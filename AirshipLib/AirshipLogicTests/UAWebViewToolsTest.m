@@ -54,30 +54,34 @@
 }
 
 - (void)testPerformJSDelegate {
-
     //a run-actions argument should result in the the callback being dispatched to our internal action JS delegate
-    [[self.mockActionJSDelegate expect] callWithData:[OCMArg any] withCompletionHandler:[OCMArg any]];
-    [UAWebViewTools performJSDelegate:nil url:self.regularActionsURL];
+    UAWebViewCallData *runActionsData = [UAWebViewCallData callDataForURL:self.regularActionsURL webView:nil];
+    [[self.mockActionJSDelegate expect] callWithData:runActionsData withCompletionHandler:[OCMArg any]];
+    [UAWebViewTools performJSDelegateWithData:runActionsData];
     [self.mockActionJSDelegate verify];
 
     //same for run-basic-actions
-    [[self.mockActionJSDelegate expect] callWithData:[OCMArg any] withCompletionHandler:[OCMArg any]];
-    [UAWebViewTools performJSDelegate:nil url:self.basicActionsURL];
+    UAWebViewCallData *runBasicActionsData = [UAWebViewCallData callDataForURL:self.basicActionsURL webView:nil];
+    [[self.mockActionJSDelegate expect] callWithData:runBasicActionsData withCompletionHandler:[OCMArg any]];
+    [UAWebViewTools performJSDelegateWithData:runBasicActionsData];
     [self.mockActionJSDelegate verify];
 
     //same for run-action-cb
-    [[self.mockActionJSDelegate expect] callWithData:[OCMArg any] withCompletionHandler:[OCMArg any]];
-    [UAWebViewTools performJSDelegate:nil url:self.callbackActionURL];
+    UAWebViewCallData *runActionsCBData = [UAWebViewCallData callDataForURL:self.callbackActionURL webView:nil];
+    [[self.mockActionJSDelegate expect] callWithData:runActionsCBData withCompletionHandler:[OCMArg any]];
+    [UAWebViewTools performJSDelegateWithData:runActionsCBData];
     [self.mockActionJSDelegate verify];
 
     //ua urls should be dispatched to the (deprecated) inbox js delegate
-    [[self.mockInboxJSDelegate expect] callbackArguments:[OCMArg any] withOptions:[OCMArg any]];
-    [UAWebViewTools performJSDelegate:nil url:self.deprecatedOtherURL];
+    UAWebViewCallData *deprecatedData = [UAWebViewCallData callDataForURL:self.deprecatedOtherURL webView:nil];
+    [[self.mockInboxJSDelegate expect] callbackArguments:deprecatedData.arguments withOptions:deprecatedData.options];
+    [UAWebViewTools performJSDelegateWithData:deprecatedData];
     [self.mockInboxJSDelegate verify];
 
     //otherwise uairship urls should be dispatched to the the new user js delegate
-    [[self.mockUserDefinedJSDelegate expect] callWithData:[OCMArg any] withCompletionHandler:[OCMArg any]];
-    [UAWebViewTools performJSDelegate:nil url:self.otherURL];
+    UAWebViewCallData *data = [UAWebViewCallData callDataForURL:self.otherURL webView:nil];
+    [[self.mockUserDefinedJSDelegate expect] callWithData:data withCompletionHandler:[OCMArg any]];
+    [UAWebViewTools performJSDelegateWithData:data];
     [self.mockUserDefinedJSDelegate verify];
 }
 

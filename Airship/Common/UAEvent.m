@@ -23,7 +23,10 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEvent.h"
+#import <CoreTelephony/CTTelephonyNetworkInfo.h>
+#import <CoreTelephony/CTCarrier.h>
+
+#import "UAEvent+Internal.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
 #import "UAUser.h"
@@ -32,61 +35,33 @@
 #import "UAPush.h"
 #import "UAInboxUtils.h"
 
-#import <CoreTelephony/CTTelephonyNetworkInfo.h>
-#import <CoreTelephony/CTCarrier.h>
-
-@interface UAEvent ()
-
-@property (nonatomic, copy) NSString *time;
-@property (nonatomic, copy) NSString *event_id;
-@property (nonatomic, strong) NSMutableDictionary *data;
-
-@end
-
 @implementation UAEvent
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
-        self.event_id = [UAUtils UUID];
-        self.data = [NSMutableDictionary dictionary];
+        self.eventId = [UAUtils UUID];
+        self.time = [NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]];
         return self;
     }
     return nil;
-}
-
-+ (id)event {
-    id obj = [[self alloc] init];
-    return obj;
-}
-
-- (id)initWithContext:(NSDictionary *)context {
-    if (self=[self init]) {
-        [self gatherData:context];
-        return self;
-    }
-    return nil;
-}
-
-+ (id)eventWithContext:(NSDictionary *)context {
-    id obj = [[self alloc] initWithContext:context];
-    return obj;
 }
 
 - (BOOL)isValid {
     return YES;
 }
 
-- (NSString*)getType {
+- (NSString *)eventType {
     return @"base";
 }
 
-- (NSUInteger)getEstimatedSize {
+
+- (NSUInteger)estimatedSize {
     NSMutableDictionary *eventDictionary = [NSMutableDictionary dictionary];
-    [eventDictionary setObject:[self getType] forKey:@"type"];
-    [eventDictionary setObject:self.time forKey:@"time"];
-    [eventDictionary setObject:self.event_id forKey:@"event_id"];
-    [eventDictionary setObject:self.data forKey:@"data"];
+    [eventDictionary setValue:self.eventType forKey:@"type"];
+    [eventDictionary setValue:self.time forKey:@"time"];
+    [eventDictionary setValue:self.eventId forKey:@"event_id"];
+    [eventDictionary setValue:self.data forKey:@"data"];
     
 
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:eventDictionary
@@ -98,68 +73,113 @@
     return [jsonData length];
 }
 
-- (void)addDataWithValue:(id)value forKey:(NSString*)key {
-    if (value && key) {
-        [self.data setObject:value forKey:key];
-    }
-}
-
-- (void)addDataFromSessionWithKey:(NSString *)sessionKey forKey:(NSString *)dataKey {
-    [self addDataWithValue:[[UAirship shared].analytics.session objectForKey:sessionKey] forKey:dataKey];
-}
-
-- (void)addDataFromSessionForKey:(NSString*)dataKey {
-    [self addDataFromSessionWithKey:dataKey forKey:dataKey];
-}
-
-- (void)gatherIndividualData:(NSDictionary*)context{}
-
-- (void)gatherData:(NSDictionary*)context {
-    // in case we re-use a event object
-    self.time = [NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]];
-    [self.data removeAllObjects];
-
-    // gather individual data
-    [self gatherIndividualData:context];
-}
-
 - (NSString *)description {
     return [NSString stringWithFormat:@"UAEvent id=%@, type=%@, time=%@, data=%@",
-            [self getType], self.time, self.event_id, self.data];
+            self.eventId, self.eventType, self.time, self.data];
+}
+
+- (NSString *)connectionType {
+    // Capture connection type using Reachability
+    NetworkStatus netStatus = [[Reachability reachabilityForInternetConnection] currentReachabilityStatus];
+    NSString *connectionTypeString = @"";
+    switch (netStatus) {
+        case UA_NotReachable:
+        {
+            connectionTypeString = @"none";//this should never be sent
+            break;
+        }
+        case UA_ReachableViaWWAN:
+        {
+            connectionTypeString = @"cell";
+            break;
+        }
+        case UA_ReachableViaWiFi:
+        {
+            connectionTypeString = @"wifi";
+            break;
+        }
+    }
+    return connectionTypeString;
+}
+
+- (NSString *)carrierName {
+    CTTelephonyNetworkInfo *netInfo = [[CTTelephonyNetworkInfo alloc] init];
+    return netInfo.subscriberCellularProvider.carrierName;
+}
+
+- (NSArray *)notificationTypes {
+    NSMutableArray *notificationTypes = [NSMutableArray array];
+    UIRemoteNotificationType enabledRemoteNotificationTypes = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
+
+    if ((UIRemoteNotificationTypeBadge & enabledRemoteNotificationTypes) > 0) {
+        [notificationTypes addObject:@"badge"];
+    }
+
+    if ((UIRemoteNotificationTypeSound & enabledRemoteNotificationTypes) > 0) {
+        [notificationTypes addObject:@"sound"];
+    }
+
+    if ((UIRemoteNotificationTypeAlert & enabledRemoteNotificationTypes) > 0) {
+        [notificationTypes addObject:@"alert"];
+    }
+
+    if ((UIRemoteNotificationTypeNewsstandContentAvailability & enabledRemoteNotificationTypes) > 0) {
+        [notificationTypes addObject:@"newsstand"];
+    }
+
+    return notificationTypes;
 }
 
 @end
 
+@interface UAEventAppInit()
+- (NSMutableDictionary *)gatherData;
+@end
+
 @implementation UAEventAppInit
 
-- (NSString*)getType {
++ (instancetype)event {
+    UAEventAppInit *event = [[self alloc] init];
+    event.data = [[event gatherData] mutableCopy];
+    return event;
+}
+
+- (NSMutableDictionary *)gatherData {
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+
+    UAAnalytics *analytics = [UAirship shared].analytics;
+
+    [data setValue:analytics.conversionPushId forKey:@"push_id"];
+    [data setValue:analytics.conversionRichPushId forKey:@"rich_push_id"];
+
+    [data setValue:[UAUser defaultUser].username forKey:@"user_id"];
+    [data setValue:[self connectionType] forKey:@"connection_type"];
+    [data setValue:[self carrierName] forKey:@"carrier"];
+    [data setValue:[self notificationTypes] forKey:@"notification_types"];
+
+    NSTimeZone *localtz = [NSTimeZone defaultTimeZone];
+    [data setValue:[NSNumber numberWithDouble:[localtz secondsFromGMT]] forKey:@"time_zone"];
+    [data setValue:([localtz isDaylightSavingTime] ? @"true" : @"false") forKey:@"daylight_savings"];
+
+    // Component Versions
+    [data setValue:[[UIDevice currentDevice] systemVersion] forKey:@"os_version"];
+    [data setValue:[UAirshipVersion get] forKey:@"lib_version"];
+
+    NSString *packageVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey] ?: @"";
+    [data setValue:packageVersion forKey:@"package_version"];
+
+    // Foreground
+    BOOL isInForeground = ([UIApplication sharedApplication].applicationState != UIApplicationStateBackground);
+    [data setValue:(isInForeground ? @"true" : @"false") forKey:@"foreground"];
+
+    return data;
+}
+
+- (NSString *)eventType {
     return @"app_init";
 }
 
-- (void)gatherIndividualData:(NSDictionary*)context {
-    [self addDataWithValue:[UAUser defaultUser].username forKey:@"user_id"];
-    [self addDataFromSessionForKey:@"connection_type"];
-    [self addDataFromSessionWithKey:@"launched_from_push_id" forKey:@"push_id"];
-    [self addDataFromSessionWithKey:@"launched_from_rich_push_id" forKey:@"rich_push_id"];
-    [self addDataFromSessionForKey:@"foreground"];
-    
-    CTTelephonyNetworkInfo *netInfo = [[CTTelephonyNetworkInfo alloc] init];
-    CTCarrier *carrier = netInfo.subscriberCellularProvider;
-
-    [self addDataWithValue:carrier.carrierName forKey:@"carrier"];
-
-    [self addDataFromSessionForKey:@"time_zone"];
-    [self addDataFromSessionForKey:@"daylight_savings"];
-    [self addDataFromSessionForKey:@"notification_types"];
-    
-    // Component Versions
-    [self addDataFromSessionForKey:@"os_version"];
-    [self addDataFromSessionForKey:@"lib_version"];
-    [self addDataFromSessionForKey:@"package_version"];
-    
-}
-
-- (NSUInteger)getEstimatedSize {
+- (NSUInteger)estimatedSize {
     return kEventAppInitSize;
 }
 
@@ -167,30 +187,42 @@
 
 @implementation UAEventAppForeground
 
-- (NSString*)getType {
-    return @"app_foreground";
+- (NSMutableDictionary *)gatherData {
+    NSMutableDictionary *data = [super gatherData];
+    [data removeObjectForKey:@"foreground"];
+    return data;
 }
 
-- (void)gatherIndividualData:(NSDictionary*)context {
-    [super gatherIndividualData:context];
-    [self.data removeObjectForKey:@"foreground"];//not necessary - even is an explicit foreground
+- (NSString *)eventType {
+    return @"app_foreground";
 }
 
 @end
 
 @implementation UAEventAppExit
 
-- (NSString *)getType {
++ (instancetype)event {
+    UAEventAppExit *event = [[self alloc] init];
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+
+    UAAnalytics *analytics = [UAirship shared].analytics;
+
+    [data setValue:analytics.conversionPushId forKey:@"push_id"];
+    [data setValue:analytics.conversionRichPushId forKey:@"rich_push_id"];
+
+
+    [data setValue:[event connectionType] forKey:@"connection_type"];
+
+    event.data = [data mutableCopy];
+    return event;
+}
+
+
+- (NSString *)eventType {
     return @"app_exit";
 }
 
-- (void)gatherIndividualData:(NSDictionary *)context {
-    [self addDataFromSessionForKey:@"connection_type"];
-    [self addDataFromSessionWithKey:@"launched_from_push_id" forKey:@"push_id"];
-    [self addDataFromSessionWithKey:@"launched_from_rich_push_id" forKey:@"rich_push_id"];
-}
-
-- (NSUInteger)getEstimatedSize {
+- (NSUInteger)estimatedSize {
     return kEventAppExitSize;
 }
 
@@ -198,7 +230,7 @@
 
 @implementation UAEventAppBackground
 
-- (NSString *)getType {
+- (NSString *)eventType {
     return @"app_background";
 }
 
@@ -206,31 +238,35 @@
 
 @implementation UAEventAppActive
 
-- (NSString *)getType {
++ (instancetype)event {
+    UAEventAppActive *event = [[self alloc] init];
+    event.data = @{@"class_name": @""};
+    return event;
+}
+
+- (NSString *)eventType {
     return @"activity_started";
 }
 
-- (void)gatherIndividualData:(NSDictionary *)context {
-    [self.data setValue:@"" forKey:@"class_name"];
-}
-
-- (NSUInteger)getEstimatedSize {
+- (NSUInteger)estimatedSize {
     return kEventAppActiveSize;
 }
 
 @end
 
 @implementation UAEventAppInactive
- 
-- (NSString *)getType {
+
++ (instancetype)event {
+    UAEventAppInactive *event = [[self alloc] init];
+    event.data = @{@"class_name": @""};
+    return event;
+}
+
+- (NSString *)eventType {
     return @"activity_stopped";
 }
 
-- (void)gatherIndividualData:(NSDictionary *)context {
-    [self.data setValue:@"" forKey:@"class_name"];
-}
-
-- (NSUInteger)getEstimatedSize {
+- (NSUInteger)estimatedSize {
     return kEventAppInactiveSize;
 }
 
@@ -238,17 +274,24 @@
 
 @implementation UAEventDeviceRegistration
 
-- (NSString *)getType {
++ (instancetype)event {
+    UAEventDeviceRegistration *event = [[self alloc] init];
+
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+
+    [data setValue:[UAPush shared].deviceToken forKey:@"device_token"];
+    [data setValue:[UAPush shared].channelID forKey:@"channel_id"];
+    [data setValue:[UAUser defaultUser].username forKey:@"user_id"];
+
+    event.data = [data mutableCopy];
+    return event;
+}
+
+- (NSString *)eventType {
     return @"device_registration";
 }
 
-- (void)gatherIndividualData:(NSDictionary *)context {
-    [self addDataWithValue:[UAPush shared].deviceToken forKey:@"device_token"];
-    [self addDataWithValue:[UAPush shared].channelID forKey:@"channel_id"];
-    [self addDataWithValue:[UAUser defaultUser].username forKey:@"user_id"];
-}
-
-- (NSUInteger)getEstimatedSize {
+- (NSUInteger)estimatedSize {
     return kEventDeviceRegistrationSize;
 }
 
@@ -256,26 +299,33 @@
 
 @implementation UAEventPushReceived
 
-- (NSString *)getType {
++ (instancetype)eventWithNotification:(NSDictionary *)notification {
+    UAEventPushReceived *event = [[self alloc] init];
+
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+
+    NSString *richPushId = [UAInboxUtils getRichPushMessageIDFromNotification:notification];
+    if (richPushId) {
+        [data setValue:richPushId forKey:@"rich_push_id"];
+    }
+
+    // Add the std push id, if present, else create a UUID
+    NSString *pushId = [notification objectForKey:@"_"];
+    if (pushId) {
+        [data setValue:pushId forKey:@"push_id"];
+    } else {
+        [data setValue:[UAUtils UUID] forKey:@"push_id"];
+    }
+
+    event.data = [data mutableCopy];
+    return event;
+}
+
+- (NSString *)eventType {
     return @"push_received";
 }
 
-- (void)gatherIndividualData:(NSDictionary *)context {
-    NSString *richPushId = [UAInboxUtils getRichPushMessageIDFromNotification:context];
-    if (richPushId) {
-        [self addDataWithValue:richPushId forKey:@"rich_push_id"];
-    }
-
-    //Add the std push id, if present, else create a UUID
-    NSString *pushId = [context objectForKey:@"_"];
-    if (pushId) {
-        [self addDataWithValue:pushId forKey:@"push_id"];
-    } else {
-        [self addDataWithValue:[UAUtils UUID] forKey:@"push_id"];
-    }
-}
-
-- (NSUInteger)getEstimatedSize {
+- (NSUInteger)estimatedSize {
     return kEventPushReceivedSize;
 }
 

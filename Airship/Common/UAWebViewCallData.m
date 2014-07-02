@@ -4,6 +4,10 @@
 @implementation UAWebViewCallData
 
 + (UAWebViewCallData *)callDataForURL:(NSURL *)url webView:(UIWebView *)webView {
+    return [UAWebViewCallData callDataForURL:url webView:webView message:nil];
+}
+
++ (UAWebViewCallData *)callDataForURL:(NSURL *)url webView:(UIWebView *)webView message:(UAInboxMessage *)message {
     NSString *urlPath = [url path];
     if ([urlPath hasPrefix:@"/"]) {
         urlPath = [urlPath substringFromIndex:1]; //trim the leading slash
@@ -46,6 +50,8 @@
     data.arguments = arguments;
     data.options = options;
     data.webView = webView;
+    data.url = url;
+    data.message = message;
 
     return data;
 }

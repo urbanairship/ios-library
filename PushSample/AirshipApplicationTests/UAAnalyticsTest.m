@@ -122,8 +122,6 @@
 
 - (void)testDidBecomeActiveAfterForeground {
     id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
-    [[mockAnalytics expect] refreshSessionWhenNetworkChanged];
-    [[mockAnalytics expect] refreshSessionWhenActive];
     
     __block int foregroundCount = 0;
     __block int activeCount = 0;
@@ -289,7 +287,7 @@
     UAEventAppActive *event = [[UAEventAppActive alloc] init];
 
     // Expect adding event to add it tot he db and to start sending analytics
-    [[mockDBManager expect] addEvent:event withSession:_analytics.session];
+    [[mockDBManager expect] addEvent:event withSessionId:_analytics.sessionId];
     [[mockAnalytics expect] send];
 
     [_analytics addEvent:event];
@@ -315,7 +313,7 @@
     UAEventAppActive *event = [[UAEventAppActive alloc] init];
 
     // Expect adding event to add it tot he db and to start sending analytics
-    [[mockDBManager expect] addEvent:event withSession:_analytics.session];
+    [[mockDBManager expect] addEvent:event withSessionId:_analytics.sessionId];
     [[mockAnalytics expect] send];
 
     [_analytics addEvent:event];
@@ -339,11 +337,11 @@
 
     // Verify adding a location event in the background sends if the last send time
     // was 15 minutes ago.
-    UALocationEvent *locationEvent = [[UALocationEvent alloc] initWithLocationContext:nil];
+    UALocationEvent *locationEvent = [[UALocationEvent alloc]init];
     _analytics.lastSendTime = [NSDate dateWithTimeIntervalSinceNow:-16*60*1000]; // 16 minutes ago
 
     // Expect adding event to add it tot he db and to start sending analytics
-    [[mockDBManager expect] addEvent:locationEvent withSession:_analytics.session];
+    [[mockDBManager expect] addEvent:locationEvent withSessionId:_analytics.sessionId];
     [[mockAnalytics expect] send];
 
     [_analytics addEvent:locationEvent];
@@ -355,7 +353,7 @@
     _analytics.lastSendTime = [NSDate date];
 
     // Expect adding event to add it tot he db and to start sending analytics
-    [[mockDBManager expect] addEvent:locationEvent withSession:_analytics.session];
+    [[mockDBManager expect] addEvent:locationEvent withSessionId:_analytics.sessionId];
     [[mockAnalytics reject] send];
 
     [_analytics addEvent:locationEvent];
@@ -386,7 +384,8 @@
 
 // This test is not comprehensive for this method, as the method needs refactoring.
 - (void)testPrepareEventsForUpload {
-    UAEventAppForeground *appEvent = [[UAEventAppForeground alloc] initWithContext:nil];
+    UAEventAppForeground *appEvent = [UAEventAppForeground event];
+
     // If the events database is empty, everything crashes
     XCTAssertNotNil(appEvent);
     // Remember, the NSUserPreferences are in an unknown state in every test, so reset
@@ -404,7 +403,7 @@
     dispatch_queue_t testQueue = dispatch_queue_create("com.urbanairship.analyticsThreadsafeTest", DISPATCH_QUEUE_CONCURRENT);
     dispatch_group_t testGroup = dispatch_group_create();
     dispatch_group_async(testGroup, testQueue, ^{
-        UALocationEvent *event = [UALocationEvent locationEventWithLocation:[UALocationTestUtils testLocationPDX] locationManager:nil andUpdateType:@"testUpdate"];
+        UALocationEvent *event = [UALocationEvent significantChangeLocationEventWithLocation:[UALocationTestUtils testLocationPDX] providerType:@"testUpdate"];
         int random = 0;
         for (int i = 0; i < 10; i++) {
             random = arc4random() % 2;

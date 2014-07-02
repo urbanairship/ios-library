@@ -67,7 +67,6 @@
     event.transactionID = transactionID;
     event.attributionID = attributionID;
     event.attributionType = attributionType;
-    [event gatherData:@{}];
 
     XCTAssertEqualObjects(eventName, [event.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(transactionID, [event.data objectForKey:@"transaction_id"], @"Unexpected transaction id.");
@@ -184,6 +183,14 @@
     // 0
     event = [UACustomEvent eventWithName:@"event name" valueFromString:@"0"];
     XCTAssertEqualObjects(@(0), event.eventValue, @"Event value should be set from a valid numeric string.");
+
+    // nil
+    event = [UACustomEvent eventWithName:@"event name" valueFromString:nil];
+    XCTAssertNil(event.eventValue, @"Event values that nil should be ignored.");
+
+    // NaN
+    event = [UACustomEvent eventWithName:@"event name" valueFromString:@"blah"];
+    XCTAssertNil(event.eventValue, @"Event values that are not numbers should be ignored");
 }
 
 /**
@@ -218,6 +225,14 @@
     // 0
     event = [UACustomEvent eventWithName:@"event name" value:@(0)];
     XCTAssertEqualObjects(@(0), event.eventValue, @"Event value should be set from a valid numeric string.");
+
+    // nil
+    event = [UACustomEvent eventWithName:@"event name" value:nil];
+    XCTAssertNil(event.eventValue, @"Nil event values should be ignored.");
+
+    // NaN
+    event = [UACustomEvent eventWithName:@"event name" value:[NSDecimalNumber notANumber]];
+    XCTAssertNil(event.eventValue, @"NSDecimalNumbers that are equal to notANumber should be ignored.");
 }
 
 
@@ -227,7 +242,6 @@
  */
 - (void)testEventValueToData {
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
-    [event gatherData:@{}];
     XCTAssertEqualObjects(@(123123456), [event.data objectForKey:@"event_value"], @"Unexpected event value.");
 }
 
@@ -237,18 +251,16 @@
  */
 - (void)testAutoAttribution {
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
-    [event gatherData:@{}];
 
     // Verify attribution is blank when conversion ID is nil
     XCTAssertNil([event.data objectForKey:@"attribution_id"], @"Attribution should be nil");
     XCTAssertNil([event.data objectForKey:@"attribution_type"], @"Attribution should be nil");
 
     // Set a conversion push ID for the analytics session
-    [[[self.analytics stub] andReturn:@{@"launched_from_push_id":@"push ID"}] session];
+    [[[self.analytics stub] andReturn:@"push ID"] conversionPushId];
 
     // Recreate the event to verify auto fil behavior
     event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
-    [event gatherData:@{}];
 
     // Verify the attribution is hard open with the push ID
     XCTAssertEqualObjects(kUAAttributionHardOpen, [event.data objectForKey:@"attribution_type"], @"Attribution should autofil to hard open");
@@ -257,7 +269,6 @@
     // Recreate the event with a attribution ID to verify attribution does not auto fil
     event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
     event.attributionID = @"attribution ID";
-    [event gatherData:@{}];
 
     XCTAssertEqualObjects(@"attribution ID", [event.data objectForKey:@"attribution_id"], @"Attribution ID should be the set value");
     XCTAssertNil([event.data objectForKey:@"attribution_type"], @"Attribution type is not set and should be nil");
@@ -265,7 +276,6 @@
     // Recreate the event with a attribution type to verify attribution does not auto fil
     event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
     event.attributionType = @"attribution type";
-    [event gatherData:@{}];
 
     XCTAssertEqualObjects(@"attribution type", [event.data objectForKey:@"attribution_type"], @"Attribution type should be the set value");
     XCTAssertNil([event.data objectForKey:@"attribution_id"], @"Attribution ID is not set and should be nil");
@@ -284,6 +294,8 @@
     event.eventName = @"";
     XCTAssertFalse([event isValid], @"Event should be invalid when it does not have an event name");
 }
+
+
 
 @end
 

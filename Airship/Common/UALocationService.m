@@ -558,34 +558,30 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     self.lastReportedLocation = location;
     self.dateOfLastLocation = location.timestamp;
     UALocationEvent *event = nil;
+
     if (provider == self.standardLocationProvider) {
-        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:UALocationEventUpdateTypeContinuous];
+        event = [UALocationEvent standardLocationEventWithLocation:location
+                                                      providerType:provider.provider
+                                                   desiredAccuracy:@(provider.desiredAccuracy)
+                                                    distanceFilter:@(provider.distanceFilter)];
+    } else if (provider == self.significantChangeProvider) {
+        event = [UALocationEvent significantChangeLocationEventWithLocation:location
+                                                               providerType:provider.provider];
+    } else if (provider == self.singleLocationProvider) {
+        event = [UALocationEvent singleLocationEventWithLocation:location
+                                                      providerType:provider.provider
+                                                   desiredAccuracy:@(provider.desiredAccuracy)
+                                                    distanceFilter:@(provider.distanceFilter)];
+    } else {
+        event = [UALocationEvent locationEventWithLocation:location
+                                              providerType:provider.provider
+                                           desiredAccuracy:@(provider.desiredAccuracy)
+                                            distanceFilter:@(provider.distanceFilter)];
     }
-    else if (provider == self.significantChangeProvider) {
-        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:UALocationEventUpdateTypeChange];
-    }
-    else if (provider == self.singleLocationProvider) {
-        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:UALocationEventUpdateTypeSingle];
-    }
-    else {
-        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:UALocationEventUpdateTypeNone];
-    }
-    [self sendEventToAnalytics:event];
+
+    [[[UAirship shared] analytics] addEvent:event];
 }
 
-
-- (void)reportLocation:(CLLocation *)location
-   fromLocationManager:(CLLocationManager *)locationManager
-        withUpdateType:(UALocationEventUpdateType *)updateTypeOrNil {
-    UALOG(@"Sending location to analytics -> %@ update type %@", location, updateTypeOrNil);
-    UALocationEvent *event = [UALocationEvent locationEventWithLocation:location locationManager:locationManager andUpdateType:updateTypeOrNil];
-    [self sendEventToAnalytics:event];
-}
-
-- (void)sendEventToAnalytics:(UALocationEvent *)locationEvent {
-    UAAnalytics *analytics = [[UAirship shared] analytics];
-    [analytics addEvent:locationEvent];
-}
 
 #pragma mark -
 #pragma mark Authorization convenience 

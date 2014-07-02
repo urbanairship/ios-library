@@ -27,6 +27,13 @@
     return jsonDecodedArgs;
 }
 
+- (NSDictionary *)createMetaDataFromCallData:(UAWebViewCallData *)data {
+    NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
+    [metadata setValue:data.webView forKey:UAActionMetadataWebViewKey];
+    [metadata setValue:data.message forKey:UAActionMetadataInboxMessageKey];
+    return metadata;
+}
+
 /**
  * Handles the run-action-cb command.
  *
@@ -35,15 +42,15 @@
  * used from JavaScript, but can be used entirely through URL loading as well.
  *
  * @param callbackID A callback identifier generated in the JS layer. This can be nil.
- * @param options The options passed in the JS delegate call.
- * @param webView The UIWebView originating the delegate call
+ * @param data The call data passed in the JS delegate call.
  * @param completionHandler The completion handler passed in the JS delegate call.
  */
 - (void)runActionWithCallbackID:(NSString *)callbackID
-                    withOptions:(NSDictionary *)options
-                    withWebView:(UIWebView *)webView
-       withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
-    NSArray *keys = [options allKeys];
+                           data:(UAWebViewCallData *)data
+              completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
+
+
+    NSArray *keys = [data.options allKeys];
 
     NSString *actionName = [keys firstObject];
     if (!actionName) {
@@ -59,7 +66,7 @@
         return;
     }
 
-    id encodedArgumentsValue = [[options valueForKey:actionName] firstObject];
+    id encodedArgumentsValue = [[data.options valueForKey:actionName] firstObject];
     id decodedArgumentsValue;
     if (encodedArgumentsValue && encodedArgumentsValue != [NSNull null]) {
         decodedArgumentsValue = [self objectForEncodedArguments:encodedArgumentsValue];
@@ -77,13 +84,9 @@
         }
     }
 
-    // instantiate metadata dictionary and place webView under the UAWebViewMetadataKey
-    NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
-    [metadata setValue:webView forKey:UAActionMetadataWebViewKey];
-    
     UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
                                                             withSituation:UASituationWebViewInvocation
-                                                              metadata:metadata];
+                                                              metadata:[self createMetaDataFromCallData:data]];
     
     [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
         UA_LDEBUG("Action %@ finished executing with status %ld", actionName, (long)result.status);
@@ -142,15 +145,12 @@
  * arbitrary argument objects through JSON serialization of core types.  It is best
  * used from JavaScript, but can be used entirely through URL loading as well.
  *
- * @param options The options passed in the JS delegate call.
- * @param webView The UIWebView originating the delegate call
+ * @param data The call data passed in the JS delegate call.
  * @param completionHandler The completion handler passed in the JS delegate call.
  */
-- (void)runActionsWithOptions:(NSDictionary *)options
-                  withWebView:(UIWebView *)webView
-        withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
+- (void)runActionsWithData:(UAWebViewCallData *)data completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
-    for (NSString *actionName in options) {
+    for (NSString *actionName in data.options) {
 
         NSString *decodedActionName = [actionName urlDecodedStringWithEncoding:NSUTF8StringEncoding];
         if (!decodedActionName) {
@@ -158,7 +158,7 @@
             continue;
         }
 
-        for (id encodedArgumentsValue in [options objectForKey:actionName]) {
+        for (id encodedArgumentsValue in [data.options objectForKey:actionName]) {
 
             id decodedArgumentsValue;
             if (encodedArgumentsValue && encodedArgumentsValue != [NSNull null]) {
@@ -169,15 +169,11 @@
                     continue;
                 }
             }
-
-            // instantiate metadata dictionary and place webView under the UAWebViewMetadataKey
-            NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
-            [metadata setValue:webView forKey:UAActionMetadataWebViewKey];
             
             UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
                                                                     withSituation:UASituationWebViewInvocation
-                                                                         metadata:metadata];
-            
+                                                                         metadata:[self createMetaDataFromCallData:data]];
+
             [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
                 if (result.status == UAActionStatusCompleted) {
                     UA_LDEBUG(@"action %@ completed successfully", actionName);
@@ -199,15 +195,13 @@
  * for passing string arguments to actions.  For convenience, multiple actions can
  * be passed in the query options, in which case they will all be run at once.
  *
- * @param options The options passed in the JS delegate callback.
- * @param webView The UIWebView originating the delegate call
+ * @param data The call data passed in the JS delegate call.
  * @param completionHandler The completion handler passed in the JS delegate callback.
  */
-- (void)runBasicActionsWithOptions:(NSDictionary *)options
-                       withWebView:(UIWebView *)webView
-             withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
+- (void)runBasicActionsWithData:(UAWebViewCallData *)data
+              completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
-    for (NSString *actionName in options) {
+    for (NSString *actionName in data.options) {
 
         NSString *decodedActionName = [actionName urlDecodedStringWithEncoding:NSUTF8StringEncoding];
         if (!decodedActionName) {
@@ -215,7 +209,7 @@
             continue;
         }
 
-        for (id encodedArgumentsValue in [options objectForKey:actionName]) {
+        for (id encodedArgumentsValue in [data.options objectForKey:actionName]) {
 
 
             NSString *decodedArgumentsValue;
@@ -227,15 +221,11 @@
                     continue;
                 }
             }
-            
-            // instantiate metadata dictionary and place webView under the UAWebViewMetadataKey
-            NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
-            [metadata setValue:webView forKey:UAActionMetadataWebViewKey];
        
             UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
                                                                     withSituation:UASituationWebViewInvocation
-                                                                         metadata:metadata];
-            
+                                                                         metadata:[self createMetaDataFromCallData:data]];
+
             [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
                 if (result.status == UAActionStatusCompleted) {
                     UA_LDEBUG(@"action %@ completed successfully", actionName);
@@ -249,6 +239,7 @@
     completionHandler(nil);
 }
 
+
 - (void)callWithData:(UAWebViewCallData *)data
     withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
     UA_LDEBUG(@"action js delegate arguments: %@ \n options: %@", data.arguments, data.options);
@@ -261,18 +252,15 @@
         //into the JS environment, otherwise we'll just run the action to completion
 
         NSString *callbackID = [data.arguments firstObject];
-        [self runActionWithCallbackID:callbackID
-                          withOptions:data.options
-                          withWebView:data.webView
-                withCompletionHandler:completionHandler];
+        [self runActionWithCallbackID:callbackID data:data completionHandler:completionHandler];
     } else if ([data.name isEqualToString:@"run-actions"]){
         //run-actions is the 'complex' version with JSON-encoded string arguments, and
         //allows multiple simultaneous actions
-        [self runActionsWithOptions:data.options withWebView:data.webView withCompletionHandler:completionHandler];
+        [self runActionsWithData:data completionHandler:completionHandler];
     } else if ([data.name isEqualToString:@"run-basic-actions"]) {
         //run-basic-actions is the 'demo-friendly' version with implicit string argument values and
         //allows multiple simultaneous actions
-        [self runBasicActionsWithOptions:data.options withWebView:data.webView withCompletionHandler:completionHandler];
+        [self runBasicActionsWithData:data completionHandler:completionHandler];
     } else {
         //arguments not recognized, pass a nil script result
         completionHandler(nil);

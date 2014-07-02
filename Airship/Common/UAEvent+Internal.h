@@ -23,32 +23,28 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import "UAGlobal.h"
+#import "UAEvent.h"
 
-@class UAEvent;
-@class UASQLite;
+@interface UAEvent ()
+/**
+ * The time the event was created.
+ */
+@property (nonatomic, copy) NSString *time;
 
-@interface UAAnalyticsDBManager : NSObject {
-    dispatch_queue_t dbQueue;
-}
+/**
+ * The unique event ID.
+ */
+@property (nonatomic, copy) NSString *eventId;
 
-@property (nonatomic, strong) UASQLite *db;
+/**
+ * The event's data.
+ */
+@property (nonatomic, strong) NSDictionary *data;
 
-SINGLETON_INTERFACE(UAAnalyticsDBManager);
 
-- (void)resetDB;
-
-- (void)addEvent:(UAEvent *)event withSessionId:(NSString *)sessionId;
-- (NSArray *)getEvents:(NSUInteger)max;
-- (NSArray *)getEventByEventId:(NSString *)eventId;
-
-- (void)deleteEvent:(NSNumber *)eventId;
-- (void)deleteEvents:(NSArray *)events;
-- (void)deleteBySessionId:(NSString *)sessionId;
-- (void)deleteOldestSession;
-
-- (NSUInteger)eventCount;
-- (NSUInteger)sizeInBytes;
-
+/**
+ * Gets the current connection type.
+ * Possible values are "cell", "wifi", or "none".
+ */
+- (NSString *)connectionType;
 @end

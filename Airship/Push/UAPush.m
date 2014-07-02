@@ -657,8 +657,7 @@ BOOL deferChannelCreationOnForeground = false;
 
     self.deviceToken = [deviceToken lowercaseString];
 
-    UAEventDeviceRegistration *regEvent = [UAEventDeviceRegistration eventWithContext:nil];
-    [[UAirship shared].analytics addEvent:regEvent];
+    [[UAirship shared].analytics addEvent:[UAEventDeviceRegistration event]];
 
     BOOL inBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
 

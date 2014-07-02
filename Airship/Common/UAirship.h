@@ -91,6 +91,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 @property (nonatomic, weak) id<UAJavaScriptDelegate> jsDelegate;
 
+
 ///---------------------------------------------------------------------------------------
 /// @name Location Services
 ///---------------------------------------------------------------------------------------

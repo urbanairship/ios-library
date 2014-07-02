@@ -26,6 +26,7 @@
 
 #define kEventAppInitSize               450//397 w/ push id, no inbox id
 #define kEventAppExitSize               200//136 w/ only network type
+
 #define kEventDeviceRegistrationSize    200//153 w/ only user info
 #define kEventPushReceivedSize          200//160 w/ uuid push info
 #define kEventAppActiveSize             120
@@ -33,18 +34,30 @@
 
 @interface UAEvent : NSObject
 
+/**
+ * The time the event was created.
+ */
 @property (nonatomic, readonly, copy) NSString *time;
-@property (nonatomic, readonly, copy) NSString *event_id;
-@property (nonatomic, readonly, strong) NSMutableDictionary *data;
 
-+ (id)event;
-- (id)initWithContext:(NSDictionary *)context;
-+ (id)eventWithContext:(NSDictionary *)context;
-- (NSString *)getType;
-- (void)gatherData:(NSDictionary *)context;
-- (NSUInteger)getEstimatedSize;
-- (void)addDataFromSessionForKey:(NSString *)dataKey;
-- (void)addDataWithValue:(id)value forKey:(NSString *)key;
+/**
+ * The unique event ID.
+ */
+@property (nonatomic, readonly, copy) NSString *eventId;
+
+/**
+ * The event's data.
+ */
+@property (nonatomic, readonly, strong) NSDictionary *data;
+
+/**
+ * The event's type.
+ */
+@property (nonatomic, readonly) NSString *eventType;
+
+/**
+ * The event's estimated size.
+ */
+@property (nonatomic, readonly) NSUInteger estimatedSize;
 
 /**
  * Checks if the event is valid. Invalid events will be dropped.
@@ -55,21 +68,45 @@
 @end
 
 @interface UAEventAppInit : UAEvent
+
+/**
+ * Factory method to create a UAEventAppInit.
+ */
++ (instancetype)event;
+
 @end
 
 @interface UAEventAppForeground : UAEventAppInit
 @end
 
 @interface UAEventAppExit : UAEvent
+
+/**
+ * Factory method to create a UAEventAppExit.
+ */
++ (instancetype)event;
+
 @end
 
 @interface UAEventAppBackground : UAEventAppExit
 @end
 
 @interface UAEventDeviceRegistration : UAEvent
+
+/**
+ * Factory method to create a UAEventDeviceRegistration.
+ */
++ (instancetype)event;
+
 @end
 
 @interface UAEventPushReceived : UAEvent
+
+/**
+ * Factory method to create a UAEventPushReceived.
+ * @param notification The received push notification.
+ */
++ (instancetype)eventWithNotification:(NSDictionary *)notification;
 @end
 
 /**
@@ -78,6 +115,12 @@
  * trigger a UAEventAppInactive event.
  */
 @interface UAEventAppActive : UAEvent
+
+/**
+ * Factory method to create a UAEventAppActive.
+ */
++ (instancetype)event;
+
 @end
 
 /**
@@ -86,4 +129,10 @@
  * notification center in iOS5+, the user launches the task-bar, etc.
  */
 @interface UAEventAppInactive : UAEvent
+
+/**
+ * Factory method to create a UAEventAppInactive.
+ */
++ (instancetype)event;
+
 @end

@@ -26,13 +26,11 @@
 #import "UACustomEvent.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
+#import "UAInboxMessage.h"
 
 @implementation UACustomEvent
 
-#define kUACustomEventCharacterLimit 255
-#define kUACustomEventSize 800
-
-- (NSString *)getType {
+- (NSString *)eventType {
     return @"custom_event";
 }
 
@@ -47,55 +45,20 @@
 }
 
 + (instancetype)eventWithName:(NSString *)eventName {
-    return [[UACustomEvent alloc] initWithName:eventName withValue:nil];
+    return [UACustomEvent eventWithName:eventName value:nil];
 }
 
 + (instancetype)eventWithName:(NSString *)eventName valueFromString:(NSString *)eventValue {
-    NSDecimalNumber *decimalValue = [NSDecimalNumber decimalNumberWithString:eventValue];
-    return [[UACustomEvent alloc] initWithName:eventName withValue:decimalValue];
+    NSDecimalNumber *decimalValue = eventValue ? [NSDecimalNumber decimalNumberWithString:eventValue] : nil;
+    return [UACustomEvent eventWithName:eventName value:decimalValue];
 }
 
 + (instancetype)eventWithName:(NSString *)eventName value:(NSDecimalNumber *)eventValue {
-    return [[UACustomEvent alloc] initWithName:eventName withValue:eventValue];
+    UACustomEvent *event = [[UACustomEvent alloc] initWithName:eventName withValue:eventValue];
+    return event;
 }
 
-- (void)gatherIndividualData:(NSDictionary *)context {
-    // Event name
-    [self addDataWithValue:self.eventName forKey:@"event_name"];
-
-    // Attribution
-    if (!self.attributionType && !self.attributionID) {
-        NSString *conversionID = [[UAirship shared].analytics.session objectForKey:@"launched_from_push_id"];
-        if (conversionID) {
-            [self addDataWithValue:kUAAttributionHardOpen forKey:@"attribution_type"];
-            [self addDataWithValue:conversionID forKey:@"attribution_id"];
-        }
-    } else {
-        [self addDataWithValue:self.attributionID forKey:@"attribution_id"];
-        [self addDataWithValue:self.attributionType forKey:@"attribution_type"];
-    }
-
-    // Transaction ID
-    [self addDataWithValue:self.transactionID forKey:@"transaction_id"];
-
-    // Event value
-    if (self.eventValue) {
-
-        // Move the decimal position over 6 positions
-        NSDecimalNumber *number = [self.eventValue decimalNumberByMultiplyingByPowerOf10:6];
-
-        /*
-         We use long long value here because on a 32 bit machine int and long
-         have the same range. We clamp eventValue to [-2^31, 2^31-1] so we know
-         for sure that the value multiplied by 10^6 (~2^20) will have an approximate
-         range of [-2^51, 2^51-1] so it will always fit into the range warp9
-         is expecting [-2^63, 2^63-1].
-         */
-        [self addDataWithValue:@([number longLongValue]) forKey:@"event_value"];
-    }
-}
-
-- (NSUInteger)getEstimatedSize {
+- (NSUInteger)estimatedSize {
     return kUACustomEventSize;
 }
 
@@ -136,7 +99,13 @@
 }
 
 - (void)setEventValue:(NSDecimalNumber *)eventValue {
-    if ([eventValue compare:@(INT32_MAX)] > 0) {
+    if ([eventValue isEqualToNumber:[NSDecimalNumber notANumber]]) {
+        return;
+    }
+
+    if (!eventValue) {
+        _eventValue = nil;
+    } else if ([eventValue compare:@(INT32_MAX)] > 0) {
         UA_LERR(@"Event value %@ is larger than 2^31-1", self.eventValue);
     } else if ([eventValue compare:@(INT32_MIN)] < 0) {
         UA_LERR(@"Event value %@ is smaller than -2^31", self.eventValue);
@@ -147,6 +116,53 @@
             _eventValue = [NSDecimalNumber decimalNumberWithDecimal:[eventValue decimalValue]];
         }
     }
+}
+
+- (void)setAttributionFromMessage:(UAInboxMessage *)message {
+    if (message) {
+        self.attributionID = message.messageID;
+        self.attributionType = kUAAttributionMCRAP;
+    }
+}
+
+- (NSDictionary *)data {
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+
+    // Event name
+    [dictionary setValue:self.eventName forKey:@"event_name"];
+
+    // Attribution
+    if (!self.attributionType && !self.attributionID) {
+        NSString *conversionID = [UAirship shared].analytics.conversionPushId;
+        if (conversionID) {
+            [dictionary setValue:kUAAttributionHardOpen forKey:@"attribution_type"];
+            [dictionary setValue:conversionID forKey:@"attribution_id"];
+        }
+    } else {
+        [dictionary setValue:self.attributionID forKey:@"attribution_id"];
+        [dictionary setValue:self.attributionType forKey:@"attribution_type"];
+    }
+
+    // Transaction ID
+    [dictionary setValue:self.transactionID forKey:@"transaction_id"];
+
+    // Event value
+    if (self.eventValue) {
+
+        // Move the decimal position over 6 positions
+        NSDecimalNumber *number = [self.eventValue decimalNumberByMultiplyingByPowerOf10:6];
+
+        /*
+         We use long long value here because on a 32 bit machine int and long
+         have the same range. We clamp eventValue to [-2^31, 2^31-1] so we know
+         for sure that the value multiplied by 10^6 (~2^20) will have an approximate
+         range of [-2^51, 2^51-1] so it will always fit into the range warp9
+         is expecting [-2^63, 2^63-1].
+         */
+        [dictionary setValue:@([number longLongValue]) forKey:@"event_value"];
+    }
+
+    return [dictionary mutableCopy];
 }
 
 @end

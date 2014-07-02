@@ -26,6 +26,7 @@
 #import <Foundation/Foundation.h>
 
 @class UAWebViewCallData;
+@class UAInboxMessage;
 
 /**
  * The UAWebViewTools provides an interface for webview utility methods.
@@ -52,11 +53,22 @@
  navigationType:(UIWebViewNavigationType)navigationType;
 
 /**
+ * Custom URL scheme handling, for app-specific URL navigation and JS delegate call logic.
+ *
+ * @param wv The webview loading the request.
+ * @param request The request.
+ * @param navigationType An enumeration of UIWebViewNavigationType.
+ * @param message The inbox message associated with the webview.
+ * @return `YES` if the URL should be loaded by the webView, `NO` otherwise.
+ */
++ (BOOL)webView:(UIWebView *)wv shouldStartLoadWithRequest:(NSURLRequest *)request
+ navigationType:(UIWebViewNavigationType)navigationType message:(UAInboxMessage *)message;
+
+/**
  * Used for farming out JavaScript delegate calls.
  *
- * @param webView The webview originating the call.
- * @param url The URL containing the call data.
+ * @param data The webview call data.
  */
-+ (void)performJSDelegate:(UIWebView *)webView url:(NSURL *)url;
++ (void)performJSDelegateWithData:(UAWebViewCallData *)data;
 
 @end

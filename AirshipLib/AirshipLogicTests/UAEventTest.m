@@ -24,33 +24,245 @@
  */
 
 #import <XCTest/XCTest.h>
+#import <OCMOCK/OCMock.h>
+#import <CoreTelephony/CTTelephonyNetworkInfo.h>
+#import <CoreTelephony/CTCarrier.h>
+
 #import "UAPush+Internal.h"
 #import "UAUser+Internal.h"
 #import "UAEvent.h"
+#import "UAirship.h"
+#import "UAAnalytics.h"
+#import "UA_Reachability.h"
+
 
 @interface UAEventTest : XCTestCase
+
+// stubs
+@property(nonatomic, strong) id analytics;
+@property(nonatomic, strong) id airship;
+@property(nonatomic, strong) id reachability;
+@property(nonatomic, strong) id timeZone;
+@property(nonatomic, strong) id airshipVersion;
+@property(nonatomic, strong) id application;
+@property(nonatomic, strong) id push;
+@property(nonatomic, strong) id currentDevice;
 
 @end
 
 @implementation UAEventTest
 
+- (void)setUp {
+    [super setUp];
+
+    self.analytics = [OCMockObject niceMockForClass:[UAAnalytics class]];
+    self.airship = [OCMockObject niceMockForClass:[UAirship class]];
+    [[[self.airship stub] andReturn:self.airship] shared];
+    [[[self.airship stub] andReturn:self.analytics] analytics];
+
+    self.reachability = [OCMockObject niceMockForClass:[Reachability class]];
+    [[[self.reachability stub] andReturn:self.reachability] reachabilityForInternetConnection];
+
+
+    self.timeZone = [OCMockObject niceMockForClass:[NSTimeZone class]];
+    [[[self.timeZone stub] andReturn:self.timeZone] defaultTimeZone];
+
+    self.airshipVersion = [OCMockObject niceMockForClass:[UAirshipVersion class]];
+
+    self.application = [OCMockObject niceMockForClass:[UIApplication class]];
+    [[[self.application stub] andReturn:self.application] sharedApplication];
+
+    self.push = [OCMockObject niceMockForClass:[UAPush class]];
+    [[[self.push stub] andReturn:self.push] shared];
+
+    self.currentDevice = [OCMockObject niceMockForClass:[UIDevice class]];
+    [[[self.currentDevice stub] andReturn:self.currentDevice] currentDevice];
+}
+
+- (void)tearDown {
+    [self.analytics stopMocking];
+    [self.airship stopMocking];
+    [self.reachability stopMocking];
+    [self.timeZone stopMocking];
+    [self.airshipVersion stopMocking];
+    [self.application stopMocking];
+    [self.push stopMocking];
+    [self.currentDevice stopMocking];
+
+    [super tearDown];
+}
+
+/**
+ * Test app init event
+ */
+- (void)testAppInitEvent {
+    [UAUser defaultUser].username = @"user id";
+    [[[self.reachability stub] andReturnValue:@(UA_ReachableViaWWAN)] currentReachabilityStatus];
+    [[[self.analytics stub] andReturn:@"push id"] conversionPushId];
+    [[[self.analytics stub] andReturn:@"rich push id"] conversionRichPushId];
+
+    [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
+    [[[self.timeZone stub] andReturnValue:@YES] isDaylightSavingTime];
+
+    [(UIDevice *)[[self.currentDevice stub] andReturn:@"os version"]systemVersion];
+
+    [[[self.airshipVersion stub] andReturn:@"airship version"] get];
+
+    [[[self.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
+
+    NSDictionary *expectedData = @{@"user_id": @"user id",
+                                   @"connection_type": @"cell",
+                                   @"push_id": @"push id",
+                                   @"rich_push_id": @"rich push id",
+                                   @"time_zone": @2000,
+                                   @"daylight_savings": @"true",
+                                   @"notification_types": @[],
+                                   @"os_version": @"os version",
+                                   @"lib_version": @"airship version",
+                                   @"package_version": @"",
+                                   @"foreground": @"true"};
+
+
+    UAEventAppInit *event = [UAEventAppInit event];
+    XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
+    XCTAssertEqualObjects(event.eventType, @"app_init", @"Event type is unexpected.");
+    XCTAssertEqual(event.estimatedSize, kEventAppInitSize, @"Event is reporting wrong estimated size.");
+    XCTAssertNotNil(event.eventId, @"Event should have an ID");
+
+}
+
+/**
+ * Test app foreground event
+ */
+- (void)testAppForegroundEvent {
+    [UAUser defaultUser].username = @"user id";
+    [[[self.reachability stub] andReturnValue:@(UA_ReachableViaWWAN)] currentReachabilityStatus];
+    [[[self.analytics stub] andReturn:@"push id"] conversionPushId];
+    [[[self.analytics stub] andReturn:@"rich push id"] conversionRichPushId];
+
+    [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
+    [[[self.timeZone stub] andReturnValue:@YES] isDaylightSavingTime];
+
+    [(UIDevice *)[[self.currentDevice stub] andReturn:@"os version"]systemVersion];
+
+    [[[self.airshipVersion stub] andReturn:@"airship version"] get];
+
+    // Same as app init but without the foreground key
+    NSDictionary *expectedData = @{@"user_id": @"user id",
+                                   @"connection_type": @"cell",
+                                   @"push_id": @"push id",
+                                   @"rich_push_id": @"rich push id",
+                                   @"time_zone": @2000,
+                                   @"daylight_savings": @"true",
+                                   @"notification_types": @[],
+                                   @"os_version": @"os version",
+                                   @"lib_version": @"airship version",
+                                   @"package_version": @""};
+
+
+    UAEventAppForeground *event = [UAEventAppForeground event];
+    XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
+    XCTAssertEqualObjects(event.eventType, @"app_foreground", @"Event type is unexpected.");
+    XCTAssertEqual(event.estimatedSize, kEventAppInitSize, @"Event is reporting wrong estimated size.");
+    XCTAssertNotNil(event.eventId, @"Event should have an ID");
+
+}
+
+/**
+ * Test app exit event
+ */
+- (void)testAppExitEvent {
+
+    [[[self.reachability stub] andReturnValue:@(UA_ReachableViaWWAN)] currentReachabilityStatus];
+    [[[self.analytics stub] andReturn:@"push id"] conversionPushId];
+    [[[self.analytics stub] andReturn:@"rich push id"] conversionRichPushId];
+
+    NSDictionary *expectedData = @{@"connection_type": @"cell",
+                                   @"push_id": @"push id",
+                                   @"rich_push_id": @"rich push id"};
+
+    UAEventAppExit *event = [UAEventAppExit event];
+    XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
+    XCTAssertEqualObjects(event.eventType, @"app_exit", @"Event type is unexpected.");
+    XCTAssertEqual(event.estimatedSize, kEventAppExitSize, @"Event is reporting wrong estimated size.");
+    XCTAssertNotNil(event.eventId, @"Event should have an ID");
+}
+
+/**
+ * Test app background event
+ */
+- (void)UAEventAppBackground {
+    NSDictionary *expectedData = @{@"class_name": @""};
+
+    UAEventAppBackground *event = [UAEventAppBackground event];
+    XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
+    XCTAssertEqualObjects(event.eventType, @"app_background", @"Event type is unexpected.");
+    XCTAssertEqual(event.estimatedSize, kEventAppExitSize, @"Event is reporting wrong estimated size.");
+    XCTAssertNotNil(event.eventId, @"Event should have an ID");
+}
+
+/**
+ * Test app active event
+ */
+- (void)testAppActiveEvent {
+    NSDictionary *expectedData = @{@"class_name": @""};
+
+    UAEventAppActive *event = [UAEventAppActive event];
+    XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
+    XCTAssertEqualObjects(event.eventType, @"activity_started", @"Event type is unexpected.");
+    XCTAssertEqual(event.estimatedSize, kEventAppActiveSize, @"Event is reporting wrong estimated size.");
+    XCTAssertNotNil(event.eventId, @"Event should have an ID");
+}
+
+/**
+ * Test app inactive event
+ */
+- (void)testAppInactiveEvent {
+    NSDictionary *expectedData = @{@"class_name": @""};
+
+    UAEventAppInactive *event = [UAEventAppInactive event];
+    XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
+    XCTAssertEqualObjects(event.eventType, @"activity_stopped", @"Event type is unexpected.");
+    XCTAssertEqual(event.estimatedSize, kEventAppInactiveSize, @"Event is reporting wrong estimated size.");
+    XCTAssertNotNil(event.eventId, @"Event should have an ID");
+}
 
 /**
  * Test device registration event
  */
 - (void)testRegistrationEvent {
-    [UAPush shared].deviceToken = @"a12312ad";
-    [UAPush shared].channelID = @"someChannelID";
+    [[[self.push stub] andReturn:@"a12312ad"] deviceToken];
+    [[[self.push stub] andReturn:@"someChannelID"] channelID];
     [UAUser defaultUser].username = @"someUserID";
 
-    NSDictionary *expectedData = @{ @"device_token":@"a12312ad",
-                                    @"channel_id":@"someChannelID",
-                                    @"user_id":@"someUserID" };
+    NSDictionary *expectedData = @{@"device_token": @"a12312ad",
+                                   @"channel_id": @"someChannelID",
+                                   @"user_id": @"someUserID"};
 
-    UAEventDeviceRegistration *deviceRegistration = [[UAEventDeviceRegistration alloc] init];
-    [deviceRegistration gatherData:@{}];
-    XCTAssertEqualObjects(deviceRegistration.data, expectedData, @"Event data is unexpected.");
+    UAEventDeviceRegistration *event = [UAEventDeviceRegistration event];
+    XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
+    XCTAssertEqualObjects(event.eventType, @"device_registration", @"Event type is unexpected.");
+    XCTAssertEqual(event.estimatedSize, kEventDeviceRegistrationSize, @"Event is reporting wrong estimated size.");
+    XCTAssertNotNil(event.eventId, @"Event should have an ID");
 }
 
+
+/**
+ * Test push received event
+ */
+- (void)testPushReceivedEvent {
+    id notification = @{ @"_": @"push id",
+                         @"_uamid": @"rich push id" };
+
+
+    NSDictionary *expectedData = @{@"rich_push_id": @"rich push id",
+                                   @"push_id": @"push id"};
+
+    UAEventPushReceived *event = [UAEventPushReceived eventWithNotification:notification];
+    XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
+    XCTAssertEqualObjects(event.eventType, @"push_received", @"Event type is unexpected.");
+    XCTAssertEqual(event.estimatedSize, kEventPushReceivedSize, @"Event is reporting wrong estimated size.");
+    XCTAssertNotNil(event.eventId, @"Event should have an ID");
+}
 
 @end

@@ -244,12 +244,13 @@ UALogLevel uaLogLevel = UALogLevelError;
 
     NSDictionary *remoteNotification = [notification.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
 
-    _sharedAirship.analytics.notificationUserInfo = remoteNotification;
-    [_sharedAirship.analytics refreshSessionWhenActive];
+    [_sharedAirship.analytics launchedFromNotification:remoteNotification];
+
+
 
     //Send Startup Analytics Info
     //init first event
-    [_sharedAirship.analytics addEvent:[UAEventAppInit eventWithContext:nil]];
+    [_sharedAirship.analytics addEvent:[UAEventAppInit event]];
 
 
     // If the device is running iOS7 or greater, and the app delegate responds to
@@ -282,7 +283,7 @@ UALogLevel uaLogLevel = UALogLevelError;
     }
 
     // add app_exit event
-    [_sharedAirship.analytics addEvent:[UAEventAppExit eventWithContext:nil]];
+    [_sharedAirship.analytics addEvent:[UAEventAppExit event]];
 
     if (_sharedAirship.config.automaticSetupEnabled) {
         // swap pointers back to the initial app delegate
