@@ -66,7 +66,7 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
         event.attributionID = attributionID;
     } else {
         BOOL autoFill = [[self parseStringFromDictionary:dict key:@"auto_fill_landing_page"] boolValue];
-        NSString *conversionID = [[UAirship shared].analytics.session objectForKey:@"launched_from_push_id"];
+        NSString *conversionID = [UAirship shared].analytics.conversionPushId;
         if (autoFill && conversionID) {
             event.attributionType = kUAAttributionLandingPage;
             event.attributionID = conversionID;

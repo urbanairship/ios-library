@@ -80,15 +80,12 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
     });
 }
 
-- (void)addEvent:(UAEvent *)event withSession:(NSDictionary *)session {
-    NSUInteger estimateSize = [event getEstimatedSize];
-    
+- (void)addEvent:(UAEvent *)event withSessionId:(NSString *)sessionId {
     // Serialize the event data dictionary
     NSString *errString = nil;
     NSData *serializedData = [NSPropertyListSerialization dataFromPropertyList:event.data
                                                                         format:NSPropertyListBinaryFormat_v1_0
                                                               errorDescription:&errString];
-
     if (errString) {
         UALOG(@"Dictionary Serialization Error: %@", errString);
     }
@@ -97,17 +94,15 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
     if (!serializedData) {
         serializedData = [@"" dataUsingEncoding:NSUTF8StringEncoding];
     }
-    
-    NSString *sessionID = [session objectForKey:@"session_id"];
-    
+        
     dispatch_async(dbQueue, ^{
         [self.db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?)",
-         [event getType],
-         event.event_id,
+         event.eventType,
+         event.eventId,
          event.time,
          serializedData,
-         sessionID,
-         [NSString stringWithFormat:@"%lu", (unsigned long)estimateSize]];
+         sessionId,
+         [NSString stringWithFormat:@"%lu", (unsigned long)event.estimatedSize]];
     });
     //UALOG(@"DB Count %d", [self eventCount]);
     //UALOG(@"DB Size %d", [self sizeInBytes]);
@@ -122,10 +117,10 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
     return result;
 }
 
-- (NSArray *)getEventByEventId:(NSString *)event_id {
+- (NSArray *)getEventByEventId:(NSString *)eventId {
     __block NSArray *result;
     dispatch_sync(dbQueue, ^{
-        result = [self.db executeQuery:@"SELECT * FROM analytics WHERE event_id = ?", event_id];
+        result = [self.db executeQuery:@"SELECT * FROM analytics WHERE event_id = ?", eventId];
     });
     return result;
 }

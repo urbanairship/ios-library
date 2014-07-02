@@ -394,21 +394,5 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
  */
 - (void)reportCurrentLocation;
 
-/**
- * Sends a location directly to Urban Airship. The required parameters are taken from the CLLocation and
- * the CLLocationManager. The UALocationEventUpdateType is helpful in providing the end developer with information
- * regarding the use of location in app. The possible values are:
- *
- * - UAUALocationEventUpdateTypeChange This is one of the periodic services, intended for the significant change or region monitoring service
- * - UAUALocationEventUpdateTypeContinuous This is meant for the standard location service.
- * - UAUALocationEventUpdateTypeSingle This is meant for a one time service, like the reportCurrentLocation method on this class
- * @param location A CLLocation
- * @param locationManager The location manager that provided the location
- * @param updateTypeOrNil The update type as described above or nil.
- * @warning This must be called from the main thread. Not doing so will result in a crash. 
- */
-- (void)reportLocation:(CLLocation *)location 
-        fromLocationManager:(CLLocationManager *)locationManager 
-             withUpdateType:(UALocationEventUpdateType *)updateTypeOrNil;
 
 @end

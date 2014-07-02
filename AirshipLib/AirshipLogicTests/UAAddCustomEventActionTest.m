@@ -249,7 +249,7 @@
     UAActionResult *expectedResult = [UAActionResult emptyResult];
 
     // Set a conversion push ID for the analytics session
-    [[[self.analytics stub] andReturn:@{@"launched_from_push_id":@"push ID"}] session];
+    [[[self.analytics stub] andReturn:@"push ID"] conversionPushId];
 
     [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         UACustomEvent *event = obj;

@@ -57,9 +57,19 @@
 @interface UAAnalytics ()
 
 /**
- * The analytics session as an NSMutableDictionary.
+ * The conversion push Id.
  */
-@property (nonatomic, strong) NSMutableDictionary *session;
+@property (nonatomic, strong) NSString *conversionPushId;
+
+/**
+ * The conversion rich push Id.
+ */
+@property (nonatomic, strong) NSString *conversionRichPushId;
+
+/**
+ * The current session Id.
+ */
+@property (nonatomic, strong) NSString *sessionId;
 
 /**
  * The notification as an NSDictionary.
@@ -105,10 +115,6 @@
  */
 @property (nonatomic, strong) UAConfig *config;
 
-/**
- * The package version.
- */
-@property (nonatomic, copy) NSString *packageVersion;
 
 /**
  * The operation queue used for analytics.
@@ -126,11 +132,6 @@
  * and all of the launch/notification data is present.
  */
 @property (nonatomic, assign) BOOL isEnteringForeground;
-
-/**
- * Initializes the analytics session.
- */
-- (void)initSession;
 
 /**
  * Restores any upload event settings from the
@@ -188,17 +189,6 @@
  */
 - (void)willResignActive;
 
-/* Network connectivity */
-
-/**
- * Capture the connection type when the network has changed.
- */
-- (void)refreshSessionWhenNetworkChanged;
-
-/**
- * Refresh the session when the application becomes active.
- */
-- (void)refreshSessionWhenActive;
 
 /**
  * Generate an analytics request with the proper fields
@@ -222,6 +212,12 @@
  * Checks a event dictionary for expected fields and values.
  * @param event The event as an NSMutableDictionary to validate.
  */
-- (BOOL) isEventValid:(NSMutableDictionary *)event;
+- (BOOL)isEventValid:(NSMutableDictionary *)event;
+
+
+/**
+ * Called to notify analytics the app was launched from a push notification.
+ */
+- (void)launchedFromNotification:(NSDictionary *)notification;
 
 @end
