@@ -104,13 +104,6 @@ extern NSString * const UAActionMetadataInboxMessageKey;
  */
 @property(nonatomic, strong) id value;
 
-
-/**
- * The name the action was invoked with.
- */
-@property(nonatomic, copy) NSString *name;
-
-
 /**
  * The argument's metadata. Metadata provides more information
  * about the environment that the action was triggered from. 
