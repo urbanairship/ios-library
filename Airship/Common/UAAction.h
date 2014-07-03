@@ -43,7 +43,7 @@ typedef void (^UAActionCompletionHandler)(UAActionResult *);
 /**
  * A block that defines the primary work performed by an action.
  */
-typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler completionHandler);
+typedef void (^UAActionBlock)(UAActionArguments *, NSString *, UAActionCompletionHandler completionHandler);
 
 /**
  * Base class for actions, which define a modular unit of work.
