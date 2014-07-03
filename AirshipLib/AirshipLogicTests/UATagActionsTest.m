@@ -94,12 +94,14 @@
  */
 - (void)testAddTagsAction {
     UAAddTagsAction *action = [[UAAddTagsAction alloc] init];
+    NSString *actionName = @"actionName";
     [self validateArgumentsForAddRemoveTagsAction:action];
 
     [[self.mockPush expect] addTagToCurrentDevice:[OCMArg any]];
     [[self.mockPush expect] updateRegistration];
 
     [action runWithArguments:self.stringArgs
+                  actionName:actionName
        withCompletionHandler:^(UAActionResult *result){
            [self.mockPush verify];
     }];
@@ -107,7 +109,7 @@
     [[self.mockPush expect] addTagsToCurrentDevice:[OCMArg any]];
     [[self.mockPush expect] updateRegistration];
 
-    [action runWithArguments:self.arrayArgs
+    [action runWithArguments:self.arrayArgs actionName:actionName
        withCompletionHandler:^(UAActionResult *result){
            [self.mockPush verify];
     }];
@@ -118,12 +120,15 @@
  */
 - (void)testRemoveTagsAction {
     UARemoveTagsAction *action = [[UARemoveTagsAction alloc] init];
+    NSString *actionName = @"actionName";
+
     [self validateArgumentsForAddRemoveTagsAction:action];
 
     [[self.mockPush expect] removeTagFromCurrentDevice:[OCMArg any]];
     [[self.mockPush expect] updateRegistration];
 
     [action runWithArguments:self.stringArgs
+                  actionName:actionName
        withCompletionHandler:^(UAActionResult *result){
            [self.mockPush verify];
     }];
@@ -132,6 +137,7 @@
     [[self.mockPush expect] updateRegistration];
 
     [action runWithArguments:self.arrayArgs
+                  actionName:actionName
        withCompletionHandler:^(UAActionResult *result){
            [self.mockPush verify];
     }];

@@ -26,14 +26,14 @@
     __block BOOL ran = NO;
     __block NSString *result;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
     [[UAActionRegistry shared] registerAction:test name:@"test_action"];
 
-    UAAction *unserializable = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *unserializable = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
         ran = YES;
         handler([UAActionResult resultWithValue:self]);
     }];
@@ -78,7 +78,7 @@
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
                                                         webView:nil];
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
@@ -111,7 +111,7 @@
     __block NSString *result;
     __block BOOL ran = NO;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
@@ -135,7 +135,7 @@
     __block NSString *result;
     __block BOOL ran = NO;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
@@ -161,12 +161,12 @@
     __block BOOL alsoRan = NO;
     __block NSString *result;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
-    UAAction *alsoTest = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *alsoTest = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
         alsoRan = YES;
         handler([UAActionResult resultWithValue:@"yeah!"]);
     }];
@@ -211,7 +211,7 @@
     __block BOOL ran = NO;
 
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
@@ -237,7 +237,7 @@
     __block int runCount = 0;
     __block NSString *result;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
         runCount ++;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
@@ -265,12 +265,12 @@
     __block BOOL alsoRan = NO;
     __block NSString *result;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
-    UAAction *alsoTest = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *alsoTest = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
         alsoRan = YES;
         handler([UAActionResult resultWithValue:@"yeah!"]);
     }];
@@ -299,7 +299,7 @@
      __block int runCount = 0;
     __block NSString *result;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
         runCount ++;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];

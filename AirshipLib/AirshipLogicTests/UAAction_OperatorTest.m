@@ -37,7 +37,6 @@
 
 - (void)setUp {
     self.emptyArgs = [UAActionArguments argumentsWithValue:nil withSituation:UASituationManualInvocation];
-    self.emptyArgs.name = @"emptyArgs";
 
     [super setUp];
 }
@@ -56,10 +55,12 @@
     //there are two of them so we can compare the results of two different (equivalent) actions
     __block UAActionResult *blockResult;
     __block UAActionResult *blockResult2;
+    __block NSString *name;
 
     //this action just finishes immediately with a result whose value is the string @"simpleResult"
-    UAActionBlock actionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler) {
+    UAActionBlock actionBlock = ^(UAActionArguments *args, NSString *actionName,UAActionCompletionHandler handler) {
         handler([UAActionResult resultWithValue:@"simpleResult"]);
+        name = actionName;
     };
 
     //a simple predicate that is always true
@@ -85,8 +86,8 @@
     UAAction *action = wrap(actionBlock, predicate);
 
     UAActionBindBlock bangBindBlock = ^(UAActionBlock actionBlock, UAActionPredicate predicate) {
-        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler){
-            actionBlock(args, ^(UAActionResult *result){
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args,NSString *actionName, UAActionCompletionHandler handler){
+            actionBlock(args, actionName, ^(UAActionResult *result){
                 handler([UAActionResult resultWithValue:[result.value stringByAppendingString:@"!"]]);
             });
         };
@@ -100,13 +101,13 @@
 
     UAAction *foo = [action bind:bangBindBlock];
 
-    [foo runWithArguments:nil withCompletionHandler:^(UAActionResult *result){
+    [foo runWithArguments:nil actionName:name withCompletionHandler:^(UAActionResult *result){
         blockResult = result;
     }];
 
     UAAction *bar = bangBindBlock(actionBlock, predicate);
 
-    [bar runWithArguments:nil withCompletionHandler:^(UAActionResult *result){
+    [bar runWithArguments:nil actionName:name withCompletionHandler:^(UAActionResult *result){
         blockResult2 = result;
     }];
 
@@ -127,11 +128,11 @@
     foo = [wrap(actionBlock, predicate) bind:wrap];
     bar = wrap(actionBlock, predicate);
 
-    [foo runWithArguments:nil withCompletionHandler:^(UAActionResult *result){
+    [foo runWithArguments:nil actionName:name withCompletionHandler:^(UAActionResult *result){
         blockResult = result;
     }];
 
-    [bar runWithArguments:nil withCompletionHandler:^(UAActionResult *result){
+    [bar runWithArguments:nil actionName:name withCompletionHandler:^(UAActionResult *result){
         blockResult2 = result;
     }];
 
@@ -163,11 +164,11 @@
 
     UAAction *baz = [foo bind:nestedBind];
 
-    [bar runWithArguments:nil withCompletionHandler:^(UAActionResult *result) {
+    [bar runWithArguments:nil actionName:name withCompletionHandler:^(UAActionResult *result) {
         blockResult = result;
     }];
 
-    [baz runWithArguments:nil withCompletionHandler:^(UAActionResult *result) {
+    [baz runWithArguments:nil actionName:name withCompletionHandler:^(UAActionResult *result) {
         blockResult2 = result;
     }];
 
@@ -190,7 +191,7 @@
     };
 
     //this action just finishes immediately with a result whose value is the string @"simpleResult"
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
         handler([UAActionResult resultWithValue:@"simpleResult"]);
     }];
 
@@ -201,8 +202,8 @@
     UAActionBindBlock bindBlock = ^(UAActionBlock actionBlock, UAActionPredicate predicate){
         //the transformed action block calls the original action block, and produces a result value that concatenates
         //the string @"to the max" on the end of the original result
-        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler) {
-            actionBlock(args, ^(UAActionResult *result){
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
+            actionBlock(args, actionName, ^(UAActionResult *result){
                 NSString *concatenatedValue = [result.value stringByAppendingString:@" to the Max!!!!"];
                 handler([UAActionResult resultWithValue:concatenatedValue]);
             });
@@ -227,7 +228,7 @@
     XCTAssertEqualObjects(blockResult.value, @"simpleResult to the Max!!!!", @"the result value should be 'simpleResult to the Max!!!!'");
 
     //the original result isn't hardcoded into the transformation, we can take anything to the max
-    UAAction *hobo = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *hobo = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
         handler([UAActionResult resultWithValue:@"hobo"]);
     }];
 
@@ -252,7 +253,7 @@
     };
 
     //this action just finishes immediately with a result whose value is the string @"simpleResult"
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
         handler([UAActionResult resultWithValue:@"simpleResult"]);
     }];
 
@@ -264,8 +265,8 @@
     UAActionLiftBlock liftBlock = ^(UAActionBlock actionBlock) {
         //the transformed action block calls the original action block, and produces a result value that concatenates
         //the string @"to the max" on the end of the original result
-        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler){
-            actionBlock(args, ^(UAActionResult *result){
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
+            actionBlock(args, actionName, ^(UAActionResult *result){
                 NSString *concatenatedValue = [result.value stringByAppendingString:@" to the Max!!!!"];
                 handler([UAActionResult resultWithValue:concatenatedValue]);
             });
@@ -295,7 +296,7 @@
     //this action just finishes immediately with a result whose value is the string @"simpleResult".
     //we're also adding some arbitrary argument validation.  this one will reject arguments whose
     //value is the string @"foo".
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
         handler([UAActionResult resultWithValue:@"simpleResult"]);
     } acceptingArguments:^(UAActionArguments *args){
         return (BOOL)![args.value isEqual:@"foo"];
@@ -312,8 +313,8 @@
     UAActionLiftBlock actionLiftBlock = ^(UAActionBlock actionBlock) {
         //the transformed action block calls the original action block, and produces a result value that concatenates
         //the string @"to the max" on the end of the original result
-        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler){
-            actionBlock(args, ^(UAActionResult *result){
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
+            actionBlock(args, actionName, ^(UAActionResult *result){
                 NSString *concatenatedValue = [result.value stringByAppendingString:@" to the Max!!!!"];
                 handler([UAActionResult resultWithValue:concatenatedValue]);
             });
@@ -354,26 +355,32 @@
     __block BOOL didContinuationActionRun = NO;
     __block UAActionResult *result;
     __block UAActionArguments *continuationArguments;
+    __block NSString *emptyArgsName;
+    __block NSString *continuationName;
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
+        emptyArgsName = actionName;
         return completionHandler([UAActionResult resultWithValue:@"originalResult"]);
     }];
 
-    UAAction *continuationAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UAAction *continuationAction = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
         continuationArguments = args;
         didContinuationActionRun = YES;
+        continuationName = actionName;
         return completionHandler([UAActionResult resultWithValue:@"continuationResult"]);
     }];
 
     action = [action continueWith:continuationAction];
-    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *actionResult){
+    [action runWithArguments:self.emptyArgs
+                  actionName:emptyArgsName
+       withCompletionHandler:^(UAActionResult *actionResult){
         result = actionResult;
     }];
 
     XCTAssertTrue(didContinuationActionRun, @"The continuation action should be run if the original action does not return an error.");
     XCTAssertEqualObjects(continuationArguments.value, @"originalResult", @"The continuation action should be passed a new argument with the value of the previous result");
     XCTAssertEqualObjects(result.value, @"continuationResult", @"Running a continuation action should call completion handler with the result from the continuation action");
-    XCTAssertEqualObjects(self.emptyArgs.name, continuationArguments.name, @"The continuation action should be passed the name from the original arguments.");
+    XCTAssertEqualObjects(emptyArgsName, continuationName, @"The continuation action should be passed the name from the original arguments.");
 }
 
 /**
@@ -383,22 +390,24 @@
 - (void)testContinueWithError {
     __block BOOL didContinuationActionRun = NO;
     __block UAActionResult *result;
+    __block NSString *continuationName;
 
     UAActionResult *errorResult = [UAActionResult resultWithError:[NSError errorWithDomain:@"some-domian" code:10 userInfo:nil]];
 
 
     // Set up action to return an error result
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
         return completionHandler(errorResult);
     }];
 
-    UAAction *continuationAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
+    UAAction *continuationAction = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler){
+        continuationName = actionName;
         didContinuationActionRun = YES;
         completionHandler([UAActionResult emptyResult]);
     }];
 
     action = [action continueWith:continuationAction];
-    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *actionResult){
+    [action runWithArguments:self.emptyArgs actionName:continuationName withCompletionHandler:^(UAActionResult *actionResult){
         result = actionResult;
     }];
 
@@ -411,14 +420,17 @@
  */
 - (void)testContinueWithNilAction {
     __block UAActionResult *result;
+    __block NSString *name;
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
+        name = actionName;
         return completionHandler([UAActionResult resultWithValue:@"originalResult"]);
     }];
 
 
     action = [action continueWith:nil];
-    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *actionResult){
+    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *actionResult){
         result = actionResult;
     }];
 
@@ -430,9 +442,12 @@
  */
 - (void)testFilterYesPredicate {
     __block BOOL didPerform = NO;
+    __block NSString *name;
+
     UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
+        name = actionName;
         didPerform = YES;
         return completionHandler(expectedResult);
     }];
@@ -442,7 +457,7 @@
         return YES;
     }];
 
-    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
+    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *result) {
         XCTAssertEqualObjects(result, expectedResult, @"Filter result is unexpected");
     }];
 
@@ -455,7 +470,7 @@
         return NO;
     };
 
-    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
+    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *result) {
         XCTAssertNil(result.value, @"Run should return a empty result if the action cannot be run");
     }];
 
@@ -467,8 +482,10 @@
  */
 - (void)testFilterNoPredicate {
     __block UAActionResult *result;
+    __block NSString *name;
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
+        name = actionName;
         XCTFail(@"When filter returns NO, it should not perform the original action");
         return completionHandler([UAActionResult emptyResult]);
     }];
@@ -478,7 +495,7 @@
         return NO;
     }];
 
-    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *actionResult) {
+    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *actionResult) {
         result = actionResult;
     }];
 
@@ -492,16 +509,19 @@
  */
 - (void)testFilterNilPredicate {
     __block BOOL didPerform = NO;
+    __block NSString *name;
+
     UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
+        name = actionName;
         didPerform = YES;
         return completionHandler(expectedResult);
     }];
 
     action = [action filter:nil];
 
-    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
+    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *result) {
         XCTAssertEqualObjects(result, expectedResult, @"Filter result is unexpected");
     }];
 
@@ -517,8 +537,10 @@
                                                             withSituation:UASituationManualInvocation];
 
     __block UAActionResult *result;
+    __block NSString *name;
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
+        name = actionName;
         XCTAssertEqualObjects(mappedArgs, args, @"Action is not receiving mapped args");
         return completionHandler(expectedResult);
     }];
@@ -528,7 +550,7 @@
         return mappedArgs;
     }];
 
-    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *actionResult) {
+    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *actionResult) {
         result = actionResult;
     }];
 
@@ -542,15 +564,17 @@
 - (void)testMapNilBlock {
     UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
     __block UAActionResult *result;
+    __block NSString *name;
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
+        name = actionName;
         XCTAssertEqualObjects(self.emptyArgs, args, @"Action is not receiving correct args");
         return completionHandler(expectedResult);
     }];
 
     action = [action map:nil];
 
-    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *actionResult) {
+    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *actionResult) {
         result = actionResult;
     }];
 
@@ -564,13 +588,15 @@
 - (void)testPreExecution {
     __block BOOL didPerform = NO;
     __block BOOL preExecutePerformed = NO;
+    __block NSString *name;
     UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
         didPerform = YES;
-
+        name = actionName;
         XCTAssertTrue(preExecutePerformed, @"Pre execute block is not being called before perform");
         return completionHandler(expectedResult);
+        
     }];
 
     action = [action preExecution:^(UAActionArguments *args) {
@@ -580,7 +606,7 @@
         XCTAssertEqualObjects(self.emptyArgs, args, @"Pre execute block is being passed the correct action arguments");
     }];
 
-    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
+    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *result) {
         XCTAssertEqualObjects(result, expectedResult, @"preExecution result is unexpected");
     }];
 
@@ -592,15 +618,18 @@
  */
 - (void)testPreExecutionNilBlock {
     __block BOOL didPerform = NO;
+    __block NSString *name;
+
     UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
+        name = actionName;
         didPerform = YES;
         return completionHandler(expectedResult);
     }];
 
     action = [action preExecution:nil];
-    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
+    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *result) {
         XCTAssertEqualObjects(result, expectedResult, @"preExecution result is unexpected");
     }];
 
@@ -614,11 +643,13 @@
 - (void)testPostExecution {
     __block BOOL didPerform = NO;
     __block BOOL postExecuteBlock = NO;
+    __block NSString *name;
+
     UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
         didPerform = YES;
-
+        name = actionName;
         XCTAssertFalse(postExecuteBlock, @"Post execute block is being called before perform");
         return completionHandler(expectedResult);
     }];
@@ -632,7 +663,7 @@
         XCTAssertEqualObjects(expectedResult, result, @"Post execute block is not being passed the correct action result");
     }];
 
-    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
+    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *result) {
         XCTAssertTrue(postExecuteBlock, @"Post execute block is not being called before the completion handler is called");
         XCTAssertEqualObjects(result, expectedResult, @"postExecution result is unexpected");
     }];
@@ -645,15 +676,18 @@
  */
 - (void)testPostExecutionNilBlock {
     __block BOOL didPerform = NO;
+    __block NSString *name;
+
     UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
+        name = actionName;
         didPerform = YES;
         return completionHandler(expectedResult);
     }];
     
     action = [action postExecution:nil];
-    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
+    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *result) {
         XCTAssertEqualObjects(result, expectedResult, @"postExecution result is unexpected");
     }];
     
