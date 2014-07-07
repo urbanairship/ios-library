@@ -93,7 +93,7 @@ typedef void (^UAActionBlock)(UAActionArguments *, NSString *, UAActionCompletio
  * @param arguments A UAActionArguments value representing the arguments passed to the action.
  * @param completionHandler A UAActionCompletionHandler that will be called when the action has finished executing.
  */
-- (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler;
+- (void)performWithArguments:(UAActionArguments *)arguments actionName:(NSString *)name withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 #pragma mark factory methods
 

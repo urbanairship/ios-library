@@ -195,7 +195,7 @@
         handler([UAActionResult resultWithValue:@"simpleResult"]);
     }];
 
-    [action performWithArguments:nil withCompletionHandler:saveBlockResult];
+    [action performWithArguments:nil actionName:@"name" withCompletionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult", @"the result value should be 'simpleResult'");
 
     //a bind block defines a transformation between action blocks, and between predicates, and returns a new action
@@ -224,7 +224,7 @@
     UAAction *actionToTheMax = [action bind:bindBlock];
 
     //now when we run the new action, we should see the concatenation in the results
-    [actionToTheMax performWithArguments:nil withCompletionHandler:saveBlockResult];
+    [actionToTheMax performWithArguments:nil actionName:@"name" withCompletionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult to the Max!!!!", @"the result value should be 'simpleResult to the Max!!!!'");
 
     //the original result isn't hardcoded into the transformation, we can take anything to the max
@@ -234,7 +234,7 @@
 
     UAAction *hoboToTheMax = [hobo bind:bindBlock];
 
-    [hoboToTheMax performWithArguments:nil withCompletionHandler:saveBlockResult];
+    [hoboToTheMax performWithArguments:nil actionName:@"name" withCompletionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"hobo to the Max!!!!", @"the result value should be 'hobo to the Max!!!!'");
 }
 
@@ -257,7 +257,7 @@
         handler([UAActionResult resultWithValue:@"simpleResult"]);
     }];
 
-    [action performWithArguments:nil withCompletionHandler:saveBlockResult];
+    [action performWithArguments:nil actionName:@"name" withCompletionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult", @"the result value should be 'simpleResult'");
 
     //an action lift block defines a transformation between action blocks
@@ -279,7 +279,7 @@
     //resulting action will inherit the receiver's argument validation logic
     UAAction *actionToTheMax = [action lift:liftBlock];
 
-    [actionToTheMax performWithArguments:nil withCompletionHandler:saveBlockResult];
+    [actionToTheMax performWithArguments:nil actionName:@"name" withCompletionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult to the Max!!!!", @"the result value should be 'simpleResult to the Max!!!!'");
 }
 
@@ -302,7 +302,7 @@
         return (BOOL)![args.value isEqual:@"foo"];
     }];
 
-    [action performWithArguments:nil withCompletionHandler:saveBlockResult];
+    [action performWithArguments:nil actionName:@"name" withCompletionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult", @"the result value should be 'simpleResult'");
 
     UAActionArguments *fooArgs = [UAActionArguments argumentsWithValue:@"foo" withSituation:UASituationManualInvocation];
@@ -339,7 +339,7 @@
     //both the original action and acceptsArguments logic have been preserved but extended.
     UAAction *actionToTheMax = [action lift:actionLiftBlock transformingPredicate:predicateLiftBlock];
 
-    [actionToTheMax performWithArguments:nil withCompletionHandler:saveBlockResult];
+    [actionToTheMax performWithArguments:nil actionName:@"name" withCompletionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult to the Max!!!!", @"the result value should be 'simpleResult to the Max!!!!'");
 
     UAActionArguments *barArgs = [UAActionArguments argumentsWithValue:@"bar" withSituation:UASituationManualInvocation];

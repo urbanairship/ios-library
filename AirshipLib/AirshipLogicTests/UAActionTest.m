@@ -80,7 +80,7 @@
     UAAction *action = [[UAAction alloc] init];
 
     __block UAActionResult *blockResult;
-    [action performWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
+    [action performWithArguments:self.emptyArgs actionName:@"name" withCompletionHandler:^(UAActionResult *result) {
         blockResult = result;
     }];
 
@@ -94,14 +94,17 @@
 - (void)testPerformWithArgumentsBlock {
 
     __block UAActionArguments *blockArgs;
+    __block NSString *name;
+
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
         blockArgs = args;
+        name = actionName;
         return completionHandler([UAActionResult resultWithValue:@"hi" withFetchResult:UAActionFetchResultNewData]);
     }];
 
     __block UAActionResult *blockResult;
-    [action performWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
+    [action performWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *result) {
         blockResult = result;
     }];
 

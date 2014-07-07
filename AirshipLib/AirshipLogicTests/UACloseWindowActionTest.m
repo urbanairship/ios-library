@@ -83,7 +83,7 @@
 
     __block id actionResult;
 
-    [self.action performWithArguments:args withCompletionHandler:^(UAActionResult *result){
+    [self.action performWithArguments:args actionName:@"name" withCompletionHandler:^(UAActionResult *result){
         actionResult = result;
     }];
 
@@ -102,7 +102,7 @@
 
     __block id actionResult;
 
-    [self.action performWithArguments:args withCompletionHandler:^(UAActionResult *result){
+    [self.action performWithArguments:args actionName:@"name" withCompletionHandler:^(UAActionResult *result){
         actionResult = result;
     }];
 
