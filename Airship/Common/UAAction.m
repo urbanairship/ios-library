@@ -88,50 +88,6 @@
     });
 }
 
-//- (void)runWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-//
-//    completionHandler = completionHandler ?: ^(UAActionResult *result){
-//        //if no completion handler was passed, use an empty block in its place
-//    };
-//
-//    typedef void (^voidBlock)(void);
-//
-//    //execute the passed block directly if we're on the main thread, otherwise
-//    //dispatch it to the main queue
-//    void (^dispatchMainIfNecessary)(voidBlock) = ^(voidBlock block){
-//        if (![[NSThread currentThread] isEqual:[NSThread mainThread]]) {
-//            dispatch_async(dispatch_get_main_queue(), block);
-//        } else {
-//            block();
-//        }
-//    };
-//
-//    //make sure the initial acceptsArguments/willPerform/perform is executed on the main queue
-//    dispatchMainIfNecessary(^{
-//        if (![self acceptsArguments:arguments]) {
-//            //TODO: this is probably too noisy of a log level, and it's also a fairly unhelpful
-//            //message because it doesn't provide any context. should it be up to the
-//            //action itself to log or somehow provide its reasoning?
-//            UA_LINFO(@"Action %@ does not accept arguments %@.",
-//                     [self description], [arguments description]);
-//            completionHandler([UAActionResult rejectedArgumentsResult]);
-//        } else {
-//            [self willPerformWithArguments:arguments];
-//            [self performWithArguments:arguments withCompletionHandler:^(UAActionResult *result){
-//                //make sure the passed completion handler and didPerformWithArguments are executed on the
-//                //main queue
-//                dispatchMainIfNecessary(^{
-//                    if (!result) {
-//                        UA_LWARN("Action %@ called the completion handler with a nil result", [self description]);
-//                    }
-//
-//                    [self didPerformWithArguments:arguments withResult:result];
-//                    completionHandler(result);
-//                });
-//            }];
-//        }
-//    });
-//}
 
 #pragma mark core methods
 

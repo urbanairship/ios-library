@@ -28,7 +28,9 @@
 
 @implementation UARemoveTagsAction
 
-- (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+- (void)performWithArguments:(UAActionArguments *)arguments
+                  actionName:(NSString *) actionName
+       withCompletionHandler:(UAActionCompletionHandler)completionHandler {
     if ([arguments.value isKindOfClass:[NSString class]]) {
         [[UAPush shared] removeTagFromCurrentDevice:arguments.value];
     } else {

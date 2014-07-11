@@ -41,8 +41,6 @@
  */
 @property(nonatomic, copy) UAActionPredicate acceptsArgumentsBlock;
 
-
-
 /**
  * Performs the action, with pre/post execution calls, if it accepts the provided arguments and name.
  *
@@ -53,15 +51,5 @@
  */
 - (void)runWithArguments:(UAActionArguments *)arguments actionName:(NSString *)name withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
-
-/**
- * Performs the action, with pre/post execution calls, if it accepts the provided arguments.
- *
- * If the arguments are accepted, this method will also call
- * [UAAction willPerformWithArguments:] and
- * [UAAction didPerformWithArguments:withResult:]
- * before and after the perform method, respectively.
- */
-//- (void)runWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 @end

@@ -46,30 +46,6 @@ NSString *anotherActionName = @"AnotherActionName";
     [super tearDown];
 }
 
-///**
-// * Test running an action
-// */
-//- (void)testRunAction {
-//    __block BOOL didCompletionHandlerRun = NO;
-//    __block NSString *name;
-//
-//    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
-//    UAActionResult *result = [UAActionResult emptyResult];
-//
-//    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
-//        name = actionName;
-//        XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
-//        completionHandler(result);
-//    }];
-//
-//    [UAActionRunner runAction:action withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
-//        didCompletionHandlerRun = YES;
-//        XCTAssertEqualObjects(result, finalResult, @"Runner completion handler did not receive the action's results");
-//    }];
-//
-//    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
-//}
-
 /**
  * Test running an action from a name
  */

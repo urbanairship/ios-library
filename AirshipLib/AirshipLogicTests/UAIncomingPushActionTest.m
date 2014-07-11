@@ -152,6 +152,8 @@
     [self.action performWithArguments:self.arguments actionName:@"test_action" withCompletionHandler:^(UAActionResult *result) {
         runResult = result;
     }];
+    
+    
 
     XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegate receivedBackgroundNotification: should be called");
     XCTAssertNotNil(runResult, @"Incoming push action should still generate an action result");

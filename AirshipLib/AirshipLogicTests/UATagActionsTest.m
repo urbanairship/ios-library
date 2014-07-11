@@ -94,7 +94,7 @@
  */
 - (void)testAddTagsAction {
     UAAddTagsAction *action = [[UAAddTagsAction alloc] init];
-    NSString *actionName = @"actionName";
+    NSString *actionName = @"test_action";
     [self validateArgumentsForAddRemoveTagsAction:action];
 
     [[self.mockPush expect] addTagToCurrentDevice:[OCMArg any]];
@@ -120,7 +120,7 @@
  */
 - (void)testRemoveTagsAction {
     UARemoveTagsAction *action = [[UARemoveTagsAction alloc] init];
-    NSString *actionName = @"actionName";
+    NSString *actionName = @"test_action";
 
     [self validateArgumentsForAddRemoveTagsAction:action];
 

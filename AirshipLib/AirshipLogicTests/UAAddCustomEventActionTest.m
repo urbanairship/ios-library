@@ -359,6 +359,24 @@
 }
 
 /**
+ * Helper method to verify perform.
+ */
+- (void)verifyPerformWithArgs:(UAActionArguments *)args
+                   actionName:(NSString *)actionName
+           withExpectedResult:(UAActionResult *)expectedResult {
+    
+    __block BOOL finished = NO;
+    
+    [self.action performWithArguments:args actionName:@"test_action" withCompletionHandler:^(UAActionResult *result) {
+        finished = YES;
+        XCTAssertEqual(result.status, expectedResult.status, @"Result status should match expected result status.");
+        XCTAssertEqual(result.fetchResult, expectedResult.fetchResult, @"FetchResult should match expected fetchresult.");
+    }];
+    
+    XCTAssertTrue(finished, @"Action should have completed.");
+}
+
+/**
  * Helper method to verify accepts arguments.
  */
 - (void)verifyAcceptsArgumentsWithValue:(id)value shouldAccept:(BOOL)shouldAccept {

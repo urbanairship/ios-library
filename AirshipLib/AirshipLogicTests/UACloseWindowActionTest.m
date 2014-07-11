@@ -32,7 +32,7 @@
 @interface UACloseWindowActionTest : XCTestCase
 @property(nonatomic, strong)id mockWebView;
 @property(nonatomic, strong)id mockUARichContentWindow;
-@property(nonatomic, strong)UACloseWindowAction *action;
+@property(nonatomic, strong) UACloseWindowAction *action;
 @end
 
 @implementation UACloseWindowActionTest
@@ -83,7 +83,7 @@
 
     __block id actionResult;
 
-    [self.action performWithArguments:args actionName:@"test_action" withCompletionHandler:^(UAActionResult *result){
+    [self.action performWithArguments:args actionName:@"__close_window_action" withCompletionHandler:^(UAActionResult *result){
         actionResult = result;
     }];
 
