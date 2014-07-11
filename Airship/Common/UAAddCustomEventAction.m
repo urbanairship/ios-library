@@ -48,6 +48,7 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments
+                  actionName:(NSString *)name
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
     NSDictionary *dict = [NSDictionary dictionaryWithDictionary:arguments.value];
@@ -87,6 +88,8 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
         completionHandler([UAActionResult resultWithError:error]);
     }
 }
+
+
 
 /**
  * Helper method to parse a string from a dictionary's value.
