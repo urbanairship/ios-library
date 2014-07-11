@@ -80,7 +80,7 @@
     UAAction *action = [[UAAction alloc] init];
 
     __block UAActionResult *blockResult;
-    [action performWithArguments:self.emptyArgs actionName:@"name" withCompletionHandler:^(UAActionResult *result) {
+    [action performWithArguments:self.emptyArgs actionName:@"test_action" withCompletionHandler:^(UAActionResult *result) {
         blockResult = result;
     }];
 

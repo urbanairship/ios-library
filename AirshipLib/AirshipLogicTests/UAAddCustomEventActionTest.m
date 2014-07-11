@@ -349,7 +349,7 @@
 
     __block BOOL finished = NO;
 
-    [self.action performWithArguments:args actionName:@"name" withCompletionHandler:^(UAActionResult *result) {
+    [self.action performWithArguments:args actionName:@"test_action" withCompletionHandler:^(UAActionResult *result) {
         finished = YES;
         XCTAssertEqual(result.status, expectedResult.status, @"Result status should match expected result status.");
         XCTAssertEqual(result.fetchResult, expectedResult.fetchResult, @"FetchResult should match expected fetchresult.");

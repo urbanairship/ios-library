@@ -146,14 +146,6 @@
     //override
 }
 
-//- (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-//    if (self.actionBlock) {
-//        self.actionBlock(arguments, completionHandler);
-//    } else {
-//        completionHandler([UAActionResult emptyResult]);
-//    }
-//}
-
 - (void)performWithArguments:(UAActionArguments *)args actionName:(NSString *)name withCompletionHandler:(UAActionCompletionHandler)completionHandler {
     if (self.actionBlock) {
         self.actionBlock(args, name, completionHandler);
