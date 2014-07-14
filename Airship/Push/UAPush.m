@@ -737,6 +737,8 @@ BOOL deferChannelCreationOnForeground = false;
     if (self.registrationBackgroundTask == UIBackgroundTaskInvalid) {
         self.registrationBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
             [self.deviceRegistrar cancelAllRequests];
+            [[UIApplication sharedApplication] endBackgroundTask:self.registrationBackgroundTask];
+            self.registrationBackgroundTask = UIBackgroundTaskInvalid;
         }];
     }
 
