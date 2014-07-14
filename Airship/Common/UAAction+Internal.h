@@ -49,7 +49,9 @@
  * [UAAction didPerformWithArguments:withResult:]
  * before and after the perform method, respectively.
  */
-- (void)runWithArguments:(UAActionArguments *)arguments actionName:(NSString *)name withCompletionHandler:(UAActionCompletionHandler)completionHandler;
+- (void)runWithArguments:(UAActionArguments *)arguments
+              actionName:(NSString *)name
+   withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 
 @end

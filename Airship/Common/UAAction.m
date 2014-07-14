@@ -43,7 +43,9 @@
 
 #pragma mark internal methods
 
-- (void)runWithArguments:(UAActionArguments *)arguments actionName:(NSString *)name withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+- (void)runWithArguments:(UAActionArguments *)arguments
+              actionName:(NSString *)name
+   withCompletionHandler:(UAActionCompletionHandler)completionHandler {
     
     completionHandler = completionHandler ?: ^(UAActionResult *result){
         //if no completion handler was passed, use an empty block in its place
@@ -72,7 +74,9 @@
             completionHandler([UAActionResult rejectedArgumentsResult]);
         } else {
             [self willPerformWithArguments:arguments];
-            [self performWithArguments:arguments actionName:name withCompletionHandler:^(UAActionResult *result){
+            [self performWithArguments:arguments
+                            actionName:name
+                 withCompletionHandler:^(UAActionResult *result){
                 //make sure the passed completion handler and didPerformWithArguments are executed on the
                 //main queue
                 dispatchMainIfNecessary(^{
@@ -102,7 +106,9 @@
     //override
 }
 
-- (void)performWithArguments:(UAActionArguments *)args actionName:(NSString *)name withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+- (void)performWithArguments:(UAActionArguments *)args
+                  actionName:(NSString *)name
+       withCompletionHandler:(UAActionCompletionHandler)completionHandler {
     if (self.actionBlock) {
         self.actionBlock(args, name, completionHandler);
     } else {
@@ -110,7 +116,8 @@
     }
 }
 
-- (void)didPerformWithArguments:(UAActionArguments *)arguments withResult:(UAActionResult *)result {
+- (void)didPerformWithArguments:(UAActionArguments *)arguments
+                     withResult:(UAActionResult *)result {
     //override
 }
 
@@ -120,7 +127,8 @@
     return [[self alloc] initWithBlock:actionBlock];
 }
 
-+ (instancetype)actionWithBlock:(UAActionBlock)actionBlock acceptingArguments:(UAActionPredicate)predicateBlock {
++ (instancetype)actionWithBlock:(UAActionBlock)actionBlock
+             acceptingArguments:(UAActionPredicate)predicateBlock {
     UAAction *action = [self actionWithBlock:actionBlock];
     action.acceptsArgumentsBlock = predicateBlock;
     return action;

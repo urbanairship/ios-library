@@ -82,7 +82,8 @@ typedef void (^UAActionBlock)(UAActionArguments *, NSString *, UAActionCompletio
  * @param arguments A UAActionArguments value representing the arguments passed to the action.
  * @param result A UAActionResult from performing the action.
  */
-- (void)didPerformWithArguments:(UAActionArguments *)arguments withResult:(UAActionResult *)result;
+- (void)didPerformWithArguments:(UAActionArguments *)arguments
+                     withResult:(UAActionResult *)result;
 
 /**
  * Performs the action.
@@ -93,7 +94,9 @@ typedef void (^UAActionBlock)(UAActionArguments *, NSString *, UAActionCompletio
  * @param arguments A UAActionArguments value representing the arguments passed to the action.
  * @param completionHandler A UAActionCompletionHandler that will be called when the action has finished executing.
  */
-- (void)performWithArguments:(UAActionArguments *)arguments actionName:(NSString *)name withCompletionHandler:(UAActionCompletionHandler)completionHandler;
+- (void)performWithArguments:(UAActionArguments *)arguments
+                  actionName:(NSString *)name
+       withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 #pragma mark factory methods
 
@@ -110,6 +113,7 @@ typedef void (^UAActionBlock)(UAActionArguments *, NSString *, UAActionCompletio
  * @param actionBlock A UAActionBlock representing the primary work performed by the action.
  * @param predicateBlock A UAActionPredicate limiting the scope of the arguments.
  */
-+ (instancetype)actionWithBlock:(UAActionBlock)actionBlock acceptingArguments:(UAActionPredicate)predicateBlock;
++ (instancetype)actionWithBlock:(UAActionBlock)actionBlock
+             acceptingArguments:(UAActionPredicate)predicateBlock;
 
 @end

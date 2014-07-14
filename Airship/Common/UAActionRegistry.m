@@ -103,7 +103,9 @@ SINGLETON_IMPLEMENTATION(UAActionRegistry)
 }
 
 
-- (BOOL)registerReservedAction:(UAAction *)action name:(NSString *)name predicate:(UAActionPredicate)predicate {
+- (BOOL)registerReservedAction:(UAAction *)action
+                          name:(NSString *)name
+                     predicate:(UAActionPredicate)predicate {
     if ([self registerAction:action name:name predicate:predicate]) {
         [self.reservedEntryNames addObject:name];
         return YES;

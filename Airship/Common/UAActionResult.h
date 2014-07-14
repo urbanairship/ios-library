@@ -137,4 +137,5 @@ typedef NS_ENUM(NSInteger, UAActionStatus) {
  */
 + (instancetype)resultWithError:(NSError *)error withFetchResult:(UAActionFetchResult)fetchResult;
 
+
 @end

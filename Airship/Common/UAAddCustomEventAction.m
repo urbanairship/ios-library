@@ -89,8 +89,6 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
     }
 }
 
-
-
 /**
  * Helper method to parse a string from a dictionary's value.
  */
