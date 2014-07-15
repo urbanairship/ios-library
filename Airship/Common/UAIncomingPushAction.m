@@ -31,7 +31,7 @@
 
 - (void)performWithArguments:(UAActionArguments *)arguments
                   actionName:(NSString *) actionName
-       withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+           completionHandler:(UAActionCompletionHandler)completionHandler {
     switch (arguments.situation) {
         case UASituationForegroundPush:
             [self handleForegroundPush:arguments.value completionHandler:completionHandler];

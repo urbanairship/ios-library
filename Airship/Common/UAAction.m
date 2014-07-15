@@ -45,7 +45,7 @@
 
 - (void)runWithArguments:(UAActionArguments *)arguments
               actionName:(NSString *)name
-   withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+       completionHandler:(UAActionCompletionHandler)completionHandler {
     
     completionHandler = completionHandler ?: ^(UAActionResult *result){
         //if no completion handler was passed, use an empty block in its place
@@ -76,7 +76,7 @@
             [self willPerformWithArguments:arguments];
             [self performWithArguments:arguments
                             actionName:name
-                 withCompletionHandler:^(UAActionResult *result){
+                     completionHandler:^(UAActionResult *result){
                 //make sure the passed completion handler and didPerformWithArguments are executed on the
                 //main queue
                 dispatchMainIfNecessary(^{
@@ -108,7 +108,7 @@
 
 - (void)performWithArguments:(UAActionArguments *)args
                   actionName:(NSString *)name
-       withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+           completionHandler:(UAActionCompletionHandler)completionHandler {
     if (self.actionBlock) {
         self.actionBlock(args, name, completionHandler);
     } else {

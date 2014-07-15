@@ -80,7 +80,7 @@
     UAAction *action = [[UAAction alloc] init];
 
     __block UAActionResult *blockResult;
-    [action performWithArguments:self.emptyArgs actionName:@"test_action" withCompletionHandler:^(UAActionResult *result) {
+    [action performWithArguments:self.emptyArgs actionName:@"test_action" completionHandler:^(UAActionResult *result) {
         blockResult = result;
     }];
 
@@ -104,7 +104,7 @@
     }];
 
     __block UAActionResult *blockResult;
-    [action performWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *result) {
+    [action performWithArguments:self.emptyArgs actionName:name completionHandler:^(UAActionResult *result) {
         blockResult = result;
     }];
 
@@ -134,7 +134,7 @@
         return YES;
     };
 
-    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *actionResult) {
+    [action runWithArguments:self.emptyArgs actionName:name completionHandler:^(UAActionResult *actionResult) {
         blockResult = actionResult;
     }];
 
@@ -164,7 +164,7 @@
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         XCTAssertFalse(isMainThread(), @"we should be on a background thread");
-        [action runWithArguments:nil actionName:name withCompletionHandler:^(UAActionResult *result){
+        [action runWithArguments:nil actionName:name completionHandler:^(UAActionResult *result){
             XCTAssertTrue(isMainThread(), @"we should be on the main thread");
             ran = YES;
             [self.sync continue];
@@ -198,7 +198,7 @@
         });
     }];
 
-    [action runWithArguments:nil actionName:name withCompletionHandler:^(UAActionResult *result){
+    [action runWithArguments:nil actionName:name completionHandler:^(UAActionResult *result){
         ran = YES;
         XCTAssertTrue(isMainThread(), @"we should be back on the main thread");
     }];
@@ -223,7 +223,7 @@
         return NO;
     };
 
-    [action runWithArguments:self.emptyArgs actionName:nil withCompletionHandler:^(UAActionResult *actionResult) {
+    [action runWithArguments:self.emptyArgs actionName:nil completionHandler:^(UAActionResult *actionResult) {
         blockResult = actionResult;
     }];
 

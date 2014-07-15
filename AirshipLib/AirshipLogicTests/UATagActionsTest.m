@@ -102,7 +102,7 @@
 
     [action runWithArguments:self.stringArgs
                   actionName:actionName
-       withCompletionHandler:^(UAActionResult *result){
+           completionHandler:^(UAActionResult *result){
            [self.mockPush verify];
     }];
 
@@ -110,7 +110,7 @@
     [[self.mockPush expect] updateRegistration];
 
     [action runWithArguments:self.arrayArgs actionName:actionName
-       withCompletionHandler:^(UAActionResult *result){
+       completionHandler:^(UAActionResult *result){
            [self.mockPush verify];
     }];
 }
@@ -129,7 +129,7 @@
 
     [action runWithArguments:self.stringArgs
                   actionName:actionName
-       withCompletionHandler:^(UAActionResult *result){
+           completionHandler:^(UAActionResult *result){
            [self.mockPush verify];
     }];
 
@@ -138,7 +138,7 @@
 
     [action runWithArguments:self.arrayArgs
                   actionName:actionName
-       withCompletionHandler:^(UAActionResult *result){
+           completionHandler:^(UAActionResult *result){
            [self.mockPush verify];
     }];
 

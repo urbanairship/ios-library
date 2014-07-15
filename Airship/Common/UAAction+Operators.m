@@ -39,7 +39,7 @@ NSString * const UAActionOperatorErrorDomain = @"com.urbanairship.actions.operat
     }
 
     UAActionBlock actionBlock = ^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
-        [self runWithArguments:args actionName:actionName withCompletionHandler:handler];
+        [self runWithArguments:args actionName:actionName completionHandler:handler];
     };
 
     UAActionPredicate acceptsArgumentsBlock = ^(UAActionArguments *args) {
@@ -92,7 +92,7 @@ NSString * const UAActionOperatorErrorDomain = @"com.urbanairship.actions.operat
                     {
                         UAActionArguments *nextArgs = [UAActionArguments argumentsWithValue:result.value withSituation:args.situation];
 
-                        [next runWithArguments:nextArgs actionName:actionName withCompletionHandler:^(UAActionResult *nextResult) {
+                        [next runWithArguments:nextArgs actionName:actionName completionHandler:^(UAActionResult *nextResult) {
                             handler(nextResult);
                         }];
 

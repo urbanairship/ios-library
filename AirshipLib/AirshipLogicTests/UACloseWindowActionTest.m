@@ -83,7 +83,7 @@
 
     __block id actionResult;
 
-    [self.action performWithArguments:args actionName:@"__close_window_action" withCompletionHandler:^(UAActionResult *result){
+    [self.action performWithArguments:args actionName:@"test_action" completionHandler:^(UAActionResult *result){
         actionResult = result;
     }];
 
@@ -102,7 +102,7 @@
 
     __block id actionResult;
 
-    [self.action performWithArguments:args actionName:@"test_action" withCompletionHandler:^(UAActionResult *result){
+    [self.action performWithArguments:args actionName:@"test_action" completionHandler:^(UAActionResult *result){
         actionResult = result;
     }];
 

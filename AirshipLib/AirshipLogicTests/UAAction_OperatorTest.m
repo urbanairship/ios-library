@@ -55,12 +55,10 @@
     //there are two of them so we can compare the results of two different (equivalent) actions
     __block UAActionResult *blockResult;
     __block UAActionResult *blockResult2;
-    __block NSString *name;
 
     //this action just finishes immediately with a result whose value is the string @"simpleResult"
     UAActionBlock actionBlock = ^(UAActionArguments *args, NSString *actionName,UAActionCompletionHandler handler) {
         handler([UAActionResult resultWithValue:@"simpleResult"]);
-        name = actionName;
     };
 
     //a simple predicate that is always true
@@ -101,13 +99,13 @@
 
     UAAction *foo = [action bind:bangBindBlock];
 
-    [foo runWithArguments:nil actionName:name withCompletionHandler:^(UAActionResult *result){
+    [foo runWithArguments:nil actionName:@"test_action" completionHandler:^(UAActionResult *result){
         blockResult = result;
     }];
 
     UAAction *bar = bangBindBlock(actionBlock, predicate);
 
-    [bar runWithArguments:nil actionName:name withCompletionHandler:^(UAActionResult *result){
+    [bar runWithArguments:nil actionName:@"test_action" completionHandler:^(UAActionResult *result){
         blockResult2 = result;
     }];
 
@@ -128,11 +126,11 @@
     foo = [wrap(actionBlock, predicate) bind:wrap];
     bar = wrap(actionBlock, predicate);
 
-    [foo runWithArguments:nil actionName:name withCompletionHandler:^(UAActionResult *result){
+    [foo runWithArguments:nil actionName:@"test_action" completionHandler:^(UAActionResult *result){
         blockResult = result;
     }];
 
-    [bar runWithArguments:nil actionName:name withCompletionHandler:^(UAActionResult *result){
+    [bar runWithArguments:nil actionName:@"test_action" completionHandler:^(UAActionResult *result){
         blockResult2 = result;
     }];
 
@@ -164,11 +162,11 @@
 
     UAAction *baz = [foo bind:nestedBind];
 
-    [bar runWithArguments:nil actionName:name withCompletionHandler:^(UAActionResult *result) {
+    [bar runWithArguments:nil actionName:@"test_action" completionHandler:^(UAActionResult *result) {
         blockResult = result;
     }];
 
-    [baz runWithArguments:nil actionName:name withCompletionHandler:^(UAActionResult *result) {
+    [baz runWithArguments:nil actionName:@"test_action" completionHandler:^(UAActionResult *result) {
         blockResult2 = result;
     }];
 
@@ -195,7 +193,7 @@
         handler([UAActionResult resultWithValue:@"simpleResult"]);
     }];
 
-    [action performWithArguments:nil actionName:@"test_action" withCompletionHandler:saveBlockResult];
+    [action performWithArguments:nil actionName:@"test_action" completionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult", @"the result value should be 'simpleResult'");
 
     //a bind block defines a transformation between action blocks, and between predicates, and returns a new action
@@ -224,7 +222,7 @@
     UAAction *actionToTheMax = [action bind:bindBlock];
 
     //now when we run the new action, we should see the concatenation in the results
-    [actionToTheMax performWithArguments:nil actionName:@"test_action" withCompletionHandler:saveBlockResult];
+    [actionToTheMax performWithArguments:nil actionName:@"test_action" completionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult to the Max!!!!", @"the result value should be 'simpleResult to the Max!!!!'");
 
     //the original result isn't hardcoded into the transformation, we can take anything to the max
@@ -234,7 +232,7 @@
 
     UAAction *hoboToTheMax = [hobo bind:bindBlock];
 
-    [hoboToTheMax performWithArguments:nil actionName:@"test_action"withCompletionHandler:saveBlockResult];
+    [hoboToTheMax performWithArguments:nil actionName:@"test_action"completionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"hobo to the Max!!!!", @"the result value should be 'hobo to the Max!!!!'");
 }
 
@@ -257,7 +255,7 @@
         handler([UAActionResult resultWithValue:@"simpleResult"]);
     }];
 
-    [action performWithArguments:nil actionName:@"test_action"withCompletionHandler:saveBlockResult];
+    [action performWithArguments:nil actionName:@"test_action"completionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult", @"the result value should be 'simpleResult'");
 
     //an action lift block defines a transformation between action blocks
@@ -279,7 +277,7 @@
     //resulting action will inherit the receiver's argument validation logic
     UAAction *actionToTheMax = [action lift:liftBlock];
 
-    [actionToTheMax performWithArguments:nil actionName:@"test_action"withCompletionHandler:saveBlockResult];
+    [actionToTheMax performWithArguments:nil actionName:@"test_action"completionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult to the Max!!!!", @"the result value should be 'simpleResult to the Max!!!!'");
 }
 
@@ -302,7 +300,7 @@
         return (BOOL)![args.value isEqual:@"foo"];
     }];
 
-    [action performWithArguments:nil actionName:@"test_action" withCompletionHandler:saveBlockResult];
+    [action performWithArguments:nil actionName:@"test_action" completionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult", @"the result value should be 'simpleResult'");
 
     UAActionArguments *fooArgs = [UAActionArguments argumentsWithValue:@"foo" withSituation:UASituationManualInvocation];
@@ -339,7 +337,7 @@
     //both the original action and acceptsArguments logic have been preserved but extended.
     UAAction *actionToTheMax = [action lift:actionLiftBlock transformingPredicate:predicateLiftBlock];
 
-    [actionToTheMax performWithArguments:nil actionName:@"test_action" withCompletionHandler:saveBlockResult];
+    [actionToTheMax performWithArguments:nil actionName:@"test_action" completionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult to the Max!!!!", @"the result value should be 'simpleResult to the Max!!!!'");
 
     UAActionArguments *barArgs = [UAActionArguments argumentsWithValue:@"bar" withSituation:UASituationManualInvocation];
@@ -373,7 +371,7 @@
     action = [action continueWith:continuationAction];
     [action runWithArguments:self.emptyArgs
                   actionName:emptyArgsName
-       withCompletionHandler:^(UAActionResult *actionResult){
+       completionHandler:^(UAActionResult *actionResult){
         result = actionResult;
     }];
 
@@ -407,7 +405,7 @@
     }];
 
     action = [action continueWith:continuationAction];
-    [action runWithArguments:self.emptyArgs actionName:continuationName withCompletionHandler:^(UAActionResult *actionResult){
+    [action runWithArguments:self.emptyArgs actionName:continuationName completionHandler:^(UAActionResult *actionResult){
         result = actionResult;
     }];
 
@@ -430,7 +428,7 @@
 
 
     action = [action continueWith:nil];
-    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *actionResult){
+    [action runWithArguments:self.emptyArgs actionName:name completionHandler:^(UAActionResult *actionResult){
         result = actionResult;
     }];
 
@@ -457,7 +455,7 @@
         return YES;
     }];
 
-    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *result) {
+    [action runWithArguments:self.emptyArgs actionName:name completionHandler:^(UAActionResult *result) {
         XCTAssertEqualObjects(result, expectedResult, @"Filter result is unexpected");
     }];
 
@@ -470,7 +468,7 @@
         return NO;
     };
 
-    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *result) {
+    [action runWithArguments:self.emptyArgs actionName:name completionHandler:^(UAActionResult *result) {
         XCTAssertNil(result.value, @"Run should return a empty result if the action cannot be run");
     }];
 
@@ -495,7 +493,7 @@
         return NO;
     }];
 
-    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *actionResult) {
+    [action runWithArguments:self.emptyArgs actionName:name completionHandler:^(UAActionResult *actionResult) {
         result = actionResult;
     }];
 
@@ -521,7 +519,7 @@
 
     action = [action filter:nil];
 
-    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *result) {
+    [action runWithArguments:self.emptyArgs actionName:name completionHandler:^(UAActionResult *result) {
         XCTAssertEqualObjects(result, expectedResult, @"Filter result is unexpected");
     }];
 
@@ -550,7 +548,7 @@
         return mappedArgs;
     }];
 
-    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *actionResult) {
+    [action runWithArguments:self.emptyArgs actionName:name completionHandler:^(UAActionResult *actionResult) {
         result = actionResult;
     }];
 
@@ -574,7 +572,7 @@
 
     action = [action map:nil];
 
-    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *actionResult) {
+    [action runWithArguments:self.emptyArgs actionName:name completionHandler:^(UAActionResult *actionResult) {
         result = actionResult;
     }];
 
@@ -606,7 +604,7 @@
         XCTAssertEqualObjects(self.emptyArgs, args, @"Pre execute block is being passed the correct action arguments");
     }];
 
-    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *result) {
+    [action runWithArguments:self.emptyArgs actionName:name completionHandler:^(UAActionResult *result) {
         XCTAssertEqualObjects(result, expectedResult, @"preExecution result is unexpected");
     }];
 
@@ -629,7 +627,7 @@
     }];
 
     action = [action preExecution:nil];
-    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *result) {
+    [action runWithArguments:self.emptyArgs actionName:name completionHandler:^(UAActionResult *result) {
         XCTAssertEqualObjects(result, expectedResult, @"preExecution result is unexpected");
     }];
 
@@ -663,7 +661,7 @@
         XCTAssertEqualObjects(expectedResult, result, @"Post execute block is not being passed the correct action result");
     }];
 
-    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *result) {
+    [action runWithArguments:self.emptyArgs actionName:name completionHandler:^(UAActionResult *result) {
         XCTAssertTrue(postExecuteBlock, @"Post execute block is not being called before the completion handler is called");
         XCTAssertEqualObjects(result, expectedResult, @"postExecution result is unexpected");
     }];
@@ -687,7 +685,7 @@
     }];
     
     action = [action postExecution:nil];
-    [action runWithArguments:self.emptyArgs actionName:name withCompletionHandler:^(UAActionResult *result) {
+    [action runWithArguments:self.emptyArgs actionName:name completionHandler:^(UAActionResult *result) {
         XCTAssertEqualObjects(result, expectedResult, @"postExecution result is unexpected");
     }];
     

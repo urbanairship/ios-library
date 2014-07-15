@@ -49,7 +49,7 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
 
 - (void)performWithArguments:(UAActionArguments *)arguments
                   actionName:(NSString *)name
-       withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+       completionHandler:(UAActionCompletionHandler)completionHandler {
 
     NSDictionary *dict = [NSDictionary dictionaryWithDictionary:arguments.value];
 

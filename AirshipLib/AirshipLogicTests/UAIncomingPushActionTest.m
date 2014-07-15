@@ -110,7 +110,7 @@
     self.arguments.situation = UASituationLaunchedFromPush;
 
     [[self.mockedPushDelegate expect] launchedFromNotification:self.arguments.value];
-    [self.action performWithArguments:self.arguments actionName:@"test_action" withCompletionHandler:^(UAActionResult *result) {
+    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *result) {
         runResult = result;
     }];
 
@@ -130,7 +130,7 @@
         return YES;
     }]];
 
-    [self.action performWithArguments:self.arguments actionName:@"test_action" withCompletionHandler:^(UAActionResult *result) {
+    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *result) {
         runResult = result;
     }];
 
@@ -149,7 +149,7 @@
     self.arguments.situation = UASituationBackgroundPush;
 
     [[self.mockedPushDelegate expect] receivedBackgroundNotification:self.arguments.value];
-    [self.action performWithArguments:self.arguments actionName:@"test_action" withCompletionHandler:^(UAActionResult *result) {
+    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *result) {
         runResult = result;
     }];
     
@@ -171,7 +171,7 @@
         return YES;
     }]];
 
-    [self.action performWithArguments:self.arguments actionName:@"test_action" withCompletionHandler:^(UAActionResult *result) {
+    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *result) {
         runResult = result;
     }];
 
@@ -190,7 +190,7 @@
 
     [[self.mockedPushDelegate expect] receivedForegroundNotification:self.arguments.value];
 
-    [self.action performWithArguments:self.arguments actionName:@"test_action" withCompletionHandler:^(UAActionResult *result) {
+    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *result) {
         runResult = result;
     }];
 
@@ -210,7 +210,7 @@
         return YES;
     }]];
 
-    [self.action performWithArguments:self.arguments actionName:@"test_action" withCompletionHandler:^(UAActionResult *result) {
+    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *result) {
         runResult = result;
     }];
 
@@ -232,7 +232,7 @@
     [[self.mockedPushDelegate expect] displayNotificationAlert:@"sample alert!"];
     [[self.mockedPushDelegate expect] handleBadgeUpdate:2];
 
-    [self.action performWithArguments:self.arguments actionName:@"test_action" withCompletionHandler:^(UAActionResult *result) {}];
+    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *result) {}];
     XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegate should notify the delegate of a foreground notification");
 
     // Enable auto badge and verify handleBadgeUpdate: is not called
@@ -242,7 +242,7 @@
     [[self.mockedPushDelegate expect] displayNotificationAlert:@"sample alert!"];
     [[self.mockedPushDelegate reject] handleBadgeUpdate:2];
 
-    [self.action performWithArguments:self.arguments actionName:@"test_action" withCompletionHandler:^(UAActionResult *result) {}];
+    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *result) {}];
     XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegates handleBadgeUpdate should not be called if autobadge is enabled");
 
 
@@ -252,7 +252,7 @@
     [[self.mockedPushDelegate reject] displayNotificationAlert:OCMOCK_ANY];
     [[self.mockedPushDelegate reject] handleBadgeUpdate:2];
 
-    [self.action performWithArguments:self.arguments actionName:@"test_action" withCompletionHandler:^(UAActionResult *result) {}];
+    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *result) {}];
     XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegates should not be notified of an empty dictionary");
 }
 

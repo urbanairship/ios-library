@@ -237,7 +237,7 @@
         return (BOOL)([obj isKindOfClass:[NSURL class]] && [((NSURL *)obj).absoluteString isEqualToString:expectedUrl]);
     }]];
 
-    [self.action performWithArguments:args actionName:@"test_action" withCompletionHandler:^(UAActionResult *result){
+    [self.action performWithArguments:args actionName:@"test_action" completionHandler:^(UAActionResult *result){
         finished = YES;
         XCTAssertEqual(result.fetchResult, fetchResult,
                        @"fetch result %ud should match expect result %ud", result.fetchResult, fetchResult);

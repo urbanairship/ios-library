@@ -30,7 +30,7 @@
 
 - (void)performWithArguments:(UAActionArguments *)arguments
                   actionName:(NSString *) actionName
-       withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+           completionHandler:(UAActionCompletionHandler)completionHandler {
     if ([arguments.value isKindOfClass:[NSString class]]) {
         [[UAPush shared] addTagToCurrentDevice:arguments.value];
     } else {
