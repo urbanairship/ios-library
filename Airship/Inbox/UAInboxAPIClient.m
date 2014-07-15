@@ -18,7 +18,7 @@
 
 @implementation UAInboxAPIClient
 
-NSString *const UALastMessageListModifyTime = @"UALastMessageListModifyTime.%@";
+NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.%@";
 
 
 - (id)init {
@@ -48,7 +48,7 @@ NSString *const UALastMessageListModifyTime = @"UALastMessageListModifyTime.%@";
 
     UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:requestUrl method:@"GET"];
 
-    NSString *lastModified = [[NSUserDefaults standardUserDefaults] stringForKey:[NSString stringWithFormat:UALastMessageListModifyTime, userName]];
+    NSString *lastModified = [[NSUserDefaults standardUserDefaults] stringForKey:[NSString stringWithFormat:UALastMessageListModifiedTime, userName]];
     if (lastModified) {
         [request addRequestHeader:@"If-Modified-Since" value:lastModified];
     }
@@ -158,11 +158,11 @@ NSString *const UALastMessageListModifyTime = @"UALastMessageListModifyTime.%@";
 
           if (statusCode == 200) {
               NSDictionary *headers = request.response.allHeaderFields;
-              NSString *lastModiified = [headers objectForKey:@"Last-Modified"];
+              NSString *lastModified = [headers objectForKey:@"Last-Modified"];
 
-              UA_LDEBUG(@"Setting Last-Modified time to '%@' for user %@'s message list.", lastModiified, userName);
-              [[NSUserDefaults standardUserDefaults] setValue:lastModiified
-                                                       forKey:[NSString stringWithFormat:UALastMessageListModifyTime, userName]];
+              UA_LDEBUG(@"Setting Last-Modified time to '%@' for user %@'s message list.", lastModified, userName);
+              [[NSUserDefaults standardUserDefaults] setValue:lastModified
+                                                       forKey:[NSString stringWithFormat:UALastMessageListModifiedTime, userName]];
 
               NSString *responseString = request.responseString;
               UA_LTRACE(@"Retrieved message list response: %@", responseString);
