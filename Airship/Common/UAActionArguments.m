@@ -49,7 +49,7 @@ NSString * const UAActionMetadataInboxMessageKey = @"com.urbanairship.message";
 
 - (instancetype)initWithValue:(id)value
                 withSituation:(UASituation)situation
-                     metadata:(NSDictionary *)metadata{
+                     metadata:(NSDictionary *)metadata {
     
     self = [super init];
     if (self) {
