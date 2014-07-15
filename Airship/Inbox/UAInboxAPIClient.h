@@ -3,9 +3,10 @@
 #import "UAHTTPConnection.h"
 #import "UAInboxMessageList.h"
 
-typedef void (^UAInboxClientSuccessBlock)(void);
-typedef void (^UAInboxClientRetrievalSuccessBlock)(NSMutableArray *messages, NSUInteger unread);
 typedef void (^UAInboxClientFailureBlock)(UAHTTPRequest *request);
+typedef void (^UAInboxClientSuccessBlock)(void);
+typedef void (^UAInboxClientMessageRetrievalSuccessBlock)(NSInteger status, NSArray *messages, NSInteger unread);
+
 
 /**
 * A high level abstraction for performing Rich Push API requests.
@@ -29,7 +30,7 @@ typedef void (^UAInboxClientFailureBlock)(UAHTTPRequest *request);
  * @param successBlock A block to be executed when the call completes successfully.
  * @param failureBlock A block to be executed if the call fails.
  */
-- (void)retrieveMessageListOnSuccess:(UAInboxClientRetrievalSuccessBlock)successBlock
+- (void)retrieveMessageListOnSuccess:(UAInboxClientMessageRetrievalSuccessBlock)successBlock
                            onFailure:(UAInboxClientFailureBlock)failureBlock;
 
 /**

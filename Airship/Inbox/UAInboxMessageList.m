@@ -129,16 +129,46 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
         isCallbackCancelled = YES;
     }];
 
-    [self.client retrieveMessageListOnSuccess:^(NSMutableArray *newMessages, NSUInteger unread){
-        self.isRetrieving = NO;
+    [self.client retrieveMessageListOnSuccess:^(NSInteger status, NSArray *messages, NSInteger unread) {
 
-        self.messages = newMessages;
-        self.unreadCount = (NSInteger)unread;
+        if (status == 200) {
+            UA_LDEBUG(@"Refreshing message list.");
+
+            UAInboxDBManager *inboxDBManager = [UAInboxDBManager shared];
+            NSMutableSet *responseMessageIDs = [NSMutableSet set];
+
+            // Convert dictionary to objects for convenience
+            for (NSDictionary *message in messages) {
+                if (![inboxDBManager updateMessageWithDictionary:message]) {
+                    UAInboxMessage *tmp = [inboxDBManager addMessageFromDictionary:message];
+                    tmp.inbox = [UAInbox shared].messageList;
+                }
+
+                NSString *messageID = [message valueForKey:@"message_id"];
+                if (messageID) {
+                    [responseMessageIDs addObject:messageID];
+                }
+            }
+
+            // Delete server side deleted messages
+            NSMutableSet *messagesToDelete = [[inboxDBManager messageIDs] mutableCopy];
+            [messagesToDelete minusSet:responseMessageIDs];
+            [inboxDBManager deleteMessagesWithIDs:messagesToDelete];
+            
+            // Delete any expired messages
+            [[UAInboxDBManager shared] deleteExpiredMessages];
+
+            self.messages = [[[UAInboxDBManager shared] getMessages] mutableCopy];
+            self.unreadCount = unread;
+        }
+
+        self.isRetrieving = NO;
 
         UA_LDEBUG(@"Retrieve message list succeeded with messages: %@", self.messages);
         if (successBlock && !isCallbackCancelled) {
             successBlock();
         }
+
         [self notifyObservers:@selector(messageListLoaded)];
         [self sendMessageListUpdatedNotification];
     } onFailure:^(UAHTTPRequest *request){
