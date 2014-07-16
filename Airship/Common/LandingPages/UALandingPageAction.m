@@ -74,7 +74,7 @@
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments
-                  actionName:(NSString *) actionName
+                  actionName:(NSString *)actionName
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
     NSURL *landingPageURL = [self parseURLFromValue:arguments.value];

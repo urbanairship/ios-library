@@ -29,7 +29,7 @@
 @implementation UAAddTagsAction
 
 - (void)performWithArguments:(UAActionArguments *)arguments
-                  actionName:(NSString *) actionName
+                  actionName:(NSString *)actionName
            completionHandler:(UAActionCompletionHandler)completionHandler {
     if ([arguments.value isKindOfClass:[NSString class]]) {
         [[UAPush shared] addTagToCurrentDevice:arguments.value];
