@@ -296,6 +296,36 @@
     XCTAssertNil([dict valueForKey:kUAChannelIdentityHintsKey], @"identity hints section should not be included in the payload");
 }
 
+/**
+ * Test that an empty alias is not included
+ */
+- (void)testPayloadDictionaryEmptyAlias {
+    self.payload.alias = @"";
+
+    NSDictionary *dict = [[NSDictionary alloc] initWithDictionary:[self.payload payloadDictionary]];
+    XCTAssertNil([dict valueForKey:kUAChannelAliasJSONKey], @"Alias should not be included in the payload");
+}
+
+/**
+ * Test that an alias with just spaces is not included
+ */
+- (void)testPayloadDictionarySpacesAlias {
+    self.payload.alias = @"     ";
+
+    NSDictionary *dict = [[NSDictionary alloc] initWithDictionary:[self.payload payloadDictionary]];
+    XCTAssertNil([dict valueForKey:kUAChannelAliasJSONKey], @"Alias should not be included in the payload");
+}
+
+/**
+ * Test that a nil alias is not included
+ */
+- (void)testPayloadDictionaryNilAlias {
+    self.payload.alias = nil;
+
+    NSDictionary *dict = [[NSDictionary alloc] initWithDictionary:[self.payload payloadDictionary]];
+    XCTAssertNil([dict valueForKey:kUAChannelAliasJSONKey], @"Alias should not be included in the payload");
+}
+
 
 // Helpers
 
