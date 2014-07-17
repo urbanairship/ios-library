@@ -96,7 +96,7 @@ typedef void (^UAActionBlock)(UAActionArguments *, NSString *, UAActionCompletio
  */
 - (void)performWithArguments:(UAActionArguments *)arguments
                   actionName:(NSString *)name
-       completionHandler:(UAActionCompletionHandler)completionHandler;
+           completionHandler:(UAActionCompletionHandler)completionHandler;
 
 #pragma mark factory methods
 
