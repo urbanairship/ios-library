@@ -317,6 +317,17 @@
 }
 
 /**
+ * Test that an alias with spaces is trimmed and included
+ */
+- (void)testPayloadDictionarySpacesTrimmedAlias  {
+    self.payload.alias = @"     fakeAlias     ";
+
+    NSDictionary *dict = [[NSDictionary alloc] initWithDictionary:[self.payload payloadDictionary]];
+    NSDictionary *channel = [dict valueForKey:kUAChannelKey];
+    XCTAssertEqualObjects(self.payload.alias, [channel valueForKey:kUAChannelAliasJSONKey], @"alias should be present");
+}
+
+/**
  * Test that a nil alias is not included
  */
 - (void)testPayloadDictionaryNilAlias {
