@@ -28,6 +28,7 @@
 #import "UAPush.h"
 #import "UAirship+Internal.h"
 #import <OCMock/OCMock.h>
+#import "UAActionArguments+Internal.h"
 
 @interface UAIncomingPushActionTest : XCTestCase
 

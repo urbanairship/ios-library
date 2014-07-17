@@ -7,6 +7,7 @@
 #import "UARemoveTagsAction.h"
 #import "UAPush+Internal.h"
 #import "UAPush+Test.h"
+#import "UAActionArguments+Internal.h"
 
 @interface UATagActionsTest : XCTestCase
 @property(nonatomic, strong) id mockPush;

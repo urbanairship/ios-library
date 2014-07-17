@@ -189,20 +189,6 @@ NSString *anotherActionName = @"AnotherActionName";
 
 }
 
-///**
-// * Test running an action with a null completion handler
-// */
-//- (void)testRunActionNullCompletionHandler {
-//    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
-//    UAActionResult *result = [UAActionResult emptyResult];
-//
-//    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
-//        completionHandler(result);
-//    }];
-//
-//    XCTAssertNoThrow([UAActionRunner runAction:action withArguments:arguments withCompletionHandler:nil],
-//                     "Null completion handler should not throw an exception");
-//}
 
 /**
  * Test running an empty dictionary of actions

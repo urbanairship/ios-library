@@ -27,6 +27,7 @@
 #import "UACloseWindowAction.h"
 #import <OCMock/OCMock.h>
 #import "UARichContentWindow.h"
+#import "UAActionArguments+Internal.h"
 
 
 @interface UACloseWindowActionTest : XCTestCase

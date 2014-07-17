@@ -100,12 +100,12 @@ extern NSString * const UAActionMetadataInboxMessageKey;
 /**
  * Situation of the action
  */
-@property(nonatomic, assign) UASituation situation;
+@property(nonatomic, assign, readonly) UASituation situation;
 
 /**
  * The value associated with the action
  */
-@property(nonatomic, strong) id value;
+@property(nonatomic, strong, readonly) id value;
 
 /**
  * The argument's metadata. Metadata provides more information

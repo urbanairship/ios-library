@@ -30,6 +30,7 @@
 #import "UAInbox.h"
 #import "UAInboxPushHandler.h"
 #import "UAInboxMessageList.h"
+#import "UAActionArguments+Internal.h"
 
 @interface UAIncomingRichPushActionTest : XCTestCase
 

@@ -28,6 +28,7 @@
 #import <OCMock/OCMock.h>
 #import "UAAction+Operators.h"
 #import "UATestSynchronizer.h"
+#import "UAActionArguments+Internal.h"
 
 @interface UAOpenExternalURLActionTest : XCTestCase
 
