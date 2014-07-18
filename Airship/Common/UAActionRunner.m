@@ -33,8 +33,8 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
 @implementation UAActionRunner
 
 + (void)runActionWithName:(NSString *)actionName
-                withArguments:(UAActionArguments *)arguments
-        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+            withArguments:(UAActionArguments *)arguments
+    withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
     UAActionRegistryEntry *entry = [[UAActionRegistry shared] registryEntryWithName:actionName];
 
@@ -44,7 +44,7 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
             UAAction *action = [entry actionForSituation:arguments.situation];
             [action runWithArguments:arguments
                           actionName:actionName
-                   completionHandler:completionHandler];
+               completionHandler:completionHandler];
         } else {
             UA_LINFO(@"Not running action %@ because of predicate.", actionName);
             if (completionHandler) {
@@ -64,6 +64,12 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
             completionHandler([UAActionResult actionNotFoundResult]);
         }
     }
+}
+
++ (void)runAction:(UAAction *)action
+    withArguments:(UAActionArguments *)arguments
+withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+    [action runWithArguments:arguments actionName:nil completionHandler:completionHandler];
 }
 
 + (void)runActions:(NSDictionary *)actions

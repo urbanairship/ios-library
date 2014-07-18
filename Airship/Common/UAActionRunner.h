@@ -48,6 +48,15 @@
         withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 /**
+ * Runs an action.
+ *
+ * @param action The action to run
+ * @param arguments The action's arguments
+ * @param completionHandler CompletionHandler to pass to the action.
+ */
++ (void)runAction:(UAAction *)action withArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler;
+
+/**
  * Runs a map of actionNames and action arguments.
  *
  * The results of all the actions will be aggregated into a 
