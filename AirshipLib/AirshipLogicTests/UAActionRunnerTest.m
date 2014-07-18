@@ -216,6 +216,29 @@ NSString *anotherActionName = @"AnotherActionName";
                      "Null completion handler should not throw an exception");
 }
 
+
+/**
+ * Test running an action
+ */
+- (void)testRunAction {
+    __block BOOL didCompletionHandlerRun = NO;
+    
+    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
+    UAActionResult *result = [UAActionResult emptyResult];
+    
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
+        XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
+        completionHandler(result);
+    }];
+    
+    [UAActionRunner runAction:action withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
+        didCompletionHandlerRun = YES;
+        XCTAssertEqualObjects(result, finalResult, @"Runner completion handler did not receive the action's results");
+    }];
+    
+    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
+}
+
 /**
  * Test running a set of actions from a dictionary
  */
@@ -256,6 +279,21 @@ NSString *anotherActionName = @"AnotherActionName";
 
     XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
     XCTAssertEqual(2, actionRunCount, @"Both actions should of ran");
+}
+
+/**
+ * Test running an action with a null completion handler
+ */
+- (void)testRunActionNullCompletionHandler {
+    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
+    UAActionResult *result = [UAActionResult emptyResult];
+    
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
+        completionHandler(result);
+    }];
+    
+    XCTAssertNoThrow([UAActionRunner runAction:action withArguments:arguments withCompletionHandler:nil],
+                     "Null completion handler should not throw an exception");
 }
 
 
