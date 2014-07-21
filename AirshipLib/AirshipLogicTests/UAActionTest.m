@@ -157,14 +157,14 @@
         return [[NSThread currentThread] isEqual:[NSThread mainThread]];
     };
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
         XCTAssertTrue(isMainThread(), @"we should be on the main thread");
         handler([UAActionResult emptyResult]);
     }];
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         XCTAssertFalse(isMainThread(), @"we should be on a background thread");
-        [action runWithArguments:nil actionName:name completionHandler:^(UAActionResult *result){
+        [action runWithArguments:nil actionName:name completionHandler:^(UAActionResult *result) {
             XCTAssertTrue(isMainThread(), @"we should be on the main thread");
             ran = YES;
             [self.sync continue];
@@ -189,7 +189,7 @@
         return [[NSThread currentThread] isEqual:[NSThread mainThread]];
     };
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             XCTAssertFalse(isMainThread(), @"we should be on a background thread");
             handler([UAActionResult emptyResult]);
@@ -198,7 +198,7 @@
         });
     }];
 
-    [action runWithArguments:nil actionName:name completionHandler:^(UAActionResult *result){
+    [action runWithArguments:nil actionName:name completionHandler:^(UAActionResult *result) {
         ran = YES;
         XCTAssertTrue(isMainThread(), @"we should be back on the main thread");
     }];

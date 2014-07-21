@@ -86,7 +86,7 @@ NSString * const UAActionOperatorErrorDomain = @"com.urbanairship.actions.operat
 
     UAActionLiftBlock liftBlock = ^(UAActionBlock actionBlock) {
         UAActionBlock transformedActionBlock = ^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
-            actionBlock(args, actionName, ^(UAActionResult *result){
+            actionBlock(args, actionName, ^(UAActionResult *result) {
                 switch (result.status) {
                     case UAActionStatusCompleted:
                     {
@@ -125,11 +125,11 @@ NSString * const UAActionOperatorErrorDomain = @"com.urbanairship.actions.operat
         return self;
     }
 
-    UAActionLiftBlock actionLiftBlock = ^(UAActionBlock actionBlock){
+    UAActionLiftBlock actionLiftBlock = ^(UAActionBlock actionBlock) {
         return actionBlock;
     };
 
-    UAActionPredicateLiftBlock predicateLiftBlock = ^(UAActionPredicate predicate){
+    UAActionPredicateLiftBlock predicateLiftBlock = ^(UAActionPredicate predicate) {
         UAActionPredicate transformedPredicate = ^(UAActionArguments *args) {
             if (!filterBlock(args)) {
                 return NO;
@@ -149,7 +149,7 @@ NSString * const UAActionOperatorErrorDomain = @"com.urbanairship.actions.operat
     }
 
     UAActionLiftBlock actionLiftBlock = ^(UAActionBlock actionBlock) {
-        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
             actionBlock(mapArgumentsBlock(args), actionName, handler);
         };
 
@@ -173,7 +173,7 @@ NSString * const UAActionOperatorErrorDomain = @"com.urbanairship.actions.operat
     }
 
     UAActionLiftBlock liftBlock = ^(UAActionBlock actionBlock) {
-        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
             preExecutionBlock(args);
             actionBlock(args, actionName, handler);
         };
@@ -190,7 +190,7 @@ NSString * const UAActionOperatorErrorDomain = @"com.urbanairship.actions.operat
 
     UAActionLiftBlock liftBlock = ^(UAActionBlock actionBlock) {
         UAActionBlock transformedActionBlock = ^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
-            actionBlock(args, actionName, ^(UAActionResult *result){
+            actionBlock(args, actionName, ^(UAActionResult *result) {
                 postExecutionBlock(args, result);
                 handler(result);
             });

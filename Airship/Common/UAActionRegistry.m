@@ -284,7 +284,7 @@ SINGLETON_IMPLEMENTATION(UAActionRegistry)
     UALandingPageAction *landingPageAction = [[UALandingPageAction alloc] init];
     [self registerAction:landingPageAction
                    names:@[kUALandingPageActionDefaultRegistryName, kUALandingPageActionDefaultRegistryAlias]
-               predicate:^(UAActionArguments *args){
+               predicate:^(UAActionArguments *args) {
                    if (UASituationBackgroundPush == args.situation) {
                        UAApplicationMetrics *metrics = [UAirship shared].applicationMetrics;
                        NSTimeInterval timeSinceLastOpen = [[NSDate date] timeIntervalSinceDate:metrics.lastApplicationOpenDate];

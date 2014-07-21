@@ -77,7 +77,7 @@ NSString *anotherActionName = @"AnotherActionName";
 
     [UAActionRunner runActionWithName:@"nopenopenopenopenope"
                         withArguments:nil
-                withCompletionHandler:^(UAActionResult *result){
+                withCompletionHandler:^(UAActionResult *result) {
                     XCTAssertEqual(result.status, UAActionStatusActionNotFound, "action should not be found");
                     XCTAssertNil(result.value, @"a bad action name should result in a nil value");
                     didCompletionHandlerRun = YES;
@@ -88,7 +88,7 @@ NSString *anotherActionName = @"AnotherActionName";
     didCompletionHandlerRun = NO;
 
     //re-register the action with a predicate guaranteed to fail
-    [[UAActionRegistry shared] registerAction:action name:actionName predicate:^(UAActionArguments *args){
+    [[UAActionRegistry shared] registerAction:action name:actionName predicate:^(UAActionArguments *args) {
         return NO;
     }];
 

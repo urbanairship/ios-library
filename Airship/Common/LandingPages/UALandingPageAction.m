@@ -127,7 +127,7 @@
         [self.connection cancel];
     }
 
-    UAHTTPConnectionSuccessBlock successBlock = ^(UAHTTPRequest *request){
+    UAHTTPConnectionSuccessBlock successBlock = ^(UAHTTPRequest *request) {
         UA_LTRACE(@"Retrieved landing page with status code %ld at url: %@.",
                   (long)[request.response statusCode], request.url);
 
@@ -139,7 +139,7 @@
         }
     };
 
-    UAHTTPConnectionFailureBlock failureBlock = ^(UAHTTPRequest *request){
+    UAHTTPConnectionFailureBlock failureBlock = ^(UAHTTPRequest *request) {
         UA_LTRACE(@"Error %@ for landing page pre-fetch request at url: %@", request.error, request.url);
         completionHandler([UAActionResult resultWithError:request.error withFetchResult:UAActionFetchResultFailed]);
     };

@@ -92,6 +92,7 @@ typedef void (^UAActionBlock)(UAActionArguments *, NSString *, UAActionCompletio
  *
  * @note You should not ordinarily call this method directly.  Instead, use the `UAActionRunner`.
  * @param arguments A UAActionArguments value representing the arguments passed to the action.
+ * @param name A NSString representing the name of the action.
  * @param completionHandler A UAActionCompletionHandler that will be called when the action has finished executing.
  */
 - (void)performWithArguments:(UAActionArguments *)arguments

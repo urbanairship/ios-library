@@ -84,8 +84,8 @@
     UAAction *action = wrap(actionBlock, predicate);
 
     UAActionBindBlock bangBindBlock = ^(UAActionBlock actionBlock, UAActionPredicate predicate) {
-        UAActionBlock transformedActionBlock = ^(UAActionArguments *args,NSString *actionName, UAActionCompletionHandler handler){
-            actionBlock(args, actionName, ^(UAActionResult *result){
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
+            actionBlock(args, actionName, ^(UAActionResult *result) {
                 handler([UAActionResult resultWithValue:[result.value stringByAppendingString:@"!"]]);
             });
         };
@@ -99,13 +99,13 @@
 
     UAAction *foo = [action bind:bangBindBlock];
 
-    [foo runWithArguments:nil actionName:@"test_action" completionHandler:^(UAActionResult *result){
+    [foo runWithArguments:nil actionName:@"test_action" completionHandler:^(UAActionResult *result) {
         blockResult = result;
     }];
 
     UAAction *bar = bangBindBlock(actionBlock, predicate);
 
-    [bar runWithArguments:nil actionName:@"test_action" completionHandler:^(UAActionResult *result){
+    [bar runWithArguments:nil actionName:@"test_action" completionHandler:^(UAActionResult *result) {
         blockResult2 = result;
     }];
 
@@ -126,11 +126,11 @@
     foo = [wrap(actionBlock, predicate) bind:wrap];
     bar = wrap(actionBlock, predicate);
 
-    [foo runWithArguments:nil actionName:@"test_action" completionHandler:^(UAActionResult *result){
+    [foo runWithArguments:nil actionName:@"test_action" completionHandler:^(UAActionResult *result) {
         blockResult = result;
     }];
 
-    [bar runWithArguments:nil actionName:@"test_action" completionHandler:^(UAActionResult *result){
+    [bar runWithArguments:nil actionName:@"test_action" completionHandler:^(UAActionResult *result) {
         blockResult2 = result;
     }];
 
@@ -189,7 +189,7 @@
     };
 
     //this action just finishes immediately with a result whose value is the string @"simpleResult"
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
         handler([UAActionResult resultWithValue:@"simpleResult"]);
     }];
 
@@ -197,11 +197,11 @@
     XCTAssertEqualObjects(blockResult.value, @"simpleResult", @"the result value should be 'simpleResult'");
 
     //a bind block defines a transformation between action blocks, and between predicates, and returns a new action
-    UAActionBindBlock bindBlock = ^(UAActionBlock actionBlock, UAActionPredicate predicate){
+    UAActionBindBlock bindBlock = ^(UAActionBlock actionBlock, UAActionPredicate predicate) {
         //the transformed action block calls the original action block, and produces a result value that concatenates
         //the string @"to the max" on the end of the original result
         UAActionBlock transformedActionBlock = ^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
-            actionBlock(args, actionName, ^(UAActionResult *result){
+            actionBlock(args, actionName, ^(UAActionResult *result) {
                 NSString *concatenatedValue = [result.value stringByAppendingString:@" to the Max!!!!"];
                 handler([UAActionResult resultWithValue:concatenatedValue]);
             });
@@ -226,7 +226,7 @@
     XCTAssertEqualObjects(blockResult.value, @"simpleResult to the Max!!!!", @"the result value should be 'simpleResult to the Max!!!!'");
 
     //the original result isn't hardcoded into the transformation, we can take anything to the max
-    UAAction *hobo = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
+    UAAction *hobo = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
         handler([UAActionResult resultWithValue:@"hobo"]);
     }];
 
@@ -251,7 +251,7 @@
     };
 
     //this action just finishes immediately with a result whose value is the string @"simpleResult"
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
         handler([UAActionResult resultWithValue:@"simpleResult"]);
     }];
 
@@ -263,8 +263,8 @@
     UAActionLiftBlock liftBlock = ^(UAActionBlock actionBlock) {
         //the transformed action block calls the original action block, and produces a result value that concatenates
         //the string @"to the max" on the end of the original result
-        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
-            actionBlock(args, actionName, ^(UAActionResult *result){
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
+            actionBlock(args, actionName, ^(UAActionResult *result) {
                 NSString *concatenatedValue = [result.value stringByAppendingString:@" to the Max!!!!"];
                 handler([UAActionResult resultWithValue:concatenatedValue]);
             });
@@ -294,9 +294,9 @@
     //this action just finishes immediately with a result whose value is the string @"simpleResult".
     //we're also adding some arbitrary argument validation.  this one will reject arguments whose
     //value is the string @"foo".
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
         handler([UAActionResult resultWithValue:@"simpleResult"]);
-    } acceptingArguments:^(UAActionArguments *args){
+    } acceptingArguments:^(UAActionArguments *args) {
         return (BOOL)![args.value isEqual:@"foo"];
     }];
 
@@ -311,8 +311,8 @@
     UAActionLiftBlock actionLiftBlock = ^(UAActionBlock actionBlock) {
         //the transformed action block calls the original action block, and produces a result value that concatenates
         //the string @"to the max" on the end of the original result
-        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler){
-            actionBlock(args, actionName, ^(UAActionResult *result){
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
+            actionBlock(args, actionName, ^(UAActionResult *result) {
                 NSString *concatenatedValue = [result.value stringByAppendingString:@" to the Max!!!!"];
                 handler([UAActionResult resultWithValue:concatenatedValue]);
             });
@@ -321,7 +321,7 @@
     };
 
     //a predicate lift block defines a transformation between predicates.
-    UAActionPredicateLiftBlock predicateLiftBlock = ^(UAActionPredicate predicate){
+    UAActionPredicateLiftBlock predicateLiftBlock = ^(UAActionPredicate predicate) {
         //this one inherits the logic of the existing predicate, and adds logic that
         //rejects arguments whose value is the string @"bar".
         UAActionPredicate transformedPredicate = ^(UAActionArguments *args) {
@@ -371,7 +371,7 @@
     action = [action continueWith:continuationAction];
     [action runWithArguments:self.emptyArgs
                   actionName:emptyArgsName
-       completionHandler:^(UAActionResult *actionResult){
+       completionHandler:^(UAActionResult *actionResult) {
         result = actionResult;
     }];
 
@@ -398,14 +398,14 @@
         return completionHandler(errorResult);
     }];
 
-    UAAction *continuationAction = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler){
+    UAAction *continuationAction = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
         continuationName = actionName;
         didContinuationActionRun = YES;
         completionHandler([UAActionResult emptyResult]);
     }];
 
     action = [action continueWith:continuationAction];
-    [action runWithArguments:self.emptyArgs actionName:continuationName completionHandler:^(UAActionResult *actionResult){
+    [action runWithArguments:self.emptyArgs actionName:continuationName completionHandler:^(UAActionResult *actionResult) {
         result = actionResult;
     }];
 
@@ -428,7 +428,7 @@
 
 
     action = [action continueWith:nil];
-    [action runWithArguments:self.emptyArgs actionName:name completionHandler:^(UAActionResult *actionResult){
+    [action runWithArguments:self.emptyArgs actionName:name completionHandler:^(UAActionResult *actionResult) {
         result = actionResult;
     }];
 

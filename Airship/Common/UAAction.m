@@ -47,7 +47,7 @@
               actionName:(NSString *)name
        completionHandler:(UAActionCompletionHandler)completionHandler {
     
-    completionHandler = completionHandler ?: ^(UAActionResult *result){
+    completionHandler = completionHandler ?: ^(UAActionResult *result) {
         //if no completion handler was passed, use an empty block in its place
     };
     
@@ -55,7 +55,7 @@
     
     //execute the passed block directly if we're on the main thread, otherwise
     //dispatch it to the main queue
-    void (^dispatchMainIfNecessary)(voidBlock) = ^(voidBlock block){
+    void (^dispatchMainIfNecessary)(voidBlock) = ^(voidBlock block) {
         if (![[NSThread currentThread] isEqual:[NSThread mainThread]]) {
             dispatch_async(dispatch_get_main_queue(), block);
         } else {
@@ -76,7 +76,7 @@
             [self willPerformWithArguments:arguments];
             [self performWithArguments:arguments
                             actionName:name
-                     completionHandler:^(UAActionResult *result){
+                     completionHandler:^(UAActionResult *result) {
                 //make sure the passed completion handler and didPerformWithArguments are executed on the
                 //main queue
                 dispatchMainIfNecessary(^{
