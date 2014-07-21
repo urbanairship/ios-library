@@ -54,7 +54,9 @@
  * @param arguments The action's arguments
  * @param completionHandler CompletionHandler to pass to the action.
  */
-+ (void)runAction:(UAAction *)action withArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler;
++ (void)runAction:(UAAction *)action
+    withArguments:(UAActionArguments *)arguments
+withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 /**
  * Runs a map of actionNames and action arguments.
