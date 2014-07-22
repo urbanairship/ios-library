@@ -64,7 +64,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     if (self) {
         self.unreadCount = -1;
         self.isBatchUpdating = NO;
-        self.client = [[UAInboxAPIClient alloc] init];
     }
     return self;
 }
