@@ -566,6 +566,9 @@
 		4995C6B2180DC5D3004F8724 /* UATagActionsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATagActionsTest.m; sourceTree = "<group>"; };
 		49C1F07D1978523300DD67DE /* UAInboxMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxMessage.h; sourceTree = "<group>"; };
 		49C1F07E1978523300DD67DE /* UAInboxMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessage.m; sourceTree = "<group>"; };
+		49C1F089197DD9CC00DD67DE /* UAInbox+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInbox+Internal.h"; sourceTree = "<group>"; };
+		49C1F08A197DDB4400DD67DE /* UAInboxMessageList+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInboxMessageList+Internal.h"; sourceTree = "<group>"; };
+		49C1F08B197DDB5600DD67DE /* UAInboxMessage+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInboxMessage+Internal.h"; sourceTree = "<group>"; };
 		49C671FE184EAB640088F210 /* UANativeBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANativeBridge.h; path = JS/UANativeBridge.h; sourceTree = "<group>"; };
 		49C67203184EB9120088F210 /* UANativeBridge.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = UANativeBridge.c; path = JS/UANativeBridge.c; sourceTree = "<group>"; };
 		49C6721B1857CB040088F210 /* UANativeBridgeTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UANativeBridgeTest.m; sourceTree = "<group>"; };
@@ -912,6 +915,7 @@
 		1F610DC117835C3A00BCD96E /* Inbox */ = {
 			isa = PBXGroup;
 			children = (
+				49C1F089197DD9CC00DD67DE /* UAInbox+Internal.h */,
 				1F610DC217835C3A00BCD96E /* UAInbox.h */,
 				1F610DC317835C3A00BCD96E /* UAInbox.m */,
 				1F610DC417835C3A00BCD96E /* UAInboxAPIClient.h */,
@@ -920,10 +924,12 @@
 				1F610DC717835C3A00BCD96E /* UAInboxDBManager.m */,
 				1F610DC817835C3A00BCD96E /* UAInboxDefaultJSDelegate.h */,
 				1F610DC917835C3A00BCD96E /* UAInboxDefaultJSDelegate.m */,
+				49C1F08B197DDB5600DD67DE /* UAInboxMessage+Internal.h */,
 				49C1F07D1978523300DD67DE /* UAInboxMessage.h */,
 				49C1F07E1978523300DD67DE /* UAInboxMessage.m */,
 				1F610DCA17835C3A00BCD96E /* UAInboxMessageData.h */,
 				1F610DCB17835C3A00BCD96E /* UAInboxMessageData.m */,
+				49C1F08A197DDB4400DD67DE /* UAInboxMessageList+Internal.h */,
 				1F610DCC17835C3A00BCD96E /* UAInboxMessageList.h */,
 				1F610DCD17835C3A00BCD96E /* UAInboxMessageList.m */,
 				1F610DCE17835C3A00BCD96E /* UAInboxMessageListObserver.h */,
