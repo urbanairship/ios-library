@@ -26,59 +26,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-#import "UADisposable.h"
-#import "UAInboxMessageListDelegate.h"
-
-typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
-
-@class UAInboxMessageList;
-
-/**
- * This class represents a Rich Push Inbox message. It contains all
- * the available information about a message, including the URLs where
- * the message can be retrieved.
- */
 @interface UAInboxMessageData : NSManagedObject
-
-
-/**
- * Mark the message as read.
- * @param successBlock A block to be executed if the mark-as-read operation is successful.
- * @param failureBlock A block to be executed if the mark-as-read operation fails.
- * @return A UADisposable which can be used to cancel callback execution.
- * This value will be nil if the request is not submitted due to an already scheduled update,
- * or because the message has already been marked as read.
- */
-- (UADisposable *)markAsReadWithSuccessBlock:(UAInboxMessageCallbackBlock)successBlock
-                  withFailureBlock:(UAInboxMessageCallbackBlock)failureBlock;
-
-/**
- * Mark the message as read. This eventually results in a callback to
- * [UAInboxMessageListDelegate singleMessageMarkAsReadFinished:] or
- * [UAInboxMessageListDelegate singleMessageMarkAsReadFailed:].
- *
- * @param delegate An object implementing the `UAInboxMessageListDelegate` protocol.
- * @return A UADisposable which can be used to cancel callback execution.
- * This value will be nil if the request is not submitted due to an already scheduled update,
- * or because the message has already been marked as read.
- */
-- (UADisposable *)markAsReadWithDelegate:(id<UAInboxMessageListDelegate>)delegate;
-
-/**
- * Mark the message as read. This eventually results in a callback to
- * [UAInboxMessageListObserver singleMessageMarkAsReadFinished:] or
- * [UAInboxMessageListObserver singleMessageMarkAsReadFailed:].
- *
- * @return YES if the request was submitted or already complete, otherwise NO.
- *
- * @deprecated As of version 3.0. Replaced with block and delegate-based methods.
- */
-- (BOOL)markAsRead __attribute__((deprecated("As of version 3.0")));
-
-/**
- * YES if the message is expired, NO otherwise
- */
-- (BOOL)isExpired;
 
 ///---------------------------------------------------------------------------------------
 /// @name Message Properties
@@ -134,10 +82,8 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
 @property (nonatomic, strong) NSDictionary *rawMessageObject;
 
 /**
- * The parent inbox.
- * 
- * Note that this object is not retained by the message.
+ * Indicates whether the message has been deleted from the backing store.
  */
-@property (weak) UAInboxMessageList *inbox; 
+- (BOOL)isGone;
 
 @end
