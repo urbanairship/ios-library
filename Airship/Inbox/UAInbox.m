@@ -24,7 +24,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #import "UAInbox.h"
-
+#import "UAInbox+Internal.h"
 #import "UAirship.h"
 #import "UAInboxDBManager.h"
 #import "UAInboxMessageList.h"
@@ -97,7 +97,7 @@ static Class _uiClass;
         [g_sharedUAInbox.messageList removeObserver:g_sharedUAInbox.pushHandler];
         if (g_sharedUAInbox.messageList) {
             if (g_sharedUAInbox.messageList.isRetrieving || g_sharedUAInbox.messageList.isBatchUpdating) {
-                g_sharedUAInbox.messageList.client = nil;
+                g_sharedUAInbox.client = nil;
             }
         }
         g_sharedUAInbox.messageList = nil;
@@ -130,7 +130,11 @@ static Class _uiClass;
 - (id)init {
     self = [super init];
     if (self) {
+
+        self.client = [[UAInboxAPIClient alloc] init];
+
         self.messageList = [[UAInboxMessageList alloc] init];
+        self.messageList.client = self.client;
 
         [self.messageList retrieveMessageListWithDelegate:nil];
 
