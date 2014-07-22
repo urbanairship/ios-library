@@ -43,7 +43,7 @@ typedef void (^UAActionCompletionHandler)(UAActionResult *);
 /**
  * A block that defines the primary work performed by an action.
  */
-typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler completionHandler);
+typedef void (^UAActionBlock)(UAActionArguments *, NSString *, UAActionCompletionHandler completionHandler);
 
 /**
  * Base class for actions, which define a modular unit of work.
@@ -82,7 +82,8 @@ typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler com
  * @param arguments A UAActionArguments value representing the arguments passed to the action.
  * @param result A UAActionResult from performing the action.
  */
-- (void)didPerformWithArguments:(UAActionArguments *)arguments withResult:(UAActionResult *)result;
+- (void)didPerformWithArguments:(UAActionArguments *)arguments
+                     withResult:(UAActionResult *)result;
 
 /**
  * Performs the action.
@@ -91,9 +92,12 @@ typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler com
  *
  * @note You should not ordinarily call this method directly.  Instead, use the `UAActionRunner`.
  * @param arguments A UAActionArguments value representing the arguments passed to the action.
+ * @param name A NSString representing the name of the action.
  * @param completionHandler A UAActionCompletionHandler that will be called when the action has finished executing.
  */
-- (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler;
+- (void)performWithArguments:(UAActionArguments *)arguments
+                  actionName:(NSString *)name
+           completionHandler:(UAActionCompletionHandler)completionHandler;
 
 #pragma mark factory methods
 
@@ -110,6 +114,7 @@ typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler com
  * @param actionBlock A UAActionBlock representing the primary work performed by the action.
  * @param predicateBlock A UAActionPredicate limiting the scope of the arguments.
  */
-+ (instancetype)actionWithBlock:(UAActionBlock)actionBlock acceptingArguments:(UAActionPredicate)predicateBlock;
++ (instancetype)actionWithBlock:(UAActionBlock)actionBlock
+             acceptingArguments:(UAActionPredicate)predicateBlock;
 
 @end

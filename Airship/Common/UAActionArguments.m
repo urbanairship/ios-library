@@ -35,7 +35,8 @@ NSString * const UAActionMetadataInboxMessageKey = @"com.urbanairship.message";
 
 @implementation UAActionArguments
 
-- (instancetype)initWithValue:(id)value withSituation:(UASituation)situation {
+- (instancetype)initWithValue:(id)value
+                withSituation:(UASituation)situation {
 
     self = [super init];
     if (self) {
@@ -46,7 +47,9 @@ NSString * const UAActionMetadataInboxMessageKey = @"com.urbanairship.message";
     return self;
 }
 
-- (instancetype)initWithValue:(id)value withSituation:(UASituation)situation metadata:(NSDictionary *)metadata{
+- (instancetype)initWithValue:(id)value
+                withSituation:(UASituation)situation
+                     metadata:(NSDictionary *)metadata {
     
     self = [super init];
     if (self) {
@@ -58,11 +61,14 @@ NSString * const UAActionMetadataInboxMessageKey = @"com.urbanairship.message";
     return self;
 }
 
-+ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation {
++ (instancetype)argumentsWithValue:(id)value
+                     withSituation:(UASituation)situation {
     return [[self alloc] initWithValue:value withSituation:situation];
 }
 
-+ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation metadata:(NSDictionary *)metadata {
++ (instancetype)argumentsWithValue:(id)value
+                     withSituation:(UASituation)situation
+                          metadata:(NSDictionary *)metadata {
     return [[self alloc] initWithValue:value withSituation:situation metadata:metadata];
 }
 

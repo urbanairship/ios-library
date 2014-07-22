@@ -103,7 +103,9 @@ SINGLETON_IMPLEMENTATION(UAActionRegistry)
 }
 
 
-- (BOOL)registerReservedAction:(UAAction *)action name:(NSString *)name predicate:(UAActionPredicate)predicate {
+- (BOOL)registerReservedAction:(UAAction *)action
+                          name:(NSString *)name
+                     predicate:(UAActionPredicate)predicate {
     if ([self registerAction:action name:name predicate:predicate]) {
         [self.reservedEntryNames addObject:name];
         return YES;
@@ -282,7 +284,7 @@ SINGLETON_IMPLEMENTATION(UAActionRegistry)
     UALandingPageAction *landingPageAction = [[UALandingPageAction alloc] init];
     [self registerAction:landingPageAction
                    names:@[kUALandingPageActionDefaultRegistryName, kUALandingPageActionDefaultRegistryAlias]
-               predicate:^(UAActionArguments *args){
+               predicate:^(UAActionArguments *args) {
                    if (UASituationBackgroundPush == args.situation) {
                        UAApplicationMetrics *metrics = [UAirship shared].applicationMetrics;
                        NSTimeInterval timeSinceLastOpen = [[NSDate date] timeIntervalSinceDate:metrics.lastApplicationOpenDate];

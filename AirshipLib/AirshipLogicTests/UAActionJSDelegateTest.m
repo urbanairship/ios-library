@@ -26,14 +26,14 @@
     __block BOOL ran = NO;
     __block NSString *result;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
     [[UAActionRegistry shared] registerAction:test name:@"test_action"];
 
-    UAAction *unserializable = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *unserializable = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
         ran = YES;
         handler([UAActionResult resultWithValue:self]);
     }];
@@ -46,7 +46,7 @@
                                                         webView:nil];
 
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
         result = script;
     }];
 
@@ -58,7 +58,7 @@
     data = [UAWebViewCallData callDataForURL:url
                                      webView:nil];
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
         result = script;
     }];
 
@@ -78,14 +78,14 @@
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
                                                         webView:nil];
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
     [[UAActionRegistry shared] registerAction:test name:@"test_action"];
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
         result = script;
     }];
 
@@ -100,7 +100,7 @@
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
                                                         webView:nil];
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
         result = script;
     }];
 
@@ -111,7 +111,7 @@
     __block NSString *result;
     __block BOOL ran = NO;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
@@ -122,7 +122,7 @@
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
                                                         webView:nil];
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
         result = script;
     }];
 
@@ -135,7 +135,7 @@
     __block NSString *result;
     __block BOOL ran = NO;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
@@ -146,7 +146,7 @@
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
                                                         webView:nil];
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
         result = script;
     }];
 
@@ -161,12 +161,12 @@
     __block BOOL alsoRan = NO;
     __block NSString *result;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
-    UAAction *alsoTest = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *alsoTest = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
         alsoRan = YES;
         handler([UAActionResult resultWithValue:@"yeah!"]);
     }];
@@ -179,7 +179,7 @@
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
                                                         webView:nil];
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
         result = script;
     }];
 
@@ -198,7 +198,7 @@
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
                                                         webView:nil];
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
         result = script;
     }];
 
@@ -211,7 +211,7 @@
     __block BOOL ran = NO;
 
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
@@ -223,7 +223,7 @@
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
                                                         webView:nil];
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
         result = script;
     }];
 
@@ -237,7 +237,7 @@
     __block int runCount = 0;
     __block NSString *result;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
         runCount ++;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
@@ -249,7 +249,7 @@
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
                                                         webView:nil];
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
         result = script;
     }];
 
@@ -265,12 +265,12 @@
     __block BOOL alsoRan = NO;
     __block NSString *result;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
-    UAAction *alsoTest = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *alsoTest = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
         alsoRan = YES;
         handler([UAActionResult resultWithValue:@"yeah!"]);
     }];
@@ -283,7 +283,7 @@
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
                                                         webView:nil];
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
         result = script;
     }];
 
@@ -299,7 +299,7 @@
      __block int runCount = 0;
     __block NSString *result;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
         runCount ++;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
@@ -311,7 +311,7 @@
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
                                                         webView:nil];
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
         result = script;
     }];
 
@@ -328,7 +328,7 @@
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
                                                         webView:nil];
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
         result = script;
     }];
 

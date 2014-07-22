@@ -43,24 +43,26 @@
 
 #pragma mark internal methods
 
-- (void)runWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-
-    completionHandler = completionHandler ?: ^(UAActionResult *result){
+- (void)runWithArguments:(UAActionArguments *)arguments
+              actionName:(NSString *)name
+       completionHandler:(UAActionCompletionHandler)completionHandler {
+    
+    completionHandler = completionHandler ?: ^(UAActionResult *result) {
         //if no completion handler was passed, use an empty block in its place
     };
-
+    
     typedef void (^voidBlock)(void);
-
+    
     //execute the passed block directly if we're on the main thread, otherwise
     //dispatch it to the main queue
-    void (^dispatchMainIfNecessary)(voidBlock) = ^(voidBlock block){
+    void (^dispatchMainIfNecessary)(voidBlock) = ^(voidBlock block) {
         if (![[NSThread currentThread] isEqual:[NSThread mainThread]]) {
             dispatch_async(dispatch_get_main_queue(), block);
         } else {
             block();
         }
     };
-
+    
     //make sure the initial acceptsArguments/willPerform/perform is executed on the main queue
     dispatchMainIfNecessary(^{
         if (![self acceptsArguments:arguments]) {
@@ -72,14 +74,15 @@
             completionHandler([UAActionResult rejectedArgumentsResult]);
         } else {
             [self willPerformWithArguments:arguments];
-            [self performWithArguments:arguments withCompletionHandler:^(UAActionResult *result){
+            [self performWithArguments:arguments
+                            actionName:name
+                     completionHandler:^(UAActionResult *result) {
                 //make sure the passed completion handler and didPerformWithArguments are executed on the
                 //main queue
                 dispatchMainIfNecessary(^{
                     if (!result) {
                         UA_LWARN("Action %@ called the completion handler with a nil result", [self description]);
                     }
-
                     [self didPerformWithArguments:arguments withResult:result];
                     completionHandler(result);
                 });
@@ -87,6 +90,7 @@
         }
     });
 }
+
 
 #pragma mark core methods
 
@@ -101,15 +105,18 @@
     //override
 }
 
-- (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+- (void)performWithArguments:(UAActionArguments *)args
+                  actionName:(NSString *)name
+           completionHandler:(UAActionCompletionHandler)completionHandler {
     if (self.actionBlock) {
-        self.actionBlock(arguments, completionHandler);
+        self.actionBlock(args, name, completionHandler);
     } else {
         completionHandler([UAActionResult emptyResult]);
     }
 }
 
-- (void)didPerformWithArguments:(UAActionArguments *)arguments withResult:(UAActionResult *)result {
+- (void)didPerformWithArguments:(UAActionArguments *)arguments
+                     withResult:(UAActionResult *)result {
     //override
 }
 
@@ -119,7 +126,8 @@
     return [[self alloc] initWithBlock:actionBlock];
 }
 
-+ (instancetype)actionWithBlock:(UAActionBlock)actionBlock acceptingArguments:(UAActionPredicate)predicateBlock {
++ (instancetype)actionWithBlock:(UAActionBlock)actionBlock
+             acceptingArguments:(UAActionPredicate)predicateBlock {
     UAAction *action = [self actionWithBlock:actionBlock];
     action.acceptsArgumentsBlock = predicateBlock;
     return action;

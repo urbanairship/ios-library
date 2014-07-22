@@ -30,7 +30,8 @@
 @implementation UAIncomingPushAction
 
 - (void)performWithArguments:(UAActionArguments *)arguments
-       withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+                  actionName:(NSString *)actionName
+           completionHandler:(UAActionCompletionHandler)completionHandler {
     switch (arguments.situation) {
         case UASituationForegroundPush:
             [self handleForegroundPush:arguments.value completionHandler:completionHandler];

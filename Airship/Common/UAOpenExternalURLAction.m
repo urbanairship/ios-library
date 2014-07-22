@@ -42,7 +42,8 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments
-       withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+                  actionName:(NSString *)actionName
+           completionHandler:(UAActionCompletionHandler)completionHandler {
 
     NSURL *url = [self createURLFromValue:arguments.value];
 

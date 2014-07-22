@@ -28,6 +28,7 @@
 #import <OCMock/OCMock.h>
 #import "UAAction+Operators.h"
 #import "UATestSynchronizer.h"
+#import "UAActionArguments+Internal.h"
 
 @interface UAOpenExternalURLActionTest : XCTestCase
 
@@ -100,7 +101,7 @@
 
     [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE(YES)] openURL:[NSURL URLWithString:self.arguments.value]];
 
-    [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *performResult) {
+    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *performResult) {
         result = performResult;
     }];
 
@@ -123,7 +124,7 @@
 
     [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE(YES)] openURL:self.arguments.value];
 
-    [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *performResult) {
+    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *performResult) {
         result = performResult;
     }];
 
@@ -145,7 +146,7 @@
 
     [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE(NO)] openURL:OCMOCK_ANY];
 
-    [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *performResult) {
+    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *performResult) {
         result = performResult;
     }];
 
@@ -166,7 +167,7 @@
     self.arguments.value = [NSURL URLWithString:@"sms://+1(541)555%2032195%202241%202313"];
     [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE(YES)] openURL:[NSURL URLWithString:@"sms:+15415553219522412313"]];
 
-    [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *performResult) {
+    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *performResult) {
         result = performResult;
     }];
 
@@ -177,7 +178,7 @@
     self.arguments.value = @"tel://+1541555adfasdfa%2032195%202241%202313";
     [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE(YES)] openURL:[NSURL URLWithString:@"tel:+15415553219522412313"]];
 
-    [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *performResult) {
+    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *performResult) {
         result = performResult;
     }];
 
@@ -195,7 +196,7 @@
     self.arguments.value = [NSURL URLWithString:@"app://itunes.apple.com/some-app"];
     [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE(YES)] openURL:[NSURL URLWithString:@"http://itunes.apple.com/some-app"]];
 
-    [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *performResult) {
+    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *performResult) {
         result = performResult;
     }];
 
@@ -206,7 +207,7 @@
     self.arguments.value = @"app://phobos.apple.com/some-app";
     [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE(YES)] openURL:[NSURL URLWithString:@"http://phobos.apple.com/some-app"]];
 
-    [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *performResult) {
+    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *performResult) {
         result = performResult;
     }];
 

@@ -88,7 +88,7 @@
                                                             withSituation:UASituationWebViewInvocation
                                                               metadata:[self createMetaDataFromCallData:data]];
     
-    [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
+    [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result) {
         UA_LDEBUG("Action %@ finished executing with status %ld", actionName, (long)result.status);
         if (!callbackID) {
             completionHandler(nil);
@@ -174,7 +174,7 @@
                                                                     withSituation:UASituationWebViewInvocation
                                                                          metadata:[self createMetaDataFromCallData:data]];
 
-            [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
+            [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result) {
                 if (result.status == UAActionStatusCompleted) {
                     UA_LDEBUG(@"action %@ completed successfully", actionName);
                 } else {
@@ -226,7 +226,7 @@
                                                                     withSituation:UASituationWebViewInvocation
                                                                          metadata:[self createMetaDataFromCallData:data]];
 
-            [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
+            [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result) {
                 if (result.status == UAActionStatusCompleted) {
                     UA_LDEBUG(@"action %@ completed successfully", actionName);
                 } else {
@@ -253,7 +253,7 @@
 
         NSString *callbackID = [data.arguments firstObject];
         [self runActionWithCallbackID:callbackID data:data completionHandler:completionHandler];
-    } else if ([data.name isEqualToString:@"run-actions"]){
+    } else if ([data.name isEqualToString:@"run-actions"]) {
         //run-actions is the 'complex' version with JSON-encoded string arguments, and
         //allows multiple simultaneous actions
         [self runActionsWithData:data completionHandler:completionHandler];

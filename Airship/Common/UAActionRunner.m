@@ -33,17 +33,18 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
 @implementation UAActionRunner
 
 + (void)runActionWithName:(NSString *)actionName
-                withArguments:(UAActionArguments *)arguments
-        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+            withArguments:(UAActionArguments *)arguments
+    withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
     UAActionRegistryEntry *entry = [[UAActionRegistry shared] registryEntryWithName:actionName];
 
     if (entry) {
         if (!entry.predicate || entry.predicate(arguments)) {
             UA_LINFO("Running action %@", actionName);
-            arguments.name = actionName;
             UAAction *action = [entry actionForSituation:arguments.situation];
-            [self runAction:action withArguments:arguments withCompletionHandler:completionHandler];
+            [action runWithArguments:arguments
+                          actionName:actionName
+               completionHandler:completionHandler];
         } else {
             UA_LINFO(@"Not running action %@ because of predicate.", actionName);
             if (completionHandler) {
@@ -68,8 +69,7 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
 + (void)runAction:(UAAction *)action
     withArguments:(UAActionArguments *)arguments
 withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-
-    [action runWithArguments:arguments withCompletionHandler:completionHandler];
+    [action runWithArguments:arguments actionName:nil completionHandler:completionHandler];
 }
 
 + (void)runActions:(NSDictionary *)actions
@@ -108,8 +108,7 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler {
         };
 
         UAActionArguments *args = [actions objectForKey:actionName];
-        args.name = actionName;
-
+        
         [self runActionWithName:actionName
                       withArguments:args withCompletionHandler:handler];
     }

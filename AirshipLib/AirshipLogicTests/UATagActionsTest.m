@@ -7,6 +7,7 @@
 #import "UARemoveTagsAction.h"
 #import "UAPush+Internal.h"
 #import "UAPush+Test.h"
+#import "UAActionArguments+Internal.h"
 
 @interface UATagActionsTest : XCTestCase
 @property(nonatomic, strong) id mockPush;
@@ -94,21 +95,23 @@
  */
 - (void)testAddTagsAction {
     UAAddTagsAction *action = [[UAAddTagsAction alloc] init];
+    NSString *actionName = @"test_action";
     [self validateArgumentsForAddRemoveTagsAction:action];
 
     [[self.mockPush expect] addTagToCurrentDevice:[OCMArg any]];
     [[self.mockPush expect] updateRegistration];
 
     [action runWithArguments:self.stringArgs
-       withCompletionHandler:^(UAActionResult *result){
+                  actionName:actionName
+           completionHandler:^(UAActionResult *result) {
            [self.mockPush verify];
     }];
 
     [[self.mockPush expect] addTagsToCurrentDevice:[OCMArg any]];
     [[self.mockPush expect] updateRegistration];
 
-    [action runWithArguments:self.arrayArgs
-       withCompletionHandler:^(UAActionResult *result){
+    [action runWithArguments:self.arrayArgs actionName:actionName
+       completionHandler:^(UAActionResult *result) {
            [self.mockPush verify];
     }];
 }
@@ -118,13 +121,16 @@
  */
 - (void)testRemoveTagsAction {
     UARemoveTagsAction *action = [[UARemoveTagsAction alloc] init];
+    NSString *actionName = @"test_action";
+
     [self validateArgumentsForAddRemoveTagsAction:action];
 
     [[self.mockPush expect] removeTagFromCurrentDevice:[OCMArg any]];
     [[self.mockPush expect] updateRegistration];
 
     [action runWithArguments:self.stringArgs
-       withCompletionHandler:^(UAActionResult *result){
+                  actionName:actionName
+           completionHandler:^(UAActionResult *result) {
            [self.mockPush verify];
     }];
 
@@ -132,7 +138,8 @@
     [[self.mockPush expect] updateRegistration];
 
     [action runWithArguments:self.arrayArgs
-       withCompletionHandler:^(UAActionResult *result){
+                  actionName:actionName
+           completionHandler:^(UAActionResult *result) {
            [self.mockPush verify];
     }];
 

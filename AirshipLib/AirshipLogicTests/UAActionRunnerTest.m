@@ -47,28 +47,6 @@ NSString *anotherActionName = @"AnotherActionName";
 }
 
 /**
- * Test running an action
- */
-- (void)testRunAction {
-    __block BOOL didCompletionHandlerRun = NO;
-
-    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
-    UAActionResult *result = [UAActionResult emptyResult];
-
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
-        XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
-        completionHandler(result);
-    }];
-
-    [UAActionRunner runAction:action withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
-        didCompletionHandlerRun = YES;
-        XCTAssertEqualObjects(result, finalResult, @"Runner completion handler did not receive the action's results");
-    }];
-
-    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
-}
-
-/**
  * Test running an action from a name
  */
 - (void)testRunActionWithName {
@@ -77,7 +55,7 @@ NSString *anotherActionName = @"AnotherActionName";
 
     UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
         didActionRun = YES;
         XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
         completionHandler([UAActionResult emptyResult]);
@@ -99,7 +77,7 @@ NSString *anotherActionName = @"AnotherActionName";
 
     [UAActionRunner runActionWithName:@"nopenopenopenopenope"
                         withArguments:nil
-                withCompletionHandler:^(UAActionResult *result){
+                withCompletionHandler:^(UAActionResult *result) {
                     XCTAssertEqual(result.status, UAActionStatusActionNotFound, "action should not be found");
                     XCTAssertNil(result.value, @"a bad action name should result in a nil value");
                     didCompletionHandlerRun = YES;
@@ -110,7 +88,7 @@ NSString *anotherActionName = @"AnotherActionName";
     didCompletionHandlerRun = NO;
 
     //re-register the action with a predicate guaranteed to fail
-    [[UAActionRegistry shared] registerAction:action name:actionName predicate:^(UAActionArguments *args){
+    [[UAActionRegistry shared] registerAction:action name:actionName predicate:^(UAActionArguments *args) {
         return NO;
     }];
 
@@ -130,7 +108,7 @@ NSString *anotherActionName = @"AnotherActionName";
 
     UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
         XCTFail(@"Action should not run if the predicate returns NO");
         completionHandler([UAActionResult emptyResult]);
     }];
@@ -165,7 +143,7 @@ NSString *anotherActionName = @"AnotherActionName";
 
     UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
         didActionRun = YES;
         XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
         completionHandler([UAActionResult emptyResult]);
@@ -211,20 +189,6 @@ NSString *anotherActionName = @"AnotherActionName";
 
 }
 
-/**
- * Test running an action with a null completion handler
- */
-- (void)testRunActionNullCompletionHandler {
-    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
-    UAActionResult *result = [UAActionResult emptyResult];
-
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
-        completionHandler(result);
-    }];
-
-    XCTAssertNoThrow([UAActionRunner runAction:action withArguments:arguments withCompletionHandler:nil],
-                     "Null completion handler should not throw an exception");
-}
 
 /**
  * Test running an empty dictionary of actions
@@ -252,6 +216,29 @@ NSString *anotherActionName = @"AnotherActionName";
                      "Null completion handler should not throw an exception");
 }
 
+
+/**
+ * Test running an action
+ */
+- (void)testRunAction {
+    __block BOOL didCompletionHandlerRun = NO;
+    
+    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
+    UAActionResult *result = [UAActionResult emptyResult];
+    
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
+        XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
+        completionHandler(result);
+    }];
+    
+    [UAActionRunner runAction:action withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
+        didCompletionHandlerRun = YES;
+        XCTAssertEqualObjects(result, finalResult, @"Runner completion handler did not receive the action's results");
+    }];
+    
+    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
+}
+
 /**
  * Test running a set of actions from a dictionary
  */
@@ -261,7 +248,7 @@ NSString *anotherActionName = @"AnotherActionName";
 
     UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
         actionRunCount++;
         XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
         completionHandler([UAActionResult emptyResult]);
@@ -292,6 +279,21 @@ NSString *anotherActionName = @"AnotherActionName";
 
     XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
     XCTAssertEqual(2, actionRunCount, @"Both actions should of ran");
+}
+
+/**
+ * Test running an action with a null completion handler
+ */
+- (void)testRunActionNullCompletionHandler {
+    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
+    UAActionResult *result = [UAActionResult emptyResult];
+    
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
+        completionHandler(result);
+    }];
+    
+    XCTAssertNoThrow([UAActionRunner runAction:action withArguments:arguments withCompletionHandler:nil],
+                     "Null completion handler should not throw an exception");
 }
 
 
