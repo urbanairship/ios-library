@@ -23,7 +23,7 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#import "UAInboxMessage.h"
+#import "UAInboxMessageData.h"
 #import "UAInboxMessage+Internal.h"
 
 #import "UAirship.h"
@@ -50,103 +50,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @dynamic extra;
 @dynamic rawMessageObject;
 
-@synthesize inbox;
 @synthesize contentType;
-@synthesize client;
 
-#pragma mark -
-#pragma mark NSObject methods
-
-// NSObject override
-- (NSString *)description {
-    return [NSString stringWithFormat: @"%@ - %@", self.messageID, self.title];
+- (BOOL)isGone{
+    return ![self.managedObjectContext existingObjectWithID:self.objectID error:NULL];
 }
-
-#pragma mark -
-#pragma mark Mark As Read Delegate Methods
-
-- (UADisposable *)markAsReadWithSuccessBlock:(UAInboxMessageCallbackBlock)successBlock
-                  withFailureBlock:(UAInboxMessageCallbackBlock)failureBlock {
-
-    UAInboxMessageList *strongInbox = self.inbox;
-
-    if (!self.unread || strongInbox.isBatchUpdating) {
-        return nil;
-    }
-
-    strongInbox.isBatchUpdating = YES;
-
-    __block BOOL isCallbackCancelled = NO;
-
-    UADisposable *disposable = [UADisposable disposableWithBlock:^{
-        isCallbackCancelled = YES;
-    }];
-
-    [self.client
-     markMessageRead:self onSuccess:^{
-         if (self.unread) {
-             strongInbox.unreadCount = strongInbox.unreadCount - 1;
-             self.unread = NO;
-             [[UAInboxDBManager shared] saveContext];
-         }
-
-         strongInbox.isBatchUpdating = NO;
-
-         [strongInbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
-
-         if (successBlock && !isCallbackCancelled) {
-             successBlock(self);
-         }
-     } onFailure:^(UAHTTPRequest *request){
-         UA_LDEBUG(@"Mark as read failed for message %@ with HTTP status: %ld", self.messageID, (long)request.response.statusCode);
-         strongInbox.isBatchUpdating = NO;
-
-         [strongInbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
-
-         if (failureBlock && !isCallbackCancelled) {
-             failureBlock(self);
-         }
-     }];
-
-    return disposable;
-}
-
-- (UADisposable *)markAsReadWithDelegate:(id<UAInboxMessageListDelegate>)delegate {
-    __weak id<UAInboxMessageListDelegate> weakDelegate = delegate;
-
-    return [self markAsReadWithSuccessBlock:^(UAInboxMessage *message){
-        id<UAInboxMessageListDelegate> strongDelegate = weakDelegate;
-        if ([strongDelegate respondsToSelector:@selector(singleMessageMarkAsReadFinished:)]) {
-            [strongDelegate singleMessageMarkAsReadFinished:message];
-        }
-    } withFailureBlock: ^(UAInboxMessage *message){
-        id<UAInboxMessageListDelegate> strongDelegate = weakDelegate;
-        if ([strongDelegate respondsToSelector:@selector(singleMessageMarkAsReadFailed:)]) {
-            [strongDelegate singleMessageMarkAsReadFailed:message];
-        }
-    }];
-}
-
-- (BOOL)isExpired {
-    if (self.messageExpiration) {
-        NSComparisonResult result = [self.messageExpiration compare:[NSDate date]];
-        return (result == NSOrderedAscending || result == NSOrderedSame);
-    }
-    
-    return NO;
-}
-
-- (BOOL)markAsRead {
-    //the return value should be YES if a request was sent or if we're already marked read.
-    return [self markAsReadWithSuccessBlock:nil withFailureBlock:nil] || !self.unread;
-}
-
--(UAInboxAPIClient *)client {
-    if (!client) {
-       client = [[UAInboxAPIClient alloc] init];
-    }
-
-    return client;
-}
-
 @end
