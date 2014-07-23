@@ -189,10 +189,6 @@
     }
 }
 
-- (BOOL)unread {
-    return _unread;
-}
-
 - (void)setMessageSent:(NSDate *)messageSent {
     _messageSent = messageSent;
     if (!self.data.isGone) {
