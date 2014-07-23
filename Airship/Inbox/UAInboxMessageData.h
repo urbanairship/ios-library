@@ -26,6 +26,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+/**
+ * CoreData class representing the backing data for
+ * a UAInboxMessage.
+ *
+ * This classs should not ordinarily be used directly.
+ */
 @interface UAInboxMessageData : NSManagedObject
 
 ///---------------------------------------------------------------------------------------
@@ -36,7 +42,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * The Urban Airship message ID.
  * This ID may be used to match an incoming push notification to a specific message.
  */
-@property (nonatomic, strong) NSString *messageID;
+@property (nonatomic, copy) NSString *messageID;
 
 /**
  * The URL for the message body itself.
@@ -66,7 +72,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @property (nonatomic, strong) NSDate *messageExpiration;
 
 /** The message title */
-@property (nonatomic, strong) NSString *title;
+@property (nonatomic, copy) NSString *title;
 
 /**
  * The message's extra dictionary. This dictionary can be populated
