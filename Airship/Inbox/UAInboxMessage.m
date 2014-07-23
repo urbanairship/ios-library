@@ -93,7 +93,7 @@
         isCallbackCancelled = YES;
     }];
 
-    UAInboxAPIClient *client = [UAInbox shared].client;
+    UAInboxAPIClient *client = self.client ?: [UAInbox shared].client;
 
     [client
      markMessageRead:self onSuccess:^{
