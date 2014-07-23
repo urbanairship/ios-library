@@ -89,6 +89,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
  * Indicates whether the message has been deleted from the backing store.
+ *
+ * Note: this method is more reliable for our purposes than the inherited
+ * isInserted and isDeleted methods, which both return NO after and insertion
+ * or deletion has been commited to disk once the context is saved.
  */
 - (BOOL)isGone;
 
