@@ -91,20 +91,10 @@ static Class _uiClass;
 }
 
 + (void)land {
-    
-    if (g_sharedUAInbox) {
-
-        [g_sharedUAInbox.messageList removeObserver:g_sharedUAInbox.pushHandler];
-        if (g_sharedUAInbox.messageList) {
-            if (g_sharedUAInbox.messageList.isRetrieving || g_sharedUAInbox.messageList.isBatchUpdating) {
-                g_sharedUAInbox.client = nil;
-            }
-        }
-        g_sharedUAInbox.messageList = nil;
-        [[g_sharedUAInbox uiClass]land];
-
-        g_sharedUAInbox = nil;
-    }
+    [g_sharedUAInbox.client cancelAllRequests];
+    [g_sharedUAInbox.messageList removeObserver:g_sharedUAInbox.pushHandler];
+    [[g_sharedUAInbox uiClass]land];
+    g_sharedUAInbox = nil;
 }
 
 //note: this is for deleting the UAInboxCache from disk, which is no longer in use.
