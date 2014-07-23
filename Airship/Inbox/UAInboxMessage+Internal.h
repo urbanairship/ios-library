@@ -5,7 +5,6 @@
 
 @interface UAInboxMessage ()
 
-@property(nonatomic, strong) UAInboxAPIClient *client;
 @property(nonatomic, strong) UAInboxMessageData *data;
 
 + (instancetype)messageWithData:(UAInboxMessageData *)data;
