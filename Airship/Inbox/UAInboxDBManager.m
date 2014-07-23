@@ -31,7 +31,7 @@
 #import "UAirship.h"
 #import "UAConfig.h"
 
-#define kUAInboxDBEntityName @"UAInboxMessageData"
+#define kUAInboxDBEntityName @"UAInboxMessage"
 
 @implementation UAInboxDBManager
 
@@ -178,7 +178,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     _managedObjectModel = [[NSManagedObjectModel alloc] init];
     NSEntityDescription *inboxEntity = [[NSEntityDescription alloc] init];
     [inboxEntity setName:kUAInboxDBEntityName];
-    [inboxEntity setManagedObjectClassName:kUAInboxDBEntityName];
+    [inboxEntity setManagedObjectClassName:@"UAInboxMessageData"];
     [_managedObjectModel setEntities:@[inboxEntity]];
 
     NSMutableArray *inboxProperties = [NSMutableArray array];
