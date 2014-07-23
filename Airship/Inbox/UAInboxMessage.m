@@ -32,17 +32,6 @@
 
 @implementation UAInboxMessage
 
-@synthesize messageID = _messageID;
-@synthesize messageBodyURL = _messageBodyURL;
-@synthesize messageURL = _messageURL;
-@synthesize contentType = _contentType;
-@synthesize unread = _unread;
-@synthesize messageSent = _messageSent;
-@synthesize messageExpiration = _messageExpiration;
-@synthesize title = _title;
-@synthesize extra = _extra;
-@synthesize rawMessageObject = _rawMessageObject;
-
 - (instancetype)initWithMessageData:(UAInboxMessageData *)data {
     self = [super init];
     if (self) {
@@ -154,71 +143,101 @@
     return [self markAsReadWithSuccessBlock:nil withFailureBlock:nil] || !self.unread;
 }
 
+- (NSString *)messageID {
+    return self.data.messageID;
+}
+
 - (void)setMessageID:(NSString *)messageID {
-    _messageID = messageID;
     if (!self.data.isGone) {
         self.data.messageID = messageID;
     }
 }
 
+- (NSURL *)messageBodyURL {
+    return self.data.messageBodyURL;
+}
+
 - (void)setMessageBodyURL:(NSURL *)messageBodyURL {
-    _messageBodyURL = messageBodyURL;
     if (!self.data.isGone) {
         self.data.messageBodyURL = messageBodyURL;
     }
 }
 
+- (NSURL *)messageURL {
+    return self.data.messageURL;
+}
+
 - (void)setMessageURL:(NSURL *)messageURL {
-    _messageURL = messageURL;
     if (!self.data.isGone) {
         self.data.messageURL = messageURL;
     }
 }
 
+- (NSString *)contentType {
+    return self.data.contentType;
+}
+
 - (void)setContentType:(NSString *)contentType {
-    _contentType = contentType;
     if (!self.data.isGone) {
         self.data.contentType = contentType;
     }
 }
 
+- (BOOL)unread {
+    return self.data.unread;
+}
+
 - (void)setUnread:(BOOL)unread {
-    _unread = unread;
     if (!self.data.isGone) {
         self.data.unread = unread;
     }
 }
 
+- (NSDate *)messageSent {
+    return self.data.messageSent;
+}
+
 - (void)setMessageSent:(NSDate *)messageSent {
-    _messageSent = messageSent;
     if (!self.data.isGone) {
         self.data.messageSent = messageSent;
     }
 }
 
+- (NSDate *)messageExpiration {
+    return self.data.messageExpiration;
+}
+
 - (void)setMessageExpiration:(NSDate *)messageExpiration {
-    _messageExpiration = messageExpiration;
     if (!self.data.isGone) {
         self.data.messageExpiration = messageExpiration;
     }
 }
 
+- (NSString *)title {
+    return self.data.title;
+}
+
 - (void)setTitle:(NSString *)title {
-    _title = title;
     if (!self.data.isGone) {
         self.data.title = title;
     }
 }
 
+- (NSDictionary *)extra {
+    return self.data.extra;
+}
+
 - (void)setExtra:(NSDictionary *)extra {
-    _extra = extra;
     if (!self.data.isGone) {
         self.data.extra = extra;
     }
 }
 
+- (NSDictionary *)rawMessageObject {
+    return self.data.rawMessageObject;
+}
+
 - (void)setRawMessageObject:(NSDictionary *)rawMessageObject {
-    _rawMessageObject = rawMessageObject;
     if (!self.data.isGone) {
         self.data.rawMessageObject = rawMessageObject;
     }
