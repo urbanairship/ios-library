@@ -178,6 +178,9 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     _managedObjectModel = [[NSManagedObjectModel alloc] init];
     NSEntityDescription *inboxEntity = [[NSEntityDescription alloc] init];
     [inboxEntity setName:kUAInboxDBEntityName];
+
+    // Note: the class name does not need to be the same as the entity name, but maintaining a consistent
+    // entity name is necessary in order to smoothly migrate if the class name changes
     [inboxEntity setManagedObjectClassName:@"UAInboxMessageData"];
     [_managedObjectModel setEntities:@[inboxEntity]];
 
