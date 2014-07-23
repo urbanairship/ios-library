@@ -448,4 +448,12 @@
 
     [mockDate stopMocking];
 }
+
+- (void)testDeletedMessagesAreSafeToTouch {
+    XCTAssertFalse(self.message.data.isGone, @"message should not be 'gone'");
+    [self.dbManager deleteMessages:@[self.message]];
+    XCTAssertTrue(self.message.data.isGone, @"message should be 'gone'");
+    XCTAssertNoThrow(self.message.unread = !self.message.unread, @"writing to a property on the deleted message should not throw");
+}
+
 @end
