@@ -163,6 +163,21 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertNil(self.push.alias, @"alias should be able to be cleared");
     XCTAssertNil([[NSUserDefaults standardUserDefaults] stringForKey:UAPushAliasSettingsKey],
                  @"alias should be able to be cleared in standardUserDefaults");
+
+    self.push.alias = @"";
+    XCTAssertEqualObjects(@"", self.push.alias, @"alias is not being set correctly");
+    XCTAssertEqualObjects(@"", [[NSUserDefaults standardUserDefaults] stringForKey:UAPushAliasSettingsKey],
+                          @"alias should be stored in standardUserDefaults");
+
+    self.push.alias = @"   ";
+    XCTAssertEqualObjects(@"", self.push.alias, @"alias is not being trimmed and set correctly");
+    XCTAssertEqualObjects(@"", [[NSUserDefaults standardUserDefaults] stringForKey:UAPushAliasSettingsKey],
+                          @"alias should be stored in standardUserDefaults");
+
+    self.push.alias = @"   a   ";
+    XCTAssertEqualObjects(@"a", self.push.alias, @"alias is not being trimmed and set correctly");
+    XCTAssertEqualObjects(@"a", [[NSUserDefaults standardUserDefaults] stringForKey:UAPushAliasSettingsKey],
+                          @"alias should be stored in standardUserDefaults");
 }
 
 - (void)testTags {
