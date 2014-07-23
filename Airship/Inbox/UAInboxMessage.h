@@ -46,7 +46,7 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
  * The Urban Airship message ID.
  * This ID may be used to match an incoming push notification to a specific message.
  */
-@property (nonatomic, strong) NSString *messageID;
+@property (nonatomic, copy) NSString *messageID;
 
 /**
  * The URL for the message body itself.
@@ -76,7 +76,7 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
 @property (nonatomic, strong) NSDate *messageExpiration;
 
 /** The message title */
-@property (nonatomic, strong) NSString *title;
+@property (nonatomic, copy) NSString *title;
 
 /**
  * The message's extra dictionary. This dictionary can be populated
