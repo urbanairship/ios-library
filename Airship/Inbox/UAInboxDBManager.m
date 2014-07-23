@@ -74,7 +74,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
         UALOG(@"No results!");
     }
 
-    return resultMessages ?: [NSArray array];
+    return resultMessages;
 }
 
 - (NSSet *)messageIDs {
