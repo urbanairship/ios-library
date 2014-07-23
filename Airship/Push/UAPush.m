@@ -199,7 +199,8 @@ static Class _uiClass;
 }
 
 - (void)setAlias:(NSString *)alias {
-    [[NSUserDefaults standardUserDefaults] setObject:alias forKey:UAPushAliasSettingsKey];
+    NSString * trimmedAlias = [alias stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    [[NSUserDefaults standardUserDefaults] setObject:trimmedAlias forKey:UAPushAliasSettingsKey];
 }
 
 - (NSArray *)tags {
