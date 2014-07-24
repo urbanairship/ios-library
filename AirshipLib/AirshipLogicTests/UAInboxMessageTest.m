@@ -449,6 +449,10 @@
     [mockDate stopMocking];
 }
 
+/**
+ * Test that reading and writing properties on a message deleted from the database doesn't
+ * crash the application.
+ */
 - (void)testDeletedMessagesAreSafeToTouch {
     XCTAssertFalse(self.message.data.isGone, @"message should not be 'gone'");
     [self.dbManager deleteMessages:@[self.message]];
