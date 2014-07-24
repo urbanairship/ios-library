@@ -24,12 +24,15 @@
  */
 
 
-#define kEventAppInitSize               450//397 w/ push id, no inbox id
-#define kEventAppExitSize               200//136 w/ only network type
-#define kEventDeviceRegistrationSize    200//153 w/ only user info
-#define kEventPushReceivedSize          200//160 w/ uuid push info
-#define kEventAppActiveSize             120
-#define kEventAppInactiveSize           120
+
+#define kEventAppInitSize               (NSUInteger) 450//397 w/ push id, no inbox id
+#define kEventAppExitSize               (NSUInteger) 200//136 w/ only network type
+
+#define kEventDeviceRegistrationSize    (NSUInteger) 200//153 w/ only user info
+#define kEventPushReceivedSize          (NSUInteger) 200//160 w/ uuid push info
+#define kEventAppActiveSize             (NSUInteger) 120
+#define kEventAppInactiveSize           (NSUInteger) 120
+
 
 @interface UAEvent : NSObject
 
