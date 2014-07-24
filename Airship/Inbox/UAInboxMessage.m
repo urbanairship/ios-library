@@ -36,16 +36,6 @@
     self = [super init];
     if (self) {
         self.data = data;
-        self.messageID = data.messageID;
-        self.messageBodyURL = data.messageBodyURL;
-        self.messageURL = data.messageURL;
-        self.contentType = data.contentType;
-        self.unread = data.unread;
-        self.messageSent = data.messageSent;
-        self.messageExpiration = data.messageExpiration;
-        self.title = data.title;
-        self.extra = data.extra;
-        self.rawMessageObject = data.rawMessageObject;
     }
     return self;
 }
