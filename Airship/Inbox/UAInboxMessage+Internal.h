@@ -18,7 +18,7 @@
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, strong) NSDictionary *extra;
 @property (nonatomic, strong) NSDictionary *rawMessageObject;
-@property (weak) UAInboxMessageList *inbox;
+@property (nonatomic, weak) UAInboxMessageList *inbox;
 
 + (instancetype)messageWithData:(UAInboxMessageData *)data;
 
