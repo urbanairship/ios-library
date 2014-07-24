@@ -46,57 +46,57 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
  * The Urban Airship message ID.
  * This ID may be used to match an incoming push notification to a specific message.
  */
-@property (nonatomic, copy) NSString *messageID;
+@property (nonatomic, readonly, copy) NSString *messageID;
 
 /**
  * The URL for the message body itself.
  * This URL may only be accessed with Basic Auth credentials set to the user id and password.
  */
-@property (nonatomic, strong) NSURL *messageBodyURL;
+@property (nonatomic, readonly, strong) NSURL *messageBodyURL;
 
 /** The URL for the message.
  * This URL may only be accessed with Basic Auth credentials set to the user id and password.
  */
-@property (nonatomic, strong) NSURL *messageURL;
+@property (nonatomic, readonly, strong) NSURL *messageURL;
 
 /** The MIME content type for the message (e.g., text/html) */
-@property (nonatomic, copy) NSString *contentType;
+@property (nonatomic, readonly, copy) NSString *contentType;
 
 /** YES if the message is unread, otherwise NO. */
-@property (nonatomic, assign) BOOL unread;
+@property (nonatomic, readonly, assign) BOOL unread;
 
 /** The date and time the message was sent (UTC) */
-@property (nonatomic, strong) NSDate *messageSent;
+@property (nonatomic, readonly, strong) NSDate *messageSent;
 
 /**
  * The date and time the message will expire.
  *
  * A nil value indicates it will never expire
  */
-@property (nonatomic, strong) NSDate *messageExpiration;
+@property (nonatomic, readonly, strong) NSDate *messageExpiration;
 
 /** The message title */
-@property (nonatomic, copy) NSString *title;
+@property (nonatomic, readonly, copy) NSString *title;
 
 /**
  * The message's extra dictionary. This dictionary can be populated
  * with arbitrary key-value data at the time the message is composed.
  */
-@property (nonatomic, strong) NSDictionary *extra;
+@property (nonatomic, readonly, strong) NSDictionary *extra;
 
 /**
  * The raw message dictionary. This is the dictionary that
  * originally created the message.  It can contain more values
  * then the message.
  */
-@property (nonatomic, strong) NSDictionary *rawMessageObject;
+@property (nonatomic, readonly, strong) NSDictionary *rawMessageObject;
 
 /**
  * The parent inbox.
  *
  * Note that this object is not retained by the message.
  */
-@property (weak) UAInboxMessageList *inbox;
+@property (readonly, weak) UAInboxMessageList *inbox;
 
 /**
  * Mark the message as read.
