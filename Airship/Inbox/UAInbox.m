@@ -24,7 +24,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #import "UAInbox.h"
-
+#import "UAInbox+Internal.h"
 #import "UAirship.h"
 #import "UAInboxDBManager.h"
 #import "UAInboxMessageList.h"
@@ -91,20 +91,10 @@ static Class _uiClass;
 }
 
 + (void)land {
-    
-    if (g_sharedUAInbox) {
-
-        [g_sharedUAInbox.messageList removeObserver:g_sharedUAInbox.pushHandler];
-        if (g_sharedUAInbox.messageList) {
-            if (g_sharedUAInbox.messageList.isRetrieving || g_sharedUAInbox.messageList.isBatchUpdating) {
-                g_sharedUAInbox.messageList.client = nil;
-            }
-        }
-        g_sharedUAInbox.messageList = nil;
-        [[g_sharedUAInbox uiClass]land];
-
-        g_sharedUAInbox = nil;
-    }
+    [g_sharedUAInbox.client cancelAllRequests];
+    [g_sharedUAInbox.messageList removeObserver:g_sharedUAInbox.pushHandler];
+    [[g_sharedUAInbox uiClass]land];
+    g_sharedUAInbox = nil;
 }
 
 //note: this is for deleting the UAInboxCache from disk, which is no longer in use.
@@ -130,7 +120,11 @@ static Class _uiClass;
 - (id)init {
     self = [super init];
     if (self) {
+
+        self.client = [[UAInboxAPIClient alloc] init];
+
         self.messageList = [[UAInboxMessageList alloc] init];
+        self.messageList.client = self.client;
 
         [self.messageList retrieveMessageListWithDelegate:nil];
 
