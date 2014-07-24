@@ -154,9 +154,9 @@
     for (NSNumber *situationNumber in foregroundSitutions) {
         [[self.mockLandingPageOverlayController expect] closeAll:NO];
 
-        [[self.mockLandingPageOverlayController expect] showURL:[OCMArg checkWithBlock:^(id obj){
+        [[self.mockLandingPageOverlayController expect] showURL:[OCMArg checkWithBlock:^(id obj) {
             return (BOOL)([obj isKindOfClass:[NSURL class]] && [((NSURL *)obj).absoluteString isEqualToString:expectedUrl]);
-        }] withHeaders:[OCMArg checkWithBlock:^(id obj){
+        }] withHeaders:[OCMArg checkWithBlock:^(id obj) {
             return (BOOL) ([headers count] ? [headers isEqualToDictionary:obj] : [obj count] == 0);
         }]];
 
@@ -187,18 +187,18 @@
     __block UAHTTPRequest *request;
 
     [[[self.mockHTTPConnection expect] andReturn:self.mockHTTPConnection]
-     connectionWithRequest:[OCMArg checkWithBlock:^(id obj){
+     connectionWithRequest:[OCMArg checkWithBlock:^(id obj) {
         request = obj;
         return YES;
-    }] successBlock:[OCMArg checkWithBlock:^(id obj){
+    }] successBlock:[OCMArg checkWithBlock:^(id obj) {
         success = obj;
         return YES;
-    }] failureBlock:[OCMArg checkWithBlock:^(id obj){
+    }] failureBlock:[OCMArg checkWithBlock:^(id obj) {
         failure = obj;
         return YES;
     }]];
 
-    [(UAHTTPConnection *)[[self.mockHTTPConnection expect] andDo:^(NSInvocation *inv){
+    [(UAHTTPConnection *)[[self.mockHTTPConnection expect] andDo:^(NSInvocation *inv) {
         if (successful) {
             NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:request.url
                                                                       statusCode:200
@@ -233,11 +233,11 @@
 
     __block BOOL finished = NO;
 
-    [[self.mockURLProtocol expect] addCachableURL:[OCMArg checkWithBlock:^(id obj){
+    [[self.mockURLProtocol expect] addCachableURL:[OCMArg checkWithBlock:^(id obj) {
         return (BOOL)([obj isKindOfClass:[NSURL class]] && [((NSURL *)obj).absoluteString isEqualToString:expectedUrl]);
     }]];
 
-    [self.action performWithArguments:args withCompletionHandler:^(UAActionResult *result){
+    [self.action performWithArguments:args actionName:@"test_action" completionHandler:^(UAActionResult *result) {
         finished = YES;
         XCTAssertEqual(result.fetchResult, fetchResult,
                        @"fetch result %ud should match expect result %ud", result.fetchResult, fetchResult);

@@ -45,7 +45,9 @@
 /**
  * Registers a reserved action.  Reserved actions can not be removed or modified.
  */
-- (BOOL)registerReservedAction:(UAAction *)action name:(NSString *)name predicate:(UAActionPredicate)predicate;
+- (BOOL)registerReservedAction:(UAAction *)action
+                          name:(NSString *)name
+                     predicate:(UAActionPredicate)predicate;
 
 /**
  * Registers default actions.

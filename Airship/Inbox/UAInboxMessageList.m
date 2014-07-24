@@ -23,7 +23,6 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#import "UAInboxMessageList.h"
 #import "UAInboxMessageList+Internal.h"
 
 #import "UAirship.h"
@@ -33,7 +32,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInboxAPIClient.h"
 #import "UAInboxMessageListObserver.h"
 #import "UAInboxMessageListDelegate.h"
-#import "UAInboxMessage.h"
+#import "UAInboxMessage+Internal.h"
 #import "UAInboxDBManager+Internal.h"
 #import "UAUtils.h"
 #import "UAUser.h"
@@ -64,7 +63,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     if (self) {
         self.unreadCount = -1;
         self.isBatchUpdating = NO;
-        self.client = [[UAInboxAPIClient alloc] init];
     }
     return self;
 }

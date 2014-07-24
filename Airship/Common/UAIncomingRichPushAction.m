@@ -44,7 +44,8 @@
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments
-       withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+                  actionName:(NSString *)actionName
+           completionHandler:(UAActionCompletionHandler)completionHandler {
 
     NSDictionary *pushPayload = [arguments.metadata objectForKey:UAActionMetadataPushPayloadKey];
     

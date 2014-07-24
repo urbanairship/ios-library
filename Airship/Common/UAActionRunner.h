@@ -55,7 +55,7 @@
  * @param completionHandler CompletionHandler to pass to the action.
  */
 + (void)runAction:(UAAction *)action
-        withArguments:(UAActionArguments *)arguments
+    withArguments:(UAActionArguments *)arguments
 withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 /**

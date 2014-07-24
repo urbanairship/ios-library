@@ -66,7 +66,8 @@ typedef NS_ENUM(NSInteger, UASituation) {
  * @param value The value associated with the arguments.
  * @param situation The situation of the action.
  */
-+ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation;
++ (instancetype)argumentsWithValue:(id)value
+                     withSituation:(UASituation)situation;
 
 
 /**
@@ -76,7 +77,9 @@ typedef NS_ENUM(NSInteger, UASituation) {
  * @param situation The situation of the action.
  * @param metadata for the action - e.g. webview, payload, etc.
  */
-+ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation metadata:(NSDictionary *) metadata;
++ (instancetype)argumentsWithValue:(id)value
+                     withSituation:(UASituation)situation
+                          metadata:(NSDictionary *) metadata;
 
 /**
  * WebView metadata key.
@@ -97,19 +100,12 @@ extern NSString * const UAActionMetadataInboxMessageKey;
 /**
  * Situation of the action
  */
-@property(nonatomic, assign) UASituation situation;
+@property(nonatomic, assign, readonly) UASituation situation;
 
 /**
  * The value associated with the action
  */
-@property(nonatomic, strong) id value;
-
-
-/**
- * The name the action was invoked with.
- */
-@property(nonatomic, copy) NSString *name;
-
+@property(nonatomic, strong, readonly) id value;
 
 /**
  * The argument's metadata. Metadata provides more information

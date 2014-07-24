@@ -7,6 +7,7 @@
 #import "UAInboxMessageListDelegate.h"
 #import "UAInboxAPIClient.h"
 #import "UAUser+Test.h"
+#import "UAActionArguments+Internal.h"
 
 static UAUser *mockUser = nil;
 

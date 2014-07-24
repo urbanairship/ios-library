@@ -245,4 +245,8 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
      }];
 }
 
+- (void)cancelAllRequests {
+    [self.requestEngine cancelAllRequests];
+}
+
 @end

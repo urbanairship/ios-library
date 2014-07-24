@@ -27,12 +27,13 @@
 #import "UACloseWindowAction.h"
 #import <OCMock/OCMock.h>
 #import "UARichContentWindow.h"
+#import "UAActionArguments+Internal.h"
 
 
 @interface UACloseWindowActionTest : XCTestCase
 @property(nonatomic, strong)id mockWebView;
 @property(nonatomic, strong)id mockUARichContentWindow;
-@property(nonatomic, strong)UACloseWindowAction *action;
+@property(nonatomic, strong) UACloseWindowAction *action;
 @end
 
 @implementation UACloseWindowActionTest
@@ -83,7 +84,7 @@
 
     __block id actionResult;
 
-    [self.action performWithArguments:args withCompletionHandler:^(UAActionResult *result){
+    [self.action performWithArguments:args actionName:@"test_action" completionHandler:^(UAActionResult *result){
         actionResult = result;
     }];
 
@@ -102,7 +103,7 @@
 
     __block id actionResult;
 
-    [self.action performWithArguments:args withCompletionHandler:^(UAActionResult *result){
+    [self.action performWithArguments:args actionName:@"test_action" completionHandler:^(UAActionResult *result){
         actionResult = result;
     }];
 
