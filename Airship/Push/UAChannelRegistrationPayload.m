@@ -50,7 +50,12 @@
     [channel setValue:@"ios" forKey:kUAChannelDeviceTypeKey];
     [channel setValue:[NSNumber numberWithBool:self.optedIn] forKey:kUAChannelOptInKey];
     [channel setValue:self.pushAddress forKey:kUAChannelPushAddressKey];
-    [channel setValue:self.alias forKey:kUAChannelAliasJSONKey];
+
+    self.alias = [self.alias stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    if ([self.alias length] > 0) {
+        [channel setValue:self.alias forKey:kUAChannelAliasJSONKey];
+    }
+
     [channel setValue:[NSNumber numberWithBool:self.setTags] forKey:kUAChannelSetTagsKey];
     if (self.setTags) {
         [channel setValue:self.tags forKey:kUAChannelTagsJSONKey];
