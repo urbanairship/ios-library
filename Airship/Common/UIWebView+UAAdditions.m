@@ -35,7 +35,7 @@
     // This will inject the current device orientation
     // Note that face up and face down orientations will be ignored as this
     // casts a device orientation to an interface orientation
-    [self willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
+    [self injectInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 
     /*
      * Define and initialize our one global
@@ -126,7 +126,7 @@
     [self stringByEvaluatingJavaScriptFromString:js];
 }
 
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
+- (void)injectInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
 
     switch (toInterfaceOrientation) {
         case UIDeviceOrientationPortrait:

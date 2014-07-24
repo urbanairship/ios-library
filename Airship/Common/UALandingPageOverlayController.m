@@ -370,7 +370,7 @@ static NSMutableSet *overlayControllers = nil;
     }
 
     // This will inject the current device orientation
-    [self.webView willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
+    [self.webView injectInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
 
 - (void)finish {
@@ -411,7 +411,7 @@ static NSMutableSet *overlayControllers = nil;
 
 - (void)webViewDidStartLoad:(UIWebView *)wv {
     [self.webView populateJavascriptEnvironment:self.message];
-    [self.webView willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
+    [self.webView injectInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
