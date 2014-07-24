@@ -57,6 +57,9 @@ typedef void (^UAInboxClientMessageRetrievalSuccessBlock)(NSInteger status, NSAr
                         onSuccess:(UAInboxClientSuccessBlock)successBlock
                         onFailure:(UAInboxClientFailureBlock)failureBlock;
 
+/**
+ * Cancels all in-flight API requests.
+ */
 - (void)cancelAllRequests;
 
 @end
