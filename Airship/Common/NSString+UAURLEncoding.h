@@ -23,14 +23,25 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
-#import "UAInboxMessage.h"
+#import <Foundation/Foundation.h>
 
-@interface UIWebView (UAAdditions)
+/**
+ * Category extensions for URL encoding and decoding of strings.
+ */
+@interface NSString(UAURLEncoding)
 
-- (void)populateJavascriptEnvironment:(UAInboxMessage *)message;
-- (void)populateJavascriptEnvironment;
-- (void)fireUALibraryReadyEvent;
-- (void)injectInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation;
+/**
+ * URL decodes the receiver.
+ * @param encoding The desired NSStringEncoding for the result.
+ * @return A URL decoded NSString, or nil if decoding failed.
+ */
+- (NSString *)urlDecodedStringWithEncoding:(NSStringEncoding)encoding;
+
+/**
+ * URL encodes the receiver.
+ * @param encoding The desired NSStringEncoding for the result.
+ * @return A URL decoded NSString, or nil if decoding failed.
+ */
+- (NSString *)urlEncodedStringWithEncoding:(NSStringEncoding)encoding;
 
 @end

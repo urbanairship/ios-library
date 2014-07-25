@@ -11,7 +11,7 @@
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
 
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -23,25 +23,10 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import "UAActionArguments.h"
 
-/**
- * Category extensions for URL encoding and decoding of strings.
- */
-@interface NSString(URLEncoding)
+@interface UAActionArguments ()
 
-/**
- * URL decodes the receiver.
- * @param encoding The desired NSStringEncoding for the result.
- * @return A URL decoded NSString, or nil if decoding failed.
- */
-- (NSString *)urlDecodedStringWithEncoding:(NSStringEncoding)encoding;
-
-/**
- * URL encodes the receiver.
- * @param encoding The desired NSStringEncoding for the result.
- * @return A URL decoded NSString, or nil if decoding failed.
- */
-- (NSString *)urlEncodedStringWithEncoding:(NSStringEncoding)encoding;
+@property (nonatomic, readonly) NSString *situationString;
 
 @end

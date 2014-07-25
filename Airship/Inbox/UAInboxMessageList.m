@@ -23,7 +23,6 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#import "UAInboxMessageList.h"
 #import "UAInboxMessageList+Internal.h"
 
 #import "UAirship.h"
@@ -33,7 +32,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInboxAPIClient.h"
 #import "UAInboxMessageListObserver.h"
 #import "UAInboxMessageListDelegate.h"
-#import "UAInboxMessage.h"
+#import "UAInboxMessage+Internal.h"
 #import "UAInboxDBManager+Internal.h"
 #import "UAUtils.h"
 #import "UAUser.h"
@@ -64,7 +63,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     if (self) {
         self.unreadCount = -1;
         self.isBatchUpdating = NO;
-        self.client = [[UAInboxAPIClient alloc] init];
     }
     return self;
 }
@@ -129,16 +127,41 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
         isCallbackCancelled = YES;
     }];
 
-    [self.client retrieveMessageListOnSuccess:^(NSMutableArray *newMessages, NSUInteger unread){
-        self.isRetrieving = NO;
+    [self.client retrieveMessageListOnSuccess:^(NSInteger status, NSArray *messages, NSInteger unread) {
 
-        self.messages = newMessages;
-        self.unreadCount = (NSInteger)unread;
+        if (status == 200) {
+            UA_LDEBUG(@"Refreshing message list.");
+
+            UAInboxDBManager *inboxDBManager = [UAInboxDBManager shared];
+            NSMutableSet *responseMessageIDs = [NSMutableSet set];
+
+            // Convert dictionary to objects for convenience
+            for (NSDictionary *message in messages) {
+                if (![inboxDBManager updateMessageWithDictionary:message]) {
+                   [inboxDBManager addMessageFromDictionary:message];
+                }
+
+                NSString *messageID = [message valueForKey:@"message_id"];
+                if (messageID) {
+                    [responseMessageIDs addObject:messageID];
+                }
+            }
+
+            // Delete server side deleted messages
+            NSMutableSet *messagesToDelete = [[inboxDBManager messageIDs] mutableCopy];
+            [messagesToDelete minusSet:responseMessageIDs];
+            [inboxDBManager deleteMessagesWithIDs:messagesToDelete];
+
+            [self loadSavedMessages];
+        }
+
+        self.isRetrieving = NO;
 
         UA_LDEBUG(@"Retrieve message list succeeded with messages: %@", self.messages);
         if (successBlock && !isCallbackCancelled) {
             successBlock();
         }
+
         [self notifyObservers:@selector(messageListLoaded)];
         [self sendMessageListUpdatedNotification];
     } onFailure:^(UAHTTPRequest *request){
@@ -197,21 +220,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
         isCallbackCancelled = YES;
     }];
 
-    void (^succeed)(void) = ^{
-        self.isBatchUpdating = NO;
-
-        for (UAInboxMessage *msg in updateMessageArray) {
-            if (msg.unread) {
-                msg.unread = NO;
-                self.unreadCount -= 1;
-            }
-        }
-
-        if (successBlock && !isCallbackCancelled) {
-            successBlock();
-        }
-        [self sendMessageListUpdatedNotification];
-    };
 
     void (^fail)(UAHTTPRequest *) = ^(UAHTTPRequest *request){
         self.isBatchUpdating = NO;
@@ -222,10 +230,23 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
         [self sendMessageListUpdatedNotification];
     };
 
+    void (^succeed)(void) = ^{
+        [self loadSavedMessages];
+
+        self.isBatchUpdating = NO;
+
+        if (successBlock && !isCallbackCancelled) {
+            successBlock();
+        }
+
+        [self sendMessageListUpdatedNotification];
+    };
+
+
+
     if (command == UABatchDeleteMessages) {
         UA_LDEBUG("Deleting messages: %@", updateMessageArray);
         [self.client performBatchDeleteForMessages:updateMessageArray onSuccess:^{
-            [self.messages removeObjectsInArray:updateMessageArray];
             [[UAInboxDBManager shared] deleteMessages:updateMessageArray];
             [self notifyObservers:@selector(batchDeleteFinished)];
             succeed();
@@ -237,7 +258,7 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     } else if (command == UABatchReadMessages) {
         UA_LDEBUG("Marking messages as read: %@", updateMessageArray);
         [self.client performBatchMarkAsReadForMessages:updateMessageArray onSuccess:^{
-            [[UAInboxDBManager shared] saveContext];
+            [[UAInboxDBManager shared] markMessagesRead:updateMessageArray];
             [self notifyObservers:@selector(batchMarkAsReadFinished)];
             succeed();
         }onFailure:^(UAHTTPRequest *request){

@@ -39,6 +39,9 @@
 #import "UAChannelRegistrationPayload.h"
 #import "UAUser.h"
 
+#define kUAMinTagLength 1
+#define kUAMaxTagLength 127
+
 UAPushSettingsKey *const UAPushEnabledSettingsKey = @"UAPushEnabled";
 UAPushSettingsKey *const UAPushAliasSettingsKey = @"UAPushAlias";
 UAPushSettingsKey *const UAPushTagsSettingsKey = @"UAPushTags";
@@ -196,7 +199,8 @@ static Class _uiClass;
 }
 
 - (void)setAlias:(NSString *)alias {
-    [[NSUserDefaults standardUserDefaults] setObject:alias forKey:UAPushAliasSettingsKey];
+    NSString * trimmedAlias = [alias stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    [[NSUserDefaults standardUserDefaults] setObject:trimmedAlias forKey:UAPushAliasSettingsKey];
 }
 
 - (NSArray *)tags {
@@ -204,11 +208,36 @@ static Class _uiClass;
     if (!currentTags) {
         currentTags = [NSArray array];
     }
+    
+    NSArray *normalizedTags = [self normalizeTags:currentTags];
+    
+    //sync tags to prevent the tags property invocation from constantly logging tag set failure
+    if ([currentTags count] != [normalizedTags count]) {
+        [self setTags:normalizedTags];
+    }
+
     return currentTags;
 }
 
 - (void)setTags:(NSArray *)tags {
-    [[NSUserDefaults standardUserDefaults] setObject:tags forKey:UAPushTagsSettingsKey];
+    [[NSUserDefaults standardUserDefaults] setObject:[self normalizeTags:tags] forKey:UAPushTagsSettingsKey];
+}
+
+-(NSArray *)normalizeTags:(NSArray *)tags {
+    NSMutableArray *normalizedTags = [[NSMutableArray alloc] init];
+
+    for (NSString *tag in tags) {
+        
+        NSString *trimmedTag = [tag stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+
+        if ([trimmedTag length] >= kUAMinTagLength && [trimmedTag length] <= kUAMaxTagLength) {
+            [normalizedTags addObject:trimmedTag];
+        } else {
+            UA_LERR(@"Tags must be > 0 and < 128 characters in length, tag %@ has been removed from the tag set", tag);
+        }
+    }
+    
+    return [NSArray arrayWithArray:normalizedTags];
 }
 
 - (void)addTagsToCurrentDevice:(NSArray *)tags {

@@ -3,6 +3,18 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+---------------------
+4.0.1 - July 25, 2014
+---------------------
+- Tag utility now uses OS preferred language.
+- Renamed methods to prevent false positives when apps are scanned by Apple for use of undocumented APIs.
+- Aliases and tags are now trimmed to prevent device registration errors.
+- Added custom inbox UIs are now checked that they conform to the UAInboxUI protocol.
+- UAInboxMessage no longer extends NSManagedObject to protect against possible inbox message crashes.
+- Prefixed internal category extension names with 'UA' to prevent name conflicts with other libraries.
+- Fixed possible crash with background tasks.
+
+
 ----------------------
 4.0.0 - March 25, 2014
 ----------------------

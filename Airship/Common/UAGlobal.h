@@ -71,13 +71,13 @@ extern UALogLevel uaLogLevel; // Default is UALogLevelError
 
 // constants
 #define kAirshipProductionServer @"https://device-api.urbanairship.com"
-#define kAnalyticsProductionServer @"https://combine.urbanairship.com";
+#define kAnalyticsProductionServer @"https://combine.urbanairship.com"
 #define kUAProductionLandingPageContentURL @"https://dl.urbanairship.com/aaa"
 
 #ifdef _UA_VERSION
 #define UA_VERSION @ _UA_VERSION
 #else
-#define UA_VERSION @ "1.1.2"
+#define UA_VERSION @ "0.0.0"
 #endif
 
 #define UA_VERSION_INTERFACE(CLASSNAME) \

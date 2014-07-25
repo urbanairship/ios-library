@@ -51,13 +51,13 @@
 @property(nonatomic, strong) id mockUAUtils;
 @property(nonatomic, strong) id mockUAUser;
 @property(nonatomic, strong) UAPush *push;
+@property(nonatomic, strong) NSDictionary *notification;
 
 @end
 
 @implementation UAPushTest
 
 NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
-NSDictionary *notification;
 
 
 - (void)setUp {
@@ -65,7 +65,7 @@ NSDictionary *notification;
 
     self.push = [[UAPush alloc] init];
 
-    notification = @{ @"aps":
+    self.notification = @{ @"aps":
                           @{ @"alert": @"sample alert!", @"badge": @2, @"sound": @"cat" },
                       @"someActionKey": @"someActionValue"
                     };
@@ -163,6 +163,21 @@ NSDictionary *notification;
     XCTAssertNil(self.push.alias, @"alias should be able to be cleared");
     XCTAssertNil([[NSUserDefaults standardUserDefaults] stringForKey:UAPushAliasSettingsKey],
                  @"alias should be able to be cleared in standardUserDefaults");
+
+    self.push.alias = @"";
+    XCTAssertEqualObjects(@"", self.push.alias, @"alias is not being set correctly");
+    XCTAssertEqualObjects(@"", [[NSUserDefaults standardUserDefaults] stringForKey:UAPushAliasSettingsKey],
+                          @"alias should be stored in standardUserDefaults");
+
+    self.push.alias = @"   ";
+    XCTAssertEqualObjects(@"", self.push.alias, @"alias is not being trimmed and set correctly");
+    XCTAssertEqualObjects(@"", [[NSUserDefaults standardUserDefaults] stringForKey:UAPushAliasSettingsKey],
+                          @"alias should be stored in standardUserDefaults");
+
+    self.push.alias = @"   a   ";
+    XCTAssertEqualObjects(@"a", self.push.alias, @"alias is not being trimmed and set correctly");
+    XCTAssertEqualObjects(@"a", [[NSUserDefaults standardUserDefaults] stringForKey:UAPushAliasSettingsKey],
+                          @"alias should be stored in standardUserDefaults");
 }
 
 - (void)testTags {
@@ -179,6 +194,118 @@ NSDictionary *notification;
     XCTAssertEqual((NSUInteger)0, [[[NSUserDefaults standardUserDefaults] valueForKey:UAPushTagsSettingsKey] count],
                    @"tags are not being cleared in standardUserDefaults");
 }
+
+/**
+ * Tests tag setting when tag contains white space
+ */
+- (void)testSetTagsWhitespaceRemoval {
+    NSArray *tags = @[@"   tag-one   ", @"tag-two   "];
+    NSArray *tagsNoSpaces = @[@"tag-one", @"tag-two"];
+    [self.push setTags:tags];
+    
+    XCTAssertEqualObjects(tagsNoSpaces, self.push.tags, @"whitespace was not trimmed from tags");
+}
+
+/**
+ * Tests tag setting when tag consists entirely of whitespace
+ */
+- (void)testSetTagWhitespaceOnly {
+    NSArray *tags = @[@" "];
+    [self.push setTags:tags];
+    
+    XCTAssertNotEqualObjects(tags, self.push.tags, @"tag with whitespace only should not set");
+}
+
+/**
+ * Tests tag setting when tag has minimum acceptable length
+ */
+- (void)testSetTagsMinTagSize {
+    NSArray *tags = @[@"1"];
+    [self.push setTags:tags];
+    
+    XCTAssertEqualObjects(tags, self.push.tags, @"tag with minimum character should set");
+}
+
+/**
+ * Tests tag setting when tag has maximum acceptable length
+ */
+- (void)testSetTagsMaxTagSize {
+    NSArray *tags = @[[@"" stringByPaddingToLength:127 withString: @"." startingAtIndex:0]];
+    [self.push setTags:tags];
+    
+    XCTAssertEqualObjects(tags, self.push.tags, @"tag with maximum characters should set");
+}
+
+/**
+ * Tests tag setting when tag has multi-byte characters
+ */
+- (void)testSetTagsMultiByteCharacters {
+    NSArray *tags = @[@"함수 목록"];
+    [self.push setTags:tags];
+    
+    XCTAssertEqualObjects(tags, self.push.tags, @"tag with multi-byte characters should set");
+}
+
+/**
+ * Tests tag setting when tag has multi-byte characters and minimum length
+ */
+- (void)testMinLengthMultiByteCharacters {
+    NSArray *tags = @[@"함"];
+    [self.push setTags:tags];
+    
+    XCTAssertEqualObjects(tags, self.push.tags, @"tag with minimum multi-byte characters should set");
+}
+
+/**
+ * Tests tag setting when tag has multi-byte characters and maximum length
+ */
+- (void)testMaxLengthMultiByteCharacters {
+    NSArray *tags = @[[@"" stringByPaddingToLength:127 withString: @"함" startingAtIndex:0]];;
+    [self.push setTags:tags];
+    
+    XCTAssertEqualObjects(tags, self.push.tags, @"tag with maximum multi-byte characters should set");
+}
+
+/**
+ * Tests tag setting when tag has greater than maximum acceptable length
+ */
+- (void)testSetTagsOverMaxTagSizeRemoval {
+    NSArray *tags = @[[@"" stringByPaddingToLength:128 withString: @"." startingAtIndex:0]];
+    [self.push setTags:tags];
+    
+    XCTAssertNotEqualObjects(tags, self.push.tags, @"tag with 128 characters should not set");
+}
+
+/**
+ * Tests tag normalization when tag includes whitespace
+ */
+- (void)testNormalizeTagsWhitespaceRemoval {
+    NSArray *tags = @[@"   tag-one   ", @"tag-two   "];
+    NSArray *tagsNoSpaces = @[@"tag-one", @"tag-two"];
+    [self.push normalizeTags:tags];
+    
+    XCTAssertEqualObjects(tagsNoSpaces, [self.push normalizeTags:tags], @"whitespace was trimmed from tags");
+}
+
+/**
+ * Tests tag normalization when tag has maximum acceptable length
+ */
+- (void)testNormalizeTagsMaxTagSize {
+    NSArray *tags = @[[@"" stringByPaddingToLength:127 withString: @"." startingAtIndex:0]];
+    
+    XCTAssertEqualObjects(tags, [self.push normalizeTags:tags], @"tag with 127 characters should set");
+}
+
+/**
+ * Tests tag normalization when tag has greater than maximum acceptable length
+ */
+- (void)testNormalizeTagsOverMaxTagSizeRemoval {
+    NSArray *tags = @[[@"" stringByPaddingToLength:128 withString: @"." startingAtIndex:0]];
+    [self.push normalizeTags:tags];
+    
+    XCTAssertNotEqualObjects(tags, [self.push normalizeTags:tags], @"tag with 128 characters should not set");
+}
+
 
 - (void)testAddTagsToCurrentDevice {
     self.push.tags = nil;
@@ -1015,8 +1142,8 @@ NSDictionary *notification;
 
         // Test handleNotification: first
         [[self.mockActionRunner expect] runActions:[OCMArg checkWithBlock:runActionsCheck] withCompletionHandler:[OCMArg checkWithBlock:handlerCheck]];
-        [[self.mockedAnalytics expect] handleNotification:notification inApplicationState:applicationState];
-        [self.push handleNotification:notification applicationState:applicationState];
+        [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:applicationState];
+        [self.push handleNotification:self.notification applicationState:applicationState];
 
         XCTAssertNoThrow([self.mockActionRunner verify], @"handleNotification should run push actions with situation %ld", expectedSituation);
         XCTAssertNoThrow([self.mockedAnalytics verify], @"analytics should be notified of the incoming notification");
@@ -1027,8 +1154,8 @@ NSDictionary *notification;
             fetchResult = fetchResults[fetchResultIndex];
 
             [[self.mockActionRunner expect] runActions:[OCMArg checkWithBlock:runActionsCheck] withCompletionHandler:[OCMArg checkWithBlock:handlerCheck]];
-            [[self.mockedAnalytics expect] handleNotification:notification inApplicationState:applicationState];
-            [self.push handleNotification:notification applicationState:applicationState fetchCompletionHandler:^(UIBackgroundFetchResult result) {
+            [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:applicationState];
+            [self.push handleNotification:self.notification applicationState:applicationState fetchCompletionHandler:^(UIBackgroundFetchResult result) {
                 completionHandlerCalled = YES;
 
                 // Relies on the fact that UAActionFetchResults cast correctly to UIBackgroundFetchResults
@@ -1053,9 +1180,9 @@ NSDictionary *notification;
 - (void)testHandleNotificationAutoBadgeDisabled {
     UAPush.shared.autobadgeEnabled = NO;
     [[self.mockedApplication reject] setApplicationIconBadgeNumber:2];
-    [self.push handleNotification:notification applicationState:UIApplicationStateActive];
-    [self.push handleNotification:notification applicationState:UIApplicationStateBackground];
-    [self.push handleNotification:notification applicationState:UIApplicationStateInactive];
+    [self.push handleNotification:self.notification applicationState:UIApplicationStateActive];
+    [self.push handleNotification:self.notification applicationState:UIApplicationStateBackground];
+    [self.push handleNotification:self.notification applicationState:UIApplicationStateInactive];
 
     XCTAssertNoThrow([self.mockedApplication verify], @"Badge should only be updated if autobadge is enabled");
 }
@@ -1068,13 +1195,13 @@ NSDictionary *notification;
     UAPush.shared.autobadgeEnabled = YES;
 
     [[self.mockedApplication expect] setApplicationIconBadgeNumber:2];
-    [self.push handleNotification:notification applicationState:UIApplicationStateActive];
+    [self.push handleNotification:self.notification applicationState:UIApplicationStateActive];
 
     XCTAssertNoThrow([self.mockedApplication verify], @"Badge should be updated if app is in the foreground");
 
     [[self.mockedApplication reject] setApplicationIconBadgeNumber:2];
-    [self.push handleNotification:notification applicationState:UIApplicationStateBackground];
-    [self.push handleNotification:notification applicationState:UIApplicationStateInactive];
+    [self.push handleNotification:self.notification applicationState:UIApplicationStateBackground];
+    [self.push handleNotification:self.notification applicationState:UIApplicationStateInactive];
 
     XCTAssertNoThrow([self.mockedApplication verify], @"Badge should only be updated if app is in the foreground");
 }
@@ -1084,12 +1211,12 @@ NSDictionary *notification;
  */
 - (void)testHandleNotificationLaunchNotification {
     self.push.launchNotification = nil;
-    [self.push handleNotification:notification applicationState:UIApplicationStateActive];
-    [self.push handleNotification:notification applicationState:UIApplicationStateBackground];
+    [self.push handleNotification:self.notification applicationState:UIApplicationStateActive];
+    [self.push handleNotification:self.notification applicationState:UIApplicationStateBackground];
 
     XCTAssertNil(self.push.launchNotification, @"Launch notification should only be set in an inactive state");
 
-    [self.push handleNotification:notification applicationState:UIApplicationStateInactive];
+    [self.push handleNotification:self.notification applicationState:UIApplicationStateInactive];
     XCTAssertNotNil(self.push.launchNotification, @"Launch notification should be set in an inactive state");
 }
 
@@ -1100,7 +1227,7 @@ NSDictionary *notification;
 - (void)testApplicationDidEnterBackground {
     UAPush *push = self.push;
     push.hasEnteredBackground = NO;
-    push.launchNotification = notification;
+    push.launchNotification = self.notification;
 
     [push applicationDidEnterBackground];
     XCTAssertTrue(push.hasEnteredBackground, @"applicationDidEnterBackground should set hasEnteredBackground to true");

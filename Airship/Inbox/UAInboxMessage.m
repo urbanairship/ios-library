@@ -1,58 +1,48 @@
 /*
-Copyright 2009-2014 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
 
-1. Redistributions of source code must retain the above copyright notice, this
-list of conditions and the following disclaimer.
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
 
-2. Redistributions in binaryform must reproduce the above copyright notice,
-this list of conditions and the following disclaimer in the documentation
-and/or other materials provided withthe distribution.
+ 2. Redistributions in binaryform must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided withthe distribution.
 
-THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
-IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
-OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 #import "UAInboxMessage.h"
 #import "UAInboxMessage+Internal.h"
-
-#import "UAirship.h"
 #import "UAInbox.h"
-#import "UAInboxMessageList.h"
-#import "UAInboxMessageListObserver.h"
+#import "UAInboxMessageData.h"
+#import "UAInboxAPIClient.h"
 #import "UAInboxDBManager.h"
-#import "UAHTTPConnection.h"
-#import "UAUtils.h"
-#import "UAGlobal.h"
 
-/*
- * Implementation
- */
 @implementation UAInboxMessage
 
-@dynamic title;
-@dynamic messageBodyURL;
-@dynamic messageSent;
-@dynamic messageExpiration;
-@dynamic unread;
-@dynamic messageURL;
-@dynamic messageID;
-@dynamic extra;
-@dynamic rawMessageObject;
+- (instancetype)initWithMessageData:(UAInboxMessageData *)data {
+    self = [super init];
+    if (self) {
+        self.data = data;
+    }
+    return self;
+}
 
-@synthesize inbox;
-@synthesize contentType;
-@synthesize client;
++ (instancetype)messageWithData:(UAInboxMessageData *)data {
+    return [[self alloc] initWithMessageData:data];
+}
 
 #pragma mark -
 #pragma mark NSObject methods
@@ -66,7 +56,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma mark Mark As Read Delegate Methods
 
 - (UADisposable *)markAsReadWithSuccessBlock:(UAInboxMessageCallbackBlock)successBlock
-                  withFailureBlock:(UAInboxMessageCallbackBlock)failureBlock {
+                            withFailureBlock:(UAInboxMessageCallbackBlock)failureBlock {
 
     UAInboxMessageList *strongInbox = self.inbox;
 
@@ -82,7 +72,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         isCallbackCancelled = YES;
     }];
 
-    [self.client
+    UAInboxAPIClient *client = self.client ?: [UAInbox shared].client;
+
+    [client
      markMessageRead:self onSuccess:^{
          if (self.unread) {
              strongInbox.unreadCount = strongInbox.unreadCount - 1;
@@ -132,7 +124,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         NSComparisonResult result = [self.messageExpiration compare:[NSDate date]];
         return (result == NSOrderedAscending || result == NSOrderedSame);
     }
-    
+
     return NO;
 }
 
@@ -141,12 +133,104 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return [self markAsReadWithSuccessBlock:nil withFailureBlock:nil] || !self.unread;
 }
 
--(UAInboxAPIClient *)client {
-    if (!client) {
-       client = [[UAInboxAPIClient alloc] init];
-    }
+- (NSString *)messageID {
+    return self.data.messageID;
+}
 
-    return client;
+- (void)setMessageID:(NSString *)messageID {
+    if (!self.data.isGone) {
+        self.data.messageID = messageID;
+    }
+}
+
+- (NSURL *)messageBodyURL {
+    return self.data.messageBodyURL;
+}
+
+- (void)setMessageBodyURL:(NSURL *)messageBodyURL {
+    if (!self.data.isGone) {
+        self.data.messageBodyURL = messageBodyURL;
+    }
+}
+
+- (NSURL *)messageURL {
+    return self.data.messageURL;
+}
+
+- (void)setMessageURL:(NSURL *)messageURL {
+    if (!self.data.isGone) {
+        self.data.messageURL = messageURL;
+    }
+}
+
+- (NSString *)contentType {
+    return self.data.contentType;
+}
+
+- (void)setContentType:(NSString *)contentType {
+    if (!self.data.isGone) {
+        self.data.contentType = contentType;
+    }
+}
+
+- (BOOL)unread {
+    return self.data.unread;
+}
+
+- (void)setUnread:(BOOL)unread {
+    if (!self.data.isGone) {
+        self.data.unread = unread;
+    }
+}
+
+- (NSDate *)messageSent {
+    return self.data.messageSent;
+}
+
+- (void)setMessageSent:(NSDate *)messageSent {
+    if (!self.data.isGone) {
+        self.data.messageSent = messageSent;
+    }
+}
+
+- (NSDate *)messageExpiration {
+    return self.data.messageExpiration;
+}
+
+- (void)setMessageExpiration:(NSDate *)messageExpiration {
+    if (!self.data.isGone) {
+        self.data.messageExpiration = messageExpiration;
+    }
+}
+
+- (NSString *)title {
+    return self.data.title;
+}
+
+- (void)setTitle:(NSString *)title {
+    if (!self.data.isGone) {
+        self.data.title = title;
+    }
+}
+
+- (NSDictionary *)extra {
+    return self.data.extra;
+}
+
+- (void)setExtra:(NSDictionary *)extra {
+    if (!self.data.isGone) {
+        self.data.extra = extra;
+    }
+}
+
+- (NSDictionary *)rawMessageObject {
+    return self.data.rawMessageObject;
+}
+
+- (void)setRawMessageObject:(NSDictionary *)rawMessageObject {
+    if (!self.data.isGone) {
+        self.data.rawMessageObject = rawMessageObject;
+    }
 }
 
 @end

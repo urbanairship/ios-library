@@ -39,8 +39,8 @@
 @property (nonatomic, strong) UAURLProtocol *urlProtocol;
 
 @property (nonatomic, strong) id connection;
-@property (nonatomic, copy) UAHTTPConnectionSuccessBlock connectionSuccessBlock;
-@property (nonatomic, copy) UAHTTPConnectionFailureBlock connectionFailureBlock;
+@property (nonatomic, strong) UAHTTPConnectionSuccessBlock connectionSuccessBlock;
+@property (nonatomic, strong) UAHTTPConnectionFailureBlock connectionFailureBlock;
 @property (nonatomic, strong) UAHTTPRequest *connectionRequest;
 
 @end

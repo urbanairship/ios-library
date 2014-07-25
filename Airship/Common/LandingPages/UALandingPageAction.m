@@ -31,7 +31,7 @@
 #import "UALandingPageOverlayController.h"
 #import "UAirship.h"
 #import "UAConfig.h"
-#import "NSString+URLEncoding.h"
+#import "NSString+UAURLEncoding.h"
 #import "UAUtils.h"
 
 @interface UALandingPageAction()

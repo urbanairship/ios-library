@@ -46,7 +46,7 @@
     
     if (tagFlags & UATagTypeCountry) {
         // Get user's country code based on currentLocale
-        NSLocale *locale = [NSLocale currentLocale];
+        NSLocale *locale = [NSLocale autoupdatingCurrentLocale];
         NSString *countryCode = [locale objectForKey: NSLocaleCountryCode];
         
         //Prefix the tag with "country_" to avoid collisions w/ language
@@ -57,7 +57,7 @@
     
     if (tagFlags & UATagTypeLanguage) {
         // Get user's language code based on currentLocale
-        NSLocale *locale = [NSLocale currentLocale];
+        NSLocale *locale = [NSLocale autoupdatingCurrentLocale];
         NSString *languageCode = [locale objectForKey: NSLocaleLanguageCode];
         
         //Prefix the tag with "language_" to avoid collisions w/ country

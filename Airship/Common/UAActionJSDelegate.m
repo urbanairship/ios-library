@@ -3,7 +3,7 @@
 #import "UAGlobal.h"
 
 #import "NSJSONSerialization+UAAdditions.h"
-#import "NSString+URLEncoding.h"
+#import "NSString+UAURLEncoding.h"
 
 #import "UAActionRunner.h"
 #import "UAWebViewCallData.h"

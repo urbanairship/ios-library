@@ -129,7 +129,6 @@
  */
 - (void)playNotificationSound:(NSString *)soundFilename;
 
-
 /**
  * Called when a push notification is received in the foreground with a badge number.
  * @param badgeNumber The badge number to display
@@ -138,11 +137,11 @@
 
 /**
  * Called when a push notification is received while the app is running in the foreground.
+ * Overridden by receivedForegroundNotification:fetchCompletionHandler.
  *
  * @param notification The notification dictionary.
  */
 - (void)receivedForegroundNotification:(NSDictionary *)notification;
-
 
 /**
  * Called when a push notification is received while the app is running in the foreground 
@@ -155,6 +154,15 @@
 
 /**
  * Called when a push notification is received while the app is running in the background
+ * for applications with the "remote-notification" background mode.  
+ * Overridden by receivedBackgroundNotification:fetchCompletionHandler.
+ *
+ * @param notification The notification dictionary.
+ */
+- (void)receivedBackgroundNotification:(NSDictionary *)notification;
+
+/**
+ * Called when a push notification is received while the app is running in the background
  * for applications with the "remote-notification" background mode.
  *
  * @param notification The notification dictionary.
@@ -163,20 +171,12 @@
 - (void)receivedBackgroundNotification:(NSDictionary *)notification fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
 
 /**
- * Called when a push notification is received while the app is running in the background.
- *
- * @param notification The notification dictionary.
- */
-- (void)receivedBackgroundNotification:(NSDictionary *)notification;
-
-
-/**
  * Called when the app is started or resumed because a user opened a notification.
+ * Overridden by launchedFromNotification:fetchCompletionHandler.
  *
  * @param notification The notification dictionary.
  */
 - (void)launchedFromNotification:(NSDictionary *)notification;
-
 
 /**
  * Called when the app is started or resumed because a user opened a notification

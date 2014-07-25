@@ -29,6 +29,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @class UAInboxMessageList;
 @class UAInboxPushHandler;
+@class UAInboxAPIClient;
 
 #define INBOX_UI_CLASS @"UAInboxUI"
 
@@ -162,6 +163,11 @@ SINGLETON_INTERFACE(UAInbox);
  * Handles incoming rich push messages.
  */
 @property (nonatomic, strong) UAInboxPushHandler *pushHandler;
+
+/**
+ * The Inbox API Client
+ */
+@property (nonatomic, readonly, strong) UAInboxAPIClient *client;
 
 
 /**

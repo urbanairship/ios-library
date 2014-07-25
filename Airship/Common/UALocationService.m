@@ -382,6 +382,10 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         // This eventually calls stopSingleLocation, which shuts down the background task
         // Same task as performSelector:withObject:afterDelay, so if that works, this works
         [self shutdownSingleLocationWithTimeoutError];
+
+        if (self.singleLocationBackgroundIdentifier != UIBackgroundTaskInvalid) {
+            [[UIApplication sharedApplication] endBackgroundTask:self.singleLocationBackgroundIdentifier];
+        }
     }];
     self.singleLocationProvider.delegate = self;
     [self.singleLocationProvider startReportingLocation];

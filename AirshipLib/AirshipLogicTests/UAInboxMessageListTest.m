@@ -24,6 +24,9 @@ static UAUser *mockUser = nil;
 @property(nonatomic, strong) id mockMessageListNotificationObserver;
 //a mock delegate we'll pass into the appropriate methods for callbacks
 @property(nonatomic, strong) id mockMessageListDelegate;
+
+@property(nonatomic, strong) UAInboxMessageList *messageList;
+
 @end
 
 @implementation UAInboxMessageListTest
@@ -42,11 +45,13 @@ static UAUser *mockUser = nil;
     [self.mockMessageListNotificationObserver setExpectationOrderMatters:YES];
     [self.mockMessageListDelegate setExpectationOrderMatters:YES];
 
+    self.messageList = [[UAInboxMessageList alloc] init];
+
     //inject the API client
-    [UAInbox shared].messageList.client = self.mockInboxAPIClient;
+    self.messageList.client = self.mockInboxAPIClient;
 
     //add our (deprecated) message list observer
-    [[UAInbox shared].messageList addObserver:self.mockMessageListObserver];
+    [self.messageList addObserver:self.mockMessageListObserver];
 
     //sign up for NSNotificationCenter events with our mock observer
     [[NSNotificationCenter defaultCenter] addObserver:self.mockMessageListNotificationObserver selector:@selector(messageListWillUpdate) name:UAInboxMessageListWillUpdateNotification object:nil];
@@ -61,7 +66,7 @@ static UAUser *mockUser = nil;
     [UAUser unswizzleDefaultUserCreated];
 
     //undo observer sign-ups
-    [[UAInbox shared].messageList removeObservers];
+    [self.messageList removeObservers];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListWillUpdateNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListUpdatedNotification object:nil];
@@ -77,7 +82,7 @@ static UAUser *mockUser = nil;
 //if there's no user, retrieveMessageList should do nothing
 - (void)testRetrieveMessageListDefaultUserNotCreated {
     [UAUser unswizzleDefaultUserCreated];
-    [[UAInbox shared].messageList retrieveMessageList];
+    [self.messageList retrieveMessageList];
     [UAUser swizzleDefaultUserCreated];
 }
 
@@ -90,8 +95,8 @@ static UAUser *mockUser = nil;
     [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
-        UAInboxClientRetrievalSuccessBlock successBlock = (__bridge UAInboxClientRetrievalSuccessBlock) arg;
-        successBlock(nil, 0);
+        UAInboxClientMessageRetrievalSuccessBlock successBlock = (__bridge UAInboxClientMessageRetrievalSuccessBlock) arg;
+        successBlock(304, nil, 0);
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
     [[self.mockMessageListObserver expect] messageListWillLoad];
@@ -100,7 +105,7 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
-    [[UAInbox shared].messageList retrieveMessageList];
+    [self.messageList retrieveMessageList];
 
     [self.mockMessageListObserver verify];
     [self.mockMessageListDelegate verify];
@@ -124,7 +129,7 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
-    [[UAInbox shared].messageList retrieveMessageList];
+    [self.messageList retrieveMessageList];
 
     [self.mockMessageListObserver verify];
     [self.mockMessageListDelegate verify];
@@ -145,7 +150,7 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
-    [[UAInbox shared].messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil];
+    [self.messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil];
 
     [self.mockMessageListObserver verify];
     [self.mockMessageListDelegate verify];
@@ -166,7 +171,7 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
-    [[UAInbox shared].messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil];
+    [self.messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil];
 
     [self.mockMessageListObserver verify];
     [self.mockMessageListDelegate verify];
@@ -187,7 +192,7 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
-    [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil];
+    [self.messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil];
 
     [self.mockMessageListObserver verify];
     [self.mockMessageListDelegate verify];
@@ -208,7 +213,7 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
-    [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil];
+    [self.messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil];
 
     [self.mockMessageListObserver verify];
     [self.mockMessageListDelegate verify];
@@ -223,7 +228,7 @@ static UAUser *mockUser = nil;
     //if there's no user, the delegate version of this method should do nothing and return a nil disposable
     [UAUser unswizzleDefaultUserCreated];
 
-    UADisposable *disposable = [[UAInbox shared].messageList retrieveMessageListWithDelegate:self.mockMessageListDelegate];
+    UADisposable *disposable = [self.messageList retrieveMessageListWithDelegate:self.mockMessageListDelegate];
     XCTAssertNil(disposable, @"disposable should be nil");
 
     [UAUser swizzleDefaultUserCreated];
@@ -237,8 +242,8 @@ static UAUser *mockUser = nil;
     [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
-        UAInboxClientRetrievalSuccessBlock successBlock = (__bridge UAInboxClientRetrievalSuccessBlock) arg;
-        successBlock(nil, 0);
+        UAInboxClientMessageRetrievalSuccessBlock successBlock = (__bridge UAInboxClientMessageRetrievalSuccessBlock) arg;
+        successBlock(304, nil, 0);
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
     [[self.mockMessageListObserver expect] messageListWillLoad];
@@ -249,7 +254,7 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
-    UADisposable *disposable = [[UAInbox shared].messageList retrieveMessageListWithDelegate:self.mockMessageListDelegate];
+    UADisposable *disposable = [self.messageList retrieveMessageListWithDelegate:self.mockMessageListDelegate];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
 
@@ -278,7 +283,7 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
-    UADisposable *disposable = [[UAInbox shared].messageList retrieveMessageListWithDelegate:self.mockMessageListDelegate];
+    UADisposable *disposable = [self.messageList retrieveMessageListWithDelegate:self.mockMessageListDelegate];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
 
@@ -299,9 +304,9 @@ static UAUser *mockUser = nil;
     [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
-        UAInboxClientRetrievalSuccessBlock successBlock = (__bridge UAInboxClientRetrievalSuccessBlock) arg;
+        UAInboxClientMessageRetrievalSuccessBlock successBlock = (__bridge UAInboxClientMessageRetrievalSuccessBlock) arg;
         trigger = ^{
-            successBlock(nil, 0);
+            successBlock(304, nil, 0);
         };
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
@@ -311,7 +316,7 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
-    UADisposable *disposable = [[UAInbox shared].messageList retrieveMessageListWithDelegate:self.mockMessageListDelegate];
+    UADisposable *disposable = [self.messageList retrieveMessageListWithDelegate:self.mockMessageListDelegate];
     [disposable dispose];
 
     //disposal should prevent the successBlock from being executed in the trigger function
@@ -347,7 +352,7 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
-    UADisposable *disposable = [[UAInbox shared].messageList retrieveMessageListWithDelegate:self.mockMessageListDelegate];
+    UADisposable *disposable = [self.messageList retrieveMessageListWithDelegate:self.mockMessageListDelegate];
     [disposable dispose];
 
     //disposal should prevent the failureBlock from being executed in the trigger function
@@ -380,7 +385,7 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
-    UADisposable *disposable = [[UAInbox shared].messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil withDelegate:self.mockMessageListDelegate];
+    UADisposable *disposable = [self.messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil withDelegate:self.mockMessageListDelegate];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
 
@@ -409,7 +414,7 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
-    UADisposable *disposable = [[UAInbox shared].messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil withDelegate:self.mockMessageListDelegate];
+    UADisposable *disposable = [self.messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil withDelegate:self.mockMessageListDelegate];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
 
@@ -443,7 +448,7 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
-    UADisposable *disposable = [[UAInbox shared].messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil withDelegate:self.mockMessageListDelegate];
+    UADisposable *disposable = [self.messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil withDelegate:self.mockMessageListDelegate];
 
     [disposable dispose];
 
@@ -481,7 +486,7 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
-    UADisposable *disposable = [[UAInbox shared].messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil withDelegate:self.mockMessageListDelegate];
+    UADisposable *disposable = [self.messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil withDelegate:self.mockMessageListDelegate];
 
     [disposable dispose];
 
@@ -514,7 +519,7 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
-    UADisposable *disposable = [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil withDelegate:self.mockMessageListDelegate];
+    UADisposable *disposable = [self.messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil withDelegate:self.mockMessageListDelegate];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
 
@@ -543,7 +548,7 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
-    UADisposable *disposable = [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil withDelegate:self.mockMessageListDelegate];
+    UADisposable *disposable = [self.messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil withDelegate:self.mockMessageListDelegate];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
 
@@ -577,7 +582,7 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
-    UADisposable *disposable = [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil withDelegate:self.mockMessageListDelegate];
+    UADisposable *disposable = [self.messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil withDelegate:self.mockMessageListDelegate];
 
     [disposable dispose];
 
@@ -615,7 +620,7 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
-    UADisposable *disposable = [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil withDelegate:self.mockMessageListDelegate];
+    UADisposable *disposable = [self.messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil withDelegate:self.mockMessageListDelegate];
 
     [disposable dispose];
 
@@ -638,7 +643,7 @@ static UAUser *mockUser = nil;
 
     __block BOOL fail = NO;
 
-    UADisposable *disposable = [[UAInbox shared].messageList retrieveMessageListWithSuccessBlock:^{
+    UADisposable *disposable = [self.messageList retrieveMessageListWithSuccessBlock:^{
         fail = YES;
     } withFailureBlock:^{
         fail = YES;
@@ -658,8 +663,8 @@ static UAUser *mockUser = nil;
     [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
-        UAInboxClientRetrievalSuccessBlock successBlock = (__bridge UAInboxClientRetrievalSuccessBlock) arg;
-        successBlock(nil, 0);
+        UAInboxClientMessageRetrievalSuccessBlock successBlock = (__bridge UAInboxClientMessageRetrievalSuccessBlock) arg;
+        successBlock(304, nil, 0);
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
     [[self.mockMessageListObserver expect] messageListWillLoad];
@@ -670,7 +675,7 @@ static UAUser *mockUser = nil;
 
     __block BOOL fail = YES;
 
-    UADisposable *disposable = [[UAInbox shared].messageList retrieveMessageListWithSuccessBlock:^{
+    UADisposable *disposable = [self.messageList retrieveMessageListWithSuccessBlock:^{
         fail = NO;
     } withFailureBlock:^{
         fail = YES;
@@ -704,7 +709,7 @@ static UAUser *mockUser = nil;
 
     __block BOOL fail = NO;
 
-    UADisposable *disposable = [[UAInbox shared].messageList retrieveMessageListWithSuccessBlock:^{
+    UADisposable *disposable = [self.messageList retrieveMessageListWithSuccessBlock:^{
         fail = NO;
     } withFailureBlock:^{
         fail = YES;
@@ -729,9 +734,9 @@ static UAUser *mockUser = nil;
     [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
-        UAInboxClientRetrievalSuccessBlock successBlock = (__bridge UAInboxClientRetrievalSuccessBlock) arg;
+        UAInboxClientMessageRetrievalSuccessBlock successBlock = (__bridge UAInboxClientMessageRetrievalSuccessBlock) arg;
         trigger = ^{
-            successBlock(nil, 0);
+            successBlock(304, nil, 0);
         };
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
@@ -743,7 +748,7 @@ static UAUser *mockUser = nil;
 
     __block BOOL fail = NO;
 
-    UADisposable *disposable = [[UAInbox shared].messageList retrieveMessageListWithSuccessBlock:^{
+    UADisposable *disposable = [self.messageList retrieveMessageListWithSuccessBlock:^{
         fail = YES;
     } withFailureBlock:^{
         fail = YES;
@@ -788,7 +793,7 @@ static UAUser *mockUser = nil;
 
     __block BOOL fail = NO;
 
-    UADisposable *disposable = [[UAInbox shared].messageList retrieveMessageListWithSuccessBlock:^{
+    UADisposable *disposable = [self.messageList retrieveMessageListWithSuccessBlock:^{
         fail = YES;
     } withFailureBlock:^{
         fail = YES;
@@ -827,7 +832,7 @@ static UAUser *mockUser = nil;
 
     __block BOOL fail = YES;
 
-    UADisposable *disposable = [[UAInbox shared].messageList
+    UADisposable *disposable = [self.messageList
       performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil withSuccessBlock:^{
           fail = NO;
     } withFailureBlock:^{
@@ -862,7 +867,7 @@ static UAUser *mockUser = nil;
 
     __block BOOL fail = YES;
 
-    UADisposable *disposable = [[UAInbox shared].messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil withSuccessBlock:^{
+    UADisposable *disposable = [self.messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil withSuccessBlock:^{
         fail = YES;
     } withFailureBlock:^{
         fail = NO;
@@ -902,7 +907,7 @@ static UAUser *mockUser = nil;
 
     __block BOOL fail = NO;
 
-    UADisposable *disposable = [[UAInbox shared].messageList
+    UADisposable *disposable = [self.messageList
                                 performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil withSuccessBlock:^{
                                     fail = YES;
                                 } withFailureBlock:^{
@@ -947,7 +952,7 @@ static UAUser *mockUser = nil;
 
     __block BOOL fail = NO;
 
-    UADisposable *disposable = [[UAInbox shared].messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil withSuccessBlock:^{
+    UADisposable *disposable = [self.messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil withSuccessBlock:^{
         fail = YES;
     } withFailureBlock:^{
         fail = YES;
@@ -986,7 +991,7 @@ static UAUser *mockUser = nil;
 
     __block BOOL fail = YES;
 
-    UADisposable *disposable = [[UAInbox shared].messageList
+    UADisposable *disposable = [self.messageList
                                 performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil withSuccessBlock:^{
                                     fail = NO;
                                 } withFailureBlock:^{
@@ -1021,7 +1026,7 @@ static UAUser *mockUser = nil;
 
     __block BOOL fail = YES;
 
-    UADisposable *disposable = [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil withSuccessBlock:^{
+    UADisposable *disposable = [self.messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil withSuccessBlock:^{
         fail = YES;
     } withFailureBlock:^{
         fail = NO;
@@ -1061,7 +1066,7 @@ static UAUser *mockUser = nil;
 
     __block BOOL fail = NO;
 
-    UADisposable *disposable = [[UAInbox shared].messageList
+    UADisposable *disposable = [self.messageList
                                 performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil withSuccessBlock:^{
                                     fail = YES;
                                 } withFailureBlock:^{
@@ -1106,7 +1111,7 @@ static UAUser *mockUser = nil;
 
     __block BOOL fail = NO;
 
-    UADisposable *disposable = [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil withSuccessBlock:^{
+    UADisposable *disposable = [self.messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil withSuccessBlock:^{
         fail = YES;
     } withFailureBlock:^{
         fail = YES;
