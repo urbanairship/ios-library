@@ -10,9 +10,9 @@ Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 - Renamed methods to prevent false positives when apps are scanned by Apple for use of undocumented APIs.
 - Aliases and tags are now trimmed to prevent device registration errors.
 - Added custom inbox UIs are now checked that they conform to the UAInboxUI protocol.
-- UAInboxMessage no longer extends NSManagedObject to protect agains possible inbox message crashes.
-- Prefix internal category extensions to prevent name conflicts with other libraries.
-- Fix possible crash with background tasks.
+- UAInboxMessage no longer extends NSManagedObject to protect against possible inbox message crashes.
+- Prefixed internal category extension names with 'UA' to prevent name conflicts with other libraries.
+- Fixed possible crash with background tasks.
 
 
 ----------------------
