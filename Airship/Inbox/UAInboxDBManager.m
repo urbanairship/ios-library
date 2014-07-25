@@ -125,6 +125,16 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     [self saveContext];
 }
 
+- (void)markMessagesRead:(NSArray *)messages {
+    for (UAInboxMessage *message in messages) {
+        if ([message isKindOfClass:[UAInboxMessage class]]) {
+            message.unread = NO;
+        }
+    }
+
+    [self saveContext];
+}
+
 - (void)deleteMessagesWithIDs:(NSSet *)messageIDs {
     for (NSString *messageID in messageIDs) {
         UAInboxMessage *message = [self getMessageWithID:messageID];
