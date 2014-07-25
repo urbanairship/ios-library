@@ -4,7 +4,7 @@ iOS Changelog
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
 ---------------------
-4.0.1 - July 24, 2014
+4.0.1 - July 25, 2014
 ---------------------
 - Tag utility now uses OS preferred language.
 - Renamed methods to prevent false positives when apps are scanned by Apple for use of undocumented APIs.
