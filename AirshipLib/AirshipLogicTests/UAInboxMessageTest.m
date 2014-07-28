@@ -21,6 +21,7 @@
 //a mock delegate we'll pass into the appropriate methods for callbacks
 @property(nonatomic, strong) id mockMessageListDelegate;
 
+@property(nonatomic, strong) UAInboxMessageList *messageList;
 @end
 
 @implementation UAInboxMessageTest
@@ -46,7 +47,7 @@
     self.message.unread = YES;
     //this is normally set when a message is associated with the message list, needed for
     //sending (deprecated) UAInboxMessageListObserver callbacks
-    self.message.inbox = [UAInbox shared].messageList;
+    self.message.inbox = self.messageList = [[UAInboxMessageList alloc] init];
 
     self.mockInboxAPIClient = [OCMockObject mockForClass:[UAInboxAPIClient class]];
     self.mockMessageListObserver = [OCMockObject mockForProtocol:@protocol(UAInboxMessageListObserver)];
@@ -61,7 +62,7 @@
     self.message.client = self.mockInboxAPIClient;
 
     //add our (deprecated) message list observer
-    [[UAInbox shared].messageList addObserver:self.mockMessageListObserver];
+    [self.messageList addObserver:self.mockMessageListObserver];
 }
 
 - (void)tearDown {
@@ -113,11 +114,11 @@
 
 //if the inbox is currently batch updating, this method should do nothing
 - (void)testMarkAsReadBatchUpdating {
-    [UAInbox shared].messageList.isBatchUpdating = YES;
+    self.messageList.isBatchUpdating = YES;
     [self.message markAsRead];
     //if the inbox is batch updating, this should be a no-op. otherwise,
     //unexpected methods will be called.
-    [UAInbox shared].messageList.isBatchUpdating = NO;
+    self.messageList.isBatchUpdating = NO;
 }
 
 //if the message is already marked read, this method should do nothing
@@ -232,12 +233,12 @@
 //if the inbox is currently batch updating, this method should do nothing.
 //the returned disposable should be nil.
 - (void)testMarkAsReadWithDelegateBatchUpdating {
-    [UAInbox shared].messageList.isBatchUpdating = YES;
+    self.messageList.isBatchUpdating = YES;
     UADisposable *disposable = [self.message markAsReadWithDelegate:self.mockMessageListDelegate];
     XCTAssertNil(disposable, @"disposable should be nil");
     //if the inbox is batch updating, this should be a no-op. otherwise,
     //unexpected methods will be called.
-    [UAInbox shared].messageList.isBatchUpdating = NO;
+    self.messageList.isBatchUpdating = NO;
 }
 
 //if the message is already marked as read, this method should do nothing.
@@ -388,7 +389,7 @@
 //if the inbox is currently batch updating, this method should do nothing.
 //the returned disposable should be nil.
 - (void)testMarkAsReadWithBlocksBatchUpdating {
-    [UAInbox shared].messageList.isBatchUpdating = YES;
+    self.messageList.isBatchUpdating = YES;
     __block BOOL fail = NO;
 
     UADisposable *disposable = [self.message markAsReadWithSuccessBlock:^(UAInboxMessage *message){
@@ -401,7 +402,7 @@
     XCTAssertFalse(fail, @"callbacks should not have executed");
     //if the inbox is batch updating, this should be a no-op. otherwise,
     //unexpected methods will be called.
-    [UAInbox shared].messageList.isBatchUpdating = NO;
+    self.messageList.isBatchUpdating = NO;
 }
 
 //if the message is already marked as read, this method should do nothing.

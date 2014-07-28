@@ -75,6 +75,13 @@ SINGLETON_INTERFACE(UAInboxDBManager);
  */
 - (void)deleteMessages:(NSArray *)messages;
 
+
+/**
+ * Marks a list of messages as read.
+ * @param messages NSArray of UAInboxMessages to be marked as read
+ */
+- (void)markMessagesRead:(NSArray *)messages;
+
 /**
  * Deletes a set of messages from the database
  * @param messageIDs NSArray of the messages IDs to be deleted
