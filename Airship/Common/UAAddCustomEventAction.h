@@ -48,7 +48,7 @@ extern NSString * const UAAddCustomEventActionErrorDomain;
  *
  * Expected argument values: A dictionary of keys for the custom event. When a
  * custom event action is triggered from a Message Center Rich Push Message,
- * the attribution type and ID will automatically be filled for the message if
+ * the interaction type and ID will automatically be filled for the message if
  * they are left blank.
  *
  * Valid situations: UASituationForegroundPush, UASituationLanchedFromPush,

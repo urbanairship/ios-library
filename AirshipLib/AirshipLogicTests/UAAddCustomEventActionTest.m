@@ -96,8 +96,8 @@
     NSDictionary *dict = @{@"event_name": @"event name",
                            @"transaction_id": @"transaction id",
                            @"event_value": @(123.45),
-                           @"attribution_type": @"attribution type",
-                           @"attribution_id": @"attribution id"};
+                           @"interaction_type": @"interaction type",
+                           @"interaction_id": @"interaction id"};
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:dict
                                                       withSituation:UASituationManualInvocation];
@@ -109,8 +109,8 @@
         return [event.eventName isEqualToString:@"event name"] &&
                [event.transactionID isEqualToString:@"transaction id"] &&
                [event.eventValue isEqualToNumber:@(123.45)] &&
-               [event.attributionType isEqualToString:@"attribution type"] &&
-               [event.attributionID isEqualToString:@"attribution id"];
+               [event.interactionType isEqualToString:@"interaction type"] &&
+               [event.interactionID isEqualToString:@"interaction id"];
 
     }]];
 
@@ -128,8 +128,8 @@
     NSDictionary *dict = @{@"event_name": @"event name",
                            @"transaction_id": @"transaction id",
                            @"event_value": @"123.45",
-                           @"attribution_type": @"attribution type",
-                           @"attribution_id": @"attribution id"};
+                           @"interaction_type": @"interaction type",
+                           @"interaction_id": @"interaction id"};
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:dict
                                                       withSituation:UASituationManualInvocation];
@@ -141,8 +141,8 @@
         return [event.eventName isEqualToString:@"event name"] &&
         [event.transactionID isEqualToString:@"transaction id"] &&
         [event.eventValue isEqualToNumber:@(123.45)] &&
-        [event.attributionType isEqualToString:@"attribution type"] &&
-        [event.attributionID isEqualToString:@"attribution id"];
+        [event.interactionType isEqualToString:@"interaction type"] &&
+        [event.interactionID isEqualToString:@"interaction id"];
 
     }]];
 
@@ -159,8 +159,8 @@
     NSDictionary *dict = @{@"event_name": @"",
                            @"transaction_id": @"transaction id",
                            @"event_value": @"123.45",
-                           @"attribution_type": @"attribution type",
-                           @"attribution_id": @"attribution id"};
+                           @"interaction_type": @"interaction type",
+                           @"interaction_id": @"interaction id"};
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:dict withSituation:UASituationManualInvocation];
 
@@ -173,136 +173,12 @@
     [self verifyPerformWithArgs:args withExpectedResult:expectedResult];
 }
 
-/**
- * Test perform when attribution ID does not exist.
- */
-- (void)testPerformNoAttributionID {
-    NSDictionary *dict = @{@"event_name": @"event name",
-                           @"transaction_id": @"transaction id",
-                           @"event_value": @"123.45",
-                           @"attribution_type": @"attribution type"};
-
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:dict
-                                                      withSituation:UASituationManualInvocation];
-
-    UAActionResult *expectedResult = [UAActionResult emptyResult];
-
-    [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UACustomEvent *event = obj;
-        return [event.eventName isEqualToString:@"event name"] &&
-        [event.transactionID isEqualToString:@"transaction id"] &&
-        [event.eventValue isEqualToNumber:@(123.45)] &&
-        [event.attributionType isEqualToString:@"attribution type"] &&
-        ([event.attributionID length] == 0);
-
-    }]];
-
-    [self verifyPerformWithArgs:args withExpectedResult:expectedResult];
-
-    // Verify the event was added
-    XCTAssertNoThrow([self.analytics verify], @"Custom event should have been added.");
-}
 
 /**
- * Test perform when attribution type does not exist.
+ * Test auto filling in the interaction id and type from an mcrap when left
+ * empty.
  */
-- (void)testPerformNoAttributionType {
-    NSDictionary *dict = @{@"event_name": @"event name",
-                           @"transaction_id": @"transaction id",
-                           @"event_value": @"123.45",
-                           @"attribution_id": @"attribution id"};
-
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:dict
-                                                      withSituation:UASituationManualInvocation];
-
-    UAActionResult *expectedResult = [UAActionResult emptyResult];
-
-    [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UACustomEvent *event = obj;
-        return [event.eventName isEqualToString:@"event name"] &&
-        [event.transactionID isEqualToString:@"transaction id"] &&
-        [event.eventValue isEqualToNumber:@(123.45)] &&
-        [event.attributionID isEqualToString:@"attribution id"] &&
-        ([event.attributionType length] == 0);
-
-    }]];
-
-    [self verifyPerformWithArgs:args withExpectedResult:expectedResult];
-
-    // Verify the event was added
-    XCTAssertNoThrow([self.analytics verify], @"Custom event should have been added.");
-}
-
-/**
- * Test perform when both attribution type and ID does not exist, autofill is
- * true and conversion ID exist
- */
-- (void)testPerformAutoFillTrueConversionID {
-    NSDictionary *dict = @{@"event_name": @"event name",
-                           @"transaction_id": @"transaction id",
-                           @"event_value": @"123.45",
-                           @"auto_fill_landing_page": @"YES"};
-
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:dict
-                                                      withSituation:UASituationManualInvocation];
-
-    UAActionResult *expectedResult = [UAActionResult emptyResult];
-
-    // Set a conversion push ID for the analytics session
-    [[[self.analytics stub] andReturn:@"push ID"] conversionPushId];
-
-    [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UACustomEvent *event = obj;
-        return [event.eventName isEqualToString:@"event name"] &&
-        [event.transactionID isEqualToString:@"transaction id"] &&
-        [event.eventValue isEqualToNumber:@(123.45)] &&
-        [event.attributionType isEqualToString:kUAAttributionLandingPage] &&
-        [event.attributionID isEqualToString:@"push ID"];
-
-    }]];
-
-    [self verifyPerformWithArgs:args withExpectedResult:expectedResult];
-
-    // Verify the event was added
-    XCTAssertNoThrow([self.analytics verify], @"Custom event should have been added.");
-}
-
-/**
- * Test perform when both attribution type and ID does not exist, autofill is
- * true and conversion ID does not exist
- */
-- (void)testPerformAutoFillTrueNoConversionID {
-    NSDictionary *dict = @{@"event_name": @"event name",
-                           @"transaction_id": @"transaction id",
-                           @"event_value": @"123.45",
-                           @"auto_fill_landing_page": @"YES"};
-
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:dict
-                                                      withSituation:UASituationManualInvocation];
-
-    UAActionResult *expectedResult = [UAActionResult emptyResult];
-
-    [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UACustomEvent *event = obj;
-        return [event.eventName isEqualToString:@"event name"] &&
-        [event.transactionID isEqualToString:@"transaction id"] &&
-        [event.eventValue isEqualToNumber:@(123.45)] &&
-        ([event.attributionType length] == 0) &&
-        ([event.attributionID length] == 0);
-
-    }]];
-
-    [self verifyPerformWithArgs:args withExpectedResult:expectedResult];
-
-    // Verify the event was added
-    XCTAssertNoThrow([self.analytics verify], @"Custom event should have been added.");
-}
-
-/**
- * Test auto filling in the attribution when the attribution is not set, auto landing page
- * is false, and a MCRAP message is available in the Action Arguments metadata.
- */
-- (void)testPerformAutoFillFalse {
+- (void)testInteractionEmptyMCRAP {
     id messageDictionary = @{@"message_id": @"message id",
                              @"title": @"someTitle",
                              @"content_type": @"someContentType",
@@ -331,8 +207,54 @@
         return [event.eventName isEqualToString:@"event name"] &&
         [event.transactionID isEqualToString:@"transaction id"] &&
         [event.eventValue isEqualToNumber:@(123.45)] &&
-        [event.attributionID isEqualToString:@"message id"] &&
-        [event.attributionType isEqualToString:@"ua_mcrap"];
+        [event.interactionID isEqualToString:@"message id"] &&
+        [event.interactionType isEqualToString:@"ua_mcrap"];
+    }]];
+
+    [self verifyPerformWithArgs:args withExpectedResult:expectedResult];
+
+    // Verify the event was added
+    XCTAssertNoThrow([self.analytics verify], @"Custom event should have been added.");
+}
+
+/**
+ * Test not modifying the interaction id and type when it is set and triggered
+ * from an mcrap.
+ */
+- (void)testInteractionSetMCRAP {
+    id messageDictionary = @{@"message_id": @"message id",
+                             @"title": @"someTitle",
+                             @"content_type": @"someContentType",
+                             @"extra": @{@"someKey":@"someValue"},
+                             @"message_body_url": @"http://someMessageBodyUrl",
+                             @"message_url": @"http://someMessageUrl",
+                             @"unread": @"0",
+                             @"message_sent": @"2013-08-13 00:16:22" };
+
+    // Only way to recreate a message is to actually save one
+    [self.inboxDBManager addMessageFromDictionary:messageDictionary];
+    UAInboxMessage *message = [[self.inboxDBManager getMessages] objectAtIndex:0];
+
+    NSDictionary *eventPayload = @{@"event_name": @"event name",
+                                   @"transaction_id": @"transaction id",
+                                   @"event_value": @"123.45",
+                                   @"interaction_type": @"interaction type",
+                                   @"interaction_id": @"interaction id"};
+
+
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:eventPayload
+                                                      withSituation:UASituationManualInvocation
+                                                           metadata:@{UAActionMetadataInboxMessageKey: message}];
+
+    UAActionResult *expectedResult = [UAActionResult emptyResult];
+
+    [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UACustomEvent *event = obj;
+        return [event.eventName isEqualToString:@"event name"] &&
+        [event.transactionID isEqualToString:@"transaction id"] &&
+        [event.eventValue isEqualToNumber:@(123.45)] &&
+        [event.interactionID isEqualToString:@"interaction id"] &&
+        [event.interactionType isEqualToString:@"interaction type"];
     }]];
 
     [self verifyPerformWithArgs:args withExpectedResult:expectedResult];

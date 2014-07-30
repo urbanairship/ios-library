@@ -57,19 +57,19 @@
 @interface UAAnalytics ()
 
 /**
- * The conversion push Id.
+ * The conversion send Id.
  */
-@property (nonatomic, strong) NSString *conversionPushId;
+@property (nonatomic, copy) NSString *conversionSendId;
 
 /**
  * The conversion rich push Id.
  */
-@property (nonatomic, strong) NSString *conversionRichPushId;
+@property (nonatomic, copy) NSString *conversionRichPushId;
 
 /**
  * The current session Id.
  */
-@property (nonatomic, strong) NSString *sessionId;
+@property (nonatomic, copy) NSString *sessionId;
 
 /**
  * The notification as an NSDictionary.

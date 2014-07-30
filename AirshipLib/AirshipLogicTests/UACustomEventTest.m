@@ -60,18 +60,18 @@
 - (void)testCustomEvent {
     NSString *eventName =  [@"" stringByPaddingToLength:255 withString:@"EVENT_NAME" startingAtIndex:0];
     NSString *transactionID =  [@"" stringByPaddingToLength:255 withString:@"TRANSACTION_ID" startingAtIndex:0];
-    NSString *attributionID =  [@"" stringByPaddingToLength:255 withString:@"ATTRIBUTION_ID" startingAtIndex:0];
-    NSString *attributionType =  [@"" stringByPaddingToLength:255 withString:@"ATTRIBUTION_TYPE" startingAtIndex:0];
+    NSString *interactionID =  [@"" stringByPaddingToLength:255 withString:@"INTERACTION_ID" startingAtIndex:0];
+    NSString *interactionType =  [@"" stringByPaddingToLength:255 withString:@"INTERACTION_TYPE" startingAtIndex:0];
 
     UACustomEvent *event = [UACustomEvent eventWithName:eventName value:@(INT32_MIN)];
     event.transactionID = transactionID;
-    event.attributionID = attributionID;
-    event.attributionType = attributionType;
+    event.interactionID = interactionID;
+    event.interactionType = interactionType;
 
     XCTAssertEqualObjects(eventName, [event.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(transactionID, [event.data objectForKey:@"transaction_id"], @"Unexpected transaction id.");
-    XCTAssertEqualObjects(attributionID, [event.data objectForKey:@"attribution_id"], @"Unexpected attribution id.");
-    XCTAssertEqualObjects(attributionType, [event.data objectForKey:@"attribution_type"], @"Unexpected attribution type.");
+    XCTAssertEqualObjects(interactionID, [event.data objectForKey:@"interaction_id"], @"Unexpected interaction id.");
+    XCTAssertEqualObjects(interactionType, [event.data objectForKey:@"interaction_type"], @"Unexpected interaction type.");
     XCTAssertEqualObjects(@(INT32_MIN * 1000000.0), [event.data objectForKey:@"event_value"], @"Unexpected event value.");
 }
 
@@ -95,41 +95,41 @@
 }
 
 /**
- * Test setting the attribution ID.
+ * Test setting the interaction ID.
  */
-- (void)testSetAttributionID {
+- (void)testSetInteractionID {
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
-    XCTAssertNil(event.attributionID, @"Attribution ID should default to nil");
+    XCTAssertNil(event.interactionID, @"Interaction ID should default to nil");
 
-    NSString *attributionID = [@"" stringByPaddingToLength:255 withString:@"ATTRIBUTION_ID" startingAtIndex:0];
+    NSString *interactionID = [@"" stringByPaddingToLength:255 withString:@"INTERACTION_ID" startingAtIndex:0];
 
-    event.attributionID = attributionID;
-    XCTAssertEqualObjects(attributionID, event.attributionID, "255 character attribution IDs should be valid");
+    event.interactionID = interactionID;
+    XCTAssertEqualObjects(interactionID, event.interactionID, "255 character interaction IDs should be valid");
 
-    event.attributionID = nil;
-    XCTAssertNil(event.attributionID, @"Attribution ID should be able to be cleared");
+    event.interactionID = nil;
+    XCTAssertNil(event.interactionID, @"Interaction ID should be able to be cleared");
 
-    event.attributionID = [@"" stringByPaddingToLength:256 withString:@"ATTRIBUTION_ID" startingAtIndex:0];
-    XCTAssertNil(event.attributionID, @"Attribution IDs larger than 255 characters should be ignored");
+    event.interactionID = [@"" stringByPaddingToLength:256 withString:@"INTERACTION_ID" startingAtIndex:0];
+    XCTAssertNil(event.interactionID, @"Interaction IDs larger than 255 characters should be ignored");
 }
 
 /**
- * Test setting the attribution type.
+ * Test setting the interaction type.
  */
-- (void)testSetAttributionType {
+- (void)testSetInteractionType {
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
-    XCTAssertNil(event.attributionType, @"Attribution type should default to nil");
+    XCTAssertNil(event.interactionType, @"Interaction type should default to nil");
 
-    NSString *attributionType = [@"" stringByPaddingToLength:255 withString:@"ATTRIBUTION_TYPE" startingAtIndex:0];
+    NSString *interactionType = [@"" stringByPaddingToLength:255 withString:@"INTERACTION_TYPE" startingAtIndex:0];
 
-    event.attributionType = attributionType;
-    XCTAssertEqualObjects(attributionType, event.attributionType, "255 character attribution Types should be valid");
+    event.interactionType = interactionType;
+    XCTAssertEqualObjects(interactionType, event.interactionType, "255 character interaction Types should be valid");
 
-    event.attributionType = nil;
-    XCTAssertNil(event.attributionType, @"Attribution type should be able to be cleared");
+    event.interactionType = nil;
+    XCTAssertNil(event.interactionType, @"Interaction type should be able to be cleared");
 
-    event.attributionType = [@"" stringByPaddingToLength:256 withString:@"ATTRIBUTION_TYPE" startingAtIndex:0];
-    XCTAssertNil(event.attributionID, @"Attribution types larger than 255 characters should be ignored");
+    event.interactionType = [@"" stringByPaddingToLength:256 withString:@"INTERACTION_TYPE" startingAtIndex:0];
+    XCTAssertNil(event.interactionType, @"Interaction types larger than 255 characters should be ignored");
 }
 
 /**
@@ -148,7 +148,7 @@
     XCTAssertNil(event.transactionID, @"Transaction ID should be able to be cleared");
 
     event.transactionID = [@"" stringByPaddingToLength:256 withString:@"TRANSACTION_ID" startingAtIndex:0];
-    XCTAssertNil(event.attributionID, @"Transaction IDs larger than 255 characters should be ignored");
+    XCTAssertNil(event.transactionID, @"Transaction IDs larger than 255 characters should be ignored");
 }
 
 /**
@@ -246,39 +246,13 @@
 }
 
 /**
- * Test auto filling in the attribution if a hard conversion ID is set and neither
- * the attribution type or id is filled in.
+ * Test event includes conversion send id if available.
  */
-- (void)testAutoAttribution {
-    UACustomEvent *event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
+- (void)testConversionSendID {
+    [[[self.analytics stub] andReturn:@"send ID"] conversionSendId];
+    UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
 
-    // Verify attribution is blank when conversion ID is nil
-    XCTAssertNil([event.data objectForKey:@"attribution_id"], @"Attribution should be nil");
-    XCTAssertNil([event.data objectForKey:@"attribution_type"], @"Attribution should be nil");
-
-    // Set a conversion push ID for the analytics session
-    [[[self.analytics stub] andReturn:@"push ID"] conversionPushId];
-
-    // Recreate the event to verify auto fil behavior
-    event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
-
-    // Verify the attribution is hard open with the push ID
-    XCTAssertEqualObjects(kUAAttributionHardOpen, [event.data objectForKey:@"attribution_type"], @"Attribution should autofil to hard open");
-    XCTAssertEqualObjects(@"push ID", [event.data objectForKey:@"attribution_id"], @"Attribution should autofil to push id");
-
-    // Recreate the event with a attribution ID to verify attribution does not auto fil
-    event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
-    event.attributionID = @"attribution ID";
-
-    XCTAssertEqualObjects(@"attribution ID", [event.data objectForKey:@"attribution_id"], @"Attribution ID should be the set value");
-    XCTAssertNil([event.data objectForKey:@"attribution_type"], @"Attribution type is not set and should be nil");
-
-    // Recreate the event with a attribution type to verify attribution does not auto fil
-    event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
-    event.attributionType = @"attribution type";
-
-    XCTAssertEqualObjects(@"attribution type", [event.data objectForKey:@"attribution_type"], @"Attribution type should be the set value");
-    XCTAssertNil([event.data objectForKey:@"attribution_id"], @"Attribution ID is not set and should be nil");
+    XCTAssertEqualObjects(@"send ID", [event.data objectForKey:@"conversion_send_id"], @"Send id should be set.");
 }
 
 /**

@@ -26,9 +26,7 @@
 #import <Foundation/Foundation.h>
 #import "UAEvent.h"
 
-#define kUAAttributionHardOpen @"ua_hard_open"
-#define kUAAttributionLandingPage @"ua_landing_page"
-#define kUAAttributionMCRAP @"ua_mcrap"
+#define kUAInteractionMCRAP @"ua_mcrap"
 
 #define kUACustomEventCharacterLimit 255
 #define kUACustomEventSize 800
@@ -78,25 +76,25 @@
 @property(nonatomic, copy) NSString *eventName;
 
 /**
- * The event's attribution ID. The ID's length must not exceed 255 characters or it will
+ * The event's interaction ID. The ID's length must not exceed 255 characters or it will
  * be ignored.
  */
-@property(nonatomic, copy) NSString *attributionID;
+@property(nonatomic, copy) NSString *interactionID;
 
 /**
- * The event's attribution type. The type's length must not exceed 255 characters or it will
+ * The event's interaction type. The type's length must not exceed 255 characters or it will
  * be ignored.
  */
-@property(nonatomic, copy) NSString *attributionType;
+@property(nonatomic, copy) NSString *interactionType;
 
 /**
- * The event's transaction ID. The ID's length must not exceed 255 characters or it will
+ * The event's interaction ID. The ID's length must not exceed 255 characters or it will
  * be ignored.
  */
 @property(nonatomic, copy) NSString *transactionID;
 
 /**
- * Sets the custom event's attribution type and ID from a UAInboxMessage.
+ * Sets the custom event's interaction type and ID from a UAInboxMessage.
  */
-- (void)setAttributionFromMessage:(UAInboxMessage *)message;
+- (void)setInteractionFromMessage:(UAInboxMessage *)message;
 @end
