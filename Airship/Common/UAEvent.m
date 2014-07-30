@@ -149,7 +149,7 @@
 
     UAAnalytics *analytics = [UAirship shared].analytics;
 
-    [data setValue:analytics.conversionPushId forKey:@"push_id"];
+    [data setValue:analytics.conversionSendId forKey:@"push_id"];
     [data setValue:analytics.conversionRichPushId forKey:@"rich_push_id"];
 
     [data setValue:[UAUser defaultUser].username forKey:@"user_id"];
@@ -207,7 +207,7 @@
 
     UAAnalytics *analytics = [UAirship shared].analytics;
 
-    [data setValue:analytics.conversionPushId forKey:@"push_id"];
+    [data setValue:analytics.conversionSendId forKey:@"push_id"];
     [data setValue:analytics.conversionRichPushId forKey:@"rich_push_id"];
 
 

@@ -34,19 +34,19 @@
 @interface UAAnalytics : NSObject
 
 /**
- * The conversion push Id.
+ * The conversion send Id.
  */
-@property (nonatomic, strong, readonly) NSString *conversionPushId;
+@property (nonatomic, copy, readonly) NSString *conversionSendId;
 
 /**
  * The conversion rich push Id.
  */
-@property (nonatomic, strong, readonly) NSString *conversionRichPushId;
+@property (nonatomic, copy, readonly) NSString *conversionRichPushId;
 
 /**
  * The current session Id.
  */
-@property (nonatomic, strong, readonly) NSString *sessionId;
+@property (nonatomic, copy, readonly) NSString *sessionId;
 
 /**
  * The oldest event time as an NSTimeInterval.

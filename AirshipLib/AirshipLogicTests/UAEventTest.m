@@ -98,7 +98,7 @@
 - (void)testAppInitEvent {
     [UAUser defaultUser].username = @"user id";
     [[[self.reachability stub] andReturnValue:@(UA_ReachableViaWWAN)] currentReachabilityStatus];
-    [[[self.analytics stub] andReturn:@"push id"] conversionPushId];
+    [[[self.analytics stub] andReturn:@"push id"] conversionSendId];
     [[[self.analytics stub] andReturn:@"rich push id"] conversionRichPushId];
 
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
@@ -137,7 +137,7 @@
 - (void)testAppForegroundEvent {
     [UAUser defaultUser].username = @"user id";
     [[[self.reachability stub] andReturnValue:@(UA_ReachableViaWWAN)] currentReachabilityStatus];
-    [[[self.analytics stub] andReturn:@"push id"] conversionPushId];
+    [[[self.analytics stub] andReturn:@"push id"] conversionSendId];
     [[[self.analytics stub] andReturn:@"rich push id"] conversionRichPushId];
 
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
@@ -174,7 +174,7 @@
 - (void)testAppExitEvent {
 
     [[[self.reachability stub] andReturnValue:@(UA_ReachableViaWWAN)] currentReachabilityStatus];
-    [[[self.analytics stub] andReturn:@"push id"] conversionPushId];
+    [[[self.analytics stub] andReturn:@"push id"] conversionSendId];
     [[[self.analytics stub] andReturn:@"rich push id"] conversionRichPushId];
 
     NSDictionary *expectedData = @{@"connection_type": @"cell",

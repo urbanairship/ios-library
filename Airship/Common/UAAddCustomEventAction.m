@@ -55,25 +55,20 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
 
     NSString *eventName = [self parseStringFromDictionary:dict key:@"event_name"];
     NSString *eventValue = [self parseStringFromDictionary:dict key:@"event_value"];
-    NSString *attributionID = [self parseStringFromDictionary:dict key:@"attribution_id"];
-    NSString *attributionType = [self parseStringFromDictionary:dict key:@"attribution_type"];
+    NSString *interactionID = [self parseStringFromDictionary:dict key:@"interaction_id"];
+    NSString *interactionType = [self parseStringFromDictionary:dict key:@"interaction_type"];
     NSString *transactionID = [self parseStringFromDictionary:dict key:@"transaction_id"];
 
     UACustomEvent *event = [UACustomEvent eventWithName:eventName valueFromString:eventValue];
     event.transactionID = transactionID;
 
-    if (attributionID || attributionType) {
-        event.attributionType = attributionType;
-        event.attributionID = attributionID;
+    if (interactionID || interactionType) {
+        event.interactionType = interactionType;
+        event.interactionID = interactionID;
     } else {
-        BOOL autoFill = [[self parseStringFromDictionary:dict key:@"auto_fill_landing_page"] boolValue];
-        NSString *conversionID = [UAirship shared].analytics.conversionPushId;
-        if (autoFill && conversionID) {
-            event.attributionType = kUAAttributionLandingPage;
-            event.attributionID = conversionID;
-        } else {
-            id message = [arguments.metadata objectForKey:UAActionMetadataInboxMessageKey];
-            [event setAttributionFromMessage:message];
+        id message = [arguments.metadata objectForKey:UAActionMetadataInboxMessageKey];
+        if (message) {
+            [event setInteractionFromMessage:message];
         }
     }
 

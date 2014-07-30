@@ -74,19 +74,19 @@
     }
 }
 
-- (void)setAttributionID:(NSString *)attributionID {
-    if (attributionID.length > kUACustomEventCharacterLimit) {
-        UA_LERR(@"Event attribution ID is larger than %d characters.", kUACustomEventCharacterLimit);
+- (void)setInteractionID:(NSString *)interactionID {
+    if (interactionID.length > kUACustomEventCharacterLimit) {
+        UA_LERR(@"Event interaction ID is larger than %d characters.", kUACustomEventCharacterLimit);
     } else {
-        _attributionID = [attributionID copy];
+        _interactionID = [interactionID copy];
     }
 }
 
-- (void)setAttributionType:(NSString *)attributionType {
-    if (attributionType.length > kUACustomEventCharacterLimit) {
-        UA_LERR(@"Event attribution type is larger than %d characters.", kUACustomEventCharacterLimit);
+- (void)setInteractionType:(NSString *)interactionType {
+    if (interactionType.length > kUACustomEventCharacterLimit) {
+        UA_LERR(@"Event interaction type is larger than %d characters.", kUACustomEventCharacterLimit);
     } else {
-        _attributionType = [attributionType copy];
+        _interactionType = [interactionType copy];
     }
 }
 
@@ -118,10 +118,10 @@
     }
 }
 
-- (void)setAttributionFromMessage:(UAInboxMessage *)message {
+- (void)setInteractionFromMessage:(UAInboxMessage *)message {
     if (message) {
-        self.attributionID = message.messageID;
-        self.attributionType = kUAAttributionMCRAP;
+        self.interactionID = message.messageID;
+        self.interactionType = kUAInteractionMCRAP;
     }
 }
 
@@ -131,17 +131,12 @@
     // Event name
     [dictionary setValue:self.eventName forKey:@"event_name"];
 
-    // Attribution
-    if (!self.attributionType && !self.attributionID) {
-        NSString *conversionID = [UAirship shared].analytics.conversionPushId;
-        if (conversionID) {
-            [dictionary setValue:kUAAttributionHardOpen forKey:@"attribution_type"];
-            [dictionary setValue:conversionID forKey:@"attribution_id"];
-        }
-    } else {
-        [dictionary setValue:self.attributionID forKey:@"attribution_id"];
-        [dictionary setValue:self.attributionType forKey:@"attribution_type"];
-    }
+    // Conversion Send ID
+    [dictionary setValue:[UAirship shared].analytics.conversionSendId forKey:@"conversion_send_id"];
+
+    // Interaction
+    [dictionary setValue:self.interactionID forKey:@"interaction_id"];
+    [dictionary setValue:self.interactionType forKey:@"interaction_type"];
 
     // Transaction ID
     [dictionary setValue:self.transactionID forKey:@"transaction_id"];
