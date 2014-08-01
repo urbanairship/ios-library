@@ -357,11 +357,9 @@ static NSMutableSet *overlayControllers = nil;
     // casts a device orientation to an interface orientation
 
     //iOS6+ uses supportedInterfaceOrientations for this, so if it's available we should use it.
-    if ([self.parentViewController respondsToSelector:@selector(supportedInterfaceOrientations)]) {
-        if (([self.parentViewController supportedInterfaceOrientations] &
-             (UIInterfaceOrientation)[UIDevice currentDevice].orientation) == 0) {
-            return;
-        }
+    if (([self.parentViewController supportedInterfaceOrientations] &
+         (UIInterfaceOrientation)[UIDevice currentDevice].orientation) == 0) {
+        return;
     }
     // This will inject the current device orientation
     [self.webView injectInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
