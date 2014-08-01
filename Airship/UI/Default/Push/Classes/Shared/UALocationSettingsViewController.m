@@ -33,15 +33,6 @@
 
 @implementation UALocationSettingsViewController
 
-
-- (void)viewDidUnload {
-    [self turnOffLocationDisplay];
-    self.locationTableView = nil;
-    self.locationDisplay = nil;
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.reportedLocations = [NSMutableArray arrayWithCapacity:10];

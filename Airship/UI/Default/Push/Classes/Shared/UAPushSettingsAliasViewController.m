@@ -62,10 +62,6 @@ enum {
     return YES;
 }
 
-- (void)viewDidUnload {
-    [super viewDidUnload];
-}
-
 #pragma mark -
 #pragma mark UITableViewDelegate
 

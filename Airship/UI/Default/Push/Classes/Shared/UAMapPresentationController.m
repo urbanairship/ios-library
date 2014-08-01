@@ -49,13 +49,6 @@
     self.navigationItem.rightBarButtonItem = self.rightButton;
 }
 
-- (void)viewDidUnload
-{
-    self.mapView = nil;
-    self.rightButton = nil;
-    [super viewDidUnload];
-}
-
 - (void)viewWillDisappear:(BOOL)animated {
     self.mapView.delegate = nil; // delegate is set in xib
     [super viewWillDisappear:animated];

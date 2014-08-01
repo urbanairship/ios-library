@@ -262,22 +262,7 @@ enum {
     // Relinquish ownership any cached data, images, etc. that aren't in use.
 }
 
-- (void)viewDidUnload {
-    // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
-    // For example: self.myOutlet = nil;
-
-    self.addTagController.tagDelegate = nil;
-    self.addTagController = nil;
-    
-    self.textCell = nil;
-    self.textLabel = nil;
-    self.addButton = nil;
-
-    [super viewDidUnload];
-}
-
-
-- (void)dealloc {    
+- (void)dealloc {
     self.addTagController.tagDelegate = nil;
 }
 

@@ -44,12 +44,6 @@
     return YES;
 }
 
-- (void)viewDidUnload {
-    [super viewDidUnload];
-    self.emailButton = nil;
-    self.channelIDLabel = nil;
-}
-
 #pragma mark -
 #pragma mark UITableViewDelegate
 

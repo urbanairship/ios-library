@@ -126,24 +126,6 @@ static NSUInteger channelRowCount = 1;
     return YES;
 }
 
-- (void)viewDidUnload {
-    [super viewDidUnload];
-
-    self.deviceTokenCell = nil;
-    self.deviceTokenTypesCell = nil;
-    self.deviceTokenDisabledTypesCell = nil;
-    self.deviceTokenAliasCell = nil;
-    self.deviceTokenTagsCell = nil;
-    self.helpSoundsCell = nil;
-    self.helpLogCell = nil;
-    self.locationCell = nil;
-    self.channelCell = nil;
-
-    self.footerImageView = nil;
-    self.tableView = nil;
-    
-}
-
 #pragma mark -
 
 - (void)initCells {

@@ -46,12 +46,6 @@
     return YES;
 }
 
-- (void)viewDidUnload {
-    [super viewDidUnload];
-    self.emailButton = nil;
-    self.tokenLabel = nil;
-}
-
 #pragma mark -
 #pragma mark UITableViewDelegate
 
