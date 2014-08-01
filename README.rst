@@ -247,14 +247,6 @@ Base64               BSD       Copyright 2009-2010 Matt Gallagher.
 Reachability         BSD       Copyright (C) 2010 Apple Inc.
 ===================  ========  ======================================================
 
-Sample Code
-###########
-
-===================  ========  =============================
-Third party Package  License   Copyright / Creator
-===================  ========  =============================
-MTPopupWindow        MIT       Copyright 2011 Marin Todorov
-===================  ========  =============================
 
 Test Code
 #########
