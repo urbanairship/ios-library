@@ -362,13 +362,7 @@ static NSMutableSet *overlayControllers = nil;
              (UIInterfaceOrientation)[UIDevice currentDevice].orientation) == 0) {
             return;
         }
-    } else {
-        //otherwise call the deprecated method
-        if (![self.parentViewController shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)[UIDevice currentDevice].orientation]) {
-            return;
-        }
     }
-
     // This will inject the current device orientation
     [self.webView injectInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
