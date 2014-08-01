@@ -42,10 +42,6 @@
     self.usernameLabel.text = [UAUser defaultUser].username ?: @"Unavailable";
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return YES;
-}
-
 #pragma mark -
 #pragma mark UITableViewDelegate
 

@@ -122,10 +122,6 @@ static NSUInteger channelRowCount = 1;
     [self.tableView flashScrollIndicators];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return YES;
-}
-
 #pragma mark -
 
 - (void)initCells {

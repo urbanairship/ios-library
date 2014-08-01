@@ -55,14 +55,6 @@
 }
 
 #pragma mark -
-#pragma mark Autorotation
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
-}
-
-#pragma mark -
 #pragma mark Class Methods
 
 - (void)moveSpanToCoordinate:(CLLocationCoordinate2D)location {

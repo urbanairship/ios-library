@@ -68,10 +68,6 @@ enum {
     [self initViews];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return YES;
-}
-
 - (void)viewWillAppear:(BOOL)animated {
     
     //Hide the picker if it was left up last time

@@ -55,14 +55,6 @@
     [super viewWillDisappear:animated];
 }
 
-
-#pragma mark -
-#pragma mark Rotation
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    return NO;
-}
-
 #pragma mark -
 #pragma mark GUI operations
 

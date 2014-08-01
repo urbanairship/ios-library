@@ -61,10 +61,6 @@ enum TagSections {
     self.navigationItem.rightBarButtonItem = self.saveButton;
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return YES;
-}
-
 #pragma mark -
 #pragma mark UITableViewDelegate
 
