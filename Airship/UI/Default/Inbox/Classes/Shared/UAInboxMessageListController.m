@@ -227,25 +227,8 @@
 
 }
 
-- (void)viewDidUnload {
-
-    self.loadingIndicator = nil;
-    self.loadingLabel = nil;
-    self.messageTable = nil;
-
-    self.setOfUnreadMessagesInSelection = nil;
-    self.selectAllButtonItem = nil;
-    self.deleteItem = nil;
-    self.markAsReadButtonItem = nil;
-}
-
 - (void)didReceiveMemoryWarning {
     [self.iconCache removeAllObjects];
-}
-
-// for iOS5
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return YES;
 }
 
 // For batch update/delete

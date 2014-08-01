@@ -106,11 +106,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UAInboxMessageListUpdatedNotification object:nil];
 }
 
-// for iOS5
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return YES;
-}
-
 #pragma mark -
 #pragma mark UI
 

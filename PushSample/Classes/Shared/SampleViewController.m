@@ -39,10 +39,6 @@
     }
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return YES;
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.version.text = [NSString stringWithFormat:@"UAirship Version: %@", [UAirshipVersion get]];

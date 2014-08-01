@@ -91,13 +91,4 @@
     [super didReceiveMemoryWarning];
 }
 
-#pragma mark -
-#pragma mark Interface Rotation
-
-// for iOS5
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return YES;
-}
-
-
 @end
