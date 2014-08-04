@@ -68,30 +68,6 @@ enum {
     [self initViews];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return YES;
-}
-
-- (void)viewDidUnload {
-
-    self.pushEnabledSwitch = nil;
-    self.pushEnabledLabel = nil;
-    self.pushEnabledCell = nil;
-    
-    self.quietTimeSwitch = nil;
-    self.quietTimeLabel = nil;
-    self.quietTimeEnabledCell = nil;
-    self.toCell = nil;
-    self.fromCell = nil;
-    
-    self.tableView = nil;
-    self.datePicker = nil;
-    self.airshipLocationEnabledSwitch = nil;
-    self.airshipLocationEnabledLabel = nil;
-    self.airshipLocationEnabledCell = nil;
-    [super viewDidUnload];
-}
-
 - (void)viewWillAppear:(BOOL)animated {
     
     //Hide the picker if it was left up last time

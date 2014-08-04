@@ -33,15 +33,6 @@
 
 @implementation UALocationSettingsViewController
 
-
-- (void)viewDidUnload {
-    [self turnOffLocationDisplay];
-    self.locationTableView = nil;
-    self.locationDisplay = nil;
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.reportedLocations = [NSMutableArray arrayWithCapacity:10];
@@ -62,14 +53,6 @@
     self.locationService.delegate = nil;
     self.locationService = nil;
     [super viewWillDisappear:animated];
-}
-
-
-#pragma mark -
-#pragma mark Rotation
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    return NO;
 }
 
 #pragma mark -
@@ -194,5 +177,8 @@
     [self addLocationToData:newLocation];
 }
 
+- (NSUInteger)supportedInterfaceOrientations{
+    return UIInterfaceOrientationMaskPortrait;
+}
 
 @end

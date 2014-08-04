@@ -58,14 +58,6 @@ enum {
                      @"the process of sending notifications.";
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return YES;
-}
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
-}
-
 #pragma mark -
 #pragma mark UITableViewDelegate
 

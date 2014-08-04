@@ -69,10 +69,6 @@ enum {
     @"This sample application includes the sound files below.";
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return YES;
-}
-
 #pragma mark -
 #pragma mark Table view data source
 
@@ -163,17 +159,6 @@ enum {
     
     // Relinquish ownership any cached data, images, etc. that aren't in use.
 }
-
-- (void)viewDidUnload {
-    // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
-    // For example: self.myOutlet = nil;
-    
-    self.textCell = nil;
-    self.textLabel = nil;
-}
-
-
-
 
 @end
 

@@ -40,16 +40,6 @@
     self.channelIDLabel.text = [UAPush shared].channelID ? [UAPush shared].channelID : @"Unavailable";
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return YES;
-}
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
-    self.emailButton = nil;
-    self.channelIDLabel = nil;
-}
-
 #pragma mark -
 #pragma mark UITableViewDelegate
 

@@ -42,16 +42,6 @@
     self.tokenLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return YES;
-}
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
-    self.emailButton = nil;
-    self.tokenLabel = nil;
-}
-
 #pragma mark -
 #pragma mark UITableViewDelegate
 
