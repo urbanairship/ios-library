@@ -435,7 +435,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UALOG(@"Single location failed with error %@", locationError);
     id <UALocationServiceDelegate> strongDelegate = self.delegate;
     if ([strongDelegate respondsToSelector:@selector(locationService:didUpdateLocations:)] && self.bestAvailableSingleLocation) {
-        
         [strongDelegate locationService:self didUpdateLocations:@[self.bestAvailableSingleLocation]];
     }
 
