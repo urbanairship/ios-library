@@ -355,8 +355,7 @@ static NSMutableSet *overlayControllers = nil;
 - (void)orientationChanged:(NSNotification *)notification {
     // Note that face up and face down orientations will be ignored as this
     // casts a device orientation to an interface orientation
-
-    //iOS6+ uses supportedInterfaceOrientations for this, so if it's available we should use it.
+    
     if (([self.parentViewController supportedInterfaceOrientations] &
          (UIInterfaceOrientation)[UIDevice currentDevice].orientation) == 0) {
         return;
@@ -368,6 +367,7 @@ static NSMutableSet *overlayControllers = nil;
 - (void)finish {
     [self finish:YES];
 }
+
 
 /**
  * Removes all views from the hierarchy and releases self, animated if desired.
