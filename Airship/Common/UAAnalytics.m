@@ -79,11 +79,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
                                                  selector:@selector(didBecomeActive)
                                                      name:UIApplicationDidBecomeActiveNotification
                                                    object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(willResignActive)
-                                                     name:UIApplicationWillResignActiveNotification
-                                                   object:nil];
+
         
         self.queue = [[NSOperationQueue alloc] init];
         self.queue.maxConcurrentOperationCount = 1;
@@ -141,17 +137,9 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         //add app_foreground event
         [self addEvent:[UAEventAppForeground event]];
     }
-    
-    //add activity_started / AppActive event
-    [self addEvent:[UAEventAppActive event]];
+
 }
 
-- (void)willResignActive {
-    UA_LTRACE(@"Application will resign active.");
-    
-    //add activity_stopped / AppInactive event
-    [self addEvent:[UAEventAppInactive event]];
-}
 
 #pragma mark -
 #pragma mark NSUserDefaults

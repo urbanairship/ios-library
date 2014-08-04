@@ -185,12 +185,6 @@
 - (void)didBecomeActive;
 
 /**
- * The application will resign active.
- */
-- (void)willResignActive;
-
-
-/**
  * Generate an analytics request with the proper fields
  */
 - (UAHTTPRequest *)analyticsRequest;

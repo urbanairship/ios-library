@@ -202,32 +202,6 @@
 }
 
 /**
- * Test app active event
- */
-- (void)testAppActiveEvent {
-    NSDictionary *expectedData = @{@"class_name": @""};
-
-    UAEventAppActive *event = [UAEventAppActive event];
-    XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
-    XCTAssertEqualObjects(event.eventType, @"activity_started", @"Event type is unexpected.");
-    XCTAssertEqual(event.estimatedSize, kEventAppActiveSize, @"Event is reporting wrong estimated size.");
-    XCTAssertNotNil(event.eventId, @"Event should have an ID");
-}
-
-/**
- * Test app inactive event
- */
-- (void)testAppInactiveEvent {
-    NSDictionary *expectedData = @{@"class_name": @""};
-
-    UAEventAppInactive *event = [UAEventAppInactive event];
-    XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
-    XCTAssertEqualObjects(event.eventType, @"activity_stopped", @"Event type is unexpected.");
-    XCTAssertEqual(event.estimatedSize, kEventAppInactiveSize, @"Event is reporting wrong estimated size.");
-    XCTAssertNotNil(event.eventId, @"Event should have an ID");
-}
-
-/**
  * Test device registration event
  */
 - (void)testRegistrationEvent {

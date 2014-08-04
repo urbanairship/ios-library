@@ -236,42 +236,6 @@
 
 @end
 
-@implementation UAEventAppActive
-
-+ (instancetype)event {
-    UAEventAppActive *event = [[self alloc] init];
-    event.data = @{@"class_name": @""};
-    return event;
-}
-
-- (NSString *)eventType {
-    return @"activity_started";
-}
-
-- (NSUInteger)estimatedSize {
-    return kEventAppActiveSize;
-}
-
-@end
-
-@implementation UAEventAppInactive
-
-+ (instancetype)event {
-    UAEventAppInactive *event = [[self alloc] init];
-    event.data = @{@"class_name": @""};
-    return event;
-}
-
-- (NSString *)eventType {
-    return @"activity_stopped";
-}
-
-- (NSUInteger)estimatedSize {
-    return kEventAppInactiveSize;
-}
-
-@end
-
 @implementation UAEventDeviceRegistration
 
 + (instancetype)event {

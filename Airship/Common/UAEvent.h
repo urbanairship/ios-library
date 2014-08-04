@@ -29,8 +29,6 @@
 
 #define kEventDeviceRegistrationSize    (NSUInteger) 200//153 w/ only user info
 #define kEventPushReceivedSize          (NSUInteger) 200//160 w/ uuid push info
-#define kEventAppActiveSize             (NSUInteger) 120
-#define kEventAppInactiveSize           (NSUInteger) 120
 
 @interface UAEvent : NSObject
 
@@ -107,32 +105,6 @@
  * @param notification The received push notification.
  */
 + (instancetype)eventWithNotification:(NSDictionary *)notification;
-@end
-
-/**
- * This event is recorded when the app becomes active: on foreground
- * or when resuming after losing focus for any of the reasons that would
- * trigger a UAEventAppInactive event.
- */
-@interface UAEventAppActive : UAEvent
-
-/**
- * Factory method to create a UAEventAppActive.
- */
-+ (instancetype)event;
 
 @end
 
-/**
- * This event is recorded when the app resigns its active state. This will happen
- * prior to backgrounding and when there is an incoming call, the user opens the
- * notification center in iOS5+, the user launches the task-bar, etc.
- */
-@interface UAEventAppInactive : UAEvent
-
-/**
- * Factory method to create a UAEventAppInactive.
- */
-+ (instancetype)event;
-
-@end
