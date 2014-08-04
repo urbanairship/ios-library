@@ -59,12 +59,10 @@
  * requirements.
  * @param locationProvider The location provider
  * @param locationManager The CLLocationManager object
- * @param newLocation The new location reported by the provider
- * @param oldLocation The previous location reported by the provider
+ * @param locations The locations array reported by the provider
  */
 - (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider
-       withLocationManager:(CLLocationManager *)locationManager 
-         didUpdateLocation:(CLLocation *)newLocation
-              fromLocation:(CLLocation *)oldLocation;
+     withLocationManager:(CLLocationManager *)locationManager
+      didUpdateLocations:(NSArray *)locations;
 
 @end

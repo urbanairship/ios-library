@@ -66,12 +66,12 @@
     [self.delegate locationProvider:self withLocationManager:self.locationManager didChangeAuthorizationStatus:status];
 }
 
-- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
-    UALOG(@"Significant change did update to location %@ from location %@", newLocation, oldLocation);
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
+    UALOG(@"Significant change did update to location %@", [locations lastObject]);
     id<UALocationProviderDelegate> strongDelegate = self.delegate;
-    BOOL doesRespond = [strongDelegate respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocation:fromLocation:)];
-    if ([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation] && doesRespond) {
-        [strongDelegate locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
+    BOOL doesRespond = [strongDelegate respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocations:)];
+    if ([self locationChangeMeetsAccuracyRequirements:[locations lastObject]] && doesRespond) {
+        [strongDelegate locationProvider:self withLocationManager:manager didUpdateLocations:locations];
     }
 }
 

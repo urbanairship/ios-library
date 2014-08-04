@@ -136,15 +136,15 @@
 /**
  * Standard location location update
  */
-- (void)standardLocationDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation;
+- (void)standardLocationDidUpdateLocations:(NSArray *)locations;
 
 /**
  * Sig change update method
  */
-- (void)significantChangeDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation;
+- (void)significantChangeDidUpdateLocations:(NSArray *)locations;
 
 // Single Location update logic
-- (void)singleLocationDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation;
+- (void)singleLocationDidUpdateLocations:(NSArray *)location;
 
 // Single Location when a good location is received
 - (void)stopSingleLocationWithLocation:(CLLocation *)location;

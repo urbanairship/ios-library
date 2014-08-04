@@ -123,12 +123,12 @@
 
     [[[mockLocation stub] andReturnValue:OCMOCK_VALUE(accuracy)] horizontalAccuracy];
     UABaseLocationProvider *base = [[UABaseLocationProvider alloc] init];
-    XCTAssertFalse([base locationChangeMeetsAccuracyRequirements:mockLocation from:self.testLocationSFO], @"Accuracy less than zero should fail");
+    XCTAssertFalse([base locationChangeMeetsAccuracyRequirements:mockLocation], @"Accuracy less than zero should fail");
 
     accuracy = 5.0;
     mockLocation = [OCMockObject niceMockForClass:[CLLocation class]];
     [[[mockLocation stub] andReturnValue:OCMOCK_VALUE(accuracy)] horizontalAccuracy];
-    XCTAssertTrue([base locationChangeMeetsAccuracyRequirements:mockLocation from:self.testLocationSFO]);
+    XCTAssertTrue([base locationChangeMeetsAccuracyRequirements:mockLocation]);
 
     [mockLocation stopMocking];
 }
@@ -139,13 +139,13 @@
 
     [(CLLocation *)[[location stub] andReturn:date] timestamp];
     UABaseLocationProvider *base = [[UABaseLocationProvider alloc] init];
-    XCTAssertTrue([base locationChangeMeetsAccuracyRequirements:location from:self.testLocationSFO]);
+    XCTAssertTrue([base locationChangeMeetsAccuracyRequirements:location]);
 
     base.maximumElapsedTimeForCachedLocation = 20.0;
     date = [NSDate dateWithTimeIntervalSinceNow:-50];
     location = [OCMockObject niceMockForClass:[CLLocation class]];
     [(CLLocation *)[[location stub] andReturn:date] timestamp];
-    XCTAssertFalse([base locationChangeMeetsAccuracyRequirements:location from:self.testLocationSFO]);
+    XCTAssertFalse([base locationChangeMeetsAccuracyRequirements:location]);
 
     [location stopMocking];
 }
@@ -157,16 +157,14 @@
     UABaseLocationProvider *base = [[UABaseLocationProvider alloc] initWithDelegate:self.mockUALocationService];
     id mockForBase = [OCMockObject partialMockForObject:base];
 
-    [[[mockForBase  expect] andReturnValue:OCMOCK_VALUE(YES)] locationChangeMeetsAccuracyRequirements:self.testLocationPDX from:self.testLocationSFO];
+    [[[mockForBase  expect] andReturnValue:OCMOCK_VALUE(YES)] locationChangeMeetsAccuracyRequirements:self.testLocationPDX];
     [[(OCMockObject *)self.mockUALocationService expect] locationProvider:base
                                                       withLocationManager:base.locationManager
-                                                        didUpdateLocation:self.testLocationPDX
-                                                             fromLocation:self.testLocationSFO];
+                                                        didUpdateLocations:@[self.testLocationSFO, self.testLocationPDX]];
 
 
     [base.locationManager.delegate locationManager:base.locationManager
-                               didUpdateToLocation:self.testLocationPDX
-                                      fromLocation:self.testLocationSFO];
+                                didUpdateLocations:@[self.testLocationSFO, self.testLocationPDX]];
 
     [(OCMockObject *)self.mockUALocationService verify];
     [mockForBase verify];
@@ -178,17 +176,15 @@
     UAStandardLocationProvider *standard = [[UAStandardLocationProvider alloc] initWithDelegate:self.mockUALocationService];
     id mockForStandard = [OCMockObject partialMockForObject:standard];
     
-    [[[mockForStandard  expect] andReturnValue:OCMOCK_VALUE(YES)] locationChangeMeetsAccuracyRequirements:self.testLocationPDX
-                                                                                        from:self.testLocationSFO];
+    [[[mockForStandard  expect] andReturnValue:OCMOCK_VALUE(YES)] locationChangeMeetsAccuracyRequirements:self.testLocationPDX];
     [[(OCMockObject *) self.mockUALocationService expect] locationProvider:standard
                                                        withLocationManager:standard.locationManager
-                                                         didUpdateLocation:self.testLocationPDX
-                                                              fromLocation:self.testLocationSFO];
+                                                         didUpdateLocations:@[self.testLocationSFO, self.testLocationPDX]];
 
 
     [standard.locationManager.delegate locationManager:standard.locationManager
-                                   didUpdateToLocation:self.testLocationPDX
-                                          fromLocation:self.testLocationSFO];
+                                    didUpdateLocations:@[self.testLocationSFO, self.testLocationPDX]];
+    
     [(OCMockObject *)self.mockUALocationService verify];
     [mockForStandard verify];
 
@@ -199,16 +195,14 @@
     UASignificantChangeProvider *significant = [[UASignificantChangeProvider alloc] initWithDelegate:self.mockUALocationService];
     id mockForSignificant = [OCMockObject partialMockForObject:significant];
 
-    [[[mockForSignificant  expect] andReturnValue:OCMOCK_VALUE(YES)]locationChangeMeetsAccuracyRequirements:self.testLocationPDX
-                                                                                          from:self.testLocationSFO];
+    [[[mockForSignificant  expect] andReturnValue:OCMOCK_VALUE(YES)]locationChangeMeetsAccuracyRequirements:self.testLocationPDX];
     [[(OCMockObject *) self.mockUALocationService expect] locationProvider:significant
                                                        withLocationManager:significant.locationManager
-                                                         didUpdateLocation:self.testLocationPDX
-                                                              fromLocation:self.testLocationSFO];
+                                                         didUpdateLocations:@[self.testLocationSFO, self.testLocationPDX]];
 
     [significant.locationManager.delegate locationManager:significant.locationManager
-                                      didUpdateToLocation:self.testLocationPDX
-                                             fromLocation:self.testLocationSFO];
+                                       didUpdateLocations:@[self.testLocationSFO, self.testLocationPDX]];
+    
     [(OCMockObject *)self.mockUALocationService verify];
     [mockForSignificant verify];
 
