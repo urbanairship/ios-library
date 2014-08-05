@@ -117,7 +117,7 @@
 #pragma mark UALocationProviderProtocol empty methods
 
 // Methods only update the location status
-// Allows for consolodation of didFailWithError and didUpateLocations and
+// Allows for consolodation of didFailWithError and didUpdateLocations and
 // delegate callbacks here
 - (void)startReportingLocation {
     self.serviceStatus = UALocationProviderUpdating;
