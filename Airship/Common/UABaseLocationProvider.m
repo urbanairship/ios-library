@@ -117,7 +117,7 @@
 #pragma mark UALocationProviderProtocol empty methods
 
 // Methods only update the location status
-// Allows for consolodation of didFailWithError and didUpateToLocation and
+// Allows for consolodation of didFailWithError and didUpdateLocations and
 // delegate callbacks here
 - (void)startReportingLocation {
     self.serviceStatus = UALocationProviderUpdating;
@@ -184,19 +184,19 @@
     }
 }
 
-- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
-    UALOG(@"Base location manager did update to location %@ from location %@", newLocation, oldLocation);
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
+    UALOG(@"Base location manager did update location %@", [locations lastObject]);
     id<UALocationProviderDelegate> strongDelegate = self.delegate;
-    BOOL doesRespond = [strongDelegate respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocation:fromLocation:)];
-    if ([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation] && doesRespond) {
-        [strongDelegate locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
+    BOOL doesRespond = [strongDelegate respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocations:)];
+    if ([self locationChangeMeetsAccuracyRequirements:[locations lastObject]] && doesRespond) {
+        [strongDelegate locationProvider:self withLocationManager:manager didUpdateLocations:locations];
     }
 }
 
 #pragma mark -
 #pragma mark Location Accuracy calculations
 
-- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation *)newLocation from:(CLLocation *)oldLocation {
+- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation *)newLocation {
     // Throw out old values
     NSTimeInterval old = -[newLocation.timestamp timeIntervalSinceNow];
     if (old > self.maximumElapsedTimeForCachedLocation) {

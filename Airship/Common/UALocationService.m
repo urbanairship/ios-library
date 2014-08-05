@@ -255,19 +255,18 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 // This method just directs traffic
 - (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider
      withLocationManager:(CLLocationManager *)locationManager 
-       didUpdateLocation:(CLLocation *)newLocation
-            fromLocation:(CLLocation *)oldLocation {
-    UALOG(@"Location service did update to location %@ from location %@", newLocation, oldLocation);
+       didUpdateLocations:(NSArray *)locations {
+    UALOG(@"Location service did update location %@", [locations lastObject]);
     if (locationProvider == self.singleLocationProvider) {
-        [self singleLocationDidUpdateToLocation:newLocation fromLocation:oldLocation];
+        [self singleLocationDidUpdateLocations:locations];
         return;
     }
     if (locationProvider == self.standardLocationProvider) {
-        [self standardLocationDidUpdateToLocation:newLocation fromLocation:oldLocation];
+        [self standardLocationDidUpdateLocations:locations];
         return;
     }
     if (locationProvider == self.significantChangeProvider){
-        [self significantChangeDidUpdateToLocation:newLocation fromLocation:oldLocation];
+        [self significantChangeDidUpdateLocations:locations];
     }
 }
 
@@ -295,12 +294,12 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 // Eventually add the auto shutdown to this method as well if locations aren't 
 // improving
-- (void)standardLocationDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation *)oldLocation {
-    if (newLocation.horizontalAccuracy < self.standardLocationProvider.desiredAccuracy || self.standardLocationProvider.desiredAccuracy <= kCLLocationAccuracyBest) {
-        [self reportLocationToAnalytics:newLocation fromProvider:self.standardLocationProvider];
+- (void)standardLocationDidUpdateLocations:(NSArray *)locations {
+    if ([[locations lastObject] horizontalAccuracy] < self.standardLocationProvider.desiredAccuracy || self.standardLocationProvider.desiredAccuracy <= kCLLocationAccuracyBest) {
+        [self reportLocationToAnalytics:[locations lastObject] fromProvider:self.standardLocationProvider];
         id <UALocationServiceDelegate> strongDelegate = self.delegate;
-        if ([strongDelegate respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
-            [strongDelegate locationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
+        if ([strongDelegate respondsToSelector:@selector(locationService:didUpdateLocations:)]) {
+            [strongDelegate locationService:self didUpdateLocations:locations];
         }
     }
 }
@@ -334,11 +333,11 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 // Report any valid location from Sig change, validity is checked by the providers themselves
 // Valid values have horizontalAccuracy > 0 and timestamps that are no older than the 
 // maximum, which is set on the provider as well
-- (void)significantChangeDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
-    [self reportLocationToAnalytics:newLocation fromProvider:self.significantChangeProvider];
+- (void)significantChangeDidUpdateLocations:(NSArray *)locations{
+    [self reportLocationToAnalytics:[locations lastObject] fromProvider:self.significantChangeProvider];
     id <UALocationServiceDelegate> strongDelegate = self.delegate;
-    if ([strongDelegate respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
-        [strongDelegate locationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
+    if ([strongDelegate respondsToSelector:@selector(locationService:didUpdateLocations:)]) {
+        [strongDelegate locationService:self didUpdateLocations:locations];
     }
 }
 
@@ -398,7 +397,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     [self stopSingleLocationWithError:locationError];
 }
 
-- (void)singleLocationDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
+- (void)singleLocationDidUpdateLocations:(NSArray *)locations{
     // Setup error timeout
     if (!self.singleLocationShutdownScheduled) {
         [self performSelector:@selector(shutdownSingleLocationWithTimeoutError)
@@ -408,18 +407,18 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     }
 
     // If desiredAccuracy is set at or better than kCLAccuracyBest, send back everything
-    if (newLocation.horizontalAccuracy < self.singleLocationProvider.desiredAccuracy) {
+    if ([[locations lastObject] horizontalAccuracy] < self.singleLocationProvider.desiredAccuracy) {
         id <UALocationServiceDelegate> strongDelegate = self.delegate;
-        if ([strongDelegate respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
-            [strongDelegate locationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
+        if ([strongDelegate respondsToSelector:@selector(locationService:didUpdateLocations:)]) {
+            [strongDelegate locationService:self didUpdateLocations:locations];
         }
-        [self stopSingleLocationWithLocation:newLocation];
+        [self stopSingleLocationWithLocation:[locations lastObject]];
     }
     else {
-        UALOG(@"Location %@ did not meet accuracy requirement", newLocation);
-        if (self.bestAvailableSingleLocation.horizontalAccuracy < newLocation.horizontalAccuracy) {
-            UALOG(@"Updated location %@\nreplaced current best location %@", self.bestAvailableSingleLocation, newLocation);
-            self.bestAvailableSingleLocation = newLocation;
+        UALOG(@"Location %@ did not meet accuracy requirement", [locations lastObject]);
+        if (self.bestAvailableSingleLocation.horizontalAccuracy < [[locations lastObject] horizontalAccuracy]) {
+            UALOG(@"Updated location %@\nreplaced current best location %@", self.bestAvailableSingleLocation, [locations lastObject]);
+            self.bestAvailableSingleLocation = [locations lastObject];
         }
     }
 }
@@ -435,8 +434,8 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 - (void)stopSingleLocationWithError:(NSError *)locationError {
     UALOG(@"Single location failed with error %@", locationError);
     id <UALocationServiceDelegate> strongDelegate = self.delegate;
-    if ([strongDelegate respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)] && self.bestAvailableSingleLocation) {
-        [strongDelegate locationService:self didUpdateToLocation:self.bestAvailableSingleLocation fromLocation:nil];
+    if ([strongDelegate respondsToSelector:@selector(locationService:didUpdateLocations:)] && self.bestAvailableSingleLocation) {
+        [strongDelegate locationService:self didUpdateLocations:@[self.bestAvailableSingleLocation]];
     }
 
     if (self.bestAvailableSingleLocation) {

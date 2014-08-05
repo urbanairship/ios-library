@@ -149,7 +149,7 @@
  * @return YES if the location meets accuracy requirements
  * @return NO if the location does not meet accuracy requirements
  */
-- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation *)newLocation from:(CLLocation *)oldLocation;
+- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation *)newLocation;
 
 ///---------------------------------------------------------------------------------------
 /// @name Starting and Stopping Location Services

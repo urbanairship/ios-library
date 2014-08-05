@@ -34,5 +34,5 @@
 + (CLAuthorizationStatus)returnCLLocationStatusNotDetermined;
 - (void)sendAuthorizationChangedDelegateCallWithAuthorization:(CLAuthorizationStatus)status;
 - (void)sendLocationDidFailWithErrorDelegateCallWithError:(NSError *)error;
-- (void)sendDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation *)oldLocation;
+- (void)sendDidUpdateLocations:(NSArray *)locations;
 @end

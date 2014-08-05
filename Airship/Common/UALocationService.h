@@ -60,7 +60,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
  * CoreLocation errors are passed directly to the delegate without any side effects. For the case
  * when the location service times out, an NSError* UALocationServiceError will be returned with
  * the best available location in the userInfo dictionary with UALocationServiceBestAvailableSingleLocationKey
- * as the key if a location was returned. In the case of a timeout, the locationService:didUpdateToLocation:fromLocation will also
+ * as the key if a location was returned. In the case of a timeout, the locationService:didUpdateLocations: will also
  * be called with the best available location if it is available. There is no guarantee as to the accuracy of this location.
  *
  * @param service Location service that generated the error
@@ -85,10 +85,9 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
  * recorded or sent.
  *
  * @param service The service reporting the location update
- * @param newLocation The updated location reported by the service
- * @param oldLocation The previously reported location. This value may be nil if there is no previous location.
+ * @param locations The updated locations reported by the service
  */
-- (void)locationService:(UALocationService *)service didUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
+- (void)locationService:(UALocationService *)service didUpdateLocations:(NSArray *)locations;
 @end
 
 

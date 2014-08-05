@@ -235,7 +235,7 @@
     [_mockLocationService verify];
 }
 
-- (void)testStopUpdatingLocation {
+- (void)teststopupdatinglocation {
     UAStandardLocationProvider *standardDelegate = [[UAStandardLocationProvider alloc] initWithDelegate:_locationService];
     _locationService.standardLocationProvider = standardDelegate;
     id mockDelegate = [OCMockObject niceMockForClass:[CLLocationManager class]];
@@ -247,23 +247,24 @@
     [mockDelegate stopMocking];
 }
 
-- (void)testStandardLocationDidUpdateToLocation {
+- (void)testStandardLocationDidUpdateLocation {
+    CLLocation *pdx = [UALocationTestUtils testLocationPDX];
     id mockDelegate = [OCMockObject niceMockForProtocol:@protocol(UALocationServiceDelegate)];
     _locationService.delegate = mockDelegate;
     _locationService.standardLocationDesiredAccuracy = 5.0;
-    [[mockDelegate reject] locationService:OCMOCK_ANY didUpdateToLocation:OCMOCK_ANY fromLocation:OCMOCK_ANY];
+    [[mockDelegate reject] locationService:OCMOCK_ANY didUpdateLocations:@[OCMOCK_ANY, OCMOCK_ANY]];
     CLLocation *location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(54, 34)
                                                          altitude:54 
                                                horizontalAccuracy:20 
                                                  verticalAccuracy:20 
                                                         timestamp:[NSDate date]];
-    [_locationService standardLocationDidUpdateToLocation:location fromLocation:[UALocationTestUtils testLocationPDX]];
+    [_locationService standardLocationDidUpdateLocations:@[[UALocationTestUtils testLocationPDX], location]];
     mockDelegate =  [OCMockObject niceMockForProtocol:@protocol(UALocationServiceDelegate)];
     _locationService.delegate = mockDelegate;
     _locationService.standardLocationDesiredAccuracy = 30.0;
     [[_mockLocationService stub] reportLocationToAnalytics:OCMOCK_ANY fromProvider:OCMOCK_ANY];
-    [[mockDelegate expect] locationService:OCMOCK_ANY didUpdateToLocation:location fromLocation:OCMOCK_ANY];
-    [_locationService standardLocationDidUpdateToLocation:location fromLocation:[UALocationTestUtils testLocationPDX]];
+    [[mockDelegate expect] locationService:OCMOCK_ANY didUpdateLocations:@[pdx, location]];
+    [_locationService standardLocationDidUpdateLocations:@[pdx, location]];
     [mockDelegate verify];
     [mockDelegate stopMocking];
 }
@@ -291,7 +292,7 @@
 - (void)testSignificantChangeDidUpdate {
     CLLocation *pdx = [UALocationTestUtils testLocationPDX];
     [[_mockLocationService expect] reportLocationToAnalytics:pdx fromProvider:OCMOCK_ANY];
-    [_locationService significantChangeDidUpdateToLocation:pdx fromLocation:[UALocationTestUtils testLocationSFO]];
+    [_locationService significantChangeDidUpdateLocations:@[[UALocationTestUtils testLocationSFO], pdx]];
     [_mockLocationService verify];
 }
 
@@ -405,7 +406,7 @@
 }
 
 /* Accuracy calculations */
-- (void)testSingleLocationDidUpdateToLocation {
+- (void)testSingleLocationDidUpdateLocations {
     _locationService.singleLocationDesiredAccuracy = 10.0;
     _locationService.singleLocationProvider = [[UAStandardLocationProvider alloc] initWithDelegate:_locationService];
 
@@ -415,15 +416,15 @@
     // Test that the location service is stopped when a good location is received.
     CLLocation *pdx = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(50, 50) altitude:100.0 horizontalAccuracy:5 verticalAccuracy:5 timestamp:[NSDate date]];
     CLLocation *sfo = [UALocationTestUtils testLocationSFO];
-    [[mockDelegate expect] locationService:_locationService didUpdateToLocation:pdx fromLocation:sfo];
+    [[mockDelegate expect] locationService:_locationService didUpdateLocations:@[sfo, pdx]];
     [[_mockLocationService expect] stopSingleLocationWithLocation:pdx];
-    [_locationService singleLocationDidUpdateToLocation:pdx fromLocation:sfo];
+    [_locationService singleLocationDidUpdateLocations:@[sfo, pdx]];
     [mockDelegate verify];
 
     // Test that location that is not accurate enough does not stop the location service
     pdx = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(50, 50) altitude:100.0 horizontalAccuracy:12.0 verticalAccuracy:5 timestamp:[NSDate date]];
     [[_mockLocationService reject] stopSingleLocationWithLocation:OCMOCK_ANY];
-    [_locationService singleLocationDidUpdateToLocation:pdx fromLocation:sfo];
+    [_locationService singleLocationDidUpdateLocations:@[sfo, pdx]];
     XCTAssertEqual(pdx, _locationService.bestAvailableSingleLocation);
     [mockDelegate stopMocking];
 }
@@ -479,7 +480,7 @@
     _locationService.singleLocationProvider = [UAStandardLocationProvider providerWithDelegate:_locationService];
     _locationService.bestAvailableSingleLocation = [UALocationTestUtils testLocationPDX];
 
-    [[mockLocationDelegate expect] locationService:_locationService didUpdateToLocation:_locationService.bestAvailableSingleLocation fromLocation:nil];
+    [[mockLocationDelegate expect] locationService:_locationService didUpdateLocations:@[_locationService.bestAvailableSingleLocation]];
     _locationService.delegate = mockLocationDelegate;
 
     [[_mockLocationService expect] reportLocationToAnalytics:_locationService.bestAvailableSingleLocation fromProvider:_locationService.singleLocationProvider];
@@ -712,22 +713,19 @@
     _locationService.significantChangeProvider = [[UASignificantChangeProvider alloc] initWithDelegate:_locationService];
     _locationService.singleLocationProvider = [[UAStandardLocationProvider alloc] initWithDelegate:_locationService];
 
-    [[_mockLocationService expect] singleLocationDidUpdateToLocation:pdx fromLocation:sfo];
-    [[_mockLocationService expect] standardLocationDidUpdateToLocation:pdx fromLocation:sfo];
-    [[_mockLocationService expect] significantChangeDidUpdateToLocation:pdx fromLocation:sfo];
+    [[_mockLocationService expect] singleLocationDidUpdateLocations:@[sfo, pdx]];
+    [[_mockLocationService expect] standardLocationDidUpdateLocations:@[sfo, pdx]];
+    [[_mockLocationService expect] significantChangeDidUpdateLocations:@[sfo, pdx]];
 
     [_locationService.standardLocationProvider.delegate locationProvider:_locationService.standardLocationProvider 
                                                     withLocationManager:_locationService.standardLocationProvider.locationManager 
-                                                      didUpdateLocation:pdx 
-                                                           fromLocation:sfo];
+                                                      didUpdateLocations:@[sfo, pdx]];
     [_locationService.singleLocationProvider.delegate locationProvider:_locationService.singleLocationProvider 
                                                   withLocationManager:_locationService.singleLocationProvider.locationManager 
-                                                    didUpdateLocation:pdx 
-                                                         fromLocation:sfo];
+                                                    didUpdateLocations:@[sfo, pdx]];
     [_locationService.significantChangeProvider.delegate locationProvider:_locationService.significantChangeProvider 
                                                      withLocationManager:_locationService.significantChangeProvider.locationManager 
-                                                       didUpdateLocation:pdx 
-                                                            fromLocation:sfo];
+                                                       didUpdateLocations:@[sfo, pdx]];
     [_mockLocationService verify];
 }
 

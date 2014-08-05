@@ -60,7 +60,7 @@
     [self.delegate locationManager:self didFailWithError:error];
 }
 
-- (void)sendDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation {
-    [self.delegate locationManager:self didUpdateToLocation:newLocation fromLocation:oldLocation];
+- (void)sendDidUpdateLocations:(NSArray *)locations {
+    [self.delegate locationManager:self didUpdateLocations:locations];
 }
 @end
