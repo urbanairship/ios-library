@@ -52,8 +52,7 @@
 
     [self.metrics didBecomeActive];
 
-    XCTAssertEqualObjects(expectedDate, self.metrics.lastApplicationOpenDate,
-                          @"Application active should set the last open date");
+    XCTAssertEqual(expectedDate.timeIntervalSince1970, self.metrics.lastApplicationOpenDate.timeIntervalSince1970, @"Application active should set the last open date");
 }
 
 @end
