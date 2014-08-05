@@ -284,7 +284,7 @@
     // Verify adding non location events in the background tries to send the events
     UAEventAppForeground *event = [[UAEventAppForeground alloc] init];
 
-    // Expect adding event to add it tot he db and to start sending analytics
+    // Expect adding event to add it to the db and to start sending analytics
     [[mockDBManager expect] addEvent:event withSessionId:_analytics.sessionId];
     [[mockAnalytics expect] send];
 
@@ -312,7 +312,7 @@
     UALocationEvent *locationEvent = [[UALocationEvent alloc]init];
     _analytics.lastSendTime = [NSDate dateWithTimeIntervalSinceNow:-16*60*1000]; // 16 minutes ago
 
-    // Expect adding event to add it tot he db and to start sending analytics
+    // Expect adding event to add it to the db and to start sending analytics
     [[mockDBManager expect] addEvent:locationEvent withSessionId:_analytics.sessionId];
     [[mockAnalytics expect] send];
 
@@ -324,7 +324,7 @@
     // the last send time was within 15 minutes
     _analytics.lastSendTime = [NSDate date];
 
-    // Expect adding event to add it tot he db and to start sending analytics
+    // Expect adding event to add it to the db and to start sending analytics
     [[mockDBManager expect] addEvent:locationEvent withSessionId:_analytics.sessionId];
     [[mockAnalytics reject] send];
 
