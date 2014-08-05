@@ -183,7 +183,7 @@
     [[[mockLocationService stub] andDo:^(NSInvocation *invoc) { shutdownCalled = YES;}] stopSingleLocationWithError:OCMOCK_ANY];
     XCTAssertFalse(_locationService.singleLocationShutdownScheduled, @"singleLocationShutdownScheduled should be NO");
 
-    [_locationService singleLocationDidUpdateToLocation:[UALocationTestUtils testLocationPDX] fromLocation:[UALocationTestUtils testLocationSFO]];
+    [_locationService singleLocationDidUpdateLocations:@[[UALocationTestUtils testLocationSFO], [UALocationTestUtils testLocationPDX]]];
     XCTAssertTrue(_locationService.singleLocationShutdownScheduled, @"singleLocationShutdownScheduled should be YES");
     _timeout = [[NSDate alloc] initWithTimeInterval:3.0 sinceDate:[NSDate date]];
 
@@ -238,14 +238,14 @@
 #pragma mark -
 #pragma mark UALocationService Delegate methods
 
-- (void)locationService:(UALocationService*)service didFailWithError:(NSError*)error{
+- (void)locationService:(UALocationService*)service didFailWithError:(NSError*)error {
     NSLog(@"Location error received %@", error);
     _errorReceived = YES;
 }
-- (void)locationService:(UALocationService*)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status{
+- (void)locationService:(UALocationService*)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     NSLog(@"Authorization status changed to %u",status);
 }
-- (void)locationService:(UALocationService*)service didUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation{
+- (void)locationService:(UALocationService*)service didUpdateLocations:(NSArray *)locations {
     NSLog(@"Location received");
     _locationReceived = YES;
 }
@@ -262,11 +262,11 @@
     CLLocation *sfo = [UALocationTestUtils testLocationSFO];
 
     id mockDelegate = [OCMockObject niceMockForProtocol:@protocol(UALocationServiceDelegate)];
-    [[mockDelegate expect] locationService:_locationService didUpdateToLocation:pdx fromLocation:sfo];
+    [[mockDelegate expect] locationService:_locationService didUpdateLocations:@[sfo, pdx]];
     UASignificantChangeProvider *sigChange = [UASignificantChangeProvider providerWithDelegate:_locationService];
     _locationService.significantChangeProvider = sigChange;
     _locationService.delegate = mockDelegate;
-    [sigChange.delegate locationProvider:sigChange withLocationManager:sigChange.locationManager didUpdateLocation:pdx fromLocation:sfo];
+    [sigChange.delegate locationProvider:sigChange withLocationManager:[sigChange locationManager] didUpdateLocations:@[sfo, pdx]];
     [mockDelegate verify];
     [mockDelegate stopMocking];
 }

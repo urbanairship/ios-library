@@ -40,7 +40,7 @@
  * @param status The new status
  */
 - (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider 
-             withLocationManager:(CLLocationManager*)locationManager 
+            withLocationManager:(CLLocationManager*)locationManager
     didChangeAuthorizationStatus:(CLAuthorizationStatus)status;
 
 /**
