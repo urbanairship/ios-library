@@ -124,15 +124,11 @@
     id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
     
     __block int foregroundCount = 0;
-    __block int activeCount = 0;
     __block int eventCount = 0;
     __block id arg = nil;
     void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
         __unsafe_unretained id unsafeArg = nil;
         [invocation getArgument:&unsafeArg atIndex:2];
-        if ([unsafeArg isKindOfClass:[UAEventAppActive class]]) {
-            activeCount++;
-        }
         
         if ([unsafeArg isKindOfClass:[UAEventAppForeground class]]) {
             foregroundCount++;
@@ -148,12 +144,10 @@
     
     XCTAssertFalse(_analytics.isEnteringForeground, @"`didBecomeActive` should set `isEnteringForeground_` to NO");
     
-    XCTAssertTrue([arg isKindOfClass:[UAEventAppActive class]] , @"didBecomeActive should fire UAEventAppActive");
-    
+
     XCTAssertEqual(foregroundCount, 1, @"One foreground event inserted.");
-    XCTAssertEqual(activeCount, 1, @"One active event inserted.");
-    XCTAssertEqual(eventCount, 2, @"Two total events inserted.");
-    
+    XCTAssertEqual(eventCount, 1, @"Only the one should be insterted.");
+
     [mockAnalytics verify];
     [mockAnalytics stopMocking];
 }
@@ -172,16 +166,13 @@
     
     //count events and grab the push ID
     __block int foregroundCount = 0;
-    __block int activeCount = 0;
     __block int eventCount = 0;
     __block NSString *eventPushId = nil;
     void (^getSingleArg)(NSInvocation *) = ^(NSInvocation *invocation){
         
         id __unsafe_unretained arg = nil;
         [invocation getArgument:&arg atIndex:2];
-        if ([arg isKindOfClass:[UAEventAppActive class]]) {
-            activeCount++;
-        }
+
         
         if ([arg isKindOfClass:[UAEventAppForeground class]]) {
             foregroundCount++;
@@ -213,8 +204,7 @@
     XCTAssertFalse([UAirship shared].analytics.isEnteringForeground, @"`didBecomeActive` should set `isEnteringForeground_` to NO");
         
     XCTAssertEqual(foregroundCount, 1, @"One foreground event should be inserted.");
-    XCTAssertEqual(activeCount, 1, @"One active event should be inserted.");
-    XCTAssertEqual(eventCount, 2, @"Two total events should be inserted.");
+    XCTAssertEqual(eventCount, 1, @"Only the one should be insterted.");
     XCTAssertTrue([incomingPushId isEqualToString:eventPushId], @"The incoming push ID is not included in the event payload.");
     
     [mockAnalytics verify];
@@ -255,26 +245,8 @@
     
     XCTAssertFalse(_analytics.isEnteringForeground, @"`enterForeground` should set `isEnteringForeground_` to NO");
     
-    XCTAssertTrue([arg isKindOfClass:[UAEventAppActive class]] , @"didBecomeActive should fire UAEventAppActive");
     [mockAnalytics stopMocking];
 }
-
-- (void)testWillResignActive {
-
-    id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
-    __block id arg = nil;
-
-    void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
-        __unsafe_unretained id unsafeArg = nil;
-        [invocation getArgument:&unsafeArg atIndex:2];
-        arg = unsafeArg;
-    };
-    [[[mockAnalytics stub] andDo:getSingleArg] addEvent:OCMOCK_ANY];
-    [_analytics willResignActive];
-    XCTAssertTrue([arg isKindOfClass:[UAEventAppInactive class]], @"willResignActive should fire UAEventAppInactive");
-    [mockAnalytics stopMocking];
-}
-
 
 - (void)testAddEventForeground {
     // Set up application to be in the foreground
@@ -284,9 +256,9 @@
     id mockDBManager = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
     id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
 
-    UAEventAppActive *event = [[UAEventAppActive alloc] init];
+    UAEventAppForeground *event = [[UAEventAppForeground alloc] init];
 
-    // Expect adding event to add it tot he db and to start sending analytics
+    // Expect adding event to add it to the db and to start sending analytics
     [[mockDBManager expect] addEvent:event withSessionId:_analytics.sessionId];
     [[mockAnalytics expect] send];
 
@@ -310,7 +282,7 @@
     id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
 
     // Verify adding non location events in the background tries to send the events
-    UAEventAppActive *event = [[UAEventAppActive alloc] init];
+    UAEventAppForeground *event = [[UAEventAppForeground alloc] init];
 
     // Expect adding event to add it tot he db and to start sending analytics
     [[mockDBManager expect] addEvent:event withSessionId:_analytics.sessionId];
