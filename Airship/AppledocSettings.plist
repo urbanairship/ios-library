@@ -30,8 +30,8 @@
     <key>--repeat-first-par</key>
     <false/>
 	<key>--verbose</key>
-	<integer>3</integer>
+	<string>3</string>
 	<key>--logformat</key>
-	<integer>1</integer>
+	<string>1</string>
 </dict>
 </plist>
