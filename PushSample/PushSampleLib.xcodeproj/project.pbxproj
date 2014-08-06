@@ -352,7 +352,7 @@
 		1FCBB64F176237BA00F42F07 /* SampleAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SampleAppDelegate.m; sourceTree = "<group>"; };
 		1FF54B2213BD319500F8E5A1 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		4906F39E19905B5500F27AF1 /* PushSample Kit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PushSample Kit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4906F39E19905B5500F27AF1 /* PushSample-Kit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PushSample-Kit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4944B7EA178F60E200E07A40 /* UAPushSettingsUserInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsUserInfoViewController.h; sourceTree = "<group>"; };
 		4944B7EB178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsUserInfoViewController.m; sourceTree = "<group>"; };
 		4944B7EE178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsUserInfoView.xib; sourceTree = "<group>"; };
@@ -705,7 +705,7 @@
 				BBEFB0171507F3A400976645 /* AirshipApplicationTests.xctest */,
 				76811EEC17EBA63600874D1F /* PushSampleKIFTests.octest */,
 				769AFCE018AD4B1B006696A9 /* ChannelRegistrationKIFTest.octest */,
-				4906F39E19905B5500F27AF1 /* PushSample Kit.app */,
+				4906F39E19905B5500F27AF1 /* PushSample-Kit.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -905,7 +905,7 @@
 			);
 			name = "PushSample Kit";
 			productName = PushLibSample;
-			productReference = 4906F39E19905B5500F27AF1 /* PushSample Kit.app */;
+			productReference = 4906F39E19905B5500F27AF1 /* PushSample-Kit.app */;
 			productType = "com.apple.product-type.application";
 		};
 		76811EEB17EBA63600874D1F /* PushSampleKIFTests */ = {
@@ -1495,12 +1495,12 @@
 				GCC_PREFIX_HEADER = PushSample_Prefix.pch;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				INFOPLIST_FILE = "PushSample Kit-Info.plist";
+				INFOPLIST_FILE = "PushSample-Kit-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				OTHER_CFLAGS = "-DUADEBUG";
 				OTHER_CODE_SIGN_FLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "PushSample Kit";
+				PRODUCT_NAME = "PushSample-Kit";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
@@ -1532,12 +1532,12 @@
 				GCC_PREFIX_HEADER = PushSample_Prefix.pch;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				INFOPLIST_FILE = "PushSample Kit-Info.plist";
+				INFOPLIST_FILE = "PushSample-Kit-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				OTHER_CFLAGS = "-DUADEBUG";
 				OTHER_CODE_SIGN_FLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "PushSample Kit";
+				PRODUCT_NAME = "PushSample-Kit";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
@@ -1566,11 +1566,11 @@
 				GCC_PREFIX_HEADER = PushSample_Prefix.pch;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				INFOPLIST_FILE = "PushSample Kit-Info.plist";
+				INFOPLIST_FILE = "PushSample-Kit-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				OTHER_CODE_SIGN_FLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "PushSample Kit";
+				PRODUCT_NAME = "PushSample-Kit";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=*]" = "";
 				SDKROOT = iphoneos;

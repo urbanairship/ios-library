@@ -198,7 +198,7 @@
 		1FF57413136778A100FEA1FD /* UAInboxMessageListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxMessageListCell.h; sourceTree = "<group>"; };
 		1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageListCell.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* InboxSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSample_Prefix.pch; sourceTree = "<group>"; };
-		4906F33D1990564A00F27AF1 /* InboxSample Kit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "InboxSample Kit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4906F33D1990564A00F27AF1 /* InboxSample-Kit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "InboxSample-Kit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4906F33E1990564A00F27AF1 /* InboxSample copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "InboxSample copy-Info.plist"; path = "/Users/marc/ios-library-dev/InboxSample/InboxSample copy-Info.plist"; sourceTree = "<absolute>"; };
 		49E001A8154F63F3009305B7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		63CB54BB1247107C00DF2EBC /* InboxTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InboxTests-Info.plist"; sourceTree = "<group>"; };
@@ -350,7 +350,7 @@
 			isa = PBXGroup;
 			children = (
 				1D6058910D05DD3D006BFB54 /* InboxSample.app */,
-				4906F33D1990564A00F27AF1 /* InboxSample Kit.app */,
+				4906F33D1990564A00F27AF1 /* InboxSample-Kit.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -535,7 +535,7 @@
 			);
 			name = "InboxSample Kit";
 			productName = InboxSample;
-			productReference = 4906F33D1990564A00F27AF1 /* InboxSample Kit.app */;
+			productReference = 4906F33D1990564A00F27AF1 /* InboxSample-Kit.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -852,13 +852,13 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				INFOPLIST_FILE = "InboxSample Kit-Info.plist";
+				INFOPLIST_FILE = "InboxSample-Kit-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "-DUADEBUG";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "InboxSample Kit";
+				PRODUCT_NAME = "InboxSample-Kit";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				RUN_CLANG_STATIC_ANALYZER = YES;
@@ -887,12 +887,12 @@
 				GCC_PREFIX_HEADER = InboxSample_Prefix.pch;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				INFOPLIST_FILE = "InboxSample Kit-Info.plist";
+				INFOPLIST_FILE = "InboxSample-Kit-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "InboxSample Kit";
+				PRODUCT_NAME = "InboxSample-Kit";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				RUN_CLANG_STATIC_ANALYZER = YES;
