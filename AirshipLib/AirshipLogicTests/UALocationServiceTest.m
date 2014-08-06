@@ -79,7 +79,7 @@
     // Only works on the first pass, values will change when accessed. When fresh values are needed in
     // user defaults call the setTestValuesInNSUserDefaults method
 
-    _locationService = [[UALocationService alloc] initWithPurpose:@"TEST"];
+    _locationService = [[UALocationService alloc] init];
     _mockLocationService = [OCMockObject partialMockForObject:_locationService];
 }
 
@@ -103,10 +103,6 @@
     XCTAssertEqual(testService.singleLocationBackgroundIdentifier, UIBackgroundTaskInvalid);
 }
 
-- (void)setInitWithPurpose {
-    XCTAssertTrue([_locationService.purpose isEqualToString:@"TEST"]);
-}
-
 // Register user defaults only works on the first app run. This is also called in UAirship, and may or may
 // not have occured at this point. The setting in NSUserDefaults may have been changed, keep this in mind
 // when testing the values in user defaults
@@ -114,7 +110,7 @@
     // UALocationService defaults. This needs to be kept in sync with the method in UAirship
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     [userDefaults setValue:[NSNumber numberWithBool:NO] forKey:UALocationServiceEnabledKey];
-    [userDefaults setValue:@"TEST" forKey:UALocationServicePurposeKey];
+
     //kCLLocationAccuracyHundredMeters works, since it is also a double, this may change in future
     [userDefaults setValue:[NSNumber numberWithDouble:kCLLocationAccuracyHundredMeters] forKey:UAStandardLocationDistanceFilterKey];
     [userDefaults setValue:[NSNumber numberWithDouble:kCLLocationAccuracyHundredMeters] forKey:UAStandardLocationDesiredAccuracyKey];
@@ -128,14 +124,6 @@
 - (void)testMinimumTime {
     _locationService.minimumTimeBetweenForegroundUpdates = 42.0;
     XCTAssertTrue(_locationService.minimumTimeBetweenForegroundUpdates == 42.0);
-}
-- (void)testSetPurpose {
-    _locationService.significantChangeProvider = [UASignificantChangeProvider providerWithDelegate:_locationService];
-    NSString *awsm = @"awesomeness";
-    _locationService.purpose = awsm;
-    XCTAssertTrue([awsm isEqualToString:_locationService.standardLocationProvider.purpose]);
-    XCTAssertTrue([awsm isEqualToString:_locationService.significantChangeProvider.purpose]);
-    XCTAssertTrue([awsm isEqualToString:[[NSUserDefaults standardUserDefaults] valueForKey:UALocationServicePurposeKey]]);
 }
 
 - (void)testStandardLocationGetSet {
@@ -570,7 +558,7 @@
     [[_mockLocationService reject] reportCurrentLocation];
     [_locationService appWillEnterForeground];
 
-    UALocationService *localService = [[UALocationService alloc] initWithPurpose:@"test"];
+    UALocationService *localService = [[UALocationService alloc] init];
     id localMockService = [OCMockObject partialMockForObject:localService];
     localService.automaticLocationOnForegroundEnabled = YES;
 

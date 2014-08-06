@@ -44,7 +44,6 @@ extern UALocationServiceProviderType * const UALocationServiceProviderUnknown;
 typedef NSString UALocationServiceNSDefaultsKey;
 extern UALocationServiceNSDefaultsKey * const UALocationServiceAllowedKey;
 extern UALocationServiceNSDefaultsKey * const UALocationServiceEnabledKey;
-extern UALocationServiceNSDefaultsKey * const UALocationServicePurposeKey;
 extern UALocationServiceNSDefaultsKey * const UAStandardLocationServiceRestartKey;
 extern UALocationServiceNSDefaultsKey * const UASignificantChangeServiceRestartKey;
 extern UALocationServiceNSDefaultsKey * const UAStandardLocationDistanceFilterKey;

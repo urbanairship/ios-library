@@ -81,18 +81,13 @@
 - (void)setDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy;
 
 /**
- * Current purpose attached to the CLLocationMananger locationManager.
- * @return Current purpose on the locationManager
+ * Purpose for location services shown to user
+ * when prompted to allow location services to begin. The default value
+ * is the NSLocationUsageDescription listed in the info.plist. This value cannot be set
+ * programatically.
+ * @return An NSString with the current purpose
  */
 - (NSString *)purpose;
-
-/**
- * Sets the purpose on the CLLocationManager locationManger which is displayed to the user
- * when the UIAlertView is displayed asking the user for location permission.
- * @warning This value cannot be nil.
- * @param newPurpose String to be set on the locationManager
- */
-- (void)setPurpose:(NSString *)newPurpose;
 
 /**
  * The most recently received location available from the CLLocationManager object. This may be more accurate than

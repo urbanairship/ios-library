@@ -76,16 +76,6 @@ NSString * const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvail
     return self;
 }
 
-- (id)initWithPurpose:(NSString *)purpose {
-    self = [self init];
-    if(self){
-        if (purpose){
-            [self setPurpose:purpose];
-        }
-    }
-    return self;
-}
-
 #pragma mark -
 #pragma mark Application State Change Management
 
@@ -190,17 +180,12 @@ NSString * const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvail
     self.standardLocationProvider.desiredAccuracy = desiredAccuracy;
 }
 
-// This is stored in user defaults to assign a purpose to new CLLocationManager objects
-// on app foreground
+// This returns the NSLocationUsageDescription
 - (NSString*)purpose {
-    return [UALocationService objectForLocationServiceKey:UALocationServicePurposeKey];
-}
-
-- (void)setPurpose:(NSString *)purpose {
-    [UALocationService setObject:purpose forLocationServiceKey:UALocationServicePurposeKey];
-
-    self.standardLocationProvider.purpose = purpose;
-    self.significantChangeProvider.purpose = purpose;
+    
+    NSDictionary* infoDict = [[NSBundle mainBundle] infoDictionary];
+    NSString* purpose = [infoDict objectForKey:@"NSLocationUsageDescription"];
+    return purpose;
 }
 
 #pragma mark -
@@ -533,9 +518,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 - (void)setCommonPropertiesOnProvider:(id <UALocationProviderProtocol>)locationProvider{
     locationProvider.delegate = self;
-    if (self.purpose) {
-        locationProvider.purpose = self.purpose;
-    }
 }
 
 - (void)setAutomaticLocationOnForegroundEnabled:(BOOL)automaticLocationOnForegroundEnabled {
@@ -672,7 +654,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     NSMutableDictionary *defaultPreferences = [NSMutableDictionary dictionaryWithCapacity:3];
     // UALocationService default values
     [defaultPreferences setValue:[NSNumber numberWithBool:NO] forKey:UALocationServiceEnabledKey];
-    [defaultPreferences setValue:kUALocationServiceDefaultPurpose forKey:UALocationServicePurposeKey];
+    
     //kCLLocationAccuracyThreeKilometers works, since it is also a double, this may change in future
     [defaultPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyThreeKilometers]
                           forKey:UAStandardLocationDistanceFilterKey];
