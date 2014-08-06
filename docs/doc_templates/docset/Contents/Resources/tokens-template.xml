@@ -6,6 +6,7 @@
 			{{>TokenIdentifier}}
 			{{>Abstract}}
 			{{>DeclaredIn}}
+            {{>Availability}}
 			{{>RelatedTokens}}
 			{{#refid}}<NodeRef refid="{{refid}}"/>{{/refid}}
 		</Token>
@@ -14,7 +15,7 @@
 		<Token>
 			{{>TokenIdentifier}}
 			{{>Abstract}}
-			{{>DeclaredIn}}			
+			{{>DeclaredIn}}
 			{{>RelatedTokens}}
 			<Declaration>{{>MethodDeclaration}}</Declaration>
 			{{#hasParameters}}<Parameters>
@@ -25,8 +26,20 @@
 			</Parameters>{{/hasParameters}}
 			{{#returnValue}}<ReturnValue>{{>Abstract}}</ReturnValue>{{/returnValue}}
 			{{#anchor}}<Anchor>{{anchor}}</Anchor>{{/anchor}}
+            {{#refid}}<NodeRef refid="{{refid}}"/>{{/refid}}
 		</Token>
 		{{/members}}
+        {{#constants}}
+        <Token>
+            {{>TokenIdentifier}}
+            {{>Abstract}}
+            <Declaration>{{declaration}}</Declaration>
+            {{>Availability}}
+            {{>DeclaredIn}}
+            {{>RelatedTokens}}
+            {{>Reference}}
+        </Token>
+        {{/constants}}
 	</File>
 </Tokens>
 
@@ -48,7 +61,15 @@ Section RelatedTokens
 EndSection
 
 Section Abstract
-<Abstract>{{#abstract}}{{>GBCommentComponentsList}}{{/abstract}}</Abstract>
+<Abstract type="html">{{#abstract}}{{>GBCommentComponentsList}}{{/abstract}}</Abstract>
+EndSection
+
+Section Availability
+{{#availability}}<Availability type="html">{{>GBCommentComponentsList}}</Availability>{{/availability}}
+EndSection
+
+Section Reference
+{{#refid}}<NodeRef refid="{{refid}}"/>{{/refid}}
 EndSection
 
 Section MethodDeclaration
@@ -56,6 +77,6 @@ Section MethodDeclaration
 EndSection
 
 Section GBCommentComponentsList
-{{#components}}{{&textValue}}{{/components}}
+{{#components}}{{textValue}}{{/components}}
 EndSection
 
