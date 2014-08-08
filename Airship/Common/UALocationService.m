@@ -181,7 +181,7 @@ NSString * const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvail
 }
 
 // This returns the NSLocationUsageDescription
-- (NSString*)purpose {
+- (NSString *)purpose {
     return self.standardLocationProvider.purpose;
 }
 
