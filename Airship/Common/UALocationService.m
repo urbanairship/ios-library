@@ -182,10 +182,7 @@ NSString * const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvail
 
 // This returns the NSLocationUsageDescription
 - (NSString*)purpose {
-    
-    NSDictionary* infoDict = [[NSBundle mainBundle] infoDictionary];
-    NSString* purpose = [infoDict objectForKey:@"NSLocationUsageDescription"];
-    return purpose;
+    return self.standardLocationProvider.purpose;
 }
 
 #pragma mark -
