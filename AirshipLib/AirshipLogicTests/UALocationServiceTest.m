@@ -135,7 +135,7 @@
     _locationService.purpose = awsm;
     XCTAssertTrue([awsm isEqualToString:_locationService.standardLocationProvider.purpose]);
     XCTAssertTrue([awsm isEqualToString:_locationService.significantChangeProvider.purpose]);
-    XCTAssertTrue(awsm == [[NSUserDefaults standardUserDefaults] valueForKey:UALocationServicePurposeKey]);
+    XCTAssertTrue([awsm isEqualToString:[[NSUserDefaults standardUserDefaults] valueForKey:UALocationServicePurposeKey]]);
 }
 
 - (void)testStandardLocationGetSet {

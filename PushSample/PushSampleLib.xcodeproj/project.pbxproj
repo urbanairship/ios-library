@@ -37,7 +37,7 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		1F3CC4A5165C2D4F008526E3 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F3CC4A4165C2D4F008526E3 /* Default-568h@2x.png */; };
-		1F4EDB491831B2E700F77343 /* libUAirship-4.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-4.0.0.a */; };
+		1F4EDB491831B2E700F77343 /* libUAirship-4.0.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-4.0.1.a */; };
 		1F6DA58712F9F61E00496A5C /* UAPushNotificationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F6DA58612F9F61E00496A5C /* UAPushNotificationHandler.m */; };
 		1F6DA58912F9FEC800496A5C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F6DA58812F9FEC800496A5C /* AudioToolbox.framework */; };
 		1F79711312DE3BFB00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79711212DE3BFB00D4937F /* AirshipConfig.plist */; };
@@ -56,6 +56,79 @@
 		1FCBB650176237BA00F42F07 /* SampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB64F176237BA00F42F07 /* SampleAppDelegate.m */; };
 		1FF54B2313BD319500F8E5A1 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FF54B2213BD319500F8E5A1 /* libz.dylib */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
+		4906F34F19905B5500F27AF1 /* checkConfig.sh in Resources */ = {isa = PBXBuildFile; fileRef = 0D2E051611AA61F300C4CD8A /* checkConfig.sh */; };
+		4906F35019905B5500F27AF1 /* MainWindow_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18C0294D124F216B00D49CD5 /* MainWindow_Pad.xib */; };
+		4906F35119905B5500F27AF1 /* MainWindow_Phone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18C02950124F216B00D49CD5 /* MainWindow_Phone.xib */; };
+		4906F35219905B5500F27AF1 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 18C02952124F216B00D49CD5 /* Default.png */; };
+		4906F35319905B5500F27AF1 /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 18C02954124F216B00D49CD5 /* Icon-Small.png */; };
+		4906F35419905B5500F27AF1 /* SampleViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18C02955124F216B00D49CD5 /* SampleViewController.xib */; };
+		4906F35519905B5500F27AF1 /* bottom-detail.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA121251B5E900E6EBF1 /* bottom-detail.png */; };
+		4906F35619905B5500F27AF1 /* bottom-detail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA131251B5E900E6EBF1 /* bottom-detail@2x.png */; };
+		4906F35719905B5500F27AF1 /* middle-detail.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA141251B5E900E6EBF1 /* middle-detail.png */; };
+		4906F35819905B5500F27AF1 /* middle-detail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA151251B5E900E6EBF1 /* middle-detail@2x.png */; };
+		4906F35919905B5500F27AF1 /* top-detail.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA161251B5E900E6EBF1 /* top-detail.png */; };
+		4906F35A19905B5500F27AF1 /* top-detail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA171251B5E900E6EBF1 /* top-detail@2x.png */; };
+		4906F35B19905B5500F27AF1 /* UAPushMoreSettingsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA181251B5E900E6EBF1 /* UAPushMoreSettingsView.xib */; };
+		4906F35C19905B5500F27AF1 /* UAPushSettingsAliasView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA191251B5E900E6EBF1 /* UAPushSettingsAliasView.xib */; };
+		4906F35D19905B5500F27AF1 /* UAPushSettingsTokenView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA1A1251B5E900E6EBF1 /* UAPushSettingsTokenView.xib */; };
+		4906F35E19905B5500F27AF1 /* UAPushSettingsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA1B1251B5E900E6EBF1 /* UAPushSettingsView.xib */; };
+		4906F35F19905B5500F27AF1 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CB312BC24150041239E /* Icon-72.png */; };
+		4906F36019905B5500F27AF1 /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CB412BC24150041239E /* Icon-Small-50.png */; };
+		4906F36119905B5500F27AF1 /* iPadDefault-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CB512BC24150041239E /* iPadDefault-Landscape.png */; };
+		4906F36219905B5500F27AF1 /* iPadDefault-Portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CB612BC24150041239E /* iPadDefault-Portrait.png */; };
+		4906F36319905B5500F27AF1 /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CBB12BC24210041239E /* Icon-Small@2x.png */; };
+		4906F36419905B5500F27AF1 /* UAPushSettingsChannelInfoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 762F81DF183EC10500F30033 /* UAPushSettingsChannelInfoViewController.xib */; };
+		4906F36519905B5500F27AF1 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CBD12BC242F0041239E /* Default@2x.png */; };
+		4906F36619905B5500F27AF1 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CBE12BC242F0041239E /* Icon.png */; };
+		4906F36719905B5500F27AF1 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F63412C15636009731BE /* Icon@2x.png */; };
+		4906F36819905B5500F27AF1 /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F63612C15644009731BE /* iTunesArtwork */; };
+		4906F36919905B5500F27AF1 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79711212DE3BFB00D4937F /* AirshipConfig.plist */; };
+		4906F36A19905B5500F27AF1 /* UAPushSettingsTagsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD3F812F79AFF00317B96 /* UAPushSettingsTagsViewController.xib */; };
+		4906F36B19905B5500F27AF1 /* UAPushSettingsAddTagViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD45412F8956900317B96 /* UAPushSettingsAddTagViewController.xib */; };
+		4906F36C19905B5500F27AF1 /* UAPushSettingsSoundsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD5EE12F8DE2200317B96 /* UAPushSettingsSoundsViewController.xib */; };
+		4906F36D19905B5500F27AF1 /* cat.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61512F8E39900317B96 /* cat.caf */; };
+		4906F36E19905B5500F27AF1 /* cow.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61612F8E39900317B96 /* cow.caf */; };
+		4906F36F19905B5500F27AF1 /* frog.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61712F8E39900317B96 /* frog.caf */; };
+		4906F37019905B5500F27AF1 /* pig.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61812F8E39900317B96 /* pig.caf */; };
+		4906F37119905B5500F27AF1 /* UAPushLocalization.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1F86D94E13007F790021ABF3 /* UAPushLocalization.bundle */; };
+		4906F37219905B5500F27AF1 /* UALocationSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BB75D9AE151BEB1600F4241E /* UALocationSettingsViewController.xib */; };
+		4906F37319905B5500F27AF1 /* UAMapPresentationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BBAAD870151D263E00A090CD /* UAMapPresentationViewController.xib */; };
+		4906F37419905B5500F27AF1 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F3CC4A4165C2D4F008526E3 /* Default-568h@2x.png */; };
+		4906F37519905B5500F27AF1 /* UAPushSettingsUserInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4944B7EE178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib */; };
+		4906F37719905B5500F27AF1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02947124F216B00D49CD5 /* main.m */; };
+		4906F37819905B5500F27AF1 /* SampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02949124F216B00D49CD5 /* SampleViewController.m */; };
+		4906F37919905B5500F27AF1 /* UAPushSettingsChannelInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 762F81DB183EBEF200F30033 /* UAPushSettingsChannelInfoViewController.m */; };
+		4906F37A19905B5500F27AF1 /* UAPushMoreSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1890BA071251B5E900E6EBF1 /* UAPushMoreSettingsViewController.m */; };
+		4906F37B19905B5500F27AF1 /* UAPushSettingsAliasViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1890BA091251B5E900E6EBF1 /* UAPushSettingsAliasViewController.m */; };
+		4906F37C19905B5500F27AF1 /* UAPushSettingsTokenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1890BA0B1251B5E900E6EBF1 /* UAPushSettingsTokenViewController.m */; };
+		4906F37D19905B5500F27AF1 /* UAPushSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1890BA0D1251B5E900E6EBF1 /* UAPushSettingsViewController.m */; };
+		4906F37E19905B5500F27AF1 /* UAPushUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1890BA0F1251B5E900E6EBF1 /* UAPushUI.m */; };
+		4906F37F19905B5500F27AF1 /* UAPushSettingsTagsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7FD3F712F79AFF00317B96 /* UAPushSettingsTagsViewController.m */; };
+		4906F38019905B5500F27AF1 /* UAPushSettingsAddTagViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7FD45312F8956900317B96 /* UAPushSettingsAddTagViewController.m */; };
+		4906F38119905B5500F27AF1 /* UAPushSettingsSoundsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7FD5ED12F8DE2200317B96 /* UAPushSettingsSoundsViewController.m */; };
+		4906F38219905B5500F27AF1 /* UAPushNotificationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F6DA58612F9F61E00496A5C /* UAPushNotificationHandler.m */; };
+		4906F38319905B5500F27AF1 /* UALocationDemoAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935D98152B5E9C006E6A92 /* UALocationDemoAnnotation.m */; };
+		4906F38419905B5500F27AF1 /* UALocationSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935D9A152B5E9C006E6A92 /* UALocationSettingsViewController.m */; };
+		4906F38519905B5500F27AF1 /* UAMapPresentationController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935D9C152B5E9C006E6A92 /* UAMapPresentationController.m */; };
+		4906F38619905B5500F27AF1 /* SampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB64F176237BA00F42F07 /* SampleAppDelegate.m */; };
+		4906F38719905B5500F27AF1 /* UAPushSettingsUserInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4944B7EB178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m */; };
+		4906F38A19905B5500F27AF1 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FCB17BA8E6600233005 /* CoreData.framework */; };
+		4906F38B19905B5500F27AF1 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB75D9AC151BEAAC00F4241E /* MapKit.framework */; };
+		4906F38C19905B5500F27AF1 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0101507F37200976645 /* CoreLocation.framework */; };
+		4906F38D19905B5500F27AF1 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FF54B2213BD319500F8E5A1 /* libz.dylib */; };
+		4906F38E19905B5500F27AF1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
+		4906F38F19905B5500F27AF1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		4906F39019905B5500F27AF1 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
+		4906F39119905B5500F27AF1 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D2E042C11AA5D1E00C4CD8A /* CFNetwork.framework */; };
+		4906F39219905B5500F27AF1 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D2E049311AA5DB100C4CD8A /* MobileCoreServices.framework */; };
+		4906F39319905B5500F27AF1 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D2E04AC11AA5E9700C4CD8A /* SystemConfiguration.framework */; };
+		4906F39419905B5500F27AF1 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
+		4906F39519905B5500F27AF1 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A698BE129F679B00757214 /* Security.framework */; };
+		4906F39619905B5500F27AF1 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5C75CD612BC28EA0041239E /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		4906F39719905B5500F27AF1 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7FD3A812F784E100317B96 /* MessageUI.framework */; };
+		4906F39819905B5500F27AF1 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F6DA58812F9FEC800496A5C /* AudioToolbox.framework */; };
+		4906F3A819905B8C00F27AF1 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4906F3A519905B5600F27AF1 /* AirshipKit.framework */; };
+		4906F3AC19905BAF00F27AF1 /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4906F3A519905B5600F27AF1 /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		4944B7EC178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4944B7EB178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m */; };
 		4944B7EF178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4944B7EE178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib */; };
 		636CB1E9128CF51200481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
@@ -116,13 +189,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1FC0E37A17E919FE00840A52 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 18C02962124F21B800D49CD5 /* AirshipLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1FE0B7B117E2751000856C60;
-			remoteInfo = "AirshipLib-iOS5";
-		};
 		1FCBB566175AA0E200F42F07 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1FCBB562175AA0E200F42F07 /* KIF.xcodeproj */;
@@ -130,12 +196,19 @@
 			remoteGlobalIDString = AAB07268139719AC008AF393;
 			remoteInfo = KIF;
 		};
-		762A995C1805F0BE00D3FC50 /* PBXContainerItemProxy */ = {
+		4906F3A419905B5600F27AF1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 18C02962124F21B800D49CD5 /* AirshipLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 49BADCC9198AF5F5000FF3D5;
+			remoteInfo = AirshipKit;
+		};
+		4906F3A919905B9400F27AF1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 18C02962124F21B800D49CD5 /* AirshipLib.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 1FE0B73F17E2751000856C60;
-			remoteInfo = "AirshipLib-iOS5";
+			remoteGlobalIDString = 49BADCC8198AF5F5000FF3D5;
+			remoteInfo = AirshipKit;
 		};
 		76811EE317EBA60100874D1F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -202,6 +275,19 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		4906F3AB19905B9E00F27AF1 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4906F3AC19905BAF00F27AF1 /* AirshipKit.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		0D2E042C11AA5D1E00C4CD8A /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		0D2E049311AA5DB100C4CD8A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
@@ -266,6 +352,7 @@
 		1FCBB64F176237BA00F42F07 /* SampleAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SampleAppDelegate.m; sourceTree = "<group>"; };
 		1FF54B2213BD319500F8E5A1 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		4906F39E19905B5500F27AF1 /* PushSample-Kit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PushSample-Kit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4944B7EA178F60E200E07A40 /* UAPushSettingsUserInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsUserInfoViewController.h; sourceTree = "<group>"; };
 		4944B7EB178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsUserInfoViewController.m; sourceTree = "<group>"; };
 		4944B7EE178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsUserInfoView.xib; sourceTree = "<group>"; };
@@ -338,7 +425,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1F4EDB491831B2E700F77343 /* libUAirship-4.0.0.a in Frameworks */,
+				1F4EDB491831B2E700F77343 /* libUAirship-4.0.1.a in Frameworks */,
 				CC523FCF17BA8E7300233005 /* CoreData.framework in Frameworks */,
 				BB75D9AD151BEAAC00F4241E /* MapKit.framework in Frameworks */,
 				BBEFB0111507F37200976645 /* CoreLocation.framework in Frameworks */,
@@ -354,6 +441,29 @@
 				D5C75CD712BC28EA0041239E /* CoreTelephony.framework in Frameworks */,
 				1F7FD3A912F784E100317B96 /* MessageUI.framework in Frameworks */,
 				1F6DA58912F9FEC800496A5C /* AudioToolbox.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4906F38819905B5500F27AF1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4906F3A819905B8C00F27AF1 /* AirshipKit.framework in Frameworks */,
+				4906F38A19905B5500F27AF1 /* CoreData.framework in Frameworks */,
+				4906F38B19905B5500F27AF1 /* MapKit.framework in Frameworks */,
+				4906F38C19905B5500F27AF1 /* CoreLocation.framework in Frameworks */,
+				4906F38D19905B5500F27AF1 /* libz.dylib in Frameworks */,
+				4906F38E19905B5500F27AF1 /* Foundation.framework in Frameworks */,
+				4906F38F19905B5500F27AF1 /* UIKit.framework in Frameworks */,
+				4906F39019905B5500F27AF1 /* CoreGraphics.framework in Frameworks */,
+				4906F39119905B5500F27AF1 /* CFNetwork.framework in Frameworks */,
+				4906F39219905B5500F27AF1 /* MobileCoreServices.framework in Frameworks */,
+				4906F39319905B5500F27AF1 /* SystemConfiguration.framework in Frameworks */,
+				4906F39419905B5500F27AF1 /* libsqlite3.dylib in Frameworks */,
+				4906F39519905B5500F27AF1 /* Security.framework in Frameworks */,
+				4906F39619905B5500F27AF1 /* CoreTelephony.framework in Frameworks */,
+				4906F39719905B5500F27AF1 /* MessageUI.framework in Frameworks */,
+				4906F39819905B5500F27AF1 /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -581,9 +691,9 @@
 		18C02963124F21B800D49CD5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BBC923F515AC8F6000EE7C2A /* libUAirship-4.0.0.a */,
+				BBC923F515AC8F6000EE7C2A /* libUAirship-4.0.1.a */,
 				7B909D40142935C900D0AB36 /* AirshipLogicTests.xctest */,
-				1FC0E37B17E919FE00840A52 /* libUAirship-iOS5-4.0.0.a */,
+				4906F3A519905B5600F27AF1 /* AirshipKit.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -595,6 +705,7 @@
 				BBEFB0171507F3A400976645 /* AirshipApplicationTests.xctest */,
 				76811EEC17EBA63600874D1F /* PushSampleKIFTests.octest */,
 				769AFCE018AD4B1B006696A9 /* ChannelRegistrationKIFTest.octest */,
+				4906F39E19905B5500F27AF1 /* PushSample-Kit.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -771,11 +882,30 @@
 			buildRules = (
 			);
 			dependencies = (
-				762A995D1805F0BE00D3FC50 /* PBXTargetDependency */,
 			);
 			name = PushSample;
 			productName = PushLibSample;
 			productReference = 1D6058910D05DD3D006BFB54 /* PushSample.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4906F34B19905B5500F27AF1 /* PushSample Kit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4906F39A19905B5500F27AF1 /* Build configuration list for PBXNativeTarget "PushSample Kit" */;
+			buildPhases = (
+				4906F34E19905B5500F27AF1 /* Resources */,
+				4906F37619905B5500F27AF1 /* Sources */,
+				4906F38819905B5500F27AF1 /* Frameworks */,
+				4906F39919905B5500F27AF1 /* ShellScript */,
+				4906F3AB19905B9E00F27AF1 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4906F3AA19905B9400F27AF1 /* PBXTargetDependency */,
+			);
+			name = "PushSample Kit";
+			productName = PushLibSample;
+			productReference = 4906F39E19905B5500F27AF1 /* PushSample-Kit.app */;
 			productType = "com.apple.product-type.application";
 		};
 		76811EEB17EBA63600874D1F /* PushSampleKIFTests */ = {
@@ -796,7 +926,7 @@
 			name = PushSampleKIFTests;
 			productName = PushSampleKIFTests;
 			productReference = 76811EEC17EBA63600874D1F /* PushSampleKIFTests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
 		769AFCDF18AD4B1B006696A9 /* ChannelRegistrationKIFTest */ = {
 			isa = PBXNativeTarget;
@@ -816,7 +946,7 @@
 			name = ChannelRegistrationKIFTest;
 			productName = ChannelRegistrationKIFTest;
 			productReference = 769AFCE018AD4B1B006696A9 /* ChannelRegistrationKIFTest.octest */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
 		BBEFB0161507F3A400976645 /* AirshipApplicationTests */ = {
 			isa = PBXNativeTarget;
@@ -835,7 +965,7 @@
 			name = AirshipApplicationTests;
 			productName = AirshipApplicationTests;
 			productReference = BBEFB0171507F3A400976645 /* AirshipApplicationTests.xctest */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -887,6 +1017,7 @@
 			projectRoot = "";
 			targets = (
 				1D6058900D05DD3D006BFB54 /* PushSample */,
+				4906F34B19905B5500F27AF1 /* PushSample Kit */,
 				BBEFB0161507F3A400976645 /* AirshipApplicationTests */,
 				76811EEB17EBA63600874D1F /* PushSampleKIFTests */,
 				769AFCDF18AD4B1B006696A9 /* ChannelRegistrationKIFTest */,
@@ -895,18 +1026,18 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		1FC0E37B17E919FE00840A52 /* libUAirship-iOS5-4.0.0.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libUAirship-iOS5-4.0.0.a";
-			remoteRef = 1FC0E37A17E919FE00840A52 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		1FCBB567175AA0E200F42F07 /* libKIF.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libKIF.a;
 			remoteRef = 1FCBB566175AA0E200F42F07 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4906F3A519905B5600F27AF1 /* AirshipKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipKit.framework;
+			remoteRef = 4906F3A419905B5600F27AF1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		76811EE417EBA60100874D1F /* Test Host.app */ = {
@@ -930,10 +1061,10 @@
 			remoteRef = 7B909D3F142935C900D0AB36 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BBC923F515AC8F6000EE7C2A /* libUAirship-4.0.0.a */ = {
+		BBC923F515AC8F6000EE7C2A /* libUAirship-4.0.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-4.0.0.a";
+			path = "libUAirship-4.0.1.a";
 			remoteRef = BBC923F415AC8F6000EE7C2A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -983,6 +1114,52 @@
 				BBAAD871151D263F00A090CD /* UAMapPresentationViewController.xib in Resources */,
 				1F3CC4A5165C2D4F008526E3 /* Default-568h@2x.png in Resources */,
 				4944B7EF178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4906F34E19905B5500F27AF1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4906F34F19905B5500F27AF1 /* checkConfig.sh in Resources */,
+				4906F35019905B5500F27AF1 /* MainWindow_Pad.xib in Resources */,
+				4906F35119905B5500F27AF1 /* MainWindow_Phone.xib in Resources */,
+				4906F35219905B5500F27AF1 /* Default.png in Resources */,
+				4906F35319905B5500F27AF1 /* Icon-Small.png in Resources */,
+				4906F35419905B5500F27AF1 /* SampleViewController.xib in Resources */,
+				4906F35519905B5500F27AF1 /* bottom-detail.png in Resources */,
+				4906F35619905B5500F27AF1 /* bottom-detail@2x.png in Resources */,
+				4906F35719905B5500F27AF1 /* middle-detail.png in Resources */,
+				4906F35819905B5500F27AF1 /* middle-detail@2x.png in Resources */,
+				4906F35919905B5500F27AF1 /* top-detail.png in Resources */,
+				4906F35A19905B5500F27AF1 /* top-detail@2x.png in Resources */,
+				4906F35B19905B5500F27AF1 /* UAPushMoreSettingsView.xib in Resources */,
+				4906F35C19905B5500F27AF1 /* UAPushSettingsAliasView.xib in Resources */,
+				4906F35D19905B5500F27AF1 /* UAPushSettingsTokenView.xib in Resources */,
+				4906F35E19905B5500F27AF1 /* UAPushSettingsView.xib in Resources */,
+				4906F35F19905B5500F27AF1 /* Icon-72.png in Resources */,
+				4906F36019905B5500F27AF1 /* Icon-Small-50.png in Resources */,
+				4906F36119905B5500F27AF1 /* iPadDefault-Landscape.png in Resources */,
+				4906F36219905B5500F27AF1 /* iPadDefault-Portrait.png in Resources */,
+				4906F36319905B5500F27AF1 /* Icon-Small@2x.png in Resources */,
+				4906F36419905B5500F27AF1 /* UAPushSettingsChannelInfoViewController.xib in Resources */,
+				4906F36519905B5500F27AF1 /* Default@2x.png in Resources */,
+				4906F36619905B5500F27AF1 /* Icon.png in Resources */,
+				4906F36719905B5500F27AF1 /* Icon@2x.png in Resources */,
+				4906F36819905B5500F27AF1 /* iTunesArtwork in Resources */,
+				4906F36919905B5500F27AF1 /* AirshipConfig.plist in Resources */,
+				4906F36A19905B5500F27AF1 /* UAPushSettingsTagsViewController.xib in Resources */,
+				4906F36B19905B5500F27AF1 /* UAPushSettingsAddTagViewController.xib in Resources */,
+				4906F36C19905B5500F27AF1 /* UAPushSettingsSoundsViewController.xib in Resources */,
+				4906F36D19905B5500F27AF1 /* cat.caf in Resources */,
+				4906F36E19905B5500F27AF1 /* cow.caf in Resources */,
+				4906F36F19905B5500F27AF1 /* frog.caf in Resources */,
+				4906F37019905B5500F27AF1 /* pig.caf in Resources */,
+				4906F37119905B5500F27AF1 /* UAPushLocalization.bundle in Resources */,
+				4906F37219905B5500F27AF1 /* UALocationSettingsViewController.xib in Resources */,
+				4906F37319905B5500F27AF1 /* UAMapPresentationViewController.xib in Resources */,
+				4906F37419905B5500F27AF1 /* Default-568h@2x.png in Resources */,
+				4906F37519905B5500F27AF1 /* UAPushSettingsUserInfoView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1041,6 +1218,19 @@
 			shellPath = /bin/sh;
 			shellScript = "# XCTest bundles must be codesigned the same way an app is if it wants access to the main bundle's features\ncodesign --verify --force --sign \"$CODE_SIGN_IDENTITY\" \"$CODESIGNING_FOLDER_PATH\"\n\n# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"";
 		};
+		4906F39919905B5500F27AF1 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"$SRCROOT/checkConfig.sh\"";
+		};
 		765C936D183FD80500227D02 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1094,6 +1284,30 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4906F37619905B5500F27AF1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4906F37719905B5500F27AF1 /* main.m in Sources */,
+				4906F37819905B5500F27AF1 /* SampleViewController.m in Sources */,
+				4906F37919905B5500F27AF1 /* UAPushSettingsChannelInfoViewController.m in Sources */,
+				4906F37A19905B5500F27AF1 /* UAPushMoreSettingsViewController.m in Sources */,
+				4906F37B19905B5500F27AF1 /* UAPushSettingsAliasViewController.m in Sources */,
+				4906F37C19905B5500F27AF1 /* UAPushSettingsTokenViewController.m in Sources */,
+				4906F37D19905B5500F27AF1 /* UAPushSettingsViewController.m in Sources */,
+				4906F37E19905B5500F27AF1 /* UAPushUI.m in Sources */,
+				4906F37F19905B5500F27AF1 /* UAPushSettingsTagsViewController.m in Sources */,
+				4906F38019905B5500F27AF1 /* UAPushSettingsAddTagViewController.m in Sources */,
+				4906F38119905B5500F27AF1 /* UAPushSettingsSoundsViewController.m in Sources */,
+				4906F38219905B5500F27AF1 /* UAPushNotificationHandler.m in Sources */,
+				4906F38319905B5500F27AF1 /* UALocationDemoAnnotation.m in Sources */,
+				4906F38419905B5500F27AF1 /* UALocationSettingsViewController.m in Sources */,
+				4906F38519905B5500F27AF1 /* UAMapPresentationController.m in Sources */,
+				4906F38619905B5500F27AF1 /* SampleAppDelegate.m in Sources */,
+				4906F38719905B5500F27AF1 /* UAPushSettingsUserInfoViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		76811EE817EBA63600874D1F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1129,10 +1343,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		762A995D1805F0BE00D3FC50 /* PBXTargetDependency */ = {
+		4906F3AA19905B9400F27AF1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "AirshipLib-iOS5";
-			targetProxy = 762A995C1805F0BE00D3FC50 /* PBXContainerItemProxy */;
+			name = AirshipKit;
+			targetProxy = 4906F3A919905B9400F27AF1 /* PBXContainerItemProxy */;
 		};
 		76811EFA17EBA63700874D1F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1250,6 +1464,113 @@
 				OTHER_CODE_SIGN_FLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PushSample;
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=*]" = "";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		4906F39B19905B5500F27AF1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUILD_STYLE = Debug;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_RESOURCE_RULES_PATH = "";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = PushSample_Prefix.pch;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				HEADER_SEARCH_PATHS = "../Airship/**";
+				INFOPLIST_FILE = "PushSample-Kit-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				OTHER_CFLAGS = "-DUADEBUG";
+				OTHER_CODE_SIGN_FLAGS = "";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "PushSample-Kit";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		4906F39C19905B5500F27AF1 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUILD_STYLE = Debug;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_RESOURCE_RULES_PATH = "";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = PushSample_Prefix.pch;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				HEADER_SEARCH_PATHS = "../Airship/**";
+				INFOPLIST_FILE = "PushSample-Kit-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				OTHER_CFLAGS = "-DUADEBUG";
+				OTHER_CODE_SIGN_FLAGS = "";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "PushSample-Kit";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphoneos;
+			};
+			name = Coverage;
+		};
+		4906F39D19905B5500F27AF1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUILD_STYLE = Release;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
+				CODE_SIGN_RESOURCE_RULES_PATH = "";
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = PushSample_Prefix.pch;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				HEADER_SEARCH_PATHS = "../Airship/**";
+				INFOPLIST_FILE = "PushSample-Kit-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				OTHER_CODE_SIGN_FLAGS = "";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "PushSample-Kit";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=*]" = "";
 				SDKROOT = iphoneos;
@@ -1574,7 +1895,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PROVISIONING_PROFILE = "";
@@ -1610,7 +1931,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = "-ObjC";
 				PROVISIONING_PROFILE = "";
@@ -1647,7 +1968,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PROVISIONING_PROFILE = "";
@@ -1749,6 +2070,16 @@
 				1D6058940D05DD3E006BFB54 /* Debug */,
 				CC3914A21790A6770033094B /* Coverage */,
 				1D6058950D05DD3E006BFB54 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		4906F39A19905B5500F27AF1 /* Build configuration list for PBXNativeTarget "PushSample Kit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4906F39B19905B5500F27AF1 /* Debug */,
+				4906F39C19905B5500F27AF1 /* Coverage */,
+				4906F39D19905B5500F27AF1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

@@ -20,7 +20,6 @@
 		18A27CB8125EDD6E0045D75B /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 18A27CA3125EDD6E0045D75B /* Icon-Small.png */; };
 		1F2B104C12DCDE700020843D /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F2B104B12DCDE700020843D /* AirshipConfig.plist */; };
 		1F3CC4C7165C41D0008526E3 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F3CC4C6165C41D0008526E3 /* Default-568h@2x.png */; };
-		1F4EDB411831ABB100F77343 /* libUAirship-4.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5EBCB6159B7AF600F2A716 /* libUAirship-4.0.0.a */; };
 		1F531D5214201ABC009ABE85 /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F531D5114201ABC009ABE85 /* libSystem.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
 		1F54E02B177255780037A20E /* UADateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F54E029177255770037A20E /* UADateUtils.m */; };
 		1F5781FE14182166003FA039 /* UAInboxMessageListController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F5781FC14182166003FA039 /* UAInboxMessageListController.xib */; };
@@ -34,6 +33,56 @@
 		1FE4238C188475C900624335 /* list-image-placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1FE4238A188475C900624335 /* list-image-placeholder@2x.png */; };
 		1FF574121367788300FEA1FD /* UAInboxMessageListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1FF574111367788300FEA1FD /* UAInboxMessageListCell.xib */; };
 		1FF57415136778A100FEA1FD /* UAInboxMessageListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */; };
+		4906F3071990564A00F27AF1 /* checkConfig.sh in Resources */ = {isa = PBXBuildFile; fileRef = C14785FF1164675600F17AB8 /* checkConfig.sh */; };
+		4906F3081990564A00F27AF1 /* InboxSampleViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18A27C9E125EDD6E0045D75B /* InboxSampleViewController.xib */; };
+		4906F3091990564A00F27AF1 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18A27CA0125EDD6E0045D75B /* MainWindow.xib */; };
+		4906F30A1990564A00F27AF1 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 18A27CA2125EDD6E0045D75B /* Default.png */; };
+		4906F30B1990564A00F27AF1 /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 18A27CA3125EDD6E0045D75B /* Icon-Small.png */; };
+		4906F30C1990564A00F27AF1 /* InboxSampleViewControlleriPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18A27C97125EDD6E0045D75B /* InboxSampleViewControlleriPad.xib */; };
+		4906F30D1990564A00F27AF1 /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 18A27C9A125EDD6E0045D75B /* Icon-Small-50.png */; };
+		4906F30E1990564A00F27AF1 /* MainWindow_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18A27C9C125EDD6E0045D75B /* MainWindow_Pad.xib */; };
+		4906F30F1990564A00F27AF1 /* UAInboxLocalization.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E9CB35AB12B89AC0002E39EA /* UAInboxLocalization.bundle */; };
+		4906F3101990564A00F27AF1 /* list-image-placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 1FE42389188475C900624335 /* list-image-placeholder.png */; };
+		4906F3111990564A00F27AF1 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75B5912BC20160041239E /* Icon-72.png */; };
+		4906F3121990564A00F27AF1 /* iPadDefault-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75B5A12BC20160041239E /* iPadDefault-Landscape.png */; };
+		4906F3131990564A00F27AF1 /* iPadDefault-Portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75B5B12BC20160041239E /* iPadDefault-Portrait.png */; };
+		4906F3141990564A00F27AF1 /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75B5F12BC20250041239E /* Icon-Small@2x.png */; };
+		4906F3151990564A00F27AF1 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75B6112BC20320041239E /* Default@2x.png */; };
+		4906F3161990564A00F27AF1 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75B6212BC20320041239E /* Icon.png */; };
+		4906F3171990564A00F27AF1 /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F5D312C15333009731BE /* iTunesArtwork */; };
+		4906F3181990564A00F27AF1 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F5D512C1533D009731BE /* Icon@2x.png */; };
+		4906F3191990564A00F27AF1 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F2B104B12DCDE700020843D /* AirshipConfig.plist */; };
+		4906F31A1990564A00F27AF1 /* UAInboxMessageListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1FF574111367788300FEA1FD /* UAInboxMessageListCell.xib */; };
+		4906F31B1990564A00F27AF1 /* list-image-placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1FE4238A188475C900624335 /* list-image-placeholder@2x.png */; };
+		4906F31C1990564A00F27AF1 /* UAInboxMessageListController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F5781FC14182166003FA039 /* UAInboxMessageListController.xib */; };
+		4906F31D1990564A00F27AF1 /* UAInboxMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F5781FD14182166003FA039 /* UAInboxMessageViewController.xib */; };
+		4906F31E1990564A00F27AF1 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F3CC4C6165C41D0008526E3 /* Default-568h@2x.png */; };
+		4906F3201990564A00F27AF1 /* InboxSampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 18A27C85125EDD6E0045D75B /* InboxSampleAppDelegate.m */; };
+		4906F3211990564A00F27AF1 /* InboxSampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18A27C87125EDD6E0045D75B /* InboxSampleViewController.m */; };
+		4906F3221990564A00F27AF1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 18A27C88125EDD6E0045D75B /* main.m */; };
+		4906F3231990564A00F27AF1 /* UAInboxUI.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CB359C12B89AC0002E39EA /* UAInboxUI.m */; };
+		4906F3241990564A00F27AF1 /* UAInboxAlertHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D5E60C8C12C2A86500E61EC0 /* UAInboxAlertHandler.m */; };
+		4906F3251990564A00F27AF1 /* UAInboxMessageListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */; };
+		4906F3261990564A00F27AF1 /* UAInboxNavUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7CDC2013F1E37000BB72EB /* UAInboxNavUI.m */; };
+		4906F3271990564A00F27AF1 /* UAInboxMessageListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57820114182188003FA039 /* UAInboxMessageListController.m */; };
+		4906F3281990564A00F27AF1 /* UAInboxMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57820314182188003FA039 /* UAInboxMessageViewController.m */; };
+		4906F3291990564A00F27AF1 /* UADateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F54E029177255770037A20E /* UADateUtils.m */; };
+		4906F32C1990564A00F27AF1 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49B19A1C1990172C00977790 /* AirshipKit.framework */; };
+		4906F32D1990564A00F27AF1 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FAB17B9856900233005 /* CoreData.framework */; };
+		4906F32E1990564A00F27AF1 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49E001A8154F63F3009305B7 /* CoreLocation.framework */; };
+		4906F32F1990564A00F27AF1 /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F531D5114201ABC009ABE85 /* libSystem.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
+		4906F3301990564A00F27AF1 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F69B10413BD1A41002CA606 /* libz.dylib */; };
+		4906F3311990564A00F27AF1 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAE80FCA81810007E1BE /* CFNetwork.framework */; };
+		4906F3321990564A00F27AF1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAEE0FCA81A40007E1BE /* Foundation.framework */; };
+		4906F3331990564A00F27AF1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAF50FCA81BD0007E1BE /* UIKit.framework */; };
+		4906F3341990564A00F27AF1 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FBB90FCB114B0007E1BE /* CoreGraphics.framework */; };
+		4906F3351990564A00F27AF1 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
+		4906F3361990564A00F27AF1 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AB3B21D10A0063D0035E6BD /* SystemConfiguration.framework */; };
+		4906F3371990564A00F27AF1 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1872674C1287C6200064C41B /* Security.framework */; };
+		4906F3381990564A00F27AF1 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
+		4906F3391990564A00F27AF1 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D02DD12B8338A00B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		4906F342199056E600F27AF1 /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 49B19A1C1990172C00977790 /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		49B19A3319901FE800977790 /* libUAirship-4.0.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5EBCB6159B7AF600F2A716 /* libUAirship-4.0.1.a */; };
 		49E001A9154F63F3009305B7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49E001A8154F63F3009305B7 /* CoreLocation.framework */; };
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
@@ -65,12 +114,12 @@
 			remoteGlobalIDString = 8DD76FA10486AA7600D96B5E;
 			remoteInfo = fmdb;
 		};
-		1FC0E38217E91B8700840A52 /* PBXContainerItemProxy */ = {
+		4906F33F199056C800F27AF1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B6E7F8381239FFD5009BC92D /* AirshipLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1FE0B7B117E2751000856C60;
-			remoteInfo = "AirshipLib-iOS5";
+			proxyType = 1;
+			remoteGlobalIDString = 49BADCC8198AF5F5000FF3D5;
+			remoteInfo = AirshipKit;
 		};
 		49422BA1142BA678009770C6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -79,12 +128,12 @@
 			remoteGlobalIDString = 7BB679061429288D00B877DB;
 			remoteInfo = AirshipLogicTests;
 		};
-		766429901805F48700DCE6BF /* PBXContainerItemProxy */ = {
+		49B19A1B1990172C00977790 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B6E7F8381239FFD5009BC92D /* AirshipLib.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 1FE0B73F17E2751000856C60;
-			remoteInfo = "AirshipLib-iOS5";
+			proxyType = 2;
+			remoteGlobalIDString = 49BADCC9198AF5F5000FF3D5;
+			remoteInfo = AirshipKit;
 		};
 		BB5EBCB5159B7AF600F2A716 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -94,6 +143,19 @@
 			remoteInfo = AirshipMIni;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4906F341199056DC00F27AF1 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4906F342199056E600F27AF1 /* AirshipKit.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0D27C1CA1165E9440086F66D /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
@@ -136,6 +198,8 @@
 		1FF57413136778A100FEA1FD /* UAInboxMessageListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxMessageListCell.h; sourceTree = "<group>"; };
 		1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageListCell.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* InboxSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSample_Prefix.pch; sourceTree = "<group>"; };
+		4906F33D1990564A00F27AF1 /* InboxSample-Kit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "InboxSample-Kit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4906F33E1990564A00F27AF1 /* InboxSample copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "InboxSample copy-Info.plist"; path = "/Users/marc/ios-library-dev/InboxSample/InboxSample copy-Info.plist"; sourceTree = "<absolute>"; };
 		49E001A8154F63F3009305B7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		63CB54BB1247107C00DF2EBC /* InboxTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InboxTests-Info.plist"; sourceTree = "<group>"; };
 		9A50FAE80FCA81810007E1BE /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -166,7 +230,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1F4EDB411831ABB100F77343 /* libUAirship-4.0.0.a in Frameworks */,
+				49B19A3319901FE800977790 /* libUAirship-4.0.1.a in Frameworks */,
 				CC523FAC17B9856900233005 /* CoreData.framework in Frameworks */,
 				49E001A9154F63F3009305B7 /* CoreLocation.framework in Frameworks */,
 				1F531D5214201ABC009ABE85 /* libSystem.dylib in Frameworks */,
@@ -180,6 +244,27 @@
 				1872674D1287C6200064C41B /* Security.framework in Frameworks */,
 				636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */,
 				1F7D02DE12B8338A00B45C37 /* CoreTelephony.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4906F32A1990564A00F27AF1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4906F32C1990564A00F27AF1 /* AirshipKit.framework in Frameworks */,
+				4906F32D1990564A00F27AF1 /* CoreData.framework in Frameworks */,
+				4906F32E1990564A00F27AF1 /* CoreLocation.framework in Frameworks */,
+				4906F32F1990564A00F27AF1 /* libSystem.dylib in Frameworks */,
+				4906F3301990564A00F27AF1 /* libz.dylib in Frameworks */,
+				4906F3311990564A00F27AF1 /* CFNetwork.framework in Frameworks */,
+				4906F3321990564A00F27AF1 /* Foundation.framework in Frameworks */,
+				4906F3331990564A00F27AF1 /* UIKit.framework in Frameworks */,
+				4906F3341990564A00F27AF1 /* CoreGraphics.framework in Frameworks */,
+				4906F3351990564A00F27AF1 /* MobileCoreServices.framework in Frameworks */,
+				4906F3361990564A00F27AF1 /* SystemConfiguration.framework in Frameworks */,
+				4906F3371990564A00F27AF1 /* Security.framework in Frameworks */,
+				4906F3381990564A00F27AF1 /* libsqlite3.dylib in Frameworks */,
+				4906F3391990564A00F27AF1 /* CoreTelephony.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,6 +350,7 @@
 			isa = PBXGroup;
 			children = (
 				1D6058910D05DD3D006BFB54 /* InboxSample.app */,
+				4906F33D1990564A00F27AF1 /* InboxSample-Kit.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -279,6 +365,7 @@
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 				9A9CBA1E0FCC559100435BCB /* Frameworks */,
+				4906F33E1990564A00F27AF1 /* InboxSample copy-Info.plist */,
 			);
 			name = CustomTemplate;
 			sourceTree = "<group>";
@@ -319,9 +406,9 @@
 		B6E7F8391239FFD5009BC92D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BB5EBCB6159B7AF600F2A716 /* libUAirship-4.0.0.a */,
+				BB5EBCB6159B7AF600F2A716 /* libUAirship-4.0.1.a */,
 				49422BA2142BA678009770C6 /* AirshipLogicTests.xctest */,
-				1FC0E38317E91B8700840A52 /* libUAirship-iOS5-4.0.0.a */,
+				49B19A1C1990172C00977790 /* AirshipKit.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -425,11 +512,30 @@
 			buildRules = (
 			);
 			dependencies = (
-				766429911805F48700DCE6BF /* PBXTargetDependency */,
 			);
 			name = InboxSample;
 			productName = InboxSample;
 			productReference = 1D6058910D05DD3D006BFB54 /* InboxSample.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4906F3021990564A00F27AF1 /* InboxSample Kit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4906F33A1990564A00F27AF1 /* Build configuration list for PBXNativeTarget "InboxSample Kit" */;
+			buildPhases = (
+				4906F3051990564A00F27AF1 /* ShellScript */,
+				4906F3061990564A00F27AF1 /* Resources */,
+				4906F31F1990564A00F27AF1 /* Sources */,
+				4906F32A1990564A00F27AF1 /* Frameworks */,
+				4906F341199056DC00F27AF1 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4906F340199056C800F27AF1 /* PBXTargetDependency */,
+			);
+			name = "InboxSample Kit";
+			productName = InboxSample;
+			productReference = 4906F33D1990564A00F27AF1 /* InboxSample-Kit.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -474,6 +580,7 @@
 			projectRoot = "";
 			targets = (
 				1D6058900D05DD3D006BFB54 /* InboxSample */,
+				4906F3021990564A00F27AF1 /* InboxSample Kit */,
 			);
 		};
 /* End PBXProject section */
@@ -486,13 +593,6 @@
 			remoteRef = 0D962FED11699572008D18A2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1FC0E38317E91B8700840A52 /* libUAirship-iOS5-4.0.0.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libUAirship-iOS5-4.0.0.a";
-			remoteRef = 1FC0E38217E91B8700840A52 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		49422BA2142BA678009770C6 /* AirshipLogicTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -500,10 +600,17 @@
 			remoteRef = 49422BA1142BA678009770C6 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BB5EBCB6159B7AF600F2A716 /* libUAirship-4.0.0.a */ = {
+		49B19A1C1990172C00977790 /* AirshipKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipKit.framework;
+			remoteRef = 49B19A1B1990172C00977790 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BB5EBCB6159B7AF600F2A716 /* libUAirship-4.0.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-4.0.0.a";
+			path = "libUAirship-4.0.1.a";
 			remoteRef = BB5EBCB5159B7AF600F2A716 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -541,9 +648,53 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4906F3061990564A00F27AF1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4906F3071990564A00F27AF1 /* checkConfig.sh in Resources */,
+				4906F3081990564A00F27AF1 /* InboxSampleViewController.xib in Resources */,
+				4906F3091990564A00F27AF1 /* MainWindow.xib in Resources */,
+				4906F30A1990564A00F27AF1 /* Default.png in Resources */,
+				4906F30B1990564A00F27AF1 /* Icon-Small.png in Resources */,
+				4906F30C1990564A00F27AF1 /* InboxSampleViewControlleriPad.xib in Resources */,
+				4906F30D1990564A00F27AF1 /* Icon-Small-50.png in Resources */,
+				4906F30E1990564A00F27AF1 /* MainWindow_Pad.xib in Resources */,
+				4906F30F1990564A00F27AF1 /* UAInboxLocalization.bundle in Resources */,
+				4906F3101990564A00F27AF1 /* list-image-placeholder.png in Resources */,
+				4906F3111990564A00F27AF1 /* Icon-72.png in Resources */,
+				4906F3121990564A00F27AF1 /* iPadDefault-Landscape.png in Resources */,
+				4906F3131990564A00F27AF1 /* iPadDefault-Portrait.png in Resources */,
+				4906F3141990564A00F27AF1 /* Icon-Small@2x.png in Resources */,
+				4906F3151990564A00F27AF1 /* Default@2x.png in Resources */,
+				4906F3161990564A00F27AF1 /* Icon.png in Resources */,
+				4906F3171990564A00F27AF1 /* iTunesArtwork in Resources */,
+				4906F3181990564A00F27AF1 /* Icon@2x.png in Resources */,
+				4906F3191990564A00F27AF1 /* AirshipConfig.plist in Resources */,
+				4906F31A1990564A00F27AF1 /* UAInboxMessageListCell.xib in Resources */,
+				4906F31B1990564A00F27AF1 /* list-image-placeholder@2x.png in Resources */,
+				4906F31C1990564A00F27AF1 /* UAInboxMessageListController.xib in Resources */,
+				4906F31D1990564A00F27AF1 /* UAInboxMessageViewController.xib in Resources */,
+				4906F31E1990564A00F27AF1 /* Default-568h@2x.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		4906F3051990564A00F27AF1 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"$SRCROOT/checkConfig.sh\"";
+		};
 		C147861B116468E400F17AB8 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -577,13 +728,30 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4906F31F1990564A00F27AF1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4906F3201990564A00F27AF1 /* InboxSampleAppDelegate.m in Sources */,
+				4906F3211990564A00F27AF1 /* InboxSampleViewController.m in Sources */,
+				4906F3221990564A00F27AF1 /* main.m in Sources */,
+				4906F3231990564A00F27AF1 /* UAInboxUI.m in Sources */,
+				4906F3241990564A00F27AF1 /* UAInboxAlertHandler.m in Sources */,
+				4906F3251990564A00F27AF1 /* UAInboxMessageListCell.m in Sources */,
+				4906F3261990564A00F27AF1 /* UAInboxNavUI.m in Sources */,
+				4906F3271990564A00F27AF1 /* UAInboxMessageListController.m in Sources */,
+				4906F3281990564A00F27AF1 /* UAInboxMessageViewController.m in Sources */,
+				4906F3291990564A00F27AF1 /* UADateUtils.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		766429911805F48700DCE6BF /* PBXTargetDependency */ = {
+		4906F340199056C800F27AF1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "AirshipLib-iOS5";
-			targetProxy = 766429901805F48700DCE6BF /* PBXContainerItemProxy */;
+			name = AirshipKit;
+			targetProxy = 4906F33F199056C800F27AF1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -613,7 +781,7 @@
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INFOPLIST_FILE = "InboxSample-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "-DUADEBUG";
 				OTHER_LDFLAGS = "-ObjC";
@@ -647,10 +815,84 @@
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INFOPLIST_FILE = "InboxSample-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = InboxSample;
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "$(inherited)";
+			};
+			name = Release;
+		};
+		4906F33B1990564A00F27AF1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				BUILD_STYLE = Debug;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_STATIC_ANALYZER_MODE = deep;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = InboxSample_Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				HEADER_SEARCH_PATHS = "../Airship/**";
+				INFOPLIST_FILE = "InboxSample-Kit-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = "-DUADEBUG";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "InboxSample-Kit";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "$(inherited)";
+			};
+			name = Debug;
+		};
+		4906F33C1990564A00F27AF1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				BUILD_STYLE = Release;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_STATIC_ANALYZER_MODE = deep;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = InboxSample_Prefix.pch;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				HEADER_SEARCH_PATHS = "../Airship/**";
+				INFOPLIST_FILE = "InboxSample-Kit-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "InboxSample-Kit";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				RUN_CLANG_STATIC_ANALYZER = YES;
@@ -683,7 +925,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LD_RUNPATH_SEARCH_PATHS = "";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
@@ -716,7 +959,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LD_RUNPATH_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				RUN_CLANG_STATIC_ANALYZER = YES;
@@ -734,6 +978,15 @@
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
 				1D6058950D05DD3E006BFB54 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4906F33A1990564A00F27AF1 /* Build configuration list for PBXNativeTarget "InboxSample Kit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4906F33B1990564A00F27AF1 /* Debug */,
+				4906F33C1990564A00F27AF1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -32,7 +32,6 @@ AIRSHIP_LIB_PATH="${ROOT_PATH}/AirshipLib"
 # Build the distribution binary
 rm -rf "${AIRSHIP_LIB_PATH}/distribution_binaries"
 bash "${AIRSHIP_LIB_PATH}/buildTarget.sh" AirshipLib
-bash "${AIRSHIP_LIB_PATH}/buildTarget.sh" AirshipLib-iOS5
 bash "${AIRSHIP_LIB_PATH}/update_library_reference.sh"
 
 # Remove any old deploy
