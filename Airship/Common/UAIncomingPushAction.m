@@ -189,7 +189,7 @@
 
 - (BOOL)useFetchCompletionHandlerDelegates {
     id appDelegate = [UIApplication sharedApplication].delegate;
-    return [UAirship shared].backgroundNotificationEnabled
+    return [UAirship shared].remoteNotificationBackgroundModeEnabled
         || [appDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)];
 
 }

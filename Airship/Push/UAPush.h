@@ -241,41 +241,58 @@ SINGLETON_INTERFACE(UAPush);
 ///---------------------------------------------------------------------------------------
 
 /**
- * Enables/disables push notifications on this device through Urban Airship. Defaults to `YES`.
+ * Enables/disables background remote notifications on this device through Urban Airship.
+ * Defaults to `YES`.
  */
-@property (nonatomic) BOOL pushEnabled;
+@property(nonatomic) BOOL backgroundPushNotificationsEnabled;
 
-/** 
- * Sets the default value for pushEnabled. The default is `YES`. After the pushEnabled
- * value has been directly set, this value has no effect.
- *
- * @param enabled The default value for push enabled
+/**
+ * Enables/disables user notifications on this device through Urban Airship.
+ * Defaults to 'NO'.
  */
-+ (void)setDefaultPushEnabledValue:(BOOL)enabled;
+@property(nonatomic) BOOL userPushNotificationsEnabled;
 
 /**
  * The device token for this device, as a hex string.
  */
-@property (nonatomic, copy, readonly) NSString *deviceToken;
+@property(nonatomic, copy, readonly) NSString *deviceToken;
 
 /**
  * The channel id for this device.
  */
-@property (nonatomic, copy, readonly) NSString *channelID;
+@property(nonatomic, copy, readonly) NSString *channelID;
 
 /**
- * Notification types this app will request from APNS. If push is enabled, changes to this value will
- * take effect the next time the app registers with [UAPush registerForRemoteNotifications].
+ * Notification types this app will request from APNS. Changes to this value
+ * will not take effect the next time the app registers with
+ * [[UAPush shared] updateAPNSRegistration].
+ *
+ * Defaults to alert, sound and badge.
+ *
+ * @deprecated As of version 5.0. Replaced with userNotificationTypes.
+ */
+@property(nonatomic, assign) UIRemoteNotificationType notificationTypes __attribute__((deprecated("As of version 5.0")));
+
+/**
+ * User Notification types this app will request from APNS. Changes to this value
+ * will not take effect the next time the app registers with
+ * [[UAPush shared] updateAPNSRegistration].
  *
  * Defaults to alert, sound and badge.
  */
-@property (nonatomic, assign) UIRemoteNotificationType notificationTypes;
+@property(nonatomic, assign) UIUserNotificationType userNotificationTypes NS_AVAILABLE_IOS(8_0);
+
+/**
+ * The user notification categories. Changes to this value will not take effect
+ * the next time the app registers with [[UAPush shared] updateAPNSRegistration].
+ */
+@property(readonly) NSSet *userNotificationCategories;
 
 /**
  * Set a delegate that implements the UAPushNotificationDelegate protocol. If not
  * set, a default implementation is provided (UAPushNotificationHandler).
  */
-@property (nonatomic, weak) id<UAPushNotificationDelegate> pushNotificationDelegate;
+@property(nonatomic, weak) id<UAPushNotificationDelegate> pushNotificationDelegate;
 
 /**
  * Set a delegate that implements the UAPushNotificationDelegate protocol. If not
@@ -283,17 +300,67 @@ SINGLETON_INTERFACE(UAPush);
  *
  * @deprecated As of version 3.0. Replaced with [UAPush pushNotificationDelegate] property.
  */
-@property (nonatomic, weak) id<UAPushNotificationDelegate> delegate __attribute__((deprecated("As of version 3.0")));
+@property(nonatomic, weak) id<UAPushNotificationDelegate> delegate __attribute__((deprecated("As of version 3.0")));
 
 /**
  * Set a delegate that implements the UARegistrationDelegate protocol.
  */
-@property (nonatomic, weak) id<UARegistrationDelegate> registrationDelegate;
+@property(nonatomic, weak) id<UARegistrationDelegate> registrationDelegate;
 
 /**
  * Notification that launched the application
  */
-@property (nonatomic, readonly, strong) NSDictionary *launchNotification;
+@property(nonatomic, readonly, strong) NSDictionary *launchNotification;
+
+/**
+ * Sets the default value for userPushNotificationsEnabled. The default is `NO`.
+ * After the userPushNotificationsEnabled value has been directly set, this value
+ * has no effect.
+ *
+ * @param enabled The default value for userPushNotificationsEnabled
+ */
++ (void)setDefaultUserPushNotificationsEnabledValue:(BOOL)enabled;
+
+/**
+ * Sets the default value for backgroundPushNotificationsEnabled. The default is `YES`.
+ * After the backgroundPushNotificationsEnabled value has been directly set, this
+ * value has no effect.
+ *
+ * @param enabled The default value for backgroundPushNotificationsEnabled
+ */
++ (void)setDefaultBackgroundPushNotificationsEnabledValue:(BOOL)enabled;
+
+/**
+ * Updates the registration with APNS. Call after modifying notification types
+ * and user notification categories.
+ */
+- (void)updateAPNSRegistration;
+
+
+///---------------------------------------------------------------------------------------
+/// @name User Notification Categories
+///---------------------------------------------------------------------------------------
+
+/**
+ * Adds a user notification category to the current set of categories. Changes to
+ * this value will not take effect the next time the app registers with
+ * [[UAPush shared] updateAPNSRegistration].
+ */
+- (void)addUserNotificationCategory:(UIUserNotificationCategory *)category NS_AVAILABLE_IOS(8_0);
+
+/**
+ * Adds a set of user notification categories to the current set of categories. Changes to
+ * this value will not take effect the next time the app registers with
+ * [[UAPush shared] updateAPNSRegistration].
+ */
+- (void)addUserNotificationCategories:(NSSet *)categories NS_AVAILABLE_IOS(8_0);
+
+/**
+ * Removes a user notification category from the current set of categories. Changes
+ * to this value will not take effect the next time the app registers with
+ * [[UAPush shared] updateAPNSRegistration].
+ */
+- (void)removeUserNotificationCategory:(UIUserNotificationCategory *)category NS_AVAILABLE_IOS(8_0);
 
 ///---------------------------------------------------------------------------------------
 /// @name Autobadge
@@ -317,6 +384,12 @@ SINGLETON_INTERFACE(UAPush);
  * convenience method for `setBadgeNumber:0`.
  */
 - (void)resetBadge;
+
+/**
+ * Gets the current enabled notification types.
+ */
++ (NSUInteger)currentEnabledNotificationTypes;
+
 
 ///---------------------------------------------------------------------------------------
 /// @name Alias
@@ -447,39 +520,8 @@ SINGLETON_INTERFACE(UAPush);
 
 
 ///---------------------------------------------------------------------------------------
-/// @name Registration
+/// @name Channel Registration
 ///---------------------------------------------------------------------------------------
-
-/**
- * This registers the device token and all current associated Urban Airship custom
- * features that are currently set.
- * 
- * Features set with this call if available:
- *  
- * - tags
- * - alias
- * - quiet time
- * - autobadge
- * 
- * Add a `UARegistrationDelegate` to `UAPush` to received success and failure callbacks.
- *
- * @param token The device token to register.
- */
-- (void)registerDeviceToken:(NSData *)token;
-
-/**
- * Register the device for remote notifications (see Apple documentation for more
- * detail).
- *
- * @param types Bitmask of UIRemoteNotificationType types
- */
-- (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types;
-
-/**
- * Register the device for remote notifications using the types set in [UAPush notificationTypes] (see Apple documentation for more
- * detail).
- */
-- (void)registerForRemoteNotifications;
 
 /**
  * Registers or updates the current registration with an API call. If push notifications are
@@ -489,8 +531,9 @@ SINGLETON_INTERFACE(UAPush);
  */
 - (void)updateRegistration;
 
+
 ///---------------------------------------------------------------------------------------
-/// @name Receiving Notifications
+/// @name AppDelegate hooks
 ///---------------------------------------------------------------------------------------
 
 /**
@@ -500,7 +543,7 @@ SINGLETON_INTERFACE(UAPush);
  * @param notification The notification payload, as passed to your application delegate.
  * @param state The application state at the time the notification was received.
  */
-- (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state;
+- (void)onReceiveRemoteNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state;
 
 /**
  * Handle incoming push notifications. This method will record push conversions, parse the notification
@@ -510,7 +553,21 @@ SINGLETON_INTERFACE(UAPush);
  * @param state The application state at the time the notification was received.
  * @param completionHandler Should be called with a UIBackgroundFetchResult as soon as possible, so the system can accurately estimate its power and data cost.
  */
-- (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
+- (void)onReceiveRemoteNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
 
+/**
+ * Handle device token registration. Associates the
+ * token with the channel and update the channel registration.
+ *
+ * Add a `UARegistrationDelegate` to `UAPush` to received success and failure callbacks.
+ *
+ * @param token The device token to register.
+ */
+- (void)onRegisterForRemoteNotificationsWithDeviceToken:(NSData *)token;
+
+/**
+ * Handles user notification settings registration.
+ */
+- (void)onRegisterUserNotificationSettings NS_AVAILABLE_IOS(8_0);
 
 @end

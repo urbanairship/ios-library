@@ -66,20 +66,20 @@ typedef void (^MethodBlock)(NSInvocation *);
 - (void)testRespondsToSelectorApplicationDidReceiveRemoteNotificationFetchCompletionHandler {
     id mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
     [[[mockAirship stub] andReturn:mockAirship] shared];
-    [[[mockAirship expect] andReturnValue:OCMOCK_VALUE(NO)] backgroundNotificationEnabled];
+    [[[mockAirship expect] andReturnValue:OCMOCK_VALUE(NO)] remoteNotificationBackgroundModeEnabled];
 
     // Verify it does not respond when background notifications is disabled and the app delegate does not respond
     XCTAssertFalse([self.baseDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)],
                    @"respondsToSelector should not respond to application:didReceiveRemoteNotification:fetchCompletionHandler: when background push is disabled and originalAppDelegate does not respond");
 
     // Verify it does respond when background notifications is enabled
-    [[[mockAirship expect] andReturnValue:OCMOCK_VALUE(YES)] backgroundNotificationEnabled];
+    [[[mockAirship expect] andReturnValue:OCMOCK_VALUE(YES)] remoteNotificationBackgroundModeEnabled];
 
     XCTAssertTrue([self.baseDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)],
                   @"respondsToSelector should respond to application:didReceiveRemoteNotification:fetchCompletionHandler: when background push is enabled");
 
     // Verify it responds when background notifications is disabled but the app delegate responds
-    [[[mockAirship expect] andReturnValue:OCMOCK_VALUE(NO)] backgroundNotificationEnabled];
+    [[[mockAirship expect] andReturnValue:OCMOCK_VALUE(NO)] remoteNotificationBackgroundModeEnabled];
 
     [self.originalDelegate addMethodBlock:^(NSInvocation *invocation) { }
                        forSelectorString:@"application:didReceiveRemoteNotification:fetchCompletionHandler:"];

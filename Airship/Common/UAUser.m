@@ -65,7 +65,6 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
 
 + (void)land {
-
     if (_defaultUser) {
         [_defaultUser unregisterForDeviceRegistrationChanges];
     }

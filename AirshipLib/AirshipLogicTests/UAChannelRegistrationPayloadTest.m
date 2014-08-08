@@ -45,6 +45,7 @@
 
     // set up the full payload
     self.payload.optedIn = YES;
+    self.payload.backgroundEnabled = YES;
     self.payload.pushAddress = @"FAKEADDRESS";
     self.payload.userID = @"fakeUser";
     self.payload.deviceID = @"fakeDeviceID";
@@ -73,6 +74,7 @@
     NSDictionary *channel = [dict valueForKey:kUAChannelKey];
     XCTAssertEqualObjects(@"ios", [channel valueForKey:kUAChannelDeviceTypeKey], @"device type should be present");
     XCTAssertEqualObjects([NSNumber numberWithBool:self.payload.optedIn], [channel valueForKey:kUAChannelOptInKey], @"opt-in should be present");
+    XCTAssertEqualObjects([NSNumber numberWithBool:self.payload.backgroundEnabled], [channel valueForKey:kUABackgroundEnabledJSONKey], @"background should be present");
     XCTAssertEqualObjects(self.payload.pushAddress, [channel valueForKey:kUAChannelPushAddressKey], @"push address should be present");
     XCTAssertEqualObjects(self.payload.alias, [channel valueForKey:kUAChannelAliasJSONKey], @"alias should be present");
     XCTAssertEqualObjects([NSNumber numberWithBool:self.payload.setTags], [channel valueForKey:kUAChannelSetTagsKey], @"set tags should be present");
@@ -159,6 +161,10 @@
     payloadCopy.optedIn = NO;
     XCTAssertFalse([self.payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
     payloadCopy.optedIn = self.payload.optedIn;
+
+    payloadCopy.backgroundEnabled = NO;
+    XCTAssertFalse([self.payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    payloadCopy.backgroundEnabled = self.payload.backgroundEnabled;
 
     payloadCopy.pushAddress = @"different-value";
     XCTAssertFalse([self.payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");

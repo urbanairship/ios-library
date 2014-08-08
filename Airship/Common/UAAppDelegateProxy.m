@@ -85,7 +85,7 @@
     // Respond to the new notification delegate if background push is enabled or
     // the default app delegate responds to it.
     if ([NSStringFromSelector(selector) isEqualToString:@"application:didReceiveRemoteNotification:fetchCompletionHandler:"]) {
-        return [UAirship shared].backgroundNotificationEnabled || [self.originalAppDelegate respondsToSelector:selector];
+        return [UAirship shared].remoteNotificationBackgroundModeEnabled || [self.originalAppDelegate respondsToSelector:selector];
     }
 
     // If this isn't a selector we normally respond to, say we do as long as either delegate does

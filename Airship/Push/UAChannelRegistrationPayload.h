@@ -44,6 +44,9 @@
 #define kUAChannelSetTagsKey @"set_tags"
 #define kUAChannelTagsJSONKey @"tags"
 
+#define kUABackgroundEnabledJSONKey @"background"
+
+
 /**
  * Model object encapsulating the data relevant to a creation or updates processed by UAChannelAPIClient.
  */
@@ -52,52 +55,58 @@
 /**
  * The user ID.
  */
-@property(nonatomic, copy)NSString *userID;
+@property(nonatomic, copy) NSString *userID;
 
 /**
  * The device ID.
  */
-@property(nonatomic, copy)NSString *deviceID;
+@property(nonatomic, copy) NSString *deviceID;
 
 /**
  * This flag indicates that the user is able to receive push notifications.
  */
-@property(nonatomic, assign)BOOL optedIn;
+@property(nonatomic, assign) BOOL optedIn;
 
 /**
  * The address to push notifications to.  This should be the device token.
  */
-@property(nonatomic, copy)NSString *pushAddress;
+@property(nonatomic, copy) NSString *pushAddress;
 
 /**
  * The flag indicates tags in this request should be handled.
  */
-@property(nonatomic, assign)BOOL setTags;
+@property(nonatomic, assign) BOOL setTags;
 
 /**
  * The tags for this device.
  */
-@property(nonatomic, strong)NSArray *tags;
+@property(nonatomic, strong) NSArray *tags;
 
 /**
  * The alias for this device.
  */
-@property(nonatomic, copy)NSString *alias;
+@property(nonatomic, copy) NSString *alias;
 
 /**
  * Quiet time settings for this device.
  */
-@property(nonatomic, strong)NSDictionary *quietTime;
+@property(nonatomic, strong) NSDictionary *quietTime;
 
 /**
  * The time zone for this device.
  */
-@property(nonatomic, copy)NSString *timeZone;
+@property(nonatomic, copy) NSString *timeZone;
 
 /**
  * The badge for this device.
  */
-@property(nonatomic, strong)NSNumber *badge;
+@property(nonatomic, strong) NSNumber *badge;
+
+
+/**
+ * This flag indicates that the user is able to receive background notifications.
+ */
+@property(nonatomic, assign) BOOL backgroundEnabled;
 
 /**
  * The UAChannelRegistrationPayload as JSON data.
