@@ -87,11 +87,10 @@
 
 - (void)testLocationProviderDescription {
     UABaseLocationProvider *provider = [[UABaseLocationProvider alloc] initWithDelegate:nil];
-    provider.purpose = @"CATS";
     provider.distanceFilter = 21;
     provider.desiredAccuracy = 21;
 
-    NSString *expectedDescription = @"Provider:UNKNOWN, Purpose:CATS, Updating:0, desiredAccuracy 21.000000, distanceFilter 21.000000";
+    NSString *expectedDescription = [NSString stringWithFormat:@"Provider:UNKNOWN, Purpose:%@, Updating:0, desiredAccuracy 21.000000, distanceFilter 21.000000" , provider.purpose];
     XCTAssertEqualObjects(expectedDescription, provider.description, @"Provider description is unexpected");
 }
 

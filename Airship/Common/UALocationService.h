@@ -253,31 +253,15 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 /**
  * Purpose for location services shown to user
  * when prompted to allow location services to begin. The default value
- * is kUALocationServiceDefaultPurpose listed in UAirship.m. This value is set on
- * all new location services.
+ * is the NSLocationUsageDescription listed in the info.plist. This value cannot be set
+ * programatically.
  * @return An NSString with the current purpose
  */
 - (NSString *)purpose;
 
-/** Purpose for location services shown to user
- * when prompted to allow location services to begin. The default value
- * is kUALocationServiceDefaultPurpose listed in UAirship.m. This value is set on
- * all new location services.
- * @param purpose The new purpose of the service
- */
-- (void)setPurpose:(NSString *)purpose;
-
 ///---------------------------------------------------------------------------------------
 /// @name Creating the Location Service
 ///---------------------------------------------------------------------------------------
-
-/**
- * Returns a UALocationService object with the given purpose. The purpose
- * string is passed to the UALocationProviders and set on the CLLocationManager.
- * This is displayed to the user when asking for location authorization.
- * @param purpose The description that is displayed to the user when prompted for authorization.
- */
-- (id)initWithPurpose:(NSString *)purpose;
 
 /**
  * Starts the Standard Location service and

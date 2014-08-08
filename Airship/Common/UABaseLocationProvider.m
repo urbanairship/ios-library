@@ -83,14 +83,10 @@
     self.serviceStatus = UALocationProviderNotUpdating;
 }
 
-- (void)setPurpose:(NSString *)purpose {
-    if (purpose) {
-        self.locationManager.purpose = purpose;
-    }
-}
-
 - (NSString *)purpose {
-    return self.locationManager.purpose;
+    NSDictionary* infoDict = NSBundle.mainBundle.infoDictionary;
+    NSString* purpose = [infoDict objectForKey:@"NSLocationUsageDescription"];
+    return purpose;
 }
 
 - (CLLocationDistance)distanceFilter {

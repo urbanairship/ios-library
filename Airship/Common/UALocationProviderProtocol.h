@@ -59,17 +59,13 @@
 @property (nonatomic, assign) id delegate;
 
 /**
- * The purpose associated with the CLLocationManager that is displayed to the user when
- * permission for location services is required.
- * @return The location manager purpose as an NSString.
+ * Purpose for location services shown to user
+ * when prompted to allow location services to begin. The default value
+ * is the NSLocationUsageDescription listed in the info.plist. This value cannot be set
+ * programatically.
+ * @return An NSString with the current purpose
  */
 - (NSString *)purpose;
-
-/**
- * Set the location manager purpose.
- * @param newPurpose The new purpose to set.
- */
-- (void)setPurpose:(NSString *)newPurpose;
 
 /**
  * Starts updating location.

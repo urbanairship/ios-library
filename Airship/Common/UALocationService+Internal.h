@@ -108,7 +108,7 @@
 - (void)setSingleLocationProvider:(UAStandardLocationProvider*)singleLocationProvider;
 
 // Convenience method to set properties common to all providers
-// currently sets the delegate and purpose
+// currently sets the delegate
 - (void)setCommonPropertiesOnProvider:(id <UALocationProviderProtocol>)locationProvider;
 
 // convenience method for calling enabled and authorized
