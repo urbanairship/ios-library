@@ -621,12 +621,12 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 - (void)startSession {
     [self clearSession];
 
-    self.sessionId = [UAUtils UUID];
+    self.sessionId = [NSUUID UUID].UUIDString;
     if (self.notificationUserInfo) {
 
         // If the server did not send a push ID (likely because the payload did not have room)
         // generate an ID for the server to use
-        self.conversionSendId = [self.notificationUserInfo objectForKey:@"_"] ?: [UAUtils UUID];
+        self.conversionSendId = [self.notificationUserInfo objectForKey:@"_"] ?: [NSUUID UUID].UUIDString;
 
         NSString *richPushID = [UAInboxUtils getRichPushMessageIDFromNotification:self.notificationUserInfo];
         if (richPushID) {

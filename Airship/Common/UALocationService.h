@@ -159,8 +159,6 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 /**
  * Reports the current authorization status of location services as reported by the
  * system.
- * @warning For iOS < 4.2, this value is updated after an attempt has been made to start location
- * services, and is persisted from that point on. Prompting the user is the only way to set this value.
  *
  * @return YES if the user has authorized location services, or has yet to be asked about location services.
  * @return NO if the user has explicitly disabled location services

@@ -43,7 +43,7 @@
 
 // This method sends the push notification with the uniqueID and verifies the expected push arrived
 - (void)sendAndWaitForNotification:(NSString *)description sendPushBlock:(SendPushBlock)sendPushBlock {
-    NSString *alertID = [UAUtils UUID];
+    NSString *alertID = [NSUUID UUID].UUIDString;
     [self setUniqueID:alertID];
 
     return [self runBlock:^KIFTestStepResult(NSError **error) {

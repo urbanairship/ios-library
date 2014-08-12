@@ -6,10 +6,11 @@
  */
 @interface UATestSynchronizer : NSObject
 
-#if OS_OBJECT_USE_OBJC
+
 /**
  * The dispatch semaphore used for synchronization
  */
+#if OS_OBJECT_USE_OBJC
 @property(nonatomic, strong) dispatch_semaphore_t semaphore;    // GCD objects use ARC
 #else
 @property(nonatomic, assign) dispatch_semaphore_t semaphore;    // GCD object don't use ARC

@@ -43,14 +43,6 @@
 ///---------------------------------------------------------------------------------------
 
 /**
- * Generate a UUID.
- * Uses CFUUID to generate and return a UUID.
- *
- * @return A UUID.
- */
-+ (NSString *)UUID;
-
-/**
  * Get the device model name. e.g., iPhone3,1
  * @return The device model name.
  */

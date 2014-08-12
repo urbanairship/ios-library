@@ -41,7 +41,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     self = [super init];
     if (self) {
         NSString  *databaseName = [NSString stringWithFormat:CORE_DATA_STORE_NAME, [UAirship shared].config.appKey];
-        self.storeURL = [[self getStoreDirectoryURL] URLByAppendingPathComponent:databaseName];
+        self.storeURL = [[self createStoreURL] URLByAppendingPathComponent:databaseName];
 
         // Delete the old directory if it exists
         [self deleteOldDatabaseIfExists];
@@ -326,7 +326,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     return message;
 }
 
-- (NSURL *)getStoreDirectoryURL {
+- (NSURL *)createStoreURL {
     NSFileManager *fm = [NSFileManager defaultManager];
 
     NSURL *libraryDirectoryURL = [[fm URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
@@ -337,7 +337,8 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
         NSError *error = nil;
         if (![fm createDirectoryAtURL:directoryURL withIntermediateDirectories:YES attributes:nil error:&error]) {
             UA_LERR(@"Error creating inbox directory %@: %@", [directoryURL lastPathComponent], error);
-        } else {
+        }
+        else {
             [UAUtils addSkipBackupAttributeToItemAtURL:directoryURL];
         }
     }

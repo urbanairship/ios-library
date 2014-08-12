@@ -48,8 +48,6 @@
 
 #pragma mark -
 #pragma mark CLLocationDelegate Methods
-
-//** iOS 4.2 or higher */
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UALOG(@"Standard location authorization changed %d", status);
     switch (status) {

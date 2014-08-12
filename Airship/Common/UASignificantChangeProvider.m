@@ -46,7 +46,6 @@
 
 #pragma mark -
 #pragma mark CLLocationManager Delegate
-//** iOS 4.2+ */
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UALOG(@"Significant change did change authorization status %d", status);
     switch (status) {

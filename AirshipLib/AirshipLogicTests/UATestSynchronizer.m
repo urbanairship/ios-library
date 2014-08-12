@@ -44,10 +44,4 @@
     dispatch_semaphore_signal(self.semaphore);
 }
 
-- (void)dealloc {
-#if !OS_OBJECT_USE_OBJC
-    dispatch_release(self.semaphore);
-#endif
-}
-
 @end
