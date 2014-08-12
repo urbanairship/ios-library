@@ -22,5 +22,7 @@
 	<string>${CURRENT_PROJECT_VERSION}</string>
 	<key>NSPrincipalClass</key>
 	<string></string>
+	<key>NSLocationUsageDescription</key>
+	<string>Urban Airship location service</string>
 </dict>
 </plist>
