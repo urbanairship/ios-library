@@ -162,7 +162,7 @@
 // TODO: figure out a way around this
 
 - (void)testUALocationServiceDoesGetLocation {
-    _locationService = [[UALocationService alloc] initWithPurpose:@"testing"];
+    _locationService = [[UALocationService alloc] init];
     [UALocationService setAirshipLocationServiceEnabled:YES];
     _locationService.delegate = self;
     
@@ -176,7 +176,7 @@
 
 - (void)testReportCurrentLocationTimesOutWithError {
     __block BOOL shutdownCalled = NO;
-    _locationService = [[UALocationService alloc] initWithPurpose:@"current location test"];
+    _locationService = [[UALocationService alloc] init];
     _locationService.timeoutForSingleLocationService = 1;
 
     id mockLocationService = [OCMockObject partialMockForObject:_locationService];
@@ -204,7 +204,7 @@
 }
 
 - (void)testReportCurrentLocationShutsDownBackgroundTaskOnError {
-    _locationService = [[UALocationService alloc] initWithPurpose:@"background shutdown test"];
+    _locationService = [[UALocationService alloc] init];
     id mockLocationService = [OCMockObject partialMockForObject:_locationService];
     [[[mockLocationService stub] andReturnValue:OCMOCK_VALUE(YES)] isLocationServiceEnabledAndAuthorized];
     _locationService.singleLocationProvider = [UAStandardLocationProvider providerWithDelegate:_locationService];
@@ -227,7 +227,7 @@
 #pragma mark Last Location and Date
 
 - (void)testLastLocationAndDate {
-    _locationService = [[UALocationService alloc] initWithPurpose:@"app_test"];
+    _locationService = [[UALocationService alloc] init];
     CLLocation *pdx = [UALocationTestUtils testLocationPDX];
     [_locationService reportLocationToAnalytics:pdx fromProvider:_locationService.standardLocationProvider];
     XCTAssertEqualObjects(pdx, _locationService.lastReportedLocation);
@@ -257,7 +257,7 @@
 }
 
 - (void)testSignificantChangeNotifiesDelegate {
-    _locationService = [[UALocationService alloc] initWithPurpose:@"Test"];
+    _locationService = [[UALocationService alloc] init];
     CLLocation *pdx = [UALocationTestUtils testLocationPDX];
     CLLocation *sfo = [UALocationTestUtils testLocationSFO];
 

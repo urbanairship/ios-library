@@ -84,8 +84,8 @@
 }
 
 - (NSString *)purpose {
-    NSDictionary* infoDict = NSBundle.mainBundle.infoDictionary;
-    NSString* purpose = [infoDict objectForKey:@"NSLocationUsageDescription"];
+    NSDictionary *infoDict = NSBundle.mainBundle.infoDictionary;
+    NSString *purpose = [infoDict objectForKey:@"NSLocationUsageDescription"];
     return purpose;
 }
 
