@@ -28,6 +28,8 @@
 #import "UAGlobal.h"
 #import "UAPush.h"
 
+@class UIUserNotificationSettings;
+
 @implementation UAAppDelegate
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
@@ -50,6 +52,11 @@
 -(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     UA_LINFO(@"Received remote notification: %@", userInfo);
     [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState fetchCompletionHandler:completionHandler];
+}
+
+// add delegate calls - we'll need to retrigger registration to get the proper opt-in behavior here, since the DT could come back first
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
+    [[UAPush shared] updateRegistration];
 }
 
 

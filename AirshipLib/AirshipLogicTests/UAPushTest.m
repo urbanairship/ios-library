@@ -392,6 +392,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                      @"Should throw when removing a nil set of tags");
 }
 
+#ifndef __IPHONE_8_0
 - (void)testPushEnabledToYes {
     self.push.pushEnabled = NO;
 
@@ -443,6 +444,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
                      @"pushEnabled should make unregister with the device api client");
 }
+
+#endif
 
 - (void)testSetQuietTime {
     [self.push setQuietTimeStartHour:12 startMinute:30 endHour:14 endMinute:58];
@@ -556,6 +559,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                  @"timezone should be able to be cleared in standardUserDefaults");
 }
 
+#ifndef __IPHONE_8_0
+
 - (void)testRegisterForRemoteNotificationsPushEnabled {
     self.push.pushEnabled = YES;
     self.push.notificationTypes = UIRemoteNotificationTypeSound;
@@ -567,6 +572,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                      @"should register for push notification types when push is enabled");
 
 }
+
 
 - (void)testRegisterForRemoteNotificationsPushDisabled {
     self.push.pushEnabled = NO;
@@ -592,6 +598,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertEqual(UIRemoteNotificationTypeBadge, self.push.notificationTypes,
                    @"registerForPushNotificationTypes should still set the notificationTypes when push is enabled");
 }
+#endif
 
 - (void)testRegisterForRemoteNotificationTypesPushDisabled {
     self.push.notificationTypes = UIRemoteNotificationTypeSound;
