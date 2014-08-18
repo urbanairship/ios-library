@@ -385,9 +385,11 @@ static NSUInteger channelRowCount = 1;
 - (void)updateCellValues {
     
     self.deviceTokenCell.detailTextLabel.text = [UAPush shared].deviceToken ? [UAPush shared].deviceToken : @"Unavailable";
-    self.deviceTokenTypesCell.detailTextLabel.text = [self pushTypeString:[[UIApplication sharedApplication] enabledRemoteNotificationTypes]];
+
+    NSUInteger types = [UAPush currentEnabledNotificationTypes];
+    self.deviceTokenTypesCell.detailTextLabel.text = [self pushTypeString:types];
     
-    UIRemoteNotificationType disabledTypes = [[UIApplication sharedApplication] enabledRemoteNotificationTypes] ^ [UAPush shared].notificationTypes;
+    UIRemoteNotificationType disabledTypes = types ^ [UAPush shared].notificationTypes;
     self.deviceTokenDisabledTypesCell.detailTextLabel.text = [self pushTypeString:disabledTypes];
     
     self.deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";

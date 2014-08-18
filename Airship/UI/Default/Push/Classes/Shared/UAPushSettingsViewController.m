@@ -178,10 +178,10 @@ enum {
                                                                                             target:self
                                                                                             action:@selector(quit)];
 
-    UIRemoteNotificationType type = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
+    NSUInteger types = [UAPush currentEnabledNotificationTypes];
     UISwitch *strongPushEnabledSwitch = self.pushEnabledSwitch;
 
-    if (type == UIRemoteNotificationTypeNone || ![UAPush shared].pushEnabled) {
+    if (types == UIRemoteNotificationTypeNone || ![UAPush shared].pushEnabled) {
         strongPushEnabledSwitch.on = NO;
     } else {
         strongPushEnabledSwitch.on = YES;

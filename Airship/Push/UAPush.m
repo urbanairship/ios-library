@@ -612,15 +612,7 @@ BOOL deferChannelCreationOnForeground = false;
     payload.pushAddress = self.deviceToken;
 
     if (self.pushEnabled && self.deviceToken) {
-        NSUInteger types;
-
-        if ([[UIApplication sharedApplication] respondsToSelector:NSSelectorFromString(@"currentUserNotificationSettings")]) {
-            NSValue *value = [[UIApplication sharedApplication] valueForKeyPath:@"currentUserNotificationSettings.types"];
-            [value getValue:&types];
-        } else {
-            types = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
-        }
-        payload.optedIn = types != UIRemoteNotificationTypeNone;
+        payload.optedIn = [UAPush currentEnabledNotificationTypes] != UIRemoteNotificationTypeNone;
     } else {
         payload.optedIn = NO;
     }
@@ -801,4 +793,15 @@ BOOL deferChannelCreationOnForeground = false;
     return func(class, selector, types, nil);
 }
 
++ (NSUInteger)currentEnabledNotificationTypes {
+    NSUInteger types;
+    if ([[UIApplication sharedApplication] respondsToSelector:NSSelectorFromString(@"currentUserNotificationSettings")]) {
+        NSValue *value = [[UIApplication sharedApplication] valueForKeyPath:@"currentUserNotificationSettings.types"];
+        [value getValue:&types];
+    } else {
+        types = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
+    }
+
+    return types;
+}
 @end

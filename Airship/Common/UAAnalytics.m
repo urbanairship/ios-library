@@ -182,15 +182,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     // check enabled notification types
     NSMutableArray *notification_types = [NSMutableArray array];
 
-    NSUInteger types;
-    
-    if ([[UIApplication sharedApplication] respondsToSelector:NSSelectorFromString(@"currentUserNotificationSettings")]) {
-        NSValue *value = [[UIApplication sharedApplication] valueForKeyPath:@"currentUserNotificationSettings.types"];
-        [value getValue:&types];
-    } else {
-        types = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
-    }
-
+    NSUInteger types = [UAPush currentEnabledNotificationTypes];
     if ((UIRemoteNotificationTypeBadge & types) > 0) {
         [notification_types addObject:@"badge"];
     }

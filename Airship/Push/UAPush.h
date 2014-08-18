@@ -513,4 +513,9 @@ SINGLETON_INTERFACE(UAPush);
 - (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
 
 
+/**
+ * Gets the current enabled notification types.
+ */
++ (NSUInteger)currentEnabledNotificationTypes;
+
 @end
