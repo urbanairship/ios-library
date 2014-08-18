@@ -29,9 +29,11 @@
     <true/>
     <key>--repeat-first-par</key>
     <false/>
-	<key>--verbose</key>
-	<string>3</string>
-	<key>--logformat</key>
-	<string>1</string>
+    <key>--verbose</key>
+    <string>3</string>
+    <key>--logformat</key>
+    <string>1</string>
+    <key>--templates</key>
+    <string>../docs/doc_templates</string>
 </dict>
 </plist>
