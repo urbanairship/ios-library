@@ -129,6 +129,8 @@
     _locationService.minimumTimeBetweenForegroundUpdates = 42.0;
     XCTAssertTrue(_locationService.minimumTimeBetweenForegroundUpdates == 42.0);
 }
+
+#ifndef __IPHONE_8_0
 - (void)testSetPurpose {
     _locationService.significantChangeProvider = [UASignificantChangeProvider providerWithDelegate:_locationService];
     NSString *awsm = @"awesomeness";
@@ -137,6 +139,7 @@
     XCTAssertTrue([awsm isEqualToString:_locationService.significantChangeProvider.purpose]);
     XCTAssertTrue(awsm == [[NSUserDefaults standardUserDefaults] valueForKey:UALocationServicePurposeKey]);
 }
+#endif
 
 - (void)testStandardLocationGetSet {
     _locationService.standardLocationDesiredAccuracy = 10.0;

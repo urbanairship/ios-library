@@ -181,21 +181,21 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     
     // check enabled notification types
     NSMutableArray *notification_types = [NSMutableArray array];
-    UIRemoteNotificationType enabledRemoteNotificationTypes = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
-    
-    if ((UIRemoteNotificationTypeBadge & enabledRemoteNotificationTypes) > 0) {
+
+    NSUInteger types = [UAPush currentEnabledNotificationTypes];
+    if ((UIRemoteNotificationTypeBadge & types) > 0) {
         [notification_types addObject:@"badge"];
     }
     
-    if ((UIRemoteNotificationTypeSound & enabledRemoteNotificationTypes) > 0) {
+    if ((UIRemoteNotificationTypeSound & types) > 0) {
         [notification_types addObject:@"sound"];
     }
     
-    if ((UIRemoteNotificationTypeAlert & enabledRemoteNotificationTypes) > 0) {
+    if ((UIRemoteNotificationTypeAlert & types) > 0) {
         [notification_types addObject:@"alert"];
     }
 
-    if ((UIRemoteNotificationTypeNewsstandContentAvailability & enabledRemoteNotificationTypes) > 0) {
+    if ((UIRemoteNotificationTypeNewsstandContentAvailability & types) > 0) {
         [notification_types addObject:@"newsstand"];
     }
     
