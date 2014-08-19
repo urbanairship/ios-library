@@ -27,3 +27,4 @@ cover.py
 OCMockLibrary
 *.swp
 Deploy/output
+test-output/
