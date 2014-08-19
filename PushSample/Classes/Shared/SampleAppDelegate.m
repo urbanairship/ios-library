@@ -43,14 +43,6 @@
     // You should remove this in your app.
     [self failIfSimulator];
 
-    // This prevents the UA Library from registering with UIApplication by default. This will allow
-    // you to prompt your users at a later time. This gives your app the opportunity to explain the
-    // benefits of push or allows users to turn it on explicitly in a settings screen.
-    //
-    // If you just want everyone to immediately be prompted for push, you can
-    // leave this line out.
-    [UAPush setDefaultPushEnabledValue:NO];
-
     // Set log level for debugging config loading (optional)
     // It will be set to the value in the loaded config upon takeOff
     [UAirship setLogLevel:UALogLevelTrace];
@@ -71,15 +63,6 @@
 
     // Set the icon badge to zero on startup (optional)
     [[UAPush shared] resetBadge];
-
-    // Set the notification types required for the app (optional). With the default value of push set to no,
-    // UAPush will record the desired remote notification types, but not register for
-    // push notifications as mentioned above. When push is enabled at a later time, the registration
-    // will occur normally. This value defaults to badge, alert and sound, so it's only necessary to
-    // set it if you want to add or remove types.
-    [UAPush shared].notificationTypes = (UIRemoteNotificationTypeBadge |
-                                         UIRemoteNotificationTypeSound |
-                                         UIRemoteNotificationTypeAlert);
 
     return YES;
 }

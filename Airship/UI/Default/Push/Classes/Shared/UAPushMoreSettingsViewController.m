@@ -363,9 +363,17 @@ static NSUInteger channelRowCount = 1;
 - (void)updateCellValues {
     
     self.deviceTokenCell.detailTextLabel.text = [UAPush shared].deviceToken ? [UAPush shared].deviceToken : @"Unavailable";
-    self.deviceTokenTypesCell.detailTextLabel.text = [self pushTypeString:[[UIApplication sharedApplication] enabledRemoteNotificationTypes]];
+
+    UIUserNotificationType enabledTypes;
+    if ([UIUserNotificationSettings class]) {
+        enabledTypes = [[UIApplication sharedApplication] currentUserNotificationSettings].types;
+    } else {
+        enabledTypes = (UIUserNotificationType)[[UIApplication sharedApplication] enabledRemoteNotificationTypes];
+    }
+
+    self.deviceTokenTypesCell.detailTextLabel.text = [self pushTypeString:enabledTypes];
     
-    UIRemoteNotificationType disabledTypes = [[UIApplication sharedApplication] enabledRemoteNotificationTypes] ^ [UAPush shared].notificationTypes;
+    UIUserNotificationType disabledTypes = enabledTypes ^ [UAPush shared].userNotificationTypes;
     self.deviceTokenDisabledTypesCell.detailTextLabel.text = [self pushTypeString:disabledTypes];
     
     self.deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
@@ -380,19 +388,19 @@ static NSUInteger channelRowCount = 1;
     self.usernameCell.detailTextLabel.text = [UAUser defaultUser].username ?: @"Unavailable";
 }
 
-- (NSString *)pushTypeString:(UIRemoteNotificationType)types {
+- (NSString *)pushTypeString:(UIUserNotificationType)types {
     NSMutableArray *typeArray = [NSMutableArray arrayWithCapacity:3];
 
     //Use the same order as the Settings->Notifications panel
-    if (types & UIRemoteNotificationTypeBadge) {
+    if (types & UIUserNotificationTypeBadge) {
         [typeArray addObject:UA_PU_TR(@"UA_Notification_Type_Badges")];
     }
 
-    if (types & UIRemoteNotificationTypeAlert) {
+    if (types & UIUserNotificationTypeAlert) {
         [typeArray addObject:UA_PU_TR(@"UA_Notification_Type_Alerts")];
     }
 
-    if (types & UIRemoteNotificationTypeSound) {
+    if (types & UIUserNotificationTypeSound) {
         [typeArray addObject:UA_PU_TR(@"UA_Notification_Type_Sounds")];
     }
 

@@ -101,7 +101,7 @@ UALogLevel uaLogLevel = UALogLevelError;
     self = [super init];
     if (self) {
         self.ready = NO;
-        self.backgroundNotificationEnabled = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIBackgroundModes"] containsObject:@"remote-notification"]
+        self.remoteNotificationBackgroundModeEnabled = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIBackgroundModes"] containsObject:@"remote-notification"]
                                     && kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0;
     }
     return self;
@@ -261,13 +261,13 @@ UALogLevel uaLogLevel = UALogLevelError;
     && kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0;
 
     if (remoteNotification && !skipNotifyPush) {
-        [[UAPush shared] handleNotification:remoteNotification
+        [[UAPush shared] onReceiveRemoteNotification:remoteNotification
                            applicationState:[UIApplication sharedApplication].applicationState];
     }
 
     // Register now
     if ([UAirship shared].config.automaticSetupEnabled) {
-        [[UAPush shared] registerForRemoteNotifications];
+        [[UAPush shared] updateAPNSRegistration];
     }
 }
 
@@ -346,7 +346,7 @@ UALogLevel uaLogLevel = UALogLevelError;
 
 - (void)validate {
     // Background notification validation
-    if (self.backgroundNotificationEnabled) {
+    if (self.remoteNotificationBackgroundModeEnabled) {
 
         if (self.config.automaticSetupEnabled) {
             id delegate = self.appDelegate.originalAppDelegate;

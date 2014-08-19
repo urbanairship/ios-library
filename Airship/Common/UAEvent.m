@@ -109,22 +109,35 @@
 
 - (NSArray *)notificationTypes {
     NSMutableArray *notificationTypes = [NSMutableArray array];
-    UIRemoteNotificationType enabledRemoteNotificationTypes = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
 
-    if ((UIRemoteNotificationTypeBadge & enabledRemoteNotificationTypes) > 0) {
-        [notificationTypes addObject:@"badge"];
-    }
+    if ([UIUserNotificationSettings class]) {
+        UIUserNotificationType enabledTypes = [[UIApplication sharedApplication] currentUserNotificationSettings].types;
 
-    if ((UIRemoteNotificationTypeSound & enabledRemoteNotificationTypes) > 0) {
-        [notificationTypes addObject:@"sound"];
-    }
+        if ((UIUserNotificationTypeBadge & enabledTypes) > 0) {
+            [notificationTypes addObject:@"badge"];
+        }
 
-    if ((UIRemoteNotificationTypeAlert & enabledRemoteNotificationTypes) > 0) {
-        [notificationTypes addObject:@"alert"];
-    }
+        if ((UIUserNotificationTypeSound & enabledTypes) > 0) {
+            [notificationTypes addObject:@"sound"];
+        }
 
-    if ((UIRemoteNotificationTypeNewsstandContentAvailability & enabledRemoteNotificationTypes) > 0) {
-        [notificationTypes addObject:@"newsstand"];
+        if ((UIUserNotificationTypeAlert & enabledTypes) > 0) {
+            [notificationTypes addObject:@"alert"];
+        }
+    } else {
+        UIRemoteNotificationType enabledTypes = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
+
+        if ((UIRemoteNotificationTypeBadge & enabledTypes) > 0) {
+            [notificationTypes addObject:@"badge"];
+        }
+
+        if ((UIRemoteNotificationTypeSound & enabledTypes) > 0) {
+            [notificationTypes addObject:@"sound"];
+        }
+
+        if ((UIRemoteNotificationTypeAlert & enabledTypes) > 0) {
+            [notificationTypes addObject:@"alert"];
+        }
     }
 
     return notificationTypes;
@@ -155,6 +168,7 @@
     [data setValue:[UAUser defaultUser].username forKey:@"user_id"];
     [data setValue:[self connectionType] forKey:@"connection_type"];
     [data setValue:[self carrierName] forKey:@"carrier"];
+
     [data setValue:[self notificationTypes] forKey:@"notification_types"];
 
     NSTimeZone *localtz = [NSTimeZone defaultTimeZone];

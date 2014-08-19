@@ -58,7 +58,7 @@
     [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
     [[[self.mockedAirship stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:&_backgroundNotificationEnabled];
-    }] backgroundNotificationEnabled];
+    }] remoteNotificationBackgroundModeEnabled];
 
 
     self.action = [[UAIncomingPushAction alloc] init];
@@ -122,7 +122,7 @@
 
     // Turn on background notifications
     self.backgroundNotificationEnabled = YES;
-    XCTAssertTrue([UAirship shared].backgroundNotificationEnabled, @"Should accept valid situation");
+    XCTAssertTrue([UAirship shared].remoteNotificationBackgroundModeEnabled, @"Should accept valid situation");
 
     // Expect the notification and call the block with the delegateResult
     [[self.mockedPushDelegate expect] launchedFromNotification:self.arguments.value fetchCompletionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -163,7 +163,7 @@
 
     // Turn on background notifications
     self.backgroundNotificationEnabled = YES;
-    XCTAssertTrue([UAirship shared].backgroundNotificationEnabled, @"Should accept valid situation");
+    XCTAssertTrue([UAirship shared].remoteNotificationBackgroundModeEnabled, @"Should accept valid situation");
 
     // Expect the notification and call the block with the delegateResult
     [[self.mockedPushDelegate expect] receivedBackgroundNotification:self.arguments.value fetchCompletionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -202,7 +202,7 @@
 
     // Turn on background notifications
     self.backgroundNotificationEnabled = YES;
-    XCTAssertTrue([UAirship shared].backgroundNotificationEnabled, @"Should accept valid situation");
+    XCTAssertTrue([UAirship shared].remoteNotificationBackgroundModeEnabled, @"Should accept valid situation");
 
     // Expect the notification and call the block with the delegateResult
     [[self.mockedPushDelegate expect] receivedForegroundNotification:self.arguments.value fetchCompletionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {

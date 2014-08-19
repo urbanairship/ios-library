@@ -77,6 +77,9 @@
     [UAInboxNavUI shared].useOverlay = YES;
     [UAInboxNavUI shared].popoverSize = CGSizeMake(600, 1100);
 
+    // Enabled user notifications
+    [UAPush shared].userPushNotificationsEnabled = YES;
+
     // Return value is ignored for push notifications, so it's safer to return
     // NO by default for other resources
     return NO;

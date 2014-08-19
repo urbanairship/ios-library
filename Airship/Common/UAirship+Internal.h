@@ -37,7 +37,7 @@
 @property (nonatomic, assign) BOOL ready;
 @property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UAAnalytics *analytics;
-@property (nonatomic, assign) BOOL backgroundNotificationEnabled;
+@property (nonatomic, assign) BOOL remoteNotificationBackgroundModeEnabled;
 
 @property (nonatomic, strong) id<UAJavaScriptDelegate> actionJSDelegate;
 

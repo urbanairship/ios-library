@@ -76,7 +76,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * with the "remote-notification" background mode and is running
  * iOS7 or greater.
  */
-@property (nonatomic, assign, readonly) BOOL backgroundNotificationEnabled;
+@property (nonatomic, assign, readonly) BOOL remoteNotificationBackgroundModeEnabled;
 
 /**
  * This flag is set to `YES` if the shared instance of

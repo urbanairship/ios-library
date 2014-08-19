@@ -31,7 +31,9 @@
 #define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"
 
 typedef NSString UAPushSettingsKey;
-extern UAPushSettingsKey *const UAPushEnabledSettingsKey;
+extern UAPushSettingsKey *const UAUserPushNotificationsEnabledKey;
+extern UAPushSettingsKey *const UABackgroundPushNotificationsEnabledKey;
+
 extern UAPushSettingsKey *const UAPushAliasSettingsKey;
 extern UAPushSettingsKey *const UAPushTagsSettingsKey;
 extern UAPushSettingsKey *const UAPushBadgeSettingsKey;
@@ -54,43 +56,50 @@ extern UAPushUserInfoKey *const UAPushChannelCreationOnForeground;
 /**
  * Default push handler.
  */
-@property (nonatomic, strong) NSObject <UAPushNotificationDelegate> *defaultPushHandler;
+@property(nonatomic, strong) NSObject <UAPushNotificationDelegate> *defaultPushHandler;
 
 /**
  * Device token as a string.
  */
-@property (nonatomic, copy) NSString *deviceToken;
+@property(nonatomic, copy) NSString *deviceToken;
 
 /**
  * Channel ID as a string.
  */
-@property (nonatomic, copy) NSString *channelID;
+@property(nonatomic, copy) NSString *channelID;
 
 /**
  * Channel location as a string.
  */
-@property (nonatomic, copy) NSString *channelLocation;
+@property(nonatomic, copy) NSString *channelLocation;
 
 /**
  * Indicates that the app has entered the background once
  * Controls the appDidBecomeActive updateRegistration call
  */
-@property (nonatomic, assign) BOOL hasEnteredBackground;
+@property(nonatomic, assign) BOOL hasEnteredBackground;
 
 /**
  * The UADeviceRegistrar that handles registering the device with Urban Airship.
  */
-@property (nonatomic, strong) UADeviceRegistrar *deviceRegistrar;
+@property(nonatomic, strong) UADeviceRegistrar *deviceRegistrar;
 
 /**
  * Notification that launched the application
  */
-@property (nonatomic, strong) NSDictionary *launchNotification;
+@property(nonatomic, strong) NSDictionary *launchNotification;
 
 /**
  * Background task identifier used to do any registration in the background.
  */
-@property (nonatomic, assign) UIBackgroundTaskIdentifier registrationBackgroundTask;
+@property(nonatomic, assign) UIBackgroundTaskIdentifier registrationBackgroundTask;
+
+/**
+ * The user notification categories. Changes to this value will not take effect
+ * the next time the app registers with [UAPush updateApnsRegistration].
+ */
+@property(nonatomic, strong) NSMutableSet *mutableUserNotificationCategories;
+
 
 /**
  * Get the local time zone, considered the default.
@@ -108,6 +117,11 @@ extern UAPushUserInfoKey *const UAPushChannelCreationOnForeground;
  * app init.
  */
 - (void)applicationDidEnterBackground;
+
+/**
+ * Used to update channel registration when the background refresh status changes.
+ */
+- (void)applicationBackgroundRefreshStatusChanged;
 
 /**
  * Called when the device registrar failed to register.
@@ -157,5 +171,24 @@ extern UAPushUserInfoKey *const UAPushChannelCreationOnForeground;
  * @param forcefully Tells the device api client to do any device api call forcefully.
  */
 - (void)updateRegistrationForcefully:(BOOL)forcefully;
+
+/**
+ * Returns YES if background push is enabled and configured for the device. Used
+ * as the channel's 'background' flag.
+ */
+- (BOOL)backgroundPushNotificationsAllowed;
+
+/**
+ * Returns YES if user notifications are configured and enabled for the device. Used
+ * as the channel's 'opt_in' flag.
+ */
+- (BOOL)userPushNotificationsAllowed;
+
+/**
+ * Migrates the old pushEnabled setting to the new userPushNotificationsEnabled
+ * setting.
+ */
+- (void)migratePushSettings;
+
 
 @end

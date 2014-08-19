@@ -49,6 +49,7 @@
     NSMutableDictionary *channel = [NSMutableDictionary dictionary];
     [channel setValue:@"ios" forKey:kUAChannelDeviceTypeKey];
     [channel setValue:[NSNumber numberWithBool:self.optedIn] forKey:kUAChannelOptInKey];
+    [channel setValue:[NSNumber numberWithBool:self.backgroundEnabled] forKey:kUABackgroundEnabledJSONKey];
     [channel setValue:self.pushAddress forKey:kUAChannelPushAddressKey];
 
     self.alias = [self.alias stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
@@ -81,6 +82,7 @@
         copy.userID = self.userID;
         copy.deviceID = self.deviceID;
         copy.optedIn = self.optedIn;
+        copy.backgroundEnabled = self.backgroundEnabled;
         copy.pushAddress = self.pushAddress;
         copy.setTags = self.setTags;
         copy.tags = [self.tags copyWithZone:zone];

@@ -100,10 +100,11 @@ return VERSION_STR;                                         \
 #define SINGLETON_IMPLEMENTATION(CLASSNAME)                                                 \
                                                                                             \
 static CLASSNAME* g_shared##CLASSNAME = nil;                                                \
+static dispatch_once_t sharedOncePredicate##CLASSNAME;                                      \
+static dispatch_once_t allocOncePredicate##CLASSNAME;                                                  \
 \
 + (CLASSNAME*)shared                                                                        \
 {                                                                                           \
-static dispatch_once_t sharedOncePredicate##CLASSNAME;                                                 \
 \
 dispatch_once(&sharedOncePredicate##CLASSNAME, ^{                                                      \
 g_shared##CLASSNAME = [[self alloc] init];                                                  \
@@ -113,7 +114,6 @@ return g_shared##CLASSNAME;                                                     
 \
 + (id)allocWithZone:(NSZone*)zone                                                           \
 {                                                                                           \
-static dispatch_once_t allocOncePredicate##CLASSNAME;                                                  \
 dispatch_once(&allocOncePredicate##CLASSNAME, ^{                                                       \
 if (g_shared##CLASSNAME == nil) {                                                           \
 g_shared##CLASSNAME = [super allocWithZone:zone];                                           \

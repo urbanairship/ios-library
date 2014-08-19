@@ -31,25 +31,27 @@
 @implementation UAAppDelegate
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    UA_LTRACE(@"APNS device token: %@", deviceToken);
+    UA_LTRACE(@"Application registred for remote notifications with device token: %@", deviceToken);
+    [[UAPush shared] onRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+}
 
-    // Updates the device token and registers the token with UA. This won't occur until
-    // push is enabled if the outlined process is followed. This call is required.
-    [[UAPush shared] registerDeviceToken:deviceToken];
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
+    UA_LTRACE(@"Application did register with user notification settings %@", notificationSettings);
+    [[UAPush shared] onRegisterUserNotificationSettings];
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *) error {
-    UA_LERR(@"Failed To Register For Remote Notifications With Error: %@", error);
+    UA_LERR(@"Application failed to register for remote notifications with error: %@", error);
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    UA_LINFO(@"Received remote notification: %@", userInfo);
-    [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState];
+    UA_LINFO(@"Application received remote notification: %@", userInfo);
+    [[UAPush shared] onReceiveRemoteNotification:userInfo applicationState:application.applicationState];
 }
 
 -(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    UA_LINFO(@"Received remote notification: %@", userInfo);
-    [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState fetchCompletionHandler:completionHandler];
+    UA_LINFO(@"Application received remote notification: %@", userInfo);
+    [[UAPush shared] onReceiveRemoteNotification:userInfo applicationState:application.applicationState fetchCompletionHandler:completionHandler];
 }
 
 
