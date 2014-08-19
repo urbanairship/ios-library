@@ -40,6 +40,7 @@
 
 #define kUAMinTagLength 1
 #define kUAMaxTagLength 127
+#define kUANotificationActionKey @"com.urbanairship.notification_actions"
 
 UAPushSettingsKey *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 UAPushSettingsKey *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
@@ -551,6 +552,71 @@ static Class _uiClass;
     [UAActionRunner runActions:actions withCompletionHandler:^(UAActionResult *result) {
         if (completionHandler) {
             completionHandler((UIBackgroundFetchResult)[result fetchResult]);
+        }
+    }];
+}
+
+- (void)onReceiveActionWithIdentifier:(NSString *)identifier
+                         notification:(NSDictionary *)notification
+                     applicationState:(UIApplicationState)state
+                    completionHandler:(void (^)())completionHandler {
+
+    [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
+
+
+    NSString *categoryId = [[notification valueForKey:@"aps"] valueForKey:@"category"];
+    NSSet *categories = [[UIApplication sharedApplication] currentUserNotificationSettings].categories;
+
+    UIUserNotificationCategory *notificationCategory;
+    UIUserNotificationAction *notificationAction;
+
+    for (UIUserNotificationCategory *possibleCategory in categories) {
+        if ([possibleCategory.identifier isEqualToString:categoryId]) {
+            notificationCategory = possibleCategory;
+            break;
+        }
+    }
+
+    if (!notificationCategory) {
+        UA_LERR(@"Unknown notification category identifier %@", categoryId);
+        completionHandler();
+        return;
+    }
+
+    NSMutableArray *possibleActions = [NSMutableArray arrayWithArray:[notificationCategory actionsForContext:UIUserNotificationActionContextDefault]];
+    [possibleActions addObjectsFromArray:[notificationCategory actionsForContext:UIUserNotificationActionContextMinimal]];
+
+    for (UIUserNotificationAction *possibleAction in possibleActions) {
+        if ([possibleAction.identifier isEqualToString:identifier]) {
+            notificationAction = possibleAction;
+            break;
+        }
+    }
+
+    if (!notificationAction) {
+        UA_LERR(@"Unknown notification action identifier %@", identifier);
+        completionHandler();
+        return;
+    }
+
+    // Pull the action payload for the button identifier
+    NSDictionary *actionsPayload = [[notification objectForKey:kUANotificationActionKey] objectForKey:identifier];
+
+    UASituation situation;
+    if (notificationAction.activationMode == UIUserNotificationActivationModeBackground) {
+        situation = UASituationBackgroundInteractiveButton;
+    } else {
+        situation = UASituationForegoundInteractiveButton;
+    }
+
+    // Create dictionary of actions inside the push notification
+    NSMutableDictionary *actions = [self createActionsFromNotification:actionsPayload
+                                                         withSituation:situation];
+
+    // Run the actions
+    [UAActionRunner runActions:actions withCompletionHandler:^(UAActionResult *result) {
+        if (completionHandler) {
+            completionHandler();
         }
     }];
 }

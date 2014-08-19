@@ -52,7 +52,19 @@ typedef NS_ENUM(NSInteger, UASituation) {
      * Represents a situation in which the action was triggered from a
      * web view
      */
-    UASituationWebViewInvocation
+    UASituationWebViewInvocation,
+
+    /**
+     * Represents a situation in which the action was triggered from a
+     * foreground interactive notification button.
+     */
+    UASituationForegoundInteractiveButton,
+
+    /**
+     * Represents a situation in which the action was triggered from a
+     * background interactive notification button.
+     */
+    UASituationBackgroundInteractiveButton
 };
 
 /**

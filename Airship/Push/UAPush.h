@@ -570,4 +570,14 @@ SINGLETON_INTERFACE(UAPush);
  */
 - (void)onRegisterUserNotificationSettings NS_AVAILABLE_IOS(8_0);
 
+/**
+ * Handle interactive notification actions
+ *
+ * @param identifier The identifier of the button that was triggered.
+ * @param notification The notification payload, as passed to your application delegate.
+ * @param state The application state at the time the notification was received.
+ * @param completionHandler The completion handler.
+ */
+- (void)onReceiveActionWithIdentifier:(NSString *)identifier notification:(NSDictionary *)notification applicationState:(UIApplicationState)state completionHandler:(void (^)())completionHandler NS_AVAILABLE_IOS(8_0);
+
 @end

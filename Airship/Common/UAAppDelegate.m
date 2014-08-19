@@ -31,7 +31,7 @@
 @implementation UAAppDelegate
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    UA_LTRACE(@"Application registred for remote notifications with device token: %@", deviceToken);
+    UA_LTRACE(@"Application registered for remote notifications with device token: %@", deviceToken);
     [[UAPush shared] onRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
 }
 
@@ -54,5 +54,9 @@
     [[UAPush shared] onReceiveRemoteNotification:userInfo applicationState:application.applicationState fetchCompletionHandler:completionHandler];
 }
 
+- (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)())handler {
+    UA_LINFO(@"Received remote notification button interaction: %@ notification: %@", identifier, userInfo);
+    [[UAPush shared] onReceiveActionWithIdentifier:identifier notification:userInfo applicationState:application.applicationState completionHandler:handler];
+}
 
 @end
