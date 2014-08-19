@@ -82,8 +82,8 @@
 }
 
 - (BOOL)respondsToSelector:(SEL)selector {
-    // We only want to respond to the new notification delegate if background push is
-    // enabled or the default app delegate responds to it.
+    // Respond to the new notification delegate if background push is enabled or
+    // the default app delegate responds to it.
     if ([NSStringFromSelector(selector) isEqualToString:@"application:didReceiveRemoteNotification:fetchCompletionHandler:"]) {
         return [UAirship shared].backgroundNotificationEnabled || [self.originalAppDelegate respondsToSelector:selector];
     }
@@ -138,9 +138,9 @@
                 }
 
                 completionHandlerCalled = YES;
-                resultCount ++;
+                resultCount++;
 
-                // Merge the UIBackgroundFetchResults.  If final fetchResult is not already UIBackgroundFetchResultNewData
+                // Merge the UIBackgroundFetchResults. If final fetchResult is not already UIBackgroundFetchResultNewData
                 // and the current result is not UIBackgroundFetchResultNoData, then set the fetchResult to result
                 // (should be either UIBackgroundFetchFailed or UIBackgroundFetchResultNewData)
                 if (fetchResult != UIBackgroundFetchResultNewData && result != UIBackgroundFetchResultNoData) {
@@ -153,6 +153,50 @@
             }
         }];
     }
-
 }
+
+- (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)())handler {
+    SEL selector = @selector(application:handleActionWithIdentifier:forRemoteNotification:completionHandler:);
+
+    __block NSUInteger resultCount = 0;
+    __block NSUInteger expectedCount = 0;
+
+    NSMutableArray *delegates = [NSMutableArray array];
+    if ([self airshipDelegateRespondsToSelector:selector]) {
+        [delegates addObject:self.airshipAppDelegate];
+    }
+    if ([self.originalAppDelegate respondsToSelector:selector]) {
+        [delegates addObject:self.originalAppDelegate];
+    }
+
+    // if we have no delegates that respond to the selector, return early
+    if (!delegates.count) {
+        handler();
+        return;
+    }
+
+    expectedCount = delegates.count;
+    for (NSObject<UIApplicationDelegate> *delegate in delegates) {
+        __block BOOL completionHandlerCalled = NO;
+        
+        [delegate application:application handleActionWithIdentifier:identifier forRemoteNotification:userInfo completionHandler:^{
+            @synchronized(self) {
+                if (completionHandlerCalled) {
+                    UA_LERR(@"Completion handler called multiple times.");
+                    return;
+                }
+
+                completionHandlerCalled = YES;
+                resultCount++;
+
+                if (expectedCount == resultCount) {
+                    handler();
+                }
+            }
+        }];
+    }
+}
+
+
+
 @end

@@ -232,7 +232,68 @@ typedef void (^MethodBlock)(NSInvocation *);
     }
 }
 
+/*
+ * Tests application:handleActionWithIdentifier:forRemoteNotification:completionHandler
+ * calls both delegates if they responds and only calls the completion handler
+ * once after each delegate is finished.
+ */
+- (void)testHandleAction {
 
+    __block BOOL callbackCalled = NO;
+    __block BOOL originalDelegateCalled = NO;
+    __block BOOL airshipDelegateCalled = NO;
+
+    // Neither app delegates respond
+    [self.baseDelegate application:nil handleActionWithIdentifier:@"id" forRemoteNotification:nil completionHandler:^{
+        callbackCalled = YES;
+    }];
+
+    XCTAssertTrue(callbackCalled, @"The proxy delegate should call the completion handler if no app delegates respond to the method.");
+
+    // One app delegate responds
+    callbackCalled = NO;
+
+    [self.originalDelegate addMethodBlock:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:5];
+        void (^handler)() = (__bridge void (^)())arg;
+
+        originalDelegateCalled = YES;
+        handler();
+    } forSelectorString:@"application:handleActionWithIdentifier:forRemoteNotification:completionHandler:"];
+
+    [self.baseDelegate application:nil handleActionWithIdentifier:@"id" forRemoteNotification:nil completionHandler:^{
+        callbackCalled = YES;
+    }];
+
+    XCTAssertTrue(callbackCalled, @"The proxy delegate should call the completion handler after sub delegates finish.");
+    XCTAssertTrue(originalDelegateCalled, @"The original delegate should be called with the app delegate.");
+
+
+    // Both app delegates respond
+    callbackCalled = NO;
+    originalDelegateCalled = NO;
+    airshipDelegateCalled = NO;
+
+    [self.airshipDelegate addMethodBlock:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:5];
+        void (^handler)() = (__bridge void (^)())arg;
+
+        airshipDelegateCalled = YES;
+        handler();
+    } forSelectorString:@"application:handleActionWithIdentifier:forRemoteNotification:completionHandler:"];
+
+
+    [self.baseDelegate application:nil handleActionWithIdentifier:@"id" forRemoteNotification:nil completionHandler:^{
+        callbackCalled = YES;
+    }];
+
+    XCTAssertTrue(callbackCalled, @"The proxy delegate should call the completion handler after sub delegates finish.");
+    XCTAssertTrue(originalDelegateCalled, @"The selector should be called on the original delegate.");
+    XCTAssertTrue(airshipDelegateCalled, @"The selector should be called on the airship delegate.");
+
+}
 
 -(NSString *)stringFromBackgroundFetchResult:(UIBackgroundFetchResult)result {
     switch(result) {
