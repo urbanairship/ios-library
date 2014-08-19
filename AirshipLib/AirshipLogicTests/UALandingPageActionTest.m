@@ -143,15 +143,15 @@
 
 
 /**
- * Helper method to verify perfrom in foreground situations
+ * Helper method to verify perform in foreground situations
  */
 - (void)verifyPerformInForegroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl expectedHeaders:(NSDictionary *)headers {
-    NSArray *foregroundSitutions = @[[NSNumber numberWithInteger:UASituationWebViewInvocation],
+    NSArray *situations = @[[NSNumber numberWithInteger:UASituationWebViewInvocation],
                                      [NSNumber numberWithInteger:UASituationForegroundPush],
                                      [NSNumber numberWithInteger:UASituationLaunchedFromPush],
                                      [NSNumber numberWithInteger:UASituationManualInvocation]];
 
-    for (NSNumber *situationNumber in foregroundSitutions) {
+    for (NSNumber *situationNumber in situations) {
         [[self.mockLandingPageOverlayController expect] closeAll:NO];
 
         [[self.mockLandingPageOverlayController expect] showURL:[OCMArg checkWithBlock:^(id obj) {
@@ -227,7 +227,7 @@
 }
 
 /**
- * Helper method to verify perfrom
+ * Helper method to verify perform
  */
 - (void)verifyPerformWithArgs:(UAActionArguments *)args withExpectedUrl:(NSString *)expectedUrl withExpectedFetchResult:(UAActionFetchResult)fetchResult {
 

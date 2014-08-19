@@ -30,13 +30,15 @@
  *
  * This action is registered under the names landing_page_action and ^p.
  *
- * Expected argument values: NSString or NSURL.   Short url formats are in the form
+ * Expected argument values: NSString or NSURL. Short url formats are in the form
  * of "u:<content-id>" and will be used to construct a new URL using the content-id.
  *
  * Valid situations: UASituationForegroundPush, UASituationLanchedFromPush,
- * UASituationWebViewInvocation, UASituationManualInvocation.
+ * UASituationWebViewInvocation, UASituationManualInvocation, UASituationBackgroundPush,
+ * and UASituationForegoundInteractiveButton
  *
- * In the background situation, this action will attempt to pre-fetch the data and cache it for later use.
+ * In situation UASituationBackgroundPush, the action will attempt to pre-fetch
+ * the data and cache it for later use.
  *
  * Result value: nil
  *

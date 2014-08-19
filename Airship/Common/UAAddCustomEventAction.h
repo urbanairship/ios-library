@@ -52,7 +52,8 @@ extern NSString * const UAAddCustomEventActionErrorDomain;
  * they are left blank.
  *
  * Valid situations: UASituationForegroundPush, UASituationLanchedFromPush,
- * UASituationWebViewInvocation, UASituationManualInvocation, UASituationBackgroundPush
+ * UASituationWebViewInvocation, UASituationManualInvocation, UASituationBackgroundPush,
+ * UASituationForegoundInteractiveButton, and UASituationBackgroundInteractiveButton
  *
  * 
  * Result value: nil
