@@ -156,21 +156,6 @@
     return _locationReceived;
 }
 
-// This test will not run automatically on a clean install
-// as selecting OK for the location permission alert view
-// tanks the run loop update
-// TODO: figure out a way around this
-
-- (void)testUALocationServiceDoesGetLocation {
-    _locationService = [[UALocationService alloc] init];
-    [UALocationService setAirshipLocationServiceEnabled:YES];
-    _locationService.delegate = self;
-    
-    [_locationService startReportingStandardLocation];    
-    XCTAssertTrue([self serviceAcquiredLocation], @"Location Service failed to acquire location");
-}
-
-
 #pragma mark -
 #pragma mark Single Location Service Report Current location background
 
