@@ -32,6 +32,21 @@ xcode_setting() {
 SRCROOT=$(xcode_setting "SRCROOT")
 SDK_NAME=$(xcode_setting "SDK_NAME")
 EXECUTABLE_NAME=$(xcode_setting "EXECUTABLE_NAME")
+EXECUTABLE_PATH=$(xcode_setting "EXECUTABLE_PATH")
+EXECUTABLE_FOLDER_PATH=$(xcode_setting "EXECUTABLE_FOLDER_PATH")
+PACKAGE_TYPE=$(xcode_setting "PACKAGE_TYPE")
+
+if [ $PACKAGE_TYPE == "com.apple.package-type.wrapper.framework" ]
+then
+    TARGET_FRAMEWORK=true
+    TARGET_COPY_PATH="$EXECUTABLE_FOLDER_PATH"
+else
+    TARGET_FRAMEWORK=false
+    TARGET_COPY_PATH="$EXECUTABLE_NAME"
+fi
+
+TARGET_LIPO_PATH="$EXECUTABLE_PATH"
+
 BUILT_PRODUCTS_DIR=$(xcode_setting "BUILT_PRODUCTS_DIR")
 DEPLOY_DIR="${SRCROOT}/distribution_binaries/"
 
@@ -73,6 +88,8 @@ then
 echo "########### TESTS #############"
 echo "Use the following variables when debugging this script; note that they may change on recursions"
 echo "Executable name is $EXECUTABLE_NAME"
+echo "Target copy path is $TARGET_COPY_PATH"
+echo "Target lipo path is $TARGET_LIPO_PATH"
 echo "DEPLOY_DIR = $DEPLOY_DIR"
 echo "BUILD_DIR = $BUILD_DIR"
 echo "BUILD_ROOT = $BUILD_ROOT"
@@ -105,10 +122,16 @@ mkdir -p "${CREATING_UNIVERSAL_DIR}"
 
 LIPO="xcrun -sdk iphoneos lipo"
 
-echo "lipo: for current configuration (${CONFIGURATION}) creating output file: ${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME}"
+echo "lipo: for current configuration (${CONFIGURATION}) creating output file: ${CREATING_UNIVERSAL_DIR}/${TARGET_LIPO_PATH}"
 echo "...outputing a universal armv7/armv7s/arm64/x86_64/i386 build to: ${CREATING_UNIVERSAL_DIR}"
-$LIPO -create -output "${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME}" "${CURRENTCONFIG_DEVICE_DIR}/${EXECUTABLE_NAME}" "${CURRENTCONFIG_SIMULATOR_DIR}/${EXECUTABLE_NAME}"
-$LIPO -i "${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME}"
 
-echo "Copying ${EXECUTABLE_NAME} to ${DEPLOY_DIR}"
-cp ${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME} ${DEPLOY_DIR}
+if [ $TARGET_FRAMEWORK ]
+then
+    mkdir "${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_FOLDER_PATH}"
+fi
+
+$LIPO -create -output "${CREATING_UNIVERSAL_DIR}/${TARGET_LIPO_PATH}" "${CURRENTCONFIG_DEVICE_DIR}/${TARGET_LIPO_PATH}" "${CURRENTCONFIG_SIMULATOR_DIR}/${TARGET_LIPO_PATH}"
+$LIPO -i "${CREATING_UNIVERSAL_DIR}/${TARGET_LIPO_PATH}"
+
+echo "Copying ${TARGET_COPY_PATH} to ${DEPLOY_DIR}"
+cp -R ${CREATING_UNIVERSAL_DIR}/${TARGET_COPY_PATH} ${DEPLOY_DIR}
