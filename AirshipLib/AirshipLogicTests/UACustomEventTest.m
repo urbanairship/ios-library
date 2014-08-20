@@ -24,7 +24,7 @@
  */
 
 #import <XCTest/XCTest.h>
-#import "UACustomEvent.h"
+#import "UACustomEvent+Internal.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import <OCMock/OCMock.h>
@@ -253,6 +253,16 @@
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
 
     XCTAssertEqualObjects(@"send ID", [event.data objectForKey:@"conversion_send_id"], @"Send id should be set.");
+}
+
+/**
+ * Test setting the event conversion send id.
+ */
+- (void)testSettingConversionSendID {
+    UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
+    event.conversionSendId = @"directSendId";
+
+    XCTAssertEqualObjects(@"directSendId", [event.data objectForKey:@"conversion_send_id"], @"Send id should be set.");
 }
 
 /**

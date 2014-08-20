@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UACustomEvent.h"
+#import "UACustomEvent+Internal.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAInboxMessage.h"
@@ -132,7 +132,8 @@
     [dictionary setValue:self.eventName forKey:@"event_name"];
 
     // Conversion Send ID
-    [dictionary setValue:[UAirship shared].analytics.conversionSendId forKey:@"conversion_send_id"];
+    NSString *sendId = self.conversionSendId ?:[UAirship shared].analytics.conversionSendId;
+    [dictionary setValue:sendId forKey:@"conversion_send_id"];
 
     // Interaction
     [dictionary setValue:self.interactionID forKey:@"interaction_id"];
