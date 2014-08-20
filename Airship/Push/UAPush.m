@@ -37,6 +37,7 @@
 #import "UAActionRunner.h"
 #import "UAChannelRegistrationPayload.h"
 #import "UAUser.h"
+#import "UAInteractiveNotificationEvent.h"
 
 #define kUAMinTagLength 1
 #define kUAMaxTagLength 127
@@ -598,6 +599,11 @@ static Class _uiClass;
         completionHandler();
         return;
     }
+
+    [[UAirship shared].analytics addEvent:[UAInteractiveNotificationEvent eventWithNotificationAction:notificationAction
+                                                                                           categoryId:categoryId
+                                                                                         notification:notification]];
+
 
     // Pull the action payload for the button identifier
     NSDictionary *actionsPayload = notification[kUANotificationActionKey][identifier];

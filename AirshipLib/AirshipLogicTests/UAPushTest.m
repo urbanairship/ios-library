@@ -39,6 +39,7 @@
 #import "UADeviceRegistrar.h"
 #import "UAEvent.h"
 #import "NSObject+HideClass.h"
+#import "UAInteractiveNotificationEvent.h"
 
 
 @interface UAPushTest : XCTestCase
@@ -1910,7 +1911,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     // Test handleNotification: first
     [[self.mockActionRunner expect] runActions:[OCMArg checkWithBlock:runActionsCheck] withCompletionHandler:[OCMArg checkWithBlock:handlerCheck]];
     [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateBackground];
-
+    [[self.mockedAnalytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isKindOfClass:[UAInteractiveNotificationEvent class]];
+    }]];
 
     [self.push onReceiveActionWithIdentifier:@"backgroundIdentifier"
                                 notification:self.notification
@@ -1980,10 +1983,12 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
         return YES;
     };
 
-    // Test handleNotification: first
     [[self.mockActionRunner expect] runActions:[OCMArg checkWithBlock:runActionsCheck] withCompletionHandler:[OCMArg checkWithBlock:handlerCheck]];
-    [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateActive];
 
+    [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateActive];
+    [[self.mockedAnalytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isKindOfClass:[UAInteractiveNotificationEvent class]];
+    }]];
 
     [self.push onReceiveActionWithIdentifier:@"foregroundIdentifier"
                                 notification:self.notification
@@ -2010,9 +2015,12 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testNotificationActionButtonUnknownCategory {
     __block BOOL completionHandlerCalled = NO;
 
-    [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateActive];
     [[self.mockActionRunner reject] runActions:OCMOCK_ANY withCompletionHandler:OCMOCK_ANY];
 
+    [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateActive];
+    [[self.mockedAnalytics reject] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isKindOfClass:[UAInteractiveNotificationEvent class]];
+    }]];
 
     [self.push onReceiveActionWithIdentifier:@"foregroundIdentifier"
                                 notification:self.notification
@@ -2053,8 +2061,12 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     __block BOOL completionHandlerCalled = NO;
 
-    [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateActive];
     [[self.mockActionRunner reject] runActions:OCMOCK_ANY withCompletionHandler:OCMOCK_ANY];
+
+    [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateActive];
+    [[self.mockedAnalytics reject] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isKindOfClass:[UAInteractiveNotificationEvent class]];
+    }]];
 
 
     [self.push onReceiveActionWithIdentifier:@"unknown!"
