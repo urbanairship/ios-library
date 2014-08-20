@@ -37,6 +37,7 @@
 @property(nonatomic, strong) id mockedKeychainClass;
 @property(nonatomic, strong) id mockLocaleClass;
 @property(nonatomic, strong) id mockTimeZoneClass;
+@property(nonatomic, strong) id mockPush;
 @end
 
 @implementation UAAnalyticsTest
@@ -51,6 +52,9 @@
     self.mockLocaleClass = [OCMockObject mockForClass:[NSLocale class]];
     self.mockTimeZoneClass = [OCMockObject mockForClass:[NSTimeZone class]];
 
+    self.mockPush = [OCMockObject niceMockForClass:[UAPush class]];
+    [[[self.mockPush stub] andReturn:self.mockPush] shared];
+
     UAConfig *config = [[UAConfig alloc] init];
     self.analytics = [[UAAnalytics alloc] initWithConfig:config];
  }
@@ -61,6 +65,7 @@
     [self.mockedKeychainClass stopMocking];
     [self.mockLocaleClass stopMocking];
     [self.mockTimeZoneClass stopMocking];
+    [self.mockPush stopMocking];
 }
 
 - (void)testRequestTimezoneHeader {
@@ -92,23 +97,54 @@
 }
 
 - (void)testRequestEmptyPushAddressHeader {
-    [UAPush shared].deviceToken = nil;
+    [[[self.mockPush stub] andReturn:nil] deviceToken];
+
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
     XCTAssertNil([headers objectForKey:@"X-UA-Push-Address"], @"Device token should be null in event headers");
 }
 
 - (void)testRequestPushAddressHeader {
     NSString *deviceTokenString = @"123456789012345678901234567890";
-    [UAPush shared].deviceToken = deviceTokenString;
+    [[[self.mockPush stub] andReturn:deviceTokenString] deviceToken];
+
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
     XCTAssertEqualObjects([headers objectForKey:@"X-UA-Push-Address"], deviceTokenString, @"Wrong device token in event headers");
 }
 
 - (void)testRequestChannelIDHeader {
     NSString *channelIDString = @"someChannelID";
-    [UAPush shared].channelID = channelIDString;
+    [[[self.mockPush stub] andReturn:channelIDString] channelID];
+
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
     XCTAssertEqualObjects([headers objectForKey:@"X-UA-Channel-ID"], channelIDString, @"Wrong channel id in event headers");
+}
+
+- (void)testRequestChannelOptInNoHeader {
+    [[[self.mockPush stub] andReturnValue:@(NO)] userPushNotificationsAllowed];
+
+    NSDictionary *headers = [self.analytics analyticsRequest].headers;
+    XCTAssertEqual([headers objectForKey:@"X-UA-Channel-Opted-In"], @"false");
+}
+
+- (void)testRequestChannelOptInYesHeader {
+    [[[self.mockPush stub] andReturnValue:@(YES)] userPushNotificationsAllowed];
+
+    NSDictionary *headers = [self.analytics analyticsRequest].headers;
+    XCTAssertEqual([headers objectForKey:@"X-UA-Channel-Opted-In"], @"true");
+}
+
+- (void)testRequestChannelBackgroundEnabledNoHeader {
+    [[[self.mockPush stub] andReturnValue:@(NO)] backgroundPushNotificationsAllowed];
+
+    NSDictionary *headers = [self.analytics analyticsRequest].headers;
+    XCTAssertEqual([headers objectForKey:@"X-UA-Channel-Background-Enabled"], @"false");
+}
+
+- (void)testRequestChannelBackgroundEnabledYesHeader {
+    [[[self.mockPush stub] andReturnValue:@(YES)] backgroundPushNotificationsAllowed];
+
+    NSDictionary *headers = [self.analytics analyticsRequest].headers;
+    XCTAssertEqual([headers objectForKey:@"X-UA-Channel-Background-Enabled"], @"true");
 }
 
 - (void)restoreSavedUploadEventSettingsEmptyUserDefaults {
