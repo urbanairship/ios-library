@@ -169,6 +169,11 @@
 		495048AE173996BF00F8B5BE /* UAHTTPRequestEngineTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 495048AD173996BF00F8B5BE /* UAHTTPRequestEngineTest.m */; };
 		495048B2173AD3F600F8B5BE /* UADeviceRegistrationPayloadTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 495048B1173AD3F600F8B5BE /* UADeviceRegistrationPayloadTest.m */; };
 		495048B7173B11A500F8B5BE /* UAHTTPConnection+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 495048B6173B11A500F8B5BE /* UAHTTPConnection+Internal.h */; };
+		4953A45419A55E9900F8D111 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49BADCC9198AF5F5000FF3D5 /* AirshipKit.framework */; };
+		4953A45D19A5626300F8D111 /* UAPushNotificationHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 4953A45C19A5626300F8D111 /* UAPushNotificationHandler.h */; };
+		4953A45E19A5642E00F8D111 /* UAInbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DC217835C3A00BCD96E /* UAInbox.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4953A46119A5657200F8D111 /* AirshipKit_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4953A45F19A5657200F8D111 /* AirshipKit_Tests.m */; };
+		4953A46219A5657200F8D111 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4953A46019A5657200F8D111 /* Info.plist */; };
 		495526B117D95552009BC301 /* UAInboxMessageListTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 495526AB17D95552009BC301 /* UAInboxMessageListTest.m */; };
 		495526B217D95552009BC301 /* UAInboxMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 495526AC17D95552009BC301 /* UAInboxMessageTest.m */; };
 		495526B417D95552009BC301 /* UAUser+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 495526AF17D95552009BC301 /* UAUser+Test.m */; };
@@ -180,7 +185,6 @@
 		4995C642180DBBDD004F8724 /* UARemoveTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C63F180DBBDD004F8724 /* UARemoveTagsAction.m */; };
 		4995C6B3180DC5D3004F8724 /* UATagActionsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C6B2180DC5D3004F8724 /* UATagActionsTest.m */; };
 		49BADDB0198B0847000FF3D5 /* UAInbox+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C1F089197DD9CC00DD67DE /* UAInbox+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		49BADDB1198B0848000FF3D5 /* UAInbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DC217835C3A00BCD96E /* UAInbox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49BADDB2198B0848000FF3D5 /* UAInboxAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DC417835C3A00BCD96E /* UAInboxAPIClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49BADDB3198B0848000FF3D5 /* UAInboxDBManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DC617835C3A00BCD96E /* UAInboxDBManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49BADDB4198B0848000FF3D5 /* UAInboxDefaultJSDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DC817835C3A00BCD96E /* UAInboxDefaultJSDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -489,6 +493,13 @@
 			remoteGlobalIDString = BB8860A7159A7E9600584445;
 			remoteInfo = AirshipLib;
 		};
+		4953A45519A55E9900F8D111 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 49BADCC8198AF5F5000FF3D5;
+			remoteInfo = AirshipKit;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -584,6 +595,10 @@
 		495048B0173AD3F600F8B5BE /* UADeviceRegistrationPayloadTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADeviceRegistrationPayloadTest.h; sourceTree = "<group>"; };
 		495048B1173AD3F600F8B5BE /* UADeviceRegistrationPayloadTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADeviceRegistrationPayloadTest.m; sourceTree = "<group>"; };
 		495048B6173B11A500F8B5BE /* UAHTTPConnection+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAHTTPConnection+Internal.h"; sourceTree = "<group>"; };
+		4953A44E19A55E9900F8D111 /* AirshipKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4953A45C19A5626300F8D111 /* UAPushNotificationHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAPushNotificationHandler.h; path = ../Airship/UI/Default/Push/Classes/Shared/UAPushNotificationHandler.h; sourceTree = "<group>"; };
+		4953A45F19A5657200F8D111 /* AirshipKit_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AirshipKit_Tests.m; path = AirshipKitTests/AirshipKit_Tests.m; sourceTree = SOURCE_ROOT; };
+		4953A46019A5657200F8D111 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = AirshipKitTests/Info.plist; sourceTree = SOURCE_ROOT; };
 		495526AB17D95552009BC301 /* UAInboxMessageListTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageListTest.m; sourceTree = "<group>"; };
 		495526AC17D95552009BC301 /* UAInboxMessageTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageTest.m; sourceTree = "<group>"; };
 		495526AE17D95552009BC301 /* UAUser+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUser+Test.h"; sourceTree = "<group>"; };
@@ -802,6 +817,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4953A44B19A55E9900F8D111 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4953A45419A55E9900F8D111 /* AirshipKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		49BADCC5198AF5F5000FF3D5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -861,6 +884,7 @@
 				7BB679061429288D00B877DB /* AirshipLogicTests.xctest */,
 				BB88612C159A7E9600584445 /* libUAirship-4.0.2.a */,
 				49BADCC9198AF5F5000FF3D5 /* AirshipKit.framework */,
+				4953A44E19A55E9900F8D111 /* AirshipKitTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -868,10 +892,12 @@
 		0867D691FE84028FC02AAC07 /* AirshipLib */ = {
 			isa = PBXGroup;
 			children = (
+				4953A45C19A5626300F8D111 /* UAPushNotificationHandler.h */,
 				D9FD1A13122DB77000522B4E /* Airship */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				7BB6790C1429288D00B877DB /* AirshipLogicTests */,
 				49BADCCA198AF5F5000FF3D5 /* AirshipKit */,
+				4953A44F19A55E9900F8D111 /* AirshipKitTests */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				76F9B4AB18D3CE2A00C438D4 /* JRSwizzle */,
 				034768DFFF38A50411DB9C8B /* Products */,
@@ -1095,6 +1121,24 @@
 				49942CDA17B19A3B007E5FB1 /* UADelayOperationTest.m */,
 			);
 			name = HTTP;
+			sourceTree = "<group>";
+		};
+		4953A44F19A55E9900F8D111 /* AirshipKitTests */ = {
+			isa = PBXGroup;
+			children = (
+				4953A45F19A5657200F8D111 /* AirshipKit_Tests.m */,
+				4953A45019A55E9900F8D111 /* Supporting Files */,
+			);
+			name = AirshipKitTests;
+			path = "AirshipKit Tests";
+			sourceTree = "<group>";
+		};
+		4953A45019A55E9900F8D111 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				4953A46019A5657200F8D111 /* Info.plist */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		4995C637180DBB97004F8724 /* Tags */ = {
@@ -1523,7 +1567,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				494FB5AE1992D4D2000CF253 /* AirshipKit.h in Headers */,
-				49BADDB1198B0848000FF3D5 /* UAInbox.h in Headers */,
+				4953A45E19A5642E00F8D111 /* UAInbox.h in Headers */,
 				49BADDB2198B0848000FF3D5 /* UAInboxAPIClient.h in Headers */,
 				CC313A9A19A66DBE00134A9F /* UAUserNotificationCategories.h in Headers */,
 				49BADDB3198B0848000FF3D5 /* UAInboxDBManager.h in Headers */,
@@ -1633,6 +1677,7 @@
 				49BADE0C198B086B000FF3D5 /* UAirship+Internal.h in Headers */,
 				49BADE11198B086D000FF3D5 /* UAConfig+Internal.h in Headers */,
 				49BADE13198B086E000FF3D5 /* UASQLite.h in Headers */,
+				4953A45D19A5626300F8D111 /* UAPushNotificationHandler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1755,6 +1800,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		4953A44D19A55E9900F8D111 /* AirshipKitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4953A45719A55E9900F8D111 /* Build configuration list for PBXNativeTarget "AirshipKitTests" */;
+			buildPhases = (
+				4953A44A19A55E9900F8D111 /* Sources */,
+				4953A44B19A55E9900F8D111 /* Frameworks */,
+				4953A44C19A55E9900F8D111 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4953A45619A55E9900F8D111 /* PBXTargetDependency */,
+			);
+			name = AirshipKitTests;
+			productName = "AirshipKit Tests";
+			productReference = 4953A44E19A55E9900F8D111 /* AirshipKitTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		49BADCC8198AF5F5000FF3D5 /* AirshipKit */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 49BADCDC198AF5F6000FF3D5 /* Build configuration list for PBXNativeTarget "AirshipKit" */;
@@ -1823,6 +1886,10 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 0500;
 				TargetAttributes = {
+					4953A44D19A55E9900F8D111 = {
+						CreatedOnToolsVersion = 6.0;
+						TestTargetID = 49BADCC8198AF5F5000FF3D5;
+					};
 					49BADCC8198AF5F5000FF3D5 = {
 						CreatedOnToolsVersion = 6.0;
 					};
@@ -1846,12 +1913,21 @@
 			targets = (
 				BB8860A7159A7E9600584445 /* AirshipLib */,
 				7BB679051429288D00B877DB /* AirshipLogicTests */,
+				4953A44D19A55E9900F8D111 /* AirshipKitTests */,
 				49BADCC8198AF5F5000FF3D5 /* AirshipKit */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4953A44C19A55E9900F8D111 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4953A46219A5657200F8D111 /* Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		49BADCC7198AF5F5000FF3D5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1960,6 +2036,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4953A44A19A55E9900F8D111 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4953A46119A5657200F8D111 /* AirshipKit_Tests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		49BADCC4198AF5F5000FF3D5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2208,6 +2292,11 @@
 			target = BB8860A7159A7E9600584445 /* AirshipLib */;
 			targetProxy = 1F4230BA16C095B8004B52C1 /* PBXContainerItemProxy */;
 		};
+		4953A45619A55E9900F8D111 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 49BADCC8198AF5F5000FF3D5 /* AirshipKit */;
+			targetProxy = 4953A45519A55E9900F8D111 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -2292,6 +2381,115 @@
 			};
 			name = Release;
 		};
+		4953A45819A55E9900F8D111 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = AirshipKitTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_CFLAGS = (
+					"-Werror",
+					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4953A45919A55E9900F8D111 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = AirshipKitTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = (
+					"-Werror",
+					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Coverage;
+		};
+		4953A45A19A55E9900F8D111 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = AirshipKitTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = (
+					"-Werror",
+					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		49BADCDD198AF5F6000FF3D5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2322,6 +2520,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = AirshipKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -2360,6 +2559,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = AirshipKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -2399,6 +2599,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = AirshipKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -2698,6 +2899,15 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		4953A45719A55E9900F8D111 /* Build configuration list for PBXNativeTarget "AirshipKitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4953A45819A55E9900F8D111 /* Debug */,
+				4953A45919A55E9900F8D111 /* Coverage */,
+				4953A45A19A55E9900F8D111 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		49BADCDC198AF5F6000FF3D5 /* Build configuration list for PBXNativeTarget "AirshipKit" */ = {
 			isa = XCConfigurationList;
