@@ -564,7 +564,7 @@ static Class _uiClass;
     [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
 
 
-    NSString *categoryId = [[notification valueForKey:@"aps"] valueForKey:@"category"];
+    NSString *categoryId = notification[@"aps"][@"category"];
     NSSet *categories = [[UIApplication sharedApplication] currentUserNotificationSettings].categories;
 
     UIUserNotificationCategory *notificationCategory;
@@ -583,8 +583,8 @@ static Class _uiClass;
         return;
     }
 
-    NSMutableArray *possibleActions = [NSMutableArray arrayWithArray:[notificationCategory actionsForContext:UIUserNotificationActionContextDefault]];
-    [possibleActions addObjectsFromArray:[notificationCategory actionsForContext:UIUserNotificationActionContextMinimal]];
+    NSMutableArray *possibleActions = [NSMutableArray arrayWithArray:[notificationCategory actionsForContext:UIUserNotificationActionContextMinimal]];
+    [possibleActions addObjectsFromArray:[notificationCategory actionsForContext:UIUserNotificationActionContextDefault]];
 
     for (UIUserNotificationAction *possibleAction in possibleActions) {
         if ([possibleAction.identifier isEqualToString:identifier]) {
@@ -600,7 +600,7 @@ static Class _uiClass;
     }
 
     // Pull the action payload for the button identifier
-    NSDictionary *actionsPayload = [[notification objectForKey:kUANotificationActionKey] objectForKey:identifier];
+    NSDictionary *actionsPayload = notification[kUANotificationActionKey][identifier];
 
     UASituation situation;
     if (notificationAction.activationMode == UIUserNotificationActivationModeBackground) {
