@@ -32,12 +32,12 @@
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     UA_LTRACE(@"Application registered for remote notifications with device token: %@", deviceToken);
-    [[UAPush shared] onRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+    [[UAPush shared] appRegisteredForRemoteNotificationsWithDeviceToken:deviceToken];
 }
 
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
     UA_LTRACE(@"Application did register with user notification settings %@", notificationSettings);
-    [[UAPush shared] onRegisterUserNotificationSettings];
+    [[UAPush shared] appRegisteredUserNotificationSettings];
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *) error {
@@ -46,17 +46,17 @@
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     UA_LINFO(@"Application received remote notification: %@", userInfo);
-    [[UAPush shared] onReceiveRemoteNotification:userInfo applicationState:application.applicationState];
+    [[UAPush shared] appReceivedRemoteNotification:userInfo applicationState:application.applicationState];
 }
 
 -(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     UA_LINFO(@"Application received remote notification: %@", userInfo);
-    [[UAPush shared] onReceiveRemoteNotification:userInfo applicationState:application.applicationState fetchCompletionHandler:completionHandler];
+    [[UAPush shared] appReceivedRemoteNotification:userInfo applicationState:application.applicationState fetchCompletionHandler:completionHandler];
 }
 
 - (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)())handler {
     UA_LINFO(@"Received remote notification button interaction: %@ notification: %@", identifier, userInfo);
-    [[UAPush shared] onReceiveActionWithIdentifier:identifier notification:userInfo applicationState:application.applicationState completionHandler:handler];
+    [[UAPush shared] appReceivedActionWithIdentifier:identifier notification:userInfo applicationState:application.applicationState completionHandler:handler];
 }
 
 @end

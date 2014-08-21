@@ -267,10 +267,24 @@ SINGLETON_INTERFACE(UAPush);
 @property(nonatomic) BOOL backgroundPushNotificationsEnabled;
 
 /**
+ * Sets the default value for backgroundPushNotificationsEnabled. The default is `YES`.
+ * After the backgroundPushNotificationsEnabled value has been directly set, this
+ * value has no effect.
+ */
+@property(nonatomic, assign) BOOL backgroundPushNotificationsEnabledByDefault;
+
+/**
  * Enables/disables user notifications on this device through Urban Airship.
  * Defaults to 'NO'.
  */
 @property(nonatomic) BOOL userPushNotificationsEnabled;
+
+/**
+ * Sets the default value for userPushNotificationsEnabled. The default is `NO`.
+ * After the userPushNotificationsEnabled value has been directly set, this value
+ * has no effect.
+ */
+@property(nonatomic, assign) BOOL userPushNotificationsEnabledByDefault;
 
 /**
  * The device token for this device, as a hex string.
@@ -331,24 +345,6 @@ SINGLETON_INTERFACE(UAPush);
  * Notification that launched the application
  */
 @property(nonatomic, readonly, strong) NSDictionary *launchNotification;
-
-/**
- * Sets the default value for userPushNotificationsEnabled. The default is `NO`.
- * After the userPushNotificationsEnabled value has been directly set, this value
- * has no effect.
- *
- * @param enabled The default value for userPushNotificationsEnabled
- */
-+ (void)setDefaultUserPushNotificationsEnabledValue:(BOOL)enabled;
-
-/**
- * Sets the default value for backgroundPushNotificationsEnabled. The default is `YES`.
- * After the backgroundPushNotificationsEnabled value has been directly set, this
- * value has no effect.
- *
- * @param enabled The default value for backgroundPushNotificationsEnabled
- */
-+ (void)setDefaultBackgroundPushNotificationsEnabledValue:(BOOL)enabled;
 
 /**
  * Updates the registration with APNS. Call after modifying notification types
@@ -563,7 +559,7 @@ SINGLETON_INTERFACE(UAPush);
  * @param notification The notification payload, as passed to your application delegate.
  * @param state The application state at the time the notification was received.
  */
-- (void)onReceiveRemoteNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state;
+- (void)appReceivedRemoteNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state;
 
 /**
  * Handle incoming push notifications. This method will record push conversions, parse the notification
@@ -573,7 +569,7 @@ SINGLETON_INTERFACE(UAPush);
  * @param state The application state at the time the notification was received.
  * @param completionHandler Should be called with a UIBackgroundFetchResult as soon as possible, so the system can accurately estimate its power and data cost.
  */
-- (void)onReceiveRemoteNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
+- (void)appReceivedRemoteNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
 
 /**
  * Handle device token registration. Associates the
@@ -583,21 +579,21 @@ SINGLETON_INTERFACE(UAPush);
  *
  * @param token The device token to register.
  */
-- (void)onRegisterForRemoteNotificationsWithDeviceToken:(NSData *)token;
+- (void)appRegisteredForRemoteNotificationsWithDeviceToken:(NSData *)token;
 
 /**
  * Handles user notification settings registration.
  */
-- (void)onRegisterUserNotificationSettings NS_AVAILABLE_IOS(8_0);
+- (void)appRegisteredUserNotificationSettings NS_AVAILABLE_IOS(8_0);
 
 /**
- * Handle interactive notification actions
+ * Handle interactive notification actions.
  *
  * @param identifier The identifier of the button that was triggered.
  * @param notification The notification payload, as passed to your application delegate.
  * @param state The application state at the time the notification was received.
  * @param completionHandler The completion handler.
  */
-- (void)onReceiveActionWithIdentifier:(NSString *)identifier notification:(NSDictionary *)notification applicationState:(UIApplicationState)state completionHandler:(void (^)())completionHandler NS_AVAILABLE_IOS(8_0);
+- (void)appReceivedActionWithIdentifier:(NSString *)identifier notification:(NSDictionary *)notification applicationState:(UIApplicationState)state completionHandler:(void (^)())completionHandler NS_AVAILABLE_IOS(8_0);
 
 @end
