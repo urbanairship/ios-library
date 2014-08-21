@@ -263,6 +263,43 @@
     XCTAssertNoThrow([self.analytics verify], @"Custom event should have been added.");
 }
 
+
+/**
+ * Test setting the conversion send id on the event if the action arguments has
+ * a push payload meta data.
+ */
+- (void)testSetConversionSendIdFromPush {
+    NSDictionary *dict = @{@"event_name": @"event name",
+                           @"transaction_id": @"transaction id",
+                           @"event_value": @"123.45",
+                           @"interaction_type": @"interaction type",
+                           @"interaction_id": @"interaction id"};
+
+    NSDictionary *notification = @{ @"_": @"send id", @"apns": @{@"alert": @"oh hi"} };
+
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:dict
+                                                      withSituation:UASituationManualInvocation
+                                                           metadata:@{UAActionMetadataPushPayloadKey:notification}];
+
+    UAActionResult *expectedResult = [UAActionResult emptyResult];
+
+    [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UACustomEvent *event = obj;
+        return [event.eventName isEqualToString:@"event name"] &&
+        [event.transactionID isEqualToString:@"transaction id"] &&
+        [event.eventValue isEqualToNumber:@(123.45)] &&
+        [event.interactionType isEqualToString:@"interaction type"] &&
+        [event.interactionID isEqualToString:@"interaction id"] &&
+        [event.data[@"conversion_send_id"] isEqualToString:@"send id"];
+    }]];
+
+    [self verifyPerformWithArgs:args withExpectedResult:expectedResult];
+
+    // Verify the event was added
+    XCTAssertNoThrow([self.analytics verify], @"Custom event should have been added.");
+}
+
+
 /**
  * Helper method to verify perform.
  */
@@ -320,5 +357,7 @@
         }
     }
 }
+
+
 
 @end

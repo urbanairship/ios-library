@@ -24,7 +24,7 @@
  */
 
 #import "UAAddCustomEventAction.h"
-#import "UACustomEvent.h"
+#import "UACustomEvent+Internal.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
 
@@ -71,6 +71,9 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
             [event setInteractionFromMessage:message];
         }
     }
+
+    // Set the conversion send id if the action was triggered from a push
+    event.conversionSendId = arguments.metadata[UAActionMetadataPushPayloadKey][@"_"];
 
     if ([event isValid]) {
         [[UAirship shared].analytics addEvent:event];
