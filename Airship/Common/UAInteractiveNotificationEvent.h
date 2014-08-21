@@ -23,24 +23,19 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAModifyTagsAction.h"
+#import <Foundation/Foundation.h>
+#import "UAEvent.h"
+
+@interface UAInteractiveNotificationEvent : UAEvent
 
 /**
- * Adds tags. This Action is registered under the
- * names ^+t and "add_tags_action".
+ * Factory method for creating an interactive notification event.
  *
- * Expected argument values: NSString (single tag) and NSArray (single or multiple tags)
- *
- * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush
- * UASituationWebViewInvocation, UASituationForegoundInteractiveButton,
- * UASituationBackgroundInteractiveButton and UASituationManualInvocation
- *
- * Result value: nil
- *
- * Error: nil
- *
- * Fetch result: UAActionFetchResultNone
+ * @param action The triggered UIUserNotificationAction.
+ * @param category The category in the notification.
+ * @param notification The notification.
  */
-@interface UAAddTagsAction : UAModifyTagsAction
-
++ (instancetype)eventWithNotificationAction:(UIUserNotificationAction *)action
+                                 categoryId:(NSString *)category
+                               notification:(NSDictionary *)notification;
 @end

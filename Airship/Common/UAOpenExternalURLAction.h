@@ -48,7 +48,8 @@ extern NSString * const UAOpenExternalURLActionErrorDomain;
  * Expected argument values: NSString
  *
  * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush
- * UASituationWebViewInvocation, and UASituationManualInvocation
+ * UASituationWebViewInvocation, UASituationForegoundInteractiveButton, and
+ * UASituationManualInvocation
  *
  * Result value: An NSString representation of the input
  *

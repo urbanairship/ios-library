@@ -187,6 +187,26 @@
  */
 - (void)launchedFromNotification:(NSDictionary *)notification fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
 
+/**
+ * Called when the app is started from a user notification action button with foreground activation mode.
+ *
+ * @param notification The notification dictionary.
+ * @param identifier The user notification action identifier.
+ * @param completionHandler Should be called as soon as possible.
+ */
+- (void)launchedFromNotification:(NSDictionary *)notification actionIdentifier:(NSString *)identifier completionHandler:(void (^)())completionHandler;
+
+
+/**
+ * Called when the app is started from a user notification action button with background activation mode.
+ *
+ * @param notification The notification dictionary.
+ * @param identifier The user notification action identifier.
+ * @param completionHandler Should be called as soon as possible.
+ */
+- (void)receivedBackgroundNotification:(NSDictionary *)notification actionIdentifier:(NSString *)identifier completionHandler:(void (^)())completionHandler;
+
+
 @end
 
 
@@ -569,5 +589,15 @@ SINGLETON_INTERFACE(UAPush);
  * Handles user notification settings registration.
  */
 - (void)onRegisterUserNotificationSettings NS_AVAILABLE_IOS(8_0);
+
+/**
+ * Handle interactive notification actions
+ *
+ * @param identifier The identifier of the button that was triggered.
+ * @param notification The notification payload, as passed to your application delegate.
+ * @param state The application state at the time the notification was received.
+ * @param completionHandler The completion handler.
+ */
+- (void)onReceiveActionWithIdentifier:(NSString *)identifier notification:(NSDictionary *)notification applicationState:(UIApplicationState)state completionHandler:(void (^)())completionHandler NS_AVAILABLE_IOS(8_0);
 
 @end

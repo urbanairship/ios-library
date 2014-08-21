@@ -23,24 +23,41 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAModifyTagsAction.h"
+#import "UAInteractiveNotificationEvent.h"
+#import "UAEvent+Internal.h"
 
-/**
- * Adds tags. This Action is registered under the
- * names ^+t and "add_tags_action".
- *
- * Expected argument values: NSString (single tag) and NSArray (single or multiple tags)
- *
- * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush
- * UASituationWebViewInvocation, UASituationForegoundInteractiveButton,
- * UASituationBackgroundInteractiveButton and UASituationManualInvocation
- *
- * Result value: nil
- *
- * Error: nil
- *
- * Fetch result: UAActionFetchResultNone
- */
-@interface UAAddTagsAction : UAModifyTagsAction
+#define kUAInteractiveNotificationEventSize 350
+@implementation UAInteractiveNotificationEvent
+
+
++ (instancetype)eventWithNotificationAction:(UIUserNotificationAction *)action
+                                 categoryId:(NSString *)category
+                               notification:(NSDictionary *)notification {
+
+    UAInteractiveNotificationEvent *event =  [[self alloc] init];
+
+    BOOL foreground = action.activationMode == UIUserNotificationActivationModeForeground;
+
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+    [data setValue:category forKey:@"button_group"];
+    [data setValue:action.identifier forKey:@"button_id"];
+    [data setValue:action.title forKey:@"button_description"];
+    [data setValue:foreground ? @"true" : @"false" forKey:@"foreground"];
+    [data setValue:notification[@"_"] forKey:@"send_id"];
+
+    event.data = [NSDictionary dictionaryWithDictionary:data];
+
+    return event;
+}
+
+- (NSString *)eventType {
+    return @"interactive_notification_action";
+}
+
+- (NSUInteger)estimatedSize {
+    return kUAInteractiveNotificationEventSize;
+}
 
 @end
+
+

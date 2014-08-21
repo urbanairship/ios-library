@@ -37,9 +37,11 @@
 #import "UAActionRunner.h"
 #import "UAChannelRegistrationPayload.h"
 #import "UAUser.h"
+#import "UAInteractiveNotificationEvent.h"
 
 #define kUAMinTagLength 1
 #define kUAMaxTagLength 127
+#define kUANotificationActionKey @"com.urbanairship.notification_actions"
 
 UAPushSettingsKey *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 UAPushSettingsKey *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
@@ -534,13 +536,13 @@ static Class _uiClass;
         case UIApplicationStateBackground:
             UA_LTRACE(@"Received a notification when application state is UIApplicationStateBackground");
             situation = UASituationBackgroundPush;
-
             break;
     }
 
     // Create dictionary of actions inside the push notification
-    NSMutableDictionary *actions = [self createActionsFromNotification:notification
-                                                         withSituation:situation];
+    NSMutableDictionary *actions = [self createActionsFromPayload:notification
+                                                        situation:situation
+                                                         metadata:@{UAActionMetadataPushPayloadKey:notification}];
 
     // Add incoming push action
     UAActionArguments *incomingPushArgs = [UAActionArguments argumentsWithValue:notification
@@ -555,15 +557,96 @@ static Class _uiClass;
     }];
 }
 
-- (NSMutableDictionary *)createActionsFromNotification:(NSDictionary *)notification
-                                         withSituation:(UASituation)situation{
+- (void)onReceiveActionWithIdentifier:(NSString *)identifier
+                         notification:(NSDictionary *)notification
+                     applicationState:(UIApplicationState)state
+                    completionHandler:(void (^)())completionHandler {
+
+    [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
+
+
+    NSString *categoryId = notification[@"aps"][@"category"];
+    NSSet *categories = [[UIApplication sharedApplication] currentUserNotificationSettings].categories;
+
+    UIUserNotificationCategory *notificationCategory;
+    UIUserNotificationAction *notificationAction;
+
+    for (UIUserNotificationCategory *possibleCategory in categories) {
+        if ([possibleCategory.identifier isEqualToString:categoryId]) {
+            notificationCategory = possibleCategory;
+            break;
+        }
+    }
+
+    if (!notificationCategory) {
+        UA_LERR(@"Unknown notification category identifier %@", categoryId);
+        completionHandler();
+        return;
+    }
+
+    NSMutableArray *possibleActions = [NSMutableArray arrayWithArray:[notificationCategory actionsForContext:UIUserNotificationActionContextMinimal]];
+    [possibleActions addObjectsFromArray:[notificationCategory actionsForContext:UIUserNotificationActionContextDefault]];
+
+    for (UIUserNotificationAction *possibleAction in possibleActions) {
+        if ([possibleAction.identifier isEqualToString:identifier]) {
+            notificationAction = possibleAction;
+            break;
+        }
+    }
+
+    if (!notificationAction) {
+        UA_LERR(@"Unknown notification action identifier %@", identifier);
+        completionHandler();
+        return;
+    }
+
+    [[UAirship shared].analytics addEvent:[UAInteractiveNotificationEvent eventWithNotificationAction:notificationAction
+                                                                                           categoryId:categoryId
+                                                                                         notification:notification]];
+
+
+    // Pull the action payload for the button identifier
+    NSDictionary *actionsPayload = notification[kUANotificationActionKey][identifier];
+
+    UASituation situation;
+    if (notificationAction.activationMode == UIUserNotificationActivationModeBackground) {
+        situation = UASituationBackgroundInteractiveButton;
+    } else {
+        situation = UASituationForegoundInteractiveButton;
+    }
+
+    // Create dictionary of actions inside the push notification
+    NSMutableDictionary *actions = [self createActionsFromPayload:actionsPayload
+                                                         situation:situation
+                                                         metadata:@{UAActionMetadataUserNotificationActionIDKey:identifier,
+                                                                    UAActionMetadataPushPayloadKey:notification}];
+
+    // Add incoming push action
+    UAActionArguments *incomingPushArgs = [UAActionArguments argumentsWithValue:notification
+                                                                  withSituation:situation
+                                                                       metadata:@{UAActionMetadataUserNotificationActionIDKey:identifier}];
+
+    [actions setValue:incomingPushArgs forKey:kUAIncomingPushActionRegistryName];
+
+
+    // Run the actions
+    [UAActionRunner runActions:actions withCompletionHandler:^(UAActionResult *result) {
+        if (completionHandler) {
+            completionHandler();
+        }
+    }];
+}
+
+- (NSMutableDictionary *)createActionsFromPayload:(NSDictionary *)payload
+                                        situation:(UASituation)situation
+                                         metadata:(NSDictionary *)metadata{
 
     NSMutableDictionary *actions = [NSMutableDictionary dictionary];
 
-    for (NSString *possibleActionName in notification) {
-        UAActionArguments *args = [UAActionArguments argumentsWithValue:[notification valueForKey:possibleActionName]
+    for (NSString *possibleActionName in payload) {
+        UAActionArguments *args = [UAActionArguments argumentsWithValue:[payload valueForKey:possibleActionName]
                                                           withSituation:situation
-                                                               metadata:@{UAActionMetadataPushPayloadKey: notification}];
+                                                               metadata:metadata];
 
         [actions setValue:args forKey:possibleActionName];
     }

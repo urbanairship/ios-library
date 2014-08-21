@@ -39,6 +39,7 @@
 #import "UADeviceRegistrar.h"
 #import "UAEvent.h"
 #import "NSObject+HideClass.h"
+#import "UAInteractiveNotificationEvent.h"
 
 
 @interface UAPushTest : XCTestCase
@@ -70,10 +71,25 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     // only allows 1, even trying to alloc init a new one.
     self.push =  [UAPush shared];
 
-    self.notification = @{ @"aps":
-                          @{ @"alert": @"sample alert!", @"badge": @2, @"sound": @"cat" },
-                      @"someActionKey": @"someActionValue"
-                    };
+    self.notification = @{
+                          @"aps": @{
+                                   @"alert": @"sample alert!",
+                                   @"badge": @2,
+                                   @"sound": @"cat",
+                                   @"category": @"notificationCategory"
+                           },
+                           @"com.urbanairship.notification_actions": @{
+                                   @"backgroundIdentifier": @{
+                                           @"backgroundAction": @"backgroundActionValue"
+                                   },
+                                   @"foregroundIdentifier": @{
+                                           @"foregroundAction": @"foregroundActionValue",
+                                           @"otherForegroundAction": @"otherForegroundActionValue"
+
+                                   },
+                           },
+                          @"someActionKey": @"someActionValue",
+                          };
 
     // Set up a mocked application
     self.mockedApplication = [OCMockObject niceMockForClass:[UIApplication class]];
@@ -1847,5 +1863,236 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey]);
 }
 
+/**
+ * Test handling receiving notification actions triggered with an identifier for
+ * background activation mode.
+ */
+- (void)testOnReceiveActionWithIdentifierBackground {
+    UIMutableUserNotificationAction *foregroundAction = [[UIMutableUserNotificationAction alloc] init];
+    foregroundAction.activationMode = UIUserNotificationActivationModeForeground;
+    foregroundAction.identifier = @"foregroundIdentifier";
+
+    UIMutableUserNotificationAction *backgroundAction = [[UIMutableUserNotificationAction alloc] init];
+    backgroundAction.activationMode = UIUserNotificationActivationModeBackground;
+    backgroundAction.identifier = @"backgroundIdentifier";
+
+    UIMutableUserNotificationCategory *category = [[UIMutableUserNotificationCategory alloc] init];
+    [category setActions:@[foregroundAction, backgroundAction] forContext:UIUserNotificationActionContextMinimal];
+    category.identifier = @"notificationCategory";
+
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:0 categories:[NSSet setWithArray:@[category]]];
+    [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
+
+    __block BOOL completionHandlerCalled = NO;
+
+    BOOL (^runActionsCheck)(id obj) = ^(id obj) {
+        NSDictionary *actions = (NSDictionary *)obj;
+        if (actions.count != 2) {
+            return NO;
+        }
+
+        // Validate other push action is added
+        UAActionArguments *args = [actions valueForKey:@"backgroundAction"];
+        if (!args || (args.situation != UASituationBackgroundInteractiveButton || ![args.value isEqualToString:@"backgroundActionValue"])) {
+            return NO;
+        }
+
+        // Validate incoming push action is added
+        if (![actions valueForKey:kUAIncomingPushActionRegistryName]) {
+            return NO;
+        }
+
+        return YES;
+    };
+
+    BOOL (^handlerCheck)(id obj) = ^(id obj) {
+        void (^handler)(UAActionResult *) = obj;
+        if (handler) {
+            handler([UAActionResult emptyResult]);
+        }
+        return YES;
+    };
+
+    // Test handleNotification: first
+    [[self.mockActionRunner expect] runActions:[OCMArg checkWithBlock:runActionsCheck] withCompletionHandler:[OCMArg checkWithBlock:handlerCheck]];
+    [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateBackground];
+    [[self.mockedAnalytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isKindOfClass:[UAInteractiveNotificationEvent class]];
+    }]];
+
+    [self.push onReceiveActionWithIdentifier:@"backgroundIdentifier"
+                                notification:self.notification
+                            applicationState:UIApplicationStateBackground
+                           completionHandler:^{
+                               completionHandlerCalled = YES;
+                           }];
+
+
+    XCTAssertNoThrow([self.mockActionRunner verify],
+                     @"Actions should run for notification action button");
+
+    XCTAssertNoThrow([self.mockedAnalytics verify],
+                     @"Analytics should be notified of the incoming notification");
+
+    XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
+}
+
+/**
+ * Test handling receiving notification actions triggered with an identifier for
+ * foreground activation mode.
+ */
+- (void)testOnReceiveActionWithIdentifierForeground {
+    UIMutableUserNotificationAction *foregroundAction = [[UIMutableUserNotificationAction alloc] init];
+    foregroundAction.activationMode = UIUserNotificationActivationModeForeground;
+    foregroundAction.identifier = @"foregroundIdentifier";
+
+    UIMutableUserNotificationAction *backgroundAction = [[UIMutableUserNotificationAction alloc] init];
+    backgroundAction.activationMode = UIUserNotificationActivationModeBackground;
+    backgroundAction.identifier = @"backgroundIdentifier";
+
+    UIMutableUserNotificationCategory *category = [[UIMutableUserNotificationCategory alloc] init];
+    [category setActions:@[foregroundAction, backgroundAction] forContext:UIUserNotificationActionContextMinimal];
+    category.identifier = @"notificationCategory";
+
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:0 categories:[NSSet setWithArray:@[category]]];
+    [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
+
+    __block BOOL completionHandlerCalled = NO;
+
+    BOOL (^runActionsCheck)(id obj) = ^(id obj) {
+        NSDictionary *actions = (NSDictionary *)obj;
+        if (actions.count != 3) {
+            return NO;
+        }
+
+        // Validate other push action is added
+        UAActionArguments *args = [actions valueForKey:@"foregroundAction"];
+        if (!args || (args.situation != UASituationForegoundInteractiveButton || ![args.value isEqualToString:@"foregroundActionValue"])) {
+            return NO;
+        }
+
+        args = [actions valueForKey:@"otherForegroundAction"];
+        if (!args || (args.situation != UASituationForegoundInteractiveButton || ![args.value isEqualToString:@"otherForegroundActionValue"])) {
+            return NO;
+        }
+
+        // Validate incoming push action is added
+        if (![actions valueForKey:kUAIncomingPushActionRegistryName]) {
+            return NO;
+        }
+
+        return YES;
+    };
+
+    BOOL (^handlerCheck)(id obj) = ^(id obj) {
+        void (^handler)(UAActionResult *) = obj;
+        if (handler) {
+            handler([UAActionResult emptyResult]);
+        }
+        return YES;
+    };
+
+    [[self.mockActionRunner expect] runActions:[OCMArg checkWithBlock:runActionsCheck] withCompletionHandler:[OCMArg checkWithBlock:handlerCheck]];
+
+    [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateActive];
+    [[self.mockedAnalytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isKindOfClass:[UAInteractiveNotificationEvent class]];
+    }]];
+
+    [self.push onReceiveActionWithIdentifier:@"foregroundIdentifier"
+                                notification:self.notification
+                            applicationState:UIApplicationStateActive
+                           completionHandler:^{
+                               completionHandlerCalled = YES;
+                           }];
+
+
+    XCTAssertNoThrow([self.mockActionRunner verify],
+                     @"Actions should run for notification action button");
+
+    XCTAssertNoThrow([self.mockedAnalytics verify],
+                     @"Analytics should be notified of the incoming notification");
+
+    XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
+
+}
+
+/**
+ * Test receiving a notification action with an unknown category does not run
+ * any actions.
+ */
+- (void)testNotificationActionButtonUnknownCategory {
+    __block BOOL completionHandlerCalled = NO;
+
+    [[self.mockActionRunner reject] runActions:OCMOCK_ANY withCompletionHandler:OCMOCK_ANY];
+
+    [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateActive];
+    [[self.mockedAnalytics reject] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isKindOfClass:[UAInteractiveNotificationEvent class]];
+    }]];
+
+    [self.push onReceiveActionWithIdentifier:@"foregroundIdentifier"
+                                notification:self.notification
+                            applicationState:UIApplicationStateActive
+                           completionHandler:^{
+                               completionHandlerCalled = YES;
+                           }];
+
+
+    XCTAssertNoThrow([self.mockActionRunner verify],
+                     @"Actions should not run any actions if its unable to find the category");
+
+    XCTAssertNoThrow([self.mockedAnalytics verify],
+                     @"Analytics should be notified of the incoming notification");
+
+    XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
+}
+
+/**
+ * Test receiving a notification action with an unknown action does not run
+ * any UA actions.
+ */
+- (void)testNotificationActionButtonUnknownIdentifier {
+    UIMutableUserNotificationAction *foregroundAction = [[UIMutableUserNotificationAction alloc] init];
+    foregroundAction.activationMode = UIUserNotificationActivationModeForeground;
+    foregroundAction.identifier = @"foregroundIdentifier";
+
+    UIMutableUserNotificationAction *backgroundAction = [[UIMutableUserNotificationAction alloc] init];
+    backgroundAction.activationMode = UIUserNotificationActivationModeBackground;
+    backgroundAction.identifier = @"backgroundIdentifier";
+
+    UIMutableUserNotificationCategory *category = [[UIMutableUserNotificationCategory alloc] init];
+    [category setActions:@[foregroundAction, backgroundAction] forContext:UIUserNotificationActionContextMinimal];
+    category.identifier = @"notificationCategory";
+
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:0 categories:[NSSet setWithArray:@[category]]];
+    [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
+
+    __block BOOL completionHandlerCalled = NO;
+
+    [[self.mockActionRunner reject] runActions:OCMOCK_ANY withCompletionHandler:OCMOCK_ANY];
+
+    [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateActive];
+    [[self.mockedAnalytics reject] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isKindOfClass:[UAInteractiveNotificationEvent class]];
+    }]];
+
+
+    [self.push onReceiveActionWithIdentifier:@"unknown!"
+                                notification:self.notification
+                            applicationState:UIApplicationStateActive
+                           completionHandler:^{
+                               completionHandlerCalled = YES;
+                           }];
+
+
+    XCTAssertNoThrow([self.mockActionRunner verify],
+                     @"Actions should not run any actions if its unable to find the category");
+
+    XCTAssertNoThrow([self.mockedAnalytics verify],
+                     @"Analytics should be notified of the incoming notification");
+
+    XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
+}
 
 @end

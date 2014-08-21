@@ -343,7 +343,9 @@
                             [NSNumber numberWithInteger:UASituationForegroundPush],
                             [NSNumber numberWithInteger:UASituationBackgroundPush],
                             [NSNumber numberWithInteger:UASituationLaunchedFromPush],
-                            [NSNumber numberWithInteger:UASituationManualInvocation]];
+                            [NSNumber numberWithInteger:UASituationManualInvocation],
+                            [NSNumber numberWithInteger:UASituationForegoundInteractiveButton],
+                            [NSNumber numberWithInteger:UASituationBackgroundInteractiveButton]];
 
     for (NSNumber *situationNumber in situations) {
         UAActionArguments *args = [UAActionArguments argumentsWithValue:value

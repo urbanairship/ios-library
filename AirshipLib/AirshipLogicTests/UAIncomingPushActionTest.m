@@ -77,10 +77,12 @@
  * arguments whose value is an NSDictionary
  */
 - (void)testAcceptsArguments {
-    UASituation validSituations[3] = {
+    UASituation validSituations[5] = {
         UASituationForegroundPush,
         UASituationBackgroundPush,
-        UASituationLaunchedFromPush
+        UASituationLaunchedFromPush,
+        UASituationForegoundInteractiveButton,
+        UASituationBackgroundInteractiveButton
     };
 
     self.arguments.value = nil;
@@ -257,6 +259,58 @@
     XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegates should not be notified of an empty dictionary");
 }
 
+/**
+ * Test running the action with UASituationForegoundInteractiveButton situation notifies
+ * the app delegate of the event.
+ */
+- (void)testForegroundUserNotificationAction {
+    __block UAActionResult *runResult;
 
+    self.arguments.situation = UASituationForegoundInteractiveButton;
+    self.arguments.metadata = @{UAActionMetadataUserNotificationActionIDKey: @"action id"};
+
+    // Expect the delegate to be called. Use a checkWithBlock to call the completion handler.
+    [[self.mockedPushDelegate expect] launchedFromNotification:self.arguments.value actionIdentifier:@"action id" completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^completionBlock)() = obj;
+        completionBlock();
+        return YES;
+    }]];
+
+    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *result) {
+        runResult = result;
+    }];
+
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegate launchedFromNotification:actionIdentifier:completionHandler: should be called");
+    XCTAssertNotNil(runResult, @"Incoming push action should generate an action result");
+    XCTAssertNil(runResult.value, @"Incoming push action should default to an empty result");
+    XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNoData, @"Push action should return the delegate's fetch result");
+}
+
+/**
+ * Test running the action with UASituationBackgroundInteractiveButton situation notifies
+ * the app delegate of the event.
+ */
+- (void)testBackgroundUserNotificationAction {
+    __block UAActionResult *runResult;
+
+    self.arguments.situation = UASituationBackgroundInteractiveButton;
+    self.arguments.metadata = @{UAActionMetadataUserNotificationActionIDKey: @"action id"};
+
+    // Expect the delegate to be called. Use a checkWithBlock to call the completion handler.
+    [[self.mockedPushDelegate expect] receivedBackgroundNotification:self.arguments.value actionIdentifier:@"action id" completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^completionBlock)() = obj;
+        completionBlock();
+        return YES;
+    }]];
+
+    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *result) {
+        runResult = result;
+    }];
+
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegate receivedBackgroundNotification:actionIdentifier:completionHandler: should be called");
+    XCTAssertNotNil(runResult, @"Incoming push action should generate an action result");
+    XCTAssertNil(runResult.value, @"Incoming push action should default to an empty result");
+    XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNoData, @"Push action should return the delegate's fetch result");
+}
 
 @end

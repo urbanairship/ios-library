@@ -85,7 +85,7 @@
     // set cachable url
     [UAURLProtocol addCachableURL:landingPageURL];
 
-    if (arguments.situation == UASituationBackgroundPush ) {
+    if (arguments.situation == UASituationBackgroundPush) {
         // pre-fetch url so that it can be accessed later from the cache
         if (isContentUrl) {
             [self prefetchURL:landingPageURL
@@ -113,6 +113,10 @@
 }
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
+    if (arguments.situation == UASituationBackgroundInteractiveButton) {
+        return NO;
+    }
+
     if (arguments.situation == UASituationBackgroundPush && UAirship.shared.config.cacheDiskSizeInMB == 0) {
         return NO;
     }
