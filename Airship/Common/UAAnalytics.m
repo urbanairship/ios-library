@@ -35,7 +35,7 @@
 #import "UADelayOperation.h"
 #import "UAInboxUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAPush.h"
+#import "UAPush+Internal.h"
 #import "UAUtils.h"
 
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
@@ -326,7 +326,10 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [request addRequestHeader:@"X-UA-ID" value:[UAUtils deviceID]];
     [request addRequestHeader:@"X-UA-User-ID" value:[UAUser defaultUser].username];
     [request addRequestHeader:@"X-UA-App-Key" value:[UAirship shared].config.appKey];
-    
+
+    [request addRequestHeader:@"X-UA-Channel-Opted-In" value:[[UAPush shared] userPushNotificationsAllowed] ? @"true" : @"false"];
+    [request addRequestHeader:@"X-UA-Channel-Background-Enabled" value:[[UAPush shared] backgroundPushNotificationsAllowed] ? @"true" : @"false"];
+
     // Optional Items
     [request addRequestHeader:@"X-UA-Lib-Version" value:[UAirshipVersion get]];
     [request addRequestHeader:@"X-UA-Device-Model" value:[UAUtils deviceModelName]];
