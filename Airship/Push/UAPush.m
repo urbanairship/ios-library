@@ -123,6 +123,8 @@ static Class _uiClass;
         self.mutableUserNotificationCategories = [NSMutableSet set];
         self.deviceTagsEnabled = YES;
 
+        self.backgroundPushNotificationsEnabledByDefault = YES;
+
         self.userNotificationTypes = UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound;
 
         // Log the channel ID at error level, but without logging
@@ -505,11 +507,11 @@ static Class _uiClass;
     [self setBadgeNumber:0];
 }
 
-- (void)onReceiveRemoteNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state {
-    [self onReceiveRemoteNotification:notification applicationState:state fetchCompletionHandler:nil];
+- (void)appReceivedRemoteNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state {
+    [self appReceivedRemoteNotification:notification applicationState:state fetchCompletionHandler:nil];
   }
 
-- (void)onReceiveRemoteNotification:(NSDictionary *)notification
+- (void)appReceivedRemoteNotification:(NSDictionary *)notification
           applicationState:(UIApplicationState)state
     fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
@@ -557,7 +559,7 @@ static Class _uiClass;
     }];
 }
 
-- (void)onReceiveActionWithIdentifier:(NSString *)identifier
+- (void)appReceivedActionWithIdentifier:(NSString *)identifier
                          notification:(NSDictionary *)notification
                      applicationState:(UIApplicationState)state
                     completionHandler:(void (^)())completionHandler {
@@ -829,7 +831,7 @@ BOOL deferChannelCreationOnForeground = false;
 
 
 //The new token to register, or nil if updating the existing token
-- (void)onRegisterForRemoteNotificationsWithDeviceToken:(NSData *)token {
+- (void)appRegisteredForRemoteNotificationsWithDeviceToken:(NSData *)token {
     // Convert device deviceToken to a hex string
     NSMutableString *deviceToken = [NSMutableString stringWithCapacity:([token length] * 2)];
     const unsigned char *bytes = (const unsigned char *)[token bytes];
@@ -858,7 +860,7 @@ BOOL deferChannelCreationOnForeground = false;
     }
 }
 
-- (void)onRegisterUserNotificationSettings {
+- (void)appRegisteredUserNotificationSettings {
     BOOL inBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
 
     // Only allow new registrations to happen in the background if we are creating a channel ID
@@ -908,14 +910,16 @@ BOOL deferChannelCreationOnForeground = false;
 #pragma mark Default Values
 
 // Change the default push enabled value in the registered user defaults
-+ (void)setDefaultBackgroundPushNotificationsEnabledValue:(BOOL)enabled {
+- (void)setBackgroundPushNotificationsEnabledByDefault:(BOOL)enabled {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithObject:[NSNumber numberWithBool:enabled] forKey:UABackgroundPushNotificationsEnabledKey];
     [[NSUserDefaults standardUserDefaults] registerDefaults:dictionary];
+    _backgroundPushNotificationsEnabledByDefault = enabled;
 }
 
-+ (void)setDefaultUserPushNotificationsEnabledValue:(BOOL)enabled {
+- (void)setUserPushNotificationsEnabledByDefault:(BOOL)enabled {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithObject:[NSNumber numberWithBool:enabled] forKey:UAUserPushNotificationsEnabledKey];
     [[NSUserDefaults standardUserDefaults] registerDefaults:dictionary];
+    _userPushNotificationsEnabledByDefault = enabled;
 }
 
 #pragma mark -
@@ -932,10 +936,6 @@ BOOL deferChannelCreationOnForeground = false;
     } else {
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushQuietTimeEnabledSettingsKey];
     }
-
-    NSDictionary *defaults = @{ UABackgroundPushNotificationsEnabledKey:[NSNumber numberWithBool:YES] };
-
-    [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
 }
 
 - (BOOL)beginRegistrationBackgroundTask {

@@ -828,7 +828,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
-    [self.push onRegisterForRemoteNotificationsWithDeviceToken:token];
+    [self.push appRegisteredForRemoteNotificationsWithDeviceToken:token];
 
     XCTAssertNoThrow([self.mockedAnalytics verify],
                      @"should add device registration event to analytics");
@@ -864,7 +864,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                                                    withPayload:OCMOCK_ANY
                                                     forcefully:NO];
 
-    [self.push onRegisterForRemoteNotificationsWithDeviceToken:token];
+    [self.push appRegisteredForRemoteNotificationsWithDeviceToken:token];
 
     XCTAssertNoThrow([self.mockedAnalytics verify],
                      @"should add device registration event to analytics");
@@ -897,7 +897,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                                                    withPayload:OCMOCK_ANY
                                                     forcefully:NO];
 
-    [self.push onRegisterForRemoteNotificationsWithDeviceToken:token];
+    [self.push appRegisteredForRemoteNotificationsWithDeviceToken:token];
 
     XCTAssertNoThrow([self.mockedAnalytics verify],
                      @"should add device registration event to analytics");
@@ -934,7 +934,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                                                    withPayload:OCMOCK_ANY
                                                     forcefully:NO];
 
-    [self.push onRegisterForRemoteNotificationsWithDeviceToken:token];
+    [self.push appRegisteredForRemoteNotificationsWithDeviceToken:token];
 
     XCTAssertNoThrow([self.mockedAnalytics verify],
                      @"should add device registration event to analytics");
@@ -960,7 +960,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
-    [self.push onRegisterUserNotificationSettings];
+    [self.push appRegisteredUserNotificationSettings];
 
     XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
                      @"should update registration on registering channel ID");
@@ -983,7 +983,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                                                    withPayload:OCMOCK_ANY
                                                     forcefully:NO];
 
-    [self.push onRegisterUserNotificationSettings];
+    [self.push appRegisteredUserNotificationSettings];
 
     XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
                      @"should not allow registration in background except for channel creation");
@@ -1008,34 +1008,13 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                                                     forcefully:NO];
 
 
-    [self.push onRegisterUserNotificationSettings];
+    [self.push appRegisteredUserNotificationSettings];
 
     XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
                      @"should update registration on registering channel ID");
 
 }
 
-/**
- * Test registering the default NSUserDefaults settings enables background 
- * push notifications.
- */
-- (void)testRegisterNSUserDefaultsSetsBackgroundPushEnabled {
-    // Clear out any existing push enabled defaults values
-    NSMutableDictionary *defaults = [NSMutableDictionary dictionaryWithCapacity:2];
-    [defaults setValue:[NSNumber numberWithBool:NO] forKey:UABackgroundPushNotificationsEnabledKey];
-    [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
-
-    // Remove existing push setting
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UABackgroundPushNotificationsEnabledKey];
-
-     XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UABackgroundPushNotificationsEnabledKey],
-                    @"Unable to set push enable default");
-
-    [UAPush registerNSUserDefaults];
-
-    XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UABackgroundPushNotificationsEnabledKey],
-                  @"register defaults should set default value of pushEnabled to YES");
-}
 
 - (void)testRegisterNSUserDefaultsQuietTime {
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushQuietTimeEnabledSettingsKey];
@@ -1064,14 +1043,14 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 /**
  * Test setting the default userPushNotificationsEnabled value.
  */
-- (void)testSetDefaultUserPushNotificationsEnabledValue {
-    [UAPush setDefaultUserPushNotificationsEnabledValue:YES];
+- (void)testUserPushNotificationsEnabledByDefault {
+    self.push.userPushNotificationsEnabledByDefault = YES;
 
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAUserPushNotificationsEnabledKey];
     XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey],
                   @"UAUserPushNotificationsEnabledKey in standardUserDefaults should default to YES");
 
-    [UAPush setDefaultUserPushNotificationsEnabledValue:NO];
+    self.push.userPushNotificationsEnabledByDefault = NO;
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAUserPushNotificationsEnabledKey];
     XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey],
                    @"UAUserPushNotificationsEnabledKey in standardUserDefaults should default to NO");
@@ -1080,14 +1059,14 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 /**
  * Test setting the default backgroundPushNotificationEnabled value.
  */
-- (void)testSetDefaultBackgroundPushNotificationsEnabledValue {
-    [UAPush setDefaultBackgroundPushNotificationsEnabledValue:YES];
+- (void)testBackgroundPushNotificationsEnabledByDefault {
+    self.push.backgroundPushNotificationsEnabledByDefault = YES;
 
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:UABackgroundPushNotificationsEnabledKey];
     XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UABackgroundPushNotificationsEnabledKey],
                   @"UABackgroundPushNotificationsEnabledKey in standardUserDefaults should default to YES");
 
-    [UAPush setDefaultBackgroundPushNotificationsEnabledValue:NO];
+    self.push.backgroundPushNotificationsEnabledByDefault = NO;
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:UABackgroundPushNotificationsEnabledKey];
     XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UABackgroundPushNotificationsEnabledKey],
                    @"UABackgroundPushNotificationsEnabledKey in standardUserDefaults should default to NO");
@@ -1533,7 +1512,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
         // Test handleNotification: first
         [[self.mockActionRunner expect] runActions:[OCMArg checkWithBlock:runActionsCheck] withCompletionHandler:[OCMArg checkWithBlock:handlerCheck]];
         [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:applicationState];
-        [self.push onReceiveRemoteNotification:self.notification applicationState:applicationState];
+        [self.push appReceivedRemoteNotification:self.notification applicationState:applicationState];
 
         XCTAssertNoThrow([self.mockActionRunner verify], @"handleNotification should run push actions with situation %d", expectedSituation);
         XCTAssertNoThrow([self.mockedAnalytics verify], @"analytics should be notified of the incoming notification");
@@ -1545,7 +1524,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
             [[self.mockActionRunner expect] runActions:[OCMArg checkWithBlock:runActionsCheck] withCompletionHandler:[OCMArg checkWithBlock:handlerCheck]];
             [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:applicationState];
-            [self.push onReceiveRemoteNotification:self.notification applicationState:applicationState fetchCompletionHandler:^(UIBackgroundFetchResult result) {
+            [self.push appReceivedRemoteNotification:self.notification applicationState:applicationState fetchCompletionHandler:^(UIBackgroundFetchResult result) {
                 completionHandlerCalled = YES;
 
                 // Relies on the fact that UAActionFetchResults cast correctly to UIBackgroundFetchResults
@@ -1570,9 +1549,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testHandleNotificationAutoBadgeDisabled {
     UAPush.shared.autobadgeEnabled = NO;
     [[self.mockedApplication reject] setApplicationIconBadgeNumber:2];
-    [self.push onReceiveRemoteNotification:self.notification applicationState:UIApplicationStateActive];
-    [self.push onReceiveRemoteNotification:self.notification applicationState:UIApplicationStateBackground];
-    [self.push onReceiveRemoteNotification:self.notification applicationState:UIApplicationStateInactive];
+    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateActive];
+    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateBackground];
+    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateInactive];
 
     XCTAssertNoThrow([self.mockedApplication verify], @"Badge should only be updated if autobadge is enabled");
 }
@@ -1585,13 +1564,13 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     UAPush.shared.autobadgeEnabled = YES;
 
     [[self.mockedApplication expect] setApplicationIconBadgeNumber:2];
-    [self.push onReceiveRemoteNotification:self.notification applicationState:UIApplicationStateActive];
+    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateActive];
 
     XCTAssertNoThrow([self.mockedApplication verify], @"Badge should be updated if app is in the foreground");
 
     [[self.mockedApplication reject] setApplicationIconBadgeNumber:2];
-    [self.push onReceiveRemoteNotification:self.notification applicationState:UIApplicationStateBackground];
-    [self.push onReceiveRemoteNotification:self.notification applicationState:UIApplicationStateInactive];
+    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateBackground];
+    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateInactive];
 
     XCTAssertNoThrow([self.mockedApplication verify], @"Badge should only be updated if app is in the foreground");
 }
@@ -1601,12 +1580,12 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  */
 - (void)testHandleNotificationLaunchNotification {
     self.push.launchNotification = nil;
-    [self.push onReceiveRemoteNotification:self.notification applicationState:UIApplicationStateActive];
-    [self.push onReceiveRemoteNotification:self.notification applicationState:UIApplicationStateBackground];
+    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateActive];
+    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateBackground];
 
     XCTAssertNil(self.push.launchNotification, @"Launch notification should only be set in an inactive state");
 
-    [self.push onReceiveRemoteNotification:self.notification applicationState:UIApplicationStateInactive];
+    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateInactive];
     XCTAssertNotNil(self.push.launchNotification, @"Launch notification should be set in an inactive state");
 }
 
@@ -1920,7 +1899,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
         return [obj isKindOfClass:[UAInteractiveNotificationEvent class]];
     }]];
 
-    [self.push onReceiveActionWithIdentifier:@"backgroundIdentifier"
+    [self.push appReceivedActionWithIdentifier:@"backgroundIdentifier"
                                 notification:self.notification
                             applicationState:UIApplicationStateBackground
                            completionHandler:^{
@@ -1999,7 +1978,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
         return [obj isKindOfClass:[UAInteractiveNotificationEvent class]];
     }]];
 
-    [self.push onReceiveActionWithIdentifier:@"foregroundIdentifier"
+    [self.push appReceivedActionWithIdentifier:@"foregroundIdentifier"
                                 notification:self.notification
                             applicationState:UIApplicationStateActive
                            completionHandler:^{
@@ -2031,7 +2010,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
         return [obj isKindOfClass:[UAInteractiveNotificationEvent class]];
     }]];
 
-    [self.push onReceiveActionWithIdentifier:@"foregroundIdentifier"
+    [self.push appReceivedActionWithIdentifier:@"foregroundIdentifier"
                                 notification:self.notification
                             applicationState:UIApplicationStateActive
                            completionHandler:^{
@@ -2078,7 +2057,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     }]];
 
 
-    [self.push onReceiveActionWithIdentifier:@"unknown!"
+    [self.push appReceivedActionWithIdentifier:@"unknown!"
                                 notification:self.notification
                             applicationState:UIApplicationStateActive
                            completionHandler:^{

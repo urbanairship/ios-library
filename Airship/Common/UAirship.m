@@ -261,7 +261,7 @@ UALogLevel uaLogLevel = UALogLevelError;
     && kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0;
 
     if (remoteNotification && !skipNotifyPush) {
-        [[UAPush shared] onReceiveRemoteNotification:remoteNotification
+        [[UAPush shared] appReceivedRemoteNotification:remoteNotification
                            applicationState:[UIApplication sharedApplication].applicationState];
     }
 
