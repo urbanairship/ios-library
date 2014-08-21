@@ -10,11 +10,7 @@
 /**
  * The dispatch semaphore used for synchronization
  */
-#if OS_OBJECT_USE_OBJC
 @property(nonatomic, strong) dispatch_semaphore_t semaphore;    // GCD objects use ARC
-#else
-@property(nonatomic, assign) dispatch_semaphore_t semaphore;    // GCD object don't use ARC
-#endif
 
 /**
  * How long the runloop should spin for each iteration while waiting.
