@@ -94,19 +94,28 @@ typedef NS_ENUM(NSInteger, UASituation) {
                           metadata:(NSDictionary *) metadata;
 
 /**
- * WebView metadata key.
+ * Metadata key for the web view. Available when an action is triggered from
+ * a web view.
  */
 extern NSString * const UAActionMetadataWebViewKey;
 
 /**
- * Push payload metadata key.
+ * Metadata key for the push notificaiton. Available when an action is triggered
+ * from a push notification or user notification action.
  */
 extern NSString * const UAActionMetadataPushPayloadKey;
 
 /**
- * Inbox Message metadata key.
+ * Metadata key for the inbox message. Available when an action is triggered from
+ * a inbox message.
  */
 extern NSString * const UAActionMetadataInboxMessageKey;
+
+/**
+ * Metadata key for the user notification action identifier. Available when an
+ * action is triggered from a user notification action.
+ */
+extern NSString * const UAActionMetadataUserNotificationActionIDKey;
 
 
 /**

@@ -110,6 +110,7 @@
     // Do something when launched via a notification
 }
 
+
 - (void)receivedForegroundNotification:(NSDictionary *)notification fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler{
     UA_LDEBUG(@"Received a notification while the app was already in the foreground");
 
@@ -126,6 +127,20 @@
 
     // Call the completion handler
     completionHandler(UIBackgroundFetchResultNoData);
+}
+
+- (void)launchedFromNotification:(NSDictionary *)notification actionIdentifier:(NSString *)identifier completionHandler:(void (^)())completionHandler {
+    UA_LDEBUG(@"The application was launched or resumed from a foreground user notification button");
+    // Do something when launched via a user notification button
+
+    completionHandler();
+}
+
+- (void)receivedBackgroundNotification:(NSDictionary *)notification actionIdentifier:(NSString *)identifier completionHandler:(void (^)())completionHandler {
+    UA_LDEBUG(@"The application was started in the background from a user notification button");
+    // Do any background tasks via a user notificaiton button
+
+    completionHandler();
 }
 
 @end

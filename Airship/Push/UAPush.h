@@ -187,6 +187,26 @@
  */
 - (void)launchedFromNotification:(NSDictionary *)notification fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
 
+/**
+ * Called when the app is started from a user notification action button with foreground activation mode.
+ *
+ * @param notification The notification dictionary.
+ * @param identifier The user notification action identifier.
+ * @param completionHandler Should be called as soon as possible.
+ */
+- (void)launchedFromNotification:(NSDictionary *)notification actionIdentifier:(NSString *)identifier completionHandler:(void (^)())completionHandler;
+
+
+/**
+ * Called when the app is started from a user notification action button with background activation mode.
+ *
+ * @param notification The notification dictionary.
+ * @param identifier The user notification action identifier.
+ * @param completionHandler Should be called as soon as possible.
+ */
+- (void)receivedBackgroundNotification:(NSDictionary *)notification actionIdentifier:(NSString *)identifier completionHandler:(void (^)())completionHandler;
+
+
 @end
 
 

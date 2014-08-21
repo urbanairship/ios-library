@@ -23,27 +23,19 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAAction.h"
+#import <Foundation/Foundation.h>
+#import "UAEvent.h"
+
+@interface UAInteractiveNotificationEvent : UAEvent
 
 /**
- * Action class used for handing incoming push data, performing delegate callbacks and
- * running push actions. This action is used by the library and should not normally be
- * used directly.
+ * Factory method for creating an interactive notification event.
  *
- * Expected argument values: An APNS NSDictionary.
- *
- * Valid situations: UASituationForegroundPush, UASituationBackgroundPush, 
- * UASituationLaunchedFromPush, UASituationForegoundInteractiveButton, and
- * UASituationBackgroundInteractiveButton
- *
- * Result value: nil
- *
- * Error: nil
- *
- * Fetch result: Aggregate UAActionFetchResult from delegates when handling background pushes, otherwise
- * UAActionFetchResultNone
+ * @param action The triggered UIUserNotificationAction.
+ * @param category The category in the notification.
+ * @param notification The notification.
  */
-
-@interface UAIncomingPushAction : UAAction
-
++ (instancetype)eventWithNotificationAction:(UIUserNotificationAction *)action
+                                 categoryId:(NSString *)category
+                               notification:(NSDictionary *)notification;
 @end

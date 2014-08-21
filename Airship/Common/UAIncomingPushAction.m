@@ -42,6 +42,16 @@
         case UASituationBackgroundPush:
             [self handleBackgroundPush:arguments.value completionHandler:completionHandler];
             break;
+        case UASituationBackgroundInteractiveButton:
+            [self handleBackgroundUserNotificationAction:arguments.metadata[UAActionMetadataUserNotificationActionIDKey]
+                                            notification:arguments.value
+                                       completionHandler:completionHandler];
+            break;
+        case UASituationForegoundInteractiveButton:
+            [self handleForegroundUserNotificationAction:arguments.metadata[UAActionMetadataUserNotificationActionIDKey]
+                                            notification:arguments.value
+                                       completionHandler:completionHandler];
+            break;
         default:
             completionHandler([UAActionResult emptyResult]);
             break;
@@ -53,12 +63,13 @@
         case UASituationBackgroundPush:
         case UASituationLaunchedFromPush:
         case UASituationForegroundPush:
+        case UASituationForegoundInteractiveButton:
+        case UASituationBackgroundInteractiveButton:
             return [arguments.value isKindOfClass:[NSDictionary class]];
         default:
             return NO;
     }
 }
-
 
 - (void)handleForegroundPush:(NSDictionary *)notification
           completionHandler:(UAActionCompletionHandler)completionHandler {
@@ -183,6 +194,35 @@
             [pushDelegate receivedBackgroundNotification:notification];
         }
 
+        completionHandler([UAActionResult emptyResult]);
+    }
+}
+
+- (void)handleBackgroundUserNotificationAction:(NSString *)identifier
+                                  notification:(NSDictionary *)notification
+                             completionHandler:(UAActionCompletionHandler)completionHandler {
+
+    id<UAPushNotificationDelegate> pushDelegate = [UAPush shared].pushNotificationDelegate;
+    if ([pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:actionIdentifier:completionHandler:)]) {
+        [pushDelegate receivedBackgroundNotification:notification actionIdentifier:identifier completionHandler:^{
+            completionHandler([UAActionResult emptyResult]);
+        }];
+    } else {
+        completionHandler([UAActionResult emptyResult]);
+    }
+}
+
+
+- (void)handleForegroundUserNotificationAction:(NSString *)identifier
+                                  notification:(NSDictionary *)notification
+                             completionHandler:(UAActionCompletionHandler)completionHandler {
+
+    id<UAPushNotificationDelegate> pushDelegate = [UAPush shared].pushNotificationDelegate;
+    if ([pushDelegate respondsToSelector:@selector(launchedFromNotification:actionIdentifier:completionHandler:)]) {
+        [pushDelegate launchedFromNotification:notification actionIdentifier:identifier completionHandler:^{
+            completionHandler([UAActionResult emptyResult]);
+        }];
+    } else {
         completionHandler([UAActionResult emptyResult]);
     }
 }

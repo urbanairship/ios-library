@@ -23,27 +23,41 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAAction.h"
+#import "UAInteractiveNotificationEvent.h"
+#import "UAEvent+Internal.h"
 
-/**
- * Action class used for handing incoming push data, performing delegate callbacks and
- * running push actions. This action is used by the library and should not normally be
- * used directly.
- *
- * Expected argument values: An APNS NSDictionary.
- *
- * Valid situations: UASituationForegroundPush, UASituationBackgroundPush, 
- * UASituationLaunchedFromPush, UASituationForegoundInteractiveButton, and
- * UASituationBackgroundInteractiveButton
- *
- * Result value: nil
- *
- * Error: nil
- *
- * Fetch result: Aggregate UAActionFetchResult from delegates when handling background pushes, otherwise
- * UAActionFetchResultNone
- */
+#define kUAInteractiveNotificationEventSize 350
+@implementation UAInteractiveNotificationEvent
 
-@interface UAIncomingPushAction : UAAction
+
++ (instancetype)eventWithNotificationAction:(UIUserNotificationAction *)action
+                                 categoryId:(NSString *)category
+                               notification:(NSDictionary *)notification {
+
+    UAInteractiveNotificationEvent *event =  [[self alloc] init];
+
+    BOOL foreground = action.activationMode == UIUserNotificationActivationModeForeground;
+
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+    [data setValue:category forKey:@"button_group"];
+    [data setValue:action.identifier forKey:@"button_id"];
+    [data setValue:action.title forKey:@"button_description"];
+    [data setValue:foreground ? @"true" : @"false" forKey:@"foreground"];
+    [data setValue:notification[@"_"] forKey:@"send_id"];
+
+    event.data = [NSDictionary dictionaryWithDictionary:data];
+
+    return event;
+}
+
+- (NSString *)eventType {
+    return @"interactive_notification_action";
+}
+
+- (NSUInteger)estimatedSize {
+    return kUAInteractiveNotificationEventSize;
+}
 
 @end
+
+
