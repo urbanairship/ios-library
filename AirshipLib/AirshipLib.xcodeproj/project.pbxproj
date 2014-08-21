@@ -405,6 +405,7 @@
 		CC523FB017B985F800233005 /* UAJSONValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = CC523FAE17B985F700233005 /* UAJSONValueTransformer.h */; };
 		CC523FB117B985F800233005 /* UAJSONValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = CC523FAF17B985F700233005 /* UAJSONValueTransformer.m */; };
 		CC523FC317BA8AC200233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FC217BA8AC200233005 /* CoreData.framework */; };
+		CC7BE5EB19A55C5700B3EACE /* UAShareActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7BE5EA19A55C5700B3EACE /* UAShareActionTest.m */; };
 		CC7DC941183E977100E95BB8 /* UAChannelAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CC7DC93D183E977100E95BB8 /* UAChannelAPIClient.h */; };
 		CC7DC943183E977100E95BB8 /* UAChannelAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7DC93E183E977100E95BB8 /* UAChannelAPIClient.m */; };
 		CC7DC945183E977100E95BB8 /* UAChannelRegistrationPayload.h in Headers */ = {isa = PBXBuildFile; fileRef = CC7DC93F183E977100E95BB8 /* UAChannelRegistrationPayload.h */; };
@@ -463,6 +464,10 @@
 		CCDD37CE18089E6F00B8866E /* UAOpenExternalURLActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDD37CC18089E6F00B8866E /* UAOpenExternalURLActionTest.m */; };
 		CCDF66A219A5166B0043657E /* UACustomEvent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDF66A119A5166B0043657E /* UACustomEvent+Internal.h */; };
 		CCDF66A319A5166B0043657E /* UACustomEvent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDF66A119A5166B0043657E /* UACustomEvent+Internal.h */; };
+		CCDF66AE19A544590043657E /* UAShareAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDF66AC19A544590043657E /* UAShareAction.h */; };
+		CCDF66AF19A544590043657E /* UAShareAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDF66AC19A544590043657E /* UAShareAction.h */; };
+		CCDF66B019A544590043657E /* UAShareAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDF66AD19A544590043657E /* UAShareAction.m */; };
+		CCDF66B119A544590043657E /* UAShareAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDF66AD19A544590043657E /* UAShareAction.m */; };
 		CCF4462A1947D252003E04E7 /* UACustomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = CCF446281947D252003E04E7 /* UACustomEvent.h */; };
 		CCF4462C1947D252003E04E7 /* UACustomEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = CCF446291947D252003E04E7 /* UACustomEvent.m */; };
 		CCF4462F1947D265003E04E7 /* UACustomEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCF4462E1947D265003E04E7 /* UACustomEventTest.m */; };
@@ -695,6 +700,7 @@
 		CC523FAE17B985F700233005 /* UAJSONValueTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAJSONValueTransformer.h; sourceTree = "<group>"; };
 		CC523FAF17B985F700233005 /* UAJSONValueTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAJSONValueTransformer.m; sourceTree = "<group>"; };
 		CC523FC217BA8AC200233005 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		CC7BE5EA19A55C5700B3EACE /* UAShareActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAShareActionTest.m; sourceTree = "<group>"; };
 		CC7DC93D183E977100E95BB8 /* UAChannelAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAChannelAPIClient.h; sourceTree = "<group>"; };
 		CC7DC93E183E977100E95BB8 /* UAChannelAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelAPIClient.m; sourceTree = "<group>"; };
 		CC7DC93F183E977100E95BB8 /* UAChannelRegistrationPayload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAChannelRegistrationPayload.h; sourceTree = "<group>"; };
@@ -755,6 +761,8 @@
 		CCDD37C718089E5700B8866E /* UAOpenExternalURLAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAOpenExternalURLAction.m; sourceTree = "<group>"; };
 		CCDD37CC18089E6F00B8866E /* UAOpenExternalURLActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAOpenExternalURLActionTest.m; sourceTree = "<group>"; };
 		CCDF66A119A5166B0043657E /* UACustomEvent+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UACustomEvent+Internal.h"; sourceTree = "<group>"; };
+		CCDF66AC19A544590043657E /* UAShareAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAShareAction.h; sourceTree = "<group>"; };
+		CCDF66AD19A544590043657E /* UAShareAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAShareAction.m; sourceTree = "<group>"; };
 		CCF446281947D252003E04E7 /* UACustomEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACustomEvent.h; sourceTree = "<group>"; };
 		CCF446291947D252003E04E7 /* UACustomEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACustomEvent.m; sourceTree = "<group>"; };
 		CCF4462E1947D265003E04E7 /* UACustomEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACustomEventTest.m; sourceTree = "<group>"; };
@@ -1328,6 +1336,8 @@
 				CCDD379A1807019000B8866E /* UAIncomingRichPushAction.m */,
 				492ADA0E18C959CB0032C491 /* UACloseWindowAction.h */,
 				492ADA0F18C959CB0032C491 /* UACloseWindowAction.m */,
+				CCDF66AC19A544590043657E /* UAShareAction.h */,
+				CCDF66AD19A544590043657E /* UAShareAction.m */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -1362,6 +1372,7 @@
 				49E9C9C5183C28E900B7BCFF /* UAActionJSDelegateTest.m */,
 				49416D5E18C025E900A18B72 /* UALandingPageActionTest.m */,
 				CCB9990A18E23E68007F911D /* UACloseWindowActionTest.m */,
+				CC7BE5EA19A55C5700B3EACE /* UAShareActionTest.m */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -1565,6 +1576,7 @@
 				49BADE05198B0867000FF3D5 /* UATagUtils.h in Headers */,
 				49BADE06198B0868000FF3D5 /* UAUtils.h in Headers */,
 				49BADE07198B0868000FF3D5 /* UAKeychainUtils.h in Headers */,
+				CCDF66AF19A544590043657E /* UAShareAction.h in Headers */,
 				49BADE08198B0869000FF3D5 /* NSString+UAURLEncoding.h in Headers */,
 				49BADE09198B0869000FF3D5 /* UAWebViewCallData.h in Headers */,
 				49BADE0A198B086A000FF3D5 /* UAirship.h in Headers */,
@@ -1642,6 +1654,7 @@
 				CC8542B317F4B81600D2DE10 /* UAAction.h in Headers */,
 				BB8860E7159A7E9600584445 /* UALocationProviderProtocol.h in Headers */,
 				CC7DC94C183E978A00E95BB8 /* UADeviceRegistrar.h in Headers */,
+				CCDF66AE19A544590043657E /* UAShareAction.h in Headers */,
 				BB8860E8159A7E9600584445 /* UALocationProviderDelegate.h in Headers */,
 				49E9C9C1183AD42300B7BCFF /* UAWebViewCallData.h in Headers */,
 				BB8860DA159A7E9600584445 /* UAEvent.h in Headers */,
@@ -1964,6 +1977,7 @@
 				491B842F198C237F00FB7A40 /* UAAggregateActionResult.m in Sources */,
 				491B8430198C237F00FB7A40 /* UAIncomingPushAction.m in Sources */,
 				491B8431198C237F00FB7A40 /* UALandingPageAction.m in Sources */,
+				CCDF66B119A544590043657E /* UAShareAction.m in Sources */,
 				491B8432198C237F00FB7A40 /* UASyncAction.m in Sources */,
 				491B8433198C237F00FB7A40 /* UAAction+Operators.m in Sources */,
 				491B8434198C237F00FB7A40 /* UAIncomingRichPushAction.m in Sources */,
@@ -2014,6 +2028,7 @@
 			files = (
 				49226C8318A3045900D4A57A /* UAURLProtocolTest.m in Sources */,
 				76E53565194760540020335C /* UAAddCustomEventActionTest.m in Sources */,
+				CC7BE5EB19A55C5700B3EACE /* UAShareActionTest.m in Sources */,
 				7BB679151429288D00B877DB /* UAUtilsTest.m in Sources */,
 				CCD3158417CFBD5A002E93A1 /* UAPushTest.m in Sources */,
 				7649615518C644D4003AF5EE /* UAInboxPushHandlerTest.m in Sources */,
@@ -2114,6 +2129,7 @@
 				76E5356319475F8E0020335C /* UAAddCustomEventAction.m in Sources */,
 				CC8542D917F4B81600D2DE10 /* UASyncAction.m in Sources */,
 				CC8542B517F4B81600D2DE10 /* UAAction.m in Sources */,
+				CCDF66B019A544590043657E /* UAShareAction.m in Sources */,
 				BB886110159A7E9600584445 /* UAEvent.m in Sources */,
 				1F680E81189B1ECF00991E57 /* UIWebView+UAAdditions.m in Sources */,
 				CCDD379D1807019000B8866E /* UAIncomingRichPushAction.m in Sources */,

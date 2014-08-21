@@ -35,6 +35,7 @@
 #import "UAApplicationMetrics.h"
 #import "UACloseWindowAction.h"
 #import "UAAddCustomEventAction.h"
+#import "UAShareAction.h"
 
 @implementation UAActionRegistry
 @dynamic registeredEntries;
@@ -304,6 +305,12 @@ SINGLETON_IMPLEMENTATION(UAActionRegistry)
                     name:kUAAddCustomEventActionDefaultRegistryName
                predicate:^BOOL(UAActionArguments *args) {
                    return args.situation == UASituationManualInvocation || args.situation == UASituationWebViewInvocation;
+    }];
+
+    // Share action
+    UAShareAction *shareAction = [[UAShareAction alloc] init];
+    [self registerAction:shareAction names:@[kUAShareActionDefaultRegistryName, kUAShareActionDefaultRegistryAlias] predicate:^(UAActionArguments *args) {
+        return (BOOL)(args.situation != UASituationForegroundPush);
     }];
 }
 
