@@ -30,7 +30,7 @@
 NSString * const UAActionMetadataWebViewKey = @"com.urbanairship.webview";
 NSString * const UAActionMetadataPushPayloadKey = @"com.urbanairship.payload";
 NSString * const UAActionMetadataInboxMessageKey = @"com.urbanairship.message";
-
+NSString * const UAActionMetadataUserNotificationActionIDKey = @"com.urbanairship.user_notification_id";
 
 
 @implementation UAActionArguments

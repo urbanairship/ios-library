@@ -1887,13 +1887,18 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     BOOL (^runActionsCheck)(id obj) = ^(id obj) {
         NSDictionary *actions = (NSDictionary *)obj;
-        if (actions.count != 1) {
+        if (actions.count != 2) {
             return NO;
         }
 
         // Validate other push action is added
         UAActionArguments *args = [actions valueForKey:@"backgroundAction"];
         if (!args || (args.situation != UASituationBackgroundInteractiveButton || ![args.value isEqualToString:@"backgroundActionValue"])) {
+            return NO;
+        }
+
+        // Validate incoming push action is added
+        if (![actions valueForKey:kUAIncomingPushActionRegistryName]) {
             return NO;
         }
 
@@ -1956,7 +1961,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     BOOL (^runActionsCheck)(id obj) = ^(id obj) {
         NSDictionary *actions = (NSDictionary *)obj;
-        if (actions.count != 2) {
+        if (actions.count != 3) {
             return NO;
         }
 
@@ -1971,6 +1976,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
             return NO;
         }
 
+        // Validate incoming push action is added
+        if (![actions valueForKey:kUAIncomingPushActionRegistryName]) {
+            return NO;
+        }
 
         return YES;
     };

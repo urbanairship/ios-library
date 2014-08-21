@@ -536,13 +536,13 @@ static Class _uiClass;
         case UIApplicationStateBackground:
             UA_LTRACE(@"Received a notification when application state is UIApplicationStateBackground");
             situation = UASituationBackgroundPush;
-
             break;
     }
 
     // Create dictionary of actions inside the push notification
-    NSMutableDictionary *actions = [self createActionsFromNotification:notification
-                                                         withSituation:situation];
+    NSMutableDictionary *actions = [self createActionsFromPayload:notification
+                                                        situation:situation
+                                                         metadata:@{UAActionMetadataPushPayloadKey:notification}];
 
     // Add incoming push action
     UAActionArguments *incomingPushArgs = [UAActionArguments argumentsWithValue:notification
@@ -616,8 +616,18 @@ static Class _uiClass;
     }
 
     // Create dictionary of actions inside the push notification
-    NSMutableDictionary *actions = [self createActionsFromNotification:actionsPayload
-                                                         withSituation:situation];
+    NSMutableDictionary *actions = [self createActionsFromPayload:actionsPayload
+                                                         situation:situation
+                                                         metadata:@{UAActionMetadataUserNotificationActionIDKey:identifier,
+                                                                    UAActionMetadataPushPayloadKey:notification}];
+
+    // Add incoming push action
+    UAActionArguments *incomingPushArgs = [UAActionArguments argumentsWithValue:notification
+                                                                  withSituation:situation
+                                                                       metadata:@{UAActionMetadataUserNotificationActionIDKey:identifier}];
+
+    [actions setValue:incomingPushArgs forKey:kUAIncomingPushActionRegistryName];
+
 
     // Run the actions
     [UAActionRunner runActions:actions withCompletionHandler:^(UAActionResult *result) {
@@ -627,15 +637,16 @@ static Class _uiClass;
     }];
 }
 
-- (NSMutableDictionary *)createActionsFromNotification:(NSDictionary *)notification
-                                         withSituation:(UASituation)situation{
+- (NSMutableDictionary *)createActionsFromPayload:(NSDictionary *)payload
+                                        situation:(UASituation)situation
+                                         metadata:(NSDictionary *)metadata{
 
     NSMutableDictionary *actions = [NSMutableDictionary dictionary];
 
-    for (NSString *possibleActionName in notification) {
-        UAActionArguments *args = [UAActionArguments argumentsWithValue:[notification valueForKey:possibleActionName]
+    for (NSString *possibleActionName in payload) {
+        UAActionArguments *args = [UAActionArguments argumentsWithValue:[payload valueForKey:possibleActionName]
                                                           withSituation:situation
-                                                               metadata:@{UAActionMetadataPushPayloadKey: notification}];
+                                                               metadata:metadata];
 
         [actions setValue:args forKey:possibleActionName];
     }
