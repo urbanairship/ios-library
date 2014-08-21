@@ -3,11 +3,9 @@
 
 @interface UADelayOperation()
 @property(nonatomic, assign) NSTimeInterval seconds;
-#if OS_OBJECT_USE_OBJC
+
 @property(nonatomic, strong) dispatch_semaphore_t semaphore;    // GCD objects use ARC
-#else
-@property(nonatomic, assign) dispatch_semaphore_t semaphore;    // GCD object don't use ARC
-#endif
+
 @end
 
 @implementation UADelayOperation
@@ -32,12 +30,6 @@
 - (void)cancel {
     [super cancel];
     dispatch_semaphore_signal(self.semaphore);
-}
-
-- (void)dealloc {
-    #if !OS_OBJECT_USE_OBJC
-    dispatch_release(self.semaphore);
-    #endif
 }
 
 + (id)operationWithDelayInSeconds:(NSTimeInterval)seconds {

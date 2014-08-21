@@ -40,7 +40,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.eventId = [UAUtils UUID];
+        self.eventId = [NSUUID UUID].UUIDString;
         self.time = [NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]];
         return self;
     }
@@ -292,7 +292,7 @@
     if (pushId) {
         [data setValue:pushId forKey:@"push_id"];
     } else {
-        [data setValue:[UAUtils UUID] forKey:@"push_id"];
+        [data setValue:[NSUUID UUID].UUIDString forKey:@"push_id"];
     }
 
     event.data = [data mutableCopy];

@@ -114,7 +114,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     NSLog(@"Test that an alias can be set and we can receive a push.");
     NSLog(@"-----------------------------------------------------------------------------------------------");
 
-    NSString *uniqueAlias = [[UAUtils UUID] lowercaseString];
+    NSString *uniqueAlias = [[NSUUID UUID].UUIDString lowercaseString];
 
     [tester tapViewWithAccessibilityLabel:@"Token Settings"];
     [tester tapViewWithAccessibilityLabel:@"Alias"];
@@ -143,7 +143,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     NSLog(@"Test that a tag can be set.");
     NSLog(@"-----------------------------------------------------------------------------------------------");
 
-    NSString *uniqueTag = [[UAUtils UUID] lowercaseString];
+    NSString *uniqueTag = [[NSUUID UUID].UUIDString lowercaseString];
 
     [tester tapViewWithAccessibilityLabel:@"Token Settings"];
     [tester tapViewWithAccessibilityLabel:@"Tags"];

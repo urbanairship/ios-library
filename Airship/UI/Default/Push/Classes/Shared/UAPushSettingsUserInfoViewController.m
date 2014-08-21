@@ -39,6 +39,7 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     self.usernameLabel.text = [UAUser defaultUser].username ?: @"Unavailable";
 }
 
@@ -111,8 +112,6 @@
     if ([MFMailComposeViewController canSendMail]) {
         MFMailComposeViewController *mfViewController = [[MFMailComposeViewController alloc] init];
         mfViewController.mailComposeDelegate = self;
-
-
 
         NSString *messageBody = [NSString stringWithFormat:@"Your username is %@\n\nSend a test rich push at http://go.urbanairship.com", [UAUser defaultUser].username];
 

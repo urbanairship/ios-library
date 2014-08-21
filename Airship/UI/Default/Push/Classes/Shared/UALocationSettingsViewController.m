@@ -172,7 +172,10 @@
 - (void)locationService:(UALocationService*)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UALOG(@"LOCATION_AUTHORIZATION_STATUS %u", status);
 }
-- (void)locationService:(UALocationService*)service didUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation {
+- (void)locationService:(UALocationService*)service didUpdateLocations:(NSArray *)locations {
+    
+    CLLocation *newLocation = [locations lastObject];
+    
     UALOG(@"LOCATION_UPDATE LAT:%f LONG:%f", newLocation.coordinate.latitude, newLocation.coordinate.longitude);
     [self addLocationToData:newLocation];
 }

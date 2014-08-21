@@ -63,17 +63,6 @@
     return [UAKeychainUtils getDeviceID];
 }
 
-+ (NSString *) UUID {
-    //create a new UUID
-  CFUUIDRef uuidObj = CFUUIDCreate(nil);
-    
-  //get the string representation of the UUID
-    NSString *uuidString = (NSString*)CFBridgingRelease(CFUUIDCreateString(nil, uuidObj));
-    CFRelease(uuidObj);
-  
-    return uuidString;
-}
-
 + (NSString *)deviceModelName {
     size_t size;
     
@@ -212,26 +201,14 @@
     if (![[NSFileManager defaultManager] fileExistsAtPath: [url path]]) {
         return NO;
     }
-
-    if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_5_1) {
-        NSError *error = nil;
-        BOOL success = [url setResourceValue: [NSNumber numberWithBool: YES]
-                                      forKey: NSURLIsExcludedFromBackupKey error: &error];
-        if (!success) {
-            UA_LERR(@"Error excluding %@ from backup %@", [url lastPathComponent], error);
-        }
-
-        return success;
-    } else {
-        u_int8_t b = 1;
-        BOOL success = setxattr([[url path] fileSystemRepresentation], "com.apple.MobileBackup", &b, 1, 0, 0) == 0;
-
-        if (!success) {
-            UA_LERR(@"Error excluding %@ from backup using setxattr", [url lastPathComponent]);
-        }
-
-        return success;
+    NSError *error = nil;
+    BOOL success = [url setResourceValue: [NSNumber numberWithBool: YES]
+                                  forKey: NSURLIsExcludedFromBackupKey error: &error];
+    if (!success) {
+        UA_LERR(@"Error excluding %@ from backup %@", [url lastPathComponent], error);
     }
+
+    return success;
 }
 
 /**

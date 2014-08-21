@@ -186,7 +186,7 @@ static NSString *_cachedDeviceID = nil;
 + (NSString *)createDeviceID {
     //UALOG(@"Storing Username: %@ and Password: %@", username, password);
 
-    NSString *deviceID = [UAUtils UUID];
+    NSString *deviceID = [NSUUID UUID].UUIDString;
 
     NSMutableDictionary *keychainValues = [UAKeychainUtils searchDictionaryWithIdentifier:kUAKeychainDeviceIDKey];
 
