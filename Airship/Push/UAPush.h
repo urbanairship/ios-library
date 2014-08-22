@@ -279,6 +279,7 @@ SINGLETON_INTERFACE(UAPush);
  */
 @property(nonatomic) BOOL userPushNotificationsEnabled;
 
+
 /**
  * Sets the default value for userPushNotificationsEnabled. The default is `NO`.
  * After the userPushNotificationsEnabled value has been directly set, this value
@@ -317,10 +318,22 @@ SINGLETON_INTERFACE(UAPush);
 @property(nonatomic, assign) UIUserNotificationType userNotificationTypes NS_AVAILABLE_IOS(8_0);
 
 /**
- * The user notification categories. Changes to this value will not take effect
- * the next time the app registers with [[UAPush shared] updateAPNSRegistration].
+ * Custom user notification categories. Urban Airship default user notification
+ * categories will be unaffected by this field.
+ *
+ * Changes to this value will not take effect the next time the app registers
+ * with [[UAPush shared] updateAPNSRegistration].
  */
-@property(readonly) NSSet *userNotificationCategories;
+@property(nonatomic, strong) NSSet *userNotificationCategories;
+
+/**
+ * Sets authorization required for the default Urban Airship categories. Only applies
+ * to background user notification actions.
+ *
+ * Changes to this value will not take effect the next time the app registers
+ * with [[UAPush shared] updateAPNSRegistration].
+ */
+@property(nonatomic, assign) BOOL requireAuthorizationForDefaultCategories;
 
 /**
  * Set a delegate that implements the UAPushNotificationDelegate protocol. If not
@@ -352,31 +365,6 @@ SINGLETON_INTERFACE(UAPush);
  */
 - (void)updateAPNSRegistration;
 
-
-///---------------------------------------------------------------------------------------
-/// @name User Notification Categories
-///---------------------------------------------------------------------------------------
-
-/**
- * Adds a user notification category to the current set of categories. Changes to
- * this value will not take effect the next time the app registers with
- * [[UAPush shared] updateAPNSRegistration].
- */
-- (void)addUserNotificationCategory:(UIUserNotificationCategory *)category NS_AVAILABLE_IOS(8_0);
-
-/**
- * Adds a set of user notification categories to the current set of categories. Changes to
- * this value will not take effect the next time the app registers with
- * [[UAPush shared] updateAPNSRegistration].
- */
-- (void)addUserNotificationCategories:(NSSet *)categories NS_AVAILABLE_IOS(8_0);
-
-/**
- * Removes a user notification category from the current set of categories. Changes
- * to this value will not take effect the next time the app registers with
- * [[UAPush shared] updateAPNSRegistration].
- */
-- (void)removeUserNotificationCategory:(UIUserNotificationCategory *)category NS_AVAILABLE_IOS(8_0);
 
 ///---------------------------------------------------------------------------------------
 /// @name Autobadge

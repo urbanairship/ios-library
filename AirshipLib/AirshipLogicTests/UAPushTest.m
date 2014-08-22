@@ -40,6 +40,7 @@
 #import "UAEvent.h"
 #import "NSObject+HideClass.h"
 #import "UAInteractiveNotificationEvent.h"
+#import "UADefaultUserNotificationCategories.h"
 
 
 @interface UAPushTest : XCTestCase
@@ -53,6 +54,7 @@
 @property(nonatomic, strong) id mockUAUtils;
 @property(nonatomic, strong) id mockUAUser;
 @property(nonatomic, strong) id mockUIUserNotificationSettings;
+@property(nonatomic, strong) id mockDefaultUserNotificationCategories;
 
 @property(nonatomic, strong) UAPush *push;
 @property(nonatomic, strong) NSDictionary *notification;
@@ -124,6 +126,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [[[self.mockUAUser stub] andReturn:self.mockUAUser] defaultUser];
     [[[self.mockUAUser stub] andReturn:@"someUser"] username];
 
+    self.mockDefaultUserNotificationCategories = [OCMockObject niceMockForClass:[UADefaultUserNotificationCategories class]];
 
     self.push.registrationDelegate = self.mockRegistrationDelegate;
 }
@@ -145,10 +148,12 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [self.mockUAUtils stopMocking];
     [self.mockUAUser stopMocking];
     [self.mockUIUserNotificationSettings stopMocking];
-    [super tearDown];
+    [self.mockDefaultUserNotificationCategories stopMocking];
 
     // We hide this class in a few tests. Its only available on iOS8.
     [UIUserNotificationSettings revealClass];
+
+    [super tearDown];
 }
 
 - (void)testSetDeviceToken {
@@ -456,12 +461,14 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  */
 - (void)testUserPushNotificationsEnabledIOS8 {
     self.push.userPushNotificationsEnabled = NO;
+    [[[self.mockDefaultUserNotificationCategories stub] andReturn:[NSSet set]] defaultCategoriesRequireAuth:YES];
 
     // Make sure push is set to NO
     XCTAssertFalse(self.push.userPushNotificationsEnabled, @"userPushNotificationsEnabled should default to NO");
 
     UIUserNotificationSettings *expected = [UIUserNotificationSettings settingsForTypes:self.push.userNotificationTypes
-                                                                             categories:self.push.userNotificationCategories];
+                                                                             categories:[NSSet set]];
+
     [[self.mockedApplication expect] registerUserNotificationSettings:expected];
     self.push.userPushNotificationsEnabled = YES;
 
@@ -725,7 +732,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  */
 - (void)testUpdateAPNSRegistrationUserNotificationsEnabledIOS8 {
     self.push.userPushNotificationsEnabled = YES;
-    [self.push addUserNotificationCategory:[[UIUserNotificationCategory alloc] init]];
+    [[[self.mockDefaultUserNotificationCategories stub] andReturn:[NSSet set]] defaultCategoriesRequireAuth:YES];
+
+    self.push.userNotificationCategories = [NSSet setWithArray:@[[[UIUserNotificationCategory alloc] init]]];
 
     UIUserNotificationSettings *expected = [UIUserNotificationSettings settingsForTypes:self.push.userNotificationTypes
                                                                              categories:self.push.userNotificationCategories];
@@ -735,8 +744,87 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     XCTAssertNoThrow([self.mockedApplication verify],
                      @"should register for user notification settings when push is enabled");
+}
+
+
+/**
+ * Test setting requireAuthorizationForDefaultCategories requests the correct
+ * defaults user notification categories.
+ */
+- (void)testRequireAuthorizationForDefaultCategories {
+    self.push.userNotificationCategories = nil;
+    self.push.userPushNotificationsEnabled = YES;
+
+    NSSet *defaultSet = [NSSet setWithArray:@[[[UIUserNotificationCategory alloc] init], [[UIUserNotificationCategory alloc] init]]];
+    NSSet *requiredAuthorizationSet = [NSSet setWithArray:@[[[UIUserNotificationCategory alloc] init]]];
+    [[[self.mockDefaultUserNotificationCategories stub] andReturn:defaultSet] defaultCategoriesRequireAuth:NO];
+    [[[self.mockDefaultUserNotificationCategories stub] andReturn:requiredAuthorizationSet] defaultCategoriesRequireAuth:YES];
+
+
+    self.push.requireAuthorizationForDefaultCategories = NO;
+
+    UIUserNotificationSettings *expected = [UIUserNotificationSettings settingsForTypes:self.push.userNotificationTypes
+                                                                             categories:defaultSet];
+
+    [[self.mockedApplication expect] registerUserNotificationSettings:expected];
+    [self.push updateAPNSRegistration];
+
+    XCTAssertNoThrow([self.mockedApplication verify],
+                     @"should register with default categories without requiring authorization");
+
+
+
+    self.push.requireAuthorizationForDefaultCategories = YES;
+
+    expected = [UIUserNotificationSettings settingsForTypes:self.push.userNotificationTypes
+                                                 categories:requiredAuthorizationSet];
+
+    [[self.mockedApplication expect] registerUserNotificationSettings:expected];
+    [self.push updateAPNSRegistration];
+
+    XCTAssertNoThrow([self.mockedApplication verify],
+                     @"should register with requiredAuthorizationSet defaults categories");
+}
+
+/**
+ * Test the user notification categories used to register is the union between
+ * the default categories and the custom categories.
+ */
+- (void)testUserNotificationCategories {
+    UIMutableUserNotificationCategory *defaultCategory = [[UIMutableUserNotificationCategory alloc] init];
+    defaultCategory.identifier = @"defaultCategory";
+
+    UIMutableUserNotificationCategory *customCategory = [[UIMutableUserNotificationCategory alloc] init];
+    customCategory.identifier = @"customCategory";
+
+    UIMutableUserNotificationCategory *anotherCustomCategory = [[UIMutableUserNotificationCategory alloc] init];
+    anotherCustomCategory.identifier = @"anotherCustomCategory";
+
+    NSSet *defaultSet = [NSSet setWithArray:@[defaultCategory]];
+    NSSet *customSet = [NSSet setWithArray:@[customCategory, anotherCustomCategory]];
+
+    [[[self.mockDefaultUserNotificationCategories stub] andReturn:defaultSet] defaultCategoriesRequireAuth:self.push.requireAuthorizationForDefaultCategories];
+    self.push.userNotificationCategories = customSet;
+
+
+    [[self.mockedApplication expect] registerUserNotificationSettings:[OCMArg checkWithBlock:^BOOL(id obj) {
+        NSSet *categories = ((UIUserNotificationSettings *)obj).categories;
+
+        // Should only have 3 categories - defaultCategory, customCategory, anotherCustomCategory.
+        if (categories.count != 3) {
+            return NO;
+        }
+
+        return YES;
+    }]];
+
+    [self.push updateAPNSRegistration];
+
+    XCTAssertNoThrow([self.mockedApplication verify],
+                     @"Registered categories should be the union of defaults and customs");
 
 }
+
 
 /**
  * Test update apns registration when user notifications are disabled on >= iOS8.
@@ -2072,6 +2160,28 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                      @"Analytics should be notified of the incoming notification");
 
     XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
+}
+
+/**
+ * Test setting user notification categories filters out any category with the reserved
+ * prefix "ua_".
+ */
+- (void)testSettingUserNotificationCategories {
+    UIMutableUserNotificationCategory *uaCategory = [[UIMutableUserNotificationCategory alloc] init];
+    uaCategory.identifier = @"ua_category";
+
+    UIMutableUserNotificationCategory *customCategory = [[UIMutableUserNotificationCategory alloc] init];
+    customCategory.identifier = @"customCategory";
+
+    UIMutableUserNotificationCategory *anotherCustomCategory = [[UIMutableUserNotificationCategory alloc] init];
+    anotherCustomCategory.identifier = @"anotherCustomCategory";
+
+    self.push.userNotificationCategories = [NSSet setWithArray:@[uaCategory, customCategory, anotherCustomCategory]];
+
+    XCTAssertEqual(2, self.push.userNotificationCategories.count, @"Should filter out any categories with prefix ua_");
+    XCTAssertFalse([self.push.userNotificationCategories containsObject:uaCategory]);
+    XCTAssertTrue([self.push.userNotificationCategories containsObject:customCategory]);
+    XCTAssertTrue([self.push.userNotificationCategories containsObject:anotherCustomCategory]);
 }
 
 @end

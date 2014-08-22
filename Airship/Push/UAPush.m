@@ -38,6 +38,7 @@
 #import "UAChannelRegistrationPayload.h"
 #import "UAUser.h"
 #import "UAInteractiveNotificationEvent.h"
+#import "UADefaultUserNotificationCategories.h"
 
 #define kUAMinTagLength 1
 #define kUAMaxTagLength 127
@@ -120,9 +121,8 @@ static Class _uiClass;
         self.deviceRegistrar = [[UADeviceRegistrar alloc] init];
         self.deviceRegistrar.delegate = self;
 
-        self.mutableUserNotificationCategories = [NSMutableSet set];
         self.deviceTagsEnabled = YES;
-
+        self.requireAuthorizationForDefaultCategories = YES;
         self.backgroundPushNotificationsEnabledByDefault = YES;
 
         self.userNotificationTypes = UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound;
@@ -265,22 +265,6 @@ static Class _uiClass;
     [self setTags:[updatedTags allObjects]];
 }
 
-- (void)addUserNotificationCategory:(UIUserNotificationCategory *)category {
-    [self.mutableUserNotificationCategories addObject:[category copy]];
-}
-
-- (void)addUserNotificationCategories:(NSSet *)categories {
-    [self.mutableUserNotificationCategories unionSet:categories];
-}
-
-- (void)removeUserNotificationCategory:(UIUserNotificationCategory *)category {
-    [self.mutableUserNotificationCategories removeObject:category];
-}
-
-- (NSSet *)userNotificationCategories {
-    return [NSSet setWithSet:self.mutableUserNotificationCategories];
-}
-
 - (BOOL)userPushNotificationsEnabled {
     return [[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey];
 }
@@ -310,6 +294,22 @@ static Class _uiClass;
     if (enabled != previousValue) {
         [self updateRegistration];
     }
+}
+
+- (void)setUserNotificationCategories:(NSSet *)categories {
+    _userNotificationCategories = [categories filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+        if (![evaluatedObject isKindOfClass:[UIUserNotificationCategory class]]) {
+            return NO;
+        }
+
+        UIUserNotificationCategory *category = evaluatedObject;
+        if ([category.identifier hasPrefix:@"ua_"]) {
+            UA_LERR(@"Ignoring category %@, only Urban Airship user notification categories are allowed to have prefix ua_.", category.identifier);
+            return NO;
+        }
+
+        return YES;
+    }]];
 }
 
 - (NSDictionary *)quietTime {
@@ -810,9 +810,13 @@ BOOL deferChannelCreationOnForeground = false;
 
     if ([UIUserNotificationSettings class]) {
         if (self.userPushNotificationsEnabled) {
-            UA_LDEBUG(@"Registering for user notification types %u.", self.userNotificationTypes);
+
+            NSMutableSet *categories = [NSMutableSet setWithSet:[UADefaultUserNotificationCategories defaultCategoriesRequireAuth:self.requireAuthorizationForDefaultCategories]];
+            [categories unionSet:self.userNotificationCategories];
+
+            UA_LDEBUG(@"Registering for user notification types %ld.", (long)self.userNotificationTypes);
             [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:self.userNotificationTypes
-                                                                                            categories:self.userNotificationCategories]];
+                                                                                            categories:categories]];
         } else {
             UA_LDEBUG(@"Unregistering for user notification types.");
             [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone
@@ -820,7 +824,7 @@ BOOL deferChannelCreationOnForeground = false;
         }
     } else {
         if (self.userPushNotificationsEnabled) {
-            UA_LDEBUG(@"Registering for remote notification types %u.", _notificationTypes);
+            UA_LDEBUG(@"Registering for remote notification types %ld.", (long)_notificationTypes);
             [[UIApplication sharedApplication] registerForRemoteNotificationTypes:_notificationTypes];
         } else {
             UA_LDEBUG(@"Unregistering for remote notifications.");

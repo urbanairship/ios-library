@@ -95,13 +95,6 @@ extern UAPushUserInfoKey *const UAPushChannelCreationOnForeground;
 @property(nonatomic, assign) UIBackgroundTaskIdentifier registrationBackgroundTask;
 
 /**
- * The user notification categories. Changes to this value will not take effect
- * the next time the app registers with [UAPush updateApnsRegistration].
- */
-@property(nonatomic, strong) NSMutableSet *mutableUserNotificationCategories;
-
-
-/**
  * Get the local time zone, considered the default.
  */
 - (NSTimeZone *)defaultTimeZoneForQuietTime;
