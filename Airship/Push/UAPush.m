@@ -42,7 +42,7 @@
 
 #define kUAMinTagLength 1
 #define kUAMaxTagLength 127
-#define kUANotificationActionKey @"com.urbanairship.notification_actions"
+#define kUANotificationActionKey @"com.urbanairship.interactive_actions"
 
 UAPushSettingsKey *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 UAPushSettingsKey *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";

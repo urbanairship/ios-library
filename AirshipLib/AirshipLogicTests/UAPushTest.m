@@ -80,7 +80,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                                    @"sound": @"cat",
                                    @"category": @"notificationCategory"
                            },
-                           @"com.urbanairship.notification_actions": @{
+                           @"com.urbanairship.interactive_actions": @{
                                    @"backgroundIdentifier": @{
                                            @"backgroundAction": @"backgroundActionValue"
                                    },
