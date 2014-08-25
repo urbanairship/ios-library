@@ -40,7 +40,7 @@
 #import "UAEvent.h"
 #import "NSObject+HideClass.h"
 #import "UAInteractiveNotificationEvent.h"
-#import "UADefaultUserNotificationCategories.h"
+#import "UAUserNotificationCategories+Internal.h"
 
 
 @interface UAPushTest : XCTestCase
@@ -126,7 +126,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [[[self.mockUAUser stub] andReturn:self.mockUAUser] defaultUser];
     [[[self.mockUAUser stub] andReturn:@"someUser"] username];
 
-    self.mockDefaultUserNotificationCategories = [OCMockObject niceMockForClass:[UADefaultUserNotificationCategories class]];
+    self.mockDefaultUserNotificationCategories = [OCMockObject niceMockForClass:[UAUserNotificationCategories class]];
 
     self.push.registrationDelegate = self.mockRegistrationDelegate;
 }
@@ -461,7 +461,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  */
 - (void)testUserPushNotificationsEnabledIOS8 {
     self.push.userPushNotificationsEnabled = NO;
-    [[[self.mockDefaultUserNotificationCategories stub] andReturn:[NSSet set]] defaultCategoriesRequireAuth:YES];
+    [[[self.mockDefaultUserNotificationCategories stub] andReturn:[NSSet set]] defaultCategoriesWithRequireAuth:YES];
 
     // Make sure push is set to NO
     XCTAssertFalse(self.push.userPushNotificationsEnabled, @"userPushNotificationsEnabled should default to NO");
@@ -732,7 +732,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  */
 - (void)testUpdateAPNSRegistrationUserNotificationsEnabledIOS8 {
     self.push.userPushNotificationsEnabled = YES;
-    [[[self.mockDefaultUserNotificationCategories stub] andReturn:[NSSet set]] defaultCategoriesRequireAuth:YES];
+    [[[self.mockDefaultUserNotificationCategories stub] andReturn:[NSSet set]] defaultCategoriesWithRequireAuth:YES];
 
     self.push.userNotificationCategories = [NSSet setWithArray:@[[[UIUserNotificationCategory alloc] init]]];
 
@@ -757,8 +757,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     NSSet *defaultSet = [NSSet setWithArray:@[[[UIUserNotificationCategory alloc] init], [[UIUserNotificationCategory alloc] init]]];
     NSSet *requiredAuthorizationSet = [NSSet setWithArray:@[[[UIUserNotificationCategory alloc] init]]];
-    [[[self.mockDefaultUserNotificationCategories stub] andReturn:defaultSet] defaultCategoriesRequireAuth:NO];
-    [[[self.mockDefaultUserNotificationCategories stub] andReturn:requiredAuthorizationSet] defaultCategoriesRequireAuth:YES];
+    [[[self.mockDefaultUserNotificationCategories stub] andReturn:defaultSet] defaultCategoriesWithRequireAuth:NO];
+    [[[self.mockDefaultUserNotificationCategories stub] andReturn:requiredAuthorizationSet] defaultCategoriesWithRequireAuth:YES];
 
 
     self.push.requireAuthorizationForDefaultCategories = NO;
@@ -803,7 +803,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     NSSet *defaultSet = [NSSet setWithArray:@[defaultCategory]];
     NSSet *customSet = [NSSet setWithArray:@[customCategory, anotherCustomCategory]];
 
-    [[[self.mockDefaultUserNotificationCategories stub] andReturn:defaultSet] defaultCategoriesRequireAuth:self.push.requireAuthorizationForDefaultCategories];
+    [[[self.mockDefaultUserNotificationCategories stub] andReturn:defaultSet] defaultCategoriesWithRequireAuth:self.push.requireAuthorizationForDefaultCategories];
     self.push.userNotificationCategories = customSet;
 
 
