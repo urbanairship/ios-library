@@ -34,7 +34,10 @@
         // signal completion
         [self.sync continue];
     }];
+
+    [UAHTTPConnection succeed];
 }
+
 
 - (void)tearDown {
     // Tear-down code here.
@@ -44,6 +47,7 @@
 }
 
 /* tests */
+
 
 - (void)testDefaults {
     XCTAssertEqual(self.operation.isConcurrent, YES, @"UAHTTPConnectionOperations are concurrent (asynchronous)");
@@ -75,11 +79,12 @@
 - (void)testPreemptiveCancel {
     [self.operation cancel];
     XCTAssertEqual(self.operation.isCancelled, YES, @"you can cancel operations before they have started");
-    [self.operation start];
 
+    [self.operation start];
     XCTAssertEqual(self.operation.isExecuting, NO, @"start should have no effect after cancellation");
     XCTAssertEqual(self.operation.isFinished, YES, @"cancelled operations always move to the finished state");
 }
+
 
 - (void)testQueueCancel {
     //create a serial queue
@@ -114,9 +119,7 @@
     [self.operation start];
     [self.operation cancel];
 
-    [self.sync wait];
-
-    XCTAssertEqual(self.operation.isCancelled, YES, @"the operation should now be canceled");
+    XCTAssertEqual(self.operation.isCancelled, YES, @"operation should have moved to the cancelled state");
     XCTAssertEqual(self.operation.isExecuting, NO, @"start should have no effect after cancellation");
     XCTAssertEqual(self.operation.isFinished, YES, @"cancelled operations always move to the finished state");
 }
