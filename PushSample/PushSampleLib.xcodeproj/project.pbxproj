@@ -37,7 +37,7 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		1F3CC4A5165C2D4F008526E3 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F3CC4A4165C2D4F008526E3 /* Default-568h@2x.png */; };
-		1F4EDB491831B2E700F77343 /* libUAirship-4.0.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-4.0.1.a */; };
+		1F4EDB491831B2E700F77343 /* libUAirship-4.0.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-4.0.2.a */; };
 		1F6DA58712F9F61E00496A5C /* UAPushNotificationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F6DA58612F9F61E00496A5C /* UAPushNotificationHandler.m */; };
 		1F6DA58912F9FEC800496A5C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F6DA58812F9FEC800496A5C /* AudioToolbox.framework */; };
 		1F79711312DE3BFB00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79711212DE3BFB00D4937F /* AirshipConfig.plist */; };
@@ -174,6 +174,11 @@
 		BBEFB0301507F65700976645 /* UALocationServicesApplicationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BBEFB02D1507F65700976645 /* UALocationServicesApplicationTest.m */; };
 		BBEFB0321507F68500976645 /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0311507F68500976645 /* libOCMock.a */; };
 		BBEFB0521507F76400976645 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0101507F37200976645 /* CoreLocation.framework */; };
+		CC070C7219ABB72A00E91553 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CC070C7119ABB72A00E91553 /* Settings.bundle */; };
+		CC070C7319ABB72A00E91553 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CC070C7119ABB72A00E91553 /* Settings.bundle */; };
+		CC070C7419ABB72A00E91553 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CC070C7119ABB72A00E91553 /* Settings.bundle */; };
+		CC070C7519ABB72A00E91553 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CC070C7119ABB72A00E91553 /* Settings.bundle */; };
+		CC070C7619ABB72A00E91553 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CC070C7119ABB72A00E91553 /* Settings.bundle */; };
 		CC523FCE17BA8E6D00233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FCB17BA8E6600233005 /* CoreData.framework */; };
 		CC523FCF17BA8E7300233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FCB17BA8E6600233005 /* CoreData.framework */; };
 		D5A3F63512C15636009731BE /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F63412C15636009731BE /* Icon@2x.png */; };
@@ -405,6 +410,7 @@
 		BBEFB0251507F3A400976645 /* AirshipApplicationTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AirshipApplicationTests-Prefix.pch"; sourceTree = "<group>"; };
 		BBEFB02D1507F65700976645 /* UALocationServicesApplicationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationServicesApplicationTest.m; sourceTree = "<group>"; };
 		BBEFB0311507F68500976645 /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = ../TestCommon/OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
+		CC070C7119ABB72A00E91553 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		CC523FCB17BA8E6600233005 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		D5A3F63412C15636009731BE /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		D5A3F63612C15644009731BE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
@@ -425,7 +431,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1F4EDB491831B2E700F77343 /* libUAirship-4.0.1.a in Frameworks */,
+				1F4EDB491831B2E700F77343 /* libUAirship-4.0.2.a in Frameworks */,
 				CC523FCF17BA8E7300233005 /* CoreData.framework in Frameworks */,
 				BB75D9AD151BEAAC00F4241E /* MapKit.framework in Frameworks */,
 				BBEFB0111507F37200976645 /* CoreLocation.framework in Frameworks */,
@@ -674,6 +680,7 @@
 		18C02951124F216B00D49CD5 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				CC070C7119ABB72A00E91553 /* Settings.bundle */,
 				1F7FD61512F8E39900317B96 /* cat.caf */,
 				1F7FD61612F8E39900317B96 /* cow.caf */,
 				1F7FD61712F8E39900317B96 /* frog.caf */,
@@ -691,7 +698,7 @@
 		18C02963124F21B800D49CD5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BBC923F515AC8F6000EE7C2A /* libUAirship-4.0.1.a */,
+				BBC923F515AC8F6000EE7C2A /* libUAirship-4.0.2.a */,
 				7B909D40142935C900D0AB36 /* AirshipLogicTests.xctest */,
 				4906F3A519905B5600F27AF1 /* AirshipKit.framework */,
 			);
@@ -1061,10 +1068,10 @@
 			remoteRef = 7B909D3F142935C900D0AB36 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BBC923F515AC8F6000EE7C2A /* libUAirship-4.0.1.a */ = {
+		BBC923F515AC8F6000EE7C2A /* libUAirship-4.0.2.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-4.0.1.a";
+			path = "libUAirship-4.0.2.a";
 			remoteRef = BBC923F415AC8F6000EE7C2A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1107,6 +1114,7 @@
 				1F7FD5F012F8DE2200317B96 /* UAPushSettingsSoundsViewController.xib in Resources */,
 				1F7FD61912F8E39900317B96 /* cat.caf in Resources */,
 				1F7FD61A12F8E39900317B96 /* cow.caf in Resources */,
+				CC070C7219ABB72A00E91553 /* Settings.bundle in Resources */,
 				1F7FD61B12F8E39900317B96 /* frog.caf in Resources */,
 				1F7FD61C12F8E39900317B96 /* pig.caf in Resources */,
 				1F86D94F13007F790021ABF3 /* UAPushLocalization.bundle in Resources */,
@@ -1153,6 +1161,7 @@
 				4906F36C19905B5500F27AF1 /* UAPushSettingsSoundsViewController.xib in Resources */,
 				4906F36D19905B5500F27AF1 /* cat.caf in Resources */,
 				4906F36E19905B5500F27AF1 /* cow.caf in Resources */,
+				CC070C7319ABB72A00E91553 /* Settings.bundle in Resources */,
 				4906F36F19905B5500F27AF1 /* frog.caf in Resources */,
 				4906F37019905B5500F27AF1 /* pig.caf in Resources */,
 				4906F37119905B5500F27AF1 /* UAPushLocalization.bundle in Resources */,
@@ -1167,6 +1176,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC070C7519ABB72A00E91553 /* Settings.bundle in Resources */,
 				76B14D7317ECC4D400377362 /* AirshipConfig.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1175,6 +1185,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC070C7619ABB72A00E91553 /* Settings.bundle in Resources */,
 				769AFCFD18AD4C34006696A9 /* AirshipConfig.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1183,6 +1194,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC070C7419ABB72A00E91553 /* Settings.bundle in Resources */,
 				BBEFB0211507F3A400976645 /* InfoPlist.strings in Resources */,
 				BB6B828C15892C0D00C42B03 /* TagTest.plist in Resources */,
 				BB8EDF03159D07B400534E28 /* deviceToken.data in Resources */,

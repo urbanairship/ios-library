@@ -46,6 +46,7 @@
 		BB935DB1152B614A006E6A92 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB935DB0152B614A006E6A92 /* MapKit.framework */; };
 		BB935DB4152B61DB006E6A92 /* UALocationSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BB935DB2152B61DB006E6A92 /* UALocationSettingsViewController.xib */; };
 		BB935DB5152B61DB006E6A92 /* UAMapPresentationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BB935DB3152B61DB006E6A92 /* UAMapPresentationViewController.xib */; };
+		CC070C7D19ABBDA500E91553 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CC070C7C19ABBDA500E91553 /* Settings.bundle */; };
 		D5184E841315F2F900A40CAC /* UAPushNotificationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D5184E7C1315F2F900A40CAC /* UAPushNotificationHandler.m */; };
 		D5184E851315F2F900A40CAC /* UAPushSettingsTagsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D5184E7D1315F2F900A40CAC /* UAPushSettingsTagsViewController.m */; };
 		D5184E861315F2F900A40CAC /* UAPushSettingsSoundsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D5184E7F1315F2F900A40CAC /* UAPushSettingsSoundsViewController.m */; };
@@ -130,6 +131,7 @@
 		BB935DB0152B614A006E6A92 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		BB935DB2152B61DB006E6A92 /* UALocationSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UALocationSettingsViewController.xib; sourceTree = "<group>"; };
 		BB935DB3152B61DB006E6A92 /* UAMapPresentationViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAMapPresentationViewController.xib; sourceTree = "<group>"; };
+		CC070C7C19ABBDA500E91553 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		D5184E7C1315F2F900A40CAC /* UAPushNotificationHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushNotificationHandler.m; sourceTree = "<group>"; };
 		D5184E7D1315F2F900A40CAC /* UAPushSettingsTagsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsTagsViewController.m; sourceTree = "<group>"; };
 		D5184E7E1315F2F900A40CAC /* UAPushSettingsTagsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsTagsViewController.h; sourceTree = "<group>"; };
@@ -377,6 +379,7 @@
 		18C02951124F216B00D49CD5 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				CC070C7C19ABBDA500E91553 /* Settings.bundle */,
 				D5184E941315F39C00A40CAC /* pig.caf */,
 				D5184E951315F39C00A40CAC /* frog.caf */,
 				D5184E961315F39C00A40CAC /* cow.caf */,
@@ -532,6 +535,7 @@
 				D5184E8E1315F33900A40CAC /* UAPushSettingsAddTagViewController.xib in Resources */,
 				D5184E8F1315F33900A40CAC /* UAPushLocalization.bundle in Resources */,
 				D5184E981315F39C00A40CAC /* pig.caf in Resources */,
+				CC070C7D19ABBDA500E91553 /* Settings.bundle in Resources */,
 				D5184E991315F39C00A40CAC /* frog.caf in Resources */,
 				D5184E9A1315F39C00A40CAC /* cow.caf in Resources */,
 				D5184E9B1315F39C00A40CAC /* cat.caf in Resources */,
