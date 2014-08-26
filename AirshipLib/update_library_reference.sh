@@ -51,9 +51,10 @@ dest_lib_root="${SRCROOT}/../Airship"
 echo "remove old library $lib_base_name*.${EXECUTABLE_EXTENSION}"
 find "$dest_lib_root" -d 1 -name "$lib_base_name*.${EXECUTABLE_EXTENSION}" -exec rm {} \;
 
-# Copies the lib to the Airship folder for sample projects to use (not for packaging)
+# Copies the lib and framework to the Airship folder
 echo "copy *.$EXECUTABLE_EXTENSION from ${BINARY_DIR} to $dest_lib_root"
 cp "${BINARY_DIR}"/*.$EXECUTABLE_EXTENSION "$dest_lib_root"
+cp -R "${BINARY_DIR}"/*.framework "$dest_lib_root"
 
 for sample_prj_root in "${SRCROOT}"/../*Sample
 do
