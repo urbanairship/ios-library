@@ -100,27 +100,20 @@
     [self didChangeValueForKey:@"isFinished"];
 }
 
-- (void)cancelConnectionOnMainThread {
-    [self.connection cancel];
-
+- (void)cancel {
+    //the super call affects the isCancelled KVO value, synchronize to avoid a race
     @synchronized(self) {
+        [super cancel];
+
+        [self.connection cancel];
+
         if (self.isExecuting) {
             [self finish];
         }
     }
 }
 
-- (void)cancel {
-    //the super call affects the isCancelled KVO value, synchronize to avoid a race
-    @synchronized(self) {
-        [super cancel];
-    }
-
-    //since NSURLConnection is asynchronous and designed be used from the main thread, perform connection cancellation there
-    [self performSelectorOnMainThread:@selector(cancelConnectionOnMainThread) withObject:nil waitUntilDone:NO];
-}
-
-- (void)startConnectionOnMainThread {
+- (void)start {
 
     UAHTTPConnectionSuccessBlock onConnectionSuccess = ^(UAHTTPRequest *request) {
         if (self.successBlock) {
@@ -141,11 +134,6 @@
         }
     };
 
-    self.connection = [UAHTTPConnection connectionWithRequest:self.request successBlock:onConnectionSuccess failureBlock:onConnectionFailure];
-    [self.connection start];
-}
-
-- (void)start {
     //synchronize change to the isExecuting KVO value
     @synchronized(self) {
         //we may have already been cancelled at this point, in which case finish and retrun
@@ -154,9 +142,11 @@
             return;
         }
         self.isExecuting = YES;
+
+        self.connection = [UAHTTPConnection connectionWithRequest:self.request successBlock:onConnectionSuccess failureBlock:onConnectionFailure];
+        self.connection.delegateQueue = [NSOperationQueue mainQueue];
+        [self.connection start];
     }
-    //since NSURLConnection is asynchronous and designed be used from the main thread, perform connection setup/start there
-    [self performSelectorOnMainThread:@selector(startConnectionOnMainThread) withObject:nil waitUntilDone:NO];
 }
 
 - (void)cleanup {
