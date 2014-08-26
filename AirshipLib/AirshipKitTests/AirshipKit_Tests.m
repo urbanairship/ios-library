@@ -4,6 +4,10 @@
 
 #import <AirshipKit/AirshipKit.h>
 
+/**
+ * Empty test class that will fail to compile if
+ * AirshipKit has a header mismatch with AirshipLib.h
+ */
 @interface AirshipKit_Tests : XCTestCase
 @end
 
