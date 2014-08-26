@@ -46,6 +46,7 @@
           "category_id" : [
               {
                   "identifier" : "action id",
+                  "title_resource" : "action title resource",
                   "title" : "action title",
                    "foreground" : @YES,
                   "authenticationRequired" : @NO,
