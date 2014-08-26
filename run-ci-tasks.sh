@@ -35,5 +35,9 @@ mkdir -p test-output
 # Run our Logic Tests
 xcrun xcodebuild -destination 'platform=iOS Simulator,OS=8.0,name=iPhone 5s' -project AirshipLib/AirshipLib.xcodeproj -scheme AirshipLib test | tee test-output/XCTEST-LOGIC.out
 
+# Run AirshipKit Tests
+xcrun xcodebuild -destination 'platform=iOS Simulator,OS=8.0,name=iPhone 5s' -project AirshipLib/AirshipLib.xcodeproj -scheme AirshipKit test | tee test-output/XCTEST-AIRSHIPKIT.out
+
 # Run our Application Tests
 xcrun xcodebuild -destination 'platform=iOS Simulator,OS=8.0,name=iPhone 5s' -project PushSample/PushSampleLib.xcodeproj -scheme PushSample test | tee test-output/XCTEST-APPLICATION.out
+
