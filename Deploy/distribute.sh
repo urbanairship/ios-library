@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -ex
 
 # Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 #
@@ -46,6 +46,11 @@ mkdir -p $OUTPUT_PATH
 ./$SCRIPT_DIRECTORY/package_airshiplib.sh $OUTPUT_PATH
 ./$SCRIPT_DIRECTORY/package_sample.sh $SCRIPT_DIRECTORY/../InboxSample $OUTPUT_PATH
 ./$SCRIPT_DIRECTORY/package_sample.sh $SCRIPT_DIRECTORY/../PushSample $OUTPUT_PATH
+"./${ROOT_PATH}/build_docs.sh"
+
+# Copy the generated docs
+mkdir -p "${OUTPUT_PATH}/reference-docs/"
+cp -R "${ROOT_PATH}/docs/html/" "${OUTPUT_PATH}/reference-docs/"
 
 # Rename InboxSample to RichPushSample
 mv "${OUTPUT_PATH}/InboxSample" "${OUTPUT_PATH}/RichPushSample"
@@ -56,7 +61,7 @@ cp "${ROOT_PATH}/README.rst" "${OUTPUT_PATH}"
 cp "${ROOT_PATH}/LICENSE" "${OUTPUT_PATH}"
 
 cd $OUTPUT_PATH
-for PACKAGE in RichPushSample PushSample Airship LICENSE CHANGELOG README.rst; do
+for PACKAGE in RichPushSample PushSample Airship reference-docs LICENSE CHANGELOG README.rst; do
 	zip -r libUAirship-latest.zip $PACKAGE
 done
 cd -

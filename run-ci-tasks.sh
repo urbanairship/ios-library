@@ -27,8 +27,6 @@ xcode-select --print-path
 
 ./Deploy/distribute.sh
 
-./build_docs.sh
-
 ./mock_setup.sh
 
 rm -rf test-output
