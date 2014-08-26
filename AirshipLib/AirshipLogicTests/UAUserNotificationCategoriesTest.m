@@ -36,7 +36,7 @@
     NSString *plistPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"CustomNotificationCategories" ofType:@"plist"];
     NSSet *categories = [UAUserNotificationCategories createCategoriesFromFile:plistPath];
 
-    XCTAssertEqual(2, categories.count);
+    XCTAssertEqual(3, categories.count);
 
     // Share category
     UIUserNotificationCategory *share = [self findCategoryById:@"share_category" set:categories];
@@ -74,6 +74,20 @@
     XCTAssertEqual(UIUserNotificationActivationModeBackground, noAction.activationMode);
     XCTAssertTrue(noAction.authenticationRequired);
     XCTAssertTrue(noAction.destructive);
+
+    // Follow category
+    UIUserNotificationCategory *follow = [self findCategoryById:@"follow_category" set:categories];
+    XCTAssertNotNil(follow);
+    XCTAssertEqual(1, [share actionsForContext:UIUserNotificationActionContextDefault].count);
+    XCTAssertEqual(1, [share actionsForContext:UIUserNotificationActionContextMinimal].count);
+
+    // Follow action in follow category
+    UIUserNotificationAction *followAction = [self findActionById:@"follow_button" category:follow];
+    XCTAssertNotNil(followAction);
+    XCTAssertEqualObjects(@"Follow", followAction.title);
+    XCTAssertEqual(UIUserNotificationActivationModeForeground, followAction.activationMode);
+    XCTAssertFalse(followAction.authenticationRequired);
+    XCTAssertFalse(followAction.destructive);
 }
 
 - (void)testCreateFromInvalidPlist {

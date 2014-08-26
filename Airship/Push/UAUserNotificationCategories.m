@@ -52,10 +52,18 @@
 + (UIUserNotificationCategory *)createYesNoForegroundCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"yes",
                            @"foreground": @YES,
-                           @"title": @"Yes"},
+                           @"title": NSLocalizedStringWithDefaultValue(@"ua_yes_no_foreground_yes",
+                                                                       nil,
+                                                                       [NSBundle mainBundle],
+                                                                       @"Yes",
+                                                                       "Button title for yes when app is in foreground")},
                          @{@"identifier": @"no",
                            @"foreground": @NO,
-                           @"title": @"No",
+                           @"title": NSLocalizedStringWithDefaultValue(@"ua_yes_no_foreground_no",
+                                                                       nil,
+                                                                       [NSBundle mainBundle],
+                                                                       @"No",
+                                                                       "Button title for no when app is in foreground"),
                            @"authenticationRequired":@(requireAuth)}];
 
     return [self createCategory:@"ua_yes_no_foreground" actions:actions];
@@ -64,11 +72,19 @@
 + (UIUserNotificationCategory *)createYesNoBackgroundCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"yes",
                            @"foreground": @NO,
-                           @"title": @"Yes",
+                           @"title": NSLocalizedStringWithDefaultValue(@"ua_yes_no_background_yes",
+                                                                       nil,
+                                                                       [NSBundle mainBundle],
+                                                                       @"Yes",
+                                                                       "Button title for yes when app is in background"),
                            @"authenticationRequired": @(requireAuth)},
                          @{@"identifier": @"no",
                            @"foreground": @NO,
-                           @"title": @"No",
+                           @"title": NSLocalizedStringWithDefaultValue(@"ua_yes_no_background_no",
+                                                                       nil,
+                                                                       [NSBundle mainBundle],
+                                                                       @"No",
+                                                                       "Button title for no when app is in background"),
                            @"authenticationRequired": @(requireAuth)}];
 
     return [self createCategory:@"ua_yes_no_background" actions:actions];
@@ -78,7 +94,11 @@
 + (UIUserNotificationCategory *)createShopNowCategory {
     NSArray *actions = @[@{@"identifier": @"shop_now",
                            @"foreground": @YES,
-                           @"title": @"Shop Now"}];
+                           @"title": NSLocalizedStringWithDefaultValue(@"ua_shop_now_shop_now",
+                                                                       nil,
+                                                                       [NSBundle mainBundle],
+                                                                       @"Shop Now",
+                                                                       "Button title to shop now")}];
 
     return [self createCategory:@"ua_shop_now" actions:actions];
 }
@@ -86,7 +106,11 @@
 + (UIUserNotificationCategory *)createBuyNowCategory {
     NSArray *actions = @[@{@"identifier": @"buy_now",
                            @"foreground": @YES,
-                           @"title": @"Buy Now"}];
+                           @"title": NSLocalizedStringWithDefaultValue(@"ua_buy_now_buy_now",
+                                                                       nil,
+                                                                       [NSBundle mainBundle],
+                                                                       @"Buy Now",
+                                                                       "Button title to buy now")}];
 
     return [self createCategory:@"ua_buy_now" actions:actions];
 }
@@ -94,7 +118,11 @@
 + (UIUserNotificationCategory *)createFollowCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"follow",
                            @"foreground": @NO,
-                           @"title": @"Follow",
+                           @"title": NSLocalizedStringWithDefaultValue(@"ua_follow_follow",
+                                                                       nil,
+                                                                       [NSBundle mainBundle],
+                                                                       @"Follow",
+                                                                       "Button title to follow"),
                            @"authenticationRequired": @(requireAuth)}];
 
     return [self createCategory:@"ua_follow" actions:actions];
@@ -104,7 +132,11 @@
 + (UIUserNotificationCategory *)createUnfollowCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"unfollow",
                            @"foreground": @NO,
-                           @"title": @"Unfollow",
+                           @"title": NSLocalizedStringWithDefaultValue(@"ua_unfollow_unfollow",
+                                                                       nil,
+                                                                       [NSBundle mainBundle],
+                                                                       @"Unfollow",
+                                                                       "Button title to unfollow"),
                            @"destructive": @YES,
                            @"authenticationRequired": @(requireAuth)}];
 
@@ -114,7 +146,11 @@
 + (UIUserNotificationCategory *)createOptInCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"opt_in",
                            @"foreground": @NO,
-                           @"title": @"Opt-in",
+                           @"title": NSLocalizedStringWithDefaultValue(@"ua_opt_in_opt_in",
+                                                                       nil,
+                                                                       [NSBundle mainBundle],
+                                                                       @"Opt-in",
+                                                                       "Button title to opt-in"),
                            @"authenticationRequired": @(requireAuth)}];
 
     return [self createCategory:@"ua_opt_in" actions:actions];
@@ -123,7 +159,11 @@
 + (UIUserNotificationCategory *)createOptOutCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"opt_out",
                            @"foreground": @NO,
-                           @"title": @"Opt-out",
+                           @"title": NSLocalizedStringWithDefaultValue(@"ua_opt_out_opt_out",
+                                                                       nil,
+                                                                       [NSBundle mainBundle],
+                                                                       @"Opt-out",
+                                                                       "Button title to opt-out"),
                            @"destructive": @YES,
                            @"authenticationRequired": @(requireAuth)}];
 
@@ -133,7 +173,11 @@
 + (UIUserNotificationCategory *)createRemindMeLaterCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"remind",
                            @"foreground": @NO,
-                           @"title": @"Remind Me Later",
+                           @"title": NSLocalizedStringWithDefaultValue(@"ua_remind_me_later_remind",
+                                                                       nil,
+                                                                       [NSBundle mainBundle],
+                                                                       @"Remind Me Later",
+                                                                       "Button title to remind me later"),
                            @"authenticationRequired": @(requireAuth)}];
 
     return [self createCategory:@"ua_remind_me_later" actions:actions];
@@ -142,7 +186,11 @@
 + (UIUserNotificationCategory *)createShareCategory {
     NSArray *actions = @[@{@"identifier": @"share",
                            @"foreground": @YES,
-                           @"title": @"Share"}];
+                           @"title": NSLocalizedStringWithDefaultValue(@"ua_share_share",
+                                                                       nil,
+                                                                       [NSBundle mainBundle],
+                                                                       @"Share",
+                                                                       "Button title to share")}];
 
     return [self createCategory:@"ua_share" actions:actions];
 }
@@ -150,10 +198,18 @@
 + (UIUserNotificationCategory *)createAcceptOrDeclineForegroundCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"accept",
                            @"foreground": @YES,
-                           @"title": @"Accept"},
+                           @"title": NSLocalizedStringWithDefaultValue(@"ua_accept_decline_foreground_accept",
+                                                                       nil,
+                                                                       [NSBundle mainBundle],
+                                                                       @"Accept",
+                                                                       "Button title to accept when app is in foreground")},
                          @{@"identifier": @"decline",
                            @"foreground": @NO,
-                           @"title": @"Decline",
+                           @"title": NSLocalizedStringWithDefaultValue(@"ua_accept_decline_foreground_decline",
+                                                                       nil,
+                                                                       [NSBundle mainBundle],
+                                                                       @"Decline",
+                                                                       "Button title to decline when app is in foreground"),
                            @"authenticationRequired":@(requireAuth)}];
 
     return [self createCategory:@"ua_accept_decline_foreground" actions:actions];
@@ -162,11 +218,19 @@
 + (UIUserNotificationCategory *)createAcceptOrDeclineBackgroundCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"accept",
                            @"foreground": @NO,
-                           @"title": @"Accept",
+                           @"title": NSLocalizedStringWithDefaultValue(@"ua_accept_decline_background_accept",
+                                                                       nil,
+                                                                       [NSBundle mainBundle],
+                                                                       @"Accept",
+                                                                       "Button title to accept when app is in background"),
                            @"authenticationRequired": @(requireAuth)},
                          @{@"identifier": @"decline",
                            @"foreground": @NO,
-                           @"title": @"Decline",
+                           @"title": NSLocalizedStringWithDefaultValue(@"ua_accept_decline_background_decline",
+                                                                       nil,
+                                                                       [NSBundle mainBundle],
+                                                                       @"Decline",
+                                                                       "Button title to decline when app is in background"),
                            @"authenticationRequired": @(requireAuth)}];
 
     return [self createCategory:@"ua_accept_decline_background" actions:actions];
@@ -191,10 +255,17 @@
     NSMutableArray *actions = [NSMutableArray array];
 
     for (NSDictionary *actionDefinition in actionDefinitions) {
+        NSString *title;
+        if (actionDefinition[@"title_resource"]) {
+            title = NSLocalizedStringWithDefaultValue(actionDefinition[@"title_resource"], nil, [NSBundle mainBundle], actionDefinition[@"title"], nil);
+        } else {
+            title = actionDefinition[@"title"];
+        }
+
         UIMutableUserNotificationAction *action = [[UIMutableUserNotificationAction alloc] init];
         action.destructive = [actionDefinition[@"destructive"] boolValue];
         action.activationMode = [actionDefinition[@"foreground"] boolValue] ? UIUserNotificationActivationModeForeground : UIUserNotificationActivationModeBackground;
-        action.title = actionDefinition[@"title"];
+        action.title = title;
         action.identifier = actionDefinition[@"identifier"];
         action.authenticationRequired = [actionDefinition[@"authenticationRequired"] boolValue];
         [actions addObject:action];
@@ -207,6 +278,5 @@
 
     return category;
 }
-
 
 @end
