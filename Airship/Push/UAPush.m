@@ -38,7 +38,7 @@
 #import "UAChannelRegistrationPayload.h"
 #import "UAUser.h"
 #import "UAInteractiveNotificationEvent.h"
-#import "UADefaultUserNotificationCategories.h"
+#import "UAUserNotificationCategories+Internal.h"
 
 #define kUAMinTagLength 1
 #define kUAMaxTagLength 127
@@ -811,7 +811,7 @@ BOOL deferChannelCreationOnForeground = false;
     if ([UIUserNotificationSettings class]) {
         if (self.userPushNotificationsEnabled) {
 
-            NSMutableSet *categories = [NSMutableSet setWithSet:[UADefaultUserNotificationCategories defaultCategoriesRequireAuth:self.requireAuthorizationForDefaultCategories]];
+            NSMutableSet *categories = [NSMutableSet setWithSet:[UAUserNotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories]];
             [categories unionSet:self.userNotificationCategories];
 
             UA_LDEBUG(@"Registering for user notification types %ld.", (long)self.userNotificationTypes);

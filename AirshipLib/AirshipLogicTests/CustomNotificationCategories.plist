@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>share_category</key>
+	<array>
+		<dict>
+			<key>authorizationRequired</key>
+			<false/>
+			<key>destructive</key>
+			<false/>
+			<key>title</key>
+			<string>Share</string>
+			<key>foreground</key>
+			<true/>
+			<key>identifier</key>
+			<string>share_button</string>
+		</dict>
+	</array>
+	<key>yes_no_category</key>
+	<array>
+		<dict>
+			<key>authenticationRequired</key>
+			<false/>
+			<key>destructive</key>
+			<false/>
+			<key>title</key>
+			<string>Yes</string>
+			<key>foreground</key>
+			<true/>
+			<key>identifier</key>
+			<string>yes_button</string>
+		</dict>
+		<dict>
+			<key>authenticationRequired</key>
+			<true/>
+			<key>destructive</key>
+			<true/>
+			<key>title</key>
+			<string>No</string>
+			<key>foreground</key>
+			<false/>
+			<key>identifier</key>
+			<string>no_button</string>
+		</dict>
+	</array>
+</dict>
+</plist>

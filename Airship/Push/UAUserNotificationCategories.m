@@ -1,13 +1,37 @@
-#import "UADefaultUserNotificationCategories.h"
+/*
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
-@implementation UADefaultUserNotificationCategories
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
 
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+
+ 2. Redistributions in binaryform must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided withthe distribution.
+
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
+ IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "UAUserNotificationCategories.h"
+
+@implementation UAUserNotificationCategories
 
 + (NSSet *)defaultCategories {
-    return [self defaultCategoriesRequireAuth:YES];
+    return [self defaultCategoriesWithRequireAuth:YES];
 }
 
-+ (NSSet *)defaultCategoriesRequireAuth:(BOOL)requireAuth {
++ (NSSet *)defaultCategoriesWithRequireAuth:(BOOL)requireAuth {
     NSArray *categories = @[[self createYesNoForegroundCategoryRequireAuth:requireAuth],
                             [self createYesNoBackgroundCategoryRequireAuth:requireAuth],
                             [self createShopNowCategory],
@@ -26,13 +50,13 @@
 
 
 + (UIUserNotificationCategory *)createYesNoForegroundCategoryRequireAuth:(BOOL)requireAuth {
-    NSArray *actions =@[@{@"identifier": @"yes",
-                          @"foreground": @YES,
-                          @"title": @"Yes"},
-                        @{@"identifier": @"no",
-                          @"foreground": @NO,
-                          @"title": @"No",
-                          @"auth":@(requireAuth)}];
+    NSArray *actions = @[@{@"identifier": @"yes",
+                           @"foreground": @YES,
+                           @"title": @"Yes"},
+                         @{@"identifier": @"no",
+                           @"foreground": @NO,
+                           @"title": @"No",
+                           @"authenticationRequired":@(requireAuth)}];
 
     return [self createCategory:@"ua_yes_no_foreground" actions:actions];
 }
@@ -41,11 +65,11 @@
     NSArray *actions = @[@{@"identifier": @"yes",
                            @"foreground": @NO,
                            @"title": @"Yes",
-                           @"auth": @(requireAuth)},
+                           @"authenticationRequired": @(requireAuth)},
                          @{@"identifier": @"no",
                            @"foreground": @NO,
                            @"title": @"No",
-                           @"auth": @(requireAuth)}];
+                           @"authenticationRequired": @(requireAuth)}];
 
     return [self createCategory:@"ua_yes_no_background" actions:actions];
 }
@@ -71,7 +95,7 @@
     NSArray *actions = @[@{@"identifier": @"follow",
                            @"foreground": @NO,
                            @"title": @"Follow",
-                           @"auth": @(requireAuth)}];
+                           @"authenticationRequired": @(requireAuth)}];
 
     return [self createCategory:@"ua_follow" actions:actions];
 }
@@ -82,7 +106,7 @@
                            @"foreground": @NO,
                            @"title": @"Unfollow",
                            @"destructive": @YES,
-                           @"auth": @(requireAuth)}];
+                           @"authenticationRequired": @(requireAuth)}];
 
     return [self createCategory:@"ua_unfollow" actions:actions];
 }
@@ -91,7 +115,7 @@
     NSArray *actions = @[@{@"identifier": @"opt_in",
                            @"foreground": @NO,
                            @"title": @"Opt-in",
-                           @"auth": @(requireAuth)}];
+                           @"authenticationRequired": @(requireAuth)}];
 
     return [self createCategory:@"ua_opt_in" actions:actions];
 }
@@ -101,7 +125,7 @@
                            @"foreground": @NO,
                            @"title": @"Opt-out",
                            @"destructive": @YES,
-                           @"auth": @(requireAuth)}];
+                           @"authenticationRequired": @(requireAuth)}];
 
     return [self createCategory:@"ua_opt_out" actions:actions];
 }
@@ -110,7 +134,7 @@
     NSArray *actions = @[@{@"identifier": @"remind",
                            @"foreground": @NO,
                            @"title": @"Remind Me Later",
-                           @"auth": @(requireAuth)}];
+                           @"authenticationRequired": @(requireAuth)}];
 
     return [self createCategory:@"ua_remind_me_later" actions:actions];
 }
@@ -124,13 +148,13 @@
 }
 
 + (UIUserNotificationCategory *)createAcceptOrDeclineForegroundCategoryRequireAuth:(BOOL)requireAuth {
-    NSArray *actions =@[@{@"identifier": @"accept",
-                          @"foreground": @YES,
-                          @"title": @"Accept"},
-                        @{@"identifier": @"decline",
-                          @"foreground": @NO,
-                          @"title": @"Decline",
-                          @"auth":@(requireAuth)}];
+    NSArray *actions = @[@{@"identifier": @"accept",
+                           @"foreground": @YES,
+                           @"title": @"Accept"},
+                         @{@"identifier": @"decline",
+                           @"foreground": @NO,
+                           @"title": @"Decline",
+                           @"authenticationRequired":@(requireAuth)}];
 
     return [self createCategory:@"ua_accept_decline_foreground" actions:actions];
 }
@@ -139,13 +163,28 @@
     NSArray *actions = @[@{@"identifier": @"accept",
                            @"foreground": @NO,
                            @"title": @"Accept",
-                           @"auth": @(requireAuth)},
+                           @"authenticationRequired": @(requireAuth)},
                          @{@"identifier": @"decline",
                            @"foreground": @NO,
                            @"title": @"Decline",
-                           @"auth": @(requireAuth)}];
+                           @"authenticationRequired": @(requireAuth)}];
 
     return [self createCategory:@"ua_accept_decline_background" actions:actions];
+}
+
++ (NSSet *)createCategoriesFromFile:(NSString *)path {
+    NSDictionary *categoriesDictionary = [[NSDictionary alloc] initWithContentsOfFile:path];
+
+    NSMutableSet *categories = [NSMutableSet set];
+
+    for (NSString *categoryId in [categoriesDictionary allKeys]) {
+        NSArray *actions = [categoriesDictionary valueForKey:categoryId];
+        if (actions) {
+            [categories addObject:[self createCategory:categoryId actions:actions]];
+        }
+    }
+
+    return [NSSet setWithSet:categories];
 }
 
 + (UIUserNotificationCategory *)createCategory:(NSString *)categoryId actions:(NSArray *)actionDefinitions {
@@ -154,7 +193,7 @@
     for (NSDictionary *actionDefinition in actionDefinitions) {
         UIMutableUserNotificationAction *action = [[UIMutableUserNotificationAction alloc] init];
         action.destructive = [actionDefinition[@"destructive"] boolValue];
-        action.activationMode = actionDefinition[@"foreground"] ? UIUserNotificationActivationModeForeground : UIUserNotificationActivationModeBackground;
+        action.activationMode = [actionDefinition[@"foreground"] boolValue] ? UIUserNotificationActivationModeForeground : UIUserNotificationActivationModeBackground;
         action.title = actionDefinition[@"title"];
         action.identifier = actionDefinition[@"identifier"];
         action.authenticationRequired = [actionDefinition[@"authenticationRequired"] boolValue];
