@@ -30,10 +30,29 @@
  */
 @interface UAUserNotificationCategories : NSObject
 
+
 /**
  * Creates a set of categories from the specified `.plist` file.
  *
- * @param filePath The path of the specified file
+ * Categories are defined in a plist dictionary with the category id
+ * followed by an NSArray of user nofication action defintions. The
+ * action defintions use the same keys as the properties on the action,
+ * with the exception of "foreground" mapping to either UIUserNotificationActivationModeForeground
+ * or UIUserNotificationActivationModeBackground.
+ *
+ *  Example:
+<pre>
+      {
+          "category_id" : [
+              {
+                  "identifier" : "action id",
+                  "title" : "action title",
+                   "foreground" : @YES,
+                  "authenticationRequired" : @NO,
+                  "destructive" : @NO
+              }]
+       }
+ </pre>
  */
 + (NSSet *)createCategoriesFromFile:(NSString *)filePath;
 
