@@ -31,7 +31,6 @@
 #import "UAAnalytics.h"
 #import "UAEvent.h"
 #import "UADeviceRegistrationPayload.h"
-#import "UAPushNotificationHandler.h"
 #import "UAUtils.h"
 #import "UAActionRegistry+Internal.h"
 #import "UAActionRunner.h"

@@ -173,7 +173,6 @@
 		4953A45E19A5642E00F8D111 /* UAInbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DC217835C3A00BCD96E /* UAInbox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4953A46119A5657200F8D111 /* AirshipKit_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4953A45F19A5657200F8D111 /* AirshipKit_Tests.m */; };
 		4953A46219A5657200F8D111 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4953A46019A5657200F8D111 /* Info.plist */; };
-		4953A46519A6718200F8D111 /* UAPushNotificationHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 4953A46319A6714F00F8D111 /* UAPushNotificationHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		495526B117D95552009BC301 /* UAInboxMessageListTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 495526AB17D95552009BC301 /* UAInboxMessageListTest.m */; };
 		495526B217D95552009BC301 /* UAInboxMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 495526AC17D95552009BC301 /* UAInboxMessageTest.m */; };
 		495526B417D95552009BC301 /* UAUser+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 495526AF17D95552009BC301 /* UAUser+Test.m */; };
@@ -598,7 +597,6 @@
 		4953A44E19A55E9900F8D111 /* AirshipKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4953A45F19A5657200F8D111 /* AirshipKit_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AirshipKit_Tests.m; path = AirshipKitTests/AirshipKit_Tests.m; sourceTree = SOURCE_ROOT; };
 		4953A46019A5657200F8D111 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = AirshipKitTests/Info.plist; sourceTree = SOURCE_ROOT; };
-		4953A46319A6714F00F8D111 /* UAPushNotificationHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAPushNotificationHandler.h; path = ../../Airship/UI/Default/Push/Classes/Shared/UAPushNotificationHandler.h; sourceTree = "<group>"; };
 		495526AB17D95552009BC301 /* UAInboxMessageListTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageListTest.m; sourceTree = "<group>"; };
 		495526AC17D95552009BC301 /* UAInboxMessageTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageTest.m; sourceTree = "<group>"; };
 		495526AE17D95552009BC301 /* UAUser+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUser+Test.h"; sourceTree = "<group>"; };
@@ -1175,7 +1173,6 @@
 		49BADCCA198AF5F5000FF3D5 /* AirshipKit */ = {
 			isa = PBXGroup;
 			children = (
-				4953A46319A6714F00F8D111 /* UAPushNotificationHandler.h */,
 				49BADCCD198AF5F5000FF3D5 /* AirshipKit.h */,
 				49BADCCB198AF5F5000FF3D5 /* Supporting Files */,
 			);
@@ -1655,7 +1652,6 @@
 				49BADE16198B086F000FF3D5 /* UAActionJSDelegate.h in Headers */,
 				49BADE17198B0870000FF3D5 /* UAJavaScriptDelegate.h in Headers */,
 				49BADE18198B0870000FF3D5 /* AirshipLib.h in Headers */,
-				4953A46519A6718200F8D111 /* UAPushNotificationHandler.h in Headers */,
 				49BADE0D198B086B000FF3D5 /* UAApplicationMetriccs+Internal.h in Headers */,
 				49BADDB0198B0847000FF3D5 /* UAInbox+Internal.h in Headers */,
 				49BADDB5198B0849000FF3D5 /* UAInboxMessage+Internal.h in Headers */,
