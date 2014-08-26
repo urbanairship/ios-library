@@ -318,7 +318,7 @@
 		76792D11178E12A10054F8AD /* UAHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 76792D0F178E12A10054F8AD /* UAHTTPRequest.m */; };
 		76792D13178E13810054F8AD /* UAHTTPRequest+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 76792D12178E13810054F8AD /* UAHTTPRequest+Internal.h */; };
 		76B4E01619A4038000603F8A /* UAInteractiveNotificationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 76B4E01419A4038000603F8A /* UAInteractiveNotificationEvent.h */; };
-		76B4E01719A4038000603F8A /* UAInteractiveNotificationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 76B4E01419A4038000603F8A /* UAInteractiveNotificationEvent.h */; };
+		76B4E01719A4038000603F8A /* UAInteractiveNotificationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 76B4E01419A4038000603F8A /* UAInteractiveNotificationEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		76B4E01819A4038000603F8A /* UAInteractiveNotificationEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 76B4E01519A4038000603F8A /* UAInteractiveNotificationEvent.m */; };
 		76B4E01919A4038000603F8A /* UAInteractiveNotificationEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 76B4E01519A4038000603F8A /* UAInteractiveNotificationEvent.m */; };
 		76E5356219475F8E0020335C /* UAAddCustomEventAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 76E5356019475F8E0020335C /* UAAddCustomEventAction.h */; };
@@ -403,7 +403,7 @@
 		CC20BE1E19589D450098CF35 /* UALocationEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC20BE1D19589D450098CF35 /* UALocationEventTest.m */; };
 		CC2950F81949040300E905E3 /* UAEvent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC2950F71949040300E905E3 /* UAEvent+Internal.h */; };
 		CC313A9919A66DBE00134A9F /* UAUserNotificationCategories.h in Headers */ = {isa = PBXBuildFile; fileRef = CC313A9719A66DBE00134A9F /* UAUserNotificationCategories.h */; };
-		CC313A9A19A66DBE00134A9F /* UAUserNotificationCategories.h in Headers */ = {isa = PBXBuildFile; fileRef = CC313A9719A66DBE00134A9F /* UAUserNotificationCategories.h */; };
+		CC313A9A19A66DBE00134A9F /* UAUserNotificationCategories.h in Headers */ = {isa = PBXBuildFile; fileRef = CC313A9719A66DBE00134A9F /* UAUserNotificationCategories.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC313A9B19A66DBE00134A9F /* UAUserNotificationCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = CC313A9819A66DBE00134A9F /* UAUserNotificationCategories.m */; };
 		CC313A9C19A66DBE00134A9F /* UAUserNotificationCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = CC313A9819A66DBE00134A9F /* UAUserNotificationCategories.m */; };
 		CC313AA019A7BF5C00134A9F /* CustomNotificationCategories.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC313A9F19A7BF5C00134A9F /* CustomNotificationCategories.plist */; };
@@ -477,7 +477,7 @@
 		CCDF66A219A5166B0043657E /* UACustomEvent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDF66A119A5166B0043657E /* UACustomEvent+Internal.h */; };
 		CCDF66A319A5166B0043657E /* UACustomEvent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDF66A119A5166B0043657E /* UACustomEvent+Internal.h */; };
 		CCDF66AE19A544590043657E /* UAShareAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDF66AC19A544590043657E /* UAShareAction.h */; };
-		CCDF66AF19A544590043657E /* UAShareAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDF66AC19A544590043657E /* UAShareAction.h */; };
+		CCDF66AF19A544590043657E /* UAShareAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDF66AC19A544590043657E /* UAShareAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CCDF66B019A544590043657E /* UAShareAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDF66AD19A544590043657E /* UAShareAction.m */; };
 		CCDF66B119A544590043657E /* UAShareAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDF66AD19A544590043657E /* UAShareAction.m */; };
 		CCF4462A1947D252003E04E7 /* UACustomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = CCF446281947D252003E04E7 /* UACustomEvent.h */; };
@@ -1569,7 +1569,6 @@
 				494FB5AE1992D4D2000CF253 /* AirshipKit.h in Headers */,
 				4953A45E19A5642E00F8D111 /* UAInbox.h in Headers */,
 				49BADDB2198B0848000FF3D5 /* UAInboxAPIClient.h in Headers */,
-				CC313A9A19A66DBE00134A9F /* UAUserNotificationCategories.h in Headers */,
 				49BADDB3198B0848000FF3D5 /* UAInboxDBManager.h in Headers */,
 				49BADDB4198B0848000FF3D5 /* UAInboxDefaultJSDelegate.h in Headers */,
 				49BADDB6198B0849000FF3D5 /* UAInboxMessage.h in Headers */,
@@ -1640,7 +1639,6 @@
 				49BADE05198B0867000FF3D5 /* UATagUtils.h in Headers */,
 				49BADE06198B0868000FF3D5 /* UAUtils.h in Headers */,
 				49BADE07198B0868000FF3D5 /* UAKeychainUtils.h in Headers */,
-				CCDF66AF19A544590043657E /* UAShareAction.h in Headers */,
 				49BADE08198B0869000FF3D5 /* NSString+UAURLEncoding.h in Headers */,
 				49BADE09198B0869000FF3D5 /* UAWebViewCallData.h in Headers */,
 				49BADE0A198B086A000FF3D5 /* UAirship.h in Headers */,
@@ -1649,9 +1647,11 @@
 				49BADE0F198B086C000FF3D5 /* UAGlobal.h in Headers */,
 				49BADE10198B086C000FF3D5 /* UAConfig.h in Headers */,
 				49BADE12198B086D000FF3D5 /* UAObservable.h in Headers */,
-				76B4E01719A4038000603F8A /* UAInteractiveNotificationEvent.h in Headers */,
 				49BADE14198B086E000FF3D5 /* UADisposable.h in Headers */,
 				49BADE15198B086F000FF3D5 /* UAURLProtocol.h in Headers */,
+				CCDF66AF19A544590043657E /* UAShareAction.h in Headers */,
+				76B4E01719A4038000603F8A /* UAInteractiveNotificationEvent.h in Headers */,
+				CC313A9A19A66DBE00134A9F /* UAUserNotificationCategories.h in Headers */,
 				49BADE16198B086F000FF3D5 /* UAActionJSDelegate.h in Headers */,
 				49BADE17198B0870000FF3D5 /* UAJavaScriptDelegate.h in Headers */,
 				49BADE18198B0870000FF3D5 /* AirshipLib.h in Headers */,
@@ -2908,6 +2908,7 @@
 				4953A45A19A55E9900F8D111 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		49BADCDC198AF5F6000FF3D5 /* Build configuration list for PBXNativeTarget "AirshipKit" */ = {
 			isa = XCConfigurationList;
