@@ -182,10 +182,6 @@
     [self.urlConnection cancel];
 }
 
-- (void)setDelegateQueue:(NSOperationQueue *)queue {
-    _delegateQueue = queue;
-}
-
 #pragma mark -
 #pragma mark NSURLConnection delegate
 
