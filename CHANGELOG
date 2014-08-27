@@ -3,6 +3,20 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+------------------------------
+iOS8 Preview (5.0.0.{build #})
+------------------------------
+- Initial preview release of 5.0.0. This is not intended for use in an App Store app.
+- Supports iOS6+.
+- Includes an Embedded.framework for use in applications with a minimum SDK version of 8.0.
+- Includes support for interactive notifications and the new iOS8 notification registration model.
+- Added a new action for social sharing that can be called from pushes or web views.
+- Includes support for defining custom events in our reporting system.
+- Other changes include removal of previously deprecated methods and general modernization (now that iOS5 support has been dropped).
+- Additional API changes will occur throughout the course of the preview program. InboxUIProtocol and PushUIProtocol will be removed as we
+  improve our support for custom inbox UI integrations.
+- The SDK distribution now includes the API reference documentation in the `reference-docs` folder.
+
 -----------------------
 4.0.2 - August 18, 2014
 -----------------------
