@@ -5,11 +5,10 @@ Overview
 --------
 
 Urban Airship's libUAirship is a drop-in static library that provides a simple way to
-integrate Urban Airship services into your iOS applications. This entire project will
-allow you to build the library files and all sample projects. If you just want to
-include the library in your app, you can download the latest ``libUAirship.zip``
-These zips contain a pre-compiled universal libraries for an armv7/armv7s/arm64/i386/x86_64
-version (``libUAirship-x.y.z.a``).
+integrate Urban Airship services into your iOS applications. If you just want to
+include the library in your app, you can download ``libUAirship-latest.zip`` from
+http://urbanairship.com/resources/developer-resources. This zip contains a pre-compiled
+universal library for armv7/armv7s/arm64/i386/x86_64 (``libUAirship-x.y.z.a``).
 
 Resources
 ----------
@@ -205,12 +204,13 @@ The available log levels are:
 
 Building the Library
 --------------------
+Source can be found at https://github.com/urbanairship/ios-library
 
 Running Tests
 #############
 
 The unit tests in this project require OCMock. OCMock can be installed automatically
-with the use of our install script, mock_setup.sh.
+with the use of our install script, scripts/mock_setup.sh.
 
 Building for Distribution
 #########################
