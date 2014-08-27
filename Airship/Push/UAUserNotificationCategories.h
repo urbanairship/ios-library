@@ -35,6 +35,7 @@
  * Creates a set of categories from the specified `.plist` file.
  *
  * @param filePath The path of the `.plist` file.
+ * @return A set of categories.
  *
  * Categories are defined in a plist dictionary with the category id
  * followed by an NSArray of user notification action definitions. The
@@ -45,21 +46,20 @@
  * the latter takes precedence. If "title_resource" does not exist, the action
  * definition title will fall back to the value of "title". If the required action
  * definition title is not defined, the category will not be created.
- *  Example:
-<pre>
-      {
-          "category_id" : [
-              {
-                  "identifier" : "action id",
-                  "title_resource" : "action title resource",
-                  "title" : "action title",
-                   "foreground" : @YES,
-                  "authenticationRequired" : @NO,
-                  "destructive" : @NO
-              }]
-       }
- </pre>
  *
+ * Example:
+ *
+ *  {
+ *      "category_id" : [
+ *          {
+ *              "identifier" : "action id",
+ *              "title_resource" : "action title resource",
+ *              "title" : "action title",
+ *              "foreground" : @YES,
+ *              "authenticationRequired" : @NO,
+ *              "destructive" : @NO
+ *          }]
+ *  }
  */
 + (NSSet *)createCategoriesFromFile:(NSString *)filePath;
 
