@@ -136,10 +136,9 @@
 /// @name Location Accuracy
 ///---------------------------------------------------------------------------------------
 
-/** 
+/**
  * Calculates location change accuracy
  * @param newLocation The updated location from the location service.
- * @param oldLocation The location that the new location is compared to.
  *
  * @return YES if the location meets accuracy requirements
  * @return NO if the location does not meet accuracy requirements

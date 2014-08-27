@@ -26,6 +26,10 @@
 #import <Foundation/Foundation.h>
 #import "UAEvent.h"
 
+/**
+ * A UAInteractiveNotificationEvent captures information regarding an interactive
+ * notification event for UAAnalytics.
+ */
 @interface UAInteractiveNotificationEvent : UAEvent
 
 /**
