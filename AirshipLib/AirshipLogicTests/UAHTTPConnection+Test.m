@@ -22,16 +22,27 @@ static BOOL _succeed = YES;
     [self jr_swizzleMethod:@selector(startWithoutIO) withMethod:@selector(start) error:nil];
 }
 
+- (void)sendResponse:(void (^)(void))block{
+    if (self.delegateQueue) {
+        [[NSOperationQueue mainQueue] addOperation:[NSBlockOperation blockOperationWithBlock:block]];
+    } else {
+        block();
+    }
+}
+
 - (void)sendSuccess {
-    [self connectionDidFinishLoading:self.urlConnection];
+    [self sendResponse:^{
+        [self connectionDidFinishLoading:self.urlConnection];
+    }];
 }
 
 - (void)sendFailure {
-    [self connection:self.urlConnection didFailWithError:[NSError errorWithDomain:@"whatever" code:0 userInfo:nil]];
+    [self sendResponse:^{
+        [self connection:self.urlConnection didFailWithError:[NSError errorWithDomain:@"whatever" code:0 userInfo:nil]];
+    }];
 }
 
 - (BOOL)startWithoutIO {
-    //we need to retain ourselves here, since the failure selector below releases
     if (_succeed) {
         [self sendSuccess];
     } else {

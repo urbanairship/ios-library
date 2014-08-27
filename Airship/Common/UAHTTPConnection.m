@@ -139,10 +139,17 @@
         return NO;
     }
 
-    // keep ourselves around for a while so the request can complete
-
     self.responseData = [NSMutableData data];
-    self.urlConnection = [NSURLConnection connectionWithRequest:urlRequest delegate:self];
+    self.urlConnection = [[NSURLConnection alloc] initWithRequest:urlRequest
+                                                         delegate:self
+                                                 startImmediately:NO];
+
+    // inexplicably, setting the queue to nil results in network errors
+    if (self.delegateQueue) {
+        [self.urlConnection setDelegateQueue:self.delegateQueue];
+    }
+
+    [self.urlConnection start];
 
     return YES;
 }

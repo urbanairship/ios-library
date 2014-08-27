@@ -69,6 +69,14 @@
 @property (nonatomic, copy) UAHTTPConnectionFailureBlock failureBlock;
 
 /**
+ * The queue on which to dispatch block and delegate callbacks.
+ *
+ * If unset, callbacks will occur on the thread from which the connection was started.
+ * Note: you cannot reschedule the delegate queue once a connection is in flight.
+ */
+@property (nonatomic, strong) NSOperationQueue *delegateQueue;
+
+/**
  * Class factory method for creating a UAHTTPConnection.
  * @param httpRequest An instance of UAHTTPRequest.
  */
