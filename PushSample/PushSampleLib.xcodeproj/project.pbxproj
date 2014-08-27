@@ -10,7 +10,6 @@
 		0D2E043C11AA5D1E00C4CD8A /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D2E042C11AA5D1E00C4CD8A /* CFNetwork.framework */; };
 		0D2E049A11AA5DB100C4CD8A /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D2E049311AA5DB100C4CD8A /* MobileCoreServices.framework */; };
 		0D2E04BE11AA5E9700C4CD8A /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D2E04AC11AA5E9700C4CD8A /* SystemConfiguration.framework */; };
-		0D2E051711AA61F300C4CD8A /* checkConfig.sh in Resources */ = {isa = PBXBuildFile; fileRef = 0D2E051611AA61F300C4CD8A /* checkConfig.sh */; };
 		1890BABE1251B5E900E6EBF1 /* UAPushMoreSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1890BA071251B5E900E6EBF1 /* UAPushMoreSettingsViewController.m */; };
 		1890BABF1251B5E900E6EBF1 /* UAPushSettingsAliasViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1890BA091251B5E900E6EBF1 /* UAPushSettingsAliasViewController.m */; };
 		1890BAC01251B5E900E6EBF1 /* UAPushSettingsTokenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1890BA0B1251B5E900E6EBF1 /* UAPushSettingsTokenViewController.m */; };
@@ -37,7 +36,7 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		1F3CC4A5165C2D4F008526E3 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F3CC4A4165C2D4F008526E3 /* Default-568h@2x.png */; };
-		1F4EDB491831B2E700F77343 /* libUAirship-4.0.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-4.0.2.a */; };
+		1F4EDB491831B2E700F77343 /* libUAirship-5.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-5.0.0.a */; };
 		1F6DA58712F9F61E00496A5C /* UAPushNotificationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F6DA58612F9F61E00496A5C /* UAPushNotificationHandler.m */; };
 		1F6DA58912F9FEC800496A5C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F6DA58812F9FEC800496A5C /* AudioToolbox.framework */; };
 		1F79711312DE3BFB00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79711212DE3BFB00D4937F /* AirshipConfig.plist */; };
@@ -56,7 +55,6 @@
 		1FCBB650176237BA00F42F07 /* SampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB64F176237BA00F42F07 /* SampleAppDelegate.m */; };
 		1FF54B2313BD319500F8E5A1 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FF54B2213BD319500F8E5A1 /* libz.dylib */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
-		4906F34F19905B5500F27AF1 /* checkConfig.sh in Resources */ = {isa = PBXBuildFile; fileRef = 0D2E051611AA61F300C4CD8A /* checkConfig.sh */; };
 		4906F35019905B5500F27AF1 /* MainWindow_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18C0294D124F216B00D49CD5 /* MainWindow_Pad.xib */; };
 		4906F35119905B5500F27AF1 /* MainWindow_Phone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18C02950124F216B00D49CD5 /* MainWindow_Phone.xib */; };
 		4906F35219905B5500F27AF1 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 18C02952124F216B00D49CD5 /* Default.png */; };
@@ -201,6 +199,13 @@
 			remoteGlobalIDString = AAB07268139719AC008AF393;
 			remoteInfo = KIF;
 		};
+		1FDCD38619AE90C100FF1236 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 18C02962124F21B800D49CD5 /* AirshipLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4953A44E19A55E9900F8D111;
+			remoteInfo = AirshipKitTests;
+		};
 		4906F3A419905B5600F27AF1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 18C02962124F21B800D49CD5 /* AirshipLib.xcodeproj */;
@@ -297,7 +302,6 @@
 		0D2E042C11AA5D1E00C4CD8A /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		0D2E049311AA5DB100C4CD8A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		0D2E04AC11AA5E9700C4CD8A /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		0D2E051611AA61F300C4CD8A /* checkConfig.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = checkConfig.sh; sourceTree = "<group>"; };
 		1890BA061251B5E900E6EBF1 /* UAPushMoreSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushMoreSettingsViewController.h; sourceTree = "<group>"; };
 		1890BA071251B5E900E6EBF1 /* UAPushMoreSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushMoreSettingsViewController.m; sourceTree = "<group>"; };
 		1890BA081251B5E900E6EBF1 /* UAPushSettingsAliasViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsAliasViewController.h; sourceTree = "<group>"; };
@@ -431,7 +435,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1F4EDB491831B2E700F77343 /* libUAirship-4.0.2.a in Frameworks */,
+				1F4EDB491831B2E700F77343 /* libUAirship-5.0.0.a in Frameworks */,
 				CC523FCF17BA8E7300233005 /* CoreData.framework in Frameworks */,
 				BB75D9AD151BEAAC00F4241E /* MapKit.framework in Frameworks */,
 				BBEFB0111507F37200976645 /* CoreLocation.framework in Frameworks */,
@@ -698,8 +702,9 @@
 		18C02963124F21B800D49CD5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BBC923F515AC8F6000EE7C2A /* libUAirship-4.0.2.a */,
+				BBC923F515AC8F6000EE7C2A /* libUAirship-5.0.0.a */,
 				7B909D40142935C900D0AB36 /* AirshipLogicTests.xctest */,
+				1FDCD38719AE90C100FF1236 /* AirshipKitTests.xctest */,
 				4906F3A519905B5600F27AF1 /* AirshipKit.framework */,
 			);
 			name = Products;
@@ -760,7 +765,6 @@
 				D5F70FBC12C94C39007285C4 /* PushSample-Info.plist */,
 				D5F70FBD12C94C39007285C4 /* PushSample_Prefix.pch */,
 				18C02947124F216B00D49CD5 /* main.m */,
-				0D2E051611AA61F300C4CD8A /* checkConfig.sh */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -884,7 +888,6 @@
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
 				1D60588F0D05DD3D006BFB54 /* Frameworks */,
-				0D2E053D11AA62C000C4CD8A /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -902,7 +905,6 @@
 				4906F34E19905B5500F27AF1 /* Resources */,
 				4906F37619905B5500F27AF1 /* Sources */,
 				4906F38819905B5500F27AF1 /* Frameworks */,
-				4906F39919905B5500F27AF1 /* ShellScript */,
 				4906F3AB19905B9E00F27AF1 /* CopyFiles */,
 			);
 			buildRules = (
@@ -980,7 +982,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastTestingUpgradeCheck = 0510;
+				LastTestingUpgradeCheck = 0600;
 				LastUpgradeCheck = 0500;
 				TargetAttributes = {
 					1D6058900D05DD3D006BFB54 = {
@@ -1040,6 +1042,13 @@
 			remoteRef = 1FCBB566175AA0E200F42F07 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		1FDCD38719AE90C100FF1236 /* AirshipKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipKitTests.xctest;
+			remoteRef = 1FDCD38619AE90C100FF1236 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		4906F3A519905B5600F27AF1 /* AirshipKit.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -1068,10 +1077,10 @@
 			remoteRef = 7B909D3F142935C900D0AB36 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BBC923F515AC8F6000EE7C2A /* libUAirship-4.0.2.a */ = {
+		BBC923F515AC8F6000EE7C2A /* libUAirship-5.0.0.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-4.0.2.a";
+			path = "libUAirship-5.0.0.a";
 			remoteRef = BBC923F415AC8F6000EE7C2A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1082,7 +1091,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0D2E051711AA61F300C4CD8A /* checkConfig.sh in Resources */,
 				18C0295B124F216B00D49CD5 /* MainWindow_Pad.xib in Resources */,
 				18C0295D124F216B00D49CD5 /* MainWindow_Phone.xib in Resources */,
 				18C0295E124F216B00D49CD5 /* Default.png in Resources */,
@@ -1129,7 +1137,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4906F34F19905B5500F27AF1 /* checkConfig.sh in Resources */,
 				4906F35019905B5500F27AF1 /* MainWindow_Pad.xib in Resources */,
 				4906F35119905B5500F27AF1 /* MainWindow_Phone.xib in Resources */,
 				4906F35219905B5500F27AF1 /* Default.png in Resources */,
@@ -1204,19 +1211,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0D2E053D11AA62C000C4CD8A /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT/checkConfig.sh\"";
-		};
 		1FA9A6481684EB3D00258A01 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1229,19 +1223,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# XCTest bundles must be codesigned the same way an app is if it wants access to the main bundle's features\ncodesign --verify --force --sign \"$CODE_SIGN_IDENTITY\" \"$CODESIGNING_FOLDER_PATH\"\n\n# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"";
-		};
-		4906F39919905B5500F27AF1 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT/checkConfig.sh\"";
 		};
 		765C936D183FD80500227D02 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1508,6 +1489,7 @@
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INFOPLIST_FILE = "PushSample-Kit-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				OTHER_CFLAGS = "-DUADEBUG";
 				OTHER_CODE_SIGN_FLAGS = "";
@@ -1545,6 +1527,7 @@
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INFOPLIST_FILE = "PushSample-Kit-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				OTHER_CFLAGS = "-DUADEBUG";
 				OTHER_CODE_SIGN_FLAGS = "";
@@ -1579,6 +1562,7 @@
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INFOPLIST_FILE = "PushSample-Kit-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				OTHER_CODE_SIGN_FLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
