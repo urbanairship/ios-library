@@ -23,12 +23,14 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 SCRIPT_DIRECTORY=`dirname $0`
 OUTPUT_PATH=$SCRIPT_DIRECTORY/output
 ROOT_PATH=`dirname "${0}"`/../
 XCSCHEME_PATH=$ROOT_PATH/AirshipLib/AirshipLib.xcodeproj/xcshareddata/xcschemes/
 PBXPROJ_PATH=$ROOT_PATH/AirshipLib/AirshipLib.xcodeproj/
+
+# Set the appropriate xcode version
+source "${ROOT_PATH}"/scripts/configure-xcode-version.sh
 
 # Grab the release version
 VERSION=$(awk <$SCRIPT_DIRECTORY/../AirshipLib/Config.xcconfig "\$1 == \"CURRENT_PROJECT_VERSION\" { print \$3 }")

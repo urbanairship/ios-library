@@ -31,7 +31,7 @@ XCODE_SETTINGS="${TEMP_DIR}/${TARGET_NAME}.settings"
 
 # Query the Xcode Project for the current settings, based on the current target
 # Dump the settings output as an awkdb into /tmp
-xcodebuild -showBuildSettings -project $PROJECT_PATH -target $TARGET_NAME > ${XCODE_SETTINGS}
+xcrun xcodebuild -showBuildSettings -project $PROJECT_PATH -target $TARGET_NAME > ${XCODE_SETTINGS}
 xcode_setting() {
     echo $(cat ${XCODE_SETTINGS} | awk "\$1 == \"${1}\" { print \$3 }")
 }
