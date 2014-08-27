@@ -48,7 +48,7 @@ mkdir -p $OUTPUT_PATH
 ./$SCRIPT_DIRECTORY/package_airshiplib.sh $OUTPUT_PATH
 ./$SCRIPT_DIRECTORY/package_sample.sh $SCRIPT_DIRECTORY/../InboxSample $OUTPUT_PATH
 ./$SCRIPT_DIRECTORY/package_sample.sh $SCRIPT_DIRECTORY/../PushSample $OUTPUT_PATH
-"./${ROOT_PATH}/build_docs.sh"
+"${ROOT_PATH}/scripts/build_docs.sh"
 
 # Copy the generated docs
 mkdir -p "${OUTPUT_PATH}/reference-docs/"
