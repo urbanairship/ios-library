@@ -228,6 +228,7 @@
 }
 
 - (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
     [self.iconCache removeAllObjects];
 }
 
