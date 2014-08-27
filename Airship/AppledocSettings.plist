@@ -3,8 +3,6 @@
 	"http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>--output</key>
-    <string>docs/</string>
 	<key>--ignore</key>
 	<array>
 		<string>External</string>
@@ -33,7 +31,5 @@
     <string>3</string>
     <key>--logformat</key>
     <string>1</string>
-    <key>--templates</key>
-    <string>../docs/doc_templates</string>
 </dict>
 </plist>

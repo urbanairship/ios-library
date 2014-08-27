@@ -1960,7 +1960,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT/../\"\n./generate_header_imports.sh";
+			shellScript = "\"$SRCROOT/../scripts/generate_header_imports.sh\"";
 		};
 		494FB59919919392000CF253 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1986,7 +1986,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT/../\"\n./generate_header_imports.sh";
+			shellScript = "\"$SRCROOT/../scripts/generate_header_imports.sh\"";
 		};
 		494FB59B19919444000CF253 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

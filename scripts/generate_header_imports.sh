@@ -1,6 +1,9 @@
-#!/bin/bash
+#!/bin/bash -ex
 
-cd Airship
+SCRIPT_DIRECTORY=`dirname $0`
+ROOT_PATH=`dirname "${0}"`/../
+
+cd "${ROOT_PATH}/Airship"
 
 #find all header files, excluding UASQLite, the internal headers, and AirshipLib.h,
 #and convert to Obj-C import statements
