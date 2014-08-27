@@ -82,7 +82,7 @@
 		4906F3381990564A00F27AF1 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		4906F3391990564A00F27AF1 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D02DD12B8338A00B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		4906F342199056E600F27AF1 /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 49B19A1C1990172C00977790 /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		49B19A3319901FE800977790 /* libUAirship-4.0.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5EBCB6159B7AF600F2A716 /* libUAirship-4.0.1.a */; };
+		49B19A3319901FE800977790 /* libUAirship-4.0.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5EBCB6159B7AF600F2A716 /* libUAirship-4.0.2.a */; };
 		49E001A9154F63F3009305B7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49E001A8154F63F3009305B7 /* CoreLocation.framework */; };
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
@@ -92,6 +92,8 @@
 		9A50FAEF0FCA81A40007E1BE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAEE0FCA81A40007E1BE /* Foundation.framework */; };
 		9A50FAF60FCA81BD0007E1BE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAF50FCA81BD0007E1BE /* UIKit.framework */; };
 		C14786001164675600F17AB8 /* checkConfig.sh in Resources */ = {isa = PBXBuildFile; fileRef = C14785FF1164675600F17AB8 /* checkConfig.sh */; };
+		CC070C6D19ABB6F300E91553 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CC070C6C19ABB6F300E91553 /* Settings.bundle */; };
+		CC070C6E19ABB6F300E91553 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CC070C6C19ABB6F300E91553 /* Settings.bundle */; };
 		CC523FAC17B9856900233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FAB17B9856900233005 /* CoreData.framework */; };
 		D5A3F5D412C15333009731BE /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F5D312C15333009731BE /* iTunesArtwork */; };
 		D5A3F5D612C1533D009731BE /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F5D512C1533D009731BE /* Icon@2x.png */; };
@@ -209,6 +211,7 @@
 		9AB3B21D10A0063D0035E6BD /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		B6E7F8381239FFD5009BC92D /* AirshipLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipLib.xcodeproj; path = ../AirshipLib/AirshipLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		C14785FF1164675600F17AB8 /* checkConfig.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = checkConfig.sh; sourceTree = "<group>"; };
+		CC070C6C19ABB6F300E91553 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		CC523FAB17B9856900233005 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		D5A3F5D312C15333009731BE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
 		D5A3F5D512C1533D009731BE /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
@@ -230,7 +233,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				49B19A3319901FE800977790 /* libUAirship-4.0.1.a in Frameworks */,
+				49B19A3319901FE800977790 /* libUAirship-4.0.2.a in Frameworks */,
 				CC523FAC17B9856900233005 /* CoreData.framework in Frameworks */,
 				49E001A9154F63F3009305B7 /* CoreLocation.framework in Frameworks */,
 				1F531D5214201ABC009ABE85 /* libSystem.dylib in Frameworks */,
@@ -336,6 +339,7 @@
 		18A27CA1125EDD6E0045D75B /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				CC070C6C19ABB6F300E91553 /* Settings.bundle */,
 				D5A3F5D312C15333009731BE /* iTunesArtwork */,
 				D5C75B6112BC20320041239E /* Default@2x.png */,
 				D5C75B6212BC20320041239E /* Icon.png */,
@@ -406,7 +410,7 @@
 		B6E7F8391239FFD5009BC92D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BB5EBCB6159B7AF600F2A716 /* libUAirship-4.0.1.a */,
+				BB5EBCB6159B7AF600F2A716 /* libUAirship-4.0.2.a */,
 				49422BA2142BA678009770C6 /* AirshipLogicTests.xctest */,
 				49B19A1C1990172C00977790 /* AirshipKit.framework */,
 			);
@@ -607,10 +611,10 @@
 			remoteRef = 49B19A1B1990172C00977790 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BB5EBCB6159B7AF600F2A716 /* libUAirship-4.0.1.a */ = {
+		BB5EBCB6159B7AF600F2A716 /* libUAirship-4.0.2.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-4.0.1.a";
+			path = "libUAirship-4.0.2.a";
 			remoteRef = BB5EBCB5159B7AF600F2A716 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -643,6 +647,7 @@
 				1FF574121367788300FEA1FD /* UAInboxMessageListCell.xib in Resources */,
 				1FE4238C188475C900624335 /* list-image-placeholder@2x.png in Resources */,
 				1F5781FE14182166003FA039 /* UAInboxMessageListController.xib in Resources */,
+				CC070C6D19ABB6F300E91553 /* Settings.bundle in Resources */,
 				1F5781FF14182166003FA039 /* UAInboxMessageViewController.xib in Resources */,
 				1F3CC4C7165C41D0008526E3 /* Default-568h@2x.png in Resources */,
 			);
@@ -674,6 +679,7 @@
 				4906F31A1990564A00F27AF1 /* UAInboxMessageListCell.xib in Resources */,
 				4906F31B1990564A00F27AF1 /* list-image-placeholder@2x.png in Resources */,
 				4906F31C1990564A00F27AF1 /* UAInboxMessageListController.xib in Resources */,
+				CC070C6E19ABB6F300E91553 /* Settings.bundle in Resources */,
 				4906F31D1990564A00F27AF1 /* UAInboxMessageViewController.xib in Resources */,
 				4906F31E1990564A00F27AF1 /* Default-568h@2x.png in Resources */,
 			);

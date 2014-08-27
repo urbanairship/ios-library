@@ -50,6 +50,7 @@ UA_VERSION_IMPLEMENTATION(UAirshipVersion, UA_VERSION)
 
 // Exceptions
 NSString * const UAirshipTakeOffBackgroundThreadException = @"UAirshipTakeOffBackgroundThreadException";
+NSString * const UAResetKeychainKey = @"com.urbanairship.reset_keychain";
 
 static UAirship *_sharedAirship;
 
@@ -199,20 +200,30 @@ UALogLevel uaLogLevel = UALogLevelError;
     [_sharedAirship.analytics delayNextSend:UAAnalyticsFirstBatchUploadInterval];
 
     _sharedAirship.applicationMetrics = [[UAApplicationMetrics alloc] init];
+
     /*
      * Handle Debug Options
      */
 
-    //For testing, set this value in AirshipConfig to clear out
-    //the keychain credentials, as they will otherwise be persisted
-    //even when the application is uninstalled.
-    if (config.clearKeychain) {
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    // Clearing the key chain
+    if (config.clearKeychain || [[NSUserDefaults standardUserDefaults] boolForKey:UAResetKeychainKey]) {
+
+        if (config.clearKeychain) {
+            UA_LERR(@"UAConfig.clearKeychain is deprecated. To clear the keychain once during the next applicaiton start, use the settings bundle to set YES for the key %@ in standard user defaults.", UAResetKeychainKey);
+        }
+#pragma clang diagnostic pop
+
 
         UA_LDEBUG(@"Deleting the keychain credentials");
         [UAKeychainUtils deleteKeychainValue:_sharedAirship.config.appKey];
 
         UA_LDEBUG(@"Deleting the UA device ID");
         [UAKeychainUtils deleteKeychainValue:kUAKeychainDeviceIDKey];
+
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAResetKeychainKey];
     }
 
     if (!config.inProduction) {
