@@ -24,6 +24,7 @@
  */
 
 #import "UAUserNotificationCategories.h"
+#import "UAGlobal.h"
 
 @implementation UAUserNotificationCategories
 
@@ -244,7 +245,10 @@
     for (NSString *categoryId in [categoriesDictionary allKeys]) {
         NSArray *actions = [categoriesDictionary valueForKey:categoryId];
         if (actions) {
-            [categories addObject:[self createCategory:categoryId actions:actions]];
+            UIUserNotificationCategory *category = [self createCategory:categoryId actions:actions];
+            if (category) {
+                [categories addObject:category];
+            }
         }
     }
 
@@ -258,8 +262,14 @@
         NSString *title;
         if (actionDefinition[@"title_resource"]) {
             title = NSLocalizedStringWithDefaultValue(actionDefinition[@"title_resource"], nil, [NSBundle mainBundle], actionDefinition[@"title"], nil);
-        } else {
+        } else if (actionDefinition[@"title"]) {
             title = actionDefinition[@"title"];
+        }
+
+        if (!title) {
+            UA_LERR(@"Error creating category: %@ for action: %@ due to missing title.",
+                    categoryId, actionDefinition[@"identifier"]);
+            return nil;
         }
 
         UIMutableUserNotificationAction *action = [[UIMutableUserNotificationAction alloc] init];
