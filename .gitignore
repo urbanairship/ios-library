@@ -13,6 +13,7 @@ Release/
 Distribution/
 build/
 Airship/*.a
+Airship/*.framework
 Airship/Common/JS/UANativeBridge.c
 Airship/AirshipLib.h
 xcuserdata/
