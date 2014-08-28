@@ -5,13 +5,10 @@ Overview
 --------
 
 Urban Airship's libUAirship is a drop-in static library that provides a simple way to
-integrate Urban Airship services into your iOS applications. This entire project will
-allow you to build the library files and all sample projects. If you just want to
-include the library in your app, you can download the latest ``libUAirship.zip``
-These zips contain two pre-compiled universal libraries: an armv7/armv7s/arm64/i386/x86_64
-version (``libUAirship-x.y.z.a``), which includes 32 and 64-bit binaries and can be used with
-iOS5.1.1+, and a 32-bit only package (``libUAirship-iOS5-x.y.z.a``) which can be used with iOS5+
-application targets.
+integrate Urban Airship services into your iOS applications. If you just want to
+include the library in your app, you can download ``libUAirship-latest.zip`` from
+http://urbanairship.com/resources/developer-resources. This zip contains a pre-compiled
+universal library for armv7/armv7s/arm64/i386/x86_64 (``libUAirship-x.y.z.a``).
 
 Resources
 ----------
@@ -56,7 +53,7 @@ Build Settings
 ##############
 
 **Compiler**
-The latest version of LLVM is the default compiler for all projects and the static library.
+The latest version of Xcode 6 beta is required for all projects and the static library. Projects must target >= iOS6.
      
 **Header search path**                          
 Ensure that your build target's header search path includes the Airship directory.
@@ -119,18 +116,10 @@ To enable push notifications, you will need to make several additions to your ap
     
         // Your other application code.....
     
-        // This prevents the UA Library from registering with UIApplication by default. This will allow
-        // you to prompt your users at a later time. This gives your app the opportunity to explain the
-        // benefits of push or allows users to turn it on explicitly in a settings screen.
-        //
-        // If you just want everyone to immediately be prompted for push, you can
-        // leave this line out.
-        [UAPush setDefaultPushEnabledValue:NO];
-    
         // Set log level for debugging config loading (optional)
         // It will be set to the value in the loaded config upon takeOff
         [UAirship setLogLevel:UALogLevelTrace];
-    
+
         // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
         // or set runtime properties here.
         UAConfig *config = [UAConfig defaultConfig];
@@ -138,26 +127,33 @@ To enable push notifications, you will need to make several additions to your ap
         // You can then programatically override the plist values:
         // config.developmentAppKey = @"YourKey";
         // etc.
-    
+
         // Call takeOff (which creates the UAirship singleton)
-        // You may also simply call [UAirship takeOff] without any arguments if you want
-        // to use the default config loaded from AirshipConfig.plist
         [UAirship takeOff:config];
-    
+
         // Print out the application configuration for debugging (optional)
         UA_LDEBUG(@"Config:\n%@", [config description]);
-    
+
         // Set the icon badge to zero on startup (optional)
         [[UAPush shared] resetBadge];
-    
-        // Set the notification types required for the app (optional). With the default value of push set to no,
-        // UAPush will record the desired remote notification types, but not register for
-        // push notifications as mentioned above. When push is enabled at a later time, the registration
-        // will occur normally. This value defaults to badge, alert and sound, so it's only necessary to
-        // set it if you want to add or remove types.
-        [UAPush shared].notificationTypes = (UIRemoteNotificationTypeBadge |
-                                             UIRemoteNotificationTypeSound |
-                                             UIRemoteNotificationTypeAlert);
+
+        // Set the default background push notification enabled. This controls being
+        // able to send background push messages to the user through Urban Airship.
+        // This value defaults to YES.
+        [UAPush shared].backgroundPushNotificationsEnabledByDefault = YES;
+
+
+        // Set the default user notification enabled. Once enabled
+        // it will prompt the user for permission. This value defaults to NO.
+        [UAPush shared].userPushNotificationsEnabledByDefault = NO;
+
+
+        // Set the notification types required for the app (optional). This value defaults
+        // to badge, alert and sound, so it's only necessary to set it if you want
+        // to add or remove types.
+        [UAPush shared].userNotificationTypes = (UIUserNotificationTypeAlert |
+                                                 UIUserNotificationTypeBadge |
+                                                 UIUserNotificationTypeSound);
 
         return YES;
     }
@@ -166,9 +162,9 @@ To enable push later on in your application:
 
 .. code:: obj-c
 
-    // Somewhere in the app, this will enable push, setting it to NO will disable push.
-    // This will trigger the proper registration or de-registration code in the library.
-    [[UAPush shared] setPushEnabled:YES];
+    // Somewhere in the app, this will enable push (setting it to NO will disable push,
+    // which will trigger the proper registration or de-registration code in the library).
+    [UAPush shared].userPushNotificationsEnabled = YES;
 
 Logging
 -------
@@ -208,12 +204,13 @@ The available log levels are:
 
 Building the Library
 --------------------
+Source can be found at https://github.com/urbanairship/ios-library
 
 Running Tests
 #############
 
 The unit tests in this project require OCMock. OCMock can be installed automatically
-with the use of our install script, mock_setup.sh.
+with the use of our install script, scripts/mock_setup.sh.
 
 Building for Distribution
 #########################
