@@ -34,9 +34,6 @@
 /**
  * Creates a set of categories from the specified `.plist` file.
  *
- * @param filePath The path of the `.plist` file.
- * @return A set of categories.
- *
  * Categories are defined in a plist dictionary with the category id
  * followed by an NSArray of user notification action definitions. The
  * action definitions use the same keys as the properties on the action,
@@ -60,6 +57,9 @@
  *              "destructive" : @NO
  *          }]
  *  }
+ *
+ * @param filePath The path of the `.plist` file.
+ * @return A set of categories.
  */
 + (NSSet *)createCategoriesFromFile:(NSString *)filePath;
 
