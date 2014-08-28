@@ -352,6 +352,8 @@
 		CC523FB017B985F800233005 /* UAJSONValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = CC523FAE17B985F700233005 /* UAJSONValueTransformer.h */; };
 		CC523FB117B985F800233005 /* UAJSONValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = CC523FAF17B985F700233005 /* UAJSONValueTransformer.m */; };
 		CC523FC317BA8AC200233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FC217BA8AC200233005 /* CoreData.framework */; };
+		CC7215C319AF816A0017C4AF /* UAInboxMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C1F07D1978523300DD67DE /* UAInboxMessage.h */; };
+		CC7215C419AF81760017C4AF /* UAInboxMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C1F07E1978523300DD67DE /* UAInboxMessage.m */; };
 		CC7DC941183E977100E95BB8 /* UAChannelAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CC7DC93D183E977100E95BB8 /* UAChannelAPIClient.h */; };
 		CC7DC942183E977100E95BB8 /* UAChannelAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CC7DC93D183E977100E95BB8 /* UAChannelAPIClient.h */; };
 		CC7DC943183E977100E95BB8 /* UAChannelAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7DC93E183E977100E95BB8 /* UAChannelAPIClient.m */; };
@@ -1408,6 +1410,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC7215C319AF816A0017C4AF /* UAInboxMessage.h in Headers */,
 				1FE0B74117E2751000856C60 /* UAInboxDBManager.h in Headers */,
 				CC8542D417F4B81600D2DE10 /* UAPushActionArguments.h in Headers */,
 				CC8542CC17F4B81600D2DE10 /* UAIncomingPushAction.h in Headers */,
@@ -1782,6 +1785,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC7215C419AF81760017C4AF /* UAInboxMessage.m in Sources */,
 				CC8542BA17F4B81600D2DE10 /* UAActionArguments.m in Sources */,
 				1FE0B77B17E2751000856C60 /* UADeviceRegistrationPayload.m in Sources */,
 				1FE0B77C17E2751000856C60 /* UAUtils.m in Sources */,
