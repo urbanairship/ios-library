@@ -36,7 +36,7 @@
     NSString *plistPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"CustomNotificationCategories" ofType:@"plist"];
     NSSet *categories = [UAUserNotificationCategories createCategoriesFromFile:plistPath];
 
-    XCTAssertEqual(2, categories.count);
+    XCTAssertEqual(3, categories.count);
 
     // Share category
     UIUserNotificationCategory *share = [self findCategoryById:@"share_category" set:categories];
@@ -74,6 +74,35 @@
     XCTAssertEqual(UIUserNotificationActivationModeBackground, noAction.activationMode);
     XCTAssertTrue(noAction.authenticationRequired);
     XCTAssertTrue(noAction.destructive);
+
+    // Follow category
+    UIUserNotificationCategory *follow = [self findCategoryById:@"follow_category" set:categories];
+    XCTAssertNotNil(follow);
+    XCTAssertEqual(1, [follow actionsForContext:UIUserNotificationActionContextDefault].count);
+    XCTAssertEqual(1, [follow actionsForContext:UIUserNotificationActionContextMinimal].count);
+
+    // Follow action in follow category
+    UIUserNotificationAction *followAction = [self findActionById:@"follow_button" category:follow];
+    XCTAssertNotNil(followAction);
+    // Test when 'title_resource' value does not exist will fall back to 'title' value
+    XCTAssertEqualObjects(@"FollowMe", followAction.title);
+    XCTAssertEqual(UIUserNotificationActivationModeForeground, followAction.activationMode);
+    XCTAssertFalse(followAction.authenticationRequired);
+    XCTAssertFalse(followAction.destructive);
+}
+
+- (void)testDoesNotCreateCategoryMissingTitle {
+    NSArray *actions = @[@{@"identifier": @"yes",
+                           @"foreground": @YES,
+                           @"authenticationRequired": @YES},
+                         @{@"identifier": @"no",
+                           @"foreground": @NO,
+                           @"destructive": @YES,
+                           @"authenticationRequired": @NO}];
+
+    UIUserNotificationCategory *category = [UAUserNotificationCategories createCategory:@"category" actions:actions];
+
+    XCTAssertNil(category);
 }
 
 - (void)testCreateFromInvalidPlist {

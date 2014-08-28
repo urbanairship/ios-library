@@ -86,6 +86,7 @@
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
 		63C51F0711D30F870078DED4 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AB3B21D10A0063D0035E6BD /* SystemConfiguration.framework */; };
+		76911B2019AD367400AA245D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 76911B2219AD367400AA245D /* Localizable.strings */; };
 		9A465ED40FF4AB1800DCABE9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FBB90FCB114B0007E1BE /* CoreGraphics.framework */; };
 		9A50FAE90FCA81810007E1BE /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAE80FCA81810007E1BE /* CFNetwork.framework */; };
 		9A50FAEF0FCA81A40007E1BE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAEE0FCA81A40007E1BE /* Foundation.framework */; };
@@ -209,6 +210,7 @@
 		4906F33E1990564A00F27AF1 /* InboxSample copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "InboxSample copy-Info.plist"; path = "/Users/marc/ios-library-dev/InboxSample/InboxSample copy-Info.plist"; sourceTree = "<absolute>"; };
 		49E001A8154F63F3009305B7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		63CB54BB1247107C00DF2EBC /* InboxTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InboxTests-Info.plist"; sourceTree = "<group>"; };
+		76911B2119AD367400AA245D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		9A50FAE80FCA81810007E1BE /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		9A50FAEE0FCA81A40007E1BE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		9A50FAF50FCA81BD0007E1BE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -344,6 +346,7 @@
 			isa = PBXGroup;
 			children = (
 				CC070C6C19ABB6F300E91553 /* Settings.bundle */,
+				76911B2219AD367400AA245D /* Localizable.strings */,
 				D5A3F5D312C15333009731BE /* iTunesArtwork */,
 				D5C75B6112BC20320041239E /* Default@2x.png */,
 				D5C75B6212BC20320041239E /* Icon.png */,
@@ -643,6 +646,7 @@
 				189224A2127A6795000CF8D0 /* MainWindow_Pad.xib in Resources */,
 				E9CB35C612B89AC0002E39EA /* UAInboxLocalization.bundle in Resources */,
 				1FE4238B188475C900624335 /* list-image-placeholder.png in Resources */,
+				76911B2019AD367400AA245D /* Localizable.strings in Resources */,
 				D5C75B5C12BC20160041239E /* Icon-72.png in Resources */,
 				D5C75B5D12BC20160041239E /* iPadDefault-Landscape.png in Resources */,
 				D5C75B5E12BC20160041239E /* iPadDefault-Portrait.png in Resources */,
@@ -738,6 +742,17 @@
 			targetProxy = 4906F33F199056C800F27AF1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		76911B2219AD367400AA245D /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				76911B2119AD367400AA245D /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		1D6058940D05DD3E006BFB54 /* Debug */ = {

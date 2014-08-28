@@ -17,6 +17,23 @@
 			<string>share_button</string>
 		</dict>
 	</array>
+	<key>follow_category</key>
+	<array>
+		<dict>
+			<key>authorizationRequired</key>
+			<false/>
+			<key>destructive</key>
+			<false/>
+			<key>title_resource</key>
+			<string>ua_follow_title_resource</string>
+			<key>title</key>
+			<string>FollowMe</string>
+			<key>foreground</key>
+			<true/>
+			<key>identifier</key>
+			<string>follow_button</string>
+		</dict>
+	</array>
 	<key>yes_no_category</key>
 	<array>
 		<dict>
