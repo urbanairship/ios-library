@@ -391,6 +391,7 @@ SINGLETON_INTERFACE(UAPush);
 
 /**
  * Gets the current enabled notification types.
+ * @return The current enabled notification types.
  */
 + (NSUInteger)currentEnabledNotificationTypes;
 

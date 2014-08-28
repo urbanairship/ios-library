@@ -119,16 +119,20 @@ extern UAPushUserInfoKey *const UAPushChannelCreationOnForeground;
 
 /**
  * Called when the device registrar failed to register.
+ * @param payload The registration payload.
  */
 - (void)registrationFailedWithPayload:(UAChannelRegistrationPayload *)payload;
 
 /**
  * Called when the device registrar succesfully registered.
+ * @param payload The registration payload.
  */
 - (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload;
 
 /**
  * Called when the device registrar creates a new channel.
+ * @param channelID The channel ID string.
+ * @param channelLocation The channel location string.
  */
 - (void)channelCreated:(NSString *)channelID channelLocation:(NSString *)channelLocation;
 
@@ -140,6 +144,7 @@ extern UAPushUserInfoKey *const UAPushChannelCreationOnForeground;
 
 /**
  * Used to trim whitespace and filter out tags with unacceptable tag length
+ * @param tags Tags as an NSArray.
  */
 -(NSArray *)normalizeTags:(NSArray *)tags;
 
