@@ -96,6 +96,7 @@ extern UAPushUserInfoKey *const UAPushChannelCreationOnForeground;
 
 /**
  * Get the local time zone, considered the default.
+ * @return The local time zone.
  */
 - (NSTimeZone *)defaultTimeZoneForQuietTime;
 

@@ -34,6 +34,7 @@ extern NSString * const UAUserCreatedNotification;
 
 /**
  * Returns the singleton user instance.
+ * @return The singleton user instance.
  */
 + (UAUser *)defaultUser;
 

@@ -39,6 +39,10 @@
 /// @name NSObject 
 ///---------------------------------------------------------------------------------------
 
+/**
+ * Returns a string that describes the contents of UABaseLocationProvider.
+ * @return A string that describes UABaseLocationProvider.
+ */
 - (NSString *)description;
 
 ///---------------------------------------------------------------------------------------

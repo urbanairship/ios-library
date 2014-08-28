@@ -40,14 +40,14 @@
 /**
  * Adds a URL to be handled and cached by the Protocol.
  *
- *@param url The URL or mainDocumentURL of a request to cache.
+ * @param url The URL or mainDocumentURL of a request to cache.
  */
 + (void)addCachableURL:(NSURL *)url;
 
 /**
  * Removes a URL from being cached.
  *
- *@param url The URL or mainDocumentURL of a request.
+ * @param url The URL or mainDocumentURL of a request.
  */
 + (void)removeCachableURL:(NSURL *)url;
 

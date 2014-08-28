@@ -25,15 +25,45 @@
 
 #import <UIKit/UIKit.h>
 
-typedef enum _UALogLevel {
+/**
+ * Represents the possible log levels.
+ */
+typedef NS_ENUM(NSInteger, UALogLevel) {
+    /**
+     * Undefined log level.
+     */
     UALogLevelUndefined = -1,
+
+    /**
+     * No log messages.
+     */
     UALogLevelNone = 0,
+
+    /**
+     * Log error messages.
+     */
     UALogLevelError = 1,
+
+    /**
+     * Log warning messages.
+     */
     UALogLevelWarn = 2,
+
+    /**
+     * Log informative messages.
+     */
     UALogLevelInfo = 3,
+
+    /**
+     * Log debugging messages.
+     */
     UALogLevelDebug = 4,
+
+    /**
+     * Log detailed tracing messages.
+     */
     UALogLevelTrace = 5
-} UALogLevel;
+};
 
 
 #define UA_LEVEL_LOG_THREAD(level, levelString, fmt, ...) \

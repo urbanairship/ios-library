@@ -29,6 +29,11 @@
 
 @property(nonatomic, strong) NSMutableArray *mutableNames;
 
+/**
+ * Add a situation override to the UAActionRegistryEntry.
+ * @param situation The situation override to add.
+ * @param action The action to be added.
+ */
 - (void)addSituationOverride:(UASituation)situation withAction:(UAAction *)action;
 
 @end

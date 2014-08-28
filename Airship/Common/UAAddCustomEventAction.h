@@ -29,7 +29,7 @@
  * Represents the possible error conditions
  * when running a `UAAddCustomEventAction`.
  */
-NS_ENUM(NSInteger, UAAddCustomEventActionErrorCode) {
+typedef NS_ENUM(NSInteger, UAAddCustomEventActionErrorCode) {
     /**
      * Indicates that the eventName is invalid.
      */

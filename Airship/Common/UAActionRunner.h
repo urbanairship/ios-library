@@ -66,7 +66,7 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler;
  *
  * @param actions The map of action names and arguments.
  * @param completionHandler CompletionHandler to call after all the
- * actions have completed.  The result will be the aggregated result 
+ * actions have completed. The result will be the aggregated result
  * of all the actions run.
  */
 + (void)runActions:(NSDictionary *)actions

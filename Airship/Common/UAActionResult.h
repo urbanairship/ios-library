@@ -28,22 +28,26 @@
 /**
  * Represents the result of performing a background fetch, or none if no fetch was performed.
  */
-typedef enum  {
+typedef NS_OPTIONS(NSInteger, UAActionFetchResult) {
     /**
      * The action did not result in any new data being fetched.
      */
     UAActionFetchResultNoData = UIBackgroundFetchResultNoData,
+
     /**
      * The action resulted in new data being fetched.
      */
     UAActionFetchResultNewData = UIBackgroundFetchResultNewData,
+
     /**
      * The action failed.
      */
     UAActionFetchResultFailed = UIBackgroundFetchResultFailed
-} UAActionFetchResult;
+};
 
-
+/**
+ * Represents the action status.
+ */
 typedef NS_ENUM(NSInteger, UAActionStatus) {
     /**
      * The action accepted the arguments and executed without an error.
@@ -133,7 +137,7 @@ typedef NS_ENUM(NSInteger, UAActionStatus) {
  * and `fetchResult` properties are set to the supplied arguments.
  *
  * @param error An instance of NSError.
- * @param fetchResult A UAActionFetchResult enum value;
+ * @param fetchResult A UAActionFetchResult enum value.
  */
 + (instancetype)resultWithError:(NSError *)error withFetchResult:(UAActionFetchResult)fetchResult;
 

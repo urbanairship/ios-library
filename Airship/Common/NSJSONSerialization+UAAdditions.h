@@ -30,7 +30,13 @@
  */
 extern NSString * const UAJSONSerializationErrorDomain;
 
-NS_ENUM(NSInteger, UAJSONSerializationErrorCode) {
+/**
+ * Represents the possible error conditions when serializing JSON objects.
+ */
+typedef NS_ENUM(NSInteger, UAJSONSerializationErrorCode) {
+    /**
+     * Indicates an error in serializing an invalid object.
+     */
     UAJSONSerializationErrorCodeInvalidObject
 };
 

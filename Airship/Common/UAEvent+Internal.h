@@ -45,6 +45,7 @@
 /**
  * Gets the current connection type.
  * Possible values are "cell", "wifi", or "none".
+ * @return The current connection type as a string.
  */
 - (NSString *)connectionType;
 @end

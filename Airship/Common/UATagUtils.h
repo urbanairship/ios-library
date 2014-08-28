@@ -29,13 +29,33 @@
  * Autogenerate a set of tags with
  * the following flags.
  */
-typedef enum {
-    UATagTypeTimeZone             = 1 << 0, /** Full Time Zone: "America/Los_Angeles" */
-    UATagTypeTimeZoneAbbreviation = 1 << 1, /** Abbreviated Time Zone: "PST" Note: Containst DST info and may abbreviations may conflict with other time zones. */
-    UATagTypeLanguage             = 1 << 2, /** Language Code, with prefix: "language_en" */
-    UATagTypeCountry              = 1 << 3, /** Country Code, with prefix: "country_us" */
-    UATagTypeDeviceType           = 1 << 4  /** Device type: iPhone, iPad or iPod */
-} UATagType;
+typedef NS_OPTIONS(NSInteger, UATagType) {
+    /**
+     * Full Time Zone: "America/Los_Angeles"
+     */
+    UATagTypeTimeZone             = 1 << 0,
+
+    /**
+     * Abbreviated Time Zone: "PST" Note: Contains DST info and abbreviations
+     * may conflict with other time zones.
+     */
+    UATagTypeTimeZoneAbbreviation = 1 << 1,
+
+    /**
+     * Language Code, with prefix: "language_en"
+     */
+    UATagTypeLanguage             = 1 << 2,
+
+    /**
+     * Country Code, with prefix: "country_us"
+     */
+    UATagTypeCountry              = 1 << 3,
+
+    /**
+     * Device type: iPhone, iPad or iPod
+     */
+    UATagTypeDeviceType           = 1 << 4
+};
 
 /**
  * The UATagUtils object provides an interface for creating tags.
@@ -48,6 +68,7 @@ typedef enum {
  * Creates an autoreleased NSArray containing tags specified in the
  * tags parameter, a bit field accepting UATagType flags.
  * @param tags to create
+ * @return The tags as an NSArray.
  */
 + (NSArray *)createTags:(UATagType) tags;
 

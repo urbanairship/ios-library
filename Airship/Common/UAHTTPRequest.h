@@ -100,12 +100,14 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 /**
  * Create a request with the URL string.
  * @param urlString The URL string.
+ * @return The request with the specified URL string.
  */
 + (UAHTTPRequest *)requestWithURLString:(NSString *)urlString;
 
 /**
  * Create a request with the URL.
  * @param url The URL.
+ * @return The request with the specified URL.
  */
 + (UAHTTPRequest *)requestWithURL:(NSURL *)url;
 

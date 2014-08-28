@@ -186,6 +186,7 @@
 
 /**
  * Generate an analytics request with the proper fields
+ * @return An analytics request.
  */
 - (UAHTTPRequest *)analyticsRequest;
 
@@ -193,6 +194,7 @@
  * Prepare the event data for sending. Enforce max batch limits.
  * Loop through events and discard DB-only items, format the
  * JSON data field as a dictionary.
+ * @return Event data as an NSArray.
  */
 - (NSArray *)prepareEventsForUpload;
 
@@ -205,12 +207,14 @@
 /**
  * Checks a event dictionary for expected fields and values.
  * @param event The event as an NSMutableDictionary to validate.
+ * @return 'YES' if the event is valid, otherwise 'NO'
  */
 - (BOOL)isEventValid:(NSMutableDictionary *)event;
 
 
 /**
  * Called to notify analytics the app was launched from a push notification.
+ * @param notification The push notification.
  */
 - (void)launchedFromNotification:(NSDictionary *)notification;
 

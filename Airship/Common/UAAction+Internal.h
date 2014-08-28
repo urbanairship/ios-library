@@ -48,6 +48,10 @@
  * [UAAction willPerformWithArguments:] and
  * [UAAction didPerformWithArguments:withResult:]
  * before and after the perform method, respectively.
+ *
+ * @param arguments The action's arguments.
+ * @param name The action's name.
+ * @param completionHandler CompletionHandler to pass to the action..
  */
 - (void)runWithArguments:(UAActionArguments *)arguments
               actionName:(NSString *)name
