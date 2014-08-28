@@ -115,13 +115,13 @@
 
 /**
  * Start the connection asynchronously.
- * @return 'YES' if the connection was started, otherwise 'NO'
+ * @return 'YES' if the connection was started, otherwise 'NO'.
  */
 - (BOOL)start;
 
 /**
- * Start the connection synchronously
- * @return 'YES' if the connection was started, otherwise 'NO'
+ * Start the connection synchronously.
+ * @return 'YES' if the connection was started, otherwise 'NO'.
  */
 - (BOOL)startSynchronous;
 

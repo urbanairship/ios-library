@@ -51,7 +51,7 @@
  *
  * @param arguments The action's arguments.
  * @param name The action's name.
- * @param completionHandler CompletionHandler to pass to the action.
+ * @param completionHandler CompletionHandler when the action is finished.
  */
 - (void)runWithArguments:(UAActionArguments *)arguments
               actionName:(NSString *)name

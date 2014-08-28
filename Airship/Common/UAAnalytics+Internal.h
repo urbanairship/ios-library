@@ -207,7 +207,7 @@
 /**
  * Checks a event dictionary for expected fields and values.
  * @param event The event as an NSMutableDictionary to validate.
- * @return 'YES' if the event is valid, otherwise 'NO'
+ * @return 'YES' if the event is valid, otherwise 'NO'.
  */
 - (BOOL)isEventValid:(NSMutableDictionary *)event;
 
