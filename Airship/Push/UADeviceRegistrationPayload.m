@@ -4,7 +4,7 @@
 #import "UAChannelRegistrationPayload.h"
 
 @interface UADeviceRegistrationPayload()
-@property(nonatomic, strong) NSDictionary *payloadDictionary;
+@property (nonatomic, strong) NSDictionary *payloadDictionary;
 @end
 
 @implementation UADeviceRegistrationPayload

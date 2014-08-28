@@ -28,7 +28,7 @@
 #import <OCMock/OCMock.h>
 
 @interface UAApplicationMetricsTest : XCTestCase
-@property(nonatomic, strong)UAApplicationMetrics *metrics;
+@property (nonatomic, strong) UAApplicationMetrics *metrics;
 @end
 
 @implementation UAApplicationMetricsTest

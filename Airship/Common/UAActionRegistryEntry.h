@@ -34,17 +34,17 @@
 /**
  * The entry's action.
  */
-@property(nonatomic, strong) UAAction *action;
+@property (nonatomic, strong) UAAction *action;
 
 /**
  * The entry's predicate.
  */
-@property(nonatomic, copy) UAActionPredicate predicate;
+@property (nonatomic, copy) UAActionPredicate predicate;
 
 /**
  * Registered names
  */
-@property(nonatomic, readonly) NSArray *names;
+@property (nonatomic, readonly) NSArray *names;
 
 
 /**

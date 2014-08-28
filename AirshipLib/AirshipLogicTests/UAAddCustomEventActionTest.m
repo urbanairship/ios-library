@@ -34,10 +34,10 @@
 
 @interface UAAddCustomEventActionTest : XCTestCase
 
-@property(nonatomic, strong) id analytics;
-@property(nonatomic, strong) id airship;
-@property(nonatomic, strong) UAAddCustomEventAction *action;
-@property(nonatomic, strong) UAInboxDBManager *inboxDBManager;
+@property (nonatomic, strong) id analytics;
+@property (nonatomic, strong) id airship;
+@property (nonatomic, strong) UAAddCustomEventAction *action;
+@property (nonatomic, strong) UAInboxDBManager *inboxDBManager;
 
 @end
 

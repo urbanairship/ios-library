@@ -46,7 +46,7 @@
 /**
  * The connection delegate.
  */
-@property (weak, nonatomic) id delegate;
+@property (nonatomic, weak) id delegate;
 
 /**
  * The connection success selector.

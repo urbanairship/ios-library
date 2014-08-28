@@ -26,7 +26,7 @@
 #import "UADisposable.h"
 
 @interface UADisposable ()
-@property(nonatomic, copy) UADisposalBlock disposalBlock;
+@property (nonatomic, copy) UADisposalBlock disposalBlock;
 @end
 
 @implementation UADisposable

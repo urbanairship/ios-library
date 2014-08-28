@@ -43,7 +43,7 @@ typedef void (^UADisposalBlock)(void);
  *
  * @param disposalBlock A `UADisposalBlock` to be executed upon disposal.
  */
-+ (instancetype) disposableWithBlock:(UADisposalBlock)disposalBlock;
++ (instancetype)disposableWithBlock:(UADisposalBlock)disposalBlock;
 
 /**
  * Dispose of associated resources.

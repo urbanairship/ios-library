@@ -27,9 +27,9 @@
 
 @interface UAActionArguments ()
 
-@property(nonatomic, readonly) NSString *situationString;
-@property(nonatomic, copy) NSDictionary *metadata;
-@property(nonatomic, assign) UASituation situation;
-@property(nonatomic, strong) id value;
+@property (nonatomic, readonly) NSString *situationString;
+@property (nonatomic, copy) NSDictionary *metadata;
+@property (nonatomic, assign) UASituation situation;
+@property (nonatomic, strong) id value;
 
 @end

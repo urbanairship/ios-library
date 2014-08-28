@@ -35,15 +35,15 @@
 #import "UAPush+Internal.h"
 
 @interface UADeviceRegistrationPayloadTest()
-@property(nonatomic, strong) UADeviceRegistrationPayload *payload;
-@property(nonatomic, strong) UADeviceRegistrationPayload *emptyPayload;
-@property(nonatomic, copy) NSString *alias;
-@property(nonatomic, strong) NSArray *tags;
-@property(nonatomic, strong) NSMutableDictionary *quietTime;
-@property(nonatomic, strong) NSDate *startDate;
-@property(nonatomic, strong) NSDate *endDate;
-@property(nonatomic, copy) NSString *timeZone;
-@property(nonatomic, strong) NSNumber *badge;
+@property (nonatomic, strong) UADeviceRegistrationPayload *payload;
+@property (nonatomic, strong) UADeviceRegistrationPayload *emptyPayload;
+@property (nonatomic, copy) NSString *alias;
+@property (nonatomic, strong) NSArray *tags;
+@property (nonatomic, strong) NSMutableDictionary *quietTime;
+@property (nonatomic, strong) NSDate *startDate;
+@property (nonatomic, strong) NSDate *endDate;
+@property (nonatomic, copy) NSString *timeZone;
+@property (nonatomic, strong) NSNumber *badge;
 @end
 
 @implementation UADeviceRegistrationPayloadTest

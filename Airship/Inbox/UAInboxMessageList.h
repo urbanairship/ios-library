@@ -200,24 +200,24 @@ typedef NS_ENUM(NSInteger, UABatchUpdateCommand) {
 /**
  * The list of messages on disk as an NSMutableArray.
  */
-@property(nonatomic, strong) NSMutableArray *messages;
+@property (nonatomic, strong) NSMutableArray *messages;
 
 /**
  * The number of messages that are currently unread or -1
  * if the message list is not loaded.
  */
-@property(assign) NSInteger unreadCount;
+@property (assign) NSInteger unreadCount;
 
 /**
  * YES if a batch update is currently being performed on the message list,
  * NO otherwise.
  */
-@property(assign) BOOL isBatchUpdating;
+@property (assign) BOOL isBatchUpdating;
 
 /**
  * YES if retrieving message list is currently in progress.
  * NO otherwise.
  */
-@property(nonatomic, readonly, assign) BOOL isRetrieving;
+@property (nonatomic, readonly, assign) BOOL isRetrieving;
 
 @end

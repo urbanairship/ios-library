@@ -35,7 +35,7 @@
 
 @interface UAURLProtocol()
 
-@property(nonatomic, strong) UAHTTPConnection *connection;
+@property (nonatomic, strong) UAHTTPConnection *connection;
 
 @end
 

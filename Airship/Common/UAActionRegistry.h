@@ -55,7 +55,7 @@ SINGLETON_INTERFACE(UAActionRegistry);
 /**
  * A set of the current registered entries
  */
-@property(nonatomic, readonly) NSSet *registeredEntries;
+@property (nonatomic, readonly) NSSet *registeredEntries;
 
 /**
  * Registers an action with a predicate.

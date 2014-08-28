@@ -32,10 +32,10 @@
 #import "UAInboxMessageList.h"
 
 @interface UAInboxPushHandlerTest : XCTestCase
-@property(nonatomic, strong) UAInboxMessage *message;
-@property(nonatomic, strong) id mockMessageList;
-@property(nonatomic, strong) UAInboxPushHandler *pushHandler;
-@property(nonatomic, strong) id mockedUAInboxPushHandlerDelegate;
+@property (nonatomic, strong) UAInboxMessage *message;
+@property (nonatomic, strong) id mockMessageList;
+@property (nonatomic, strong) UAInboxPushHandler *pushHandler;
+@property (nonatomic, strong) id mockedUAInboxPushHandlerDelegate;
 @end
 
 @implementation UAInboxPushHandlerTest

@@ -31,8 +31,8 @@
 #import "NSJSONSerialization+UAAdditions.h"
 
 @interface UACustomEventTest : XCTestCase
-@property(nonatomic, strong) id analytics;
-@property(nonatomic, strong) id airship;
+@property (nonatomic, strong) id analytics;
+@property (nonatomic, strong) id airship;
 
 @end
 

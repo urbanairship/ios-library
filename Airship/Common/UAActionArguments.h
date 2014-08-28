@@ -123,17 +123,17 @@ extern NSString * const UAActionMetadataUserNotificationActionIDKey;
 /**
  * Situation of the action
  */
-@property(nonatomic, assign, readonly) UASituation situation;
+@property (nonatomic, assign, readonly) UASituation situation;
 
 /**
  * The value associated with the action
  */
-@property(nonatomic, strong, readonly) id value;
+@property (nonatomic, strong, readonly) id value;
 
 /**
  * The argument's metadata. Metadata provides more information
  * about the environment that the action was triggered from. 
  */
-@property(nonatomic, copy, readonly) NSDictionary *metadata;
+@property (nonatomic, copy, readonly) NSDictionary *metadata;
 
 @end

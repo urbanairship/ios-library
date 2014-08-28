@@ -27,8 +27,8 @@
 #import "UAInteractiveNotificationEvent.h"
 
 @interface UAInteractiveNotificationEventTest : XCTestCase
-@property(nonatomic, strong) NSDictionary *notification;
-@property(nonatomic, strong) UIMutableUserNotificationAction *action;
+@property (nonatomic, strong) NSDictionary *notification;
+@property (nonatomic, strong) UIMutableUserNotificationAction *action;
 @end
 
 @implementation UAInteractiveNotificationEventTest

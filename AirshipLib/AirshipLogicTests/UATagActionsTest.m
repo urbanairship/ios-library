@@ -10,12 +10,12 @@
 #import "UAActionArguments+Internal.h"
 
 @interface UATagActionsTest : XCTestCase
-@property(nonatomic, strong) id mockPush;
-@property(nonatomic, strong) UAActionArguments *stringArgs;
-@property(nonatomic, strong) UAActionArguments *arrayArgs;
-@property(nonatomic, strong) UAActionArguments *emptyArrayArgs;
-@property(nonatomic, strong) UAActionArguments *badArrayArgs;
-@property(nonatomic, strong) UAActionArguments *numberArgs;
+@property (nonatomic, strong) id mockPush;
+@property (nonatomic, strong) UAActionArguments *stringArgs;
+@property (nonatomic, strong) UAActionArguments *arrayArgs;
+@property (nonatomic, strong) UAActionArguments *emptyArrayArgs;
+@property (nonatomic, strong) UAActionArguments *badArrayArgs;
+@property (nonatomic, strong) UAActionArguments *numberArgs;
 @end
 
 @implementation UATagActionsTest

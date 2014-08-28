@@ -35,7 +35,7 @@
 #import "UAUtils.h"
 
 @interface UALandingPageAction()
-@property(nonatomic, strong) UAHTTPConnection *connection;
+@property (nonatomic, strong) UAHTTPConnection *connection;
 @end
 
 

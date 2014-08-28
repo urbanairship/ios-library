@@ -5,8 +5,8 @@
 #import "UAWebViewCallData.h"
 
 @interface UANativeBridgeTest : XCTestCase
-@property(nonatomic, strong) JSContext *jsc;
-@property(nonatomic, strong) NSString *nativeBridge;
+@property (nonatomic, strong) JSContext *jsc;
+@property (nonatomic, strong) NSString *nativeBridge;
 @end
 
 @implementation UANativeBridgeTest

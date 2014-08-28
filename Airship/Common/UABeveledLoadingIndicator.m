@@ -3,7 +3,7 @@
 #include <QuartzCore/QuartzCore.h>
 
 @interface UABeveledLoadingIndicator()
-@property(nonatomic, strong) UIActivityIndicatorView *activity;
+@property (nonatomic, strong) UIActivityIndicatorView *activity;
 @end
 
 @implementation UABeveledLoadingIndicator

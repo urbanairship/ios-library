@@ -7,7 +7,7 @@
 #import "UAWebViewCallData.h"
 
 @interface UAActionJSDelegateTest : XCTestCase
-@property(nonatomic, strong) UAActionJSDelegate *jsDelegate;
+@property (nonatomic, strong) UAActionJSDelegate *jsDelegate;
 @end
 
 @implementation UAActionJSDelegateTest

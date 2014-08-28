@@ -97,6 +97,6 @@ typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
  * (most 5xx status codes, reachability errors, etc). In this case, the client will perform exponential backoff and schedule
  * reconnections accordingly before calling back with a success or failure.  Defaults to `YES`.
  */
-@property(nonatomic, assign) BOOL shouldRetryOnConnectionError;
+@property (nonatomic, assign) BOOL shouldRetryOnConnectionError;
 
 @end

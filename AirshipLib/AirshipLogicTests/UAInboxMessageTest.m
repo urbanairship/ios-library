@@ -12,16 +12,16 @@
 
 @interface UAInboxMessageTest : XCTestCase
 
-@property(nonatomic, strong) UAInboxDBManager *dbManager;
-@property(nonatomic, strong) UAInboxMessage *message;
+@property (nonatomic, strong) UAInboxDBManager *dbManager;
+@property (nonatomic, strong) UAInboxMessage *message;
 //the mock inbox API client we'll inject into the message
-@property(nonatomic, strong) id mockInboxAPIClient;
+@property (nonatomic, strong) id mockInboxAPIClient;
 //a mock (old-school) message list observer that will receive deprecated callbacks
-@property(nonatomic, strong) id mockMessageListObserver;
+@property (nonatomic, strong) id mockMessageListObserver;
 //a mock delegate we'll pass into the appropriate methods for callbacks
-@property(nonatomic, strong) id mockMessageListDelegate;
+@property (nonatomic, strong) id mockMessageListDelegate;
 
-@property(nonatomic, strong) UAInboxMessageList *messageList;
+@property (nonatomic, strong) UAInboxMessageList *messageList;
 @end
 
 @implementation UAInboxMessageTest

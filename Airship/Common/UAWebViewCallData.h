@@ -31,31 +31,31 @@
  * A name, derived from the host passed in the delegate call URL.
  * This is typically the name of a command.
  */
-@property(nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *name;
 
 /**
  * The argument strings passed in the call.
  */
-@property(nonatomic, strong) NSArray *arguments;
+@property (nonatomic, strong) NSArray *arguments;
 
 /**
  * The query options passed in the call.
  */
-@property(nonatomic, strong) NSDictionary *options;
+@property (nonatomic, strong) NSDictionary *options;
 
 /**
  * The UIWebView initiating the call.
  */
-@property(nonatomic, strong) UIWebView *webView;
+@property (nonatomic, strong) UIWebView *webView;
 
 /**
  * The orignal URL that initiated the call.
  */
-@property(nonatomic, strong) NSURL *url;
+@property (nonatomic, strong) NSURL *url;
 
 /**
  * The UAInboxMessage associated with the webview.
  */
-@property(nonatomic, strong) UAInboxMessage *message;
+@property (nonatomic, strong) UAInboxMessage *message;
 
 @end

@@ -12,7 +12,7 @@
 
 @interface UAInboxAPIClient()
 
-@property(nonatomic, strong) UAHTTPRequestEngine *requestEngine;
+@property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
 
 @end
 

@@ -28,7 +28,7 @@
 #import "UAObservable.h"
 
 @interface UAObservable()
-@property(nonatomic, strong) NSMutableSet *observers;
+@property (nonatomic, strong) NSMutableSet *observers;
 @end
 
 @implementation UAObservable

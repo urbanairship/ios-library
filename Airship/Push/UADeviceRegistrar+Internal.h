@@ -65,7 +65,7 @@
 /**
  * A flag indicating if registration is in progress.
  */
-@property (assign) BOOL isRegistrationInProgress;
+@property (atomic, assign) BOOL isRegistrationInProgress;
 
 
 @end

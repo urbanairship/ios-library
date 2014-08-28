@@ -15,7 +15,7 @@
 
 
 @interface UADeviceAPIClient()
-@property(nonatomic, strong) UAHTTPRequestEngine *requestEngine;
+@property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
 @end
 
 @implementation UADeviceAPIClient

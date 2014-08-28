@@ -124,7 +124,7 @@
 /**
  * YES if analytics upload is in progress.
  */
-@property (assign) BOOL isSending;
+@property (atomic, assign) BOOL isSending;
 
 /**
  * YES if the app is in the process of entering the foreground, but is not yet active.

@@ -5,8 +5,8 @@
 
 @interface UAInboxMessage ()
 
-@property(nonatomic, strong) UAInboxAPIClient *client;
-@property(nonatomic, strong) UAInboxMessageData *data;
+@property (nonatomic, strong) UAInboxAPIClient *client;
+@property (nonatomic, strong) UAInboxMessageData *data;
 
 @property (nonatomic, copy) NSString *messageID;
 @property (nonatomic, strong) NSURL *messageBodyURL;

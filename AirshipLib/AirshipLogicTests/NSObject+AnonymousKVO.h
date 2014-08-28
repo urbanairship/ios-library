@@ -15,11 +15,11 @@ typedef void (^UAAnonymousKVOBlock)(id value);
 /**
  * The object being observed.
  */
-@property(nonatomic, strong, readonly) id object;
+@property (nonatomic, strong, readonly) id object;
 /**
  * The block to be executed when the observed object passes new values.
  */
-@property(nonatomic, strong, readonly) UAAnonymousKVOBlock block;
+@property (nonatomic, strong, readonly) UAAnonymousKVOBlock block;
 
 /**
  * Observe an object for KVO changes. New values will be passed
@@ -38,7 +38,7 @@ typedef void (^UAAnonymousKVOBlock)(id value);
 /**
  * A set of anonymous observers.
  */
-@property(nonatomic, strong, readonly) NSMutableSet *anonymousObservers;
+@property (nonatomic, strong, readonly) NSMutableSet *anonymousObservers;
 
 /**
  * Observe the object for KVO changes. New values will be passed

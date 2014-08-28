@@ -34,10 +34,10 @@
 #import "UAConfig.h"
 @interface UAChannelAPIClientTest : XCTestCase
 
-@property(nonatomic, strong) id mockRequestEngine;
-@property(nonatomic, strong) id mockAirship;
-@property(nonatomic, strong) UAConfig *config;
-@property(nonatomic, strong) UAChannelAPIClient *client;
+@property (nonatomic, strong) id mockRequestEngine;
+@property (nonatomic, strong) id mockAirship;
+@property (nonatomic, strong) UAConfig *config;
+@property (nonatomic, strong) UAChannelAPIClient *client;
 
 @end
 

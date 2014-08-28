@@ -33,11 +33,11 @@
 #import "UAPush+Internal.h"
 
 @interface UAAnalyticsTest()
-@property(nonatomic, strong) UAAnalytics *analytics;
-@property(nonatomic, strong) id mockedKeychainClass;
-@property(nonatomic, strong) id mockLocaleClass;
-@property(nonatomic, strong) id mockTimeZoneClass;
-@property(nonatomic, strong) id mockPush;
+@property (nonatomic, strong) UAAnalytics *analytics;
+@property (nonatomic, strong) id mockedKeychainClass;
+@property (nonatomic, strong) id mockLocaleClass;
+@property (nonatomic, strong) id mockTimeZoneClass;
+@property (nonatomic, strong) id mockPush;
 @end
 
 @implementation UAAnalyticsTest

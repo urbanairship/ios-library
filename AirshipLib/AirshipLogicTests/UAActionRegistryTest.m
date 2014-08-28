@@ -29,9 +29,9 @@
 #import "UAirship+Internal.h"
 
 @interface UAActionRegistryTest : XCTestCase
-@property(nonatomic, strong) UAActionRegistry *registry;
-@property(nonatomic, strong) UAApplicationMetrics *metrics;
-@property(nonatomic, strong) id mockAirship;
+@property (nonatomic, strong) UAActionRegistry *registry;
+@property (nonatomic, strong) UAApplicationMetrics *metrics;
+@property (nonatomic, strong) id mockAirship;
 @end
 
 @implementation UAActionRegistryTest

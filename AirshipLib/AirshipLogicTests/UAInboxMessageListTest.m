@@ -18,15 +18,15 @@ static UAUser *mockUser = nil;
 
 @interface UAInboxMessageListTest : XCTestCase
 //the mock inbox API client we'll inject into the message list
-@property(nonatomic, strong) id mockInboxAPIClient;
+@property (nonatomic, strong) id mockInboxAPIClient;
 //a mock (old-school) message list observer that will receive deprecated callbacks
-@property(nonatomic, strong) id mockMessageListObserver;
+@property (nonatomic, strong) id mockMessageListObserver;
 //a mock object that will sign up for NSNotificationCenter events
-@property(nonatomic, strong) id mockMessageListNotificationObserver;
+@property (nonatomic, strong) id mockMessageListNotificationObserver;
 //a mock delegate we'll pass into the appropriate methods for callbacks
-@property(nonatomic, strong) id mockMessageListDelegate;
+@property (nonatomic, strong) id mockMessageListDelegate;
 
-@property(nonatomic, strong) UAInboxMessageList *messageList;
+@property (nonatomic, strong) UAInboxMessageList *messageList;
 
 @end
 

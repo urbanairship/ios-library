@@ -5,13 +5,13 @@
 
 @interface UAAnonymousObserver()
 
-@property(nonatomic, strong) id object;
-@property(nonatomic, strong) UAAnonymousKVOBlock block;
+@property (nonatomic, strong) id object;
+@property (nonatomic, strong) UAAnonymousKVOBlock block;
 
 @end
 
 @interface NSObject();
-@property(nonatomic, strong) NSMutableSet *anonymousObservers;
+@property (nonatomic, strong) NSMutableSet *anonymousObservers;
 @end
 
 @implementation UAAnonymousObserver

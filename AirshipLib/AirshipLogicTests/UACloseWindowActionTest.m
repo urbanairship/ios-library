@@ -31,9 +31,9 @@
 
 
 @interface UACloseWindowActionTest : XCTestCase
-@property(nonatomic, strong)id mockWebView;
-@property(nonatomic, strong)id mockUARichContentWindow;
-@property(nonatomic, strong) UACloseWindowAction *action;
+@property (nonatomic, strong) id mockWebView;
+@property (nonatomic, strong) id mockUARichContentWindow;
+@property (nonatomic, strong) UACloseWindowAction *action;
 @end
 
 @implementation UACloseWindowActionTest

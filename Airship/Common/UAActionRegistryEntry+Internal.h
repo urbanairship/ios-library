@@ -27,7 +27,7 @@
 
 @interface UAActionRegistryEntry()
 
-@property(nonatomic, strong) NSMutableArray *mutableNames;
+@property (nonatomic, strong) NSMutableArray *mutableNames;
 
 /**
  * Add a situation override to the UAActionRegistryEntry.

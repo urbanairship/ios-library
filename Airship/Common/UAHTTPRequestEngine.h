@@ -85,34 +85,34 @@ typedef void (^UAHTTPRequestEngineFailureBlock)(UAHTTPRequest *request, NSUInteg
  *
  * Defaults to 1.
  */
-@property(nonatomic, assign) NSUInteger maxConcurrentRequests;
+@property (nonatomic, assign) NSUInteger maxConcurrentRequests;
 
 /**
  * The initial delay interval in seconds, to be used in retry backoff sequences. 
  *
  * Defaults to 30 seconds.
  */
-@property(nonatomic, assign) NSUInteger initialDelayIntervalInSeconds;
+@property (nonatomic, assign) NSUInteger initialDelayIntervalInSeconds;
 
 /**
  * The maximum delay interval in seconds, to be used in retry backoff sequences. 
  *
  * Defaults to 300 seconds.
  */
-@property(nonatomic, assign) NSUInteger maxDelayIntervalInSeconds;
+@property (nonatomic, assign) NSUInteger maxDelayIntervalInSeconds;
 
 /**
  * The multiplier used to obtain new delay intervals during retry backoff sequences.
  *
  * Defaults to 2.
  */
-@property(nonatomic, assign) NSUInteger backoffFactor;
+@property (nonatomic, assign) NSUInteger backoffFactor;
 
 
 /**
  * The operation queue used for running registrations.
  */
-@property(nonatomic, readonly, strong) NSOperationQueue *queue;
+@property (nonatomic, readonly, strong) NSOperationQueue *queue;
 
 
 @end

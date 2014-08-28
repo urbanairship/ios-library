@@ -30,7 +30,7 @@
 #import "UAUtils.h"
 
 @interface UAInboxDBManagerTests : XCTestCase
-@property(nonatomic, strong) UAInboxDBManager *dbManager;
+@property (nonatomic, strong) UAInboxDBManager *dbManager;
 @end
 
 @implementation UAInboxDBManagerTests
