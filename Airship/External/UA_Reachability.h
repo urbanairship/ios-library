@@ -52,11 +52,25 @@
 #define Reachability        UA_Reachability
 #define NetworkStatus       UA_NetworkStatus
 
-typedef enum {
-	UA_NotReachable = 0,
+/**
+ * Represents the network status.
+ */
+typedef NS_ENUM(NSInteger, NetworkStatus) {
+    /**
+     * When the network is not reachable.
+     */
+	UA_NotReachable,
+
+    /**
+     * When the network is reachable via Wi-Fi.
+     */
 	UA_ReachableViaWiFi,
+
+    /**
+     * When the network is reachable via WWAN.
+     */
 	UA_ReachableViaWWAN
-} NetworkStatus;
+};
 #define kUA_ReachabilityChangedNotification @"kNetworkReachabilityChangedNotification"
 
 @interface Reachability: NSObject

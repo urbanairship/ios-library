@@ -79,6 +79,7 @@
 /**
  * Class factory method for creating a UAHTTPConnection.
  * @param httpRequest An instance of UAHTTPRequest.
+ * @return A UAHTTPConnection with the specified httpRequest.
  */
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest;
 
@@ -88,6 +89,7 @@
  * @param delegate The delegate
  * @param successSelector The selector to be called if the connection was successful.
  * @param failureSelector The selector to be called if the connection was unsuccessful.
+ * @return A UAHTTPConnection with the specified httpRequest.
  */
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
                                    delegate:(id)delegate
@@ -99,7 +101,7 @@
  * @param httpRequest An instance of UAHTTPRequest.
  * @param successBlock A UAHTTPConnectionSuccessBlock that will be called if the connection was successful.
  * @param failureBlock A UAHTTPConnectionFailureBlock that will be called if the connection was unsuccessful.
- *
+ * @return A UAHTTPConnection with the specified httpRequest.
  */
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
                                successBlock:(UAHTTPConnectionSuccessBlock)successBlock
@@ -113,11 +115,13 @@
 
 /**
  * Start the connection asynchronously.
+ * @return 'YES' if the connection was started, otherwise 'NO'.
  */
 - (BOOL)start;
 
 /**
- * Start the connection synchronously
+ * Start the connection synchronously.
+ * @return 'YES' if the connection was started, otherwise 'NO'.
  */
 - (BOOL)startSynchronous;
 

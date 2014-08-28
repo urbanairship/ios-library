@@ -27,7 +27,6 @@
 
 /**
  * A circle with an X in it, drawn to fill the frame.
- * TODO: expose the margin inset and line width
  */
 @interface UABespokeCloseView : UIView
 

@@ -185,7 +185,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 /**
  * The most recently received location available from the CLLocationManager object. This may be more accurate than
  * the last reported location, and it may also be nil. See CLLocationManager documentation for more details.
- * @return The most recent location, or nil if no locations are available
+ * @return The most recent location, or nil if no locations are available.
  */
 - (CLLocation *)location;
 
@@ -253,7 +253,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
  * when prompted to allow location services to begin. The default value
  * is the NSLocationUsageDescription listed in the info.plist. This value cannot be set
  * programatically.
- * @return An NSString with the current purpose
+ * @return An NSString with the current purpose.
  */
 - (NSString *)purpose;
 

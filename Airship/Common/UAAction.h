@@ -37,7 +37,6 @@ typedef BOOL (^UAActionPredicate)(UAActionArguments *);
 /**
  * A completion handler that signals that an action has finished executing.
  */
-
 typedef void (^UAActionCompletionHandler)(UAActionResult *);
 
 /**
@@ -57,7 +56,7 @@ typedef void (^UAActionBlock)(UAActionArguments *, NSString *, UAActionCompletio
  * the action can accept the arguments.
  *
  * This method can be used both to verify that an argument's value is an appropriate type,
- * as well as to limit the scope of execution of a desired range of values.  Rejecting
+ * as well as to limit the scope of execution of a desired range of values. Rejecting
  * arguments will result in the action not being performed when it is run.
  *
  * @param arguments A UAActionArguments value representing the arguments passed to the action.
@@ -90,7 +89,7 @@ typedef void (^UAActionBlock)(UAActionArguments *, NSString *, UAActionCompletio
  *
  * Subclasses of UAAction should override this method to define custom behavior.
  *
- * @note You should not ordinarily call this method directly.  Instead, use the `UAActionRunner`.
+ * @note You should not ordinarily call this method directly. Instead, use the `UAActionRunner`.
  * @param arguments A UAActionArguments value representing the arguments passed to the action.
  * @param name A NSString representing the name of the action.
  * @param completionHandler A UAActionCompletionHandler that will be called when the action has finished executing.

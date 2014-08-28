@@ -71,6 +71,8 @@
  * Converts string keys from the old ALL_CAPS format to the new property name format. Transforms
  * boolean strings (YES/NO) into NSNumber BOOLs if the target property is a primitive char type. Transforms
  * integer strings ("1", "5", etc. for log levels) into NSNumber objects.
+ * @param keyedValues The dictionary to be normalized.
+ * @return A normalized NSDictionary.
  */
 + (NSDictionary *)normalizeDictionary:(NSDictionary *)keyedValues;
 

@@ -27,6 +27,9 @@
 
 #define kPendingPushActionDefaultsKey @"com.urbanairship.action.pending"
 
+/**
+ * Represents the possible situations.
+ */
 typedef NS_ENUM(NSInteger, UASituation) {
     /**
      * Represents a situation in which the action was invoked manually.
@@ -116,7 +119,6 @@ extern NSString * const UAActionMetadataInboxMessageKey;
  * action is triggered from a user notification action.
  */
 extern NSString * const UAActionMetadataUserNotificationActionIDKey;
-
 
 /**
  * Situation of the action

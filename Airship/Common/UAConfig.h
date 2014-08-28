@@ -188,17 +188,20 @@
 
 /**
  * Creates an instance using the values set in the `AirshipConfig.plist` file.
+ * @return A UAConfig with values from `AirshipConfig.plist` file.
  */
 + (UAConfig *)defaultConfig;
 
 /**
  * Creates an instance using the values found in the specified `.plist` file.
  * @param path The path of the specified file.
+ * @return A UAConfig with values from the specified file.
  */
 + (UAConfig *)configWithContentsOfFile:(NSString *)path;
 
 /**
  * Creates an instance with empty values.
+ * @return A UAConfig with empty values.
  */
 + (UAConfig *)config;
 

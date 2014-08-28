@@ -89,6 +89,9 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
 
 /**
  * Helper method to parse a string from a dictionary's value.
+ * @param dict The dictionary to be parsed.
+ * @param key The specified key.
+ * @return The string parsed from the dicitionary.
  */
 - (NSString *)parseStringFromDictionary:(NSDictionary *)dict key:(NSString *)key {
     id value = [dict objectForKey:key];

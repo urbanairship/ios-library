@@ -33,6 +33,10 @@
 
 @class UAInboxMessage;
 
+/**
+ * A UACustomEvent captures information regarding a custom event for
+ * UAAnalytics.
+ */
 @interface UACustomEvent : UAEvent
 
 /**
@@ -95,6 +99,8 @@
 
 /**
  * Sets the custom event's interaction type and ID from a UAInboxMessage.
+ * @param message The UAInboxMessage to set the custom event's interaction type
+ * and ID from.
  */
 - (void)setInteractionFromMessage:(UAInboxMessage *)message;
 @end

@@ -25,14 +25,30 @@
 
 /** These are common keys used in several location classes */
 
-typedef enum {
-    UALocationProviderNotUpdating = 0,
-    UALocationProviderUpdating
-} UALocationProviderStatus;
+/**
+ * Represents the possible location provider status.
+ */
+typedef NS_ENUM(NSInteger, UALocationProviderStatus) {
+    /**
+     * The service is not updating location.
+     */
+    UALocationProviderNotUpdating,
 
-typedef enum {
-    UALocationServiceTimedOut = 0
-} UALocationServiceError;
+    /**
+     * The service is currently updating location.
+     */
+    UALocationProviderUpdating
+};
+
+/**
+ * Represents the possible location service error conditions.
+ */
+typedef NS_ENUM(NSInteger, UALocationServiceError) {
+    /**
+     * The location service timed out before receiving a location.
+     */
+    UALocationServiceTimedOut
+};
 
 // The different service provider types, for UAAnalytics
 typedef NSString UALocationServiceProviderType;

@@ -315,7 +315,7 @@ SINGLETON_INTERFACE(UAPush);
  *
  * Defaults to alert, sound and badge.
  */
-@property(nonatomic, assign) UIUserNotificationType userNotificationTypes NS_AVAILABLE_IOS(8_0);
+@property(nonatomic, assign) UIUserNotificationType userNotificationTypes;
 
 /**
  * Custom user notification categories. Urban Airship default user notification
@@ -391,6 +391,7 @@ SINGLETON_INTERFACE(UAPush);
 
 /**
  * Gets the current enabled notification types.
+ * @return The current enabled notification types.
  */
 + (NSUInteger)currentEnabledNotificationTypes;
 
@@ -572,7 +573,7 @@ SINGLETON_INTERFACE(UAPush);
 /**
  * Handles user notification settings registration.
  */
-- (void)appRegisteredUserNotificationSettings NS_AVAILABLE_IOS(8_0);
+- (void)appRegisteredUserNotificationSettings;
 
 /**
  * Handle interactive notification actions.
@@ -582,6 +583,6 @@ SINGLETON_INTERFACE(UAPush);
  * @param state The application state at the time the notification was received.
  * @param completionHandler The completion handler.
  */
-- (void)appReceivedActionWithIdentifier:(NSString *)identifier notification:(NSDictionary *)notification applicationState:(UIApplicationState)state completionHandler:(void (^)())completionHandler NS_AVAILABLE_IOS(8_0);
+- (void)appReceivedActionWithIdentifier:(NSString *)identifier notification:(NSDictionary *)notification applicationState:(UIApplicationState)state completionHandler:(void (^)())completionHandler;
 
 @end

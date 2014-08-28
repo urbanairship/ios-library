@@ -123,6 +123,7 @@
 /**
  * A utility method that grabs the top-most view controller for the main application window.
  * May return nil if a suitable view controller cannot be found.
+ * @return The top-most view controller or nil if controller cannot be found.
  */
 + (UIViewController *)topController;
 

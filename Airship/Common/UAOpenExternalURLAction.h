@@ -29,7 +29,7 @@
  * Represents the possible error conditions
  * when running a `UAOpenExternalURLAction`.
  */
-NS_ENUM(NSInteger, UAOpenExternalURLActionErrorCode) {
+typedef NS_ENUM(NSInteger, UAOpenExternalURLActionErrorCode) {
     /**
      * Indicates that the URL failed to open.
      */

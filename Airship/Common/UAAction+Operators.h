@@ -25,8 +25,14 @@
 
 #import "UAAction.h"
 
-NS_ENUM(NSInteger, UAActionOperatorErrorCode) {
-    UAActionOperatorErrorCodeChildActionRejectedArgs,
+/**
+ * Represents the possible error conditions when running an action.
+ */
+typedef NS_ENUM(NSInteger, UAActionOperatorErrorCode) {
+    /**
+     * Indicates the action rejected the arguments.
+     */
+    UAActionOperatorErrorCodeChildActionRejectedArgs
 };
 
 /**

@@ -30,6 +30,9 @@
 #define kEventDeviceRegistrationSize    (NSUInteger) 200//153 w/ only user info
 #define kEventPushReceivedSize          (NSUInteger) 200//160 w/ uuid push info
 
+/**
+ * This base class encapsulates analytics events.
+ */
 @interface UAEvent : NSObject
 
 /**
@@ -65,6 +68,9 @@
 
 @end
 
+/**
+ * Event when app is initialized.
+ */
 @interface UAEventAppInit : UAEvent
 
 /**
@@ -74,9 +80,15 @@
 
 @end
 
+/**
+ * Event when app is in the foreground.
+ */
 @interface UAEventAppForeground : UAEventAppInit
 @end
 
+/**
+ * Event when app exits.
+ */
 @interface UAEventAppExit : UAEvent
 
 /**
@@ -86,9 +98,15 @@
 
 @end
 
+/**
+ * Event when app is backgrounded.
+ */
 @interface UAEventAppBackground : UAEventAppExit
 @end
 
+/**
+ * Event when device registration occurred.
+ */
 @interface UAEventDeviceRegistration : UAEvent
 
 /**
@@ -98,6 +116,9 @@
 
 @end
 
+/**
+ * Event when a push notification is received.
+ */
 @interface UAEventPushReceived : UAEvent
 
 /**

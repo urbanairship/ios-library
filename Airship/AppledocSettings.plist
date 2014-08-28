@@ -10,6 +10,7 @@
 		<string>TestSamples</string>
 		<string>UI</string>
 		<string>*+Internal.h</string>
+		<string>AirshipKit.framework</string>
 	</array>
 	<key>--project-company</key>
 	<string>Urban Airship</string>

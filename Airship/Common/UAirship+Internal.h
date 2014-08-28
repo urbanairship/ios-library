@@ -55,6 +55,7 @@
  * Handle app init. This should be called from NSNotification center
  * and will record a launch from notification and record the app init even
  * for analytics.
+ * @param notification The app did finish launching notification
  */
 + (void)handleAppDidFinishLaunchingNotification:(NSNotification *)notification;
 

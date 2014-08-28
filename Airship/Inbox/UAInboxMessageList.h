@@ -50,13 +50,20 @@ extern NSString * const UAInboxMessageListUpdatedNotification;
 @class UAInboxMessage;
 
 /**
- * An emum expressing the two possible batch update commands,
+ * An enum expressing the two possible batch update commands,
  * delete and mark-as-read.
  */
-typedef enum {
+typedef NS_ENUM(NSInteger, UABatchUpdateCommand) {
+    /**
+     * Update the message list by marking messages as read.
+     */
     UABatchReadMessages,
-    UABatchDeleteMessages,
-} UABatchUpdateCommand;
+
+    /**
+     * Update the message list by deleting messages.
+     */
+    UABatchDeleteMessages
+};
 
 /**
  * The primary interface to the contents of the inbox.

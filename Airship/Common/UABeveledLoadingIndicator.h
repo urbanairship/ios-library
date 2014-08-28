@@ -11,6 +11,7 @@
 /**
  * Construct an autoreleased UABeveledLoadingIndicator with
  * a container rect size of 100 x 100.
+ * @return A new UABeveledLoadingIndicator.
  */
 + (UABeveledLoadingIndicator *)indicator;
 
