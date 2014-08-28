@@ -6,7 +6,7 @@
 
 @interface UANativeBridgeTest : XCTestCase
 @property (nonatomic, strong) JSContext *jsc;
-@property (nonatomic, strong) NSString *nativeBridge;
+@property (nonatomic, copy) NSString *nativeBridge;
 @end
 
 @implementation UANativeBridgeTest

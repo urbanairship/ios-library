@@ -40,8 +40,8 @@
 
 @property (nonatomic, strong) UAHTTPRequest *deviceFailureRequest;
 @property (nonatomic, strong) UAHTTPRequest *channelFailureRequest;
-@property (nonatomic, strong) NSString *channelCreateSuccessChannelID;
-@property (nonatomic, strong) NSString *channelCreateSuccessChannelLocation;
+@property (nonatomic, copy) NSString *channelCreateSuccessChannelID;
+@property (nonatomic, copy) NSString *channelCreateSuccessChannelLocation;
 
 
 @property (nonatomic, strong) UAChannelRegistrationPayload *payload;

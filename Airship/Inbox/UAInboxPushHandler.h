@@ -79,7 +79,7 @@
 /**
  * The message ID of the most recent rich push as an NSString.
  */
-@property (nonatomic, strong) NSString *viewingMessageID;
+@property (nonatomic, copy) NSString *viewingMessageID;
 
 /**
  * The delegate that should be notified when an incoming push is handled,

@@ -31,7 +31,7 @@
  * A name, derived from the host passed in the delegate call URL.
  * This is typically the name of a command.
  */
-@property (nonatomic, strong) NSString *name;
+@property (nonatomic, copy) NSString *name;
 
 /**
  * The argument strings passed in the call.
