@@ -49,7 +49,7 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
 - (void)loadSavedMessages;
 
-@property(nonatomic, assign) BOOL isRetrieving;
+@property (nonatomic, assign) BOOL isRetrieving;
 
 @end
 

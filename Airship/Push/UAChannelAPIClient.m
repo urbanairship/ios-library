@@ -39,7 +39,7 @@
 #define kUAChannelCreateLocation @"/api/channels/"
 
 @interface UAChannelAPIClient()
-@property(nonatomic, strong) UAHTTPRequestEngine *requestEngine;
+@property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
 @end
 
 @implementation UAChannelAPIClient

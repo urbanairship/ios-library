@@ -17,39 +17,39 @@
  * 
  * http://developer.apple.com/library/ios/#documentation/cocoa/reference/NSOperation_class/Reference/Reference.html
  */
-@property(nonatomic, assign) BOOL isConcurrent;
+@property (nonatomic, assign) BOOL isConcurrent;
 
 /**
  * Indicates whether the operation is currently executing.
  */
-@property(nonatomic, assign) BOOL isExecuting;
+@property (nonatomic, assign) BOOL isExecuting;
 
 /**
  * Indicates whether the operation has finished.
  */
-@property(nonatomic, assign) BOOL isFinished;
+@property (nonatomic, assign) BOOL isFinished;
 
 //Additional private state
 
 /**
  * The request to be executed.
  */
-@property(nonatomic, strong) UAHTTPRequest *request;
+@property (nonatomic, strong) UAHTTPRequest *request;
 
 /**
  * The UAHTTPConnectionSuccessBlock to be executed if the connection is successful.
  */
-@property(nonatomic, copy) UAHTTPConnectionSuccessBlock successBlock;
+@property (nonatomic, copy) UAHTTPConnectionSuccessBlock successBlock;
 
 /**
  * The UAHTTPConnectionFailureBlock to be executed if the connection is unsuccessful.
  */
-@property(nonatomic, copy) UAHTTPConnectionFailureBlock failureBlock;
+@property (nonatomic, copy) UAHTTPConnectionFailureBlock failureBlock;
 
 /**
  * The actual HTTP connection, created and run once the operation begins execution.
  */
-@property(nonatomic, strong) UAHTTPConnection *connection;
+@property (nonatomic, strong) UAHTTPConnection *connection;
 
 @end
 

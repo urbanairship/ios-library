@@ -8,11 +8,11 @@
 #import <OCMock/OCMock.h>
 
 @interface UAHTTPRequestEngineTest()
-@property(nonatomic, strong) UAHTTPRequestEngine *engine;
-@property(nonatomic, strong) UAHTTPRequest *request;
-@property(nonatomic, strong) NSOperationQueue *queue;
-@property(nonatomic, strong) id mockQueue;
-@property(nonatomic, strong) UATestSynchronizer *sync;
+@property (nonatomic, strong) UAHTTPRequestEngine *engine;
+@property (nonatomic, strong) UAHTTPRequest *request;
+@property (nonatomic, strong) NSOperationQueue *queue;
+@property (nonatomic, strong) id mockQueue;
+@property (nonatomic, strong) UATestSynchronizer *sync;
 @end
 
 @implementation UAHTTPRequestEngineTest

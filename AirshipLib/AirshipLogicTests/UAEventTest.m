@@ -39,14 +39,14 @@
 @interface UAEventTest : XCTestCase
 
 // stubs
-@property(nonatomic, strong) id analytics;
-@property(nonatomic, strong) id airship;
-@property(nonatomic, strong) id reachability;
-@property(nonatomic, strong) id timeZone;
-@property(nonatomic, strong) id airshipVersion;
-@property(nonatomic, strong) id application;
-@property(nonatomic, strong) id push;
-@property(nonatomic, strong) id currentDevice;
+@property (nonatomic, strong) id analytics;
+@property (nonatomic, strong) id airship;
+@property (nonatomic, strong) id reachability;
+@property (nonatomic, strong) id timeZone;
+@property (nonatomic, strong) id airshipVersion;
+@property (nonatomic, strong) id application;
+@property (nonatomic, strong) id push;
+@property (nonatomic, strong) id currentDevice;
 
 @end
 

@@ -9,15 +9,15 @@
 #import "UAWebViewCallData.h"
 
 @interface UAWebViewToolsTest : XCTestCase
-@property(nonatomic, strong) id mockInboxJSDelegate;
-@property(nonatomic, strong) id mockActionJSDelegate;
-@property(nonatomic, strong) id mockUserDefinedJSDelegate;
-@property(nonatomic, strong) id mockAirship;
-@property(nonatomic, strong) NSURL *basicActionsURL;
-@property(nonatomic, strong) NSURL *regularActionsURL;
-@property(nonatomic, strong) NSURL *callbackActionURL;
-@property(nonatomic, strong) NSURL *otherURL;
-@property(nonatomic, strong) NSURL *deprecatedOtherURL;
+@property (nonatomic, strong) id mockInboxJSDelegate;
+@property (nonatomic, strong) id mockActionJSDelegate;
+@property (nonatomic, strong) id mockUserDefinedJSDelegate;
+@property (nonatomic, strong) id mockAirship;
+@property (nonatomic, strong) NSURL *basicActionsURL;
+@property (nonatomic, strong) NSURL *regularActionsURL;
+@property (nonatomic, strong) NSURL *callbackActionURL;
+@property (nonatomic, strong) NSURL *otherURL;
+@property (nonatomic, strong) NSURL *deprecatedOtherURL;
 @end
 
 @implementation UAWebViewToolsTest

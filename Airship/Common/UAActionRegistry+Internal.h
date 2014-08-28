@@ -34,12 +34,12 @@
 /**
  * Map of names to action entries
  */
-@property(nonatomic, strong) NSMutableDictionary *registeredActionEntries;
+@property (nonatomic, strong) NSMutableDictionary *registeredActionEntries;
 
 /**
  * An array of the reserved entry names
  */
-@property(nonatomic, strong) NSMutableArray *reservedEntryNames;
+@property (nonatomic, strong) NSMutableArray *reservedEntryNames;
 
 
 /**

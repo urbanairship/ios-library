@@ -2,9 +2,9 @@
 #import "UADelayOperation.h"
 
 @interface UADelayOperation()
-@property(nonatomic, assign) NSTimeInterval seconds;
+@property (nonatomic, assign) NSTimeInterval seconds;
 
-@property(nonatomic, strong) dispatch_semaphore_t semaphore;    // GCD objects use ARC
+@property (nonatomic, strong) dispatch_semaphore_t semaphore;    // GCD objects use ARC
 
 @end
 

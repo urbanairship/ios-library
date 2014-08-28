@@ -44,20 +44,20 @@
 
 
 @interface UAPushTest : XCTestCase
-@property(nonatomic, strong) id mockedApplication;
-@property(nonatomic, strong) id mockedDeviceRegistrar;
-@property(nonatomic, strong) id mockedAirship;
-@property(nonatomic, strong) id mockedAnalytics;
-@property(nonatomic, strong) id mockedPushDelegate;
-@property(nonatomic, strong) id mockRegistrationDelegate;
-@property(nonatomic, strong) id mockActionRunner;
-@property(nonatomic, strong) id mockUAUtils;
-@property(nonatomic, strong) id mockUAUser;
-@property(nonatomic, strong) id mockUIUserNotificationSettings;
-@property(nonatomic, strong) id mockDefaultUserNotificationCategories;
+@property (nonatomic, strong) id mockedApplication;
+@property (nonatomic, strong) id mockedDeviceRegistrar;
+@property (nonatomic, strong) id mockedAirship;
+@property (nonatomic, strong) id mockedAnalytics;
+@property (nonatomic, strong) id mockedPushDelegate;
+@property (nonatomic, strong) id mockRegistrationDelegate;
+@property (nonatomic, strong) id mockActionRunner;
+@property (nonatomic, strong) id mockUAUtils;
+@property (nonatomic, strong) id mockUAUser;
+@property (nonatomic, strong) id mockUIUserNotificationSettings;
+@property (nonatomic, strong) id mockDefaultUserNotificationCategories;
 
-@property(nonatomic, strong) UAPush *push;
-@property(nonatomic, strong) NSDictionary *notification;
+@property (nonatomic, strong) UAPush *push;
+@property (nonatomic, strong) NSDictionary *notification;
 
 @end
 

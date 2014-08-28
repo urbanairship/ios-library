@@ -3,5 +3,5 @@
 #import "UAInboxAPIClient.h"
 
 @interface UAInboxMessageList ()
-@property(nonatomic, strong) UAInboxAPIClient *client;
+@property (nonatomic, strong) UAInboxAPIClient *client;
 @end

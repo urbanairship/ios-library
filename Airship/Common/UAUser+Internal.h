@@ -61,47 +61,47 @@
 /**
  * The user api client
  */
-@property(nonatomic, strong) UAUserAPIClient *apiClient;
+@property (nonatomic, strong) UAUserAPIClient *apiClient;
 
 /**
  * Flag indicating if the user has been initialized
  */
-@property(nonatomic, assign) BOOL initialized;
+@property (nonatomic, assign) BOOL initialized;
 
 /**
  * The user name.
  */
-@property(nonatomic, copy) NSString *username;
+@property (nonatomic, copy) NSString *username;
 
 /**
  * The user's password.
  */
-@property(nonatomic, copy) NSString *password;
+@property (nonatomic, copy) NSString *password;
 
 /**
  * The user's url.
  */
-@property(nonatomic, copy) NSString *url;
+@property (nonatomic, copy) NSString *url;
 
 /**
  * Background task identifier used to perform user updates in the background.
  */
-@property(nonatomic, assign) UIBackgroundTaskIdentifier userUpdateBackgroundTask;
+@property (nonatomic, assign) UIBackgroundTaskIdentifier userUpdateBackgroundTask;
 
 /**
  * Flag indicating if the device registration changes are being observed or not
  */
-@property(nonatomic, assign) BOOL isObservingDeviceRegistrationChanges;
+@property (nonatomic, assign) BOOL isObservingDeviceRegistrationChanges;
 
 /**
  * The current app key
  */
-@property(nonatomic, readonly) NSString *appKey;
+@property (nonatomic, readonly) NSString *appKey;
 
 /**
  * Flag indicating if the  user is being created
  */
-@property(nonatomic, assign) BOOL creatingUser;
+@property (nonatomic, assign) BOOL creatingUser;
 
 @end
 

@@ -27,14 +27,14 @@
 /**
  * The user name.
  */
-@property(nonatomic, readonly, copy) NSString *username;
+@property (nonatomic, readonly, copy) NSString *username;
 /**
  * The password.
  */
-@property(nonatomic, readonly, copy) NSString *password;
+@property (nonatomic, readonly, copy) NSString *password;
 /**
  * The url as a string.
  */
-@property(nonatomic, readonly, copy) NSString *url;
+@property (nonatomic, readonly, copy) NSString *url;
 
 @end

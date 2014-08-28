@@ -12,12 +12,12 @@
 
 @interface UALandingPageActionTest : XCTestCase
 
-@property(nonatomic, strong) id mockURLProtocol;
-@property(nonatomic, strong) id mockLandingPageOverlayController;
-@property(nonatomic, strong) id mockHTTPConnection;
-@property(nonatomic, strong) id mockAirship;
-@property(nonatomic, strong) id mockConfig;
-@property(nonatomic, strong) UALandingPageAction *action;
+@property (nonatomic, strong) id mockURLProtocol;
+@property (nonatomic, strong) id mockLandingPageOverlayController;
+@property (nonatomic, strong) id mockHTTPConnection;
+@property (nonatomic, strong) id mockAirship;
+@property (nonatomic, strong) id mockConfig;
+@property (nonatomic, strong) UALandingPageAction *action;
 
 @end
 

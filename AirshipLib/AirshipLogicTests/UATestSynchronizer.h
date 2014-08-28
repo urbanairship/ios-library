@@ -10,18 +10,18 @@
 /**
  * The dispatch semaphore used for synchronization
  */
-@property(nonatomic, strong) dispatch_semaphore_t semaphore;    // GCD objects use ARC
+@property (nonatomic, strong) dispatch_semaphore_t semaphore;    // GCD objects use ARC
 
 /**
  * How long the runloop should spin for each iteration while waiting.
  * Default is 0.1 seconds.
  */
-@property(nonatomic, assign) NSTimeInterval runLoopInterval;
+@property (nonatomic, assign) NSTimeInterval runLoopInterval;
 /**
  * How long to wait for a completion signal before timing out.
  * Default is 2 seconds.
  */
-@property(nonatomic, assign) NSTimeInterval defaultTimeoutInterval;
+@property (nonatomic, assign) NSTimeInterval defaultTimeoutInterval;
 
 /**
  * Spin the run loop iteratively until either a completion signal is delivered,

@@ -31,8 +31,8 @@
     sqlite3 *_db;
 }
 
-@property (assign) NSInteger busyRetryTimeout;
-@property (copy) NSString *dbPath;
+@property (atomic, assign) NSInteger busyRetryTimeout;
+@property (nonatomic, copy) NSString *dbPath;
 
 - (id)initWithDBPath:(NSString *)aDBPath;
 

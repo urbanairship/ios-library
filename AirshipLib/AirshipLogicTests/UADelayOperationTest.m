@@ -3,7 +3,7 @@
 #import "UADelayOperation.h"
 
 @interface UADelayOperationTest()
-@property(nonatomic, strong) NSOperationQueue *queue;
+@property (nonatomic, strong) NSOperationQueue *queue;
 @end
 
 @implementation UADelayOperationTest

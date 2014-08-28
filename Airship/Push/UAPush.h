@@ -264,20 +264,20 @@ SINGLETON_INTERFACE(UAPush);
  * Enables/disables background remote notifications on this device through Urban Airship.
  * Defaults to `YES`.
  */
-@property(nonatomic) BOOL backgroundPushNotificationsEnabled;
+@property (nonatomic, assign) BOOL backgroundPushNotificationsEnabled;
 
 /**
  * Sets the default value for backgroundPushNotificationsEnabled. The default is `YES`.
  * After the backgroundPushNotificationsEnabled value has been directly set, this
  * value has no effect.
  */
-@property(nonatomic, assign) BOOL backgroundPushNotificationsEnabledByDefault;
+@property (nonatomic, assign) BOOL backgroundPushNotificationsEnabledByDefault;
 
 /**
  * Enables/disables user notifications on this device through Urban Airship.
  * Defaults to 'NO'.
  */
-@property(nonatomic) BOOL userPushNotificationsEnabled;
+@property (nonatomic, assign) BOOL userPushNotificationsEnabled;
 
 
 /**
@@ -285,17 +285,17 @@ SINGLETON_INTERFACE(UAPush);
  * After the userPushNotificationsEnabled value has been directly set, this value
  * has no effect.
  */
-@property(nonatomic, assign) BOOL userPushNotificationsEnabledByDefault;
+@property (nonatomic, assign) BOOL userPushNotificationsEnabledByDefault;
 
 /**
  * The device token for this device, as a hex string.
  */
-@property(nonatomic, copy, readonly) NSString *deviceToken;
+@property (nonatomic, copy, readonly) NSString *deviceToken;
 
 /**
  * The channel id for this device.
  */
-@property(nonatomic, copy, readonly) NSString *channelID;
+@property (nonatomic, copy, readonly) NSString *channelID;
 
 /**
  * Notification types this app will request from APNS. Changes to this value
@@ -306,7 +306,7 @@ SINGLETON_INTERFACE(UAPush);
  *
  * @deprecated As of version 5.0. Replaced with userNotificationTypes.
  */
-@property(nonatomic, assign) UIRemoteNotificationType notificationTypes __attribute__((deprecated("As of version 5.0")));
+@property (nonatomic, assign) UIRemoteNotificationType notificationTypes __attribute__((deprecated("As of version 5.0")));
 
 /**
  * User Notification types this app will request from APNS. Changes to this value
@@ -315,7 +315,7 @@ SINGLETON_INTERFACE(UAPush);
  *
  * Defaults to alert, sound and badge.
  */
-@property(nonatomic, assign) UIUserNotificationType userNotificationTypes;
+@property (nonatomic, assign) UIUserNotificationType userNotificationTypes;
 
 /**
  * Custom user notification categories. Urban Airship default user notification
@@ -324,7 +324,7 @@ SINGLETON_INTERFACE(UAPush);
  * Changes to this value will not take effect the next time the app registers
  * with [[UAPush shared] updateAPNSRegistration].
  */
-@property(nonatomic, strong) NSSet *userNotificationCategories;
+@property (nonatomic, strong) NSSet *userNotificationCategories;
 
 /**
  * Sets authorization required for the default Urban Airship categories. Only applies
@@ -333,13 +333,13 @@ SINGLETON_INTERFACE(UAPush);
  * Changes to this value will not take effect the next time the app registers
  * with [[UAPush shared] updateAPNSRegistration].
  */
-@property(nonatomic, assign) BOOL requireAuthorizationForDefaultCategories;
+@property (nonatomic, assign) BOOL requireAuthorizationForDefaultCategories;
 
 /**
  * Set a delegate that implements the UAPushNotificationDelegate protocol. If not
  * set, a default implementation is provided (UAPushNotificationHandler).
  */
-@property(nonatomic, weak) id<UAPushNotificationDelegate> pushNotificationDelegate;
+@property (nonatomic, weak) id<UAPushNotificationDelegate> pushNotificationDelegate;
 
 /**
  * Set a delegate that implements the UAPushNotificationDelegate protocol. If not
@@ -347,17 +347,17 @@ SINGLETON_INTERFACE(UAPush);
  *
  * @deprecated As of version 3.0. Replaced with [UAPush pushNotificationDelegate] property.
  */
-@property(nonatomic, weak) id<UAPushNotificationDelegate> delegate __attribute__((deprecated("As of version 3.0")));
+@property (nonatomic, weak) id<UAPushNotificationDelegate> delegate __attribute__((deprecated("As of version 3.0")));
 
 /**
  * Set a delegate that implements the UARegistrationDelegate protocol.
  */
-@property(nonatomic, weak) id<UARegistrationDelegate> registrationDelegate;
+@property (nonatomic, weak) id<UARegistrationDelegate> registrationDelegate;
 
 /**
  * Notification that launched the application
  */
-@property(nonatomic, readonly, strong) NSDictionary *launchNotification;
+@property (nonatomic, readonly, strong) NSDictionary *launchNotification;
 
 /**
  * Updates the registration with APNS. Call after modifying notification types

@@ -34,12 +34,12 @@
 
 
 @interface UIWebView_UAAdditionsTest : XCTestCase
-@property(strong, nonatomic) id webView;
-@property(strong, nonatomic) id mockWebView;
-@property(strong, nonatomic) id mockUIDevice;
-@property(strong, nonatomic) id mockUAUser;
+@property (strong, nonatomic) id webView;
+@property (strong, nonatomic) id mockWebView;
+@property (strong, nonatomic) id mockUIDevice;
+@property (strong, nonatomic) id mockUAUser;
 
-@property(nonatomic, strong) JSContext *jsc;
+@property (nonatomic, strong) JSContext *jsc;
 
 @end
 

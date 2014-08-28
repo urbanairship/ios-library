@@ -34,12 +34,12 @@
 
 @interface UAIncomingRichPushActionTest : XCTestCase
 
-@property(nonatomic, strong) UAIncomingRichPushAction *action;
-@property(nonatomic, strong) UAActionArguments *arguments;
-@property(nonatomic, strong) id mockInbox;
-@property(nonatomic, strong) id mockPushHandler;
-@property(nonatomic, strong) id mockPushHandlerDelegate;
-@property(nonatomic, strong) id mockMessageList;
+@property (nonatomic, strong) UAIncomingRichPushAction *action;
+@property (nonatomic, strong) UAActionArguments *arguments;
+@property (nonatomic, strong) id mockInbox;
+@property (nonatomic, strong) id mockPushHandler;
+@property (nonatomic, strong) id mockPushHandlerDelegate;
+@property (nonatomic, strong) id mockMessageList;
 
 @end
 

@@ -59,7 +59,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @property (nonatomic, copy) NSString *contentType;
 
 /** YES if the message is unread, otherwise NO. */
-@property (assign) BOOL unread;
+@property (nonatomic, assign) BOOL unread;
 
 /** The date and time the message was sent (UTC) */
 @property (nonatomic, strong) NSDate *messageSent;

@@ -5,7 +5,7 @@
 #import "UAGlobal.h"
 
 @interface UAHTTPRequestEngine()
-@property(nonatomic, strong) NSOperationQueue *queue;
+@property (nonatomic, strong) NSOperationQueue *queue;
 @end
 
 @implementation UAHTTPRequestEngine

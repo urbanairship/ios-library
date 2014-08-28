@@ -56,43 +56,43 @@ extern UAPushUserInfoKey *const UAPushChannelCreationOnForeground;
 /**
  * Default push handler.
  */
-@property(nonatomic, strong) NSObject <UAPushNotificationDelegate> *defaultPushHandler;
+@property (nonatomic, strong) NSObject <UAPushNotificationDelegate> *defaultPushHandler;
 
 /**
  * Device token as a string.
  */
-@property(nonatomic, copy) NSString *deviceToken;
+@property (nonatomic, copy) NSString *deviceToken;
 
 /**
  * Channel ID as a string.
  */
-@property(nonatomic, copy) NSString *channelID;
+@property (nonatomic, copy) NSString *channelID;
 
 /**
  * Channel location as a string.
  */
-@property(nonatomic, copy) NSString *channelLocation;
+@property (nonatomic, copy) NSString *channelLocation;
 
 /**
  * Indicates that the app has entered the background once
  * Controls the appDidBecomeActive updateRegistration call
  */
-@property(nonatomic, assign) BOOL hasEnteredBackground;
+@property (nonatomic, assign) BOOL hasEnteredBackground;
 
 /**
  * The UADeviceRegistrar that handles registering the device with Urban Airship.
  */
-@property(nonatomic, strong) UADeviceRegistrar *deviceRegistrar;
+@property (nonatomic, strong) UADeviceRegistrar *deviceRegistrar;
 
 /**
  * Notification that launched the application
  */
-@property(nonatomic, strong) NSDictionary *launchNotification;
+@property (nonatomic, strong) NSDictionary *launchNotification;
 
 /**
  * Background task identifier used to do any registration in the background.
  */
-@property(nonatomic, assign) UIBackgroundTaskIdentifier registrationBackgroundTask;
+@property (nonatomic, assign) UIBackgroundTaskIdentifier registrationBackgroundTask;
 
 /**
  * Get the local time zone, considered the default.

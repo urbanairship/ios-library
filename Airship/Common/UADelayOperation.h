@@ -17,6 +17,6 @@
 /**
  * The amount of the the delay in seconds.
  */
-@property(nonatomic, assign, readonly) NSTimeInterval seconds;
+@property (nonatomic, assign, readonly) NSTimeInterval seconds;
 
 @end

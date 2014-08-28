@@ -8,8 +8,8 @@
 #import "NSObject+AnonymousKVO.h"
 
 @interface UAHTTPConnectionOperationTest()
-@property(nonatomic, strong) UAHTTPConnectionOperation *operation;
-@property(nonatomic, strong) UATestSynchronizer *sync;
+@property (nonatomic, strong) UAHTTPConnectionOperation *operation;
+@property (nonatomic, strong) UATestSynchronizer *sync;
 @end
 
 @implementation UAHTTPConnectionOperationTest

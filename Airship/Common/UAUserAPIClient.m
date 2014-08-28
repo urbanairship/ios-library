@@ -31,7 +31,7 @@
 #import "NSJSONSerialization+UAAdditions.h"
 
 @interface UAUserAPIClient()
-@property(nonatomic, strong) UAHTTPRequestEngine *requestEngine;
+@property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
 @end
 
 @implementation UAUserAPIClient

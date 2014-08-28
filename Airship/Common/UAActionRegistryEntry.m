@@ -26,7 +26,7 @@
 #import "UAActionRegistryEntry+Internal.h"
 
 @interface UAActionRegistryEntry()
-@property(nonatomic, strong) NSMutableDictionary *situationOverrides;
+@property (nonatomic, strong) NSMutableDictionary *situationOverrides;
 @end
 
 @implementation UAActionRegistryEntry

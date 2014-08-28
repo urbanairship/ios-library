@@ -29,7 +29,7 @@
 #import "UAAction+Operators.h"
 
 @interface UAAction_OperatorTest : XCTestCase
-@property (nonatomic, strong)UAActionArguments *emptyArgs;
+@property (nonatomic, strong) UAActionArguments *emptyArgs;
 @end
 
 

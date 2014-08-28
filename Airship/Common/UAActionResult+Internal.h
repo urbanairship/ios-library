@@ -41,22 +41,22 @@
 /**
  * The result value produced when running an action (can be nil).
  */
-@property(nonatomic, strong) id value;
+@property (nonatomic, strong) id value;
 
 /**
  * An optional UAActionFetchResult that can be set if the action performed a background fetch.
  */
-@property(nonatomic, assign) UAActionFetchResult fetchResult;
+@property (nonatomic, assign) UAActionFetchResult fetchResult;
 
 /**
  * An optional error value that can be set if the action was unable to perform its work successfully.
  */
-@property(nonatomic, strong) NSError *error;
+@property (nonatomic, strong) NSError *error;
 
 /**
  * The actions run status.
  */
-@property(nonatomic, assign) UAActionStatus status;
+@property (nonatomic, assign) UAActionStatus status;
 
 
 @end

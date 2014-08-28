@@ -71,31 +71,31 @@
  * The event's value. The value must be between -2^31 and
  * 2^31 - 1 or it will be ignored.
  */
-@property(nonatomic, strong) NSDecimalNumber *eventValue;
+@property (nonatomic, strong) NSDecimalNumber *eventValue;
 
 /**
  * The event's name. The name's length must not exceed 255 characters or it will
  * be ignored.
  */
-@property(nonatomic, copy) NSString *eventName;
+@property (nonatomic, copy) NSString *eventName;
 
 /**
  * The event's interaction ID. The ID's length must not exceed 255 characters or it will
  * be ignored.
  */
-@property(nonatomic, copy) NSString *interactionID;
+@property (nonatomic, copy) NSString *interactionID;
 
 /**
  * The event's interaction type. The type's length must not exceed 255 characters or it will
  * be ignored.
  */
-@property(nonatomic, copy) NSString *interactionType;
+@property (nonatomic, copy) NSString *interactionType;
 
 /**
  * The event's interaction ID. The ID's length must not exceed 255 characters or it will
  * be ignored.
  */
-@property(nonatomic, copy) NSString *transactionID;
+@property (nonatomic, copy) NSString *transactionID;
 
 /**
  * Sets the custom event's interaction type and ID from a UAInboxMessage.

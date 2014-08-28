@@ -12,9 +12,9 @@ typedef void (^MethodBlock)(NSInvocation *);
 @end
 
 @interface UAAppDelegateProxyTest : XCTestCase
-@property(nonatomic, strong) UAAppDelegateProxy *baseDelegate;
-@property(nonatomic, strong) TestAppDelegateSurrogate *airshipDelegate;
-@property(nonatomic, strong) TestAppDelegateSurrogate *originalDelegate;
+@property (nonatomic, strong) UAAppDelegateProxy *baseDelegate;
+@property (nonatomic, strong) TestAppDelegateSurrogate *airshipDelegate;
+@property (nonatomic, strong) TestAppDelegateSurrogate *originalDelegate;
 @end
 
 @implementation UAAppDelegateProxyTest

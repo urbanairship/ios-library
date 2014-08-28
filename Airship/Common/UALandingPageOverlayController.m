@@ -42,25 +42,25 @@ static NSMutableSet *overlayControllers = nil;
 /**
  * The UIWebView used to display the message content.
  */
-@property(nonatomic, strong) UIWebView *webView;
+@property (nonatomic, strong) UIWebView *webView;
 
 /**
  * The URL being displayed.
  */
-@property(nonatomic, strong) NSURL *url;
+@property (nonatomic, strong) NSURL *url;
 
 /**
  * The request headers
  */
-@property(nonatomic, strong) NSDictionary *headers;
+@property (nonatomic, strong) NSDictionary *headers;
 
 /**
  * The message being displayed, if applicable. This value may be nil.
  */
-@property(nonatomic, strong) UAInboxMessage *message;
-@property(nonatomic, strong) UIViewController *parentViewController;
-@property(nonatomic, strong) UIView *overlayView;
-@property(nonatomic, strong) UABeveledLoadingIndicator *loadingIndicator;
+@property (nonatomic, strong) UAInboxMessage *message;
+@property (nonatomic, strong) UIViewController *parentViewController;
+@property (nonatomic, strong) UIView *overlayView;
+@property (nonatomic, strong) UABeveledLoadingIndicator *loadingIndicator;
 
 @end
 

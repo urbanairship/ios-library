@@ -36,11 +36,11 @@
 #import <OCMock/OCMConstraint.h>
 
 @interface UAUserTest : XCTestCase
-@property(nonatomic, strong) UAUser *user;
-@property(nonatomic, strong) id mockUserClient;
-@property(nonatomic, strong) id mockKeychainUtils;
-@property(nonatomic, strong) id mockedAirship;
-@property(nonatomic, strong) id mockedUAPush;
+@property (nonatomic, strong) UAUser *user;
+@property (nonatomic, strong) id mockUserClient;
+@property (nonatomic, strong) id mockKeychainUtils;
+@property (nonatomic, strong) id mockedAirship;
+@property (nonatomic, strong) id mockedUAPush;
 @end
 
 @implementation UAUserTest
