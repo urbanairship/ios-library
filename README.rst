@@ -162,9 +162,9 @@ To enable push later on in your application:
 
 .. code:: obj-c
 
-    // Somewhere in the app, this will enable push, setting it to NO will disable push.
-    // This will trigger the proper registration or de-registration code in the library.
-    [[UAPush shared] userPushNotificationsEnabled:YES];
+    // Somewhere in the app, this will enable push (setting it to NO will disable push,
+    // which will trigger the proper registration or de-registration code in the library).
+    [UAPush shared].userPushNotificationsEnabled = YES;
 
 Logging
 -------
