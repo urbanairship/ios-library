@@ -35,7 +35,7 @@
 
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         self.deviceAPIURL = kAirshipProductionServer;
@@ -100,13 +100,13 @@
 #pragma mark -
 #pragma Factory Methods
 
-+ (UAConfig *)defaultConfig {
-    return [UAConfig configWithContentsOfFile:
++ (instancetype)defaultConfig {
+    return [self configWithContentsOfFile:
             [[NSBundle mainBundle] pathForResource:@"AirshipConfig" ofType:@"plist"]];
 }
 
-+ (UAConfig *)configWithContentsOfFile:(NSString *)path {
-    UAConfig *config = [UAConfig config];
++ (instancetype)configWithContentsOfFile:(NSString *)path {
+    UAConfig *config = [self config];
     if (path) {
         //copy from dictionary plist
         NSDictionary *configDict = [[NSDictionary alloc] initWithContentsOfFile:path];
@@ -117,8 +117,8 @@
     return config;
 }
 
-+ (UAConfig *)config {
-    return [[UAConfig alloc] init];
++ (instancetype)config {
+    return [[self alloc] init];
 }
 
 #pragma mark -

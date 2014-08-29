@@ -58,7 +58,7 @@
  * Initializes with the specified airshipConfig file.
  * @param airshipConfig The 'AirshipConfig.plist' file
  */
-- (id)initWithConfig:(UAConfig *)airshipConfig;
+- (instancetype)initWithConfig:(UAConfig *)airshipConfig;
 
 /**
  * Delays the next analytics send.

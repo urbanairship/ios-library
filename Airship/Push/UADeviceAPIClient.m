@@ -20,7 +20,7 @@
 
 @implementation UADeviceAPIClient
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         self.requestEngine = [[UAHTTPRequestEngine alloc] init];

@@ -28,7 +28,7 @@
 
 @implementation UAAppDelegateProxy
 
-- (id)init {
+- (instancetype)init {
     //NSProxy has no default init method, so [super init] is unnecessary
     return self;
 }

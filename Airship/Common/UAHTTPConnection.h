@@ -81,7 +81,7 @@
  * @param httpRequest An instance of UAHTTPRequest.
  * @return A UAHTTPConnection with the specified httpRequest.
  */
-+ (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest;
++ (instancetype)connectionWithRequest:(UAHTTPRequest *)httpRequest;
 
 /**
  * Class factory method for creating a UAHTTPConnection.
@@ -91,10 +91,10 @@
  * @param failureSelector The selector to be called if the connection was unsuccessful.
  * @return A UAHTTPConnection with the specified httpRequest.
  */
-+ (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
-                                   delegate:(id)delegate
-                                    success:(SEL)successSelector
-                                    failure:(SEL)failureSelector;
++ (instancetype)connectionWithRequest:(UAHTTPRequest *)httpRequest
+                             delegate:(id)delegate
+                              success:(SEL)successSelector
+                              failure:(SEL)failureSelector;
 
 /**
  * Class factory method for creating a UAHTTPConnection.
@@ -103,15 +103,15 @@
  * @param failureBlock A UAHTTPConnectionFailureBlock that will be called if the connection was unsuccessful.
  * @return A UAHTTPConnection with the specified httpRequest.
  */
-+ (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
-                               successBlock:(UAHTTPConnectionSuccessBlock)successBlock
-                               failureBlock:(UAHTTPConnectionFailureBlock)failureBlock;
++ (instancetype)connectionWithRequest:(UAHTTPRequest *)httpRequest
+                         successBlock:(UAHTTPConnectionSuccessBlock)successBlock
+                         failureBlock:(UAHTTPConnectionFailureBlock)failureBlock;
 
 /**
  * Initializer with the HTTP request.
  * @param httpRequest An instance of UAHTTPRequest.
  */
-- (id)initWithRequest:(UAHTTPRequest *)httpRequest;
+- (instancetype)initWithRequest:(UAHTTPRequest *)httpRequest;
 
 /**
  * Start the connection asynchronously.

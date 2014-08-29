@@ -35,7 +35,7 @@
     self.locationManager.delegate = nil;
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         self.provider = UALocationServiceProviderNetwork;

@@ -387,7 +387,7 @@ typedef void (^MethodBlock)(NSInvocation *);
 
 @implementation TestAppDelegateSurrogate
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         self.methodBlocks = [NSMutableDictionary dictionary];

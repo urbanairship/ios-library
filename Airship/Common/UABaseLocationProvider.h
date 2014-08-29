@@ -128,13 +128,13 @@
 /// @name Creating a UABaseLocationProvider
 ///---------------------------------------------------------------------------------------
 
-- (id)init;
+- (instancetype)init;
 
 /**
  * Initializes the object with a delegate
  * @param delegate Delegate object that implements the UALocationProviderDelegate protocol
  */
-- (id)initWithDelegate:(id<UALocationProviderDelegate>)delegate;
+- (instancetype)initWithDelegate:(id<UALocationProviderDelegate>)delegate;
 
 ///---------------------------------------------------------------------------------------
 /// @name Location Accuracy

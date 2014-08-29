@@ -29,19 +29,19 @@ static NSString *defaultUserAgentString;
 
 @implementation UAHTTPRequest
 
-+ (UAHTTPRequest *)requestWithURL:(NSURL *)url {
-    return [[UAHTTPRequest alloc] initWithURL:url];
++ (instancetype)requestWithURL:(NSURL *)url {
+    return [[self alloc] initWithURL:url];
 }
 
-+ (UAHTTPRequest *)requestWithURLString:(NSString *)urlString {
-    return [[UAHTTPRequest alloc] initWithURLString:urlString];
++ (instancetype)requestWithURLString:(NSString *)urlString {
+    return [[self alloc] initWithURLString:urlString];
 }
 
 + (void)setDefaultUserAgentString:(NSString *)userAgent {
     defaultUserAgentString = [userAgent copy];
 }
 
-- (id)initWithURL:(NSURL *)url {
+- (instancetype)initWithURL:(NSURL *)url {
     self = [super init];
     if (self) {
         self.url = url;
@@ -58,7 +58,7 @@ static NSString *defaultUserAgentString;
 }
 
 
-- (id)initWithURLString:(NSString *)urlString {
+- (instancetype)initWithURLString:(NSString *)urlString {
     return [self initWithURL:[NSURL URLWithString:urlString]];
 }
 

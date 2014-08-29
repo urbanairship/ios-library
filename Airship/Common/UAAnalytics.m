@@ -50,7 +50,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [self.queue cancelAllOperations];
 }
 
-- (id)initWithConfig:(UAConfig *)airshipConfig {
+- (instancetype)initWithConfig:(UAConfig *)airshipConfig {
     self = [super init];
     if (self) {
         //set server to default if not specified in options

@@ -117,7 +117,7 @@ static Class _uiClass;
 #pragma mark -
 #pragma mark Memory management
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
 

@@ -36,7 +36,7 @@
 
 @implementation UAUserAPIClient
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         self.requestEngine= [[UAHTTPRequestEngine alloc] init];
@@ -45,7 +45,7 @@
     return self;
 }
 
-- (id)initWithRequestEngine:(UAHTTPRequestEngine *)requestEngine {
+- (instancetype)initWithRequestEngine:(UAHTTPRequestEngine *)requestEngine {
     self = [super init];
     if (self) {
         self.requestEngine = requestEngine;
@@ -54,11 +54,11 @@
 }
 
 + (instancetype)client {
-    return [[UAUserAPIClient alloc] init];
+    return [[self alloc] init];
 }
 
 + (instancetype)clientWithRequestEngine:(UAHTTPRequestEngine *)requestEngine {
-    return [[UAUserAPIClient alloc] initWithRequestEngine:requestEngine];
+    return [[self alloc] initWithRequestEngine:requestEngine];
 }
 
 - (void)createUserWithChannelID:(NSString *)channelID

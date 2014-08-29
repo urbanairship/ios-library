@@ -50,7 +50,7 @@
     }
 }
 
-+ (instancetype) disposableWithBlock:(UADisposalBlock)disposalBlock {
++ (instancetype)disposableWithBlock:(UADisposalBlock)disposalBlock {
     return [[self alloc] initWithDisposalBlock:disposalBlock];
 }
 

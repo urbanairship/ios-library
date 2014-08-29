@@ -37,7 +37,7 @@
 
 SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         NSString  *databaseName = [NSString stringWithFormat:CORE_DATA_STORE_NAME, [UAirship shared].config.appKey];

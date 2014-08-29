@@ -34,7 +34,7 @@
 @property (atomic, assign) NSInteger busyRetryTimeout;
 @property (nonatomic, copy) NSString *dbPath;
 
-- (id)initWithDBPath:(NSString *)aDBPath;
+- (instancetype)initWithDBPath:(NSString *)aDBPath;
 
 - (BOOL)open:(NSString *)aDBPath;
 - (void)close;

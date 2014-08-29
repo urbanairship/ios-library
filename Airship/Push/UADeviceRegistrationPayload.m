@@ -49,20 +49,20 @@
          withQuietTime:(NSDictionary *)quietTime
              withBadge:(NSNumber *)badge {
 
-    return [[UADeviceRegistrationPayload alloc] initWithAlias:alias
-                                                     withTags:tags
-                                                 withTimeZone:timeZone
-                                                withQuietTime:quietTime
-                                                    withBadge:badge];
+    return [[self alloc] initWithAlias:alias
+                              withTags:tags
+                          withTimeZone:timeZone
+                         withQuietTime:quietTime
+                             withBadge:badge];
 }
 
 + (instancetype)payloadFromChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload {
     NSArray *tags = payload.setTags ? payload.tags : nil;
-    return [UADeviceRegistrationPayload payloadWithAlias:payload.alias
-                                                withTags:tags
-                                            withTimeZone:payload.timeZone
-                                           withQuietTime:payload.quietTime
-                                               withBadge:payload.badge];
+    return [self payloadWithAlias:payload.alias
+                         withTags:tags
+                     withTimeZone:payload.timeZone
+                    withQuietTime:payload.quietTime
+                        withBadge:payload.badge];
 }
 
 - (NSDictionary *)asDictionary {

@@ -55,7 +55,7 @@
 
 @implementation UAHTTPConnectionOperation
 
-- (id)initWithRequest:(UAHTTPRequest *)request
+- (instancetype)initWithRequest:(UAHTTPRequest *)request
                onSuccess:(UAHTTPConnectionSuccessBlock)successBlock
                onFailure:(UAHTTPConnectionFailureBlock)failureBlock {
 
@@ -73,13 +73,13 @@
     return self;
 }
 
-+ (id)operationWithRequest:(UAHTTPRequest *)request
++ (instancetype)operationWithRequest:(UAHTTPRequest *)request
                  onSuccess:(UAHTTPConnectionSuccessBlock)successBlock
                  onFailure:(UAHTTPConnectionFailureBlock)failureBlock {
 
-    return [[UAHTTPConnectionOperation alloc] initWithRequest:request
-                                                     onSuccess:successBlock
-                                                     onFailure:failureBlock];
+    return [[self alloc] initWithRequest:request
+                               onSuccess:successBlock
+                               onFailure:failureBlock];
 }
 
 - (void)setIsExecuting:(BOOL)isExecuting {

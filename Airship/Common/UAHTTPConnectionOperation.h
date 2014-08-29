@@ -40,7 +40,7 @@
  * @param successBlock A UAHTTPConnectionSuccessBlock which will be called if the resulting connection succeeds.
  * @param failureBlock A UAHTTPConnectionFailureBlock which will be called if the resulting connection fails.
  */
-- (id)initWithRequest:(UAHTTPRequest *)request
+- (instancetype)initWithRequest:(UAHTTPRequest *)request
             onSuccess:(UAHTTPConnectionSuccessBlock)successBlock
             onFailure:(UAHTTPConnectionFailureBlock)failureBlock;
 
@@ -50,7 +50,7 @@
  * @param successBlock A UAHTTPConnectionSuccessBlock which will be called if the resulting connection succeeds.
  * @param failureBlock A UAHTTPConnectionFailureBlock which will be called if the resulting connection fails.
  */
-+ (id)operationWithRequest:(UAHTTPRequest *)request
++ (instancetype)operationWithRequest:(UAHTTPRequest *)request
                  onSuccess:(UAHTTPConnectionSuccessBlock)successBlock
                  onFailure:(UAHTTPConnectionFailureBlock)failureBlock;
 

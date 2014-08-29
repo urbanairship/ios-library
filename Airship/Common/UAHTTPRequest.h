@@ -102,14 +102,14 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
  * @param urlString The URL string.
  * @return The request with the specified URL string.
  */
-+ (UAHTTPRequest *)requestWithURLString:(NSString *)urlString;
++ (instancetype)requestWithURLString:(NSString *)urlString;
 
 /**
  * Create a request with the URL.
  * @param url The URL.
  * @return The request with the specified URL.
  */
-+ (UAHTTPRequest *)requestWithURL:(NSURL *)url;
++ (instancetype)requestWithURL:(NSURL *)url;
 
 /**
  * Set the default user agent.
@@ -121,13 +121,13 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
  * UAHTTPRequest initializer taking a URL string.
  * @param urlString The URL string.
  */
-- (id)initWithURLString:(NSString *)urlString;
+- (instancetype)initWithURLString:(NSString *)urlString;
 
 /**
  * UAHTTPRequest initializer taking a URL.
  * @param url The URL.
  */
-- (id)initWithURL:(NSURL *)url;
+- (instancetype)initWithURL:(NSURL *)url;
 
 /**
  * Add a request header.

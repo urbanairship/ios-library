@@ -71,7 +71,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         // init

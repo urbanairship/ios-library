@@ -12,7 +12,7 @@
  * UADelayOperation class factory method.
  * @param seconds The number of seconds to sleep.
  */
-+ (id)operationWithDelayInSeconds:(NSTimeInterval)seconds;
++ (instancetype)operationWithDelayInSeconds:(NSTimeInterval)seconds;
 
 /**
  * The amount of the the delay in seconds.
