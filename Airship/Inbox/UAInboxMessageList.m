@@ -30,7 +30,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UADisposable.h"
 #import "UAInbox.h"
 #import "UAInboxAPIClient.h"
-#import "UAInboxMessageListObserver.h"
 #import "UAInboxMessageListDelegate.h"
 #import "UAInboxMessage+Internal.h"
 #import "UAInboxDBManager+Internal.h"
@@ -65,10 +64,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     self.messages = nil;
 }
 
-+ (UAInboxMessageList *)shared {
-    return [UAInbox shared].messageList;
-}
-
 #pragma mark NSNotificationCenter helper methods
 
 - (void)sendMessageListWillUpdateNotification {
@@ -91,7 +86,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     UA_LDEBUG("Retrieving message list.");
 
     self.retrieveOperationCount++;
-    [self notifyObservers: @selector(messageListWillLoad)];
     [self sendMessageListWillUpdateNotification];
 
     __block BOOL isCallbackCancelled = NO;
@@ -142,7 +136,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
                         successBlock();
                     }
 
-                    [self notifyObservers:@selector(messageListLoaded)];
                     [self sendMessageListUpdatedNotification];
                 }];
 
@@ -157,7 +150,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
                         successBlock();
                     }
 
-                    [self notifyObservers:@selector(messageListLoaded)];
                     [self sendMessageListUpdatedNotification];
                 });
             }
@@ -173,7 +165,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
             failureBlock();
         }
 
-        [self notifyObservers:@selector(inboxLoadFailed)];
         [self sendMessageListUpdatedNotification];
     }];
 
@@ -195,10 +186,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
             [strongDelegate messageListLoadFailed];
         }
     }];
-}
-
-- (void)retrieveMessageList {
-    [self retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
 }
 
 - (UADisposable *)performBatchUpdateCommand:(UABatchUpdateCommand)command
@@ -243,15 +230,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     }
 }
 
-- (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
-              withMessageIndexSet:(NSIndexSet *)messageIndexSet {
-    [self performBatchUpdateCommand:command
-                withMessageIndexSet:messageIndexSet
-                   withSuccessBlock:nil
-                   withFailureBlock:nil];
-
-}
-
 - (UADisposable *)markMessagesRead:(NSArray *)messages delegate:(id<UAInboxMessageListDelegate>)delegate {
     __weak id<UAInboxMessageListDelegate> weakDelegate = delegate;
     return [self markMessagesRead:messages completionHandler:^{
@@ -264,7 +242,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
 - (UADisposable *)markMessagesRead:(NSArray *)messages completionHandler:(void (^)())completionHandler {
     self.batchOperationCount++;
-    [self notifyObservers: @selector(messageListWillLoad)];
     [self sendMessageListWillUpdateNotification];
 
     __block BOOL isCallbackCancelled = NO;
@@ -294,7 +271,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
                 completionHandler();
             }
 
-            [self notifyObservers: @selector(batchMarkAsReadFinished)];
             [self sendMessageListUpdatedNotification];
         }];
     }];
@@ -316,7 +292,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
 - (UADisposable *)markMessagesDeleted:(NSArray *)messages completionHandler:(void (^)())completionHandler {
     self.batchOperationCount++;
-    [self notifyObservers: @selector(messageListWillLoad)];
     [self sendMessageListWillUpdateNotification];
 
     __block BOOL isCallbackCancelled = NO;
@@ -346,7 +321,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
                 completionHandler();
             }
 
-            [self notifyObservers: @selector(batchDeleteFinished)];
             [self sendMessageListUpdatedNotification];
         }];
     }];

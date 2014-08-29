@@ -6,7 +6,6 @@
 #import "UAInbox.h"
 #import "UAInboxDBManager.h"
 #import "UAInboxMessageList+Internal.h"
-#import "UAInboxMessageListObserver.h"
 #import "UAInboxMessageListDelegate.h"
 #import "UAInboxAPIClient.h"
 
@@ -49,16 +48,11 @@
     //sending (deprecated) UAInboxMessageListObserver callbacks
     self.message.inbox = self.messageList = [[UAInboxMessageList alloc] init];
 
-    self.mockMessageListObserver = [OCMockObject mockForProtocol:@protocol(UAInboxMessageListObserver)];
-
     self.mockMessageListDelegate = [OCMockObject mockForProtocol:@protocol(UAInboxMessageListDelegate)];
 
     //order is important with these events, so we should be explicit about it
     [self.mockMessageListObserver setExpectationOrderMatters:YES];
     [self.mockMessageListDelegate setExpectationOrderMatters:YES];
-
-    //add our (deprecated) message list observer
-    [self.messageList addObserver:self.mockMessageListObserver];
 }
 
 - (void)tearDown {
@@ -67,7 +61,6 @@
     [self.mockMessageListObserver stopMocking];
     [self.mockMessageListDelegate stopMocking];
     [self.dbManager deleteMessages:[self.dbManager fetchMessagesWithPredicate:nil]];
-    [[UAInbox shared].messageList removeObservers];
     [super tearDown];
 }
 

@@ -340,14 +340,6 @@ static Class _uiClass;
     return [NSTimeZone localTimeZone];
 }
 
-- (id<UAPushNotificationDelegate>)getDelegate {
-    return self.pushNotificationDelegate;
-}
-
-- (void)setDelegate:(id<UAPushNotificationDelegate>)delegate {
-    self.pushNotificationDelegate = delegate;
-}
-
 - (void)setNotificationTypes:(UIRemoteNotificationType)notificationTypes {
     if ([UIUserNotificationSettings class]) {
         UA_LWARN(@"Remote notification types are deprecated, use userNotificationTypes instead.");
@@ -380,36 +372,6 @@ static Class _uiClass;
 
 #pragma mark -
 #pragma mark Open APIs - Property Setters
-
-
-- (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)timezone {
-    if (!from || !to) {
-        UA_LERR(@"Unable to set quiet time, parameter is nil. From: %@ To: %@", from, to);
-        return;
-    }
-
-    if (!timezone) {
-        timezone = [self defaultTimeZoneForQuietTime];
-    }
-
-    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    [cal setTimeZone:timezone];
-    
-    NSString *startTimeStr = [NSString stringWithFormat:@"%ld:%02ld",
-                              (long)[cal components:NSHourCalendarUnit fromDate:from].hour,
-                              (long)[cal components:NSMinuteCalendarUnit fromDate:from].minute];
-    
-    NSString *endTimeStr = [NSString stringWithFormat:@"%ld:%02ld",
-                            (long)[cal components:NSHourCalendarUnit fromDate:to].hour,
-                            (long)[cal components:NSMinuteCalendarUnit fromDate:to].minute];
-
-    UA_LDEBUG("Setting quiet time: (%@) %@ to %@", [timezone name], startTimeStr, endTimeStr);
-
-    self.quietTime = @{UAPushQuietTimeStartKey : startTimeStr,
-                       UAPushQuietTimeEndKey : endTimeStr };
-
-    self.timeZone = timezone;
-}
 
 -(void)setQuietTimeStartHour:(NSUInteger)startHour startMinute:(NSUInteger)startMinute
                      endHour:(NSUInteger)endHour endMinute:(NSUInteger)endMinute {
