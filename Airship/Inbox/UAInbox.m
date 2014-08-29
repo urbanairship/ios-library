@@ -126,7 +126,9 @@ static Class _uiClass;
         self.messageList = [[UAInboxMessageList alloc] init];
         self.messageList.client = self.client;
 
+        [self.messageList loadSavedMessages];
         [self.messageList retrieveMessageListWithDelegate:nil];
+
 
         self.pushHandler = [[UAInboxPushHandler alloc] init];
 

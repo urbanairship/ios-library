@@ -50,7 +50,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     return self;
 }
 
-- (NSArray *)getMessages {
+- (NSArray *)fetchMessagesWithPredicate:(NSPredicate *)predicate {
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:kUAInboxDBEntityName
                                               inManagedObjectContext:self.managedObjectContext];
@@ -59,6 +59,10 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"messageSent" ascending:NO];
     NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
     [request setSortDescriptors:sortDescriptors];
+
+    if (predicate) {
+        [request setPredicate:predicate];
+    }
 
     NSError *error = nil;
     NSArray *resultData = [self.managedObjectContext executeFetchRequest:request error:&error];
@@ -75,15 +79,6 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     }
 
     return resultMessages;
-}
-
-- (NSSet *)messageIDs {
-    NSMutableSet *messageIDs = [NSMutableSet set];
-    for (UAInboxMessage *message in [self getMessages]) {
-        [messageIDs addObject:message.messageID];
-    }
-
-    return messageIDs;
 }
 
 - (UAInboxMessage *)addMessageFromDictionary:(NSDictionary *)dictionary {
@@ -104,7 +99,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 }
 
 - (BOOL)updateMessageWithDictionary:(NSDictionary *)dictionary {
-    UAInboxMessage *message = [self getMessageWithID:[dictionary objectForKey:@"message_id"]];
+    UAInboxMessage *message = [self messageWithId:[dictionary objectForKey:@"message_id"]];
 
     if (!message) {
         return NO;
@@ -125,29 +120,6 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     [self saveContext];
 }
 
-- (void)markMessagesRead:(NSArray *)messages {
-    for (UAInboxMessage *message in messages) {
-        if ([message isKindOfClass:[UAInboxMessage class]]) {
-            message.unread = NO;
-        }
-    }
-
-    [self saveContext];
-}
-
-- (void)deleteMessagesWithIDs:(NSSet *)messageIDs {
-    for (NSString *messageID in messageIDs) {
-        UAInboxMessage *message = [self getMessageWithID:messageID];
-
-        if (message) {
-            UALOG(@"Deleting: %@", messageID);
-            [self.managedObjectContext deleteObject:message.data];
-        }
-    }
-
-    [self saveContext];
-}
-
 - (void)saveContext {
     NSError *error = nil;
     NSManagedObjectContext *context = self.managedObjectContext;
@@ -158,22 +130,23 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     }
 }
 
-
 /**
  Returns the managed object context for the application.
  If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.
  */
 - (NSManagedObjectContext *)managedObjectContext {
-    if (_managedObjectContext) {
+    @synchronized(self) {
+        if (_managedObjectContext) {
+            return _managedObjectContext;
+        }
+
+        NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
+        if (coordinator != nil) {
+            _managedObjectContext = [[NSManagedObjectContext alloc] init];
+            [_managedObjectContext setPersistentStoreCoordinator:coordinator];
+        }
         return _managedObjectContext;
     }
-
-    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-    if (coordinator != nil) {
-        _managedObjectContext = [[NSManagedObjectContext alloc] init];
-        [_managedObjectContext setPersistentStoreCoordinator:coordinator];
-    }
-    return _managedObjectContext;
 }
 
 /**
@@ -181,52 +154,67 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
  If the model doesn't already exist, it is created from the application's model.
  */
 - (NSManagedObjectModel *)managedObjectModel {
-    if (_managedObjectModel) {
+    @synchronized(self)  {
+        if (_managedObjectModel) {
+            return _managedObjectModel;
+        }
+
+        _managedObjectModel = [[NSManagedObjectModel alloc] init];
+        NSEntityDescription *inboxEntity = [[NSEntityDescription alloc] init];
+        [inboxEntity setName:kUAInboxDBEntityName];
+
+        // Note: the class name does not need to be the same as the entity name, but maintaining a consistent
+        // entity name is necessary in order to smoothly migrate if the class name changes
+        [inboxEntity setManagedObjectClassName:@"UAInboxMessageData"];
+        [_managedObjectModel setEntities:@[inboxEntity]];
+
+        NSMutableArray *inboxProperties = [NSMutableArray array];
+        [inboxProperties addObject:[self createAttributeDescription:@"messageBodyURL" withType:NSTransformableAttributeType setOptional:true]];
+        [inboxProperties addObject:[self createAttributeDescription:@"messageID" withType:NSStringAttributeType setOptional:true]];
+        [inboxProperties addObject:[self createAttributeDescription:@"messageSent" withType:NSDateAttributeType setOptional:true]];
+        [inboxProperties addObject:[self createAttributeDescription:@"title" withType:NSStringAttributeType setOptional:true]];
+        [inboxProperties addObject:[self createAttributeDescription:@"unread" withType:NSBooleanAttributeType setOptional:true]];
+        [inboxProperties addObject:[self createAttributeDescription:@"unreadClient" withType:NSBooleanAttributeType setOptional:true defaultValue:@YES]];
+        [inboxProperties addObject:[self createAttributeDescription:@"deletedClient" withType:NSBooleanAttributeType setOptional:true]];
+        [inboxProperties addObject:[self createAttributeDescription:@"messageURL" withType:NSTransformableAttributeType setOptional:true]];
+        [inboxProperties addObject:[self createAttributeDescription:@"messageExpiration" withType:NSDateAttributeType setOptional:true]];
+
+
+        NSAttributeDescription *extraDescription = [self createAttributeDescription:@"extra" withType:NSTransformableAttributeType setOptional:true];
+        [extraDescription setValueTransformerName:@"UAJSONValueTransformer"];
+        [inboxProperties addObject:extraDescription];
+
+        NSAttributeDescription *rawMessageObjectDescription = [self createAttributeDescription:@"rawMessageObject" withType:NSTransformableAttributeType setOptional:true];
+        [extraDescription setValueTransformerName:@"UAJSONValueTransformer"];
+        [inboxProperties addObject:rawMessageObjectDescription];
+        
+        [inboxEntity setProperties:inboxProperties];
+        
         return _managedObjectModel;
     }
-
-    _managedObjectModel = [[NSManagedObjectModel alloc] init];
-    NSEntityDescription *inboxEntity = [[NSEntityDescription alloc] init];
-    [inboxEntity setName:kUAInboxDBEntityName];
-
-    // Note: the class name does not need to be the same as the entity name, but maintaining a consistent
-    // entity name is necessary in order to smoothly migrate if the class name changes
-    [inboxEntity setManagedObjectClassName:@"UAInboxMessageData"];
-    [_managedObjectModel setEntities:@[inboxEntity]];
-
-    NSMutableArray *inboxProperties = [NSMutableArray array];
-    [inboxProperties addObject:[self createAttributeDescription:@"messageBodyURL" withType:NSTransformableAttributeType setOptional:true]];
-    [inboxProperties addObject:[self createAttributeDescription:@"messageID" withType:NSStringAttributeType setOptional:true]];
-    [inboxProperties addObject:[self createAttributeDescription:@"messageSent" withType:NSDateAttributeType setOptional:true]];
-    [inboxProperties addObject:[self createAttributeDescription:@"title" withType:NSStringAttributeType setOptional:true]];
-    [inboxProperties addObject:[self createAttributeDescription:@"unread" withType:NSBooleanAttributeType setOptional:true]];
-    [inboxProperties addObject:[self createAttributeDescription:@"messageURL" withType:NSTransformableAttributeType setOptional:true]];
-    [inboxProperties addObject:[self createAttributeDescription:@"messageExpiration" withType:NSDateAttributeType setOptional:true]];
-
-    NSAttributeDescription *extraDescription = [self createAttributeDescription:@"extra" withType:NSTransformableAttributeType setOptional:true];
-    [extraDescription setValueTransformerName:@"UAJSONValueTransformer"];
-    [inboxProperties addObject:extraDescription];
-
-    NSAttributeDescription *rawMessageObjectDescription = [self createAttributeDescription:@"rawMessageObject" withType:NSTransformableAttributeType setOptional:true];
-    [extraDescription setValueTransformerName:@"UAJSONValueTransformer"];
-    [inboxProperties addObject:rawMessageObjectDescription];
-
-    [inboxEntity setProperties:inboxProperties];
-
-    return _managedObjectModel;
 }
 
-- (NSAttributeDescription *) createAttributeDescription:(NSString *)name
-                                               withType:(NSAttributeType)attributeType
-                                            setOptional:(BOOL)isOptional {
+- (NSAttributeDescription *)createAttributeDescription:(NSString *)name
+                                              withType:(NSAttributeType)attributeType
+                                           setOptional:(BOOL)isOptional {
+
+    return [self createAttributeDescription:name withType:attributeType setOptional:isOptional defaultValue:nil];
+}
+
+- (NSAttributeDescription *)createAttributeDescription:(NSString *)name
+                                              withType:(NSAttributeType)attributeType
+                                           setOptional:(BOOL)isOptional
+                                          defaultValue:(id)defaultValue {
 
     NSAttributeDescription *attribute= [[NSAttributeDescription alloc] init];
     [attribute setName:name];
     [attribute setAttributeType:attributeType];
     [attribute setOptional:isOptional];
+    [attribute setDefaultValue:defaultValue];
 
     return attribute;
 }
+
 
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
     if (_persistentStoreCoordinator) {
@@ -247,43 +235,27 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 }
 
 - (void)updateMessage:(UAInboxMessage *)message withDictionary:(NSDictionary *)dict {
-    message.messageID = [dict objectForKey:@"message_id"];
-    message.contentType = [dict objectForKey:@"content_type"];
-    message.title = [dict objectForKey:@"title"];
-    message.extra = [dict objectForKey:@"extra"];
-    message.messageBodyURL = [NSURL URLWithString: [dict objectForKey:@"message_body_url"]];
-    message.messageURL = [NSURL URLWithString: [dict objectForKey:@"message_url"]];
-    message.unread = [[dict objectForKey:@"unread"] boolValue];
-    message.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:[dict objectForKey:@"message_sent"]];
-    message.rawMessageObject = dict;
+    if (!message.data.isGone) {
+        message.data.messageID = dict[@"message_id"];
+        message.data.contentType = dict[@"content_type"];
+        message.data.title = dict[@"title"];
+        message.data.extra = dict[@"extra"];
+        message.data.messageBodyURL = [NSURL URLWithString:dict[@"message_body_url"]];
+        message.data.messageURL = [NSURL URLWithString:dict[@"message_url"]];
+        message.data.unread = [dict[@"unread"] boolValue];
+        message.data.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:dict[@"message_sent"]];
+        message.data.rawMessageObject = dict;
 
-    NSString *messageExpiration = [dict objectForKey:@"message_expiry"];
-    if (messageExpiration) {
-        message.messageExpiration = [[UAUtils ISODateFormatterUTC] dateFromString:messageExpiration];
-    } else {
-        messageExpiration = nil;
+        NSString *messageExpiration = dict[@"message_expiry"];
+        if (messageExpiration) {
+            message.data.messageExpiration = [[UAUtils ISODateFormatterUTC] dateFromString:messageExpiration];
+        } else {
+            message.data.messageExpiration = nil;
+        }
     }
 }
 
-- (void)deleteExpiredMessages {
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:kUAInboxDBEntityName
-                                              inManagedObjectContext:self.managedObjectContext];
-    [request setEntity:entity];
 
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"messageExpiration < %@", [NSDate date]];
-    [request setPredicate:predicate];
-
-    NSError *error = nil;
-    NSArray *resultData = [self.managedObjectContext executeFetchRequest:request error:&error];
-
-    for (UAInboxMessageData *messageData in resultData) {
-        UA_LDEBUG(@"Deleting expired message: %@", messageData.messageID);
-        [self.managedObjectContext deleteObject:messageData];
-    }
-
-    [self saveContext];
-}
 
 - (void)deleteOldDatabaseIfExists {
     NSArray *libraryDirectories = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
@@ -295,7 +267,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     }
 }
 
--(UAInboxMessage *)getMessageWithID:(NSString *)messageID {
+-(UAInboxMessage *)messageWithId:(NSString *)messageID {
     if (!messageID) {
         return nil;
     }

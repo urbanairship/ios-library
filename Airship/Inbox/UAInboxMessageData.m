@@ -29,7 +29,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAirship.h"
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
-#import "UAInboxMessageListObserver.h"
 #import "UAInboxDBManager.h"
 #import "UAHTTPConnection.h"
 #import "UAUtils.h"
@@ -45,10 +44,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @dynamic messageSent;
 @dynamic messageExpiration;
 @dynamic unread;
+@dynamic unreadClient;
+@dynamic deletedClient;
 @dynamic messageURL;
 @dynamic messageID;
 @dynamic extra;
 @dynamic rawMessageObject;
+
 
 @synthesize contentType;
 

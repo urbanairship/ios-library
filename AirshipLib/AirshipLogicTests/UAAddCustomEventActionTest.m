@@ -61,7 +61,7 @@
     [self.airship stopMocking];
 
     // Clean up the created message
-    [self.inboxDBManager deleteMessages:[self.inboxDBManager getMessages]];
+    [self.inboxDBManager deleteMessages:[self.inboxDBManager fetchMessagesWithPredicate:nil]];
 
     [super tearDown];
 }
@@ -190,7 +190,7 @@
 
     // Only way to recreate a message is to actually save one
     [self.inboxDBManager addMessageFromDictionary:messageDictionary];
-    UAInboxMessage *message = [[self.inboxDBManager getMessages] objectAtIndex:0];
+    UAInboxMessage *message = [[self.inboxDBManager fetchMessagesWithPredicate:nil] objectAtIndex:0];
 
     NSDictionary *eventPayload = @{@"event_name": @"event name",
                            @"transaction_id": @"transaction id",
@@ -233,7 +233,7 @@
 
     // Only way to recreate a message is to actually save one
     [self.inboxDBManager addMessageFromDictionary:messageDictionary];
-    UAInboxMessage *message = [[self.inboxDBManager getMessages] objectAtIndex:0];
+    UAInboxMessage *message = [[self.inboxDBManager fetchMessagesWithPredicate:nil] objectAtIndex:0];
 
     NSDictionary *eventPayload = @{@"event_name": @"event name",
                                    @"transaction_id": @"transaction id",

@@ -30,6 +30,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UADisposable.h"
 #import "UAObservable.h"
 
+
+/**
+ * A completion block for message list operations.
+ */
 typedef void (^UAInboxMessageListCallbackBlock)(void);
 
 /**
@@ -65,6 +69,7 @@ typedef NS_ENUM(NSInteger, UABatchUpdateCommand) {
     UABatchDeleteMessages
 };
 
+
 /**
  * The primary interface to the contents of the inbox.
  * Use this class to asychronously retrieve messges from the server,
@@ -91,9 +96,8 @@ typedef NS_ENUM(NSInteger, UABatchUpdateCommand) {
  * @return A UADisposable token which can be used to cancel callback execution.
  * This value will be nil if the associated user has not yet been created.
  */
-
 - (UADisposable *)retrieveMessageListWithSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
-                           withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock;
+                                     withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock;
 
 /**
  * Fetch new messages from the server.  This will result in a
@@ -104,9 +108,8 @@ typedef NS_ENUM(NSInteger, UABatchUpdateCommand) {
  * @param delegate An object implementing the `UAInboxMessageListDelegate` protocol.
  * @return A UADisposable token which can be used to cancel callback execution.
  * This value will be nil if the associated user has not yet been created.
- */
+ * */
 - (UADisposable *)retrieveMessageListWithDelegate:(id<UAInboxMessageListDelegate>)delegate;
-
 
 /**
  * Fetch new messages from the server.  This will result in a
@@ -130,9 +133,9 @@ typedef NS_ENUM(NSInteger, UABatchUpdateCommand) {
  * If the passed batch update command cannot be interpreted, this value will be nil.
  */
 - (UADisposable *)performBatchUpdateCommand:(UABatchUpdateCommand)command
-              withMessageIndexSet:(NSIndexSet *)messageIndexSet
-                        withSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
-                        withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock;
+                        withMessageIndexSet:(NSIndexSet *)messageIndexSet
+                           withSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
+                           withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock;
 
 /**
  * Update the message list by marking messages as read, or deleting them.
@@ -148,11 +151,9 @@ typedef NS_ENUM(NSInteger, UABatchUpdateCommand) {
  * @return A UADisposable token which can be used to cancel callback execution.
  * If the passed batch update command cannot be interpreted, this value will be nil.
  */
-
 - (UADisposable *)performBatchUpdateCommand:(UABatchUpdateCommand)command
-              withMessageIndexSet:(NSIndexSet *)messageIndexSet
-                     withDelegate:(id<UAInboxMessageListDelegate>)delegate;
-
+                        withMessageIndexSet:(NSIndexSet *)messageIndexSet
+                               withDelegate:(id<UAInboxMessageListDelegate>)delegate;
 
 /**
  * Update the message list by marking messages as read, or deleting them.
@@ -169,6 +170,7 @@ typedef NS_ENUM(NSInteger, UABatchUpdateCommand) {
  */
 - (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
               withMessageIndexSet:(NSIndexSet *)messageIndexSet __attribute__((deprecated("As of version 3.0")));
+
 
 /**
  * Returns the number of messages currently in the inbox.
@@ -197,6 +199,7 @@ typedef NS_ENUM(NSInteger, UABatchUpdateCommand) {
  */
 - (NSUInteger)indexOfMessage:(UAInboxMessage *)message;
 
+
 /**
  * The list of messages on disk as an NSMutableArray.
  */
@@ -209,15 +212,15 @@ typedef NS_ENUM(NSInteger, UABatchUpdateCommand) {
 @property (assign) NSInteger unreadCount;
 
 /**
- * YES if a batch update is currently being performed on the message list,
- * NO otherwise.
- */
-@property (assign) BOOL isBatchUpdating;
-
-/**
  * YES if retrieving message list is currently in progress.
  * NO otherwise.
  */
-@property (nonatomic, readonly, assign) BOOL isRetrieving;
+@property (readonly) BOOL isRetrieving;
+
+/**
+ * YES if message batching is currently in progress.
+ * NO otherwise.
+ */
+@property (readonly) BOOL isBatchUpdating;
 
 @end

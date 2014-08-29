@@ -61,6 +61,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /** YES if the message is unread, otherwise NO. */
 @property (nonatomic, assign) BOOL unread;
 
+/** YES if the message is unread on the client, otherwise NO. */
+@property (assign) BOOL unreadClient;
+
+/** YES if the message is deleted, otherwise NO. */
+@property (assign) BOOL deletedClient;
+
 /** The date and time the message was sent (UTC) */
 @property (nonatomic, strong) NSDate *messageSent;
 
@@ -95,5 +101,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * or deletion has been commited to disk once the context is saved.
  */
 @property (nonatomic, readonly) BOOL isGone;
+
+
 
 @end

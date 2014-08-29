@@ -15,10 +15,6 @@
     return self;
 }
 
-- (NSString *)foobar {
-    return @"foobar";
-}
-
 - (id)valueForKey:(NSString *)key {
     return [super valueForKey:key];
 }
