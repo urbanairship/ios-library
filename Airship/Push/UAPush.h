@@ -24,7 +24,6 @@
  */
 
 #import "UAGlobal.h"
-#import "UAObservable.h"
 #import "UAHTTPConnection.h"
 #import "UADeviceRegistrar.h"
 
@@ -342,14 +341,6 @@ SINGLETON_INTERFACE(UAPush);
 @property (nonatomic, weak) id<UAPushNotificationDelegate> pushNotificationDelegate;
 
 /**
- * Set a delegate that implements the UAPushNotificationDelegate protocol. If not
- * set, a default implementation is provided (UAPushNotificationHandler).
- *
- * @deprecated As of version 3.0. Replaced with [UAPush pushNotificationDelegate] property.
- */
-@property (nonatomic, weak) id<UAPushNotificationDelegate> delegate __attribute__((deprecated("As of version 3.0")));
-
-/**
  * Set a delegate that implements the UARegistrationDelegate protocol.
  */
 @property (nonatomic, weak) id<UARegistrationDelegate> registrationDelegate;
@@ -485,24 +476,6 @@ SINGLETON_INTERFACE(UAPush);
  * Enables/Disables quiet time
  */
 @property (nonatomic, assign) BOOL quietTimeEnabled;
-
-/**
- * Change quiet time for current device token, only take hh:mm into account. Update the server
- * after making changes to the quiet time with the `updateRegistration` call. 
- * Batching these calls improves API and client performance.
- * 
- * @warning The behavior of this method changed in 1.3.0
- * This method no longer automatically enables quiet time, and does not automatically update
- * the server. Please refer to `quietTimeEnabled` and `updateRegistration` methods for
- * more information
- * 
- * @param from Date for start of quiet time (HH:MM are used)
- * @param to Date for end of quiet time (HH:MM are used)
- * @param tz The time zone for the from and to dates
- * @deprecated As of version 3.2.  Replaced with 
- * setQuietTimeStartHour:startMinute:endHour:endMinute:
- */
-- (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)tz;
 
 /**
  * Sets the quiet time start and end time.  The start and end time does not change

@@ -31,7 +31,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInboxPushHandler.h"
 #import "UAInboxMessage.h"
 #import "UAUser.h"
-#import "UAInboxMessageListObserver.h"
 #import "UAInboxMessageList+Internal.h"
 
 @implementation UAInbox
@@ -92,7 +91,6 @@ static Class _uiClass;
 
 + (void)land {
     [g_sharedUAInbox.client cancelAllRequests];
-    [g_sharedUAInbox.messageList removeObserver:g_sharedUAInbox.pushHandler];
     [[g_sharedUAInbox uiClass]land];
     g_sharedUAInbox = nil;
 }
@@ -132,8 +130,6 @@ static Class _uiClass;
 
         self.pushHandler = [[UAInboxPushHandler alloc] init];
 
-        [self.messageList addObserver:self.pushHandler];
-
        [[NSNotificationCenter defaultCenter] addObserver:self
                                                 selector:@selector(enterForeground)
                                                     name:UIApplicationWillEnterForegroundNotification
@@ -154,7 +150,6 @@ static Class _uiClass;
 }
 
 - (void)dealloc {
-    [self.messageList removeObserver:self.pushHandler];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     self.pushHandler = nil;
 }

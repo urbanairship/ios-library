@@ -629,51 +629,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                           @"Quiet time end is not set correctly");
 }
 
-- (void)testSetQuietTimeDeprecated {
-    NSDate *start = [NSDate dateWithTimeIntervalSince1970:60]; // 0:01 GMT
-    NSDate *end = [NSDate dateWithTimeIntervalSince1970:60 * 60 * 13]; // 13:00 GMT
-
-    [self.push setQuietTimeFrom:start
-                                   to:end
-                         withTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
-
-    XCTAssertEqualObjects(@"GMT", [self.push.timeZone abbreviation],
-                          @"Timezone should be set to the timezone in quiet time");
-
-    NSDictionary *quietTime = self.push.quietTime;
-    XCTAssertEqualObjects(@"0:01", [quietTime valueForKey:UAPushQuietTimeStartKey],
-                          @"Quiet time start is not set correctly");
-    XCTAssertEqualObjects(@"13:00", [quietTime valueForKey:UAPushQuietTimeEndKey],
-                          @"Quiet time end is not set correctly");
-
-
-    // Test setting timezone to -5 GMT
-    [self.push setQuietTimeFrom:start
-                                   to:end
-                         withTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:-3600*5]];
-
-    quietTime = self.push.quietTime;
-    XCTAssertEqualObjects(@"19:01", [quietTime valueForKey:UAPushQuietTimeStartKey],
-                          @"Quiet time start is not set handling timezone to -5 GMT correctly");
-
-    XCTAssertEqualObjects(@"8:00", [quietTime valueForKey:UAPushQuietTimeEndKey],
-                          @"Quiet time end is not set handling timezone to -5 GMT correctly");
-}
-
-- (void)testSetQuietTimeDeprecatedNoTimeZone {
-    NSDate *start = [NSDate dateWithTimeIntervalSince1970:60]; // 0:01 GMT
-    NSDate *end = [NSDate dateWithTimeIntervalSince1970:60 * 60 * 13]; // 13:00 GMT
-
-    // Set the current timezone to CDT
-    self.push.timeZone = [NSTimeZone timeZoneWithAbbreviation:@"CDT"];
-
-    // When timezone is nil, it uses whatever defaultQuietTimeZone is, then sets it to timezone
-    [self.push setQuietTimeFrom:start to:end withTimeZone:nil];
-
-    XCTAssertEqualObjects([self.push.defaultTimeZoneForQuietTime abbreviation],
-                          [self.push.timeZone abbreviation],
-                          @"Timezone should be set to defaultTimeZoneForQuietTime");
-}
 
 - (void)testTimeZone {
     self.push.timeZone = [NSTimeZone timeZoneWithAbbreviation:@"EST"];
@@ -1243,9 +1198,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     self.push.tags = @[@"tag-one"];
     self.push.autobadgeEnabled = NO;
     self.push.quietTimeEnabled = YES;
-    [self.push setQuietTimeFrom:[NSDate dateWithTimeIntervalSince1970:0]
-                                   to:[NSDate dateWithTimeIntervalSince1970:10]
-                         withTimeZone:[NSTimeZone timeZoneWithName:@"Pacific/Auckland"]];
+    self.push.timeZone = [NSTimeZone timeZoneWithName:@"Pacific/Auckland"];
+    [self.push setQuietTimeStartHour:12 startMinute:0 endHour:12 endMinute:0];
 
     // Opt in requirements
     self.push.userPushNotificationsEnabled = YES;
@@ -1524,9 +1478,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testRegistrationPayloadNoQuietTime {
     self.push.userPushNotificationsEnabled = YES;
     self.push.quietTimeEnabled = NO;
-    [self.push setQuietTimeFrom:[NSDate dateWithTimeIntervalSince1970:0]
-                                   to:[NSDate dateWithTimeIntervalSince1970:10]
-                         withTimeZone:[NSTimeZone timeZoneWithName:@"Pacific/Auckland"]];
 
 
     // Check that the payload does not include a quiet time

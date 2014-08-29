@@ -3,7 +3,6 @@
 #import <OCMock/OCMock.h>
 #import "UAInbox.h"
 #import "UAInboxMessageList+Internal.h"
-#import "UAInboxMessageListObserver.h"
 #import "UAInboxMessageListDelegate.h"
 #import "UAInboxAPIClient.h"
 #import "UAUser+Test.h"
@@ -20,8 +19,6 @@ static UAUser *mockUser = nil;
 @interface UAInboxMessageListTest : XCTestCase
 //the mock inbox API client we'll inject into the message list
 @property (nonatomic, strong) id mockInboxAPIClient;
-//a mock (old-school) message list observer that will receive deprecated callbacks
-@property (nonatomic, strong) id mockMessageListObserver;
 //a mock object that will sign up for NSNotificationCenter events
 @property (nonatomic, strong) id mockMessageListNotificationObserver;
 //a mock delegate we'll pass into the appropriate methods for callbacks
@@ -37,13 +34,11 @@ static UAUser *mockUser = nil;
     [super setUp];
 
     self.mockInboxAPIClient = [OCMockObject mockForClass:[UAInboxAPIClient class]];
-    self.mockMessageListObserver = [OCMockObject mockForProtocol:@protocol(UAInboxMessageListObserver)];
 
     self.mockMessageListNotificationObserver = [OCMockObject mockForProtocol:@protocol(UAInboxMessageListMockNotificationObserver)];
     self.mockMessageListDelegate = [OCMockObject mockForProtocol:@protocol(UAInboxMessageListDelegate)];
 
     //order is important with these events, so we should be explicit about it
-    [self.mockMessageListObserver setExpectationOrderMatters:YES];
     [self.mockMessageListNotificationObserver setExpectationOrderMatters:YES];
     [self.mockMessageListDelegate setExpectationOrderMatters:YES];
 
@@ -51,9 +46,6 @@ static UAUser *mockUser = nil;
 
     //inject the API client
     self.messageList.client = self.mockInboxAPIClient;
-
-    //add our (deprecated) message list observer
-    [self.messageList addObserver:self.mockMessageListObserver];
 
     //sign up for NSNotificationCenter events with our mock observer
     [[NSNotificationCenter defaultCenter] addObserver:self.mockMessageListNotificationObserver selector:@selector(messageListWillUpdate) name:UAInboxMessageListWillUpdateNotification object:nil];
@@ -69,14 +61,10 @@ static UAUser *mockUser = nil;
     //unswizzle the defaultUserCreated back to its normal implementation
     [UAUser unswizzleDefaultUserCreated];
 
-    //undo observer sign-ups
-    [self.messageList removeObservers];
-
     [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListWillUpdateNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListUpdatedNotification object:nil];
 
     [self.mockInboxAPIClient stopMocking];
-    [self.mockMessageListObserver stopMocking];
     [self.mockMessageListDelegate stopMocking];
     [self.mockMessageListNotificationObserver stopMocking];
 
@@ -86,97 +74,17 @@ static UAUser *mockUser = nil;
 //if there's no user, retrieveMessageList should do nothing
 - (void)testRetrieveMessageListDefaultUserNotCreated {
     [UAUser unswizzleDefaultUserCreated];
-    [self.messageList retrieveMessageList];
+
+    [self.messageList retrieveMessageListWithSuccessBlock:^{
+        XCTFail(@"No user should no-op");
+    } withFailureBlock:^{
+        XCTFail(@"No user should no-op");
+    }];
+    [self waitUntilAllOperationsAreFinished];
+
     [UAUser swizzleDefaultUserCreated];
 }
 
-
-//if successful, the observer should get messageListWillLoad and messageListLoaded callbacks.
-//UAInboxMessageListWillUpdateNotification and UAInboxMessageListUpdatedNotification should be emitted.
-- (void)testRetrieveMessageListSuccess {
-
-    [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-        UAInboxClientMessageRetrievalSuccessBlock successBlock = (__bridge UAInboxClientMessageRetrievalSuccessBlock) arg;
-        successBlock(304, nil, 0);
-    }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
-
-    [[self.mockMessageListObserver expect] messageListWillLoad];
-    [[self.mockMessageListObserver expect] messageListLoaded];
-
-    [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
-    [[self.mockMessageListNotificationObserver expect] messageListUpdated];
-
-    [self.messageList retrieveMessageList];
-    [self waitUntilAllOperationsAreFinished];
-
-    [self.mockMessageListObserver verify];
-    [self.mockMessageListDelegate verify];
-    [self.mockMessageListNotificationObserver verify];
-}
-
-//if successful, the observer should get messageListWillLoad and inboxLoadFailed callbacks.
-//UAInboxMessageListWillUpdateNotification and UAInboxMessageListUpdatedNotification should be emitted.
-- (void)testRetrieveMessageListFailure {
-
-    [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAInboxClientFailureBlock failureBlock = (__bridge UAInboxClientFailureBlock) arg;
-        failureBlock(nil);
-    }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
-
-    [[self.mockMessageListObserver expect] messageListWillLoad];
-    [[self.mockMessageListObserver expect] inboxLoadFailed];
-
-    [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
-    [[self.mockMessageListNotificationObserver expect] messageListUpdated];
-
-    [self.messageList retrieveMessageList];
-    [self waitUntilAllOperationsAreFinished];
-
-    [self.mockMessageListObserver verify];
-    [self.mockMessageListDelegate verify];
-    [self.mockMessageListNotificationObserver verify];
-}
-
-- (void)testPerformBatchMarkAsReadSuccess {
-    [[self.mockMessageListObserver expect] messageListWillLoad];
-    [[self.mockMessageListObserver expect] batchMarkAsReadFinished];
-
-    [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
-    [[self.mockMessageListNotificationObserver expect] messageListUpdated];
-
-    [self.messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:[NSIndexSet indexSet]];
-    [self waitUntilAllOperationsAreFinished];
-
-    [self.mockMessageListObserver verify];
-    [self.mockMessageListDelegate verify];
-    [self.mockMessageListNotificationObserver verify];
-}
-
-- (void)testPerformBatchDeleteSuccess {
-    [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAInboxClientSuccessBlock successBlock = (__bridge UAInboxClientSuccessBlock) arg;
-        successBlock();
-    }] performBatchDeleteForMessages:[OCMArg any] onSuccess:[OCMArg any] onFailure:[OCMArg any]];
-
-    [[self.mockMessageListObserver expect] messageListWillLoad];
-    [[self.mockMessageListObserver expect] batchDeleteFinished];
-
-    [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
-    [[self.mockMessageListNotificationObserver expect] messageListUpdated];
-
-    [self.messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:[NSIndexSet indexSet]];
-    [self waitUntilAllOperationsAreFinished];
-
-    [self.mockMessageListObserver verify];
-    [self.mockMessageListDelegate verify];
-    [self.mockMessageListNotificationObserver verify];
-}
 
 #pragma mark delegate methods
 
@@ -204,8 +112,6 @@ static UAUser *mockUser = nil;
         successBlock(304, nil, 0);
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
-    [[self.mockMessageListObserver expect] messageListWillLoad];
-    [[self.mockMessageListObserver expect] messageListLoaded];
 
     [[self.mockMessageListDelegate expect] messageListLoadSucceeded];
 
@@ -217,7 +123,6 @@ static UAUser *mockUser = nil;
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
 
-    [self.mockMessageListObserver verify];
     [self.mockMessageListDelegate verify];
     [self.mockMessageListNotificationObserver verify];
 }
@@ -234,9 +139,6 @@ static UAUser *mockUser = nil;
         failureBlock(nil);
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
-    [[self.mockMessageListObserver expect] messageListWillLoad];
-    [[self.mockMessageListObserver expect] inboxLoadFailed];
-
     [[self.mockMessageListDelegate expect] messageListLoadFailed];
 
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
@@ -247,7 +149,6 @@ static UAUser *mockUser = nil;
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
 
-    [self.mockMessageListObserver verify];
     [self.mockMessageListDelegate verify];
     [self.mockMessageListNotificationObserver verify];
 }
@@ -270,8 +171,6 @@ static UAUser *mockUser = nil;
         };
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
-    [[self.mockMessageListObserver expect] messageListWillLoad];
-    [[self.mockMessageListObserver expect] messageListLoaded];
 
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
@@ -285,7 +184,6 @@ static UAUser *mockUser = nil;
 
     [self waitUntilAllOperationsAreFinished];
 
-    [self.mockMessageListObserver verify];
     [self.mockMessageListDelegate verify];
     [self.mockMessageListNotificationObserver verify];
 }
@@ -308,9 +206,6 @@ static UAUser *mockUser = nil;
         };
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
-    [[self.mockMessageListObserver expect] messageListWillLoad];
-    [[self.mockMessageListObserver expect] inboxLoadFailed];
-
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
@@ -323,7 +218,6 @@ static UAUser *mockUser = nil;
 
     [self waitUntilAllOperationsAreFinished];
 
-    [self.mockMessageListObserver verify];
     [self.mockMessageListDelegate verify];
     [self.mockMessageListNotificationObserver verify];
 }
@@ -340,9 +234,6 @@ static UAUser *mockUser = nil;
         successBlock();
     }] performBatchMarkAsReadForMessages:[OCMArg any] onSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
-    [[self.mockMessageListObserver expect] messageListWillLoad];
-    [[self.mockMessageListObserver expect] batchMarkAsReadFinished];
-
     [[self.mockMessageListDelegate expect] batchMarkAsReadFinished];
 
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
@@ -353,7 +244,6 @@ static UAUser *mockUser = nil;
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
 
-    [self.mockMessageListObserver verify];
     [self.mockMessageListDelegate verify];
     [self.mockMessageListNotificationObserver verify];
 }
@@ -364,9 +254,6 @@ static UAUser *mockUser = nil;
 //the delegate should get a batchDeleteFinished callback.
 //the UADisposable returned should be non-nil.
 - (void)testPerformBatchDeleteWithDelegateSuccess {
-    [[self.mockMessageListObserver expect] messageListWillLoad];
-    [[self.mockMessageListObserver expect] batchDeleteFinished];
-
     [[self.mockMessageListDelegate expect] batchDeleteFinished];
 
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
@@ -377,7 +264,6 @@ static UAUser *mockUser = nil;
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
 
-    [self.mockMessageListObserver verify];
     [self.mockMessageListDelegate verify];
     [self.mockMessageListNotificationObserver verify];
 }
@@ -417,8 +303,6 @@ static UAUser *mockUser = nil;
         successBlock(304, nil, 0);
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
-    [[self.mockMessageListObserver expect] messageListWillLoad];
-    [[self.mockMessageListObserver expect] messageListLoaded];
 
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
@@ -435,7 +319,6 @@ static UAUser *mockUser = nil;
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
     XCTAssertFalse(fail, @"success block should have been called");
 
-    [self.mockMessageListObserver verify];
     [self.mockMessageListDelegate verify];
     [self.mockMessageListNotificationObserver verify];
 }
@@ -452,9 +335,6 @@ static UAUser *mockUser = nil;
         failureBlock(nil);
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
-    [[self.mockMessageListObserver expect] messageListWillLoad];
-    [[self.mockMessageListObserver expect] inboxLoadFailed];
-
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
@@ -470,7 +350,6 @@ static UAUser *mockUser = nil;
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
     XCTAssertTrue(fail, @"failure block should have been called");
 
-    [self.mockMessageListObserver verify];
     [self.mockMessageListDelegate verify];
     [self.mockMessageListNotificationObserver verify];
 }
@@ -492,8 +371,6 @@ static UAUser *mockUser = nil;
         };
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
-    [[self.mockMessageListObserver expect] messageListWillLoad];
-    [[self.mockMessageListObserver expect] messageListLoaded];
 
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
@@ -516,7 +393,6 @@ static UAUser *mockUser = nil;
 
     XCTAssertFalse(fail, @"callback blocks should not have been executed");
 
-    [self.mockMessageListObserver verify];
     [self.mockMessageListDelegate verify];
     [self.mockMessageListNotificationObserver verify];
 }
@@ -539,8 +415,7 @@ static UAUser *mockUser = nil;
         };
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
-    [[self.mockMessageListObserver expect] messageListWillLoad];
-    [[self.mockMessageListObserver expect] inboxLoadFailed];
+
 
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
@@ -562,7 +437,6 @@ static UAUser *mockUser = nil;
 
     XCTAssertFalse(fail, @"callback blocks should not have been executed");
 
-    [self.mockMessageListObserver verify];
     [self.mockMessageListDelegate verify];
     [self.mockMessageListNotificationObserver verify];
 }
@@ -579,8 +453,6 @@ static UAUser *mockUser = nil;
         successBlock();
     }] performBatchMarkAsReadForMessages:[OCMArg any] onSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
-    [[self.mockMessageListObserver expect] messageListWillLoad];
-    [[self.mockMessageListObserver expect] batchMarkAsReadFinished];
 
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
@@ -598,7 +470,6 @@ static UAUser *mockUser = nil;
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
     XCTAssertFalse(fail, @"success block should have been executed");
 
-    [self.mockMessageListObserver verify];
     [self.mockMessageListDelegate verify];
     [self.mockMessageListNotificationObserver verify];
 }
@@ -614,9 +485,6 @@ static UAUser *mockUser = nil;
         UAInboxClientSuccessBlock successBlock = (__bridge UAInboxClientSuccessBlock) arg;
         successBlock();
     }] performBatchDeleteForMessages:[OCMArg any] onSuccess:[OCMArg any] onFailure:[OCMArg any]];
-
-    [[self.mockMessageListObserver expect] messageListWillLoad];
-    [[self.mockMessageListObserver expect] batchDeleteFinished];
 
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
@@ -634,7 +502,6 @@ static UAUser *mockUser = nil;
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
     XCTAssertFalse(fail, @"success block should have been executed");
 
-    [self.mockMessageListObserver verify];
     [self.mockMessageListDelegate verify];
     [self.mockMessageListNotificationObserver verify];
 }

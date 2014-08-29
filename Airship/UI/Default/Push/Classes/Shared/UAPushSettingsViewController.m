@@ -382,7 +382,16 @@ enum {
         NSDate *toDate = [formatter dateFromString:toString];
                 
         [UAPush shared].quietTimeEnabled = YES;
-        [[UAPush shared] setQuietTimeFrom:fromDate to:toDate withTimeZone:[NSTimeZone localTimeZone]];
+
+        NSDateComponents *fromComponents = [[NSCalendar currentCalendar] components:NSHourCalendarUnit|NSMinuteCalendarUnit fromDate:fromDate];
+        NSDateComponents *toComponents = [[NSCalendar currentCalendar] components:NSHourCalendarUnit|NSMinuteCalendarUnit fromDate:toDate];
+
+
+        [[UAPush shared] setQuietTimeStartHour:(NSUInteger)fromComponents.hour
+                                   startMinute:(NSUInteger)fromComponents.minute
+                                       endHour:(NSUInteger)toComponents.hour
+                                     endMinute:(NSUInteger)toComponents.minute];
+
         [[UAPush shared] updateRegistration];
     } else {
         [UAPush shared].quietTimeEnabled = NO;

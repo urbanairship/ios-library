@@ -61,9 +61,7 @@
         return nil;
     }
 
-    UAInboxMessageList *strongInbox = self.inbox;
-    return [strongInbox markMessagesRead:@[self] completionHandler:^{
-        [strongInbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
+    return [self.inbox markMessagesRead:@[self] completionHandler:^{
         if (completionHandler) {
             completionHandler(self);
         }
@@ -89,11 +87,6 @@
             [strongDelegate singleMessageMarkAsReadFinished:message];
         }
     }];
-}
-
-- (BOOL)markAsRead {
-    //the return value should be YES if a request was sent or if we're already marked read.
-    return [self markAsReadWithSuccessBlock:nil withFailureBlock:nil] || !self.unread;
 }
 
 - (BOOL)isExpired {
