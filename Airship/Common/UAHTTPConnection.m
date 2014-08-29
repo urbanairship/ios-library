@@ -40,9 +40,9 @@
 }
 
 + (instancetype)connectionWithRequest:(UAHTTPRequest *)httpRequest
-                                   delegate:(id)delegate
-                                    success:(SEL)successSelector
-                                    failure:(SEL)failureSelector {
+                             delegate:(id)delegate
+                              success:(SEL)successSelector
+                              failure:(SEL)failureSelector {
     UAHTTPConnection *connection = [self connectionWithRequest:httpRequest];
     connection.delegate = delegate;
     connection.successSelector = successSelector;
@@ -52,8 +52,8 @@
 }
 
 + (instancetype)connectionWithRequest:(UAHTTPRequest *)httpRequest
-                               successBlock:(UAHTTPConnectionSuccessBlock)successBlock
-                               failureBlock:(UAHTTPConnectionFailureBlock)failureBlock {
+                         successBlock:(UAHTTPConnectionSuccessBlock)successBlock
+                         failureBlock:(UAHTTPConnectionFailureBlock)failureBlock {
     UAHTTPConnection *connection = [self connectionWithRequest:httpRequest];
     connection.successBlock = successBlock;
     connection.failureBlock = failureBlock;

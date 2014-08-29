@@ -92,9 +92,9 @@
  * @return A UAHTTPConnection with the specified httpRequest.
  */
 + (instancetype)connectionWithRequest:(UAHTTPRequest *)httpRequest
-                                   delegate:(id)delegate
-                                    success:(SEL)successSelector
-                                    failure:(SEL)failureSelector;
+                             delegate:(id)delegate
+                              success:(SEL)successSelector
+                              failure:(SEL)failureSelector;
 
 /**
  * Class factory method for creating a UAHTTPConnection.
@@ -104,8 +104,8 @@
  * @return A UAHTTPConnection with the specified httpRequest.
  */
 + (instancetype)connectionWithRequest:(UAHTTPRequest *)httpRequest
-                               successBlock:(UAHTTPConnectionSuccessBlock)successBlock
-                               failureBlock:(UAHTTPConnectionFailureBlock)failureBlock;
+                         successBlock:(UAHTTPConnectionSuccessBlock)successBlock
+                         failureBlock:(UAHTTPConnectionFailureBlock)failureBlock;
 
 /**
  * Initializer with the HTTP request.
