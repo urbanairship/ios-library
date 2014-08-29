@@ -47,7 +47,6 @@
         id<UAInboxPushHandlerDelegate> strongDelegate = self.delegate;
 
         if (message) {
-
             if (self.hasLaunchMessage) {
                 [strongDelegate launchRichPushMessageAvailable:message];
                 self.hasLaunchMessage = NO;

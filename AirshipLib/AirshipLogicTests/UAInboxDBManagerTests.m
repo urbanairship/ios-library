@@ -37,12 +37,12 @@
 
 - (void)setUp {
     self.dbManager = [UAInboxDBManager shared];
-    [self.dbManager deleteMessages:[self.dbManager getMessages]];
+    [self.dbManager deleteMessages:[self.dbManager fetchMessagesWithPredicate:nil]];
     [super setUp];
 }
 
 - (void)tearDown {
-    [self.dbManager deleteMessages:[self.dbManager getMessages]];
+    [self.dbManager deleteMessages:[self.dbManager fetchMessagesWithPredicate:nil]];
     [super tearDown];
 }
 
@@ -50,7 +50,7 @@
     NSDictionary *messageDictionary = [self createMessageDictionaryWithMessageID:@"someId"];
     [self.dbManager addMessageFromDictionary:messageDictionary];
 
-    NSArray *messages = [self.dbManager getMessages];
+    NSArray *messages = [self.dbManager fetchMessagesWithPredicate:nil];
 
     XCTAssertEqual((NSUInteger)1, messages.count, @"Unable to add message from dictionary to inbox database store");
     [self verifyMessage:[messages lastObject] withDictionary:messageDictionary];
@@ -59,7 +59,7 @@
 - (void)testAddMessageFromDictioanryEmptyDictionary {
     [self.dbManager addMessageFromDictionary:@{}];
 
-    NSArray *messages = [self.dbManager getMessages];
+    NSArray *messages = [self.dbManager fetchMessagesWithPredicate:nil];
 
     XCTAssertEqual((NSUInteger)1, messages.count, @"Unable to add message from dictionary to inbox database store");
     [self verifyMessage:[messages lastObject] withDictionary:@{}];
@@ -68,7 +68,7 @@
 - (void)testAddMessageFromDictionaryNilDictionary {
     [self.dbManager addMessageFromDictionary:nil];
 
-    NSArray *messages = [self.dbManager getMessages];
+    NSArray *messages = [self.dbManager fetchMessagesWithPredicate:nil];
 
     XCTAssertEqual((NSUInteger)1, messages.count, @"Unable to add message from dictionary to inbox database store");
 
@@ -99,7 +99,7 @@
     XCTAssertTrue([self.dbManager updateMessageWithDictionary:messageDictionary], @"Update message failed to update a message.");
 
     // Verify the message is updated
-    NSArray *messages = [self.dbManager getMessages];
+    NSArray *messages = [self.dbManager fetchMessagesWithPredicate:nil];
     XCTAssertEqual((NSUInteger)1, messages.count, @"Updating a message changed the amount of messages");
     [self verifyMessage:[messages lastObject] withDictionary:messageDictionary];
 }
@@ -109,14 +109,14 @@
     [messagesToDelete addObject:[self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"anotherId"]]];
     [messagesToDelete addObject:[self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"yetAnotherId"]]];
 
-    XCTAssertEqual((NSUInteger)2, [self.dbManager getMessages].count, @"2 messages should of been added");
+    XCTAssertEqual((NSUInteger)2, [self.dbManager fetchMessagesWithPredicate:nil].count, @"2 messages should of been added");
 
     [self.dbManager deleteMessages:messagesToDelete];
-    XCTAssertEqual((NSUInteger)0, [self.dbManager getMessages].count, @"All of the messages should be deleted");
+    XCTAssertEqual((NSUInteger)0, [self.dbManager fetchMessagesWithPredicate:nil].count, @"All of the messages should be deleted");
 
     // Try to delete them again make sure it does not throw
     XCTAssertNoThrow([self.dbManager deleteMessages:messagesToDelete], @"Deleted messages twice causes an exception to be thrown");
-    XCTAssertEqual((NSUInteger)0, [self.dbManager getMessages].count, @"All of the messages should be deleted");
+    XCTAssertEqual((NSUInteger)0, [self.dbManager fetchMessagesWithPredicate:nil].count, @"All of the messages should be deleted");
 }
 
 - (void)testDeleteMessages {
@@ -126,11 +126,11 @@
     NSDictionary *messageDictionary = [self createMessageDictionaryWithMessageID:@"anotherMessageId"];
     [self.dbManager addMessageFromDictionary:messageDictionary];
 
-    XCTAssertEqual((NSUInteger)2, [self.dbManager getMessages].count, @"2 messages should of been added");
+    XCTAssertEqual((NSUInteger)2, [self.dbManager fetchMessagesWithPredicate:nil].count, @"2 messages should of been added");
 
     [self.dbManager deleteMessages:messagesToDelete];
-    XCTAssertEqual((NSUInteger)1, [self.dbManager getMessages].count, @"Only one of the messages should of been deleted");
-    [self verifyMessage:[[self.dbManager getMessages] lastObject] withDictionary:messageDictionary];
+    XCTAssertEqual((NSUInteger)1, [self.dbManager fetchMessagesWithPredicate:nil].count, @"Only one of the messages should of been deleted");
+    [self verifyMessage:[[self.dbManager fetchMessagesWithPredicate:nil] lastObject] withDictionary:messageDictionary];
 }
 
 - (void)testDeleteMessagesEmptyArray {
@@ -144,63 +144,6 @@
 - (void)testDeleteMessagesInvalidArray {
     NSArray *invalidArray = @[@1, @"what", [NSArray array]];
     XCTAssertNoThrow([self.dbManager deleteMessages:invalidArray], @"Deleting invalid messages should not result in an exception");
-}
-
-- (void)testDeleteMessagesWithIDs {
-    // Add 2 messages
-    [self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"anotherId"]];
-    [self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"anotherMessageId"]];
-
-    XCTAssertEqual((NSUInteger)2, [self.dbManager getMessages].count, @"2 messages should of been added");
-
-    [self.dbManager deleteMessagesWithIDs:[NSSet setWithArray:@[@"anotherId"]]];
-    XCTAssertEqual((NSUInteger)1, [self.dbManager getMessages].count, @"Only one of the messages should of been deleted");
-    [self verifyMessage:[[self.dbManager getMessages] lastObject] withDictionary:[self createMessageDictionaryWithMessageID:@"anotherMessageId"]];
-}
-
-- (void)testMessageIDs {
-    // Add 2 messages
-    [self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"anotherId"]];
-    [self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"anotherMessageId"]];
-
-    XCTAssertTrue([[self.dbManager messageIDs] containsObject:@"anotherId"], @"messageIDs not returning all the added messages");
-    XCTAssertTrue([[self.dbManager messageIDs] containsObject:@"anotherMessageId"], @"messageIDs not returning all the added messages");
-    XCTAssertEqual((NSUInteger)2, [self.dbManager messageIDs].count, @"messageIDs should only contain 2 IDs");
-}
-
-- (void)testDeleteExpiredMessages {
-    NSDate *currentDate = [NSDate date];
-
-    // Mock the date to always return currentDate
-    id mockDate = [OCMockObject mockForClass:[NSDate class]];
-    [[[mockDate stub] andReturn:currentDate] date];
-    
-    XCTAssertNoThrow([self.dbManager deleteExpiredMessages], @"Deleting expired messages on empty database should not throw");
-
-    NSArray *unExpiredMessageDicts = @[[self createMessageDictionaryWithMessageID:@"noExpiration"],
-                                       [self createMessageDictionaryWithMessageID:@"notExpired" expirationDate:[currentDate dateByAddingTimeInterval:1]]];
-
-    // Add the unexpired messages
-    for (NSDictionary *dict in unExpiredMessageDicts) {
-        [self.dbManager addMessageFromDictionary:dict];
-    }
-
-    // Add 2 message that are expired
-    [self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"expiredOne" expirationDate:currentDate]];
-    [self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"expiredTwo" expirationDate:[currentDate dateByAddingTimeInterval:-1]]];
-
-    [self.dbManager deleteExpiredMessages];
-
-    // Verify the unExpiredMessages still exist
-    for (NSDictionary *dict in unExpiredMessageDicts) {
-        NSString *messageId = [dict valueForKey:@"message_id"];
-        XCTAssertTrue([[self.dbManager messageIDs] containsObject:messageId], @"Expected unexpired message with id %@ to not be deleted", messageId);
-    }
-
-    XCTAssertEqual((NSUInteger)2, [self.dbManager messageIDs].count, @"messageIDs should only contain 2 IDs");
-
-
-    [mockDate stopMocking];
 }
 
 - (NSDictionary *)createMessageDictionaryWithMessageID:(NSString *)messageID {
