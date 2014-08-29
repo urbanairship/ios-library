@@ -44,7 +44,22 @@
                             [self createRemindMeLaterCategoryRequireAuth:requireAuth],
                             [self createShareCategory],
                             [self createAcceptOrDeclineForegroundCategoryRequireAuth:requireAuth],
-                            [self createAcceptOrDeclineBackgroundCategoryRequireAuth:requireAuth]];
+                            [self createAcceptOrDeclineBackgroundCategoryRequireAuth:requireAuth],
+                            [self createBuyNowShareCategory],
+                            [self createDownloadCategory],
+                            [self createDownloadShareCategory],
+                            [self createFollowShareCategoryRequireAuth:requireAuth],
+                            [self createHappySadCategoryRequireAuth:requireAuth],
+                            [self createLikeCategoryRequireAuth:requireAuth],
+                            [self createLikeDislikeCategoryRequireAuth:requireAuth],
+                            [self createLikeShareCategoryRequireAuth:requireAuth],
+                            [self createMoreLikeLessLikeCategoryRequireAuth:requireAuth],
+                            [self createOptInShareCategoryRequireAuth:requireAuth],
+                            [self createOptOutShareCategoryRequireAuth:requireAuth],
+                            [self createRemindMeLaterShareCategoryRequireAuth:requireAuth],
+                            [self createShopNowShareCategory],
+                            [self createThumbsUpThumbsDownCategoryRequireAuth:requireAuth],
+                            [self createUnfollowShareCategoryRequireAuth:requireAuth]];
 
     return [NSSet setWithArray:categories];
 }
@@ -53,11 +68,11 @@
 + (UIUserNotificationCategory *)createYesNoForegroundCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"yes",
                            @"foreground": @YES,
-                           @"title_resource": @"ua_yes_no_foreground_yes",
+                           @"title_resource": @"ua_notification_button_yes",
                            @"title": @"Yes"},
                          @{@"identifier": @"no",
                            @"foreground": @NO,
-                           @"title_resource": @"ua_yes_no_foreground_no",
+                           @"title_resource": @"ua_notification_button_no",
                            @"title": @"No",
                            @"authenticationRequired":@(requireAuth)}];
 
@@ -67,12 +82,12 @@
 + (UIUserNotificationCategory *)createYesNoBackgroundCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"yes",
                            @"foreground": @NO,
-                           @"title_resource": @"ua_yes_no_background_yes",
+                           @"title_resource": @"ua_notification_button_yes",
                            @"title": @"Yes",
                            @"authenticationRequired": @(requireAuth)},
                          @{@"identifier": @"no",
                            @"foreground": @NO,
-                           @"title_resource": @"ua_yes_no_background_no",
+                           @"title_resource": @"ua_notification_button_no",
                            @"title": @"No",
                            @"authenticationRequired": @(requireAuth)}];
 
@@ -83,7 +98,7 @@
 + (UIUserNotificationCategory *)createShopNowCategory {
     NSArray *actions = @[@{@"identifier": @"shop_now",
                            @"foreground": @YES,
-                           @"title_resource": @"ua_shop_now_shop_now",
+                           @"title_resource": @"ua_notification_button_shop_now",
                            @"title": @"Shop Now"}];
 
     return [self createCategory:@"ua_shop_now" actions:actions];
@@ -92,7 +107,7 @@
 + (UIUserNotificationCategory *)createBuyNowCategory {
     NSArray *actions = @[@{@"identifier": @"buy_now",
                            @"foreground": @YES,
-                           @"title_resource": @"ua_buy_now_buy_now",
+                           @"title_resource": @"ua_notification_button_buy_now",
                            @"title": @"Buy Now"}];
 
     return [self createCategory:@"ua_buy_now" actions:actions];
@@ -101,7 +116,7 @@
 + (UIUserNotificationCategory *)createFollowCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"follow",
                            @"foreground": @NO,
-                           @"title_resource": @"ua_follow_follow",
+                           @"title_resource": @"ua_notification_button_follow",
                            @"title": @"Follow",
                            @"authenticationRequired": @(requireAuth)}];
 
@@ -112,7 +127,7 @@
 + (UIUserNotificationCategory *)createUnfollowCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"unfollow",
                            @"foreground": @NO,
-                           @"title_resource": @"ua_unfollow_unfollow",
+                           @"title_resource": @"ua_notification_button_unfollow",
                            @"title": @"Unfollow",
                            @"destructive": @YES,
                            @"authenticationRequired": @(requireAuth)}];
@@ -123,7 +138,7 @@
 + (UIUserNotificationCategory *)createOptInCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"opt_in",
                            @"foreground": @NO,
-                           @"title_resource": @"ua_opt_in_opt_in",
+                           @"title_resource": @"ua_notification_button_opt_in",
                            @"title": @"Opt-in",
                            @"authenticationRequired": @(requireAuth)}];
 
@@ -133,7 +148,7 @@
 + (UIUserNotificationCategory *)createOptOutCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"opt_out",
                            @"foreground": @NO,
-                           @"title_resource": @"ua_opt_out_opt_out",
+                           @"title_resource": @"ua_notification_button_opt_out",
                            @"title": @"Opt-out",
                            @"destructive": @YES,
                            @"authenticationRequired": @(requireAuth)}];
@@ -144,7 +159,7 @@
 + (UIUserNotificationCategory *)createRemindMeLaterCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"remind",
                            @"foreground": @NO,
-                           @"title_resource": @"ua_remind_me_later_remind",
+                           @"title_resource": @"ua_notification_button_remind",
                            @"title": @"Remind Me Later",
                            @"authenticationRequired": @(requireAuth)}];
 
@@ -154,7 +169,7 @@
 + (UIUserNotificationCategory *)createShareCategory {
     NSArray *actions = @[@{@"identifier": @"share",
                            @"foreground": @YES,
-                           @"title_resource": @"ua_share_share",
+                           @"title_resource": @"ua_notification_button_share",
                            @"title": @"Share"}];
 
     return [self createCategory:@"ua_share" actions:actions];
@@ -163,11 +178,11 @@
 + (UIUserNotificationCategory *)createAcceptOrDeclineForegroundCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"accept",
                            @"foreground": @YES,
-                           @"title_resource": @"ua_accept_decline_foreground_accept",
+                           @"title_resource": @"ua_notification_button_accept",
                            @"title": @"Accept"},
                          @{@"identifier": @"decline",
                            @"foreground": @NO,
-                           @"title_resource": @"ua_accept_decline_foreground_decline",
+                           @"title_resource": @"ua_notification_button_decline",
                            @"title": @"Decline",
                            @"authenticationRequired":@(requireAuth)}];
 
@@ -177,16 +192,231 @@
 + (UIUserNotificationCategory *)createAcceptOrDeclineBackgroundCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"accept",
                            @"foreground": @NO,
-                           @"title_resource": @"ua_accept_decline_background_accept",
+                           @"title_resource": @"ua_notification_button_accept",
                            @"title": @"Accept",
                            @"authenticationRequired": @(requireAuth)},
                          @{@"identifier": @"decline",
                            @"foreground": @NO,
-                           @"title_resource": @"ua_accept_decline_background_decline",
+                           @"title_resource": @"ua_notification_button_decline",
                            @"title": @"Decline",
                            @"authenticationRequired": @(requireAuth)}];
 
     return [self createCategory:@"ua_accept_decline_background" actions:actions];
+}
+
+
++ (UIUserNotificationCategory *)createDownloadCategory {
+    NSArray *actions = @[@{@"identifier": @"download",
+                           @"foreground": @YES,
+                           @"title_resource": @"ua_notification_button_download",
+                           @"title": @"Download"}];
+
+    return [self createCategory:@"ua_download" actions:actions];
+}
+
++ (UIUserNotificationCategory *)createDownloadShareCategory {
+    NSArray *actions = @[@{@"identifier": @"download",
+                           @"foreground": @YES,
+                           @"title_resource": @"ua_notification_button_download",
+                           @"title": @"Download"},
+                         @{@"identifier": @"share",
+                           @"foreground": @YES,
+                           @"title_resource": @"ua_notification_button_share",
+                           @"title": @"Share"}];
+
+
+    return [self createCategory:@"ua_download_share" actions:actions];
+}
+
++ (UIUserNotificationCategory *)createRemindMeLaterShareCategoryRequireAuth:(BOOL)requireAuth {
+    NSArray *actions = @[@{@"identifier": @"remind",
+                           @"foreground": @NO,
+                           @"title_resource": @"ua_notification_button_remind",
+                           @"title": @"Remind Me Later",
+                           @"authenticationRequired": @(requireAuth)},
+                         @{@"identifier": @"share",
+                           @"foreground": @YES,
+                           @"title_resource": @"ua_notification_button_share",
+                           @"title": @"Share"}];
+
+
+    return [self createCategory:@"ua_remind_share" actions:actions];
+}
+
++ (UIUserNotificationCategory *)createOptInShareCategoryRequireAuth:(BOOL)requireAuth {
+    NSArray *actions = @[@{@"identifier": @"opt_in",
+                           @"foreground": @NO,
+                           @"title_resource": @"ua_notification_button_opt_in",
+                           @"title": @"Opt-in",
+                           @"authenticationRequired": @(requireAuth)},
+                         @{@"identifier": @"share",
+                           @"foreground": @YES,
+                           @"title_resource": @"ua_notification_button_share",
+                           @"title": @"Share"}];
+
+
+    return [self createCategory:@"ua_opt_in_share" actions:actions];
+}
+
++ (UIUserNotificationCategory *)createOptOutShareCategoryRequireAuth:(BOOL)requireAuth {
+    NSArray *actions = @[@{@"identifier": @"opt_out",
+                           @"foreground": @NO,
+                           @"title_resource": @"ua_notification_button_opt_out",
+                           @"title": @"Opt-out",
+                           @"destructive": @YES,
+                           @"authenticationRequired": @(requireAuth)},
+                         @{@"identifier": @"share",
+                           @"foreground": @YES,
+                           @"title_resource": @"ua_notification_button_share",
+                           @"title": @"Share"}];
+
+
+    return [self createCategory:@"ua_opt_out_share" actions:actions];
+}
+
++ (UIUserNotificationCategory *)createFollowShareCategoryRequireAuth:(BOOL)requireAuth {
+    NSArray *actions = @[@{@"identifier": @"follow",
+                           @"foreground": @NO,
+                           @"title_resource": @"ua_notification_button_follow",
+                           @"title": @"Follow",
+                           @"authenticationRequired": @(requireAuth)},
+                         @{@"identifier": @"share",
+                           @"foreground": @YES,
+                           @"title_resource": @"ua_notification_button_share",
+                           @"title": @"Share"}];
+
+
+    return [self createCategory:@"ua_follow_share" actions:actions];
+}
+
++ (UIUserNotificationCategory *)createUnfollowShareCategoryRequireAuth:(BOOL)requireAuth {
+    NSArray *actions = @[@{@"identifier": @"unfollow",
+                           @"foreground": @NO,
+                           @"title_resource": @"ua_notification_button_unfollow",
+                           @"title": @"Unfollow",
+                           @"destructive": @YES,
+                           @"authenticationRequired": @(requireAuth)},
+                         @{@"identifier": @"share",
+                           @"foreground": @YES,
+                           @"title_resource": @"ua_notification_button_share",
+                           @"title": @"Share"}];
+
+
+    return [self createCategory:@"ua_unfollow_share" actions:actions];
+}
+
++ (UIUserNotificationCategory *)createShopNowShareCategory {
+    NSArray *actions = @[@{@"identifier": @"shop_now",
+                           @"foreground": @YES,
+                           @"title_resource": @"ua_notification_button_shop_now",
+                           @"title": @"Shop Now"},
+                         @{@"identifier": @"share",
+                           @"foreground": @YES,
+                           @"title_resource": @"ua_notification_button_share",
+                           @"title": @"Share"}];
+
+
+    return [self createCategory:@"ua_shop_now_share" actions:actions];
+}
+
++ (UIUserNotificationCategory *)createBuyNowShareCategory {
+    NSArray *actions = @[@{@"identifier": @"buy_now",
+                           @"foreground": @YES,
+                           @"title_resource": @"ua_notification_button_buy_now",
+                           @"title": @"Buy Now"},
+                         @{@"identifier": @"share",
+                           @"foreground": @YES,
+                           @"title_resource": @"ua_notification_button_share",
+                           @"title": @"Share"}];
+
+
+    return [self createCategory:@"ua_buy_now_share" actions:actions];
+}
+
++ (UIUserNotificationCategory *)createMoreLikeLessLikeCategoryRequireAuth:(BOOL)requireAuth {
+    NSArray *actions = @[@{@"identifier": @"more_like",
+                           @"foreground": @NO,
+                           @"title_resource": @"ua_notification_button_more_like",
+                           @"title": @"More Like This",
+                           @"authenticationRequired": @(requireAuth)},
+                         @{@"identifier": @"less_like",
+                           @"foreground": @NO,
+                           @"title_resource": @"ua_notification_button_less_like",
+                           @"title": @"Less Like This",
+                           @"authenticationRequired": @(requireAuth)}];
+
+
+    return [self createCategory:@"ua_more_like_less_like" actions:actions];
+}
+
++ (UIUserNotificationCategory *)createLikeDislikeCategoryRequireAuth:(BOOL)requireAuth {
+    NSArray *actions = @[@{@"identifier": @"like",
+                           @"foreground": @NO,
+                           @"title_resource": @"ua_notification_button_like",
+                           @"title": @"Like",
+                           @"authenticationRequired": @(requireAuth)},
+                         @{@"identifier": @"dislike",
+                           @"foreground": @NO,
+                           @"title_resource": @"ua_notification_button_dislike",
+                           @"title": @"Dislike",
+                           @"authenticationRequired": @(requireAuth)}];
+
+
+    return [self createCategory:@"ua_like_dislike" actions:actions];
+}
+
++ (UIUserNotificationCategory *)createLikeCategoryRequireAuth:(BOOL)requireAuth {
+    NSArray *actions = @[@{@"identifier": @"like",
+                           @"foreground": @NO,
+                           @"title_resource": @"ua_notification_button_like",
+                           @"title": @"Like",
+                           @"authenticationRequired": @(requireAuth)}];
+
+
+    return [self createCategory:@"ua_like" actions:actions];
+}
+
+
++ (UIUserNotificationCategory *)createLikeShareCategoryRequireAuth:(BOOL)requireAuth {
+    NSArray *actions = @[@{@"identifier": @"like",
+                           @"foreground": @NO,
+                           @"title_resource": @"ua_notification_button_like",
+                           @"title": @"Like",
+                           @"authenticationRequired": @(requireAuth)},
+                         @{@"identifier": @"share",
+                           @"foreground": @YES,
+                           @"title_resource": @"ua_notification_button_share",
+                           @"title": @"Share"}];
+
+    return [self createCategory:@"ua_like_share" actions:actions];
+}
+
++ (UIUserNotificationCategory *)createHappySadCategoryRequireAuth:(BOOL)requireAuth {
+    NSArray *actions = @[@{@"identifier": @"happy",
+                           @"foreground": @NO,
+                           @"title": @"😀",
+                           @"authenticationRequired": @(requireAuth)},
+                         @{@"identifier": @"sad",
+                           @"foreground": @NO,
+                           @"title": @"😞",
+                           @"authenticationRequired": @(requireAuth)}];
+
+
+    return [self createCategory:@"ua_icons_happy_sad" actions:actions];
+}
+
++ (UIUserNotificationCategory *)createThumbsUpThumbsDownCategoryRequireAuth:(BOOL)requireAuth {
+    NSArray *actions = @[@{@"identifier": @"up",
+                           @"foreground": @NO,
+                           @"title": @"👍",
+                           @"authenticationRequired": @(requireAuth)},
+                         @{@"identifier": @"down",
+                           @"foreground": @NO,
+                           @"title": @"👎",
+                           @"authenticationRequired": @(requireAuth)}];
+
+
+    return [self createCategory:@"ua_icons_up_down" actions:actions];
 }
 
 + (NSSet *)createCategoriesFromFile:(NSString *)path {
