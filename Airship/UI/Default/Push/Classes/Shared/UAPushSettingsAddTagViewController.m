@@ -142,7 +142,7 @@ enum TagSections {
             
             // Configure the cell...
             
-            cell.textLabel.text = [self.presetTags objectAtIndex:indexPath.row];
+            cell.textLabel.text = [self.presetTags objectAtIndex:(NSUInteger)indexPath.row];
             cell.accessoryType = UITableViewCellAccessoryNone;
             
             return cell;

@@ -111,7 +111,7 @@ enum {
             }
             
             // Configure the cell...
-            cell.textLabel.text = [[[self.soundList objectAtIndex:indexPath.row] pathComponents] lastObject];
+            cell.textLabel.text = [[[self.soundList objectAtIndex:(NSUInteger)indexPath.row] pathComponents] lastObject];
             break;
         }
         default:

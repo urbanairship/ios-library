@@ -115,7 +115,7 @@ enum {
             
             // Configure the cell...
             
-            cell.textLabel.text = [[UAPush shared].tags objectAtIndex:indexPath.row];
+            cell.textLabel.text = [[UAPush shared].tags objectAtIndex:(NSUInteger)indexPath.row];
             cell.accessoryType = UITableViewCellAccessoryNone;
             break;
         }
