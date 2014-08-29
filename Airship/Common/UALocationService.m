@@ -633,7 +633,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 + (BOOL)locationServicesEnabled {
-    // TODO: remove wrapper?
     return [CLLocationManager locationServicesEnabled];
 }
 

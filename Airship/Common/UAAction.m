@@ -66,10 +66,7 @@
     //make sure the initial acceptsArguments/willPerform/perform is executed on the main queue
     dispatchMainIfNecessary(^{
         if (![self acceptsArguments:arguments]) {
-            //TODO: this is probably too noisy of a log level, and it's also a fairly unhelpful
-            //message because it doesn't provide any context. should it be up to the
-            //action itself to log or somehow provide its reasoning?
-            UA_LINFO(@"Action %@ does not accept arguments %@.",
+            UA_LDEBUG(@"Action %@ does not accept arguments %@.",
                      [self description], [arguments description]);
             completionHandler([UAActionResult rejectedArgumentsResult]);
         } else {
