@@ -44,7 +44,7 @@
 
 @implementation UAChannelAPIClient
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         self.requestEngine = [[UAHTTPRequestEngine alloc] init];
@@ -56,7 +56,7 @@
     return self;
 }
 
-- (id)initWithRequestEngine:(UAHTTPRequestEngine *)requestEngine {
+- (instancetype)initWithRequestEngine:(UAHTTPRequestEngine *)requestEngine {
     self = [super init];
     if (self) {
         self.requestEngine = requestEngine;
@@ -65,12 +65,12 @@
     return self;
 }
 
-+ (UAChannelAPIClient *)client {
-    return [[UAChannelAPIClient alloc] init];
++ (instancetype)client {
+    return [[self alloc] init];
 }
 
-+ (UAChannelAPIClient *)clientWithRequestEngine:(UAHTTPRequestEngine *)requestEngine {
-    return [[UAChannelAPIClient alloc] initWithRequestEngine:requestEngine];
++ (instancetype)clientWithRequestEngine:(UAHTTPRequestEngine *)requestEngine {
+    return [[self alloc] initWithRequestEngine:requestEngine];
 }
 
 - (void)cancelAllRequests {

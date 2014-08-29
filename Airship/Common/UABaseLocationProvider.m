@@ -45,7 +45,7 @@
     self.locationManager.delegate = nil;
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self){
         self.locationManager = [[CLLocationManager alloc] init];
@@ -57,7 +57,7 @@
     return self;
 }
 
-- (id)initWithDelegate:(id<UALocationProviderDelegate>)delegate {
+- (instancetype)initWithDelegate:(id<UALocationProviderDelegate>)delegate {
     self = [self init];
     if (self && [delegate conformsToProtocol:@protocol(UALocationProviderDelegate)]) {
         self.delegate = delegate;
@@ -65,11 +65,11 @@
     return self;
 }
 
-- (NSString*)description {
-    return [NSString stringWithFormat:@"Provider:%@, Purpose:%@, Updating:%d, desiredAccuracy %f, distanceFilter %f", 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"Provider:%@, Purpose:%@, Updating:%ld, desiredAccuracy %f, distanceFilter %f", 
             self.provider,
             self.purpose,
-            self.serviceStatus,
+            (long)self.serviceStatus,
             self.locationManager.desiredAccuracy,
             self.locationManager.distanceFilter];
 }

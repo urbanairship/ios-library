@@ -42,7 +42,7 @@
 
 SINGLETON_IMPLEMENTATION(UAActionRegistry)
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         self.registeredActionEntries = [[NSMutableDictionary alloc] init];

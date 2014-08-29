@@ -38,7 +38,7 @@
     // Super class deallocates location manager
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self){
         self.provider = UALocationServiceProviderGps;

@@ -38,7 +38,7 @@
 @interface UAAppDelegateProxy : NSProxy<UIApplicationDelegate>
 
 //NSProxy has no default init method, we have to declare it to satisfy the compiler
-- (id)init;
+- (instancetype)init;
 
 /**
  * The Urban Airship app delegate. 

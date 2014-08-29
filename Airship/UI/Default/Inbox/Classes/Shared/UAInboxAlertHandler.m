@@ -36,7 +36,7 @@
 
 @implementation UAInboxAlertHandler
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
 

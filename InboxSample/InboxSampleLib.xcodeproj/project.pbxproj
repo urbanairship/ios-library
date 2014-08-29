@@ -207,7 +207,6 @@
 		1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageListCell.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* InboxSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSample_Prefix.pch; sourceTree = "<group>"; };
 		4906F33D1990564A00F27AF1 /* InboxSample-Kit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "InboxSample-Kit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4906F33E1990564A00F27AF1 /* InboxSample copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "InboxSample copy-Info.plist"; path = "/Users/marc/ios-library-dev/InboxSample/InboxSample copy-Info.plist"; sourceTree = "<absolute>"; };
 		49E001A8154F63F3009305B7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		63CB54BB1247107C00DF2EBC /* InboxTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InboxTests-Info.plist"; sourceTree = "<group>"; };
 		76911B2119AD367400AA245D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -376,7 +375,6 @@
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 				9A9CBA1E0FCC559100435BCB /* Frameworks */,
-				4906F33E1990564A00F27AF1 /* InboxSample copy-Info.plist */,
 			);
 			name = CustomTemplate;
 			sourceTree = "<group>";

@@ -10,7 +10,7 @@
 
 @implementation UADelayOperation
 
-- (id)initWithDelayInSeconds:(NSTimeInterval)seconds {
+- (instancetype)initWithDelayInSeconds:(NSTimeInterval)seconds {
     self = [super init];
     if (self) {
         self.semaphore = dispatch_semaphore_create(0);
@@ -32,8 +32,8 @@
     dispatch_semaphore_signal(self.semaphore);
 }
 
-+ (id)operationWithDelayInSeconds:(NSTimeInterval)seconds {
-    return [[UADelayOperation alloc] initWithDelayInSeconds:seconds];
++ (instancetype)operationWithDelayInSeconds:(NSTimeInterval)seconds {
+    return [[self alloc] initWithDelayInSeconds:seconds];
 }
 
 @end

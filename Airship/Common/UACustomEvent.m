@@ -45,16 +45,16 @@
 }
 
 + (instancetype)eventWithName:(NSString *)eventName {
-    return [UACustomEvent eventWithName:eventName value:nil];
+    return [self eventWithName:eventName value:nil];
 }
 
 + (instancetype)eventWithName:(NSString *)eventName valueFromString:(NSString *)eventValue {
     NSDecimalNumber *decimalValue = eventValue ? [NSDecimalNumber decimalNumberWithString:eventValue] : nil;
-    return [UACustomEvent eventWithName:eventName value:decimalValue];
+    return [self eventWithName:eventName value:decimalValue];
 }
 
 + (instancetype)eventWithName:(NSString *)eventName value:(NSDecimalNumber *)eventValue {
-    UACustomEvent *event = [[UACustomEvent alloc] initWithName:eventName withValue:eventValue];
+    UACustomEvent *event = [[self alloc] initWithName:eventName withValue:eventValue];
     return event;
 }
 

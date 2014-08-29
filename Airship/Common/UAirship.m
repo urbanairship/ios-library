@@ -99,7 +99,7 @@ UALogLevel uaLogLevel = UALogLevelError;
 #pragma mark -
 #pragma mark Object Lifecycle
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         self.ready = NO;

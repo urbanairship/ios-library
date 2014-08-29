@@ -10,7 +10,7 @@
 
 @implementation UAHTTPRequestEngine
 
-- (id)initWithQueue:(NSOperationQueue *)queue {
+- (instancetype)initWithQueue:(NSOperationQueue *)queue {
     self = [super init];
     if (self) {
         self.queue = queue;
@@ -23,7 +23,7 @@
     return self;
 }
 
-- (id)init {
+- (instancetype)init {
     return [self initWithQueue:[[NSOperationQueue alloc] init]];
 }
 

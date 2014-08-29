@@ -8,8 +8,8 @@
 
 @implementation UABeveledLoadingIndicator
 
-+ (UABeveledLoadingIndicator *)indicator {
-    return [[UABeveledLoadingIndicator alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
++ (instancetype)indicator {
+    return [[self alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
 }
 
 - (void)setup {
@@ -26,7 +26,7 @@
     self.activity.center = CGPointMake( self.frame.size.width/2, self.frame.size.height/2);
 }
 
-- (id)initWithFrame:(CGRect)frame {
+- (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
         [self setup];

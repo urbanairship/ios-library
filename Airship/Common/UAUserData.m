@@ -11,7 +11,7 @@
 
 @implementation UAUserData
 
-- (id)initWithUsername:(NSString *)username password:(NSString *)password url:(NSString *)url {
+- (instancetype)initWithUsername:(NSString *)username password:(NSString *)password url:(NSString *)url {
     self = [super init];
     if (self) {
         self.username = username;
@@ -22,8 +22,8 @@
     return self;
 }
 
-+ (id)dataWithUsername:(NSString *)username password:(NSString *)password url:(NSString *)url {
-    return [[UAUserData alloc] initWithUsername:username password:password url:url];
++ (instancetype)dataWithUsername:(NSString *)username password:(NSString *)password url:(NSString *)url {
+    return [[self alloc] initWithUsername:username password:password url:url];
 }
 
 

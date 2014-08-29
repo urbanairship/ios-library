@@ -31,7 +31,7 @@
 
 SINGLETON_IMPLEMENTATION(UAPushUI)
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         NSString *path = [[[NSBundle mainBundle] resourcePath]

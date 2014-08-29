@@ -35,7 +35,7 @@
 @implementation UALocationDemoAnnotation
 
 
-- (id)initWithLocation:(CLLocation*)location {
+- (instancetype)initWithLocation:(CLLocation*)location {
     self = [super init];
     if (self){
         self.coordinate = location.coordinate;

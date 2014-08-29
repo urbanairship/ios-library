@@ -111,7 +111,7 @@ static NSMutableSet *overlayControllers = nil;
     }
 }
 
-- (id)initWithParentViewController:(UIViewController *)parent andURL:(NSURL *)url andMessage:(UAInboxMessage *)message andHeaders:(NSDictionary *)headers {
+- (instancetype)initWithParentViewController:(UIViewController *)parent andURL:(NSURL *)url andMessage:(UAInboxMessage *)message andHeaders:(NSDictionary *)headers {
     self = [super init];
     if (self) {
 

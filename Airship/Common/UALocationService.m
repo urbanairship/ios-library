@@ -63,7 +63,7 @@ NSString * const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvail
 
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         self.minimumTimeBetweenForegroundUpdates = 120.0;

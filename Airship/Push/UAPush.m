@@ -88,7 +88,7 @@ static Class _uiClass;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         //init with default delegate implementation

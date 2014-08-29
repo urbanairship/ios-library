@@ -35,15 +35,15 @@
 @implementation UAHTTPConnection
 
 
-+ (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest {
-    return [[UAHTTPConnection alloc] initWithRequest:httpRequest];
++ (instancetype)connectionWithRequest:(UAHTTPRequest *)httpRequest {
+    return [[self alloc] initWithRequest:httpRequest];
 }
 
-+ (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
++ (instancetype)connectionWithRequest:(UAHTTPRequest *)httpRequest
                                    delegate:(id)delegate
                                     success:(SEL)successSelector
                                     failure:(SEL)failureSelector {
-    UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:httpRequest];
+    UAHTTPConnection *connection = [self connectionWithRequest:httpRequest];
     connection.delegate = delegate;
     connection.successSelector = successSelector;
     connection.failureSelector = failureSelector;
@@ -51,21 +51,21 @@
     return connection;
 }
 
-+ (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
++ (instancetype)connectionWithRequest:(UAHTTPRequest *)httpRequest
                                successBlock:(UAHTTPConnectionSuccessBlock)successBlock
                                failureBlock:(UAHTTPConnectionFailureBlock)failureBlock {
-    UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:httpRequest];
+    UAHTTPConnection *connection = [self connectionWithRequest:httpRequest];
     connection.successBlock = successBlock;
     connection.failureBlock = failureBlock;
 
     return connection;
 }
 
-- (id)init {
+- (instancetype)init {
     return [super init];
 }
 
-- (id)initWithRequest:(UAHTTPRequest *)httpRequest {
+- (instancetype)initWithRequest:(UAHTTPRequest *)httpRequest {
     self = [self init];
     if (self) {
         self.request = httpRequest;

@@ -27,7 +27,7 @@
 
 @implementation UABespokeCloseView
 
-- (id)initWithFrame:(CGRect)frame {
+- (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
         self.opaque = NO; //peek through around the circle!

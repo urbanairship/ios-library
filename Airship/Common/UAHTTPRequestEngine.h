@@ -46,13 +46,13 @@ typedef void (^UAHTTPRequestEngineFailureBlock)(UAHTTPRequest *request, NSUInteg
 /**
  * Default initializer.
  */
-- (id)init;
+- (instancetype)init;
 
 /**
  * Initializer with argument for custom NSOperationQueue.
  * @param queue A custom NSOperationQueue
  */
-- (id)initWithQueue:(NSOperationQueue *)queue;
+- (instancetype)initWithQueue:(NSOperationQueue *)queue;
 
 /**
  * Enqueues a request for immediate or pending execution.

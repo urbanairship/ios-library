@@ -30,7 +30,7 @@
 @implementation UAApplicationMetrics
 NSString *const UAApplicationMetricLastOpenDate = @"UAApplicationMetricLastOpenDate";
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         // App inactive/active for incoming calls, notification center, and taskbar
