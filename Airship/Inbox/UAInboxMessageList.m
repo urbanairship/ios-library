@@ -60,10 +60,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     return self;
 }
 
-- (void)dealloc {
-    self.messages = nil;
-}
-
 #pragma mark NSNotificationCenter helper methods
 
 - (void)sendMessageListWillUpdateNotification {
@@ -93,13 +89,13 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
         isCallbackCancelled = YES;
     }];
 
-    // Sync client state
-    [self syncDeletedMessages];
-    [self syncLocallyReadMessages];
 
     // Fetch new messages
     [self.client retrieveMessageListOnSuccess:^(NSInteger status, NSArray *messages, NSInteger unread) {
         [self.queue addOperationWithBlock:^{
+            // Sync client state
+            [self syncLocalMessageState];
+
             if (status == 200) {
                 UA_LDEBUG(@"Refreshing message list.");
 
@@ -138,7 +134,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
                     [self sendMessageListUpdatedNotification];
                 }];
-
             } else {
                 UA_LDEBUG(@"Retrieve message list succeeded with messages: %@", self.messages);
                 dispatch_async(dispatch_get_main_queue(), ^() {
@@ -167,7 +162,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
         [self sendMessageListUpdatedNotification];
     }];
-
 
     return disposable;
 }
@@ -219,28 +213,29 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
                                withDelegate:(id<UAInboxMessageListDelegate>)delegate {
 
     NSArray *updateMessageArray = [self.messages objectsAtIndexes:messageIndexSet];
+    __weak id<UAInboxMessageListDelegate> weakDelegate = delegate;
     switch (command) {
         case UABatchDeleteMessages:
-            return [self markMessagesDeleted:updateMessageArray delegate:delegate];
+            return [self markMessagesDeleted:updateMessageArray completionHandler:^{
+                id<UAInboxMessageListDelegate> strongDelegate = weakDelegate;
+                if ([strongDelegate respondsToSelector:@selector(batchDeleteFinished)]) {
+                    [strongDelegate batchDeleteFinished];
+                }
+            }];
         case UABatchReadMessages:
-            return [self markMessagesRead:updateMessageArray delegate:delegate];
+            return [self markMessagesRead:updateMessageArray completionHandler:^{
+                id<UAInboxMessageListDelegate> strongDelegate = weakDelegate;
+                if ([strongDelegate respondsToSelector:@selector(batchMarkAsReadFinished)]) {
+                    [strongDelegate batchMarkAsReadFinished];
+                }
+            }];
         default:
             UA_LWARN(@"Unable to perform batch update with invalid command type: %d", command);
             return nil;
     }
 }
 
-- (UADisposable *)markMessagesRead:(NSArray *)messages delegate:(id<UAInboxMessageListDelegate>)delegate {
-    __weak id<UAInboxMessageListDelegate> weakDelegate = delegate;
-    return [self markMessagesRead:messages completionHandler:^{
-        id<UAInboxMessageListDelegate> strongDelegate = weakDelegate;
-        if ([strongDelegate respondsToSelector:@selector(batchMarkAsReadFinished)]) {
-            [strongDelegate batchMarkAsReadFinished];
-        }
-    }];
-}
-
-- (UADisposable *)markMessagesRead:(NSArray *)messages completionHandler:(void (^)())completionHandler {
+- (UADisposable *)markMessagesRead:(NSArray *)messages completionHandler:(UAInboxMessageListCallbackBlock)completionHandler {
     self.batchOperationCount++;
     [self sendMessageListWillUpdateNotification];
 
@@ -259,8 +254,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
         [[UAInboxDBManager shared] saveContext];
 
-        [self syncLocallyReadMessages];
-
         // Block is dispatched on the main queue
         [self refreshInboxWithCompletionHandler:^{
             if (self.batchOperationCount > 0) {
@@ -273,24 +266,14 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
             [self sendMessageListUpdatedNotification];
         }];
+
+        [self syncLocalMessageState];
     }];
 
     return disposable;
 }
 
-
-
-- (UADisposable *)markMessagesDeleted:(NSArray *)messages delegate:(id<UAInboxMessageListDelegate>)delegate {
-    __weak id<UAInboxMessageListDelegate> weakDelegate = delegate;
-    return [self markMessagesDeleted:messages completionHandler:^{
-        id<UAInboxMessageListDelegate> strongDelegate = weakDelegate;
-        if ([strongDelegate respondsToSelector:@selector(batchDeleteFinished)]) {
-            [strongDelegate batchDeleteFinished];
-        }
-    }];
-}
-
-- (UADisposable *)markMessagesDeleted:(NSArray *)messages completionHandler:(void (^)())completionHandler {
+- (UADisposable *)markMessagesDeleted:(NSArray *)messages completionHandler:(UAInboxMessageListCallbackBlock)completionHandler{
     self.batchOperationCount++;
     [self sendMessageListWillUpdateNotification];
 
@@ -309,8 +292,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
         [[UAInboxDBManager shared] saveContext];
 
-        [self syncDeletedMessages];
-
         // Block is dispatched on the main queue
         [self refreshInboxWithCompletionHandler:^{
             if (self.batchOperationCount > 0) {
@@ -323,6 +304,8 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
             [self sendMessageListUpdatedNotification];
         }];
+
+        [self syncLocalMessageState];
     }];
 
     return disposable;
@@ -335,7 +318,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
         [self sendMessageListUpdatedNotification];
     }];
 }
-
 
 
 #pragma mark -
@@ -370,7 +352,7 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
         dispatch_async(dispatch_get_main_queue(), ^() {
 
             self.unreadCount = unreadCount;
-            self.messages = savedMessages;
+            self.messages = [NSArray arrayWithArray:savedMessages];
 
             if (completionHandler) {
                 completionHandler();
@@ -380,9 +362,9 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 }
 
 /**
- * Syncs any locally deleted messages with Urban Airship.
+ * Syncs any locally deleted and read messages with Urban Airship.
  */
-- (void)syncDeletedMessages {
+- (void)syncLocalMessageState {
     NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deletedClient == YES"];
     NSArray *deletedMessages = [[UAInboxDBManager shared] fetchMessagesWithPredicate:deletedPredicate];
 
@@ -396,12 +378,7 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
             UA_LDEBUG(@"Failed to delete messages.");
         }];
     }
-}
 
-/**
- * Syncs any locally read messages with Urban Airship.
- */
-- (void)syncLocallyReadMessages {
     NSPredicate *locallyReadPredicate = [NSPredicate predicateWithFormat:@"unreadClient == YES && unreadClient != unread"];
     NSArray *locallyReadMessages = [[UAInboxDBManager shared] fetchMessagesWithPredicate:locallyReadPredicate];
 
@@ -431,20 +408,22 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     return [self.messages count];
 }
 
-- (UAInboxMessage *)messageForID:(NSString *)mid {
-    for (UAInboxMessage *msg in self.messages) {
-        if ([msg.messageID isEqualToString:mid]) {
-            return msg;
+- (UAInboxMessage *)messageForID:(NSString *)messageID {
+    for (UAInboxMessage *message in self.messages) {
+        if ([message.messageID isEqualToString:messageID]) {
+            return message;
         }
     }
+
     return nil;
 }
 
 - (UAInboxMessage *)messageAtIndex:(NSUInteger)index {
-    if (index >= [self.messages count]) {
-        UA_LWARN("Load message(index=%lu, count=%lu) error.", (unsigned long)index, (unsigned long)[self.messages count]);
+    if (index >= self.messageCount) {
+        UA_LWARN("Load message(index=%lu, count=%lu) error.", (unsigned long)index, (unsigned long)self.messageCount);
         return nil;
     }
+
     return [self.messages objectAtIndex:index];
 }
 

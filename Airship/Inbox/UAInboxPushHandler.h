@@ -68,7 +68,7 @@
  * This class handles incoming rich push messages that are sent with
  * an APNS notification.
  */
-@interface UAInboxPushHandler : NSObject <UAInboxMessageListDelegate>
+@interface UAInboxPushHandler : NSObject
 
 
 /**
@@ -79,7 +79,7 @@
 /**
  * The message ID of the most recent rich push as an NSString.
  */
-@property (nonatomic, copy) NSString *viewingMessageID;
+@property (nonatomic, copy, readonly) NSString *viewingMessageID;
 
 /**
  * The delegate that should be notified when an incoming push is handled,

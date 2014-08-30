@@ -33,7 +33,7 @@ static UAUser *mockUser = nil;
 - (void)setUp {
     [super setUp];
 
-    self.mockInboxAPIClient = [OCMockObject mockForClass:[UAInboxAPIClient class]];
+    self.mockInboxAPIClient = [OCMockObject niceMockForClass:[UAInboxAPIClient class]];
 
     self.mockMessageListNotificationObserver = [OCMockObject mockForProtocol:@protocol(UAInboxMessageListMockNotificationObserver)];
     self.mockMessageListDelegate = [OCMockObject mockForProtocol:@protocol(UAInboxMessageListDelegate)];
@@ -56,6 +56,7 @@ static UAUser *mockUser = nil;
 }
 
 - (void)tearDown {
+    [self.messageList.queue cancelAllOperations];
     [self waitUntilAllOperationsAreFinished];
 
     //unswizzle the defaultUserCreated back to its normal implementation

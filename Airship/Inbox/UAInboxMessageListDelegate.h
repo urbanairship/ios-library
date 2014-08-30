@@ -10,7 +10,10 @@
  * Delegates are notified when messages are modified, loaded or
  * fail to load or update.
  *
+ * @deprecated As of 5.0.0. Use the block based message list callbacks instead.
+ *
  */
+ __attribute__((deprecated("As of version 5.0.0")))
 @protocol UAInboxMessageListDelegate <NSObject>
 
 @optional

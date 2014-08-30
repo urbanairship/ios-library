@@ -55,11 +55,11 @@ static Class _uiClass;
 }
 
 - (void)enterForeground {
-    [self.messageList retrieveMessageListWithDelegate:nil];
+    [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
 }
 
 - (void)userCreated {
-    [self.messageList retrieveMessageListWithDelegate:nil];
+    [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
 }
 
 #pragma mark -
@@ -125,7 +125,7 @@ static Class _uiClass;
         self.messageList.client = self.client;
 
         [self.messageList loadSavedMessages];
-        [self.messageList retrieveMessageListWithDelegate:nil];
+        [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
 
 
         self.pushHandler = [[UAInboxPushHandler alloc] init];

@@ -28,7 +28,7 @@
 #import <OCMock/OCMConstraint.h>
 #import "UAInbox.h"
 #import "UAInboxMessage.h"
-#import "UAInboxPushHandler.h"
+#import "UAInboxPushHandler+Internal.h"
 #import "UAInboxMessageList.h"
 
 @interface UAInboxPushHandlerTest : XCTestCase

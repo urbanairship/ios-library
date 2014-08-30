@@ -23,43 +23,13 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#import "UAInboxPushHandler+Internal.h"
-#import "UAirship.h"
-
-#import "UAInbox.h"
-#import "UAInboxMessageList.h"
-#import "UAAnalytics.h"
-#import "UAEvent.h"
+#import "UAInboxPushHandler.h"
 
 
-@implementation UAInboxPushHandler
+@interface UAInboxPushHandler ()
 
+@property (nonatomic, copy) NSString *viewingMessageID;
 
-- (void)messageListLoadSucceeded {
+- (void)messageListLoadSucceeded;
 
-    // only take action if there's a new message
-    if (self.viewingMessageID) {
-
-        UAInboxMessage *message = [[UAInbox shared].messageList messageForID:self.viewingMessageID];
-
-        // if the notification came in while the app was backgrounded, treat it as a launch message
-        id<UAInboxPushHandlerDelegate> strongDelegate = self.delegate;
-
-        if (message) {
-            if (self.hasLaunchMessage) {
-                [strongDelegate launchRichPushMessageAvailable:message];
-                self.hasLaunchMessage = NO;
-
-            }
-
-            // otherwise, have the UI class display it
-            else {
-                [strongDelegate richPushMessageAvailable:message];
-            }
-        }
-
-        self.viewingMessageID = nil;
-    }
-}
 @end

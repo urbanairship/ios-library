@@ -113,8 +113,12 @@
     self.arguments.situation = UASituationForegroundPush;
     __block UAActionResult *actionResult = nil;
 
-    // Should retrive new message list
-    [[self.mockMessageList expect] retrieveMessageListWithDelegate:self.mockPushHandler];
+    // Should retrieve new message list
+    [[self.mockMessageList expect] retrieveMessageListWithSuccessBlock:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UAInboxMessageListCallbackBlock block = obj;
+        block();
+        return YES;
+    }] withFailureBlock:OCMOCK_ANY];
 
     // Should notify the RAP notification arrived
     [[self.mockPushHandlerDelegate expect] richPushNotificationArrived:[self.arguments.metadata objectForKey:UAActionMetadataPushPayloadKey]];
@@ -125,7 +129,7 @@
 
     XCTAssertNotNil(actionResult, @"perform did not call the completion handler");
     XCTAssertEqualObjects(actionResult.value, @"rich-push-id", @"Results value should be the RAP id");
-    XCTAssertNoThrow([self.mockMessageList verify], @"message list should retreive new RAPs");
+    XCTAssertNoThrow([self.mockMessageList verify], @"message list should retrieve new RAPs");
     XCTAssertNoThrow([self.mockPushHandlerDelegate verify], @"handler delegate should be notified of a RAP notification");
 }
 
@@ -136,8 +140,13 @@
     self.arguments.situation = UASituationLaunchedFromPush;
     __block UAActionResult *actionResult = nil;
 
-    // Should retrive new message list
-    [[self.mockMessageList expect] retrieveMessageListWithDelegate:self.mockPushHandler];
+    // Should retrieve new message list
+    [[self.mockMessageList expect] retrieveMessageListWithSuccessBlock:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UAInboxMessageListCallbackBlock block = obj;
+        block();
+        return YES;
+    }] withFailureBlock:OCMOCK_ANY];
+
 
     // Should notify the delegate that it was launched with a RAP notification
     [[self.mockPushHandlerDelegate expect] applicationLaunchedWithRichPushNotification:[self.arguments.metadata objectForKey:UAActionMetadataPushPayloadKey]];
@@ -151,7 +160,42 @@
 
     XCTAssertNotNil(actionResult, @"perform did not call the completion handler");
     XCTAssertEqualObjects(actionResult.value, @"rich-push-id", @"Results value should be the RAP id");
-    XCTAssertNoThrow([self.mockMessageList verify], @"message list should retreive new RAPs");
+    XCTAssertNoThrow([self.mockMessageList verify], @"message list should retrieve new RAPs");
+    XCTAssertNoThrow([self.mockPushHandlerDelegate verify], @"handler delegate should be notified of a RAP notification");
+    XCTAssertNoThrow([self.mockPushHandler verify], @"handler should set hasLaunchMessage");
+}
+
+
+/**
+ * Test when the message list fails to refresh it returns UIBackgroundFetchResultFailed.
+ */
+- (void)testMessageListFailedToRefresh {
+    self.arguments.situation = UASituationLaunchedFromPush;
+    __block UAActionResult *actionResult = nil;
+
+    // Should retrieve new message list, call failure block
+    [[self.mockMessageList expect] retrieveMessageListWithSuccessBlock:OCMOCK_ANY withFailureBlock:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UAInboxMessageListCallbackBlock block = obj;
+        block();
+        return YES;
+    }] ];
+
+
+    // Should notify the delegate that it was launched with a RAP notification
+    [[self.mockPushHandlerDelegate expect] applicationLaunchedWithRichPushNotification:[self.arguments.metadata objectForKey:UAActionMetadataPushPayloadKey]];
+
+    // Should tell the handler there is a launch message
+    [[self.mockPushHandler expect] setHasLaunchMessage:YES];
+
+    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *result) {
+        actionResult = result;
+    }];
+
+    XCTAssertNotNil(actionResult, @"perform did not call the completion handler");
+    XCTAssertEqualObjects(actionResult.value, @"rich-push-id", @"Results value should be the RAP id");
+    XCTAssertEqual(actionResult.fetchResult, UIBackgroundFetchResultFailed, @"Fetch result should be UIBackgroundFetchResultFailed");
+
+    XCTAssertNoThrow([self.mockMessageList verify], @"message list should retrieve new RAPs");
     XCTAssertNoThrow([self.mockPushHandlerDelegate verify], @"handler delegate should be notified of a RAP notification");
     XCTAssertNoThrow([self.mockPushHandler verify], @"handler should set hasLaunchMessage");
 }
