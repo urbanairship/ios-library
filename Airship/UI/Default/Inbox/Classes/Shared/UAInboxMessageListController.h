@@ -34,7 +34,6 @@
  */
 @interface UAInboxMessageListController : UIViewController <UITableViewDelegate,
                                                             UITableViewDataSource,
-                                                            UAInboxMessageListDelegate,
                                                             UIScrollViewDelegate>
 
 /**
