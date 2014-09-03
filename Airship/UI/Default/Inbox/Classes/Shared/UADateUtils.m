@@ -28,47 +28,53 @@
 
 @implementation UADateUtils
 
+static NSDateFormatter *dateFormatter;
+static NSDateFormatter *sameDayFormatter;
+
+
 + (NSString *)formattedDateRelativeToNow:(NSDate *)date {
 
-    // shared locale object
-    NSLocale *enUSPOSIXLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+    if ([self isDate:date inSameCalendarDayAsDate:[NSDate date]]) {
+        if (!sameDayFormatter) {
+            sameDayFormatter = [[NSDateFormatter alloc] init];
+            sameDayFormatter.timeStyle = NSDateFormatterShortStyle;
+            sameDayFormatter.dateStyle = NSDateFormatterShortStyle;
+            sameDayFormatter.doesRelativeDateFormatting = YES;
+        }
 
-    NSDateFormatter* mdf = [[NSDateFormatter alloc] init];
-    [mdf setLocale:enUSPOSIXLocale];
-    [mdf setTimeStyle:NSDateFormatterFullStyle];
-    [mdf setTimeZone:[NSTimeZone localTimeZone]];
-    [mdf setDateFormat:@"yyyy-MM-dd"];
+        return [sameDayFormatter stringFromDate:date];
+    } else {
+        if (!dateFormatter) {
+            dateFormatter = [[NSDateFormatter alloc] init];
+            dateFormatter.timeStyle = NSDateFormatterNoStyle;
+            dateFormatter.dateStyle = NSDateFormatterShortStyle;
+            dateFormatter.doesRelativeDateFormatting = YES;
+        }
 
-    NSDate *midnight = [mdf dateFromString:[mdf stringFromDate:date]];
-
-    NSInteger dayDiff = (int)[midnight timeIntervalSinceNow] / (60*60*24);
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setLocale:enUSPOSIXLocale];
-    [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
-    [dateFormatter setTimeZone:[NSTimeZone localTimeZone]];
-
-    // TODO: format string for localization
-    if(dayDiff == 0)
-        [dateFormatter setDateFormat:@"h:mm aaa"];
-    else if(dayDiff == -1)
-        [dateFormatter setDateFormat:@"'Yesterday'"];
-    else if(dayDiff == -2)
-        [dateFormatter setDateFormat:@"'Two days ago'"];
-    else if(dayDiff == -3)
-        [dateFormatter setDateFormat:@"'Three days ago'"];
-    else if(dayDiff == -4)
-        [dateFormatter setDateFormat:@"'Four days ago'"];
-    else if(dayDiff == -5)
-        [dateFormatter setDateFormat:@"'Five days ago'"];
-    else if(dayDiff == -6)
-        [dateFormatter setDateFormat:@"'Six days ago'"];
-    else if(dayDiff < -14 && dayDiff >= -7)
-        [dateFormatter setDateFormat:@"'Last week'"];
-    else
-        [dateFormatter setDateFormat:@"MMMM d"];
-
-    return [dateFormatter stringFromDate:date];
+        return [dateFormatter stringFromDate:date];
+    }
 }
 
+/**
+ * A helper method to determine if two dates fall on the same calendar.
+ *
+ * @param date A date to compare.
+ * @param otherDate The other date to compare.
+ * @return YES if the dates fall on the same calendar day, else NO.
+ */
++ (BOOL)isDate:(NSDate *)date inSameCalendarDayAsDate:(NSDate *)otherDate {
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+
+    NSUInteger components = (NSYearCalendarUnit |
+                             NSMonthCalendarUnit |
+                             NSDayCalendarUnit);
+
+    NSDateComponents *dateComponents = [calendar components:components fromDate:date];
+    NSDateComponents *otherDateComponents = [calendar components:components fromDate:otherDate];
+
+    return (dateComponents.day == otherDateComponents.day &&
+            dateComponents.month == otherDateComponents.month &&
+            dateComponents.year == otherDateComponents.year);
+}
 
 @end
