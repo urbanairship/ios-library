@@ -27,7 +27,6 @@
 		1F57820614182188003FA039 /* UAInboxMessageListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57820114182188003FA039 /* UAInboxMessageListController.m */; };
 		1F57820714182188003FA039 /* UAInboxMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57820314182188003FA039 /* UAInboxMessageViewController.m */; };
 		1F69B13013BD1E62002CA606 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F69B10413BD1A41002CA606 /* libz.dylib */; };
-		1F7CDC2113F1E37000BB72EB /* UAInboxNavUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7CDC2013F1E37000BB72EB /* UAInboxNavUI.m */; };
 		1F7D02DE12B8338A00B45C37 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D02DD12B8338A00B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		1FE4238B188475C900624335 /* list-image-placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 1FE42389188475C900624335 /* list-image-placeholder.png */; };
 		1FE4238C188475C900624335 /* list-image-placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1FE4238A188475C900624335 /* list-image-placeholder@2x.png */; };
@@ -59,10 +58,8 @@
 		4906F3201990564A00F27AF1 /* InboxSampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 18A27C85125EDD6E0045D75B /* InboxSampleAppDelegate.m */; };
 		4906F3211990564A00F27AF1 /* InboxSampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18A27C87125EDD6E0045D75B /* InboxSampleViewController.m */; };
 		4906F3221990564A00F27AF1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 18A27C88125EDD6E0045D75B /* main.m */; };
-		4906F3231990564A00F27AF1 /* UAInboxUI.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CB359C12B89AC0002E39EA /* UAInboxUI.m */; };
 		4906F3241990564A00F27AF1 /* UAInboxAlertHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D5E60C8C12C2A86500E61EC0 /* UAInboxAlertHandler.m */; };
 		4906F3251990564A00F27AF1 /* UAInboxMessageListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */; };
-		4906F3261990564A00F27AF1 /* UAInboxNavUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7CDC2013F1E37000BB72EB /* UAInboxNavUI.m */; };
 		4906F3271990564A00F27AF1 /* UAInboxMessageListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57820114182188003FA039 /* UAInboxMessageListController.m */; };
 		4906F3281990564A00F27AF1 /* UAInboxMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57820314182188003FA039 /* UAInboxMessageViewController.m */; };
 		4906F3291990564A00F27AF1 /* UADateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F54E029177255770037A20E /* UADateUtils.m */; };
@@ -81,7 +78,14 @@
 		4906F3381990564A00F27AF1 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		4906F3391990564A00F27AF1 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D02DD12B8338A00B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		4906F342199056E600F27AF1 /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 49B19A1C1990172C00977790 /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		4972571419AFF63100B0FF93 /* InboxSampleModalUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4972571319AFF63100B0FF93 /* InboxSampleModalUserInterface.m */; };
+		4972571C19AFF64500B0FF93 /* InboxSamplePopoverUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4972571B19AFF64500B0FF93 /* InboxSamplePopoverUserInterface.m */; };
+		4972571F19AFF65400B0FF93 /* InboxSampleNavigationUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4972571E19AFF65400B0FF93 /* InboxSampleNavigationUserInterface.m */; };
 		49B19A3319901FE800977790 /* libUAirship-5.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5EBCB6159B7AF600F2A716 /* libUAirship-5.0.0.a */; };
+		49BEFC8319B103C8008D4999 /* UAInboxUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 49BEFC8119B103C8008D4999 /* UAInboxUI.m */; };
+		49D34B8219B0FFA900C4E82C /* InboxSampleModalUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4972571319AFF63100B0FF93 /* InboxSampleModalUserInterface.m */; };
+		49D34B8419B0FFA900C4E82C /* InboxSamplePopoverUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4972571B19AFF64500B0FF93 /* InboxSamplePopoverUserInterface.m */; };
+		49D34B8619B0FFA900C4E82C /* InboxSampleNavigationUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4972571E19AFF65400B0FF93 /* InboxSampleNavigationUserInterface.m */; };
 		49E001A9154F63F3009305B7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49E001A8154F63F3009305B7 /* CoreLocation.framework */; };
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
@@ -103,7 +107,6 @@
 		D5C75B6312BC20320041239E /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75B6112BC20320041239E /* Default@2x.png */; };
 		D5C75B6412BC20320041239E /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75B6212BC20320041239E /* Icon.png */; };
 		D5E60C8D12C2A86500E61EC0 /* UAInboxAlertHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D5E60C8C12C2A86500E61EC0 /* UAInboxAlertHandler.m */; };
-		E9CB35BB12B89AC0002E39EA /* UAInboxUI.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CB359C12B89AC0002E39EA /* UAInboxUI.m */; };
 		E9CB35C612B89AC0002E39EA /* UAInboxLocalization.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E9CB35AB12B89AC0002E39EA /* UAInboxLocalization.bundle */; };
 /* End PBXBuildFile section */
 
@@ -114,13 +117,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 8DD76FA10486AA7600D96B5E;
 			remoteInfo = fmdb;
-		};
-		1FDCD37E19AE89FC00FF1236 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B6E7F8381239FFD5009BC92D /* AirshipLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4953A44E19A55E9900F8D111;
-			remoteInfo = AirshipKitTests;
 		};
 		4906F33F199056C800F27AF1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -135,6 +131,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 7BB679061429288D00B877DB;
 			remoteInfo = AirshipLogicTests;
+		};
+		4972571819AFF63200B0FF93 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B6E7F8381239FFD5009BC92D /* AirshipLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4953A44E19A55E9900F8D111;
+			remoteInfo = AirshipKitTests;
 		};
 		49B19A1B1990172C00977790 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -197,8 +200,6 @@
 		1F57820214182188003FA039 /* UAInboxMessageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxMessageViewController.h; sourceTree = "<group>"; };
 		1F57820314182188003FA039 /* UAInboxMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageViewController.m; sourceTree = "<group>"; };
 		1F69B10413BD1A41002CA606 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		1F7CDC1F13F1E37000BB72EB /* UAInboxNavUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxNavUI.h; sourceTree = "<group>"; };
-		1F7CDC2013F1E37000BB72EB /* UAInboxNavUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxNavUI.m; sourceTree = "<group>"; };
 		1F7D02DD12B8338A00B45C37 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		1FE42389188475C900624335 /* list-image-placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-image-placeholder.png"; sourceTree = "<group>"; };
 		1FE4238A188475C900624335 /* list-image-placeholder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-image-placeholder@2x.png"; sourceTree = "<group>"; };
@@ -207,6 +208,15 @@
 		1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageListCell.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* InboxSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSample_Prefix.pch; sourceTree = "<group>"; };
 		4906F33D1990564A00F27AF1 /* InboxSample-Kit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "InboxSample-Kit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4972571219AFF63100B0FF93 /* InboxSampleModalUserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSampleModalUserInterface.h; sourceTree = "<group>"; };
+		4972571319AFF63100B0FF93 /* InboxSampleModalUserInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxSampleModalUserInterface.m; sourceTree = "<group>"; };
+		4972571A19AFF64500B0FF93 /* InboxSamplePopoverUserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSamplePopoverUserInterface.h; sourceTree = "<group>"; };
+		4972571B19AFF64500B0FF93 /* InboxSamplePopoverUserInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxSamplePopoverUserInterface.m; sourceTree = "<group>"; };
+		4972571D19AFF65400B0FF93 /* InboxSampleNavigationUserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSampleNavigationUserInterface.h; sourceTree = "<group>"; };
+		4972571E19AFF65400B0FF93 /* InboxSampleNavigationUserInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxSampleNavigationUserInterface.m; sourceTree = "<group>"; };
+		4972572019B0007500B0FF93 /* InboxSampleUserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSampleUserInterface.h; sourceTree = "<group>"; };
+		49BEFC8019B103C8008D4999 /* UAInboxUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxUI.h; sourceTree = "<group>"; };
+		49BEFC8119B103C8008D4999 /* UAInboxUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxUI.m; sourceTree = "<group>"; };
 		49E001A8154F63F3009305B7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		63CB54BB1247107C00DF2EBC /* InboxTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InboxTests-Info.plist"; sourceTree = "<group>"; };
 		76911B2119AD367400AA245D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -228,8 +238,6 @@
 		D5C75B6212BC20320041239E /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		D5E60C8B12C2A86500E61EC0 /* UAInboxAlertHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxAlertHandler.h; sourceTree = "<group>"; };
 		D5E60C8C12C2A86500E61EC0 /* UAInboxAlertHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxAlertHandler.m; sourceTree = "<group>"; };
-		E9CB359B12B89AC0002E39EA /* UAInboxUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxUI.h; sourceTree = "<group>"; };
-		E9CB359C12B89AC0002E39EA /* UAInboxUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxUI.m; sourceTree = "<group>"; };
 		E9CB35AB12B89AC0002E39EA /* UAInboxLocalization.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = UAInboxLocalization.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -298,6 +306,7 @@
 		18A27C82125EDD6E0045D75B /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				49D34B6E19B00BD000C4E82C /* User Interfaces */,
 				18A27C84125EDD6E0045D75B /* InboxSampleAppDelegate.h */,
 				18A27C85125EDD6E0045D75B /* InboxSampleAppDelegate.m */,
 				18A27C86125EDD6E0045D75B /* InboxSampleViewController.h */,
@@ -391,6 +400,20 @@
 			name = "Other Sources";
 			sourceTree = "<group>";
 		};
+		49D34B6E19B00BD000C4E82C /* User Interfaces */ = {
+			isa = PBXGroup;
+			children = (
+				4972572019B0007500B0FF93 /* InboxSampleUserInterface.h */,
+				4972571219AFF63100B0FF93 /* InboxSampleModalUserInterface.h */,
+				4972571319AFF63100B0FF93 /* InboxSampleModalUserInterface.m */,
+				4972571A19AFF64500B0FF93 /* InboxSamplePopoverUserInterface.h */,
+				4972571B19AFF64500B0FF93 /* InboxSamplePopoverUserInterface.m */,
+				4972571D19AFF65400B0FF93 /* InboxSampleNavigationUserInterface.h */,
+				4972571E19AFF65400B0FF93 /* InboxSampleNavigationUserInterface.m */,
+			);
+			name = "User Interfaces";
+			sourceTree = "<group>";
+		};
 		9A9CBA1E0FCC559100435BCB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -416,7 +439,7 @@
 			children = (
 				BB5EBCB6159B7AF600F2A716 /* libUAirship-5.0.0.a */,
 				49422BA2142BA678009770C6 /* AirshipLogicTests.xctest */,
-				1FDCD37F19AE89FC00FF1236 /* AirshipKitTests.xctest */,
+				4972571919AFF63200B0FF93 /* AirshipKitTests.xctest */,
 				49B19A1C1990172C00977790 /* AirshipKit.framework */,
 			);
 			name = Products;
@@ -467,20 +490,18 @@
 		E9CB359612B89AC0002E39EA /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				49BEFC8019B103C8008D4999 /* UAInboxUI.h */,
+				49BEFC8119B103C8008D4999 /* UAInboxUI.m */,
 				1F54E028177255760037A20E /* UADateUtils.h */,
 				1F54E029177255770037A20E /* UADateUtils.m */,
 				1F57820014182188003FA039 /* UAInboxMessageListController.h */,
 				1F57820114182188003FA039 /* UAInboxMessageListController.m */,
 				1F57820214182188003FA039 /* UAInboxMessageViewController.h */,
 				1F57820314182188003FA039 /* UAInboxMessageViewController.m */,
-				1F7CDC1F13F1E37000BB72EB /* UAInboxNavUI.h */,
-				1F7CDC2013F1E37000BB72EB /* UAInboxNavUI.m */,
 				1FF57413136778A100FEA1FD /* UAInboxMessageListCell.h */,
 				1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */,
 				D5E60C8B12C2A86500E61EC0 /* UAInboxAlertHandler.h */,
 				D5E60C8C12C2A86500E61EC0 /* UAInboxAlertHandler.m */,
-				E9CB359B12B89AC0002E39EA /* UAInboxUI.h */,
-				E9CB359C12B89AC0002E39EA /* UAInboxUI.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -600,18 +621,18 @@
 			remoteRef = 0D962FED11699572008D18A2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1FDCD37F19AE89FC00FF1236 /* AirshipKitTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = AirshipKitTests.xctest;
-			remoteRef = 1FDCD37E19AE89FC00FF1236 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		49422BA2142BA678009770C6 /* AirshipLogicTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = AirshipLogicTests.xctest;
 			remoteRef = 49422BA1142BA678009770C6 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4972571919AFF63200B0FF93 /* AirshipKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipKitTests.xctest;
+			remoteRef = 4972571819AFF63200B0FF93 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		49B19A1C1990172C00977790 /* AirshipKit.framework */ = {
@@ -701,15 +722,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4972571C19AFF64500B0FF93 /* InboxSamplePopoverUserInterface.m in Sources */,
+				4972571F19AFF65400B0FF93 /* InboxSampleNavigationUserInterface.m in Sources */,
 				18A27CA5125EDD6E0045D75B /* InboxSampleAppDelegate.m in Sources */,
+				4972571419AFF63100B0FF93 /* InboxSampleModalUserInterface.m in Sources */,
 				18A27CA6125EDD6E0045D75B /* InboxSampleViewController.m in Sources */,
 				18A27CA7125EDD6E0045D75B /* main.m in Sources */,
-				E9CB35BB12B89AC0002E39EA /* UAInboxUI.m in Sources */,
 				D5E60C8D12C2A86500E61EC0 /* UAInboxAlertHandler.m in Sources */,
 				1FF57415136778A100FEA1FD /* UAInboxMessageListCell.m in Sources */,
-				1F7CDC2113F1E37000BB72EB /* UAInboxNavUI.m in Sources */,
 				1F57820614182188003FA039 /* UAInboxMessageListController.m in Sources */,
 				1F57820714182188003FA039 /* UAInboxMessageViewController.m in Sources */,
+				49BEFC8319B103C8008D4999 /* UAInboxUI.m in Sources */,
 				1F54E02B177255780037A20E /* UADateUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -718,13 +741,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49D34B8219B0FFA900C4E82C /* InboxSampleModalUserInterface.m in Sources */,
+				49D34B8419B0FFA900C4E82C /* InboxSamplePopoverUserInterface.m in Sources */,
+				49D34B8619B0FFA900C4E82C /* InboxSampleNavigationUserInterface.m in Sources */,
 				4906F3201990564A00F27AF1 /* InboxSampleAppDelegate.m in Sources */,
 				4906F3211990564A00F27AF1 /* InboxSampleViewController.m in Sources */,
 				4906F3221990564A00F27AF1 /* main.m in Sources */,
-				4906F3231990564A00F27AF1 /* UAInboxUI.m in Sources */,
 				4906F3241990564A00F27AF1 /* UAInboxAlertHandler.m in Sources */,
 				4906F3251990564A00F27AF1 /* UAInboxMessageListCell.m in Sources */,
-				4906F3261990564A00F27AF1 /* UAInboxNavUI.m in Sources */,
 				4906F3271990564A00F27AF1 /* UAInboxMessageListController.m in Sources */,
 				4906F3281990564A00F27AF1 /* UAInboxMessageViewController.m in Sources */,
 				4906F3291990564A00F27AF1 /* UADateUtils.m in Sources */,

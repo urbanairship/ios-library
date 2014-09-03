@@ -19,7 +19,6 @@
 		1F57821014182267003FA039 /* UAInboxMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F57820E14182267003FA039 /* UAInboxMessageViewController.xib */; };
 		1F57821B14182289003FA039 /* UAInboxMessageListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57821214182289003FA039 /* UAInboxMessageListController.m */; };
 		1F57821C14182289003FA039 /* UAInboxMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57821414182289003FA039 /* UAInboxMessageViewController.m */; };
-		1F57821D14182289003FA039 /* UAInboxNavUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57821614182289003FA039 /* UAInboxNavUI.m */; };
 		1F69B12413BD1D8C002CA606 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F69B12313BD1D8C002CA606 /* libz.dylib */; };
 		1F69B12713BD1DDD002CA606 /* UAInboxMessageListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F69B12613BD1DDD002CA606 /* UAInboxMessageListCell.m */; };
 		1F69B12913BD1DF4002CA606 /* UAInboxMessageListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F69B12813BD1DF4002CA606 /* UAInboxMessageListCell.xib */; };
@@ -27,6 +26,9 @@
 		1FE0B85717E8D7D800856C60 /* libUAirship-5.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FE0B7F817E27C1D00856C60 /* libUAirship-5.0.0.a */; };
 		1FE423A41893262600624335 /* list-image-placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 1FE423A21893262600624335 /* list-image-placeholder.png */; };
 		1FE423A61893262600624335 /* list-image-placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1FE423A31893262600624335 /* list-image-placeholder@2x.png */; };
+		493977A019B7C1E70063C58F /* InboxSampleModalUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4939779A19B7C1E70063C58F /* InboxSampleModalUserInterface.m */; };
+		493977A119B7C1E70063C58F /* InboxSampleNavigationUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4939779C19B7C1E70063C58F /* InboxSampleNavigationUserInterface.m */; };
+		493977A219B7C1E70063C58F /* InboxSamplePopoverUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4939779E19B7C1E70063C58F /* InboxSamplePopoverUserInterface.m */; };
 		49E001B0154F6535009305B7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49E001AF154F6535009305B7 /* CoreLocation.framework */; };
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
@@ -87,8 +89,6 @@
 		1F57821214182289003FA039 /* UAInboxMessageListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageListController.m; sourceTree = "<group>"; };
 		1F57821314182289003FA039 /* UAInboxMessageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxMessageViewController.h; sourceTree = "<group>"; };
 		1F57821414182289003FA039 /* UAInboxMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageViewController.m; sourceTree = "<group>"; };
-		1F57821514182289003FA039 /* UAInboxNavUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxNavUI.h; sourceTree = "<group>"; };
-		1F57821614182289003FA039 /* UAInboxNavUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxNavUI.m; sourceTree = "<group>"; };
 		1F69B12313BD1D8C002CA606 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		1F69B12513BD1DDD002CA606 /* UAInboxMessageListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxMessageListCell.h; sourceTree = "<group>"; };
 		1F69B12613BD1DDD002CA606 /* UAInboxMessageListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageListCell.m; sourceTree = "<group>"; };
@@ -98,6 +98,13 @@
 		1FE423A21893262600624335 /* list-image-placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-image-placeholder.png"; sourceTree = "<group>"; };
 		1FE423A31893262600624335 /* list-image-placeholder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-image-placeholder@2x.png"; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* InboxSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSample_Prefix.pch; sourceTree = "<group>"; };
+		4939779919B7C1E70063C58F /* InboxSampleModalUserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSampleModalUserInterface.h; sourceTree = "<group>"; };
+		4939779A19B7C1E70063C58F /* InboxSampleModalUserInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxSampleModalUserInterface.m; sourceTree = "<group>"; };
+		4939779B19B7C1E70063C58F /* InboxSampleNavigationUserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSampleNavigationUserInterface.h; sourceTree = "<group>"; };
+		4939779C19B7C1E70063C58F /* InboxSampleNavigationUserInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxSampleNavigationUserInterface.m; sourceTree = "<group>"; };
+		4939779D19B7C1E70063C58F /* InboxSamplePopoverUserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSamplePopoverUserInterface.h; sourceTree = "<group>"; };
+		4939779E19B7C1E70063C58F /* InboxSamplePopoverUserInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxSamplePopoverUserInterface.m; sourceTree = "<group>"; };
+		4939779F19B7C1E70063C58F /* InboxSampleUserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSampleUserInterface.h; sourceTree = "<group>"; };
 		49E001AF154F6535009305B7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		9A50FAE80FCA81810007E1BE /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		9A50FAEE0FCA81A40007E1BE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -178,6 +185,7 @@
 		18A27C82125EDD6E0045D75B /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				49D34B7D19B0FF5800C4E82C /* User Interfaces */,
 				E9CB367C12B89BCA002E39EA /* InboxSampleAppDelegate.h */,
 				E9CB367D12B89BCA002E39EA /* InboxSampleAppDelegate.m */,
 				E9CB367E12B89BCA002E39EA /* InboxSampleViewController.h */,
@@ -268,6 +276,20 @@
 			name = "Other Sources";
 			sourceTree = "<group>";
 		};
+		49D34B7D19B0FF5800C4E82C /* User Interfaces */ = {
+			isa = PBXGroup;
+			children = (
+				4939779919B7C1E70063C58F /* InboxSampleModalUserInterface.h */,
+				4939779A19B7C1E70063C58F /* InboxSampleModalUserInterface.m */,
+				4939779B19B7C1E70063C58F /* InboxSampleNavigationUserInterface.h */,
+				4939779C19B7C1E70063C58F /* InboxSampleNavigationUserInterface.m */,
+				4939779D19B7C1E70063C58F /* InboxSamplePopoverUserInterface.h */,
+				4939779E19B7C1E70063C58F /* InboxSamplePopoverUserInterface.m */,
+				4939779F19B7C1E70063C58F /* InboxSampleUserInterface.h */,
+			);
+			name = "User Interfaces";
+			sourceTree = "<group>";
+		};
 		9A9CBA1E0FCC559100435BCB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -337,8 +359,6 @@
 				1F57821214182289003FA039 /* UAInboxMessageListController.m */,
 				1F57821314182289003FA039 /* UAInboxMessageViewController.h */,
 				1F57821414182289003FA039 /* UAInboxMessageViewController.m */,
-				1F57821514182289003FA039 /* UAInboxNavUI.h */,
-				1F57821614182289003FA039 /* UAInboxNavUI.m */,
 				D5624D6712C2E68400A962EE /* UAInboxAlertHandler.h */,
 				D5624D6812C2E68400A962EE /* UAInboxAlertHandler.m */,
 				D56858E512C1924800BBF31A /* UAInboxUI.h */,
@@ -474,13 +494,15 @@
 			files = (
 				18A27CA7125EDD6E0045D75B /* main.m in Sources */,
 				E9CB368012B89BCA002E39EA /* InboxSampleAppDelegate.m in Sources */,
+				493977A119B7C1E70063C58F /* InboxSampleNavigationUserInterface.m in Sources */,
+				493977A219B7C1E70063C58F /* InboxSamplePopoverUserInterface.m in Sources */,
 				E9CB368112B89BCA002E39EA /* InboxSampleViewController.m in Sources */,
 				D56858E812C1924800BBF31A /* UAInboxUI.m in Sources */,
 				D5624D6912C2E68400A962EE /* UAInboxAlertHandler.m in Sources */,
+				493977A019B7C1E70063C58F /* InboxSampleModalUserInterface.m in Sources */,
 				1F69B12713BD1DDD002CA606 /* UAInboxMessageListCell.m in Sources */,
 				1F57821B14182289003FA039 /* UAInboxMessageListController.m in Sources */,
 				1F57821C14182289003FA039 /* UAInboxMessageViewController.m in Sources */,
-				1F57821D14182289003FA039 /* UAInboxNavUI.m in Sources */,
 				1F54E0251772555F0037A20E /* UADateUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
