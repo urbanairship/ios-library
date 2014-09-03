@@ -28,16 +28,100 @@
 #import "UAInbox.h"
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageViewController.h"
-
-#import "UAInboxNavUI.h"
-#import "UAInboxUI.h"
-
+#import "UALandingPageOverlayController.h"
+#import "InboxSampleUserInterface.h"
+#import "InboxSampleModalUserInterface.h"
+#import "InboxSamplePopoverUserInterface.h"
+#import "InboxSampleNavigationUserInterface.h"
+#import "UAInboxAlertHandler.h"
 #import "UAUtils.h"
+
+typedef NS_ENUM(NSInteger, InboxStyle) {
+    InboxStyleModal,
+    InboxStyleNavigation
+};
+
+@interface InboxSampleViewController()
+@property(nonatomic, assign) InboxStyle style;
+@property(nonatomic, strong) UIPopoverController *popover;
+@property(nonatomic, strong) id<InboxSampleUserInterface> userInterface;
+@property(nonatomic, strong) UAInboxAlertHandler *alertHandler;
+@end
 
 @implementation InboxSampleViewController
 
+- (void)awakeFromNib {
+    self.alertHandler = [[UAInboxAlertHandler alloc] init];
+}
+
 - (IBAction)mail:(id)sender {
-    [UAInbox displayInboxInViewController:self.navigationController animated:YES];
+    [self.userInterface showInbox];
+}
+
+- (BOOL)shouldUsePopover {
+    return UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && !self.runiPhoneTargetOniPad;
+}
+
+/*
+ Builds a new instance of the message list controller, configuring buttons and closeBlock implemenations.
+ */
+- (UAInboxMessageListController *)buildMessageListController {
+    UAInboxMessageListController *mlc = [[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil];
+    mlc.title = @"Inbox";
+
+    mlc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                                         target:self
+                                                                                         action:@selector(inboxDone:)];
+
+    //the closeBLock allows for rich push messages to close the inbox after running actions
+    mlc.closeBlock = ^(BOOL animated) {
+        [self.userInterface hideInbox];
+    };
+
+    return mlc;
+}
+
+- (void)inboxDone:(id)sender {
+    [self.userInterface hideInbox];
+}
+
+/*
+ Displays an incoming message, either by showing it in an overlay,
+ or loading it in an already visible inbox interface.
+ */
+- (void)displayMessage:(UAInboxMessage *)message {
+    if (![self.userInterface isVisible]) {
+        if (self.useOverlay) {
+            [UALandingPageOverlayController showMessage:message];
+            return;
+        } else {
+            [self.userInterface showInbox];
+        }
+    }
+
+    [self.userInterface.messageListController displayMessage:message];
+}
+
+- (void)setStyle:(enum InboxStyle)style {
+    UAInboxMessageListController *mlc = [self buildMessageListController];
+    switch (style) {
+        case InboxStyleModal:
+            self.userInterface = [[InboxSampleModalUserInterface alloc] initWithMessageListController:mlc];
+            break;
+        case InboxStyleNavigation:
+            if ([self shouldUsePopover]) {
+                self.userInterface = [[InboxSamplePopoverUserInterface alloc] initWithMessageListController:mlc
+                                                                                        popoverSize:self.popoverSize];
+            } else {
+                self.userInterface = [[InboxSampleNavigationUserInterface alloc] initWithMessageListController:mlc];
+            }
+            break;
+        default:
+            break;
+    }
+
+    self.userInterface.parentController = self;
+    _style = style;
 }
 
 - (IBAction)selectInboxStyle:(id)sender {
@@ -59,36 +143,64 @@
                         otherButtonTitles:@"Modal", popoverOrNav, nil];
     
     [sheet showInView:self.view];
-    
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     switch (buttonIndex) {
         case 0:
-            [UAInbox useCustomUI:[UAInboxUI class]];
-            [UAInbox shared].pushHandler.delegate = [UAInboxUI shared];
+            self.style = InboxStyleModal;
             break;
         case 1:
-            [UAInbox useCustomUI:[UAInboxNavUI class]];
-            [UAInbox shared].pushHandler.delegate = [UAInboxNavUI shared];
+            self.style = InboxStyleNavigation;
             break;
     }
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    self.runiPhoneTargetOniPad = NO;
+    self.style = InboxStyleModal;
+
     self.version.text = [NSString stringWithFormat:@"UAInbox Version: %@", [UAirshipVersion get]];
-    
-    self.navigationItem.rightBarButtonItem 
-        = [[UIBarButtonItem alloc] initWithTitle:@"Inbox" style:UIBarButtonItemStylePlain target:self action:@selector(mail:)];
-    
-    // For UINavigationController UI
-    [UAInboxNavUI shared].popoverButton = self.navigationItem.rightBarButtonItem;
-    
+
+    self.navigationItem.rightBarButtonItem  = [[UIBarButtonItem alloc] initWithTitle:@"Inbox"
+                                                                               style:UIBarButtonItemStylePlain
+                                                                              target:self action:@selector(mail:)];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
+}
+
+#pragma mark UAInboxPushHandlerDelegate methods
+
+/*
+ Called when a new rich push message is available for viewing.
+ */
+- (void)richPushMessageAvailable:(UAInboxMessage *)message {
+
+     // Display an alert, and if the user taps "View", display the message
+     NSString *alertText = message.title;
+     [self.alertHandler showNewMessageAlert:alertText withViewBlock:^{
+         [self displayMessage:message];
+     }];
+}
+
+/*
+ Called when a new rich push message is available after launching from a
+ push notification.
+ */
+- (void)launchRichPushMessageAvailable:(UAInboxMessage *)message {
+    [self displayMessage:message];
+}
+
+- (void)richPushNotificationArrived:(NSDictionary *)notification {
+    // Add custom notification handling here
+}
+
+- (void)applicationLaunchedWithRichPushNotification:(NSDictionary *)notification {
+    // Add custom launch notification handling here
 }
 
 @end

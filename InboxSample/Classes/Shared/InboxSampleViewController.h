@@ -24,14 +24,41 @@
  */
 
 #import <UIKit/UIKit.h>
-#import "UAInboxUI.h"
+#import "UAInboxPushHandler.h"
 
-@interface InboxSampleViewController : UIViewController <UIActionSheetDelegate>
-
-@property(nonatomic, weak) IBOutlet UILabel *version;
+@interface InboxSampleViewController : UIViewController <UIActionSheetDelegate, UIPopoverControllerDelegate, UAInboxPushHandlerDelegate>
 
 - (IBAction)mail:(id)sender;
 - (IBAction)selectInboxStyle:(id)sender;
+
+/**
+ * The label displaying the current version number of the Urban
+ * Airship library.
+ */
+@property(nonatomic, weak) IBOutlet UILabel *version;
+
+/**
+ * Whether to display incoming rich push messages in
+ * an overlay controller.
+ *
+ * Defaults to YES.
+ */
+@property(nonatomic, assign) BOOL useOverlay;
+
+/**
+ * Whether to use the iPhone UI on the iPad. 
+ *
+ * Defaults to NO.
+ */
+@property(nonatomic, assign) BOOL runiPhoneTargetOniPad;
+
+/**
+ * The size of the popover controller's window,
+ * When using the popover user interface.
+ *
+ * Defaults to 320 x 1100.
+ */
+@property(nonatomic, assign) CGSize popoverSize;
 
 @end
 
