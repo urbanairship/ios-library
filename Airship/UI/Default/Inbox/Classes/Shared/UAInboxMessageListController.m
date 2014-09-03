@@ -300,7 +300,7 @@
 }
 
 - (void)coverUpEmptyListIfNeeded {
-    NSUInteger messageCount = [[UAInbox shared].messageList messageCount];
+    NSUInteger messageCount = [[self tableData] count];
     
     self.loadingView.hidden = (messageCount != 0);
     
@@ -410,7 +410,9 @@
 
     NSMutableIndexSet *messageIDs = [NSMutableIndexSet indexSet];
     for (NSIndexPath *indexPath in strongMessageTable.indexPathsForSelectedRows) {
-        [messageIDs addIndex:(NSUInteger)indexPath.row];
+        [messageIDs addIndex:[[[UAInbox shared].messageList messages]
+                              indexOfObject:[[self tableData]
+                                             objectAtIndex:indexPath.row]]];
     }
 
     self.cancelItem.enabled = NO;
@@ -478,7 +480,9 @@
     if (!indexPath) return;//require an index path (for safety with literal below)
 
     NSMutableIndexSet *set = [NSMutableIndexSet indexSet];
-    [set addIndex:(NSUInteger)indexPath.row];
+    [set addIndex:[[[UAInbox shared].messageList messages]
+                   indexOfObject:[[self tableData]
+                                  objectAtIndex:indexPath.row]]];
 
     self.currentBatchUpdateIndexPaths = @[indexPath];
 
@@ -486,6 +490,26 @@
                                         withMessageIndexSet:set
                                                withDelegate:self];
     [self refreshBatchUpdateButtons];
+}
+
+#pragma mark -
+#pragma mark tableDataFilter
+
+- (NSArray *)tableData {
+    NSString *currShow = @"icon_loc";
+
+    NSMutableArray *displayableObjects = [NSMutableArray array];
+
+    UAInboxMessageList *messageList = [UAInbox shared].messageList;
+
+    for (NSUInteger i = 0; i < [[UAInbox shared].messageList messageCount]; i++) {
+        UAInboxMessage *message = [[UAInbox shared].messageList messageAtIndex:i];
+        if ([message.extra objectForKey:currShow]) {
+            // only show in the table if matching key is found
+            [displayableObjects addObject:message];
+        }
+    }
+    return displayableObjects;
 }
 
 #pragma mark -
@@ -498,7 +522,7 @@
         cell = [topLevelObjects objectAtIndex:0];
     }
 
-    UAInboxMessage *message = [[UAInbox shared].messageList messageAtIndex:(NSUInteger)indexPath.row];
+    UAInboxMessage *message = [[self tableData] objectAtIndex:indexPath.row];
 
     [cell setData:message];
 
@@ -527,7 +551,7 @@
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return (NSInteger)[[UAInbox shared].messageList messageCount];
+    return (NSInteger)[[self tableData] count];
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -555,7 +579,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    UAInboxMessage *message = [self messageForIndexPath:indexPath];
+    UAInboxMessage *message = [[self tableData] objectAtIndex:indexPath.row];
     [self updateSetOfUnreadMessagesWithMessage:message atIndexPath:indexPath];
     if (self.editing && ![[UAInbox shared].messageList isBatchUpdating]) {
         [self refreshBatchUpdateButtons];
@@ -565,7 +589,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
-    UAInboxMessage *message = [self messageForIndexPath:indexPath];
+    UAInboxMessage *message = [[self tableData] objectAtIndex:indexPath.row];
     [self updateSetOfUnreadMessagesWithMessage:message atIndexPath:indexPath];
     if (self.editing && ![[UAInbox shared].messageList isBatchUpdating]) {
         [self refreshBatchUpdateButtons];
@@ -712,7 +736,7 @@
 
 - (void)retrieveIconForIndexPath:(NSIndexPath *)indexPath {
 
-    UAInboxMessage *message = [[UAInbox shared].messageList messageAtIndex:(NSUInteger)indexPath.row];
+    UAInboxMessage *message = [[self tableData] objectAtIndex:indexPath.row];
 
     NSString *iconListURLString = [self iconURLStringForMessage:message];
     if (!iconListURLString) {
