@@ -38,9 +38,23 @@
                                                             UIScrollViewDelegate>
 
 /**
+ * Displays a new message, either by updating the currently displayed message or
+ * by navigating to a new one.
+ *
+ * @param message The message to load.
+ */
+- (void)displayMessage:(UAInboxMessage *)message;
+
+/**
  * Set this property to YES if the class should show alert dialogs in erroneous
  * situations, NO otherwise.  Defaults to YES.
  */
 @property (nonatomic, assign) BOOL shouldShowAlerts;
+
+/**
+ * Block that will be invoked when a message view controller receives a closeWindow message
+ * from the webView.
+ */
+@property (nonatomic, copy) void (^closeBlock)(BOOL animated);
 
 @end

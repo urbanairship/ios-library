@@ -25,6 +25,7 @@
 
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageListCell.h"
+#import "UAInboxMessageViewController.h"
 #import "UAInboxUI.h"
 #import "UAInbox.h"
 #import "UAGlobal.h"
@@ -324,6 +325,28 @@
     return count;
 }
 
+- (void)displayMessage:(UAInboxMessage *)message {
+    UAInboxMessageViewController *mvc;
+
+    //if a message view is displaying, just load the new message
+    UIViewController *top = self.navigationController.topViewController;
+    if ([top class] == [UAInboxMessageViewController class]) {
+        mvc = (UAInboxMessageViewController *) top;
+        [mvc loadMessageForID:message.messageID];
+    }
+    //otherwise, push over a new message view
+    else {
+        mvc = [[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil];
+        mvc.closeBlock = ^(BOOL animated){
+            if (self.closeBlock) {
+                self.closeBlock(animated);
+            }
+        };
+        [mvc loadMessageForID:message.messageID];
+        [self.navigationController pushViewController:mvc animated:YES];
+    }
+}
+
 
 #pragma mark -
 #pragma mark Button Action Methods
@@ -544,7 +567,7 @@
     if (self.editing && ![[UAInbox shared].messageList isBatchUpdating]) {
         [self refreshBatchUpdateButtons];
     } else if (!self.editing) {
-        [UAInbox displayMessageWithID:message.messageID inViewController:self.navigationController];
+        [self displayMessage:message];
     }
 }
 

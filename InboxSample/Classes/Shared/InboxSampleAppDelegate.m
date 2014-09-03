@@ -27,8 +27,6 @@
 #import "InboxSampleViewController.h"
 #import "UAInboxDefaultJSDelegate.h"
 #import "UAInboxPushHandler.h"
-#import "UAInboxNavUI.h"
-#import "UAInboxUI.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAPush.h"
@@ -61,23 +59,23 @@
 
     // Configure Inbox behaviour before UAInboxPushHandler since it may need it
     // when launching from notification
-    [UAInbox useCustomUI:[UAInboxUI class]];
-    [UAInbox shared].pushHandler.delegate = [UAInboxUI shared];
 
     // Optional: Delegate for JavaScript callback
     self.jsDelegate = [[UAInboxDefaultJSDelegate alloc] init];
     [UAInbox shared].jsDelegate = self.jsDelegate;
-    
-    // For modal UI:
-    [UAInboxUI shared].inboxParentController = strongNavigationController;
-    [UAInboxUI shared].useOverlay = YES;
-    
-    // For Navigation UI:
-    [UAInboxNavUI shared].inboxParentController = strongNavigationController;
-    [UAInboxNavUI shared].useOverlay = YES;
-    [UAInboxNavUI shared].popoverSize = CGSizeMake(600, 1100);
 
-    // Enabled user notifications
+    InboxSampleViewController *sampleViewController = self.viewController;
+
+    // Set the sample view controller as the Inbox push handler delegate
+    [UAInbox shared].pushHandler.delegate = sampleViewController;
+
+    // Set a default size for the sapmle popover interface
+    sampleViewController.popoverSize = CGSizeMake(600, 1100);
+
+    // Use an overlay UI for simple message display
+    sampleViewController.useOverlay = YES;
+
+    // Enable user notifications
     [UAPush shared].userPushNotificationsEnabled = YES;
 
     // Return value is ignored for push notifications, so it's safer to return

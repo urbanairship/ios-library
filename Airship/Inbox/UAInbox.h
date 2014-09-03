@@ -31,37 +31,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @class UAInboxPushHandler;
 @class UAInboxAPIClient;
 
-#define INBOX_UI_CLASS @"UAInboxUI"
-
-/**
- * All UIs should implement this protocol to interact with the UAInbox object.
- */
-@protocol UAInboxUIProtocol
-@required
-
-/** 
- * Hide the inbox UI and perform any resource cleanup.
- */
-+ (void)quitInbox;
-
-/**
- * Display the inbox UI.
- *
- * @param parentViewController The parent view controller
- * @param animated YES to animate the transition
- */
-+ (void)displayInboxInViewController:(UIViewController *)parentViewController animated:(BOOL)animated;
-
-/**
- * Display the inbox UI and open a specific message.
- *
- * @param messageID The ID for the message to display
- * @param parentViewController The parent view controller
- */
-+ (void)displayMessageWithID:(NSString *)messageID inViewController:(UIViewController *)parentViewController;
-
-@end
-
 
 /**
  * A standard protocol for accessing native Objective-C functionality from your
@@ -107,46 +76,6 @@ __attribute__((deprecated("As of version 3.2")))
 @interface UAInbox : NSObject
 
 SINGLETON_INTERFACE(UAInbox);
-
-///---------------------------------------------------------------------------------------
-/// @name Custom UI Specification
-///---------------------------------------------------------------------------------------
-
-/** Get the current UI class. Defaults to UAInboxUI. */
-- (Class)uiClass;
-
-/**
- * Set a custom UI class. Defaults to UAInboxUI.
- *
- * @param customUIClass The custom UI class. The class must implement the UAInboxUIProtocol.
- */
-+ (void)useCustomUI:(Class)customUIClass;
-
-/**
- * Hides the Rich Push Inbox UI and cleans up as necessary.
- *
- * Calls [UAInboxUIProtocol quitInbox] on the UI class.
- */
-+ (void)quitInbox;
-
-/**
- * Display the inbox UI.
- *
- * Calls [UAInboxUIProtocol displayInbox: animated:] on the UI class.
- *
- * @param parentViewController The parent view controller
- * @param animated YES to animate the transition
- */
-+ (void)displayInboxInViewController:(UIViewController *)parentViewController animated:(BOOL)animated;
-/**
- * Display the inbox UI and open a specific message.
- *
- * @param messageID The ID for the message to display
- * @param parentViewController The parent view controller
- *
- * Calls [UAInboxUIProtocol displayMessage: message:] on the UI class.
- */
-+ (void)displayMessageWithID:(NSString *)messageID inViewController:(UIViewController *)parentViewController;
 
 /**
  * Tear down and clean up any resources. This method should be called when the inbox is no
