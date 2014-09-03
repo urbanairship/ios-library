@@ -37,6 +37,7 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     self.channelIDLabel.text = [UAPush shared].channelID ? [UAPush shared].channelID : @"Unavailable";
 }
 

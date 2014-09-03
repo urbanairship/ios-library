@@ -170,7 +170,6 @@
 		4953A45419A55E9900F8D111 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49BADCC9198AF5F5000FF3D5 /* AirshipKit.framework */; };
 		4953A45E19A5642E00F8D111 /* UAInbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DC217835C3A00BCD96E /* UAInbox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4953A46119A5657200F8D111 /* AirshipKit_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4953A45F19A5657200F8D111 /* AirshipKit_Tests.m */; };
-		4953A46219A5657200F8D111 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4953A46019A5657200F8D111 /* Info.plist */; };
 		495526B117D95552009BC301 /* UAInboxMessageListTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 495526AB17D95552009BC301 /* UAInboxMessageListTest.m */; };
 		495526B217D95552009BC301 /* UAInboxMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 495526AC17D95552009BC301 /* UAInboxMessageTest.m */; };
 		495526B417D95552009BC301 /* UAUser+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 495526AF17D95552009BC301 /* UAUser+Test.m */; };
@@ -312,6 +311,10 @@
 		76792D10178E12A10054F8AD /* UAHTTPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 76792D0E178E12A10054F8AD /* UAHTTPRequest.h */; };
 		76792D11178E12A10054F8AD /* UAHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 76792D0F178E12A10054F8AD /* UAHTTPRequest.m */; };
 		76792D13178E13810054F8AD /* UAHTTPRequest+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 76792D12178E13810054F8AD /* UAHTTPRequest+Internal.h */; };
+		76AA8EDB19B0F0A2005FD1C3 /* NSJSONSerialization+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBFA2D817B5436500F97E1D /* NSJSONSerialization+UAAdditions.h */; };
+		76AA8EDC19B0F0A2005FD1C3 /* UAAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CC85429F17F4B81600D2DE10 /* UAAction.h */; };
+		76AA8EDD19B0F0A2005FD1C3 /* UAKeychainUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE43798128B589000D38A14 /* UAKeychainUtils.h */; };
+		76AA8EDE19B0F0A2005FD1C3 /* UAIncomingRichPushAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDD37991807019000B8866E /* UAIncomingRichPushAction.h */; };
 		76B4E01619A4038000603F8A /* UAInteractiveNotificationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 76B4E01419A4038000603F8A /* UAInteractiveNotificationEvent.h */; };
 		76B4E01719A4038000603F8A /* UAInteractiveNotificationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 76B4E01419A4038000603F8A /* UAInteractiveNotificationEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		76B4E01819A4038000603F8A /* UAInteractiveNotificationEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 76B4E01519A4038000603F8A /* UAInteractiveNotificationEvent.m */; };
@@ -340,7 +343,6 @@
 		BB8860B3159A7E9600584445 /* UAUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = D9983E8C1238462100B7E69F /* UAUtils.h */; };
 		BB8860CE159A7E9600584445 /* UA_Reachability.h in Headers */ = {isa = PBXBuildFile; fileRef = B631183B1250925A0014F697 /* UA_Reachability.h */; };
 		BB8860CF159A7E9600584445 /* UA_Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = B69DB4C812533B280037AF7F /* UA_Base64.h */; };
-		BB8860D0159A7E9600584445 /* UAKeychainUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE43798128B589000D38A14 /* UAKeychainUtils.h */; };
 		BB8860D2159A7E9600584445 /* UAUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FC71652129597F9003BDD2B /* UAUser.h */; };
 		BB8860D6159A7E9600584445 /* UAAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F23001212B2B7BA001DB898 /* UAAnalytics.h */; };
 		BB8860D7159A7E9600584445 /* UATagUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F2B10C312DD01B60020843D /* UATagUtils.h */; };
@@ -425,7 +427,6 @@
 		CC7DC95D183E97E900E95BB8 /* UAUserAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7DC95C183E97E900E95BB8 /* UAUserAPIClientTest.m */; };
 		CC85427817F2130700D2DE10 /* UAURLProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = CC85427617F2130700D2DE10 /* UAURLProtocol.h */; };
 		CC85427A17F2130700D2DE10 /* UAURLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85427717F2130700D2DE10 /* UAURLProtocol.m */; };
-		CC8542B317F4B81600D2DE10 /* UAAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CC85429F17F4B81600D2DE10 /* UAAction.h */; };
 		CC8542B517F4B81600D2DE10 /* UAAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CC8542A017F4B81600D2DE10 /* UAAction.m */; };
 		CC8542B717F4B81600D2DE10 /* UAActionArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = CC8542A117F4B81600D2DE10 /* UAActionArguments.h */; };
 		CC8542B917F4B81600D2DE10 /* UAActionArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = CC8542A217F4B81600D2DE10 /* UAActionArguments.m */; };
@@ -455,13 +456,11 @@
 		CCB7DF5B17BBF1B800CEDC56 /* UAInboxDBManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB7DF5A17BBF1B800CEDC56 /* UAInboxDBManagerTests.m */; };
 		CCB7DF5E17BBF71000CEDC56 /* UAInboxDBManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCB7DF5C17BBF71000CEDC56 /* UAInboxDBManager+Internal.h */; };
 		CCB9990B18E23E68007F911D /* UACloseWindowActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB9990A18E23E68007F911D /* UACloseWindowActionTest.m */; };
-		CCBFA2DA17B5436500F97E1D /* NSJSONSerialization+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBFA2D817B5436500F97E1D /* NSJSONSerialization+UAAdditions.h */; };
 		CCBFA2DB17B5436500F97E1D /* NSJSONSerialization+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CCBFA2D917B5436500F97E1D /* NSJSONSerialization+UAAdditions.m */; };
 		CCBFA2E017B547B600F97E1D /* NSJSONSerialization_UAAdditionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCBFA2DF17B547B600F97E1D /* NSJSONSerialization_UAAdditionsTests.m */; };
 		CCCDAEA019954A1300E93CF7 /* NSObject+HideClass.m in Sources */ = {isa = PBXBuildFile; fileRef = CCCDAE9F19954A1300E93CF7 /* NSObject+HideClass.m */; };
 		CCD13DE219A4FCFD0007078C /* UAInteractiveNotificationEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD13DE119A4FCFD0007078C /* UAInteractiveNotificationEventTest.m */; };
 		CCD3158417CFBD5A002E93A1 /* UAPushTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD3158317CFBD5A002E93A1 /* UAPushTest.m */; };
-		CCDD379B1807019000B8866E /* UAIncomingRichPushAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDD37991807019000B8866E /* UAIncomingRichPushAction.h */; };
 		CCDD379D1807019000B8866E /* UAIncomingRichPushAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDD379A1807019000B8866E /* UAIncomingRichPushAction.m */; };
 		CCDD37A51807157500B8866E /* UAIncomingRichPushActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDD37A41807157500B8866E /* UAIncomingRichPushActionTest.m */; };
 		CCDD37C818089E5700B8866E /* UAOpenExternalURLAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDD37C618089E5700B8866E /* UAOpenExternalURLAction.h */; };
@@ -1672,24 +1671,21 @@
 				1F610DE517835C3A00BCD96E /* UAInboxDBManager.h in Headers */,
 				CC8542CB17F4B81600D2DE10 /* UAIncomingPushAction.h in Headers */,
 				4905C4E518246339001D48E3 /* NSString+UAURLEncoding.h in Headers */,
-				BB8860D0159A7E9600584445 /* UAKeychainUtils.h in Headers */,
+				76AA8EDD19B0F0A2005FD1C3 /* UAKeychainUtils.h in Headers */,
 				CCA3A5041803184D009C7371 /* UAActionRegistryEntry+Internal.h in Headers */,
 				CC8542D717F4B81600D2DE10 /* UASyncAction.h in Headers */,
-				CCBFA2DA17B5436500F97E1D /* NSJSONSerialization+UAAdditions.h in Headers */,
-				CCDD379B1807019000B8866E /* UAIncomingRichPushAction.h in Headers */,
+				76AA8EDB19B0F0A2005FD1C3 /* NSJSONSerialization+UAAdditions.h in Headers */,
+				76AA8EDE19B0F0A2005FD1C3 /* UAIncomingRichPushAction.h in Headers */,
 				1F610E0417835C3A00BCD96E /* UAPush+Internal.h in Headers */,
 				CC8542B717F4B81600D2DE10 /* UAActionArguments.h in Headers */,
 				1F610DEB17835C3A00BCD96E /* UAInboxMessageData.h in Headers */,
 				CC4AAE0518C93ECF001F23B3 /* UAApplicationMetriccs+Internal.h in Headers */,
 				BB8860B1159A7E9600584445 /* UAGlobal.h in Headers */,
-				BB8860D0159A7E9600584445 /* UAKeychainUtils.h in Headers */,
 				BB8860D2159A7E9600584445 /* UAUser.h in Headers */,
 				BB8860D6159A7E9600584445 /* UAAnalytics.h in Headers */,
 				CCF4462A1947D252003E04E7 /* UACustomEvent.h in Headers */,
 				BB8860D7159A7E9600584445 /* UATagUtils.h in Headers */,
 				BB8860D8159A7E9600584445 /* UASQLite.h in Headers */,
-				CCBFA2DA17B5436500F97E1D /* NSJSONSerialization+UAAdditions.h in Headers */,
-				CCDD379B1807019000B8866E /* UAIncomingRichPushAction.h in Headers */,
 				BB8860D9159A7E9600584445 /* UAHTTPConnection.h in Headers */,
 				CC7DC950183E978A00E95BB8 /* UADeviceRegistrar+Internal.h in Headers */,
 				BB8860E3159A7E9600584445 /* UASignificantChangeProvider.h in Headers */,
@@ -1698,7 +1694,7 @@
 				BB8860E6159A7E9600584445 /* UALocationCommonValues.h in Headers */,
 				BB8860DB159A7E9600584445 /* UAAnalyticsDBManager.h in Headers */,
 				49416D6218C513D500A18B72 /* UABespokeCloseView.h in Headers */,
-				CC8542B317F4B81600D2DE10 /* UAAction.h in Headers */,
+				76AA8EDC19B0F0A2005FD1C3 /* UAAction.h in Headers */,
 				BB8860E7159A7E9600584445 /* UALocationProviderProtocol.h in Headers */,
 				CC7DC94C183E978A00E95BB8 /* UADeviceRegistrar.h in Headers */,
 				CCDF66AE19A544590043657E /* UAShareAction.h in Headers */,
@@ -1714,7 +1710,6 @@
 				4995C640180DBBDD004F8724 /* UARemoveTagsAction.h in Headers */,
 				CCB7DF5E17BBF71000CEDC56 /* UAInboxDBManager+Internal.h in Headers */,
 				CC1D229B180373E0005C8393 /* UAAction+Operators.h in Headers */,
-				CC8542B317F4B81600D2DE10 /* UAAction.h in Headers */,
 				CC070C8219ABCD7000E91553 /* UAUserNotificationCategories+Internal.h in Headers */,
 				CCA3A50117FF626C009C7371 /* UAActionRegistry+Internal.h in Headers */,
 				CC103E1118A9456200DC950F /* UAActionResult+Internal.h in Headers */,
@@ -1864,7 +1859,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0600;
 				TargetAttributes = {
 					4953A44D19A55E9900F8D111 = {
 						CreatedOnToolsVersion = 6.0;
@@ -1904,7 +1899,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4953A46219A5657200F8D111 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2293,7 +2287,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1F31E8FC15F14C5500DC63BA /* Config.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_STATIC_ANALYZER_MODE = deep;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -2301,13 +2294,16 @@
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -2330,7 +2326,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1F31E8FC15F14C5500DC63BA /* Config.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_STATIC_ANALYZER_MODE = deep;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -2338,10 +2333,13 @@
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -2750,7 +2748,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1F31E8FC15F14C5500DC63BA /* Config.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_STATIC_ANALYZER_MODE = deep;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -2758,13 +2755,16 @@
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
