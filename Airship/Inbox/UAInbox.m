@@ -37,23 +37,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 SINGLETON_IMPLEMENTATION(UAInbox)
 
-#pragma mark -
-#pragma mark Custom UI
-
-static Class _uiClass;
-
-- (Class)uiClass {
-    if (!_uiClass) {
-        _uiClass = NSClassFromString(INBOX_UI_CLASS);
-    }
-    
-    if (_uiClass == nil) {
-        UALOG(@"Inbox UI class not found.");
-    }
-
-    return _uiClass;
-}
-
 - (void)enterForeground {
     [self.messageList retrieveMessageListWithDelegate:nil];
 }
@@ -62,36 +45,8 @@ static Class _uiClass;
     [self.messageList retrieveMessageListWithDelegate:nil];
 }
 
-#pragma mark -
-#pragma mark Open APIs, set custom ui
-
-+ (void)useCustomUI:(Class)customUIClass {
-    if (!customUIClass || [customUIClass conformsToProtocol:@protocol(UAInboxUIProtocol)]) {
-        _uiClass = customUIClass;
-    } else {
-        UA_LERR(@"Custom UI class does not conform to UAInboxUIProtocol");
-    }
-}
-
-#pragma mark -
-#pragma mark Open API, enter/quit Inbox
-
-+ (void)displayInboxInViewController:(UIViewController *)parentViewController animated:(BOOL)animated {
-    [[[UAInbox shared] uiClass] displayInboxInViewController:parentViewController animated:animated];
-}
-
-+ (void)displayMessageWithID:(NSString *)messageID inViewController:(UIViewController *)parentViewController {
-    [[UAInbox shared].uiClass displayMessageWithID:messageID inViewController:parentViewController];
-}
-
-
-+ (void)quitInbox {
-    [[[UAInbox shared] uiClass] quitInbox];
-}
-
 + (void)land {
     [g_sharedUAInbox.client cancelAllRequests];
-    [[g_sharedUAInbox uiClass]land];
     g_sharedUAInbox = nil;
 }
 
