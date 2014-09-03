@@ -443,7 +443,7 @@
     for (NSDictionary *actionDefinition in actionDefinitions) {
         NSString *title;
         if (actionDefinition[@"title_resource"]) {
-            title = NSLocalizedStringWithDefaultValue(actionDefinition[@"title_resource"], nil, [NSBundle mainBundle], actionDefinition[@"title"], nil);
+            title = NSLocalizedStringWithDefaultValue(actionDefinition[@"title_resource"], @"UAInteractiveNotifications", [NSBundle mainBundle], actionDefinition[@"title"], nil);
         } else if (actionDefinition[@"title"]) {
             title = actionDefinition[@"title"];
         }
