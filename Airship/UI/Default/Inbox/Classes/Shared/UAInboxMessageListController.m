@@ -56,9 +56,8 @@
 - (void)coverUpEmptyListIfNeeded;
 - (void)showLoadingScreen;
 - (void)hideLoadingScreen;
-- (UAInboxMessage *)messageForIndexPath:(NSIndexPath *)indexPath;
 
-- (void)updateSetOfUnreadMessagesWithMessage:(UAInboxMessage *)message atIndexPath:(NSIndexPath *)indexPath;
+- (UAInboxMessage *)messageForIndexPath:(NSIndexPath *)indexPath;
 
 /**
  * Returns the number of unread messages in the specified set of index paths for the current table view.
@@ -91,8 +90,6 @@
 @property (nonatomic, weak) IBOutlet UABeveledLoadingIndicator *loadingIndicator;
 @property (nonatomic, weak) IBOutlet UILabel *loadingLabel;
 
-@property (nonatomic, strong) NSMutableSet *setOfUnreadMessagesInSelection;
-@property (nonatomic, strong) NSArray *currentBatchUpdateIndexPaths;
 @property (nonatomic, strong) UIBarButtonItem *deleteItem;
 @property (nonatomic, strong) UIBarButtonItem *selectAllButtonItem;
 @property (nonatomic, strong) UIBarButtonItem *markAsReadButtonItem;
@@ -102,7 +99,8 @@
 @property (nonatomic, copy) NSString *cellReusableId;
 @property (nonatomic, copy) NSString *cellNibName;
 
-@property (nonatomic, strong) id messageListObserver;
+@property (nonatomic, strong) NSArray *messages;
+
 
 /**
  * A dictionary of sets of (NSIndexPath *) with absolute URLs (NSString *) for keys.
@@ -134,7 +132,7 @@
         self.iconCache.countLimit = kUAIconImageCacheMaxCount;
         self.iconCache.totalCostLimit = kUAIconImageCacheMaxByteCost;
         self.currentIconURLRequests = [NSMutableDictionary dictionary];
-
+        self.messages = [UAInbox shared].messageList.messages;
     }
 
     return self;
@@ -159,8 +157,6 @@
     [self createToolbarItems];
 
     [self updateNavigationTitleText];
-
-    self.setOfUnreadMessagesInSelection = [NSMutableSet set];
 }
 
 - (void)createToolbarItems {
@@ -249,12 +245,12 @@
 
 - (void)tableReloadData {
     UITableView *strongMessageTable = self.messageTable;
+    self.messages = [UAInbox shared].messageList.messages;
     [strongMessageTable reloadData];
     [strongMessageTable deselectRowAtIndexPath:[strongMessageTable indexPathForSelectedRow] animated:NO];
 }
 
 - (void)refreshAfterBatchUpdate {
-
     // end editing
     self.cancelItem.enabled = YES;
     [self cancelButtonPressed:nil];
@@ -262,9 +258,6 @@
     // reset selection
     UITableView *strongMessageTable = self.messageTable;
     [strongMessageTable deselectRowAtIndexPath:[strongMessageTable indexPathForSelectedRow] animated:NO];
-
-    // reset current operation set
-    self.currentBatchUpdateIndexPaths = nil;
 
     // force button update
     [self refreshBatchUpdateButtons];
@@ -285,11 +278,9 @@
 }
 
 - (void)coverUpEmptyListIfNeeded {
-    NSUInteger messageCount = [[UAInbox shared].messageList messageCount];
+    self.loadingView.hidden = (self.messages.count != 0);
     
-    self.loadingView.hidden = (messageCount != 0);
-    
-    if (messageCount == 0) {
+    if (self.messages.count == 0) {
         self.loadingLabel.text = UA_INBOX_TR(@"UA_No_Messages");
     }
 }
@@ -301,24 +292,14 @@
 
 // indexPath.row is for use with grouped table views, see NSIndexPath UIKit Additions
 - (UAInboxMessage *)messageForIndexPath:(NSIndexPath *)indexPath {
-    NSArray *messages = [[UAInbox shared].messageList messages];
-    return [messages objectAtIndex:(NSUInteger)indexPath.row];
+    return [self.messages objectAtIndex:(NSUInteger)indexPath.row];
 }
 
-- (void)updateSetOfUnreadMessagesWithMessage:(UAInboxMessage *)message atIndexPath:(NSIndexPath *)indexPath {
-
-    if (message.unread) {
-        [self.setOfUnreadMessagesInSelection addObject:indexPath];
-    } else {
-        [self.setOfUnreadMessagesInSelection removeObject:indexPath];
-    }
-}
 
 - (NSUInteger)countOfUnreadMessagesInIndexPaths:(NSArray *)indexPaths {
-
     NSUInteger count = 0;
     for (NSIndexPath *path in indexPaths) {
-        if ([self.setOfUnreadMessagesInSelection containsObject:path]) {
+        if ([self messageForIndexPath:path].unread) {
             ++count;
         }
     }
@@ -387,8 +368,6 @@
         return;
     }
 
-    [self.setOfUnreadMessagesInSelection removeAllObjects];
-
     self.navigationItem.rightBarButtonItem = self.cancelItem;
     UITableView *strongMessageTable = self.messageTable;
     [strongMessageTable deselectRowAtIndexPath:[strongMessageTable indexPathForSelectedRow] animated:YES];
@@ -405,8 +384,6 @@
     
     self.navigationItem.rightBarButtonItem = self.editItem;
 
-    [self.setOfUnreadMessagesInSelection removeAllObjects];
-
     [self setEditing:NO animated:YES];
     [self updateNavigationTitleText];
 }
@@ -415,31 +392,27 @@
 
     UITableView *strongMessageTable = self.messageTable;
 
-    NSMutableIndexSet *messageIDs = [NSMutableIndexSet indexSet];
+    NSMutableArray *messages = [NSMutableArray array];
     for (NSIndexPath *indexPath in strongMessageTable.indexPathsForSelectedRows) {
-        [messageIDs addIndex:(NSUInteger)indexPath.row];
+        [messages addObject:[self.messages objectAtIndex:(NSUInteger)indexPath.row]];
     }
 
     self.cancelItem.enabled = NO;
 
-    self.currentBatchUpdateIndexPaths = strongMessageTable.indexPathsForSelectedRows;
-
     if (sender == self.markAsReadButtonItem) {
-        [[UAInbox shared].messageList performBatchUpdateCommand:UABatchReadMessages
-                                            withMessageIndexSet:messageIDs
-                                                    withDelegate:self];
+
+        [[UAInbox shared].messageList markMessagesRead:messages completionHandler:^{
+            [self refreshAfterBatchUpdate];
+        }];
     } else {
-        [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages
-                                            withMessageIndexSet:messageIDs
-                                                   withDelegate:self];
+        [[UAInbox shared].messageList markMessagesDeleted:messages completionHandler:^{
+            [self refreshAfterBatchUpdate];
+        }];
     }
 
     [self refreshBatchUpdateButtons];
 }
 
-- (void)batchUpdateButtonCanceled:(id)sender {
-    self.currentBatchUpdateIndexPaths = nil;
-}
 
 - (void)refreshBatchUpdateButtons {
     NSString *deleteStr = UA_INBOX_TR(@"UA_Delete");
@@ -484,14 +457,13 @@
 
     if (!indexPath) return;//require an index path (for safety with literal below)
 
-    NSMutableIndexSet *set = [NSMutableIndexSet indexSet];
-    [set addIndex:(NSUInteger)indexPath.row];
+    UAInboxMessage *message = [self.messages objectAtIndex:(NSUInteger)indexPath.row];
+    if (message) {
+        [[UAInbox shared].messageList markMessagesDeleted:@[message] completionHandler:^{
+            [self refreshAfterBatchUpdate];
+        }];
+    }
 
-    self.currentBatchUpdateIndexPaths = @[indexPath];
-
-    [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages
-                                        withMessageIndexSet:set
-                                               withDelegate:self];
     [self refreshBatchUpdateButtons];
 }
 
@@ -505,7 +477,7 @@
         cell = [topLevelObjects objectAtIndex:0];
     }
 
-    UAInboxMessage *message = [[UAInbox shared].messageList messageAtIndex:(NSUInteger)indexPath.row];
+    UAInboxMessage *message = [self.messages objectAtIndex:(NSUInteger)indexPath.row];
 
     [cell setData:message];
 
@@ -563,7 +535,6 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
     UAInboxMessage *message = [self messageForIndexPath:indexPath];
-    [self updateSetOfUnreadMessagesWithMessage:message atIndexPath:indexPath];
     if (self.editing && ![[UAInbox shared].messageList isBatchUpdating]) {
         [self refreshBatchUpdateButtons];
     } else if (!self.editing) {
@@ -572,8 +543,6 @@
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
-    UAInboxMessage *message = [self messageForIndexPath:indexPath];
-    [self updateSetOfUnreadMessagesWithMessage:message atIndexPath:indexPath];
     if (self.editing && ![[UAInbox shared].messageList isBatchUpdating]) {
         [self refreshBatchUpdateButtons];
     }
@@ -595,56 +564,6 @@
     [self tableReloadData];
     [self refreshBatchUpdateButtons];
     [self updateNavigationTitleText];
-}
-
-#pragma mark -
-#pragma mark UAInboxMessageListDelegate
-
-- (void)batchMarkAsReadFinished {
-    [self.messageTable reloadRowsAtIndexPaths:self.currentBatchUpdateIndexPaths
-                        withRowAnimation:UITableViewRowAnimationNone];
-    [self refreshAfterBatchUpdate];
-}
-
-
-- (void)batchMarkAsReadFailed {
-    if (self.shouldShowAlerts) {
-        
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Mailbox_Error_Title")
-                                                        message:UA_INBOX_TR(@"UA_Error_Mark_Read_Message")
-                                                       delegate:nil
-                                              cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
-                                              otherButtonTitles:nil];
-        [alert show];
-        
-    }
-    [self refreshAfterBatchUpdate];
-}
-
-- (void)batchDeleteFinished {
-
-    UITableView *strongMessageTable = self.messageTable;
-    [strongMessageTable beginUpdates];
-    [strongMessageTable deleteRowsAtIndexPaths:self.currentBatchUpdateIndexPaths
-                             withRowAnimation:UITableViewRowAnimationLeft];
-    [strongMessageTable endUpdates];
-    
-    [self refreshAfterBatchUpdate];
-}
-
-
-- (void)batchDeleteFailed {
-    if (self.shouldShowAlerts) {
-        
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Mailbox_Error_Title")
-                                                        message:UA_INBOX_TR(@"UA_Error_Delete_Message")
-                                                       delegate:nil
-                                              cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
-                                              otherButtonTitles:nil];
-        [alert show];
-        
-    }
-    [self refreshAfterBatchUpdate];
 }
 
 #pragma mark -
@@ -688,9 +607,8 @@
 
     NSArray *indexPaths = [self.messageTable indexPathsForRowsInRect:r];
     for (NSIndexPath *indexPath in indexPaths) {
-        [self retrieveIconForIndexPath:indexPath];
         UA_LTRACE(@"Loading row %ld. Title: %@", (long)indexPath.row, [self messageForIndexPath:indexPath].title);
-
+        [self retrieveIconForIndexPath:indexPath];
     }
 }
 
@@ -719,7 +637,7 @@
 
 - (void)retrieveIconForIndexPath:(NSIndexPath *)indexPath {
 
-    UAInboxMessage *message = [[UAInbox shared].messageList messageAtIndex:(NSUInteger)indexPath.row];
+    UAInboxMessage *message = [self.messages objectAtIndex:(NSUInteger)indexPath.row];
 
     NSString *iconListURLString = [self iconURLStringForMessage:message];
     if (!iconListURLString) {

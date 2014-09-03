@@ -38,11 +38,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 SINGLETON_IMPLEMENTATION(UAInbox)
 
 - (void)enterForeground {
-    [self.messageList retrieveMessageListWithDelegate:nil];
+    [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
 }
 
 - (void)userCreated {
-    [self.messageList retrieveMessageListWithDelegate:nil];
+    [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
 }
 
 + (void)land {
@@ -80,7 +80,7 @@ SINGLETON_IMPLEMENTATION(UAInbox)
         self.messageList.client = self.client;
 
         [self.messageList loadSavedMessages];
-        [self.messageList retrieveMessageListWithDelegate:nil];
+        [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
 
 
         self.pushHandler = [[UAInboxPushHandler alloc] init];

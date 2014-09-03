@@ -24,7 +24,7 @@
  */
 
 #import "UAIncomingRichPushAction.h"
-#import "UAInboxPushHandler.h"
+#import "UAInboxPushHandler+Internal.h"
 #import "UAInbox.h"
 #import "UAInboxUtils.h"
 #import "UAInboxMessageList.h"
@@ -71,8 +71,12 @@
             break;
     }
 
-    [[UAInbox shared].messageList retrieveMessageListWithDelegate:handler];
-    completionHandler([UAActionResult resultWithValue:richPushID withFetchResult:UAActionFetchResultNewData]);
+    [[UAInbox shared].messageList retrieveMessageListWithSuccessBlock:^{
+        [handler messageListLoadSucceeded];
+        completionHandler([UAActionResult resultWithValue:richPushID withFetchResult:UAActionFetchResultNewData]);
+    } withFailureBlock:^{
+        completionHandler([UAActionResult resultWithValue:richPushID withFetchResult:UAActionFetchResultFailed]);
+    }];
 }
 
 

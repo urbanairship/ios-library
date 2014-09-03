@@ -112,6 +112,16 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
  */
 @property (nonatomic, readonly, weak) UAInboxMessageList *inbox;
 
+
+/**
+ * Mark the message as read.
+ *
+ * @param completionHandler A block to be executed on completion.
+ * @return A UADisposable which can be used to cancel callback execution.
+ */
+- (UADisposable *)markMessageReadWithCompletionHandler:(UAInboxMessageCallbackBlock)completionHandler;
+
+
 /**
  * Mark the message as read.
  * @param successBlock A block to be executed if the mark-as-read operation is successful.
@@ -120,9 +130,12 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
  * This value will be nil if the request is not submitted due to an already scheduled update,
  * or because the message has already been marked as read.
  *
+ * @deprecated As of 5.0.0. Use markMessageReadWithCompletionHandler: instead. Marking
+ * messages read no longer require an HTTP operation to complete, so the failure 
+ * block will never be called.
  */
 - (UADisposable *)markAsReadWithSuccessBlock:(UAInboxMessageCallbackBlock)successBlock
-                            withFailureBlock:(UAInboxMessageCallbackBlock)failureBlock;
+                            withFailureBlock:(UAInboxMessageCallbackBlock)failureBlock __attribute__((deprecated("As of version 5.0.0")));
 
 /**
  * Mark the message as read. This eventually results in a callback to
@@ -134,8 +147,9 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
  * This value will be nil if the request is not submitted due to an already scheduled update,
  * or because the message has already been marked as read.
  *
+ * @deprecated As of 5.0.0. Use markMessageReadWithCompletionHandler: instead.
  */
-- (UADisposable *)markAsReadWithDelegate:(id<UAInboxMessageListDelegate>)delegate;
+- (UADisposable *)markAsReadWithDelegate:(id<UAInboxMessageListDelegate>)delegate __attribute__((deprecated("As of version 5.0.0")));
 
 /**
  * YES if the message is expired, NO otherwise

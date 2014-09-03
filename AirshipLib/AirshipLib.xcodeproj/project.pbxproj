@@ -412,6 +412,8 @@
 		CC523FB017B985F800233005 /* UAJSONValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = CC523FAE17B985F700233005 /* UAJSONValueTransformer.h */; };
 		CC523FB117B985F800233005 /* UAJSONValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = CC523FAF17B985F700233005 /* UAJSONValueTransformer.m */; };
 		CC523FC317BA8AC200233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FC217BA8AC200233005 /* CoreData.framework */; };
+		CC6773C119B11C1F00B016EC /* UAInboxPushHandler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC6773C019B11C1F00B016EC /* UAInboxPushHandler+Internal.h */; };
+		CC6773C219B11C1F00B016EC /* UAInboxPushHandler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC6773C019B11C1F00B016EC /* UAInboxPushHandler+Internal.h */; };
 		CC7BE5EB19A55C5700B3EACE /* UAShareActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7BE5EA19A55C5700B3EACE /* UAShareActionTest.m */; };
 		CC7DC941183E977100E95BB8 /* UAChannelAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CC7DC93D183E977100E95BB8 /* UAChannelAPIClient.h */; };
 		CC7DC943183E977100E95BB8 /* UAChannelAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7DC93E183E977100E95BB8 /* UAChannelAPIClient.m */; };
@@ -718,6 +720,7 @@
 		CC523FAE17B985F700233005 /* UAJSONValueTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAJSONValueTransformer.h; sourceTree = "<group>"; };
 		CC523FAF17B985F700233005 /* UAJSONValueTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAJSONValueTransformer.m; sourceTree = "<group>"; };
 		CC523FC217BA8AC200233005 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		CC6773C019B11C1F00B016EC /* UAInboxPushHandler+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInboxPushHandler+Internal.h"; sourceTree = "<group>"; };
 		CC7BE5EA19A55C5700B3EACE /* UAShareActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAShareActionTest.m; sourceTree = "<group>"; };
 		CC7DC93D183E977100E95BB8 /* UAChannelAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAChannelAPIClient.h; sourceTree = "<group>"; };
 		CC7DC93E183E977100E95BB8 /* UAChannelAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelAPIClient.m; sourceTree = "<group>"; };
@@ -1001,6 +1004,7 @@
 				1F610DCC17835C3A00BCD96E /* UAInboxMessageList.h */,
 				1F610DCD17835C3A00BCD96E /* UAInboxMessageList.m */,
 				4903207F17BD55E800E03BA1 /* UAInboxMessageListDelegate.h */,
+				CC6773C019B11C1F00B016EC /* UAInboxPushHandler+Internal.h */,
 				1F610DCF17835C3A00BCD96E /* UAInboxPushHandler.h */,
 				1F610DD017835C3A00BCD96E /* UAInboxPushHandler.m */,
 				1F610DD317835C3A00BCD96E /* UAInboxUtils.h */,
@@ -1575,6 +1579,7 @@
 				49BADDCD198B0851000FF3D5 /* UABespokeCloseView.h in Headers */,
 				49BADDCE198B0851000FF3D5 /* UARichContentWindow.h in Headers */,
 				49BADDCF198B0851000FF3D5 /* UANativeBridge.h in Headers */,
+				CC6773C219B11C1F00B016EC /* UAInboxPushHandler+Internal.h in Headers */,
 				49BADDD0198B0852000FF3D5 /* UAAddTagsAction.h in Headers */,
 				49BADDD1198B0852000FF3D5 /* UARemoveTagsAction.h in Headers */,
 				49BADDD2198B0852000FF3D5 /* UAModifyTagsAction.h in Headers */,
@@ -1749,6 +1754,7 @@
 				49D11C1217270C6E0058E7C3 /* UAHTTPRequestEngine.h in Headers */,
 				495048A71738812500F8B5BE /* UADelayOperation.h in Headers */,
 				1F610E0517835C3A00BCD96E /* UAPush.h in Headers */,
+				CC6773C119B11C1F00B016EC /* UAInboxPushHandler+Internal.h in Headers */,
 				1F610DE817835C3A00BCD96E /* UAInboxDefaultJSDelegate.h in Headers */,
 				CC7DC941183E977100E95BB8 /* UAChannelAPIClient.h in Headers */,
 				49416D6818C513F500A18B72 /* UALandingPageOverlayController.h in Headers */,
