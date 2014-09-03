@@ -75,15 +75,6 @@ SINGLETON_IMPLEMENTATION(UAPush)
 
 static Class _uiClass;
 
-// Self refers to the class at this point in execution
-// The self == check is because that a sublcass that does not implement this method
-// forwards it up the chain. It will only be called once by this class
-+ (void)initialize {
-    if (self == [UAPush class]) {
-        [self registerNSUserDefaults];
-    }
-}
-
 -(void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -885,22 +876,6 @@ BOOL deferChannelCreationOnForeground = false;
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithObject:[NSNumber numberWithBool:enabled] forKey:UAUserPushNotificationsEnabledKey];
     [[NSUserDefaults standardUserDefaults] registerDefaults:dictionary];
     _userPushNotificationsEnabledByDefault = enabled;
-}
-
-#pragma mark -
-#pragma mark NSUserDefaults
-
-+ (void)registerNSUserDefaults {
-    // Migration for pre 1.3.0 library quiet time settings
-    // This pulls an object, instead of a BOOL
-    id quietTimeEnabled = [[NSUserDefaults standardUserDefaults] valueForKey:UAPushQuietTimeEnabledSettingsKey];
-    NSDictionary *currentQuietTime = [[NSUserDefaults standardUserDefaults] valueForKey:UAPushQuietTimeSettingsKey];
-
-    if (!quietTimeEnabled && currentQuietTime) {
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushQuietTimeEnabledSettingsKey];
-    } else {
-        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushQuietTimeEnabledSettingsKey];
-    }
 }
 
 - (BOOL)beginRegistrationBackgroundTask {

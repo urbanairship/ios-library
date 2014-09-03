@@ -137,12 +137,6 @@ extern UAPushUserInfoKey *const UAPushChannelCreationOnForeground;
 - (void)channelCreated:(NSString *)channelID channelLocation:(NSString *)channelLocation;
 
 /**
- * Register the user defaults for this class. You should not need to call this method
- * unless you are bypassing UAirship
- */
-+ (void)registerNSUserDefaults;
-
-/**
  * Used to trim whitespace and filter out tags with unacceptable tag length
  * @param tags Tags as an NSArray.
  */
