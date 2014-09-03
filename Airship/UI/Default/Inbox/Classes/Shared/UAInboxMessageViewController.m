@@ -49,6 +49,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @property (nonatomic, strong) UIBarButtonItem *upButtonItem;
 @property (nonatomic, strong) UIBarButtonItem *downButtonItem;
 
+@property (nonatomic, strong) NSArray *messages;
+
 /**
  * The UIWebView used to display the message content.
  */
@@ -85,7 +87,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             self.navigationController.navigationBar.translucent = NO;
             self.navigationController.navigationBar.opaque = YES;
         }
+
+        self.messages = [UAInbox shared].messageList.messages;
     }
+
 
     return self;
 }
@@ -111,8 +116,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma mark UI
 
 - (void)refreshHeader {
-    NSUInteger count = [[UAInbox shared].messageList messageCount];
-    NSUInteger index = [[UAInbox shared].messageList indexOfMessage:self.message];
+    NSUInteger count = [self.messages count];
+    NSUInteger index = [self.messages indexOfObject:self.message];
 
     if (index < count) {
         self.title = [NSString stringWithFormat:UA_INBOX_TR(@"UA_Message_Fraction"), index+1, count];
@@ -126,13 +131,22 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)loadMessageForID:(NSString *)mid {
-    UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:mid];
-    if (msg == nil) {
+    NSUInteger index = NSNotFound;
+
+    for (NSUInteger i = 0; i < [self.messages count]; i++) {
+        UAInboxMessage *message = [self.messages objectAtIndex:i];
+        if ([message.messageID isEqualToString:mid]) {
+            index = i;
+            break;
+        }
+    }
+
+    if (index == NSNotFound) {
         UALOG(@"Can not find message with ID: %@", mid);
         return;
     }
 
-    [self loadMessageAtIndex:[[UAInbox shared].messageList indexOfMessage:msg]];
+    [self loadMessageAtIndex:index];
 }
 
 - (void)loadMessageAtIndex:(NSUInteger)index {
@@ -148,7 +162,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     [self.view insertSubview:self.webView belowSubview:self.statusBar];
 
-    self.message = [[UAInbox shared].messageList messageAtIndex:index];
+    self.message = [self.messages objectAtIndex:index];
     if (self.message == nil) {
         UALOG(@"Can not find message with index: %lu", (unsigned long)index);
         return;
@@ -187,7 +201,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     // Mark message as read after it has finished loading
     if(self.message.unread) {
-        [self.message markAsReadWithDelegate:nil];
+        [self.message markMessageReadWithCompletionHandler:nil];
     }
 
     [self.webView fireUALibraryReadyEvent];
@@ -224,7 +238,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (IBAction)navigationAction:(id)sender {
 
-    NSUInteger index = [[UAInbox shared].messageList indexOfMessage:self.message];
+    NSUInteger index = [self.messages indexOfObject:self.message];
 
     if (self.upButtonItem == sender) {
         [self loadMessageAtIndex:index-1];
@@ -234,14 +248,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)updateMessageNavButtons {
-    NSUInteger index = [[UAInbox shared].messageList indexOfMessage:self.message];
+    NSUInteger index = [self.messages indexOfObject:self.message];
 
     if (!self.message || index == NSNotFound) {
         self.upButtonItem.enabled = NO;
         self.downButtonItem.enabled = NO;
     } else {
         self.upButtonItem.enabled = (index > 0);
-        self.downButtonItem.enabled = (index < ([[UAInbox shared].messageList messageCount] - 1));
+        self.downButtonItem.enabled = (index < ([self.messages count] - 1));
     }
 
     UALOG(@"update nav %lu, of %lu", (unsigned long)index, (unsigned long)[[UAInbox shared].messageList messageCount]);
@@ -250,6 +264,21 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma mark NSNotificationCenter callbacks
 
 - (void)messageListUpdated {
+    // Refresh the message array
+    self.messages = [UAInbox shared].messageList.messages;
+
+    // Refresh the new instance of the current message
+    NSString *messageID = self.message.messageID;
+    self.message = nil;
+    if (messageID) {
+        for (UAInboxMessage *message in self.messages) {
+            if ([message.messageID isEqualToString:messageID]) {
+                self.message = message;
+                break;
+            }
+        }
+    }
+
     [self refreshHeader];
 }
 
