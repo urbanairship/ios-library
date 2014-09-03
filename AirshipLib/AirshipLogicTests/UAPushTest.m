@@ -1058,29 +1058,18 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
 }
 
-
-- (void)testRegisterNSUserDefaultsQuietTime {
+/**
+ * Test quietTimeEnabled.
+ */
+- (void)testSetQuietTimeEnabled {
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushQuietTimeEnabledSettingsKey];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushQuietTimeSettingsKey];
+    XCTAssertFalse(self.push.quietTimeEnabled, @"QuietTime should be disabled");
 
-    [UAPush registerNSUserDefaults];
-    XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAPushQuietTimeEnabledSettingsKey],
-                   @"Quiet time should not be enabled if neither setting or enabled is set");
+    [UAPush shared].quietTimeEnabled = YES;
+    XCTAssertTrue(self.push.quietTimeEnabled, @"QuietTime should be enabled");
 
-    // Add quiet time dictionary and remove the enable setting
-    [[NSUserDefaults standardUserDefaults] setValue:[NSDictionary dictionary] forKey:UAPushQuietTimeSettingsKey];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushQuietTimeEnabledSettingsKey];
-
-    [UAPush registerNSUserDefaults];
-    XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UAPushQuietTimeEnabledSettingsKey],
-                  @"Quiet time should be enabled if quiet time setting has a value but enabled does not");
-
-    // Set quiet time enabled to false to make sure it does not get set back to true
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushQuietTimeEnabledSettingsKey];
-
-    [UAPush registerNSUserDefaults];
-    XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAPushQuietTimeEnabledSettingsKey],
-                   @"Quiet time should not be enabled if it already is set to disable");
+    [UAPush shared].quietTimeEnabled = NO;
+    XCTAssertFalse(self.push.quietTimeEnabled, @"QuietTime should be disabled");
 }
 
 /**
