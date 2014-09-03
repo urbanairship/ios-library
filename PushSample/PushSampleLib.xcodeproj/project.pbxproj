@@ -1508,7 +1508,7 @@
 				GCC_PREFIX_HEADER = PushSample_Prefix.pch;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				INFOPLIST_FILE = "PushSample-Kit-Info.plist";
+				INFOPLIST_FILE = "PushSample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				OTHER_CFLAGS = "-DUADEBUG";
@@ -1546,7 +1546,7 @@
 				GCC_PREFIX_HEADER = PushSample_Prefix.pch;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				INFOPLIST_FILE = "PushSample-Kit-Info.plist";
+				INFOPLIST_FILE = "PushSample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				OTHER_CFLAGS = "-DUADEBUG";
@@ -1581,7 +1581,7 @@
 				GCC_PREFIX_HEADER = PushSample_Prefix.pch;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				INFOPLIST_FILE = "PushSample-Kit-Info.plist";
+				INFOPLIST_FILE = "PushSample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				OTHER_CODE_SIGN_FLAGS = "";
