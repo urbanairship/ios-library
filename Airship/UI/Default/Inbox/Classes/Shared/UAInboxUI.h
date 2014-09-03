@@ -24,49 +24,14 @@
  */
 
 #import <Foundation/Foundation.h>
-
-#import "UAInboxAlertHandler.h"
-#import "UAInbox.h"
-#import "UAInboxPushHandler.h"
-#import "UAInboxMessageListController.h"
+#import "UAGlobal.h"
 
 #define UA_INBOX_TR(key) [[UAInboxUI shared].localizationBundle localizedStringForKey:key value:@"" table:nil]
 
-/**
- * This class is the default rich push UI impelementation.  When it is
- * designated as the [UAInbox uiClass], launching the inbox will cause it
- * to be displayed in a modal view controller.
- */
-@interface UAInboxUI : NSObject <UAInboxUIProtocol, UAInboxPushHandlerDelegate>
-/**
- * Set this property to YES if the class should display in-app messages
- * using UAInboxOverlayController, and NO if it should navigate to the
- * inbox and display the message as though it had been selected.
- */
-@property (nonatomic, assign) BOOL useOverlay;
-
-/**
- * The parent view controller the inbox will be launched from.
- */
-@property (nonatomic, strong) UIViewController *inboxParentController;
+@interface UAInboxUI : NSObject
 
 @property (nonatomic, strong) NSBundle *localizationBundle;
 
 SINGLETON_INTERFACE(UAInboxUI);
-
-///---------------------------------------------------------------------------------------
-/// @name UAInboxUIProtocol Methods
-///---------------------------------------------------------------------------------------
-+ (void)quitInbox;
-+ (void)displayInboxInViewController:(UIViewController *)parentViewController animated:(BOOL)animated;
-+ (void)displayMessageWithID:(NSString *)messageID inViewController:(UIViewController *)parentViewController;
-
-///---------------------------------------------------------------------------------------
-/// @name UAInboxPushHandlerDelegate Methods
-///---------------------------------------------------------------------------------------
-- (void)richPushNotificationArrived:(NSDictionary *)message;
-- (void)richPushMessageAvailable:(UAInboxMessage *)richPushMessage;
-- (void)applicationLaunchedWithRichPushNotification:(NSDictionary *)notification;
-- (void)launchRichPushMessageAvailable:(UAInboxMessage *)richPushMessage;
 
 @end
