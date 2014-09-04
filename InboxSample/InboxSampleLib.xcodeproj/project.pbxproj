@@ -91,7 +91,7 @@
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
 		63C51F0711D30F870078DED4 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AB3B21D10A0063D0035E6BD /* SystemConfiguration.framework */; };
-		76A98E6919B7ADD0003F6BB0 /* UAInteractiveNotifications.strings in Resources */ = {isa = PBXBuildFile; fileRef = 76A98E6719B7ADD0003F6BB0 /* UAInteractiveNotifications.strings */; };
+		7639296E19B92A770076D16A /* UAInteractiveNotifications.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7639296419B92A770076D16A /* UAInteractiveNotifications.strings */; };
 		9A465ED40FF4AB1800DCABE9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FBB90FCB114B0007E1BE /* CoreGraphics.framework */; };
 		9A50FAE90FCA81810007E1BE /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAE80FCA81810007E1BE /* CFNetwork.framework */; };
 		9A50FAEF0FCA81A40007E1BE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAEE0FCA81A40007E1BE /* Foundation.framework */; };
@@ -220,7 +220,15 @@
 		49BEFC8119B103C8008D4999 /* UAInboxUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxUI.m; sourceTree = "<group>"; };
 		49E001A8154F63F3009305B7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		63CB54BB1247107C00DF2EBC /* InboxTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InboxTests-Info.plist"; sourceTree = "<group>"; };
-		76A98E6819B7ADD0003F6BB0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Resources/en.lproj/UAInteractiveNotifications.strings; sourceTree = "<group>"; };
+		7639296519B92A770076D16A /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/UAInteractiveNotifications.strings; sourceTree = "<group>"; };
+		7639296619B92A770076D16A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UAInteractiveNotifications.strings; sourceTree = "<group>"; };
+		7639296719B92A770076D16A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/UAInteractiveNotifications.strings; sourceTree = "<group>"; };
+		7639296819B92A770076D16A /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/UAInteractiveNotifications.strings; sourceTree = "<group>"; };
+		7639296919B92A770076D16A /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/UAInteractiveNotifications.strings; sourceTree = "<group>"; };
+		7639296A19B92A770076D16A /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/UAInteractiveNotifications.strings; sourceTree = "<group>"; };
+		7639296B19B92A770076D16A /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt; path = pt.lproj/UAInteractiveNotifications.strings; sourceTree = "<group>"; };
+		7639296C19B92A770076D16A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/UAInteractiveNotifications.strings"; sourceTree = "<group>"; };
+		7639296D19B92A770076D16A /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/UAInteractiveNotifications.strings"; sourceTree = "<group>"; };
 		9A50FAE80FCA81810007E1BE /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		9A50FAEE0FCA81A40007E1BE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		9A50FAF50FCA81BD0007E1BE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -414,6 +422,14 @@
 			name = "User Interfaces";
 			sourceTree = "<group>";
 		};
+		7639296319B92A770076D16A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				7639296419B92A770076D16A /* UAInteractiveNotifications.strings */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		9A9CBA1E0FCC559100435BCB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -465,7 +481,7 @@
 		D9FFC79F124BFD3700E8BD30 /* Default */ = {
 			isa = PBXGroup;
 			children = (
-				76A98E6719B7ADD0003F6BB0 /* UAInteractiveNotifications.strings */,
+				7639296319B92A770076D16A /* Resources */,
 				E9CB358512B89AC0002E39EA /* Inbox */,
 			);
 			path = Default;
@@ -594,6 +610,14 @@
 				French,
 				German,
 				en,
+				de,
+				es,
+				fr,
+				it,
+				ja,
+				pt,
+				"zh-Hans",
+				"zh-Hant",
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
@@ -669,7 +693,7 @@
 				1FE4238B188475C900624335 /* list-image-placeholder.png in Resources */,
 				D5C75B5C12BC20160041239E /* Icon-72.png in Resources */,
 				D5C75B5D12BC20160041239E /* iPadDefault-Landscape.png in Resources */,
-				76A98E6919B7ADD0003F6BB0 /* UAInteractiveNotifications.strings in Resources */,
+				7639296E19B92A770076D16A /* UAInteractiveNotifications.strings in Resources */,
 				D5C75B5E12BC20160041239E /* iPadDefault-Portrait.png in Resources */,
 				D5C75B6012BC20250041239E /* Icon-Small@2x.png in Resources */,
 				D5C75B6312BC20320041239E /* Default@2x.png in Resources */,
@@ -769,10 +793,18 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		76A98E6719B7ADD0003F6BB0 /* UAInteractiveNotifications.strings */ = {
+		7639296419B92A770076D16A /* UAInteractiveNotifications.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				76A98E6819B7ADD0003F6BB0 /* en */,
+				7639296519B92A770076D16A /* de */,
+				7639296619B92A770076D16A /* en */,
+				7639296719B92A770076D16A /* es */,
+				7639296819B92A770076D16A /* fr */,
+				7639296919B92A770076D16A /* it */,
+				7639296A19B92A770076D16A /* ja */,
+				7639296B19B92A770076D16A /* pt */,
+				7639296C19B92A770076D16A /* zh-Hans */,
+				7639296D19B92A770076D16A /* zh-Hant */,
 			);
 			name = UAInteractiveNotifications.strings;
 			sourceTree = "<group>";
