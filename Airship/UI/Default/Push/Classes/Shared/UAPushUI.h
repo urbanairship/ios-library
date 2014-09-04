@@ -32,29 +32,10 @@
  * The default implementation provided in the library's sample UI distribution.
  */
 
-@interface UAPushUI : NSObject<UAPushUIProtocol>
+@interface UAPushUI : NSObject
 
-@property (nonatomic, strong) UIViewController *apnsSettingsViewController;
-@property (nonatomic, strong) UIViewController *tokenSettingsViewController;
 @property (nonatomic, strong) NSBundle *localizationBundle;
 
 SINGLETON_INTERFACE(UAPushUI)
-
-/**
- * Open the push token demo screen. The default implementation provides a UI for vieweing and
- * managing device token metadata.
- *
- * @param viewController The parent view controller.
- * @param animated `YES` to animate the display, otherwise `NO`
- */
-+ (void)openTokenSettings:(UIViewController *)viewController
-                 animated:(BOOL)animated;
-
-/**
- * Close the push token demo screen.
- *
- * @param animated `YES` to animate the view transition, otherwise `NO`
- */
- + (void)closeTokenSettingsAnimated:(BOOL)animated;
 
 @end
