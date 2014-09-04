@@ -26,8 +26,6 @@
 #import "SampleViewController.h"
 #import "UAPush.h"
 #import "UAirship.h"
-#import "UAPushUI.h"
-
 
 @implementation SampleViewController
 
@@ -42,7 +40,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.version.text = [NSString stringWithFormat:@"UAirship Version: %@", [UAirshipVersion get]];
-    [UAPush useCustomUI:[UAPushUI class]];
 }
 
 
