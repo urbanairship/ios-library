@@ -27,7 +27,6 @@
 #import "UADeviceRegistrationPayload.h"
 #import "UADeviceRegistrar+Internal.h"
 
-#define PUSH_UI_CLASS @"UAPushUI"
 #define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"
 
 typedef NSString UAPushSettingsKey;

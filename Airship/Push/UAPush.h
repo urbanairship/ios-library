@@ -69,34 +69,6 @@
 
 @end
 
-//---------------------------------------------------------------------------------------
-// UAPushUIProtocol Protocol
-//---------------------------------------------------------------------------------------
-
-/**
- * Implement this protocol to provide a custom UI for use with UAPush. The default
- * implementation, UAPushUI, is provided in the library's sample UI distribution.
- */
-@protocol UAPushUIProtocol
-
-/**
- * Open a push settings screen. The default implementation provides settings for toggling push
- * on and off and managing quiet time.
- *
- * @param viewController The parent view controller.
- * @param animated `YES` to animate the display, otherwise `NO`
- */
-+ (void)openApnsSettings:(UIViewController *)viewController
-                animated:(BOOL)animated;
-
-/**
- * Close the push settings screen.
- *
- * @param animated `YES` to animate the view transition, otherwise `NO`
- */
-+ (void)closeApnsSettingsAnimated:(BOOL)animated;
-
-@end
 
 //---------------------------------------------------------------------------------------
 // UAPushNotificationDelegate Protocol
@@ -220,40 +192,6 @@
 @interface UAPush : NSObject <UADeviceRegistrarDelegate>
 
 SINGLETON_INTERFACE(UAPush);
-
-///---------------------------------------------------------------------------------------
-/// @name UAPush User Interface
-///---------------------------------------------------------------------------------------
-
-
-/**
- * Use a custom UI implementation.
- * Replaces the default push UI, defined in `UAPushUI`, with
- * a custom implementation.
- *
- * @see UAPushUIProtocol
- *
- * @param customUIClass An implementation of UAPushUIProtocol
- */
-+ (void)useCustomUI:(Class)customUIClass;
-
-/**
- * Open the push settings screen. The default implementation provides settings for toggling push
- * on and off and managing quiet time.
- *
- * @param viewController The parent view controller.
- * @param animated `YES` to animate the display, otherwise `NO`
- */
-+ (void)openApnsSettings:(UIViewController *)viewController
-                animated:(BOOL)animated;
-
-/**
- * Close the push settings screen.
- *
- * @param animated `YES` to animate the view transition, otherwise `NO`
- */
-+ (void)closeApnsSettingsAnimated:(BOOL)animated;
-
 
 ///---------------------------------------------------------------------------------------
 /// @name Push Notifications
