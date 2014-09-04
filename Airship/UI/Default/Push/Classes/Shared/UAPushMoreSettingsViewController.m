@@ -79,17 +79,6 @@ static NSUInteger channelRowCount = 1;
 
     self.title = @"Push Notification Demo";
 
-    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc]
-                                              initWithTitle:@"Back"
-                                              style:UIBarButtonItemStyleBordered
-                                              target:nil
-                                              action:nil];
-
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
-                                              initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                              target:self
-                                              action:@selector(quit)];
-
     // make our existing layout work beyond iOS6
     if ([self respondsToSelector:NSSelectorFromString(@"edgesForExtendedLayout")]) {
         [self setValue:[NSNumber numberWithInt:0] forKey:@"edgesForExtendedLayout"];
@@ -179,10 +168,6 @@ static NSUInteger channelRowCount = 1;
     self.locationCell.textLabel.text = @"Location";
     
     [self updateCellValues];
-}
-
-- (void)quit {
-    [UAPushUI closeTokenSettingsAnimated:YES];
 }
 
 #pragma mark -

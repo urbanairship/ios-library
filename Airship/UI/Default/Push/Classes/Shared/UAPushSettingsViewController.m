@@ -75,6 +75,11 @@ enum {
     [super viewWillAppear:animated];
 }
 
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self saveState];
+}
+
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
     
     //if shown, update picker and scroll offset
@@ -149,10 +154,9 @@ enum {
 #pragma mark logic
 
 - (void)initViews {
+
     self.title = UA_PU_TR(@"UA_Push_Settings_Title");
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                                                            target:self
-                                                                                            action:@selector(quit)];
+
 
     NSUInteger types = [UAPush currentEnabledNotificationTypes];
     UISwitch *strongPushEnabledSwitch = self.pushEnabledSwitch;
@@ -258,7 +262,7 @@ enum {
     }
 }
 
-- (IBAction)quit {
+- (void)saveState {
     
     if (self.dirty) {
         UISwitch *strongPushEnabledSwitch = self.pushEnabledSwitch;
@@ -271,8 +275,6 @@ enum {
         
         self.dirty = NO;
     }
-    
-    [UAPush closeApnsSettingsAnimated:YES];
 }
 
 - (IBAction)pickerValueChanged:(id)sender {
