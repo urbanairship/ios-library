@@ -27,24 +27,48 @@
 #import "UAPush.h"
 #import "UAirship.h"
 #import "UAPushUI.h"
-
+#import "UAPushSettingsViewController.h"
+#import "UAPushMoreSettingsViewController.h"
 
 @implementation SampleViewController
 
+- (UAPushSettingsViewController *)buildAPNSSettingsViewController {
+    UAPushSettingsViewController *vc = [[UAPushSettingsViewController alloc] initWithNibName:@"UAPushSettingsView"
+                                                                                      bundle:nil];
+
+    vc.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                                           target:self
+                                                                                         action:@selector(closeSettings)];
+
+    return vc;
+}
+
+- (UAPushMoreSettingsViewController *)buildTokenSettingsViewController {
+    UAPushMoreSettingsViewController *vc = [[UAPushMoreSettingsViewController alloc] initWithNibName:@"UAPushMoreSettingsView"
+                                                                                              bundle:nil];
+    vc.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
+                                              initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                              target:self
+                                            action:@selector(closeSettings)];
+
+    return vc;
+}
+
 - (IBAction)buttonPressed:(id)sender {
+    UIViewController *root;
     if (sender == self.settingsButton) {
-        [UAPush openApnsSettings:self animated:YES];
+        root = [self buildAPNSSettingsViewController];
     } else if (sender == self.tokenButton) {
-        [UAPushUI openTokenSettings:self animated:YES];
+        root = [self buildTokenSettingsViewController];
     }
+
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:root];
+
+    [self presentViewController:nav animated:YES completion:nil];
 }
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.version.text = [NSString stringWithFormat:@"UAirship Version: %@", [UAirshipVersion get]];
-    [UAPush useCustomUI:[UAPushUI class]];
+- (void)closeSettings {
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
-
-
 
 @end

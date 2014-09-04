@@ -43,47 +43,4 @@ SINGLETON_IMPLEMENTATION(UAPushUI)
     return self;
 }
 
-- (UIViewController *)apnsSettingsViewController {
-    if (!_apnsSettingsViewController) {
-        UIViewController *root = [[UAPushSettingsViewController alloc]
-                                   initWithNibName:@"UAPushSettingsView"
-                                            bundle:nil];
-        _apnsSettingsViewController = [[UINavigationController alloc] initWithRootViewController:root];
-    }
-    return _apnsSettingsViewController;
-}
-
-- (UIViewController *)tokenSettingsViewController {
-    if (!_tokenSettingsViewController) {
-        UIViewController *root = [[UAPushMoreSettingsViewController alloc]
-                                   initWithNibName:@"UAPushMoreSettingsView"
-                                            bundle:nil];
-        _tokenSettingsViewController = [[UINavigationController alloc] initWithRootViewController:root];
-    }
-    return _tokenSettingsViewController;
-}
-
-+ (void)openApnsSettings:(UIViewController *)viewController
-                animated:(BOOL)animated {
-    [viewController presentViewController:[UAPushUI shared].apnsSettingsViewController
-                                 animated:animated
-                               completion:NULL];
-}
-
-+ (void)openTokenSettings:(UIViewController *)viewController
-                 animated:(BOOL)animated {
-    [viewController presentViewController:[UAPushUI shared].tokenSettingsViewController
-                                 animated:animated
-                               completion:NULL];
-}
-
-+ (void)closeApnsSettingsAnimated:(BOOL)animated {
-    [[UAPushUI shared].apnsSettingsViewController dismissViewControllerAnimated:animated completion:NULL];
-}
-
-+ (void)closeTokenSettingsAnimated:(BOOL)animated {
-    [[UAPushUI shared].tokenSettingsViewController dismissViewControllerAnimated:animated completion:NULL];
-}
-
-
 @end

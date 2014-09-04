@@ -63,8 +63,11 @@
 @property (nonatomic, assign) BOOL dirty;
 @property (nonatomic, assign) BOOL pickerDisplayed;
 
+/**
+ * Saves settings changed by the user.
+ */
+- (void)saveState;
 
-- (IBAction)quit;
 - (IBAction)pickerValueChanged:(id)sender;
 - (IBAction)switchValueChanged:(id)sender;
 

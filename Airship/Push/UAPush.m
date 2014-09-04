@@ -73,8 +73,6 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 SINGLETON_IMPLEMENTATION(UAPush)
 #pragma clang diagnostic pop
 
-static Class _uiClass;
-
 -(void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -345,21 +343,6 @@ static Class _uiClass;
     _notificationTypes = (UIRemoteNotificationType) userNotificationTypes;
 }
 
-#pragma mark -
-#pragma mark Private methods
-
-- (Class)uiClass {
-    if (!_uiClass) {
-        _uiClass = NSClassFromString(PUSH_UI_CLASS);
-    }
-    
-    if (!_uiClass) {
-        UA_LDEBUG(@"Push UI class not found.");
-    }
-    
-    return _uiClass;
-}
-
 
 #pragma mark -
 #pragma mark Open APIs - Property Setters
@@ -398,25 +381,6 @@ static Class _uiClass;
         allocOncePredicateUAPush = 0;
         sharedOncePredicateUAPush = 0;
     }
-}
-
-#pragma mark -
-#pragma mark Open APIs - Custom UI
-
-+ (void)useCustomUI:(Class)customUIClass {
-    _uiClass = customUIClass;
-}
-
-#pragma mark -
-#pragma mark Open APIs - UI Display
-
-+ (void)openApnsSettings:(UIViewController *)viewController
-                animated:(BOOL)animated {
-    [[[UAPush shared] uiClass] openApnsSettings:viewController animated:animated];
-}
-
-+ (void)closeApnsSettingsAnimated:(BOOL)animated {
-    [[[UAPush shared] uiClass] closeApnsSettingsAnimated:animated];
 }
 
 #pragma mark -
