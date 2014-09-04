@@ -6,6 +6,19 @@ Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 ------------------------------
 iOS8 Preview (5.0.0.{build #})
 ------------------------------
+
+Added to preview on 2014-9-4
+- Support for armv7s architecture (missing from original preview).
+- Removed UAInboxUI and UAPushUI protocols. Sample code now displays views directly.
+- Sample projects now include targets that use the embedded framework (static library still used in the original targets).
+- Added support for localization of interactive notification text (including out of the box actions provided by UA).
+- Removed a number of previously deprecated methods/classes.
+- The inbox now stores local state for read/delete. The UI no longer needs to block while updates are made.
+- Modernized init and factory methods. All now return instancetype rather than id or concrete classes.
+- Added major updates to the generated documentation (in reference-docs).
+- Removed duplicate headers in the framework target.
+
+Added to preview on 2014-8-27
 - Initial preview release of 5.0.0. This is not intended for use in an App Store app.
 - Supports iOS6+.
 - Includes an Embedded.framework for use in applications with a minimum SDK version of 8.0.
