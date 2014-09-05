@@ -49,16 +49,13 @@
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UALOG(@"Significant change did change authorization status %d", status);
     switch (status) {
-        case kCLAuthorizationStatusAuthorized:
-            break;
-        case kCLAuthorizationStatusNotDetermined:
-            break;
         case kCLAuthorizationStatusDenied:
-            [self stopReportingLocation];
-            break;
         case kCLAuthorizationStatusRestricted:
             [self stopReportingLocation];
             break;
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+        case kCLAuthorizationStatusAuthorizedAlways:
+        case kCLAuthorizationStatusNotDetermined:
         default:
             break;
     }
