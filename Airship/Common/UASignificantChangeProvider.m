@@ -48,16 +48,31 @@
 #pragma mark CLLocationManager Delegate
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UALOG(@"Significant change did change authorization status %d", status);
-    switch (status) {
-        case kCLAuthorizationStatusDenied:
-        case kCLAuthorizationStatusRestricted:
-            [self stopReportingLocation];
-            break;
-        case kCLAuthorizationStatusAuthorizedWhenInUse:
-        case kCLAuthorizationStatusAuthorizedAlways:
-        case kCLAuthorizationStatusNotDetermined:
-        default:
-            break;
+    //iOS 8+
+    if ([CLLocationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+        switch (status) {
+            case kCLAuthorizationStatusDenied:
+            case kCLAuthorizationStatusRestricted:
+                [self stopReportingLocation];
+                break;
+            case kCLAuthorizationStatusAuthorizedAlways:
+            case kCLAuthorizationStatusAuthorizedWhenInUse:
+            case kCLAuthorizationStatusNotDetermined:
+            default:
+                break;
+        }
+    }
+    else {
+        switch (status) {
+            case kCLAuthorizationStatusDenied:
+            case kCLAuthorizationStatusRestricted:
+                [self stopReportingLocation];
+                break;
+            case kCLAuthorizationStatusAuthorized:
+            case kCLAuthorizationStatusNotDetermined:
+            default:
+                break;
+        }
     }
     [self.delegate locationProvider:self withLocationManager:self.locationManager didChangeAuthorizationStatus:status];
 }

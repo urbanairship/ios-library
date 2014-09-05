@@ -129,16 +129,31 @@
 /* iOS 4.2 or better */
 // This is the nuclear option. Subclasses should implement specific action
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-    switch (status) {
-        case kCLAuthorizationStatusDenied:
-        case kCLAuthorizationStatusRestricted:
-            [self stopAllReporting];
-            break;
-        case kCLAuthorizationStatusAuthorizedAlways:
-        case kCLAuthorizationStatusAuthorizedWhenInUse:
-        case kCLAuthorizationStatusNotDetermined:
-        default:
-            break;
+    //iOS 8+
+    if ([CLLocationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+        switch (status) {
+            case kCLAuthorizationStatusDenied:
+            case kCLAuthorizationStatusRestricted:
+                [self stopAllReporting];
+                break;
+            case kCLAuthorizationStatusAuthorizedAlways:
+            case kCLAuthorizationStatusAuthorizedWhenInUse:
+            case kCLAuthorizationStatusNotDetermined:
+            default:
+                break;
+        }
+    }
+    else {
+        switch (status) {
+            case kCLAuthorizationStatusDenied:
+            case kCLAuthorizationStatusRestricted:
+                [self stopAllReporting];
+                break;
+            case kCLAuthorizationStatusAuthorized:
+            case kCLAuthorizationStatusNotDetermined:
+            default:
+                break;
+        }
     }
 
     id<UALocationProviderDelegate> strongDelegate = self.delegate;
