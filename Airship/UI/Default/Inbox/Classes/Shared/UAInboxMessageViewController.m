@@ -25,7 +25,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "UAInbox.h"
 #import "UAInboxMessageViewController.h"
-#import "UAInboxUI.h"
+#import "UAInboxLocalization.h"
 #import "UAInboxMessageList.h"
 
 #import "UIWebView+UAAdditions.h"
@@ -69,7 +69,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (instancetype)initWithNibName:(NSString *)nibName bundle:(NSBundle *)nibBundle {
     if (self = [super initWithNibName:nibName bundle:nibBundle]) {
         
-        self.title = UA_INBOX_TR(@"UA_Message");
+        self.title = UAInboxLocalizedString(@"UA_Message");
 
         self.upButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:103/* system 'up' bitmap */
                                                                           target:self
@@ -120,7 +120,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     NSUInteger index = [self.messages indexOfObject:self.message];
 
     if (index < count) {
-        self.title = [NSString stringWithFormat:UA_INBOX_TR(@"UA_Message_Fraction"), index+1, count];
+        self.title = [NSString stringWithFormat:UAInboxLocalizedString(@"UA_Message_Fraction"), index+1, count];
     } else {
         [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
         self.statusBar.hidden = YES;
@@ -217,10 +217,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     
     if (self.shouldShowAlerts) {
         
-        UIAlertView *someError = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Mailbox_Error_Title")
-                                                            message:UA_INBOX_TR(@"UA_Error_Fetching_Message")
+        UIAlertView *someError = [[UIAlertView alloc] initWithTitle:UAInboxLocalizedString(@"UA_Mailbox_Error_Title")
+                                                            message:UAInboxLocalizedString(@"UA_Error_Fetching_Message")
                                                            delegate:self
-                                                  cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
+                                                  cancelButtonTitle:UAInboxLocalizedString(@"UA_OK")
                                                   otherButtonTitles:nil];
         [someError show];
     }

@@ -25,7 +25,7 @@
 
 #import "UAirship.h"
 #import "UAPush.h"
-#import "UAPushUI.h"
+#import "UAPushLocalization.h"
 #import "UAPushSettingsViewController.h"
 #import "UALocationService.h"
 
@@ -155,8 +155,7 @@ enum {
 
 - (void)initViews {
 
-    self.title = UA_PU_TR(@"UA_Push_Settings_Title");
-
+    self.title = UAPushLocalizedString(@"UA_Push_Settings_Title");
 
     NSUInteger types = [UAPush currentEnabledNotificationTypes];
     UISwitch *strongPushEnabledSwitch = self.pushEnabledSwitch;
@@ -175,14 +174,14 @@ enum {
         strongAirshipLocationEnabledSwitch.on = NO;
     }
     
-    self.pushEnabledLabel.text = UA_PU_TR(@"UA_Push_Settings_Enabled_Label");
-    self.airshipLocationEnabledLabel.text = UA_PU_TR(@"UA_Push_Settings_Location_Enabled_Label");
-    self.quietTimeLabel.text = UA_PU_TR(@"UA_Push_Settings_Quiet_Time_Label");
+    self.pushEnabledLabel.text = UAPushLocalizedString(@"UA_Push_Settings_Enabled_Label");
+    self.airshipLocationEnabledLabel.text = UAPushLocalizedString(@"UA_Push_Settings_Location_Enabled_Label");
+    self.quietTimeLabel.text = UAPushLocalizedString(@"UA_Push_Settings_Quiet_Time_Label");
     
     self.fromCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
     self.toCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-    self.fromCell.textLabel.text = UA_PU_TR(@"UA_Quiet_Time_From");
-    self.toCell.textLabel.text = UA_PU_TR(@"UA_Quiet_Time_To");
+    self.fromCell.textLabel.text = UAPushLocalizedString(@"UA_Quiet_Time_From");
+    self.toCell.textLabel.text = UAPushLocalizedString(@"UA_Quiet_Time_To");
 
     
     NSDate *date1 = nil;
