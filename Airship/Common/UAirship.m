@@ -34,7 +34,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAKeychainUtils.h"
 #import "UALocationService.h"
 #import "UAGlobal.h"
-#import "UAPush.h"
+#import "UAPush+Internal.h"
 #import "UAConfig.h"
 #import "UAApplicationMetrics.h"
 
@@ -299,7 +299,7 @@ UALogLevel uaLogLevel = UALogLevelError;
 
     // Register now
     if ([UAirship shared].config.automaticSetupEnabled) {
-        [[UAPush shared] updateAPNSRegistration];
+        [[UAPush shared] updateRegistration];
     }
 }
 

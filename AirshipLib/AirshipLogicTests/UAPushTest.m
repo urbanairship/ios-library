@@ -484,20 +484,15 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
 /**
  * Test disabling userPushNotificationsEnabled on < iOS8 saves its settings
- * to NSUserDefaults, updates apns registration, and updates a channel registration.
+ * to NSUserDefaults and updates registration.
  */
 - (void)testUserPushNotificationsDisabled {
     [UIUserNotificationSettings hideClass];
 
     self.push.deviceToken = validDeviceToken;
     self.push.userPushNotificationsEnabled = YES;
+    self.push.shouldUpdateAPNSRegistration = NO;
 
-
-    // Add a device token so we get a device api callback
-    [[self.mockedDeviceRegistrar expect] registerPushDisabledWithChannelID:OCMOCK_ANY
-                                                           channelLocation:OCMOCK_ANY
-                                                               withPayload:OCMOCK_ANY
-                                                                forcefully:NO];
 
     [[self.mockedApplication expect] registerForRemoteNotificationTypes:UIRemoteNotificationTypeNone];
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
@@ -513,18 +508,16 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     XCTAssertNoThrow([self.mockedApplication verify],
                      @"userPushNotificationsEnabled should unregister for remote notifications");
-
-    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
-                     @"userPushNotificationsEnabled should make unregister with the device api client");
 }
 
 /**
  * Test disabling userPushNotificationsEnabled on >= iOS8 saves its settings
- * to NSUserDefaults, updates apns registration, and updates a channel registration.
+ * to NSUserDefaults and updates registration.
  */
 - (void)testUserPushNotificationsDisabledIOS8 {
     self.push.userPushNotificationsEnabled = YES;
     self.push.deviceToken = validDeviceToken;
+    self.push.shouldUpdateAPNSRegistration = NO;
 
     // Make sure push is set to YES
     XCTAssertTrue(self.push.userPushNotificationsEnabled, @"userPushNotificationsEnabled should default to YES");
@@ -552,11 +545,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     XCTAssertNoThrow([self.mockedApplication verify],
                      @"userPushNotificationsEnabled should unregister for remote notifications");
-
-    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
-                     @"userPushNotificationsEnabled should make unregister with the device api client");
-
-
 }
 
 /**
@@ -655,9 +643,11 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  * Test update apns registration when user notifications are enabled on < iOS8.
  */
 - (void)testUpdateAPNSRegistrationUserNotificationsEnabled {
+
     [UIUserNotificationSettings hideClass];
     self.push.userPushNotificationsEnabled = YES;
     self.push.notificationTypes = UIRemoteNotificationTypeSound;
+    self.push.shouldUpdateAPNSRegistration = YES;
 
     [[self.mockedApplication expect] registerForRemoteNotificationTypes:UIRemoteNotificationTypeSound];
     [self.push updateAPNSRegistration];
@@ -665,6 +655,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertNoThrow([self.mockedApplication verify],
                      @"should register for push notification types when push is enabled");
 
+    XCTAssertFalse(self.push.shouldUpdateAPNSRegistration, @"Updating APNS registration should set shouldUpdateAPNSRegistration to NO");
 }
 
 /**
@@ -674,12 +665,28 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [UIUserNotificationSettings hideClass];
     self.push.userPushNotificationsEnabled = NO;
     self.push.notificationTypes = UIRemoteNotificationTypeSound;
+    self.push.shouldUpdateAPNSRegistration = YES;
+
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
     [[self.mockedApplication reject] registerForRemoteNotificationTypes:UIRemoteNotificationTypeSound];
+
+    // Add a device token so we get a device api callback
+    [[self.mockedDeviceRegistrar expect] registerPushDisabledWithChannelID:OCMOCK_ANY
+                                                           channelLocation:OCMOCK_ANY
+                                                               withPayload:OCMOCK_ANY
+                                                                forcefully:NO];
+
     [self.push updateAPNSRegistration];
+
 
     XCTAssertNoThrow([self.mockedApplication verify],
                      @"should not register for push notification types when push is disabled");
+
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
+                     @"should update device registration");
+
+    XCTAssertFalse(self.push.shouldUpdateAPNSRegistration, @"Updating APNS registration should set shouldUpdateAPNSRegistration to NO");
 }
 
 /**
@@ -687,6 +694,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  */
 - (void)testUpdateAPNSRegistrationUserNotificationsEnabledIOS8 {
     self.push.userPushNotificationsEnabled = YES;
+    self.push.shouldUpdateAPNSRegistration = YES;
     [[[self.mockDefaultUserNotificationCategories stub] andReturn:[NSSet set]] defaultCategoriesWithRequireAuth:YES];
 
     self.push.userNotificationCategories = [NSSet setWithArray:@[[[UIUserNotificationCategory alloc] init]]];
@@ -699,8 +707,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     XCTAssertNoThrow([self.mockedApplication verify],
                      @"should register for user notification settings when push is enabled");
-}
 
+    XCTAssertFalse(self.push.shouldUpdateAPNSRegistration, @"Updating APNS registration should set shouldUpdateAPNSRegistration to NO");
+}
 
 /**
  * Test setting requireAuthorizationForDefaultCategories requests the correct
@@ -1102,6 +1111,27 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:UABackgroundPushNotificationsEnabledKey];
     XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UABackgroundPushNotificationsEnabledKey],
                    @"UABackgroundPushNotificationsEnabledKey in standardUserDefaults should default to NO");
+}
+
+
+/**
+ * Test update registration when shouldUpdateAPNSRegistration is true, updates
+ * apns registration and not channel registration.
+ */
+- (void)testUpdateRegistrationShouldUpdateAPNS {
+    self.push.shouldUpdateAPNSRegistration = YES;
+
+    // Reject any device registration
+    [[self.mockedDeviceRegistrar reject] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
+                                                   withPayload:OCMOCK_ANY
+                                                    forcefully:NO];
+
+    // Update the registration
+    [self.push updateRegistration];
+
+    // Verify it reset the flag
+    XCTAssertFalse(self.push.shouldUpdateAPNSRegistration, @"updateRegistration should handle APNS registration updates if shouldUpdateAPNSRegistration is YES.");
 }
 
 - (void)testUpdateRegistrationForcefullyPushEnabled {
@@ -2106,7 +2136,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  * Test setting user notification categories filters out any category with the reserved
  * prefix "ua_".
  */
-- (void)testSettingUserNotificationCategories {
+- (void)testSetUserNotificationCategories {
     UIMutableUserNotificationCategory *uaCategory = [[UIMutableUserNotificationCategory alloc] init];
     uaCategory.identifier = @"ua_category";
 
@@ -2122,6 +2152,28 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertFalse([self.push.userNotificationCategories containsObject:uaCategory]);
     XCTAssertTrue([self.push.userNotificationCategories containsObject:customCategory]);
     XCTAssertTrue([self.push.userNotificationCategories containsObject:anotherCustomCategory]);
+
+    XCTAssertTrue(self.push.shouldUpdateAPNSRegistration, "Any APNS changes should update the flag.");
+}
+
+/**
+ * Test set user notification types.
+ */
+- (void)testSetUserNotificationTypes {
+    self.push.userNotificationTypes = UIUserNotificationTypeBadge;
+
+    XCTAssertTrue(self.push.shouldUpdateAPNSRegistration, "Any APNS changes should update the flag.");
+    XCTAssertEqual(self.push.userNotificationTypes, self.push.notificationTypes, @"Setting one type should set the the other type.");
+}
+
+/**
+ * Test set remote notification types.
+ */
+- (void)testSetRemoteNotificationTypes {
+    self.push.notificationTypes = UIRemoteNotificationTypeAlert;
+
+    XCTAssertTrue(self.push.shouldUpdateAPNSRegistration, "Any APNS changes should update the flag.");
+    XCTAssertEqual(self.push.userNotificationTypes, self.push.notificationTypes, @"Setting one type should set the the other type.");
 }
 
 @end
