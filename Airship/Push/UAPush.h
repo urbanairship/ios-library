@@ -237,7 +237,7 @@ SINGLETON_INTERFACE(UAPush);
 /**
  * Notification types this app will request from APNS. Changes to this value
  * will not take effect the next time the app registers with
- * [[UAPush shared] updateAPNSRegistration].
+ * [[UAPush shared] updateRegistration].
  *
  * Defaults to alert, sound and badge.
  *
@@ -248,7 +248,7 @@ SINGLETON_INTERFACE(UAPush);
 /**
  * User Notification types this app will request from APNS. Changes to this value
  * will not take effect the next time the app registers with
- * [[UAPush shared] updateAPNSRegistration].
+ * [[UAPush shared] updateRegistration].
  *
  * Defaults to alert, sound and badge.
  */
@@ -259,7 +259,7 @@ SINGLETON_INTERFACE(UAPush);
  * categories will be unaffected by this field.
  *
  * Changes to this value will not take effect the next time the app registers
- * with [[UAPush shared] updateAPNSRegistration].
+ * with [[UAPush shared] updateRegistration].
  */
 @property (nonatomic, strong) NSSet *userNotificationCategories;
 
@@ -268,7 +268,7 @@ SINGLETON_INTERFACE(UAPush);
  * to background user notification actions.
  *
  * Changes to this value will not take effect the next time the app registers
- * with [[UAPush shared] updateAPNSRegistration].
+ * with [[UAPush shared] updateRegistration].
  */
 @property (nonatomic, assign) BOOL requireAuthorizationForDefaultCategories;
 
@@ -287,12 +287,6 @@ SINGLETON_INTERFACE(UAPush);
  * Notification that launched the application
  */
 @property (nonatomic, readonly, strong) NSDictionary *launchNotification;
-
-/**
- * Updates the registration with APNS. Call after modifying notification types
- * and user notification categories.
- */
-- (void)updateAPNSRegistration;
 
 
 ///---------------------------------------------------------------------------------------

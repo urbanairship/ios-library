@@ -94,6 +94,12 @@ extern UAPushUserInfoKey *const UAPushChannelCreationOnForeground;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier registrationBackgroundTask;
 
 /**
+ * Indicates whether APNS registration is out of date or not.
+ */
+@property (nonatomic, assign) BOOL shouldUpdateAPNSRegistration;
+
+
+/**
  * Get the local time zone, considered the default.
  * @return The local time zone.
  */
@@ -181,6 +187,12 @@ extern UAPushUserInfoKey *const UAPushChannelCreationOnForeground;
  * setting.
  */
 - (void)migratePushSettings;
+
+/**
+ * Updates the registration with APNS. Call after modifying notification types
+ * and user notification categories.
+ */
+- (void)updateAPNSRegistration;
 
 
 @end

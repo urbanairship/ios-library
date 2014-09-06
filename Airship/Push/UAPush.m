@@ -262,13 +262,9 @@ SINGLETON_IMPLEMENTATION(UAPush)
     [[NSUserDefaults standardUserDefaults] setBool:enabled forKey:UAUserPushNotificationsEnabledKey];
 
     if (enabled != previousValue) {
-        [self updateAPNSRegistration];
-
-        if (!enabled) {
-            [self updateRegistration];
-        }
+        self.shouldUpdateAPNSRegistration = YES;
+        [self updateRegistration];
     }
-
 }
 
 - (BOOL)backgroundPushNotificationsEnabled {
@@ -298,6 +294,8 @@ SINGLETON_IMPLEMENTATION(UAPush)
 
         return YES;
     }]];
+
+    self.shouldUpdateAPNSRegistration = YES;
 }
 
 - (NSDictionary *)quietTime {
@@ -336,11 +334,15 @@ SINGLETON_IMPLEMENTATION(UAPush)
         _userNotificationTypes = all & notificationTypes;
     }
     _notificationTypes = notificationTypes;
+
+    self.shouldUpdateAPNSRegistration = YES;
 }
 
 - (void)setUserNotificationTypes:(UIUserNotificationType)userNotificationTypes {
     _userNotificationTypes = userNotificationTypes;
     _notificationTypes = (UIRemoteNotificationType) userNotificationTypes;
+
+    self.shouldUpdateAPNSRegistration = YES;
 }
 
 
@@ -709,11 +711,17 @@ BOOL deferChannelCreationOnForeground = false;
 }
 
 - (void)updateRegistration {
+    // APNS registration will cause a channel registration
+    if (self.shouldUpdateAPNSRegistration) {
+        UA_LTRACE(@"APNS registration is out of date, updating.");
+        [self updateAPNSRegistration];
+        return;
+    }
+
     if (self.userPushNotificationsEnabled && !self.channelID && self.deviceRegistrar.isUsingChannelRegistration) {
         UA_LDEBUG(@"Push is enabled but we have not yet tried to generate a channel ID. "
-                  "Registration will perform automatically when a device token is generated,"
-                  "the app is backgrounded, or the next time the app is foregrounded.");
-
+                  "Urban Airship registration will automatically run when the device token is registered,"
+                  "the next time the app is backgrounded, or the next time the app is foregrounded.");
         return;
     }
 
@@ -722,6 +730,8 @@ BOOL deferChannelCreationOnForeground = false;
 
 
 - (void)updateAPNSRegistration {
+    UA_LTRACE(@"Updating APNS registration.");
+
     UIApplication *application = [UIApplication sharedApplication];
 
     if ([UIUserNotificationSettings class]) {
@@ -745,8 +755,14 @@ BOOL deferChannelCreationOnForeground = false;
         } else {
             UA_LDEBUG(@"Unregistering for remote notifications.");
             [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeNone];
+
+            // Registering for only UIRemoteNotificationTypeNone will not result in a
+            // device token registration call. Instead update chanel registration directly.
+            [self updateRegistrationForcefully:NO];
         }
     }
+
+    self.shouldUpdateAPNSRegistration = NO;
 }
 
 
@@ -776,7 +792,6 @@ BOOL deferChannelCreationOnForeground = false;
         } else {
             [self updateRegistrationForcefully:NO];
         }
-
     }
 }
 
