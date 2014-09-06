@@ -26,7 +26,7 @@
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageListCell.h"
 #import "UAInboxMessageViewController.h"
-#import "UAInboxUI.h"
+#import "UAInboxLocalization.h"
 #import "UAInbox.h"
 #import "UAGlobal.h"
 #import "UAInboxMessage.h"
@@ -147,7 +147,7 @@
                 action:@selector(editButtonPressed:)];
 
     self.cancelItem = [[UIBarButtonItem alloc]
-                  initWithTitle:UA_INBOX_TR(@"UA_Cancel")
+                  initWithTitle:UAInboxLocalizedString(@"UA_Cancel")
                   style:UIBarButtonItemStyleDone
                   target:self
                   action:@selector(cancelButtonPressed:)];
@@ -165,19 +165,19 @@
                                                                                    target:nil
                                                                                    action:nil];
 
-    self.selectAllButtonItem = [[UIBarButtonItem alloc] initWithTitle:UA_INBOX_TR(@"UA_Select_All")
+    self.selectAllButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAInboxLocalizedString(@"UA_Select_All")
                                                style:UIBarButtonItemStylePlain
                                               target:self
                                               action:@selector(selectAllButtonPressed:)];
 
 
-    self.deleteItem = [[UIBarButtonItem alloc] initWithTitle:UA_INBOX_TR(@"UA_Delete")
+    self.deleteItem = [[UIBarButtonItem alloc] initWithTitle:UAInboxLocalizedString(@"UA_Delete")
                                                        style:UIBarButtonItemStylePlain
                                                       target:self
                                                       action:@selector(batchUpdateButtonPressed:)];
     self.deleteItem.tintColor = [UIColor redColor];
     
-    self.markAsReadButtonItem = [[UIBarButtonItem alloc] initWithTitle:UA_INBOX_TR(@"UA_Mark_as_Read")
+    self.markAsReadButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAInboxLocalizedString(@"UA_Mark_as_Read")
                                                 style:UIBarButtonItemStylePlain
                                                target:self action:@selector(batchUpdateButtonPressed:)];
 
@@ -268,7 +268,7 @@
 
 
     UILabel *strongLoadingLabel = self.loadingLabel;
-    strongLoadingLabel.text = UA_INBOX_TR(@"UA_Loading");
+    strongLoadingLabel.text = UAInboxLocalizedString(@"UA_Loading");
 
     UABeveledLoadingIndicator *strongLoadingIndicator = self.loadingIndicator;
     strongLoadingIndicator.alpha = 0.9;
@@ -281,7 +281,7 @@
     self.loadingView.hidden = (self.messages.count != 0);
     
     if (self.messages.count == 0) {
-        self.loadingLabel.text = UA_INBOX_TR(@"UA_No_Messages");
+        self.loadingLabel.text = UAInboxLocalizedString(@"UA_No_Messages");
     }
 }
 
@@ -415,8 +415,8 @@
 
 
 - (void)refreshBatchUpdateButtons {
-    NSString *deleteStr = UA_INBOX_TR(@"UA_Delete");
-    NSString *markReadStr = UA_INBOX_TR(@"UA_Mark_as_Read");
+    NSString *deleteStr = UAInboxLocalizedString(@"UA_Delete");
+    NSString *markReadStr = UAInboxLocalizedString(@"UA_Mark_as_Read");
 
     UITableView *strongMessageTable = self.messageTable;
     NSUInteger count = [strongMessageTable.indexPathsForSelectedRows count];
@@ -446,9 +446,9 @@
     }
 
     if ([strongMessageTable.indexPathsForSelectedRows count] < [strongMessageTable numberOfRowsInSection:0]) {
-        self.selectAllButtonItem.title = UA_INBOX_TR(@"UA_Select_All");
+        self.selectAllButtonItem.title = UAInboxLocalizedString(@"UA_Select_All");
     } else {
-        self.selectAllButtonItem.title = UA_INBOX_TR(@"UA_Select_None");
+        self.selectAllButtonItem.title = UAInboxLocalizedString(@"UA_Select_None");
     }
 
 }
@@ -577,7 +577,7 @@
         count = 0;
     }
 
-    self.title = [NSString stringWithFormat:UA_INBOX_TR(@"UA_Inbox_List_Title"), count];
+    self.title = [NSString stringWithFormat:UAInboxLocalizedString(@"UA_Inbox_List_Title"), count];
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation

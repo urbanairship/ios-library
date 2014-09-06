@@ -26,7 +26,7 @@
 #import "UAPushMoreSettingsViewController.h"
 #import "UAirship.h"
 #import "UAPush.h"
-#import "UAPushUI.h"
+#import "UAPushLocalization.h"
 #import "UAPushSettingsTokenViewController.h"
 #import "UAPushSettingsAliasViewController.h"
 #import "UAPushSettingsTagsViewController.h"
@@ -378,22 +378,22 @@ static NSUInteger channelRowCount = 1;
 
     //Use the same order as the Settings->Notifications panel
     if (types & UIUserNotificationTypeBadge) {
-        [typeArray addObject:UA_PU_TR(@"UA_Notification_Type_Badges")];
+        [typeArray addObject:UAPushLocalizedString(@"UA_Notification_Type_Badges")];
     }
 
     if (types & UIUserNotificationTypeAlert) {
-        [typeArray addObject:UA_PU_TR(@"UA_Notification_Type_Alerts")];
+        [typeArray addObject:UAPushLocalizedString(@"UA_Notification_Type_Alerts")];
     }
 
     if (types & UIUserNotificationTypeSound) {
-        [typeArray addObject:UA_PU_TR(@"UA_Notification_Type_Sounds")];
+        [typeArray addObject:UAPushLocalizedString(@"UA_Notification_Type_Sounds")];
     }
 
     if ([typeArray count] > 0) {
         return [typeArray componentsJoinedByString:@", "];
     }
 
-    return UA_PU_TR(@"None");
+    return UAPushLocalizedString(@"None");
 }
 
 @end

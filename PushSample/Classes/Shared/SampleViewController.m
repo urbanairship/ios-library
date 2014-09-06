@@ -26,7 +26,7 @@
 #import "SampleViewController.h"
 #import "UAPush.h"
 #import "UAirship.h"
-#import "UAPushUI.h"
+#import "UAPushLocalization.h"
 #import "UAPushSettingsViewController.h"
 #import "UAPushMoreSettingsViewController.h"
 

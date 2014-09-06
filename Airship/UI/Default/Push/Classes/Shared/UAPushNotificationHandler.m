@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAPushUI.h"
+#import "UAPushLocalization.h"
 #import "UAPushNotificationHandler.h"
 
 #import <AudioToolbox/AudioServices.h>
@@ -34,7 +34,7 @@
 
     UA_LDEBUG(@"Received an alert in the foreground.");
 
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: UA_PU_TR(@"UA_Notification_Title")
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: UAPushLocalizedString(@"UA_Notification_Title")
                                                     message: alertMessage
                                                    delegate: nil
                                           cancelButtonTitle: @"OK"
@@ -52,7 +52,7 @@
     
     NSString *body = [alertDict valueForKey:@"body"];
     
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: UA_PU_TR(@"UA_Notification_Title")
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: UAPushLocalizedString(@"UA_Notification_Title")
                                                     message: body
                                                    delegate: nil
                                           cancelButtonTitle: @"OK"
