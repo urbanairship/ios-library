@@ -132,7 +132,6 @@
         self.iconCache.countLimit = kUAIconImageCacheMaxCount;
         self.iconCache.totalCostLimit = kUAIconImageCacheMaxByteCost;
         self.currentIconURLRequests = [NSMutableDictionary dictionary];
-        self.messages = [UAInbox shared].messageList.messages;
     }
 
     return self;
@@ -189,6 +188,7 @@
     [super viewWillAppear:animated];
 
     self.navigationItem.backBarButtonItem = nil;
+    self.messages = [UAInbox shared].messageList.messages;
 
     if ([UAInbox shared].messageList.isRetrieving) {
         [self showLoadingScreen];
@@ -221,7 +221,6 @@
     // just clear the cache on low memory warning (as implemented)
 
     // [self.iconCache removeAllObjects]; // Remove all the objects - they can be repopulated from the URL cache
-
 }
 
 - (void)didReceiveMemoryWarning {
@@ -245,7 +244,6 @@
 
 - (void)tableReloadData {
     UITableView *strongMessageTable = self.messageTable;
-    self.messages = [UAInbox shared].messageList.messages;
     [strongMessageTable reloadData];
     [strongMessageTable deselectRowAtIndexPath:[strongMessageTable indexPathForSelectedRow] animated:NO];
 }
@@ -294,7 +292,6 @@
 - (UAInboxMessage *)messageForIndexPath:(NSIndexPath *)indexPath {
     return [self.messages objectAtIndex:(NSUInteger)indexPath.row];
 }
-
 
 - (NSUInteger)countOfUnreadMessagesInIndexPaths:(NSArray *)indexPaths {
     NSUInteger count = 0;
@@ -506,7 +503,7 @@
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return (NSInteger)[[UAInbox shared].messageList messageCount];
+    return (NSInteger)self.messages.count;
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -558,9 +555,9 @@
 
 - (void)messageListUpdated {
     UA_LDEBUG(@"UAInboxMessageListController messageListUpdated");
+    self.messages = [UAInbox shared].messageList.messages;
 
     [self hideLoadingScreen];
-    
     [self tableReloadData];
     [self refreshBatchUpdateButtons];
     [self updateNavigationTitleText];
