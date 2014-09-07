@@ -60,7 +60,6 @@ NSString * const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvail
     [self stopSingleLocation];
 
     // public
-
 }
 
 - (instancetype)init {
@@ -72,11 +71,6 @@ NSString * const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvail
         // NSUserDefaults. 
         [self setStandardLocationProvider:[[UAStandardLocationProvider alloc] init]]; 
         self.singleLocationBackgroundIdentifier = UIBackgroundTaskInvalid;
-        
-        if ([CLLocationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
-            [[self.standardLocationProvider locationManager] requestWhenInUseAuthorization];
-        }
-        
     }
     return self;
 }
@@ -619,33 +613,17 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 + (BOOL)locationServiceAuthorized {
-    //iOS 8+
-    if ([CLLocationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
-        switch ([CLLocationManager authorizationStatus]) {
-            case kCLAuthorizationStatusNotDetermined:
-            case kCLAuthorizationStatusAuthorizedWhenInUse:
-            case kCLAuthorizationStatusAuthorizedAlways:
-                return YES;
-            case kCLAuthorizationStatusDenied:
-            case kCLAuthorizationStatusRestricted:
-                return NO;
-            default:
-                UALOG(@"Unexpected value for authorization");
-                return NO;
-        }
-    }
-    else {
-        switch ([CLLocationManager authorizationStatus]) {
-            case kCLAuthorizationStatusNotDetermined:
-            case kCLAuthorizationStatusAuthorized:
-                return YES;
-            case kCLAuthorizationStatusDenied:
-            case kCLAuthorizationStatusRestricted:
-                return NO;
-            default:
-                UALOG(@"Unexpected value for authorization");
-                return NO;
-        }
+    switch ([CLLocationManager authorizationStatus]) {
+        case kCLAuthorizationStatusNotDetermined:
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+        case kCLAuthorizationStatusAuthorizedAlways:
+            return YES;
+        case kCLAuthorizationStatusDenied:
+        case kCLAuthorizationStatusRestricted:
+            return NO;
+        default:
+            UALOG(@"Unexpected value for authorization");
+            return NO;
     }
 }
 
@@ -657,7 +635,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 + (BOOL)locationServicesEnabled {
-
     return [CLLocationManager locationServicesEnabled];
 }
 
@@ -687,8 +664,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
                           forKey:UASingleLocationTimeoutKey];
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaultPreferences];
 }
-
-
 
 @end
 
