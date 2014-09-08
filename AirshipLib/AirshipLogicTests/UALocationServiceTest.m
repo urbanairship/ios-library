@@ -43,6 +43,7 @@
 @interface UALocationService(Test)
 + (BOOL)returnYES;
 + (BOOL)returnNO;
+
 @end
 
 @implementation UALocationService(Test)
@@ -61,6 +62,9 @@
     UALocationService *_locationService;
     id _mockLocationService; //[OCMockObject partialMockForObject:locationService]
 }
+
+@property (nonatomic, strong) id mockBundle;
+
 - (void)swizzleCLLocationClassMethod:(SEL)oneSelector withMethod:(SEL)anotherSelector;
 - (void)swizzleUALocationServiceClassMethod:(SEL)oneMethod withMethod:(SEL)anotherMethod;
 - (void)swizzleCLLocationClassEnabledAndAuthorized;
@@ -81,12 +85,18 @@
 
     _locationService = [[UALocationService alloc] init];
     _mockLocationService = [OCMockObject partialMockForObject:_locationService];
+
+    self.mockBundle = [OCMockObject niceMockForClass:[NSBundle class]];
+    [[[self.mockBundle stub] andReturn:self.mockBundle] mainBundle];
+    [[[self.mockBundle stub] andReturn:@"Always"] objectForInfoDictionaryKey:@"NSLocationAlwaysUsageDescription"];
+    [[[self.mockBundle stub] andReturn:@"WhenInUse"] objectForInfoDictionaryKey:@"NSLocationWhenInUseUsageDescription"];
+
 }
 
 - (void)tearDown {
     [_mockLocationService stopMocking];
     _mockLocationService = nil;
-    
+    [self.mockBundle stopMocking];
     _locationService = nil;
 }
 

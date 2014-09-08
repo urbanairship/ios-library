@@ -71,6 +71,8 @@ NSString * const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvail
         // NSUserDefaults. 
         [self setStandardLocationProvider:[[UAStandardLocationProvider alloc] init]]; 
         self.singleLocationBackgroundIdentifier = UIBackgroundTaskInvalid;
+
+        self.requestAlwaysAuthorization = YES;
     }
     return self;
 }
@@ -257,6 +259,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 #pragma mark Standard Location Methods
 - (void)startReportingStandardLocation {
     UALOG(@"Attempt to start standard location service");
+
     if (!self.standardLocationProvider) {
         // Factory methods aren't used to avoid setting the delegate twice
         self.standardLocationProvider = [[UAStandardLocationProvider alloc] init];
@@ -292,6 +295,12 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 #pragma mark Significant Change
 - (void)startReportingSignificantLocationChanges {
     UALOG(@"Attempt to start significant change service");
+
+    if (!self.requestAlwaysAuthorization) {
+        UA_LERR(@"Significant change location requires always authorization");
+        return;
+    }
+
     if (!self.significantChangeProvider) {
         // Factory methods aren't used to avoid setting the delegate twice
         self.significantChangeProvider = [[UASignificantChangeProvider alloc] init];
@@ -347,15 +356,19 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     if (self.singleLocationServiceStatus == UALocationProviderUpdating) {
         return;
     }
-    
+
     if (![self isLocationServiceEnabledAndAuthorized]) {
         return;
     }
-    
+
     if (!self.singleLocationProvider) {
         self.singleLocationProvider = [UAStandardLocationProvider providerWithDelegate:self];
     }
-    
+
+    if (![self requestAuthorizationWithLocationManager:[self.singleLocationProvider locationManager]]) {
+        return;
+    }
+
     // Setup the background task
     // This exits the same way as the performSelector:withObject:afterDelay method
     self.singleLocationBackgroundIdentifier = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
@@ -367,7 +380,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
             [[UIApplication sharedApplication] endBackgroundTask:self.singleLocationBackgroundIdentifier];
         }
     }];
+
     self.singleLocationProvider.delegate = self;
+
     [self.singleLocationProvider startReportingLocation];
 }
 
@@ -451,23 +466,30 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 #pragma mark Common Methods for Providers
 
 - (void)startReportingLocationWithProvider:(id<UALocationProviderProtocol>)locationProvider {
-    BOOL authorizedAndEnabled = [self isLocationServiceEnabledAndAuthorized];
-    if (authorizedAndEnabled) {
-        UALOG(@"Starting location service");
-        // Delegates are set to nil when the service is shut down
-        if(locationProvider.delegate == nil){
-            locationProvider.delegate = self;
-        }
-        if (locationProvider == self.standardLocationProvider) {
-            self.shouldStartReportingStandardLocation = YES;
-        }
-        if (locationProvider == self.significantChangeProvider) {
-            self.shouldStartReportingSignificantChange = YES;
-        }
-        [locationProvider startReportingLocation];
+    if (![self isLocationServiceEnabledAndAuthorized]) {
+        UALOG(@"Location service not authorized or not enabled.");
         return;
     }
-    UALOG(@"Location service not authorized or not enabled");
+
+    if (![self requestAuthorizationWithLocationManager:[locationProvider locationManager]]) {
+        return;
+    }
+
+    UALOG(@"Starting location service");
+    // Delegates are set to nil when the service is shut down
+    if(locationProvider.delegate == nil) {
+        locationProvider.delegate = self;
+    }
+
+    if (locationProvider == self.standardLocationProvider) {
+        self.shouldStartReportingStandardLocation = YES;
+    }
+
+    if (locationProvider == self.significantChangeProvider) {
+        self.shouldStartReportingSignificantChange = YES;
+    }
+
+    [locationProvider startReportingLocation];
 }
 
 #pragma mark -
@@ -663,6 +685,33 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     [defaultPreferences setValue:[NSNumber numberWithDouble:kUALocationServiceSingleLocationDefaultTimeout]
                           forKey:UASingleLocationTimeoutKey];
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaultPreferences];
+}
+
+/**
+ * Helper method to request authorization.
+ * @returns YES if authorization was requested or is not required, otherwise NO.
+ */
+- (BOOL)requestAuthorizationWithLocationManager:(CLLocationManager *)locationManager {
+    // iOS7 and older we do not need to request authorization prior to starting location.
+    if (![locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
+        return YES;
+    }
+
+    if (self.requestAlwaysAuthorization) {
+        if (![[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSLocationAlwaysUsageDescription"]) {
+            UA_LERR(@"NSLocationAlwaysUsageDescription not set, unable to request authorization.");
+            return NO;
+        }
+        [locationManager requestAlwaysAuthorization];
+    } else {
+        if (![[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSLocationWhenInUseUsageDescription"]) {
+            UA_LERR(@"NSLocationWhenInUseUsageDescription not set, unable to request authorization.");
+            return NO;
+        }
+        [locationManager requestWhenInUseAuthorization];
+    }
+
+    return YES;
 }
 
 @end
