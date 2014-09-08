@@ -215,6 +215,15 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 @property (nonatomic, assign, setter=setAutomaticLocationOnForegroundEnabled:) BOOL automaticLocationOnForegroundEnabled;
 
 /**
+* Request "always" location authorization. If YES (the default), Urban Airship will request always-on location permission. If NO,
+* "when in use" authorization will be requested. Always-On permission is required for background location monitoring,
+* including significant change.
+* Once location reporting is started and an authorization prompt is presented, changes to the authorization level are not possible
+* without updating the app in the App Store.
+*/
+@property (nonatomic, assign) BOOL requestAlwaysAuthorization;
+
+/**
  * Allows location services to continue in the background.
  */
 @property (nonatomic, assign) BOOL backgroundLocationServiceEnabled;
