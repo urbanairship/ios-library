@@ -65,5 +65,9 @@
 	</array>
 	<key>NSLocationUsageDescription</key>
 	<string>Urban Airship location service</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Urban Airship location service</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Urban Airship location service when app is in use</string>
 </dict>
 </plist>
