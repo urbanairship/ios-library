@@ -519,6 +519,11 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     self.push.deviceToken = validDeviceToken;
     self.push.shouldUpdateAPNSRegistration = NO;
 
+    // Make sure we have previously registered types
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeBadge categories:nil];
+    [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
+
+
     // Make sure push is set to YES
     XCTAssertTrue(self.push.userPushNotificationsEnabled, @"userPushNotificationsEnabled should default to YES");
 
@@ -794,11 +799,37 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  * Test update apns registration when user notifications are disabled on >= iOS8.
  */
 - (void)testUpdateAPNSRegistrationUserNotificationsDisabledIOS8 {
+    // Make sure we have previously registered types
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeBadge categories:nil];
+    [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
+
     self.push.userPushNotificationsEnabled = NO;
     UIUserNotificationSettings *expected = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone
                                                                              categories:nil];
 
     [[self.mockedApplication expect] registerUserNotificationSettings:expected];
+    [self.push updateAPNSRegistration];
+
+    XCTAssertNoThrow([self.mockedApplication verify],
+                     @"should register UIUserNotificationTypeNone types and nil categories");
+}
+
+
+/**
+ * Test update apns does not register for 0 types if already is registered for none.
+ */
+- (void)testUpdateAPNSRegistrationPushAlreadyDisabledIOS8 {
+
+    // Make sure we have previously registered types
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone categories:nil];
+    [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
+
+    self.push.userPushNotificationsEnabled = NO;
+
+    // Make sure we do not call registerUserNotificationSettings for none, if we are
+    // already registered for none or it will prompt the user.
+    [[self.mockedApplication reject] registerUserNotificationSettings:OCMOCK_ANY];
+
     [self.push updateAPNSRegistration];
 
     XCTAssertNoThrow([self.mockedApplication verify],

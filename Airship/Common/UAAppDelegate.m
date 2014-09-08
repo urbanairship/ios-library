@@ -36,7 +36,7 @@
 }
 
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
-    UA_LTRACE(@"Application did register with user notification settings %@", notificationSettings);
+    UA_LTRACE(@"Application did register with user notification types %ld", (unsigned long)notificationSettings.types);
     [[UAPush shared] appRegisteredUserNotificationSettings];
 }
 
