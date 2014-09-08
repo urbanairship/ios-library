@@ -15,12 +15,12 @@ Added to preview on 2014-9-8
 - Removed UAPush updateAPNSRegistration - this is all handled by UAPush updateRegistration now.
 - Added translations for our out of the box notifications. These are early translations and they haven't been verified by
   anyone other than the translation company we used.
+- UA location now handles iOS8-style authorization. Once location reporting is started and an authorization prompt is presented, changes to the
+  authorization level are not possible without updating the app version update. By default, "always" authorization will be requested. To request
+  "when in use" set the property 'requestAlwaysAuthorization' to NO on UALocationService.
 - Known issue: After disabling and re-enabling user notifications in the SDK, they must be manually enabled in Settings.app before
   notifications will work again. Restarting the device will re-enable banners, but not badges or sounds. This is due to a bug in
   the iOS8 beta.
-- Known issue: UA location services do not currently request iOS8-style authorization. You may request the 'always'-style authorization
-  via directly CoreLocation calls when starting the services until we include this in our SDK (next preview).
-
 
 Added to preview on 2014-9-4
 - Support for armv7s architecture (missing from original preview).
