@@ -60,7 +60,6 @@ NSString * const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvail
     [self stopSingleLocation];
 
     // public
-
 }
 
 - (instancetype)init {
@@ -603,8 +602,10 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 + (BOOL)airshipLocationServiceEnabled {
-    return [UALocationService boolForLocationServiceKey:UALocationServiceEnabledKey]; 
+    return [UALocationService boolForLocationServiceKey:UALocationServiceEnabledKey];
 }
+
+
 
 // Setting these values will trigger a NSUserDefaults update with a KVO notification
 + (void)setAirshipLocationServiceEnabled:(BOOL)airshipLocationServiceEnabled{
@@ -614,7 +615,8 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 + (BOOL)locationServiceAuthorized {
     switch ([CLLocationManager authorizationStatus]) {
         case kCLAuthorizationStatusNotDetermined:
-        case kCLAuthorizationStatusAuthorized:
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+        case kCLAuthorizationStatusAuthorizedAlways:
             return YES;
         case kCLAuthorizationStatusDenied:
         case kCLAuthorizationStatusRestricted:
@@ -662,8 +664,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
                           forKey:UASingleLocationTimeoutKey];
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaultPreferences];
 }
-
-
 
 @end
 

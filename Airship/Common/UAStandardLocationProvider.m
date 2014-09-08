@@ -55,8 +55,9 @@
         case kCLAuthorizationStatusRestricted:
             [self stopReportingLocation];
             break;
-        case kCLAuthorizationStatusAuthorized:
-        case kCLAuthorizationStatusNotDetermined:            
+        case kCLAuthorizationStatusAuthorizedAlways:
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+        case kCLAuthorizationStatusNotDetermined:
         default:
             break;
     }
