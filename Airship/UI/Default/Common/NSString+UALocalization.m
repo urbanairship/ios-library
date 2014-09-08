@@ -7,13 +7,19 @@
                                table:(NSString *)table
                       fallbackLocale:(NSString *)fallbackLocale {
 
-    NSString *string = [[NSBundle mainBundle] localizedStringForKey:key value:nil table:table];
+    // This empty string has a space in it, so as not to be treated as equivalent to nil
+    // by the NSBundle method
+    NSString *missing = @" ";
 
-    if ([string isEqualToString:key]) {
+    NSString *string = [[NSBundle mainBundle] localizedStringForKey:key value:missing table:table];
+
+    // If a localized string can't be found for the desired language, fall back to "en"
+    if ([string isEqualToString:missing]) {
         NSString *fallbackPath = [[NSBundle mainBundle] pathForResource:fallbackLocale ofType:@"lproj"];
         string = [[NSBundle bundleWithPath:fallbackPath] localizedStringForKey:key value:key table:table];
     }
 
+    // If there is not result for "en", return the key as a last resort, instead of nil
     return string ?: key;
 }
 
