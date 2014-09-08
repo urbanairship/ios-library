@@ -85,8 +85,14 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     [self sendMessageListWillUpdateNotification];
 
     __block BOOL isCallbackCancelled = NO;
+
+    __block UAInboxMessageListCallbackBlock castSuccessBlock = successBlock;
+    __block UAInboxMessageListCallbackBlock castFailureBlock = failureBlock;
+
     UADisposable *disposable = [UADisposable disposableWithBlock:^{
         isCallbackCancelled = YES;
+        castSuccessBlock = nil;
+        castFailureBlock = nil;
     }];
 
 
@@ -240,8 +246,11 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     [self sendMessageListWillUpdateNotification];
 
     __block BOOL isCallbackCancelled = NO;
+
+    __block UAInboxMessageListCallbackBlock block = completionHandler;
     UADisposable *disposable = [UADisposable disposableWithBlock:^{
         isCallbackCancelled = YES;
+        block = nil;
     }];
 
 
@@ -278,8 +287,10 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     [self sendMessageListWillUpdateNotification];
 
     __block BOOL isCallbackCancelled = NO;
+    __block UAInboxMessageListCallbackBlock block = completionHandler;
     UADisposable *disposable = [UADisposable disposableWithBlock:^{
         isCallbackCancelled = YES;
+        block = nil;
     }];
 
 
