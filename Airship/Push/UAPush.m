@@ -735,19 +735,23 @@ BOOL deferChannelCreationOnForeground = false;
     UIApplication *application = [UIApplication sharedApplication];
 
     if ([UIUserNotificationSettings class]) {
-        if (self.userPushNotificationsEnabled) {
 
+        if (self.userPushNotificationsEnabled) {
             NSMutableSet *categories = [NSMutableSet setWithSet:[UAUserNotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories]];
             [categories unionSet:self.userNotificationCategories];
 
             UA_LDEBUG(@"Registering for user notification types %ld.", (long)self.userNotificationTypes);
             [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:self.userNotificationTypes
                                                                                             categories:categories]];
-        } else {
+        } else if ([UAPush currentEnabledNotificationTypes] != UIUserNotificationTypeNone) {
             UA_LDEBUG(@"Unregistering for user notification types.");
             [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone
                                                                                             categories:nil]];
+        } else {
+            UA_LDEBUG(@"Already unregistered for user notification types.");
+            [self updateRegistrationForcefully:NO];
         }
+
     } else {
         if (self.userPushNotificationsEnabled) {
             UA_LDEBUG(@"Registering for remote notification types %ld.", (long)_notificationTypes);
