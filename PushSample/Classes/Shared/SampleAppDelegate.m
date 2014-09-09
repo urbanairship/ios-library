@@ -64,24 +64,20 @@
     // Set the icon badge to zero on startup (optional)
     [[UAPush shared] resetBadge];
 
-    // Set the default background push notification enabled. This controls being
-    // able to send background push messages to the user through Urban Airship.
-    // This value defaults to YES.
-    [UAPush shared].backgroundPushNotificationsEnabledByDefault = YES;
-
-
-    // Set the default user notification enabled. Once enabled
-    // it will prompt the user for permission. This value defaults to NO.
-    [UAPush shared].userPushNotificationsEnabledByDefault = NO;
-
-
-
     // Set the notification types required for the app (optional). This value defaults
     // to badge, alert and sound, so it's only necessary to set it if you want
     // to add or remove types.
     [UAPush shared].userNotificationTypes = (UIUserNotificationTypeAlert |
                                              UIUserNotificationTypeBadge |
                                              UIUserNotificationTypeSound);
+
+
+    // User notifications will not be enabled until userPushNotificationsEnabled is
+    // set YES on UAPush. Onced enabled, the setting will be persisted and the user
+    // will be prompted to allow notifications. You should wait for a more appropriate
+    // time to enable push to increase the likelihood that the user will accept
+    // notifications.
+    // [UAPush shared].userPushNotificationsEnabled = YES;
 
     return YES;
 }
