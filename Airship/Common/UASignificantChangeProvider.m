@@ -29,7 +29,6 @@
 @implementation UASignificantChangeProvider
 
 - (void)dealloc {
-    
     self.delegate = nil;
     [self.locationManager stopMonitoringSignificantLocationChanges];
     self.locationManager.delegate = nil;
@@ -49,17 +48,13 @@
 //** iOS 4.2+ */
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UALOG(@"Significant change did change authorization status %d", status);
-    switch (status) {
-        case kCLAuthorizationStatusAuthorized:
+    switch ((int)status) {
+        case kCLAuthorizationStatusDenied:
+        case kCLAuthorizationStatusRestricted:
+        case 5: // kCLAuthorizationStatusAuthorizedWhenInUse
+            [self stopReportingLocation];
             break;
         case kCLAuthorizationStatusNotDetermined:
-            break;
-        case kCLAuthorizationStatusDenied:
-            [self stopReportingLocation];
-            break;
-        case kCLAuthorizationStatusRestricted:
-            [self stopReportingLocation];
-            break;
         default:
             break;
     }
