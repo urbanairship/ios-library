@@ -272,7 +272,7 @@ static Class _uiClass;
                 [[UIApplication sharedApplication] registerForRemoteNotificationTypes:self.notificationTypes];
             }
         } else {
-            if ([[UIApplication sharedApplication] respondsToSelector:NSSelectorFromString(@"registerUserNotificationSettings:")]) {
+            if ([[UIApplication sharedApplication] respondsToSelector:NSSelectorFromString(@"registerUserNotificationSettings:")] && [UAPush currentEnabledNotificationTypes] != 0) {
                 id settings = [self createUserNotificationSettings:UIRemoteNotificationTypeNone];
 
                 // Using delay to avoid perfrom selector warning.
