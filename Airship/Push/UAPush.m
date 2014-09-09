@@ -745,19 +745,7 @@ BOOL deferChannelCreationOnForeground = false;
 #pragma mark NSUserDefaults
 
 + (void)registerNSUserDefaults {
-    // Migration for pre 1.3.0 library quiet time settings
-    // This pulls an object, instead of a BOOL
-    id quietTimeEnabled = [[NSUserDefaults standardUserDefaults] valueForKey:UAPushQuietTimeEnabledSettingsKey];
-    NSDictionary *currentQuietTime = [[NSUserDefaults standardUserDefaults] valueForKey:UAPushQuietTimeSettingsKey];
-
-    if (!quietTimeEnabled && currentQuietTime) {
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushQuietTimeEnabledSettingsKey];
-    } else {
-        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushQuietTimeEnabledSettingsKey];
-    }
-
     NSDictionary *defaults = @{ UAPushEnabledSettingsKey: [NSNumber numberWithBool:YES] };
-
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
 }
 
