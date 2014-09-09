@@ -84,9 +84,13 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     self.retrieveOperationCount++;
     [self sendMessageListWillUpdateNotification];
 
-    __block BOOL isCallbackCancelled = NO;
+
+    __block UAInboxMessageListCallbackBlock retrieveMessageListSuccessBlock = successBlock;
+    __block UAInboxMessageListCallbackBlock retrieveMessageListFailureBlock = failureBlock;
+
     UADisposable *disposable = [UADisposable disposableWithBlock:^{
-        isCallbackCancelled = YES;
+        retrieveMessageListSuccessBlock = nil;
+        retrieveMessageListFailureBlock = nil;
     }];
 
 
@@ -128,8 +132,8 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
                         self.retrieveOperationCount--;
                     }
 
-                    if (successBlock && !isCallbackCancelled) {
-                        successBlock();
+                    if (retrieveMessageListSuccessBlock) {
+                        retrieveMessageListSuccessBlock();
                     }
 
                     [self sendMessageListUpdatedNotification];
@@ -141,8 +145,8 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
                         self.retrieveOperationCount--;
                     }
 
-                    if (successBlock && !isCallbackCancelled) {
-                        successBlock();
+                    if (retrieveMessageListSuccessBlock) {
+                        retrieveMessageListSuccessBlock();
                     }
 
                     [self sendMessageListUpdatedNotification];
@@ -156,8 +160,8 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
         }
 
         UA_LDEBUG(@"Retrieve message list failed with status: %ld", (long)request.response.statusCode);
-        if (failureBlock && !isCallbackCancelled) {
-            failureBlock();
+        if (retrieveMessageListFailureBlock) {
+            retrieveMessageListFailureBlock();
         }
 
         [self sendMessageListUpdatedNotification];
@@ -239,9 +243,9 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     self.batchOperationCount++;
     [self sendMessageListWillUpdateNotification];
 
-    __block BOOL isCallbackCancelled = NO;
+    __block UAInboxMessageListCallbackBlock inboxMessageListCompletionBlock = completionHandler;
     UADisposable *disposable = [UADisposable disposableWithBlock:^{
-        isCallbackCancelled = YES;
+        inboxMessageListCompletionBlock = nil;
     }];
 
 
@@ -260,8 +264,8 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
                 self.batchOperationCount--;
             }
 
-            if (completionHandler && !isCallbackCancelled) {
-                completionHandler();
+            if (inboxMessageListCompletionBlock) {
+                inboxMessageListCompletionBlock();
             }
 
             [self sendMessageListUpdatedNotification];
@@ -277,9 +281,9 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     self.batchOperationCount++;
     [self sendMessageListWillUpdateNotification];
 
-    __block BOOL isCallbackCancelled = NO;
+    __block UAInboxMessageListCallbackBlock inboxMessageListCompletionBlock = completionHandler;
     UADisposable *disposable = [UADisposable disposableWithBlock:^{
-        isCallbackCancelled = YES;
+        inboxMessageListCompletionBlock = nil;
     }];
 
 
@@ -298,8 +302,8 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
                 self.batchOperationCount--;
             }
 
-            if (completionHandler && !isCallbackCancelled) {
-                completionHandler();
+            if (inboxMessageListCompletionBlock) {
+                inboxMessageListCompletionBlock();
             }
 
             [self sendMessageListUpdatedNotification];
