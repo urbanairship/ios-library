@@ -43,6 +43,9 @@
 @property (nonatomic, weak) IBOutlet UILabel *pushEnabledLabel;
 @property (nonatomic, weak) IBOutlet UISwitch *pushEnabledSwitch;
 
+// This cell provides a link to the app's system settings on iOS8
+@property (nonatomic, strong) UITableViewCell *pushSystemSettingsCell;
+
 // These quiet time IBOutlets needs to be strong because they are removed from
 // the table view when 'Push Enabled' is set to false. When 'Push Enabled' is
 // set to true, they need to be re-created and added back to the table view.
