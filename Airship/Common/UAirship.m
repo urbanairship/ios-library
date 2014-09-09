@@ -212,7 +212,7 @@ UALogLevel uaLogLevel = UALogLevelError;
     if (config.clearKeychain || [[NSUserDefaults standardUserDefaults] boolForKey:UAResetKeychainKey]) {
 
         if (config.clearKeychain) {
-            UA_LERR(@"UAConfig.clearKeychain is deprecated. To clear the keychain once during the next applicaiton start, use the settings bundle to set YES for the key %@ in standard user defaults.", UAResetKeychainKey);
+            UA_LERR(@"UAConfig.clearKeychain is deprecated. To clear the keychain once during the next application start, use the settings bundle to set YES for the key %@ in standard user defaults.", UAResetKeychainKey);
         }
 #pragma clang diagnostic pop
 
@@ -309,7 +309,6 @@ UALogLevel uaLogLevel = UALogLevelError;
 }
 
 + (void)land {
-
     if (!_sharedAirship) {
         return;
     }
@@ -388,7 +387,7 @@ UALogLevel uaLogLevel = UALogLevelError;
             if ([delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)]
                 && ![delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
 
-                UA_LWARN(@"Application is set up to receive background notifications, but the app delegate only implements application:didReceiveRemoteNotification: and not application:didReceiveRemoteNotification:fetchCompletionHandler.  application:didReceiveRemoteNotification: will be ignored.");
+                UA_LWARN(@"Application is set up to receive background notifications, but the app delegate only implements application:didReceiveRemoteNotification: and not application:didReceiveRemoteNotification:fetchCompletionHandler. application:didReceiveRemoteNotification: will be ignored.");
             }
         } else {
             id delegate = [UIApplication sharedApplication].delegate;
@@ -401,6 +400,9 @@ UALogLevel uaLogLevel = UALogLevelError;
                 UA_LWARN(@"Application is set up to receive background notifications, but the app delegate does not implements application:didReceiveRemoteNotification:fetchCompletionHandler:. Use either UAirship automaticSetupEnabled or implement a proper application:didReceiveRemoteNotification:fetchCompletionHandler: in the app delegate.");
             }
         }
+    } else if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
+        UA_LWARN(@"Application is not configured for background notifications. "
+                 @"Please enable remote notifications in the application's background modes.");
     }
 
     // Push notification delegate validation
@@ -411,20 +413,20 @@ UALogLevel uaLogLevel = UALogLevelError;
         if ([pushDelegate respondsToSelector:@selector(receivedForegroundNotification:)]
             && ! [pushDelegate respondsToSelector:@selector(receivedForegroundNotification:fetchCompletionHandler:)]) {
 
-             UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedForegroundNotification:fetchCompletionHandler: instead of receivedForegroundNotification:.  receivedForegroundNotification: will still be called.");
+             UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedForegroundNotification:fetchCompletionHandler: instead of receivedForegroundNotification:. receivedForegroundNotification: will still be called.");
 
         }
 
         if ([pushDelegate respondsToSelector:@selector(launchedFromNotification:)]
             && ! [pushDelegate respondsToSelector:@selector(launchedFromNotification:fetchCompletionHandler:)]) {
 
-            UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement launchedFromNotification:fetchCompletionHandler: instead of launchedFromNotification:.  launchedFromNotification: will still be called.");
+            UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement launchedFromNotification:fetchCompletionHandler: instead of launchedFromNotification:. launchedFromNotification: will still be called.");
         }
 
         if ([pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:)]
             && ! [pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:fetchCompletionHandler:)]) {
 
-            UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedBackgroundNotification:fetchCompletionHandler: instead of receivedBackgroundNotification:.  receivedBackgroundNotification: will still be called.");
+            UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedBackgroundNotification:fetchCompletionHandler: instead of receivedBackgroundNotification:. receivedBackgroundNotification: will still be called.");
         }
     }
 
