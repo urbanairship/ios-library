@@ -75,7 +75,11 @@
     // Use an overlay UI for simple message display
     sampleViewController.useOverlay = YES;
 
-    // Enable user notifications
+    // User notifications will not be enabled until userPushNotificationsEnabled is
+    // set YES on UAPush. Onced enabled, the setting will be persisted and the user
+    // will be prompted to allow notifications. You should wait for a more appropriate
+    // time to enable push to increase the likelihood that the user will accept
+    // notifications.
     [UAPush shared].userPushNotificationsEnabled = YES;
 
     // Return value is ignored for push notifications, so it's safer to return
