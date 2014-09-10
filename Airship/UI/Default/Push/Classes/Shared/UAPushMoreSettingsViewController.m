@@ -349,12 +349,8 @@ static NSUInteger channelRowCount = 1;
     
     self.deviceTokenCell.detailTextLabel.text = [UAPush shared].deviceToken ? [UAPush shared].deviceToken : @"Unavailable";
 
-    UIUserNotificationType enabledTypes;
-    if ([UIUserNotificationSettings class]) {
-        enabledTypes = [[UIApplication sharedApplication] currentUserNotificationSettings].types;
-    } else {
-        enabledTypes = (UIUserNotificationType)[[UIApplication sharedApplication] enabledRemoteNotificationTypes];
-    }
+    NSUInteger enabledTypes = [UAPush currentEnabledNotificationTypes];
+
 
     self.deviceTokenTypesCell.detailTextLabel.text = [self pushTypeString:enabledTypes];
     
