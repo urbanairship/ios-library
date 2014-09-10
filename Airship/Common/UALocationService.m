@@ -317,6 +317,13 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         self.significantChangeProvider = [[UASignificantChangeProvider alloc] init];
     }
 
+    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+
+    // kCLAuthorizationStatusAuthorizedWhenInUse = 5
+    if ([self.significantChangeProvider.locationManager respondsToSelector:NSSelectorFromString(@"requestAlwaysAuthorization")] && status == 5) {
+        UA_LERR(@"Significant change location requires always authorization");
+        return;
+    }
     [self startReportingLocationWithProvider:self.significantChangeProvider];
 }
 
@@ -639,17 +646,13 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 + (BOOL)locationServiceAuthorized {
     switch ([CLLocationManager authorizationStatus]) {
-        case kCLAuthorizationStatusNotDetermined:
-        case kCLAuthorizationStatusAuthorized:
-            return YES;
         case kCLAuthorizationStatusDenied:
         case kCLAuthorizationStatusRestricted:
             return NO;
+        case kCLAuthorizationStatusNotDetermined:
         default:
-            UALOG(@"Unexpected value for authorization");
-            return NO;
-    }
-}
+            return YES;
+    }}
 
 // convenience method for devs
 + (BOOL)coreLocationWillPromptUserForPermissionToRun {

@@ -134,16 +134,11 @@
 // This is the nuclear option. Subclasses should implement specific action
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     switch (status) {
-        case kCLAuthorizationStatusAuthorized:
-            break;
-        case kCLAuthorizationStatusNotDetermined:
-            break;
         case kCLAuthorizationStatusDenied:
-            [self stopAllReporting];
-            break;
         case kCLAuthorizationStatusRestricted:
             [self stopAllReporting];
             break;
+        case kCLAuthorizationStatusNotDetermined:
         default:
             break;
     }

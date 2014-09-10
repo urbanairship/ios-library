@@ -165,6 +165,21 @@ static Class _uiClass;
 #pragma mark -
 #pragma mark Get/Set Methods
 
+
+- (void)setNotificationTypes:(UIRemoteNotificationType)notificationTypes {
+    if (notificationTypes == UIRemoteNotificationTypeNone && [[UIApplication sharedApplication] respondsToSelector:NSSelectorFromString(@"registerUserNotificationSettings:")]) {
+        UA_LWARN(@"Registering for UIRemoteNotificationTypeNone may disable the ability to register for other types without restarting the device first.");
+    }
+    _notificationTypes = notificationTypes;
+}
+
+- (void)setAllowUnregisteringUserNotificationTypes:(BOOL)allowUnregisteringUserNotificationTypes {
+    if (allowUnregisteringUserNotificationTypes) {
+        UA_LWARN(@"Allowing UAPush to unregister for notification types may disable the ability to register for other types without restarting the device first.");
+    }
+    _allowUnregisteringUserNotificationTypes = allowUnregisteringUserNotificationTypes;
+}
+
 - (void)setChannelID:(NSString *)channelID {
     [[NSUserDefaults standardUserDefaults] setValue:channelID forKey:UAPushChannelIDKey];
     // Log the channel ID at error level, but without logging
@@ -273,10 +288,12 @@ static Class _uiClass;
             }
         } else {
             if ([[UIApplication sharedApplication] respondsToSelector:NSSelectorFromString(@"registerUserNotificationSettings:")]) {
-                id settings = [self createUserNotificationSettings:UIRemoteNotificationTypeNone];
 
-                // Using delay to avoid perfrom selector warning.
-                [[UIApplication sharedApplication] performSelector:NSSelectorFromString(@"registerUserNotificationSettings:") withObject:settings afterDelay:0.0];
+                if ([UAPush currentUserNotificationTypes] != 0 && self.allowUnregisteringUserNotificationTypes) {
+                    id settings = [self createUserNotificationSettings:UIRemoteNotificationTypeNone];
+                    // Using delay to avoid perfrom selector warning.
+                    [[UIApplication sharedApplication] performSelector:NSSelectorFromString(@"registerUserNotificationSettings:") withObject:settings afterDelay:0.0];
+                }
             } else {
                 [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeNone];
             }
@@ -745,19 +762,7 @@ BOOL deferChannelCreationOnForeground = false;
 #pragma mark NSUserDefaults
 
 + (void)registerNSUserDefaults {
-    // Migration for pre 1.3.0 library quiet time settings
-    // This pulls an object, instead of a BOOL
-    id quietTimeEnabled = [[NSUserDefaults standardUserDefaults] valueForKey:UAPushQuietTimeEnabledSettingsKey];
-    NSDictionary *currentQuietTime = [[NSUserDefaults standardUserDefaults] valueForKey:UAPushQuietTimeSettingsKey];
-
-    if (!quietTimeEnabled && currentQuietTime) {
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushQuietTimeEnabledSettingsKey];
-    } else {
-        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushQuietTimeEnabledSettingsKey];
-    }
-
     NSDictionary *defaults = @{ UAPushEnabledSettingsKey: [NSNumber numberWithBool:YES] };
-
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
 }
 
@@ -794,14 +799,26 @@ BOOL deferChannelCreationOnForeground = false;
 }
 
 + (NSUInteger)currentEnabledNotificationTypes {
-    NSUInteger types;
+    if (![UAPush shared].pushEnabled) {
+        return UIRemoteNotificationTypeNone;
+    }
+
+    if ([[UIApplication sharedApplication] respondsToSelector:NSSelectorFromString(@"currentUserNotificationSettings")]) {
+        return [self currentUserNotificationTypes];
+    } else {
+        return [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
+    }
+}
+
+// Gets the user notification types for iOS8
++ (NSUInteger)currentUserNotificationTypes {
+    NSUInteger types = 0;
     if ([[UIApplication sharedApplication] respondsToSelector:NSSelectorFromString(@"currentUserNotificationSettings")]) {
         NSValue *value = [[UIApplication sharedApplication] valueForKeyPath:@"currentUserNotificationSettings.types"];
         [value getValue:&types];
-    } else {
-        types = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
     }
 
     return types;
 }
+
 @end
