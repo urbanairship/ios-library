@@ -129,6 +129,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     self.mockDefaultUserNotificationCategories = [OCMockObject niceMockForClass:[UAUserNotificationCategories class]];
 
     self.push.registrationDelegate = self.mockRegistrationDelegate;
+    self.push.allowUnregisteringUserNotificationTypes = YES;
 }
 
 - (void)tearDown {
@@ -2205,6 +2206,47 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     XCTAssertTrue(self.push.shouldUpdateAPNSRegistration, "Any APNS changes should update the flag.");
     XCTAssertEqual(self.push.userNotificationTypes, self.push.notificationTypes, @"Setting one type should set the the other type.");
+}
+
+
+/**
+ * Test when allowUnregisteringUserNotificationTypes is NO it prevents UAPush from
+ * unregistering user notification types.
+ */
+- (void)testDisallowUnregisteringUserNotificationTypes {
+    self.push.userPushNotificationsEnabled = YES;
+    self.push.deviceToken = validDeviceToken;
+    self.push.shouldUpdateAPNSRegistration = NO;
+
+    // Turn off allowing unregistering user notification types
+    self.push.allowUnregisteringUserNotificationTypes = NO;
+
+    // Make sure we have previously registered types
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeBadge categories:nil];
+    [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
+
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    // Add a device token so we get a device api callback
+    [[self.mockedDeviceRegistrar expect] registerPushDisabledWithChannelID:OCMOCK_ANY
+                                                           channelLocation:OCMOCK_ANY
+                                                               withPayload:OCMOCK_ANY
+                                                                forcefully:NO];
+
+    // The flag allowUnregisteringUserNotificationTypes should prevent unregistering notification types
+    [[self.mockedApplication reject] registerUserNotificationSettings:OCMOCK_ANY];
+
+
+    self.push.userPushNotificationsEnabled = NO;
+
+    XCTAssertFalse(self.push.userPushNotificationsEnabled,
+                   @"userPushNotificationsEnabled should be disabled when set to NO");
+
+    XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey],
+                   @"userPushNotificationsEnabled should be stored in standardUserDefaults");
+
+    XCTAssertNoThrow([self.mockedApplication verify],
+                     @"userPushNotificationsEnabled should unregister for remote notifications");
 }
 
 @end

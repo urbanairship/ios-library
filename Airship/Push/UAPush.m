@@ -330,6 +330,11 @@ SINGLETON_IMPLEMENTATION(UAPush)
 - (void)setNotificationTypes:(UIRemoteNotificationType)notificationTypes {
     if ([UIUserNotificationSettings class]) {
         UA_LWARN(@"Remote notification types are deprecated, use userNotificationTypes instead.");
+
+        if (notificationTypes == UIRemoteNotificationTypeNone) {
+            UA_LWARN(@"Registering for UIRemoteNotificationTypeNone may disable the ability to register for other types without restarting the device first.");
+        }
+
         UIUserNotificationType all = UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound;
         _userNotificationTypes = all & notificationTypes;
     }
@@ -339,12 +344,23 @@ SINGLETON_IMPLEMENTATION(UAPush)
 }
 
 - (void)setUserNotificationTypes:(UIUserNotificationType)userNotificationTypes {
+    if (userNotificationTypes == UIUserNotificationTypeNone && [UIUserNotificationSettings class]) {
+        UA_LWARN(@"Registering for UIUserNotificationTypeNone may disable the ability to register for other types without restarting the device first.");
+    }
+
     _userNotificationTypes = userNotificationTypes;
     _notificationTypes = (UIRemoteNotificationType) userNotificationTypes;
 
     self.shouldUpdateAPNSRegistration = YES;
 }
 
+
+- (void)setAllowUnregisteringUserNotificationTypes:(BOOL)allowUnregisteringUserNotificationTypes {
+    if (allowUnregisteringUserNotificationTypes) {
+        UA_LWARN(@"Allowing UAPush to unregister for notification types may disable the ability to register for other types without restarting the device first.");
+    }
+    _allowUnregisteringUserNotificationTypes = allowUnregisteringUserNotificationTypes;
+}
 
 #pragma mark -
 #pragma mark Open APIs - Property Setters
@@ -736,6 +752,8 @@ BOOL deferChannelCreationOnForeground = false;
 
     if ([UIUserNotificationSettings class]) {
 
+
+        // Push Enabled
         if (self.userPushNotificationsEnabled) {
             NSMutableSet *categories = [NSMutableSet setWithSet:[UAUserNotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories]];
             [categories unionSet:self.userNotificationCategories];
@@ -743,7 +761,10 @@ BOOL deferChannelCreationOnForeground = false;
             UA_LDEBUG(@"Registering for user notification types %ld.", (long)self.userNotificationTypes);
             [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:self.userNotificationTypes
                                                                                             categories:categories]];
-        } else if ([UAPush currentEnabledNotificationTypes] != UIUserNotificationTypeNone) {
+        } else if (!self.allowUnregisteringUserNotificationTypes) {
+            UA_LDEBUG(@"Skipping unregistered for user notification types.");
+            [self updateRegistrationForcefully:NO];
+        } else if ([application currentUserNotificationSettings].types != UIUserNotificationTypeNone) {
             UA_LDEBUG(@"Unregistering for user notification types.");
             [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone
                                                                                             categories:nil]];
@@ -897,6 +918,10 @@ BOOL deferChannelCreationOnForeground = false;
 }
 
 + (NSUInteger)currentEnabledNotificationTypes {
+    if (![UAPush shared].userPushNotificationsEnabled) {
+        return UIUserNotificationTypeNone;
+    }
+
     if ([UIUserNotificationSettings class]) {
         return [[UIApplication sharedApplication] currentUserNotificationSettings].types;
     } else {
