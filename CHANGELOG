@@ -52,7 +52,7 @@ Added to preview on 2014-8-27
  - Fixed iOS 8 push prompt on first-run and immediate opt-out.
  - Fixed quiet time setting not persisting between application restarts.
  - Added work around for iOS 8 registration bug where disabling push registering prevents registering for notification types
-   without a device restart. Instead of registring for 0 notification types, the device will just be marked as opted-out. This only 
+   without a device restart. Instead of registering for 0 notification types, the device will just be marked as opted-out. This only 
    affects newer iOS 8 devices. For more information, see the documentation for allowUnregisteringUserNotificationTypes on UAPush. 
  - UA location is now compatible with iOS 8 authorization modes. If building against Xcode 6, make sure to add the new authorization
    keys (NSLocationAlwaysUsageDescription and NSLocationWhenInUseUsageDescription) to the application's info.plist. You must also manually
