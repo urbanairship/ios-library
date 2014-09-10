@@ -32,9 +32,9 @@
                   actionName:(NSString *)actionName
            completionHandler:(UAActionCompletionHandler)completionHandler {
     if ([arguments.value isKindOfClass:[NSString class]]) {
-        [[UAPush shared] addTagToCurrentDevice:arguments.value];
+        [[UAPush shared] addTag:arguments.value];
     } else {
-        [[UAPush shared] addTagsToCurrentDevice:arguments.value];
+        [[UAPush shared] addTags:arguments.value];
     }
     [[UAPush shared] updateRegistration];
     completionHandler([UAActionResult emptyResult]);

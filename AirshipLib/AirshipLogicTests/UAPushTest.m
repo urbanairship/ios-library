@@ -343,20 +343,20 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 }
 
 
-- (void)testAddTagsToCurrentDevice {
+- (void)testAddTags {
     self.push.tags = nil;
 
-    [self.push addTagsToCurrentDevice:@[@"tag-one", @"tag-two"]];
+    [self.push addTags:@[@"tag-one", @"tag-two"]];
     XCTAssertEqualObjects([NSSet setWithArray:(@[@"tag-one", @"tag-two"])], [NSSet setWithArray:self.push.tags],
                           @"Add tags to current device fails when no existing tags exist");
 
     // Try to add same tags again
-    [self.push addTagsToCurrentDevice:@[@"tag-one", @"tag-two"]];
+    [self.push addTags:@[@"tag-one", @"tag-two"]];
     XCTAssertEqual((NSUInteger)2, self.push.tags.count, @"Add tags should not add duplicate tags");
 
 
     // Try to add a new set of tags, with one of the tags being unique
-    [self.push addTagsToCurrentDevice:@[@"tag-one", @"tag-three"]];
+    [self.push addTags:@[@"tag-one", @"tag-three"]];
 
     XCTAssertEqual((NSUInteger)3, self.push.tags.count,
                    @"Add tags should add unique tags even if some of them are duplicate");
@@ -365,66 +365,66 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                           @"Add tags should add unique tags even if some of them are duplicate");
 
     // Try to add an nil set of tags
-    XCTAssertNoThrow([self.push addTagsToCurrentDevice:nil],
+    XCTAssertNoThrow([self.push addTags:nil],
                      @"Should not throw when adding a nil set of tags");
 
     // Try to add an nil set of tags
-    XCTAssertNoThrow([self.push addTagsToCurrentDevice:[NSArray array]],
+    XCTAssertNoThrow([self.push addTags:[NSArray array]],
                      @"Should not throw when adding an empty tag array");
 }
 
-- (void)testAddTagToCurrentDevice {
+- (void)testAddTag {
     self.push.tags = nil;
 
-    [self.push addTagToCurrentDevice:@"tag-one"];
+    [self.push addTag:@"tag-one"];
     XCTAssertEqualObjects((@[@"tag-one"]), self.push.tags,
                           @"Add tag to current device fails when no existing tags exist");
 
     // Try to add same tag again
-    [self.push addTagToCurrentDevice:@"tag-one"];
+    [self.push addTag:@"tag-one"];
     XCTAssertEqual((NSUInteger)1, self.push.tags.count, @"Add tag should not add duplicate tags");
 
     // Add a new tag
-    [self.push addTagToCurrentDevice:@"tag-two"];
+    [self.push addTag:@"tag-two"];
     XCTAssertEqualObjects((@[@"tag-one", @"tag-two"]), self.push.tags,
                           @"Adding another tag to tags fails");
 
     // Try to add an nil tag
-    XCTAssertThrows([self.push addTagToCurrentDevice:nil],
+    XCTAssertThrows([self.push addTag:nil],
                     @"Should throw when adding a nil tag");
 }
 
-- (void)testRemoveTagFromCurrentDevice {
+- (void)testRemoveTag {
     self.push.tags = nil;
-    XCTAssertNoThrow([self.push removeTagFromCurrentDevice:@"some-tag"],
+    XCTAssertNoThrow([self.push removeTag:@"some-tag"],
                      @"Should not throw when removing a tag when tags are empty");
 
     self.push.tags = @[@"some-tag", @"some-other-tag"];
-    XCTAssertNoThrow([self.push removeTagFromCurrentDevice:@"some-not-found-tag"],
+    XCTAssertNoThrow([self.push removeTag:@"some-not-found-tag"],
                      @"Should not throw when removing a tag that does not exist");
 
-    [self.push removeTagFromCurrentDevice:@"some-tag"];
+    [self.push removeTag:@"some-tag"];
     XCTAssertEqualObjects((@[@"some-other-tag"]), self.push.tags,
                           @"Remove tag from device should actually remove the tag");
 
-    XCTAssertThrows([self.push removeTagFromCurrentDevice:nil],
+    XCTAssertThrows([self.push removeTag:nil],
                     @"Should throw when removing a nil tag");
 }
 
-- (void)testRemoveTagsFromCurrentDevice {
+- (void)testRemoveTags {
     self.push.tags = nil;
-    XCTAssertNoThrow([self.push removeTagsFromCurrentDevice:@[@"some-tag"]],
+    XCTAssertNoThrow([self.push removeTags:@[@"some-tag"]],
                      @"Should not throw when removing tags when current tags are empty");
 
     self.push.tags = @[@"some-tag", @"some-other-tag"];
-    XCTAssertNoThrow([self.push removeTagsFromCurrentDevice:@[@"some-not-found-tag"]],
+    XCTAssertNoThrow([self.push removeTags:@[@"some-not-found-tag"]],
                      @"Should not throw when removing tags that do not exist");
 
-    [self.push removeTagsFromCurrentDevice:@[@"some-tag"]];
+    [self.push removeTags:@[@"some-tag"]];
     XCTAssertEqualObjects((@[@"some-other-tag"]), self.push.tags,
                           @"Remove tags from device should actually remove the tag");
 
-    XCTAssertNoThrow([self.push removeTagsFromCurrentDevice:nil],
+    XCTAssertNoThrow([self.push removeTags:nil],
                      @"Should throw when removing a nil set of tags");
 }
 
