@@ -917,7 +917,7 @@ BOOL deferChannelCreationOnForeground = false;
     }
 }
 
-+ (NSUInteger)currentEnabledNotificationTypes {
+- (UIUserNotificationType)currentEnabledNotificationTypes {
     if (![UAPush shared].userPushNotificationsEnabled) {
         return UIUserNotificationTypeNone;
     }
@@ -925,7 +925,8 @@ BOOL deferChannelCreationOnForeground = false;
     if ([UIUserNotificationSettings class]) {
         return [[UIApplication sharedApplication] currentUserNotificationSettings].types;
     } else {
-        return [UIApplication sharedApplication].enabledRemoteNotificationTypes;
+        UIUserNotificationType all = UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound;
+        return [UIApplication sharedApplication].enabledRemoteNotificationTypes & all;
     }
 }
 

@@ -349,7 +349,7 @@ static NSUInteger channelRowCount = 1;
     
     self.deviceTokenCell.detailTextLabel.text = [UAPush shared].deviceToken ? [UAPush shared].deviceToken : @"Unavailable";
 
-    NSUInteger enabledTypes = [UAPush currentEnabledNotificationTypes];
+    UIUserNotificationType enabledTypes = [[UAPush shared] currentEnabledNotificationTypes];
 
 
     self.deviceTokenTypesCell.detailTextLabel.text = [self pushTypeString:enabledTypes];
