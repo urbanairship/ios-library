@@ -351,7 +351,7 @@ SINGLETON_INTERFACE(UAPush);
  * @note When updating multiple server-side values (tags, alias, time zone, quiet time), set the
  * values first, then call `updateRegistration`. Batching these calls improves performance.
  *
- * @deprecated As of version 5.0. Replaced with addTag.
+ * @deprecated As of version 5.0.0 Replaced with addTag.
  *
  * @param tag Tag to be added
  */
@@ -366,7 +366,7 @@ SINGLETON_INTERFACE(UAPush);
  * values first, then call `updateRegistration`. Batching these calls improves performance.
  *
  *
- * @deprecated As of version 5.0. Replaced with addTags.
+ * @deprecated As of version 5.0.0 Replaced with addTags.
  *
  * @param tags Array of new tags
  */
@@ -380,7 +380,7 @@ SINGLETON_INTERFACE(UAPush);
  * @note When updating multiple server-side values (tags, alias, time zone, quiet time), set the
  * values first, then call `updateRegistration`. Batching these calls improves performance.
  *
- * @deprecated As of version 5.0. Replaced with removeTag.
+ * @deprecated As of version 5.0.0 Replaced with removeTag.
  *
  * @param tag Tag to be removed
  */
@@ -393,7 +393,7 @@ SINGLETON_INTERFACE(UAPush);
  * @note When updating multiple server-side values (tags, alias, time zone, quiet time), set the
  * values first, then call `updateRegistration`. Batching these calls improves performance.
  *
- * @deprecated As of version 5.0. Replaced with removeTags.
+ * @deprecated As of version 5.0.0 Replaced with removeTags.
  *
  * @param tags Array of tags to be removed
  */

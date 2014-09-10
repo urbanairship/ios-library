@@ -383,7 +383,7 @@ SINGLETON_IMPLEMENTATION(UAPush)
 #pragma mark Open APIs - UA Registration Tags APIs
 
 - (void)addTagToCurrentDevice:(NSString *)tag {
-    [self addTags:[NSArray arrayWithObject:tag]];
+    [self addTag:tag];
 }
 
 - (void)addTagsToCurrentDevice:(NSArray *)tags {
@@ -396,7 +396,7 @@ SINGLETON_IMPLEMENTATION(UAPush)
 }
 
 - (void)removeTagsFromCurrentDevice:(NSArray *)tags {
-    NSMutableArray *mutableTags = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:UAPushTagsSettingsKey]];
+    NSMutableArray *mutableTags = [NSMutableArray arrayWithArray:self.tags];
     [mutableTags removeObjectsInArray:tags];
     [[NSUserDefaults standardUserDefaults] setObject:mutableTags forKey:UAPushTagsSettingsKey];
 }
@@ -406,7 +406,7 @@ SINGLETON_IMPLEMENTATION(UAPush)
 }
 
 - (void)addTags:(NSArray *)tags {
-    NSMutableSet *updatedTags = [NSMutableSet setWithArray:[self tags]];
+    NSMutableSet *updatedTags = [NSMutableSet setWithArray:self.tags];
     [updatedTags addObjectsFromArray:tags];
     [self setTags:[updatedTags allObjects]];
 }
@@ -416,7 +416,7 @@ SINGLETON_IMPLEMENTATION(UAPush)
 }
 
 - (void)removeTags:(NSArray *)tags {
-    NSMutableArray *mutableTags = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:UAPushTagsSettingsKey]];
+    NSMutableArray *mutableTags = [NSMutableArray arrayWithArray:self.tags];
     [mutableTags removeObjectsInArray:tags];
     [[NSUserDefaults standardUserDefaults] setObject:mutableTags forKey:UAPushTagsSettingsKey];
 }
