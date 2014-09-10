@@ -247,12 +247,6 @@ SINGLETON_IMPLEMENTATION(UAPush)
     return [NSArray arrayWithArray:normalizedTags];
 }
 
-- (void)addTagsToCurrentDevice:(NSArray *)tags {
-    NSMutableSet *updatedTags = [NSMutableSet setWithArray:[self tags]];
-    [updatedTags addObjectsFromArray:tags];
-    [self setTags:[updatedTags allObjects]];
-}
-
 - (BOOL)userPushNotificationsEnabled {
     return [[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey];
 }
@@ -389,14 +383,39 @@ SINGLETON_IMPLEMENTATION(UAPush)
 #pragma mark Open APIs - UA Registration Tags APIs
 
 - (void)addTagToCurrentDevice:(NSString *)tag {
-    [self addTagsToCurrentDevice:[NSArray arrayWithObject:tag]];
+    [self addTags:[NSArray arrayWithObject:tag]];
 }
 
+- (void)addTagsToCurrentDevice:(NSArray *)tags {
+    [self addTags:tags];
+}
+
+
 - (void)removeTagFromCurrentDevice:(NSString *)tag {
-    [self removeTagsFromCurrentDevice:[NSArray arrayWithObject:tag]];
+    [self removeTags:[NSArray arrayWithObject:tag]];
 }
 
 - (void)removeTagsFromCurrentDevice:(NSArray *)tags {
+    NSMutableArray *mutableTags = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:UAPushTagsSettingsKey]];
+    [mutableTags removeObjectsInArray:tags];
+    [[NSUserDefaults standardUserDefaults] setObject:mutableTags forKey:UAPushTagsSettingsKey];
+}
+
+- (void)addTag:(NSString *)tag {
+    [self addTags:[NSArray arrayWithObject:tag]];
+}
+
+- (void)addTags:(NSArray *)tags {
+    NSMutableSet *updatedTags = [NSMutableSet setWithArray:[self tags]];
+    [updatedTags addObjectsFromArray:tags];
+    [self setTags:[updatedTags allObjects]];
+}
+
+- (void)removeTag:(NSString *)tag {
+    [self removeTags:[NSArray arrayWithObject:tag]];
+}
+
+- (void)removeTags:(NSArray *)tags {
     NSMutableArray *mutableTags = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:UAPushTagsSettingsKey]];
     [mutableTags removeObjectsInArray:tags];
     [[NSUserDefaults standardUserDefaults] setObject:mutableTags forKey:UAPushTagsSettingsKey];
