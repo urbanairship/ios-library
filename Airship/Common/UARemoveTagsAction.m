@@ -32,9 +32,9 @@
                   actionName:(NSString *)actionName
            completionHandler:(UAActionCompletionHandler)completionHandler {
     if ([arguments.value isKindOfClass:[NSString class]]) {
-        [[UAPush shared] removeTagFromCurrentDevice:arguments.value];
+        [[UAPush shared] removeTag:arguments.value];
     } else {
-        [[UAPush shared] removeTagsFromCurrentDevice:arguments.value];
+        [[UAPush shared] removeTags:arguments.value];
     }
     [[UAPush shared] updateRegistration];
     completionHandler([UAActionResult emptyResult]);

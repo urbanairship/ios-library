@@ -370,9 +370,65 @@ SINGLETON_INTERFACE(UAPush);
  * @note When updating multiple server-side values (tags, alias, time zone, quiet time), set the
  * values first, then call `updateRegistration`. Batching these calls improves performance.
  *
+ * @deprecated As of version 5.0.0 Replaced with addTag.
+ *
  * @param tag Tag to be added
  */
-- (void)addTagToCurrentDevice:(NSString *)tag;
+- (void)addTagToCurrentDevice:(NSString *)tag __attribute__((deprecated("As of version 5.0.0")));
+
+
+/**
+ * Adds a group of tags to the current list of device tags. To update the server, make all of your
+ * changes, then call `updateRegistration`.
+ *
+ * @note When updating multiple server-side values (tags, alias, time zone, quiet time), set the
+ * values first, then call `updateRegistration`. Batching these calls improves performance.
+ *
+ *
+ * @deprecated As of version 5.0.0 Replaced with addTags.
+ *
+ * @param tags Array of new tags
+ */
+
+- (void)addTagsToCurrentDevice:(NSArray *)tags __attribute__((deprecated("As of version 5.0.0")));
+
+/**
+ * Removes a tag from the current tag list. To update the server, make all of your changes, then call
+ * `updateRegistration`.
+ *
+ * @note When updating multiple server-side values (tags, alias, time zone, quiet time), set the
+ * values first, then call `updateRegistration`. Batching these calls improves performance.
+ *
+ * @deprecated As of version 5.0.0 Replaced with removeTag.
+ *
+ * @param tag Tag to be removed
+ */
+- (void)removeTagFromCurrentDevice:(NSString *)tag __attribute__((deprecated("As of version 5.0.0")));
+
+/**
+ * Removes a group of tags from a device. To update the server, make all of your changes, then call
+ * `updateRegistration`.
+ *
+ * @note When updating multiple server-side values (tags, alias, time zone, quiet time), set the
+ * values first, then call `updateRegistration`. Batching these calls improves performance.
+ *
+ * @deprecated As of version 5.0.0 Replaced with removeTags.
+ *
+ * @param tags Array of tags to be removed
+ */
+- (void)removeTagsFromCurrentDevice:(NSArray *)tags __attribute__((deprecated("As of version 5.0.0")));
+
+/**
+ * Adds a tag to the list of tags for the device.
+ * To update the server, make all of your changes, then call
+ * `updateRegistration` to update the Urban Airship server.
+ *
+ * @note When updating multiple server-side values (tags, alias, time zone, quiet time), set the
+ * values first, then call `updateRegistration`. Batching these calls improves performance.
+ *
+ * @param tag Tag to be added
+ */
+- (void)addTag:(NSString *)tag;
 
 /**
  * Adds a group of tags to the current list of device tags. To update the server, make all of your
@@ -384,7 +440,7 @@ SINGLETON_INTERFACE(UAPush);
  * @param tags Array of new tags
  */
 
-- (void)addTagsToCurrentDevice:(NSArray *)tags;
+- (void)addTags:(NSArray *)tags;
 
 /**
  * Removes a tag from the current tag list. To update the server, make all of your changes, then call
@@ -395,7 +451,7 @@ SINGLETON_INTERFACE(UAPush);
  *
  * @param tag Tag to be removed
  */
-- (void)removeTagFromCurrentDevice:(NSString *)tag;
+- (void)removeTag:(NSString *)tag;
 
 /**
  * Removes a group of tags from a device. To update the server, make all of your changes, then call
@@ -403,10 +459,10 @@ SINGLETON_INTERFACE(UAPush);
  *
  * @note When updating multiple server-side values (tags, alias, time zone, quiet time), set the
  * values first, then call `updateRegistration`. Batching these calls improves performance.
- * 
+ *
  * @param tags Array of tags to be removed
  */
-- (void)removeTagsFromCurrentDevice:(NSArray *)tags;
+- (void)removeTags:(NSArray *)tags;
 
 ///---------------------------------------------------------------------------------------
 /// @name Quiet Time

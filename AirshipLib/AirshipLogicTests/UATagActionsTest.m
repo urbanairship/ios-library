@@ -98,7 +98,7 @@
     NSString *actionName = @"test_action";
     [self validateArgumentsForAddRemoveTagsAction:action];
 
-    [[self.mockPush expect] addTagToCurrentDevice:[OCMArg any]];
+    [[self.mockPush expect] addTag:[OCMArg any]];
     [[self.mockPush expect] updateRegistration];
 
     [action runWithArguments:self.stringArgs
@@ -107,7 +107,7 @@
            [self.mockPush verify];
     }];
 
-    [[self.mockPush expect] addTagsToCurrentDevice:[OCMArg any]];
+    [[self.mockPush expect] addTags:[OCMArg any]];
     [[self.mockPush expect] updateRegistration];
 
     [action runWithArguments:self.arrayArgs actionName:actionName
@@ -125,7 +125,7 @@
 
     [self validateArgumentsForAddRemoveTagsAction:action];
 
-    [[self.mockPush expect] removeTagFromCurrentDevice:[OCMArg any]];
+    [[self.mockPush expect] removeTag:[OCMArg any]];
     [[self.mockPush expect] updateRegistration];
 
     [action runWithArguments:self.stringArgs
@@ -134,7 +134,7 @@
            [self.mockPush verify];
     }];
 
-    [[self.mockPush expect] removeTagsFromCurrentDevice:[OCMArg any]];
+    [[self.mockPush expect] removeTags:[OCMArg any]];
     [[self.mockPush expect] updateRegistration];
 
     [action runWithArguments:self.arrayArgs
