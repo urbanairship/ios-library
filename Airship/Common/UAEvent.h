@@ -66,66 +66,9 @@
  */
 - (BOOL)isValid;
 
-@end
 
-/**
- * Event when app is initialized.
- */
-@interface UAEventAppInit : UAEvent
 
-/**
- * Factory method to create a UAEventAppInit.
- */
-+ (instancetype)event;
 
-@end
-
-/**
- * Event when app is in the foreground.
- */
-@interface UAEventAppForeground : UAEventAppInit
-@end
-
-/**
- * Event when app exits.
- */
-@interface UAEventAppExit : UAEvent
-
-/**
- * Factory method to create a UAEventAppExit.
- */
-+ (instancetype)event;
-
-@end
-
-/**
- * Event when app is backgrounded.
- */
-@interface UAEventAppBackground : UAEventAppExit
-@end
-
-/**
- * Event when device registration occurred.
- */
-@interface UAEventDeviceRegistration : UAEvent
-
-/**
- * Factory method to create a UAEventDeviceRegistration.
- */
-+ (instancetype)event;
-
-@end
-
-/**
- * Event when a push notification is received.
- */
-@interface UAEventPushReceived : UAEvent
-
-/**
- * Factory method to create a UAEventPushReceived.
- * @param notification The received push notification.
- */
-+ (instancetype)eventWithNotification:(NSDictionary *)notification;
 
 @end
 

@@ -474,6 +474,30 @@
 		CCDF66AF19A544590043657E /* UAShareAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDF66AC19A544590043657E /* UAShareAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CCDF66B019A544590043657E /* UAShareAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDF66AD19A544590043657E /* UAShareAction.m */; };
 		CCDF66B119A544590043657E /* UAShareAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDF66AD19A544590043657E /* UAShareAction.m */; };
+		CCE34AE019C2632500A8EFC0 /* UAEventAppForeground.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE34ADE19C2632500A8EFC0 /* UAEventAppForeground.h */; };
+		CCE34AE119C2632500A8EFC0 /* UAEventAppForeground.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE34ADE19C2632500A8EFC0 /* UAEventAppForeground.h */; };
+		CCE34AE219C2632500A8EFC0 /* UAEventAppForeground.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE34ADF19C2632500A8EFC0 /* UAEventAppForeground.m */; };
+		CCE34AE319C2632500A8EFC0 /* UAEventAppForeground.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE34ADF19C2632500A8EFC0 /* UAEventAppForeground.m */; };
+		CCE34AE619C2642D00A8EFC0 /* UAEventAppInit.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE34AE419C2642D00A8EFC0 /* UAEventAppInit.h */; };
+		CCE34AE719C2642D00A8EFC0 /* UAEventAppInit.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE34AE419C2642D00A8EFC0 /* UAEventAppInit.h */; };
+		CCE34AE819C2642D00A8EFC0 /* UAEventAppInit.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE34AE519C2642D00A8EFC0 /* UAEventAppInit.m */; };
+		CCE34AE919C2642D00A8EFC0 /* UAEventAppInit.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE34AE519C2642D00A8EFC0 /* UAEventAppInit.m */; };
+		CCE34AEC19C2644500A8EFC0 /* UAEventAppExit.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE34AEA19C2644500A8EFC0 /* UAEventAppExit.h */; };
+		CCE34AED19C2644500A8EFC0 /* UAEventAppExit.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE34AEA19C2644500A8EFC0 /* UAEventAppExit.h */; };
+		CCE34AEE19C2644500A8EFC0 /* UAEventAppExit.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE34AEB19C2644500A8EFC0 /* UAEventAppExit.m */; };
+		CCE34AEF19C2644500A8EFC0 /* UAEventAppExit.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE34AEB19C2644500A8EFC0 /* UAEventAppExit.m */; };
+		CCE34AF219C2646500A8EFC0 /* UAEventAppBackground.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE34AF019C2646500A8EFC0 /* UAEventAppBackground.h */; };
+		CCE34AF319C2646500A8EFC0 /* UAEventAppBackground.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE34AF019C2646500A8EFC0 /* UAEventAppBackground.h */; };
+		CCE34AF419C2646500A8EFC0 /* UAEventAppBackground.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE34AF119C2646500A8EFC0 /* UAEventAppBackground.m */; };
+		CCE34AF519C2646500A8EFC0 /* UAEventAppBackground.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE34AF119C2646500A8EFC0 /* UAEventAppBackground.m */; };
+		CCE34AF819C2647A00A8EFC0 /* UAEventDeviceRegistration.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE34AF619C2647A00A8EFC0 /* UAEventDeviceRegistration.h */; };
+		CCE34AF919C2647A00A8EFC0 /* UAEventDeviceRegistration.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE34AF619C2647A00A8EFC0 /* UAEventDeviceRegistration.h */; };
+		CCE34AFA19C2647A00A8EFC0 /* UAEventDeviceRegistration.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE34AF719C2647A00A8EFC0 /* UAEventDeviceRegistration.m */; };
+		CCE34AFB19C2647A00A8EFC0 /* UAEventDeviceRegistration.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE34AF719C2647A00A8EFC0 /* UAEventDeviceRegistration.m */; };
+		CCE34AFE19C2648900A8EFC0 /* UAEventPushReceived.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE34AFC19C2648900A8EFC0 /* UAEventPushReceived.h */; };
+		CCE34AFF19C2648900A8EFC0 /* UAEventPushReceived.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE34AFC19C2648900A8EFC0 /* UAEventPushReceived.h */; };
+		CCE34B0019C2648900A8EFC0 /* UAEventPushReceived.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE34AFD19C2648900A8EFC0 /* UAEventPushReceived.m */; };
+		CCE34B0119C2648900A8EFC0 /* UAEventPushReceived.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE34AFD19C2648900A8EFC0 /* UAEventPushReceived.m */; };
 		CCF4462A1947D252003E04E7 /* UACustomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = CCF446281947D252003E04E7 /* UACustomEvent.h */; };
 		CCF4462C1947D252003E04E7 /* UACustomEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = CCF446291947D252003E04E7 /* UACustomEvent.m */; };
 		CCF4462F1947D265003E04E7 /* UACustomEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCF4462E1947D265003E04E7 /* UACustomEventTest.m */; };
@@ -784,6 +808,18 @@
 		CCDF66A119A5166B0043657E /* UACustomEvent+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UACustomEvent+Internal.h"; sourceTree = "<group>"; };
 		CCDF66AC19A544590043657E /* UAShareAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAShareAction.h; sourceTree = "<group>"; };
 		CCDF66AD19A544590043657E /* UAShareAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAShareAction.m; sourceTree = "<group>"; };
+		CCE34ADE19C2632500A8EFC0 /* UAEventAppForeground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAEventAppForeground.h; sourceTree = "<group>"; };
+		CCE34ADF19C2632500A8EFC0 /* UAEventAppForeground.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventAppForeground.m; sourceTree = "<group>"; };
+		CCE34AE419C2642D00A8EFC0 /* UAEventAppInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAEventAppInit.h; sourceTree = "<group>"; };
+		CCE34AE519C2642D00A8EFC0 /* UAEventAppInit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventAppInit.m; sourceTree = "<group>"; };
+		CCE34AEA19C2644500A8EFC0 /* UAEventAppExit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAEventAppExit.h; sourceTree = "<group>"; };
+		CCE34AEB19C2644500A8EFC0 /* UAEventAppExit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventAppExit.m; sourceTree = "<group>"; };
+		CCE34AF019C2646500A8EFC0 /* UAEventAppBackground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAEventAppBackground.h; sourceTree = "<group>"; };
+		CCE34AF119C2646500A8EFC0 /* UAEventAppBackground.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventAppBackground.m; sourceTree = "<group>"; };
+		CCE34AF619C2647A00A8EFC0 /* UAEventDeviceRegistration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAEventDeviceRegistration.h; sourceTree = "<group>"; };
+		CCE34AF719C2647A00A8EFC0 /* UAEventDeviceRegistration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventDeviceRegistration.m; sourceTree = "<group>"; };
+		CCE34AFC19C2648900A8EFC0 /* UAEventPushReceived.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAEventPushReceived.h; sourceTree = "<group>"; };
+		CCE34AFD19C2648900A8EFC0 /* UAEventPushReceived.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventPushReceived.m; sourceTree = "<group>"; };
 		CCF446281947D252003E04E7 /* UACustomEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACustomEvent.h; sourceTree = "<group>"; };
 		CCF446291947D252003E04E7 /* UACustomEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACustomEvent.m; sourceTree = "<group>"; };
 		CCF4462E1947D265003E04E7 /* UACustomEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACustomEventTest.m; sourceTree = "<group>"; };
@@ -1262,16 +1298,28 @@
 		CC2950F01948DB5D00E905E3 /* Events */ = {
 			isa = PBXGroup;
 			children = (
-				CCDF66A119A5166B0043657E /* UACustomEvent+Internal.h */,
-				BBB87E0B15057C7F00971CEC /* UALocationEvent.h */,
-				BBB87E0C15057C7F00971CEC /* UALocationEvent.m */,
-				CCF446281947D252003E04E7 /* UACustomEvent.h */,
-				CCF446291947D252003E04E7 /* UACustomEvent.m */,
 				D5BED7B812FC787900057449 /* UAEvent.h */,
 				D5BED7B712FC787900057449 /* UAEvent.m */,
 				CC2950F71949040300E905E3 /* UAEvent+Internal.h */,
+				BBB87E0B15057C7F00971CEC /* UALocationEvent.h */,
+				BBB87E0C15057C7F00971CEC /* UALocationEvent.m */,
+				CCDF66A119A5166B0043657E /* UACustomEvent+Internal.h */,
+				CCF446281947D252003E04E7 /* UACustomEvent.h */,
+				CCF446291947D252003E04E7 /* UACustomEvent.m */,
 				76B4E01419A4038000603F8A /* UAInteractiveNotificationEvent.h */,
 				76B4E01519A4038000603F8A /* UAInteractiveNotificationEvent.m */,
+				CCE34AE419C2642D00A8EFC0 /* UAEventAppInit.h */,
+				CCE34AE519C2642D00A8EFC0 /* UAEventAppInit.m */,
+				CCE34ADE19C2632500A8EFC0 /* UAEventAppForeground.h */,
+				CCE34ADF19C2632500A8EFC0 /* UAEventAppForeground.m */,
+				CCE34AEA19C2644500A8EFC0 /* UAEventAppExit.h */,
+				CCE34AEB19C2644500A8EFC0 /* UAEventAppExit.m */,
+				CCE34AF019C2646500A8EFC0 /* UAEventAppBackground.h */,
+				CCE34AF119C2646500A8EFC0 /* UAEventAppBackground.m */,
+				CCE34AF619C2647A00A8EFC0 /* UAEventDeviceRegistration.h */,
+				CCE34AF719C2647A00A8EFC0 /* UAEventDeviceRegistration.m */,
+				CCE34AFC19C2648900A8EFC0 /* UAEventPushReceived.h */,
+				CCE34AFD19C2648900A8EFC0 /* UAEventPushReceived.m */,
 			);
 			name = Events;
 			sourceTree = "<group>";
@@ -1568,10 +1616,12 @@
 				49BADDBE198B084C000FF3D5 /* UAJSONValueTransformer.h in Headers */,
 				49BADDC0198B084C000FF3D5 /* UAChannelAPIClient.h in Headers */,
 				49BADDC1198B084D000FF3D5 /* UAChannelRegistrationPayload.h in Headers */,
+				CCE34AFF19C2648900A8EFC0 /* UAEventPushReceived.h in Headers */,
 				49BADDC3198B084D000FF3D5 /* UADeviceAPIClient.h in Headers */,
 				49BADDC4198B084E000FF3D5 /* UADeviceRegistrationPayload.h in Headers */,
 				49BADDC5198B084E000FF3D5 /* UAPush.h in Headers */,
 				49BADDC7198B084F000FF3D5 /* UADeviceRegistrar.h in Headers */,
+				CCE34AE119C2632500A8EFC0 /* UAEventAppForeground.h in Headers */,
 				49BADDC9198B084F000FF3D5 /* UA_Base64.h in Headers */,
 				49BADDCA198B0850000FF3D5 /* UA_Reachability.h in Headers */,
 				49BADDCB198B0850000FF3D5 /* UALandingPageOverlayController.h in Headers */,
@@ -1579,11 +1629,13 @@
 				49BADDCD198B0851000FF3D5 /* UABespokeCloseView.h in Headers */,
 				49BADDCE198B0851000FF3D5 /* UARichContentWindow.h in Headers */,
 				49BADDCF198B0851000FF3D5 /* UANativeBridge.h in Headers */,
+				CCE34AED19C2644500A8EFC0 /* UAEventAppExit.h in Headers */,
 				CC6773C219B11C1F00B016EC /* UAInboxPushHandler+Internal.h in Headers */,
 				49BADDD0198B0852000FF3D5 /* UAAddTagsAction.h in Headers */,
 				49BADDD1198B0852000FF3D5 /* UARemoveTagsAction.h in Headers */,
 				49BADDD2198B0852000FF3D5 /* UAModifyTagsAction.h in Headers */,
 				49BADDD3198B0853000FF3D5 /* UAOpenExternalURLAction.h in Headers */,
+				CCE34AF919C2647A00A8EFC0 /* UAEventDeviceRegistration.h in Headers */,
 				49BADDD5198B0854000FF3D5 /* UAAction.h in Headers */,
 				49BADDD6198B0854000FF3D5 /* UAActionArguments.h in Headers */,
 				49BADDD9198B0855000FF3D5 /* UAActionRegistry.h in Headers */,
@@ -1620,6 +1672,7 @@
 				49BADDFD198B0864000FF3D5 /* UASignificantChangeProvider.h in Headers */,
 				49BADDFE198B0864000FF3D5 /* UAStandardLocationProvider.h in Headers */,
 				49BADDFF198B0865000FF3D5 /* UAUser.h in Headers */,
+				CCE34AE719C2642D00A8EFC0 /* UAEventAppInit.h in Headers */,
 				49BADE01198B0865000FF3D5 /* UAUserAPIClient.h in Headers */,
 				49BADE02198B0866000FF3D5 /* UAUserData.h in Headers */,
 				49BADE03198B0866000FF3D5 /* UIWebView+UAAdditions.h in Headers */,
@@ -1658,6 +1711,7 @@
 				49BADDEA198B085C000FF3D5 /* UAEvent+Internal.h in Headers */,
 				49BADDEB198B085C000FF3D5 /* UAAnalytics+Internal.h in Headers */,
 				49BADDF0198B085E000FF3D5 /* UAHTTPConnection+Internal.h in Headers */,
+				CCE34AF319C2646500A8EFC0 /* UAEventAppBackground.h in Headers */,
 				49BADDF6198B0861000FF3D5 /* UAHTTPRequest+Internal.h in Headers */,
 				49BADDFB198B0863000FF3D5 /* UALocationService+Internal.h in Headers */,
 				49BADE00198B0865000FF3D5 /* UAUser+Internal.h in Headers */,
@@ -1688,9 +1742,11 @@
 				BB8860B1159A7E9600584445 /* UAGlobal.h in Headers */,
 				BB8860D2159A7E9600584445 /* UAUser.h in Headers */,
 				BB8860D6159A7E9600584445 /* UAAnalytics.h in Headers */,
+				CCE34AF219C2646500A8EFC0 /* UAEventAppBackground.h in Headers */,
 				CCF4462A1947D252003E04E7 /* UACustomEvent.h in Headers */,
 				BB8860D7159A7E9600584445 /* UATagUtils.h in Headers */,
 				BB8860D8159A7E9600584445 /* UASQLite.h in Headers */,
+				CCE34AF819C2647A00A8EFC0 /* UAEventDeviceRegistration.h in Headers */,
 				BB8860D9159A7E9600584445 /* UAHTTPConnection.h in Headers */,
 				CC7DC950183E978A00E95BB8 /* UADeviceRegistrar+Internal.h in Headers */,
 				BB8860E3159A7E9600584445 /* UASignificantChangeProvider.h in Headers */,
@@ -1716,6 +1772,7 @@
 				CCB7DF5E17BBF71000CEDC56 /* UAInboxDBManager+Internal.h in Headers */,
 				CC1D229B180373E0005C8393 /* UAAction+Operators.h in Headers */,
 				CC070C8219ABCD7000E91553 /* UAUserNotificationCategories+Internal.h in Headers */,
+				CCE34AE019C2632500A8EFC0 /* UAEventAppForeground.h in Headers */,
 				CCA3A50117FF626C009C7371 /* UAActionRegistry+Internal.h in Headers */,
 				CC103E1118A9456200DC950F /* UAActionResult+Internal.h in Headers */,
 				1F610E0A17835C6700BCD96E /* UAConfig.h in Headers */,
@@ -1728,9 +1785,11 @@
 				1F610DDF17835C3A00BCD96E /* UAInbox.h in Headers */,
 				CC8542C317F4B81600D2DE10 /* UAActionRunner.h in Headers */,
 				1F610DC017835C2200BCD96E /* UAirship+Internal.h in Headers */,
+				CCE34AFE19C2648900A8EFC0 /* UAEventPushReceived.h in Headers */,
 				49C1F07F1978523300DD67DE /* UAInboxMessage.h in Headers */,
 				1F610E0117835C3A00BCD96E /* UADeviceRegistrationPayload.h in Headers */,
 				BB8860CE159A7E9600584445 /* UA_Reachability.h in Headers */,
+				CCE34AE619C2642D00A8EFC0 /* UAEventAppInit.h in Headers */,
 				4905C4DF182458AC001D48E3 /* UAActionJSDelegate.h in Headers */,
 				CCDD37C818089E5700B8866E /* UAOpenExternalURLAction.h in Headers */,
 				1F610DFB17835C3A00BCD96E /* UADeviceAPIClient.h in Headers */,
@@ -1772,6 +1831,7 @@
 				CC4AAE0718C93ECF001F23B3 /* UAApplicationMetrics.h in Headers */,
 				76792D13178E13810054F8AD /* UAHTTPRequest+Internal.h in Headers */,
 				CC523FB017B985F800233005 /* UAJSONValueTransformer.h in Headers */,
+				CCE34AEC19C2644500A8EFC0 /* UAEventAppExit.h in Headers */,
 				4903208017BD55E800E03BA1 /* UAInboxMessageListDelegate.h in Headers */,
 				49EECA8B17CBD4BC00DE0AFB /* UADisposable.h in Headers */,
 				1F55FB6D181A34DD002AA192 /* UABeveledLoadingIndicator.h in Headers */,
@@ -2036,7 +2096,9 @@
 				491B8413198C237F00FB7A40 /* UAInboxMessage.m in Sources */,
 				491B8414198C237F00FB7A40 /* UAInboxMessageData.m in Sources */,
 				491B8415198C237F00FB7A40 /* UAInboxMessageList.m in Sources */,
+				CCE34AE919C2642D00A8EFC0 /* UAEventAppInit.m in Sources */,
 				491B8416198C237F00FB7A40 /* UAInboxPushHandler.m in Sources */,
+				CCE34AF519C2646500A8EFC0 /* UAEventAppBackground.m in Sources */,
 				491B8417198C237F00FB7A40 /* UAInboxUtils.m in Sources */,
 				491B8418198C237F00FB7A40 /* UAJSONValueTransformer.m in Sources */,
 				491B8419198C237F00FB7A40 /* UAChannelAPIClient.m in Sources */,
@@ -2049,6 +2111,7 @@
 				491B8420198C237F00FB7A40 /* UA_Reachability.m in Sources */,
 				491B8421198C237F00FB7A40 /* UALandingPageOverlayController.m in Sources */,
 				491B8422198C237F00FB7A40 /* UABeveledLoadingIndicator.m in Sources */,
+				CCE34AFB19C2647A00A8EFC0 /* UAEventDeviceRegistration.m in Sources */,
 				491B8423198C237F00FB7A40 /* UABespokeCloseView.m in Sources */,
 				491B8424198C237F00FB7A40 /* UAAddTagsAction.m in Sources */,
 				491B8425198C237F00FB7A40 /* UARemoveTagsAction.m in Sources */,
@@ -2069,8 +2132,10 @@
 				491B8433198C237F00FB7A40 /* UAAction+Operators.m in Sources */,
 				491B8434198C237F00FB7A40 /* UAIncomingRichPushAction.m in Sources */,
 				491B8435198C237F00FB7A40 /* UACloseWindowAction.m in Sources */,
+				CCE34AEF19C2644500A8EFC0 /* UAEventAppExit.m in Sources */,
 				491B8436198C237F00FB7A40 /* UALocationEvent.m in Sources */,
 				491B8437198C237F00FB7A40 /* UACustomEvent.m in Sources */,
+				CCE34AE319C2632500A8EFC0 /* UAEventAppForeground.m in Sources */,
 				491B8438198C237F00FB7A40 /* UAEvent.m in Sources */,
 				491B8439198C237F00FB7A40 /* UAAnalytics.m in Sources */,
 				491B843A198C237F00FB7A40 /* UAAnalyticsDBManager.m in Sources */,
@@ -2098,6 +2163,7 @@
 				491B844E198C237F00FB7A40 /* UAKeychainUtils.m in Sources */,
 				491B844F198C237F00FB7A40 /* NSString+UAURLEncoding.m in Sources */,
 				491B8450198C237F00FB7A40 /* UAWebViewCallData.m in Sources */,
+				CCE34B0119C2648900A8EFC0 /* UAEventPushReceived.m in Sources */,
 				491B8451198C237F00FB7A40 /* NSJSONSerialization+UAAdditions.m in Sources */,
 				491B8452198C237F00FB7A40 /* UAirship.m in Sources */,
 				491B8453198C237F00FB7A40 /* UAApplicationMetrics.m in Sources */,
@@ -2189,7 +2255,9 @@
 				49416D6A18C513F500A18B72 /* UALandingPageOverlayController.m in Sources */,
 				BB8860EE159A7E9600584445 /* UAUtils.m in Sources */,
 				49416D6418C513D500A18B72 /* UABespokeCloseView.m in Sources */,
+				CCE34AE819C2642D00A8EFC0 /* UAEventAppInit.m in Sources */,
 				CCF4462C1947D252003E04E7 /* UACustomEvent.m in Sources */,
+				CCE34AF419C2646500A8EFC0 /* UAEventAppBackground.m in Sources */,
 				1F55FB6F181A34DD002AA192 /* UABeveledLoadingIndicator.m in Sources */,
 				1F610DFC17835C3A00BCD96E /* UADeviceAPIClient.m in Sources */,
 				CCA3A4ED17FCB3A8009C7371 /* UAActionRegistryEntry.m in Sources */,
@@ -2202,6 +2270,7 @@
 				CCBFA2DB17B5436500F97E1D /* NSJSONSerialization+UAAdditions.m in Sources */,
 				1F610DB617835C2200BCD96E /* UAAppDelegate.m in Sources */,
 				BB886104159A7E9600584445 /* UA_Base64.m in Sources */,
+				CCE34AFA19C2647A00A8EFC0 /* UAEventDeviceRegistration.m in Sources */,
 				BB886105159A7E9600584445 /* UAKeychainUtils.m in Sources */,
 				CC8542C117F4B81600D2DE10 /* UAActionResult.m in Sources */,
 				BB886107159A7E9600584445 /* UAUser.m in Sources */,
@@ -2222,8 +2291,10 @@
 				CCDD379D1807019000B8866E /* UAIncomingRichPushAction.m in Sources */,
 				BB886111159A7E9600584445 /* UAAnalyticsDBManager.m in Sources */,
 				49F437541810B5B400182D06 /* UAModifyTagsAction.m in Sources */,
+				CCE34AEE19C2644500A8EFC0 /* UAEventAppExit.m in Sources */,
 				1F610E0617835C3A00BCD96E /* UAPush.m in Sources */,
 				BB886116159A7E9600584445 /* UALocationEvent.m in Sources */,
+				CCE34AE219C2632500A8EFC0 /* UAEventAppForeground.m in Sources */,
 				CC8542C517F4B81600D2DE10 /* UAActionRunner.m in Sources */,
 				BB886117159A7E9600584445 /* UALocationService.m in Sources */,
 				CC313A9B19A66DBE00134A9F /* UAUserNotificationCategories.m in Sources */,
@@ -2251,6 +2322,7 @@
 				495048A81738812500F8B5BE /* UADelayOperation.m in Sources */,
 				49E9C9C3183AD42300B7BCFF /* UAWebViewCallData.m in Sources */,
 				CC1D229D180373E0005C8393 /* UAAction+Operators.m in Sources */,
+				CCE34B0019C2648900A8EFC0 /* UAEventPushReceived.m in Sources */,
 				1F610DE317835C3A00BCD96E /* UAInboxAPIClient.m in Sources */,
 				494BF70C1762789D00B25E12 /* UAUserAPIClient.m in Sources */,
 				494BF70E1762789D00B25E12 /* UAUserData.m in Sources */,
