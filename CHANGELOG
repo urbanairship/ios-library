@@ -7,7 +7,16 @@ Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 iOS8 Preview (5.0.0.{build #})
 ------------------------------
 
-Added to preview on 2014-9-10
+Known issues with iOS8 GM that may impact your integration:
+- Applications do not enter the 'active' state when launched from an interactive notification (radar 18179525). This may impact the accuracy
+  of reporting.
+- Background refresh always appears to be enabled in an application even when disabled in settings and background
+  push will not be delivered. Push registration will consider a device in this situation able to receive a background notification
+  when it cannot. (radar 18298439)
+- Registering for UIUserNotificationTypeNone will prevent a re-registration until the device has been restarted and the settings
+  are manually updated in Settings.app. We have added a workaround for this issue in the latest (Sept 11) preview. (radar 18284099)
+
+Added to preview on 2014-9-11
  - Added work around for iOS 8 registration bug where disabling user notifications prevents registering for notification types
    without a device restart. Instead of registering for 0 notification types, the device will just be marked as opted-out. This only 
    affects newer iOS 8 devices. For more information, see the documentation for allowUnregisteringUserNotificationTypes on UAPush. 
