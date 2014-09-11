@@ -115,25 +115,7 @@ UALogLevel uaLogLevel = UALogLevelError;
 }
 
 + (void)takeOff:(UAConfig *)config {
-
-    NSLog(@"\n\n\n"
-          "\t *********************************************************\n"
-          "\t *             URBAN AIRSHIP PREVIEW RELEASE             *\n"
-          "\t *                                                       *\n"
-          "\t * This is a preview Urban Airship release.  It is       *\n"
-          "\t * not intended to be part of a production application.  *\n"
-          "\t *                                                       *\n"
-          "\t *                                                       *\n"
-          "\t *                 _..--=--..._                          *\n"
-          "\t *              .-'            '-.  .-.                  *\n"
-          "\t *             /.'              '.\\/  /                  *\n"
-          "\t *            |=-                -=| (                   *\n"
-          "\t *             \'.              .'/\\  \\                   *\n"
-          "\t *              '-.,_____ _____.-'  '-'                  *\n"
-          "\t *                   [_____]=8                           *\n"
-          "\t *                                                       *\n"
-          "\t *********************************************************\n\n\n");
-
+    UA_BUILD_WARNINGS;
 
     if ([UA_VERSION isEqualToString:@"0.0.0"]) {
         UA_LERR(@"_UA_VERSION is undefined - this commonly indicates an issue with the build configuration, UA_VERSION will be set to \"0.0.0\".");

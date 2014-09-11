@@ -7,6 +7,15 @@ Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 iOS8 Preview (5.0.0.{build #})
 ------------------------------
 
+Added to preview on 2014-9-10
+ - Added work around for iOS 8 registration bug where disabling user notifications prevents registering for notification types
+   without a device restart. Instead of registering for 0 notification types, the device will just be marked as opted-out. This only 
+   affects newer iOS 8 devices. For more information, see the documentation for allowUnregisteringUserNotificationTypes on UAPush. 
+ - Replaced existing tag modifiers on UAPush with more concisely named methods: addTag: addTags: removeTag: removeTags:.
+ - currentEnabledNotificationTypes on UAPush is now an instance method instead.
+ - Removed preview warning.
+
+
 Added to preview on 2014-9-8
 - Fixed push prompt on first-run and immediate opt-out.
 - Fixed issue with frozen sample inbox UI introduced in previous preview.
