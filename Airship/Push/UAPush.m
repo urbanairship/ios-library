@@ -103,7 +103,8 @@ SINGLETON_IMPLEMENTATION(UAPush)
                                                        object:[UIApplication sharedApplication]];
         }
 
-
+        // Do not remove migratePushSettings call from init. It needs to be run
+        // prior to allowing the application to set defaults.
         [self migratePushSettings];
         
         self.deviceRegistrar = [[UADeviceRegistrar alloc] init];
@@ -923,15 +924,25 @@ BOOL deferChannelCreationOnForeground = false;
 - (void)migratePushSettings {
     // Migrate userNotificationEnabled setting to YES if we are currently registered for notification types
     if (![[NSUserDefaults standardUserDefaults] objectForKey:UAUserPushNotificationsEnabledKey]) {
-        BOOL registeredForUserNotificationTypes;
-        if ([UIUserNotificationSettings class]) {
-            registeredForUserNotificationTypes = [[UIApplication sharedApplication] currentUserNotificationSettings].types != UIUserNotificationTypeNone;
-        } else {
-            registeredForUserNotificationTypes =[UIApplication sharedApplication].enabledRemoteNotificationTypes != UIRemoteNotificationTypeNone;
-        }
 
-        if (registeredForUserNotificationTypes) {
-            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAUserPushNotificationsEnabledKey];
+        // If the previous pushEnabled was set
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:@"UAPushEnabled"]) {
+            BOOL previousValue = [[NSUserDefaults standardUserDefaults] boolForKey:@"UAPushEnabled"];
+            UA_LDEBUG(@"Migrating userPushNotificationEnabled to %@ from previous pushEnabledValue.", previousValue ? @"YES" : @"NO");
+            [[NSUserDefaults standardUserDefaults] setBool:previousValue forKey:UAUserPushNotificationsEnabledKey];
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"UAPushEnabled"];
+        } else {
+            BOOL registeredForUserNotificationTypes;
+            if ([UIUserNotificationSettings class]) {
+                registeredForUserNotificationTypes = [[UIApplication sharedApplication] currentUserNotificationSettings].types != UIUserNotificationTypeNone;
+            } else {
+                registeredForUserNotificationTypes =[UIApplication sharedApplication].enabledRemoteNotificationTypes != UIRemoteNotificationTypeNone;
+            }
+
+            if (registeredForUserNotificationTypes) {
+                UA_LDEBUG(@"Migrating userPushNotificationEnabled to YES because application has user notification types.");
+                [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAUserPushNotificationsEnabledKey];
+            }
         }
     }
 }
