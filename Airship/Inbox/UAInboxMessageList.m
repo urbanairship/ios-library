@@ -249,6 +249,8 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     }];
 
 
+    UA_LDEBUG(@"Marking messages as read %@.", messages);
+
     [self.queue addOperationWithBlock:^{
         for (UAInboxMessage *message in messages) {
             if ([message isKindOfClass:[UAInboxMessage class]] && !message.data.isGone) {
@@ -257,6 +259,7 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
         }
 
         [[UAInboxDBManager shared] saveContext];
+
 
         // Block is dispatched on the main queue
         [self refreshInboxWithCompletionHandler:^{
@@ -286,6 +289,7 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
         inboxMessageListCompletionBlock = nil;
     }];
 
+    UA_LDEBUG(@"Marking messages as deleted %@.", messages);
 
     [self.queue addOperationWithBlock:^{
         for (UAInboxMessage *message in messages) {
@@ -351,6 +355,8 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
             // Add messsage's body url to the cachable urls
             [UAURLProtocol addCachableURL:msg.messageBodyURL];
         }
+
+        UA_LINFO(@"Inbox messages updated.");
 
         UA_LDEBUG(@"Loaded saved messages: %@.", savedMessages);
         dispatch_async(dispatch_get_main_queue(), ^() {

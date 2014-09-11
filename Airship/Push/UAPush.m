@@ -468,6 +468,7 @@ SINGLETON_IMPLEMENTATION(UAPush)
           applicationState:(UIApplicationState)state
     fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
+    UA_LINFO(@"Application received remote notification: %@", notification);
 
     [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
 
@@ -516,6 +517,8 @@ SINGLETON_IMPLEMENTATION(UAPush)
                          notification:(NSDictionary *)notification
                      applicationState:(UIApplicationState)state
                     completionHandler:(void (^)())completionHandler {
+
+    UA_LINFO(@"Received remote notification button interaction: %@ notification: %@", identifier, notification);
 
     [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
 
@@ -630,7 +633,7 @@ BOOL deferChannelCreationOnForeground = false;
             UA_LTRACE(@"Channel ID not created, Updating registration.");
             [self updateRegistrationForcefully:NO];
         } else if (self.hasEnteredBackground) {
-            UA_LTRACE(@"App transitioning from background to foreground.  Updating registration.");
+            UA_LTRACE(@"App transitioning from background to foreground. Updating registration.");
             [self updateRegistrationForcefully:NO];
         }
     }
@@ -654,7 +657,7 @@ BOOL deferChannelCreationOnForeground = false;
 }
 
 - (void)applicationBackgroundRefreshStatusChanged {
-    UA_LDEBUG(@"Background refresh status changed.");
+    UA_LTRACE(@"Background refresh status changed.");
     [self updateRegistration];
 }
 
@@ -748,7 +751,7 @@ BOOL deferChannelCreationOnForeground = false;
 - (void)updateRegistration {
     // APNS registration will cause a channel registration
     if (self.shouldUpdateAPNSRegistration) {
-        UA_LTRACE(@"APNS registration is out of date, updating.");
+        UA_LDEBUG(@"APNS registration is out of date, updating.");
         [self updateAPNSRegistration];
         return;
     }
@@ -765,8 +768,6 @@ BOOL deferChannelCreationOnForeground = false;
 
 
 - (void)updateAPNSRegistration {
-    UA_LTRACE(@"Updating APNS registration.");
-
     UIApplication *application = [UIApplication sharedApplication];
 
     if ([UIUserNotificationSettings class]) {
@@ -812,6 +813,7 @@ BOOL deferChannelCreationOnForeground = false;
 
 //The new token to register, or nil if updating the existing token
 - (void)appRegisteredForRemoteNotificationsWithDeviceToken:(NSData *)token {
+
     // Convert device deviceToken to a hex string
     NSMutableString *deviceToken = [NSMutableString stringWithCapacity:([token length] * 2)];
     const unsigned char *bytes = (const unsigned char *)[token bytes];
@@ -821,6 +823,7 @@ BOOL deferChannelCreationOnForeground = false;
     }
 
     self.deviceToken = [deviceToken lowercaseString];
+    UA_LINFO(@"Application registered device token: %@", self.deviceToken);
 
     [[UAirship shared].analytics addEvent:[UAEventDeviceRegistration event]];
 
@@ -840,6 +843,8 @@ BOOL deferChannelCreationOnForeground = false;
 }
 
 - (void)appRegisteredUserNotificationSettings {
+    UA_LINFO(@"Application did register with user notification types %ld.", (unsigned long)[[UIApplication sharedApplication] currentUserNotificationSettings].types);
+
     BOOL inBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
 
     // Only allow new registrations to happen in the background if we are creating a channel ID
@@ -851,6 +856,13 @@ BOOL deferChannelCreationOnForeground = false;
 }
 
 - (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload {
+
+    if (self.deviceRegistrar.isUsingChannelRegistration) {
+        UA_LINFO(@"Channel registration updated successfully.");
+    } else {
+        UA_LINFO(@"Device registration updated successfully.");
+    }
+
     id strongDelegate = self.registrationDelegate;
     if ([strongDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
         [strongDelegate registrationSucceededForChannelID:self.channelID deviceToken:self.deviceToken];
@@ -868,6 +880,13 @@ BOOL deferChannelCreationOnForeground = false;
 }
 
 - (void)registrationFailedWithPayload:(UAChannelRegistrationPayload *)payload {
+
+    if (self.deviceRegistrar.isUsingChannelRegistration) {
+        UA_LINFO(@"Channel registration failed.");
+    } else {
+        UA_LINFO(@"Device registration failed.");
+    }
+
     id strongDelegate = self.registrationDelegate;
     if ([strongDelegate respondsToSelector:@selector(registrationFailed)]) {
         [strongDelegate registrationFailed];
@@ -881,7 +900,7 @@ BOOL deferChannelCreationOnForeground = false;
     self.channelLocation = channelLocation;
 
     if (uaLogLevel >= UALogLevelError) {
-        NSLog(@"Channel ID: %@", self.channelID);
+        NSLog(@"Created channel with ID: %@", self.channelID);
     }
 }
 

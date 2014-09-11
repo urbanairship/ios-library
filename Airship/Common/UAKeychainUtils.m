@@ -235,17 +235,17 @@ static NSString *_cachedDeviceID = nil;
     NSString *modelName = nil;
     if (status == errSecSuccess) {
 
-        UALOG(@"Retrieved device id info from keychain.");
+        UA_LTRACE(@"Retrieved device ID info from keychain.");
 
         if (resultDataRef) {
             //grab the deviceId and associated model name
             deviceID = [[NSString alloc] initWithData:[resultDict valueForKey:(__bridge id)kSecValueData] encoding:NSUTF8StringEncoding];
             modelName = [[resultDict objectForKey:(__bridge id)kSecAttrAccount] mutableCopy];
 
-            UALOG(@"Loaded Device ID: %@", deviceID);
-            UALOG(@"Loaded Model Name: %@", modelName);
+            UA_LTRACE(@"Loaded Device ID: %@", deviceID);
+            UA_LTRACE(@"Loaded Model Name: %@", modelName);
         } else {
-            UALOG(@"Device ID result is nil.");
+            UA_LTRACE(@"Device ID result is nil.");
         }
     }
 
@@ -256,10 +256,10 @@ static NSString *_cachedDeviceID = nil;
     // will be migrated in the case of a device upgrade, so we will be able to maintain continuity
     // and a history of devices per user.
     if (!deviceID || ![modelName isEqualToString:[UAUtils deviceModelName]]) {
-        UALOG(@"Device model changed. Regenerating the device ID.");
+        UA_LDEBUG(@"Device model changed. Regenerating the device ID.");
         [UAKeychainUtils deleteKeychainValue:kUAKeychainDeviceIDKey];
         deviceID = [UAKeychainUtils createDeviceID];
-        UALOG(@"New device ID: %@", deviceID);
+        UA_LDEBUG(@"New device ID: %@", deviceID);
     }
 
     _cachedDeviceID = [deviceID copy];

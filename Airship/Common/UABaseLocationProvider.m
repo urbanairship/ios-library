@@ -170,7 +170,6 @@
             break;
     }
 
-    UALOG(@"UA Location Manager %@ did fail with error %@", [self class], error);
     id<UALocationProviderDelegate> strongDelegate = self.delegate;
     if ([strongDelegate respondsToSelector:@selector(locationProvider:withLocationManager:didFailWithError:)]) {
         [strongDelegate locationProvider:self withLocationManager:self.locationManager didFailWithError:error];
@@ -178,7 +177,6 @@
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
-    UALOG(@"Base location manager did update location %@", [locations lastObject]);
     id<UALocationProviderDelegate> strongDelegate = self.delegate;
     BOOL doesRespond = [strongDelegate respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocations:)];
     if ([self locationChangeMeetsAccuracyRequirements:[locations lastObject]] && doesRespond) {
@@ -199,11 +197,10 @@
     // accuracy values less than zero represent invalid lat/long values
     // If altitude becomes important in the future, add the check here for verticalAccuracy
     if (newLocation.horizontalAccuracy < 0) {
-        UALOG(@"Location %@ did not met accuracy requirements", newLocation);
+        UA_LTRACE(@"Location %@ did not met accuracy requirements", newLocation);
         return NO;
     }
     
-    UALOG(@"Location %@ met accuracy requirements", newLocation);
     return YES;
 }
 

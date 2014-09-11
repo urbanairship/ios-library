@@ -192,9 +192,11 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     }
 
     if (self.config.analyticsEnabled) {
-        UA_LTRACE(@"Adding event: %@.", event);
+        UA_LDEBUG(@"Adding %@ event %@.", event.eventType, event.eventId);
 
         [[UAAnalyticsDBManager shared] addEvent:event withSessionId:self.sessionId];
+        UA_LTRACE(@"Added: %@.", event);
+
         self.databaseSize += event.estimatedSize;
         if (self.oldestEventTime == 0) {
             self.oldestEventTime = [event.time doubleValue];

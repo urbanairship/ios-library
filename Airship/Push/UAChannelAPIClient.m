@@ -81,6 +81,8 @@
                       onSuccess:(UAChannelAPIClientCreateSuccessBlock)successBlock
                       onFailure:(UAChannelAPIClientFailureBlock)failureBlock {
 
+    UA_LTRACE(@"Creating channel with payload %@.", payload);
+
     UAHTTPRequest *request = [self requestToCreateChannelWithPayload:payload];
 
     [self.requestEngine runRequest:request succeedWhere:^BOOL(UAHTTPRequest *request) {
@@ -109,6 +111,8 @@
             UA_LERR(@"missing successBlock");
         }
     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
+        [UAUtils logFailedRequest:request withMessage:@"Creating channel"];
+
         if (failureBlock) {
             failureBlock(request);
         } else {
@@ -126,6 +130,8 @@
         UA_LERR(@"Unable to update a channel with a nil channel location.");
         return;
     }
+
+    UA_LTRACE(@"Updating channel at location %@ with payload %@.", channelLocation, payload);
 
     UAHTTPRequest *request = [self requestToUpdateWithChannelLocation:channelLocation payload:payload];
 
@@ -147,6 +153,8 @@
             UA_LERR(@"missing successBlock");
         }
     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
+        [UAUtils logFailedRequest:request withMessage:@"Updating channel"];
+
         if (failureBlock) {
             failureBlock(request);
         } else {
@@ -169,8 +177,6 @@
     [request addRequestHeader: @"Content-Type" value: @"application/json"];
     [request appendBodyData:[payload asJSONData]];
 
-    UA_LTRACE(@"Request to update channel with payload: %@", [[NSString alloc] initWithData:[payload asJSONData] encoding:NSUTF8StringEncoding]);
-
     return request;
 }
 
@@ -187,8 +193,6 @@
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
     [request addRequestHeader: @"Content-Type" value: @"application/json"];
     [request appendBodyData:[payload asJSONData]];
-
-    UA_LTRACE(@"Request to create channel with payload: %@", [[NSString alloc] initWithData:[payload asJSONData] encoding:NSUTF8StringEncoding]);
 
     return request;
 }

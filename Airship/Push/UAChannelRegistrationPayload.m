@@ -99,4 +99,8 @@
     return [[self payloadDictionary] isEqualToDictionary:[payload payloadDictionary]];
 }
 
+- (NSString *)description {
+    return [[self payloadDictionary] description];
+}
+
 @end

@@ -158,11 +158,11 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         // but only if we indeed have a username and password to store
         if (self.username != nil && self.password != nil) {
             if (![UAKeychainUtils createKeychainValueForUsername:self.username withPassword:self.password forIdentifier:self.appKey]) {
-                UA_LINFO(@"Save failed: unable to create keychain for username.");
+                UA_LERR(@"Save failed: unable to create keychain for username.");
                 return;
             }
         } else {
-            UA_LINFO(@"Save failed: must have a username and password.");
+            UA_LDEBUG(@"Save failed: must have a username and password.");
             return;
         }
     }
@@ -222,7 +222,10 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 - (void)createUser {
     self.creatingUser = YES;
 
+
     UAUserAPIClientCreateSuccessBlock success = ^(UAUserData *data, NSDictionary *payload) {
+        UA_LINFO(@"Created user %@.", data.username);
+
         self.creatingUser = NO;
         self.username = data.username;
         self.password = data.password;
@@ -239,7 +242,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     };
 
     UAUserAPIClientFailureBlock failure = ^(UAHTTPRequest *request) {
-        UA_LDEBUG(@"Failed to create user");
+        UA_LINFO(@"Failed to create user");
         self.creatingUser = NO;
     };
 
@@ -259,41 +262,38 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     NSString *channelID = [UAPush shared].channelID;
 
     if (![self defaultUserCreated]) {
-        UA_LDEBUG(@"Skipping user update, user not created yet");
+        UA_LDEBUG(@"Skipping user update, user not created yet.");
         return;
     }
 
     if (!channelID && !deviceToken) {
-        UA_LDEBUG(@"Skipping user update, no device token or channel");
+        UA_LDEBUG(@"Skipping user update, no device token or channel.");
         return;
     }
 
-    UA_LTRACE(@"user update background task is %lu", (unsigned long)self.userUpdateBackgroundTask);
 
     if (self.userUpdateBackgroundTask == UIBackgroundTaskInvalid) {
         self.userUpdateBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
             [self invalidateUserUpdateBackgroundTask];
         }];
-
-        UA_LTRACE(@"Begin user update background task %lu", (unsigned long)self.userUpdateBackgroundTask);
     }
 
     [self.apiClient updateUser:self.username
                    deviceToken:deviceToken
                      channelID:channelID
                      onSuccess:^{
-                         UA_LINFO(@"User updated successfully");
+                         UA_LINFO(@"Updated user %@ successfully.", self.username);
                          [self invalidateUserUpdateBackgroundTask];
                      }
                      onFailure:^(UAHTTPRequest *request) {
-                         UA_LDEBUG(@"Failed to update user");
+                         UA_LDEBUG(@"Failed to update user.");
                          [self invalidateUserUpdateBackgroundTask];
                      }];
 }
 
 - (void)invalidateUserUpdateBackgroundTask {
     if (self.userUpdateBackgroundTask != UIBackgroundTaskInvalid) {
-        UA_LTRACE(@"Ending user update background task %lu", (unsigned long)self.userUpdateBackgroundTask);
+        UA_LTRACE(@"Ending user update background task %lu.", (unsigned long)self.userUpdateBackgroundTask);
 
         [[UIApplication sharedApplication] endBackgroundTask:self.userUpdateBackgroundTask];
         self.userUpdateBackgroundTask = UIBackgroundTaskInvalid;

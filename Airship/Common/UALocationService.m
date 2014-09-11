@@ -93,7 +93,7 @@ NSString * const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvail
 
 - (void)restartPreviousLocationServices {
     if (!self.backgroundLocationServiceEnabled) {
-        UALOG(@"Restarting location providers that were previously running");
+        UA_LDEBUG(@"Restarting location providers that were previously running");
         if (self.shouldStartReportingStandardLocation) {
             [self startReportingStandardLocation];
         }
@@ -105,7 +105,7 @@ NSString * const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvail
 }
 
 - (void)appWillEnterForeground {
-    UALOG(@"Location service did receive appWillEnterForeground");
+    UA_LTRACE(@"Location service did receive appWillEnterForeground");
     if ([self shouldPerformAutoLocationUpdate]) {
         [self reportCurrentLocation];
     }
@@ -115,7 +115,7 @@ NSString * const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvail
 }
 
 - (void)appDidEnterBackground {
-    UALOG(@"Location service did enter background");
+    UA_LTRACE(@"Location service did enter background");
     if (!self.backgroundLocationServiceEnabled) {
         // Single Location service does not get stopped here, there is a background task that will stop automatically
         // when a location is reported, or the service times out (default timeout 30 seconds 16APR12)
@@ -204,7 +204,7 @@ NSString * const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvail
 - (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider 
      withLocationManager:(CLLocationManager*)locationManager 
 didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-    UALOG(@"Location service did change authorization status %d", status);
+    UA_LDEBUG(@"Location service did change authorization status %d", status);
     // Only use the authorization change callbacks from the standardLocationProvider. 
     // It exists for the life of the UALocationService callback.
     if(locationProvider != self.standardLocationProvider){
@@ -221,7 +221,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
      withLocationManager:(CLLocationManager *)locationManager
         didFailWithError:(NSError *)error {
 
-    UALOG(@"Location service did fail with error %@", error.description);
+    UA_LWARN(@"Location service did fail with error %@", error.description);
 
     // There is different logic for the single location service, since it could be a background
     // task
@@ -239,7 +239,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 - (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider
      withLocationManager:(CLLocationManager *)locationManager 
        didUpdateLocations:(NSArray *)locations {
-    UALOG(@"Location service did update location %@", [locations lastObject]);
+
+    UA_LTRACE(@"Location service did update location %@", [locations lastObject]);
+    
     if (locationProvider == self.singleLocationProvider) {
         [self singleLocationDidUpdateLocations:locations];
         return;
@@ -258,8 +260,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 #pragma mark -
 #pragma mark Standard Location Methods
 - (void)startReportingStandardLocation {
-    UALOG(@"Attempt to start standard location service");
-
     if (!self.standardLocationProvider) {
         // Factory methods aren't used to avoid setting the delegate twice
         self.standardLocationProvider = [[UAStandardLocationProvider alloc] init];
@@ -271,7 +271,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 // Keep the standardLocationProvider around for the life of the object to receive didChangeAuthorization 
 // callbacks 
 - (void)stopReportingStandardLocation {
-    UALOG(@"Location service stop reporting standard location");
     [self.standardLocationProvider stopReportingLocation];
     self.shouldStartReportingStandardLocation = NO;
 }
@@ -294,8 +293,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 #pragma mark Significant Change
 - (void)startReportingSignificantLocationChanges {
-    UALOG(@"Attempt to start significant change service");
-
     if (!self.requestAlwaysAuthorization) {
         UA_LERR(@"Significant change location requires always authorization");
         return;
@@ -312,7 +309,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 // Release the significantChangeProvider to prevent double delegate callbacks
 // when authorization state changes
 - (void)stopReportingSignificantLocationChanges {
-    UALOG(@"Stop reporting significant change");
     [self.significantChangeProvider stopReportingLocation];
     self.shouldStartReportingSignificantChange = NO;
     
@@ -354,10 +350,12 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     // If the single location provider is nil, this will evaluate to false, and a 
     // new location provider will be instantiated. 
     if (self.singleLocationServiceStatus == UALocationProviderUpdating) {
+        UA_LDEBUG(@"Current location already in progress.");
         return;
     }
 
     if (![self isLocationServiceEnabledAndAuthorized]) {
+        UA_LDEBUG(@"Location service not authorized or not enabled.");
         return;
     }
 
@@ -411,9 +409,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         [self stopSingleLocationWithLocation:[locations lastObject]];
     }
     else {
-        UALOG(@"Location %@ did not meet accuracy requirement", [locations lastObject]);
+        UA_LTRACE(@"Location %@ did not meet accuracy requirement", [locations lastObject]);
         if (self.bestAvailableSingleLocation.horizontalAccuracy < [[locations lastObject] horizontalAccuracy]) {
-            UALOG(@"Updated location %@\nreplaced current best location %@", self.bestAvailableSingleLocation, [locations lastObject]);
+            UA_LTRACE(@"Updated location %@\nreplaced current best location %@", self.bestAvailableSingleLocation, [locations lastObject]);
             self.bestAvailableSingleLocation = [locations lastObject];
         }
     }
@@ -421,14 +419,13 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 //Make sure stopSingleLocation is called to shutdown background task
 - (void)stopSingleLocationWithLocation:(CLLocation *)location {
-    UALOG(@"Single location acquired location %@", location);
     [self reportLocationToAnalytics:location fromProvider:self.singleLocationProvider];
     [self stopSingleLocation];
 }
 
 //Make sure stopSingleLocation is called to shutdown background task
 - (void)stopSingleLocationWithError:(NSError *)locationError {
-    UALOG(@"Single location failed with error %@", locationError);
+    UA_LWARN(@"Single location failed with error %@", locationError);
     id <UALocationServiceDelegate> strongDelegate = self.delegate;
     if ([strongDelegate respondsToSelector:@selector(locationService:didUpdateLocations:)] && self.bestAvailableSingleLocation) {
         [strongDelegate locationService:self didUpdateLocations:@[self.bestAvailableSingleLocation]];
@@ -455,7 +452,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     }
     [self.singleLocationProvider stopReportingLocation];
     self.singleLocationProvider.delegate = nil;
-    UALOG(@"Shutdown single location background task");
+    UA_LTRACE(@"Shutdown single location background task");
     // Order is import if this task is refactored, as execution terminates very quickly with
     // endBackgroundTask. The background task will be invalidated. 
     [[UIApplication sharedApplication] endBackgroundTask:self.singleLocationBackgroundIdentifier];
@@ -467,7 +464,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 - (void)startReportingLocationWithProvider:(id<UALocationProviderProtocol>)locationProvider {
     if (![self isLocationServiceEnabledAndAuthorized]) {
-        UALOG(@"Location service not authorized or not enabled.");
+        UA_LDEBUG(@"Location service not authorized or not enabled.");
         return;
     }
 
@@ -475,7 +472,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         return;
     }
 
-    UALOG(@"Starting location service");
+    UA_LINFO(@"Starting location service with provider %@.", locationProvider);
     // Delegates are set to nil when the service is shut down
     if(locationProvider.delegate == nil) {
         locationProvider.delegate = self;
@@ -539,17 +536,13 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 - (void)setAutomaticLocationOnForegroundEnabled:(BOOL)automaticLocationOnForegroundEnabled {
-    if (_automaticLocationOnForegroundEnabled == automaticLocationOnForegroundEnabled) {
-        return;
-    }
-    else {
+    if (_automaticLocationOnForegroundEnabled != automaticLocationOnForegroundEnabled) {
         _automaticLocationOnForegroundEnabled = automaticLocationOnForegroundEnabled;
         if (automaticLocationOnForegroundEnabled) {
             [self reportCurrentLocation];
-        }//if(automatic
-    }//else
+        }
+    }
 }
-
 
 #pragma mark -
 #pragma mark UALocationEvent Analytics
@@ -557,7 +550,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 // UAirship
 
 - (void)reportLocationToAnalytics:(CLLocation *)location fromProvider:(id<UALocationProviderProtocol>)provider {
-    UALOG(@"Reporting location %@ to analytics from provider %@", location, provider);
+    UA_LDEBUG(@"Reporting location %@ to analytics from provider %@", location, provider);
     self.lastReportedLocation = location;
     self.dateOfLastLocation = location.timestamp;
     UALocationEvent *event = nil;
@@ -628,7 +621,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 
-
 // Setting these values will trigger a NSUserDefaults update with a KVO notification
 + (void)setAirshipLocationServiceEnabled:(BOOL)airshipLocationServiceEnabled{
     [UALocationService setBool:airshipLocationServiceEnabled forLocationServiceKey:UALocationServiceEnabledKey];
@@ -636,16 +628,14 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 + (BOOL)locationServiceAuthorized {
     switch ([CLLocationManager authorizationStatus]) {
-        case kCLAuthorizationStatusNotDetermined:
-        case kCLAuthorizationStatusAuthorizedWhenInUse:
-        case kCLAuthorizationStatusAuthorizedAlways:
-            return YES;
         case kCLAuthorizationStatusDenied:
         case kCLAuthorizationStatusRestricted:
             return NO;
+        case kCLAuthorizationStatusNotDetermined:
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+        case kCLAuthorizationStatusAuthorizedAlways:
         default:
-            UALOG(@"Unexpected value for authorization");
-            return NO;
+            return YES;
     }
 }
 

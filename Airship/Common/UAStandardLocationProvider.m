@@ -49,7 +49,6 @@
 #pragma mark -
 #pragma mark CLLocationDelegate Methods
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-    UALOG(@"Standard location authorization changed %d", status);
     switch (status) {
         case kCLAuthorizationStatusDenied:
         case kCLAuthorizationStatusRestricted:
@@ -65,7 +64,6 @@
 }
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
-    UALOG(@"Standard location manager did update location %@", [locations lastObject]);
     id<UALocationProviderDelegate> strongDelegate = self.delegate;
     BOOL doesRespond = [strongDelegate respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocations:)];
     if([self locationChangeMeetsAccuracyRequirements:[locations lastObject]] && doesRespond) {
@@ -77,12 +75,11 @@
 #pragma mark Location Reporting
 
 - (void)startReportingLocation {
-    UALOG(@"Start standard location");
     [super startReportingLocation];
     [self.locationManager startUpdatingLocation];
 }
 - (void)stopReportingLocation {
-    UALOG(@"Stop standard location");
+    UA_LDEBUG(@"Stop standard location");
     [super stopReportingLocation];
     [self.locationManager stopUpdatingLocation];
 }

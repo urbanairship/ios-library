@@ -46,13 +46,13 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
                           actionName:actionName
                completionHandler:completionHandler];
         } else {
-            UA_LINFO(@"Not running action %@ because of predicate.", actionName);
+            UA_LDEBUG(@"Not running action %@ because of predicate.", actionName);
             if (completionHandler) {
                 completionHandler([UAActionResult rejectedArgumentsResult]);
             }
         }
     } else {
-        UA_LINFO(@"No action found with name %@, skipping action.", actionName);
+        UA_LDEBUG(@"No action found with name %@, skipping action.", actionName);
 
         //log a warning if the name begins with a carat prefix.
         if ([actionName hasPrefix:@"^"]) {
