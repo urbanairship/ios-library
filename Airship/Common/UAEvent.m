@@ -110,34 +110,18 @@
 - (NSArray *)notificationTypes {
     NSMutableArray *notificationTypes = [NSMutableArray array];
 
-    if ([UIUserNotificationSettings class]) {
-        UIUserNotificationType enabledTypes = [[UIApplication sharedApplication] currentUserNotificationSettings].types;
+    UIUserNotificationType enabledTypes = [[UAPush shared] currentEnabledNotificationTypes];
 
-        if ((UIUserNotificationTypeBadge & enabledTypes) > 0) {
-            [notificationTypes addObject:@"badge"];
-        }
+    if ((UIUserNotificationTypeBadge & enabledTypes) > 0) {
+        [notificationTypes addObject:@"badge"];
+    }
 
-        if ((UIUserNotificationTypeSound & enabledTypes) > 0) {
-            [notificationTypes addObject:@"sound"];
-        }
+    if ((UIUserNotificationTypeSound & enabledTypes) > 0) {
+        [notificationTypes addObject:@"sound"];
+    }
 
-        if ((UIUserNotificationTypeAlert & enabledTypes) > 0) {
-            [notificationTypes addObject:@"alert"];
-        }
-    } else {
-        UIRemoteNotificationType enabledTypes = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
-
-        if ((UIRemoteNotificationTypeBadge & enabledTypes) > 0) {
-            [notificationTypes addObject:@"badge"];
-        }
-
-        if ((UIRemoteNotificationTypeSound & enabledTypes) > 0) {
-            [notificationTypes addObject:@"sound"];
-        }
-
-        if ((UIRemoteNotificationTypeAlert & enabledTypes) > 0) {
-            [notificationTypes addObject:@"alert"];
-        }
+    if ((UIUserNotificationTypeAlert & enabledTypes) > 0) {
+        [notificationTypes addObject:@"alert"];
     }
 
     return notificationTypes;

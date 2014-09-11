@@ -444,7 +444,7 @@ enum {
  * Update the text in the table cells to reflect the current push-enabled state.
  */
 - (void)updateSettingsLinkText {
-    NSUInteger types = [UAPush currentEnabledNotificationTypes];
+    UIUserNotificationType types = [[UAPush shared] currentEnabledNotificationTypes];
 
     // Types are not set as desired
     // NOTE: when comparing types, always make sure userPushNotificationsEnabled == YES, otherwise
