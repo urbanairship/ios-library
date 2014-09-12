@@ -27,7 +27,6 @@
 
 #import "UAirship.h"
 #import "UAAnalyticsDBManager.h"
-#import "UAEvent.h"
 #import "UALocationEvent.h"
 #import "UAUser.h"
 #import "UAConfig.h"
@@ -37,6 +36,11 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAPush+Internal.h"
 #import "UAUtils.h"
+#import "UAEventAppBackground.h"
+#import "UAEventPushReceived.h"
+#import "UAEventAppBackground.h"
+#import "UAEventAppForeground.h"
+
 
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 

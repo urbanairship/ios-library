@@ -29,7 +29,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "UAUser.h"
 #import "UAAnalytics+Internal.h"
-#import "UAEvent.h"
 #import "UAUtils.h"
 #import "UAKeychainUtils.h"
 #import "UALocationService.h"
@@ -42,6 +41,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAAppDelegate.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAURLProtocol.h"
+#import "UAEventAppInit.h"
+#import "UAEventAppExit.h"
 
 
 #import "UAActionJSDelegate.h"

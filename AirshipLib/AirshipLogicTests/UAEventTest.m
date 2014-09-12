@@ -34,6 +34,13 @@
 #import "UAirship.h"
 #import "UAAnalytics.h"
 #import "UA_Reachability.h"
+#import "UAEventAppInit.h"
+#import "UAEventAppExit.h"
+#import "UAEventAppBackground.h"
+#import "UAEventAppForeground.h"
+#import "UAEventDeviceRegistration.h"
+#import "UAEventPushReceived.h"
+
 
 
 @interface UAEventTest : XCTestCase

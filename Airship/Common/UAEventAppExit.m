@@ -23,42 +23,36 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEvent.h"
+#import "UAEventAppExit.h"
+#import "UAEvent+Internal.h"
+#import "UAAnalytics.h"
+#import "UAirship.h"
 
-@interface UAEvent ()
-/**
- * The time the event was created.
- */
-@property (nonatomic, copy) NSString *time;
+@implementation UAEventAppExit
 
-/**
- * The unique event ID.
- */
-@property (nonatomic, copy) NSString *eventId;
++ (instancetype)event {
+    UAEventAppExit *event = [[self alloc] init];
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
 
-/**
- * The event's data.
- */
-@property (nonatomic, strong) NSDictionary *data;
+    UAAnalytics *analytics = [UAirship shared].analytics;
+
+    [data setValue:analytics.conversionSendId forKey:@"push_id"];
+    [data setValue:analytics.conversionRichPushId forKey:@"rich_push_id"];
 
 
-/**
- * Gets the current connection type.
- * Possible values are "cell", "wifi", or "none".
- * @return The current connection type as a string.
- */
-- (NSString *)connectionType;
+    [data setValue:[event connectionType] forKey:@"connection_type"];
 
-/**
- * Gets the carrier's name.
- * @returns The carrier's name.
- */
-- (NSString *)carrierName;
+    event.data = [data mutableCopy];
+    return event;
+}
 
-/**
- * Gets the current enabled notification types as a string array.
- *
- * @return The current notification types as a string array.
- */
-- (NSArray *)notificationTypes;
+
+- (NSString *)eventType {
+    return @"app_exit";
+}
+
+- (NSUInteger)estimatedSize {
+    return kEventAppExitSize;
+}
+
 @end

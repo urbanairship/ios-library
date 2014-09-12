@@ -23,42 +23,32 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEvent.h"
+#import "UAEventDeviceRegistration.h"
+#import "UAEvent+Internal.h"
+#import "UAPush.h"
+#import "UAUser.h"
 
-@interface UAEvent ()
-/**
- * The time the event was created.
- */
-@property (nonatomic, copy) NSString *time;
+@implementation UAEventDeviceRegistration
 
-/**
- * The unique event ID.
- */
-@property (nonatomic, copy) NSString *eventId;
++ (instancetype)event {
+    UAEventDeviceRegistration *event = [[self alloc] init];
 
-/**
- * The event's data.
- */
-@property (nonatomic, strong) NSDictionary *data;
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
 
+    [data setValue:[UAPush shared].deviceToken forKey:@"device_token"];
+    [data setValue:[UAPush shared].channelID forKey:@"channel_id"];
+    [data setValue:[UAUser defaultUser].username forKey:@"user_id"];
 
-/**
- * Gets the current connection type.
- * Possible values are "cell", "wifi", or "none".
- * @return The current connection type as a string.
- */
-- (NSString *)connectionType;
+    event.data = [data mutableCopy];
+    return event;
+}
 
-/**
- * Gets the carrier's name.
- * @returns The carrier's name.
- */
-- (NSString *)carrierName;
+- (NSString *)eventType {
+    return @"device_registration";
+}
 
-/**
- * Gets the current enabled notification types as a string array.
- *
- * @return The current notification types as a string array.
- */
-- (NSArray *)notificationTypes;
+- (NSUInteger)estimatedSize {
+    return kEventDeviceRegistrationSize;
+}
+
 @end

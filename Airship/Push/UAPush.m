@@ -29,7 +29,8 @@
 
 #import "UAirship.h"
 #import "UAAnalytics.h"
-#import "UAEvent.h"
+#import "UAEventDeviceRegistration.h"
+
 #import "UADeviceRegistrationPayload.h"
 #import "UAUtils.h"
 #import "UAActionRegistry+Internal.h"

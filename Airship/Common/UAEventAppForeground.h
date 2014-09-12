@@ -23,42 +23,12 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEvent.h"
-
-@interface UAEvent ()
-/**
- * The time the event was created.
- */
-@property (nonatomic, copy) NSString *time;
+#import <Foundation/Foundation.h>
+#import "UAEventAppInit.h"
 
 /**
- * The unique event ID.
+ * Event when app is in the foreground.
  */
-@property (nonatomic, copy) NSString *eventId;
+@interface UAEventAppForeground : UAEventAppInit
 
-/**
- * The event's data.
- */
-@property (nonatomic, strong) NSDictionary *data;
-
-
-/**
- * Gets the current connection type.
- * Possible values are "cell", "wifi", or "none".
- * @return The current connection type as a string.
- */
-- (NSString *)connectionType;
-
-/**
- * Gets the carrier's name.
- * @returns The carrier's name.
- */
-- (NSString *)carrierName;
-
-/**
- * Gets the current enabled notification types as a string array.
- *
- * @return The current notification types as a string array.
- */
-- (NSArray *)notificationTypes;
 @end

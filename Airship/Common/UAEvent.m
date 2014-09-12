@@ -27,13 +27,8 @@
 #import <CoreTelephony/CTCarrier.h>
 
 #import "UAEvent+Internal.h"
-#import "UAirship.h"
-#import "UAAnalytics.h"
-#import "UAUser.h"
-#import "UAUtils.h"
 #import "UA_Reachability.h"
 #import "UAPush.h"
-#import "UAInboxUtils.h"
 
 @implementation UAEvent
 
@@ -54,7 +49,6 @@
 - (NSString *)eventType {
     return @"base";
 }
-
 
 - (NSUInteger)estimatedSize {
     NSMutableDictionary *eventDictionary = [NSMutableDictionary dictionary];
@@ -125,170 +119,6 @@
     }
 
     return notificationTypes;
-}
-
-@end
-
-@interface UAEventAppInit()
-- (NSMutableDictionary *)gatherData;
-@end
-
-@implementation UAEventAppInit
-
-+ (instancetype)event {
-    UAEventAppInit *event = [[self alloc] init];
-    event.data = [[event gatherData] mutableCopy];
-    return event;
-}
-
-- (NSMutableDictionary *)gatherData {
-    NSMutableDictionary *data = [NSMutableDictionary dictionary];
-
-    UAAnalytics *analytics = [UAirship shared].analytics;
-
-    [data setValue:analytics.conversionSendId forKey:@"push_id"];
-    [data setValue:analytics.conversionRichPushId forKey:@"rich_push_id"];
-
-    [data setValue:[UAUser defaultUser].username forKey:@"user_id"];
-    [data setValue:[self connectionType] forKey:@"connection_type"];
-    [data setValue:[self carrierName] forKey:@"carrier"];
-
-    [data setValue:[self notificationTypes] forKey:@"notification_types"];
-
-    NSTimeZone *localtz = [NSTimeZone defaultTimeZone];
-    [data setValue:[NSNumber numberWithDouble:[localtz secondsFromGMT]] forKey:@"time_zone"];
-    [data setValue:([localtz isDaylightSavingTime] ? @"true" : @"false") forKey:@"daylight_savings"];
-
-    // Component Versions
-    [data setValue:[[UIDevice currentDevice] systemVersion] forKey:@"os_version"];
-    [data setValue:[UAirshipVersion get] forKey:@"lib_version"];
-
-    NSString *packageVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey] ?: @"";
-    [data setValue:packageVersion forKey:@"package_version"];
-
-    // Foreground
-    BOOL isInForeground = ([UIApplication sharedApplication].applicationState != UIApplicationStateBackground);
-    [data setValue:(isInForeground ? @"true" : @"false") forKey:@"foreground"];
-
-    return data;
-}
-
-- (NSString *)eventType {
-    return @"app_init";
-}
-
-- (NSUInteger)estimatedSize {
-    return kEventAppInitSize;
-}
-
-@end
-
-@implementation UAEventAppForeground
-
-- (NSMutableDictionary *)gatherData {
-    NSMutableDictionary *data = [super gatherData];
-    [data removeObjectForKey:@"foreground"];
-    return data;
-}
-
-- (NSString *)eventType {
-    return @"app_foreground";
-}
-
-@end
-
-@implementation UAEventAppExit
-
-+ (instancetype)event {
-    UAEventAppExit *event = [[self alloc] init];
-    NSMutableDictionary *data = [NSMutableDictionary dictionary];
-
-    UAAnalytics *analytics = [UAirship shared].analytics;
-
-    [data setValue:analytics.conversionSendId forKey:@"push_id"];
-    [data setValue:analytics.conversionRichPushId forKey:@"rich_push_id"];
-
-
-    [data setValue:[event connectionType] forKey:@"connection_type"];
-
-    event.data = [data mutableCopy];
-    return event;
-}
-
-
-- (NSString *)eventType {
-    return @"app_exit";
-}
-
-- (NSUInteger)estimatedSize {
-    return kEventAppExitSize;
-}
-
-@end
-
-@implementation UAEventAppBackground
-
-- (NSString *)eventType {
-    return @"app_background";
-}
-
-@end
-
-@implementation UAEventDeviceRegistration
-
-+ (instancetype)event {
-    UAEventDeviceRegistration *event = [[self alloc] init];
-
-    NSMutableDictionary *data = [NSMutableDictionary dictionary];
-
-    [data setValue:[UAPush shared].deviceToken forKey:@"device_token"];
-    [data setValue:[UAPush shared].channelID forKey:@"channel_id"];
-    [data setValue:[UAUser defaultUser].username forKey:@"user_id"];
-
-    event.data = [data mutableCopy];
-    return event;
-}
-
-- (NSString *)eventType {
-    return @"device_registration";
-}
-
-- (NSUInteger)estimatedSize {
-    return kEventDeviceRegistrationSize;
-}
-
-@end
-
-@implementation UAEventPushReceived
-
-+ (instancetype)eventWithNotification:(NSDictionary *)notification {
-    UAEventPushReceived *event = [[self alloc] init];
-
-    NSMutableDictionary *data = [NSMutableDictionary dictionary];
-
-    NSString *richPushId = [UAInboxUtils getRichPushMessageIDFromNotification:notification];
-    if (richPushId) {
-        [data setValue:richPushId forKey:@"rich_push_id"];
-    }
-
-    // Add the std push id, if present, else create a UUID
-    NSString *pushId = [notification objectForKey:@"_"];
-    if (pushId) {
-        [data setValue:pushId forKey:@"push_id"];
-    } else {
-        [data setValue:[NSUUID UUID].UUIDString forKey:@"push_id"];
-    }
-
-    event.data = [data mutableCopy];
-    return event;
-}
-
-- (NSString *)eventType {
-    return @"push_received";
-}
-
-- (NSUInteger)estimatedSize {
-    return kEventPushReceivedSize;
 }
 
 @end

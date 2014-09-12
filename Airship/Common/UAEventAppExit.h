@@ -25,40 +25,14 @@
 
 #import "UAEvent.h"
 
-@interface UAEvent ()
 /**
- * The time the event was created.
+ * Event when app exits.
  */
-@property (nonatomic, copy) NSString *time;
+@interface UAEventAppExit : UAEvent
 
 /**
- * The unique event ID.
+ * Factory method to create a UAEventAppExit.
  */
-@property (nonatomic, copy) NSString *eventId;
++ (instancetype)event;
 
-/**
- * The event's data.
- */
-@property (nonatomic, strong) NSDictionary *data;
-
-
-/**
- * Gets the current connection type.
- * Possible values are "cell", "wifi", or "none".
- * @return The current connection type as a string.
- */
-- (NSString *)connectionType;
-
-/**
- * Gets the carrier's name.
- * @returns The carrier's name.
- */
-- (NSString *)carrierName;
-
-/**
- * Gets the current enabled notification types as a string array.
- *
- * @return The current notification types as a string array.
- */
-- (NSArray *)notificationTypes;
 @end
