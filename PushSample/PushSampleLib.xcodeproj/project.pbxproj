@@ -123,6 +123,8 @@
 		4906F39819905B5500F27AF1 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F6DA58812F9FEC800496A5C /* AudioToolbox.framework */; };
 		4906F3A819905B8C00F27AF1 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4906F3A519905B5600F27AF1 /* AirshipKit.framework */; };
 		4906F3AC19905BAF00F27AF1 /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4906F3A519905B5600F27AF1 /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		493FB10519C100BF006424E2 /* NSString+UASizeWithFontCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 493FB10419C100BF006424E2 /* NSString+UASizeWithFontCompatibility.m */; };
+		493FB10619C100BF006424E2 /* NSString+UASizeWithFontCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 493FB10419C100BF006424E2 /* NSString+UASizeWithFontCompatibility.m */; };
 		4944B7EC178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4944B7EB178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m */; };
 		4944B7EF178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4944B7EE178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib */; };
 		49C0CB0819BA3CCC00771F4F /* NSString+UALocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C0CB0719BA3CCC00771F4F /* NSString+UALocalization.m */; };
@@ -358,6 +360,8 @@
 		1FF54B2213BD319500F8E5A1 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		4906F39E19905B5500F27AF1 /* PushSample-Kit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PushSample-Kit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		493FB10319C100BF006424E2 /* NSString+UASizeWithFontCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UASizeWithFontCompatibility.h"; sourceTree = "<group>"; };
+		493FB10419C100BF006424E2 /* NSString+UASizeWithFontCompatibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UASizeWithFontCompatibility.m"; sourceTree = "<group>"; };
 		4944B7EA178F60E200E07A40 /* UAPushSettingsUserInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsUserInfoViewController.h; sourceTree = "<group>"; };
 		4944B7EB178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsUserInfoViewController.m; sourceTree = "<group>"; };
 		4944B7EE178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsUserInfoView.xib; sourceTree = "<group>"; };
@@ -806,6 +810,8 @@
 			isa = PBXGroup;
 			children = (
 				49C0CB4319BA5E3300771F4F /* Resources */,
+				493FB10319C100BF006424E2 /* NSString+UASizeWithFontCompatibility.h */,
+				493FB10419C100BF006424E2 /* NSString+UASizeWithFontCompatibility.m */,
 				49C0CB0619BA3CCC00771F4F /* NSString+UALocalization.h */,
 				49C0CB0719BA3CCC00771F4F /* NSString+UALocalization.m */,
 			);
@@ -1305,6 +1311,7 @@
 				1F6DA58712F9F61E00496A5C /* UAPushNotificationHandler.m in Sources */,
 				BB935D9D152B5E9C006E6A92 /* UALocationDemoAnnotation.m in Sources */,
 				BB935D9E152B5E9C006E6A92 /* UALocationSettingsViewController.m in Sources */,
+				493FB10519C100BF006424E2 /* NSString+UASizeWithFontCompatibility.m in Sources */,
 				BB935D9F152B5E9C006E6A92 /* UAMapPresentationController.m in Sources */,
 				1FCBB650176237BA00F42F07 /* SampleAppDelegate.m in Sources */,
 				4944B7EC178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m in Sources */,
@@ -1329,6 +1336,7 @@
 				4906F38219905B5500F27AF1 /* UAPushNotificationHandler.m in Sources */,
 				4906F38319905B5500F27AF1 /* UALocationDemoAnnotation.m in Sources */,
 				4906F38419905B5500F27AF1 /* UALocationSettingsViewController.m in Sources */,
+				493FB10619C100BF006424E2 /* NSString+UASizeWithFontCompatibility.m in Sources */,
 				4906F38519905B5500F27AF1 /* UAMapPresentationController.m in Sources */,
 				4906F38619905B5500F27AF1 /* SampleAppDelegate.m in Sources */,
 				4906F38719905B5500F27AF1 /* UAPushSettingsUserInfoViewController.m in Sources */,
