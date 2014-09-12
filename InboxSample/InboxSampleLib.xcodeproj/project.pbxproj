@@ -93,6 +93,9 @@
 		63C51F0711D30F870078DED4 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AB3B21D10A0063D0035E6BD /* SystemConfiguration.framework */; };
 		76F5B72819C37F2F003C07A0 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 76F5B72719C37F2F003C07A0 /* Settings.bundle */; };
 		76F5B72919C37F41003C07A0 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 76F5B72719C37F2F003C07A0 /* Settings.bundle */; };
+		76F5B74619C39CE6003C07A0 /* UAInboxUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49C0CB7419BA625900771F4F /* UAInboxUI.strings */; };
+		76F5B74A19C39CFC003C07A0 /* UAInteractiveNotifications.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49C0CB6119BA5E9B00771F4F /* UAInteractiveNotifications.strings */; };
+		76F5B74B19C39D4B003C07A0 /* NSString+UALocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C0CB5F19BA5E9B00771F4F /* NSString+UALocalization.m */; };
 		9A465ED40FF4AB1800DCABE9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FBB90FCB114B0007E1BE /* CoreGraphics.framework */; };
 		9A50FAE90FCA81810007E1BE /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAE80FCA81810007E1BE /* CFNetwork.framework */; };
 		9A50FAEF0FCA81A40007E1BE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAEE0FCA81A40007E1BE /* Foundation.framework */; };
@@ -722,6 +725,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76F5B74A19C39CFC003C07A0 /* UAInteractiveNotifications.strings in Resources */,
+				76F5B74619C39CE6003C07A0 /* UAInboxUI.strings in Resources */,
 				76F5B72919C37F41003C07A0 /* Settings.bundle in Resources */,
 				4906F3081990564A00F27AF1 /* InboxSampleViewController.xib in Resources */,
 				4906F3091990564A00F27AF1 /* MainWindow.xib in Resources */,
@@ -774,6 +779,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76F5B74B19C39D4B003C07A0 /* NSString+UALocalization.m in Sources */,
 				49D34B8219B0FFA900C4E82C /* InboxSampleModalUserInterface.m in Sources */,
 				49D34B8419B0FFA900C4E82C /* InboxSamplePopoverUserInterface.m in Sources */,
 				49D34B8619B0FFA900C4E82C /* InboxSampleNavigationUserInterface.m in Sources */,
