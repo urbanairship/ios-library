@@ -62,7 +62,7 @@ SINGLETON_IMPLEMENTATION(UAInbox)
         NSError *error = nil;
         [fm removeItemAtPath:diskCachePath error:&error];
         if (error) {
-            UA_LINFO(@"error deleting inbox cache: %@", error.description);
+            UA_LTRACE(@"Error deleting inbox cache: %@", error.description);
         }
     }
 }

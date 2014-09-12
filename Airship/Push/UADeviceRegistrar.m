@@ -55,7 +55,7 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
 
     @synchronized(self) {
         if (self.isRegistrationInProgress) {
-            UA_LDEBUG(@"Unable to perform registration, one is already in progress.");
+            UA_LDEBUG(@"Ignoring registration request, one already in progress.");
             return;
         }
 
@@ -80,7 +80,7 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
             }
 
         } else {
-            UA_LDEBUG(@"Ignoring duplicate update request.");
+            UA_LDEBUG(@"Ignoring registration request, registration is up to date.");
             [self succeededWithPayload:payload];
         }
     }
@@ -96,7 +96,7 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     UAChannelRegistrationPayload *payloadCopy = [payload copy];
     @synchronized(self) {
         if (self.isRegistrationInProgress) {
-            UA_LDEBUG(@"Unable to perform registration, one is already in progress.");
+            UA_LDEBUG(@"Ignoring registration request, one already in progress.");
             return;
         }
 
@@ -122,7 +122,7 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
             }
 
         } else {
-            UA_LDEBUG(@"Ignoring duplicate update request.");
+            UA_LDEBUG(@"Ignoring registration request, registration is up to date.");
             [self succeededWithPayload:payload];
         }
     }
@@ -148,30 +148,32 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
       channelLocation:(NSString *)location
           withPayload:(UAChannelRegistrationPayload *)payload {
 
+    UA_LDEBUG(@"Updating channel %@", channelID);
+
     UAChannelAPIClientUpdateSuccessBlock successBlock = ^{
-        UA_LTRACE(@"Channel %@ updated successfully.", channelID);
         [self succeededWithPayload:payload];
     };
 
     UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
         if (request.response.statusCode != 409) {
-            [UAUtils logFailedRequest:request withMessage:@"updating channel"];
+            UA_LDEBUG(@"Channel failed to update with payload %@", payload);
             [self failedWithPayload:payload];
             return;
         }
 
         // Conflict with channel id, create a new one
         UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *newChannelID, NSString *newChannelLocation) {
-            UA_LTRACE(@"Channel %@ created successfully. Channel location: %@.", newChannelID, newChannelLocation);
+            UA_LDEBUG(@"Channel %@ created successfully. Channel location: %@.", newChannelID, newChannelLocation);
             [self channelCreated:newChannelID channelLocation:newChannelLocation];
             [self succeededWithPayload:payload];
         };
 
         UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
-            [UAUtils logFailedRequest:request withMessage:@"creating channel"];
+            UA_LDEBUG(@"Channel failed to create with payload %@", payload);
             [self failedWithPayload:payload];
         };
 
+        UA_LDEBUG(@"Channel conflict, recreating.");
         [self.channelAPIClient createChannelWithPayload:payload
                                               onSuccess:successBlock
                                               onFailure:failureBlock];
@@ -187,19 +189,21 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
 - (void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload
                      fallBackBlock:(void (^)(UAChannelRegistrationPayload *))fallBackBlock {
 
+    UA_LDEBUG(@"Creating channel.");
+
     UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *channelID, NSString *channelLocation) {
-        UA_LTRACE(@"Channel %@ created successfully. Channel location: %@.", channelID, channelLocation);
+        UA_LDEBUG(@"Channel %@ created successfully. Channel location: %@.", channelID, channelLocation);
         [self channelCreated:channelID channelLocation:channelLocation];
         [self succeededWithPayload:payload];
     };
 
     UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
         if (request.response.statusCode == 501 && fallBackBlock) {
-            UA_LTRACE(@"Channel api not available, falling back to device token registration");
+            UA_LDEBUG(@"Channel api not available, falling back to device token registration");
             self.isUsingChannelRegistration = NO;
             fallBackBlock(payload);
         } else {
-            [UAUtils logFailedRequest:request withMessage:@"creating channel"];
+            UA_LDEBUG(@"Channel creation failed.");
             [self failedWithPayload:payload];
         }
     };
@@ -211,8 +215,10 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
 
 // TODO: Remove this once device token registration is removed
 - (void)unregisterDeviceTokenWithChannelPayload:(UAChannelRegistrationPayload *)payload {
+    UA_LDEBUG(@"Unregistering device token with Urban Airship.");
+
     if (!self.isDeviceTokenRegistered) {
-        UA_LDEBUG(@"Device token already unregistered, skipping.");
+        UA_LDEBUG(@"Device token already unregistered.");
         [self succeededWithPayload:payload];
         return;
     }
@@ -227,7 +233,7 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     }
 
     UADeviceAPIClientSuccessBlock successBlock = ^{
-        UA_LTRACE(@"Device token unregistered with Urban Airship successfully.");
+        UA_LDEBUG(@"Device token unregistered with Urban Airship successfully.");
         self.deviceTokenRegistered = NO;
         [self succeededWithPayload:payload];
     };
@@ -251,6 +257,8 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
         return;
     }
 
+    UA_LDEBUG(@"Registering device token with Urban Airship.");
+
     NSString *deviceToken = payload.pushAddress;
     UADeviceRegistrationPayload *devicePayload = [UADeviceRegistrationPayload payloadFromChannelRegistrationPayload:payload];
 
@@ -261,7 +269,6 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     };
 
     UADeviceAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
-        [UAUtils logFailedRequest:request withMessage:@"registering device token"];
         [self failedWithPayload:payload];
     };
 
@@ -286,7 +293,7 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     }
 }
 
-- (void)succeededWithPayload:payload {
+- (void)succeededWithPayload:(UAChannelRegistrationPayload *)payload {
     @synchronized(self) {
         if (!self.isRegistrationInProgress) {
             return;

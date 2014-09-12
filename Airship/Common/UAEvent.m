@@ -62,13 +62,13 @@
                                                         options:0
                                                           error:nil];
     
-    UA_LDEBUG(@"Estimated event size: %lu", (unsigned long)[jsonData length]);
+    UA_LTRACE(@"Estimated event size: %lu", (unsigned long)[jsonData length]);
     
     return [jsonData length];
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"UAEvent id=%@, type=%@, time=%@, data=%@",
+    return [NSString stringWithFormat:@"UAEvent ID: %@ type: %@ time: %@ data: %@",
             self.eventId, self.eventType, self.time, self.data];
 }
 

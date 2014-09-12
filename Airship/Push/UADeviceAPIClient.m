@@ -48,6 +48,7 @@
 
     [request addRequestHeader: @"Content-Type" value: @"application/json"];
     [request appendBodyData:[payload asJSONData]];
+
     return request;
 }
 
@@ -83,7 +84,7 @@
          }
      }
      onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-         UA_LTRACE(@"DeviceAPI request failed");
+         [UAUtils logFailedRequest:request withMessage:@"DeviceAPI request failed"];
 
          //clear the pending cache
          if (failureBlock) {
@@ -102,8 +103,7 @@
     UAHTTPRequest *putRequest = [self requestToRegisterDeviceToken:deviceToken
                                                        withPayload:payload];
 
-    UA_LDEBUG(@"Running device registration.");
-    UA_LTRACE(@"Sending device registration with headers: %@, payload: %@",
+    UA_LTRACE(@"Registering device token with headers: %@, payload: %@",
               [putRequest.headers descriptionWithLocale:nil indent:1],
               [NSJSONSerialization stringWithObject:payload.asDictionary options:NSJSONWritingPrettyPrinted]);
 
@@ -131,7 +131,6 @@
 
     UAHTTPRequest *deleteRequest = [self requestToDeleteDeviceToken:deviceToken];
 
-    UA_LDEBUG(@"Running device unregistration.");
     UA_LTRACE(@"Unregistering device token %@", deviceToken);
 
     [self

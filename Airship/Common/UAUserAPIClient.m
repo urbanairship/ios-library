@@ -93,6 +93,7 @@
 
          UAUserData *data = [UAUserData dataWithUsername:username password:password url:url];
 
+         UA_LTRACE(@"Created user: %@", username);
          if (successBlock) {
              successBlock(data, payload);
          } else {
@@ -114,7 +115,6 @@
          onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock
          onFailure:(UAUserAPIClientFailureBlock)failureBlock {
 
-    UA_LDEBUG(@"Updating user %@.", username);
 
 
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];
@@ -139,7 +139,7 @@
         NSInteger status = request.response.statusCode;
         return (BOOL)((status >= 500 && status <= 599) || request.error);
     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        UA_LDEBUG(@"User successfully updated.  Response: %@", request.responseString);
+        UA_LTRACE(@"User successfully updated.");
         if (successBlock) {
             successBlock();
         } else {

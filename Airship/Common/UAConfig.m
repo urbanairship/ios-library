@@ -113,6 +113,8 @@
         NSDictionary *normalizedDictionary = [UAConfig normalizeDictionary:configDict];
 
         [config setValuesForKeysWithDictionary:normalizedDictionary];
+
+        UA_LTRACE(@"Config options: %@", [normalizedDictionary description]);
     }
     return config;
 }
@@ -211,11 +213,9 @@
 
         objc_property_t property = class_getProperty(self, [realKey UTF8String]);
 
-        UA_LTRACE(@"Real key: %@", realKey);
         if (property != NULL) {
             NSString *type = [NSString stringWithUTF8String:property_getAttributes(property)];
 
-            UA_LTRACE(@"Type: %@", type);
             if ([type hasPrefix:@"Tc"] || [type hasPrefix:@"TB"]) {//treat chars as bools
                 value = [NSNumber numberWithBool:[value boolValue]];
             } else if (![type hasPrefix:@"T@"]) {//indicates an obj-c object (id)
@@ -226,8 +226,6 @@
         [newKeyedValues setValue:value forKey:realKey];
     }
 
-    UA_LTRACE(@"New Dictionary: %@", [newKeyedValues description]);
-    
     return newKeyedValues;
 }
 

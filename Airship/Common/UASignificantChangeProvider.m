@@ -47,7 +47,6 @@
 #pragma mark -
 #pragma mark CLLocationManager Delegate
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-    UALOG(@"Significant change did change authorization status %d", status);
     switch (status) {
         case kCLAuthorizationStatusDenied:
         case kCLAuthorizationStatusRestricted:
@@ -63,7 +62,6 @@
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
-    UALOG(@"Significant change did update to location %@", [locations lastObject]);
     id<UALocationProviderDelegate> strongDelegate = self.delegate;
     BOOL doesRespond = [strongDelegate respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocations:)];
     if ([self locationChangeMeetsAccuracyRequirements:[locations lastObject]] && doesRespond) {
@@ -76,12 +74,11 @@
 
 
 - (void)startReportingLocation {
-    UALOG(@"Start significant change service");
     [super startReportingLocation];
     [self.locationManager startMonitoringSignificantLocationChanges];
 }
 - (void)stopReportingLocation {
-    UALOG(@"Stop reporting significant change service");
+    UA_LDEBUG(@"Stop reporting significant change service");
     [super stopReportingLocation];
     [self.locationManager stopMonitoringSignificantLocationChanges];
 }

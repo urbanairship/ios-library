@@ -31,16 +31,6 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
 }
 
 
-- (UAHTTPRequest *)requestToMarkMessageRead:(UAInboxMessage *)message {
-    NSString *urlString = [NSString stringWithFormat: @"%@%@", message.messageURL, @"read/"];
-    NSURL *url = [NSURL URLWithString: urlString];
-    
-    UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:url method:@"POST"];
-    
-    UA_LTRACE(@"Request to mark message as read: %@", urlString);
-    return request;
-}
-
 - (UAHTTPRequest *)requestToRetrieveMessageListForUser:(NSString *)userName {
     NSString *urlString = [NSString stringWithFormat: @"%@%@%@%@",
                            [UAirship shared].config.deviceAPIURL, @"/api/user/", userName,@"/messages/"];
@@ -88,7 +78,6 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
     NSURL *requestUrl;
     NSDictionary *data;
     NSArray *updateMessageURLs = [messages valueForKeyPath:@"messageURL.absoluteString"];
-    UA_LDEBUG(@"%@", updateMessageURLs);
 
     NSString *urlString = [NSString stringWithFormat:@"%@%@%@%@",
                            [UAirship shared].config.deviceAPIURL,
@@ -112,32 +101,6 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
     return request;
 }
 
-- (void)markMessageRead:(UAInboxMessage *)message
-              onSuccess:(UAInboxClientSuccessBlock)successBlock
-                  onFailure:(UAInboxClientFailureBlock)failureBlock {
-    
-    UAHTTPRequest *readRequest = [self requestToMarkMessageRead:message];
-
-    [self.requestEngine
-     runRequest:readRequest
-     succeedWhere:^(UAHTTPRequest *request){
-        return (BOOL)(request.response.statusCode == 200);
-     } retryWhere:^(UAHTTPRequest *request){
-        return NO;
-     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay){
-         if (successBlock) {
-             successBlock();
-         } else {
-             UA_LERR(@"missing successBlock");
-         }
-     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay){
-         if (failureBlock) {
-            failureBlock(request);
-         } else {
-             UA_LERR(@"missing failureBlock");
-         }
-     }];
-}
 
 - (void)retrieveMessageListOnSuccess:(UAInboxClientMessageRetrievalSuccessBlock)successBlock
                            onFailure:(UAInboxClientFailureBlock)failureBlock {
@@ -183,6 +146,8 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
               UA_LERR(@"missing successBlock");
           }
       } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay){
+          [UAUtils logFailedRequest:request withMessage:@"Retrieve messages failed"];
+
           if (failureBlock) {
               failureBlock(request);
           } else {
@@ -210,6 +175,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
              UA_LERR(@"missing successBlock");
          }
      } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay){
+         [UAUtils logFailedRequest:request withMessage:@"Batch delete failed"];
          if (failureBlock) {
              failureBlock(request);
          } else {
@@ -237,6 +203,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
              UA_LERR(@"missing successBlock");
          }
      } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay){
+         [UAUtils logFailedRequest:request withMessage:@"Batch mark read failed"];
          if (failureBlock) {
              failureBlock(request);
          } else {

@@ -83,7 +83,6 @@ UALogLevel uaLogLevel = UALogLevelError;
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:[UAirship class] selector:@selector(handleAppDidFinishLaunchingNotification:) name:UIApplicationDidFinishLaunchingNotification object:nil];
     [center addObserver:[UAirship class] selector:@selector(handleAppTerminationNotification:) name:UIApplicationWillTerminateNotification object:nil];
-
 }
 
 #pragma mark -
@@ -111,7 +110,6 @@ UALogLevel uaLogLevel = UALogLevelError;
 }
 
 + (void)takeOff {
-    
     [UAirship takeOff:[UAConfig defaultConfig]];
 }
 
@@ -121,7 +119,7 @@ UALogLevel uaLogLevel = UALogLevelError;
     if ([UA_VERSION isEqualToString:@"0.0.0"]) {
         UA_LERR(@"_UA_VERSION is undefined - this commonly indicates an issue with the build configuration, UA_VERSION will be set to \"0.0.0\".");
     }
-    
+
     // takeOff needs to be run on the main thread
     if (![[NSThread currentThread] isMainThread]) {
         NSException *mainThreadException = [NSException exceptionWithName:UAirshipTakeOffBackgroundThreadException
@@ -146,6 +144,7 @@ UALogLevel uaLogLevel = UALogLevelError;
 
     [UAirship setLogLevel:config.logLevel];
 
+
     _sharedAirship = [[UAirship alloc] init];
     _sharedAirship.config = config;
 
@@ -158,9 +157,8 @@ UALogLevel uaLogLevel = UALogLevelError;
         return;
     }
 
-    UA_LINFO(@"App Key: %@", _sharedAirship.config.appKey);
-    UA_LINFO(@"App Secret: %@", _sharedAirship.config.appSecret);
-    UA_LINFO(@"Server: %@", _sharedAirship.config.deviceAPIURL);
+    UA_LINFO(@"UAirship Take Off! Lib Version: %@ App Key: %@ Production: %@.",
+             UA_VERSION, config.appKey, config.inProduction ?  @"YES" : @"NO");
 
     if (config.automaticSetupEnabled) {
 
@@ -214,7 +212,7 @@ UALogLevel uaLogLevel = UALogLevelError;
     }
 
     if (config.cacheDiskSizeInMB > 0) {
-        UA_LINFO("Registering UAURLProtocol");
+        UA_LTRACE("Registering UAURLProtocol.");
         [NSURLProtocol registerClass:[UAURLProtocol class]];
     }
 
@@ -354,7 +352,7 @@ UALogLevel uaLogLevel = UALogLevelError;
     NSString *userAgent = [NSString stringWithFormat:@"%@ %@ (%@; %@ %@; UALib %@; %@; %@)",
                            appName, appVersion, deviceModel, osName, osVersion, libVersion, self.config.appKey, locale];
     
-    UALOG(@"Setting User-Agent for UA requests to %@", userAgent);
+    UA_LDEBUG(@"Setting User-Agent for UA requests to %@", userAgent);
     [UAHTTPRequest setDefaultUserAgentString:userAgent];
 }
 
