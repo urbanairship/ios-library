@@ -155,6 +155,8 @@
 		76B14D6F17ECBFFE00377362 /* PushSampleKIFTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 76811ED617EBA60100874D1F /* PushSampleKIFTests.m */; };
 		76B14D7317ECC4D400377362 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79711212DE3BFB00D4937F /* AirshipConfig.plist */; };
 		76C69E9918AEC2FF00572214 /* UAChannelRegistrationPayload+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 76C69E9818AEC2FF00572214 /* UAChannelRegistrationPayload+UAAdditions.m */; };
+		76F5B71619C37C37003C07A0 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 76F5B71519C37C37003C07A0 /* Settings.bundle */; };
+		76F5B71719C37C6B003C07A0 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 76F5B71519C37C37003C07A0 /* Settings.bundle */; };
 		76F9B4B718D3CE8A00C438D4 /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 76F9B4B618D3CE8A00C438D4 /* JRSwizzle.m */; };
 		BB484B2E15910C7E0097B38C /* UALocationTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BB484B2D15910C7E0097B38C /* UALocationTestUtils.m */; };
 		BB4E13691545D4BB0076EC1B /* UAAnalyticsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */; };
@@ -174,11 +176,6 @@
 		BBEFB0301507F65700976645 /* UALocationServicesApplicationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BBEFB02D1507F65700976645 /* UALocationServicesApplicationTest.m */; };
 		BBEFB0321507F68500976645 /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0311507F68500976645 /* libOCMock.a */; };
 		BBEFB0521507F76400976645 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0101507F37200976645 /* CoreLocation.framework */; };
-		CC070C7219ABB72A00E91553 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CC070C7119ABB72A00E91553 /* Settings.bundle */; };
-		CC070C7319ABB72A00E91553 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CC070C7119ABB72A00E91553 /* Settings.bundle */; };
-		CC070C7419ABB72A00E91553 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CC070C7119ABB72A00E91553 /* Settings.bundle */; };
-		CC070C7519ABB72A00E91553 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CC070C7119ABB72A00E91553 /* Settings.bundle */; };
-		CC070C7619ABB72A00E91553 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CC070C7119ABB72A00E91553 /* Settings.bundle */; };
 		CC523FCE17BA8E6D00233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FCB17BA8E6600233005 /* CoreData.framework */; };
 		CC523FCF17BA8E7300233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FCB17BA8E6600233005 /* CoreData.framework */; };
 		D5A3F63512C15636009731BE /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F63412C15636009731BE /* Icon@2x.png */; };
@@ -401,6 +398,7 @@
 		769AFCFF18AD4D9B006696A9 /* ChannelRegistrationKIFTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChannelRegistrationKIFTest.m; sourceTree = "<group>"; };
 		76C69E9718AEC2FF00572214 /* UAChannelRegistrationPayload+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAChannelRegistrationPayload+UAAdditions.h"; sourceTree = "<group>"; };
 		76C69E9818AEC2FF00572214 /* UAChannelRegistrationPayload+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UAChannelRegistrationPayload+UAAdditions.m"; sourceTree = "<group>"; };
+		76F5B71519C37C37003C07A0 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		76F9B4B518D3CE8A00C438D4 /* JRSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRSwizzle.h; sourceTree = "<group>"; };
 		76F9B4B618D3CE8A00C438D4 /* JRSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JRSwizzle.m; sourceTree = "<group>"; };
 		BB484B2C15910C7E0097B38C /* UALocationTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationTestUtils.h; path = ../../TestCommon/LocationTest/UALocationTestUtils.h; sourceTree = "<group>"; };
@@ -426,7 +424,6 @@
 		BBEFB0251507F3A400976645 /* AirshipApplicationTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AirshipApplicationTests-Prefix.pch"; sourceTree = "<group>"; };
 		BBEFB02D1507F65700976645 /* UALocationServicesApplicationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationServicesApplicationTest.m; sourceTree = "<group>"; };
 		BBEFB0311507F68500976645 /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = ../TestCommon/OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
-		CC070C7119ABB72A00E91553 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		CC523FCB17BA8E6600233005 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		D5A3F63412C15636009731BE /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		D5A3F63612C15644009731BE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
@@ -696,7 +693,6 @@
 		18C02951124F216B00D49CD5 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				CC070C7119ABB72A00E91553 /* Settings.bundle */,
 				1F7FD61512F8E39900317B96 /* cat.caf */,
 				1F7FD61612F8E39900317B96 /* cow.caf */,
 				1F7FD61712F8E39900317B96 /* frog.caf */,
@@ -819,6 +815,7 @@
 		49C0CB4319BA5E3300771F4F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				76F5B71519C37C37003C07A0 /* Settings.bundle */,
 				49C0CB4419BA5E3300771F4F /* UAInteractiveNotifications.strings */,
 			);
 			path = Resources;
@@ -1161,8 +1158,8 @@
 				1F7FD45612F8956900317B96 /* UAPushSettingsAddTagViewController.xib in Resources */,
 				1F7FD5F012F8DE2200317B96 /* UAPushSettingsSoundsViewController.xib in Resources */,
 				1F7FD61912F8E39900317B96 /* cat.caf in Resources */,
+				76F5B71619C37C37003C07A0 /* Settings.bundle in Resources */,
 				1F7FD61A12F8E39900317B96 /* cow.caf in Resources */,
-				CC070C7219ABB72A00E91553 /* Settings.bundle in Resources */,
 				1F7FD61B12F8E39900317B96 /* frog.caf in Resources */,
 				1F7FD61C12F8E39900317B96 /* pig.caf in Resources */,
 				BB75D9AF151BEB1600F4241E /* UALocationSettingsViewController.xib in Resources */,
@@ -1176,6 +1173,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76F5B71719C37C6B003C07A0 /* Settings.bundle in Resources */,
 				4906F35019905B5500F27AF1 /* MainWindow_Pad.xib in Resources */,
 				4906F35119905B5500F27AF1 /* MainWindow_Phone.xib in Resources */,
 				4906F35219905B5500F27AF1 /* Default.png in Resources */,
@@ -1209,7 +1207,6 @@
 				4906F36C19905B5500F27AF1 /* UAPushSettingsSoundsViewController.xib in Resources */,
 				4906F36D19905B5500F27AF1 /* cat.caf in Resources */,
 				4906F36E19905B5500F27AF1 /* cow.caf in Resources */,
-				CC070C7319ABB72A00E91553 /* Settings.bundle in Resources */,
 				4906F36F19905B5500F27AF1 /* frog.caf in Resources */,
 				4906F37019905B5500F27AF1 /* pig.caf in Resources */,
 				4906F37219905B5500F27AF1 /* UALocationSettingsViewController.xib in Resources */,
@@ -1223,7 +1220,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC070C7519ABB72A00E91553 /* Settings.bundle in Resources */,
 				76B14D7317ECC4D400377362 /* AirshipConfig.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1232,7 +1228,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC070C7619ABB72A00E91553 /* Settings.bundle in Resources */,
 				769AFCFD18AD4C34006696A9 /* AirshipConfig.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1241,7 +1236,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC070C7419ABB72A00E91553 /* Settings.bundle in Resources */,
 				BBEFB0211507F3A400976645 /* InfoPlist.strings in Resources */,
 				BB6B828C15892C0D00C42B03 /* TagTest.plist in Resources */,
 				BB8EDF03159D07B400534E28 /* deviceToken.data in Resources */,
