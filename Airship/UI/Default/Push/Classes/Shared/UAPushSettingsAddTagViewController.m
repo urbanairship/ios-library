@@ -26,6 +26,7 @@
 #import "UAPushSettingsAddTagViewController.h"
 #import "UAPush.h"
 #import "UATagUtils.h"
+#import "NSString+UASizeWithFontCompatibility.h"
 
 enum TagSections {
     TagSectionCustom = 0,
@@ -74,7 +75,7 @@ enum TagSections {
         text = [self.presetTags objectAtIndex:(NSUInteger)indexPath.row];
     }
 
-    CGFloat height = [text sizeWithFont:self.tagField.font
+    CGFloat height = [text uaSizeWithFont:self.tagField.font
                       constrainedToSize:CGSizeMake(240, 1500)
                           lineBreakMode:NSLineBreakByWordWrapping].height;
 

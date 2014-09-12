@@ -25,6 +25,7 @@
 
 #import "UAGlobal.h"
 #import "UAPushSettingsSoundsViewController.h"
+#import "NSString+UASizeWithFontCompatibility.h"
 
 #import <AudioToolbox/AudioServices.h>
 
@@ -140,7 +141,7 @@ enum {
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == SectionDesc) {
         UILabel *strongTextLabel = self.textLabel;
-        CGFloat height = [strongTextLabel.text sizeWithFont:strongTextLabel.font
+        CGFloat height = [strongTextLabel.text uaSizeWithFont:strongTextLabel.font
                           constrainedToSize:CGSizeMake(240, 1500)
                               lineBreakMode:NSLineBreakByWordWrapping].height;
         return height + kCellPaddingHeight * 2;

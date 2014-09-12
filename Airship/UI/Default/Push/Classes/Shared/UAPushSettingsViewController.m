@@ -419,8 +419,8 @@ enum {
                 
         [UAPush shared].quietTimeEnabled = YES;
 
-        NSDateComponents *fromComponents = [[NSCalendar currentCalendar] components:NSHourCalendarUnit|NSMinuteCalendarUnit fromDate:fromDate];
-        NSDateComponents *toComponents = [[NSCalendar currentCalendar] components:NSHourCalendarUnit|NSMinuteCalendarUnit fromDate:toDate];
+        NSDateComponents *fromComponents = [[NSCalendar currentCalendar] components:NSCalendarUnitHour|NSCalendarUnitMinute fromDate:fromDate];
+        NSDateComponents *toComponents = [[NSCalendar currentCalendar] components:NSCalendarUnitHour|NSCalendarUnitMinute fromDate:toDate];
 
 
         [[UAPush shared] setQuietTimeStartHour:(NSUInteger)fromComponents.hour

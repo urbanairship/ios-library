@@ -26,6 +26,7 @@
 #import "UAPushSettingsTagsViewController.h"
 #import "UAPushSettingsAddTagViewController.h"
 #import "UAPush.h"
+#import "NSString+UASizeWithFontCompatibility.h"
 
 enum {
     SectionDesc     = 0,
@@ -192,7 +193,7 @@ enum {
         text = [[UAPush shared].tags objectAtIndex:(NSUInteger)indexPath.row];
     }
     
-    CGFloat height = [text sizeWithFont:strongTextLabel.font
+    CGFloat height = [text uaSizeWithFont:strongTextLabel.font
                                      constrainedToSize:CGSizeMake(240, 1500)
                                          lineBreakMode:NSLineBreakByWordWrapping].height;
     

@@ -25,6 +25,7 @@
 
 #import "UAPushSettingsAliasViewController.h"
 #import "UAPush.h"
+#import "NSString+UASizeWithFontCompatibility.h"
 
 enum {
     SectionDesc        = 0,
@@ -66,7 +67,7 @@ enum {
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == SectionDesc) {
         UILabel *strongTextLabel = self.textLabel;
-        CGFloat height = [strongTextLabel.text sizeWithFont:strongTextLabel.font
+        CGFloat height = [strongTextLabel.text uaSizeWithFont:strongTextLabel.font
                           constrainedToSize:CGSizeMake(300, 1500)
                               lineBreakMode:NSLineBreakByWordWrapping].height;
         return height + kCellPaddingHeight * 2;

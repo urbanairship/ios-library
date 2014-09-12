@@ -46,7 +46,7 @@
 }
 
 - (NSString*)monthDateFromDate:(NSDate *)date {
-    NSUInteger components = NSMonthCalendarUnit | NSDayCalendarUnit;
+    NSUInteger components = NSCalendarUnitMonth | NSCalendarUnitDay;
     NSDateComponents *monthDay = [[NSCalendar currentCalendar] components:components fromDate:date];
     return [NSString stringWithFormat:@"%ld/%ld", (long)monthDay.month, (long)monthDay.day];
 }

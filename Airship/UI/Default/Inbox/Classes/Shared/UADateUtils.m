@@ -25,7 +25,6 @@
 
 #import "UADateUtils.h"
 
-
 @implementation UADateUtils
 
 static NSDateFormatter *dateFormatter;
@@ -65,9 +64,9 @@ static NSDateFormatter *sameDayFormatter;
 + (BOOL)isDate:(NSDate *)date inSameCalendarDayAsDate:(NSDate *)otherDate {
     NSCalendar *calendar = [NSCalendar currentCalendar];
 
-    NSUInteger components = (NSYearCalendarUnit |
-                             NSMonthCalendarUnit |
-                             NSDayCalendarUnit);
+    NSUInteger components = ( NSCalendarUnitYear |
+                             NSCalendarUnitMonth |
+                             NSCalendarUnitDay);
 
     NSDateComponents *dateComponents = [calendar components:components fromDate:date];
     NSDateComponents *otherDateComponents = [calendar components:components fromDate:otherDate];
