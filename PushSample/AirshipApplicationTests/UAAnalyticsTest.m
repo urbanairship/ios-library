@@ -34,6 +34,10 @@
 #import "UAAnalytics+Internal.h"
 #import "UAirship+Internal.h"
 #import "UALocationTestUtils.h"
+#import "UAEventPushReceived.h"
+#import "UAEventAppForeground.h"
+#import "UAEventAppInit.h"
+#import "UAEventAppBackground.h"
 
 /* This class involves lots of async calls to the web
  Care should be taken to mock out responses and calls, race conditions
