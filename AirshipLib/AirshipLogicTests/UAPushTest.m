@@ -1037,17 +1037,14 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     self.push.userPushNotificationsEnabled = YES;
     self.push.channelID = @"channel ID";
 
-    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:OCMOCK_ANY
-                                                    forcefully:NO];
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+    [[self.mockedApplication expect] registerForRemoteNotifications];
 
     [self.push appRegisteredUserNotificationSettings];
 
-    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
-                     @"should update registration on registering channel ID");
+    XCTAssertNoThrow([self.mockedApplication verify],
+                     @"Should reregister remote notifications.");
 }
 
 /**
@@ -1071,32 +1068,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
                      @"should not allow registration in background except for channel creation");
-}
-
-/**
- * Test handleUserNotificationSettingsRegistration allows background registration
- * to create a channel.
- */
-- (void)testHandleUserNotificationSettingsRegistrationBackgroundChannelCreation {
-    self.push.userPushNotificationsEnabled = YES;
-    self.push.channelID = nil;
-
-
-    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isUsingChannelRegistration];
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-    
-    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:OCMOCK_ANY
-                                                    forcefully:NO];
-
-
-    [self.push appRegisteredUserNotificationSettings];
-
-    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
-                     @"should update registration on registering channel ID");
-
 }
 
 /**
