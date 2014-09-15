@@ -64,7 +64,6 @@
 		493977C719B7CE660063C58F /* UAPushSettingsSoundsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D5184E891315F33900A40CAC /* UAPushSettingsSoundsViewController.xib */; };
 		493977C819B7CE660063C58F /* UAPushSettingsAddTagViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D5184E8A1315F33900A40CAC /* UAPushSettingsAddTagViewController.xib */; };
 		493977CA19B7CE660063C58F /* pig.caf in Resources */ = {isa = PBXBuildFile; fileRef = D5184E941315F39C00A40CAC /* pig.caf */; };
-		493977CB19B7CE660063C58F /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CC070C7C19ABBDA500E91553 /* Settings.bundle */; };
 		493977CC19B7CE660063C58F /* frog.caf in Resources */ = {isa = PBXBuildFile; fileRef = D5184E951315F39C00A40CAC /* frog.caf */; };
 		493977CD19B7CE660063C58F /* cow.caf in Resources */ = {isa = PBXBuildFile; fileRef = D5184E961315F39C00A40CAC /* cow.caf */; };
 		493977CE19B7CE660063C58F /* cat.caf in Resources */ = {isa = PBXBuildFile; fileRef = D5184E971315F39C00A40CAC /* cat.caf */; };
@@ -115,6 +114,8 @@
 		636CB1EC128CF51900481EFC /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A0C124F251B00D49CD5 /* StoreKit.framework */; };
 		76149E881843B0B400398008 /* UAPushSettingsChannelInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76149E871843B0B400398008 /* UAPushSettingsChannelInfoViewController.m */; };
 		76149E8A1843B0CF00398008 /* UAPushSettingsChannelInfoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 76149E891843B0CF00398008 /* UAPushSettingsChannelInfoViewController.xib */; };
+		76F5B71F19C37E98003C07A0 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 76F5B71E19C37E98003C07A0 /* Settings.bundle */; };
+		76F5B72019C37EAD003C07A0 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 76F5B71E19C37E98003C07A0 /* Settings.bundle */; };
 		BB935DA5152B6081006E6A92 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB935DA4152B6081006E6A92 /* CoreLocation.framework */; };
 		BB935DAD152B60BD006E6A92 /* UALocationDemoAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935DA8152B60BD006E6A92 /* UALocationDemoAnnotation.m */; };
 		BB935DAE152B60BD006E6A92 /* UALocationSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935DAA152B60BD006E6A92 /* UALocationSettingsViewController.m */; };
@@ -122,7 +123,6 @@
 		BB935DB1152B614A006E6A92 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB935DB0152B614A006E6A92 /* MapKit.framework */; };
 		BB935DB4152B61DB006E6A92 /* UALocationSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BB935DB2152B61DB006E6A92 /* UALocationSettingsViewController.xib */; };
 		BB935DB5152B61DB006E6A92 /* UAMapPresentationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BB935DB3152B61DB006E6A92 /* UAMapPresentationViewController.xib */; };
-		CC070C7D19ABBDA500E91553 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CC070C7C19ABBDA500E91553 /* Settings.bundle */; };
 		D5184E841315F2F900A40CAC /* UAPushNotificationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D5184E7C1315F2F900A40CAC /* UAPushNotificationHandler.m */; };
 		D5184E851315F2F900A40CAC /* UAPushSettingsTagsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D5184E7D1315F2F900A40CAC /* UAPushSettingsTagsViewController.m */; };
 		D5184E861315F2F900A40CAC /* UAPushSettingsSoundsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D5184E7F1315F2F900A40CAC /* UAPushSettingsSoundsViewController.m */; };
@@ -221,6 +221,7 @@
 		76149E861843B0B400398008 /* UAPushSettingsChannelInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsChannelInfoViewController.h; sourceTree = "<group>"; };
 		76149E871843B0B400398008 /* UAPushSettingsChannelInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsChannelInfoViewController.m; sourceTree = "<group>"; };
 		76149E891843B0CF00398008 /* UAPushSettingsChannelInfoViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsChannelInfoViewController.xib; sourceTree = "<group>"; };
+		76F5B71E19C37E98003C07A0 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		BB935DA4152B6081006E6A92 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		BB935DA7152B60BD006E6A92 /* UALocationDemoAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationDemoAnnotation.h; sourceTree = "<group>"; };
 		BB935DA8152B60BD006E6A92 /* UALocationDemoAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationDemoAnnotation.m; sourceTree = "<group>"; };
@@ -231,7 +232,6 @@
 		BB935DB0152B614A006E6A92 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		BB935DB2152B61DB006E6A92 /* UALocationSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UALocationSettingsViewController.xib; sourceTree = "<group>"; };
 		BB935DB3152B61DB006E6A92 /* UAMapPresentationViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAMapPresentationViewController.xib; sourceTree = "<group>"; };
-		CC070C7C19ABBDA500E91553 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		D5184E7C1315F2F900A40CAC /* UAPushNotificationHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushNotificationHandler.m; sourceTree = "<group>"; };
 		D5184E7D1315F2F900A40CAC /* UAPushSettingsTagsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsTagsViewController.m; sourceTree = "<group>"; };
 		D5184E7E1315F2F900A40CAC /* UAPushSettingsTagsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsTagsViewController.h; sourceTree = "<group>"; };
@@ -498,7 +498,6 @@
 		18C02951124F216B00D49CD5 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				CC070C7C19ABBDA500E91553 /* Settings.bundle */,
 				D5184E941315F39C00A40CAC /* pig.caf */,
 				D5184E951315F39C00A40CAC /* frog.caf */,
 				D5184E961315F39C00A40CAC /* cow.caf */,
@@ -583,6 +582,7 @@
 		49C0CB2B19BA5DFE00771F4F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				76F5B71E19C37E98003C07A0 /* Settings.bundle */,
 				49C0CB2C19BA5DFE00771F4F /* UAInteractiveNotifications.strings */,
 			);
 			path = Resources;
@@ -700,7 +700,7 @@
 				D5184E8D1315F33900A40CAC /* UAPushSettingsSoundsViewController.xib in Resources */,
 				D5184E8E1315F33900A40CAC /* UAPushSettingsAddTagViewController.xib in Resources */,
 				D5184E981315F39C00A40CAC /* pig.caf in Resources */,
-				CC070C7D19ABBDA500E91553 /* Settings.bundle in Resources */,
+				76F5B71F19C37E98003C07A0 /* Settings.bundle in Resources */,
 				D5184E991315F39C00A40CAC /* frog.caf in Resources */,
 				D5184E9A1315F39C00A40CAC /* cow.caf in Resources */,
 				D5184E9B1315F39C00A40CAC /* cat.caf in Resources */,
@@ -715,6 +715,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76F5B72019C37EAD003C07A0 /* Settings.bundle in Resources */,
 				493977AC19B7CE660063C58F /* MainWindow_Pad.xib in Resources */,
 				493977AD19B7CE660063C58F /* MainWindow_Phone.xib in Resources */,
 				493977AE19B7CE660063C58F /* Default.png in Resources */,
@@ -747,7 +748,6 @@
 				493977C719B7CE660063C58F /* UAPushSettingsSoundsViewController.xib in Resources */,
 				493977C819B7CE660063C58F /* UAPushSettingsAddTagViewController.xib in Resources */,
 				493977CA19B7CE660063C58F /* pig.caf in Resources */,
-				493977CB19B7CE660063C58F /* Settings.bundle in Resources */,
 				493977CC19B7CE660063C58F /* frog.caf in Resources */,
 				493977CD19B7CE660063C58F /* cow.caf in Resources */,
 				493977CE19B7CE660063C58F /* cat.caf in Resources */,
