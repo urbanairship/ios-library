@@ -25,6 +25,7 @@
 
 #import "UAPushSettingsChannelInfoViewController.h"
 #import "UAPush.h"
+#import "NSString+UASizeWithFontCompatibility.h"
 
 @implementation UAPushSettingsChannelInfoViewController
 
@@ -48,7 +49,7 @@
 
 - (CGFloat)tableView: (UITableView *) tableView heightForRowAtIndexPath:(NSIndexPath *) indexPath {
     UIFont *font = [UIFont systemFontOfSize:17];
-    CGFloat height = [self.text sizeWithFont:font
+    CGFloat height = [self.text uaSizeWithFont:font
                            constrainedToSize:CGSizeMake(280.0, 1500.0)
                                lineBreakMode:NSLineBreakByWordWrapping].height;
     return height + kCellPaddingHeight;
@@ -80,7 +81,7 @@
     description.numberOfLines = 0;
     description.backgroundColor = [UIColor clearColor];
     [description setFont: font];
-    CGFloat height = [self.text sizeWithFont:font
+    CGFloat height = [self.text uaSizeWithFont:font
                            constrainedToSize:CGSizeMake(280.0, 800.0)
                                lineBreakMode:NSLineBreakByWordWrapping].height;
     [description setFrame: CGRectMake(0.0f, 10.0f, 320.0f, height)];

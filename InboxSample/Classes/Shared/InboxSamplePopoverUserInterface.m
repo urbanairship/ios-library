@@ -25,9 +25,12 @@
     self.popoverController = [[UIPopoverController alloc] initWithContentViewController:self.navigationController];
     self.popoverController.popoverContentSize = self.popoverSize;
     self.popoverController.delegate = self;
+
+#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0)
+    messageListController.preferredContentSize = self.popoverSize;
+#else
     messageListController.contentSizeForViewInPopover = self.popoverSize;
-
-
+#endif
     _messageListController = messageListController;
 }
 

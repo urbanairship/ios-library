@@ -77,6 +77,9 @@
 		4906F3381990564A00F27AF1 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		4906F3391990564A00F27AF1 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D02DD12B8338A00B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		4906F342199056E600F27AF1 /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 49B19A1C1990172C00977790 /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		4947EEEB19C24ED9004710BE /* NSString+UALocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C0CB5F19BA5E9B00771F4F /* NSString+UALocalization.m */; };
+		4947EEEF19C24F10004710BE /* UAInteractiveNotifications.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49C0CB6119BA5E9B00771F4F /* UAInteractiveNotifications.strings */; };
+		4947EEF419C24FAA004710BE /* UAInboxUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49C0CB7419BA625900771F4F /* UAInboxUI.strings */; };
 		4972571419AFF63100B0FF93 /* InboxSampleModalUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4972571319AFF63100B0FF93 /* InboxSampleModalUserInterface.m */; };
 		4972571C19AFF64500B0FF93 /* InboxSamplePopoverUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4972571B19AFF64500B0FF93 /* InboxSamplePopoverUserInterface.m */; };
 		4972571F19AFF65400B0FF93 /* InboxSampleNavigationUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4972571E19AFF65400B0FF93 /* InboxSampleNavigationUserInterface.m */; };

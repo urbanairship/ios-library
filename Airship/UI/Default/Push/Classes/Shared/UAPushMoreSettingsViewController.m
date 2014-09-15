@@ -351,7 +351,6 @@ static NSUInteger channelRowCount = 1;
 
     UIUserNotificationType enabledTypes = [[UAPush shared] currentEnabledNotificationTypes];
 
-
     self.deviceTokenTypesCell.detailTextLabel.text = [self pushTypeString:enabledTypes];
     
     UIUserNotificationType disabledTypes = enabledTypes ^ [UAPush shared].userNotificationTypes;
