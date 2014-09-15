@@ -46,6 +46,10 @@ rm -rf $OUTPUT_PATH
 mkdir -p $OUTPUT_PATH
 
 ./$SCRIPT_DIRECTORY/package_airshiplib.sh $OUTPUT_PATH
+
+# Verify architectures in the fat binary
+lipo "${OUTPUT_PATH}/Airship/libUAirship-$VERSION.a" -verify_arch armv7 armv7s i386 x86_64 arm64
+
 ./$SCRIPT_DIRECTORY/package_sample.sh $SCRIPT_DIRECTORY/../InboxSample $OUTPUT_PATH
 ./$SCRIPT_DIRECTORY/package_sample.sh $SCRIPT_DIRECTORY/../PushSample $OUTPUT_PATH
 "${ROOT_PATH}/scripts/build_docs.sh"
