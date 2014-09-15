@@ -174,7 +174,7 @@ UALogLevel uaLogLevel = UALogLevelError;
              UA_VERSION, config.appKey, config.inProduction ?  @"YES" : @"NO");
 
     if (config.automaticSetupEnabled) {
-
+        UA_LINFO(@"Automatic setup enabled.");
         _sharedAirship.appDelegate = [[UAAppDelegateProxy alloc ]init];
 
         //swap pointers with the initial app delegate

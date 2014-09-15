@@ -125,9 +125,9 @@ SINGLETON_IMPLEMENTATION(UAPush)
 
         self.registrationBackgroundTask = UIBackgroundTaskInvalid;
 
-        // Always register for remote notifications on iOS8. This does not prompt for
+        // Register for remote notifications on iOS8 right away if the background mode is enabled. This does not prompt for
         // permissions to show notifications, but starts the device token registration.
-        if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerForRemoteNotifications)]) {
+        if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerForRemoteNotifications)] && [UAirship shared].remoteNotificationBackgroundModeEnabled) {
             [[UIApplication sharedApplication] registerForRemoteNotifications];
         }
     }
@@ -660,7 +660,14 @@ BOOL deferChannelCreationOnForeground = false;
 
 - (void)applicationBackgroundRefreshStatusChanged {
     UA_LTRACE(@"Background refresh status changed.");
-    [self updateRegistration];
+
+    if ([UIApplication sharedApplication].backgroundRefreshStatus == UIBackgroundRefreshStatusAvailable) {
+        if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerForRemoteNotifications)]) {
+            [[UIApplication sharedApplication] registerForRemoteNotifications];
+        }
+    } else {
+        [self updateRegistration];
+    }
 }
 
 #pragma mark -
@@ -831,30 +838,17 @@ BOOL deferChannelCreationOnForeground = false;
 
     BOOL inBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
 
-    // Skip doing any channel registration updates until the user registration callback.
-    // This prevents doing 2 channel registrations in a row on first install.
-    if (!self.userPushNotificationsEnabled || ![UIUserNotificationSettings class]) {
-
-        // Only allow new registrations to happen in the background if we are creating a channel ID
-        if (inBackground && (self.channelID || !self.deviceRegistrar.isUsingChannelRegistration)) {
-            UA_LDEBUG(@"Skipping device registration. The app is currently backgrounded.");
-        } else {
-            [self updateRegistrationForcefully:NO];
-        }
-    }
-}
-
-- (void)appRegisteredUserNotificationSettings {
-    UA_LINFO(@"Application did register with user notification types %ld.", (unsigned long)[[UIApplication sharedApplication] currentUserNotificationSettings].types);
-
-    BOOL inBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
-
     // Only allow new registrations to happen in the background if we are creating a channel ID
     if (inBackground && (self.channelID || !self.deviceRegistrar.isUsingChannelRegistration)) {
         UA_LDEBUG(@"Skipping device registration. The app is currently backgrounded.");
     } else {
         [self updateRegistrationForcefully:NO];
     }
+}
+
+- (void)appRegisteredUserNotificationSettings {
+    UA_LINFO(@"Application did register with user notification types %ld.", (unsigned long)[[UIApplication sharedApplication] currentUserNotificationSettings].types);
+    [[UIApplication sharedApplication] registerForRemoteNotifications];
 }
 
 - (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload {
