@@ -53,6 +53,8 @@ UA_VERSION_IMPLEMENTATION(UAirshipVersion, UA_VERSION)
 NSString * const UAirshipTakeOffBackgroundThreadException = @"UAirshipTakeOffBackgroundThreadException";
 NSString * const UAResetKeychainKey = @"com.urbanairship.reset_keychain";
 
+NSString * const UALibraryVersion = @"com.urbanairship.library_version";
+
 static UAirship *_sharedAirship;
 
 // Its possible that plugins that use load to call takeoff will trigger after
@@ -118,6 +120,17 @@ UALogLevel uaLogLevel = UALogLevelError;
 
     if ([UA_VERSION isEqualToString:@"0.0.0"]) {
         UA_LERR(@"_UA_VERSION is undefined - this commonly indicates an issue with the build configuration, UA_VERSION will be set to \"0.0.0\".");
+    } else {
+        NSString *previousVersion = [[NSUserDefaults standardUserDefaults] stringForKey:UALibraryVersion];
+        if (![UA_VERSION isEqualToString:previousVersion]) {
+            [[NSUserDefaults standardUserDefaults] setObject:UA_VERSION forKey:UALibraryVersion];
+
+            if (previousVersion) {
+                UA_LINFO(@"Urban Airship library version changed from %@ to %@.", previousVersion, UA_VERSION);
+            }
+        }
+
+
     }
 
     // takeOff needs to be run on the main thread
