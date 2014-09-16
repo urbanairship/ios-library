@@ -206,7 +206,7 @@
 
     for (NSString *key in keyedValues) {
         if (oldKeyMap[key]) {
-            NSLog(@"%@ is old, use %@ instead", key, oldKeyMap[key]);
+            UA_LWARN(@"%@ is a legacy config key, use %@ instead", key, oldKeyMap[key]);
         }
 
         NSString *realKey = [oldKeyMap objectForKey:key] ?: key;
