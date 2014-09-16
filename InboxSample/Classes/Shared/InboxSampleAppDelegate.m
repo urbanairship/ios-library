@@ -53,8 +53,6 @@
     // It will be set to the value in the loaded config upon takeOff
     [UAirship setLogLevel:UALogLevelTrace];
 
-    //[UAInbox useCustomUI: [UAInboxNavUI class]];
-    
     // Call takeOff (which creates the UAirship singleton). This call is
     // required.
     //
