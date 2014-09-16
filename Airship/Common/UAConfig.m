@@ -205,6 +205,10 @@
     NSMutableDictionary *newKeyedValues = [NSMutableDictionary dictionary];
 
     for (NSString *key in keyedValues) {
+        if (oldKeyMap[key]) {
+            UA_LWARN(@"%@ is a legacy config key, use %@ instead", key, oldKeyMap[key]);
+        }
+
         NSString *realKey = [oldKeyMap objectForKey:key] ?: key;
         id value = [keyedValues objectForKey:key];
 
