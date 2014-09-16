@@ -61,6 +61,10 @@ __attribute__((deprecated("As of version 3.2")))
  *
  * The default implementation is UAInboxDefaultJSDelegate. It is designed to work with
  * the UACallback.js file that ships with the sample project.
+ *
+ * @param args Array of js delegate arguments
+ * @param options Dictionary of js delegate options
+ * @return Callback string indicating success or failure
  */ 
 - (NSString *)callbackArguments:(NSArray *)args withOptions:(NSDictionary *)options;
 

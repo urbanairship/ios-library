@@ -59,7 +59,6 @@
  * Closes all currently displayed overlays.
  * @param animated Indicates whether to animate the close transition.
  */
-
 + (void)closeAll:(BOOL)animated;
 
 @end

@@ -81,6 +81,7 @@
 
 /**
  * Date representing the last attempt to send analytics.
+ * @return NSDate representing the last attempt to send analytics
  */
 - (NSDate*)lastSendTime;
 

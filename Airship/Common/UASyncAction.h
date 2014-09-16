@@ -36,6 +36,7 @@
  * Triggers the action synchronously. Subclasses of UASyncAction should override this method to define custom behavior.
  *
  * @param arguments An id value representing the arguments passed to the action.
+ * @return UAActionResult for the action
  */
 - (UAActionResult *)performWithArguments:(UAActionArguments *)arguments;
 
