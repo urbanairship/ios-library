@@ -12,8 +12,13 @@
 - (instancetype)initWithMessageListController:(UAInboxMessageListController *)controller popoverSize:(CGSize)size {
     self = [super init];
     if (self) {
-        self.messageListController = controller;
+#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0)
+        controller.preferredContentSize = size;
+#else
+        controller.contentSizeForViewInPopover = size;
+#endif
         self.popoverSize = size;
+        self.messageListController = controller;
     }
     return self;
 }
@@ -26,11 +31,6 @@
     self.popoverController.popoverContentSize = self.popoverSize;
     self.popoverController.delegate = self;
 
-#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0)
-    messageListController.preferredContentSize = self.popoverSize;
-#else
-    messageListController.contentSizeForViewInPopover = self.popoverSize;
-#endif
     _messageListController = messageListController;
 }
 
