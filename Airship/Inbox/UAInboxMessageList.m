@@ -207,7 +207,7 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
                 }
             }];
         default:
-            UA_LWARN(@"Unable to perform batch update with invalid command type: %ld", command);
+            UA_LWARN(@"Unable to perform batch update with invalid command type: %ld", (long)command);
             return nil;
     }
 }
@@ -234,7 +234,7 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
                 }
             }];
         default:
-            UA_LWARN(@"Unable to perform batch update with invalid command type: %ld", command);
+            UA_LWARN(@"Unable to perform batch update with invalid command type: %ld",(long)command);
             return nil;
     }
 }
