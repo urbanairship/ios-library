@@ -83,9 +83,9 @@
             self.developmentAppSecret,
             self.productionAppKey,
             self.productionAppSecret,
-            self.developmentLogLevel,
-            self.productionLogLevel,
-            self.logLevel,
+            (long)self.developmentLogLevel,
+            (long)self.productionLogLevel,
+            (long)self.logLevel,
             self.detectProvisioningMode,
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
