@@ -64,7 +64,10 @@ UAPushUserInfoKey *const UAPushUserInfoPushEnabled = @"PushEnabled";
 
 UAPushUserInfoKey *const UAPushChannelCreationOnForeground = @"UAPushChannelCreationOnForeground";
 
-UAPushUserInfoKey *const UAPushEnabledSettingsMigrated = @"UAPushEnabledSettingsMigrated";
+UAPushUserInfoKey *const UAPushEnabledSettingsMigratedKey = @"UAPushEnabledSettingsMigrated";
+
+// Old push enabled key
+UAPushUserInfoKey *const UAPushEnabledKey = @"UAPushEnabled";
 
 NSString *const UAPushQuietTimeStartKey = @"start";
 NSString *const UAPushQuietTimeEndKey = @"end";
@@ -941,22 +944,20 @@ BOOL deferChannelCreationOnForeground = false;
 
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 
-    if ([userDefaults boolForKey:UAPushEnabledSettingsMigrated]) {
+    if ([userDefaults boolForKey:UAPushEnabledSettingsMigratedKey]) {
         // Already migrated
         return;
     }
-
-    [userDefaults setBool:YES forKey:UAPushEnabledSettingsMigrated];
 
     // Migrate userNotificationEnabled setting to YES if we are currently registered for notification types
     if (![userDefaults objectForKey:UAUserPushNotificationsEnabledKey]) {
 
         // If the previous pushEnabled was set
-        if ([userDefaults objectForKey:@"UAPushEnabled"]) {
-            BOOL previousValue = [[NSUserDefaults standardUserDefaults] boolForKey:@"UAPushEnabled"];
+        if ([userDefaults objectForKey:UAPushEnabledKey]) {
+            BOOL previousValue = [[NSUserDefaults standardUserDefaults] boolForKey:UAPushEnabledKey];
             UA_LDEBUG(@"Migrating userPushNotificationEnabled to %@ from previous pushEnabledValue.", previousValue ? @"YES" : @"NO");
             [userDefaults setBool:previousValue forKey:UAUserPushNotificationsEnabledKey];
-            [userDefaults removeObjectForKey:@"UAPushEnabled"];
+            [userDefaults removeObjectForKey:UAPushEnabledKey];
         } else {
             BOOL registeredForUserNotificationTypes;
             if ([UIUserNotificationSettings class]) {
@@ -971,6 +972,8 @@ BOOL deferChannelCreationOnForeground = false;
             }
         }
     }
+
+    [userDefaults setBool:YES forKey:UAPushEnabledSettingsMigratedKey];
 }
 
 - (UIUserNotificationType)currentEnabledNotificationTypes {
