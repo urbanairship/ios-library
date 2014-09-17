@@ -64,6 +64,8 @@ UAPushUserInfoKey *const UAPushUserInfoPushEnabled = @"PushEnabled";
 
 UAPushUserInfoKey *const UAPushChannelCreationOnForeground = @"UAPushChannelCreationOnForeground";
 
+UAPushUserInfoKey *const UAPushEnabledSettingsMigrated = @"UAPushEnabledSettingsMigrated";
+
 NSString *const UAPushQuietTimeStartKey = @"start";
 NSString *const UAPushQuietTimeEndKey = @"end";
 
@@ -936,15 +938,25 @@ BOOL deferChannelCreationOnForeground = false;
 }
 
 - (void)migratePushSettings {
+
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+
+    if ([userDefaults boolForKey:UAPushEnabledSettingsMigrated]) {
+        // Already migrated
+        return;
+    }
+
+    [userDefaults setBool:YES forKey:UAPushEnabledSettingsMigrated];
+
     // Migrate userNotificationEnabled setting to YES if we are currently registered for notification types
-    if (![[NSUserDefaults standardUserDefaults] objectForKey:UAUserPushNotificationsEnabledKey]) {
+    if (![userDefaults objectForKey:UAUserPushNotificationsEnabledKey]) {
 
         // If the previous pushEnabled was set
-        if ([[NSUserDefaults standardUserDefaults] objectForKey:@"UAPushEnabled"]) {
+        if ([userDefaults objectForKey:@"UAPushEnabled"]) {
             BOOL previousValue = [[NSUserDefaults standardUserDefaults] boolForKey:@"UAPushEnabled"];
             UA_LDEBUG(@"Migrating userPushNotificationEnabled to %@ from previous pushEnabledValue.", previousValue ? @"YES" : @"NO");
-            [[NSUserDefaults standardUserDefaults] setBool:previousValue forKey:UAUserPushNotificationsEnabledKey];
-            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"UAPushEnabled"];
+            [userDefaults setBool:previousValue forKey:UAUserPushNotificationsEnabledKey];
+            [userDefaults removeObjectForKey:@"UAPushEnabled"];
         } else {
             BOOL registeredForUserNotificationTypes;
             if ([UIUserNotificationSettings class]) {
@@ -955,7 +967,7 @@ BOOL deferChannelCreationOnForeground = false;
 
             if (registeredForUserNotificationTypes) {
                 UA_LDEBUG(@"Migrating userPushNotificationEnabled to YES because application has user notification types.");
-                [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAUserPushNotificationsEnabledKey];
+                [userDefaults setBool:YES forKey:UAUserPushNotificationsEnabledKey];
             }
         }
     }
