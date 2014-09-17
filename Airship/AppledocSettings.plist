@@ -1,73 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" 
-	"http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>--ignore</key>
-    <array>
-        <string>*.m</string>
+	<key>--ignore</key>
+	<array>
+		<string>*.m</string>
 		<string>External</string>
 		<string>Test</string>
 		<string>TestSamples</string>
 		<string>UI</string>
 		<string>*+Internal.h</string>
 		<string>AirshipKit.framework</string>
+		<string>UAAppDelegate.h</string>
+		<string>UAAppDelegateProxy.h</string>
 
-        <string>UAAppDelegate.h</string>
-        <string>UAAppDelegateProxy.h</string>
+		<string>UAChannelAPIClient.h</string>
+		<string>UADeviceAPIClient.h</string>
+		<string>UAInboxAPIClient.h</string>
+		<string>UAUserAPIClient.h</string>
+		<string>UADeviceRegistrar.h</string>
 
-        <string>UAChannelAPIClient.h</string>
-        <string>UADeviceAPIClient.h</string>
-        <string>UAInboxAPIClient.h</string>
-        <string>UAUserAPIClient.h</string>
-        <string>UADeviceRegistrar.h</string>
+		<string>UAUserData.h</string>
+		<string>UAChannelRegistrationPayload.h</string>
+		<string>UADeviceRegistrationPayload.h</string>
+		<string>UADeviceRegistrationPayload.h</string>
 
-        <string>UAUserData.h</string>
-        <string>UAChannelRegistrationPayload.h</string>
-        <string>UADeviceRegistrationPayload.h</string>
-        <string>UADeviceRegistrationPayload.h</string>
+		<string>UAInboxDBManager.h</string>
+		<string>UAInboxMessageData.h</string>
 
-        <string>UAInboxDBManager.h</string>
-        <string>UAInboxMessageData.h</string>
+		<string>UAIncomingPushAction.h</string>
+		<string>UAIncomingRichPushAction.h</string>
+		<string>UACloseWindowAction.h</string>
 
-        <string>UAIncomingPushAction.h</string>
-        <string>UAIncomingRichPushAction.h</string>
-        <string>UACloseWindowAction.h</string>
+		<string>UAInteractiveNotificationEvent.h</string>
+		<string>UAEventAppInit.h</string>
+		<string>UAEventAppExit.h</string>
+		<string>UAEventAppBackground.h</string>
+		<string>UAEventAppForeground.h</string>
+		<string>UAEventDeviceRegistration.h</string>
+		<string>UAEventPushReceived.h</string>
 
-        <string>UAInteractiveNotificationEvent.h</string>
-        <string>UAEventAppInit.h</string>
-        <string>UAEventAppExit.h</string>
-        <string>UAEventAppBackground.h</string>
-        <string>UAEventAppForeground.h</string>
-        <string>UAEventDeviceRegistration.h</string>
-        <string>UAEventPushReceived.h</string>
+		<string>UAHTTPConnection.h</string>
+		<string>UAHTTPConnectionOperation.h</string>
+		<string>UAHTTPRequestEngine.h</string>
+		<string>UAHTTPRequest.h</string>
 
-        <string>UAHTTPConnection.h</string>
-        <string>UAHTTPConnectionOperation.h</string>
-        <string>UAHTTPRequestEngine.h</string>
-        <string>UAHTTPRequest.h</string>
+		<string>UAUtils.h</string>
 
-        <string>UAUtils.h</string>
-    </array>
-    <key>--project-company</key>
-    <string>Urban Airship</string>
-    <key>--company-id</key>
-    <string>com.urbanairship</string>
-    <key>--project-name</key>
-    <string>Urban Airship iOS Library</string>
-    <key>--create-docset</key>
-    <true/>
-    <key>--create-html</key>
-    <true/>
-    <key>--install-docset</key>
-    <false/>
-    <key>--keep-intermediate-files</key>
-    <true/>
-    <key>--repeat-first-par</key>
-    <false/>
-    <key>--verbose</key>
-    <string>3</string>
-    <key>--logformat</key>
-    <string>1</string>
+		<string>UAAnalyticsDBManager.h</string>
+		<string>UASQLite.h</string>
+	</array>
+	<key>--project-company</key>
+	<string>Urban Airship</string>
+	<key>--company-id</key>
+	<string>com.urbanairship</string>
+	<key>--project-name</key>
+	<string>Urban Airship iOS Library</string>
+	<key>--create-docset</key>
+	<true/>
+	<key>--create-html</key>
+	<true/>
+	<key>--install-docset</key>
+	<false/>
+	<key>--keep-intermediate-files</key>
+	<true/>
+	<key>--repeat-first-par</key>
+	<false/>
+	<key>--verbose</key>
+	<string>3</string>
+	<key>--logformat</key>
+	<string>1</string>
 </dict>
 </plist>
