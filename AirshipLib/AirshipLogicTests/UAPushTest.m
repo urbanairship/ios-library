@@ -1804,6 +1804,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testMigrateNewRegistrationFlowAlreadySetIOS8 {
     // Set the UAUserPushNotificationsEnabledKey setting to NO
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAUserPushNotificationsEnabledKey];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsMigrated];
 
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert categories:nil];
     [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
@@ -1820,6 +1821,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testMigrateNewRegistrationFlowDisabledIOS8 {
     // Clear the UAUserPushNotificationsEnabledKey setting
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAUserPushNotificationsEnabledKey];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsMigrated];
 
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone categories:nil];
     [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
@@ -1837,6 +1839,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testMigrateNewRegistrationFlowEnabledIOS8 {
     // Clear the UAUserPushNotificationsEnabledKey setting
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAUserPushNotificationsEnabledKey];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsMigrated];
 
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert categories:nil];
     [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
@@ -1857,6 +1860,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     // Set the UAUserPushNotificationsEnabledKey setting to NO
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAUserPushNotificationsEnabledKey];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsMigrated];
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIRemoteNotificationTypeAlert)] enabledRemoteNotificationTypes];
 
@@ -1875,6 +1879,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     // Clear the UAUserPushNotificationsEnabledKey setting
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAUserPushNotificationsEnabledKey];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsMigrated];
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIRemoteNotificationTypeNone)] enabledRemoteNotificationTypes];
 
@@ -1892,8 +1897,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testMigrateNewRegistrationFlowEnabled {
     [UIUserNotificationSettings hideClass];
 
+
     // Clear the UAUserPushNotificationsEnabledKey setting
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAUserPushNotificationsEnabledKey];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsMigrated];
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIRemoteNotificationTypeAlert)] enabledRemoteNotificationTypes];
 
@@ -1901,6 +1908,32 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     // Verify it was set to YES
     XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey]);
+}
+
+/**
+ * Test migrating only performs once.
+ */
+- (void)testMigrateNewRegistrationFlowOnlyOnce {
+    // Clear the UAUserPushNotificationsEnabledKey setting
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAUserPushNotificationsEnabledKey];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsMigrated];
+
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert categories:nil];
+    [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
+
+    [self.push migratePushSettings];
+
+    // Verify it was set to YES
+    XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey]);
+    XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UAPushEnabledSettingsMigrated]);
+
+    // Clear the UAUserPushNotificationsEnabledKey setting
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAUserPushNotificationsEnabledKey];
+
+    [self.push migratePushSettings];
+
+    // Should not enable it the second time
+    XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey]);
 }
 
 /**
