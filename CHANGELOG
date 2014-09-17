@@ -3,66 +3,92 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
-------------------------------
-iOS8 Preview (5.0.0.{build #})
-------------------------------
+-----------
+iOS 8 Notes (Updated September 17, 2014)
+-----------
 
-Known issues with iOS8 GM that may impact your integration:
-- Applications do not enter the 'active' state when launched from an interactive notification (radar 18179525). This may impact the accuracy
-  of reporting.
-- Background refresh always appears to be enabled in an application even when disabled in settings and background
-  push will not be delivered. Push registration will consider a device in this situation able to receive a background notification
-  when it cannot. (radar 18298439)
-- Registering for UIUserNotificationTypeNone will prevent a re-registration until the device has been restarted and the settings
-  are manually updated in Settings.app. We have added a workaround for this issue in the latest (Sept 11) preview. (radar 18284099)
+Known issues with iOS 8.0.0 that may impact your application:
+- Applications do not enter the 'active' state when started from an interactive notification
+  and subsequent app sessions do not receive the application:didBecomeActive delegate call or
+  UIApplicationDidBecomeActiveNotification notification. The application state never
+  transitions out of 'inactive' (Radar #18179525). This will impact the accuracy of
+  reporting for applications using interactive notifications.
+- Background refresh always appears to be enabled in an application even when disabled in
+  settings and background push will not be delivered. Push registration will consider a
+  device in this situation able to receive a background notification when it cannot. (Radar #18298439)
+- Registering for UIUserNotificationTypeNone will prevent a re-registration until the device
+  has been restarted and the settings are manually updated in Settings.app. There is a
+  workaround for this issue in UA SDK 5.0.0. (Radar #18284099)
 
-Added to preview on 2014-9-11
- - Added work around for iOS 8 registration bug where disabling user notifications prevents registering for notification types
-   without a device restart. Instead of registering for 0 notification types, the device will just be marked as opted-out. This only 
-   affects newer iOS 8 devices. For more information, see the documentation for allowUnregisteringUserNotificationTypes on UAPush. 
- - Replaced existing tag modifiers on UAPush with more concisely named methods: addTag: addTags: removeTag: removeTags:.
- - currentEnabledNotificationTypes on UAPush is now an instance method instead.
- - Removed preview warning.
+  NOTE:
+  The workaround for the bug impacting registrations for UIUserNotificationTypeNone
+  may impact your ability to send broadcast background pushes to ALL users if the payload
+  contains a badge, alert or sound as the user facing parts of the payload will still be
+  displayed by iOS even if your application has set userNotifications to NO in the SDK.
+  Currently, Urban Airship will not send any notifications to users who are not opted-in,
+  but we will soon be supporting the new iOS 8 feature that allows sending background push
+  to these users. If you wish to make use of this feature, be sure to send only data
+  (no badge/alert/sound) or wait for an updated SDK or instructions on how to disable the
+  workaround. We plan to release this as soon as we have verified that iOS contains a fix
+  for this issue.
+  
 
+--------------------------
+5.0.0 - September 17, 2014
+--------------------------
 
-Added to preview on 2014-9-8
-- Fixed push prompt on first-run and immediate opt-out.
-- Fixed issue with frozen sample inbox UI introduced in previous preview.
-- Refactored the localization in both sample projects.
-- Moved sample resources to a new common folder (including those used in the interactive notifications).
-- Removed UAPush updateAPNSRegistration - this is all handled by UAPush updateRegistration now.
-- Added translations for our out of the box notifications. These are early translations and they haven't been verified by
-  anyone other than the translation company we used.
-- UA location now handles iOS8-style authorization. Once location reporting is started and an authorization prompt is presented, changes to the
-  authorization level are not possible without updating the app version update. By default, "always" authorization will be requested. To request
-  "when in use" set the property 'requestAlwaysAuthorization' to NO on UALocationService.
-- Known issue: After disabling and re-enabling user notifications in the SDK, they must be manually enabled in Settings.app before
-  notifications will work again. Restarting the device will re-enable banners, but not badges or sounds. This is due to a bug in
-  the iOS8 beta.
-
-Added to preview on 2014-9-4
-- Support for armv7s architecture (missing from original preview).
-- Removed UAInboxUI and UAPushUI protocols. Sample code now displays views directly.
-- Sample projects now include targets that use the embedded framework (static library still used in the original targets).
-- Added support for localization of interactive notification text (including out of the box actions provided by UA).
-- Removed a number of previously deprecated methods/classes.
-- The inbox now stores local state for read/delete. The UI no longer needs to block while updates are made.
-- Modernized init and factory methods. All now return instancetype rather than id or concrete classes.
-- Added major updates to the generated documentation (in reference-docs).
-- Removed duplicate headers in the framework target.
-- Fixed quiet time enabled issue.
-
-Added to preview on 2014-8-27
-- Initial preview release of 5.0.0. This is not intended for use in an App Store app.
-- Supports iOS6+.
+New Features
+------------
+- Full support for iOS 8, including compatibility with Swift applications.
 - Includes an Embedded.framework for use in applications with a minimum SDK version of 8.0.
-- Includes support for interactive notifications and the new iOS8 notification registration model.
-- Added a new action for social sharing that can be called from pushes or web views.
+- Includes support for interactive notifications and the new iOS 8 notification registration model.
+  - Includes more than 25 built-in interactive notification sets, including button resources
+    for 9 languages.
+  - Additional/replacement localization strings may be added to built-in actions.
+- Includes a new action for social sharing that can be called from pushes or web views.
 - Includes support for defining custom events in our reporting system.
-- Other changes include removal of previously deprecated methods and general modernization (now that iOS5 support has been dropped).
-- Additional API changes will occur throughout the course of the preview program. InboxUIProtocol and PushUIProtocol will be removed as we
-  improve our support for custom inbox UI integrations.
+- Background push can now be used without an opt-in prompt (request remote-notification
+  background type in your Info.plist).
+- The inbox now stores local state for read/delete. The UI no longer needs to block while
+  updates are made.
+- Inbox core data operations are now performed on a background queue.
+
+Major API Changes
+-----------------
+- User notifications (badge, alert, sound) now default to OFF. This change is designed to
+  make it easier to prompt for permission in the right spot. If you were relying on the
+  old default (push enabled at start), you will need to update your registration logic.
+- Supports iOS 6+. (Support for iOS 5 has been removed).
+- UA location now handles iOS8-style authorization. Once location reporting is started and
+  an authorization prompt is presented, changes to the authorization level are not possible
+  without updating the app in the App Store. By default, "always" authorization will be requested.
+  To request "when in use" set the property 'requestAlwaysAuthorization' to NO on UALocationService.
+- Replaced existing tag modifiers on UAPush with more concisely named methods: addTag, addTags,
+  removeTag, and removeTags.
+- FOR DETAILED INFO: http://docs.urbanairship.com/topic_guides/ios_migration.html
+
+Sample UI Changes
+-----------------
+- Removed UAInboxUI and UAPushUI protocols. Sample code now displays views directly.
+- Refactored the localization in both sample projects.
+- Moved sample resources to a new common folder (including those used in the interactive
+  notifications).
+- Sample projects now include targets that use the embedded framework (static library
+  still used in the original targets).
+
+General Modernization
+---------------------
+- Modernized init and factory methods. All now return `instancetype` rather than `id` or
+  concrete classes.
+- NS_ENUM and NS_OPTIONS are now used throughout.
+- Removed previously deprecated methods and classes.
+- Removed use of methods deprecated in iOS 6 (now that iOS 5 support has been dropped).
+
+Documentation Updates
+---------------------
 - The SDK distribution now includes the API reference documentation in the `reference-docs` folder.
+- The generated (header) documentation (in reference-docs) now has complete coverage of our public interface,
+  including enums and block types.
 
 --------------------------
 4.0.4 - September 10, 2014
