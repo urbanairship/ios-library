@@ -154,7 +154,7 @@ enum {
         NSString *tagToDelete = [[UAPush shared].tags objectAtIndex:(NSUInteger)indexPath.row];
         
         // Commit to server
-        [[UAPush shared] removeTagFromCurrentDevice:tagToDelete];
+        [[UAPush shared] removeTag:tagToDelete];
         [[UAPush shared] updateRegistration];
         
         // Delete the row from the view
