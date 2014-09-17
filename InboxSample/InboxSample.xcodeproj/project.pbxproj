@@ -91,6 +91,8 @@
 		9A50FAE90FCA81810007E1BE /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAE80FCA81810007E1BE /* CFNetwork.framework */; };
 		9A50FAEF0FCA81A40007E1BE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAEE0FCA81A40007E1BE /* Foundation.framework */; };
 		9A50FAF60FCA81BD0007E1BE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAF50FCA81BD0007E1BE /* UIKit.framework */; };
+		CC9EA97719CA34B20003D393 /* NSString+UASizeWithFontCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = CC9EA97619CA34B20003D393 /* NSString+UASizeWithFontCompatibility.m */; };
+		CC9EA97819CA34B20003D393 /* NSString+UASizeWithFontCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = CC9EA97619CA34B20003D393 /* NSString+UASizeWithFontCompatibility.m */; };
 		D5624D6912C2E68400A962EE /* UAInboxAlertHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D5624D6812C2E68400A962EE /* UAInboxAlertHandler.m */; };
 		D5A192A812C15AA6006AF4AE /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = D5A192A712C15AA6006AF4AE /* iTunesArtwork */; };
 		D5A192AA12C15AAE006AF4AE /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5A192A912C15AAE006AF4AE /* Icon@2x.png */; };
@@ -191,6 +193,8 @@
 		9A50FAF50FCA81BD0007E1BE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		9A50FBB90FCB114B0007E1BE /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		9AB3B21D10A0063D0035E6BD /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		CC9EA97519CA34B20003D393 /* NSString+UASizeWithFontCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UASizeWithFontCompatibility.h"; sourceTree = "<group>"; };
+		CC9EA97619CA34B20003D393 /* NSString+UASizeWithFontCompatibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UASizeWithFontCompatibility.m"; sourceTree = "<group>"; };
 		D5624D6712C2E68400A962EE /* UAInboxAlertHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxAlertHandler.h; sourceTree = "<group>"; };
 		D5624D6812C2E68400A962EE /* UAInboxAlertHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxAlertHandler.m; sourceTree = "<group>"; };
 		D5A192A712C15AA6006AF4AE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
@@ -204,7 +208,6 @@
 		D5C75C9C12BC23D20041239E /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		D5C75C9D12BC23D20041239E /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		E9CB326512B85A87002E39EA /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
-		E9CB365B12B89BA5002E39EA /* UAInboxLocalization.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = UAInboxLocalization.bundle; sourceTree = "<group>"; };
 		E9CB367C12B89BCA002E39EA /* InboxSampleAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSampleAppDelegate.h; sourceTree = "<group>"; };
 		E9CB367D12B89BCA002E39EA /* InboxSampleAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxSampleAppDelegate.m; sourceTree = "<group>"; };
 		E9CB367E12B89BCA002E39EA /* InboxSampleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSampleViewController.h; sourceTree = "<group>"; };
@@ -375,6 +378,8 @@
 		49C0CB7B19BA634F00771F4F /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				CC9EA97519CA34B20003D393 /* NSString+UASizeWithFontCompatibility.h */,
+				CC9EA97619CA34B20003D393 /* NSString+UASizeWithFontCompatibility.m */,
 				49C0CB7C19BA634F00771F4F /* NSString+UALocalization.h */,
 				49C0CB7D19BA634F00771F4F /* NSString+UALocalization.m */,
 				49C0CB7E19BA634F00771F4F /* Resources */,
@@ -502,7 +507,6 @@
 				1F69B12813BD1DF4002CA606 /* UAInboxMessageListCell.xib */,
 				1F57820D14182267003FA039 /* UAInboxMessageListController.xib */,
 				1F57820E14182267003FA039 /* UAInboxMessageViewController.xib */,
-				E9CB365B12B89BA5002E39EA /* UAInboxLocalization.bundle */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -675,6 +679,7 @@
 				E9CB368012B89BCA002E39EA /* InboxSampleAppDelegate.m in Sources */,
 				493977A119B7C1E70063C58F /* InboxSampleNavigationUserInterface.m in Sources */,
 				493977A219B7C1E70063C58F /* InboxSamplePopoverUserInterface.m in Sources */,
+				CC9EA97719CA34B20003D393 /* NSString+UASizeWithFontCompatibility.m in Sources */,
 				E9CB368112B89BCA002E39EA /* InboxSampleViewController.m in Sources */,
 				D5624D6912C2E68400A962EE /* UAInboxAlertHandler.m in Sources */,
 				493977A019B7C1E70063C58F /* InboxSampleModalUserInterface.m in Sources */,
@@ -694,6 +699,7 @@
 				4939782919B7E01B0063C58F /* InboxSampleNavigationUserInterface.m in Sources */,
 				4939782A19B7E01B0063C58F /* InboxSamplePopoverUserInterface.m in Sources */,
 				4939776619B691100063C58F /* main.m in Sources */,
+				CC9EA97819CA34B20003D393 /* NSString+UASizeWithFontCompatibility.m in Sources */,
 				4939776719B691100063C58F /* InboxSampleAppDelegate.m in Sources */,
 				4939776819B691100063C58F /* InboxSampleViewController.m in Sources */,
 				4939776A19B691100063C58F /* UAInboxAlertHandler.m in Sources */,
