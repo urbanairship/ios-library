@@ -949,8 +949,6 @@ BOOL deferChannelCreationOnForeground = false;
         return;
     }
 
-    [userDefaults setBool:YES forKey:UAPushEnabledSettingsMigratedKey];
-
     // Migrate userNotificationEnabled setting to YES if we are currently registered for notification types
     if (![userDefaults objectForKey:UAUserPushNotificationsEnabledKey]) {
 
@@ -974,6 +972,8 @@ BOOL deferChannelCreationOnForeground = false;
             }
         }
     }
+
+    [userDefaults setBool:YES forKey:UAPushEnabledSettingsMigratedKey];
 }
 
 - (UIUserNotificationType)currentEnabledNotificationTypes {
