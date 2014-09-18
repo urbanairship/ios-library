@@ -49,7 +49,7 @@ typedef NSString UAPushUserInfoKey;
 extern UAPushUserInfoKey *const UAPushUserInfoRegistration;
 extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 extern UAPushUserInfoKey *const UAPushChannelCreationOnForeground;
-extern UAPushUserInfoKey *const UAPushEnabledSettingsMigrated;
+extern UAPushUserInfoKey *const UAPushEnabledSettingsMigratedKey;
 
 @interface UAPush ()
 
