@@ -25,6 +25,7 @@
 
 #import "UAShareAction.h"
 #import "UAUtils.h"
+#import "UAGlobal.h"
 
 @implementation UAShareAction
 
