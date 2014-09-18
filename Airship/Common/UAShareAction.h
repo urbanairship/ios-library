@@ -24,7 +24,7 @@
  */
 
 
-#import <AirshipKit/AirshipKit.h>
+#import "UAAction.h"
 
 /**
  * Shares text using UIActivityViewController.
