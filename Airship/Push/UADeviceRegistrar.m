@@ -70,7 +70,7 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
                 return;
             }
 
-            if (!channelID) {
+            if (!channelID || !channelLocation) {
                 // Try to create a channel, fall back to registering the device token
                 [self createChannelWithPayload:payloadCopy fallBackBlock:^(UAChannelRegistrationPayload *payload) {
                     [self registerDeviceTokenWithChannelPayload:payload];
@@ -112,7 +112,7 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
                 return;
             }
 
-            if (!channelID) {
+            if (!channelID || !channelLocation) {
                 // Try to create a channel, fall back to unregistering the device token
                 [self createChannelWithPayload:payloadCopy fallBackBlock:^(UAChannelRegistrationPayload *payload) {
                     [self unregisterDeviceTokenWithChannelPayload:payload];
@@ -192,9 +192,15 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     UA_LDEBUG(@"Creating channel.");
 
     UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *channelID, NSString *channelLocation) {
-        UA_LDEBUG(@"Channel %@ created successfully. Channel location: %@.", channelID, channelLocation);
-        [self channelCreated:channelID channelLocation:channelLocation];
-        [self succeededWithPayload:payload];
+        if (!channelID || !channelLocation) {
+            UA_LDEBUG(@"Channel ID: %@ or channel location: %@ is missing. Channel creation failed",
+                      channelID, channelLocation);
+            [self failedWithPayload:payload];
+        } else {
+            UA_LDEBUG(@"Channel %@ created successfully. Channel location: %@.", channelID, channelLocation);
+            [self channelCreated:channelID channelLocation:channelLocation];
+            [self succeededWithPayload:payload];
+        }
     };
 
     UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
