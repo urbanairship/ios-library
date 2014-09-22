@@ -137,6 +137,7 @@
 -(void)testCreateUserFailed {
     UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
     [UAPush shared].channelID = @"some-channel";
+    [UAPush shared].channelLocation = @"some-channel-location";
     [UAPush shared].deviceToken = nil;
 
     __block UAUserAPIClientFailureBlock failureBlock;
