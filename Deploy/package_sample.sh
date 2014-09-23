@@ -38,7 +38,10 @@ cp -R $SRC_PATH $DEST_PATH
 # Delete unwanted files
 rm -rf `find ${TARGET_PATH} -name "build"`
 rm -rf `find ${TARGET_PATH} -name "*SampleLib.xcodeproj"`
-rm -rf `find ${TARGET_PATH} -name "*Test*"`
+rm -rf `find ${TARGET_PATH} -name "*Tests"`
+rm -rf `find ${TARGET_PATH} -name "*Test*.plist"`
+rm -rf `find ${TARGET_PATH} -name "*Test*.pch"`
+rm -rf `find ${TARGET_PATH} -name "*KIFTest*"`
 rm -rf `find ${TARGET_PATH} -name "*.orig" `
 rm -rf `find ${TARGET_PATH} -name "*KIF-Info.plist" `
 
