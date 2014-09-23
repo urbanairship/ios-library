@@ -24,8 +24,8 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ROOT_PATH=`dirname "${0}"`/../
-SRC_PATH=$1
-DEST_PATH=$2
+SRC_PATH="${1}"
+DEST_PATH="${2}"
 TARGET_PATH="${DEST_PATH}/`basename ${SRC_PATH}`"
 
 # Remvove old package
