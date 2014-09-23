@@ -267,7 +267,7 @@
 
     UILabel *strongLoadingLabel = self.loadingLabel;
     strongLoadingLabel.text = UAInboxLocalizedString(@"UA_Loading");
-    // Set label color to black to contrast with dark beveled loading indicator background
+    // Set label color to white to contrast with dark beveled loading indicator background
     self.loadingLabel.textColor = [UIColor whiteColor];
     [self.messageTable setSeparatorStyle:UITableViewCellSelectionStyleDefault];
 
