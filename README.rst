@@ -53,7 +53,7 @@ Build Settings
 ##############
 
 **Compiler**
-The latest version of Xcode 6 beta is required for all projects and the static library. Projects must target >= iOS6.
+Xcode 6 is required for all projects and the static library. Projects must target >= iOS6.
      
 **Header search path**                          
 Ensure that your build target's header search path includes the Airship directory.
