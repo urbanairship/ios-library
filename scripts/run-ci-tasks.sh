@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 set -o pipefail
 
-SCRIPT_DIRECTORY=`dirname $0`
+SCRIPT_DIRECTORY=`dirname "$0"`
 ROOT_PATH=`dirname "${0}"`/../
 
 source "${SCRIPT_DIRECTORY}/configure-xcode-version.sh"

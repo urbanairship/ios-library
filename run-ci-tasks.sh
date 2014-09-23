@@ -5,7 +5,7 @@ set -o pipefail
 # this should be removed once the job has been updated
 
 
-SCRIPT_DIRECTORY=`dirname ${0}`/scripts
+SCRIPT_DIRECTORY=`dirname "${0}"`/scripts
 ROOT_PATH=`dirname "${0}"`
 
 "${SCRIPT_DIRECTORY}/run-ci-tasks.sh"

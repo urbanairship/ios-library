@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 
-SCRIPT_DIRECTORY=`dirname $0`
+SCRIPT_DIRECTORY=`dirname "$0"`
 ROOT_PATH=`dirname "${0}"`/../
 
 VERSION=$(awk <${ROOT_PATH}/AirshipLib/Config.xcconfig "\$1 == \"CURRENT_PROJECT_VERSION\" { print \$3 }")

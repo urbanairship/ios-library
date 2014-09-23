@@ -16,7 +16,7 @@
 DEBUG_THIS_SCRIPT="true"
 
 CONFIGURATION="Release"
-PROJECT_PATH=`dirname $0`/AirshipLib.xcodeproj
+PROJECT_PATH=`dirname "$0"`/AirshipLib.xcodeproj
 
 TARGET_NAME=$1
 
