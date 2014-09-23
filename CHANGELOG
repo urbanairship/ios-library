@@ -3,6 +3,13 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+--------------------------
+5.0.1 - September 23, 2014
+--------------------------
+ - Verify channel location exists during channel creation.
+ - Fixed "No Messages" not being displayed for Inbox.
+ - Updated build scripts to handle paths with spaces.
+
 -----------
 iOS 8 Notes (Updated September 17, 2014)
 -----------

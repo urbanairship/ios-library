@@ -1704,6 +1704,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testRegistrationSucceeded {
     self.push.deviceToken = validDeviceToken;
     self.push.channelID = @"someChannelID";
+    self.push.channelLocation = @"someChannelLocation";
     self.push.registrationBackgroundTask = 30;
     [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isUsingChannelRegistration];
 
@@ -1722,6 +1723,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testRegistrationSucceededUpdateNeeded {
     self.push.deviceToken = validDeviceToken;
     self.push.channelID = @"someChannelID";
+    self.push.channelLocation = @"someChannelLocation";
     self.push.registrationBackgroundTask = 30;
 
     [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isUsingChannelRegistration];
@@ -1793,8 +1795,19 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  */
 - (void)testSetChannelID {
     self.push.channelID = @"someChannelID";
+    self.push.channelLocation = @"someChannelLocation";
 
     XCTAssertEqualObjects(@"someChannelID", self.push.channelID, @"Channel ID is not being set properly");
+}
+
+/**
+ * Test setting the channel ID without a channel location returns nil.
+ */
+- (void)testSetChannelIDNoLocation {
+    self.push.channelID = @"someChannelID";
+    self.push.channelLocation = nil;
+
+    XCTAssertNil(self.push.channelID, @"Channel ID should be nil without location.");
 }
 
 /**
@@ -2251,6 +2264,66 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     XCTAssertNoThrow([self.mockedApplication verify],
                      @"userPushNotificationsEnabled should unregister for remote notifications");
+}
+
+/**
+ * Test channel ID is returned when both channel ID and channel location exist.
+ */
+- (void)testChannelID {
+    [[NSUserDefaults standardUserDefaults] setValue:@"channel ID" forKey:@"UAChannelID"];
+    [[NSUserDefaults standardUserDefaults] setValue:@"channel Location" forKey:@"UAChannelLocation"];
+
+    XCTAssertEqualObjects(self.push.channelID, @"channel ID", @"Should return channel ID");
+}
+
+/**
+ * Test channelID returns nil when channel ID does not exist.
+ */
+- (void)testChannelIDNoChannel {
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"UAChannelID"];
+    [[NSUserDefaults standardUserDefaults] setValue:@"channel Location" forKey:@"UAChannelLocation"];
+
+    XCTAssertNil(self.push.channelID, @"Channel ID should be nil");
+}
+
+/**
+ * Test channelID returns nil when channel location does not exist.
+ */
+- (void)testChannelIDNoLocation {
+    [[NSUserDefaults standardUserDefaults] setValue:@"channel ID" forKey:@"UAChannelID"];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"UAChannelLocation"];
+
+    XCTAssertNil(self.push.channelID, @"Channel ID should be nil");
+}
+
+/**
+ * Test channel location is returned when both channel ID and channel location exist.
+ */
+- (void)testChannelLocation {
+    [[NSUserDefaults standardUserDefaults] setValue:@"channel ID" forKey:@"UAChannelID"];
+    [[NSUserDefaults standardUserDefaults] setValue:@"channel Location" forKey:@"UAChannelLocation"];
+
+    XCTAssertEqualObjects(self.push.channelLocation, @"channel Location", @"Should return channel location");
+}
+
+/**
+ * Test channelLocation returns nil when channel ID does not exist.
+ */
+- (void)testChannelLocationNoChannel {
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"UAChannelID"];
+    [[NSUserDefaults standardUserDefaults] setValue:@"channel Location" forKey:@"UAChannelLocation"];
+
+    XCTAssertNil(self.push.channelLocation, @"Channel location should be nil");
+}
+
+/**
+ * Test channelLocation returns nil when channel location does not exist.
+ */
+- (void)testChannelLocationNoLocation {
+    [[NSUserDefaults standardUserDefaults] setValue:@"channel ID" forKey:@"UAChannelID"];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"UAChannelLocation"];
+
+    XCTAssertNil(self.push.channelLocation, @"Channel location should be nil");
 }
 
 @end

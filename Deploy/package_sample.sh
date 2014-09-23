@@ -24,8 +24,8 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ROOT_PATH=`dirname "${0}"`/../
-SRC_PATH=$1
-DEST_PATH=$2
+SRC_PATH="${1}"
+DEST_PATH="${2}"
 TARGET_PATH="${DEST_PATH}/`basename ${SRC_PATH}`"
 
 # Remvove old package
@@ -41,6 +41,7 @@ rm -rf `find ${TARGET_PATH} -name "*SampleLib.xcodeproj"`
 rm -rf `find ${TARGET_PATH} -name "*Tests"`
 rm -rf `find ${TARGET_PATH} -name "*Test*.plist"`
 rm -rf `find ${TARGET_PATH} -name "*Test*.pch"`
+rm -rf `find ${TARGET_PATH} -name "*KIFTest*"`
 rm -rf `find ${TARGET_PATH} -name "*.orig" `
 rm -rf `find ${TARGET_PATH} -name "*KIF-Info.plist" `
 

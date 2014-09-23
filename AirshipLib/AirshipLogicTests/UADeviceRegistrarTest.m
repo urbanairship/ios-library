@@ -232,7 +232,26 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 }
 
 /**
- * Test that registering registering when a request is in progress 
+ * Test register without a channel location fails to creates a channel
+ */
+- (void)testRegisterNoChannelLocation {
+    // Expect the channel client to fail to create a channel and call failure block
+    [[[self.mockedChannelClient expect] andDo:channelCreateFailureDoBlock] createChannelWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]
+                                                                                          onSuccess:OCMOCK_ANY
+                                                                                          onFailure:OCMOCK_ANY];
+
+    // Expect the delegate to be called
+    [[self.mockedRegistrarDelegate expect] registrationFailedWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
+
+    [self.registrar registerWithChannelID:@"someChannel" channelLocation:nil withPayload:self.payload forcefully:NO];
+
+    XCTAssertNoThrow([self.mockedDeviceClient verify], @"Device should clear any pending requests");
+    XCTAssertNoThrow([self.mockedChannelClient verify], @"Channel client should create a new create request");
+    XCTAssertNoThrow([self.mockedRegistrarDelegate verify], @"Delegate should be called on failure");
+}
+
+/**
+ * Test that registering when a request is in progress
  * does not attempt to register again
  */
 - (void)testRegisterRequestInProgress {

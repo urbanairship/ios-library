@@ -16,9 +16,9 @@
 DEBUG_THIS_SCRIPT="true"
 
 CONFIGURATION="Release"
-PROJECT_PATH=`dirname $0`/AirshipLib.xcodeproj
+PROJECT_PATH=`dirname "$0"`/AirshipLib.xcodeproj
 
-TARGET_NAME=$1
+TARGET_NAME="${1}"
 
 XCODE_SETTINGS=$(mktemp -t $TARGET_NAME.settings)
 

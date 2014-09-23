@@ -189,7 +189,13 @@ SINGLETON_IMPLEMENTATION(UAPush)
 }
 
 - (NSString *)channelID {
-    return [[NSUserDefaults standardUserDefaults] stringForKey:UAPushChannelIDKey];
+    // Get the channel location from standardUserDefaults instead of
+    // the channelLocation property, because that may cause an infinite loop.
+    if ([[NSUserDefaults standardUserDefaults] stringForKey:UAPushChannelLocationKey]) {
+        return [[NSUserDefaults standardUserDefaults] stringForKey:UAPushChannelIDKey];
+    } else {
+        return nil;
+    }
 }
 
 - (void)setChannelLocation:(NSString *)channelLocation {
@@ -197,7 +203,13 @@ SINGLETON_IMPLEMENTATION(UAPush)
 }
 
 - (NSString *)channelLocation {
-    return [[NSUserDefaults standardUserDefaults] stringForKey:UAPushChannelLocationKey];
+    // Get the channel ID from standardUserDefaults instead of
+    // the channelID property, because that may cause an infinite loop.
+    if ([[NSUserDefaults standardUserDefaults] stringForKey:UAPushChannelIDKey]) {
+        return [[NSUserDefaults standardUserDefaults] stringForKey:UAPushChannelLocationKey];
+    } else {
+        return nil;
+    }
 }
 
 - (BOOL)autobadgeEnabled {
@@ -897,11 +909,16 @@ BOOL deferChannelCreationOnForeground = false;
 }
 
 - (void)channelCreated:(NSString *)channelID channelLocation:(NSString *)channelLocation {
-    self.channelID = channelID;
-    self.channelLocation = channelLocation;
+    if (channelID && channelLocation) {
+        self.channelID = channelID;
+        self.channelLocation = channelLocation;
 
-    if (uaLogLevel >= UALogLevelError) {
-        NSLog(@"Created channel with ID: %@", self.channelID);
+        if (uaLogLevel >= UALogLevelError) {
+            NSLog(@"Created channel with ID: %@", self.channelID);
+        }
+    } else {
+        UA_LERR(@"Channel creation failed. Missing channelID: %@ or channelLocation: %@",
+                channelID, channelLocation);
     }
 }
 

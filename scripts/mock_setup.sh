@@ -4,7 +4,7 @@
 # and copies the appropriate files to the test directory. The library is built  The libOCMock.a file and the headers are all that's 
 # required.
 
-SCRIPT_DIRECTORY=`dirname $0`
+SCRIPT_DIRECTORY=`dirname "$0"`
 ROOT_PATH=`dirname "${0}"`/../
 
 source ${SCRIPT_DIRECTORY}/configure-xcode-version.sh
