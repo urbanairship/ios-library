@@ -375,29 +375,15 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
  * Syncs any locally deleted and read messages with Urban Airship.
  */
 - (void)syncLocalMessageState {
-    NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deletedClient == YES"];
-    NSArray *deletedMessages = [[UAInboxDBManager shared] fetchMessagesWithPredicate:deletedPredicate];
-
-    if (deletedMessages.count) {
-        [self.client performBatchDeleteForMessages:deletedMessages onSuccess:^{
-            UA_LDEBUG(@"Deleted %@ on server.", deletedMessages);
-            [self.queue addOperationWithBlock:^{
-                [[UAInboxDBManager shared] deleteMessages:deletedMessages];
-            }];
-        } onFailure:^(UAHTTPRequest *request) {
-            UA_LDEBUG(@"Failed to delete messages.");
-        }];
-    }
-
-    NSPredicate *locallyReadPredicate = [NSPredicate predicateWithFormat:@"unreadClient == YES && unreadClient != unread"];
+    NSPredicate *locallyReadPredicate = [NSPredicate predicateWithFormat:@"unreadClient == NO && unread == YES"];
     NSArray *locallyReadMessages = [[UAInboxDBManager shared] fetchMessagesWithPredicate:locallyReadPredicate];
 
+    UA_LDEBUG(@"Marking %@ read on server.", locallyReadMessages);
     if (locallyReadMessages.count) {
         [self.client performBatchMarkAsReadForMessages:locallyReadMessages onSuccess:^{
-            UA_LDEBUG(@"Marked %@ read on server.", locallyReadMessages);
-
             [self.queue addOperationWithBlock:^{
                 for (UAInboxMessage *message in locallyReadMessages) {
+                    UA_LDEBUG(@"Successfully marked messages read on server.");
                     if ([message isKindOfClass:[UAInboxMessage class]] && !message.data.isGone) {
                         message.data.unread = NO;
                     }
@@ -406,6 +392,18 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
             }];
         } onFailure:^(UAHTTPRequest *request) {
             UA_LDEBUG(@"Failed to mark messages read.");
+        }];
+    }
+
+    NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deletedClient == YES"];
+    NSArray *deletedMessages = [[UAInboxDBManager shared] fetchMessagesWithPredicate:deletedPredicate];
+
+    UA_LDEBUG(@"Deleting %@ on server.", deletedMessages);
+    if (deletedMessages.count) {
+        [self.client performBatchDeleteForMessages:deletedMessages onSuccess:^{
+            UA_LDEBUG(@"Successfully deleted messages on server.");
+        } onFailure:^(UAHTTPRequest *request) {
+            UA_LDEBUG(@"Failed to delete messages.");
         }];
     }
 }
