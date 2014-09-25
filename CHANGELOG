@@ -3,20 +3,8 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
---------------------------
-5.0.2 - September 25, 2014
---------------------------
- - Fix issue where inbox messages were coming back after being deleted.
-
---------------------------
-5.0.1 - September 23, 2014
---------------------------
- - Verify channel location exists during channel creation.
- - Fixed "No Messages" not being displayed for Inbox.
- - Updated build scripts to handle paths with spaces.
-
 -----------
-iOS 8 Notes (Updated September 17, 2014)
+iOS 8 Notes (Updated September 25, 2014)
 -----------
 
 Known issues with iOS 8.0.0 that may impact your application:
@@ -48,7 +36,18 @@ Known issues with iOS 8.0.0 that may impact your application:
   (no badge/alert/sound) or wait for an updated SDK or instructions on how to disable the
   workaround. We plan to release this as soon as we have verified that iOS contains a fix
   for this issue.
-  
+
+--------------------------
+5.0.2 - September 25, 2014
+--------------------------
+ - Fixed issue where inbox messages were coming back after being deleted.
+
+--------------------------
+5.0.1 - September 23, 2014
+--------------------------
+ - Verify channel location exists during channel creation.
+ - Fixed "No Messages" not being displayed for Inbox.
+ - Updated build scripts to handle paths with spaces.
 
 --------------------------
 5.0.0 - September 17, 2014
