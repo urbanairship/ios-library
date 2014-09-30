@@ -498,6 +498,7 @@
 		CCE34AFF19C2648900A8EFC0 /* UAEventPushReceived.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE34AFC19C2648900A8EFC0 /* UAEventPushReceived.h */; };
 		CCE34B0019C2648900A8EFC0 /* UAEventPushReceived.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE34AFD19C2648900A8EFC0 /* UAEventPushReceived.m */; };
 		CCE34B0119C2648900A8EFC0 /* UAEventPushReceived.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE34AFD19C2648900A8EFC0 /* UAEventPushReceived.m */; };
+		CCEB1F8319CB61C500624FF4 /* IOS8BugsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCEB1F8219CB61C500624FF4 /* IOS8BugsTests.m */; };
 		CCF4462A1947D252003E04E7 /* UACustomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = CCF446281947D252003E04E7 /* UACustomEvent.h */; };
 		CCF4462C1947D252003E04E7 /* UACustomEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = CCF446291947D252003E04E7 /* UACustomEvent.m */; };
 		CCF4462F1947D265003E04E7 /* UACustomEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCF4462E1947D265003E04E7 /* UACustomEventTest.m */; };
@@ -820,6 +821,7 @@
 		CCE34AF719C2647A00A8EFC0 /* UAEventDeviceRegistration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventDeviceRegistration.m; sourceTree = "<group>"; };
 		CCE34AFC19C2648900A8EFC0 /* UAEventPushReceived.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAEventPushReceived.h; sourceTree = "<group>"; };
 		CCE34AFD19C2648900A8EFC0 /* UAEventPushReceived.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventPushReceived.m; sourceTree = "<group>"; };
+		CCEB1F8219CB61C500624FF4 /* IOS8BugsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IOS8BugsTests.m; sourceTree = "<group>"; };
 		CCF446281947D252003E04E7 /* UACustomEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACustomEvent.h; sourceTree = "<group>"; };
 		CCF446291947D252003E04E7 /* UACustomEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACustomEvent.m; sourceTree = "<group>"; };
 		CCF4462E1947D265003E04E7 /* UACustomEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACustomEventTest.m; sourceTree = "<group>"; };
@@ -1247,6 +1249,7 @@
 				49F2122F18AD5A2800136622 /* NSObject+AnonymousKVO.m */,
 				49F2122718AC0DD800136622 /* UATestSynchronizer.h */,
 				49F2122818AC0DD800136622 /* UATestSynchronizer.m */,
+				CCEB1F8219CB61C500624FF4 /* IOS8BugsTests.m */,
 			);
 			path = AirshipLogicTests;
 			sourceTree = "<group>";
@@ -2222,6 +2225,7 @@
 				CC4AADF618C67B23001F23B3 /* UIWebView_UAAdditionsTest.m in Sources */,
 				CCDD37CE18089E6F00B8866E /* UAOpenExternalURLActionTest.m in Sources */,
 				495526B417D95552009BC301 /* UAUser+Test.m in Sources */,
+				CCEB1F8319CB61C500624FF4 /* IOS8BugsTests.m in Sources */,
 				CCA3A4FF17FF1582009C7371 /* UAActionRegistryEntryTest.m in Sources */,
 				CCBFA2E017B547B600F97E1D /* NSJSONSerialization_UAAdditionsTests.m in Sources */,
 				49E9C9BE1836EBAB00B7BCFF /* UAWebViewToolsTest.m in Sources */,
