@@ -352,7 +352,7 @@ static NSMutableSet *overlayControllers = nil;
 #pragma mark UIWebViewDelegate
 
 - (BOOL)webView:(UIWebView *)wv shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
-    return [UAWebViewTools webView:wv shouldStartLoadWithRequest:request navigationType:navigationType];
+    return [UAWebViewTools webView:wv shouldStartLoadWithRequest:request navigationType:navigationType message:self.message];
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)wv {
