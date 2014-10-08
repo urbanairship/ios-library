@@ -59,7 +59,7 @@
     // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
     [UAirship takeOff];
 
-    // Configure Inbox behaviour before UAInboxPushHandler since it may need it
+    // Configure Inbox behavior before UAInboxPushHandler since it may need it
     // when launching from notification
 
     // Optional: Delegate for JavaScript callback
@@ -71,14 +71,14 @@
     // Set the sample view controller as the Inbox push handler delegate
     [UAInbox shared].pushHandler.delegate = sampleViewController;
 
-    // Set a default size for the sapmle popover interface
+    // Set a default size for the sample popover interface
     sampleViewController.popoverSize = CGSizeMake(600, 1100);
 
     // Use an overlay UI for simple message display
     sampleViewController.useOverlay = YES;
 
     // User notifications will not be enabled until userPushNotificationsEnabled is
-    // set YES on UAPush. Onced enabled, the setting will be persisted and the user
+    // set YES on UAPush. Once enabled, the setting will be persisted and the user
     // will be prompted to allow notifications. You should wait for a more appropriate
     // time to enable push to increase the likelihood that the user will accept
     // notifications.
@@ -104,7 +104,7 @@
 - (void)failIfSimulator {
     if ([[[UIDevice currentDevice] model] rangeOfString:@"Simulator"].location != NSNotFound) {
         UIAlertView *someError = [[UIAlertView alloc] initWithTitle:@"Notice"
-                                                            message:@"You can see UAInbox in the simulator, but you will not be able to recieve push notifications."
+                                                            message:@"You can see UAInbox in the simulator, but you will not be able to receive push notifications."
                                                            delegate:self
                                                   cancelButtonTitle:@"OK"
                                                   otherButtonTitles:nil];

@@ -124,7 +124,7 @@ To enable push notifications, you will need to make several additions to your ap
         // or set runtime properties here.
         UAConfig *config = [UAConfig defaultConfig];
 
-        // You can then programatically override the plist values:
+        // You can then programmatically override the plist values:
         // config.developmentAppKey = @"YourKey";
         // etc.
 
@@ -145,7 +145,7 @@ To enable push notifications, you will need to make several additions to your ap
                                                  UIUserNotificationTypeSound);
 
         // User notifications will not be enabled until userPushNotificationsEnabled is
-        // set YES on UAPush. Onced enabled, the setting will be persisted and the user
+        // set YES on UAPush. Once enabled, the setting will be persisted and the user
         // will be prompted to allow notifications. You should wait for a more appropriate
         // time to enable push to increase the likelihood that the user will accept
         // notifications.
