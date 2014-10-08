@@ -41,8 +41,8 @@ Known issues with iOS 8.0.0 that may impact your application:
 5.0.3 - October 8, 2014
 -----------------------
  - Fixed missing headers in AirshipKit.
- - Fixed issue where message center pages loaded in the overlay view from a tap on
-   notification has the wrong interaction_type.
+ - Fixed custom events attribution from a message center page if the page was
+   displayed using the UALandingPageOverlayController.
 
 --------------------------
 5.0.2 - September 25, 2014
