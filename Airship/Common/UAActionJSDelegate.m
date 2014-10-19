@@ -1,3 +1,27 @@
+/*
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+
+ 2. Redistributions in binaryform must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided withthe distribution.
+
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
+ IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 #import "UAActionJSDelegate.h"
 #import "UAGlobal.h"
@@ -150,35 +174,18 @@
  */
 - (void)runActionsWithData:(UAWebViewCallData *)data completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
-    for (NSString *actionName in data.options) {
+    NSDictionary *decodedOptions = [self decodeOptions:data basicEncoding:NO];
 
-        NSString *decodedActionName = [actionName urlDecodedStringWithEncoding:NSUTF8StringEncoding];
-        if (!decodedActionName) {
-            UA_LDEBUG(@"unable to decode action name %@", actionName);
-            continue;
-        }
+    for (NSString *decodedActionName in decodedOptions) {
+        for (UAActionArguments *actionArguments in [decodedOptions objectForKey:decodedActionName]) {
 
-        for (id encodedArgumentsValue in [data.options objectForKey:actionName]) {
-
-            id decodedArgumentsValue;
-            if (encodedArgumentsValue && encodedArgumentsValue != [NSNull null]) {
-                decodedArgumentsValue = [self objectForEncodedArguments:encodedArgumentsValue];
-
-                if (!decodedArgumentsValue) {
-                    UA_LERR(@"Error decoding arguments: %@", encodedArgumentsValue);
-                    continue;
-                }
-            }
-            
-            UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
-                                                                    withSituation:UASituationWebViewInvocation
-                                                                         metadata:[self createMetaDataFromCallData:data]];
-
-            [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result) {
+            [UAActionRunner runActionWithName:decodedActionName
+                                withArguments:actionArguments
+                        withCompletionHandler:^(UAActionResult *result) {
                 if (result.status == UAActionStatusCompleted) {
-                    UA_LDEBUG(@"action %@ completed successfully", actionName);
+                    UA_LDEBUG(@"action %@ completed successfully", decodedActionName);
                 } else {
-                    UA_LDEBUG(@"action %@ completed with an error", actionName);
+                    UA_LDEBUG(@"action %@ completed with an error", decodedActionName);
                 }
             }];
         }
@@ -186,7 +193,6 @@
 
     completionHandler(nil);
 }
-
 
 /**
  * Handles the run-basic-actions callback.
@@ -201,42 +207,74 @@
 - (void)runBasicActionsWithData:(UAWebViewCallData *)data
               completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
-    for (NSString *actionName in data.options) {
+    NSDictionary *decodedOptions = [self decodeOptions:data basicEncoding:YES];
 
+    for (NSString *decodedActionName in decodedOptions) {
+        for (UAActionArguments *actionArguments in [decodedOptions objectForKey:decodedActionName]) {
+
+            [UAActionRunner runActionWithName:decodedActionName
+                                withArguments:actionArguments
+                        withCompletionHandler:^(UAActionResult *result) {
+                            if (result.status == UAActionStatusCompleted) {
+                                UA_LDEBUG(@"action %@ completed successfully", decodedActionName);
+                            } else {
+                                UA_LDEBUG(@"action %@ completed with an error", decodedActionName);
+                            }
+                        }];
+        }
+    }
+    
+    completionHandler(nil);
+}
+
+/**
+ * Decodes options with basic URL or URL+json encoding, returns dicstionary of action arguments
+ * under action name keys, returns nil if decoding error occurs
+ */
+- (NSDictionary *)decodeOptions:(UAWebViewCallData *) data basicEncoding:(BOOL) basicEncoding {
+    NSMutableDictionary *decodedOptions = [[NSMutableDictionary alloc] init];
+    NSMutableArray *decodedActionArguments = [[NSMutableArray alloc] init];
+
+    for (NSString *actionName in data.options) {
         NSString *decodedActionName = [actionName urlDecodedStringWithEncoding:NSUTF8StringEncoding];
-        if (!decodedActionName) {
-            UA_LDEBUG(@"unable to decode action name");
-            continue;
+
+        if (!decodedActionName || [decodedActionName isEqual:@""]) {
+            UA_LDEBUG(@"Error decoding action name: %@", actionName);
+            return nil;
         }
 
         for (id encodedArgumentsValue in [data.options objectForKey:actionName]) {
 
+            id decodedArgumentsValue;
 
-            NSString *decodedArgumentsValue;
-            if (encodedArgumentsValue && encodedArgumentsValue != [NSNull null]) {
+            if (encodedArgumentsValue && encodedArgumentsValue != [NSNull null] && basicEncoding) {
                 decodedArgumentsValue = [encodedArgumentsValue urlDecodedStringWithEncoding:NSUTF8StringEncoding];
-
-                if (!decodedArgumentsValue) {
-                    UA_LERR(@"Error decoding arguments: %@", encodedArgumentsValue);
-                    continue;
-                }
             }
-       
+            if (encodedArgumentsValue && encodedArgumentsValue != [NSNull null] && !basicEncoding) {
+                decodedArgumentsValue =  [self objectForEncodedArguments:encodedArgumentsValue];
+            }
+
+            if (!decodedArgumentsValue && encodedArgumentsValue != [NSNull null]) {
+                UA_LERR(@"Error decoding arguments: %@", encodedArgumentsValue);
+                return nil;
+            }
+            // If encodedActionArgumentsValue successfully decodes, replace it with its actionArguments created from the decodedActionArgumentValue
             UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
                                                                     withSituation:UASituationWebViewInvocation
                                                                          metadata:[self createMetaDataFromCallData:data]];
-
-            [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result) {
-                if (result.status == UAActionStatusCompleted) {
-                    UA_LDEBUG(@"action %@ completed successfully", actionName);
-                } else {
-                    UA_LDEBUG(@"action %@ completed with an error", actionName);
-                }
-            }];
+            [decodedActionArguments addObject:actionArgs];
         }
+
+        [decodedOptions setObject: [[NSArray alloc] initWithArray:decodedActionArguments] forKey:decodedActionName];
+        [decodedActionArguments removeAllObjects];
     }
 
-    completionHandler(nil);
+    // if decoded options is unpopulated, then no actionNames are present in options, return nil
+    if ([decodedOptions isEqual:@{}]) {
+        UA_LERR(@"Error no options available to decode");
+        return nil;
+    }
+    return decodedOptions;
 }
 
 
