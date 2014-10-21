@@ -4,6 +4,7 @@
 #import "UAActionRegistry.h"
 #import "UAActionJSDelegate.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "UAActionJSDelegate+Internal.h"
 #import "UAWebViewCallData.h"
 
 @interface UAActionJSDelegateTest : XCTestCase
@@ -189,6 +190,24 @@
 
     [[UAActionRegistry shared] removeEntryWithName:@"test_action"];
     [[UAActionRegistry shared] removeEntryWithName:@"also_test_action"];
+}
+
+-(void)testDecodeOptionsReturnsNoActionsBogusURL {
+    NSURL *url = [NSURL URLWithString:@"www.bogusURL&%@"];
+    UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
+                                                        webView:nil];
+    NSDictionary *result = [self.jsDelegate decodeActionArgumentsWithData:data basicEncoding:NO];
+
+    XCTAssertNil(result, @"URL should fail to decode and decodeOptions should return nil");
+}
+
+-(void)testDecodeOptionsNilActionReturnsNil {
+    NSURL *url = [NSURL URLWithString:@"uairship://run-actions?test_action=%22hi%22&"];
+    UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
+                                                        webView:nil];
+    NSDictionary *result = [self.jsDelegate decodeActionArgumentsWithData:data basicEncoding:NO];
+
+    XCTAssertNil(result, @"URL should fail to decode a nil action and decodeOptions should return nil");
 }
 
 - (void)testRunActionInvalidAction {

@@ -1,3 +1,4 @@
+
 /*
  Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
@@ -23,15 +24,18 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import "UAJavaScriptDelegate.h"
+#import "UAActionJSDelegate.h"
+
+@interface UAActionJSDelegate ()
 
 /**
- * Library-internal implementation of UAJavaScriptDelegate.
+ * Decodes options with basic URL or URL+json encoding
  *
- * This class exclusively handles UAJavaScriptDelegate calls with the
- * run-action-cb, run-actions and run-basic-actions commands.
+ * @param data The UAWebViewCallData
+ * @param basicEncoding Boolean to select for basic encoding
+ * @return A dictionary of action arguments under action name keys or returns nil if decoding error occurs.
  */
-@interface UAActionJSDelegate : NSObject<UAJavaScriptDelegate>
+- (NSDictionary *)decodeActionArgumentsWithData:(UAWebViewCallData *)data basicEncoding:(BOOL)basicEncoding;
 
 @end
+
