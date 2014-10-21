@@ -174,7 +174,7 @@
  */
 - (void)runActionsWithData:(UAWebViewCallData *)data completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
-    NSDictionary *decodedOptions = [self decodeOptions:data basicEncoding:NO];
+    NSDictionary *decodedOptions = [self decodeActionArguments:data basicEncoding:NO];
 
     for (NSString *decodedActionName in decodedOptions) {
         for (UAActionArguments *actionArguments in [decodedOptions objectForKey:decodedActionName]) {
@@ -207,7 +207,7 @@
 - (void)runBasicActionsWithData:(UAWebViewCallData *)data
               completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
-    NSDictionary *decodedOptions = [self decodeOptions:data basicEncoding:YES];
+    NSDictionary *decodedOptions = [self decodeActionArguments:data basicEncoding:YES];
 
     for (NSString *decodedActionName in decodedOptions) {
         for (UAActionArguments *actionArguments in [decodedOptions objectForKey:decodedActionName]) {
@@ -228,10 +228,13 @@
 }
 
 /**
- * Decodes options with basic URL or URL+json encoding, returns dicstionary of action arguments
- * under action name keys, returns nil if decoding error occurs
+ * Decodes options with basic URL or URL+json encoding
+ *
+ * @param data The UAWebViewCallData
+ * @param basicEncoding Boolean to select for basic encoding
+ * @return A dictionary of action arguments under action name keys or returns nil if decoding error occurs.
  */
-- (NSDictionary *)decodeOptions:(UAWebViewCallData *) data basicEncoding:(BOOL) basicEncoding {
+- (NSDictionary *)decodeActionArguments:(UAWebViewCallData *) data basicEncoding:(BOOL) basicEncoding {
     NSMutableDictionary *decodedOptions = [[NSMutableDictionary alloc] init];
     NSMutableArray *decodedActionArguments = [[NSMutableArray alloc] init];
 
@@ -258,7 +261,7 @@
                 UA_LERR(@"Error decoding arguments: %@", encodedArgumentsValue);
                 return nil;
             }
-            // If encodedActionArgumentsValue successfully decodes, replace it with its actionArguments created from the decodedActionArgumentValue
+            // If encodedArgumentsValue successfully decodes, create actionArguments with the resulting decodedArgumentValue
             UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
                                                                     withSituation:UASituationWebViewInvocation
                                                                          metadata:[self createMetaDataFromCallData:data]];

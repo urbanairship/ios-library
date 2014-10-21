@@ -29,9 +29,13 @@
 @interface UAActionJSDelegate ()
 
 /**
- * Decodes options with basic URL or URL+json encoding, returns dicstionary of action arguments 
- * under action name keys, returns nil if decoding error occurs
+ * Decodes options with basic URL or URL+json encoding
+ *
+ * @param data The UAWebViewCallData
+ * @param basicEncoding Boolean to select for basic encoding
+ * @return A dictionary of action arguments under action name keys or returns nil if decoding error occurs.
  */
--(NSDictionary *)decodeOptions:(UAWebViewCallData *) data basicEncoding:(BOOL) basicEncoding;
+- (NSDictionary *)decodeActionArguments:(UAWebViewCallData *)data basicEncoding:(BOOL)basicEncoding;
 
 @end
+
