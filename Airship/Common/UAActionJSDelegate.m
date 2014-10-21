@@ -174,7 +174,7 @@
  */
 - (void)runActionsWithData:(UAWebViewCallData *)data completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
-    NSDictionary *decodedOptions = [self decodeActionArguments:data basicEncoding:NO];
+    NSDictionary *decodedOptions = [self decodeActionArgumentsWithData:data basicEncoding:NO];
 
     for (NSString *decodedActionName in decodedOptions) {
         for (UAActionArguments *actionArguments in [decodedOptions objectForKey:decodedActionName]) {
@@ -207,7 +207,7 @@
 - (void)runBasicActionsWithData:(UAWebViewCallData *)data
               completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
-    NSDictionary *decodedOptions = [self decodeActionArguments:data basicEncoding:YES];
+    NSDictionary *decodedOptions = [self decodeActionArgumentsWithData:data basicEncoding:YES];
 
     for (NSString *decodedActionName in decodedOptions) {
         for (UAActionArguments *actionArguments in [decodedOptions objectForKey:decodedActionName]) {
@@ -234,7 +234,7 @@
  * @param basicEncoding Boolean to select for basic encoding
  * @return A dictionary of action arguments under action name keys or returns nil if decoding error occurs.
  */
-- (NSDictionary *)decodeActionArguments:(UAWebViewCallData *) data basicEncoding:(BOOL) basicEncoding {
+- (NSDictionary *)decodeActionArgumentsWithData:(UAWebViewCallData *) data basicEncoding:(BOOL) basicEncoding {
     NSMutableDictionary *decodedOptions = [[NSMutableDictionary alloc] init];
     NSMutableArray *decodedActionArguments = [[NSMutableArray alloc] init];
 

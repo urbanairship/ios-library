@@ -35,7 +35,7 @@
  * @param basicEncoding Boolean to select for basic encoding
  * @return A dictionary of action arguments under action name keys or returns nil if decoding error occurs.
  */
-- (NSDictionary *)decodeActionArguments:(UAWebViewCallData *)data basicEncoding:(BOOL)basicEncoding;
+- (NSDictionary *)decodeActionArgumentsWithData:(UAWebViewCallData *)data basicEncoding:(BOOL)basicEncoding;
 
 @end
 
