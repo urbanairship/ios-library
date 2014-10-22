@@ -1688,7 +1688,6 @@
 				CC313A9A19A66DBE00134A9F /* UAUserNotificationCategories.h in Headers */,
 				49BADE16198B086F000FF3D5 /* UAActionJSDelegate.h in Headers */,
 				49BADE17198B0870000FF3D5 /* UAJavaScriptDelegate.h in Headers */,
-				49BADE18198B0870000FF3D5 /* AirshipLib.h in Headers */,
 				CCE34AFF19C2648900A8EFC0 /* UAEventPushReceived.h in Headers */,
 				CCE34AE119C2632500A8EFC0 /* UAEventAppForeground.h in Headers */,
 				CCE34AED19C2644500A8EFC0 /* UAEventAppExit.h in Headers */,
@@ -1904,7 +1903,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BB886129159A7E9600584445 /* Build configuration list for PBXNativeTarget "AirshipLib" */;
 			buildPhases = (
-				494FB5981991933E000CF253 /* ShellScript */,
 				49C67201184EB2E50088F210 /* Run Script */,
 				BB8860B0159A7E9600584445 /* Headers */,
 				BB8860EB159A7E9600584445 /* Sources */,
@@ -1995,19 +1993,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		494FB5981991933E000CF253 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT/../scripts/generate_header_imports.sh\"";
-		};
 		494FB59919919392000CF253 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
