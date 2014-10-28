@@ -52,6 +52,18 @@
     UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
     activityViewController.excludedActivityTypes = @[UIActivityTypeAssignToContact, UIActivityTypePrint, UIActivityTypeSaveToCameraRoll, UIActivityTypeAirDrop];
 
+    // Positions the popover for iPad devices.
+    if ([activityViewController respondsToSelector:@selector(popoverPresentationController)]) {
+
+        activityViewController.popoverPresentationController.sourceView = [UAUtils topController].view;
+
+        CGRect screenRect = [[UIScreen mainScreen] bounds];
+        CGRect smallerRect = CGRectInset(screenRect, 10, 10);
+
+        activityViewController.popoverPresentationController.sourceRect = smallerRect;
+        activityViewController.popoverPresentationController.permittedArrowDirections = 0;
+    }
+
     [[UAUtils topController] presentViewController:activityViewController animated:YES completion:^{
         completionHandler([UAActionResult emptyResult]);
     }];
