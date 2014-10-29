@@ -23,31 +23,17 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#import "UAAction.h"
 #import <UIKit/UIKit.h>
 
 /**
- * Shares text using UAActivityViewController.
- *
- * This action is registered under the names share_action and ^s.
- *
- * Expected argument value is an NSString.
- *
- * Valid situations: UASituationForegroundPush, UASituationLanchedFromPush,
- * UASituationWebViewInvocation, UASituationManualInvocation,
- * and UASituationForegoundInteractiveButton
- *
- * Default predicate: Rejects situation UASituationForegroundPush.
- *
- * Result value: nil
- *
+ * A implementation of the UIPopoverPresentationControllerDelegate that always
+ * positions the popover in the center of the screen between rotations.
  */
-@interface UAShareAction : UAAction
+@interface UAPopoverPositioner : NSObject<UIPopoverPresentationControllerDelegate>
 
 /**
- * An array of positioners, in case the action is run multiple times between dismissals.
+ * Returns the desired source rect dimensions for the popover.
  */
-@property(nonatomic, strong) NSMutableArray *positioners;
+- (CGRect)sourceRect;
 
 @end

@@ -23,31 +23,17 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#import "UAAction.h"
 #import <UIKit/UIKit.h>
 
 /**
- * Shares text using UAActivityViewController.
- *
- * This action is registered under the names share_action and ^s.
- *
- * Expected argument value is an NSString.
- *
- * Valid situations: UASituationForegroundPush, UASituationLanchedFromPush,
- * UASituationWebViewInvocation, UASituationManualInvocation,
- * and UASituationForegoundInteractiveButton
- *
- * Default predicate: Rejects situation UASituationForegroundPush.
- *
- * Result value: nil
- *
+ * Wrapper around UIActivityViewController that takes an optional
+ * block that will fire after the view disappears.
  */
-@interface UAShareAction : UAAction
+@interface UAActivityViewController : UIActivityViewController
 
 /**
- * An array of positioners, in case the action is run multiple times between dismissals.
+ * Block called after the view has disappeared.
  */
-@property(nonatomic, strong) NSMutableArray *positioners;
+@property (nonatomic, copy) void (^dismissalBlock)(void);
 
 @end

@@ -26,6 +26,8 @@
 #import "UAShareAction.h"
 #import "UAUtils.h"
 #import "UAGlobal.h"
+#import "UAActivityViewController.h"
+#import "UAPopoverPositioner.h"
 
 @implementation UAShareAction
 
@@ -49,24 +51,36 @@
 
     NSArray *activityItems = @[arguments.value];
 
-    UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
+    UAActivityViewController *activityViewController =  [[UAActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
     activityViewController.excludedActivityTypes = @[UIActivityTypeAssignToContact, UIActivityTypePrint, UIActivityTypeSaveToCameraRoll, UIActivityTypeAirDrop];
 
-    // Positions the popover for iPad devices.
+    // A popover positioner, if we need it
+    UAPopoverPositioner *positioner;
+
+    // iOS 8.0+, iPad only
     if ([activityViewController respondsToSelector:@selector(popoverPresentationController)]) {
 
-        activityViewController.popoverPresentationController.sourceView = [UAUtils topController].view;
+        UIPopoverPresentationController * popoverPresentationController = activityViewController.popoverPresentationController;
 
-        CGRect screenRect = [[UIScreen mainScreen] bounds];
-        CGRect smallerRect = CGRectInset(screenRect, 10, 10);
+        popoverPresentationController.permittedArrowDirections = 0;
 
-        activityViewController.popoverPresentationController.sourceRect = smallerRect;
-        activityViewController.popoverPresentationController.permittedArrowDirections = 0;
+        // Create and add a positioner
+        positioner = [[UAPopoverPositioner alloc] init];
+        [self.positioners addObject:positioner];
+
+        // Set the new positioner as the delegate, center the popover on the screen
+        popoverPresentationController.delegate = positioner;
+        popoverPresentationController.sourceRect = [positioner sourceRect];
+        popoverPresentationController.sourceView = [UAUtils topController].view;
     }
 
-    [[UAUtils topController] presentViewController:activityViewController animated:YES completion:^{
+    // Remove the positioner, if present, and call the completion handler once the modal is dismissed
+    activityViewController.dismissalBlock = ^ {
+        [self.positioners removeObject:positioner];
         completionHandler([UAActionResult emptyResult]);
-    }];
+    };
+
+    [[UAUtils topController] presentViewController:activityViewController animated:YES completion:nil];
 }
 
 @end

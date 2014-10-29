@@ -23,31 +23,25 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "UAActivityViewController.h"
 
-#import "UAAction.h"
-#import <UIKit/UIKit.h>
+@implementation UAActivityViewController
 
-/**
- * Shares text using UAActivityViewController.
- *
- * This action is registered under the names share_action and ^s.
- *
- * Expected argument value is an NSString.
- *
- * Valid situations: UASituationForegroundPush, UASituationLanchedFromPush,
- * UASituationWebViewInvocation, UASituationManualInvocation,
- * and UASituationForegoundInteractiveButton
- *
- * Default predicate: Rejects situation UASituationForegroundPush.
- *
- * Result value: nil
- *
- */
-@interface UAShareAction : UAAction
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+}
 
-/**
- * An array of positioners, in case the action is run multiple times between dismissals.
- */
-@property(nonatomic, strong) NSMutableArray *positioners;
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    if (self.dismissalBlock) {
+        self.dismissalBlock();
+    }
+}
 
 @end

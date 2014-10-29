@@ -306,6 +306,14 @@
 		49F437541810B5B400182D06 /* UAModifyTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F437511810B5B400182D06 /* UAModifyTagsAction.m */; };
 		49FCCB191912C6640057D1C4 /* UAActionArguments+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 49FCCB181912C6640057D1C4 /* UAActionArguments+Internal.h */; };
 		760D14BA17C2C9E600BBE6E6 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 760D14B917C2C9E600BBE6E6 /* XCTest.framework */; };
+		762941AB1A016EB60077CDC1 /* UAActivityViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 762941A91A016EB60077CDC1 /* UAActivityViewController.h */; };
+		762941AC1A016EB60077CDC1 /* UAActivityViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 762941A91A016EB60077CDC1 /* UAActivityViewController.h */; };
+		762941AD1A016EB60077CDC1 /* UAActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 762941AA1A016EB60077CDC1 /* UAActivityViewController.m */; };
+		762941AE1A016EB60077CDC1 /* UAActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 762941AA1A016EB60077CDC1 /* UAActivityViewController.m */; };
+		762941B11A016F910077CDC1 /* UAPopoverPositioner.h in Headers */ = {isa = PBXBuildFile; fileRef = 762941AF1A016F910077CDC1 /* UAPopoverPositioner.h */; };
+		762941B21A016F910077CDC1 /* UAPopoverPositioner.h in Headers */ = {isa = PBXBuildFile; fileRef = 762941AF1A016F910077CDC1 /* UAPopoverPositioner.h */; };
+		762941B31A016F910077CDC1 /* UAPopoverPositioner.m in Sources */ = {isa = PBXBuildFile; fileRef = 762941B01A016F910077CDC1 /* UAPopoverPositioner.m */; };
+		762941B41A016F910077CDC1 /* UAPopoverPositioner.m in Sources */ = {isa = PBXBuildFile; fileRef = 762941B01A016F910077CDC1 /* UAPopoverPositioner.m */; };
 		7649615518C644D4003AF5EE /* UAInboxPushHandlerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7649615418C644D4003AF5EE /* UAInboxPushHandlerTest.m */; };
 		7676AA0C18C4EF5B00B4E5B4 /* UAAppDelegateProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DB017835C2200BCD96E /* UAAppDelegateProxy.m */; };
 		76792D10178E12A10054F8AD /* UAHTTPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 76792D0E178E12A10054F8AD /* UAHTTPRequest.h */; };
@@ -664,6 +672,10 @@
 		49FCCB181912C6640057D1C4 /* UAActionArguments+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAActionArguments+Internal.h"; sourceTree = "<group>"; };
 		633146B3122FA474008F2D48 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		760D14B917C2C9E600BBE6E6 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		762941A91A016EB60077CDC1 /* UAActivityViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAActivityViewController.h; sourceTree = "<group>"; };
+		762941AA1A016EB60077CDC1 /* UAActivityViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActivityViewController.m; sourceTree = "<group>"; };
+		762941AF1A016F910077CDC1 /* UAPopoverPositioner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPopoverPositioner.h; sourceTree = "<group>"; };
+		762941B01A016F910077CDC1 /* UAPopoverPositioner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPopoverPositioner.m; sourceTree = "<group>"; };
 		762CD99F18B6CC2A00AD4C4F /* UAChannelRegistrationPayload+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAChannelRegistrationPayload+Internal.h"; sourceTree = "<group>"; };
 		7649615418C644D4003AF5EE /* UAInboxPushHandlerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxPushHandlerTest.m; sourceTree = "<group>"; };
 		76792D0E178E12A10054F8AD /* UAHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAHTTPRequest.h; sourceTree = "<group>"; };
@@ -1017,6 +1029,10 @@
 				49416D6018C513D500A18B72 /* UABespokeCloseView.h */,
 				49416D6118C513D500A18B72 /* UABespokeCloseView.m */,
 				492ADA0B18C958E50032C491 /* UARichContentWindow.h */,
+				762941A91A016EB60077CDC1 /* UAActivityViewController.h */,
+				762941AA1A016EB60077CDC1 /* UAActivityViewController.m */,
+				762941AF1A016F910077CDC1 /* UAPopoverPositioner.h */,
+				762941B01A016F910077CDC1 /* UAPopoverPositioner.m */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -1615,6 +1631,7 @@
 				49BADDB9198B084A000FF3D5 /* UAInboxMessageList.h in Headers */,
 				49BADDBB198B084B000FF3D5 /* UAInboxMessageListDelegate.h in Headers */,
 				49BADDBC198B084B000FF3D5 /* UAInboxPushHandler.h in Headers */,
+				762941AC1A016EB60077CDC1 /* UAActivityViewController.h in Headers */,
 				49BADDBD198B084B000FF3D5 /* UAInboxUtils.h in Headers */,
 				49BADDBE198B084C000FF3D5 /* UAJSONValueTransformer.h in Headers */,
 				49BADDC0198B084C000FF3D5 /* UAChannelAPIClient.h in Headers */,
@@ -1640,6 +1657,7 @@
 				49BADDDB198B0856000FF3D5 /* UAActionRegistryEntry.h in Headers */,
 				49BADDDC198B0856000FF3D5 /* UAActionResult.h in Headers */,
 				49BADDDE198B0857000FF3D5 /* UAActionRunner.h in Headers */,
+				762941B21A016F910077CDC1 /* UAPopoverPositioner.h in Headers */,
 				49BADDDF198B0857000FF3D5 /* UAAddCustomEventAction.h in Headers */,
 				49BADDE0198B0858000FF3D5 /* UAAggregateActionResult.h in Headers */,
 				49BADDE1198B0858000FF3D5 /* UAIncomingPushAction.h in Headers */,
@@ -1768,6 +1786,7 @@
 				CC2950F81949040300E905E3 /* UAEvent+Internal.h in Headers */,
 				49FCCB191912C6640057D1C4 /* UAActionArguments+Internal.h in Headers */,
 				BB8860E0159A7E9600584445 /* UALocationEvent.h in Headers */,
+				762941B11A016F910077CDC1 /* UAPopoverPositioner.h in Headers */,
 				BB8860E2159A7E9600584445 /* UALocationService.h in Headers */,
 				BB8860B3159A7E9600584445 /* UAUtils.h in Headers */,
 				CCDF66A219A5166B0043657E /* UACustomEvent+Internal.h in Headers */,
@@ -1819,6 +1838,7 @@
 				CC6773C119B11C1F00B016EC /* UAInboxPushHandler+Internal.h in Headers */,
 				1F610DE817835C3A00BCD96E /* UAInboxDefaultJSDelegate.h in Headers */,
 				CC7DC941183E977100E95BB8 /* UAChannelAPIClient.h in Headers */,
+				762941AB1A016EB60077CDC1 /* UAActivityViewController.h in Headers */,
 				49416D6818C513F500A18B72 /* UALandingPageOverlayController.h in Headers */,
 				495048B7173B11A500F8B5BE /* UAHTTPConnection+Internal.h in Headers */,
 				76E5356219475F8E0020335C /* UAAddCustomEventAction.h in Headers */,
@@ -2150,6 +2170,7 @@
 				491B843F198C237F00FB7A40 /* UAHTTPRequestEngine.m in Sources */,
 				491B8440198C237F00FB7A40 /* UADelayOperation.m in Sources */,
 				491B8441198C237F00FB7A40 /* UAHTTPRequest.m in Sources */,
+				762941B41A016F910077CDC1 /* UAPopoverPositioner.m in Sources */,
 				491B8442198C237F00FB7A40 /* UABaseLocationProvider.m in Sources */,
 				491B8443198C237F00FB7A40 /* UALocationCommonValues.m in Sources */,
 				491B8444198C237F00FB7A40 /* UALocationService.m in Sources */,
@@ -2163,6 +2184,7 @@
 				491B844B198C237F00FB7A40 /* UAWebViewTools.m in Sources */,
 				491B844C198C237F00FB7A40 /* UATagUtils.m in Sources */,
 				491B844D198C237F00FB7A40 /* UAUtils.m in Sources */,
+				762941AE1A016EB60077CDC1 /* UAActivityViewController.m in Sources */,
 				491B844E198C237F00FB7A40 /* UAKeychainUtils.m in Sources */,
 				491B844F198C237F00FB7A40 /* NSString+UAURLEncoding.m in Sources */,
 				491B8450198C237F00FB7A40 /* UAWebViewCallData.m in Sources */,
@@ -2310,6 +2332,7 @@
 				CC8542BD17F4B81600D2DE10 /* UAActionRegistry.m in Sources */,
 				BB886119159A7E9600584445 /* UAStandardLocationProvider.m in Sources */,
 				CC85427A17F2130700D2DE10 /* UAURLProtocol.m in Sources */,
+				762941B31A016F910077CDC1 /* UAPopoverPositioner.m in Sources */,
 				BB88611A159A7E9600584445 /* UABaseLocationProvider.m in Sources */,
 				1F610DE917835C3A00BCD96E /* UAInboxDefaultJSDelegate.m in Sources */,
 				BB88611B159A7E9600584445 /* UALocationCommonValues.m in Sources */,
@@ -2323,6 +2346,7 @@
 				49C1F0801978523300DD67DE /* UAInboxMessage.m in Sources */,
 				1F610DE017835C3A00BCD96E /* UAInbox.m in Sources */,
 				1F610DEF17835C3A00BCD96E /* UAInboxMessageList.m in Sources */,
+				762941AD1A016EB60077CDC1 /* UAActivityViewController.m in Sources */,
 				495048A81738812500F8B5BE /* UADelayOperation.m in Sources */,
 				49E9C9C3183AD42300B7BCFF /* UAWebViewCallData.m in Sources */,
 				CC1D229D180373E0005C8393 /* UAAction+Operators.m in Sources */,

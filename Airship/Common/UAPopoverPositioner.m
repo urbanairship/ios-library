@@ -23,31 +23,21 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "UAPopoverPositioner.h"
 
-#import "UAAction.h"
-#import <UIKit/UIKit.h>
+@implementation UAPopoverPositioner
 
-/**
- * Shares text using UAActivityViewController.
- *
- * This action is registered under the names share_action and ^s.
- *
- * Expected argument value is an NSString.
- *
- * Valid situations: UASituationForegroundPush, UASituationLanchedFromPush,
- * UASituationWebViewInvocation, UASituationManualInvocation,
- * and UASituationForegoundInteractiveButton
- *
- * Default predicate: Rejects situation UASituationForegroundPush.
- *
- * Result value: nil
- *
- */
-@interface UAShareAction : UAAction
+- (CGRect)sourceRect {
+    CGRect screenBounds = [UIScreen mainScreen].bounds;
+    return CGRectInset(screenBounds, CGRectGetWidth(screenBounds)/4.0, CGRectGetHeight(screenBounds)/4.0);
+}
 
-/**
- * An array of positioners, in case the action is run multiple times between dismissals.
- */
-@property(nonatomic, strong) NSMutableArray *positioners;
+// Called whenever a rotation is about to occur
+- (void)popoverPresentationController:(UIPopoverPresentationController *)popoverPresentationController
+          willRepositionPopoverToRect:(inout CGRect *)rect
+                               inView:(inout UIView *__autoreleasing *)view {
+    // Override the passed rect with our desired dimensions
+    *rect = [self sourceRect];
+}
 
 @end
