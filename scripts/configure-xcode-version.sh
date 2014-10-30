@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 
-# Available Xcode Apps (Sept 9 2014)
+# Available Xcode Apps (Oct 29 2014)
 # XCODE_5_0_2_APP
 # XCODE_5_1_1_APP
 # XCODE_6_BETA_4_APP
@@ -9,6 +9,7 @@
 # XCODE_6_BETA_7_APP (same caveat for headless tests)
 # XCODE_6_APP (GM seed)
 # XCODE_6_0_1_APP
+# XCODE_6_1_APP
 
 # Additional versions should be set up on the build machine, and your own for testing
 # Your ~/.bash_profile might look something like:
@@ -16,7 +17,7 @@
 # export XCODE_5_1_1_APP=/Applications/Xcode-5.1.1.app
 # export XCODE_6_BETA_5_APP=/Applications/Xcode6-Beta5.app
 
-XCODE_APP=$XCODE_6_0_1_APP
+XCODE_APP=$XCODE_6_1_APP
 
 if [ -z "$XCODE_APP" ]; then
   echo "Looks like you're missing Xcode!"
