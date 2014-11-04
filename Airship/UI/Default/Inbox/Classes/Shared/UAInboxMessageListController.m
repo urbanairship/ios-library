@@ -198,10 +198,6 @@
         [self updateNavigationTitleText];
     }
 
-    UITableView *strongMessageTable = self.messageTable;
-
-    [strongMessageTable deselectRowAtIndexPath:[strongMessageTable indexPathForSelectedRow] animated:animated];
-
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(messageListWillUpdate)
                                                  name:UAInboxMessageListWillUpdateNotification object:nil];
@@ -231,6 +227,8 @@
 // For batch update/delete
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated {
 
+    [super setEditing:editing animated:animated];
+
     // Set allowsMultipleSelectionDuringEditing to YES only while
     // editing. This allows multi-select AND swipe to delete.
     UITableView *strongMessageTable = self.messageTable;
@@ -239,23 +237,17 @@
     [self.navigationController setToolbarHidden:!editing animated:animated];
     [strongMessageTable setEditing:editing animated:animated];
 
-    [super setEditing:editing animated:animated];
+
 }
 
 - (void)tableReloadData {
-    UITableView *strongMessageTable = self.messageTable;
-    [strongMessageTable reloadData];
-    [strongMessageTable deselectRowAtIndexPath:[strongMessageTable indexPathForSelectedRow] animated:NO];
+    [self.messageTable reloadData];
 }
 
 - (void)refreshAfterBatchUpdate {
     // end editing
     self.cancelItem.enabled = YES;
     [self cancelButtonPressed:nil];
-
-    // reset selection
-    UITableView *strongMessageTable = self.messageTable;
-    [strongMessageTable deselectRowAtIndexPath:[strongMessageTable indexPathForSelectedRow] animated:NO];
 
     // force button update
     [self refreshBatchUpdateButtons];
@@ -347,7 +339,7 @@
             currentPath = [NSIndexPath indexPathForRow:i inSection:0];
             [strongMessageTable deselectRowAtIndexPath:currentPath
                                              animated:NO];
-            [self tableView:strongMessageTable didSelectRowAtIndexPath:currentPath];
+            [self tableView:strongMessageTable didDeselectRowAtIndexPath:currentPath];
         }
     } else {
         // not everything is selected, so let's select all
@@ -356,7 +348,7 @@
             [strongMessageTable selectRowAtIndexPath:currentPath
                                            animated:NO
                                      scrollPosition:UITableViewScrollPositionNone];
-            [self tableView:strongMessageTable didDeselectRowAtIndexPath:currentPath];
+            [self tableView:strongMessageTable didSelectRowAtIndexPath:currentPath];
         }
     }
 
@@ -372,8 +364,7 @@
     }
 
     self.navigationItem.rightBarButtonItem = self.cancelItem;
-    UITableView *strongMessageTable = self.messageTable;
-    [strongMessageTable deselectRowAtIndexPath:[strongMessageTable indexPathForSelectedRow] animated:YES];
+
     [self setEditing:YES animated:YES];
 
     // refresh need to be called after setEdit, because in iPad platform,
@@ -474,10 +465,11 @@
 #pragma mark UITableViewDataSource
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    // Reuse cell - all the cells are (UAInboxMessageListCell *)
     UAInboxMessageListCell *cell = (UAInboxMessageListCell *)[tableView dequeueReusableCellWithIdentifier:self.cellReusableId];
     if (!cell) {
-        NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:self.cellNibName owner:nil options:nil];
-        cell = [topLevelObjects objectAtIndex:0];
+        cell = [[[NSBundle mainBundle] loadNibNamed:self.cellNibName owner:nil options:nil] firstObject];
     }
 
     UAInboxMessage *message = [self.messages objectAtIndex:(NSUInteger)indexPath.row];
@@ -497,8 +489,6 @@
         // if a download is deferred or in progress, return a placeholder image
         localImageView.image = [UIImage imageNamed:kUAPlaceholderIconImage];
     }
-
-    cell.editing = tableView.editing;
 
     return cell;
 }
@@ -692,9 +682,12 @@
                     [strongSelf.iconCache setObject:iconImage forKey:iconListURLString cost:sizeInBytes];
                     UA_LTRACE(@"Added image to cache (%@) with size in bytes: %lu", iconListURL, (unsigned long)sizeInBytes);
 
-                    NSArray *indexPaths = [(NSSet *)[strongSelf.currentIconURLRequests objectForKey:iconListURLString] allObjects];
-                    [strongSelf.messageTable reloadRowsAtIndexPaths:indexPaths
-                                                   withRowAnimation:UITableViewRowAnimationNone];
+                    // Update each cell directly if it exists rather than forcing a reload (which deselects)
+                    UAInboxMessageListCell *cell;
+                    for (NSIndexPath *indexPath in (NSSet *)[strongSelf.currentIconURLRequests objectForKey:iconListURLString]) {
+                        cell = (UAInboxMessageListCell *)[strongSelf.messageTable cellForRowAtIndexPath:indexPath];
+                        cell.listIconView.image = iconImage;
+                    }
                 }
 
                 // Clear the request marker

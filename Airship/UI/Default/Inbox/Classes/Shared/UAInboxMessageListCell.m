@@ -34,12 +34,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)setData:(UAInboxMessage *)message {
 
     self.dateView.text = [UADateUtils formattedDateRelativeToNow:message.messageSent];
-
-
     self.title.text = message.title;
 
     UIView *localUnreadIndicator = self.unreadIndicator;
-
     if (message.unread) {
         localUnreadIndicator.hidden = NO;
     } else {
