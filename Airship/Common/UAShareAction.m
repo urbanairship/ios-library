@@ -29,9 +29,17 @@
 #import "UAActivityViewController.h"
 #import "UAPopoverPositioner.h"
 
+@interface UAShareAction()
+/**
+ * A set of positioners, in case the action is run multiple times between dismissals.
+ */
+@property(nonatomic, strong) NSMutableSet *positioners;
+@end
+
 @implementation UAShareAction
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
+
     if (arguments.situation == UASituationBackgroundPush || arguments.situation == UASituationBackgroundInteractiveButton) {
         return NO;
     }
@@ -40,7 +48,11 @@
         return NO;
     }
 
-    return YES;
+    IF_IOS7_OR_GREATER(return YES;)
+
+    // Reject if on iOS 6.x (unsupported).
+    return NO;
+
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments

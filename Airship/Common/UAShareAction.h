@@ -45,9 +45,4 @@
  */
 @interface UAShareAction : UAAction
 
-/**
- * An array of positioners, in case the action is run multiple times between dismissals.
- */
-@property(nonatomic, strong) NSMutableArray *positioners;
-
 @end
