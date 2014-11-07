@@ -31,13 +31,6 @@
 #import "UAInboxMessageList+Internal.h"
 #import "UAUtils.h"
 
-@interface UAInboxMessage() <UIWebViewDelegate>
-
-// semaphore for Quick Look methods
-@property (nonatomic, strong) dispatch_semaphore_t semaphore;
-
-@end
-
 @implementation UAInboxMessage
 
 - (instancetype)initWithMessageData:(UAInboxMessageData *)data {
@@ -149,9 +142,17 @@
 #pragma mark -
 #pragma mark Quick Look methods
 
-- (BOOL)waitWithTimeoutInterval:(NSTimeInterval)interval {
+- (BOOL)waitWithTimeoutInterval:(NSTimeInterval)interval pollingWebView:(UIWebView *)webView {
     NSDate *timeoutDate = [NSDate dateWithTimeIntervalSinceNow:interval];
-    while (dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_NOW)  && [timeoutDate timeIntervalSinceNow] > 0) {
+    // The webView may not have begun loading at this point
+    BOOL loadingStarted = webView.loading;
+    while ([timeoutDate timeIntervalSinceNow] > 0) {
+        if (!loadingStarted && webView.loading) {
+            loadingStarted = YES;
+        } else if (loadingStarted && !webView.loading) {
+            // Break once the webView has transitioned from a loading to non-loading state
+            break;
+        }
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
     }
@@ -165,25 +166,17 @@
     NSString *auth = [UAUtils userAuthHeaderString];
     [request setValue:auth forHTTPHeaderField:@"Authorization"];
 
-    // Semaphore used to signal that the webview finished loading
-    self.semaphore = dispatch_semaphore_create(0);
-
-    // Load the messsage body, and wait for a signal on the semaphore, with a 5 second timeout.
-    webView.delegate = self;
+    // Load the message body, spin the run loop and poll the webView with a 5 second timeout.
     [webView loadRequest:request];
-    [self waitWithTimeoutInterval:5];
+    [self waitWithTimeoutInterval:5 pollingWebView:webView];
 
-    // Return a UIImage rendered from the webview
+    // Return a UIImage rendered from the webView
     UIGraphicsBeginImageContext(webView.bounds.size);
     CGContextRef context = UIGraphicsGetCurrentContext();
     [webView.layer renderInContext:context];
     UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return img;
-}
-
-- (void)webViewDidFinishLoad:(UIWebView *)webView {
-    dispatch_semaphore_signal(self.semaphore);
 }
 
 @end
