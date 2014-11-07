@@ -29,8 +29,7 @@
 #import "UAActivityViewController.h"
 
 @interface UAShareAction()
-@property (nonatomic, strong) UAActivityViewController *shareViewController;
-@property (nonatomic, strong) UAActivityViewController *oldShareViewController;
+@property (nonatomic, strong) UAActivityViewController *lastActivityViewController;
 @end
 
 @implementation UAShareAction
@@ -63,9 +62,13 @@
     UAActivityViewController *activityViewController =  [[UAActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
     activityViewController.excludedActivityTypes = @[UIActivityTypeAssignToContact, UIActivityTypePrint, UIActivityTypeSaveToCameraRoll, UIActivityTypeAirDrop];
 
+    activityViewController.dismissalBlock = ^{
+        self.lastActivityViewController = nil;
+    };
+
     void (^displayShareBlock)(void) = ^(void) {
 
-        self.shareViewController = activityViewController;
+        self.lastActivityViewController = activityViewController;
 
         // iOS 8.0+, iPad only
         if ([activityViewController respondsToSelector:@selector(popoverPresentationController)]) {
@@ -85,12 +88,8 @@
         }];
     };
 
-    if (self.shareViewController) {
-        self.oldShareViewController = self.shareViewController;
-        [self.oldShareViewController dismissViewControllerAnimated:YES completion:displayShareBlock];
-        self.oldShareViewController.dismissalBlock = ^ {
-            displayShareBlock();
-        };
+    if (self.lastActivityViewController) {
+        [self.lastActivityViewController dismissViewControllerAnimated:YES completion:displayShareBlock];
     } else {
         displayShareBlock();
     }
