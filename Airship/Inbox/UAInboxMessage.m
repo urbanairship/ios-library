@@ -29,6 +29,14 @@
 #import "UAInboxAPIClient.h"
 #import "UAInboxDBManager.h"
 #import "UAInboxMessageList+Internal.h"
+#import "UAUtils.h"
+
+@interface UAInboxMessage() <UIWebViewDelegate>
+
+// semaphore for Quick Look methods
+@property (nonatomic, strong) dispatch_semaphore_t semaphore;
+
+@end
 
 @implementation UAInboxMessage
 
@@ -136,6 +144,46 @@
 
 - (NSDictionary *)rawMessageObject {
     return self.data.rawMessageObject;
+}
+
+#pragma mark -
+#pragma mark Quick Look methods
+
+- (BOOL)waitWithTimeoutInterval:(NSTimeInterval)interval {
+    NSDate *timeoutDate = [NSDate dateWithTimeIntervalSinceNow:interval];
+    while (dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_NOW)  && [timeoutDate timeIntervalSinceNow] > 0) {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+    }
+    return [timeoutDate timeIntervalSinceNow] > 0;
+}
+
+- (id)debugQuickLookObject {
+
+    UIWebView *webView = [[UIWebView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.messageBodyURL];
+    NSString *auth = [UAUtils userAuthHeaderString];
+    [request setValue:auth forHTTPHeaderField:@"Authorization"];
+
+    // Semaphore used to signal that the webview finished loading
+    self.semaphore = dispatch_semaphore_create(0);
+
+    // Load the messsage body, and wait for a signal on the semaphore, with a 5 second timeout.
+    webView.delegate = self;
+    [webView loadRequest:request];
+    [self waitWithTimeoutInterval:5];
+
+    // Return a UIImage rendered from the webview
+    UIGraphicsBeginImageContext(webView.bounds.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    [webView.layer renderInContext:context];
+    UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return img;
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    dispatch_semaphore_signal(self.semaphore);
 }
 
 @end

@@ -121,6 +121,10 @@
     return notificationTypes;
 }
 
+- (id)debugQuickLookObject {
+    return self.data.description;
+}
+
 @end
 
 
