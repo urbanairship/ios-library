@@ -27,13 +27,10 @@
 #import "UAUtils.h"
 #import "UAGlobal.h"
 #import "UAActivityViewController.h"
-#import "UAPopoverPositioner.h"
 
 @interface UAShareAction()
-/**
- * A set of positioners, in case the action is run multiple times between dismissals.
- */
-@property(nonatomic, strong) NSMutableSet *positioners;
+@property (nonatomic, strong) UAActivityViewController *shareViewController;
+@property (nonatomic, strong) UAActivityViewController *oldShareViewController;
 @end
 
 @implementation UAShareAction
@@ -66,33 +63,37 @@
     UAActivityViewController *activityViewController =  [[UAActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
     activityViewController.excludedActivityTypes = @[UIActivityTypeAssignToContact, UIActivityTypePrint, UIActivityTypeSaveToCameraRoll, UIActivityTypeAirDrop];
 
-    // A popover positioner, if we need it
-    UAPopoverPositioner *positioner;
+    void (^displayShareBlock)(void) = ^(void) {
 
-    // iOS 8.0+, iPad only
-    if ([activityViewController respondsToSelector:@selector(popoverPresentationController)]) {
+        self.shareViewController = activityViewController;
 
-        UIPopoverPresentationController * popoverPresentationController = activityViewController.popoverPresentationController;
+        // iOS 8.0+, iPad only
+        if ([activityViewController respondsToSelector:@selector(popoverPresentationController)]) {
 
-        popoverPresentationController.permittedArrowDirections = 0;
+            UIPopoverPresentationController * popoverPresentationController = activityViewController.popoverPresentationController;
 
-        // Create and add a positioner
-        positioner = [[UAPopoverPositioner alloc] init];
-        [self.positioners addObject:positioner];
+            popoverPresentationController.permittedArrowDirections = 0;
 
-        // Set the new positioner as the delegate, center the popover on the screen
-        popoverPresentationController.delegate = positioner;
-        popoverPresentationController.sourceRect = [positioner sourceRect];
-        popoverPresentationController.sourceView = [UAUtils topController].view;
-    }
+            // Set the delegate, center the popover on the screen
+            popoverPresentationController.delegate = activityViewController;
+            popoverPresentationController.sourceRect = activityViewController.sourceRect;
+            popoverPresentationController.sourceView = [UAUtils topController].view;
+        }
 
-    // Remove the positioner, if present, and call the completion handler once the modal is dismissed
-    activityViewController.dismissalBlock = ^ {
-        [self.positioners removeObject:positioner];
-        completionHandler([UAActionResult emptyResult]);
+        [[UAUtils topController] presentViewController:activityViewController animated:YES completion:^{
+            completionHandler([UAActionResult emptyResult]);
+        }];
     };
 
-    [[UAUtils topController] presentViewController:activityViewController animated:YES completion:nil];
+    if (self.shareViewController) {
+        self.oldShareViewController = self.shareViewController;
+        [self.oldShareViewController dismissViewControllerAnimated:YES completion:displayShareBlock];
+        self.oldShareViewController.dismissalBlock = ^ {
+            displayShareBlock();
+        };
+    } else {
+        displayShareBlock();
+    }
 }
 
 @end

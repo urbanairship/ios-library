@@ -34,4 +34,17 @@
     }
 }
 
+- (CGRect)sourceRect {
+    CGRect screenBounds = [UIScreen mainScreen].bounds;
+    return CGRectInset(screenBounds, CGRectGetWidth(screenBounds)/4.0, CGRectGetHeight(screenBounds)/4.0);
+}
+
+// Called whenever a rotation is about to occur
+- (void)popoverPresentationController:(UIPopoverPresentationController *)popoverPresentationController
+          willRepositionPopoverToRect:(inout CGRect *)rect
+                               inView:(inout UIView *__autoreleasing *)view {
+    // Override the passed rect with our desired dimensions
+    *rect = [self sourceRect];
+}
+
 @end
