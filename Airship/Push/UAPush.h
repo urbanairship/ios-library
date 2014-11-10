@@ -25,7 +25,7 @@
 
 #import "UAGlobal.h"
 #import "UAHTTPConnection.h"
-#import "UADeviceRegistrar.h"
+#import "UAChannelRegistrar.h"
 
 
 //---------------------------------------------------------------------------------------
@@ -189,7 +189,7 @@
  * This singleton provides an interface to the functionality provided by the Urban Airship iOS Push API.
  */
 #pragma clang diagnostic push
-@interface UAPush : NSObject <UADeviceRegistrarDelegate>
+@interface UAPush : NSObject <UAChannelRegistrarDelegate>
 
 SINGLETON_INTERFACE(UAPush);
 

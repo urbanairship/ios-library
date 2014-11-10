@@ -71,7 +71,7 @@
 		491B8419198C237F00FB7A40 /* UAChannelAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7DC93E183E977100E95BB8 /* UAChannelAPIClient.m */; };
 		491B841A198C237F00FB7A40 /* UAChannelRegistrationPayload.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7DC940183E977100E95BB8 /* UAChannelRegistrationPayload.m */; };
 		491B841D198C237F00FB7A40 /* UAPush.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DDE17835C3A00BCD96E /* UAPush.m */; };
-		491B841E198C237F00FB7A40 /* UADeviceRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7DC94A183E978A00E95BB8 /* UADeviceRegistrar.m */; };
+		491B841E198C237F00FB7A40 /* UAChannelRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7DC94A183E978A00E95BB8 /* UAChannelRegistrar.m */; };
 		491B841F198C237F00FB7A40 /* UA_Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = B69DB4C912533B280037AF7F /* UA_Base64.m */; };
 		491B8420198C237F00FB7A40 /* UA_Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = B631183C1250925A0014F697 /* UA_Reachability.m */; };
 		491B8421198C237F00FB7A40 /* UALandingPageOverlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49416D6718C513F500A18B72 /* UALandingPageOverlayController.m */; };
@@ -192,8 +192,8 @@
 		49BADDC2198B084D000FF3D5 /* UAChannelRegistrationPayload+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 762CD99F18B6CC2A00AD4C4F /* UAChannelRegistrationPayload+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49BADDC5198B084E000FF3D5 /* UAPush.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DDD17835C3A00BCD96E /* UAPush.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49BADDC6198B084E000FF3D5 /* UAPush+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DDC17835C3A00BCD96E /* UAPush+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		49BADDC7198B084F000FF3D5 /* UADeviceRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = CC7DC949183E978A00E95BB8 /* UADeviceRegistrar.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		49BADDC8198B084F000FF3D5 /* UADeviceRegistrar+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC7DC94B183E978A00E95BB8 /* UADeviceRegistrar+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		49BADDC7198B084F000FF3D5 /* UAChannelRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = CC7DC949183E978A00E95BB8 /* UAChannelRegistrar.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		49BADDC8198B084F000FF3D5 /* UAChannelRegistrar+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC7DC94B183E978A00E95BB8 /* UAChannelRegistrar+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49BADDC9198B084F000FF3D5 /* UA_Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = B69DB4C812533B280037AF7F /* UA_Base64.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49BADDCA198B0850000FF3D5 /* UA_Reachability.h in Headers */ = {isa = PBXBuildFile; fileRef = B631183B1250925A0014F697 /* UA_Reachability.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49BADDCB198B0850000FF3D5 /* UALandingPageOverlayController.h in Headers */ = {isa = PBXBuildFile; fileRef = 49416D6618C513F500A18B72 /* UALandingPageOverlayController.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -411,12 +411,12 @@
 		CC7DC943183E977100E95BB8 /* UAChannelAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7DC93E183E977100E95BB8 /* UAChannelAPIClient.m */; };
 		CC7DC945183E977100E95BB8 /* UAChannelRegistrationPayload.h in Headers */ = {isa = PBXBuildFile; fileRef = CC7DC93F183E977100E95BB8 /* UAChannelRegistrationPayload.h */; };
 		CC7DC947183E977100E95BB8 /* UAChannelRegistrationPayload.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7DC940183E977100E95BB8 /* UAChannelRegistrationPayload.m */; };
-		CC7DC94C183E978A00E95BB8 /* UADeviceRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = CC7DC949183E978A00E95BB8 /* UADeviceRegistrar.h */; };
-		CC7DC94E183E978A00E95BB8 /* UADeviceRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7DC94A183E978A00E95BB8 /* UADeviceRegistrar.m */; };
-		CC7DC950183E978A00E95BB8 /* UADeviceRegistrar+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC7DC94B183E978A00E95BB8 /* UADeviceRegistrar+Internal.h */; };
+		CC7DC94C183E978A00E95BB8 /* UAChannelRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = CC7DC949183E978A00E95BB8 /* UAChannelRegistrar.h */; };
+		CC7DC94E183E978A00E95BB8 /* UAChannelRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7DC94A183E978A00E95BB8 /* UAChannelRegistrar.m */; };
+		CC7DC950183E978A00E95BB8 /* UAChannelRegistrar+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC7DC94B183E978A00E95BB8 /* UAChannelRegistrar+Internal.h */; };
 		CC7DC956183E97C300E95BB8 /* UAChannelAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7DC954183E97C300E95BB8 /* UAChannelAPIClientTest.m */; };
 		CC7DC957183E97C300E95BB8 /* UAChannelRegistrationPayloadTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7DC955183E97C300E95BB8 /* UAChannelRegistrationPayloadTest.m */; };
-		CC7DC959183E97D000E95BB8 /* UADeviceRegistrarTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7DC958183E97D000E95BB8 /* UADeviceRegistrarTest.m */; };
+		CC7DC959183E97D000E95BB8 /* UAChannelRegistrarTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7DC958183E97D000E95BB8 /* UAChannelRegistrarTest.m */; };
 		CC7DC95B183E97E000E95BB8 /* UAEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7DC95A183E97E000E95BB8 /* UAEventTest.m */; };
 		CC7DC95D183E97E900E95BB8 /* UAUserAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7DC95C183E97E900E95BB8 /* UAUserAPIClientTest.m */; };
 		CC85427817F2130700D2DE10 /* UAURLProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = CC85427617F2130700D2DE10 /* UAURLProtocol.h */; };
@@ -738,12 +738,12 @@
 		CC7DC93E183E977100E95BB8 /* UAChannelAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelAPIClient.m; sourceTree = "<group>"; };
 		CC7DC93F183E977100E95BB8 /* UAChannelRegistrationPayload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAChannelRegistrationPayload.h; sourceTree = "<group>"; };
 		CC7DC940183E977100E95BB8 /* UAChannelRegistrationPayload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelRegistrationPayload.m; sourceTree = "<group>"; };
-		CC7DC949183E978A00E95BB8 /* UADeviceRegistrar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADeviceRegistrar.h; sourceTree = "<group>"; };
-		CC7DC94A183E978A00E95BB8 /* UADeviceRegistrar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADeviceRegistrar.m; sourceTree = "<group>"; };
-		CC7DC94B183E978A00E95BB8 /* UADeviceRegistrar+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UADeviceRegistrar+Internal.h"; sourceTree = "<group>"; };
+		CC7DC949183E978A00E95BB8 /* UAChannelRegistrar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAChannelRegistrar.h; sourceTree = "<group>"; };
+		CC7DC94A183E978A00E95BB8 /* UAChannelRegistrar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelRegistrar.m; sourceTree = "<group>"; };
+		CC7DC94B183E978A00E95BB8 /* UAChannelRegistrar+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAChannelRegistrar+Internal.h"; sourceTree = "<group>"; };
 		CC7DC954183E97C300E95BB8 /* UAChannelAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelAPIClientTest.m; sourceTree = "<group>"; };
 		CC7DC955183E97C300E95BB8 /* UAChannelRegistrationPayloadTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelRegistrationPayloadTest.m; sourceTree = "<group>"; };
-		CC7DC958183E97D000E95BB8 /* UADeviceRegistrarTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADeviceRegistrarTest.m; sourceTree = "<group>"; };
+		CC7DC958183E97D000E95BB8 /* UAChannelRegistrarTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelRegistrarTest.m; sourceTree = "<group>"; };
 		CC7DC95A183E97E000E95BB8 /* UAEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventTest.m; sourceTree = "<group>"; };
 		CC7DC95C183E97E900E95BB8 /* UAUserAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUserAPIClientTest.m; sourceTree = "<group>"; };
 		CC85427617F2130700D2DE10 /* UAURLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAURLProtocol.h; sourceTree = "<group>"; };
@@ -1048,9 +1048,9 @@
 				1F610DDD17835C3A00BCD96E /* UAPush.h */,
 				1F610DDC17835C3A00BCD96E /* UAPush+Internal.h */,
 				1F610DDE17835C3A00BCD96E /* UAPush.m */,
-				CC7DC949183E978A00E95BB8 /* UADeviceRegistrar.h */,
-				CC7DC94A183E978A00E95BB8 /* UADeviceRegistrar.m */,
-				CC7DC94B183E978A00E95BB8 /* UADeviceRegistrar+Internal.h */,
+				CC7DC949183E978A00E95BB8 /* UAChannelRegistrar.h */,
+				CC7DC94A183E978A00E95BB8 /* UAChannelRegistrar.m */,
+				CC7DC94B183E978A00E95BB8 /* UAChannelRegistrar+Internal.h */,
 				CC313A9719A66DBE00134A9F /* UAUserNotificationCategories.h */,
 				CC070C8119ABCD7000E91553 /* UAUserNotificationCategories+Internal.h */,
 				CC313A9819A66DBE00134A9F /* UAUserNotificationCategories.m */,
@@ -1463,7 +1463,7 @@
 				CCD3158317CFBD5A002E93A1 /* UAPushTest.m */,
 				49C811AA180DE93500AB15CD /* UAPush+Test.h */,
 				49C811AB180DE93500AB15CD /* UAPush+Test.m */,
-				CC7DC958183E97D000E95BB8 /* UADeviceRegistrarTest.m */,
+				CC7DC958183E97D000E95BB8 /* UAChannelRegistrarTest.m */,
 				CC313AA119A7C08300134A9F /* UAUserNotificationCategoriesTest.m */,
 			);
 			name = Push;
@@ -1586,7 +1586,7 @@
 				49BADDC0198B084C000FF3D5 /* UAChannelAPIClient.h in Headers */,
 				49BADDC1198B084D000FF3D5 /* UAChannelRegistrationPayload.h in Headers */,
 				49BADDC5198B084E000FF3D5 /* UAPush.h in Headers */,
-				49BADDC7198B084F000FF3D5 /* UADeviceRegistrar.h in Headers */,
+				49BADDC7198B084F000FF3D5 /* UAChannelRegistrar.h in Headers */,
 				49BADDC9198B084F000FF3D5 /* UA_Base64.h in Headers */,
 				49BADDCA198B0850000FF3D5 /* UA_Reachability.h in Headers */,
 				49BADDCB198B0850000FF3D5 /* UALandingPageOverlayController.h in Headers */,
@@ -1667,7 +1667,7 @@
 				49BADDBF198B084C000FF3D5 /* UAInboxDBManager+Internal.h in Headers */,
 				49BADDC2198B084D000FF3D5 /* UAChannelRegistrationPayload+Internal.h in Headers */,
 				49BADDC6198B084E000FF3D5 /* UAPush+Internal.h in Headers */,
-				49BADDC8198B084F000FF3D5 /* UADeviceRegistrar+Internal.h in Headers */,
+				49BADDC8198B084F000FF3D5 /* UAChannelRegistrar+Internal.h in Headers */,
 				49BADDD4198B0853000FF3D5 /* UAAction+Internal.h in Headers */,
 				49BADDD7198B0854000FF3D5 /* UAActionArguments+Internal.h in Headers */,
 				49BADDD8198B0855000FF3D5 /* UAActionRegistry+Internal.h in Headers */,
@@ -1715,7 +1715,7 @@
 				BB8860D8159A7E9600584445 /* UASQLite.h in Headers */,
 				CCE34AF819C2647A00A8EFC0 /* UAEventDeviceRegistration.h in Headers */,
 				BB8860D9159A7E9600584445 /* UAHTTPConnection.h in Headers */,
-				CC7DC950183E978A00E95BB8 /* UADeviceRegistrar+Internal.h in Headers */,
+				CC7DC950183E978A00E95BB8 /* UAChannelRegistrar+Internal.h in Headers */,
 				BB8860E3159A7E9600584445 /* UASignificantChangeProvider.h in Headers */,
 				BB8860E4159A7E9600584445 /* UAStandardLocationProvider.h in Headers */,
 				BB8860E5159A7E9600584445 /* UABaseLocationProvider.h in Headers */,
@@ -1724,7 +1724,7 @@
 				49416D6218C513D500A18B72 /* UABespokeCloseView.h in Headers */,
 				76AA8EDC19B0F0A2005FD1C3 /* UAAction.h in Headers */,
 				BB8860E7159A7E9600584445 /* UALocationProviderProtocol.h in Headers */,
-				CC7DC94C183E978A00E95BB8 /* UADeviceRegistrar.h in Headers */,
+				CC7DC94C183E978A00E95BB8 /* UAChannelRegistrar.h in Headers */,
 				CCDF66AE19A544590043657E /* UAShareAction.h in Headers */,
 				BB8860E8159A7E9600584445 /* UALocationProviderDelegate.h in Headers */,
 				49E9C9C1183AD42300B7BCFF /* UAWebViewCallData.h in Headers */,
@@ -2070,7 +2070,7 @@
 				491B8419198C237F00FB7A40 /* UAChannelAPIClient.m in Sources */,
 				491B841A198C237F00FB7A40 /* UAChannelRegistrationPayload.m in Sources */,
 				491B841D198C237F00FB7A40 /* UAPush.m in Sources */,
-				491B841E198C237F00FB7A40 /* UADeviceRegistrar.m in Sources */,
+				491B841E198C237F00FB7A40 /* UAChannelRegistrar.m in Sources */,
 				491B841F198C237F00FB7A40 /* UA_Base64.m in Sources */,
 				491B8420198C237F00FB7A40 /* UA_Reachability.m in Sources */,
 				491B8421198C237F00FB7A40 /* UALandingPageOverlayController.m in Sources */,
@@ -2170,7 +2170,7 @@
 				CC7DC95B183E97E000E95BB8 /* UAEventTest.m in Sources */,
 				CCA3A4FB17FF1521009C7371 /* UAActionRunnerTest.m in Sources */,
 				CCA3A4F717FF1506009C7371 /* UAActionRegistryTest.m in Sources */,
-				CC7DC959183E97D000E95BB8 /* UADeviceRegistrarTest.m in Sources */,
+				CC7DC959183E97D000E95BB8 /* UAChannelRegistrarTest.m in Sources */,
 				49F2122918AC0DD800136622 /* UATestSynchronizer.m in Sources */,
 				4995C6B3180DC5D3004F8724 /* UATagActionsTest.m in Sources */,
 				BB484B2B15910C370097B38C /* UALocationTestUtils.m in Sources */,
@@ -2239,7 +2239,7 @@
 				4995C63C180DBBC9004F8724 /* UAAddTagsAction.m in Sources */,
 				BB88610B159A7E9600584445 /* UAAnalytics.m in Sources */,
 				BB88610D159A7E9600584445 /* UATagUtils.m in Sources */,
-				CC7DC94E183E978A00E95BB8 /* UADeviceRegistrar.m in Sources */,
+				CC7DC94E183E978A00E95BB8 /* UAChannelRegistrar.m in Sources */,
 				BB88610E159A7E9600584445 /* UASQLite.m in Sources */,
 				1F610DBB17835C2200BCD96E /* UAConfig.m in Sources */,
 				1F65BB7E18997AB6000E8ACC /* UALandingPageAction.m in Sources */,

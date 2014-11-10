@@ -28,25 +28,25 @@
 @class UAChannelRegistrationPayload;
 
 /**
- * The UADeviceRegistrarDelegate protocol for registration events.
+ * The UAChannelRegistrarDelegate protocol for registration events.
  */
-@protocol UADeviceRegistrarDelegate <NSObject>
+@protocol UAChannelRegistrarDelegate <NSObject>
 @optional
 
 /**
- * Called when the device registrar failed to register.
+ * Called when the channel registrar failed to register.
  * @param payload The registration payload.
  */
 - (void)registrationFailedWithPayload:(UAChannelRegistrationPayload *)payload;
 
 /**
- * Called when the device registrar succesfully registered.
+ * Called when the channel registrar succesfully registered.
  * @param payload The registration payload.
  */
 - (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload;
 
 /**
- * Called when the device registrar creates a new channel.
+ * Called when the channel registrar creates a new channel.
  * @param channelID The channel ID string.
  * @param channelLocation The channel location string.
  */
@@ -55,14 +55,14 @@
 @end
 
 /**
- * The UADeviceRegistrar class is responsible for device registrations.
+ * The UAChannelRegistrar class is responsible for device registrations.
  */
-@interface UADeviceRegistrar : NSObject
+@interface UAChannelRegistrar : NSObject
 
 /**
- * A UADeviceRegistrarDelegate delegate.
+ * A UAChannelRegistrarDelegate delegate.
  */
-@property (nonatomic, weak) id<UADeviceRegistrarDelegate> delegate;
+@property (nonatomic, weak) id<UAChannelRegistrarDelegate> delegate;
 
 /**
  * Register the device with Urban Airship.

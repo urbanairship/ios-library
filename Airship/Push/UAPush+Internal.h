@@ -24,7 +24,7 @@
  */
 
 #import "UAPush.h"
-#import "UADeviceRegistrar+Internal.h"
+#import "UAChannelRegistrar+Internal.h"
 
 #define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"
 
@@ -79,9 +79,9 @@ extern UAPushUserInfoKey *const UAPushEnabledSettingsMigratedKey;
 @property (nonatomic, assign) BOOL hasEnteredBackground;
 
 /**
- * The UADeviceRegistrar that handles registering the device with Urban Airship.
+ * The UAChannelRegistrar that handles registering the device with Urban Airship.
  */
-@property (nonatomic, strong) UADeviceRegistrar *deviceRegistrar;
+@property (nonatomic, strong) UAChannelRegistrar *channelRegistrar;
 
 /**
  * Notification that launched the application
@@ -123,19 +123,19 @@ extern UAPushUserInfoKey *const UAPushEnabledSettingsMigratedKey;
 - (void)applicationBackgroundRefreshStatusChanged;
 
 /**
- * Called when the device registrar failed to register.
+ * Called when the channel registrar failed to register.
  * @param payload The registration payload.
  */
 - (void)registrationFailedWithPayload:(UAChannelRegistrationPayload *)payload;
 
 /**
- * Called when the device registrar succesfully registered.
+ * Called when the channel registrar succesfully registered.
  * @param payload The registration payload.
  */
 - (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload;
 
 /**
- * Called when the device registrar creates a new channel.
+ * Called when the channel registrar creates a new channel.
  * @param channelID The channel ID string.
  * @param channelLocation The channel location string.
  */

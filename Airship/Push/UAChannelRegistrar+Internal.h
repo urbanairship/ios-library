@@ -23,14 +23,14 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UADeviceRegistrar.h"
+#import "UAChannelRegistrar.h"
 
 @class UAChannelRegistrationPayload;
 @class UADeviceAPIClient;
 @class UAChannelAPIClient;
 
 
-@interface UADeviceRegistrar ()
+@interface UAChannelRegistrar ()
 
 
 /**

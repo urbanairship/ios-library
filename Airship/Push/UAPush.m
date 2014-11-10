@@ -112,8 +112,8 @@ SINGLETON_IMPLEMENTATION(UAPush)
         // prior to allowing the application to set defaults.
         [self migratePushSettings];
         
-        self.deviceRegistrar = [[UADeviceRegistrar alloc] init];
-        self.deviceRegistrar.delegate = self;
+        self.channelRegistrar = [[UAChannelRegistrar alloc] init];
+        self.channelRegistrar.delegate = self;
 
         self.deviceTagsEnabled = YES;
         self.requireAuthorizationForDefaultCategories = YES;
@@ -752,7 +752,7 @@ BOOL deferChannelCreationOnForeground = false;
 - (void)updateRegistrationForcefully:(BOOL)forcefully {
     // If we have a channel ID or we are not doing channel registration, cancel all requests.
     if (self.channelID) {
-        [self.deviceRegistrar cancelAllRequests];
+        [self.channelRegistrar cancelAllRequests];
     }
 
     if (![self beginRegistrationBackgroundTask]) {
@@ -760,7 +760,7 @@ BOOL deferChannelCreationOnForeground = false;
         return;
     }
 
-    [self.deviceRegistrar registerWithChannelID:self.channelID
+    [self.channelRegistrar registerWithChannelID:self.channelID
                                 channelLocation:self.channelLocation
                                     withPayload:[self createChannelPayload]
                                      forcefully:forcefully];
@@ -921,7 +921,7 @@ BOOL deferChannelCreationOnForeground = false;
 - (BOOL)beginRegistrationBackgroundTask {
     if (self.registrationBackgroundTask == UIBackgroundTaskInvalid) {
         self.registrationBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-            [self.deviceRegistrar cancelAllRequests];
+            [self.channelRegistrar cancelAllRequests];
             [[UIApplication sharedApplication] endBackgroundTask:self.registrationBackgroundTask];
             self.registrationBackgroundTask = UIBackgroundTaskInvalid;
         }];

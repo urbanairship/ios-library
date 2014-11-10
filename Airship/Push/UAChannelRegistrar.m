@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UADeviceRegistrar+Internal.h"
+#import "UAChannelRegistrar+Internal.h"
 #import "UAChannelAPIClient.h"
 #import "UAGlobal.h"
 #import "UAUtils.h"
@@ -32,7 +32,7 @@
 
 NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
 
-@implementation UADeviceRegistrar
+@implementation UAChannelRegistrar
 
 -(id)init {
     self = [super init];

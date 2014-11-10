@@ -27,11 +27,11 @@
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
 #import "UAChannelAPIClient.h"
-#import "UADeviceRegistrar+Internal.h"
+#import "UAChannelRegistrar+Internal.h"
 #import "UAChannelRegistrationPayload.h"
 #import "UAHTTPRequest+Internal.h"
 
-@interface UADeviceRegistrarTest : XCTestCase
+@interface UAChannelRegistrarTest : XCTestCase
 
 @property (nonatomic, strong) id mockedChannelClient;
 @property (nonatomic, strong) id mockedRegistrarDelegate;
@@ -43,12 +43,12 @@
 
 
 @property (nonatomic, strong) UAChannelRegistrationPayload *payload;
-@property (nonatomic, strong) UADeviceRegistrar *registrar;
+@property (nonatomic, strong) UAChannelRegistrar *registrar;
 
 
 @end
 
-@implementation UADeviceRegistrarTest
+@implementation UAChannelRegistrarTest
 
 void (^channelUpdateSuccessDoBlock)(NSInvocation *);
 void (^channelCreateSuccessDoBlock)(NSInvocation *);
@@ -65,9 +65,9 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
     self.mockedChannelClient = [OCMockObject niceMockForClass:[UAChannelAPIClient class]];
 
-    self.mockedRegistrarDelegate = [OCMockObject niceMockForProtocol:@protocol(UADeviceRegistrarDelegate)];
+    self.mockedRegistrarDelegate = [OCMockObject niceMockForProtocol:@protocol(UAChannelRegistrarDelegate)];
 
-    self.registrar = [[UADeviceRegistrar alloc] init];
+    self.registrar = [[UAChannelRegistrar alloc] init];
     self.registrar.channelAPIClient = self.mockedChannelClient;
     self.registrar.delegate = self.mockedRegistrarDelegate;
 
