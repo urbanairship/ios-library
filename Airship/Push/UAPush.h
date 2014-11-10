@@ -41,12 +41,9 @@
 @optional
 
 /**
- * Called when the device channel and/or device token successfully registers with
- * Urban Airship.  Successful registrations could be disabling push, enabling push,
- * or updating the device registration settings.
- *
- * A nil channel id indicates the channel creation failed and the old device token
- * registration is being used.
+ * Called when the device channel registers with Urban Airship. Successful
+ * registrations could be disabling push, enabling push, or updating the device
+ * registration settings.
  *
  * The device token will only be available once the application successfully
  * registers with APNS.
@@ -59,8 +56,7 @@
 - (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken;
 
 /**
- * Called when the device channel and/or device token failed to register with
- * Urban Airship.
+ * Called when the device channel failed to register with Urban Airship.
  *
  * When registration finishes in the background, any async tasks that are triggered
  * from this call should request a background task.

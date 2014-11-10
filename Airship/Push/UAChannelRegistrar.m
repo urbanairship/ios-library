@@ -30,8 +30,6 @@
 #import "UAChannelRegistrationPayload.h"
 #import "UAHTTPRequest.h"
 
-NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
-
 @implementation UAChannelRegistrar
 
 -(id)init {
@@ -61,7 +59,6 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
         if (forcefully || ![payload isEqualToPayload:self.lastSuccessPayload]) {
 
             if (!channelID || !channelLocation) {
-                // Try to create a channel, fall back to registering the device token
                 [self createChannelWithPayload:payloadCopy];
             } else {
                 [self updateChannel:channelID channelLocation:channelLocation withPayload:payloadCopy];

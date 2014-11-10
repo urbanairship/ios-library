@@ -668,7 +668,7 @@ BOOL deferChannelCreationOnForeground = false;
                                                     name:UIApplicationDidEnterBackgroundNotification 
                                                   object:[UIApplication sharedApplication]];
 
-    // Create a channel if we do not have a channel id and we are using channel registration
+    // Create a channel if we do not have a channel ID
     if (!self.channelID) {
         [self updateRegistrationForcefully:NO];
     }
@@ -750,7 +750,7 @@ BOOL deferChannelCreationOnForeground = false;
 }
 
 - (void)updateRegistrationForcefully:(BOOL)forcefully {
-    // If we have a channel ID or we are not doing channel registration, cancel all requests.
+    // Only cancel in flight requests if the channel is already created
     if (self.channelID) {
         [self.channelRegistrar cancelAllRequests];
     }

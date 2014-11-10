@@ -26,7 +26,6 @@
 #import "UAChannelRegistrar.h"
 
 @class UAChannelRegistrationPayload;
-@class UADeviceAPIClient;
 @class UAChannelAPIClient;
 
 
