@@ -31,7 +31,6 @@
 #import "UAAnalytics.h"
 #import "UAEventDeviceRegistration.h"
 
-#import "UADeviceRegistrationPayload.h"
 #import "UAUtils.h"
 #import "UAActionRegistry+Internal.h"
 #import "UAActionRunner.h"
@@ -113,8 +112,8 @@ SINGLETON_IMPLEMENTATION(UAPush)
         // prior to allowing the application to set defaults.
         [self migratePushSettings];
         
-        self.deviceRegistrar = [[UADeviceRegistrar alloc] init];
-        self.deviceRegistrar.delegate = self;
+        self.channelRegistrar = [[UAChannelRegistrar alloc] init];
+        self.channelRegistrar.delegate = self;
 
         self.deviceTagsEnabled = YES;
         self.requireAuthorizationForDefaultCategories = YES;
@@ -648,7 +647,7 @@ BOOL deferChannelCreationOnForeground = false;
 
     // If this is the first run, skip creating the channel ID.
     if ([[NSUserDefaults standardUserDefaults] boolForKey:UAPushChannelCreationOnForeground]) {
-        if (!self.channelID && self.deviceRegistrar.isUsingChannelRegistration) {
+        if (!self.channelID) {
             UA_LTRACE(@"Channel ID not created, Updating registration.");
             [self updateRegistrationForcefully:NO];
         } else if (self.hasEnteredBackground) {
@@ -669,8 +668,8 @@ BOOL deferChannelCreationOnForeground = false;
                                                     name:UIApplicationDidEnterBackgroundNotification 
                                                   object:[UIApplication sharedApplication]];
 
-    // Create a channel if we do not have a channel id and we are using channel registration
-    if (!self.channelID && self.deviceRegistrar.isUsingChannelRegistration) {
+    // Create a channel if we do not have a channel ID
+    if (!self.channelID) {
         [self updateRegistrationForcefully:NO];
     }
 }
@@ -751,9 +750,9 @@ BOOL deferChannelCreationOnForeground = false;
 }
 
 - (void)updateRegistrationForcefully:(BOOL)forcefully {
-    // If we have a channel ID or we are not doing channel registration, cancel all requests.
-    if (self.channelID || !self.deviceRegistrar.isUsingChannelRegistration) {
-        [self.deviceRegistrar cancelAllRequests];
+    // Only cancel in flight requests if the channel is already created
+    if (self.channelID) {
+        [self.channelRegistrar cancelAllRequests];
     }
 
     if (![self beginRegistrationBackgroundTask]) {
@@ -761,17 +760,10 @@ BOOL deferChannelCreationOnForeground = false;
         return;
     }
 
-    if (self.userPushNotificationsEnabled) {
-        [self.deviceRegistrar registerWithChannelID:self.channelID
-                                    channelLocation:self.channelLocation
-                                        withPayload:[self createChannelPayload]
-                                         forcefully:forcefully];
-    } else {
-        [self.deviceRegistrar registerPushDisabledWithChannelID:self.channelID
-                                                channelLocation:self.channelLocation
-                                                    withPayload:[self createChannelPayload]
-                                                     forcefully:forcefully];
-    }
+    [self.channelRegistrar registerWithChannelID:self.channelID
+                                channelLocation:self.channelLocation
+                                    withPayload:[self createChannelPayload]
+                                     forcefully:forcefully];
 }
 
 - (void)updateRegistration {
@@ -782,7 +774,7 @@ BOOL deferChannelCreationOnForeground = false;
         return;
     }
 
-    if (self.userPushNotificationsEnabled && !self.channelID && self.deviceRegistrar.isUsingChannelRegistration) {
+    if (self.userPushNotificationsEnabled && !self.channelID) {
         UA_LDEBUG(@"Push is enabled but we have not yet tried to generate a channel ID. "
                   "Urban Airship registration will automatically run when the device token is registered,"
                   "the next time the app is backgrounded, or the next time the app is foregrounded.");
@@ -856,7 +848,7 @@ BOOL deferChannelCreationOnForeground = false;
     BOOL inBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
 
     // Only allow new registrations to happen in the background if we are creating a channel ID
-    if (inBackground && (self.channelID || !self.deviceRegistrar.isUsingChannelRegistration)) {
+    if (inBackground && self.channelID) {
         UA_LDEBUG(@"Skipping device registration. The app is currently backgrounded.");
     } else {
         [self updateRegistrationForcefully:NO];
@@ -870,22 +862,14 @@ BOOL deferChannelCreationOnForeground = false;
 
 - (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload {
 
-    if (self.deviceRegistrar.isUsingChannelRegistration) {
-        UA_LINFO(@"Channel registration updated successfully.");
-    } else {
-        UA_LINFO(@"Device registration updated successfully.");
-    }
+    UA_LINFO(@"Channel registration updated successfully.");
 
     id strongDelegate = self.registrationDelegate;
     if ([strongDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
         [strongDelegate registrationSucceededForChannelID:self.channelID deviceToken:self.deviceToken];
     }
 
-    // Register again if we are using old registration, and we have a deviceToken, and if the
-    // device token does not match if push is enabled.
-    if (!self.deviceRegistrar.isUsingChannelRegistration && self.deviceToken && self.userPushNotificationsEnabled != self.deviceRegistrar.isDeviceTokenRegistered) {
-        [self updateRegistrationForcefully:NO];
-    } else if (![payload isEqualToPayload:[self createChannelPayload]]) {
+    if (![payload isEqualToPayload:[self createChannelPayload]]) {
         [self updateRegistrationForcefully:NO];
     } else {
         [self endRegistrationBackgroundTask];
@@ -894,11 +878,7 @@ BOOL deferChannelCreationOnForeground = false;
 
 - (void)registrationFailedWithPayload:(UAChannelRegistrationPayload *)payload {
 
-    if (self.deviceRegistrar.isUsingChannelRegistration) {
-        UA_LINFO(@"Channel registration failed.");
-    } else {
-        UA_LINFO(@"Device registration failed.");
-    }
+    UA_LINFO(@"Channel registration failed.");
 
     id strongDelegate = self.registrationDelegate;
     if ([strongDelegate respondsToSelector:@selector(registrationFailed)]) {
@@ -941,7 +921,7 @@ BOOL deferChannelCreationOnForeground = false;
 - (BOOL)beginRegistrationBackgroundTask {
     if (self.registrationBackgroundTask == UIBackgroundTaskInvalid) {
         self.registrationBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-            [self.deviceRegistrar cancelAllRequests];
+            [self.channelRegistrar cancelAllRequests];
             [[UIApplication sharedApplication] endBackgroundTask:self.registrationBackgroundTask];
             self.registrationBackgroundTask = UIBackgroundTaskInvalid;
         }];

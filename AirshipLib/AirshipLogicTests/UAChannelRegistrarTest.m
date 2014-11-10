@@ -26,15 +26,13 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
-#import "UADeviceAPIClient.h"
 #import "UAChannelAPIClient.h"
-#import "UADeviceRegistrar+Internal.h"
+#import "UAChannelRegistrar+Internal.h"
 #import "UAChannelRegistrationPayload.h"
 #import "UAHTTPRequest+Internal.h"
 
-@interface UADeviceRegistrarTest : XCTestCase
+@interface UAChannelRegistrarTest : XCTestCase
 
-@property (nonatomic, strong) id mockedDeviceClient;
 @property (nonatomic, strong) id mockedChannelClient;
 @property (nonatomic, strong) id mockedRegistrarDelegate;
 
@@ -45,12 +43,12 @@
 
 
 @property (nonatomic, strong) UAChannelRegistrationPayload *payload;
-@property (nonatomic, strong) UADeviceRegistrar *registrar;
+@property (nonatomic, strong) UAChannelRegistrar *registrar;
 
 
 @end
 
-@implementation UADeviceRegistrarTest
+@implementation UAChannelRegistrarTest
 
 void (^channelUpdateSuccessDoBlock)(NSInvocation *);
 void (^channelCreateSuccessDoBlock)(NSInvocation *);
@@ -65,13 +63,11 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
     self.channelCreateSuccessChannelID = @"newChannelID";
     self.channelCreateSuccessChannelLocation = @"newChannelLocation";
 
-    self.mockedDeviceClient = [OCMockObject niceMockForClass:[UADeviceAPIClient class]];
     self.mockedChannelClient = [OCMockObject niceMockForClass:[UAChannelAPIClient class]];
 
-    self.mockedRegistrarDelegate = [OCMockObject niceMockForProtocol:@protocol(UADeviceRegistrarDelegate)];
+    self.mockedRegistrarDelegate = [OCMockObject niceMockForProtocol:@protocol(UAChannelRegistrarDelegate)];
 
-    self.registrar = [[UADeviceRegistrar alloc] init];
-    self.registrar.deviceAPIClient = self.mockedDeviceClient;
+    self.registrar = [[UAChannelRegistrar alloc] init];
     self.registrar.channelAPIClient = self.mockedChannelClient;
     self.registrar.delegate = self.mockedRegistrarDelegate;
 
@@ -108,20 +104,12 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
         UAChannelAPIClientFailureBlock failureBlock = (__bridge UAChannelAPIClientFailureBlock)arg;
         failureBlock(self.channelFailureRequest);
     };
-
-    deviceRegisterSuccessDoBlock = ^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UADeviceAPIClientSuccessBlock successBlock = (__bridge UADeviceAPIClientSuccessBlock)arg;
-        successBlock();
-    };
 }
 
 
 - (void)tearDown {
     [super tearDown];
     
-    [self.mockedDeviceClient stopMocking];
     [self.mockedChannelClient stopMocking];
     [self.mockedRegistrarDelegate stopMocking];
 }
@@ -141,7 +129,6 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
     [self.registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:self.payload forcefully:NO];
 
-    XCTAssertNoThrow([self.mockedDeviceClient verify], @"Registering should always cancel current and pending requests.");
     XCTAssertNoThrow([self.mockedChannelClient verify], @"Registering should always cancel all requests and call updateChannel with passed payload and channel id.");
     XCTAssertNoThrow([self.mockedRegistrarDelegate verify], @"Delegate should be called.");
 }
@@ -162,7 +149,6 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
     [self.registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:self.payload forcefully:NO];
 
-    XCTAssertNoThrow([self.mockedDeviceClient verify], @"Registering should always cancel current and pending requests.");
     XCTAssertNoThrow([self.mockedChannelClient verify], @"Registering should always cancel all requests and call updateChannel with passed payload and channel id.");
     XCTAssertNoThrow([self.mockedRegistrarDelegate verify], @"Delegate should be called on failure");
 }
@@ -226,7 +212,6 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
     [self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO];
 
-    XCTAssertNoThrow([self.mockedDeviceClient verify], @"Device should clear any pending requests");
     XCTAssertNoThrow([self.mockedChannelClient verify], @"Channel client should create a new create request");
     XCTAssertNoThrow([self.mockedRegistrarDelegate verify], @"Delegate should be called on success");
 }
@@ -245,7 +230,6 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
     [self.registrar registerWithChannelID:@"someChannel" channelLocation:nil withPayload:self.payload forcefully:NO];
 
-    XCTAssertNoThrow([self.mockedDeviceClient verify], @"Device should clear any pending requests");
     XCTAssertNoThrow([self.mockedChannelClient verify], @"Channel client should create a new create request");
     XCTAssertNoThrow([self.mockedRegistrarDelegate verify], @"Delegate should be called on failure");
 }
@@ -267,198 +251,9 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
     // Reject any registration requests
     [[self.mockedChannelClient reject] updateChannelWithLocation:OCMOCK_ANY withPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
     [[self.mockedChannelClient reject] createChannelWithPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
-    [[self.mockedDeviceClient reject] registerDeviceToken:OCMOCK_ANY withPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
-    [[self.mockedDeviceClient reject] unregisterDeviceToken:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
     XCTAssertNoThrow([self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO], @"A pending request should ignore any further requests.");
     XCTAssertNoThrow([self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:YES], @"A pending request should ignore any further requests.");
-    XCTAssertNoThrow([self.registrar registerPushDisabledWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO], @"A pending request should ignore any further requests.");
-    XCTAssertNoThrow([self.registrar registerPushDisabledWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:YES], @"A pending request should ignore any further requests.");
-}
-
-/**
- * Test a succesful register when push is disabled with a channel
- */
-- (void)testRegisterPushDisabledWithChannel {
-    [[[self.mockedChannelClient expect] andDo:channelUpdateSuccessDoBlock] updateChannelWithLocation:@"someLocation"
-                                                                                    withPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]
-                                                                                      onSuccess:OCMOCK_ANY
-                                                                                      onFailure:OCMOCK_ANY];
-
-    // Expect the delegate to be called
-    [[self.mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
-
-
-    [self.registrar registerPushDisabledWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:self.payload forcefully:NO];
-    XCTAssertNoThrow([self.mockedDeviceClient verify], @"Registering should always cancel current and pending requests.");
-    XCTAssertNoThrow([self.mockedChannelClient verify], @"Registering should always cancel all requests and call updateChannel with passed payload and channel id.");
-    XCTAssertNoThrow([self.mockedRegistrarDelegate verify], @"Delegate should be called on success");
-}
-
-/**
- * Test a failed register when push is disabled with a channel
- */
-- (void)testRegisterPushDisabledWithChannelFail {
-    [[[self.mockedChannelClient expect] andDo:channelUpdateFailureDoBlock] updateChannelWithLocation:@"someLocation"
-                                                                                    withPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]
-                                                                                      onSuccess:OCMOCK_ANY
-                                                                                      onFailure:OCMOCK_ANY];
-    // Expect the delegate to be called
-    [[self.mockedRegistrarDelegate expect] registrationFailedWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
-
-
-    [self.registrar registerPushDisabledWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:self.payload forcefully:NO];
-    XCTAssertNoThrow([self.mockedDeviceClient verify], @"Registering should always cancel current and pending requests.");
-    XCTAssertNoThrow([self.mockedChannelClient verify], @"Registering should always cancel all requests and call updateChannel with passed payload and channel id.");
-    XCTAssertNoThrow([self.mockedRegistrarDelegate verify], @"Delegate should be called on failure");
-}
-
-
-/**
- * Test register push disabled with the same payload as the
- * previous successful payload.
- */
-- (void)testRegisterPushDisabledWithChannelDuplicate {
-    // Expect the channel client to update channel and call the update block
-    [[[self.mockedChannelClient expect] andDo:channelUpdateSuccessDoBlock] updateChannelWithLocation:@"someLocation"
-                                                                                    withPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]
-                                                                                      onSuccess:OCMOCK_ANY
-                                                                                      onFailure:OCMOCK_ANY];
-
-    // Add a successful request
-    [self.registrar registerPushDisabledWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:self.payload forcefully:NO];
-
-    // Expect it again when we call run it forcefully
-    [[[self.mockedChannelClient expect] andDo:channelUpdateSuccessDoBlock] updateChannelWithLocation:@"someLocation"
-                                                                                    withPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]
-                                                                                      onSuccess:OCMOCK_ANY
-                                                                                      onFailure:OCMOCK_ANY];
-
-
-
-
-    // Run it again forcefully
-    [self.registrar registerPushDisabledWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:self.payload forcefully:YES];
-    XCTAssertNoThrow([self.mockedChannelClient verify], @"Registering forcefully should not care about previous requests.");
-
-
-    // Run it normally, it should not call update
-    [[self.mockedChannelClient reject] updateChannelWithLocation:OCMOCK_ANY
-                                                withPayload:OCMOCK_ANY
-                                                  onSuccess:OCMOCK_ANY
-                                                  onFailure:OCMOCK_ANY];
-
-
-    [self.registrar registerPushDisabledWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:self.payload forcefully:NO];
-
-    XCTAssertNoThrow([self.mockedChannelClient verify], @"Registering with a payload that is already registered should skip.");
-}
-
-/**
- * Test that register push disabeld without a channel attempts to create a channel
- */
-- (void)testRegisterPushDisabledNoChannelID {
-    // Expect the channel client to create a channel and call success block
-    [[[self.mockedChannelClient expect] andDo:channelCreateSuccessDoBlock] createChannelWithPayload:OCMOCK_ANY
-                                                                                     onSuccess:OCMOCK_ANY
-                                                                                     onFailure:OCMOCK_ANY];
-
-
-    [[self.mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
-
-    [self.registrar registerPushDisabledWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO];
-
-    XCTAssertNoThrow([self.mockedChannelClient verify], @"Channel client should create a new create request");
-    XCTAssertNoThrow([self.mockedRegistrarDelegate verify], @"Registration delegate should be notified of the successful registration");
-}
-
-/**
- * Test that registering with a nil channel id first tries to create a channel 
- * and falls back to registering the device token.
- */
-- (void)testRegisterNoChannelFallback {
-    self.payload.pushAddress = @"some-device-token";
-    self.registrar.isDeviceTokenRegistered  = NO;
-
-    // Set up failure with 501 so we fallback
-    self.channelFailureRequest.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:501 HTTPVersion:nil headerFields:nil];
-
-    //Expect the channel client to create a channel and fail with 501
-    [[[self.mockedChannelClient expect] andDo:channelCreateFailureDoBlock] createChannelWithPayload:OCMOCK_ANY
-                                                                                     onSuccess:OCMOCK_ANY
-                                                                                     onFailure:OCMOCK_ANY];
-
-
-    [[[self.mockedDeviceClient expect] andDo:deviceRegisterSuccessDoBlock] registerDeviceToken:self.payload.pushAddress
-                                                                              withPayload:OCMOCK_ANY
-                                                                                onSuccess:OCMOCK_ANY
-                                                                                onFailure:OCMOCK_ANY];
-
-    [[self.mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
-
-    [self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO];
-
-    XCTAssertNoThrow([self.mockedDeviceClient verify], @"Device client should be called to register the device token");
-    XCTAssertNoThrow([self.mockedChannelClient verify], @"Channel client should attempt to create a channel id");
-    XCTAssertNoThrow([self.mockedRegistrarDelegate verify], @"Registration delegate should be notified of the successful registration");
-    XCTAssertFalse(self.registrar.isUsingChannelRegistration, @"Failing to create a channel with a 501 should fallback to device token registration");
-
-    // Reject any more unregister calls
-    [[self.mockedDeviceClient reject] registerDeviceToken:OCMOCK_ANY
-                                         withPayload:OCMOCK_ANY
-                                           onSuccess:OCMOCK_ANY
-                                           onFailure:OCMOCK_ANY];
-
-    XCTAssertNoThrow( [self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO], @"Registrar should not register the device token twice");
-
-
-    self.payload.pushAddress = nil;
-    self.registrar.isDeviceTokenRegistered  = NO;
-    XCTAssertNoThrow([self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO], @"Registrar should not try to register a nil device token");
-}
-
-/**
- * Test device fallback when trying to register push disabled.
- */
-- (void)testRegisterPushDisabledNoChannelFallback {
-    self.payload.pushAddress = @"some-device-token";
-    self.registrar.isDeviceTokenRegistered  = NO;
-
-    // Set up failure with 501 so we fallback
-    self.channelFailureRequest.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:501 HTTPVersion:nil headerFields:nil];
-
-    //Expect the channel client to create a channel and fail with 501
-    [[[self.mockedChannelClient expect] andDo:channelCreateFailureDoBlock] createChannelWithPayload:OCMOCK_ANY
-                                                                                     onSuccess:OCMOCK_ANY
-                                                                                     onFailure:OCMOCK_ANY];
-
-
-    [[[self.mockedDeviceClient expect] andDo:deviceRegisterSuccessDoBlock] registerDeviceToken:self.payload.pushAddress
-                                                                              withPayload:OCMOCK_ANY
-                                                                                onSuccess:OCMOCK_ANY
-                                                                                onFailure:OCMOCK_ANY];
-
-    [[self.mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
-
-    [self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO];
-
-    XCTAssertNoThrow([self.mockedDeviceClient verify], @"Device client should be called to register the device token");
-    XCTAssertNoThrow([self.mockedChannelClient verify], @"Channel client should attempt to create a channel id");
-    XCTAssertNoThrow([self.mockedRegistrarDelegate verify], @"Delegate should be called on success");
-    XCTAssertFalse(self.registrar.isUsingChannelRegistration, @"Failing to create a channel with a 501 should fallback to device token registration");
-
-    // Reject any more unregister calls
-    [[self.mockedDeviceClient reject] registerDeviceToken:OCMOCK_ANY
-                                         withPayload:OCMOCK_ANY
-                                           onSuccess:OCMOCK_ANY
-                                           onFailure:OCMOCK_ANY];
-
-    XCTAssertNoThrow( [self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO], @"Registrar should not register the device token twice");
-
-
-    self.payload.pushAddress = nil;
-    self.registrar.isDeviceTokenRegistered  = NO;
-    XCTAssertNoThrow([self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO], @"Registrar should not try to register a nil device token");
 }
 
 /**
@@ -468,20 +263,16 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
     self.registrar.lastSuccessPayload = [[UAChannelRegistrationPayload alloc] init];
     self.registrar.isRegistrationInProgress = NO;
     [[self.mockedChannelClient expect] cancelAllRequests];
-    [[self.mockedDeviceClient expect] cancelAllRequests];
 
     [self.registrar cancelAllRequests];
-    XCTAssertNoThrow([self.mockedDeviceClient verify], @"Device client should cancel all of its requests.");
     XCTAssertNoThrow([self.mockedChannelClient verify], @"Channel client should cancel all of its requests.");
     XCTAssertNotNil(self.registrar.lastSuccessPayload, @"Last success payload should not be cleared if a request is not in progress.");
 
     self.registrar.isRegistrationInProgress = YES;
     [[self.mockedChannelClient expect] cancelAllRequests];
-    [[self.mockedDeviceClient expect] cancelAllRequests];
 
     [self.registrar cancelAllRequests];
     XCTAssertNil(self.registrar.lastSuccessPayload, @"Last success payload should be cleared if a request is in progress.");
-    XCTAssertNoThrow([self.mockedDeviceClient verify], @"Device client should cancel all of its requests.");
     XCTAssertNoThrow([self.mockedChannelClient verify], @"Channel client should cancel all of its requests.");
 }
 

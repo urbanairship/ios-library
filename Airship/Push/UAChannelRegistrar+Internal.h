@@ -23,20 +23,14 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UADeviceRegistrar.h"
+#import "UAChannelRegistrar.h"
 
 @class UAChannelRegistrationPayload;
-@class UADeviceAPIClient;
 @class UAChannelAPIClient;
 
 
-@interface UADeviceRegistrar ()
+@interface UAChannelRegistrar ()
 
-
-/**
- * The device API client.
- */
-@property (nonatomic, strong) UADeviceAPIClient *deviceAPIClient;
 
 /**
  * The channel API client.
@@ -49,18 +43,6 @@
  */
 @property (nonatomic, strong) UAChannelRegistrationPayload *lastSuccessPayload;
 
-
-/**
- * A flag indicating if the device token has been registered with the
- * device API client.
- */
-@property (nonatomic, assign) BOOL isDeviceTokenRegistered;
-
-/**
- * A flag indicating if the registrar is using the new channel registration or
- * the old device token registration.
- */
-@property (nonatomic, assign) BOOL isUsingChannelRegistration;
 
 /**
  * A flag indicating if registration is in progress.
