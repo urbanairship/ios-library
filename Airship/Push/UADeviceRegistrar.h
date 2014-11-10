@@ -78,19 +78,6 @@
                    forcefully:(BOOL)forcefully;
 
 /**
- * Register that push is disabled for the device with Urban Airship.
- *
- * @param channelID The channel id to update.  If nil is supplied, a channel will be created.
- * @param channelLocation The channel location.  If nil is supplied, a channel will be created.
- * @param payload The payload for the registration.
- * @param forcefully To force the registration, skipping duplicate request checks.
- */
-- (void)registerPushDisabledWithChannelID:(NSString *)channelID
-                          channelLocation:(NSString *)channelLocation
-                              withPayload:(UAChannelRegistrationPayload *)payload
-                               forcefully:(BOOL)forcefully;
-
-/**
  * Cancels all pending and current requests.  
  *
  * Note: This may or may not prevent the registration finished event and registration

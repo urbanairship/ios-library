@@ -24,7 +24,6 @@
  */
 
 #import "UAPush.h"
-#import "UADeviceRegistrationPayload.h"
 #import "UADeviceRegistrar+Internal.h"
 
 #define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"

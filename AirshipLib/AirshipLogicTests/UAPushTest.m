@@ -27,7 +27,6 @@
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
 #import "UAPush+Internal.h"
-#import "UADeviceAPIClient.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
 #import "UAirship+Internal.h"
@@ -529,10 +528,11 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertTrue(self.push.userPushNotificationsEnabled, @"userPushNotificationsEnabled should default to YES");
 
     // Add a device token so we get a device api callback
-    [[self.mockedDeviceRegistrar expect] registerPushDisabledWithChannelID:OCMOCK_ANY
-                                                           channelLocation:OCMOCK_ANY
-                                                               withPayload:OCMOCK_ANY
-                                                                forcefully:NO];
+    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
+                                                   withPayload:OCMOCK_ANY
+                                                    forcefully:NO];
+
 
     UIUserNotificationSettings *expected = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone
                                                                              categories:nil];
@@ -678,10 +678,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [[self.mockedApplication reject] registerForRemoteNotificationTypes:UIRemoteNotificationTypeSound];
 
     // Add a device token so we get a device api callback
-    [[self.mockedDeviceRegistrar expect] registerPushDisabledWithChannelID:OCMOCK_ANY
-                                                           channelLocation:OCMOCK_ANY
-                                                               withPayload:OCMOCK_ANY
-                                                                forcefully:NO];
+    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
+                                                   withPayload:OCMOCK_ANY
+                                                    forcefully:NO];
 
     [self.push updateAPNSRegistration];
 
@@ -960,38 +960,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertEqualObjects(@"736f6d652d746f6b656e", self.push.deviceToken, @"Register device token should set the device token");
 }
 
-/**
- * Test registering a device token in the background does not
- * update registration if we are using device registration
- */
-- (void)testHandleDeviceTokenRegistrationBackgroundDeviceRegistration {
-    self.push.notificationTypes = UIRemoteNotificationTypeSound;
-    self.push.userPushNotificationsEnabled = YES;
-    self.push.deviceToken = nil;
-
-    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(NO)] isUsingChannelRegistration];
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
-
-
-    NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
-    [[self.mockedAnalytics expect] addEvent:OCMOCK_ANY];
-
-    [[self.mockedDeviceRegistrar reject] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:OCMOCK_ANY
-                                                    forcefully:NO];
-
-    [self.push appRegisteredForRemoteNotificationsWithDeviceToken:token];
-
-    XCTAssertNoThrow([self.mockedAnalytics verify],
-                     @"should add device registration event to analytics");
-
-    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
-                     @"should not allow registration in background except for channel creation");
-
-    // 736f6d652d746f6b656e = "some-token" in hex
-    XCTAssertEqualObjects(@"736f6d652d746f6b656e", self.push.deviceToken, @"Register device token should set the device token");
-}
 
 /**
  * Test device token registration in the background updates registration for
@@ -1005,7 +973,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     self.push.deviceToken = nil;
     self.push.channelID = nil;
 
-    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isUsingChannelRegistration];
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
@@ -1055,7 +1022,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     self.push.userPushNotificationsEnabled = YES;
     self.push.channelID = @"channel";
 
-    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(NO)] isUsingChannelRegistration];
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
 
 
@@ -1168,10 +1134,12 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     self.push.userPushNotificationsEnabled = NO;
     self.push.deviceToken = validDeviceToken;
 
-    [[self.mockedDeviceRegistrar expect] registerPushDisabledWithChannelID:OCMOCK_ANY
-                                                           channelLocation:OCMOCK_ANY
-                                                               withPayload:OCMOCK_ANY
-                                                                forcefully:YES];
+    // Add a device token so we get a device api callback
+    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
+                                                   withPayload:OCMOCK_ANY
+                                                    forcefully:YES];
+
 
     [[[self.mockedApplication expect] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
@@ -1671,8 +1639,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testApplicationDidEnterBackgroundCreatesChannel {
     self.push.channelID = nil;
     self.push.userPushNotificationsEnabled = YES;
-    
-    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isUsingChannelRegistration];
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
@@ -1706,7 +1672,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     self.push.channelID = @"someChannelID";
     self.push.channelLocation = @"someChannelLocation";
     self.push.registrationBackgroundTask = 30;
-    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isUsingChannelRegistration];
 
     [[self.mockRegistrationDelegate expect] registrationSucceededForChannelID:@"someChannelID" deviceToken:validDeviceToken];
 
@@ -1726,8 +1691,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     self.push.channelLocation = @"someChannelLocation";
     self.push.registrationBackgroundTask = 30;
 
-    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isUsingChannelRegistration];
-
     [[self.mockRegistrationDelegate expect] registrationSucceededForChannelID:@"someChannelID" deviceToken:validDeviceToken];
 
     [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
@@ -1745,35 +1708,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertNoThrow([self.mockedApplication verify], @"Should not end the background task");
 }
 
-/**
- * Test registration succeeded when using device registration
- */
-- (void)testRegistrationSucceededDeviceRegistrationUpdate {
-    self.push.deviceToken = validDeviceToken;
-    self.push.channelID = nil;
-    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(NO)] isUsingChannelRegistration];
-    self.push.registrationBackgroundTask = 30;
-
-    // Make push enabled not match isDeviceTokenRegistered
-    self.push.userPushNotificationsEnabled = NO;
-    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isDeviceTokenRegistered];
-
-    [[self.mockRegistrationDelegate expect] registrationSucceededForChannelID:nil deviceToken:validDeviceToken];
-
-    [[self.mockedDeviceRegistrar expect] registerPushDisabledWithChannelID:OCMOCK_ANY
-                                                           channelLocation:OCMOCK_ANY
-                                                               withPayload:OCMOCK_ANY
-                                                                forcefully:NO];
-
-    // Should not end the background task
-    [[self.mockedApplication reject] endBackgroundTask:30];
-
-    // Call with an empty payload.  Should be different then the UAPush generated payload
-    [self.push registrationSucceededWithPayload:[[UAChannelRegistrationPayload alloc] init]];
-
-    XCTAssertNoThrow([self.mockRegistrationDelegate verify], @"Delegate should be called");
-    XCTAssertNoThrow([self.mockedApplication verify], @"Should not end the background task");
-}
 
 /**
  * Test registration failed
@@ -2245,10 +2179,12 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
     // Add a device token so we get a device api callback
-    [[self.mockedDeviceRegistrar expect] registerPushDisabledWithChannelID:OCMOCK_ANY
-                                                           channelLocation:OCMOCK_ANY
-                                                               withPayload:OCMOCK_ANY
-                                                                forcefully:NO];
+    // Add a device token so we get a device api callback
+    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
+                                                   withPayload:OCMOCK_ANY
+                                                    forcefully:NO];
+
 
     // The flag allowUnregisteringUserNotificationTypes should prevent unregistering notification types
     [[self.mockedApplication reject] registerUserNotificationSettings:OCMOCK_ANY];
