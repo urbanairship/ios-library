@@ -136,7 +136,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     if (self.username && self.password ) {
         // If the user and password are set, then we are not in a "no user"/"initial run" case - just set it in defaults
         // for the app to access with a Settings bundle
-        [[UAirship shared].dataStore setObject:self.username forKey:@"ua_user_id"];
+        [[NSUserDefaults standardUserDefaults] setObject:self.username forKey:@"ua_user_id"];
     } else {
         // Either the user or password is not set, so the "no user"/"initial run" case is still true, try to recreate the user
         [self createUser];
@@ -177,12 +177,13 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     NSMutableDictionary *userDictionary = [NSMutableDictionary dictionaryWithDictionary:dictionary];
 
     [userDictionary setValue:self.url forKey:kUserUrlKey];
-    
+
+
     // Save in defaults for access with a Settings bundle
-    [[UAirship shared].dataStore setObject:self.username forKey:@"ua_user_id"];
-    
-    [[UAirship shared].dataStore setObject:userDictionary forKey:self.appKey];
-    [[UAirship shared].dataStore synchronize];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:self.username forKey:@"ua_user_id"];
+    [defaults setObject:userDictionary forKey:self.appKey];
+    [defaults synchronize];
 }
 
 #pragma mark -
