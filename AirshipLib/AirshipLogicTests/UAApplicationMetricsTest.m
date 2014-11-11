@@ -25,10 +25,12 @@
 
 #import <XCTest/XCTest.h>
 #import "UAApplicationMetriccs+Internal.h"
+#import "UAPreferenceDataStore.h"
 #import <OCMock/OCMock.h>
 
 @interface UAApplicationMetricsTest : XCTestCase
 @property (nonatomic, strong) UAApplicationMetrics *metrics;
+@property (nonatomic, strong) id mockDataStore;
 @end
 
 @implementation UAApplicationMetricsTest
@@ -36,27 +38,27 @@
 - (void)setUp {
     [super setUp];
 
-    self.metrics = [[UAApplicationMetrics alloc] init];
+    self.mockDataStore = [OCMockObject niceMockForClass:[UAPreferenceDataStore class]];
+    self.metrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.mockDataStore];
 }
 
 - (void)tearDown {
     [super tearDown];
+
+    [self.mockDataStore stopMocking];
 }
 
 - (void)testApplicationActive {
-    NSDate *expectedDate = [NSDate date];
-
     // Make date always return our expected date
+    NSDate *expectedDate = [NSDate date];
     id mockDate = [OCMockObject mockForClass:[NSDate class]];
     [[[mockDate stub] andReturn:expectedDate] date];
 
+    [[self.mockDataStore expect] setObject:expectedDate forKey:@"UAApplicationMetricLastOpenDate"];
+
     [self.metrics didBecomeActive];
 
-    XCTAssertEqualWithAccuracy(expectedDate.timeIntervalSince1970,
-                               self.metrics.lastApplicationOpenDate.timeIntervalSince1970,
-                               .01,
-                               @"Application active should set the last open date");
-
+    [self.mockDataStore verify];
 }
 
 @end

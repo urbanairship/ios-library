@@ -25,30 +25,29 @@
 
 #import "UAPush.h"
 #import "UAChannelRegistrar+Internal.h"
+@class UAPreferenceDataStore;
 
 #define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"
 
-typedef NSString UAPushSettingsKey;
-extern UAPushSettingsKey *const UAUserPushNotificationsEnabledKey;
-extern UAPushSettingsKey *const UABackgroundPushNotificationsEnabledKey;
+extern NSString *const UAUserPushNotificationsEnabledKey;
+extern NSString *const UABackgroundPushNotificationsEnabledKey;
 
-extern UAPushSettingsKey *const UAPushAliasSettingsKey;
-extern UAPushSettingsKey *const UAPushTagsSettingsKey;
-extern UAPushSettingsKey *const UAPushBadgeSettingsKey;
-extern UAPushSettingsKey *const UAPushQuietTimeSettingsKey;
-extern UAPushSettingsKey *const UAPushQuietTimeEnabledSettingsKey;
-extern UAPushSettingsKey *const UAPushTimeZoneSettingsKey;
-extern UAPushSettingsKey *const UAPushDeviceCanEditTagsKey;
+extern NSString *const UAPushAliasSettingsKey;
+extern NSString *const UAPushTagsSettingsKey;
+extern NSString *const UAPushBadgeSettingsKey;
+extern NSString *const UAPushQuietTimeSettingsKey;
+extern NSString *const UAPushQuietTimeEnabledSettingsKey;
+extern NSString *const UAPushTimeZoneSettingsKey;
+extern NSString *const UAPushDeviceCanEditTagsKey;
 
 extern NSString *const UAPushQuietTimeStartKey;
 extern NSString *const UAPushQuietTimeEndKey;
 
 // Keys for the userInfo object on request objects
-typedef NSString UAPushUserInfoKey;
-extern UAPushUserInfoKey *const UAPushUserInfoRegistration;
-extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
-extern UAPushUserInfoKey *const UAPushChannelCreationOnForeground;
-extern UAPushUserInfoKey *const UAPushEnabledSettingsMigratedKey;
+extern NSString *const UAPushUserInfoRegistration;
+extern NSString *const UAPushUserInfoPushEnabled;
+extern NSString *const UAPushChannelCreationOnForeground;
+extern NSString *const UAPushEnabledSettingsMigratedKey;
 
 @interface UAPush ()
 
@@ -98,6 +97,10 @@ extern UAPushUserInfoKey *const UAPushEnabledSettingsMigratedKey;
  */
 @property (nonatomic, assign) BOOL shouldUpdateAPNSRegistration;
 
+@property (nonatomic, readonly) UAPreferenceDataStore *dataStore;
+
+
+- (void)setup;
 
 /**
  * Get the local time zone, considered the default.

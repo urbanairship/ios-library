@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAURLProtocol.h"
 #import "UAEventAppInit.h"
 #import "UAEventAppExit.h"
+#import "UAPreferenceDataStore.h"
 
 
 #import "UAActionJSDelegate.h"
@@ -118,21 +119,6 @@ UALogLevel uaLogLevel = UALogLevelError;
 + (void)takeOff:(UAConfig *)config {
     UA_BUILD_WARNINGS;
 
-    if ([UA_VERSION isEqualToString:@"0.0.0"]) {
-        UA_LERR(@"_UA_VERSION is undefined - this commonly indicates an issue with the build configuration, UA_VERSION will be set to \"0.0.0\".");
-    } else {
-        NSString *previousVersion = [[NSUserDefaults standardUserDefaults] stringForKey:UALibraryVersion];
-        if (![UA_VERSION isEqualToString:previousVersion]) {
-            [[NSUserDefaults standardUserDefaults] setObject:UA_VERSION forKey:UALibraryVersion];
-
-            if (previousVersion) {
-                UA_LINFO(@"Urban Airship library version changed from %@ to %@.", previousVersion, UA_VERSION);
-            }
-        }
-
-
-    }
-
     // takeOff needs to be run on the main thread
     if (![[NSThread currentThread] isMainThread]) {
         NSException *mainThreadException = [NSException exceptionWithName:UAirshipTakeOffBackgroundThreadException
@@ -161,6 +147,7 @@ UALogLevel uaLogLevel = UALogLevelError;
     _sharedAirship = [[UAirship alloc] init];
     _sharedAirship.config = config;
 
+
     // Ensure that app credentials have been passed in
     if (![config validate]) {
 
@@ -169,6 +156,24 @@ UALogLevel uaLogLevel = UALogLevelError;
         // Bail now. Don't continue the takeOff sequence.
         return;
     }
+
+    _sharedAirship.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", config.appKey]];
+
+    [_sharedAirship.dataStore migrateUnprefixedKeys:@[UALibraryVersion]];
+
+    if ([UA_VERSION isEqualToString:@"0.0.0"]) {
+        UA_LERR(@"_UA_VERSION is undefined - this commonly indicates an issue with the build configuration, UA_VERSION will be set to \"0.0.0\".");
+    } else {
+        NSString *previousVersion = [_sharedAirship.dataStore stringForKey:UALibraryVersion];
+        if (![UA_VERSION isEqualToString:previousVersion]) {
+            [_sharedAirship.dataStore setObject:UA_VERSION forKey:UALibraryVersion];
+
+            if (previousVersion) {
+                UA_LINFO(@"Urban Airship library version changed from %@ to %@.", previousVersion, UA_VERSION);
+            }
+        }
+    }
+
 
     UA_LINFO(@"UAirship Take Off! Lib Version: %@ App Key: %@ Production: %@.",
              UA_VERSION, config.appKey, config.inProduction ?  @"YES" : @"NO");
@@ -190,7 +195,7 @@ UALogLevel uaLogLevel = UALogLevelError;
     [_sharedAirship configureUserAgent];
 
     // Set up analytics
-    _sharedAirship.analytics = [[UAAnalytics alloc] initWithConfig:_sharedAirship.config];
+    _sharedAirship.analytics = [[UAAnalytics alloc] initWithConfig:_sharedAirship.config dataStore:_sharedAirship.dataStore];
     [_sharedAirship.analytics delayNextSend:UAAnalyticsFirstBatchUploadInterval];
 
     _sharedAirship.applicationMetrics = [[UAApplicationMetrics alloc] init];
@@ -229,14 +234,15 @@ UALogLevel uaLogLevel = UALogLevelError;
         [NSURLProtocol registerClass:[UAURLProtocol class]];
     }
 
-    // The singleton is now ready for use!
-    _sharedAirship.ready = true;
-
+    [[UAPush shared] setup];
 
     //create/setup user (begin listening for device token changes)
     [[UAUser defaultUser] initializeUser];
 
     _sharedAirship.actionJSDelegate = [[UAActionJSDelegate alloc] init];
+
+    // The singleton is now ready for use!
+    _sharedAirship.ready = true;
 
     if (_appDidFinishLaunchingNotification) {
 

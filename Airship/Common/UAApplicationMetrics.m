@@ -25,12 +25,16 @@
 
 
 #import "UAApplicationMetrics.h"
+#import "UAPreferenceDataStore.h"
 
+@interface UAApplicationMetrics()
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+@end
 
 @implementation UAApplicationMetrics
 NSString *const UAApplicationMetricLastOpenDate = @"UAApplicationMetricLastOpenDate";
 
-- (instancetype)init {
+- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
         // App inactive/active for incoming calls, notification center, and taskbar
@@ -43,16 +47,25 @@ NSString *const UAApplicationMetricLastOpenDate = @"UAApplicationMetricLastOpenD
     return self;
 }
 
++ (instancetype)applicationMetricsWithDataStore:(UAPreferenceDataStore *)dataStore {
+    UAApplicationMetrics *metrics = [[UAApplicationMetrics alloc] init];
+    metrics.dataStore = dataStore;
+
+    [metrics.dataStore migrateUnprefixedKeys:@[UAApplicationMetricLastOpenDate]];
+
+    return metrics;
+}
+
 - (void)didBecomeActive {
     self.lastApplicationOpenDate = [NSDate date];
 }
 
 - (NSDate *)lastApplicationOpenDate {
-    return [[NSUserDefaults standardUserDefaults] objectForKey:UAApplicationMetricLastOpenDate];
+    return [self.dataStore objectForKey:UAApplicationMetricLastOpenDate];
 }
 
 - (void)setLastApplicationOpenDate:(NSDate *)date {
-    [[NSUserDefaults standardUserDefaults] setObject:date forKey:UAApplicationMetricLastOpenDate];
+    [self.dataStore setObject:date forKey:UAApplicationMetricLastOpenDate];
 }
 
 @end

@@ -40,6 +40,7 @@
 #import "UAEventPushReceived.h"
 #import "UAEventAppBackground.h"
 #import "UAEventAppForeground.h"
+#import "UAPreferenceDataStore.h"
 
 
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
@@ -54,11 +55,12 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [self.queue cancelAllOperations];
 }
 
-- (instancetype)initWithConfig:(UAConfig *)airshipConfig {
+- (instancetype)initWithConfig:(UAConfig *)airshipConfig dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
         //set server to default if not specified in options
         self.config = airshipConfig;
+        self.dataStore = dataStore;
         
         [self resetEventsDatabaseStatus];
 
@@ -146,31 +148,31 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 
 #pragma mark -
-#pragma mark NSUserDefaults
+#pragma mark Preferences
 
 - (NSDate*)lastSendTime {
-    return [[NSUserDefaults standardUserDefaults] objectForKey:@"X-UA-Last-Send-Time"] ?: [NSDate distantPast];
+    return [self.dataStore objectForKey:@"X-UA-Last-Send-Time"] ?: [NSDate distantPast];
 }
 
 - (void)setLastSendTime:(NSDate *)lastSendTime {
     if (lastSendTime) {
-        [[NSUserDefaults standardUserDefaults] setObject:lastSendTime forKey:@"X-UA-Last-Send-Time"];
+        [self.dataStore setObject:lastSendTime forKey:@"X-UA-Last-Send-Time"];
     }
 }
 
 - (void)restoreSavedUploadEventSettings {
     // If the key is missing the int will end up being 0 and the values will clamp to there lower end.
-    self.maxTotalDBSize = (NSUInteger)[[NSUserDefaults standardUserDefaults] integerForKey:kMaxTotalDBSizeUserDefaultsKey];
-    self.maxBatchSize = (NSUInteger)[[NSUserDefaults standardUserDefaults] integerForKey:kMaxBatchSizeUserDefaultsKey];
-    self.maxWait = (NSUInteger)[[NSUserDefaults standardUserDefaults] integerForKey:kMaxWaitUserDefaultsKey];
-    self.minBatchInterval = (NSUInteger)[[NSUserDefaults standardUserDefaults] integerForKey:kMinBatchIntervalUserDefaultsKey];
+    self.maxTotalDBSize = (NSUInteger)[self.dataStore integerForKey:kMaxTotalDBSizeUserDefaultsKey];
+    self.maxBatchSize = (NSUInteger)[self.dataStore integerForKey:kMaxBatchSizeUserDefaultsKey];
+    self.maxWait = (NSUInteger)[self.dataStore integerForKey:kMaxWaitUserDefaultsKey];
+    self.minBatchInterval = (NSUInteger)[self.dataStore integerForKey:kMinBatchIntervalUserDefaultsKey];
 }
 
 - (void)saveUploadEventSettings {
-    [[NSUserDefaults standardUserDefaults] setInteger:(NSInteger)self.maxTotalDBSize forKey:kMaxTotalDBSizeUserDefaultsKey];
-    [[NSUserDefaults standardUserDefaults] setInteger:(NSInteger)self.maxBatchSize forKey:kMaxBatchSizeUserDefaultsKey];
-    [[NSUserDefaults standardUserDefaults] setInteger:(NSInteger)self.maxWait forKey:kMaxWaitUserDefaultsKey];
-    [[NSUserDefaults standardUserDefaults] setInteger:(NSInteger)self.minBatchInterval forKey:kMinBatchIntervalUserDefaultsKey];
+    [self.dataStore setInteger:(NSInteger)self.maxTotalDBSize forKey:kMaxTotalDBSizeUserDefaultsKey];
+    [self.dataStore setInteger:(NSInteger)self.maxBatchSize forKey:kMaxBatchSizeUserDefaultsKey];
+    [self.dataStore setInteger:(NSInteger)self.maxWait forKey:kMaxWaitUserDefaultsKey];
+    [self.dataStore setInteger:(NSInteger)self.minBatchInterval forKey:kMinBatchIntervalUserDefaultsKey];
 }
 
 #pragma mark -

@@ -27,7 +27,7 @@
 
 #import "UAPush+Internal.h"
 
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UAAnalytics.h"
 #import "UAEventDeviceRegistration.h"
 
@@ -38,35 +38,36 @@
 #import "UAUser.h"
 #import "UAInteractiveNotificationEvent.h"
 #import "UAUserNotificationCategories+Internal.h"
+#import "UAPreferenceDataStore.h"
 
 #define kUAMinTagLength 1
 #define kUAMaxTagLength 127
 #define kUANotificationActionKey @"com.urbanairship.interactive_actions"
 
-UAPushSettingsKey *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
-UAPushSettingsKey *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
+NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
+NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
 
-UAPushSettingsKey *const UAPushAliasSettingsKey = @"UAPushAlias";
-UAPushSettingsKey *const UAPushTagsSettingsKey = @"UAPushTags";
-UAPushSettingsKey *const UAPushBadgeSettingsKey = @"UAPushBadge";
-UAPushSettingsKey *const UAPushChannelIDKey = @"UAChannelID";
-UAPushSettingsKey *const UAPushChannelLocationKey = @"UAChannelLocation";
-UAPushSettingsKey *const UAPushDeviceTokenKey = @"UADeviceToken";
+NSString *const UAPushAliasSettingsKey = @"UAPushAlias";
+NSString *const UAPushTagsSettingsKey = @"UAPushTags";
+NSString *const UAPushBadgeSettingsKey = @"UAPushBadge";
+NSString *const UAPushChannelIDKey = @"UAChannelID";
+NSString *const UAPushChannelLocationKey = @"UAChannelLocation";
+NSString *const UAPushDeviceTokenKey = @"UADeviceToken";
 
-UAPushSettingsKey *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
-UAPushSettingsKey *const UAPushQuietTimeEnabledSettingsKey = @"UAPushQuietTimeEnabled";
-UAPushSettingsKey *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
-UAPushSettingsKey *const UAPushDeviceCanEditTagsKey = @"UAPushDeviceCanEditTags";
+NSString *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
+NSString *const UAPushQuietTimeEnabledSettingsKey = @"UAPushQuietTimeEnabled";
+NSString *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
+NSString *const UAPushDeviceCanEditTagsKey = @"UAPushDeviceCanEditTags";
 
-UAPushUserInfoKey *const UAPushUserInfoRegistration = @"Registration";
-UAPushUserInfoKey *const UAPushUserInfoPushEnabled = @"PushEnabled";
+NSString *const UAPushUserInfoRegistration = @"Registration";
+NSString *const UAPushUserInfoPushEnabled = @"PushEnabled";
 
-UAPushUserInfoKey *const UAPushChannelCreationOnForeground = @"UAPushChannelCreationOnForeground";
+NSString *const UAPushChannelCreationOnForeground = @"UAPushChannelCreationOnForeground";
 
-UAPushUserInfoKey *const UAPushEnabledSettingsMigratedKey = @"UAPushEnabledSettingsMigrated";
+NSString *const UAPushEnabledSettingsMigratedKey = @"UAPushEnabledSettingsMigrated";
 
 // Old push enabled key
-UAPushUserInfoKey *const UAPushEnabledKey = @"UAPushEnabled";
+NSString *const UAPushEnabledKey = @"UAPushEnabled";
 
 NSString *const UAPushQuietTimeStartKey = @"start";
 NSString *const UAPushQuietTimeEndKey = @"end";
@@ -78,8 +79,16 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 SINGLETON_IMPLEMENTATION(UAPush)
 #pragma clang diagnostic pop
 
--(void)dealloc {
+- (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (UAPreferenceDataStore *)dataStore {
+    if (![UAirship shared].dataStore) {
+        UA_LERR(@"Data store is empty, takeoff not called!");
+    }
+
+    return [UAirship shared].dataStore;
 }
 
 - (instancetype)init {
@@ -90,16 +99,30 @@ SINGLETON_IMPLEMENTATION(UAPush)
         self.defaultPushHandler = [[NSClassFromString(PUSH_DELEGATE_CLASS) alloc] init];
         self.pushNotificationDelegate = _defaultPushHandler;
 
+        self.deviceTagsEnabled = YES;
+        self.requireAuthorizationForDefaultCategories = YES;
+        self.backgroundPushNotificationsEnabledByDefault = YES;
+
+        self.userNotificationTypes = UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound;
+        self.registrationBackgroundTask = UIBackgroundTaskInvalid;
+    }
+
+    return self;
+}
+
+- (void)setup {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(applicationDidBecomeActive) 
-                                                     name:UIApplicationDidBecomeActiveNotification 
+                                                 selector:@selector(applicationDidBecomeActive)
+                                                     name:UIApplicationDidBecomeActiveNotification
                                                    object:[UIApplication sharedApplication]];
 
         // Only for observing the first call to app background
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                              selector:@selector(applicationDidEnterBackground) 
-                                                  name:UIApplicationDidEnterBackgroundNotification 
-                                                object:[UIApplication sharedApplication]];
+                                                 selector:@selector(applicationDidEnterBackground)
+                                                     name:UIApplicationDidEnterBackgroundNotification
+                                                   object:[UIApplication sharedApplication]];
 
         if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
             [[NSNotificationCenter defaultCenter] addObserver:self
@@ -111,15 +134,9 @@ SINGLETON_IMPLEMENTATION(UAPush)
         // Do not remove migratePushSettings call from init. It needs to be run
         // prior to allowing the application to set defaults.
         [self migratePushSettings];
-        
+
         self.channelRegistrar = [[UAChannelRegistrar alloc] init];
         self.channelRegistrar.delegate = self;
-
-        self.deviceTagsEnabled = YES;
-        self.requireAuthorizationForDefaultCategories = YES;
-        self.backgroundPushNotificationsEnabledByDefault = YES;
-
-        self.userNotificationTypes = UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound;
 
         // Log the channel ID at error level, but without logging
         // it as an error.
@@ -127,16 +144,12 @@ SINGLETON_IMPLEMENTATION(UAPush)
             NSLog(@"Channel ID: %@", self.channelID);
         }
 
-        self.registrationBackgroundTask = UIBackgroundTaskInvalid;
-
         // Register for remote notifications on iOS8 right away if the background mode is enabled. This does not prompt for
         // permissions to show notifications, but starts the device token registration.
         if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerForRemoteNotifications)] && [UAirship shared].remoteNotificationBackgroundModeEnabled) {
             [[UIApplication sharedApplication] registerForRemoteNotifications];
         }
-    }
-
-    return self;
+    });
 }
 
 #pragma mark -
@@ -144,7 +157,7 @@ SINGLETON_IMPLEMENTATION(UAPush)
 
 - (void)setDeviceToken:(NSString *)deviceToken {
     if (deviceToken == nil) {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushDeviceTokenKey];
+        [self.dataStore removeObjectForKey:UAPushDeviceTokenKey];
         return;
     }
     
@@ -162,7 +175,7 @@ SINGLETON_IMPLEMENTATION(UAPush)
         UA_LWARN(@"Device token %@ should be only 32 bytes (64 characters) long", deviceToken);
     }
 
-    [[NSUserDefaults standardUserDefaults] setObject:deviceToken forKey:UAPushDeviceTokenKey];
+    [self.dataStore setObject:deviceToken forKey:UAPushDeviceTokenKey];
 
     // Log the device token at error level, but without logging
     // it as an error.
@@ -172,14 +185,14 @@ SINGLETON_IMPLEMENTATION(UAPush)
 }
 
 - (NSString *)deviceToken {
-    return [[NSUserDefaults standardUserDefaults] stringForKey:UAPushDeviceTokenKey];
+    return [self.dataStore stringForKey:UAPushDeviceTokenKey];
 }
 
 #pragma mark -
 #pragma mark Get/Set Methods
 
 - (void)setChannelID:(NSString *)channelID {
-    [[NSUserDefaults standardUserDefaults] setValue:channelID forKey:UAPushChannelIDKey];
+    [self.dataStore setValue:channelID forKey:UAPushChannelIDKey];
     // Log the channel ID at error level, but without logging
     // it as an error.
     if (uaLogLevel >= UALogLevelError) {
@@ -188,48 +201,48 @@ SINGLETON_IMPLEMENTATION(UAPush)
 }
 
 - (NSString *)channelID {
-    // Get the channel location from standardUserDefaults instead of
+    // Get the channel location from data store instead of
     // the channelLocation property, because that may cause an infinite loop.
-    if ([[NSUserDefaults standardUserDefaults] stringForKey:UAPushChannelLocationKey]) {
-        return [[NSUserDefaults standardUserDefaults] stringForKey:UAPushChannelIDKey];
+    if ([self.dataStore stringForKey:UAPushChannelLocationKey]) {
+        return [self.dataStore stringForKey:UAPushChannelIDKey];
     } else {
         return nil;
     }
 }
 
 - (void)setChannelLocation:(NSString *)channelLocation {
-    [[NSUserDefaults standardUserDefaults] setValue:channelLocation forKey:UAPushChannelLocationKey];
+    [self.dataStore setValue:channelLocation forKey:UAPushChannelLocationKey];
 }
 
 - (NSString *)channelLocation {
-    // Get the channel ID from standardUserDefaults instead of
+    // Get the channel ID from data store instead of
     // the channelID property, because that may cause an infinite loop.
-    if ([[NSUserDefaults standardUserDefaults] stringForKey:UAPushChannelIDKey]) {
-        return [[NSUserDefaults standardUserDefaults] stringForKey:UAPushChannelLocationKey];
+    if ([self.dataStore stringForKey:UAPushChannelIDKey]) {
+        return [self.dataStore stringForKey:UAPushChannelLocationKey];
     } else {
         return nil;
     }
 }
 
 - (BOOL)autobadgeEnabled {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:UAPushBadgeSettingsKey];
+    return [self.dataStore boolForKey:UAPushBadgeSettingsKey];
 }
 
 - (void)setAutobadgeEnabled:(BOOL)autobadgeEnabled {
-    [[NSUserDefaults standardUserDefaults] setBool:autobadgeEnabled forKey:UAPushBadgeSettingsKey];
+    [self.dataStore setBool:autobadgeEnabled forKey:UAPushBadgeSettingsKey];
 }
 
 - (NSString *)alias {
-    return [[NSUserDefaults standardUserDefaults] stringForKey:UAPushAliasSettingsKey];
+    return [self.dataStore stringForKey:UAPushAliasSettingsKey];
 }
 
 - (void)setAlias:(NSString *)alias {
     NSString * trimmedAlias = [alias stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-    [[NSUserDefaults standardUserDefaults] setObject:trimmedAlias forKey:UAPushAliasSettingsKey];
+    [self.dataStore setObject:trimmedAlias forKey:UAPushAliasSettingsKey];
 }
 
 - (NSArray *)tags {
-    NSArray *currentTags = [[NSUserDefaults standardUserDefaults] objectForKey:UAPushTagsSettingsKey];
+    NSArray *currentTags = [self.dataStore objectForKey:UAPushTagsSettingsKey];
     if (!currentTags) {
         currentTags = [NSArray array];
     }
@@ -245,7 +258,7 @@ SINGLETON_IMPLEMENTATION(UAPush)
 }
 
 - (void)setTags:(NSArray *)tags {
-    [[NSUserDefaults standardUserDefaults] setObject:[self normalizeTags:tags] forKey:UAPushTagsSettingsKey];
+    [self.dataStore setObject:[self normalizeTags:tags] forKey:UAPushTagsSettingsKey];
 }
 
 -(NSArray *)normalizeTags:(NSArray *)tags {
@@ -266,12 +279,16 @@ SINGLETON_IMPLEMENTATION(UAPush)
 }
 
 - (BOOL)userPushNotificationsEnabled {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey];
+    if (![self.dataStore objectForKey:UAUserPushNotificationsEnabledKey]) {
+        return self.userPushNotificationsEnabledByDefault;
+    }
+
+    return [self.dataStore boolForKey:UAUserPushNotificationsEnabledKey];
 }
 
 - (void)setUserPushNotificationsEnabled:(BOOL)enabled {
     BOOL previousValue = self.userPushNotificationsEnabled;
-    [[NSUserDefaults standardUserDefaults] setBool:enabled forKey:UAUserPushNotificationsEnabledKey];
+    [self.dataStore setBool:enabled forKey:UAUserPushNotificationsEnabledKey];
 
     if (enabled != previousValue) {
         self.shouldUpdateAPNSRegistration = YES;
@@ -280,12 +297,16 @@ SINGLETON_IMPLEMENTATION(UAPush)
 }
 
 - (BOOL)backgroundPushNotificationsEnabled {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:UABackgroundPushNotificationsEnabledKey];
+    if (![self.dataStore objectForKey:UABackgroundPushNotificationsEnabledKey]) {
+        return self.backgroundPushNotificationsEnabledByDefault;
+    }
+
+    return [self.dataStore boolForKey:UABackgroundPushNotificationsEnabledKey];
 }
 
 - (void)setBackgroundPushNotificationsEnabled:(BOOL)enabled {
     BOOL previousValue = self.backgroundPushNotificationsEnabled;
-    [[NSUserDefaults standardUserDefaults] setBool:enabled forKey:UABackgroundPushNotificationsEnabledKey];
+    [self.dataStore setBool:enabled forKey:UABackgroundPushNotificationsEnabledKey];
 
     if (enabled != previousValue) {
         [self updateRegistration];
@@ -311,28 +332,28 @@ SINGLETON_IMPLEMENTATION(UAPush)
 }
 
 - (NSDictionary *)quietTime {
-    return [[NSUserDefaults standardUserDefaults] dictionaryForKey:UAPushQuietTimeSettingsKey];
+    return [self.dataStore dictionaryForKey:UAPushQuietTimeSettingsKey];
 }
 
 - (void)setQuietTime:(NSDictionary *)quietTime {
-    [[NSUserDefaults standardUserDefaults] setObject:quietTime forKey:UAPushQuietTimeSettingsKey];
+    [self.dataStore setObject:quietTime forKey:UAPushQuietTimeSettingsKey];
 }
 
 - (BOOL)quietTimeEnabled {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:UAPushQuietTimeEnabledSettingsKey];
+    return [self.dataStore boolForKey:UAPushQuietTimeEnabledSettingsKey];
 }
 
 - (void)setQuietTimeEnabled:(BOOL)quietTimeEnabled {
-    [[NSUserDefaults standardUserDefaults] setBool:quietTimeEnabled forKey:UAPushQuietTimeEnabledSettingsKey];
+    [self.dataStore setBool:quietTimeEnabled forKey:UAPushQuietTimeEnabledSettingsKey];
 }
 
 - (NSTimeZone *)timeZone {
-    NSString *timeZoneName = [[NSUserDefaults standardUserDefaults] stringForKey:UAPushTimeZoneSettingsKey];
+    NSString *timeZoneName = [self.dataStore stringForKey:UAPushTimeZoneSettingsKey];
     return [NSTimeZone timeZoneWithName:timeZoneName] ?: [self defaultTimeZoneForQuietTime];
 }
 
 - (void)setTimeZone:(NSTimeZone *)timeZone {
-    [[NSUserDefaults standardUserDefaults] setObject:[timeZone name] forKey:UAPushTimeZoneSettingsKey];
+    [self.dataStore setObject:[timeZone name] forKey:UAPushTimeZoneSettingsKey];
 }
 
 - (NSTimeZone *)defaultTimeZoneForQuietTime {
@@ -432,7 +453,7 @@ SINGLETON_IMPLEMENTATION(UAPush)
 - (void)removeTagsFromCurrentDevice:(NSArray *)tags {
     NSMutableArray *mutableTags = [NSMutableArray arrayWithArray:self.tags];
     [mutableTags removeObjectsInArray:tags];
-    [[NSUserDefaults standardUserDefaults] setObject:mutableTags forKey:UAPushTagsSettingsKey];
+    [self.dataStore setObject:mutableTags forKey:UAPushTagsSettingsKey];
 }
 
 - (void)addTag:(NSString *)tag {
@@ -452,7 +473,7 @@ SINGLETON_IMPLEMENTATION(UAPush)
 - (void)removeTags:(NSArray *)tags {
     NSMutableArray *mutableTags = [NSMutableArray arrayWithArray:self.tags];
     [mutableTags removeObjectsInArray:tags];
-    [[NSUserDefaults standardUserDefaults] setObject:mutableTags forKey:UAPushTagsSettingsKey];
+    [self.dataStore setObject:mutableTags forKey:UAPushTagsSettingsKey];
 }
 
 - (void)setBadgeNumber:(NSInteger)badgeNumber {
@@ -646,7 +667,7 @@ BOOL deferChannelCreationOnForeground = false;
 - (void)applicationDidBecomeActive {
 
     // If this is the first run, skip creating the channel ID.
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:UAPushChannelCreationOnForeground]) {
+    if ([self.dataStore boolForKey:UAPushChannelCreationOnForeground]) {
         if (!self.channelID) {
             UA_LTRACE(@"Channel ID not created, Updating registration.");
             [self updateRegistrationForcefully:NO];
@@ -662,7 +683,7 @@ BOOL deferChannelCreationOnForeground = false;
     self.launchNotification = nil;
 
     // Set the UAPushChannelCreationOnForeground after first run
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushChannelCreationOnForeground];
+    [self.dataStore setBool:YES forKey:UAPushChannelCreationOnForeground];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self 
                                                     name:UIApplicationDidEnterBackgroundNotification 
@@ -690,8 +711,6 @@ BOOL deferChannelCreationOnForeground = false;
 #pragma mark UA Registration Methods
 
 - (UAChannelRegistrationPayload *)createChannelPayload {
-    [[NSUserDefaults standardUserDefaults] synchronize];
-
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     payload.deviceID = [UAUtils deviceID];
     payload.userID = [UAUser defaultUser].username;
@@ -907,14 +926,10 @@ BOOL deferChannelCreationOnForeground = false;
 
 // Change the default push enabled value in the registered user defaults
 - (void)setBackgroundPushNotificationsEnabledByDefault:(BOOL)enabled {
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithObject:[NSNumber numberWithBool:enabled] forKey:UABackgroundPushNotificationsEnabledKey];
-    [[NSUserDefaults standardUserDefaults] registerDefaults:dictionary];
     _backgroundPushNotificationsEnabledByDefault = enabled;
 }
 
 - (void)setUserPushNotificationsEnabledByDefault:(BOOL)enabled {
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithObject:[NSNumber numberWithBool:enabled] forKey:UAUserPushNotificationsEnabledKey];
-    [[NSUserDefaults standardUserDefaults] registerDefaults:dictionary];
     _userPushNotificationsEnabledByDefault = enabled;
 }
 
@@ -937,24 +952,30 @@ BOOL deferChannelCreationOnForeground = false;
     }
 }
 
+
+
 - (void)migratePushSettings {
+    [self.dataStore migrateUnprefixedKeys:@[UAUserPushNotificationsEnabledKey, UABackgroundPushNotificationsEnabledKey,
+                                            UAPushAliasSettingsKey, UAPushTagsSettingsKey, UAPushBadgeSettingsKey,
+                                            UAPushChannelIDKey, UAPushChannelLocationKey, UAPushDeviceTokenKey,
+                                            UAPushQuietTimeSettingsKey, UAPushQuietTimeEnabledSettingsKey,
+                                            UAPushDeviceCanEditTagsKey, UAPushUserInfoRegistration, UAPushUserInfoPushEnabled,
+                                            UAPushChannelCreationOnForeground, UAPushEnabledSettingsMigratedKey, UAPushEnabledKey]];
 
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-
-    if ([userDefaults boolForKey:UAPushEnabledSettingsMigratedKey]) {
+    if ([self.dataStore boolForKey:UAPushEnabledSettingsMigratedKey]) {
         // Already migrated
         return;
     }
 
     // Migrate userNotificationEnabled setting to YES if we are currently registered for notification types
-    if (![userDefaults objectForKey:UAUserPushNotificationsEnabledKey]) {
+    if (![self.dataStore objectForKey:UAUserPushNotificationsEnabledKey]) {
 
         // If the previous pushEnabled was set
-        if ([userDefaults objectForKey:UAPushEnabledKey]) {
-            BOOL previousValue = [[NSUserDefaults standardUserDefaults] boolForKey:UAPushEnabledKey];
+        if ([self.dataStore objectForKey:UAPushEnabledKey]) {
+            BOOL previousValue = [self.dataStore boolForKey:UAPushEnabledKey];
             UA_LDEBUG(@"Migrating userPushNotificationEnabled to %@ from previous pushEnabledValue.", previousValue ? @"YES" : @"NO");
-            [userDefaults setBool:previousValue forKey:UAUserPushNotificationsEnabledKey];
-            [userDefaults removeObjectForKey:UAPushEnabledKey];
+            [self.dataStore setBool:previousValue forKey:UAUserPushNotificationsEnabledKey];
+            [self.dataStore removeObjectForKey:UAPushEnabledKey];
         } else {
             BOOL registeredForUserNotificationTypes;
             if ([UIUserNotificationSettings class]) {
@@ -965,12 +986,12 @@ BOOL deferChannelCreationOnForeground = false;
 
             if (registeredForUserNotificationTypes) {
                 UA_LDEBUG(@"Migrating userPushNotificationEnabled to YES because application has user notification types.");
-                [userDefaults setBool:YES forKey:UAUserPushNotificationsEnabledKey];
+                [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
             }
         }
     }
 
-    [userDefaults setBool:YES forKey:UAPushEnabledSettingsMigratedKey];
+    [self.dataStore setBool:YES forKey:UAPushEnabledSettingsMigratedKey];
 }
 
 - (UIUserNotificationType)currentEnabledNotificationTypes {
@@ -985,6 +1006,5 @@ BOOL deferChannelCreationOnForeground = false;
         return [UIApplication sharedApplication].enabledRemoteNotificationTypes & all;
     }
 }
-
 
 @end

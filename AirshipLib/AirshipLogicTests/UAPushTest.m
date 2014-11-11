@@ -40,7 +40,7 @@
 #import "NSObject+HideClass.h"
 #import "UAInteractiveNotificationEvent.h"
 #import "UAUserNotificationCategories+Internal.h"
-
+#import "UAPreferenceDataStore.h"
 
 @interface UAPushTest : XCTestCase
 @property (nonatomic, strong) id mockedApplication;
@@ -56,6 +56,8 @@
 @property (nonatomic, strong) id mockDefaultUserNotificationCategories;
 
 @property (nonatomic, strong) UAPush *push;
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+
 @property (nonatomic, strong) NSDictionary *notification;
 
 @end
@@ -71,6 +73,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     // Unable to create a separate instance of UAPush. The singleton implementation
     // only allows 1, even trying to alloc init a new one.
     self.push =  [UAPush shared];
+
+    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"uapush.test."];
 
     self.notification = @{
                           @"aps": @{
@@ -110,6 +114,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     self.mockedAirship =[OCMockObject niceMockForClass:[UAirship class]];
     [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
     [[[self.mockedAirship stub] andReturn:self.mockedAnalytics] analytics];
+    [[[self.mockedAirship stub] andReturn:self.dataStore] dataStore];
 
     self.mockedPushDelegate = [OCMockObject niceMockForProtocol:@protocol(UAPushNotificationDelegate)];
     self.push.pushNotificationDelegate = self.mockedPushDelegate;
@@ -134,6 +139,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)tearDown {
     self.push.pushNotificationDelegate = nil;
     self.push.registrationDelegate = nil;
+
+    [self.dataStore removeAll];
 
     // Landing UAPush so next [UAPush shared] a new one will be created
     [UAPush land];
@@ -180,39 +187,39 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testAutoBadgeEnabled {
     self.push.autobadgeEnabled = true;
     XCTAssertTrue(self.push.autobadgeEnabled, @"autobadgeEnabled should be enabled when set to YES");
-    XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UAPushBadgeSettingsKey],
+    XCTAssertTrue([self.dataStore boolForKey:UAPushBadgeSettingsKey],
                   @"autobadgeEnabled should be stored in standardUserDefaults");
 
     self.push.autobadgeEnabled = NO;
     XCTAssertFalse(self.push.autobadgeEnabled, @"autobadgeEnabled should be disabled when set to NO");
-    XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAPushBadgeSettingsKey],
+    XCTAssertFalse([self.dataStore boolForKey:UAPushBadgeSettingsKey],
                    @"autobadgeEnabled should be stored in standardUserDefaults");
 }
 
 - (void)testAlias {
     self.push.alias = @"some-alias";
     XCTAssertEqualObjects(@"some-alias", self.push.alias, @"alias is not being set correctly");
-    XCTAssertEqualObjects(@"some-alias", [[NSUserDefaults standardUserDefaults] stringForKey:UAPushAliasSettingsKey],
+    XCTAssertEqualObjects(@"some-alias", [self.dataStore stringForKey:UAPushAliasSettingsKey],
                           @"alias should be stored in standardUserDefaults");
 
     self.push.alias = nil;
     XCTAssertNil(self.push.alias, @"alias should be able to be cleared");
-    XCTAssertNil([[NSUserDefaults standardUserDefaults] stringForKey:UAPushAliasSettingsKey],
+    XCTAssertNil([self.dataStore stringForKey:UAPushAliasSettingsKey],
                  @"alias should be able to be cleared in standardUserDefaults");
 
     self.push.alias = @"";
     XCTAssertEqualObjects(@"", self.push.alias, @"alias is not being set correctly");
-    XCTAssertEqualObjects(@"", [[NSUserDefaults standardUserDefaults] stringForKey:UAPushAliasSettingsKey],
+    XCTAssertEqualObjects(@"", [self.dataStore stringForKey:UAPushAliasSettingsKey],
                           @"alias should be stored in standardUserDefaults");
 
     self.push.alias = @"   ";
     XCTAssertEqualObjects(@"", self.push.alias, @"alias is not being trimmed and set correctly");
-    XCTAssertEqualObjects(@"", [[NSUserDefaults standardUserDefaults] stringForKey:UAPushAliasSettingsKey],
+    XCTAssertEqualObjects(@"", [self.dataStore stringForKey:UAPushAliasSettingsKey],
                           @"alias should be stored in standardUserDefaults");
 
     self.push.alias = @"   a   ";
     XCTAssertEqualObjects(@"a", self.push.alias, @"alias is not being trimmed and set correctly");
-    XCTAssertEqualObjects(@"a", [[NSUserDefaults standardUserDefaults] stringForKey:UAPushAliasSettingsKey],
+    XCTAssertEqualObjects(@"a", [self.dataStore stringForKey:UAPushAliasSettingsKey],
                           @"alias should be stored in standardUserDefaults");
 }
 
@@ -222,12 +229,12 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     XCTAssertEqual((NSUInteger)2, self.push.tags.count, @"should of added 2 tags");
     XCTAssertEqualObjects(tags, self.push.tags, @"tags are not stored correctly");
-    XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] valueForKey:UAPushTagsSettingsKey], self.push.tags,
+    XCTAssertEqualObjects([self.dataStore valueForKey:UAPushTagsSettingsKey], self.push.tags,
                           @"tags are not stored correctly in standardUserDefaults");
 
     self.push.tags = nil;
     XCTAssertEqual((NSUInteger)0, self.push.tags.count, @"tags should return an empty array even when set to nil");
-    XCTAssertEqual((NSUInteger)0, [[[NSUserDefaults standardUserDefaults] valueForKey:UAPushTagsSettingsKey] count],
+    XCTAssertEqual((NSUInteger)0, [[self.dataStore valueForKey:UAPushTagsSettingsKey] count],
                    @"tags are not being cleared in standardUserDefaults");
 }
 
@@ -447,7 +454,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertTrue(self.push.userPushNotificationsEnabled,
                   @"userPushNotificationsEnabled should be enabled when set to YES");
 
-    XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey],
+    XCTAssertTrue([self.dataStore boolForKey:UAUserPushNotificationsEnabledKey],
                   @"userPushNotificationsEnabled should be stored in standardUserDefaults");
 
     XCTAssertNoThrow([self.mockedApplication verify],
@@ -475,7 +482,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertTrue(self.push.userPushNotificationsEnabled,
                   @"userPushNotificationsEnabled should be enabled when set to YES");
 
-    XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey],
+    XCTAssertTrue([self.dataStore boolForKey:UAUserPushNotificationsEnabledKey],
                   @"userPushNotificationsEnabled should be stored in standardUserDefaults");
 
     XCTAssertNoThrow([self.mockedApplication verify],
@@ -503,7 +510,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertFalse(self.push.userPushNotificationsEnabled,
                    @"userPushNotificationsEnabled should be disabled when set to NO");
 
-    XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey],
+    XCTAssertFalse([self.dataStore boolForKey:UAUserPushNotificationsEnabledKey],
                    @"userPushNotificationsEnabled should be stored in standardUserDefaults");
 
     XCTAssertNoThrow([self.mockedApplication verify],
@@ -546,7 +553,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertFalse(self.push.userPushNotificationsEnabled,
                    @"userPushNotificationsEnabled should be disabled when set to NO");
 
-    XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey],
+    XCTAssertFalse([self.dataStore boolForKey:UAUserPushNotificationsEnabledKey],
                    @"userPushNotificationsEnabled should be stored in standardUserDefaults");
 
     XCTAssertNoThrow([self.mockedApplication verify],
@@ -569,11 +576,11 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     self.push.backgroundPushNotificationsEnabled = YES;
 
-    XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UABackgroundPushNotificationsEnabledKey],
+    XCTAssertTrue([self.dataStore boolForKey:UABackgroundPushNotificationsEnabledKey],
                    @"backgroundPushNotificationsEnabled should be stored in standardUserDefaults");
 
     self.push.backgroundPushNotificationsEnabled = NO;
-    XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UABackgroundPushNotificationsEnabledKey],
+    XCTAssertFalse([self.dataStore boolForKey:UABackgroundPushNotificationsEnabledKey],
                   @"backgroundPushNotificationsEnabled should be stored in standardUserDefaults");
 
 }
@@ -632,7 +639,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                           @"timezone is not being set correctly");
 
     XCTAssertEqualObjects([[NSTimeZone timeZoneWithAbbreviation:@"EST"] name],
-                          [[NSUserDefaults standardUserDefaults] stringForKey:UAPushTimeZoneSettingsKey],
+                          [self.dataStore stringForKey:UAPushTimeZoneSettingsKey],
                           @"timezone should be stored in standardUserDefaults");
 
     self.push.timeZone = nil;
@@ -641,7 +648,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                           [self.push.timeZone abbreviation],
                           @"Timezone should default to defaultTimeZoneForQuietTime");
 
-    XCTAssertNil([[NSUserDefaults standardUserDefaults] stringForKey:UAPushTimeZoneSettingsKey],
+    XCTAssertNil([self.dataStore stringForKey:UAPushTimeZoneSettingsKey],
                  @"timezone should be able to be cleared in standardUserDefaults");
 }
 
@@ -761,6 +768,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  * the default categories and the custom categories.
  */
 - (void)testUserNotificationCategories {
+    self.push.userPushNotificationsEnabled = YES;
+
     UIMutableUserNotificationCategory *defaultCategory = [[UIMutableUserNotificationCategory alloc] init];
     defaultCategory.identifier = @"defaultCategory";
 
@@ -792,7 +801,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     XCTAssertNoThrow([self.mockedApplication verify],
                      @"Registered categories should be the union of defaults and customs");
-
 }
 
 
@@ -1040,7 +1048,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  * Test quietTimeEnabled.
  */
 - (void)testSetQuietTimeEnabled {
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushQuietTimeEnabledSettingsKey];
+    [self.dataStore removeObjectForKey:UAPushQuietTimeEnabledSettingsKey];
     XCTAssertFalse(self.push.quietTimeEnabled, @"QuietTime should be disabled");
 
     [UAPush shared].quietTimeEnabled = YES;
@@ -1055,15 +1063,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  */
 - (void)testUserPushNotificationsEnabledByDefault {
     self.push.userPushNotificationsEnabledByDefault = YES;
-
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAUserPushNotificationsEnabledKey];
-    XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey],
-                  @"UAUserPushNotificationsEnabledKey in standardUserDefaults should default to YES");
+    XCTAssertTrue(self.push.userPushNotificationsEnabled, @"default user notification value not taking affect.");
 
     self.push.userPushNotificationsEnabledByDefault = NO;
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAUserPushNotificationsEnabledKey];
-    XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey],
-                   @"UAUserPushNotificationsEnabledKey in standardUserDefaults should default to NO");
+    XCTAssertFalse(self.push.userPushNotificationsEnabled, @"default user notification value not taking affect.");
 }
 
 /**
@@ -1071,17 +1074,11 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  */
 - (void)testBackgroundPushNotificationsEnabledByDefault {
     self.push.backgroundPushNotificationsEnabledByDefault = YES;
-
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UABackgroundPushNotificationsEnabledKey];
-    XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UABackgroundPushNotificationsEnabledKey],
-                  @"UABackgroundPushNotificationsEnabledKey in standardUserDefaults should default to YES");
+    XCTAssertTrue(self.push.backgroundPushNotificationsEnabled, @"default background notification value not taking affect.");
 
     self.push.backgroundPushNotificationsEnabledByDefault = NO;
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UABackgroundPushNotificationsEnabledKey];
-    XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UABackgroundPushNotificationsEnabledKey],
-                   @"UABackgroundPushNotificationsEnabledKey in standardUserDefaults should default to NO");
+    XCTAssertFalse(self.push.backgroundPushNotificationsEnabled, @"default background notification value not taking affect.");
 }
-
 
 /**
  * Test update registration when shouldUpdateAPNSRegistration is true, updates
@@ -1629,7 +1626,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [self.push applicationDidEnterBackground];
     XCTAssertTrue(self.push.hasEnteredBackground, @"applicationDidEnterBackground should set hasEnteredBackground to true");
     XCTAssertNil(self.push.launchNotification, @"applicationDidEnterBackground should clear the launch notification");
-    XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UAPushChannelCreationOnForeground], @"applicationDidEnterBackground should set channelCreationOnForeground to true");
+    XCTAssertTrue([self.dataStore boolForKey:UAPushChannelCreationOnForeground], @"applicationDidEnterBackground should set channelCreationOnForeground to true");
 }
 
 /**
@@ -1750,16 +1747,18 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  */
 - (void)testMigrateNewRegistrationFlowAlreadySetIOS8 {
     // Set the UAUserPushNotificationsEnabledKey setting to NO
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAUserPushNotificationsEnabledKey];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsMigratedKey];
+    [self.dataStore setBool:NO forKey:UAUserPushNotificationsEnabledKey];
+
 
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert categories:nil];
     [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
 
+    // Force a migration
+    [self.dataStore removeObjectForKey:UAPushEnabledSettingsMigratedKey];
     [self.push migratePushSettings];
 
     // Verify its still NO
-    XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey]);
+    XCTAssertFalse([self.dataStore boolForKey:UAUserPushNotificationsEnabledKey]);
 }
 /**
  * Test migrating the userNotificationEnabled key does not set if the
@@ -1767,8 +1766,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  */
 - (void)testMigrateNewRegistrationFlowDisabledIOS8 {
     // Clear the UAUserPushNotificationsEnabledKey setting
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAUserPushNotificationsEnabledKey];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsMigratedKey];
+    [self.dataStore removeObjectForKey:UAUserPushNotificationsEnabledKey];
+    [self.dataStore removeObjectForKey:UAPushEnabledSettingsMigratedKey];
 
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone categories:nil];
     [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
@@ -1776,7 +1775,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [self.push migratePushSettings];
 
     // Verify it was not set
-    XCTAssertNil([[NSUserDefaults standardUserDefaults] objectForKey:UAUserPushNotificationsEnabledKey]);
+    XCTAssertNil([self.dataStore objectForKey:UAUserPushNotificationsEnabledKey]);
 }
 
 /**
@@ -1785,8 +1784,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  */
 - (void)testMigrateNewRegistrationFlowEnabledIOS8 {
     // Clear the UAUserPushNotificationsEnabledKey setting
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAUserPushNotificationsEnabledKey];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsMigratedKey];
+    [self.dataStore removeObjectForKey:UAUserPushNotificationsEnabledKey];
+    [self.dataStore removeObjectForKey:UAPushEnabledSettingsMigratedKey];
 
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert categories:nil];
     [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
@@ -1794,7 +1793,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [self.push migratePushSettings];
 
     // Verify it was set to YES
-    XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey]);
+    XCTAssertTrue([self.dataStore boolForKey:UAUserPushNotificationsEnabledKey]);
 }
 
 
@@ -1806,15 +1805,15 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [UIUserNotificationSettings hideClass];
 
     // Set the UAUserPushNotificationsEnabledKey setting to NO
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAUserPushNotificationsEnabledKey];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsMigratedKey];
+    [self.dataStore setBool:NO forKey:UAUserPushNotificationsEnabledKey];
+    [self.dataStore removeObjectForKey:UAPushEnabledSettingsMigratedKey];
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIRemoteNotificationTypeAlert)] enabledRemoteNotificationTypes];
 
     [self.push migratePushSettings];
 
     // Verify its still NO
-    XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey]);
+    XCTAssertFalse([self.dataStore boolForKey:UAUserPushNotificationsEnabledKey]);
 }
 
 /**
@@ -1825,8 +1824,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [UIUserNotificationSettings hideClass];
 
     // Clear the UAUserPushNotificationsEnabledKey setting
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAUserPushNotificationsEnabledKey];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsMigratedKey];
+    [self.dataStore removeObjectForKey:UAUserPushNotificationsEnabledKey];
+    [self.dataStore removeObjectForKey:UAPushEnabledSettingsMigratedKey];
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIRemoteNotificationTypeNone)] enabledRemoteNotificationTypes];
 
@@ -1834,7 +1833,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [self.push migratePushSettings];
 
     // Verify it was not set
-    XCTAssertNil([[NSUserDefaults standardUserDefaults] objectForKey:UAUserPushNotificationsEnabledKey]);
+    XCTAssertNil([self.dataStore objectForKey:UAUserPushNotificationsEnabledKey]);
 }
 
 /**
@@ -1846,15 +1845,15 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
 
     // Clear the UAUserPushNotificationsEnabledKey setting
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAUserPushNotificationsEnabledKey];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsMigratedKey];
+    [self.dataStore removeObjectForKey:UAUserPushNotificationsEnabledKey];
+    [self.dataStore removeObjectForKey:UAPushEnabledSettingsMigratedKey];
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIRemoteNotificationTypeAlert)] enabledRemoteNotificationTypes];
 
     [self.push migratePushSettings];
 
     // Verify it was set to YES
-    XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey]);
+    XCTAssertTrue([self.dataStore boolForKey:UAUserPushNotificationsEnabledKey]);
 }
 
 /**
@@ -1862,8 +1861,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  */
 - (void)testMigrateNewRegistrationFlowOnlyOnce {
     // Clear the UAUserPushNotificationsEnabledKey setting
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAUserPushNotificationsEnabledKey];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsMigratedKey];
+    [self.dataStore removeObjectForKey:UAUserPushNotificationsEnabledKey];
+    [self.dataStore removeObjectForKey:UAPushEnabledSettingsMigratedKey];
 
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert categories:nil];
     [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
@@ -1871,16 +1870,16 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [self.push migratePushSettings];
 
     // Verify it was set to YES
-    XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey]);
-    XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UAPushEnabledSettingsMigratedKey]);
+    XCTAssertTrue([self.dataStore boolForKey:UAUserPushNotificationsEnabledKey]);
+    XCTAssertTrue([self.dataStore boolForKey:UAPushEnabledSettingsMigratedKey]);
 
     // Clear the UAUserPushNotificationsEnabledKey setting
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAUserPushNotificationsEnabledKey];
+    [self.dataStore removeObjectForKey:UAUserPushNotificationsEnabledKey];
 
     [self.push migratePushSettings];
 
     // Should not enable it the second time
-    XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey]);
+    XCTAssertFalse([self.dataStore boolForKey:UAUserPushNotificationsEnabledKey]);
 }
 
 /**
@@ -2195,7 +2194,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertFalse(self.push.userPushNotificationsEnabled,
                    @"userPushNotificationsEnabled should be disabled when set to NO");
 
-    XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAUserPushNotificationsEnabledKey],
+    XCTAssertFalse([self.dataStore boolForKey:UAUserPushNotificationsEnabledKey],
                    @"userPushNotificationsEnabled should be stored in standardUserDefaults");
 
     XCTAssertNoThrow([self.mockedApplication verify],
@@ -2206,8 +2205,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  * Test channel ID is returned when both channel ID and channel location exist.
  */
 - (void)testChannelID {
-    [[NSUserDefaults standardUserDefaults] setValue:@"channel ID" forKey:@"UAChannelID"];
-    [[NSUserDefaults standardUserDefaults] setValue:@"channel Location" forKey:@"UAChannelLocation"];
+    [self.dataStore setValue:@"channel ID" forKey:@"UAChannelID"];
+    [self.dataStore setValue:@"channel Location" forKey:@"UAChannelLocation"];
 
     XCTAssertEqualObjects(self.push.channelID, @"channel ID", @"Should return channel ID");
 }
@@ -2216,8 +2215,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  * Test channelID returns nil when channel ID does not exist.
  */
 - (void)testChannelIDNoChannel {
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"UAChannelID"];
-    [[NSUserDefaults standardUserDefaults] setValue:@"channel Location" forKey:@"UAChannelLocation"];
+    [self.dataStore removeObjectForKey:@"UAChannelID"];
+    [self.dataStore setValue:@"channel Location" forKey:@"UAChannelLocation"];
 
     XCTAssertNil(self.push.channelID, @"Channel ID should be nil");
 }
@@ -2226,8 +2225,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  * Test channelID returns nil when channel location does not exist.
  */
 - (void)testChannelIDNoLocation {
-    [[NSUserDefaults standardUserDefaults] setValue:@"channel ID" forKey:@"UAChannelID"];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"UAChannelLocation"];
+    [self.dataStore setValue:@"channel ID" forKey:@"UAChannelID"];
+    [self.dataStore removeObjectForKey:@"UAChannelLocation"];
 
     XCTAssertNil(self.push.channelID, @"Channel ID should be nil");
 }
@@ -2236,8 +2235,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  * Test channel location is returned when both channel ID and channel location exist.
  */
 - (void)testChannelLocation {
-    [[NSUserDefaults standardUserDefaults] setValue:@"channel ID" forKey:@"UAChannelID"];
-    [[NSUserDefaults standardUserDefaults] setValue:@"channel Location" forKey:@"UAChannelLocation"];
+    [self.dataStore setValue:@"channel ID" forKey:@"UAChannelID"];
+    [self.dataStore setValue:@"channel Location" forKey:@"UAChannelLocation"];
 
     XCTAssertEqualObjects(self.push.channelLocation, @"channel Location", @"Should return channel location");
 }
@@ -2246,8 +2245,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  * Test channelLocation returns nil when channel ID does not exist.
  */
 - (void)testChannelLocationNoChannel {
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"UAChannelID"];
-    [[NSUserDefaults standardUserDefaults] setValue:@"channel Location" forKey:@"UAChannelLocation"];
+    [self.dataStore removeObjectForKey:@"UAChannelID"];
+    [self.dataStore setValue:@"channel Location" forKey:@"UAChannelLocation"];
 
     XCTAssertNil(self.push.channelLocation, @"Channel location should be nil");
 }
@@ -2256,8 +2255,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  * Test channelLocation returns nil when channel location does not exist.
  */
 - (void)testChannelLocationNoLocation {
-    [[NSUserDefaults standardUserDefaults] setValue:@"channel ID" forKey:@"UAChannelID"];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"UAChannelLocation"];
+    [self.dataStore setValue:@"channel ID" forKey:@"UAChannelID"];
+    [self.dataStore removeObjectForKey:@"UAChannelLocation"];
 
     XCTAssertNil(self.push.channelLocation, @"Channel location should be nil");
 }
