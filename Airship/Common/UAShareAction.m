@@ -30,6 +30,7 @@
 
 @interface UAShareAction()
 @property (nonatomic, strong) UAActivityViewController *lastActivityViewController;
+@property (nonatomic, strong) UIPopoverController *popoverController;
 @end
 
 @implementation UAShareAction
@@ -63,6 +64,7 @@
     activityViewController.excludedActivityTypes = @[UIActivityTypeAssignToContact, UIActivityTypePrint, UIActivityTypeSaveToCameraRoll, UIActivityTypeAirDrop];
 
     activityViewController.dismissalBlock = ^{
+        self.popoverController = nil;
         self.lastActivityViewController = nil;
     };
 
@@ -88,9 +90,9 @@
                 completionHandler([UAActionResult emptyResult]);
             }];
         } else if ([deviceType rangeOfString:@"iPad"].location != NSNotFound && deviceVersion >= 7.0 && deviceVersion < 8.0) {
-            UIPopoverController * popoverController = [[UIPopoverController alloc] initWithContentViewController:activityViewController];
-            popoverController.delegate = activityViewController;
-            [popoverController presentPopoverFromRect:activityViewController.sourceRect inView:[UAUtils topController].view permittedArrowDirections:0 animated:YES];
+            self.popoverController = [[UIPopoverController alloc] initWithContentViewController:activityViewController];
+            self.popoverController.delegate = activityViewController;
+            [self.popoverController presentPopoverFromRect:activityViewController.sourceRect inView:[UAUtils topController].view permittedArrowDirections:0 animated:YES];
             completionHandler([UAActionResult emptyResult]);
         } else {
             [[UAUtils topController] presentViewController:activityViewController animated:YES completion:^{

@@ -35,7 +35,29 @@
 }
 
 - (CGRect)sourceRect {
+    NSString *deviceType = [UIDevice currentDevice].model;
+    float deviceVersion = [[UIDevice currentDevice].systemVersion floatValue];
     CGRect screenBounds = [UIScreen mainScreen].bounds;
+
+    // iOS 8.0+ iPad
+    if ([deviceType rangeOfString:@"iPad"].location != NSNotFound && deviceVersion >= 8.0) {
+        return CGRectInset(screenBounds, CGRectGetWidth(screenBounds)/4.0, CGRectGetHeight(screenBounds)/4.0);
+    }
+
+    CGFloat width = CGRectGetWidth(screenBounds);
+    CGFloat height = CGRectGetHeight(screenBounds);
+    UIInterfaceOrientation interfaceOrientation = [UIApplication sharedApplication].statusBarOrientation;
+
+    // iOS 7.x iPad
+    if ([deviceType rangeOfString:@"iPad"].location != NSNotFound && deviceVersion >= 7.0 && deviceVersion < 8.0) {
+        if (UIInterfaceOrientationIsPortrait(interfaceOrientation)) {
+            screenBounds.size = CGSizeMake(width, height);
+        } else {
+            screenBounds.size = CGSizeMake(height, width);
+        }
+        return CGRectInset(screenBounds, width/4.0, height/4.0);
+    }
+
     return CGRectInset(screenBounds, CGRectGetWidth(screenBounds)/4.0, CGRectGetHeight(screenBounds)/4.0);
 }
 
