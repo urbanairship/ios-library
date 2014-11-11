@@ -158,11 +158,6 @@
  */
 - (void)setObject:(id)value forKey:(NSString *)key;
 
-/**
- * Writes any modifications to the persistent domains to disk and updates all
- * unmodified persistent domains to what is on disk.
- */
-- (void)synchronize;
 
 /**
  * Removes all the keys that start with the data store's key prefix.

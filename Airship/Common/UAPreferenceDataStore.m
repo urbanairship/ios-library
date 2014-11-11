@@ -133,8 +133,6 @@
             [self.defaults removeObjectForKey:key];
         }
     }
-
-    [self.defaults synchronize];
 }
 
 - (void)removeAll {
@@ -143,15 +141,6 @@
             [self.defaults removeObjectForKey:key];
         }
     }
-
-    [self.defaults synchronize];
 }
-
-- (void)synchronize {
-    [self.defaults synchronize];
-}
-
-
-
 
 @end
