@@ -29,7 +29,7 @@
  * Wrapper around UIActivityViewController that takes an optional
  * block that will fire after the view disappears.
  */
-@interface UAActivityViewController : UIActivityViewController <UIPopoverPresentationControllerDelegate>
+@interface UAActivityViewController : UIActivityViewController <UIPopoverPresentationControllerDelegate, UIPopoverControllerDelegate>
 
 /**
  * Block called after the view has disappeared.
