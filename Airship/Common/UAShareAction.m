@@ -29,6 +29,7 @@
 #import "UAActivityViewController.h"
 
 @interface UAShareAction()
+@property (nonatomic, strong) UAActivityViewController *activityViewController;
 @property (nonatomic, strong) UAActivityViewController *lastActivityViewController;
 @property (nonatomic, strong) UIPopoverController *popoverController;
 @end
@@ -60,49 +61,69 @@
 
     NSArray *activityItems = @[arguments.value];
 
-    UAActivityViewController *activityViewController =  [[UAActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
-    activityViewController.excludedActivityTypes = @[UIActivityTypeAssignToContact, UIActivityTypePrint, UIActivityTypeSaveToCameraRoll, UIActivityTypeAirDrop];
+    self.activityViewController = [[UAActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
+    self.activityViewController.excludedActivityTypes = @[UIActivityTypeAssignToContact, UIActivityTypePrint, UIActivityTypeSaveToCameraRoll, UIActivityTypeAirDrop];
 
-    activityViewController.dismissalBlock = ^{
-        self.popoverController = nil;
-        self.lastActivityViewController = nil;
+    NSString *deviceType = [UIDevice currentDevice].model;
+    float deviceVersion = [[UIDevice currentDevice].systemVersion floatValue];
+
+    __weak UAShareAction *weakSelf = self;
+    self.activityViewController.dismissalBlock = ^{
+        __strong UAShareAction *strongSelf = weakSelf;
+
+        completionHandler([UAActionResult emptyResult]);
+
+        if ([strongSelf.lastActivityViewController isEqual:strongSelf.activityViewController]) {
+            strongSelf.lastActivityViewController = nil;
+            strongSelf.popoverController = nil;
+
+        } else if ([deviceType rangeOfString:@"iPad"].location != NSNotFound && deviceVersion >= 7.0 && deviceVersion < 8.0) {
+
+            if (strongSelf.activityViewController != nil) {
+                strongSelf.lastActivityViewController = strongSelf.activityViewController;
+                strongSelf.popoverController = [[UIPopoverController alloc] initWithContentViewController:strongSelf.activityViewController];
+                strongSelf.popoverController.delegate = strongSelf.activityViewController;
+                [strongSelf.popoverController presentPopoverFromRect:strongSelf.activityViewController.sourceRect inView:[UAUtils topController].view permittedArrowDirections:0 animated:YES];
+            }
+        }
     };
 
     void (^displayShareBlock)(void) = ^(void) {
 
-        self.lastActivityViewController = activityViewController;
-        NSString *deviceType = [UIDevice currentDevice].model;
-        float deviceVersion = [[UIDevice currentDevice].systemVersion floatValue];
+        self.lastActivityViewController = self.activityViewController;
 
-        // iOS 8.0+, iPad only
-        if ([activityViewController respondsToSelector:@selector(popoverPresentationController)]) {
+        // iOS 8.0+
+        if ([self.activityViewController respondsToSelector:@selector(popoverPresentationController)]) {
 
-            UIPopoverPresentationController * popoverPresentationController = activityViewController.popoverPresentationController;
+            UIPopoverPresentationController * popoverPresentationController = self.activityViewController.popoverPresentationController;
 
             popoverPresentationController.permittedArrowDirections = 0;
 
             // Set the delegate, center the popover on the screen
-            popoverPresentationController.delegate = activityViewController;
-            popoverPresentationController.sourceRect = activityViewController.sourceRect;
+            popoverPresentationController.delegate = self.activityViewController;
+            popoverPresentationController.sourceRect = self.activityViewController.sourceRect;
             popoverPresentationController.sourceView = [UAUtils topController].view;
 
-            [[UAUtils topController] presentViewController:activityViewController animated:YES completion:^{
-                completionHandler([UAActionResult emptyResult]);
-            }];
+            [[UAUtils topController] presentViewController:self.activityViewController animated:YES completion:nil];
+
         } else if ([deviceType rangeOfString:@"iPad"].location != NSNotFound && deviceVersion >= 7.0 && deviceVersion < 8.0) {
-            self.popoverController = [[UIPopoverController alloc] initWithContentViewController:activityViewController];
-            self.popoverController.delegate = activityViewController;
-            [self.popoverController presentPopoverFromRect:activityViewController.sourceRect inView:[UAUtils topController].view permittedArrowDirections:0 animated:YES];
-            completionHandler([UAActionResult emptyResult]);
+            // iOS 7.x iPad only
+            self.popoverController = [[UIPopoverController alloc] initWithContentViewController:self.activityViewController];
+            self.popoverController.delegate = self.activityViewController;
+            [self.popoverController presentPopoverFromRect:self.activityViewController.sourceRect inView:[UAUtils topController].view permittedArrowDirections:0 animated:YES];
+
         } else {
-            [[UAUtils topController] presentViewController:activityViewController animated:YES completion:^{
-                completionHandler([UAActionResult emptyResult]);
-            }];
+
+            [[UAUtils topController] presentViewController:self.activityViewController animated:YES completion:nil];
         }
     };
 
     if (self.lastActivityViewController) {
-        [self.lastActivityViewController dismissViewControllerAnimated:YES completion:displayShareBlock];
+        if ([deviceType rangeOfString:@"iPad"].location != NSNotFound && deviceVersion >= 7.0 && deviceVersion < 8.0) {
+            [self.popoverController dismissPopoverAnimated:YES];
+        } else {
+            [self.lastActivityViewController dismissViewControllerAnimated:YES completion:displayShareBlock];
+        }
     } else {
         displayShareBlock();
     }
