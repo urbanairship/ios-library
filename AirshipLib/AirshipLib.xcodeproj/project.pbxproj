@@ -281,7 +281,6 @@
 		49BADE15198B086F000FF3D5 /* UAURLProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = CC85427617F2130700D2DE10 /* UAURLProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49BADE16198B086F000FF3D5 /* UAActionJSDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 4905C4DD182458AC001D48E3 /* UAActionJSDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49BADE17198B0870000FF3D5 /* UAJavaScriptDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 49DCFABF1831B580002CD5FB /* UAJavaScriptDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		49BADE18198B0870000FF3D5 /* AirshipLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BADCE5198B04C6000FF3D5 /* AirshipLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49C1F07F1978523300DD67DE /* UAInboxMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C1F07D1978523300DD67DE /* UAInboxMessage.h */; };
 		49C1F0801978523300DD67DE /* UAInboxMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C1F07E1978523300DD67DE /* UAInboxMessage.m */; };
 		49C671FF184EAB640088F210 /* UANativeBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C671FE184EAB640088F210 /* UANativeBridge.h */; };
@@ -1689,7 +1688,6 @@
 				CC313A9A19A66DBE00134A9F /* UAUserNotificationCategories.h in Headers */,
 				49BADE16198B086F000FF3D5 /* UAActionJSDelegate.h in Headers */,
 				49BADE17198B0870000FF3D5 /* UAJavaScriptDelegate.h in Headers */,
-				49BADE18198B0870000FF3D5 /* AirshipLib.h in Headers */,
 				CCE34AFF19C2648900A8EFC0 /* UAEventPushReceived.h in Headers */,
 				CCE34AE119C2632500A8EFC0 /* UAEventAppForeground.h in Headers */,
 				CCE34AED19C2644500A8EFC0 /* UAEventAppExit.h in Headers */,
@@ -1866,11 +1864,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 49BADCDC198AF5F6000FF3D5 /* Build configuration list for PBXNativeTarget "AirshipKit" */;
 			buildPhases = (
-				494FB59A19919419000CF253 /* ShellScript */,
 				494FB59B19919444000CF253 /* ShellScript */,
 				49BADCC4198AF5F5000FF3D5 /* Sources */,
 				49BADCC5198AF5F5000FF3D5 /* Frameworks */,
 				49BADCC6198AF5F5000FF3D5 /* Headers */,
+				494FB59A19919419000CF253 /* ShellScript */,
 				49BADCC7198AF5F5000FF3D5 /* Resources */,
 			);
 			buildRules = (
@@ -1905,7 +1903,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BB886129159A7E9600584445 /* Build configuration list for PBXNativeTarget "AirshipLib" */;
 			buildPhases = (
-				494FB5981991933E000CF253 /* ShellScript */,
 				49C67201184EB2E50088F210 /* Run Script */,
 				BB8860B0159A7E9600584445 /* Headers */,
 				BB8860EB159A7E9600584445 /* Sources */,
@@ -1996,19 +1993,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		494FB5981991933E000CF253 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT/../scripts/generate_header_imports.sh\"";
-		};
 		494FB59919919392000CF253 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
