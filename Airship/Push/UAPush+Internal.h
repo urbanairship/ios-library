@@ -29,24 +29,64 @@
 
 #define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"
 
+/**
+ * User push notification enabled data store key.
+ */
 extern NSString *const UAUserPushNotificationsEnabledKey;
+
+/**
+ * Background push notification enabled data store key.
+ */
 extern NSString *const UABackgroundPushNotificationsEnabledKey;
 
+/**
+ * Alias data store key.
+ */
 extern NSString *const UAPushAliasSettingsKey;
-extern NSString *const UAPushTagsSettingsKey;
-extern NSString *const UAPushBadgeSettingsKey;
-extern NSString *const UAPushQuietTimeSettingsKey;
-extern NSString *const UAPushQuietTimeEnabledSettingsKey;
-extern NSString *const UAPushTimeZoneSettingsKey;
-extern NSString *const UAPushDeviceCanEditTagsKey;
 
+/**
+ * Tags data store key.
+ */
+extern NSString *const UAPushTagsSettingsKey;
+
+/**
+ * Badge data store key.
+ */
+extern NSString *const UAPushBadgeSettingsKey;
+
+/**
+ * Quiet time settings data store key.
+ */
+extern NSString *const UAPushQuietTimeSettingsKey;
+
+/**
+ * Quiet enabled data store key.
+ */
+extern NSString *const UAPushQuietTimeEnabledSettingsKey;
+
+/**
+ * Quiet time time zone data store key.
+ */
+extern NSString *const UAPushTimeZoneSettingsKey;
+
+/**
+ * Quiet time settings start key.
+ */
 extern NSString *const UAPushQuietTimeStartKey;
+
+/**
+ * Quiet time settings end key.
+ */
 extern NSString *const UAPushQuietTimeEndKey;
 
-// Keys for the userInfo object on request objects
-extern NSString *const UAPushUserInfoRegistration;
-extern NSString *const UAPushUserInfoPushEnabled;
+/**
+ * If channel creation should occur on foreground data store key.
+ */
 extern NSString *const UAPushChannelCreationOnForeground;
+
+/**
+ * If push enabled settings have been migrated data store key.
+ */
 extern NSString *const UAPushEnabledSettingsMigratedKey;
 
 @interface UAPush ()

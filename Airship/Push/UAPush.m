@@ -57,20 +57,18 @@ NSString *const UAPushDeviceTokenKey = @"UADeviceToken";
 NSString *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
 NSString *const UAPushQuietTimeEnabledSettingsKey = @"UAPushQuietTimeEnabled";
 NSString *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
-NSString *const UAPushDeviceCanEditTagsKey = @"UAPushDeviceCanEditTags";
-
-NSString *const UAPushUserInfoRegistration = @"Registration";
-NSString *const UAPushUserInfoPushEnabled = @"PushEnabled";
 
 NSString *const UAPushChannelCreationOnForeground = @"UAPushChannelCreationOnForeground";
-
 NSString *const UAPushEnabledSettingsMigratedKey = @"UAPushEnabledSettingsMigrated";
 
 // Old push enabled key
 NSString *const UAPushEnabledKey = @"UAPushEnabled";
 
+
+// Quiet time dictionary keys
 NSString *const UAPushQuietTimeStartKey = @"start";
 NSString *const UAPushQuietTimeEndKey = @"end";
+
 
 @implementation UAPush 
 
@@ -924,7 +922,6 @@ BOOL deferChannelCreationOnForeground = false;
 #pragma mark -
 #pragma mark Default Values
 
-// Change the default push enabled value in the registered user defaults
 - (void)setBackgroundPushNotificationsEnabledByDefault:(BOOL)enabled {
     _backgroundPushNotificationsEnabledByDefault = enabled;
 }
@@ -959,8 +956,8 @@ BOOL deferChannelCreationOnForeground = false;
                                             UAPushAliasSettingsKey, UAPushTagsSettingsKey, UAPushBadgeSettingsKey,
                                             UAPushChannelIDKey, UAPushChannelLocationKey, UAPushDeviceTokenKey,
                                             UAPushQuietTimeSettingsKey, UAPushQuietTimeEnabledSettingsKey,
-                                            UAPushDeviceCanEditTagsKey, UAPushUserInfoRegistration, UAPushUserInfoPushEnabled,
-                                            UAPushChannelCreationOnForeground, UAPushEnabledSettingsMigratedKey, UAPushEnabledKey]];
+                                            UAPushChannelCreationOnForeground, UAPushEnabledSettingsMigratedKey,
+                                            UAPushEnabledKey, UAPushTimeZoneSettingsKey]];
 
     if ([self.dataStore boolForKey:UAPushEnabledSettingsMigratedKey]) {
         // Already migrated
