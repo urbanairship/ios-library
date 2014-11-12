@@ -24,7 +24,7 @@
  */
 
 #import <XCTest/XCTest.h>
-#import "UAApplicationMetriccs+Internal.h"
+#import "UAApplicationMetrics+Internal.h"
 #import "UAPreferenceDataStore.h"
 #import <OCMock/OCMock.h>
 

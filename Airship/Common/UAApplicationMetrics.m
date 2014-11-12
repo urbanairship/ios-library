@@ -24,7 +24,7 @@
  */
 
 
-#import "UAApplicationMetrics.h"
+#import "UAApplicationMetrics+Internal.h"
 #import "UAPreferenceDataStore.h"
 
 @interface UAApplicationMetrics()

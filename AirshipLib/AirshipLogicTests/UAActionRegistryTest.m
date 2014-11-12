@@ -25,7 +25,7 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "UAActionRegistry+Internal.h"
-#import "UAApplicationMetriccs+Internal.h"
+#import "UAApplicationMetrics+Internal.h"
 #import "UAirship+Internal.h"
 
 @interface UAActionRegistryTest : XCTestCase
