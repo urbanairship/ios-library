@@ -8,6 +8,29 @@ source "${SCRIPT_DIRECTORY}/configure-xcode-version.sh"
 
 "${ROOT_PATH}/Deploy/distribute.sh"
 
+# Build All Sample Projects
+# Use Debug configurations and a simulator SDK so the build process doesn't attempt to sign the output
+
+# create dummy AirshipConfig.plist files so samples build
+cp "${ROOT_PATH}/InboxSample/AirshipConfig.plist.sample" "${ROOT_PATH}/InboxSample/AirshipConfig.plist"
+cp "${ROOT_PATH}/PushSample/AirshipConfig.plist.sample" "${ROOT_PATH}/PushSample/AirshipConfig.plist"
+
+# Build Distrbution Projects First
+# InboxSample targets
+xcrun xcodebuild -project "${ROOT_PATH}/InboxSample/InboxSample.xcodeproj" -configuration Debug -sdk iphonesimulator8.1
+
+# PushSample targets
+xcrun xcodebuild -project "${ROOT_PATH}/PushSample/PushSample.xcodeproj" -configuration Debug -sdk iphonesimulator8.1
+
+# Build 'lib' projects and targets
+# build InboxSampleLib targets - use scheme so that AirshipLib is built
+xcrun xcodebuild -project "${ROOT_PATH}/InboxSample/InboxSampleLib.xcodeproj" -scheme InboxSample -configuration Debug -sdk iphonesimulator8.1
+xcrun xcodebuild -project "${ROOT_PATH}/InboxSample/InboxSampleLib.xcodeproj" -scheme InboxSampleKit -configuration Debug -sdk iphonesimulator8.1
+
+# build PushSampleLib targets - use scheme so that AirshipLib is built
+xcrun xcodebuild -project "${ROOT_PATH}/PushSample/PushSampleLib.xcodeproj" -scheme PushSample -configuration Debug -sdk iphonesimulator8.1
+xcrun xcodebuild -project "${ROOT_PATH}/PushSample/PushSampleLib.xcodeproj" -scheme PushSampleKit -configuration Debug -sdk iphonesimulator8.1
+
 ##################################################################################################
 # NOTE: The following tests have been commented out until our CI system is capable of running them
 ##################################################################################################
