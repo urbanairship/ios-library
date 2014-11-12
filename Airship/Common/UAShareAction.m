@@ -64,7 +64,7 @@
     self.activityViewController = [[UAActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
     self.activityViewController.excludedActivityTypes = @[UIActivityTypeAssignToContact, UIActivityTypePrint, UIActivityTypeSaveToCameraRoll, UIActivityTypeAirDrop];
 
-    NSString *deviceType = [UIDevice currentDevice].model;
+    UIUserInterfaceIdiom userInterfaceIdiom = [UIDevice currentDevice].userInterfaceIdiom;
     float deviceVersion = [[UIDevice currentDevice].systemVersion floatValue];
 
     __weak UAShareAction *weakSelf = self;
@@ -77,7 +77,7 @@
             strongSelf.lastActivityViewController = nil;
             strongSelf.popoverController = nil;
 
-        } else if ([deviceType rangeOfString:@"iPad"].location != NSNotFound && deviceVersion >= 7.0 && deviceVersion < 8.0) {
+        } else if (userInterfaceIdiom == UIUserInterfaceIdiomPad && deviceVersion >= 7.0 && deviceVersion < 8.0) {
 
             if (strongSelf.activityViewController != nil) {
                 strongSelf.lastActivityViewController = strongSelf.activityViewController;
@@ -106,7 +106,7 @@
 
             [[UAUtils topController] presentViewController:self.activityViewController animated:YES completion:nil];
 
-        } else if ([deviceType rangeOfString:@"iPad"].location != NSNotFound && deviceVersion >= 7.0 && deviceVersion < 8.0) {
+        } else if (userInterfaceIdiom == UIUserInterfaceIdiomPad && deviceVersion >= 7.0 && deviceVersion < 8.0) {
             // iOS 7.x iPad only
             self.popoverController = [[UIPopoverController alloc] initWithContentViewController:self.activityViewController];
             self.popoverController.delegate = self.activityViewController;
@@ -119,7 +119,7 @@
     };
 
     if (self.lastActivityViewController) {
-        if ([deviceType rangeOfString:@"iPad"].location != NSNotFound && deviceVersion >= 7.0 && deviceVersion < 8.0) {
+        if (userInterfaceIdiom == UIUserInterfaceIdiomPad && deviceVersion >= 7.0 && deviceVersion < 8.0) {
             [self.popoverController dismissPopoverAnimated:YES];
         } else {
             [self.lastActivityViewController dismissViewControllerAnimated:YES completion:displayShareBlock];
