@@ -107,6 +107,7 @@
 @property (nonatomic, assign) UALogLevel productionLogLevel;
 
 
+
 /**
  * The size in MB for the UA Disk Cache.  Defaults to 100.
  *
@@ -181,6 +182,14 @@
  */
 @property (nonatomic, copy) NSString *landingPageContentURL;
 
+
+/**
+ * If set to `YES`, the Urban Airship user will be cleared if the application is
+ * restored on a different device from an encrypted backup.
+ *
+ * Defaults to 'NO'.
+ */
+@property (nonatomic, assign) BOOL clearUserOnAppRestore;
 
 ///---------------------------------------------------------------------------------------
 /// @name Factory Methods
