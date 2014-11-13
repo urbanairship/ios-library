@@ -147,7 +147,6 @@ UALogLevel uaLogLevel = UALogLevelError;
     _sharedAirship = [[UAirship alloc] init];
     _sharedAirship.config = config;
 
-
     // Ensure that app credentials have been passed in
     if (![config validate]) {
 
@@ -157,23 +156,23 @@ UALogLevel uaLogLevel = UALogLevelError;
         return;
     }
 
-    _sharedAirship.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", config.appKey]];
+    UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", config.appKey]];
+     _sharedAirship.dataStore = dataStore;
 
-    [_sharedAirship.dataStore migrateUnprefixedKeys:@[UALibraryVersion]];
+    [dataStore migrateUnprefixedKeys:@[UALibraryVersion]];
 
     if ([UA_VERSION isEqualToString:@"0.0.0"]) {
         UA_LERR(@"_UA_VERSION is undefined - this commonly indicates an issue with the build configuration, UA_VERSION will be set to \"0.0.0\".");
     } else {
         NSString *previousVersion = [_sharedAirship.dataStore stringForKey:UALibraryVersion];
         if (![UA_VERSION isEqualToString:previousVersion]) {
-            [_sharedAirship.dataStore setObject:UA_VERSION forKey:UALibraryVersion];
+            [dataStore setObject:UA_VERSION forKey:UALibraryVersion];
 
             if (previousVersion) {
                 UA_LINFO(@"Urban Airship library version changed from %@ to %@.", previousVersion, UA_VERSION);
             }
         }
     }
-
 
     UA_LINFO(@"UAirship Take Off! Lib Version: %@ App Key: %@ Production: %@.",
              UA_VERSION, config.appKey, config.inProduction ?  @"YES" : @"NO");
@@ -195,7 +194,7 @@ UALogLevel uaLogLevel = UALogLevelError;
     [_sharedAirship configureUserAgent];
 
     // Set up analytics
-    _sharedAirship.analytics = [[UAAnalytics alloc] initWithConfig:_sharedAirship.config dataStore:_sharedAirship.dataStore];
+    _sharedAirship.analytics = [[UAAnalytics alloc] initWithConfig:_sharedAirship.config dataStore:dataStore];
     [_sharedAirship.analytics delayNextSend:UAAnalyticsFirstBatchUploadInterval];
 
     _sharedAirship.applicationMetrics = [[UAApplicationMetrics alloc] init];
@@ -217,13 +216,37 @@ UALogLevel uaLogLevel = UALogLevelError;
 
 
         UA_LDEBUG(@"Deleting the keychain credentials");
-        [UAKeychainUtils deleteKeychainValue:_sharedAirship.config.appKey];
+        [UAKeychainUtils deleteKeychainValue:config.appKey];
 
         UA_LDEBUG(@"Deleting the UA device ID");
         [UAKeychainUtils deleteKeychainValue:kUAKeychainDeviceIDKey];
 
+        // Delete the Device ID in the data store so we don't clear the channel
+        [dataStore removeObjectForKey:@"deviceId"];
+
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAResetKeychainKey];
     }
+
+    NSString *previousDeviceId = [dataStore stringForKey:@"deviceId"];
+    NSString *currentDeviceId = [UAKeychainUtils getDeviceID];
+
+    if (previousDeviceId && ![previousDeviceId isEqualToString:currentDeviceId]) {
+        // Device ID changed since the last open. Most likely due to an app restore
+        // on a different device.
+
+        UA_LDEBUG(@"Device ID changed.");
+        UA_LDEBUG(@"Clearing previous channel.");
+        [UAPush shared].channelID = nil;
+        [UAPush shared].channelLocation = nil;
+
+        if (config.clearUserOnAppRestore) {
+            UA_LDEBUG(@"Deleting the keychain credentials");
+            [UAKeychainUtils deleteKeychainValue:config.appKey];
+        }
+    }
+
+    // Save the Device ID to the data store to detect when it changes
+    [dataStore setObject:currentDeviceId forKey:@"deviceId"];
 
     if (!config.inProduction) {
         [_sharedAirship validate];
