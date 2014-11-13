@@ -29,6 +29,7 @@
 #import "UAirship+Internal.h"
 #import <OCMock/OCMock.h>
 #import "UAActionArguments+Internal.h"
+#import "UAPreferenceDataStore.h"
 
 @interface UAIncomingPushActionTest : XCTestCase
 
@@ -56,6 +57,8 @@
 
     self.mockedAirship = [OCMockObject niceMockForClass:[UAirship class]];
     [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
+    [[[self.mockedAirship stub] andReturn:[UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test"]] dataStore];
+
     [[[self.mockedAirship stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:&_backgroundNotificationEnabled];
     }] remoteNotificationBackgroundModeEnabled];

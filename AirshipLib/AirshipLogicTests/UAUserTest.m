@@ -31,16 +31,20 @@
 #import "UAPush+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAConfig+Internal.h"
+#import "UAPreferenceDataStore.h"
 
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
 
 @interface UAUserTest : XCTestCase
 @property (nonatomic, strong) UAUser *user;
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+
 @property (nonatomic, strong) id mockUserClient;
 @property (nonatomic, strong) id mockKeychainUtils;
 @property (nonatomic, strong) id mockedAirship;
 @property (nonatomic, strong) id mockedUAPush;
+
 @end
 
 @implementation UAUserTest
@@ -52,9 +56,11 @@
     UAConfig *config = [[UAConfig alloc] init];
     config.developmentAppKey = @"9Q1tVTl0RF16baYKYp8HPQ";
 
+    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"user.test."];
     self.mockedAirship =[OCMockObject niceMockForClass:[UAirship class]];
     [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
     [[[self.mockedAirship stub] andReturn:config] config];
+    [[[self.mockedAirship stub] andReturn:self.dataStore] dataStore];
 
     [[[NSBundle mainBundle] infoDictionary] setValue:@"someBundleId" forKey:@"CFBundleIdentifier"];
 
@@ -69,6 +75,8 @@
     [self.mockKeychainUtils stopMocking];
     [self.mockedAirship stopMocking];
     [self.mockedUAPush stopMocking];
+
+    [self.dataStore removeAll];
 
     [super tearDown];
 }
@@ -94,6 +102,8 @@
     UAUserData *userData = [UAUserData dataWithUsername:@"userName" password:@"password" url:@"http://url.com"];
 
     [UAPush shared].channelID = @"some-channel";
+    [UAPush shared].channelLocation = @"some-location";
+
     [UAPush shared].deviceToken = nil;
 
     void (^andDoBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
@@ -168,6 +178,7 @@
  */
 -(void)testUpdateUser {
     [UAPush shared].channelID = @"some-channel";
+    [UAPush shared].channelLocation = @"some-location";
     [UAPush shared].deviceToken = @"aaaaa";
     self.user.username = @"username";
 
@@ -259,6 +270,8 @@
  */
 -(void)testRegisterForDeviceRegistrationChangesChannelIDAvailable {
     [UAPush shared].channelID = @"some-channel";
+    [UAPush shared].channelLocation = @"some-location";
+
     [UAPush shared].deviceToken = @"aaaaa";
     self.user.username = @"username";
 
@@ -308,6 +321,7 @@
  */
 -(void)testObserveValueForKeyPath {
     [UAPush shared].channelID = @"some-channel";
+    [UAPush shared].channelLocation = @"some-location";
     [UAPush shared].deviceToken = @"aaaaa";
     self.user.username = @"username";
 

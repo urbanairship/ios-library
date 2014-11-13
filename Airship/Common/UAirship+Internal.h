@@ -28,6 +28,7 @@
 @class UABaseAppDelegateSurrogate;
 @class UAJavaScriptDelegate;
 @class UAAppDelegateProxy;
+@class UAPreferenceDataStore;
 
 @interface UAirship()
 
@@ -42,6 +43,8 @@
 @property (nonatomic, strong) id<UAJavaScriptDelegate> actionJSDelegate;
 
 @property (nonatomic, strong) UAApplicationMetrics *applicationMetrics;
+
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 
 /**

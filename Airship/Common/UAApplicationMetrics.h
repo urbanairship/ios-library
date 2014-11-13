@@ -26,15 +26,20 @@
 
 #import <Foundation/Foundation.h>
 
+@class UAPreferenceDataStore;
+
 /**
  * The UAApplicationMetrics class keeps track of application-related metrics.
  */
 @interface UAApplicationMetrics : NSObject
+
 
 /**
  * The date of the last time the application was active.
  */
 @property (nonatomic, readonly, strong) NSDate *lastApplicationOpenDate;
 
+
++ (instancetype)applicationMetricsWithDataStore:(UAPreferenceDataStore *)dataStore;
 
 @end
