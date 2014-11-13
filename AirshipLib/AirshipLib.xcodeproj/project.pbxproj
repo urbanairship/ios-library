@@ -451,6 +451,7 @@
 		CCB9990B18E23E68007F911D /* UACloseWindowActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB9990A18E23E68007F911D /* UACloseWindowActionTest.m */; };
 		CCBFA2DB17B5436500F97E1D /* NSJSONSerialization+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CCBFA2D917B5436500F97E1D /* NSJSONSerialization+UAAdditions.m */; };
 		CCBFA2E017B547B600F97E1D /* NSJSONSerialization_UAAdditionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCBFA2DF17B547B600F97E1D /* NSJSONSerialization_UAAdditionsTests.m */; };
+		CCC0508C1A129C83000AE545 /* UAKeyChainUtilTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC0508B1A129C83000AE545 /* UAKeyChainUtilTest.m */; };
 		CCCDAEA019954A1300E93CF7 /* NSObject+HideClass.m in Sources */ = {isa = PBXBuildFile; fileRef = CCCDAE9F19954A1300E93CF7 /* NSObject+HideClass.m */; };
 		CCD13DE219A4FCFD0007078C /* UAInteractiveNotificationEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD13DE119A4FCFD0007078C /* UAInteractiveNotificationEventTest.m */; };
 		CCD3158417CFBD5A002E93A1 /* UAPushTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD3158317CFBD5A002E93A1 /* UAPushTest.m */; };
@@ -782,6 +783,7 @@
 		CCBFA2D817B5436500F97E1D /* NSJSONSerialization+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSJSONSerialization+UAAdditions.h"; sourceTree = "<group>"; };
 		CCBFA2D917B5436500F97E1D /* NSJSONSerialization+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSJSONSerialization+UAAdditions.m"; sourceTree = "<group>"; };
 		CCBFA2DF17B547B600F97E1D /* NSJSONSerialization_UAAdditionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSJSONSerialization_UAAdditionsTests.m; sourceTree = "<group>"; };
+		CCC0508B1A129C83000AE545 /* UAKeyChainUtilTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAKeyChainUtilTest.m; sourceTree = "<group>"; };
 		CCCDAE9E19954A1300E93CF7 /* NSObject+HideClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+HideClass.h"; sourceTree = "<group>"; };
 		CCCDAE9F19954A1300E93CF7 /* NSObject+HideClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+HideClass.m"; sourceTree = "<group>"; };
 		CCD13DE119A4FCFD0007078C /* UAInteractiveNotificationEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInteractiveNotificationEventTest.m; sourceTree = "<group>"; };
@@ -1499,6 +1501,7 @@
 				49E9C9BD1836EBAB00B7BCFF /* UAWebViewToolsTest.m */,
 				490710BB184D3EAB00E494AF /* UAWebViewCallDataTest.m */,
 				CC4AADF518C67B23001F23B3 /* UIWebView_UAAdditionsTest.m */,
+				CCC0508B1A129C83000AE545 /* UAKeyChainUtilTest.m */,
 			);
 			name = Util;
 			sourceTree = "<group>";
@@ -2168,6 +2171,7 @@
 				49C811AC180DE93500AB15CD /* UAPush+Test.m in Sources */,
 				CCA3A4F917FF1515009C7371 /* UAActionResultTest.m in Sources */,
 				CC4AADF618C67B23001F23B3 /* UIWebView_UAAdditionsTest.m in Sources */,
+				CCC0508C1A129C83000AE545 /* UAKeyChainUtilTest.m in Sources */,
 				CCDD37CE18089E6F00B8866E /* UAOpenExternalURLActionTest.m in Sources */,
 				495526B417D95552009BC301 /* UAUser+Test.m in Sources */,
 				CCEB1F8319CB61C500624FF4 /* IOS8BugsTests.m in Sources */,

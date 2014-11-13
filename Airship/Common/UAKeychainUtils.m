@@ -52,14 +52,14 @@ static NSString *_cachedDeviceID = nil;
 
     NSMutableDictionary *userDictionary = [UAKeychainUtils searchDictionaryWithIdentifier:identifier];
 
-    //set access permission - we use the keychain for it's stickiness, not security,
-    //so the least permissive setting is acceptable here
+    // Set access permission - we use the keychain for it's stickiness, not security,
+    // So the least permissive setting is acceptable here
     [userDictionary setObject:(__bridge id)kSecAttrAccessibleAlways forKey:(__bridge id)kSecAttrAccessible];
 
-    //set username data
+    // Set username data
     [userDictionary setObject:username forKey:(__bridge id)kSecAttrAccount];
 
-    //set password data
+    // Set password data
     NSData *passwordData = [password dataUsingEncoding:NSUTF8StringEncoding];
     [userDictionary setObject:passwordData forKey:(__bridge id)kSecValueData];
 
@@ -68,6 +68,7 @@ static NSString *_cachedDeviceID = nil;
     if (status == errSecSuccess) {
         return YES;
     }
+
     return NO;
 }
 
@@ -95,74 +96,54 @@ static NSString *_cachedDeviceID = nil;
     if (status == errSecSuccess) {
         return YES;
     }
+
     return NO;
 }
 
-
-+ (NSString *)getPassword:(NSString *)identifier {
-
+/**
+ * Helper method to get the user credentials.
+ *
+ * @return The results dictionary with the username stored under the kSecAttrAccount key,
+ * and the password stored under kSecValueData.
+ */
++ (NSDictionary *)getUserCredentials:(NSString *)identifier {
     if (!identifier) {
-        UA_LERR(@"Unable to get password. The identifier for the keychain is nil.");
+        UA_LERR(@"Unable to get user credentials. The identifier for the keychain is nil.");
         return nil;
     }
 
-    // Get password next
-    NSMutableDictionary *passwordSearch = [UAKeychainUtils searchDictionaryWithIdentifier:identifier];
+    NSMutableDictionary *searchQuery = [UAKeychainUtils searchDictionaryWithIdentifier:identifier];
 
     // Add search attributes
-    [passwordSearch setObject:(__bridge id)kSecMatchLimitOne forKey:(__bridge id)kSecMatchLimit];
+    [searchQuery setObject:(__bridge id)kSecMatchLimitOne forKey:(__bridge id)kSecMatchLimit];
 
     // Add search return types
-    [passwordSearch setObject:(id)kCFBooleanTrue forKey:(__bridge id)kSecReturnData];
+    [searchQuery setObject:(id)kCFBooleanTrue forKey:(__bridge id)kSecReturnData];
+    [searchQuery setObject:(id)kCFBooleanTrue forKey:(__bridge id)kSecReturnAttributes];
 
-    CFDataRef passwordDataRef = nil;
-    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)passwordSearch,
-                                          (CFTypeRef *)&passwordDataRef);
-    NSData *passwordData = (__bridge_transfer NSData *)passwordDataRef;
 
-    NSString *password = nil;
-    if (status == errSecSuccess) {
-        if (passwordData) {
-            password = [[NSString alloc] initWithData:passwordData encoding:NSUTF8StringEncoding];
-            //UALOG(@"Loaded Password: %@",password);
-        }
+    CFDictionaryRef resultDataRef = nil;
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)searchQuery, (CFTypeRef *)&resultDataRef);
+    NSDictionary *resultDict = (__bridge_transfer NSDictionary *)resultDataRef;
+
+    if (status == errSecSuccess && resultDict) {
+        return resultDict;
     }
 
-    return password;
+    return nil;
+}
+
++ (NSString *)getPassword:(NSString *)identifier {
+    NSDictionary *credentials = [self getUserCredentials:identifier];
+    if (credentials) {
+        return [[NSString alloc] initWithData:[credentials valueForKey:(__bridge id)kSecValueData] encoding:NSUTF8StringEncoding];
+    }
+    return nil;
 }
 
 + (NSString *)getUsername:(NSString *)identifier {
-
-    if (!identifier) {
-        UA_LERR(@"Unable to get username. The identifier for the keychain is nil.");
-        return nil;
-    }
-
-    NSMutableDictionary *attributeSearch = [UAKeychainUtils searchDictionaryWithIdentifier:identifier];
-
-    // Add search attributes
-    [attributeSearch setObject:(__bridge id)kSecMatchLimitOne forKey:(__bridge id)kSecMatchLimit];
-
-    // Add search return types
-    [attributeSearch setObject:(id)kCFBooleanTrue forKey:(__bridge id)kSecReturnAttributes];
-
-    // Get username first
-    CFDictionaryRef resultDataRef = nil;
-    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)attributeSearch,
-                                          (CFTypeRef *)&resultDataRef);
-
-    NSDictionary *resultDict = (__bridge_transfer NSDictionary *)resultDataRef;
-
-    NSString *username = nil;
-    if (status == errSecSuccess) {
-        NSString *accountValue = [resultDict objectForKey:(__bridge id)kSecAttrAccount];
-        if (accountValue) {
-            username = [accountValue mutableCopy];
-            //UALOG(@"Loaded Username: %@",username);
-        }
-    }
-
-    return username;
+    NSDictionary *credentials = [self getUserCredentials:identifier];
+    return [[credentials objectForKey:(__bridge id)kSecAttrAccount] copy];
 }
 
 + (NSMutableDictionary *)searchDictionaryWithIdentifier:(NSString *)identifier {
@@ -192,7 +173,7 @@ static NSString *_cachedDeviceID = nil;
 
     //set access permission - we use the keychain for its stickiness, not security,
     //so the least permissive setting is acceptable here
-    [keychainValues setObject:(__bridge id)kSecAttrAccessibleAlways forKey:(__bridge id)kSecAttrAccessible];
+    [keychainValues setObject:(__bridge id)kSecAttrAccessibleAlwaysThisDeviceOnly forKey:(__bridge id)kSecAttrAccessible];
 
     //set model name (username) data
     [keychainValues setObject:[UAUtils deviceModelName] forKey:(__bridge id)kSecAttrAccount];
@@ -232,34 +213,45 @@ static NSString *_cachedDeviceID = nil;
     NSDictionary *resultDict = (__bridge_transfer NSDictionary *)resultDataRef;
 
     NSString *deviceID = nil;
-    NSString *modelName = nil;
     if (status == errSecSuccess) {
 
-        UA_LTRACE(@"Retrieved device ID info from keychain.");
+        UA_LTRACE(@"Retrieved Device ID info from keychain.");
 
         if (resultDataRef) {
-            //grab the deviceId and associated model name
+
+            // Check if we have the old attribute type
+            if ([[[resultDict objectForKey:(__bridge id)kSecAttrAccessible] copy] isEqualToString:(__bridge NSString *)(kSecAttrAccessibleAlways)]) {
+
+                UA_LTRACE(@"Updating Device ID attributes");
+
+                // Update the deviceID attribute to kSecAttrAccessibleAlwaysThisDeviceOnly
+                NSMutableDictionary *updateQuery = [NSMutableDictionary dictionary];
+
+                // Set the new attribute
+                [updateQuery setObject:(__bridge id)kSecAttrAccessibleAlwaysThisDeviceOnly forKey:(__bridge id)kSecAttrAccessible];
+
+                // Perform the update
+                OSStatus status = SecItemUpdate((__bridge CFDictionaryRef)[UAKeychainUtils searchDictionaryWithIdentifier:kUAKeychainDeviceIDKey], (__bridge CFDictionaryRef)updateQuery);
+                if (status != errSecSuccess) {
+                    UA_LTRACE(@"Failed to update Device ID accessibility attribute.");
+                } else {
+                    UA_LTRACE(@"Updated Device ID attributes.");
+                }
+            }
+
+            // Grab the device ID
             deviceID = [[NSString alloc] initWithData:[resultDict valueForKey:(__bridge id)kSecValueData] encoding:NSUTF8StringEncoding];
-            modelName = [[resultDict objectForKey:(__bridge id)kSecAttrAccount] mutableCopy];
 
             UA_LTRACE(@"Loaded Device ID: %@", deviceID);
-            UA_LTRACE(@"Loaded Model Name: %@", modelName);
         } else {
             UA_LTRACE(@"Device ID result is nil.");
         }
     }
 
-    // If the stored deviceID is nil (it has never been set) or the stored the model name is not
-    // equal to the current device's model name, generate a new ID
-    //
-    // The device ID is reset on a hardware change so that we have a device-unique ID. The UAUser ID
-    // will be migrated in the case of a device upgrade, so we will be able to maintain continuity
-    // and a history of devices per user.
-    if (!deviceID || ![modelName isEqualToString:[UAUtils deviceModelName]]) {
-        UA_LDEBUG(@"Device model changed. Regenerating the device ID.");
+    if (!deviceID) {
         [UAKeychainUtils deleteKeychainValue:kUAKeychainDeviceIDKey];
         deviceID = [UAKeychainUtils createDeviceID];
-        UA_LDEBUG(@"New device ID: %@", deviceID);
+        UA_LDEBUG(@"Generated new Device ID: %@", deviceID);
     }
 
     _cachedDeviceID = [deviceID copy];
