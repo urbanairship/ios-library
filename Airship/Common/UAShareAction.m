@@ -79,7 +79,7 @@
 
         } else if (userInterfaceIdiom == UIUserInterfaceIdiomPad && deviceVersion >= 7.0 && deviceVersion < 8.0) {
 
-            if (strongSelf.activityViewController != nil) {
+            if (strongSelf.activityViewController) {
                 strongSelf.lastActivityViewController = strongSelf.activityViewController;
                 strongSelf.popoverController = [[UIPopoverController alloc] initWithContentViewController:strongSelf.activityViewController];
                 strongSelf.popoverController.delegate = strongSelf.activityViewController;

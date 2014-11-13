@@ -39,7 +39,8 @@
     CGRect screenBounds = [UIScreen mainScreen].bounds;
 
     // iOS 7.x iPad
-    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad && deviceVersion >= 7.0 && deviceVersion < 8.0) {
+    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad &&
+        deviceVersion >= 7.0 && deviceVersion < 8.0) {
 
         CGFloat width = CGRectGetWidth(screenBounds);
         CGFloat height = CGRectGetHeight(screenBounds);
@@ -68,9 +69,7 @@
 }
 
 // Called whenever a rotation is about to occur for iOS 7.x iPad
-- (void)popoverController:(UIPopoverController *)popoverController
-willRepositionPopoverToRect:(inout CGRect *)rect
-                   inView:(inout UIView *__autoreleasing *)view {
+- (void)popoverController:(UIPopoverController *)popoverController willRepositionPopoverToRect:(inout CGRect *)rect inView:(inout UIView *__autoreleasing *)view {
     // Override the passed rect with our desired dimensions
     *rect = [self sourceRect];
 }
