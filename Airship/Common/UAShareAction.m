@@ -29,7 +29,6 @@
 #import "UAActivityViewController.h"
 
 @interface UAShareAction()
-@property (nonatomic, strong) UAActivityViewController *activityViewController;
 @property (nonatomic, strong) UAActivityViewController *lastActivityViewController;
 @property (nonatomic, strong) UIPopoverController *popoverController;
 @end
@@ -61,68 +60,64 @@
 
     NSArray *activityItems = @[arguments.value];
 
-    self.activityViewController = [[UAActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
-    self.activityViewController.excludedActivityTypes = @[UIActivityTypeAssignToContact, UIActivityTypePrint, UIActivityTypeSaveToCameraRoll, UIActivityTypeAirDrop];
+    UAActivityViewController *activityViewController = [[UAActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
+    activityViewController.excludedActivityTypes = @[UIActivityTypeAssignToContact, UIActivityTypePrint, UIActivityTypeSaveToCameraRoll, UIActivityTypeAirDrop];
 
     UIUserInterfaceIdiom userInterfaceIdiom = [UIDevice currentDevice].userInterfaceIdiom;
     float deviceVersion = [[UIDevice currentDevice].systemVersion floatValue];
 
-    __weak UAShareAction *weakSelf = self;
-    self.activityViewController.dismissalBlock = ^{
-        __strong UAShareAction *strongSelf = weakSelf;
-
-        completionHandler([UAActionResult emptyResult]);
-
-        if ([strongSelf.lastActivityViewController isEqual:strongSelf.activityViewController]) {
-            strongSelf.lastActivityViewController = nil;
-            strongSelf.popoverController = nil;
-
-        } else if (userInterfaceIdiom == UIUserInterfaceIdiomPad && deviceVersion >= 7.0 && deviceVersion < 8.0) {
-
-            if (strongSelf.activityViewController) {
-                strongSelf.lastActivityViewController = strongSelf.activityViewController;
-                strongSelf.popoverController = [[UIPopoverController alloc] initWithContentViewController:strongSelf.activityViewController];
-                strongSelf.popoverController.delegate = strongSelf.activityViewController;
-                [strongSelf.popoverController presentPopoverFromRect:strongSelf.activityViewController.sourceRect inView:[UAUtils topController].view permittedArrowDirections:0 animated:YES];
-            }
-        }
-    };
-
     void (^displayShareBlock)(void) = ^(void) {
 
-        self.lastActivityViewController = self.activityViewController;
+        self.lastActivityViewController = activityViewController;
 
         // iOS 8.0+
-        if ([self.activityViewController respondsToSelector:@selector(popoverPresentationController)]) {
+        if ([activityViewController respondsToSelector:@selector(popoverPresentationController)]) {
 
-            UIPopoverPresentationController * popoverPresentationController = self.activityViewController.popoverPresentationController;
+            UIPopoverPresentationController * popoverPresentationController = activityViewController.popoverPresentationController;
 
             popoverPresentationController.permittedArrowDirections = 0;
 
             // Set the delegate, center the popover on the screen
-            popoverPresentationController.delegate = self.activityViewController;
-            popoverPresentationController.sourceRect = self.activityViewController.sourceRect;
+            popoverPresentationController.delegate = activityViewController;
+            popoverPresentationController.sourceRect = activityViewController.sourceRect;
             popoverPresentationController.sourceView = [UAUtils topController].view;
 
-            [[UAUtils topController] presentViewController:self.activityViewController animated:YES completion:nil];
+            [[UAUtils topController] presentViewController:activityViewController animated:YES completion:nil];
 
         } else if (userInterfaceIdiom == UIUserInterfaceIdiomPad && deviceVersion >= 7.0 && deviceVersion < 8.0) {
             // iOS 7.x iPad only
-            self.popoverController = [[UIPopoverController alloc] initWithContentViewController:self.activityViewController];
-            self.popoverController.delegate = self.activityViewController;
-            [self.popoverController presentPopoverFromRect:self.activityViewController.sourceRect inView:[UAUtils topController].view permittedArrowDirections:0 animated:YES];
+            self.popoverController = [[UIPopoverController alloc] initWithContentViewController:activityViewController];
+            self.popoverController.delegate = activityViewController;
+            [self.popoverController presentPopoverFromRect:activityViewController.sourceRect inView:[UAUtils topController].view permittedArrowDirections:0 animated:YES];
 
         } else {
-
-            [[UAUtils topController] presentViewController:self.activityViewController animated:YES completion:nil];
+            [[UAUtils topController] presentViewController:activityViewController animated:YES completion:nil];
         }
     };
 
+
+    void (^dismissalBlock)(void);
+    __weak UAShareAction *weakSelf = self;
+
+    self.lastActivityViewController.dismissalBlock = dismissalBlock = ^{
+        __strong UAShareAction *strongSelf = weakSelf;
+
+        completionHandler([UAActionResult emptyResult]);
+
+        strongSelf.lastActivityViewController = nil;
+        strongSelf.popoverController = nil;
+    };
+
     if (self.lastActivityViewController) {
+        self.lastActivityViewController.dismissalBlock = ^{
+            dismissalBlock();
+            displayShareBlock();
+        };
+
         if (userInterfaceIdiom == UIUserInterfaceIdiomPad && deviceVersion >= 7.0 && deviceVersion < 8.0) {
             [self.popoverController dismissPopoverAnimated:YES];
         } else {
-            [self.lastActivityViewController dismissViewControllerAnimated:YES completion:displayShareBlock];
+            [self.lastActivityViewController dismissViewControllerAnimated:YES completion:nil];
         }
     } else {
         displayShareBlock();
