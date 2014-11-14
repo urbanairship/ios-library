@@ -38,6 +38,8 @@
 @property (nonatomic, strong) id mockLocaleClass;
 @property (nonatomic, strong) id mockTimeZoneClass;
 @property (nonatomic, strong) id mockPush;
+@property (nonatomic, strong) NSValue *noValue;
+@property (nonatomic, strong) NSValue *yesValue;
 @end
 
 @implementation UAAnalyticsTest
@@ -57,6 +59,11 @@
 
     UAConfig *config = [[UAConfig alloc] init];
     self.analytics = [[UAAnalytics alloc] initWithConfig:config];
+
+    BOOL no = NO;
+    BOOL yes = YES;
+    self.noValue = [NSValue valueWithBytes:&no objCType:@encode(BOOL)];
+    self.yesValue = [NSValue valueWithBytes:&yes objCType:@encode(BOOL)];
  }
 
 - (void)tearDown {
@@ -120,28 +127,32 @@
 }
 
 - (void)testRequestChannelOptInNoHeader {
-    [[[self.mockPush stub] andReturnValue:@(NO)] userPushNotificationsAllowed];
+
+    BOOL no = NO;
+    BOOL yes = YES;
+
+    [[[self.mockPush stub] andReturnValue:self.noValue] userPushNotificationsAllowed];
 
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
     XCTAssertEqual([headers objectForKey:@"X-UA-Channel-Opted-In"], @"false");
 }
 
 - (void)testRequestChannelOptInYesHeader {
-    [[[self.mockPush stub] andReturnValue:@(YES)] userPushNotificationsAllowed];
+    [[[self.mockPush stub] andReturnValue:self.yesValue] userPushNotificationsAllowed];
 
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
     XCTAssertEqual([headers objectForKey:@"X-UA-Channel-Opted-In"], @"true");
 }
 
 - (void)testRequestChannelBackgroundEnabledNoHeader {
-    [[[self.mockPush stub] andReturnValue:@(NO)] backgroundPushNotificationsAllowed];
+    [[[self.mockPush stub] andReturnValue:self.noValue] backgroundPushNotificationsAllowed];
 
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
     XCTAssertEqual([headers objectForKey:@"X-UA-Channel-Background-Enabled"], @"false");
 }
 
 - (void)testRequestChannelBackgroundEnabledYesHeader {
-    [[[self.mockPush stub] andReturnValue:@(YES)] backgroundPushNotificationsAllowed];
+    [[[self.mockPush stub] andReturnValue:self.yesValue] backgroundPushNotificationsAllowed];
 
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
     XCTAssertEqual([headers objectForKey:@"X-UA-Channel-Background-Enabled"], @"true");

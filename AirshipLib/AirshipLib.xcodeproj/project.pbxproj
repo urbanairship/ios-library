@@ -174,6 +174,7 @@
 		4953A45419A55E9900F8D111 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49BADCC9198AF5F5000FF3D5 /* AirshipKit.framework */; };
 		4953A45E19A5642E00F8D111 /* UAInbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DC217835C3A00BCD96E /* UAInbox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4953A46119A5657200F8D111 /* AirshipKit_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4953A45F19A5657200F8D111 /* AirshipKit_Tests.m */; };
+		4954FECD1A1596DF00BEBC05 /* UAWhitelistTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4954FECC1A1596DF00BEBC05 /* UAWhitelistTest.m */; };
 		495526B117D95552009BC301 /* UAInboxMessageListTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 495526AB17D95552009BC301 /* UAInboxMessageListTest.m */; };
 		495526B217D95552009BC301 /* UAInboxMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 495526AC17D95552009BC301 /* UAInboxMessageTest.m */; };
 		495526B417D95552009BC301 /* UAUser+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 495526AF17D95552009BC301 /* UAUser+Test.m */; };
@@ -625,6 +626,7 @@
 		4953A44E19A55E9900F8D111 /* AirshipKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4953A45F19A5657200F8D111 /* AirshipKit_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AirshipKit_Tests.m; path = AirshipKitTests/AirshipKit_Tests.m; sourceTree = SOURCE_ROOT; };
 		4953A46019A5657200F8D111 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = AirshipKitTests/Info.plist; sourceTree = SOURCE_ROOT; };
+		4954FECC1A1596DF00BEBC05 /* UAWhitelistTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWhitelistTest.m; sourceTree = "<group>"; };
 		495526AB17D95552009BC301 /* UAInboxMessageListTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageListTest.m; sourceTree = "<group>"; };
 		495526AC17D95552009BC301 /* UAInboxMessageTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageTest.m; sourceTree = "<group>"; };
 		495526AE17D95552009BC301 /* UAUser+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUser+Test.h"; sourceTree = "<group>"; };
@@ -1361,6 +1363,7 @@
 				CCCDAE9F19954A1300E93CF7 /* NSObject+HideClass.m */,
 				CC85427D17F2164500D2DE10 /* UAURLProtocolTest.m */,
 				CC4AAE0B18C93EF2001F23B3 /* UAApplicationMetricsTest.m */,
+				4954FECC1A1596DF00BEBC05 /* UAWhitelistTest.m */,
 			);
 			name = Common;
 			sourceTree = "<group>";
@@ -2238,6 +2241,7 @@
 				CCB7DF5B17BBF1B800CEDC56 /* UAInboxDBManagerTests.m in Sources */,
 				CC7DC957183E97C300E95BB8 /* UAChannelRegistrationPayloadTest.m in Sources */,
 				CC20BE1E19589D450098CF35 /* UALocationEventTest.m in Sources */,
+				4954FECD1A1596DF00BEBC05 /* UAWhitelistTest.m in Sources */,
 				495048B2173AD3F600F8B5BE /* UADeviceRegistrationPayloadTest.m in Sources */,
 				1F675946175682E000C062E0 /* UAConfigTest.m in Sources */,
 				CC1D22A61804587F005C8393 /* UAIncomingPushActionTest.m in Sources */,

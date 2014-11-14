@@ -3,11 +3,22 @@
 #import "UAGlobal.h"
 #import "UAConfig.h"
 
+/**
+ * Block mapping URLs to whitelist status
+ */
 typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 
 @interface UAWhitelist ()
+
+/**
+ * Set of UAWhitelistMatcher blocks
+ */
 @property(nonatomic, strong) NSMutableSet *matchers;
+/**
+ * Regex that matches valid whitelist pattern entries
+ */
 @property(nonatomic, strong) NSRegularExpression *validPatternExpression;
+
 @end
 
 @implementation UAWhitelist
@@ -16,13 +27,14 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
     self = [super init];
     if (self) {
         self.matchers = [NSMutableSet set];
-        [self addEntry:@"https://*.urbanairship.com"];
     }
     return self;
 }
 
 + (instancetype)whitelistWithConfig:(UAConfig *)config {
     UAWhitelist *whitelist = [[self alloc] init];
+
+    [whitelist addEntry:@"https://*.urbanairship.com"];
 
     for (NSString *entry in config.whitelist) {
         [whitelist addEntry:entry];
@@ -31,26 +43,32 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
     return whitelist;
 }
 
+/**
+ * Escapes whitelist pattern strings so that they don't contain unanticipated regex characters
+ */
 - (NSString *)escapeRegexString:(NSString *)input escapingWildcards:(BOOL)escapingWildcards {
 
-    /**
-     * Regular expression characters. Used to escape any regular expression from the path and host.
-     */
-    NSArray *specialCharacters = @[@"\\.", @"[", @"]", @"{", @"}", @"(", @")", @"^", @"$", @"?", @"+", @"|", @"*"];
 
-    NSString *escapedInput;
+    // Regular expression characters. Used to escape any regular expression from the path and host.
+    NSArray *specialCharacters = @[@"\\", @".", @"[", @"]", @"{", @"}", @"(", @")", @"^", @"$", @"?", @"+", @"|", @"*"];
+
+    // Prefix all special characters with a backslash
     for (NSString *character in specialCharacters) {
-        escapedInput = [input stringByReplacingOccurrencesOfString:character
+        input = [input stringByReplacingOccurrencesOfString:character
                                                         withString:[@"\\" stringByAppendingString:character]];
     }
 
-    if (escapingWildcards) {
-        escapedInput = [escapedInput stringByReplacingOccurrencesOfString:@"*" withString:@".*"];
+    // If wildcards are intended, transform them in to the appropriate regex pattern
+    if (!escapingWildcards) {
+        input = [input stringByReplacingOccurrencesOfString:@"\\*" withString:@".*"];
     }
 
-    return escapedInput;
+    return input;
 }
 
+/**
+ * Generates matcher that compares a URL component (scheme/host/path) with a supplied regex
+ */
 - (UAWhitelistMatcher)matcherForURLComponent:(NSString *)componentKey withRegexString:(NSString *)regexString {
 
     if (![regexString hasPrefix:@"^"]) {
@@ -61,7 +79,10 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
     }
 
     return ^BOOL(NSURL *url){
-        NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regexString options:0 error:nil];
+        NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regexString
+                                                                               options:NSRegularExpressionUseUnicodeWordBoundaries
+                                                                                 error:nil];
+        // NSRegularExpression chokes on nil input strings, so in that case convert it into an empty string
         NSString *component = [url valueForKey:componentKey] ?: @"";
 
         NSRange matchRange = [regex rangeOfFirstMatchInString:component options:0 range:NSMakeRange(0, component.length)];
@@ -72,10 +93,17 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 - (UAWhitelistMatcher)schemeMatcherForPattern:(NSString *)pattern {
 
     NSURL *url = [NSURL URLWithString:pattern];
+
+    if (!url) {
+        UA_LDEBUG(@"unable to parse URL for pattern: %@", pattern);
+        return nil;
+    }
+
     NSString *scheme = url.scheme;
 
     NSString *schemeRegexString;
 
+    // NSURL won't parse strings with an actual asterisk for the scheme
     if (!scheme || !scheme.length || [scheme isEqualToString:@"WILDCARD"]) {
         schemeRegexString = @"(http|https)";
     } else {
@@ -87,11 +115,17 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 
 - (UAWhitelistMatcher)hostMatcherForPattern:(NSString *)pattern {
     NSURL *url = [NSURL URLWithString:pattern];
+
+    if (!url){
+        UA_LDEBUG(@"unable to parse URL for pattern: %@", pattern);
+        return nil;
+    }
+
     NSString *host = url.host;
 
     NSString *hostRegexString;
 
-    if (!host) {
+    if (!host || [host isEqualToString:@"*"]) {
         hostRegexString = @".*";
     } else if ([host hasPrefix:@"*."]) {
         hostRegexString = [@"(.*\\.)?" stringByAppendingString:[self escapeRegexString:[host substringFromIndex:2]
@@ -105,6 +139,12 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 
 - (UAWhitelistMatcher)pathMatcherForPattern:(NSString *)pattern {
     NSURL *url = [NSURL URLWithString:pattern];
+
+    if (!url) {
+        UA_LDEBUG(@"unable to parse URL for pattern: %@", pattern);
+        return nil;
+    }
+
     NSString *path = url.path;
 
     NSString *pathRegexString;
@@ -140,7 +180,7 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 
     /**
      * Regular expression to match the path.
-     * <path> := '/' <any chars>
+     * <path> := '/' <any chars, including *>
      */
     NSString *pathRegexString =  @"(/.*)";
 
@@ -153,7 +193,7 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
                                          schemeRegexString, hostRegexString, pathRegexString];
 
     NSRegularExpression *validPatternExpression = [NSRegularExpression regularExpressionWithPattern:validPatternRegexString
-                                                                            options:0
+                                                                            options:NSRegularExpressionUseUnicodeWordBoundaries
                                                                               error:nil];
     NSUInteger matches = [validPatternExpression numberOfMatchesInString:pattern
                                                                       options:0
@@ -163,12 +203,13 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 
 - (BOOL)addEntry:(NSString *)patternString {
 
-    if (![self validatePattern:patternString]) {
+    if (!patternString || ![self validatePattern:patternString]) {
         UA_LWARN(@"Invalid whitelist pattern: %@", patternString);
         return NO;
     }
 
     if ([patternString hasPrefix:@"*://"]) {
+        // NSURL won't parse strings with an actual asterisk for the scheme
         patternString = [@"WILDCARD" stringByAppendingString:[patternString substringFromIndex:1]];
     }
 
@@ -183,6 +224,12 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
     UAWhitelistMatcher hostMatcher = [self hostMatcherForPattern:patternString];
     UAWhitelistMatcher pathMatcher = [self pathMatcherForPattern:patternString];
 
+    // If any of these are nil, something went wrong
+    if (!schemeMatcher || !hostMatcher || !pathMatcher) {
+        UA_LINFO(@"Unable to build pattern matchers for whitelist entry: %@", patternString);
+        return NO;
+    }
+
     UAWhitelistMatcher patternMatcher = ^BOOL(NSURL *url) {
         BOOL matchedScheme = schemeMatcher(url);
         BOOL matchedHost = hostMatcher(url);
@@ -192,7 +239,7 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 
     [self.matchers addObject:[patternMatcher copy]];
 
-    return true;
+    return YES;
 }
 
 - (BOOL)isWhitelisted:(NSURL *)url {
