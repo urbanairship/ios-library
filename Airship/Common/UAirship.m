@@ -229,6 +229,8 @@ UALogLevel uaLogLevel = UALogLevelError;
         [NSURLProtocol registerClass:[UAURLProtocol class]];
     }
 
+    _sharedAirship.whitelist = [UAWhitelist whitelistWithConfig:config];
+
     // The singleton is now ready for use!
     _sharedAirship.ready = true;
 

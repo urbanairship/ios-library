@@ -25,6 +25,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "UAGlobal.h"
 #import "UAJavaScriptDelegate.h"
+#import "UAWhitelist.h"
 
 @class UAConfig;
 @class UAAnalytics;
@@ -90,6 +91,8 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * NOTE: this delegate is not retained.
  */
 @property (nonatomic, weak) id<UAJavaScriptDelegate> jsDelegate;
+
+@property (nonatomic, strong, readonly) UAWhitelist *whitelist;
 
 
 ///---------------------------------------------------------------------------------------

@@ -191,8 +191,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [self.statusBar setHidden: NO];
     [self.activity startAnimating];
     self.statusBarTitle.text = self.message.title;
-    
-    [self.webView populateJavascriptEnvironment:self.message];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
@@ -204,6 +202,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         [self.message markMessageReadWithCompletionHandler:nil];
     }
 
+    [self.webView populateJavascriptEnvironment:self.message];
     [self.webView fireUALibraryReadyEvent];
 }
 

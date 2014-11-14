@@ -51,6 +51,7 @@
         usesProductionPushServer_ = NO;
         self.isSimulator = ([[[UIDevice currentDevice] model] rangeOfString:@"Simulator"].location != NSNotFound);
         self.cacheDiskSizeInMB = 100;
+        self.whitelist = [NSArray array];
     }
     return self;
 }
@@ -74,7 +75,8 @@
             "Device API URL: %@\n"
             "Cache Size: %ld MB\n"
             "Landing Page Content URL: %@\n"
-            "Automatic Setup Enabled: %d\n",
+            "Automatic Setup Enabled: %d\n"
+            "Whitelist: %@",
             self.appKey,
             self.appSecret,
             self.inProduction,
@@ -96,7 +98,8 @@
             self.deviceAPIURL,
             (unsigned long)self.cacheDiskSizeInMB,
             self.landingPageContentURL,
-            self.automaticSetupEnabled];
+            self.automaticSetupEnabled,
+            self.whitelist];
 }
 
 #pragma mark -

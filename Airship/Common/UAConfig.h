@@ -131,6 +131,8 @@
  */
 @property (nonatomic, assign) BOOL automaticSetupEnabled;
 
+@property (nonatomic, strong) NSArray *whitelist;
+
 ///---------------------------------------------------------------------------------------
 /// @name Advanced Configuration Options
 ///---------------------------------------------------------------------------------------
