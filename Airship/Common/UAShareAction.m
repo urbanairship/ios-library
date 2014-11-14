@@ -99,7 +99,7 @@
     void (^dismissalBlock)(void);
     __weak UAShareAction *weakSelf = self;
 
-    self.lastActivityViewController.dismissalBlock = dismissalBlock = ^{
+    activityViewController.dismissalBlock = dismissalBlock = ^{
         __strong UAShareAction *strongSelf = weakSelf;
 
         completionHandler([UAActionResult emptyResult]);
