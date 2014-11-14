@@ -257,15 +257,15 @@ UALogLevel uaLogLevel = UALogLevelError;
         [NSURLProtocol registerClass:[UAURLProtocol class]];
     }
 
-    [[UAPush shared] setup];
-
-    //create/setup user (begin listening for device token changes)
-    [[UAUser defaultUser] initializeUser];
-
     _sharedAirship.actionJSDelegate = [[UAActionJSDelegate alloc] init];
 
     // The singleton is now ready for use!
     _sharedAirship.ready = true;
+
+    [[UAPush shared] setup];
+
+    //create/setup user (begin listening for device token changes)
+    [[UAUser defaultUser] initializeUser];
 
     if (_appDidFinishLaunchingNotification) {
 
