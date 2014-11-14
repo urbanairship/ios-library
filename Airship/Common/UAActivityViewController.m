@@ -53,7 +53,7 @@
         }
 
         // Return a smaller rectangle by 25% on each axis, producing a 50% smaller rectangle inset.
-        return CGRectInset(screenBounds, width/4.0, height/4.0);
+        return CGRectInset(screenBounds, CGRectGetWidth(screenBounds)/4.0, CGRectGetHeight(screenBounds)/4.0);
     }
 
     // Return a smaller rectangle by 25% on each axis, producing a 50% smaller rectangle inset.
