@@ -23,26 +23,22 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#import "UAAction.h"
 #import <UIKit/UIKit.h>
 
 /**
- * Shares text using UAActivityViewController.
- *
- * This action is registered under the names share_action and ^s.
- *
- * Expected argument value is an NSString.
- *
- * Valid situations: UASituationForegroundPush, UASituationLanchedFromPush,
- * UASituationWebViewInvocation, UASituationManualInvocation,
- * and UASituationForegoundInteractiveButton
- *
- * Default predicate: Rejects situation UASituationForegroundPush.
- *
- * Result value: nil
- *
+ * Wrapper around UIActivityViewController that takes an optional
+ * block that will fire after the view disappears.
  */
-@interface UAShareAction : UAAction
+@interface UAActivityViewController : UIActivityViewController <UIPopoverPresentationControllerDelegate, UIPopoverControllerDelegate>
+
+/**
+ * Block called after the view has disappeared.
+ */
+@property (nonatomic, copy) void (^dismissalBlock)(void);
+
+/**
+ * Returns the desired source rect dimensions for the popover.
+ */
+- (CGRect)sourceRect;
 
 @end
