@@ -92,6 +92,9 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 @property (nonatomic, weak) id<UAJavaScriptDelegate> jsDelegate;
 
+/**
+ * The whitelist used for validating webview URLs.
+ */
 @property (nonatomic, strong, readonly) UAWhitelist *whitelist;
 
 

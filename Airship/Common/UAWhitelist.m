@@ -80,7 +80,7 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 
     return ^BOOL(NSURL *url){
         NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regexString
-                                                                               options:NSRegularExpressionUseUnicodeWordBoundaries
+                                                                               options:0
                                                                                  error:nil];
         // NSRegularExpression chokes on nil input strings, so in that case convert it into an empty string
         NSString *component = [url valueForKey:componentKey] ?: @"";

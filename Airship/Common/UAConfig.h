@@ -131,6 +131,11 @@
  */
 @property (nonatomic, assign) BOOL automaticSetupEnabled;
 
+/**
+ * An array of UAWhitelist entry strings.
+ *
+ * @note See UAWhitelist for pattern entry syntax.
+ */
 @property (nonatomic, strong) NSArray *whitelist;
 
 ///---------------------------------------------------------------------------------------
