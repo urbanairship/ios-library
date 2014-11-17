@@ -86,7 +86,6 @@
 /**
  * Test international URLs.
  */
-
 - (void)testInternationalDomainsNotWhitelisted {
     //NSURL can't handle these
     XCTAssertFalse([self.whitelist addEntry:@"*://ουτοπία.δπθ.gr"]);
@@ -96,7 +95,6 @@
 /**
  * Test wild card scheme accepts http and https schemes.
  */
-
 - (void)testSchemeWildcard {
     [self.whitelist addEntry:@"*://www.urbanairship.com"];
 
@@ -115,7 +113,6 @@
 /**
  * Test scheme matching works.
  */
-
 - (void)testScheme {
     [self.whitelist addEntry:@"https://www.urbanairship.com"];
     [self.whitelist addEntry:@"file:///asset.html"];
@@ -134,7 +131,6 @@
 /**
  * Test regular expression on the host are treated as literals.
  */
-
 - (void)testRegexInHost {
     XCTAssertTrue([self.whitelist addEntry:@"*://[a-z,A-Z]+"]);
 
@@ -147,7 +143,6 @@
 /**
  * Test host matching actually works.
  */
-
 - (void)testHost {
 
     XCTAssertTrue([self.whitelist addEntry:@"http://www.urbanairship.com"]);
@@ -167,7 +162,6 @@
 /**
  * Test wild card the host accepts any host.
  */
-
 - (void)testHostWildcard {
     XCTAssertTrue([self.whitelist addEntry:@"http://*"]);
 
@@ -183,7 +177,6 @@
 /**
  * Test wild card for subdomain accepts any subdomain, including no subdomain.
  */
-
 - (void)testHostWildcardSubdomain {
     XCTAssertTrue([self.whitelist addEntry:@"http://*.urbanairship.com"]);
 
@@ -199,7 +192,6 @@
 /**
  * Test wild card matcher matches any url that has a valid file path or http/https url.
  */
-
 - (void)testWildcardMatcher {
     XCTAssertTrue([self.whitelist addEntry:@"*"]);
 
@@ -211,7 +203,6 @@
 /**
  * Test file paths.
  */
-
 - (void)testFilePaths {
     XCTAssertTrue([self.whitelist addEntry:@"file:///foo/index.html"]);
 

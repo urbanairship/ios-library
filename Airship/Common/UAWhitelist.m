@@ -1,3 +1,27 @@
+/*
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+
+ 2. Redistributions in binaryform must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided withthe distribution.
+
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
+ IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 #import "UAWhitelist.h"
 #import "UAGlobal.h"
@@ -55,7 +79,7 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
     // Prefix all special characters with a backslash
     for (NSString *character in specialCharacters) {
         input = [input stringByReplacingOccurrencesOfString:character
-                                                        withString:[@"\\" stringByAppendingString:character]];
+                                                 withString:[@"\\" stringByAppendingString:character]];
     }
 
     // If wildcards are intended, transform them in to the appropriate regex pattern
@@ -220,6 +244,7 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
         return YES;
     }
 
+    // Build matchers for each relevant component (scheme/host/path) of the URL based on the pattern string
     UAWhitelistMatcher schemeMatcher = [self schemeMatcherForPattern:patternString];
     UAWhitelistMatcher hostMatcher = [self hostMatcherForPattern:patternString];
     UAWhitelistMatcher pathMatcher = [self pathMatcherForPattern:patternString];
@@ -230,6 +255,8 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
         return NO;
     }
 
+    // The matcher that is stored in the whitelist encompasses matching each component.
+    // A URL matches if an only if all components match.
     UAWhitelistMatcher patternMatcher = ^BOOL(NSURL *url) {
         BOOL matchedScheme = schemeMatcher(url);
         BOOL matchedHost = hostMatcher(url);
