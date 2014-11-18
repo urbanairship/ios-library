@@ -355,13 +355,12 @@ static NSMutableSet *overlayControllers = nil;
     return [UAWebViewTools webView:wv shouldStartLoadWithRequest:request navigationType:navigationType message:self.message];
 }
 
-- (void)webViewDidStartLoad:(UIWebView *)wv {
-    [self.webView populateJavascriptEnvironment:self.message];
-    [self.webView injectInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
-}
-
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
     [self.loadingIndicator hide];
+
+    [self.webView populateJavascriptEnvironment:self.message];
+    [self.webView injectInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
+
     [self.webView fireUALibraryReadyEvent];
 
     if (self.message) {

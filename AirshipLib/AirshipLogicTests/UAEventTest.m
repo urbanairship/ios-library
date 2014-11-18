@@ -109,7 +109,8 @@
     [[[self.analytics stub] andReturn:@"rich push id"] conversionRichPushId];
 
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
-    [[[self.timeZone stub] andReturnValue:@YES] isDaylightSavingTime];
+
+    [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE(YES)] isDaylightSavingTime];
 
     [(UIDevice *)[[self.currentDevice stub] andReturn:@"os version"]systemVersion];
 
@@ -148,7 +149,7 @@
     [[[self.analytics stub] andReturn:@"rich push id"] conversionRichPushId];
 
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
-    [[[self.timeZone stub] andReturnValue:@YES] isDaylightSavingTime];
+    [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE(YES)] isDaylightSavingTime];
 
     [(UIDevice *)[[self.currentDevice stub] andReturn:@"os version"]systemVersion];
 

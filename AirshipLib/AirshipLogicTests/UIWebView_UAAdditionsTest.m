@@ -28,16 +28,19 @@
 #import "UIWebView+UAAdditions.h"
 #import <OCMock/OCMock.h>
 #import <JavaScriptCore/JavaScriptCore.h>
+#import "UAirship.h"
+#import "UAConfig.h"
 #import "UAUser.h"
 #import "UAInboxMessage.h"
 #import "UAInboxDBManager+Internal.h"
 
 
 @interface UIWebView_UAAdditionsTest : XCTestCase
-@property (strong, nonatomic) id webView;
+@property (strong, nonatomic) UIWebView *webView;
 @property (strong, nonatomic) id mockWebView;
 @property (strong, nonatomic) id mockUIDevice;
 @property (strong, nonatomic) id mockUAUser;
+@property (strong, nonatomic) id mockAirship;
 
 @property (nonatomic, strong) JSContext *jsc;
 
@@ -64,6 +67,12 @@
     // Mock UIDevice
     self.mockUIDevice = [OCMockObject niceMockForClass:[UIDevice class]];
     [[[self.mockUIDevice stub] andReturn:self.mockUIDevice] currentDevice];
+
+    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+
+    UAWhitelist *whitelist = [UAWhitelist whitelistWithConfig:[UAConfig defaultConfig]];
+    [[[self.mockAirship stub] andReturn:whitelist] whitelist];
 }
 
 - (void)tearDown {
@@ -133,6 +142,12 @@
         [invocation setReturnValue:&js];
     }] stringByEvaluatingJavaScriptFromString:[OCMArg any]];
 
+    NSURL *url = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    request.mainDocumentURL = url;
+
+    [[[self.mockWebView stub] andReturn:request] request];
+
     [self.mockWebView populateJavascriptEnvironment];
 
     XCTAssertNotNil(js, "Javascript environment was not populated");
@@ -172,6 +187,8 @@
 }
 
 
+
+
 /**
  * Test populateJavascriptEnvironment with a message
  */
@@ -196,6 +213,9 @@
         [invocation getArgument:&js atIndex:2];
         [invocation setReturnValue:&js];
     }] stringByEvaluatingJavaScriptFromString:[OCMArg any]];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"]];
+    [[[self.mockWebView stub] andReturn:request] request];
 
     [self.mockWebView populateJavascriptEnvironment:message];
 
@@ -222,6 +242,21 @@
 
     // Delete the message
     [[UAInboxDBManager shared] deleteMessages:@[message.messageID]];
+}
+
+/**
+ * Test that populating the JS environment doesn't happen when the URL is not whitelisted
+ */
+- (void)testPopulateJavascriptEnvironmentNotWhitelitsed {
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://foo.notwhitelisted.com/whatever.html"]];
+    [[[self.mockWebView stub] andReturn:request] request];
+
+    // Capture the js environment string
+    [[[self.mockWebView stub] andDo:^(NSInvocation *invocation) {
+        XCTFail(@"No JS should have been injected");
+    }] stringByEvaluatingJavaScriptFromString:[OCMArg any]];
+
+    [self.mockWebView populateJavascriptEnvironment];
 }
 
 @end
