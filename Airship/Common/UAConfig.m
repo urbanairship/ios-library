@@ -52,7 +52,9 @@
         self.isSimulator = ([[[UIDevice currentDevice] model] rangeOfString:@"Simulator"].location != NSNotFound);
         self.cacheDiskSizeInMB = 100;
         self.clearUserOnAppRestore = NO;
+        self.whitelist = [NSArray array];
     }
+
     return self;
 }
 
@@ -76,7 +78,8 @@
             "Cache Size: %ld MB\n"
             "Landing Page Content URL: %@\n"
             "Automatic Setup Enabled: %d\n"
-            "Clear user on Application Restore: %d\n",
+            "Clear user on Application Restore: %d\n"
+            "Whitelist: %@",
             self.appKey,
             self.appSecret,
             self.inProduction,
@@ -99,7 +102,8 @@
             (unsigned long)self.cacheDiskSizeInMB,
             self.landingPageContentURL,
             self.automaticSetupEnabled,
-            self.clearUserOnAppRestore];
+            self.clearUserOnAppRestore,
+            self.whitelist];
 }
 
 #pragma mark -

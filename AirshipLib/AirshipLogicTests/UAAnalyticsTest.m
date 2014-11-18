@@ -41,7 +41,8 @@
 @property (nonatomic, strong) id mockTimeZoneClass;
 @property (nonatomic, strong) id mockPush;
 @property (nonatomic, strong) id mockDataStore;
-
+@property (nonatomic, strong) NSValue *noValue;
+@property (nonatomic, strong) NSValue *yesValue;
 @end
 
 @implementation UAAnalyticsTest
@@ -127,28 +128,29 @@
 }
 
 - (void)testRequestChannelOptInNoHeader {
-    [[[self.mockPush stub] andReturnValue:@(NO)] userPushNotificationsAllowed];
+
+    [[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(NO)] userPushNotificationsAllowed];
 
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
     XCTAssertEqual([headers objectForKey:@"X-UA-Channel-Opted-In"], @"false");
 }
 
 - (void)testRequestChannelOptInYesHeader {
-    [[[self.mockPush stub] andReturnValue:@(YES)] userPushNotificationsAllowed];
+    [[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(YES)] userPushNotificationsAllowed];
 
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
     XCTAssertEqual([headers objectForKey:@"X-UA-Channel-Opted-In"], @"true");
 }
 
 - (void)testRequestChannelBackgroundEnabledNoHeader {
-    [[[self.mockPush stub] andReturnValue:@(NO)] backgroundPushNotificationsAllowed];
+    [[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(NO)] backgroundPushNotificationsAllowed];
 
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
     XCTAssertEqual([headers objectForKey:@"X-UA-Channel-Background-Enabled"], @"false");
 }
 
 - (void)testRequestChannelBackgroundEnabledYesHeader {
-    [[[self.mockPush stub] andReturnValue:@(YES)] backgroundPushNotificationsAllowed];
+    [[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(YES)] backgroundPushNotificationsAllowed];
 
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
     XCTAssertEqual([headers objectForKey:@"X-UA-Channel-Background-Enabled"], @"true");

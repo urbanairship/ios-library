@@ -27,10 +27,22 @@
 #import "UAUser.h"
 #import "UAUtils.h"
 #import "UANativeBridge.h"
+#import "UAirship.h"
 
 @implementation UIWebView (UAAdditions)
 
 - (void)populateJavascriptEnvironment:(UAInboxMessage *)message {
+
+    UAWhitelist *whitelist = [UAirship shared].whitelist;
+    NSURL *requestURL = self.request.mainDocumentURL;
+    if (![whitelist isWhitelisted:requestURL]) {
+        if (requestURL && !requestURL.absoluteString) {
+            UA_LWARN(@"Attempting to load page with an empty request URL. This may indicate a redirect is in progress.");
+            UA_LWARN(@"Be sure to call populateJavascriptEnvironment from the webViewDidFinishLoad method.");
+        }
+        UA_LINFO(@"URL %@ is not whitelisted, not populating JS interface", self.request.URL);
+        return;
+    }
 
     // This will inject the current device orientation
     // Note that face up and face down orientations will be ignored as this

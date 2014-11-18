@@ -258,6 +258,7 @@ UALogLevel uaLogLevel = UALogLevelError;
     }
 
     _sharedAirship.actionJSDelegate = [[UAActionJSDelegate alloc] init];
+    _sharedAirship.whitelist = [UAWhitelist whitelistWithConfig:config];
 
     // The singleton is now ready for use!
     _sharedAirship.ready = true;
