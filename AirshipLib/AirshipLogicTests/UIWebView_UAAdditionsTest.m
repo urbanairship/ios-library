@@ -214,9 +214,11 @@
         [invocation setReturnValue:&js];
     }] stringByEvaluatingJavaScriptFromString:[OCMArg any]];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"]];
-    [[[self.mockWebView stub] andReturn:request] request];
+    NSURL *url = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    request.mainDocumentURL = url;
 
+    [[[self.mockWebView stub] andReturn:request] request];
     [self.mockWebView populateJavascriptEnvironment:message];
 
     XCTAssertNotNil(js, "Javascript environment was not populated");
