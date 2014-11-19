@@ -447,4 +447,23 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     return self.batchOperationCount > 0;
 }
 
+- (id)debugQuickLookObject {
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@""];
+
+    NSUInteger index = 0;
+    NSUInteger characterIndex = 0;
+    for (UAInboxMessage *message in self.messages) {
+        NSString *line = index < self.messages.count-1 ? [NSString stringWithFormat:@"%@\n", message.title] : message.title;
+        [attributedString.mutableString appendString:line];
+        // Display unread messages in bold text
+        NSString *fontName = message.unread ? @"Helvetica Bold" : @"Helvetica";
+        [attributedString addAttribute:NSFontAttributeName value:[UIFont fontWithName:fontName size:15]
+                                 range:NSMakeRange(characterIndex, line.length)];
+        index++;
+        characterIndex += line.length;
+    }
+
+    return attributedString;
+}
+
 @end
