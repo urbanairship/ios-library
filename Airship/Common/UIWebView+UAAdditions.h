@@ -26,11 +26,42 @@
 #import <UIKit/UIKit.h>
 #import "UAInboxMessage.h"
 
+/**
+ * Category extensions for Urban Airship web view additions.
+ */
 @interface UIWebView (UAAdditions)
 
-- (void)populateJavascriptEnvironment:(UAInboxMessage *)message;
-- (void)populateJavascriptEnvironment;
-- (void)fireUALibraryReadyEvent;
+/**
+ * Injects the Urban Airship Javascript environment into the webview.
+ *
+ * @param message The message loaded into the webview.
+ * @deprecated As of 5.1. Instead, custom webview implementations should
+ * use the UAWebViewDelegate class.
+ */
+- (void)populateJavascriptEnvironment:(UAInboxMessage *)message __attribute__((deprecated("As of version 5.1.0")));
+
+
+/**
+ * Injects the Urban Airship Javascript environment into the webview.
+ *
+ * @deprecated As of 5.1. Instead, custom webview implementations should
+ * use the UAWebViewDelegate class.
+ */
+- (void)populateJavascriptEnvironment __attribute__((deprecated("As of version 5.1.0")));
+
+/**
+ * Fires the Urban Airship Javascript ready event.
+ *
+ * @deprecated As of 5.1. Instead, custom webview implementations should
+ * use the UAWebViewDelegate class.
+ */
+- (void)fireUALibraryReadyEvent __attribute__((deprecated("As of version 5.1.0")));
+
+/**
+ * Injects the current orientation into the webview. Should be called when the webview's
+ * orientation changes.
+ * @param toInterfaceOrientation The current webview orientation.
+ */
 - (void)injectInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation;
 
 @end

@@ -131,11 +131,7 @@
 }
 
 - (void)fireUALibraryReadyEvent {
-    NSString *js = @"var uaLibraryReadyEvent = document.createEvent('Event');\
-    uaLibraryReadyEvent.initEvent('ualibraryready', true, true); \
-    document.dispatchEvent(uaLibraryReadyEvent);";
-
-    [self stringByEvaluatingJavaScriptFromString:js];
+    // Handled in the native bridge now
 }
 
 - (void)injectInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {

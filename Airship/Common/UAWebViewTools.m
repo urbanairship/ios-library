@@ -33,7 +33,6 @@
 
 @implementation UAWebViewTools
 
-
 + (NSURL *)createValidPhoneNumberUrlFromUrl:(NSURL *)url {
 
     NSString *decodedUrlString = [url.absoluteString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];

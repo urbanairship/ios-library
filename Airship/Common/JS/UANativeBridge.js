@@ -101,3 +101,6 @@ UAirship.close = function() {
     UAirship.runAction('__close_window_action', null, null);
 }
 
+var uaLibraryReadyEvent = document.createEvent('Event');
+uaLibraryReadyEvent.initEvent('ualibraryready', true, true);
+document.dispatchEvent(uaLibraryReadyEvent);

@@ -176,6 +176,13 @@ typedef NS_ENUM(NSInteger, UABatchUpdateCommand) {
 - (NSUInteger)messageCount;
 
 /**
+ * Returns the message associated with a particular URL.
+ * @param url The URL of the message
+ * @return The associated UAInboxMessage object.
+ */
+- (UAInboxMessage *)messageForBodyURL:(NSURL *)url;
+
+/**
  * Returns the message associated with a particular ID.
  * @param messageID The message ID as an NSString.
  * @return The associated UAInboxMessage object.
