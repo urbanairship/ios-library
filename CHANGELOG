@@ -44,7 +44,7 @@ Known issues with iOS 8.0.0 that may impact your application:
 - Added whitelisting to Urban Airship Javascript interface injection.
 - Added UAWebViewDelegate to simplify Urban Airship Javascript interface injection into custom webview implementations.
 - Fixed multiple Javascript interface injection when using the new UAWebViewDelegate.
-- Fixed possible crash when using the Share Action on iPad devices.
+- Fixed crash when using the Share Action on iPad devices.
 
 -----------------------
 5.0.3 - October 8, 2014
