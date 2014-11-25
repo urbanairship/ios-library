@@ -197,21 +197,23 @@
 - (void)testUpdateAnalyticsParameters {
     // Create headers with response values for the event header settings
     NSMutableDictionary *headers = [NSMutableDictionary dictionaryWithCapacity:4];
-    [headers setValue:[NSNumber numberWithInt:kMinTotalDBSizeBytes + 1] forKey:@"X-UA-Max-Total"];
-    [headers setValue:[NSNumber numberWithInt:kMinBatchSizeBytes + 1] forKey:@"X-UA-Max-Batch"];
-    [headers setValue:[NSNumber numberWithInt:kMinWaitSeconds + 1] forKey:@"X-UA-Max-Wait"];
-    [headers setValue:[NSNumber numberWithInt:kMinBatchIntervalSeconds + 1] forKey:@"X-UA-Min-Batch-Interval"];
+    [headers setValue:[NSNumber numberWithInt:11] forKey:@"X-UA-Max-Total"];
+    [headers setValue:[NSNumber numberWithInt:11] forKey:@"X-UA-Max-Batch"];
+    [headers setValue:[NSNumber numberWithInt:8*24*3600] forKey:@"X-UA-Max-Wait"];
+    [headers setValue:[NSNumber numberWithInt:62] forKey:@"X-UA-Min-Batch-Interval"];
 
     id mockResponse = [OCMockObject niceMockForClass:[NSHTTPURLResponse class]];
     [[[mockResponse stub] andReturn:headers] allHeaderFields];
-    
-    [self.analytics updateAnalyticsParametersWithHeaderValues:mockResponse];
 
     // Make sure all the expected settings are set to the current analytics properties
-    XCTAssertEqual((NSInteger)self.analytics.maxTotalDBSize, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxTotalDBSizeUserDefaultsKey], @"maxTotalDBSize failed to save update its value from response header");
-    XCTAssertEqual((NSInteger)self.analytics.maxBatchSize, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxBatchSizeUserDefaultsKey], @"maxBatchSize failed to save update its value from response header");
-    XCTAssertEqual((NSInteger)self.analytics.maxWait, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxWaitUserDefaultsKey], @"maxWait is setting failed to save update its value from response header");
-    XCTAssertEqual((NSInteger)self.analytics.minBatchInterval, [[NSUserDefaults standardUserDefaults] integerForKey:kMinBatchIntervalUserDefaultsKey], @"minBatchInterval failed to save update its value from response header");
+    [[self.mockDataStore expect] setInteger:11 * 1024 forKey:kMaxTotalDBSizeUserDefaultsKey]; // 11 KB
+    [[self.mockDataStore expect] setInteger:11 * 1024 forKey:kMaxBatchSizeUserDefaultsKey]; // 11 KB
+    [[self.mockDataStore expect] setInteger:8*24*3600 forKey:kMaxWaitUserDefaultsKey]; // 8 days
+    [[self.mockDataStore expect] setInteger:62 forKey:kMinBatchIntervalUserDefaultsKey]; // 62 seconds
+
+    [self.analytics updateAnalyticsParametersWithHeaderValues:mockResponse];
+
+    [self.mockDataStore verify];
     [mockResponse stopMocking];
 }
 
