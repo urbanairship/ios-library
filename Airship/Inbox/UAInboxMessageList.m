@@ -44,6 +44,8 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
 @implementation UAInboxMessageList
 
+@synthesize messages = _messages;
+
 #pragma mark Create Inbox
 
 - (instancetype)init {
@@ -56,8 +58,40 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
         self.unreadCount = -1;
         self.queue = [[NSOperationQueue alloc] init];
         self.queue.maxConcurrentOperationCount = 1;
+
+        self.messageIDMap = [NSMutableDictionary dictionary];
+        self.messageURLMap = [NSMutableDictionary dictionary];
     }
     return self;
+}
+
+#pragma mark Custom setters
+
+- (void)setMessages:(NSArray *)messages {
+    @synchronized(self) {
+        _messages = messages;
+
+        NSMutableDictionary *messageIDMap = [NSMutableDictionary dictionary];
+        NSMutableDictionary *messageURLMap = [NSMutableDictionary dictionary];
+
+        for (UAInboxMessage *message in messages) {
+            if (message.messageBodyURL.absoluteString) {
+                [messageURLMap setObject:message forKey:message.messageBodyURL.absoluteString];
+            }
+            if (message.messageID) {
+                [messageIDMap setObject:message forKey:message.messageID];
+            }
+        }
+
+        self.messageIDMap = [messageIDMap copy];
+        self.messageIDMap = [messageURLMap copy];
+    }
+}
+
+- (NSArray *)messages {
+    @synchronized(self) {
+        return _messages;
+    }
 }
 
 #pragma mark NSNotificationCenter helper methods
@@ -416,14 +450,12 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     return [self.messages count];
 }
 
-- (UAInboxMessage *)messageForID:(NSString *)messageID {
-    for (UAInboxMessage *message in self.messages) {
-        if ([message.messageID isEqualToString:messageID]) {
-            return message;
-        }
-    }
+- (UAInboxMessage *)messageForBodyURL:(NSURL *)url {
+    return [self.messageURLMap objectForKey:url.absoluteString];
+}
 
-    return nil;
+- (UAInboxMessage *)messageForID:(NSString *)messageID {
+    return [self.messageIDMap objectForKey:messageID];
 }
 
 - (UAInboxMessage *)messageAtIndex:(NSUInteger)index {

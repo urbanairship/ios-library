@@ -25,7 +25,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import <UIKit/UIKit.h>
 #import "UAInboxMessage.h"
-#import "UIWebView+UAAdditions.h"
 #import "UARichContentWindow.h"
 
 
