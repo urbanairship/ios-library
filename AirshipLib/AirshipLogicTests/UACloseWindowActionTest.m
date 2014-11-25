@@ -80,7 +80,7 @@
                                                       withSituation:UASituationWebViewInvocation
                                                            metadata:@{UAActionMetadataWebViewKey: self.mockWebView}];
 
-    [[self.mockUARichContentWindow expect] closeWindow:YES];
+    [[self.mockUARichContentWindow expect] closeWebView:self.mockWebView animated:YES];
 
     __block id actionResult;
 

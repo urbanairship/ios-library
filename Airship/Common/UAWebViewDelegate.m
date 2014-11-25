@@ -112,6 +112,17 @@
     }
 }
 
+- (void)closeWebView:(UIWebView *)webView animated:(BOOL)animated {
+    id strongContentWindow = self.richContentWindow;
+    if ([strongContentWindow respondsToSelector:@selector(closeWebView:animated:)]) {
+        [strongContentWindow closeWebView:webView animated:animated];
+    } else if ([strongContentWindow respondsToSelector:@selector(closeWindow:)]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        [strongContentWindow closeWindow:animated];
+#pragma clang diagnostic pop
+    }
+}
 
 - (void)webViewDidStartLoad:(UIWebView *)webView {
     id strongDelegate = self.forwardDelegate;
@@ -126,6 +137,8 @@
         [strongDelegate webView:webView didFailLoadWithError:error];
     }
 }
+
+
 
 - (void)populateJavascriptEnvironment:(UIWebView *)webView {
     // This will be nil if we are not loading a Rich Push message
@@ -317,5 +330,6 @@
 
     return NO;
 }
+
 
 @end

@@ -24,6 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "UARichContentWindow.h"
 
 @class UAInboxMessage;
 
@@ -31,11 +32,17 @@
  * A UIWebView delegate that automatically injects the Urban Airship
  * Javascript interface on whitelisted URLs.
  */
-@interface UAWebViewDelegate : NSObject <UIWebViewDelegate>
+@interface UAWebViewDelegate : NSObject <UIWebViewDelegate, UARichContentWindow>
 
 /**
  * Optional delegate to forward any UIWebViewDelegate calls.
  */
 @property (nonatomic, weak) id <UIWebViewDelegate> forwardDelegate;
+
+/**
+ * The rich content window. Optional, needed to support closing the webview from
+ * the Urban Airship Javascript interface.
+ */
+@property (nonatomic, weak) id <UARichContentWindow> richContentWindow;
 
 @end

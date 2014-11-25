@@ -109,7 +109,7 @@ static NSMutableSet *overlayControllers = nil;
 
 + (void)closeAll:(BOOL)animated {
     for (UALandingPageOverlayController *oc in overlayControllers) {
-        [oc closeWindow:animated];
+        [oc closeWebView:oc.webView animated:animated];
     }
 }
 
@@ -128,6 +128,7 @@ static NSMutableSet *overlayControllers = nil;
         self.webView.opaque = NO;
         self.webViewDelegate = [[UAWebViewDelegate alloc] init];
         self.webViewDelegate.forwardDelegate = self;
+        self.webViewDelegate.richContentWindow = self;
         self.webView.delegate = self.webViewDelegate;
 
 
@@ -400,7 +401,7 @@ static NSMutableSet *overlayControllers = nil;
 
 #pragma mark UARichContentWindow
 
-- (void)closeWindow:(BOOL)animated {
+- (void)closeWebView:(UIWebView *)webView animated:(BOOL)animated {
     UA_LDEBUG(@"Closing landing page overlay controller: %@", [self.url absoluteString]);
     [self finish:animated];
 }

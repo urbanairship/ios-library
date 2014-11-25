@@ -18,6 +18,8 @@
 @property(nonatomic, strong) UAWebViewDelegate *delegate;
 @property(nonatomic, strong) id mockWebView;
 @property(nonatomic, strong) id mockForwardDelegate;
+@property(nonatomic, strong) id mockContentWindow;
+
 @property (strong, nonatomic) id mockUIDevice;
 @property (strong, nonatomic) id mockUAUser;
 @property (strong, nonatomic) id mockAirship;
@@ -35,6 +37,9 @@
     self.delegate = [[UAWebViewDelegate alloc] init];
     self.mockForwardDelegate = [OCMockObject niceMockForProtocol:@protocol(UIWebViewDelegate)];
     self.delegate.forwardDelegate = self.mockForwardDelegate;
+
+    self.mockContentWindow = [OCMockObject niceMockForProtocol:@protocol(UARichContentWindow)];
+    self.delegate.richContentWindow = self.mockContentWindow;
 
     // Mock web view
     self.mockWebView = [OCMockObject niceMockForClass:[UIWebView class]];
@@ -72,6 +77,8 @@
     [self.mockUIDevice stopMocking];
     [self.mockUAUser stopMocking];
     [self.mockForwardDelegate stopMocking];
+    [self.mockContentWindow stopMocking];
+
     [self.mockMessageList stopMocking];
     [self.mockInbox stopMocking];
 
@@ -113,6 +120,15 @@
 - (void)testDidFinishLoadForwardDelegate {
     [[self.mockForwardDelegate expect] webViewDidFinishLoad:self.mockWebView];
     [self.delegate webViewDidFinishLoad:self.mockWebView];
+    [self.mockForwardDelegate verify];
+}
+
+/**
+ * Test closeWebView:animated: forwards its message to the richContentWindow.
+ */
+- (void)testCloseWebView {
+    [[self.mockContentWindow expect] closeWebView:self.mockWebView animated:YES];
+    [self.delegate closeWebView:self.mockWebView animated:YES];
     [self.mockForwardDelegate verify];
 }
 
