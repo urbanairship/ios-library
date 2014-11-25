@@ -146,7 +146,7 @@
 
 /**
  * Sets the value of the specified key.
- * @param value The preference value.
+ * @param url The preference value.
  * @param key The preference key.
  */
 - (void)setURL:(NSURL *)url forKey:(NSString *)key;
