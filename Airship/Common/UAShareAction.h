@@ -25,9 +25,10 @@
 
 
 #import "UAAction.h"
+#import <UIKit/UIKit.h>
 
 /**
- * Shares text using UIActivityViewController.
+ * Shares text using UAActivityViewController.
  *
  * This action is registered under the names share_action and ^s.
  *

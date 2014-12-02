@@ -33,7 +33,6 @@
 
 @implementation UAWebViewTools
 
-
 + (NSURL *)createValidPhoneNumberUrlFromUrl:(NSURL *)url {
 
     NSString *decodedUrlString = [url.absoluteString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
@@ -57,11 +56,13 @@
      */
 
     if ([[url scheme] isEqualToString:@"uairship"] || [[url scheme] isEqualToString:@"ua"]) {
-        if ((navigationType == UIWebViewNavigationTypeLinkClicked) || (navigationType == UIWebViewNavigationTypeOther)) {
-            UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url webView:wv message:message];
-            [self performJSDelegateWithData:data];
-            return NO;
+        if ([[UAirship shared].whitelist isWhitelisted:wv.request.mainDocumentURL]) {
+            if ((navigationType == UIWebViewNavigationTypeLinkClicked) || (navigationType == UIWebViewNavigationTypeOther)) {
+                UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url webView:wv message:message];
+                [self performJSDelegateWithData:data];
+            }
         }
+        return NO;
     }
 
     // send iTunes/Phobos urls to AppStore.app

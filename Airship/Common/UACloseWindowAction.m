@@ -38,11 +38,16 @@
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
     UIWebView *webView = [arguments.metadata objectForKey:UAActionMetadataWebViewKey];
-    
-    if ([webView.delegate conformsToProtocol:@protocol(UARichContentWindow)]) {
-        if ([webView.delegate respondsToSelector:@selector(closeWindow:)]) {
-            [(id<UARichContentWindow>)webView.delegate closeWindow:YES];
-        }
+
+    id webViewDelegate = webView.delegate;
+
+    if ([webViewDelegate respondsToSelector:@selector(closeWebView:animated:)]) {
+        [webViewDelegate closeWebView:webView animated:YES];
+    } else if ([webViewDelegate respondsToSelector:@selector(closeWindow:)]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        [webViewDelegate closeWindow:YES];
+#pragma clang diagnostic pop
     }
 
     completionHandler([UAActionResult emptyResult]);

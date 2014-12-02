@@ -27,11 +27,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInboxMessageViewController.h"
 #import "UAInboxLocalization.h"
 #import "UAInboxMessageList.h"
-
-#import "UIWebView+UAAdditions.h"
-#import "UAWebViewTools.h"
-
+#import "UAWebViewDelegate.h"
 #import "UAUtils.h"
+#import "UIWebView+UAAdditions.h"
 
 #define kMessageUp 0
 #define kMessageDown 1
@@ -51,6 +49,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @property (nonatomic, strong) NSArray *messages;
 
+@property (nonatomic, strong) UAWebViewDelegate *webViewDelegate;
+
 /**
  * The UIWebView used to display the message content.
  */
@@ -60,10 +60,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @implementation UAInboxMessageViewController
 
 
-
 - (void)dealloc {
     self.webView.delegate = nil;
-
 }
 
 - (instancetype)initWithNibName:(NSString *)nibName bundle:(NSBundle *)nibBundle {
@@ -158,7 +156,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     self.webView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
     self.webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
 
-    self.webView.delegate = self;
+    self.webViewDelegate = [[UAWebViewDelegate alloc] init];
+    self.webViewDelegate.forwardDelegate = self;
+    self.webViewDelegate.richContentWindow = self;
+    self.webView.delegate = self.webViewDelegate;
 
     [self.view insertSubview:self.webView belowSubview:self.statusBar];
 
@@ -183,16 +184,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma mark UIWebViewDelegate
 
-- (BOOL)webView:(UIWebView *)wv shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
-    return [UAWebViewTools webView:wv shouldStartLoadWithRequest:request navigationType:navigationType message:self.message];
-}
 
 - (void)webViewDidStartLoad:(UIWebView *)wv {
     [self.statusBar setHidden: NO];
     [self.activity startAnimating];
     self.statusBarTitle.text = self.message.title;
-    
-    [self.webView populateJavascriptEnvironment:self.message];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
@@ -204,7 +200,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         [self.message markMessageReadWithCompletionHandler:nil];
     }
 
-    [self.webView fireUALibraryReadyEvent];
+    [self.webView injectInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
@@ -228,7 +224,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma mark UARichContentWindow
 
-- (void)closeWindow:(BOOL)animated {
+- (void)closeWebView:(UIWebView *)webView animated:(BOOL)animated {
     if (self.closeBlock) {
         self.closeBlock(animated);
     }

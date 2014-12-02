@@ -24,32 +24,70 @@
  */
 
 #import "UAPush.h"
-#import "UADeviceRegistrationPayload.h"
-#import "UADeviceRegistrar+Internal.h"
+#import "UAChannelRegistrar+Internal.h"
+@class UAPreferenceDataStore;
 
 #define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"
 
-typedef NSString UAPushSettingsKey;
-extern UAPushSettingsKey *const UAUserPushNotificationsEnabledKey;
-extern UAPushSettingsKey *const UABackgroundPushNotificationsEnabledKey;
+/**
+ * User push notification enabled data store key.
+ */
+extern NSString *const UAUserPushNotificationsEnabledKey;
 
-extern UAPushSettingsKey *const UAPushAliasSettingsKey;
-extern UAPushSettingsKey *const UAPushTagsSettingsKey;
-extern UAPushSettingsKey *const UAPushBadgeSettingsKey;
-extern UAPushSettingsKey *const UAPushQuietTimeSettingsKey;
-extern UAPushSettingsKey *const UAPushQuietTimeEnabledSettingsKey;
-extern UAPushSettingsKey *const UAPushTimeZoneSettingsKey;
-extern UAPushSettingsKey *const UAPushDeviceCanEditTagsKey;
+/**
+ * Background push notification enabled data store key.
+ */
+extern NSString *const UABackgroundPushNotificationsEnabledKey;
 
+/**
+ * Alias data store key.
+ */
+extern NSString *const UAPushAliasSettingsKey;
+
+/**
+ * Tags data store key.
+ */
+extern NSString *const UAPushTagsSettingsKey;
+
+/**
+ * Badge data store key.
+ */
+extern NSString *const UAPushBadgeSettingsKey;
+
+/**
+ * Quiet time settings data store key.
+ */
+extern NSString *const UAPushQuietTimeSettingsKey;
+
+/**
+ * Quiet enabled data store key.
+ */
+extern NSString *const UAPushQuietTimeEnabledSettingsKey;
+
+/**
+ * Quiet time time zone data store key.
+ */
+extern NSString *const UAPushTimeZoneSettingsKey;
+
+/**
+ * Quiet time settings start key.
+ */
 extern NSString *const UAPushQuietTimeStartKey;
+
+/**
+ * Quiet time settings end key.
+ */
 extern NSString *const UAPushQuietTimeEndKey;
 
-// Keys for the userInfo object on request objects
-typedef NSString UAPushUserInfoKey;
-extern UAPushUserInfoKey *const UAPushUserInfoRegistration;
-extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
-extern UAPushUserInfoKey *const UAPushChannelCreationOnForeground;
-extern UAPushUserInfoKey *const UAPushEnabledSettingsMigratedKey;
+/**
+ * If channel creation should occur on foreground data store key.
+ */
+extern NSString *const UAPushChannelCreationOnForeground;
+
+/**
+ * If push enabled settings have been migrated data store key.
+ */
+extern NSString *const UAPushEnabledSettingsMigratedKey;
 
 @interface UAPush ()
 
@@ -80,9 +118,9 @@ extern UAPushUserInfoKey *const UAPushEnabledSettingsMigratedKey;
 @property (nonatomic, assign) BOOL hasEnteredBackground;
 
 /**
- * The UADeviceRegistrar that handles registering the device with Urban Airship.
+ * The UAChannelRegistrar that handles registering the device with Urban Airship.
  */
-@property (nonatomic, strong) UADeviceRegistrar *deviceRegistrar;
+@property (nonatomic, strong) UAChannelRegistrar *channelRegistrar;
 
 /**
  * Notification that launched the application
@@ -99,6 +137,10 @@ extern UAPushUserInfoKey *const UAPushEnabledSettingsMigratedKey;
  */
 @property (nonatomic, assign) BOOL shouldUpdateAPNSRegistration;
 
+@property (nonatomic, readonly) UAPreferenceDataStore *dataStore;
+
+
+- (void)setup;
 
 /**
  * Get the local time zone, considered the default.
@@ -124,19 +166,19 @@ extern UAPushUserInfoKey *const UAPushEnabledSettingsMigratedKey;
 - (void)applicationBackgroundRefreshStatusChanged;
 
 /**
- * Called when the device registrar failed to register.
+ * Called when the channel registrar failed to register.
  * @param payload The registration payload.
  */
 - (void)registrationFailedWithPayload:(UAChannelRegistrationPayload *)payload;
 
 /**
- * Called when the device registrar succesfully registered.
+ * Called when the channel registrar succesfully registered.
  * @param payload The registration payload.
  */
 - (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload;
 
 /**
- * Called when the device registrar creates a new channel.
+ * Called when the channel registrar creates a new channel.
  * @param channelID The channel ID string.
  * @param channelLocation The channel location string.
  */

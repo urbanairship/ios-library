@@ -26,10 +26,17 @@
 #import "UAShareAction.h"
 #import "UAUtils.h"
 #import "UAGlobal.h"
+#import "UAActivityViewController.h"
+
+@interface UAShareAction()
+@property (nonatomic, strong) UAActivityViewController *lastActivityViewController;
+@property (nonatomic, strong) UIPopoverController *popoverController;
+@end
 
 @implementation UAShareAction
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
+
     if (arguments.situation == UASituationBackgroundPush || arguments.situation == UASituationBackgroundInteractiveButton) {
         return NO;
     }
@@ -38,7 +45,11 @@
         return NO;
     }
 
-    return YES;
+    IF_IOS7_OR_GREATER(return YES;)
+
+    // Reject if on iOS 6.x (unsupported).
+    return NO;
+
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments
@@ -49,12 +60,68 @@
 
     NSArray *activityItems = @[arguments.value];
 
-    UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
+    UAActivityViewController *activityViewController = [[UAActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
     activityViewController.excludedActivityTypes = @[UIActivityTypeAssignToContact, UIActivityTypePrint, UIActivityTypeSaveToCameraRoll, UIActivityTypeAirDrop];
 
-    [[UAUtils topController] presentViewController:activityViewController animated:YES completion:^{
+    UIUserInterfaceIdiom userInterfaceIdiom = [UIDevice currentDevice].userInterfaceIdiom;
+    float deviceVersion = [[UIDevice currentDevice].systemVersion floatValue];
+
+    void (^displayShareBlock)(void) = ^(void) {
+
+        self.lastActivityViewController = activityViewController;
+
+        // iOS 8.0+
+        if ([activityViewController respondsToSelector:@selector(popoverPresentationController)]) {
+
+            UIPopoverPresentationController * popoverPresentationController = activityViewController.popoverPresentationController;
+
+            popoverPresentationController.permittedArrowDirections = 0;
+
+            // Set the delegate, center the popover on the screen
+            popoverPresentationController.delegate = activityViewController;
+            popoverPresentationController.sourceRect = activityViewController.sourceRect;
+            popoverPresentationController.sourceView = [UAUtils topController].view;
+
+            [[UAUtils topController] presentViewController:activityViewController animated:YES completion:nil];
+
+        } else if (userInterfaceIdiom == UIUserInterfaceIdiomPad && deviceVersion >= 7.0 && deviceVersion < 8.0) {
+            // iOS 7.x iPad only
+            self.popoverController = [[UIPopoverController alloc] initWithContentViewController:activityViewController];
+            self.popoverController.delegate = activityViewController;
+            [self.popoverController presentPopoverFromRect:activityViewController.sourceRect inView:[UAUtils topController].view permittedArrowDirections:0 animated:YES];
+
+        } else {
+            [[UAUtils topController] presentViewController:activityViewController animated:YES completion:nil];
+        }
+    };
+
+
+    void (^dismissalBlock)(void);
+    __weak UAShareAction *weakSelf = self;
+
+    activityViewController.dismissalBlock = dismissalBlock = ^{
+        __strong UAShareAction *strongSelf = weakSelf;
+
         completionHandler([UAActionResult emptyResult]);
-    }];
+
+        strongSelf.lastActivityViewController = nil;
+        strongSelf.popoverController = nil;
+    };
+
+    if (self.lastActivityViewController) {
+        self.lastActivityViewController.dismissalBlock = ^{
+            dismissalBlock();
+            displayShareBlock();
+        };
+
+        if (userInterfaceIdiom == UIUserInterfaceIdiomPad && deviceVersion >= 7.0 && deviceVersion < 8.0) {
+            [self.popoverController dismissPopoverAnimated:YES];
+        } else {
+            [self.lastActivityViewController dismissViewControllerAnimated:YES completion:nil];
+        }
+    } else {
+        displayShareBlock();
+    }
 }
 
 @end

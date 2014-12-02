@@ -9,6 +9,8 @@
 #import "UAUser.h"
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "UAirship+Internal.h"
+#import "UAPreferenceDataStore.h"
 
 @interface UAInboxAPIClient()
 
@@ -38,7 +40,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
 
     UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:requestUrl method:@"GET"];
 
-    NSString *lastModified = [[NSUserDefaults standardUserDefaults] stringForKey:[NSString stringWithFormat:UALastMessageListModifiedTime, userName]];
+    NSString *lastModified = [[UAirship shared].dataStore stringForKey:[NSString stringWithFormat:UALastMessageListModifiedTime, userName]];
     if (lastModified) {
         [request addRequestHeader:@"If-Modified-Since" value:lastModified];
     }
@@ -124,8 +126,8 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
               NSString *lastModified = [headers objectForKey:@"Last-Modified"];
 
               UA_LDEBUG(@"Setting Last-Modified time to '%@' for user %@'s message list.", lastModified, userName);
-              [[NSUserDefaults standardUserDefaults] setValue:lastModified
-                                                       forKey:[NSString stringWithFormat:UALastMessageListModifiedTime, userName]];
+              [[UAirship shared].dataStore setValue:lastModified
+                                             forKey:[NSString stringWithFormat:UALastMessageListModifiedTime, userName]];
 
               NSString *responseString = request.responseString;
               UA_LTRACE(@"Retrieved message list response: %@", responseString);

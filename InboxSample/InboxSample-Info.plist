@@ -8,6 +8,10 @@
 	<string>Inbox</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleIcons</key>
+	<dict/>
+	<key>CFBundleIcons~ipad</key>
+	<dict/>
 	<key>CFBundleIdentifier</key>
 	<string>com.urbanairship.richpush</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -44,6 +48,12 @@
 	</dict>
 	<key>Initial interface orientation</key>
 	<string>UIInterfaceOrientationPortrait</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Urban Airship location service</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Urban Airship location service</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Urban Airship location service when app is in use</string>
 	<key>NSMainNibFile</key>
 	<string>MainWindow</string>
 	<key>NSMainNibFile~ipad</key>
@@ -52,8 +62,6 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
-	<key>UILaunchImageFile~ipad</key>
-	<string>iPadDefault</string>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 	<key>UISupportedInterfaceOrientations</key>
@@ -63,11 +71,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>NSLocationUsageDescription</key>
-	<string>Urban Airship location service</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Urban Airship location service</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Urban Airship location service when app is in use</string>
 </dict>
 </plist>

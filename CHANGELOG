@@ -3,6 +3,7 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+
 -----------
 iOS 8 Notes (Updated September 25, 2014)
 -----------
@@ -36,6 +37,14 @@ Known issues with iOS 8.0.0 that may impact your application:
   (no badge/alert/sound) or wait for an updated SDK or instructions on how to disable the
   workaround. We plan to release this as soon as we have verified that iOS contains a fix
   for this issue.
+
+------------------------
+5.1.0 - December 2, 2014
+------------------------
+- Added whitelisting to Urban Airship Javascript interface injection.
+- Added UAWebViewDelegate to simplify Urban Airship Javascript interface injection into custom webview implementations.
+  - Prevents the Urban Airship Javascript interface from being injected multiple times into a page with frames.
+- Fixed crash when using the Share Action on iPad devices.
 
 -----------------------
 5.0.3 - October 8, 2014

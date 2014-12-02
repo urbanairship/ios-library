@@ -115,6 +115,10 @@
  */
 @property (nonatomic, strong) UAConfig *config;
 
+/**
+ * The data store to save and load any analytics preferences.
+ */
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 /**
  * The operation queue used for analytics.
@@ -135,13 +139,13 @@
 
 /**
  * Restores any upload event settings from the
- * standardUserDefaults.
+ * preference data store.
  */
 - (void)restoreSavedUploadEventSettings;
 
 /**
  * Saves any upload event settings from the headers to the
- * standardUserDefaults.
+ * preference data store.
  */
 - (void)saveUploadEventSettings;
 

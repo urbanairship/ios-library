@@ -30,7 +30,10 @@
 
 /**
  * The UAWebViewTools provides an interface for webview utility methods.
+ * @deprecated As of 5.1. Custom webview implementations should instead
+ * use the UAWebViewDelegate class.
  */
+__attribute__((deprecated("As of version 5.1.0")))
 @interface UAWebViewTools : NSObject
 
 /**

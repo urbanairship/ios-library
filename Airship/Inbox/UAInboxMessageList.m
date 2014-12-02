@@ -44,6 +44,8 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
 @implementation UAInboxMessageList
 
+@synthesize messages = _messages;
+
 #pragma mark Create Inbox
 
 - (instancetype)init {
@@ -56,8 +58,38 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
         self.unreadCount = -1;
         self.queue = [[NSOperationQueue alloc] init];
         self.queue.maxConcurrentOperationCount = 1;
+
     }
     return self;
+}
+
+#pragma mark Custom setters
+
+- (void)setMessages:(NSArray *)messages {
+    @synchronized(self) {
+        _messages = messages;
+
+        NSMutableDictionary *messageIDMap = [NSMutableDictionary dictionary];
+        NSMutableDictionary *messageURLMap = [NSMutableDictionary dictionary];
+
+        for (UAInboxMessage *message in messages) {
+            if (message.messageBodyURL.absoluteString) {
+                [messageURLMap setObject:message forKey:message.messageBodyURL.absoluteString];
+            }
+            if (message.messageID) {
+                [messageIDMap setObject:message forKey:message.messageID];
+            }
+        }
+
+        self.messageIDMap = [messageIDMap copy];
+        self.messageURLMap = [messageURLMap copy];
+    }
+}
+
+- (NSArray *)messages {
+    @synchronized(self) {
+        return _messages;
+    }
 }
 
 #pragma mark NSNotificationCenter helper methods
@@ -416,14 +448,12 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     return [self.messages count];
 }
 
-- (UAInboxMessage *)messageForID:(NSString *)messageID {
-    for (UAInboxMessage *message in self.messages) {
-        if ([message.messageID isEqualToString:messageID]) {
-            return message;
-        }
-    }
+- (UAInboxMessage *)messageForBodyURL:(NSURL *)url {
+    return [self.messageURLMap objectForKey:url.absoluteString];
+}
 
-    return nil;
+- (UAInboxMessage *)messageForID:(NSString *)messageID {
+    return [self.messageIDMap objectForKey:messageID];
 }
 
 - (UAInboxMessage *)messageAtIndex:(NSUInteger)index {
@@ -445,6 +475,25 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
 - (BOOL)isBatchUpdating {
     return self.batchOperationCount > 0;
+}
+
+- (id)debugQuickLookObject {
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@""];
+
+    NSUInteger index = 0;
+    NSUInteger characterIndex = 0;
+    for (UAInboxMessage *message in self.messages) {
+        NSString *line = index < self.messages.count-1 ? [NSString stringWithFormat:@"%@\n", message.title] : message.title;
+        [attributedString.mutableString appendString:line];
+        // Display unread messages in bold text
+        NSString *fontName = message.unread ? @"Helvetica Bold" : @"Helvetica";
+        [attributedString addAttribute:NSFontAttributeName value:[UIFont fontWithName:fontName size:15]
+                                 range:NSMakeRange(characterIndex, line.length)];
+        index++;
+        characterIndex += line.length;
+    }
+
+    return attributedString;
 }
 
 @end

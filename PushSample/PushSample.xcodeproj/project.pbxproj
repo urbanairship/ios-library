@@ -10,7 +10,7 @@
 		0D2E043C11AA5D1E00C4CD8A /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D2E042C11AA5D1E00C4CD8A /* CFNetwork.framework */; };
 		0D2E049A11AA5DB100C4CD8A /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D2E049311AA5DB100C4CD8A /* MobileCoreServices.framework */; };
 		0D2E04BE11AA5E9700C4CD8A /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D2E04AC11AA5E9700C4CD8A /* SystemConfiguration.framework */; };
-		184E3FD5129E4D1D004465C8 /* libUAirship-5.0.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 184E3FD4129E4D1D004465C8 /* libUAirship-5.0.3.a */; };
+		184E3FD5129E4D1D004465C8 /* libUAirship-5.1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 184E3FD4129E4D1D004465C8 /* libUAirship-5.1.0.a */; };
 		1890BAC31251B5E900E6EBF1 /* bottom-detail.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA121251B5E900E6EBF1 /* bottom-detail.png */; };
 		1890BAC41251B5E900E6EBF1 /* bottom-detail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA131251B5E900E6EBF1 /* bottom-detail@2x.png */; };
 		1890BAC51251B5E900E6EBF1 /* middle-detail.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA141251B5E900E6EBF1 /* middle-detail.png */; };
@@ -21,14 +21,13 @@
 		18C02959124F216B00D49CD5 /* SampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02949124F216B00D49CD5 /* SampleViewController.m */; };
 		18C0295B124F216B00D49CD5 /* MainWindow_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18C0294D124F216B00D49CD5 /* MainWindow_Pad.xib */; };
 		18C0295D124F216B00D49CD5 /* MainWindow_Phone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18C02950124F216B00D49CD5 /* MainWindow_Phone.xib */; };
-		18C0295E124F216B00D49CD5 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 18C02952124F216B00D49CD5 /* Default.png */; };
-		18C02960124F216B00D49CD5 /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 18C02954124F216B00D49CD5 /* Icon-Small.png */; };
 		18C02961124F216B00D49CD5 /* SampleViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18C02955124F216B00D49CD5 /* SampleViewController.xib */; };
 		18D8478F129F6A2E007A36CE /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18D8478E129F6A2E007A36CE /* Security.framework */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
-		1F3CC4D0165C48AD008526E3 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F3CC4CF165C48AD008526E3 /* Default-568h@2x.png */; };
 		1F79711612DE3C1000D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79711512DE3C1000D4937F /* AirshipConfig.plist */; };
+		1FCCBC0E1A0EB64A00B256F0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1FCCBC0D1A0EB64A00B256F0 /* Images.xcassets */; };
+		1FCCBC0F1A0EB64A00B256F0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1FCCBC0D1A0EB64A00B256F0 /* Images.xcassets */; };
 		1FD26EBF13FB318700DBC45F /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FD26EBE13FB318700DBC45F /* libz.dylib */; };
 		1FE3959E177A25DC00388531 /* SampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3959C177A25DC00388531 /* SampleAppDelegate.m */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
@@ -36,8 +35,6 @@
 		4921C0BD179085F600FE65BF /* UAPushSettingsUserInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4921C0BC179085F600FE65BF /* UAPushSettingsUserInfoView.xib */; };
 		493977AC19B7CE660063C58F /* MainWindow_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18C0294D124F216B00D49CD5 /* MainWindow_Pad.xib */; };
 		493977AD19B7CE660063C58F /* MainWindow_Phone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18C02950124F216B00D49CD5 /* MainWindow_Phone.xib */; };
-		493977AE19B7CE660063C58F /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 18C02952124F216B00D49CD5 /* Default.png */; };
-		493977AF19B7CE660063C58F /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 18C02954124F216B00D49CD5 /* Icon-Small.png */; };
 		493977B019B7CE660063C58F /* SampleViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18C02955124F216B00D49CD5 /* SampleViewController.xib */; };
 		493977B119B7CE660063C58F /* bottom-detail.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA121251B5E900E6EBF1 /* bottom-detail.png */; };
 		493977B219B7CE660063C58F /* bottom-detail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA131251B5E900E6EBF1 /* bottom-detail@2x.png */; };
@@ -45,15 +42,7 @@
 		493977B419B7CE660063C58F /* middle-detail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA151251B5E900E6EBF1 /* middle-detail@2x.png */; };
 		493977B519B7CE660063C58F /* top-detail.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA161251B5E900E6EBF1 /* top-detail.png */; };
 		493977B619B7CE660063C58F /* top-detail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA171251B5E900E6EBF1 /* top-detail@2x.png */; };
-		493977B719B7CE660063C58F /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CF012BC29800041239E /* Icon-72.png */; };
-		493977B819B7CE660063C58F /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CF112BC29800041239E /* Icon-Small-50.png */; };
-		493977B919B7CE660063C58F /* iPadDefault-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CF212BC29800041239E /* iPadDefault-Landscape.png */; };
-		493977BA19B7CE660063C58F /* iPadDefault-Portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CF312BC29800041239E /* iPadDefault-Portrait.png */; };
-		493977BB19B7CE660063C58F /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CF812BC298D0041239E /* Icon-Small@2x.png */; };
-		493977BC19B7CE660063C58F /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CFA12BC299A0041239E /* Default@2x.png */; };
-		493977BD19B7CE660063C58F /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CFB12BC299A0041239E /* Icon.png */; };
 		493977BE19B7CE660063C58F /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = D5A192BC12C15ADD006AF4AE /* iTunesArtwork */; };
-		493977BF19B7CE660063C58F /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5A192BE12C15AE5006AF4AE /* Icon@2x.png */; };
 		493977C019B7CE660063C58F /* UAPushSettingsChannelInfoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 76149E891843B0CF00398008 /* UAPushSettingsChannelInfoViewController.xib */; };
 		493977C119B7CE660063C58F /* UAPushMoreSettingsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D56857C312C183D900BBF31A /* UAPushMoreSettingsView.xib */; };
 		493977C219B7CE660063C58F /* UAPushSettingsAliasView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D56857C412C183D900BBF31A /* UAPushSettingsAliasView.xib */; };
@@ -69,7 +58,6 @@
 		493977CE19B7CE660063C58F /* cat.caf in Resources */ = {isa = PBXBuildFile; fileRef = D5184E971315F39C00A40CAC /* cat.caf */; };
 		493977CF19B7CE660063C58F /* UALocationSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BB935DB2152B61DB006E6A92 /* UALocationSettingsViewController.xib */; };
 		493977D019B7CE660063C58F /* UAMapPresentationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BB935DB3152B61DB006E6A92 /* UAMapPresentationViewController.xib */; };
-		493977D119B7CE660063C58F /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F3CC4CF165C48AD008526E3 /* Default-568h@2x.png */; };
 		493977D219B7CE660063C58F /* UAPushSettingsUserInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4921C0BC179085F600FE65BF /* UAPushSettingsUserInfoView.xib */; };
 		493977D419B7CE660063C58F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02947124F216B00D49CD5 /* main.m */; };
 		493977D519B7CE660063C58F /* SampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02949124F216B00D49CD5 /* SampleViewController.m */; };
@@ -147,15 +135,7 @@
 		D56857C912C183D900BBF31A /* UAPushSettingsTokenView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D56857C512C183D900BBF31A /* UAPushSettingsTokenView.xib */; };
 		D56857CA12C183D900BBF31A /* UAPushSettingsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D56857C612C183D900BBF31A /* UAPushSettingsView.xib */; };
 		D5A192BD12C15ADD006AF4AE /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = D5A192BC12C15ADD006AF4AE /* iTunesArtwork */; };
-		D5A192BF12C15AE5006AF4AE /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5A192BE12C15AE5006AF4AE /* Icon@2x.png */; };
 		D5C75CED12BC29710041239E /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5C75CEC12BC29710041239E /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		D5C75CF412BC29800041239E /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CF012BC29800041239E /* Icon-72.png */; };
-		D5C75CF512BC29800041239E /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CF112BC29800041239E /* Icon-Small-50.png */; };
-		D5C75CF612BC29800041239E /* iPadDefault-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CF212BC29800041239E /* iPadDefault-Landscape.png */; };
-		D5C75CF712BC29800041239E /* iPadDefault-Portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CF312BC29800041239E /* iPadDefault-Portrait.png */; };
-		D5C75CF912BC298D0041239E /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CF812BC298D0041239E /* Icon-Small@2x.png */; };
-		D5C75CFC12BC299A0041239E /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CFA12BC299A0041239E /* Default@2x.png */; };
-		D5C75CFD12BC299A0041239E /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CFB12BC299A0041239E /* Icon.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -175,7 +155,7 @@
 		0D2E042C11AA5D1E00C4CD8A /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		0D2E049311AA5DB100C4CD8A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		0D2E04AC11AA5E9700C4CD8A /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		184E3FD4129E4D1D004465C8 /* libUAirship-5.0.3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-5.0.3.a"; path = "../Airship/libUAirship-5.0.3.a"; sourceTree = SOURCE_ROOT; };
+		184E3FD4129E4D1D004465C8 /* libUAirship-5.1.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-5.1.0.a"; path = "../Airship/libUAirship-5.1.0.a"; sourceTree = SOURCE_ROOT; };
 		1890BA121251B5E900E6EBF1 /* bottom-detail.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bottom-detail.png"; sourceTree = "<group>"; };
 		1890BA131251B5E900E6EBF1 /* bottom-detail@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bottom-detail@2x.png"; sourceTree = "<group>"; };
 		1890BA141251B5E900E6EBF1 /* middle-detail.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "middle-detail.png"; sourceTree = "<group>"; };
@@ -187,8 +167,6 @@
 		18C02949124F216B00D49CD5 /* SampleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SampleViewController.m; sourceTree = "<group>"; };
 		18C0294D124F216B00D49CD5 /* MainWindow_Pad.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainWindow_Pad.xib; sourceTree = "<group>"; };
 		18C02950124F216B00D49CD5 /* MainWindow_Phone.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainWindow_Phone.xib; sourceTree = "<group>"; };
-		18C02952124F216B00D49CD5 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
-		18C02954124F216B00D49CD5 /* Icon-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small.png"; sourceTree = "<group>"; };
 		18C02955124F216B00D49CD5 /* SampleViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SampleViewController.xib; sourceTree = "<group>"; };
 		18C02A08124F250000D49CD5 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		18C02A0C124F251B00D49CD5 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -196,8 +174,8 @@
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* PushSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PushSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		1F3CC4CF165C48AD008526E3 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		1F79711512DE3C1000D4937F /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = AirshipConfig.plist; sourceTree = "<group>"; };
+		1FCCBC0D1A0EB64A00B256F0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		1FD26EBE13FB318700DBC45F /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		1FE3959C177A25DC00388531 /* SampleAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SampleAppDelegate.m; sourceTree = "<group>"; };
 		1FE3959D177A25DC00388531 /* SampleAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleAppDelegate.h; sourceTree = "<group>"; };
@@ -266,15 +244,7 @@
 		D56857C512C183D900BBF31A /* UAPushSettingsTokenView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAPushSettingsTokenView.xib; sourceTree = "<group>"; };
 		D56857C612C183D900BBF31A /* UAPushSettingsView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAPushSettingsView.xib; sourceTree = "<group>"; };
 		D5A192BC12C15ADD006AF4AE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
-		D5A192BE12C15AE5006AF4AE /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		D5C75CEC12BC29710041239E /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
-		D5C75CF012BC29800041239E /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
-		D5C75CF112BC29800041239E /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small-50.png"; sourceTree = "<group>"; };
-		D5C75CF212BC29800041239E /* iPadDefault-Landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iPadDefault-Landscape.png"; sourceTree = "<group>"; };
-		D5C75CF312BC29800041239E /* iPadDefault-Portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iPadDefault-Portrait.png"; sourceTree = "<group>"; };
-		D5C75CF812BC298D0041239E /* Icon-Small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small@2x.png"; sourceTree = "<group>"; };
-		D5C75CFA12BC299A0041239E /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
-		D5C75CFB12BC299A0041239E /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		D5F70FF412C94E33007285C4 /* PushSample-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "PushSample-Info.plist"; sourceTree = "<group>"; };
 		D5F70FF512C94E33007285C4 /* PushSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushSample_Prefix.pch; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -295,7 +265,7 @@
 				1FD26EBF13FB318700DBC45F /* libz.dylib in Frameworks */,
 				636CB1E9128CF51200481EFC /* libsqlite3.dylib in Frameworks */,
 				636CB1EC128CF51900481EFC /* StoreKit.framework in Frameworks */,
-				184E3FD5129E4D1D004465C8 /* libUAirship-5.0.3.a in Frameworks */,
+				184E3FD5129E4D1D004465C8 /* libUAirship-5.1.0.a in Frameworks */,
 				18D8478F129F6A2E007A36CE /* Security.framework in Frameworks */,
 				D5C75CED12BC29710041239E /* CoreTelephony.framework in Frameworks */,
 				D5184E911315F35B00A40CAC /* AudioToolbox.framework in Frameworks */,
@@ -332,7 +302,7 @@
 		184E3FD3129E4D11004465C8 /* Support */ = {
 			isa = PBXGroup;
 			children = (
-				184E3FD4129E4D1D004465C8 /* libUAirship-5.0.3.a */,
+				184E3FD4129E4D1D004465C8 /* libUAirship-5.1.0.a */,
 			);
 			name = Support;
 			sourceTree = "<group>";
@@ -469,6 +439,7 @@
 		18C0294A124F216B00D49CD5 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1FCCBC0D1A0EB64A00B256F0 /* Images.xcassets */,
 				18C0294B124F216B00D49CD5 /* iPad */,
 				18C0294E124F216B00D49CD5 /* iPhone */,
 				18C02951124F216B00D49CD5 /* Shared */,
@@ -479,10 +450,6 @@
 		18C0294B124F216B00D49CD5 /* iPad */ = {
 			isa = PBXGroup;
 			children = (
-				D5C75CF012BC29800041239E /* Icon-72.png */,
-				D5C75CF112BC29800041239E /* Icon-Small-50.png */,
-				D5C75CF212BC29800041239E /* iPadDefault-Landscape.png */,
-				D5C75CF312BC29800041239E /* iPadDefault-Portrait.png */,
 				18C0294D124F216B00D49CD5 /* MainWindow_Pad.xib */,
 			);
 			path = iPad;
@@ -491,9 +458,6 @@
 		18C0294E124F216B00D49CD5 /* iPhone */ = {
 			isa = PBXGroup;
 			children = (
-				1F3CC4CF165C48AD008526E3 /* Default-568h@2x.png */,
-				D5A192BE12C15AE5006AF4AE /* Icon@2x.png */,
-				D5C75CF812BC298D0041239E /* Icon-Small@2x.png */,
 				18C02950124F216B00D49CD5 /* MainWindow_Phone.xib */,
 			);
 			path = iPhone;
@@ -507,10 +471,6 @@
 				D5184E961315F39C00A40CAC /* cow.caf */,
 				D5184E971315F39C00A40CAC /* cat.caf */,
 				D5A192BC12C15ADD006AF4AE /* iTunesArtwork */,
-				D5C75CFA12BC299A0041239E /* Default@2x.png */,
-				D5C75CFB12BC299A0041239E /* Icon.png */,
-				18C02952124F216B00D49CD5 /* Default.png */,
-				18C02954124F216B00D49CD5 /* Icon-Small.png */,
 				18C02955124F216B00D49CD5 /* SampleViewController.xib */,
 			);
 			path = Shared;
@@ -676,8 +636,6 @@
 			files = (
 				18C0295B124F216B00D49CD5 /* MainWindow_Pad.xib in Resources */,
 				18C0295D124F216B00D49CD5 /* MainWindow_Phone.xib in Resources */,
-				18C0295E124F216B00D49CD5 /* Default.png in Resources */,
-				18C02960124F216B00D49CD5 /* Icon-Small.png in Resources */,
 				18C02961124F216B00D49CD5 /* SampleViewController.xib in Resources */,
 				1890BAC31251B5E900E6EBF1 /* bottom-detail.png in Resources */,
 				1890BAC41251B5E900E6EBF1 /* bottom-detail@2x.png in Resources */,
@@ -685,16 +643,8 @@
 				1890BAC61251B5E900E6EBF1 /* middle-detail@2x.png in Resources */,
 				1890BAC71251B5E900E6EBF1 /* top-detail.png in Resources */,
 				1890BAC81251B5E900E6EBF1 /* top-detail@2x.png in Resources */,
-				D5C75CF412BC29800041239E /* Icon-72.png in Resources */,
 				49C0CB3A19BA5DFE00771F4F /* UAInteractiveNotifications.strings in Resources */,
-				D5C75CF512BC29800041239E /* Icon-Small-50.png in Resources */,
-				D5C75CF612BC29800041239E /* iPadDefault-Landscape.png in Resources */,
-				D5C75CF712BC29800041239E /* iPadDefault-Portrait.png in Resources */,
-				D5C75CF912BC298D0041239E /* Icon-Small@2x.png in Resources */,
-				D5C75CFC12BC299A0041239E /* Default@2x.png in Resources */,
-				D5C75CFD12BC299A0041239E /* Icon.png in Resources */,
 				D5A192BD12C15ADD006AF4AE /* iTunesArtwork in Resources */,
-				D5A192BF12C15AE5006AF4AE /* Icon@2x.png in Resources */,
 				76149E8A1843B0CF00398008 /* UAPushSettingsChannelInfoViewController.xib in Resources */,
 				D56857C712C183D900BBF31A /* UAPushMoreSettingsView.xib in Resources */,
 				D56857C812C183D900BBF31A /* UAPushSettingsAliasView.xib in Resources */,
@@ -705,6 +655,7 @@
 				49C0CB9D19BA677B00771F4F /* UAPushUI.strings in Resources */,
 				D5184E8D1315F33900A40CAC /* UAPushSettingsSoundsViewController.xib in Resources */,
 				D5184E8E1315F33900A40CAC /* UAPushSettingsAddTagViewController.xib in Resources */,
+				1FCCBC0E1A0EB64A00B256F0 /* Images.xcassets in Resources */,
 				D5184E981315F39C00A40CAC /* pig.caf in Resources */,
 				76F5B71F19C37E98003C07A0 /* Settings.bundle in Resources */,
 				D5184E991315F39C00A40CAC /* frog.caf in Resources */,
@@ -712,7 +663,6 @@
 				D5184E9B1315F39C00A40CAC /* cat.caf in Resources */,
 				BB935DB4152B61DB006E6A92 /* UALocationSettingsViewController.xib in Resources */,
 				BB935DB5152B61DB006E6A92 /* UAMapPresentationViewController.xib in Resources */,
-				1F3CC4D0165C48AD008526E3 /* Default-568h@2x.png in Resources */,
 				4921C0BD179085F600FE65BF /* UAPushSettingsUserInfoView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -724,8 +674,6 @@
 				76F5B72019C37EAD003C07A0 /* Settings.bundle in Resources */,
 				493977AC19B7CE660063C58F /* MainWindow_Pad.xib in Resources */,
 				493977AD19B7CE660063C58F /* MainWindow_Phone.xib in Resources */,
-				493977AE19B7CE660063C58F /* Default.png in Resources */,
-				493977AF19B7CE660063C58F /* Icon-Small.png in Resources */,
 				493977B019B7CE660063C58F /* SampleViewController.xib in Resources */,
 				493977B119B7CE660063C58F /* bottom-detail.png in Resources */,
 				493977B219B7CE660063C58F /* bottom-detail@2x.png in Resources */,
@@ -733,16 +681,8 @@
 				493977B419B7CE660063C58F /* middle-detail@2x.png in Resources */,
 				493977B519B7CE660063C58F /* top-detail.png in Resources */,
 				493977B619B7CE660063C58F /* top-detail@2x.png in Resources */,
-				493977B719B7CE660063C58F /* Icon-72.png in Resources */,
 				49C0CB3B19BA5DFE00771F4F /* UAInteractiveNotifications.strings in Resources */,
-				493977B819B7CE660063C58F /* Icon-Small-50.png in Resources */,
-				493977B919B7CE660063C58F /* iPadDefault-Landscape.png in Resources */,
-				493977BA19B7CE660063C58F /* iPadDefault-Portrait.png in Resources */,
-				493977BB19B7CE660063C58F /* Icon-Small@2x.png in Resources */,
-				493977BC19B7CE660063C58F /* Default@2x.png in Resources */,
-				493977BD19B7CE660063C58F /* Icon.png in Resources */,
 				493977BE19B7CE660063C58F /* iTunesArtwork in Resources */,
-				493977BF19B7CE660063C58F /* Icon@2x.png in Resources */,
 				493977C019B7CE660063C58F /* UAPushSettingsChannelInfoViewController.xib in Resources */,
 				493977C119B7CE660063C58F /* UAPushMoreSettingsView.xib in Resources */,
 				493977C219B7CE660063C58F /* UAPushSettingsAliasView.xib in Resources */,
@@ -752,6 +692,7 @@
 				493977C619B7CE660063C58F /* UAPushSettingsTagsViewController.xib in Resources */,
 				49C0CB9E19BA677B00771F4F /* UAPushUI.strings in Resources */,
 				493977C719B7CE660063C58F /* UAPushSettingsSoundsViewController.xib in Resources */,
+				1FCCBC0F1A0EB64A00B256F0 /* Images.xcassets in Resources */,
 				493977C819B7CE660063C58F /* UAPushSettingsAddTagViewController.xib in Resources */,
 				493977CA19B7CE660063C58F /* pig.caf in Resources */,
 				493977CC19B7CE660063C58F /* frog.caf in Resources */,
@@ -759,7 +700,6 @@
 				493977CE19B7CE660063C58F /* cat.caf in Resources */,
 				493977CF19B7CE660063C58F /* UALocationSettingsViewController.xib in Resources */,
 				493977D019B7CE660063C58F /* UAMapPresentationViewController.xib in Resources */,
-				493977D119B7CE660063C58F /* Default-568h@2x.png in Resources */,
 				493977D219B7CE660063C58F /* UAPushSettingsUserInfoView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -851,6 +791,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUILD_STYLE = Debug;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
@@ -878,6 +820,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUILD_STYLE = Release;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
@@ -901,6 +845,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUILD_STYLE = Debug;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = ../Airship/;
@@ -930,6 +876,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUILD_STYLE = Release;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = ../Airship/;

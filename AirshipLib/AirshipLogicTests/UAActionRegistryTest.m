@@ -25,13 +25,14 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "UAActionRegistry+Internal.h"
-#import "UAApplicationMetriccs+Internal.h"
+#import "UAApplicationMetrics+Internal.h"
 #import "UAirship+Internal.h"
 
 @interface UAActionRegistryTest : XCTestCase
 @property (nonatomic, strong) UAActionRegistry *registry;
-@property (nonatomic, strong) UAApplicationMetrics *metrics;
+@property (nonatomic, strong) id mockMetrics;
 @property (nonatomic, strong) id mockAirship;
+
 @end
 
 @implementation UAActionRegistryTest
@@ -49,12 +50,13 @@
     self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
 
-    self.metrics = [[UAApplicationMetrics alloc] init];
-    [[[self.mockAirship stub] andReturn:self.metrics] applicationMetrics];
+    self.mockMetrics = [OCMockObject niceMockForClass:[UAApplicationMetrics class]];
+    [[[self.mockAirship stub] andReturn:self.mockMetrics] applicationMetrics];
 }
 
 - (void)tearDown {
     [self.mockAirship stopMocking];
+    [self.mockMetrics stopMocking];
 
     [super tearDown];
 }
@@ -342,13 +344,19 @@
  * Test landing page default predicate
  */
 - (void)testLandingPageDefaultPredicate {
+
+    __block NSDate *date;
+    [[[self.mockMetrics stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&date];
+    }] lastApplicationOpenDate];
+
+
     [self.registry registerDefaultActions];
     UAActionRegistryEntry *entry = [self.registry registryEntryWithName:kUALandingPageActionDefaultRegistryName];
 
     XCTAssertNotNil(entry, "Landing page should be registered by default");
     XCTAssertNotNil(entry.predicate, "Landing page should have a default predicate");
 
-    self.metrics.lastApplicationOpenDate = nil;
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"some-value"
                                                       withSituation:UASituationBackgroundPush];
@@ -356,10 +364,10 @@
     XCTAssertFalse(entry.predicate(args), "Should not accept background push if the app has never been opened before");
 
 
-    self.metrics.lastApplicationOpenDate = [NSDate dateWithTimeIntervalSince1970:0];
+    date = [NSDate dateWithTimeIntervalSince1970:0];
     XCTAssertFalse(entry.predicate(args), "Should not accept background push if the app has not been opened since 1970");
 
-    self.metrics.lastApplicationOpenDate = [NSDate date];
+    date = [NSDate date];
     XCTAssertTrue(entry.predicate(args), "Should accept background push if the app has been opened recently");
 }
 

@@ -31,13 +31,18 @@
 #import <OCMock/OCMConstraint.h>
 #import "UAKeychainUtils.h"
 #import "UAPush+Internal.h"
+#import "UAPreferenceDataStore.h"
 
 @interface UAAnalyticsTest()
 @property (nonatomic, strong) UAAnalytics *analytics;
+
 @property (nonatomic, strong) id mockedKeychainClass;
 @property (nonatomic, strong) id mockLocaleClass;
 @property (nonatomic, strong) id mockTimeZoneClass;
 @property (nonatomic, strong) id mockPush;
+@property (nonatomic, strong) id mockDataStore;
+@property (nonatomic, strong) NSValue *noValue;
+@property (nonatomic, strong) NSValue *yesValue;
 @end
 
 @implementation UAAnalyticsTest
@@ -55,8 +60,10 @@
     self.mockPush = [OCMockObject niceMockForClass:[UAPush class]];
     [[[self.mockPush stub] andReturn:self.mockPush] shared];
 
+    self.mockDataStore = [OCMockObject niceMockForClass:[UAPreferenceDataStore class]];
+
     UAConfig *config = [[UAConfig alloc] init];
-    self.analytics = [[UAAnalytics alloc] initWithConfig:config];
+    self.analytics = [[UAAnalytics alloc] initWithConfig:config dataStore:self.mockDataStore];
  }
 
 - (void)tearDown {
@@ -66,6 +73,7 @@
     [self.mockLocaleClass stopMocking];
     [self.mockTimeZoneClass stopMocking];
     [self.mockPush stopMocking];
+    [self.mockDataStore stopMocking];
 }
 
 - (void)testRequestTimezoneHeader {
@@ -120,40 +128,35 @@
 }
 
 - (void)testRequestChannelOptInNoHeader {
-    [[[self.mockPush stub] andReturnValue:@(NO)] userPushNotificationsAllowed];
+
+    [[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(NO)] userPushNotificationsAllowed];
 
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
     XCTAssertEqual([headers objectForKey:@"X-UA-Channel-Opted-In"], @"false");
 }
 
 - (void)testRequestChannelOptInYesHeader {
-    [[[self.mockPush stub] andReturnValue:@(YES)] userPushNotificationsAllowed];
+    [[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(YES)] userPushNotificationsAllowed];
 
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
     XCTAssertEqual([headers objectForKey:@"X-UA-Channel-Opted-In"], @"true");
 }
 
 - (void)testRequestChannelBackgroundEnabledNoHeader {
-    [[[self.mockPush stub] andReturnValue:@(NO)] backgroundPushNotificationsAllowed];
+    [[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(NO)] backgroundPushNotificationsAllowed];
 
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
     XCTAssertEqual([headers objectForKey:@"X-UA-Channel-Background-Enabled"], @"false");
 }
 
 - (void)testRequestChannelBackgroundEnabledYesHeader {
-    [[[self.mockPush stub] andReturnValue:@(YES)] backgroundPushNotificationsAllowed];
+    [[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(YES)] backgroundPushNotificationsAllowed];
 
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
     XCTAssertEqual([headers objectForKey:@"X-UA-Channel-Background-Enabled"], @"true");
 }
 
-- (void)restoreSavedUploadEventSettingsEmptyUserDefaults {
-    // Clear the settings from the standard user defaults
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMaxTotalDBSizeUserDefaultsKey];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMaxBatchSizeUserDefaultsKey];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMaxWaitUserDefaultsKey];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMinBatchIntervalUserDefaultsKey];
-
+- (void)restoreSavedUploadEventSettingsEmptyDataStore {
     [self.analytics restoreSavedUploadEventSettings];
 
     // Should try to set the values to 0 and the setter should normalize them to the min values.
@@ -164,11 +167,12 @@
 }
 
 - (void)restoreSavedUploadEventSettingsExistingData {
-    // Set valid date for the defaults
-    [[NSUserDefaults standardUserDefaults] setInteger:kMinTotalDBSizeBytes + 5 forKey:kMaxTotalDBSizeUserDefaultsKey];
-    [[NSUserDefaults standardUserDefaults] setInteger:kMinBatchSizeBytes + 5 forKey:kMaxBatchSizeUserDefaultsKey];
-    [[NSUserDefaults standardUserDefaults] setInteger:kMinWaitSeconds + 5 forKey:kMaxWaitUserDefaultsKey];
-    [[NSUserDefaults standardUserDefaults] setInteger:kMinBatchIntervalSeconds + 5 forKey:kMinBatchIntervalUserDefaultsKey];
+
+    // Set valid data
+    [[[self.mockDataStore stub] andReturnValue:@(kMinTotalDBSizeBytes + 5)] integerForKey:kMaxTotalDBSizeUserDefaultsKey];
+    [[[self.mockDataStore stub] andReturnValue:@(kMinBatchSizeBytes + 5)] integerForKey:kMaxBatchSizeUserDefaultsKey];
+    [[[self.mockDataStore stub] andReturnValue:@(kMinWaitSeconds + 5)] integerForKey:kMaxWaitUserDefaultsKey];
+    [[[self.mockDataStore stub] andReturnValue:@(kMinBatchIntervalSeconds + 5)] integerForKey:kMinBatchIntervalUserDefaultsKey];
 
     [self.analytics restoreSavedUploadEventSettings];
 
@@ -180,39 +184,36 @@
 }
 
 - (void)testSaveUploadEventSettings {
-    // Clear the settings from the standard user defaults
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMaxTotalDBSizeUserDefaultsKey];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMaxBatchSizeUserDefaultsKey];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMaxWaitUserDefaultsKey];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMinBatchIntervalUserDefaultsKey];
+    [[self.mockDataStore expect] setInteger:(NSInteger)self.analytics.maxTotalDBSize forKey:kMaxTotalDBSizeUserDefaultsKey];
+    [[self.mockDataStore expect] setInteger:(NSInteger)self.analytics.maxBatchSize forKey:kMaxBatchSizeUserDefaultsKey];
+    [[self.mockDataStore expect] setInteger:(NSInteger)self.analytics.maxWait forKey:kMaxWaitUserDefaultsKey];
+    [[self.mockDataStore expect] setInteger:(NSInteger)self.analytics.minBatchInterval forKey:kMinBatchIntervalUserDefaultsKey];
 
     [self.analytics saveUploadEventSettings];
 
-    // Make sure all the expected settings are set to the current analytics properties
-    XCTAssertEqual((NSInteger)self.analytics.maxTotalDBSize, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxTotalDBSizeUserDefaultsKey], @"maxTotalDBSize failed to save to user defaults");
-    XCTAssertEqual((NSInteger)self.analytics.maxBatchSize, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxBatchSizeUserDefaultsKey], @"maxBatchSize failed to save to user defaults");
-    XCTAssertEqual((NSInteger)self.analytics.maxWait, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxWaitUserDefaultsKey], @"maxWait is setting failed to save to user defaults");
-    XCTAssertEqual((NSInteger)self.analytics.minBatchInterval, [[NSUserDefaults standardUserDefaults] integerForKey:kMinBatchIntervalUserDefaultsKey], @"minBatchInterval failed to save to user defaults");
+    [self.mockDataStore verify];
 }
 
 - (void)testUpdateAnalyticsParameters {
     // Create headers with response values for the event header settings
     NSMutableDictionary *headers = [NSMutableDictionary dictionaryWithCapacity:4];
-    [headers setValue:[NSNumber numberWithInt:kMinTotalDBSizeBytes + 1] forKey:@"X-UA-Max-Total"];
-    [headers setValue:[NSNumber numberWithInt:kMinBatchSizeBytes + 1] forKey:@"X-UA-Max-Batch"];
-    [headers setValue:[NSNumber numberWithInt:kMinWaitSeconds + 1] forKey:@"X-UA-Max-Wait"];
-    [headers setValue:[NSNumber numberWithInt:kMinBatchIntervalSeconds + 1] forKey:@"X-UA-Min-Batch-Interval"];
+    [headers setValue:[NSNumber numberWithInt:11] forKey:@"X-UA-Max-Total"];
+    [headers setValue:[NSNumber numberWithInt:11] forKey:@"X-UA-Max-Batch"];
+    [headers setValue:[NSNumber numberWithInt:8*24*3600] forKey:@"X-UA-Max-Wait"];
+    [headers setValue:[NSNumber numberWithInt:62] forKey:@"X-UA-Min-Batch-Interval"];
 
     id mockResponse = [OCMockObject niceMockForClass:[NSHTTPURLResponse class]];
     [[[mockResponse stub] andReturn:headers] allHeaderFields];
-    
-    [self.analytics updateAnalyticsParametersWithHeaderValues:mockResponse];
 
     // Make sure all the expected settings are set to the current analytics properties
-    XCTAssertEqual((NSInteger)self.analytics.maxTotalDBSize, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxTotalDBSizeUserDefaultsKey], @"maxTotalDBSize failed to save update its value from response header");
-    XCTAssertEqual((NSInteger)self.analytics.maxBatchSize, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxBatchSizeUserDefaultsKey], @"maxBatchSize failed to save update its value from response header");
-    XCTAssertEqual((NSInteger)self.analytics.maxWait, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxWaitUserDefaultsKey], @"maxWait is setting failed to save update its value from response header");
-    XCTAssertEqual((NSInteger)self.analytics.minBatchInterval, [[NSUserDefaults standardUserDefaults] integerForKey:kMinBatchIntervalUserDefaultsKey], @"minBatchInterval failed to save update its value from response header");
+    [[self.mockDataStore expect] setInteger:11 * 1024 forKey:kMaxTotalDBSizeUserDefaultsKey]; // 11 KB
+    [[self.mockDataStore expect] setInteger:11 * 1024 forKey:kMaxBatchSizeUserDefaultsKey]; // 11 KB
+    [[self.mockDataStore expect] setInteger:8*24*3600 forKey:kMaxWaitUserDefaultsKey]; // 8 days
+    [[self.mockDataStore expect] setInteger:62 forKey:kMinBatchIntervalUserDefaultsKey]; // 62 seconds
+
+    [self.analytics updateAnalyticsParametersWithHeaderValues:mockResponse];
+
+    [self.mockDataStore verify];
     [mockResponse stopMocking];
 }
 

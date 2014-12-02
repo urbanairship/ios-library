@@ -29,9 +29,10 @@
 #import "UABeveledLoadingIndicator.h"
 #import "UAUtils.h"
 #import "UAGlobal.h"
-
+#import "UAInboxMessage.h"
 #import "UIWebView+UAAdditions.h"
-#import "UAWebViewTools.h"
+
+#import "UAWebViewDelegate.h"
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -61,6 +62,7 @@ static NSMutableSet *overlayControllers = nil;
 @property (nonatomic, strong) UIViewController *parentViewController;
 @property (nonatomic, strong) UIView *overlayView;
 @property (nonatomic, strong) UABeveledLoadingIndicator *loadingIndicator;
+@property (nonatomic, strong) UAWebViewDelegate *webViewDelegate;
 
 @end
 
@@ -107,7 +109,7 @@ static NSMutableSet *overlayControllers = nil;
 
 + (void)closeAll:(BOOL)animated {
     for (UALandingPageOverlayController *oc in overlayControllers) {
-        [oc closeWindow:animated];
+        [oc closeWebView:oc.webView animated:animated];
     }
 }
 
@@ -124,7 +126,12 @@ static NSMutableSet *overlayControllers = nil;
         self.webView = [[UIWebView alloc] initWithFrame:CGRectZero];
         self.webView.backgroundColor = [UIColor clearColor];
         self.webView.opaque = NO;
-        self.webView.delegate = self;
+        self.webViewDelegate = [[UAWebViewDelegate alloc] init];
+        self.webViewDelegate.forwardDelegate = self;
+        self.webViewDelegate.richContentWindow = self;
+        self.webView.delegate = self.webViewDelegate;
+
+
         self.webView.dataDetectorTypes = UIDataDetectorTypeNone;
 
         // Hack to hide the ugly webview gradient (iOS6 and earlier)
@@ -314,6 +321,7 @@ static NSMutableSet *overlayControllers = nil;
          (UIInterfaceOrientation)[UIDevice currentDevice].orientation) == 0) {
         return;
     }
+
     // This will inject the current device orientation
     [self.webView injectInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
@@ -351,22 +359,14 @@ static NSMutableSet *overlayControllers = nil;
 
 #pragma mark UIWebViewDelegate
 
-- (BOOL)webView:(UIWebView *)wv shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
-    return [UAWebViewTools webView:wv shouldStartLoadWithRequest:request navigationType:navigationType message:self.message];
-}
-
-- (void)webViewDidStartLoad:(UIWebView *)wv {
-    [self.webView populateJavascriptEnvironment:self.message];
-    [self.webView injectInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
-}
-
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
     [self.loadingIndicator hide];
-    [self.webView fireUALibraryReadyEvent];
 
     if (self.message) {
         [self.message markMessageReadWithCompletionHandler:nil];
     }
+
+    [self.webView injectInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
@@ -401,7 +401,7 @@ static NSMutableSet *overlayControllers = nil;
 
 #pragma mark UARichContentWindow
 
-- (void)closeWindow:(BOOL)animated {
+- (void)closeWebView:(UIWebView *)webView animated:(BOOL)animated {
     UA_LDEBUG(@"Closing landing page overlay controller: %@", [self.url absoluteString]);
     [self finish:animated];
 }

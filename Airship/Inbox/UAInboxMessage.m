@@ -29,6 +29,7 @@
 #import "UAInboxAPIClient.h"
 #import "UAInboxDBManager.h"
 #import "UAInboxMessageList+Internal.h"
+#import "UAUtils.h"
 
 @implementation UAInboxMessage
 
@@ -136,6 +137,46 @@
 
 - (NSDictionary *)rawMessageObject {
     return self.data.rawMessageObject;
+}
+
+#pragma mark -
+#pragma mark Quick Look methods
+
+- (BOOL)waitWithTimeoutInterval:(NSTimeInterval)interval pollingWebView:(UIWebView *)webView {
+    NSDate *timeoutDate = [NSDate dateWithTimeIntervalSinceNow:interval];
+    // The webView may not have begun loading at this point
+    BOOL loadingStarted = webView.loading;
+    while ([timeoutDate timeIntervalSinceNow] > 0) {
+        if (!loadingStarted && webView.loading) {
+            loadingStarted = YES;
+        } else if (loadingStarted && !webView.loading) {
+            // Break once the webView has transitioned from a loading to non-loading state
+            break;
+        }
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+    }
+    return [timeoutDate timeIntervalSinceNow] > 0;
+}
+
+- (id)debugQuickLookObject {
+
+    UIWebView *webView = [[UIWebView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.messageBodyURL];
+    NSString *auth = [UAUtils userAuthHeaderString];
+    [request setValue:auth forHTTPHeaderField:@"Authorization"];
+
+    // Load the message body, spin the run loop and poll the webView with a 5 second timeout.
+    [webView loadRequest:request];
+    [self waitWithTimeoutInterval:5 pollingWebView:webView];
+
+    // Return a UIImage rendered from the webView
+    UIGraphicsBeginImageContext(webView.bounds.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    [webView.layer renderInContext:context];
+    UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return img;
 }
 
 @end

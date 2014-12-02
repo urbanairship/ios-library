@@ -25,12 +25,13 @@
 
 #import "UAUser+Internal.h"
 #import "UAUserAPIClient.h"
-#import "UAirship.h"
 #import "UAPush.h"
 #import "UAGlobal.h"
 #import "UAUtils.h"
 #import "UAConfig.h"
 #import "UAKeychainUtils.h"
+#import "UAPreferenceDataStore.h"
+#import "UAirship+Internal.h"
 
 
 static UAUser *_defaultUser;
@@ -172,16 +173,17 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                                        withPassword:self.password
                                       forIdentifier:self.appKey];
     
-    NSDictionary *dictionary = [[NSUserDefaults standardUserDefaults] objectForKey:self.appKey];
+    NSDictionary *dictionary = [[UAirship shared].dataStore objectForKey:self.appKey];
     NSMutableDictionary *userDictionary = [NSMutableDictionary dictionaryWithDictionary:dictionary];
 
     [userDictionary setValue:self.url forKey:kUserUrlKey];
-    
+
+
     // Save in defaults for access with a Settings bundle
-    [[NSUserDefaults standardUserDefaults] setObject:self.username forKey:@"ua_user_id"];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:userDictionary forKey:self.appKey];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:self.username forKey:@"ua_user_id"];
+    [defaults setObject:userDictionary forKey:self.appKey];
+    [defaults synchronize];
 }
 
 #pragma mark -
@@ -208,12 +210,6 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     return YES;
 }
 
-- (void)createDefaultUser {
-    if ([self defaultUserCreated]) {
-        return;
-    }
-    [self createUser];
-}
 
 - (void)sendUserCreatedNotification {
     [[NSNotificationCenter defaultCenter] postNotificationName:UAUserCreatedNotification object:nil];
