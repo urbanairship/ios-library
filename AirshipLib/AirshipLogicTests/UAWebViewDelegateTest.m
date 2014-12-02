@@ -224,8 +224,8 @@
     XCTAssertEqualObjects([[UAUtils ISODateFormatterUTC] stringFromDate:messageSent], [self.jsc evaluateScript:@"UAirship.getMessageSentDate()"].toString);
 
     // Verify message send date ms
-    NSNumber *milliseconds = [NSNumber numberWithDouble:[messageSent timeIntervalSince1970] * 1000];
-    XCTAssertEqualObjects(milliseconds, [self.jsc evaluateScript:@"UAirship.getMessageSentDateMS()"].toNumber);
+    double milliseconds = [messageSent timeIntervalSince1970] * 1000;
+    XCTAssertEqualWithAccuracy(milliseconds, [self.jsc evaluateScript:@"UAirship.getMessageSentDateMS()"].toDouble, 0.001);
 
     [message stopMocking];
 }

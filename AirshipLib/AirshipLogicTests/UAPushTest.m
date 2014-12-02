@@ -1804,6 +1804,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testMigrateNewRegistrationFlowAlreadySet {
     [UIUserNotificationSettings hideClass];
 
+    // Clear any previous migration values in standard user defaults
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsMigratedKey];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAUserPushNotificationsEnabledKey];
+
     // Set the UAUserPushNotificationsEnabledKey setting to NO
     [self.dataStore setBool:NO forKey:UAUserPushNotificationsEnabledKey];
     [self.dataStore removeObjectForKey:UAPushEnabledSettingsMigratedKey];
