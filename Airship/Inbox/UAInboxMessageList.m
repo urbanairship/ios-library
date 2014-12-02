@@ -59,8 +59,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
         self.queue = [[NSOperationQueue alloc] init];
         self.queue.maxConcurrentOperationCount = 1;
 
-        self.messageIDMap = [NSMutableDictionary dictionary];
-        self.messageURLMap = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -84,7 +82,7 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
         }
 
         self.messageIDMap = [messageIDMap copy];
-        self.messageIDMap = [messageURLMap copy];
+        self.messageURLMap = [messageURLMap copy];
     }
 }
 

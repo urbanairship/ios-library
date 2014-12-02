@@ -158,6 +158,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     self.webViewDelegate = [[UAWebViewDelegate alloc] init];
     self.webViewDelegate.forwardDelegate = self;
+    self.webViewDelegate.richContentWindow = self;
     self.webView.delegate = self.webViewDelegate;
 
     [self.view insertSubview:self.webView belowSubview:self.statusBar];
@@ -223,7 +224,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma mark UARichContentWindow
 
-- (void)closeWindow:(BOOL)animated {
+- (void)closeWebView:(UIWebView *)webView animated:(BOOL)animated {
     if (self.closeBlock) {
         self.closeBlock(animated);
     }
