@@ -38,6 +38,7 @@
 #import "UAEventAppForeground.h"
 #import "UAEventAppInit.h"
 #import "UAEventAppBackground.h"
+#import "UAPreferenceDataStore.h"
 
 /* This class involves lots of async calls to the web
  Care should be taken to mock out responses and calls, race conditions
@@ -48,6 +49,7 @@
 @interface UAAnalyticsTest : XCTestCase {
   @private
     UAAnalytics *_analytics;
+    UAPreferenceDataStore *_dataStore;
 }
 
 @end
@@ -57,15 +59,16 @@
 
 - (void)setUp {
     UAConfig *config = [[UAConfig alloc] init];
-    _analytics = [[UAAnalytics alloc] initWithConfig:config];
+    _dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"analytics.tests"];
+    _analytics = [[UAAnalytics alloc] initWithConfig:config dataStore:_dataStore];
 
     [UAirship shared].analytics = _analytics;
 }
 
 - (void)tearDown {
-
+    [_dataStore removeAll];
+    _dataStore = nil;
     _analytics = nil;
-
 }
 
 - (void)testLastSendTimeGetSetMethods {
