@@ -30,6 +30,8 @@
 #import "UA_Reachability.h"
 #import "UAPush.h"
 
+static CTTelephonyNetworkInfo *netInfo;
+
 @implementation UAEvent
 
 - (instancetype)init {
@@ -97,7 +99,12 @@
 }
 
 - (NSString *)carrierName {
-    CTTelephonyNetworkInfo *netInfo = [[CTTelephonyNetworkInfo alloc] init];
+    
+    static dispatch_once_t dispatchToken;
+    dispatch_once(&dispatchToken, ^{
+        netInfo = [[CTTelephonyNetworkInfo alloc] init];
+    });
+    
     return netInfo.subscriberCellularProvider.carrierName;
 }
 
