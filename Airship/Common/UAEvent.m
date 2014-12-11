@@ -34,7 +34,9 @@
 
 /*
  * Fix for CTTelephonyNetworkInfo bug where instances might receive
- * notifications after being deallocated causes EXC_BAD_ACCESS exceptions.
+ * notifications after being deallocated causes EXC_BAD_ACCESS exceptions. We
+ * suspect that it is an iOS6 only issue.
+ *
  * http://stackoverflow.com/questions/14238586/coretelephony-crash/15510580#15510580
  */
 static CTTelephonyNetworkInfo *netInfo_;
