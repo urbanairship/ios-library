@@ -32,6 +32,14 @@
 
 @implementation UAEvent
 
+/*
+ * Fix for CTTelephonyNetworkInfo bug where instances might receive
+ * notifications after being deallocated causes EXC_BAD_ACCESS exceptions.
+ * http://stackoverflow.com/questions/14238586/coretelephony-crash/15510580#15510580
+ */
+static CTTelephonyNetworkInfo *netInfo;
+static dispatch_once_t dispatchToken;
+
 - (instancetype)init {
     self = [super init];
     if (self) {
@@ -93,11 +101,14 @@
             break;
         }
     }
+
     return connectionTypeString;
 }
 
 - (NSString *)carrierName {
-    CTTelephonyNetworkInfo *netInfo = [[CTTelephonyNetworkInfo alloc] init];
+    dispatch_once(&dispatchToken, ^{
+        netInfo = [[CTTelephonyNetworkInfo alloc] init];
+    });
     return netInfo.subscriberCellularProvider.carrierName;
 }
 
