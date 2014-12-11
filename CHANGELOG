@@ -38,6 +38,12 @@ Known issues with iOS 8.0.0 that may impact your application:
   workaround. We plan to release this as soon as we have verified that iOS contains a fix
   for this issue.
 
+-------------------------
+5.1.1 - December 11, 2014
+-------------------------
+- Add workaound for possible CoreTelephony crash.
+- Fix compiler warnings in UAInboxMessageListController.
+
 ------------------------
 5.1.0 - December 2, 2014
 ------------------------
