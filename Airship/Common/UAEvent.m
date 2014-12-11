@@ -37,8 +37,8 @@
  * notifications after being deallocated causes EXC_BAD_ACCESS exceptions.
  * http://stackoverflow.com/questions/14238586/coretelephony-crash/15510580#15510580
  */
-static CTTelephonyNetworkInfo *netInfo;
-static dispatch_once_t dispatchToken;
+static CTTelephonyNetworkInfo *netInfo_;
+static dispatch_once_t netInfoDispatchToken_;
 
 - (instancetype)init {
     self = [super init];
@@ -106,10 +106,10 @@ static dispatch_once_t dispatchToken;
 }
 
 - (NSString *)carrierName {
-    dispatch_once(&dispatchToken, ^{
-        netInfo = [[CTTelephonyNetworkInfo alloc] init];
+    dispatch_once(&netInfoDispatchToken_, ^{
+        netInfo_ = [[CTTelephonyNetworkInfo alloc] init];
     });
-    return netInfo.subscriberCellularProvider.carrierName;
+    return netInfo_.subscriberCellularProvider.carrierName;
 }
 
 - (NSArray *)notificationTypes {
