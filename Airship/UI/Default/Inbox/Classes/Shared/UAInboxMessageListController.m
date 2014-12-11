@@ -260,8 +260,8 @@
     UILabel *strongLoadingLabel = self.loadingLabel;
     strongLoadingLabel.text = UAInboxLocalizedString(@"UA_Loading");
     // Set label color to white to contrast with dark beveled loading indicator background
-    self.loadingLabel.textColor = [UIColor whiteColor];
-    [self.messageTable setSeparatorStyle:UITableViewCellSelectionStyleDefault];
+    strongLoadingLabel.textColor = [UIColor whiteColor];
+    [self.messageTable setSeparatorStyle:UITableViewCellSeparatorStyleNone];
 
     UABeveledLoadingIndicator *strongLoadingIndicator = self.loadingIndicator;
     strongLoadingIndicator.alpha = 0.9;
@@ -274,9 +274,10 @@
     self.loadingView.hidden = (self.messages.count != 0);
     
     if (self.messages.count == 0) {
-        self.loadingLabel.text = UAInboxLocalizedString(@"UA_No_Messages");
+        UILabel *strongLoadingLabel = self.loadingLabel;
+        strongLoadingLabel.text = UAInboxLocalizedString(@"UA_No_Messages");
         // Set label color to black to contrast with light tableview background
-        self.loadingLabel.textColor = [UIColor blackColor];
+        strongLoadingLabel.textColor = [UIColor blackColor];
         [self.messageTable setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     }
 }
