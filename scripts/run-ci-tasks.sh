@@ -32,19 +32,19 @@ xcrun xcodebuild -project "${ROOT_PATH}/PushSample/PushSampleLib.xcodeproj" -sch
 xcrun xcodebuild -project "${ROOT_PATH}/PushSample/PushSampleLib.xcodeproj" -scheme PushSampleKit -configuration Debug -sdk iphonesimulator8.1
 
 ##################################################################################################
-# NOTE: The following tests have been commented out until our CI system is capable of running them
+# Run the Tests!
 ##################################################################################################
 
-#"${SCRIPT_DIRECTORY}/mock_setup.sh"
+"${SCRIPT_DIRECTORY}/mock_setup.sh"
 
-#rm -rf "${ROOT_PATH}/test-output"
-#mkdir -p "${ROOT_PATH}/test-output"
+rm -rf "${ROOT_PATH}/test-output"
+mkdir -p "${ROOT_PATH}/test-output"
 
 # Run our Logic Tests
-#xcrun xcodebuild -destination 'platform=iOS Simulator,OS=8.0,name=iPhone 5s' -project "${ROOT_PATH}/AirshipLib/AirshipLib.xcodeproj" -scheme AirshipLib test | tee "${ROOT_PATH}/test-output/XCTEST-LOGIC.out"
+xcrun xcodebuild -destination 'platform=iOS Simulator,OS=8.1,name=iPhone 5s' -project "${ROOT_PATH}/AirshipLib/AirshipLib.xcodeproj" -scheme AirshipLib test | tee "${ROOT_PATH}/test-output/XCTEST-LOGIC.out"
 
 # Run AirshipKit Tests
-#xcrun xcodebuild -destination 'platform=iOS Simulator,OS=8.0,name=iPhone 5s' -project "${ROOT_PATH}/AirshipLib/AirshipLib.xcodeproj" -scheme AirshipKit test | tee "${ROOT_PATH}/test-output/XCTEST-AIRSHIPKIT.out"
+xcrun xcodebuild -destination 'platform=iOS Simulator,OS=8.1,name=iPhone 5s' -project "${ROOT_PATH}/AirshipLib/AirshipLib.xcodeproj" -scheme AirshipKit test | tee "${ROOT_PATH}/test-output/XCTEST-AIRSHIPKIT.out"
 
 # Run our Application Tests
-#xcrun xcodebuild -destination 'platform=iOS Simulator,OS=8.0,name=iPhone 5s' -project "${ROOT_PATH}/PushSample/PushSampleLib.xcodeproj" -scheme PushSample test | tee "${ROOT_PATH}/test-output/XCTEST-APPLICATION.out"
+xcrun xcodebuild -destination 'platform=iOS Simulator,OS=8.1,name=iPhone 5s' -project "${ROOT_PATH}/PushSample/PushSampleLib.xcodeproj" -scheme PushSample test | tee "${ROOT_PATH}/test-output/XCTEST-APPLICATION.out"
