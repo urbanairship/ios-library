@@ -300,6 +300,26 @@
 		49F437521810B5B400182D06 /* UAModifyTagsAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49F437501810B5B400182D06 /* UAModifyTagsAction.h */; };
 		49F437541810B5B400182D06 /* UAModifyTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F437511810B5B400182D06 /* UAModifyTagsAction.m */; };
 		49FCCB191912C6640057D1C4 /* UAActionArguments+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 49FCCB181912C6640057D1C4 /* UAActionArguments+Internal.h */; };
+		611652251A2D26BD007C96D0 /* UAProximityRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 611652231A2D26BD007C96D0 /* UAProximityRegion.h */; };
+		611652261A2D26BD007C96D0 /* UAProximityRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = 611652241A2D26BD007C96D0 /* UAProximityRegion.m */; };
+		6116522A1A2D26D5007C96D0 /* UACircularRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 611652281A2D26D5007C96D0 /* UACircularRegion.h */; };
+		6116522B1A2D26D5007C96D0 /* UACircularRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = 611652291A2D26D5007C96D0 /* UACircularRegion.m */; };
+		612ED4D51A3785E500DD7762 /* UARegionEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 612ED4D31A3785E500DD7762 /* UARegionEventTest.m */; };
+		612ED4D81A378BCA00DD7762 /* UARegionEvent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 612ED4D61A378BA100DD7762 /* UARegionEvent+Internal.h */; };
+		612ED4DB1A38DE1F00DD7762 /* UACircularRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = 611652291A2D26D5007C96D0 /* UACircularRegion.m */; };
+		612ED4DC1A38DE2300DD7762 /* UACircularRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 611652281A2D26D5007C96D0 /* UACircularRegion.h */; };
+		612ED4DD1A38DE3900DD7762 /* UACircularRegion+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 612ED4DA1A37D08200DD7762 /* UACircularRegion+Internal.h */; };
+		612ED4DE1A38DE3B00DD7762 /* UAProximityRegion+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 612ED4D91A37D06E00DD7762 /* UAProximityRegion+Internal.h */; };
+		612ED4DF1A38DE4A00DD7762 /* UAProximityRegion+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 612ED4D91A37D06E00DD7762 /* UAProximityRegion+Internal.h */; };
+		612ED4E01A38DE4D00DD7762 /* UACircularRegion+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 612ED4DA1A37D08200DD7762 /* UACircularRegion+Internal.h */; };
+		612ED4E11A38DE5100DD7762 /* UAProximityRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 611652231A2D26BD007C96D0 /* UAProximityRegion.h */; };
+		612ED4E21A38DE5400DD7762 /* UAProximityRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = 611652241A2D26BD007C96D0 /* UAProximityRegion.m */; };
+		612ED4E31A38DE5D00DD7762 /* UARegionEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D6AD171A2D18C10032420C /* UARegionEvent.m */; };
+		612ED4E41A38DE6000DD7762 /* UARegionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 61D6AD161A2D18C10032420C /* UARegionEvent.h */; };
+		614F0DAC1A3B773E00F00AAB /* UACircularRegionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 614F0DAB1A3B773E00F00AAB /* UACircularRegionTest.m */; };
+		61D6AD181A2D18C10032420C /* UARegionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 61D6AD161A2D18C10032420C /* UARegionEvent.h */; };
+		61D6AD191A2D18C10032420C /* UARegionEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D6AD171A2D18C10032420C /* UARegionEvent.m */; };
+		61D8FE4E1A3B76F100E21EBB /* UAProximityRegionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D8FE4D1A3B76F100E21EBB /* UAProximityRegionTest.m */; };
 		61E0EBD619EC7F4500B50AF3 /* UAActionJSDelegate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 61E0EBD519EC7F4500B50AF3 /* UAActionJSDelegate+Internal.h */; };
 		760D14BA17C2C9E600BBE6E6 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 760D14B917C2C9E600BBE6E6 /* XCTest.framework */; };
 		762941AB1A016EB60077CDC1 /* UAActivityViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 762941A91A016EB60077CDC1 /* UAActivityViewController.h */; };
@@ -670,6 +690,18 @@
 		49F437501810B5B400182D06 /* UAModifyTagsAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAModifyTagsAction.h; sourceTree = "<group>"; };
 		49F437511810B5B400182D06 /* UAModifyTagsAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAModifyTagsAction.m; sourceTree = "<group>"; };
 		49FCCB181912C6640057D1C4 /* UAActionArguments+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAActionArguments+Internal.h"; sourceTree = "<group>"; };
+		611652231A2D26BD007C96D0 /* UAProximityRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAProximityRegion.h; sourceTree = "<group>"; };
+		611652241A2D26BD007C96D0 /* UAProximityRegion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAProximityRegion.m; sourceTree = "<group>"; };
+		611652281A2D26D5007C96D0 /* UACircularRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACircularRegion.h; sourceTree = "<group>"; };
+		611652291A2D26D5007C96D0 /* UACircularRegion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACircularRegion.m; sourceTree = "<group>"; };
+		612ED4D31A3785E500DD7762 /* UARegionEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARegionEventTest.m; sourceTree = "<group>"; };
+		612ED4D61A378BA100DD7762 /* UARegionEvent+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UARegionEvent+Internal.h"; sourceTree = "<group>"; };
+		612ED4D91A37D06E00DD7762 /* UAProximityRegion+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAProximityRegion+Internal.h"; sourceTree = "<group>"; };
+		612ED4DA1A37D08200DD7762 /* UACircularRegion+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UACircularRegion+Internal.h"; sourceTree = "<group>"; };
+		614F0DAB1A3B773E00F00AAB /* UACircularRegionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACircularRegionTest.m; sourceTree = "<group>"; };
+		61D6AD161A2D18C10032420C /* UARegionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARegionEvent.h; sourceTree = "<group>"; };
+		61D6AD171A2D18C10032420C /* UARegionEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARegionEvent.m; sourceTree = "<group>"; };
+		61D8FE4D1A3B76F100E21EBB /* UAProximityRegionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAProximityRegionTest.m; sourceTree = "<group>"; };
 		61E0EBD519EC7F4500B50AF3 /* UAActionJSDelegate+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAActionJSDelegate+Internal.h"; sourceTree = "<group>"; };
 		633146B3122FA474008F2D48 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		760D14B917C2C9E600BBE6E6 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -1314,6 +1346,9 @@
 			children = (
 				CC7DC95A183E97E000E95BB8 /* UAEventTest.m */,
 				CCF4462E1947D265003E04E7 /* UACustomEventTest.m */,
+				612ED4D31A3785E500DD7762 /* UARegionEventTest.m */,
+				61D8FE4D1A3B76F100E21EBB /* UAProximityRegionTest.m */,
+				614F0DAB1A3B773E00F00AAB /* UACircularRegionTest.m */,
 				CC20BE1D19589D450098CF35 /* UALocationEventTest.m */,
 				CCD13DE119A4FCFD0007078C /* UAInteractiveNotificationEventTest.m */,
 			);
@@ -1329,6 +1364,15 @@
 				BBB87E0B15057C7F00971CEC /* UALocationEvent.h */,
 				BBB87E0C15057C7F00971CEC /* UALocationEvent.m */,
 				CCDF66A119A5166B0043657E /* UACustomEvent+Internal.h */,
+				612ED4D61A378BA100DD7762 /* UARegionEvent+Internal.h */,
+				61D6AD161A2D18C10032420C /* UARegionEvent.h */,
+				61D6AD171A2D18C10032420C /* UARegionEvent.m */,
+				612ED4D91A37D06E00DD7762 /* UAProximityRegion+Internal.h */,
+				611652231A2D26BD007C96D0 /* UAProximityRegion.h */,
+				611652241A2D26BD007C96D0 /* UAProximityRegion.m */,
+				612ED4DA1A37D08200DD7762 /* UACircularRegion+Internal.h */,
+				611652281A2D26D5007C96D0 /* UACircularRegion.h */,
+				611652291A2D26D5007C96D0 /* UACircularRegion.m */,
 				CCF446281947D252003E04E7 /* UACustomEvent.h */,
 				CCF446291947D252003E04E7 /* UACustomEvent.m */,
 				76B4E01419A4038000603F8A /* UAInteractiveNotificationEvent.h */,
@@ -1626,6 +1670,7 @@
 				49BADDB6198B0849000FF3D5 /* UAInboxMessage.h in Headers */,
 				49BADDB7198B0849000FF3D5 /* UAInboxMessageData.h in Headers */,
 				49BADDB9198B084A000FF3D5 /* UAInboxMessageList.h in Headers */,
+				612ED4E01A38DE4D00DD7762 /* UACircularRegion+Internal.h in Headers */,
 				49BADDBB198B084B000FF3D5 /* UAInboxMessageListDelegate.h in Headers */,
 				49BADDBC198B084B000FF3D5 /* UAInboxPushHandler.h in Headers */,
 				49BADDBD198B084B000FF3D5 /* UAInboxUtils.h in Headers */,
@@ -1637,6 +1682,7 @@
 				49BADDC9198B084F000FF3D5 /* UA_Base64.h in Headers */,
 				49BADDCA198B0850000FF3D5 /* UA_Reachability.h in Headers */,
 				49BADDCB198B0850000FF3D5 /* UALandingPageOverlayController.h in Headers */,
+				612ED4E41A38DE6000DD7762 /* UARegionEvent.h in Headers */,
 				49BADDCC198B0850000FF3D5 /* UABeveledLoadingIndicator.h in Headers */,
 				49BADDCD198B0851000FF3D5 /* UABespokeCloseView.h in Headers */,
 				49BADDCE198B0851000FF3D5 /* UARichContentWindow.h in Headers */,
@@ -1645,6 +1691,7 @@
 				49BADDD1198B0852000FF3D5 /* UARemoveTagsAction.h in Headers */,
 				49BADDD2198B0852000FF3D5 /* UAModifyTagsAction.h in Headers */,
 				49BADDD3198B0853000FF3D5 /* UAOpenExternalURLAction.h in Headers */,
+				612ED4DC1A38DE2300DD7762 /* UACircularRegion.h in Headers */,
 				49BADDD5198B0854000FF3D5 /* UAAction.h in Headers */,
 				49BADDD6198B0854000FF3D5 /* UAActionArguments.h in Headers */,
 				49BADDD9198B0855000FF3D5 /* UAActionRegistry.h in Headers */,
@@ -1682,6 +1729,7 @@
 				49BADE01198B0865000FF3D5 /* UAUserAPIClient.h in Headers */,
 				49BADE02198B0866000FF3D5 /* UAUserData.h in Headers */,
 				49BADE05198B0867000FF3D5 /* UATagUtils.h in Headers */,
+				612ED4E11A38DE5100DD7762 /* UAProximityRegion.h in Headers */,
 				49BADE06198B0868000FF3D5 /* UAUtils.h in Headers */,
 				49BADE07198B0868000FF3D5 /* UAKeychainUtils.h in Headers */,
 				49BADE08198B0869000FF3D5 /* NSString+UAURLEncoding.h in Headers */,
@@ -1714,6 +1762,7 @@
 				49BADDC8198B084F000FF3D5 /* UAChannelRegistrar+Internal.h in Headers */,
 				49BADDD4198B0853000FF3D5 /* UAAction+Internal.h in Headers */,
 				49BADDD7198B0854000FF3D5 /* UAActionArguments+Internal.h in Headers */,
+				612ED4DF1A38DE4A00DD7762 /* UAProximityRegion+Internal.h in Headers */,
 				49BADDD8198B0855000FF3D5 /* UAActionRegistry+Internal.h in Headers */,
 				49BADDDA198B0855000FF3D5 /* UAActionRegistryEntry+Internal.h in Headers */,
 				49BADDDD198B0857000FF3D5 /* UAActionResult+Internal.h in Headers */,
@@ -1779,6 +1828,7 @@
 				CC2950F81949040300E905E3 /* UAEvent+Internal.h in Headers */,
 				49FCCB191912C6640057D1C4 /* UAActionArguments+Internal.h in Headers */,
 				BB8860E0159A7E9600584445 /* UALocationEvent.h in Headers */,
+				612ED4DD1A38DE3900DD7762 /* UACircularRegion+Internal.h in Headers */,
 				BB8860E2159A7E9600584445 /* UALocationService.h in Headers */,
 				CC319CE81A0C43000079226E /* UAPreferenceDataStore.h in Headers */,
 				BB8860B3159A7E9600584445 /* UAUtils.h in Headers */,
@@ -1797,6 +1847,7 @@
 				CC8542BF17F4B81600D2DE10 /* UAActionResult.h in Headers */,
 				CC1F43971A1D388800D3A227 /* UAWebViewDelegate.h in Headers */,
 				492ADA0C18C958E50032C491 /* UARichContentWindow.h in Headers */,
+				611652251A2D26BD007C96D0 /* UAProximityRegion.h in Headers */,
 				1F610DEE17835C3A00BCD96E /* UAInboxMessageList.h in Headers */,
 				1F610DF817835C3A00BCD96E /* UAInboxUtils.h in Headers */,
 				1F610DDF17835C3A00BCD96E /* UAInbox.h in Headers */,
@@ -1815,6 +1866,7 @@
 				BB8860CF159A7E9600584445 /* UA_Base64.h in Headers */,
 				1F65BB7C18997AB6000E8ACC /* UALandingPageAction.h in Headers */,
 				CC7DC945183E977100E95BB8 /* UAChannelRegistrationPayload.h in Headers */,
+				6116522A1A2D26D5007C96D0 /* UACircularRegion.h in Headers */,
 				492ADA1018C959CB0032C491 /* UACloseWindowAction.h in Headers */,
 				BB8860E1159A7E9600584445 /* UALocationService+Internal.h in Headers */,
 				CCA3A4EB17FCB3A8009C7371 /* UAActionRegistryEntry.h in Headers */,
@@ -1822,6 +1874,7 @@
 				1F610DB517835C2200BCD96E /* UAAppDelegate.h in Headers */,
 				BB8860EA159A7E9600584445 /* UAAnalytics+Internal.h in Headers */,
 				1F610DBD17835C2200BCD96E /* UAirship.h in Headers */,
+				61D6AD181A2D18C10032420C /* UARegionEvent.h in Headers */,
 				49D11C02171E00980058E7C3 /* UAHTTPConnectionOperation.h in Headers */,
 				4995C63A180DBBC9004F8724 /* UAAddTagsAction.h in Headers */,
 				49D11C1217270C6E0058E7C3 /* UAHTTPRequestEngine.h in Headers */,
@@ -1831,7 +1884,9 @@
 				1F610DE817835C3A00BCD96E /* UAInboxDefaultJSDelegate.h in Headers */,
 				CC7DC941183E977100E95BB8 /* UAChannelAPIClient.h in Headers */,
 				762941AB1A016EB60077CDC1 /* UAActivityViewController.h in Headers */,
+				612ED4DE1A38DE3B00DD7762 /* UAProximityRegion+Internal.h in Headers */,
 				49416D6818C513F500A18B72 /* UALandingPageOverlayController.h in Headers */,
+				612ED4D81A378BCA00DD7762 /* UARegionEvent+Internal.h in Headers */,
 				495048B7173B11A500F8B5BE /* UAHTTPConnection+Internal.h in Headers */,
 				76E5356219475F8E0020335C /* UAAddCustomEventAction.h in Headers */,
 				494BF70A1762789D00B25E12 /* UAUser+Internal.h in Headers */,
@@ -2099,6 +2154,7 @@
 				491B8413198C237F00FB7A40 /* UAInboxMessage.m in Sources */,
 				491B8414198C237F00FB7A40 /* UAInboxMessageData.m in Sources */,
 				491B8415198C237F00FB7A40 /* UAInboxMessageList.m in Sources */,
+				612ED4E31A38DE5D00DD7762 /* UARegionEvent.m in Sources */,
 				CCE34AE919C2642D00A8EFC0 /* UAEventAppInit.m in Sources */,
 				491B8416198C237F00FB7A40 /* UAInboxPushHandler.m in Sources */,
 				CCE34AF519C2646500A8EFC0 /* UAEventAppBackground.m in Sources */,
@@ -2122,6 +2178,7 @@
 				491B8428198C237F00FB7A40 /* UAAction.m in Sources */,
 				491B8429198C237F00FB7A40 /* UAActionArguments.m in Sources */,
 				491B842A198C237F00FB7A40 /* UAActionRegistry.m in Sources */,
+				612ED4DB1A38DE1F00DD7762 /* UACircularRegion.m in Sources */,
 				491B842B198C237F00FB7A40 /* UAActionRegistryEntry.m in Sources */,
 				491B842C198C237F00FB7A40 /* UAActionResult.m in Sources */,
 				491B842D198C237F00FB7A40 /* UAActionRunner.m in Sources */,
@@ -2157,6 +2214,7 @@
 				491B8445198C237F00FB7A40 /* UASignificantChangeProvider.m in Sources */,
 				491B8446198C237F00FB7A40 /* UAStandardLocationProvider.m in Sources */,
 				491B8447198C237F00FB7A40 /* UAUser.m in Sources */,
+				612ED4E21A38DE5400DD7762 /* UAProximityRegion.m in Sources */,
 				491B8448198C237F00FB7A40 /* UAUserAPIClient.m in Sources */,
 				76B4E01919A4038000603F8A /* UAInteractiveNotificationEvent.m in Sources */,
 				491B8449198C237F00FB7A40 /* UAUserData.m in Sources */,
@@ -2219,6 +2277,7 @@
 				495048A11738593000F8B5BE /* UAHTTPConnectionOperationTest.m in Sources */,
 				495048A41738778300F8B5BE /* UAHTTPConnection+Test.m in Sources */,
 				495048AE173996BF00F8B5BE /* UAHTTPRequestEngineTest.m in Sources */,
+				614F0DAC1A3B773E00F00AAB /* UACircularRegionTest.m in Sources */,
 				497B0EAA1836AB8700DA65BB /* NSString_UAURLEncodingTest.m in Sources */,
 				49C811AC180DE93500AB15CD /* UAPush+Test.m in Sources */,
 				CCA3A4F917FF1515009C7371 /* UAActionResultTest.m in Sources */,
@@ -2226,6 +2285,7 @@
 				CCC0508C1A129C83000AE545 /* UAKeyChainUtilTest.m in Sources */,
 				CCDD37CE18089E6F00B8866E /* UAOpenExternalURLActionTest.m in Sources */,
 				495526B417D95552009BC301 /* UAUser+Test.m in Sources */,
+				612ED4D51A3785E500DD7762 /* UARegionEventTest.m in Sources */,
 				CCEB1F8319CB61C500624FF4 /* IOS8BugsTests.m in Sources */,
 				CCA3A4FF17FF1582009C7371 /* UAActionRegistryEntryTest.m in Sources */,
 				CCBFA2E017B547B600F97E1D /* NSJSONSerialization_UAAdditionsTests.m in Sources */,
@@ -2244,6 +2304,7 @@
 				CC85FD171773A1010074674F /* UAAnalyticsTest.m in Sources */,
 				49C665301A1EAFEF00E5D650 /* UAWebViewDelegateTest.m in Sources */,
 				CCF4462F1947D265003E04E7 /* UACustomEventTest.m in Sources */,
+				61D8FE4E1A3B76F100E21EBB /* UAProximityRegionTest.m in Sources */,
 				49942CDB17B19A3B007E5FB1 /* UADelayOperationTest.m in Sources */,
 				490710BC184D3EAB00E494AF /* UAWebViewCallDataTest.m in Sources */,
 			);
@@ -2284,6 +2345,7 @@
 				BB88610B159A7E9600584445 /* UAAnalytics.m in Sources */,
 				BB88610D159A7E9600584445 /* UATagUtils.m in Sources */,
 				CC7DC94E183E978A00E95BB8 /* UAChannelRegistrar.m in Sources */,
+				61D6AD191A2D18C10032420C /* UARegionEvent.m in Sources */,
 				BB88610E159A7E9600584445 /* UASQLite.m in Sources */,
 				1F610DBB17835C2200BCD96E /* UAConfig.m in Sources */,
 				1F65BB7E18997AB6000E8ACC /* UALandingPageAction.m in Sources */,
@@ -2303,6 +2365,7 @@
 				BB886116159A7E9600584445 /* UALocationEvent.m in Sources */,
 				CCE34AE219C2632500A8EFC0 /* UAEventAppForeground.m in Sources */,
 				CC8542C517F4B81600D2DE10 /* UAActionRunner.m in Sources */,
+				611652261A2D26BD007C96D0 /* UAProximityRegion.m in Sources */,
 				BB886117159A7E9600584445 /* UALocationService.m in Sources */,
 				CC313A9B19A66DBE00134A9F /* UAUserNotificationCategories.m in Sources */,
 				1F610DF917835C3A00BCD96E /* UAInboxUtils.m in Sources */,
@@ -2333,6 +2396,7 @@
 				CCE34B0019C2648900A8EFC0 /* UAEventPushReceived.m in Sources */,
 				1F610DE317835C3A00BCD96E /* UAInboxAPIClient.m in Sources */,
 				494BF70C1762789D00B25E12 /* UAUserAPIClient.m in Sources */,
+				6116522B1A2D26D5007C96D0 /* UACircularRegion.m in Sources */,
 				494BF70E1762789D00B25E12 /* UAUserData.m in Sources */,
 				76792D11178E12A10054F8AD /* UAHTTPRequest.m in Sources */,
 				CC523FB117B985F800233005 /* UAJSONValueTransformer.m in Sources */,
