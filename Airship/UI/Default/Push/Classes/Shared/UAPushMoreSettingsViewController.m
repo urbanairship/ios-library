@@ -29,6 +29,7 @@
 #import "UAPushLocalization.h"
 #import "UAPushSettingsTokenViewController.h"
 #import "UAPushSettingsAliasViewController.h"
+#import "UAPushSettingsNamedUserViewController.h"
 #import "UAPushSettingsTagsViewController.h"
 #import "UAPushSettingsSoundsViewController.h"
 #import "UAPushSettingsUserInfoViewController.h"
@@ -54,7 +55,8 @@ enum {
     DeviceTokenSectionTokenCell = 2,
     DeviceTokenSectionAliasCell = 3,
     DeviceTokenSectionTagsCell  = 4,
-    DeviceTokenSectionRowCount  = 5
+    DeviceTokenSectionNamedUserCell = 5,
+    DeviceTokenSectionRowCount  = 6,
 };
 
 enum {
@@ -134,6 +136,11 @@ static NSUInteger channelRowCount = 1;
     self.deviceTokenTagsCell.textLabel.text = @"Tags";
     self.deviceTokenTagsCell.accessibilityLabel = @"Tags";
     self.deviceTokenTagsCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+
+    self.deviceTokenNamedUserCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+    self.deviceTokenNamedUserCell.textLabel.text = @"Named User";
+    self.deviceTokenNamedUserCell.accessibilityLabel = @"Named User";
+    self.deviceTokenNamedUserCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
     self.channelCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
     self.channelCell.textLabel.text = @"Channel ID";
@@ -231,6 +238,9 @@ static NSUInteger channelRowCount = 1;
             case DeviceTokenSectionAliasCell:
                 cell = self.deviceTokenAliasCell;
                 break;
+            case DeviceTokenSectionNamedUserCell:
+                cell = self.deviceTokenNamedUserCell;
+                break;
             case DeviceTokenSectionTagsCell:
                 cell = self.deviceTokenTagsCell;
                 break;
@@ -275,12 +285,20 @@ static NSUInteger channelRowCount = 1;
                                        initWithNibName:@"UAPushSettingsTokenView" bundle:nil];
             }
             [self.navigationController pushViewController:self.tokenViewController animated:YES];
+
         } else if (indexPath.row == DeviceTokenSectionAliasCell) {
             if (!self.aliasViewController) {
                 self.aliasViewController = [[UAPushSettingsAliasViewController alloc]
-                                       initWithNibName:@"UAPushSettingsAliasView" bundle:nil];
+                                            initWithNibName:@"UAPushSettingsAliasView" bundle:nil];
             }
             [self.navigationController pushViewController:self.aliasViewController animated:YES];
+
+        } else if (indexPath.row == DeviceTokenSectionNamedUserCell) {
+            if (!self.namedUserViewController) {
+                self.namedUserViewController = [[UAPushSettingsNamedUserViewController alloc]
+                                       initWithNibName:@"UAPushSettingsNamedUserView" bundle:nil];
+            }
+            [self.navigationController pushViewController:self.namedUserViewController animated:YES];
             
         } else if (indexPath.row == DeviceTokenSectionTagsCell) {
             if (!self.tagsViewController) {
@@ -339,6 +357,7 @@ static NSUInteger channelRowCount = 1;
         [self.deviceTokenTypesCell setNeedsLayout];
         [self.deviceTokenDisabledTypesCell setNeedsLayout];
         [self.deviceTokenAliasCell setNeedsLayout];
+        [self.deviceTokenNamedUserCell setNeedsLayout];
         [self.deviceTokenTagsCell setNeedsLayout];
         [self.channelCell setNeedsLayout];
     }
@@ -357,6 +376,10 @@ static NSUInteger channelRowCount = 1;
     self.deviceTokenDisabledTypesCell.detailTextLabel.text = [self pushTypeString:disabledTypes];
     
     self.deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
+
+    UANamedUser *namedUser = [UAPush shared].namedUser;
+    NSString *namedUserId = [namedUser identifier];
+    self.deviceTokenNamedUserCell.detailTextLabel.text = namedUserId ? namedUserId : @"Not Set";
     
     if ([[UAPush shared].tags count] > 0) {
         self.deviceTokenTagsCell.detailTextLabel.text = [[UAPush shared].tags componentsJoinedByString:@", "];

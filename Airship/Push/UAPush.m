@@ -26,7 +26,7 @@
 #import <UIKit/UIKit.h>
 
 #import "UAPush+Internal.h"
-
+#import "UANamedUser+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAAnalytics.h"
 #import "UAEventDeviceRegistration.h"
@@ -103,6 +103,7 @@ SINGLETON_IMPLEMENTATION(UAPush)
 
         self.userNotificationTypes = UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound;
         self.registrationBackgroundTask = UIBackgroundTaskInvalid;
+        self.namedUser = [[UANamedUser alloc] init];
     }
 
     return self;
@@ -147,6 +148,9 @@ SINGLETON_IMPLEMENTATION(UAPush)
         if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerForRemoteNotifications)] && [UAirship shared].remoteNotificationBackgroundModeEnabled) {
             [[UIApplication sharedApplication] registerForRemoteNotifications];
         }
+
+        // Checks if association/disassociation was previously interrupted.
+        [self.namedUser setup];
     });
 }
 
@@ -237,6 +241,14 @@ SINGLETON_IMPLEMENTATION(UAPush)
 - (void)setAlias:(NSString *)alias {
     NSString * trimmedAlias = [alias stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     [self.dataStore setObject:trimmedAlias forKey:UAPushAliasSettingsKey];
+}
+
+- (NSString *)namedUserID {
+    return [self.namedUser identifier];
+}
+
+- (void)setNamedUserID:(NSString *)identifier {
+    [self.namedUser setIdentifier:identifier];
 }
 
 - (NSArray *)tags {
