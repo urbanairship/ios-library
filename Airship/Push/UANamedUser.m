@@ -39,22 +39,16 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 
 @implementation UANamedUser
 
-- (UAPreferenceDataStore *)dataStore {
-    if (![UAirship shared].dataStore) {
-        UA_LERR(@"Data store is empty, takeoff not called!");
-    }
-    return [UAirship shared].dataStore;
-}
-
-- (instancetype)init {
+- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
+        self.dataStore = dataStore;
         self.namedUserAPIClient = [[UANamedUserAPIClient alloc] init];
     }
     return self;
 }
 
-- (void)setup {
+- (void)update {
     if (self.changeToken == nil && self.lastUpdatedToken  == nil) {
         // Skip since no one has set the named user ID. Usually from a new or re-install.
         UA_LDEBUG(@"New or re-install, skipping named user update");
@@ -67,11 +61,16 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
         return;
     }
 
+    if ([UAPush shared].channelID == nil) {
+        // Skip since we don't have a channel ID.
+        UA_LDEBUG(@"The channel ID does not exist. Will retry when channel ID is available.");
+        return;
+    }
     if (self.identifier == nil) {
         // When identifier is nil, disassociate the current named user ID.
         [self disassociateNamedUser];
     } else {
-        // When identifier is non-null, associate the currentId.
+        // When identifier is non-nil, associate the current named user ID.
         [self associateNamedUser:self.identifier];
     }
 }
@@ -95,25 +94,21 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 
     // if the IDs don't match or ID is set to nil and current token is nil (re-install case), then update.
     if (!isEqual || (self.identifier == nil && self.changeToken == nil)) {
-        [self.dataStore setObject:trimmedId forKey:UANamedUserIdKey];
+        [self.dataStore setValue:trimmedId forKey:UANamedUserIdKey];
 
         // Update the change token.
-        [self setChangeToken];
+        [self setChangeToken:[NSUUID UUID].UUIDString];
 
-        if (self.identifier == nil) {
-            // When identifier is nil, disassociate the current named user ID.
-            [self disassociateNamedUser];
-        } else {
-            // When identifier is non-null, associate the currentId.
-            [self associateNamedUser:trimmedId];
-        }
+        // Update named user.
+        [self update];
+
     } else {
         UA_LDEBUG(@"NamedUser - Skipping update. Named user ID trimmed already matches existing named user: %@", self.identifier);
     }
 }
 
-- (void)setChangeToken {
-    [self.dataStore setObject:[NSUUID UUID].UUIDString forKey:UANamedUserChangeTokenKey];
+- (void)setChangeToken:(NSString *)uuidString {
+    [self.dataStore setValue:uuidString forKey:UANamedUserChangeTokenKey];
 }
 
 - (NSString *)changeToken {
@@ -121,7 +116,7 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 }
 
 - (void)setLastUpdatedToken:(NSString *)token {
-    [self.dataStore setObject:token forKey:UANamedUserLastUpdatedTokenKey];
+    [self.dataStore setValue:token forKey:UANamedUserLastUpdatedTokenKey];
 }
 
 - (NSString *)lastUpdatedToken {

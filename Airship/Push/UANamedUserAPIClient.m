@@ -80,23 +80,33 @@
         onSuccess:(UANamedUserAPIClientSuccessBlock)successBlock
         onFailure:(UANamedUserAPIClientFailureBlock)failureBlock {
 
+    if (!identifier) {
+        UA_LERR(@"The named user ID cannot be nil.");
+        return;
+    }
+
+    if (!channelID) {
+        UA_LERR(@"The channel ID cannot be nil.");
+        return;
+    }
+
     UA_LTRACE(@"Associating channel %@ with named user ID: %@", channelID, identifier);
 
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];
-    [payload setObject:channelID forKey:kUANamedUserChannelIDKey];
+    [payload setValue:channelID forKey:kUANamedUserChannelIDKey];
     [payload setObject:@"ios" forKey:kUANamedUserDeviceTypeKey];
-    [payload setObject:identifier forKey:kUANamedUserIdentifierKey];
+    [payload setValue:identifier forKey:kUANamedUserIdentifierKey];
 
     UAHTTPRequest *request = [self requestWithPayload:payload
                               urlString:[NSString stringWithFormat:@"%@%@", self.urlString, @"/associate"]];
 
     [self.requestEngine runRequest:request succeedWhere:^BOOL(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
-        return (BOOL)(status == 200 || status == 201);
+        return (BOOL)(status == 200);
     } retryWhere:^BOOL(UAHTTPRequest *request) {
         if (self.shouldRetryOnConnectionError) {
             NSInteger status = request.response.statusCode;
-            return (BOOL)(((status >= 500 && status <= 599 && status != 501) || request.error));
+            return (BOOL)(((status >= 500 && status <= 599) || request.error));
         }
         return NO;
     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
@@ -123,10 +133,15 @@
            onSuccess:(UANamedUserAPIClientSuccessBlock)successBlock
            onFailure:(UANamedUserAPIClientFailureBlock)failureBlock {
 
+    if (!channelID) {
+        UA_LERR(@"The channel ID cannot be nil.");
+        return;
+    }
+
     UA_LTRACE(@"Disassociating channel %@ from named user ID", channelID);
 
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];
-    [payload setObject:channelID forKey:kUANamedUserChannelIDKey];
+    [payload setValue:channelID forKey:kUANamedUserChannelIDKey];
     [payload setObject:@"ios" forKey:kUANamedUserDeviceTypeKey];
 
     UAHTTPRequest *request = [self requestWithPayload:payload
@@ -134,12 +149,11 @@
 
     [self.requestEngine runRequest:request succeedWhere:^BOOL(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
-        return (BOOL)(status == 200 || status == 201);
+        return (BOOL)(status == 200);
     } retryWhere:^BOOL(UAHTTPRequest *request) {
         if (self.shouldRetryOnConnectionError) {
-            // TODO: test retry when response is nil
             NSInteger status = request.response.statusCode;
-            return (BOOL)(((status >= 500 && status <= 599 && status != 501) || request.error));
+            return (BOOL)(((status >= 500 && status <= 599) || request.error));
         }
         return NO;
     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {

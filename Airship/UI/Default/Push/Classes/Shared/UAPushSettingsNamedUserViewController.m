@@ -29,7 +29,7 @@
 
 enum {
     SectionDesc        = 0,
-    SectionNamedUser       = 1,
+    SectionNamedUser   = 1,
     SectionCount       = 2
 };
 
@@ -51,7 +51,7 @@ enum {
     self.title = @"Device Named User";
 
     UITextField *strongNamedUserField = self.namedUserField;
-    strongNamedUserField.text = [[UAPush shared].namedUser identifier];
+    strongNamedUserField.text = [UAPush shared].namedUser.identifier;
     strongNamedUserField.clearsOnBeginEditing = YES;
     strongNamedUserField.accessibilityLabel = @"Edit NamedUser";
     self.textLabel.text = @"Assign a named user ID to a device or a group of devices to simplify "
@@ -125,10 +125,10 @@ enum {
     NSString *result = [newNamedUser stringByReplacingCharactersInRange:range withString:@""];
 
     if ([result length] != 0) {
-        [[UAPush shared].namedUser setIdentifier:result];
+        [UAPush shared].namedUser.identifier = result;
     } else {
         textField.text = nil;
-        [[UAPush shared].namedUser setIdentifier:nil];
+        [UAPush shared].namedUser.identifier = nil;
     }
 }
 

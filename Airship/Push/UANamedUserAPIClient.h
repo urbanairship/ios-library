@@ -59,7 +59,7 @@ typedef void (^UANamedUserAPIClientFailureBlock)(UAHTTPRequest *request);
  * @param channelID The channel ID string.
  * @param successBlock A UANamedUserAPIClientCreateSuccessBlock that will be
  *        called if the named user ID was associated successfully.
- * @param failureblock A UANamedUserrAPIClientFailureBlock that will be called
+ * @param failureBlock A UANamedUserrAPIClientFailureBlock that will be called
  *        if the named user ID association was unsuccessful.
  */
 - (void)associate:(NSString *)identifier
@@ -73,7 +73,7 @@ typedef void (^UANamedUserAPIClientFailureBlock)(UAHTTPRequest *request);
  * @param channelID The channel ID string.
  * @param successBlock A UANamedUserAPIClientCreateSuccessBlock that will be
  *        called if the named user ID was disassociated successfully.
- * @param failureblock A UANamedUserrAPIClientFailureBlock that will be called
+ * @param failureBlock A UANamedUserrAPIClientFailureBlock that will be called
  *        if the named user ID disassociation was unsuccessful.
  */
 - (void)disassociate:(NSString *)channelID

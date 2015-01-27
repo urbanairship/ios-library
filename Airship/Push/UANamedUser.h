@@ -25,6 +25,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class UAPreferenceDataStore;
+
 /**
  * The named user is created in UAPush.
  */

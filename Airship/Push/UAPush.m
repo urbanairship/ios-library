@@ -103,7 +103,7 @@ SINGLETON_IMPLEMENTATION(UAPush)
 
         self.userNotificationTypes = UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound;
         self.registrationBackgroundTask = UIBackgroundTaskInvalid;
-        self.namedUser = [[UANamedUser alloc] init];
+        self.namedUser = [[UANamedUser alloc] initWithDataStore:[UAirship shared].dataStore];
     }
 
     return self;
@@ -149,8 +149,8 @@ SINGLETON_IMPLEMENTATION(UAPush)
             [[UIApplication sharedApplication] registerForRemoteNotifications];
         }
 
-        // Checks if association/disassociation was previously interrupted.
-        [self.namedUser setup];
+        // Update the named user if necessary.
+        [self.namedUser update];
     });
 }
 
@@ -241,14 +241,6 @@ SINGLETON_IMPLEMENTATION(UAPush)
 - (void)setAlias:(NSString *)alias {
     NSString * trimmedAlias = [alias stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     [self.dataStore setObject:trimmedAlias forKey:UAPushAliasSettingsKey];
-}
-
-- (NSString *)namedUserID {
-    return [self.namedUser identifier];
-}
-
-- (void)setNamedUserID:(NSString *)identifier {
-    [self.namedUser setIdentifier:identifier];
 }
 
 - (NSArray *)tags {
@@ -925,6 +917,9 @@ BOOL deferChannelCreationOnForeground = false;
         if (uaLogLevel >= UALogLevelError) {
             NSLog(@"Created channel with ID: %@", self.channelID);
         }
+
+        // Once we get a channel, update the named user if necessary.
+        [self.namedUser update];
     } else {
         UA_LERR(@"Channel creation failed. Missing channelID: %@ or channelLocation: %@",
                 channelID, channelLocation);

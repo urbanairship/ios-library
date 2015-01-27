@@ -30,6 +30,21 @@
 @interface UANamedUser ()
 
 /**
+ * Named user identifier data store key.
+ */
+extern NSString *const UANamedUserIdKey;
+
+/**
+ * Named user change token data store key.
+ */
+extern NSString *const UANamedUserChangeTokenKey;
+
+/**
+ * Named user last updated token data store key.
+ */
+extern NSString *const UANamedUserLastUpdatedTokenKey;
+
+/**
  * The change token tracks the start of setting the named user ID.
  */
 @property (nonatomic, copy) NSString *changeToken;
@@ -45,8 +60,19 @@
 @property (nonatomic, strong) UANamedUserAPIClient *namedUserAPIClient;
 
 /**
- * Performs association/disassociation if it was previously interrupted.
+ * The data store to save and load named user info.
  */
-- (void)setup;
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+
+/**
+ * Initializes the Named User with the specified data store.
+ * @param dataStore The shared preference data store.
+ */
+- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore;
+
+/**
+ * Update named user.
+ */
+- (void)update;
 
 @end

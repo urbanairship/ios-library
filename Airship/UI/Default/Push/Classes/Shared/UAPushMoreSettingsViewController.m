@@ -377,8 +377,7 @@ static NSUInteger channelRowCount = 1;
     
     self.deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
 
-    UANamedUser *namedUser = [UAPush shared].namedUser;
-    NSString *namedUserId = [namedUser identifier];
+    NSString *namedUserId = [UAPush shared].namedUser.identifier;
     self.deviceTokenNamedUserCell.detailTextLabel.text = namedUserId ? namedUserId : @"Not Set";
     
     if ([[UAPush shared].tags count] > 0) {

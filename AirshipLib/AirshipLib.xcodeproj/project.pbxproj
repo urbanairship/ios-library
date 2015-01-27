@@ -321,6 +321,8 @@
 		767D0D541A730BB8008CEC8A /* UANamedUserAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 767D0D3C1A71CC16008CEC8A /* UANamedUserAPIClient.m */; };
 		767D0D571A731937008CEC8A /* UANamedUser+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 767D0D561A731937008CEC8A /* UANamedUser+Internal.h */; };
 		767D0D581A731937008CEC8A /* UANamedUser+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 767D0D561A731937008CEC8A /* UANamedUser+Internal.h */; };
+		767D0D5A1A76BFF8008CEC8A /* UANamedUserTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 767D0D591A76BFF8008CEC8A /* UANamedUserTest.m */; };
+		767D0D5C1A76E702008CEC8A /* UANamedUserAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 767D0D5B1A76E702008CEC8A /* UANamedUserAPIClientTest.m */; };
 		76AA8EDB19B0F0A2005FD1C3 /* NSJSONSerialization+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBFA2D817B5436500F97E1D /* NSJSONSerialization+UAAdditions.h */; };
 		76AA8EDC19B0F0A2005FD1C3 /* UAAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CC85429F17F4B81600D2DE10 /* UAAction.h */; };
 		76AA8EDD19B0F0A2005FD1C3 /* UAKeychainUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE43798128B589000D38A14 /* UAKeychainUtils.h */; };
@@ -695,6 +697,8 @@
 		767D0D3B1A71CC16008CEC8A /* UANamedUserAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UANamedUserAPIClient.h; sourceTree = "<group>"; };
 		767D0D3C1A71CC16008CEC8A /* UANamedUserAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UANamedUserAPIClient.m; sourceTree = "<group>"; };
 		767D0D561A731937008CEC8A /* UANamedUser+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UANamedUser+Internal.h"; sourceTree = "<group>"; };
+		767D0D591A76BFF8008CEC8A /* UANamedUserTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UANamedUserTest.m; sourceTree = "<group>"; };
+		767D0D5B1A76E702008CEC8A /* UANamedUserAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UANamedUserAPIClientTest.m; sourceTree = "<group>"; };
 		76B4E01419A4038000603F8A /* UAInteractiveNotificationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInteractiveNotificationEvent.h; sourceTree = "<group>"; };
 		76B4E01519A4038000603F8A /* UAInteractiveNotificationEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInteractiveNotificationEvent.m; sourceTree = "<group>"; };
 		76E5356019475F8E0020335C /* UAAddCustomEventAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAddCustomEventAction.h; sourceTree = "<group>"; };
@@ -1523,6 +1527,8 @@
 				49C811AB180DE93500AB15CD /* UAPush+Test.m */,
 				CC7DC958183E97D000E95BB8 /* UAChannelRegistrarTest.m */,
 				CC313AA119A7C08300134A9F /* UAUserNotificationCategoriesTest.m */,
+				767D0D591A76BFF8008CEC8A /* UANamedUserTest.m */,
+				767D0D5B1A76E702008CEC8A /* UANamedUserAPIClientTest.m */,
 			);
 			name = Push;
 			sourceTree = "<group>";
@@ -1965,7 +1971,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 0600;
+				LastUpgradeCheck = 0610;
 				TargetAttributes = {
 					4953A44D19A55E9900F8D111 = {
 						CreatedOnToolsVersion = 6.0;
@@ -2251,12 +2257,14 @@
 				49C811AC180DE93500AB15CD /* UAPush+Test.m in Sources */,
 				CCA3A4F917FF1515009C7371 /* UAActionResultTest.m in Sources */,
 				CC4AADF618C67B23001F23B3 /* UIWebView_UAAdditionsTest.m in Sources */,
+				767D0D5A1A76BFF8008CEC8A /* UANamedUserTest.m in Sources */,
 				CCC0508C1A129C83000AE545 /* UAKeyChainUtilTest.m in Sources */,
 				CCDD37CE18089E6F00B8866E /* UAOpenExternalURLActionTest.m in Sources */,
 				495526B417D95552009BC301 /* UAUser+Test.m in Sources */,
 				CCEB1F8319CB61C500624FF4 /* IOS8BugsTests.m in Sources */,
 				CCA3A4FF17FF1582009C7371 /* UAActionRegistryEntryTest.m in Sources */,
 				CCBFA2E017B547B600F97E1D /* NSJSONSerialization_UAAdditionsTests.m in Sources */,
+				767D0D5C1A76E702008CEC8A /* UANamedUserAPIClientTest.m in Sources */,
 				49E9C9BE1836EBAB00B7BCFF /* UAWebViewToolsTest.m in Sources */,
 				CCB7DF5B17BBF1B800CEDC56 /* UAInboxDBManagerTests.m in Sources */,
 				CC7DC957183E97C300E95BB8 /* UAChannelRegistrationPayloadTest.m in Sources */,
@@ -2594,6 +2602,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					armv7s,
+				);
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -2642,6 +2654,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					armv7s,
+				);
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -2686,6 +2702,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					armv7s,
+				);
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
