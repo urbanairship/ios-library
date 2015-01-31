@@ -41,6 +41,7 @@
 @property (nonatomic, strong) id mockedNamedUserClient;
 @property (nonatomic, strong) id mockedUAPush;
 @property (nonatomic, strong) UAHTTPRequest *namedUserFailureRequest;
+@property (nonatomic, copy) NSString *pushChannelID;
 
 @end
 
@@ -58,8 +59,14 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
     [[[self.mockedAirship stub] andReturn:self.dataStore] dataStore];
 
-    self.mockedUAPush = [OCMockObject partialMockForObject:[UAPush shared]];
-    [[[self.mockedUAPush stub] andReturn:@"someChannel"] channelID];
+    self.mockedUAPush = [OCMockObject niceMockForClass:[UAPush class]];
+    [[[self.mockedUAPush stub] andReturn:self.mockedUAPush] shared];
+    [[[self.mockedUAPush stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&_pushChannelID];
+    }] channelID];
+
+    self.pushChannelID = @"someChannel";
+
 
     self.namedUser = [[UANamedUser alloc] initWithDataStore:self.dataStore];
     self.mockedNamedUserClient = [OCMockObject niceMockForClass:[UANamedUserAPIClient class]];
@@ -112,7 +119,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 
     XCTAssertEqualObjects(@"superFakeNamedUser", self.namedUser.identifier,
                           @"Named user ID should be set.");
-    XCTAssertEqualObjects(@"superFakeNamedUser", [self.dataStore stringForKey:UANamedUserIdKey],
+    XCTAssertEqualObjects(@"superFakeNamedUser", [self.dataStore stringForKey:UANamedUserIDKey],
                           @"Named user ID should be stored in standardUserDefaults.");
     XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
                              @"Change tokens should have changed.");
@@ -152,7 +159,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     self.namedUser.identifier = nil;
 
     XCTAssertNil(self.namedUser.identifier, @"Named user ID should be nil.");
-    XCTAssertNil([self.dataStore stringForKey:UANamedUserIdKey],
+    XCTAssertNil([self.dataStore stringForKey:UANamedUserIDKey],
                  @"Named user ID should be able to be cleared in standardUserDefaults.");
     XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
                              @"Change tokens should have changed.");
@@ -163,8 +170,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
  * Test set ID when channel doesn't exist sets ID, but fails to associate
  */
 - (void)testSetIDNoChannel {
-    self.mockedUAPush = [OCMockObject partialMockForObject:[UAPush shared]];
-    [[[self.mockedUAPush stub] andReturn:nil] channelID];
+    self.pushChannelID = nil;
 
     // Named user client should not associate
     [[self.mockedNamedUserClient reject] associate:OCMOCK_ANY
@@ -285,8 +291,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
  * Test update will skip update when channel ID doesn't exist.
  */
 - (void)testUpdateSkipUpdateNoChannel {
-    self.mockedUAPush = [OCMockObject partialMockForObject:[UAPush shared]];
-    [[[self.mockedUAPush stub] andReturn:nil] channelID];
+    self.pushChannelID = nil;
 
     self.namedUser.changeToken = @"AbcToken";
     self.namedUser.lastUpdatedToken = @"XyzToken";

@@ -30,9 +30,9 @@
 #import "UAHTTPRequestEngine.h"
 #import "NSJSONSerialization+UAAdditions.h"
 
-#define kUANamedUserRetryTimeInitialDelay 60
+#define kUANamedUserRetryTimeInitialDelay 60    // 60 seconds
 #define kUANamedUserRetryTimeMultiplier 2
-#define kUANamedUserRetryTimeMaxDelay 300
+#define kUANamedUserRetryTimeMaxDelay 300       // 300 seconds
 #define kUANamedUserPath @"/api/named_users"
 #define kUANamedUserChannelIDKey @"channel_id"
 #define kUANamedUserDeviceTypeKey @"device_type"
@@ -116,15 +116,15 @@
         if (successBlock) {
             successBlock();
         } else {
-            UA_LERR(@"missing successBlock");
+            UA_LERR(@"Missing successBlock");
         }
-    }onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
+    } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
         [UAUtils logFailedRequest:request withMessage:@"Associating named user"];
 
         if (failureBlock) {
             failureBlock(request);
         } else {
-            UA_LERR(@"missing failureBlock");
+            UA_LERR(@"Missing failureBlock");
         }
     }];
 }
@@ -163,15 +163,15 @@
         if (successBlock) {
             successBlock();
         } else {
-            UA_LERR(@"missing successBlock");
+            UA_LERR(@"Missing successBlock");
         }
-    }onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
+    } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
         [UAUtils logFailedRequest:request withMessage:@"Disassociating named user"];
 
         if (failureBlock) {
             failureBlock(request);
         } else {
-            UA_LERR(@"missing failureBlock");
+            UA_LERR(@"Missing failureBlock");
         }
     }];
 }

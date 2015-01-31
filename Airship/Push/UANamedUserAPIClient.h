@@ -42,7 +42,7 @@ typedef void (^UANamedUserAPIClientFailureBlock)(UAHTTPRequest *request);
  *
  * @return UANamedUserAPIClient with a default requestEngine.
  */
-+ (UANamedUserAPIClient *)client;
++ (instancetype)client;
 
 /**
  * Factory method to create a UANamedUserAPIClient.
@@ -50,7 +50,7 @@ typedef void (^UANamedUserAPIClientFailureBlock)(UAHTTPRequest *request);
  * @param requestEngine The specified UAHTTPRequestEngine.
  * @return UANamedUserAPIClient with the specified requestEngine.
  */
-+ (UANamedUserAPIClient *)clientWithRequestEngine:(UAHTTPRequestEngine *)requestEngine;
++ (instancetype)clientWithRequestEngine:(UAHTTPRequestEngine *)requestEngine;
 
 /**
  * Associates the channel to the named user ID.

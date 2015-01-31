@@ -31,7 +31,7 @@
 
 #define kUAMaxNamedUserIdLength 128
 
-NSString *const UANamedUserIdKey = @"UANamedUserId";
+NSString *const UANamedUserIDKey = @"UANamedUserID";
 NSString *const UANamedUserChangeTokenKey = @"UANamedUserChangeToken";
 NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 
@@ -49,39 +49,40 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 }
 
 - (void)update {
-    if (self.changeToken == nil && self.lastUpdatedToken  == nil) {
+    if (!self.changeToken && !self.lastUpdatedToken) {
         // Skip since no one has set the named user ID. Usually from a new or re-install.
-        UA_LDEBUG(@"New or re-install, skipping named user update");
+        UA_LDEBUG(@"New or re-install, skipping named user update.");
         return;
     }
 
-    if (self.changeToken != nil && [self.changeToken isEqualToString:self.lastUpdatedToken]) {
-        // Skip since no change has occurred (token remain the same).
+    if ([self.changeToken isEqualToString:self.lastUpdatedToken]) {
+        // Skip since no change has occurred (token remains the same).
         UA_LDEBUG(@"Named user already updated. Skipping.");
         return;
     }
 
-    if ([UAPush shared].channelID == nil) {
+    if (![UAPush shared].channelID) {
         // Skip since we don't have a channel ID.
         UA_LDEBUG(@"The channel ID does not exist. Will retry when channel ID is available.");
         return;
     }
-    if (self.identifier == nil) {
+
+    if (self.identifier) {
+        // When identifier is non-nil, associate the current named user ID.
+        [self associateNamedUser];
+    } else {
         // When identifier is nil, disassociate the current named user ID.
         [self disassociateNamedUser];
-    } else {
-        // When identifier is non-nil, associate the current named user ID.
-        [self associateNamedUser:self.identifier];
     }
 }
 
 - (NSString *)identifier {
-    return [self.dataStore objectForKey:UANamedUserIdKey];
+    return [self.dataStore objectForKey:UANamedUserIDKey];
 }
 
 - (void)setIdentifier:(NSString *)identifier {
-    NSString * trimmedId = nil;
-    if (identifier != nil) {
+    NSString * trimmedId;
+    if (identifier) {
         trimmedId = [identifier stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         if ([trimmedId length] <= 0 || [trimmedId length] > kUAMaxNamedUserIdLength) {
             UA_LERR(@"Failed to set named user ID. The named user ID must be greater than 0 and less than 129 characters.");
@@ -89,15 +90,12 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
         }
     }
 
-    // check if the newly trimmed ID matches with currently stored ID
-    BOOL isEqual = self.identifier == nil ? trimmedId == nil : [self.identifier isEqualToString:trimmedId];
-
     // if the IDs don't match or ID is set to nil and current token is nil (re-install case), then update.
-    if (!isEqual || (self.identifier == nil && self.changeToken == nil)) {
-        [self.dataStore setValue:trimmedId forKey:UANamedUserIdKey];
+    if (!(self.identifier == trimmedId || [self.identifier isEqualToString:trimmedId]) || (!self.identifier && !self.changeToken)) {
+        [self.dataStore setValue:trimmedId forKey:UANamedUserIDKey];
 
         // Update the change token.
-        [self setChangeToken:[NSUUID UUID].UUIDString];
+        self.changeToken = [NSUUID UUID].UUIDString;
 
         // Update named user.
         [self update];
@@ -123,11 +121,12 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
     return [self.dataStore objectForKey:UANamedUserLastUpdatedTokenKey];
 }
 
-- (void)associateNamedUser:(NSString *)identifier {
-    [self.namedUserAPIClient associate:identifier channelID:[UAPush shared].channelID
+- (void)associateNamedUser {
+    NSString *token = self.changeToken;
+    [self.namedUserAPIClient associate:self.identifier channelID:[UAPush shared].channelID
      onSuccess:^{
-         [self setLastUpdatedToken:self.changeToken];
-         UA_LINFO(@"Named user associated to channel successfully.");
+         self.lastUpdatedToken = token;
+         UA_LDEBUG(@"Named user associated to channel successfully.");
      }
      onFailure:^(UAHTTPRequest *request) {
          UA_LDEBUG(@"Failed to associate channel to named user.");
@@ -135,10 +134,11 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 }
 
 - (void)disassociateNamedUser {
+    NSString *token = self.changeToken;
     [self.namedUserAPIClient disassociate:[UAPush shared].channelID
      onSuccess:^{
-         [self setLastUpdatedToken:self.changeToken];
-         UA_LINFO(@"Named user disassociated from channel successfully.");
+         self.lastUpdatedToken = token;
+         UA_LDEBUG(@"Named user disassociated from channel successfully.");
      }
      onFailure:^(UAHTTPRequest *request) {
          UA_LDEBUG(@"Failed to disassociate channel from named user.");

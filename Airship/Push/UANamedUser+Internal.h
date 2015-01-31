@@ -32,7 +32,7 @@
 /**
  * Named user identifier data store key.
  */
-extern NSString *const UANamedUserIdKey;
+extern NSString *const UANamedUserIDKey;
 
 /**
  * Named user change token data store key.
@@ -71,7 +71,7 @@ extern NSString *const UANamedUserLastUpdatedTokenKey;
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
- * Update named user.
+ * Updates the association or disassociation of the current named user ID.
  */
 - (void)update;
 
