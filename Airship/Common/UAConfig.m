@@ -53,7 +53,7 @@
         self.cacheDiskSizeInMB = 100;
         self.clearUserOnAppRestore = NO;
         self.whitelist = [NSArray array];
-        self.clearNamedUser = NO;
+        self.clearNamedUserOnAppRestore = NO;
     }
 
     return self;
@@ -105,7 +105,7 @@
             self.automaticSetupEnabled,
             self.clearUserOnAppRestore,
             self.whitelist,
-            self.clearNamedUser];
+            self.clearNamedUserOnAppRestore];
 }
 
 #pragma mark -

@@ -29,7 +29,7 @@
 @class UAChannelRegistrationPayload;
 @class UAHTTPRequest;
 
-typedef void (^UAChannelAPIClientCreateSuccessBlock)(NSString *channelID, NSString *channelLocation);
+typedef void (^UAChannelAPIClientCreateSuccessBlock)(NSString *channelID, NSString *channelLocation, BOOL newChannel);
 
 typedef void (^UAChannelAPIClientUpdateSuccessBlock)();
 

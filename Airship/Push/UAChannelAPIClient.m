@@ -89,13 +89,6 @@
 
     [self.requestEngine runRequest:request succeedWhere:^BOOL(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
-        if (status == 200) {
-            // 200 means channel previously existed and a named user may be associated to it.
-            if ([UAirship shared].config.clearNamedUser) {
-                // If clearNamedUser is true on re-install, then disassociate if necessary
-                [[UAPush shared].namedUser disassociateNamedUserIfNil];
-            }
-        }
         return (BOOL)(status == 200 || status == 201);
     } retryWhere:^BOOL(UAHTTPRequest *request) {
         if (self.shouldRetryOnConnectionError) {
@@ -108,6 +101,13 @@
         NSString *responseString = request.responseString;
         NSDictionary *jsonResponse = [NSJSONSerialization objectWithString:responseString];
         UA_LTRACE(@"Retrieved channel response: %@", responseString);
+        NSInteger status = request.response.statusCode;
+
+        BOOL newChannel = NO;
+        // 200 means channel previously existed, while 201 means newly created channel
+        if (status == 201) {
+            newChannel = YES;
+        }
 
         // Get the channel id from the request
         NSString *channelID = [jsonResponse valueForKey:@"channel_id"];
@@ -115,7 +115,7 @@
         // Channel location from the request
         NSString *channelLocation = [request.response.allHeaderFields valueForKey:@"Location"];
         if (successBlock) {
-            successBlock(channelID, channelLocation);
+            successBlock(channelID, channelLocation, newChannel);
         } else {
             UA_LERR(@"missing successBlock");
         }
