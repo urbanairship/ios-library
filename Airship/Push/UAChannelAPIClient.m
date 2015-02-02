@@ -31,6 +31,8 @@
 #import "UAConfig.h"
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "UAPush.h"
+#import "UANamedUser+Internal.h"
 
 
 #define kUAChannelRetryTimeInitialDelay 60
@@ -87,6 +89,13 @@
 
     [self.requestEngine runRequest:request succeedWhere:^BOOL(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
+        if (status == 200) {
+            // 200 means channel previously existed and a named user may be associated to it.
+            if ([UAirship shared].config.clearNamedUser) {
+                // If clearNamedUser is true on re-install, then disassociate if necessary
+                [[UAPush shared].namedUser disassociateNamedUserIfNil];
+            }
+        }
         return (BOOL)(status == 200 || status == 201);
     } retryWhere:^BOOL(UAHTTPRequest *request) {
         if (self.shouldRetryOnConnectionError) {

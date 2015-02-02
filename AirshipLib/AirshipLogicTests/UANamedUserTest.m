@@ -313,4 +313,63 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
                      @"Named user client should not associate or disassociate.");
 }
 
+/**
+ * Test disassociateNamedUserIfNil when named user is nil.
+ */
+- (void)testDisassociateNamedUserNil {
+    self.namedUser.identifier = nil;
+
+    // Expect the named user client to disassociate
+    [[self.mockedNamedUserClient expect] disassociate:@"someChannel"
+                                            onSuccess:OCMOCK_ANY
+                                            onFailure:OCMOCK_ANY];
+
+
+    self.namedUser.changeToken = nil;
+    [self.namedUser disassociateNamedUserIfNil];
+
+    XCTAssertNil(self.namedUser.identifier, @"Named user ID should remain nil.");
+    XCTAssertNoThrow([self.mockedNamedUserClient verify],
+                     @"Named user should be disassociated");
+}
+
+/**
+ * Test disassociateNamedUserIfNil when named user is not nil.
+ */
+- (void)testDisassociateNamedUserNonNil {
+
+    // Named user client should not disassociate
+    [[self.mockedNamedUserClient reject] disassociate:OCMOCK_ANY
+                                            onSuccess:OCMOCK_ANY
+                                            onFailure:OCMOCK_ANY];
+
+    [self.namedUser disassociateNamedUserIfNil];
+
+    XCTAssertEqualObjects(@"fakeNamedUser", self.namedUser.identifier,
+                          @"Named user ID should remain the same.");
+    XCTAssertNoThrow([self.mockedNamedUserClient verify],
+                     @"Named user should not be disassociated");
+}
+
+/**
+ * Test force update changes the current token and updates named user.
+ */
+- (void)testForceUpdate {
+    NSString *changeToken = self.namedUser.changeToken;
+
+    // Expect the named user client to associate and call the success block
+    [[[self.mockedNamedUserClient expect] andDo:namedUserSuccessDoBlock] associate:@"fakeNamedUser"
+                                                                         channelID:@"someChannel"
+                                                                         onSuccess:OCMOCK_ANY
+                                                                         onFailure:OCMOCK_ANY];
+
+    [self.namedUser forceUpdate];
+
+    XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
+                             @"Change token should have changed.");
+    XCTAssertEqualObjects(self.namedUser.changeToken, self.namedUser.lastUpdatedToken,
+                          @"Tokens should match.");
+    XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should be associated");
+}
+
 @end

@@ -39,4 +39,9 @@
  */
 @property (nonatomic, copy) NSString *identifier;
 
+/**
+ * Force updating the association or disassociation of the current named user ID.
+ */
+- (void)forceUpdate;
+
 @end

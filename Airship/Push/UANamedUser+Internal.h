@@ -75,4 +75,9 @@ extern NSString *const UANamedUserLastUpdatedTokenKey;
  */
 - (void)update;
 
+/**
+ * Disassociate the named user only if the named user ID is really nil.
+ */
+- (void)disassociateNamedUserIfNil;
+
 @end

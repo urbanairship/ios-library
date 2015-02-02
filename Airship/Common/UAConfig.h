@@ -198,6 +198,12 @@
  */
 @property (nonatomic, assign) BOOL clearUserOnAppRestore;
 
+/**
+ * If set to `YES`, the application will clear the previous named user ID on a
+ * re-install. Defaults to `NO`.
+ */
+@property (nonatomic, assign) BOOL clearNamedUser;
+
 ///---------------------------------------------------------------------------------------
 /// @name Factory Methods
 ///---------------------------------------------------------------------------------------

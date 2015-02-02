@@ -145,4 +145,16 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
      }];
 }
 
+- (void)disassociateNamedUserIfNil {
+    if (!self.identifier) {
+        self.identifier = nil;
+    }
+}
+
+- (void)forceUpdate {
+    UA_LDEBUG(@"NamedUser - force named user update.");
+    self.changeToken = [NSUUID UUID].UUIDString;
+    [self update];
+}
+
 @end
