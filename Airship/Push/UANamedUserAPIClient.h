@@ -28,8 +28,14 @@
 @class UAHTTPRequestEngine;
 @class UAHTTPRequest;
 
+/**
+ * A block called when named user association or disassociation succeeded.
+ */
 typedef void (^UANamedUserAPIClientSuccessBlock)();
 
+/**
+ * A block called when named user association or disassociation failed.
+ */
 typedef void (^UANamedUserAPIClientFailureBlock)(UAHTTPRequest *request);
 
 /**

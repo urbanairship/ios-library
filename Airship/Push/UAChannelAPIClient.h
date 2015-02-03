@@ -29,10 +29,19 @@
 @class UAChannelRegistrationPayload;
 @class UAHTTPRequest;
 
+/**
+ * A block called when the channel ID creation succeeded.
+ */
 typedef void (^UAChannelAPIClientCreateSuccessBlock)(NSString *channelID, NSString *channelLocation, BOOL newChannel);
 
+/**
+ * A block called when the channel update succeeded.
+ */
 typedef void (^UAChannelAPIClientUpdateSuccessBlock)();
 
+/**
+ * A block called when the channel creation or update failed.
+ */
 typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
 
 /**
