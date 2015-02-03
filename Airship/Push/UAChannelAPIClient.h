@@ -31,6 +31,10 @@
 
 /**
  * A block called when the channel ID creation succeeded.
+ *
+ * @param channelID The channel identifier string.
+ * @param channelLocation The channel location string.
+ * @param newChannel Boolean to indicate if the channel is newly created.
  */
 typedef void (^UAChannelAPIClientCreateSuccessBlock)(NSString *channelID, NSString *channelLocation, BOOL newChannel);
 
@@ -41,6 +45,8 @@ typedef void (^UAChannelAPIClientUpdateSuccessBlock)();
 
 /**
  * A block called when the channel creation or update failed.
+ *
+ * @param request The request that failed.
  */
 typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
 
