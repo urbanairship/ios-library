@@ -312,7 +312,7 @@ SINGLETON_INTERFACE(UAPush);
  * Toggle the Urban Airship auto-badge feature. Defaults to `NO` If enabled, this will update the
  * badge number stored by Urban Airship every time the app is started or foregrounded.
  */
-@property (nonatomic, assign) BOOL autobadgeEnabled;
+@property (nonatomic, assign, getter=isAutobadgeEnabled) BOOL autobadgeEnabled;
 
 /**
  * Sets the badge number on the device and on the Urban Airship server.
@@ -356,7 +356,7 @@ SINGLETON_INTERFACE(UAPush);
  * Set this to `NO` to prevent the device from sending any tag information to the server when using
  * server-side tagging. Defaults to `YES`.
  */
-@property (nonatomic, assign) BOOL deviceTagsEnabled;
+@property (nonatomic, assign, getter=isDeviceTagsEnabled) BOOL deviceTagsEnabled;
 
 /**
  * Adds a tag to the list of tags for the device.
@@ -478,7 +478,7 @@ SINGLETON_INTERFACE(UAPush);
 /**
  * Enables/Disables quiet time
  */
-@property (nonatomic, assign) BOOL quietTimeEnabled;
+@property (nonatomic, assign, getter=isQuietTimeEnabled) BOOL quietTimeEnabled;
 
 /**
  * Sets the quiet time start and end time.  The start and end time does not change

@@ -222,7 +222,7 @@ SINGLETON_IMPLEMENTATION(UAPush)
     }
 }
 
-- (BOOL)autobadgeEnabled {
+- (BOOL)isAutobadgeEnabled {
     return [self.dataStore boolForKey:UAPushBadgeSettingsKey];
 }
 
@@ -337,7 +337,7 @@ SINGLETON_IMPLEMENTATION(UAPush)
     [self.dataStore setObject:quietTime forKey:UAPushQuietTimeSettingsKey];
 }
 
-- (BOOL)quietTimeEnabled {
+- (BOOL)isQuietTimeEnabled {
     return [self.dataStore boolForKey:UAPushQuietTimeEnabledSettingsKey];
 }
 
@@ -762,7 +762,7 @@ BOOL deferChannelCreationOnForeground = false;
         return app.isRegisteredForRemoteNotifications;
     } else {
         // iOS 7 requires user notifications.
-        return [self userPushNotificationsEnabled];
+        return self.userPushNotificationsEnabled;
     }
 }
 

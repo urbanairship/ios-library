@@ -58,13 +58,13 @@
  * The production status of this application. This may be set directly, or it may be determined
  * automatically if the detectProvisioningMode flag is set to `YES`.
  */
-@property (nonatomic, assign) BOOL inProduction;
+@property (nonatomic, assign, getter=isInProduction) BOOL inProduction;
 
 /**
  * Toggles Urban Airship analytics. Defaults to `YES`. If set to `NO`, many UA features will not be
  * available to this application.
  */
-@property (nonatomic, assign) BOOL analyticsEnabled;
+@property (nonatomic, assign, getter=isAnalyticsEnabled) BOOL analyticsEnabled;
 
 ///---------------------------------------------------------------------------------------
 /// @name Configuration Values
@@ -130,7 +130,7 @@
  * in application:didFinishLaunchingWithOptions: and forward all notification-related app delegate
  * calls to UAPush and UAInbox.
  */
-@property (nonatomic, assign) BOOL automaticSetupEnabled;
+@property (nonatomic, assign, getter=isAutomaticSetupEnabled) BOOL automaticSetupEnabled;
 
 /**
  * An array of UAWhitelist entry strings.

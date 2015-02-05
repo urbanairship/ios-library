@@ -147,7 +147,7 @@
     return self.inProduction ? self.productionLogLevel : self.developmentLogLevel;
 }
 
-- (BOOL)inProduction {
+- (BOOL)isInProduction {
     return self.detectProvisioningMode ? [self usesProductionPushServer] : _inProduction;
 }
 

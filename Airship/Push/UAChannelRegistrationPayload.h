@@ -65,7 +65,7 @@
 /**
  * This flag indicates that the user is able to receive push notifications.
  */
-@property (nonatomic, assign) BOOL optedIn;
+@property (nonatomic, assign, getter=isOptedIn) BOOL optedIn;
 
 /**
  * The address to push notifications to.  This should be the device token.
@@ -106,7 +106,7 @@
 /**
  * This flag indicates that the user is able to receive background notifications.
  */
-@property (nonatomic, assign) BOOL backgroundEnabled;
+@property (nonatomic, assign, getter=isBackgroundEnabled) BOOL backgroundEnabled;
 
 /**
  * The UAChannelRegistrationPayload as JSON data.
