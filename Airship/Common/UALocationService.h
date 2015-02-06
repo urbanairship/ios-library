@@ -226,7 +226,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 /**
  * Allows location services to continue in the background.
  */
-@property (nonatomic, assign) BOOL backgroundLocationServiceEnabled;
+@property (nonatomic, assign, getter=isBackgroundLocationServiceEnabled) BOOL backgroundLocationServiceEnabled;
 
 /**
  * Minimum time between automatic updates that are tied to app foreground events.
