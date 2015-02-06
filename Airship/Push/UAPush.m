@@ -26,7 +26,7 @@
 #import <UIKit/UIKit.h>
 
 #import "UAPush+Internal.h"
-
+#import "UANamedUser+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAAnalytics.h"
 #import "UAEventDeviceRegistration.h"
@@ -103,6 +103,7 @@ SINGLETON_IMPLEMENTATION(UAPush)
 
         self.userNotificationTypes = UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound;
         self.registrationBackgroundTask = UIBackgroundTaskInvalid;
+        self.namedUser = [[UANamedUser alloc] initWithDataStore:[UAirship shared].dataStore];
     }
 
     return self;
@@ -147,6 +148,9 @@ SINGLETON_IMPLEMENTATION(UAPush)
         if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerForRemoteNotifications)] && [UAirship shared].remoteNotificationBackgroundModeEnabled) {
             [[UIApplication sharedApplication] registerForRemoteNotifications];
         }
+
+        // Update the named user if necessary.
+        [self.namedUser update];
     });
 }
 
@@ -913,6 +917,9 @@ BOOL deferChannelCreationOnForeground = false;
         if (uaLogLevel >= UALogLevelError) {
             NSLog(@"Created channel with ID: %@", self.channelID);
         }
+
+        // Once we get a channel, update the named user if necessary.
+        [self.namedUser update];
     } else {
         UA_LERR(@"Channel creation failed. Missing channelID: %@ or channelLocation: %@",
                 channelID, channelLocation);

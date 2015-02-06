@@ -29,6 +29,10 @@
 #import "UAUtils.h"
 #import "UAChannelRegistrationPayload.h"
 #import "UAHTTPRequest.h"
+#import "UAirship.h"
+#import "UAConfig.h"
+#import "UAPush.h"
+#import "UANamedUser+Internal.h"
 
 @implementation UAChannelRegistrar
 
@@ -105,10 +109,15 @@
         }
 
         // Conflict with channel id, create a new one
-        UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *newChannelID, NSString *newChannelLocation) {
+        UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *newChannelID, NSString *newChannelLocation, BOOL newChannel) {
             UA_LDEBUG(@"Channel %@ created successfully. Channel location: %@.", newChannelID, newChannelLocation);
             [self channelCreated:newChannelID channelLocation:newChannelLocation];
             [self succeededWithPayload:payload];
+
+            // if this channel previously existed, a named user may be associated to it
+            if (!newChannel && [UAirship shared].config.clearNamedUserOnAppRestore) {
+                [[UAPush shared].namedUser disassociateNamedUserIfNil];
+            }
         };
 
         UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
@@ -132,7 +141,7 @@
 
     UA_LDEBUG(@"Creating channel.");
 
-    UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *channelID, NSString *channelLocation) {
+    UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *channelID, NSString *channelLocation, BOOL newChannel) {
         if (!channelID || !channelLocation) {
             UA_LDEBUG(@"Channel ID: %@ or channel location: %@ is missing. Channel creation failed",
                       channelID, channelLocation);
@@ -141,6 +150,11 @@
             UA_LDEBUG(@"Channel %@ created successfully. Channel location: %@.", channelID, channelLocation);
             [self channelCreated:channelID channelLocation:channelLocation];
             [self succeededWithPayload:payload];
+
+            // if this channel previously existed, a named user may be associated to it
+            if (!newChannel && [UAirship shared].config.clearNamedUserOnAppRestore) {
+                [[UAPush shared].namedUser disassociateNamedUserIfNil];
+            }
         }
     };
 

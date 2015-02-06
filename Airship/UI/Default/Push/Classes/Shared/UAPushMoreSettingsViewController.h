@@ -33,6 +33,7 @@
 @property (nonatomic, strong) UITableViewCell *deviceTokenTypesCell;
 @property (nonatomic, strong) UITableViewCell *deviceTokenDisabledTypesCell;
 @property (nonatomic, strong) UITableViewCell *deviceTokenAliasCell;
+@property (nonatomic, strong) UITableViewCell *deviceTokenNamedUserCell;
 @property (nonatomic, strong) UITableViewCell *deviceTokenTagsCell;
 @property (nonatomic, strong) UITableViewCell *channelCell;
 @property (nonatomic, strong) UITableViewCell *usernameCell;
@@ -40,6 +41,7 @@
 @property (nonatomic, strong) UITableViewCell *helpLogCell;
 @property (nonatomic, strong) UIViewController *tokenViewController;
 @property (nonatomic, strong) UIViewController *aliasViewController;
+@property (nonatomic, strong) UIViewController *namedUserViewController;
 @property (nonatomic, strong) UIViewController *tagsViewController;
 @property (nonatomic, strong) UIViewController *channelInfoViewController;
 @property (nonatomic, strong) UIViewController *userInfoViewController;

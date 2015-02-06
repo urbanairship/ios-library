@@ -102,6 +102,10 @@
 		636CB1EC128CF51900481EFC /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A0C124F251B00D49CD5 /* StoreKit.framework */; };
 		76149E881843B0B400398008 /* UAPushSettingsChannelInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76149E871843B0B400398008 /* UAPushSettingsChannelInfoViewController.m */; };
 		76149E8A1843B0CF00398008 /* UAPushSettingsChannelInfoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 76149E891843B0CF00398008 /* UAPushSettingsChannelInfoViewController.xib */; };
+		767D0D711A783E41008CEC8A /* UAPushSettingsNamedUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 767D0D6F1A783E41008CEC8A /* UAPushSettingsNamedUserViewController.m */; };
+		767D0D721A783E41008CEC8A /* UAPushSettingsNamedUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 767D0D6F1A783E41008CEC8A /* UAPushSettingsNamedUserViewController.m */; };
+		767D0D741A783E8E008CEC8A /* UAPushSettingsNamedUserView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 767D0D731A783E8E008CEC8A /* UAPushSettingsNamedUserView.xib */; };
+		767D0D751A783E8E008CEC8A /* UAPushSettingsNamedUserView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 767D0D731A783E8E008CEC8A /* UAPushSettingsNamedUserView.xib */; };
 		76F5B71F19C37E98003C07A0 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 76F5B71E19C37E98003C07A0 /* Settings.bundle */; };
 		76F5B72019C37EAD003C07A0 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 76F5B71E19C37E98003C07A0 /* Settings.bundle */; };
 		BB935DA5152B6081006E6A92 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB935DA4152B6081006E6A92 /* CoreLocation.framework */; };
@@ -201,6 +205,9 @@
 		76149E861843B0B400398008 /* UAPushSettingsChannelInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsChannelInfoViewController.h; sourceTree = "<group>"; };
 		76149E871843B0B400398008 /* UAPushSettingsChannelInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsChannelInfoViewController.m; sourceTree = "<group>"; };
 		76149E891843B0CF00398008 /* UAPushSettingsChannelInfoViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsChannelInfoViewController.xib; sourceTree = "<group>"; };
+		767D0D6F1A783E41008CEC8A /* UAPushSettingsNamedUserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsNamedUserViewController.m; sourceTree = "<group>"; };
+		767D0D701A783E41008CEC8A /* UAPushSettingsNamedUserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsNamedUserViewController.h; sourceTree = "<group>"; };
+		767D0D731A783E8E008CEC8A /* UAPushSettingsNamedUserView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsNamedUserView.xib; sourceTree = "<group>"; };
 		76F5B71E19C37E98003C07A0 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		BB935DA4152B6081006E6A92 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		BB935DA7152B60BD006E6A92 /* UALocationDemoAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationDemoAnnotation.h; sourceTree = "<group>"; };
@@ -376,6 +383,8 @@
 				D56857B512C183CA00BBF31A /* UAPushMoreSettingsViewController.m */,
 				D56857B612C183CA00BBF31A /* UAPushSettingsAliasViewController.h */,
 				D56857B712C183CA00BBF31A /* UAPushSettingsAliasViewController.m */,
+				767D0D6F1A783E41008CEC8A /* UAPushSettingsNamedUserViewController.m */,
+				767D0D701A783E41008CEC8A /* UAPushSettingsNamedUserViewController.h */,
 				D56857B812C183CA00BBF31A /* UAPushSettingsTokenViewController.h */,
 				D56857B912C183CA00BBF31A /* UAPushSettingsTokenViewController.m */,
 				D56857BA12C183CA00BBF31A /* UAPushSettingsViewController.h */,
@@ -405,6 +414,7 @@
 				D5184E8A1315F33900A40CAC /* UAPushSettingsAddTagViewController.xib */,
 				D56857C312C183D900BBF31A /* UAPushMoreSettingsView.xib */,
 				D56857C412C183D900BBF31A /* UAPushSettingsAliasView.xib */,
+				767D0D731A783E8E008CEC8A /* UAPushSettingsNamedUserView.xib */,
 				D56857C512C183D900BBF31A /* UAPushSettingsTokenView.xib */,
 				D56857C612C183D900BBF31A /* UAPushSettingsView.xib */,
 				1890BA121251B5E900E6EBF1 /* bottom-detail.png */,
@@ -655,6 +665,7 @@
 				49C0CB9D19BA677B00771F4F /* UAPushUI.strings in Resources */,
 				D5184E8D1315F33900A40CAC /* UAPushSettingsSoundsViewController.xib in Resources */,
 				D5184E8E1315F33900A40CAC /* UAPushSettingsAddTagViewController.xib in Resources */,
+				767D0D741A783E8E008CEC8A /* UAPushSettingsNamedUserView.xib in Resources */,
 				1FCCBC0E1A0EB64A00B256F0 /* Images.xcassets in Resources */,
 				D5184E981315F39C00A40CAC /* pig.caf in Resources */,
 				76F5B71F19C37E98003C07A0 /* Settings.bundle in Resources */,
@@ -692,6 +703,7 @@
 				493977C619B7CE660063C58F /* UAPushSettingsTagsViewController.xib in Resources */,
 				49C0CB9E19BA677B00771F4F /* UAPushUI.strings in Resources */,
 				493977C719B7CE660063C58F /* UAPushSettingsSoundsViewController.xib in Resources */,
+				767D0D751A783E8E008CEC8A /* UAPushSettingsNamedUserView.xib in Resources */,
 				1FCCBC0F1A0EB64A00B256F0 /* Images.xcassets in Resources */,
 				493977C819B7CE660063C58F /* UAPushSettingsAddTagViewController.xib in Resources */,
 				493977CA19B7CE660063C58F /* pig.caf in Resources */,
@@ -716,6 +728,7 @@
 				76149E881843B0B400398008 /* UAPushSettingsChannelInfoViewController.m in Sources */,
 				D56857BE12C183CA00BBF31A /* UAPushMoreSettingsViewController.m in Sources */,
 				D56857BF12C183CA00BBF31A /* UAPushSettingsAliasViewController.m in Sources */,
+				767D0D711A783E41008CEC8A /* UAPushSettingsNamedUserViewController.m in Sources */,
 				D56857C012C183CA00BBF31A /* UAPushSettingsTokenViewController.m in Sources */,
 				D56857C112C183CA00BBF31A /* UAPushSettingsViewController.m in Sources */,
 				D5184E841315F2F900A40CAC /* UAPushNotificationHandler.m in Sources */,
@@ -741,6 +754,7 @@
 				493977D619B7CE660063C58F /* UAPushSettingsChannelInfoViewController.m in Sources */,
 				493977D719B7CE660063C58F /* UAPushMoreSettingsViewController.m in Sources */,
 				493977D819B7CE660063C58F /* UAPushSettingsAliasViewController.m in Sources */,
+				767D0D721A783E41008CEC8A /* UAPushSettingsNamedUserViewController.m in Sources */,
 				493977D919B7CE660063C58F /* UAPushSettingsTokenViewController.m in Sources */,
 				493977DA19B7CE660063C58F /* UAPushSettingsViewController.m in Sources */,
 				493977DC19B7CE660063C58F /* UAPushNotificationHandler.m in Sources */,

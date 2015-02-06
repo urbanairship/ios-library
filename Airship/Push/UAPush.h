@@ -26,6 +26,7 @@
 #import "UAGlobal.h"
 #import "UAHTTPConnection.h"
 #import "UAChannelRegistrar.h"
+#import "UANamedUser.h"
 
 
 //---------------------------------------------------------------------------------------
@@ -347,6 +348,11 @@ SINGLETON_INTERFACE(UAPush);
 
 /** Tags for this device. */
 @property (nonatomic, copy) NSArray *tags;
+
+/**
+ * Named user for this device.
+ */
+@property (nonatomic, strong) UANamedUser *namedUser;
 
 /**
  * Allows setting tags from the device. Tags can be set from either the server or the device, but
