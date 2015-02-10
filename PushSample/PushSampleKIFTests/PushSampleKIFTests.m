@@ -83,10 +83,9 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
 
     [tester waitForViewWithAccessibilityLabel:channelId];
 
-    IF_IOS7_OR_GREATER(
+    if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
         [tester tapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton];
-    )
-    else {
+    } else {
         [tester tapViewWithAccessibilityLabel:@"Push Notification Demo" traits:UIAccessibilityTraitButton];
     }
 
@@ -151,10 +150,9 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     // in iOS 7+, we need to tap the keyboard's done button
     [tester tapViewWithAccessibilityLabel:@"done" traits:UIAccessibilityTraitKeyboardKey];
 
-    IF_IOS7_OR_GREATER(
+    if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
         [tester tapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton];
-    )
-    else {
+    } else {
         [tester tapViewWithAccessibilityLabel:@"Push Notification Demo" traits:UIAccessibilityTraitButton];
     }
 
@@ -185,8 +183,9 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
         [tester tapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Delete %@", tag] traits:UIAccessibilityTraitButton];
 
         // iOS 7 UI requires another tap on 'Delete' button, while older versions need to confirm deletion.
-        IF_IOS7_OR_GREATER([tester tapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Delete"] traits:UIAccessibilityTraitButton];)
-        else {
+        if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
+            [tester tapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Delete"] traits:UIAccessibilityTraitButton];
+        } else {
             [tester tapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Confirm Deletion for %@", tag] traits:UIAccessibilityTraitButton];
         }
     }
@@ -199,10 +198,9 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     [tester tapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton];
 
     // back to token screen
-    IF_IOS7_OR_GREATER(
+    if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
         [tester tapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton];
-    )
-    else {
+    } else {
         [tester tapViewWithAccessibilityLabel:@"Push Notification Demo" traits:UIAccessibilityTraitButton];
     }
 
