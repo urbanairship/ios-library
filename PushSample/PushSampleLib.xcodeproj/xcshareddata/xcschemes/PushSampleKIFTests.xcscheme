@@ -17,7 +17,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "76811EEB17EBA63600874D1F"
-               BuildableName = "PushSampleKIFTests.octest"
+               BuildableName = "PushSampleKIFTests.xctest"
                BlueprintName = "PushSampleKIFTests"
                ReferencedContainer = "container:PushSampleLib.xcodeproj">
             </BuildableReference>

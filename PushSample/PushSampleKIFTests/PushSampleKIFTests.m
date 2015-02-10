@@ -67,6 +67,30 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
 
     // verify push is enabled
     [tester verifyPushEnabled:YES];
+
+    // Verify channel ID created
+    NSString *channelId = [UAPush shared].channelID;
+    NSLog(@"Channel ID is: %@", channelId);
+
+    if (!channelId) {
+        NSLog(@"Test failed: Expected channel ID to be created");
+        exit(EXIT_FAILURE);
+    }
+
+    [tester tapViewWithAccessibilityLabel:@"Token Settings"];
+    [tester waitForTappableViewWithAccessibilityLabel:@"Channel ID"];
+    [tester tapViewWithAccessibilityLabel:@"Channel ID"];
+
+    [tester waitForViewWithAccessibilityLabel:channelId];
+
+    if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
+        [tester tapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton];
+    } else {
+        [tester tapViewWithAccessibilityLabel:@"Push Notification Demo" traits:UIAccessibilityTraitButton];
+    }
+
+
+    [tester tapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton];
 }
 
 - (void)afterAll {
@@ -125,7 +149,13 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     // save the alias and go back
     // in iOS 7+, we need to tap the keyboard's done button
     [tester tapViewWithAccessibilityLabel:@"done" traits:UIAccessibilityTraitKeyboardKey];
-    [tester tapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton];
+
+    if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
+        [tester tapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton];
+    } else {
+        [tester tapViewWithAccessibilityLabel:@"Push Notification Demo" traits:UIAccessibilityTraitButton];
+    }
+
     [tester tapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton];
 
     NSLog(@"Wait for the registration to succeed.");
@@ -153,8 +183,9 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
         [tester tapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Delete %@", tag] traits:UIAccessibilityTraitButton];
 
         // iOS 7 UI requires another tap on 'Delete' button, while older versions need to confirm deletion.
-        IF_IOS7_OR_GREATER([tester tapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Delete"] traits:UIAccessibilityTraitButton];)
-        else {
+        if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
+            [tester tapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Delete"] traits:UIAccessibilityTraitButton];
+        } else {
             [tester tapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Confirm Deletion for %@", tag] traits:UIAccessibilityTraitButton];
         }
     }
@@ -167,7 +198,11 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     [tester tapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton];
 
     // back to token screen
-    [tester tapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton];
+    if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
+        [tester tapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton];
+    } else {
+        [tester tapViewWithAccessibilityLabel:@"Push Notification Demo" traits:UIAccessibilityTraitButton];
+    }
 
     // back to main screen
     [tester tapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton];
@@ -176,7 +211,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     NSLog(@"Wait for the registration to succeed.");
     [tester waitForTimeInterval:kAliasTagsRegistrationWait];
 
-    // Now send a push to the tag and verify we received the notification
+    // Now send a push to the tag and verify we received the notification.
     [tester sendAndWaitForNotification:@"Send Push to tag" sendPushBlock:^(NSString *alertID) {
         [UAPushClient sendAlert:alertID toTag:uniqueTag];
     }];
