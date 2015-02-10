@@ -24,7 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
-
+#import <UIKit/UIKit.h>
 /**
  * This class is a replacement app delegate that handles incoming push notifications and registration
  * callbacks. When used with UAAppDelegateProxy, both this class and the original app delegate

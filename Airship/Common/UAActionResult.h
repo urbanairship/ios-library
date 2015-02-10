@@ -24,6 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 /**
  * Represents the result of performing a background fetch, or none if no fetch was performed.

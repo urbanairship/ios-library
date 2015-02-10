@@ -1,6 +1,6 @@
 
-
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 /**
  * Convenience category for calculating string sizes in a compatible
