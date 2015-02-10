@@ -122,6 +122,10 @@
 		49C0CB9919BA648300771F4F /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49C0CB9719BA648300771F4F /* UAPushUI.strings */; };
 		49C0CB9A19BA648300771F4F /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49C0CB9719BA648300771F4F /* UAPushUI.strings */; };
 		636CB1E9128CF51200481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
+		7622C9E21A8A738900399992 /* UAPushSettingsNamedUserView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 767D0D4E1A72F827008CEC8A /* UAPushSettingsNamedUserView.xib */; };
+		7622C9E31A8A73B100399992 /* UAPushSettingsNamedUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 767D0D401A72CF4C008CEC8A /* UAPushSettingsNamedUserViewController.m */; };
+		7622C9E41A8A73E200399992 /* UAPushSettingsNamedUserView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 767D0D4E1A72F827008CEC8A /* UAPushSettingsNamedUserView.xib */; };
+		7622C9E51A8A73ED00399992 /* UAPushSettingsNamedUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 767D0D401A72CF4C008CEC8A /* UAPushSettingsNamedUserViewController.m */; };
 		762F81DD183EBEF200F30033 /* UAPushSettingsChannelInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 762F81DB183EBEF200F30033 /* UAPushSettingsChannelInfoViewController.m */; };
 		762F81E0183EC10500F30033 /* UAPushSettingsChannelInfoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 762F81DF183EC10500F30033 /* UAPushSettingsChannelInfoViewController.xib */; };
 		76811EEE17EBA63700874D1F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -189,20 +193,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 49BADCC8198AF5F5000FF3D5;
 			remoteInfo = AirshipKit;
-		};
-		767D0D4A1A72CF4C008CEC8A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1FCBB562175AA0E200F42F07 /* KIF.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EB72047C1680DDAD00278DA2;
-			remoteInfo = "KIF-OCUnit";
-		};
-		767D0D4C1A72CF4C008CEC8A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1FCBB562175AA0E200F42F07 /* KIF.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EABD46CD1857A0F300A5F081;
-			remoteInfo = "KIF Tests";
 		};
 		76811EE317EBA60100874D1F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -985,20 +975,6 @@
 			remoteRef = 4906F3A419905B5600F27AF1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		767D0D4B1A72CF4C008CEC8A /* libKIF-OCUnit.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libKIF-OCUnit.a";
-			remoteRef = 767D0D4A1A72CF4C008CEC8A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		767D0D4D1A72CF4C008CEC8A /* KIF Tests - XCTest.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "KIF Tests - XCTest.xctest";
-			remoteRef = 767D0D4C1A72CF4C008CEC8A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		76811EE417EBA60100874D1F /* Test Host.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
@@ -1048,6 +1024,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7622C9E21A8A738900399992 /* UAPushSettingsNamedUserView.xib in Resources */,
 				18C0295B124F216B00D49CD5 /* MainWindow_Pad.xib in Resources */,
 				18C0295D124F216B00D49CD5 /* MainWindow_Phone.xib in Resources */,
 				18C02961124F216B00D49CD5 /* SampleViewController.xib in Resources */,
@@ -1069,7 +1046,6 @@
 				49C0CB9919BA648300771F4F /* UAPushUI.strings in Resources */,
 				1F7FD45612F8956900317B96 /* UAPushSettingsAddTagViewController.xib in Resources */,
 				1F7FD5F012F8DE2200317B96 /* UAPushSettingsSoundsViewController.xib in Resources */,
-				767D0D4F1A72F827008CEC8A /* UAPushSettingsNamedUserView.xib in Resources */,
 				1FCCBC191A0EB6DE00B256F0 /* Images.xcassets in Resources */,
 				1F7FD61912F8E39900317B96 /* cat.caf in Resources */,
 				76F5B71619C37C37003C07A0 /* Settings.bundle in Resources */,
@@ -1086,6 +1062,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7622C9E41A8A73E200399992 /* UAPushSettingsNamedUserView.xib in Resources */,
 				76F5B71719C37C6B003C07A0 /* Settings.bundle in Resources */,
 				4906F35019905B5500F27AF1 /* MainWindow_Pad.xib in Resources */,
 				4906F35119905B5500F27AF1 /* MainWindow_Phone.xib in Resources */,
@@ -1107,7 +1084,6 @@
 				4906F36A19905B5500F27AF1 /* UAPushSettingsTagsViewController.xib in Resources */,
 				49C0CB9A19BA648300771F4F /* UAPushUI.strings in Resources */,
 				4906F36B19905B5500F27AF1 /* UAPushSettingsAddTagViewController.xib in Resources */,
-				767D0D501A72F827008CEC8A /* UAPushSettingsNamedUserView.xib in Resources */,
 				1FCCBC1A1A0EB6DE00B256F0 /* Images.xcassets in Resources */,
 				4906F36C19905B5500F27AF1 /* UAPushSettingsSoundsViewController.xib in Resources */,
 				4906F36D19905B5500F27AF1 /* cat.caf in Resources */,
@@ -1174,12 +1150,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7622C9E31A8A73B100399992 /* UAPushSettingsNamedUserViewController.m in Sources */,
 				18C02958124F216B00D49CD5 /* main.m in Sources */,
 				18C02959124F216B00D49CD5 /* SampleViewController.m in Sources */,
 				762F81DD183EBEF200F30033 /* UAPushSettingsChannelInfoViewController.m in Sources */,
 				1890BABE1251B5E900E6EBF1 /* UAPushMoreSettingsViewController.m in Sources */,
 				49C0CB0819BA3CCC00771F4F /* NSString+UALocalization.m in Sources */,
-				767D0D411A72CF4C008CEC8A /* UAPushSettingsNamedUserViewController.m in Sources */,
 				1890BABF1251B5E900E6EBF1 /* UAPushSettingsAliasViewController.m in Sources */,
 				1890BAC01251B5E900E6EBF1 /* UAPushSettingsTokenViewController.m in Sources */,
 				1890BAC11251B5E900E6EBF1 /* UAPushSettingsViewController.m in Sources */,
@@ -1200,7 +1176,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				767D0D551A730CD8008CEC8A /* UAPushSettingsNamedUserViewController.m in Sources */,
+				7622C9E51A8A73ED00399992 /* UAPushSettingsNamedUserViewController.m in Sources */,
 				4906F37719905B5500F27AF1 /* main.m in Sources */,
 				4906F37819905B5500F27AF1 /* SampleViewController.m in Sources */,
 				4906F37919905B5500F27AF1 /* UAPushSettingsChannelInfoViewController.m in Sources */,
@@ -1696,6 +1672,7 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				BUILD_STYLE = Debug;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_STATIC_ANALYZER_MODE = deep;
@@ -1734,6 +1711,7 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				BUILD_STYLE = Release;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_STATIC_ANALYZER_MODE = deep;
@@ -1771,6 +1749,7 @@
 		CC3914A11790A6770033094B /* Coverage */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				BUILD_STYLE = Debug;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_STATIC_ANALYZER_MODE = deep;
