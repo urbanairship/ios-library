@@ -213,7 +213,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     NSLog(@"Wait for the registration to succeed.");
     [tester waitForTimeInterval:kAliasTagsRegistrationWait];
 
-    // Now send a push to the tag and verify we received the notification
+    // Now send a push to the tag and verify we received the notification.
     [tester sendAndWaitForNotification:@"Send Push to tag" sendPushBlock:^(NSString *alertID) {
         [UAPushClient sendAlert:alertID toTag:uniqueTag];
     }];

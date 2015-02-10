@@ -880,7 +880,7 @@
 			name = PushSampleKIFTests;
 			productName = PushSampleKIFTests;
 			productReference = 76811EEC17EBA63600874D1F /* PushSampleKIFTests.xctest */;
-			productType = "com.apple.product-type.bundle.ocunit-test";
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		BBEFB0161507F3A400976645 /* AirshipApplicationTests */ = {
 			isa = PBXNativeTarget;
@@ -1365,6 +1365,7 @@
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_RESOURCE_RULES_PATH = "";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
