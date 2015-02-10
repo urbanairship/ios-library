@@ -24,7 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
-
+#import <UIKit/UIKit.h>
 /**
  * Utility methods to create categories from plist files or NSDictionaries.
  */

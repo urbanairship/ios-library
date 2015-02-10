@@ -23,7 +23,10 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
+
 #import "UAEvent.h"
 #import "UALocationProviderProtocol.h"
 

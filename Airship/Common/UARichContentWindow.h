@@ -24,6 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 /**
  * Protocol for mediating the display of rich content pages

@@ -23,6 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 #define kEventAppInitSize               (NSUInteger) 450//397 w/ push id, no inbox id
 #define kEventAppExitSize               (NSUInteger) 200//136 w/ only network type
