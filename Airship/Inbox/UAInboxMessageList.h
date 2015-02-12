@@ -58,7 +58,7 @@ extern NSString * const UAInboxMessageListUpdatedNotification;
  *
  * @deprecated As of 5.0.
  */
-typedef NS_ENUM(NSInteger, UABatchUpdateCommand) {
+typedef __attribute__((deprecated("As of version 5.0.0"))) NS_ENUM (NSInteger, UABatchUpdateCommand) {
     /**
      * Update the message list by marking messages as read.
      */
