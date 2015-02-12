@@ -32,11 +32,13 @@
 + (void)sendAlert:(NSString *)alert toDeviceToken:(NSString *)deviceToken;
 + (void)sendAlert:(NSString *)alert toTag:(NSString *)tag;
 + (void)sendAlert:(NSString *)alert toAlias:(NSString *)alias;
-
++ (void)sendAlert:(NSString *)alert toNamedUser:(NSString *)namedUser;
++ (void)sendAlert:(NSString *)alert toChannel:(NSString *)channel;
 + (void)sendBroadcastAlert:(NSString *)alert;
 
 // helpers
 + (void)sendAlertWithPayload:(NSDictionary *)payload;
 + (UAHTTPRequest *)pushRequestWithURLString:(NSString *)URL;
++ (NSDictionary *)createPayload:(NSDictionary *)audience alert:(NSString *)alert;
 
 @end
