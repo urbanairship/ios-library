@@ -27,7 +27,7 @@
 #import "UATestPushDelegate.h"
 #import "UAUtils.h"
 
-#define kPushWait 90.0
+#define kPushWait 120.0 // Wait up to 120 seconds for push before marking test failed
 
 @implementation KIFUITestActor (UAAdditions)
 

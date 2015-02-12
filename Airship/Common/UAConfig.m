@@ -80,7 +80,8 @@
             "Landing Page Content URL: %@\n"
             "Automatic Setup Enabled: %d\n"
             "Clear user on Application Restore: %d\n"
-            "Whitelist: %@",
+            "Whitelist: %@\n"
+            "Clear named user on App Restore: %d\n",
             self.appKey,
             self.appSecret,
             self.inProduction,

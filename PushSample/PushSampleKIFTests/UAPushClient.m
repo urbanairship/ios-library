@@ -33,37 +33,27 @@
 @implementation UAPushClient
 
 + (void)sendAlert:(NSString *)alert toDeviceToken:(NSString *)deviceToken {
-    NSMutableDictionary *audience = [NSMutableDictionary dictionary];
-    [audience setValue:deviceToken forKey:@"device_token"];
-
+    NSDictionary *audience = @{@"device_token" : deviceToken};
     [UAPushClient sendAlertWithPayload:[self createPayload:audience alert:alert]];
 }
 
 + (void)sendAlert:(NSString *)alert toTag:(NSString *)tag {
-    NSMutableDictionary *audience = [NSMutableDictionary dictionary];
-    [audience setValue:tag forKey:@"tag"];
-
+    NSDictionary *audience = @{@"tag" : tag};
     [UAPushClient sendAlertWithPayload:[self createPayload:audience alert:alert]];
 }
 
 + (void)sendAlert:(NSString *)alert toAlias:(NSString *)alias {
-    NSMutableDictionary *audience = [NSMutableDictionary dictionary];
-    [audience setValue:alias forKey:@"alias"];
-
+    NSDictionary *audience = @{@"alias" : alias};
     [UAPushClient sendAlertWithPayload:[self createPayload:audience alert:alert]];
 }
 
 + (void)sendAlert:(NSString *)alert toNamedUser:(NSString *)namedUser {
-    NSMutableDictionary *audience = [NSMutableDictionary dictionary];
-    [audience setValue:namedUser forKey:@"named_user"];
-
+    NSDictionary *audience = @{@"named_user" : namedUser};
     [UAPushClient sendAlertWithPayload:[self createPayload:audience alert:alert]];
 }
 
 + (void)sendAlert:(NSString *)alert toChannel:(NSString *)channel {
-    NSMutableDictionary *audience = [NSMutableDictionary dictionary];
-    [audience setValue:channel forKey:@"ios_channel"];
-
+    NSDictionary *audience = @{@"ios_channel" : channel};
     [UAPushClient sendAlertWithPayload:[self createPayload:audience alert:alert]];
 }
 
@@ -99,20 +89,20 @@
 }
 
 + (NSDictionary *)createPayload:(NSDictionary *)audience alert:(NSString *)alert {
-    NSMutableDictionary *payload = [NSMutableDictionary dictionary];
-    if (audience) {
-        [payload setValue:audience forKey:@"audience"];
+    NSArray *deviceTypes = [NSArray arrayWithObjects:@"ios", nil];
+    NSDictionary *notification = @{@"alert" : alert};
+
+    if (!audience) {
+        NSDictionary *payload = @{@"audience" : @"all",
+                    @"device_types" : deviceTypes,
+                    @"notification" : notification};
+        return payload;
     } else {
-        [payload setValue:@"all" forKey:@"audience"];
+        NSDictionary *payload = @{@"audience" : audience,
+                    @"device_types" : deviceTypes,
+                    @"notification" : notification};
+        return payload;
     }
-
-    [payload setValue:[NSArray arrayWithObject:@"ios"] forKey:@"device_types"];
-
-    NSMutableDictionary *notification = [NSMutableDictionary dictionary];
-    [notification setValue:alert forKey:@"alert"];
-
-    [payload setValue:notification forKey:@"notification"];
-    return payload;
 }
 
 @end
