@@ -89,20 +89,13 @@
 }
 
 + (NSDictionary *)createPayload:(NSDictionary *)audience alert:(NSString *)alert {
-    NSArray *deviceTypes = [NSArray arrayWithObjects:@"ios", nil];
     NSDictionary *notification = @{@"alert" : alert};
+    NSMutableDictionary *payload = [NSMutableDictionary dictionary];
+    payload[@"audience"] = audience ?: @"all";
+    payload[@"device_types"] = @[@"ios"];
+    payload[@"notification"] = notification;
 
-    if (!audience) {
-        NSDictionary *payload = @{@"audience" : @"all",
-                    @"device_types" : deviceTypes,
-                    @"notification" : notification};
-        return payload;
-    } else {
-        NSDictionary *payload = @{@"audience" : audience,
-                    @"device_types" : deviceTypes,
-                    @"notification" : notification};
-        return payload;
-    }
+    return payload;
 }
 
 @end
