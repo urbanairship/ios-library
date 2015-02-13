@@ -57,26 +57,30 @@
 }
 
 - (NSArray *)constraintsForBottomPositionWithNumberOfButtons:(NSUInteger)numberOfButtons {
-
     NSMutableArray *constraints = [NSMutableArray array];
 
     // tab is at the top, followed by the label
     [constraints addObject:@"V:|-tabMargin-[tab]-verticalMargin-[label]"];
-    if (numberOfButtons) {
-        // button 1 is vertically positioned underneath the label
-        [constraints addObject:@"V:[label]-verticalMargin-[button1]-verticalMargin-|"];
-        if (numberOfButtons > 1) {
-            // button 2 is vertically positioned underneath the label, followed by the edge
-            [constraints addObject:@"V:[label]-verticalMargin-[button2]-verticalMargin-|"];
-            // button 1 and two are equal in size
-            [constraints addObject:@"H:|-horizontalMargin-[button1]-horizontalMargin-[button2(==button1)]-horizontalMargin-|"];
-        } else {
-            // button 1 takes up all space apart from margins on either side
-            [constraints addObject:@"H:|-horizontalMargin-[button1]-horizontalMargin-|"];
-        }
-    } else {
+
+    // 0 buttons
+    if (!numberOfButtons) {
         // label is followed by the edge
         [constraints addObject:@"V:[label]-verticalMargin-|"];
+    } else if (numberOfButtons == 1) {
+        // button 1 is vertically positioned underneath the label
+        [constraints addObject:@"V:[label]-verticalMargin-[button1]-verticalMargin-|"];
+
+        // button 1 takes up all space apart from margins on either side
+        [constraints addObject:@"H:|-horizontalMargin-[button1]-horizontalMargin-|"];
+    } else if (numberOfButtons > 1) {
+        // button 1 is vertically positioned underneath the label
+        [constraints addObject:@"V:[label]-verticalMargin-[button1]-verticalMargin-|"];
+
+        // button 2 is vertically positioned underneath the label, followed by the edge
+        [constraints addObject:@"V:[label]-verticalMargin-[button2]-verticalMargin-|"];
+
+        // button 1 and two are equal in size
+        [constraints addObject:@"H:|-horizontalMargin-[button1]-horizontalMargin-[button2(==button1)]-horizontalMargin-|"];
     }
 
     return constraints;
@@ -87,23 +91,29 @@
 
     // label is at the top
     [constraints addObject:@"V:|-verticalMargin-[label]"];
-    if (numberOfButtons) {
-        // button 1 is positioned beneath the label, followed by the tab and the edge
-        [constraints addObject:@"V:[label]-verticalMargin-[button1]-verticalMargin-[tab]-tabMargin-|"];
-        if (numberOfButtons > 1) {
-            // button 2 is position beneath the label, followed by the tab and the edge
-            [constraints addObject:@"V:[label]-verticalMargin-[button2]-verticalMargin-[tab]-tabMargin-|"];
-            // button 1 and two are equal in size
-            [constraints addObject:@"H:|-horizontalMargin-[button1]-horizontalMargin-[button2(==button1)]-horizontalMargin-|"];
-        } else {
-            // button 1 takes up all space apart from margins on either side
-            [constraints addObject:@"H:|-horizontalMargin-[button1]-horizontalMargin-|"];
-        }
-    } else {
+
+    // 0 buttons
+    if (!numberOfButtons) {
         // label is followed by the tab and the edge
         [constraints addObject:@"V:[label]-verticalMargin-[tab]-tabMargin-|"];
-    }
+    } else if (numberOfButtons == 1) {
+        // button 1 is positioned beneath the label, followed by the tab and the edge
+        [constraints addObject:@"V:[label]-verticalMargin-[button1]-verticalMargin-[tab]-tabMargin-|"];
 
+        // button 1 takes up all space apart from margins on either side
+        [constraints addObject:@"H:|-horizontalMargin-[button1]-horizontalMargin-|"];
+
+    } else if (numberOfButtons > 1) {
+        // button 2 is position beneath the label, followed by the tab and the edge
+        [constraints addObject:@"V:[label]-verticalMargin-[button2]-verticalMargin-[tab]-tabMargin-|"];
+
+        // button 1 is positioned beneath the label, followed by the tab and the edge
+        [constraints addObject:@"V:[label]-verticalMargin-[button1]-verticalMargin-[tab]-tabMargin-|"];
+
+        // button 1 and two are equal in size
+        [constraints addObject:@"H:|-horizontalMargin-[button1]-horizontalMargin-[button2(==button1)]-horizontalMargin-|"];
+    }
+    
     return constraints;
 }
 
@@ -148,8 +158,10 @@
                                    @"V:[label(labelHeight)]", //set the label height
                                    @"H:|-horizontalMargin-[label]-horizontalMargin-|"]; // label is inset by the horizontal margin
 
+
     // constraints that vary depending on position and number of buttons present
     NSMutableArray *positionalConstraints = [NSMutableArray array];
+
 
     if (position == UAInAppNotificationPositionBottom) {
         [positionalConstraints addObjectsFromArray:[self constraintsForBottomPositionWithNumberOfButtons:numberOfButtons]];
