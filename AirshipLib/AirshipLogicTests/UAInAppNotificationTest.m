@@ -16,7 +16,7 @@
     id expiry = @"2020-12-15T11:45:22";
     id extra = @{@"foo":@"bar", @"baz":@12345};
 
-    id display = @{@"alert":@"hi!", @"type":@"banner", @"duration":@20, @"position":@"top", @"background_color":@"#ffffffff", @"button_color":@"#ff00ff00"};
+    id display = @{@"alert":@"hi!", @"type":@"banner", @"duration":@20, @"position":@"top", @"primary_color":@"#ffffffff", @"secondary_color":@"#ff00ff00"};
 
     id actions = @{@"on_click":@{@"^d":@"http://google.com"}, @"button_group":@"ua_yes_no_foreground", @"button_actions":@{@"yes":@{@"^+t": @"yes_tag"}, @"no":@{@"^+t": @"no_tag"}}};
 
@@ -61,8 +61,8 @@
     XCTAssertEqualObjects(ian.onClick, self.payload[@"actions"][@"on_click"]);
     XCTAssertEqualObjects(ian.buttonActions, self.payload[@"actions"][@"button_actions"]);
 
-    XCTAssertEqualObjects(ian.backgroundColor, [UIColor colorWithRed:1 green:1 blue:1 alpha:1]);
-    XCTAssertEqualObjects(ian.buttonColor, [UIColor greenColor]);
+    XCTAssertEqualObjects(ian.primaryColor, [UIColor colorWithRed:1 green:1 blue:1 alpha:1]);
+    XCTAssertEqualObjects(ian.secondaryColor, [UIColor greenColor]);
 
     XCTAssertEqualObjects(ian.payload, self.payload);
 }

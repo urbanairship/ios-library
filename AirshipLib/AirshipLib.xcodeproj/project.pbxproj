@@ -298,6 +298,10 @@
 		49D11C03171E00980058E7C3 /* UAHTTPConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D11C01171E00980058E7C3 /* UAHTTPConnectionOperation.m */; };
 		49D11C1217270C6E0058E7C3 /* UAHTTPRequestEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D11C1017270C6E0058E7C3 /* UAHTTPRequestEngine.h */; };
 		49D11C1317270C6E0058E7C3 /* UAHTTPRequestEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D11C1117270C6E0058E7C3 /* UAHTTPRequestEngine.m */; };
+		49D7FF4C1A8E92390017A11C /* UAInAppNotificationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D7FF481A8E92390017A11C /* UAInAppNotificationController.h */; };
+		49D7FF4D1A8E92390017A11C /* UAInAppNotificationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D7FF491A8E92390017A11C /* UAInAppNotificationController.m */; };
+		49D7FF4E1A8E92390017A11C /* UAInAppNotificationView.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D7FF4A1A8E92390017A11C /* UAInAppNotificationView.h */; };
+		49D7FF4F1A8E92390017A11C /* UAInAppNotificationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D7FF4B1A8E92390017A11C /* UAInAppNotificationView.m */; };
 		49DCFAC01831B580002CD5FB /* UAJavaScriptDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 49DCFABF1831B580002CD5FB /* UAJavaScriptDelegate.h */; };
 		49E9C9BE1836EBAB00B7BCFF /* UAWebViewToolsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49E9C9BD1836EBAB00B7BCFF /* UAWebViewToolsTest.m */; };
 		49E9C9C1183AD42300B7BCFF /* UAWebViewCallData.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E9C9BF183AD42300B7BCFF /* UAWebViewCallData.h */; };
@@ -704,6 +708,10 @@
 		49D11C01171E00980058E7C3 /* UAHTTPConnectionOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAHTTPConnectionOperation.m; sourceTree = "<group>"; };
 		49D11C1017270C6E0058E7C3 /* UAHTTPRequestEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAHTTPRequestEngine.h; sourceTree = "<group>"; };
 		49D11C1117270C6E0058E7C3 /* UAHTTPRequestEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAHTTPRequestEngine.m; sourceTree = "<group>"; };
+		49D7FF481A8E92390017A11C /* UAInAppNotificationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppNotificationController.h; sourceTree = "<group>"; };
+		49D7FF491A8E92390017A11C /* UAInAppNotificationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppNotificationController.m; sourceTree = "<group>"; };
+		49D7FF4A1A8E92390017A11C /* UAInAppNotificationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppNotificationView.h; sourceTree = "<group>"; };
+		49D7FF4B1A8E92390017A11C /* UAInAppNotificationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppNotificationView.m; sourceTree = "<group>"; };
 		49DCFABF1831B580002CD5FB /* UAJavaScriptDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAJavaScriptDelegate.h; sourceTree = "<group>"; };
 		49E9C9BD1836EBAB00B7BCFF /* UAWebViewToolsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWebViewToolsTest.m; sourceTree = "<group>"; };
 		49E9C9BF183AD42300B7BCFF /* UAWebViewCallData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAWebViewCallData.h; sourceTree = "<group>"; };
@@ -1095,6 +1103,7 @@
 		1F55FB6A181A34B7002AA192 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				49D7FF471A8E92180017A11C /* In-App Notifications */,
 				49416D5718BECBC300A18B72 /* LandingPages */,
 				1F55FB6B181A34DD002AA192 /* UABeveledLoadingIndicator.h */,
 				1F55FB6C181A34DD002AA192 /* UABeveledLoadingIndicator.m */,
@@ -1338,6 +1347,17 @@
 				49C671FE184EAB640088F210 /* UANativeBridge.h */,
 			);
 			name = JS;
+			sourceTree = "<group>";
+		};
+		49D7FF471A8E92180017A11C /* In-App Notifications */ = {
+			isa = PBXGroup;
+			children = (
+				49D7FF481A8E92390017A11C /* UAInAppNotificationController.h */,
+				49D7FF491A8E92390017A11C /* UAInAppNotificationController.m */,
+				49D7FF4A1A8E92390017A11C /* UAInAppNotificationView.h */,
+				49D7FF4B1A8E92390017A11C /* UAInAppNotificationView.m */,
+			);
+			name = "In-App Notifications";
 			sourceTree = "<group>";
 		};
 		76F9B4AB18D3CE2A00C438D4 /* JRSwizzle */ = {
@@ -1918,9 +1938,11 @@
 				49F437521810B5B400182D06 /* UAModifyTagsAction.h in Headers */,
 				CC8542BF17F4B81600D2DE10 /* UAActionResult.h in Headers */,
 				CC1F43971A1D388800D3A227 /* UAWebViewDelegate.h in Headers */,
+				49D7FF4E1A8E92390017A11C /* UAInAppNotificationView.h in Headers */,
 				492ADA0C18C958E50032C491 /* UARichContentWindow.h in Headers */,
 				611652251A2D26BD007C96D0 /* UAProximityRegion.h in Headers */,
 				1F610DEE17835C3A00BCD96E /* UAInboxMessageList.h in Headers */,
+				49D7FF4C1A8E92390017A11C /* UAInAppNotificationController.h in Headers */,
 				49B7046F1A7C4DCC000F67A6 /* UAColorUtils.h in Headers */,
 				1F610DF817835C3A00BCD96E /* UAInboxUtils.h in Headers */,
 				1F610DDF17835C3A00BCD96E /* UAInbox.h in Headers */,
@@ -2425,6 +2447,7 @@
 				BB886105159A7E9600584445 /* UAKeychainUtils.m in Sources */,
 				CC8542C117F4B81600D2DE10 /* UAActionResult.m in Sources */,
 				BB886107159A7E9600584445 /* UAUser.m in Sources */,
+				49D7FF4D1A8E92390017A11C /* UAInAppNotificationController.m in Sources */,
 				4995C63C180DBBC9004F8724 /* UAAddTagsAction.m in Sources */,
 				BB88610B159A7E9600584445 /* UAAnalytics.m in Sources */,
 				BB88610D159A7E9600584445 /* UATagUtils.m in Sources */,
@@ -2487,6 +2510,7 @@
 				76792D11178E12A10054F8AD /* UAHTTPRequest.m in Sources */,
 				CC523FB117B985F800233005 /* UAJSONValueTransformer.m in Sources */,
 				492ADA1218C959CB0032C491 /* UACloseWindowAction.m in Sources */,
+				49D7FF4F1A8E92390017A11C /* UAInAppNotificationView.m in Sources */,
 				49EECA8C17CBD4BC00DE0AFB /* UADisposable.m in Sources */,
 				CC7DC943183E977100E95BB8 /* UAChannelAPIClient.m in Sources */,
 			);

@@ -126,24 +126,15 @@ typedef NS_ENUM(NSInteger, UAInAppNotificationDisplayType) {
 @property(nonatomic, assign) NSTimeInterval duration;
 
 /**
- * The primary font color.
+ * The primary color.
  */
-@property(nonatomic, strong) UIColor *fontColor;
+@property(nonatomic, strong) UIColor *primaryColor;
 
 /**
- * The background color.
+ * The secondary color.
  */
-@property(nonatomic, strong) UIColor *backgroundColor;
+@property(nonatomic, strong) UIColor *secondaryColor;
 
-/**
- * The button color.
- */
-@property(nonatomic, strong) UIColor *buttonColor;
-
-/**
- * The button font color.
- */
-@property(nonatomic, strong) UIColor *buttonFontColor;
 
 // Actions
 

@@ -66,10 +66,8 @@
         n.position = UAInAppNotificationPositionBottom;
     }
 
-    n.fontColor = [UAColorUtils colorWithHexString:typeCheck(display[@"font_color"], [NSString class])];
-    n.buttonColor = [UAColorUtils colorWithHexString:typeCheck(display[@"button_color"], [NSString class])];
-    n.backgroundColor = [UAColorUtils colorWithHexString:typeCheck(display[@"background_color"], [NSString class])];
-    n.buttonFontColor = [UAColorUtils colorWithHexString:typeCheck(display[@"button_font_color"], [NSString class])];
+    n.primaryColor = [UAColorUtils colorWithHexString:typeCheck(display[@"primary_color"], [NSString class])];
+    n.secondaryColor = [UAColorUtils colorWithHexString:typeCheck(display[@"secondary_color"], [NSString class])];
 
     // actions
 
@@ -140,21 +138,17 @@
         position = @"bottom";
     }
 
-    NSString *backgroundColor = [UAColorUtils hexStringWithColor:self.backgroundColor];
-    NSString *fontColor = [UAColorUtils hexStringWithColor:self.fontColor];
-    NSString *buttonColor = [UAColorUtils hexStringWithColor:self.buttonColor];
-    NSString *buttonFontColor = [UAColorUtils hexStringWithColor:self.buttonFontColor];
+    NSString *primaryColor = [UAColorUtils hexStringWithColor:self.primaryColor];
+    NSString *secondaryColor = [UAColorUtils hexStringWithColor:self.secondaryColor];
 
     NSMutableDictionary *display = [NSMutableDictionary dictionary];
     [display setValue:displayType forKey:@"type"];
     [display setValue:position forKey:@"position"];
     [display setValue:alert forKey:@"alert"];
     [display setValue:duration forKey:@"duration"];
-    [display setValue:backgroundColor forKey:@"background_color"];
-    [display setValue:fontColor forKey:@"font_color"];
-    [display setValue:buttonColor forKey:@"button_color"];
-    [display setValue:buttonFontColor forKey:@"button_font_color"];
-
+    [display setValue:primaryColor forKey:@"primary_color"];
+    [display setValue:secondaryColor forKey:@"secondary_color"];
+    
     NSMutableDictionary *actions = [NSMutableDictionary dictionary];
     [actions setValue:self.buttonGroup forKey:@"button_group"];
     [actions setValue:self.buttonActions forKey:@"button_actions"];
