@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "BB8860A7159A7E9600584445"
-               BuildableName = "libUAirship-5.1.1.a"
+               BuildableName = "libUAirship-6.0.0.a"
                BlueprintName = "AirshipLib"
                ReferencedContainer = "container:AirshipLib.xcodeproj">
             </BuildableReference>
@@ -63,7 +63,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BB8860A7159A7E9600584445"
-            BuildableName = "libUAirship-5.1.1.a"
+            BuildableName = "libUAirship-6.0.0.a"
             BlueprintName = "AirshipLib"
             ReferencedContainer = "container:AirshipLib.xcodeproj">
          </BuildableReference>
