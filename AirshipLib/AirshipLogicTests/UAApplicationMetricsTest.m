@@ -59,6 +59,8 @@
     [self.metrics didBecomeActive];
 
     [self.mockDataStore verify];
+
+    [mockDate stopMocking];
 }
 
 @end
