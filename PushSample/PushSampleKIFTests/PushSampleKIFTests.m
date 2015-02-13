@@ -122,14 +122,25 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     }];
 }
 
-- (void)testReceiveUnicastPush {
+- (void)testReceiveDeviceTokenPush {
     NSLog(@"-----------------------------------------------------------------------------------------------");
-    NSLog(@"Test that a unicast push is received and properly handled.");
+    NSLog(@"Test that a device token push is received and properly handled.");
     NSLog(@"-----------------------------------------------------------------------------------------------");
 
     // Now send a unicast push to the device token and verify we received the notification
-    [tester sendAndWaitForNotification:@"Send a unicast Push" sendPushBlock:^(NSString *alertID) {
+    [tester sendAndWaitForNotification:@"Send a push to the device token" sendPushBlock:^(NSString *alertID) {
         [UAPushClient sendAlert:alertID toDeviceToken:[UAPush shared].deviceToken];
+    }];
+}
+
+- (void)testReceiveChannelPush {
+    NSLog(@"-----------------------------------------------------------------------------------------------");
+    NSLog(@"Test that a channel push is received and properly handled.");
+    NSLog(@"-----------------------------------------------------------------------------------------------");
+
+    // Now send a unicast push to the channel and verify we received the notification
+    [tester sendAndWaitForNotification:@"Send a push to the channel" sendPushBlock:^(NSString *alertID) {
+        [UAPushClient sendAlert:alertID toChannel:[UAPush shared].channelID];
     }];
 }
 
@@ -164,6 +175,41 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     // Now send a push to the alias and verify we received the notification
     [tester sendAndWaitForNotification:@"Send Push to alias" sendPushBlock:^(NSString *alertID) {
         [UAPushClient sendAlert:alertID toAlias:uniqueAlias];
+    }];
+
+}
+
+- (void)testSetNamedUser {
+    NSLog(@"-----------------------------------------------------------------------------------------------");
+    NSLog(@"Test that a named user can be set and we can receive a push.");
+    NSLog(@"-----------------------------------------------------------------------------------------------");
+
+    NSString *uniqueNamedUser = [[NSUUID UUID].UUIDString lowercaseString];
+
+    [tester tapViewWithAccessibilityLabel:@"Token Settings"];
+    [tester tapViewWithAccessibilityLabel:@"Named User"];
+
+    // edit the named user with the uniqueNamedUser
+    [tester enterText:uniqueNamedUser intoViewWithAccessibilityLabel:@"Edit NamedUser"];
+
+    // save the named user and go back
+    // in iOS 7+, we need to tap the keyboard's done button
+    [tester tapViewWithAccessibilityLabel:@"done" traits:UIAccessibilityTraitKeyboardKey];
+
+    if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
+        [tester tapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton];
+    } else {
+        [tester tapViewWithAccessibilityLabel:@"Push Notification Demo" traits:UIAccessibilityTraitButton];
+    }
+
+    [tester tapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton];
+
+    NSLog(@"Wait for the registration to succeed.");
+    [tester waitForTimeInterval:kAliasTagsRegistrationWait];
+
+    // Now send a push to the named user and verify we received the notification
+    [tester sendAndWaitForNotification:@"Send Push to named user" sendPushBlock:^(NSString *alertID) {
+        [UAPushClient sendAlert:alertID toNamedUser:uniqueNamedUser];
     }];
 
 }

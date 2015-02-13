@@ -33,32 +33,35 @@
 @implementation UAPushClient
 
 + (void)sendAlert:(NSString *)alert toDeviceToken:(NSString *)deviceToken {
-    NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:@{@"aps":[NSMutableDictionary dictionary]}];
-    [payload setValue:[NSArray arrayWithObject:deviceToken] forKeyPath:@"device_tokens"];
-    [payload setValue:alert forKeyPath:@"aps.alert"];
-
-    [UAPushClient sendAlertWithPayload:payload];
+    NSDictionary *audience = @{@"device_token" : deviceToken};
+    [UAPushClient sendAlertWithPayload:[self createPayload:audience alert:alert]];
 }
 
 + (void)sendAlert:(NSString *)alert toTag:(NSString *)tag {
-    NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:@{@"aps":[NSMutableDictionary dictionary]}];
-    [payload setValue:[NSArray arrayWithObject:tag] forKeyPath:@"tags"];
-    [payload setValue:alert forKeyPath:@"aps.alert"];
-
-    [UAPushClient sendAlertWithPayload:payload];
+    NSDictionary *audience = @{@"tag" : tag};
+    [UAPushClient sendAlertWithPayload:[self createPayload:audience alert:alert]];
 }
 
 + (void)sendAlert:(NSString *)alert toAlias:(NSString *)alias {
-    NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:@{@"aps":[NSMutableDictionary dictionary]}];
-    [payload setValue:[NSArray arrayWithObject:alias] forKeyPath:@"aliases"];
-    [payload setValue:alert forKeyPath:@"aps.alert"];
+    NSDictionary *audience = @{@"alias" : alias};
+    [UAPushClient sendAlertWithPayload:[self createPayload:audience alert:alert]];
+}
 
-    [UAPushClient sendAlertWithPayload:payload];
++ (void)sendAlert:(NSString *)alert toNamedUser:(NSString *)namedUser {
+    NSDictionary *audience = @{@"named_user" : namedUser};
+    [UAPushClient sendAlertWithPayload:[self createPayload:audience alert:alert]];
+}
 
++ (void)sendAlert:(NSString *)alert toChannel:(NSString *)channel {
+    NSDictionary *audience = @{@"ios_channel" : channel};
+    [UAPushClient sendAlertWithPayload:[self createPayload:audience alert:alert]];
 }
 
 + (void)sendAlertWithPayload:(NSDictionary *)payload {
     UAHTTPRequest *request = [UAPushClient pushRequestWithURLString:@"https://go.urbanairship.com/api/push/"];
+    [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
+    [request addRequestHeader: @"Content-Type" value: @"application/json"];
+
     NSError *err = nil;
     [request appendBodyData:[NSJSONSerialization dataWithJSONObject:payload options:NSJSONWritingPrettyPrinted error:&err]];
 
@@ -72,20 +75,7 @@
 }
 
 + (void)sendBroadcastAlert:(NSString *)alert {
-
-    NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:@{@"aps":[NSMutableDictionary dictionary]}];
-    [payload setValue:alert forKeyPath:@"aps.alert"];
-
-    UAHTTPRequest *request = [UAPushClient pushRequestWithURLString:@"https://go.urbanairship.com/api/push/broadcast/"];
-    NSError *err = nil;
-    [request appendBodyData:[NSJSONSerialization dataWithJSONObject:payload options:NSJSONWritingPrettyPrinted error:&err]];
-
-    UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:request];
-    connection.successBlock = ^(UAHTTPRequest *r) {
-        NSLog(@"Response Code: %ld", (long)r.response.statusCode);
-        NSLog(@"Response Body: %@", [NSString stringWithUTF8String:[[request responseData] bytes]]);
-    };
-    [connection start];
+    [UAPushClient sendAlertWithPayload:[self createPayload:nil alert:alert]];
 }
 
 + (UAHTTPRequest *)pushRequestWithURLString:(NSString *)urlString {
@@ -96,6 +86,16 @@
     [request addRequestHeader: @"Content-Type" value: @"application/json"];
     
     return request;
+}
+
++ (NSDictionary *)createPayload:(NSDictionary *)audience alert:(NSString *)alert {
+    NSDictionary *notification = @{@"alert" : alert};
+    NSMutableDictionary *payload = [NSMutableDictionary dictionary];
+    payload[@"audience"] = audience ?: @"all";
+    payload[@"device_types"] = @[@"ios"];
+    payload[@"notification"] = notification;
+
+    return payload;
 }
 
 @end
