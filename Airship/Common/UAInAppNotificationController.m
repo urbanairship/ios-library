@@ -49,8 +49,13 @@
 
     notificationView.button1.titleLabel.font = boldFont;
     notificationView.button2.titleLabel.font = boldFont;
-    [notificationView.button1 setTitle:buttonTitles[0] forState:UIControlStateNormal];
-    [notificationView.button2 setTitle:buttonTitles[1] forState:UIControlStateNormal];
+
+    if (buttonTitles) {
+        [notificationView.button1 setTitle:buttonTitles[0] forState:UIControlStateNormal];
+        if (buttonTitles.count > 1) {
+            [notificationView.button2 setTitle:buttonTitles[1] forState:UIControlStateNormal];
+        }
+    }
 
     [notificationView.button1 setTitleColor:primaryColor forState:UIControlStateNormal];
     [notificationView.button2 setTitleColor:primaryColor forState:UIControlStateNormal];
