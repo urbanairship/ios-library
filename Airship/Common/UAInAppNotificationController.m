@@ -29,6 +29,10 @@
     return self;
 }
 
+/**
+ * Configures a notification view with the associated
+ * notification model data.
+ */
 - (UAInAppNotificationView *)buildNotificationView {
 
     NSMutableArray *buttonTitles;
@@ -70,6 +74,15 @@
     notificationView.button1.backgroundColor = secondaryColor;
     notificationView.button2.backgroundColor = secondaryColor;
 
+    return notificationView;
+}
+
+/**
+ * Signs self up for control events on the notification view.
+ * This method has the side effect of adding self as a target for
+ * button, swipe and tap actions.
+ */
+- (void)signUpForControlEventsWithNotificationView:(UAInAppNotificationView *)notificationView {
     // add a swipe gesture recognizer corresponding to the position of the notification
     UISwipeGestureRecognizer *swipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeWithGestureRecognizer:)];
 
@@ -90,11 +103,12 @@
     // sign up for button touch events
     [notificationView.button1 addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
     [notificationView.button2 addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
-
-    return notificationView;
 }
 
-- (void)buildLayoutWithParent:(UIView *)parentView {
+/**
+ * Adds layout constraints to the notification view.
+ */
+- (void)buildLayoutWithParent:(UIView *)parentView notificationView:(UAInAppNotificationView *)notificationView {
     CGFloat horizontalMargin = 0;
     CGRect screenRect = [UIScreen mainScreen].applicationFrame;
     CGFloat screenWidth = CGRectGetWidth(screenRect);
@@ -108,12 +122,12 @@
     }
 
     id metrics = @{@"horizontalMargin":@(horizontalMargin), @"longWidth":@(actualLongWidth)};
-    id views = @{@"notificationView":self.notificationView};
+    id views = @{@"notificationView":notificationView};
 
-    [parentView addSubview:self.notificationView];
+    [parentView addSubview:notificationView];
 
     // center the notification view in the parent (this cannot be expressed in VFL)
-    [parentView addConstraint:[NSLayoutConstraint constraintWithItem:self.notificationView
+    [parentView addConstraint:[NSLayoutConstraint constraintWithItem:notificationView
                                                            attribute:NSLayoutAttributeCenterX
                                                            relatedBy:NSLayoutRelationEqual
                                                               toItem:parentView
@@ -146,7 +160,7 @@
 
     // forces a layout, giving the traditional CGGeometry attributes defined values for the
     // current set of constraints
-    [self.notificationView layoutIfNeeded];
+    [notificationView layoutIfNeeded];
 }
 
 - (void)show {
@@ -157,8 +171,11 @@
     // is not directly dependent on arbitrary container/object lifecycles
     self.referenceToSelf = self;
 
-    self.notificationView = [self buildNotificationView];
-    [self buildLayoutWithParent:parentView];
+    UAInAppNotificationView *notificationView = [self buildNotificationView];
+    [self buildLayoutWithParent:parentView notificationView:notificationView];
+    [self signUpForControlEventsWithNotificationView:notificationView];
+
+    self.notificationView = notificationView;
 
     // simple timer that dispatches a dismiss call after the notification duration has been reached
     void(^timeoutBlock)(void) = ^{
