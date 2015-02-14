@@ -199,7 +199,7 @@
 
 - (void)dismiss {
     [self dismissWithAnimationBlock:^{
-        //animate the notification view back off the screen
+        // animate the notification view back off the screen
         if (self.notification.position == UAInAppNotificationPositionTop) {
             self.notificationView.center = CGPointMake(self.notificationView.center.x, -(CGRectGetHeight(self.notificationView.frame)/2));
         } else {
