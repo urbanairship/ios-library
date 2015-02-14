@@ -3,11 +3,19 @@
 #import "UAInAppNotificationView.h"
 #import "UAUtils.h"
 
+#define kUAInAppNotificationControllerDefaultPrimaryColor [UIColor whiteColor]
+#define kUAInAppNotificationControllerDefaultSecondaryColor [UIColor colorWithRed:40.0/255 green:40.0/255 blue:40.0/255 alpha:1]
+
 @interface UAInAppNotificationController ()
 
 @property(nonatomic, strong) UAInAppNotification *notification;
 @property(nonatomic, strong) UAInAppNotificationView *notificationView;
-@property(nonatomic, strong) UAInAppNotificationController *ref;
+
+/**
+ * A settable reference to self, so we can self-retain for the notification
+ * display duration.
+ */
+@property(nonatomic, strong) UAInAppNotificationController *referenceToSelf;
 
 @end
 
@@ -31,8 +39,8 @@
     UIFont *boldFont = [UIFont boldSystemFontOfSize:12];
 
     // the primary and secondary colors aren't set in the model, choose sensible defaults
-    UIColor *primaryColor = self.notification.primaryColor ?: [UIColor whiteColor];
-    UIColor *secondaryColor = self.notification.secondaryColor ?: [UIColor colorWithRed:40.0/255 green:40.0/255 blue:40.0/255 alpha:1];
+    UIColor *primaryColor = self.notification.primaryColor ?: kUAInAppNotificationControllerDefaultPrimaryColor;
+    UIColor *secondaryColor = self.notification.secondaryColor ?: kUAInAppNotificationControllerDefaultSecondaryColor;
 
     UAInAppNotificationView *notificationView = [[UAInAppNotificationView alloc] initWithPosition:self.notification.position
                                                                                   numberOfButtons:buttonTitles.count];
@@ -93,6 +101,8 @@
     CGFloat longWidth = MAX(screenWidth, CGRectGetHeight(screenRect));
     CGFloat actualLongWidth = longWidth * 0.45;
 
+    // if we're on an a phone, set the horizontal margin so that the notification view
+    // is 95% of screen width
     if ([UIDevice currentDevice].userInterfaceIdiom != UIUserInterfaceIdiomPad) {
         horizontalMargin = (screenWidth - screenWidth*0.95)/2.0;
     }
@@ -145,7 +155,7 @@
 
     // retain self for the duration of the notification display, so that avoiding premature deallocation
     // is not directly dependent on arbitrary container/object lifecycles
-    self.ref = self;
+    self.referenceToSelf = self;
 
     self.notificationView = [self buildNotificationView];
     [self buildLayoutWithParent:parentView];
@@ -183,7 +193,7 @@
                          [self.notificationView removeFromSuperview];
                          self.notificationView = nil;
                          // release self
-                         self.ref = nil;
+                         self.referenceToSelf = nil;
                      }];
 }
 
