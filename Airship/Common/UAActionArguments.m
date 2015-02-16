@@ -89,10 +89,15 @@ NSString * const UAActionMetadataUserNotificationActionIDKey = @"com.urbanairshi
         case UASituationWebViewInvocation:
             return @"Webview Invocation";
             break;
-        default:
-            return @"Manual Invocation";
+        case UASituationForegroundInteractiveButton:
+            return @"Foreground Interactive Button";
+            break;
+        case UASituationBackgroundInteractiveButton:
+            return @"Background Interactive Button";
             break;
     }
+
+    return @"Manual Invocation";
 }
 
 - (NSString *)description {
