@@ -30,6 +30,8 @@ typedef NS_ENUM(NSInteger, UAInAppNotificationDisplayType) {
     UAInAppNotificationDisplayTypeBanner
 };
 
+@class UAInAppNotificationButtonActionBinding;
+
 /**
  * Model object representing in-app notification data.
  */
@@ -159,5 +161,12 @@ typedef NS_ENUM(NSInteger, UAInAppNotificationDisplayType) {
  * on the notification.
  */
 @property(nonatomic, copy) NSDictionary *onClick;
+
+/**
+ * An array of UAInAppNotificationButtonActionBinding instances,
+ * corresponding to the left to right order of interactive notification
+ * buttons.
+ */
+@property(nonatomic, readonly) NSArray *buttonActionBindings;
 
 @end

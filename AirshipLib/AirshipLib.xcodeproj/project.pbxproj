@@ -171,6 +171,10 @@
 		4995C640180DBBDD004F8724 /* UARemoveTagsAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 4995C63E180DBBDD004F8724 /* UARemoveTagsAction.h */; };
 		4995C642180DBBDD004F8724 /* UARemoveTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C63F180DBBDD004F8724 /* UARemoveTagsAction.m */; };
 		4995C6B3180DC5D3004F8724 /* UATagActionsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C6B2180DC5D3004F8724 /* UATagActionsTest.m */; };
+		49973CE71A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = 49973CE51A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.h */; };
+		49973CE81A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = 49973CE51A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.h */; };
+		49973CE91A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.m in Sources */ = {isa = PBXBuildFile; fileRef = 49973CE61A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.m */; };
+		49973CEA1A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.m in Sources */ = {isa = PBXBuildFile; fileRef = 49973CE61A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.m */; };
 		49B7045C1A76FF3C000F67A6 /* UAInAppNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B7045A1A76FF3C000F67A6 /* UAInAppNotification.h */; };
 		49B7045D1A76FF3C000F67A6 /* UAInAppNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B7045A1A76FF3C000F67A6 /* UAInAppNotification.h */; };
 		49B7045E1A76FF3C000F67A6 /* UAInAppNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B7045B1A76FF3C000F67A6 /* UAInAppNotification.m */; };
@@ -678,6 +682,8 @@
 		4995C63E180DBBDD004F8724 /* UARemoveTagsAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARemoveTagsAction.h; sourceTree = "<group>"; };
 		4995C63F180DBBDD004F8724 /* UARemoveTagsAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARemoveTagsAction.m; sourceTree = "<group>"; };
 		4995C6B2180DC5D3004F8724 /* UATagActionsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATagActionsTest.m; sourceTree = "<group>"; };
+		49973CE51A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppNotificationButtonActionBinding.h; sourceTree = "<group>"; };
+		49973CE61A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppNotificationButtonActionBinding.m; sourceTree = "<group>"; };
 		49B7045A1A76FF3C000F67A6 /* UAInAppNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppNotification.h; sourceTree = "<group>"; };
 		49B7045B1A76FF3C000F67A6 /* UAInAppNotification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppNotification.m; sourceTree = "<group>"; };
 		49B7046B1A7AF9A6000F67A6 /* UAInAppNotificationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppNotificationTest.m; sourceTree = "<group>"; };
@@ -1311,6 +1317,8 @@
 			children = (
 				49B7045A1A76FF3C000F67A6 /* UAInAppNotification.h */,
 				49B7045B1A76FF3C000F67A6 /* UAInAppNotification.m */,
+				49973CE51A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.h */,
+				49973CE61A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.m */,
 			);
 			name = "In-App Notifications";
 			sourceTree = "<group>";
@@ -1839,6 +1847,7 @@
 				CCE34AF919C2647A00A8EFC0 /* UAEventDeviceRegistration.h in Headers */,
 				CCE34AF319C2646500A8EFC0 /* UAEventAppBackground.h in Headers */,
 				767D0D511A730B50008CEC8A /* UANamedUser.h in Headers */,
+				49973CE81A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.h in Headers */,
 				767D0D521A730B7C008CEC8A /* UANamedUserAPIClient.h in Headers */,
 				49BADE0D198B086B000FF3D5 /* UAApplicationMetrics+Internal.h in Headers */,
 				767D0D581A731937008CEC8A /* UANamedUser+Internal.h in Headers */,
@@ -1930,6 +1939,7 @@
 				CC1D229B180373E0005C8393 /* UAAction+Operators.h in Headers */,
 				CC070C8219ABCD7000E91553 /* UAUserNotificationCategories+Internal.h in Headers */,
 				CCE34AE019C2632500A8EFC0 /* UAEventAppForeground.h in Headers */,
+				49973CE71A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.h in Headers */,
 				61E0EBD619EC7F4500B50AF3 /* UAActionJSDelegate+Internal.h in Headers */,
 				CCA3A50117FF626C009C7371 /* UAActionRegistry+Internal.h in Headers */,
 				CC103E1118A9456200DC950F /* UAActionResult+Internal.h in Headers */,
@@ -2241,6 +2251,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				767D0D541A730BB8008CEC8A /* UANamedUserAPIClient.m in Sources */,
+				49973CEA1A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.m in Sources */,
 				767D0D531A730BA4008CEC8A /* UANamedUser.m in Sources */,
 				491B8462198C45AA00FB7A40 /* UANativeBridge.c in Sources */,
 				491B840F198C237F00FB7A40 /* UAInbox.m in Sources */,
@@ -2489,6 +2500,7 @@
 				49B704711A7C4DCC000F67A6 /* UAColorUtils.m in Sources */,
 				BB88611B159A7E9600584445 /* UALocationCommonValues.m in Sources */,
 				4905C4E718246339001D48E3 /* NSString+UAURLEncoding.m in Sources */,
+				49973CE91A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.m in Sources */,
 				49C67204184EB9120088F210 /* UANativeBridge.c in Sources */,
 				49D11C03171E00980058E7C3 /* UAHTTPConnectionOperation.m in Sources */,
 				76B4E01819A4038000603F8A /* UAInteractiveNotificationEvent.m in Sources */,

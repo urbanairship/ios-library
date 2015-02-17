@@ -2,6 +2,9 @@
 #import "UAInAppNotification.h"
 #import "UAInAppNotificationView.h"
 #import "UAUtils.h"
+#import "UAUserNotificationCategories+Internal.h"
+#import "UAInAppNotificationButtonActionBinding.h"
+#import "UAActionRunner.h"
 
 #define kUAInAppNotificationDefaultPrimaryColor [UIColor whiteColor]
 #define kUAInAppNotificationDefaultSecondaryColor [UIColor colorWithRed:40.0/255 green:40.0/255 blue:40.0/255 alpha:1]
@@ -13,6 +16,12 @@
 
 @property(nonatomic, strong) UAInAppNotification *notification;
 @property(nonatomic, strong) UAInAppNotificationView *notificationView;
+
+/**
+ * An array of dictionaries containing localized button titles and
+ * action name/argument value bindings.
+ */
+@property(nonatomic, strong) NSArray *buttonActionBindings;
 
 /**
  * A settable reference to self, so we can self-retain for the notification
@@ -28,6 +37,9 @@
     self = [super init];
     if (self) {
         self.notification = notification;
+
+        self.buttonActionBindings = notification.buttonActionBindings;
+
     }
     return self;
 }
@@ -38,11 +50,6 @@
  */
 - (UAInAppNotificationView *)buildNotificationView {
 
-    NSMutableArray *buttonTitles;
-
-    // extract and set button titles here
-    // e.g. buttonTitles = [NSMutableArray arrayWithArray:@[@"Hello", @"World"]]
-
     UIFont *boldFont = [UIFont boldSystemFontOfSize:12];
 
     // the primary and secondary colors aren't set in the model, choose sensible defaults
@@ -50,7 +57,7 @@
     UIColor *secondaryColor = self.notification.secondaryColor ?: kUAInAppNotificationDefaultSecondaryColor;
 
     UAInAppNotificationView *notificationView = [[UAInAppNotificationView alloc] initWithPosition:self.notification.position
-                                                                                  numberOfButtons:buttonTitles.count];
+                                                                                  numberOfButtons:self.buttonActionBindings.count];
 
     // configure all the subviews
     notificationView.backgroundColor = primaryColor;
@@ -65,10 +72,12 @@
     notificationView.button1.titleLabel.font = boldFont;
     notificationView.button2.titleLabel.font = boldFont;
 
-    if (buttonTitles) {
-        [notificationView.button1 setTitle:buttonTitles[0] forState:UIControlStateNormal];
-        if (buttonTitles.count > 1) {
-            [notificationView.button2 setTitle:buttonTitles[1] forState:UIControlStateNormal];
+    if (self.buttonActionBindings.count) {
+        UAInAppNotificationButtonActionBinding *button1 = self.buttonActionBindings[0];
+        [notificationView.button1 setTitle:button1.localizedTitle forState:UIControlStateNormal];
+        if (self.buttonActionBindings.count > 1) {
+            UAInAppNotificationButtonActionBinding *button2 = self.buttonActionBindings[1];
+            [notificationView.button2 setTitle:button2.localizedTitle forState:UIControlStateNormal];
         }
     }
 
@@ -237,7 +246,21 @@
 }
 
 - (void)buttonTapped:(id)sender {
-    // run button actions here
+    UAInAppNotificationButtonActionBinding *binding;
+
+    // retrieve the binding associated with the tapped button
+    if ([sender isEqual:self.notificationView.button1]) {
+        binding = self.buttonActionBindings[0];
+    } else if ([sender isEqual:self.notificationView.button2])  {
+        binding = self.buttonActionBindings[1];
+    }
+
+    // run all the bound actions
+    for (NSString *actionName in binding.actions) {
+        UAActionArguments *args = binding.actions[actionName];
+        [UAActionRunner runActionWithName:actionName withArguments:args withCompletionHandler:nil];
+    }
+
     [self dismiss];
 }
 

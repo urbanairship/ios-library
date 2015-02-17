@@ -2,6 +2,8 @@
 #import "UAInAppNotification.h"
 #import "UAUtils.h"
 #import "UAColorUtils.h"
+#import "UAInAppNotificationButtonActionBinding.h"
+#import "UAActionArguments.h"
 
 // 30 days in seconds
 #define kUADefaultInAppNotificationExpiryInterval 60 * 60 * 24 * 30
@@ -162,6 +164,56 @@
     [payload setValue:(actions.count ?actions : nil) forKey:@"actions"];
 
     return payload;
+}
+
+- (NSArray *)buttonActionBindings {
+    NSMutableArray *bindings = [NSMutableArray array];
+
+    // restrict this to iOS 8+ for now
+    if (self.buttonGroup && [UIUserNotificationCategory class]) {
+
+        // get the current set of interactive notification categories
+        NSSet *categories = [UIApplication sharedApplication].currentUserNotificationSettings.categories;
+
+        for (UIUserNotificationCategory *category in categories) {
+            // if there's a match between a category identifier and our button group
+            if ([category.identifier isEqualToString:self.buttonGroup]) {
+                // create a button action binding for each corresponding action identifier
+                for (UIUserNotificationAction *notificationAction in [category actionsForContext:UIUserNotificationActionContextDefault]) {
+                    NSDictionary *payload = self.buttonActions[notificationAction.identifier];
+                    if (payload) {
+                        UAInAppNotificationButtonActionBinding *binding = [[UAInAppNotificationButtonActionBinding alloc] init];
+                        binding.localizedTitle = NSLocalizedStringWithDefaultValue(notificationAction.title, @"UAInteractiveNotifications",
+                                                                                   [NSBundle mainBundle], notificationAction.title, nil);
+
+                        NSMutableDictionary *actionsDictionary = [NSMutableDictionary dictionary];
+                        binding.actions = [NSMutableDictionary dictionary];
+
+                        // choose the situation that matches cthe orresponding notificationAction's activation mode
+                        UASituation situation = notificationAction.activationMode == UIUserNotificationActivationModeForeground ?
+                            UASituationForegroundInteractiveButton : UASituationBackgroundInteractiveButton;
+
+                        for (NSString *actionName in payload) {
+                            actionsDictionary[actionName] = [UAActionArguments argumentsWithValue:payload[actionName] withSituation:situation];
+                        }
+
+                        binding.actions = actionsDictionary;
+
+                        [bindings addObject:binding];
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    // only return bindings if we got a match for each action identifier
+    // so we don't end up with the wrong number of buttons
+    if (bindings.count == self.buttonActions.count) {
+        return bindings;
+    } else {
+        return [NSArray array];
+    }
 }
 
 @end
