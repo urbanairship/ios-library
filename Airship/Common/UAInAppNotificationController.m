@@ -3,8 +3,11 @@
 #import "UAInAppNotificationView.h"
 #import "UAUtils.h"
 
-#define kUAInAppNotificationControllerDefaultPrimaryColor [UIColor whiteColor]
-#define kUAInAppNotificationControllerDefaultSecondaryColor [UIColor colorWithRed:40.0/255 green:40.0/255 blue:40.0/255 alpha:1]
+#define kUAInAppNotificationDefaultPrimaryColor [UIColor whiteColor]
+#define kUAInAppNotificationDefaultSecondaryColor [UIColor colorWithRed:40.0/255 green:40.0/255 blue:40.0/255 alpha:1]
+#define kUAInAppNotificationiPhoneScreenWidthPercentage 0.95
+#define kUAInAppNotificationPadScreenWidthPercentage 0.45
+
 
 @interface UAInAppNotificationController ()
 
@@ -43,8 +46,8 @@
     UIFont *boldFont = [UIFont boldSystemFontOfSize:12];
 
     // the primary and secondary colors aren't set in the model, choose sensible defaults
-    UIColor *primaryColor = self.notification.primaryColor ?: kUAInAppNotificationControllerDefaultPrimaryColor;
-    UIColor *secondaryColor = self.notification.secondaryColor ?: kUAInAppNotificationControllerDefaultSecondaryColor;
+    UIColor *primaryColor = self.notification.primaryColor ?: kUAInAppNotificationDefaultPrimaryColor;
+    UIColor *secondaryColor = self.notification.secondaryColor ?: kUAInAppNotificationDefaultSecondaryColor;
 
     UAInAppNotificationView *notificationView = [[UAInAppNotificationView alloc] initWithPosition:self.notification.position
                                                                                   numberOfButtons:buttonTitles.count];
@@ -112,14 +115,13 @@
     CGFloat horizontalMargin = 0;
     CGRect screenRect = [UIScreen mainScreen].applicationFrame;
     CGFloat screenWidth = CGRectGetWidth(screenRect);
-    CGFloat longWidth = MAX(screenWidth, CGRectGetHeight(screenRect));
-    CGFloat actualLongWidth = longWidth * 0.45;
 
-    // if we're on an a phone, set the horizontal margin so that the notification view
-    // is 95% of screen width
-    if ([UIDevice currentDevice].userInterfaceIdiom != UIUserInterfaceIdiomPad) {
-        horizontalMargin = (screenWidth - screenWidth*0.95)/2.0;
-    }
+    // On an iPad, notifications are 45% of the fixed screen width in landscape
+    CGFloat longWidth = MAX(screenWidth, CGRectGetHeight(screenRect));
+    CGFloat actualLongWidth = longWidth * kUAInAppNotificationPadScreenWidthPercentage;
+
+    // On a phone, notifications are always 95% of current screen width
+    horizontalMargin = (screenWidth - screenWidth*kUAInAppNotificationiPhoneScreenWidthPercentage)/2.0;
 
     id metrics = @{@"horizontalMargin":@(horizontalMargin), @"longWidth":@(actualLongWidth)};
     id views = @{@"notificationView":notificationView};
@@ -144,7 +146,7 @@
         verticalLayout = @"V:|[notificationView]";
     }
 
-    // if the UI idiom is iPad, make the notificationView fixed width, otherwise offset it with horizontal margins
+    // if the UI idiom is iPad, use the fixed width, otherwise offset it with the horizontal margins
     if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
         horizontalLayout = @"[notificationView(longWidth)]";
     } else {
