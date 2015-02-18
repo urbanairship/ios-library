@@ -64,6 +64,10 @@
     XCTAssertEqual(args.situationString, @"Launched from Push", @"situation string should read 'Launched from Push'");
     args.situation = UASituationWebViewInvocation;
     XCTAssertEqual(args.situationString, @"Webview Invocation", @"situation string should read 'Webview Invocation'");
+    args.situation = UASituationForegroundInteractiveButton;
+    XCTAssertEqual(args.situationString, @"Foreground Interactive Button", @"situation string should read 'Foreground Interactive Button'");
+    args.situation = UASituationBackgroundInteractiveButton;
+    XCTAssertEqual(args.situationString, @"Background Interactive Button", @"situation string should read 'Background Interactive Button'");
     args.situation = 567;
     XCTAssertEqual(args.situationString, @"Manual Invocation", @"situation string should read 'Manual Invocation'");
 }
