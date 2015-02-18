@@ -101,12 +101,24 @@
 
 /**
  * Creates an ISO dateFormatter (UTC) with the following attributes:
- * locale set to 'en_US_POSIX', timestyle set to 'NSDATEFormatterFullStyle',
+ * locale set to 'en_US_POSIX', timestyle set to 'NSDateFormatterFullStyle',
  * date format set to 'yyyy-MM-dd HH:mm:ss'.
  *
  * @return A DateFormatter with the default attributes.
  */
 + (NSDateFormatter *)ISODateFormatterUTC;
+
+/**
+ * Creates an ISO dateFormatter (UTC) with the following attributes:
+ * locale set to 'en_US_POSIX', timestyle set to 'NSDateFormatterFullStyle',
+ * date format set to 'yyyy-MM-dd'T'HH:mm:ss'. The formatter returned by this method 
+ * is identical to that of `ISODateFormatterUTC`, except that the format matches the optional 
+ * `T` delimiter between date and time.
+ *
+ * @return A DateFormatter with the default attributes, matching the optional `T` delimiter.
+ */
++ (NSDateFormatter *)ISODateFormatterUTCWithDelimiter;
+
 
 ///---------------------------------------------------------------------------------------
 /// @name File management

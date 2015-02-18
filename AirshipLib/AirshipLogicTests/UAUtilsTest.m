@@ -26,18 +26,50 @@
 #import "UAUtils.h"
 #import "UAUtilsTest.h"
 
+@interface UAUtilsTest ()
+@property(nonatomic, strong) NSCalendar *gregorianUTC;
+@end
+
 @implementation UAUtilsTest
 
 - (void)setUp {
     [super setUp];
-    
-    // Set-up code here.
+    self.gregorianUTC = [[NSCalendar alloc]
+                             initWithCalendarIdentifier:NSGregorianCalendar];
+
+    self.gregorianUTC.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
 }
 
 - (void)tearDown {
-    // Tear-down code here.
-    
     [super tearDown];
+}
+
+- (NSDateComponents *)componentsForDate:(NSDate *)date {
+    return [self.gregorianUTC components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit) fromDate:date];
+}
+
+- (void)validateDateFormatter:(NSDateFormatter *)dateFormatter withFormatString:(NSString *)formatString {
+    NSDate *date = [dateFormatter dateFromString:formatString];
+
+    NSDateComponents *components = [self componentsForDate:date];
+
+    XCTAssertEqual(components.year, 2020);
+    XCTAssertEqual(components.month, 12);
+    XCTAssertEqual(components.day, 15);
+    XCTAssertEqual(components.hour, 11);
+    XCTAssertEqual(components.minute, 45);
+    XCTAssertEqual(components.second, 22);
+
+    XCTAssertEqualObjects(formatString, [dateFormatter stringFromDate:date]);
+
+}
+
+- (void)testISODateFormatterUTC {
+    [self validateDateFormatter:[UAUtils ISODateFormatterUTC] withFormatString: @"2020-12-15 11:45:22"];
+}
+
+- (void)testISODateFormatterUTCWithDelimiter {
+    [self validateDateFormatter:[UAUtils ISODateFormatterUTCWithDelimiter] withFormatString: @"2020-12-15T11:45:22"];
 }
 
 @end

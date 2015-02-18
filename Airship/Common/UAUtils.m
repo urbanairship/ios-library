@@ -197,6 +197,12 @@
     return dateFormatter;
 }
 
++ (NSDateFormatter *)ISODateFormatterUTCWithDelimiter {
+    NSDateFormatter *dateFormatter = [self ISODateFormatterUTC];
+    dateFormatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss";
+    return dateFormatter;
+}
+
 + (BOOL)addSkipBackupAttributeToItemAtURL:(NSURL *)url {
     if (![[NSFileManager defaultManager] fileExistsAtPath: [url path]]) {
         return NO;
