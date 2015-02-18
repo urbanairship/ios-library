@@ -611,7 +611,7 @@ SINGLETON_IMPLEMENTATION(UAPush)
     if (notificationAction.activationMode == UIUserNotificationActivationModeBackground) {
         situation = UASituationBackgroundInteractiveButton;
     } else {
-        situation = UASituationForegoundInteractiveButton;
+        situation = UASituationForegroundInteractiveButton;
     }
 
     // Create dictionary of actions inside the push notification

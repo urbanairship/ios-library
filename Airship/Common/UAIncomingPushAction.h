@@ -33,7 +33,7 @@
  * Expected argument values: An APNS NSDictionary.
  *
  * Valid situations: UASituationForegroundPush, UASituationBackgroundPush, 
- * UASituationLaunchedFromPush, UASituationForegoundInteractiveButton, and
+ * UASituationLaunchedFromPush, UASituationForegroundInteractiveButton, and
  * UASituationBackgroundInteractiveButton
  *
  * Result value: nil

@@ -54,7 +54,7 @@
 
     UASituation validSituations[5] = {
         UASituationForegroundPush,
-        UASituationForegoundInteractiveButton,
+        UASituationForegroundInteractiveButton,
         UASituationLaunchedFromPush,
         UASituationManualInvocation,
         UASituationWebViewInvocation

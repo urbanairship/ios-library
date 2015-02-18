@@ -61,7 +61,7 @@ typedef NS_ENUM(NSInteger, UASituation) {
      * Represents a situation in which the action was triggered from a
      * foreground interactive notification button.
      */
-    UASituationForegoundInteractiveButton,
+    UASituationForegroundInteractiveButton,
 
     /**
      * Represents a situation in which the action was triggered from a
@@ -95,6 +95,14 @@ typedef NS_ENUM(NSInteger, UASituation) {
 + (instancetype)argumentsWithValue:(id)value
                      withSituation:(UASituation)situation
                           metadata:(NSDictionary *) metadata;
+
+/**
+ * Represents a situation in which the action was triggered from a
+ * foreground interactive notification button, with alternate spelling.
+ *
+ * @deprecated As of version 6.0.0. Replaced with UASituationForegroundInteractiveButton.
+ */
+extern UASituation const UASituationForegoundInteractiveButton __attribute__((deprecated("As of version 6.0.0")));
 
 /**
  * Metadata key for the web view. Available when an action is triggered from

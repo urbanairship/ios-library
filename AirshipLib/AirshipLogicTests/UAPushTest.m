@@ -1990,12 +1990,12 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
         // Validate other push action is added
         UAActionArguments *args = [actions valueForKey:@"foregroundAction"];
-        if (!args || (args.situation != UASituationForegoundInteractiveButton || ![args.value isEqualToString:@"foregroundActionValue"])) {
+        if (!args || (args.situation != UASituationForegroundInteractiveButton || ![args.value isEqualToString:@"foregroundActionValue"])) {
             return NO;
         }
 
         args = [actions valueForKey:@"otherForegroundAction"];
-        if (!args || (args.situation != UASituationForegoundInteractiveButton || ![args.value isEqualToString:@"otherForegroundActionValue"])) {
+        if (!args || (args.situation != UASituationForegroundInteractiveButton || ![args.value isEqualToString:@"otherForegroundActionValue"])) {
             return NO;
         }
 
