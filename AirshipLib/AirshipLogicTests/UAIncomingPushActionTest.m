@@ -84,7 +84,7 @@
         UASituationForegroundPush,
         UASituationBackgroundPush,
         UASituationLaunchedFromPush,
-        UASituationForegoundInteractiveButton,
+        UASituationForegroundInteractiveButton,
         UASituationBackgroundInteractiveButton
     };
 
@@ -263,13 +263,13 @@
 }
 
 /**
- * Test running the action with UASituationForegoundInteractiveButton situation notifies
+ * Test running the action with UASituationForegroundInteractiveButton situation notifies
  * the app delegate of the event.
  */
 - (void)testForegroundUserNotificationAction {
     __block UAActionResult *runResult;
 
-    self.arguments.situation = UASituationForegoundInteractiveButton;
+    self.arguments.situation = UASituationForegroundInteractiveButton;
     self.arguments.metadata = @{UAActionMetadataUserNotificationActionIDKey: @"action id"};
 
     // Expect the delegate to be called. Use a checkWithBlock to call the completion handler.

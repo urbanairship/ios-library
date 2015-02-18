@@ -344,7 +344,7 @@
                             [NSNumber numberWithInteger:UASituationBackgroundPush],
                             [NSNumber numberWithInteger:UASituationLaunchedFromPush],
                             [NSNumber numberWithInteger:UASituationManualInvocation],
-                            [NSNumber numberWithInteger:UASituationForegoundInteractiveButton],
+                            [NSNumber numberWithInteger:UASituationForegroundInteractiveButton],
                             [NSNumber numberWithInteger:UASituationBackgroundInteractiveButton]];
 
     for (NSNumber *situationNumber in situations) {

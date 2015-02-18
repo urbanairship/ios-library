@@ -47,7 +47,7 @@
                                             notification:arguments.value
                                        completionHandler:completionHandler];
             break;
-        case UASituationForegoundInteractiveButton:
+        case UASituationForegroundInteractiveButton:
             [self handleForegroundUserNotificationAction:arguments.metadata[UAActionMetadataUserNotificationActionIDKey]
                                             notification:arguments.value
                                        completionHandler:completionHandler];
@@ -63,7 +63,7 @@
         case UASituationBackgroundPush:
         case UASituationLaunchedFromPush:
         case UASituationForegroundPush:
-        case UASituationForegoundInteractiveButton:
+        case UASituationForegroundInteractiveButton:
         case UASituationBackgroundInteractiveButton:
             return [arguments.value isKindOfClass:[NSDictionary class]];
         default:

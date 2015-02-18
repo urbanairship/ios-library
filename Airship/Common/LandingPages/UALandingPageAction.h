@@ -35,7 +35,7 @@
  *
  * Valid situations: UASituationForegroundPush, UASituationLanchedFromPush,
  * UASituationWebViewInvocation, UASituationManualInvocation, UASituationBackgroundPush,
- * and UASituationForegoundInteractiveButton
+ * and UASituationForegroundInteractiveButton
  *
  * In situation UASituationBackgroundPush, the action will attempt to pre-fetch
  * the data and cache it for later use.
