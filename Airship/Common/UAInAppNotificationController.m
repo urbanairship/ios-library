@@ -10,12 +10,16 @@
 #define kUAInAppNotificationDefaultSecondaryColor [UIColor colorWithRed:40.0/255 green:40.0/255 blue:40.0/255 alpha:1]
 #define kUAInAppNotificationiPhoneScreenWidthPercentage 0.95
 #define kUAInAppNotificationPadScreenWidthPercentage 0.45
-
+#define kUAInAppNotificationMinimumLongPressDuration 0.2
+#define kUAInAppNotificationAnimationDuration 0.2
 
 @interface UAInAppNotificationController ()
 
 @property(nonatomic, strong) UAInAppNotification *notification;
 @property(nonatomic, strong) UAInAppNotificationView *notificationView;
+@property(nonatomic, strong) UIColor *primaryColor;
+@property(nonatomic, strong) UIColor *secondaryColor;
+@property(nonatomic, assign) BOOL isInverted;
 
 /**
  * An array of dictionaries containing localized button titles and
@@ -40,8 +44,43 @@
 
         self.buttonActionBindings = notification.buttonActionBindings;
 
+        // the primary and secondary colors aren't set in the model, choose sensible defaults
+        self.primaryColor = self.notification.primaryColor ?: kUAInAppNotificationDefaultPrimaryColor;
+        self.secondaryColor = self.notification.secondaryColor ?: kUAInAppNotificationDefaultSecondaryColor;
+
+        // colors are uninverted to start
+        self.isInverted = NO;
     }
     return self;
+}
+
+/**
+ * Configures primary and secondary colors in the notification view, inverting the color
+ * scheme if necessary.
+ */
+- (void)configureColorsWithNotificationView:(UAInAppNotificationView *)notificationView inverted:(BOOL)inverted {
+
+    UIColor *colorA;
+    UIColor *colorB;
+
+    if (inverted) {
+        colorA = self.secondaryColor;
+        colorB = self.primaryColor;
+    } else {
+        colorA = self.primaryColor;
+        colorB = self.secondaryColor;
+    }
+
+    notificationView.backgroundColor = colorA;
+
+    notificationView.tab.backgroundColor = colorB;
+
+    notificationView.messageLabel.textColor = colorB;
+
+    [notificationView.button1 setTitleColor:colorA forState:UIControlStateNormal];
+    [notificationView.button2 setTitleColor:colorA forState:UIControlStateNormal];
+    notificationView.button1.backgroundColor = colorB;
+    notificationView.button2.backgroundColor = colorB;
 }
 
 /**
@@ -52,22 +91,13 @@
 
     UIFont *boldFont = [UIFont boldSystemFontOfSize:12];
 
-    // the primary and secondary colors aren't set in the model, choose sensible defaults
-    UIColor *primaryColor = self.notification.primaryColor ?: kUAInAppNotificationDefaultPrimaryColor;
-    UIColor *secondaryColor = self.notification.secondaryColor ?: kUAInAppNotificationDefaultSecondaryColor;
-
     UAInAppNotificationView *notificationView = [[UAInAppNotificationView alloc] initWithPosition:self.notification.position
                                                                                   numberOfButtons:self.buttonActionBindings.count];
 
     // configure all the subviews
-    notificationView.backgroundColor = primaryColor;
-
-    notificationView.tab.backgroundColor = secondaryColor;
-
     notificationView.messageLabel.text = self.notification.alert;
     notificationView.messageLabel.numberOfLines = 4;
     notificationView.messageLabel.font = boldFont;
-    notificationView.messageLabel.textColor = secondaryColor;
 
     notificationView.button1.titleLabel.font = boldFont;
     notificationView.button2.titleLabel.font = boldFont;
@@ -81,10 +111,7 @@
         }
     }
 
-    [notificationView.button1 setTitleColor:primaryColor forState:UIControlStateNormal];
-    [notificationView.button2 setTitleColor:primaryColor forState:UIControlStateNormal];
-    notificationView.button1.backgroundColor = secondaryColor;
-    notificationView.button2.backgroundColor = secondaryColor;
+    [self configureColorsWithNotificationView:notificationView inverted:NO];
 
     return notificationView;
 }
@@ -106,10 +133,14 @@
 
     [notificationView addGestureRecognizer:swipeGestureRecognizer];
 
-    // add a tap gesture recognizer if an onClick action is present in the model
+    // add tap and long press gesture recognizers if an onClick action is present in the model
     if (self.notification.onClick) {
         UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapWithGestureRecognizer:)];
         [notificationView addGestureRecognizer:tapGestureRecognizer];
+
+        UILongPressGestureRecognizer *longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressWithGestureRecognizer:)];
+        longPressGestureRecognizer.minimumPressDuration = kUAInAppNotificationMinimumLongPressDuration;
+        [notificationView addGestureRecognizer:longPressGestureRecognizer];
     }
 
     // sign up for button touch events
@@ -205,33 +236,52 @@
     }
 
     // animate the notification view into place, starting the timer when the animation has completed
-    [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+    [UIView animateWithDuration:kUAInAppNotificationAnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         self.notificationView.center = originalCenter;
     } completion:^(BOOL finished) {
         timeoutBlock();
     }];
 }
 
+- (void)invertColors {
+    if (!self.isInverted) {
+        [self configureColorsWithNotificationView:self.notificationView inverted:YES];
+        self.isInverted = YES;
+    }
+}
+
+- (void)uninvertColors {
+    if (self.isInverted) {
+        [self configureColorsWithNotificationView:self.notificationView inverted:NO];
+        self.isInverted = NO;
+    }
+}
+
+
 - (void)dismissWithAnimationBlock:(void(^)(void))block {
-    [UIView animateWithDuration:0.2
-                          delay:0
-                        options:UIViewAnimationOptionCurveEaseInOut
-                     animations:block
-                     completion:^(BOOL finished){
-                         [self.notificationView removeFromSuperview];
-                         self.notificationView = nil;
-                         // release self
-                         self.referenceToSelf = nil;
-                     }];
+    // dispatch with a delay of zero to postpone the block by a runloop cycle, so that
+    // the animation isn't disrupted
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [UIView animateWithDuration:kUAInAppNotificationAnimationDuration
+                              delay:0
+                            options:UIViewAnimationOptionCurveEaseInOut
+                         animations:block
+                         completion:^(BOOL finished){
+                             [self.notificationView removeFromSuperview];
+                             self.notificationView = nil;
+                             // release self
+                             self.referenceToSelf = nil;
+                         }];
+    });
 }
 
 - (void)dismiss {
     [self dismissWithAnimationBlock:^{
         // animate the notification view back off the screen
         if (self.notification.position == UAInAppNotificationPositionTop) {
-            self.notificationView.center = CGPointMake(self.notificationView.center.x, -(CGRectGetHeight(self.notificationView.frame)/2));
+            self.notificationView.center = CGPointMake(self.notificationView.center.x, -(CGRectGetHeight(self.notificationView.frame)));
         } else {
-            self.notificationView.center = CGPointMake(self.notificationView.center.x, self.notificationView.center.y + (CGRectGetHeight(self.notificationView.frame)/2));
+            self.notificationView.center = CGPointMake(self.notificationView.center.x, self.notificationView.center.y + (CGRectGetHeight(self.notificationView.frame)));
         }
     }];
 }
@@ -240,9 +290,54 @@
     [self dismiss];
 }
 
+- (void)runOnClickActions {
+    NSDictionary *actions = self.notification.onClick;
+
+    for (NSString *name in actions) {
+        UAActionArguments *args = [UAActionArguments argumentsWithValue:actions[name] withSituation:UASituationForegroundInteractiveButton];
+        [UAActionRunner runActionWithName:name withArguments:args withCompletionHandler:nil];
+    }
+}
+
+/**
+ * A tap should result in a brief color inversion (0.1 seconds),
+ * running the associated actions, and dismissing the notification.
+ */
 - (void)tapWithGestureRecognizer:(UIGestureRecognizer *)recognizer {
-    // run onClick action here
-    [self dismiss];
+    if (recognizer.state == UIGestureRecognizerStateEnded) {
+        [self invertColors];
+        [self runOnClickActions];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self uninvertColors];
+            [self dismiss];
+        });
+    }
+}
+
+/**
+ * A long press should result in a color inversion as long as the finger
+ * remains within the view boundaries (à la UIButton). Actions should only
+ * be run (and the notification dismissed) if the gesture ends within these boundaries.
+ */
+- (void)longPressWithGestureRecognizer:(UIGestureRecognizer *)recognizer {
+
+    CGPoint touchPoint = [recognizer locationInView:self.notificationView];
+
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+        [self invertColors];
+    } else if (recognizer.state == UIGestureRecognizerStateChanged) {
+        if (CGRectContainsPoint(self.notificationView.bounds, touchPoint)) {
+            [self invertColors];
+        } else {
+            [self uninvertColors];
+        }
+    } else if (recognizer.state == UIGestureRecognizerStateEnded) {
+        if (CGRectContainsPoint(self.notificationView.bounds, touchPoint)) {
+            [self uninvertColors];
+            [self runOnClickActions];
+            [self dismiss];
+        }
+    }
 }
 
 - (void)buttonTapped:(id)sender {
@@ -256,10 +351,7 @@
     }
 
     // run all the bound actions
-    for (NSString *actionName in binding.actions) {
-        UAActionArguments *args = binding.actions[actionName];
-        [UAActionRunner runActionWithName:actionName withArguments:args withCompletionHandler:nil];
-    }
+    [UAActionRunner runActions:binding.actions withCompletionHandler:nil];
 
     [self dismiss];
 }

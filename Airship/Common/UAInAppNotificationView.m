@@ -23,6 +23,8 @@
 
         self.messageLabel = [UILabel new];
         self.messageLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        self.messageLabel.userInteractionEnabled = NO;
+
         [self addSubview:self.messageLabel];
 
         self.tab = [UIView new];
