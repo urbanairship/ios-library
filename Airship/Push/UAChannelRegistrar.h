@@ -40,7 +40,7 @@
 - (void)registrationFailedWithPayload:(UAChannelRegistrationPayload *)payload;
 
 /**
- * Called when the channel registrar succesfully registered.
+ * Called when the channel registrar successfully registered.
  * @param payload The registration payload.
  */
 - (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload;
@@ -51,6 +51,11 @@
  * @param channelLocation The channel location string.
  */
 - (void)channelCreated:(NSString *)channelID channelLocation:(NSString *)channelLocation;
+
+/**
+ * Called to disassociate previously existing named user.
+ */
+- (void)clearPreviousNamedUser;
 
 @end
 

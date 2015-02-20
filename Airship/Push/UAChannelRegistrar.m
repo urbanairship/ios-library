@@ -31,8 +31,6 @@
 #import "UAHTTPRequest.h"
 #import "UAirship.h"
 #import "UAConfig.h"
-#import "UAPush.h"
-#import "UANamedUser+Internal.h"
 
 @implementation UAChannelRegistrar
 
@@ -116,7 +114,7 @@
 
             // if this channel previously existed, a named user may be associated to it
             if (!newChannel && [UAirship shared].config.clearNamedUserOnAppRestore) {
-                [[UAPush shared].namedUser disassociateNamedUserIfNil];
+                [self clearNamedUserOnAppRestore];
             }
         };
 
@@ -153,7 +151,7 @@
 
             // if this channel previously existed, a named user may be associated to it
             if (!newChannel && [UAirship shared].config.clearNamedUserOnAppRestore) {
-                [[UAPush shared].namedUser disassociateNamedUserIfNil];
+                [self clearNamedUserOnAppRestore];
             }
         }
     };
@@ -207,4 +205,10 @@
 
 }
 
+- (void)clearNamedUserOnAppRestore {
+    id strongDelegate = self.delegate;
+    if ([strongDelegate respondsToSelector:@selector(clearPreviousNamedUser)]) {
+        [strongDelegate clearPreviousNamedUser];
+    }
+}
 @end

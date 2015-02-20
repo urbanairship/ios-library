@@ -31,8 +31,6 @@
 #import "UAConfig.h"
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAPush.h"
-#import "UANamedUser+Internal.h"
 
 
 #define kUAChannelRetryTimeInitialDelay 60

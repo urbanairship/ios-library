@@ -926,6 +926,10 @@ BOOL deferChannelCreationOnForeground = false;
     }
 }
 
+-(void)clearPreviousNamedUser {
+    [self.namedUser disassociateNamedUserIfNil];
+}
+
 #pragma mark -
 #pragma mark Default Values
 
