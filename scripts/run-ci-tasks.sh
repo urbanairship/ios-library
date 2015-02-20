@@ -11,10 +11,6 @@ source "${SCRIPT_DIRECTORY}/configure-xcode-version.sh"
 # Build All Sample Projects
 # Use Debug configurations and a simulator SDK so the build process doesn't attempt to sign the output
 
-# create dummy AirshipConfig.plist files so samples build
-cp "${ROOT_PATH}/InboxSample/AirshipConfig.plist.sample" "${ROOT_PATH}/InboxSample/AirshipConfig.plist"
-cp "${ROOT_PATH}/PushSample/AirshipConfig.plist.sample" "${ROOT_PATH}/PushSample/AirshipConfig.plist"
-
 # Build Distrbution Projects First
 # InboxSample targets
 xcrun xcodebuild -project "${ROOT_PATH}/InboxSample/InboxSample.xcodeproj" -configuration Debug -sdk iphonesimulator8.1
