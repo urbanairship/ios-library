@@ -253,7 +253,6 @@
 		D5A192BC12C15ADD006AF4AE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
 		D5C75CEC12BC29710041239E /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		D5F70FF412C94E33007285C4 /* PushSample-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "PushSample-Info.plist"; sourceTree = "<group>"; };
-		D5F70FF512C94E33007285C4 /* PushSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushSample_Prefix.pch; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -514,7 +513,6 @@
 			children = (
 				1F79711512DE3C1000D4937F /* AirshipConfig.plist */,
 				D5F70FF412C94E33007285C4 /* PushSample-Info.plist */,
-				D5F70FF512C94E33007285C4 /* PushSample_Prefix.pch */,
 				18C02947124F216B00D49CD5 /* main.m */,
 			);
 			name = "Other Sources";
