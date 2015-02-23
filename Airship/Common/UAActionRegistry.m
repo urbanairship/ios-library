@@ -36,6 +36,7 @@
 #import "UACloseWindowAction.h"
 #import "UAAddCustomEventAction.h"
 #import "UAShareAction.h"
+#import "UAInAppNotificationAction.h"
 
 @implementation UAActionRegistry
 @dynamic registeredEntries;
@@ -311,6 +312,11 @@ SINGLETON_IMPLEMENTATION(UAActionRegistry)
     UAShareAction *shareAction = [[UAShareAction alloc] init];
     [self registerAction:shareAction names:@[kUAShareActionDefaultRegistryName, kUAShareActionDefaultRegistryAlias] predicate:^(UAActionArguments *args) {
         return (BOOL)(args.situation != UASituationForegroundPush);
+    }];
+
+    UAInAppNotificationAction *ianAction = [[UAInAppNotificationAction alloc] init];
+    [self registerAction:ianAction names:@[kUAInAppNotificationActionDefaultRegistryName, kUAInAppNotificationActionDefaultRegistryAlias] predicate:^(UAActionArguments *args){
+        return (BOOL)(args.situation != UASituationLaunchedFromPush);
     }];
 }
 

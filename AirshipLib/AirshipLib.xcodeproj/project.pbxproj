@@ -175,6 +175,11 @@
 		49973CE81A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = 49973CE51A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.h */; };
 		49973CE91A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.m in Sources */ = {isa = PBXBuildFile; fileRef = 49973CE61A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.m */; };
 		49973CEA1A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.m in Sources */ = {isa = PBXBuildFile; fileRef = 49973CE61A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.m */; };
+		49973CED1A97BFDE009B5EB1 /* UAInAppNotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49973CEB1A97BFDE009B5EB1 /* UAInAppNotificationAction.h */; };
+		49973CEE1A97BFDE009B5EB1 /* UAInAppNotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49973CEB1A97BFDE009B5EB1 /* UAInAppNotificationAction.h */; };
+		49973CEF1A97BFDE009B5EB1 /* UAInAppNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49973CEC1A97BFDE009B5EB1 /* UAInAppNotificationAction.m */; };
+		49973CF01A97BFDE009B5EB1 /* UAInAppNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49973CEC1A97BFDE009B5EB1 /* UAInAppNotificationAction.m */; };
+		49973CF41A9BB723009B5EB1 /* UAInAppNotificationActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49973CF31A9BB723009B5EB1 /* UAInAppNotificationActionTest.m */; };
 		49B7045C1A76FF3C000F67A6 /* UAInAppNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B7045A1A76FF3C000F67A6 /* UAInAppNotification.h */; };
 		49B7045D1A76FF3C000F67A6 /* UAInAppNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B7045A1A76FF3C000F67A6 /* UAInAppNotification.h */; };
 		49B7045E1A76FF3C000F67A6 /* UAInAppNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B7045B1A76FF3C000F67A6 /* UAInAppNotification.m */; };
@@ -684,6 +689,9 @@
 		4995C6B2180DC5D3004F8724 /* UATagActionsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATagActionsTest.m; sourceTree = "<group>"; };
 		49973CE51A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppNotificationButtonActionBinding.h; sourceTree = "<group>"; };
 		49973CE61A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppNotificationButtonActionBinding.m; sourceTree = "<group>"; };
+		49973CEB1A97BFDE009B5EB1 /* UAInAppNotificationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppNotificationAction.h; sourceTree = "<group>"; };
+		49973CEC1A97BFDE009B5EB1 /* UAInAppNotificationAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppNotificationAction.m; sourceTree = "<group>"; };
+		49973CF31A9BB723009B5EB1 /* UAInAppNotificationActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppNotificationActionTest.m; sourceTree = "<group>"; };
 		49B7045A1A76FF3C000F67A6 /* UAInAppNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppNotification.h; sourceTree = "<group>"; };
 		49B7045B1A76FF3C000F67A6 /* UAInAppNotification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppNotification.m; sourceTree = "<group>"; };
 		49B7046B1A7AF9A6000F67A6 /* UAInAppNotificationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppNotificationTest.m; sourceTree = "<group>"; };
@@ -1576,6 +1584,8 @@
 				492ADA0F18C959CB0032C491 /* UACloseWindowAction.m */,
 				CCDF66AC19A544590043657E /* UAShareAction.h */,
 				CCDF66AD19A544590043657E /* UAShareAction.m */,
+				49973CEB1A97BFDE009B5EB1 /* UAInAppNotificationAction.h */,
+				49973CEC1A97BFDE009B5EB1 /* UAInAppNotificationAction.m */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -1611,6 +1621,7 @@
 				49416D5E18C025E900A18B72 /* UALandingPageActionTest.m */,
 				CCB9990A18E23E68007F911D /* UACloseWindowActionTest.m */,
 				CC7BE5EA19A55C5700B3EACE /* UAShareActionTest.m */,
+				49973CF31A9BB723009B5EB1 /* UAInAppNotificationActionTest.m */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -1785,6 +1796,7 @@
 				49BADDD2198B0852000FF3D5 /* UAModifyTagsAction.h in Headers */,
 				49BADDD3198B0853000FF3D5 /* UAOpenExternalURLAction.h in Headers */,
 				612ED4DC1A38DE2300DD7762 /* UACircularRegion.h in Headers */,
+				49973CEE1A97BFDE009B5EB1 /* UAInAppNotificationAction.h in Headers */,
 				49BADDD5198B0854000FF3D5 /* UAAction.h in Headers */,
 				49BADDD6198B0854000FF3D5 /* UAActionArguments.h in Headers */,
 				49BADDD9198B0855000FF3D5 /* UAActionRegistry.h in Headers */,
@@ -1984,6 +1996,7 @@
 				4995C63A180DBBC9004F8724 /* UAAddTagsAction.h in Headers */,
 				767D0D371A71A938008CEC8A /* UANamedUser.h in Headers */,
 				49D11C1217270C6E0058E7C3 /* UAHTTPRequestEngine.h in Headers */,
+				49973CED1A97BFDE009B5EB1 /* UAInAppNotificationAction.h in Headers */,
 				495048A71738812500F8B5BE /* UADelayOperation.h in Headers */,
 				1F610E0517835C3A00BCD96E /* UAPush.h in Headers */,
 				CC6773C119B11C1F00B016EC /* UAInboxPushHandler+Internal.h in Headers */,
@@ -2279,6 +2292,7 @@
 				491B8421198C237F00FB7A40 /* UALandingPageOverlayController.m in Sources */,
 				49B7045F1A76FF3C000F67A6 /* UAInAppNotification.m in Sources */,
 				491B8422198C237F00FB7A40 /* UABeveledLoadingIndicator.m in Sources */,
+				49973CF01A97BFDE009B5EB1 /* UAInAppNotificationAction.m in Sources */,
 				CCE34AFB19C2647A00A8EFC0 /* UAEventDeviceRegistration.m in Sources */,
 				491B8423198C237F00FB7A40 /* UABespokeCloseView.m in Sources */,
 				491B8424198C237F00FB7A40 /* UAAddTagsAction.m in Sources */,
@@ -2356,6 +2370,7 @@
 				CC7BE5EB19A55C5700B3EACE /* UAShareActionTest.m in Sources */,
 				7BB679151429288D00B877DB /* UAUtilsTest.m in Sources */,
 				CCD3158417CFBD5A002E93A1 /* UAPushTest.m in Sources */,
+				49973CF41A9BB723009B5EB1 /* UAInAppNotificationActionTest.m in Sources */,
 				7649615518C644D4003AF5EE /* UAInboxPushHandlerTest.m in Sources */,
 				BBB87D5F150574DE00971CEC /* CLLocationManager+Test.m in Sources */,
 				CCB9990B18E23E68007F911D /* UACloseWindowActionTest.m in Sources */,
@@ -2453,6 +2468,7 @@
 				1F610DB617835C2200BCD96E /* UAAppDelegate.m in Sources */,
 				BB886104159A7E9600584445 /* UA_Base64.m in Sources */,
 				49B7045E1A76FF3C000F67A6 /* UAInAppNotification.m in Sources */,
+				49973CEF1A97BFDE009B5EB1 /* UAInAppNotificationAction.m in Sources */,
 				CCE34AFA19C2647A00A8EFC0 /* UAEventDeviceRegistration.m in Sources */,
 				767D0D381A71A938008CEC8A /* UANamedUser.m in Sources */,
 				BB886105159A7E9600584445 /* UAKeychainUtils.m in Sources */,
