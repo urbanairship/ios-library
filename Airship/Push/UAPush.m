@@ -39,6 +39,7 @@
 #import "UAInteractiveNotificationEvent.h"
 #import "UAUserNotificationCategories+Internal.h"
 #import "UAPreferenceDataStore.h"
+#import "UAConfig.h"
 
 #define kUAMinTagLength 1
 #define kUAMaxTagLength 127
@@ -926,8 +927,11 @@ BOOL deferChannelCreationOnForeground = false;
     }
 }
 
--(void)clearPreviousNamedUser {
-    [self.namedUser disassociateNamedUserIfNil];
+-(void)channelPreviouslyExisted {
+    // If this channel previously existed, a named user may be associated to it.
+    if ([UAirship shared].config.clearNamedUserOnAppRestore) {
+        [self.namedUser disassociateNamedUserIfNil];
+    }
 }
 
 #pragma mark -

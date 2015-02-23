@@ -185,9 +185,9 @@ extern NSString *const UAPushEnabledSettingsMigratedKey;
 - (void)channelCreated:(NSString *)channelID channelLocation:(NSString *)channelLocation;
 
 /**
- * Called to disassociate previously existing named user.
+ * Called when the channel previously existed.
  */
-- (void)clearPreviousNamedUser;
+- (void)channelPreviouslyExisted;
 
 /**
  * Used to trim whitespace and filter out tags with unacceptable tag length

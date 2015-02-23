@@ -381,7 +381,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
     [[self.mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
     [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation];
-    [[self.mockedRegistrarDelegate expect] clearPreviousNamedUser];
+    [[self.mockedRegistrarDelegate expect] channelPreviouslyExisted];
 
     [self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO];
 
@@ -406,7 +406,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
     [[self.mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
     [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation];
-    [[self.mockedRegistrarDelegate reject] clearPreviousNamedUser];
+    [[self.mockedRegistrarDelegate reject] channelPreviouslyExisted];
 
 
     [self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO];
@@ -432,7 +432,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
     [[self.mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
     [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation];
-    [[self.mockedRegistrarDelegate reject] clearPreviousNamedUser];
+    [[self.mockedRegistrarDelegate expect] channelPreviouslyExisted];
 
 
     [self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO];
@@ -458,7 +458,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
     [[self.mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
     [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation];
-    [[self.mockedRegistrarDelegate reject] clearPreviousNamedUser];
+    [[self.mockedRegistrarDelegate reject] channelPreviouslyExisted];
 
 
     [self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO];
