@@ -180,6 +180,10 @@
 		49973CEF1A97BFDE009B5EB1 /* UAInAppNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49973CEC1A97BFDE009B5EB1 /* UAInAppNotificationAction.m */; };
 		49973CF01A97BFDE009B5EB1 /* UAInAppNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49973CEC1A97BFDE009B5EB1 /* UAInAppNotificationAction.m */; };
 		49973CF41A9BB723009B5EB1 /* UAInAppNotificationActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49973CF31A9BB723009B5EB1 /* UAInAppNotificationActionTest.m */; };
+		49973CF51A9BF515009B5EB1 /* UAInAppNotificationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D7FF491A8E92390017A11C /* UAInAppNotificationController.m */; };
+		49973CF61A9BF52A009B5EB1 /* UAInAppNotificationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D7FF4B1A8E92390017A11C /* UAInAppNotificationView.m */; };
+		49973CF71A9BF543009B5EB1 /* UAInAppNotificationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D7FF481A8E92390017A11C /* UAInAppNotificationController.h */; };
+		49973CF81A9BF543009B5EB1 /* UAInAppNotificationView.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D7FF4A1A8E92390017A11C /* UAInAppNotificationView.h */; };
 		49B7045C1A76FF3C000F67A6 /* UAInAppNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B7045A1A76FF3C000F67A6 /* UAInAppNotification.h */; };
 		49B7045D1A76FF3C000F67A6 /* UAInAppNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B7045A1A76FF3C000F67A6 /* UAInAppNotification.h */; };
 		49B7045E1A76FF3C000F67A6 /* UAInAppNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B7045B1A76FF3C000F67A6 /* UAInAppNotification.m */; };
@@ -1879,6 +1883,8 @@
 				CC6773C219B11C1F00B016EC /* UAInboxPushHandler+Internal.h in Headers */,
 				49BADDEA198B085C000FF3D5 /* UAEvent+Internal.h in Headers */,
 				49BADDEB198B085C000FF3D5 /* UAAnalytics+Internal.h in Headers */,
+				49973CF71A9BF543009B5EB1 /* UAInAppNotificationController.h in Headers */,
+				49973CF81A9BF543009B5EB1 /* UAInAppNotificationView.h in Headers */,
 				49BADDF0198B085E000FF3D5 /* UAHTTPConnection+Internal.h in Headers */,
 				49BADDF6198B0861000FF3D5 /* UAHTTPRequest+Internal.h in Headers */,
 				49BADDFB198B0863000FF3D5 /* UALocationService+Internal.h in Headers */,
@@ -2263,6 +2269,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49973CF61A9BF52A009B5EB1 /* UAInAppNotificationView.m in Sources */,
+				49973CF51A9BF515009B5EB1 /* UAInAppNotificationController.m in Sources */,
 				767D0D541A730BB8008CEC8A /* UANamedUserAPIClient.m in Sources */,
 				49973CEA1A969166009B5EB1 /* UAInAppNotificationButtonActionBinding.m in Sources */,
 				767D0D531A730BA4008CEC8A /* UANamedUser.m in Sources */,
