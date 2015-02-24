@@ -237,7 +237,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
                                                                                      onFailure:OCMOCK_ANY];
 
     [[self.mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
-    [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation];
+    [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation newChannel:YES];
 
 
     [self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO];
@@ -328,7 +328,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
     // Expect the delegate to be called
     [[self.mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
-    [[self.mockedRegistrarDelegate expect] channelCreated:@"newChannel" channelLocation:self.channelCreateSuccessChannelLocation];
+    [[self.mockedRegistrarDelegate expect] channelCreated:@"newChannel" channelLocation:self.channelCreateSuccessChannelLocation newChannel:YES];
 
 
     [self.registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:self.payload forcefully:NO];
@@ -380,8 +380,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
                                                                                           onFailure:OCMOCK_ANY];
 
     [[self.mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
-    [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation];
-    [[self.mockedRegistrarDelegate expect] channelPreviouslyExisted];
+    [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation newChannel:NO];
 
     [self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO];
 
@@ -405,9 +404,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
                                                                                           onFailure:OCMOCK_ANY];
 
     [[self.mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
-    [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation];
-    [[self.mockedRegistrarDelegate reject] channelPreviouslyExisted];
-
+    [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation newChannel:YES];
 
     [self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO];
 
@@ -431,9 +428,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
                                                                                           onFailure:OCMOCK_ANY];
 
     [[self.mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
-    [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation];
-    [[self.mockedRegistrarDelegate expect] channelPreviouslyExisted];
-
+    [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation newChannel:NO];
 
     [self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO];
 
@@ -457,9 +452,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
                                                                                           onFailure:OCMOCK_ANY];
 
     [[self.mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
-    [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation];
-    [[self.mockedRegistrarDelegate reject] channelPreviouslyExisted];
-
+    [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation newChannel:YES];
 
     [self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO];
 

@@ -910,7 +910,10 @@ BOOL deferChannelCreationOnForeground = false;
     [self endRegistrationBackgroundTask];
 }
 
-- (void)channelCreated:(NSString *)channelID channelLocation:(NSString *)channelLocation {
+- (void)channelCreated:(NSString *)channelID
+       channelLocation:(NSString *)channelLocation
+            newChannel:(BOOL)newChannel {
+
     if (channelID && channelLocation) {
         self.channelID = channelID;
         self.channelLocation = channelLocation;
@@ -919,8 +922,14 @@ BOOL deferChannelCreationOnForeground = false;
             NSLog(@"Created channel with ID: %@", self.channelID);
         }
 
-        // Once we get a channel, update the named user if necessary.
-        [self.namedUser update];
+        // If this channel previously existed, a named user may be associated to it.
+        if (!newChannel && [UAirship shared].config.clearNamedUserOnAppRestore) {
+            [self.namedUser disassociateNamedUserIfNil];
+        } else {
+            // Once we get a channel, update the named user if necessary.
+            [self.namedUser update];
+        }
+
     } else {
         UA_LERR(@"Channel creation failed. Missing channelID: %@ or channelLocation: %@",
                 channelID, channelLocation);

@@ -104,15 +104,12 @@
             return;
         }
 
-        // Conflict with channel id, create a new one
+        // Conflict with channel ID, create a new one
         UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *newChannelID, NSString *newChannelLocation, BOOL newChannel) {
             UA_LDEBUG(@"Channel %@ created successfully. Channel location: %@.", newChannelID, newChannelLocation);
-            [self channelCreated:newChannelID channelLocation:newChannelLocation];
+            [self channelCreated:newChannelID channelLocation:newChannelLocation newChannel:newChannel];
             [self succeededWithPayload:payload];
 
-            if (!newChannel) {
-                [self channelExisted];
-            }
         };
 
         UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
@@ -143,12 +140,8 @@
             [self failedWithPayload:payload];
         } else {
             UA_LDEBUG(@"Channel %@ created successfully. Channel location: %@.", channelID, channelLocation);
-            [self channelCreated:channelID channelLocation:channelLocation];
+            [self channelCreated:channelID channelLocation:channelLocation newChannel:newChannel];
             [self succeededWithPayload:payload];
-
-            if (!newChannel) {
-                [self channelExisted];
-            }
         }
     };
 
@@ -193,18 +186,15 @@
     }
 }
 
-- (void)channelCreated:(NSString *)channelID channelLocation:(NSString *)channelLocation {
-    id strongDelegate = self.delegate;
-    if ([strongDelegate respondsToSelector:@selector(channelCreated:channelLocation:)]) {
-        [strongDelegate channelCreated:channelID channelLocation:channelLocation];
-    }
+- (void)channelCreated:(NSString *)channelID
+       channelLocation:(NSString *)channelLocation
+            newChannel:(BOOL)newChannel {
 
-}
-
-- (void)channelExisted {
     id strongDelegate = self.delegate;
-    if ([strongDelegate respondsToSelector:@selector(channelPreviouslyExisted)]) {
-        [strongDelegate channelPreviouslyExisted];
+
+    if ([strongDelegate respondsToSelector:@selector(channelCreated:channelLocation:newChannel:)]) {
+        [strongDelegate channelCreated:channelID channelLocation:channelLocation newChannel:newChannel];
     }
 }
+
 @end
