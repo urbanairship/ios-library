@@ -4,6 +4,8 @@
 #import "UAColorUtils.h"
 #import "UAInAppNotificationButtonActionBinding.h"
 #import "UAActionArguments.h"
+#import "UAirship+Internal.h"
+#import "UAPreferenceDataStore.h"
 
 // 30 days in seconds
 #define kUADefaultInAppNotificationExpiryInterval 60 * 60 * 24 * 30
@@ -13,7 +15,7 @@
 
 
 // User defaults key for storing and retrieving pending notifications
-#define kUAPendingInAppNotificationUserDefaultsKey @"com.urbanairship.pending_in_app_notification"
+#define kUAPendingInAppNotificationDataStoreKey @"com.urbanairship.pending_in_app_notification"
 
 @implementation UAInAppNotification
 
@@ -81,7 +83,7 @@
 }
 
 + (NSDictionary *)pendingNotificationPayload {
-    NSDictionary *payload = [[NSUserDefaults standardUserDefaults] objectForKey:kUAPendingInAppNotificationUserDefaultsKey];
+    NSDictionary *payload = [[UAirship shared].dataStore objectForKey:kUAPendingInAppNotificationDataStoreKey];
     return payload;
 }
 
@@ -89,14 +91,24 @@
     NSDictionary *payload = [self pendingNotificationPayload];
     if (payload) {
         UAInAppNotification *ian = [self notificationWithPayload:payload];
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:kUAPendingInAppNotificationUserDefaultsKey];
+        [[UAirship shared].dataStore removeObjectForKey:kUAPendingInAppNotificationDataStoreKey];
         return ian;
     }
     return nil;
 }
 
 + (void)storePendingNotificationPayload:(NSDictionary *)payload {
-    [[NSUserDefaults standardUserDefaults] setObject:payload forKey:kUAPendingInAppNotificationUserDefaultsKey];
+    [[UAirship shared].dataStore setObject:payload forKey:kUAPendingInAppNotificationDataStoreKey];
+}
+
++ (void)deletePendingNotificationPayload {
+    [[UAirship shared].dataStore removeObjectForKey:kUAPendingInAppNotificationDataStoreKey];
+}
+
++ (void)deletePendingNotificationPayload:(NSDictionary *)payload {
+    if ([[self pendingNotificationPayload] isEqualToDictionary:payload]) {
+        [self deletePendingNotificationPayload];
+    }
 }
 
 - (instancetype)init {

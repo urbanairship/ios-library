@@ -1,10 +1,15 @@
 
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
+#import <OCMock/OCMock.h>
 
 #import "UAInAppNotification.h"
+#import "UAirship+Internal.h"
+#import "UAPreferenceDataStore.h"
 
 @interface UAInAppNotificationTest : XCTestCase
+@property(nonatomic, strong) id mockAirship;
+@property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) NSDictionary *payload;
 @end
 
@@ -12,6 +17,11 @@
 
 - (void)setUp {
     [super setUp];
+
+    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test"];
+    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [[[self.mockAirship stub] andReturn:self.dataStore] dataStore];
 
     id expiry = @"2020-12-15T11:45:22";
     id extra = @{@"foo":@"bar", @"baz":@12345};
@@ -24,7 +34,7 @@
 }
 
 - (void)tearDown {
-    [NSUserDefaults resetStandardUserDefaults];
+    [self.mockAirship stopMocking];
     [super tearDown];
 }
 

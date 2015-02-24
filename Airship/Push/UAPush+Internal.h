@@ -112,12 +112,6 @@ extern NSString *const UAPushEnabledSettingsMigratedKey;
 @property (nonatomic, copy) NSString *channelLocation;
 
 /**
- * Indicates that the app has entered the background once
- * Controls the appDidBecomeActive updateRegistration call
- */
-@property (nonatomic, assign) BOOL hasEnteredBackground;
-
-/**
  * The UAChannelRegistrar that handles registering the device with Urban Airship.
  */
 @property (nonatomic, strong) UAChannelRegistrar *channelRegistrar;

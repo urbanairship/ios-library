@@ -1620,11 +1620,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  * the hasEnteredBackground flag
  */
 - (void)testApplicationDidEnterBackground {
-    self.push.hasEnteredBackground = NO;
     self.push.launchNotification = self.notification;
 
     [self.push applicationDidEnterBackground];
-    XCTAssertTrue(self.push.hasEnteredBackground, @"applicationDidEnterBackground should set hasEnteredBackground to true");
     XCTAssertNil(self.push.launchNotification, @"applicationDidEnterBackground should clear the launch notification");
     XCTAssertTrue([self.dataStore boolForKey:UAPushChannelCreationOnForeground], @"applicationDidEnterBackground should set channelCreationOnForeground to true");
 }

@@ -56,6 +56,13 @@ typedef NS_ENUM(NSInteger, UAInAppNotificationDisplayType) {
 + (instancetype)notificationWithPayload:(NSDictionary *)payload;
 
 /**
+ * Retrieves the most recent pending notification payload from disk.
+ *
+ * @return An in-app notification payload in NSDictionary format.
+ */
++ (NSDictionary *)pendingNotificationPayload;
+
+/**
  * Retrieves the most recent pending notification from disk.
  *
  * @return An instance of UAInAppNotification, or nil if no
@@ -70,6 +77,22 @@ typedef NS_ENUM(NSInteger, UAInAppNotificationDisplayType) {
  * in NSDictionary representation.
  */
 + (void)storePendingNotificationPayload:(NSDictionary *)payload;
+
+/**
+ * Deletes the pending notification payload if present.
+ *
+ */
++ (void)deletePendingNotificationPayload;
+
+
+/**
+ * Deletes the pending notification payload if it matches the
+ * passed payload argument.
+ *
+ * @param payload The IAN payload to delete.
+ */
++ (void)deletePendingNotificationPayload:(NSDictionary *)payload;
+
 
 /**
  * Tests whether the notification is equal by value to another notification.

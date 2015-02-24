@@ -41,9 +41,13 @@
 #import "UAPreferenceDataStore.h"
 #import "UAConfig.h"
 
+#import "UAInAppNotification.h"
+#import "UAInAppNotificationAction.h"
+
 #define kUAMinTagLength 1
 #define kUAMaxTagLength 127
 #define kUANotificationActionKey @"com.urbanairship.interactive_actions"
+#define kUAPushDelayBeforeInAppNotificationDisplay 0.4
 
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
@@ -669,28 +673,29 @@ BOOL deferChannelCreationOnForeground = false;
 
 - (void)applicationDidBecomeActive {
 
-    // If this is the first run, skip creating the channel ID.
     if ([self.dataStore boolForKey:UAPushChannelCreationOnForeground]) {
-        if (!self.channelID) {
-            UA_LTRACE(@"Channel ID not created, Updating registration.");
-            [self updateRegistrationForcefully:NO];
-        } else if (self.hasEnteredBackground) {
-            UA_LTRACE(@"App transitioning from background to foreground. Updating registration.");
-            [self updateRegistrationForcefully:NO];
-        }
+        UA_LTRACE(@"Application did become active. Updating registration.");
+        [self updateRegistrationForcefully:NO]; 
+    }
+
+    // the pending in-app notification, if present
+    NSDictionary *pendingIANPayload = [UAInAppNotification pendingNotificationPayload];
+
+    if (pendingIANPayload) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kUAPushDelayBeforeInAppNotificationDisplay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            UAActionArguments *args = [UAActionArguments argumentsWithValue:pendingIANPayload withSituation:UASituationManualInvocation];
+            [UAActionRunner runActionWithName:kUAInAppNotificationActionDefaultRegistryName withArguments:args withCompletionHandler:nil];
+        });
+
+        [UAInAppNotification deletePendingNotificationPayload:pendingIANPayload];
     }
 }
 
 - (void)applicationDidEnterBackground {
-    self.hasEnteredBackground = YES;
     self.launchNotification = nil;
 
     // Set the UAPushChannelCreationOnForeground after first run
     [self.dataStore setBool:YES forKey:UAPushChannelCreationOnForeground];
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self 
-                                                    name:UIApplicationDidEnterBackgroundNotification 
-                                                  object:[UIApplication sharedApplication]];
 
     // Create a channel if we do not have a channel ID
     if (!self.channelID) {
