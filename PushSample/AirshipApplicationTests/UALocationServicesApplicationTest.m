@@ -145,17 +145,6 @@
     [mockAnalytics stopMocking];
 }
 
-- (BOOL)serviceAcquiredLocation {
-    _timeout = [[NSDate alloc] initWithTimeIntervalSinceNow:15];
-    while (!_locationReceived) {
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
-        if ([_timeout timeIntervalSinceNow] < 0.0) {
-            break;
-        }
-    }
-    return _locationReceived;
-}
-
 #pragma mark -
 #pragma mark Single Location Service Report Current location background
 
@@ -165,11 +154,14 @@
     _locationService.timeoutForSingleLocationService = 1;
 
     id mockLocationService = [OCMockObject partialMockForObject:_locationService];
-    [[[mockLocationService stub] andDo:^(NSInvocation *invoc) { shutdownCalled = YES;}] stopSingleLocationWithError:OCMOCK_ANY];
+    [[[mockLocationService stub] andDo:^(NSInvocation *invoc) {
+            shutdownCalled = YES;
+        }] stopSingleLocationWithError:OCMOCK_ANY];
     XCTAssertFalse(_locationService.singleLocationShutdownScheduled, @"singleLocationShutdownScheduled should be NO");
 
     [_locationService singleLocationDidUpdateLocations:@[[UALocationTestUtils testLocationSFO], [UALocationTestUtils testLocationPDX]]];
     XCTAssertTrue(_locationService.singleLocationShutdownScheduled, @"singleLocationShutdownScheduled should be YES");
+
     _timeout = [[NSDate alloc] initWithTimeInterval:3.0 sinceDate:[NSDate date]];
 
     while (!shutdownCalled) {
@@ -178,6 +170,7 @@
             break;
         }
     }
+    
     XCTAssertTrue(shutdownCalled, @"Location service should be shutdown when a location cannot be obtained within timeout limits");
     [mockLocationService stopMocking];
 }

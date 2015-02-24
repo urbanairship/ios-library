@@ -62,6 +62,9 @@
     _dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"analytics.tests"];
     _analytics = [[UAAnalytics alloc] initWithConfig:config dataStore:_dataStore];
 
+    // Use verbose logging so all the logs show up during tests
+    config.developmentLogLevel = UALogLevelTrace;
+
     [UAirship shared].analytics = _analytics;
 }
 
@@ -379,8 +382,13 @@
 
 - (void)testAnalyticsIsThreadSafe {
     UAAnalytics *airshipAnalytics = [[UAirship shared] analytics];
+
+    __block BOOL threadTestEnded = NO;
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+
     dispatch_queue_t testQueue = dispatch_queue_create("com.urbanairship.analyticsThreadsafeTest", DISPATCH_QUEUE_CONCURRENT);
     dispatch_group_t testGroup = dispatch_group_create();
+
     dispatch_group_async(testGroup, testQueue, ^{
         UALocationEvent *event = [UALocationEvent significantChangeLocationEventWithLocation:[UALocationTestUtils testLocationPDX] providerType:@"testUpdate"];
         int random = 0;
@@ -388,20 +396,33 @@
             random = arc4random() % 2;
             if (random == 0) {
                 dispatch_group_async(testGroup, dispatch_get_main_queue(), ^{
-                    UALOG(@"Added test event on main thread");
-                    [airshipAnalytics addEvent:event];
+                    if (!threadTestEnded) { //if the test is over, just don't do anything
+                        NSLog(@"Added test event on main thread");
+                        [airshipAnalytics addEvent:event];
+                    }
                 });
-                continue;
+            } else {
+                NSLog(@"Added test event on a background thread");
+                [airshipAnalytics addEvent:event];
             }
-            UALOG(@"Added test event on a background thread");
-            [airshipAnalytics addEvent:event];
         }
+
+        // OK we're done. Signal on the main queue AFTER all the other stuff is dispatched.
+        dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_semaphore_signal(semaphore);
+
+        });
+
     });
-    dispatch_group_wait(testGroup, 5 * NSEC_PER_SEC);
-    #if !OS_OBJECT_USE_OBJC
-    dispatch_release(testGroup);
-    dispatch_release(testQueue);
-    #endif
+
+    // Wait for main queue block to execute
+    NSDate *timeoutDate = [NSDate dateWithTimeIntervalSinceNow:5.0];// Give these things 5 seconds to complete
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW)  && [timeoutDate timeIntervalSinceNow] > 0) {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+    }
+    threadTestEnded = YES;
+
     UAAnalyticsDBManager *analyticsDb = [UAAnalyticsDBManager shared];
     NSArray *bunchOevents = [analyticsDb getEvents:100];
     __block BOOL testFail = YES;
