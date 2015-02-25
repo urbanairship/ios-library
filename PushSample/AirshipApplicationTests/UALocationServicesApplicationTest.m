@@ -162,10 +162,10 @@
     [_locationService singleLocationDidUpdateLocations:@[[UALocationTestUtils testLocationSFO], [UALocationTestUtils testLocationPDX]]];
     XCTAssertTrue(_locationService.singleLocationShutdownScheduled, @"singleLocationShutdownScheduled should be YES");
 
-    _timeout = [[NSDate alloc] initWithTimeInterval:3.0 sinceDate:[NSDate date]];
+    _timeout = [NSDate dateWithTimeIntervalSinceNow:10.0];
 
     while (!shutdownCalled) {
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
         if ([_timeout timeIntervalSinceNow] < 0.0) {
             break;
         }
