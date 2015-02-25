@@ -40,7 +40,7 @@
 - (void)registrationFailedWithPayload:(UAChannelRegistrationPayload *)payload;
 
 /**
- * Called when the channel registrar succesfully registered.
+ * Called when the channel registrar successfully registered.
  * @param payload The registration payload.
  */
 - (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload;
@@ -49,8 +49,11 @@
  * Called when the channel registrar creates a new channel.
  * @param channelID The channel ID string.
  * @param channelLocation The channel location string.
+ * @param existing Boolean to indicate if the channel previously existed or not.
  */
-- (void)channelCreated:(NSString *)channelID channelLocation:(NSString *)channelLocation;
+- (void)channelCreated:(NSString *)channelID
+       channelLocation:(NSString *)channelLocation
+              existing:(BOOL)existing;
 
 @end
 

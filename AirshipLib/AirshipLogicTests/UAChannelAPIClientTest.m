@@ -178,7 +178,7 @@
         successBlock(request, 0);
     }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
-    [self.client createChannelWithPayload:nil onSuccess:^(NSString *cId, NSString *location, BOOL newChannel) {
+    [self.client createChannelWithPayload:nil onSuccess:^(NSString *cId, NSString *location, BOOL existing) {
         channelID = cId;
         channelLocation = location;
     } onFailure:nil];

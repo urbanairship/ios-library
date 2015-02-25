@@ -29,10 +29,6 @@
 #import "UAUtils.h"
 #import "UAChannelRegistrationPayload.h"
 #import "UAHTTPRequest.h"
-#import "UAirship.h"
-#import "UAConfig.h"
-#import "UAPush.h"
-#import "UANamedUser+Internal.h"
 
 @implementation UAChannelRegistrar
 
@@ -108,16 +104,12 @@
             return;
         }
 
-        // Conflict with channel id, create a new one
-        UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *newChannelID, NSString *newChannelLocation, BOOL newChannel) {
-            UA_LDEBUG(@"Channel %@ created successfully. Channel location: %@.", newChannelID, newChannelLocation);
-            [self channelCreated:newChannelID channelLocation:newChannelLocation];
+        // Conflict with channel ID, create a new one
+        UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *newChannelID, NSString *channelLocation, BOOL existing) {
+            UA_LDEBUG(@"Channel %@ created successfully. Channel location: %@.", newChannelID, channelLocation);
+            [self channelCreated:newChannelID channelLocation:channelLocation existing:existing];
             [self succeededWithPayload:payload];
 
-            // if this channel previously existed, a named user may be associated to it
-            if (!newChannel && [UAirship shared].config.clearNamedUserOnAppRestore) {
-                [[UAPush shared].namedUser disassociateNamedUserIfNil];
-            }
         };
 
         UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
@@ -141,20 +133,15 @@
 
     UA_LDEBUG(@"Creating channel.");
 
-    UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *channelID, NSString *channelLocation, BOOL newChannel) {
+    UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *channelID, NSString *channelLocation, BOOL existing) {
         if (!channelID || !channelLocation) {
             UA_LDEBUG(@"Channel ID: %@ or channel location: %@ is missing. Channel creation failed",
                       channelID, channelLocation);
             [self failedWithPayload:payload];
         } else {
             UA_LDEBUG(@"Channel %@ created successfully. Channel location: %@.", channelID, channelLocation);
-            [self channelCreated:channelID channelLocation:channelLocation];
+            [self channelCreated:channelID channelLocation:channelLocation existing:existing];
             [self succeededWithPayload:payload];
-
-            // if this channel previously existed, a named user may be associated to it
-            if (!newChannel && [UAirship shared].config.clearNamedUserOnAppRestore) {
-                [[UAPush shared].namedUser disassociateNamedUserIfNil];
-            }
         }
     };
 
@@ -199,12 +186,15 @@
     }
 }
 
-- (void)channelCreated:(NSString *)channelID channelLocation:(NSString *)channelLocation {
-    id strongDelegate = self.delegate;
-    if ([strongDelegate respondsToSelector:@selector(channelCreated:channelLocation:)]) {
-        [strongDelegate channelCreated:channelID channelLocation:channelLocation];
-    }
+- (void)channelCreated:(NSString *)channelID
+       channelLocation:(NSString *)channelLocation
+              existing:(BOOL)existing {
 
+    id strongDelegate = self.delegate;
+
+    if ([strongDelegate respondsToSelector:@selector(channelCreated:channelLocation:existing:)]) {
+        [strongDelegate channelCreated:channelID channelLocation:channelLocation existing:existing];
+    }
 }
 
 @end

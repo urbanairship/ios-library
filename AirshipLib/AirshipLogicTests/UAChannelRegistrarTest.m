@@ -52,7 +52,7 @@
 @property (nonatomic, strong) UAChannelRegistrationPayload *payload;
 @property (nonatomic, strong) UAChannelRegistrar *registrar;
 @property bool clearNamedUser;
-@property bool newChannel;
+@property bool existing;
 
 @end
 
@@ -68,7 +68,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 - (void)setUp {
     [super setUp];
 
-    self.newChannel = YES;
+    self.existing = YES;
     self.clearNamedUser = YES;
 
     self.channelCreateSuccessChannelID = @"newChannelID";
@@ -121,7 +121,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAChannelAPIClientCreateSuccessBlock successBlock = (__bridge UAChannelAPIClientCreateSuccessBlock)arg;
-        successBlock(self.channelCreateSuccessChannelID, self.channelCreateSuccessChannelLocation, self.newChannel);
+        successBlock(self.channelCreateSuccessChannelID, self.channelCreateSuccessChannelLocation, self.existing);
     };
 
     channelCreateFailureDoBlock = ^(NSInvocation *invocation) {
@@ -237,7 +237,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
                                                                                      onFailure:OCMOCK_ANY];
 
     [[self.mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
-    [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation];
+    [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation existing:YES];
 
 
     [self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO];
@@ -328,7 +328,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
     // Expect the delegate to be called
     [[self.mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
-    [[self.mockedRegistrarDelegate expect] channelCreated:@"newChannel" channelLocation:self.channelCreateSuccessChannelLocation];
+    [[self.mockedRegistrarDelegate expect] channelCreated:@"newChannel" channelLocation:self.channelCreateSuccessChannelLocation existing:YES];
 
 
     [self.registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:self.payload forcefully:NO];
@@ -369,7 +369,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
  */
 - (void)testDisassociateChannelExistFlagYes {
     // set to an existing channel
-    self.newChannel = NO;
+    self.existing = YES;
 
     // set clearNamedUserOnAppRestore
     self.clearNamedUser = YES;
@@ -380,15 +380,12 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
                                                                                           onFailure:OCMOCK_ANY];
 
     [[self.mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
-    [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation];
-    [[self.mockedUANamedUser expect] disassociateNamedUserIfNil];
-
+    [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation existing:YES];
 
     [self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO];
 
     XCTAssertNoThrow([self.mockedChannelClient verify], @"Channel client should create a new create request");
     XCTAssertNoThrow([self.mockedRegistrarDelegate verify], @"Delegate should be called on success");
-    XCTAssertNoThrow([self.mockedUANamedUser verify], @"Named user disassociateNamedUserIfNil should be called");
 }
 
 /**
@@ -396,7 +393,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
  */
 - (void)testNewChannelFlagYes {
     // set to new channel
-    self.newChannel = YES;
+    self.existing = NO;
 
     // set clearNamedUserOnAppRestore
     self.clearNamedUser = YES;
@@ -407,15 +404,12 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
                                                                                           onFailure:OCMOCK_ANY];
 
     [[self.mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
-    [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation];
-    [[self.mockedUANamedUser reject] disassociateNamedUserIfNil];
-
+    [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation existing:NO];
 
     [self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO];
 
     XCTAssertNoThrow([self.mockedChannelClient verify], @"Channel client should create a new create request");
     XCTAssertNoThrow([self.mockedRegistrarDelegate verify], @"Delegate should be called on success");
-    XCTAssertNoThrow([self.mockedUANamedUser verify], @"Named user disassociateNamedUserIfNil should not be called");
 }
 
 /**
@@ -423,7 +417,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
  */
 - (void)testChannelExistFlagNo {
     // set to an existing channel
-    self.newChannel = NO;
+    self.existing = YES;
 
     // set clearNamedUserOnAppRestore
     self.clearNamedUser = NO;
@@ -434,23 +428,20 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
                                                                                           onFailure:OCMOCK_ANY];
 
     [[self.mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
-    [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation];
-    [[self.mockedUANamedUser reject] disassociateNamedUserIfNil];
-
+    [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation existing:YES];
 
     [self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO];
 
     XCTAssertNoThrow([self.mockedChannelClient verify], @"Channel client should create a new create request");
     XCTAssertNoThrow([self.mockedRegistrarDelegate verify], @"Delegate should be called on success");
-    XCTAssertNoThrow([self.mockedUANamedUser verify], @"Named user disassociateNamedUserIfNil should not be called");
 }
 
 /**
  * Test disassociate not called when channel is new and flag is NO
  */
 - (void)testNewChannelFlagNo {
-    // set to an existing channel
-    self.newChannel = YES;
+    // set to new channel
+    self.existing = NO;
 
     // set clearNamedUserOnAppRestore
     self.clearNamedUser = NO;
@@ -461,15 +452,12 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
                                                                                           onFailure:OCMOCK_ANY];
 
     [[self.mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]];
-    [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation];
-    [[self.mockedUANamedUser reject] disassociateNamedUserIfNil];
-
+    [[self.mockedRegistrarDelegate expect] channelCreated:self.channelCreateSuccessChannelID channelLocation:self.channelCreateSuccessChannelLocation existing:NO];
 
     [self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO];
 
     XCTAssertNoThrow([self.mockedChannelClient verify], @"Channel client should create a new create request");
     XCTAssertNoThrow([self.mockedRegistrarDelegate verify], @"Delegate should be called on success");
-    XCTAssertNoThrow([self.mockedUANamedUser verify], @"Named user disassociateNamedUserIfNil should not be called");
 }
 
 @end

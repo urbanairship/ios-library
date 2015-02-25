@@ -31,8 +31,6 @@
 #import "UAConfig.h"
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAPush.h"
-#import "UANamedUser+Internal.h"
 
 
 #define kUAChannelRetryTimeInitialDelay 60
@@ -103,10 +101,10 @@
         UA_LTRACE(@"Retrieved channel response: %@", responseString);
         NSInteger status = request.response.statusCode;
 
-        BOOL newChannel = NO;
+        BOOL existing = NO;
         // 200 means channel previously existed, while 201 means newly created channel
-        if (status == 201) {
-            newChannel = YES;
+        if (status == 200) {
+            existing = YES;
         }
 
         // Get the channel id from the request
@@ -115,7 +113,7 @@
         // Channel location from the request
         NSString *channelLocation = [request.response.allHeaderFields valueForKey:@"Location"];
         if (successBlock) {
-            successBlock(channelID, channelLocation, newChannel);
+            successBlock(channelID, channelLocation, existing);
         } else {
             UA_LERR(@"missing successBlock");
         }
