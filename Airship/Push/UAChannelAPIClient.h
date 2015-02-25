@@ -34,9 +34,9 @@
  *
  * @param channelID The channel identifier string.
  * @param channelLocation The channel location string.
- * @param newChannel Boolean to indicate if the channel is newly created.
+ * @param existing Boolean to indicate if the channel previously existed or not.
  */
-typedef void (^UAChannelAPIClientCreateSuccessBlock)(NSString *channelID, NSString *channelLocation, BOOL newChannel);
+typedef void (^UAChannelAPIClientCreateSuccessBlock)(NSString *channelID, NSString *channelLocation, BOOL existing);
 
 /**
  * A block called when the channel update succeeded.

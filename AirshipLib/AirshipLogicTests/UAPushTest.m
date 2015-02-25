@@ -1655,7 +1655,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testChannelCreated {
     UAPush *push = self.push;
 
-    [push channelCreated:@"someChannelID" channelLocation:@"someLocation" newChannel:YES];
+    [push channelCreated:@"someChannelID" channelLocation:@"someLocation" existing:YES];
 
     XCTAssertEqualObjects(push.channelID, @"someChannelID", @"The channel ID should be set on channel creation.");
     XCTAssertEqualObjects(push.channelLocation, @"someLocation", @"The channel location should be set on channel creation.");

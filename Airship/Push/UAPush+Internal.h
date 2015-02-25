@@ -181,11 +181,11 @@ extern NSString *const UAPushEnabledSettingsMigratedKey;
  * Called when the channel registrar creates a new channel.
  * @param channelID The channel ID string.
  * @param channelLocation The channel location string.
- * @param newChannel Boolean to indicate if the channel previously existed or not.
+ * @param existing Boolean to indicate if the channel previously existed or not.
  */
 - (void)channelCreated:(NSString *)channelID
        channelLocation:(NSString *)channelLocation
-            newChannel:(BOOL)newChannel;
+              existing:(BOOL)existing;
 
 /**
  * Called when the channel previously existed.

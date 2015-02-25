@@ -912,7 +912,7 @@ BOOL deferChannelCreationOnForeground = false;
 
 - (void)channelCreated:(NSString *)channelID
        channelLocation:(NSString *)channelLocation
-            newChannel:(BOOL)newChannel {
+              existing:(BOOL)existing {
 
     if (channelID && channelLocation) {
         self.channelID = channelID;
@@ -923,7 +923,7 @@ BOOL deferChannelCreationOnForeground = false;
         }
 
         // If this channel previously existed, a named user may be associated to it.
-        if (!newChannel && [UAirship shared].config.clearNamedUserOnAppRestore) {
+        if (existing && [UAirship shared].config.clearNamedUserOnAppRestore) {
             [self.namedUser disassociateNamedUserIfNil];
         } else {
             // Once we get a channel, update the named user if necessary.
