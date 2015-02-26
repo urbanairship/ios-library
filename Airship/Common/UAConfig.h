@@ -204,6 +204,11 @@
  */
 @property (nonatomic, assign) BOOL clearNamedUserOnAppRestore;
 
+/**
+ * Dictionary of custom config values.
+ */
+@property (nonatomic, copy) NSDictionary *customConfig;
+
 ///---------------------------------------------------------------------------------------
 /// @name Factory Methods
 ///---------------------------------------------------------------------------------------

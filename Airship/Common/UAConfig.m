@@ -81,7 +81,8 @@
             "Automatic Setup Enabled: %d\n"
             "Clear user on Application Restore: %d\n"
             "Whitelist: %@\n"
-            "Clear named user on App Restore: %d\n",
+            "Clear named user on App Restore: %d\n"
+            "Custom Config: %@\n",
             self.appKey,
             self.appSecret,
             self.inProduction,
@@ -106,7 +107,8 @@
             self.automaticSetupEnabled,
             self.clearUserOnAppRestore,
             self.whitelist,
-            self.clearNamedUserOnAppRestore];
+            self.clearNamedUserOnAppRestore,
+            self.custom];
 }
 
 #pragma mark -

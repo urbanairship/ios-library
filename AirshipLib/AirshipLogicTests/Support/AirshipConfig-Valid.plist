@@ -18,6 +18,11 @@
 	<true/>
 	<key>clearKeychain</key>
 	<true/>
+	<key>custom</key>
+	<dict>
+		<key>customKey</key>
+		<string>customValue</string>
+	</dict>
 	<key>inProduction</key>
 	<true/>
 </dict>

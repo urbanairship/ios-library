@@ -185,6 +185,7 @@
     XCTAssertEqualObjects(config.productionAppSecret, validAppValue, @"Production app secret was improperly loaded.");
     XCTAssertEqualObjects(config.developmentAppKey, validAppValue, @"Development app key was improperly loaded.");
     XCTAssertEqualObjects(config.developmentAppSecret, validAppValue, @"Development app secret was improperly loaded.");
+    XCTAssertEqualObjects(config.customConfig, @{@"customKey": @"customValue"}, @"Custom config was improperly loaded.");
 
     XCTAssertEqual(config.developmentLogLevel, 1, @"Development log level was improperly loaded.");
     XCTAssertEqual(config.productionLogLevel, 5, @"Production log level was improperly loaded.");
