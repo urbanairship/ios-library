@@ -3,9 +3,9 @@
 
 /**
  * Model object representing a binding between an in-app
- * notification button, a localized title and action name/argument pairs.
+ * message button, a localized title and action name/argument pairs.
  */
-@interface UAInAppNotificationButtonActionBinding : NSObject
+@interface UAInAppMessageButtonActionBinding : NSObject
 
 /**
  * The localized title of the button.

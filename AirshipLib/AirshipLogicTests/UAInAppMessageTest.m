@@ -3,17 +3,17 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 
-#import "UAInAppNotification.h"
+#import "UAInAppMessage.h"
 #import "UAirship+Internal.h"
 #import "UAPreferenceDataStore.h"
 
-@interface UAInAppNotificationTest : XCTestCase
+@interface UAInAppMessageTest : XCTestCase
 @property(nonatomic, strong) id mockAirship;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) NSDictionary *payload;
 @end
 
-@implementation UAInAppNotificationTest
+@implementation UAInAppMessageTest
 
 - (void)setUp {
     [super setUp];
@@ -41,16 +41,16 @@
 /**
  * Helper method for verifying model/payload equivalence 
  */
-- (void)verifyPayloadConsistency:(UAInAppNotification *)ian {
+- (void)verifyPayloadConsistency:(UAInAppMessage *)message {
 
     NSCalendar *gregorian = [[NSCalendar alloc]
                              initWithCalendarIdentifier:NSGregorianCalendar];
     gregorian.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
 
     NSDateComponents *expiryComponents =
-    [gregorian components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit) fromDate:ian.expiry];
+    [gregorian components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit) fromDate:message.expiry];
 
-    XCTAssertEqualObjects(ian.identifier, @"some identifier");
+    XCTAssertEqualObjects(message.identifier, @"some identifier");
 
     XCTAssertEqual(expiryComponents.year, 2020);
     XCTAssertEqual(expiryComponents.month, 12);
@@ -59,30 +59,30 @@
     XCTAssertEqual(expiryComponents.minute, 45);
     XCTAssertEqual(expiryComponents.second, 22);
 
-    XCTAssertEqualObjects(ian.extra[@"foo"], self.payload[@"extra"][@"foo"]);
-    XCTAssertEqualObjects(ian.extra[@"baz"], self.payload[@"extra"][@"baz"]);
+    XCTAssertEqualObjects(message.extra[@"foo"], self.payload[@"extra"][@"foo"]);
+    XCTAssertEqualObjects(message.extra[@"baz"], self.payload[@"extra"][@"baz"]);
 
-    XCTAssertEqualObjects(ian.alert, self.payload[@"display"][@"alert"]);
-    XCTAssertEqual(ian.duration, [self.payload[@"display"][@"duration"] doubleValue]);
-    XCTAssertEqual(ian.position, UAInAppNotificationPositionTop);
-    XCTAssertEqual(ian.displayType, UAInAppNotificationDisplayTypeBanner);
+    XCTAssertEqualObjects(message.alert, self.payload[@"display"][@"alert"]);
+    XCTAssertEqual(message.duration, [self.payload[@"display"][@"duration"] doubleValue]);
+    XCTAssertEqual(message.position, UAInAppMessagePositionTop);
+    XCTAssertEqual(message.displayType, UAInAppMessageDisplayTypeBanner);
 
-    XCTAssertEqualObjects(ian.buttonGroup, self.payload[@"actions"][@"button_group"]);
-    XCTAssertEqualObjects(ian.onClick, self.payload[@"actions"][@"on_click"]);
-    XCTAssertEqualObjects(ian.buttonActions, self.payload[@"actions"][@"button_actions"]);
+    XCTAssertEqualObjects(message.buttonGroup, self.payload[@"actions"][@"button_group"]);
+    XCTAssertEqualObjects(message.onClick, self.payload[@"actions"][@"on_click"]);
+    XCTAssertEqualObjects(message.buttonActions, self.payload[@"actions"][@"button_actions"]);
 
-    XCTAssertEqualObjects(ian.primaryColor, [UIColor colorWithRed:1 green:1 blue:1 alpha:1]);
-    XCTAssertEqualObjects(ian.secondaryColor, [UIColor greenColor]);
+    XCTAssertEqualObjects(message.primaryColor, [UIColor colorWithRed:1 green:1 blue:1 alpha:1]);
+    XCTAssertEqualObjects(message.secondaryColor, [UIColor greenColor]);
 
-    XCTAssertEqualObjects(ian.payload, self.payload);
+    XCTAssertEqualObjects(message.payload, self.payload);
 }
 
 - (void)testDefaults {
-    UAInAppNotification *ian = [UAInAppNotification notification];
-    XCTAssertEqual(ian.displayType, UAInAppNotificationDisplayTypeBanner);
-    XCTAssertEqual(ian.position, UAInAppNotificationPositionBottom);
+    UAInAppMessage *message = [UAInAppMessage message];
+    XCTAssertEqual(message.displayType, UAInAppMessageDisplayTypeBanner);
+    XCTAssertEqual(message.position, UAInAppMessagePositionBottom);
 
-    NSDate *expiry = ian.expiry;
+    NSDate *expiry = message.expiry;
     NSDate *expectedExpiry = [NSDate dateWithTimeIntervalSinceNow:60 * 60 * 24 * 30];
     XCTAssertEqualWithAccuracy(expiry.timeIntervalSince1970, expectedExpiry.timeIntervalSince1970, 1);
 }
@@ -90,35 +90,35 @@
 /**
  * Test that payloads get turned into model objects properly
  */
-- (void)testNotificationWithPayload {
-    UAInAppNotification *ian = [UAInAppNotification notificationWithPayload:self.payload];
-    [self verifyPayloadConsistency:ian];
+- (void)testMessageWithPayload {
+    UAInAppMessage *iam = [UAInAppMessage messageWithPayload:self.payload];
+    [self verifyPayloadConsistency:iam];
 }
 
 /**
- * Test that pending notification storage and retrieval works
+ * Test that pending message storage and retrieval works
  */
-- (void)testPendingNotification {
-    [UAInAppNotification storePendingNotificationPayload:self.payload];
+- (void)testPendingMessage {
+    [UAInAppMessage storePendingMessagePayload:self.payload];
 
-    UAInAppNotification *ian = [UAInAppNotification pendingNotification];
-    [self verifyPayloadConsistency:ian];
+    UAInAppMessage *iam = [UAInAppMessage pendingMessage];
+    [self verifyPayloadConsistency:iam];
 
-    // The pending notification should be erased once it's been retrieved.
-    XCTAssertNil([UAInAppNotification pendingNotification]);
+    // The pending message should be erased once it's been retrieved.
+    XCTAssertNil([UAInAppMessage pendingMessage]);
 }
 
 /**
- * Test that notifications can be compared for equality by value
+ * Test that messages can be compared for equality by value
  */
-- (void)testIsEqualToNotification {
-    UAInAppNotification *ian = [UAInAppNotification notificationWithPayload:self.payload];
-    UAInAppNotification *ian2 = [UAInAppNotification notificationWithPayload:self.payload];
-    XCTAssertTrue([ian isEqualToNotification:ian2]);
+- (void)testIsEqualToMessage {
+    UAInAppMessage *iam = [UAInAppMessage messageWithPayload:self.payload];
+    UAInAppMessage *iam2 = [UAInAppMessage messageWithPayload:self.payload];
+    XCTAssertTrue([iam isEqualToMessage:iam2]);
 
-    ian.alert = @"sike!";
+    iam.alert = @"sike!";
 
-    XCTAssertFalse([ian isEqualToNotification:ian2]);
+    XCTAssertFalse([iam isEqualToMessage:iam2]);
 }
 
 - (void)testUnexpectedDisplayAndPosition {
@@ -126,13 +126,13 @@
     NSDictionary *weirdDisplay = @{@"alert":@"yo!", @"type":@"not a type", @"position":@"sideways, starring paul giamatti"};
 
     weirdPayload[@"display"] = weirdDisplay;
-    UAInAppNotification *ian = [UAInAppNotification notificationWithPayload:weirdPayload];
+    UAInAppMessage *iam = [UAInAppMessage messageWithPayload:weirdPayload];
 
     // default to unknown
-    XCTAssertEqual(ian.displayType, UAInAppNotificationDisplayTypeUnknown);
+    XCTAssertEqual(iam.displayType, UAInAppMessageDisplayTypeUnknown);
 
     // default to bottom
-    XCTAssertEqual(ian.position, UAInAppNotificationPositionBottom);
+    XCTAssertEqual(iam.position, UAInAppMessagePositionBottom);
 }
 
 /**
@@ -144,19 +144,19 @@
 
     weirdPayload[@"display"] = weirdDisplay;
 
-    UAInAppNotification *ian = [UAInAppNotification notificationWithPayload:weirdPayload];
+    UAInAppMessage *iam = [UAInAppMessage messageWithPayload:weirdPayload];
 
     // alert has no default, so it should be nil in this case
-    XCTAssertNil(ian.alert);
+    XCTAssertNil(iam.alert);
 
     // default to unknown (as opposed to banner, which is the default when constructing a new object)
-    XCTAssertEqual(ian.displayType, UAInAppNotificationDisplayTypeUnknown);
+    XCTAssertEqual(iam.displayType, UAInAppMessageDisplayTypeUnknown);
 
     // default to bottom
-    XCTAssertEqual(ian.position, UAInAppNotificationPositionBottom);
+    XCTAssertEqual(iam.position, UAInAppMessagePositionBottom);
 
     // default to 15 seconds
-    XCTAssertEqual(ian.duration, 15);
+    XCTAssertEqual(iam.duration, 15);
 }
 
 @end

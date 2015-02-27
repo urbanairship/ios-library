@@ -2,7 +2,7 @@
 #import "UAAction.h"
 
 /**
- * Stores or displays an in-app notification.
+ * Stores or displays an in-app message.
  *
  * This action is registered under the names com.urbanairship.in_app and ^i.
  *
@@ -17,6 +17,6 @@
  * Result value: nil
  *
  */
-@interface UAInAppNotificationAction : UAAction
+@interface UAInAppMessageAction : UAAction
 
 @end

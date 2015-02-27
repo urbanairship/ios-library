@@ -41,8 +41,8 @@
 #import "UAPreferenceDataStore.h"
 #import "UAConfig.h"
 
-#import "UAInAppNotification.h"
-#import "UAInAppNotificationAction.h"
+#import "UAInAppMessage.h"
+#import "UAInAppMessageAction.h"
 
 #define kUAMinTagLength 1
 #define kUAMaxTagLength 127
@@ -678,16 +678,16 @@ BOOL deferChannelCreationOnForeground = false;
         [self updateRegistrationForcefully:NO]; 
     }
 
-    // the pending in-app notification, if present
-    NSDictionary *pendingIANPayload = [UAInAppNotification pendingNotificationPayload];
+    // the pending in-app message, if present
+    NSDictionary *pendingMessagePayload = [UAInAppMessage pendingMessagePayload];
 
-    if (pendingIANPayload) {
+    if (pendingMessagePayload) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kUAPushDelayBeforeInAppNotificationDisplay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            UAActionArguments *args = [UAActionArguments argumentsWithValue:pendingIANPayload withSituation:UASituationManualInvocation];
-            [UAActionRunner runActionWithName:kUAInAppNotificationActionDefaultRegistryName withArguments:args withCompletionHandler:nil];
+            UAActionArguments *args = [UAActionArguments argumentsWithValue:pendingMessagePayload withSituation:UASituationManualInvocation];
+            [UAActionRunner runActionWithName:kUAInAppMessageActionDefaultRegistryName withArguments:args withCompletionHandler:nil];
         });
 
-        [UAInAppNotification deletePendingNotificationPayload:pendingIANPayload];
+        [UAInAppMessage deletePendingMessagePayload:pendingMessagePayload];
     }
 }
 

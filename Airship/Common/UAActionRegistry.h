@@ -41,8 +41,8 @@
 #define kUAAddCustomEventActionDefaultRegistryName @"add_custom_event_action"
 #define kUAShareActionDefaultRegistryName @"share_action"
 #define kUAShareActionDefaultRegistryAlias @"^s"
-#define kUAInAppNotificationActionDefaultRegistryName @"com.urbanairship.in_app"
-#define kUAInAppNotificationActionDefaultRegistryAlias @"^i"
+#define kUAInAppMessageActionDefaultRegistryName @"com.urbanairship.in_app"
+#define kUAInAppMessageActionDefaultRegistryAlias @"^i"
 
 
 #define kUALandingPageActionLastOpenTimeLimitInSeconds @(7 * 86400) // 1 week
