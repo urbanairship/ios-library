@@ -18,8 +18,20 @@
 
         // rounded corners
         self.layer.cornerRadius = 4;
-        self.layer.borderColor = [[UIColor blackColor] CGColor];
-        self.layer.borderWidth = 0.5;
+
+        CGFloat shadowOffsetY;
+
+        // if on the bottom, project the shadow on the top edge
+        if (position == UAInAppMessagePositionBottom) {
+            shadowOffsetY = -1;
+        } else {
+            // otherwise project it on the bottom edge
+            shadowOffsetY = 1;
+        }
+
+        self.layer.shadowOffset = CGSizeMake(0, shadowOffsetY);
+        self.layer.shadowRadius = 1;
+        self.layer.shadowOpacity = 0.35;
 
         self.messageLabel = [UILabel new];
         self.messageLabel.translatesAutoresizingMaskIntoConstraints = NO;

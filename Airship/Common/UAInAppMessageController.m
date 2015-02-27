@@ -135,10 +135,13 @@
     // add tap and long press gesture recognizers if an onClick action is present in the model
     if (self.message.onClick) {
         UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapWithGestureRecognizer:)];
+        tapGestureRecognizer.delegate = self;
         [messageView addGestureRecognizer:tapGestureRecognizer];
+
 
         UILongPressGestureRecognizer *longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressWithGestureRecognizer:)];
         longPressGestureRecognizer.minimumPressDuration = kUAInAppMessageMinimumLongPressDuration;
+        longPressGestureRecognizer.delegate = self;
         [messageView addGestureRecognizer:longPressGestureRecognizer];
     }
 
@@ -337,6 +340,19 @@
             [self dismiss];
         }
     }
+}
+
+/**
+ * Delegate method for the tap and long press recognizer that rejects touches originating from either
+ * of the action buttons.
+ */
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    // Ignore touches within the action buttons
+    if (([touch.view isEqual:self.messageView.button1] ||
+         [touch.view isEqual:self.messageView.button2])) {
+        return NO;
+    }
+    return YES;
 }
 
 - (void)buttonTapped:(id)sender {

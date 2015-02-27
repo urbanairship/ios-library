@@ -1,5 +1,6 @@
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @class UAInAppMessage;
 
@@ -7,7 +8,7 @@
  * Controller interface for showing and dismissing in-app
  * messages.
  */
-@interface UAInAppMessageController : NSObject
+@interface UAInAppMessageController : NSObject<UIGestureRecognizerDelegate>
 
 /**
  * UAInAppMessageController initializer.
