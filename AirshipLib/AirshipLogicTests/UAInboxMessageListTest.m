@@ -5,9 +5,10 @@
 #import "UAInboxMessageList+Internal.h"
 #import "UAInboxMessageListDelegate.h"
 #import "UAInboxAPIClient.h"
-#import "UAUser+Test.h"
 #import "UAActionArguments+Internal.h"
 #import "UATestSynchronizer.h"
+#import "UAirship.h"
+#import "UAConfig.h"
 
 static UAUser *mockUser = nil;
 
@@ -17,6 +18,9 @@ static UAUser *mockUser = nil;
 @end
 
 @interface UAInboxMessageListTest : XCTestCase
+@property (nonatomic, strong) id mockUser;
+@property (nonatomic, assign) BOOL userCreated;
+
 //the mock inbox API client we'll inject into the message list
 @property (nonatomic, strong) id mockInboxAPIClient;
 //a mock object that will sign up for NSNotificationCenter events
@@ -33,6 +37,12 @@ static UAUser *mockUser = nil;
 - (void)setUp {
     [super setUp];
 
+    self.userCreated = YES;
+    self.mockUser = [OCMockObject niceMockForClass:[UAUser class]];
+    [[[self.mockUser stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&_userCreated];
+    }] isCreated];
+
     self.mockInboxAPIClient = [OCMockObject niceMockForClass:[UAInboxAPIClient class]];
 
     self.mockMessageListNotificationObserver = [OCMockObject mockForProtocol:@protocol(UAInboxMessageListMockNotificationObserver)];
@@ -42,7 +52,7 @@ static UAUser *mockUser = nil;
     [self.mockMessageListNotificationObserver setExpectationOrderMatters:YES];
     [self.mockMessageListDelegate setExpectationOrderMatters:YES];
 
-    self.messageList = [[UAInboxMessageList alloc] init];
+    self.messageList = [UAInboxMessageList messageListWithUser:self.mockUser client:self.mockInboxAPIClient config:[UAConfig config]];
 
     //inject the API client
     self.messageList.client = self.mockInboxAPIClient;
@@ -50,17 +60,13 @@ static UAUser *mockUser = nil;
     //sign up for NSNotificationCenter events with our mock observer
     [[NSNotificationCenter defaultCenter] addObserver:self.mockMessageListNotificationObserver selector:@selector(messageListWillUpdate) name:UAInboxMessageListWillUpdateNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self.mockMessageListNotificationObserver selector:@selector(messageListUpdated) name:UAInboxMessageListUpdatedNotification object:nil];
-
-    //swizzle the defaultUserCreated method to always return YES
-    [UAUser swizzleDefaultUserCreated];
 }
 
 - (void)tearDown {
+    [self.mockUser stopMocking];
+
     [self.messageList.queue cancelAllOperations];
     [self waitUntilAllOperationsAreFinished];
-
-    //unswizzle the defaultUserCreated back to its normal implementation
-    [UAUser unswizzleDefaultUserCreated];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListWillUpdateNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListUpdatedNotification object:nil];
@@ -74,7 +80,7 @@ static UAUser *mockUser = nil;
 
 //if there's no user, retrieveMessageList should do nothing
 - (void)testRetrieveMessageListDefaultUserNotCreated {
-    [UAUser unswizzleDefaultUserCreated];
+    self.userCreated = NO;
 
     [self.messageList retrieveMessageListWithSuccessBlock:^{
         XCTFail(@"No user should no-op");
@@ -82,23 +88,18 @@ static UAUser *mockUser = nil;
         XCTFail(@"No user should no-op");
     }];
     [self waitUntilAllOperationsAreFinished];
-
-    [UAUser swizzleDefaultUserCreated];
 }
 
-
 #pragma mark delegate methods
+
 
 //if the user is not created, this method should do nothing.
 //the UADisposable return value should be nil.
 - (void)testRetrieveMessageListWithDelegateDefaultUserNotCreated {
-    //if there's no user, the delegate version of this method should do nothing and return a nil disposable
-    [UAUser unswizzleDefaultUserCreated];
+    self.userCreated = NO;
 
     UADisposable *disposable = [self.messageList retrieveMessageListWithDelegate:self.mockMessageListDelegate];
     XCTAssertNil(disposable, @"disposable should be nil");
-
-    [UAUser swizzleDefaultUserCreated];
 }
 
 //if successful, the observer should get messageListWillLoad and messageListLoaded callbacks.
@@ -276,7 +277,7 @@ static UAUser *mockUser = nil;
 //the UADisposable return value should be nil.
 - (void)testRetrieveMessageListWithBlocksDefaultUserNotCreated {
     //if there's no user, the block version of this method should do nothing and return a nil disposable
-    [UAUser unswizzleDefaultUserCreated];
+    self.userCreated = NO;
 
     __block BOOL fail = NO;
 
@@ -288,8 +289,6 @@ static UAUser *mockUser = nil;
 
     XCTAssertNil(disposable, @"disposable should be nil");
     XCTAssertFalse(fail, @"callback blocks should not have been executed");
-
-    [UAUser swizzleDefaultUserCreated];
 }
 
 //if successful, the observer should get messageListWillLoad and messageListLoaded callbacks.

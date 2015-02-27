@@ -28,6 +28,7 @@
 @class UAHTTPRequestEngine;
 @class UAChannelRegistrationPayload;
 @class UAHTTPRequest;
+@class UAConfig;
 
 /**
  * A block called when the channel ID creation succeeded.
@@ -57,16 +58,10 @@ typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
 
 /**
  * Factory method to create a UAChannelAPIClient.
- * @param requestEngine The specified UAHTTPRequestEngine.
- * @return UAChannelAPIClient with the specified requestEngine.
+ * @param config the Urban Airship config.
+ * @return UAChannelAPIClient instance.
  */
-+ (UAChannelAPIClient *)clientWithRequestEngine:(UAHTTPRequestEngine *)requestEngine;
-
-/**
- * Factory method to create a UAChannelAPIClient.
- * @return UAChannelAPIClient with a default requestEngine.
- */
-+ (UAChannelAPIClient *)client;
++ (instancetype)clientWithConfig:(UAConfig *)config;
 
 /**
  * Create the channel ID.
@@ -113,5 +108,10 @@ typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
  * reconnections accordingly before calling back with a success or failure.  Defaults to `YES`.
  */
 @property (nonatomic, assign) BOOL shouldRetryOnConnectionError;
+
+/**
+ * The client's request engine.
+ */
+@property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
 
 @end

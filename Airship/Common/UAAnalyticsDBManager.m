@@ -34,9 +34,6 @@
 
 @implementation UAAnalyticsDBManager
 
-SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
-
-
 - (void)createDatabaseIfNeeded {
     dispatch_sync(dbQueue, ^{
         NSString *libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) lastObject];

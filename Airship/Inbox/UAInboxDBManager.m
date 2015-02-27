@@ -28,19 +28,16 @@
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import <CoreData/CoreData.h>
-#import "UAirship.h"
 #import "UAConfig.h"
 
 #define kUAInboxDBEntityName @"UAInboxMessage"
 
 @implementation UAInboxDBManager
 
-SINGLETON_IMPLEMENTATION(UAInboxDBManager)
-
-- (instancetype)init {
+- (instancetype)initWithConfig:(UAConfig *)config {
     self = [super init];
     if (self) {
-        NSString  *databaseName = [NSString stringWithFormat:CORE_DATA_STORE_NAME, [UAirship shared].config.appKey];
+        NSString  *databaseName = [NSString stringWithFormat:CORE_DATA_STORE_NAME, config.appKey];
         self.storeURL = [[self createStoreURL] URLByAppendingPathComponent:databaseName];
 
         // Delete the old directory if it exists
@@ -49,6 +46,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     
     return self;
 }
+
 
 - (NSArray *)fetchMessagesWithPredicate:(NSPredicate *)predicate {
     NSFetchRequest *request = [[NSFetchRequest alloc] init];

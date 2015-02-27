@@ -27,7 +27,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "UAirship+Internal.h"
 
-#import "UAUser.h"
+#import "UAUser+Internal.h"
 #import "UAAnalytics+Internal.h"
 #import "UAUtils.h"
 #import "UAKeychainUtils.h"
@@ -36,6 +36,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAPush+Internal.h"
 #import "UAConfig.h"
 #import "UAApplicationMetrics.h"
+#import "UAInbox+Internal.h"
+#import "UAActionRegistry.h"
 
 #import "UAAppDelegateProxy.h"
 #import "UAAppDelegate.h"
@@ -44,7 +46,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAEventAppInit.h"
 #import "UAEventAppExit.h"
 #import "UAPreferenceDataStore.h"
-
 
 #import "UAActionJSDelegate.h"
 
@@ -88,6 +89,7 @@ UALogLevel uaLogLevel = UALogLevelError;
     [center addObserver:[UAirship class] selector:@selector(handleAppTerminationNotification:) name:UIApplicationWillTerminateNotification object:nil];
 }
 
+
 #pragma mark -
 #pragma mark Location Get/Set Methods
 
@@ -102,13 +104,29 @@ UALogLevel uaLogLevel = UALogLevelError;
 #pragma mark -
 #pragma mark Object Lifecycle
 
-- (instancetype)init {
+- (instancetype)initWithConifg:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
-        self.ready = NO;
         self.remoteNotificationBackgroundModeEnabled = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIBackgroundModes"] containsObject:@"remote-notification"]
-                                    && kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0;
+        && kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0;
+
+
+        self.dataStore = dataStore;
+        self.config = config;
+
+        self.actionJSDelegate = [[UAActionJSDelegate alloc] init];
+        self.applicationMetrics = [[UAApplicationMetrics alloc] init];
+        self.actionRegistry = [UAActionRegistry defaultRegistry];
+
+        self.sharedPush = [UAPush pushWithConfig:config dataStore:dataStore];
+        self.sharedInboxUser = [UAUser userWithPush:self.sharedPush config:config dataStore:dataStore];
+        self.sharedInbox = [UAInbox inboxWithUser:self.sharedInboxUser config:config dataStore:dataStore];
+
+        self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore];
+        self.whitelist = [UAWhitelist whitelistWithConfig:config];
+
     }
+
     return self;
 }
 
@@ -143,10 +161,6 @@ UALogLevel uaLogLevel = UALogLevelError;
 
     [UAirship setLogLevel:config.logLevel];
 
-
-    _sharedAirship = [[UAirship alloc] init];
-    _sharedAirship.config = config;
-
     // Ensure that app credentials have been passed in
     if (![config validate]) {
 
@@ -156,11 +170,14 @@ UALogLevel uaLogLevel = UALogLevelError;
         return;
     }
 
-    UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", config.appKey]];
-     _sharedAirship.dataStore = dataStore;
+    UA_LINFO(@"UAirship Take Off! Lib Version: %@ App Key: %@ Production: %@.",
+             UA_VERSION, config.appKey, config.inProduction ?  @"YES" : @"NO");
 
+    // Data store
+    UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", config.appKey]];
     [dataStore migrateUnprefixedKeys:@[UALibraryVersion]];
 
+    // Save the version
     if ([UA_VERSION isEqualToString:@"0.0.0"]) {
         UA_LERR(@"_UA_VERSION is undefined - this commonly indicates an issue with the build configuration, UA_VERSION will be set to \"0.0.0\".");
     } else {
@@ -174,34 +191,16 @@ UALogLevel uaLogLevel = UALogLevelError;
         }
     }
 
-    UA_LINFO(@"UAirship Take Off! Lib Version: %@ App Key: %@ Production: %@.",
-             UA_VERSION, config.appKey, config.inProduction ?  @"YES" : @"NO");
+    // User Agent
+    NSString *userAgent = [UAirship createUserAgentForAppKey:config.appKey];
+    UA_LDEBUG(@"Setting User-Agent for UA requests to %@", userAgent);
+    [UAHTTPRequest setDefaultUserAgentString:userAgent];
 
-    if (config.automaticSetupEnabled) {
-        UA_LINFO(@"Automatic setup enabled.");
-        _sharedAirship.appDelegate = [[UAAppDelegateProxy alloc ]init];
-
-        //swap pointers with the initial app delegate
-        @synchronized ([UIApplication sharedApplication]) {
-            _sharedAirship.appDelegate.originalAppDelegate = [UIApplication sharedApplication].delegate;
-            _sharedAirship.appDelegate.airshipAppDelegate = [[UAAppDelegate alloc] init];
-            [UIApplication sharedApplication].delegate = _sharedAirship.appDelegate;
-        }
+    // Cache
+    if (config.cacheDiskSizeInMB > 0) {
+        UA_LTRACE("Registering UAURLProtocol.");
+        [NSURLProtocol registerClass:[UAURLProtocol class]];
     }
-
-
-    // Build a custom user agent with the app key and name
-    [_sharedAirship configureUserAgent];
-
-    // Set up analytics
-    _sharedAirship.analytics = [[UAAnalytics alloc] initWithConfig:_sharedAirship.config dataStore:dataStore];
-    [_sharedAirship.analytics delayNextSend:UAAnalyticsFirstBatchUploadInterval];
-
-    _sharedAirship.applicationMetrics = [[UAApplicationMetrics alloc] init];
-
-    /*
-     * Handle Debug Options
-     */
 
 
 #pragma clang diagnostic push
@@ -233,11 +232,11 @@ UALogLevel uaLogLevel = UALogLevelError;
     if (previousDeviceId && ![previousDeviceId isEqualToString:currentDeviceId]) {
         // Device ID changed since the last open. Most likely due to an app restore
         // on a different device.
-
         UA_LDEBUG(@"Device ID changed.");
+
         UA_LDEBUG(@"Clearing previous channel.");
-        [UAPush shared].channelID = nil;
-        [UAPush shared].channelLocation = nil;
+        [dataStore removeObjectForKey:UAPushChannelLocationKey];
+        [dataStore removeObjectForKey:UAPushChannelIDKey];
 
         if (config.clearUserOnAppRestore) {
             UA_LDEBUG(@"Deleting the keychain credentials");
@@ -248,28 +247,33 @@ UALogLevel uaLogLevel = UALogLevelError;
     // Save the Device ID to the data store to detect when it changes
     [dataStore setObject:currentDeviceId forKey:@"deviceId"];
 
+    // Create Airship
+    _sharedAirship = [[UAirship alloc] initWithConifg:config dataStore:dataStore];
+
+    // Create the user if it does not exist
+    if (!_sharedAirship.sharedInboxUser.isCreated) {
+        [_sharedAirship.sharedInboxUser createUser];
+    }
+
+    // Automatic setup
+    if (_sharedAirship.config.automaticSetupEnabled) {
+        UA_LINFO(@"Automatic setup enabled.");
+        _sharedAirship.appDelegate = [[UAAppDelegateProxy alloc ]init];
+
+        //swap pointers with the initial app delegate
+        @synchronized ([UIApplication sharedApplication]) {
+            _sharedAirship.appDelegate.originalAppDelegate = [UIApplication sharedApplication].delegate;
+            _sharedAirship.appDelegate.airshipAppDelegate = [[UAAppDelegate alloc] init];
+            [UIApplication sharedApplication].delegate = _sharedAirship.appDelegate;
+        }
+    }
+
+    // Validate any setup issues
     if (!config.inProduction) {
         [_sharedAirship validate];
     }
 
-    if (config.cacheDiskSizeInMB > 0) {
-        UA_LTRACE("Registering UAURLProtocol.");
-        [NSURLProtocol registerClass:[UAURLProtocol class]];
-    }
-
-    _sharedAirship.actionJSDelegate = [[UAActionJSDelegate alloc] init];
-    _sharedAirship.whitelist = [UAWhitelist whitelistWithConfig:config];
-
-    // The singleton is now ready for use!
-    _sharedAirship.ready = true;
-
-    [[UAPush shared] setup];
-
-    //create/setup user (begin listening for device token changes)
-    [[UAUser defaultUser] initializeUser];
-
     if (_appDidFinishLaunchingNotification) {
-
         // Set up can occur after takeoff, so handle the launch notification on the
         // next run loop to allow app setup to finish
         dispatch_async(dispatch_get_main_queue(), ^() {
@@ -302,8 +306,6 @@ UALogLevel uaLogLevel = UALogLevelError;
 
     [_sharedAirship.analytics launchedFromNotification:remoteNotification];
 
-
-
     //Send Startup Analytics Info
     //init first event
     [_sharedAirship.analytics addEvent:[UAEventAppInit event]];
@@ -317,18 +319,23 @@ UALogLevel uaLogLevel = UALogLevelError;
     && kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0;
 
     if (remoteNotification && !skipNotifyPush) {
-        [[UAPush shared] appReceivedRemoteNotification:remoteNotification
-                           applicationState:[UIApplication sharedApplication].applicationState];
+        [_sharedAirship.sharedPush appReceivedRemoteNotification:remoteNotification
+                                                applicationState:[UIApplication sharedApplication].applicationState];
     }
 
     // Register now
-    if ([UAirship shared].config.automaticSetupEnabled) {
-        [[UAPush shared] updateRegistration];
+    if (_sharedAirship.config.automaticSetupEnabled) {
+        [_sharedAirship.sharedPush updateRegistration];
     }
 }
 
 + (void)handleAppTerminationNotification:(NSNotification *)notification {
     [[NSNotificationCenter defaultCenter] removeObserver:[UAirship class]  name:UIApplicationWillTerminateNotification object:nil];
+
+    // Add app_exit event
+    [[UAirship shared].analytics addEvent:[UAEventAppExit event]];
+
+    // Land it
     [UAirship land];
 }
 
@@ -337,9 +344,7 @@ UALogLevel uaLogLevel = UALogLevelError;
         return;
     }
 
-    // add app_exit event
-    [_sharedAirship.analytics addEvent:[UAEventAppExit event]];
-
+    // Reset the app delegate
     if (_sharedAirship.config.automaticSetupEnabled) {
         // swap pointers back to the initial app delegate
         @synchronized ([UIApplication sharedApplication]) {
@@ -347,31 +352,37 @@ UALogLevel uaLogLevel = UALogLevelError;
         }
     }
 
-    //Land common classes
-    [UAUser land];
-    
-    //Land the modular libaries first
-    [NSClassFromString(@"UAPush") land];
-    [NSClassFromString(@"UAInbox") land];
-    
-    //Finally, release the airship!
+    // Finally, release the airship!
     _sharedAirship = nil;
 
-    takeOffPred_ = 0; // reset the dispatch_once_t flag for testing
+    // Reset the dispatch_once_t flag for testing
+    takeOffPred_ = 0;
 }
 
 + (UAirship *)shared {
     return _sharedAirship;
 }
 
++ (UAPush *)push {
+    return _sharedAirship.sharedPush;
+}
+
++ (UAInbox *)inbox {
+    return _sharedAirship.sharedInbox;
+}
+
++ (UAUser *)inboxUser {
+    return _sharedAirship.sharedInboxUser;
+}
+
 #pragma mark -
 #pragma mark DeviceToken get/set/utils
 
 - (NSString *)deviceToken {
-    return [[UAPush shared] deviceToken];
+    return self.sharedPush.deviceToken;
 }
 
-- (void)configureUserAgent {
++ (NSString *)createUserAgentForAppKey:(NSString *)appKey {
     /*
      * [LIB-101] User agent string should be:
      * App 1.0 (iPad; iPhone OS 5.0.1; UALib 1.1.2; <app key>; en_US)
@@ -392,11 +403,8 @@ UALogLevel uaLogLevel = UALogLevelError;
     NSString *libVersion = [UAirshipVersion get];
     NSString *locale = [[NSLocale autoupdatingCurrentLocale] localeIdentifier];
     
-    NSString *userAgent = [NSString stringWithFormat:@"%@ %@ (%@; %@ %@; UALib %@; %@; %@)",
-                           appName, appVersion, deviceModel, osName, osVersion, libVersion, self.config.appKey, locale];
-    
-    UA_LDEBUG(@"Setting User-Agent for UA requests to %@", userAgent);
-    [UAHTTPRequest setDefaultUserAgentString:userAgent];
+    return [NSString stringWithFormat:@"%@ %@ (%@; %@ %@; UALib %@; %@; %@)",
+                           appName, appVersion, deviceModel, osName, osVersion, libVersion, appKey, locale];
 }
 
 - (void)validate {
@@ -432,7 +440,7 @@ UALogLevel uaLogLevel = UALogLevelError;
     // Push notification delegate validation
     id appDelegate = [UIApplication sharedApplication].delegate;
     if ([appDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
-        id pushDelegate = [UAPush shared].pushNotificationDelegate;
+        id pushDelegate = self.sharedPush.pushNotificationDelegate;
 
         if ([pushDelegate respondsToSelector:@selector(receivedForegroundNotification:)]
             && ! [pushDelegate respondsToSelector:@selector(receivedForegroundNotification:fetchCompletionHandler:)]) {

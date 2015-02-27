@@ -25,7 +25,9 @@
 
 #import "UAPush.h"
 #import "UAChannelRegistrar+Internal.h"
+
 @class UAPreferenceDataStore;
+@class UAConfig;
 
 #define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"
 
@@ -89,6 +91,16 @@ extern NSString *const UAPushChannelCreationOnForeground;
  */
 extern NSString *const UAPushEnabledSettingsMigratedKey;
 
+/**
+ * Channel ID data store key.
+ */
+extern NSString *const UAPushChannelIDKey;
+
+/**
+ * Channel location data store key.
+ */
+extern NSString *const UAPushChannelLocationKey;
+
 @interface UAPush ()
 
 /**
@@ -131,10 +143,18 @@ extern NSString *const UAPushEnabledSettingsMigratedKey;
  */
 @property (nonatomic, assign) BOOL shouldUpdateAPNSRegistration;
 
-@property (nonatomic, readonly) UAPreferenceDataStore *dataStore;
+/**
+ * The preference data store.
+ */
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
-
-- (void)setup;
+/**
+ * Factory method to create a push instance.
+ * @param config The Urban Airship config
+ * @param dataStore The preference data store.
+ * @return A new push instance.
+ */
++ (instancetype)pushWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
  * Get the local time zone, considered the default.
@@ -191,12 +211,6 @@ extern NSString *const UAPushEnabledSettingsMigratedKey;
  * @param tags Tags as an NSArray.
  */
 -(NSArray *)normalizeTags:(NSArray *)tags;
-
-/**
- * Clean up when app is terminated. You should not ordinarily call this method as it is called
- * during [UAirship land].
- */
-+ (void)land;
 
 /**
  * Creates a UAChannelRegistrationPayload.

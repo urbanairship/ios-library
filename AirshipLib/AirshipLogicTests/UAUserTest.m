@@ -39,11 +39,11 @@
 @interface UAUserTest : XCTestCase
 @property (nonatomic, strong) UAUser *user;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+@property (nonatomic, strong) UAConfig *config;
 
+@property (nonatomic, strong) UAPush *push;
 @property (nonatomic, strong) id mockUserClient;
 @property (nonatomic, strong) id mockKeychainUtils;
-@property (nonatomic, strong) id mockedAirship;
-@property (nonatomic, strong) id mockedUAPush;
 
 @end
 
@@ -51,30 +51,23 @@
 
 - (void)setUp {
     [super setUp];
-    self.user = [[UAUser alloc] init];
 
-    UAConfig *config = [[UAConfig alloc] init];
-    config.developmentAppKey = @"9Q1tVTl0RF16baYKYp8HPQ";
-
+    self.config = [[UAConfig alloc] init];
+    self.config.developmentAppKey = @"9Q1tVTl0RF16baYKYp8HPQ";
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"user.test."];
-    self.mockedAirship =[OCMockObject niceMockForClass:[UAirship class]];
-    [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
-    [[[self.mockedAirship stub] andReturn:config] config];
-    [[[self.mockedAirship stub] andReturn:self.dataStore] dataStore];
+    self.push = [UAPush pushWithConfig:self.config dataStore:self.dataStore];
+
 
     [[[NSBundle mainBundle] infoDictionary] setValue:@"someBundleId" forKey:@"CFBundleIdentifier"];
-
-    self.mockUserClient = [OCMockObject partialMockForObject:self.user.apiClient];
     self.mockKeychainUtils = [OCMockObject niceMockForClass:[UAKeychainUtils class]];
 
-    self.mockedUAPush = [OCMockObject partialMockForObject:[UAPush shared]];
-}
+    self.user = [UAUser userWithPush:self.push config:self.config dataStore:self.dataStore];
+    self.mockUserClient = [OCMockObject partialMockForObject:self.user.apiClient];
+ }
 
 - (void)tearDown {
     [self.mockUserClient stopMocking];
     [self.mockKeychainUtils stopMocking];
-    [self.mockedAirship stopMocking];
-    [self.mockedUAPush stopMocking];
 
     [self.dataStore removeAll];
 
@@ -89,8 +82,8 @@
     XCTAssertNil(self.user.url, @"url should be nil");
 }
 
-- (void)testDefaultUserCreated {
-    XCTAssertFalse([self.user defaultUserCreated], @"Uninitialized user should not be created");
+- (void)testIsCreated {
+    XCTAssertFalse(self.user.isCreated, @"Uninitialized user should not be created");
 }
 
 /**
@@ -101,10 +94,10 @@
 
     UAUserData *userData = [UAUserData dataWithUsername:@"userName" password:@"password" url:@"http://url.com"];
 
-    [UAPush shared].channelID = @"some-channel";
-    [UAPush shared].channelLocation = @"some-location";
 
-    [UAPush shared].deviceToken = nil;
+    self.push.channelID = @"some-channel";
+    self.push.channelLocation = @"some-location";
+    self.push.deviceToken = nil;
 
     void (^andDoBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
         void *arg;
@@ -113,18 +106,18 @@
     };
 
     [[[self.mockUserClient expect] andDo:andDoBlock] createUserWithChannelID:@"some-channel"
-                                                                 deviceToken:nil
+                                                                 deviceToken:OCMOCK_ANY
                                                                    onSuccess:OCMOCK_ANY
                                                                    onFailure:OCMOCK_ANY];
 
     // Expect it to create and update the keychain
     [[[self.mockKeychainUtils expect] andReturnValue:OCMOCK_VALUE(YES)] createKeychainValueForUsername:userData.username
                                                                                           withPassword:userData.password
-                                                                                         forIdentifier:self.user.appKey];
+                                                                                         forIdentifier:self.config.appKey];
 
     [[[self.mockKeychainUtils expect] andReturnValue:OCMOCK_VALUE(YES)] updateKeychainValueForUsername:userData.username
                                                                                           withPassword:userData.password
-                                                                                         forIdentifier:self.user.appKey];
+                                                                                         forIdentifier:self.config.appKey];
 
     [self.user createUser];
 
@@ -146,9 +139,9 @@
  */
 -(void)testCreateUserFailed {
     UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-    [UAPush shared].channelID = @"some-channel";
-    [UAPush shared].channelLocation = @"some-channel-location";
-    [UAPush shared].deviceToken = nil;
+    self.push.channelID = @"some-channel";
+    self.push.channelLocation = @"some-channel-location";
+    self.push.deviceToken = nil;
 
     __block UAUserAPIClientFailureBlock failureBlock;
 
@@ -158,7 +151,7 @@
         failureBlock = (__bridge UAUserAPIClientFailureBlock)arg;
     };
 
-    [UAPush shared].channelID = @"some-channel";
+    self.push.channelID = @"some-channel";
 
     [[[self.mockUserClient expect] andDo:andDoBlock] createUserWithChannelID:@"some-channel"
                                                                  deviceToken:nil
@@ -177,17 +170,15 @@
  * Test updateUser
  */
 -(void)testUpdateUser {
-    [UAPush shared].channelID = @"some-channel";
-    [UAPush shared].channelLocation = @"some-location";
-    [UAPush shared].deviceToken = @"aaaaa";
-    self.user.username = @"username";
+    self.push.channelID = @"some-channel";
+    self.push.channelLocation = @"some-location";
+    self.push.deviceToken = @"aaaaa";
 
     // Set up a default user
-    [[[self.mockedAirship stub] andReturnValue:OCMOCK_VALUE(YES)] ready];
-    [[[self.mockKeychainUtils stub] andReturn:@"username"] getUsername:self.user.appKey];
-    [[[self.mockKeychainUtils stub] andReturn:@"password"] getPassword:self.user.appKey];
+    self.user.username = @"username";
+    self.user.password = @"password";
 
-    [[self.mockUserClient expect] updateUser:@"username"
+    [[self.mockUserClient expect] updateUser:self.user
                                  deviceToken:@"aaaaa"
                                    channelID:@"some-channel"
                                    onSuccess:OCMOCK_ANY
@@ -202,14 +193,12 @@
  * Test updateUser when no device token or channel id is present
  */
 -(void)testUpdateUserNoDeviceTokenOrChannelID {
-    [UAPush shared].channelID = nil;
-    [UAPush shared].deviceToken = nil;
-    self.user.username = @"username";
+    self.push.channelID = nil;
+    self.push.deviceToken = nil;
 
     // Set up a default user
-    [[[self.mockedAirship stub] andReturnValue:OCMOCK_VALUE(YES)] ready];
-    [[[self.mockKeychainUtils stub] andReturn:@"username"] getUsername:self.user.appKey];
-    [[[self.mockKeychainUtils stub] andReturn:@"password"] getPassword:self.user.appKey];
+    self.user.username = @"username";
+    self.user.password = @"password";
 
     [[self.mockUserClient reject] updateUser:OCMOCK_ANY
                                  deviceToken:OCMOCK_ANY
@@ -227,8 +216,8 @@
  * Test updateUser no default user
  */
 -(void)testUpdateUserNoDefaultUser {
-    [UAPush shared].channelID = @"some-channel";
-    [UAPush shared].deviceToken = @"aaaaa";
+    self.push.channelID = @"some-channel";
+    self.push.deviceToken = @"aaaaa";
     self.user.username = @"username";
 
     [[self.mockUserClient reject] updateUser:OCMOCK_ANY
@@ -246,22 +235,27 @@
  * Test registering as an observer for UAPush registration changes
  */
 -(void)testRegisterForDeviceRegistrationChanges {
+    [self.user unregisterForDeviceRegistrationChanges];
+
     XCTAssertFalse(self.user.isObservingDeviceRegistrationChanges, @"We should not be observing registration changes initially.");
 
-    [[self.mockedUAPush expect] addObserver:self.user forKeyPath:@"deviceToken" options:0 context:NULL];
-    [[self.mockedUAPush expect] addObserver:self.user forKeyPath:@"channelID" options:0 context:NULL];
+    id mockPush = [OCMockObject partialMockForObject:self.push];
+
+    [[mockPush expect] addObserver:self.user forKeyPath:@"deviceToken" options:0 context:NULL];
+    [[mockPush expect] addObserver:self.user forKeyPath:@"channelID" options:0 context:NULL];
 
     [self.user registerForDeviceRegistrationChanges];
 
     XCTAssertTrue(self.user.isObservingDeviceRegistrationChanges, @"We should be observing registration changes after registeringForDeviceRegistrationChanges.");
-    XCTAssertNoThrow([self.mockedUAPush verify], @"User should add itself as an observer for device token and channel ID.");
+    XCTAssertNoThrow([mockPush verify], @"User should add itself as an observer for device token and channel ID.");
 
-    [[self.mockedUAPush reject] addObserver:self.user forKeyPath:@"deviceToken" options:0 context:NULL];
-    [[self.mockedUAPush reject] addObserver:self.user forKeyPath:@"channelID" options:0 context:NULL];
+    [[mockPush reject] addObserver:self.user forKeyPath:@"deviceToken" options:0 context:NULL];
+    [[mockPush reject] addObserver:self.user forKeyPath:@"channelID" options:0 context:NULL];
     [self.user registerForDeviceRegistrationChanges];
 
-    XCTAssertNoThrow([self.mockedUAPush verify], @"User should not be able to register twice for KVO.");
+    XCTAssertNoThrow([mockPush verify], @"User should not be able to register twice for KVO.");
 
+    [mockPush stopMocking];
 }
 
 /**
@@ -269,26 +263,25 @@
  * calls update if the channel or device token is available.
  */
 -(void)testRegisterForDeviceRegistrationChangesChannelIDAvailable {
-    [UAPush shared].channelID = @"some-channel";
-    [UAPush shared].channelLocation = @"some-location";
-
-    [UAPush shared].deviceToken = @"aaaaa";
-    self.user.username = @"username";
+    self.push.channelID = @"some-channel";
+    self.push.channelLocation = @"some-location";
+    self.push.deviceToken = @"aaaaa";
 
     // Set up a default user
-    [[[self.mockedAirship stub] andReturnValue:OCMOCK_VALUE(YES)] ready];
-    [[[self.mockKeychainUtils stub] andReturn:@"username"] getUsername:self.user.appKey];
-    [[[self.mockKeychainUtils stub] andReturn:@"password"] getPassword:self.user.appKey];
+    self.user.username = @"username";
+    self.user.password = @"password";
 
     // Expect an update call when we register for device registration changes
-    [[self.mockUserClient expect] updateUser:@"username"
+    [[self.mockUserClient expect] updateUser:self.user
                                  deviceToken:@"aaaaa"
                                    channelID:@"some-channel"
                                    onSuccess:OCMOCK_ANY
                                    onFailure:OCMOCK_ANY];
 
 
+    [self.user unregisterForDeviceRegistrationChanges];
     [self.user registerForDeviceRegistrationChanges];
+
     XCTAssertNoThrow([self.mockUserClient verify], @"User should call the client to be updated.");
 }
 
@@ -298,38 +291,37 @@
  */
 -(void)testUnregisterForDeviceRegistrationChanges {
     [self.user registerForDeviceRegistrationChanges];
+    id mockPush = [OCMockObject partialMockForObject:self.push];
 
     XCTAssertTrue(self.user.isObservingDeviceRegistrationChanges, @"We should be observing registration changes after registeringForDeviceRegistrationChanges.");
 
-    [[self.mockedUAPush expect] removeObserver:self.user forKeyPath:@"deviceToken"];
-    [[self.mockedUAPush expect] removeObserver:self.user forKeyPath:@"channelID"];
+    [[mockPush expect] removeObserver:self.user forKeyPath:@"deviceToken"];
+    [[mockPush expect] removeObserver:self.user forKeyPath:@"channelID"];
 
     [self.user unregisterForDeviceRegistrationChanges];
 
     XCTAssertFalse(self.user.isObservingDeviceRegistrationChanges, @"We should not be observing registration changes after unregisteringForDeviceRegistrationChanges.");
-    XCTAssertNoThrow([self.mockedUAPush verify], @"User should remove itself as an observer for device token and channel ID.");
+    XCTAssertNoThrow([mockPush verify], @"User should remove itself as an observer for device token and channel ID.");
 
-    [[self.mockedUAPush reject] removeObserver:self.user forKeyPath:@"deviceToken"];
-    [[self.mockedUAPush reject] removeObserver:self.user forKeyPath:@"channelID"];
+    [[mockPush reject] removeObserver:self.user forKeyPath:@"deviceToken"];
+    [[mockPush reject] removeObserver:self.user forKeyPath:@"channelID"];
     [self.user unregisterForDeviceRegistrationChanges];
 
-    XCTAssertNoThrow([self.mockedUAPush verify], @"User should not be able to unregister twice for KVO.");
+    XCTAssertNoThrow([mockPush verify], @"User should not be able to unregister twice for KVO.");
+    [mockPush stopMocking];
 }
 
 /**
  * Test observer changes to device token and channel ID updates the user
  */
 -(void)testObserveValueForKeyPath {
-    [UAPush shared].channelID = @"some-channel";
-    [UAPush shared].channelLocation = @"some-location";
-    [UAPush shared].deviceToken = @"aaaaa";
-    self.user.username = @"username";
-
+    self.push.channelID = @"some-channel";
+    self.push.channelLocation = @"some-location";
+    self.push.deviceToken = @"aaaaa";
+    
     // Set up a default user
-    [[[self.mockedAirship stub] andReturnValue:OCMOCK_VALUE(YES)] ready];
-    [[[self.mockKeychainUtils stub] andReturn:@"username"] getUsername:self.user.appKey];
-    [[[self.mockKeychainUtils stub] andReturn:@"password"] getPassword:self.user.appKey];
-
+    self.user.username = @"username";
+    self.user.password = @"password";
 
     [[self.mockUserClient expect] updateUser:OCMOCK_ANY
                                  deviceToken:OCMOCK_ANY
@@ -340,7 +332,7 @@
     [self.user observeValueForKeyPath:@"channelID" ofObject:nil change:nil context:nil];
     XCTAssertNoThrow([self.mockUserClient verify], @"User should call the client to be updated.");
 
-    [UAPush shared].channelID = nil;
+    self.push.channelID = nil;
     [[self.mockUserClient expect] updateUser:OCMOCK_ANY
                                  deviceToken:OCMOCK_ANY
                                    channelID:OCMOCK_ANY
@@ -352,7 +344,7 @@
 
 
     // Device token changes should be ignored if we have a channel id
-    [UAPush shared].channelID = @"channelID";
+    self.push.channelID = @"channelID";
     [[self.mockUserClient reject] updateUser:OCMOCK_ANY
                                  deviceToken:OCMOCK_ANY
                                    channelID:OCMOCK_ANY

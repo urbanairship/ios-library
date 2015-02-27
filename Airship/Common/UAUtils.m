@@ -113,32 +113,6 @@
     return([NSString stringWithFormat:@"%1.2f TB",bytes]);
 }
 
-+ (UAHTTPRequest *)UAHTTPUserRequestWithURL:(NSURL *)url method:(NSString *)method {
-    if (![UAirship shared].ready) {
-        return nil;
-    }
-    
-    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:url];
-    request.HTTPMethod = method;
-    request.username = [UAUser defaultUser].username;
-    request.password = [UAUser defaultUser].password;
-
-    return request;
-}
-
-+ (UAHTTPRequest *)UAHTTPRequestWithURL:(NSURL *)url method:(NSString *)method {
-    if (![UAirship shared].ready) {
-        return nil;
-    }
-    
-    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:url];
-    request.HTTPMethod = method;
-    request.username = [UAirship shared].config.appKey;
-    request.password = [UAirship shared].config.appSecret;
-
-    return request;
-}
-
 + (void)logFailedRequest:(UAHTTPRequest *)request withMessage:(NSString *)message {
     UA_LTRACE(@"***** Request ERROR: %@ *****"
           @"\n\tError: %@"
@@ -166,8 +140,8 @@
 }
 
 + (NSString *)userAuthHeaderString {
-    return [UAUtils authHeaderStringWithName:[UAUser defaultUser].username
-                                    password:[UAUser defaultUser].password];
+    return [UAUtils authHeaderStringWithName:[UAirship inboxUser].username
+                                    password:[UAirship inboxUser].password];
 }
 
 + (NSString *)appAuthHeaderString {

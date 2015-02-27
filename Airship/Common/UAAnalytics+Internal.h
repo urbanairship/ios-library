@@ -53,8 +53,10 @@
 
 @class UAEvent;
 @class UAHTTPRequest;
+@class UAAnalyticsDBManager;
 
 @interface UAAnalytics ()
+
 
 /**
  * The conversion send Id.
@@ -138,6 +140,19 @@
 @property (nonatomic, assign) BOOL isEnteringForeground;
 
 /**
+ * The analytic database manager.
+ */
+@property (nonatomic, strong) UAAnalyticsDBManager *analyticDBManager;
+
+/**
+ * Factory method to create an analytics instance.
+ * @param airshipConfig The 'AirshipConfig.plist' file
+ * @param dataStore The shared preference data store.
+ * @return A new analytics instance.
+ */
++ (instancetype)analyticsWithConfig:(UAConfig *)airshipConfig dataStore:(UAPreferenceDataStore *)dataStore;
+
+/**
  * Restores any upload event settings from the
  * preference data store.
  */
@@ -206,7 +221,7 @@
  * Removes old events from the database until the
  * size of the database is less then databaseSize
  */
-- (void) pruneEvents;
+- (void)pruneEvents;
 
 /**
  * Checks a event dictionary for expected fields and values.

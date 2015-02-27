@@ -31,6 +31,7 @@
 #import "UAGlobal.h"
 #import "UAInboxMessage.h"
 #import "UAInboxMessageList.h"
+#import "UAirship.h"
 
 #import "UAURLProtocol.h"
 
@@ -188,9 +189,9 @@
     [super viewWillAppear:animated];
 
     self.navigationItem.backBarButtonItem = nil;
-    self.messages = [UAInbox shared].messageList.messages;
+    self.messages = [UAirship inbox].messageList.messages;
 
-    if ([UAInbox shared].messageList.isRetrieving) {
+    if ([UAirship inbox].messageList.isRetrieving) {
         [self showLoadingScreen];
     } else {
         [self hideLoadingScreen];
@@ -360,7 +361,7 @@
     
     self.navigationItem.leftBarButtonItem.enabled = NO;
     
-    if ([UAInbox shared].messageList.isBatchUpdating) {
+    if ([UAirship inbox].messageList.isBatchUpdating) {
         return;
     }
 
@@ -396,11 +397,11 @@
 
     if (sender == self.markAsReadButtonItem) {
 
-        [[UAInbox shared].messageList markMessagesRead:messages completionHandler:^{
+        [[UAirship inbox].messageList markMessagesRead:messages completionHandler:^{
             [self refreshAfterBatchUpdate];
         }];
     } else {
-        [[UAInbox shared].messageList markMessagesDeleted:messages completionHandler:^{
+        [[UAirship inbox].messageList markMessagesDeleted:messages completionHandler:^{
             [self refreshAfterBatchUpdate];
         }];
     }
@@ -427,7 +428,7 @@
         NSUInteger unreadCountInSelection = [self countOfUnreadMessagesInIndexPaths:strongMessageTable.indexPathsForSelectedRows];
         self.markAsReadButtonItem.title = [NSString stringWithFormat:@"%@ (%lu)", markReadStr, (unsigned long)unreadCountInSelection];
 
-        if ([UAInbox shared].messageList.isBatchUpdating) {
+        if ([UAirship inbox].messageList.isBatchUpdating) {
             self.deleteItem.enabled = NO;
             self.markAsReadButtonItem.enabled = NO;
         } else {
@@ -454,7 +455,7 @@
 
     UAInboxMessage *message = [self.messages objectAtIndex:(NSUInteger)indexPath.row];
     if (message) {
-        [[UAInbox shared].messageList markMessagesDeleted:@[message] completionHandler:^{
+        [[UAirship inbox].messageList markMessagesDeleted:@[message] completionHandler:^{
             [self refreshAfterBatchUpdate];
         }];
     }
@@ -529,7 +530,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
     UAInboxMessage *message = [self messageForIndexPath:indexPath];
-    if (self.editing && ![[UAInbox shared].messageList isBatchUpdating]) {
+    if (self.editing && ![[UAirship inbox].messageList isBatchUpdating]) {
         [self refreshBatchUpdateButtons];
     } else if (!self.editing) {
         [self displayMessage:message];
@@ -537,7 +538,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (self.editing && ![[UAInbox shared].messageList isBatchUpdating]) {
+    if (self.editing && ![[UAirship inbox].messageList isBatchUpdating]) {
         [self refreshBatchUpdateButtons];
     }
 }
@@ -552,7 +553,7 @@
 
 - (void)messageListUpdated {
     UA_LDEBUG(@"UAInboxMessageListController messageListUpdated");
-    self.messages = [UAInbox shared].messageList.messages;
+    self.messages = [UAirship inbox].messageList.messages;
 
     [self hideLoadingScreen];
     [self tableReloadData];
@@ -565,7 +566,7 @@
 
 
 - (void)updateNavigationTitleText {
-    NSInteger count = [UAInbox shared].messageList.unreadCount;
+    NSInteger count = [UAirship inbox].messageList.unreadCount;
 
     if (count < 0) {
         count = 0;

@@ -79,13 +79,7 @@ __attribute__((deprecated("As of version 3.2")))
  */
 @interface UAInbox : NSObject
 
-SINGLETON_INTERFACE(UAInbox);
-
-/**
- * Tear down and clean up any resources. This method should be called when the inbox is no
- * longer needed.
- */
-+ (void)land;
++ (instancetype)shared __attribute__((deprecated("As of version 6.0.0. Use [UAirship inbox] instead.")));
 
 /**
  * The list of Rich Push Inbox messages.

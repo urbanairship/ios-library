@@ -27,7 +27,6 @@
 #import "UAHTTPRequestEngine.h"
 #import "UAChannelRegistrationPayload.h"
 #import "UAHTTPConnectionOperation.h"
-#import "UAirship.h"
 #import "UAConfig.h"
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
@@ -39,14 +38,15 @@
 #define kUAChannelCreateLocation @"/api/channels/"
 
 @interface UAChannelAPIClient()
-@property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
+@property (nonatomic, strong) UAConfig *config;
 @end
 
 @implementation UAChannelAPIClient
 
-- (instancetype)init {
+- (instancetype)initWithConfig:(UAConfig *)config {
     self = [super init];
     if (self) {
+        self.config = config;
         self.requestEngine = [[UAHTTPRequestEngine alloc] init];
         self.requestEngine.initialDelayIntervalInSeconds = kUAChannelRetryTimeInitialDelay;
         self.requestEngine.maxDelayIntervalInSeconds = kUAChannelRetryTimeMaxDelay;
@@ -65,13 +65,10 @@
     return self;
 }
 
-+ (instancetype)client {
-    return [[self alloc] init];
++ (instancetype)clientWithConfig:(UAConfig *)config {
+    return [[self alloc] initWithConfig:config];
 }
 
-+ (instancetype)clientWithRequestEngine:(UAHTTPRequestEngine *)requestEngine {
-    return [[self alloc] initWithRequestEngine:requestEngine];
-}
 
 - (void)cancelAllRequests {
     [self.requestEngine cancelAllRequests];
@@ -178,7 +175,11 @@
  * @return A UAHTTPRequest request.
  */
 - (UAHTTPRequest *)requestToUpdateWithChannelLocation:(NSString *)location payload:(UAChannelRegistrationPayload *)payload {
-    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:location] method:@"PUT"];
+
+    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:[NSURL URLWithString:location]];
+    request.HTTPMethod = @"PUT";
+    request.username = self.config.appKey;
+    request.password = self.config.appSecret;
 
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
     [request addRequestHeader: @"Content-Type" value: @"application/json"];
@@ -194,8 +195,12 @@
  * @return A UAHTTPRequest request.
  */
 - (UAHTTPRequest *)requestToCreateChannelWithPayload:(UAChannelRegistrationPayload *)payload {
-    NSString *urlString = [NSString stringWithFormat:@"%@%@", [UAirship shared].config.deviceAPIURL, kUAChannelCreateLocation];
-    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:urlString] method:@"POST"];
+    NSString *urlString = [NSString stringWithFormat:@"%@%@", self.config.deviceAPIURL, kUAChannelCreateLocation];
+
+    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:[NSURL URLWithString:urlString]];
+    request.HTTPMethod = @"POST";
+    request.username = self.config.appKey;
+    request.password = self.config.appSecret;
 
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
     [request addRequestHeader: @"Content-Type" value: @"application/json"];

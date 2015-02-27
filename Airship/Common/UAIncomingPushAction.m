@@ -74,7 +74,7 @@
 - (void)handleForegroundPush:(NSDictionary *)notification
           completionHandler:(UAActionCompletionHandler)completionHandler {
 
-    id<UAPushNotificationDelegate> pushDelegate = [UAPush shared].pushNotificationDelegate;
+    id<UAPushNotificationDelegate> pushDelegate = [UAirship push].pushNotificationDelegate;
 
     // Please refer to the following Apple documentation for full details on handling the userInfo payloads
     // http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ApplePushService/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1
@@ -97,7 +97,7 @@
 
         // Badge
         NSString *badgeNumber = [apsDict valueForKey:@"badge"];
-        if (badgeNumber && ![UAPush shared].autobadgeEnabled && [pushDelegate respondsToSelector:@selector(handleBadgeUpdate:)]) {
+        if (badgeNumber && ![UAirship push].autobadgeEnabled && [pushDelegate respondsToSelector:@selector(handleBadgeUpdate:)]) {
             [pushDelegate handleBadgeUpdate:[badgeNumber intValue]];
         }
 
@@ -139,7 +139,7 @@
 - (void)handleLaunchedFromPush:(NSDictionary *)notification
           completionHandler:(UAActionCompletionHandler)completionHandler {
 
-    id<UAPushNotificationDelegate> pushDelegate = [UAPush shared].pushNotificationDelegate;
+    id<UAPushNotificationDelegate> pushDelegate = [UAirship push].pushNotificationDelegate;
 
     if (self.useFetchCompletionHandlerDelegates) {
         if ([pushDelegate respondsToSelector:@selector(launchedFromNotification:fetchCompletionHandler:)]) {
@@ -170,7 +170,7 @@
 - (void)handleBackgroundPush:(NSDictionary *)notification
           completionHandler:(UAActionCompletionHandler)completionHandler {
 
-    id<UAPushNotificationDelegate> pushDelegate = [UAPush shared].pushNotificationDelegate;
+    id<UAPushNotificationDelegate> pushDelegate = [UAirship push].pushNotificationDelegate;
 
     if (self.useFetchCompletionHandlerDelegates) {
         if ([pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:fetchCompletionHandler:)]) {
@@ -202,7 +202,7 @@
                                   notification:(NSDictionary *)notification
                              completionHandler:(UAActionCompletionHandler)completionHandler {
 
-    id<UAPushNotificationDelegate> pushDelegate = [UAPush shared].pushNotificationDelegate;
+    id<UAPushNotificationDelegate> pushDelegate = [UAirship push].pushNotificationDelegate;
     if ([pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:actionIdentifier:completionHandler:)]) {
         [pushDelegate receivedBackgroundNotification:notification actionIdentifier:identifier completionHandler:^{
             completionHandler([UAActionResult emptyResult]);
@@ -217,7 +217,7 @@
                                   notification:(NSDictionary *)notification
                              completionHandler:(UAActionCompletionHandler)completionHandler {
 
-    id<UAPushNotificationDelegate> pushDelegate = [UAPush shared].pushNotificationDelegate;
+    id<UAPushNotificationDelegate> pushDelegate = [UAirship push].pushNotificationDelegate;
     if ([pushDelegate respondsToSelector:@selector(launchedFromNotification:actionIdentifier:completionHandler:)]) {
         [pushDelegate launchedFromNotification:notification actionIdentifier:identifier completionHandler:^{
             completionHandler([UAActionResult emptyResult]);

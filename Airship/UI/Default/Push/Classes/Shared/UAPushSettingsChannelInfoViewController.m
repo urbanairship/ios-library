@@ -26,6 +26,7 @@
 #import "UAPushSettingsChannelInfoViewController.h"
 #import "UAPush.h"
 #import "NSString+UASizeWithFontCompatibility.h"
+#import "UAirship.h"
 
 @implementation UAPushSettingsChannelInfoViewController
 
@@ -39,7 +40,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    self.channelIDLabel.text = [UAPush shared].channelID ? [UAPush shared].channelID : @"Unavailable";
+    self.channelIDLabel.text = [UAirship push].channelID ? [UAirship push].channelID : @"Unavailable";
 }
 
 #pragma mark -
@@ -99,7 +100,7 @@
 #pragma mark -
 #pragma mark UI Button Actions
 - (IBAction)copyChannelID {
-    NSString *channelID = [UAPush shared].channelID;
+    NSString *channelID = [UAirship push].channelID;
     if (channelID) {
         UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
         pasteboard.string = channelID;
@@ -114,7 +115,7 @@
 
 
 
-        NSString *messageBody = [NSString stringWithFormat:@"Your channel ID is %@\n\nSend a test push at http://go.urbanairship.com", [UAPush shared].channelID];
+        NSString *messageBody = [NSString stringWithFormat:@"Your channel ID is %@\n\nSend a test push at http://go.urbanairship.com", [UAirship push].channelID];
 
         [mfViewController setSubject:@"Channel ID"];
         [mfViewController setMessageBody:messageBody isHTML:NO];

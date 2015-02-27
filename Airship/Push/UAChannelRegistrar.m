@@ -29,16 +29,21 @@
 #import "UAUtils.h"
 #import "UAChannelRegistrationPayload.h"
 #import "UAHTTPRequest.h"
+#import "UAConfig.h"
 
 @implementation UAChannelRegistrar
 
--(id)init {
+-(id)initWithConfig:(UAConfig *)config {
     self = [super init];
     if (self) {
-        self.channelAPIClient = [[UAChannelAPIClient alloc] init];
+        self.channelAPIClient = [UAChannelAPIClient clientWithConfig:config];
         self.isRegistrationInProgress = NO;
     }
     return self;
+}
+
++ (instancetype)channelRegistrarWithConfig:(UAConfig *)config {
+    return [[UAChannelRegistrar alloc] initWithConfig:config];
 }
 
 - (void)registerWithChannelID:(NSString *)channelID
@@ -109,7 +114,6 @@
             UA_LDEBUG(@"Channel %@ created successfully. Channel location: %@.", newChannelID, channelLocation);
             [self channelCreated:newChannelID channelLocation:channelLocation existing:existing];
             [self succeededWithPayload:payload];
-
         };
 
         UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {

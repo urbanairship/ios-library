@@ -1,20 +1,19 @@
 
 #import "UAInboxAPIClient.h"
-#import "UAInbox.h"
 #import "UAInboxMessage.h"
 #import "UAHTTPRequestEngine.h"
-#import "UAGlobal.h"
-#import "UAirship.h"
 #import "UAConfig.h"
 #import "UAUser.h"
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAirship+Internal.h"
 #import "UAPreferenceDataStore.h"
 
 @interface UAInboxAPIClient()
 
 @property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
+@property (nonatomic, strong) UAConfig *config;
+@property (nonatomic, strong) UAUser *user;
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 @end
 
@@ -22,25 +21,34 @@
 
 NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.%@";
 
-
-- (instancetype)init {
+- (instancetype)initWithUser:(UAUser *)user config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
+        self.user = user;
+        self.config = config;
+        self.dataStore = dataStore;
         self.requestEngine = [[UAHTTPRequestEngine alloc] init];
     }
 
     return self;
 }
 
++ (instancetype)clientWithUser:(UAUser *)user config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+    return [[UAInboxAPIClient alloc] initWithUser:user config:config dataStore:dataStore];
+}
 
-- (UAHTTPRequest *)requestToRetrieveMessageListForUser:(NSString *)userName {
+- (UAHTTPRequest *)requestToRetrieveMessageList{
     NSString *urlString = [NSString stringWithFormat: @"%@%@%@%@",
-                           [UAirship shared].config.deviceAPIURL, @"/api/user/", userName,@"/messages/"];
+                           self.config.deviceAPIURL, @"/api/user/", self.user.username,@"/messages/"];
+
     NSURL *requestUrl = [NSURL URLWithString: urlString];
 
-    UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:requestUrl method:@"GET"];
+    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:requestUrl];
+    request.HTTPMethod = @"GET";
+    request.username = self.user.username;
+    request.password = self.user.password;
 
-    NSString *lastModified = [[UAirship shared].dataStore stringForKey:[NSString stringWithFormat:UALastMessageListModifiedTime, userName]];
+    NSString *lastModified = [self.dataStore stringForKey:[NSString stringWithFormat:UALastMessageListModifiedTime, self.user.username]];
     if (lastModified) {
         [request addRequestHeader:@"If-Modified-Since" value:lastModified];
     }
@@ -55,19 +63,21 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
     NSArray *updateMessageURLs = [messages valueForKeyPath:@"messageURL.absoluteString"];
 
     NSString *urlString = [NSString stringWithFormat:@"%@%@%@%@",
-                           [UAirship shared].config.deviceAPIURL,
+                           self.config.deviceAPIURL,
                            @"/api/user/",
-                           [UAUser defaultUser].username,
+                           self.user.username,
                            @"/messages/delete/"];
+
     requestUrl = [NSURL URLWithString:urlString];
 
     data = @{@"delete" : updateMessageURLs};
 
     NSString* body = [NSJSONSerialization stringWithObject:data];
 
-    UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:requestUrl
-                                                        method:@"POST"];
-
+    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:requestUrl];
+    request.HTTPMethod = @"POST";
+    request.username = self.user.username;
+    request.password = self.user.password;
 
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
@@ -82,19 +92,21 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
     NSArray *updateMessageURLs = [messages valueForKeyPath:@"messageURL.absoluteString"];
 
     NSString *urlString = [NSString stringWithFormat:@"%@%@%@%@",
-                           [UAirship shared].config.deviceAPIURL,
+                           self.config.deviceAPIURL,
                            @"/api/user/",
-                           [UAUser defaultUser].username,
+                           self.user.username,
                            @"/messages/unread/"];
+
     requestUrl = [NSURL URLWithString:urlString];
 
     data = @{@"mark_as_read" : updateMessageURLs};
 
     NSString* body = [NSJSONSerialization stringWithObject:data];
 
-    UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:requestUrl
-                                                        method:@"POST"];
-
+    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:requestUrl];
+    request.HTTPMethod = @"POST";
+    request.username = self.user.username;
+    request.password = self.user.password;
 
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
@@ -107,8 +119,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
 - (void)retrieveMessageListOnSuccess:(UAInboxClientMessageRetrievalSuccessBlock)successBlock
                            onFailure:(UAInboxClientFailureBlock)failureBlock {
 
-    NSString *userName = [UAUser defaultUser].username;
-    UAHTTPRequest *retrieveRequest = [self requestToRetrieveMessageListForUser:userName];
+    UAHTTPRequest *retrieveRequest = [self requestToRetrieveMessageList];
     
     [self.requestEngine
       runRequest:retrieveRequest
@@ -125,9 +136,9 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
               NSDictionary *headers = request.response.allHeaderFields;
               NSString *lastModified = [headers objectForKey:@"Last-Modified"];
 
-              UA_LDEBUG(@"Setting Last-Modified time to '%@' for user %@'s message list.", lastModified, userName);
-              [[UAirship shared].dataStore setValue:lastModified
-                                             forKey:[NSString stringWithFormat:UALastMessageListModifiedTime, userName]];
+              UA_LDEBUG(@"Setting Last-Modified time to '%@' for user %@'s message list.", lastModified, self.user.username);
+              [self.dataStore setValue:lastModified
+                                forKey:[NSString stringWithFormat:UALastMessageListModifiedTime, self.user.username]];
 
               NSString *responseString = request.responseString;
               UA_LTRACE(@"Retrieved message list response: %@", responseString);

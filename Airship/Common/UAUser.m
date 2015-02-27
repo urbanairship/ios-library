@@ -26,30 +26,22 @@
 #import "UAUser+Internal.h"
 #import "UAUserAPIClient.h"
 #import "UAPush.h"
-#import "UAGlobal.h"
 #import "UAUtils.h"
 #import "UAConfig.h"
 #import "UAKeychainUtils.h"
 #import "UAPreferenceDataStore.h"
-#import "UAirship+Internal.h"
-
-
-static UAUser *_defaultUser;
+#import "UAirship.h"
 
 NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.user_created";
 
-
+@interface UAUser()
+@property (nonatomic, strong) UAPush *push;
+@end
 
 @implementation UAUser
 
 + (UAUser *)defaultUser {
-    @synchronized(self) {
-        if(_defaultUser == nil) {
-            _defaultUser = [[UAUser alloc] init];
-            UA_LTRACE(@"Initialized default user.");
-        }
-    }
-    return _defaultUser;
+    return [UAirship inboxUser];
 }
 
 + (void)setDefaultUsername:(NSString *)defaultUsername withPassword:(NSString *)defaultPassword {
@@ -64,83 +56,37 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     
 }
 
-
-+ (void)land {
-    if (_defaultUser) {
-        [_defaultUser unregisterForDeviceRegistrationChanges];
-    }
-    
+- (void)dealloc {
+    [self unregisterForDeviceRegistrationChanges];
 }
 
-- (instancetype)init {
+- (instancetype)initWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
-        // init
-        self.apiClient = [UAUserAPIClient client];
+        self.config = config;
+        self.apiClient = [UAUserAPIClient clientWithConfig:config];
+        self.userUpdateBackgroundTask = UIBackgroundTaskInvalid;
+        self.dataStore = dataStore;
+        self.push = push;
+
+
+        NSString *storedUsername = [UAKeychainUtils getUsername:self.config.appKey];
+        NSString *storedPassword = [UAKeychainUtils getPassword:self.config.appKey];
+
+        if (storedUsername && storedPassword) {
+            self.username = storedUsername;
+            self.password = storedPassword;
+            [[NSUserDefaults standardUserDefaults] setObject:self.username forKey:@"ua_user_id"];
+        }
+
+        [self registerForDeviceRegistrationChanges];
     }
     
     return self;
 }
 
-- (void)initializeUser {
-    
-    @synchronized(self) {
-        
-        if (self.initialized) {
-            return;
-        }
-        
-        if (![UAirship shared].ready) {
-            return;
-        }
-
-        if (!self.appKey) {
-            UA_LERR(@"No App Key was set on UAUser. Unable to initialize.");
-            UA_LERR("[UAirship takeOff] has probably not been called yet or is being called after application:didFinishLaunchingWithOptions: has returned");
-            return;
-        }
-                
-        NSString *storedUsername = [UAKeychainUtils getUsername:self.appKey];
-        NSString *storedPassword = [UAKeychainUtils getPassword:self.appKey];
-        
-        if (storedUsername && storedPassword) {
-            self.username = storedUsername;
-            self.password = storedPassword;
-        }
-        
-        // Boot strap
-        [self loadUser];
-        
-        [self performSelector:@selector(registerForDeviceRegistrationChanges) withObject:nil afterDelay:0];
-
-
-        self.initialized = YES;
-        self.userUpdateBackgroundTask = UIBackgroundTaskInvalid;
-    }
-}
-
-#pragma mark -
-#pragma mark Load
-
-- (void)loadUser {
-
-    if (self.creatingUser) {
-        // if we're creating a user, do not load anything now
-        // everything relevant has already been loaded
-        // and we don't want to step on the in-progress creation
-        return;
-    }
-
-    // First thing we need to do is make sure we have a valid User.
-
-    if (self.username && self.password ) {
-        // If the user and password are set, then we are not in a "no user"/"initial run" case - just set it in defaults
-        // for the app to access with a Settings bundle
-        [[NSUserDefaults standardUserDefaults] setObject:self.username forKey:@"ua_user_id"];
-    } else {
-        // Either the user or password is not set, so the "no user"/"initial run" case is still true, try to recreate the user
-        [self createUser];
-    }
++ (instancetype)userWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+    return [[UAUser alloc] initWithPush:push config:config dataStore:dataStore];
 }
 
 #pragma mark -
@@ -151,14 +97,14 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
  */
 - (void)saveUserData {
 
-    NSString *storedUsername = [UAKeychainUtils getUsername:self.appKey];
+    NSString *storedUsername = [UAKeychainUtils getUsername:self.config.appKey];
 
     if (!storedUsername) {
 
         // No username object stored in the keychain for this app, so let's create it
         // but only if we indeed have a username and password to store
         if (self.username != nil && self.password != nil) {
-            if (![UAKeychainUtils createKeychainValueForUsername:self.username withPassword:self.password forIdentifier:self.appKey]) {
+            if (![UAKeychainUtils createKeychainValueForUsername:self.username withPassword:self.password forIdentifier:self.config.appKey]) {
                 UA_LERR(@"Save failed: unable to create keychain for username.");
                 return;
             }
@@ -171,9 +117,9 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     //Update keychain with latest username and password
     [UAKeychainUtils updateKeychainValueForUsername:self.username
                                        withPassword:self.password
-                                      forIdentifier:self.appKey];
+                                      forIdentifier:self.config.appKey];
     
-    NSDictionary *dictionary = [[UAirship shared].dataStore objectForKey:self.appKey];
+    NSDictionary *dictionary = [self.dataStore objectForKey:self.config.appKey];
     NSMutableDictionary *userDictionary = [NSMutableDictionary dictionaryWithDictionary:dictionary];
 
     [userDictionary setValue:self.url forKey:kUserUrlKey];
@@ -182,40 +128,29 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     // Save in defaults for access with a Settings bundle
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:self.username forKey:@"ua_user_id"];
-    [defaults setObject:userDictionary forKey:self.appKey];
+    [defaults setObject:userDictionary forKey:self.config.appKey];
     [defaults synchronize];
 }
 
 #pragma mark -
 #pragma mark Create
 
-- (BOOL)defaultUserCreated {
-    
-    if (![UAirship shared].ready) {
-        return NO;
+- (BOOL)isCreated {
+    if (self.password.length && self.username.length) {
+        return YES;
     }
-    
-    NSString *storedUsername = [UAKeychainUtils getUsername:self.appKey];
-    NSString *storedPassword = [UAKeychainUtils getPassword:self.appKey];
-
-    if (storedUsername == nil || storedPassword == nil) {
-        return NO;
-    }
-
-    //check for empty values
-    if ([storedUsername isEqualToString:@""] || [storedPassword isEqualToString:@""]) {
-        return NO;
-    }
-
-    return YES;
+    return NO;
 }
-
 
 - (void)sendUserCreatedNotification {
     [[NSNotificationCenter defaultCenter] postNotificationName:UAUserCreatedNotification object:nil];
 }
 
 - (void)createUser {
+    if (self.isCreated) {
+        return;
+    }
+
     self.creatingUser = YES;
 
 
@@ -243,8 +178,8 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     };
 
 
-    [self.apiClient createUserWithChannelID:[UAPush shared].channelID
-                                deviceToken:[UAPush shared].deviceToken
+    [self.apiClient createUserWithChannelID:self.push.channelID
+                                deviceToken:self.push.deviceToken
                                   onSuccess:success
                                   onFailure:failure];
 }
@@ -253,11 +188,10 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 #pragma mark Update
 
 -(void)updateUser {
+    NSString *deviceToken = self.push.deviceToken;
+    NSString *channelID = self.push.channelID;
 
-    NSString *deviceToken = [UAPush shared].deviceToken;
-    NSString *channelID = [UAPush shared].channelID;
-
-    if (![self defaultUserCreated]) {
+    if (!self.isCreated) {
         UA_LDEBUG(@"Skipping user update, user not created yet.");
         return;
     }
@@ -274,7 +208,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         }];
     }
 
-    [self.apiClient updateUser:self.username
+    [self.apiClient updateUser:self
                    deviceToken:deviceToken
                      channelID:channelID
                      onSuccess:^{
@@ -296,9 +230,6 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     }
 }
 
-- (NSString *)appKey {
-    return [UAirship shared].config.appKey;
-}
 
 #pragma mark -
 #pragma mark Device Token Listener
@@ -311,11 +242,11 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     self.isObservingDeviceRegistrationChanges = YES;
 
     // Listen for changes to the device token and channel ID
-    [[UAPush shared] addObserver:self forKeyPath:@"deviceToken" options:0 context:NULL];
-    [[UAPush shared] addObserver:self forKeyPath:@"channelID" options:0 context:NULL];
+    [self.push addObserver:self forKeyPath:@"deviceToken" options:0 context:NULL];
+    [self.push addObserver:self forKeyPath:@"channelID" options:0 context:NULL];
 
     // Update the user if we already have a channelID or device token
-    if ([UAPush shared].deviceToken || [UAPush shared].channelID) {
+    if (self.push.deviceToken || self.push.channelID) {
         [self updateUser];
         return;
     }
@@ -328,7 +259,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     
     if ([keyPath isEqualToString:@"deviceToken"]) {
         // Only update user if we do not have a channel ID
-        if (![UAPush shared].channelID) {
+        if (!self.push.channelID) {
             UA_LTRACE(@"KVO device token modified. Updating user.");
             [self updateUser];
         }
@@ -340,8 +271,8 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
 -(void)unregisterForDeviceRegistrationChanges {
     if (self.isObservingDeviceRegistrationChanges) {
-        [[UAPush shared] removeObserver:self forKeyPath:@"deviceToken"];
-        [[UAPush shared] removeObserver:self forKeyPath:@"channelID"];
+        [self.push removeObserver:self forKeyPath:@"deviceToken"];
+        [self.push removeObserver:self forKeyPath:@"channelID"];
         self.isObservingDeviceRegistrationChanges = NO;
     }
 }

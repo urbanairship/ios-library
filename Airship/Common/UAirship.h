@@ -31,6 +31,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @class UAAnalytics;
 @class UALocationService;
 @class UAApplicationMetrics;
+@class UAPush;
+@class UAUser;
+@class UAInbox;
+@class UAActionRegistry;
 
 UA_VERSION_INTERFACE(UAirshipVersion)
 
@@ -67,6 +71,13 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 @property (nonatomic, strong, readonly) UAAnalytics *analytics;
 
+
+/**
+ * The default action registry.
+ */
+@property (nonatomic, strong, readonly) UAActionRegistry *actionRegistry;
+
+
 /**
  * Stores common application metrics such as last open.
  */
@@ -79,11 +90,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 @property (nonatomic, assign, readonly) BOOL remoteNotificationBackgroundModeEnabled;
 
-/**
- * This flag is set to `YES` if the shared instance of
- * UAirship has been initialized and is ready for use.
- */
-@property (nonatomic, assign, readonly) BOOL ready;
 
 /**
  * A user configurable JavaScript delegate.
@@ -157,5 +163,26 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * @return The shared `UAirship` instance.
  */
 + (UAirship *)shared;
+
+/**
+ * Returns the shared `UAPush` instance.
+ *
+ * @return The shared `UAPush` instance.
+ */
++ (UAPush *)push;
+
+/**
+ * Returns the shared `UAInbox` instance.
+ *
+ * @return The shared `UAInbox` instance.
+ */
++ (UAInbox *)inbox;
+
+/**
+ * Returns the shared `UAUser` instance.
+ *
+ * @return The shared `UAUser` instance.
+ */
++ (UAUser *)inboxUser;
 
 @end

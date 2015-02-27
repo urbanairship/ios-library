@@ -23,7 +23,6 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#import "UAInbox.h"
 #import "UAInbox+Internal.h"
 #import "UAirship.h"
 #import "UAInboxDBManager.h"
@@ -35,7 +34,51 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @implementation UAInbox
 
-SINGLETON_IMPLEMENTATION(UAInbox)
++ (instancetype)shared {
+    return [UAirship inbox];
+}
+
+- (void)dealloc {
+    self.pushHandler = nil;
+    [self.client cancelAllRequests];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (instancetype)initWithUser:(UAUser *)user config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+    self = [super init];
+    if (self) {
+        self.user = user;
+        self.client = [UAInboxAPIClient clientWithUser:user config:config dataStore:dataStore];
+        self.messageList = [UAInboxMessageList messageListWithUser:self.user client:self.client config:config];
+
+        self.pushHandler = [[UAInboxPushHandler alloc] init];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(enterForeground)
+                                                     name:UIApplicationWillEnterForegroundNotification
+                                                   object:nil];
+
+        if (!self.user.isCreated) {
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(userCreated)
+                                                         name:UAUserCreatedNotification
+                                                       object:nil];
+        }
+
+        [self.messageList loadSavedMessages];
+        [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
+
+
+        // delete legacy UAInboxCache if present
+        [self deleteInboxCache];
+    }
+    
+    return self;
+}
+
++ (instancetype) inboxWithUser:(UAUser *)user config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+    return [[UAInbox alloc] initWithUser:user config:config dataStore:dataStore];
+}
 
 - (void)enterForeground {
     [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
@@ -43,11 +86,6 @@ SINGLETON_IMPLEMENTATION(UAInbox)
 
 - (void)userCreated {
     [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
-}
-
-+ (void)land {
-    [g_sharedUAInbox.client cancelAllRequests];
-    g_sharedUAInbox = nil;
 }
 
 //note: this is for deleting the UAInboxCache from disk, which is no longer in use.
@@ -66,48 +104,5 @@ SINGLETON_IMPLEMENTATION(UAInbox)
         }
     }
 }
-
-#pragma mark -
-#pragma mark Memory management
-
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-
-        self.client = [[UAInboxAPIClient alloc] init];
-
-        self.messageList = [[UAInboxMessageList alloc] init];
-        self.messageList.client = self.client;
-
-        [self.messageList loadSavedMessages];
-        [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
-
-
-        self.pushHandler = [[UAInboxPushHandler alloc] init];
-
-       [[NSNotificationCenter defaultCenter] addObserver:self
-                                                selector:@selector(enterForeground)
-                                                    name:UIApplicationWillEnterForegroundNotification
-                                                  object:nil];
-
-        if (![[UAUser defaultUser] defaultUserCreated]) {
-            [[NSNotificationCenter defaultCenter] addObserver:self
-                                                     selector:@selector(userCreated)
-                                                         name:UAUserCreatedNotification
-                                                       object:nil];
-        }
-
-        //delete legacy UAInboxCache if present
-        [self deleteInboxCache];
-    }
-
-    return self;
-}
-
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    self.pushHandler = nil;
-}
-
 
 @end

@@ -41,19 +41,25 @@
 @implementation UAActionRegistry
 @dynamic registeredEntries;
 
-SINGLETON_IMPLEMENTATION(UAActionRegistry)
++ (instancetype)shared {
+    return [UAirship shared].actionRegistry;
+}
 
 - (instancetype)init {
     self = [super init];
     if (self) {
         self.registeredActionEntries = [[NSMutableDictionary alloc] init];
         self.reservedEntryNames = [NSMutableArray array];
-
-        [self registerDefaultActions];
     }
     return self;
 }
 
+
++ (instancetype)defaultRegistry {
+    UAActionRegistry *registry = [[UAActionRegistry alloc] init];
+    [registry registerDefaultActions];
+    return registry;
+}
 
 -(BOOL)registerAction:(UAAction *)action names:(NSArray *)names {
     return [self registerAction:action names:names predicate:nil];

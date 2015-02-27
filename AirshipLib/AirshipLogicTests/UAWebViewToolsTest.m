@@ -13,6 +13,8 @@
 @property (nonatomic, strong) id mockActionJSDelegate;
 @property (nonatomic, strong) id mockUserDefinedJSDelegate;
 @property (nonatomic, strong) id mockAirship;
+@property (nonatomic, strong) id mockInbox;
+
 @property (nonatomic, strong) NSURL *basicActionsURL;
 @property (nonatomic, strong) NSURL *regularActionsURL;
 @property (nonatomic, strong) NSURL *callbackActionURL;
@@ -29,11 +31,14 @@
     self.mockActionJSDelegate = [OCMockObject mockForProtocol:@protocol(UAJavaScriptDelegate)];
     self.mockUserDefinedJSDelegate = [OCMockObject mockForProtocol:@protocol(UAJavaScriptDelegate)];
     self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.mockInbox = [OCMockObject niceMockForClass:[UAInbox class]];
 
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.mockActionJSDelegate] actionJSDelegate];
     [[[self.mockAirship stub] andReturn:self.mockUserDefinedJSDelegate] jsDelegate];
-    [UAInbox shared].jsDelegate = self.mockInboxJSDelegate;
+    [[[self.mockAirship stub] andReturn:self.mockInbox] inbox];
+
+    [[[self.mockInbox stub] andReturn:self.mockInboxJSDelegate] jsDelegate];
 
     self.basicActionsURL = [NSURL URLWithString:@"uairship://run-basic-actions/?foo=bar&baz=boz"];
     self.regularActionsURL = [NSURL URLWithString:@"uairship://run-actions/some-callback-id?foo=bar"];
@@ -46,9 +51,8 @@
     [self.mockActionJSDelegate stopMocking];
     [self.mockInboxJSDelegate stopMocking];
     [self.mockUserDefinedJSDelegate stopMocking];
-
-    [UAirship shared].jsDelegate = nil;
-    [UAirship shared].actionJSDelegate = nil;
+    [self.mockAirship stopMocking];
+    [self.mockInbox stopMocking];
 
     [super tearDown];
 }

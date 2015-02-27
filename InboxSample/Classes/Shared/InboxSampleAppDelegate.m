@@ -64,12 +64,12 @@
 
     // Optional: Delegate for JavaScript callback
     self.jsDelegate = [[UAInboxDefaultJSDelegate alloc] init];
-    [UAInbox shared].jsDelegate = self.jsDelegate;
+    [UAirship inbox].jsDelegate = self.jsDelegate;
 
     InboxSampleViewController *sampleViewController = self.viewController;
 
     // Set the sample view controller as the Inbox push handler delegate
-    [UAInbox shared].pushHandler.delegate = sampleViewController;
+    [UAirship inbox].pushHandler.delegate = sampleViewController;
 
     // Set a default size for the sample popover interface
     sampleViewController.popoverSize = CGSizeMake(600, 1100);
@@ -82,7 +82,9 @@
     // will be prompted to allow notifications. You should wait for a more appropriate
     // time to enable push to increase the likelihood that the user will accept
     // notifications.
-    [UAPush shared].userPushNotificationsEnabled = YES;
+    [UAirship push].userPushNotificationsEnabled = YES;
+
+    [[UAirship push] addTag:@"testy"];
 
     // Return value is ignored for push notifications, so it's safer to return
     // NO by default for other resources
@@ -92,13 +94,13 @@
 - (void)applicationWillResignActive:(UIApplication *)application {
     
     // Set the application's badge to the number of unread messages
-    if ([UAInbox shared].messageList.unreadCount >= 0) {
-        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[UAInbox shared].messageList.unreadCount];
+    if ([UAirship inbox].messageList.unreadCount >= 0) {
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[UAirship inbox].messageList.unreadCount];
     }
 }
 
 - (void)dealloc {
-    [UAInbox shared].jsDelegate = nil;
+    [UAirship inbox].jsDelegate = nil;
 }
 
 - (void)failIfSimulator {

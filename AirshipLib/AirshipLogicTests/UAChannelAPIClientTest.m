@@ -44,19 +44,18 @@
 @implementation UAChannelAPIClientTest
 
 
-
 - (void)setUp {
     [super setUp];
 
     self.config = [UAConfig config];
 
     self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturnValue:OCMOCK_VALUE(YES)] ready];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.config] config];
 
     self.mockRequestEngine = [OCMockObject niceMockForClass:[UAHTTPRequestEngine class]];
-    self.client = [UAChannelAPIClient clientWithRequestEngine:self.mockRequestEngine];
+    self.client = [UAChannelAPIClient clientWithConfig:self.config];
+    self.client.requestEngine = self.mockRequestEngine;
 }
 
 - (void)tearDown {

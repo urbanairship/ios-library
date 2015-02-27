@@ -54,6 +54,8 @@
 @property (nonatomic, strong) id application;
 @property (nonatomic, strong) id push;
 @property (nonatomic, strong) id currentDevice;
+@property (nonatomic, strong) id user;
+
 
 @end
 
@@ -63,13 +65,18 @@
     [super setUp];
 
     self.analytics = [OCMockObject niceMockForClass:[UAAnalytics class]];
+    self.push = [OCMockObject niceMockForClass:[UAPush class]];
+    self.user = [OCMockObject niceMockForClass:[UAUser class]];
+
     self.airship = [OCMockObject niceMockForClass:[UAirship class]];
+
     [[[self.airship stub] andReturn:self.airship] shared];
     [[[self.airship stub] andReturn:self.analytics] analytics];
+    [[[self.airship stub] andReturn:self.push] push];
+    [[[self.airship stub] andReturn:self.user] inboxUser];
 
     self.reachability = [OCMockObject niceMockForClass:[Reachability class]];
     [[[self.reachability stub] andReturn:self.reachability] reachabilityForInternetConnection];
-
 
     self.timeZone = [OCMockObject niceMockForClass:[NSTimeZone class]];
     [[[self.timeZone stub] andReturn:self.timeZone] defaultTimeZone];
@@ -78,9 +85,6 @@
 
     self.application = [OCMockObject niceMockForClass:[UIApplication class]];
     [[[self.application stub] andReturn:self.application] sharedApplication];
-
-    self.push = [OCMockObject niceMockForClass:[UAPush class]];
-    [[[self.push stub] andReturn:self.push] shared];
 
     self.currentDevice = [OCMockObject niceMockForClass:[UIDevice class]];
     [[[self.currentDevice stub] andReturn:self.currentDevice] currentDevice];
@@ -95,6 +99,7 @@
     [self.application stopMocking];
     [self.push stopMocking];
     [self.currentDevice stopMocking];
+    [self.currentDevice stopMocking];
 
     [super tearDown];
 }
@@ -103,7 +108,8 @@
  * Test app init event
  */
 - (void)testAppInitEvent {
-    [UAUser defaultUser].username = @"user id";
+    [[[self.user stub] andReturn:@"user id"] username];
+
     [[[self.reachability stub] andReturnValue:@(UA_ReachableViaWWAN)] currentReachabilityStatus];
     [[[self.analytics stub] andReturn:@"push id"] conversionSendId];
     [[[self.analytics stub] andReturn:@"rich push id"] conversionRichPushId];
@@ -143,7 +149,7 @@
  * Test app foreground event
  */
 - (void)testAppForegroundEvent {
-    [UAUser defaultUser].username = @"user id";
+    [[[self.user stub] andReturn:@"user id"] username];
     [[[self.reachability stub] andReturnValue:@(UA_ReachableViaWWAN)] currentReachabilityStatus];
     [[[self.analytics stub] andReturn:@"push id"] conversionSendId];
     [[[self.analytics stub] andReturn:@"rich push id"] conversionRichPushId];
@@ -215,7 +221,7 @@
 - (void)testRegistrationEvent {
     [[[self.push stub] andReturn:@"a12312ad"] deviceToken];
     [[[self.push stub] andReturn:@"someChannelID"] channelID];
-    [UAUser defaultUser].username = @"someUserID";
+    [[[self.user stub] andReturn:@"someUserID"] username];
 
     NSDictionary *expectedData = @{@"device_token": @"a12312ad",
                                    @"channel_id": @"someChannelID",

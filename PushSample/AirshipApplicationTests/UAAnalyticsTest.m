@@ -60,7 +60,7 @@
 - (void)setUp {
     UAConfig *config = [[UAConfig alloc] init];
     _dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"analytics.tests"];
-    _analytics = [[UAAnalytics alloc] initWithConfig:config dataStore:_dataStore];
+    _analytics = [UAAnalytics analyticsWithConfig:config dataStore:_dataStore];
 
     // Use verbose logging so all the logs show up during tests
     config.developmentLogLevel = UALogLevelTrace;
@@ -263,8 +263,8 @@
     id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
     [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
-    id mockDBManager = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
     id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
+    id mockDBManager = [OCMockObject partialMockForObject:_analytics.analyticDBManager];
 
     UAEventAppForeground *event = [[UAEventAppForeground alloc] init];
 
@@ -288,8 +288,8 @@
     id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
     [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
 
-    id mockDBManager = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
     id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
+    id mockDBManager = [OCMockObject partialMockForObject:_analytics.analyticDBManager];
 
     // Verify adding non location events in the background tries to send the events
     UAEventAppForeground *event = [[UAEventAppForeground alloc] init];
@@ -314,8 +314,8 @@
     id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
     [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
 
-    id mockDBManager = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
     id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
+    id mockDBManager = [OCMockObject partialMockForObject:_analytics.analyticDBManager];
 
     // Verify adding a location event in the background sends if the last send time
     // was 15 minutes ago.
@@ -423,7 +423,8 @@
     }
     threadTestEnded = YES;
 
-    UAAnalyticsDBManager *analyticsDb = [UAAnalyticsDBManager shared];
+    UAAnalyticsDBManager *analyticsDb = airshipAnalytics.analyticDBManager;
+
     NSArray *bunchOevents = [analyticsDb getEvents:100];
     __block BOOL testFail = YES;
     [bunchOevents enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {

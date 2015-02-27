@@ -27,6 +27,7 @@
 #import "UAAction+Internal.h"
 #import "UAActionRegistryEntry.h"
 #import "UAActionResult+Internal.h"
+#import "UAirship.h"
 
 NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
 
@@ -36,7 +37,7 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
             withArguments:(UAActionArguments *)arguments
     withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    UAActionRegistryEntry *entry = [[UAActionRegistry shared] registryEntryWithName:actionName];
+    UAActionRegistryEntry *entry = [[UAirship shared].actionRegistry registryEntryWithName:actionName];
 
     if (entry) {
         if (!entry.predicate || entry.predicate(arguments)) {

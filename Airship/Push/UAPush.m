@@ -74,31 +74,20 @@ NSString *const UAPushEnabledKey = @"UAPushEnabled";
 NSString *const UAPushQuietTimeStartKey = @"start";
 NSString *const UAPushQuietTimeEndKey = @"end";
 
-
 @implementation UAPush 
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-SINGLETON_IMPLEMENTATION(UAPush)
-#pragma clang diagnostic pop
++ (instancetype)shared {
+    return [UAirship push];
+}
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (UAPreferenceDataStore *)dataStore {
-    if (![UAirship shared].dataStore) {
-        UA_LERR(@"Data store is empty, takeoff not called!");
-    }
-
-    return [UAirship shared].dataStore;
-}
-
-- (instancetype)init {
+- (instancetype)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
-        //init with default delegate implementation
-        // released when replaced
+        self.dataStore = dataStore;
         self.defaultPushHandler = [[NSClassFromString(PUSH_DELEGATE_CLASS) alloc] init];
         self.pushNotificationDelegate = _defaultPushHandler;
 
@@ -108,15 +97,11 @@ SINGLETON_IMPLEMENTATION(UAPush)
 
         self.userNotificationTypes = UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound;
         self.registrationBackgroundTask = UIBackgroundTaskInvalid;
-        self.namedUser = [[UANamedUser alloc] initWithDataStore:[UAirship shared].dataStore];
-    }
+        self.namedUser = [[UANamedUser alloc] initWithConfig:config dataStore:dataStore];
 
-    return self;
-}
+        self.channelRegistrar = [UAChannelRegistrar channelRegistrarWithConfig:config];
+        self.channelRegistrar.delegate = self;
 
-- (void)setup {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(applicationDidBecomeActive)
                                                      name:UIApplicationDidBecomeActiveNotification
@@ -135,12 +120,10 @@ SINGLETON_IMPLEMENTATION(UAPush)
                                                        object:[UIApplication sharedApplication]];
         }
 
+
         // Do not remove migratePushSettings call from init. It needs to be run
         // prior to allowing the application to set defaults.
         [self migratePushSettings];
-
-        self.channelRegistrar = [[UAChannelRegistrar alloc] init];
-        self.channelRegistrar.delegate = self;
 
         // Log the channel ID at error level, but without logging
         // it as an error.
@@ -153,10 +136,16 @@ SINGLETON_IMPLEMENTATION(UAPush)
         if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerForRemoteNotifications)] && [UAirship shared].remoteNotificationBackgroundModeEnabled) {
             [[UIApplication sharedApplication] registerForRemoteNotifications];
         }
-
+        
         // Update the named user if necessary.
         [self.namedUser update];
-    });
+    }
+
+    return self;
+}
+
++ (instancetype)pushWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+    return [[UAPush alloc] initWithConfig:config dataStore:dataStore];
 }
 
 #pragma mark -
@@ -427,19 +416,6 @@ SINGLETON_IMPLEMENTATION(UAPush)
                        UAPushQuietTimeEndKey : endTimeStr };
 }
 
-
-#pragma mark -
-#pragma mark Open APIs
-
-+ (void)land {
-    
-    // not much teardown to do here, but implement anyway for the future
-    if (g_sharedUAPush) {
-        g_sharedUAPush = nil;
-        allocOncePredicateUAPush = 0;
-        sharedOncePredicateUAPush = 0;
-    }
-}
 
 #pragma mark -
 #pragma mark Open APIs - UA Registration Tags APIs
@@ -721,7 +697,7 @@ BOOL deferChannelCreationOnForeground = false;
 - (UAChannelRegistrationPayload *)createChannelPayload {
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     payload.deviceID = [UAUtils deviceID];
-    payload.userID = [UAUser defaultUser].username;
+    payload.userID = [UAirship inboxUser].username;
     payload.pushAddress = self.deviceToken;
 
     payload.optedIn = [self userPushNotificationsAllowed];
@@ -978,8 +954,6 @@ BOOL deferChannelCreationOnForeground = false;
     }
 }
 
-
-
 - (void)migratePushSettings {
     [self.dataStore migrateUnprefixedKeys:@[UAUserPushNotificationsEnabledKey, UABackgroundPushNotificationsEnabledKey,
                                             UAPushAliasSettingsKey, UAPushTagsSettingsKey, UAPushBadgeSettingsKey,
@@ -1021,7 +995,7 @@ BOOL deferChannelCreationOnForeground = false;
 }
 
 - (UIUserNotificationType)currentEnabledNotificationTypes {
-    if (![UAPush shared].userPushNotificationsEnabled) {
+    if (!self.userPushNotificationsEnabled) {
         return UIUserNotificationTypeNone;
     }
 

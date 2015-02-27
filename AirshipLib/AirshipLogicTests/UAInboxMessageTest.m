@@ -8,6 +8,7 @@
 #import "UAInboxMessageList+Internal.h"
 #import "UAInboxMessageListDelegate.h"
 #import "UAInboxAPIClient.h"
+#import "UAConfig.h"
 
 @interface UAInboxMessageTest : XCTestCase
 
@@ -39,7 +40,7 @@
 
 - (void)setUp {
     [super setUp];
-    self.dbManager = [UAInboxDBManager shared];
+    self.dbManager = [[UAInboxDBManager alloc] initWithConfig:[UAConfig config]];
     [self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"12345"]];
     self.message = [[self.dbManager fetchMessagesWithPredicate:nil] objectAtIndex:0];
 

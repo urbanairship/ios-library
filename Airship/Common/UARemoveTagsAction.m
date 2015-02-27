@@ -25,6 +25,7 @@
 
 #import "UARemoveTagsAction.h"
 #import "UAPush.h"
+#import "UAirship.h"
 
 @implementation UARemoveTagsAction
 
@@ -32,11 +33,11 @@
                   actionName:(NSString *)actionName
            completionHandler:(UAActionCompletionHandler)completionHandler {
     if ([arguments.value isKindOfClass:[NSString class]]) {
-        [[UAPush shared] removeTag:arguments.value];
+        [[UAirship push] removeTag:arguments.value];
     } else {
-        [[UAPush shared] removeTags:arguments.value];
+        [[UAirship push] removeTags:arguments.value];
     }
-    [[UAPush shared] updateRegistration];
+    [[UAirship push] updateRegistration];
     completionHandler([UAActionResult emptyResult]);
 }
 

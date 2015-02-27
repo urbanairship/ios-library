@@ -192,7 +192,7 @@ enum {
 
     self.title = UAPushLocalizedString(@"UA_Push_Settings_Title");
 
-    self.pushEnabledSwitch.on = [UAPush shared].userPushNotificationsEnabled;
+    self.pushEnabledSwitch.on = [UAirship push].userPushNotificationsEnabled;
 
     if (!self.pushSystemSettingsCell) {
         self.pushSystemSettingsCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
@@ -225,9 +225,9 @@ enum {
     [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
     
     
-    NSDictionary *quietTime = [[UAPush shared] quietTime];
+    NSDictionary *quietTime = [[UAirship push] quietTime];
     [formatter setDateFormat:@"HH:mm"];
-    self.quietTimeSwitch.on = [UAPush shared].quietTimeEnabled;
+    self.quietTimeSwitch.on = [UAirship push].quietTimeEnabled;
     if (quietTime != nil) {
         UALOG(@"Quiet time dict found: %@ to %@", [quietTime objectForKey:@"start"], [quietTime objectForKey:@"end"]);
         date1 = [formatter dateFromString:[quietTime objectForKey:@"start"]];
@@ -301,7 +301,7 @@ enum {
     if (self.dirty) {
         UISwitch *strongPushEnabledSwitch = self.pushEnabledSwitch;
 
-        [UAPush shared].userPushNotificationsEnabled = strongPushEnabledSwitch.on;
+        [UAirship push].userPushNotificationsEnabled = strongPushEnabledSwitch.on;
         
         if (strongPushEnabledSwitch.on) {
             [self updateQuietTime];
@@ -417,21 +417,21 @@ enum {
         NSDate *fromDate = [formatter dateFromString:fromString];
         NSDate *toDate = [formatter dateFromString:toString];
                 
-        [UAPush shared].quietTimeEnabled = YES;
+        [UAirship push].quietTimeEnabled = YES;
 
         NSDateComponents *fromComponents = [[NSCalendar currentCalendar] components:NSCalendarUnitHour|NSCalendarUnitMinute fromDate:fromDate];
         NSDateComponents *toComponents = [[NSCalendar currentCalendar] components:NSCalendarUnitHour|NSCalendarUnitMinute fromDate:toDate];
 
 
-        [[UAPush shared] setQuietTimeStartHour:(NSUInteger)fromComponents.hour
+        [[UAirship push] setQuietTimeStartHour:(NSUInteger)fromComponents.hour
                                    startMinute:(NSUInteger)fromComponents.minute
                                        endHour:(NSUInteger)toComponents.hour
                                      endMinute:(NSUInteger)toComponents.minute];
 
-        [[UAPush shared] updateRegistration];
+        [[UAirship push] updateRegistration];
     } else {
-        [UAPush shared].quietTimeEnabled = NO;
-        [[UAPush shared] updateRegistration];
+        [UAirship push].quietTimeEnabled = NO;
+        [[UAirship push] updateRegistration];
     }
 
 
@@ -444,16 +444,16 @@ enum {
  * Update the text in the table cells to reflect the current push-enabled state.
  */
 - (void)updateSettingsLinkText {
-    UIUserNotificationType types = [[UAPush shared] currentEnabledNotificationTypes];
+    UIUserNotificationType types = [[UAirship push] currentEnabledNotificationTypes];
 
     // Types are not set as desired
     // NOTE: when comparing types, always make sure userPushNotificationsEnabled == YES, otherwise
     // we might be comparing prior to registration.
-    if ([UAPush shared].userPushNotificationsEnabled && types == UIUserNotificationTypeNone) {
+    if ([UAirship push].userPushNotificationsEnabled && types == UIUserNotificationTypeNone) {
         // No user notifications are available - point to settings
         self.pushSystemSettingsCell.textLabel.text = UAPushLocalizedString(@"UA_Push_Settings_Link_Disabled_Title");
         self.pushSystemSettingsCell.detailTextLabel.text = UAPushLocalizedString(@"UA_Push_Settings_Link_Disabled_Detail");
-    } else if ([UAPush shared].userPushNotificationsEnabled && types != [UAPush shared].userNotificationTypes) {
+    } else if ([UAirship push].userPushNotificationsEnabled && types != [UAirship push].userNotificationTypes) {
         // Check the current setting rather than the button on/off state to ensure we're comparing
         // the right things, as registration won't occur until after the scren closes
         //
@@ -479,7 +479,7 @@ enum {
     return ([UIUserNotificationSettings class] && self.pushEnabledSwitch.on);
 
     // If you only want to show the link when settings are mismatched, add an additional condition:
-    //            && [UAPush currentEnabledNotificationTypes] != [UAPush shared].userNotificationTypes);
+    //            && [[UAirship push] currentEnabledNotificationTypes] != [UAirship push].userNotificationTypes);
 }
 
 @end

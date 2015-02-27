@@ -28,6 +28,7 @@
 #import "UAInbox.h"
 #import "UAInboxUtils.h"
 #import "UAInboxMessageList.h"
+#import "UAirship.h"
 
 @implementation UAIncomingRichPushAction
 
@@ -50,7 +51,7 @@
     NSDictionary *pushPayload = [arguments.metadata objectForKey:UAActionMetadataPushPayloadKey];
     
     
-    UAInboxPushHandler *handler = [UAInbox shared].pushHandler;
+    UAInboxPushHandler *handler = [UAirship inbox].pushHandler;
 
     NSString *richPushID = [UAInboxUtils getRichPushMessageIDFromValue:arguments.value];
 
@@ -71,7 +72,7 @@
             break;
     }
 
-    [[UAInbox shared].messageList retrieveMessageListWithSuccessBlock:^{
+    [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
         [handler messageListLoadSucceeded];
         completionHandler([UAActionResult resultWithValue:richPushID withFetchResult:UAActionFetchResultNewData]);
     } withFailureBlock:^{

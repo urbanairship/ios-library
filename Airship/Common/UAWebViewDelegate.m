@@ -55,7 +55,7 @@
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
 
     // This will be nil if we are not loading a Rich Push message
-    UAInboxMessage *message = [[UAInbox shared].messageList messageForBodyURL:request.URL];
+    UAInboxMessage *message = [[UAirship inbox].messageList messageForBodyURL:request.URL];
 
     NSURL *url = [request URL];
 
@@ -142,7 +142,7 @@
 
 - (void)populateJavascriptEnvironment:(UIWebView *)webView {
     // This will be nil if we are not loading a Rich Push message
-    UAInboxMessage *message = [[UAInbox shared].messageList messageForBodyURL:webView.request.mainDocumentURL];
+    UAInboxMessage *message = [[UAirship inbox].messageList messageForBodyURL:webView.request.mainDocumentURL];
 
     /*
      * Define and initialize our one global
@@ -171,7 +171,7 @@
     /*
      * Set the UA user ID.
      */
-    appendJavascriptProperty(@"userID", @"getUserId", [UAUser defaultUser].username);
+    appendJavascriptProperty(@"userID", @"getUserId", [UAirship inboxUser].username);
 
     /*
      * Set the current message ID.
@@ -223,7 +223,7 @@
 - (void)performJSDelegateWithData:(UAWebViewCallData *)data {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    id<UAInboxJavaScriptDelegate> inboxJSDelegate = [UAInbox shared].jsDelegate;
+    id<UAInboxJavaScriptDelegate> inboxJSDelegate = [UAirship inbox].jsDelegate;
 #pragma clang diagnostic pop
     id <UAJavaScriptDelegate> actionJSDelegate = [UAirship shared].actionJSDelegate;
     id <UAJavaScriptDelegate> userJSDDelegate = [UAirship shared].jsDelegate;

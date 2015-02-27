@@ -28,6 +28,7 @@
 #import "UAInboxDBManager+Internal.h"
 #import "UAInboxMessage.h"
 #import "UAUtils.h"
+#import "UAConfig.h"
 
 @interface UAInboxDBManagerTests : XCTestCase
 @property (nonatomic, strong) UAInboxDBManager *dbManager;
@@ -36,7 +37,7 @@
 @implementation UAInboxDBManagerTests
 
 - (void)setUp {
-    self.dbManager = [UAInboxDBManager shared];
+    self.dbManager = [[UAInboxDBManager alloc]initWithConfig:[UAConfig config]];
     [self.dbManager deleteMessages:[self.dbManager fetchMessagesWithPredicate:nil]];
     [super setUp];
 }

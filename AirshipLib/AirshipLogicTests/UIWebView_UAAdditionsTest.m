@@ -62,7 +62,6 @@
 
     // Mock UAUser
     self.mockUAUser = [OCMockObject niceMockForClass:[UAUser class]];
-    [[[self.mockUAUser stub] andReturn:self.mockUAUser] defaultUser];
 
     // Mock UIDevice
     self.mockUIDevice = [OCMockObject niceMockForClass:[UIDevice class]];
@@ -70,6 +69,7 @@
 
     self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [[[self.mockAirship stub] andReturn:self.mockUAUser] inboxUser];
 
     UAWhitelist *whitelist = [UAWhitelist whitelistWithConfig:[UAConfig defaultConfig]];
     [[[self.mockAirship stub] andReturn:whitelist] whitelist];
@@ -186,25 +186,20 @@
     XCTAssertFalse([self.jsc evaluateScript:@"UAirship.finishAction"].isUndefined);
 }
 
-
-
-
 /**
  * Test populateJavascriptEnvironment with a message
  */
 - (void)testPopulateJavascriptEnvironmentWithMessage {
 
-    // Create an actual message because NSManagedObjects and OCMock are not friends.
-    NSDictionary *messageDefintion = @{@"message_id": @"messageID",
-                                       @"title": @"messageTitle",
-                                       @"content_type": @"someContentType",
-                                       @"extra": @{@"someKey":@"someValue"},
-                                       @"message_body_url": @"http://someMessageBodyUrl",
-                                       @"message_url": @"http://someMessageUrl",
-                                       @"unread": @"0",
-                                       @"message_sent": @"2013-08-13 00:16:22" };
-
-    UAInboxMessage *message = [[UAInboxDBManager shared] addMessageFromDictionary:messageDefintion];
+    id message = [OCMockObject mockForClass:[UAInboxMessage class]];
+    [[[message stub] andReturn:@"messageID"] messageID];
+    [[[message stub] andReturn:@"messageTitle"] title];
+    [[[message stub] andReturn:@"someContentType"] contentType];
+    [[[message stub] andReturn:@{@"someKey":@"someValue"}] extra];
+    [[[message stub] andReturn:@"http://someMessageBodyUrl"] messageBodyURL];
+    [[[message stub] andReturn:@"http://someMessageUrl"] messageURL];
+    [[[message stub] andReturn:@NO] unread];
+    [[[message stub] andReturn:[NSDate dateWithTimeIntervalSince1970:1376352982]] messageSent];
 
     __block NSString *js;
 
@@ -240,10 +235,6 @@
     // Verify message send date ms
     XCTAssertEqualObjects(@1376352982000, [self.jsc evaluateScript:@"UAirship.getMessageSentDateMS()"].toNumber);
     XCTAssertEqualObjects(@1376352982000, [self.jsc evaluateScript:@"UAirship.messageSentDateMS"].toNumber);
-
-
-    // Delete the message
-    [[UAInboxDBManager shared] deleteMessages:@[message.messageID]];
 }
 
 /**

@@ -30,6 +30,7 @@
 #import "KIFUITestActor+UAAdditions.h"
 #import "UAPushClient.h"
 #import "UAUtils.h"
+#import "UAirship.h"
 
 #define kPushRegistrationWait 10.0
 #define kAliasTagsRegistrationWait 30.0
@@ -51,7 +52,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     }
 
     pushDelegate = [[UATestPushDelegate alloc] init];
-    [UAPush shared].pushNotificationDelegate = pushDelegate;
+    [UAirship push].pushNotificationDelegate = pushDelegate;
 
     // enable push via the UI
     [tester tapViewWithAccessibilityLabel:@"Push Settings"];
@@ -69,7 +70,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     [tester verifyPushEnabled:YES];
 
     // Verify channel ID created
-    NSString *channelId = [UAPush shared].channelID;
+    NSString *channelId = [UAirship push].channelID;
     NSLog(@"Channel ID is: %@", channelId);
 
     if (!channelId) {
@@ -129,7 +130,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
 
     // Now send a unicast push to the device token and verify we received the notification
     [tester sendAndWaitForNotification:@"Send a push to the device token" sendPushBlock:^(NSString *alertID) {
-        [UAPushClient sendAlert:alertID toDeviceToken:[UAPush shared].deviceToken];
+        [UAPushClient sendAlert:alertID toDeviceToken:[UAirship push].deviceToken];
     }];
 }
 
@@ -140,7 +141,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
 
     // Now send a unicast push to the channel and verify we received the notification
     [tester sendAndWaitForNotification:@"Send a push to the channel" sendPushBlock:^(NSString *alertID) {
-        [UAPushClient sendAlert:alertID toChannel:[UAPush shared].channelID];
+        [UAPushClient sendAlert:alertID toChannel:[UAirship push].channelID];
     }];
 }
 
@@ -225,7 +226,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     [tester tapViewWithAccessibilityLabel:@"Tags"];
 
     // delete any existing tags
-    for (NSString *tag in [UAPush shared].tags) {
+    for (NSString *tag in [UAirship push].tags) {
         [tester tapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Delete %@", tag] traits:UIAccessibilityTraitButton];
 
         // iOS 7 UI requires another tap on 'Delete' button, while older versions need to confirm deletion.

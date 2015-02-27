@@ -26,6 +26,7 @@
 #import "UAPushSettingsUserInfoViewController.h"
 #import "UAUser.h"
 #import "NSString+UASizeWithFontCompatibility.h"
+#import "UAirship.h"
 
 @implementation UAPushSettingsUserInfoViewController
 
@@ -41,7 +42,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    self.usernameLabel.text = [UAUser defaultUser].username ?: @"Unavailable";
+    self.usernameLabel.text = [UAirship inboxUser].username ?: @"Unavailable";
 }
 
 #pragma mark -
@@ -101,7 +102,7 @@
 #pragma mark -
 #pragma mark UI Button Actions
 - (IBAction)copyUsername {
-    NSString *username = [UAUser defaultUser].username;
+    NSString *username = [UAirship inboxUser].username;
     if (username) {
         UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
         pasteboard.string = username;
@@ -114,7 +115,7 @@
         MFMailComposeViewController *mfViewController = [[MFMailComposeViewController alloc] init];
         mfViewController.mailComposeDelegate = self;
 
-        NSString *messageBody = [NSString stringWithFormat:@"Your username is %@\n\nSend a test rich push at http://go.urbanairship.com", [UAUser defaultUser].username];
+        NSString *messageBody = [NSString stringWithFormat:@"Your username is %@\n\nSend a test rich push at http://go.urbanairship.com", [UAirship inboxUser].username];
 
         [mfViewController setSubject:@"Username"];
         [mfViewController setMessageBody:messageBody isHTML:NO];

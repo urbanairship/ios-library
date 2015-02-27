@@ -42,8 +42,6 @@
 */
 @property (nonatomic, strong) UASQLite *db;
 
-SINGLETON_INTERFACE(UAAnalyticsDBManager);
-
 /**
  * Resets the database
  */

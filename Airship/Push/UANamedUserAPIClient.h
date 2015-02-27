@@ -27,6 +27,7 @@
 
 @class UAHTTPRequestEngine;
 @class UAHTTPRequest;
+@class UAConfig;
 
 /**
  * A block called when named user association or disassociation succeeded.
@@ -45,20 +46,13 @@ typedef void (^UANamedUserAPIClientFailureBlock)(UAHTTPRequest *request);
  */
 @interface UANamedUserAPIClient : NSObject
 
-/**
- * Factory method to create a UANamedUserAPIClient.
- *
- * @return UANamedUserAPIClient with a default requestEngine.
- */
-+ (instancetype)client;
 
 /**
  * Factory method to create a UANamedUserAPIClient.
- *
- * @param requestEngine The specified UAHTTPRequestEngine.
- * @return UANamedUserAPIClient with the specified requestEngine.
+ * @param config the Urban Airship config.
+ * @return UANamedUserAPIClient instance.
  */
-+ (instancetype)clientWithRequestEngine:(UAHTTPRequestEngine *)requestEngine;
++ (instancetype)clientWithConfig:(UAConfig *)config;
 
 /**
  * Associates the channel to the named user ID.
@@ -95,5 +89,10 @@ typedef void (^UANamedUserAPIClientFailureBlock)(UAHTTPRequest *request);
  * accordingly before calling back with a success or failure.  Defaults to `YES`.
  */
 @property (nonatomic, assign) BOOL shouldRetryOnConnectionError;
+
+/**
+ * The client's request engine.
+ */
+@property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
 
 @end

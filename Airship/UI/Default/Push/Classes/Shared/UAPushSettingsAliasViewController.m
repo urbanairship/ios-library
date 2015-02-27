@@ -26,6 +26,7 @@
 #import "UAPushSettingsAliasViewController.h"
 #import "UAPush.h"
 #import "NSString+UASizeWithFontCompatibility.h"
+#import "UAirship.h"
 
 enum {
     SectionDesc        = 0,
@@ -52,7 +53,7 @@ enum {
     self.title = @"Device Alias";
 
     UITextField *strongAliasField = self.aliasField;
-    strongAliasField.text = [UAPush shared].alias;
+    strongAliasField.text = [UAirship push].alias;
     strongAliasField.clearsOnBeginEditing = YES;
     strongAliasField.accessibilityLabel = @"Edit Alias";
     self.textLabel.text = @"Assign an alias to a device or a group of devices to simplify "
@@ -126,12 +127,12 @@ enum {
     NSString *result = [newAlias stringByReplacingCharactersInRange:range withString:@""];
 
     if ([result length] != 0) {
-        [[UAPush shared] setAlias:result];
-        [[UAPush shared] updateRegistration];
+        [[UAirship push] setAlias:result];
+        [[UAirship push] updateRegistration];
     } else {
         textField.text = nil;
-        [[UAPush shared] setAlias:nil];
-        [[UAPush shared] updateRegistration];
+        [[UAirship push] setAlias:nil];
+        [[UAirship push] updateRegistration];
     }
 }
 

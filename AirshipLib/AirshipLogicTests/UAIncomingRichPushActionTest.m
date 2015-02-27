@@ -31,6 +31,7 @@
 #import "UAInboxPushHandler.h"
 #import "UAInboxMessageList.h"
 #import "UAActionArguments+Internal.h"
+#import "UAirship.h"
 
 @interface UAIncomingRichPushActionTest : XCTestCase
 
@@ -40,7 +41,7 @@
 @property (nonatomic, strong) id mockPushHandler;
 @property (nonatomic, strong) id mockPushHandlerDelegate;
 @property (nonatomic, strong) id mockMessageList;
-
+@property (nonatomic, strong) id mockAirship;
 @end
 
 @implementation UAIncomingRichPushActionTest
@@ -62,8 +63,11 @@
     self.mockPushHandlerDelegate = [OCMockObject niceMockForProtocol:@protocol(UAInboxPushHandlerDelegate)];
     self.mockMessageList = [OCMockObject niceMockForClass:[UAInboxMessageList class]];
     self.mockInbox = [OCMockObject mockForClass:[UAInbox class]];
+    self.mockAirship = [OCMockObject mockForClass:[UAirship class]];
 
-    [[[self.mockInbox stub] andReturn:self.mockInbox] shared];
+    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [[[self.mockAirship stub] andReturn:self.mockInbox] inbox];
+
     [[[self.mockInbox stub] andReturn:self.mockMessageList] messageList];
     [[[self.mockInbox stub] andReturn:self.mockPushHandler] pushHandler];
 
@@ -71,6 +75,7 @@
 }
 
 - (void)tearDown {
+    [self.mockAirship stopMocking];
     [self.mockInbox stopMocking];
     [self.mockPushHandler stopMocking];
     [self.mockMessageList stopMocking];

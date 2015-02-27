@@ -41,6 +41,7 @@
 #import "UAInteractiveNotificationEvent.h"
 #import "UAUserNotificationCategories+Internal.h"
 #import "UAPreferenceDataStore.h"
+#import "UAConfig.h"
 
 @interface UAPushTest : XCTestCase
 @property (nonatomic, strong) id mockedApplication;
@@ -69,12 +70,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
 - (void)setUp {
     [super setUp];
-
-    // Unable to create a separate instance of UAPush. The singleton implementation
-    // only allows 1, even trying to alloc init a new one.
-    self.push =  [UAPush shared];
-
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"uapush.test."];
+    self.push =  [UAPush pushWithConfig:[UAConfig defaultConfig] dataStore:self.dataStore];
 
     self.notification = @{
                           @"aps": @{
@@ -127,7 +124,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [[[self.mockUAUtils stub] andReturn:@"someDeviceID"] deviceID];
 
     self.mockUAUser = [OCMockObject niceMockForClass:[UAUser class]];
-    [[[self.mockUAUser stub] andReturn:self.mockUAUser] defaultUser];
+    [[[self.mockedAirship stub] andReturn:self.mockUAUser] inboxUser];
     [[[self.mockUAUser stub] andReturn:@"someUser"] username];
 
     self.mockDefaultUserNotificationCategories = [OCMockObject niceMockForClass:[UAUserNotificationCategories class]];
@@ -141,9 +138,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     self.push.registrationDelegate = nil;
 
     [self.dataStore removeAll];
-
-    // Landing UAPush so next [UAPush shared] a new one will be created
-    [UAPush land];
 
     [self.mockedApplication stopMocking];
     [self.mockedChannelRegistrar stopMocking];
@@ -164,7 +158,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 }
 
 - (void)testSetDeviceToken {
-
     self.push.deviceToken = nil;
 
     self.push.deviceToken = @"invalid characters";
@@ -1051,10 +1044,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [self.dataStore removeObjectForKey:UAPushQuietTimeEnabledSettingsKey];
     XCTAssertFalse(self.push.quietTimeEnabled, @"QuietTime should be disabled");
 
-    [UAPush shared].quietTimeEnabled = YES;
+    self.push.quietTimeEnabled = YES;
     XCTAssertTrue(self.push.quietTimeEnabled, @"QuietTime should be enabled");
 
-    [UAPush shared].quietTimeEnabled = NO;
+    self.push.quietTimeEnabled = NO;
     XCTAssertFalse(self.push.quietTimeEnabled, @"QuietTime should be disabled");
 }
 
@@ -1573,7 +1566,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  * not set the badge on the application
  */
 - (void)testHandleNotificationAutoBadgeDisabled {
-    UAPush.shared.autobadgeEnabled = NO;
+    self.push.autobadgeEnabled = NO;
     [[self.mockedApplication reject] setApplicationIconBadgeNumber:2];
     [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateActive];
     [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateBackground];
@@ -1587,7 +1580,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  * only when a notification comes in while the app is in the foreground
  */
 - (void)testHandleNotificationAutoBadgeEnabled {
-    UAPush.shared.autobadgeEnabled = YES;
+    self.push.autobadgeEnabled = YES;
 
     [[self.mockedApplication expect] setApplicationIconBadgeNumber:2];
     [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateActive];

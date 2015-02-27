@@ -137,7 +137,7 @@
 + (void)performJSDelegateWithData:(UAWebViewCallData *)data {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    id<UAInboxJavaScriptDelegate> inboxJSDelegate = [UAInbox shared].jsDelegate;
+    id<UAInboxJavaScriptDelegate> inboxJSDelegate = [UAirship inbox].jsDelegate;
 #pragma clang diagnostic pop
     id <UAJavaScriptDelegate> actionJSDelegate = [UAirship shared].actionJSDelegate;
     id <UAJavaScriptDelegate> userJSDDelegate = [UAirship shared].jsDelegate;

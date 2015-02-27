@@ -57,13 +57,6 @@
 
 
 /**
- * Initializes with the specified airshipConfig file.
- * @param airshipConfig The 'AirshipConfig.plist' file
- * @param dataStore The shared preference data store.
- */
-- (instancetype)initWithConfig:(UAConfig *)airshipConfig dataStore:(UAPreferenceDataStore *)dataStore;
-
-/**
  * Delays the next analytics send.
  * @param time The number of seconds to delay the send opertation.
  */
