@@ -4,6 +4,8 @@
 #import "UAHTTPConnection.h"
 
 @class UAHTTPRequestEngine;
+@class UAUser;
+@class UAConfig;
 
 typedef void (^UAUserAPIClientCreateSuccessBlock)(UAUserData *data, NSDictionary *payload);
 typedef void (^UAUserAPIClientUpdateSuccessBlock)();
@@ -17,16 +19,10 @@ typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
 
 /**
  * Factory method to create a UAUserAPIClient.
+ * @param config the Urban Airship config.
+ * @return UAUserAPIClient instance.
  */
-+ (instancetype)client;
-
-
-/**
- * Factory method to create a UAUserAPIClient.
- *
- * @param requestEngine The specified UAHTTPRequestEngine.
- */
-+ (instancetype)clientWithRequestEngine:(UAHTTPRequestEngine *)requestEngine;
++ (instancetype)clientWithConfig:(UAConfig *)config;
 
 /**
  * Create a user.
@@ -50,16 +46,21 @@ typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
  * If the channel id is available, it will add the channel and remove
  * the device token.  If only the device token is available it will add it to the user.
  *
- * @param username The specified user to update.
+ * @param user The specified user to update.
  * @param deviceToken The user's device token.
  * @param channelID The user's channel ID.
  * @param successBlock A UAUserAPIClientUpdateSuccessBlock that will be called if the update was successful.
  * @param failureBlock A UAUserAPIClientFailureBlock that will be called if the update was unsuccessful.
  */
-- (void)updateUser:(NSString *)username
+- (void)updateUser:(UAUser *)user
        deviceToken:(NSString *)deviceToken
          channelID:(NSString *)channelID
          onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock
          onFailure:(UAUserAPIClientFailureBlock)failureBlock;
+
+/**
+ * The client's request engine.
+ */
+@property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
 
 @end

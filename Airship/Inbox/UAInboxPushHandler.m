@@ -41,7 +41,7 @@
     // only take action if there's a new message
     if (self.viewingMessageID) {
 
-        UAInboxMessage *message = [[UAInbox shared].messageList messageForID:self.viewingMessageID];
+        UAInboxMessage *message = [[UAirship inbox].messageList messageForID:self.viewingMessageID];
 
         // if the notification came in while the app was backgrounded, treat it as a launch message
         id<UAInboxPushHandlerDelegate> strongDelegate = self.delegate;

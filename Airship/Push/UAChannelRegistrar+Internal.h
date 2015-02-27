@@ -27,7 +27,7 @@
 
 @class UAChannelRegistrationPayload;
 @class UAChannelAPIClient;
-
+@class UAConfig;
 
 @interface UAChannelRegistrar ()
 
@@ -48,6 +48,13 @@
  * A flag indicating if registration is in progress.
  */
 @property (atomic, assign) BOOL isRegistrationInProgress;
+
+/**
+ * Factory method to create a channel registrar.
+ * @param config The Urban Airship config.
+ * @return A new channel registrar instance.
+ */
++ (instancetype)channelRegistrarWithConfig:(UAConfig *)config;
 
 
 @end

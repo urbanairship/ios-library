@@ -29,6 +29,7 @@
 #import "UAEvent+Internal.h"
 #import "UA_Reachability.h"
 #import "UAPush.h"
+#import "UAirship.h"
 
 @implementation UAEvent
 
@@ -117,7 +118,7 @@ static dispatch_once_t netInfoDispatchToken_;
 - (NSArray *)notificationTypes {
     NSMutableArray *notificationTypes = [NSMutableArray array];
 
-    UIUserNotificationType enabledTypes = [[UAPush shared] currentEnabledNotificationTypes];
+    UIUserNotificationType enabledTypes = [[UAirship push] currentEnabledNotificationTypes];
 
     if ((UIUserNotificationTypeBadge & enabledTypes) > 0) {
         [notificationTypes addObject:@"badge"];

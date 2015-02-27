@@ -37,23 +37,13 @@ extern NSString * const UAUserCreatedNotification;
  * Returns the singleton user instance.
  * @return The singleton user instance.
  */
-+ (UAUser *)defaultUser;
-
-/**
- * Causes the user instance to stop listening for device token changes.
- */
-+ (void)land;
++ (UAUser *)defaultUser __attribute__((deprecated("As of version 6.0.0. Use [UAirship inboxUser] instead.")));
 
 /**
  * Indicates whether the default user has been created.
  * @return `YES` if the user has been created, `NO` otherwise.
  */
-- (BOOL)defaultUserCreated;
-
-/**
- * Loads the user from disk if available, otherwise creates the user (asynchronously) from scratch.
- */
-- (void)initializeUser;
+@property (nonatomic, readonly, getter=isCreated) BOOL created;
 
 /**
  * The user name.

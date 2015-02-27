@@ -188,7 +188,9 @@
 #pragma clang diagnostic push
 @interface UAPush : NSObject <UAChannelRegistrarDelegate>
 
-SINGLETON_INTERFACE(UAPush);
+
++ (instancetype)shared __attribute__((deprecated("As of version 6.0.0. Use [UAirship push] instead.")));
+
 
 ///---------------------------------------------------------------------------------------
 /// @name Push Notifications
@@ -253,7 +255,7 @@ SINGLETON_INTERFACE(UAPush);
 /**
  * Notification types this app will request from APNS. Changes to this value
  * will not take effect the next time the app registers with
- * [[UAPush shared] updateRegistration].
+ * [[UAirship push] updateRegistration].
  *
  * Defaults to alert, sound and badge.
  *
@@ -264,7 +266,7 @@ SINGLETON_INTERFACE(UAPush);
 /**
  * User Notification types this app will request from APNS. Changes to this value
  * will not take effect the next time the app registers with
- * [[UAPush shared] updateRegistration].
+ * [[UAirship push] updateRegistration].
  *
  * Defaults to alert, sound and badge.
  */
@@ -275,7 +277,7 @@ SINGLETON_INTERFACE(UAPush);
  * categories will be unaffected by this field.
  *
  * Changes to this value will not take effect the next time the app registers
- * with [[UAPush shared] updateRegistration].
+ * with [[UAirship push] updateRegistration].
  */
 @property (nonatomic, strong) NSSet *userNotificationCategories;
 
@@ -284,7 +286,7 @@ SINGLETON_INTERFACE(UAPush);
  * to background user notification actions.
  *
  * Changes to this value will not take effect the next time the app registers
- * with [[UAPush shared] updateRegistration].
+ * with [[UAirship push] updateRegistration].
  */
 @property (nonatomic, assign) BOOL requireAuthorizationForDefaultCategories;
 

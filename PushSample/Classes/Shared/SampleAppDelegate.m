@@ -62,12 +62,12 @@
     UA_LDEBUG(@"Config:\n%@", [config description]);
 
     // Set the icon badge to zero on startup (optional)
-    [[UAPush shared] resetBadge];
+    [[UAirship push] resetBadge];
 
     // Set the notification types required for the app (optional). This value defaults
     // to badge, alert and sound, so it's only necessary to set it if you want
     // to add or remove types.
-    [UAPush shared].userNotificationTypes = (UIUserNotificationTypeAlert |
+    [UAirship push].userNotificationTypes = (UIUserNotificationTypeAlert |
                                              UIUserNotificationTypeBadge |
                                              UIUserNotificationTypeSound);
 
@@ -77,7 +77,7 @@
     // will be prompted to allow notifications. You should wait for a more appropriate
     // time to enable push to increase the likelihood that the user will accept
     // notifications.
-    // [UAPush shared].userPushNotificationsEnabled = YES;
+    // [UAirship push].userPushNotificationsEnabled = YES;
 
     return YES;
 }
@@ -86,7 +86,7 @@
     UA_LDEBUG(@"Application did become active.");
     
     // Set the icon badge to zero on resume (optional)
-    [[UAPush shared] resetBadge];
+    [[UAirship push] resetBadge];
 }
 
 
@@ -95,21 +95,21 @@
     UA_LINFO(@"Received remote notification (in appDelegate): %@", userInfo);
 
     // Optionally provide a delegate that will be used to handle notifications received while the app is running
-    // [UAPush shared].pushNotificationDelegate = your custom push delegate class conforming to the UAPushNotificationDelegate protocol
+    // [UAirship push].pushNotificationDelegate = your custom push delegate class conforming to the UAPushNotificationDelegate protocol
     
     // Reset the badge after a push received (optional)
-    [[UAPush shared] resetBadge];
+    [[UAirship push] resetBadge];
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler{
     UA_LINFO(@"Received remote notification (in appDelegate): %@", userInfo);
 
     // Optionally provide a delegate that will be used to handle notifications received while the app is running
-    // [UAPush shared].pushNotificationDelegate = your custom push delegate class conforming to the UAPushNotificationDelegate protocol
+    // [UAirship push].pushNotificationDelegate = your custom push delegate class conforming to the UAPushNotificationDelegate protocol
 
     // Reset the badge after a push is received in a active or inactive state
     if (application.applicationState != UIApplicationStateBackground) {
-        [[UAPush shared] resetBadge];
+        [[UAirship push] resetBadge];
     }
 
     completionHandler(UIBackgroundFetchResultNoData);

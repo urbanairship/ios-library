@@ -39,12 +39,13 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 
 @implementation UANamedUser
 
-- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
         self.dataStore = dataStore;
-        self.namedUserAPIClient = [[UANamedUserAPIClient alloc] init];
+        self.namedUserAPIClient = [UANamedUserAPIClient clientWithConfig:config];
     }
+    
     return self;
 }
 
@@ -61,7 +62,7 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
         return;
     }
 
-    if (![UAPush shared].channelID) {
+    if (![UAirship push].channelID) {
         // Skip since we don't have a channel ID.
         UA_LDEBUG(@"The channel ID does not exist. Will retry when channel ID is available.");
         return;
@@ -123,7 +124,7 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 
 - (void)associateNamedUser {
     NSString *token = self.changeToken;
-    [self.namedUserAPIClient associate:self.identifier channelID:[UAPush shared].channelID
+    [self.namedUserAPIClient associate:self.identifier channelID:[UAirship push].channelID
      onSuccess:^{
          self.lastUpdatedToken = token;
          UA_LDEBUG(@"Named user associated to channel successfully.");
@@ -135,7 +136,7 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 
 - (void)disassociateNamedUser {
     NSString *token = self.changeToken;
-    [self.namedUserAPIClient disassociate:[UAPush shared].channelID
+    [self.namedUserAPIClient disassociate:[UAirship push].channelID
      onSuccess:^{
          self.lastUpdatedToken = token;
          UA_LDEBUG(@"Named user disassociated from channel successfully.");

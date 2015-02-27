@@ -26,6 +26,7 @@
 #import "UANamedUser.h"
 
 @class UANamedUserAPIClient;
+@class UAConfig;
 
 @interface UANamedUser ()
 
@@ -66,9 +67,10 @@ extern NSString *const UANamedUserLastUpdatedTokenKey;
 
 /**
  * Initializes the Named User with the specified data store.
+ * @param config The Urban Airship config.
  * @param dataStore The shared preference data store.
  */
-- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore;
+- (instancetype)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
  * Updates the association or disassociation of the current named user ID.

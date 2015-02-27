@@ -6,11 +6,13 @@
 #import "UAAddTagsAction.h"
 #import "UARemoveTagsAction.h"
 #import "UAPush+Internal.h"
-#import "UAPush+Test.h"
 #import "UAActionArguments+Internal.h"
+#import "UAirship.h"
 
 @interface UATagActionsTest : XCTestCase
 @property (nonatomic, strong) id mockPush;
+@property (nonatomic, strong) id mockAirship;
+
 @property (nonatomic, strong) UAActionArguments *stringArgs;
 @property (nonatomic, strong) UAActionArguments *arrayArgs;
 @property (nonatomic, strong) UAActionArguments *emptyArrayArgs;
@@ -28,12 +30,15 @@
     self.emptyArrayArgs = [UAActionArguments argumentsWithValue:@[] withSituation:UASituationForegroundPush];
     self.badArrayArgs = [UAActionArguments argumentsWithValue:@[@"hi", @10] withSituation:UASituationLaunchedFromPush];
     self.numberArgs = [UAActionArguments argumentsWithValue:@10 withSituation:UASituationWebViewInvocation];
-    [UAPush configure:self.mockPush];
+
+    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [[[self.mockAirship stub] andReturn:self.mockPush] push];
 }
 
 - (void)tearDown {
     [self.mockPush stopMocking];
-    [UAPush reset];
+    [self.mockAirship stopMocking];
     [super tearDown];
 }
 

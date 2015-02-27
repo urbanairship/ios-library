@@ -24,21 +24,22 @@
  */
 
 #import "UAUserAPIClient.h"
-#import "UAirship.h"
 #import "UAConfig.h"
 #import "UAHTTPRequestEngine.h"
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "UAUser.h"
 
 @interface UAUserAPIClient()
-@property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
+@property (nonatomic, strong) UAConfig *config;
 @end
 
 @implementation UAUserAPIClient
 
-- (instancetype)init {
+- (instancetype)initWithConfig:(UAConfig *)config {
     self = [super init];
     if (self) {
+        self.config = config;
         self.requestEngine= [[UAHTTPRequestEngine alloc] init];
     }
 
@@ -53,8 +54,8 @@
     return self;
 }
 
-+ (instancetype)client {
-    return [[self alloc] init];
++ (instancetype)clientWithConfig:(UAConfig *)config {
+    return [[self alloc] initWithConfig:config];
 }
 
 + (instancetype)clientWithRequestEngine:(UAHTTPRequestEngine *)requestEngine {
@@ -109,7 +110,7 @@
      }];
 }
 
-- (void)updateUser:(NSString *)username
+- (void)updateUser:(UAUser *)user
        deviceToken:(NSString *)deviceToken
          channelID:(NSString *)channelID
          onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock
@@ -129,8 +130,7 @@
         [payload setValue:@{@"add": @[deviceToken]} forKey:@"device_tokens"];
     }
 
-    UAHTTPRequest *request = [self requestToUpdateUserWithPayload:payload
-                                                 forUsername:username];
+    UAHTTPRequest *request = [self requestToUpdateUser:user payload:payload];
 
     [self.requestEngine runRequest:request succeedWhere:^(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
@@ -157,11 +157,16 @@
 
 - (UAHTTPRequest *)requestToCreateUserWithPayload:(NSDictionary *)payload {
     NSString *urlString = [NSString stringWithFormat:@"%@%@",
-                           [UAirship shared].config.deviceAPIURL,
+                           self.config.deviceAPIURL,
                            @"/api/user/"];
 
     NSURL *createUrl = [NSURL URLWithString:urlString];
-    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:createUrl method:@"POST"];
+
+    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:createUrl];
+    request.HTTPMethod = @"POST";
+    request.username = self.config.appKey;
+    request.password = self.config.appSecret;
+
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
 
@@ -173,18 +178,19 @@
     return request;
 }
 
-- (UAHTTPRequest *)requestToUpdateUserWithPayload:(NSDictionary *)payload
-                                 forUsername:(NSString *)username {
+- (UAHTTPRequest *)requestToUpdateUser:(UAUser *)user payload:(NSDictionary *)payload {
 
     NSString *updateUrlString = [NSString stringWithFormat:@"%@%@%@/",
-                                 [UAirship shared].config.deviceAPIURL,
+                                 self.config.deviceAPIURL,
                                  @"/api/user/",
-                                 username];
+                                 user.username];
 
     NSURL *updateUrl = [NSURL URLWithString: updateUrlString];
 
-    // Now do the user update, and pass out "master list" of deviceTokens back to the server
-    UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:updateUrl method:@"POST"];
+    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:updateUrl];
+    request.HTTPMethod = @"POST";
+    request.username = user.username;
+    request.password = user.password;
 
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];

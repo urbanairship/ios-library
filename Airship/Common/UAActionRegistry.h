@@ -53,13 +53,18 @@
  */
 @interface UAActionRegistry : NSObject
 
-SINGLETON_INTERFACE(UAActionRegistry);
-
++ (instancetype)shared __attribute__((deprecated("As of version 6.0.0. Use [UAirship shared].actionRegistry instead.")));
 
 /**
  * A set of the current registered entries
  */
 @property (nonatomic, readonly) NSSet *registeredEntries;
+
+/**
+ * Factory method to create an action registry with the default action entries.
+ * @return An action registry with the default action entries.
+ */
++ (instancetype)defaultRegistry;
 
 /**
  * Registers an action with a predicate.

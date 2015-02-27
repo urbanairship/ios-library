@@ -24,7 +24,6 @@
  */
 
 #import "UANamedUserAPIClient.h"
-#import "UAirship.h"
 #import "UAConfig.h"
 #import "UAUtils.h"
 #import "UAHTTPRequestEngine.h"
@@ -39,41 +38,31 @@
 #define kUANamedUserIdentifierKey @"named_user_id"
 
 @interface UANamedUserAPIClient()
-@property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
 @property (nonatomic, copy) NSString *urlString;
+@property (nonatomic, strong) UAConfig *config;
+
 @end
 
 @implementation UANamedUserAPIClient
 
-- (instancetype)init {
+- (instancetype)initWithConfig:(UAConfig *)config {
     self = [super init];
     if (self) {
+        self.config = config;
         self.requestEngine = [[UAHTTPRequestEngine alloc] init];
         self.requestEngine.initialDelayIntervalInSeconds = kUANamedUserRetryTimeInitialDelay;
         self.requestEngine.maxDelayIntervalInSeconds = kUANamedUserRetryTimeMaxDelay;
         self.requestEngine.backoffFactor = kUANamedUserRetryTimeMultiplier;
         self.shouldRetryOnConnectionError = YES;
-        self.urlString = [NSString stringWithFormat:@"%@%@", [UAirship shared].config.deviceAPIURL, kUANamedUserPath];
+        self.urlString = [NSString stringWithFormat:@"%@%@", config.deviceAPIURL, kUANamedUserPath];
     }
     return self;
 }
 
-- (instancetype)initWithRequestEngine:(UAHTTPRequestEngine *)requestEngine {
-    self = [super init];
-    if (self) {
-        self.requestEngine = requestEngine;
-        self.shouldRetryOnConnectionError = YES;
-    }
-    return self;
++ (instancetype)clientWithConfig:(UAConfig *)config {
+    return [[self alloc] initWithConfig:config];
 }
 
-+ (instancetype)client {
-    return [[self alloc] init];
-}
-
-+ (instancetype)clientWithRequestEngine:(UAHTTPRequestEngine *)requestEngine {
-    return [[self alloc] initWithRequestEngine:requestEngine];
-}
 
 - (void)associate:(NSString *)identifier
         channelID:(NSString *)channelID
@@ -178,7 +167,10 @@
 
 - (UAHTTPRequest *)requestWithPayload:(NSDictionary *)payload urlString:(NSString *)urlString {
 
-    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:urlString] method:@"POST"];
+    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:[NSURL URLWithString:urlString]];
+    request.HTTPMethod = @"POST";
+    request.username = self.config.appKey;
+    request.password = self.config.appSecret;
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
     [request addRequestHeader: @"Content-Type" value: @"application/json"];
 

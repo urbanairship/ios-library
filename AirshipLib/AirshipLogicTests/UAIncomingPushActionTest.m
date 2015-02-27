@@ -37,6 +37,8 @@
 @property (nonatomic, strong) UAActionArguments *arguments;
 @property (nonatomic, strong) id mockedPushDelegate;
 @property (nonatomic, strong) id mockedAirship;
+@property (nonatomic, strong) id mockPush;
+
 @property bool backgroundNotificationEnabled;
 
 
@@ -53,11 +55,13 @@
     self.arguments.value = @{ @"aps": @{ @"alert": @"sample alert!", @"badge": @2, @"sound": @"cat" }};
 
     self.mockedPushDelegate = [OCMockObject niceMockForProtocol:@protocol(UAPushNotificationDelegate)];
-    [UAPush shared].pushNotificationDelegate = self.mockedPushDelegate;
+
+    self.mockPush = [OCMockObject niceMockForClass:[UAPush class]];
+    [[[self.mockPush stub] andReturn:self.mockedPushDelegate] pushNotificationDelegate];
 
     self.mockedAirship = [OCMockObject niceMockForClass:[UAirship class]];
     [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
-    [[[self.mockedAirship stub] andReturn:[UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test"]] dataStore];
+    [[[self.mockedAirship stub] andReturn:self.mockPush] push];
 
     [[[self.mockedAirship stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:&_backgroundNotificationEnabled];
@@ -68,9 +72,9 @@
 }
 
 - (void)tearDown {
-    [UAPush shared].pushNotificationDelegate = nil;
     [self.mockedPushDelegate stopMocking];
     [self.mockedAirship stopMocking];
+    [self.mockPush stopMocking];
 
     [super tearDown];
 }
@@ -232,8 +236,7 @@
  */
 - (void)testPerformInUASituationForegroundPushNotifyForegroundAlert {
     self.arguments.situation = UASituationForegroundPush;
-    [UAPush shared].autobadgeEnabled = NO;
-    
+
     [[self.mockedPushDelegate expect] playNotificationSound:@"cat"];
     [[self.mockedPushDelegate expect] displayNotificationAlert:@"sample alert!"];
     [[self.mockedPushDelegate expect] handleBadgeUpdate:2];
@@ -242,7 +245,7 @@
     XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegate should notify the delegate of a foreground notification");
 
     // Enable auto badge and verify handleBadgeUpdate: is not called
-    [UAPush shared].autobadgeEnabled = YES;
+    [[[self.mockPush stub] andReturnValue:@YES] isAutobadgeEnabled];
 
     [[self.mockedPushDelegate expect] playNotificationSound:@"cat"];
     [[self.mockedPushDelegate expect] displayNotificationAlert:@"sample alert!"];

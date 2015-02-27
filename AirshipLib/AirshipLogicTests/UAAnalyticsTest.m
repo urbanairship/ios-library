@@ -32,6 +32,7 @@
 #import "UAKeychainUtils.h"
 #import "UAPush+Internal.h"
 #import "UAPreferenceDataStore.h"
+#import "UAirship.h"
 
 @interface UAAnalyticsTest()
 @property (nonatomic, strong) UAAnalytics *analytics;
@@ -41,6 +42,8 @@
 @property (nonatomic, strong) id mockTimeZoneClass;
 @property (nonatomic, strong) id mockPush;
 @property (nonatomic, strong) id mockDataStore;
+@property (nonatomic, strong) id mockAirship;
+
 @property (nonatomic, strong) NSValue *noValue;
 @property (nonatomic, strong) NSValue *yesValue;
 @end
@@ -58,17 +61,21 @@
     self.mockTimeZoneClass = [OCMockObject mockForClass:[NSTimeZone class]];
 
     self.mockPush = [OCMockObject niceMockForClass:[UAPush class]];
-    [[[self.mockPush stub] andReturn:self.mockPush] shared];
+
+    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [[[self.mockAirship stub] andReturn:self.mockPush] push];
 
     self.mockDataStore = [OCMockObject niceMockForClass:[UAPreferenceDataStore class]];
 
     UAConfig *config = [[UAConfig alloc] init];
-    self.analytics = [[UAAnalytics alloc] initWithConfig:config dataStore:self.mockDataStore];
+    self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:self.mockDataStore];
  }
 
 - (void)tearDown {
     [super tearDown];
 
+    [self.mockAirship stopMocking];
     [self.mockedKeychainClass stopMocking];
     [self.mockLocaleClass stopMocking];
     [self.mockTimeZoneClass stopMocking];

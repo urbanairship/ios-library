@@ -23,6 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <UIKit/UIKit.h>
 #import "UAAnalytics+Internal.h"
 
 #import "UAirship.h"
@@ -58,45 +59,53 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 - (instancetype)initWithConfig:(UAConfig *)airshipConfig dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
-        //set server to default if not specified in options
+        self.analyticDBManager = [[UAAnalyticsDBManager alloc] init];
+        // Set server to default if not specified in options
         self.config = airshipConfig;
         self.dataStore = dataStore;
         
         [self resetEventsDatabaseStatus];
 
         [self restoreSavedUploadEventSettings];
-        [self saveUploadEventSettings];//save defaults to store lastSendTime if this was an initial condition
 
-        
+        // Save defaults to store lastSendTime if this was an initial condition
+        [self saveUploadEventSettings];
+
+        self.queue = [[NSOperationQueue alloc] init];
+        self.queue.maxConcurrentOperationCount = 1;
+
+
         // Register for background notifications
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(enterBackground)
                                                      name:UIApplicationDidEnterBackgroundNotification
                                                    object:nil];
-        
+
         // Register for foreground notifications
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(enterForeground)
                                                      name:UIApplicationWillEnterForegroundNotification
                                                    object:nil];
-        
-        // App inactive/active for incoming calls, notification center, and taskbar 
+
+        // App inactive/active for incoming calls, notification center, and taskbar
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(didBecomeActive)
                                                      name:UIApplicationDidBecomeActiveNotification
                                                    object:nil];
 
-        
-        self.queue = [[NSOperationQueue alloc] init];
-        self.queue.maxConcurrentOperationCount = 1;
 
         [self startSession];
+        [self delayNextSend:UAAnalyticsFirstBatchUploadInterval];
     }
 
     return self;
 }
 
-- (void) delayNextSend:(NSTimeInterval)time {
++ (instancetype)analyticsWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+    return [[UAAnalytics alloc] initWithConfig:config dataStore:dataStore];
+}
+
+- (void)delayNextSend:(NSTimeInterval)time {
     //call send after waiting for the first batch upload interval
     UADelayOperation *delayOperation = [UADelayOperation operationWithDelayInSeconds:UAAnalyticsFirstBatchUploadInterval];
     delayOperation.completionBlock = ^{
@@ -200,7 +209,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     if (self.config.analyticsEnabled) {
         UA_LDEBUG(@"Adding %@ event %@.", event.eventType, event.eventId);
 
-        [[UAAnalyticsDBManager shared] addEvent:event withSessionId:self.sessionId];
+        [self.analyticDBManager addEvent:event withSessionId:self.sessionId];
         UA_LTRACE(@"Added: %@.", event);
 
         self.databaseSize += event.estimatedSize;
@@ -301,9 +310,9 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 #pragma mark Send Logic
 
 - (void)resetEventsDatabaseStatus {
-    self.databaseSize = [[UAAnalyticsDBManager shared] sizeInBytes];
+    self.databaseSize = [self.analyticDBManager sizeInBytes];
 
-    NSArray *events = [[UAAnalyticsDBManager shared] getEvents:1];
+    NSArray *events = [self.analyticDBManager getEvents:1];
     if ([events count] > 0) {
         NSDictionary *event = [events objectAtIndex:0];
         self.oldestEventTime = [[event objectForKey:@"time"] doubleValue];
@@ -316,7 +325,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 }
 
 - (BOOL)hasEventsToSend {
-    return self.databaseSize > 0 && [[UAAnalyticsDBManager shared] eventCount] > 0;
+    return self.databaseSize > 0 && [self.analyticDBManager eventCount] > 0;
 }
 
 - (UAHTTPRequest*)analyticsRequest {
@@ -332,11 +341,11 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [request addRequestHeader:@"X-UA-Package-Name" value:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleIdentifierKey]];
     [request addRequestHeader:@"X-UA-Package-Version" value:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey] ?: @""];
     [request addRequestHeader:@"X-UA-ID" value:[UAUtils deviceID]];
-    [request addRequestHeader:@"X-UA-User-ID" value:[UAUser defaultUser].username];
+    [request addRequestHeader:@"X-UA-User-ID" value:[UAirship inboxUser].username];
     [request addRequestHeader:@"X-UA-App-Key" value:[UAirship shared].config.appKey];
 
-    [request addRequestHeader:@"X-UA-Channel-Opted-In" value:[[UAPush shared] userPushNotificationsAllowed] ? @"true" : @"false"];
-    [request addRequestHeader:@"X-UA-Channel-Background-Enabled" value:[[UAPush shared] backgroundPushNotificationsAllowed] ? @"true" : @"false"];
+    [request addRequestHeader:@"X-UA-Channel-Opted-In" value:[[UAirship push] userPushNotificationsAllowed] ? @"true" : @"false"];
+    [request addRequestHeader:@"X-UA-Channel-Background-Enabled" value:[[UAirship push] backgroundPushNotificationsAllowed] ? @"true" : @"false"];
 
     // Optional Items
     [request addRequestHeader:@"X-UA-Lib-Version" value:[UAirshipVersion get]];
@@ -347,8 +356,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [request addRequestHeader:@"X-UA-Locale-Language" value:[[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode]];
     [request addRequestHeader:@"X-UA-Locale-Country" value:[[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleCountryCode]];
     [request addRequestHeader:@"X-UA-Locale-Variant" value:[[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleVariantCode]];
-    [request addRequestHeader:@"X-UA-Push-Address" value:[UAPush shared].deviceToken];
-    [request addRequestHeader:@"X-UA-Channel-ID" value:[UAPush shared].channelID];
+    [request addRequestHeader:@"X-UA-Push-Address" value:[UAirship push].deviceToken];
+    [request addRequestHeader:@"X-UA-Channel-ID" value:[UAirship push].channelID];
 
     return request;
 }
@@ -357,7 +366,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     // Delete older events until the database size is met
     while (self.databaseSize > self.maxTotalDBSize) {
         UA_LTRACE(@"Database exceeds max size of %ld bytes... Deleting oldest session.", (long)self.maxTotalDBSize);
-        [[UAAnalyticsDBManager shared] deleteOldestSession];
+        [self.analyticDBManager deleteOldestSession];
         [self resetEventsDatabaseStatus];
     }
 }
@@ -383,18 +392,18 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         return nil;
     }
 
-    NSUInteger avgEventSize = self.databaseSize / [[UAAnalyticsDBManager shared] eventCount];
+    NSUInteger avgEventSize = self.databaseSize / [self.analyticDBManager eventCount];
     int actualSize = 0;
     NSUInteger batchEventCount = 0;
     
-    NSArray *events = [[UAAnalyticsDBManager shared] getEvents:self.maxBatchSize/avgEventSize];
+    NSArray *events = [self.analyticDBManager getEvents:self.maxBatchSize/avgEventSize];
     NSArray *topLevelKeys = @[@"type", @"time", @"event_id", @"data"];
 
     for (NSMutableDictionary *event in events) {
         
         if (![self isEventValid:event]) {
             UA_LERR("Detected invalid event due to possible database corruption. Recreating database");
-            [[UAAnalyticsDBManager shared] resetDB];
+            [self.analyticDBManager resetDB];
             return nil;
         }
 
@@ -477,7 +486,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         [self updateAnalyticsParametersWithHeaderValues:request.response];
         
         if ([request.response statusCode] == 200) {
-            [[UAAnalyticsDBManager shared] deleteEvents:events];
+            [self.analyticDBManager deleteEvents:events];
             [self resetEventsDatabaseStatus];
         } else {
             UA_LTRACE(@"Send analytics data request failed: %ld", (long)[request.response statusCode]);

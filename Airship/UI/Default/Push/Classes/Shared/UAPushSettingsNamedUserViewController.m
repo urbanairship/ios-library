@@ -26,6 +26,7 @@
 #import "UAPushSettingsNamedUserViewController.h"
 #import "UAPush.h"
 #import "NSString+UASizeWithFontCompatibility.h"
+#import "UAirship.h"
 
 enum {
     SectionDesc        = 0,
@@ -51,7 +52,7 @@ enum {
     self.title = @"Device Named User";
 
     UITextField *strongNamedUserField = self.namedUserField;
-    strongNamedUserField.text = [UAPush shared].namedUser.identifier;
+    strongNamedUserField.text = [UAirship push].namedUser.identifier;
     strongNamedUserField.clearsOnBeginEditing = YES;
     strongNamedUserField.accessibilityLabel = @"Edit NamedUser";
     self.textLabel.text = @"Assign a named user ID to a device or a group of devices to simplify "
@@ -125,10 +126,10 @@ enum {
     NSString *result = [newNamedUser stringByReplacingCharactersInRange:range withString:@""];
 
     if ([result length] != 0) {
-        [UAPush shared].namedUser.identifier = result;
+        [UAirship push].namedUser.identifier = result;
     } else {
         textField.text = nil;
-        [UAPush shared].namedUser.identifier = nil;
+        [UAirship push].namedUser.identifier = nil;
     }
 }
 

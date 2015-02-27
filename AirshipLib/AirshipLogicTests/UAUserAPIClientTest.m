@@ -32,12 +32,14 @@
 #import "UAUtils.h"
 #import "UAConfig+Internal.h"
 #import "UAirship+Internal.h"
+#import "UAUser.h"
 
 @interface UAUserAPIClientTest : XCTestCase
 @property (nonatomic, strong) UAUserAPIClient *client;
 @property (nonatomic, strong) id mockRequestEngine;
 @property (nonatomic, strong) id mockUAUtils;
-@property (nonatomic, strong) id mockAirship;
+@property (nonatomic, strong) id mockUser;
+
 @property (nonatomic, strong) UAConfig *config;
 
 @end
@@ -47,25 +49,25 @@
 - (void)setUp {
     [super setUp];
 
+    self.config = [UAConfig config];
+
     self.mockRequestEngine = [OCMockObject niceMockForClass:[UAHTTPRequestEngine class]];
-    self.client = [UAUserAPIClient clientWithRequestEngine:self.mockRequestEngine];
+    self.client = [UAUserAPIClient clientWithConfig:self.config];
+    self.client.requestEngine = self.mockRequestEngine;
 
     self.mockUAUtils = [OCMockObject niceMockForClass:[UAUtils class]];
     [[[self.mockUAUtils stub] andReturn:@"deviceID"] deviceID];
 
-    self.config = [UAConfig config];
-
-    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturnValue:OCMOCK_VALUE(YES)] ready];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
-    [[[self.mockAirship stub] andReturn:self.config] config];
+    self.mockUser = [OCMockObject niceMockForClass:[UAUser class]];
+    [[[self.mockUser stub] andReturn:@"userName"] username];
+    [[[self.mockUser stub] andReturn:@"userPassword"] password];
 }
 
 - (void)tearDown {
     [self.mockRequestEngine stopMocking];
     [self.mockUAUtils stopMocking];
-    [self.mockAirship stopMocking];
-    
+    [self.mockUser stopMocking];
+
     [super tearDown];
 }
 
@@ -300,7 +302,7 @@
                                       onFailure:OCMOCK_ANY];
 
 
-    [self.client updateUser:@"userName" deviceToken:@"deviceToken" channelID:nil onSuccess:nil onFailure:nil];
+    [self.client updateUser:self.mockUser deviceToken:@"deviceToken" channelID:nil onSuccess:nil onFailure:nil];
     XCTAssertNoThrow([self.mockRequestEngine verify], @"Update user should call retry on 500 status codes and succeed on 201.");
 }
 
@@ -328,7 +330,7 @@
                                                          onFailure:OCMOCK_ANY];
 
 
-    [self.client updateUser:@"userName" deviceToken:@"deviceToken" channelID:@"channel" onSuccess:^{
+    [self.client updateUser:self.mockUser deviceToken:@"deviceToken" channelID:@"channel" onSuccess:^{
         successBlockCalled = YES;
     } onFailure:nil];
 
@@ -358,7 +360,7 @@
                                                          onSuccess:OCMOCK_ANY
                                                          onFailure:OCMOCK_ANY];
 
-    [self.client updateUser:@"userName"
+    [self.client updateUser:self.mockUser
                 deviceToken:@"deviceToken"
                   channelID:@"channel"
                   onSuccess:nil
@@ -398,7 +400,7 @@
                                       onFailure:OCMOCK_ANY];
 
 
-    [self.client updateUser:@"userName" deviceToken:@"deviceToken" channelID:@"channel" onSuccess:nil onFailure:nil];
+    [self.client updateUser:self.mockUser deviceToken:@"deviceToken" channelID:@"channel" onSuccess:nil onFailure:nil];
     XCTAssertNoThrow([self.mockRequestEngine verify], @"Create user should make a create user request.");
 
     
@@ -410,7 +412,7 @@
                                       onSuccess:OCMOCK_ANY
                                       onFailure:OCMOCK_ANY];
 
-    [self.client updateUser:@"userName" deviceToken:nil channelID:@"channel" onSuccess:nil onFailure:nil];
+    [self.client updateUser:self.mockUser deviceToken:nil channelID:@"channel" onSuccess:nil onFailure:nil];
     XCTAssertNoThrow([self.mockRequestEngine verify], @"Create user should make a create user request.");
 
 
@@ -422,7 +424,7 @@
                                       onSuccess:OCMOCK_ANY
                                       onFailure:OCMOCK_ANY];
 
-    [self.client updateUser:@"userName" deviceToken:@"deviceToken" channelID:@"" onSuccess:nil onFailure:nil];
+    [self.client updateUser:self.mockUser deviceToken:@"deviceToken" channelID:@"" onSuccess:nil onFailure:nil];
     XCTAssertNoThrow([self.mockRequestEngine verify], @"Create user should make a create user request.");
 }
 

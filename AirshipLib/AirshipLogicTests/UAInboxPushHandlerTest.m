@@ -30,12 +30,16 @@
 #import "UAInboxMessage.h"
 #import "UAInboxPushHandler+Internal.h"
 #import "UAInboxMessageList.h"
+#import "UAirship.h"
 
 @interface UAInboxPushHandlerTest : XCTestCase
 @property (nonatomic, strong) UAInboxMessage *message;
 @property (nonatomic, strong) id mockMessageList;
 @property (nonatomic, strong) UAInboxPushHandler *pushHandler;
 @property (nonatomic, strong) id mockedUAInboxPushHandlerDelegate;
+@property (nonatomic, strong) id mockAirship;
+@property (nonatomic, strong) id mockInbox;
+
 @end
 
 @implementation UAInboxPushHandlerTest
@@ -47,10 +51,18 @@
     self.message = [[UAInboxMessage alloc] init];
 
     self.mockMessageList = [OCMockObject niceMockForClass:[UAInboxMessageList class]];
-    [UAInbox shared].messageList = self.mockMessageList;
+    [UAirship inbox].messageList = self.mockMessageList;
 
     self.mockedUAInboxPushHandlerDelegate = [OCMockObject niceMockForProtocol:@protocol(UAInboxPushHandlerDelegate)];
     self.pushHandler.delegate = self.mockedUAInboxPushHandlerDelegate;
+
+    self.mockInbox = [OCMockObject niceMockForClass:[UAInbox class]];
+    [[[self.mockInbox stub] andReturn:self.mockMessageList] messageList];
+
+    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [[[self.mockAirship stub] andReturn:self.mockInbox] inbox];
+
 }
 
 - (void)tearDown {

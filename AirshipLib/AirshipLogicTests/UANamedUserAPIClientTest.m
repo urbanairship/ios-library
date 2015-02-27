@@ -48,12 +48,12 @@
     self.config = [UAConfig config];
 
     self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturnValue:OCMOCK_VALUE(YES)] ready];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.config] config];
 
     self.mockRequestEngine = [OCMockObject niceMockForClass:[UAHTTPRequestEngine class]];
-    self.client = [UANamedUserAPIClient clientWithRequestEngine:self.mockRequestEngine];
+    self.client = [UANamedUserAPIClient clientWithConfig:self.config];
+    self.client.requestEngine = self.mockRequestEngine;
 }
 
 - (void)tearDown {

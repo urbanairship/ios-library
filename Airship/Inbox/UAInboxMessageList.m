@@ -48,10 +48,13 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
 #pragma mark Create Inbox
 
-- (instancetype)init {
+- (instancetype)initWithUser:(UAUser *)user client:(UAInboxAPIClient *)client config:(UAConfig *)config {
     self = [super init];
 
     if (self) {
+        self.inboxDBManager = [[UAInboxDBManager alloc] initWithConfig:config];
+        self.user = user;
+        self.client = client;
         self.batchOperationCount = 0;
         self.retrieveOperationCount = 0;
 
@@ -61,6 +64,10 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
     }
     return self;
+}
+
++ (instancetype)messageListWithUser:(UAUser *)user client:(UAInboxAPIClient *)client config:(UAConfig *)config{
+    return [[UAInboxMessageList alloc] initWithUser:user client:client config:config];
 }
 
 #pragma mark Custom setters
@@ -107,7 +114,7 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 - (UADisposable *)retrieveMessageListWithSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
                                      withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock {
 
-    if (![[UAUser defaultUser] defaultUserCreated]) {
+    if (!self.user.isCreated) {
         return nil;
     }
 
@@ -135,13 +142,12 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
             if (status == 200) {
                 UA_LDEBUG(@"Refreshing message list.");
 
-                UAInboxDBManager *inboxDBManager = [UAInboxDBManager shared];
                 NSMutableSet *responseMessageIDs = [NSMutableSet set];
 
                 // Convert dictionary to objects for convenience
                 for (NSDictionary *message in messages) {
-                    if (![inboxDBManager updateMessageWithDictionary:message]) {
-                        [inboxDBManager addMessageFromDictionary:message];
+                    if (![self.inboxDBManager updateMessageWithDictionary:message]) {
+                        [self.inboxDBManager addMessageFromDictionary:message];
                     }
 
                     NSString *messageID = [message valueForKey:@"message_id"];
@@ -152,10 +158,10 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
                 // Delete server side deleted messages
                 NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"NOT (messageID IN %@)", responseMessageIDs];
-                NSArray *deletedMessages = [[UAInboxDBManager shared] fetchMessagesWithPredicate:deletedPredicate];
+                NSArray *deletedMessages = [self.inboxDBManager fetchMessagesWithPredicate:deletedPredicate];
                 if (deletedMessages.count) {
                     UA_LDEBUG(@"Server deleted messages: %@", deletedMessages);
-                    [inboxDBManager deleteMessages:deletedMessages];
+                    [self.inboxDBManager deleteMessages:deletedMessages];
                 }
 
                 // Block is dispatched on the main queue
@@ -290,7 +296,7 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
             }
         }
 
-        [[UAInboxDBManager shared] saveContext];
+        [self.inboxDBManager saveContext];
 
 
         // Block is dispatched on the main queue
@@ -330,7 +336,7 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
             }
         }
 
-        [[UAInboxDBManager shared] saveContext];
+        [self.inboxDBManager saveContext];
 
         // Block is dispatched on the main queue
         [self refreshInboxWithCompletionHandler:^{
@@ -374,7 +380,7 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     [self.queue addOperationWithBlock:^{
         NSString *predicateFormat = @"(messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)";
         NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateFormat, [NSDate date]];
-        NSMutableArray *savedMessages = [[[UAInboxDBManager shared] fetchMessagesWithPredicate:predicate] mutableCopy];
+        NSMutableArray *savedMessages = [[self.inboxDBManager fetchMessagesWithPredicate:predicate] mutableCopy];
 
         NSInteger unreadCount = 0;
 
@@ -408,7 +414,7 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
  */
 - (void)syncLocalMessageState {
     NSPredicate *locallyReadPredicate = [NSPredicate predicateWithFormat:@"unreadClient == NO && unread == YES"];
-    NSArray *locallyReadMessages = [[UAInboxDBManager shared] fetchMessagesWithPredicate:locallyReadPredicate];
+    NSArray *locallyReadMessages = [self.inboxDBManager fetchMessagesWithPredicate:locallyReadPredicate];
 
     UA_LDEBUG(@"Marking %@ read on server.", locallyReadMessages);
     if (locallyReadMessages.count) {
@@ -420,7 +426,7 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
                         message.data.unread = NO;
                     }
                 }
-                [[UAInboxDBManager shared] saveContext];
+                [self.inboxDBManager saveContext];
             }];
         } onFailure:^(UAHTTPRequest *request) {
             UA_LDEBUG(@"Failed to mark messages read.");
@@ -428,7 +434,7 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     }
 
     NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deletedClient == YES"];
-    NSArray *deletedMessages = [[UAInboxDBManager shared] fetchMessagesWithPredicate:deletedPredicate];
+    NSArray *deletedMessages = [self.inboxDBManager fetchMessagesWithPredicate:deletedPredicate];
 
     UA_LDEBUG(@"Deleting %@ on server.", deletedMessages);
     if (deletedMessages.count) {

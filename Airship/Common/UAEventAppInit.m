@@ -23,11 +23,13 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <UIKit/UIKit.h>
 #import "UAEventAppInit.h"
 #import "UAEvent+Internal.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAUser.h"
+
 
 @implementation UAEventAppInit
 
@@ -45,7 +47,7 @@
     [data setValue:analytics.conversionSendId forKey:@"push_id"];
     [data setValue:analytics.conversionRichPushId forKey:@"rich_push_id"];
 
-    [data setValue:[UAUser defaultUser].username forKey:@"user_id"];
+    [data setValue:[UAirship inboxUser].username forKey:@"user_id"];
     [data setValue:[self connectionType] forKey:@"connection_type"];
     [data setValue:[self carrierName] forKey:@"carrier"];
 

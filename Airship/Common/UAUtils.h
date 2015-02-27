@@ -60,9 +60,6 @@
 /// @name UAHTTP Authenticated Request Helpers
 ///---------------------------------------------------------------------------------------
 
-+ (UAHTTPRequest *)UAHTTPUserRequestWithURL:(NSURL *)url method:(NSString *)method;
-
-+ (UAHTTPRequest *)UAHTTPRequestWithURL:(NSURL *)url method:(NSString *)method;
 
 + (void)logFailedRequest:(UAHTTPRequest *)request withMessage:(NSString *)message;
 

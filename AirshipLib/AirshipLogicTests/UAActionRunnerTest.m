@@ -27,21 +27,36 @@
 #import "UAAction.h"
 #import "UAActionRunner.h"
 #import "UAActionRegistry.h"
+#import <OCMock/OCMock.h>
+#import "UAirship.h"
 
 @interface UAActionRunnerTest : XCTestCase
+@property (nonatomic, strong) UAActionRegistry *registry;
+@property (nonatomic, strong) id mockAirship;
 
 @end
 
 @implementation UAActionRunnerTest
 
-
 NSString *actionName = @"ActionName";
 NSString *anotherActionName = @"AnotherActionName";
 
+- (void)setUp {
+    [super setUp];
+    self.registry = [UAActionRegistry defaultRegistry];
+
+
+    // Mock Airship
+    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [[[self.mockAirship stub] andReturn:self.registry] actionRegistry];
+}
+
 - (void)tearDown {
     // Clear possible actions that were registered in the tests
-    [[UAActionRegistry shared] registerAction:nil name:actionName];
-    [[UAActionRegistry shared] registerAction:nil name:anotherActionName];
+    [self.registry registerAction:nil name:actionName];
+    [self.registry registerAction:nil name:anotherActionName];
+    [self.mockAirship stopMocking];
 
     [super tearDown];
 }
@@ -61,7 +76,7 @@ NSString *anotherActionName = @"AnotherActionName";
         completionHandler([UAActionResult emptyResult]);
     }];
 
-    [[UAActionRegistry shared] registerAction:action name:actionName];
+    [self.registry registerAction:action name:actionName];
 
     [UAActionRunner runActionWithName:actionName withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
         didCompletionHandlerRun = YES;
@@ -88,7 +103,7 @@ NSString *anotherActionName = @"AnotherActionName";
     didCompletionHandlerRun = NO;
 
     //re-register the action with a predicate guaranteed to fail
-    [[UAActionRegistry shared] registerAction:action name:actionName predicate:^(UAActionArguments *args) {
+    [self.registry registerAction:action name:actionName predicate:^(UAActionArguments *args) {
         return NO;
     }];
 
@@ -113,7 +128,7 @@ NSString *anotherActionName = @"AnotherActionName";
         completionHandler([UAActionResult emptyResult]);
     }];
 
-    [[UAActionRegistry shared] registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
+    [self.registry registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
         XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
         return NO;
     }];
@@ -149,7 +164,7 @@ NSString *anotherActionName = @"AnotherActionName";
         completionHandler([UAActionResult emptyResult]);
     }];
 
-    [[UAActionRegistry shared] registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
+    [self.registry registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
         XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
         return YES;
     }];
@@ -254,13 +269,13 @@ NSString *anotherActionName = @"AnotherActionName";
         completionHandler([UAActionResult emptyResult]);
     }];
 
-    [[UAActionRegistry shared] registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
+    [self.registry registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
         XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
         return YES;
     }];
 
     // Register another action
-    [[UAActionRegistry shared] registerAction:action name:anotherActionName predicate:^BOOL(UAActionArguments *args) {
+    [self.registry registerAction:action name:anotherActionName predicate:^BOOL(UAActionArguments *args) {
         XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
         return YES;
     }];

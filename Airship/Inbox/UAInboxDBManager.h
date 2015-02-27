@@ -28,6 +28,7 @@
 #import "UAGlobal.h"
 
 @class UAInboxMessage;
+@class UAConfig;
 
 #define OLD_DB_NAME @"UAInbox.db"
 
@@ -40,7 +41,12 @@
 @interface UAInboxDBManager : NSObject {
 }
 
-SINGLETON_INTERFACE(UAInboxDBManager);
+
+/**
+ * Initializes the inbox db manager with the given config.
+ * @param config The Urban Airship config.
+ */
+- (instancetype)initWithConfig:(UAConfig *)config;
 
 /**
  * Gets the current users messages, sorted descending 

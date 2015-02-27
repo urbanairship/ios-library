@@ -76,7 +76,7 @@
     /*
      * Set the UA user ID.
      */
-    appendJavascriptProperty(@"userID", @"getUserId", [UAUser defaultUser].username);
+    appendJavascriptProperty(@"userID", @"getUserId", [UAirship inboxUser].username);
 
     /*
      * Set the current message ID.

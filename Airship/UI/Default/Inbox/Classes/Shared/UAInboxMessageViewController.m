@@ -30,6 +30,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAWebViewDelegate.h"
 #import "UAUtils.h"
 #import "UIWebView+UAAdditions.h"
+#import "UAirship.h"
 
 #define kMessageUp 0
 #define kMessageDown 1
@@ -86,7 +87,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             self.navigationController.navigationBar.opaque = YES;
         }
 
-        self.messages = [UAInbox shared].messageList.messages;
+        self.messages = [UAirship inbox].messageList.messages;
     }
 
 
@@ -254,14 +255,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         self.downButtonItem.enabled = (index < ([self.messages count] - 1));
     }
 
-    UALOG(@"update nav %lu, of %lu", (unsigned long)index, (unsigned long)[[UAInbox shared].messageList messageCount]);
+    UALOG(@"update nav %lu, of %lu", (unsigned long)index, (unsigned long)[[UAirship inbox].messageList messageCount]);
 }
 
 #pragma mark NSNotificationCenter callbacks
 
 - (void)messageListUpdated {
     // Refresh the message array
-    self.messages = [UAInbox shared].messageList.messages;
+    self.messages = [UAirship inbox].messageList.messages;
 
     // Refresh the new instance of the current message
     NSString *messageID = self.message.messageID;

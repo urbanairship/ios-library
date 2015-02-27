@@ -35,23 +35,39 @@
 // Setters for public readonly-getters
 @property (nonatomic, strong) UAAppDelegateProxy *appDelegate;
 @property (nonatomic, strong) UALocationService *locationService;
-@property (nonatomic, assign) BOOL ready;
 @property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UAAnalytics *analytics;
+@property (nonatomic, strong) UAActionRegistry *actionRegistry;
 @property (nonatomic, assign) BOOL remoteNotificationBackgroundModeEnabled;
 @property (nonatomic, strong) id<UAJavaScriptDelegate> actionJSDelegate;
 @property (nonatomic, strong) UAApplicationMetrics *applicationMetrics;
 @property (nonatomic, strong) UAWhitelist *whitelist;
-
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 
 /**
- * Should set this user agent up
+ * The push manager.
+ */
+@property (nonatomic, strong) UAPush *sharedPush;
+
+
+/**
+ * The inbox user.
+ */
+@property (nonatomic, strong) UAUser *sharedInboxUser;
+
+/**
+ * The inbox.
+ */
+@property (nonatomic, strong) UAInbox *sharedInbox;
+
+/**
+ * Creates the user agent string for a given appkey.
  * User agent string should be:
  * App 1.0 (iPad; iPhone OS <version>; UALib <version>; <app key>; en_US)
+ * @return The user agent string.
  */
-- (void)configureUserAgent;
++ (NSString *)createUserAgentForAppKey:(NSString *)appKey;
 
 /**
  * Handle app init. This should be called from NSNotification center

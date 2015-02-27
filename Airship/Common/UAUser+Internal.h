@@ -30,8 +30,20 @@
 
 @class UAHTTPRequest;
 @class UAUserAPIClient;
+@class UAConfig;
+@class UAPreferenceDataStore;
+@class UAPush;
 
 @interface UAUser()
+
+/**
+ * Factory method to create a user instance.
+ * @param push The push manager.
+ * @param config The Urban Airship config.
+ * @param dataStore The preference data store.
+ * @return UAUser instance.
+ */
++ (instancetype)userWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
  * Registers for device registration changes on UAPush
@@ -64,11 +76,6 @@
 @property (nonatomic, strong) UAUserAPIClient *apiClient;
 
 /**
- * Flag indicating if the user has been initialized
- */
-@property (nonatomic, assign) BOOL initialized;
-
-/**
  * The user name.
  */
 @property (nonatomic, copy) NSString *username;
@@ -94,14 +101,19 @@
 @property (nonatomic, assign) BOOL isObservingDeviceRegistrationChanges;
 
 /**
- * The current app key
- */
-@property (nonatomic, readonly) NSString *appKey;
-
-/**
  * Flag indicating if the  user is being created
  */
 @property (nonatomic, assign) BOOL creatingUser;
+
+/**
+ * The preference data store
+ */
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+
+/**
+ * The Urban Airship config
+ */
+@property (nonatomic, strong) UAConfig *config;
 
 @end
 

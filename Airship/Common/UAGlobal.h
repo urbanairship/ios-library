@@ -123,40 +123,6 @@ return VERSION_STR;                                         \
 }                                                           \
 @end
 
-
-#define SINGLETON_INTERFACE(CLASSNAME)                                                      \
-+ (CLASSNAME*)shared;                                                                       \
-
-#define SINGLETON_IMPLEMENTATION(CLASSNAME)                                                 \
-                                                                                            \
-static CLASSNAME* g_shared##CLASSNAME = nil;                                                \
-static dispatch_once_t sharedOncePredicate##CLASSNAME;                                      \
-static dispatch_once_t allocOncePredicate##CLASSNAME;                                                  \
-\
-+ (CLASSNAME*)shared                                                                        \
-{                                                                                           \
-\
-dispatch_once(&sharedOncePredicate##CLASSNAME, ^{                                                      \
-g_shared##CLASSNAME = [[self alloc] init];                                                  \
-});                                                                                         \
-return g_shared##CLASSNAME;                                                                 \
-}                                                                                           \
-\
-+ (id)allocWithZone:(NSZone*)zone                                                           \
-{                                                                                           \
-dispatch_once(&allocOncePredicate##CLASSNAME, ^{                                                       \
-if (g_shared##CLASSNAME == nil) {                                                           \
-g_shared##CLASSNAME = [super allocWithZone:zone];                                           \
-}                                                                                           \
-});                                                                                         \
-return g_shared##CLASSNAME;                                                                 \
-}                                                                                           \
-\
-- (id)copyWithZone:(NSZone*)zone                                                            \
-{                                                                                           \
-return self;                                                                                \
-}                                                                                           \
-
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000
 #define IF_IOS7_OR_GREATER(...) \
     if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) \

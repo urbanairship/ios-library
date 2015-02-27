@@ -93,8 +93,8 @@ static NSUInteger channelRowCount = 1;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
-    [[UAPush shared] addObserver:self forKeyPath:kUAPushDeviceTokenPath options:NSKeyValueObservingOptionNew context:nil];
-    [[UAPush shared] addObserver:self forKeyPath:kUAPushChannelIDPath options:NSKeyValueObservingOptionNew context:nil];
+    [[UAirship push] addObserver:self forKeyPath:kUAPushDeviceTokenPath options:NSKeyValueObservingOptionNew context:nil];
+    [[UAirship push] addObserver:self forKeyPath:kUAPushChannelIDPath options:NSKeyValueObservingOptionNew context:nil];
 
     [self updateCellValues];
     UITableView *strongTableView = self.tableView;
@@ -103,8 +103,8 @@ static NSUInteger channelRowCount = 1;
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:NO];
-    [[UAPush shared] removeObserver:self forKeyPath:kUAPushDeviceTokenPath];
-    [[UAPush shared] removeObserver:self forKeyPath:kUAPushChannelIDPath];
+    [[UAirship push] removeObserver:self forKeyPath:kUAPushDeviceTokenPath];
+    [[UAirship push] removeObserver:self forKeyPath:kUAPushChannelIDPath];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -153,7 +153,7 @@ static NSUInteger channelRowCount = 1;
     self.usernameCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
     //if the user is still being created, update the cell once that is complete.
-    if (![[UAUser defaultUser] defaultUserCreated]) {
+    if (![UAirship inboxUser].isCreated) {
         self.userCreatedObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UAUserCreatedNotification object:nil queue:nil usingBlock:^(NSNotification *note){
             [self updateCellValues];
             [self.usernameCell setNeedsLayout];
@@ -366,28 +366,28 @@ static NSUInteger channelRowCount = 1;
 
 - (void)updateCellValues {
     
-    self.deviceTokenCell.detailTextLabel.text = [UAPush shared].deviceToken ? [UAPush shared].deviceToken : @"Unavailable";
+    self.deviceTokenCell.detailTextLabel.text = [UAirship push].deviceToken ? [UAirship push].deviceToken : @"Unavailable";
 
-    UIUserNotificationType enabledTypes = [[UAPush shared] currentEnabledNotificationTypes];
+    UIUserNotificationType enabledTypes = [[UAirship push] currentEnabledNotificationTypes];
 
     self.deviceTokenTypesCell.detailTextLabel.text = [self pushTypeString:enabledTypes];
     
-    UIUserNotificationType disabledTypes = enabledTypes ^ [UAPush shared].userNotificationTypes;
+    UIUserNotificationType disabledTypes = enabledTypes ^ [UAirship push].userNotificationTypes;
     self.deviceTokenDisabledTypesCell.detailTextLabel.text = [self pushTypeString:disabledTypes];
     
-    self.deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
+    self.deviceTokenAliasCell.detailTextLabel.text = [UAirship push].alias ? [UAirship push].alias : @"Not Set";
 
-    NSString *namedUserId = [UAPush shared].namedUser.identifier;
+    NSString *namedUserId = [UAirship push].namedUser.identifier;
     self.deviceTokenNamedUserCell.detailTextLabel.text = namedUserId ? namedUserId : @"Not Set";
     
-    if ([[UAPush shared].tags count] > 0) {
-        self.deviceTokenTagsCell.detailTextLabel.text = [[UAPush shared].tags componentsJoinedByString:@", "];
+    if ([[UAirship push].tags count] > 0) {
+        self.deviceTokenTagsCell.detailTextLabel.text = [[UAirship push].tags componentsJoinedByString:@", "];
     } else {
         self.deviceTokenTagsCell.detailTextLabel.text = @"None";
     }
 
-    self.channelCell.detailTextLabel.text = [UAPush shared].channelID ? [UAPush shared].channelID : @"Unavailable";
-    self.usernameCell.detailTextLabel.text = [UAUser defaultUser].username ?: @"Unavailable";
+    self.channelCell.detailTextLabel.text = [UAirship push].channelID ? [UAirship push].channelID : @"Unavailable";
+    self.usernameCell.detailTextLabel.text = [UAirship inboxUser].username ?: @"Unavailable";
 }
 
 - (NSString *)pushTypeString:(UIUserNotificationType)types {

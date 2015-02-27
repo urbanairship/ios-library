@@ -26,6 +26,7 @@
 #import "KIFUITestActor+UAAdditions.h"
 #import "UATestPushDelegate.h"
 #import "UAUtils.h"
+#import "UAirship.h"
 
 #define kPushWait 120.0 // Wait up to 120 seconds for push before marking test failed
 
@@ -35,7 +36,7 @@
 - (void)setUniqueID:(NSString *)alertID {
     return [self runBlock:^KIFTestStepResult(NSError *__autoreleasing *error) {
         NSLog(@"Set uniqueID.");
-        UATestPushDelegate *pushDelegate = (UATestPushDelegate*) [UAPush shared].pushNotificationDelegate;
+        UATestPushDelegate *pushDelegate = (UATestPushDelegate*) [UAirship push].pushNotificationDelegate;
         pushDelegate.uniqueID = alertID;
         return KIFTestStepResultSuccess;
     }];
@@ -59,7 +60,7 @@
 - (void)verifyPushEnabled:(BOOL)enabled {
     return [self runBlock:^KIFTestStepResult(NSError **error) {
         NSLog(@"Verify PushEnabled.");
-        KIFTestCondition(([UAPush shared].userPushNotificationsEnabled == enabled), error, @"PushEnabled does not match expected value.");
+        KIFTestCondition(([UAirship push].userPushNotificationsEnabled == enabled), error, @"PushEnabled does not match expected value.");
         return KIFTestStepResultSuccess;
     }];
 }

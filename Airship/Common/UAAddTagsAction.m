@@ -25,6 +25,7 @@
 
 #import "UAAddTagsAction.h"
 #import "UAPush.h"
+#import "UAirship.h"
 
 @implementation UAAddTagsAction
 
@@ -32,11 +33,11 @@
                   actionName:(NSString *)actionName
            completionHandler:(UAActionCompletionHandler)completionHandler {
     if ([arguments.value isKindOfClass:[NSString class]]) {
-        [[UAPush shared] addTag:arguments.value];
+        [[UAirship push] addTag:arguments.value];
     } else {
-        [[UAPush shared] addTags:arguments.value];
+        [[UAirship push] addTags:arguments.value];
     }
-    [[UAPush shared] updateRegistration];
+    [[UAirship push] updateRegistration];
     completionHandler([UAActionResult emptyResult]);
 
 }

@@ -27,6 +27,7 @@
 #import "UAEvent+Internal.h"
 #import "UAPush.h"
 #import "UAUser.h"
+#import "UAirship.h"
 
 @implementation UAEventDeviceRegistration
 
@@ -35,9 +36,9 @@
 
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
 
-    [data setValue:[UAPush shared].deviceToken forKey:@"device_token"];
-    [data setValue:[UAPush shared].channelID forKey:@"channel_id"];
-    [data setValue:[UAUser defaultUser].username forKey:@"user_id"];
+    [data setValue:[UAirship push].deviceToken forKey:@"device_token"];
+    [data setValue:[UAirship push].channelID forKey:@"channel_id"];
+    [data setValue:[UAirship inboxUser].username forKey:@"user_id"];
 
     event.data = [data mutableCopy];
     return event;

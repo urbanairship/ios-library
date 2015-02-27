@@ -46,25 +46,25 @@
 
     // Mock UAUser
     self.mockUAUser = [OCMockObject niceMockForClass:[UAUser class]];
-    [[[self.mockUAUser stub] andReturn:self.mockUAUser] defaultUser];
 
     // Mock UIDevice
     self.mockUIDevice = [OCMockObject niceMockForClass:[UIDevice class]];
     [[[self.mockUIDevice stub] andReturn:self.mockUIDevice] currentDevice];
 
+    // Mock the inbox and message list
+    self.mockInbox = [OCMockObject niceMockForClass:[UAInbox class]];
+    self.mockMessageList = [OCMockObject niceMockForClass:[UAInboxMessageList class]];
+    [[[self.mockInbox stub] andReturn:self.mockMessageList] messageList];
+
     // Mock Airship
     self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [[[self.mockAirship stub] andReturn:self.mockUAUser] inboxUser];
+    [[[self.mockAirship stub] andReturn:self.mockInbox] inbox];
 
     // Set an actual whitelist
     UAWhitelist *whitelist = [UAWhitelist whitelistWithConfig:[UAConfig defaultConfig]];
     [[[self.mockAirship stub] andReturn:whitelist] whitelist];
-
-    // Mock the inbox and message list
-    self.mockInbox = [OCMockObject niceMockForClass:[UAInbox class]];
-    self.mockMessageList = [OCMockObject niceMockForClass:[UAInboxMessageList class]];
-    [[[self.mockInbox stub] andReturn:self.mockInbox] shared];
-    [[[self.mockInbox stub] andReturn:self.mockMessageList] messageList];
 
     // Set up a Javascript environment
     self.jsc = [[JSContext alloc] initWithVirtualMachine:[[JSVirtualMachine alloc] init]];

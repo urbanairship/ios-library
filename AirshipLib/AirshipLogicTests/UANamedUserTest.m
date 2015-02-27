@@ -32,6 +32,7 @@
 #import "UANamedUser+Internal.h"
 #import "UANamedUserAPIClient.h"
 #import "UAPush+Internal.h"
+#import "UAConfig.h"
 
 @interface UANamedUserTest : XCTestCase
 
@@ -55,20 +56,18 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"uapush.test."];
 
-    self.mockedAirship = [OCMockObject niceMockForClass:[UAirship class]];
-    [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
-    [[[self.mockedAirship stub] andReturn:self.dataStore] dataStore];
-
     self.mockedUAPush = [OCMockObject niceMockForClass:[UAPush class]];
-    [[[self.mockedUAPush stub] andReturn:self.mockedUAPush] shared];
     [[[self.mockedUAPush stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:&_pushChannelID];
     }] channelID];
 
+    self.mockedAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
+    [[[self.mockedAirship stub] andReturn:self.mockedUAPush] push];
+
     self.pushChannelID = @"someChannel";
 
-
-    self.namedUser = [[UANamedUser alloc] initWithDataStore:self.dataStore];
+    self.namedUser = [[UANamedUser alloc] initWithConfig:[UAConfig config] dataStore:self.dataStore];
     self.mockedNamedUserClient = [OCMockObject niceMockForClass:[UANamedUserAPIClient class]];
     self.namedUser.namedUserAPIClient = self.mockedNamedUserClient;
 

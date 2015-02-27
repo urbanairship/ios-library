@@ -81,7 +81,6 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
     self.mockedUANamedUser = [OCMockObject niceMockForClass:[UANamedUser class]];
 
     self.mockedUAPush = [OCMockObject niceMockForClass:[UAPush class]];
-    [[[self.mockedUAPush stub] andReturn:self.mockedUAPush] shared];
     [[[self.mockedUAPush stub] andReturn:self.mockedUANamedUser] namedUser];
 
     self.mockedUAConfig = [OCMockObject niceMockForClass:[UAConfig class]];
@@ -92,6 +91,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
     self.mockedUAirship = [OCMockObject niceMockForClass:[UAirship class]];
     [[[self.mockedUAirship stub] andReturn:self.mockedUAirship] shared];
     [[[self.mockedUAirship stub] andReturn:self.mockedUAConfig] config];
+    [[[self.mockedUAirship stub] andReturn:self.mockedUAPush] push];
 
     self.registrar = [[UAChannelRegistrar alloc] init];
     self.registrar.channelAPIClient = self.mockedChannelClient;

@@ -3,6 +3,9 @@
 #import "UAHTTPConnection.h"
 #import "UAInboxMessageList.h"
 
+@class UAConfig;
+@class UAPreferenceDataStore;
+
 typedef void (^UAInboxClientFailureBlock)(UAHTTPRequest *request);
 typedef void (^UAInboxClientSuccessBlock)(void);
 typedef void (^UAInboxClientMessageRetrievalSuccessBlock)(NSInteger status, NSArray *messages, NSInteger unread);
@@ -12,6 +15,15 @@ typedef void (^UAInboxClientMessageRetrievalSuccessBlock)(NSInteger status, NSAr
 * A high level abstraction for performing Rich Push API requests.
 */
 @interface UAInboxAPIClient : NSObject
+
+/**
+ * Factory method for client.
+ * @param user The inbox user.
+ * @param dataStore The preference data store.
+ * @param config The Urban Airship config.
+ * @return UAInboxAPIClient instance.
+ */
++ (instancetype)clientWithUser:(UAUser *)user config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
  * Retrieves the full message list from the server.
