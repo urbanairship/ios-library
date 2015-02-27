@@ -41,8 +41,16 @@ Known issues with iOS 8.0.0 that may impact your application:
 ------------------------------
 6.0.0.x - Early Access/Preview
 ------------------------------
-- Feb --, 2015
-  - First Early Access Release 
+
+Added to preview on February 27, 2015
+-------------------------------------
+ - Initial Preview release for 6.0.0.
+ - Support for in-app messaging.
+ - Support for associating and disassociating a channel to a named user.
+ - Added new region events for proximity triggers.
+ - Modernized public BOOL properties to include the prefix "is" on the getter.
+ - Reduced the number of internal singletons. UAPush, UAInbox, UAInboxList, UAActionRegistry shared methods have been deprecated
+   and are now accessible from class methods on UAirship.
 
 -------------------------
 5.1.1 - December 11, 2014
