@@ -1,6 +1,6 @@
-#import "UAInAppNotificationView.h"
+#import "UAInAppMessageView.h"
 
-@interface UAInAppNotificationView ()
+@interface UAInAppMessageView ()
 
 @property(nonatomic, strong) UIView *tab;
 @property(nonatomic, strong) UILabel *messageLabel;
@@ -9,9 +9,9 @@
 
 @end
 
-@implementation UAInAppNotificationView
+@implementation UAInAppMessageView
 
-- (instancetype)initWithPosition:(UAInAppNotificationPosition)position numberOfButtons:(NSUInteger)numberOfButtons {
+- (instancetype)initWithPosition:(UAInAppMessagePosition)position numberOfButtons:(NSUInteger)numberOfButtons {
     self = [super init];
     if (self) {
         self.translatesAutoresizingMaskIntoConstraints = NO;
@@ -119,7 +119,7 @@
     return constraints;
 }
 
-- (void)buildLayoutWithPosition:(UAInAppNotificationPosition)position numberOfButtons:(NSUInteger)numberOfButtons {
+- (void)buildLayoutWithPosition:(UAInAppMessagePosition)position numberOfButtons:(NSUInteger)numberOfButtons {
 
     // layout constants
     CGFloat verticalMargin = 15;
@@ -165,7 +165,7 @@
     NSMutableArray *positionalConstraints = [NSMutableArray array];
 
 
-    if (position == UAInAppNotificationPositionBottom) {
+    if (position == UAInAppMessagePositionBottom) {
         [positionalConstraints addObjectsFromArray:[self constraintsForBottomPositionWithNumberOfButtons:numberOfButtons]];
     } else {
         [positionalConstraints addObjectsFromArray:[self constraintsForTopPositionWithNumberOfButtons:numberOfButtons]];

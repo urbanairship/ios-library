@@ -1,18 +1,18 @@
 
 #import <UIKit/UIKit.h>
-#import "UAInAppNotification.h"
+#import "UAInAppMessage.h"
 
 /**
- * View class for in-app notifications.
+ * View class for in-app messages.
  */
-@interface UAInAppNotificationView : UIView
+@interface UAInAppMessageView : UIView
 
 /**
- * UAInAppNotificationView initializer.
- * @param position A `UAInAppNotificationPosition` value, indicating screen position.
+ * UAInAppMessageView initializer.
+ * @param position A `UAInAppMessagePosition` value, indicating screen position.
  * @param numberOfButtons The number of buttons to display (0-2).
  */
-- (instancetype)initWithPosition:(UAInAppNotificationPosition)position numberOfButtons:(NSUInteger)numberOfButtons;
+- (instancetype)initWithPosition:(UAInAppMessagePosition)position numberOfButtons:(NSUInteger)numberOfButtons;
 
 /**
  * The "tab" widget indicating swipability.
@@ -20,7 +20,7 @@
 @property(nonatomic, readonly)  UIView *tab;
 
 /**
- * The message label displaying notification alert content.
+ * The message label displaying message alert content.
  */
 @property(nonatomic, readonly)  UILabel *messageLabel;
 

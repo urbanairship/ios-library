@@ -1,20 +1,20 @@
 
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
-#import "UAInAppNotificationAction.h"
+#import "UAInAppMessageAction.h"
 #import "UAActionArguments+Internal.h"
 
-@interface UAInAppNotificationActionTest : XCTestCase
+@interface UAInAppMessageActionTest : XCTestCase
 @property(nonatomic, strong) NSDictionary *payload;
-@property(nonatomic, strong) UAInAppNotificationAction *action;
+@property(nonatomic, strong) UAInAppMessageAction *action;
 @property(nonatomic, strong) UAActionArguments *arguments;
 @end
 
-@implementation UAInAppNotificationActionTest
+@implementation UAInAppMessageActionTest
 
 - (void)setUp {
     [super setUp];
-    self.action = [UAInAppNotificationAction new];
+    self.action = [UAInAppMessageAction new];
 
     id expiry = @"2020-12-15T11:45:22";
     id extra = @{@"foo":@"bar", @"baz":@12345};
