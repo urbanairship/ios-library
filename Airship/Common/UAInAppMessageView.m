@@ -1,5 +1,9 @@
 #import "UAInAppMessageView.h"
 
+#define kUAInAppMessageViewShadowOffsetY 1
+#define kUAInAppMessageViewShadowRadius 1
+#define kUAInAppMessageViewShadowOpacity 0.35
+
 @interface UAInAppMessageView ()
 
 @property(nonatomic, strong) UIView *tab;
@@ -23,15 +27,15 @@
 
         // if on the bottom, project the shadow on the top edge
         if (position == UAInAppMessagePositionBottom) {
-            shadowOffsetY = -1;
+            shadowOffsetY = -kUAInAppMessageViewShadowOffsetY;
         } else {
             // otherwise project it on the bottom edge
-            shadowOffsetY = 1;
+            shadowOffsetY = kUAInAppMessageViewShadowOffsetY;
         }
 
         self.layer.shadowOffset = CGSizeMake(0, shadowOffsetY);
-        self.layer.shadowRadius = 1;
-        self.layer.shadowOpacity = 0.35;
+        self.layer.shadowRadius = kUAInAppMessageViewShadowRadius;
+        self.layer.shadowOpacity = kUAInAppMessageViewShadowOpacity;
 
         self.messageLabel = [UILabel new];
         self.messageLabel.translatesAutoresizingMaskIntoConstraints = NO;

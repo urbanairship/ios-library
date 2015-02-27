@@ -348,8 +348,7 @@
  */
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
     // Ignore touches within the action buttons
-    if (([touch.view isEqual:self.messageView.button1] ||
-         [touch.view isEqual:self.messageView.button2])) {
+    if ([touch.view isKindOfClass:[UIButton class]]) {
         return NO;
     }
     return YES;
