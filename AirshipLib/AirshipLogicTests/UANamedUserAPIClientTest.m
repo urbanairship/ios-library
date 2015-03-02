@@ -142,6 +142,60 @@
 }
 
 /**
+ * Test associate named user succeeds request if the status is 201.
+ */
+-(void)testAssociateSucceedsRequest201 {
+    BOOL (^whereBlockCheck)(id obj) = ^(id obj) {
+        UAHTTPRequestEngineWhereBlock whereBlock = obj;
+        UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
+
+        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:201 HTTPVersion:nil headerFields:nil];
+        if (!whereBlock(request)) {
+            return NO;
+        }
+
+        return YES;
+    };
+
+    [[self.mockRequestEngine expect] runRequest:OCMOCK_ANY
+                                   succeedWhere:[OCMArg checkWithBlock:whereBlockCheck]
+                                     retryWhere:OCMOCK_ANY
+                                      onSuccess:OCMOCK_ANY
+                                      onFailure:OCMOCK_ANY];
+
+    [self.client associate:@"fakeNamedUserId" channelID:@"fakeChannel" onSuccess:nil onFailure:nil];
+    XCTAssertNoThrow([self.mockRequestEngine verify],
+                     @"Associate named user should succeed on 201 status code.");
+}
+
+/**
+ * Test associate named user succeeds request if the status is 299.
+ */
+-(void)testAssociateSucceedsRequest299 {
+    BOOL (^whereBlockCheck)(id obj) = ^(id obj) {
+        UAHTTPRequestEngineWhereBlock whereBlock = obj;
+        UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
+
+        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:299 HTTPVersion:nil headerFields:nil];
+        if (!whereBlock(request)) {
+            return NO;
+        }
+
+        return YES;
+    };
+
+    [[self.mockRequestEngine expect] runRequest:OCMOCK_ANY
+                                   succeedWhere:[OCMArg checkWithBlock:whereBlockCheck]
+                                     retryWhere:OCMOCK_ANY
+                                      onSuccess:OCMOCK_ANY
+                                      onFailure:OCMOCK_ANY];
+
+    [self.client associate:@"fakeNamedUserId" channelID:@"fakeChannel" onSuccess:nil onFailure:nil];
+    XCTAssertNoThrow([self.mockRequestEngine verify],
+                     @"Associate named user should succeed on 299 status code.");
+}
+
+/**
  * Test associate named user calls the onSuccessBlock when the request is successful.
  */
 - (void)testAssociateOnSuccess {
@@ -268,6 +322,60 @@
     [self.client disassociate:@"fakeChannel" onSuccess:nil onFailure:nil];
     XCTAssertNoThrow([self.mockRequestEngine verify],
                      @"Disassociate named user should succeed on 200 status code.");
+}
+
+/**
+ * Test disassociate named user succeeds request if the status is 202.
+ */
+-(void)testDisassociateSucceedsRequest202 {
+    BOOL (^whereBlockCheck)(id obj) = ^(id obj) {
+        UAHTTPRequestEngineWhereBlock whereBlock = obj;
+        UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
+
+        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:202 HTTPVersion:nil headerFields:nil];
+        if (!whereBlock(request)) {
+            return NO;
+        }
+
+        return YES;
+    };
+
+    [[self.mockRequestEngine expect] runRequest:OCMOCK_ANY
+                                   succeedWhere:[OCMArg checkWithBlock:whereBlockCheck]
+                                     retryWhere:OCMOCK_ANY
+                                      onSuccess:OCMOCK_ANY
+                                      onFailure:OCMOCK_ANY];
+
+    [self.client disassociate:@"fakeChannel" onSuccess:nil onFailure:nil];
+    XCTAssertNoThrow([self.mockRequestEngine verify],
+                     @"Disassociate named user should succeed on 202 status code.");
+}
+
+/**
+ * Test disassociate named user succeeds request if the status is 299.
+ */
+-(void)testDisassociateSucceedsRequest299 {
+    BOOL (^whereBlockCheck)(id obj) = ^(id obj) {
+        UAHTTPRequestEngineWhereBlock whereBlock = obj;
+        UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
+
+        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:299 HTTPVersion:nil headerFields:nil];
+        if (!whereBlock(request)) {
+            return NO;
+        }
+
+        return YES;
+    };
+
+    [[self.mockRequestEngine expect] runRequest:OCMOCK_ANY
+                                   succeedWhere:[OCMArg checkWithBlock:whereBlockCheck]
+                                     retryWhere:OCMOCK_ANY
+                                      onSuccess:OCMOCK_ANY
+                                      onFailure:OCMOCK_ANY];
+
+    [self.client disassociate:@"fakeChannel" onSuccess:nil onFailure:nil];
+    XCTAssertNoThrow([self.mockRequestEngine verify],
+                     @"Disassociate named user should succeed on 299 status code.");
 }
 
 /**

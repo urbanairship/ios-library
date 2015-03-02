@@ -145,7 +145,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 }
 
 /**
- * Test sucessful register with a channel
+ * Test successful register with a channel
  */
 - (void)testRegisterWithChannel {
     // Expect the channel client to update channel and call the update block

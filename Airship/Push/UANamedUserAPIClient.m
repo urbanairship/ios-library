@@ -91,7 +91,7 @@
 
     [self.requestEngine runRequest:request succeedWhere:^BOOL(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
-        return (BOOL)(status == 200);
+        return (BOOL)(status >= 200 && status <= 299);
     } retryWhere:^BOOL(UAHTTPRequest *request) {
         if (self.shouldRetryOnConnectionError) {
             NSInteger status = request.response.statusCode;
@@ -138,7 +138,7 @@
 
     [self.requestEngine runRequest:request succeedWhere:^BOOL(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
-        return (BOOL)(status == 200);
+        return (BOOL)(status >= 200 && status <= 299);
     } retryWhere:^BOOL(UAHTTPRequest *request) {
         if (self.shouldRetryOnConnectionError) {
             NSInteger status = request.response.statusCode;
