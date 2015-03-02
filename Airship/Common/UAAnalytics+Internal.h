@@ -50,6 +50,7 @@
 #define kMaxBatchSizeUserDefaultsKey @"X-UA-Max-Batch"
 #define kMaxWaitUserDefaultsKey @"X-UA-Max-Wait"
 #define kMinBatchIntervalUserDefaultsKey @"X-UA-Min-Batch-Interval"
+#define kUAAnalyticsEnabled @"UAAnalyticsEnabled"
 
 @class UAEvent;
 @class UAHTTPRequest;

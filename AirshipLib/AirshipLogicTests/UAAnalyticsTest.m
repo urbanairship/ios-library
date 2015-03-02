@@ -33,6 +33,7 @@
 #import "UAPush+Internal.h"
 #import "UAPreferenceDataStore.h"
 #import "UAirship.h"
+#import "UAAnalyticsDBManager.h"
 
 @interface UAAnalyticsTest()
 @property (nonatomic, strong) UAAnalytics *analytics;
@@ -41,8 +42,10 @@
 @property (nonatomic, strong) id mockLocaleClass;
 @property (nonatomic, strong) id mockTimeZoneClass;
 @property (nonatomic, strong) id mockPush;
-@property (nonatomic, strong) id mockDataStore;
 @property (nonatomic, strong) id mockAirship;
+@property (nonatomic, strong) id mockDBManager;
+
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 @property (nonatomic, strong) NSValue *noValue;
 @property (nonatomic, strong) NSValue *yesValue;
@@ -66,10 +69,13 @@
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.mockPush] push];
 
-    self.mockDataStore = [OCMockObject niceMockForClass:[UAPreferenceDataStore class]];
+    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test.analytics"];
+
+    self.mockDBManager = [OCMockObject niceMockForClass:[UAAnalyticsDBManager class]];
 
     UAConfig *config = [[UAConfig alloc] init];
-    self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:self.mockDataStore];
+    self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:self.dataStore];
+    self.analytics.analyticDBManager = self.mockDBManager;
  }
 
 - (void)tearDown {
@@ -80,7 +86,9 @@
     [self.mockLocaleClass stopMocking];
     [self.mockTimeZoneClass stopMocking];
     [self.mockPush stopMocking];
-    [self.mockDataStore stopMocking];
+    [self.mockDBManager stopMocking];
+
+    [self.dataStore removeAll];
 }
 
 - (void)testRequestTimezoneHeader {
@@ -176,10 +184,10 @@
 - (void)restoreSavedUploadEventSettingsExistingData {
 
     // Set valid data
-    [[[self.mockDataStore stub] andReturnValue:@(kMinTotalDBSizeBytes + 5)] integerForKey:kMaxTotalDBSizeUserDefaultsKey];
-    [[[self.mockDataStore stub] andReturnValue:@(kMinBatchSizeBytes + 5)] integerForKey:kMaxBatchSizeUserDefaultsKey];
-    [[[self.mockDataStore stub] andReturnValue:@(kMinWaitSeconds + 5)] integerForKey:kMaxWaitUserDefaultsKey];
-    [[[self.mockDataStore stub] andReturnValue:@(kMinBatchIntervalSeconds + 5)] integerForKey:kMinBatchIntervalUserDefaultsKey];
+    [self.dataStore setValue:@(kMinTotalDBSizeBytes + 5) forKey:kMaxTotalDBSizeUserDefaultsKey];
+    [self.dataStore setValue:@(kMinBatchSizeBytes + 5) forKey:kMaxBatchSizeUserDefaultsKey];
+    [self.dataStore setValue:@(kMinWaitSeconds + 5) forKey:kMaxWaitUserDefaultsKey];
+    [self.dataStore setValue:@(kMinBatchIntervalSeconds + 5) forKey:kMinBatchIntervalUserDefaultsKey];
 
     [self.analytics restoreSavedUploadEventSettings];
 
@@ -191,14 +199,12 @@
 }
 
 - (void)testSaveUploadEventSettings {
-    [[self.mockDataStore expect] setInteger:(NSInteger)self.analytics.maxTotalDBSize forKey:kMaxTotalDBSizeUserDefaultsKey];
-    [[self.mockDataStore expect] setInteger:(NSInteger)self.analytics.maxBatchSize forKey:kMaxBatchSizeUserDefaultsKey];
-    [[self.mockDataStore expect] setInteger:(NSInteger)self.analytics.maxWait forKey:kMaxWaitUserDefaultsKey];
-    [[self.mockDataStore expect] setInteger:(NSInteger)self.analytics.minBatchInterval forKey:kMinBatchIntervalUserDefaultsKey];
-
     [self.analytics saveUploadEventSettings];
 
-    [self.mockDataStore verify];
+    XCTAssertEqual(self.analytics.maxTotalDBSize, [[self.dataStore valueForKey:kMaxTotalDBSizeUserDefaultsKey] integerValue]);
+    XCTAssertEqual(self.analytics.maxBatchSize, [[self.dataStore valueForKey:kMaxBatchSizeUserDefaultsKey] integerValue]);
+    XCTAssertEqual(self.analytics.maxWait,[[self.dataStore valueForKey:kMaxWaitUserDefaultsKey] integerValue]);
+    XCTAssertEqual(self.analytics.minBatchInterval,[[self.dataStore valueForKey:kMinBatchIntervalUserDefaultsKey] integerValue]);
 }
 
 - (void)testUpdateAnalyticsParameters {
@@ -212,15 +218,14 @@
     id mockResponse = [OCMockObject niceMockForClass:[NSHTTPURLResponse class]];
     [[[mockResponse stub] andReturn:headers] allHeaderFields];
 
-    // Make sure all the expected settings are set to the current analytics properties
-    [[self.mockDataStore expect] setInteger:11 * 1024 forKey:kMaxTotalDBSizeUserDefaultsKey]; // 11 KB
-    [[self.mockDataStore expect] setInteger:11 * 1024 forKey:kMaxBatchSizeUserDefaultsKey]; // 11 KB
-    [[self.mockDataStore expect] setInteger:8*24*3600 forKey:kMaxWaitUserDefaultsKey]; // 8 days
-    [[self.mockDataStore expect] setInteger:62 forKey:kMinBatchIntervalUserDefaultsKey]; // 62 seconds
-
     [self.analytics updateAnalyticsParametersWithHeaderValues:mockResponse];
 
-    [self.mockDataStore verify];
+    // Make sure all the expected settings are set to the current analytics properties
+    XCTAssertEqual(11 * 1024, [[self.dataStore valueForKey:kMaxTotalDBSizeUserDefaultsKey] integerValue]);
+    XCTAssertEqual(11 * 1024, [[self.dataStore valueForKey:kMaxBatchSizeUserDefaultsKey] integerValue]);
+    XCTAssertEqual(8*24*3600, [[self.dataStore valueForKey:kMaxWaitUserDefaultsKey] integerValue]);
+    XCTAssertEqual(62,[[self.dataStore valueForKey:kMinBatchIntervalUserDefaultsKey] integerValue]);
+
     [mockResponse stopMocking];
 }
 
@@ -309,6 +314,57 @@
     }
 }
 
+/**
+ * Test disabling analytics will result in deleting the database.
+ */
+- (void)testDisablingAnalytics {
+    [[self.mockDBManager expect] resetDB];
+    self.analytics.enabled = NO;
+
+    [self.mockDBManager verify];
+    XCTAssertFalse(self.analytics.enabled);
+}
+
+/**
+ * Test the default value of enabled is YES and will not reset the value to YES
+ * on init if its set to NO.
+ */
+- (void)testDefaultAnalyticsEnableValue {
+    XCTAssertTrue(self.analytics.enabled);
+    self.analytics.enabled = NO;
+
+    // Recreate analytics and see if its still disabled
+    self.analytics = [UAAnalytics analyticsWithConfig:[UAConfig config] dataStore:self.dataStore];
+
+    XCTAssertFalse(self.analytics.enabled);
+}
+
+/**
+ * Test isEnabled always returns YES only if UAConfig enables analytics and the
+ * runtime setting is enabled.
+ */
+- (void)testIsEnabled {
+    self.analytics.enabled = YES;
+    XCTAssertTrue(self.analytics.enabled);
+
+    self.analytics.enabled = NO;
+    XCTAssertFalse(self.analytics.enabled);
+}
+
+/**
+ * Test isEnabled only returns NO when UAConfig disables analytics.
+ */
+- (void)testIsEnabledConfigOverride {
+    UAConfig *config = [UAConfig config];
+    config.analyticsEnabled = NO;
+    self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:self.dataStore];
+
+    self.analytics.enabled = YES;
+    XCTAssertFalse(self.analytics.enabled);
+
+    self.analytics.enabled = NO;
+    XCTAssertFalse(self.analytics.enabled);
+}
 
 - (void)setCurrentLocale:(NSString *)localeCode {
     NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:localeCode];
