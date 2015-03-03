@@ -115,16 +115,18 @@
 }
 
 /**
- * Test associate named user succeeds request if the status is 200.
+ * Test associate named user succeeds request when status is 2xx.
  */
 -(void)testAssociateSucceedsRequest {
     BOOL (^whereBlockCheck)(id obj) = ^(id obj) {
         UAHTTPRequestEngineWhereBlock whereBlock = obj;
-        UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
 
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:nil];
-        if (!whereBlock(request)) {
-            return NO;
+        for (NSInteger i = 200; i < 300; i++) {
+            UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
+            request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:i HTTPVersion:nil headerFields:nil];
+            if (!whereBlock(request)) {
+                return NO;
+            }
         }
 
         return YES;
@@ -138,7 +140,7 @@
 
     [self.client associate:@"fakeNamedUserId" channelID:@"fakeChannel" onSuccess:nil onFailure:nil];
     XCTAssertNoThrow([self.mockRequestEngine verify],
-                     @"Associate named user should succeed on 200 status code.");
+                     @"Associate named user should succeed on 2xx status codes.");
 }
 
 /**
@@ -244,16 +246,18 @@
 }
 
 /**
- * Test disassociate named user succeeds request if the status is 200.
+ * Test disassociate named user succeeds request when status is 2xx.
  */
 -(void)testDisassociateSucceedsRequest {
     BOOL (^whereBlockCheck)(id obj) = ^(id obj) {
         UAHTTPRequestEngineWhereBlock whereBlock = obj;
-        UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
 
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:nil];
-        if (!whereBlock(request)) {
-            return NO;
+        for (NSInteger i = 200; i < 300; i++) {
+            UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
+            request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:i HTTPVersion:nil headerFields:nil];
+            if (!whereBlock(request)) {
+                return NO;
+            }
         }
 
         return YES;
@@ -267,7 +271,7 @@
 
     [self.client disassociate:@"fakeChannel" onSuccess:nil onFailure:nil];
     XCTAssertNoThrow([self.mockRequestEngine verify],
-                     @"Disassociate named user should succeed on 200 status code.");
+                     @"Disassociate named user should succeed on 2xx status codes.");
 }
 
 /**
