@@ -18,7 +18,7 @@
 	<true/>
 	<key>clearKeychain</key>
 	<true/>
-	<key>custom</key>
+	<key>customConfig</key>
 	<dict>
 		<key>customKey</key>
 		<string>customValue</string>
