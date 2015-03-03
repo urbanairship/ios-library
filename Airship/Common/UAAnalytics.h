@@ -55,6 +55,14 @@
  */
 @property (nonatomic, assign, readonly) NSTimeInterval oldestEventTime;
 
+/**
+ * Analytics enable flag. Disabling analytics will delete any locally stored events
+ * and prevent any events from uploading.
+ *
+ * Note: This property will always return `NO` if analytics is disabled in
+ * UAConfig.
+ */
+@property (nonatomic, assign, getter=isEnabled) BOOL enabled;
 
 /**
  * Delays the next analytics send.

@@ -63,7 +63,12 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         // Set server to default if not specified in options
         self.config = airshipConfig;
         self.dataStore = dataStore;
-        
+
+        // Default analytics value
+        if (![self.dataStore objectForKey:kUAAnalyticsEnabled]) {
+            [self.dataStore setBool:@YES forKey:kUAAnalyticsEnabled];
+        }
+
         [self resetEventsDatabaseStatus];
 
         [self restoreSavedUploadEventSettings];
@@ -73,7 +78,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
         self.queue = [[NSOperationQueue alloc] init];
         self.queue.maxConcurrentOperationCount = 1;
-
 
         // Register for background notifications
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -206,31 +210,33 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         return;
     }
 
-    if (self.config.analyticsEnabled) {
-        UA_LDEBUG(@"Adding %@ event %@.", event.eventType, event.eventId);
+    if (!self.isEnabled) {
+        UA_LTRACE("Analytics disabled, ignoring event: %@", event.eventType);
+        return;
+    }
 
-        [self.analyticDBManager addEvent:event withSessionId:self.sessionId];
-        UA_LTRACE(@"Added: %@.", event);
+    UA_LDEBUG(@"Adding %@ event %@.", event.eventType, event.eventId);
 
-        self.databaseSize += event.estimatedSize;
-        if (self.oldestEventTime == 0) {
-            self.oldestEventTime = [event.time doubleValue];
-        }
+    [self.analyticDBManager addEvent:event withSessionId:self.sessionId];
+    UA_LTRACE(@"Added: %@.", event);
 
-        if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground
-            && event.eventType == UALocationEventAnalyticsType) {
+    self.databaseSize += event.estimatedSize;
+    if (self.oldestEventTime == 0) {
+        self.oldestEventTime = [event.time doubleValue];
+    }
 
-            NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
+    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground
+        && event.eventType == UALocationEventAnalyticsType) {
 
-            if (timeSinceLastSend >= kMinBackgroundLocationIntervalSeconds) {
-                [self send];
-            } else {
-                UA_LTRACE("Skipping send, background location events batch for 15 minutes.");
-            }
-        } else {
+        NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
+
+        if (timeSinceLastSend >= kMinBackgroundLocationIntervalSeconds) {
             [self send];
+        } else {
+            UA_LTRACE("Skipping send, background location events batch for 15 minutes.");
         }
-
+    } else {
+        [self send];
     }
 }
 
@@ -650,6 +656,21 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
             self.conversionRichPushId = richPushID;
         }
     }
+}
+
+- (BOOL)isEnabled {
+    return [self.dataStore boolForKey:kUAAnalyticsEnabled] && self.config.analyticsEnabled;
+}
+
+- (void)setEnabled:(BOOL)enabled {
+    // If we are disabling the runtime flag clear all events
+    if ([self.dataStore boolForKey:kUAAnalyticsEnabled] && !enabled) {
+        UA_LINFO(@"Deleting all analytic events.");
+        [self.queue cancelAllOperations];
+        [self.analyticDBManager resetDB];
+    }
+
+    [self.dataStore setBool:enabled forKey:kUAAnalyticsEnabled];
 }
 
 @end
