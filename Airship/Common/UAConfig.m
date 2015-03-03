@@ -108,7 +108,7 @@
             self.clearUserOnAppRestore,
             self.whitelist,
             self.clearNamedUserOnAppRestore,
-            self.custom];
+            self.customConfig];
 }
 
 #pragma mark -
