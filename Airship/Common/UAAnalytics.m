@@ -66,7 +66,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
         // Default analytics value
         if (![self.dataStore objectForKey:kUAAnalyticsEnabled]) {
-            [self.dataStore setBool:@YES forKey:kUAAnalyticsEnabled];
+            [self.dataStore setBool:YES forKey:kUAAnalyticsEnabled];
         }
 
         [self resetEventsDatabaseStatus];
