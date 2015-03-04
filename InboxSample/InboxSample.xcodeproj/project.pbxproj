@@ -140,7 +140,6 @@
 		1FE0B7F817E27C1D00856C60 /* libUAirship-6.0.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-6.0.0.a"; path = "../Airship/libUAirship-6.0.0.a"; sourceTree = "<group>"; };
 		1FE423A21893262600624335 /* list-image-placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-image-placeholder.png"; sourceTree = "<group>"; };
 		1FE423A31893262600624335 /* list-image-placeholder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-image-placeholder@2x.png"; sourceTree = "<group>"; };
-		32CA4F630368D1EE00C91783 /* InboxSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSample_Prefix.pch; sourceTree = "<group>"; };
 		4939778019B691110063C58F /* InboxSample-Kit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "InboxSample-Kit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4939779119B7BF3B0063C58F /* AirshipKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AirshipKit.framework; path = ../Airship/AirshipKit.framework; sourceTree = "<group>"; };
 		4939779919B7C1E70063C58F /* InboxSampleModalUserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSampleModalUserInterface.h; sourceTree = "<group>"; };
@@ -330,7 +329,6 @@
 				1F79710012DE3B7100D4937F /* AirshipConfig.plist */,
 				18A27CBB125EDDB60045D75B /* InboxSample-Info.plist */,
 				18A27C88125EDD6E0045D75B /* main.m */,
-				32CA4F630368D1EE00C91783 /* InboxSample_Prefix.pch */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
