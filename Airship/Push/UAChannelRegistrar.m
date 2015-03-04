@@ -104,7 +104,7 @@
 
     UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
         if (request.response.statusCode != 409) {
-            UA_LDEBUG(@"Channel failed to update with JSON payload %@", payload.asJSONData);
+            UA_LDEBUG(@"Channel failed to update with JSON payload %@", [payload asJSONData]);
             [self failedWithPayload:payload];
             return;
         }
@@ -117,7 +117,7 @@
         };
 
         UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
-            UA_LDEBUG(@"Channel failed to create with JSON payload %@", payload.asJSONData);
+            UA_LDEBUG(@"Channel failed to create with JSON payload %@", [payload asJSONData]);
             [self failedWithPayload:payload];
         };
 
