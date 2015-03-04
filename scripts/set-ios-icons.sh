@@ -2,7 +2,7 @@
 # ./set-ios-icons.sh <png file> <PushSample or InboxSample>
 
 p=`dirname "$0"`
-f=${p}/../${2}/Resources/Images.xcassets/AppIcon.appiconset
+f="${p}/../${2}/Resources/Images.xcassets/AppIcon.appiconset"
 echo ${f}
 
 # Universal app icon requirements.
