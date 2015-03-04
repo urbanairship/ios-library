@@ -88,8 +88,6 @@ NSString *const UAPushQuietTimeEndKey = @"end";
     self = [super init];
     if (self) {
         self.dataStore = dataStore;
-        self.defaultPushHandler = [[NSClassFromString(PUSH_DELEGATE_CLASS) alloc] init];
-        self.pushNotificationDelegate = _defaultPushHandler;
 
         self.deviceTagsEnabled = YES;
         self.requireAuthorizationForDefaultCategories = YES;

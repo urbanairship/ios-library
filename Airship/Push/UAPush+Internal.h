@@ -29,8 +29,6 @@
 @class UAPreferenceDataStore;
 @class UAConfig;
 
-#define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"
-
 /**
  * User push notification enabled data store key.
  */
@@ -102,11 +100,6 @@ extern NSString *const UAPushChannelIDKey;
 extern NSString *const UAPushChannelLocationKey;
 
 @interface UAPush ()
-
-/**
- * Default push handler.
- */
-@property (nonatomic, strong) NSObject <UAPushNotificationDelegate> *defaultPushHandler;
 
 /**
  * Device token as a string.

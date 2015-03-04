@@ -26,6 +26,7 @@
 #import "UAIncomingPushAction.h"
 #import "UAPush.h"
 #import "UAirship.h"
+#import "UAConfig.h"
 
 @implementation UAIncomingPushAction
 
@@ -75,6 +76,13 @@
           completionHandler:(UAActionCompletionHandler)completionHandler {
 
     id<UAPushNotificationDelegate> pushDelegate = [UAirship push].pushNotificationDelegate;
+    if (!pushDelegate) {
+        if (![UAirship shared].config.inProduction) {
+            UA_LWARN(@"Recieved a foreground push notification when the [UAirship push].pushNotificationDelegate is not set. Unable to show any UI.");
+        }
+        completionHandler([UAActionResult emptyResult]);
+        return;
+    }
 
     // Please refer to the following Apple documentation for full details on handling the userInfo payloads
     // http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ApplePushService/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1

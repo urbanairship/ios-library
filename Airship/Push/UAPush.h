@@ -291,8 +291,7 @@
 @property (nonatomic, assign) BOOL requireAuthorizationForDefaultCategories;
 
 /**
- * Set a delegate that implements the UAPushNotificationDelegate protocol. If not
- * set, a default implementation is provided (UAPushNotificationHandler).
+ * Set a delegate that implements the UAPushNotificationDelegate protocol.
  */
 @property (nonatomic, weak) id<UAPushNotificationDelegate> pushNotificationDelegate;
 
