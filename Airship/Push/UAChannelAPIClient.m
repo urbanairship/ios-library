@@ -78,7 +78,7 @@
                       onSuccess:(UAChannelAPIClientCreateSuccessBlock)successBlock
                       onFailure:(UAChannelAPIClientFailureBlock)failureBlock {
 
-    UA_LTRACE(@"Creating channel with payload %@.", payload);
+    UA_LTRACE(@"Creating channel with JSON payload %@.", payload.asJSONData);
 
     UAHTTPRequest *request = [self requestToCreateChannelWithPayload:payload];
 
@@ -135,7 +135,7 @@
         return;
     }
 
-    UA_LTRACE(@"Updating channel at location %@ with payload %@.", channelLocation, payload);
+    UA_LTRACE(@"Updating channel at location %@ with JSON payload %@.", channelLocation, payload.asJSONData);
 
     UAHTTPRequest *request = [self requestToUpdateWithChannelLocation:channelLocation payload:payload];
 
