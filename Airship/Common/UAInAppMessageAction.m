@@ -5,6 +5,7 @@
 #import "UAGlobal.h"
 #import "UAPush.h"
 #import "UAActionRegistry.h"
+#import "UAirship.h"
 
 @interface UAInAppMessageAction ()
 @property(nonatomic, strong) UAInAppMessageController *messageController;
@@ -32,7 +33,7 @@
         NSString *iamPayloadKey = kUAInAppMessageActionDefaultRegistryName;
 
         // the IAM associated with the launch notification, if present
-        NSDictionary *launchIAMPayload = [[UAPush shared].launchNotification objectForKey:iamPayloadKey];
+        NSDictionary *launchIAMPayload = [[UAirship push].launchNotification objectForKey:iamPayloadKey];
 
         // if the pending payload isn't contained in the launch notification
         if (![payload isEqualToDictionary:launchIAMPayload]) {
