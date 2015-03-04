@@ -14,7 +14,7 @@
  *
  * Default predicate: Rejects situation UASituationLaunchedFromPush.
  *
- * Result value: nil
+ * Result value: nil.
  *
  */
 @interface UAInAppMessageAction : UAAction

@@ -3,6 +3,7 @@
 #import "UAInAppMessage.h"
 #import "UAInAppMessageController.h"
 #import "UAGlobal.h"
+#import "UAirship.h"
 #import "UAPush.h"
 #import "UAActionRegistry.h"
 #import "UAirship.h"
@@ -40,11 +41,21 @@
 
             // if there is no expiry or expiry is in the future
             if (!message.expiry || [[NSDate date] compare:message.expiry] == NSOrderedAscending) {
-                // display it
-                UAInAppMessageController *messageController = [[UAInAppMessageController alloc] initWithMessage:message];
-                [self.messageController dismiss];
-                self.messageController = messageController;
-                [messageController show];
+
+                // if it's not currently displayed
+                if (![message isEqualToMessage:self.messageController.message]) {
+                    UAInAppMessageController *messageController = [[UAInAppMessageController alloc] initWithMessage:message dismissalBlock:^{
+                        // delete the pending payload once it's dismissed
+                        [UAInAppMessage deletePendingMessagePayload:payload];
+                    }];
+
+                    // dismiss any existing message and show the new one
+                    [self.messageController dismiss];
+                    self.messageController = messageController;
+                    [messageController show];
+                } else {
+                    completionHandler([UAActionResult emptyResult]);
+                }
             } else {
                 UA_LDEBUG(@"In-app message is expired: %@", message.expiry);
             }
@@ -57,13 +68,15 @@
         NSDictionary *parentDictionary = arguments.metadata[UAActionMetadataPushPayloadKey];
         NSString *sendID = parentDictionary[@"_"];
         NSMutableDictionary *amendedPayload = [NSMutableDictionary dictionaryWithDictionary:payload];
+        // set the send ID as the IAM unique identifier
         if (sendID) {
             amendedPayload[@"identifier"] = sendID;
         }
-        [UAInAppMessage storePendingMessagePayload:payload];
-    }
 
-    completionHandler([UAActionResult emptyResult]);
+        [UAInAppMessage storePendingMessagePayload:amendedPayload];
+
+        completionHandler([UAActionResult emptyResult]);
+    }
 }
 
 @end

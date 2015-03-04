@@ -74,7 +74,7 @@ NSString *const UAPushEnabledKey = @"UAPushEnabled";
 NSString *const UAPushQuietTimeStartKey = @"start";
 NSString *const UAPushQuietTimeEndKey = @"end";
 
-@implementation UAPush 
+@implementation UAPush
 
 + (instancetype)shared {
     return [UAirship push];
@@ -134,7 +134,7 @@ NSString *const UAPushQuietTimeEndKey = @"end";
         if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerForRemoteNotifications)] && [UAirship shared].remoteNotificationBackgroundModeEnabled) {
             [[UIApplication sharedApplication] registerForRemoteNotifications];
         }
-        
+
         // Update the named user if necessary.
         [self.namedUser update];
     }
@@ -154,7 +154,7 @@ NSString *const UAPushQuietTimeEndKey = @"end";
         [self.dataStore removeObjectForKey:UAPushDeviceTokenKey];
         return;
     }
-    
+
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"[^0-9a-fA-F]"
                                                                            options:NSRegularExpressionCaseInsensitive
                                                                              error:NULL];
@@ -240,9 +240,9 @@ NSString *const UAPushQuietTimeEndKey = @"end";
     if (!currentTags) {
         currentTags = [NSArray array];
     }
-    
+
     NSArray *normalizedTags = [self normalizeTags:currentTags];
-    
+
     //sync tags to prevent the tags property invocation from constantly logging tag set failure
     if ([currentTags count] != [normalizedTags count]) {
         [self setTags:normalizedTags];
@@ -259,7 +259,7 @@ NSString *const UAPushQuietTimeEndKey = @"end";
     NSMutableArray *normalizedTags = [[NSMutableArray alloc] init];
 
     for (NSString *tag in tags) {
-        
+
         NSString *trimmedTag = [tag stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 
         if ([trimmedTag length] >= kUAMinTagLength && [trimmedTag length] <= kUAMaxTagLength) {
@@ -268,7 +268,7 @@ NSString *const UAPushQuietTimeEndKey = @"end";
             UA_LERR(@"Tags must be > 0 and < 128 characters in length, tag %@ has been removed from the tag set", tag);
         }
     }
-    
+
     return [NSArray arrayWithArray:normalizedTags];
 }
 
@@ -463,11 +463,11 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 
 - (void)appReceivedRemoteNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state {
     [self appReceivedRemoteNotification:notification applicationState:state fetchCompletionHandler:nil];
-  }
+}
 
 - (void)appReceivedRemoteNotification:(NSDictionary *)notification
-          applicationState:(UIApplicationState)state
-    fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+                     applicationState:(UIApplicationState)state
+               fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
     UA_LINFO(@"Application received remote notification: %@", notification);
 
@@ -518,9 +518,9 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 }
 
 - (void)appReceivedActionWithIdentifier:(NSString *)identifier
-                         notification:(NSDictionary *)notification
-                     applicationState:(UIApplicationState)state
-                    completionHandler:(void (^)())completionHandler {
+                           notification:(NSDictionary *)notification
+                       applicationState:(UIApplicationState)state
+                      completionHandler:(void (^)())completionHandler {
 
     UA_LINFO(@"Received remote notification button interaction: %@ notification: %@", identifier, notification);
 
@@ -574,7 +574,7 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 
     // Situation for the actions
     UASituation situation = notificationAction.activationMode == UIUserNotificationActivationModeBackground ?
-                UASituationBackgroundInteractiveButton : UASituationForegroundInteractiveButton;
+    UASituationBackgroundInteractiveButton : UASituationForegroundInteractiveButton;
 
     // Action metadata
     NSDictionary *metadata = @{ UAActionMetadataUserNotificationActionIDKey: identifier,
@@ -609,7 +609,7 @@ BOOL deferChannelCreationOnForeground = false;
 
     if ([self.dataStore boolForKey:UAPushChannelCreationOnForeground]) {
         UA_LTRACE(@"Application did become active. Updating registration.");
-        [self updateRegistrationForcefully:NO]; 
+        [self updateRegistrationForcefully:NO];
     }
 
     // the pending in-app message, if present
@@ -621,8 +621,6 @@ BOOL deferChannelCreationOnForeground = false;
                                         value:pendingMessagePayload
                                     situation:UASituationManualInvocation];
         });
-
-        [UAInAppMessage deletePendingMessagePayload:pendingMessagePayload];
     }
 }
 
@@ -682,14 +680,14 @@ BOOL deferChannelCreationOnForeground = false;
 
     if ([UIUserNotificationSettings class]) {
         return self.deviceToken
-            && self.userPushNotificationsEnabled
-            && [app currentUserNotificationSettings].types != UIUserNotificationTypeNone
-            && app.isRegisteredForRemoteNotifications;
+        && self.userPushNotificationsEnabled
+        && [app currentUserNotificationSettings].types != UIUserNotificationTypeNone
+        && app.isRegisteredForRemoteNotifications;
 
     } else {
         return self.deviceToken
-            && self.userPushNotificationsEnabled
-            && app.enabledRemoteNotificationTypes != UIRemoteNotificationTypeNone;
+        && self.userPushNotificationsEnabled
+        && app.enabledRemoteNotificationTypes != UIRemoteNotificationTypeNone;
     }
 }
 
@@ -723,9 +721,9 @@ BOOL deferChannelCreationOnForeground = false;
     }
 
     [self.channelRegistrar registerWithChannelID:self.channelID
-                                channelLocation:self.channelLocation
-                                    withPayload:[self createChannelPayload]
-                                     forcefully:forcefully];
+                                 channelLocation:self.channelLocation
+                                     withPayload:[self createChannelPayload]
+                                      forcefully:forcefully];
 }
 
 - (void)updateRegistration {

@@ -98,7 +98,8 @@
 }
 
 + (void)storePendingMessagePayload:(NSDictionary *)payload {
-    [[UAirship shared].dataStore setObject:payload forKey:kUAPendingInAppMessageDataStoreKey];
+    UAInAppMessage *interimMessage = [self messageWithPayload:payload];
+    [[UAirship shared].dataStore setObject:interimMessage.payload forKey:kUAPendingInAppMessageDataStoreKey];
 }
 
 + (void)deletePendingMessagePayload {

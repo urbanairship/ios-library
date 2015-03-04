@@ -16,9 +16,15 @@
 
 @property(nonatomic, strong) UAInAppMessage *message;
 @property(nonatomic, strong) UAInAppMessageView *messageView;
+@property(nonatomic, copy) void (^dismissalBlock)(void);
 @property(nonatomic, strong) UIColor *primaryColor;
 @property(nonatomic, strong) UIColor *secondaryColor;
 @property(nonatomic, assign) BOOL isInverted;
+
+/**
+ * A timer set for the duration of the message, after wich the view is dismissed.
+ */
+@property(nonatomic, strong) NSTimer *dismissalTimer;
 
 /**
  * An array of dictionaries containing localized button titles and
@@ -36,7 +42,7 @@
 
 @implementation UAInAppMessageController
 
-- (instancetype)initWithMessage:(UAInAppMessage *)message {
+- (instancetype)initWithMessage:(UAInAppMessage *)message dismissalBlock:(void (^)(void))dismissalBlock {
     self = [super init];
     if (self) {
         self.message = message;
@@ -49,6 +55,8 @@
 
         // colors are uninverted to start
         self.isInverted = NO;
+
+        self.dismissalBlock = dismissalBlock;
     }
     return self;
 }
@@ -207,6 +215,35 @@
     [messageView layoutIfNeeded];
 }
 
+- (void)scheduleDismissalTimer {
+    self.dismissalTimer = [NSTimer timerWithTimeInterval:self.message.duration
+                                                  target:self
+                                                selector:@selector(dismiss)
+                                                userInfo:nil
+                                                 repeats:NO];
+    [[NSRunLoop currentRunLoop] addTimer:self.dismissalTimer forMode:NSDefaultRunLoopMode];
+}
+
+- (void)invalidateDismissalTimer {
+    [self.dismissalTimer invalidate];
+}
+
+- (void)listenForAppStateTransitions {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationDidBecomeActive)
+                                                 name:UIApplicationDidBecomeActiveNotification
+                                               object:[UIApplication sharedApplication]];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationWillResignActive)
+                                                 name:UIApplicationWillResignActiveNotification
+                                               object:[UIApplication sharedApplication]];
+}
+
+- (void)resignAppStateTransitions {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 - (void)show {
 
     UIView *parentView = [UAUtils topController].view;
@@ -221,14 +258,6 @@
 
     self.messageView = messageView;
 
-    // simple timer that dispatches a dismiss call after the message duration has been reached
-    void(^timeoutBlock)(void) = ^{
-        __weak UAInAppMessageController *weakSelf = self;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.message.duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [weakSelf dismiss];
-        });
-    };
-
     // save and offset the message view's original center point for animation in
     CGPoint originalCenter = self.messageView.center;
     if (self.message.position == UAInAppMessagePositionTop) {
@@ -241,7 +270,8 @@
     [UIView animateWithDuration:kUAInAppMessageAnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         self.messageView.center = originalCenter;
     } completion:^(BOOL finished) {
-        timeoutBlock();
+        [self listenForAppStateTransitions];
+        [self scheduleDismissalTimer];
     }];
 }
 
@@ -259,7 +289,6 @@
     }
 }
 
-
 - (void)dismissWithAnimationBlock:(void(^)(void))block {
     // dispatch with a delay of zero to postpone the block by a runloop cycle, so that
     // the animation isn't disrupted
@@ -270,14 +299,25 @@
                          animations:block
                          completion:^(BOOL finished){
                              [self.messageView removeFromSuperview];
+
                              self.messageView = nil;
                              // release self
                              self.referenceToSelf = nil;
+
+                             if (self.dismissalBlock) {
+                                 self.dismissalBlock();
+                             }
+
                          }];
     });
 }
 
 - (void)dismiss {
+    [self.dismissalTimer invalidate];
+    self.dismissalTimer = nil;
+
+    [self resignAppStateTransitions];
+
     [self dismissWithAnimationBlock:^{
         // animate the message view back off the screen
         if (self.message.position == UAInAppMessagePositionTop) {
@@ -286,6 +326,14 @@
             self.messageView.center = CGPointMake(self.messageView.center.x, self.messageView.center.y + (CGRectGetHeight(self.messageView.frame)));
         }
     }];
+}
+
+- (void)applicationDidBecomeActive {
+    [self scheduleDismissalTimer];
+}
+
+- (void)applicationWillResignActive {
+    [self invalidateDismissalTimer];
 }
 
 - (void)swipeWithGestureRecognizer:(UIGestureRecognizer *)recognizer {
