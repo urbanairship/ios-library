@@ -25,7 +25,6 @@
 #import <UIKit/UIKit.h>
 
 @class InboxSampleViewController;
-@class UAInboxDefaultJSDelegate;
 
 @interface InboxSampleAppDelegate : NSObject <UIApplicationDelegate> 
 

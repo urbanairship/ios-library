@@ -28,7 +28,7 @@ typedef void (^UAJavaScriptDelegateCompletionHandler)(NSString *script);
  * If the passed command name is not one the delegate responds to, or if no JavaScript side effect
  * is desired, it implementations should pass nil.
  *
- * To pass information to the delegate from a webview, insert links with a "ua" scheme,
+ * To pass information to the delegate from a webview, insert links with a "uairship" scheme,
  * args in the path and key-value option pairs in the query string. The host
  * portion of the URL is treated as the command name.
  *

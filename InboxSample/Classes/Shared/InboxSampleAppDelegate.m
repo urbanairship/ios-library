@@ -25,7 +25,6 @@
 #import "InboxSampleAppDelegate.h"
 
 #import "InboxSampleViewController.h"
-#import "UAInboxDefaultJSDelegate.h"
 #import "UAInboxPushHandler.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
@@ -33,9 +32,6 @@
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
 
-@interface InboxSampleAppDelegate()
-@property (nonatomic, strong) UAInboxDefaultJSDelegate *jsDelegate;
-@end
 
 @implementation InboxSampleAppDelegate
 
@@ -61,10 +57,6 @@
 
     // Configure Inbox behavior before UAInboxPushHandler since it may need it
     // when launching from notification
-
-    // Optional: Delegate for JavaScript callback
-    self.jsDelegate = [[UAInboxDefaultJSDelegate alloc] init];
-    [UAirship inbox].jsDelegate = self.jsDelegate;
 
     InboxSampleViewController *sampleViewController = self.viewController;
 
@@ -95,10 +87,6 @@
     if ([UAirship inbox].messageList.unreadCount >= 0) {
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[UAirship inbox].messageList.unreadCount];
     }
-}
-
-- (void)dealloc {
-    [UAirship inbox].jsDelegate = nil;
 }
 
 - (void)failIfSimulator {
