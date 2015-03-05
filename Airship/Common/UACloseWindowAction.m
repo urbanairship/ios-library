@@ -42,11 +42,6 @@
 
     if ([webViewDelegate respondsToSelector:@selector(closeWebView:animated:)]) {
         [webViewDelegate closeWebView:webView animated:YES];
-    } else if ([webViewDelegate respondsToSelector:@selector(closeWindow:)]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [webViewDelegate closeWindow:YES];
-#pragma clang diagnostic pop
     }
 
     completionHandler([UAActionResult emptyResult]);
