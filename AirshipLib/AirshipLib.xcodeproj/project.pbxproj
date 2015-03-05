@@ -286,10 +286,6 @@
 		49BADE17198B0870000FF3D5 /* UAJavaScriptDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 49DCFABF1831B580002CD5FB /* UAJavaScriptDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49C1F07F1978523300DD67DE /* UAInboxMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C1F07D1978523300DD67DE /* UAInboxMessage.h */; };
 		49C1F0801978523300DD67DE /* UAInboxMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C1F07E1978523300DD67DE /* UAInboxMessage.m */; };
-		49C665251A1E76D200E5D650 /* UAWebViewTools.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C665231A1E76D200E5D650 /* UAWebViewTools.h */; };
-		49C665261A1E76D200E5D650 /* UAWebViewTools.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C665231A1E76D200E5D650 /* UAWebViewTools.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		49C665271A1E76D200E5D650 /* UAWebViewTools.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C665241A1E76D200E5D650 /* UAWebViewTools.m */; };
-		49C665281A1E76D200E5D650 /* UAWebViewTools.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C665241A1E76D200E5D650 /* UAWebViewTools.m */; };
 		49C6652B1A1E77DB00E5D650 /* UIWebView+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C665291A1E77DB00E5D650 /* UIWebView+UAAdditions.h */; };
 		49C6652C1A1E77DB00E5D650 /* UIWebView+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C665291A1E77DB00E5D650 /* UIWebView+UAAdditions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49C6652D1A1E77DB00E5D650 /* UIWebView+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C6652A1A1E77DB00E5D650 /* UIWebView+UAAdditions.m */; };
@@ -308,7 +304,6 @@
 		49D7FF4E1A8E92390017A11C /* UAInAppMessageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D7FF4A1A8E92390017A11C /* UAInAppMessageView.h */; };
 		49D7FF4F1A8E92390017A11C /* UAInAppMessageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D7FF4B1A8E92390017A11C /* UAInAppMessageView.m */; };
 		49DCFAC01831B580002CD5FB /* UAJavaScriptDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 49DCFABF1831B580002CD5FB /* UAJavaScriptDelegate.h */; };
-		49E9C9BE1836EBAB00B7BCFF /* UAWebViewToolsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49E9C9BD1836EBAB00B7BCFF /* UAWebViewToolsTest.m */; };
 		49E9C9C1183AD42300B7BCFF /* UAWebViewCallData.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E9C9BF183AD42300B7BCFF /* UAWebViewCallData.h */; };
 		49E9C9C3183AD42300B7BCFF /* UAWebViewCallData.m in Sources */ = {isa = PBXBuildFile; fileRef = 49E9C9C0183AD42300B7BCFF /* UAWebViewCallData.m */; };
 		49E9C9C6183C28E900B7BCFF /* UAActionJSDelegateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49E9C9C5183C28E900B7BCFF /* UAActionJSDelegateTest.m */; };
@@ -698,8 +693,6 @@
 		49C1F089197DD9CC00DD67DE /* UAInbox+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInbox+Internal.h"; sourceTree = "<group>"; };
 		49C1F08A197DDB4400DD67DE /* UAInboxMessageList+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInboxMessageList+Internal.h"; sourceTree = "<group>"; };
 		49C1F08B197DDB5600DD67DE /* UAInboxMessage+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInboxMessage+Internal.h"; sourceTree = "<group>"; };
-		49C665231A1E76D200E5D650 /* UAWebViewTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAWebViewTools.h; sourceTree = "<group>"; };
-		49C665241A1E76D200E5D650 /* UAWebViewTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWebViewTools.m; sourceTree = "<group>"; };
 		49C665291A1E77DB00E5D650 /* UIWebView+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIWebView+UAAdditions.h"; sourceTree = "<group>"; };
 		49C6652A1A1E77DB00E5D650 /* UIWebView+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIWebView+UAAdditions.m"; sourceTree = "<group>"; };
 		49C6652F1A1EAFEF00E5D650 /* UAWebViewDelegateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWebViewDelegateTest.m; sourceTree = "<group>"; };
@@ -716,7 +709,6 @@
 		49D7FF4A1A8E92390017A11C /* UAInAppMessageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageView.h; sourceTree = "<group>"; };
 		49D7FF4B1A8E92390017A11C /* UAInAppMessageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageView.m; sourceTree = "<group>"; };
 		49DCFABF1831B580002CD5FB /* UAJavaScriptDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAJavaScriptDelegate.h; sourceTree = "<group>"; };
-		49E9C9BD1836EBAB00B7BCFF /* UAWebViewToolsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWebViewToolsTest.m; sourceTree = "<group>"; };
 		49E9C9BF183AD42300B7BCFF /* UAWebViewCallData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAWebViewCallData.h; sourceTree = "<group>"; };
 		49E9C9C0183AD42300B7BCFF /* UAWebViewCallData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWebViewCallData.m; sourceTree = "<group>"; };
 		49E9C9C5183C28E900B7BCFF /* UAActionJSDelegateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionJSDelegateTest.m; sourceTree = "<group>"; };
@@ -1202,8 +1194,6 @@
 			children = (
 				49C665291A1E77DB00E5D650 /* UIWebView+UAAdditions.h */,
 				49C6652A1A1E77DB00E5D650 /* UIWebView+UAAdditions.m */,
-				49C665231A1E76D200E5D650 /* UAWebViewTools.h */,
-				49C665241A1E76D200E5D650 /* UAWebViewTools.m */,
 				CCBFA2D817B5436500F97E1D /* NSJSONSerialization+UAAdditions.h */,
 				CCBFA2D917B5436500F97E1D /* NSJSONSerialization+UAAdditions.m */,
 				4905C4E318246339001D48E3 /* NSString+UAURLEncoding.h */,
@@ -1660,7 +1650,6 @@
 				7BB679121429288D00B877DB /* UAUtilsTest.h */,
 				7BB679141429288D00B877DB /* UAUtilsTest.m */,
 				497B0EA91836AB8700DA65BB /* NSString_UAURLEncodingTest.m */,
-				49E9C9BD1836EBAB00B7BCFF /* UAWebViewToolsTest.m */,
 				490710BB184D3EAB00E494AF /* UAWebViewCallDataTest.m */,
 				CC4AADF518C67B23001F23B3 /* UIWebView_UAAdditionsTest.m */,
 				CCC0508B1A129C83000AE545 /* UAKeyChainUtilTest.m */,
@@ -1741,7 +1730,6 @@
 			files = (
 				762941AC1A016EB60077CDC1 /* UAActivityViewController.h in Headers */,
 				CC319CE91A0C43000079226E /* UAPreferenceDataStore.h in Headers */,
-				49C665261A1E76D200E5D650 /* UAWebViewTools.h in Headers */,
 				CC1F43981A1D388800D3A227 /* UAWebViewDelegate.h in Headers */,
 				4946199D1A11A49D00E138C0 /* UAWhitelist.h in Headers */,
 				494FB5AE1992D4D2000CF253 /* AirshipKit.h in Headers */,
@@ -1955,7 +1943,6 @@
 				CCE34AE619C2642D00A8EFC0 /* UAEventAppInit.h in Headers */,
 				4905C4DF182458AC001D48E3 /* UAActionJSDelegate.h in Headers */,
 				CCDD37C818089E5700B8866E /* UAOpenExternalURLAction.h in Headers */,
-				49C665251A1E76D200E5D650 /* UAWebViewTools.h in Headers */,
 				CC8542BB17F4B81600D2DE10 /* UAActionRegistry.h in Headers */,
 				1F610DE217835C3A00BCD96E /* UAInboxAPIClient.h in Headers */,
 				49C671FF184EAB640088F210 /* UANativeBridge.h in Headers */,
@@ -2250,7 +2237,6 @@
 				491B840F198C237F00FB7A40 /* UAInbox.m in Sources */,
 				491B8410198C237F00FB7A40 /* UAInboxAPIClient.m in Sources */,
 				4946199F1A11A49D00E138C0 /* UAWhitelist.m in Sources */,
-				49C665281A1E76D200E5D650 /* UAWebViewTools.m in Sources */,
 				491B8411198C237F00FB7A40 /* UAInboxDBManager.m in Sources */,
 				491B8413198C237F00FB7A40 /* UAInboxMessage.m in Sources */,
 				491B8414198C237F00FB7A40 /* UAInboxMessageData.m in Sources */,
@@ -2394,7 +2380,6 @@
 				CCA3A4FF17FF1582009C7371 /* UAActionRegistryEntryTest.m in Sources */,
 				CCBFA2E017B547B600F97E1D /* NSJSONSerialization_UAAdditionsTests.m in Sources */,
 				767D0D5C1A76E702008CEC8A /* UANamedUserAPIClientTest.m in Sources */,
-				49E9C9BE1836EBAB00B7BCFF /* UAWebViewToolsTest.m in Sources */,
 				CCB7DF5B17BBF1B800CEDC56 /* UAInboxDBManagerTests.m in Sources */,
 				CC7DC957183E97C300E95BB8 /* UAChannelRegistrationPayloadTest.m in Sources */,
 				CC20BE1E19589D450098CF35 /* UALocationEventTest.m in Sources */,
@@ -2424,7 +2409,6 @@
 				CC8542B917F4B81600D2DE10 /* UAActionArguments.m in Sources */,
 				4995C642180DBBDD004F8724 /* UARemoveTagsAction.m in Sources */,
 				4946199E1A11A49D00E138C0 /* UAWhitelist.m in Sources */,
-				49C665271A1E76D200E5D650 /* UAWebViewTools.m in Sources */,
 				CCDD37CA18089E5700B8866E /* UAOpenExternalURLAction.m in Sources */,
 				49416D6A18C513F500A18B72 /* UALandingPageOverlayController.m in Sources */,
 				BB8860EE159A7E9600584445 /* UAUtils.m in Sources */,
