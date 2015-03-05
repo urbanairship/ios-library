@@ -23,7 +23,6 @@
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments
-                  actionName:(NSString *)name
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
     NSDictionary *payload = arguments.value;

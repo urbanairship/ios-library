@@ -34,18 +34,48 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
 @implementation UAActionRunner
 
 + (void)runActionWithName:(NSString *)actionName
-            withArguments:(UAActionArguments *)arguments
-    withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+                    value:(id)value
+                situation:(UASituation)situation {
+
+    [self runActionWithName:actionName value:value situation:situation metadata:nil completionHandler:nil];
+}
+
++ (void)runActionWithName:(NSString *)actionName
+                    value:(id)value
+                situation:(UASituation)situation
+                 metadata:(NSDictionary *)metadata {
+
+    [self runActionWithName:actionName value:value situation:situation metadata:metadata completionHandler:nil];
+}
+
++ (void)runActionWithName:(NSString *)actionName
+                    value:(id)value
+                situation:(UASituation)situation
+        completionHandler:(UAActionCompletionHandler)completionHandler {
+
+    [self runActionWithName:actionName value:value situation:situation metadata:nil completionHandler:completionHandler];
+}
+
++ (void)runActionWithName:(NSString *)actionName
+                    value:(id)value
+                situation:(UASituation)situation
+                 metadata:(NSDictionary *)metadata
+        completionHandler:(UAActionCompletionHandler)completionHandler {
 
     UAActionRegistryEntry *entry = [[UAirship shared].actionRegistry registryEntryWithName:actionName];
 
+
     if (entry) {
+        // Add the action name to the metadata
+        NSMutableDictionary *fullMetadata = metadata ? [NSMutableDictionary dictionaryWithDictionary:metadata] : [NSMutableDictionary dictionary];
+        fullMetadata[UAActionMetadataRegisteredName] = actionName;
+
+        UAActionArguments *arguments = [UAActionArguments argumentsWithValue:value withSituation:situation metadata:fullMetadata];
         if (!entry.predicate || entry.predicate(arguments)) {
             UA_LINFO("Running action %@", actionName);
-            UAAction *action = [entry actionForSituation:arguments.situation];
-            [action runWithArguments:arguments
-                          actionName:actionName
-               completionHandler:completionHandler];
+
+            UAAction *action = [entry actionForSituation:situation];
+            [action runWithArguments:arguments completionHandler:completionHandler];
         } else {
             UA_LDEBUG(@"Not running action %@ because of predicate.", actionName);
             if (completionHandler) {
@@ -67,20 +97,50 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
     }
 }
 
+
 + (void)runAction:(UAAction *)action
-    withArguments:(UAActionArguments *)arguments
-withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-    [action runWithArguments:arguments actionName:nil completionHandler:completionHandler];
+            value:(id)value
+        situation:(UASituation)situation {
+
+    [self runAction:action value:value situation:situation metadata:nil completionHandler:nil];
 }
 
-+ (void)runActions:(NSDictionary *)actions
- withCompletionHandler:(UAActionCompletionHandler)completionHandler {
++ (void)runAction:(UAAction *)action
+            value:(id)value
+        situation:(UASituation)situation
+         metadata:(NSDictionary *)metadata {
+
+    [self runAction:action value:value situation:situation metadata:metadata completionHandler:nil];
+}
+
++ (void)runAction:(UAAction *)action
+            value:(id)value
+        situation:(UASituation)situation
+completionHandler:(UAActionCompletionHandler)completionHandler {
+
+    [self runAction:action value:value situation:situation metadata:nil completionHandler:completionHandler];
+}
+
++ (void)runAction:(UAAction *)action
+            value:(id)value
+        situation:(UASituation)situation
+         metadata:(NSDictionary *)metadata
+completionHandler:(UAActionCompletionHandler)completionHandler {
+
+    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:value withSituation:situation metadata:metadata];
+    [action runWithArguments:arguments completionHandler:completionHandler];
+}
+
++ (void)runActionsWithActionValues:(NSDictionary *)actionValues
+                         situation:(UASituation)situation
+                          metadata:(NSDictionary *)metadata
+                 completionHandler:(UAActionCompletionHandler)completionHandler {
 
     __block UAAggregateActionResult *aggregateResult = [[UAAggregateActionResult alloc] init];
-    __block NSUInteger expectedCount = actions.count;
+    __block NSUInteger expectedCount = actionValues.count;
     __block NSUInteger resultCount = 0;
 
-    if (!actions.count) {
+    if (!actionValues.count) {
         UA_LTRACE("No actions to perform.");
         if (completionHandler) {
             completionHandler(aggregateResult);
@@ -88,7 +148,7 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler {
         return;
     }
 
-    for (NSString *actionName in actions) {
+    for (NSString *actionName in actionValues) {
         __block BOOL completionHandlerCalled = NO;
 
         UAActionCompletionHandler handler = ^(UAActionResult *result) {
@@ -108,10 +168,11 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler {
             }
         };
 
-        UAActionArguments *args = [actions objectForKey:actionName];
-        
         [self runActionWithName:actionName
-                      withArguments:args withCompletionHandler:handler];
+                          value:actionValues[actionName]
+                      situation:situation
+                       metadata:metadata
+              completionHandler:handler];
     }
 }
 @end

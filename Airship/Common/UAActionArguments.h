@@ -128,6 +128,14 @@ extern NSString * const UAActionMetadataInboxMessageKey;
  */
 extern NSString * const UAActionMetadataUserNotificationActionIDKey;
 
+
+/**
+ * Metadata key for the name of the action in the registry. Available when an
+ * action is triggered by name.
+ */
+extern NSString * const UAActionMetadataRegisteredName;
+
+
 /**
  * Situation of the action
  */

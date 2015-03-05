@@ -53,7 +53,6 @@
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments
-                  actionName:(NSString *)actionName
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
     UA_LDEBUG(@"Running share action: %@", arguments);

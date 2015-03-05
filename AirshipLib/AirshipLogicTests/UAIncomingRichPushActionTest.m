@@ -128,7 +128,7 @@
     // Should notify the RAP notification arrived
     [[self.mockPushHandlerDelegate expect] richPushNotificationArrived:[self.arguments.metadata objectForKey:UAActionMetadataPushPayloadKey]];
 
-    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *result) {
+    [self.action performWithArguments:self.arguments completionHandler:^(UAActionResult *result) {
         actionResult = result;
     }];
 
@@ -159,7 +159,7 @@
     // Should tell the handler there is a launch message
     [[self.mockPushHandler expect] setHasLaunchMessage:YES];
 
-    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *result) {
+    [self.action performWithArguments:self.arguments completionHandler:^(UAActionResult *result) {
         actionResult = result;
     }];
 
@@ -192,7 +192,7 @@
     // Should tell the handler there is a launch message
     [[self.mockPushHandler expect] setHasLaunchMessage:YES];
 
-    [self.action performWithArguments:self.arguments actionName:@"test_action" completionHandler:^(UAActionResult *result) {
+    [self.action performWithArguments:self.arguments completionHandler:^(UAActionResult *result) {
         actionResult = result;
     }];
 

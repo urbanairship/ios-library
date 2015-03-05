@@ -34,7 +34,6 @@
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments
-                  actionName:(NSString *)actionName
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
     UIWebView *webView = [arguments.metadata objectForKey:UAActionMetadataWebViewKey];

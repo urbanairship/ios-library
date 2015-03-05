@@ -30,8 +30,8 @@
 @implementation UAAddTagsAction
 
 - (void)performWithArguments:(UAActionArguments *)arguments
-                  actionName:(NSString *)actionName
            completionHandler:(UAActionCompletionHandler)completionHandler {
+    
     if ([arguments.value isKindOfClass:[NSString class]]) {
         [[UAirship push] addTag:arguments.value];
     } else {

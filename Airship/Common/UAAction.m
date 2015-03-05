@@ -44,7 +44,6 @@
 #pragma mark internal methods
 
 - (void)runWithArguments:(UAActionArguments *)arguments
-              actionName:(NSString *)name
        completionHandler:(UAActionCompletionHandler)completionHandler {
     
     completionHandler = completionHandler ?: ^(UAActionResult *result) {
@@ -71,9 +70,7 @@
             completionHandler([UAActionResult rejectedArgumentsResult]);
         } else {
             [self willPerformWithArguments:arguments];
-            [self performWithArguments:arguments
-                            actionName:name
-                     completionHandler:^(UAActionResult *result) {
+            [self performWithArguments:arguments completionHandler:^(UAActionResult *result) {
                 //make sure the passed completion handler and didPerformWithArguments are executed on the
                 //main queue
                 dispatchMainIfNecessary(^{
@@ -105,11 +102,24 @@
 - (void)performWithArguments:(UAActionArguments *)args
                   actionName:(NSString *)name
            completionHandler:(UAActionCompletionHandler)completionHandler {
+
+
     if (self.actionBlock) {
-        self.actionBlock(args, name, completionHandler);
+        self.actionBlock(args, completionHandler);
     } else {
         completionHandler([UAActionResult emptyResult]);
     }
+}
+
+- (void)performWithArguments:(UAActionArguments *)args completionHandler:(UAActionCompletionHandler)completionHandler {
+    NSString *actionName = args.metadata[UAActionMetadataRegisteredName];
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    // Replace with calling the action block after performWithArguments:actionName:completionHandler: is removed
+    [self performWithArguments:args actionName:actionName completionHandler:completionHandler];
+#pragma clang diagnostic pop
+
 }
 
 - (void)didPerformWithArguments:(UAActionArguments *)arguments

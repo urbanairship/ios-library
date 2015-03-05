@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2014 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2015 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -23,18 +23,28 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UASyncAction.h"
+#import "UAActionRunner.h"
 
-@implementation UASyncAction
+@interface UAActionRunner ()
 
-- (void)performWithArguments:(UAActionArguments *)arguments
-       withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-    completionHandler([self performWithArguments:arguments]);
-}
-
-- (UAActionResult *)performWithArguments:(id)arguments {
-    //override
-    return [UAActionResult emptyResult];
-}
+/**
+ * Runs all actions in a given dictionary. The dictionary's keys will be treated
+ * as action names, while the values will be treated as each action's argument value.
+ *
+ * The results of all the actions will be aggregated into a
+ * single UAAggregateActionResult.
+ *
+ * @param actionValues The map of action names to action values.
+ * @param situation The action's situation.
+ * @param metadata The action's metadata.
+ * @param completionHandler CompletionHandler to call after all the
+ * actions have completed. The result will be the aggregated result
+ * of all the actions run.
+ */
++ (void)runActionsWithActionValues:(NSDictionary *)actionValues
+                         situation:(UASituation)situation
+                          metadata:(NSDictionary *)metadata
+                 completionHandler:(UAActionCompletionHandler)completionHandler;
 
 @end
+

@@ -30,7 +30,7 @@
 #import "UAirship.h"
 #import "UAAnalytics.h"
 #import "UAirship+Internal.h"
-#import "UAActionRunner.h"
+#import "UAActionRunner+Internal.h"
 #import "UAActionRegistry+Internal.h"
 #import "UAUtils.h"
 #import "UAUser.h"
@@ -75,21 +75,21 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     self.notification = @{
                           @"aps": @{
-                                   @"alert": @"sample alert!",
-                                   @"badge": @2,
-                                   @"sound": @"cat",
-                                   @"category": @"notificationCategory"
-                           },
-                           @"com.urbanairship.interactive_actions": @{
-                                   @"backgroundIdentifier": @{
-                                           @"backgroundAction": @"backgroundActionValue"
-                                   },
-                                   @"foregroundIdentifier": @{
-                                           @"foregroundAction": @"foregroundActionValue",
-                                           @"otherForegroundAction": @"otherForegroundActionValue"
+                                  @"alert": @"sample alert!",
+                                  @"badge": @2,
+                                  @"sound": @"cat",
+                                  @"category": @"notificationCategory"
+                                  },
+                          @"com.urbanairship.interactive_actions": @{
+                                  @"backgroundIdentifier": @{
+                                          @"backgroundAction": @"backgroundActionValue"
+                                          },
+                                  @"foregroundIdentifier": @{
+                                          @"foregroundAction": @"foregroundActionValue",
+                                          @"otherForegroundAction": @"otherForegroundActionValue"
 
-                                   },
-                           },
+                                          },
+                                  },
                           @"someActionKey": @"someActionValue",
                           };
 
@@ -170,11 +170,11 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     self.push.deviceToken = nil;
     XCTAssertNil(self.push.deviceToken,
-                          @"setDeviceToken should allow a nil device token.");
+                 @"setDeviceToken should allow a nil device token.");
 
     self.push.deviceToken = @"";
     XCTAssertEqualObjects(@"", self.push.deviceToken,
-                 @"setDeviceToken should do nothing to an empty string");
+                          @"setDeviceToken should do nothing to an empty string");
 }
 
 - (void)testAutoBadgeEnabled {
@@ -238,7 +238,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     NSArray *tags = @[@"   tag-one   ", @"tag-two   "];
     NSArray *tagsNoSpaces = @[@"tag-one", @"tag-two"];
     [self.push setTags:tags];
-    
+
     XCTAssertEqualObjects(tagsNoSpaces, self.push.tags, @"whitespace was not trimmed from tags");
 }
 
@@ -248,7 +248,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testSetTagWhitespaceOnly {
     NSArray *tags = @[@" "];
     [self.push setTags:tags];
-    
+
     XCTAssertNotEqualObjects(tags, self.push.tags, @"tag with whitespace only should not set");
 }
 
@@ -258,7 +258,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testSetTagsMinTagSize {
     NSArray *tags = @[@"1"];
     [self.push setTags:tags];
-    
+
     XCTAssertEqualObjects(tags, self.push.tags, @"tag with minimum character should set");
 }
 
@@ -268,7 +268,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testSetTagsMaxTagSize {
     NSArray *tags = @[[@"" stringByPaddingToLength:127 withString: @"." startingAtIndex:0]];
     [self.push setTags:tags];
-    
+
     XCTAssertEqualObjects(tags, self.push.tags, @"tag with maximum characters should set");
 }
 
@@ -278,7 +278,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testSetTagsMultiByteCharacters {
     NSArray *tags = @[@"함수 목록"];
     [self.push setTags:tags];
-    
+
     XCTAssertEqualObjects(tags, self.push.tags, @"tag with multi-byte characters should set");
 }
 
@@ -288,7 +288,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testMinLengthMultiByteCharacters {
     NSArray *tags = @[@"함"];
     [self.push setTags:tags];
-    
+
     XCTAssertEqualObjects(tags, self.push.tags, @"tag with minimum multi-byte characters should set");
 }
 
@@ -298,7 +298,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testMaxLengthMultiByteCharacters {
     NSArray *tags = @[[@"" stringByPaddingToLength:127 withString: @"함" startingAtIndex:0]];;
     [self.push setTags:tags];
-    
+
     XCTAssertEqualObjects(tags, self.push.tags, @"tag with maximum multi-byte characters should set");
 }
 
@@ -308,7 +308,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testSetTagsOverMaxTagSizeRemoval {
     NSArray *tags = @[[@"" stringByPaddingToLength:128 withString: @"." startingAtIndex:0]];
     [self.push setTags:tags];
-    
+
     XCTAssertNotEqualObjects(tags, self.push.tags, @"tag with 128 characters should not set");
 }
 
@@ -319,7 +319,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     NSArray *tags = @[@"   tag-one   ", @"tag-two   "];
     NSArray *tagsNoSpaces = @[@"tag-one", @"tag-two"];
     [self.push normalizeTags:tags];
-    
+
     XCTAssertEqualObjects(tagsNoSpaces, [self.push normalizeTags:tags], @"whitespace was trimmed from tags");
 }
 
@@ -328,7 +328,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  */
 - (void)testNormalizeTagsMaxTagSize {
     NSArray *tags = @[[@"" stringByPaddingToLength:127 withString: @"." startingAtIndex:0]];
-    
+
     XCTAssertEqualObjects(tags, [self.push normalizeTags:tags], @"tag with 127 characters should set");
 }
 
@@ -338,7 +338,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testNormalizeTagsOverMaxTagSizeRemoval {
     NSArray *tags = @[[@"" stringByPaddingToLength:128 withString: @"." startingAtIndex:0]];
     [self.push normalizeTags:tags];
-    
+
     XCTAssertNotEqualObjects(tags, [self.push normalizeTags:tags], @"tag with 128 characters should not set");
 }
 
@@ -529,9 +529,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     // Add a device token so we get a device api callback
     [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:OCMOCK_ANY
-                                                    forcefully:NO];
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:OCMOCK_ANY
+                                                     forcefully:NO];
 
 
     UIUserNotificationSettings *expected = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone
@@ -563,18 +563,18 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     // Add a device token so we get a device api callback
     [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:OCMOCK_ANY
-                                                    forcefully:NO];
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:OCMOCK_ANY
+                                                     forcefully:NO];
 
     self.push.backgroundPushNotificationsEnabled = YES;
 
     XCTAssertTrue([self.dataStore boolForKey:UABackgroundPushNotificationsEnabledKey],
-                   @"backgroundPushNotificationsEnabled should be stored in standardUserDefaults");
+                  @"backgroundPushNotificationsEnabled should be stored in standardUserDefaults");
 
     self.push.backgroundPushNotificationsEnabled = NO;
     XCTAssertFalse([self.dataStore boolForKey:UABackgroundPushNotificationsEnabledKey],
-                  @"backgroundPushNotificationsEnabled should be stored in standardUserDefaults");
+                   @"backgroundPushNotificationsEnabled should be stored in standardUserDefaults");
 
 }
 
@@ -679,9 +679,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     // Add a device token so we get a device api callback
     [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:OCMOCK_ANY
-                                                    forcefully:NO];
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:OCMOCK_ANY
+                                                     forcefully:NO];
 
     [self.push updateAPNSRegistration];
 
@@ -849,9 +849,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     [[self.mockedApplication expect] setApplicationIconBadgeNumber:15];
     [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:OCMOCK_ANY
-                                                    forcefully:YES];
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:OCMOCK_ANY
+                                                     forcefully:YES];
 
     [self.push setBadgeNumber:15];
     XCTAssertNoThrow([self.mockedApplication verify],
@@ -881,9 +881,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     // Reject device api client registration because autobadge is not enabled
     [[self.mockedChannelRegistrar reject] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:OCMOCK_ANY
-                                                    forcefully:YES];
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:OCMOCK_ANY
+                                                     forcefully:YES];
     [self.push setBadgeNumber:15];
     XCTAssertNoThrow([self.mockedApplication verify],
                      @"should update application icon badge number when its different");
@@ -907,9 +907,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [[self.mockedAnalytics expect] addEvent:OCMOCK_ANY];
 
     [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:OCMOCK_ANY
-                                                    forcefully:NO];
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:OCMOCK_ANY
+                                                     forcefully:NO];
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
@@ -945,9 +945,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [[self.mockedAnalytics expect] addEvent:OCMOCK_ANY];
 
     [[self.mockedChannelRegistrar reject] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:OCMOCK_ANY
-                                                    forcefully:NO];
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:OCMOCK_ANY
+                                                     forcefully:NO];
 
     [self.push appRegisteredForRemoteNotificationsWithDeviceToken:token];
 
@@ -982,9 +982,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [[self.mockedAnalytics expect] addEvent:OCMOCK_ANY];
 
     [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:OCMOCK_ANY
-                                                    forcefully:NO];
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:OCMOCK_ANY
+                                                     forcefully:NO];
 
     [self.push appRegisteredForRemoteNotificationsWithDeviceToken:token];
 
@@ -1027,9 +1027,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
 
     [[self.mockedChannelRegistrar reject] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:OCMOCK_ANY
-                                                    forcefully:NO];
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:OCMOCK_ANY
+                                                     forcefully:NO];
 
     [self.push appRegisteredUserNotificationSettings];
 
@@ -1082,9 +1082,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     // Reject any device registration
     [[self.mockedChannelRegistrar reject] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:OCMOCK_ANY
-                                                    forcefully:NO];
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:OCMOCK_ANY
+                                                     forcefully:NO];
 
     // Update the registration
     [self.push updateRegistration];
@@ -1105,9 +1105,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
         [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(state)] applicationState];
 
         [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
-                                                   channelLocation:OCMOCK_ANY
-                                                       withPayload:OCMOCK_ANY
-                                                        forcefully:YES];
+                                                    channelLocation:OCMOCK_ANY
+                                                        withPayload:OCMOCK_ANY
+                                                         forcefully:YES];
 
         [[[self.mockedApplication expect] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
@@ -1126,9 +1126,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     // Add a device token so we get a device api callback
     [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:OCMOCK_ANY
-                                                    forcefully:YES];
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:OCMOCK_ANY
+                                                     forcefully:YES];
 
 
     [[[self.mockedApplication expect] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
@@ -1148,9 +1148,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [[[self.mockedApplication expect] andReturnValue:OCMOCK_VALUE((NSUInteger)UIBackgroundTaskInvalid)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
     [[self.mockedChannelRegistrar reject] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:OCMOCK_ANY
-                                                    forcefully:YES];
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:OCMOCK_ANY
+                                                     forcefully:YES];
 
     [self.push updateRegistrationForcefully:YES];
 
@@ -1204,9 +1204,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
     [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
-                                                    forcefully:YES];
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
+                                                     forcefully:YES];
 
     [self.push updateRegistrationForcefully:YES];
 
@@ -1234,7 +1234,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 /**
  * Test when backgroundPushNotificationsAllowed is YES when running on < iOS8,
  * device token is available, remote-notification background mode is enabled,
- * backgroundRefreshStatus is allowed, and backgroundPushNotificationsEnabled is 
+ * backgroundRefreshStatus is allowed, and backgroundPushNotificationsEnabled is
  * enabled.
  */
 - (void)testBackgroundPushNotificationsAllowed {
@@ -1262,7 +1262,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     self.push.deviceToken = nil;
     XCTAssertFalse(self.push.backgroundPushNotificationsAllowed,
-                  @"BackgroundPushNotificationsAllowed should be NO");
+                   @"BackgroundPushNotificationsAllowed should be NO");
 }
 
 /**
@@ -1371,7 +1371,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
 
     XCTAssertTrue(self.push.userPushNotificationsAllowed,
-                   @"UserPushNotificationsAllowed should be YES");
+                  @"UserPushNotificationsAllowed should be YES");
 }
 
 - (void)testRegistrationPayloadNoDeviceToken {
@@ -1421,9 +1421,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
     [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
-                                                    forcefully:YES];
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
+                                                     forcefully:YES];
 
     [self.push updateRegistrationForcefully:YES];
 
@@ -1445,9 +1445,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
     [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
-                                                    forcefully:YES];
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
+                                                     forcefully:YES];
 
     [self.push updateRegistrationForcefully:YES];
 
@@ -1468,9 +1468,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
     [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
-                                                    forcefully:YES];
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
+                                                     forcefully:YES];
 
     [self.push updateRegistrationForcefully:YES];
 
@@ -1488,29 +1488,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     __block UASituation expectedSituation;
     __block UAActionFetchResult fetchResult = UAActionFetchResultNoData;
 
-    BOOL (^runActionsCheck)(id obj) = ^(id obj) {
-        NSDictionary *actions = (NSDictionary *)obj;
-        if (actions.count < 1) {
-            return NO;
-        }
-
-        // Validate incoming push action is added
-        UAActionArguments *args = [actions valueForKey:kUAIncomingPushActionRegistryName];
-        if (!args || args.situation != expectedSituation) {
-            return NO;
-        }
-
-        // Validate other push action is added
-        args = [actions valueForKey:@"someActionKey"];
-        if (!args || (args.situation != expectedSituation || ![args.value isEqualToString:@"someActionValue"])) {
-            return NO;
-        }
-
-
-
-        return YES;
-    };
-
     BOOL (^handlerCheck)(id obj) = ^(id obj) {
         void (^handler)(UAActionResult *) = obj;
         if (handler) {
@@ -1524,16 +1501,23 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     UIApplicationState applicationStates[] = {UIApplicationStateBackground, UIApplicationStateInactive, UIApplicationStateActive};
     UASituation situations[] = {UASituationBackgroundPush, UASituationLaunchedFromPush, UASituationForegroundPush};
 
+    // Expected actions payload
+    NSMutableDictionary *expectedActionPayload = [NSMutableDictionary dictionaryWithDictionary:self.notification];
+    expectedActionPayload[kUAIncomingPushActionRegistryName] = self.notification;
+
     for(NSInteger stateIndex = 0; stateIndex < 3; stateIndex++) {
         expectedSituation = situations[stateIndex];
         UIApplicationState applicationState = applicationStates[stateIndex];
 
-        // Test handleNotification: first
-        [[self.mockActionRunner expect] runActions:[OCMArg checkWithBlock:runActionsCheck] withCompletionHandler:[OCMArg checkWithBlock:handlerCheck]];
+        [[self.mockActionRunner expect]runActionsWithActionValues:expectedActionPayload
+                                                        situation:expectedSituation
+                                                         metadata: @{ UAActionMetadataPushPayloadKey: self.notification }
+                                                completionHandler:[OCMArg checkWithBlock:handlerCheck]];
+
         [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:applicationState];
         [self.push appReceivedRemoteNotification:self.notification applicationState:applicationState];
 
-        XCTAssertNoThrow([self.mockActionRunner verify], @"handleNotification should run push actions with situation %d", expectedSituation);
+        XCTAssertNoThrow([self.mockActionRunner verify], @"handleNotification should run push actions with situation %ld", expectedSituation);
         XCTAssertNoThrow([self.mockedAnalytics verify], @"analytics should be notified of the incoming notification");
 
         // Test handleNotification:fetchCompletionHandler: for every background fetch result
@@ -1541,7 +1525,11 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
             __block BOOL completionHandlerCalled = NO;
             fetchResult = fetchResults[fetchResultIndex];
 
-            [[self.mockActionRunner expect] runActions:[OCMArg checkWithBlock:runActionsCheck] withCompletionHandler:[OCMArg checkWithBlock:handlerCheck]];
+            [[self.mockActionRunner expect]runActionsWithActionValues:expectedActionPayload
+                                                            situation:expectedSituation
+                                                             metadata: @{ UAActionMetadataPushPayloadKey: self.notification }
+                                                    completionHandler:[OCMArg checkWithBlock:handlerCheck]];
+
             [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:applicationState];
             [self.push appReceivedRemoteNotification:self.notification applicationState:applicationState fetchCompletionHandler:^(UIBackgroundFetchResult result) {
                 completionHandlerCalled = YES;
@@ -1551,18 +1539,22 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
             }];
 
             XCTAssertTrue(completionHandlerCalled, @"handleNotification should call fetch completion handler");
-            XCTAssertNoThrow([self.mockActionRunner verify], @"handleNotification should run push actions with situation %d", expectedSituation);
+            XCTAssertNoThrow([self.mockActionRunner verify], @"handleNotification should run push actions with situation %ld", expectedSituation);
             XCTAssertNoThrow([self.mockedAnalytics verify], @"analytics should be notified of the incoming notification");
         }
     }
 
     // UIApplicationStateActive, no completion handler
     expectedSituation = UASituationForegroundPush;
-    [[self.mockActionRunner expect] runActions:[OCMArg checkWithBlock:runActionsCheck] withCompletionHandler:[OCMArg checkWithBlock:handlerCheck]];
+
+    [[self.mockActionRunner expect]runActionsWithActionValues:expectedActionPayload
+                                                    situation:expectedSituation
+                                                     metadata: @{ UAActionMetadataPushPayloadKey: self.notification }
+                                            completionHandler:[OCMArg checkWithBlock:handlerCheck]];
 }
 
 /**
- * Test handleNotification when auto badge is disabled does 
+ * Test handleNotification when auto badge is disabled does
  * not set the badge on the application
  */
 - (void)testHandleNotificationAutoBadgeDisabled {
@@ -1595,7 +1587,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 }
 
 /**
- * Test handleNotification in an inactive state sets the launchNotification  
+ * Test handleNotification in an inactive state sets the launchNotification
  */
 - (void)testHandleNotificationLaunchNotification {
     self.push.launchNotification = nil;
@@ -1609,7 +1601,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 }
 
 /**
- * Test applicationDidEnterBackground clears the notification and sets 
+ * Test applicationDidEnterBackground clears the notification and sets
  * the hasEnteredBackground flag
  */
 - (void)testApplicationDidEnterBackground {
@@ -1631,9 +1623,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
     [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:OCMOCK_ANY
-                                                    forcefully:NO];
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:OCMOCK_ANY
+                                                     forcefully:NO];
 
     [self.push applicationDidEnterBackground];
 
@@ -1682,9 +1674,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [[self.mockRegistrationDelegate expect] registrationSucceededForChannelID:@"someChannelID" deviceToken:validDeviceToken];
 
     [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:OCMOCK_ANY
-                                                    forcefully:NO];
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:OCMOCK_ANY
+                                                     forcefully:NO];
 
     // Should not end the background task
     [[self.mockedApplication reject] endBackgroundTask:30];
@@ -1899,26 +1891,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     __block BOOL completionHandlerCalled = NO;
 
-    BOOL (^runActionsCheck)(id obj) = ^(id obj) {
-        NSDictionary *actions = (NSDictionary *)obj;
-        if (actions.count != 2) {
-            return NO;
-        }
-
-        // Validate other push action is added
-        UAActionArguments *args = [actions valueForKey:@"backgroundAction"];
-        if (!args || (args.situation != UASituationBackgroundInteractiveButton || ![args.value isEqualToString:@"backgroundActionValue"])) {
-            return NO;
-        }
-
-        // Validate incoming push action is added
-        if (![actions valueForKey:kUAIncomingPushActionRegistryName]) {
-            return NO;
-        }
-
-        return YES;
-    };
-
     BOOL (^handlerCheck)(id obj) = ^(id obj) {
         void (^handler)(UAActionResult *) = obj;
         if (handler) {
@@ -1927,19 +1899,29 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
         return YES;
     };
 
-    // Test handleNotification: first
-    [[self.mockActionRunner expect] runActions:[OCMArg checkWithBlock:runActionsCheck] withCompletionHandler:[OCMArg checkWithBlock:handlerCheck]];
+    // Expected actions payload
+    NSMutableDictionary *expectedActionPayload = [NSMutableDictionary dictionary];
+    [expectedActionPayload addEntriesFromDictionary:self.notification[@"com.urbanairship.interactive_actions"][@"backgroundIdentifier"]];
+    expectedActionPayload[kUAIncomingPushActionRegistryName] = self.notification;
+
+    [[self.mockActionRunner expect]runActionsWithActionValues:expectedActionPayload
+                                                    situation:UASituationBackgroundInteractiveButton
+                                                     metadata: @{ UAActionMetadataUserNotificationActionIDKey: @"backgroundIdentifier",
+                                                                  UAActionMetadataPushPayloadKey: self.notification }
+                                            completionHandler:[OCMArg checkWithBlock:handlerCheck]];
+
+
     [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateBackground];
     [[self.mockedAnalytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isKindOfClass:[UAInteractiveNotificationEvent class]];
     }]];
 
     [self.push appReceivedActionWithIdentifier:@"backgroundIdentifier"
-                                notification:self.notification
-                            applicationState:UIApplicationStateBackground
-                           completionHandler:^{
-                               completionHandlerCalled = YES;
-                           }];
+                                  notification:self.notification
+                              applicationState:UIApplicationStateBackground
+                             completionHandler:^{
+                                 completionHandlerCalled = YES;
+                             }];
 
 
     XCTAssertNoThrow([self.mockActionRunner verify],
@@ -1973,31 +1955,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     __block BOOL completionHandlerCalled = NO;
 
-    BOOL (^runActionsCheck)(id obj) = ^(id obj) {
-        NSDictionary *actions = (NSDictionary *)obj;
-        if (actions.count != 3) {
-            return NO;
-        }
-
-        // Validate other push action is added
-        UAActionArguments *args = [actions valueForKey:@"foregroundAction"];
-        if (!args || (args.situation != UASituationForegroundInteractiveButton || ![args.value isEqualToString:@"foregroundActionValue"])) {
-            return NO;
-        }
-
-        args = [actions valueForKey:@"otherForegroundAction"];
-        if (!args || (args.situation != UASituationForegroundInteractiveButton || ![args.value isEqualToString:@"otherForegroundActionValue"])) {
-            return NO;
-        }
-
-        // Validate incoming push action is added
-        if (![actions valueForKey:kUAIncomingPushActionRegistryName]) {
-            return NO;
-        }
-
-        return YES;
-    };
-
     BOOL (^handlerCheck)(id obj) = ^(id obj) {
         void (^handler)(UAActionResult *) = obj;
         if (handler) {
@@ -2006,7 +1963,18 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
         return YES;
     };
 
-    [[self.mockActionRunner expect] runActions:[OCMArg checkWithBlock:runActionsCheck] withCompletionHandler:[OCMArg checkWithBlock:handlerCheck]];
+
+    // Expected actions payload
+    NSMutableDictionary *expectedActionPayload = [NSMutableDictionary dictionary];
+    [expectedActionPayload addEntriesFromDictionary:self.notification[@"com.urbanairship.interactive_actions"][@"foregroundIdentifier"]];
+    expectedActionPayload[kUAIncomingPushActionRegistryName] = self.notification;
+
+    [[self.mockActionRunner expect]runActionsWithActionValues:expectedActionPayload
+                                                    situation:UASituationForegroundInteractiveButton
+                                                     metadata: @{ UAActionMetadataUserNotificationActionIDKey: @"foregroundIdentifier",
+                                                                  UAActionMetadataPushPayloadKey: self.notification }
+                                            completionHandler:[OCMArg checkWithBlock:handlerCheck]];
+
 
     [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateActive];
     [[self.mockedAnalytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -2014,11 +1982,11 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     }]];
 
     [self.push appReceivedActionWithIdentifier:@"foregroundIdentifier"
-                                notification:self.notification
-                            applicationState:UIApplicationStateActive
-                           completionHandler:^{
-                               completionHandlerCalled = YES;
-                           }];
+                                  notification:self.notification
+                              applicationState:UIApplicationStateActive
+                             completionHandler:^{
+                                 completionHandlerCalled = YES;
+                             }];
 
 
     XCTAssertNoThrow([self.mockActionRunner verify],
@@ -2038,7 +2006,15 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 - (void)testNotificationActionButtonUnknownCategory {
     __block BOOL completionHandlerCalled = NO;
 
-    [[self.mockActionRunner reject] runActions:OCMOCK_ANY withCompletionHandler:OCMOCK_ANY];
+    [[self.mockActionRunner reject] runActionsWithActionValues:OCMOCK_ANY
+                                                     situation:UASituationForegroundInteractiveButton
+                                                      metadata:OCMOCK_ANY
+                                             completionHandler:OCMOCK_ANY];
+
+    [[self.mockActionRunner reject] runActionsWithActionValues:OCMOCK_ANY
+                                                     situation:UASituationBackgroundInteractiveButton
+                                                      metadata:OCMOCK_ANY
+                                             completionHandler:OCMOCK_ANY];
 
     [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateActive];
     [[self.mockedAnalytics reject] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -2046,11 +2022,11 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     }]];
 
     [self.push appReceivedActionWithIdentifier:@"foregroundIdentifier"
-                                notification:self.notification
-                            applicationState:UIApplicationStateActive
-                           completionHandler:^{
-                               completionHandlerCalled = YES;
-                           }];
+                                  notification:self.notification
+                              applicationState:UIApplicationStateActive
+                             completionHandler:^{
+                                 completionHandlerCalled = YES;
+                             }];
 
 
     XCTAssertNoThrow([self.mockActionRunner verify],
@@ -2084,20 +2060,27 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     __block BOOL completionHandlerCalled = NO;
 
-    [[self.mockActionRunner reject] runActions:OCMOCK_ANY withCompletionHandler:OCMOCK_ANY];
+    [[self.mockActionRunner reject] runActionsWithActionValues:OCMOCK_ANY
+                                                     situation:UASituationForegroundInteractiveButton
+                                                      metadata:OCMOCK_ANY
+                                             completionHandler:OCMOCK_ANY];
+
+    [[self.mockActionRunner reject] runActionsWithActionValues:OCMOCK_ANY
+                                                     situation:UASituationBackgroundInteractiveButton
+                                                      metadata:OCMOCK_ANY
+                                             completionHandler:OCMOCK_ANY];
 
     [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateActive];
     [[self.mockedAnalytics reject] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isKindOfClass:[UAInteractiveNotificationEvent class]];
     }]];
 
-
     [self.push appReceivedActionWithIdentifier:@"unknown!"
-                                notification:self.notification
-                            applicationState:UIApplicationStateActive
-                           completionHandler:^{
-                               completionHandlerCalled = YES;
-                           }];
+                                  notification:self.notification
+                              applicationState:UIApplicationStateActive
+                             completionHandler:^{
+                                 completionHandlerCalled = YES;
+                             }];
 
 
     XCTAssertNoThrow([self.mockActionRunner verify],
@@ -2175,9 +2158,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     // Add a device token so we get a device api callback
     // Add a device token so we get a device api callback
     [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:OCMOCK_ANY
-                                                    forcefully:NO];
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:OCMOCK_ANY
+                                                     forcefully:NO];
 
 
     // The flag allowUnregisteringUserNotificationTypes should prevent unregistering notification types
