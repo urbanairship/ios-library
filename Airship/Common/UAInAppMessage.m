@@ -181,41 +181,37 @@
 - (NSArray *)buttonActionBindings {
     NSMutableArray *bindings = [NSMutableArray array];
 
-    // restrict this to iOS 8+ for now
+    // Restrict this to iOS 8+ for now
     if (self.buttonGroup && [UIUserNotificationCategory class]) {
 
-        // get the current set of interactive notification categories
+        // Get the current set of interactive notification categories
         NSSet *categories = [UIApplication sharedApplication].currentUserNotificationSettings.categories;
 
         for (UIUserNotificationCategory *category in categories) {
-            // if there's a match between a category identifier and our button group
-            if ([category.identifier isEqualToString:self.buttonGroup]) {
-                // create a button action binding for each corresponding action identifier
-                for (UIUserNotificationAction *notificationAction in [category actionsForContext:UIUserNotificationActionContextDefault]) {
-                    NSDictionary *payload = self.buttonActions[notificationAction.identifier];
-                    if (payload) {
-                        UAInAppMessageButtonActionBinding *binding = [[UAInAppMessageButtonActionBinding alloc] init];
-                        binding.localizedTitle = NSLocalizedStringWithDefaultValue(notificationAction.title, @"UAInteractiveNotifications",
-                                                                                   [NSBundle mainBundle], notificationAction.title, nil);
 
-                        NSMutableDictionary *actionsDictionary = [NSMutableDictionary dictionary];
-                        binding.actions = [NSMutableDictionary dictionary];
-
-                        // choose the situation that matches cthe orresponding notificationAction's activation mode
-                        UASituation situation = notificationAction.activationMode == UIUserNotificationActivationModeForeground ?
-                            UASituationForegroundInteractiveButton : UASituationBackgroundInteractiveButton;
-
-                        for (NSString *actionName in payload) {
-                            actionsDictionary[actionName] = [UAActionArguments argumentsWithValue:payload[actionName] withSituation:situation];
-                        }
-
-                        binding.actions = actionsDictionary;
-
-                        [bindings addObject:binding];
-                    }
-                }
-                break;
+            // Find the category that matches our buttonGroup
+            if (![category.identifier isEqualToString:self.buttonGroup]) {
+                continue;
             }
+
+            // Create a button action binding for each corresponding action identifier
+            for (UIUserNotificationAction *notificationAction in [category actionsForContext:UIUserNotificationActionContextDefault]) {
+                NSDictionary *payload = self.buttonActions[notificationAction.identifier];
+                if (payload) {
+                    UAInAppMessageButtonActionBinding *binding = [[UAInAppMessageButtonActionBinding alloc] init];
+                    binding.localizedTitle = NSLocalizedStringWithDefaultValue(notificationAction.title, @"UAInteractiveNotifications",
+                                                                               [NSBundle mainBundle], notificationAction.title, nil);
+
+                    // choose the situation that matches the corresponding notificationAction's activation mode
+                    binding.situation = notificationAction.activationMode == UIUserNotificationActivationModeForeground ?
+                    UASituationForegroundInteractiveButton : UASituationBackgroundInteractiveButton;
+
+                    binding.actions = payload;
+
+                    [bindings addObject:binding];
+                }
+            }
+            break;
         }
     }
 

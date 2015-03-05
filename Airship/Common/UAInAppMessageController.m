@@ -3,7 +3,7 @@
 #import "UAInAppMessageView.h"
 #import "UAUtils.h"
 #import "UAInAppMessageButtonActionBinding.h"
-#import "UAActionRunner.h"
+#import "UAActionRunner+Internal.h"
 
 #define kUAInAppMessageDefaultPrimaryColor [UIColor whiteColor]
 #define kUAInAppMessageDefaultSecondaryColor [UIColor colorWithRed:40.0/255 green:40.0/255 blue:40.0/255 alpha:1]
@@ -293,12 +293,10 @@
 }
 
 - (void)runOnClickActions {
-    NSDictionary *actions = self.message.onClick;
-
-    for (NSString *name in actions) {
-        UAActionArguments *args = [UAActionArguments argumentsWithValue:actions[name] withSituation:UASituationForegroundInteractiveButton];
-        [UAActionRunner runActionWithName:name withArguments:args withCompletionHandler:nil];
-    }
+    [UAActionRunner runActionsWithActionValues:self.message.onClick
+                                     situation:UASituationForegroundInteractiveButton
+                                      metadata:nil
+                             completionHandler:nil];
 }
 
 /**
@@ -357,15 +355,18 @@
 - (void)buttonTapped:(id)sender {
     UAInAppMessageButtonActionBinding *binding;
 
-    // retrieve the binding associated with the tapped button
+    // Retrieve the binding associated with the tapped button
     if ([sender isEqual:self.messageView.button1]) {
         binding = self.buttonActionBindings[0];
     } else if ([sender isEqual:self.messageView.button2])  {
         binding = self.buttonActionBindings[1];
     }
 
-    // run all the bound actions
-    [UAActionRunner runActions:binding.actions withCompletionHandler:nil];
+    // Run all the bound actions
+    [UAActionRunner runActionsWithActionValues:binding.actions
+                                     situation:binding.situation
+                                      metadata:nil
+                             completionHandler:nil];
 
     [self dismiss];
 }

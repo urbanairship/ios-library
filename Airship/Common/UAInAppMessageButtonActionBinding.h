@@ -1,5 +1,6 @@
 
 #import <Foundation/Foundation.h>
+#import "UAActionArguments.h"
 
 /**
  * Model object representing a binding between an in-app
@@ -13,9 +14,14 @@
 @property(nonatomic, copy) NSString *localizedTitle;
 
 /**
- * A dictionary mapping action names to UAActionArguments, to
+ * A dictionary mapping action names to action values, to
  * be run when the button is pressed.
  */
 @property(nonatomic, copy) NSDictionary *actions;
+
+/**
+ * The action's situation.
+ */
+@property (nonatomic, assign) UASituation situation;
 
 @end

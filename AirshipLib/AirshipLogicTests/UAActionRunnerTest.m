@@ -25,7 +25,7 @@
 
 #import <XCTest/XCTest.h>
 #import "UAAction.h"
-#import "UAActionRunner.h"
+#import "UAActionRunner+Internal.h"
 #import "UAActionRegistry.h"
 #import <OCMock/OCMock.h>
 #import "UAirship.h"
@@ -33,7 +33,6 @@
 @interface UAActionRunnerTest : XCTestCase
 @property (nonatomic, strong) UAActionRegistry *registry;
 @property (nonatomic, strong) id mockAirship;
-
 @end
 
 @implementation UAActionRunnerTest
@@ -68,20 +67,27 @@ NSString *anotherActionName = @"AnotherActionName";
     __block BOOL didCompletionHandlerRun = NO;
     __block BOOL didActionRun = NO;
 
-    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
-
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         didActionRun = YES;
-        XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
+        XCTAssertEqualObjects(@"value", args.value, @"Runner should pass the supplied value to the action");
+        XCTAssertEqual(UASituationForegroundPush, args.situation, @"Runner should pass the situation to the action");
+
+        NSDictionary  *expectedMetadata = @{ @"meta key": @"meta value", UAActionMetadataRegisteredName: actionName };
+        XCTAssertEqualObjects(expectedMetadata, args.metadata, @"Runner should pass the action name in the metadata");
+
         completionHandler([UAActionResult emptyResult]);
     }];
 
     [self.registry registerAction:action name:actionName];
 
-    [UAActionRunner runActionWithName:actionName withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
-        didCompletionHandlerRun = YES;
-        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action should return a UAActionFetchResultNoData fetch result");
-        XCTAssertEqual(finalResult.status, UAActionStatusCompleted, @"Action should of ran and returned UAActionStatusCompleted status");
+    [UAActionRunner runActionWithName:actionName
+                                value:@"value"
+                            situation:UASituationForegroundPush
+                             metadata:@{@"meta key": @"meta value"}
+                    completionHandler:^(UAActionResult *finalResult) {
+                        didCompletionHandlerRun = YES;
+                        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action should return a UAActionFetchResultNoData fetch result");
+                        XCTAssertEqual(finalResult.status, UAActionStatusCompleted, @"Action should of ran and returned UAActionStatusCompleted status");
     }];
 
     XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
@@ -90,13 +96,16 @@ NSString *anotherActionName = @"AnotherActionName";
     didActionRun = NO;
     didCompletionHandlerRun = NO;
 
+
     [UAActionRunner runActionWithName:@"nopenopenopenopenope"
-                        withArguments:nil
-                withCompletionHandler:^(UAActionResult *result) {
-                    XCTAssertEqual(result.status, UAActionStatusActionNotFound, "action should not be found");
-                    XCTAssertNil(result.value, @"a bad action name should result in a nil value");
-                    didCompletionHandlerRun = YES;
-    }];
+                                value:@"value"
+                            situation:UASituationForegroundPush
+                             metadata:nil
+                    completionHandler:^(UAActionResult *result) {
+                        XCTAssertEqual(result.status, UAActionStatusActionNotFound, "action should not be found");
+                        XCTAssertNil(result.value, @"a bad action name should result in a nil value");
+                        didCompletionHandlerRun = YES;
+                    }];
 
     XCTAssertTrue(didCompletionHandlerRun, @"completion handler should have run");
 
@@ -107,9 +116,14 @@ NSString *anotherActionName = @"AnotherActionName";
         return NO;
     }];
 
-    [UAActionRunner runActionWithName:actionName withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
-        didCompletionHandlerRun = YES;
-    }];
+
+    [UAActionRunner runActionWithName:actionName
+                                value:@"value"
+                            situation:UASituationForegroundPush
+                             metadata:nil
+                    completionHandler:^(UAActionResult *finalResult) {
+                        didCompletionHandlerRun = YES;
+                    }];
 
     XCTAssertTrue(didCompletionHandlerRun, @"completion handler should have run");
     XCTAssertFalse(didActionRun, @"action should not have run");
@@ -121,32 +135,34 @@ NSString *anotherActionName = @"AnotherActionName";
 - (void)testRunActionWithNameNoPredicate {
     __block BOOL didCompletionHandlerRun = NO;
 
-    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
-
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         XCTFail(@"Action should not run if the predicate returns NO");
         completionHandler([UAActionResult emptyResult]);
     }];
 
     [self.registry registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
-        XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
+        XCTAssertEqualObjects(@"value", args.value, @"Runner should pass the supplied value to the action");
+        XCTAssertEqual(UASituationForegroundPush, args.situation, @"Runner should pass the situation to the action");
+
+        NSDictionary  *expectedMetadata = @{ UAActionMetadataRegisteredName: actionName };
+        XCTAssertEqualObjects(expectedMetadata, args.metadata, @"Runner should pass the action name in the metadata");
         return NO;
     }];
 
-    [UAActionRunner runActionWithName:actionName withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
-        didCompletionHandlerRun = YES;
-        XCTAssertNil(finalResult.value, @"Action that did not run should return a nil value result");
-        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
-        XCTAssertEqual(finalResult.status, UAActionStatusArgumentsRejected, @"Rejected arguments should return UAActionStatusArgumentsRejected status");
-    }];
+
+    [UAActionRunner runActionWithName:actionName
+                                value:@"value"
+                            situation:UASituationForegroundPush
+                             metadata:nil
+                    completionHandler:^(UAActionResult *finalResult) {
+                        didCompletionHandlerRun = YES;
+                        XCTAssertNil(finalResult.value, @"Action that did not run should return a nil value result");
+                        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
+                        XCTAssertEqual(finalResult.status, UAActionStatusArgumentsRejected, @"Rejected arguments should return UAActionStatusArgumentsRejected status");
+                    }];
+
 
     XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
-
-
-    // Try again with a nil completion handler
-    XCTAssertNoThrow([UAActionRunner runActionWithName:actionName withArguments:arguments withCompletionHandler:nil],
-                     "Null completion handler should not throw an exception");
-
 }
 
 /**
@@ -156,24 +172,37 @@ NSString *anotherActionName = @"AnotherActionName";
     __block BOOL didCompletionHandlerRun = NO;
     __block BOOL didActionRun = NO;
 
-    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
-
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         didActionRun = YES;
-        XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
+        XCTAssertEqualObjects(@"value", args.value, @"Runner should pass the supplied value to the action");
+        XCTAssertEqual(UASituationForegroundPush, args.situation, @"Runner should pass the situation to the action");
+
+        NSDictionary  *expectedMetadata = @{ UAActionMetadataRegisteredName: actionName };
+        XCTAssertEqualObjects(expectedMetadata, args.metadata, @"Runner should pass the action name in the metadata");
+
         completionHandler([UAActionResult emptyResult]);
     }];
 
     [self.registry registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
-        XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
+        XCTAssertEqualObjects(@"value", args.value, @"Runner should pass the supplied value to the action");
+        XCTAssertEqual(UASituationForegroundPush, args.situation, @"Runner should pass the situation to the action");
+
+        NSDictionary  *expectedMetadata = @{ UAActionMetadataRegisteredName: actionName };
+        XCTAssertEqualObjects(expectedMetadata, args.metadata, @"Runner should pass the action name in the metadata");
+
         return YES;
     }];
 
-    [UAActionRunner runActionWithName:actionName withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
-        didCompletionHandlerRun = YES;
-        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action should return a UAActionFetchResultNoData fetch result");
-        XCTAssertEqual(finalResult.status, UAActionStatusCompleted, @"Action should of ran and returned UAActionStatusCompleted status");
-    }];
+    [UAActionRunner runActionWithName:actionName
+                                value:@"value"
+                            situation:UASituationForegroundPush
+                             metadata:nil
+                    completionHandler:^(UAActionResult *finalResult) {
+                        didCompletionHandlerRun = YES;
+                        XCTAssertNil(finalResult.value, @"Action that did not run should return a nil value result");
+                        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
+                        XCTAssertEqual(finalResult.status, UAActionStatusCompleted, @"Action should of ran and returned UAActionStatusCompleted status");
+                    }];
 
     XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
     XCTAssertTrue(didActionRun, @"Runner should run action if predicate returns YES");
@@ -185,24 +214,21 @@ NSString *anotherActionName = @"AnotherActionName";
 - (void)testRunActionWithNameNotRegistered {
     __block BOOL didCompletionHandlerRun = NO;
 
-    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
 
-    [UAActionRunner runActionWithName:@"SomeUnregisteredActionName" withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
-        didCompletionHandlerRun = YES;
-        XCTAssertNil(finalResult.value, @"Action that did not run should return a nil value result");
-        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
-        XCTAssertEqual(finalResult.status, UAActionStatusActionNotFound, @"Not found action should return UAActionStatusActionNotFound status");
-
-    }];
-
+    [UAActionRunner runActionWithName:@"SomeUnregisteredActionName"
+                                value:@"value"
+                            situation:UASituationWebViewInvocation
+                             metadata:nil
+                    completionHandler:^(UAActionResult *finalResult) {
+                        didCompletionHandlerRun = YES;
+                        XCTAssertNil(finalResult.value, @"Action that did not run should return a nil value result");
+                        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
+                        XCTAssertEqual(finalResult.status, UAActionStatusActionNotFound, @"Not found action should return UAActionStatusActionNotFound status");
+                    }];
 
     XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
-
-    // Try again with a nil completion handler
-    XCTAssertNoThrow([UAActionRunner runActionWithName:@"SomeUnregisteredActionName" withArguments:arguments withCompletionHandler:nil],
-                     "Null completion handler should not throw an exception");
-
 }
+
 
 
 /**
@@ -211,26 +237,25 @@ NSString *anotherActionName = @"AnotherActionName";
 - (void)testRunActionsEmptyDictionary {
     __block BOOL didCompletionHandlerRun = NO;
 
-    [UAActionRunner runActions:[NSDictionary dictionary] withCompletionHandler:^(UAActionResult *finalResult) {
-        didCompletionHandlerRun = YES;
 
-        // Should return an aggregate action result
-        XCTAssertTrue([finalResult isKindOfClass:[UAAggregateActionResult class]], @"Running actions should return a UAAggregateActionResult");
+    [UAActionRunner runActionsWithActionValues:[NSDictionary dictionary]
+                                     situation:UASituationWebViewInvocation
+                                      metadata:nil
+                             completionHandler:^(UAActionResult *finalResult) {
+                                 didCompletionHandlerRun = YES;
 
-        NSDictionary *resultDictionary = (NSDictionary  *)finalResult.value;
+                                 // Should return an aggregate action result
+                                 XCTAssertTrue([finalResult isKindOfClass:[UAAggregateActionResult class]], @"Running actions should return a UAAggregateActionResult");
+
+                                 NSDictionary *resultDictionary = (NSDictionary  *)finalResult.value;
 
 
-        XCTAssertEqual((NSUInteger) 0, resultDictionary.count, @"Should have an empty dictionary");
-        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
-    }];
+                                 XCTAssertEqual((NSUInteger) 0, resultDictionary.count, @"Should have an empty dictionary");
+                                 XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
+                             }];
 
     XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
-
-    // Try again with a nil completion handler
-    XCTAssertNoThrow([UAActionRunner runActions:[NSDictionary dictionary] withCompletionHandler:nil],
-                     "Null completion handler should not throw an exception");
 }
-
 
 /**
  * Test running an action
@@ -238,15 +263,17 @@ NSString *anotherActionName = @"AnotherActionName";
 - (void)testRunAction {
     __block BOOL didCompletionHandlerRun = NO;
     
-    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
     UAActionResult *result = [UAActionResult emptyResult];
     
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
-        XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        XCTAssertEqualObjects(@"value", args.value, @"Runner should pass the supplied value to the action");
+        XCTAssertEqual(UASituationLaunchedFromPush, args.situation, @"Runner should pass the situation to the action");
+        XCTAssertNil(args.metadata, @"Runner should pass the action name in the metadata");
         completionHandler(result);
     }];
-    
-    [UAActionRunner runAction:action withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
+
+
+    [UAActionRunner runAction:action value:@"value" situation:UASituationLaunchedFromPush metadata:nil completionHandler:^(UAActionResult *finalResult) {
         didCompletionHandlerRun = YES;
         XCTAssertEqualObjects(result, finalResult, @"Runner completion handler did not receive the action's results");
     }];
@@ -257,58 +284,88 @@ NSString *anotherActionName = @"AnotherActionName";
 /**
  * Test running a set of actions from a dictionary
  */
-- (void)testRunActions {
+- (void)testRunActionPayload {
     __block BOOL didCompletionHandlerRun = NO;
     __block int actionRunCount = 0;
 
-    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         actionRunCount++;
-        XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
+
+        XCTAssertEqualObjects(@"value", args.value, @"Runner should pass the supplied value to the action");
+        XCTAssertEqual(UASituationManualInvocation, args.situation, @"Runner should pass the situation to the action");
+
+        NSDictionary  *expectedMetadata = @{ @"meta key": @"meta value", UAActionMetadataRegisteredName: actionName };
+        XCTAssertEqualObjects(expectedMetadata, args.metadata, @"Runner should pass the action name in the metadata");
+
         completionHandler([UAActionResult emptyResult]);
     }];
 
+    // Verify the predicate is called
     [self.registry registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
-        XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
+        XCTAssertEqual(@"value", args.value, @"Runner should pass the supplied value to the action");
+        XCTAssertEqual(UASituationManualInvocation, args.situation, @"Runner should pass the situation to the action");
+
+        NSDictionary  *expectedMetadata = @{ @"meta key": @"meta value", UAActionMetadataRegisteredName: actionName };
+        XCTAssertEqualObjects(expectedMetadata, args.metadata, @"Runner should pass the action name in the metadata");
+
         return YES;
     }];
+
+    UAAction *anotherAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        actionRunCount++;
+
+        XCTAssertEqualObjects(@"another value", args.value, @"Runner should pass the supplied value to the action");
+        XCTAssertEqual(UASituationManualInvocation, args.situation, @"Runner should pass the situation to the action");
+
+        NSDictionary  *expectedMetadata = @{ @"meta key": @"meta value", UAActionMetadataRegisteredName: anotherActionName };
+        XCTAssertEqualObjects(expectedMetadata, args.metadata, @"Runner should pass the action name in the metadata");
+
+        completionHandler([UAActionResult emptyResult]);
+    }];
+
 
     // Register another action
-    [self.registry registerAction:action name:anotherActionName predicate:^BOOL(UAActionArguments *args) {
-        XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
+    [self.registry registerAction:anotherAction name:anotherActionName predicate:^BOOL(UAActionArguments *args) {
+        XCTAssertEqualObjects(@"another value", args.value, @"Runner should pass the supplied value to the action");
+        XCTAssertEqual(UASituationManualInvocation, args.situation, @"Runner should pass the situation to the action");
+
+        NSDictionary  *expectedMetadata = @{ @"meta key": @"meta value", UAActionMetadataRegisteredName: anotherActionName };
+        XCTAssertEqualObjects(expectedMetadata, args.metadata, @"Runner should pass the action name in the metadata");
+
         return YES;
     }];
 
-    NSDictionary *actionsToRun = @{actionName : arguments, anotherActionName: arguments};
-    [UAActionRunner runActions:actionsToRun withCompletionHandler:^(UAActionResult *finalResult) {
-        didCompletionHandlerRun = YES;
+    NSDictionary *actionPayload = @{actionName : @"value", anotherActionName: @"another value"};
+    [UAActionRunner runActionsWithActionValues:actionPayload situation:UASituationManualInvocation metadata:@{@"meta key": @"meta value"}
+                             completionHandler:^(UAActionResult *finalResult) {
+                                 didCompletionHandlerRun = YES;
 
-        // Should return an aggregate action result
-        XCTAssertTrue([finalResult isKindOfClass:[UAAggregateActionResult class]], @"Running actions should return a UAAggregateActionResult");
+                                 // Should return an aggregate action result
+                                 XCTAssertTrue([finalResult isKindOfClass:[UAAggregateActionResult class]], @"Running actions should return a UAAggregateActionResult");
 
-        NSDictionary *resultDictionary = (NSDictionary  *)finalResult.value;
+                                 NSDictionary *resultDictionary = (NSDictionary  *)finalResult.value;
 
-        XCTAssertEqual((NSUInteger) 2, resultDictionary.count, @"Action should have 2 results");
-    }];
+                                 XCTAssertEqual((NSUInteger) 2, resultDictionary.count, @"Action should have 2 results");
+                             }];
 
     XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
     XCTAssertEqual(2, actionRunCount, @"Both actions should of ran");
 }
 
+
+
 /**
  * Test running an action with a null completion handler
  */
 - (void)testRunActionNullCompletionHandler {
-    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
     UAActionResult *result = [UAActionResult emptyResult];
     
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         completionHandler(result);
     }];
     
-    XCTAssertNoThrow([UAActionRunner runAction:action withArguments:arguments withCompletionHandler:nil],
-                     "Null completion handler should not throw an exception");
+    XCTAssertNoThrow([UAActionRunner runAction:action value:@"value" situation:UASituationForegroundPush], "Null completion handler should not throw an exception");
 }
 
 

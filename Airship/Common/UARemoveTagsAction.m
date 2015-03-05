@@ -30,8 +30,8 @@
 @implementation UARemoveTagsAction
 
 - (void)performWithArguments:(UAActionArguments *)arguments
-                  actionName:(NSString *)actionName
            completionHandler:(UAActionCompletionHandler)completionHandler {
+    
     if ([arguments.value isKindOfClass:[NSString class]]) {
         [[UAirship push] removeTag:arguments.value];
     } else {

@@ -86,7 +86,6 @@
 		491B842F198C237F00FB7A40 /* UAAggregateActionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = CC8542AA17F4B81600D2DE10 /* UAAggregateActionResult.m */; };
 		491B8430198C237F00FB7A40 /* UAIncomingPushAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CC8542AC17F4B81600D2DE10 /* UAIncomingPushAction.m */; };
 		491B8431198C237F00FB7A40 /* UALandingPageAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F65BB7218997AB6000E8ACC /* UALandingPageAction.m */; };
-		491B8432198C237F00FB7A40 /* UASyncAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CC8542B217F4B81600D2DE10 /* UASyncAction.m */; };
 		491B8433198C237F00FB7A40 /* UAAction+Operators.m in Sources */ = {isa = PBXBuildFile; fileRef = CC1D229A180373E0005C8393 /* UAAction+Operators.m */; };
 		491B8434198C237F00FB7A40 /* UAIncomingRichPushAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDD379A1807019000B8866E /* UAIncomingRichPushAction.m */; };
 		491B8435198C237F00FB7A40 /* UACloseWindowAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 492ADA0F18C959CB0032C491 /* UACloseWindowAction.m */; };
@@ -240,7 +239,6 @@
 		49BADDE0198B0858000FF3D5 /* UAAggregateActionResult.h in Headers */ = {isa = PBXBuildFile; fileRef = CC8542A917F4B81600D2DE10 /* UAAggregateActionResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49BADDE1198B0858000FF3D5 /* UAIncomingPushAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CC8542AB17F4B81600D2DE10 /* UAIncomingPushAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49BADDE2198B0859000FF3D5 /* UALandingPageAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F65BB7118997AB6000E8ACC /* UALandingPageAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		49BADDE3198B0859000FF3D5 /* UASyncAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CC8542B117F4B81600D2DE10 /* UASyncAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49BADDE4198B0859000FF3D5 /* UAAction+Operators.h in Headers */ = {isa = PBXBuildFile; fileRef = CC1D2299180373E0005C8393 /* UAAction+Operators.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49BADDE5198B085A000FF3D5 /* UAIncomingRichPushAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDD37991807019000B8866E /* UAIncomingRichPushAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49BADDE6198B085A000FF3D5 /* UACloseWindowAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 492ADA0E18C959CB0032C491 /* UACloseWindowAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -345,7 +343,6 @@
 		61D6AD181A2D18C10032420C /* UARegionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 61D6AD161A2D18C10032420C /* UARegionEvent.h */; };
 		61D6AD191A2D18C10032420C /* UARegionEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D6AD171A2D18C10032420C /* UARegionEvent.m */; };
 		61D8FE4E1A3B76F100E21EBB /* UAProximityRegionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D8FE4D1A3B76F100E21EBB /* UAProximityRegionTest.m */; };
-		61E0EBD619EC7F4500B50AF3 /* UAActionJSDelegate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 61E0EBD519EC7F4500B50AF3 /* UAActionJSDelegate+Internal.h */; };
 		760D14BA17C2C9E600BBE6E6 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 760D14B917C2C9E600BBE6E6 /* XCTest.framework */; };
 		762941AB1A016EB60077CDC1 /* UAActivityViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 762941A91A016EB60077CDC1 /* UAActivityViewController.h */; };
 		762941AC1A016EB60077CDC1 /* UAActivityViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 762941A91A016EB60077CDC1 /* UAActivityViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -508,8 +505,6 @@
 		CC8542C917F4B81600D2DE10 /* UAAggregateActionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = CC8542AA17F4B81600D2DE10 /* UAAggregateActionResult.m */; };
 		CC8542CB17F4B81600D2DE10 /* UAIncomingPushAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CC8542AB17F4B81600D2DE10 /* UAIncomingPushAction.h */; };
 		CC8542CD17F4B81600D2DE10 /* UAIncomingPushAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CC8542AC17F4B81600D2DE10 /* UAIncomingPushAction.m */; };
-		CC8542D717F4B81600D2DE10 /* UASyncAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CC8542B117F4B81600D2DE10 /* UASyncAction.h */; };
-		CC8542D917F4B81600D2DE10 /* UASyncAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CC8542B217F4B81600D2DE10 /* UASyncAction.m */; };
 		CC85FD171773A1010074674F /* UAAnalyticsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85FD161773A1010074674F /* UAAnalyticsTest.m */; };
 		CCA3A4EB17FCB3A8009C7371 /* UAActionRegistryEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = CCA3A4E917FCB3A8009C7371 /* UAActionRegistryEntry.h */; };
 		CCA3A4ED17FCB3A8009C7371 /* UAActionRegistryEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA3A4EA17FCB3A8009C7371 /* UAActionRegistryEntry.m */; };
@@ -530,6 +525,8 @@
 		CCCDAEA019954A1300E93CF7 /* NSObject+HideClass.m in Sources */ = {isa = PBXBuildFile; fileRef = CCCDAE9F19954A1300E93CF7 /* NSObject+HideClass.m */; };
 		CCD13DE219A4FCFD0007078C /* UAInteractiveNotificationEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD13DE119A4FCFD0007078C /* UAInteractiveNotificationEventTest.m */; };
 		CCD3158417CFBD5A002E93A1 /* UAPushTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD3158317CFBD5A002E93A1 /* UAPushTest.m */; };
+		CCD7FCF11AA5383100A20B05 /* UAActionRunner+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCD7FCF01AA5383100A20B05 /* UAActionRunner+Internal.h */; };
+		CCD7FCF21AA5383100A20B05 /* UAActionRunner+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCD7FCF01AA5383100A20B05 /* UAActionRunner+Internal.h */; };
 		CCDD379D1807019000B8866E /* UAIncomingRichPushAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDD379A1807019000B8866E /* UAIncomingRichPushAction.m */; };
 		CCDD37A51807157500B8866E /* UAIncomingRichPushActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDD37A41807157500B8866E /* UAIncomingRichPushActionTest.m */; };
 		CCDD37C818089E5700B8866E /* UAOpenExternalURLAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDD37C618089E5700B8866E /* UAOpenExternalURLAction.h */; };
@@ -750,7 +747,6 @@
 		61D6AD161A2D18C10032420C /* UARegionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARegionEvent.h; sourceTree = "<group>"; };
 		61D6AD171A2D18C10032420C /* UARegionEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARegionEvent.m; sourceTree = "<group>"; };
 		61D8FE4D1A3B76F100E21EBB /* UAProximityRegionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAProximityRegionTest.m; sourceTree = "<group>"; };
-		61E0EBD519EC7F4500B50AF3 /* UAActionJSDelegate+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAActionJSDelegate+Internal.h"; sourceTree = "<group>"; };
 		633146B3122FA474008F2D48 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		760D14B917C2C9E600BBE6E6 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		762941A91A016EB60077CDC1 /* UAActivityViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAActivityViewController.h; sourceTree = "<group>"; };
@@ -879,8 +875,6 @@
 		CC8542AA17F4B81600D2DE10 /* UAAggregateActionResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAggregateActionResult.m; sourceTree = "<group>"; };
 		CC8542AB17F4B81600D2DE10 /* UAIncomingPushAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAIncomingPushAction.h; sourceTree = "<group>"; };
 		CC8542AC17F4B81600D2DE10 /* UAIncomingPushAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAIncomingPushAction.m; sourceTree = "<group>"; };
-		CC8542B117F4B81600D2DE10 /* UASyncAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UASyncAction.h; sourceTree = "<group>"; };
-		CC8542B217F4B81600D2DE10 /* UASyncAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UASyncAction.m; sourceTree = "<group>"; };
 		CC85FD151773A1010074674F /* UAAnalyticsTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAnalyticsTest.h; sourceTree = "<group>"; };
 		CC85FD161773A1010074674F /* UAAnalyticsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAnalyticsTest.m; sourceTree = "<group>"; };
 		CCA3A4E917FCB3A8009C7371 /* UAActionRegistryEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAActionRegistryEntry.h; sourceTree = "<group>"; };
@@ -904,6 +898,7 @@
 		CCCDAE9F19954A1300E93CF7 /* NSObject+HideClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+HideClass.m"; sourceTree = "<group>"; };
 		CCD13DE119A4FCFD0007078C /* UAInteractiveNotificationEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInteractiveNotificationEventTest.m; sourceTree = "<group>"; };
 		CCD3158317CFBD5A002E93A1 /* UAPushTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushTest.m; sourceTree = "<group>"; };
+		CCD7FCF01AA5383100A20B05 /* UAActionRunner+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAActionRunner+Internal.h"; sourceTree = "<group>"; };
 		CCDD37991807019000B8866E /* UAIncomingRichPushAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAIncomingRichPushAction.h; sourceTree = "<group>"; };
 		CCDD379A1807019000B8866E /* UAIncomingRichPushAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAIncomingRichPushAction.m; sourceTree = "<group>"; };
 		CCDD37A41807157500B8866E /* UAIncomingRichPushActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAIncomingRichPushActionTest.m; sourceTree = "<group>"; };
@@ -1561,6 +1556,7 @@
 				CC103E1018A9456200DC950F /* UAActionResult+Internal.h */,
 				CC8542A617F4B81600D2DE10 /* UAActionResult.m */,
 				CC8542A717F4B81600D2DE10 /* UAActionRunner.h */,
+				CCD7FCF01AA5383100A20B05 /* UAActionRunner+Internal.h */,
 				CC8542A817F4B81600D2DE10 /* UAActionRunner.m */,
 				76E5356019475F8E0020335C /* UAAddCustomEventAction.h */,
 				76E5356119475F8E0020335C /* UAAddCustomEventAction.m */,
@@ -1570,8 +1566,6 @@
 				CC8542AC17F4B81600D2DE10 /* UAIncomingPushAction.m */,
 				1F65BB7118997AB6000E8ACC /* UALandingPageAction.h */,
 				1F65BB7218997AB6000E8ACC /* UALandingPageAction.m */,
-				CC8542B117F4B81600D2DE10 /* UASyncAction.h */,
-				CC8542B217F4B81600D2DE10 /* UASyncAction.m */,
 				CC1D2299180373E0005C8393 /* UAAction+Operators.h */,
 				CC1D229A180373E0005C8393 /* UAAction+Operators.m */,
 				CCDD37991807019000B8866E /* UAIncomingRichPushAction.h */,
@@ -1726,7 +1720,6 @@
 				49EECA8A17CBD4BC00DE0AFB /* UADisposable.m */,
 				CC85427617F2130700D2DE10 /* UAURLProtocol.h */,
 				CC85427717F2130700D2DE10 /* UAURLProtocol.m */,
-				61E0EBD519EC7F4500B50AF3 /* UAActionJSDelegate+Internal.h */,
 				4905C4DD182458AC001D48E3 /* UAActionJSDelegate.h */,
 				4905C4DE182458AC001D48E3 /* UAActionJSDelegate.m */,
 				49DCFABF1831B580002CD5FB /* UAJavaScriptDelegate.h */,
@@ -1779,6 +1772,7 @@
 				49BADDC7198B084F000FF3D5 /* UAChannelRegistrar.h in Headers */,
 				49BADDC9198B084F000FF3D5 /* UA_Base64.h in Headers */,
 				49BADDCA198B0850000FF3D5 /* UA_Reachability.h in Headers */,
+				CCD7FCF21AA5383100A20B05 /* UAActionRunner+Internal.h in Headers */,
 				49BADDCB198B0850000FF3D5 /* UALandingPageOverlayController.h in Headers */,
 				612ED4E41A38DE6000DD7762 /* UARegionEvent.h in Headers */,
 				49BADDCC198B0850000FF3D5 /* UABeveledLoadingIndicator.h in Headers */,
@@ -1801,7 +1795,6 @@
 				49BADDE0198B0858000FF3D5 /* UAAggregateActionResult.h in Headers */,
 				49BADDE1198B0858000FF3D5 /* UAIncomingPushAction.h in Headers */,
 				49BADDE2198B0859000FF3D5 /* UALandingPageAction.h in Headers */,
-				49BADDE3198B0859000FF3D5 /* UASyncAction.h in Headers */,
 				49BADDE4198B0859000FF3D5 /* UAAction+Operators.h in Headers */,
 				49BADDE5198B085A000FF3D5 /* UAIncomingRichPushAction.h in Headers */,
 				49BADDE6198B085A000FF3D5 /* UACloseWindowAction.h in Headers */,
@@ -1897,9 +1890,9 @@
 				1F610DE517835C3A00BCD96E /* UAInboxDBManager.h in Headers */,
 				CC8542CB17F4B81600D2DE10 /* UAIncomingPushAction.h in Headers */,
 				4905C4E518246339001D48E3 /* NSString+UAURLEncoding.h in Headers */,
+				CCD7FCF11AA5383100A20B05 /* UAActionRunner+Internal.h in Headers */,
 				76AA8EDD19B0F0A2005FD1C3 /* UAKeychainUtils.h in Headers */,
 				CCA3A5041803184D009C7371 /* UAActionRegistryEntry+Internal.h in Headers */,
-				CC8542D717F4B81600D2DE10 /* UASyncAction.h in Headers */,
 				76AA8EDB19B0F0A2005FD1C3 /* NSJSONSerialization+UAAdditions.h in Headers */,
 				49C6652B1A1E77DB00E5D650 /* UIWebView+UAAdditions.h in Headers */,
 				76AA8EDE19B0F0A2005FD1C3 /* UAIncomingRichPushAction.h in Headers */,
@@ -1948,7 +1941,6 @@
 				CC070C8219ABCD7000E91553 /* UAUserNotificationCategories+Internal.h in Headers */,
 				CCE34AE019C2632500A8EFC0 /* UAEventAppForeground.h in Headers */,
 				49973CE71A969166009B5EB1 /* UAInAppMessageButtonActionBinding.h in Headers */,
-				61E0EBD619EC7F4500B50AF3 /* UAActionJSDelegate+Internal.h in Headers */,
 				CCA3A50117FF626C009C7371 /* UAActionRegistry+Internal.h in Headers */,
 				CC103E1118A9456200DC950F /* UAActionResult+Internal.h in Headers */,
 				1F610E0A17835C6700BCD96E /* UAConfig.h in Headers */,
@@ -2311,7 +2303,6 @@
 				CCDF66B119A544590043657E /* UAShareAction.m in Sources */,
 				49C6652E1A1E77DB00E5D650 /* UIWebView+UAAdditions.m in Sources */,
 				CC319CEB1A0C43000079226E /* UAPreferenceDataStore.m in Sources */,
-				491B8432198C237F00FB7A40 /* UASyncAction.m in Sources */,
 				491B8433198C237F00FB7A40 /* UAAction+Operators.m in Sources */,
 				491B8434198C237F00FB7A40 /* UAIncomingRichPushAction.m in Sources */,
 				491B8435198C237F00FB7A40 /* UACloseWindowAction.m in Sources */,
@@ -2481,7 +2472,6 @@
 				1F65BB7E18997AB6000E8ACC /* UALandingPageAction.m in Sources */,
 				BB88610F159A7E9600584445 /* UAHTTPConnection.m in Sources */,
 				76E5356319475F8E0020335C /* UAAddCustomEventAction.m in Sources */,
-				CC8542D917F4B81600D2DE10 /* UASyncAction.m in Sources */,
 				CC8542B517F4B81600D2DE10 /* UAAction.m in Sources */,
 				CCDF66B019A544590043657E /* UAShareAction.m in Sources */,
 				BB886110159A7E9600584445 /* UAEvent.m in Sources */,

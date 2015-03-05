@@ -42,7 +42,7 @@ typedef void (^UAActionCompletionHandler)(UAActionResult *);
 /**
  * A block that defines the primary work performed by an action.
  */
-typedef void (^UAActionBlock)(UAActionArguments *, NSString *, UAActionCompletionHandler completionHandler);
+typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler completionHandler);
 
 /**
  * Base class for actions, which define a modular unit of work.
@@ -96,6 +96,20 @@ typedef void (^UAActionBlock)(UAActionArguments *, NSString *, UAActionCompletio
  */
 - (void)performWithArguments:(UAActionArguments *)arguments
                   actionName:(NSString *)name
+           completionHandler:(UAActionCompletionHandler)completionHandler
+__attribute__((deprecated("As of version 6.0.0. Use performWithArguments:completionHandler: instead. The name of the action is now accessible through the arguments metadata.")));
+
+
+/**
+ * Performs the action.
+ *
+ * Subclasses of UAAction should override this method to define custom behavior.
+ *
+ * @note You should not ordinarily call this method directly. Instead, use the `UAActionRunner`.
+ * @param arguments A UAActionArguments value representing the arguments passed to the action.
+ * @param completionHandler A UAActionCompletionHandler that will be called when the action has finished executing.
+ */
+- (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler;
 
 #pragma mark factory methods

@@ -80,7 +80,7 @@
     UAAction *action = [[UAAction alloc] init];
 
     __block UAActionResult *blockResult;
-    [action performWithArguments:self.emptyArgs actionName:@"test_action" completionHandler:^(UAActionResult *result) {
+    [action performWithArguments:self.emptyArgs completionHandler:^(UAActionResult *result) {
         blockResult = result;
     }];
 
@@ -94,17 +94,14 @@
 - (void)testPerformWithArgumentsBlock {
 
     __block UAActionArguments *blockArgs;
-    __block NSString *name;
 
-
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         blockArgs = args;
-        name = actionName;
         return completionHandler([UAActionResult resultWithValue:@"hi" withFetchResult:UAActionFetchResultNewData]);
     }];
 
     __block UAActionResult *blockResult;
-    [action performWithArguments:self.emptyArgs actionName:name completionHandler:^(UAActionResult *result) {
+    [action performWithArguments:self.emptyArgs completionHandler:^(UAActionResult *result) {
         blockResult = result;
     }];
 
@@ -120,13 +117,11 @@
     __block UAActionArguments *blockPerformArgs;
     __block UAActionArguments *blockAcceptsArgs;
     __block UAActionResult *blockResult;
-    __block NSString *name;
 
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName,  UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         blockPerformArgs = args;
         completionHandler([UAActionResult resultWithValue:@"hi" withFetchResult:UAActionFetchResultNewData]);
-        name = actionName;
     }];
 
     action.acceptsArgumentsBlock = ^(UAActionArguments *args) {
@@ -134,7 +129,7 @@
         return YES;
     };
 
-    [action runWithArguments:self.emptyArgs actionName:name completionHandler:^(UAActionResult *actionResult) {
+    [action runWithArguments:self.emptyArgs completionHandler:^(UAActionResult *actionResult) {
         blockResult = actionResult;
     }];
 
@@ -151,20 +146,19 @@
 - (void)testRunOnBackgroundThread {
 
     __block BOOL ran = NO;
-    __block NSString *name;
 
     BOOL (^isMainThread)(void) = ^{
         return [[NSThread currentThread] isEqual:[NSThread mainThread]];
     };
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         XCTAssertTrue(isMainThread(), @"we should be on the main thread");
         handler([UAActionResult emptyResult]);
     }];
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         XCTAssertFalse(isMainThread(), @"we should be on a background thread");
-        [action runWithArguments:nil actionName:name completionHandler:^(UAActionResult *result) {
+        [action runWithArguments:nil completionHandler:^(UAActionResult *result) {
             XCTAssertTrue(isMainThread(), @"we should be on the main thread");
             ran = YES;
             [self.sync continue];
@@ -183,22 +177,20 @@
 - (void)testFinishOnBackgroundThread {
 
     __block BOOL ran = NO;
-    __block NSString *name;
 
     BOOL (^isMainThread)(void) = ^{
         return [[NSThread currentThread] isEqual:[NSThread mainThread]];
     };
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             XCTAssertFalse(isMainThread(), @"we should be on a background thread");
             handler([UAActionResult emptyResult]);
             [self.sync continue];
-            name = actionName;
         });
     }];
 
-    [action runWithArguments:nil actionName:name completionHandler:^(UAActionResult *result) {
+    [action runWithArguments:nil completionHandler:^(UAActionResult *result) {
         ran = YES;
         XCTAssertTrue(isMainThread(), @"we should be back on the main thread");
     }];
@@ -214,7 +206,7 @@
 - (void)testRunWithArgumentsInvalidActionArguments {
     __block UAActionResult *blockResult;
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler completionHandler) {
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         XCTFail(@"performWithArguments:withCompletionHandler: should not be called if the action cannot accept the arguments");
         return completionHandler([UAActionResult emptyResult]);
     }];
@@ -223,7 +215,7 @@
         return NO;
     };
 
-    [action runWithArguments:self.emptyArgs actionName:nil completionHandler:^(UAActionResult *actionResult) {
+    [action runWithArguments:self.emptyArgs completionHandler:^(UAActionResult *actionResult) {
         blockResult = actionResult;
     }];
 

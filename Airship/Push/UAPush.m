@@ -33,7 +33,7 @@
 
 #import "UAUtils.h"
 #import "UAActionRegistry+Internal.h"
-#import "UAActionRunner.h"
+#import "UAActionRunner+Internal.h"
 #import "UAChannelRegistrationPayload.h"
 #import "UAUser.h"
 #import "UAInteractiveNotificationEvent.h"
@@ -517,22 +517,25 @@ NSString *const UAPushQuietTimeEndKey = @"end";
             break;
     }
 
-    // Create dictionary of actions inside the push notification
-    NSMutableDictionary *actions = [self createActionsFromPayload:notification
-                                                        situation:situation
-                                                         metadata:@{UAActionMetadataPushPayloadKey:notification}];
+
+    // Create the action payload
+    NSMutableDictionary *actionsPayload = [NSMutableDictionary dictionaryWithDictionary:notification];
 
     // Add incoming push action
-    UAActionArguments *incomingPushArgs = [UAActionArguments argumentsWithValue:notification
-                                                                  withSituation:situation];
-    [actions setValue:incomingPushArgs forKey:kUAIncomingPushActionRegistryName];
+    actionsPayload[kUAIncomingPushActionRegistryName] = notification;
 
-    //Run the actions
-    [UAActionRunner runActions:actions withCompletionHandler:^(UAActionResult *result) {
-        if (completionHandler) {
-            completionHandler((UIBackgroundFetchResult)[result fetchResult]);
-        }
-    }];
+    // Action metadata
+    NSDictionary *metadata = @{ UAActionMetadataPushPayloadKey:notification };
+
+    // Run the actions
+    [UAActionRunner runActionsWithActionValues:actionsPayload
+                                     situation:situation
+                                      metadata:metadata
+                             completionHandler:^(UAActionResult *result) {
+                                 if (completionHandler) {
+                                     completionHandler((UIBackgroundFetchResult)[result fetchResult]);
+                                 }
+                             }];
 }
 
 - (void)appReceivedActionWithIdentifier:(NSString *)identifier
@@ -584,54 +587,30 @@ NSString *const UAPushQuietTimeEndKey = @"end";
                                                                                            categoryId:categoryId
                                                                                          notification:notification]];
 
-
     // Pull the action payload for the button identifier
-    NSDictionary *actionsPayload = notification[kUANotificationActionKey][identifier];
-
-    UASituation situation;
-    if (notificationAction.activationMode == UIUserNotificationActivationModeBackground) {
-        situation = UASituationBackgroundInteractiveButton;
-    } else {
-        situation = UASituationForegroundInteractiveButton;
-    }
-
-    // Create dictionary of actions inside the push notification
-    NSMutableDictionary *actions = [self createActionsFromPayload:actionsPayload
-                                                         situation:situation
-                                                         metadata:@{UAActionMetadataUserNotificationActionIDKey:identifier,
-                                                                    UAActionMetadataPushPayloadKey:notification}];
+    NSMutableDictionary *actionsPayload = [NSMutableDictionary dictionaryWithDictionary:notification[kUANotificationActionKey][identifier]];
 
     // Add incoming push action
-    UAActionArguments *incomingPushArgs = [UAActionArguments argumentsWithValue:notification
-                                                                  withSituation:situation
-                                                                       metadata:@{UAActionMetadataUserNotificationActionIDKey:identifier}];
+    actionsPayload[kUAIncomingPushActionRegistryName] = notification;
 
-    [actions setValue:incomingPushArgs forKey:kUAIncomingPushActionRegistryName];
+    // Situation for the actions
+    UASituation situation = notificationAction.activationMode == UIUserNotificationActivationModeBackground ?
+                UASituationBackgroundInteractiveButton : UASituationForegroundInteractiveButton;
 
+    // Action metadata
+    NSDictionary *metadata = @{ UAActionMetadataUserNotificationActionIDKey: identifier,
+                                UAActionMetadataPushPayloadKey: notification };
 
     // Run the actions
-    [UAActionRunner runActions:actions withCompletionHandler:^(UAActionResult *result) {
-        if (completionHandler) {
-            completionHandler();
-        }
-    }];
-}
+    [UAActionRunner runActionsWithActionValues:actionsPayload
+                                     situation:situation
+                                      metadata:metadata
+                             completionHandler:^(UAActionResult *result) {
+                                 if (completionHandler) {
+                                     completionHandler();
+                                 }
+                             }];
 
-- (NSMutableDictionary *)createActionsFromPayload:(NSDictionary *)payload
-                                        situation:(UASituation)situation
-                                         metadata:(NSDictionary *)metadata{
-
-    NSMutableDictionary *actions = [NSMutableDictionary dictionary];
-
-    for (NSString *possibleActionName in payload) {
-        UAActionArguments *args = [UAActionArguments argumentsWithValue:[payload valueForKey:possibleActionName]
-                                                          withSituation:situation
-                                                               metadata:metadata];
-
-        [actions setValue:args forKey:possibleActionName];
-    }
-
-    return actions;
 }
 
 - (void)updateBadgeFromNotification:(NSDictionary *)notification {
@@ -659,8 +638,9 @@ BOOL deferChannelCreationOnForeground = false;
 
     if (pendingMessagePayload) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kUAPushDelayBeforeInAppNotificationDisplay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            UAActionArguments *args = [UAActionArguments argumentsWithValue:pendingMessagePayload withSituation:UASituationManualInvocation];
-            [UAActionRunner runActionWithName:kUAInAppMessageActionDefaultRegistryName withArguments:args withCompletionHandler:nil];
+            [UAActionRunner runActionWithName:kUAInAppMessageActionDefaultRegistryName
+                                        value:pendingMessagePayload
+                                    situation:UASituationManualInvocation];
         });
 
         [UAInAppMessage deletePendingMessagePayload:pendingMessagePayload];

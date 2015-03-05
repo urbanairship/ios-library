@@ -51,7 +51,7 @@
     return jsonDecodedArgs;
 }
 
-- (NSDictionary *)createMetaDataFromCallData:(UAWebViewCallData *)data {
+- (NSDictionary *)metadataWithCallData:(UAWebViewCallData *)data {
     NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
     [metadata setValue:data.webView forKey:UAActionMetadataWebViewKey];
     [metadata setValue:data.message forKey:UAActionMetadataInboxMessageKey];
@@ -59,63 +59,26 @@
 }
 
 /**
- * Handles the run-action-cb command.
+ * Runs an action with a given value and performs a callback on completion.
  *
- * This supports async callbacks into JS functions, as well the passing of
- * arbitrary argument objects through JSON serialization of core types.  It is best
- * used from JavaScript, but can be used entirely through URL loading as well.
- *
+ * @param actionName The name of the action to perform
+ * @param actionValue The action argument's value
+ * @param metadata Optional metadata to pass to the action arguments.
  * @param callbackID A callback identifier generated in the JS layer. This can be nil.
- * @param data The call data passed in the JS delegate call.
  * @param completionHandler The completion handler passed in the JS delegate call.
  */
-- (void)runActionWithCallbackID:(NSString *)callbackID
-                           data:(UAWebViewCallData *)data
-              completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
+- (void)runAction:(NSString *)actionName
+      actionValue:(id)actionValue
+         metadata:(NSDictionary *)metadata
+       callbackID:(NSString *)callbackID
+completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
-
-    NSArray *keys = [data.options allKeys];
-
-    NSString *actionName = [keys firstObject];
-    if (!actionName) {
-        UA_LDEBUG(@"no action name was passed");
-        completionHandler(nil);
-        return;
-    }
-
-    NSString *decodedActionName = [actionName urlDecodedStringWithEncoding:NSUTF8StringEncoding];
-    if (!decodedActionName) {
-        UA_LDEBUG(@"unable to decode action name");
-        completionHandler(nil);
-        return;
-    }
-
-    id encodedArgumentsValue = [[data.options valueForKey:actionName] firstObject];
-    id decodedArgumentsValue;
-    if (encodedArgumentsValue && encodedArgumentsValue != [NSNull null]) {
-        decodedArgumentsValue = [self objectForEncodedArguments:encodedArgumentsValue];
-
-        if (!decodedArgumentsValue) {
-            if (callbackID) {
-                NSString *errorString = [NSString stringWithFormat:@"Error decoding arguments: %@", encodedArgumentsValue];
-                NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');", errorString, callbackID];
-                completionHandler(script);
-            } else {
-                completionHandler(nil);
-            }
-
-            return;
-        }
-    }
-
-    UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
-                                                            withSituation:UASituationWebViewInvocation
-                                                              metadata:[self createMetaDataFromCallData:data]];
-    
-    [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result) {
+    UAActionCompletionHandler actionCompletionHandler = ^(UAActionResult *result) {
         UA_LDEBUG("Action %@ finished executing with status %ld", actionName, (long)result.status);
         if (!callbackID) {
-            completionHandler(nil);
+            if (completionHandler) {
+                completionHandler(nil);
+            }
             return;
         }
 
@@ -158,153 +121,175 @@
                 break;
         }
 
-        completionHandler(script);
-    }];
+        if (completionHandler) {
+            completionHandler(script);
+        }
+    };
+
+    [UAActionRunner runActionWithName:actionName
+                                value:actionValue
+                            situation:UASituationWebViewInvocation
+                             metadata:metadata
+                    completionHandler:actionCompletionHandler];
 }
 
 /**
- * Handles the run-actions command.
- *
- * This supports async callbacks into JS functions, as well the passing of
- * arbitrary argument objects through JSON serialization of core types.  It is best
- * used from JavaScript, but can be used entirely through URL loading as well.
- *
- * @param data The call data passed in the JS delegate call.
- * @param completionHandler The completion handler passed in the JS delegate call.
+ * Runs a dictionary of action names to an array of action values.
+ * 
+ * @param actionValues A map of action name to an array of action values.
+ * @param metadata Optional metadata to pass to the action arguments.
  */
-- (void)runActionsWithData:(UAWebViewCallData *)data completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
-
-    NSDictionary *decodedOptions = [self decodeActionArgumentsWithData:data basicEncoding:NO];
-
-    for (NSString *decodedActionName in decodedOptions) {
-        for (UAActionArguments *actionArguments in [decodedOptions objectForKey:decodedActionName]) {
-
-            [UAActionRunner runActionWithName:decodedActionName
-                                withArguments:actionArguments
-                        withCompletionHandler:^(UAActionResult *result) {
-                if (result.status == UAActionStatusCompleted) {
-                    UA_LDEBUG(@"action %@ completed successfully", decodedActionName);
-                } else {
-                    UA_LDEBUG(@"action %@ completed with an error", decodedActionName);
-                }
-            }];
+- (void)runActionsWithValues:(NSDictionary *)actionValues metadata:(NSDictionary *)metadata {
+    for (NSString *actionName in actionValues) {
+        for (id actionValue in actionValues[actionName]) {
+            [UAActionRunner runActionWithName:actionName
+                                        value:(actionValue == [NSNull null]) ? nil : actionValue
+                                    situation:UASituationWebViewInvocation
+                                     metadata:metadata
+                            completionHandler:^(UAActionResult *result) {
+                                if (result.status == UAActionStatusCompleted) {
+                                    UA_LDEBUG(@"action %@ completed successfully", actionName);
+                                } else {
+                                    UA_LDEBUG(@"action %@ completed with an error", actionName);
+                                }
+                            }];
         }
     }
-
-    completionHandler(nil);
 }
 
-/**
- * Handles the run-basic-actions callback.
- *
- * This does not support callbacks into the JS layer, and only allows
- * for passing string arguments to actions.  For convenience, multiple actions can
- * be passed in the query options, in which case they will all be run at once.
- *
- * @param data The call data passed in the JS delegate call.
- * @param completionHandler The completion handler passed in the JS delegate callback.
- */
-- (void)runBasicActionsWithData:(UAWebViewCallData *)data
-              completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
-
-    NSDictionary *decodedOptions = [self decodeActionArgumentsWithData:data basicEncoding:YES];
-
-    for (NSString *decodedActionName in decodedOptions) {
-        for (UAActionArguments *actionArguments in [decodedOptions objectForKey:decodedActionName]) {
-
-            [UAActionRunner runActionWithName:decodedActionName
-                                withArguments:actionArguments
-                        withCompletionHandler:^(UAActionResult *result) {
-                            if (result.status == UAActionStatusCompleted) {
-                                UA_LDEBUG(@"action %@ completed successfully", decodedActionName);
-                            } else {
-                                UA_LDEBUG(@"action %@ completed with an error", decodedActionName);
-                            }
-                        }];
-        }
-    }
-    
-    completionHandler(nil);
-}
 
 /**
  * Decodes options with basic URL or URL+json encoding
  *
- * @param data The UAWebViewCallData
+ * @param callData The UAWebViewCallData
  * @param basicEncoding Boolean to select for basic encoding
- * @return A dictionary of action arguments under action name keys or returns nil if decoding error occurs.
+ * @return A dictionary of action name to an array of action values.
  */
-- (NSDictionary *)decodeActionArgumentsWithData:(UAWebViewCallData *)data basicEncoding:(BOOL)basicEncoding {
-    NSMutableDictionary *decodedOptions = [[NSMutableDictionary alloc] init];
-    NSMutableArray *decodedActionArguments = [[NSMutableArray alloc] init];
-
-    for (NSString *actionName in data.options) {
-        NSString *decodedActionName = [actionName urlDecodedStringWithEncoding:NSUTF8StringEncoding];
-
-        if (!decodedActionName || [decodedActionName isEqual:@""]) {
-            UA_LDEBUG(@"Error decoding action name: %@", actionName);
-            return nil;
-        }
-
-        for (id encodedArgumentsValue in [data.options objectForKey:actionName]) {
-
-            id decodedArgumentsValue;
-
-            if (encodedArgumentsValue && encodedArgumentsValue != [NSNull null] && basicEncoding) {
-                decodedArgumentsValue = [encodedArgumentsValue urlDecodedStringWithEncoding:NSUTF8StringEncoding];
-            }
-            if (encodedArgumentsValue && encodedArgumentsValue != [NSNull null] && !basicEncoding) {
-                decodedArgumentsValue =  [self objectForEncodedArguments:encodedArgumentsValue];
-            }
-
-            if (!decodedArgumentsValue && encodedArgumentsValue != [NSNull null]) {
-                UA_LERR(@"Error decoding arguments: %@", encodedArgumentsValue);
-                return nil;
-            }
-            // If encodedArgumentsValue successfully decodes, create actionArguments with the resulting decodedArgumentValue
-            UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
-                                                                    withSituation:UASituationWebViewInvocation
-                                                                         metadata:[self createMetaDataFromCallData:data]];
-            [decodedActionArguments addObject:actionArgs];
-        }
-
-        [decodedOptions setObject: [[NSArray alloc] initWithArray:decodedActionArguments] forKey:decodedActionName];
-        [decodedActionArguments removeAllObjects];
-    }
-
-    // if decoded options is unpopulated, then no actionNames are present in options, return nil
-    if ([decodedOptions isEqual:@{}]) {
+- (NSDictionary *)decodeActionValuesWithCallData:(UAWebViewCallData *)callData basicEncoding:(BOOL)basicEncoding {
+    if (!callData.options.count) {
         UA_LERR(@"Error no options available to decode");
         return nil;
     }
-    return decodedOptions;
+
+    NSMutableDictionary *actionValues = [[NSMutableDictionary alloc] init];
+
+    for (NSString *encodedActionName in callData.options) {
+
+        NSString *actionName = [encodedActionName urlDecodedStringWithEncoding:NSUTF8StringEncoding];
+        if (!actionName.length) {
+            UA_LDEBUG(@"Error decoding action name: %@", encodedActionName);
+            return nil;
+        }
+
+        NSMutableArray *values = [NSMutableArray array];
+
+        for (id encodedValue in callData.options[encodedActionName]) {
+
+            if (!encodedValue || encodedValue == [NSNull null]) {
+                 [values addObject:[NSNull null]];
+                continue;
+            }
+
+            id value;
+            if (basicEncoding) {
+                value = [encodedValue urlDecodedStringWithEncoding:NSUTF8StringEncoding];
+            } else {
+                value = [self objectForEncodedArguments:encodedValue];
+            }
+
+            if (!value) {
+                UA_LERR(@"Error decoding arguments: %@", encodedValue);
+                return nil;
+            }
+
+            [values addObject:value];
+        }
+
+        actionValues[actionName] = values;
+    }
+
+    return actionValues;
 }
 
+- (void)callWithData:(UAWebViewCallData *)data withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
+    UA_LDEBUG(@"action js delegate name: %@ \n arguments: %@ \n options: %@", data.name, data.arguments, data.options);
 
-- (void)callWithData:(UAWebViewCallData *)data
-    withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
-    UA_LDEBUG(@"action js delegate arguments: %@ \n options: %@", data.arguments, data.options);
-
-
-    //we need at least one argument
-    //run-action-cb is the full JS callback interface, and only runs one action at a time
     if ([data.name isEqualToString:@"run-action-cb"]) {
-        //the callbackID is optional, if present we can make an async callback
-        //into the JS environment, otherwise we'll just run the action to completion
 
+        /*
+         * run-action-cb performs a single action and calls the completion handler with
+         * the result of the action. The action's value is JSON encoded.
+         * 
+         * Expected format:
+         * run-action-cb/<callbackID>?<actionName>=<actionValue>
+         */
+
+        // Callback ID is optional
         NSString *callbackID = [data.arguments firstObject];
-        [self runActionWithCallbackID:callbackID data:data completionHandler:completionHandler];
+
+        NSDictionary *actionValues = [self decodeActionValuesWithCallData:data basicEncoding:NO];
+
+        if (!actionValues) {
+            if (callbackID) {
+                NSString *errorString = [NSString stringWithFormat:@"Error decoding action arguments from URL: %@", data.url];
+                NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');", errorString, callbackID];
+                if (completionHandler) {
+                    completionHandler(script);
+                }
+            } else {
+                if (completionHandler) {
+                    completionHandler(nil);
+                }
+            }
+            return;
+        }
+
+        // We only support running a single action with a single argument
+        NSString *actionName = [[actionValues allKeys] firstObject];
+        id actionValue = [actionValues[actionName] firstObject];
+
+        // Run the action
+        [self runAction:actionName
+            actionValue:(actionValue == [NSNull null]) ? nil : actionValue
+               metadata:[self metadataWithCallData:data]
+             callbackID:callbackID
+      completionHandler:completionHandler];
+
     } else if ([data.name isEqualToString:@"run-actions"]) {
-        //run-actions is the 'complex' version with JSON-encoded string arguments, and
-        //allows multiple simultaneous actions
-        [self runActionsWithData:data completionHandler:completionHandler];
+
+        /*
+         * run-actions performs several actions with the values JSON encoded.
+         *
+         * Expected format:
+         * run-actions?<actionName>=<actionValue>&<anotherActionName>=<anotherActionValue>...
+         */
+
+        [self runActionsWithValues:[self decodeActionValuesWithCallData:data basicEncoding:NO]
+                         metadata:[self metadataWithCallData:data]];
+
+        if (completionHandler) {
+            completionHandler(nil);
+        }
     } else if ([data.name isEqualToString:@"run-basic-actions"]) {
-        //run-basic-actions is the 'demo-friendly' version with implicit string argument values and
-        //allows multiple simultaneous actions
-        [self runBasicActionsWithData:data completionHandler:completionHandler];
+
+        /*
+         * run-basic-actions performs several actions with basic encoded action values.
+         *
+         * Expected format:
+         * run-basic-actions?<actionName>=<actionValue>&<anotherActionName>=<anotherActionValue>...
+         */
+
+        [self runActionsWithValues:[self decodeActionValuesWithCallData:data basicEncoding:YES]
+                          metadata:[self metadataWithCallData:data]];
+
+        if (completionHandler) {
+            completionHandler(nil);
+        }
     } else {
-        //arguments not recognized, pass a nil script result
-        completionHandler(nil);
+        // Arguments not recognized, pass a nil script result
+        if (completionHandler) {
+            completionHandler(nil);
+        }
     }
 }
 

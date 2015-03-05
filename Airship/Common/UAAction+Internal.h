@@ -50,11 +50,9 @@
  * before and after the perform method, respectively.
  *
  * @param arguments The action's arguments.
- * @param name The action's name.
  * @param completionHandler CompletionHandler when the action is finished.
  */
 - (void)runWithArguments:(UAActionArguments *)arguments
-              actionName:(NSString *)name
        completionHandler:(UAActionCompletionHandler)completionHandler;
 
 

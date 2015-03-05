@@ -4,7 +4,6 @@
 #import "UAActionRegistry.h"
 #import "UAActionJSDelegate.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAActionJSDelegate+Internal.h"
 #import "UAWebViewCallData.h"
 #import "UAirship.h"
 
@@ -37,14 +36,14 @@
     __block BOOL ran = NO;
     __block NSString *result;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
     [self.registry registerAction:test name:@"test_action"];
 
-    UAAction *unserializable = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
+    UAAction *unserializable = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         ran = YES;
         handler([UAActionResult resultWithValue:self]);
     }];
@@ -89,7 +88,7 @@
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
                                                         webView:nil];
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
@@ -100,7 +99,7 @@
         result = script;
     }];
 
-    XCTAssertEqualObjects(result, @"UAirship.finishAction(new Error('Error decoding arguments: blah'), null, 'some-callback-ID');", @"resulting script should pass an arguments encoding error, a null result value, and the provided callback ID");
+    XCTAssertEqualObjects(result, @"UAirship.finishAction(new Error('Error decoding action arguments from URL: uairship://run-action-cb/some-callback-ID?test_action=blah'), null, 'some-callback-ID');", @"resulting script should pass an arguments encoding error, a null result value, and the provided callback ID");
     [self.registry removeEntryWithName:@"test_action"];
 }
 
@@ -122,7 +121,7 @@
     __block NSString *result;
     __block BOOL ran = NO;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
@@ -146,7 +145,7 @@
     __block NSString *result;
     __block BOOL ran = NO;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
@@ -172,12 +171,12 @@
     __block BOOL alsoRan = NO;
     __block NSString *result;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
-    UAAction *alsoTest = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
+    UAAction *alsoTest = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         alsoRan = YES;
         handler([UAActionResult resultWithValue:@"yeah!"]);
     }];
@@ -202,24 +201,6 @@
     [self.registry removeEntryWithName:@"also_test_action"];
 }
 
--(void)testDecodeActionArgumentsWithDataReturnsNoActionsBogusURL {
-    NSURL *url = [NSURL URLWithString:@"www.bogusURL&%@"];
-    UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
-                                                        webView:nil];
-    NSDictionary *result = [self.jsDelegate decodeActionArgumentsWithData:data basicEncoding:NO];
-
-    XCTAssertNil(result, @"URL should fail to decode and decodeActionArgumentsWithData should return nil");
-}
-
--(void)testDecodeActionArgumentsWithDataNilActionReturnsNil {
-    NSURL *url = [NSURL URLWithString:@"uairship://run-actions?test_action=%22hi%22&"];
-    UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
-                                                        webView:nil];
-    NSDictionary *result = [self.jsDelegate decodeActionArgumentsWithData:data basicEncoding:NO];
-
-    XCTAssertNil(result, @"URL should fail to decode a nil action and decodeActionArgumentsWithData should return nil");
-}
-
 - (void)testRunActionInvalidAction {
     __block NSString *result;
 
@@ -240,7 +221,7 @@
     __block BOOL ran = NO;
 
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
@@ -266,7 +247,7 @@
     __block int runCount = 0;
     __block NSString *result;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         runCount ++;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
@@ -294,12 +275,12 @@
     __block BOOL alsoRan = NO;
     __block NSString *result;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
-    UAAction *alsoTest = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
+    UAAction *alsoTest = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         alsoRan = YES;
         handler([UAActionResult resultWithValue:@"yeah!"]);
     }];
@@ -328,7 +309,7 @@
      __block int runCount = 0;
     __block NSString *result;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, NSString *actionName, UAActionCompletionHandler handler) {
+    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         runCount ++;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];

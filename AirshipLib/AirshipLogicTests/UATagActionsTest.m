@@ -59,7 +59,7 @@
 
     for (NSInteger i = 0; i < 4; i++) {
         args.situation = situations[i];
-        NSLog(@"situation!: %d", args.situation);
+        NSLog(@"situation!: %ld", args.situation);
         XCTAssertTrue([action acceptsArguments:args], @"any non-background situation should be valid");
     }
 
@@ -100,14 +100,12 @@
  */
 - (void)testAddTagsAction {
     UAAddTagsAction *action = [[UAAddTagsAction alloc] init];
-    NSString *actionName = @"test_action";
     [self validateArgumentsForAddRemoveTagsAction:action];
 
     [[self.mockPush expect] addTag:[OCMArg any]];
     [[self.mockPush expect] updateRegistration];
 
     [action runWithArguments:self.stringArgs
-                  actionName:actionName
            completionHandler:^(UAActionResult *result) {
            [self.mockPush verify];
     }];
@@ -115,8 +113,7 @@
     [[self.mockPush expect] addTags:[OCMArg any]];
     [[self.mockPush expect] updateRegistration];
 
-    [action runWithArguments:self.arrayArgs actionName:actionName
-       completionHandler:^(UAActionResult *result) {
+    [action runWithArguments:self.arrayArgs completionHandler:^(UAActionResult *result) {
            [self.mockPush verify];
     }];
 }
@@ -126,25 +123,20 @@
  */
 - (void)testRemoveTagsAction {
     UARemoveTagsAction *action = [[UARemoveTagsAction alloc] init];
-    NSString *actionName = @"test_action";
 
     [self validateArgumentsForAddRemoveTagsAction:action];
 
     [[self.mockPush expect] removeTag:[OCMArg any]];
     [[self.mockPush expect] updateRegistration];
 
-    [action runWithArguments:self.stringArgs
-                  actionName:actionName
-           completionHandler:^(UAActionResult *result) {
+    [action runWithArguments:self.stringArgs completionHandler:^(UAActionResult *result) {
            [self.mockPush verify];
     }];
 
     [[self.mockPush expect] removeTags:[OCMArg any]];
     [[self.mockPush expect] updateRegistration];
 
-    [action runWithArguments:self.arrayArgs
-                  actionName:actionName
-           completionHandler:^(UAActionResult *result) {
+    [action runWithArguments:self.arrayArgs completionHandler:^(UAActionResult *result) {
            [self.mockPush verify];
     }];
 
