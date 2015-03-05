@@ -5,7 +5,6 @@
 	developmentAppSecret = "        0A00000000000000000000        ";
 	productionAppKey = "  0A00000000000000000000      ";
 	productionAppSecret = "    0A00000000000000000000     ";
-	clearKeychain = YES;
 	developmentLogLevel = 1;
 	inProduction = YES;
 	"detectProvisioningMode" = YES;

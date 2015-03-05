@@ -167,7 +167,6 @@
     XCTAssertEqualObjects(config.developmentAppSecret, validAppValue, @"Development app secret was improperly loaded.");
 
     XCTAssertEqual(config.developmentLogLevel, 5, @"Development log level was improperly loaded.");
-    XCTAssertTrue(config.clearKeychain, @"Clear keychain was improperly loaded.");
     XCTAssertTrue(config.inProduction, @"inProduction was improperly loaded.");
 
 }
@@ -189,7 +188,6 @@
 
     XCTAssertEqual(config.developmentLogLevel, 1, @"Development log level was improperly loaded.");
     XCTAssertEqual(config.productionLogLevel, 5, @"Production log level was improperly loaded.");
-    XCTAssertTrue(config.clearKeychain, @"Clear keychain was improperly loaded.");
     XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode was improperly loaded.");
 
     //special case this one since we have to disable detectProvisioningMode
@@ -212,7 +210,6 @@
 
     XCTAssertEqual(config.developmentLogLevel, 1, @"Development log level was improperly loaded.");
     XCTAssertEqual(config.productionLogLevel, 5, @"Production log level was improperly loaded.");
-    XCTAssertTrue(config.clearKeychain, @"Clear keychain was improperly loaded.");
     XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode was improperly loaded.");
 
     //special case this one since we have to disable detectProvisioningMode

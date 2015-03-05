@@ -72,7 +72,6 @@
             "Production Log Level: %ld\n"
             "Resolved Log Level: %ld\n"
             "Detect Provisioning Mode: %d\n"
-            "Clear Keychain: %d\n"
             "Analytics Enabled: %d\n"
             "Analytics URL: %@\n"
             "Device API URL: %@\n"
@@ -95,10 +94,6 @@
             (long)self.productionLogLevel,
             (long)self.logLevel,
             self.detectProvisioningMode,
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-            self.clearKeychain,
-#pragma clang diagnostic pop
             self.analyticsEnabled,
             self.analyticsURL,
             self.deviceAPIURL,
@@ -192,12 +187,6 @@
         UA_LERR(@"Current App Secret (%@) is not valid.", self.appSecret);
         valid = NO;
     }
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if (self.inProduction && self.clearKeychain) {
-        UA_LERR(@"This application is in PRODUCTION and set to clear the keychain with a debug flag. ARE YOU SURE YOU WANT TO DO THIS?");
-    }
-#pragma clang diagnostic pop
 
     return valid;
 }
@@ -210,7 +199,6 @@
                                 @"DEVELOPMENT_APP_KEY" : @"developmentAppKey",
                                 @"DEVELOPMENT_APP_SECRET" : @"developmentAppSecret",
                                 @"APP_STORE_OR_AD_HOC_BUILD" : @"inProduction",
-                                @"DELETE_KEYCHAIN_CREDENTIALS" : @"clearKeychain",
                                 @"AIRSHIP_SERVER" : @"deviceAPIURL",
                                 @"ANALYTICS_SERVER" : @"analyticsURL"};
 
