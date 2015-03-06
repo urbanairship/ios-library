@@ -135,12 +135,12 @@ To enable push notifications, you will need to make several additions to your ap
         UA_LDEBUG(@"Config:\n%@", [config description]);
 
         // Set the icon badge to zero on startup (optional)
-        [[UAPush shared] resetBadge];
+        [[UAirship push] resetBadge];
 
         // Set the notification types required for the app (optional). This value defaults
         // to badge, alert and sound, so it's only necessary to set it if you want
         // to add or remove types.
-        [UAPush shared].userNotificationTypes = (UIUserNotificationTypeAlert |
+        [UAirship push].userNotificationTypes = (UIUserNotificationTypeAlert |
                                                  UIUserNotificationTypeBadge |
                                                  UIUserNotificationTypeSound);
 
@@ -149,7 +149,7 @@ To enable push notifications, you will need to make several additions to your ap
         // will be prompted to allow notifications. You should wait for a more appropriate
         // time to enable push to increase the likelihood that the user will accept
         // notifications.
-        // [UAPush shared].userPushNotificationsEnabled = YES;
+        // [UAirship push].userPushNotificationsEnabled = YES;
 
         return YES;
     }
@@ -160,7 +160,7 @@ To enable push later on in your application:
 
     // Somewhere in the app, this will enable push (setting it to NO will disable push,
     // which will trigger the proper registration or de-registration code in the library).
-    [UAPush shared].userPushNotificationsEnabled = YES;
+    [UAirship push].userPushNotificationsEnabled = YES;
 
 Logging
 -------
