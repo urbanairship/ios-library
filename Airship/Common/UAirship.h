@@ -157,31 +157,36 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 + (void)takeOff;
 
+///---------------------------------------------------------------------------------------
+/// @name Instance Accessors
+///---------------------------------------------------------------------------------------
+
 /**
- * Returns the shared `UAirship` instance.
+ * Returns the `UAirship` instance.
  *
- * @return The shared `UAirship` instance.
+ * @return The `UAirship` instance.
  */
 + (UAirship *)shared;
 
 /**
- * Returns the shared `UAPush` instance.
+ * Returns the `UAPush` instance. Used for configuring and managing push
+ * notifications.
  *
- * @return The shared `UAPush` instance.
+ * @return The `UAPush` instance.
  */
 + (UAPush *)push;
 
 /**
- * Returns the shared `UAInbox` instance.
+ * Returns the `UAInbox` instance. Provides access to the inbox messages.
  *
- * @return The shared `UAInbox` instance.
+ * @return The `UAInbox` instance.
  */
 + (UAInbox *)inbox;
 
 /**
- * Returns the shared `UAUser` instance.
+ * Returns the `UAUser` instance.
  *
- * @return The shared `UAUser` instance.
+ * @return The `UAUser` instance.
  */
 + (UAUser *)inboxUser;
 
