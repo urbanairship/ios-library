@@ -322,7 +322,10 @@
 
     UAInAppMessageAction *iamAction = [[UAInAppMessageAction alloc] init];
     [self registerAction:iamAction names:@[kUAInAppMessageActionDefaultRegistryName, kUAInAppMessageActionDefaultRegistryAlias] predicate:^(UAActionArguments *args){
-        return (BOOL)(args.situation != UASituationLaunchedFromPush);
+        IF_IOS7_OR_GREATER(return (BOOL)(args.situation != UASituationLaunchedFromPush);)
+
+        // In-App Messages will not work on iOS 6 or below
+        return  NO;
     }];
 }
 
