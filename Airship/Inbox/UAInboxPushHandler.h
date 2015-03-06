@@ -25,8 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "UAInboxMessageListDelegate.h"
-
+@class UAInboxMessage;
 @class UAInboxMessageList;
 
 /**
