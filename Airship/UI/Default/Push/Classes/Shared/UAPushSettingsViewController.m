@@ -28,13 +28,15 @@
 #import "UAPushLocalization.h"
 #import "UAPushSettingsViewController.h"
 #import "UALocationService.h"
+#import "UAAnalytics.h"
 
 // Overall counts for sectioned table view
 enum {
     SectionPushEnabled = 0,
     SectionAirshipLocationEnabled = 1,
     SectionQuietTime   = 2,
-    SectionCount       = 3
+    SectionAnalyticsEnabled = 3,
+    SectionCount       = 4
 };
 
 // The section for the push enabled switch is 0
@@ -49,6 +51,8 @@ enum {
 // The row count is one
 //static NSUInteger AirshipLocationEnabledSectionSwitchCell = 1;
 static NSUInteger AirshipLocationEnabledSectionRowCount = 1;
+
+static NSUInteger AnalyticsEnabledSectionRowCount = 1;
 
 // Enums for the Quiet time table view
 enum {
@@ -131,7 +135,13 @@ enum {
             }
         }
         case SectionAirshipLocationEnabled:
+        {
             return (NSInteger)AirshipLocationEnabledSectionRowCount;
+        }
+        case SectionAnalyticsEnabled:
+        {
+            return (NSInteger)AnalyticsEnabledSectionRowCount;
+        }
         case SectionQuietTime:
         {
             if (pushEnabledSwitchOn && self.quietTimeSwitch.on) {
@@ -164,6 +174,8 @@ enum {
         }
     } else if (indexPath.section == SectionAirshipLocationEnabled) {
         return self.airshipLocationEnabledCell;
+    } else if (indexPath.section == SectionAnalyticsEnabled) {
+        return self.analyticsEnabledCell;
     }
     return nil;
 }
@@ -209,9 +221,11 @@ enum {
     }
 
     self.airshipLocationEnabledSwitch.on = [UALocationService airshipLocationServiceEnabled];
+    self.analyticsEnabledSwitch.on = [UAirship shared].analytics.enabled;
     
     self.pushEnabledLabel.text = UAPushLocalizedString(@"UA_Push_Settings_Enabled_Label");
     self.airshipLocationEnabledLabel.text = UAPushLocalizedString(@"UA_Push_Settings_Location_Enabled_Label");
+    self.analyticsEnabledLabel.text = UAPushLocalizedString(@"UA_Push_Settings_Analytics_Enabled_Label");
     self.quietTimeLabel.text = UAPushLocalizedString(@"UA_Push_Settings_Quiet_Time_Label");
     
     self.fromCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
@@ -344,11 +358,17 @@ enum {
     }
     [self.tableView reloadData];
     
-    if (self.airshipLocationEnabledSwitch.on){
+    if (self.airshipLocationEnabledSwitch.on) {
         [UALocationService setAirshipLocationServiceEnabled:YES];
     }
     else {
         [UALocationService setAirshipLocationServiceEnabled:NO];
+    }
+
+    if (self.analyticsEnabledSwitch.on) {
+        [UAirship shared].analytics.enabled = YES;
+    } else {
+        [UAirship shared].analytics.enabled = NO;
     }
 
 }
