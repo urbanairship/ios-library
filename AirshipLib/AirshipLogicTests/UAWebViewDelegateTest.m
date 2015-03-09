@@ -161,28 +161,22 @@
     [self.jsc evaluateScript:js];
 
     // Verify device model
-    XCTAssertEqualObjects(@"device model", [self.jsc evaluateScript:@"UAirship.devicemodel"].toString);
     XCTAssertEqualObjects(@"device model", [self.jsc evaluateScript:@"UAirship.getDeviceModel()"].toString);
 
     // Verify user id
-    XCTAssertEqualObjects(@"user name", [self.jsc evaluateScript:@"UAirship.userID"].toString);
     XCTAssertEqualObjects(@"user name", [self.jsc evaluateScript:@"UAirship.getUserId()"].toString);
 
     // Verify message id is null
     XCTAssertTrue([self.jsc evaluateScript:@"UAirship.getMessageId()"].isNull);
-    XCTAssertTrue([self.jsc evaluateScript:@"UAirship.messageID"].isNull);
 
     // Verify message title is null
     XCTAssertTrue([self.jsc evaluateScript:@"UAirship.getMessageTitle()"].isNull);
-    XCTAssertTrue([self.jsc evaluateScript:@"UAirship.messageTitle"].isNull);
 
     // Verify message send date is null
     XCTAssertTrue([self.jsc evaluateScript:@"UAirship.getMessageSentDate()"].isNull);
-    XCTAssertTrue([self.jsc evaluateScript:@"UAirship.messageSentDate"].isNull);
 
     // Verify message send date ms is -1
     XCTAssertEqualObjects(@-1, [self.jsc evaluateScript:@"UAirship.getMessageSentDateMS()"].toNumber);
-    XCTAssertEqualObjects(@-1, [self.jsc evaluateScript:@"UAirship.messageSentDateMS"].toNumber);
 
 
     // Verify native bridge methods are not undefined
@@ -245,6 +239,55 @@
 
     [message stopMocking];
 }
+
+
+/**
+ * Test loading the JS environemnt when a message contains a title with invalid JSON
+ * characters is properly escaped.
+ */
+- (void)testLoadJSEnvironmentWithQuatedMessageTitle {
+
+
+    id message = [OCMockObject niceMockForClass:[UAInboxMessage class]];
+
+    /*
+     * From RFC 4627, "All Unicode characters may be placed within the
+     * quotation marks except for the characters that must be escaped:
+     * quotation mark, reverse solidus, and the control characters
+     * (U+0000 through U+001F)."
+     */
+    [[[message stub] andReturn:@"\"\t\b\r\n\f/title"] title];
+
+    __block NSString *js;
+
+    // Capture the js environment string
+    [[[self.mockWebView stub] andDo:^(NSInvocation *invocation) {
+        [invocation getArgument:&js atIndex:2];
+        [invocation setReturnValue:&js];
+    }] stringByEvaluatingJavaScriptFromString:[OCMArg any]];
+
+    NSURL *url = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    request.mainDocumentURL = url;
+
+
+    // Associate the URL with the mock message
+    [[[self.mockMessageList stub] andReturn:message] messageForBodyURL:url];
+
+    [[[self.mockWebView stub] andReturn:request] request];
+
+    [self.delegate webViewDidFinishLoad:self.mockWebView];
+
+    XCTAssertNotNil(js, "Javascript environment was not populated");
+
+    [self.jsc evaluateScript:js];
+
+    // Verify message title
+    XCTAssertEqualObjects(@"\"\t\b\r\n\f/title", [self.jsc evaluateScript:@"UAirship.getMessageTitle()"].toString);
+
+    [message stopMocking];
+}
+
 
 /**
  * Test that webViewDidFinishLoad: does not load the JS environment when the URL is not whitelisted.
