@@ -266,6 +266,54 @@
 }
 
 /**
+ * Test running the action with UASituationForegroundPush situation and dictionary
+ * with localized properties notifies the app delegate of a localized alert.
+ */
+- (void)testPerformInUASituationForegroundPushNotifiyForegroundAlertLocalized {
+    self.arguments.situation = UASituationForegroundPush;
+
+    // dictionary with localized property will display localized notification
+    self.arguments.value = @{ @"aps": @{ @"alert": @{@"loc-key": @"VIEW"}}};
+
+    [[self.mockedPushDelegate expect] displayLocalizedNotificationAlert:OCMOCK_ANY];
+    [[self.mockedPushDelegate reject] displayNotificationAlert:OCMOCK_ANY];
+    [self.action performWithArguments:self.arguments completionHandler:^(UAActionResult *result) {}];
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegate should notify the delegate of a foreground notification");
+
+    // dictionary with localized property will display localized notification
+    self.arguments.value = @{ @"aps": @{ @"alert": @{@"action-loc-key": @"VIEW"}}};
+
+    [[self.mockedPushDelegate expect] displayLocalizedNotificationAlert:OCMOCK_ANY];
+    [[self.mockedPushDelegate reject] displayNotificationAlert:OCMOCK_ANY];
+    [self.action performWithArguments:self.arguments completionHandler:^(UAActionResult *result) {}];
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegate should notify the delegate of a foreground notification");
+}
+
+/**
+ * Test running the action with UASituationForegroundPush situation and dictionary
+ * without localized properties notifies the app delegate of an alert.
+ */
+- (void)testPerformInUASituationForegroundPushNotifyForegroundAlertDictionary {
+    self.arguments.situation = UASituationForegroundPush;
+
+    // dictionary without localized property will not display localized notification
+    self.arguments.value = @{ @"aps": @{ @"alert": @{@"body": @"sample body!"}}};
+
+    [[self.mockedPushDelegate expect] displayNotificationAlert:@"sample body!"];
+    [[self.mockedPushDelegate reject] displayLocalizedNotificationAlert:OCMOCK_ANY];
+    [self.action performWithArguments:self.arguments completionHandler:^(UAActionResult *result) {}];
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegate should notify the delegate of a foreground notification");
+
+    // dictionary without localized property or body will not notify delegate
+    self.arguments.value = @{ @"aps": @{ @"alert": @{@"title": @"sample title!"}}};
+
+    [[self.mockedPushDelegate reject] displayNotificationAlert:OCMOCK_ANY];
+    [[self.mockedPushDelegate reject] displayLocalizedNotificationAlert:OCMOCK_ANY];
+    [self.action performWithArguments:self.arguments completionHandler:^(UAActionResult *result) {}];
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegate should not notify the delegate of a foreground notification");
+}
+
+/**
  * Test running the action with UASituationForegroundInteractiveButton situation notifies
  * the app delegate of the event.
  */
@@ -318,5 +366,6 @@
     XCTAssertNil(runResult.value, @"Incoming push action should default to an empty result");
     XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNoData, @"Push action should return the delegate's fetch result");
 }
+
 
 @end
