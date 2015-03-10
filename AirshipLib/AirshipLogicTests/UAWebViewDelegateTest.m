@@ -245,7 +245,7 @@
  * Test loading the JS environemnt when a message contains a title with invalid JSON
  * characters is properly escaped.
  */
-- (void)testLoadJSEnvironmentWithQuatedMessageTitle {
+- (void)testLoadJSEnvironmentWithInvalidJSONCharactersMessageTitle {
 
 
     id message = [OCMockObject niceMockForClass:[UAInboxMessage class]];
