@@ -29,9 +29,13 @@
 #import "UAirship.h"
 #import "UAPush.h"
 #import "UAAnalytics.h"
+#import "UAPushNotificationHandler.h"
+
+@interface SampleAppDelegate()
+@property (nonatomic, strong) UAPushNotificationHandler *pushHandler;
+@end
 
 @implementation SampleAppDelegate
-
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
@@ -70,6 +74,11 @@
     [UAirship push].userNotificationTypes = (UIUserNotificationTypeAlert |
                                              UIUserNotificationTypeBadge |
                                              UIUserNotificationTypeSound);
+
+    // Set a delegate to handle incoming push notifications. Useful for displaying
+    // notification when they are recieved in the foreground.
+    self.pushHandler = [[UAPushNotificationHandler alloc] init];
+    [UAirship push].pushNotificationDelegate = self.pushHandler;
 
 
     // User notifications will not be enabled until userPushNotificationsEnabled is
