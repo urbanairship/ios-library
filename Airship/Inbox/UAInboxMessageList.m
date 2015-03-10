@@ -30,7 +30,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UADisposable.h"
 #import "UAInbox.h"
 #import "UAInboxAPIClient.h"
-#import "UAInboxMessageListDelegate.h"
 #import "UAInboxMessage+Internal.h"
 #import "UAInboxDBManager+Internal.h"
 #import "UAUtils.h"
@@ -208,74 +207,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     return disposable;
 }
 
-- (UADisposable *)retrieveMessageListWithDelegate:(id<UAInboxMessageListDelegate>)delegate {
-    __weak id<UAInboxMessageListDelegate> weakDelegate = delegate;
-
-    return [self retrieveMessageListWithSuccessBlock:^{
-        id<UAInboxMessageListDelegate> strongDelegate = weakDelegate;
-        if ([strongDelegate respondsToSelector:@selector(messageListLoadSucceeded)]) {
-            [strongDelegate messageListLoadSucceeded];
-        }
-    } withFailureBlock:^{
-        id<UAInboxMessageListDelegate> strongDelegate = weakDelegate;
-        if ([strongDelegate respondsToSelector:@selector(messageListLoadFailed)]){
-            [strongDelegate messageListLoadFailed];
-        }
-    }];
-}
-
-- (UADisposable *)performBatchUpdateCommand:(UABatchUpdateCommand)command
-                        withMessageIndexSet:(NSIndexSet *)messageIndexSet
-                           withSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
-                           withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock {
-
-    NSArray *updateMessageArray = [self.messages objectsAtIndexes:messageIndexSet];
-
-    switch (command) {
-        case UABatchDeleteMessages:
-            return [self markMessagesDeleted:updateMessageArray completionHandler:^{
-                if (successBlock) {
-                    successBlock();
-                }
-            }];
-        case UABatchReadMessages:
-            return [self markMessagesRead:updateMessageArray completionHandler:^{
-                if (successBlock) {
-                    successBlock();
-                }
-            }];
-        default:
-            UA_LWARN(@"Unable to perform batch update with invalid command type: %ld", (long)command);
-            return nil;
-    }
-}
-
-- (UADisposable *)performBatchUpdateCommand:(UABatchUpdateCommand)command
-                        withMessageIndexSet:(NSIndexSet *)messageIndexSet
-                               withDelegate:(id<UAInboxMessageListDelegate>)delegate {
-
-    NSArray *updateMessageArray = [self.messages objectsAtIndexes:messageIndexSet];
-    __weak id<UAInboxMessageListDelegate> weakDelegate = delegate;
-    switch (command) {
-        case UABatchDeleteMessages:
-            return [self markMessagesDeleted:updateMessageArray completionHandler:^{
-                id<UAInboxMessageListDelegate> strongDelegate = weakDelegate;
-                if ([strongDelegate respondsToSelector:@selector(batchDeleteFinished)]) {
-                    [strongDelegate batchDeleteFinished];
-                }
-            }];
-        case UABatchReadMessages:
-            return [self markMessagesRead:updateMessageArray completionHandler:^{
-                id<UAInboxMessageListDelegate> strongDelegate = weakDelegate;
-                if ([strongDelegate respondsToSelector:@selector(batchMarkAsReadFinished)]) {
-                    [strongDelegate batchMarkAsReadFinished];
-                }
-            }];
-        default:
-            UA_LWARN(@"Unable to perform batch update with invalid command type: %ld",(long)command);
-            return nil;
-    }
-}
 
 - (UADisposable *)markMessagesRead:(NSArray *)messages completionHandler:(UAInboxMessageListCallbackBlock)completionHandler {
     self.batchOperationCount++;
@@ -460,19 +391,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
 - (UAInboxMessage *)messageForID:(NSString *)messageID {
     return [self.messageIDMap objectForKey:messageID];
-}
-
-- (UAInboxMessage *)messageAtIndex:(NSUInteger)index {
-    if (index >= self.messageCount) {
-        UA_LWARN("Load message(index=%lu, count=%lu) error.", (unsigned long)index, (unsigned long)self.messageCount);
-        return nil;
-    }
-
-    return [self.messages objectAtIndex:index];
-}
-
-- (NSUInteger)indexOfMessage:(UAInboxMessage *)message {
-    return [self.messages indexOfObject:message];
 }
 
 - (BOOL)isRetrieving {

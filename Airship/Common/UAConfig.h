@@ -162,16 +162,6 @@
  */
 @property (nonatomic, assign) BOOL detectProvisioningMode;
 
-/**
- * If set to `YES`, the app will clear all keychain user information every time the app starts.
- * This is designed for development mode only.
- *
- * @deprecated As of version 5.0. To clear the keychain once during the next
- * application start, use the settings bundle to set YES for the key
- * "com.urbanairship.reset_keychain" in standard user defaults.
- */
-@property (nonatomic, assign) BOOL clearKeychain __attribute__((deprecated("As of version 5.0.0")));
-
 
 /**
  * The Urban Airship device API url. This option is reserved for internal debugging.

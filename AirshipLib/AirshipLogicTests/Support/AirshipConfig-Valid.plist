@@ -16,8 +16,6 @@
 	<string>5</string>
 	<key>detectProvisioningMode</key>
 	<true/>
-	<key>clearKeychain</key>
-	<true/>
 	<key>customConfig</key>
 	<dict>
 		<key>customKey</key>

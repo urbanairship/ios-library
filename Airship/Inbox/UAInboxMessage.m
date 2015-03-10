@@ -69,27 +69,6 @@
     }];
 }
 
-- (UADisposable *)markAsReadWithSuccessBlock:(UAInboxMessageCallbackBlock)successBlock
-                            withFailureBlock:(UAInboxMessageCallbackBlock)failureBlock {
-
-    return [self markMessageReadWithCompletionHandler:^(UAInboxMessage *message) {
-        if (successBlock) {
-            successBlock(message);
-        }
-    }];
-}
-
-- (UADisposable *)markAsReadWithDelegate:(id<UAInboxMessageListDelegate>)delegate {
-    __weak id<UAInboxMessageListDelegate> weakDelegate = delegate;
-
-    return [self markMessageReadWithCompletionHandler:^(UAInboxMessage *message){
-        id<UAInboxMessageListDelegate> strongDelegate = weakDelegate;
-        if ([strongDelegate respondsToSelector:@selector(singleMessageMarkAsReadFinished:)]) {
-            [strongDelegate singleMessageMarkAsReadFinished:message];
-        }
-    }];
-}
-
 - (BOOL)isExpired {
     if (self.messageExpiration) {
         NSComparisonResult result = [self.messageExpiration compare:[NSDate date]];

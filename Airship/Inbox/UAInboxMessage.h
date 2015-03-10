@@ -25,11 +25,12 @@
 
 #import <Foundation/Foundation.h>
 #import "UADisposable.h"
-#import "UAInboxMessageListDelegate.h"
 
-typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
 
 @class UAInboxMessageList;
+@class UAInboxMessage;
+
+typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
 
 /**
  * This class represents a Rich Push Inbox message. It contains all
@@ -121,35 +122,6 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
  */
 - (UADisposable *)markMessageReadWithCompletionHandler:(UAInboxMessageCallbackBlock)completionHandler;
 
-
-/**
- * Mark the message as read.
- * @param successBlock A block to be executed if the mark-as-read operation is successful.
- * @param failureBlock A block to be executed if the mark-as-read operation fails.
- * @return A UADisposable which can be used to cancel callback execution.
- * This value will be nil if the request is not submitted due to an already scheduled update,
- * or because the message has already been marked as read.
- *
- * @deprecated As of 5.0.0. Use markMessageReadWithCompletionHandler: instead. Marking
- * messages read no longer require an HTTP operation to complete, so the failure 
- * block will never be called.
- */
-- (UADisposable *)markAsReadWithSuccessBlock:(UAInboxMessageCallbackBlock)successBlock
-                            withFailureBlock:(UAInboxMessageCallbackBlock)failureBlock __attribute__((deprecated("As of version 5.0.0")));
-
-/**
- * Mark the message as read. This eventually results in a callback to
- * [UAInboxMessageListDelegate singleMessageMarkAsReadFinished:] or
- * [UAInboxMessageListDelegate singleMessageMarkAsReadFailed:].
- *
- * @param delegate An object implementing the `UAInboxMessageListDelegate` protocol.
- * @return A UADisposable which can be used to cancel callback execution.
- * This value will be nil if the request is not submitted due to an already scheduled update,
- * or because the message has already been marked as read.
- *
- * @deprecated As of 5.0.0. Use markMessageReadWithCompletionHandler: instead.
- */
-- (UADisposable *)markAsReadWithDelegate:(id<UAInboxMessageListDelegate>)delegate __attribute__((deprecated("As of version 5.0.0")));
 
 /**
  * YES if the message is expired, NO otherwise

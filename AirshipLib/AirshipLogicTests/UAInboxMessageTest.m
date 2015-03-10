@@ -6,7 +6,6 @@
 #import "UAInbox.h"
 #import "UAInboxDBManager.h"
 #import "UAInboxMessageList+Internal.h"
-#import "UAInboxMessageListDelegate.h"
 #import "UAInboxAPIClient.h"
 #import "UAConfig.h"
 
@@ -18,8 +17,6 @@
 
 //a mock (old-school) message list observer that will receive deprecated callbacks
 @property (nonatomic, strong) id mockMessageListObserver;
-//a mock delegate we'll pass into the appropriate methods for callbacks
-@property (nonatomic, strong) id mockMessageListDelegate;
 
 @property (nonatomic, strong) UAInboxMessageList *messageList;
 @end
@@ -49,18 +46,14 @@
     //sending (deprecated) UAInboxMessageListObserver callbacks
     self.message.inbox = self.messageList = [[UAInboxMessageList alloc] init];
 
-    self.mockMessageListDelegate = [OCMockObject mockForProtocol:@protocol(UAInboxMessageListDelegate)];
-
     //order is important with these events, so we should be explicit about it
     [self.mockMessageListObserver setExpectationOrderMatters:YES];
-    [self.mockMessageListDelegate setExpectationOrderMatters:YES];
 }
 
 - (void)tearDown {
     // Put teardown code here; it will be run once, after the last test case.
     //undo observer sign-ups
     [self.mockMessageListObserver stopMocking];
-    [self.mockMessageListDelegate stopMocking];
     [self.dbManager deleteMessages:[self.dbManager fetchMessagesWithPredicate:nil]];
     [super tearDown];
 }

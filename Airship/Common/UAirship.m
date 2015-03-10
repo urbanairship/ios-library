@@ -203,17 +203,8 @@ UALogLevel uaLogLevel = UALogLevelError;
     }
 
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     // Clearing the key chain
-    if (config.clearKeychain || [[NSUserDefaults standardUserDefaults] boolForKey:UAResetKeychainKey]) {
-
-        if (config.clearKeychain) {
-            UA_LERR(@"UAConfig.clearKeychain is deprecated. To clear the keychain once during the next application start, use the settings bundle to set YES for the key %@ in standard user defaults.", UAResetKeychainKey);
-        }
-#pragma clang diagnostic pop
-
-
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:UAResetKeychainKey]) {
         UA_LDEBUG(@"Deleting the keychain credentials");
         [UAKeychainUtils deleteKeychainValue:config.appKey];
 

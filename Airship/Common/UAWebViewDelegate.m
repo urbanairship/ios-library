@@ -68,7 +68,7 @@
 
     // Always handle uairship urls
     // uairship://command/[<arguments>][?<dictionary>]
-    if ([[url scheme] isEqualToString:@"uairship"] || [[url scheme] isEqualToString:@"ua"]) {
+    if ([[url scheme] isEqualToString:@"uairship"]) {
         if ([[UAirship shared].whitelist isWhitelisted:webView.request.mainDocumentURL]) {
             if ((navigationType == UIWebViewNavigationTypeLinkClicked) || (navigationType == UIWebViewNavigationTypeOther)) {
                 UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url webView:webView message:message];
@@ -116,11 +116,6 @@
     id strongContentWindow = self.richContentWindow;
     if ([strongContentWindow respondsToSelector:@selector(closeWebView:animated:)]) {
         [strongContentWindow closeWebView:webView animated:animated];
-    } else if ([strongContentWindow respondsToSelector:@selector(closeWindow:)]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [strongContentWindow closeWindow:animated];
-#pragma clang diagnostic pop
     }
 }
 
@@ -221,17 +216,10 @@
 }
 
 - (void)performJSDelegateWithData:(UAWebViewCallData *)data {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    id<UAInboxJavaScriptDelegate> inboxJSDelegate = [UAirship inbox].jsDelegate;
-#pragma clang diagnostic pop
     id <UAJavaScriptDelegate> actionJSDelegate = [UAirship shared].actionJSDelegate;
     id <UAJavaScriptDelegate> userJSDDelegate = [UAirship shared].jsDelegate;
 
-    BOOL isUsingNewScheme = [data.url.scheme isEqualToString:@"uairship"];
-    BOOL isUsingDeprecatedScheme = [data.url.scheme isEqualToString:@"ua"];
-
-    if (isUsingNewScheme) {
+    if ([data.url.scheme isEqualToString:@"uairship"]) {
         if ([data.name isEqualToString:@"run-actions"] ||
             [data.name isEqualToString:@"run-basic-actions"] ||
             [data.name isEqualToString:@"run-action-cb"]) {
@@ -241,10 +229,6 @@
         } else {
             [self performAsyncJSCallWithDelegate:userJSDDelegate data:data];
         }
-    } else if (isUsingDeprecatedScheme) {
-        //deprecated inbox JS delegate, if applicable
-        [self performDeprecatedJSCallWithDelegate:inboxJSDelegate
-                                             data:data];
     }
 }
 
@@ -259,21 +243,6 @@
         }];
     }
 }
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-- (void)performDeprecatedJSCallWithDelegate:(id<UAInboxJavaScriptDelegate>)delegate
-                                       data:(UAWebViewCallData *)data {
-
-    SEL selector = @selector(callbackArguments:withOptions:);
-    if ([delegate respondsToSelector:selector]) {
-        NSString *script = [delegate callbackArguments:data.arguments withOptions:data.options];
-        if (script) {
-            [data.webView stringByEvaluatingJavaScriptFromString:script];
-        }
-    }
-}
-#pragma clang diagnostic pop
 
 - (NSURL *)createValidPhoneNumberUrlFromUrl:(NSURL *)url {
 

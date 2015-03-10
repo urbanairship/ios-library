@@ -25,7 +25,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import <Foundation/Foundation.h>
 
-#import "UAInboxMessageListDelegate.h"
 #import "UAUser.h"
 #import "UADisposable.h"
 
@@ -51,25 +50,6 @@ extern NSString * const UAInboxMessageListWillUpdateNotification;
 extern NSString * const UAInboxMessageListUpdatedNotification;
 
 @class UAInboxMessage;
-
-/**
- * An enum expressing the two possible batch update commands,
- * delete and mark-as-read.
- *
- * @deprecated As of 5.0.
- */
-typedef __attribute__((deprecated("As of version 5.0.0"))) NS_ENUM (NSInteger, UABatchUpdateCommand) {
-    /**
-     * Update the message list by marking messages as read.
-     */
-    UABatchReadMessages,
-
-    /**
-     * Update the message list by deleting messages.
-     */
-    UABatchDeleteMessages
-};
-
 
 /**
  * The primary interface to the contents of the inbox.
@@ -113,63 +93,6 @@ typedef __attribute__((deprecated("As of version 5.0.0"))) NS_ENUM (NSInteger, U
                                      withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock;
 
 /**
- * Fetch new messages from the server.  This will result in a
- * callback to the passed delegate at [UAInboxMessageListDelegate messageListLoadSucceeded] upon
- * successful completion, and [UAInboxMessageListDelegate messageListLoadFailed] on failure. If
- * The associated user has not yet been created, this will be a no-op.
- *
- * @param delegate An object implementing the `UAInboxMessageListDelegate` protocol.
- * @return A UADisposable token which can be used to cancel callback execution.
- * This value will be nil if the associated user has not yet been created.
- *
- * @deprecated As of 5.0.0. Use retrieveMessageListWithSuccessBlock:withFailureBlock: instead.
- * */
-- (UADisposable *)retrieveMessageListWithDelegate:(id<UAInboxMessageListDelegate>)delegate __attribute__((deprecated("As of version 5.0.0")));
-
-
-/**
- * Update the message list by marking messages as read, or deleting them.
- *
- *
- * @param command the UABatchUpdateCommand to perform.
- * @param messageIndexSet an NSIndexSet of message IDs representing the subset of the inbox to update.
- * @param successBlock A block to be executed if the batch update succeeds.
- * @param failureBlock A block to be executed if the batch update fails.
- * @return A UADisposable token which can be used to cancel callback execution.
- * If the passed batch update command cannot be interpreted, this value will be nil.
- *
- * @deprecated As of 5.0.0. Use markMessagesRead:completionHandler: or markMessagesDeleted:completionHandler:
- * instead. Marking messages read or deleted no longer requires an HTTP operation
- * to succeed, so the failure block will no longer be called.
- */
-- (UADisposable *)performBatchUpdateCommand:(UABatchUpdateCommand)command
-                        withMessageIndexSet:(NSIndexSet *)messageIndexSet
-                           withSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
-                           withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock __attribute__((deprecated("As of version 5.0.0")));
-
-/**
- * Update the message list by marking messages as read, or deleting them.
- * This eventually will result in an asyncrhonous delegate callback to
- * [UAInboxMessageListDelegate batchMarkAsReadFinished],
- * [UAInboxMessageListDelegate batchMarkAsReadFailed],
- * [UAInboxMessageListDelegate batchDeleteFinished], or
- * [UAInboxMessageListDelegate batchDeleteFailed].
- *
- * @param command the UABatchUpdateCommand to perform.
- * @param messageIndexSet an NSIndexSet of message IDs representing the subset of the inbox to update.
- * @param delegate An object implementing the `UAInboxMessageListDelegate` protocol.
- * @return A UADisposable token which can be used to cancel callback execution.
- * If the passed batch update command cannot be interpreted, this value will be nil.
- *
- * @deprecated As of 5.0.0. Use markMessagesRead:completionHandler: or markMessagesDeleted:completionHandler:
- * instead.
- */
-- (UADisposable *)performBatchUpdateCommand:(UABatchUpdateCommand)command
-                        withMessageIndexSet:(NSIndexSet *)messageIndexSet
-                               withDelegate:(id<UAInboxMessageListDelegate>)delegate __attribute__((deprecated("As of version 5.0.0")));
-
-
-/**
  * Returns the number of messages currently in the inbox.
  * @return The message count as an integer.
  */
@@ -188,27 +111,6 @@ typedef __attribute__((deprecated("As of version 5.0.0"))) NS_ENUM (NSInteger, U
  * @return The associated UAInboxMessage object.
  */
 - (UAInboxMessage *)messageForID:(NSString *)messageID;
-
-/**
- * Returns the message associated with a particular message list index.
- * @param index The message list index as an integer.
- * @return The associated UAInboxMessage object.
- *
- * @deprecated As of 5.0.0. Inbox implementations should store a local copy of the messages array
- * and perform its own message at index operations.
- */
-- (UAInboxMessage*)messageAtIndex:(NSUInteger)index __attribute__((deprecated("As of version 5.0.0")));
-
-/**
- * Returns the index of a particular message within the message list.
- * @param message The UAInboxMessage object of interest.
- * @return The index of the message as an integer.
- *
- * @deprecated As of 5.0.0. Inbox implementations should store a local copy of the messages array
- * and perform its own index of message operations.
- */
-- (NSUInteger)indexOfMessage:(UAInboxMessage *)message __attribute__((deprecated("As of version 5.0.0")));
-
 
 /**
  * The list of messages on disk as an NSArray.

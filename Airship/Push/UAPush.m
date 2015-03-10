@@ -420,25 +420,6 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 #pragma mark -
 #pragma mark Open APIs - UA Registration Tags APIs
 
-- (void)addTagToCurrentDevice:(NSString *)tag {
-    [self addTag:tag];
-}
-
-- (void)addTagsToCurrentDevice:(NSArray *)tags {
-    [self addTags:tags];
-}
-
-
-- (void)removeTagFromCurrentDevice:(NSString *)tag {
-    [self removeTags:[NSArray arrayWithObject:tag]];
-}
-
-- (void)removeTagsFromCurrentDevice:(NSArray *)tags {
-    NSMutableArray *mutableTags = [NSMutableArray arrayWithArray:self.tags];
-    [mutableTags removeObjectsInArray:tags];
-    [self.dataStore setObject:mutableTags forKey:UAPushTagsSettingsKey];
-}
-
 - (void)addTag:(NSString *)tag {
     [self addTags:[NSArray arrayWithObject:tag]];
 }
