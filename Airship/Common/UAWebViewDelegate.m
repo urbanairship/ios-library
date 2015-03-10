@@ -36,6 +36,7 @@
 #import "UAInboxMessageList.h"
 #import "UAJavaScriptDelegate.h"
 #import "UAWebViewCallData.h"
+#import "NSString+UAURLEncoding.h"
 
 @interface UAWebViewDelegate()
 @property (nonatomic, strong) NSMapTable *injectedWebViews;
@@ -134,7 +135,6 @@
 }
 
 
-
 - (void)populateJavascriptEnvironment:(UIWebView *)webView {
     // This will be nil if we are not loading a Rich Push message
     UAInboxMessage *message = [[UAirship inbox].messageList messageForBodyURL:webView.request.mainDocumentURL];
@@ -144,39 +144,40 @@
      */
     __block NSString *js = @"var UAirship = {};";
 
-    void (^appendJavascriptProperty)(NSString *, NSString *, id) = ^(NSString *propertyName, NSString *methodName, id value){
-        NSString *valueAsString;
+    void (^appendStringGetter)(NSString *, NSString *) = ^(NSString *methodName, NSString *value){
         if (!value) {
-            valueAsString = @"null";
-        } else if ([value isKindOfClass:[NSString class]]) {
-            valueAsString = [NSString stringWithFormat:@"\"%@\"", value];
+            js = [js stringByAppendingFormat:@"UAirship.%@ = function() {return null;};", methodName];
         } else {
-            valueAsString = [value stringValue];
+            NSString *encodedValue = [value urlEncodedStringWithEncoding:NSUTF8StringEncoding];
+            js = [js stringByAppendingFormat:@"UAirship.%@ = function() {return decodeURIComponent(\"%@\");};", methodName, encodedValue];
         }
-
-        js = [js stringByAppendingFormat:@"UAirship.%@ = %@;", propertyName, valueAsString];
-        js = [js stringByAppendingFormat:@"UAirship.%@ = function() {return %@};", methodName, valueAsString];
     };
+
+    void (^appendNumberGetter)(NSString *, NSNumber *) = ^(NSString *methodName, NSNumber *value){
+        NSNumber *returnValue = value ?: @(-1);
+        js = [js stringByAppendingFormat:@"UAirship.%@ = function() {return %@;};", methodName, returnValue];
+    };
+
 
     /*
      * Set the device model.
      */
-    appendJavascriptProperty(@"devicemodel", @"getDeviceModel", [UIDevice currentDevice].model);
+    appendStringGetter(@"getDeviceModel", [UIDevice currentDevice].model);
 
     /*
      * Set the UA user ID.
      */
-    appendJavascriptProperty(@"userID", @"getUserId", [UAirship inboxUser].username);
+    appendStringGetter(@"getUserId", [UAirship inboxUser].username);
 
     /*
      * Set the current message ID.
      */
-    appendJavascriptProperty(@"messageID", @"getMessageId", message.messageID);
+    appendStringGetter(@"getMessageId", message.messageID);
 
     /*
      * Set the current message's title.
      */
-    appendJavascriptProperty(@"messageTitle", @"getMessageTitle", message.title);
+    appendStringGetter(@"getMessageTitle", message.title);
 
     /*
      * Set the current message's sent date
@@ -184,14 +185,14 @@
     if (message.messageSent) {
         NSTimeInterval messageSentDateMS = [message.messageSent timeIntervalSince1970] * 1000;
         NSNumber *milliseconds = [NSNumber numberWithDouble:messageSentDateMS];
-        appendJavascriptProperty(@"messageSentDateMS", @"getMessageSentDateMS", milliseconds);
+        appendNumberGetter(@"getMessageSentDateMS", milliseconds);
 
         NSString *messageSentDate = [[UAUtils ISODateFormatterUTC] stringFromDate:message.messageSent];
-        appendJavascriptProperty(@"messageSentDate", @"getMessageSentDate", messageSentDate);
+        appendStringGetter(@"getMessageSentDate", messageSentDate);
 
     } else {
-        appendJavascriptProperty(@"messageSentDateMS", @"getMessageSentDateMS", @(-1));
-        appendJavascriptProperty(@"messageSentDate", @"getMessageSentDate", nil);
+        appendNumberGetter(@"getMessageSentDateMS", nil);
+        appendStringGetter(@"getMessageSentDate", nil);
     }
 
     /*
