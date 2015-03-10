@@ -91,18 +91,16 @@
             } else if ([alert isKindOfClass:[NSDictionary class]] &&
                        [pushDelegate respondsToSelector:@selector(displayLocalizedNotificationAlert:)]) {
 
-                if (alert[@"action-loc-key"] != nil || alert[@"loc-key"] != nil) {
+                if (alert[@"action-loc-key"] || alert[@"loc-key"]) {
 
                     // The alert is a a dictionary with more localization details
                     // This should be customized to fit your message details or usage scenario
                     [pushDelegate displayLocalizedNotificationAlert:alert];
 
-                } else {
+                } else if (alert[@"body"]) {
 
-                    if (alert[@"body"] != nil) {
-                        // The alert does not contain localized info, so just display body
-                        [pushDelegate displayNotificationAlert:alert[@"body"]];
-                    }
+                    // The alert does not contain localized info, so just display body
+                    [pushDelegate displayNotificationAlert:alert[@"body"]];
                 }
             }
         }
