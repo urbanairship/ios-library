@@ -88,19 +88,30 @@
                 // The alert is a single string message so we can display it
                 [pushDelegate displayNotificationAlert:alert];
 
-            } else if ([alert isKindOfClass:[NSDictionary class]] &&
-                       [pushDelegate respondsToSelector:@selector(displayLocalizedNotificationAlert:)]) {
+            } else if ([alert isKindOfClass:[NSDictionary class]]) {
 
+                // If it contains localization details
                 if (alert[@"action-loc-key"] || alert[@"loc-key"]) {
 
-                    // The alert is a a dictionary with more localization details
-                    // This should be customized to fit your message details or usage scenario
-                    [pushDelegate displayLocalizedNotificationAlert:alert];
+                    if ([pushDelegate respondsToSelector:@selector(displayLocalizedNotificationAlert:)]) {
 
-                } else if (alert[@"body"]) {
+                        // The alert is a dictionary with more localization details
+                        // This should be customized to fit your message details or usage scenario
+                        [pushDelegate displayLocalizedNotificationAlert:alert];
 
-                    // The alert does not contain localized info, so just display body
-                    [pushDelegate displayNotificationAlert:alert[@"body"]];
+                    } else if ([pushDelegate respondsToSelector:@selector(displayNotificationAlert:)]) {
+
+                        // Fall back to just display the notificaiton
+                        if (alert[@"body"]) {
+                            [pushDelegate displayNotificationAlert:alert[@"body"]];
+                        }
+                    }
+
+                } else  if ([pushDelegate respondsToSelector:@selector(displayNotificationAlert:)]) {
+
+                    if (alert[@"body"]) {
+                        [pushDelegate displayNotificationAlert:alert[@"body"]];
+                    }
                 }
             }
         }
