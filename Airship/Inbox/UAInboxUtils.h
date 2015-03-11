@@ -31,21 +31,21 @@
 @interface UAInboxUtils : NSObject
 
 /**
- *  Retrieves a rich push message ID from a notification dictionary
+ *  Retrieves an inbox message ID from a notification dictionary
  *
  * @param notification The notification dictionary.
- * @return a rich push message ID if found, nil otherwise
+ * @return a message ID if found, nil otherwise
  */
-+ (NSString *)getRichPushMessageIDFromNotification:(NSDictionary *)notification;
++ (NSString *)inboxMessageIDFromNotification:(NSDictionary *)notification;
 
 
 /**
- * Retrieves a rich push message ID from an NSArray containing the ID
+ * Retrieves an inbox message ID from an NSArray containing the ID
  * or if the value is the ID.
  *
- * @param richPushValues The value of the rich push id from a notification.
- * @return a rich push message ID if found, nil otherwise
+ * @param values The value of the inbox message id from a notification.
+ * @return a message ID if found, nil otherwise
  */
-+ (NSString *)getRichPushMessageIDFromValue:(id)richPushValues;
++ (NSString *)inboxMessageIDFromValue:(id)values;
 
 @end

@@ -34,7 +34,7 @@
 
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
 
-    NSString *richPushId = [UAInboxUtils getRichPushMessageIDFromNotification:notification];
+    NSString *richPushId = [UAInboxUtils inboxMessageIDFromNotification:notification];
     if (richPushId) {
         [data setValue:richPushId forKey:@"rich_push_id"];
     }
