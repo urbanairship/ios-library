@@ -327,6 +327,12 @@ NSString *const UAPushQuietTimeEndKey = @"end";
     self.shouldUpdateAPNSRegistration = YES;
 }
 
+- (NSSet *)allUserNotificationCategories {
+    NSMutableSet *categories = [NSMutableSet setWithSet:[UAUserNotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories]];
+    [categories unionSet:self.userNotificationCategories];
+    return categories;
+}
+
 - (NSDictionary *)quietTime {
     return [self.dataStore dictionaryForKey:UAPushQuietTimeSettingsKey];
 }
@@ -772,13 +778,10 @@ BOOL deferChannelCreationOnForeground = false;
     UIApplication *application = [UIApplication sharedApplication];
 
     if ([UIUserNotificationSettings class]) {
-
-
+        
         // Push Enabled
         if (self.userPushNotificationsEnabled) {
-            NSMutableSet *categories = [NSMutableSet setWithSet:[UAUserNotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories]];
-            [categories unionSet:self.userNotificationCategories];
-
+            NSSet *categories = [self allUserNotificationCategories];
             UA_LDEBUG(@"Registering for user notification types %ld.", (long)self.userNotificationTypes);
             [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:self.userNotificationTypes
                                                                                             categories:categories]];

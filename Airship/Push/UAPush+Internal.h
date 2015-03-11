@@ -148,6 +148,9 @@ extern NSString *const UAPushChannelLocationKey;
  */
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
+@property (nonatomic, readonly) NSSet *allUserNotificationCategories;
+
+
 /**
  * Factory method to create a push instance.
  * @param config The Urban Airship config

@@ -6,6 +6,10 @@
 #import "UAActionArguments.h"
 #import "UAirship+Internal.h"
 #import "UAPreferenceDataStore.h"
+#import "UAPush+Internal.h"
+#import "UAUserNotificationCategories+Internal.h"
+#import "UAUserNotificationCategory.h"
+#import "UAUserNotificationAction.h"
 
 // 30 days in seconds
 #define kUADefaultInAppMessageExpiryInterval 60 * 60 * 24 * 30
@@ -182,12 +186,18 @@
     NSMutableArray *bindings = [NSMutableArray array];
 
     // Restrict this to iOS 8+ for now
-    if (self.buttonGroup && [UIUserNotificationCategory class]) {
+    if (self.buttonGroup) {
 
-        // Get the current set of interactive notification categories
-        NSSet *categories = [UIApplication sharedApplication].currentUserNotificationSettings.categories;
+        NSSet *categories;
 
-        for (UIUserNotificationCategory *category in categories) {
+        if ([UIUserNotificationCategory class]) {
+            // Get the current set of interactive notification categories
+            categories = [UIApplication sharedApplication].currentUserNotificationSettings.categories;
+        } else {
+            categories =  [UAirship push].allUserNotificationCategories;
+        }
+
+        for (UAUserNotificationCategory *category in categories) {
 
             // Find the category that matches our buttonGroup
             if (![category.identifier isEqualToString:self.buttonGroup]) {
@@ -195,7 +205,7 @@
             }
 
             // Create a button action binding for each corresponding action identifier
-            for (UIUserNotificationAction *notificationAction in [category actionsForContext:UIUserNotificationActionContextDefault]) {
+            for (UAUserNotificationAction *notificationAction in [category actionsForContext:UAUserNotificationActionContextDefault]) {
                 NSDictionary *payload = self.buttonActions[notificationAction.identifier];
                 if (payload) {
                     UAInAppMessageButtonActionBinding *binding = [[UAInAppMessageButtonActionBinding alloc] init];
@@ -203,7 +213,7 @@
                                                                                [NSBundle mainBundle], notificationAction.title, nil);
 
                     // choose the situation that matches the corresponding notificationAction's activation mode
-                    binding.situation = notificationAction.activationMode == UIUserNotificationActivationModeForeground ?
+                    binding.situation = notificationAction.activationMode == UAUserNotificationActivationModeForeground ?
                     UASituationForegroundInteractiveButton : UASituationBackgroundInteractiveButton;
 
                     binding.actions = payload;
