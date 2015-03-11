@@ -34,8 +34,8 @@
 enum {
     SectionPushEnabled = 0,
     SectionAirshipLocationEnabled = 1,
-    SectionQuietTime   = 2,
-    SectionAnalyticsEnabled = 3,
+    SectionAnalyticsEnabled = 2,
+    SectionQuietTime   = 3,
     SectionCount       = 4
 };
 
@@ -221,7 +221,8 @@ enum {
     }
 
     self.airshipLocationEnabledSwitch.on = [UALocationService airshipLocationServiceEnabled];
-    self.analyticsEnabledSwitch.on = [UAirship shared].analytics.enabled;
+    // If the switch is enabled, don't send usage data
+    self.analyticsEnabledSwitch.on = ![UAirship shared].analytics.enabled;
     
     self.pushEnabledLabel.text = UAPushLocalizedString(@"UA_Push_Settings_Enabled_Label");
     self.airshipLocationEnabledLabel.text = UAPushLocalizedString(@"UA_Push_Settings_Location_Enabled_Label");
@@ -366,9 +367,10 @@ enum {
     }
 
     if (self.analyticsEnabledSwitch.on) {
-        [UAirship shared].analytics.enabled = YES;
-    } else {
+        // If switch is enabled, don't send usage data
         [UAirship shared].analytics.enabled = NO;
+    } else {
+        [UAirship shared].analytics.enabled = YES;
     }
 
 }

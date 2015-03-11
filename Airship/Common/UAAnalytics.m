@@ -394,7 +394,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     
     [self pruneEvents];
 
-    if (!self.enabled || ![self hasEventsToSend]) {
+    if (![self hasEventsToSend]) {
         return nil;
     }
 
