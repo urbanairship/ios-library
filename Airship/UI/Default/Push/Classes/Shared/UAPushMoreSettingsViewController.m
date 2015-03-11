@@ -377,8 +377,8 @@ static NSUInteger channelRowCount = 1;
     
     self.deviceTokenAliasCell.detailTextLabel.text = [UAirship push].alias ? [UAirship push].alias : @"Not Set";
 
-    NSString *namedUserId = [UAirship push].namedUser.identifier;
-    self.deviceTokenNamedUserCell.detailTextLabel.text = namedUserId ? namedUserId : @"Not Set";
+    NSString *namedUserID = [UAirship push].namedUser.identifier;
+    self.deviceTokenNamedUserCell.detailTextLabel.text = namedUserID ? namedUserID : @"Not Set";
     
     if ([[UAirship push].tags count] > 0) {
         self.deviceTokenTagsCell.detailTextLabel.text = [[UAirship push].tags componentsJoinedByString:@", "];

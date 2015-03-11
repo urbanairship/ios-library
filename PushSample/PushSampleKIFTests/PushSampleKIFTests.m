@@ -70,10 +70,10 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     [tester verifyPushEnabled:YES];
 
     // Verify channel ID created
-    NSString *channelId = [UAirship push].channelID;
-    NSLog(@"Channel ID is: %@", channelId);
+    NSString *channelID = [UAirship push].channelID;
+    NSLog(@"Channel ID is: %@", channelID);
 
-    if (!channelId) {
+    if (!channelID) {
         NSLog(@"Test failed: Expected channel ID to be created");
         exit(EXIT_FAILURE);
     }
@@ -82,7 +82,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     [tester waitForTappableViewWithAccessibilityLabel:@"Channel ID"];
     [tester tapViewWithAccessibilityLabel:@"Channel ID"];
 
-    [tester waitForViewWithAccessibilityLabel:channelId];
+    [tester waitForViewWithAccessibilityLabel:channelID];
 
     if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
         [tester tapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton];

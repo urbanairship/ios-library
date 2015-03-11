@@ -58,7 +58,7 @@
     [super setUp];
     
     self.mockedKeychainClass = [OCMockObject mockForClass:[UAKeychainUtils class]];
-    [[[self.mockedKeychainClass stub] andReturn:@"some-device-id"] getDeviceID];
+    [[[self.mockedKeychainClass stub] andReturn:@"some-device-ID"] getDeviceID];
 
     self.mockLocaleClass = [OCMockObject mockForClass:[NSLocale class]];
     self.mockTimeZoneClass = [OCMockObject mockForClass:[NSTimeZone class]];
@@ -139,7 +139,7 @@
     [[[self.mockPush stub] andReturn:channelIDString] channelID];
 
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
-    XCTAssertEqualObjects([headers objectForKey:@"X-UA-Channel-ID"], channelIDString, @"Wrong channel id in event headers");
+    XCTAssertEqualObjects([headers objectForKey:@"X-UA-Channel-ID"], channelIDString, @"Wrong channel ID in event headers");
 }
 
 - (void)testRequestChannelOptInNoHeader {
@@ -379,9 +379,9 @@
 }
 
 -(NSMutableDictionary *) createValidEvent {
-    return [@{@"event_id": @"some-event-id",
+    return [@{@"event_id": @"some-event-ID",
              @"data": [NSMutableData dataWithCapacity:1],
-             @"session_id": @"some-session-id",
+             @"session_id": @"some-session-ID",
              @"type": @"base",
              @"time":[NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]],
              @"event_size":@"40"} mutableCopy];

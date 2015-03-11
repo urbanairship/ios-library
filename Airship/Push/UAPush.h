@@ -248,7 +248,7 @@
 @property (nonatomic, copy, readonly) NSString *deviceToken;
 
 /**
- * The channel id for this device.
+ * The channel ID for this device.
  */
 @property (nonatomic, copy, readonly) NSString *channelID;
 

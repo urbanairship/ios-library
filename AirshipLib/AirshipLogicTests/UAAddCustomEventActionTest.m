@@ -86,10 +86,10 @@
  */
 - (void)testPerformNSNumber {
     NSDictionary *dict = @{@"event_name": @"event name",
-                           @"transaction_id": @"transaction id",
+                           @"transaction_id": @"transaction ID",
                            @"event_value": @(123.45),
                            @"interaction_type": @"interaction type",
-                           @"interaction_id": @"interaction id"};
+                           @"interaction_id": @"interaction ID"};
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:dict
                                                       withSituation:UASituationManualInvocation];
@@ -99,10 +99,10 @@
     [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         UACustomEvent *event = obj;
         return [event.eventName isEqualToString:@"event name"] &&
-               [event.transactionID isEqualToString:@"transaction id"] &&
+               [event.transactionID isEqualToString:@"transaction ID"] &&
                [event.eventValue isEqualToNumber:@(123.45)] &&
                [event.interactionType isEqualToString:@"interaction type"] &&
-               [event.interactionID isEqualToString:@"interaction id"];
+               [event.interactionID isEqualToString:@"interaction ID"];
 
     }]];
 
@@ -118,10 +118,10 @@
  */
 - (void)testPerformString {
     NSDictionary *dict = @{@"event_name": @"event name",
-                           @"transaction_id": @"transaction id",
+                           @"transaction_id": @"transaction ID",
                            @"event_value": @"123.45",
                            @"interaction_type": @"interaction type",
-                           @"interaction_id": @"interaction id"};
+                           @"interaction_id": @"interaction ID"};
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:dict
                                                       withSituation:UASituationManualInvocation];
@@ -131,10 +131,10 @@
     [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         UACustomEvent *event = obj;
         return [event.eventName isEqualToString:@"event name"] &&
-        [event.transactionID isEqualToString:@"transaction id"] &&
+        [event.transactionID isEqualToString:@"transaction ID"] &&
         [event.eventValue isEqualToNumber:@(123.45)] &&
         [event.interactionType isEqualToString:@"interaction type"] &&
-        [event.interactionID isEqualToString:@"interaction id"];
+        [event.interactionID isEqualToString:@"interaction ID"];
 
     }]];
 
@@ -149,10 +149,10 @@
  */
 - (void)testPerformInvalidCustomEventName {
     NSDictionary *dict = @{@"event_name": @"",
-                           @"transaction_id": @"transaction id",
+                           @"transaction_id": @"transaction ID",
                            @"event_value": @"123.45",
                            @"interaction_type": @"interaction type",
-                           @"interaction_id": @"interaction id"};
+                           @"interaction_id": @"interaction ID"};
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:dict withSituation:UASituationManualInvocation];
 
@@ -167,12 +167,12 @@
 
 
 /**
- * Test auto filling in the interaction id and type from an mcrap when left
+ * Test auto filling in the interaction ID and type from an mcrap when left
  * empty.
  */
 - (void)testInteractionEmptyMCRAP {
     id message = [OCMockObject mockForClass:[UAInboxMessage class]];
-    [[[message stub] andReturn:@"message id"] messageID];
+    [[[message stub] andReturn:@"message ID"] messageID];
     [[[message stub] andReturn:@"messageTitle"] title];
     [[[message stub] andReturn:@"someContentType"] contentType];
     [[[message stub] andReturn:@{@"someKey":@"someValue"}] extra];
@@ -182,7 +182,7 @@
     [[[message stub] andReturn:[NSDate dateWithTimeIntervalSince1970:1376352982]] messageSent];
 
     NSDictionary *eventPayload = @{@"event_name": @"event name",
-                           @"transaction_id": @"transaction id",
+                           @"transaction_id": @"transaction ID",
                            @"event_value": @"123.45"};
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:eventPayload
@@ -194,9 +194,9 @@
     [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         UACustomEvent *event = obj;
         return [event.eventName isEqualToString:@"event name"] &&
-        [event.transactionID isEqualToString:@"transaction id"] &&
+        [event.transactionID isEqualToString:@"transaction ID"] &&
         [event.eventValue isEqualToNumber:@(123.45)] &&
-        [event.interactionID isEqualToString:@"message id"] &&
+        [event.interactionID isEqualToString:@"message ID"] &&
         [event.interactionType isEqualToString:@"ua_mcrap"];
     }]];
 
@@ -207,12 +207,12 @@
 }
 
 /**
- * Test not modifying the interaction id and type when it is set and triggered
+ * Test not modifying the interaction ID and type when it is set and triggered
  * from an mcrap.
  */
 - (void)testInteractionSetMCRAP {
     id message = [OCMockObject mockForClass:[UAInboxMessage class]];
-    [[[message stub] andReturn:@"message id"] messageID];
+    [[[message stub] andReturn:@"message ID"] messageID];
     [[[message stub] andReturn:@"messageTitle"] title];
     [[[message stub] andReturn:@"someContentType"] contentType];
     [[[message stub] andReturn:@{@"someKey":@"someValue"}] extra];
@@ -222,10 +222,10 @@
     [[[message stub] andReturn:[NSDate dateWithTimeIntervalSince1970:1376352982]] messageSent];
     
     NSDictionary *eventPayload = @{@"event_name": @"event name",
-                                   @"transaction_id": @"transaction id",
+                                   @"transaction_id": @"transaction ID",
                                    @"event_value": @"123.45",
                                    @"interaction_type": @"interaction type",
-                                   @"interaction_id": @"interaction id"};
+                                   @"interaction_id": @"interaction ID"};
 
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:eventPayload
@@ -237,9 +237,9 @@
     [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         UACustomEvent *event = obj;
         return [event.eventName isEqualToString:@"event name"] &&
-        [event.transactionID isEqualToString:@"transaction id"] &&
+        [event.transactionID isEqualToString:@"transaction ID"] &&
         [event.eventValue isEqualToNumber:@(123.45)] &&
-        [event.interactionID isEqualToString:@"interaction id"] &&
+        [event.interactionID isEqualToString:@"interaction ID"] &&
         [event.interactionType isEqualToString:@"interaction type"];
     }]];
 
@@ -251,17 +251,17 @@
 
 
 /**
- * Test setting the conversion send id on the event if the action arguments has
+ * Test setting the conversion send ID on the event if the action arguments has
  * a push payload meta data.
  */
 - (void)testSetConversionSendIdFromPush {
     NSDictionary *dict = @{@"event_name": @"event name",
-                           @"transaction_id": @"transaction id",
+                           @"transaction_id": @"transaction ID",
                            @"event_value": @"123.45",
                            @"interaction_type": @"interaction type",
-                           @"interaction_id": @"interaction id"};
+                           @"interaction_id": @"interaction ID"};
 
-    NSDictionary *notification = @{ @"_": @"send id", @"apns": @{@"alert": @"oh hi"} };
+    NSDictionary *notification = @{ @"_": @"send ID", @"apns": @{@"alert": @"oh hi"} };
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:dict
                                                       withSituation:UASituationManualInvocation
@@ -272,11 +272,11 @@
     [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         UACustomEvent *event = obj;
         return [event.eventName isEqualToString:@"event name"] &&
-        [event.transactionID isEqualToString:@"transaction id"] &&
+        [event.transactionID isEqualToString:@"transaction ID"] &&
         [event.eventValue isEqualToNumber:@(123.45)] &&
         [event.interactionType isEqualToString:@"interaction type"] &&
-        [event.interactionID isEqualToString:@"interaction id"] &&
-        [event.data[@"conversion_send_id"] isEqualToString:@"send id"];
+        [event.interactionID isEqualToString:@"interaction ID"] &&
+        [event.data[@"conversion_send_id"] isEqualToString:@"send ID"];
     }]];
 
     [self verifyPerformWithArgs:args withExpectedResult:expectedResult];

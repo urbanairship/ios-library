@@ -350,10 +350,10 @@
     __block UAActionResult *runResult;
 
     self.arguments.situation = UASituationForegroundInteractiveButton;
-    self.arguments.metadata = @{UAActionMetadataUserNotificationActionIDKey: @"action id"};
+    self.arguments.metadata = @{UAActionMetadataUserNotificationActionIDKey: @"action ID"};
 
     // Expect the delegate to be called. Use a checkWithBlock to call the completion handler.
-    [[self.mockedPushDelegate expect] launchedFromNotification:self.arguments.value actionIdentifier:@"action id" completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+    [[self.mockedPushDelegate expect] launchedFromNotification:self.arguments.value actionIdentifier:@"action ID" completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)() = obj;
         completionBlock();
         return YES;
@@ -377,10 +377,10 @@
     __block UAActionResult *runResult;
 
     self.arguments.situation = UASituationBackgroundInteractiveButton;
-    self.arguments.metadata = @{UAActionMetadataUserNotificationActionIDKey: @"action id"};
+    self.arguments.metadata = @{UAActionMetadataUserNotificationActionIDKey: @"action ID"};
 
     // Expect the delegate to be called. Use a checkWithBlock to call the completion handler.
-    [[self.mockedPushDelegate expect] receivedBackgroundNotification:self.arguments.value actionIdentifier:@"action id" completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+    [[self.mockedPushDelegate expect] receivedBackgroundNotification:self.arguments.value actionIdentifier:@"action ID" completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)() = obj;
         completionBlock();
         return YES;

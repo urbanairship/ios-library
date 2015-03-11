@@ -97,7 +97,7 @@
 }
 
 - (BOOL)updateMessageWithDictionary:(NSDictionary *)dictionary {
-    UAInboxMessage *message = [self messageWithId:[dictionary objectForKey:@"message_id"]];
+    UAInboxMessage *message = [self messageWithID:[dictionary objectForKey:@"message_id"]];
 
     if (!message) {
         return NO;
@@ -265,7 +265,7 @@
     }
 }
 
--(UAInboxMessage *)messageWithId:(NSString *)messageID {
+-(UAInboxMessage *)messageWithID:(NSString *)messageID {
     if (!messageID) {
         return nil;
     }
@@ -283,7 +283,7 @@
     NSArray *resultData = [self.managedObjectContext executeFetchRequest:request error:&error];
 
     if (error) {
-        UA_LWARN("Error when retrieving message with id %@", messageID);
+        UA_LWARN("Error when retrieving message with ID %@", messageID);
         return nil;
     }
 

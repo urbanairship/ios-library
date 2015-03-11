@@ -154,7 +154,7 @@
 }
 
 /**
- * Test create channel calls the onSuccessBlock with the response channel id
+ * Test create channel calls the onSuccessBlock with the response channel ID
  * when the request is successful.
  */
 - (void)testCreateChannelOnSuccess {
@@ -163,7 +163,7 @@
 
     // Set up a request with a valid response body
     UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-    NSString *response = @"{ \"ok\":true, \"channel_id\": \"someChannelId\"}";
+    NSString *response = @"{ \"ok\":true, \"channel_id\": \"someChannelID\"}";
     request.responseData = [response dataUsingEncoding:NSUTF8StringEncoding];
 
     request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{@"Location":@"someChannelLocation"}];
@@ -177,12 +177,12 @@
         successBlock(request, 0);
     }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
-    [self.client createChannelWithPayload:nil onSuccess:^(NSString *cId, NSString *location, BOOL existing) {
-        channelID = cId;
+    [self.client createChannelWithPayload:nil onSuccess:^(NSString *cID, NSString *location, BOOL existing) {
+        channelID = cID;
         channelLocation = location;
     } onFailure:nil];
 
-    XCTAssertEqualObjects(@"someChannelId", channelID, @"Channel id should match someChannelId from the response");
+    XCTAssertEqualObjects(@"someChannelID", channelID, @"Channel ID should match someChannelID from the response");
     XCTAssertEqualObjects(@"someChannelLocation", channelLocation, @"Channel location should match location header from the response");
 }
 
@@ -351,7 +351,7 @@
 
     // Set up a request with a valid response body
     UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-    NSString *response = @"{ \"ok\":true, \"channel_id\": \"someChannelId\"}";
+    NSString *response = @"{ \"ok\":true, \"channel_id\": \"someChannelID\"}";
     request.responseData = [response dataUsingEncoding:NSUTF8StringEncoding];
 
     // Expect the run request and call the success block
@@ -444,7 +444,7 @@
 }
 
 /**
- * Test update channel with a nil channel id does not run
+ * Test update channel with a nil channel ID does not run
  */
 - (void)testUpdateChannelNilID {
     [[self.mockRequestEngine reject] runRequest:OCMOCK_ANY

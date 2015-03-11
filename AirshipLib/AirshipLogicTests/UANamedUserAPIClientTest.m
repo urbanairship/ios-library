@@ -109,7 +109,7 @@
                                       onSuccess:OCMOCK_ANY
                                       onFailure:OCMOCK_ANY];
 
-    [self.client associate:@"fakeNamedUserId" channelID:@"fakeChannel" onSuccess:nil onFailure:nil];
+    [self.client associate:@"fakeNamedUserID" channelID:@"fakeChannel" onSuccess:nil onFailure:nil];
     XCTAssertNoThrow([self.mockRequestEngine verify],
                      @"Associate named user should call retry on 5xx status codes.");
 }
@@ -138,7 +138,7 @@
                                       onSuccess:OCMOCK_ANY
                                       onFailure:OCMOCK_ANY];
 
-    [self.client associate:@"fakeNamedUserId" channelID:@"fakeChannel" onSuccess:nil onFailure:nil];
+    [self.client associate:@"fakeNamedUserID" channelID:@"fakeChannel" onSuccess:nil onFailure:nil];
     XCTAssertNoThrow([self.mockRequestEngine verify],
                      @"Associate named user should succeed on 2xx status codes.");
 }
@@ -163,7 +163,7 @@
         successBlock(request, 0);
     }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
-    [self.client associate:@"fakeNamedUserId" channelID:@"fakeChannel" onSuccess:^{
+    [self.client associate:@"fakeNamedUserID" channelID:@"fakeChannel" onSuccess:^{
         onSuccessCalled = YES;
     } onFailure:nil];
 
@@ -187,7 +187,7 @@
         failureBlock(request, 0);
     }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
-    [self.client associate:@"fakeNamedUserId" channelID:@"fakeChannel" onSuccess:nil onFailure:^(UAHTTPRequest *request) {
+    [self.client associate:@"fakeNamedUserID" channelID:@"fakeChannel" onSuccess:nil onFailure:^(UAHTTPRequest *request) {
         failedRequest = request;
     }];
 

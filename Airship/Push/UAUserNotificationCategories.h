@@ -34,7 +34,7 @@
 /**
  * Creates a set of categories from the specified `.plist` file.
  *
- * Categories are defined in a plist dictionary with the category id
+ * Categories are defined in a plist dictionary with the category ID
  * followed by an NSArray of user notification action definitions. The
  * action definitions use the same keys as the properties on the action,
  * with the exception of "foreground" mapping to either UIUserNotificationActivationModeForeground
@@ -49,7 +49,7 @@
  *  {
  *      "category_id" : [
  *          {
- *              "identifier" : "action id",
+ *              "identifier" : "action ID",
  *              "title_resource" : "action title resource",
  *              "title" : "action title",
  *              "foreground" : @YES,
@@ -64,12 +64,12 @@
 + (NSSet *)createCategoriesFromFile:(NSString *)filePath;
 
 /**
- * Creates a user notification category with the specified id and action definition.
+ * Creates a user notification category with the specified ID and action definition.
  *
- * @param categoryId The category identifier
+ * @param categoryID The category identifier
  * @param actionDefinitions An array of user notification action dictionaries used
  * to construct UIUserNotificationAction for the category.
  * @return The user notification category created or nil if an error occurred.
  */
-+ (UIUserNotificationCategory *)createCategory:(NSString *)categoryId actions:(NSArray *)actionDefinitions;
++ (UIUserNotificationCategory *)createCategory:(NSString *)categoryID actions:(NSArray *)actionDefinitions;
 @end

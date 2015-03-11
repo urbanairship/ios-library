@@ -9,7 +9,7 @@
 
  2. Redistributions in binaryform must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
- and/or other materials provided withthe distribution.
+ and/or other materials provided with the distribution.
 
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -164,7 +164,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
         [self saveUserData];
 
-        //if we didnt send a device token or a channel on creation, try again
+        //if we didn't send a device token or a channel on creation, try again
         if (![payload valueForKey:@"device_tokens"] || ![payload valueForKey:@"ios_channels"]) {
             [self updateUser];
         }

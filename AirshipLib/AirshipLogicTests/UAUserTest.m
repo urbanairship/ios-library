@@ -58,7 +58,7 @@
     self.push = [UAPush pushWithConfig:self.config dataStore:self.dataStore];
 
 
-    [[[NSBundle mainBundle] infoDictionary] setValue:@"someBundleId" forKey:@"CFBundleIdentifier"];
+    [[[NSBundle mainBundle] infoDictionary] setValue:@"someBundleID" forKey:@"CFBundleIdentifier"];
     self.mockKeychainUtils = [OCMockObject niceMockForClass:[UAKeychainUtils class]];
 
     self.user = [UAUser userWithPush:self.push config:self.config dataStore:self.dataStore];
@@ -190,7 +190,7 @@
 }
 
 /**
- * Test updateUser when no device token or channel id is present
+ * Test updateUser when no device token or channel ID is present
  */
 -(void)testUpdateUserNoDeviceTokenOrChannelID {
     self.push.channelID = nil;
@@ -208,7 +208,7 @@
 
     [self.user updateUser];
 
-    XCTAssertNoThrow([self.mockUserClient verify], @"User should not update if the device token and channel id is missing.");
+    XCTAssertNoThrow([self.mockUserClient verify], @"User should not update if the device token and channel ID is missing.");
 }
 
 
@@ -343,7 +343,7 @@
     XCTAssertNoThrow([self.mockUserClient verify], @"User should call the client to be updated.");
 
 
-    // Device token changes should be ignored if we have a channel id
+    // Device token changes should be ignored if we have a channel ID
     self.push.channelID = @"channelID";
     [[self.mockUserClient reject] updateUser:OCMOCK_ANY
                                  deviceToken:OCMOCK_ANY

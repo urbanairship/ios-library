@@ -62,7 +62,7 @@
     [self verifyAcceptsArgumentsWithValue:@"file://foo.urbanairship.com" shouldAccept:true];
     [self verifyAcceptsArgumentsWithValue:[NSURL URLWithString:@"https://foo.urbanairship.com"] shouldAccept:true];
 
-    // Verify UA content id urls
+    // Verify UA content ID urls
     [self verifyAcceptsArgumentsWithValue:@"u:content-id" shouldAccept:true];
 }
 

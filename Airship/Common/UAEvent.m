@@ -46,7 +46,7 @@ static dispatch_once_t netInfoDispatchToken_;
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.eventId = [NSUUID UUID].UUIDString;
+        self.eventID = [NSUUID UUID].UUIDString;
         self.time = [NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]];
         return self;
     }
@@ -65,7 +65,7 @@ static dispatch_once_t netInfoDispatchToken_;
     NSMutableDictionary *eventDictionary = [NSMutableDictionary dictionary];
     [eventDictionary setValue:self.eventType forKey:@"type"];
     [eventDictionary setValue:self.time forKey:@"time"];
-    [eventDictionary setValue:self.eventId forKey:@"event_id"];
+    [eventDictionary setValue:self.eventID forKey:@"event_id"];
     [eventDictionary setValue:self.data forKey:@"data"];
     
 
@@ -80,7 +80,7 @@ static dispatch_once_t netInfoDispatchToken_;
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"UAEvent ID: %@ type: %@ time: %@ data: %@",
-            self.eventId, self.eventType, self.time, self.data];
+            self.eventID, self.eventType, self.time, self.data];
 }
 
 - (NSString *)connectionType {

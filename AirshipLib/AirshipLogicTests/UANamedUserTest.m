@@ -136,10 +136,10 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
                                          onSuccess:OCMOCK_ANY
                                          onFailure:OCMOCK_ANY];
 
-    NSString *currentId = self.namedUser.identifier;
+    NSString *currentID = self.namedUser.identifier;
     self.namedUser.identifier = @"         ";
 
-    XCTAssertEqualObjects(currentId, self.namedUser.identifier,
+    XCTAssertEqualObjects(currentID, self.namedUser.identifier,
                           @"Named user ID should not have changed.");
     XCTAssertEqualObjects(changeToken, self.namedUser.changeToken,
                           @"Change tokens should remain the same.");

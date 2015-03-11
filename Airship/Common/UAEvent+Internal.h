@@ -34,7 +34,7 @@
 /**
  * The unique event ID.
  */
-@property (nonatomic, copy) NSString *eventId;
+@property (nonatomic, copy) NSString *eventID;
 
 /**
  * The event's data.

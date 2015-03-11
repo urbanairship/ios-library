@@ -155,8 +155,8 @@ static NSString *_cachedDeviceID = nil;
     NSData *encodedIdentifier = [identifier dataUsingEncoding:NSUTF8StringEncoding];
     [searchDictionary setObject:encodedIdentifier forKey:(__bridge id)kSecAttrGeneric];
 
-    NSString *bundleId = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
-    [searchDictionary setObject:bundleId forKey:(__bridge id)kSecAttrService];
+    NSString *bundleID = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
+    [searchDictionary setObject:bundleID forKey:(__bridge id)kSecAttrService];
 
     return searchDictionary; 
 }
@@ -178,9 +178,9 @@ static NSString *_cachedDeviceID = nil;
     //set model name (username) data
     [keychainValues setObject:[UAUtils deviceModelName] forKey:(__bridge id)kSecAttrAccount];
 
-    //set device id (password) data
-    NSData *deviceIdData = [deviceID dataUsingEncoding:NSUTF8StringEncoding];
-    [keychainValues setObject:deviceIdData forKey:(__bridge id)kSecValueData];
+    //set device ID (password) data
+    NSData *deviceIDData = [deviceID dataUsingEncoding:NSUTF8StringEncoding];
+    [keychainValues setObject:deviceIDData forKey:(__bridge id)kSecValueData];
 
     OSStatus status = SecItemAdd((__bridge CFDictionaryRef)keychainValues, NULL);
 

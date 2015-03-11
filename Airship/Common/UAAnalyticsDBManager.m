@@ -74,7 +74,7 @@
     });
 }
 
-- (void)addEvent:(UAEvent *)event withSessionId:(NSString *)sessionId {
+- (void)addEvent:(UAEvent *)event withSessionID:(NSString *)sessionID {
     // Serialize the event data dictionary
     NSString *errString = nil;
     NSData *serializedData = [NSPropertyListSerialization dataFromPropertyList:event.data
@@ -92,10 +92,10 @@
     dispatch_async(dbQueue, ^{
         [self.db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?)",
          event.eventType,
-         event.eventId,
+         event.eventID,
          event.time,
          serializedData,
-         sessionId,
+         sessionID,
          [NSString stringWithFormat:@"%lu", (unsigned long)event.estimatedSize]];
     });
     //UALOG(@"DB Count %d", [self eventCount]);
@@ -111,17 +111,17 @@
     return result;
 }
 
-- (NSArray *)getEventByEventId:(NSString *)eventId {
+- (NSArray *)getEventByEventID:(NSString *)eventID {
     __block NSArray *result;
     dispatch_sync(dbQueue, ^{
-        result = [self.db executeQuery:@"SELECT * FROM analytics WHERE event_id = ?", eventId];
+        result = [self.db executeQuery:@"SELECT * FROM analytics WHERE event_id = ?", eventID];
     });
     return result;
 }
 
-- (void)deleteEvent:(NSNumber *)eventId {
+- (void)deleteEvent:(NSNumber *)eventID {
     dispatch_async(dbQueue, ^{
-        [self.db executeUpdate:@"DELETE FROM analytics WHERE event_id = ?", eventId];
+        [self.db executeUpdate:@"DELETE FROM analytics WHERE event_id = ?", eventID];
     });
 }
 
@@ -137,16 +137,16 @@
 
 }
 
-- (void)deleteBySessionId:(NSString *)sessionId {
+- (void)deleteBySessionID:(NSString *)sessionID {
     
-    UALOG(@"Deleting session ID: %@", sessionId);
+    UALOG(@"Deleting session ID: %@", sessionID);
     
-    if (sessionId == nil) {
-        UALOG(@"Warn: sessionId is nil.");
+    if (sessionID == nil) {
+        UALOG(@"Warn: sessionID is nil.");
         return;
     }
     dispatch_async(dbQueue, ^{
-        [self.db executeUpdate:@"DELETE FROM analytics WHERE session_id = ?", sessionId];
+        [self.db executeUpdate:@"DELETE FROM analytics WHERE session_id = ?", sessionID];
     });
 }
 
@@ -158,10 +158,10 @@
     }
 
     NSDictionary *event = [events objectAtIndex:0];
-    NSString *sessionId = [event objectForKey:@"session_id"];
-    NSAssert(sessionId != nil, @"analytics session id is nil");
+    NSString *sessionID = [event objectForKey:@"session_id"];
+    NSAssert(sessionID != nil, @"analytics session ID is nil");
 
-    [self deleteBySessionId:sessionId];
+    [self deleteBySessionID:sessionID];
 }
 
 - (NSUInteger)eventCount {

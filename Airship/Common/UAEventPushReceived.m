@@ -34,15 +34,15 @@
 
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
 
-    NSString *richPushId = [UAInboxUtils inboxMessageIDFromNotification:notification];
-    if (richPushId) {
-        [data setValue:richPushId forKey:@"rich_push_id"];
+    NSString *richPushID = [UAInboxUtils inboxMessageIDFromNotification:notification];
+    if (richPushID) {
+        [data setValue:richPushID forKey:@"rich_push_id"];
     }
 
-    // Add the std push id, if present, else create a UUID
-    NSString *pushId = [notification objectForKey:@"_"];
-    if (pushId) {
-        [data setValue:pushId forKey:@"push_id"];
+    // Add the std push ID, if present, else create a UUID
+    NSString *pushID = [notification objectForKey:@"_"];
+    if (pushID) {
+        [data setValue:pushID forKey:@"push_id"];
     } else {
         [data setValue:[NSUUID UUID].UUIDString forKey:@"push_id"];
     }

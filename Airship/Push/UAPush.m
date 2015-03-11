@@ -527,21 +527,21 @@ NSString *const UAPushQuietTimeEndKey = @"end";
     [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
 
 
-    NSString *categoryId = notification[@"aps"][@"category"];
+    NSString *categoryID = notification[@"aps"][@"category"];
     NSSet *categories = [[UIApplication sharedApplication] currentUserNotificationSettings].categories;
 
     UIUserNotificationCategory *notificationCategory;
     UIUserNotificationAction *notificationAction;
 
     for (UIUserNotificationCategory *possibleCategory in categories) {
-        if ([possibleCategory.identifier isEqualToString:categoryId]) {
+        if ([possibleCategory.identifier isEqualToString:categoryID]) {
             notificationCategory = possibleCategory;
             break;
         }
     }
 
     if (!notificationCategory) {
-        UA_LERR(@"Unknown notification category identifier %@", categoryId);
+        UA_LERR(@"Unknown notification category identifier %@", categoryID);
         completionHandler();
         return;
     }
@@ -563,7 +563,7 @@ NSString *const UAPushQuietTimeEndKey = @"end";
     }
 
     [[UAirship shared].analytics addEvent:[UAInteractiveNotificationEvent eventWithNotificationAction:notificationAction
-                                                                                           categoryId:categoryId
+                                                                                           categoryID:categoryID
                                                                                          notification:notification]];
 
     // Pull the action payload for the button identifier

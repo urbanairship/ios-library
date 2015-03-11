@@ -1614,7 +1614,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
 /**
  * Test update registration is called when the device enters a background and
- * we do not have a channel id
+ * we do not have a channel ID
  */
 - (void)testApplicationDidEnterBackgroundCreatesChannel {
     self.push.channelID = nil;

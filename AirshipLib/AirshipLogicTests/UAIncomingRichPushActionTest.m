@@ -51,11 +51,11 @@
 
     self.action = [[UAIncomingRichPushAction alloc] init];
     self.arguments = [[UAActionArguments alloc] init];
-    self.arguments.value = @"rich-push-id";
+    self.arguments.value = @"rich-push-ID";
     
-    NSDictionary *notification = @{@"aps": @{}, @"_uamid":@"rich-push-id"};
+    NSDictionary *notification = @{@"aps": @{}, @"_uamid":@"rich-push-ID"};
     
-    self.arguments = [UAActionArguments argumentsWithValue:@"rich-push-id"
+    self.arguments = [UAActionArguments argumentsWithValue:@"rich-push-ID"
                                              withSituation:UASituationForegroundPush
                                                metadata:@{UAActionMetadataPushPayloadKey: notification}];
 
@@ -94,8 +94,8 @@
     self.arguments.situation = UASituationLaunchedFromPush;
     XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accepts valid arguments in UASituationLaunchedFromPush situation");
 
-    self.arguments.value = @[@"RAP-id"];
-    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accepts an array that contains a RAP id");
+    self.arguments.value = @[@"RAP-ID"];
+    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accepts an array that contains a RAP ID");
 
     self.arguments.situation = UASituationBackgroundPush;
     XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should not accept argument in UASituationBackgroundPush situation");
@@ -105,9 +105,9 @@
 
     self.arguments.situation = UASituationForegroundPush;
     self.arguments.value = @3;
-    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should not accept argument with an invalid RAP id");
+    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should not accept argument with an invalid RAP ID");
 
-    UAActionArguments *invalidArgs = [UAActionArguments argumentsWithValue:@"valid-id" withSituation:UASituationForegroundPush];
+    UAActionArguments *invalidArgs = [UAActionArguments argumentsWithValue:@"valid-ID" withSituation:UASituationForegroundPush];
     XCTAssertFalse([self.action acceptsArguments:invalidArgs], @"action should not accept arguments that are not UAPushActionArguments");
 }
 
@@ -133,7 +133,7 @@
     }];
 
     XCTAssertNotNil(actionResult, @"perform did not call the completion handler");
-    XCTAssertEqualObjects(actionResult.value, @"rich-push-id", @"Results value should be the RAP id");
+    XCTAssertEqualObjects(actionResult.value, @"rich-push-ID", @"Results value should be the RAP ID");
     XCTAssertNoThrow([self.mockMessageList verify], @"message list should retrieve new RAPs");
     XCTAssertNoThrow([self.mockPushHandlerDelegate verify], @"handler delegate should be notified of a RAP notification");
 }
@@ -164,7 +164,7 @@
     }];
 
     XCTAssertNotNil(actionResult, @"perform did not call the completion handler");
-    XCTAssertEqualObjects(actionResult.value, @"rich-push-id", @"Results value should be the RAP id");
+    XCTAssertEqualObjects(actionResult.value, @"rich-push-ID", @"Results value should be the RAP ID");
     XCTAssertNoThrow([self.mockMessageList verify], @"message list should retrieve new RAPs");
     XCTAssertNoThrow([self.mockPushHandlerDelegate verify], @"handler delegate should be notified of a RAP notification");
     XCTAssertNoThrow([self.mockPushHandler verify], @"handler should set hasLaunchMessage");
@@ -197,7 +197,7 @@
     }];
 
     XCTAssertNotNil(actionResult, @"perform did not call the completion handler");
-    XCTAssertEqualObjects(actionResult.value, @"rich-push-id", @"Results value should be the RAP id");
+    XCTAssertEqualObjects(actionResult.value, @"rich-push-ID", @"Results value should be the RAP ID");
     XCTAssertEqual(actionResult.fetchResult, UIBackgroundFetchResultFailed, @"Fetch result should be UIBackgroundFetchResultFailed");
 
     XCTAssertNoThrow([self.mockMessageList verify], @"message list should retrieve new RAPs");

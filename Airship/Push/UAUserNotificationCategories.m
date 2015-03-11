@@ -424,10 +424,10 @@
 
     NSMutableSet *categories = [NSMutableSet set];
 
-    for (NSString *categoryId in [categoriesDictionary allKeys]) {
-        NSArray *actions = [categoriesDictionary valueForKey:categoryId];
+    for (NSString *categoryID in [categoriesDictionary allKeys]) {
+        NSArray *actions = [categoriesDictionary valueForKey:categoryID];
         if (actions) {
-            UIUserNotificationCategory *category = [self createCategory:categoryId actions:actions];
+            UIUserNotificationCategory *category = [self createCategory:categoryID actions:actions];
             if (category) {
                 [categories addObject:category];
             }
@@ -437,7 +437,7 @@
     return [NSSet setWithSet:categories];
 }
 
-+ (UIUserNotificationCategory *)createCategory:(NSString *)categoryId actions:(NSArray *)actionDefinitions {
++ (UIUserNotificationCategory *)createCategory:(NSString *)categoryID actions:(NSArray *)actionDefinitions {
     NSMutableArray *actions = [NSMutableArray array];
 
     for (NSDictionary *actionDefinition in actionDefinitions) {
@@ -450,7 +450,7 @@
 
         if (!title) {
             UA_LERR(@"Error creating category: %@ for action: %@ due to missing required title.",
-                    categoryId, actionDefinition[@"identifier"]);
+                    categoryID, actionDefinition[@"identifier"]);
             return nil;
         }
 
@@ -466,7 +466,7 @@
     UIMutableUserNotificationCategory *category = [[UIMutableUserNotificationCategory alloc] init];
     [category setActions:actions forContext:UIUserNotificationActionContextMinimal];
     [category setActions:actions forContext:UIUserNotificationActionContextDefault];
-    category.identifier = categoryId;
+    category.identifier = categoryID;
 
     return category;
 }

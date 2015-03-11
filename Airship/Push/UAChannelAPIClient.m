@@ -106,7 +106,7 @@
             existing = YES;
         }
 
-        // Get the channel id from the request
+        // Get the channel ID from the request
         NSString *channelID = [jsonResponse valueForKey:@"channel_id"];
 
         // Channel location from the request

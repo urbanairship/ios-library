@@ -391,7 +391,7 @@
         return [expectedRequestBody isEqualToDictionary:data];
     };
 
-    // Verify we add a channel id and remove the device token if they are both present
+    // Verify we add a channel ID and remove the device token if they are both present
     expectedRequestBody = @{@"device_tokens": @{@"remove" : @[@"deviceToken"]}, @"ios_channels": @{@"add" : @[@"channel"]}};
     [[self.mockRequestEngine expect] runRequest:[OCMArg checkWithBlock:checkRequestBlock]
                                    succeedWhere:OCMOCK_ANY
@@ -404,7 +404,7 @@
     XCTAssertNoThrow([self.mockRequestEngine verify], @"Create user should make a create user request.");
 
     
-    // Verify we only add a channel id if there is no device token
+    // Verify we only add a channel ID if there is no device token
     expectedRequestBody = @{@"ios_channels": @{@"add" : @[@"channel"]}};
     [[self.mockRequestEngine expect] runRequest:[OCMArg checkWithBlock:checkRequestBlock]
                                    succeedWhere:OCMOCK_ANY
@@ -416,7 +416,7 @@
     XCTAssertNoThrow([self.mockRequestEngine verify], @"Create user should make a create user request.");
 
 
-    // Verify we add a device token if there is no channel id
+    // Verify we add a device token if there is no channel ID
     expectedRequestBody = @{@"device_tokens": @{@"add" : @[@"deviceToken"]}};
     [[self.mockRequestEngine expect] runRequest:[OCMArg checkWithBlock:checkRequestBlock]
                                    succeedWhere:OCMOCK_ANY
