@@ -651,7 +651,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         // generate an ID for the server to use
         self.conversionSendId = [self.notificationUserInfo objectForKey:@"_"] ?: [NSUUID UUID].UUIDString;
 
-        NSString *richPushID = [UAInboxUtils getRichPushMessageIDFromNotification:self.notificationUserInfo];
+        NSString *richPushID = [UAInboxUtils inboxMessageIDFromNotification:self.notificationUserInfo];
         if (richPushID) {
             self.conversionRichPushId = richPushID;
         }

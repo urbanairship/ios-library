@@ -29,18 +29,18 @@
 
 @implementation UAInboxUtils
 
-+ (NSString *)getRichPushMessageIDFromNotification:(NSDictionary *)notification {
-    // Get the rich push ID, which can be sent as a one-element array or a string
-    return [self getRichPushMessageIDFromValue:[notification objectForKey:kUARichPushMessageIDKey]];
++ (NSString *)inboxMessageIDFromNotification:(NSDictionary *)notification {
+    // Get the inbox message ID, which can be sent as a one-element array or a string
+    return [self inboxMessageIDFromValue:[notification objectForKey:kUARichPushMessageIDKey]];
 }
 
-+ (NSString *)getRichPushMessageIDFromValue:(id)richPushValue {
-    id richPushID = richPushValue;
-    if ([richPushID isKindOfClass:[NSArray class]]) {
-        richPushID = [(NSArray *)richPushID firstObject];
++ (NSString *)inboxMessageIDFromValue:(id)values {
+    id messageID = values;
+    if ([messageID isKindOfClass:[NSArray class]]) {
+        messageID = [(NSArray *)messageID firstObject];
     }
 
-    return [richPushID isKindOfClass:[NSString class]] ? richPushID : nil;
+    return [messageID isKindOfClass:[NSString class]] ? messageID : nil;
 }
 
 @end

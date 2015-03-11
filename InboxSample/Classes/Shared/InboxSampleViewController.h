@@ -24,9 +24,11 @@
  */
 
 #import <UIKit/UIKit.h>
-#import "UAInboxPushHandler.h"
 
-@interface InboxSampleViewController : UIViewController <UIActionSheetDelegate, UIPopoverControllerDelegate, UAInboxPushHandlerDelegate>
+@class UAInboxMessage;
+
+@interface InboxSampleViewController : UIViewController <UIActionSheetDelegate, UIPopoverControllerDelegate>
+
 
 - (IBAction)mail:(id)sender;
 - (IBAction)selectInboxStyle:(id)sender;
@@ -59,6 +61,14 @@
  * Defaults to 320 x 1100.
  */
 @property(nonatomic, assign) CGSize popoverSize;
+
+/*
+ * Displays an incoming message, either by showing it in an overlay,
+ * or loading it in an already visible inbox interface.
+ *
+ * @param message The message to display.
+ */
+- (void)displayMessage:(UAInboxMessage *)message;
 
 @end
 

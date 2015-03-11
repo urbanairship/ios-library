@@ -22,6 +22,7 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import "InboxSampleViewController.h"
 #import "InboxSampleAppDelegate.h"
 #import "UAirship.h"
@@ -33,8 +34,6 @@
 #import "InboxSampleModalUserInterface.h"
 #import "InboxSamplePopoverUserInterface.h"
 #import "InboxSampleNavigationUserInterface.h"
-#import "UAInboxAlertHandler.h"
-#import "UAUtils.h"
 
 typedef NS_ENUM(NSInteger, InboxStyle) {
     InboxStyleModal,
@@ -45,15 +44,9 @@ typedef NS_ENUM(NSInteger, InboxStyle) {
 @property(nonatomic, assign) InboxStyle style;
 @property(nonatomic, strong) UIPopoverController *popover;
 @property(nonatomic, strong) id<InboxSampleUserInterface> userInterface;
-@property(nonatomic, strong) UAInboxAlertHandler *alertHandler;
 @end
 
 @implementation InboxSampleViewController
-
-- (void)awakeFromNib {
-    self.alertHandler = [[UAInboxAlertHandler alloc] init];
-}
-
 - (IBAction)mail:(id)sender {
     [self.userInterface showInbox];
 }
@@ -173,34 +166,5 @@ typedef NS_ENUM(NSInteger, InboxStyle) {
     [super didReceiveMemoryWarning];
 }
 
-#pragma mark UAInboxPushHandlerDelegate methods
-
-/*
- Called when a new rich push message is available for viewing.
- */
-- (void)richPushMessageAvailable:(UAInboxMessage *)message {
-
-     // Display an alert, and if the user taps "View", display the message
-     NSString *alertText = message.title;
-     [self.alertHandler showNewMessageAlert:alertText withViewBlock:^{
-         [self displayMessage:message];
-     }];
-}
-
-/*
- Called when a new rich push message is available after launching from a
- push notification.
- */
-- (void)launchRichPushMessageAvailable:(UAInboxMessage *)message {
-    [self displayMessage:message];
-}
-
-- (void)richPushNotificationArrived:(NSDictionary *)notification {
-    // Add custom notification handling here
-}
-
-- (void)applicationLaunchedWithRichPushNotification:(NSDictionary *)notification {
-    // Add custom launch notification handling here
-}
 
 @end

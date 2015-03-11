@@ -11,7 +11,7 @@
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
 
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -24,28 +24,12 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "UAPush.h"
 
 /**
- * Rich Push helper methods.
+ * A UAPushNotificationDelegate implementation to display an alert when receiving
+ * a notification in the foreground.
  */
-@interface UAInboxUtils : NSObject
-
-/**
- *  Retrieves an inbox message ID from a notification dictionary
- *
- * @param notification The notification dictionary.
- * @return a message ID if found, nil otherwise
- */
-+ (NSString *)inboxMessageIDFromNotification:(NSDictionary *)notification;
-
-
-/**
- * Retrieves an inbox message ID from an NSArray containing the ID
- * or if the value is the ID.
- *
- * @param values The value of the inbox message id from a notification.
- * @return a message ID if found, nil otherwise
- */
-+ (NSString *)inboxMessageIDFromValue:(id)values;
+@interface PushNotificationDelegate : NSObject <UAPushNotificationDelegate>
 
 @end
