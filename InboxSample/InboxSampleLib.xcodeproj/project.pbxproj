@@ -90,6 +90,8 @@
 		CC523FAC17B9856900233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FAB17B9856900233005 /* CoreData.framework */; };
 		CCC496DE1AA7C15F0058DA1B /* PushNotificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC496DD1AA7C15F0058DA1B /* PushNotificationDelegate.m */; };
 		CCC496DF1AA7C15F0058DA1B /* PushNotificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC496DD1AA7C15F0058DA1B /* PushNotificationDelegate.m */; };
+		CCC496E21AA7C51C0058DA1B /* InboxPushHandlerDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC496E11AA7C51C0058DA1B /* InboxPushHandlerDelegate.m */; };
+		CCC496E31AA7C51C0058DA1B /* InboxPushHandlerDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC496E11AA7C51C0058DA1B /* InboxPushHandlerDelegate.m */; };
 		D5A3F5D412C15333009731BE /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F5D312C15333009731BE /* iTunesArtwork */; };
 		D5E60C8D12C2A86500E61EC0 /* UAInboxAlertHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D5E60C8C12C2A86500E61EC0 /* UAInboxAlertHandler.m */; };
 /* End PBXBuildFile section */
@@ -220,6 +222,8 @@
 		CC523FAB17B9856900233005 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		CCC496DC1AA7C15F0058DA1B /* PushNotificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationDelegate.h; sourceTree = "<group>"; };
 		CCC496DD1AA7C15F0058DA1B /* PushNotificationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushNotificationDelegate.m; sourceTree = "<group>"; };
+		CCC496E01AA7C51C0058DA1B /* InboxPushHandlerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxPushHandlerDelegate.h; sourceTree = "<group>"; };
+		CCC496E11AA7C51C0058DA1B /* InboxPushHandlerDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxPushHandlerDelegate.m; sourceTree = "<group>"; };
 		D5A3F5D312C15333009731BE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
 		D5E60C8B12C2A86500E61EC0 /* UAInboxAlertHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxAlertHandler.h; sourceTree = "<group>"; };
 		D5E60C8C12C2A86500E61EC0 /* UAInboxAlertHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxAlertHandler.m; sourceTree = "<group>"; };
@@ -297,6 +301,8 @@
 				18A27C87125EDD6E0045D75B /* InboxSampleViewController.m */,
 				CCC496DC1AA7C15F0058DA1B /* PushNotificationDelegate.h */,
 				CCC496DD1AA7C15F0058DA1B /* PushNotificationDelegate.m */,
+				CCC496E01AA7C51C0058DA1B /* InboxPushHandlerDelegate.h */,
+				CCC496E11AA7C51C0058DA1B /* InboxPushHandlerDelegate.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -714,6 +720,7 @@
 				D5E60C8D12C2A86500E61EC0 /* UAInboxAlertHandler.m in Sources */,
 				1FF57415136778A100FEA1FD /* UAInboxMessageListCell.m in Sources */,
 				1F57820614182188003FA039 /* UAInboxMessageListController.m in Sources */,
+				CCC496E21AA7C51C0058DA1B /* InboxPushHandlerDelegate.m in Sources */,
 				1F57820714182188003FA039 /* UAInboxMessageViewController.m in Sources */,
 				CCC496DE1AA7C15F0058DA1B /* PushNotificationDelegate.m in Sources */,
 				1F54E02B177255780037A20E /* UADateUtils.m in Sources */,
@@ -734,6 +741,7 @@
 				4906F3241990564A00F27AF1 /* UAInboxAlertHandler.m in Sources */,
 				4906F3251990564A00F27AF1 /* UAInboxMessageListCell.m in Sources */,
 				4906F3271990564A00F27AF1 /* UAInboxMessageListController.m in Sources */,
+				CCC496E31AA7C51C0058DA1B /* InboxPushHandlerDelegate.m in Sources */,
 				4906F3281990564A00F27AF1 /* UAInboxMessageViewController.m in Sources */,
 				CCC496DF1AA7C15F0058DA1B /* PushNotificationDelegate.m in Sources */,
 				4906F3291990564A00F27AF1 /* UADateUtils.m in Sources */,

@@ -11,7 +11,7 @@
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
 
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -22,15 +22,13 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#import <Foundation/Foundation.h>
+#import "UAInboxPushHandler.h"
 
-#import <UIKit/UIKit.h>
-
-typedef void (^UAInboxAlertHandlerViewBlock)(void);
-
-@interface UAInboxAlertHandler : NSObject <UIAlertViewDelegate>
-
-@property(nonatomic, strong) UIAlertView *notificationAlert;
-
-- (void)showNewMessageAlert:(NSString *)message withViewBlock:(UAInboxAlertHandlerViewBlock)viewBlock;
+/**
+ * Urban Airship Inbox delegate example that alerts the user when a new message
+ * is ready to view.
+ */
+@interface InboxPushHandlerDelegate : NSObject <UAInboxPushHandlerDelegate>
 
 @end
