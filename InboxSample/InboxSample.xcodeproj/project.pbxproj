@@ -80,6 +80,8 @@
 		9A50FAF60FCA81BD0007E1BE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAF50FCA81BD0007E1BE /* UIKit.framework */; };
 		CC9EA97719CA34B20003D393 /* NSString+UASizeWithFontCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = CC9EA97619CA34B20003D393 /* NSString+UASizeWithFontCompatibility.m */; };
 		CC9EA97819CA34B20003D393 /* NSString+UASizeWithFontCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = CC9EA97619CA34B20003D393 /* NSString+UASizeWithFontCompatibility.m */; };
+		CCC496F31AA7D3470058DA1B /* PushNotificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC496F01AA7D3470058DA1B /* PushNotificationDelegate.m */; };
+		CCC496F41AA7D3470058DA1B /* PushNotificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC496F01AA7D3470058DA1B /* PushNotificationDelegate.m */; };
 		D5624D6912C2E68400A962EE /* UAInboxAlertHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D5624D6812C2E68400A962EE /* UAInboxAlertHandler.m */; };
 		D5A192A812C15AA6006AF4AE /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = D5A192A712C15AA6006AF4AE /* iTunesArtwork */; };
 		D5C75C9612BC23BB0041239E /* InboxSampleViewControlleriPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = D5C75C9112BC23BB0041239E /* InboxSampleViewControlleriPad.xib */; };
@@ -170,6 +172,8 @@
 		9AB3B21D10A0063D0035E6BD /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		CC9EA97519CA34B20003D393 /* NSString+UASizeWithFontCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UASizeWithFontCompatibility.h"; sourceTree = "<group>"; };
 		CC9EA97619CA34B20003D393 /* NSString+UASizeWithFontCompatibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UASizeWithFontCompatibility.m"; sourceTree = "<group>"; };
+		CCC496EF1AA7D3470058DA1B /* PushNotificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PushNotificationDelegate.h; path = Classes/Shared/PushNotificationDelegate.h; sourceTree = SOURCE_ROOT; };
+		CCC496F01AA7D3470058DA1B /* PushNotificationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PushNotificationDelegate.m; path = Classes/Shared/PushNotificationDelegate.m; sourceTree = SOURCE_ROOT; };
 		D5624D6712C2E68400A962EE /* UAInboxAlertHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxAlertHandler.h; sourceTree = "<group>"; };
 		D5624D6812C2E68400A962EE /* UAInboxAlertHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxAlertHandler.m; sourceTree = "<group>"; };
 		D5A192A712C15AA6006AF4AE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
@@ -431,6 +435,8 @@
 		E9CB364612B89BA5002E39EA /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				CCC496EF1AA7D3470058DA1B /* PushNotificationDelegate.h */,
+				CCC496F01AA7D3470058DA1B /* PushNotificationDelegate.m */,
 				49C0CB9119BA638A00771F4F /* UAInboxLocalization.h */,
 				1F54E0221772555F0037A20E /* UADateUtils.h */,
 				1F54E0231772555F0037A20E /* UADateUtils.m */,
@@ -617,6 +623,7 @@
 				493977A219B7C1E70063C58F /* InboxSamplePopoverUserInterface.m in Sources */,
 				CC9EA97719CA34B20003D393 /* NSString+UASizeWithFontCompatibility.m in Sources */,
 				E9CB368112B89BCA002E39EA /* InboxSampleViewController.m in Sources */,
+				CCC496F31AA7D3470058DA1B /* PushNotificationDelegate.m in Sources */,
 				D5624D6912C2E68400A962EE /* UAInboxAlertHandler.m in Sources */,
 				493977A019B7C1E70063C58F /* InboxSampleModalUserInterface.m in Sources */,
 				1F69B12713BD1DDD002CA606 /* UAInboxMessageListCell.m in Sources */,
@@ -637,6 +644,7 @@
 				4939776619B691100063C58F /* main.m in Sources */,
 				CC9EA97819CA34B20003D393 /* NSString+UASizeWithFontCompatibility.m in Sources */,
 				4939776719B691100063C58F /* InboxSampleAppDelegate.m in Sources */,
+				CCC496F41AA7D3470058DA1B /* PushNotificationDelegate.m in Sources */,
 				4939776819B691100063C58F /* InboxSampleViewController.m in Sources */,
 				4939776A19B691100063C58F /* UAInboxAlertHandler.m in Sources */,
 				4939776B19B691100063C58F /* UAInboxMessageListCell.m in Sources */,

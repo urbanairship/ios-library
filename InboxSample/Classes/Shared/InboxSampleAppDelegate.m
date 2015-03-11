@@ -31,7 +31,11 @@
 #import "UAPush.h"
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
+#import "PushNotificationDelegate.h"
 
+@interface InboxSampleAppDelegate()
+@property (nonatomic, strong) PushNotificationDelegate *pushDelegate;
+@end
 
 @implementation InboxSampleAppDelegate
 
@@ -62,6 +66,9 @@
 
     // Set the sample view controller as the Inbox push handler delegate
     [UAirship inbox].pushHandler.delegate = sampleViewController;
+    // Set the sample view controller as the push notification delegate
+    self.pushDelegate = [[PushNotificationDelegate alloc] init];
+    [UAirship push].pushNotificationDelegate = self.pushDelegate;
 
     // Set a default size for the sample popover interface
     sampleViewController.popoverSize = CGSizeMake(600, 1100);
