@@ -26,61 +26,73 @@
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
-    NSDictionary *payload = arguments.value;
-
     if (arguments.situation == UASituationManualInvocation) {
-
-        // the IAM payload is indexed to the corresponding action name
-        NSString *iamPayloadKey = kUAInAppMessageActionDefaultRegistryName;
-
-        // the IAM associated with the launch notification, if present
-        NSDictionary *launchIAMPayload = [[UAirship push].launchNotification objectForKey:iamPayloadKey];
-
-        // if the pending payload isn't contained in the launch notification
-        if (![payload isEqualToDictionary:launchIAMPayload]) {
-            UAInAppMessage *message = [UAInAppMessage messageWithPayload:payload];
-
-            // if there is no expiry or expiry is in the future
-            if (!message.expiry || [[NSDate date] compare:message.expiry] == NSOrderedAscending) {
-
-                // if it's not currently displayed
-                if (![message isEqualToMessage:self.messageController.message]) {
-                    UAInAppMessageController *messageController = [[UAInAppMessageController alloc] initWithMessage:message dismissalBlock:^{
-                        // delete the pending payload once it's dismissed
-                        [UAInAppMessage deletePendingMessagePayload:payload];
-                    }];
-
-                    UA_LINFO(@"Displaying in-app message: %@", payload);
-
-                    // dismiss any existing message and show the new one
-                    [self.messageController dismiss];
-                    self.messageController = messageController;
-                    [messageController show];
-                } else {
-                    UA_LDEBUG(@"In-app message already displayed: %@", payload);
-                    completionHandler([UAActionResult emptyResult]);
-                }
-            } else {
-                UA_LINFO(@"In-app message is expired: %@", payload);
-            }
-        } else {
-            UA_LINFO(@"In-app message matches launch payload, discarding: %@", payload);
-        }
-
+        [self displayMessageWithArguments:arguments];
     } else {
-        // store it for later
-        NSDictionary *parentDictionary = arguments.metadata[UAActionMetadataPushPayloadKey];
-        NSString *sendID = parentDictionary[@"_"];
-        NSMutableDictionary *amendedPayload = [NSMutableDictionary dictionaryWithDictionary:payload];
-        // set the send ID as the IAM unique identifier
-        if (sendID) {
-            amendedPayload[@"identifier"] = sendID;
-        }
-        UA_LINFO(@"Storing in-app message to display on next foreground: %@.", amendedPayload);
-        [UAInAppMessage storePendingMessagePayload:amendedPayload];
-
-        completionHandler([UAActionResult emptyResult]);
+        [self savePendingMessageWithArguments:arguments];
     }
+
+    completionHandler([UAActionResult emptyResult]);
+}
+
+
+/**
+ * Helper method to handle displaying the in-app message.
+ * @param arguments The action arguments.
+ */
+- (void)displayMessageWithArguments:(UAActionArguments *)arguments {
+
+    UAInAppMessage *message = [UAInAppMessage messageWithPayload:arguments.value];
+
+    NSDictionary *launchNotification = [UAirship push].launchNotification;
+
+    // If the pending payload ID does not match the launchNotification's send ID
+    if ([message.identifier isEqualToString:launchNotification[@"_"]]) {
+        UA_LINFO(@"The in-app message delivery push was directly launched for message: %@", message);
+        [UAInAppMessage deletePendingMessagePayload:arguments.value];
+        return;
+    }
+
+    // Check if the message is expired
+    if (message.expiry && [[NSDate date] compare:message.expiry] == NSOrderedDescending) {
+        UA_LINFO(@"In-app message is expired: %@", message);
+        [UAInAppMessage deletePendingMessagePayload:arguments.value];
+        return;
+    }
+
+    // If it's not currently displayed
+    if ([message isEqualToMessage:self.messageController.message]) {
+        UA_LDEBUG(@"In-app message already displayed: %@", message);
+        return;
+    }
+
+    UA_LINFO(@"Displaying in-app message: %@", message);
+    UAInAppMessageController *messageController = [[UAInAppMessageController alloc] initWithMessage:message dismissalBlock:^{
+        // Delete the pending payload once it's dismissed
+        [UAInAppMessage deletePendingMessagePayload:arguments.value];
+    }];
+
+    // Dismiss any existing message and show the new one
+    [self.messageController dismiss];
+    self.messageController = messageController;
+    [messageController show];
+}
+
+/**
+ * Helper method to handle saving the in-app message to display later.
+ * @param arguments The action arguments.
+ */
+- (void)savePendingMessageWithArguments:(UAActionArguments *)arguments {
+    // Set the send ID as the IAM unique identifier
+    NSDictionary *apnsPayload = arguments.metadata[UAActionMetadataPushPayloadKey];
+    NSMutableDictionary *messagePayload = [NSMutableDictionary dictionaryWithDictionary:arguments.value];
+    if (apnsPayload[@"_"]) {
+        messagePayload[@"identifier"] = apnsPayload[@"_"];
+    }
+
+    // Store it for later
+    UA_LINFO(@"Storing in-app message to display on next foreground: %@.", messagePayload);
+    [UAInAppMessage storePendingMessagePayload:messagePayload];
 }
 
 @end
