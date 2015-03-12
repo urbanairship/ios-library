@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="14A379a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" promptedForUpgradeToXcode5="NO">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
     </dependencies>
@@ -9,6 +9,9 @@
                 <outlet property="airshipLocationEnabledCell" destination="162" id="167"/>
                 <outlet property="airshipLocationEnabledLabel" destination="164" id="166"/>
                 <outlet property="airshipLocationEnabledSwitch" destination="163" id="165"/>
+                <outlet property="analyticsEnabledCell" destination="Oyc-9F-t0a" id="txK-w9-YhG"/>
+                <outlet property="analyticsEnabledLabel" destination="q2r-v9-vCK" id="z6o-k2-JC5"/>
+                <outlet property="analyticsEnabledSwitch" destination="sOw-bC-dZ6" id="8gL-kl-6JM"/>
                 <outlet property="datePicker" destination="91" id="105"/>
                 <outlet property="pushEnabledCell" destination="88" id="157"/>
                 <outlet property="pushEnabledLabel" destination="145" id="160"/>
@@ -29,7 +32,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <switch opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="144">
-                        <rect key="frame" x="254" y="6" width="51" height="31"/>
+                        <rect key="frame" x="249" y="6" width="51" height="31"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                         <accessibility key="accessibilityConfiguration" label="Push Notifications Enabled"/>
                         <connections>
@@ -125,6 +128,31 @@
                 </subviews>
             </tableViewCellContentView>
             <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+        </tableViewCell>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="analyticsCell" id="Oyc-9F-t0a">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Oyc-9F-t0a" id="mdc-Ga-PKq">
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="sOw-bC-dZ6">
+                        <rect key="frame" x="249" y="6" width="51" height="31"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <connections>
+                            <action selector="switchValueChanged:" destination="-1" eventType="valueChanged" id="V7G-NQ-Kxq"/>
+                        </connections>
+                    </switch>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Don't send usage data" lineBreakMode="tailTruncation" minimumFontSize="9" id="q2r-v9-vCK">
+                        <rect key="frame" x="9" y="11" width="181" height="21"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="17"/>
+                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </label>
+                </subviews>
+            </tableViewCellContentView>
+            <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+            <point key="canvasLocation" x="526" y="252"/>
         </tableViewCell>
     </objects>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
