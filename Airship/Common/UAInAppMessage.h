@@ -63,14 +63,6 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
 + (NSDictionary *)pendingMessagePayload;
 
 /**
- * Retrieves the most recent pending message from disk.
- *
- * @return An instance of UAInAppMessage, or nil if no
- * pending message is available.
- */
-+ (instancetype)pendingMessage;
-
-/**
  * Stores a pending message for later retrieval and display.
  *
  * @param payload The in-app message section of a push payload,

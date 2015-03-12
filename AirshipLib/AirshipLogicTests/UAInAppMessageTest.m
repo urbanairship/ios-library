@@ -95,18 +95,6 @@
     [self verifyPayloadConsistency:iam];
 }
 
-/**
- * Test that pending message storage and retrieval works
- */
-- (void)testPendingMessage {
-    [UAInAppMessage storePendingMessagePayload:self.payload];
-
-    UAInAppMessage *iam = [UAInAppMessage pendingMessage];
-    [self verifyPayloadConsistency:iam];
-
-    // The pending message should be erased once it's been retrieved.
-    XCTAssertNil([UAInAppMessage pendingMessage]);
-}
 
 /**
  * Test that messages can be compared for equality by value

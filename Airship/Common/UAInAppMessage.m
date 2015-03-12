@@ -87,18 +87,7 @@
     return payload;
 }
 
-+ (instancetype)pendingMessage {
-    NSDictionary *payload = [self pendingMessagePayload];
-    if (payload) {
-        UAInAppMessage *message = [self messageWithPayload:payload];
-        [[UAirship shared].dataStore removeObjectForKey:kUAPendingInAppMessageDataStoreKey];
-        return message;
-    }
-    return nil;
-}
-
 + (void)storePendingMessagePayload:(NSDictionary *)payload {
-
     UAInAppMessage *interimMessage = [self messageWithPayload:payload];
     [[UAirship shared].dataStore setObject:interimMessage.payload forKey:kUAPendingInAppMessageDataStoreKey];
 }
@@ -224,6 +213,10 @@
     } else {
         return [NSArray array];
     }
+}
+
+- (NSString *)description {
+    return self.payload.description;
 }
 
 @end
