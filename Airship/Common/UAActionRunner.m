@@ -72,8 +72,6 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
 
         UAActionArguments *arguments = [UAActionArguments argumentsWithValue:value withSituation:situation metadata:fullMetadata];
         if (!entry.predicate || entry.predicate(arguments)) {
-            UA_LINFO("Running action %@", actionName);
-
             UAAction *action = [entry actionForSituation:situation];
             [action runWithArguments:arguments completionHandler:completionHandler];
         } else {

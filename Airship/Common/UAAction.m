@@ -65,10 +65,10 @@
     //make sure the initial acceptsArguments/willPerform/perform is executed on the main queue
     dispatchMainIfNecessary(^{
         if (![self acceptsArguments:arguments]) {
-            UA_LDEBUG(@"Action %@ does not accept arguments %@.",
-                     [self description], [arguments description]);
+            UA_LDEBUG(@"Action %@ rejected arguments %@.", [self description], [arguments description]);
             completionHandler([UAActionResult rejectedArgumentsResult]);
         } else {
+            UA_LDEBUG(@"Action %@ performing with arguments %@.", [self description], [arguments description]);
             [self willPerformWithArguments:arguments];
             [self performWithArguments:arguments completionHandler:^(UAActionResult *result) {
                 //make sure the passed completion handler and didPerformWithArguments are executed on the

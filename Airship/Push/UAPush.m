@@ -614,8 +614,8 @@ BOOL deferChannelCreationOnForeground = false;
 
     // the pending in-app message, if present
     NSDictionary *pendingMessagePayload = [UAInAppMessage pendingMessagePayload];
-
     if (pendingMessagePayload) {
+        UA_LDEBUG(@"Dispatching in-app message action for message: %@.", pendingMessagePayload);
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kUAPushDelayBeforeInAppNotificationDisplay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [UAActionRunner runActionWithName:kUAInAppMessageActionDefaultRegistryName
                                         value:pendingMessagePayload

@@ -29,6 +29,7 @@
     NSDictionary *payload = arguments.value;
 
     if (arguments.situation == UASituationManualInvocation) {
+
         // the IAM payload is indexed to the corresponding action name
         NSString *iamPayloadKey = kUAInAppMessageActionDefaultRegistryName;
 
@@ -37,7 +38,7 @@
 
         // if the pending payload isn't contained in the launch notification
         if (![payload isEqualToDictionary:launchIAMPayload]) {
-            UAInAppMessage *message = [UAInAppMessage messageWithPayload:arguments.value];
+            UAInAppMessage *message = [UAInAppMessage messageWithPayload:payload];
 
             // if there is no expiry or expiry is in the future
             if (!message.expiry || [[NSDate date] compare:message.expiry] == NSOrderedAscending) {
@@ -49,18 +50,21 @@
                         [UAInAppMessage deletePendingMessagePayload:payload];
                     }];
 
+                    UA_LINFO(@"Displaying in-app message: %@", payload);
+
                     // dismiss any existing message and show the new one
                     [self.messageController dismiss];
                     self.messageController = messageController;
                     [messageController show];
                 } else {
+                    UA_LDEBUG(@"In-app message already displayed: %@", payload);
                     completionHandler([UAActionResult emptyResult]);
                 }
             } else {
-                UA_LDEBUG(@"In-app message is expired: %@", message.expiry);
+                UA_LINFO(@"In-app message is expired: %@", payload);
             }
         } else {
-            UA_LDEBUG(@"In-app message matches launch payload, discarding: %@", launchIAMPayload);
+            UA_LINFO(@"In-app message matches launch payload, discarding: %@", payload);
         }
 
     } else {
@@ -72,7 +76,7 @@
         if (sendID) {
             amendedPayload[@"identifier"] = sendID;
         }
-
+        UA_LINFO(@"Storing in-app message to display on next foreground: %@.", amendedPayload);
         [UAInAppMessage storePendingMessagePayload:amendedPayload];
 
         completionHandler([UAActionResult emptyResult]);
