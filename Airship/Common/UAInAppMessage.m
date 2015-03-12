@@ -98,6 +98,7 @@
 }
 
 + (void)storePendingMessagePayload:(NSDictionary *)payload {
+
     UAInAppMessage *interimMessage = [self messageWithPayload:payload];
     [[UAirship shared].dataStore setObject:interimMessage.payload forKey:kUAPendingInAppMessageDataStoreKey];
 }
