@@ -51,9 +51,9 @@
  * Adds analytics event to sqlite DB
  *
  * @param event UAEvent to add
- * @param sessionId Session ID string
+ * @param sessionID Session ID string
  */
-- (void)addEvent:(UAEvent *)event withSessionId:(NSString *)sessionId;
+- (void)addEvent:(UAEvent *)event withSessionID:(NSString *)sessionID;
 
 /**
  * Gets analytics events via sqlite query
@@ -66,17 +66,17 @@
 /**
  * Gets analytics events via sqlite query using event ID
  *
- * @param eventId Analytics event ID string
+ * @param eventID Analytics event ID string
  * @return An array of analytics events from the DB
  */
-- (NSArray *)getEventByEventId:(NSString *)eventId;
+- (NSArray *)getEventByEventID:(NSString *)eventID;
 
 /**
  * Deletes individual analytics events from sqlite DB using event ID
  *
- * @param eventId Analytics event ID string
+ * @param eventID Analytics event ID string
  */
-- (void)deleteEvent:(NSNumber *)eventId;
+- (void)deleteEvent:(NSNumber *)eventID;
 
 /**
  * Deletes an array of analytics events from sqlite DB
@@ -88,9 +88,9 @@
 /**
  * Deletes analytics events from sqlite DB using session ID
  *
- * @param sessionId Session ID string of the events to be deleted
+ * @param sessionID Session ID string of the events to be deleted
  */
-- (void)deleteBySessionId:(NSString *)sessionId;
+- (void)deleteBySessionID:(NSString *)sessionID;
 
 /**
  * Deletes analytics events from sqlite DB using oldest session ID

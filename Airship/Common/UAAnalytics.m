@@ -215,9 +215,9 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         return;
     }
 
-    UA_LDEBUG(@"Adding %@ event %@.", event.eventType, event.eventId);
+    UA_LDEBUG(@"Adding %@ event %@.", event.eventType, event.eventID);
 
-    [self.analyticDBManager addEvent:event withSessionId:self.sessionId];
+    [self.analyticDBManager addEvent:event withSessionID:self.sessionID];
     UA_LTRACE(@"Added: %@.", event);
 
     self.databaseSize += event.estimatedSize;
@@ -636,24 +636,24 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 }
 
 - (void)clearSession {
-    self.sessionId = @"";
-    self.conversionSendId = nil;
-    self.conversionRichPushId = nil;
+    self.sessionID = @"";
+    self.conversionSendID = nil;
+    self.conversionRichPushID = nil;
 }
 
 - (void)startSession {
     [self clearSession];
 
-    self.sessionId = [NSUUID UUID].UUIDString;
+    self.sessionID = [NSUUID UUID].UUIDString;
     if (self.notificationUserInfo) {
 
         // If the server did not send a push ID (likely because the payload did not have room)
         // generate an ID for the server to use
-        self.conversionSendId = [self.notificationUserInfo objectForKey:@"_"] ?: [NSUUID UUID].UUIDString;
+        self.conversionSendID = [self.notificationUserInfo objectForKey:@"_"] ?: [NSUUID UUID].UUIDString;
 
         NSString *richPushID = [UAInboxUtils inboxMessageIDFromNotification:self.notificationUserInfo];
         if (richPushID) {
-            self.conversionRichPushId = richPushID;
+            self.conversionRichPushID = richPushID;
         }
     }
 }

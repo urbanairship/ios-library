@@ -76,9 +76,9 @@
  */
 - (void)testMessageListLoadSucceededLaunchMesg {
     self.pushHandler.hasLaunchMessage = YES;
-    self.pushHandler.viewingMessageID = @"viewingMessageId";
+    self.pushHandler.viewingMessageID = @"viewingMessageID";
 
-    [[[self.mockMessageList stub] andReturn:self.message] messageForID:@"viewingMessageId"];
+    [[[self.mockMessageList stub] andReturn:self.message] messageForID:@"viewingMessageID"];
 
     [[self.mockedUAInboxPushHandlerDelegate expect] launchRichPushMessageAvailable:self.message];
 
@@ -94,10 +94,10 @@
  */
 - (void)testMessageListLoadSucceededNilLaunchMesg {
     self.pushHandler.hasLaunchMessage = YES;
-    self.pushHandler.viewingMessageID = @"viewingMessageId";
+    self.pushHandler.viewingMessageID = @"viewingMessageID";
     UAInboxMessage *message = nil;
 
-    [[[self.mockMessageList stub] andReturn:message] messageForID:@"viewingMessageId"];
+    [[[self.mockMessageList stub] andReturn:message] messageForID:@"viewingMessageID"];
 
     [[self.mockedUAInboxPushHandlerDelegate expect] launchRichPushMessageAvailable:self.message];
 
@@ -113,9 +113,9 @@
  */
 - (void)testMessageListLoadSucceededDisplayMesg {
     self.pushHandler.hasLaunchMessage = NO;
-    self.pushHandler.viewingMessageID = @"viewingMessageId";
+    self.pushHandler.viewingMessageID = @"viewingMessageID";
 
-    [[[self.mockMessageList stub] andReturn:self.message] messageForID:@"viewingMessageId"];
+    [[[self.mockMessageList stub] andReturn:self.message] messageForID:@"viewingMessageID"];
 
     [[self.mockedUAInboxPushHandlerDelegate expect] richPushMessageAvailable:self.message];
 
@@ -131,10 +131,10 @@
  */
 - (void)testMessageListLoadSucceededNilDisplayMesg {
     self.pushHandler.hasLaunchMessage = NO;
-    self.pushHandler.viewingMessageID = @"viewingMessageId";
+    self.pushHandler.viewingMessageID = @"viewingMessageID";
     UAInboxMessage *message = nil;
 
-    [[[self.mockMessageList stub] andReturn:message] messageForID:@"viewingMessageId"];
+    [[[self.mockMessageList stub] andReturn:message] messageForID:@"viewingMessageID"];
 
     [[self.mockedUAInboxPushHandlerDelegate expect] richPushMessageAvailable:self.message];
 

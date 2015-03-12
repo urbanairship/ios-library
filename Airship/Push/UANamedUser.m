@@ -29,7 +29,7 @@
 #import "UANamedUserAPIClient.h"
 #import "UAPush+Internal.h"
 
-#define kUAMaxNamedUserIdLength 128
+#define kUAMaxNamedUserIDLength 128
 
 NSString *const UANamedUserIDKey = @"UANamedUserID";
 NSString *const UANamedUserChangeTokenKey = @"UANamedUserChangeToken";
@@ -82,18 +82,18 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 }
 
 - (void)setIdentifier:(NSString *)identifier {
-    NSString * trimmedId;
+    NSString *trimmedID;
     if (identifier) {
-        trimmedId = [identifier stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-        if ([trimmedId length] <= 0 || [trimmedId length] > kUAMaxNamedUserIdLength) {
+        trimmedID = [identifier stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        if ([trimmedID length] <= 0 || [trimmedID length] > kUAMaxNamedUserIDLength) {
             UA_LERR(@"Failed to set named user ID. The named user ID must be greater than 0 and less than 129 characters.");
             return;
         }
     }
 
     // if the IDs don't match or ID is set to nil and current token is nil (re-install case), then update.
-    if (!(self.identifier == trimmedId || [self.identifier isEqualToString:trimmedId]) || (!self.identifier && !self.changeToken)) {
-        [self.dataStore setValue:trimmedId forKey:UANamedUserIDKey];
+    if (!(self.identifier == trimmedID || [self.identifier isEqualToString:trimmedID]) || (!self.identifier && !self.changeToken)) {
+        [self.dataStore setValue:trimmedID forKey:UANamedUserIDKey];
 
         // Update the change token.
         self.changeToken = [NSUUID UUID].UUIDString;

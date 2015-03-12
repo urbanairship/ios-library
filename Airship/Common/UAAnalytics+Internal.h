@@ -60,19 +60,19 @@
 
 
 /**
- * The conversion send Id.
+ * The conversion send ID.
  */
-@property (nonatomic, copy) NSString *conversionSendId;
+@property (nonatomic, copy) NSString *conversionSendID;
 
 /**
- * The conversion rich push Id.
+ * The conversion rich push ID.
  */
-@property (nonatomic, copy) NSString *conversionRichPushId;
+@property (nonatomic, copy) NSString *conversionRichPushID;
 
 /**
- * The current session Id.
+ * The current session ID.
  */
-@property (nonatomic, copy) NSString *sessionId;
+@property (nonatomic, copy) NSString *sessionID;
 
 /**
  * The notification as an NSDictionary.

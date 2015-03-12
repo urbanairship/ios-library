@@ -48,7 +48,7 @@
 }
 
 - (void)testAddMessageFromDictionary {
-    NSDictionary *messageDictionary = [self createMessageDictionaryWithMessageID:@"someId"];
+    NSDictionary *messageDictionary = [self createMessageDictionaryWithMessageID:@"someID"];
     [self.dbManager addMessageFromDictionary:messageDictionary];
 
     NSArray *messages = [self.dbManager fetchMessagesWithPredicate:nil];
@@ -77,20 +77,20 @@
 }
 
 - (void)testUpdateMessageFromDictionaryEmptyMessages {
-    NSDictionary *messageDictionary = [self createMessageDictionaryWithMessageID:@"someId"];
+    NSDictionary *messageDictionary = [self createMessageDictionaryWithMessageID:@"someID"];
     XCTAssertFalse([self.dbManager updateMessageWithDictionary:messageDictionary], @"Update message returned YES when it should have no message to update.");
 }
 
 - (void)testUpdateMessageFromDictionaryNewMessages {
-    [self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"someId"]];
+    [self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"someID"]];
 
-    NSDictionary *messageDictionary = [self createMessageDictionaryWithMessageID:@"someOtherId"];
+    NSDictionary *messageDictionary = [self createMessageDictionaryWithMessageID:@"someOtherID"];
     XCTAssertFalse([self.dbManager updateMessageWithDictionary:messageDictionary], @"Update message returned YES when it should not have a matching message to update.");
 }
 
 - (void)testUpdateMessage {
     // Add a message
-    NSDictionary *messageDictionary = [[self createMessageDictionaryWithMessageID:@"someId"] mutableCopy];
+    NSDictionary *messageDictionary = [[self createMessageDictionaryWithMessageID:@"someID"] mutableCopy];
     [self.dbManager addMessageFromDictionary:messageDictionary];
 
     // Modify the dictionary
@@ -107,8 +107,8 @@
 
 - (void)testDeleteMessagesAll {
     NSMutableArray *messagesToDelete = [NSMutableArray array];
-    [messagesToDelete addObject:[self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"anotherId"]]];
-    [messagesToDelete addObject:[self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"yetAnotherId"]]];
+    [messagesToDelete addObject:[self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"anotherID"]]];
+    [messagesToDelete addObject:[self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"yetAnotherID"]]];
 
     XCTAssertEqual((NSUInteger)2, [self.dbManager fetchMessagesWithPredicate:nil].count, @"2 messages should of been added");
 
@@ -122,9 +122,9 @@
 
 - (void)testDeleteMessages {
     NSMutableArray *messagesToDelete = [NSMutableArray array];
-    [messagesToDelete addObject:[self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"anotherId"]]];
+    [messagesToDelete addObject:[self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"anotherID"]]];
 
-    NSDictionary *messageDictionary = [self createMessageDictionaryWithMessageID:@"anotherMessageId"];
+    NSDictionary *messageDictionary = [self createMessageDictionaryWithMessageID:@"anotherMessageID"];
     [self.dbManager addMessageFromDictionary:messageDictionary];
 
     XCTAssertEqual((NSUInteger)2, [self.dbManager fetchMessagesWithPredicate:nil].count, @"2 messages should of been added");
@@ -167,7 +167,7 @@
 }
 
 - (void) verifyMessage:(UAInboxMessage *)message withDictionary:(NSDictionary *)dictionary {
-    XCTAssertEqualObjects([dictionary valueForKey:@"message_id"], message.messageID, @"Message's id does not match the expected message id");
+    XCTAssertEqualObjects([dictionary valueForKey:@"message_id"], message.messageID, @"Message's ID does not match the expected message ID");
     XCTAssertEqualObjects([dictionary valueForKey:@"title"], message.title, @"Message's title does not match the expected message title");
     XCTAssertEqualObjects([dictionary valueForKey:@"content_type"], message.contentType, @"Message's content type does not match the expected message content type");
     XCTAssertEqualObjects([dictionary valueForKey:@"message_url"], [message.messageURL absoluteString], @"Message's url does not match the expected message url");

@@ -172,12 +172,12 @@
     //an event, we have to use that one.
     id mockAnalytics = [OCMockObject partialMockForObject:[UAirship shared].analytics];
     
-    NSString *incomingPushId = @"the_push_id";
+    NSString *incomingPushID = @"the_push_id";
     
     //count events and grab the push ID
     __block int foregroundCount = 0;
     __block int eventCount = 0;
-    __block NSString *eventPushId = nil;
+    __block NSString *eventPushID = nil;
     void (^getSingleArg)(NSInvocation *) = ^(NSInvocation *invocation){
         
         id __unsafe_unretained arg = nil;
@@ -189,7 +189,7 @@
             
             // save the push id for later
             UAEventAppForeground *fgEvent = (UAEventAppForeground *)arg;
-            eventPushId = [fgEvent.data objectForKey:@"push_id"];
+            eventPushID = [fgEvent.data objectForKey:@"push_id"];
         }
         
         eventCount++;
@@ -206,7 +206,7 @@
     
     //mock a notification - the "_" id is all that matters - we don't need an aps payload
     //this value is passed in through the app delegate's didReceiveRemoteNotification method
-    [[UAirship shared].analytics handleNotification:[NSDictionary dictionaryWithObject:incomingPushId forKey:@"_"] inApplicationState:UIApplicationStateInactive];
+    [[UAirship shared].analytics handleNotification:[NSDictionary dictionaryWithObject:incomingPushID forKey:@"_"] inApplicationState:UIApplicationStateInactive];
     
     //now the app is active, according to NSNotificationCenter
     [[UAirship shared].analytics didBecomeActive];
@@ -215,7 +215,7 @@
         
     XCTAssertEqual(foregroundCount, 1, @"One foreground event should be inserted.");
     XCTAssertEqual(eventCount, 1, @"Only the one should be insterted.");
-    XCTAssertTrue([incomingPushId isEqualToString:eventPushId], @"The incoming push ID is not included in the event payload.");
+    XCTAssertTrue([incomingPushID isEqualToString:eventPushID], @"The incoming push ID is not included in the event payload.");
     
     [mockAnalytics verify];
     [mockAnalytics stopMocking];
@@ -269,7 +269,7 @@
     UAEventAppForeground *event = [[UAEventAppForeground alloc] init];
 
     // Expect adding event to add it to the db and to start sending analytics
-    [[mockDBManager expect] addEvent:event withSessionId:_analytics.sessionId];
+    [[mockDBManager expect] addEvent:event withSessionID:_analytics.sessionID];
     [[mockAnalytics expect] send];
 
     [_analytics addEvent:event];
@@ -295,7 +295,7 @@
     UAEventAppForeground *event = [[UAEventAppForeground alloc] init];
 
     // Expect adding event to add it to the db and to start sending analytics
-    [[mockDBManager expect] addEvent:event withSessionId:_analytics.sessionId];
+    [[mockDBManager expect] addEvent:event withSessionID:_analytics.sessionID];
     [[mockAnalytics expect] send];
 
     [_analytics addEvent:event];
@@ -323,7 +323,7 @@
     _analytics.lastSendTime = [NSDate dateWithTimeIntervalSinceNow:-16*60*1000]; // 16 minutes ago
 
     // Expect adding event to add it to the db and to start sending analytics
-    [[mockDBManager expect] addEvent:locationEvent withSessionId:_analytics.sessionId];
+    [[mockDBManager expect] addEvent:locationEvent withSessionID:_analytics.sessionID];
     [[mockAnalytics expect] send];
 
     [_analytics addEvent:locationEvent];
@@ -335,7 +335,7 @@
     _analytics.lastSendTime = [NSDate date];
 
     // Expect adding event to add it to the db and to start sending analytics
-    [[mockDBManager expect] addEvent:locationEvent withSessionId:_analytics.sessionId];
+    [[mockDBManager expect] addEvent:locationEvent withSessionID:_analytics.sessionID];
     [[mockAnalytics reject] send];
 
     [_analytics addEvent:locationEvent];

@@ -159,7 +159,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
     [self.registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:self.payload forcefully:NO];
 
-    XCTAssertNoThrow([self.mockedChannelClient verify], @"Registering should always cancel all requests and call updateChannel with passed payload and channel id.");
+    XCTAssertNoThrow([self.mockedChannelClient verify], @"Registering should always cancel all requests and call updateChannel with passed payload and channel ID.");
     XCTAssertNoThrow([self.mockedRegistrarDelegate verify], @"Delegate should be called.");
 }
 
@@ -179,7 +179,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
     [self.registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:self.payload forcefully:NO];
 
-    XCTAssertNoThrow([self.mockedChannelClient verify], @"Registering should always cancel all requests and call updateChannel with passed payload and channel id.");
+    XCTAssertNoThrow([self.mockedChannelClient verify], @"Registering should always cancel all requests and call updateChannel with passed payload and channel ID.");
     XCTAssertNoThrow([self.mockedRegistrarDelegate verify], @"Delegate should be called on failure");
 }
 
@@ -308,7 +308,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
 /**
  * Test that a channel update with a 409 status tries to 
- * create a new channel id.
+ * create a new channel ID.
  */
 - (void)testChannelConflictNewChannel {
     self.channelFailureRequest.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:409 HTTPVersion:nil headerFields:nil];
@@ -332,7 +332,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
 
     [self.registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:self.payload forcefully:NO];
-    XCTAssertNoThrow([self.mockedChannelClient verify], @"Conflict with the channel id should create a new channel");
+    XCTAssertNoThrow([self.mockedChannelClient verify], @"Conflict with the channel ID should create a new channel");
     XCTAssertNoThrow([self.mockedRegistrarDelegate verify], @"Registration delegate should be called with the new channel");
 }
 
@@ -360,7 +360,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
 
     [self.registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:self.payload forcefully:NO];
-    XCTAssertNoThrow([self.mockedChannelClient verify], @"Conflict with the channel id should try to create a new channel");
+    XCTAssertNoThrow([self.mockedChannelClient verify], @"Conflict with the channel ID should try to create a new channel");
     XCTAssertNoThrow([self.mockedRegistrarDelegate verify], @"Delegate should be called on failure");
 }
 

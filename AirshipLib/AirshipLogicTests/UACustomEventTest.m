@@ -69,8 +69,8 @@
     event.interactionType = interactionType;
 
     XCTAssertEqualObjects(eventName, [event.data objectForKey:@"event_name"], @"Unexpected event name.");
-    XCTAssertEqualObjects(transactionID, [event.data objectForKey:@"transaction_id"], @"Unexpected transaction id.");
-    XCTAssertEqualObjects(interactionID, [event.data objectForKey:@"interaction_id"], @"Unexpected interaction id.");
+    XCTAssertEqualObjects(transactionID, [event.data objectForKey:@"transaction_id"], @"Unexpected transaction ID.");
+    XCTAssertEqualObjects(interactionID, [event.data objectForKey:@"interaction_id"], @"Unexpected interaction ID.");
     XCTAssertEqualObjects(interactionType, [event.data objectForKey:@"interaction_type"], @"Unexpected interaction type.");
     XCTAssertEqualObjects(@(INT32_MIN * 1000000.0), [event.data objectForKey:@"event_value"], @"Unexpected event value.");
 }
@@ -246,23 +246,23 @@
 }
 
 /**
- * Test event includes conversion send id if available.
+ * Test event includes conversion send ID if available.
  */
 - (void)testConversionSendID {
-    [[[self.analytics stub] andReturn:@"send ID"] conversionSendId];
+    [[[self.analytics stub] andReturn:@"send ID"] conversionSendID];
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
 
-    XCTAssertEqualObjects(@"send ID", [event.data objectForKey:@"conversion_send_id"], @"Send id should be set.");
+    XCTAssertEqualObjects(@"send ID", [event.data objectForKey:@"conversion_send_id"], @"Send ID should be set.");
 }
 
 /**
- * Test setting the event conversion send id.
+ * Test setting the event conversion send ID.
  */
 - (void)testSettingConversionSendID {
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
-    event.conversionSendId = @"directSendId";
+    event.conversionSendID = @"directSendID";
 
-    XCTAssertEqualObjects(@"directSendId", [event.data objectForKey:@"conversion_send_id"], @"Send id should be set.");
+    XCTAssertEqualObjects(@"directSendID", [event.data objectForKey:@"conversion_send_id"], @"Send ID should be set.");
 }
 
 /**

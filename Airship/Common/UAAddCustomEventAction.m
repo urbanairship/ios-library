@@ -71,8 +71,8 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
         }
     }
 
-    // Set the conversion send id if the action was triggered from a push
-    event.conversionSendId = arguments.metadata[UAActionMetadataPushPayloadKey][@"_"];
+    // Set the conversion send ID if the action was triggered from a push
+    event.conversionSendID = arguments.metadata[UAActionMetadataPushPayloadKey][@"_"];
 
     if ([event isValid]) {
         [[UAirship shared].analytics addEvent:event];

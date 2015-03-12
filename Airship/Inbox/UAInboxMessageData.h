@@ -46,12 +46,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
  * The URL for the message body itself.
- * This URL may only be accessed with Basic Auth credentials set to the user id and password.
+ * This URL may only be accessed with Basic Auth credentials set to the user ID and password.
  */
 @property (nonatomic, strong) NSURL *messageBodyURL;
 
 /** The URL for the message.
- * This URL may only be accessed with Basic Auth credentials set to the user id and password.
+ * This URL may only be accessed with Basic Auth credentials set to the user ID and password.
  */
 @property (nonatomic, strong) NSURL *messageURL;
 

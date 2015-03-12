@@ -41,7 +41,7 @@
                                       @"sound": @"cat",
                                       @"category": @"notificationCategory"
                                     },
-                           @"_": @"send id"
+                           @"_": @"send ID"
                         };
 
     self.action = [[UIMutableUserNotificationAction alloc] init];
@@ -61,7 +61,7 @@
 
     // With data
     event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
-                                                             categoryId:@"category_id"
+                                                             categoryID:@"category_id"
                                                            notification:self.notification];
 
     XCTAssertEqual(event.estimatedSize, 350, @"Event should have a set estimated size." );
@@ -80,14 +80,14 @@
  */
 - (void)testEventDataEmpty {
     UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:nil
-                                                                                             categoryId:nil
+                                                                                             categoryID:nil
                                                                                            notification:nil];
 
 
     NSDictionary *expectedData = @{@"foreground": @"true"};
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
-    XCTAssertNotNil(event.eventId, @"Event should have an ID");
+    XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
 
 /**
@@ -96,17 +96,17 @@
 - (void)testEventDataForegroundAction {
 
     UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
-                                                                                             categoryId:@"category_id"
+                                                                                             categoryID:@"category_id"
                                                                                            notification:self.notification];
 
     NSDictionary *expectedData = @{@"foreground": @"true",
                      @"button_id": @"action_identifier",
                      @"button_description": @"action_title",
                      @"button_group": @"category_id",
-                     @"send_id": @"send id"};
+                     @"send_id": @"send ID"};
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
-    XCTAssertNotNil(event.eventId, @"Event should have an ID");
+    XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
 
 
@@ -116,17 +116,17 @@
 - (void)testEventDataBackgroundAction {
     self.action.activationMode = UIUserNotificationActivationModeBackground;
     UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
-                                                                                             categoryId:@"category_id"
+                                                                                             categoryID:@"category_id"
                                                                                            notification:self.notification];
 
     NSDictionary *expectedData = @{@"foreground": @"false",
                      @"button_id": @"action_identifier",
                      @"button_description": @"action_title",
                      @"button_group": @"category_id",
-                     @"send_id": @"send id"};
+                     @"send_id": @"send ID"};
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
-    XCTAssertNotNil(event.eventId, @"Event should have an ID");
+    XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
 
 @end

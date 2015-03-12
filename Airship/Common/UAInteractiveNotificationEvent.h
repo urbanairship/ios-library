@@ -40,6 +40,6 @@
  * @param notification The notification.
  */
 + (instancetype)eventWithNotificationAction:(UIUserNotificationAction *)action
-                                 categoryId:(NSString *)category
+                                 categoryID:(NSString *)category
                                notification:(NSDictionary *)notification;
 @end

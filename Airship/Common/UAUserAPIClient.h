@@ -27,7 +27,7 @@ typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
 /**
  * Create a user.
  *
- * If the channel id is available, only it will be used.  If not, the device token
+ * If the channel ID is available, only it will be used.  If not, the device token
  * will be used.
  * 
  * @param deviceToken The user's device token.
@@ -43,7 +43,7 @@ typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
 /**
  * Update a user.
  *
- * If the channel id is available, it will add the channel and remove
+ * If the channel ID is available, it will add the channel and remove
  * the device token.  If only the device token is available it will add it to the user.
  *
  * @param user The specified user to update.

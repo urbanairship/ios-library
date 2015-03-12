@@ -132,8 +132,8 @@
     [dictionary setValue:self.eventName forKey:@"event_name"];
 
     // Conversion Send ID
-    NSString *sendId = self.conversionSendId ?:[UAirship shared].analytics.conversionSendId;
-    [dictionary setValue:sendId forKey:@"conversion_send_id"];
+    NSString *sendID = self.conversionSendID ?:[UAirship shared].analytics.conversionSendID;
+    [dictionary setValue:sendID forKey:@"conversion_send_id"];
 
     // Interaction
     [dictionary setValue:self.interactionID forKey:@"interaction_id"];

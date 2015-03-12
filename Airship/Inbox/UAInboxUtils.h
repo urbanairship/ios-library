@@ -43,7 +43,7 @@
  * Retrieves an inbox message ID from an NSArray containing the ID
  * or if the value is the ID.
  *
- * @param values The value of the inbox message id from a notification.
+ * @param values The value of the inbox message ID from a notification.
  * @return a message ID if found, nil otherwise
  */
 + (NSString *)inboxMessageIDFromValue:(id)values;

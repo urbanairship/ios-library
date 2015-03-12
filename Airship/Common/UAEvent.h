@@ -26,7 +26,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-#define kEventAppInitSize               (NSUInteger) 450//397 w/ push id, no inbox id
+#define kEventAppInitSize               (NSUInteger) 450//397 w/ push ID, no inbox ID
 #define kEventAppExitSize               (NSUInteger) 200//136 w/ only network type
 
 #define kEventDeviceRegistrationSize    (NSUInteger) 200//153 w/ only user info
@@ -45,7 +45,7 @@
 /**
  * The unique event ID.
  */
-@property (nonatomic, readonly, copy) NSString *eventId;
+@property (nonatomic, readonly, copy) NSString *eventID;
 
 /**
  * The event's data.

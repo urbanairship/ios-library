@@ -31,7 +31,7 @@
 
 
 + (instancetype)eventWithNotificationAction:(UIUserNotificationAction *)action
-                                 categoryId:(NSString *)category
+                                 categoryID:(NSString *)category
                                notification:(NSDictionary *)notification {
 
     UAInteractiveNotificationEvent *event =  [[self alloc] init];

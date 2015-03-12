@@ -74,10 +74,10 @@
 /**
  * Test getting the Device ID.
  */
-- (void)testDeviceId {
-    NSString *deviceId = [UAKeychainUtils getDeviceID];
-    XCTAssertNotNil(deviceId, @"Device ID should always return a generated device ID.");
-    XCTAssertEqualObjects(deviceId, [UAKeychainUtils getDeviceID], @"Device ID should return the same Device ID.");
+- (void)testDeviceID {
+    NSString *deviceID = [UAKeychainUtils getDeviceID];
+    XCTAssertNotNil(deviceID, @"Device ID should always return a generated device ID.");
+    XCTAssertEqualObjects(deviceID, [UAKeychainUtils getDeviceID], @"Device ID should return the same Device ID.");
 }
 
 

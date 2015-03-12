@@ -163,10 +163,10 @@
     // Verify device model
     XCTAssertEqualObjects(@"device model", [self.jsc evaluateScript:@"UAirship.getDeviceModel()"].toString);
 
-    // Verify user id
+    // Verify user ID
     XCTAssertEqualObjects(@"user name", [self.jsc evaluateScript:@"UAirship.getUserId()"].toString);
 
-    // Verify message id is null
+    // Verify message ID is null
     XCTAssertTrue([self.jsc evaluateScript:@"UAirship.getMessageId()"].isNull);
 
     // Verify message title is null
@@ -224,7 +224,7 @@
 
     [self.jsc evaluateScript:js];
 
-    // Verify message id
+    // Verify message ID
     XCTAssertEqualObjects(@"messageID", [self.jsc evaluateScript:@"UAirship.getMessageId()"].toString);
 
     // Verify message title

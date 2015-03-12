@@ -28,9 +28,9 @@
 @interface UACustomEvent ()
 
 /**
- * The send id that triggered the event.
+ * The send ID that triggered the event.
  */
-@property (nonatomic, copy) NSString *conversionSendId;
+@property (nonatomic, copy) NSString *conversionSendID;
 
 
 @end
