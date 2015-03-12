@@ -82,7 +82,7 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 }
 
 - (void)setIdentifier:(NSString *)identifier {
-    NSString * trimmedID;
+    NSString *trimmedID;
     if (identifier) {
         trimmedID = [identifier stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         if ([trimmedID length] <= 0 || [trimmedID length] > kUAMaxNamedUserIDLength) {
