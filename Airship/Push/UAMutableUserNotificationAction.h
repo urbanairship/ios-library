@@ -43,7 +43,7 @@
 /**
  * The mode in which to run the app when the action is performed.
  */
-@property(nonatomic, assign) UAUserNotificationActivationMode activationMode;
+@property(nonatomic, assign) UIUserNotificationActivationMode activationMode;
 
 /**
  * A Boolean value indicating whether the user must unlock the device before the action is performed.

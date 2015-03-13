@@ -37,7 +37,7 @@
  * @param context The context in which the alert is displayed.
  */
 - (void)setActions:(NSArray *)actions
-        forContext:(UAUserNotificationActionContext)context;
+        forContext:(UIUserNotificationActionContext)context;
 
 /**
  * The name of the action group.

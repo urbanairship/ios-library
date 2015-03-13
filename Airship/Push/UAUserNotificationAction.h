@@ -24,14 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
-
-/**
- * Clone of UIUserNotificationActivationMode for iOS 7 support.
- */
-typedef enum UAUserNotificationActivationMode : NSUInteger {
-    UAUserNotificationActivationModeForeground,
-    UAUserNotificationActivationModeBackground
-} UAUserNotificationActivationMode;
+#import <UIKit/UIKit.h>
 
 /**
  * Clone of UIUserNotificationAction for iOS 7 support.
@@ -51,7 +44,7 @@ typedef enum UAUserNotificationActivationMode : NSUInteger {
 /**
  * The mode in which to run the app when the action is performed.
  */
-@property(nonatomic, assign, readonly) UAUserNotificationActivationMode activationMode;
+@property(nonatomic, assign, readonly) UIUserNotificationActivationMode activationMode;
 
 /**
  * A Boolean value indicating whether the user must unlock the device before the action is performed.

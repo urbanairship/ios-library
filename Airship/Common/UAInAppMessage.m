@@ -205,7 +205,7 @@
             }
 
             // Create a button action binding for each corresponding action identifier
-            for (UAUserNotificationAction *notificationAction in [category actionsForContext:UAUserNotificationActionContextDefault]) {
+            for (UAUserNotificationAction *notificationAction in [category actionsForContext:UIUserNotificationActionContextDefault]) {
                 NSDictionary *payload = self.buttonActions[notificationAction.identifier];
                 if (payload) {
                     UAInAppMessageButtonActionBinding *binding = [[UAInAppMessageButtonActionBinding alloc] init];
@@ -213,7 +213,7 @@
                                                                                [NSBundle mainBundle], notificationAction.title, nil);
 
                     // choose the situation that matches the corresponding notificationAction's activation mode
-                    binding.situation = notificationAction.activationMode == UAUserNotificationActivationModeForeground ?
+                    binding.situation = notificationAction.activationMode == UIUserNotificationActivationModeForeground ?
                     UASituationForegroundInteractiveButton : UASituationBackgroundInteractiveButton;
 
                     binding.actions = payload;

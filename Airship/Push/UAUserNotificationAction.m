@@ -29,7 +29,7 @@
 
 @property(nonatomic, copy) NSString *identifier;
 @property(nonatomic, copy) NSString *title;
-@property(nonatomic, assign) UAUserNotificationActivationMode activationMode;
+@property(nonatomic, assign) UIUserNotificationActivationMode activationMode;
 @property(nonatomic, assign, getter=isAuthenticationRequired) BOOL authenticationRequired;
 @property(nonatomic, assign, getter=isDestructive) BOOL destructive;
 
@@ -38,7 +38,7 @@
 @implementation UAUserNotificationAction
 
 - (BOOL)isAuthenticationRequired {
-    if (self.activationMode == UAUserNotificationActivationModeForeground) {
+    if (self.activationMode == UIUserNotificationActivationModeForeground) {
         return YES;
     }
     return _authenticationRequired;

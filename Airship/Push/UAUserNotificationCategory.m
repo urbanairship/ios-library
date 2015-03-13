@@ -37,7 +37,7 @@
  * This implementation does nothing, because in practice one will always create
  * the mutable variant.
  */
-- (NSArray *)actionsForContext:(UAUserNotificationActionContext)context {
+- (NSArray *)actionsForContext:(UIUserNotificationActionContext)context {
     return nil;
 }
 
@@ -46,7 +46,7 @@
     category.identifier = self.identifier;
 
     for (int ctx=UIUserNotificationActionContextDefault; ctx <= UIUserNotificationActionContextMinimal; ctx++) {
-        NSArray *uaActions = [self actionsForContext:(UAUserNotificationActionContext)ctx];
+        NSArray *uaActions = [self actionsForContext:(UIUserNotificationActionContext)ctx];
         NSMutableArray *uiActions = [NSMutableArray array];
         for (UAUserNotificationAction *uaAction in uaActions) {
             UIMutableUserNotificationAction *uiAction = [[UIMutableUserNotificationAction alloc] init];

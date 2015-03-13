@@ -27,14 +27,6 @@
 #import <UIKit/UIKit.h>
 
 /**
- * Clone of UIUserNotificationActionContext enum for iOS 7 support.
- */
-typedef NS_ENUM(NSUInteger, UAUserNotificationActionContext) {
-    UAUserNotificationActionContextDefault,  // the default context of a notification action
-    UAUserNotificationActionContextMinimal   // the context of a notification action when space is limited
-};
-
-/**
  * Clone of UIUserNotificationCategory for iOS 7 support.
  */
 @interface UAUserNotificationCategory : NSObject
@@ -44,7 +36,7 @@ typedef NS_ENUM(NSUInteger, UAUserNotificationActionContext) {
  *
  * @param context The context in which the notification is displayed.
  */
-- (NSArray *)actionsForContext:(UAUserNotificationActionContext)context;
+- (NSArray *)actionsForContext:(UIUserNotificationActionContext)context;
 
 /**
  * The name of the action group.

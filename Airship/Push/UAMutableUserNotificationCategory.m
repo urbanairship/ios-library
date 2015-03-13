@@ -42,11 +42,11 @@
     return self;
 }
 
-- (void)setActions:(NSArray *)actions forContext:(UAUserNotificationActionContext)context {
+- (void)setActions:(NSArray *)actions forContext:(UIUserNotificationActionContext)context {
     [self.actions setObject:actions forKey:@(context)];
 }
 
-- (NSArray *)actionsForContext:(UAUserNotificationActionContext)context {
+- (NSArray *)actionsForContext:(UIUserNotificationActionContext)context {
     return self.actions[@(context)];
 }
 

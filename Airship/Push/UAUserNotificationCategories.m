@@ -67,7 +67,7 @@
 }
 
 
-+ (id)createYesNoForegroundCategoryRequireAuth:(BOOL)requireAuth {
++ (UIUserNotificationCategory *)createYesNoForegroundCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"yes",
                            @"foreground": @YES,
                            @"title_resource": @"ua_notification_button_yes",
@@ -81,7 +81,7 @@
     return [self createCategory:@"ua_yes_no_foreground" actions:actions];
 }
 
-+ (id)createYesNoBackgroundCategoryRequireAuth:(BOOL)requireAuth {
++ (UIUserNotificationCategory *)createYesNoBackgroundCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"yes",
                            @"foreground": @NO,
                            @"title_resource": @"ua_notification_button_yes",
@@ -97,7 +97,7 @@
 }
 
 
-+ (id)createShopNowCategory {
++ (UIUserNotificationCategory *)createShopNowCategory {
     NSArray *actions = @[@{@"identifier": @"shop_now",
                            @"foreground": @YES,
                            @"title_resource": @"ua_notification_button_shop_now",
@@ -106,7 +106,7 @@
     return [self createCategory:@"ua_shop_now" actions:actions];
 }
 
-+ (id)createBuyNowCategory {
++ (UIUserNotificationCategory *)createBuyNowCategory {
     NSArray *actions = @[@{@"identifier": @"buy_now",
                            @"foreground": @YES,
                            @"title_resource": @"ua_notification_button_buy_now",
@@ -115,7 +115,7 @@
     return [self createCategory:@"ua_buy_now" actions:actions];
 }
 
-+ (id)createFollowCategoryRequireAuth:(BOOL)requireAuth {
++ (UIUserNotificationCategory *)createFollowCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"follow",
                            @"foreground": @NO,
                            @"title_resource": @"ua_notification_button_follow",
@@ -126,7 +126,7 @@
 }
 
 
-+ (id)createUnfollowCategoryRequireAuth:(BOOL)requireAuth {
++ (UIUserNotificationCategory *)createUnfollowCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"unfollow",
                            @"foreground": @NO,
                            @"title_resource": @"ua_notification_button_unfollow",
@@ -137,7 +137,7 @@
     return [self createCategory:@"ua_unfollow" actions:actions];
 }
 
-+ (id)createOptInCategoryRequireAuth:(BOOL)requireAuth {
++ (UIUserNotificationCategory *)createOptInCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"opt_in",
                            @"foreground": @NO,
                            @"title_resource": @"ua_notification_button_opt_in",
@@ -147,7 +147,7 @@
     return [self createCategory:@"ua_opt_in" actions:actions];
 }
 
-+ (id)createOptOutCategoryRequireAuth:(BOOL)requireAuth {
++ (UIUserNotificationCategory *)createOptOutCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"opt_out",
                            @"foreground": @NO,
                            @"title_resource": @"ua_notification_button_opt_out",
@@ -158,7 +158,7 @@
     return [self createCategory:@"ua_opt_out" actions:actions];
 }
 
-+ (id)createRemindMeLaterCategoryRequireAuth:(BOOL)requireAuth {
++ (UIUserNotificationCategory *)createRemindMeLaterCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"remind",
                            @"foreground": @NO,
                            @"title_resource": @"ua_notification_button_remind",
@@ -168,7 +168,7 @@
     return [self createCategory:@"ua_remind_me_later" actions:actions];
 }
 
-+ (id)createShareCategory {
++ (UIUserNotificationCategory *)createShareCategory {
     NSArray *actions = @[@{@"identifier": @"share",
                            @"foreground": @YES,
                            @"title_resource": @"ua_notification_button_share",
@@ -177,7 +177,7 @@
     return [self createCategory:@"ua_share" actions:actions];
 }
 
-+ (id)createAcceptOrDeclineForegroundCategoryRequireAuth:(BOOL)requireAuth {
++ (UIUserNotificationCategory *)createAcceptOrDeclineForegroundCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"accept",
                            @"foreground": @YES,
                            @"title_resource": @"ua_notification_button_accept",
@@ -191,7 +191,7 @@
     return [self createCategory:@"ua_accept_decline_foreground" actions:actions];
 }
 
-+ (id)createAcceptOrDeclineBackgroundCategoryRequireAuth:(BOOL)requireAuth {
++ (UIUserNotificationCategory *)createAcceptOrDeclineBackgroundCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"accept",
                            @"foreground": @NO,
                            @"title_resource": @"ua_notification_button_accept",
@@ -207,7 +207,7 @@
 }
 
 
-+ (id)createDownloadCategory {
++ (UIUserNotificationCategory *)createDownloadCategory {
     NSArray *actions = @[@{@"identifier": @"download",
                            @"foreground": @YES,
                            @"title_resource": @"ua_notification_button_download",
@@ -216,7 +216,7 @@
     return [self createCategory:@"ua_download" actions:actions];
 }
 
-+ (id)createDownloadShareCategory {
++ (UIUserNotificationCategory *)createDownloadShareCategory {
     NSArray *actions = @[@{@"identifier": @"download",
                            @"foreground": @YES,
                            @"title_resource": @"ua_notification_button_download",
@@ -230,7 +230,7 @@
     return [self createCategory:@"ua_download_share" actions:actions];
 }
 
-+ (id)createRemindMeLaterShareCategoryRequireAuth:(BOOL)requireAuth {
++ (UIUserNotificationCategory *)createRemindMeLaterShareCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"remind",
                            @"foreground": @NO,
                            @"title_resource": @"ua_notification_button_remind",
@@ -245,7 +245,7 @@
     return [self createCategory:@"ua_remind_share" actions:actions];
 }
 
-+ (id)createOptInShareCategoryRequireAuth:(BOOL)requireAuth {
++ (UIUserNotificationCategory *)createOptInShareCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"opt_in",
                            @"foreground": @NO,
                            @"title_resource": @"ua_notification_button_opt_in",
@@ -260,7 +260,7 @@
     return [self createCategory:@"ua_opt_in_share" actions:actions];
 }
 
-+ (id)createOptOutShareCategoryRequireAuth:(BOOL)requireAuth {
++ (UIUserNotificationCategory *)createOptOutShareCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"opt_out",
                            @"foreground": @NO,
                            @"title_resource": @"ua_notification_button_opt_out",
@@ -276,7 +276,7 @@
     return [self createCategory:@"ua_opt_out_share" actions:actions];
 }
 
-+ (id)createFollowShareCategoryRequireAuth:(BOOL)requireAuth {
++ (UIUserNotificationCategory *)createFollowShareCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"follow",
                            @"foreground": @NO,
                            @"title_resource": @"ua_notification_button_follow",
@@ -291,7 +291,7 @@
     return [self createCategory:@"ua_follow_share" actions:actions];
 }
 
-+ (id)createUnfollowShareCategoryRequireAuth:(BOOL)requireAuth {
++ (UIUserNotificationCategory *)createUnfollowShareCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"unfollow",
                            @"foreground": @NO,
                            @"title_resource": @"ua_notification_button_unfollow",
@@ -307,7 +307,7 @@
     return [self createCategory:@"ua_unfollow_share" actions:actions];
 }
 
-+ (id)createShopNowShareCategory {
++ (UIUserNotificationCategory *)createShopNowShareCategory {
     NSArray *actions = @[@{@"identifier": @"shop_now",
                            @"foreground": @YES,
                            @"title_resource": @"ua_notification_button_shop_now",
@@ -321,7 +321,7 @@
     return [self createCategory:@"ua_shop_now_share" actions:actions];
 }
 
-+ (id)createBuyNowShareCategory {
++ (UIUserNotificationCategory *)createBuyNowShareCategory {
     NSArray *actions = @[@{@"identifier": @"buy_now",
                            @"foreground": @YES,
                            @"title_resource": @"ua_notification_button_buy_now",
@@ -335,7 +335,7 @@
     return [self createCategory:@"ua_buy_now_share" actions:actions];
 }
 
-+ (id)createMoreLikeLessLikeCategoryRequireAuth:(BOOL)requireAuth {
++ (UIUserNotificationCategory *)createMoreLikeLessLikeCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"more_like",
                            @"foreground": @NO,
                            @"title_resource": @"ua_notification_button_more_like",
@@ -351,7 +351,7 @@
     return [self createCategory:@"ua_more_like_less_like" actions:actions];
 }
 
-+ (id)createLikeDislikeCategoryRequireAuth:(BOOL)requireAuth {
++ (UIUserNotificationCategory *)createLikeDislikeCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"like",
                            @"foreground": @NO,
                            @"title_resource": @"ua_notification_button_like",
@@ -367,7 +367,7 @@
     return [self createCategory:@"ua_like_dislike" actions:actions];
 }
 
-+ (id)createLikeCategoryRequireAuth:(BOOL)requireAuth {
++ (UIUserNotificationCategory *)createLikeCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"like",
                            @"foreground": @NO,
                            @"title_resource": @"ua_notification_button_like",
@@ -379,7 +379,7 @@
 }
 
 
-+ (id)createLikeShareCategoryRequireAuth:(BOOL)requireAuth {
++ (UIUserNotificationCategory *)createLikeShareCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"like",
                            @"foreground": @NO,
                            @"title_resource": @"ua_notification_button_like",
@@ -393,7 +393,7 @@
     return [self createCategory:@"ua_like_share" actions:actions];
 }
 
-+ (id)createHappySadCategoryRequireAuth:(BOOL)requireAuth {
++ (UIUserNotificationCategory *)createHappySadCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"happy",
                            @"foreground": @NO,
                            @"title": @"😀",
@@ -407,7 +407,7 @@
     return [self createCategory:@"ua_icons_happy_sad" actions:actions];
 }
 
-+ (id)createThumbsUpThumbsDownCategoryRequireAuth:(BOOL)requireAuth {
++ (UIUserNotificationCategory *)createThumbsUpThumbsDownCategoryRequireAuth:(BOOL)requireAuth {
     NSArray *actions = @[@{@"identifier": @"up",
                            @"foreground": @NO,
                            @"title": @"👍",
@@ -439,7 +439,7 @@
     return [NSSet setWithSet:categories];
 }
 
-+ (id)createCategory:(NSString *)categoryId actions:(NSArray *)actionDefinitions {
++ (UIUserNotificationCategory *)createCategory:(NSString *)categoryId actions:(NSArray *)actionDefinitions {
 
     Class CategoryClass = [UIMutableUserNotificationCategory class] ?: [UAMutableUserNotificationCategory class];
     Class ActionClass = [UIMutableUserNotificationAction class] ?: [UAMutableUserNotificationAction class];
@@ -460,7 +460,7 @@
             return nil;
         }
 
-        UAMutableUserNotificationAction *action = [[ActionClass alloc] init];
+        UIMutableUserNotificationAction *action = [[ActionClass alloc] init];
         action.destructive = [actionDefinition[@"destructive"] boolValue];
         action.activationMode = [actionDefinition[@"foreground"] boolValue] ? UIUserNotificationActivationModeForeground : UIUserNotificationActivationModeBackground;
         action.title = title;
@@ -469,9 +469,9 @@
         [actions addObject:action];
     }
 
-    UAMutableUserNotificationCategory *category = [[CategoryClass alloc] init];
-    [category setActions:actions forContext:UAUserNotificationActionContextMinimal];
-    [category setActions:actions forContext:UAUserNotificationActionContextDefault];
+    UIMutableUserNotificationCategory *category = [[CategoryClass alloc] init];
+    [category setActions:actions forContext:UIUserNotificationActionContextMinimal];
+    [category setActions:actions forContext:UIUserNotificationActionContextDefault];
     category.identifier = categoryId;
 
     return category;
