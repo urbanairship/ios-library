@@ -24,40 +24,14 @@
  */
 
 #import "UAUserNotificationAction.h"
-#import "UAUserNotificationAction+Internal.h"
 
 @interface UAUserNotificationAction ()
 
-@property(nonatomic, copy) NSString *identifier;
-@property(nonatomic, copy) NSString *title;
-@property(nonatomic, assign) UIUserNotificationActivationMode activationMode;
-@property(nonatomic, assign, getter=isAuthenticationRequired) BOOL authenticationRequired;
-@property(nonatomic, assign, getter=isDestructive) BOOL destructive;
-
-@end
-
-@implementation UAUserNotificationAction
-
-- (BOOL)isAuthenticationRequired {
-    if (self.activationMode == UIUserNotificationActivationModeForeground) {
-        return YES;
-    }
-    return _authenticationRequired;
-}
-
-- (BOOL)isDestructive {
-    return _destructive;
-}
-
-- (UIUserNotificationAction *)asUIUserNotificationAction {
-    UIMutableUserNotificationAction *uiAction = [[UIMutableUserNotificationAction alloc] init];
-    uiAction.identifier = self.identifier;
-    uiAction.title = self.title;
-    uiAction.authenticationRequired = self.authenticationRequired;
-    uiAction.activationMode = self.activationMode;
-    uiAction.destructive = self.destructive;
-
-    return uiAction;
-}
+/**
+ * Converts a UAUserNotificationAction into a UIUserNotificationAction.
+ *
+ * @return An instance of UIUserNotificationAction.
+ */
+- (UIUserNotificationAction *)asUIUserNotificationAction;
 
 @end

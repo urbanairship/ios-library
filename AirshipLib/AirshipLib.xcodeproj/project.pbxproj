@@ -133,6 +133,8 @@
 		49226C8318A3045900D4A57A /* UAURLProtocolTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85427D17F2164500D2DE10 /* UAURLProtocolTest.m */; };
 		4928D8F51AB24D010046E5BE /* UAUserNotificationCategory+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4928D8F41AB24D010046E5BE /* UAUserNotificationCategory+Internal.h */; };
 		4928D8F61AB24D010046E5BE /* UAUserNotificationCategory+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4928D8F41AB24D010046E5BE /* UAUserNotificationCategory+Internal.h */; };
+		4928D8F81AB364500046E5BE /* UAUserNotificationAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4928D8F71AB364500046E5BE /* UAUserNotificationAction+Internal.h */; };
+		4928D8F91AB364500046E5BE /* UAUserNotificationAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4928D8F71AB364500046E5BE /* UAUserNotificationAction+Internal.h */; };
 		492ADA0C18C958E50032C491 /* UARichContentWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 492ADA0B18C958E50032C491 /* UARichContentWindow.h */; };
 		492ADA1018C959CB0032C491 /* UACloseWindowAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 492ADA0E18C959CB0032C491 /* UACloseWindowAction.h */; };
 		492ADA1218C959CB0032C491 /* UACloseWindowAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 492ADA0F18C959CB0032C491 /* UACloseWindowAction.m */; };
@@ -663,6 +665,7 @@
 		490710BB184D3EAB00E494AF /* UAWebViewCallDataTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWebViewCallDataTest.m; sourceTree = "<group>"; };
 		491B845F198C44C200FB7A40 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
 		4928D8F41AB24D010046E5BE /* UAUserNotificationCategory+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUserNotificationCategory+Internal.h"; sourceTree = "<group>"; };
+		4928D8F71AB364500046E5BE /* UAUserNotificationAction+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUserNotificationAction+Internal.h"; sourceTree = "<group>"; };
 		492ADA0B18C958E50032C491 /* UARichContentWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARichContentWindow.h; sourceTree = "<group>"; };
 		492ADA0E18C959CB0032C491 /* UACloseWindowAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACloseWindowAction.h; sourceTree = "<group>"; };
 		492ADA0F18C959CB0032C491 /* UACloseWindowAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACloseWindowAction.m; sourceTree = "<group>"; };
@@ -1276,6 +1279,7 @@
 				49BEBF621AAA5DC000740665 /* UAMutableUserNotificationCategory.m */,
 				49BEBF671AAA5DDC00740665 /* UAMutableUserNotificationAction.h */,
 				49BEBF681AAA5DDC00740665 /* UAMutableUserNotificationAction.m */,
+				4928D8F71AB364500046E5BE /* UAUserNotificationAction+Internal.h */,
 			);
 			name = Compatibility;
 			sourceTree = "<group>";
@@ -1933,6 +1937,7 @@
 				CCDF66A319A5166B0043657E /* UACustomEvent+Internal.h in Headers */,
 				49C6652C1A1E77DB00E5D650 /* UIWebView+UAAdditions.h in Headers */,
 				CC070C8319ABCD7000E91553 /* UAUserNotificationCategories+Internal.h in Headers */,
+				4928D8F91AB364500046E5BE /* UAUserNotificationAction+Internal.h in Headers */,
 				49BADE11198B086D000FF3D5 /* UAConfig+Internal.h in Headers */,
 				49BADE13198B086E000FF3D5 /* UASQLite.h in Headers */,
 			);
@@ -2029,6 +2034,7 @@
 				49C671FF184EAB640088F210 /* UANativeBridge.h in Headers */,
 				BB8860CF159A7E9600584445 /* UA_Base64.h in Headers */,
 				1F65BB7C18997AB6000E8ACC /* UALandingPageAction.h in Headers */,
+				4928D8F81AB364500046E5BE /* UAUserNotificationAction+Internal.h in Headers */,
 				CC7DC945183E977100E95BB8 /* UAChannelRegistrationPayload.h in Headers */,
 				6116522A1A2D26D5007C96D0 /* UACircularRegion.h in Headers */,
 				492ADA1018C959CB0032C491 /* UACloseWindowAction.h in Headers */,

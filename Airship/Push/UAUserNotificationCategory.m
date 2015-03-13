@@ -23,9 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAUserNotificationCategory.h"
 #import "UAUserNotificationCategory+Internal.h"
-#import "UAUserNotificationAction.h"
+#import "UAUserNotificationAction+Internal.h"
 
 @interface UAUserNotificationCategory ()
 @property(nonatomic, copy) NSString *identifier;
@@ -45,22 +44,21 @@
     UIMutableUserNotificationCategory *category = [[UIMutableUserNotificationCategory alloc] init];
     category.identifier = self.identifier;
 
-    for (int ctx=UIUserNotificationActionContextDefault; ctx <= UIUserNotificationActionContextMinimal; ctx++) {
-        NSArray *uaActions = [self actionsForContext:(UIUserNotificationActionContext)ctx];
-        NSMutableArray *uiActions = [NSMutableArray array];
-        for (UAUserNotificationAction *uaAction in uaActions) {
-            UIMutableUserNotificationAction *uiAction = [[UIMutableUserNotificationAction alloc] init];
-            uiAction.identifier = uaAction.identifier;
-            uiAction.title = uaAction.title;
-            uiAction.authenticationRequired = uaAction.authenticationRequired;
-            uiAction.activationMode = (UIUserNotificationActivationMode)uaAction.activationMode;
-            uiAction.destructive = uaAction.destructive;
-
-            [uiActions addObject:uiAction];
-        }
-
-        [category setActions:uiActions forContext:(UIUserNotificationActionContext)ctx];
+    NSArray *defaultActions = [self actionsForContext:UIUserNotificationActionContextDefault];
+    NSMutableArray *defaultUIActions = [NSMutableArray array];
+    for (UAUserNotificationAction *uaAction in defaultActions) {
+        [defaultUIActions addObject:[uaAction asUIUserNotificationAction]];
     }
+
+    [category setActions:defaultUIActions forContext:UIUserNotificationActionContextDefault];
+
+    NSArray *minimalActions = [self actionsForContext:UIUserNotificationActionContextMinimal];
+    NSMutableArray *minimalUIActions = [NSMutableArray array];
+    for (UAUserNotificationAction *uaAction in minimalActions) {
+        [minimalUIActions addObject:[uaAction asUIUserNotificationAction]];
+    }
+
+    [category setActions:minimalUIActions forContext:UIUserNotificationActionContextDefault];
 
     return category;
 }
