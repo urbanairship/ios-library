@@ -481,8 +481,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     [self.mockedApplication verify];
 
-    //XCTAssertNoThrow([self.mockedApplication verify],
-    //                 @"userPushNotificationsEnabled should register for remote notifications");
+    XCTAssertNoThrow([self.mockedApplication verify],
+                     @"userPushNotificationsEnabled should register for remote notifications");
 }
 
 /**
