@@ -43,6 +43,7 @@
 
 #import "UAInAppMessage.h"
 #import "UAInAppMessageAction.h"
+#import "UAUserNotificationCategory+Internal.h"
 
 #define kUAMinTagLength 1
 #define kUAMaxTagLength 127
@@ -309,9 +310,31 @@ NSString *const UAPushQuietTimeEndKey = @"end";
     }
 }
 
+/**
+ * Converts UAUserNotificationCategory to UIUserNotificationCategory on iOS 8
+ */
+- (NSSet *)sanitizeCategories:(NSSet *)categories {
+    if ([UIUserNotificationCategory class]) {
+        NSMutableSet *newSet = [NSMutableSet set];
+        for (id category in categories) {
+            if ([category isKindOfClass:[UAUserNotificationCategory class]]) {
+                UIUserNotificationCategory *uiCategory = [category asUIUserNotificationCategory];
+                [newSet addObject:uiCategory];
+            }
+            [newSet addObject:category];
+        }
+
+        return newSet;
+    }
+    return categories;
+}
+
 - (void)setUserNotificationCategories:(NSSet *)categories {
+
+    categories = [self sanitizeCategories:categories];
+
     _userNotificationCategories = [categories filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
-        if (![evaluatedObject isKindOfClass:[UIUserNotificationCategory class]]) {
+        if ([UIUserNotificationCategory class] && ![evaluatedObject isKindOfClass:[UIUserNotificationCategory class]]) {
             return NO;
         }
 
