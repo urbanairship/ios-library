@@ -33,6 +33,10 @@
 
 @implementation UAUserNotificationCategory
 
+/**
+ * This implementation does nothing, because in practice one will always create
+ * the mutable variant.
+ */
 - (NSArray *)actionsForContext:(UAUserNotificationActionContext)context {
     return nil;
 }
