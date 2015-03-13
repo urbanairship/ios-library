@@ -291,7 +291,7 @@
 		49BADE16198B086F000FF3D5 /* UAActionJSDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 4905C4DD182458AC001D48E3 /* UAActionJSDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49BADE17198B0870000FF3D5 /* UAJavaScriptDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 49DCFABF1831B580002CD5FB /* UAJavaScriptDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49BEBF5C1AAA5D6700740665 /* UAUserNotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BEBF5A1AAA5D6700740665 /* UAUserNotificationAction.h */; };
-		49BEBF5D1AAA5D6700740665 /* UAUserNotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BEBF5A1AAA5D6700740665 /* UAUserNotificationAction.h */; };
+		49BEBF5D1AAA5D6700740665 /* UAUserNotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BEBF5A1AAA5D6700740665 /* UAUserNotificationAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49BEBF5E1AAA5D6700740665 /* UAUserNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49BEBF5B1AAA5D6700740665 /* UAUserNotificationAction.m */; };
 		49BEBF5F1AAA5D6700740665 /* UAUserNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49BEBF5B1AAA5D6700740665 /* UAUserNotificationAction.m */; };
 		49BEBF631AAA5DC000740665 /* UAMutableUserNotificationCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BEBF611AAA5DC000740665 /* UAMutableUserNotificationCategory.h */; };
@@ -1799,6 +1799,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49BEBF5D1AAA5D6700740665 /* UAUserNotificationAction.h in Headers */,
 				762941AC1A016EB60077CDC1 /* UAActivityViewController.h in Headers */,
 				CC319CE91A0C43000079226E /* UAPreferenceDataStore.h in Headers */,
 				49C665261A1E76D200E5D650 /* UAWebViewTools.h in Headers */,
@@ -1835,7 +1836,6 @@
 				49BADDD1198B0852000FF3D5 /* UARemoveTagsAction.h in Headers */,
 				49BADDD2198B0852000FF3D5 /* UAModifyTagsAction.h in Headers */,
 				49BADDD3198B0853000FF3D5 /* UAOpenExternalURLAction.h in Headers */,
-				49BEBF5D1AAA5D6700740665 /* UAUserNotificationAction.h in Headers */,
 				612ED4DC1A38DE2300DD7762 /* UACircularRegion.h in Headers */,
 				49BADDD5198B0854000FF3D5 /* UAAction.h in Headers */,
 				49BADDD6198B0854000FF3D5 /* UAActionArguments.h in Headers */,
