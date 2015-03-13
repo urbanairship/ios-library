@@ -23,29 +23,15 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAUserNotificationAction.h"
+#import "UAUserNotificationCategory.h"
 
-@interface UAUserNotificationAction ()
+@interface UAUserNotificationCategory ()
 
-@property(nonatomic, copy) NSString *identifier;
-@property(nonatomic, copy) NSString *title;
-@property(nonatomic, assign) UAUserNotificationActivationMode activationMode;
-@property(nonatomic, assign, getter=isAuthenticationRequired) BOOL authenticationRequired;
-@property(nonatomic, assign, getter=isDestructive) BOOL destructive;
-
-@end
-
-@implementation UAUserNotificationAction
-
-- (BOOL)isAuthenticationRequired {
-    if (self.activationMode == UAUserNotificationActivationModeForeground) {
-        return YES;
-    }
-    return _authenticationRequired;
-}
-
-- (BOOL)isDestructive {
-    return _destructive;
-}
+/**
+ * Converts a UAUserNotificationCategory into a UIUserNotificationCategory.
+ *
+ * @return An instance of UIUserNotificationCategory.
+ */
+- (UIUserNotificationCategory *)asUIUserNotificationCategory;
 
 @end
