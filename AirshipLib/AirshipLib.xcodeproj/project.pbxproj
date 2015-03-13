@@ -131,6 +131,8 @@
 		491B8461198C451100FB7A40 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D51846B61300B8EC00A40CAC /* libz.dylib */; };
 		491B8462198C45AA00FB7A40 /* UANativeBridge.c in Sources */ = {isa = PBXBuildFile; fileRef = 49C67203184EB9120088F210 /* UANativeBridge.c */; };
 		49226C8318A3045900D4A57A /* UAURLProtocolTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85427D17F2164500D2DE10 /* UAURLProtocolTest.m */; };
+		4928D8F51AB24D010046E5BE /* UAUserNotificationCategory+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4928D8F41AB24D010046E5BE /* UAUserNotificationCategory+Internal.h */; };
+		4928D8F61AB24D010046E5BE /* UAUserNotificationCategory+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4928D8F41AB24D010046E5BE /* UAUserNotificationCategory+Internal.h */; };
 		492ADA0C18C958E50032C491 /* UARichContentWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 492ADA0B18C958E50032C491 /* UARichContentWindow.h */; };
 		492ADA1018C959CB0032C491 /* UACloseWindowAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 492ADA0E18C959CB0032C491 /* UACloseWindowAction.h */; };
 		492ADA1218C959CB0032C491 /* UACloseWindowAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 492ADA0F18C959CB0032C491 /* UACloseWindowAction.m */; };
@@ -174,16 +176,16 @@
 		49973CE91A969166009B5EB1 /* UAInAppMessageButtonActionBinding.m in Sources */ = {isa = PBXBuildFile; fileRef = 49973CE61A969166009B5EB1 /* UAInAppMessageButtonActionBinding.m */; };
 		49973CEA1A969166009B5EB1 /* UAInAppMessageButtonActionBinding.m in Sources */ = {isa = PBXBuildFile; fileRef = 49973CE61A969166009B5EB1 /* UAInAppMessageButtonActionBinding.m */; };
 		49973CED1A97BFDE009B5EB1 /* UAInAppMessageAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49973CEB1A97BFDE009B5EB1 /* UAInAppMessageAction.h */; };
-		49973CEE1A97BFDE009B5EB1 /* UAInAppMessageAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49973CEB1A97BFDE009B5EB1 /* UAInAppMessageAction.h */; };
+		49973CEE1A97BFDE009B5EB1 /* UAInAppMessageAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49973CEB1A97BFDE009B5EB1 /* UAInAppMessageAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49973CEF1A97BFDE009B5EB1 /* UAInAppMessageAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49973CEC1A97BFDE009B5EB1 /* UAInAppMessageAction.m */; };
 		49973CF01A97BFDE009B5EB1 /* UAInAppMessageAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49973CEC1A97BFDE009B5EB1 /* UAInAppMessageAction.m */; };
 		49973CF41A9BB723009B5EB1 /* UAInAppMessageActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49973CF31A9BB723009B5EB1 /* UAInAppMessageActionTest.m */; };
 		49973CF51A9BF515009B5EB1 /* UAInAppMessageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D7FF491A8E92390017A11C /* UAInAppMessageController.m */; };
 		49973CF61A9BF52A009B5EB1 /* UAInAppMessageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D7FF4B1A8E92390017A11C /* UAInAppMessageView.m */; };
-		49973CF71A9BF543009B5EB1 /* UAInAppMessageController.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D7FF481A8E92390017A11C /* UAInAppMessageController.h */; };
-		49973CF81A9BF543009B5EB1 /* UAInAppMessageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D7FF4A1A8E92390017A11C /* UAInAppMessageView.h */; };
+		49973CF71A9BF543009B5EB1 /* UAInAppMessageController.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D7FF481A8E92390017A11C /* UAInAppMessageController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		49973CF81A9BF543009B5EB1 /* UAInAppMessageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D7FF4A1A8E92390017A11C /* UAInAppMessageView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49B7045C1A76FF3C000F67A6 /* UAInAppMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B7045A1A76FF3C000F67A6 /* UAInAppMessage.h */; };
-		49B7045D1A76FF3C000F67A6 /* UAInAppMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B7045A1A76FF3C000F67A6 /* UAInAppMessage.h */; };
+		49B7045D1A76FF3C000F67A6 /* UAInAppMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B7045A1A76FF3C000F67A6 /* UAInAppMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49B7045E1A76FF3C000F67A6 /* UAInAppMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B7045B1A76FF3C000F67A6 /* UAInAppMessage.m */; };
 		49B7045F1A76FF3C000F67A6 /* UAInAppMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B7045B1A76FF3C000F67A6 /* UAInAppMessage.m */; };
 		49B7046C1A7AF9A6000F67A6 /* UAInAppMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B7046B1A7AF9A6000F67A6 /* UAInAppMessageTest.m */; };
@@ -293,11 +295,11 @@
 		49BEBF5E1AAA5D6700740665 /* UAUserNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49BEBF5B1AAA5D6700740665 /* UAUserNotificationAction.m */; };
 		49BEBF5F1AAA5D6700740665 /* UAUserNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49BEBF5B1AAA5D6700740665 /* UAUserNotificationAction.m */; };
 		49BEBF631AAA5DC000740665 /* UAMutableUserNotificationCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BEBF611AAA5DC000740665 /* UAMutableUserNotificationCategory.h */; };
-		49BEBF641AAA5DC000740665 /* UAMutableUserNotificationCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BEBF611AAA5DC000740665 /* UAMutableUserNotificationCategory.h */; };
+		49BEBF641AAA5DC000740665 /* UAMutableUserNotificationCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BEBF611AAA5DC000740665 /* UAMutableUserNotificationCategory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49BEBF651AAA5DC000740665 /* UAMutableUserNotificationCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 49BEBF621AAA5DC000740665 /* UAMutableUserNotificationCategory.m */; };
 		49BEBF661AAA5DC000740665 /* UAMutableUserNotificationCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 49BEBF621AAA5DC000740665 /* UAMutableUserNotificationCategory.m */; };
 		49BEBF691AAA5DDC00740665 /* UAMutableUserNotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BEBF671AAA5DDC00740665 /* UAMutableUserNotificationAction.h */; };
-		49BEBF6A1AAA5DDC00740665 /* UAMutableUserNotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BEBF671AAA5DDC00740665 /* UAMutableUserNotificationAction.h */; };
+		49BEBF6A1AAA5DDC00740665 /* UAMutableUserNotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BEBF671AAA5DDC00740665 /* UAMutableUserNotificationAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49BEBF6B1AAA5DDC00740665 /* UAMutableUserNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49BEBF681AAA5DDC00740665 /* UAMutableUserNotificationAction.m */; };
 		49BEBF6C1AAA5DDC00740665 /* UAMutableUserNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49BEBF681AAA5DDC00740665 /* UAMutableUserNotificationAction.m */; };
 		49C1F07F1978523300DD67DE /* UAInboxMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C1F07D1978523300DD67DE /* UAInboxMessage.h */; };
@@ -316,7 +318,7 @@
 		49C6721C1857CB040088F210 /* UANativeBridgeTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C6721B1857CB040088F210 /* UANativeBridgeTest.m */; };
 		49C6721E1857CE840088F210 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49C6721D1857CE840088F210 /* JavaScriptCore.framework */; };
 		49CE03281AA9374000257BD8 /* UAUserNotificationCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = 49CE03261AA9374000257BD8 /* UAUserNotificationCategory.h */; };
-		49CE03291AA9374000257BD8 /* UAUserNotificationCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = 49CE03261AA9374000257BD8 /* UAUserNotificationCategory.h */; };
+		49CE03291AA9374000257BD8 /* UAUserNotificationCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = 49CE03261AA9374000257BD8 /* UAUserNotificationCategory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49CE032A1AA9374000257BD8 /* UAUserNotificationCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 49CE03271AA9374000257BD8 /* UAUserNotificationCategory.m */; };
 		49CE032B1AA9374000257BD8 /* UAUserNotificationCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 49CE03271AA9374000257BD8 /* UAUserNotificationCategory.m */; };
 		49D11C02171E00980058E7C3 /* UAHTTPConnectionOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D11C00171E00980058E7C3 /* UAHTTPConnectionOperation.h */; };
@@ -660,6 +662,7 @@
 		4905C4E418246339001D48E3 /* NSString+UAURLEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UAURLEncoding.m"; sourceTree = "<group>"; };
 		490710BB184D3EAB00E494AF /* UAWebViewCallDataTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWebViewCallDataTest.m; sourceTree = "<group>"; };
 		491B845F198C44C200FB7A40 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
+		4928D8F41AB24D010046E5BE /* UAUserNotificationCategory+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUserNotificationCategory+Internal.h"; sourceTree = "<group>"; };
 		492ADA0B18C958E50032C491 /* UARichContentWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARichContentWindow.h; sourceTree = "<group>"; };
 		492ADA0E18C959CB0032C491 /* UACloseWindowAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACloseWindowAction.h; sourceTree = "<group>"; };
 		492ADA0F18C959CB0032C491 /* UACloseWindowAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACloseWindowAction.m; sourceTree = "<group>"; };
@@ -1264,6 +1267,7 @@
 		4928D8E51AAA87110046E5BE /* Compatibility */ = {
 			isa = PBXGroup;
 			children = (
+				4928D8F41AB24D010046E5BE /* UAUserNotificationCategory+Internal.h */,
 				49CE03261AA9374000257BD8 /* UAUserNotificationCategory.h */,
 				49CE03271AA9374000257BD8 /* UAUserNotificationCategory.m */,
 				49BEBF5A1AAA5D6700740665 /* UAUserNotificationAction.h */,
@@ -1833,7 +1837,6 @@
 				49BADDD3198B0853000FF3D5 /* UAOpenExternalURLAction.h in Headers */,
 				49BEBF5D1AAA5D6700740665 /* UAUserNotificationAction.h in Headers */,
 				612ED4DC1A38DE2300DD7762 /* UACircularRegion.h in Headers */,
-				49973CEE1A97BFDE009B5EB1 /* UAInAppMessageAction.h in Headers */,
 				49BADDD5198B0854000FF3D5 /* UAAction.h in Headers */,
 				49BADDD6198B0854000FF3D5 /* UAActionArguments.h in Headers */,
 				49BADDD9198B0855000FF3D5 /* UAActionRegistry.h in Headers */,
@@ -1844,20 +1847,19 @@
 				49BADDE0198B0858000FF3D5 /* UAAggregateActionResult.h in Headers */,
 				49BADDE1198B0858000FF3D5 /* UAIncomingPushAction.h in Headers */,
 				49BADDE2198B0859000FF3D5 /* UALandingPageAction.h in Headers */,
-				49CE03291AA9374000257BD8 /* UAUserNotificationCategory.h in Headers */,
 				49BADDE4198B0859000FF3D5 /* UAAction+Operators.h in Headers */,
 				49BADDE5198B085A000FF3D5 /* UAIncomingRichPushAction.h in Headers */,
 				49BADDE6198B085A000FF3D5 /* UACloseWindowAction.h in Headers */,
 				49BADDE7198B085A000FF3D5 /* UALocationEvent.h in Headers */,
 				49BADDE8198B085B000FF3D5 /* UACustomEvent.h in Headers */,
 				49BADDE9198B085B000FF3D5 /* UAEvent.h in Headers */,
-				49BEBF6A1AAA5DDC00740665 /* UAMutableUserNotificationAction.h in Headers */,
 				49BADDEC198B085C000FF3D5 /* UAAnalytics.h in Headers */,
 				49BADDED198B085D000FF3D5 /* UAAnalyticsDBManager.h in Headers */,
 				49BADDEE198B085D000FF3D5 /* UAAppDelegate.h in Headers */,
 				49BADDEF198B085E000FF3D5 /* UAAppDelegateProxy.h in Headers */,
 				49BADDF1198B085F000FF3D5 /* UAHTTPConnection.h in Headers */,
 				49BADDF2198B085F000FF3D5 /* UAHTTPConnectionOperation.h in Headers */,
+				4928D8F61AB24D010046E5BE /* UAUserNotificationCategory+Internal.h in Headers */,
 				49BADDF3198B085F000FF3D5 /* UAHTTPRequestEngine.h in Headers */,
 				49BADDF4198B0860000FF3D5 /* UADelayOperation.h in Headers */,
 				49BADDF5198B0860000FF3D5 /* UAHTTPRequest.h in Headers */,
@@ -1882,10 +1884,15 @@
 				49BADE0E198B086C000FF3D5 /* UAApplicationMetrics.h in Headers */,
 				49BADE0F198B086C000FF3D5 /* UAGlobal.h in Headers */,
 				49BADE10198B086C000FF3D5 /* UAConfig.h in Headers */,
-				49B7045D1A76FF3C000F67A6 /* UAInAppMessage.h in Headers */,
 				49BADE14198B086E000FF3D5 /* UADisposable.h in Headers */,
 				49BADE15198B086F000FF3D5 /* UAURLProtocol.h in Headers */,
+				49973CEE1A97BFDE009B5EB1 /* UAInAppMessageAction.h in Headers */,
+				49CE03291AA9374000257BD8 /* UAUserNotificationCategory.h in Headers */,
+				49BEBF6A1AAA5DDC00740665 /* UAMutableUserNotificationAction.h in Headers */,
+				49B7045D1A76FF3C000F67A6 /* UAInAppMessage.h in Headers */,
 				49BEBF641AAA5DC000740665 /* UAMutableUserNotificationCategory.h in Headers */,
+				49973CF71A9BF543009B5EB1 /* UAInAppMessageController.h in Headers */,
+				49973CF81A9BF543009B5EB1 /* UAInAppMessageView.h in Headers */,
 				CCDF66AF19A544590043657E /* UAShareAction.h in Headers */,
 				76B4E01719A4038000603F8A /* UAInteractiveNotificationEvent.h in Headers */,
 				CC313A9A19A66DBE00134A9F /* UAUserNotificationCategories.h in Headers */,
@@ -1918,8 +1925,6 @@
 				CC6773C219B11C1F00B016EC /* UAInboxPushHandler+Internal.h in Headers */,
 				49BADDEA198B085C000FF3D5 /* UAEvent+Internal.h in Headers */,
 				49BADDEB198B085C000FF3D5 /* UAAnalytics+Internal.h in Headers */,
-				49973CF71A9BF543009B5EB1 /* UAInAppMessageController.h in Headers */,
-				49973CF81A9BF543009B5EB1 /* UAInAppMessageView.h in Headers */,
 				49BADDF0198B085E000FF3D5 /* UAHTTPConnection+Internal.h in Headers */,
 				49BADDF6198B0861000FF3D5 /* UAHTTPRequest+Internal.h in Headers */,
 				49BADDFB198B0863000FF3D5 /* UALocationService+Internal.h in Headers */,
@@ -1940,6 +1945,7 @@
 				76B4E01619A4038000603F8A /* UAInteractiveNotificationEvent.h in Headers */,
 				CC313A9919A66DBE00134A9F /* UAUserNotificationCategories.h in Headers */,
 				1F610DE517835C3A00BCD96E /* UAInboxDBManager.h in Headers */,
+				4928D8F51AB24D010046E5BE /* UAUserNotificationCategory+Internal.h in Headers */,
 				CC8542CB17F4B81600D2DE10 /* UAIncomingPushAction.h in Headers */,
 				4905C4E518246339001D48E3 /* NSString+UAURLEncoding.h in Headers */,
 				CCD7FCF11AA5383100A20B05 /* UAActionRunner+Internal.h in Headers */,
