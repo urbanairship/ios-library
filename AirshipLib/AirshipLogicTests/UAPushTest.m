@@ -461,13 +461,14 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
  */
 - (void)testUserPushNotificationsEnabledIOS8 {
     self.push.userPushNotificationsEnabled = NO;
-    [[[self.mockDefaultUserNotificationCategories stub] andReturn:[NSSet set]] defaultCategoriesWithRequireAuth:YES];
+
+    NSSet *expectedCategories = self.push.allUserNotificationCategories;
 
     // Make sure push is set to NO
     XCTAssertFalse(self.push.userPushNotificationsEnabled, @"userPushNotificationsEnabled should default to NO");
 
     UIUserNotificationSettings *expected = [UIUserNotificationSettings settingsForTypes:self.push.userNotificationTypes
-                                                                             categories:[NSSet set]];
+                                                                             categories:expectedCategories];
 
     [[self.mockedApplication expect] registerUserNotificationSettings:expected];
     self.push.userPushNotificationsEnabled = YES;
@@ -478,8 +479,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertTrue([self.dataStore boolForKey:UAUserPushNotificationsEnabledKey],
                   @"userPushNotificationsEnabled should be stored in standardUserDefaults");
 
-    XCTAssertNoThrow([self.mockedApplication verify],
-                     @"userPushNotificationsEnabled should register for remote notifications");
+    [self.mockedApplication verify];
+
+    //XCTAssertNoThrow([self.mockedApplication verify],
+    //                 @"userPushNotificationsEnabled should register for remote notifications");
 }
 
 /**
