@@ -185,7 +185,6 @@
 - (NSArray *)buttonActionBindings {
     NSMutableArray *bindings = [NSMutableArray array];
 
-    // Restrict this to iOS 8+ for now
     if (self.buttonGroup) {
 
         NSSet *categories;
