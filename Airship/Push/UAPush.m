@@ -97,6 +97,7 @@ NSString *const UAPushQuietTimeEndKey = @"end";
         self.backgroundPushNotificationsEnabledByDefault = YES;
 
         self.userNotificationTypes = UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound;
+        self.allUserNotificationCategories = [UAUserNotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories];
         self.registrationBackgroundTask = UIBackgroundTaskInvalid;
         self.namedUser = [[UANamedUser alloc] initWithConfig:config dataStore:dataStore];
 
@@ -348,13 +349,25 @@ NSString *const UAPushQuietTimeEndKey = @"end";
     }]];
 
     self.shouldUpdateAPNSRegistration = YES;
+
+    [self updateAllUserNotificationCategories];
 }
 
-- (NSSet *)allUserNotificationCategories {
+- (void)setRequireAuthorizationForDefaultCategories:(BOOL)requireAuthorizationForDefaultCategories {
+    _requireAuthorizationForDefaultCategories = requireAuthorizationForDefaultCategories;
+    [self updateAllUserNotificationCategories];
+}
+
+/**
+ * Caches a set of user notification categories based on the the current developer-supplied set and our default set with authorization settings.
+ * Call this method whenever either changes to update the cache.
+ */
+- (void)updateAllUserNotificationCategories {
     NSMutableSet *categories = [NSMutableSet setWithSet:[UAUserNotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories]];
     [categories unionSet:self.userNotificationCategories];
-    return categories;
+    self.allUserNotificationCategories = categories;
 }
+
 
 - (NSDictionary *)quietTime {
     return [self.dataStore dictionaryForKey:UAPushQuietTimeSettingsKey];

@@ -148,7 +148,7 @@ extern NSString *const UAPushChannelLocationKey;
  */
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
-@property (nonatomic, readonly) NSSet *allUserNotificationCategories;
+@property (nonatomic, strong) NSSet *allUserNotificationCategories;
 
 
 /**
