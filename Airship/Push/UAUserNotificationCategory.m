@@ -64,10 +64,34 @@
 }
 
 - (BOOL)isEqualToCategory:(UAUserNotificationCategory *)category {
-    BOOL equalIdentifier = [self.identifier isEqualToString:category.identifier];
-    BOOL equalMinimalActions = [[self actionsForContext:UIUserNotificationActionContextMinimal] isEqualToArray:[category actionsForContext:UIUserNotificationActionContextMinimal]];
-    BOOL equalDefaultActions = [[self actionsForContext:UIUserNotificationActionContextDefault] isEqualToArray:[category actionsForContext:UIUserNotificationActionContextDefault]];
-    return equalIdentifier && equalMinimalActions && equalDefaultActions;
+    NSArray *minimalUAActions = [self actionsForContext:UIUserNotificationActionContextMinimal];
+    NSArray *defaultUAActions = [self actionsForContext:UIUserNotificationActionContextDefault];
+
+    NSArray *minimalUIActions = [category actionsForContext:UIUserNotificationActionContextMinimal];
+    NSArray *defaultUIActions = [category actionsForContext:UIUserNotificationActionContextDefault];
+
+    if (minimalUAActions.count != minimalUIActions.count || defaultUAActions.count != defaultUIActions.count) {
+        return NO;
+    }
+
+    for (NSUInteger i= 0; i< minimalUAActions.count; i++) {
+        UAUserNotificationAction *uaAction = minimalUAActions[i];
+        UIUserNotificationAction *uiAction = minimalUIActions[i];
+        if (![uaAction isEqualToAction:(UAUserNotificationAction *)uiAction]) {
+            return NO;
+        }
+    }
+
+    for (NSUInteger i= 0; i< defaultUAActions.count; i++) {
+        UAUserNotificationAction *uaAction = defaultUAActions[i];
+        UIUserNotificationAction *uiAction = defaultUIActions[i];
+        if (![uaAction isEqualToAction:(UAUserNotificationAction *)uiAction]) {
+            return NO;
+        }
+    }
+
+    // identifiers match as long as they are either equal or both nil
+    return [self.identifier isEqualToString:category.identifier] || (!self.identifier && !category.identifier);
 }
 
 @end

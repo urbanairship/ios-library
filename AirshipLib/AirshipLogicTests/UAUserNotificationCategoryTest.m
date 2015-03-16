@@ -37,7 +37,7 @@
 
 - (void)testAsUIUserNotificationCategory {
     UIUserNotificationCategory *uiCategory = [self.uaCategory asUIUserNotificationCategory];
-    XCTAssertTrue([self.uaCategory isEqualToCategory:uiCategory]);
+    XCTAssertTrue([self.uaCategory isEqualToCategory:(UAUserNotificationCategory *)uiCategory]);
 }
 
 @end
