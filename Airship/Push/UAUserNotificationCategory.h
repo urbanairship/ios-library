@@ -32,6 +32,11 @@
 @interface UAUserNotificationCategory : NSObject
 
 /**
+ * The name of the action group.
+ */
+@property(nonatomic, copy, readonly) NSString *identifier;
+
+/**
  * Returns the actions to be displayed for the given notification context.
  *
  * @param context The context in which the notification is displayed.
@@ -39,8 +44,10 @@
 - (NSArray *)actionsForContext:(UIUserNotificationActionContext)context;
 
 /**
- * The name of the action group.
+ * Tests for equality by value.
+ *
+ * @param category An instance of UAUserNotificationCategory.
  */
-@property(nonatomic, copy, readonly) NSString *identifier;
+- (BOOL)isEqualToCategory:(UAUserNotificationCategory *)category;
 
 @end

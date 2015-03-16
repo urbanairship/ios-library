@@ -58,9 +58,16 @@
         [minimalUIActions addObject:[uaAction asUIUserNotificationAction]];
     }
 
-    [category setActions:minimalUIActions forContext:UIUserNotificationActionContextDefault];
+    [category setActions:minimalUIActions forContext:UIUserNotificationActionContextMinimal];
 
     return category;
+}
+
+- (BOOL)isEqualToCategory:(UAUserNotificationCategory *)category {
+    BOOL equalIdentifier = [self.identifier isEqualToString:category.identifier];
+    BOOL equalMinimalActions = [[self actionsForContext:UIUserNotificationActionContextMinimal] isEqualToArray:[category actionsForContext:UIUserNotificationActionContextMinimal]];
+    BOOL equalDefaultActions = [[self actionsForContext:UIUserNotificationActionContextDefault] isEqualToArray:[category actionsForContext:UIUserNotificationActionContextDefault]];
+    return equalIdentifier && equalMinimalActions && equalDefaultActions;
 }
 
 @end

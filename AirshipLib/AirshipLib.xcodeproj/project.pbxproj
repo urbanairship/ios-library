@@ -135,6 +135,7 @@
 		4928D8F61AB24D010046E5BE /* UAUserNotificationCategory+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4928D8F41AB24D010046E5BE /* UAUserNotificationCategory+Internal.h */; };
 		4928D8F81AB364500046E5BE /* UAUserNotificationAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4928D8F71AB364500046E5BE /* UAUserNotificationAction+Internal.h */; };
 		4928D8F91AB364500046E5BE /* UAUserNotificationAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4928D8F71AB364500046E5BE /* UAUserNotificationAction+Internal.h */; };
+		4928D8FD1AB758C10046E5BE /* UAUserNotificationCategoryTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4928D8FC1AB758C10046E5BE /* UAUserNotificationCategoryTest.m */; };
 		492ADA0C18C958E50032C491 /* UARichContentWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 492ADA0B18C958E50032C491 /* UARichContentWindow.h */; };
 		492ADA1018C959CB0032C491 /* UACloseWindowAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 492ADA0E18C959CB0032C491 /* UACloseWindowAction.h */; };
 		492ADA1218C959CB0032C491 /* UACloseWindowAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 492ADA0F18C959CB0032C491 /* UACloseWindowAction.m */; };
@@ -666,6 +667,7 @@
 		491B845F198C44C200FB7A40 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
 		4928D8F41AB24D010046E5BE /* UAUserNotificationCategory+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUserNotificationCategory+Internal.h"; sourceTree = "<group>"; };
 		4928D8F71AB364500046E5BE /* UAUserNotificationAction+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUserNotificationAction+Internal.h"; sourceTree = "<group>"; };
+		4928D8FC1AB758C10046E5BE /* UAUserNotificationCategoryTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUserNotificationCategoryTest.m; sourceTree = "<group>"; };
 		492ADA0B18C958E50032C491 /* UARichContentWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARichContentWindow.h; sourceTree = "<group>"; };
 		492ADA0E18C959CB0032C491 /* UACloseWindowAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACloseWindowAction.h; sourceTree = "<group>"; };
 		492ADA0F18C959CB0032C491 /* UACloseWindowAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACloseWindowAction.m; sourceTree = "<group>"; };
@@ -1284,6 +1286,22 @@
 			name = Compatibility;
 			sourceTree = "<group>";
 		};
+		4928D8FA1AB758980046E5BE /* Interactive */ = {
+			isa = PBXGroup;
+			children = (
+				4928D8FB1AB7589F0046E5BE /* Compatibility */,
+			);
+			name = Interactive;
+			sourceTree = "<group>";
+		};
+		4928D8FB1AB7589F0046E5BE /* Compatibility */ = {
+			isa = PBXGroup;
+			children = (
+				4928D8FC1AB758C10046E5BE /* UAUserNotificationCategoryTest.m */,
+			);
+			name = Compatibility;
+			sourceTree = "<group>";
+		};
 		49416D5718BECBC300A18B72 /* LandingPages */ = {
 			isa = PBXGroup;
 			children = (
@@ -1686,6 +1704,7 @@
 		CCD3158217CFBD45002E93A1 /* Push */ = {
 			isa = PBXGroup;
 			children = (
+				4928D8FA1AB758980046E5BE /* Interactive */,
 				CC7DC952183E979700E95BB8 /* ChannelClient */,
 				CCD3158317CFBD5A002E93A1 /* UAPushTest.m */,
 				CC7DC958183E97D000E95BB8 /* UAChannelRegistrarTest.m */,
@@ -2442,6 +2461,7 @@
 				BBB87D63150574DE00971CEC /* UALocationProviderTests.m in Sources */,
 				CC4AAE0C18C93EF2001F23B3 /* UAApplicationMetricsTest.m in Sources */,
 				76F9B4AE18D3CE2A00C438D4 /* JRSwizzle.m in Sources */,
+				4928D8FD1AB758C10046E5BE /* UAUserNotificationCategoryTest.m in Sources */,
 				CC1D22A218037DD9005C8393 /* UAAggregateActionResultTest.m in Sources */,
 				BBB87D64150574DE00971CEC /* UALocationServiceTest.m in Sources */,
 				CCA3A4F317FF14DF009C7371 /* UAActionTest.m in Sources */,

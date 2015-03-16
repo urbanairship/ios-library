@@ -56,4 +56,11 @@
  */
 @property(nonatomic, assign, readonly, getter=isDestructive) BOOL destructive;
 
+/**
+ * Tests for equality by value.
+ *
+ * @param notificationAction An instance of UAUserNotificationAction.
+ */
+- (BOOL)isEqualToAction:(UAUserNotificationAction *)notificationAction;
+
 @end

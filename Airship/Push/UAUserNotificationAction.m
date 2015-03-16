@@ -60,4 +60,13 @@
     return uiAction;
 }
 
+- (BOOL)isEqualToAction:(UAUserNotificationAction *)notificationAction {
+    BOOL equalIdentifier = [self.identifier isEqualToString:notificationAction.identifier];
+    BOOL equalTitle = [self.title isEqualToString:notificationAction.title];
+    BOOL equalAuth = self.authenticationRequired == notificationAction.authenticationRequired;
+    BOOL equalActivationMode = self.activationMode == notificationAction.activationMode;
+    BOOL equalDestructive = self.destructive == notificationAction.destructive;
+    return equalIdentifier && equalTitle && equalAuth && equalActivationMode && equalDestructive;
+}
+
 @end
