@@ -187,14 +187,7 @@
 
     if (self.buttonGroup) {
 
-        NSSet *categories;
-
-        if ([UIUserNotificationCategory class]) {
-            // Get the current set of interactive notification categories
-            categories = [UIApplication sharedApplication].currentUserNotificationSettings.categories;
-        } else {
-            categories =  [UAirship push].allUserNotificationCategories;
-        }
+        NSSet *categories = [UAirship push].allUserNotificationCategories;
 
         for (UAUserNotificationCategory *category in categories) {
 
