@@ -479,8 +479,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertTrue([self.dataStore boolForKey:UAUserPushNotificationsEnabledKey],
                   @"userPushNotificationsEnabled should be stored in standardUserDefaults");
 
-    [self.mockedApplication verify];
-
     XCTAssertNoThrow([self.mockedApplication verify],
                      @"userPushNotificationsEnabled should register for remote notifications");
 }
