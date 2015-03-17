@@ -25,6 +25,7 @@
 
 #import "UAInboxDBManager+Internal.h"
 #import "UAInboxMessage+Internal.h"
+#import "UADBMigrationErrorHandler.h"
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import <CoreData/CoreData.h>
@@ -229,6 +230,8 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
         
         [[NSFileManager defaultManager] removeItemAtURL:self.storeURL error:nil];
         [_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:self.storeURL options:nil error:&error];
+      
+        [UADBMigrationErrorHandler deleteOldDatabaseIfExists];
     }
 
     return _persistentStoreCoordinator;
