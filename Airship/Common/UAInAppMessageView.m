@@ -26,8 +26,8 @@
 #import "UAInAppMessageView.h"
 
 #define kUAInAppMessageViewShadowOffsetY 1
-#define kUAInAppMessageViewShadowRadius 1
-#define kUAInAppMessageViewShadowOpacity 0.35
+#define kUAInAppMessageViewShadowRadius 3
+#define kUAInAppMessageViewShadowOpacity 0.25
 
 @interface UAInAppMessageView ()
 
@@ -163,13 +163,13 @@
 - (void)buildLayoutWithPosition:(UAInAppMessagePosition)position numberOfButtons:(NSUInteger)numberOfButtons {
 
     // layout constants
-    CGFloat verticalMargin = 15;
-    CGFloat horizontalMargin = 5;
+    CGFloat verticalMargin = 10;
+    CGFloat horizontalMargin = 10;
     CGFloat lineHeight = 15;
     CGFloat nLines = 4;
     CGFloat tabHeight = 5;
     CGFloat tabWidth = 30;
-    CGFloat tabMargin = 5;
+    CGFloat tabMargin = 10;
     CGFloat labelHeight = lineHeight * nLines;
 
     // views and metrics dictionaries for binding in VFL expressions
