@@ -189,6 +189,7 @@
 
         NSSet *categories = [UAirship push].allUserNotificationCategories;
 
+        // id -> UAUserNotificationCategory/UIUserNotificationCategory
         for (id category in categories) {
             // Find the category that matches our buttonGroup
             if (![[category identifier] isEqualToString:self.buttonGroup]) {
@@ -196,6 +197,7 @@
             }
 
             // Create a button action binding for each corresponding action identifier
+            // id -> UAUserNotificationAction/UIUserNotificationAction
             for (id notificationAction in [category actionsForContext:UIUserNotificationActionContextDefault]) {
                 NSDictionary *payload = self.buttonActions[[notificationAction identifier]];
                 if (payload) {
