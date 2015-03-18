@@ -238,4 +238,10 @@
  */
 - (void)launchedFromNotification:(NSDictionary *)notification;
 
+/**
+ * Determines the location permission for the app.
+ * @return The location permission string.
+ */
+- (NSString *)locationPermission;
+
 @end

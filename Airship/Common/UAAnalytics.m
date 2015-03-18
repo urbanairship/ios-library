@@ -42,11 +42,18 @@
 #import "UAEventAppBackground.h"
 #import "UAEventAppForeground.h"
 #import "UAPreferenceDataStore.h"
+#import "UALocationService.h"
 
 
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 @implementation UAAnalytics
+
+NSString *const UALocationPermissionSystemLocationDisabled = @"SYSTEM_LOCATION_DISABLED";
+NSString *const UALocationPermissionNotAllowed = @"NOT_ALLOWED";
+NSString *const UALocationPermissionAlwaysAllowed = @"ALWAYS_ALLOWED";
+NSString *const UALocationPermissionForegroundAllowed = @"FOREGROUND_ALLOWED";
+NSString *const UALocationPermissionUnprompted = @"UNPROMPTED";
 
 #pragma mark -
 #pragma mark Object Lifecycle
@@ -364,6 +371,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [request addRequestHeader:@"X-UA-Locale-Variant" value:[[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleVariantCode]];
     [request addRequestHeader:@"X-UA-Push-Address" value:[UAirship push].deviceToken];
     [request addRequestHeader:@"X-UA-Channel-ID" value:[UAirship push].channelID];
+    [request addRequestHeader:@"X-UA-Location-Permission" value:[self locationPermission]];
+    [request addRequestHeader:@"X-UA-Location-Service-Enabled" value:[UALocationService airshipLocationServiceEnabled] ? @"true" : @"false"];
 
     return request;
 }
@@ -671,6 +680,24 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     }
 
     [self.dataStore setBool:enabled forKey:kUAAnalyticsEnabled];
+}
+
+- (NSString *)locationPermission {
+    if (![UALocationService locationServicesEnabled]) {
+        return UALocationPermissionSystemLocationDisabled;
+    } else {
+        switch ([CLLocationManager authorizationStatus]) {
+            case kCLAuthorizationStatusDenied:
+            case kCLAuthorizationStatusRestricted:
+                return UALocationPermissionNotAllowed;
+            case kCLAuthorizationStatusAuthorizedAlways:
+                return UALocationPermissionAlwaysAllowed;
+            case kCLAuthorizationStatusAuthorizedWhenInUse:
+                return UALocationPermissionForegroundAllowed;
+            case kCLAuthorizationStatusNotDetermined:
+                return UALocationPermissionUnprompted;
+        }
+    }
 }
 
 @end
