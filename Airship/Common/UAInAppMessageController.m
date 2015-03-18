@@ -29,6 +29,9 @@
 #import "UAUtils.h"
 #import "UAInAppMessageButtonActionBinding.h"
 #import "UAActionRunner+Internal.h"
+#import "UAirship.h"
+#import "UAInAppMessaging.h"
+
 
 #define kUAInAppMessageDefaultPrimaryColor [UIColor whiteColor]
 #define kUAInAppMessageDefaultSecondaryColor [UIColor colorWithRed:40.0/255 green:40.0/255 blue:40.0/255 alpha:1]
@@ -121,7 +124,7 @@
  */
 - (UAInAppMessageView *)buildMessageView {
 
-    UIFont *boldFont = [UIFont boldSystemFontOfSize:12];
+    UIFont *messageFont = [UAirship inAppMessaging].font;
 
     UAInAppMessageView *messageView = [[UAInAppMessageView alloc] initWithPosition:self.message.position
                                                                    numberOfButtons:self.buttonActionBindings.count];
@@ -129,10 +132,10 @@
     // configure all the subviews
     messageView.messageLabel.text = self.message.alert;
     messageView.messageLabel.numberOfLines = 4;
-    messageView.messageLabel.font = boldFont;
+    messageView.messageLabel.font = messageFont;
 
-    messageView.button1.titleLabel.font = boldFont;
-    messageView.button2.titleLabel.font = boldFont;
+    messageView.button1.titleLabel.font = messageFont;
+    messageView.button2.titleLabel.font = messageFont;
 
     if (self.buttonActionBindings.count) {
         UAInAppMessageButtonActionBinding *button1 = self.buttonActionBindings[0];

@@ -46,6 +46,7 @@
 #import "UAEventAppInit.h"
 #import "UAEventAppExit.h"
 #import "UAPreferenceDataStore.h"
+#import "UAInAppMessaging.h"
 
 #import "UAActionJSDelegate.h"
 
@@ -121,6 +122,7 @@ UALogLevel uaLogLevel = UALogLevelError;
         self.sharedPush = [UAPush pushWithConfig:config dataStore:dataStore];
         self.sharedInboxUser = [UAUser userWithPush:self.sharedPush config:config dataStore:dataStore];
         self.sharedInbox = [UAInbox inboxWithUser:self.sharedInboxUser config:config dataStore:dataStore];
+        self.sharedInAppMessaging = [[UAInAppMessaging alloc] init];
 
         self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore];
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
@@ -364,6 +366,10 @@ UALogLevel uaLogLevel = UALogLevelError;
 
 + (UAUser *)inboxUser {
     return _sharedAirship.sharedInboxUser;
+}
+
++ (UAInAppMessaging *)inAppMessaging {
+    return _sharedAirship.sharedInAppMessaging;
 }
 
 #pragma mark -
