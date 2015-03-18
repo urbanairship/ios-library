@@ -256,5 +256,20 @@ extern NSString *const UAPushChannelLocationKey;
  */
 - (void)updateAPNSRegistration;
 
+/**
+ * Determines whether UIUserNotificationCategory is available for use.
+ */
+- (BOOL)shouldUseUIUserNotificationCategories;
+
+/**
+ * Converts UAUserNotificationCategory to UIUserNotificationCategory on iOS 8.
+ */
+- (NSSet *)sanitizeCategories:(NSSet *)categories;
+
+/**
+ * Updates the set of all known user notification categories by combining
+ * the default and user supplied categories.
+ */
+- (void)updateAllUserNotificationCategories;
 
 @end

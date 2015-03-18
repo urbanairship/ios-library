@@ -311,18 +311,23 @@ NSString *const UAPushQuietTimeEndKey = @"end";
     }
 }
 
+- (BOOL)shouldUseUIUserNotificationCategories {
+    return [UIUserNotificationCategory class] != nil;
+}
+
 /**
  * Converts UAUserNotificationCategory to UIUserNotificationCategory on iOS 8
  */
 - (NSSet *)sanitizeCategories:(NSSet *)categories {
-    if ([UIUserNotificationCategory class]) {
+    if ([self shouldUseUIUserNotificationCategories]) {
         NSMutableSet *newSet = [NSMutableSet set];
         for (id category in categories) {
             if ([category isKindOfClass:[UAUserNotificationCategory class]]) {
                 UIUserNotificationCategory *uiCategory = [category asUIUserNotificationCategory];
                 [newSet addObject:uiCategory];
+            } else {
+                [newSet addObject:category];
             }
-            [newSet addObject:category];
         }
 
         return newSet;
@@ -335,7 +340,7 @@ NSString *const UAPushQuietTimeEndKey = @"end";
     categories = [self sanitizeCategories:categories];
 
     _userNotificationCategories = [categories filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
-        if ([UIUserNotificationCategory class] && ![evaluatedObject isKindOfClass:[UIUserNotificationCategory class]]) {
+        if ([self shouldUseUIUserNotificationCategories] && ![evaluatedObject isKindOfClass:[UIUserNotificationCategory class]]) {
             return NO;
         }
 
@@ -358,14 +363,19 @@ NSString *const UAPushQuietTimeEndKey = @"end";
     [self updateAllUserNotificationCategories];
 }
 
+- (void)setAllUserNotificationCategories:(NSSet *)allUserNotificationCategories {
+    NSSet *sanitizedCategories = [self sanitizeCategories:allUserNotificationCategories];
+    _allUserNotificationCategories = sanitizedCategories;
+}
+
 /**
  * Caches a set of user notification categories based on the the current developer-supplied set and our default set with authorization settings.
  * Call this method whenever either changes to update the cache.
  */
 - (void)updateAllUserNotificationCategories {
-    NSMutableSet *categories = [NSMutableSet setWithSet:[UAUserNotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories]];
-    [categories unionSet:self.userNotificationCategories];
-    self.allUserNotificationCategories = categories;
+    NSMutableSet *allCategories = [NSMutableSet setWithSet:[UAUserNotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories]];
+    [allCategories unionSet:self.userNotificationCategories];
+    self.allUserNotificationCategories = allCategories;
 }
 
 
