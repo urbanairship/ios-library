@@ -26,8 +26,8 @@
 #import "UAInAppMessageView.h"
 
 #define kUAInAppMessageViewShadowOffsetY 1
-#define kUAInAppMessageViewShadowRadius 1
-#define kUAInAppMessageViewShadowOpacity 0.35
+#define kUAInAppMessageViewShadowRadius 3
+#define kUAInAppMessageViewShadowOpacity 0.25
 
 @interface UAInAppMessageView ()
 
@@ -108,7 +108,7 @@
     // 0 buttons
     if (!numberOfButtons) {
         // label is followed by the edge
-        [constraints addObject:@"V:[label]-verticalMargin-|"];
+        [constraints addObject:@"V:[label]-tabAreaHeight-|"];
     } else if (numberOfButtons == 1) {
         // button 1 is vertically positioned underneath the label
         [constraints addObject:@"V:[label]-verticalMargin-[button1]-verticalMargin-|"];
@@ -133,7 +133,7 @@
     NSMutableArray *constraints = [NSMutableArray array];
 
     // label is at the top
-    [constraints addObject:@"V:|-verticalMargin-[label]"];
+    [constraints addObject:@"V:|-tabAreaHeight-[label]"];
 
     // 0 buttons
     if (!numberOfButtons) {
@@ -163,13 +163,14 @@
 - (void)buildLayoutWithPosition:(UAInAppMessagePosition)position numberOfButtons:(NSUInteger)numberOfButtons {
 
     // layout constants
-    CGFloat verticalMargin = 15;
-    CGFloat horizontalMargin = 5;
+    CGFloat verticalMargin = 10;
+    CGFloat horizontalMargin = 10;
     CGFloat lineHeight = 15;
     CGFloat nLines = 4;
     CGFloat tabHeight = 5;
     CGFloat tabWidth = 30;
-    CGFloat tabMargin = 5;
+    CGFloat tabMargin = 10;
+    CGFloat tabAreaHeight = tabHeight + tabMargin + verticalMargin;
     CGFloat labelHeight = lineHeight * nLines;
 
     // views and metrics dictionaries for binding in VFL expressions
@@ -183,6 +184,7 @@
                    @"horizontalMargin":@(horizontalMargin),
                    @"tabMargin":@(tabMargin),
                    @"tabHeight":@(tabHeight),
+                   @"tabAreaHeight":@(tabAreaHeight),
                    @"tabWidth":@(tabWidth),
                    @"labelHeight":@(labelHeight)};
 
