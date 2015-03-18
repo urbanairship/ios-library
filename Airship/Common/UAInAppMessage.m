@@ -189,23 +189,22 @@
 
         NSSet *categories = [UAirship push].allUserNotificationCategories;
 
-        for (UAUserNotificationCategory *category in categories) {
-
+        for (id category in categories) {
             // Find the category that matches our buttonGroup
-            if (![category.identifier isEqualToString:self.buttonGroup]) {
+            if (![[category identifier] isEqualToString:self.buttonGroup]) {
                 continue;
             }
 
             // Create a button action binding for each corresponding action identifier
-            for (UAUserNotificationAction *notificationAction in [category actionsForContext:UIUserNotificationActionContextDefault]) {
-                NSDictionary *payload = self.buttonActions[notificationAction.identifier];
+            for (id notificationAction in [category actionsForContext:UIUserNotificationActionContextDefault]) {
+                NSDictionary *payload = self.buttonActions[[notificationAction identifier]];
                 if (payload) {
                     UAInAppMessageButtonActionBinding *binding = [[UAInAppMessageButtonActionBinding alloc] init];
-                    binding.localizedTitle = NSLocalizedStringWithDefaultValue(notificationAction.title, @"UAInteractiveNotifications",
-                                                                               [NSBundle mainBundle], notificationAction.title, nil);
+                    binding.localizedTitle = NSLocalizedStringWithDefaultValue([notificationAction title], @"UAInteractiveNotifications",
+                                                                               [NSBundle mainBundle], [notificationAction title], nil);
 
                     // choose the situation that matches the corresponding notificationAction's activation mode
-                    binding.situation = notificationAction.activationMode == UIUserNotificationActivationModeForeground ?
+                    binding.situation = [notificationAction activationMode] == UIUserNotificationActivationModeForeground ?
                     UASituationForegroundInteractiveButton : UASituationBackgroundInteractiveButton;
 
                     binding.actions = payload;
