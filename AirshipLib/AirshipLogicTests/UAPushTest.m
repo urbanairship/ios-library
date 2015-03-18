@@ -40,6 +40,8 @@
 #import "NSObject+HideClass.h"
 #import "UAInteractiveNotificationEvent.h"
 #import "UAUserNotificationCategories+Internal.h"
+#import "UAMutableUserNotificationAction.h"
+#import "UAMutableUserNotificationCategory.h"
 #import "UAPreferenceDataStore.h"
 #import "UAConfig.h"
 
@@ -2094,10 +2096,64 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 }
 
 /**
- * Test setting user notification categories filters out any category with the reserved
- * prefix "ua_".
+ * Test that UAUserNotificationCategory is converted UIUserNotificationCategory iff iOS >= 8.
+ */
+- (void)testSanitizeCategories {
+    id iOS8Push = [OCMockObject partialMockForObject:self.push];
+    id iOS7Push = [OCMockObject partialMockForObject:self.push];
+
+    // iOS 8
+    [[[iOS8Push stub] andReturnValue:OCMOCK_VALUE(YES)] shouldUseUIUserNotificationCategories];
+
+    UAMutableUserNotificationCategory *uaCategory = [[UAMutableUserNotificationCategory alloc] init];
+    uaCategory.identifier = @"uaCategory";
+
+    UIMutableUserNotificationCategory *uiCategory = [[UIMutableUserNotificationCategory alloc] init];
+    uiCategory.identifier = @"uiCategory";
+
+    UIMutableUserNotificationCategory *otherUICategory = [[UIMutableUserNotificationCategory alloc] init];
+    otherUICategory.identifier = @"otherUICategory";
+
+    NSSet *mixedSet = [NSSet setWithArray:@[uaCategory, uiCategory, otherUICategory]];
+    NSSet *sanitizedSet = [iOS8Push sanitizeCategories:mixedSet];
+
+    // All should be the UI variant
+    for (UIUserNotificationCategory *category in sanitizedSet) {
+        XCTAssertTrue([category isKindOfClass:[UIUserNotificationCategory class]]);
+    }
+
+    // Count should match
+    XCTAssertEqual(mixedSet.count, sanitizedSet.count);
+
+    // iOS < 8
+    [[[iOS7Push stub] andReturnValue:OCMOCK_VALUE(NO)] shouldUseUIUserNotificationCategories];
+
+    UAMutableUserNotificationCategory *otherUACategory = [[UAMutableUserNotificationCategory alloc] init];
+    otherUACategory.identifier = @"otherUACategory";
+
+    // UIUserNotificationCategory is not available at runtime on iOS 7 and below
+    NSSet *uaSet = [NSSet setWithArray:@[uaCategory, otherUACategory]];
+    sanitizedSet = [iOS7Push sanitizeCategories:uaSet];
+
+    // All should be the UA variant
+    for (UIUserNotificationCategory *category in sanitizedSet) {
+        XCTAssertTrue([category isKindOfClass:[UAUserNotificationCategory class]]);
+    }
+
+    // Count should match
+    XCTAssertEqual(uaSet.count, sanitizedSet.count);
+
+    [iOS7Push stopMocking];
+    [iOS8Push stopMocking];
+}
+
+/**
+ * Test setting user notification categories sanitizes category types according to OS version, 
+ * and filters out any category with the reserved prefix "ua_".
  */
 - (void)testSetUserNotificationCategories {
+    id mockPush = [OCMockObject partialMockForObject:self.push];
+
     UIMutableUserNotificationCategory *uaCategory = [[UIMutableUserNotificationCategory alloc] init];
     uaCategory.identifier = @"ua_category";
 
@@ -2107,14 +2163,79 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     UIMutableUserNotificationCategory *anotherCustomCategory = [[UIMutableUserNotificationCategory alloc] init];
     anotherCustomCategory.identifier = @"anotherCustomCategory";
 
-    self.push.userNotificationCategories = [NSSet setWithArray:@[uaCategory, customCategory, anotherCustomCategory]];
+    NSSet *categories = [NSSet setWithArray:@[uaCategory, customCategory, anotherCustomCategory]];
+    [[[mockPush expect] andReturn:categories] sanitizeCategories:categories];
 
-    XCTAssertEqual(2, self.push.userNotificationCategories.count, @"Should filter out any categories with prefix ua_");
-    XCTAssertFalse([self.push.userNotificationCategories containsObject:uaCategory]);
-    XCTAssertTrue([self.push.userNotificationCategories containsObject:customCategory]);
-    XCTAssertTrue([self.push.userNotificationCategories containsObject:anotherCustomCategory]);
+    // Recast for convenience
+    UAPush *push = mockPush;
 
-    XCTAssertTrue(self.push.shouldUpdateAPNSRegistration, "Any APNS changes should update the flag.");
+    push.userNotificationCategories = categories;
+
+    [mockPush verify];
+
+    XCTAssertEqual(2, push.userNotificationCategories.count, @"Should filter out any categories with prefix ua_");
+    XCTAssertFalse([push.userNotificationCategories containsObject:uaCategory]);
+    XCTAssertTrue([push.userNotificationCategories containsObject:customCategory]);
+    XCTAssertTrue([push.userNotificationCategories containsObject:anotherCustomCategory]);
+    XCTAssertTrue(push.shouldUpdateAPNSRegistration, "Any APNS changes should update the flag.");
+
+    [mockPush stopMocking];
+}
+
+- (void)testSetAllUserNotificationCategories {
+    id mockPush = [OCMockObject partialMockForObject:self.push];
+
+    UIMutableUserNotificationCategory *customCategory = [[UIMutableUserNotificationCategory alloc] init];
+    customCategory.identifier = @"customCategory";
+
+    UIMutableUserNotificationCategory *anotherCustomCategory = [[UIMutableUserNotificationCategory alloc] init];
+    anotherCustomCategory.identifier = @"anotherCustomCategory";
+
+    NSSet *categories = [NSSet setWithArray:@[customCategory, anotherCustomCategory]];
+
+    [[[mockPush expect] andReturn:categories] sanitizeCategories:categories];
+
+    ((UAPush *)mockPush).allUserNotificationCategories = categories;
+
+    [mockPush verify];
+    [mockPush stopMocking];
+}
+
+/**
+ * Test that updating all user notification categories results in unioning the
+ * default categories with the user supplied categories.
+ */
+- (void)testUpdateAllUserNotificationCategories {
+
+    id mockPush = [OCMockObject partialMockForObject:self.push];
+    // Recast for convenience
+    UAPush *push = mockPush;
+
+    UIMutableUserNotificationCategory *customCategory = [[UIMutableUserNotificationCategory alloc] init];
+    customCategory.identifier = @"customCategory";
+
+    UIMutableUserNotificationCategory *anotherCustomCategory = [[UIMutableUserNotificationCategory alloc] init];
+    anotherCustomCategory.identifier = @"anotherCustomCategory";
+
+    NSSet *userCategories = [NSSet setWithArray:@[customCategory, anotherCustomCategory]];
+    NSSet *defaultCategories = [UAUserNotificationCategories defaultCategoriesWithRequireAuth:push.requireAuthorizationForDefaultCategories];
+
+    push.userNotificationCategories = userCategories;
+
+    NSMutableSet *allCategories = [NSMutableSet setWithSet:push.userNotificationCategories];
+    NSSet *sanitizedDefaultCategories = [push sanitizeCategories:defaultCategories];
+    [allCategories unionSet:sanitizedDefaultCategories];
+
+    [[mockPush expect] setAllUserNotificationCategories:[OCMArg checkWithBlock:^(id obj) {
+        return [obj isKindOfClass:[NSSet class]];
+    }]];
+
+    [push updateAllUserNotificationCategories];
+
+    XCTAssertEqual(allCategories.count, push.allUserNotificationCategories.count);
+
+    [mockPush verify];
+    [mockPush stopMocking];
 }
 
 /**
