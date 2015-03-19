@@ -30,7 +30,7 @@
 
 /**
  * The desired font to use when displaying in-app messages.
- * Defaults to a bold system font of size 12.
+ * Defaults to a bold system font 12 points in size.
  */
 @property(nonatomic, strong) UIFont *font;
 
