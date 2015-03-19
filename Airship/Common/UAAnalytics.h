@@ -25,6 +25,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <CoreBluetooth/CoreBluetooth.h>
 
 @class UAEvent;
 @class UAConfig;
@@ -33,7 +34,7 @@
 /**
  * The UAAnalytics object provides an interface to the Urban Airship Analytics API.
  */
-@interface UAAnalytics : NSObject
+@interface UAAnalytics : NSObject <CBCentralManagerDelegate>
 
 /**
  * The conversion send ID.

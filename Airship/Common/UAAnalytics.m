@@ -24,6 +24,8 @@
  */
 
 #import <UIKit/UIKit.h>
+#import <CoreBluetooth/CoreBluetooth.h>
+
 #import "UAAnalytics+Internal.h"
 
 #import "UAirship.h"
@@ -44,8 +46,12 @@
 #import "UAPreferenceDataStore.h"
 #import "UALocationService.h"
 
-
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
+
+@interface UAAnalytics ()
+@property (nonatomic, strong) CBCentralManager *centralManager;
+@property (nonatomic, assign) BOOL bluetoothEnabled;
+@end
 
 @implementation UAAnalytics
 
@@ -104,6 +110,7 @@ NSString *const UALocationPermissionUnprompted = @"UNPROMPTED";
                                                      name:UIApplicationDidBecomeActiveNotification
                                                    object:nil];
 
+        self.centralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil options:nil];
 
         [self startSession];
         [self delayNextSend:UAAnalyticsFirstBatchUploadInterval];
@@ -373,6 +380,7 @@ NSString *const UALocationPermissionUnprompted = @"UNPROMPTED";
     [request addRequestHeader:@"X-UA-Channel-ID" value:[UAirship push].channelID];
     [request addRequestHeader:@"X-UA-Location-Permission" value:[self locationPermission]];
     [request addRequestHeader:@"X-UA-Location-Service-Enabled" value:[UALocationService airshipLocationServiceEnabled] ? @"true" : @"false"];
+    [request addRequestHeader:@"X-UA-Bluetooth-Status" value:self.bluetoothEnabled ? @"true" : @"false"];
 
     return request;
 }
@@ -700,4 +708,12 @@ NSString *const UALocationPermissionUnprompted = @"UNPROMPTED";
     }
 }
 
+- (void)centralManagerDidUpdateState:(CBCentralManager *)central {
+
+    if (self.centralManager.state == CBCentralManagerStatePoweredOn){
+        self.bluetoothEnabled = YES;
+    } else {
+        self.bluetoothEnabled = NO;
+    }
+}
 @end
