@@ -35,6 +35,9 @@
     [self.uaCategory setActions:actions forContext:UIUserNotificationActionContextDefault];
 }
 
+/**
+ * Test the conversion of UAUserNotificationCategory to UIUserNotificationCategory
+ */
 - (void)testAsUIUserNotificationCategory {
     UIUserNotificationCategory *uiCategory = [self.uaCategory asUIUserNotificationCategory];
     XCTAssertTrue([self.uaCategory isEqualToCategory:(UAUserNotificationCategory *)uiCategory]);
