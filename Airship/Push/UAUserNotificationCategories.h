@@ -25,6 +25,9 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+
+@class UAUserNotificationCategory;
+
 /**
  * Utility methods to create categories from plist files or NSDictionaries.
  */
@@ -66,10 +69,11 @@
 /**
  * Creates a user notification category with the specified ID and action definition.
  *
- * @param categoryID The category identifier
+ * @param categoryId The category identifier
  * @param actionDefinitions An array of user notification action dictionaries used
  * to construct UIUserNotificationAction for the category.
  * @return The user notification category created or nil if an error occurred.
  */
-+ (UIUserNotificationCategory *)createCategory:(NSString *)categoryID actions:(NSArray *)actionDefinitions;
++ (UAUserNotificationCategory *)createCategory:(NSString *)categoryId actions:(NSArray *)actionDefinitions;
+
 @end

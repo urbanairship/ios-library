@@ -43,6 +43,7 @@
 
 #import "UAInAppMessage.h"
 #import "UAInAppMessageAction.h"
+#import "UAUserNotificationCategory+Internal.h"
 
 #define kUAMinTagLength 1
 #define kUAMaxTagLength 127
@@ -94,6 +95,7 @@ NSString *const UAPushQuietTimeEndKey = @"end";
         self.backgroundPushNotificationsEnabledByDefault = YES;
 
         self.userNotificationTypes = UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound;
+        self.allUserNotificationCategories = [UAUserNotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories];
         self.registrationBackgroundTask = UIBackgroundTaskInvalid;
         self.namedUser = [[UANamedUser alloc] initWithConfig:config dataStore:dataStore];
 
@@ -307,9 +309,36 @@ NSString *const UAPushQuietTimeEndKey = @"end";
     }
 }
 
+- (BOOL)shouldUseUIUserNotificationCategories {
+    return [UIUserNotificationCategory class] != nil;
+}
+
+/**
+ * Converts UAUserNotificationCategory to UIUserNotificationCategory on iOS 8
+ */
+- (NSSet *)normalizeCategories:(NSSet *)categories {
+    if ([self shouldUseUIUserNotificationCategories]) {
+        NSMutableSet *newSet = [NSMutableSet set];
+        for (id category in categories) {
+            if ([category isKindOfClass:[UAUserNotificationCategory class]]) {
+                UIUserNotificationCategory *uiCategory = [category asUIUserNotificationCategory];
+                [newSet addObject:uiCategory];
+            } else {
+                [newSet addObject:category];
+            }
+        }
+
+        return newSet;
+    }
+    return categories;
+}
+
 - (void)setUserNotificationCategories:(NSSet *)categories {
+
+    categories = [self normalizeCategories:categories];
+
     _userNotificationCategories = [categories filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
-        if (![evaluatedObject isKindOfClass:[UIUserNotificationCategory class]]) {
+        if ([self shouldUseUIUserNotificationCategories] && ![evaluatedObject isKindOfClass:[UIUserNotificationCategory class]]) {
             return NO;
         }
 
@@ -323,7 +352,30 @@ NSString *const UAPushQuietTimeEndKey = @"end";
     }]];
 
     self.shouldUpdateAPNSRegistration = YES;
+
+    [self updateAllUserNotificationCategories];
 }
+
+- (void)setRequireAuthorizationForDefaultCategories:(BOOL)requireAuthorizationForDefaultCategories {
+    _requireAuthorizationForDefaultCategories = requireAuthorizationForDefaultCategories;
+    [self updateAllUserNotificationCategories];
+}
+
+- (void)setAllUserNotificationCategories:(NSSet *)allUserNotificationCategories {
+    NSSet *normalizedCategories = [self normalizeCategories:allUserNotificationCategories];
+    _allUserNotificationCategories = normalizedCategories;
+}
+
+/**
+ * Caches a set of user notification categories based on the the current developer-supplied set and our default set with authorization settings.
+ * Call this method whenever either changes to update the cache.
+ */
+- (void)updateAllUserNotificationCategories {
+    NSMutableSet *allCategories = [NSMutableSet setWithSet:[UAUserNotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories]];
+    [allCategories unionSet:self.userNotificationCategories];
+    self.allUserNotificationCategories = allCategories;
+}
+
 
 - (NSDictionary *)quietTime {
     return [self.dataStore dictionaryForKey:UAPushQuietTimeSettingsKey];
@@ -749,13 +801,10 @@ BOOL deferChannelCreationOnForeground = false;
     UIApplication *application = [UIApplication sharedApplication];
 
     if ([UIUserNotificationSettings class]) {
-
-
+        
         // Push Enabled
         if (self.userPushNotificationsEnabled) {
-            NSMutableSet *categories = [NSMutableSet setWithSet:[UAUserNotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories]];
-            [categories unionSet:self.userNotificationCategories];
-
+            NSSet *categories = [self allUserNotificationCategories];
             UA_LDEBUG(@"Registering for user notification types %ld.", (long)self.userNotificationTypes);
             [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:self.userNotificationTypes
                                                                                             categories:categories]];

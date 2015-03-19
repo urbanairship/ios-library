@@ -141,6 +141,9 @@ extern NSString *const UAPushChannelLocationKey;
  */
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
+@property (nonatomic, strong) NSSet *allUserNotificationCategories;
+
+
 /**
  * Factory method to create a push instance.
  * @param config The Urban Airship config
@@ -246,5 +249,20 @@ extern NSString *const UAPushChannelLocationKey;
  */
 - (void)updateAPNSRegistration;
 
+/**
+ * Determines whether UIUserNotificationCategory is available for use.
+ */
+- (BOOL)shouldUseUIUserNotificationCategories;
+
+/**
+ * Converts UAUserNotificationCategory to UIUserNotificationCategory on iOS 8.
+ */
+- (NSSet *)normalizeCategories:(NSSet *)categories;
+
+/**
+ * Updates the set of all known user notification categories by combining
+ * the default and user supplied categories.
+ */
+- (void)updateAllUserNotificationCategories;
 
 @end

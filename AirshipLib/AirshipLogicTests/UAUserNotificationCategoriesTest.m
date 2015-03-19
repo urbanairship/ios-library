@@ -25,6 +25,8 @@
 
 #import <XCTest/XCTest.h>
 #import "UAUserNotificationCategories.h"
+#import "UAUserNotificationCategory.h"
+#import "UAUserNotificationAction.h"
 
 @interface UAUserNotificationCategoriesTest : XCTestCase
 
@@ -39,13 +41,13 @@
     XCTAssertEqual(3, categories.count);
 
     // Share category
-    UIUserNotificationCategory *share = [self findCategoryById:@"share_category" set:categories];
+    UAUserNotificationCategory *share = [self findCategoryById:@"share_category" set:categories];
     XCTAssertNotNil(share);
     XCTAssertEqual(1, [share actionsForContext:UIUserNotificationActionContextDefault].count);
     XCTAssertEqual(1, [share actionsForContext:UIUserNotificationActionContextMinimal].count);
 
     // Share action in share category
-    UIUserNotificationAction *shareAction = [self findActionById:@"share_button" category:share];
+    UAUserNotificationAction  *shareAction = [self findActionById:@"share_button" category:share];
     XCTAssertNotNil(shareAction);
     XCTAssertEqualObjects(@"Share", shareAction.title);
     XCTAssertEqual(UIUserNotificationActivationModeForeground, shareAction.activationMode);
@@ -54,13 +56,13 @@
 
 
     // Yes no category
-    UIUserNotificationCategory *yesNo = [self findCategoryById:@"yes_no_category" set:categories];
+    UAUserNotificationCategory *yesNo = [self findCategoryById:@"yes_no_category" set:categories];
     XCTAssertNotNil(yesNo);
     XCTAssertEqual(2, [yesNo actionsForContext:UIUserNotificationActionContextDefault].count);
     XCTAssertEqual(2, [yesNo actionsForContext:UIUserNotificationActionContextMinimal].count);
 
     // Yes action in yes no category
-    UIUserNotificationAction *yesAction = [self findActionById:@"yes_button" category:yesNo];
+    UAUserNotificationAction  *yesAction = [self findActionById:@"yes_button" category:yesNo];
     XCTAssertNotNil(yesAction);
     XCTAssertEqualObjects(@"Yes", yesAction.title);
     XCTAssertEqual(UIUserNotificationActivationModeForeground, yesAction.activationMode);
@@ -68,7 +70,7 @@
     XCTAssertFalse(yesAction.destructive);
 
     // No action in yes no category
-    UIUserNotificationAction *noAction = [self findActionById:@"no_button" category:yesNo];
+    UAUserNotificationAction  *noAction = [self findActionById:@"no_button" category:yesNo];
     XCTAssertNotNil(noAction);
     XCTAssertEqualObjects(@"No", noAction.title);
     XCTAssertEqual(UIUserNotificationActivationModeBackground, noAction.activationMode);
@@ -76,13 +78,13 @@
     XCTAssertTrue(noAction.destructive);
 
     // Follow category
-    UIUserNotificationCategory *follow = [self findCategoryById:@"follow_category" set:categories];
+    UAUserNotificationCategory *follow = [self findCategoryById:@"follow_category" set:categories];
     XCTAssertNotNil(follow);
     XCTAssertEqual(1, [follow actionsForContext:UIUserNotificationActionContextDefault].count);
     XCTAssertEqual(1, [follow actionsForContext:UIUserNotificationActionContextMinimal].count);
 
     // Follow action in follow category
-    UIUserNotificationAction *followAction = [self findActionById:@"follow_button" category:follow];
+    UAUserNotificationAction  *followAction = [self findActionById:@"follow_button" category:follow];
     XCTAssertNotNil(followAction);
     // Test when 'title_resource' value does not exist will fall back to 'title' value
     XCTAssertEqualObjects(@"FollowMe", followAction.title);
@@ -100,7 +102,7 @@
                            @"destructive": @YES,
                            @"authenticationRequired": @NO}];
 
-    UIUserNotificationCategory *category = [UAUserNotificationCategories createCategory:@"category" actions:actions];
+    UAUserNotificationCategory *category = [UAUserNotificationCategories createCategory:@"category" actions:actions];
 
     XCTAssertNil(category);
 }
@@ -122,10 +124,10 @@
                            @"authenticationRequired": @NO}];
 
 
-    UIUserNotificationCategory *category = [UAUserNotificationCategories createCategory:@"category" actions:actions];
+    UAUserNotificationCategory *category = [UAUserNotificationCategories createCategory:@"category" actions:actions];
 
     // Yes action
-    UIUserNotificationAction *yesAction = [self findActionById:@"yes" category:category];
+    UAUserNotificationAction  *yesAction = [self findActionById:@"yes" category:category];
     XCTAssertNotNil(yesAction);
     XCTAssertEqualObjects(@"Yes", yesAction.title);
     XCTAssertEqual(UIUserNotificationActivationModeForeground, yesAction.activationMode);
@@ -133,7 +135,7 @@
     XCTAssertFalse(yesAction.destructive);
 
     // No action
-    UIUserNotificationAction *noAction = [self findActionById:@"no" category:category];
+    UAUserNotificationAction  *noAction = [self findActionById:@"no" category:category];
     XCTAssertNotNil(noAction);
     XCTAssertEqualObjects(@"No", noAction.title);
     XCTAssertEqual(UIUserNotificationActivationModeBackground, noAction.activationMode);
@@ -143,8 +145,8 @@
 }
 
 
-- (UIUserNotificationCategory *)findCategoryById:(NSString *)identifier set:(NSSet *)categories {
-    for (UIUserNotificationCategory *category in categories) {
+- (UAUserNotificationCategory *)findCategoryById:(NSString *)identifier set:(NSSet *)categories {
+    for (UAUserNotificationCategory *category in categories) {
         if ([category.identifier isEqualToString:identifier]) {
             return category;
         }
@@ -153,8 +155,8 @@
     return nil;
 }
 
-- (UIUserNotificationAction *)findActionById:(NSString *)identifier category:(UIUserNotificationCategory *)category {
-    for (UIUserNotificationAction *action in [category actionsForContext:UIUserNotificationActionContextMinimal]) {
+- (UAUserNotificationAction  *)findActionById:(NSString *)identifier category:(UAUserNotificationCategory *)category {
+    for (UAUserNotificationAction  *action in [category actionsForContext:UIUserNotificationActionContextMinimal]) {
         if ([action.identifier isEqualToString:identifier]) {
             return action;
         }

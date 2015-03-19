@@ -245,7 +245,7 @@
     XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegate should notify the delegate of a foreground notification");
 
     // Enable auto badge and verify handleBadgeUpdate: is not called
-    [[[self.mockPush stub] andReturnValue:@YES] isAutobadgeEnabled];
+    [[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(YES)] isAutobadgeEnabled];
 
     [[self.mockedPushDelegate expect] playNotificationSound:@"cat"];
     [[self.mockedPushDelegate expect] displayNotificationAlert:@"sample alert!"];
