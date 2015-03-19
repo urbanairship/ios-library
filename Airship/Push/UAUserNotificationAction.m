@@ -39,9 +39,6 @@
 @implementation UAUserNotificationAction
 
 - (BOOL)isAuthenticationRequired {
-    if (self.activationMode == UIUserNotificationActivationModeForeground) {
-        return YES;
-    }
     return _authenticationRequired;
 }
 
