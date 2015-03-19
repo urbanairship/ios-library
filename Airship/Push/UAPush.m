@@ -318,7 +318,7 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 /**
  * Converts UAUserNotificationCategory to UIUserNotificationCategory on iOS 8
  */
-- (NSSet *)sanitizeCategories:(NSSet *)categories {
+- (NSSet *)normalizeCategories:(NSSet *)categories {
     if ([self shouldUseUIUserNotificationCategories]) {
         NSMutableSet *newSet = [NSMutableSet set];
         for (id category in categories) {
@@ -337,7 +337,7 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 
 - (void)setUserNotificationCategories:(NSSet *)categories {
 
-    categories = [self sanitizeCategories:categories];
+    categories = [self normalizeCategories:categories];
 
     _userNotificationCategories = [categories filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
         if ([self shouldUseUIUserNotificationCategories] && ![evaluatedObject isKindOfClass:[UIUserNotificationCategory class]]) {
@@ -364,8 +364,8 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 }
 
 - (void)setAllUserNotificationCategories:(NSSet *)allUserNotificationCategories {
-    NSSet *sanitizedCategories = [self sanitizeCategories:allUserNotificationCategories];
-    _allUserNotificationCategories = sanitizedCategories;
+    NSSet *normalizedCategories = [self normalizeCategories:allUserNotificationCategories];
+    _allUserNotificationCategories = normalizedCategories;
 }
 
 /**

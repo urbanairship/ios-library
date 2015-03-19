@@ -264,7 +264,7 @@ extern NSString *const UAPushChannelLocationKey;
 /**
  * Converts UAUserNotificationCategory to UIUserNotificationCategory on iOS 8.
  */
-- (NSSet *)sanitizeCategories:(NSSet *)categories;
+- (NSSet *)normalizeCategories:(NSSet *)categories;
 
 /**
  * Updates the set of all known user notification categories by combining
