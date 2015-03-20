@@ -35,6 +35,7 @@
 @class UAUser;
 @class UAInbox;
 @class UAActionRegistry;
+@class UAInAppMessaging;
 
 UA_VERSION_INTERFACE(UAirshipVersion)
 
@@ -189,5 +190,11 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * @return The `UAUser` instance.
  */
 + (UAUser *)inboxUser;
+
+/**
+ * Returns the `UAInAppMessaging` instance. Used for customizing
+ * in-app notifications.
+ */
++ (UAInAppMessaging *)inAppMessaging;
 
 @end
