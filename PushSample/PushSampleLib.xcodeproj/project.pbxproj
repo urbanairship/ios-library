@@ -126,6 +126,8 @@
 		7622C9E31A8A73B100399992 /* UAPushSettingsNamedUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 767D0D401A72CF4C008CEC8A /* UAPushSettingsNamedUserViewController.m */; };
 		7622C9E41A8A73E200399992 /* UAPushSettingsNamedUserView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 767D0D4E1A72F827008CEC8A /* UAPushSettingsNamedUserView.xib */; };
 		7622C9E51A8A73ED00399992 /* UAPushSettingsNamedUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 767D0D401A72CF4C008CEC8A /* UAPushSettingsNamedUserViewController.m */; };
+		762941D81ABCDF19003F7C7C /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 762941D71ABCDF19003F7C7C /* CoreBluetooth.framework */; };
+		762941E11ABCDF22003F7C7C /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 762941D71ABCDF19003F7C7C /* CoreBluetooth.framework */; };
 		762F81DD183EBEF200F30033 /* UAPushSettingsChannelInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 762F81DB183EBEF200F30033 /* UAPushSettingsChannelInfoViewController.m */; };
 		762F81E0183EC10500F30033 /* UAPushSettingsChannelInfoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 762F81DF183EC10500F30033 /* UAPushSettingsChannelInfoViewController.xib */; };
 		76811EEE17EBA63700874D1F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -349,6 +351,7 @@
 		49C0CB5019BA5E3300771F4F /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/UAInteractiveNotifications.strings"; sourceTree = "<group>"; };
 		49C0CB5119BA5E3300771F4F /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/UAInteractiveNotifications.strings"; sourceTree = "<group>"; };
 		49C0CB9819BA648300771F4F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UAPushUI.strings; sourceTree = "<group>"; };
+		762941D71ABCDF19003F7C7C /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		762F81DA183EBEF200F30033 /* UAPushSettingsChannelInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsChannelInfoViewController.h; sourceTree = "<group>"; };
 		762F81DB183EBEF200F30033 /* UAPushSettingsChannelInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsChannelInfoViewController.m; sourceTree = "<group>"; };
 		762F81DF183EC10500F30033 /* UAPushSettingsChannelInfoViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsChannelInfoViewController.xib; sourceTree = "<group>"; };
@@ -403,6 +406,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				762941D81ABCDF19003F7C7C /* CoreBluetooth.framework in Frameworks */,
 				1F4EDB491831B2E700F77343 /* libUAirship-6.0.0.a in Frameworks */,
 				CC523FCF17BA8E7300233005 /* CoreData.framework in Frameworks */,
 				BB75D9AD151BEAAC00F4241E /* MapKit.framework in Frameworks */,
@@ -426,6 +430,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				762941E11ABCDF22003F7C7C /* CoreBluetooth.framework in Frameworks */,
 				4906F3A819905B8C00F27AF1 /* AirshipKit.framework in Frameworks */,
 				4906F38A19905B5500F27AF1 /* CoreData.framework in Frameworks */,
 				4906F38B19905B5500F27AF1 /* MapKit.framework in Frameworks */,
@@ -717,6 +722,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				762941D71ABCDF19003F7C7C /* CoreBluetooth.framework */,
 				76955C7917C2D83E004BAC64 /* XCTest.framework */,
 				CC523FCB17BA8E6600233005 /* CoreData.framework */,
 				BB75D9AC151BEAAC00F4241E /* MapKit.framework */,

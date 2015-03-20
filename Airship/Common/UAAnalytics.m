@@ -24,7 +24,7 @@
  */
 
 #import <UIKit/UIKit.h>
-#import <CoreBluetooth/CoreBluetooth.h>
+#import <CoreBluetooth/CBCentralManager.h>
 
 #import "UAAnalytics+Internal.h"
 

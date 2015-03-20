@@ -362,6 +362,9 @@
 		762941AC1A016EB60077CDC1 /* UAActivityViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 762941A91A016EB60077CDC1 /* UAActivityViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		762941AD1A016EB60077CDC1 /* UAActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 762941AA1A016EB60077CDC1 /* UAActivityViewController.m */; };
 		762941AE1A016EB60077CDC1 /* UAActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 762941AA1A016EB60077CDC1 /* UAActivityViewController.m */; };
+		762941D41ABCDE7F003F7C7C /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 762941D31ABCDE7F003F7C7C /* CoreBluetooth.framework */; };
+		762941D51ABCDEB5003F7C7C /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 762941D31ABCDE7F003F7C7C /* CoreBluetooth.framework */; };
+		762941D61ABCDEC6003F7C7C /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 762941D31ABCDE7F003F7C7C /* CoreBluetooth.framework */; };
 		7649615518C644D4003AF5EE /* UAInboxPushHandlerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7649615418C644D4003AF5EE /* UAInboxPushHandlerTest.m */; };
 		7676AA0C18C4EF5B00B4E5B4 /* UAAppDelegateProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DB017835C2200BCD96E /* UAAppDelegateProxy.m */; };
 		76792D10178E12A10054F8AD /* UAHTTPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 76792D0E178E12A10054F8AD /* UAHTTPRequest.h */; };
@@ -772,6 +775,7 @@
 		760D14B917C2C9E600BBE6E6 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		762941A91A016EB60077CDC1 /* UAActivityViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAActivityViewController.h; sourceTree = "<group>"; };
 		762941AA1A016EB60077CDC1 /* UAActivityViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActivityViewController.m; sourceTree = "<group>"; };
+		762941D31ABCDE7F003F7C7C /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		762CD99F18B6CC2A00AD4C4F /* UAChannelRegistrationPayload+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAChannelRegistrationPayload+Internal.h"; sourceTree = "<group>"; };
 		7649615418C644D4003AF5EE /* UAInboxPushHandlerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxPushHandlerTest.m; sourceTree = "<group>"; };
 		76792D0E178E12A10054F8AD /* UAHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAHTTPRequest.h; sourceTree = "<group>"; };
@@ -978,6 +982,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				762941D61ABCDEC6003F7C7C /* CoreBluetooth.framework in Frameworks */,
 				491B8461198C451100FB7A40 /* libz.dylib in Frameworks */,
 				491B8460198C44C200FB7A40 /* libsqlite3.0.dylib in Frameworks */,
 				491B845E198C243800FB7A40 /* CoreTelephony.framework in Frameworks */,
@@ -992,6 +997,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				762941D51ABCDEB5003F7C7C /* CoreBluetooth.framework in Frameworks */,
 				49C6721E1857CE840088F210 /* JavaScriptCore.framework in Frameworks */,
 				760D14BA17C2C9E600BBE6E6 /* XCTest.framework in Frameworks */,
 				CC523FC317BA8AC200233005 /* CoreData.framework in Frameworks */,
@@ -1016,6 +1022,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				762941D41ABCDE7F003F7C7C /* CoreBluetooth.framework in Frameworks */,
 				BB88611D159A7E9600584445 /* CoreLocation.framework in Frameworks */,
 				BB886120159A7E9600584445 /* Foundation.framework in Frameworks */,
 				BB886121159A7E9600584445 /* SystemConfiguration.framework in Frameworks */,
@@ -1057,6 +1064,7 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				762941D31ABCDE7F003F7C7C /* CoreBluetooth.framework */,
 				491B845F198C44C200FB7A40 /* libsqlite3.0.dylib */,
 				49C6721D1857CE840088F210 /* JavaScriptCore.framework */,
 				760D14B917C2C9E600BBE6E6 /* XCTest.framework */,

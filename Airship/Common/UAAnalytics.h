@@ -25,7 +25,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import <CoreBluetooth/CoreBluetooth.h>
+#import <CoreBluetooth/CBCentralManager.h>
 
 @class UAEvent;
 @class UAConfig;

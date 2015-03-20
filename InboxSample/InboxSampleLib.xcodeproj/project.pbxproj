@@ -78,6 +78,8 @@
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
 		63C51F0711D30F870078DED4 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AB3B21D10A0063D0035E6BD /* SystemConfiguration.framework */; };
+		762941E51ABCE173003F7C7C /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 762941E41ABCE173003F7C7C /* CoreBluetooth.framework */; };
+		762941E91ABCE17D003F7C7C /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 762941E41ABCE173003F7C7C /* CoreBluetooth.framework */; };
 		76F5B72819C37F2F003C07A0 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 76F5B72719C37F2F003C07A0 /* Settings.bundle */; };
 		76F5B72919C37F41003C07A0 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 76F5B72719C37F2F003C07A0 /* Settings.bundle */; };
 		76F5B74619C39CE6003C07A0 /* UAInboxUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49C0CB7419BA625900771F4F /* UAInboxUI.strings */; };
@@ -212,6 +214,7 @@
 		49C0CB7519BA625900771F4F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UAInboxUI.strings; sourceTree = "<group>"; };
 		49E001A8154F63F3009305B7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		63CB54BB1247107C00DF2EBC /* InboxTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InboxTests-Info.plist"; sourceTree = "<group>"; };
+		762941E41ABCE173003F7C7C /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		76F5B72719C37F2F003C07A0 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		9A50FAE80FCA81810007E1BE /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		9A50FAEE0FCA81A40007E1BE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -234,6 +237,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				762941E51ABCE173003F7C7C /* CoreBluetooth.framework in Frameworks */,
 				49B19A3319901FE800977790 /* libUAirship-6.0.0.a in Frameworks */,
 				CC523FAC17B9856900233005 /* CoreData.framework in Frameworks */,
 				49E001A9154F63F3009305B7 /* CoreLocation.framework in Frameworks */,
@@ -255,6 +259,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				762941E91ABCE17D003F7C7C /* CoreBluetooth.framework in Frameworks */,
 				4906F32C1990564A00F27AF1 /* AirshipKit.framework in Frameworks */,
 				4906F32D1990564A00F27AF1 /* CoreData.framework in Frameworks */,
 				4906F32E1990564A00F27AF1 /* CoreLocation.framework in Frameworks */,
@@ -415,6 +420,7 @@
 		9A9CBA1E0FCC559100435BCB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				762941E41ABCE173003F7C7C /* CoreBluetooth.framework */,
 				CC523FAB17B9856900233005 /* CoreData.framework */,
 				49E001A8154F63F3009305B7 /* CoreLocation.framework */,
 				0D5F511011744AF5004AE48F /* MobileCoreServices.framework */,
