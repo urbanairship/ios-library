@@ -168,7 +168,6 @@
 		18A27C9C125EDD6E0045D75B /* MainWindow_Pad.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainWindow_Pad.xib; sourceTree = "<group>"; };
 		18A27C9E125EDD6E0045D75B /* InboxSampleViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = InboxSampleViewController.xib; sourceTree = "<group>"; };
 		18A27CA0125EDD6E0045D75B /* MainWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
-		18A27CA4125EDD6E0045D75B /* UACallback.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = UACallback.js; sourceTree = "<group>"; };
 		18A27CBB125EDDB60045D75B /* InboxSample-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "InboxSample-Info.plist"; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* InboxSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InboxSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F2B104B12DCDE700020843D /* AirshipConfig.plist */ = {isa = PBXFileReference; explicitFileType = text.plist; fileEncoding = 4; path = AirshipConfig.plist; sourceTree = "<group>"; };
@@ -340,7 +339,6 @@
 			isa = PBXGroup;
 			children = (
 				D5A3F5D312C15333009731BE /* iTunesArtwork */,
-				18A27CA4125EDD6E0045D75B /* UACallback.js */,
 			);
 			path = Shared;
 			sourceTree = "<group>";

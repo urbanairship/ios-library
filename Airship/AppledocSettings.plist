@@ -50,6 +50,7 @@
 
 		<string>UAAnalyticsDBManager.h</string>
 		<string>UASQLite.h</string>
+		<string>UALocationProviderProtocol.h</string>
 	</array>
 	<key>--project-company</key>
 	<string>Urban Airship</string>

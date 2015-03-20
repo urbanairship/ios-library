@@ -71,7 +71,7 @@ cp "${ROOT_PATH}/LICENSE" "${OUTPUT_PATH}"
 
 cd $OUTPUT_PATH
 for PACKAGE in RichPushSample PushSample Airship reference-docs LICENSE CHANGELOG README.rst; do
-	zip -r libUAirship-latest.zip $PACKAGE
+	zip -r libUAirship-latest.zip $PACKAGE --exclude=*.DS_Store*
 done
 cd -
 

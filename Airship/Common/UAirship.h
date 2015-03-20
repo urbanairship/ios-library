@@ -51,8 +51,8 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 
 /**
  * UAirship manages the shared state for all Urban Airship services. [UAirship takeOff:] should be
- * called from `[UIApplication application:didFinishLaunchingWithOptions:]` to initialize the shared
- * instance.
+ * called from within your application delegate's `application:didFinishLaunchingWithOptions:` method
+ * to initialize the shared instance.
  */
 @interface UAirship : NSObject
 

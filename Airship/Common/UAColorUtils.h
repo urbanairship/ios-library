@@ -26,6 +26,9 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+/**
+ * A collection of utilities for converting UIColors to and from various string representations.
+ */
 @interface UAColorUtils : NSObject
 
 /**

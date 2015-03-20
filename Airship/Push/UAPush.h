@@ -255,7 +255,7 @@
 /**
  * Notification types this app will request from APNS. Changes to this value
  * will not take effect the next time the app registers with
- * [[UAirship push] updateRegistration].
+ * updateRegistration.
  *
  * Defaults to alert, sound and badge.
  *
@@ -266,7 +266,7 @@
 /**
  * User Notification types this app will request from APNS. Changes to this value
  * will not take effect the next time the app registers with
- * [[UAirship push] updateRegistration].
+ * updateRegistration.
  *
  * Defaults to alert, sound and badge.
  */
@@ -277,7 +277,7 @@
  * categories will be unaffected by this field.
  *
  * Changes to this value will not take effect the next time the app registers
- * with [[UAirship push] updateRegistration].
+ * with updateRegistration.
  */
 @property (nonatomic, strong) NSSet *userNotificationCategories;
 
@@ -286,7 +286,7 @@
  * to background user notification actions.
  *
  * Changes to this value will not take effect the next time the app registers
- * with [[UAirship push] updateRegistration].
+ * with updateRegistration.
  */
 @property (nonatomic, assign) BOOL requireAuthorizationForDefaultCategories;
 
