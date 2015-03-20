@@ -65,6 +65,7 @@ NSString *const UALocationPermissionUnprompted = @"UNPROMPTED";
 #pragma mark Object Lifecycle
 
 - (void)dealloc {
+    self.centralManager.delegate = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.queue cancelAllOperations];
 }
@@ -710,7 +711,7 @@ NSString *const UALocationPermissionUnprompted = @"UNPROMPTED";
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
 
-    if (self.centralManager.state == CBCentralManagerStatePoweredOn){
+    if (self.centralManager.state == CBCentralManagerStatePoweredOn) {
         self.bluetoothEnabled = YES;
     } else {
         self.bluetoothEnabled = NO;
