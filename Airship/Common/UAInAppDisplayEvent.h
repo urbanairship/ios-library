@@ -23,33 +23,19 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import "UAActionArguments.h"
+#import "UAEvent.h"
+
+#define kUAInAppDisplayEventSize (NSUInteger) 120
+
+@class UAInAppMessage;
+
+@interface UAInAppDisplayEvent : UAEvent
 
 /**
- * Model object representing a binding between an in-app
- * message button, a localized title and action name/argument pairs.
+ * Factory method to create a UAInAppDisplayEvent event.
+ * @param message The in-app message.
+ * @return A in-app display event.
  */
-@interface UAInAppMessageButtonActionBinding : NSObject
-
-/**
- * The localized title of the button.
- */
-@property(nonatomic, copy) NSString *localizedTitle;
-
-/**
- * The button's identifier.
- */
-@property(nonatomic, copy) NSString *identifier;
-/**
- * A dictionary mapping action names to action values, to
- * be run when the button is pressed.
- */
-@property(nonatomic, copy) NSDictionary *actions;
-
-/**
- * The action's situation.
- */
-@property (nonatomic, assign) UASituation situation;
++ (instancetype)eventWithMessage:(UAInAppMessage *)message;
 
 @end

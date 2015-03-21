@@ -23,33 +23,41 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import "UAActionArguments.h"
+#import "UAInAppDisplayEvent.h"
+#import "UAInAppMessage.h"
+#import "UAAnalytics.h"
+#import "UAirship.h"
+#import "UAEvent+Internal.h"
 
-/**
- * Model object representing a binding between an in-app
- * message button, a localized title and action name/argument pairs.
- */
-@interface UAInAppMessageButtonActionBinding : NSObject
 
-/**
- * The localized title of the button.
- */
-@property(nonatomic, copy) NSString *localizedTitle;
+@implementation UAInAppDisplayEvent
 
-/**
- * The button's identifier.
- */
-@property(nonatomic, copy) NSString *identifier;
-/**
- * A dictionary mapping action names to action values, to
- * be run when the button is pressed.
- */
-@property(nonatomic, copy) NSDictionary *actions;
+- (instancetype) initWithMessage:(UAInAppMessage *)message {
+    self = [super init];
+    if (self) {
+        NSMutableDictionary *data = [NSMutableDictionary dictionary];
+        [data setValue:message.identifier forKey:@"id"];
+        [data setValue:[UAirship shared].analytics.conversionSendID forKey:@"conversion_send_id"];
+        self.data = [data copy];
+        return self;
+    }
+    return nil;
+}
 
-/**
- * The action's situation.
- */
-@property (nonatomic, assign) UASituation situation;
++ (instancetype)eventWithMessage:(UAInAppMessage *)message {
+    return [[self alloc] initWithMessage:message];
+}
+
+- (NSString *)eventType {
+    return @"in_app_display";
+}
+
+- (NSUInteger)estimatedSize {
+    return kUAInAppDisplayEventSize;
+}
+
+- (BOOL)isValid {
+    return self.data[@"id"] != nil;
+}
 
 @end
