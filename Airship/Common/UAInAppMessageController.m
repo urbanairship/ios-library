@@ -31,7 +31,9 @@
 #import "UAActionRunner+Internal.h"
 #import "UAirship.h"
 #import "UAInAppMessaging.h"
-
+#import "UAInAppResolutionEvent.h"
+#import "UAirship.h"
+#import "UAAnalytics.h"
 
 #define kUAInAppMessageDefaultPrimaryColor [UIColor whiteColor]
 #define kUAInAppMessageDefaultSecondaryColor [UIColor colorWithRed:40.0/255 green:40.0/255 blue:40.0/255 alpha:1]
@@ -48,6 +50,8 @@
 @property(nonatomic, strong) UIColor *primaryColor;
 @property(nonatomic, strong) UIColor *secondaryColor;
 @property(nonatomic, assign) BOOL isInverted;
+@property(nonatomic, strong) NSDate *startDisplayDate;
+
 
 /**
  * A timer set for the duration of the message, after wich the view is dismissed.
@@ -246,7 +250,7 @@
 - (void)scheduleDismissalTimer {
     self.dismissalTimer = [NSTimer timerWithTimeInterval:self.message.duration
                                                   target:self
-                                                selector:@selector(dismiss)
+                                                selector:@selector(timedOut)
                                                 userInfo:nil
                                                  repeats:NO];
     [[NSRunLoop currentRunLoop] addTimer:self.dismissalTimer forMode:NSDefaultRunLoopMode];
@@ -300,6 +304,7 @@
     } completion:^(BOOL finished) {
         [self listenForAppStateTransitions];
         [self scheduleDismissalTimer];
+        self.startDisplayDate = [NSDate date];
     }];
 }
 
@@ -340,6 +345,8 @@
     });
 }
 
+
+
 - (void)dismiss {
     [self.dismissalTimer invalidate];
     self.dismissalTimer = nil;
@@ -358,6 +365,7 @@
 
 - (void)applicationDidBecomeActive {
     [self scheduleDismissalTimer];
+    self.startDisplayDate = [NSDate date];
 }
 
 - (void)applicationWillResignActive {
@@ -366,13 +374,35 @@
 
 - (void)swipeWithGestureRecognizer:(UIGestureRecognizer *)recognizer {
     [self dismiss];
+    UAInAppResolutionEvent *event = [UAInAppResolutionEvent dismissedResolutionWithMessage:self.message
+                                                                           displayDuration:[self displayDuration]];
+    [[UAirship shared].analytics addEvent:event];
 }
 
-- (void)runOnClickActions {
+/**
+ * Called when a message is clicked.
+ */
+- (void)messageClicked {
+    UAInAppResolutionEvent *event = [UAInAppResolutionEvent messageClickedResolutionWithMessage:self.message
+                                                                                displayDuration:[self displayDuration]];
+    [[UAirship shared].analytics addEvent:event];
+
+
     [UAActionRunner runActionsWithActionValues:self.message.onClick
                                      situation:UASituationForegroundInteractiveButton
                                       metadata:nil
                              completionHandler:nil];
+}
+
+/**
+ * Called when the view times out.
+ */
+- (void)timedOut {
+    [self dismiss];
+
+    UAInAppResolutionEvent *event = [UAInAppResolutionEvent timedOutResolutionWithMessage:self.message
+                                                                          displayDuration:[self displayDuration]];
+    [[UAirship shared].analytics addEvent:event];
 }
 
 /**
@@ -382,7 +412,8 @@
 - (void)tapWithGestureRecognizer:(UIGestureRecognizer *)recognizer {
     if (recognizer.state == UIGestureRecognizerStateEnded) {
         [self invertColors];
-        [self runOnClickActions];
+        [self messageClicked];
+
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self uninvertColors];
             [self dismiss];
@@ -410,7 +441,7 @@
     } else if (recognizer.state == UIGestureRecognizerStateEnded) {
         if (CGRectContainsPoint(self.messageView.bounds, touchPoint)) {
             [self uninvertColors];
-            [self runOnClickActions];
+            [self messageClicked];
             [self dismiss];
         }
     }
@@ -444,7 +475,22 @@
                                       metadata:nil
                              completionHandler:nil];
 
+    UAInAppResolutionEvent *event = [UAInAppResolutionEvent buttonClickedResolutionWithMessage:self.message
+                                                                              buttonIdentifier:binding.identifier
+                                                                                   buttonTitle:binding.localizedTitle
+                                                                               displayDuration:[self displayDuration]];
+    [[UAirship shared].analytics addEvent:event];
+    
+    
     [self dismiss];
+}
+
+/**
+ * Returns the current display duration.
+ * @return The current display duration.
+ */
+- (NSTimeInterval)displayDuration {
+    return [[NSDate date] timeIntervalSinceDate:self.startDisplayDate];
 }
 
 @end
