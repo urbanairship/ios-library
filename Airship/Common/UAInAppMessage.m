@@ -220,6 +220,8 @@
                     binding.localizedTitle = NSLocalizedStringWithDefaultValue([notificationAction title], @"UAInteractiveNotifications",
                                                                                [NSBundle mainBundle], [notificationAction title], nil);
 
+                    binding.identifier = [notificationAction identifier];
+
                     // choose the situation that matches the corresponding notificationAction's activation mode
                     binding.situation = [notificationAction activationMode] == UIUserNotificationActivationModeForeground ?
                     UASituationForegroundInteractiveButton : UASituationBackgroundInteractiveButton;

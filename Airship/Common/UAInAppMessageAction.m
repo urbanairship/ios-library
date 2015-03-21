@@ -34,6 +34,7 @@
 #import "UAPreferenceDataStore.h"
 #import "UAInAppDisplayEvent.h"
 #import "UAAnalytics.h"
+#import "UAInAppResolutionEvent.h"
 
 @interface UAInAppMessageAction ()
 @property(nonatomic, strong) UAInAppMessageController *messageController;
@@ -80,6 +81,9 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     if ([message.identifier isEqualToString:launchNotification[@"_"]]) {
         UA_LINFO(@"The in-app message delivery push was directly launched for message: %@", message);
         [UAInAppMessage deletePendingMessagePayload:arguments.value];
+
+        UAInAppResolutionEvent *event = [UAInAppResolutionEvent directOpenResolutionWithMessage:message];
+        [[UAirship shared].analytics addEvent:event];
         return;
     }
 
@@ -87,6 +91,10 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     if (message.expiry && [[NSDate date] compare:message.expiry] == NSOrderedDescending) {
         UA_LINFO(@"In-app message is expired: %@", message);
         [UAInAppMessage deletePendingMessagePayload:arguments.value];
+
+        UAInAppResolutionEvent *event = [UAInAppResolutionEvent expiredMessageResolutionWithMessage:message];
+        [[UAirship shared].analytics addEvent:event];
+
         return;
     }
 
@@ -128,6 +136,14 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     NSMutableDictionary *messagePayload = [NSMutableDictionary dictionaryWithDictionary:arguments.value];
     if (apnsPayload[@"_"]) {
         messagePayload[@"identifier"] = apnsPayload[@"_"];
+    }
+
+    if ([UAInAppMessage pendingMessagePayload]) {
+        UAInAppMessage *pending = [UAInAppMessage messageWithPayload:[UAInAppMessage pendingMessagePayload]];
+
+        UAInAppResolutionEvent *event = [UAInAppResolutionEvent replacedResolutionWithMessage:pending
+                                                                                  replacement:[UAInAppMessage messageWithPayload:messagePayload]];
+        [[UAirship shared].analytics addEvent:event];
     }
 
     // Store it for later

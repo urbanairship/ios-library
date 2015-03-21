@@ -38,6 +38,10 @@
 @property(nonatomic, copy) NSString *localizedTitle;
 
 /**
+ * The button's identifier.
+ */
+@property(nonatomic, copy) NSString *identifier;
+/**
  * A dictionary mapping action names to action values, to
  * be run when the button is pressed.
  */
