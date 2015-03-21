@@ -552,6 +552,11 @@
 		CCDF66AF19A544590043657E /* UAShareAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDF66AC19A544590043657E /* UAShareAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CCDF66B019A544590043657E /* UAShareAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDF66AD19A544590043657E /* UAShareAction.m */; };
 		CCDF66B119A544590043657E /* UAShareAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDF66AD19A544590043657E /* UAShareAction.m */; };
+		CCE1E6391ABA33C30023D254 /* UAInAppDisplayEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE1E6371ABA33C30023D254 /* UAInAppDisplayEvent.h */; };
+		CCE1E63A1ABA33C30023D254 /* UAInAppDisplayEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE1E6371ABA33C30023D254 /* UAInAppDisplayEvent.h */; };
+		CCE1E63B1ABA33C30023D254 /* UAInAppDisplayEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE1E6381ABA33C30023D254 /* UAInAppDisplayEvent.m */; };
+		CCE1E63C1ABA33C30023D254 /* UAInAppDisplayEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE1E6381ABA33C30023D254 /* UAInAppDisplayEvent.m */; };
+		CCE1E63E1ABA3E120023D254 /* UAInAppDisplayEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE1E63D1ABA3E120023D254 /* UAInAppDisplayEventTest.m */; };
 		CCE34AE019C2632500A8EFC0 /* UAEventAppForeground.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE34ADE19C2632500A8EFC0 /* UAEventAppForeground.h */; };
 		CCE34AE119C2632500A8EFC0 /* UAEventAppForeground.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE34ADE19C2632500A8EFC0 /* UAEventAppForeground.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CCE34AE219C2632500A8EFC0 /* UAEventAppForeground.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE34ADF19C2632500A8EFC0 /* UAEventAppForeground.m */; };
@@ -929,6 +934,9 @@
 		CCDF66A119A5166B0043657E /* UACustomEvent+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UACustomEvent+Internal.h"; sourceTree = "<group>"; };
 		CCDF66AC19A544590043657E /* UAShareAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAShareAction.h; sourceTree = "<group>"; };
 		CCDF66AD19A544590043657E /* UAShareAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAShareAction.m; sourceTree = "<group>"; };
+		CCE1E6371ABA33C30023D254 /* UAInAppDisplayEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppDisplayEvent.h; sourceTree = "<group>"; };
+		CCE1E6381ABA33C30023D254 /* UAInAppDisplayEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppDisplayEvent.m; sourceTree = "<group>"; };
+		CCE1E63D1ABA3E120023D254 /* UAInAppDisplayEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppDisplayEventTest.m; sourceTree = "<group>"; };
 		CCE34ADE19C2632500A8EFC0 /* UAEventAppForeground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAEventAppForeground.h; sourceTree = "<group>"; };
 		CCE34ADF19C2632500A8EFC0 /* UAEventAppForeground.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventAppForeground.m; sourceTree = "<group>"; };
 		CCE34AE419C2642D00A8EFC0 /* UAEventAppInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAEventAppInit.h; sourceTree = "<group>"; };
@@ -1369,6 +1377,8 @@
 				49973CE61A969166009B5EB1 /* UAInAppMessageButtonActionBinding.m */,
 				4928D90A1ABA37A30046E5BE /* UAInAppMessaging.h */,
 				4928D90B1ABA37A30046E5BE /* UAInAppMessaging.m */,
+				CCE1E6371ABA33C30023D254 /* UAInAppDisplayEvent.h */,
+				CCE1E6381ABA33C30023D254 /* UAInAppDisplayEvent.m */,
 			);
 			name = InAppMessages;
 			sourceTree = "<group>";
@@ -1377,6 +1387,7 @@
 			isa = PBXGroup;
 			children = (
 				49B7046B1A7AF9A6000F67A6 /* UAInAppMessageTest.m */,
+				CCE1E63D1ABA3E120023D254 /* UAInAppDisplayEventTest.m */,
 			);
 			name = InAppMessage;
 			sourceTree = "<group>";
@@ -1813,6 +1824,7 @@
 				CC319CE91A0C43000079226E /* UAPreferenceDataStore.h in Headers */,
 				CC1F43981A1D388800D3A227 /* UAWebViewDelegate.h in Headers */,
 				4946199D1A11A49D00E138C0 /* UAWhitelist.h in Headers */,
+				CCE1E63A1ABA33C30023D254 /* UAInAppDisplayEvent.h in Headers */,
 				494FB5AE1992D4D2000CF253 /* AirshipKit.h in Headers */,
 				4953A45E19A5642E00F8D111 /* UAInbox.h in Headers */,
 				49BADDB2198B0848000FF3D5 /* UAInboxAPIClient.h in Headers */,
@@ -1963,6 +1975,7 @@
 				76AA8EDE19B0F0A2005FD1C3 /* UAIncomingRichPushAction.h in Headers */,
 				1F610E0417835C3A00BCD96E /* UAPush+Internal.h in Headers */,
 				49CE03281AA9374000257BD8 /* UAUserNotificationCategory.h in Headers */,
+				CCE1E6391ABA33C30023D254 /* UAInAppDisplayEvent.h in Headers */,
 				CC8542B717F4B81600D2DE10 /* UAActionArguments.h in Headers */,
 				1F610DEB17835C3A00BCD96E /* UAInboxMessageData.h in Headers */,
 				CC4AAE0518C93ECF001F23B3 /* UAApplicationMetrics+Internal.h in Headers */,
@@ -2338,6 +2351,7 @@
 				491B8416198C237F00FB7A40 /* UAInboxPushHandler.m in Sources */,
 				CCE34AF519C2646500A8EFC0 /* UAEventAppBackground.m in Sources */,
 				49BEBF5F1AAA5D6700740665 /* UAUserNotificationAction.m in Sources */,
+				CCE1E63C1ABA33C30023D254 /* UAInAppDisplayEvent.m in Sources */,
 				491B8417198C237F00FB7A40 /* UAInboxUtils.m in Sources */,
 				491B8418198C237F00FB7A40 /* UAJSONValueTransformer.m in Sources */,
 				CC1F439A1A1D388800D3A227 /* UAWebViewDelegate.m in Sources */,
@@ -2427,6 +2441,7 @@
 			files = (
 				49226C8318A3045900D4A57A /* UAURLProtocolTest.m in Sources */,
 				76E53565194760540020335C /* UAAddCustomEventActionTest.m in Sources */,
+				CCE1E63E1ABA3E120023D254 /* UAInAppDisplayEventTest.m in Sources */,
 				CC7BE5EB19A55C5700B3EACE /* UAShareActionTest.m in Sources */,
 				7BB679151429288D00B877DB /* UAUtilsTest.m in Sources */,
 				CCD3158417CFBD5A002E93A1 /* UAPushTest.m in Sources */,
@@ -2520,6 +2535,7 @@
 				CC1F43991A1D388800D3A227 /* UAWebViewDelegate.m in Sources */,
 				1F610DBE17835C2200BCD96E /* UAirship.m in Sources */,
 				BB886103159A7E9600584445 /* UA_Reachability.m in Sources */,
+				CCE1E63B1ABA33C30023D254 /* UAInAppDisplayEvent.m in Sources */,
 				CC7DC947183E977100E95BB8 /* UAChannelRegistrationPayload.m in Sources */,
 				49BEBF5E1AAA5D6700740665 /* UAUserNotificationAction.m in Sources */,
 				CC8542CD17F4B81600D2DE10 /* UAIncomingPushAction.m in Sources */,

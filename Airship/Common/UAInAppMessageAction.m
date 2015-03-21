@@ -30,13 +30,19 @@
 #import "UAirship.h"
 #import "UAPush.h"
 #import "UAActionRegistry.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
+#import "UAPreferenceDataStore.h"
+#import "UAInAppDisplayEvent.h"
+#import "UAAnalytics.h"
 
 @interface UAInAppMessageAction ()
 @property(nonatomic, strong) UAInAppMessageController *messageController;
 @end
 
 @implementation UAInAppMessageAction
+
+NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID";
+
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     BOOL acceptsValue = [arguments.value isKindOfClass:[NSDictionary class]];
@@ -88,6 +94,16 @@
     if ([message isEqualToMessage:self.messageController.message]) {
         UA_LDEBUG(@"In-app message already displayed: %@", message);
         return;
+    }
+
+    // Send a display event if its the first time we are displaying this IAM
+    NSString *lastDisplayedIAM = [[UAirship shared].dataStore valueForKey:UALastDisplayedInAppMessageID];
+    if (message.identifier && ![message.identifier isEqualToString:lastDisplayedIAM]) {
+        UAInAppDisplayEvent *event = [UAInAppDisplayEvent eventWithMessage:message];
+        [[UAirship shared].analytics addEvent:event];
+
+        // Set the ID as the last displayed so we dont send duplicate display events
+        [[UAirship shared].dataStore setValue:message.identifier forKey:UALastDisplayedInAppMessageID];
     }
 
     UA_LINFO(@"Displaying in-app message: %@", message);
