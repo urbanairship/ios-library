@@ -74,17 +74,19 @@
 - (void)deletePendingMessagePayload;
 
 /**
- * Deletes the pending message payload if it matches the
- * passed message argument.
+ * Deletes the pending message if it matches the
+ * provided message argument.
  *
  * @param message The message to delete.
  */
 - (void)deletePendingMessage:(UAInAppMessage *)message;
 
 /**
- * Displays the the passed message. If the message is expired,
+ * Displays the the provided message. If the message is expired,
  * or if it was associated with the notification that launched the app,
  * this will be a no-op.
+ *
+ * @param message The message to display.
  */
 - (void)displayMessage:(UAInAppMessage *)message;
 
