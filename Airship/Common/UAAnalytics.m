@@ -683,7 +683,7 @@ NSString *const UALocationPermissionUnprompted = @"UNPROMPTED";
 }
 
 - (NSString *)locationPermission {
-    if (![UALocationService locationServicesEnabled]) {
+    if (![CLLocationManager locationServicesEnabled]) {
         return UALocationPermissionSystemLocationDisabled;
     } else {
         switch ([CLLocationManager authorizationStatus]) {
