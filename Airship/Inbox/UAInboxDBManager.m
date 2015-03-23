@@ -29,7 +29,7 @@
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import <CoreData/CoreData.h>
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UAConfig.h"
 
 #define kUAInboxDBEntityName @"UAInboxMessage"
@@ -230,8 +230,8 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
         
         [[NSFileManager defaultManager] removeItemAtURL:self.storeURL error:nil];
         [_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:self.storeURL options:nil error:&error];
-      
-      [[UAirship shared].dataStore setInboxLastModified:nil
+        NSString *userName = [UAUser defaultUser].username;
+        [[UAirship shared].dataStore setInboxLastModified:nil
                                                 forUser:userName];
     }
 

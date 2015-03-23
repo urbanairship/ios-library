@@ -512,6 +512,10 @@
 		CCF4462A1947D252003E04E7 /* UACustomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = CCF446281947D252003E04E7 /* UACustomEvent.h */; };
 		CCF4462C1947D252003E04E7 /* UACustomEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = CCF446291947D252003E04E7 /* UACustomEvent.m */; };
 		CCF4462F1947D265003E04E7 /* UACustomEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCF4462E1947D265003E04E7 /* UACustomEventTest.m */; };
+		F25679B31AC0129C00B681F4 /* UAPreferenceDataStore+UAInbox.h in Headers */ = {isa = PBXBuildFile; fileRef = F25679B11AC0129C00B681F4 /* UAPreferenceDataStore+UAInbox.h */; };
+		F25679B41AC0129C00B681F4 /* UAPreferenceDataStore+UAInbox.h in Headers */ = {isa = PBXBuildFile; fileRef = F25679B11AC0129C00B681F4 /* UAPreferenceDataStore+UAInbox.h */; };
+		F25679B51AC0129C00B681F4 /* UAPreferenceDataStore+UAInbox.m in Sources */ = {isa = PBXBuildFile; fileRef = F25679B21AC0129C00B681F4 /* UAPreferenceDataStore+UAInbox.m */; };
+		F25679B61AC0129C00B681F4 /* UAPreferenceDataStore+UAInbox.m in Sources */ = {isa = PBXBuildFile; fileRef = F25679B21AC0129C00B681F4 /* UAPreferenceDataStore+UAInbox.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -860,6 +864,8 @@
 		D9983E8C1238462100B7E69F /* UAUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAUtils.h; sourceTree = "<group>"; };
 		D9FD198B122DB5D000522B4E /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		D9FD1C43122DBCEA00522B4E /* UAGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAGlobal.h; sourceTree = "<group>"; };
+		F25679B11AC0129C00B681F4 /* UAPreferenceDataStore+UAInbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAPreferenceDataStore+UAInbox.h"; sourceTree = "<group>"; };
+		F25679B21AC0129C00B681F4 /* UAPreferenceDataStore+UAInbox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UAPreferenceDataStore+UAInbox.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1560,6 +1566,8 @@
 		D9FD1C3A122DBCEA00522B4E /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				F25679B11AC0129C00B681F4 /* UAPreferenceDataStore+UAInbox.h */,
+				F25679B21AC0129C00B681F4 /* UAPreferenceDataStore+UAInbox.m */,
 				CC319CE61A0C43000079226E /* UAPreferenceDataStore.h */,
 				CC319CE71A0C43000079226E /* UAPreferenceDataStore.m */,
 				1F55FB6A181A34B7002AA192 /* UI */,
@@ -1669,6 +1677,7 @@
 				49BADDF1198B085F000FF3D5 /* UAHTTPConnection.h in Headers */,
 				49BADDF2198B085F000FF3D5 /* UAHTTPConnectionOperation.h in Headers */,
 				49BADDF3198B085F000FF3D5 /* UAHTTPRequestEngine.h in Headers */,
+				F25679B41AC0129C00B681F4 /* UAPreferenceDataStore+UAInbox.h in Headers */,
 				49BADDF4198B0860000FF3D5 /* UADelayOperation.h in Headers */,
 				49BADDF5198B0860000FF3D5 /* UAHTTPRequest.h in Headers */,
 				49BADDF7198B0861000FF3D5 /* UABaseLocationProvider.h in Headers */,
@@ -1813,6 +1822,7 @@
 				1F610DE217835C3A00BCD96E /* UAInboxAPIClient.h in Headers */,
 				49C671FF184EAB640088F210 /* UANativeBridge.h in Headers */,
 				BB8860CF159A7E9600584445 /* UA_Base64.h in Headers */,
+				F25679B31AC0129C00B681F4 /* UAPreferenceDataStore+UAInbox.h in Headers */,
 				1F65BB7C18997AB6000E8ACC /* UALandingPageAction.h in Headers */,
 				CC7DC945183E977100E95BB8 /* UAChannelRegistrationPayload.h in Headers */,
 				492ADA1018C959CB0032C491 /* UACloseWindowAction.h in Headers */,
@@ -2099,6 +2109,7 @@
 				491B8413198C237F00FB7A40 /* UAInboxMessage.m in Sources */,
 				491B8414198C237F00FB7A40 /* UAInboxMessageData.m in Sources */,
 				491B8415198C237F00FB7A40 /* UAInboxMessageList.m in Sources */,
+				F25679B61AC0129C00B681F4 /* UAPreferenceDataStore+UAInbox.m in Sources */,
 				CCE34AE919C2642D00A8EFC0 /* UAEventAppInit.m in Sources */,
 				491B8416198C237F00FB7A40 /* UAInboxPushHandler.m in Sources */,
 				CCE34AF519C2646500A8EFC0 /* UAEventAppBackground.m in Sources */,
@@ -2263,6 +2274,7 @@
 				BB8860EE159A7E9600584445 /* UAUtils.m in Sources */,
 				49416D6418C513D500A18B72 /* UABespokeCloseView.m in Sources */,
 				CCE34AE819C2642D00A8EFC0 /* UAEventAppInit.m in Sources */,
+				F25679B51AC0129C00B681F4 /* UAPreferenceDataStore+UAInbox.m in Sources */,
 				CCF4462C1947D252003E04E7 /* UACustomEvent.m in Sources */,
 				CCE34AF419C2646500A8EFC0 /* UAEventAppBackground.m in Sources */,
 				1F55FB6F181A34DD002AA192 /* UABeveledLoadingIndicator.m in Sources */,
