@@ -23,13 +23,24 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UADBMigrationErrorHandler.h"
-#import "UAURLProtocol.h"
+#import "UAPreferenceDataStore.h"
 
-@implementation UADBMigrationErrorHandler
+/**
+ * Category extensions for UAPreferenceDataStore additions specific to UAInbox.
+ */
+@interface UAPreferenceDataStore (UAInbox)
 
-+ (void)clearCacheAfterMigrationError {
-  [UAURLProtocol clearCache];
-}
+/**
+ * Returns the last modified inbox info that is set using setLastModified:forUser:.
+ *
+ * @return A last modified string that can be directly passed as 'If-Modified-Since' in the request header.
+ */
+
+- (NSString *)inboxLastModifiedForUser:(NSString *)userName;
+
+/**
+ * Sets the last modified inbox info.
+ */
+- (void)setInboxLastModified:(NSString *)lastModified forUser:(NSString *)userName;
 
 @end
