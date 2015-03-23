@@ -26,12 +26,77 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+@class UAInAppMessage;
+
+/**
+ * Delegate protocol for receiving in-app messaging related
+ * callbacks.
+ */
+@protocol UAInAppMessagingDelegate <NSObject>
+
+@optional
+
+/**
+ * Indicates that an in-app message has been stored as pending.
+ * @param message The associated in-app message.
+ */
+- (void)pendingMessageAvailable:(UAInAppMessage *)message;
+
+/**
+ * Indicates that an in-app message will be automatically displayed.
+ * @param message The associated in-app message.
+ */
+- (void)messageWillBeDisplayed:(UAInAppMessage *)message;
+
+@end
+
+
 @interface UAInAppMessaging : NSObject
+
+/**
+* Retrieves the most recent pending message payload from disk.
+*
+* @return An in-app message payload in NSDictionary format.
+*/
+- (NSDictionary *)pendingMessagePayload;
+
+/**
+ * Stores a pending message for later retrieval and display.
+ *
+ * @param message An in-app message instance.
+ */
+- (void)storePendingMessage:(UAInAppMessage *)message;
+
+/**
+ * Deletes the pending message payload if present.
+ *
+ */
+- (void)deletePendingMessagePayload;
+
+/**
+ * Deletes the pending message payload if it matches the
+ * passed message argument.
+ *
+ * @param message The message to delete.
+ */
+- (void)deletePendingMessage:(UAInAppMessage *)message;
+
+/**
+ * Displays the the passed message. If the message is expired,
+ * or if it was associated with the notification that launched the app,
+ * this will be a no-op.
+ */
+- (void)displayMessage:(UAInAppMessage *)message;
 
 /**
  * The desired font to use when displaying in-app messages.
  * Defaults to a bold system font 12 points in size.
  */
 @property(nonatomic, strong) UIFont *font;
+
+/**
+ * An optional delegate to receive in-app messaging related callbacks.
+ */
+@property(nonatomic, weak) id<UAInAppMessagingDelegate> delegate;
 
 @end
