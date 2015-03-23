@@ -214,34 +214,28 @@
             // Create a button action binding for each corresponding action identifier
             // id -> UAUserNotificationAction/UIUserNotificationAction
             for (id notificationAction in [category actionsForContext:UIUserNotificationActionContextDefault]) {
-                NSDictionary *payload = self.buttonActions[[notificationAction identifier]];
-                if (payload) {
-                    UAInAppMessageButtonActionBinding *binding = [[UAInAppMessageButtonActionBinding alloc] init];
-                    binding.localizedTitle = NSLocalizedStringWithDefaultValue([notificationAction title], @"UAInteractiveNotifications",
-                                                                               [NSBundle mainBundle], [notificationAction title], nil);
+                NSDictionary *payload = self.buttonActions[[notificationAction identifier]] ?: [NSDictionary dictionary];
 
-                    binding.identifier = [notificationAction identifier];
+                UAInAppMessageButtonActionBinding *binding = [[UAInAppMessageButtonActionBinding alloc] init];
+                binding.localizedTitle = NSLocalizedStringWithDefaultValue([notificationAction title], @"UAInteractiveNotifications",
+                                                                           [NSBundle mainBundle], [notificationAction title], nil);
 
-                    // choose the situation that matches the corresponding notificationAction's activation mode
-                    binding.situation = [notificationAction activationMode] == UIUserNotificationActivationModeForeground ?
-                    UASituationForegroundInteractiveButton : UASituationBackgroundInteractiveButton;
+                binding.identifier = [notificationAction identifier];
 
-                    binding.actions = payload;
+                // choose the situation that matches the corresponding notificationAction's activation mode
+                binding.situation = [notificationAction activationMode] == UIUserNotificationActivationModeForeground ?
+                UASituationForegroundInteractiveButton : UASituationBackgroundInteractiveButton;
 
-                    [bindings addObject:binding];
-                }
+                binding.actions = payload;
+
+                [bindings addObject:binding];
+
             }
             break;
         }
     }
 
-    // only return bindings if we got a match for each action identifier
-    // so we don't end up with the wrong number of buttons
-    if (bindings.count == self.buttonActions.count) {
-        return bindings;
-    } else {
-        return [NSArray array];
-    }
+    return bindings;
 }
 
 - (NSString *)description {
