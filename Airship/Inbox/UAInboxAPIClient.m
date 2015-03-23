@@ -20,9 +20,6 @@
 
 @implementation UAInboxAPIClient
 
-NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.%@";
-
-
 - (instancetype)init {
     self = [super init];
     if (self) {
