@@ -50,20 +50,19 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     if (self) {
         self.font = [UIFont boldSystemFontOfSize:12];
 
-        __weak UAInAppMessaging *weakSelf = self;
-        self.messageControllerFactory = ^(UAInAppMessage *message){
-            return [[UAInAppMessageController alloc] initWithMessage:message dismissalBlock:^{
-                // Delete the pending payload once it's dismissed
-                [weakSelf deletePendingMessage:message];
-            }];
-        };
-
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(applicationDidBecomeActive)
                                                      name:UIApplicationDidBecomeActiveNotification
                                                    object:[UIApplication sharedApplication]];
     }
     return self;
+}
+
+- (UAInAppMessageController *)buildInAppMessageControllerWithMessage:(UAInAppMessage *)message {
+    return [[UAInAppMessageController alloc] initWithMessage:message dismissalBlock:^{
+        // Delete the pending payload once it's dismissed
+        [self deletePendingMessage:message];
+    }];
 }
 
 - (void)applicationDidBecomeActive {
@@ -171,7 +170,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
     UA_LINFO(@"Displaying in-app message: %@", message);
 
-    UAInAppMessageController *messageController = self.messageControllerFactory(message);
+    UAInAppMessageController *messageController = [self buildInAppMessageControllerWithMessage:message];
 
     // Call the delegate, if needed
     id<UAInAppMessagingDelegate> strongDelegate = self.delegate;

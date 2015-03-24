@@ -32,9 +32,12 @@
 @interface UAInAppMessaging ()
 
 /**
- * A factory block that builds a message controller, taking the associated in-app message as an
+ * A factory method that builds a message controller, taking the associated in-app message as an
  * argument.
+ *
+ * @param message The associated in-app message.
+ * @return An instance of UAInAppMessageController.
  */
-@property(nonatomic, copy) UAInAppMessageController* (^messageControllerFactory)(UAInAppMessage *);
+- (UAInAppMessageController *)buildInAppMessageControllerWithMessage:(UAInAppMessage *)message;
 
 @end
