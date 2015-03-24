@@ -81,6 +81,12 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
 - (void)storePendingMessage:(UAInAppMessage *)message {
 
+    // Discard if it's not a banner
+    if (message.displayType != UAInAppMessageDisplayTypeBanner) {
+        UA_LDEBUG(@"In-app message is not a banner, discarding: %@", message);
+        return;
+    }
+
     if ([self pendingMessagePayload]) {
         UAInAppMessage *previousPendingMessage = [UAInAppMessage messageWithPayload:[self pendingMessagePayload]];
 
@@ -112,6 +118,12 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 - (void)displayMessage:(UAInAppMessage *)message {
 
     NSDictionary *launchNotification = [UAirship push].launchNotification;
+
+    // Discard if it's not a banner
+    if (message.displayType != UAInAppMessageDisplayTypeBanner) {
+        UA_LDEBUG(@"In-app message is not a banner, discarding: %@", message);
+        return;
+    }
 
     // If the pending payload ID does not match the launchNotification's send ID
     if ([message.identifier isEqualToString:launchNotification[@"_"]]) {
