@@ -12,7 +12,7 @@
 @property(nonatomic, strong) id mockAirship;
 @property(nonatomic, strong) id mockDataStore;
 @property(nonatomic, strong) id mockMessageController;
-@property(nonatomic, strong) UAInAppMessaging *messaging;
+@property(nonatomic, strong) id mockMessaging;
 @property(nonatomic, strong) UAInAppMessage *bannerMessage;
 @property(nonatomic, strong) UAInAppMessage *nonBannerMessage;
 @end
@@ -28,14 +28,10 @@
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:mockDataStore] dataStore];
 
-    self.messaging = [[UAInAppMessaging alloc] init];
+    self.mockMessageController = [OCMockObject mockForClass:[UAInAppMessageController class]];
 
-    id mockMessageController = [OCMockObject mockForClass:[UAInAppMessageController class]];
-    self.mockMessageController = mockMessageController;
-
-    self.messaging.messageControllerFactory = ^(UAInAppMessage *message) {
-        return mockMessageController;
-    };
+    self.mockMessaging = [OCMockObject partialMockForObject:[UAInAppMessaging new]];
+    [[[self.mockMessaging stub] andReturn:self.mockMessageController] buildInAppMessageControllerWithMessage:[OCMArg any]];
 
     self.bannerMessage = [UAInAppMessage message];
     self.bannerMessage.alert = @"whatever";
@@ -56,7 +52,7 @@
  */
 - (void)testDisplayBannerMessage {
     [[self.mockMessageController expect] show];
-    [self.messaging displayMessage:self.bannerMessage];
+    [self.mockMessaging displayMessage:self.bannerMessage];
     [self.mockMessageController verify];
 }
 
@@ -64,7 +60,7 @@
  * Test that non-banner messages are not displayed.
  */
 - (void)testDisplayNonBannerMessage {
-    [self.messaging displayMessage:self.nonBannerMessage];
+    [self.mockMessaging displayMessage:self.nonBannerMessage];
     [[self.mockMessageController reject] show];
     [self.mockMessageController verify];
 }
@@ -73,7 +69,7 @@
  * Test that banner messages are stored.
  */
 - (void)testStoreBannerPendingMessage {
-    [self.messaging storePendingMessage:self.bannerMessage];
+    [self.mockMessaging storePendingMessage:self.bannerMessage];
     [[self.mockDataStore expect] setObject:self.bannerMessage.payload forKey:kUAPendingInAppMessageDataStoreKey];
     [self.mockDataStore verify];
 }
@@ -82,7 +78,7 @@
  * Test that non-banner messages are not stored.
  */
 - (void)testStoreNonBannerPendingMessage {
-    [self.messaging storePendingMessage:self.nonBannerMessage];
+    [self.mockMessaging storePendingMessage:self.nonBannerMessage];
     [[self.mockDataStore reject] setObject:self.bannerMessage.payload forKey:kUAPendingInAppMessageDataStoreKey];
     [self.mockDataStore verify];
 }
