@@ -47,13 +47,13 @@
 
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
-@implementation UAAnalytics
+#define kUALocationPermissionSystemLocationDisabled @"SYSTEM_LOCATION_DISABLED";
+#define kUALocationPermissionNotAllowed @"NOT_ALLOWED";
+#define kUALocationPermissionAlwaysAllowed @"ALWAYS_ALLOWED";
+#define kUALocationPermissionForegroundAllowed @"FOREGROUND_ALLOWED";
+#define kUALocationPermissionUnprompted @"UNPROMPTED";
 
-NSString *const UALocationPermissionSystemLocationDisabled = @"SYSTEM_LOCATION_DISABLED";
-NSString *const UALocationPermissionNotAllowed = @"NOT_ALLOWED";
-NSString *const UALocationPermissionAlwaysAllowed = @"ALWAYS_ALLOWED";
-NSString *const UALocationPermissionForegroundAllowed = @"FOREGROUND_ALLOWED";
-NSString *const UALocationPermissionUnprompted = @"UNPROMPTED";
+@implementation UAAnalytics
 
 #pragma mark -
 #pragma mark Object Lifecycle
@@ -684,18 +684,18 @@ NSString *const UALocationPermissionUnprompted = @"UNPROMPTED";
 
 - (NSString *)locationPermission {
     if (![CLLocationManager locationServicesEnabled]) {
-        return UALocationPermissionSystemLocationDisabled;
+        return kUALocationPermissionSystemLocationDisabled;
     } else {
         switch ([CLLocationManager authorizationStatus]) {
             case kCLAuthorizationStatusDenied:
             case kCLAuthorizationStatusRestricted:
-                return UALocationPermissionNotAllowed;
+                return kUALocationPermissionNotAllowed;
             case kCLAuthorizationStatusAuthorizedAlways:
-                return UALocationPermissionAlwaysAllowed;
+                return kUALocationPermissionAlwaysAllowed;
             case kCLAuthorizationStatusAuthorizedWhenInUse:
-                return UALocationPermissionForegroundAllowed;
+                return kUALocationPermissionForegroundAllowed;
             case kCLAuthorizationStatusNotDetermined:
-                return UALocationPermissionUnprompted;
+                return kUALocationPermissionUnprompted;
         }
     }
 }
