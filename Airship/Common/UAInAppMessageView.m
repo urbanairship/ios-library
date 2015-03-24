@@ -25,12 +25,22 @@
 
 #import "UAInAppMessageView.h"
 
+// shadow offset on the y axis of 1 point
 #define kUAInAppMessageViewShadowOffsetY 1
+
+// shadow radius of 3 points
 #define kUAInAppMessageViewShadowRadius 3
+
+// 25% shadow opacity
 #define kUAInAppMessageViewShadowOpacity 0.25
+
+// a corner radius of 4 points
+#define kUAInAppMessageViewCornerRadius 4
 
 @interface UAInAppMessageView ()
 
+@property(nonatomic, strong) UIView *containerView;
+@property(nonatomic, strong) UIView *maskView;
 @property(nonatomic, strong) UIView *tab;
 @property(nonatomic, strong) UILabel *messageLabel;
 @property(nonatomic, strong) UIButton *button1;
@@ -45,8 +55,20 @@
     if (self) {
         self.translatesAutoresizingMaskIntoConstraints = NO;
 
-        // rounded corners
-        self.layer.cornerRadius = 4;
+        // be transparent at the top, in order to facilitate masking of subviews
+        self.backgroundColor = [UIColor clearColor];
+
+        // contains all the meaningful subviews
+        self.containerView = [UIView new];
+        self.containerView.translatesAutoresizingMaskIntoConstraints = NO;
+        self.containerView.userInteractionEnabled = NO;
+        self.containerView.backgroundColor = [UIColor whiteColor];
+
+        // covers up rounded corners in the appropriate area
+        self.maskView = [UIView new];
+        self.maskView.translatesAutoresizingMaskIntoConstraints = NO;
+        self.maskView.userInteractionEnabled = NO;
+        self.maskView.backgroundColor = [UIColor whiteColor];
 
         CGFloat shadowOffsetY;
 
@@ -58,37 +80,49 @@
             shadowOffsetY = kUAInAppMessageViewShadowOffsetY;
         }
 
-        self.layer.shadowOffset = CGSizeMake(0, shadowOffsetY);
-        self.layer.shadowRadius = kUAInAppMessageViewShadowRadius;
-        self.layer.shadowOpacity = kUAInAppMessageViewShadowOpacity;
+        self.containerView.layer.shadowOffset = CGSizeMake(0, shadowOffsetY);
+        self.containerView.layer.shadowRadius = kUAInAppMessageViewShadowRadius;
+        self.containerView.layer.shadowOpacity = kUAInAppMessageViewShadowOpacity;
+        self.containerView.layer.cornerRadius = 4;
 
         self.messageLabel = [UILabel new];
         self.messageLabel.translatesAutoresizingMaskIntoConstraints = NO;
         self.messageLabel.userInteractionEnabled = NO;
 
-        [self addSubview:self.messageLabel];
+        [self.containerView addSubview:self.messageLabel];
 
         self.tab = [UIView new];
         self.tab.translatesAutoresizingMaskIntoConstraints = NO;
         self.tab.layer.cornerRadius = 4;
         self.tab.autoresizesSubviews = YES;
-        [self addSubview:self.tab];
+        [self.containerView addSubview:self.tab];
 
         // add buttons depending on the passed number
         if (numberOfButtons) {
             self.button1 = [self buildButton];
-            [self addSubview:self.button1];
+            [self.containerView addSubview:self.button1];
 
             if (numberOfButtons > 1) {
                 self.button2 = [self buildButton];
-                [self addSubview:self.button2];
+                [self.containerView addSubview:self.button2];
             }
         }
+
+        [self addSubview:self.containerView];
+        [self addSubview:self.maskView];
 
         [self buildLayoutWithPosition:position numberOfButtons:numberOfButtons];
     }
 
     return self;
+}
+
+
+// when setting the background color, pass through to the
+// containerView and maskView, leaving self clear.
+- (void)setBackgroundColor:(UIColor *)backgroundColor {
+    self.containerView.backgroundColor = backgroundColor;
+    self.maskView.backgroundColor = backgroundColor;
 }
 
 - (UIButton *)buildButton {
@@ -126,6 +160,9 @@
         [constraints addObject:@"H:|-horizontalMargin-[button1]-horizontalMargin-[button2(==button1)]-horizontalMargin-|"];
     }
 
+    // cover up the rounded corners at the bottom
+    [constraints addObject:@"V:[mask(maskHeight)]|"];
+
     return constraints;
 }
 
@@ -156,7 +193,10 @@
         // button 1 and two are equal in size
         [constraints addObject:@"H:|-horizontalMargin-[button1]-horizontalMargin-[button2(==button1)]-horizontalMargin-|"];
     }
-    
+
+    // cover up the rounded corners at the top
+    [constraints addObject:@"V:|[mask(maskHeight)]"];
+
     return constraints;
 }
 
@@ -179,6 +219,8 @@
     [views setValue:self.messageLabel forKey:@"label"];
     [views setValue:self.button1 forKey:@"button1"];
     [views setValue:self.button2 forKey:@"button2"];
+    [views setValue:self.containerView forKey:@"container"];
+    [views setValue:self.maskView forKey:@"mask"];
 
     id metrics = @{@"verticalMargin": @(verticalMargin),
                    @"horizontalMargin":@(horizontalMargin),
@@ -186,7 +228,8 @@
                    @"tabHeight":@(tabHeight),
                    @"tabAreaHeight":@(tabAreaHeight),
                    @"tabWidth":@(tabWidth),
-                   @"labelHeight":@(labelHeight)};
+                   @"labelHeight":@(labelHeight),
+                   @"maskHeight":@(kUAInAppMessageViewCornerRadius)};
 
 
     // centering the tab requires laying out a constraint the hard way
@@ -198,7 +241,10 @@
                                                     multiplier:1 constant:0]];
 
     // constraints common to all configurations
-    NSArray *commonConstraints = @[@"H:[tab(tabWidth)]", // set the tab width
+    NSArray *commonConstraints = @[@"H:|[container]|",
+                                   @"V:|[container]|",
+                                   @"H:|[mask]|",
+                                   @"H:[tab(tabWidth)]", // set the tab width
                                    @"V:[tab(tabHeight)]", // set the tab height
                                    @"V:[label(labelHeight)]", //set the label height
                                    @"H:|-horizontalMargin-[label]-horizontalMargin-|"]; // label is inset by the horizontal margin
