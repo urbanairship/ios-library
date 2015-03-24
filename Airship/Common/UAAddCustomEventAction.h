@@ -51,7 +51,7 @@ extern NSString * const UAAddCustomEventActionErrorDomain;
  * the interaction type and ID will automatically be filled for the message if
  * they are left blank.
  *
- * Valid situations: UASituationForegroundPush, UASituationLanchedFromPush,
+ * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush,
  * UASituationWebViewInvocation, UASituationManualInvocation, UASituationBackgroundPush,
  * UASituationForegroundInteractiveButton, and UASituationBackgroundInteractiveButton
  *

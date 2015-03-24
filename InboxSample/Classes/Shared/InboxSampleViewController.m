@@ -79,10 +79,11 @@ typedef NS_ENUM(NSInteger, InboxStyle) {
 }
 
 /*
- Displays an incoming message, either by showing it in an overlay,
- or loading it in an already visible inbox interface.
+ * Displays an inbox message.
+ *
+ * @param message The message to display.
  */
-- (void)displayMessage:(UAInboxMessage *)message {
+- (void)showInboxMessage:(UAInboxMessage *)message {
     if (![self.userInterface isVisible]) {
         if (self.useOverlay) {
             [UALandingPageOverlayController showMessage:message];
@@ -93,6 +94,13 @@ typedef NS_ENUM(NSInteger, InboxStyle) {
     }
 
     [self.userInterface.messageListController displayMessage:message];
+}
+
+/**
+ * Displays the inbox.
+ */
+- (void)showInbox {
+    [self.userInterface showInbox];
 }
 
 - (void)setStyle:(enum InboxStyle)style {

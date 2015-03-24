@@ -37,6 +37,7 @@
 
 @property (nonatomic, strong) UAIncomingRichPushAction *action;
 @property (nonatomic, strong) UAActionArguments *arguments;
+@property (nonatomic, strong) NSMutableDictionary *notification;
 @property (nonatomic, strong) id mockInbox;
 @property (nonatomic, strong) id mockPushHandler;
 @property (nonatomic, strong) id mockPushHandlerDelegate;
@@ -53,11 +54,11 @@
     self.arguments = [[UAActionArguments alloc] init];
     self.arguments.value = @"rich-push-ID";
     
-    NSDictionary *notification = @{@"aps": @{}, @"_uamid":@"rich-push-ID"};
+    self.notification = [NSMutableDictionary dictionaryWithDictionary:@{@"aps": @{}, @"_uamid":@"rich-push-ID"}];
     
     self.arguments = [UAActionArguments argumentsWithValue:@"rich-push-ID"
                                              withSituation:UASituationForegroundPush
-                                               metadata:@{UAActionMetadataPushPayloadKey: notification}];
+                                               metadata:@{UAActionMetadataPushPayloadKey: self.notification}];
 
     self.mockPushHandler = [OCMockObject niceMockForClass:[UAInboxPushHandler class]];
     self.mockPushHandlerDelegate = [OCMockObject niceMockForProtocol:@protocol(UAInboxPushHandlerDelegate)];
@@ -85,30 +86,39 @@
 }
 
 /**
- * Test accepts valid arguments
+ * Test accepts argument in situation UASituationForegroundPush.
  */
-- (void)testAcceptsArguments {
+- (void)testAcceptArgumentsUASituationForegroundPush {
     self.arguments.situation = UASituationForegroundPush;
-    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accepts valid arguments in UASituationForegroundPush situation");
-
-    self.arguments.situation = UASituationLaunchedFromPush;
-    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accepts valid arguments in UASituationLaunchedFromPush situation");
+    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accept valid arguments in UASituationForegroundPush situation");
 
     self.arguments.value = @[@"RAP-ID"];
-    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accepts an array that contains a RAP ID");
+    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accept an array that contains a RAP ID");
 
-    self.arguments.situation = UASituationBackgroundPush;
-    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should not accept argument in UASituationBackgroundPush situation");
+    self.arguments.value = nil;
+    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should reject arguments without a RAP ID");
 
-    self.arguments.situation = UASituationWebViewInvocation;
-    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should not accept argument in an invalid situation");
+    self.arguments.value = @"RAP-ID";
+    self.arguments.metadata = nil;
+    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should reject arguments without push notification metadata");
+}
 
-    self.arguments.situation = UASituationForegroundPush;
-    self.arguments.value = @3;
-    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should not accept argument with an invalid RAP ID");
+/**
+ * Test accepts argument in situation UASituationLaunchedFromPush.
+ */
+- (void)testAcceptArgumentsUASituationLaunchedFromPush {
+    self.arguments.situation = UASituationLaunchedFromPush;
+    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accept valid arguments in UASituationLaunchedFromPush situation");
 
-    UAActionArguments *invalidArgs = [UAActionArguments argumentsWithValue:@"valid-ID" withSituation:UASituationForegroundPush];
-    XCTAssertFalse([self.action acceptsArguments:invalidArgs], @"action should not accept arguments that are not UAPushActionArguments");
+    self.arguments.value = @[@"RAP-ID"];
+    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accept an array that contains a RAP ID");
+
+    self.arguments.value = nil;
+    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should reject arguments without a RAP ID");
+
+    self.arguments.value = @"RAP-ID";
+    self.arguments.metadata = nil;
+    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should reject arguments without push notification metadata");
 }
 
 /**
@@ -169,7 +179,6 @@
     XCTAssertNoThrow([self.mockPushHandlerDelegate verify], @"handler delegate should be notified of a RAP notification");
     XCTAssertNoThrow([self.mockPushHandler verify], @"handler should set hasLaunchMessage");
 }
-
 
 /**
  * Test when the message list fails to refresh it returns UIBackgroundFetchResultFailed.

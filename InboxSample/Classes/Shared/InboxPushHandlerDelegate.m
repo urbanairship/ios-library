@@ -52,8 +52,7 @@
     // Display an alert, and if the user taps "View", display the message
     NSString *alertText = message.title;
     [self.alertHandler showNewMessageAlert:alertText withViewBlock:^{
-        InboxSampleAppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
-        [appDelegate.viewController displayMessage:message];
+        [self showInboxMessage:message];
     }];
 }
 
@@ -63,7 +62,7 @@
  */
 - (void)launchRichPushMessageAvailable:(UAInboxMessage *)message {
     InboxSampleAppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
-    [appDelegate.viewController displayMessage:message];
+    [appDelegate.viewController showInboxMessage:message];
 }
 
 - (void)richPushNotificationArrived:(NSDictionary *)notification {
@@ -74,5 +73,22 @@
     // Add custom launch notification handling here
 }
 
+/**
+ * Called when the inbox is requested to be displayed.
+ */
+- (void)showInbox {
+    InboxSampleAppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
+    [appDelegate.viewController showInbox];
+}
+
+/*
+ * Called when an inbox gmessage is requested to be displayed.
+ *
+ * @param message The message to display.
+ */
+- (void)showInboxMessage:(UAInboxMessage *)inboxMessage {
+    InboxSampleAppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
+    [appDelegate.viewController showInboxMessage:inboxMessage];
+}
 
 @end

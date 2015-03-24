@@ -61,6 +61,18 @@
  */
 - (void)launchRichPushMessageAvailable:(UAInboxMessage *)richPushMessage;
 
+/**
+ * Called when the inbox is requested to be displayed.
+ */
+- (void)showInbox;
+
+/**
+ * Called when the inbox message is requested to be displayed.
+ * @param inboxMessage The inbox message.
+ */
+- (void)showInboxMessage:(UAInboxMessage *)inboxMessage;
+
+
 @end
 
 /**
