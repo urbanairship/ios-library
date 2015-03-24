@@ -36,9 +36,6 @@
 
 NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID";
 
-// User defaults key for storing and retrieving pending messages
-#define kUAPendingInAppMessageDataStoreKey @"UAPendingInAppMessage"
-
 // Number of seconds to delay before displaying an in-app message
 #define kUAInAppMessagingDelayBeforeInAppMessageDisplay 0.4
 
