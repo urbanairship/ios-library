@@ -30,6 +30,7 @@
 #import "UAPush.h"
 #import "UAActionRegistry.h"
 #import "UAInAppMessaging.h"
+#import "UAInboxUtils.h"
 
 @implementation UAInAppMessageAction
 
@@ -72,12 +73,24 @@
     // Set the send ID as the IAM unique identifier
     NSDictionary *apnsPayload = arguments.metadata[UAActionMetadataPushPayloadKey];
     NSMutableDictionary *messagePayload = [NSMutableDictionary dictionaryWithDictionary:arguments.value];
+    UAInAppMessage *message = [UAInAppMessage messageWithPayload:messagePayload];
+
     if (apnsPayload[@"_"]) {
-        messagePayload[@"identifier"] = apnsPayload[@"_"];
+        message.identifier = apnsPayload[@"_"];
+    }
+
+    NSString *inboxMessageID = [UAInboxUtils inboxMessageIDFromNotification:apnsPayload];
+    BOOL containsOpenInboxAction = message.onClick[kUADisplayInboxActionDefaultRegistryAlias] ||
+        message.onClick[kUADisplayInboxActionDefaultRegistryName];
+
+    if (inboxMessageID && !containsOpenInboxAction) {
+        NSMutableDictionary *actions = [NSMutableDictionary dictionaryWithDictionary:message.onClick];
+        actions[kUADisplayInboxActionDefaultRegistryAlias] = inboxMessageID;
+        message.onClick = actions;
     }
 
     // Store it for later
-    [[UAirship inAppMessaging] storePendingMessage:[UAInAppMessage messageWithPayload:messagePayload]];
+    [[UAirship inAppMessaging] storePendingMessage:message];
 }
 
 @end
