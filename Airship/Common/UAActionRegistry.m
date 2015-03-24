@@ -37,6 +37,7 @@
 #import "UAAddCustomEventAction.h"
 #import "UAShareAction.h"
 #import "UAInAppMessageAction.h"
+#import "UADisplayInboxAction.h"
 
 @implementation UAActionRegistry
 @dynamic registeredEntries;
@@ -327,6 +328,11 @@
         // In-App Messages will not work on iOS 6 or below
         return  NO;
     }];
+
+    UADisplayInboxAction *displayInboxAction = [[UADisplayInboxAction alloc] init];
+    [self registerAction:displayInboxAction
+                   names:@[kUADisplayInboxActionDefaultRegistryAlias, kUADisplayInboxActionDefaultRegistryName]];
+
 }
 
 @end

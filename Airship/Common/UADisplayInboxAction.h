@@ -22,58 +22,26 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#import "UAAction.h"
 
-#import <UIKit/UIKit.h>
-
-@class UAInboxMessage;
-
-@interface InboxSampleViewController : UIViewController <UIActionSheetDelegate, UIPopoverControllerDelegate>
-
-
-- (IBAction)mail:(id)sender;
-- (IBAction)selectInboxStyle:(id)sender;
 
 /**
- * The label displaying the current version number of the Urban
- * Airship library.
- */
-@property(nonatomic, weak) IBOutlet UILabel *version;
-
-/**
- * Whether to display incoming rich push messages in
- * an overlay controller.
+ * Requests the inbox be displayed. The action will call
+ * the UAInboxPushHandlerDelegate showInboxMessage: if the inbox
+ * message ID is specified and available, or it will call
+ * showInbox.
  *
- * Defaults to YES.
- */
-@property(nonatomic, assign) BOOL useOverlay;
-
-/**
- * Whether to use the iPhone UI on the iPad. 
+ * This action is registered under the names open_mc_action and ^mc.
  *
- * Defaults to NO.
- */
-@property(nonatomic, assign) BOOL runiPhoneTargetOniPad;
-
-/**
- * The size of the popover controller's window,
- * When using the popover user interface.
+ * Expected argument value is an inbox message ID as an NSString, or nil.
  *
- * Defaults to 320 x 1100.
- */
-@property(nonatomic, assign) CGSize popoverSize;
-
-/*
- * Displays an inbox message.
+ * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush,
+ * UASituationWebViewInvocation, UASituationManualInvocation,
+ * and UASituationForegroundInteractiveButton
  *
- * @param message The message to display.
+ * Result value: nil
+ *
  */
-- (void)showInboxMessage:(UAInboxMessage *)message;
-
-
-/*
- * Displays the inbox.
- */
-- (void)showInbox;
+@interface UADisplayInboxAction : UAAction
 
 @end
-

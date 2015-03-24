@@ -23,57 +23,41 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
-
-@class UAInboxMessage;
-
-@interface InboxSampleViewController : UIViewController <UIActionSheetDelegate, UIPopoverControllerDelegate>
-
-
-- (IBAction)mail:(id)sender;
-- (IBAction)selectInboxStyle:(id)sender;
-
-/**
- * The label displaying the current version number of the Urban
- * Airship library.
- */
-@property(nonatomic, weak) IBOutlet UILabel *version;
-
-/**
- * Whether to display incoming rich push messages in
- * an overlay controller.
- *
- * Defaults to YES.
- */
-@property(nonatomic, assign) BOOL useOverlay;
-
-/**
- * Whether to use the iPhone UI on the iPad. 
- *
- * Defaults to NO.
- */
-@property(nonatomic, assign) BOOL runiPhoneTargetOniPad;
-
-/**
- * The size of the popover controller's window,
- * When using the popover user interface.
- *
- * Defaults to 320 x 1100.
- */
-@property(nonatomic, assign) CGSize popoverSize;
-
-/*
- * Displays an inbox message.
- *
- * @param message The message to display.
- */
-- (void)showInboxMessage:(UAInboxMessage *)message;
+#import "UADisplayInboxAction.h"
+#import "UAActionArguments.h"
+#import "UAInboxUtils.h"
+#import "UAInboxPushHandler.h"
+#import "UAInbox.h"
+#import "UAInboxMessageList.h"
+#import "UAirship.h"
 
 
-/*
- * Displays the inbox.
- */
-- (void)showInbox;
+@implementation UADisplayInboxAction
+
+- (BOOL)acceptsArguments:(UAActionArguments *)arguments {
+
+    if (arguments.situation == UASituationBackgroundPush || arguments.situation == UASituationBackgroundInteractiveButton) {
+        return NO;
+    }
+
+    return arguments.value == nil || [arguments.value isKindOfClass:[NSString class]];
+}
+
+- (void)performWithArguments:(UAActionArguments *)arguments
+           completionHandler:(UAActionCompletionHandler)completionHandler {
+
+    NSString *messageID = [UAInboxUtils inboxMessageIDFromValue:arguments.value];
+    UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
+    id<UAInboxPushHandlerDelegate> inboxDelegate = [UAirship inbox].pushHandler.delegate;
+
+    if (message) {
+        [inboxDelegate showInboxMessage:message];
+    } else {
+        [inboxDelegate showInbox];
+    }
+
+    completionHandler([UAActionResult emptyResult]);
+}
+
 
 @end
-
