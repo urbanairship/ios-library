@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAInAppMessaging.h"
+#import "UAInAppMessaging+Internal.h"
 #import "UAInAppMessage.h"
 #import "UAPreferenceDataStore.h"
 #import "UAActionRunner.h"
@@ -53,6 +53,14 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     if (self) {
         self.font = [UIFont boldSystemFontOfSize:12];
 
+        __weak UAInAppMessaging *weakSelf = self;
+        self.messageControllerFactory = ^(UAInAppMessage *message){
+            return [[UAInAppMessageController alloc] initWithMessage:message dismissalBlock:^{
+                // Delete the pending payload once it's dismissed
+                [weakSelf deletePendingMessage:message];
+            }];
+        };
+
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(applicationDidBecomeActive)
                                                      name:UIApplicationDidBecomeActiveNotification
@@ -80,6 +88,12 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 }
 
 - (void)storePendingMessage:(UAInAppMessage *)message {
+
+    // Discard if it's not a banner
+    if (message.displayType != UAInAppMessageDisplayTypeBanner) {
+        UA_LDEBUG(@"In-app message is not a banner, discarding: %@", message);
+        return;
+    }
 
     if ([self pendingMessagePayload]) {
         UAInAppMessage *previousPendingMessage = [UAInAppMessage messageWithPayload:[self pendingMessagePayload]];
@@ -112,6 +126,12 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 - (void)displayMessage:(UAInAppMessage *)message {
 
     NSDictionary *launchNotification = [UAirship push].launchNotification;
+
+    // Discard if it's not a banner
+    if (message.displayType != UAInAppMessageDisplayTypeBanner) {
+        UA_LDEBUG(@"In-app message is not a banner, discarding: %@", message);
+        return;
+    }
 
     // If the pending payload ID does not match the launchNotification's send ID
     if ([message.identifier isEqualToString:launchNotification[@"_"]]) {
@@ -153,10 +173,8 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
 
     UA_LINFO(@"Displaying in-app message: %@", message);
-    UAInAppMessageController *messageController = [[UAInAppMessageController alloc] initWithMessage:message dismissalBlock:^{
-        // Delete the pending payload once it's dismissed
-        [[UAirship inAppMessaging] deletePendingMessage:message];
-    }];
+
+    UAInAppMessageController *messageController = self.messageControllerFactory(message);
 
     // Call the delegate, if needed
     id<UAInAppMessagingDelegate> strongDelegate = self.delegate;
