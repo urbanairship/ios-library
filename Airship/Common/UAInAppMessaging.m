@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAInAppMessaging.h"
+#import "UAInAppMessaging+Internal.h"
 #import "UAInAppMessage.h"
 #import "UAPreferenceDataStore.h"
 #import "UAActionRunner.h"
@@ -52,6 +52,14 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     self = [super init];
     if (self) {
         self.font = [UIFont boldSystemFontOfSize:12];
+
+        __weak UAInAppMessaging *weakSelf = self;
+        self.messageControllerFactory = ^(UAInAppMessage *message){
+            return [[UAInAppMessageController alloc] initWithMessage:message dismissalBlock:^{
+                // Delete the pending payload once it's dismissed
+                [weakSelf deletePendingMessage:message];
+            }];
+        };
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(applicationDidBecomeActive)
@@ -165,10 +173,8 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
 
     UA_LINFO(@"Displaying in-app message: %@", message);
-    UAInAppMessageController *messageController = [[UAInAppMessageController alloc] initWithMessage:message dismissalBlock:^{
-        // Delete the pending payload once it's dismissed
-        [[UAirship inAppMessaging] deletePendingMessage:message];
-    }];
+
+    UAInAppMessageController *messageController = self.messageControllerFactory(message);
 
     // Call the delegate, if needed
     id<UAInAppMessagingDelegate> strongDelegate = self.delegate;
