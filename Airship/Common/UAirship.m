@@ -337,6 +337,9 @@ UALogLevel uaLogLevel = UALogLevelError;
         return;
     }
 
+    // Invalidate UAAnalytics timer and cancel all queued operations
+    [_sharedAirship.analytics stopSends];
+
     // Reset the app delegate
     if (_sharedAirship.config.automaticSetupEnabled) {
         // swap pointers back to the initial app delegate

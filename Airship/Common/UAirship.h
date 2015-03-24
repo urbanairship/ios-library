@@ -39,10 +39,6 @@
 
 UA_VERSION_INTERFACE(UAirshipVersion)
 
-// Offset time for use when the app init. This is the time between object
-// creation and first upload.
-#define UAAnalyticsFirstBatchUploadInterval 15 // time in seconds
-
 /**
  * The takeOff method must be called on the main thread. Not doing so results in 
  * this exception being thrown.

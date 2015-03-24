@@ -43,6 +43,7 @@
 #import "UAEventAppForeground.h"
 #import "UAPreferenceDataStore.h"
 #import "UALocationService.h"
+#import "UARegionEvent+Internal.h"
 
 
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
@@ -60,7 +61,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [self.queue cancelAllOperations];
+    [self stopSends];
 }
 
 - (instancetype)initWithConfig:(UAConfig *)airshipConfig dataStore:(UAPreferenceDataStore *)dataStore {
@@ -83,8 +84,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         // Save defaults to store lastSendTime if this was an initial condition
         [self saveUploadEventSettings];
 
-        self.queue = [[NSOperationQueue alloc] init];
-        self.queue.maxConcurrentOperationCount = 1;
+        self.sendQueue = [[NSOperationQueue alloc] init];
+        self.sendQueue.maxConcurrentOperationCount = 1;
 
         // Register for background notifications
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -106,7 +107,16 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 
         [self startSession];
-        [self delayNextSend:UAAnalyticsFirstBatchUploadInterval];
+
+        // Set the intial delay
+        if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+            self.earliestInitialSendTime = [NSDate dateWithTimeIntervalSinceNow:kInitialBackgroundBatchWaitSeconds];
+        } else {
+            self.earliestInitialSendTime = [NSDate dateWithTimeIntervalSinceNow:kInitialForegroundBatchWaitSeconds];
+        }
+
+        // Schedule a send
+        [self sendWithDelay:self.timeToWaitBeforeSendingNextBatch];
     }
 
     return self;
@@ -114,16 +124,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 + (instancetype)analyticsWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     return [[UAAnalytics alloc] initWithConfig:config dataStore:dataStore];
-}
-
-- (void)delayNextSend:(NSTimeInterval)time {
-    //call send after waiting for the first batch upload interval
-    UADelayOperation *delayOperation = [UADelayOperation operationWithDelayInSeconds:UAAnalyticsFirstBatchUploadInterval];
-    delayOperation.completionBlock = ^{
-        [self send];
-    };
-
-    [self.queue addOperation:delayOperation];
 }
 
 #pragma mark -
@@ -155,8 +155,12 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     // If this is the first 'inactive->active' transition in this session,
     // send 
     if (self.isEnteringForeground) {
+
         self.isEnteringForeground = NO;
-        
+
+        // Update the initial send delay
+        self.earliestInitialSendTime = [NSDate dateWithTimeIntervalSinceNow:kInitialForegroundBatchWaitSeconds];
+
         // Start a new session
         [self startSession];
 
@@ -166,11 +170,10 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 }
 
-
 #pragma mark -
 #pragma mark Preferences
 
-- (NSDate*)lastSendTime {
+- (NSDate *)lastSendTime {
     return [self.dataStore objectForKey:@"X-UA-Last-Send-Time"] ?: [NSDate distantPast];
 }
 
@@ -232,18 +235,22 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         self.oldestEventTime = [event.time doubleValue];
     }
 
-    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground
-        && event.eventType == UALocationEventAnalyticsType) {
+    BOOL isBackground = [[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground;
 
+    if (isBackground && [event.eventType isEqualToString:UALocationEventAnalyticsType]) {
         NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
 
         if (timeSinceLastSend >= kMinBackgroundLocationIntervalSeconds) {
-            [self send];
+            [self sendWithDelay:0];
         } else {
             UA_LTRACE("Skipping send, background location events batch for 15 minutes.");
         }
     } else {
-        [self send];
+        if ([event.eventType isEqualToString:kUARegionEventType] ) {
+            [self sendWithDelay:kHighPriorityBatchWaitSeconds];
+        } else {
+            [self sendWithDelay:self.timeToWaitBeforeSendingNextBatch];
+        }
     }
 }
 
@@ -377,6 +384,26 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     return request;
 }
 
+-(void)invalidateTimer {
+    if (!self.sendTimer.isValid) {
+        return;
+    }
+
+    if (self.sendTimer.userInfo) {
+        UIBackgroundTaskIdentifier backgroundTask = [self.sendTimer.userInfo unsignedIntegerValue];
+
+        [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+    }
+
+    [self.sendTimer invalidate];
+    self.sendTimer = nil;
+}
+
+- (void)stopSends {
+    [self.sendQueue cancelAllOperations];
+    [self invalidateTimer];
+}
+
 - (void)pruneEvents {
     // Delete older events until the database size is met
     while (self.databaseSize > self.maxTotalDBSize) {
@@ -386,7 +413,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     }
 }
 
-- (BOOL) isEventValid:(NSMutableDictionary *)event {
+- (BOOL)isEventValid:(NSMutableDictionary *)event {
     return [[event objectForKey:@"event_size"]  respondsToSelector:NSSelectorFromString(@"intValue")] &&
             [[event objectForKey:@"data"]       isKindOfClass:[NSData class]] &&
             [[event objectForKey:@"session_id"] isKindOfClass:[NSString class]] &&
@@ -399,7 +426,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 // Enforce max batch limits
 // Loop through events and discard DB-only items, format the JSON data field
 // as a dictionary
-- (NSArray*)prepareEventsForUpload {
+- (NSArray *)prepareEventsForUpload {
     
     [self pruneEvents];
 
@@ -477,17 +504,21 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     if (timeSinceLastSend < self.minBatchInterval) {
         delay = self.minBatchInterval - timeSinceLastSend;
     }
-    return delay;
+
+    // Now worry about initial delay
+    NSTimeInterval initialDelayRemaining = [self.earliestInitialSendTime timeIntervalSinceNow];
+
+    return MAX(delay, initialDelayRemaining);
 }
 
-- (UAHTTPConnectionOperation *)sendOperationWithEvents:(NSArray *)events {
+- (NSOperation *)uploadOperationWithEvents:(NSArray *)events {
 
     UAHTTPRequest *analyticsRequest = [self analyticsRequest];
 
     [analyticsRequest appendBodyData:[NSJSONSerialization dataWithJSONObject:events
                                                                      options:0
                                                                        error:nil]];
-    
+
     UA_LTRACE(@"Sending to server: %@", self.config.analyticsURL);
     UA_LTRACE(@"Sending analytics headers: %@", [analyticsRequest.headers descriptionWithLocale:nil indent:1]);
     UA_LTRACE(@"Sending analytics body: %@", [NSJSONSerialization stringWithObject:events options:NSJSONWritingPrettyPrinted]);
@@ -495,22 +526,20 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     UAHTTPConnectionSuccessBlock successBlock = ^(UAHTTPRequest *request){
         UA_LDEBUG(@"Analytics data sent successfully. Status: %ld", (long)[request.response statusCode]);
         UA_LTRACE(@"responseData=%@, length=%lu", request.responseString, (unsigned long)[request.responseData length]);
-        self.lastSendTime = [NSDate date];
 
         // Update analytics settings with new header values
         [self updateAnalyticsParametersWithHeaderValues:request.response];
-        
+
         if ([request.response statusCode] == 200) {
             [self.analyticDBManager deleteEvents:events];
             [self resetEventsDatabaseStatus];
         } else {
-            UA_LTRACE(@"Send analytics data request failed: %ld", (long)[request.response statusCode]);
+            UA_LTRACE(@"Analytics upload request failed: %ld", (long)[request.response statusCode]);
         }
     };
 
     UAHTTPConnectionFailureBlock failureBlock = ^(UAHTTPRequest *request){
-        UA_LTRACE(@"Send analytics data request failed.");
-        self.lastSendTime = [NSDate date];
+        UA_LTRACE(@"Analytics upload request failed.");
     };
 
     UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:analyticsRequest
@@ -519,124 +548,107 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     return operation;
 }
 
-- (NSBlockOperation *)batchOperationWithCompletionBlock:(UAAnalyticsUploadCompletionBlock)completionBlock {
+// Adds event upload operation to the sendQueue.
+- (NSOperation *)queryOperationWithCompletionBlock:(UAAnalyticsUploadCompletionBlock)completionBlock {
 
-    NSBlockOperation *batchOperation = [NSBlockOperation blockOperationWithBlock:^{
-        NSArray* events = [self prepareEventsForUpload];
+    __block NSOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
 
-        //this could indicate a read problem, or simply an empty database
-        if (!events) {
-            UA_LTRACE(@"Empty database or error parsing events into array, skipping batchOperation");
-            completionBlock();
+        NSArray *events = [self prepareEventsForUpload];
+
+        // Check for empty events
+        if (!events.count) {
+            UA_LTRACE(@"No events to upload, skipping sendOperation.");
             return;
         }
 
-        //unlikely, due to the checks above, but theoretically possible
-        if (events.count == 0) {
-            UA_LTRACE(@"No events to upload, skipping batchOperation");
-            completionBlock();
-            return;
-        }
+        UA_LTRACE(@"Analytics upload in progress.");
 
-        UAHTTPConnectionOperation *sendOperation = [self sendOperationWithEvents:events];
+        self.lastSendTime = [NSDate date];
 
-        [self.queue addOperation:sendOperation];
+        NSOperation *networkOperation = [self uploadOperationWithEvents:events];
+        // Set the priority higher than the _outer_ send operation (normal priority)
+        networkOperation.queuePriority = NSOperationQueuePriorityHigh;
 
-        NSBlockOperation *rebatchOperation = [NSBlockOperation blockOperationWithBlock:^{
-            //if we're not in the background, and there's still stuff to send, create a new delay/batch and add them
-            //otherwise, we should complete here and return
-            BOOL moreBatchesNecessary = [self hasEventsToSend];
+        // Transfer to the completion block to the network operation
+        networkOperation.completionBlock = completionBlock;
+        operation.completionBlock = nil;
 
-            if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive && moreBatchesNecessary) {
-                [self batchAndSendEventsWithCompletionBlock:completionBlock];
-            } else {
-                if (!moreBatchesNecessary) {
-                    UA_LTRACE(@"No more events to upload.");
-                } else {
-                    UA_LTRACE(@"Application state is background or inactive, not sending any more batches.");
-                }
-                completionBlock();
-            }
-        }];
-
-        [rebatchOperation addDependency:sendOperation];
-
-        [self.queue addOperation:rebatchOperation];
+        [self.sendQueue addOperation:networkOperation];
     }];
 
-    return batchOperation;
+    operation.completionBlock = completionBlock;
+    return operation;
 }
 
-- (void)batchAndSendEventsWithCompletionBlock:(UAAnalyticsUploadCompletionBlock)completionBlock {
+- (void)sendWithDelay:(NSTimeInterval)delay {
+    UA_LTRACE(@"Attempting to send update.");
 
-    NSTimeInterval delay = [self timeToWaitBeforeSendingNextBatch];
+    if (!self.config.analyticsEnabled) {
+        UA_LTRACE("Analytics disabled.");
+        return;
+    }
+
+    if (![self hasEventsToSend]) {
+        UA_LTRACE(@"No analytics events to upload.");
+        return;
+    }
+
+    if (self.sendTimer.isValid && [self.sendTimer.fireDate compare:[NSDate dateWithTimeIntervalSinceNow:delay]] == NSOrderedAscending) {
+        UA_LTRACE("Upload already scheduled with delay less than %f seconds.", delay);
+        return;
+    }
+
+    __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+        UA_LTRACE(@"Analytics background task expired.");
+        [self stopSends];
+        if (backgroundTask != UIBackgroundTaskInvalid) {
+            [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+            backgroundTask = UIBackgroundTaskInvalid;
+        }
+    }];
+
+    // Invalidate the timer after creating a new background task
+    [self invalidateTimer];
+
+    if (backgroundTask == UIBackgroundTaskInvalid) {
+        UA_LTRACE("Background task unavailable, skipping analytics");
+        return;
+    }
 
     if (delay) {
-        UA_LTRACE(@"Scheduling analytics batch update in %g seconds.", delay);
+        UA_LTRACE(@"Analytics data scheduled to send in %f seconds.", delay);
+        self.sendTimer = [NSTimer timerWithTimeInterval:delay
+                                                 target:self
+                                               selector:@selector(sendTimerFired:)
+                                               userInfo:@(backgroundTask)
+                                                repeats:NO];
+
+        [[NSRunLoop mainRunLoop] addTimer:self.sendTimer forMode:NSDefaultRunLoopMode];
+    } else {
+        [self enqueueSendOperationWithBackgroundTaskIdentifier:backgroundTask];
     }
-
-    UADelayOperation *delayOperation = [UADelayOperation operationWithDelayInSeconds:delay];
-    NSBlockOperation *batchOperation = [self batchOperationWithCompletionBlock:completionBlock];
-
-    [batchOperation addDependency:delayOperation];
-
-    [self.queue addOperation:delayOperation];
-    [self.queue addOperation:batchOperation];
 }
 
-- (void)send {
-    UA_LTRACE(@"Attempting to send analytics.");
+// Enqueues another send operation with the timer's background task
+- (void)sendTimerFired:(NSTimer *)timer {
+    UIBackgroundTaskIdentifier backgroundTask = [timer.userInfo unsignedIntegerValue];
+    [self enqueueSendOperationWithBackgroundTaskIdentifier:backgroundTask];
+    [timer invalidate];
 
-    @synchronized(self) {
-
-        if (!self.config.analyticsEnabled) {
-            UA_LTRACE("Analytics disabled.");
-            return;
-        }
-
-        if (![self hasEventsToSend]) {
-            UA_LTRACE(@"No analytics events to upload.");
-            return;
-        }
-
-        if (self.isSending) {
-            UA_LTRACE(@"Analytics upload in progress, skipping analytics send.");
-            return;
-        }
-
-
-        UA_LTRACE(@"Analytics send started.");
-
-        __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-            UA_LTRACE(@"Analytics background task expired.");
-            @synchronized(self) {
-                [self.queue cancelAllOperations];
-                self.isSending = NO;
-                if (backgroundTask != UIBackgroundTaskInvalid) {
-                    [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
-                    backgroundTask = UIBackgroundTaskInvalid;
-                }
-            }
-        }];
-
-        if (backgroundTask == UIBackgroundTaskInvalid) {
-            UA_LTRACE("Background task unavailable, skipping analytics");
-            return;
-        }
-
-        self.isSending = YES;
-
-        [self batchAndSendEventsWithCompletionBlock:^{
-            UA_LTRACE(@"Analytics send completed.");
-            @synchronized(self) {
-                self.isSending = NO;
-                if (backgroundTask != UIBackgroundTaskInvalid) {
-                    [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
-                    backgroundTask = UIBackgroundTaskInvalid;
-                }
-            }
-        }];
+    if (self.sendTimer == timer) {
+        self.sendTimer = nil;
     }
+}
+
+- (void)enqueueSendOperationWithBackgroundTaskIdentifier:(UIBackgroundTaskIdentifier)backgroundTask {
+    NSOperation *sendOperation = [self queryOperationWithCompletionBlock:^{
+        UA_LTRACE(@"Analytics data send completed with background task: %lu", (unsigned long)backgroundTask);
+        if (backgroundTask != UIBackgroundTaskInvalid) {
+            [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+        }
+    }];
+
+    [self.sendQueue addOperation:sendOperation];
 }
 
 - (void)launchedFromNotification:(NSDictionary *)notification {
@@ -674,8 +686,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 - (void)setEnabled:(BOOL)enabled {
     // If we are disabling the runtime flag clear all events
     if ([self.dataStore boolForKey:kUAAnalyticsEnabled] && !enabled) {
-        UA_LINFO(@"Deleting all analytic events.");
-        [self.queue cancelAllOperations];
+        UA_LINFO(@"Deleting all analytics events.");
+        [self stopSends];
         [self.analyticDBManager resetDB];
     }
 
