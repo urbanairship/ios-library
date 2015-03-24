@@ -33,7 +33,7 @@
  * Expected argument values: NSString or NSURL. Short url formats are in the form
  * of "u:<content-id>" and will be used to construct a new URL using the content-id.
  *
- * Valid situations: UASituationForegroundPush, UASituationLanchedFromPush,
+ * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush,
  * UASituationWebViewInvocation, UASituationManualInvocation, UASituationBackgroundPush,
  * and UASituationForegroundInteractiveButton
  *

@@ -31,9 +31,9 @@
  *
  * Expected arguments: An instance of UAActionArguments.
  *
- * Valid situations: UASituationForegroundPush and UASituationBackgroundPush
+ * Valid situations: UASituationForegroundPush and UASituationLaunchedFromPush.
  *
- * Result value: nil
+ * Result value: rich push message ID
  *
  * Error: nil
  *

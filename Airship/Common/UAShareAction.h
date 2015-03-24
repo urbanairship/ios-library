@@ -34,7 +34,7 @@
  *
  * Expected argument value is an NSString.
  *
- * Valid situations: UASituationForegroundPush, UASituationLanchedFromPush,
+ * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush,
  * UASituationWebViewInvocation, UASituationManualInvocation,
  * and UASituationForegroundInteractiveButton
  *
