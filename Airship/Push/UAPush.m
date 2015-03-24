@@ -40,15 +40,11 @@
 #import "UAUserNotificationCategories+Internal.h"
 #import "UAPreferenceDataStore.h"
 #import "UAConfig.h"
-
-#import "UAInAppMessage.h"
-#import "UAInAppMessageAction.h"
 #import "UAUserNotificationCategory+Internal.h"
 
 #define kUAMinTagLength 1
 #define kUAMaxTagLength 127
 #define kUANotificationActionKey @"com.urbanairship.interactive_actions"
-#define kUAPushDelayBeforeInAppNotificationDisplay 0.4
 
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
@@ -662,17 +658,6 @@ BOOL deferChannelCreationOnForeground = false;
     if ([self.dataStore boolForKey:UAPushChannelCreationOnForeground]) {
         UA_LTRACE(@"Application did become active. Updating registration.");
         [self updateRegistrationForcefully:NO];
-    }
-
-    // the pending in-app message, if present
-    NSDictionary *pendingMessagePayload = [UAInAppMessage pendingMessagePayload];
-    if (pendingMessagePayload) {
-        UA_LDEBUG(@"Dispatching in-app message action for message: %@.", pendingMessagePayload);
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kUAPushDelayBeforeInAppNotificationDisplay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [UAActionRunner runActionWithName:kUAInAppMessageActionDefaultRegistryName
-                                        value:pendingMessagePayload
-                                    situation:UASituationManualInvocation];
-        });
     }
 }
 

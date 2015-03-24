@@ -41,10 +41,6 @@
 // 15 seconds
 #define kUADefaultInAppMessageDurationInterval 15
 
-
-// User defaults key for storing and retrieving pending messages
-#define kUAPendingInAppMessageDataStoreKey @"UAPendingInAppMessage"
-
 @implementation UAInAppMessage
 
 + (instancetype)message {
@@ -108,26 +104,6 @@
     message.onClick = typeCheck(actions[@"on_click"], [NSDictionary class]);
 
     return message;
-}
-
-+ (NSDictionary *)pendingMessagePayload {
-    NSDictionary *payload = [[UAirship shared].dataStore objectForKey:kUAPendingInAppMessageDataStoreKey];
-    return payload;
-}
-
-+ (void)storePendingMessagePayload:(NSDictionary *)payload {
-    UAInAppMessage *interimMessage = [self messageWithPayload:payload];
-    [[UAirship shared].dataStore setObject:interimMessage.payload forKey:kUAPendingInAppMessageDataStoreKey];
-}
-
-+ (void)deletePendingMessagePayload {
-    [[UAirship shared].dataStore removeObjectForKey:kUAPendingInAppMessageDataStoreKey];
-}
-
-+ (void)deletePendingMessagePayload:(NSDictionary *)payload {
-    if ([[self pendingMessagePayload] isEqualToDictionary:payload]) {
-        [self deletePendingMessagePayload];
-    }
 }
 
 - (instancetype)init {

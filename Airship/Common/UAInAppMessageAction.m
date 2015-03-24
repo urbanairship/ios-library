@@ -25,25 +25,13 @@
 
 #import "UAInAppMessageAction.h"
 #import "UAInAppMessage.h"
-#import "UAInAppMessageController.h"
 #import "UAGlobal.h"
 #import "UAirship.h"
 #import "UAPush.h"
 #import "UAActionRegistry.h"
-#import "UAirship+Internal.h"
-#import "UAPreferenceDataStore.h"
-#import "UAInAppDisplayEvent.h"
-#import "UAAnalytics.h"
-#import "UAInAppResolutionEvent.h"
-
-@interface UAInAppMessageAction ()
-@property(nonatomic, strong) UAInAppMessageController *messageController;
-@end
+#import "UAInAppMessaging.h"
 
 @implementation UAInAppMessageAction
-
-NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID";
-
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     BOOL acceptsValue = [arguments.value isKindOfClass:[NSDictionary class]];
@@ -72,58 +60,8 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
  * @param arguments The action arguments.
  */
 - (void)displayMessageWithArguments:(UAActionArguments *)arguments {
-
     UAInAppMessage *message = [UAInAppMessage messageWithPayload:arguments.value];
-
-    NSDictionary *launchNotification = [UAirship push].launchNotification;
-
-    // If the pending payload ID does not match the launchNotification's send ID
-    if ([message.identifier isEqualToString:launchNotification[@"_"]]) {
-        UA_LINFO(@"The in-app message delivery push was directly launched for message: %@", message);
-        [UAInAppMessage deletePendingMessagePayload:arguments.value];
-
-        UAInAppResolutionEvent *event = [UAInAppResolutionEvent directOpenResolutionWithMessage:message];
-        [[UAirship shared].analytics addEvent:event];
-        return;
-    }
-
-    // Check if the message is expired
-    if (message.expiry && [[NSDate date] compare:message.expiry] == NSOrderedDescending) {
-        UA_LINFO(@"In-app message is expired: %@", message);
-        [UAInAppMessage deletePendingMessagePayload:arguments.value];
-
-        UAInAppResolutionEvent *event = [UAInAppResolutionEvent expiredMessageResolutionWithMessage:message];
-        [[UAirship shared].analytics addEvent:event];
-
-        return;
-    }
-
-    // If it's not currently displayed
-    if ([message isEqualToMessage:self.messageController.message]) {
-        UA_LDEBUG(@"In-app message already displayed: %@", message);
-        return;
-    }
-
-    // Send a display event if its the first time we are displaying this IAM
-    NSString *lastDisplayedIAM = [[UAirship shared].dataStore valueForKey:UALastDisplayedInAppMessageID];
-    if (message.identifier && ![message.identifier isEqualToString:lastDisplayedIAM]) {
-        UAInAppDisplayEvent *event = [UAInAppDisplayEvent eventWithMessage:message];
-        [[UAirship shared].analytics addEvent:event];
-
-        // Set the ID as the last displayed so we dont send duplicate display events
-        [[UAirship shared].dataStore setValue:message.identifier forKey:UALastDisplayedInAppMessageID];
-    }
-
-    UA_LINFO(@"Displaying in-app message: %@", message);
-    UAInAppMessageController *messageController = [[UAInAppMessageController alloc] initWithMessage:message dismissalBlock:^{
-        // Delete the pending payload once it's dismissed
-        [UAInAppMessage deletePendingMessagePayload:arguments.value];
-    }];
-
-    // Dismiss any existing message and show the new one
-    [self.messageController dismiss];
-    self.messageController = messageController;
-    [messageController show];
+    [[UAirship inAppMessaging] displayMessage:message];
 }
 
 /**
@@ -138,17 +76,8 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         messagePayload[@"identifier"] = apnsPayload[@"_"];
     }
 
-    if ([UAInAppMessage pendingMessagePayload]) {
-        UAInAppMessage *pending = [UAInAppMessage messageWithPayload:[UAInAppMessage pendingMessagePayload]];
-
-        UAInAppResolutionEvent *event = [UAInAppResolutionEvent replacedResolutionWithMessage:pending
-                                                                                  replacement:[UAInAppMessage messageWithPayload:messagePayload]];
-        [[UAirship shared].analytics addEvent:event];
-    }
-
     // Store it for later
-    UA_LINFO(@"Storing in-app message to display on next foreground: %@.", messagePayload);
-    [UAInAppMessage storePendingMessagePayload:messagePayload];
+    [[UAirship inAppMessaging] storePendingMessage:[UAInAppMessage messageWithPayload:messagePayload]];
 }
 
 @end

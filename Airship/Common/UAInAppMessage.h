@@ -80,37 +80,6 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
 + (instancetype)messageWithPayload:(NSDictionary *)payload;
 
 /**
- * Retrieves the most recent pending message payload from disk.
- *
- * @return An in-app message payload in NSDictionary format.
- */
-+ (NSDictionary *)pendingMessagePayload;
-
-/**
- * Stores a pending message for later retrieval and display.
- *
- * @param payload The in-app message section of a push payload,
- * in NSDictionary representation.
- */
-+ (void)storePendingMessagePayload:(NSDictionary *)payload;
-
-/**
- * Deletes the pending message payload if present.
- *
- */
-+ (void)deletePendingMessagePayload;
-
-
-/**
- * Deletes the pending message payload if it matches the
- * passed payload argument.
- *
- * @param payload The message payload to delete.
- */
-+ (void)deletePendingMessagePayload:(NSDictionary *)payload;
-
-
-/**
  * Tests whether the message is equal by value to another message.
  *
  * @param message The message the receiver is being compared to.
