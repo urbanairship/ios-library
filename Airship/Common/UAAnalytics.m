@@ -42,9 +42,16 @@
 #import "UAEventAppBackground.h"
 #import "UAEventAppForeground.h"
 #import "UAPreferenceDataStore.h"
+#import "UALocationService.h"
 
 
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
+
+#define kUALocationPermissionSystemLocationDisabled @"SYSTEM_LOCATION_DISABLED";
+#define kUALocationPermissionNotAllowed @"NOT_ALLOWED";
+#define kUALocationPermissionAlwaysAllowed @"ALWAYS_ALLOWED";
+#define kUALocationPermissionForegroundAllowed @"FOREGROUND_ALLOWED";
+#define kUALocationPermissionUnprompted @"UNPROMPTED";
 
 @implementation UAAnalytics
 
@@ -364,6 +371,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [request addRequestHeader:@"X-UA-Locale-Variant" value:[[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleVariantCode]];
     [request addRequestHeader:@"X-UA-Push-Address" value:[UAirship push].deviceToken];
     [request addRequestHeader:@"X-UA-Channel-ID" value:[UAirship push].channelID];
+    [request addRequestHeader:@"X-UA-Location-Permission" value:[self locationPermission]];
+    [request addRequestHeader:@"X-UA-Location-Service-Enabled" value:[UALocationService airshipLocationServiceEnabled] ? @"true" : @"false"];
 
     return request;
 }
@@ -671,6 +680,24 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     }
 
     [self.dataStore setBool:enabled forKey:kUAAnalyticsEnabled];
+}
+
+- (NSString *)locationPermission {
+    if (![CLLocationManager locationServicesEnabled]) {
+        return kUALocationPermissionSystemLocationDisabled;
+    } else {
+        switch ([CLLocationManager authorizationStatus]) {
+            case kCLAuthorizationStatusDenied:
+            case kCLAuthorizationStatusRestricted:
+                return kUALocationPermissionNotAllowed;
+            case kCLAuthorizationStatusAuthorizedAlways:
+                return kUALocationPermissionAlwaysAllowed;
+            case kCLAuthorizationStatusAuthorizedWhenInUse:
+                return kUALocationPermissionForegroundAllowed;
+            case kCLAuthorizationStatusNotDetermined:
+                return kUALocationPermissionUnprompted;
+        }
+    }
 }
 
 @end
