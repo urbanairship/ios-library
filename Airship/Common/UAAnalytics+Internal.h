@@ -36,12 +36,17 @@
 #define kMinBatchSizeBytes (NSUInteger)1024          // local min of 1KB
 
 // maximum amount of time in seconds that events should queue for
-#define kMaxWaitSeconds (NSUInteger)14*24*3600      // local max of 14 days
-#define kMinWaitSeconds (NSUInteger)7*24*3600       // local min of 7 days
+#define kMaxWaitSeconds (NSTimeInterval)14*24*3600      // local max of 14 days
+#define kMinWaitSeconds (NSTimeInterval)7*24*3600       // local min of 7 days
+
+// Batch time modifiers based on priority and application state
+#define kHighPriorityBatchWaitSeconds (NSTimeInterval)1          // local priority min of 1s
+#define kInitialForegroundBatchWaitSeconds (NSTimeInterval)15    // local priority batch interval of 15s
+#define kInitialBackgroundBatchWaitSeconds (NSTimeInterval)5     // local priority batch interval of 5s
 
 // The actual amount of time in seconds that elapse between event-server posts
-#define kMinBatchIntervalSeconds (NSUInteger)60        // local min of 60s
-#define kMaxBatchIntervalSeconds (NSUInteger)7*24*3600  // local max of 7 days
+#define kMinBatchIntervalSeconds (NSTimeInterval)60        // local min of 60s
+#define kMaxBatchIntervalSeconds (NSTimeInterval)7*24*3600  // local max of 7 days
 
 // Minimum amount of time between background location events.
 #define kMinBackgroundLocationIntervalSeconds 900 // 900 seconds = 15 minutes
@@ -124,14 +129,20 @@
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 /**
- * The operation queue used for analytics.
+ * The operation queue used for event uplaods.
  */
-@property (nonatomic, strong) NSOperationQueue *queue;
+@property (nonatomic, strong) NSOperationQueue *sendQueue;
 
 /**
- * YES if analytics upload is in progress.
+ * Timer to schedule event uploads.
  */
-@property (atomic, assign) BOOL isSending;
+@property (nonatomic, strong) NSTimer *sendTimer;
+
+/**
+ * The earliest time to schedule the intial event upload when adding normal
+ * priority events.
+ */
+@property (nonatomic, strong) NSDate *earliestInitialSendTime;
 
 /**
  * YES if the app is in the process of entering the foreground, but is not yet active.
@@ -171,9 +182,10 @@
 - (void)resetEventsDatabaseStatus;
 
 /**
- * Sending analytics.
+ * Schedule an event upload.
+ * @param delay The delay in seconds from now.
  */
-- (void)send;
+- (void)sendWithDelay:(NSTimeInterval)delay;
 
 /**
  * Update analytics parameters with header values from the response.
@@ -243,5 +255,17 @@
  * @return The location permission string.
  */
 - (NSString *)locationPermission;
+
+/**
+* Invalidates send timer to allow deallocation of UAAnalytics.
+*/
+- (void)stopSends;
+
+/**
+ * Time to wait before sending next batch. 
+ * @return The time inerval of (minimum batch interval - last send time) or earliestInitialSendTime,
+ * whichever is greater.
+ */
+- (NSTimeInterval)timeToWaitBeforeSendingNextBatch;
 
 @end

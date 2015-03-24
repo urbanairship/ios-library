@@ -65,12 +65,6 @@
 @property (nonatomic, assign, getter=isEnabled) BOOL enabled;
 
 /**
- * Delays the next analytics send.
- * @param time The number of seconds to delay the send opertation.
- */
-- (void)delayNextSend:(NSTimeInterval)time;
-
-/**
  * Triggers an analytics event.
  * @param event The event to be triggered
  */
@@ -87,6 +81,6 @@
  * Date representing the last attempt to send analytics.
  * @return NSDate representing the last attempt to send analytics
  */
-- (NSDate*)lastSendTime;
+- (NSDate *)lastSendTime;
 
 @end
