@@ -77,15 +77,11 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
 - (void)applicationDidBecomeActive {
     // the pending in-app message, if present
-    UAInAppMessage *pendingMessagePayload = [self.dataStore objectForKey:kUAPendingInAppMessageDataStoreKey];
-    if (pendingMessagePayload) {
-        UA_LDEBUG(@"Dispatching in-app message action for message: %@.", pendingMessagePayload);
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kUAInAppMessagingDelayBeforeInAppMessageDisplay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [UAActionRunner runActionWithName:kUAInAppMessageActionDefaultRegistryName
-                                        value:pendingMessagePayload
-                                    situation:UASituationManualInvocation];
-        });
-    }
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kUAInAppMessagingDelayBeforeInAppMessageDisplay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (self.isAutoDisplayEnabled) {
+            [self displayPendingMessage];
+        }
+    });
 }
 
 - (UAInAppMessage *)pendingMessage {
@@ -126,13 +122,32 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     };
 }
 
+- (BOOL)isAutoDisplayEnabled {
+    if (![self.dataStore objectForKey:kUAAutoDisplayInAppMessageDataStoreKey]) {
+        return YES;
+    }
+
+    return [self.dataStore boolForKey:kUAAutoDisplayInAppMessageDataStoreKey];
+}
+
+- (void)setAutoDisplayEnabled:(BOOL)autoDisplayEnabled {
+    [self.dataStore setBool:autoDisplayEnabled forKey:kUAAutoDisplayInAppMessageDataStoreKey];
+}
+
 - (void)deletePendingMessage:(UAInAppMessage *)message {
     if ([self.pendingMessage isEqualToMessage:message]) {
         self.pendingMessage = nil;
     }
 }
 
+- (void)displayPendingMessage {
+    [self displayMessage:self.pendingMessage];
+}
+
 - (void)displayMessage:(UAInAppMessage *)message {
+    if (!message) {
+        return;
+    }
 
     NSDictionary *launchNotification = self.push.launchNotification;
 

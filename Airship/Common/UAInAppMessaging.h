@@ -62,7 +62,7 @@
 - (void)deletePendingMessage:(UAInAppMessage *)message;
 
 /**
- * Displays the the provided message. If the message is expired,
+ * Displays the provided message. If the message is expired,
  * or if it was associated with the notification that launched the app,
  * this will be a no-op.
  *
@@ -70,10 +70,20 @@
  */
 - (void)displayMessage:(UAInAppMessage *)message;
 
+/*
+ * Displays the pending message if it is available.
+ */
+- (void)displayPendingMessage;
+
 /**
  * The pending in-app message.
  */
 @property(nonatomic, copy) UAInAppMessage *pendingMessage;
+
+/**
+ * Enables/disables auto-display of in-app messages.
+ */
+@property(nonatomic, assign, getter=isAutoDisplayEnabled) BOOL autoDisplayEnabled;
 
 /**
  * The desired font to use when displaying in-app messages.

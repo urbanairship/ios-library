@@ -29,6 +29,9 @@
 // User defaults key for storing and retrieving pending messages
 #define kUAPendingInAppMessageDataStoreKey @"UAPendingInAppMessage"
 
+// User defaults key for storing and retrieving auto display enabled
+#define kUAAutoDisplayInAppMessageDataStoreKey @"UAAutoDisplayInAppMessageDataStoreKey"
+
 @class UAPreferenceDataStore;
 @class UAAnalytics;
 @class UAPush;
