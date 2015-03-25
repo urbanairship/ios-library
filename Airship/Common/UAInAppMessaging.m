@@ -110,7 +110,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     [self.dataStore setObject:message.payload forKey:kUAPendingInAppMessageDataStoreKey];
 
     // Call the delegate, if needed
-    id<UAInAppMessagingDelegate> strongDelegate = self.delegate;
+    id<UAInAppMessagingDelegate> strongDelegate = self.messagingDelegate;
     if ([strongDelegate respondsToSelector:@selector(pendingMessageAvailable:)]) {
         [strongDelegate pendingMessageAvailable:message];
     };
@@ -180,13 +180,14 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
     UAInAppMessageController *controller;
     controller = [UAInAppMessageController controllerWithMessage:message
+                                                        delegate:self.messageControllerDelegate
                                                   dismissalBlock:^{
                                                       // Delete the pending payload once it's dismissed
                                                       [self deletePendingMessage:message];
                                                   }];
 
     // Call the delegate, if needed
-    id<UAInAppMessagingDelegate> strongDelegate = self.delegate;
+    id<UAInAppMessagingDelegate> strongDelegate = self.messagingDelegate;
     if ([strongDelegate respondsToSelector:@selector(messageWillBeDisplayed:)]) {
         [strongDelegate messageWillBeDisplayed:message];
     };

@@ -24,7 +24,7 @@
  */
 
 #import "UAMutableUserNotificationCategory.h"
-#import "UAUserNotificationAction.h"
+#import "UAMutableUserNotificationAction.h"
 
 @interface UAMutableUserNotificationCategory ()
 @property(nonatomic, strong) NSMutableDictionary *actions;
@@ -40,6 +40,30 @@
         self.actions = [NSMutableDictionary dictionary];
     }
     return self;
+}
+
++ (instancetype)categoryWithUIUserNotificationCategory:(UIUserNotificationCategory *)uiCategory {
+    UAMutableUserNotificationCategory *uaCategory = [[self alloc] init];
+    uaCategory.identifier = uiCategory.identifier;
+
+    NSArray *minimalUIActions = [uiCategory actionsForContext:UIUserNotificationActionContextMinimal];
+    NSArray *defaultUIActions = [uiCategory actionsForContext:UIUserNotificationActionContextDefault];
+
+    NSMutableArray *minimalUAActions = [NSMutableArray array];
+    NSMutableArray *defaultUAActions = [NSMutableArray array];
+
+    for (UIUserNotificationAction *uiAction in minimalUIActions) {
+        [minimalUAActions addObject:[UAMutableUserNotificationAction actionWithUIUserNotificationAction:uiAction]];
+    }
+
+    for (UIUserNotificationAction *uiAction in defaultUIActions) {
+        [defaultUAActions addObject:[UAMutableUserNotificationAction actionWithUIUserNotificationAction:uiAction]];
+    }
+
+    [uaCategory setActions:minimalUAActions forContext:UIUserNotificationActionContextMinimal];
+    [uaCategory setActions:defaultUAActions forContext:UIUserNotificationActionContextDefault];
+
+    return uaCategory;
 }
 
 - (void)setActions:(NSArray *)actions forContext:(UIUserNotificationActionContext)context {

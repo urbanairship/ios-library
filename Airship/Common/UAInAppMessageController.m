@@ -25,7 +25,6 @@
 
 #import "UAInAppMessageController.h"
 #import "UAInAppMessage.h"
-#import "UAInAppMessageView.h"
 #import "UAUtils.h"
 #import "UAInAppMessageButtonActionBinding.h"
 #import "UAActionRunner+Internal.h"
@@ -34,24 +33,18 @@
 #import "UAInAppResolutionEvent.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
+#import "UAInAppMessageControllerDefaultDelegate.h"
 
-#define kUAInAppMessageDefaultPrimaryColor [UIColor whiteColor]
-#define kUAInAppMessageDefaultSecondaryColor [UIColor colorWithRed:40.0/255 green:40.0/255 blue:40.0/255 alpha:1]
-#define kUAInAppMessageiPhoneScreenWidthPercentage 0.95
-#define kUAInAppMessagePadScreenWidthPercentage 0.45
 #define kUAInAppMessageMinimumLongPressDuration 0.2
-#define kUAInAppMessageAnimationDuration 0.2
 
 @interface UAInAppMessageController ()
 
 @property(nonatomic, strong) UAInAppMessage *message;
-@property(nonatomic, strong) UAInAppMessageView *messageView;
+@property(nonatomic, strong) UIView *messageView;
 @property(nonatomic, copy) void (^dismissalBlock)(void);
-@property(nonatomic, strong) UIColor *primaryColor;
-@property(nonatomic, strong) UIColor *secondaryColor;
-@property(nonatomic, assign) BOOL isInverted;
 @property(nonatomic, strong) NSDate *startDisplayDate;
-
+@property(nonatomic, strong) id<UAInAppMessageControllerDelegate> userDelegate;
+@property(nonatomic, strong) UAInAppMessageControllerDefaultDelegate *defaultDelegate;
 
 /**
  * A timer set for the duration of the message, after wich the view is dismissed.
@@ -74,91 +67,74 @@
 
 @implementation UAInAppMessageController
 
-- (instancetype)initWithMessage:(UAInAppMessage *)message dismissalBlock:(void (^)(void))dismissalBlock {
+- (instancetype)initWithMessage:(UAInAppMessage *)message
+                       delegate:(id<UAInAppMessageControllerDelegate>)delegate
+                 dismissalBlock:(void (^)(void))dismissalBlock {
+
     self = [super init];
     if (self) {
         self.message = message;
-
         self.buttonActionBindings = message.buttonActionBindings;
-
-        // the primary and secondary colors aren't set in the model, choose sensible defaults
-        self.primaryColor = self.message.primaryColor ?: kUAInAppMessageDefaultPrimaryColor;
-        self.secondaryColor = self.message.secondaryColor ?: kUAInAppMessageDefaultSecondaryColor;
-
-        // colors are uninverted to start
-        self.isInverted = NO;
-
+        self.userDelegate = delegate;
+        self.defaultDelegate = [[UAInAppMessageControllerDefaultDelegate alloc] initWithMessage:message];
         self.dismissalBlock = dismissalBlock;
     }
     return self;
 }
 
 + (instancetype)controllerWithMessage:(UAInAppMessage *)message
+                             delegate:(id<UAInAppMessageControllerDelegate>)delegate
                        dismissalBlock:(void(^)(void))dismissalBlock {
 
-    return [[self alloc] initWithMessage:message dismissalBlock:dismissalBlock];
+    return [[self alloc] initWithMessage:message delegate:delegate dismissalBlock:dismissalBlock];
 }
 
-/**
- * Configures primary and secondary colors in the message view, inverting the color
- * scheme if necessary.
- */
-- (void)configureColorsWithMessageView:(UAInAppMessageView *)messageView inverted:(BOOL)inverted {
+// Delegate helper methods
 
-    UIColor *colorA;
-    UIColor *colorB;
-
-    if (inverted) {
-        colorA = self.secondaryColor;
-        colorB = self.primaryColor;
+- (UIView *)messageViewWithParentView:(UIView *)parentView {
+    if ([self.userDelegate respondsToSelector:@selector(viewForMessage:parentView:)]) {
+        return [self.userDelegate viewForMessage:self.message parentView:parentView];
     } else {
-        colorA = self.primaryColor;
-        colorB = self.secondaryColor;
+        return [self.defaultDelegate viewForMessage:self.message parentView:parentView];
     }
-
-    messageView.backgroundColor = colorA;
-
-    messageView.tab.backgroundColor = colorB;
-
-    messageView.messageLabel.textColor = colorB;
-
-    [messageView.button1 setTitleColor:colorA forState:UIControlStateNormal];
-    [messageView.button2 setTitleColor:colorA forState:UIControlStateNormal];
-    messageView.button1.backgroundColor = colorB;
-    messageView.button2.backgroundColor = colorB;
 }
 
-/**
- * Configures a message view with the associated
- * message model data.
- */
-- (UAInAppMessageView *)buildMessageView {
-
-    UIFont *messageFont = [UAirship inAppMessaging].font;
-
-    UAInAppMessageView *messageView = [[UAInAppMessageView alloc] initWithPosition:self.message.position
-                                                                   numberOfButtons:self.buttonActionBindings.count];
-
-    // configure all the subviews
-    messageView.messageLabel.text = self.message.alert;
-    messageView.messageLabel.numberOfLines = 4;
-    messageView.messageLabel.font = messageFont;
-
-    messageView.button1.titleLabel.font = messageFont;
-    messageView.button2.titleLabel.font = messageFont;
-
-    if (self.buttonActionBindings.count) {
-        UAInAppMessageButtonActionBinding *button1 = self.buttonActionBindings[0];
-        [messageView.button1 setTitle:button1.localizedTitle forState:UIControlStateNormal];
-        if (self.buttonActionBindings.count > 1) {
-            UAInAppMessageButtonActionBinding *button2 = self.buttonActionBindings[1];
-            [messageView.button2 setTitle:button2.localizedTitle forState:UIControlStateNormal];
-        }
+- (UIControl *)buttonAtIndex:(NSUInteger)index {
+    if ([self.userDelegate respondsToSelector:@selector(messageView:buttonAtIndex:)]) {
+        return [self.userDelegate messageView:self.messageView buttonAtIndex:index];
+    } else {
+        return [self.defaultDelegate messageView:self.messageView buttonAtIndex:index];
     }
+}
 
-    [self configureColorsWithMessageView:messageView inverted:NO];
 
-    return messageView;
+// Optional delegate methods
+- (void)handleTouchState:(BOOL)touchDown {
+    // Only call our default delegate if the user delegate is not set, as our handling of touch state
+    // will not work universally.
+    if (self.userDelegate) {
+        if ([self.userDelegate respondsToSelector:@selector(messageView:didChangeTouchState:)]) {
+            [self.userDelegate messageView:self.messageView didChangeTouchState:touchDown];
+        }
+    } else {
+        [self.defaultDelegate messageView:self.messageView didChangeTouchState:touchDown];
+    }
+}
+
+- (void)animateInWithParentView:(UIView *)parentView completionHandler:(void (^)(void))completionHandler {
+    if ([self.userDelegate respondsToSelector:@selector(messageView:animateInWithParentView:completionHandler:)]) {
+        [self.userDelegate messageView:self.messageView animateInWithParentView:parentView completionHandler:completionHandler];
+    } else {
+        [self.defaultDelegate messageView:self.messageView animateInWithParentView:parentView completionHandler:completionHandler];
+    }
+}
+
+- (void)animateOutWithParentView:(UIView *)parentView completionHandler:(void (^)(void))completionHandler {
+    if ([self.userDelegate respondsToSelector:@selector(messageView:animateOutWithParentView:completionHandler:)]) {
+        [self.userDelegate messageView:self.messageView animateOutWithParentView:parentView completionHandler:completionHandler];
+    } else {
+        [self.defaultDelegate messageView:self.messageView animateOutWithParentView:parentView completionHandler:completionHandler];
+    }
 }
 
 /**
@@ -166,7 +142,7 @@
  * This method has the side effect of adding self as a target for
  * button, swipe and tap actions.
  */
-- (void)signUpForControlEventsWithMessageView:(UAInAppMessageView *)messageView {
+- (void)signUpForControlEventsWithMessageView:(UIView *)messageView {
     // add a swipe gesture recognizer corresponding to the position of the message
     UISwipeGestureRecognizer *swipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeWithGestureRecognizer:)];
 
@@ -191,66 +167,12 @@
         [messageView addGestureRecognizer:longPressGestureRecognizer];
     }
 
+    UIControl *button1 = [self buttonAtIndex:0];
+    UIControl *button2 = [self buttonAtIndex:1];
+
     // sign up for button touch events
-    [messageView.button1 addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
-    [messageView.button2 addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
-}
-
-/**
- * Adds layout constraints to the message view.
- */
-- (void)buildLayoutWithParent:(UIView *)parentView messageView:(UAInAppMessageView *)messageView {
-    CGFloat horizontalMargin = 0;
-    CGRect screenRect = [UIScreen mainScreen].applicationFrame;
-    CGFloat screenWidth = CGRectGetWidth(screenRect);
-
-    // On an iPad, messages are 45% of the fixed screen width in landscape
-    CGFloat longWidth = MAX(screenWidth, CGRectGetHeight(screenRect));
-    CGFloat actualLongWidth = longWidth * kUAInAppMessagePadScreenWidthPercentage;
-
-    // On a phone, messages are always 95% of current screen width
-    horizontalMargin = (screenWidth - screenWidth*kUAInAppMessageiPhoneScreenWidthPercentage)/2.0;
-
-    id metrics = @{@"horizontalMargin":@(horizontalMargin), @"longWidth":@(actualLongWidth)};
-    id views = @{@"messageView":messageView};
-
-    [parentView addSubview:messageView];
-
-    // center the message view in the parent (this cannot be expressed in VFL)
-    [parentView addConstraint:[NSLayoutConstraint constraintWithItem:messageView
-                                                           attribute:NSLayoutAttributeCenterX
-                                                           relatedBy:NSLayoutRelationEqual
-                                                              toItem:parentView
-                                                           attribute:NSLayoutAttributeCenterX multiplier:1
-                                                            constant:0]];
-
-    NSString *verticalLayout;
-    NSString *horizontalLayout;
-
-    // place the message view flush against the top or bottom of the parent, depending on position
-    if (self.message.position == UAInAppMessagePositionBottom) {
-        verticalLayout = @"V:[messageView]|";
-    } else {
-        verticalLayout = @"V:|[messageView]";
-    }
-
-    // if the UI idiom is iPad, use the fixed width, otherwise offset it with the horizontal margins
-    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-        horizontalLayout = @"[messageView(longWidth)]";
-    } else {
-        horizontalLayout = @"H:|-horizontalMargin-[messageView]-horizontalMargin-|";
-    }
-
-    for (NSString *expression in @[verticalLayout, horizontalLayout]) {
-        [parentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:expression
-                                                                           options:0
-                                                                           metrics:metrics
-                                                                             views:views]];
-    }
-
-    // forces a layout, giving the traditional CGGeometry attributes defined values for the
-    // current set of constraints
-    [messageView layoutIfNeeded];
+    [button1 addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [button2 addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)scheduleDismissalTimer {
@@ -290,83 +212,47 @@
     // is not directly dependent on arbitrary container/object lifecycles
     self.referenceToSelf = self;
 
-    UAInAppMessageView *messageView = [self buildMessageView];
-    [self buildLayoutWithParent:parentView messageView:messageView];
-    [self signUpForControlEventsWithMessageView:messageView];
+    UIView *messageView = [self messageViewWithParentView:parentView];
+
+    // force a layout in case autolayout is used, so that the view's geometry is defined
+    [messageView layoutIfNeeded];
 
     self.messageView = messageView;
 
-    // save and offset the message view's original center point for animation in
-    CGPoint originalCenter = self.messageView.center;
-    if (self.message.position == UAInAppMessagePositionTop) {
-        self.messageView.center = CGPointMake(originalCenter.x, -(CGRectGetHeight(self.messageView.frame)/2));
-    } else if (self.message.position == UAInAppMessagePositionBottom) {
-        self.messageView.center = CGPointMake(originalCenter.x, CGRectGetHeight(parentView.frame) + CGRectGetHeight(self.messageView.frame)/2);
-    }
+    [self signUpForControlEventsWithMessageView:messageView];
 
     // animate the message view into place, starting the timer when the animation has completed
-    [UIView animateWithDuration:kUAInAppMessageAnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-        self.messageView.center = originalCenter;
-    } completion:^(BOOL finished) {
+    [self animateInWithParentView:parentView completionHandler:^{
         [self listenForAppStateTransitions];
         [self scheduleDismissalTimer];
         self.startDisplayDate = [NSDate date];
     }];
 }
 
-- (void)invertColors {
-    if (!self.isInverted) {
-        [self configureColorsWithMessageView:self.messageView inverted:YES];
-        self.isInverted = YES;
-    }
-}
-
-- (void)uninvertColors {
-    if (self.isInverted) {
-        [self configureColorsWithMessageView:self.messageView inverted:NO];
-        self.isInverted = NO;
-    }
-}
-
-- (void)dismissWithAnimationBlock:(void(^)(void))block {
+- (void)dismissWithRunloopDelay {
     // dispatch with a delay of zero to postpone the block by a runloop cycle, so that
     // the animation isn't disrupted
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [UIView animateWithDuration:kUAInAppMessageAnimationDuration
-                              delay:0
-                            options:UIViewAnimationOptionCurveEaseInOut
-                         animations:block
-                         completion:^(BOOL finished){
-                             [self.messageView removeFromSuperview];
+        [self animateOutWithParentView:self.messageView.superview completionHandler:^{
+            [self.messageView removeFromSuperview];
 
-                             self.messageView = nil;
-                             // release self
-                             self.referenceToSelf = nil;
+            self.messageView = nil;
+            // release self
+            self.referenceToSelf = nil;
 
-                             if (self.dismissalBlock) {
-                                 self.dismissalBlock();
-                             }
-
-                         }];
+            if (self.dismissalBlock) {
+                self.dismissalBlock();
+            }
+        }];
     });
 }
-
-
 
 - (void)dismiss {
     [self.dismissalTimer invalidate];
     self.dismissalTimer = nil;
 
     [self resignAppStateTransitions];
-
-    [self dismissWithAnimationBlock:^{
-        // animate the message view back off the screen
-        if (self.message.position == UAInAppMessagePositionTop) {
-            self.messageView.center = CGPointMake(self.messageView.center.x, -(CGRectGetHeight(self.messageView.frame)));
-        } else {
-            self.messageView.center = CGPointMake(self.messageView.center.x, self.messageView.center.y + (CGRectGetHeight(self.messageView.frame)));
-        }
-    }];
+    [self dismissWithRunloopDelay];
 }
 
 - (void)applicationDidBecomeActive {
@@ -417,11 +303,11 @@
  */
 - (void)tapWithGestureRecognizer:(UIGestureRecognizer *)recognizer {
     if (recognizer.state == UIGestureRecognizerStateEnded) {
-        [self invertColors];
+        [self handleTouchState:YES];
         [self messageClicked];
 
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self uninvertColors];
+            [self handleTouchState:NO];
             [self dismiss];
         });
     }
@@ -437,16 +323,16 @@
     CGPoint touchPoint = [recognizer locationInView:self.messageView];
 
     if (recognizer.state == UIGestureRecognizerStateBegan) {
-        [self invertColors];
+        [self handleTouchState:YES];
     } else if (recognizer.state == UIGestureRecognizerStateChanged) {
         if (CGRectContainsPoint(self.messageView.bounds, touchPoint)) {
-            [self invertColors];
+            [self handleTouchState:YES];
         } else {
-            [self uninvertColors];
+            [self handleTouchState:NO];
         }
     } else if (recognizer.state == UIGestureRecognizerStateEnded) {
         if (CGRectContainsPoint(self.messageView.bounds, touchPoint)) {
-            [self uninvertColors];
+            [self handleTouchState:NO];
             [self messageClicked];
             [self dismiss];
         }
@@ -459,7 +345,7 @@
  */
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
     // Ignore touches within the action buttons
-    if ([touch.view isKindOfClass:[UIButton class]]) {
+    if ([touch.view isKindOfClass:[UIControl class]]) {
         return NO;
     }
     return YES;
@@ -468,10 +354,14 @@
 - (void)buttonTapped:(id)sender {
     UAInAppMessageButtonActionBinding *binding;
 
+    UIControl *button1 = [self buttonAtIndex:0];
+    UIControl *button2 = [self buttonAtIndex:1];
+
+
     // Retrieve the binding associated with the tapped button
-    if ([sender isEqual:self.messageView.button1]) {
+    if ([sender isEqual:button1]) {
         binding = self.buttonActionBindings[0];
-    } else if ([sender isEqual:self.messageView.button2])  {
+    } else if ([sender isEqual:button2])  {
         binding = self.buttonActionBindings[1];
     }
 
@@ -483,7 +373,7 @@
 
     UAInAppResolutionEvent *event = [UAInAppResolutionEvent buttonClickedResolutionWithMessage:self.message
                                                                               buttonIdentifier:binding.identifier
-                                                                                   buttonTitle:binding.localizedTitle
+                                                                                   buttonTitle:binding.title
                                                                                displayDuration:[self displayDuration]];
     [[UAirship shared].analytics addEvent:event];
     

@@ -55,6 +55,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
 };
 
 @class UAInAppMessageButtonActionBinding;
+@class UAUserNotificationCategory;
 
 /**
  * Model object representing in-app message data.
@@ -171,8 +172,28 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
 @property(nonatomic, copy) NSDictionary *onClick;
 
 /**
+ * The chosen notification action context. If there are notification actions defined for
+ * UIUserNotificationActionContextMinimal, this context will be preferred. Othwerise, the
+ * context defaults to UIUserNotificationActionContextDefault.
+ */
+@property(nonatomic, readonly) UIUserNotificationActionContext notificationActionContext;
+
+/**
+ * An array of UAUserNotificationAction instances corresponding to the left-to-right order
+ * of interactive message buttons.
+ */
+@property(nonatomic, readonly) NSArray *notificationActions;
+
+/**
+ * A UAUserNotificationCategory instance,
+ * corresponding to to the button group of the message.
+ * If no matching category is found, this property will be nil.
+ */
+@property(nonatomic, readonly) UAUserNotificationCategory *buttonCategory;
+
+/**
  * An array of UAInAppMessageButtonActionBinding instances,
- * corresponding to the left to right order of interactive message
+ * corresponding to the left-to-right order of interactive message
  * buttons.
  */
 @property(nonatomic, readonly) NSArray *buttonActionBindings;

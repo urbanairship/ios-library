@@ -30,6 +30,13 @@
 @interface UAMutableUserNotificationCategory : UAUserNotificationCategory
 
 /**
+ * Factory method for creating a UAMutableUserNotificationCategory out of a UIUserNotificationCategory.
+ * @param uiCategory An instance of UIUserNotificationCategory.
+ * @return An instance of UAUserNotificationCategory.
+ */
++ (instancetype)categoryWithUIUserNotificationCategory:(UIUserNotificationCategory *)uiCategory;
+
+/**
  * Sets the actions to display for different alert styles.
  *
  * @param actions An array of UAUserNotificationAction objects representing the actions to display for the given context.

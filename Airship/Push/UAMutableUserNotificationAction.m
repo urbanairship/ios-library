@@ -33,4 +33,16 @@
 @dynamic authenticationRequired;
 @dynamic destructive;
 
++ (instancetype)actionWithUIUserNotificationAction:(UIUserNotificationAction *)uiAction {
+    UAMutableUserNotificationAction *uaAction = [[self alloc] init];
+    uaAction.identifier = uiAction.identifier;
+    uaAction.title = uiAction.title;
+    uaAction.activationMode = uiAction.activationMode;
+    uaAction.authenticationRequired = uiAction.authenticationRequired;
+    uaAction.destructive = uiAction.destructive;
+
+    return uaAction;
+}
+
+
 @end

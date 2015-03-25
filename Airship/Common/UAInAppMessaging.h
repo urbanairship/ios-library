@@ -25,6 +25,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "UAInAppMessageControllerDelegate.h"
 
 @class UAInAppMessage;
 
@@ -93,6 +94,11 @@
 /**
  * An optional delegate to receive in-app messaging related callbacks.
  */
-@property(nonatomic, weak) id<UAInAppMessagingDelegate> delegate;
+@property(nonatomic, weak) id<UAInAppMessagingDelegate> messagingDelegate;
+
+/**
+ * A optional delegate for configuring and providing custom UI during message display.
+ */
+@property(nonatomic, weak) id<UAInAppMessageControllerDelegate> messageControllerDelegate;
 
 @end

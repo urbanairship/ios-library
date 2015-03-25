@@ -33,9 +33,9 @@
 @interface UAInAppMessageButtonActionBinding : NSObject
 
 /**
- * The localized title of the button.
+ * The title of the button.
  */
-@property(nonatomic, copy) NSString *localizedTitle;
+@property(nonatomic, copy) NSString *title;
 
 /**
  * The button's identifier.

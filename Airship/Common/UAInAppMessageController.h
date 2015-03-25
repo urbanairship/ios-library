@@ -25,6 +25,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "UAInAppMessageControllerDelegate.h"
 
 @class UAInAppMessage;
 
@@ -37,12 +38,13 @@
 /**
  * UAInAppMessageController initializer.
  * @param message An instance of UAInAppMessage.
+ * @param delegate An object implementing the UAInAppMessageControllerDelegate protocol.
  * @param dismissalBlock A block that will be executed once the message is dismissed.
- * @return A UAInAppMessageController instance.
+ * @return An instance of UAInAppMessageController.
  */
 + (instancetype)controllerWithMessage:(UAInAppMessage *)message
+                             delegate:(id<UAInAppMessageControllerDelegate>)delegate
                        dismissalBlock:(void(^)(void))dismissalBlock;
-
 /**
  * Show the associated message.
  */

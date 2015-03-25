@@ -31,6 +31,13 @@
 @interface UAMutableUserNotificationAction : UAUserNotificationAction
 
 /**
+ * Factory method for creating a UAMutableUserNotificationAction out of a UIUserNotificationAction. 
+ * @param uiAction An instance of UIUserNotificationAction.
+ * @return An instance of UAUserNotificationAction.
+ */
++ (instancetype)actionWithUIUserNotificationAction:(UIUserNotificationAction *)uiAction;
+
+/**
  * The string that you use internally to identify the action.
  */
 @property(nonatomic, copy) NSString *identifier;
