@@ -144,6 +144,9 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     // add app_background event
     [self addEvent:[UAEventAppBackground event]];
 
+    // Send immediately so we can end our background tasks as soon as possible
+    [self sendWithDelay:0];
+
     self.notificationUserInfo = nil;
     [self clearSession];
 }
