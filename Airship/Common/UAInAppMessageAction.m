@@ -90,7 +90,7 @@
     }
 
     // Store it for later
-    [[UAirship inAppMessaging] storePendingMessage:message];
+    [UAirship inAppMessaging].pendingMessage = message;
 }
 
 @end

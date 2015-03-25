@@ -93,6 +93,12 @@
     return self;
 }
 
++ (instancetype)controllerWithMessage:(UAInAppMessage *)message
+                       dismissalBlock:(void(^)(void))dismissalBlock {
+
+    return [[self alloc] initWithMessage:message dismissalBlock:dismissalBlock];
+}
+
 /**
  * Configures primary and secondary colors in the message view, inverting the color
  * scheme if necessary.

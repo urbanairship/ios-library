@@ -29,15 +29,20 @@
 // User defaults key for storing and retrieving pending messages
 #define kUAPendingInAppMessageDataStoreKey @"UAPendingInAppMessage"
 
+@class UAPreferenceDataStore;
+@class UAAnalytics;
+@class UAPush;
+
 @interface UAInAppMessaging ()
 
 /**
- * A factory method that builds a message controller, taking the associated in-app message as an
- * argument.
- *
- * @param message The associated in-app message.
- * @return An instance of UAInAppMessageController.
+ * Factory method to create an UAInAppMessaging instance.
+ * @param push The UAPush instance.
+ * @param analytics The UAAnalytics instance.
+ * @param dataStore The preference data store.
+ * @return An instance of UAInAppMessaging.
  */
-- (UAInAppMessageController *)buildInAppMessageControllerWithMessage:(UAInAppMessage *)message;
-
++ (instancetype)inAppMessagingWithPush:(UAPush *)push
+                             analytics:(UAAnalytics *)analytics
+                             dataStore:(UAPreferenceDataStore *)dataStore;
 @end

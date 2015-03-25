@@ -38,8 +38,10 @@
  * UAInAppMessageController initializer.
  * @param message An instance of UAInAppMessage.
  * @param dismissalBlock A block that will be executed once the message is dismissed.
+ * @return A UAInAppMessageController instance.
  */
-- (instancetype)initWithMessage:(UAInAppMessage *)message dismissalBlock:(void(^)(void))dismissalBlock;
++ (instancetype)controllerWithMessage:(UAInAppMessage *)message
+                       dismissalBlock:(void(^)(void))dismissalBlock;
 
 /**
  * Show the associated message.

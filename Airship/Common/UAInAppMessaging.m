@@ -29,7 +29,6 @@
 #import "UAActionRunner.h"
 #import "UAInAppMessageController.h"
 #import "UAPush.h"
-#import "UAirship+Internal.h"
 #import "UAInAppDisplayEvent.h"
 #import "UAAnalytics.h"
 #import "UAInAppResolutionEvent.h"
@@ -41,14 +40,23 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
 @interface UAInAppMessaging ()
 @property(nonatomic, strong) UAInAppMessageController *messageController;
+@property(nonatomic, strong) UAPreferenceDataStore *dataStore;
+@property(nonatomic, strong) UAAnalytics *analytics;
+@property(nonatomic, strong) UAPush *push;
 @end
 
 @implementation UAInAppMessaging
 
-- (instancetype)init {
+- (instancetype)initWithPush:(UAPush *)push
+                   analytics:(UAAnalytics *)analytics
+                   dataStore:(UAPreferenceDataStore *)dataStore {
+
     self = [super init];
     if (self) {
         self.font = [UIFont boldSystemFontOfSize:12];
+        self.dataStore = dataStore;
+        self.analytics = analytics;
+        self.push = push;
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(applicationDidBecomeActive)
@@ -58,16 +66,18 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     return self;
 }
 
-- (UAInAppMessageController *)buildInAppMessageControllerWithMessage:(UAInAppMessage *)message {
-    return [[UAInAppMessageController alloc] initWithMessage:message dismissalBlock:^{
-        // Delete the pending payload once it's dismissed
-        [self deletePendingMessage:message];
-    }];
++ (instancetype)inAppMessagingWithPush:(UAPush *)push
+                             analytics:(UAAnalytics *)analytics
+                             dataStore:(UAPreferenceDataStore *)dataStore {
+
+    return [[UAInAppMessaging alloc] initWithPush:push
+                                        analytics:analytics
+                                        dataStore:dataStore];
 }
 
 - (void)applicationDidBecomeActive {
     // the pending in-app message, if present
-    NSDictionary *pendingMessagePayload = [[UAirship inAppMessaging] pendingMessagePayload];
+    UAInAppMessage *pendingMessagePayload = [self.dataStore objectForKey:kUAPendingInAppMessageDataStoreKey];
     if (pendingMessagePayload) {
         UA_LDEBUG(@"Dispatching in-app message action for message: %@.", pendingMessagePayload);
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kUAInAppMessagingDelayBeforeInAppMessageDisplay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -78,12 +88,19 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     }
 }
 
-- (NSDictionary *)pendingMessagePayload {
-    NSDictionary *payload = [[UAirship shared].dataStore objectForKey:kUAPendingInAppMessageDataStoreKey];
-    return payload;
+- (UAInAppMessage *)pendingMessage {
+    NSDictionary *pendingMessagePayload = [self.dataStore objectForKey:kUAPendingInAppMessageDataStoreKey];
+    if (pendingMessagePayload) {
+        return [UAInAppMessage messageWithPayload:pendingMessagePayload];;
+    }
+    return nil;
 }
 
-- (void)storePendingMessage:(UAInAppMessage *)message {
+- (void)setPendingMessage:(UAInAppMessage *)message {
+    if (!message) {
+        [self.dataStore setObject:message.payload forKey:kUAPendingInAppMessageDataStoreKey];
+        return;
+    }
 
     // Discard if it's not a banner
     if (message.displayType != UAInAppMessageDisplayTypeBanner) {
@@ -91,16 +108,16 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         return;
     }
 
-    if ([self pendingMessagePayload]) {
-        UAInAppMessage *previousPendingMessage = [UAInAppMessage messageWithPayload:[self pendingMessagePayload]];
+    UAInAppMessage *previousMessage = self.pendingMessage;
 
-        UAInAppResolutionEvent *event = [UAInAppResolutionEvent replacedResolutionWithMessage:previousPendingMessage
+    if (previousMessage) {
+        UAInAppResolutionEvent *event = [UAInAppResolutionEvent replacedResolutionWithMessage:previousMessage
                                                                                   replacement:message];
-        [[UAirship shared].analytics addEvent:event];
+        [self.analytics addEvent:event];
     }
 
     UA_LINFO(@"Storing in-app message to display on next foreground: %@.", message);
-    [[UAirship shared].dataStore setObject:message.payload forKey:kUAPendingInAppMessageDataStoreKey];
+    [self.dataStore setObject:message.payload forKey:kUAPendingInAppMessageDataStoreKey];
 
     // Call the delegate, if needed
     id<UAInAppMessagingDelegate> strongDelegate = self.delegate;
@@ -109,19 +126,15 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     };
 }
 
-- (void)deletePendingMessagePayload {
-    [[UAirship shared].dataStore removeObjectForKey:kUAPendingInAppMessageDataStoreKey];
-}
-
 - (void)deletePendingMessage:(UAInAppMessage *)message {
-    if ([[self pendingMessagePayload] isEqualToDictionary:message.payload]) {
-        [self deletePendingMessagePayload];
+    if ([self.pendingMessage isEqualToMessage:message]) {
+        self.pendingMessage = nil;
     }
 }
 
 - (void)displayMessage:(UAInAppMessage *)message {
 
-    NSDictionary *launchNotification = [UAirship push].launchNotification;
+    NSDictionary *launchNotification = self.push.launchNotification;
 
     // Discard if it's not a banner
     if (message.displayType != UAInAppMessageDisplayTypeBanner) {
@@ -135,7 +148,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         [self deletePendingMessage:message];
 
         UAInAppResolutionEvent *event = [UAInAppResolutionEvent directOpenResolutionWithMessage:message];
-        [[UAirship shared].analytics addEvent:event];
+        [self.analytics addEvent:event];
 
         return;
     }
@@ -143,10 +156,10 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     // Check if the message is expired
     if (message.expiry && [[NSDate date] compare:message.expiry] == NSOrderedDescending) {
         UA_LINFO(@"In-app message is expired: %@", message);
-        [[UAirship inAppMessaging] deletePendingMessage:message];
+        [self deletePendingMessage:message];
 
         UAInAppResolutionEvent *event = [UAInAppResolutionEvent expiredMessageResolutionWithMessage:message];
-        [[UAirship shared].analytics addEvent:event];
+        [self.analytics addEvent:event];
 
         return;
     }
@@ -158,19 +171,24 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     }
 
     // Send a display event if its the first time we are displaying this IAM
-    NSString *lastDisplayedIAM = [[UAirship shared].dataStore valueForKey:UALastDisplayedInAppMessageID];
+    NSString *lastDisplayedIAM = [self.dataStore valueForKey:UALastDisplayedInAppMessageID];
     if (message.identifier && ![message.identifier isEqualToString:lastDisplayedIAM]) {
         UAInAppDisplayEvent *event = [UAInAppDisplayEvent eventWithMessage:message];
-        [[UAirship shared].analytics addEvent:event];
+        [self.analytics addEvent:event];
 
         // Set the ID as the last displayed so we dont send duplicate display events
-        [[UAirship shared].dataStore setValue:message.identifier forKey:UALastDisplayedInAppMessageID];
+        [self.dataStore setValue:message.identifier forKey:UALastDisplayedInAppMessageID];
     }
 
 
     UA_LINFO(@"Displaying in-app message: %@", message);
 
-    UAInAppMessageController *messageController = [self buildInAppMessageControllerWithMessage:message];
+    UAInAppMessageController *controller;
+    controller = [UAInAppMessageController controllerWithMessage:message
+                                                  dismissalBlock:^{
+                                                      // Delete the pending payload once it's dismissed
+                                                      [self deletePendingMessage:message];
+                                                  }];
 
     // Call the delegate, if needed
     id<UAInAppMessagingDelegate> strongDelegate = self.delegate;
@@ -180,8 +198,8 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
     // Dismiss any existing message and show the new one
     [self.messageController dismiss];
-    self.messageController = messageController;
-    [messageController show];
+    self.messageController = controller;
+    [controller show];
 }
 
 - (void)dealloc {

@@ -54,26 +54,6 @@
 @interface UAInAppMessaging : NSObject
 
 /**
-* Retrieves the most recent pending message payload from disk.
-*
-* @return An in-app message payload in NSDictionary format.
-*/
-- (NSDictionary *)pendingMessagePayload;
-
-/**
- * Stores a pending message for later retrieval and display.
- *
- * @param message An in-app message instance.
- */
-- (void)storePendingMessage:(UAInAppMessage *)message;
-
-/**
- * Deletes the pending message payload if present.
- *
- */
-- (void)deletePendingMessagePayload;
-
-/**
  * Deletes the pending message if it matches the
  * provided message argument.
  *
@@ -89,6 +69,11 @@
  * @param message The message to display.
  */
 - (void)displayMessage:(UAInAppMessage *)message;
+
+/**
+ * The pending in-app message.
+ */
+@property(nonatomic, copy) UAInAppMessage *pendingMessage;
 
 /**
  * The desired font to use when displaying in-app messages.
