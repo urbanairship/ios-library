@@ -61,7 +61,6 @@
         // contains all the meaningful subviews
         self.containerView = [UIView new];
         self.containerView.translatesAutoresizingMaskIntoConstraints = NO;
-        self.containerView.userInteractionEnabled = NO;
         self.containerView.backgroundColor = [UIColor whiteColor];
 
         // covers up rounded corners in the appropriate area
