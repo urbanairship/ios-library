@@ -47,6 +47,7 @@
 #import "UAEventAppExit.h"
 #import "UAPreferenceDataStore.h"
 #import "UAInAppMessaging.h"
+#import "UAInboxAPIClient.h"
 
 #import "UAActionJSDelegate.h"
 
@@ -179,20 +180,6 @@ UALogLevel uaLogLevel = UALogLevelError;
     UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", config.appKey]];
     [dataStore migrateUnprefixedKeys:@[UALibraryVersion]];
 
-    // Save the version
-    if ([UA_VERSION isEqualToString:@"0.0.0"]) {
-        UA_LERR(@"_UA_VERSION is undefined - this commonly indicates an issue with the build configuration, UA_VERSION will be set to \"0.0.0\".");
-    } else {
-        NSString *previousVersion = [_sharedAirship.dataStore stringForKey:UALibraryVersion];
-        if (![UA_VERSION isEqualToString:previousVersion]) {
-            [dataStore setObject:UA_VERSION forKey:UALibraryVersion];
-
-            if (previousVersion) {
-                UA_LINFO(@"Urban Airship library version changed from %@ to %@.", previousVersion, UA_VERSION);
-            }
-        }
-    }
-
     // User Agent
     NSString *userAgent = [UAirship createUserAgentForAppKey:config.appKey];
     UA_LDEBUG(@"Setting User-Agent for UA requests to %@", userAgent);
@@ -242,6 +229,26 @@ UALogLevel uaLogLevel = UALogLevelError;
 
     // Create Airship
     _sharedAirship = [[UAirship alloc] initWithConifg:config dataStore:dataStore];
+
+    // Save the version
+    if ([UA_VERSION isEqualToString:@"0.0.0"]) {
+        UA_LERR(@"_UA_VERSION is undefined - this commonly indicates an issue with the build configuration, UA_VERSION will be set to \"0.0.0\".");
+    } else {
+        NSString *previousVersion = [_sharedAirship.dataStore stringForKey:UALibraryVersion];
+        if (![UA_VERSION isEqualToString:previousVersion]) {
+            [dataStore setObject:UA_VERSION forKey:UALibraryVersion];
+
+            // Temp workaround for MB-1047 where model changes to the inbox
+            // will drop the inbox and the last-modified-time will prevent
+            // repopulating the messages.
+            [_sharedAirship.sharedInbox.client clearLastModifiedTime];
+
+            if (previousVersion) {
+                UA_LINFO(@"Urban Airship library version changed from %@ to %@.", previousVersion, UA_VERSION);
+            }
+        }
+    }
+
 
     // Create the user if it does not exist
     if (!_sharedAirship.sharedInboxUser.isCreated) {

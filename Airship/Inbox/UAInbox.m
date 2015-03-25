@@ -66,7 +66,13 @@
         }
 
         [self.messageList loadSavedMessages];
-        [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
+
+        // Register for didBecomeActive to refresh the inbox on the first active
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(didBecomeActive)
+                                                     name:UIApplicationDidBecomeActiveNotification
+                                                   object:nil];
+
 
 
         // delete legacy UAInboxCache if present
@@ -82,6 +88,17 @@
 
 - (void)enterForeground {
     [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
+}
+
+
+- (void)didBecomeActive {
+    [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
+
+    // We only want to refresh the inbox on the first active. enterForeground will
+    // handle any background->foreground inbox refresh
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIApplicationDidBecomeActiveNotification
+                                                  object:nil];
 }
 
 - (void)userCreated {
