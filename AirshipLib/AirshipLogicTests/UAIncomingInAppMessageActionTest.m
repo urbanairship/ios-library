@@ -25,20 +25,20 @@
 
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
-#import "UAInAppMessageAction.h"
+#import "UAIncomingInAppMessageAction.h"
 #import "UAActionArguments+Internal.h"
 
-@interface UAInAppMessageActionTest : XCTestCase
+@interface UAIncomingInAppMessageActionTest : XCTestCase
 @property(nonatomic, strong) NSDictionary *payload;
-@property(nonatomic, strong) UAInAppMessageAction *action;
+@property(nonatomic, strong) UAIncomingInAppMessageAction *action;
 @property(nonatomic, strong) UAActionArguments *arguments;
 @end
 
-@implementation UAInAppMessageActionTest
+@implementation UAIncomingInAppMessageActionTest
 
 - (void)setUp {
     [super setUp];
-    self.action = [UAInAppMessageAction new];
+    self.action = [UAIncomingInAppMessageAction new];
 
     id expiry = @"2020-12-15T11:45:22";
     id extra = @{@"foo":@"bar", @"baz":@12345};
@@ -60,27 +60,18 @@
  */
 - (void)testAcceptsArguments {
 
-    UASituation validSituations[6] = {
+    UASituation validSituations[5] = {
         UASituationForegroundPush,
         UASituationBackgroundPush,
         UASituationForegroundInteractiveButton,
         UASituationBackgroundInteractiveButton,
-        UASituationManualInvocation,
-        UASituationWebViewInvocation
+        UASituationLaunchedFromPush
     };
 
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 5; i++) {
         self.arguments.situation = validSituations[i];
         XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accept NSDictionary values and non-launch from push situations");
     }
-}
-
-/**
- * Test that action rejects background situations.
- */
-- (void)testAcceptsArgumentsRejectsLaunchedFromPushSituation {
-    self.arguments.situation = UASituationLaunchedFromPush;
-    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should reject situation UASituationLaunchedFromPush");
 }
 
 /**

@@ -12,7 +12,6 @@
 
 @interface UAInAppMessagingTest : XCTestCase
 @property(nonatomic, strong) id mockAnalytics;
-@property(nonatomic, strong) id mockPush;
 @property(nonatomic, strong) id mockMessageController;
 
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
@@ -30,9 +29,8 @@
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"UAInAppMessagingTest"];
 
     self.mockAnalytics = [OCMockObject niceMockForClass:[UAAnalytics class]];
-    self.mockPush = [OCMockObject niceMockForClass:[UAPush class]];
 
-    self.inAppMessaging = [UAInAppMessaging inAppMessagingWithPush:self.mockPush analytics:self.mockAnalytics dataStore:self.dataStore];
+    self.inAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.mockAnalytics dataStore:self.dataStore];
 
     self.mockMessageController = [OCMockObject mockForClass:[UAInAppMessageController class]];
     [[[self.mockMessageController stub] andReturn:self.mockMessageController] controllerWithMessage:[OCMArg any] dismissalBlock:[OCMArg any]];
@@ -48,7 +46,6 @@
 
 - (void)tearDown {
     [self.mockAnalytics stopMocking];
-    [self.mockPush stopMocking];
     [self.mockMessageController stopMocking];
 
     [self.dataStore removeAll];
@@ -123,7 +120,7 @@
 
 
     // Verify it persists
-    self.inAppMessaging = [UAInAppMessaging inAppMessagingWithPush:self.mockPush analytics:self.mockAnalytics dataStore:self.dataStore];
+    self.inAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.mockAnalytics dataStore:self.dataStore];
     XCTAssertFalse(self.inAppMessaging.isAutoDisplayEnabled);
 }
 

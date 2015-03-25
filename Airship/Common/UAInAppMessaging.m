@@ -28,7 +28,6 @@
 #import "UAPreferenceDataStore.h"
 #import "UAActionRunner.h"
 #import "UAInAppMessageController.h"
-#import "UAPush.h"
 #import "UAInAppDisplayEvent.h"
 #import "UAAnalytics.h"
 #import "UAInAppResolutionEvent.h"
@@ -42,21 +41,18 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 @property(nonatomic, strong) UAInAppMessageController *messageController;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) UAAnalytics *analytics;
-@property(nonatomic, strong) UAPush *push;
 @end
 
 @implementation UAInAppMessaging
 
-- (instancetype)initWithPush:(UAPush *)push
-                   analytics:(UAAnalytics *)analytics
-                   dataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithAnalytics:(UAAnalytics *)analytics
+                        dataStore:(UAPreferenceDataStore *)dataStore {
 
     self = [super init];
     if (self) {
         self.font = [UIFont boldSystemFontOfSize:12];
         self.dataStore = dataStore;
         self.analytics = analytics;
-        self.push = push;
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(applicationDidBecomeActive)
@@ -66,13 +62,11 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     return self;
 }
 
-+ (instancetype)inAppMessagingWithPush:(UAPush *)push
-                             analytics:(UAAnalytics *)analytics
-                             dataStore:(UAPreferenceDataStore *)dataStore {
++ (instancetype)inAppMessagingWithAnalytics:(UAAnalytics *)analytics
+                                  dataStore:(UAPreferenceDataStore *)dataStore {
 
-    return [[UAInAppMessaging alloc] initWithPush:push
-                                        analytics:analytics
-                                        dataStore:dataStore];
+    return [[UAInAppMessaging alloc] initWithAnalytics:analytics
+                                             dataStore:dataStore];
 }
 
 - (void)applicationDidBecomeActive {
@@ -149,22 +143,9 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         return;
     }
 
-    NSDictionary *launchNotification = self.push.launchNotification;
-
     // Discard if it's not a banner
     if (message.displayType != UAInAppMessageDisplayTypeBanner) {
         UA_LDEBUG(@"In-app message is not a banner, discarding: %@", message);
-        return;
-    }
-
-    // If the pending payload ID does not match the launchNotification's send ID
-    if ([message.identifier isEqualToString:launchNotification[@"_"]]) {
-        UA_LINFO(@"The in-app message delivery push was directly launched for message: %@", message);
-        [self deletePendingMessage:message];
-
-        UAInAppResolutionEvent *event = [UAInAppResolutionEvent directOpenResolutionWithMessage:message];
-        [self.analytics addEvent:event];
-
         return;
     }
 
@@ -194,7 +175,6 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         // Set the ID as the last displayed so we dont send duplicate display events
         [self.dataStore setValue:message.identifier forKey:UALastDisplayedInAppMessageID];
     }
-
 
     UA_LINFO(@"Displaying in-app message: %@", message);
 

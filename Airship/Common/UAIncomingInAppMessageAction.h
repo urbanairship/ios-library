@@ -26,21 +26,21 @@
 #import "UAAction.h"
 
 /**
- * Stores or displays an in-app message.
+ * Stores or dismisses the pending in-app message.
  *
- * This action is registered under the names com.urbanairship.in_app and ^i.
+ * This action is registered under the name com.urbanairship.in_app.
  *
  * Expected argument value is an in-app message payload in NSDictionary format.
  *
- * Valid situations: UASituationForegroundPush, UASituationBackgroundPush,
- * UASituationWebViewInvocation, UASituationManualInvocation,
- * UASituationForegroundInteractiveButton and UASituationForegroundBackgroundButton
+ * Valid situations: UASituationBackgroundPush, UASituationForegroundPush,
+ * UASituationLaunchedFromPush, UASituationBackgroundInteractiveButton and
+ * UASituationForegroundInteractiveButton.
  *
- * Default predicate: Rejects situation UASituationLaunchedFromPush.
+ * Default predicate: Rejects all arguments on iOS6.
  *
  * Result value: nil.
  *
  */
-@interface UAInAppMessageAction : UAAction
+@interface UAIncomingInAppMessageAction : UAAction
 
 @end

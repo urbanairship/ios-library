@@ -126,7 +126,7 @@ UALogLevel uaLogLevel = UALogLevelError;
         self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore];
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
 
-        self.sharedInAppMessaging = [UAInAppMessaging inAppMessagingWithPush:self.sharedPush analytics:self.analytics dataStore:dataStore];
+        self.sharedInAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.analytics dataStore:dataStore];
     }
 
     return self;

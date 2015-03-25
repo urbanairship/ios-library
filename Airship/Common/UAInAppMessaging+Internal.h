@@ -40,12 +40,10 @@
 
 /**
  * Factory method to create an UAInAppMessaging instance.
- * @param push The UAPush instance.
  * @param analytics The UAAnalytics instance.
  * @param dataStore The preference data store.
  * @return An instance of UAInAppMessaging.
  */
-+ (instancetype)inAppMessagingWithPush:(UAPush *)push
-                             analytics:(UAAnalytics *)analytics
-                             dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)inAppMessagingWithAnalytics:(UAAnalytics *)analytics
+                                  dataStore:(UAPreferenceDataStore *)dataStore;
 @end

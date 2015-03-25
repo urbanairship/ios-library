@@ -36,7 +36,7 @@
 #import "UACloseWindowAction.h"
 #import "UAAddCustomEventAction.h"
 #import "UAShareAction.h"
-#import "UAInAppMessageAction.h"
+#import "UAIncomingInAppMessageAction.h"
 #import "UADisplayInboxAction.h"
 
 @implementation UAActionRegistry
@@ -265,6 +265,15 @@
     UAIncomingRichPushAction *richPushAction = [[UAIncomingRichPushAction alloc] init];
     [self registerReservedAction:richPushAction name:kUAIncomingRichPushActionRegistryName predicate:nil];
 
+    // Incoming in-app message action
+    UAIncomingInAppMessageAction *iamAction = [[UAIncomingInAppMessageAction alloc] init];
+    [self registerReservedAction:iamAction name:kUAIncomingInAppMessageActionDefaultRegistryName predicate:^(UAActionArguments *args){
+        IF_IOS7_OR_GREATER(return YES;)
+
+        // In-App Messages will not work on iOS 6 or below
+        return NO;
+    }];
+
     // Close window action
     UACloseWindowAction *closeWindowAction = [[UACloseWindowAction alloc] init];
     [self registerReservedAction:closeWindowAction name:kUACloseWindowActionRegistryName predicate:nil];
@@ -321,13 +330,6 @@
         return (BOOL)(args.situation != UASituationForegroundPush);
     }];
 
-    UAInAppMessageAction *iamAction = [[UAInAppMessageAction alloc] init];
-    [self registerAction:iamAction names:@[kUAInAppMessageActionDefaultRegistryName, kUAInAppMessageActionDefaultRegistryAlias] predicate:^(UAActionArguments *args){
-        IF_IOS7_OR_GREATER(return (BOOL)(args.situation != UASituationLaunchedFromPush);)
-
-        // In-App Messages will not work on iOS 6 or below
-        return  NO;
-    }];
 
     UADisplayInboxAction *displayInboxAction = [[UADisplayInboxAction alloc] init];
     [self registerAction:displayInboxAction

@@ -62,9 +62,8 @@
 - (void)deletePendingMessage:(UAInAppMessage *)message;
 
 /**
- * Displays the provided message. If the message is expired,
- * or if it was associated with the notification that launched the app,
- * this will be a no-op.
+ * Displays the provided message. Expired messages will be
+ * ignored.
  *
  * @param message The message to display.
  */
