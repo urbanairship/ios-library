@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6751" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6751" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" variant="6xAndEarlier" propertyAccessControl="none">
     <dependencies>
+        <deployment version="1536" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
     </dependencies>
     <objects>
@@ -9,9 +10,9 @@
                 <outlet property="airshipLocationEnabledCell" destination="162" id="167"/>
                 <outlet property="airshipLocationEnabledLabel" destination="164" id="166"/>
                 <outlet property="airshipLocationEnabledSwitch" destination="163" id="165"/>
-                <outlet property="analyticsEnabledCell" destination="Oyc-9F-t0a" id="txK-w9-YhG"/>
-                <outlet property="analyticsEnabledLabel" destination="q2r-v9-vCK" id="z6o-k2-JC5"/>
-                <outlet property="analyticsEnabledSwitch" destination="sOw-bC-dZ6" id="8gL-kl-6JM"/>
+                <outlet property="analyticsEnabledCell" destination="pE9-We-Ai5" id="bBw-1k-opx"/>
+                <outlet property="analyticsEnabledLabel" destination="bxY-ME-J2b" id="cCj-Od-rDx"/>
+                <outlet property="analyticsEnabledSwitch" destination="IH8-tU-vgS" id="UfM-xc-bEI"/>
                 <outlet property="datePicker" destination="91" id="105"/>
                 <outlet property="pushEnabledCell" destination="88" id="157"/>
                 <outlet property="pushEnabledLabel" destination="145" id="160"/>
@@ -32,7 +33,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <switch opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="144">
-                        <rect key="frame" x="249" y="6" width="51" height="31"/>
+                        <rect key="frame" x="221" y="8" width="79" height="27"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                         <accessibility key="accessibilityConfiguration" label="Push Notifications Enabled"/>
                         <connections>
@@ -58,7 +59,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <switch opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="152">
-                        <rect key="frame" x="249" y="6" width="51" height="31"/>
+                        <rect key="frame" x="221" y="8" width="79" height="27"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                         <connections>
                             <action selector="switchValueChanged:" destination="-1" eventType="valueChanged" id="154"/>
@@ -112,7 +113,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <switch opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="center" on="YES" id="163">
-                        <rect key="frame" x="249" y="6" width="51" height="31"/>
+                        <rect key="frame" x="221" y="8" width="79" height="27"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                         <connections>
                             <action selector="switchValueChanged:" destination="-1" eventType="valueChanged" id="168"/>
@@ -129,30 +130,31 @@
             </tableViewCellContentView>
             <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
         </tableViewCell>
-        <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="analyticsCell" id="Oyc-9F-t0a">
+        <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="enabledCell" id="pE9-We-Ai5" userLabel="Table View Cell (Analytics)">
             <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-            <autoresizingMask key="autoresizingMask"/>
-            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Oyc-9F-t0a" id="mdc-Ga-PKq">
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="pE9-We-Ai5" id="F3M-4I-lZR">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="fill" contentVerticalAlignment="center" on="YES" id="sOw-bC-dZ6">
-                        <rect key="frame" x="249" y="6" width="51" height="31"/>
+                    <switch opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="IH8-tU-vgS">
+                        <rect key="frame" x="221" y="8" width="79" height="27"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                        <accessibility key="accessibilityConfiguration" label="Push Notifications Enabled"/>
                         <connections>
-                            <action selector="switchValueChanged:" destination="-1" eventType="valueChanged" id="V7G-NQ-Kxq"/>
+                            <action selector="switchValueChanged:" destination="-1" eventType="valueChanged" id="eI6-cn-XwA"/>
                         </connections>
                     </switch>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Don't send usage data" lineBreakMode="tailTruncation" minimumFontSize="9" id="q2r-v9-vCK">
-                        <rect key="frame" x="9" y="11" width="181" height="21"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Don't Send Usage Data" lineBreakMode="tailTruncation" minimumFontSize="10" id="bxY-ME-J2b">
+                        <rect key="frame" x="14" y="12" width="187" height="21"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="17"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </label>
                 </subviews>
             </tableViewCellContentView>
-            <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
-            <point key="canvasLocation" x="140" y="259"/>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
         </tableViewCell>
     </objects>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
