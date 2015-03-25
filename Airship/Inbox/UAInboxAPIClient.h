@@ -87,4 +87,9 @@ typedef void (^UAInboxClientMessageRetrievalSuccessBlock)(NSInteger status, NSAr
  */
 - (void)cancelAllRequests;
 
+/**
+ * Clears the last modified time for message list requests.
+ */
+- (void)clearLastModifiedTime;
+
 @end

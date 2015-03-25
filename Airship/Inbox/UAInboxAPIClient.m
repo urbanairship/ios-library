@@ -253,4 +253,10 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
     [self.requestEngine cancelAllRequests];
 }
 
+- (void)clearLastModifiedTime {
+    if (self.user.username) {
+        [self.dataStore removeObjectForKey:[NSString stringWithFormat:UALastMessageListModifiedTime, self.user.username]];
+    }
+}
+
 @end
