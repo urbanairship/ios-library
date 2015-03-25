@@ -35,7 +35,7 @@
                     <switch opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="144">
                         <rect key="frame" x="221" y="8" width="79" height="27"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                        <accessibility key="accessibilityConfiguration" label="Push Notifications Enabled"/>
+                        <accessibility key="accessibilityConfiguration" label="Do Not Send User Data"/>
                         <connections>
                             <action selector="switchValueChanged:" destination="-1" eventType="valueChanged" id="146"/>
                         </connections>
