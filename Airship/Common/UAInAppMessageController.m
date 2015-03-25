@@ -37,6 +37,9 @@
 
 #define kUAInAppMessageMinimumLongPressDuration 0.2
 
+// Don't detect a swipe unless the velocity is at least 100 points per second
+#define kUAInAppMessageMinimumSwipeVelocity 100.0
+
 @interface UAInAppMessageController ()
 
 @property(nonatomic, strong) UAInAppMessage *message;
@@ -45,6 +48,10 @@
 @property(nonatomic, strong) NSDate *startDisplayDate;
 @property(nonatomic, strong) id<UAInAppMessageControllerDelegate> userDelegate;
 @property(nonatomic, strong) UAInAppMessageControllerDefaultDelegate *defaultDelegate;
+@property(nonatomic, strong) UIPanGestureRecognizer *panGestureRecognizer;
+@property(nonatomic, assign) BOOL swipeDetected;
+@property(nonatomic, assign) BOOL tapDetected;
+@property(nonatomic, assign) BOOL longPressDetected;
 
 /**
  * A timer set for the duration of the message, after wich the view is dismissed.
@@ -140,19 +147,19 @@
 /**
  * Signs self up for control events on the message view.
  * This method has the side effect of adding self as a target for
- * button, swipe and tap actions.
+ * button, pan(swipe) and tap events.
  */
-- (void)signUpForControlEventsWithMessageView:(UIView *)messageView {
-    // add a swipe gesture recognizer corresponding to the position of the message
-    UISwipeGestureRecognizer *swipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeWithGestureRecognizer:)];
+- (void)signUpForControlEventsWithMessageView:(UIView *)messageView parentView:(UIView *)parentView {
+    // add a pan gesture recognizer for detecting swipes
+    self.panGestureRecognizer  = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panWithGestureRecognizer:)];
 
-    if (self.message.position == UAInAppMessagePositionTop) {
-        swipeGestureRecognizer.direction = UISwipeGestureRecognizerDirectionUp;
-    } else {
-        swipeGestureRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
-    }
+    // don't get in the way of anything
+    self.panGestureRecognizer.delaysTouchesBegan = NO;
+    self.panGestureRecognizer.delaysTouchesEnded = NO;
+    self.panGestureRecognizer.cancelsTouchesInView = NO;
 
-    [messageView addGestureRecognizer:swipeGestureRecognizer];
+    // add to the parent view
+    [parentView addGestureRecognizer:self.panGestureRecognizer];
 
     // add tap and long press gesture recognizers if an onClick action is present in the model
     if (self.message.onClick) {
@@ -164,6 +171,7 @@
         UILongPressGestureRecognizer *longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressWithGestureRecognizer:)];
         longPressGestureRecognizer.minimumPressDuration = kUAInAppMessageMinimumLongPressDuration;
         longPressGestureRecognizer.delegate = self;
+
         [messageView addGestureRecognizer:longPressGestureRecognizer];
     }
 
@@ -218,8 +226,8 @@
     [messageView layoutIfNeeded];
 
     self.messageView = messageView;
-
-    [self signUpForControlEventsWithMessageView:messageView];
+    
+    [self signUpForControlEventsWithMessageView:messageView parentView:parentView];
 
     // animate the message view into place, starting the timer when the animation has completed
     [self animateInWithParentView:parentView completionHandler:^{
@@ -248,6 +256,9 @@
 }
 
 - (void)dismiss {
+    // prevent additional user interaction once the view starts to go away
+    self.messageView.userInteractionEnabled = NO;
+
     [self.dismissalTimer invalidate];
     self.dismissalTimer = nil;
 
@@ -264,11 +275,40 @@
     [self invalidateDismissalTimer];
 }
 
-- (void)swipeWithGestureRecognizer:(UIGestureRecognizer *)recognizer {
-    [self dismiss];
-    UAInAppResolutionEvent *event = [UAInAppResolutionEvent dismissedResolutionWithMessage:self.message
-                                                                           displayDuration:[self displayDuration]];
-    [[UAirship shared].analytics addEvent:event];
+- (void)panWithGestureRecognizer:(UIPanGestureRecognizer *)recognizer {
+
+    // if the gesture is finished
+    if (recognizer.state == UIGestureRecognizerStateEnded) {
+        CGPoint velocity = [recognizer velocityInView:self.messageView.superview];
+        CGPoint translation = [recognizer translationInView:self.messageView.superview];
+        CGPoint touchPoint = [recognizer locationInView:self.messageView];
+
+        // absolute velocity regardless of direction
+        CGFloat absoluteVelocityX = fabs(velocity.x);
+        CGFloat absoluteVelocityY = fabs(velocity.y);
+
+        // if the y-axis velocity exceeds the threshold and exceeds the x-axis velocity
+        // (i.e. if the touch is moving fast enough, and more up/down than left/right)
+        if (absoluteVelocityY > kUAInAppMessageMinimumSwipeVelocity && absoluteVelocityY > absoluteVelocityX) {
+            // if the gesture ended within the bounds of our message view
+            if (CGRectContainsPoint(self.messageView.bounds, touchPoint)) {
+                // if the y axis translation and message position line up
+                // (i.e. if the swipe is moving in the right direction)
+                if ((translation.y > 0 && self.message.position == UAInAppMessagePositionBottom) ||
+                    (translation.y < 0 && self.message.position == UAInAppMessagePositionTop)) {
+                    if (!self.tapDetected && !self.longPressDetected) {
+                        self.swipeDetected = YES;
+                        // dismiss and add the appropriate analytics event
+                        [self dismiss];
+                        UAInAppResolutionEvent *event = [UAInAppResolutionEvent dismissedResolutionWithMessage:self.message
+                                                                                               displayDuration:[self displayDuration]];
+                        [[UAirship shared].analytics addEvent:event];
+                    }
+                }
+            }
+        }
+
+    }
 }
 
 /**
@@ -303,13 +343,16 @@
  */
 - (void)tapWithGestureRecognizer:(UIGestureRecognizer *)recognizer {
     if (recognizer.state == UIGestureRecognizerStateEnded) {
-        [self handleTouchState:YES];
-        [self messageClicked];
+        if (!self.swipeDetected && !self.longPressDetected) {
+            self.tapDetected = YES;
+            [self handleTouchState:YES];
+            [self messageClicked];
 
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self handleTouchState:NO];
-            [self dismiss];
-        });
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self handleTouchState:NO];
+                [self dismiss];
+            });
+        }
     }
 }
 
@@ -332,9 +375,16 @@
         }
     } else if (recognizer.state == UIGestureRecognizerStateEnded) {
         if (CGRectContainsPoint(self.messageView.bounds, touchPoint)) {
-            [self handleTouchState:NO];
-            [self messageClicked];
-            [self dismiss];
+
+            if (!self.swipeDetected && !self.tapDetected) {
+                self.longPressDetected = YES;
+                [self handleTouchState:NO];
+                [self messageClicked];
+
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    [self dismiss];
+                });
+            }
         }
     }
 }
