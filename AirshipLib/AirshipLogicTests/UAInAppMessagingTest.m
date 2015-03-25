@@ -7,14 +7,18 @@
 #import "UAInAppMessageController.h"
 #import "UAirship+Internal.h"
 #import "UAPreferenceDataStore.h"
+#import "UAPush.h"
+#import "UAAnalytics.h"
 
 @interface UAInAppMessagingTest : XCTestCase
-@property(nonatomic, strong) id mockAirship;
-@property(nonatomic, strong) id mockDataStore;
+@property(nonatomic, strong) id mockAnalytics;
 @property(nonatomic, strong) id mockMessageController;
-@property(nonatomic, strong) id mockMessaging;
+
+@property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) UAInAppMessage *bannerMessage;
 @property(nonatomic, strong) UAInAppMessage *nonBannerMessage;
+@property(nonatomic, strong) UAInAppMessaging *inAppMessaging;
+
 @end
 
 @implementation UAInAppMessagingTest
@@ -22,29 +26,31 @@
 - (void)setUp {
     [super setUp];
 
-    id mockDataStore = [OCMockObject niceMockForClass:[UAPreferenceDataStore class]];
+    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"UAInAppMessagingTest"];
 
-    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
-    [[[self.mockAirship stub] andReturn:mockDataStore] dataStore];
+    self.mockAnalytics = [OCMockObject niceMockForClass:[UAAnalytics class]];
+
+    self.inAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.mockAnalytics dataStore:self.dataStore];
 
     self.mockMessageController = [OCMockObject mockForClass:[UAInAppMessageController class]];
-
-    self.mockMessaging = [OCMockObject partialMockForObject:[UAInAppMessaging new]];
-    [[[self.mockMessaging stub] andReturn:self.mockMessageController] buildInAppMessageControllerWithMessage:[OCMArg any]];
+    [[[self.mockMessageController stub] andReturn:self.mockMessageController] controllerWithMessage:[OCMArg any] dismissalBlock:[OCMArg any]];
 
     self.bannerMessage = [UAInAppMessage message];
     self.bannerMessage.alert = @"whatever";
     self.bannerMessage.displayType = UAInAppMessageDisplayTypeBanner;
+    self.bannerMessage.expiry = [NSDate dateWithTimeIntervalSinceNow:10000];
 
     self.nonBannerMessage.alert = @"blah";
     self.nonBannerMessage.displayType = UAInAppMessageDisplayTypeUnknown;
 }
 
 - (void)tearDown {
+    [self.mockAnalytics stopMocking];
+    [self.mockMessageController stopMocking];
+
+    [self.dataStore removeAll];
+
     [super tearDown];
-    [self.mockDataStore stopMocking];
-    [self.mockAirship stopMocking];
 }
 
 /**
@@ -52,7 +58,9 @@
  */
 - (void)testDisplayBannerMessage {
     [[self.mockMessageController expect] show];
-    [self.mockMessaging displayMessage:self.bannerMessage];
+
+    [self.inAppMessaging displayMessage:self.bannerMessage];
+
     [self.mockMessageController verify];
 }
 
@@ -60,8 +68,10 @@
  * Test that non-banner messages are not displayed.
  */
 - (void)testDisplayNonBannerMessage {
-    [self.mockMessaging displayMessage:self.nonBannerMessage];
     [[self.mockMessageController reject] show];
+
+    [self.inAppMessaging displayMessage:self.nonBannerMessage];
+
     [self.mockMessageController verify];
 }
 
@@ -69,18 +79,51 @@
  * Test that banner messages are stored.
  */
 - (void)testStoreBannerPendingMessage {
-    [self.mockMessaging storePendingMessage:self.bannerMessage];
-    [[self.mockDataStore expect] setObject:self.bannerMessage.payload forKey:kUAPendingInAppMessageDataStoreKey];
-    [self.mockDataStore verify];
+    self.inAppMessaging.pendingMessage = self.bannerMessage;
+
+    XCTAssertEqualObjects(self.inAppMessaging.pendingMessage.payload, self.bannerMessage.payload);
 }
 
 /**
  * Test that non-banner messages are not stored.
  */
 - (void)testStoreNonBannerPendingMessage {
-    [self.mockMessaging storePendingMessage:self.nonBannerMessage];
-    [[self.mockDataStore reject] setObject:self.bannerMessage.payload forKey:kUAPendingInAppMessageDataStoreKey];
-    [self.mockDataStore verify];
+    self.inAppMessaging.pendingMessage = self.nonBannerMessage;
+
+    XCTAssertNil(self.inAppMessaging.pendingMessage);
 }
+
+/**
+ * Test display pending message tries to display the pending message.
+ */
+- (void)testDisplayPendingMessage {
+    self.inAppMessaging.pendingMessage = self.bannerMessage;
+
+    // Expect to show the message
+    [[self.mockMessageController expect] show];
+
+    // Trigger the message to be displayed
+    [self.inAppMessaging displayPendingMessage];
+
+    // Verify we actually tried to show a message
+    [self.mockMessageController verify];
+}
+
+/**
+ * Test auto display enabled persists in the data store.
+ */
+- (void)testAutoDisplayEnabled {
+    XCTAssertTrue(self.inAppMessaging.isAutoDisplayEnabled);
+
+    self.inAppMessaging.autoDisplayEnabled = NO;
+    XCTAssertFalse(self.inAppMessaging.isAutoDisplayEnabled);
+
+
+    // Verify it persists
+    self.inAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.mockAnalytics dataStore:self.dataStore];
+    XCTAssertFalse(self.inAppMessaging.isAutoDisplayEnabled);
+}
+
+
 
 @end

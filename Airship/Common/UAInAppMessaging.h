@@ -54,26 +54,6 @@
 @interface UAInAppMessaging : NSObject
 
 /**
-* Retrieves the most recent pending message payload from disk.
-*
-* @return An in-app message payload in NSDictionary format.
-*/
-- (NSDictionary *)pendingMessagePayload;
-
-/**
- * Stores a pending message for later retrieval and display.
- *
- * @param message An in-app message instance.
- */
-- (void)storePendingMessage:(UAInAppMessage *)message;
-
-/**
- * Deletes the pending message payload if present.
- *
- */
-- (void)deletePendingMessagePayload;
-
-/**
  * Deletes the pending message if it matches the
  * provided message argument.
  *
@@ -82,13 +62,27 @@
 - (void)deletePendingMessage:(UAInAppMessage *)message;
 
 /**
- * Displays the the provided message. If the message is expired,
- * or if it was associated with the notification that launched the app,
- * this will be a no-op.
+ * Displays the provided message. Expired messages will be
+ * ignored.
  *
  * @param message The message to display.
  */
 - (void)displayMessage:(UAInAppMessage *)message;
+
+/*
+ * Displays the pending message if it is available.
+ */
+- (void)displayPendingMessage;
+
+/**
+ * The pending in-app message.
+ */
+@property(nonatomic, copy) UAInAppMessage *pendingMessage;
+
+/**
+ * Enables/disables auto-display of in-app messages.
+ */
+@property(nonatomic, assign, getter=isAutoDisplayEnabled) BOOL autoDisplayEnabled;
 
 /**
  * The desired font to use when displaying in-app messages.

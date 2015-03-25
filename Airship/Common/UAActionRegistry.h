@@ -41,8 +41,6 @@
 #define kUAAddCustomEventActionDefaultRegistryName @"add_custom_event_action"
 #define kUAShareActionDefaultRegistryName @"share_action"
 #define kUAShareActionDefaultRegistryAlias @"^s"
-#define kUAInAppMessageActionDefaultRegistryName @"com.urbanairship.in_app"
-#define kUAInAppMessageActionDefaultRegistryAlias @"^i"
 #define kUADisplayInboxActionDefaultRegistryName @"open_mc_action"
 #define kUADisplayInboxActionDefaultRegistryAlias @"^mc"
 

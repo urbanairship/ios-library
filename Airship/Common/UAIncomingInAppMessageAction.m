@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAInAppMessageAction.h"
+#import "UAIncomingInAppMessageAction.h"
 #import "UAInAppMessage.h"
 #import "UAGlobal.h"
 #import "UAirship.h"
@@ -31,25 +31,47 @@
 #import "UAActionRegistry.h"
 #import "UAInAppMessaging.h"
 #import "UAInboxUtils.h"
+#import "UAirship.h"
+#import "UAInAppResolutionEvent.h"
+#import "UAAnalytics.h"
 
-@implementation UAInAppMessageAction
+@implementation UAIncomingInAppMessageAction
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
-    BOOL acceptsValue = [arguments.value isKindOfClass:[NSDictionary class]];
 
-    // launching from push is not allowed
-    BOOL acceptsSituation = arguments.situation != UASituationLaunchedFromPush;
-
-    return acceptsValue && acceptsSituation;
+    switch (arguments.situation) {
+        case UASituationBackgroundPush:
+        case UASituationForegroundPush:
+        case UASituationLaunchedFromPush:
+        case UASituationBackgroundInteractiveButton:
+        case UASituationForegroundInteractiveButton:
+            return [arguments.value isKindOfClass:[NSDictionary class]];
+        case UASituationManualInvocation:
+        case UASituationWebViewInvocation:
+            return NO;
+    }
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
-    if (arguments.situation == UASituationManualInvocation) {
-        [self displayMessageWithArguments:arguments];
-    } else {
-        [self savePendingMessageWithArguments:arguments];
+    switch (arguments.situation) {
+        case UASituationBackgroundPush:
+        case UASituationForegroundPush:
+            // If the in-app message was received in the foreground or background
+            // store it to be displayed for later
+            [self savePendingMessageWithArguments:arguments];
+            break;
+        case UASituationLaunchedFromPush:
+        case UASituationBackgroundInteractiveButton:
+        case UASituationForegroundInteractiveButton:
+            // The notification has been interacted by the user so
+            // clear the pending message if it matches the one in the notification.
+            [self clearPendingMessageWithArguments:arguments];
+            break;
+        default:
+            UA_LDEBUG(@"Unexpected situation in arguments: %@", arguments);
+            break;
     }
 
     completionHandler([UAActionResult emptyResult]);
@@ -57,12 +79,25 @@
 
 
 /**
- * Helper method to handle displaying the in-app message.
- * @param arguments The action arguments.
+ * Helper method to dismiss the pending message if its ID matches the launch
+ * notifications send ID.
  */
-- (void)displayMessageWithArguments:(UAActionArguments *)arguments {
-    UAInAppMessage *message = [UAInAppMessage messageWithPayload:arguments.value];
-    [[UAirship inAppMessaging] displayMessage:message];
+- (void)clearPendingMessageWithArguments:(UAActionArguments *)arguments {
+    NSDictionary *apnsPayload = arguments.metadata[UAActionMetadataPushPayloadKey];
+    NSString *sendId = apnsPayload[@"_"];
+
+    UAInAppMessage *pending =  [UAirship inAppMessaging].pendingMessage;
+
+    // Compare only the ID in case we amended the in-app message payload
+    if (sendId.length && [sendId isEqualToString:pending.identifier]) {
+        [UAirship inAppMessaging].pendingMessage = nil;
+
+        UA_LINFO(@"The in-app message delivery push was directly launched for message: %@", pending);
+        [[UAirship inAppMessaging] deletePendingMessage:pending];
+
+        UAInAppResolutionEvent *event = [UAInAppResolutionEvent directOpenResolutionWithMessage:pending];
+        [[UAirship shared].analytics addEvent:event];
+    }
 }
 
 /**
@@ -90,7 +125,7 @@
     }
 
     // Store it for later
-    [[UAirship inAppMessaging] storePendingMessage:message];
+    [UAirship inAppMessaging].pendingMessage = message;
 }
 
 @end
