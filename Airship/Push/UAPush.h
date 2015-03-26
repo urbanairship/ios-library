@@ -211,7 +211,11 @@
 
 /**
  * Enables/disables user notifications on this device through Urban Airship.
- * Defaults to 'NO'.
+ * Defaults to 'NO'. Once set to YES, the user will be prompted for remote notifications.
+ *
+ * On iOS 8+, we recommend that you do not change this value to `NO` and instead direct users to
+ * the iOS Settings App. As such, the transition from `YES` to `NO` is disabled by default on iOS 8+.
+ * Please see requireSettingsAppToDisableUserNotifications for details.
  */
 @property (nonatomic, assign) BOOL userPushNotificationsEnabled;
 
@@ -233,6 +237,28 @@
  * until the device has been restarted (due to a bug in iOS 8).
  */
 @property (nonatomic, assign) BOOL allowUnregisteringUserNotificationTypes;
+
+/**
+ * This setting controls the behavior of the userPushNotificationsEnabled setting. If set to YES, the
+ * application will not be allowed to set userPushNotificationsEnabled to NO, and instead, the user should
+ * be directed to the iOS Settings app via the UIApplicationOpenSettingsURLString URL constant. The iOS
+ * Settings app is the preferred method of disabling user notifications as of iOS 8.
+ * 
+ * The setting defaults to YES on iOS 8+. Changing this setting to NO could allow notifications with user-visible components
+ * (badge, alert, or sound) to be processed by the OS if the notification also has a background `content-available`
+ * flag in the `aps` section of the notification.
+ *
+ * On versions of iOS prior to iOS 8, this flag will always return NO. Those iOS versions do not allow linking
+ * to the Settings app and are unaffected by the opt-out after opt-in bug.
+ *
+ * TODO: verify the upgrade case. We may need to explicitly disable notifications if the app setting does not
+ * allow user notifications but iOS still has registered types.
+ *
+ * To open the iOS Settings app directly to your application's settings:
+ * `[[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]]`
+ *
+ */
+@property (nonatomic, assign) BOOL requireSettingsAppToDisableUserNotifications;
 
 
 /**

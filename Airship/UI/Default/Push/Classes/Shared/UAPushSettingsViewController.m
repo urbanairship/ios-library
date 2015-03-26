@@ -41,15 +41,9 @@ enum {
 
 // The section for the push enabled switch is 0
 // The row count for the push table view is 1
-enum {
-    PushEnabledSectionSwitchCell = 0,
-    PushEnabledSectionSettingsLinkCell = 1,
-    PushEnabledSectionRowCount = 2
-};
+static NSUInteger PushEnabledSectionRowCount = 1;
 
 // The section for the Airship is 1
-// The row count is one
-//static NSUInteger AirshipLocationEnabledSectionSwitchCell = 1;
 static NSUInteger AirshipLocationEnabledSectionRowCount = 1;
 
 static NSUInteger AnalyticsEnabledSectionRowCount = 1;
@@ -126,13 +120,7 @@ enum {
     switch (section) {
         case SectionPushEnabled:
         {
-            // Add a row if we need to show a system push warning/link
-            if ([self shouldDisplaySystemPushRow]) {
-                return 2;
-            } else {
-                // Else row count is 1
-                return 1;
-            }
+            return (NSInteger)PushEnabledSectionRowCount;
         }
         case SectionAirshipLocationEnabled:
         {
@@ -167,10 +155,10 @@ enum {
             return self.toCell;
         }
     } else if (indexPath.section == SectionPushEnabled) {
-        if (indexPath.row == PushEnabledSectionSwitchCell) {
-            return self.pushEnabledCell;
-        } else {
+        if ([self shouldDisplaySystemPushRow]) {
             return self.pushSystemSettingsCell;
+        } else {
+            return self.pushEnabledCell;
         }
     } else if (indexPath.section == SectionAirshipLocationEnabled) {
         return self.airshipLocationEnabledCell;
@@ -184,10 +172,12 @@ enum {
 #pragma mark UITableVieDelegate Methods
 - (void)tableView:(UITableView *)view didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    if (indexPath.section == SectionPushEnabled && indexPath.row == PushEnabledSectionSettingsLinkCell) {
-        if ([UIUserNotificationSettings class]) { // only open the settings screen if the user notification settings (iOS8+) constant exists
+    if (indexPath.section == SectionPushEnabled) {
+
+        if ([self shouldDisplaySystemPushRow]) {
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
         }
+
     } else if (indexPath.section == SectionQuietTime) {
         if (indexPath.row == 1 || indexPath.row == 2) {
             [self updateDatePicker:YES];
@@ -204,7 +194,9 @@ enum {
 
     self.title = UAPushLocalizedString(@"UA_Push_Settings_Title");
 
-    self.pushEnabledSwitch.on = [UAirship push].userPushNotificationsEnabled;
+    UISwitch *pushEnabledSwitch = self.pushEnabledSwitch;
+    pushEnabledSwitch.on = [UAirship push].userPushNotificationsEnabled;
+    pushEnabledSwitch.enabled = !pushEnabledSwitch.on || ![UAirship push].requireSettingsAppToDisableUserNotifications;
 
     if (!self.pushSystemSettingsCell) {
         self.pushSystemSettingsCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
@@ -291,7 +283,7 @@ enum {
     }
     
     // reset picker subviews
-    for (UIView* subview in self.datePicker.subviews) {
+    for (UIView *subview in self.datePicker.subviews) {
         subview.frame = self.datePicker.bounds;
     }
     
@@ -498,7 +490,7 @@ enum {
  */
 - (BOOL)shouldDisplaySystemPushRow {
     // If the switch is on, AND we can link to user notification settings (i.e., iOS8), let's show the toggle
-    return ([UIUserNotificationSettings class] && self.pushEnabledSwitch.on);
+    return ([UIUserNotificationSettings class] && [UAirship push].userPushNotificationsEnabled);
 
     // If you only want to show the link when settings are mismatched, add an additional condition:
     //            && [[UAirship push] currentEnabledNotificationTypes] != [UAirship push].userNotificationTypes);

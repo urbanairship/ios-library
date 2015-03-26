@@ -132,7 +132,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     self.mockDefaultUserNotificationCategories = [OCMockObject niceMockForClass:[UAUserNotificationCategories class]];
 
     self.push.registrationDelegate = self.mockRegistrationDelegate;
-    self.push.allowUnregisteringUserNotificationTypes = YES;
 }
 
 - (void)tearDown {
@@ -513,6 +512,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                      @"userPushNotificationsEnabled should unregister for remote notifications");
 }
 
+// TODO: need a test verifying that 'require settigns app' is NO on ios7 (even when set) and YES on ios8
+
 /**
  * Test disabling userPushNotificationsEnabled on >= iOS8 saves its settings
  * to NSUserDefaults and updates registration.
@@ -543,7 +544,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
-
+    self.push.requireSettingsAppToDisableUserNotifications = NO;
     self.push.userPushNotificationsEnabled = NO;
 
     XCTAssertFalse(self.push.userPushNotificationsEnabled,
@@ -555,6 +556,13 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertNoThrow([self.mockedApplication verify],
                      @"userPushNotificationsEnabled should unregister for remote notifications");
 }
+
+// TODO: test the above, but with 'allow unregister' - expect
+// TODO: test the above, but with 'require settings app == YES'
+
+
+// TODO: Test the migration path: userPushNotificationEnabled == NO, types = YES, requireSettigns = YES
+// In that case the result should be types == 0, userPushNotificationsEnabled = YES
 
 /**
  * Test enabling or disabling backgroundPushNotificationsEnabled saves its settings
@@ -2265,6 +2273,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     self.push.userPushNotificationsEnabled = YES;
     self.push.deviceToken = validDeviceToken;
     self.push.shouldUpdateAPNSRegistration = NO;
+    self.push.requireSettingsAppToDisableUserNotifications = NO;
 
     // Turn off allowing unregistering user notification types
     self.push.allowUnregisteringUserNotificationTypes = NO;
@@ -2298,6 +2307,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertNoThrow([self.mockedApplication verify],
                      @"userPushNotificationsEnabled should unregister for remote notifications");
 }
+
+// TODO: Test the above, but with allow = NO and require settings app = YES
 
 /**
  * Test channel ID is returned when both channel ID and channel location exist.

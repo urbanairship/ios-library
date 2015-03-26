@@ -73,6 +73,9 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 
 @implementation UAPush
 
+// Both getter and setter are custom here, so give the compiler a hand with the synthesizing
+@synthesize requireSettingsAppToDisableUserNotifications = _requireSettingsAppToDisableUserNotifications;
+
 + (instancetype)shared {
     return [UAirship push];
 }
@@ -89,6 +92,11 @@ NSString *const UAPushQuietTimeEndKey = @"end";
         self.deviceTagsEnabled = YES;
         self.requireAuthorizationForDefaultCategories = YES;
         self.backgroundPushNotificationsEnabledByDefault = YES;
+
+        // Require use of the settings app to change push settings
+        // but allow the app to unregister to keep things in sync
+        self.requireSettingsAppToDisableUserNotifications = YES;
+        self.allowUnregisteringUserNotificationTypes = YES;
 
         self.userNotificationTypes = UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound;
         self.allUserNotificationCategories = [UAUserNotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories];
@@ -280,6 +288,19 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 
 - (void)setUserPushNotificationsEnabled:(BOOL)enabled {
     BOOL previousValue = self.userPushNotificationsEnabled;
+
+    // If currently registered with and currently enabled in the SDK,
+    // do not allow disabling if the settings app is required
+    // Note that we do not call 'userPushNotificationsAllowed' as it requires REMOTE notifications to return YES
+    // The requireSettingsAppToDisableUserNotifications can only return YES for iOS 8+
+    if (previousValue
+          && !enabled
+          && self.requireSettingsAppToDisableUserNotifications // This short circuits the next line on iOS < 8
+          && [[UIApplication sharedApplication] currentUserNotificationSettings].types != UIUserNotificationTypeNone) {
+        UA_LWARN(@"User notifications must be disabled via the iOS Settings app.");
+        return;
+    }
+
     [self.dataStore setBool:enabled forKey:UAUserPushNotificationsEnabledKey];
 
     if (enabled != previousValue) {
@@ -435,6 +456,21 @@ NSString *const UAPushQuietTimeEndKey = @"end";
         UA_LWARN(@"Allowing UAPush to unregister for notification types may disable the ability to register for other types without restarting the device first.");
     }
     _allowUnregisteringUserNotificationTypes = allowUnregisteringUserNotificationTypes;
+}
+
+- (void)setRequireSettingsAppToDisableUserNotifications:(BOOL)requireSettingsAppToDisableUserNotifications {
+    if (!requireSettingsAppToDisableUserNotifications && [UIUserNotificationSettings class]) {
+        UA_LWARN(@"Allowing the application to disable notifications will prevent your application from properly opt-ing out of notifications that include \"content-available\" background components in notifications that also include a user-visible component.");
+    }
+    _requireSettingsAppToDisableUserNotifications = requireSettingsAppToDisableUserNotifications;
+}
+
+- (BOOL)requireSettingsAppToDisableUserNotifications {
+    if ([UIUserNotificationSettings class]) {
+        return _requireSettingsAppToDisableUserNotifications;
+    }
+
+    return NO;
 }
 
 #pragma mark -
@@ -798,6 +834,16 @@ BOOL deferChannelCreationOnForeground = false;
             [self updateRegistrationForcefully:NO];
         } else if ([application currentUserNotificationSettings].types != UIUserNotificationTypeNone) {
             UA_LDEBUG(@"Unregistering for user notification types.");
+
+            // In iOS 8, when forcing changes to be made in the settings app,  we want to keep the 'enabled' flag set to YES
+            // if the user has enabled user notifications but later opted out -- all changes should be made via the Settings app.
+            // TODO: Considre if there is a better place to run this migration
+            // if (!userPushNotificationsEnabled, types != 0, requireSettingsApp == YES), immediately register for NONE and flip
+            // the 'userPushNotificationsEnabled' flag back to yes to notifications can be enabled outside the app
+            if (self.requireSettingsAppToDisableUserNotifications) {
+                [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
+            }
+
             [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone
                                                                                             categories:nil]];
         } else {
