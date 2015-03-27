@@ -35,12 +35,13 @@
 NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID";
 
 // Number of seconds to delay before displaying an in-app message
-#define kUAInAppMessagingDelayBeforeInAppMessageDisplay 0.4
+#define kUAInAppMessagingDelayBeforeInAppMessageDisplay 3.0
 
 @interface UAInAppMessaging ()
 @property(nonatomic, strong) UAInAppMessageController *messageController;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) UAAnalytics *analytics;
+@property(nonatomic, strong) NSTimer *autoDisplayTimer;
 @end
 
 @implementation UAInAppMessaging
@@ -58,7 +59,13 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
                                                  selector:@selector(applicationDidBecomeActive)
                                                      name:UIApplicationDidBecomeActiveNotification
                                                    object:[UIApplication sharedApplication]];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(applicationDidEnterBackground)
+                                                     name:UIApplicationDidEnterBackgroundNotification
+                                                   object:[UIApplication sharedApplication]];
     }
+
     return self;
 }
 
@@ -69,13 +76,28 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
                                              dataStore:dataStore];
 }
 
+- (void)scheduleAutoDisplayTimer {
+    self.autoDisplayTimer = [NSTimer timerWithTimeInterval:kUAInAppMessagingDelayBeforeInAppMessageDisplay
+                                                  target:self
+                                                selector:@selector(displayPendingMessage)
+                                                userInfo:nil
+                                                 repeats:NO];
+    [[NSRunLoop currentRunLoop] addTimer:self.autoDisplayTimer forMode:NSDefaultRunLoopMode];
+}
+
+- (void)invalidateAutoDisplayTimer {
+    [self.autoDisplayTimer invalidate];
+    self.autoDisplayTimer = nil;
+}
+
 - (void)applicationDidBecomeActive {
-    // the pending in-app message, if present
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kUAInAppMessagingDelayBeforeInAppMessageDisplay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        if (self.isAutoDisplayEnabled) {
-            [self displayPendingMessage];
-        }
-    });
+    if (self.isAutoDisplayEnabled) {
+        [self scheduleAutoDisplayTimer];
+    }
+}
+
+- (void)applicationDidEnterBackground {
+    [self invalidateAutoDisplayTimer];
 }
 
 - (UAInAppMessage *)pendingMessage {

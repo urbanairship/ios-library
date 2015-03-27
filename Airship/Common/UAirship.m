@@ -346,6 +346,9 @@ UALogLevel uaLogLevel = UALogLevelError;
     // Invalidate UAAnalytics timer and cancel all queued operations
     [_sharedAirship.analytics stopSends];
 
+    // Invalidate UAInAppMessaging autodisplay timer
+    [_sharedAirship.sharedInAppMessaging invalidateAutoDisplayTimer];
+
     // Reset the app delegate
     if (_sharedAirship.config.automaticSetupEnabled) {
         // swap pointers back to the initial app delegate

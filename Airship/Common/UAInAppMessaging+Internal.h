@@ -46,4 +46,10 @@
  */
 + (instancetype)inAppMessagingWithAnalytics:(UAAnalytics *)analytics
                                   dataStore:(UAPreferenceDataStore *)dataStore;
+
+/**
+ * Invalidates the autodisplay timer.
+ */
+- (void)invalidateAutoDisplayTimer;
+
 @end
