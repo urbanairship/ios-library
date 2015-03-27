@@ -141,7 +141,7 @@
     // 0 buttons
     if (!numberOfButtons) {
         // label is followed by the edge
-        [constraints addObject:@"V:[label]-tabAreaHeight-|"];
+        [constraints addObject:@"V:[label]-verticalMargin-|"];
     } else if (numberOfButtons == 1) {
         // button 1 is vertically positioned underneath the label
         [constraints addObject:@"V:[label]-verticalMargin-[button1]-verticalMargin-|"];
@@ -169,7 +169,7 @@
     NSMutableArray *constraints = [NSMutableArray array];
 
     // label is at the top
-    [constraints addObject:@"V:|-tabAreaHeight-[label]"];
+    [constraints addObject:@"V:|-verticalMargin-[label]"];
 
     // 0 buttons
     if (!numberOfButtons) {
@@ -204,13 +204,9 @@
     // layout constants
     CGFloat verticalMargin = 10;
     CGFloat horizontalMargin = 10;
-    CGFloat lineHeight = 15;
-    CGFloat nLines = 4;
     CGFloat tabHeight = 5;
     CGFloat tabWidth = 30;
     CGFloat tabMargin = 10;
-    CGFloat tabAreaHeight = tabHeight + tabMargin + verticalMargin;
-    CGFloat labelHeight = lineHeight * nLines;
 
     // views and metrics dictionaries for binding in VFL expressions
     NSMutableDictionary *views = [NSMutableDictionary dictionary];
@@ -225,9 +221,7 @@
                    @"horizontalMargin":@(horizontalMargin),
                    @"tabMargin":@(tabMargin),
                    @"tabHeight":@(tabHeight),
-                   @"tabAreaHeight":@(tabAreaHeight),
                    @"tabWidth":@(tabWidth),
-                   @"labelHeight":@(labelHeight),
                    @"maskHeight":@(kUAInAppMessageViewCornerRadius)};
 
 
@@ -245,7 +239,6 @@
                                    @"H:|[mask]|",
                                    @"H:[tab(tabWidth)]", // set the tab width
                                    @"V:[tab(tabHeight)]", // set the tab height
-                                   @"V:[label(labelHeight)]", //set the label height
                                    @"H:|-horizontalMargin-[label]-horizontalMargin-|"]; // label is inset by the horizontal margin
 
 

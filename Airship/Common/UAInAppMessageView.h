@@ -37,7 +37,6 @@
  * @param numberOfButtons The number of buttons to display (0-2).
  */
 - (instancetype)initWithPosition:(UAInAppMessagePosition)position numberOfButtons:(NSUInteger)numberOfButtons;
-
 /**
  * The "tab" widget indicating swipability.
  */
