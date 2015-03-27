@@ -348,6 +348,7 @@ enum {
     UISwitch *strongPushEnabledSwitch = self.pushEnabledSwitch;
     [UAirship push].userPushNotificationsEnabled = strongPushEnabledSwitch.on;
     strongPushEnabledSwitch.enabled = !strongPushEnabledSwitch.on || ![UAirship push].requireSettingsAppToDisableUserNotifications;
+    [self updateSettingsLinkText];
     
     if (!self.quietTimeSwitch.on || !strongPushEnabledSwitch.on) {
         [self updateDatePicker:NO];
@@ -461,6 +462,12 @@ enum {
  * Update the text in the table cells to reflect the current push-enabled state.
  */
 - (void)updateSettingsLinkText {
+
+    // Don't update the text if the cell shouldn't be displayed
+    if (![self shouldDisplaySystemPushLink]) {
+        return;
+    }
+
     UIUserNotificationType types = [[UIApplication sharedApplication] currentUserNotificationSettings].types;
 
     // Types are not set as desired

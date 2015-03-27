@@ -519,13 +519,13 @@
 		1890BA111251B5E900E6EBF1 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				1890BA1B1251B5E900E6EBF1 /* UAPushSettingsView.xib */,
 				1890BA181251B5E900E6EBF1 /* UAPushMoreSettingsView.xib */,
 				1890BA191251B5E900E6EBF1 /* UAPushSettingsAliasView.xib */,
 				767D0D4E1A72F827008CEC8A /* UAPushSettingsNamedUserView.xib */,
 				1F7FD3F812F79AFF00317B96 /* UAPushSettingsTagsViewController.xib */,
 				1F7FD45412F8956900317B96 /* UAPushSettingsAddTagViewController.xib */,
 				1F7FD5EE12F8DE2200317B96 /* UAPushSettingsSoundsViewController.xib */,
-				1890BA1B1251B5E900E6EBF1 /* UAPushSettingsView.xib */,
 				BB75D9AE151BEB1600F4241E /* UALocationSettingsViewController.xib */,
 				BBAAD870151D263E00A090CD /* UAMapPresentationViewController.xib */,
 			);
