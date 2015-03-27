@@ -204,9 +204,9 @@
     // layout constants
     CGFloat verticalMargin = 10;
     CGFloat horizontalMargin = 10;
-    CGFloat tabHeight = 5;
-    CGFloat tabWidth = 30;
-    CGFloat tabMargin = 10;
+    CGFloat tabHeight = 3;
+    CGFloat tabWidth = 35;
+    CGFloat tabMargin = 5;
 
     // views and metrics dictionaries for binding in VFL expressions
     NSMutableDictionary *views = [NSMutableDictionary dictionary];
