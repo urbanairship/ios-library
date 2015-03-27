@@ -211,7 +211,7 @@
 
 /**
  * Enables/disables user notifications on this device through Urban Airship.
- * Defaults to 'NO'. Once set to YES, the user will be prompted for remote notifications.
+ * Defaults to `NO`. Once set to `YES`, the user will be prompted for remote notifications.
  *
  * On iOS 8+, we recommend that you do not change this value to `NO` and instead direct users to
  * the iOS Settings App. As such, the transition from `YES` to `NO` is disabled by default on iOS 8+.
@@ -222,7 +222,7 @@
 
 /**
  * This setting controls the underlying behavior of the SDK when user notifications are disabled.
- * When set to 'NO' and user notifications are disabled with the userPushNotificationsEnabled
+ * When set to `NO` and user notifications are disabled with the userPushNotificationsEnabled
  * property, this SDK will mark the device as opted-out on the Urban Airship server but the OS-level
  * settings will still show this device as able to receive user notifications.
  *
@@ -231,26 +231,24 @@
  * register with other types without a device restart. It will be removed once
  * the issue is addressed in iOS 8.
  *
- * This setting defaults to 'YES' due to the new flag requireSettingsAppToDisableUserNotifications.
- * To enable SDK 5 behavior, set this flag and `requireSettingsAppToDisableUserNotifications
- * to 'NO'.
+ * This setting defaults to `YES` due to the new flag requireSettingsAppToDisableUserNotifications.
+ * To enable UA SDK 5 behavior, set this flag and requireSettingsAppToDisableUserNotifications
+ * to `NO`.
  *
- * @warning If this is set to YES, the application may not be able to re-register for push
- * until the device has been restarted (due to a bug in iOS 8).
  */
 @property (nonatomic, assign) BOOL allowUnregisteringUserNotificationTypes;
 
 /**
- * This setting controls the behavior of the userPushNotificationsEnabled setting. If set to YES, the
- * application will not be allowed to set userPushNotificationsEnabled to NO, and instead, the user should
+ * This setting controls the behavior of the userPushNotificationsEnabled setting. If set to `YES`, the
+ * application will not be allowed to set userPushNotificationsEnabled to `NO`, and instead, the user should
  * be directed to the iOS Settings app via the UIApplicationOpenSettingsURLString URL constant. The iOS
  * Settings app is the preferred method of disabling user notifications as of iOS 8.
  * 
- * The setting defaults to YES on iOS 8+. Changing this setting to NO could allow notifications with user-visible components
+ * The setting defaults to `YES` on iOS 8+. Changing this setting to `NO` could allow notifications with user-visible components
  * (badge, alert, or sound) to be processed by the OS if the notification also has a background `content-available`
  * flag in the `aps` section of the notification.
  *
- * On versions of iOS prior to iOS 8, this flag will always return NO. Those iOS versions do not allow linking
+ * On versions of iOS prior to iOS 8, this flag will always return `NO`. Those iOS versions do not allow linking
  * to the Settings app and are unaffected by the opt-out after opt-in bug.
  *
  * To open the iOS Settings app directly to your application's settings:

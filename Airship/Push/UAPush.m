@@ -289,9 +289,8 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 - (void)setUserPushNotificationsEnabled:(BOOL)enabled {
     BOOL previousValue = self.userPushNotificationsEnabled;
 
-    // Do not allow disabling if the settings app is required
-    // Note that we do not call 'userPushNotificationsAllowed' as it requires REMOTE notifications to return YES
-    // The requireSettingsAppToDisableUserNotifications can only return YES for iOS 8+
+    // Do not allow disabling if the settings app is required,
+    // requireSettingsAppToDisableUserNotifications can only return YES for iOS 8+
     if (!enabled && self.requireSettingsAppToDisableUserNotifications) {
         UA_LWARN(@"User notifications must be disabled via the iOS Settings app.");
         return;
@@ -448,7 +447,10 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 
 - (void)setRequireSettingsAppToDisableUserNotifications:(BOOL)requireSettingsAppToDisableUserNotifications {
     if (!requireSettingsAppToDisableUserNotifications && [UAPush deviceSupportsUserNotifications]) {
-        UA_LWARN(@"Allowing the application to disable notifications will prevent your application from properly opt-ing out of notifications that include \"content-available\" background components in notifications that also include a user-visible component.");
+        UA_LWARN(@"Allowing the application to disable notifications in iOS 8+ will prevent your application from properly "
+                 "opt-ing out of notifications that include \"content-available\" background components in "
+                 "notifications that also include a user-visible component. Instead, direct users to the iOS "
+                 "settings app using the UIApplicationOpenSettingsURLString URL constant.");
     }
     _requireSettingsAppToDisableUserNotifications = requireSettingsAppToDisableUserNotifications;
 }
@@ -827,10 +829,15 @@ BOOL deferChannelCreationOnForeground = false;
             [self updateRegistrationForcefully:NO];
         } else if ([application currentUserNotificationSettings].types != UIUserNotificationTypeNone) {
             UA_LDEBUG(@"Unregistering for user notification types.");
+
+            // This is likely a case where an SDK 5.0 user has been updated to SDK 6.0, so notify the developer.
+            if (self.requireSettingsAppToDisableUserNotifications) {
+                UA_LDEBUG(@"To re-register for push, userPushNotificationsEnabled must be set to YES and the user must use the iOS Settings app to enable notifications.");
+            }
             [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone
                                                                                             categories:nil]];
         } else {
-            UA_LDEBUG(@"Already unregistered for user notification types.");
+            UA_LDEBUG(@"Already unregistered for user notification types. To re-register, set userPushNotificationsEnabled to YES and/or modify iOS Settings.");
             [self updateRegistrationForcefully:NO];
         }
 
@@ -1027,11 +1034,11 @@ BOOL deferChannelCreationOnForeground = false;
 }
 
 /**
- * Checks if the UAPush deviceSupportsUserNotifications is available.
- * @return `YES` if the UIUserNotificationSettings is available, otherwise `NO`.
+ * Check if the device supports user notifications (iOS 8+).
+ * @return `YES` if the UIUserNotificationSettings class is available, otherwise `NO`.
  */
 + (BOOL)deviceSupportsUserNotifications {
-    return [UIUserNotificationSettings class] != nil;
+    return [UIUserNotificationSettings class] != Nil;
 }
 
 @end

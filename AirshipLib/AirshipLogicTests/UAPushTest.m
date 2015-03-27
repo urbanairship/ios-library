@@ -2326,7 +2326,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
     // Add a device token so we get a device api callback
-    // Add a device token so we get a device api callback
     [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
                                                 channelLocation:OCMOCK_ANY
                                                     withPayload:OCMOCK_ANY
@@ -2348,9 +2347,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertNoThrow([self.mockedApplication verify],
                      @"userPushNotificationsEnabled should unregister for remote notifications");
 }
-
-
-// TODO: Test the above, but with allow = NO and require settings app = YES
 
 /**
  * Test channel ID is returned when both channel ID and channel location exist.
