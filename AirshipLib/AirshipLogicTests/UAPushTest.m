@@ -512,7 +512,55 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                      @"userPushNotificationsEnabled should unregister for remote notifications");
 }
 
-// TODO: need a test verifying that 'require settigns app' is NO on ios7 (even when set) and YES on ios8
+/**
+ * Test requireSettingsAppToDisableUserNotifications always returns NO on iOS7
+ */
+-(void)testRequireSettingsAppToDisableUserNotificationsIOS7 {
+    // iOS7 registration
+    [UIUserNotificationSettings hideClass];
+
+    // Defaults to NO
+    XCTAssertFalse(self.push.requireSettingsAppToDisableUserNotifications);
+
+    // Try to set it to YES
+    self.push.requireSettingsAppToDisableUserNotifications = YES;
+
+    // Should still be NO
+    XCTAssertFalse(self.push.requireSettingsAppToDisableUserNotifications);
+}
+
+/**
+ * Test requireSettingsAppToDisableUserNotifications defaults to YES on
+ * iOS8+ and prevents userPushNotificationsEnabled from being disabled,
+ * once its enabled.
+ */
+-(void)testRequireSettingsAppToDisableUserNotificationsIOS8 {
+    // Defaults to YES
+    XCTAssertTrue(self.push.requireSettingsAppToDisableUserNotifications);
+
+    // Verify it can be disabled
+    self.push.requireSettingsAppToDisableUserNotifications = NO;
+    XCTAssertFalse(self.push.requireSettingsAppToDisableUserNotifications);
+
+    // Set up push for user notifications
+    self.push.userPushNotificationsEnabled = YES;
+    self.push.deviceToken = validDeviceToken;
+    self.push.shouldUpdateAPNSRegistration = NO;
+
+    // Prevent disabling userPushNotificationsEnabled
+    self.push.requireSettingsAppToDisableUserNotifications = YES;
+
+    // Verify we don't try to register when attempting to disable userPushNotificationsEnabled
+    [[self.mockedApplication reject] registerUserNotificationSettings:OCMOCK_ANY];
+
+    self.push.userPushNotificationsEnabled = NO;
+
+    // Should still be YES
+    XCTAssertTrue(self.push.userPushNotificationsEnabled);
+
+    // Verify we did not update user notificaiton settings
+    [self.mockedApplication verify];
+}
 
 /**
  * Test disabling userPushNotificationsEnabled on >= iOS8 saves its settings
@@ -556,13 +604,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertNoThrow([self.mockedApplication verify],
                      @"userPushNotificationsEnabled should unregister for remote notifications");
 }
-
-// TODO: test the above, but with 'allow unregister' - expect
-// TODO: test the above, but with 'require settings app == YES'
-
-
-// TODO: Test the migration path: userPushNotificationEnabled == NO, types = YES, requireSettigns = YES
-// In that case the result should be types == 0, userPushNotificationsEnabled = YES
 
 /**
  * Test enabling or disabling backgroundPushNotificationsEnabled saves its settings
@@ -2307,6 +2348,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertNoThrow([self.mockedApplication verify],
                      @"userPushNotificationsEnabled should unregister for remote notifications");
 }
+
 
 // TODO: Test the above, but with allow = NO and require settings app = YES
 
