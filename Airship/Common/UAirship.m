@@ -381,13 +381,6 @@ UALogLevel uaLogLevel = UALogLevelError;
     return _sharedAirship.sharedInAppMessaging;
 }
 
-#pragma mark -
-#pragma mark DeviceToken get/set/utils
-
-- (NSString *)deviceToken {
-    return self.sharedPush.deviceToken;
-}
-
 + (NSString *)createUserAgentForAppKey:(NSString *)appKey {
     /*
      * [LIB-101] User agent string should be:

@@ -58,11 +58,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 @property (nonatomic, strong, readonly) UAConfig *config;
 
 /**
- * The current APNS/remote notification device token.
- */
-@property (nonatomic, readonly) NSString *deviceToken;
-
-/**
  * The shared analytics manager. There are not currently any user-defined events,
  * so this is for internal library use only at this time.
  */
