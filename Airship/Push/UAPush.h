@@ -231,8 +231,8 @@
  * register with other types without a device restart. It will be removed once
  * the issue is addressed in iOS 8.
  *
- * This setting defaults to 'YES' due to the new flag `requireSettingsAppToDisableUserNotifications`.
- * To enable SDK 5 behavior, set this flag and `requireSettingsAppToDisableUserNotifications`
+ * This setting defaults to 'YES' due to the new flag requireSettingsAppToDisableUserNotifications.
+ * To enable SDK 5 behavior, set this flag and `requireSettingsAppToDisableUserNotifications
  * to 'NO'.
  *
  * @warning If this is set to YES, the application may not be able to re-register for push
