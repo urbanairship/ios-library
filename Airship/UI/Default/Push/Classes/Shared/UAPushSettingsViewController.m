@@ -348,7 +348,6 @@ enum {
     UISwitch *strongPushEnabledSwitch = self.pushEnabledSwitch;
     [UAirship push].userPushNotificationsEnabled = strongPushEnabledSwitch.on;
     strongPushEnabledSwitch.enabled = !strongPushEnabledSwitch.on || ![UAirship push].requireSettingsAppToDisableUserNotifications;
-    [self updateSettingsLinkText];
     
     if (!self.quietTimeSwitch.on || !strongPushEnabledSwitch.on) {
         [self updateDatePicker:NO];
