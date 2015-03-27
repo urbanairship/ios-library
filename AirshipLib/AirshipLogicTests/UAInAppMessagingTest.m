@@ -33,7 +33,7 @@
     self.inAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.mockAnalytics dataStore:self.dataStore];
 
     self.mockMessageController = [OCMockObject mockForClass:[UAInAppMessageController class]];
-    [[[self.mockMessageController stub] andReturn:self.mockMessageController] controllerWithMessage:[OCMArg any] dismissalBlock:[OCMArg any]];
+    [[[self.mockMessageController stub] andReturn:self.mockMessageController] controllerWithMessage:[OCMArg any] delegate:[OCMArg any] dismissalBlock:[OCMArg any]];
 
     self.bannerMessage = [UAInAppMessage message];
     self.bannerMessage.alert = @"whatever";
