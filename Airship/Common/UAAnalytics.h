@@ -57,7 +57,9 @@
 
 /**
  * Analytics enable flag. Disabling analytics will delete any locally stored events
- * and prevent any events from uploading.
+ * and prevent any events from uploading. Features that depend on analytics being
+ * enabled may not work properly if it's disabled (reports, region triggers,
+ * location segmentation, push to local time).
  *
  * Note: This property will always return `NO` if analytics is disabled in
  * UAConfig.
