@@ -231,7 +231,9 @@
  * register with other types without a device restart. It will be removed once
  * the issue is addressed in iOS 8.
  *
- * This setting defaults to 'NO' and will log a warning if set to 'YES'.
+ * This setting defaults to 'YES' due to the new flag `requireSettingsAppToDisableUserNotifications`.
+ * To enable SDK 5 behavior, set this flag and `requireSettingsAppToDisableUserNotifications`
+ * to 'NO'.
  *
  * @warning If this is set to YES, the application may not be able to re-register for push
  * until the device has been restarted (due to a bug in iOS 8).
@@ -251,12 +253,8 @@
  * On versions of iOS prior to iOS 8, this flag will always return NO. Those iOS versions do not allow linking
  * to the Settings app and are unaffected by the opt-out after opt-in bug.
  *
- * TODO: verify the upgrade case. We may need to explicitly disable notifications if the app setting does not
- * allow user notifications but iOS still has registered types.
- *
  * To open the iOS Settings app directly to your application's settings:
  * `[[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]]`
- *
  */
 @property (nonatomic, assign) BOOL requireSettingsAppToDisableUserNotifications;
 
