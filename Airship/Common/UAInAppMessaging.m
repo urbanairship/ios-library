@@ -35,7 +35,16 @@
 NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID";
 
 // Number of seconds to delay before displaying an in-app message
-#define kUAInAppMessagingDelayBeforeInAppMessageDisplay 3.0
+#define kUAInAppMessagingDefaultDelayBeforeInAppMessageDisplay 3.0
+
+// The default display font
+#define kUAInAppMessageDefaultFont [UIFont boldSystemFontOfSize:12];
+
+// The default primary color for IAMs: white
+#define kUAInAppMessageDefaultPrimaryColor [UIColor whiteColor]
+
+// The default secondary color for IAMs: gray-ish
+#define kUAInAppMessageDefaultSecondaryColor [UIColor colorWithRed:40.0/255 green:40.0/255 blue:40.0/255 alpha:1]
 
 @interface UAInAppMessaging ()
 @property(nonatomic, strong) UAInAppMessageController *messageController;
@@ -51,7 +60,13 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
     self = [super init];
     if (self) {
-        self.font = [UIFont boldSystemFontOfSize:12];
+
+        // Set up the most basic customization
+        self.font = kUAInAppMessageDefaultFont;
+        self.displayDelay = kUAInAppMessagingDefaultDelayBeforeInAppMessageDisplay;
+        self.defaultPrimaryColor = kUAInAppMessageDefaultPrimaryColor;
+        self.defaultSecondaryColor = kUAInAppMessageDefaultSecondaryColor;
+
         self.dataStore = dataStore;
         self.analytics = analytics;
 
@@ -87,11 +102,12 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 - (void)scheduleAutoDisplayTimer {
     [self invalidateAutoDisplayTimer];
 
-    self.autoDisplayTimer = [NSTimer timerWithTimeInterval:kUAInAppMessagingDelayBeforeInAppMessageDisplay
-                                                  target:self
-                                                selector:@selector(displayPendingMessage)
-                                                userInfo:nil
-                                                 repeats:NO];
+    self.autoDisplayTimer = [NSTimer timerWithTimeInterval:self.displayDelay
+                                                    target:self
+                                                  selector:@selector(displayPendingMessage)
+                                                  userInfo:nil
+                                                   repeats:NO];
+
     [[NSRunLoop currentRunLoop] addTimer:self.autoDisplayTimer forMode:NSDefaultRunLoopMode];
 }
 

@@ -27,12 +27,11 @@
 #import "UAInAppMessage.h"
 #import "UAInAppMessageView.h"
 #import "UAirship.h"
-#import "UAInAppmessaging.h"
+#import "UAInAppMessaging.h"
 #import "UAInAppMessageButtonActionBinding.h"
 #import "UAUserNotificationCategory.h"
 
-#define kUAInAppMessageDefaultPrimaryColor [UIColor whiteColor]
-#define kUAInAppMessageDefaultSecondaryColor [UIColor colorWithRed:40.0/255 green:40.0/255 blue:40.0/255 alpha:1]
+
 #define kUAInAppMessageAnimationDuration 0.2
 #define kUAInAppMessageiPhoneScreenWidthPercentage 0.95
 #define kUAInAppMessagePadScreenWidthPercentage 0.45
@@ -53,8 +52,8 @@
     if (self) {
         // The primary and secondary colors aren't set in the model, choose sensible defaults
         self.position = message.position;
-        self.primaryColor = message.primaryColor ?: kUAInAppMessageDefaultPrimaryColor;
-        self.secondaryColor = message.secondaryColor ?: kUAInAppMessageDefaultSecondaryColor;
+        self.primaryColor = message.primaryColor ?: [UAirship inAppMessaging].defaultPrimaryColor;
+        self.secondaryColor = message.secondaryColor ?: [UAirship inAppMessaging].defaultSecondaryColor;
     }
     return self;
 }

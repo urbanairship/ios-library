@@ -92,6 +92,24 @@
 @property(nonatomic, strong) UIFont *font;
 
 /**
+ * The default primary color for messages (background and button color). Colors sent in
+ * an in-app message payload will override this setting. Defaults to white.
+ */
+@property(nonatomic, strong) UIColor *defaultPrimaryColor;
+
+/**
+ * The default secondary color for messages (text and border color). Colors sent in
+ * an in-app message payload will override this setting. Defaults to gray (#282828).
+ */
+@property(nonatomic, strong) UIColor *defaultSecondaryColor;
+
+/**
+ * The initial delay before displaying an in-app message. The timer begins when the
+ * application becomes active. Defaults to 3 seconds.
+ */
+@property(nonatomic, assign) NSTimeInterval displayDelay;
+
+/**
  * An optional delegate to receive in-app messaging related callbacks.
  */
 @property(nonatomic, weak) id<UAInAppMessagingDelegate> messagingDelegate;
