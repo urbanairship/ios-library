@@ -30,6 +30,10 @@
 
 + (UIColor *)colorWithHexString:(NSString *)hexString {
 
+    if (!hexString) {
+        return nil;
+    }
+
     hexString = [hexString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
     if ([hexString hasPrefix:@"#"]) {
