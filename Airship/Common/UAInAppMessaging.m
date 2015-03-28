@@ -77,15 +77,16 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 }
 
 - (void)invalidateAutoDisplayTimer {
-    [self.autoDisplayTimer invalidate];
+    // if we've already got a valid timer, invalidate it first
+    if (self.autoDisplayTimer.isValid) {
+        [self.autoDisplayTimer invalidate];
+    }
     self.autoDisplayTimer = nil;
 }
 
 - (void)scheduleAutoDisplayTimer {
-    // if we've already got a valid timer, invalidate it first
-    if ([self.autoDisplayTimer isValid]) {
-        [self invalidateAutoDisplayTimer];
-    }
+    [self invalidateAutoDisplayTimer];
+
     self.autoDisplayTimer = [NSTimer timerWithTimeInterval:kUAInAppMessagingDelayBeforeInAppMessageDisplay
                                                   target:self
                                                 selector:@selector(displayPendingMessage)
