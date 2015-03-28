@@ -76,18 +76,22 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
                                              dataStore:dataStore];
 }
 
+- (void)invalidateAutoDisplayTimer {
+    [self.autoDisplayTimer invalidate];
+    self.autoDisplayTimer = nil;
+}
+
 - (void)scheduleAutoDisplayTimer {
+    // if we've already got a valid timer, invalidate it first
+    if ([self.autoDisplayTimer isValid]) {
+        [self invalidateAutoDisplayTimer];
+    }
     self.autoDisplayTimer = [NSTimer timerWithTimeInterval:kUAInAppMessagingDelayBeforeInAppMessageDisplay
                                                   target:self
                                                 selector:@selector(displayPendingMessage)
                                                 userInfo:nil
                                                  repeats:NO];
     [[NSRunLoop currentRunLoop] addTimer:self.autoDisplayTimer forMode:NSDefaultRunLoopMode];
-}
-
-- (void)invalidateAutoDisplayTimer {
-    [self.autoDisplayTimer invalidate];
-    self.autoDisplayTimer = nil;
 }
 
 - (void)applicationDidBecomeActive {
