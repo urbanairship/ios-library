@@ -68,7 +68,7 @@
                                     @"circular_region": @{
                                             @"latitude": @"45.5200000",
                                             @"longitude": @"122.6819000",
-                                            @"radius": @11
+                                            @"radius": @"11.0"
                                             },
                                     @"proximity": @{ @"minor": @11,
                                                      @"rssi": @-59,
@@ -157,7 +157,7 @@
     XCTAssertEqualObjects(source, [event.data objectForKey:@"source"], @"Unexpected region source.");
     XCTAssertEqualObjects(kUARegionBoundaryEventExitValue, [event.data objectForKey:@"action"], @"Unexpected boundary event.");
 
-    XCTAssertEqualObjects(event.circularRegion.radius, [[event.data objectForKey:@"circular_region"] objectForKey:@"radius"], @"Unexpected radius.");
+    XCTAssertEqualObjects(@"11.0", [[event.data objectForKey:@"circular_region"] objectForKey:@"radius"], @"Unexpected radius.");
     XCTAssertEqualObjects(@"45.5200000", [[event.data objectForKey:@"circular_region"] objectForKey:@"latitude"], @"Unexpected latitude.");
     XCTAssertEqualObjects(@"122.6819000", [[event.data objectForKey:@"circular_region"] objectForKey:@"longitude"], @"Unexpected longitude.");
 }

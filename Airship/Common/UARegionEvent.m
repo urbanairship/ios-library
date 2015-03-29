@@ -110,7 +110,7 @@
     if (self.circularRegion.isValid) {
         circularRegionDictionary = [NSMutableDictionary dictionary];
 
-        [circularRegionDictionary setValue:self.circularRegion.radius forKey:kUACircularRegionRadiusKey];
+        [circularRegionDictionary setValue:[NSString stringWithFormat:@"%.1f", self.circularRegion.radius.doubleValue] forKey:kUACircularRegionRadiusKey];
         [circularRegionDictionary setValue:[NSString stringWithFormat:@"%.7f", self.circularRegion.latitude.doubleValue] forKey:kUARegionLatitudeKey];
         [circularRegionDictionary setValue:[NSString stringWithFormat:@"%.7f", self.circularRegion.longitude.doubleValue] forKey:kUARegionLongitudeKey];
 
