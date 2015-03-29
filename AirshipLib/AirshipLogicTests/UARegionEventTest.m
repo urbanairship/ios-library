@@ -51,13 +51,8 @@
  * Test region event data directly.
  */
 - (void)testRegionEventData {
-    NSString *expectedData;
-    NSString *eventData;
-
     UARegionEvent *event = [UARegionEvent regionEventWithRegionID:@"region_id" source:@"source" boundaryEvent:UABoundaryEventEnter];
-
     UACircularRegion *circularRegion = [UACircularRegion circularRegionWithRadius:@11 latitude:@45.5200 longitude:@122.6819];
-
     UAProximityRegion *proximityRegion = [UAProximityRegion proximityRegionWithID:@"proximity_id" major:@1 minor:@11];
 
     proximityRegion.latitude = @45.5200;
@@ -67,18 +62,24 @@
     event.circularRegion = circularRegion;
     event.proximityRegion = proximityRegion;
 
-    expectedData = @"{\"circular_region\":{\"latitude\":\"45.5200000\",\"longitude\":\"122.6819000\",\"radius\":11},\"region_id\":\"region_id\",\"source\":\"source\",\"proximity\":{\"minor\":11,\"rssi\":-59,\"major\":1,\"proximity_id\":\"proximity_id\",\"latitude\":\"45.5200000\",\"longitude\":\"122.6819000\"},\"action\":\"enter\"}";
+    NSDictionary *expectedData = @{ @"action": @"enter",
+                                    @"region_id": @"region_id",
+                                    @"source": @"source",
+                                    @"circular_region": @{
+                                            @"latitude": @"45.5200000",
+                                            @"longitude": @"122.6819000",
+                                            @"radius": @11
+                                            },
+                                    @"proximity": @{ @"minor": @11,
+                                                     @"rssi": @-59,
+                                                     @"major": @1,
+                                                     @"proximity_id": @"proximity_id",
+                                                     @"latitude": @"45.5200000",
+                                                     @"longitude": @"122.6819000"
+                                                     }
+                                    };
 
-    // serialize the json data from the event
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:event.data
-                                                       options:0
-                                                         error:nil];
-
-    // turn json data serialized from the event into a string
-    eventData = [[NSString alloc] initWithBytes:jsonData.bytes length:jsonData.length encoding:NSUTF8StringEncoding];
-
-    // compare with hardcoded expected json string
-    XCTAssertEqualObjects(expectedData, eventData);
+    XCTAssertEqualObjects(expectedData, event.data);
 }
 
 /**
