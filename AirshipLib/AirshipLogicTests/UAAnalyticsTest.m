@@ -34,6 +34,7 @@
 #import "UAPreferenceDataStore.h"
 #import "UAirship.h"
 #import "UAAnalyticsDBManager.h"
+#import "UAEvent+Internal.h"
 
 @interface UAAnalyticsTest()
 @property (nonatomic, strong) UAAnalytics *analytics;
@@ -44,6 +45,7 @@
 @property (nonatomic, strong) id mockPush;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockDBManager;
+@property (nonatomic, strong) id mockApplication;
 
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
@@ -52,7 +54,6 @@
 @end
 
 @implementation UAAnalyticsTest
-
 
 - (void)setUp {
     [super setUp];
@@ -76,6 +77,10 @@
     UAConfig *config = [[UAConfig alloc] init];
     self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:self.dataStore];
     self.analytics.analyticDBManager = self.mockDBManager;
+
+    self.mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
+
  }
 
 - (void)tearDown {
@@ -87,6 +92,7 @@
     [self.mockTimeZoneClass stopMocking];
     [self.mockPush stopMocking];
     [self.mockDBManager stopMocking];
+    [self.mockApplication stopMocking];
 
     [self.dataStore removeAll];
 }
@@ -143,7 +149,6 @@
 }
 
 - (void)testRequestChannelOptInNoHeader {
-
     [[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(NO)] userPushNotificationsAllowed];
 
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
@@ -182,7 +187,6 @@
 }
 
 - (void)restoreSavedUploadEventSettingsExistingData {
-
     // Set valid data
     [self.dataStore setValue:@(kMinTotalDBSizeBytes + 5) forKey:kMaxTotalDBSizeUserDefaultsKey];
     [self.dataStore setValue:@(kMinBatchSizeBytes + 5) forKey:kMaxBatchSizeUserDefaultsKey];
@@ -366,6 +370,235 @@
     XCTAssertFalse(self.analytics.enabled);
 }
 
+/**
+ * Tests adding an invalid event.
+ * Expects adding an invalid event drops the event.
+ */
+- (void)testAddInvalidEvent {
+    // Mock invalid event
+    id mockEvent = [OCMockObject niceMockForClass:[UAEvent class]];
+    [[[mockEvent stub] andReturnValue:OCMOCK_VALUE(NO)] isValid];
+
+    // Add invalid event
+    [self.analytics addEvent:mockEvent];
+
+    // Ensure event add is never attempted
+    [[self.mockDBManager reject] addEvent:mockEvent withSessionID:OCMOCK_ANY];
+
+    [self.mockDBManager  verify];
+    [mockEvent stopMocking];
+}
+
+/**
+ * Tests adding a valid event.
+ * Expects adding a valid event succeeds and increases database size.
+ */
+- (void)testAddEvent {
+    // Mock valid event
+    id mockEvent = [OCMockObject niceMockForClass:[UAEvent class]];
+    [[[mockEvent stub] andReturnValue:OCMOCK_VALUE(YES)] isValid];
+    [[[mockEvent stub] andReturnValue:OCMOCK_VALUE((NSUInteger)11)] estimatedSize];
+
+    // Ensure addEvent:withSessionID is called
+    [[self.mockDBManager expect] addEvent:OCMOCK_ANY withSessionID:OCMOCK_ANY];
+
+    // Add valid event
+    [self.analytics addEvent:mockEvent];
+
+    // Assert that the database size increased by the estimated event size
+    XCTAssertEqual(self.analytics.databaseSize, 11);
+
+    [self.mockDBManager verify];
+    [mockEvent stopMocking];
+}
+
+/**
+ * Tests adding a valid event when analytics is disabled.
+ * Expects adding a valid event when analytics is disabled drops event.
+ */
+- (void)testAddEventAnalyticsDisabled {
+    self.analytics.enabled = false;
+
+    // Mock valid event
+    id mockEvent = [OCMockObject niceMockForClass:[UAEvent class]];
+    [[[mockEvent stub] andReturnValue:OCMOCK_VALUE(YES)] isValid];
+
+    // Add valid event
+    [self.analytics addEvent:mockEvent];
+
+    // Ensure event add is never attempted
+    [[self.mockDBManager reject] addEvent:OCMOCK_ANY withSessionID:OCMOCK_ANY];
+
+    [self.mockDBManager verify];
+    [mockEvent stopMocking];
+}
+
+/**
+ * Tests a timer is created with a background task with a specified delay.
+ * Expects that a timer is added with specified delay when sendWithDelay: is called.
+ */
+- (void)testSendWithDelay {
+    // Partial mock analytics just so we can pass hasEventsToSend checkout without adding an event
+    id mockAnalytics = [OCMockObject partialMockForObject:self.analytics];
+    [[[mockAnalytics stub] andReturnValue:OCMOCK_VALUE(YES)] hasEventsToSend];
+
+    // Mock background task so background task check passes
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    // Send with delay of 10 seconds
+    [self.analytics sendWithDelay:10];
+
+    // Check that timer is set with a fireDate of 10 ± 2 seconds in the future
+    XCTAssertEqualWithAccuracy([[self.analytics.sendTimer fireDate] timeIntervalSince1970], [[NSDate date] timeIntervalSince1970] + 10, 2);
+
+    [mockAnalytics stopMocking];
+}
+
+/**
+ * Tests timeToWaitBeforeSendingNextBatch when initialDelayRemaining is 0.
+ * Expects that timeToWaitBeforeSendingNextBatch is self.minBatchInterval - timeSinceLastSend when initialDelayRemaining is 0.
+ */
+- (void)testTimeToWaitBeforeSendingNextBatchNoInitialDelayRemaining {
+
+    // Partial mock analytics
+    id mockAnalytics = [OCMockObject partialMockForObject:self.analytics];
+    id mockDate = [OCMockObject niceMockForClass:[NSDate class]];
+
+    // Mock current date as epoch date 1970-01-01 00:00:00 +0000
+    [[[mockDate stub] andReturn:[NSDate dateWithTimeIntervalSince1970:0]] date];
+
+    // Mock timeIntervalSinceNow so that initialDelayRemaining = [self.analytics.earliestInitialSendTime timeIntervalSinceNow] = 0
+    self.analytics.earliestInitialSendTime = mockDate;
+    NSTimeInterval initialDelayRemaining = 0;
+    [[[mockDate stub] andReturnValue:OCMOCK_VALUE(initialDelayRemaining)] timeIntervalSinceNow];
+
+    // Set lastSendTime as epoch date 1970-01-01 00:00:00 +0000
+    self.analytics.lastSendTime = [NSDate dateWithTimeIntervalSince1970:0];
+
+    // Set minBatchInterval as 60s
+    self.analytics.minBatchInterval = 60;
+
+    NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.analytics.lastSendTime];
+
+    // Assert that the unmocked analytics timeToWaitBeforeSendingNextBatch returns (self.analytics.minBatchInterval - timeSinceLastSend)
+    XCTAssertTrue(self.analytics.timeToWaitBeforeSendingNextBatch == (self.analytics.minBatchInterval - timeSinceLastSend));
+
+    [mockAnalytics stopMocking];
+    [mockDate stopMocking];
+}
+
+/**
+ * Tests timeToWaitBeforeSendingNextBatch timeSinceLastSend > minBatchInterval and delay is 0.
+ * Expects that initialDelayRemaining is returned.
+ */
+- (void)testTimeToWaitBeforeSendingNextBatchNoDelay{
+
+    // Partial mock analytics
+    id mockAnalytics = [OCMockObject partialMockForObject:self.analytics];
+    id mockDate = [OCMockObject niceMockForClass:[NSDate class]];
+
+    // Mock timeIntervalSinceNow so that initialDelayRemaining = 1
+    self.analytics.earliestInitialSendTime = mockDate;
+    NSTimeInterval initialDelayRemaining = 1;
+    [[[mockDate stub] andReturnValue:OCMOCK_VALUE(initialDelayRemaining)] timeIntervalSinceNow];
+
+    // Set lastSendTime as epoch date 1970-01-01 00:00:00 +0000
+    self.analytics.lastSendTime = [NSDate dateWithTimeIntervalSince1970:0];
+
+    // Set minBatchInterval as 0s
+    self.analytics.minBatchInterval = 0;
+
+    // Assert that the unmocked analytics timeToWaitBeforeSendingNextBatch returns (self.analytics.minBatchInterval - timeSinceLastSend)
+    XCTAssertTrue(self.analytics.timeToWaitBeforeSendingNextBatch == initialDelayRemaining);
+
+    [mockAnalytics stopMocking];
+    [mockDate stopMocking];
+}
+
+
+/**
+ * Tests when sendWithDelay: fails to create a background task does not add a timer.
+ * Expects that a timer is not added when sendWithDelay fails to create a valid background task.
+ */
+- (void)testSendWithDelayFailedToCreateBGTask {
+    // Partial mock analytics just so we can pass hasEventsToSend checkout without adding an event
+    id mockAnalytics = [OCMockObject partialMockForObject:self.analytics];
+    [[[mockAnalytics stub] andReturnValue:OCMOCK_VALUE(YES)] hasEventsToSend];
+
+    // Mock background task so background task check fails
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE(UIBackgroundTaskInvalid)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    //Test that timer is nil
+    XCTAssertNil(self.analytics.sendTimer);
+
+    // Send with delay of 1 without mocking a background task
+    [self.analytics sendWithDelay:1];
+
+    //Test that timer is still nil due background task check failing
+    XCTAssertNil(self.analytics.sendTimer);
+
+    [mockAnalytics stopMocking];
+}
+
+/**
+ * Tests sendWithDelay: with a delay that is shorter then the existing timer's fireDate.
+ * Expects that a new timer is not added when timer delay date from now is sooner than the timer's fire date.
+ */
+- (void)testSendWithDelayExistingShorterTimerDelay {
+    // Partial mock analytics just so we can pass hasEventsToSend checkout without adding an event
+    id mockAnalytics = [OCMockObject partialMockForObject:self.analytics];
+
+    [[[mockAnalytics stub] andReturnValue:OCMOCK_VALUE(YES)] hasEventsToSend];
+
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    // Send with delay of 30 seconds
+    [self.analytics sendWithDelay:30];
+
+    // Check that timer is set with a fireDate of 30 ± 2 seconds in the future
+    XCTAssertEqualWithAccuracy([[self.analytics.sendTimer fireDate] timeIntervalSince1970], [[NSDate date] timeIntervalSince1970] + 30, 2);
+
+    // Send with delay of 10 second
+    [self.analytics sendWithDelay:10];
+
+    // Check that timer is now set with a fireDate of 10 ± 2 seconds in the future
+    XCTAssertEqualWithAccuracy([[self.analytics.sendTimer fireDate] timeIntervalSince1970], [[NSDate date] timeIntervalSince1970] + 10, 2);
+
+    [mockAnalytics stopMocking];
+}
+
+/**
+ * Tests sendWithDelay: with a delay that is longer then the existing timer's fireDate.
+ * Expects that a new timer is added when timer delay date from now is sooner than the timer's fire date.
+ */
+- (void)testSendWithDelayExistingLongerTimerDelay {
+    // Partial mock analytics just so we can pass hasEventsToSend checkout without adding an event
+    id mockAnalytics = [OCMockObject partialMockForObject:self.analytics];
+
+    [[[mockAnalytics stub] andReturnValue:OCMOCK_VALUE(YES)] hasEventsToSend];
+
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    // Send with delay of 10 seconds
+    [self.analytics sendWithDelay:10];
+
+    // Check that timer is set with a fireDate of 10 ± 5 seconds in the future
+    XCTAssertEqualWithAccuracy([[self.analytics.sendTimer fireDate] timeIntervalSince1970], [[NSDate date] timeIntervalSince1970] + 10, 2);
+
+    // Send with delay of 30 second
+    [self.analytics sendWithDelay:30];
+
+    // Check that timer is still set with a fireDate of 10 ± 2 seconds in the future
+    XCTAssertEqualWithAccuracy([[self.analytics.sendTimer fireDate] timeIntervalSince1970], [[NSDate date] timeIntervalSince1970] + 10, 2);
+
+    // Check that timer is not set with a fireDate of 30 ± 2 seconds in the future
+    XCTAssertNotEqualWithAccuracy([[self.analytics.sendTimer fireDate] timeIntervalSince1970], [[NSDate date] timeIntervalSince1970] + 30, 2);
+
+    [mockAnalytics stopMocking];
+}
+
+#pragma Helpers
+
 - (void)setCurrentLocale:(NSString *)localeCode {
     NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:localeCode];
 
@@ -374,7 +607,7 @@
 
 - (void)setTimeZone:(NSString *)name {
     NSTimeZone *timeZone = [[NSTimeZone alloc] initWithName:name];
-    
+
     [[[self.mockTimeZoneClass stub] andReturn:timeZone] defaultTimeZone];
 }
 

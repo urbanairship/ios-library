@@ -243,6 +243,11 @@
  */
 - (BOOL)isEventValid:(NSMutableDictionary *)event;
 
+/**
+ * Checks database size and event count to determine if there are events to send.
+ * @return 'YES' If there are events to send, 'NO' otherwise.
+ */
+- (BOOL)hasEventsToSend;
 
 /**
  * Called to notify analytics the app was launched from a push notification.
