@@ -29,6 +29,9 @@
 
 @class UAInAppMessage;
 
+/**
+ * In-app message display event.
+ */
 @interface UAInAppDisplayEvent : UAEvent
 
 /**

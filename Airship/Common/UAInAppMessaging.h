@@ -52,6 +52,9 @@
 @end
 
 
+/**
+ * Manager class for in-app messaging.
+ */
 @interface UAInAppMessaging : NSObject
 
 /**
