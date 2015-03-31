@@ -38,19 +38,23 @@ Known issues with iOS 8.0.0 that may impact your application:
   workaround. We plan to release this as soon as we have verified that iOS contains a fix
   for this issue.
 
-------------------------------
-6.0.0.x - Early Access/Preview
-------------------------------
-
-Added to preview on February 27, 2015
--------------------------------------
- - Initial Preview release for 6.0.0.
- - Support for in-app messaging.
- - Support for associating and disassociating a channel to a named user.
- - Added new region events for proximity triggers.
- - Modernized public BOOL properties to include the prefix "is" on the getter.
- - Reduced the number of internal singletons. UAPush, UAInbox, UAInboxList, UAActionRegistry shared methods have been deprecated
-   and are now accessible from class methods on UAirship.
+----------------------
+6.0.0 - March 31, 2015
+----------------------
+- Support for in-app messaging.
+- Support for associating and disassociating a channel to a named user.
+- Added new region events for proximity triggers.
+- Added a flag to enable/disable analytics at runtime. Useful for providing a privacy opt-out switch.
+- Disabling 'userPushNotificationsEnabled' in UAPush is now prevented by the flag 'requireSettingsAppToDisableUserNotifications' in
+  iOS8. It is strongly recommended to link the Settings app instead of providing an in-app toggle to turn on and off push. This is 
+  to work around ongoing bugs in iOS8 (Radar #17878212).
+- Modernized public BOOL properties to include the prefix "is" on the getter.
+- Reduced the number of internal singletons. UAPush, UAInbox, UAUser, UAActionRegistry shared methods have been deprecated
+  and are now accessible from class methods on UAirship.
+- Removed action name from action method signatures. The action name is now available with the action arguments metadata.
+- UAPushNotificationHandler is no longer automatically set as the push handler if the class was present.
+- Fixed Urban Airship Javascript bridge when the associated InboxMessage contains invalid characters in its title.
+- Fixed Inbox not repopulating its messages when an upgrade causes the inbox's internal cache to be dropped.
 
 -------------------------
 5.1.1 - December 11, 2014
