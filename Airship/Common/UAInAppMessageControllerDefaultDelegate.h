@@ -54,6 +54,7 @@
  * e.g. for a two-button layout, the first would be index 0, and the second would be index 1.
  *
  * @param messageView The messageView, in this case a UAInAppMessageView.
+ * @param index The button's index.
  * @return The UIControl instance corresponding to the action index, in this case "button1" or "button2".
  */
 - (UIControl *)messageView:(UIView *)messageView buttonAtIndex:(NSUInteger)index;

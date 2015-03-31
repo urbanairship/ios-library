@@ -23,6 +23,11 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+if [[ $# -ne 2 ]] ; then
+    echo 'Need to specify target and destination.'
+    exit 0
+fi
+
 ROOT_PATH=`dirname "${0}"`/../
 SRC_PATH="${1}"
 DEST_PATH="${2}"

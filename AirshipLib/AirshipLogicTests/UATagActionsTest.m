@@ -83,7 +83,7 @@
 
     for (NSInteger i = 0; i < 4; i++) {
         args.situation = situations[i];
-        NSLog(@"situation!: %ld", args.situation);
+        NSLog(@"situation!: %ld", (long)args.situation);
         XCTAssertTrue([action acceptsArguments:args], @"any non-background situation should be valid");
     }
 
