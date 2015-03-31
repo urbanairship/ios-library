@@ -208,7 +208,7 @@
 - (void)buildLayoutWithPosition:(UAInAppMessagePosition)position numberOfButtons:(NSUInteger)numberOfButtons {
 
     // layout constants
-    CGFloat verticalMargin = self.verticalMargin = 10;
+    self.verticalMargin = 10;
     CGFloat horizontalMargin = 10;
     CGFloat tabHeight = 3;
     CGFloat tabWidth = 35;
@@ -223,7 +223,7 @@
     [self.autolayoutViews setValue:self.containerView forKey:@"container"];
     [self.autolayoutViews setValue:self.maskView forKey:@"mask"];
 
-    id metrics = @{@"verticalMargin": @(verticalMargin),
+    id metrics = @{@"verticalMargin": @(self.verticalMargin),
                    @"horizontalMargin":@(horizontalMargin),
                    @"tabMargin":@(tabMargin),
                    @"tabHeight":@(tabHeight),
