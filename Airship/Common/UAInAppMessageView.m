@@ -39,12 +39,19 @@
 
 @interface UAInAppMessageView ()
 
+// subviews
 @property(nonatomic, strong) UIView *containerView;
 @property(nonatomic, strong) UIView *maskView;
 @property(nonatomic, strong) UIView *tab;
 @property(nonatomic, strong) UILabel *messageLabel;
 @property(nonatomic, strong) UIButton *button1;
 @property(nonatomic, strong) UIButton *button2;
+
+// autolayout properties
+@property(nonatomic, strong) NSMutableDictionary *autolayoutMetrics;
+@property(nonatomic, strong) NSMutableDictionary *autolayoutViews;
+@property(nonatomic, strong) NSArray *statusBarConstraints;
+@property(nonatomic, assign) CGFloat verticalMargin;
 
 @end
 
@@ -111,6 +118,8 @@
         [self addSubview:self.maskView];
 
         [self buildLayoutWithPosition:position numberOfButtons:numberOfButtons];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarFrameDidChange:) name:UIApplicationDidChangeStatusBarFrameNotification object:nil];
     }
 
     return self;
@@ -168,9 +177,6 @@
 - (NSArray *)constraintsForTopPositionWithNumberOfButtons:(NSUInteger)numberOfButtons {
     NSMutableArray *constraints = [NSMutableArray array];
 
-    // label is at the top
-    [constraints addObject:@"V:|-verticalMargin-[label]"];
-
     // 0 buttons
     if (!numberOfButtons) {
         // label is followed by the tab and the edge
@@ -202,31 +208,32 @@
 - (void)buildLayoutWithPosition:(UAInAppMessagePosition)position numberOfButtons:(NSUInteger)numberOfButtons {
 
     // layout constants
-    CGFloat verticalMargin = 10;
+    self.verticalMargin = 10;
     CGFloat horizontalMargin = 10;
     CGFloat tabHeight = 3;
     CGFloat tabWidth = 35;
     CGFloat tabMargin = 5;
 
     // views and metrics dictionaries for binding in VFL expressions
-    NSMutableDictionary *views = [NSMutableDictionary dictionary];
-    [views setValue:self.tab forKey:@"tab"];
-    [views setValue:self.messageLabel forKey:@"label"];
-    [views setValue:self.button1 forKey:@"button1"];
-    [views setValue:self.button2 forKey:@"button2"];
-    [views setValue:self.containerView forKey:@"container"];
-    [views setValue:self.maskView forKey:@"mask"];
+    self.autolayoutViews = [NSMutableDictionary dictionary];
+    [self.autolayoutViews setValue:self.tab forKey:@"tab"];
+    [self.autolayoutViews setValue:self.messageLabel forKey:@"label"];
+    [self.autolayoutViews setValue:self.button1 forKey:@"button1"];
+    [self.autolayoutViews setValue:self.button2 forKey:@"button2"];
+    [self.autolayoutViews setValue:self.containerView forKey:@"container"];
+    [self.autolayoutViews setValue:self.maskView forKey:@"mask"];
 
-    id metrics = @{@"verticalMargin": @(verticalMargin),
+    id metrics = @{@"verticalMargin": @(self.verticalMargin),
                    @"horizontalMargin":@(horizontalMargin),
                    @"tabMargin":@(tabMargin),
                    @"tabHeight":@(tabHeight),
                    @"tabWidth":@(tabWidth),
                    @"maskHeight":@(kUAInAppMessageViewCornerRadius)};
 
+    self.autolayoutMetrics = [NSMutableDictionary dictionaryWithDictionary:metrics];
 
     // centering the tab requires laying out a constraint the hard way
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:views[@"tab"]
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.tab
                                                      attribute:NSLayoutAttributeCenterX
                                                      relatedBy:NSLayoutRelationEqual
                                                         toItem:self
@@ -250,15 +257,54 @@
         [positionalConstraints addObjectsFromArray:[self constraintsForBottomPositionWithNumberOfButtons:numberOfButtons]];
     } else {
         [positionalConstraints addObjectsFromArray:[self constraintsForTopPositionWithNumberOfButtons:numberOfButtons]];
+        // calculate status bar constraints separately, as these may need to be updated on the fly
+        [self updateStatusBarConstraints];
     }
 
-    // add all the constraints
+    // add all the common and the positional constraints defined above
     for (NSString *formatString in [commonConstraints arrayByAddingObjectsFromArray:positionalConstraints]) {
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:formatString
                                                                      options:0
-                                                                     metrics:metrics
-                                                                       views:views]];
+                                                                     metrics:self.autolayoutMetrics
+                                                                       views:self.autolayoutViews]];
     }
+}
+
+- (void)updateStatusBarConstraints {
+
+    CGRect statusBarFrame = [UIApplication sharedApplication].statusBarFrame;
+
+    // on iOS 7 the width and height values will potentially be swapped. iOS 8 introduced a change to the way
+    // screen coordinates are expressed in rotation, where the width and height remain constant
+    // regardless of orientation.
+    CGFloat newHeight = MIN(CGRectGetHeight(statusBarFrame), CGRectGetWidth(statusBarFrame));
+
+    // calculate the vertical margin for the top position by adding the existing margin and the status bar height
+    self.autolayoutMetrics[@"verticalMarginTop"] = @(newHeight + self.verticalMargin);
+
+    // remove any existing constraints in this vein
+    if (self.statusBarConstraints) {
+        [self removeConstraints:self.statusBarConstraints];
+    }
+
+    // create and add the new constraints
+    self.statusBarConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-verticalMarginTop-[label]" options:0 metrics:self.autolayoutMetrics views:self.autolayoutViews];
+
+    [self addConstraints:self.statusBarConstraints];
+}
+
+
+- (void)statusBarFrameDidChange:(NSNotification *)notification {
+    /*
+     * Note: iOS 8 appears to have a bug where the status bar geometry isn't updated
+     * at the time this notification fires. Delaying the layout update by a runloop
+     * iteration is a workaround that also functions wells in iOS 7.
+     */
+    [self performSelector:@selector(updateStatusBarConstraints) withObject:nil afterDelay:0];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end
