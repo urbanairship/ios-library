@@ -274,8 +274,9 @@
 
     CGRect statusBarFrame = [UIApplication sharedApplication].statusBarFrame;
 
-    // on iOS 7 the width and height values will be swapped, due to changes in the way screen coordinates
-    // are handled in rotation.
+    // on iOS 7 the width and height values will potentially be swapped. iOS 8 introduced a change to the way
+    // screen coordinates are expressed in rotation, where the width and height remain constant
+    // regardless of orientation.
     CGFloat newHeight = MIN(CGRectGetHeight(statusBarFrame), CGRectGetWidth(statusBarFrame));
 
     // calculate the vertical margin for the top position by adding the existing margin and the status bar height
