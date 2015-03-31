@@ -294,7 +294,11 @@
 
 
 - (void)statusBarFrameDidChange:(NSNotification *)notification {
-    // perform on the next runloop iteration
+    /*
+     * Note: iOS 8 appears to have a bug where the status bar geometry isn't updated
+     * at the time this notification fires. Delaying the layout update by a runloop
+     * iteration is a workaround that also functions wells in iOS 7.
+     */
     [self performSelector:@selector(updateStatusBarConstraints) withObject:nil afterDelay:0];
 }
 
