@@ -24,5 +24,5 @@
 //     
 CURRENT_PROJECT_VERSION = 6.0.0
 
-// Include the preview build warning
-OTHER_CFLAGS = -DUA_PREVIEW=1
+// Uncomment to include the preview build warning
+// OTHER_CFLAGS = -DUA_PREVIEW=1
