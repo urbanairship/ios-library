@@ -49,7 +49,7 @@
 
 // autolayout properties
 @property(nonatomic, strong) NSMutableDictionary *autolayoutMetrics;
-@property(nonatomic, strong) NSDictionary *autolayoutViews;
+@property(nonatomic, strong) NSMutableDictionary *autolayoutViews;
 @property(nonatomic, strong) NSArray *statusBarConstraints;
 @property(nonatomic, assign) CGFloat verticalMargin;
 
