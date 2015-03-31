@@ -26,18 +26,6 @@ Known issues with iOS 8.0.0 that may impact your application:
   in the set registered with iOS. You may see notification actions with the wrong color
   or authorization required status (Radar #18385104).
 
-  NOTE:
-  The workaround for the bug impacting registrations for UIUserNotificationTypeNone
-  may impact your ability to send broadcast background pushes to ALL users if the payload
-  contains a badge, alert or sound as the user facing parts of the payload will still be
-  displayed by iOS even if your application has set userNotifications to NO in the SDK.
-  Currently, Urban Airship will not send any notifications to users who are not opted-in,
-  but we will soon be supporting the new iOS 8 feature that allows sending background push
-  to these users. If you wish to make use of this feature, be sure to send only data
-  (no badge/alert/sound) or wait for an updated SDK or instructions on how to disable the
-  workaround. We plan to release this as soon as we have verified that iOS contains a fix
-  for this issue.
-
 ----------------------
 6.0.0 - March 31, 2015
 ----------------------
