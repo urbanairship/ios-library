@@ -242,6 +242,10 @@
     // the animation isn't disrupted
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self animateOutWithParentView:self.messageView.superview completionHandler:^{
+            if (self.dismissalBlock) {
+                self.dismissalBlock();
+            }
+
             [self finishTeardown];
         }];
     });
@@ -249,8 +253,7 @@
 
 /**
  * Finalizes dismissal by removing the message view from its
- * parent, releasing the reference to self and calling the
- * dismissal block.
+ * parent, and releasing the reference to self
  */
 - (void)finishTeardown {
     [self.messageView removeFromSuperview];
@@ -258,10 +261,6 @@
     self.messageView = nil;
     // release self
     self.referenceToSelf = nil;
-
-    if (self.dismissalBlock) {
-        self.dismissalBlock();
-    }
 }
 
 /**
