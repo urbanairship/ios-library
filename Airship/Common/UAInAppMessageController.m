@@ -242,27 +242,58 @@
     // the animation isn't disrupted
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self animateOutWithParentView:self.messageView.superview completionHandler:^{
-            [self.messageView removeFromSuperview];
-
-            self.messageView = nil;
-            // release self
-            self.referenceToSelf = nil;
-
             if (self.dismissalBlock) {
                 self.dismissalBlock();
             }
+
+            [self finishTeardown];
         }];
     });
 }
 
-- (void)dismiss {
+/**
+ * Finalizes dismissal by removing the message view from its
+ * parent, and releasing the reference to self
+ */
+- (void)finishTeardown {
+    [self.messageView removeFromSuperview];
+
+    self.messageView = nil;
+    // release self
+    self.referenceToSelf = nil;
+}
+
+/**
+ * Prepares the message view for dismissal by disabling interaction, removing
+ * the pan gesture recognizer and releasing resources that can be disposed of
+ * prior to starting the dismissal animation.
+ */
+- (void)beginTeardown {
     // prevent additional user interaction once the view starts to go away
     self.messageView.userInteractionEnabled = NO;
 
+    // remove our pan gesture recognizer from the parent
+    [self.messageView.superview removeGestureRecognizer:self.panGestureRecognizer];
+
+    // invalidate the timer
     [self.dismissalTimer invalidate];
     self.dismissalTimer = nil;
 
+    // remove ourself as an observer of app state
     [self resignAppStateTransitions];
+}
+
+/**
+ * Releases all resources. This method can be safely called
+ * in dealloc as a protection against unexpected early release.
+ */
+- (void)teardown {
+    [self beginTeardown];
+    [self finishTeardown];
+}
+
+- (void)dismiss {
+    [self beginTeardown];
     [self dismissWithRunloopDelay];
 }
 
@@ -437,6 +468,13 @@
  */
 - (NSTimeInterval)displayDuration {
     return [[NSDate date] timeIntervalSinceDate:self.startDisplayDate];
+}
+
+- (void)dealloc {
+    // release resources if dismissal has not already occured.
+    // in the case where the message has already been dismissed, this
+    // will be a no-op.
+    [self teardown];
 }
 
 @end
