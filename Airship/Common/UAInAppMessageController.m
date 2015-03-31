@@ -259,6 +259,9 @@
     // prevent additional user interaction once the view starts to go away
     self.messageView.userInteractionEnabled = NO;
 
+    // remove our pan gesture recognizer from the parent
+    [self.messageView.superview removeGestureRecognizer:self.panGestureRecognizer];
+
     [self.dismissalTimer invalidate];
     self.dismissalTimer = nil;
 
