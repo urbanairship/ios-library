@@ -54,26 +54,24 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     pushDelegate = [[UATestPushDelegate alloc] init];
     [UAirship push].pushNotificationDelegate = pushDelegate;
 
-//    // enable push via the UI
-//    [tester tapViewWithAccessibilityLabel:@"Push Settings"];
-//    [tester setOn:YES forSwitchWithAccessibilityLabel:@"Push Notifications Enabled"];
-//    [tester waitForViewWithAccessibilityLabel:@"Push Notifications Enabled" value:@"1" traits:UIAccessibilityTraitNone];
+    // don't require settings app to disable push
+    [UAirship push].requireSettingsAppToDisableUserNotifications = NO;
+    [UAirship push].allowUnregisteringUserNotificationTypes = NO;
 
-//    // save push enabled
-//    [tester tapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton];
+    // enable push via the UI
+    [tester tapViewWithAccessibilityLabel:@"Push Settings"];
+    [tester setOn:YES forSwitchWithAccessibilityLabel:@"Push Notifications Enabled"];
+    [tester waitForViewWithAccessibilityLabel:@"Push Notifications Enabled" value:@"1" traits:UIAccessibilityTraitNone];
 
-    // Comment out enabling & verifying push via UI and enable push programmatically
-    // due to ongoing bugs in iOS8 that recommend to link the Settings app
-    // instead of using the in-app toggle to turn on and off push.
-
-    [UAirship push].userPushNotificationsEnabled = YES;
+    // save push enabled
+    [tester tapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton];
 
     // wait for registration
     NSLog(@"Wait for the registration to succeed.");
     [tester waitForTimeInterval:kPushRegistrationWait];
 
-//    // verify push is enabled
-//    [tester verifyPushEnabled:YES];
+    // verify push is enabled
+    [tester verifyPushEnabled:YES];
 
     // Verify channel ID created
     NSString *channelID = [UAirship push].channelID;
@@ -98,21 +96,20 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
 }
 
 - (void)afterAll {
-// Temporarily comment out disabling push in UI settings until the ongoing bugs in iOS 8 are fixed.
-//
-//    NSLog(@"-----------------------------------------------------------------------------------------------");
-//    NSLog(@"Test that push can be disabled in the settings screen and unregister from remote notifications.");
-//    NSLog(@"-----------------------------------------------------------------------------------------------");
-//
-//    // disable push via the UI
-//    [tester tapViewWithAccessibilityLabel:@"Push Settings"];
-//    [tester setOn:NO forSwitchWithAccessibilityLabel:@"Push Notifications Enabled"];
-//
-//    // save push disabled
-//    [tester tapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton];
-//
-//    // verify push is disabled
-//    [tester verifyPushEnabled:NO];
+
+    NSLog(@"-----------------------------------------------------------------------------------------------");
+    NSLog(@"Test that push can be disabled in the settings screen and unregister from remote notifications.");
+    NSLog(@"-----------------------------------------------------------------------------------------------");
+
+    // disable push via the UI
+    [tester tapViewWithAccessibilityLabel:@"Push Settings"];
+    [tester setOn:NO forSwitchWithAccessibilityLabel:@"Push Notifications Enabled"];
+
+    // save push disabled
+    [tester tapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton];
+
+    // verify push is disabled
+    [tester verifyPushEnabled:NO];
 
     pushDelegate = nil;
 }
