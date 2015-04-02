@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6751" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" variant="6xAndEarlier" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6751" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" variant="6xAndEarlier" propertyAccessControl="none">
     <dependencies>
         <deployment version="1536" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
@@ -35,7 +35,7 @@
                     <switch opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="144">
                         <rect key="frame" x="221" y="8" width="79" height="27"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                        <accessibility key="accessibilityConfiguration" label="Do Not Send User Data"/>
+                        <accessibility key="accessibilityConfiguration" label="Push Notifications Enabled"/>
                         <connections>
                             <action selector="switchValueChanged:" destination="-1" eventType="valueChanged" id="146"/>
                         </connections>
@@ -140,7 +140,7 @@
                     <switch opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="IH8-tU-vgS">
                         <rect key="frame" x="221" y="8" width="79" height="27"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                        <accessibility key="accessibilityConfiguration" label="Push Notifications Enabled"/>
+                        <accessibility key="accessibilityConfiguration" label="Do Not Send User Data"/>
                         <connections>
                             <action selector="switchValueChanged:" destination="-1" eventType="valueChanged" id="eI6-cn-XwA"/>
                         </connections>
