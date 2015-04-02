@@ -100,8 +100,8 @@ extern UALogLevel uaLogLevel; // Default is UALogLevelError
 #define UALOG UA_LDEBUG
 
 // constants
-#define kAirshipProductionServer @"https://device-api.urbanairship.com"
-#define kAnalyticsProductionServer @"https://combine.urbanairship.com"
+#define kUAAirshipProductionServer @"https://device-api.urbanairship.com"
+#define kUAAnalyticsProductionServer @"https://combine.urbanairship.com"
 #define kUAProductionLandingPageContentURL @"https://dl.urbanairship.com/aaa"
 
 #ifdef _UA_VERSION
