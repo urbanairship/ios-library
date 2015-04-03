@@ -54,10 +54,6 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     pushDelegate = [[UATestPushDelegate alloc] init];
     [UAirship push].pushNotificationDelegate = pushDelegate;
 
-    // don't require settings app to disable push
-    [UAirship push].requireSettingsAppToDisableUserNotifications = NO;
-    [UAirship push].allowUnregisteringUserNotificationTypes = NO;
-
     // enable push via the UI
     [tester tapViewWithAccessibilityLabel:@"Push Settings"];
     [tester setOn:YES forSwitchWithAccessibilityLabel:@"Push Notifications Enabled"];

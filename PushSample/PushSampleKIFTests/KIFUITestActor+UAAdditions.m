@@ -32,6 +32,19 @@
 
 @implementation KIFUITestActor (UAAdditions)
 
+// This method adds an observer for UIApplicationDidFinishLaunchingNotification
++ (void)load {
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:[KIFUITestActor class] selector:@selector(setNotificationProperties:) name:UIApplicationDidFinishLaunchingNotification object:nil];
+}
+
+// This method sets the flags to work around the iOS 8 issue.
++ (void)setNotificationProperties:(NSNotification *)notification {
+    // don't require settings app to disable push
+    [UAirship push].requireSettingsAppToDisableUserNotifications = NO;
+    [UAirship push].allowUnregisteringUserNotificationTypes = NO;
+}
+
 // This method stores the uniqueID for the expected push notification
 - (void)setUniqueID:(NSString *)alertID {
     return [self runBlock:^KIFTestStepResult(NSError *__autoreleasing *error) {
