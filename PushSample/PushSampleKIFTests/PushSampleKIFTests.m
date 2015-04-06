@@ -86,15 +86,13 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
 
     if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
         [tester tapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton];
-    } else {
-        [tester tapViewWithAccessibilityLabel:@"Push Notification Demo" traits:UIAccessibilityTraitButton];
     }
-
 
     [tester tapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton];
 }
 
 - (void)afterAll {
+
     NSLog(@"-----------------------------------------------------------------------------------------------");
     NSLog(@"Test that push can be disabled in the settings screen and unregister from remote notifications.");
     NSLog(@"-----------------------------------------------------------------------------------------------");

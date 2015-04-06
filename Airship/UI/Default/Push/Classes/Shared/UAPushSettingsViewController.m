@@ -498,8 +498,8 @@ enum {
  * @return YES if the row should be included, otherwise NO.
  */
 - (BOOL)shouldDisplaySystemPushLink {
-    // If the switch is on, AND we can link to user notification settings (i.e., iOS8), let's show the toggle
-    return ([UIUserNotificationSettings class] && [UAirship push].userPushNotificationsEnabled);
+    // If the switch is on, AND we require link to user notification settings (i.e., iOS8), let's show the toggle
+    return ([UAirship push].requireSettingsAppToDisableUserNotifications && [UAirship push].userPushNotificationsEnabled);
 }
 
 - (void)openSystemPushSettings {
