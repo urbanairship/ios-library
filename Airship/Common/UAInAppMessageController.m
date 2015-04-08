@@ -52,6 +52,8 @@
 @property(nonatomic, assign) BOOL swipeDetected;
 @property(nonatomic, assign) BOOL tapDetected;
 @property(nonatomic, assign) BOOL longPressDetected;
+@property(nonatomic, assign) BOOL isShown;
+@property(nonatomic, assign) BOOL isDismissed;
 
 /**
  * A timer set for the duration of the message, after wich the view is dismissed.
@@ -214,7 +216,18 @@
 
 - (void)show {
 
+    if (self.isShown) {
+        UA_LDEBUG(@"In-app message has already been displayed");
+        return;
+    }
+
     UIView *parentView = [UAUtils topController].view;
+
+    // if a parent view could not be found, bail early.
+    if (!parentView) {
+        UA_LDEBUG(@"Unable to find parent view, cancelling in-app message display");
+        return;
+    }
 
     // retain self for the duration of the message display, so that avoiding premature deallocation
     // is not directly dependent on arbitrary container/object lifecycles
@@ -229,6 +242,8 @@
     
     [self signUpForControlEventsWithMessageView:messageView parentView:parentView];
 
+    self.isShown = YES;
+
     // animate the message view into place, starting the timer when the animation has completed
     [self animateInWithParentView:parentView completionHandler:^{
         [self listenForAppStateTransitions];
@@ -238,6 +253,7 @@
 }
 
 - (void)dismissWithRunloopDelay {
+    self.isDismissed = YES;
     // dispatch with a delay of zero to postpone the block by a runloop cycle, so that
     // the animation isn't disrupted
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -256,9 +272,11 @@
  * parent, and releasing the reference to self
  */
 - (void)finishTeardown {
+
     [self.messageView removeFromSuperview];
 
     self.messageView = nil;
+
     // release self
     self.referenceToSelf = nil;
 }
@@ -293,6 +311,10 @@
 }
 
 - (void)dismiss {
+    if (self.isDismissed) {
+        UA_LDEBUG(@"In-app message has already been dismissed");
+        return;
+    }
     [self beginTeardown];
     [self dismissWithRunloopDelay];
 }
