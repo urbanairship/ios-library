@@ -253,7 +253,6 @@
 }
 
 - (void)dismissWithRunloopDelay {
-    self.isDismissed = YES;
     // dispatch with a delay of zero to postpone the block by a runloop cycle, so that
     // the animation isn't disrupted
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -315,6 +314,9 @@
         UA_LDEBUG(@"In-app message has already been dismissed");
         return;
     }
+
+    self.isDismissed = YES;
+
     [self beginTeardown];
     [self dismissWithRunloopDelay];
 }
