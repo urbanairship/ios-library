@@ -225,7 +225,7 @@
 
     // if a parent view could not be found, bail early.
     if (!parentView) {
-        UA_LDEBUG(@"Unable to find parent view, cancelling in-app message display");
+        UA_LDEBUG(@"Unable to find parent view, canceling in-app message display");
         return;
     }
 
