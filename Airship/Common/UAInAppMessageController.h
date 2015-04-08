@@ -48,8 +48,10 @@
 /**
  * Show the associated message. If the message has already been shown,
  * this will be a no-op.
+ *
+ * @return `YES` if the message could be displayed, `NO` otherwise.
  */
-- (void)show;
+- (BOOL)show;
 
 /**
  * Dismiss the associated message. If the message has already been dismissed,

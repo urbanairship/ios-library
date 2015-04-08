@@ -214,7 +214,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)show {
+- (BOOL)show {
 
     if (self.isShown) {
         UA_LDEBUG(@"In-app message has already been displayed");
