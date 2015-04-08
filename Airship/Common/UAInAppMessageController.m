@@ -218,7 +218,7 @@
 
     if (self.isShown) {
         UA_LDEBUG(@"In-app message has already been displayed");
-        return;
+        return NO;
     }
 
     UIView *parentView = [UAUtils topController].view;
@@ -226,7 +226,7 @@
     // if a parent view could not be found, bail early.
     if (!parentView) {
         UA_LDEBUG(@"Unable to find parent view, canceling in-app message display");
-        return;
+        return NO;
     }
 
     // retain self for the duration of the message display, so that avoiding premature deallocation
