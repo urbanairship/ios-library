@@ -217,6 +217,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
                                                   dismissalBlock:^{
                                                       // Delete the pending payload once it's dismissed
                                                       [self deletePendingMessage:message];
+                                                      self.messageController = nil;
                                                   }];
 
     // Call the delegate, if needed
@@ -241,6 +242,8 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
             // Set the ID as the last displayed so we dont send duplicate display events
             [self.dataStore setValue:message.identifier forKey:UALastDisplayedInAppMessageID];
         }
+    } else {
+        self.messageController = nil;
     }
 }
 
