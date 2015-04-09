@@ -211,13 +211,16 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
     UA_LINFO(@"Displaying in-app message: %@", message);
 
-    UAInAppMessageController *controller;
+    __block UAInAppMessageController *controller;
     controller = [UAInAppMessageController controllerWithMessage:message
                                                         delegate:self.messageControllerDelegate
                                                   dismissalBlock:^{
                                                       // Delete the pending payload once it's dismissed
                                                       [self deletePendingMessage:message];
-                                                      self.messageController = nil;
+                                                      // Release the message controller if it hasn't been replaced
+                                                      if ([self.messageController isEqual:controller]) {
+                                                          self.messageController = nil;
+                                                      }
                                                   }];
 
     // Call the delegate, if needed
