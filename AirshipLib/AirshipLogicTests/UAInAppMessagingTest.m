@@ -36,6 +36,7 @@
     [[[self.mockMessageController stub] andReturn:self.mockMessageController] controllerWithMessage:[OCMArg any] delegate:[OCMArg any] dismissalBlock:[OCMArg any]];
 
     self.bannerMessage = [UAInAppMessage message];
+    self.bannerMessage.identifier = @"identifier";
     self.bannerMessage.alert = @"whatever";
     self.bannerMessage.displayType = UAInAppMessageDisplayTypeBanner;
     self.bannerMessage.expiry = [NSDate dateWithTimeIntervalSinceNow:10000];
@@ -124,6 +125,21 @@
     XCTAssertFalse(self.inAppMessaging.isAutoDisplayEnabled);
 }
 
+/**
+ * Test that an event is added only if the messge is actually displayed
+ */
+- (void)testSendDisplayEventIfDisplayed {
+    [(UAInAppMessageController *)[[self.mockMessageController stub] andReturnValue:OCMOCK_VALUE(YES)] show];
+
+    [[self.mockAnalytics expect] addEvent:[OCMArg any]];
+    [self.inAppMessaging displayMessage:self.bannerMessage];
+
+    [self. mockAnalytics verify];
+
+    [(UAInAppMessageController *)[[self.mockMessageController stub] andReturnValue:OCMOCK_VALUE(NO)] show];
+    [[self.mockAnalytics reject] addEvent:[OCMArg any]];
+    [self. mockAnalytics verify];
+}
 
 
 @end
