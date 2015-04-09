@@ -36,6 +36,7 @@
     [[[self.mockMessageController stub] andReturn:self.mockMessageController] controllerWithMessage:[OCMArg any] delegate:[OCMArg any] dismissalBlock:[OCMArg any]];
 
     self.bannerMessage = [UAInAppMessage message];
+    self.bannerMessage.identifier = @"identifier";
     self.bannerMessage.alert = @"whatever";
     self.bannerMessage.displayType = UAInAppMessageDisplayTypeBanner;
     self.bannerMessage.expiry = [NSDate dateWithTimeIntervalSinceNow:10000];
@@ -57,7 +58,7 @@
  * Test that banner messages are displayed
  */
 - (void)testDisplayBannerMessage {
-    [[self.mockMessageController expect] show];
+    [(UAInAppMessageController *)[self.mockMessageController expect] show];
 
     [self.inAppMessaging displayMessage:self.bannerMessage];
 
@@ -68,7 +69,7 @@
  * Test that non-banner messages are not displayed.
  */
 - (void)testDisplayNonBannerMessage {
-    [[self.mockMessageController reject] show];
+    [(UAInAppMessageController *)[self.mockMessageController reject] show];
 
     [self.inAppMessaging displayMessage:self.nonBannerMessage];
 
@@ -100,7 +101,7 @@
     self.inAppMessaging.pendingMessage = self.bannerMessage;
 
     // Expect to show the message
-    [[self.mockMessageController expect] show];
+    [(UAInAppMessageController *)[self.mockMessageController expect] show];
 
     // Trigger the message to be displayed
     [self.inAppMessaging displayPendingMessage];
@@ -124,6 +125,21 @@
     XCTAssertFalse(self.inAppMessaging.isAutoDisplayEnabled);
 }
 
+/**
+ * Test that an event is added only if the messge is actually displayed
+ */
+- (void)testSendDisplayEventIfDisplayed {
+    [(UAInAppMessageController *)[[self.mockMessageController stub] andReturnValue:OCMOCK_VALUE(YES)] show];
+
+    [[self.mockAnalytics expect] addEvent:[OCMArg any]];
+    [self.inAppMessaging displayMessage:self.bannerMessage];
+
+    [self. mockAnalytics verify];
+
+    [(UAInAppMessageController *)[[self.mockMessageController stub] andReturnValue:OCMOCK_VALUE(NO)] show];
+    [[self.mockAnalytics reject] addEvent:[OCMArg any]];
+    [self. mockAnalytics verify];
+}
 
 
 @end

@@ -46,12 +46,16 @@
                              delegate:(id<UAInAppMessageControllerDelegate>)delegate
                        dismissalBlock:(void(^)(void))dismissalBlock;
 /**
- * Show the associated message.
+ * Show the associated message. If the message has already been shown,
+ * this will be a no-op.
+ *
+ * @return `YES` if the message could be displayed, `NO` otherwise.
  */
-- (void)show;
+- (BOOL)show;
 
 /**
- * Dismiss the associated message.
+ * Dismiss the associated message. If the message has already been dismissed,
+ * this will be a no-op.
  */
 - (void)dismiss;
 

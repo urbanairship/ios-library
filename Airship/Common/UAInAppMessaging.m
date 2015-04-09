@@ -209,24 +209,18 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         return;
     }
 
-    // Send a display event if its the first time we are displaying this IAM
-    NSString *lastDisplayedIAM = [self.dataStore valueForKey:UALastDisplayedInAppMessageID];
-    if (message.identifier && ![message.identifier isEqualToString:lastDisplayedIAM]) {
-        UAInAppDisplayEvent *event = [UAInAppDisplayEvent eventWithMessage:message];
-        [self.analytics addEvent:event];
-
-        // Set the ID as the last displayed so we dont send duplicate display events
-        [self.dataStore setValue:message.identifier forKey:UALastDisplayedInAppMessageID];
-    }
-
     UA_LINFO(@"Displaying in-app message: %@", message);
 
-    UAInAppMessageController *controller;
+    __weak __block UAInAppMessageController *controller;
     controller = [UAInAppMessageController controllerWithMessage:message
                                                         delegate:self.messageControllerDelegate
                                                   dismissalBlock:^{
                                                       // Delete the pending payload once it's dismissed
                                                       [self deletePendingMessage:message];
+                                                      // Release the message controller if it hasn't been replaced
+                                                      if ([self.messageController isEqual:controller]) {
+                                                          self.messageController = nil;
+                                                      }
                                                   }];
 
     // Call the delegate, if needed
@@ -235,10 +229,26 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         [strongDelegate messageWillBeDisplayed:message];
     };
 
-    // Dismiss any existing message and show the new one
+    // Dismiss any existing message and attempt to show the new one
     [self.messageController dismiss];
-    self.messageController = controller;
-    [controller show];
+    UAInAppMessageController *strongController = controller;
+    self.messageController = strongController;;
+    BOOL displayed = [strongController show];
+
+    // If the display was successful
+    if (displayed) {
+        // Send a display event if it's the first time we are displaying this IAM
+        NSString *lastDisplayedIAM = [self.dataStore valueForKey:UALastDisplayedInAppMessageID];
+        if (message.identifier && ![message.identifier isEqualToString:lastDisplayedIAM]) {
+            UAInAppDisplayEvent *event = [UAInAppDisplayEvent eventWithMessage:message];
+            [self.analytics addEvent:event];
+
+            // Set the ID as the last displayed so we dont send duplicate display events
+            [self.dataStore setValue:message.identifier forKey:UALastDisplayedInAppMessageID];
+        }
+    } else {
+        self.messageController = nil;
+    }
 }
 
 - (void)dealloc {
