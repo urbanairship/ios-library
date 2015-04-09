@@ -57,7 +57,7 @@
  * Test that banner messages are displayed
  */
 - (void)testDisplayBannerMessage {
-    [[self.mockMessageController expect] show];
+    [(UAInAppMessageController *)[self.mockMessageController expect] show];
 
     [self.inAppMessaging displayMessage:self.bannerMessage];
 
@@ -68,7 +68,7 @@
  * Test that non-banner messages are not displayed.
  */
 - (void)testDisplayNonBannerMessage {
-    [[self.mockMessageController reject] show];
+    [(UAInAppMessageController *)[self.mockMessageController reject] show];
 
     [self.inAppMessaging displayMessage:self.nonBannerMessage];
 
@@ -100,7 +100,7 @@
     self.inAppMessaging.pendingMessage = self.bannerMessage;
 
     // Expect to show the message
-    [[self.mockMessageController expect] show];
+    [(UAInAppMessageController *)[self.mockMessageController expect] show];
 
     // Trigger the message to be displayed
     [self.inAppMessaging displayPendingMessage];

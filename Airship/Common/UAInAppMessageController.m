@@ -250,6 +250,8 @@
         [self scheduleDismissalTimer];
         self.startDisplayDate = [NSDate date];
     }];
+
+    return YES;
 }
 
 - (void)dismissWithRunloopDelay {
