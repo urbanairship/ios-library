@@ -211,7 +211,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
     UA_LINFO(@"Displaying in-app message: %@", message);
 
-    __block UAInAppMessageController *controller;
+    __weak __block UAInAppMessageController *controller;
     controller = [UAInAppMessageController controllerWithMessage:message
                                                         delegate:self.messageControllerDelegate
                                                   dismissalBlock:^{
@@ -231,8 +231,9 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
     // Dismiss any existing message and attempt to show the new one
     [self.messageController dismiss];
-    self.messageController = controller;
-    BOOL displayed = [controller show];
+    UAInAppMessageController *strongController = controller;
+    self.messageController = strongController;;
+    BOOL displayed = [strongController show];
 
     // If the display was successful
     if (displayed) {
