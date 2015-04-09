@@ -26,6 +26,12 @@ Known issues with iOS 8.0.0 that may impact your application:
   in the set registered with iOS. You may see notification actions with the wrong color
   or authorization required status (Radar #18385104).
 
+---------------------
+6.0.1 - April 9, 2015
+---------------------
+- Fixed issue where displaying an in-app message in certain
+  circumstances could cause an autolayout crash.
+
 ----------------------
 6.0.0 - March 31, 2015
 ----------------------
