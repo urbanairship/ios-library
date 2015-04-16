@@ -35,6 +35,7 @@ source "${ROOT_PATH}"/scripts/configure-xcode-version.sh
 # Grab the release version
 VERSION=$(awk <$SCRIPT_DIRECTORY/../AirshipLib/Config.xcconfig "\$1 == \"CURRENT_PROJECT_VERSION\" { print \$3 }")
 
+
 # Update AirshipLib.xcscheme with the release version
 sed "s/-[0-9].[0-9].[0-9].a/-$VERSION.a/g" $XCSCHEME_PATH/AirshipLib.xcscheme > AirshipLib.xcscheme.tmp && mv -f AirshipLib.xcscheme.tmp $XCSCHEME_PATH/AirshipLib.xcscheme
 
@@ -69,8 +70,20 @@ cp "${ROOT_PATH}/CHANGELOG" "${OUTPUT_PATH}"
 cp "${ROOT_PATH}/README.rst" "${OUTPUT_PATH}"
 cp "${ROOT_PATH}/LICENSE" "${OUTPUT_PATH}"
 
+# Build info
+BUILD_INFO=$OUTPUT_PATH/BUILD_INFO
+echo "Urban Airship SDK v${VERSION}" >> $BUILD_INFO
+echo "Build time: `date`" >> $BUILD_INFO
+echo "SDK commit: `git log -n 1 --format='%h'`" >> $BUILD_INFO
+echo "Xcode version: `xcrun xcodebuild -version | tr '\r\n' ' '`" >> $BUILD_INFO
+
+# Additional build info
+if test -f $ROOT_PATH/BUILD_INFO;
+    then cat $ROOT_PATH/BUILD_INFO >> $BUILD_INFO;
+fi
+
 cd $OUTPUT_PATH
-for PACKAGE in RichPushSample PushSample Airship reference-docs LICENSE CHANGELOG README.rst; do
+for PACKAGE in RichPushSample PushSample Airship reference-docs LICENSE CHANGELOG README.rst BUILD_INFO; do
 	zip -r libUAirship-latest.zip $PACKAGE --exclude=*.DS_Store*
 done
 cd -
