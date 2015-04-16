@@ -26,11 +26,11 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-#define kEventAppInitSize               (NSUInteger) 450//397 w/ push ID, no inbox ID
-#define kEventAppExitSize               (NSUInteger) 200//136 w/ only network type
+#define kUAEventAppInitSize               (NSUInteger) 450//397 w/ push ID, no inbox ID
+#define kUAEventAppExitSize               (NSUInteger) 200//136 w/ only network type
 
-#define kEventDeviceRegistrationSize    (NSUInteger) 200//153 w/ only user info
-#define kEventPushReceivedSize          (NSUInteger) 200//160 w/ uuid push info
+#define kUAEventDeviceRegistrationSize    (NSUInteger) 200//153 w/ only user info
+#define kUAEventPushReceivedSize          (NSUInteger) 200//160 w/ uuid push info
 
 /**
  * This base class encapsulates analytics events.

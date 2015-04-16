@@ -28,21 +28,21 @@
 @implementation UALocationTestUtils
 
 + (CLLocation *)testLocationPDX {
-    CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(kTestLatPDX, kTestLongPDX);
+    CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(kUATestLatPDX, kUATestLongPDX);
     CLLocation *location = [[CLLocation alloc] initWithCoordinate:coord
-                                                         altitude:kTestAlt
-                                               horizontalAccuracy:kTestHorizontalAccuracy
-                                                 verticalAccuracy:kTestVerticalAccuracy
+                                                         altitude:kUATestAlt
+                                               horizontalAccuracy:kUATestHorizontalAccuracy
+                                                 verticalAccuracy:kUATestVerticalAccuracy
                                                         timestamp:[NSDate date]];
     return location;
 }
 
 + (CLLocation *)testLocationSFO {
-    CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(kTestLatSFO, kTestLongSFO);
+    CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(kUATestLatSFO, kUATestLongSFO);
     CLLocation *location = [[CLLocation alloc] initWithCoordinate:coord
-                                                         altitude:kTestAlt
-                                               horizontalAccuracy:kTestHorizontalAccuracy
-                                                 verticalAccuracy:kTestVerticalAccuracy
+                                                         altitude:kUATestAlt
+                                               horizontalAccuracy:kUATestHorizontalAccuracy
+                                                 verticalAccuracy:kUATestVerticalAccuracy
                                                         timestamp:[NSDate date]];
     return location;                            
 }
@@ -50,8 +50,8 @@
 
 + (CLLocationManager *)testLocationManager {
     CLLocationManager *manager = [[CLLocationManager alloc] init];
-    manager.desiredAccuracy = kTestDesiredAccuracy;
-    manager.distanceFilter = kTestDistanceFilter;
+    manager.desiredAccuracy = kUATestDesiredAccuracy;
+    manager.distanceFilter = kUATestDistanceFilter;
     return manager;
 }
 @end

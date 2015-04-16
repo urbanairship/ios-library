@@ -37,7 +37,7 @@
 - (instancetype)initWithConfig:(UAConfig *)config {
     self = [super init];
     if (self) {
-        NSString  *databaseName = [NSString stringWithFormat:CORE_DATA_STORE_NAME, config.appKey];
+        NSString  *databaseName = [NSString stringWithFormat:UA_CORE_DATA_STORE_NAME, config.appKey];
         self.storeURL = [[self createStoreURL] URLByAppendingPathComponent:databaseName];
 
         // Delete the old directory if it exists
@@ -258,7 +258,7 @@
 - (void)deleteOldDatabaseIfExists {
     NSArray *libraryDirectories = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
     NSString *libraryDirectory = [libraryDirectories objectAtIndex:0];
-    NSString *dbPath = [libraryDirectory stringByAppendingPathComponent:OLD_DB_NAME];
+    NSString *dbPath = [libraryDirectory stringByAppendingPathComponent:UA_OLD_DB_NAME];
 
     if ([[NSFileManager defaultManager] fileExistsAtPath:dbPath]) {
         [[NSFileManager defaultManager] removeItemAtPath:dbPath error:nil];
@@ -300,7 +300,7 @@
     NSFileManager *fm = [NSFileManager defaultManager];
 
     NSURL *libraryDirectoryURL = [[fm URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
-    NSURL *directoryURL = [libraryDirectoryURL URLByAppendingPathComponent: CORE_DATA_DIRECTORY_NAME];
+    NSURL *directoryURL = [libraryDirectoryURL URLByAppendingPathComponent: UA_CORE_DATA_DIRECTORY_NAME];
 
     // Create the store directory if it doesnt exist
     if (![fm fileExistsAtPath:[directoryURL path]]) {

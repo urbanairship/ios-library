@@ -49,7 +49,7 @@
 }
 
 - (NSUInteger)estimatedSize {
-    return kEventDeviceRegistrationSize;
+    return kUAEventDeviceRegistrationSize;
 }
 
 @end

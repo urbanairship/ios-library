@@ -30,10 +30,10 @@
 @class UAInboxMessage;
 @class UAConfig;
 
-#define OLD_DB_NAME @"UAInbox.db"
+#define UA_OLD_DB_NAME @"UAInbox.db"
 
-#define CORE_DATA_STORE_NAME @"Inbox-%@.sqlite"
-#define CORE_DATA_DIRECTORY_NAME @"UAInbox"
+#define UA_CORE_DATA_STORE_NAME @"Inbox-%@.sqlite"
+#define UA_CORE_DATA_DIRECTORY_NAME @"UAInbox"
 
 /**
  * The UAInboxDBManager singleton provides access to the Rich Push Inbox data.

@@ -140,7 +140,7 @@
     UAEventAppInit *event = [UAEventAppInit event];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_init", @"Event type is unexpected.");
-    XCTAssertEqual(event.estimatedSize, kEventAppInitSize, @"Event is reporting wrong estimated size.");
+    XCTAssertEqual(event.estimatedSize, kUAEventAppInitSize, @"Event is reporting wrong estimated size.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
 
 }
@@ -177,7 +177,7 @@
     UAEventAppForeground *event = [UAEventAppForeground event];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_foreground", @"Event type is unexpected.");
-    XCTAssertEqual(event.estimatedSize, kEventAppInitSize, @"Event is reporting wrong estimated size.");
+    XCTAssertEqual(event.estimatedSize, kUAEventAppInitSize, @"Event is reporting wrong estimated size.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
 
 }
@@ -198,7 +198,7 @@
     UAEventAppExit *event = [UAEventAppExit event];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_exit", @"Event type is unexpected.");
-    XCTAssertEqual(event.estimatedSize, kEventAppExitSize, @"Event is reporting wrong estimated size.");
+    XCTAssertEqual(event.estimatedSize, kUAEventAppExitSize, @"Event is reporting wrong estimated size.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
 
@@ -211,7 +211,7 @@
     UAEventAppBackground *event = [UAEventAppBackground event];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_background", @"Event type is unexpected.");
-    XCTAssertEqual(event.estimatedSize, kEventAppExitSize, @"Event is reporting wrong estimated size.");
+    XCTAssertEqual(event.estimatedSize, kUAEventAppExitSize, @"Event is reporting wrong estimated size.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
 
@@ -230,7 +230,7 @@
     UAEventDeviceRegistration *event = [UAEventDeviceRegistration event];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"device_registration", @"Event type is unexpected.");
-    XCTAssertEqual(event.estimatedSize, kEventDeviceRegistrationSize, @"Event is reporting wrong estimated size.");
+    XCTAssertEqual(event.estimatedSize, kUAEventDeviceRegistrationSize, @"Event is reporting wrong estimated size.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
 
@@ -249,7 +249,7 @@
     UAEventPushReceived *event = [UAEventPushReceived eventWithNotification:notification];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"push_received", @"Event type is unexpected.");
-    XCTAssertEqual(event.estimatedSize, kEventPushReceivedSize, @"Event is reporting wrong estimated size.");
+    XCTAssertEqual(event.estimatedSize, kUAEventPushReceivedSize, @"Event is reporting wrong estimated size.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
 

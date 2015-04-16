@@ -25,15 +25,15 @@
 
 #import <CoreLocation/CoreLocation.h>
 
-#define kTestLatPDX 45.525352839897
-#define kTestLongPDX -122.682115697712
-#define kTestLatSFO 37.772643
-#define kTestLongSFO -122.406095
-#define kTestAlt 100.0
-#define kTestHorizontalAccuracy 5.0
-#define kTestVerticalAccuracy 5.0
-#define kTestDistanceFilter 10.0
-#define kTestDesiredAccuracy 5.0
+#define kUATestLatPDX 45.525352839897
+#define kUATestLongPDX -122.682115697712
+#define kUATestLatSFO 37.772643
+#define kUATestLongSFO -122.406095
+#define kUATestAlt 100.0
+#define kUATestHorizontalAccuracy 5.0
+#define kUATestVerticalAccuracy 5.0
+#define kUATestDistanceFilter 10.0
+#define kUATestDesiredAccuracy 5.0
 
 @interface UALocationTestUtils : NSObject
 
