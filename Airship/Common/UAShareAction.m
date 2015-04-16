@@ -45,7 +45,7 @@
         return NO;
     }
 
-    IF_IOS7_OR_GREATER(return YES;)
+    UA_IF_IOS7_OR_GREATER(return YES;)
 
     // Reject if on iOS 6.x (unsupported).
     return NO;

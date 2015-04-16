@@ -25,8 +25,6 @@
 
 #import <Foundation/Foundation.h>
 
-#define kPendingPushActionDefaultsKey @"com.urbanairship.action.pending"
-
 /**
  * Represents the possible situations.
  */

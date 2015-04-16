@@ -38,8 +38,8 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.deviceAPIURL = kAirshipProductionServer;
-        self.analyticsURL = kAnalyticsProductionServer;
+        self.deviceAPIURL = kUAAirshipProductionServer;
+        self.analyticsURL = kUAAnalyticsProductionServer;
         self.landingPageContentURL = kUAProductionLandingPageContentURL;
         self.developmentLogLevel = UALogLevelDebug;
         self.productionLogLevel = UALogLevelError;
