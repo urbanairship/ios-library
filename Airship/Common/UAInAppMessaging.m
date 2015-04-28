@@ -249,7 +249,9 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         }
     } else {
         UA_LDEBUG(@"Unable to display in-app message: %@", message);
-        UA_LTRACE(@"In-app message controller: %@", self.messageController);
+        if (!self.messageController) {
+            UA_LTRACE(@"In-app message controller is nil");
+        }
         self.messageController = nil;
     }
 }
