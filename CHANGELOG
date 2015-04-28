@@ -26,6 +26,14 @@ Known issues with iOS 8.0.0 that may impact your application:
   in the set registered with iOS. You may see notification actions with the wrong color
   or authorization required status (Radar #18385104).
 
+----------------------
+6.0.2 - April 28, 2015
+----------------------
+- Prefixed all constants in public headers with 'UA'.
+- Fixed race condition preventing the display of in-app messages on some devices.
+- Fixed missing InboxMessage metadata when running an action from a WebView with an associated message.
+- Fixed Urban Airship Javascript bridge when running actions that returns a result with unescaped JSON values.
+
 ---------------------
 6.0.1 - April 9, 2015
 ---------------------
