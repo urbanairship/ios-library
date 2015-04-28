@@ -84,7 +84,7 @@
         result = script;
     }];
 
-    XCTAssertEqualObjects(result, @"UAirship.finishAction(null, '\"howdy\"', 'some-callback-ID');", @"resulting script should pass a null error, the result value 'howdy', and the provided callback ID");
+    XCTAssertEqualObjects(result, @"UAirship.finishAction(null, \"howdy\", \"some-callback-ID\");", @"resulting script should pass a null error, the result value 'howdy', and the provided callback ID");
     XCTAssertTrue(ran, @"the action should have been run");
 
     //this produces an unserializable result, which should be converted into a string description
@@ -96,7 +96,7 @@
         result = script;
     }];
 
-    NSString *expectedResult = [NSString stringWithFormat:@"UAirship.finishAction(null, '\"%@\"', 'some-callback-ID');", self.description];
+    NSString *expectedResult = [NSString stringWithFormat:@"UAirship.finishAction(null, \"%@\", \"some-callback-ID\");", self.description];
     XCTAssertEqualObjects(result, expectedResult, @"resulting script should pass a null error, the description of the result, and the provided callback ID");
 
     [self.registry removeEntryWithName:@"test_action"];
@@ -123,7 +123,7 @@
         result = script;
     }];
 
-    XCTAssertEqualObjects(result, @"UAirship.finishAction(new Error('Error decoding action arguments from URL: uairship://run-action-cb/some-callback-ID?test_action=blah'), null, 'some-callback-ID');", @"resulting script should pass an arguments encoding error, a null result value, and the provided callback ID");
+    XCTAssertEqualObjects(result, @"UAirship.finishAction(new Error(\"Error decoding action arguments from URL: uairship:\\/\\/run-action-cb\\/some-callback-ID?test_action=blah\"), null, \"some-callback-ID\");", @"resulting script should pass an arguments encoding error, a null result value, and the provided callback ID");
     [self.registry removeEntryWithName:@"test_action"];
 }
 
@@ -138,7 +138,7 @@
         result = script;
     }];
 
-    XCTAssertEqualObjects(result, @"UAirship.finishAction(new Error('No action found with name bogus_action, skipping action.'), null, 'some-callback-ID');",@"resulting script should pass an action retrieval error, a null result value, and the provided callback ID");
+    XCTAssertEqualObjects(result, @"UAirship.finishAction(new Error(\"No action found with name bogus_action, skipping action.\"), null, \"some-callback-ID\");",@"resulting script should pass an action retrieval error, a null result value, and the provided callback ID");
 }
 
 - (void)testRunActionCBEmptyArgs {
@@ -161,7 +161,7 @@
     }];
 
     XCTAssertTrue(ran, @"the action should have been run");
-    XCTAssertEqualObjects(result, @"UAirship.finishAction(null, '\"howdy\"', 'some-callback-ID');", @"resulting script should pass a null error, the result value 'howdy', and the provided callback ID");
+    XCTAssertEqualObjects(result, @"UAirship.finishAction(null, \"howdy\", \"some-callback-ID\");", @"resulting script should pass a null error, the result value 'howdy', and the provided callback ID");
     [self.registry removeEntryWithName:@"test_action"];
 }
 

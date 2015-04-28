@@ -73,6 +73,9 @@
        callbackID:(NSString *)callbackID
 completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
+    // JSONify the callback ID
+    callbackID = [NSJSONSerialization stringWithObject:callbackID acceptingFragments:YES];
+
     UAActionCompletionHandler actionCompletionHandler = ^(UAActionResult *result) {
         UA_LDEBUG("Action %@ finished executing with status %ld", actionName, (long)result.status);
         if (!callbackID) {
@@ -82,11 +85,13 @@ completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
             return;
         }
 
-        NSString *script = nil;
+        NSString *script;
+        NSString *resultString;
+        NSString *errorMessage;
+
         switch (result.status) {
             case UAActionStatusCompleted:
             {
-                NSString *resultString;
                 if (result.value) {
                     NSError *error;
                     //if the action completed with a result value, serialize into JSON
@@ -95,30 +100,31 @@ completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
                     // If there was an error serializing, fall back to a string description.
                     if (error) {
                         UA_LDEBUG(@"Unable to serialize result value %@, falling back to string description", result.value);
+                        // JSONify the result string
                         resultString = [NSJSONSerialization stringWithObject:[result.value description] acceptingFragments:YES];
                     }
                 }
                 //in the case where there is no result value, pass null
                 resultString = resultString ?: @"null";
-                //note: JSON.parse('null') and JSON.parse(null) are functionally equivalent.
-                script = [NSString stringWithFormat:@"UAirship.finishAction(null, '%@', '%@');", resultString, callbackID];
                 break;
             }
             case UAActionStatusActionNotFound:
-                script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');",
-                          [NSString stringWithFormat:@"No action found with name %@, skipping action.", actionName],
-                          callbackID];
+                errorMessage = [NSString stringWithFormat:@"No action found with name %@, skipping action.", actionName];
                 break;
             case UAActionStatusError:
-                script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');",
-                          result.error.localizedDescription,
-                          callbackID];
+                errorMessage = result.error.localizedDescription;
                 break;
             case UAActionStatusArgumentsRejected:
-                script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');",
-                          [NSString stringWithFormat:@"Action %@ rejected arguments.", actionName],
-                          callbackID];
+                errorMessage = [NSString stringWithFormat:@"Action %@ rejected arguments.", actionName];
                 break;
+        }
+
+        if (errorMessage) {
+            // JSONify the error message
+            errorMessage = [NSJSONSerialization stringWithObject:errorMessage acceptingFragments:YES];
+            script = [NSString stringWithFormat:@"UAirship.finishAction(new Error(%@), null, %@);", errorMessage, callbackID];
+        } else if (resultString) {
+            script = [NSString stringWithFormat:@"UAirship.finishAction(null, %@, %@);", resultString, callbackID];
         }
 
         if (completionHandler) {
@@ -232,7 +238,11 @@ completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
         if (!actionValues) {
             if (callbackID) {
                 NSString *errorString = [NSString stringWithFormat:@"Error decoding action arguments from URL: %@", data.url];
-                NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');", errorString, callbackID];
+                // JSONify the the error string and callback ID
+                errorString = [NSJSONSerialization stringWithObject:errorString acceptingFragments:YES];
+                callbackID = [NSJSONSerialization stringWithObject:callbackID acceptingFragments:YES];
+
+                NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(new Error(%@), null, %@);", errorString, callbackID];
                 if (completionHandler) {
                     completionHandler(script);
                 }
