@@ -44,7 +44,7 @@
 
 @property(nonatomic, strong) UAInAppMessage *message;
 @property(nonatomic, strong) UIView *messageView;
-@property(nonatomic, copy) void (^dismissalBlock)(void);
+@property(nonatomic, copy) void (^dismissalBlock)(UAInAppMessageController *);
 @property(nonatomic, strong) NSDate *startDisplayDate;
 @property(nonatomic, strong) id<UAInAppMessageControllerDelegate> userDelegate;
 @property(nonatomic, strong) UAInAppMessageControllerDefaultDelegate *defaultDelegate;
@@ -78,7 +78,7 @@
 
 - (instancetype)initWithMessage:(UAInAppMessage *)message
                        delegate:(id<UAInAppMessageControllerDelegate>)delegate
-                 dismissalBlock:(void (^)(void))dismissalBlock {
+                 dismissalBlock:(void (^)(UAInAppMessageController *))dismissalBlock {
 
     self = [super init];
     if (self) {
@@ -93,7 +93,7 @@
 
 + (instancetype)controllerWithMessage:(UAInAppMessage *)message
                              delegate:(id<UAInAppMessageControllerDelegate>)delegate
-                       dismissalBlock:(void(^)(void))dismissalBlock {
+                       dismissalBlock:(void(^)(UAInAppMessageController *))dismissalBlock {
 
     return [[self alloc] initWithMessage:message delegate:delegate dismissalBlock:dismissalBlock];
 }
@@ -260,7 +260,7 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self animateOutWithParentView:self.messageView.superview completionHandler:^{
             if (self.dismissalBlock) {
-                self.dismissalBlock();
+                self.dismissalBlock(self);
             }
 
             [self finishTeardown];

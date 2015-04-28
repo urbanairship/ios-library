@@ -211,14 +211,15 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
     UA_LINFO(@"Displaying in-app message: %@", message);
 
-    __weak __block UAInAppMessageController *controller;
+    __block UAInAppMessageController *controller;
+
     controller = [UAInAppMessageController controllerWithMessage:message
                                                         delegate:self.messageControllerDelegate
-                                                  dismissalBlock:^{
+                                                  dismissalBlock:^(UAInAppMessageController *dismissedController){
                                                       // Delete the pending payload once it's dismissed
                                                       [self deletePendingMessage:message];
                                                       // Release the message controller if it hasn't been replaced
-                                                      if ([self.messageController isEqual:controller]) {
+                                                      if ([self.messageController isEqual:dismissedController]) {
                                                           self.messageController = nil;
                                                       }
                                                   }];
@@ -247,6 +248,8 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
             [self.dataStore setValue:message.identifier forKey:UALastDisplayedInAppMessageID];
         }
     } else {
+        UA_LDEBUG(@"Unable to display in-app message: %@", message);
+        UA_LTRACE(@"In-app message controller: %@", self.messageController);
         self.messageController = nil;
     }
 }

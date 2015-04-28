@@ -44,7 +44,7 @@
  */
 + (instancetype)controllerWithMessage:(UAInAppMessage *)message
                              delegate:(id<UAInAppMessageControllerDelegate>)delegate
-                       dismissalBlock:(void(^)(void))dismissalBlock;
+                       dismissalBlock:(void(^)(UAInAppMessageController *))dismissalBlock;
 /**
  * Show the associated message. If the message has already been shown,
  * this will be a no-op.
