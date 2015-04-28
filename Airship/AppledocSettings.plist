@@ -51,6 +51,7 @@
 		<string>UAAnalyticsDBManager.h</string>
 		<string>UASQLite.h</string>
 		<string>UALocationProviderProtocol.h</string>
+                <string>UAInAppMessageController.h</string>
 	</array>
 	<key>--project-company</key>
 	<string>Urban Airship</string>
