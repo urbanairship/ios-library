@@ -138,7 +138,9 @@
         NSString *cbID = [data.arguments firstObject];
         invoked = YES;
         command = data.name;
-        NSString *callFinishAction = [NSString stringWithFormat:@"UAirship.finishAction(null,'\"done\"', '%@')",cbID];
+        // the call to finishAction should have no error (null), the string "done" (escaped here because it's embedded in an NSString),
+        // and the above callback ID (similarly escaped)
+        NSString *callFinishAction = [NSString stringWithFormat:@"UAirship.finishAction(null, \"done\", \"%@\")",cbID];
         [weakContext evaluateScript:callFinishAction];
     };
 
@@ -160,7 +162,10 @@
     XCTAssertTrue(invoked, @"UAirship.invoke should have been called");
     XCTAssertEqualObjects(command, @"run-action-cb", @"delegate command should be 'run-action-cb'");
     XCTAssertTrue(finished, @"finishTest should have been run in the action callback");
-    XCTAssertEqualObjects(finishResult, @"done", @"result of finishTest should be 'done'");
+
+    // Note: we are comparing finishResult and a non-escaped string here, because when the finishResult is passed back across
+    // the JavaScriptCore bridge, it ends up becoming a regular NSString
+    XCTAssertEqualObjects(finishResult, @"done", @"result of finishTest should be \"done\"");
 }
 
 @end
