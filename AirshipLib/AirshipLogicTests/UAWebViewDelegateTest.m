@@ -29,13 +29,15 @@
 #import <JavaScriptCore/JavaScriptCore.h>
 
 #import "UAWebViewDelegate.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UAConfig.h"
 #import "UAUser.h"
 #import "UAInboxMessage.h"
 #import "UAUtils.h"
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
+#import "UAActionJSDelegate.h"
+#import "UAWebViewCallData.h"
 
 @interface UAWebViewDelegateTest : XCTestCase
 
@@ -47,6 +49,7 @@
 @property (strong, nonatomic) id mockUIDevice;
 @property (strong, nonatomic) id mockUAUser;
 @property (strong, nonatomic) id mockAirship;
+@property (strong, nonatomic) id mockJSActionDelegate;
 @property (nonatomic, strong) id mockMessageList;
 @property (nonatomic, strong) id mockInbox;
 @property (nonatomic, strong) JSContext *jsc;
@@ -85,6 +88,10 @@
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.mockUAUser] inboxUser];
     [[[self.mockAirship stub] andReturn:self.mockInbox] inbox];
+
+    // Mock JS Action delegate
+    self.mockJSActionDelegate = [OCMockObject niceMockForClass:[UAActionJSDelegate class]];
+    [[[self.mockAirship stub] andReturn:self.mockJSActionDelegate] actionJSDelegate];
 
     // Set an actual whitelist
     UAWhitelist *whitelist = [UAWhitelist whitelistWithConfig:[UAConfig defaultConfig]];
@@ -129,13 +136,74 @@
 }
 
 /**
- * Test shouldStartLoadWithRequest:navigationType: forwards its message to the forwardDelegate.
+ * Test webView:shouldStartLoadWithRequest:navigationType: forwards its message to the forwardDelegate.
  */
 - (void)testShouldStartLoadForwardDelegate {
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://urbanairship.com"]];
     [[self.mockForwardDelegate expect] webView:self.mockWebView shouldStartLoadWithRequest:request navigationType:UIWebViewNavigationTypeOther];
     [self.delegate webView:self.mockWebView shouldStartLoadWithRequest:request navigationType:UIWebViewNavigationTypeOther];
     [self.mockForwardDelegate verify];
+}
+
+
+/**
+ * Test webView:shouldStartLoadWithRequest:navigationType: forwards uairship:// schemes
+ * to the Urban Airship Action JS delegate with the associated inbox message.
+ */
+- (void)testShouldStartLoadRunsActions {
+    // Action request
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"uairship://run-basic-actions?test_action=hi"]];
+    request.mainDocumentURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];;
+    [[[self.mockWebView stub] andReturn:request] request];
+
+    // Create an inbox message
+    NSDate *messageSent = [NSDate date];
+    id message = [OCMockObject niceMockForClass:[UAInboxMessage class]];
+    [[[message stub] andReturn:@"messageID"] messageID];
+    [[[message stub] andReturn:@"messageTitle"] title];
+    [[[message stub] andReturn:messageSent] messageSent];
+    [[[message stub] andReturnValue:@(YES)] unread];
+
+    // Associate the URL with the mock message
+    [[[self.mockMessageList stub] andReturn:message] messageForBodyURL:request.mainDocumentURL];
+
+    // Expect the js delegate to be called with the correct call data
+    [[self.mockJSActionDelegate expect] callWithData:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UAWebViewCallData *data = obj;
+
+        if (![data.url isEqual:request.URL]) {
+            return NO;
+        }
+
+        if (data.message != message) {
+            return NO;
+        }
+
+        return YES;
+
+    }] withCompletionHandler:OCMOCK_ANY];
+
+    [self.delegate webView:self.mockWebView shouldStartLoadWithRequest:request navigationType:UIWebViewNavigationTypeOther];
+
+    [self.mockJSActionDelegate verify];
+}
+
+/**
+ * Test webView:shouldStartLoadWithRequest:navigationType: does not forward uairship:// schemes
+ * to the Urban Airship Action JS delegate if the URL is not whitelisted.
+ */
+- (void)testShouldStartLoadRejectsActionRunsNotWhitelisted {
+    // Action request
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"uairship://run-basic-actions?test_action=hi"]];
+    request.mainDocumentURL = [NSURL URLWithString:@"https://foo.notwhitelisted.com/whatever.html"];;
+    [[[self.mockWebView stub] andReturn:request] request];
+
+    // Reject any calls to the JS Delegate
+    [[self.mockJSActionDelegate reject] callWithData:OCMOCK_ANY withCompletionHandler:OCMOCK_ANY];
+
+    [self.delegate webView:self.mockWebView shouldStartLoadWithRequest:request navigationType:UIWebViewNavigationTypeOther];
+
+    [self.mockJSActionDelegate verify];
 }
 
 /**

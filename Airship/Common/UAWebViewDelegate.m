@@ -56,9 +56,9 @@
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
 
     // This will be nil if we are not loading a Rich Push message
-    UAInboxMessage *message = [[UAirship inbox].messageList messageForBodyURL:request.URL];
+    UAInboxMessage *message = [[UAirship inbox].messageList messageForBodyURL:webView.request.mainDocumentURL];
 
-    NSURL *url = [request URL];
+    NSURL *url = request.URL;
 
     BOOL shouldLoad = YES;
 
