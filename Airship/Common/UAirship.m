@@ -48,7 +48,7 @@
 #import "UAPreferenceDataStore.h"
 #import "UAInboxAPIClient.h"
 #import "UAInAppMessaging+Internal.h"
-
+#import "UAChannelCapture.h"
 #import "UAActionJSDelegate.h"
 
 UA_VERSION_IMPLEMENTATION(UAirshipVersion, UA_VERSION)
@@ -127,6 +127,8 @@ UALogLevel uaLogLevel = UALogLevelError;
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
 
         self.sharedInAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.analytics dataStore:dataStore];
+
+        self.channelCapture = [UAChannelCapture channelCaptureWithConfig:config push:self.sharedPush];
     }
 
     return self;

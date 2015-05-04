@@ -29,6 +29,7 @@
 @class UAJavaScriptDelegate;
 @class UAAppDelegateProxy;
 @class UAPreferenceDataStore;
+@class UAChannelCapture;
 
 @interface UAirship()
 
@@ -43,6 +44,7 @@
 @property (nonatomic, strong) UAApplicationMetrics *applicationMetrics;
 @property (nonatomic, strong) UAWhitelist *whitelist;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+@property (nonatomic, strong) UAChannelCapture *channelCapture;
 
 
 /**

@@ -534,6 +534,7 @@
 		CC8542CB17F4B81600D2DE10 /* UAIncomingPushAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CC8542AB17F4B81600D2DE10 /* UAIncomingPushAction.h */; };
 		CC8542CD17F4B81600D2DE10 /* UAIncomingPushAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CC8542AC17F4B81600D2DE10 /* UAIncomingPushAction.m */; };
 		CC85FD171773A1010074674F /* UAAnalyticsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85FD161773A1010074674F /* UAAnalyticsTest.m */; };
+		CC8925B31AF7F068004565EE /* UAChannelCaptureTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC8925B21AF7F068004565EE /* UAChannelCaptureTest.m */; };
 		CCA3A4EB17FCB3A8009C7371 /* UAActionRegistryEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = CCA3A4E917FCB3A8009C7371 /* UAActionRegistryEntry.h */; };
 		CCA3A4ED17FCB3A8009C7371 /* UAActionRegistryEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA3A4EA17FCB3A8009C7371 /* UAActionRegistryEntry.m */; };
 		CCA3A4F317FF14DF009C7371 /* UAActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA3A4F217FF14DF009C7371 /* UAActionTest.m */; };
@@ -555,6 +556,10 @@
 		CCBFA2DB17B5436500F97E1D /* NSJSONSerialization+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CCBFA2D917B5436500F97E1D /* NSJSONSerialization+UAAdditions.m */; };
 		CCBFA2E017B547B600F97E1D /* NSJSONSerialization_UAAdditionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCBFA2DF17B547B600F97E1D /* NSJSONSerialization_UAAdditionsTests.m */; };
 		CCC0508C1A129C83000AE545 /* UAKeyChainUtilTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC0508B1A129C83000AE545 /* UAKeyChainUtilTest.m */; };
+		CCCCBFC51AE02BDA00C6600C /* UAChannelCapture.h in Headers */ = {isa = PBXBuildFile; fileRef = CCCCBFC31AE02BDA00C6600C /* UAChannelCapture.h */; };
+		CCCCBFC61AE02BDA00C6600C /* UAChannelCapture.h in Headers */ = {isa = PBXBuildFile; fileRef = CCCCBFC31AE02BDA00C6600C /* UAChannelCapture.h */; };
+		CCCCBFC71AE02BDA00C6600C /* UAChannelCapture.m in Sources */ = {isa = PBXBuildFile; fileRef = CCCCBFC41AE02BDA00C6600C /* UAChannelCapture.m */; };
+		CCCCBFC81AE02BDA00C6600C /* UAChannelCapture.m in Sources */ = {isa = PBXBuildFile; fileRef = CCCCBFC41AE02BDA00C6600C /* UAChannelCapture.m */; };
 		CCCDAEA019954A1300E93CF7 /* NSObject+HideClass.m in Sources */ = {isa = PBXBuildFile; fileRef = CCCDAE9F19954A1300E93CF7 /* NSObject+HideClass.m */; };
 		CCD13DE219A4FCFD0007078C /* UAInteractiveNotificationEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD13DE119A4FCFD0007078C /* UAInteractiveNotificationEventTest.m */; };
 		CCD3158417CFBD5A002E93A1 /* UAPushTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD3158317CFBD5A002E93A1 /* UAPushTest.m */; };
@@ -930,6 +935,7 @@
 		CC8542AC17F4B81600D2DE10 /* UAIncomingPushAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAIncomingPushAction.m; sourceTree = "<group>"; };
 		CC85FD151773A1010074674F /* UAAnalyticsTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAnalyticsTest.h; sourceTree = "<group>"; };
 		CC85FD161773A1010074674F /* UAAnalyticsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAnalyticsTest.m; sourceTree = "<group>"; };
+		CC8925B21AF7F068004565EE /* UAChannelCaptureTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelCaptureTest.m; sourceTree = "<group>"; };
 		CCA3A4E917FCB3A8009C7371 /* UAActionRegistryEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAActionRegistryEntry.h; sourceTree = "<group>"; };
 		CCA3A4EA17FCB3A8009C7371 /* UAActionRegistryEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionRegistryEntry.m; sourceTree = "<group>"; };
 		CCA3A4F217FF14DF009C7371 /* UAActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionTest.m; sourceTree = "<group>"; };
@@ -950,6 +956,8 @@
 		CCBFA2D917B5436500F97E1D /* NSJSONSerialization+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSJSONSerialization+UAAdditions.m"; sourceTree = "<group>"; };
 		CCBFA2DF17B547B600F97E1D /* NSJSONSerialization_UAAdditionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSJSONSerialization_UAAdditionsTests.m; sourceTree = "<group>"; };
 		CCC0508B1A129C83000AE545 /* UAKeyChainUtilTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAKeyChainUtilTest.m; sourceTree = "<group>"; };
+		CCCCBFC31AE02BDA00C6600C /* UAChannelCapture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAChannelCapture.h; sourceTree = "<group>"; };
+		CCCCBFC41AE02BDA00C6600C /* UAChannelCapture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelCapture.m; sourceTree = "<group>"; };
 		CCCDAE9E19954A1300E93CF7 /* NSObject+HideClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+HideClass.h"; sourceTree = "<group>"; };
 		CCCDAE9F19954A1300E93CF7 /* NSObject+HideClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+HideClass.m"; sourceTree = "<group>"; };
 		CCD13DE119A4FCFD0007078C /* UAInteractiveNotificationEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInteractiveNotificationEventTest.m; sourceTree = "<group>"; };
@@ -1593,7 +1601,6 @@
 		CC4C2A0D17CE50BE003B9A55 /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				CC319CEC1A0C43110079226E /* UAPreferenceDataStoreTest.m */,
 				CCA3A4F117FF14C0009C7371 /* Actions */,
 				CC85FD141773A0CB0074674F /* Analytics */,
 				CC4C2A0E17CE50C7003B9A55 /* AppDelegates */,
@@ -1610,6 +1617,8 @@
 				CC85427D17F2164500D2DE10 /* UAURLProtocolTest.m */,
 				CC4AAE0B18C93EF2001F23B3 /* UAApplicationMetricsTest.m */,
 				4954FECC1A1596DF00BEBC05 /* UAWhitelistTest.m */,
+				CC319CEC1A0C43110079226E /* UAPreferenceDataStoreTest.m */,
+				CC8925B21AF7F068004565EE /* UAChannelCaptureTest.m */,
 			);
 			name = Common;
 			sourceTree = "<group>";
@@ -1822,6 +1831,8 @@
 				CC4AAE0218C93ECF001F23B3 /* UAApplicationMetrics+Internal.h */,
 				CC4AAE0318C93ECF001F23B3 /* UAApplicationMetrics.h */,
 				CC4AAE0418C93ECF001F23B3 /* UAApplicationMetrics.m */,
+				CCCCBFC31AE02BDA00C6600C /* UAChannelCapture.h */,
+				CCCCBFC41AE02BDA00C6600C /* UAChannelCapture.m */,
 				D9FD1C43122DBCEA00522B4E /* UAGlobal.h */,
 				1F610E0817835C6700BCD96E /* UAConfig.h */,
 				1F610E0917835C6700BCD96E /* UAConfig+Internal.h */,
@@ -1944,6 +1955,7 @@
 				49BADE08198B0869000FF3D5 /* NSString+UAURLEncoding.h in Headers */,
 				49BADE09198B0869000FF3D5 /* UAWebViewCallData.h in Headers */,
 				49BADE0A198B086A000FF3D5 /* UAirship.h in Headers */,
+				CCCCBFC61AE02BDA00C6600C /* UAChannelCapture.h in Headers */,
 				49BADE0B198B086A000FF3D5 /* NSJSONSerialization+UAAdditions.h in Headers */,
 				49BADE0E198B086C000FF3D5 /* UAApplicationMetrics.h in Headers */,
 				49BADE0F198B086C000FF3D5 /* UAGlobal.h in Headers */,
@@ -2114,6 +2126,7 @@
 				49D11C1217270C6E0058E7C3 /* UAHTTPRequestEngine.h in Headers */,
 				49BEBF5C1AAA5D6700740665 /* UAUserNotificationAction.h in Headers */,
 				49973CED1A97BFDE009B5EB1 /* UAIncomingInAppMessageAction.h in Headers */,
+				CCCCBFC51AE02BDA00C6600C /* UAChannelCapture.h in Headers */,
 				495048A71738812500F8B5BE /* UADelayOperation.h in Headers */,
 				49A61A9A1AC32B9800BC5E68 /* UAInAppMessageControllerDefaultDelegate.h in Headers */,
 				1F610E0517835C3A00BCD96E /* UAPush.h in Headers */,
@@ -2483,6 +2496,7 @@
 				491B8453198C237F00FB7A40 /* UAApplicationMetrics.m in Sources */,
 				491B8454198C237F00FB7A40 /* UAConfig.m in Sources */,
 				491B8456198C237F00FB7A40 /* UASQLite.m in Sources */,
+				CCCCBFC81AE02BDA00C6600C /* UAChannelCapture.m in Sources */,
 				491B8457198C237F00FB7A40 /* UADisposable.m in Sources */,
 				491B8458198C237F00FB7A40 /* UAURLProtocol.m in Sources */,
 				491B8459198C237F00FB7A40 /* UAActionJSDelegate.m in Sources */,
@@ -2558,6 +2572,7 @@
 				CC7DC956183E97C300E95BB8 /* UAChannelAPIClientTest.m in Sources */,
 				CC1D22A0180374B9005C8393 /* UAAction_OperatorTest.m in Sources */,
 				CC7DC95D183E97E900E95BB8 /* UAUserAPIClientTest.m in Sources */,
+				CC8925B31AF7F068004565EE /* UAChannelCaptureTest.m in Sources */,
 				494BF703176277E000B25E12 /* UAUserTest.m in Sources */,
 				49416D5F18C025E900A18B72 /* UALandingPageActionTest.m in Sources */,
 				CC85FD171773A1010074674F /* UAAnalyticsTest.m in Sources */,
@@ -2674,6 +2689,7 @@
 				76792D11178E12A10054F8AD /* UAHTTPRequest.m in Sources */,
 				CC523FB117B985F800233005 /* UAJSONValueTransformer.m in Sources */,
 				492ADA1218C959CB0032C491 /* UACloseWindowAction.m in Sources */,
+				CCCCBFC71AE02BDA00C6600C /* UAChannelCapture.m in Sources */,
 				49D7FF4F1A8E92390017A11C /* UAInAppMessageView.m in Sources */,
 				49EECA8C17CBD4BC00DE0AFB /* UADisposable.m in Sources */,
 				CC7DC943183E977100E95BB8 /* UAChannelAPIClient.m in Sources */,
