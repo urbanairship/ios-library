@@ -54,6 +54,7 @@
         self.clearUserOnAppRestore = NO;
         self.whitelist = [NSArray array];
         self.clearNamedUserOnAppRestore = NO;
+        self.channelCaptureEnabled = YES;
     }
 
     return self;
@@ -81,6 +82,7 @@
             "Clear user on Application Restore: %d\n"
             "Whitelist: %@\n"
             "Clear named user on App Restore: %d\n"
+            "Channel Capture Enabled: %d\n"
             "Custom Config: %@\n",
             self.appKey,
             self.appSecret,
@@ -103,6 +105,7 @@
             self.clearUserOnAppRestore,
             self.whitelist,
             self.clearNamedUserOnAppRestore,
+            self.channelCaptureEnabled,
             self.customConfig];
 }
 

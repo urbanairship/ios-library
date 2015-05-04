@@ -50,11 +50,13 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
         self.config = config;
         self.push = push;
 
-        // App inactive/active for incoming calls, notification center, and taskbar
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(didBecomeActive)
-                                                     name:UIApplicationDidBecomeActiveNotification
-                                                   object:nil];
+        if (config.channelCaptureEnabled) {
+            // App inactive/active for incoming calls, notification center, and taskbar
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(didBecomeActive)
+                                                         name:UIApplicationDidBecomeActiveNotification
+                                                       object:nil];
+        }
     }
 
     return self;

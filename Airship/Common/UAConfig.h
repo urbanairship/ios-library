@@ -195,6 +195,13 @@
 @property (nonatomic, assign) BOOL clearNamedUserOnAppRestore;
 
 /**
+ * Flag indicating whether channel capture feature is enabled or not.
+ *
+ * Defaults to 'YES'.
+ */
+@property (nonatomic, assign, getter=isChannelCaptureEnabled) BOOL channelCaptureEnabled;
+
+/**
  * Dictionary of custom config values.
  */
 @property (nonatomic, copy) NSDictionary *customConfig;
