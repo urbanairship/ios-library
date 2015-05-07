@@ -38,6 +38,7 @@
 #import "UAShareAction.h"
 #import "UAIncomingInAppMessageAction.h"
 #import "UADisplayInboxAction.h"
+#import "UAPasteboardAction.h"
 
 @implementation UAActionRegistry
 @dynamic registeredEntries;
@@ -317,6 +318,7 @@
                    names:@[kUADeepLinkActionDefaultRegistryName, kUADeepLinkActionDefaultRegistryAlias]
                predicate:urlPredicate];
 
+    // Custom event action
     UAAddCustomEventAction *addCustomEventAction = [[UAAddCustomEventAction alloc] init];
     [self registerAction:addCustomEventAction
                     name:kUAAddCustomEventActionDefaultRegistryName
@@ -330,11 +332,14 @@
         return (BOOL)(args.situation != UASituationForegroundPush);
     }];
 
-
+    // Display inbox action
     UADisplayInboxAction *displayInboxAction = [[UADisplayInboxAction alloc] init];
     [self registerAction:displayInboxAction
                    names:@[kUADisplayInboxActionDefaultRegistryAlias, kUADisplayInboxActionDefaultRegistryName]];
 
+    // Pasteboard action
+    [self registerAction:[[UAPasteboardAction alloc] init]
+                   names:@[kUAPasteboardActionDefaultRegistryAlias, kUAPasteboardActionDefaultRegistryName]];
 }
 
 @end

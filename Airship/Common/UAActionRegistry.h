@@ -43,6 +43,8 @@
 #define kUAShareActionDefaultRegistryAlias @"^s"
 #define kUADisplayInboxActionDefaultRegistryName @"open_mc_action"
 #define kUADisplayInboxActionDefaultRegistryAlias @"^mc"
+#define kUAPasteboardActionDefaultRegistryName @"clipboard_action"
+#define kUAPasteboardActionDefaultRegistryAlias @"^c"
 
 #define kUALandingPageActionLastOpenTimeLimitInSeconds @(7 * 86400) // 1 week
 
