@@ -300,7 +300,10 @@
      * at the time this notification fires. Delaying the layout update by a runloop
      * iteration is a workaround that also functions wells in iOS 7.
      */
-    [self performSelector:@selector(updateStatusBarConstraints) withObject:nil afterDelay:0];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self updateStatusBarConstraints];
+    });
 }
 
 - (void)dealloc {
