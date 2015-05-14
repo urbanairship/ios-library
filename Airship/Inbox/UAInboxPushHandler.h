@@ -33,19 +33,24 @@
  * when a push notification arrives with a rich push message ID
  * embedded in its payload.
  */
+ __attribute__((deprecated("As of version 6.1.0. Implement UAInboxDelegate and set it directly on the UAInbox.")))
 @protocol UAInboxPushHandlerDelegate <NSObject>
 
 @required
+
 /**
  * Handle an incoming rich push notification.
  * @param notification An NSDictionary with the push notification contents.
  */
 - (void)richPushNotificationArrived:(NSDictionary *)notification;
+
+
 /**
  * Handle a rich push notification that launched the application.
  * @param notification An NSDictionary with the push notification contents.
  */
 - (void)applicationLaunchedWithRichPushNotification:(NSDictionary *)notification;
+
 
 /**
  * Called when a new Rich Push message is available for viewing.
@@ -62,16 +67,15 @@
 - (void)launchRichPushMessageAvailable:(UAInboxMessage *)richPushMessage;
 
 /**
- * Called when the inbox is requested to be displayed.
- */
-- (void)showInbox;
-
-/**
  * Called when the inbox message is requested to be displayed.
  * @param inboxMessage The inbox message.
  */
 - (void)showInboxMessage:(UAInboxMessage *)inboxMessage;
 
+/**
+ * Called when the inbox is requested to be displayed.
+ */
+- (void)showInbox;
 
 @end
 
@@ -79,8 +83,8 @@
  * This class handles incoming rich push messages that are sent with
  * an APNS notification.
  */
+__attribute__((deprecated("As of version 6.1.0.")))
 @interface UAInboxPushHandler : NSObject
-
 
 /**
  * YES if the most recent rich push launched the app, NO otherwise.

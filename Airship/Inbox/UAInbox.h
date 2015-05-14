@@ -30,7 +30,32 @@
 @class UAInboxMessageList;
 @class UAInboxPushHandler;
 @class UAInboxAPIClient;
+@class UAInboxMessage;
 
+@protocol UAInboxDelegate <NSObject>
+
+@optional
+
+/**
+ * Called when the UADisplayInboxAction was triggered from a foreground notification.
+ *
+ * @param richPushMessage The Rich Push message
+ */
+- (void)richPushMessageAvailable:(UAInboxMessage *)richPushMessage;
+
+/**
+ * Called when the inbox is requested to be displayed by the UADisplayInboxAction.
+ */
+- (void)showInboxMessage:(UAInboxMessage *)message;
+
+@required
+
+/**
+ * Called when the inbox is requested to be displayed by the UADisplayInboxAction.
+ */
+- (void)showInbox;
+
+@end
 
 /**
  * The main class for interacting with the Rich Push Inbox.
@@ -50,12 +75,19 @@
 /**
  * Handles incoming rich push messages.
  */
-@property (nonatomic, strong) UAInboxPushHandler *pushHandler;
+@property (nonatomic, strong) UAInboxPushHandler *pushHandler __attribute__((deprecated("As of version 6.1.0.")));
 
 /**
  * The Inbox API Client
  */
 @property (nonatomic, readonly, strong) UAInboxAPIClient *client;
 
+
+/**
+ * The delegate that should be notified when an incoming push is handled,
+ * as an object conforming to the UAInboxDelegate protocol.
+ * NOTE: The delegate is not retained.
+ */
+@property (nonatomic, weak) id <UAInboxDelegate> delegate;
 
 @end
