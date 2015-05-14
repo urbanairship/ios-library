@@ -34,6 +34,7 @@
 #import "UAInboxMessageList.h"
 #import "UAirship.h"
 #import "UAInboxMessage.h"
+#import "UALandingPageOverlayController.h"
 
 @interface UADisplayInboxActionTest : XCTestCase
 
@@ -46,7 +47,7 @@
 
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockMessageList;
-
+@property (nonatomic, strong) id mockLandingPageOverlayController;
 
 @end
 
@@ -71,6 +72,8 @@
     inbox.pushHandler = [[UAInboxPushHandler alloc] init];
     inbox.messageList = self.mockMessageList;
     [[[self.mockAirship stub] andReturn:inbox] inbox];
+
+    self.mockLandingPageOverlayController = [OCMockObject niceMockForClass:[UALandingPageOverlayController class]];
 }
 
 - (void)tearDown {
@@ -78,6 +81,7 @@
     [self.mockMessageList stopMocking];
     [self.mockPushHandlerDelegate stopMocking];
     [self.mockInboxDelegate stopMocking];
+    [self.mockLandingPageOverlayController stopMocking];
 
     [super tearDown];
 }
@@ -254,6 +258,29 @@
 
     // Verify delegate calls
     [self.mockInboxDelegate verify];
+}
+
+
+/**
+ * Test the action performing with a message will fall back to displaying the
+ * message in a landing page if no delegate is available.
+ */
+- (void)testPerformFallsBackLandingPageController {
+    // Set up the action arguments
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
+                                                      withSituation:UASituationManualInvocation];
+
+    // Return the message for the message ID
+    [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
+
+    // Should display in the landing page
+    [[self.mockLandingPageOverlayController expect] showMessage:self.mockMessage];
+
+    // Perform the action
+    [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
+
+    // Verify it was displayed
+    [self.mockLandingPageOverlayController verify];
 }
 
 

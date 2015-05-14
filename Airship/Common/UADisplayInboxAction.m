@@ -31,6 +31,7 @@
 #import "UAInboxMessageList.h"
 #import "UAInboxUtils.h"
 #import "UAInboxPushHandler+Internal.h"
+#import "UALandingPageOverlayController.h"
 
 @implementation UADisplayInboxAction
 
@@ -128,6 +129,8 @@ NSString * const UADisplayInboxActionMessageIDPlaceHolder = @"MESSAGE_ID";
                 [inboxDelegate showInboxMessage:message];
             } else if (!inboxDelegate && [deprecatedInboxDelegate respondsToSelector:@selector(launchRichPushMessageAvailable:)]) {
                 [deprecatedInboxDelegate launchRichPushMessageAvailable:message];
+            } else {
+                [UALandingPageOverlayController showMessage:message];
             }
             break;
         case UASituationManualInvocation:
@@ -137,6 +140,8 @@ NSString * const UADisplayInboxActionMessageIDPlaceHolder = @"MESSAGE_ID";
                 [inboxDelegate showInboxMessage:message];
             } else if (!inboxDelegate && [deprecatedInboxDelegate respondsToSelector:@selector(showInboxMessage:)]) {
                 [deprecatedInboxDelegate showInboxMessage:message];
+            } else {
+                [UALandingPageOverlayController showMessage:message];
             }
             break;
         case UASituationBackgroundPush:
