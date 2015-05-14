@@ -39,6 +39,7 @@
 #import "UAIncomingInAppMessageAction.h"
 #import "UADisplayInboxAction.h"
 #import "UAPasteboardAction.h"
+#import "UAOverlayInboxMessageAction.h"
 
 @implementation UAActionRegistry
 @dynamic registeredEntries;
@@ -108,7 +109,7 @@
         [entry.mutableNames addObject:name];
         [self.registeredActionEntries setValue:entry forKey:name];
     }
-    
+
     return YES;
 }
 
@@ -287,18 +288,18 @@
     // Open external URL action
     UAOpenExternalURLAction *urlAction = [[UAOpenExternalURLAction alloc] init];
     [self registerAction:urlAction
-                    names:@[kUAOpenExternalURLActionDefaultRegistryName, kUAOpenExternalURLActionDefaultRegistryAlias]
+                   names:@[kUAOpenExternalURLActionDefaultRegistryName, kUAOpenExternalURLActionDefaultRegistryAlias]
                predicate:urlPredicate];
 
 
     UAAddTagsAction *addTagsAction = [[UAAddTagsAction alloc] init];
     [self registerAction:addTagsAction
-                    names:@[kUAAddTagsActionDefaultRegistryName, kUAAddTagsActionDefaultRegistryAlias]];
+                   names:@[kUAAddTagsActionDefaultRegistryName, kUAAddTagsActionDefaultRegistryAlias]];
 
 
     UARemoveTagsAction *removeTagsAction = [[UARemoveTagsAction alloc] init];
     [self registerAction:removeTagsAction
-                    names:@[kUARemoveTagsActionDefaultRegistryName, kUARemoveTagsActionDefaultRegistryAlias]];
+                   names:@[kUARemoveTagsActionDefaultRegistryName, kUARemoveTagsActionDefaultRegistryAlias]];
 
     UALandingPageAction *landingPageAction = [[UALandingPageAction alloc] init];
     [self registerAction:landingPageAction
@@ -310,7 +311,7 @@
                        return (BOOL)(timeSinceLastOpen <= [kUALandingPageActionLastOpenTimeLimitInSeconds doubleValue]);
                    }
                    return (BOOL)(args.situation != UASituationForegroundPush);
-    }];
+               }];
 
     // Register external URL action under the deep link action name/alias
     UAOpenExternalURLAction *deepLinkAction = [[UAOpenExternalURLAction alloc] init];
@@ -324,7 +325,7 @@
                     name:kUAAddCustomEventActionDefaultRegistryName
                predicate:^BOOL(UAActionArguments *args) {
                    return args.situation == UASituationManualInvocation || args.situation == UASituationWebViewInvocation;
-    }];
+               }];
 
     // Share action
     UAShareAction *shareAction = [[UAShareAction alloc] init];
@@ -340,6 +341,14 @@
     // Pasteboard action
     [self registerAction:[[UAPasteboardAction alloc] init]
                    names:@[kUAPasteboardActionDefaultRegistryAlias, kUAPasteboardActionDefaultRegistryName]];
+
+
+    // Overlay inbox message action
+    [self registerAction:[[UAOverlayInboxMessageAction alloc] init]
+                   names:@[kUAOverlayInboxMessageActionDefaultRegistryAlias, kUAOverlayInboxMessageActionDefaultRegistryName]
+               predicate:^(UAActionArguments *args) {
+                   return (BOOL)(args.situation != UASituationForegroundPush);
+               }];
 }
 
 @end
