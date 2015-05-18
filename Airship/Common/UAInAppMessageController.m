@@ -257,7 +257,8 @@
 - (void)dismissWithRunloopDelay {
     // dispatch with a delay of zero to postpone the block by a runloop cycle, so that
     // the animation isn't disrupted
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+
+    dispatch_async(dispatch_get_main_queue(), ^{
         [self animateOutWithParentView:self.messageView.superview completionHandler:^{
             if (self.dismissalBlock) {
                 self.dismissalBlock(self);
@@ -405,6 +406,8 @@
             [self handleTouchState:YES];
             [self messageClicked];
 
+
+
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [self handleTouchState:NO];
                 [self dismiss];
@@ -438,7 +441,7 @@
                 [self handleTouchState:NO];
                 [self messageClicked];
 
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                dispatch_async(dispatch_get_main_queue(), ^{
                     [self dismiss];
                 });
             }
