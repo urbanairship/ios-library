@@ -67,7 +67,7 @@
 		4972571419AFF63100B0FF93 /* InboxSampleModalUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4972571319AFF63100B0FF93 /* InboxSampleModalUserInterface.m */; };
 		4972571C19AFF64500B0FF93 /* InboxSamplePopoverUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4972571B19AFF64500B0FF93 /* InboxSamplePopoverUserInterface.m */; };
 		4972571F19AFF65400B0FF93 /* InboxSampleNavigationUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4972571E19AFF65400B0FF93 /* InboxSampleNavigationUserInterface.m */; };
-		49B19A3319901FE800977790 /* libUAirship-6.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5EBCB6159B7AF600F2A716 /* libUAirship-6.0.0.a */; };
+		49B19A3319901FE800977790 /* libUAirship-6.0.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5EBCB6159B7AF600F2A716 /* libUAirship-6.0.2.a */; };
 		49C0CB6F19BA5E9B00771F4F /* NSString+UALocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C0CB5F19BA5E9B00771F4F /* NSString+UALocalization.m */; };
 		49C0CB7019BA5E9B00771F4F /* UAInteractiveNotifications.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49C0CB6119BA5E9B00771F4F /* UAInteractiveNotifications.strings */; };
 		49C0CB7619BA625900771F4F /* UAInboxUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49C0CB7419BA625900771F4F /* UAInboxUI.strings */; };
@@ -90,8 +90,8 @@
 		CC523FAC17B9856900233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FAB17B9856900233005 /* CoreData.framework */; };
 		CCC496DE1AA7C15F0058DA1B /* PushNotificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC496DD1AA7C15F0058DA1B /* PushNotificationDelegate.m */; };
 		CCC496DF1AA7C15F0058DA1B /* PushNotificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC496DD1AA7C15F0058DA1B /* PushNotificationDelegate.m */; };
-		CCC496E21AA7C51C0058DA1B /* InboxPushHandlerDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC496E11AA7C51C0058DA1B /* InboxPushHandlerDelegate.m */; };
-		CCC496E31AA7C51C0058DA1B /* InboxPushHandlerDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC496E11AA7C51C0058DA1B /* InboxPushHandlerDelegate.m */; };
+		CCC496E21AA7C51C0058DA1B /* InboxDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC496E11AA7C51C0058DA1B /* InboxDelegate.m */; };
+		CCC496E31AA7C51C0058DA1B /* InboxDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC496E11AA7C51C0058DA1B /* InboxDelegate.m */; };
 		D5A3F5D412C15333009731BE /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F5D312C15333009731BE /* iTunesArtwork */; };
 		D5E60C8D12C2A86500E61EC0 /* UAInboxAlertHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D5E60C8C12C2A86500E61EC0 /* UAInboxAlertHandler.m */; };
 /* End PBXBuildFile section */
@@ -221,8 +221,8 @@
 		CC523FAB17B9856900233005 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		CCC496DC1AA7C15F0058DA1B /* PushNotificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationDelegate.h; sourceTree = "<group>"; };
 		CCC496DD1AA7C15F0058DA1B /* PushNotificationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushNotificationDelegate.m; sourceTree = "<group>"; };
-		CCC496E01AA7C51C0058DA1B /* InboxPushHandlerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxPushHandlerDelegate.h; sourceTree = "<group>"; };
-		CCC496E11AA7C51C0058DA1B /* InboxPushHandlerDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxPushHandlerDelegate.m; sourceTree = "<group>"; };
+		CCC496E01AA7C51C0058DA1B /* InboxDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxDelegate.h; sourceTree = "<group>"; };
+		CCC496E11AA7C51C0058DA1B /* InboxDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxDelegate.m; sourceTree = "<group>"; };
 		D5A3F5D312C15333009731BE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
 		D5E60C8B12C2A86500E61EC0 /* UAInboxAlertHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxAlertHandler.h; sourceTree = "<group>"; };
 		D5E60C8C12C2A86500E61EC0 /* UAInboxAlertHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxAlertHandler.m; sourceTree = "<group>"; };
@@ -233,7 +233,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				49B19A3319901FE800977790 /* libUAirship-6.0.0.a in Frameworks */,
+				49B19A3319901FE800977790 /* libUAirship-6.0.2.a in Frameworks */,
 				CC523FAC17B9856900233005 /* CoreData.framework in Frameworks */,
 				49E001A9154F63F3009305B7 /* CoreLocation.framework in Frameworks */,
 				1F531D5214201ABC009ABE85 /* libSystem.dylib in Frameworks */,
@@ -300,8 +300,8 @@
 				18A27C87125EDD6E0045D75B /* InboxSampleViewController.m */,
 				CCC496DC1AA7C15F0058DA1B /* PushNotificationDelegate.h */,
 				CCC496DD1AA7C15F0058DA1B /* PushNotificationDelegate.m */,
-				CCC496E01AA7C51C0058DA1B /* InboxPushHandlerDelegate.h */,
-				CCC496E11AA7C51C0058DA1B /* InboxPushHandlerDelegate.m */,
+				CCC496E01AA7C51C0058DA1B /* InboxDelegate.h */,
+				CCC496E11AA7C51C0058DA1B /* InboxDelegate.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -433,7 +433,7 @@
 		B6E7F8391239FFD5009BC92D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BB5EBCB6159B7AF600F2A716 /* libUAirship-6.0.0.a */,
+				BB5EBCB6159B7AF600F2A716 /* libUAirship-6.0.2.a */,
 				49422BA2142BA678009770C6 /* AirshipLogicTests.xctest */,
 				4972571919AFF63200B0FF93 /* AirshipKitTests.xctest */,
 				49B19A1C1990172C00977790 /* AirshipKit.framework */,
@@ -647,10 +647,10 @@
 			remoteRef = 49B19A1B1990172C00977790 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BB5EBCB6159B7AF600F2A716 /* libUAirship-6.0.0.a */ = {
+		BB5EBCB6159B7AF600F2A716 /* libUAirship-6.0.2.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-6.0.0.a";
+			path = "libUAirship-6.0.2.a";
 			remoteRef = BB5EBCB5159B7AF600F2A716 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -718,7 +718,7 @@
 				D5E60C8D12C2A86500E61EC0 /* UAInboxAlertHandler.m in Sources */,
 				1FF57415136778A100FEA1FD /* UAInboxMessageListCell.m in Sources */,
 				1F57820614182188003FA039 /* UAInboxMessageListController.m in Sources */,
-				CCC496E21AA7C51C0058DA1B /* InboxPushHandlerDelegate.m in Sources */,
+				CCC496E21AA7C51C0058DA1B /* InboxDelegate.m in Sources */,
 				1F57820714182188003FA039 /* UAInboxMessageViewController.m in Sources */,
 				CCC496DE1AA7C15F0058DA1B /* PushNotificationDelegate.m in Sources */,
 				1F54E02B177255780037A20E /* UADateUtils.m in Sources */,
@@ -739,7 +739,7 @@
 				4906F3241990564A00F27AF1 /* UAInboxAlertHandler.m in Sources */,
 				4906F3251990564A00F27AF1 /* UAInboxMessageListCell.m in Sources */,
 				4906F3271990564A00F27AF1 /* UAInboxMessageListController.m in Sources */,
-				CCC496E31AA7C51C0058DA1B /* InboxPushHandlerDelegate.m in Sources */,
+				CCC496E31AA7C51C0058DA1B /* InboxDelegate.m in Sources */,
 				4906F3281990564A00F27AF1 /* UAInboxMessageViewController.m in Sources */,
 				CCC496DF1AA7C15F0058DA1B /* PushNotificationDelegate.m in Sources */,
 				4906F3291990564A00F27AF1 /* UADateUtils.m in Sources */,

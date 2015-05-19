@@ -23,18 +23,17 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "InboxPushHandlerDelegate.h"
-#import "UAInboxPushHandler.h"
+#import "InboxDelegate.h"
 #import "UAInboxMessage.h"
 #import "UAInboxAlertHandler.h"
 #import "InboxSampleAppDelegate.h"
 #import "InboxSampleViewController.h"
 
-@interface InboxPushHandlerDelegate()
+@interface InboxDelegate()
 @property (nonatomic, strong) UAInboxAlertHandler *alertHandler;
 @end
 
-@implementation InboxPushHandlerDelegate
+@implementation InboxDelegate
 
 - (instancetype)init {
     self = [super init];
@@ -54,23 +53,6 @@
     [self.alertHandler showNewMessageAlert:alertText withViewBlock:^{
         [self showInboxMessage:message];
     }];
-}
-
-/*
- Called when a new rich push message is available after launching from a
- push notification.
- */
-- (void)launchRichPushMessageAvailable:(UAInboxMessage *)message {
-    InboxSampleAppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
-    [appDelegate.viewController showInboxMessage:message];
-}
-
-- (void)richPushNotificationArrived:(NSDictionary *)notification {
-    // Add custom notification handling here
-}
-
-- (void)applicationLaunchedWithRichPushNotification:(NSDictionary *)notification {
-    // Add custom launch notification handling here
 }
 
 /**
