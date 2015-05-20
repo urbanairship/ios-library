@@ -22,25 +22,33 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import "UAAction.h"
 
+@class UAInboxMessage;
 
 /**
- * Requests the inbox be displayed. The action will call
- * the UAInboxPushHandlerDelegate showInboxMessage: if the inbox
- * message ID is specified and available, or it will call
- * showInbox.
+ * Requests the inbox be displayed.
+ *
+ * The action will call the UAInboxDelegate or the UAInboxPushHandlerDelegate
+ * if the UAInboxDelegate is not available. If the specified message is available
+ * showInboxMessage: will be called for every accepted situation except UASituationForegroundPush
+ * where richPushMessageAvailable: will be called instead.
+ *
+ * If the message is unavailable because the message is not in the message list or
+ * the message ID was not supplied then showInbox will be called for every situation
+ * except for UASituationForegroundPush.
  *
  * This action is registered under the names open_mc_action and ^mc.
  *
- * Expected argument value is an inbox message ID as an NSString, or nil.
+ * Expected argument value is an inbox message ID as an NSString, nil, or "MESSAGE_ID"
+ * to look for the message in the argument's metadata.
  *
  * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush,
  * UASituationWebViewInvocation, UASituationManualInvocation,
  * and UASituationForegroundInteractiveButton
  *
  * Result value: nil
- *
  */
 @interface UADisplayInboxAction : UAAction
 

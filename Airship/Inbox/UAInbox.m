@@ -39,7 +39,12 @@
 }
 
 - (void)dealloc {
+    // TODO: Remove in 7.0.0
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     self.pushHandler = nil;
+#pragma clang diagnostic pop
+
     [self.client cancelAllRequests];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -51,7 +56,11 @@
         self.client = [UAInboxAPIClient clientWithUser:user config:config dataStore:dataStore];
         self.messageList = [UAInboxMessageList messageListWithUser:self.user client:self.client config:config];
 
+        // TODO: Remove in 7.0.0
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         self.pushHandler = [[UAInboxPushHandler alloc] init];
+#pragma clang diagnostic pop
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(enterForeground)

@@ -26,7 +26,6 @@
 #import "UAActionRegistry+Internal.h"
 #import "UAActionRegistryEntry+Internal.h"
 #import "UAIncomingPushAction.h"
-#import "UAIncomingRichPushAction.h"
 #import "UAOpenExternalURLAction.h"
 #import "UAAddTagsAction.h"
 #import "UARemoveTagsAction.h"
@@ -262,10 +261,6 @@
     // Incoming push action
     UAIncomingPushAction *incomingPushAction = [[UAIncomingPushAction alloc] init];
     [self registerReservedAction:incomingPushAction name:kUAIncomingPushActionRegistryName predicate:nil];
-
-    // Incoming RAP action
-    UAIncomingRichPushAction *richPushAction = [[UAIncomingRichPushAction alloc] init];
-    [self registerReservedAction:richPushAction name:kUAIncomingRichPushActionRegistryName predicate:nil];
 
     // Incoming in-app message action
     UAIncomingInAppMessageAction *iamAction = [[UAIncomingInAppMessageAction alloc] init];

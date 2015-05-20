@@ -30,6 +30,4 @@
 
 @property (nonatomic, copy) NSString *viewingMessageID;
 
-- (void)messageListLoadSucceeded;
-
 @end

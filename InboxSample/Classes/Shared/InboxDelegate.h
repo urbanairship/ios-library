@@ -24,12 +24,11 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAInboxPushHandler.h"
+#import "UAInbox.h"
 
 /**
- * Urban Airship Inbox delegate example that alerts the user when a new message
- * is ready to view.
+ * Urban Airship Inbox to display the inbox or inbox message.
  */
-@interface InboxPushHandlerDelegate : NSObject <UAInboxPushHandlerDelegate>
+@interface InboxDelegate : NSObject <UAInboxDelegate>
 
 @end

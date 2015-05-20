@@ -67,7 +67,6 @@ NSString * const UAOverlayInboxMessageActionMessageIDPlaceHolder = @"MESSAGE_ID"
     [self fetchMessage:arguments.value arguments:arguments completionHandler:^(UAInboxMessage *message, UAActionFetchResult result) {
         if (message) {
             // Fall back to landing page controller
-            [UALandingPageOverlayController closeAll:NO];
             [UALandingPageOverlayController showMessage:message];
             completionHandler([UAActionResult resultWithValue:nil withFetchResult:result]);
         } else {
@@ -86,7 +85,9 @@ NSString * const UAOverlayInboxMessageActionMessageIDPlaceHolder = @"MESSAGE_ID"
  * the UAActionMetadataInboxMessageKey will be returned or the ID of the message
  * will be taken from the UAActionMetadataPushPayloadKey. If the message is not
  * available in the message list, the list will be refreshed.
- *
+ * 
+ * Note: A copy of this method exists in UADisplayInboxAction
+ * 
  * @param messageID The message ID.
  * @param arguments The action arguments.
  * @param completionHandler Completion handler to call when the operation is complete.
