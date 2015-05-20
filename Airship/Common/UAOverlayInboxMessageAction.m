@@ -67,7 +67,6 @@ NSString * const UAOverlayInboxMessageActionMessageIDPlaceHolder = @"MESSAGE_ID"
     [self fetchMessage:arguments.value arguments:arguments completionHandler:^(UAInboxMessage *message, UAActionFetchResult result) {
         if (message) {
             // Fall back to landing page controller
-            [UALandingPageOverlayController closeAll:NO];
             [UALandingPageOverlayController showMessage:message];
             completionHandler([UAActionResult resultWithValue:nil withFetchResult:result]);
         } else {

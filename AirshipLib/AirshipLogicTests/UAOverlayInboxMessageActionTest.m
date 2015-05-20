@@ -153,7 +153,6 @@
     UAInboxMessage *message = [OCMockObject niceMockForClass:[UAInboxMessage class]];
     [[[self.mockMessageList stub] andReturn:message] messageForID:@"MCRAP"];
 
-    [[self.mockLandingPageOverlayController expect] closeAll:NO];
     [[self.mockLandingPageOverlayController expect] showMessage:message];
 
     [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
@@ -187,7 +186,6 @@
     }] withFailureBlock:OCMOCK_ANY];
 
 
-    [[self.mockLandingPageOverlayController expect] closeAll:NO];
     [[self.mockLandingPageOverlayController expect] showMessage:message];
 
     [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
@@ -241,8 +239,6 @@
                                                            withSituation:UASituationManualInvocation
                                                                 metadata:@{UAActionMetadataInboxMessageKey: message}];
 
-
-    [[self.mockLandingPageOverlayController expect] closeAll:NO];
     [[self.mockLandingPageOverlayController expect] showMessage:message];
 
     [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
@@ -272,8 +268,6 @@
                                                            withSituation:UASituationManualInvocation
                                                                 metadata:@{UAActionMetadataPushPayloadKey: notification}];
 
-
-    [[self.mockLandingPageOverlayController expect] closeAll:NO];
     [[self.mockLandingPageOverlayController expect] showMessage:message];
 
     [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {

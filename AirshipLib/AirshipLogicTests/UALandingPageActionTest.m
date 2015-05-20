@@ -176,8 +176,6 @@
                                      [NSNumber numberWithInteger:UASituationManualInvocation]];
 
     for (NSNumber *situationNumber in situations) {
-        [[self.mockLandingPageOverlayController expect] closeAll:NO];
-
         [[self.mockLandingPageOverlayController expect] showURL:[OCMArg checkWithBlock:^(id obj) {
             return (BOOL)([obj isKindOfClass:[NSURL class]] && [((NSURL *)obj).absoluteString isEqualToString:expectedUrl]);
         }] withHeaders:[OCMArg checkWithBlock:^(id obj) {

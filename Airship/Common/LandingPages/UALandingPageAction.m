@@ -96,9 +96,6 @@
                  withPassword:nil withCompletionHandler:completionHandler];
         }
     } else {
-        //close any existing windows
-        [UALandingPageOverlayController closeAll:NO];
-
         NSMutableDictionary *headers = [NSMutableDictionary dictionary];
 
         if (isContentUrl) {
