@@ -41,6 +41,7 @@
 #import "UAPreferenceDataStore.h"
 #import "UAConfig.h"
 #import "UAUserNotificationCategory+Internal.h"
+#import "UAInboxUtils.h"
 
 #define kUAMinTagLength 1
 #define kUAMaxTagLength 127
@@ -576,6 +577,21 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 
     // Add incoming push action
     actionsPayload[kUAIncomingPushActionRegistryName] = notification;
+
+    // If we have a messageID make sure we run an inbox action
+    NSString *messageID = [UAInboxUtils inboxMessageIDFromNotification:notification];
+    if (messageID) {
+        NSSet *inboxActionNames = [NSSet setWithArray:@[kUADisplayInboxActionDefaultRegistryAlias,
+                                                        kUADisplayInboxActionDefaultRegistryName,
+                                                        kUAOverlayInboxMessageActionDefaultRegistryAlias,
+                                                        kUAOverlayInboxMessageActionDefaultRegistryName]];
+
+        NSSet *actionNames = [NSSet setWithArray:[actionsPayload allKeys]];
+
+        if (![actionNames intersectsSet:inboxActionNames]) {
+            actionsPayload[kUADisplayInboxActionDefaultRegistryAlias] = messageID;
+        }
+    }
 
     // Action metadata
     NSDictionary *metadata = @{ UAActionMetadataPushPayloadKey:notification };

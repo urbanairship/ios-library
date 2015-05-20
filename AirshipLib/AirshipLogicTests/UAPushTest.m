@@ -1606,6 +1606,55 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 }
 
 /**
+ * Test running actions for a push notification automatically adds a display inbox
+ * action if the notification contains a message ID (_uamid).
+ */
+- (void)testPushActionsRunsInboxAction {
+
+    NSDictionary *richPushNotification = @{@"_uamid": @"message_id", @"add_tags_action": @"tag"};
+
+    // Expected actions payload
+    NSMutableDictionary *expectedActionPayload = [NSMutableDictionary dictionaryWithDictionary:richPushNotification];
+
+    // Should add the IncomingPushAction
+    expectedActionPayload[kUAIncomingPushActionRegistryName] = richPushNotification;
+
+    // Should add the DisplayInboxAction
+    expectedActionPayload[kUADisplayInboxActionDefaultRegistryAlias] = @"message_id";
+
+    [[self.mockActionRunner expect]runActionsWithActionValues:expectedActionPayload
+                                                    situation:UASituationLaunchedFromPush
+                                                     metadata:OCMOCK_ANY
+                                            completionHandler:OCMOCK_ANY];
+
+    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateInactive];
+}
+
+/**
+ * Test running actions for a push notification does not add a inbox action if one is
+ * already available.
+ */
+- (void)testPushActionsInboxActionAlreadyDefined {
+
+    // Notification with a message ID and a Overlay Inbox Message Action
+    NSDictionary *richPushNotification = @{@"_uamid": @"message_id", @"^mco": @"MESSAGE_ID"};
+
+    // Expected actions payload
+    NSMutableDictionary *expectedActionPayload = [NSMutableDictionary dictionaryWithDictionary:richPushNotification];
+
+    // Should add the IncomingPushAction
+    expectedActionPayload[kUAIncomingPushActionRegistryName] = richPushNotification;
+
+    [[self.mockActionRunner expect]runActionsWithActionValues:expectedActionPayload
+                                                    situation:UASituationLaunchedFromPush
+                                                     metadata:OCMOCK_ANY
+                                            completionHandler:OCMOCK_ANY];
+
+    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateInactive];
+}
+
+
+/**
  * Test handleNotification when auto badge is disabled does
  * not set the badge on the application
  */
