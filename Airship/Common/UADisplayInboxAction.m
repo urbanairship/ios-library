@@ -25,39 +25,199 @@
 
 #import "UADisplayInboxAction.h"
 #import "UAActionArguments.h"
-#import "UAInboxUtils.h"
-#import "UAInboxPushHandler.h"
-#import "UAInbox.h"
-#import "UAInboxMessageList.h"
 #import "UAirship.h"
-
+#import "UAInbox.h"
+#import "UAInboxMessage.h"
+#import "UAInboxMessageList.h"
+#import "UAInboxUtils.h"
+#import "UAInboxPushHandler+Internal.h"
 
 @implementation UADisplayInboxAction
 
+NSString * const UADisplayInboxActionMessageIDPlaceHolder = @"MESSAGE_ID";
+
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
 
-    if (arguments.situation == UASituationBackgroundPush || arguments.situation == UASituationBackgroundInteractiveButton) {
-        return NO;
+    switch (arguments.situation) {
+        case UASituationManualInvocation:
+        case UASituationWebViewInvocation:
+        case UASituationForegroundPush:
+        case UASituationLaunchedFromPush:
+        case UASituationForegroundInteractiveButton:
+            return YES;
+        case UASituationBackgroundPush:
+        case UASituationBackgroundInteractiveButton:
+            return NO;
     }
-
-    return arguments.value == nil || [arguments.value isKindOfClass:[NSString class]];
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
-    NSString *messageID = [UAInboxUtils inboxMessageIDFromValue:arguments.value];
-    UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
-    id<UAInboxPushHandlerDelegate> inboxDelegate = [UAirship inbox].pushHandler.delegate;
+    // TODO: Remove in 7.0.0
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    UAInboxPushHandler *handler = [UAirship inbox].pushHandler;
+    id<UAInboxPushHandlerDelegate> deprecatedInboxDelegate = handler.delegate;
+#pragma clang diagnostic pop
 
-    if (message) {
-        [inboxDelegate showInboxMessage:message];
-    } else {
-        [inboxDelegate showInbox];
+    // TODO: Remove in 7.0.0
+    NSString *messageID = [UAInboxUtils inboxMessageIDFromValue:arguments.value];
+    if (messageID && ![messageID isEqualToString:UADisplayInboxActionMessageIDPlaceHolder] && ![UAirship inbox].delegate) {
+        switch (arguments.situation) {
+            case UASituationForegroundPush:
+                handler.viewingMessageID = messageID;
+                [deprecatedInboxDelegate richPushNotificationArrived:[arguments.metadata objectForKey:UAActionMetadataPushPayloadKey]];
+                break;
+            case UASituationLaunchedFromPush:
+                handler.viewingMessageID = messageID;
+                handler.hasLaunchMessage = YES;
+                [deprecatedInboxDelegate applicationLaunchedWithRichPushNotification:[arguments.metadata objectForKey:UAActionMetadataPushPayloadKey]];
+                break;
+            default:
+                break;
+        }
     }
 
-    completionHandler([UAActionResult emptyResult]);
+    [self fetchMessage:messageID arguments:arguments completionHandler:^(UAInboxMessage *message, UAActionFetchResult fetchResult) {
+        if (message) {
+            [self displayInboxMessage:message situation:arguments.situation];
+        } else {
+            [self displayInboxWithSituation:arguments.situation];
+        }
+
+        // TODO: Remove in 7.0.0
+        if (handler.hasLaunchMessage) {
+            handler.hasLaunchMessage = NO;
+        }
+
+        // TODO: Remove in 7.0.0
+        if (handler.viewingMessageID) {
+            handler.viewingMessageID = nil;
+        }
+
+        completionHandler([UAActionResult resultWithValue:nil withFetchResult:fetchResult]);
+    }];
 }
 
+/**
+ * Called when the action attempts to display the inbox message.
+ * @param message The inbox message.
+ * @param situation The argument's situation.
+ */
+- (void)displayInboxMessage:(UAInboxMessage *)message situation:(UASituation)situation {
+    id<UAInboxDelegate> inboxDelegate = [UAirship inbox].delegate;
+
+    // TODO: Remove calling the deprecatedInboxDelegate in 7.0.0
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    id<UAInboxPushHandlerDelegate> deprecatedInboxDelegate = [UAirship inbox].pushHandler.delegate;
+#pragma clang diagnostic pop
+
+    switch (situation) {
+        case UASituationForegroundPush:
+            if ([inboxDelegate respondsToSelector:@selector(richPushMessageAvailable:)]) {
+                [inboxDelegate richPushMessageAvailable:message];
+            } else if (!inboxDelegate && [deprecatedInboxDelegate respondsToSelector:@selector(richPushMessageAvailable:)]) {
+                [deprecatedInboxDelegate richPushMessageAvailable:message];
+            }
+            break;
+        case UASituationLaunchedFromPush:
+            if ([inboxDelegate respondsToSelector:@selector(showInboxMessage:)]) {
+                [inboxDelegate showInboxMessage:message];
+            } else if (!inboxDelegate && [deprecatedInboxDelegate respondsToSelector:@selector(launchRichPushMessageAvailable:)]) {
+                [deprecatedInboxDelegate launchRichPushMessageAvailable:message];
+            }
+            break;
+        case UASituationManualInvocation:
+        case UASituationWebViewInvocation:
+        case UASituationForegroundInteractiveButton:
+            if ([inboxDelegate respondsToSelector:@selector(showInboxMessage:)]) {
+                [inboxDelegate showInboxMessage:message];
+            } else if (!inboxDelegate && [deprecatedInboxDelegate respondsToSelector:@selector(showInboxMessage:)]) {
+                [deprecatedInboxDelegate showInboxMessage:message];
+            }
+            break;
+        case UASituationBackgroundPush:
+        case UASituationBackgroundInteractiveButton:
+            // noop
+            return;
+    }
+}
+
+/**
+ * Called when the action attempts to display the inbox.
+ * @param situation The argument's situation.
+ */
+- (void)displayInboxWithSituation:(UASituation)situation {
+    if (situation == UASituationForegroundPush) {
+        // Avoid interrupting the user to view the inbox
+        return;
+    }
+
+    id<UAInboxDelegate> inboxDelegate = [UAirship inbox].delegate;
+
+    // TODO: Remove calling the deprecatedInboxDelegate in 7.0.0
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    id<UAInboxPushHandlerDelegate> deprecatedInboxDelegate = [UAirship inbox].pushHandler.delegate;
+#pragma clang diagnostic pop
+
+    if ([inboxDelegate respondsToSelector:@selector(showInbox)]) {
+        [inboxDelegate showInbox];
+    } else if (!inboxDelegate && [deprecatedInboxDelegate respondsToSelector:@selector(showInbox)]) {
+        [deprecatedInboxDelegate showInbox];
+    }
+}
+
+/**
+ * Fetches the specified message. If the messageID is "MESSAGE_ID", either
+ * the UAActionMetadataInboxMessageKey will be returned or the ID of the message
+ * will be taken from the UAActionMetadataPushPayloadKey. If the message is not
+ * available in the message list, the list will be refreshed.
+ *
+ * Note: A copy of this method exists in UAOverlayInboxMessageAction
+ *
+ * @param messageID The messages ID.
+ * @param arguments The action arguments.
+ * @param completionHandler Completion handler to call when the operation is complete.
+ */
+- (void)fetchMessage:(NSString *)messageID
+           arguments:(UAActionArguments *)arguments
+   completionHandler:(void (^)(UAInboxMessage *, UAActionFetchResult))completionHandler {
+
+    if (messageID == nil) {
+        completionHandler(nil, UAActionFetchResultNoData);
+        return;
+    }
+
+    if ([messageID isEqualToString:UADisplayInboxActionMessageIDPlaceHolder]) {
+        // If we have InboxMessage metadata show the message
+        if (arguments.metadata[UAActionMetadataInboxMessageKey]) {
+            UAInboxMessage *message = arguments.metadata[UAActionMetadataInboxMessageKey];
+            completionHandler(message, UAActionFetchResultNoData);
+            return;
+        }
+
+        // Try getting the message ID from the push notification
+        NSDictionary *notification = arguments.metadata[UAActionMetadataPushPayloadKey];
+        messageID = [UAInboxUtils inboxMessageIDFromNotification:notification];
+    }
+
+    UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
+    if (message) {
+        completionHandler(message, UAActionFetchResultNoData);
+        return;
+    }
+
+    // Refresh the list to see if the message is available
+    [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
+        completionHandler([[UAirship inbox].messageList messageForID:messageID], UAActionFetchResultNewData);
+    } withFailureBlock:^{
+        completionHandler(nil, UAActionFetchResultFailed);
+    }];
+}
 
 @end

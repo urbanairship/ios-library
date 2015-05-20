@@ -86,7 +86,9 @@ NSString * const UAOverlayInboxMessageActionMessageIDPlaceHolder = @"MESSAGE_ID"
  * the UAActionMetadataInboxMessageKey will be returned or the ID of the message
  * will be taken from the UAActionMetadataPushPayloadKey. If the message is not
  * available in the message list, the list will be refreshed.
- *
+ * 
+ * Note: A copy of this method exists in UADisplayInboxAction
+ * 
  * @param messageID The message ID.
  * @param arguments The action arguments.
  * @param completionHandler Completion handler to call when the operation is complete.
