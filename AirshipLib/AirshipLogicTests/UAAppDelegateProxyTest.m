@@ -23,197 +23,298 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 #import <XCTest/XCTest.h>
-#import "UAAppDelegateProxy.h"
 #import <OCMock/OCMock.h>
-#import <OCMock/OCMConstraint.h>
+#import <objc/runtime.h>
+#import "UAAppDelegateProxy+Internal.h"
 #import "UAirship.h"
-
-typedef void (^MethodBlock)(NSInvocation *);
-
-@interface TestAppDelegateSurrogate : NSObject<UIApplicationDelegate>
-@property (nonatomic, strong) NSMutableDictionary *methodBlocks;
-- (void)addMethodBlock:(MethodBlock)methodBlock forSelectorString:(NSString *)selector;
-@end
+#import "UAPush.h"
 
 @interface UAAppDelegateProxyTest : XCTestCase
-@property (nonatomic, strong) UAAppDelegateProxy *baseDelegate;
-@property (nonatomic, strong) TestAppDelegateSurrogate *airshipDelegate;
-@property (nonatomic, strong) TestAppDelegateSurrogate *originalDelegate;
+@property (nonatomic, strong) id mockPush;
+@property (nonatomic, strong) id mockAirship;
+@property (nonatomic, strong) id delegate;
+@property (nonatomic, strong) id mockApplication;
+
+@property (nonatomic, assign) Class generatedClass;
 @end
 
 @implementation UAAppDelegateProxyTest
 
 - (void)setUp {
     [super setUp];
-    self.baseDelegate = [[UAAppDelegateProxy alloc] init];
-    self.airshipDelegate = [[TestAppDelegateSurrogate alloc] init];
-    self.originalDelegate = [[TestAppDelegateSurrogate alloc] init];
 
-    self.baseDelegate.airshipAppDelegate = self.airshipDelegate;
-    self.baseDelegate.originalAppDelegate = self.originalDelegate;
+    self.mockPush = [OCMockObject niceMockForClass:[UAPush class]];
+    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [[[self.mockAirship stub] andReturn:self.mockPush] push];
+
+    // Generate a new class for each test run to avoid test pollution
+    self.generatedClass = objc_allocateClassPair([NSObject class], [[NSUUID UUID].UUIDString UTF8String], 0);
+    objc_registerClassPair(self.generatedClass);
+
+    self.delegate = [[self.generatedClass alloc] init];
+
+    self.mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
+    [[[self.mockApplication stub] andReturn:self.delegate] delegate];
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
+
 }
 
 - (void)tearDown {
+    [self.mockAirship stopMocking];
+    [self.mockPush stopMocking];
+    [self.mockApplication stopMocking];
+
+    self.delegate = nil;
+
+    if (self.generatedClass) {
+        objc_disposeClassPair(self.generatedClass);
+    }
+
     [super tearDown];
 }
 
-/*
- * Test that responds to selector checks airshipDelegate, originalAppDelegate, and its
- * self for a given selector.
+/**
+ * Test proxying application:didFailToRegisterForRemoteNotificationsWithError:
+ * calls the original.
  */
-- (void)testRespondsToSelector {
-    // Add a method that only the airshipDelegate responds to
-    [self.airshipDelegate addMethodBlock:^(NSInvocation *invocation) { }
-                         forSelectorString:@"someRandomMethod"];
+- (void)testProxyFailedToRegisterWithError {
+    __block BOOL appDelegateCalled;
 
-    // Add a method that only the originalDelegate responds to
-    [self.originalDelegate addMethodBlock:^(NSInvocation *invocation) { }
-                       forSelectorString:@"someOtherRandomMethod"];
+    NSError *expectedError = [NSError errorWithDomain:@"test" code:1 userInfo:nil];
 
-    // Verify that it responds to methods that the airshipDelegate responds to
-    XCTAssertTrue([self.baseDelegate respondsToSelector:NSSelectorFromString(@"someRandomMethod")],
-                  @"respondsToSelector does not respond for its airshipAppDelegate methods");
+    // Add an implementation for application:didFailToRegisterForRemoteNotificationsWithError:
+    [self addAppDelegateImplementation:@selector(application:didFailToRegisterForRemoteNotificationsWithError:)
+                                 block:^(id self, UIApplication *application, NSError *error) {
+                                     appDelegateCalled = YES;
 
-    // Verify that it responds to methods that the originalAppDelegate responds to
-    XCTAssertTrue([self.baseDelegate respondsToSelector:NSSelectorFromString(@"someOtherRandomMethod")],
-                  @"respondsToSelector does not respond for its originalAppDelegate methods");
+                                     // Verify the parameters
+                                     XCTAssertEqualObjects([UIApplication sharedApplication], application);
+                                     XCTAssertEqualObjects(expectedError, error);
+                                 }];
 
-    // Verify it doesnt just respond to everything
-    XCTAssertFalse([self.baseDelegate respondsToSelector:NSSelectorFromString(@"someUndefinedMethod")],
-                   @"respondsToSelector responds to methods that are not defined");
+    // Proxy the delegate
+    [UAAppDelegateProxy proxyAppDelegate];
+
+    // Call application:didFailToRegisterForRemoteNotificationsWithError:
+    [self.delegate application:[UIApplication sharedApplication] didFailToRegisterForRemoteNotificationsWithError:expectedError];
+
+    // Verify everything was called
+    XCTAssertTrue(appDelegateCalled);
 }
 
-/*
- * Test that application:didReceiveRemoteNotification:fetchCompletionHandler: only responds if background push is enabled
- * or the originalAppDelegate responds
+/**
+ * Test proxying application:didReceiveRemoteNotification: when the delegate implments
+ * the selector calls the original and UAPush.
  */
-- (void)testRespondsToSelectorApplicationDidReceiveRemoteNotificationFetchCompletionHandler {
-    id mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
-    [[[mockAirship stub] andReturn:mockAirship] shared];
-    [[[mockAirship expect] andReturnValue:OCMOCK_VALUE(NO)] remoteNotificationBackgroundModeEnabled];
+- (void)testProxyAppReceivedRemoteNotification {
+    __block BOOL appDelegateCalled;
 
-    // Verify it does not respond when background notifications is disabled and the app delegate does not respond
-    XCTAssertFalse([self.baseDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)],
-                   @"respondsToSelector should not respond to application:didReceiveRemoteNotification:fetchCompletionHandler: when background push is disabled and originalAppDelegate does not respond");
+    NSDictionary *expectedNotification = @{@"oh": @"hi"};
 
-    // Verify it does respond when background notifications is enabled
-    [[[mockAirship expect] andReturnValue:OCMOCK_VALUE(YES)] remoteNotificationBackgroundModeEnabled];
+    // Add an implementation for application:didReceiveRemoteNotification:
+    [self addAppDelegateImplementation:@selector(application:didReceiveRemoteNotification:)
+                                 block:^(id self, UIApplication *application, NSDictionary *notification) {
+                                     appDelegateCalled = YES;
 
-    XCTAssertTrue([self.baseDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)],
-                  @"respondsToSelector should respond to application:didReceiveRemoteNotification:fetchCompletionHandler: when background push is enabled");
+                                     // Verify the parameters
+                                     XCTAssertEqualObjects([UIApplication sharedApplication], application);
+                                     XCTAssertEqualObjects(expectedNotification, notification);
+                                 }];
 
-    // Verify it responds when background notifications is disabled but the app delegate responds
-    [[[mockAirship expect] andReturnValue:OCMOCK_VALUE(NO)] remoteNotificationBackgroundModeEnabled];
+    // Expect the UAPush integration
+    [[self.mockPush expect] appReceivedRemoteNotification:expectedNotification
+                                         applicationState:[UIApplication sharedApplication].applicationState];
 
-    [self.originalDelegate addMethodBlock:^(NSInvocation *invocation) { }
-                       forSelectorString:@"application:didReceiveRemoteNotification:fetchCompletionHandler:"];
+    // Proxy the delegate
+    [UAAppDelegateProxy proxyAppDelegate];
 
-     XCTAssertTrue([self.baseDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)],
-                   @"respondsToSelector should respond to application:didReceiveRemoteNotification:fetchCompletionHandler: when the app delegate responds");
+    // Call application:didFailToRegisterForRemoteNotificationsWithError:
+    [self.delegate application:[UIApplication sharedApplication] didReceiveRemoteNotification:expectedNotification];
 
-    [mockAirship stopMocking];
+    // Verify everything was called
+    XCTAssertTrue(appDelegateCalled);
+    [self.mockPush verify];
 }
 
-/*
- * Tests that an exception is raised if the originalAppDelegate is nil
+/**
+ * Test adding application:didReceiveRemoteNotification: calls UAPush.
  */
-- (void)testForwardInvocationNoOriginalAppDelegate {
-    self.baseDelegate.originalAppDelegate = nil;
+- (void)testAddAppReceivedRemoteNotification {
+    NSDictionary *expectedNotification = @{@"oh": @"hi"};
 
-    id mockedInvocation = [OCMockObject niceMockForClass:[NSInvocation class]];
-    [mockedInvocation setSelector:NSSelectorFromString(@"someRandomMethod")];
+    // Expect the UAPush integration
+    [[self.mockPush expect] appReceivedRemoteNotification:expectedNotification applicationState:[UIApplication sharedApplication].applicationState];
 
-    XCTAssertThrows([self.baseDelegate forwardInvocation:mockedInvocation],
-                    @"UAAppDelegateProxy should raise an exception if the original app delegate is nil");
-    [mockedInvocation stopMocking];
+    // Proxy the delegate
+    [UAAppDelegateProxy proxyAppDelegate];
+
+    // Call application:didFailToRegisterForRemoteNotificationsWithError:
+    [self.delegate application:[UIApplication sharedApplication] didReceiveRemoteNotification:expectedNotification];
+
+    // Verify everything was called
+    [self.mockPush verify];
 }
 
-/*
- * Tests that it neither of the delegates respond, it still forwards
- * the invocation to the originalAppDelegate
+
+/**
+ * Test proxying application:didRegisterForRemoteNotificationsWithDeviceToken: when the delegate implments
+ * the selector calls the original and UAPush.
  */
-- (void)testForwardInvocationNoResponse {
-    // Set up a mocked invocation that expects to be invoked with the originalAppDelegate
-    id mockedInvocation = [OCMockObject niceMockForClass:[NSInvocation class]];
-    [[[mockedInvocation stub] andReturnValue:OCMOCK_VALUE(NSSelectorFromString(@"someRandomMethod"))] selector];
-    [[mockedInvocation expect] invokeWithTarget:self.originalDelegate];
+- (void)testProxyAppRegisteredForRemoteNotificationsWithDeviceToken {
+    __block BOOL appDelegateCalled;
 
-    [self.baseDelegate forwardInvocation:mockedInvocation];
-    XCTAssertNoThrow([mockedInvocation verify],
-                     @"UAAppDelegateProxy should still forward invocations to the original app delegate if neither delegate responds");
+    NSData *expectedDeviceToken = [@"device_token" dataUsingEncoding:NSUTF8StringEncoding];
 
-    [mockedInvocation stopMocking];
+    // Add an implementation for application:didReceiveRemoteNotification:
+    [self addAppDelegateImplementation:@selector(application:didRegisterForRemoteNotificationsWithDeviceToken:)
+                                 block:^(id self, UIApplication *application, NSData *deviceToken) {
+                                     appDelegateCalled = YES;
+
+                                     // Verify the parameters
+                                     XCTAssertEqualObjects([UIApplication sharedApplication], application);
+                                     XCTAssertEqualObjects(expectedDeviceToken, deviceToken);
+                                 }];
+
+    // Expect the UAPush integration
+    [[self.mockPush expect] appRegisteredForRemoteNotificationsWithDeviceToken:expectedDeviceToken];
+
+    // Proxy the delegate
+    [UAAppDelegateProxy proxyAppDelegate];
+
+    // Call application:didFailToRegisterForRemoteNotificationsWithError:
+    [self.delegate application:[UIApplication sharedApplication] didRegisterForRemoteNotificationsWithDeviceToken:expectedDeviceToken];
+
+    // Verify everything was called
+    XCTAssertTrue(appDelegateCalled);
+    [self.mockPush verify];
 }
 
-/*
- * Tests that it invokes invocations on the sub delegates if only
- * one respond to a given selector
+/**
+ * Test adding application:didRegisterForRemoteNotificationsWithDeviceToken: calls UAPush.
  */
-- (void)testForwardInvocationOneDelegateResponds {
-    // Add a method block that only one the surrgateDelegate will respond to
-    [self.airshipDelegate addMethodBlock:^(NSInvocation *invocation) { }
-                         forSelectorString:@"someOtherRandomMethod"];
+- (void)testAddAppRegisteredForRemoteNotificationsWithDeviceToken {
+    NSData *expectedDeviceToken = [@"device_token" dataUsingEncoding:NSUTF8StringEncoding];
 
-    // Set up a mocked invocation that expects to be invoked with only one delegate
-    id mockedInvocation = [OCMockObject niceMockForClass:[NSInvocation class]];
-    [[[mockedInvocation stub] andReturnValue:OCMOCK_VALUE(NSSelectorFromString(@"someOtherRandomMethod"))] selector];
-    [[mockedInvocation reject] invokeWithTarget:self.originalDelegate];
-    [[mockedInvocation expect] invokeWithTarget:self.airshipDelegate];
+    // Expect the UAPush integration
+    [[self.mockPush expect] appRegisteredForRemoteNotificationsWithDeviceToken:expectedDeviceToken];
 
-    // Verify only the airshipDelegate was invoked
-    XCTAssertNoThrow([self.baseDelegate forwardInvocation:mockedInvocation],
-                     @"UAAppDelegateProxy is invoking with both delegates when it should only be sending to the airship app delegate");
+    // Proxy the delegate
+    [UAAppDelegateProxy proxyAppDelegate];
 
-    XCTAssertNoThrow([mockedInvocation verify],
-                     @"UAAppDelegateProxy should only send to the airship app delegate");
+    // Call application:didFailToRegisterForRemoteNotificationsWithError:
+    [self.delegate application:[UIApplication sharedApplication] didRegisterForRemoteNotificationsWithDeviceToken:expectedDeviceToken];
 
-    [mockedInvocation stopMocking];
+    // Verify everything was called
+    [self.mockPush verify];
 }
 
-/*
- * Tests that it invokes invocations on the sub delegates if only
- * one respond to a given selector
+
+/**
+ * Test proxying application:didRegisterForRemoteNotificationsWithDeviceToken: when the delegate implments
+ * the selector calls the original and UAPush.
  */
-- (void)testForwardInvocationBothDelegatesResponds {
-    // Add same method blocks to the sub delegates so they will respond to different selectors
-    [self.airshipDelegate addMethodBlock:^(NSInvocation *invocation) { }
-                         forSelectorString:@"someRandomMethod"];
+- (void)testProxyAppRegisteredUserNotificationSettings {
+    __block BOOL appDelegateCalled;
 
-    [self.originalDelegate addMethodBlock:^(NSInvocation *invocation) { }
-                       forSelectorString:@"someRandomMethod"];
+    UIUserNotificationSettings *expectedSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert categories:nil];
 
-    // Set up a mocked invocation that expects to be invoked with both delegates
-    id mockedInvocation = [OCMockObject niceMockForClass:[NSInvocation class]];
-    [[[mockedInvocation stub] andReturnValue:OCMOCK_VALUE(NSSelectorFromString(@"someRandomMethod"))] selector];
-    [[mockedInvocation expect] invokeWithTarget:self.originalDelegate];
-    [[mockedInvocation expect] invokeWithTarget:self.airshipDelegate];
+    // Add an implementation for application:didReceiveRemoteNotification:
+    [self addAppDelegateImplementation:@selector(application:didRegisterUserNotificationSettings:)
+                                 block:^(id self, UIApplication *application, UIUserNotificationSettings *settings) {
+                                     appDelegateCalled = YES;
 
-    // Verify both delegates are invoked with the invocation
-    [self.baseDelegate forwardInvocation:mockedInvocation];
-    XCTAssertNoThrow([mockedInvocation verify],
-                     @"UAAppDelegateProxy did not invoke both delegates");
+                                     // Verify the parameters
+                                     XCTAssertEqualObjects([UIApplication sharedApplication], application);
+                                     XCTAssertEqualObjects(expectedSettings, settings);
+                                 }];
 
-    [mockedInvocation stopMocking];
+    // Expect the UAPush integration
+    [[self.mockPush expect] appRegisteredUserNotificationSettings];
+
+    // Proxy the delegate
+    [UAAppDelegateProxy proxyAppDelegate];
+
+    // Call application:didFailToRegisterForRemoteNotificationsWithError:
+    [self.delegate application:[UIApplication sharedApplication] didRegisterUserNotificationSettings:expectedSettings];
+
+    // Verify everything was called
+    XCTAssertTrue(appDelegateCalled);
+    [self.mockPush verify];
 }
 
-/*
- * Tests application:didReceiveRemoteNotification:fetchCompletionHandler 
- * responds with UIBackgroundFetchResultNoData if neither of the app delegates respond
+/**
+ * Test adding application:didRegisterUserNotificationSettings: calls UAPush.
  */
-- (void)testDidReceiveRemoteNotificationNoSubDelegateResponse {
-    [self.baseDelegate application:nil didReceiveRemoteNotification:nil fetchCompletionHandler:^(UIBackgroundFetchResult result){
-        XCTAssertEqual(UIBackgroundFetchResultNoData, result, @"application:didReceiveRemoteNotification:fetchCompletionHandler should return no data as a default value");
-    }];
+- (void)testAddAppRegisteredUserNotificationSettings {
+    UIUserNotificationSettings *expectedSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert categories:nil];
+
+    // Expect the UAPush integration
+    [[self.mockPush expect] appRegisteredUserNotificationSettings];
+
+    // Proxy the delegate
+    [UAAppDelegateProxy proxyAppDelegate];
+
+    // Call application:didFailToRegisterForRemoteNotificationsWithError:
+    [self.delegate application:[UIApplication sharedApplication] didRegisterUserNotificationSettings:expectedSettings];
+
+    // Verify everything was called
+    [self.mockPush verify];
 }
 
-/*
- * Tests application:didReceiveRemoteNotification:fetchCompletionHandler
- * responds with the combined value of the sub delegates
- */
-- (void)testDidReceiveRemoteNotificationBothSubDelegateResponses {
 
-    UIBackgroundFetchResult allBackgroundFetchResults[] = {UIBackgroundFetchResultNoData, UIBackgroundFetchResultFailed, UIBackgroundFetchResultNewData};
+/*
+ * Tests proxying application:didReceiveRemoteNotification:fetchCompletionHandler
+ * responds with the combined value of the app delegate and UAPush.
+ */
+- (void)testProxAppReceivedRemoteNotificationWithCompletionHandler {
+
+    NSDictionary *expectedNotification = @{@"oh": @"hi"};
+
+    // Add an implementation for application:didReceiveRemoteNotification:fetchCompletionHandler: that
+    // calls an expecrted fetch result
+    __block UIBackgroundFetchResult appDelegateResult;
+    __block BOOL appDelegateCalled;
+    [self addAppDelegateImplementation:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)
+                                 block:^(id self, UIApplication *application, NSDictionary *notification, void (^completion)(UIBackgroundFetchResult) ) {
+
+                                     appDelegateCalled = YES;
+
+                                     // Verify the parameters
+                                     XCTAssertEqualObjects([UIApplication sharedApplication], application);
+                                     XCTAssertEqualObjects(expectedNotification, notification);
+                                     XCTAssertNotNil(completion);
+                                     completion(appDelegateResult);
+                                 }];
+
+    // Add an implementation for UAPush that calls an expected fetch result
+    __block UIBackgroundFetchResult pushResult;
+    __block BOOL pushCalled;
+
+    void (^pushBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
+        pushCalled = YES;
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^handler)(UIBackgroundFetchResult result) = (__bridge void (^)(UIBackgroundFetchResult))arg;
+        handler(pushResult);
+    };
+
+    [[[self.mockPush stub] andDo:pushBlock] appReceivedRemoteNotification:expectedNotification
+                                                         applicationState:UIApplicationStateActive
+                                                   fetchCompletionHandler:OCMOCK_ANY];
+
+
+    // Proxy the delegate
+    [UAAppDelegateProxy proxyAppDelegate];
+
+
+    // Iterate through the results to verify we combine them properly
+
+    UIBackgroundFetchResult allBackgroundFetchResults[] = { UIBackgroundFetchResultNoData,
+        UIBackgroundFetchResultFailed, UIBackgroundFetchResultNewData };
 
     // The expected matrix from the different combined values of allBackgroundFetchResults indicies
     UIBackgroundFetchResult expectedResults[3][3] = {
@@ -221,221 +322,195 @@ typedef void (^MethodBlock)(NSInvocation *);
         {UIBackgroundFetchResultFailed, UIBackgroundFetchResultFailed, UIBackgroundFetchResultNewData},
         {UIBackgroundFetchResultNewData, UIBackgroundFetchResultNewData, UIBackgroundFetchResultNewData}
     };
+    
 
     for (int i = 0; i < 3; i++) {
-
-        // Set the defualtDelegate to return a result for application:didReceiveRemoteNotification:fetchCompletionHandler:
-        __block UIBackgroundFetchResult originalAppDelegateResult = allBackgroundFetchResults[i];
-        [self.originalDelegate addMethodBlock:^(NSInvocation *invocation) {
-            void *arg;
-            [invocation getArgument:&arg atIndex:4];
-            void (^handler)(UIBackgroundFetchResult result) = (__bridge void (^)(UIBackgroundFetchResult))arg;
-            handler(originalAppDelegateResult);
-        } forSelectorString:@"application:didReceiveRemoteNotification:fetchCompletionHandler:"];
+        // Set the push result
+        pushResult = allBackgroundFetchResults[i];
 
         for (int j = 0; j < 3; j++) {
 
-            // Set the airshipDelegate to return a result for application:didReceiveRemoteNotification:fetchCompletionHandler:
-            __block UIBackgroundFetchResult surrogateDelagateResult = allBackgroundFetchResults[j];
-            [self.airshipDelegate addMethodBlock:^(NSInvocation *invocation) {
-                void *arg;
-                [invocation getArgument:&arg atIndex:4];
-                void (^handler)(UIBackgroundFetchResult result) = (__bridge void (^)(UIBackgroundFetchResult))arg;
-                handler(surrogateDelagateResult);
-            } forSelectorString:@"application:didReceiveRemoteNotification:fetchCompletionHandler:"];
+            appDelegateCalled = NO;
+            pushCalled = NO;
 
-            // Verify that the expected value is returned from combining the two delegate results
-            __block UIBackgroundFetchResult expectedResult = expectedResults[i][j];
-            [self.baseDelegate application:nil didReceiveRemoteNotification:nil fetchCompletionHandler:^(UIBackgroundFetchResult result){
-                XCTAssertEqual(expectedResult, result,
-                               @"application:didReceiveRemoteNotification:fetchCompletionHandler should return %@ when airship app delegate returns %@ and original app delegate returns %@",
-                               [self stringFromBackgroundFetchResult:expectedResult],
-                               [self stringFromBackgroundFetchResult:surrogateDelagateResult],
-                               [self stringFromBackgroundFetchResult:originalAppDelegateResult]);
+            XCTestExpectation *callBackFinished = [self expectationWithDescription:@"Callback called"];
+            UIBackgroundFetchResult expectedResult = expectedResults[i][j];
+
+            // Set the app delegate result
+            appDelegateResult = allBackgroundFetchResults[j];
+
+            // Verify that the expected value is returned from combining the two results
+            [self.delegate application:[UIApplication sharedApplication]
+          didReceiveRemoteNotification:expectedNotification
+                fetchCompletionHandler:^(UIBackgroundFetchResult result){
+                    XCTAssertEqual(expectedResult, result);
+                    [callBackFinished fulfill];
+                }];
+
+            // Wait for the test expectations
+            [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+                XCTAssertTrue(pushCalled);
+                XCTAssertTrue(appDelegateCalled);
             }];
         }
     }
 }
 
 /*
- * Tests application:handleActionWithIdentifier:forRemoteNotification:completionHandler
- * calls both delegates if they responds and only calls the completion handler
- * once after each delegate is finished.
+ * Tests adding application:didReceiveRemoteNotification:fetchCompletionHandler calls
+ * through to UAPush
  */
-- (void)testHandleAction {
+- (void)testAddAppReceivedRemoteNotificationWithCompletionHandler {
 
-    __block BOOL callbackCalled = NO;
-    __block BOOL originalDelegateCalled = NO;
-    __block BOOL airshipDelegateCalled = NO;
+    NSDictionary *expectedNotification = @{@"oh": @"hi"};
 
-    // Neither app delegates respond
-    [self.baseDelegate application:nil handleActionWithIdentifier:@"id" forRemoteNotification:nil completionHandler:^{
-        callbackCalled = YES;
-    }];
 
-    XCTAssertTrue(callbackCalled, @"The proxy delegate should call the completion handler if no app delegates respond to the method.");
+    // Add an implementation for UAPush that calls an expected fetch result
+    __block BOOL pushCalled;
 
-    // One app delegate responds
-    callbackCalled = NO;
-
-    [self.originalDelegate addMethodBlock:^(NSInvocation *invocation) {
+    void (^pushBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
+        pushCalled = YES;
         void *arg;
-        [invocation getArgument:&arg atIndex:5];
-        void (^handler)() = (__bridge void (^)())arg;
-
-        originalDelegateCalled = YES;
-        handler();
-    } forSelectorString:@"application:handleActionWithIdentifier:forRemoteNotification:completionHandler:"];
-
-    [self.baseDelegate application:nil handleActionWithIdentifier:@"id" forRemoteNotification:nil completionHandler:^{
-        callbackCalled = YES;
-    }];
-
-    XCTAssertTrue(callbackCalled, @"The proxy delegate should call the completion handler after sub delegates finish.");
-    XCTAssertTrue(originalDelegateCalled, @"The original delegate should be called with the app delegate.");
-
-
-    // Both app delegates respond
-    callbackCalled = NO;
-    originalDelegateCalled = NO;
-    airshipDelegateCalled = NO;
-
-    [self.airshipDelegate addMethodBlock:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:5];
-        void (^handler)() = (__bridge void (^)())arg;
-
-        airshipDelegateCalled = YES;
-        handler();
-    } forSelectorString:@"application:handleActionWithIdentifier:forRemoteNotification:completionHandler:"];
-
-
-    [self.baseDelegate application:nil handleActionWithIdentifier:@"id" forRemoteNotification:nil completionHandler:^{
-        callbackCalled = YES;
-    }];
-
-    XCTAssertTrue(callbackCalled, @"The proxy delegate should call the completion handler after sub delegates finish.");
-    XCTAssertTrue(originalDelegateCalled, @"The selector should be called on the original delegate.");
-    XCTAssertTrue(airshipDelegateCalled, @"The selector should be called on the airship delegate.");
-
-}
-
--(NSString *)stringFromBackgroundFetchResult:(UIBackgroundFetchResult)result {
-    switch(result) {
-        case UIBackgroundFetchResultFailed:
-            return @"UIBackgroundFetchResultFailed";
-        case UIBackgroundFetchResultNewData:
-            return @"UIBackgroundFetchResultNewData";
-        case UIBackgroundFetchResultNoData:
-            return  @"UIBackgroundFetchResultNoData";
-        default:
-            return @"UKNOWN";
-    }
-}
-
-/*
- * Tests application:didReceiveRemoteNotification:fetchCompletionHandler
- * responds with the results of the single delegate that responds
- */
-- (void)testDidReceiveRemoteNotificationOneSubDelegateResponse {
-    [self.airshipDelegate addMethodBlock:^(NSInvocation *invocation) {
-        void *arg;
-        // Do magic to get the block from the NSInvocation.  Index 4 because the first 2 arguments are hidden arguments - self and command
         [invocation getArgument:&arg atIndex:4];
         void (^handler)(UIBackgroundFetchResult result) = (__bridge void (^)(UIBackgroundFetchResult))arg;
-
-        // Call handler with UIBackgroundFetchResultNewData result
         handler(UIBackgroundFetchResultNewData);
-    } forSelectorString:@"application:didReceiveRemoteNotification:fetchCompletionHandler:"];
+    };
 
-    [self.baseDelegate application:nil didReceiveRemoteNotification:nil fetchCompletionHandler:^(UIBackgroundFetchResult result){
-        XCTAssertEqual(UIBackgroundFetchResultNewData, result,
-                       @"application:didReceiveRemoteNotification:fetchCompletionHandler should return no data as a default value");
-    }];
+    [[[self.mockPush stub] andDo:pushBlock] appReceivedRemoteNotification:expectedNotification
+                                                         applicationState:UIApplicationStateActive
+                                                   fetchCompletionHandler:OCMOCK_ANY];
+
+
+    // Proxy the delegate
+    [UAAppDelegateProxy proxyAppDelegate];
+
+    // Verify that the expected value is returned from combining the two results
+    [self.delegate application:[UIApplication sharedApplication]
+  didReceiveRemoteNotification:expectedNotification
+        fetchCompletionHandler:^(UIBackgroundFetchResult result){
+            XCTAssertEqual(UIBackgroundFetchResultNewData, result);
+        }];
+
+     XCTAssertTrue(pushCalled);
 }
 
 
 /*
- * Test calling completion handlers application:didReceiveRemoteNotification:fetchCompletionHandler
- * multiple times are ignored
+ * Tests adding application:handleActionWithIdentifier:forRemoteNotification:completionHandler: calls
+ * through to UAPush
  */
-- (void)testDidReceiveRemoteNotificationCallingCompletionHandlerMultipleTimes {
+- (void)testAddAppReceivedActionWithIdentifier {
 
-    // Define application:didReceiveRemoteNotification:fetchCompletionHandler: that calls the completion
-    // handler multiple times on both delegates.
-    
-    [self.airshipDelegate addMethodBlock:^(NSInvocation *invocation) {
+    NSDictionary *expectedNotification = @{@"oh": @"hi"};
+
+
+    // Add an implementation for UAPush that calls an expected fetch result
+    __block BOOL pushCalled;
+    void (^pushBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
+        pushCalled = YES;
         void *arg;
-        // Do magic to get the block from the NSInvocation.  Index 4 because the first 2 arguments are hidden arguments - self and command
-        [invocation getArgument:&arg atIndex:4];
-        void (^handler)(UIBackgroundFetchResult result) = (__bridge void (^)(UIBackgroundFetchResult))arg;
+        [invocation getArgument:&arg atIndex:5];
+        void (^handler)() = (__bridge void (^)())arg;
+        handler();
+    };
 
-        // Call the handler multiple times
-        handler(UIBackgroundFetchResultNoData);
-        handler(UIBackgroundFetchResultNewData);
-    } forSelectorString:@"application:didReceiveRemoteNotification:fetchCompletionHandler:"];
+    [[[self.mockPush stub] andDo:pushBlock] appReceivedActionWithIdentifier:@"action!"
+                                                               notification:expectedNotification
+                                                         applicationState:UIApplicationStateActive
+                                                   completionHandler:OCMOCK_ANY];
 
-    [self.originalDelegate addMethodBlock:^(NSInvocation *invocation) {
+
+    // Proxy the delegate
+    [UAAppDelegateProxy proxyAppDelegate];
+
+    // Verify that the expected value is returned from combining the two results
+    __block BOOL completionHandlerCalled;
+    [self.delegate application:[UIApplication sharedApplication]
+     handleActionWithIdentifier:@"action!"
+  forRemoteNotification:expectedNotification
+        completionHandler:^(){
+            completionHandlerCalled = YES;
+        }];
+
+    XCTAssertTrue(pushCalled);
+    XCTAssertTrue(completionHandlerCalled);
+}
+
+
+/*
+ * Tests adding application:handleActionWithIdentifier:forRemoteNotification:completionHandler: calls
+ * through to UAPush and the original delegate.
+ */
+- (void)testProxyAppReceivedActionWithIdentifier {
+    XCTestExpectation *callBackFinished = [self expectationWithDescription:@"App delegate callback called"];
+
+    NSDictionary *expectedNotification = @{@"oh": @"hi"};
+
+    // Add implementation to the app delegate
+    __block BOOL appDelegateCalled;
+    [self addAppDelegateImplementation:@selector(application:handleActionWithIdentifier:forRemoteNotification:completionHandler:)
+                                 block:^(id self, UIApplication *application, NSString *identifier, NSDictionary *notification, void (^completion)() ) {
+
+                                     appDelegateCalled = YES;
+
+                                     // Verify the parameters
+                                     XCTAssertEqualObjects([UIApplication sharedApplication], application);
+                                     XCTAssertEqualObjects(expectedNotification, notification);
+                                     XCTAssertEqualObjects(@"action!", identifier);
+
+                                     XCTAssertNotNil(completion);
+                                     completion();
+                                 }];
+
+
+    // Stub the implementation for UAPush that calls an expected fetch result
+    __block BOOL pushCalled;
+    void (^pushBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
+        pushCalled = YES;
         void *arg;
-        // Do magic to get the block from the NSInvocation.  Index 4 because the first 2 arguments are hidden arguments - self and command
-        [invocation getArgument:&arg atIndex:4];
-        void (^handler)(UIBackgroundFetchResult result) = (__bridge void (^)(UIBackgroundFetchResult))arg;
+        [invocation getArgument:&arg atIndex:5];
+        void (^handler)() = (__bridge void (^)())arg;
+        handler();
+    };
 
-        // Call the handler multiple times
-        handler(UIBackgroundFetchResultNoData);
-        handler(UIBackgroundFetchResultNewData);
-    } forSelectorString:@"application:didReceiveRemoteNotification:fetchCompletionHandler:"];
+    [[[self.mockPush stub] andDo:pushBlock] appReceivedActionWithIdentifier:@"action!"
+                                                               notification:expectedNotification
+                                                           applicationState:UIApplicationStateActive
+                                                          completionHandler:OCMOCK_ANY];
 
 
-    [self.baseDelegate application:nil didReceiveRemoteNotification:nil fetchCompletionHandler:^(UIBackgroundFetchResult result){
-        XCTAssertEqual(UIBackgroundFetchResultNoData, result, @"application:didReceiveRemoteNotification:fetchCompletionHandler should ignore multiple calls to the completion handler");
+    // Proxy the delegate
+    [UAAppDelegateProxy proxyAppDelegate];
+
+    // Verify that the expected value is returned from combining the two results
+    __block BOOL completionHandlerCalled;
+    [self.delegate application:[UIApplication sharedApplication]
+    handleActionWithIdentifier:@"action!"
+         forRemoteNotification:expectedNotification
+             completionHandler:^(){
+                 [callBackFinished fulfill];
+                 completionHandlerCalled = YES;
+             }];
+
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+        XCTAssertTrue(pushCalled);
+        XCTAssertTrue(completionHandlerCalled);
+        XCTAssertTrue(appDelegateCalled);
     }];
+
 }
 
-- (void)testAirshipDelegateDoesNotReceiveNSObjectMessages {
-
-    SEL selector = @selector(performSelectorOnMainThread:withObject:waitUntilDone:);
-
-    // Set up a mocked invocation that expects to be invoked with both delegates
-    id mockedInvocation = [OCMockObject niceMockForClass:[NSInvocation class]];
-    [[[mockedInvocation stub] andReturnValue:OCMOCK_VALUE(selector)] selector];
-    [[mockedInvocation expect] invokeWithTarget:self.originalDelegate];
-    [[mockedInvocation reject] invokeWithTarget:self.airshipDelegate];
-
-    [self.baseDelegate forwardInvocation:mockedInvocation];
-    XCTAssertNoThrow([mockedInvocation verify],
-                     @"UAAppDelegateProxy did send NSObject methods only to the original app delegate");
-}
-
-@end
-
-
-@implementation TestAppDelegateSurrogate
-
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        self.methodBlocks = [NSMutableDictionary dictionary];
-    }
-    return self;
-}
-
-- (BOOL)respondsToSelector:(SEL)selector {
-    return self.methodBlocks[NSStringFromSelector(selector)] != nil;
-}
-
-- (void)forwardInvocation:(NSInvocation *)invocation {
-    MethodBlock methodBlock = [self.methodBlocks valueForKey:NSStringFromSelector([invocation selector])];
-
-    if (methodBlock) {
-        methodBlock(invocation);
-    } else {
-        [super forwardInvocation:invocation];
-    }
-}
-
-- (void)addMethodBlock:(MethodBlock)methodBlock forSelectorString:(NSString *)selector {
-    [self.methodBlocks setObject:[methodBlock copy] forKey:selector];
+/**
+ * Adds a block based implementation to the app delegate with the given selector.
+ *
+ * @param selector A UIApplicationDelegate selector
+ * @param block A block that matches the encoding of the selector. The first argument
+ * must be self.
+ */
+- (void)addAppDelegateImplementation:(SEL)selector block:(id)block {
+    struct objc_method_description description = protocol_getMethodDescription(@protocol(UIApplicationDelegate), selector, NO, YES);
+    IMP implementation = imp_implementationWithBlock(block);
+    class_addMethod(self.generatedClass, selector, implementation, description.types);
 }
 
 @end
