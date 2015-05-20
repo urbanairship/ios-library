@@ -115,13 +115,19 @@
     }
 
     NSString *inboxMessageID = [UAInboxUtils inboxMessageIDFromNotification:apnsPayload];
-    BOOL containsOpenInboxAction = message.onClick[kUADisplayInboxActionDefaultRegistryAlias] ||
-        message.onClick[kUADisplayInboxActionDefaultRegistryName];
+    if (inboxMessageID) {
+        NSSet *inboxActionNames = [NSSet setWithArray:@[kUADisplayInboxActionDefaultRegistryAlias,
+                                                        kUADisplayInboxActionDefaultRegistryName,
+                                                        kUAOverlayInboxMessageActionDefaultRegistryAlias,
+                                                        kUAOverlayInboxMessageActionDefaultRegistryName]];
 
-    if (inboxMessageID && !containsOpenInboxAction) {
-        NSMutableDictionary *actions = [NSMutableDictionary dictionaryWithDictionary:message.onClick];
-        actions[kUADisplayInboxActionDefaultRegistryAlias] = inboxMessageID;
-        message.onClick = actions;
+        NSSet *actionNames = [NSSet setWithArray:message.onClick.allKeys];
+
+        if (![actionNames intersectsSet:inboxActionNames]) {
+            NSMutableDictionary *actions = [NSMutableDictionary dictionaryWithDictionary:message.onClick];
+            actions[kUADisplayInboxActionDefaultRegistryAlias] = inboxMessageID;
+            message.onClick = actions;
+        }
     }
 
     // Store it for later

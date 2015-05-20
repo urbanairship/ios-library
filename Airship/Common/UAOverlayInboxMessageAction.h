@@ -23,22 +23,40 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 #import "UAAction.h"
 
+
 /**
- * Action class used for handing incoming rich push messages and performing delegate callbacks. 
+ * Requests an inbox message to be displayed in an overlay.
  *
- * Expected arguments: An instance of UAActionArguments.
+ * This action is registered under the names open_mc_overlay_action and ^mco.
  *
- * Valid situations: UASituationForegroundPush and UASituationLaunchedFromPush.
+ * Expected argument value is an inbox message ID as an NSString or "MESSAGE_ID"
+ * to look for the message in the argument's metadata.
  *
- * Result value: rich push message ID
+ * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush, UASituationWebViewInvocation,
+ * UASituationManualInvocation, and UASituationForegroundInteractiveButton.
  *
- * Error: nil
+ * Result value: nil
  *
- * Fetch result: UAActionFetchResultNewData
+ * Default predicate: Rejects situation UASituationForegroundPush.
  */
-@interface UAIncomingRichPushAction : UAAction
+@interface UAOverlayInboxMessageAction : UAAction
 
 @end
+
+/**
+ * Represents the possible error conditions
+ * when running a `UAOverlayInboxMessageAction`.
+ */
+typedef NS_ENUM(NSInteger, UAOverlayInboxMessageActionErrorCode) {
+    /**
+     * Indicates that the message was unavailable.
+     */
+    UAOverlayInboxMessageActionErrorCodeMessageUnavailable
+};
+
+/**
+ * The domain for errors encountered when running a `UAOverlayInboxMessageAction`.
+ */
+extern NSString * const UAOverlayInboxMessageActionErrorDomain;

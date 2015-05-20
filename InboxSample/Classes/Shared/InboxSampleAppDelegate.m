@@ -32,11 +32,11 @@
 #import "UAPush.h"
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
-#import "InboxPushHandlerDelegate.h"
+#import "InboxDelegate.h"
 #import "PushNotificationDelegate.h"
 
 @interface InboxSampleAppDelegate()
-@property (nonatomic, strong) InboxPushHandlerDelegate *inboxDelegate;
+@property (nonatomic, strong) InboxDelegate *inboxDelegate;
 @property (nonatomic, strong) PushNotificationDelegate *pushDelegate;
 @end
 
@@ -67,9 +67,9 @@
 
     InboxSampleViewController *sampleViewController = self.viewController;
 
-    // Set the sample view controller as the Inbox push handler delegate
-    self.inboxDelegate = [[InboxPushHandlerDelegate alloc] init];
-    [UAirship inbox].pushHandler.delegate = self.inboxDelegate;
+    // Set the inbox delegate to handle inbox display requests
+    self.inboxDelegate = [[InboxDelegate alloc] init];
+    [UAirship inbox].delegate = self.inboxDelegate;
 
     // Set the sample view controller as the push notification delegate
     self.pushDelegate = [[PushNotificationDelegate alloc] init];
