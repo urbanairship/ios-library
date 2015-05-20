@@ -79,8 +79,6 @@
         return;
     }
 
-    UA_LTRACE(@"Updating channel tag groups for: %@", channelId);
-
     NSMutableDictionary *audience = [NSMutableDictionary dictionary];
     [audience setValue:channelId forKey:kUATagGroupsIosChannelKey];
 
@@ -88,6 +86,8 @@
     [payload setValue:audience forKey:kUATagGroupsAudienceKey];
     [payload setValue:addTags forKey:kUATagGroupsAddKey];
     [payload setValue:removeTags forKey:kUATagGroupsRemoveKey];
+
+    UA_LTRACE(@"Updating channel tag groups with payload: %@", payload);
 
     UAHTTPRequest *request = [self requestWithPayload:payload
                                             urlString:[NSString stringWithFormat:@"%@%@", self.urlString, kUAChannelTagGroupsPath]];
@@ -132,8 +132,6 @@
         return;
     }
 
-    UA_LTRACE(@"Updating named user tags for: %@", identifier);
-
     NSMutableDictionary *audience = [NSMutableDictionary dictionary];
     [audience setValue:identifier forKey:kUATagGroupsNamedUserIdKey];
 
@@ -141,6 +139,8 @@
     [payload setValue:audience forKey:kUATagGroupsAudienceKey];
     [payload setValue:addTags forKey:kUATagGroupsAddKey];
     [payload setValue:removeTags forKey:kUATagGroupsRemoveKey];
+
+    UA_LTRACE(@"Updating named user tags with payload: %@", payload);
 
     UAHTTPRequest *request = [self requestWithPayload:payload
                                             urlString:[NSString stringWithFormat:@"%@%@", self.urlString, kUANamedUserTagsPath]];

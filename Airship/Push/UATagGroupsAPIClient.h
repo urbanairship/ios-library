@@ -43,7 +43,7 @@ typedef void (^UATagGroupsAPIClientSuccessBlock)();
 typedef void (^UATagGroupsAPIClientFailureBlock)(UAHTTPRequest *request);
 
 /**
- * A high level abstraction for performing tag groups operations.
+ * A high level abstraction for performing tag group operations.
  */
 @interface UATagGroupsAPIClient : NSObject
 
@@ -59,8 +59,8 @@ typedef void (^UATagGroupsAPIClientFailureBlock)(UAHTTPRequest *request);
  * Update the channel tag group.
  *
  * @param channelId The channel ID string.
- * @param addTags The dictionary of tags to add.
- * @param removeTags The dictionary of tags to remove.
+ * @param addTags The dictionary of tag group ID to an array of tags.
+ * @param removeTags The dictionary of tag group ID to an array of tags.
  * @param successBlock A UATagGroupsAPIClientSuccessBlock that will be called if
  *        the named user tags updated successfully.
  * @param failureBlock A UATagGroupsAPIClientFailureBlock that will be called if
@@ -76,8 +76,8 @@ typedef void (^UATagGroupsAPIClientFailureBlock)(UAHTTPRequest *request);
  * Update the named user tags.
  *
  * @param identifier The named user ID string.
- * @param addTags The dictionary of tags to add.
- * @param removeTags The dictionary of tags to remove.
+ * @param addTags The dictionary of tag group ID to an array of tags.
+ * @param removeTags The dictionary of tag group ID to an array of tags.
  * @param successBlock A UATagGroupsAPIClientSuccessBlock that will be called if
  *        the named user tags updated successfully.
  * @param failureBlock A UATagGroupsAPIClientFailureBlock that will be called if
