@@ -34,7 +34,7 @@
     UA_LDEBUG(@"Received a notification while the app was already in the foreground");
 
     // Only display an alert dialog if the push does not contain a rich push message id.
-    // If it does, allow the UAInboxPushHandlerDelegate richPushMessageAvailable: to handle it.
+    // If it does, allow the InboxDelegate's richPushMessageAvailable: to handle it.
     if (![UAInboxUtils inboxMessageIDFromNotification:notification]) {
 
         id alertMessage = notification[@"aps"][@"alert"];
