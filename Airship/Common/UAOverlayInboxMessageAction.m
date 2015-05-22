@@ -33,7 +33,7 @@
 #import "UALandingPageOverlayController.h"
 
 NSString * const UAOverlayInboxMessageActionErrorDomain = @"UAOverlayInboxMessageActionError";
-NSString * const UAOverlayInboxMessageActionMessageIDPlaceHolder = @"MESSAGE_ID";
+NSString * const UAOverlayInboxMessageActionMessageIDPlaceHolder = @"auto";
 
 @implementation UAOverlayInboxMessageAction
 
@@ -49,7 +49,7 @@ NSString * const UAOverlayInboxMessageActionMessageIDPlaceHolder = @"MESSAGE_ID"
                 return NO;
             }
 
-            if ([arguments.value isEqualToString:UAOverlayInboxMessageActionMessageIDPlaceHolder]) {
+            if ([arguments.value  caseInsensitiveCompare:UAOverlayInboxMessageActionMessageIDPlaceHolder] == NSOrderedSame) {
                 return arguments.metadata[UAActionMetadataPushPayloadKey] ||
                 arguments.metadata[UAActionMetadataInboxMessageKey];
             }
@@ -81,7 +81,7 @@ NSString * const UAOverlayInboxMessageActionMessageIDPlaceHolder = @"MESSAGE_ID"
 }
 
 /**
- * Fetches the specified message. If the messageID is "MESSAGE_ID", either
+ * Fetches the specified message. If the messageID is "auto", either
  * the UAActionMetadataInboxMessageKey will be returned or the ID of the message
  * will be taken from the UAActionMetadataPushPayloadKey. If the message is not
  * available in the message list, the list will be refreshed.
@@ -101,7 +101,7 @@ NSString * const UAOverlayInboxMessageActionMessageIDPlaceHolder = @"MESSAGE_ID"
         return;
     }
 
-    if ([messageID isEqualToString:UAOverlayInboxMessageActionMessageIDPlaceHolder]) {
+    if ([messageID caseInsensitiveCompare:UAOverlayInboxMessageActionMessageIDPlaceHolder] == NSOrderedSame) {
         // If we have InboxMessage metadata show the message
         if (arguments.metadata[UAActionMetadataInboxMessageKey]) {
             UAInboxMessage *message = arguments.metadata[UAActionMetadataInboxMessageKey];
