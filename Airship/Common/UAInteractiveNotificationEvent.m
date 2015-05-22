@@ -54,6 +54,10 @@
     return @"interactive_notification_action";
 }
 
+- (UAEventPriority)priority {
+    return UAEventPriorityHigh;
+}
+
 - (NSUInteger)estimatedSize {
     return kUAInteractiveNotificationEventSize;
 }
