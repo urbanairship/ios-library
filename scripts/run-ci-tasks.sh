@@ -51,7 +51,7 @@ mkdir -p "${ROOT_PATH}/test-output"
 xcrun xcodebuild -destination "${TEST_DESTINATION}" -project "${ROOT_PATH}/AirshipLib/AirshipLib.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme AirshipLib test | tee "${ROOT_PATH}/test-output/XCTEST-LOGIC.out"
 
 # Run AirshipKit Tests
-xcrun xcodebuild -destination "${TEST_DESTINATION}" -project "${ROOT_PATH}/AirshipLib/AirshipLib.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme AirshipKit test | tee "${ROOT_PATH}/test-output/XCTEST-AIRSHIPKIT.out"
+xcrun xcodebuild -destination "${TEST_DESTINATION}" -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme AirshipKit test | tee "${ROOT_PATH}/test-output/XCTEST-AIRSHIPKIT.out"
 
 # Run our Application Tests
 xcrun xcodebuild -destination "${TEST_DESTINATION}" -project "${ROOT_PATH}/PushSample/PushSampleLib.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme PushSample test | tee "${ROOT_PATH}/test-output/XCTEST-APPLICATION.out"
