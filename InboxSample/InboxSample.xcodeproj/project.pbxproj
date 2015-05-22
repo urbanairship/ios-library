@@ -54,8 +54,6 @@
 		4939777A19B691100063C58F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1872674C1287C6200064C41B /* Security.framework */; };
 		4939777B19B691100063C58F /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		4939777C19B691100063C58F /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CB326512B85A87002E39EA /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		4939779319B7BF580063C58F /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4939779119B7BF3B0063C58F /* AirshipKit.framework */; };
-		4939779519B7BFF30063C58F /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4939779119B7BF3B0063C58F /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		493977A019B7C1E70063C58F /* InboxSampleModalUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4939779A19B7C1E70063C58F /* InboxSampleModalUserInterface.m */; };
 		493977A119B7C1E70063C58F /* InboxSampleNavigationUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4939779C19B7C1E70063C58F /* InboxSampleNavigationUserInterface.m */; };
 		493977A219B7C1E70063C58F /* InboxSamplePopoverUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4939779E19B7C1E70063C58F /* InboxSamplePopoverUserInterface.m */; };
@@ -68,6 +66,8 @@
 		49C0CB8C19BA634F00771F4F /* UAInteractiveNotifications.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49C0CB7F19BA634F00771F4F /* UAInteractiveNotifications.strings */; };
 		49C0CB8F19BA635D00771F4F /* UAInboxUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49C0CB8D19BA635D00771F4F /* UAInboxUI.strings */; };
 		49C0CB9019BA635D00771F4F /* UAInboxUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49C0CB8D19BA635D00771F4F /* UAInboxUI.strings */; };
+		49D528021B0FF26E006E35FB /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 49D527FD1B0FF24D006E35FB /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		49D528031B0FF275006E35FB /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49D527FD1B0FF24D006E35FB /* AirshipKit.framework */; };
 		49E001B0154F6535009305B7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49E001AF154F6535009305B7 /* CoreLocation.framework */; };
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
@@ -102,6 +102,27 @@
 			remoteGlobalIDString = 8DD76FA10486AA7600D96B5E;
 			remoteInfo = fmdb;
 		};
+		49D527FC1B0FF24D006E35FB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 49D527F71B0FF24D006E35FB /* AirshipKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 494DD9571B0EB677009C134E;
+			remoteInfo = AirshipKit;
+		};
+		49D527FE1B0FF24D006E35FB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 49D527F71B0FF24D006E35FB /* AirshipKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 49914C2E1B0FF055001078AB;
+			remoteInfo = "AirshipKit Tests";
+		};
+		49D528001B0FF260006E35FB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 49D527F71B0FF24D006E35FB /* AirshipKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 494DD9561B0EB677009C134E;
+			remoteInfo = AirshipKit;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -111,7 +132,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				4939779519B7BFF30063C58F /* AirshipKit.framework in CopyFiles */,
+				49D528021B0FF26E006E35FB /* AirshipKit.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -144,7 +165,6 @@
 		1FE423A21893262600624335 /* list-image-placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-image-placeholder.png"; sourceTree = "<group>"; };
 		1FE423A31893262600624335 /* list-image-placeholder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-image-placeholder@2x.png"; sourceTree = "<group>"; };
 		4939778019B691110063C58F /* InboxSample-Kit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "InboxSample-Kit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4939779119B7BF3B0063C58F /* AirshipKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AirshipKit.framework; path = ../Airship/AirshipKit.framework; sourceTree = "<group>"; };
 		4939779919B7C1E70063C58F /* InboxSampleModalUserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSampleModalUserInterface.h; sourceTree = "<group>"; };
 		4939779A19B7C1E70063C58F /* InboxSampleModalUserInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxSampleModalUserInterface.m; sourceTree = "<group>"; };
 		4939779B19B7C1E70063C58F /* InboxSampleNavigationUserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSampleNavigationUserInterface.h; sourceTree = "<group>"; };
@@ -165,6 +185,7 @@
 		49C0CB8819BA634F00771F4F /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/UAInteractiveNotifications.strings"; sourceTree = "<group>"; };
 		49C0CB8E19BA635D00771F4F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UAInboxUI.strings; sourceTree = "<group>"; };
 		49C0CB9119BA638A00771F4F /* UAInboxLocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxLocalization.h; sourceTree = "<group>"; };
+		49D527F71B0FF24D006E35FB /* AirshipKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipKit.xcodeproj; path = ../AirshipKit/AirshipKit.xcodeproj; sourceTree = "<group>"; };
 		49E001AF154F6535009305B7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		76F5B71919C37DD6003C07A0 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		9A50FAE80FCA81810007E1BE /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -217,7 +238,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4939779319B7BF580063C58F /* AirshipKit.framework in Frameworks */,
+				49D528031B0FF275006E35FB /* AirshipKit.framework in Frameworks */,
 				4939777219B691100063C58F /* CoreLocation.framework in Frameworks */,
 				4939777319B691100063C58F /* libz.dylib in Frameworks */,
 				4939777419B691100063C58F /* CFNetwork.framework in Frameworks */,
@@ -322,6 +343,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				49D527F71B0FF24D006E35FB /* AirshipKit.xcodeproj */,
 				184E3F3A129E4C0D004465C8 /* Support */,
 				D9FFC6EC124BFD3700E8BD30 /* Airship */,
 				18A27C81125EDD6E0045D75B /* Classes */,
@@ -378,10 +400,18 @@
 			name = "User Interfaces";
 			sourceTree = "<group>";
 		};
+		49D527F81B0FF24D006E35FB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				49D527FD1B0FF24D006E35FB /* AirshipKit.framework */,
+				49D527FF1B0FF24D006E35FB /* AirshipKit Tests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		9A9CBA1E0FCC559100435BCB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				4939779119B7BF3B0063C58F /* AirshipKit.framework */,
 				49E001AF154F6535009305B7 /* CoreLocation.framework */,
 				E9CB326512B85A87002E39EA /* CoreTelephony.framework */,
 				0D5F511011744AF5004AE48F /* MobileCoreServices.framework */,
@@ -515,6 +545,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				49D528011B0FF260006E35FB /* PBXTargetDependency */,
 			);
 			name = "InboxSample Kit";
 			productName = InboxSample;
@@ -552,6 +583,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = 49D527F81B0FF24D006E35FB /* Products */;
+					ProjectRef = 49D527F71B0FF24D006E35FB /* AirshipKit.xcodeproj */;
+				},
+				{
 					ProductGroup = 0D962FEA11699572008D18A2 /* Products */;
 					ProjectRef = 0D962FB51169952C008D18A2 /* fmdb.xcodeproj */;
 				},
@@ -570,6 +605,20 @@
 			fileType = "compiled.mach-o.executable";
 			path = fmdb;
 			remoteRef = 0D962FED11699572008D18A2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		49D527FD1B0FF24D006E35FB /* AirshipKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipKit.framework;
+			remoteRef = 49D527FC1B0FF24D006E35FB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		49D527FF1B0FF24D006E35FB /* AirshipKit Tests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "AirshipKit Tests.xctest";
+			remoteRef = 49D527FE1B0FF24D006E35FB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -667,6 +716,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		49D528011B0FF260006E35FB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipKit;
+			targetProxy = 49D528001B0FF260006E35FB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		49C0CB7F19BA634F00771F4F /* UAInteractiveNotifications.strings */ = {
