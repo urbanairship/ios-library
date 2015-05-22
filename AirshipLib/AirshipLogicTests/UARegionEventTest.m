@@ -25,6 +25,7 @@
 
 #import <XCTest/XCTest.h>
 #import "UARegionEvent+Internal.h"
+#import "UAEvent+Internal.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import <OCMock/OCMock.h>
@@ -260,6 +261,14 @@
     XCTAssertFalse([UARegionEvent regionEventRSSIIsValid:invalidRSSIMax], @"The RSSI %@ should be invalid.", invalidRSSIMax);
     XCTAssertFalse([UARegionEvent regionEventRSSIIsValid:invalidRSSIMin], @"The RSSI %@ should be invalid.", invalidRSSIMin);
     XCTAssertFalse([UARegionEvent regionEventRSSIIsValid:invalidRSSINil], @"Nil RSSIs should be invalid.");
+}
+
+/**
+ * Test the event is high priority
+ */
+- (void)testHighPriority {
+    UARegionEvent *event = [UARegionEvent regionEventWithRegionID:@"id" source:@"source" boundaryEvent:UABoundaryEventEnter];
+    XCTAssertEqual(UAEventPriorityHigh, event.priority);
 }
 
 @end

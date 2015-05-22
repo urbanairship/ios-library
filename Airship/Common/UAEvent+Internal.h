@@ -25,7 +25,31 @@
 
 #import "UAEvent.h"
 
+/**
+ * Represents the possible priorities for an event.
+ */
+typedef NS_ENUM(NSInteger, UAEventPriority) {
+    /**
+     * Low priority event. When added in the background, it will not schedule a send
+     * if the last send was within 15 mins. Adding in the foreground will schedule
+     * sends normally.
+     */
+    UAEventPriorityLow,
+
+    /**
+     * Normal priority event. Sends will be scheduled based on the batching time.
+     */
+    UAEventPriorityNormal,
+
+    /**
+     * High priority event. A send will be scheduled immediately.
+     */
+    UAEventPriorityHigh
+};
+
+
 @interface UAEvent ()
+
 /**
  * The time the event was created.
  */
@@ -40,6 +64,11 @@
  * The event's data.
  */
 @property (nonatomic, strong) NSDictionary *data;
+
+/**
+ * The event's priority.
+ */
+@property (nonatomic, readonly) UAEventPriority priority;
 
 
 /**

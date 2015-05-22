@@ -143,5 +143,9 @@ NSString * const UAAnalyticsValueNone = @"NONE";
     return UALocationEventAnalyticsType;
 }
 
+- (UAEventPriority)priority {
+    return UAEventPriorityLow;
+}
+
 
 @end

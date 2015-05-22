@@ -25,6 +25,7 @@
 
 #import <UIKit/UIKit.h>
 #import "UAAnalytics+Internal.h"
+#import "UAEvent+Internal.h"
 
 #import "UAirship.h"
 #import "UAAnalyticsDBManager.h"
@@ -238,22 +239,25 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         self.oldestEventTime = [event.time doubleValue];
     }
 
-    BOOL isBackground = [[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground;
-
-    if (isBackground && [event.eventType isEqualToString:UALocationEventAnalyticsType]) {
-        NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
-
-        if (timeSinceLastSend >= kMinBackgroundLocationIntervalSeconds) {
-            [self sendWithDelay:0];
-        } else {
-            UA_LTRACE("Skipping send, background location events batch for 15 minutes.");
-        }
-    } else {
-        if ([event.eventType isEqualToString:kUARegionEventType] ) {
+    switch (event.priority) {
+        case UAEventPriorityHigh:
             [self sendWithDelay:kHighPriorityBatchWaitSeconds];
-        } else {
+            break;
+        case UAEventPriorityNormal:
             [self sendWithDelay:self.timeToWaitBeforeSendingNextBatch];
-        }
+            break;
+        case UAEventPriorityLow:
+            if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground) {
+                NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
+                if (timeSinceLastSend >= kMinBackgroundLowPriorityEventSendIntervalSeconds) {
+                    [self sendWithDelay:0];
+                } else {
+                    UA_LTRACE("Skipping low priority event send.");
+                }
+            } else {
+                [self sendWithDelay:self.timeToWaitBeforeSendingNextBatch];
+            }
+            break;
     }
 }
 

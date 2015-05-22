@@ -61,6 +61,10 @@ static dispatch_once_t netInfoDispatchToken_;
     return @"base";
 }
 
+- (UAEventPriority)priority {
+    return UAEventPriorityNormal;
+}
+
 - (NSUInteger)estimatedSize {
     NSMutableDictionary *eventDictionary = [NSMutableDictionary dictionary];
     [eventDictionary setValue:self.eventType forKey:@"type"];
