@@ -31,6 +31,8 @@
 #import "UAAnalytics.h"
 #import "UAPushNotificationHandler.h"
 
+#define kSimulatorWarningDisabledKey @"ua-simulator-warning-disabled"
+
 @interface SampleAppDelegate()
 @property (nonatomic, strong) UAPushNotificationHandler *pushHandler;
 @end
@@ -125,12 +127,19 @@
 }
 
 - (void)failIfSimulator {
+
+    UA_LDEBUG(@"You will not be able to receive push notifications in the simulator.");
+
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:kSimulatorWarningDisabledKey]) {
+        return;
+    }
+
     if ([[[UIDevice currentDevice] model] rangeOfString:@"Simulator"].location != NSNotFound) {
         UIAlertView *someError = [[UIAlertView alloc] initWithTitle:@"Notice"
                                                             message:@"You will not be able to receive push notifications in the simulator."
                                                            delegate:self
                                                   cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:nil];
+                                                  otherButtonTitles:@"Disable Warning", nil];
 
         // Let the UI finish launching first so it doesn't complain about the lack of a root view controller
         // Delay execution of the block for 1/2 second.
@@ -138,6 +147,13 @@
             [someError show];
         });
 
+    }
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+
+    if (buttonIndex == [alertView firstOtherButtonIndex]){
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:kSimulatorWarningDisabledKey];
     }
 }
 
