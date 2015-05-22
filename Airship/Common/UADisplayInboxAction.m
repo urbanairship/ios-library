@@ -33,9 +33,9 @@
 #import "UAInboxPushHandler+Internal.h"
 #import "UALandingPageOverlayController.h"
 
-@implementation UADisplayInboxAction
+#define kUADisplayInboxActionMessageIDPlaceHolder @"auto"
 
-NSString * const UADisplayInboxActionMessageIDPlaceHolder = @"auto";
+@implementation UADisplayInboxAction
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
 
@@ -64,7 +64,7 @@ NSString * const UADisplayInboxActionMessageIDPlaceHolder = @"auto";
 
     // TODO: Remove in 7.0.0
     NSString *messageID = [UAInboxUtils inboxMessageIDFromValue:arguments.value];
-    if (messageID && [messageID caseInsensitiveCompare:UADisplayInboxActionMessageIDPlaceHolder] != NSOrderedSame && ![UAirship inbox].delegate) {
+    if (messageID && ![[messageID lowercaseString] isEqualToString:kUADisplayInboxActionMessageIDPlaceHolder] && ![UAirship inbox].delegate) {
         switch (arguments.situation) {
             case UASituationForegroundPush:
                 handler.viewingMessageID = messageID;
@@ -198,7 +198,7 @@ NSString * const UADisplayInboxActionMessageIDPlaceHolder = @"auto";
         return;
     }
 
-    if ([messageID caseInsensitiveCompare:UADisplayInboxActionMessageIDPlaceHolder] == NSOrderedSame) {
+    if ([[messageID lowercaseString] isEqualToString:kUADisplayInboxActionMessageIDPlaceHolder]) {
         // If we have InboxMessage metadata show the message
         if (arguments.metadata[UAActionMetadataInboxMessageKey]) {
             UAInboxMessage *message = arguments.metadata[UAActionMetadataInboxMessageKey];

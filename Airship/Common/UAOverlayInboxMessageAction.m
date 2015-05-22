@@ -32,8 +32,9 @@
 #import "UAInboxUtils.h"
 #import "UALandingPageOverlayController.h"
 
+#define kUAOverlayInboxMessageActionMessageIDPlaceHolder @"auto"
+
 NSString * const UAOverlayInboxMessageActionErrorDomain = @"UAOverlayInboxMessageActionError";
-NSString * const UAOverlayInboxMessageActionMessageIDPlaceHolder = @"auto";
 
 @implementation UAOverlayInboxMessageAction
 
@@ -49,7 +50,7 @@ NSString * const UAOverlayInboxMessageActionMessageIDPlaceHolder = @"auto";
                 return NO;
             }
 
-            if ([arguments.value  caseInsensitiveCompare:UAOverlayInboxMessageActionMessageIDPlaceHolder] == NSOrderedSame) {
+            if ([[arguments.value lowercaseString] isEqualToString:kUAOverlayInboxMessageActionMessageIDPlaceHolder]) {
                 return arguments.metadata[UAActionMetadataPushPayloadKey] ||
                 arguments.metadata[UAActionMetadataInboxMessageKey];
             }
@@ -101,7 +102,7 @@ NSString * const UAOverlayInboxMessageActionMessageIDPlaceHolder = @"auto";
         return;
     }
 
-    if ([messageID caseInsensitiveCompare:UAOverlayInboxMessageActionMessageIDPlaceHolder] == NSOrderedSame) {
+    if ([[messageID lowercaseString] isEqualToString:kUAOverlayInboxMessageActionMessageIDPlaceHolder]) {
         // If we have InboxMessage metadata show the message
         if (arguments.metadata[UAActionMetadataInboxMessageKey]) {
             UAInboxMessage *message = arguments.metadata[UAActionMetadataInboxMessageKey];
