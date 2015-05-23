@@ -78,7 +78,6 @@
 		494DDBA01B0FBE7E009C134E /* UAInAppResolutionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 494DDB361B0FBE7B009C134E /* UAInAppResolutionEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		494DDBA11B0FBE7E009C134E /* UAIncomingInAppMessageAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 494DDB371B0FBE7B009C134E /* UAIncomingInAppMessageAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		494DDBA21B0FBE7F009C134E /* UAIncomingPushAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 494DDB381B0FBE7B009C134E /* UAIncomingPushAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		494DDBA31B0FBE7F009C134E /* UAIncomingRichPushAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 494DDB391B0FBE7B009C134E /* UAIncomingRichPushAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		494DDBA41B0FBE7F009C134E /* UAInteractiveNotificationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 494DDB3A1B0FBE7B009C134E /* UAInteractiveNotificationEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		494DDBA51B0FBE7F009C134E /* UAirship.h in Headers */ = {isa = PBXBuildFile; fileRef = 494DDB3B1B0FBE7B009C134E /* UAirship.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		494DDBA61B0FBE7F009C134E /* UAirship+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 494DDB3C1B0FBE7B009C134E /* UAirship+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -606,7 +605,6 @@
 				494DDBA01B0FBE7E009C134E /* UAInAppResolutionEvent.h in Headers */,
 				494DDBA11B0FBE7E009C134E /* UAIncomingInAppMessageAction.h in Headers */,
 				494DDBA21B0FBE7F009C134E /* UAIncomingPushAction.h in Headers */,
-				494DDBA31B0FBE7F009C134E /* UAIncomingRichPushAction.h in Headers */,
 				494DDBA41B0FBE7F009C134E /* UAInteractiveNotificationEvent.h in Headers */,
 				494DDBA51B0FBE7F009C134E /* UAirship.h in Headers */,
 				494DDBA71B0FBE7F009C134E /* UAJavaScriptDelegate.h in Headers */,
@@ -1043,6 +1041,7 @@
 				49914C391B0FF056001078AB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
