@@ -35,6 +35,8 @@
 #import "InboxDelegate.h"
 #import "PushNotificationDelegate.h"
 
+#define kSimulatorWarningDisabledKey @"ua-simulator-warning-disabled"
+
 @interface InboxSampleAppDelegate()
 @property (nonatomic, strong) InboxDelegate *inboxDelegate;
 @property (nonatomic, strong) PushNotificationDelegate *pushDelegate;
@@ -103,14 +105,29 @@
 }
 
 - (void)failIfSimulator {
+
+    UA_LDEBUG(@"You will not be able to receive push notifications in the simulator.");
+
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:kSimulatorWarningDisabledKey]) {
+        return;
+    }
+
     if ([[[UIDevice currentDevice] model] rangeOfString:@"Simulator"].location != NSNotFound) {
         UIAlertView *someError = [[UIAlertView alloc] initWithTitle:@"Notice"
                                                             message:@"You can see UAInbox in the simulator, but you will not be able to receive push notifications."
                                                            delegate:self
                                                   cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:nil];
+                                                  otherButtonTitles:@"Disable Warning", nil];
 
         [someError show];
+    }
+
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+
+    if (buttonIndex == alertView.firstOtherButtonIndex){
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:kSimulatorWarningDisabledKey];
     }
 }
 
