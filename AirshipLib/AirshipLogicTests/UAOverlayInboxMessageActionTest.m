@@ -105,7 +105,7 @@
 }
 
 /**
- * Test the action accepts MESSAGE_ID placeholder when it contains either inbox
+ * Test the action accepts "auto" placeholder when it contains either inbox
  * message metadata or push notification metadata.
  */
 - (void)testAcceptsArgumentMessageIDPlaceHolder {
@@ -118,7 +118,7 @@
     };
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
-    arguments.value = @"MESSAGE_ID";
+    arguments.value = @"auto";
 
     // Verify it rejects the valid situations if no metadata is present
     for (int i = 0; i < 5; i++) {
@@ -235,7 +235,7 @@
 
     UAInboxMessage *message = [OCMockObject niceMockForClass:[UAInboxMessage class]];
 
-    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"MESSAGE_ID"
+    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"auto"
                                                            withSituation:UASituationManualInvocation
                                                                 metadata:@{UAActionMetadataInboxMessageKey: message}];
 
@@ -264,7 +264,7 @@
     NSDictionary *notification = @{@"_uamid": @"MCRAP"};
     [[[self.mockMessageList stub] andReturn:message] messageForID:@"MCRAP"];
 
-    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"MESSAGE_ID"
+    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"auto"
                                                            withSituation:UASituationManualInvocation
                                                                 metadata:@{UAActionMetadataPushPayloadKey: notification}];
 

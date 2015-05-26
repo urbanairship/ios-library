@@ -222,7 +222,7 @@
 - (void)testPerfromWithPlaceHolderInboxMessageMetadata {
     [UAirship inbox].delegate = self.mockInboxDelegate;
 
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MESSAGE_ID"
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"auto"
                                                       withSituation:UASituationManualInvocation
                                                            metadata:@{UAActionMetadataInboxMessageKey: self.mockMessage}];
 
@@ -243,7 +243,7 @@
 - (void)testPerfromWithPlaceHolderPushMessageMetadata {
     [UAirship inbox].delegate = self.mockInboxDelegate;
 
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MESSAGE_ID"
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"auto"
                                                       withSituation:UASituationManualInvocation
                                                            metadata:@{UAActionMetadataPushPayloadKey: self.notification}];
 

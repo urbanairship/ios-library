@@ -41,7 +41,7 @@
  *
  * This action is registered under the names open_mc_action and ^mc.
  *
- * Expected argument value is an inbox message ID as an NSString, nil, or "MESSAGE_ID"
+ * Expected argument value is an inbox message ID as an NSString, nil, or "auto"
  * to look for the message in the argument's metadata.
  *
  * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush,

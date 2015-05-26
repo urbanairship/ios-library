@@ -33,9 +33,9 @@
 #import "UAInboxPushHandler+Internal.h"
 #import "UALandingPageOverlayController.h"
 
-@implementation UADisplayInboxAction
+#define kUADisplayInboxActionMessageIDPlaceHolder @"auto"
 
-NSString * const UADisplayInboxActionMessageIDPlaceHolder = @"MESSAGE_ID";
+@implementation UADisplayInboxAction
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
 
@@ -64,7 +64,7 @@ NSString * const UADisplayInboxActionMessageIDPlaceHolder = @"MESSAGE_ID";
 
     // TODO: Remove in 7.0.0
     NSString *messageID = [UAInboxUtils inboxMessageIDFromValue:arguments.value];
-    if (messageID && ![messageID isEqualToString:UADisplayInboxActionMessageIDPlaceHolder] && ![UAirship inbox].delegate) {
+    if (messageID && ![[messageID lowercaseString] isEqualToString:kUADisplayInboxActionMessageIDPlaceHolder] && ![UAirship inbox].delegate) {
         switch (arguments.situation) {
             case UASituationForegroundPush:
                 handler.viewingMessageID = messageID;
@@ -178,7 +178,7 @@ NSString * const UADisplayInboxActionMessageIDPlaceHolder = @"MESSAGE_ID";
 }
 
 /**
- * Fetches the specified message. If the messageID is "MESSAGE_ID", either
+ * Fetches the specified message. If the messageID is "auto", either
  * the UAActionMetadataInboxMessageKey will be returned or the ID of the message
  * will be taken from the UAActionMetadataPushPayloadKey. If the message is not
  * available in the message list, the list will be refreshed.
@@ -198,7 +198,7 @@ NSString * const UADisplayInboxActionMessageIDPlaceHolder = @"MESSAGE_ID";
         return;
     }
 
-    if ([messageID isEqualToString:UADisplayInboxActionMessageIDPlaceHolder]) {
+    if ([[messageID lowercaseString] isEqualToString:kUADisplayInboxActionMessageIDPlaceHolder]) {
         // If we have InboxMessage metadata show the message
         if (arguments.metadata[UAActionMetadataInboxMessageKey]) {
             UAInboxMessage *message = arguments.metadata[UAActionMetadataInboxMessageKey];
