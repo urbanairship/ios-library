@@ -48,8 +48,9 @@
 #define kMinBatchIntervalSeconds (NSTimeInterval)60        // local min of 60s
 #define kMaxBatchIntervalSeconds (NSTimeInterval)7*24*3600  // local max of 7 days
 
-// Minimum amount of time between background location events.
-#define kMinBackgroundLocationIntervalSeconds 900 // 900 seconds = 15 minutes
+// Minimum amount of time between background low priority event sends
+#define kMinBackgroundLowPriorityEventSendIntervalSeconds 900 // 900 seconds = 15 minutes
+
 
 #define kMaxTotalDBSizeUserDefaultsKey @"X-UA-Max-Total"
 #define kMaxBatchSizeUserDefaultsKey @"X-UA-Max-Batch"
@@ -60,7 +61,6 @@
 @class UAEvent;
 @class UAHTTPRequest;
 @class UAAnalyticsDBManager;
-
 @interface UAAnalytics ()
 
 

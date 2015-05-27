@@ -23,8 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UARegionEvent.h"
 #import "UARegionEvent+Internal.h"
+#import "UAEvent+Internal.h"
 #import "UAProximityRegion+Internal.h"
 #import "UACircularRegion+Internal.h"
 #import "UAGlobal.h"
@@ -33,6 +33,10 @@
 
 - (NSString *)eventType {
     return kUARegionEventType;
+}
+
+- (UAEventPriority)priority {
+    return UAEventPriorityHigh;
 }
 
 - (NSUInteger)estimatedSize {

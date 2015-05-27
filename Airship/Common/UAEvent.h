@@ -62,15 +62,12 @@
  */
 @property (nonatomic, readonly) NSUInteger estimatedSize;
 
+
 /**
  * Checks if the event is valid. Invalid events will be dropped.
  * @return YES if the event is valid.
  */
 - (BOOL)isValid;
-
-
-
-
 
 @end
 
