@@ -129,4 +129,14 @@
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
 
+/**
+ * Test the event is high priority
+ */
+- (void)testHighPriority {
+    UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
+                                                                                             categoryID:@"category_id"
+                                                                                           notification:self.notification];
+    XCTAssertEqual(UAEventPriorityHigh, event.priority);
+}
+
 @end
