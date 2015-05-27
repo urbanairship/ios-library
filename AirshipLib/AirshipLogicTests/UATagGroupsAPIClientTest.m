@@ -126,8 +126,8 @@
                                       onFailure:OCMOCK_ANY];
 
     [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
-                           addTags:self.addTags
-                        removeTags:self.removeTags
+                               add:self.addTags
+                            remove:self.removeTags
                          onSuccess:nil
                          onFailure:nil];
 
@@ -160,8 +160,8 @@
                                       onFailure:OCMOCK_ANY];
 
     [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
-                           addTags:self.addTags
-                        removeTags:self.removeTags
+                               add:self.addTags
+                            remove:self.removeTags
                          onSuccess:nil
                          onFailure:nil];
     XCTAssertNoThrow([self.mockRequestEngine verify],
@@ -189,8 +189,8 @@
     }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
     [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
-                           addTags:self.addTags
-                        removeTags:self.removeTags
+                               add:self.addTags
+                            remove:self.removeTags
                          onSuccess:^{
                              onSuccessCalled = YES;
                          } onFailure:nil];
@@ -216,8 +216,8 @@
     }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
     [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
-                           addTags:self.addTags
-                        removeTags:self.removeTags
+                               add:self.addTags
+                            remove:self.removeTags
                          onSuccess:nil
                          onFailure:^(UAHTTPRequest *request) {
                              failedRequest = request;
@@ -272,8 +272,8 @@
                                       onFailure:OCMOCK_ANY];
 
     [self.client updateNamedUserTags:@"fake-named-user"
-                             addTags:self.addTags
-                          removeTags:self.removeTags
+                                 add:self.addTags
+                              remove:self.removeTags
                            onSuccess:nil
                            onFailure:nil];
     XCTAssertNoThrow([self.mockRequestEngine verify],
@@ -305,8 +305,8 @@
                                       onFailure:OCMOCK_ANY];
 
     [self.client updateNamedUserTags:@"fake-named-user"
-                             addTags:self.addTags
-                          removeTags:self.removeTags
+                                 add:self.addTags
+                              remove:self.removeTags
                            onSuccess:nil
                            onFailure:nil];
     XCTAssertNoThrow([self.mockRequestEngine verify],
@@ -334,8 +334,8 @@
     }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
     [self.client updateNamedUserTags:@"fake-named-user"
-                             addTags:self.addTags
-                          removeTags:self.removeTags
+                                 add:self.addTags
+                              remove:self.removeTags
                            onSuccess:^{
                                onSuccessCalled = YES;
                            } onFailure:nil];
@@ -361,8 +361,8 @@
     }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
     [self.client updateNamedUserTags:@"fake-named-user"
-                             addTags:self.addTags
-                          removeTags:self.removeTags
+                                 add:self.addTags
+                              remove:self.removeTags
                            onSuccess:nil
                            onFailure:^(UAHTTPRequest *request) {
                                failedRequest = request;

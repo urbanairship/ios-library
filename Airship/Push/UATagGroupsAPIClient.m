@@ -69,8 +69,8 @@
 }
 
 - (void)updateChannelTags:(NSString *)channelId
-                  addTags:(NSDictionary *)addTags
-               removeTags:(NSDictionary *)removeTags
+                      add:(NSDictionary *)addTags
+                   remove:(NSDictionary *)removeTags
                 onSuccess:(UATagGroupsAPIClientSuccessBlock)successBlock
                 onFailure:(UATagGroupsAPIClientFailureBlock)failureBlock {
 
@@ -122,8 +122,8 @@
 }
 
 - (void)updateNamedUserTags:(NSString *)identifier
-                    addTags:(NSDictionary *)addTags
-                 removeTags:(NSDictionary *)removeTags
+                        add:(NSDictionary *)addTags
+                     remove:(NSDictionary *)removeTags
                   onSuccess:(UATagGroupsAPIClientSuccessBlock)successBlock
                   onFailure:(UATagGroupsAPIClientFailureBlock)failureBlock {
 

@@ -67,10 +67,10 @@ typedef void (^UATagGroupsAPIClientFailureBlock)(UAHTTPRequest *request);
  *        the named user tags update was unsuccessful.
  */
 - (void)updateChannelTags:(NSString *)channelId
-                    addTags:(NSDictionary *)addTags
-                 removeTags:(NSDictionary *)removeTags
-                  onSuccess:(UATagGroupsAPIClientSuccessBlock)successBlock
-                  onFailure:(UATagGroupsAPIClientFailureBlock)failureBlock;
+                      add:(NSDictionary *)addTags
+                   remove:(NSDictionary *)removeTags
+                onSuccess:(UATagGroupsAPIClientSuccessBlock)successBlock
+                onFailure:(UATagGroupsAPIClientFailureBlock)failureBlock;
 
 /**
  * Update the named user tags.
@@ -84,8 +84,8 @@ typedef void (^UATagGroupsAPIClientFailureBlock)(UAHTTPRequest *request);
  *        the named user tags update was unsuccessful.
  */
 - (void)updateNamedUserTags:(NSString *)identifier
-                    addTags:(NSDictionary *)addTags
-                 removeTags:(NSDictionary *)removeTags
+                        add:(NSDictionary *)addTags
+                     remove:(NSDictionary *)removeTags
                   onSuccess:(UATagGroupsAPIClientSuccessBlock)successBlock
                   onFailure:(UATagGroupsAPIClientFailureBlock)failureBlock;
 
