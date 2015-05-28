@@ -55,14 +55,14 @@ find "$dest_lib_root" -d 1 -name "$lib_base_name*.${EXECUTABLE_EXTENSION}" -exec
 echo "copy *.$EXECUTABLE_EXTENSION from ${BINARY_DIR} to $dest_lib_root"
 cp "${BINARY_DIR}"/*.$EXECUTABLE_EXTENSION "$dest_lib_root"
 
-for sample_prj_root in "${SRCROOT}"/../*Sample
+for prj_root in "${SRCROOT}"/../*Sample "${SRCROOT}"/../AirshipKit
 do
-    sample_prj_name="$(basename "$sample_prj_root")"
-    sample_prj_setting_file="$sample_prj_root/$sample_prj_name.xcodeproj/project.pbxproj"
-    echo "update library reference in $sample_prj_setting_file"
-	if [[ -f "$sample_prj_setting_file" ]]; then
-        sed "s/\($lib_base_name[^ ]*-\)[0-9]*\.[0-9]*\.[0-9]*\(\.$EXECUTABLE_EXTENSION\)/\1$version\2/g" "$sample_prj_setting_file" > "$TEMP_DIR/$sample_prj_name.tmp"
-        chgrp staff "$TEMP_DIR/$sample_prj_name.tmp"
-	    mv "$TEMP_DIR/$sample_prj_name.tmp" "$sample_prj_setting_file"
+    prj_name="$(basename "$prj_root")"
+    prj_setting_file="$prj_root/$prj_name.xcodeproj/project.pbxproj"
+    echo "update library reference in $prj_setting_file"
+	if [[ -f "$prj_setting_file" ]]; then
+        sed "s/\($lib_base_name[^ ]*-\)[0-9]*\.[0-9]*\.[0-9]*\(\.$EXECUTABLE_EXTENSION\)/\1$version\2/g" "$prj_setting_file" > "$TEMP_DIR/$prj_name.tmp"
+        chgrp staff "$TEMP_DIR/$prj_name.tmp"
+	    mv "$TEMP_DIR/$prj_name.tmp" "$prj_setting_file"
 	fi
 done
