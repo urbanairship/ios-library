@@ -242,7 +242,6 @@
 		494DDB361B0FBE7B009C134E /* UAInAppResolutionEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAInAppResolutionEvent.h; path = ../Airship/Common/UAInAppResolutionEvent.h; sourceTree = "<group>"; };
 		494DDB371B0FBE7B009C134E /* UAIncomingInAppMessageAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAIncomingInAppMessageAction.h; path = ../Airship/Common/UAIncomingInAppMessageAction.h; sourceTree = "<group>"; };
 		494DDB381B0FBE7B009C134E /* UAIncomingPushAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAIncomingPushAction.h; path = ../Airship/Common/UAIncomingPushAction.h; sourceTree = "<group>"; };
-		494DDB391B0FBE7B009C134E /* UAIncomingRichPushAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAIncomingRichPushAction.h; path = ../Airship/Common/UAIncomingRichPushAction.h; sourceTree = "<group>"; };
 		494DDB3A1B0FBE7B009C134E /* UAInteractiveNotificationEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAInteractiveNotificationEvent.h; path = ../Airship/Common/UAInteractiveNotificationEvent.h; sourceTree = "<group>"; };
 		494DDB3B1B0FBE7B009C134E /* UAirship.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAirship.h; path = ../Airship/Common/UAirship.h; sourceTree = "<group>"; };
 		494DDB3C1B0FBE7B009C134E /* UAirship+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAirship+Internal.h"; path = "../Airship/Common/UAirship+Internal.h"; sourceTree = "<group>"; };
@@ -455,7 +454,6 @@
 				494DDB361B0FBE7B009C134E /* UAInAppResolutionEvent.h */,
 				494DDB371B0FBE7B009C134E /* UAIncomingInAppMessageAction.h */,
 				494DDB381B0FBE7B009C134E /* UAIncomingPushAction.h */,
-				494DDB391B0FBE7B009C134E /* UAIncomingRichPushAction.h */,
 				494DDB3A1B0FBE7B009C134E /* UAInteractiveNotificationEvent.h */,
 				494DDB3B1B0FBE7B009C134E /* UAirship.h */,
 				494DDB3C1B0FBE7B009C134E /* UAirship+Internal.h */,
