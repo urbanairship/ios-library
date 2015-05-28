@@ -79,13 +79,24 @@
         return;
     }
 
+    if (!addTags.count && !removeTags.count) {
+        UA_LERR(@"Both addTags and removeTags cannot be empty.");
+        return;
+    }
+
     NSMutableDictionary *audience = [NSMutableDictionary dictionary];
     [audience setValue:channelId forKey:kUATagGroupsIosChannelKey];
 
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];
     [payload setValue:audience forKey:kUATagGroupsAudienceKey];
-    [payload setValue:addTags forKey:kUATagGroupsAddKey];
-    [payload setValue:removeTags forKey:kUATagGroupsRemoveKey];
+
+    if (addTags.count) {
+        [payload setValue:addTags forKey:kUATagGroupsAddKey];
+    }
+
+    if (removeTags.count) {
+        [payload setValue:removeTags forKey:kUATagGroupsRemoveKey];
+    }
 
     UA_LTRACE(@"Updating channel tag groups with payload: %@", payload);
 
@@ -132,13 +143,24 @@
         return;
     }
 
+    if (!addTags.count && !removeTags.count) {
+        UA_LERR(@"Both addTags and removeTags cannot be empty.");
+        return;
+    }
+
     NSMutableDictionary *audience = [NSMutableDictionary dictionary];
     [audience setValue:identifier forKey:kUATagGroupsNamedUserIdKey];
 
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];
     [payload setValue:audience forKey:kUATagGroupsAudienceKey];
-    [payload setValue:addTags forKey:kUATagGroupsAddKey];
-    [payload setValue:removeTags forKey:kUATagGroupsRemoveKey];
+
+    if (addTags.count) {
+        [payload setValue:addTags forKey:kUATagGroupsAddKey];
+    }
+
+    if (removeTags.count) {
+        [payload setValue:removeTags forKey:kUATagGroupsRemoveKey];
+    }
 
     UA_LTRACE(@"Updating named user tags with payload: %@", payload);
 

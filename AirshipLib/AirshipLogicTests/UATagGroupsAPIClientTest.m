@@ -62,13 +62,13 @@
     NSMutableDictionary *tagsToAdd = [NSMutableDictionary dictionary];
     NSArray *addTagsArray = @[@"tag1", @"tag2", @"tag3"];
     [tagsToAdd setValue:addTagsArray forKey:@"tag_group"];
-    [self.addTags setValue:tagsToAdd forKey:@"add"];
+    self.addTags = tagsToAdd;
 
     self.removeTags = [[NSMutableDictionary alloc] init];
     NSMutableDictionary *tagsToRemove = [NSMutableDictionary dictionary];
     NSArray *removeTagsArray = @[@"tag3", @"tag4", @"tag5"];
     [tagsToRemove setValue:removeTagsArray forKey:@"tag_group"];
-    [self.removeTags setValue:tagsToRemove forKey:@"remove"];
+    self.removeTags = tagsToRemove;
 
     self.client = [UATagGroupsAPIClient clientWithConfig:self.config];
     self.client.requestEngine = self.mockRequestEngine;
@@ -227,6 +227,118 @@
 }
 
 /**
+ * Test update channel tags with nil channel skips request.
+ */
+- (void)testUpdateChannelTagsNilChannel {
+    [[self.mockRequestEngine reject] runRequest:OCMOCK_ANY
+                                   succeedWhere:OCMOCK_ANY
+                                     retryWhere:OCMOCK_ANY
+                                      onSuccess:OCMOCK_ANY
+                                      onFailure:OCMOCK_ANY];
+
+    [self.client updateChannelTags:nil add:self.addTags remove:self.removeTags onSuccess:nil onFailure:nil];
+    XCTAssertNoThrow([self.mockRequestEngine verify], @"Update channel tags should not make a request with a nil channel.");
+}
+
+/**
+ * Test payload does not contain empty addTags for updateChannelTags.
+ */
+- (void)testUpdateChannelEmptyAddTags {
+    NSMutableDictionary *emptyAddTags = [[NSMutableDictionary alloc] init];
+
+    BOOL (^checkRequestBlock)(id obj) = ^(id obj) {
+        UAHTTPRequest *request = obj;
+        NSMutableDictionary *audience = [NSMutableDictionary dictionary];
+        [audience setValue:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE" forKey:@"ios_channel"];
+
+        NSMutableDictionary *payload = [NSMutableDictionary dictionary];
+        [payload setValue:audience forKey:@"audience"];
+        [payload setValue:self.removeTags forKey:@"remove"];
+
+        // Check the body does not contain empty addTags in the payload
+        if (![request.body isEqualToData:[NSJSONSerialization dataWithJSONObject:payload options:0 error:nil]]) {
+            return NO;
+        }
+
+        return YES;
+    };
+
+    [[self.mockRequestEngine expect] runRequest:[OCMArg checkWithBlock:checkRequestBlock]
+                                   succeedWhere:OCMOCK_ANY
+                                     retryWhere:OCMOCK_ANY
+                                      onSuccess:OCMOCK_ANY
+                                      onFailure:OCMOCK_ANY];
+
+    [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+                               add:emptyAddTags
+                            remove:self.removeTags
+                         onSuccess:nil
+                         onFailure:nil];
+
+    XCTAssertNoThrow([self.mockRequestEngine verify], @"Update channel tags should run with valid payload.");
+}
+
+/**
+ * Test payload does not contain empty removeTags for updateChannelTags.
+ */
+- (void)testUpdateChannelEmptyRemoveTags {
+    NSMutableDictionary *emptyRemoveTags = [[NSMutableDictionary alloc] init];
+
+    BOOL (^checkRequestBlock)(id obj) = ^(id obj) {
+        UAHTTPRequest *request = obj;
+        NSMutableDictionary *audience = [NSMutableDictionary dictionary];
+        [audience setValue:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE" forKey:@"ios_channel"];
+
+        NSMutableDictionary *payload = [NSMutableDictionary dictionary];
+        [payload setValue:audience forKey:@"audience"];
+        [payload setValue:self.addTags forKey:@"add"];
+
+        // Check the body does not contain empty removeTags in the payload
+        if (![request.body isEqualToData:[NSJSONSerialization dataWithJSONObject:payload options:0 error:nil]]) {
+            return NO;
+        }
+
+        return YES;
+    };
+
+    [[self.mockRequestEngine expect] runRequest:[OCMArg checkWithBlock:checkRequestBlock]
+                                   succeedWhere:OCMOCK_ANY
+                                     retryWhere:OCMOCK_ANY
+                                      onSuccess:OCMOCK_ANY
+                                      onFailure:OCMOCK_ANY];
+
+    [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+                               add:self.addTags
+                            remove:emptyRemoveTags
+                         onSuccess:nil
+                         onFailure:nil];
+
+    XCTAssertNoThrow([self.mockRequestEngine verify], @"Update channel tags should run with valid payload.");
+}
+
+
+/**
+ * Test updateChannelTags with empty addTags and removeTags skips request.
+ */
+- (void)testUpdateChannelEmptyTags {
+    NSMutableDictionary *emptyAddTags = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *emptyRemoveTags = [[NSMutableDictionary alloc] init];
+
+    [[self.mockRequestEngine reject] runRequest:OCMOCK_ANY
+                                   succeedWhere:OCMOCK_ANY
+                                     retryWhere:OCMOCK_ANY
+                                      onSuccess:OCMOCK_ANY
+                                      onFailure:OCMOCK_ANY];
+
+    [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+                               add:emptyAddTags
+                            remove:emptyRemoveTags
+                         onSuccess:nil
+                         onFailure:nil];
+    XCTAssertNoThrow([self.mockRequestEngine verify], @"Update channel tags should not make a request with both empty tags.");
+}
+
+/**
  * Test update named user tags retries on 5xx status codes.
  */
 - (void)testUpdateNamedUserTagsRetriesFailedRequest {
@@ -344,7 +456,7 @@
 }
 
 /**
- * Test update channel tags calls the onFailureBlock with the failed request
+ * Test update named user tags calls the onFailureBlock with the failed request
  * when the request fails.
  */
 - (void)testUpdateNamedUserTagsOnFailure {
@@ -369,6 +481,117 @@
     }];
 
     XCTAssertEqualObjects(request, failedRequest, @"Failure block should return the failed request.");
+}
+
+/**
+ * Test update named user tags with nil named user ID skips request.
+ */
+- (void)testUpdateNamedUserTagsNilNamedUser {
+    [[self.mockRequestEngine reject] runRequest:OCMOCK_ANY
+                                   succeedWhere:OCMOCK_ANY
+                                     retryWhere:OCMOCK_ANY
+                                      onSuccess:OCMOCK_ANY
+                                      onFailure:OCMOCK_ANY];
+
+    [self.client updateNamedUserTags:nil add:self.addTags remove:self.removeTags onSuccess:nil onFailure:nil];
+    XCTAssertNoThrow([self.mockRequestEngine verify], @"Update named user tags should not make a request with a nil named user.");
+}
+
+/**
+ * Test payload does not contain empty addTags for updateNamedUserTags.
+ */
+- (void)testUpdateNamedUserEmptyAddTags {
+    NSMutableDictionary *emptyAddTags = [[NSMutableDictionary alloc] init];
+
+    BOOL (^checkRequestBlock)(id obj) = ^(id obj) {
+        UAHTTPRequest *request = obj;
+        NSMutableDictionary *audience = [NSMutableDictionary dictionary];
+        [audience setValue:@"fake-named-user" forKey:@"named_user_id"];
+
+        NSMutableDictionary *payload = [NSMutableDictionary dictionary];
+        [payload setValue:audience forKey:@"audience"];
+        [payload setValue:self.removeTags forKey:@"remove"];
+
+        // Check the body does not contain empty addTags in the payload
+        if (![request.body isEqualToData:[NSJSONSerialization dataWithJSONObject:payload options:0 error:nil]]) {
+            return NO;
+        }
+
+        return YES;
+    };
+
+    [[self.mockRequestEngine expect] runRequest:[OCMArg checkWithBlock:checkRequestBlock]
+                                   succeedWhere:OCMOCK_ANY
+                                     retryWhere:OCMOCK_ANY
+                                      onSuccess:OCMOCK_ANY
+                                      onFailure:OCMOCK_ANY];
+
+    [self.client updateNamedUserTags:@"fake-named-user"
+                               add:emptyAddTags
+                            remove:self.removeTags
+                         onSuccess:nil
+                         onFailure:nil];
+
+    XCTAssertNoThrow([self.mockRequestEngine verify], @"Update named user tags should run with valid payload.");
+}
+
+/**
+ * Test payload does not contain empty removeTags for updateNamedUserTags.
+ */
+- (void)testUpdateNamedUserEmptyRemoveTags {
+    NSMutableDictionary *emptyRemoveTags = [[NSMutableDictionary alloc] init];
+
+    BOOL (^checkRequestBlock)(id obj) = ^(id obj) {
+        UAHTTPRequest *request = obj;
+        NSMutableDictionary *audience = [NSMutableDictionary dictionary];
+        [audience setValue:@"fake-named-user" forKey:@"named_user_id"];
+
+        NSMutableDictionary *payload = [NSMutableDictionary dictionary];
+        [payload setValue:audience forKey:@"audience"];
+        [payload setValue:self.addTags forKey:@"add"];
+
+        // Check the body does not contain empty removeTags in the payload
+        if (![request.body isEqualToData:[NSJSONSerialization dataWithJSONObject:payload options:0 error:nil]]) {
+            return NO;
+        }
+
+        return YES;
+    };
+
+    [[self.mockRequestEngine expect] runRequest:[OCMArg checkWithBlock:checkRequestBlock]
+                                   succeedWhere:OCMOCK_ANY
+                                     retryWhere:OCMOCK_ANY
+                                      onSuccess:OCMOCK_ANY
+                                      onFailure:OCMOCK_ANY];
+
+    [self.client updateNamedUserTags:@"fake-named-user"
+                               add:self.addTags
+                            remove:emptyRemoveTags
+                         onSuccess:nil
+                         onFailure:nil];
+
+    XCTAssertNoThrow([self.mockRequestEngine verify], @"Update named user tags should run with valid payload.");
+}
+
+/**
+ * Test updateNamedUserTags with empty addTags and removeTags skips request.
+ */
+- (void)testUpdateNamedUserEmptyTags {
+    NSMutableDictionary *emptyAddTags = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *emptyRemoveTags = [[NSMutableDictionary alloc] init];
+
+    [[self.mockRequestEngine reject] runRequest:OCMOCK_ANY
+                                   succeedWhere:OCMOCK_ANY
+                                     retryWhere:OCMOCK_ANY
+                                      onSuccess:OCMOCK_ANY
+                                      onFailure:OCMOCK_ANY];
+
+    [self.client updateNamedUserTags:@"fake-named-user"
+                               add:emptyAddTags
+                            remove:emptyRemoveTags
+                         onSuccess:nil
+                         onFailure:nil];
+    XCTAssertNoThrow([self.mockRequestEngine verify], @"Update named user tags should not make a request with both empty tags.");
 }
 
 @end
