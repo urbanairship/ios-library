@@ -1,9 +1,18 @@
 #!/bin/bash -ex
 
-# navigate to the public headers directory of the built target
-cd "${BUILT_PRODUCTS_DIR}/AirshipKit.framework/Headers"
+AIRSHIP_DIR="${SRCROOT}/../Airship"
+FRAMEWORK_HEADERS_DIR="${BUILT_PRODUCTS_DIR}/AirshipKit.framework/Headers"
 
-# find all public headers, excluding AirshipLib/AirshipKit and convert into
-# objective-c import statements, overwriting AirshipLib.h
-find . -type f -name '*.h' ! -name 'AirshipLib.h' ! -name 'AirshipKit.h'  -exec basename {} \; | awk '{print "#import \"" $0"\""}' > AirshipLib.h 
+# Navigate to the public headers directory of the framework target and remove any existing headers
+#cd $FRAMEWORK_HEADERS_DIR
+#rm -r *.h
+
+# Navigate to the Airship directory
+cd $AIRSHIP_DIR
+
+# Find all public headers, excluding AirshipLib and internal classes, copy to the framework headers directory, and convert into
+# objective-c import statements for reference in the umbrella header
+find . -type f -name '*.h' ! -name 'AirshipLib.h' ! -name '*+Internal.h' \
+  -exec cp {} $FRAMEWORK_HEADERS_DIR/ \; \
+  -exec basename {} \; | awk '{print "#import \"" $0"\""}' > $FRAMEWORK_HEADERS_DIR/AirshipLib.h
 
