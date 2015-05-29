@@ -23,115 +23,173 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAAppDelegateProxy.h"
-#import "UAirship.h"
+#import "UAAppDelegateProxy+Internal.h"
+
+#import <objc/runtime.h>
+
+#import "UAirship+Internal.h"
+#import "UAPush.h"
+
+static NSMutableDictionary *originalMethods_;
 
 @implementation UAAppDelegateProxy
 
-- (instancetype)init {
-    //NSProxy has no default init method, so [super init] is unnecessary
-    return self;
-}
-
-- (void)forwardInvocation:(NSInvocation *)invocation {
-    SEL selector = [invocation selector];
-
-    // Throw the exception here to make debugging easier. We are going to forward the invocation to the
-    // originalAppDelegate without checking if it responds for the purpose of crashing the app in the right place
-    // if the delegate does not respond which would be expected behavior. If the originalAppDelegate is nil, we
-    // need to exception here, and not fail silently.
-    if (!self.originalAppDelegate) {
-        NSString *errorMsg = @"UAAppDelegateProxy originalAppDelegate was nil while forwarding an invocation";
-        NSException *exception = [NSException exceptionWithName:@"UAMissingOriginalDelegate"
-                                                                     reason:errorMsg
-                                                                   userInfo:nil];
-        [exception raise];
++ (void)proxyAppDelegate {
+    if (!originalMethods_) {
+        originalMethods_ = [NSMutableDictionary dictionary];
     }
 
-    BOOL responds = NO;
-
-    /*
-     Give the airship and original app delegates an opportunity to handle the message
-
-     NOTE: The order here is crucial. NSInvocation sets a return value after being invoked,
-     which is the value returned to the original sender. Since our airshipAppDelegate does not
-     implement any methods with return values, we want to make sure that the originalAppDelegate
-     always wins, which means it should be invoked last.
-     */
-    if ([self airshipDelegateRespondsToSelector:selector]) {
-        responds = YES;
-        [invocation invokeWithTarget:self.airshipAppDelegate];
-    }
-
-    if ([self.originalAppDelegate respondsToSelector:selector]) {
-        responds = YES;
-        [invocation invokeWithTarget:self.originalAppDelegate];
-    }
-
-    if (!responds) {
-        //In the off chance that neither app delegate responds, forward the message
-        //to the original app delegate anyway.  this will likely result in a crash,
-        //but that way the exception will come from the expected location
-        [invocation invokeWithTarget:self.originalAppDelegate];
-    }
-}
-
-- (BOOL)airshipDelegateRespondsToSelector:(SEL)selector {
-    return [self.airshipAppDelegate respondsToSelector:selector] &&
-        ![[NSObject class] instancesRespondToSelector:selector];
-}
-
-- (BOOL)respondsToSelector:(SEL)selector {
-    // Respond to the new notification delegate if background push is enabled or
-    // the default app delegate responds to it.
-    if ([NSStringFromSelector(selector) isEqualToString:@"application:didReceiveRemoteNotification:fetchCompletionHandler:"]) {
-        return [UAirship shared].remoteNotificationBackgroundModeEnabled || [self.originalAppDelegate respondsToSelector:selector];
-    }
-
-    // If this isn't a selector we normally respond to, say we do as long as either delegate does
-    return [self.originalAppDelegate respondsToSelector:selector] || [self airshipDelegateRespondsToSelector:selector];
-}
-
-- (NSMethodSignature *)methodSignatureForSelector:(SEL)selector {
-    NSMethodSignature *signature = nil;
-
-    // First non nil method signature returns
-    signature = [self.airshipAppDelegate methodSignatureForSelector:selector];
-    if (signature) return signature;
-
-    signature = [self.originalAppDelegate methodSignatureForSelector:selector];
-    if (signature) return signature;
-
-    // If none of the above classes return a non nil method signature, this will likely crash
-    return [self.airshipAppDelegate methodSignatureForSelector:selector];
-}
-
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))handler {
-    SEL selector = @selector(application:didReceiveRemoteNotification:fetchCompletionHandler:);
-
-    __block NSUInteger resultCount = 0;
-    __block NSUInteger expectedCount = 0;
-    __block UIBackgroundFetchResult fetchResult = UIBackgroundFetchResultNoData;
-
-    NSMutableArray *delegates = [NSMutableArray array];
-    if ([self airshipDelegateRespondsToSelector:selector]) {
-        [delegates addObject:self.airshipAppDelegate];
-    }
-    if ([self.originalAppDelegate respondsToSelector:selector]) {
-        [delegates addObject:self.originalAppDelegate];
-    }
-
-    // if we have no delegates that respond to the selector, return early
-    if (!delegates.count) {
-        handler(fetchResult);
+    id delegate = [UIApplication sharedApplication].delegate;
+    if (!delegate) {
+        UA_LERR(@"App delegate not set, unable to perform automatic setup.");
         return;
     }
 
-    expectedCount = delegates.count;
-    for (NSObject<UIApplicationDelegate> *delegate in delegates) {
+    Class class = [delegate class];
+
+    // Check to make sure we do not already have entries for the class
+    if (originalMethods_[NSStringFromClass(class)]) {
+        UA_LDEBUG(@"Class %@ already swizzled.", NSStringFromClass(class));
+        return;
+    }
+
+    // application:handleActionWithIdentifier:forRemoteNotification:completionHandler:
+    [UAAppDelegateProxy swizzle:@selector(application:handleActionWithIdentifier:forRemoteNotification:completionHandler:)
+                            implementation:(IMP)UAApplicationHandleActionWithIdentifierForRemoteNotificationCompletionHandler
+                                     class:class];
+
+    // application:didReceiveRemoteNotification:fetchCompletionHandler:
+    // Needs to be above setting application:didReceiveRemoteNotification: because we
+    // need to check if the delegate implments that selector before we add an implmeentation
+    // for it
+    if ([delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)] ||
+        ![delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)] ||
+        [UAirship shared].remoteNotificationBackgroundModeEnabled) {
+
+        [UAAppDelegateProxy swizzle:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)
+                                implementation:(IMP)UAApplicationDidReceiveRemoteNotificationFetchCompletionHandler
+                                         class:class];
+    }
+
+    // application:didReceiveRemoteNotification:
+    [UAAppDelegateProxy swizzle:@selector(application:didReceiveRemoteNotification:)
+                 implementation:(IMP)UAApplicationDidReceiveRemoteNotification class:class];
+
+    // application:didRegisterForRemoteNotificationsWithDeviceToken
+    [UAAppDelegateProxy swizzle:@selector(application:didRegisterForRemoteNotificationsWithDeviceToken:)
+                 implementation:(IMP)UAApplicationDidRegisterForRemoteNotificationsWithDeviceToken class:class];
+
+    // application:didRegisterUserNotificationSettings:
+    [UAAppDelegateProxy swizzle:@selector(application:didRegisterUserNotificationSettings:)
+                 implementation:(IMP)UAApplicationDidRegisterUserNotificationSettings
+                          class:class];
+
+    // application:didFailToRegisterForRemoteNotificationsWithError:
+    [UAAppDelegateProxy swizzle:@selector(application:didFailToRegisterForRemoteNotificationsWithError:)
+                 implementation:(IMP)UAApplicationDidFailToRegisterForRemoteNotificationsWithError
+                          class:class];
+}
+
+
++ (void)swizzle:(SEL)selector implementation:(IMP)implementation class:(Class)class {
+    Method method = class_getInstanceMethod(class, selector);
+    if (method) {
+        UA_LDEBUG(@"Swizzling implementation for %@ class %@", NSStringFromSelector(selector), class);
+        IMP existing = method_setImplementation(method, implementation);
+        [UAAppDelegateProxy storeOriginalImplementation:existing selector:selector class:class];
+    } else {
+        struct objc_method_description description = protocol_getMethodDescription(@protocol(UIApplicationDelegate), selector, NO, YES);
+        UA_LDEBUG(@"Adding implementation for %@ class %@", NSStringFromSelector(selector), class);
+        class_addMethod(class, selector, implementation, description.types);
+    }
+}
+
++ (IMP)originalImplementation:(SEL)selector class:(Class)class {
+    NSString *selectorString = NSStringFromSelector(selector);
+    NSString *classString = NSStringFromClass(class);
+
+    if (!originalMethods_[classString]) {
+        return nil;
+    }
+
+    NSValue *value = originalMethods_[classString][selectorString];
+    if (!value) {
+        return nil;
+    }
+
+    IMP implementation;
+    [value getValue:&implementation];
+    return implementation;
+}
+
+
++ (void)storeOriginalImplementation:(IMP)implementation selector:(SEL)selector class:(Class)class {
+    NSString *selectorString = NSStringFromSelector(selector);
+    NSString *classString = NSStringFromClass(class);
+
+    if (!originalMethods_[classString]) {
+        originalMethods_[classString] = [NSMutableDictionary dictionary];
+    }
+
+    originalMethods_[classString][selectorString] = [NSValue valueWithPointer:implementation];
+
+}
+
+void UAApplicationDidReceiveRemoteNotification(id self, SEL _cmd, UIApplication *application, NSDictionary *userInfo) {
+    [[UAirship push] appReceivedRemoteNotification:userInfo applicationState:application.applicationState];
+
+    IMP original = [UAAppDelegateProxy originalImplementation:_cmd class:[self class]];
+    if (original) {
+        ((void(*)(id,SEL, UIApplication*, NSDictionary*))original)(self, _cmd, application, userInfo);
+    }
+}
+
+void UAApplicationDidRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _cmd, UIApplication *application, NSData *deviceToken) {
+    [[UAirship push] appRegisteredForRemoteNotificationsWithDeviceToken:deviceToken];
+
+    IMP original = [UAAppDelegateProxy originalImplementation:_cmd class:[self class]];
+    if (original) {
+        ((void(*)(id,SEL, UIApplication*, NSData*))original)(self, _cmd, application, deviceToken);
+    }
+}
+
+void UAApplicationDidRegisterUserNotificationSettings(id self, SEL _cmd, UIApplication *application, UIUserNotificationSettings *settings) {
+    [[UAirship push] appRegisteredUserNotificationSettings];
+
+    IMP original = [UAAppDelegateProxy originalImplementation:_cmd class:[self class]];
+    if (original) {
+        ((void(*)(id,SEL, UIApplication*, UIUserNotificationSettings*))original)(self, _cmd, application, settings);
+    }
+}
+
+void UAApplicationDidFailToRegisterForRemoteNotificationsWithError(id self, SEL _cmd, UIApplication *application, NSError *error) {
+    UA_LERR(@"Application failed to register for remote notifications with error: %@", error);
+
+    IMP original = [UAAppDelegateProxy originalImplementation:_cmd class:[self class]];
+    if (original) {
+        ((void(*)(id,SEL, UIApplication*, NSError*))original)(self, _cmd, application, error);
+    }
+}
+
+void UAApplicationDidReceiveRemoteNotificationFetchCompletionHandler(id self,
+                                                                     SEL _cmd,
+                                                                     UIApplication *application,
+                                                                     NSDictionary *userInfo,
+                                                                     void (^handler)(UIBackgroundFetchResult)) {
+
+    __block NSUInteger resultCount = 0;
+    __block NSUInteger expectedCount = 1;
+    __block UIBackgroundFetchResult fetchResult = UIBackgroundFetchResultNoData;
+
+    IMP original = [UAAppDelegateProxy originalImplementation:_cmd class:[self class]];
+    if (original) {
+        expectedCount = 2;
         __block BOOL completionHandlerCalled = NO;
-        [delegate application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:^(UIBackgroundFetchResult result) {
-            @synchronized(self) {
+
+        void (^completionHandler)(UIBackgroundFetchResult) = ^(UIBackgroundFetchResult result) {
+
+            // Make sure the app's completion handler is called on the main queue
+            dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionHandlerCalled) {
                     UA_LERR(@"Completion handler called multiple times.");
                     return;
@@ -150,37 +208,51 @@
                 if (expectedCount == resultCount) {
                     handler(fetchResult);
                 }
-            }
-        }];
+            });
+        };
+
+        // Call the original implementation
+        ((void(*)(id,SEL, UIApplication*, NSDictionary *, void (^)(UIBackgroundFetchResult)))original)(self, _cmd, application, userInfo, completionHandler);
     }
+
+    // Our completion handler is called by the action framework on the main queue
+    [[UAirship push] appReceivedRemoteNotification:userInfo
+                                  applicationState:application.applicationState
+                            fetchCompletionHandler:^(UIBackgroundFetchResult result) {
+                                resultCount++;
+
+                                // Merge the UIBackgroundFetchResults. If final fetchResult is not already UIBackgroundFetchResultNewData
+                                // and the current result is not UIBackgroundFetchResultNoData, then set the fetchResult to result
+                                // (should be either UIBackgroundFetchFailed or UIBackgroundFetchResultNewData)
+                                if (fetchResult != UIBackgroundFetchResultNewData && result != UIBackgroundFetchResultNoData) {
+                                    fetchResult = result;
+                                }
+
+                                if (expectedCount == resultCount) {
+                                    handler(fetchResult);
+                                }
+                            }];
 }
 
-- (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)())handler {
-    SEL selector = @selector(application:handleActionWithIdentifier:forRemoteNotification:completionHandler:);
 
+void UAApplicationHandleActionWithIdentifierForRemoteNotificationCompletionHandler(id self,
+                                                                                   SEL _cmd,
+                                                                                   UIApplication *application,
+                                                                                   NSString *identifier,
+                                                                                   NSDictionary *userInfo,
+                                                                                   void (^handler)()) {
     __block NSUInteger resultCount = 0;
-    __block NSUInteger expectedCount = 0;
+    __block NSUInteger expectedCount = 1;
 
-    NSMutableArray *delegates = [NSMutableArray array];
-    if ([self airshipDelegateRespondsToSelector:selector]) {
-        [delegates addObject:self.airshipAppDelegate];
-    }
-    if ([self.originalAppDelegate respondsToSelector:selector]) {
-        [delegates addObject:self.originalAppDelegate];
-    }
+    IMP original = [UAAppDelegateProxy originalImplementation:_cmd class:[self class]];
+    if (original) {
+        expectedCount = 2;
 
-    // if we have no delegates that respond to the selector, return early
-    if (!delegates.count) {
-        handler();
-        return;
-    }
-
-    expectedCount = delegates.count;
-    for (NSObject<UIApplicationDelegate> *delegate in delegates) {
         __block BOOL completionHandlerCalled = NO;
-        
-        [delegate application:application handleActionWithIdentifier:identifier forRemoteNotification:userInfo completionHandler:^{
-            @synchronized(self) {
+        void (^completionHandler)() = ^() {
+
+            // Make sure the app's completion handler is called on the main queue
+            dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionHandlerCalled) {
                     UA_LERR(@"Completion handler called multiple times.");
                     return;
@@ -192,11 +264,25 @@
                 if (expectedCount == resultCount) {
                     handler();
                 }
-            }
-        }];
+            });
+
+        };
+
+        // Call the original implementation
+        ((void(*)(id,SEL, UIApplication*, NSString *, NSDictionary *, void (^)()))original)(self, _cmd, application, identifier, userInfo, completionHandler);
     }
+
+    // Our completion handler is called by the action framework on the main queue
+    [[UAirship push] appReceivedActionWithIdentifier:identifier
+                                        notification:userInfo
+                                    applicationState:application.applicationState
+                                   completionHandler:^{
+                                       resultCount++;
+
+                                       if (expectedCount == resultCount) {
+                                           handler();
+                                       }
+                                   }];
 }
-
-
 
 @end

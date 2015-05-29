@@ -27,14 +27,12 @@
 
 @class UABaseAppDelegateSurrogate;
 @class UAJavaScriptDelegate;
-@class UAAppDelegateProxy;
 @class UAPreferenceDataStore;
 @class UAChannelCapture;
 
 @interface UAirship()
 
 // Setters for public readonly-getters
-@property (nonatomic, strong) UAAppDelegateProxy *appDelegate;
 @property (nonatomic, strong) UALocationService *locationService;
 @property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UAAnalytics *analytics;
@@ -96,5 +94,6 @@
  * terminates.
  */
 + (void)land;
+
 
 @end

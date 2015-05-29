@@ -39,8 +39,7 @@
 #import "UAInbox+Internal.h"
 #import "UAActionRegistry.h"
 
-#import "UAAppDelegateProxy.h"
-#import "UAAppDelegate.h"
+#import "UAAppDelegateProxy+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAURLProtocol.h"
 #import "UAEventAppInit.h"
@@ -67,6 +66,8 @@ static UAirship *_sharedAirship;
 static NSNotification *_appDidFinishLaunchingNotification;
 
 static dispatch_once_t takeOffPred_;
+
+static dispatch_once_t proxyDelegateOnceToken_;
 
 // Logging info
 // Default to ON and ERROR - options/plist will override
@@ -259,14 +260,11 @@ UALogLevel uaLogLevel = UALogLevelError;
     // Automatic setup
     if (_sharedAirship.config.automaticSetupEnabled) {
         UA_LINFO(@"Automatic setup enabled.");
-        _sharedAirship.appDelegate = [[UAAppDelegateProxy alloc ]init];
-
-        //swap pointers with the initial app delegate
-        @synchronized ([UIApplication sharedApplication]) {
-            _sharedAirship.appDelegate.originalAppDelegate = [UIApplication sharedApplication].delegate;
-            _sharedAirship.appDelegate.airshipAppDelegate = [[UAAppDelegate alloc] init];
-            [UIApplication sharedApplication].delegate = _sharedAirship.appDelegate;
-        }
+        dispatch_once(&proxyDelegateOnceToken_, ^{
+            @synchronized ([UIApplication sharedApplication]) {
+                [UAAppDelegateProxy proxyAppDelegate];
+            }
+        });
     }
 
     // Validate any setup issues
@@ -351,14 +349,6 @@ UALogLevel uaLogLevel = UALogLevelError;
     // Invalidate UAInAppMessaging autodisplay timer
     [_sharedAirship.sharedInAppMessaging invalidateAutoDisplayTimer];
 
-    // Reset the app delegate
-    if (_sharedAirship.config.automaticSetupEnabled) {
-        // swap pointers back to the initial app delegate
-        @synchronized ([UIApplication sharedApplication]) {
-            [UIApplication sharedApplication].delegate = _sharedAirship.appDelegate.originalAppDelegate;
-        }
-    }
-
     // Finally, release the airship!
     _sharedAirship = nil;
 
@@ -416,7 +406,7 @@ UALogLevel uaLogLevel = UALogLevelError;
     if (self.remoteNotificationBackgroundModeEnabled) {
 
         if (self.config.automaticSetupEnabled) {
-            id delegate = self.appDelegate.originalAppDelegate;
+            id delegate = [UIApplication sharedApplication].delegate;
 
             // If its automatic setup up, make sure if they are implementing their own app delegates, that they are
             // also implementing the new application:didReceiveRemoteNotification:fetchCompletionHandler: call.

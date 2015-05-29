@@ -24,30 +24,20 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAGlobal.h"
+
 
 /**
- * This class is designed to take the place of the default application delegate and forward messages
- * to both a surrogate delegate and the original delegate. This is useful for intercepting messages
- * sent to the app delegate that do not have corresponding NSNotificationCenter events (such as 
+ * This class swizzles the app delegate to intercept messsages required for Urban
+ * Airship. This is useful for intercepting messages sent to the app delegate that
+ * do not have corresponding NSNotificationCenter events (such as
  * application:didReceiveRemoteNotification: and other APNS-related calls).
- *
- * @note Delegates are typically not retained, but in this case we will take responsibility for them
- * as we're essentially a man in the middle and we don't want to lose them.
  */
-@interface UAAppDelegateProxy : NSProxy<UIApplicationDelegate>
-
-//NSProxy has no default init method, we have to declare it to satisfy the compiler
-- (instancetype)init;
+NS_ROOT_CLASS
+@interface UAAppDelegateProxy
 
 /**
- * The Urban Airship app delegate. 
+ * Swizzles the app delegate.
  */
-@property (nonatomic, strong) NSObject<UIApplicationDelegate> *airshipAppDelegate;
-
-/**
- * The original app delegate.
- */
-@property (nonatomic, strong) NSObject<UIApplicationDelegate> *originalAppDelegate;
++ (void)proxyAppDelegate;
 
 @end
