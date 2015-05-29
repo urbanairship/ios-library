@@ -316,10 +316,15 @@
     else {
         mvc = [[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil];
         mvc.closeBlock = ^(BOOL animated){
+            // Call the close block if present
             if (self.closeBlock) {
                 self.closeBlock(animated);
+            } else {
+                // Fallback to displaying the inbox
+                [self.navigationController popViewControllerAnimated:animated];
             }
         };
+
         [mvc loadMessageForID:message.messageID];
         [self.navigationController pushViewController:mvc animated:YES];
     }

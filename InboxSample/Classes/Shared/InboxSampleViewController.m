@@ -66,10 +66,13 @@ typedef NS_ENUM(NSInteger, InboxStyle) {
                                                                                          target:self
                                                                                          action:@selector(inboxDone:)];
 
-    //the closeBLock allows for rich push messages to close the inbox after running actions
-    mlc.closeBlock = ^(BOOL animated) {
-        [self.userInterface hideInbox];
-    };
+    // Optionally set a close block on the message list controller to be called when a message
+    // is closed from within the rich content using 'UAirship.close()'. The default behavior
+    // navigates back to the inbox message list.
+    //
+    // mlc.closeBlock = ^(BOOL animated) {
+    //     [self.userInterface hideInbox];
+    // };
 
     return mlc;
 }
