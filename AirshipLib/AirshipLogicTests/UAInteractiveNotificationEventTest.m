@@ -25,6 +25,7 @@
 
 #import <XCTest/XCTest.h>
 #import "UAInteractiveNotificationEvent.h"
+#import "UAEvent+Internal.h"
 
 @interface UAInteractiveNotificationEventTest : XCTestCase
 @property (nonatomic, strong) NSDictionary *notification;
