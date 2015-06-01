@@ -574,7 +574,7 @@ NSString *const UAPushRemoveChannelTagGroupsSettingsKey = @"UAPushRemoveChannelT
     // an update call
     if (self.autobadgeEnabled && (self.deviceToken || self.channelID)) {
         UA_LDEBUG(@"Sending autobadge update to UA server.");
-        [self updateRegistrationForcefully:YES];
+        [self updateChannelRegistrationForcefully:YES];
     }
 }
 
@@ -745,7 +745,7 @@ BOOL deferChannelCreationOnForeground = false;
 
     if ([self.dataStore boolForKey:UAPushChannelCreationOnForeground]) {
         UA_LTRACE(@"Application did become active. Updating registration.");
-        [self updateRegistrationForcefully:NO];
+        [self updateChannelRegistrationForcefully:NO];
     }
 }
 
@@ -757,7 +757,7 @@ BOOL deferChannelCreationOnForeground = false;
 
     // Create a channel if we do not have a channel ID
     if (!self.channelID) {
-        [self updateRegistrationForcefully:NO];
+        [self updateChannelRegistrationForcefully:NO];
     }
 }
 
@@ -848,11 +848,11 @@ BOOL deferChannelCreationOnForeground = false;
                   "Urban Airship registration will automatically run when the device token is registered,"
                   "the next time the app is backgrounded, or the next time the app is foregrounded.");
     } else {
-        [self updateRegistrationForcefully:NO];
+        [self updateChannelRegistrationForcefully:NO];
     }
 }
 
-- (void)updateRegistrationForcefully:(BOOL)forcefully {
+- (void)updateChannelRegistrationForcefully:(BOOL)forcefully {
     // Only cancel in flight requests if the channel is already created
     if (self.channelID) {
         [self.channelRegistrar cancelAllRequests];
@@ -920,7 +920,7 @@ BOOL deferChannelCreationOnForeground = false;
                                                                                             categories:categories]];
         } else if (!self.allowUnregisteringUserNotificationTypes) {
             UA_LDEBUG(@"Skipping unregistered for user notification types.");
-            [self updateRegistrationForcefully:NO];
+            [self updateChannelRegistrationForcefully:NO];
         } else if ([application currentUserNotificationSettings].types != UIUserNotificationTypeNone) {
             UA_LDEBUG(@"Unregistering for user notification types.");
 
@@ -932,7 +932,7 @@ BOOL deferChannelCreationOnForeground = false;
                                                                                             categories:nil]];
         } else {
             UA_LDEBUG(@"Already unregistered for user notification types. To re-register, set userPushNotificationsEnabled to YES and/or modify iOS Settings.");
-            [self updateRegistrationForcefully:NO];
+            [self updateChannelRegistrationForcefully:NO];
         }
 
     } else {
@@ -945,7 +945,7 @@ BOOL deferChannelCreationOnForeground = false;
 
             // Registering for only UIRemoteNotificationTypeNone will not result in a
             // device token registration call. Instead update chanel registration directly.
-            [self updateRegistrationForcefully:NO];
+            [self updateChannelRegistrationForcefully:NO];
         }
     }
 
@@ -974,7 +974,7 @@ BOOL deferChannelCreationOnForeground = false;
     if (inBackground && self.channelID) {
         UA_LDEBUG(@"Skipping device registration. The app is currently backgrounded.");
     } else {
-        [self updateRegistrationForcefully:NO];
+        [self updateChannelRegistrationForcefully:NO];
     }
 }
 
@@ -993,7 +993,7 @@ BOOL deferChannelCreationOnForeground = false;
     }
 
     if (![payload isEqualToPayload:[self createChannelPayload]]) {
-        [self updateRegistrationForcefully:NO];
+        [self updateChannelRegistrationForcefully:NO];
     } else {
         [self endRegistrationBackgroundTask];
     }

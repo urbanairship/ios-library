@@ -248,7 +248,7 @@ extern NSString *const UAPushRemoveChannelTagGroupsSettingsKey;
  *
  * @param forcefully Tells the device api client to do any device api call forcefully.
  */
-- (void)updateRegistrationForcefully:(BOOL)forcefully;
+- (void)updateChannelRegistrationForcefully:(BOOL)forcefully;
 
 /**
  * Returns YES if background push is enabled and configured for the device. Used

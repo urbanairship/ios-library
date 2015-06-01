@@ -1202,7 +1202,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
         [[[self.mockedApplication expect] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
-        [self.push updateRegistrationForcefully:YES];
+        [self.push updateChannelRegistrationForcefully:YES];
         XCTAssertNoThrow([self.mockedChannelRegistrar verify],
                          @"updateRegistration should register with the channel registrar if push is enabled.");
 
@@ -1225,7 +1225,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [[[self.mockedApplication expect] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
 
-    [self.push updateRegistrationForcefully:YES];
+    [self.push updateChannelRegistrationForcefully:YES];
     XCTAssertNoThrow([self.mockedChannelRegistrar verify],
                      @"updateRegistration should unregister with the channel registrar if push is disabled.");
 
@@ -1243,7 +1243,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                                     withPayload:OCMOCK_ANY
                                                      forcefully:YES];
 
-    [self.push updateRegistrationForcefully:YES];
+    [self.push updateChannelRegistrationForcefully:YES];
 
 
     XCTAssertNoThrow([self.mockedChannelRegistrar verify],
@@ -1254,7 +1254,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     self.push.registrationBackgroundTask = 30;
     [[self.mockedApplication reject] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
-    [self.push updateRegistrationForcefully:YES];
+    [self.push updateChannelRegistrationForcefully:YES];
 
     XCTAssertNoThrow([self.mockedApplication verify], @"A background task should not be requested if one already exists");
 }
@@ -1299,7 +1299,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                                     withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
                                                      forcefully:YES];
 
-    [self.push updateRegistrationForcefully:YES];
+    [self.push updateChannelRegistrationForcefully:YES];
 
     XCTAssertNoThrow([self.mockedChannelRegistrar verify],
                      @"payload is not being created with expected values");
@@ -1492,7 +1492,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
     [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY channelLocation:OCMOCK_ANY withPayload:[OCMArg checkWithBlock:checkPayloadBlock] forcefully:YES];
 
-    [self.push updateRegistrationForcefully:YES];
+    [self.push updateChannelRegistrationForcefully:YES];
 
     XCTAssertNoThrow([self.mockedChannelRegistrar verify],
                      @"payload is not being created with expected values");
@@ -1516,7 +1516,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                                     withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
                                                      forcefully:YES];
 
-    [self.push updateRegistrationForcefully:YES];
+    [self.push updateChannelRegistrationForcefully:YES];
 
     XCTAssertNoThrow([self.mockedChannelRegistrar verify],
                      @"payload is including tags when device tags is NO");
@@ -1540,7 +1540,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                                     withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
                                                      forcefully:YES];
 
-    [self.push updateRegistrationForcefully:YES];
+    [self.push updateChannelRegistrationForcefully:YES];
 
     XCTAssertNoThrow([self.mockedChannelRegistrar verify],
                      @"payload is not including the correct badge when auto badge is enabled");
@@ -1563,7 +1563,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                                     withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
                                                      forcefully:YES];
 
-    [self.push updateRegistrationForcefully:YES];
+    [self.push updateChannelRegistrationForcefully:YES];
 
     XCTAssertNoThrow([self.mockedChannelRegistrar verify],
                      @"payload should not include quiet time if quiet time is disabled");
@@ -2565,7 +2565,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 }
 
 /**
- * Test updateChannelTagGroups fails
+ * Test updateChannelTagGroups fails.
  */
 - (void)testUpdateChannelTagGroupsFails {
     self.push.channelID = nil;
@@ -2592,7 +2592,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 - (void)testUpdateChannelTagGroupsEmptyTags {
     self.push.channelID = @"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE";
 
-    // Don't call updateChannelTagGroups
+    // Should not call updateChannelTagGroups
     [[self.mockTagGroupsAPIClient reject] updateChannelTags:OCMOCK_ANY
                                                         add:OCMOCK_ANY
                                                      remove:OCMOCK_ANY
