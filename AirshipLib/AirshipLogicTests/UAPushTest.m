@@ -2557,7 +2557,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                                                                           onSuccess:OCMOCK_ANY
                                                                                           onFailure:OCMOCK_ANY];
 
-    [self.push updateChannelTagGroups];
+    [self.push updateRegistration];
 
     XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Update channel tag groups should succeed.");
     XCTAssertEqual((NSUInteger)0, self.push.addChannelTagGroups.count, @"addChannelTagGroups should return an empty dictionary");
@@ -2579,11 +2579,68 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                                                                           onSuccess:OCMOCK_ANY
                                                                                           onFailure:OCMOCK_ANY];
 
-    [self.push updateChannelTagGroups];
+    [self.push updateRegistration];
 
     XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Update channel tag groups should fail.");
     XCTAssertEqual((NSUInteger)1, self.push.addChannelTagGroups.count, @"should contain 1 tag group");
     XCTAssertEqual((NSUInteger)1, self.push.removeChannelTagGroups.count, @"should contain 1 tag group");
 }
+
+/**
+ * Test updateChannelTagGroups with both empty add and remove tags skips request.
+ */
+- (void)testUpdateChannelTagGroupsEmptyTags {
+    self.push.channelID = @"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE";
+
+    // Don't call updateChannelTagGroups
+    [[self.mockTagGroupsAPIClient reject] updateChannelTags:OCMOCK_ANY
+                                                        add:OCMOCK_ANY
+                                                     remove:OCMOCK_ANY
+                                                  onSuccess:OCMOCK_ANY
+                                                  onFailure:OCMOCK_ANY];
+
+    [self.push updateRegistration];
+
+    XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Should skip updateChannelTags request.");
+}
+
+/**
+ * Test updateChannelTagGroups with empty add tags still makes request.
+ */
+- (void)testUpdateChannelTagGroupsEmptyAddTags {
+    self.push.channelID = @"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE";
+    self.push.addChannelTagGroups = self.addTagGroups;
+
+    // Call updateChannelTagGroups
+    [[self.mockTagGroupsAPIClient expect] updateChannelTags:OCMOCK_ANY
+                                                        add:OCMOCK_ANY
+                                                     remove:OCMOCK_ANY
+                                                  onSuccess:OCMOCK_ANY
+                                                  onFailure:OCMOCK_ANY];
+
+    [self.push updateRegistration];
+
+    XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Should call updateChannelTags request.");
+}
+
+/**
+ * Test updateChannelTagGroups with empty remove tags still makes request.
+ */
+- (void)testUpdateChannelTagGroupsEmptyRemoveTags {
+    self.push.channelID = @"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE";
+    self.push.removeChannelTagGroups = self.removeTagGroups;
+
+    // Call updateChannelTagGroups
+    [[self.mockTagGroupsAPIClient expect] updateChannelTags:OCMOCK_ANY
+                                                        add:OCMOCK_ANY
+                                                     remove:OCMOCK_ANY
+                                                  onSuccess:OCMOCK_ANY
+                                                  onFailure:OCMOCK_ANY];
+
+    [self.push updateRegistration];
+
+    XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Should call updateChannelTags request.");
+}
+
 
 @end

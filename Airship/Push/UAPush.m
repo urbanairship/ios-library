@@ -559,34 +559,6 @@ NSString *const UAPushRemoveChannelTagGroupsSettingsKey = @"UAPushRemoveChannelT
     [self setRemoveChannelTagGroups:updateRemoveTags];
 }
 
-- (void)updateChannelTagGroups {
-
-    UATagGroupsAPIClientSuccessBlock successBlock = ^{
-        UA_LINFO(@"Channel tag groups updated successfully.");
-
-        // clear add and remove channel tag groups
-        [self setAddChannelTagGroups:[NSDictionary dictionary]];
-        [self setRemoveChannelTagGroups:[NSDictionary dictionary]];
-    };
-
-    UATagGroupsAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
-        UA_LDEBUG(@"Channel tag groups failed to update.");
-
-        // if request failed due to 400 or 403, clear add and remove channel tag groups
-        NSInteger status = request.response.statusCode;
-        if (status == 400 || status == 403) {
-            [self setAddChannelTagGroups:[NSDictionary dictionary]];
-            [self setRemoveChannelTagGroups:[NSDictionary dictionary]];
-        }
-    };
-
-    [self.tagGroupsAPIClient updateChannelTags:self.channelID
-                                           add:self.addChannelTagGroups
-                                        remove:self.removeChannelTagGroups
-                                     onSuccess:successBlock
-                                     onFailure:failureBlock];
-}
-
 - (void)setBadgeNumber:(NSInteger)badgeNumber {
 
     if ([[UIApplication sharedApplication] applicationIconBadgeNumber] == badgeNumber) {
@@ -862,6 +834,24 @@ BOOL deferChannelCreationOnForeground = false;
     }
 }
 
+- (void)updateRegistration {
+
+    // Update channel tag groups
+    [self updateChannelTagGroups];
+
+    // APNS registration will cause a channel registration
+    if (self.shouldUpdateAPNSRegistration) {
+        UA_LDEBUG(@"APNS registration is out of date, updating.");
+        [self updateAPNSRegistration];
+    } if (self.userPushNotificationsEnabled && !self.channelID) {
+        UA_LDEBUG(@"Push is enabled but we have not yet tried to generate a channel ID. "
+                  "Urban Airship registration will automatically run when the device token is registered,"
+                  "the next time the app is backgrounded, or the next time the app is foregrounded.");
+    } else {
+        [self updateRegistrationForcefully:NO];
+    }
+}
+
 - (void)updateRegistrationForcefully:(BOOL)forcefully {
     // Only cancel in flight requests if the channel is already created
     if (self.channelID) {
@@ -879,22 +869,36 @@ BOOL deferChannelCreationOnForeground = false;
                                       forcefully:forcefully];
 }
 
-- (void)updateRegistration {
-    // APNS registration will cause a channel registration
-    if (self.shouldUpdateAPNSRegistration) {
-        UA_LDEBUG(@"APNS registration is out of date, updating.");
-        [self updateAPNSRegistration];
+- (void)updateChannelTagGroups {
+
+    if (!self.addChannelTagGroups.count && !self.removeChannelTagGroups.count) {
         return;
     }
 
-    if (self.userPushNotificationsEnabled && !self.channelID) {
-        UA_LDEBUG(@"Push is enabled but we have not yet tried to generate a channel ID. "
-                  "Urban Airship registration will automatically run when the device token is registered,"
-                  "the next time the app is backgrounded, or the next time the app is foregrounded.");
-        return;
-    }
+    UATagGroupsAPIClientSuccessBlock successBlock = ^{
+        UA_LINFO(@"Channel tag groups updated successfully.");
 
-    [self updateRegistrationForcefully:NO];
+        // clear add and remove channel tag groups
+        [self setAddChannelTagGroups:[NSDictionary dictionary]];
+        [self setRemoveChannelTagGroups:[NSDictionary dictionary]];
+    };
+
+    UATagGroupsAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
+        UA_LDEBUG(@"Channel tag groups failed to update.");
+
+        // if request failed due to 400 or 403, clear add and remove channel tag groups
+        NSInteger status = request.response.statusCode;
+        if (status == 400 || status == 403) {
+            [self setAddChannelTagGroups:[NSDictionary dictionary]];
+            [self setRemoveChannelTagGroups:[NSDictionary dictionary]];
+        }
+    };
+
+    [self.tagGroupsAPIClient updateChannelTags:self.channelID
+                                           add:self.addChannelTagGroups
+                                        remove:self.removeChannelTagGroups
+                                     onSuccess:successBlock
+                                     onFailure:failureBlock];
 }
 
 - (void)updateAPNSRegistration {
