@@ -103,12 +103,12 @@ extern NSString *const UAPushChannelLocationKey;
 /**
  * Add channel tag groups data store key.
  */
-extern NSString *const UAPushAddChannelTagGroupsSettingsKey;
+extern NSString *const UAPushAddTagGroupsSettingsKey;
 
 /**
  * Remove channel tag groups data store key.
  */
-extern NSString *const UAPushRemoveChannelTagGroupsSettingsKey;
+extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 
 @interface UAPush ()
 
@@ -157,12 +157,12 @@ extern NSString *const UAPushRemoveChannelTagGroupsSettingsKey;
 /**
  * Tag groups to add to channel.
  */
-@property (nonatomic, copy) NSDictionary *addChannelTagGroups;
+@property (nonatomic, copy) NSDictionary *pendingAddTags;
 
 /**
  * Tag groups to remove from channel.
  */
-@property (nonatomic, copy) NSDictionary *removeChannelTagGroups;
+@property (nonatomic, copy) NSDictionary *pendingRemoveTags;
 
 /**
  * The tag groups API client.

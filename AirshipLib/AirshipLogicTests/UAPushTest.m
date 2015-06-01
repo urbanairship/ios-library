@@ -2497,58 +2497,107 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 }
 
 /**
- * Test addChannelTagGroups.
+ * Test pendingAddTags.
  */
-- (void)testAddChannelTagGroups {
-    self.push.addChannelTagGroups = self.addTagGroups;
+- (void)testPendingAddTags {
+    self.push.pendingAddTags = self.addTagGroups;
 
-    XCTAssertEqual((NSUInteger)1, self.push.addChannelTagGroups.count, @"should contain 1 tag group");
-    XCTAssertEqualObjects(self.addTagGroups, self.push.addChannelTagGroups, @"addChannelTagGroups are not stored correctly");
-    XCTAssertEqualObjects([self.dataStore valueForKey:UAPushAddChannelTagGroupsSettingsKey], self.push.addChannelTagGroups,
-                          @"addChannelTagGroups are not stored correctly in standardUserDefaults");
+    XCTAssertEqual((NSUInteger)1, self.push.pendingAddTags.count, @"should contain 1 tag group");
+    XCTAssertEqualObjects(self.addTagGroups, self.push.pendingAddTags, @"pendingAddTags are not stored correctly");
+    XCTAssertEqualObjects([self.dataStore valueForKey:UAPushAddTagGroupsSettingsKey], self.push.pendingAddTags,
+                          @"pendingAddTags are not stored correctly in standardUserDefaults");
 
-    // test addChannelTags
+    // test addTags
     NSArray *tags = @[@"tag1", @"tag2", @"tag3"];
-    [self.push addChannelTags:tags tagGroupID:@"another-tag-group"];
+    [self.push addTags:tags group:@"another-tag-group"];
 
-    XCTAssertEqual((NSUInteger)2, self.push.addChannelTagGroups.count, @"should contain 2 tag groups");
+    XCTAssertEqual((NSUInteger)2, self.push.pendingAddTags.count, @"should contain 2 tag groups");
 
-    self.push.addChannelTagGroups = nil;
-    XCTAssertEqual((NSUInteger)0, self.push.addChannelTagGroups.count, @"addChannelTagGroups should return an empty dictionary when set to nil");
-    XCTAssertEqual((NSUInteger)0, [[self.dataStore valueForKey:UAPushAddChannelTagGroupsSettingsKey] count],
-                   @"addChannelTagGroups not being cleared in standardUserDefaults");
+    // test addTags with overlapping tags in same group
+    NSArray *tags2 = @[@"tag3", @"tag4", @"tag5"];
+    [self.push addTags:tags2 group:@"another-tag-group"];
+    XCTAssertEqual((NSUInteger)2, self.push.pendingAddTags.count, @"should contain 2 tag groups");
+    NSArray *anotherTagArray = [self.push.pendingAddTags objectForKey:@"another-tag-group"];
+    XCTAssertEqual((NSUInteger)5, anotherTagArray.count, @"should contain 5 tags in array");
+
+    self.push.pendingAddTags = nil;
+    XCTAssertEqual((NSUInteger)0, self.push.pendingAddTags.count, @"pendingAddTags should return an empty dictionary when set to nil");
+    XCTAssertEqual((NSUInteger)0, [[self.dataStore valueForKey:UAPushAddTagGroupsSettingsKey] count],
+                   @"pendingAddTags not being cleared in standardUserDefaults");
 }
 
 /**
- * Test removeChannelTagGroups.
+ * Test pendingAddTags when pendingRemoveTags overlap.
  */
-- (void)testRemoveChannelTagGroups {
-    self.push.removeChannelTagGroups = self.removeTagGroups;
+- (void)testAddTagGroupsOverlap {
+    self.push.pendingRemoveTags = self.removeTagGroups;
+    NSArray *removeTagsArray = [self.push.pendingRemoveTags objectForKey:@"tag_group"];
+    XCTAssertEqual((NSUInteger)3, removeTagsArray.count, @"should contain 3 tags in array");
 
-    XCTAssertEqual((NSUInteger)1, self.push.removeChannelTagGroups.count, @"should contain 1 tag group");
-    XCTAssertEqualObjects(self.removeTagGroups, self.push.removeChannelTagGroups, @"removeChannelTagGroups are not stored correctly");
-    XCTAssertEqualObjects([self.dataStore valueForKey:UAPushRemoveChannelTagGroupsSettingsKey], self.push.removeChannelTagGroups,
-                          @"removeChannelTagGroups are not stored correctly in standardUserDefaults");
-
-    // test removeChannelTags
     NSArray *tags = @[@"tag1", @"tag2", @"tag3"];
-    [self.push removeChannelTags:tags tagGroupID:@"another-tag-group"];
+    [self.push addTags:tags group:@"tag_group"];
+    NSArray *updatedRemoveTagsArray = [self.push.pendingRemoveTags objectForKey:@"tag_group"];
+    XCTAssertEqual((NSUInteger)2, updatedRemoveTagsArray.count, @"should contain 2 tags in array");
 
-    XCTAssertEqual((NSUInteger)2, self.push.removeChannelTagGroups.count, @"should contain 2 tag groups");
-
-    self.push.removeChannelTagGroups = nil;
-    XCTAssertEqual((NSUInteger)0, self.push.removeChannelTagGroups.count, @"removeChannelTagGroups should return an empty dictionary when set to nil");
-    XCTAssertEqual((NSUInteger)0, [[self.dataStore valueForKey:UAPushRemoveChannelTagGroupsSettingsKey] count],
-                   @"removeChannelTagGroups not being cleared in standardUserDefaults");
+    NSArray *addTagsArray = [self.push.pendingAddTags objectForKey:@"tag_group"];
+    XCTAssertEqual((NSUInteger)3, addTagsArray.count, @"should contain 3 tags in array");
 }
 
 /**
- * Test successful updateChannelTagGroups.
+ * Test pendingRemoveTags.
  */
-- (void)testUpdateChannelTagGroups {
+- (void)testRemoveTagGroups {
+    self.push.pendingRemoveTags = self.removeTagGroups;
+
+    XCTAssertEqual((NSUInteger)1, self.push.pendingRemoveTags.count, @"should contain 1 tag group");
+    XCTAssertEqualObjects(self.removeTagGroups, self.push.pendingRemoveTags, @"pendingRemoveTags are not stored correctly");
+    XCTAssertEqualObjects([self.dataStore valueForKey:UAPushRemoveTagGroupsSettingsKey], self.push.pendingRemoveTags,
+                          @"pendingRemoveTags are not stored correctly in standardUserDefaults");
+
+    // test removeTags
+    NSArray *tags = @[@"tag1", @"tag2", @"tag3"];
+    [self.push removeTags:tags group:@"another-tag-group"];
+
+    XCTAssertEqual((NSUInteger)2, self.push.pendingRemoveTags.count, @"should contain 2 tag groups");
+
+    // test removeTags with overlapping tags in same group
+    NSArray *tags2 = @[@"tag3", @"tag4", @"tag5"];
+    [self.push removeTags:tags2 group:@"another-tag-group"];
+    XCTAssertEqual((NSUInteger)2, self.push.pendingRemoveTags.count, @"should contain 2 tag groups");
+    NSArray *anotherTagArray = [self.push.pendingRemoveTags objectForKey:@"another-tag-group"];
+    XCTAssertEqual((NSUInteger)5, anotherTagArray.count, @"should contain 5 tags");
+
+    self.push.pendingRemoveTags = nil;
+    XCTAssertEqual((NSUInteger)0, self.push.pendingRemoveTags.count, @"pendingRemoveTags should return an empty dictionary when set to nil");
+    XCTAssertEqual((NSUInteger)0, [[self.dataStore valueForKey:UAPushRemoveTagGroupsSettingsKey] count],
+                   @"pendingRemoveTags not being cleared in standardUserDefaults");
+}
+
+/**
+ * Test pendingRemoveTags when pendingAddTags overlap.
+ */
+- (void)testRemoveTagGroupsOverlap {
+    self.push.pendingAddTags = self.addTagGroups;
+    NSArray *addTagsArray = [self.push.pendingAddTags objectForKey:@"tag_group"];
+    XCTAssertEqual((NSUInteger)3, addTagsArray.count, @"should contain 3 tags in array");
+
+    NSArray *tags = @[@"tag3", @"tag4", @"tag5"];
+    [self.push removeTags:tags group:@"tag_group"];
+    NSArray *updatedAddTagsArray = [self.push.pendingAddTags objectForKey:@"tag_group"];
+    XCTAssertEqual((NSUInteger)2, updatedAddTagsArray.count, @"should contain 2 tags in array");
+
+    NSArray *removeTagsArray = [self.push.pendingRemoveTags objectForKey:@"tag_group"];
+    XCTAssertEqual((NSUInteger)3, removeTagsArray.count, @"should contain 3 tags in array");
+}
+
+
+/**
+ * Test successful update channel tags.
+ */
+- (void)testUpdateChannelTags {
     self.push.channelID = @"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE";
-    self.push.addChannelTagGroups = self.addTagGroups;
-    self.push.removeChannelTagGroups = self.removeTagGroups;
+    self.push.pendingAddTags = self.addTagGroups;
+    self.push.pendingRemoveTags = self.removeTagGroups;
 
     // Expect the tagGroupsAPIClient to update channel tags and call the success block
     [[[self.mockTagGroupsAPIClient expect] andDo:updateChannelTagsSuccessDoBlock] updateChannelTags:OCMOCK_ANY
@@ -2560,17 +2609,17 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [self.push updateRegistration];
 
     XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Update channel tag groups should succeed.");
-    XCTAssertEqual((NSUInteger)0, self.push.addChannelTagGroups.count, @"addChannelTagGroups should return an empty dictionary");
-    XCTAssertEqual((NSUInteger)0, self.push.removeChannelTagGroups.count, @"removeChannelTagGroups should return an empty dictionary");
+    XCTAssertEqual((NSUInteger)0, self.push.pendingAddTags.count, @"pendingAddTags should return an empty dictionary");
+    XCTAssertEqual((NSUInteger)0, self.push.pendingRemoveTags.count, @"pendingRemoveTags should return an empty dictionary");
 }
 
 /**
- * Test updateChannelTagGroups fails.
+ * Test update channel tags fails.
  */
 - (void)testUpdateChannelTagGroupsFails {
     self.push.channelID = nil;
-    self.push.addChannelTagGroups = self.addTagGroups;
-    self.push.removeChannelTagGroups = self.removeTagGroups;
+    self.push.pendingAddTags = self.addTagGroups;
+    self.push.pendingRemoveTags = self.removeTagGroups;
 
     // Expect the tagGroupsAPIClient to fail to update channel tags and call the failure block
     [[[self.mockTagGroupsAPIClient expect] andDo:updateChannelTagsFailureDoBlock] updateChannelTags:OCMOCK_ANY
@@ -2582,12 +2631,12 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [self.push updateRegistration];
 
     XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Update channel tag groups should fail.");
-    XCTAssertEqual((NSUInteger)1, self.push.addChannelTagGroups.count, @"should contain 1 tag group");
-    XCTAssertEqual((NSUInteger)1, self.push.removeChannelTagGroups.count, @"should contain 1 tag group");
+    XCTAssertEqual((NSUInteger)1, self.push.pendingAddTags.count, @"should contain 1 tag group");
+    XCTAssertEqual((NSUInteger)1, self.push.pendingRemoveTags.count, @"should contain 1 tag group");
 }
 
 /**
- * Test updateChannelTagGroups with both empty add and remove tags skips request.
+ * Test update channel tags with both empty add and remove tags skips request.
  */
 - (void)testUpdateChannelTagGroupsEmptyTags {
     self.push.channelID = @"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE";
@@ -2605,11 +2654,11 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 }
 
 /**
- * Test updateChannelTagGroups with empty add tags still makes request.
+ * Test update channel tags with empty add tags still makes request.
  */
 - (void)testUpdateChannelTagGroupsEmptyAddTags {
     self.push.channelID = @"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE";
-    self.push.addChannelTagGroups = self.addTagGroups;
+    self.push.pendingAddTags = self.addTagGroups;
 
     // Call updateChannelTagGroups
     [[self.mockTagGroupsAPIClient expect] updateChannelTags:OCMOCK_ANY
@@ -2624,11 +2673,11 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 }
 
 /**
- * Test updateChannelTagGroups with empty remove tags still makes request.
+ * Test update channel tags with empty remove tags still makes request.
  */
 - (void)testUpdateChannelTagGroupsEmptyRemoveTags {
     self.push.channelID = @"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE";
-    self.push.removeChannelTagGroups = self.removeTagGroups;
+    self.push.pendingRemoveTags = self.removeTagGroups;
 
     // Call updateChannelTagGroups
     [[self.mockTagGroupsAPIClient expect] updateChannelTags:OCMOCK_ANY

@@ -74,8 +74,8 @@ NSString *const UAPushQuietTimeStartKey = @"start";
 NSString *const UAPushQuietTimeEndKey = @"end";
 
 // Channel tag group keys
-NSString *const UAPushAddChannelTagGroupsSettingsKey = @"UAPushAddChannelTagGroups";
-NSString *const UAPushRemoveChannelTagGroupsSettingsKey = @"UAPushRemoveChannelTagGroups";
+NSString *const UAPushAddTagGroupsSettingsKey = @"UAPushAddTagGroups";
+NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
 
 @implementation UAPush
 
@@ -286,28 +286,28 @@ NSString *const UAPushRemoveChannelTagGroupsSettingsKey = @"UAPushRemoveChannelT
     return [NSArray arrayWithArray:normalizedTags];
 }
 
-- (NSDictionary *)addChannelTagGroups {
-    NSDictionary *currentAddTags = [self.dataStore objectForKey:UAPushAddChannelTagGroupsSettingsKey];
+- (NSDictionary *)pendingAddTags {
+    NSDictionary *currentAddTags = [self.dataStore objectForKey:UAPushAddTagGroupsSettingsKey];
     if (!currentAddTags) {
         currentAddTags = [NSDictionary dictionary];
     }
     return currentAddTags;
 }
 
-- (void)setAddChannelTagGroups:(NSDictionary *)addTagGroups {
-    [self.dataStore setObject:addTagGroups forKey:UAPushAddChannelTagGroupsSettingsKey];
+- (void)setPendingAddTags:(NSDictionary *)addTagGroups {
+    [self.dataStore setObject:addTagGroups forKey:UAPushAddTagGroupsSettingsKey];
 }
 
-- (NSDictionary *)removeChannelTagGroups {
-    NSDictionary *currentRemoveTags = [self.dataStore objectForKey:UAPushRemoveChannelTagGroupsSettingsKey];
+- (NSDictionary *)pendingRemoveTags {
+    NSDictionary *currentRemoveTags = [self.dataStore objectForKey:UAPushRemoveTagGroupsSettingsKey];
     if (!currentRemoveTags) {
         currentRemoveTags = [NSDictionary dictionary];
     }
     return currentRemoveTags;
 }
 
-- (void)setRemoveChannelTagGroups:(NSDictionary *)removeTagGroups {
-    [self.dataStore setObject:removeTagGroups forKey:UAPushRemoveChannelTagGroupsSettingsKey];
+- (void)setPendingRemoveTags:(NSDictionary *)removeTagGroups {
+    [self.dataStore setObject:removeTagGroups forKey:UAPushRemoveTagGroupsSettingsKey];
 }
 
 - (BOOL)userPushNotificationsEnabled {
@@ -547,16 +547,76 @@ NSString *const UAPushRemoveChannelTagGroupsSettingsKey = @"UAPushRemoveChannelT
 #pragma mark -
 #pragma mark Open APIs - UA Tag Groups APIs
 
-- (void)addChannelTags:(NSArray *)tags tagGroupID:(NSString *)tagGroupID {
-    NSMutableDictionary *updateAddTags = [NSMutableDictionary dictionaryWithDictionary:self.addChannelTagGroups];
-    [updateAddTags setValue:tags forKey:tagGroupID];
-    [self setAddChannelTagGroups:updateAddTags];
+- (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
+    NSMutableDictionary *addTags = [NSMutableDictionary dictionaryWithDictionary:self.pendingAddTags];
+    NSMutableDictionary *removeTags = [NSMutableDictionary dictionaryWithDictionary:self.pendingRemoveTags];
+
+    // Check if remove tags contain any tags to add.
+    if (removeTags[tagGroupID]) {
+        // Make removeTagsArray mutable to modify tags.
+        NSMutableArray *removeTagsArray = [NSMutableArray arrayWithArray:removeTags[tagGroupID]];
+        for (NSString *tag in tags) {
+            if (tag && [removeTagsArray containsObject:tag]) {
+                [removeTagsArray removeObject:tag];
+            }
+        }
+
+        removeTags[tagGroupID] = removeTagsArray;
+        [self setPendingRemoveTags:removeTags];
+    }
+
+    // Add the tags.
+    if (addTags [tagGroupID]) {
+        // Make addTagsArray mutable to modify tags.
+        NSMutableArray *addTagsArray = [NSMutableArray arrayWithArray:addTags[tagGroupID]];
+        for (NSString *tag in tags) {
+            if (![addTagsArray containsObject:tag]) {
+                [addTagsArray addObject:tag];
+            }
+        }
+
+        addTags[tagGroupID] = addTagsArray;
+    } else {
+        addTags[tagGroupID] = tags;
+    }
+
+    [self setPendingAddTags:addTags];
 }
 
-- (void)removeChannelTags:(NSArray *)tags tagGroupID:(NSString *)tagGroupID {
-    NSMutableDictionary *updateRemoveTags = [NSMutableDictionary dictionaryWithDictionary:self.removeChannelTagGroups];
-    [updateRemoveTags setValue:tags forKey:tagGroupID];
-    [self setRemoveChannelTagGroups:updateRemoveTags];
+- (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
+    NSMutableDictionary *removeTags = [NSMutableDictionary dictionaryWithDictionary:self.pendingRemoveTags];
+    NSMutableDictionary *addTags = [NSMutableDictionary dictionaryWithDictionary:self.pendingAddTags];
+
+    // Check if any add tags contain any tags to be removed.
+    if (addTags[tagGroupID]) {
+        // Make addTagsArray mutable to modify tags.
+        NSMutableArray *addTagsArray = [NSMutableArray arrayWithArray:addTags[tagGroupID]];
+        for (NSString *tag in tags) {
+            if (tag && [addTagsArray containsObject:tag]) {
+                [addTagsArray removeObject:tag];
+            }
+        }
+
+        addTags[tagGroupID] = addTagsArray;
+        [self setPendingAddTags:addTags];
+    }
+
+    // Add the tags to be removed.
+    if (removeTags [tagGroupID]) {
+        // Make removeTagsArray mutable to modify tags.
+        NSMutableArray *removeTagsArray = [NSMutableArray arrayWithArray:removeTags[tagGroupID]];
+        for (NSString *tag in tags) {
+            if (![removeTagsArray containsObject:tag]) {
+                [removeTagsArray addObject:tag];
+            }
+        }
+
+        removeTags[tagGroupID] = removeTagsArray;
+    } else {
+        removeTags[tagGroupID] = tags;
+    }
+
+    [self setPendingRemoveTags:removeTags];
 }
 
 - (void)setBadgeNumber:(NSInteger)badgeNumber {
@@ -871,32 +931,80 @@ BOOL deferChannelCreationOnForeground = false;
 
 - (void)updateChannelTagGroups {
 
-    if (!self.addChannelTagGroups.count && !self.removeChannelTagGroups.count) {
+    if (!self.pendingAddTags.count && !self.pendingRemoveTags.count) {
         return;
     }
 
+    // Get a copy of the current add and remove pending tags'
+    NSMutableDictionary *addTags = [self.pendingAddTags mutableCopy];
+    NSMutableDictionary *removeTags = [self.pendingRemoveTags mutableCopy];
+
+    // Clear the add and remove pending tags
+    self.pendingAddTags = nil;
+    self.pendingRemoveTags = nil;
+
     UATagGroupsAPIClientSuccessBlock successBlock = ^{
         UA_LINFO(@"Channel tag groups updated successfully.");
-
-        // clear add and remove channel tag groups
-        [self setAddChannelTagGroups:[NSDictionary dictionary]];
-        [self setRemoveChannelTagGroups:[NSDictionary dictionary]];
     };
 
     UATagGroupsAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
         UA_LDEBUG(@"Channel tag groups failed to update.");
 
-        // if request failed due to 400 or 403, clear add and remove channel tag groups
         NSInteger status = request.response.statusCode;
-        if (status == 400 || status == 403) {
-            [self setAddChannelTagGroups:[NSDictionary dictionary]];
-            [self setRemoveChannelTagGroups:[NSDictionary dictionary]];
+        if (status != 400 || status != 403) {
+
+            // restore original tags
+            if (!self.pendingAddTags.count && !self.pendingRemoveTags.count) {
+                // 5A set self.pendingAddTags as addTags
+                self.pendingAddTags = addTags;
+
+                // 6A set self.pendingRemoveTags as removeTags
+                self.pendingRemoveTags = removeTags;
+                return;
+            }
+
+            // 1 remove self.pendingRemoveTags from addTags
+            if (self.pendingRemoveTags.count) {
+                for (NSString *group in self.pendingRemoveTags) {
+                    if (group && addTags[group]) {
+                        NSArray *pendingRemoveTagsArray = [NSArray arrayWithArray:self.pendingRemoveTags[group]];
+                        [addTags removeObjectsForKeys:pendingRemoveTagsArray];
+                    }
+                }
+
+            }
+
+            // 2 remove self.pendingAddTags from removeTags
+            if (self.pendingAddTags.count) {
+                for (NSString *group in self.pendingAddTags) {
+                    if (group && removeTags[group]) {
+                        NSArray *pendingAddTagsArray = [NSArray arrayWithArray:self.pendingAddTags[group]];
+                        [removeTags removeObjectsForKeys:pendingAddTagsArray];
+                    }
+                }
+            }
+
+            // 3 add self.pendingRemoveTags to removeTags
+            if (self.pendingRemoveTags.count) {
+                [removeTags addEntriesFromDictionary:self.pendingRemoveTags];
+            }
+
+            // 4 add self.pendingAddTags to addTags
+            if (self.pendingAddTags.count) {
+                [addTags addEntriesFromDictionary:self.pendingAddTags];
+            }
+
+            // 5 set self.pendingAddTags as addTags
+            self.pendingAddTags = addTags;
+
+            // 6 set self.pendingRemoveTags as removeTags
+            self.pendingRemoveTags = removeTags;
         }
     };
 
     [self.tagGroupsAPIClient updateChannelTags:self.channelID
-                                           add:self.addChannelTagGroups
-                                        remove:self.removeChannelTagGroups
+                                           add:addTags
+                                        remove:removeTags
                                      onSuccess:successBlock
                                      onFailure:failureBlock];
 }
