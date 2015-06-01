@@ -10,20 +10,8 @@
 		494DD95D1B0EB677009C134E /* AirshipKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 494DD95C1B0EB677009C134E /* AirshipKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		494DDC261B0FD6A1009C134E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DDC251B0FD6A1009C134E /* libsqlite3.dylib */; };
 		494DDC281B0FD6A6009C134E /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DDC271B0FD6A6009C134E /* libz.dylib */; };
-		49914C331B0FF056001078AB /* AirshipKit_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 49914C321B0FF056001078AB /* AirshipKit_Tests.m */; };
-		49914C341B0FF056001078AB /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipKit.framework */; };
 		49D5281D1B17DFE7006E35FB /* libUAirship-6.0.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 49D5281C1B17DFE7006E35FB /* libUAirship-6.0.2.a */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		49914C351B0FF056001078AB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 494DD9561B0EB677009C134E;
-			remoteInfo = AirshipKit;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		494DD9571B0EB677009C134E /* AirshipKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -31,9 +19,6 @@
 		494DD95C1B0EB677009C134E /* AirshipKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipKit.h; sourceTree = "<group>"; };
 		494DDC251B0FD6A1009C134E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		494DDC271B0FD6A6009C134E /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		49914C2E1B0FF055001078AB /* AirshipKit Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "AirshipKit Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		49914C311B0FF056001078AB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		49914C321B0FF056001078AB /* AirshipKit_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AirshipKit_Tests.m; sourceTree = "<group>"; };
 		49D5281C1B17DFE7006E35FB /* libUAirship-6.0.2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-6.0.2.a"; path = "../Airship/libUAirship-6.0.2.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -48,14 +33,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		49914C2B1B0FF055001078AB /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				49914C341B0FF056001078AB /* AirshipKit.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -66,7 +43,6 @@
 				494DDC271B0FD6A6009C134E /* libz.dylib */,
 				494DDC251B0FD6A1009C134E /* libsqlite3.dylib */,
 				494DD9591B0EB677009C134E /* AirshipKit */,
-				49914C2F1B0FF056001078AB /* AirshipKit Tests */,
 				494DD9581B0EB677009C134E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -75,7 +51,6 @@
 			isa = PBXGroup;
 			children = (
 				494DD9571B0EB677009C134E /* AirshipKit.framework */,
-				49914C2E1B0FF055001078AB /* AirshipKit Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -93,23 +68,6 @@
 			isa = PBXGroup;
 			children = (
 				494DD95B1B0EB677009C134E /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		49914C2F1B0FF056001078AB /* AirshipKit Tests */ = {
-			isa = PBXGroup;
-			children = (
-				49914C321B0FF056001078AB /* AirshipKit_Tests.m */,
-				49914C301B0FF056001078AB /* Supporting Files */,
-			);
-			path = "AirshipKit Tests";
-			sourceTree = "<group>";
-		};
-		49914C301B0FF056001078AB /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				49914C311B0FF056001078AB /* Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -147,24 +105,6 @@
 			productReference = 494DD9571B0EB677009C134E /* AirshipKit.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		49914C2D1B0FF055001078AB /* AirshipKit Tests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 49914C371B0FF056001078AB /* Build configuration list for PBXNativeTarget "AirshipKit Tests" */;
-			buildPhases = (
-				49914C2A1B0FF055001078AB /* Sources */,
-				49914C2B1B0FF055001078AB /* Frameworks */,
-				49914C2C1B0FF055001078AB /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				49914C361B0FF056001078AB /* PBXTargetDependency */,
-			);
-			name = "AirshipKit Tests";
-			productName = "AirshipKit Tests";
-			productReference = 49914C2E1B0FF055001078AB /* AirshipKit Tests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -175,9 +115,6 @@
 				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
 					494DD9561B0EB677009C134E = {
-						CreatedOnToolsVersion = 6.3.1;
-					};
-					49914C2D1B0FF055001078AB = {
 						CreatedOnToolsVersion = 6.3.1;
 					};
 				};
@@ -195,20 +132,12 @@
 			projectRoot = "";
 			targets = (
 				494DD9561B0EB677009C134E /* AirshipKit */,
-				49914C2D1B0FF055001078AB /* AirshipKit Tests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		494DD9551B0EB677009C134E /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		49914C2C1B0FF055001078AB /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -241,23 +170,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		49914C2A1B0FF055001078AB /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				49914C331B0FF056001078AB /* AirshipKit_Tests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		49914C361B0FF056001078AB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 494DD9561B0EB677009C134E /* AirshipKit */;
-			targetProxy = 49914C351B0FF056001078AB /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		494DD96B1B0EB677009C134E /* Debug */ = {
@@ -411,36 +324,6 @@
 			};
 			name = Release;
 		};
-		49914C381B0FF056001078AB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "AirshipKit Tests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		49914C391B0FF056001078AB /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "AirshipKit Tests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -458,15 +341,6 @@
 			buildConfigurations = (
 				494DD96E1B0EB677009C134E /* Debug */,
 				494DD96F1B0EB677009C134E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		49914C371B0FF056001078AB /* Build configuration list for PBXNativeTarget "AirshipKit Tests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				49914C381B0FF056001078AB /* Debug */,
-				49914C391B0FF056001078AB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
