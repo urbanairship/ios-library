@@ -44,6 +44,7 @@
 #import "UAMutableUserNotificationCategory.h"
 #import "UAPreferenceDataStore.h"
 #import "UAConfig.h"
+#import "UATagGroupsAPIClient.h"
 
 @interface UAPushTest : XCTestCase
 @property (nonatomic, strong) id mockedApplication;
@@ -57,11 +58,15 @@
 @property (nonatomic, strong) id mockUAUser;
 @property (nonatomic, strong) id mockUIUserNotificationSettings;
 @property (nonatomic, strong) id mockDefaultUserNotificationCategories;
+@property (nonatomic, strong) id mockTagGroupsAPIClient;
 
 @property (nonatomic, strong) UAPush *push;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 @property (nonatomic, strong) NSDictionary *notification;
+@property (nonatomic, strong) NSMutableDictionary *addTagGroups;
+@property (nonatomic, strong) NSMutableDictionary *removeTagGroups;
+@property (nonatomic, strong) UAHTTPRequest *channelTagsFailureRequest;
 
 @end
 
@@ -69,6 +74,8 @@
 
 NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
+void (^updateChannelTagsSuccessDoBlock)(NSInvocation *);
+void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
 - (void)setUp {
     [super setUp];
@@ -94,6 +101,18 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                                   },
                           @"someActionKey": @"someActionValue",
                           };
+
+    self.addTagGroups = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *tagsToAdd = [NSMutableDictionary dictionary];
+    NSArray *addTagsArray = @[@"tag1", @"tag2", @"tag3"];
+    [tagsToAdd setValue:addTagsArray forKey:@"tag_group"];
+    self.addTagGroups = tagsToAdd;
+
+    self.removeTagGroups = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *tagsToRemove = [NSMutableDictionary dictionary];
+    NSArray *removeTagsArray = @[@"tag3", @"tag4", @"tag5"];
+    [tagsToRemove setValue:removeTagsArray forKey:@"tag_group"];
+    self.removeTagGroups = tagsToRemove;
 
     // Set up a mocked application
     self.mockedApplication = [OCMockObject niceMockForClass:[UIApplication class]];
@@ -132,6 +151,25 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     self.mockDefaultUserNotificationCategories = [OCMockObject niceMockForClass:[UAUserNotificationCategories class]];
 
     self.push.registrationDelegate = self.mockRegistrationDelegate;
+
+    self.mockTagGroupsAPIClient = [OCMockObject niceMockForClass:[UATagGroupsAPIClient class]];
+    self.push.tagGroupsAPIClient = self.mockTagGroupsAPIClient;
+
+    self.channelTagsFailureRequest = [[UAHTTPRequest alloc] init];
+
+    updateChannelTagsSuccessDoBlock = ^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:5];
+        UATagGroupsAPIClientSuccessBlock successBlock = (__bridge UATagGroupsAPIClientSuccessBlock)arg;
+        successBlock();
+    };
+
+    updateChannelTagsFailureDoBlock = ^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:6];
+        UATagGroupsAPIClientFailureBlock failureBlock = (__bridge UATagGroupsAPIClientFailureBlock)arg;
+        failureBlock(self.channelTagsFailureRequest);
+    };
 }
 
 - (void)tearDown {
@@ -151,6 +189,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [self.mockUAUser stopMocking];
     [self.mockUIUserNotificationSettings stopMocking];
     [self.mockDefaultUserNotificationCategories stopMocking];
+    [self.mockTagGroupsAPIClient stopMocking];
 
     // We hide this class in a few tests. Its only available on iOS8.
     [UIUserNotificationSettings revealClass];
@@ -2455,6 +2494,96 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [self.dataStore removeObjectForKey:@"UAChannelLocation"];
 
     XCTAssertNil(self.push.channelLocation, @"Channel location should be nil");
+}
+
+/**
+ * Test addChannelTagGroups.
+ */
+- (void)testAddChannelTagGroups {
+    self.push.addChannelTagGroups = self.addTagGroups;
+
+    XCTAssertEqual((NSUInteger)1, self.push.addChannelTagGroups.count, @"should contain 1 tag group");
+    XCTAssertEqualObjects(self.addTagGroups, self.push.addChannelTagGroups, @"addChannelTagGroups are not stored correctly");
+    XCTAssertEqualObjects([self.dataStore valueForKey:UAPushAddChannelTagGroupsSettingsKey], self.push.addChannelTagGroups,
+                          @"addChannelTagGroups are not stored correctly in standardUserDefaults");
+
+    // test addChannelTags
+    NSArray *tags = @[@"tag1", @"tag2", @"tag3"];
+    [self.push addChannelTags:tags tagGroupID:@"another-tag-group"];
+
+    XCTAssertEqual((NSUInteger)2, self.push.addChannelTagGroups.count, @"should contain 2 tag groups");
+
+    self.push.addChannelTagGroups = nil;
+    XCTAssertEqual((NSUInteger)0, self.push.addChannelTagGroups.count, @"addChannelTagGroups should return an empty dictionary when set to nil");
+    XCTAssertEqual((NSUInteger)0, [[self.dataStore valueForKey:UAPushAddChannelTagGroupsSettingsKey] count],
+                   @"addChannelTagGroups not being cleared in standardUserDefaults");
+}
+
+/**
+ * Test removeChannelTagGroups.
+ */
+- (void)testRemoveChannelTagGroups {
+    self.push.removeChannelTagGroups = self.removeTagGroups;
+
+    XCTAssertEqual((NSUInteger)1, self.push.removeChannelTagGroups.count, @"should contain 1 tag group");
+    XCTAssertEqualObjects(self.removeTagGroups, self.push.removeChannelTagGroups, @"removeChannelTagGroups are not stored correctly");
+    XCTAssertEqualObjects([self.dataStore valueForKey:UAPushRemoveChannelTagGroupsSettingsKey], self.push.removeChannelTagGroups,
+                          @"removeChannelTagGroups are not stored correctly in standardUserDefaults");
+
+    // test removeChannelTags
+    NSArray *tags = @[@"tag1", @"tag2", @"tag3"];
+    [self.push removeChannelTags:tags tagGroupID:@"another-tag-group"];
+
+    XCTAssertEqual((NSUInteger)2, self.push.removeChannelTagGroups.count, @"should contain 2 tag groups");
+
+    self.push.removeChannelTagGroups = nil;
+    XCTAssertEqual((NSUInteger)0, self.push.removeChannelTagGroups.count, @"removeChannelTagGroups should return an empty dictionary when set to nil");
+    XCTAssertEqual((NSUInteger)0, [[self.dataStore valueForKey:UAPushRemoveChannelTagGroupsSettingsKey] count],
+                   @"removeChannelTagGroups not being cleared in standardUserDefaults");
+}
+
+/**
+ * Test successful updateChannelTagGroups.
+ */
+- (void)testUpdateChannelTagGroups {
+    self.push.channelID = @"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE";
+    self.push.addChannelTagGroups = self.addTagGroups;
+    self.push.removeChannelTagGroups = self.removeTagGroups;
+
+    // Expect the tagGroupsAPIClient to update channel tags and call the success block
+    [[[self.mockTagGroupsAPIClient expect] andDo:updateChannelTagsSuccessDoBlock] updateChannelTags:OCMOCK_ANY
+                                                                                                add:OCMOCK_ANY
+                                                                                             remove:OCMOCK_ANY
+                                                                                          onSuccess:OCMOCK_ANY
+                                                                                          onFailure:OCMOCK_ANY];
+
+    [self.push updateChannelTagGroups];
+
+    XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Update channel tag groups should succeed.");
+    XCTAssertEqual((NSUInteger)0, self.push.addChannelTagGroups.count, @"addChannelTagGroups should return an empty dictionary");
+    XCTAssertEqual((NSUInteger)0, self.push.removeChannelTagGroups.count, @"removeChannelTagGroups should return an empty dictionary");
+}
+
+/**
+ * Test updateChannelTagGroups fails
+ */
+- (void)testUpdateChannelTagGroupsFails {
+    self.push.channelID = nil;
+    self.push.addChannelTagGroups = self.addTagGroups;
+    self.push.removeChannelTagGroups = self.removeTagGroups;
+
+    // Expect the tagGroupsAPIClient to fail to update channel tags and call the failure block
+    [[[self.mockTagGroupsAPIClient expect] andDo:updateChannelTagsFailureDoBlock] updateChannelTags:OCMOCK_ANY
+                                                                                                add:OCMOCK_ANY
+                                                                                             remove:OCMOCK_ANY
+                                                                                          onSuccess:OCMOCK_ANY
+                                                                                          onFailure:OCMOCK_ANY];
+
+    [self.push updateChannelTagGroups];
+
+    XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Update channel tag groups should fail.");
+    XCTAssertEqual((NSUInteger)1, self.push.addChannelTagGroups.count, @"should contain 1 tag group");
+    XCTAssertEqual((NSUInteger)1, self.push.removeChannelTagGroups.count, @"should contain 1 tag group");
 }
 
 @end

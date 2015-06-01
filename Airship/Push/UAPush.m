@@ -42,6 +42,7 @@
 #import "UAConfig.h"
 #import "UAUserNotificationCategory+Internal.h"
 #import "UAInboxUtils.h"
+#import "UATagGroupsAPIClient.h"
 
 #define kUAMinTagLength 1
 #define kUAMaxTagLength 127
@@ -71,6 +72,10 @@ NSString *const UAPushEnabledKey = @"UAPushEnabled";
 // Quiet time dictionary keys
 NSString *const UAPushQuietTimeStartKey = @"start";
 NSString *const UAPushQuietTimeEndKey = @"end";
+
+// Channel tag group keys
+NSString *const UAPushAddChannelTagGroupsSettingsKey = @"UAPushAddChannelTagGroups";
+NSString *const UAPushRemoveChannelTagGroupsSettingsKey = @"UAPushRemoveChannelTagGroups";
 
 @implementation UAPush
 
@@ -106,6 +111,8 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 
         self.channelRegistrar = [UAChannelRegistrar channelRegistrarWithConfig:config];
         self.channelRegistrar.delegate = self;
+
+        self.tagGroupsAPIClient = [UATagGroupsAPIClient clientWithConfig:config];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(applicationDidBecomeActive)
@@ -277,6 +284,30 @@ NSString *const UAPushQuietTimeEndKey = @"end";
     }
 
     return [NSArray arrayWithArray:normalizedTags];
+}
+
+- (NSDictionary *)addChannelTagGroups {
+    NSDictionary *currentAddTags = [self.dataStore objectForKey:UAPushAddChannelTagGroupsSettingsKey];
+    if (!currentAddTags) {
+        currentAddTags = [NSDictionary dictionary];
+    }
+    return currentAddTags;
+}
+
+- (void)setAddChannelTagGroups:(NSDictionary *)addTagGroups {
+    [self.dataStore setObject:addTagGroups forKey:UAPushAddChannelTagGroupsSettingsKey];
+}
+
+- (NSDictionary *)removeChannelTagGroups {
+    NSDictionary *currentRemoveTags = [self.dataStore objectForKey:UAPushRemoveChannelTagGroupsSettingsKey];
+    if (!currentRemoveTags) {
+        currentRemoveTags = [NSDictionary dictionary];
+    }
+    return currentRemoveTags;
+}
+
+- (void)setRemoveChannelTagGroups:(NSDictionary *)removeTagGroups {
+    [self.dataStore setObject:removeTagGroups forKey:UAPushRemoveChannelTagGroupsSettingsKey];
 }
 
 - (BOOL)userPushNotificationsEnabled {
@@ -511,6 +542,49 @@ NSString *const UAPushQuietTimeEndKey = @"end";
     NSMutableArray *mutableTags = [NSMutableArray arrayWithArray:self.tags];
     [mutableTags removeObjectsInArray:tags];
     [self.dataStore setObject:mutableTags forKey:UAPushTagsSettingsKey];
+}
+
+#pragma mark -
+#pragma mark Open APIs - UA Tag Groups APIs
+
+- (void)addChannelTags:(NSArray *)tags tagGroupID:(NSString *)tagGroupID {
+    NSMutableDictionary *updateAddTags = [NSMutableDictionary dictionaryWithDictionary:self.addChannelTagGroups];
+    [updateAddTags setValue:tags forKey:tagGroupID];
+    [self setAddChannelTagGroups:updateAddTags];
+}
+
+- (void)removeChannelTags:(NSArray *)tags tagGroupID:(NSString *)tagGroupID {
+    NSMutableDictionary *updateRemoveTags = [NSMutableDictionary dictionaryWithDictionary:self.removeChannelTagGroups];
+    [updateRemoveTags setValue:tags forKey:tagGroupID];
+    [self setRemoveChannelTagGroups:updateRemoveTags];
+}
+
+- (void)updateChannelTagGroups {
+
+    UATagGroupsAPIClientSuccessBlock successBlock = ^{
+        UA_LINFO(@"Channel tag groups updated successfully.");
+
+        // clear add and remove channel tag groups
+        [self setAddChannelTagGroups:[NSDictionary dictionary]];
+        [self setRemoveChannelTagGroups:[NSDictionary dictionary]];
+    };
+
+    UATagGroupsAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
+        UA_LDEBUG(@"Channel tag groups failed to update.");
+
+        // if request failed due to 400 or 403, clear add and remove channel tag groups
+        NSInteger status = request.response.statusCode;
+        if (status == 400 || status == 403) {
+            [self setAddChannelTagGroups:[NSDictionary dictionary]];
+            [self setRemoveChannelTagGroups:[NSDictionary dictionary]];
+        }
+    };
+
+    [self.tagGroupsAPIClient updateChannelTags:self.channelID
+                                           add:self.addChannelTagGroups
+                                        remove:self.removeChannelTagGroups
+                                     onSuccess:successBlock
+                                     onFailure:failureBlock];
 }
 
 - (void)setBadgeNumber:(NSInteger)badgeNumber {

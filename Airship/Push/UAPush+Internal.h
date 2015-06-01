@@ -28,6 +28,7 @@
 
 @class UAPreferenceDataStore;
 @class UAConfig;
+@class UATagGroupsAPIClient;
 
 /**
  * User push notification enabled data store key.
@@ -99,6 +100,16 @@ extern NSString *const UAPushChannelIDKey;
  */
 extern NSString *const UAPushChannelLocationKey;
 
+/**
+ * Add channel tag groups data store key.
+ */
+extern NSString *const UAPushAddChannelTagGroupsSettingsKey;
+
+/**
+ * Remove channel tag groups data store key.
+ */
+extern NSString *const UAPushRemoveChannelTagGroupsSettingsKey;
+
 @interface UAPush ()
 
 /**
@@ -143,6 +154,20 @@ extern NSString *const UAPushChannelLocationKey;
 
 @property (nonatomic, strong) NSSet *allUserNotificationCategories;
 
+/**
+ * Tag groups to add to channel.
+ */
+@property (nonatomic, copy) NSDictionary *addChannelTagGroups;
+
+/**
+ * Tag groups to remove from channel.
+ */
+@property (nonatomic, copy) NSDictionary *removeChannelTagGroups;
+
+/**
+ * The tag groups API client.
+ */
+@property (nonatomic, strong) UATagGroupsAPIClient *tagGroupsAPIClient;
 
 /**
  * Factory method to create a push instance.

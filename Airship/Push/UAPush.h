@@ -434,6 +434,33 @@
 - (void)removeTags:(NSArray *)tags;
 
 ///---------------------------------------------------------------------------------------
+/// @name Tag Groups
+///---------------------------------------------------------------------------------------
+
+/**
+ * Add tags to channel tag groups. To update the server,
+ * make all of your changes, then call `updateChannelTagGroups`.
+ *
+ * @param tags Array of tags to add.
+ * @param tagGroupID Tag group ID string.
+ */
+- (void)addChannelTags:(NSArray *)tags tagGroupID:(NSString *)tagGroupID;
+
+/**
+ * Removes tags from channel tag groups. To update the server,
+ * make all of your changes, then call `updateChannelTagGroups`.
+ *
+ * @param tags Array of tags to remove.
+ * @param tagGroupID Tag group ID string.
+ */
+- (void)removeChannelTags:(NSArray *)tags tagGroupID:(NSString *)tagGroupID;
+
+/**
+ * Update the channel tag groups.
+ */
+- (void)updateChannelTagGroups;
+
+///---------------------------------------------------------------------------------------
 /// @name Quiet Time
 ///---------------------------------------------------------------------------------------
 
