@@ -191,22 +191,28 @@
     return success;
 }
 
++ (UIWindow *)mainWindow {
+    UIWindow *window;
+
+    id<UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;
+    // Prefer the window property on the app delegate, if accessible
+    if ([appDelegate respondsToSelector:@selector(window)]){
+        window = appDelegate.window;
+    }
+
+    // Otherwise fall back on the first window of the app's collection, if present.
+    window = window ?: [[UIApplication sharedApplication].windows firstObject];
+
+    return window;
+}
+
 /**
  * A utility method that grabs the top-most view controller for the main application window.
  * May return nil if a suitable view controller cannot be found.
  */
 + (UIViewController *)topController {
 
-    UIWindow *window;
-
-    id<UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;
-    // Prefer the window property, if accessible
-    if ([appDelegate respondsToSelector:@selector(window)]){
-        window = appDelegate.window;
-    }
-
-    // Otherwise fall back on the first window of the app's collection, if present
-    window = window ?: [[UIApplication sharedApplication].windows firstObject];
+    UIWindow *window = [self mainWindow];
 
     UIViewController *topController = window.rootViewController;
 
@@ -236,6 +242,5 @@
     
     return topController;
 }
-
 
 @end

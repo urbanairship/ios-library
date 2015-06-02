@@ -129,6 +129,14 @@
  */
 + (BOOL)addSkipBackupAttributeToItemAtURL:(NSURL *)url;
 
+/**
+ * Returns the main window for the app. This window will
+ * be positioned underneath any other windows added and removed at runtime, by
+ * classes such a UIAlertView or UIActionSheet.
+ *
+ * @return The main window, or nil if the window cannot be found.
+ */
++ (UIWindow *)mainWindow;
 
 /**
  * A utility method that grabs the top-most view controller for the main application window.
@@ -136,7 +144,5 @@
  * @return The top-most view controller or nil if controller cannot be found.
  */
 + (UIViewController *)topController;
-
-
 
 @end

@@ -221,7 +221,8 @@
         return NO;
     }
 
-    UIView *parentView = [UAUtils topController].view;
+    // use the main app window as the parent view
+    UIView *parentView = [UAUtils mainWindow];
 
     // if a parent view could not be found, bail early.
     if (!parentView) {
