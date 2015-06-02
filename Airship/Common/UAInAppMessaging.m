@@ -79,6 +79,16 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
                                                  selector:@selector(applicationDidEnterBackground)
                                                      name:UIApplicationDidEnterBackgroundNotification
                                                    object:[UIApplication sharedApplication]];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardDidShow)
+                                                     name:UIKeyboardDidShowNotification
+                                                   object:nil];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardDidHide)
+                                                     name:UIKeyboardDidHideNotification
+                                                   object:nil];
     }
 
     return self;
@@ -111,12 +121,24 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     [[NSRunLoop currentRunLoop] addTimer:self.autoDisplayTimer forMode:NSDefaultRunLoopMode];
 }
 
+// UIKeyboardDidShowNotification event callback
+- (void)keyboardDidShow {
+    self.keyboardDisplayed = YES;
+}
+
+// UIKeyboardDidHideNotification event callback
+- (void)keyboardDidHide {
+    self.keyboardDisplayed = NO;
+}
+
+// UIApplicationDidBecomeActiveNotification event callback
 - (void)applicationDidBecomeActive {
     if (self.isAutoDisplayEnabled) {
         [self scheduleAutoDisplayTimer];
     }
 }
 
+// UIApplicationDidEnterBackgroundNotification event callback
 - (void)applicationDidEnterBackground {
     [self invalidateAutoDisplayTimer];
 }
@@ -212,6 +234,11 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     UA_LINFO(@"Displaying in-app message: %@", message);
 
     __block UAInAppMessageController *controller;
+
+    if  (self.isKeyboardDisplayed) {
+        UA_LDEBUG(@"Keyboard is currently displayed cancelling in-app message: %@", message);
+        return;
+    }
 
     controller = [UAInAppMessageController controllerWithMessage:message
                                                         delegate:self.messageControllerDelegate

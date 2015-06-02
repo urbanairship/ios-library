@@ -39,6 +39,11 @@
 @interface UAInAppMessaging ()
 
 /**
+ * A Boolean value indicating whether or not the keyboard is displayed.
+ */
+@property(nonatomic, assign, getter=isKeyboardDisplayed) BOOL keyboardDisplayed;
+
+/**
  * Factory method to create an UAInAppMessaging instance.
  * @param analytics The UAAnalytics instance.
  * @param dataStore The preference data store.
