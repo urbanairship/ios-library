@@ -262,33 +262,41 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
     NSString *predicateFormat = @"(messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)";
     NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateFormat, [NSDate date]];
 
-    // TODO: prefetch messages on the private context
 
+    // Prefetch the messages on the private context
     [self fetchMessagesWithPredicate:predicate
-                             context:self.inboxDBManager.mainManagedObjectContext
+                             context:self.inboxDBManager.privateManagedObjectContext
                    completionHandler:^(NSArray *messages) {
 
-                       NSInteger unreadCount = 0;
+                       NSArray *objectIDs = [messages valueForKeyPath:@"data.objectID"];
 
-                       for (UAInboxMessage *msg in messages) {
-                           msg.inbox = self;
-                           if (msg.unread) {
-                               unreadCount ++;
-                           }
+                       // Use the prefetch results to fetch the messages on the main context
+                       [self fetchMessagesWithPredicate:[NSPredicate predicateWithFormat:@"self IN %@", objectIDs]
+                                                context:self.inboxDBManager.mainManagedObjectContext
+                                      completionHandler:^(NSArray *messages) {
 
-                           // Add messsage's body url to the cachable urls
-                           [UAURLProtocol addCachableURL:msg.messageBodyURL];
-                       }
+                                          NSInteger unreadCount = 0;
 
-                       UA_LINFO(@"Inbox messages updated.");
+                                          for (UAInboxMessage *msg in messages) {
+                                              msg.inbox = self;
+                                              if (msg.unread) {
+                                                  unreadCount ++;
+                                              }
 
-                       UA_LDEBUG(@"Loaded saved messages: %@.", messages);
-                       self.unreadCount = unreadCount;
-                       self.messages = [NSArray arrayWithArray:messages];
-                       
-                       if (completionHandler) {
-                           completionHandler();
-                       }
+                                              // Add messsage's body url to the cachable urls
+                                              [UAURLProtocol addCachableURL:msg.messageBodyURL];
+                                          }
+
+                                          UA_LINFO(@"Inbox messages updated.");
+
+                                          UA_LDEBUG(@"Loaded saved messages: %@.", messages);
+                                          self.unreadCount = unreadCount;
+                                          self.messages = [NSArray arrayWithArray:messages];
+                                          
+                                          if (completionHandler) {
+                                              completionHandler();
+                                          }
+                                      }];
                    }];
 }
 
@@ -352,7 +360,6 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 
 
 
-
 - (NSUInteger)messageCount {
     return [self.messages count];
 }
@@ -403,8 +410,6 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"messageSent" ascending:NO];
     request.sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
     request.predicate = predicate;
-
-    // TODO: prefetch objects
 
     [context performBlock:^{
         NSArray *resultData = [context executeFetchRequest:request error:nil];

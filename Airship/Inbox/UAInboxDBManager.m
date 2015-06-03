@@ -60,7 +60,7 @@
                 [_mainManagedObjectContext setPersistentStoreCoordinator:coordinator];
 
                 [[NSNotificationCenter defaultCenter] addObserver:self
-                                                         selector:@selector(managedObjectContextDidSave:)
+                                                         selector:@selector(mainContextDidSave:)
                                                              name:NSManagedObjectContextDidSaveNotification
                                                            object:_mainManagedObjectContext];
             }
@@ -76,15 +76,26 @@
             if (coordinator != nil) {
                 _privateManagedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
                 [_privateManagedObjectContext setPersistentStoreCoordinator:coordinator];
+
+                [[NSNotificationCenter defaultCenter] addObserver:self
+                                                         selector:@selector(privateContextDidSave:)
+                                                             name:NSManagedObjectContextDidSaveNotification
+                                                           object:_privateManagedObjectContext];
             }
         }
         return _privateManagedObjectContext;
     }
 }
 
-- (void)managedObjectContextDidSave:(NSNotification *)notification {
+- (void)mainContextDidSave:(NSNotification *)notification {
     [self.privateManagedObjectContext performBlock:^{
         [self.privateManagedObjectContext mergeChangesFromContextDidSaveNotification:notification];
+    }];
+}
+
+- (void)privateContextDidSave:(NSNotification *)notification {
+    [self.mainManagedObjectContext performBlock:^{
+        [self.mainManagedObjectContext mergeChangesFromContextDidSaveNotification:notification];
     }];
 }
 /**
