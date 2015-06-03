@@ -287,11 +287,7 @@ NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
 }
 
 - (NSDictionary *)pendingAddTags {
-    NSDictionary *currentAddTags = [self.dataStore objectForKey:UAPushAddTagGroupsSettingsKey];
-    if (!currentAddTags) {
-        currentAddTags = [NSDictionary dictionary];
-    }
-    return currentAddTags;
+    return [self.dataStore objectForKey:UAPushAddTagGroupsSettingsKey] ?: [NSDictionary dictionary];
 }
 
 - (void)setPendingAddTags:(NSDictionary *)addTagGroups {
@@ -299,11 +295,7 @@ NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
 }
 
 - (NSDictionary *)pendingRemoveTags {
-    NSDictionary *currentRemoveTags = [self.dataStore objectForKey:UAPushRemoveTagGroupsSettingsKey];
-    if (!currentRemoveTags) {
-        currentRemoveTags = [NSDictionary dictionary];
-    }
-    return currentRemoveTags;
+    return [self.dataStore objectForKey:UAPushRemoveTagGroupsSettingsKey] ?: [NSDictionary dictionary];
 }
 
 - (void)setPendingRemoveTags:(NSDictionary *)removeTagGroups {
