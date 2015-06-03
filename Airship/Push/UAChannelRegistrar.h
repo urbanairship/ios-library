@@ -70,8 +70,8 @@
 /**
  * Register the device with Urban Airship.
  *
- * @param channelID The channel ID to update.  If nil is supplied, a channel will be created.
- * @param channelLocation The channel location.  If nil is supplied, a channel will be created.
+ * @param channelID The channel ID to update.  If `nil` is supplied, a channel will be created.
+ * @param channelLocation The channel location.  If `nil` is supplied, a channel will be created.
  * @param payload The payload for the registration.
  * @param forcefully To force the registration, skipping duplicate request checks.
  */

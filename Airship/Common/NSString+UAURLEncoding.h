@@ -33,14 +33,14 @@
 /**
  * URL decodes the receiver.
  * @param encoding The desired NSStringEncoding for the result.
- * @return A URL decoded NSString, or nil if decoding failed.
+ * @return A URL decoded NSString, or `nil` if decoding failed.
  */
 - (NSString *)urlDecodedStringWithEncoding:(NSStringEncoding)encoding;
 
 /**
  * URL encodes the receiver.
  * @param encoding The desired NSStringEncoding for the result.
- * @return A URL decoded NSString, or nil if decoding failed.
+ * @return A URL decoded NSString, or `nil` if decoding failed.
  */
 - (NSString *)urlEncodedStringWithEncoding:(NSStringEncoding)encoding;
 

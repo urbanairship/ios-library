@@ -239,13 +239,13 @@
 /**
  * Checks a event dictionary for expected fields and values.
  * @param event The event as an NSMutableDictionary to validate.
- * @return 'YES' if the event is valid, otherwise 'NO'.
+ * @return `YES` if the event is valid, otherwise `NO`.
  */
 - (BOOL)isEventValid:(NSMutableDictionary *)event;
 
 /**
  * Checks database size and event count to determine if there are events to send.
- * @return 'YES' If there are events to send, 'NO' otherwise.
+ * @return `YES` If there are events to send, `NO` otherwise.
  */
 - (BOOL)hasEventsToSend;
 

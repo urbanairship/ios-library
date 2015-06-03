@@ -147,12 +147,12 @@
 /**
  * Apps may be set to self-configure based on the APS-environment set in the
  * embedded.mobileprovision file by using detectProvisioningMode. If
- * detectProvisioningMode is set to 'YES', the inProduction value will
+ * detectProvisioningMode is set to `YES`, the inProduction value will
  * be determined at runtime by reading the provisioning profile. If it is set to
- * 'NO' (the default), the inProduction flag may be set directly or by using the
+ * `NO` (the default), the inProduction flag may be set directly or by using the
  * AirshipConfig.plist file.
  *
- * When this flag is enabled, the inProduction flag defaults to 'YES' for safety
+ * When this flag is enabled, the inProduction flag defaults to `YES` for safety
  * so that the production keys will always be used if the profile cannot be read
  * in a released app. Simulator builds do not include the profile, and the
  * detectProvisioningMode flag does not have any effect in cases where a profile
@@ -184,7 +184,7 @@
  * If set to `YES`, the Urban Airship user will be cleared if the application is
  * restored on a different device from an encrypted backup.
  *
- * Defaults to 'NO'.
+ * Defaults to `NO`.
  */
 @property (nonatomic, assign) BOOL clearUserOnAppRestore;
 
@@ -197,7 +197,7 @@
 /**
  * Flag indicating whether channel capture feature is enabled or not.
  *
- * Defaults to 'YES'.
+ * Defaults to `YES`.
  */
 @property (nonatomic, assign, getter=isChannelCaptureEnabled) BOOL channelCaptureEnabled;
 

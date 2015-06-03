@@ -53,7 +53,7 @@
  * @param major The major.
  * @param minor The minor.
  *
- * @return Proximity region object or nil if error occurs.
+ * @return Proximity region object or `nil` if error occurs.
  */
 + (instancetype)proximityRegionWithID:(NSString *)proximityID major:(NSNumber *)major minor:(NSNumber *)minor;
 

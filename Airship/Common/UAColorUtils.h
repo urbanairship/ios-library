@@ -37,7 +37,7 @@
  *
  * @param hexString A hex color string of type #aarrggbb or
  * #rrggbb.
- * @return An instance of UIColor, or nil if the color could
+ * @return An instance of UIColor, or `nil` if the color could
  * not be correctly parsed.
  */
 + (UIColor *)colorWithHexString:(NSString *)hexString;
