@@ -68,7 +68,7 @@ typedef NS_ENUM(NSInteger, UABoundaryEvent) {
  * @param source The source of the event.
  * @param boundaryEvent The type of boundary crossing event.
  *
- * @return Region event object or nil if error occurs.
+ * @return Region event object or `nil` if error occurs.
  */
 + (instancetype)regionEventWithRegionID:(NSString *)regionID source:(NSString *)source boundaryEvent:(UABoundaryEvent)boundaryEvent;
 

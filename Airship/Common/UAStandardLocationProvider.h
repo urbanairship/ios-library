@@ -54,7 +54,7 @@
 /**
  * Returns a location provider with the provided object assigned as the delegate.
  *
- * @param serviceDelegateOrNil Delegate object or nil.
+ * @param serviceDelegateOrNil Delegate object or `nil`.
  * @return Standard location provider.
  */
 + (UAStandardLocationProvider *)providerWithDelegate:(id<UALocationProviderDelegate>)serviceDelegateOrNil;

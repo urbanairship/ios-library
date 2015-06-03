@@ -38,7 +38,7 @@
  * @param latitude The latitude of the circular region's center point in degress.
  * @param longitude The longitude of the circular region's center point in degrees.
  *
- * @return Circular region object or nil if error occurs
+ * @return Circular region object or `nil` if error occurs
  */
 + (instancetype)circularRegionWithRadius:(NSNumber *)radius latitude:(NSNumber *)latitude longitude:(NSNumber *)longitude;
 

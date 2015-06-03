@@ -72,7 +72,7 @@
  * @param categoryId The category identifier
  * @param actionDefinitions An array of user notification action dictionaries used
  * to construct UIUserNotificationAction for the category.
- * @return The user notification category created or nil if an error occurred.
+ * @return The user notification category created or `nil` if an error occurred.
  */
 + (UAUserNotificationCategory *)createCategory:(NSString *)categoryId actions:(NSArray *)actionDefinitions;
 

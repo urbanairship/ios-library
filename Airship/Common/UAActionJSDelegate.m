@@ -64,7 +64,7 @@
  * @param actionName The name of the action to perform
  * @param actionValue The action argument's value
  * @param metadata Optional metadata to pass to the action arguments.
- * @param callbackID A callback identifier generated in the JS layer. This can be nil.
+ * @param callbackID A callback identifier generated in the JS layer. This can be `nil`.
  * @param completionHandler The completion handler passed in the JS delegate call.
  */
 - (void)runAction:(NSString *)actionName

@@ -47,7 +47,7 @@
  * @param action The action to be registered.
  * @param name The NSString name.
  * @param predicate The predicate.
- * @return 'YES' if the action was registered, otherwise 'NO'
+ * @return `YES` if the action was registered, otherwise `NO`
  */
 - (BOOL)registerReservedAction:(UAAction *)action
                           name:(NSString *)name

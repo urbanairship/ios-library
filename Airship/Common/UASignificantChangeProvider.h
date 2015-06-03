@@ -50,7 +50,7 @@
 
 /** 
  * Constructs a UASignificantChange provider with the given delegate
- * @param delegateOrNil A UALocationProviderDelegate or nil
+ * @param delegateOrNil A UALocationProviderDelegate or `nil`
  * @return Provider with the parameter as the assiged delegate
  */
 + (UASignificantChangeProvider *)providerWithDelegate:(id<UALocationProviderDelegate>)delegateOrNil;
