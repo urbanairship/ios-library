@@ -176,8 +176,6 @@
 		CC9EA97619CA34B20003D393 /* NSString+UASizeWithFontCompatibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UASizeWithFontCompatibility.m"; sourceTree = "<group>"; };
 		CCAF06BB1B0B9BD7007392A7 /* InboxDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxDelegate.h; sourceTree = "<group>"; };
 		CCAF06BC1B0B9BD7007392A7 /* InboxDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxDelegate.m; sourceTree = "<group>"; };
-		CCC496ED1AA7D3470058DA1B /* InboxPushHandlerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InboxPushHandlerDelegate.h; path = Classes/Shared/InboxPushHandlerDelegate.h; sourceTree = SOURCE_ROOT; };
-		CCC496EE1AA7D3470058DA1B /* InboxPushHandlerDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InboxPushHandlerDelegate.m; path = Classes/Shared/InboxPushHandlerDelegate.m; sourceTree = SOURCE_ROOT; };
 		CCC496EF1AA7D3470058DA1B /* PushNotificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PushNotificationDelegate.h; path = Classes/Shared/PushNotificationDelegate.h; sourceTree = SOURCE_ROOT; };
 		CCC496F01AA7D3470058DA1B /* PushNotificationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PushNotificationDelegate.m; path = Classes/Shared/PushNotificationDelegate.m; sourceTree = SOURCE_ROOT; };
 		D5624D6712C2E68400A962EE /* UAInboxAlertHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxAlertHandler.h; sourceTree = "<group>"; };
@@ -443,8 +441,6 @@
 		E9CB364612B89BA5002E39EA /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				CCC496ED1AA7D3470058DA1B /* InboxPushHandlerDelegate.h */,
-				CCC496EE1AA7D3470058DA1B /* InboxPushHandlerDelegate.m */,
 				CCC496EF1AA7D3470058DA1B /* PushNotificationDelegate.h */,
 				CCC496F01AA7D3470058DA1B /* PushNotificationDelegate.m */,
 				49C0CB9119BA638A00771F4F /* UAInboxLocalization.h */,
