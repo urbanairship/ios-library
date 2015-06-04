@@ -80,7 +80,7 @@ if test -f $ROOT_PATH/BUILD_INFO;
 fi
 
 cd $OUTPUT_PATH
-for PACKAGE in RichPushSample PushSample Airship reference-docs LICENSE CHANGELOG README.rst BUILD_INFO; do
+for PACKAGE in RichPushSample PushSample Airship AirshipKit reference-docs LICENSE CHANGELOG README.rst BUILD_INFO; do
 	zip -r libUAirship-latest.zip $PACKAGE --exclude=*.DS_Store*
 done
 cd -
