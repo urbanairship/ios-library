@@ -157,7 +157,7 @@
 /**
  * Abstract method for starting the location service.
  * @warning This method only controls the service status on this object. A call to
- * [super startReportingLocation] is required when overriding this method.
+ * `[super startReportingLocation]` is required when overriding this method.
  */
 - (void)startReportingLocation;
 

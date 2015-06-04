@@ -32,6 +32,10 @@
 @class UAInboxAPIClient;
 @class UAInboxMessage;
 
+/**
+ * Delegate protocol for receiving callbacks related to
+ * Rich Push message delivery and display.
+ */
 @protocol UAInboxDelegate <NSObject>
 
 @optional
@@ -45,6 +49,8 @@
 
 /**
  * Called when the inbox is requested to be displayed by the UADisplayInboxAction.
+ *
+ * @param message The Rich Push message
  */
 - (void)showInboxMessage:(UAInboxMessage *)message;
 
