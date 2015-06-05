@@ -269,8 +269,8 @@ NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
     [self.dataStore setObject:[self normalizeTags:tags] forKey:UAPushTagsSettingsKey];
 }
 
--(NSArray *)normalizeTags:(NSArray *)tags {
-    NSMutableArray *normalizedTags = [[NSMutableArray alloc] init];
+- (NSArray *)normalizeTags:(NSArray *)tags {
+    NSMutableArray *normalizedTags = [NSMutableArray array];
 
     for (NSString *tag in tags) {
 
@@ -412,7 +412,6 @@ NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
     self.allUserNotificationCategories = allCategories;
 }
 
-
 - (NSDictionary *)quietTime {
     return [self.dataStore dictionaryForKey:UAPushQuietTimeSettingsKey];
 }
@@ -540,7 +539,10 @@ NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
 #pragma mark Open APIs - UA Tag Groups APIs
 
 - (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (!tags.count) {
+
+    NSArray *normalizedTags = [self normalizeTags:tags];
+
+    if (!normalizedTags.count) {
         UA_LERR(@"The tags array cannot be empty.");
         return;
     }
@@ -556,7 +558,7 @@ NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
     // Check if remove tags contain any tags to add.
     if (tagsToRemove[tagGroupID]) {
         NSMutableArray *removeTagsArray = [NSMutableArray arrayWithArray:tagsToRemove[tagGroupID]];
-        [removeTagsArray removeObjectsInArray:tags];
+        [removeTagsArray removeObjectsInArray:normalizedTags];
         if (removeTagsArray.count) {
             tagsToRemove[tagGroupID] = removeTagsArray;
         } else {
@@ -569,21 +571,24 @@ NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
     // Combine the tags to be added with pendingAddTags.
     if (tagsToAdd[tagGroupID]) {
         NSMutableSet *addTagsSet = [NSMutableSet setWithArray:tagsToAdd[tagGroupID]];
-        [addTagsSet addObjectsFromArray:tags];
+        [addTagsSet addObjectsFromArray:normalizedTags];
         if (addTagsSet.count) {
             tagsToAdd[tagGroupID] = [addTagsSet allObjects];
         } else {
             [tagsToAdd removeObjectForKey:tagGroupID];
         }
     } else {
-        tagsToAdd[tagGroupID] = tags;
+        tagsToAdd[tagGroupID] = normalizedTags;
     }
 
     [self setPendingAddTags:tagsToAdd];
 }
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (!tags.count) {
+
+    NSArray *normalizedTags = [self normalizeTags:tags];
+
+    if (!normalizedTags.count) {
         UA_LERR(@"The tags array cannot be empty.");
         return;
     }
@@ -599,7 +604,7 @@ NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
     // Check if add tags contain any tags to be removed.
     if (tagsToAdd[tagGroupID]) {
         NSMutableArray *addTagsArray = [NSMutableArray arrayWithArray:tagsToAdd[tagGroupID]];
-        [addTagsArray removeObjectsInArray:tags];
+        [addTagsArray removeObjectsInArray:normalizedTags];
         if (addTagsArray.count) {
             tagsToAdd[tagGroupID] = addTagsArray;
         } else {
@@ -612,14 +617,14 @@ NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
     // Combine the tags to be removed with pendingRemoveTags.
     if (tagsToRemove[tagGroupID]) {
         NSMutableSet *removeTagsSet = [NSMutableSet setWithArray:tagsToRemove[tagGroupID]];
-        [removeTagsSet addObjectsFromArray:tags];
+        [removeTagsSet addObjectsFromArray:normalizedTags];
         if (removeTagsSet.count) {
             tagsToRemove[tagGroupID] = [removeTagsSet allObjects];
         } else {
             [tagsToRemove removeObjectForKey:tagGroupID];
         }
     } else {
-        tagsToRemove[tagGroupID] = tags;
+        tagsToRemove[tagGroupID] = normalizedTags;
     }
 
     [self setPendingRemoveTags:tagsToRemove];

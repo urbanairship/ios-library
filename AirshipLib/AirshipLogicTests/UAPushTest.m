@@ -2497,6 +2497,54 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 }
 
 /**
+ * Tests tag group addition when tag group contains white space
+ */
+- (void)testAddTagGroupWhitespaceRemoval {
+    NSArray *tags = @[@"   tag-one   ", @"tag-two   "];
+    NSArray *tagsNoSpaces = @[@"tag-one", @"tag-two"];
+    NSString *groupID = @"test_group_id";
+
+    [self.push addTags:tags group:groupID];
+
+    XCTAssertEqualObjects(tagsNoSpaces, [self.push.pendingAddTags valueForKey:groupID], @"whitespace was not trimmed from tags");
+
+    NSArray *moreTags = @[@"   tag-two   ", @"tag-three   "];
+    NSArray *moreTagsNoSpaces = @[@"tag-two", @"tag-three"];
+
+    [self.push addTags:moreTags group:groupID];
+
+    NSMutableArray *combinedTags = [NSMutableArray arrayWithArray:@[@"tag-one", @"tag-two", @"tag-three"]];
+
+    [combinedTags removeObjectsInArray:[self.push.pendingAddTags valueForKey:groupID]];
+
+    XCTAssertTrue(combinedTags.count == 0, @"whitespace was not trimmed from tags");
+}
+
+/**
+ * Tests tag group removal when tag group contains white space
+ */
+- (void)testRemoveTagGroupWhitespaceRemoval {
+    NSArray *tags = @[@"   tag-one   ", @"tag-two   "];
+    NSArray *tagsNoSpaces = @[@"tag-one", @"tag-two"];
+    NSString *groupID = @"test_group_id";
+
+    [self.push removeTags:tags group:groupID];
+
+    XCTAssertEqualObjects(tagsNoSpaces, [self.push.pendingRemoveTags valueForKey:groupID], @"whitespace was not trimmed from tags");
+
+    NSArray *moreTags = @[@"   tag-two   ", @"tag-three   "];
+    NSArray *moreTagsNoSpaces = @[@"tag-two", @"tag-three"];
+
+    [self.push removeTags:moreTags group:groupID];
+
+    NSMutableArray *combinedTags = [NSMutableArray arrayWithArray:@[@"tag-one", @"tag-two", @"tag-three"]];
+
+    [combinedTags removeObjectsInArray:[self.push.pendingRemoveTags valueForKey:groupID]];
+
+    XCTAssertTrue(combinedTags.count == 0, @"whitespace was not trimmed from tags");
+}
+
+/**
  * Test pendingAddTags.
  */
 - (void)testPendingAddTags {
@@ -2528,6 +2576,11 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     // test addTags with nil group ID
     [self.push addTags:tags2 group:nil];
     XCTAssertEqual((NSUInteger)2, self.push.pendingAddTags.count, @"should still contain 2 tag groups");
+
+    // test addTags with tags with whitespace
+    NSArray *whitespaceTags = @[@"tag1", @"tag2", @" tag3 "];
+    [self.push addTags:tags group:@"another-tag-group"];
+    XCTAssertEqual((NSUInteger)2, self.push.pendingAddTags.count, @"should contain 2 tag groups");
 
     self.push.pendingAddTags = nil;
     XCTAssertEqual((NSUInteger)0, self.push.pendingAddTags.count, @"pendingAddTags should return an empty dictionary when set to nil");
@@ -2584,6 +2637,10 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     // test removeTags with nil group ID
     [self.push addTags:tags2 group:nil];
+    XCTAssertEqual((NSUInteger)2, self.push.pendingRemoveTags.count, @"should still contain 2 tag groups");
+
+    // test removeTags with empty group ID
+    [self.push addTags:tags2 group:@""];
     XCTAssertEqual((NSUInteger)2, self.push.pendingRemoveTags.count, @"should still contain 2 tag groups");
 
     self.push.pendingRemoveTags = nil;
