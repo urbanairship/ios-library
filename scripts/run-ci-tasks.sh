@@ -32,11 +32,11 @@ xcrun xcodebuild -project "${ROOT_PATH}/PushSample/PushSample.xcodeproj" -config
 # Build 'lib' projects and targets
 # build InboxSampleLib targets - use scheme so that AirshipLib is built
 xcrun xcodebuild -project "${ROOT_PATH}/InboxSample/InboxSampleLib.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme InboxSample -configuration Debug -sdk $TARGET_SDK
-xcrun xcodebuild -project "${ROOT_PATH}/InboxSample/InboxSampleLib.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme InboxSampleKit -configuration Debug -sdk $TARGET_SDK
+xcrun xcodebuild -project "${ROOT_PATH}/InboxSample/InboxSample.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme InboxSample-Kit -configuration Debug -sdk $TARGET_SDK
 
 # build PushSampleLib targets - use scheme so that AirshipLib is built
 xcrun xcodebuild -project "${ROOT_PATH}/PushSample/PushSampleLib.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme PushSample -configuration Debug -sdk $TARGET_SDK
-xcrun xcodebuild -project "${ROOT_PATH}/PushSample/PushSampleLib.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme PushSampleKit -configuration Debug -sdk $TARGET_SDK
+xcrun xcodebuild -project "${ROOT_PATH}/PushSample/PushSample.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme PushSample-Kit -configuration Debug -sdk $TARGET_SDK
 
 ##################################################################################################
 # Run the Tests!
@@ -49,9 +49,6 @@ mkdir -p "${ROOT_PATH}/test-output"
 
 # Run our Logic Tests
 xcrun xcodebuild -destination "${TEST_DESTINATION}" -project "${ROOT_PATH}/AirshipLib/AirshipLib.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme AirshipLib test | tee "${ROOT_PATH}/test-output/XCTEST-LOGIC.out"
-
-# Run AirshipKit Tests
-xcrun xcodebuild -destination "${TEST_DESTINATION}" -project "${ROOT_PATH}/AirshipLib/AirshipLib.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme AirshipKit test | tee "${ROOT_PATH}/test-output/XCTEST-AIRSHIPKIT.out"
 
 # Run our Application Tests
 xcrun xcodebuild -destination "${TEST_DESTINATION}" -project "${ROOT_PATH}/PushSample/PushSampleLib.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme PushSample test | tee "${ROOT_PATH}/test-output/XCTEST-APPLICATION.out"

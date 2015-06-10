@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4906F3021990564A00F27AF1"
-               BuildableName = "InboxSample-Kit.app"
-               BlueprintName = "InboxSample Kit"
-               ReferencedContainer = "container:InboxSampleLib.xcodeproj">
+               BlueprintIdentifier = "493977AA19B7CE660063C58F"
+               BuildableName = "PushSample-Kit.app"
+               BlueprintName = "PushSample-Kit"
+               ReferencedContainer = "container:PushSample.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4906F3021990564A00F27AF1"
-            BuildableName = "InboxSample-Kit.app"
-            BlueprintName = "InboxSample Kit"
-            ReferencedContainer = "container:InboxSampleLib.xcodeproj">
+            BlueprintIdentifier = "493977AA19B7CE660063C58F"
+            BuildableName = "PushSample-Kit.app"
+            BlueprintName = "PushSample-Kit"
+            ReferencedContainer = "container:PushSample.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -52,10 +52,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4906F3021990564A00F27AF1"
-            BuildableName = "InboxSample-Kit.app"
-            BlueprintName = "InboxSample Kit"
-            ReferencedContainer = "container:InboxSampleLib.xcodeproj">
+            BlueprintIdentifier = "493977AA19B7CE660063C58F"
+            BuildableName = "PushSample-Kit.app"
+            BlueprintName = "PushSample-Kit"
+            ReferencedContainer = "container:PushSample.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -71,10 +71,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4906F3021990564A00F27AF1"
-            BuildableName = "InboxSample-Kit.app"
-            BlueprintName = "InboxSample Kit"
-            ReferencedContainer = "container:InboxSampleLib.xcodeproj">
+            BlueprintIdentifier = "493977AA19B7CE660063C58F"
+            BuildableName = "PushSample-Kit.app"
+            BlueprintName = "PushSample-Kit"
+            ReferencedContainer = "container:PushSample.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

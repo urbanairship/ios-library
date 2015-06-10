@@ -34,11 +34,11 @@ DEST_PATH="${1}"
 
 AIRSHIP_PATH="${ROOT_PATH}/Airship"
 AIRSHIP_LIB_PATH="${ROOT_PATH}/AirshipLib"
+AIRSHIP_KIT_PATH="${ROOT_PATH}/AirshipKit"
 
 # Build the distribution binary
 rm -rf "${AIRSHIP_LIB_PATH}/distribution_binaries"
 bash "${AIRSHIP_LIB_PATH}/buildTarget.sh" AirshipLib
-bash "${AIRSHIP_LIB_PATH}/buildTarget.sh" AirshipKit
 bash "${AIRSHIP_LIB_PATH}/update_library_reference.sh"
 
 # Remove any old deploy
@@ -49,6 +49,11 @@ mkdir -p "${DEST_PATH}/Airship"
 #################
 echo "cp -R \"${AIRSHIP_PATH}\" \"${DEST_PATH}\""
 cp -R "${AIRSHIP_PATH}" "${DEST_PATH}"
+
+# Copy AirshipKit
+#################
+echo "cp -R \"${AIRSHIP_KIT_PATH}\" \"${DEST_PATH}\""
+cp -R "${AIRSHIP_KIT_PATH}" "${DEST_PATH}"
 
 # Remove all non .h files from /Library and /Common
 # Remove all non UA_ items & dirs from Airship/External

@@ -70,8 +70,8 @@
 		493977F319B7CE660063C58F /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5C75CEC12BC29710041239E /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		493977F419B7CE660063C58F /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5184E901315F35B00A40CAC /* AudioToolbox.framework */; };
 		493977F519B7CE660063C58F /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5184E921315F36300A40CAC /* MessageUI.framework */; };
-		493977FC19B7CEA00063C58F /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 493977FB19B7CEA00063C58F /* AirshipKit.framework */; };
-		493977FE19B7CF660063C58F /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 493977FB19B7CEA00063C58F /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		49914C281B0FEADA001078AB /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 49914C251B0FEAD0001078AB /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		49914C291B0FEAE9001078AB /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49914C251B0FEAD0001078AB /* AirshipKit.framework */; };
 		49C0CB1119BA5AA800771F4F /* NSString+UALocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C0CB0E19BA5AA800771F4F /* NSString+UALocalization.m */; };
 		49C0CB1219BA5AA800771F4F /* NSString+UALocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C0CB0E19BA5AA800771F4F /* NSString+UALocalization.m */; };
 		49C0CB3A19BA5DFE00771F4F /* UAInteractiveNotifications.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49C0CB2C19BA5DFE00771F4F /* UAInteractiveNotifications.strings */; };
@@ -118,6 +118,23 @@
 		D5C75CED12BC29710041239E /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5C75CEC12BC29710041239E /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		49914C241B0FEAD0001078AB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 49914C201B0FEACF001078AB /* AirshipKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 494DD9571B0EB677009C134E;
+			remoteInfo = AirshipKit;
+		};
+		49914C261B0FEAD5001078AB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 49914C201B0FEACF001078AB /* AirshipKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 494DD9561B0EB677009C134E;
+			remoteInfo = AirshipKit;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		493977FD19B7CF540063C58F /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -125,7 +142,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				493977FE19B7CF660063C58F /* AirshipKit.framework in CopyFiles */,
+				49914C281B0FEADA001078AB /* AirshipKit.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -155,7 +172,7 @@
 		1FE3959D177A25DC00388531 /* SampleAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleAppDelegate.h; sourceTree = "<group>"; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		493977F919B7CE660063C58F /* PushSample-Kit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PushSample-Kit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		493977FB19B7CEA00063C58F /* AirshipKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AirshipKit.framework; path = ../Airship/AirshipKit.framework; sourceTree = "<group>"; };
+		49914C201B0FEACF001078AB /* AirshipKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipKit.xcodeproj; path = ../AirshipKit/AirshipKit.xcodeproj; sourceTree = "<group>"; };
 		49C0CB0D19BA5AA800771F4F /* NSString+UALocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UALocalization.h"; sourceTree = "<group>"; };
 		49C0CB0E19BA5AA800771F4F /* NSString+UALocalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UALocalization.m"; sourceTree = "<group>"; };
 		49C0CB1319BA5AB700771F4F /* UAPushLocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushLocalization.h; sourceTree = "<group>"; };
@@ -244,7 +261,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				493977FC19B7CEA00063C58F /* AirshipKit.framework in Frameworks */,
+				49914C291B0FEAE9001078AB /* AirshipKit.framework in Frameworks */,
 				493977E619B7CE660063C58F /* MapKit.framework in Frameworks */,
 				493977E719B7CE660063C58F /* CoreLocation.framework in Frameworks */,
 				493977E819B7CE660063C58F /* Foundation.framework in Frameworks */,
@@ -443,6 +460,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				49914C201B0FEACF001078AB /* AirshipKit.xcodeproj */,
 				184E3FD3129E4D11004465C8 /* Support */,
 				1890B9111251B5E900E6EBF1 /* Airship */,
 				18C0293F124F216B00D49CD5 /* Classes */,
@@ -467,7 +485,6 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				493977FB19B7CEA00063C58F /* AirshipKit.framework */,
 				BB935DB0152B614A006E6A92 /* MapKit.framework */,
 				BB935DA4152B6081006E6A92 /* CoreLocation.framework */,
 				1FD26EBE13FB318700DBC45F /* libz.dylib */,
@@ -485,6 +502,14 @@
 				D5184E921315F36300A40CAC /* MessageUI.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		49914C211B0FEACF001078AB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				49914C251B0FEAD0001078AB /* AirshipKit.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		49C0CB0B19BA5AA800771F4F /* Common */ = {
@@ -540,6 +565,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				49914C271B0FEAD5001078AB /* PBXTargetDependency */,
 			);
 			name = "PushSample-Kit";
 			productName = PushLibSample;
@@ -575,6 +601,12 @@
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 49914C211B0FEACF001078AB /* Products */;
+					ProjectRef = 49914C201B0FEACF001078AB /* AirshipKit.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				1D6058900D05DD3D006BFB54 /* PushSample */,
@@ -582,6 +614,16 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		49914C251B0FEAD0001078AB /* AirshipKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipKit.framework;
+			remoteRef = 49914C241B0FEAD0001078AB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		1D60588D0D05DD3D006BFB54 /* Resources */ = {
@@ -692,6 +734,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		49914C271B0FEAD5001078AB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipKit;
+			targetProxy = 49914C261B0FEAD5001078AB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		49C0CB2C19BA5DFE00771F4F /* UAInteractiveNotifications.strings */ = {
