@@ -38,8 +38,8 @@
 @interface UAInboxDBManager : NSObject
 
 @property (nonatomic, readonly) NSURL *storeURL;
-@property (nonatomic, readonly) NSManagedObjectContext *mainManagedObjectContext;
-@property (nonatomic, readonly) NSManagedObjectContext *privateManagedObjectContext;
+@property (nonatomic, readonly) NSManagedObjectContext *mainContext;
+@property (nonatomic, readonly) NSManagedObjectContext *privateContext;
 @property (nonatomic, readonly) NSManagedObjectModel *managedObjectModel;
 @property (nonatomic, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 

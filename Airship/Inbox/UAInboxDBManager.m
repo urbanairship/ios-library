@@ -36,8 +36,8 @@
 
 @implementation UAInboxDBManager
 
-@synthesize mainManagedObjectContext = _mainManagedObjectContext;
-@synthesize privateManagedObjectContext = _privateManagedObjectContext;
+@synthesize mainContext = _mainContext;
+@synthesize privateContext = _privateContext;
 @synthesize managedObjectModel = _managedObjectModel;
 @synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
 @synthesize storeURL = _storeURL;
@@ -51,51 +51,51 @@
     return self;
 }
 
-- (NSManagedObjectContext *)mainManagedObjectContext {
+- (NSManagedObjectContext *)mainContext {
     @synchronized(self) {
-        if (!_mainManagedObjectContext) {
+        if (!_mainContext) {
             NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
             if (coordinator != nil) {
-                _mainManagedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
-                [_mainManagedObjectContext setPersistentStoreCoordinator:coordinator];
+                _mainContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
+                [_mainContext setPersistentStoreCoordinator:coordinator];
 
                 [[NSNotificationCenter defaultCenter] addObserver:self
                                                          selector:@selector(mainContextDidSave:)
                                                              name:NSManagedObjectContextDidSaveNotification
-                                                           object:_mainManagedObjectContext];
+                                                           object:_mainContext];
             }
         }
-        return _mainManagedObjectContext;
+        return _mainContext;
     }
 }
 
-- (NSManagedObjectContext *)privateManagedObjectContext {
+- (NSManagedObjectContext *)privateContext {
     @synchronized(self) {
-        if (!_privateManagedObjectContext) {
+        if (!_privateContext) {
             NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
             if (coordinator != nil) {
-                _privateManagedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-                [_privateManagedObjectContext setPersistentStoreCoordinator:coordinator];
+                _privateContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+                [_privateContext setPersistentStoreCoordinator:coordinator];
 
                 [[NSNotificationCenter defaultCenter] addObserver:self
                                                          selector:@selector(privateContextDidSave:)
                                                              name:NSManagedObjectContextDidSaveNotification
-                                                           object:_privateManagedObjectContext];
+                                                           object:_privateContext];
             }
         }
-        return _privateManagedObjectContext;
+        return _privateContext;
     }
 }
 
 - (void)mainContextDidSave:(NSNotification *)notification {
-    [self.privateManagedObjectContext performBlock:^{
-        [self.privateManagedObjectContext mergeChangesFromContextDidSaveNotification:notification];
+    [self.privateContext performBlock:^{
+        [self.privateContext mergeChangesFromContextDidSaveNotification:notification];
     }];
 }
 
 - (void)privateContextDidSave:(NSNotification *)notification {
-    [self.mainManagedObjectContext performBlock:^{
-        [self.mainManagedObjectContext mergeChangesFromContextDidSaveNotification:notification];
+    [self.mainContext performBlock:^{
+        [self.mainContext mergeChangesFromContextDidSaveNotification:notification];
     }];
 }
 /**
