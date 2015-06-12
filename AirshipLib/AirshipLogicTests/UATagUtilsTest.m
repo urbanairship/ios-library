@@ -23,48 +23,49 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import <XCTest/XCTest.h>
+#import "UATagUtils.h"
 
-@class UAPreferenceDataStore;
+@interface UATagUtilsTest : XCTestCase
+@end
 
-/**
- * The named user is an alternate method of identifying the device. Once a named
- * user is associated to the device, it can be used to send push notifications
- * to the device.
- */
-@interface UANamedUser : NSObject
+@implementation UATagUtilsTest
 
-/**
- * The named user ID for this device.
- */
-@property (nonatomic, copy) NSString *identifier;
+- (void)setUp {
+    [super setUp];
+}
 
-/**
- * Force updating the association or disassociation of the current named user ID.
- */
-- (void)forceUpdate;
+- (void)tearDown {
+    [super tearDown];
+}
 
 /**
- * Add tags to named user tags. To update the server,
- * make all of your changes, then call `updateTags`.
- *
- * @param tags Array of tags to add.
- * @param tagGroupID Tag group ID string.
+ * Tests tag normalization when tag includes whitespace
  */
-- (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID;
+- (void)testNormalizeTagsWhitespaceRemoval {
+    NSArray *tags = @[@"   tag-one   ", @"tag-two   "];
+    NSArray *tagsNoSpaces = @[@"tag-one", @"tag-two"];
+
+    XCTAssertEqualObjects(tagsNoSpaces, [UATagUtils normalizeTags:tags], @"whitespace was trimmed from tags");
+}
 
 /**
- * Removes tags from named user tags. To update the server,
- * make all of your changes, then call `updateTags`.
- *
- * @param tags Array of tags to remove.
- * @param tagGroupID Tag group ID string.
+ * Tests tag normalization when tag has maximum acceptable length
  */
-- (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID;
+- (void)testNormalizeTagsMaxTagSize {
+    NSArray *tags = @[[@"" stringByPaddingToLength:127 withString: @"." startingAtIndex:0]];
+
+    XCTAssertEqualObjects(tags, [UATagUtils normalizeTags:tags], @"tag with 127 characters should set");
+}
 
 /**
- * Update named user tags.
+ * Tests tag normalization when tag has greater than maximum acceptable length
  */
-- (void)updateTags;
+- (void)testNormalizeTagsOverMaxTagSizeRemoval {
+    NSArray *tags = @[[@"" stringByPaddingToLength:128 withString: @"." startingAtIndex:0]];
+
+    XCTAssertNotEqualObjects(tags, [UATagUtils normalizeTags:tags], @"tag with 128 characters should not set");
+}
 
 @end

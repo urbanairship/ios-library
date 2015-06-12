@@ -27,6 +27,9 @@
 #import "UAGlobal.h"
 #import "UAUtils.h"
 
+#define kUAMinTagLength 1
+#define kUAMaxTagLength 127
+
 @implementation UATagUtils
 
 + (NSArray *)createTags:(UATagType) tagFlags {
@@ -84,4 +87,20 @@
     return tags;
 }
 
++ (NSArray *)normalizeTags:(NSArray *)tags {
+    NSMutableArray *normalizedTags = [NSMutableArray array];
+
+    for (NSString *tag in tags) {
+
+        NSString *trimmedTag = [tag stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+
+        if ([trimmedTag length] >= kUAMinTagLength && [trimmedTag length] <= kUAMaxTagLength) {
+            [normalizedTags addObject:trimmedTag];
+        } else {
+            UA_LERR(@"Tags must be > 0 and < 128 characters in length, tag %@ has been removed from the tag set", tag);
+        }
+    }
+
+    return [NSArray arrayWithArray:normalizedTags];
+}
 @end

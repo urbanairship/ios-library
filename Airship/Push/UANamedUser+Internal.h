@@ -27,6 +27,7 @@
 
 @class UANamedUserAPIClient;
 @class UAConfig;
+@class UATagGroupsAPIClient;
 
 @interface UANamedUser ()
 
@@ -44,6 +45,16 @@ extern NSString *const UANamedUserChangeTokenKey;
  * Named user last updated token data store key.
  */
 extern NSString *const UANamedUserLastUpdatedTokenKey;
+
+/**
+ * Add named user tags data store key.
+ */
+extern NSString *const UANamedUserAddTagGroupsSettingsKey;
+
+/**
+ * Remove named user tags data store key.
+ */
+extern NSString *const UANamedUserRemoveTagGroupsSettingsKey;
 
 /**
  * The change token tracks the start of setting the named user ID.
@@ -64,6 +75,21 @@ extern NSString *const UANamedUserLastUpdatedTokenKey;
  * The data store to save and load named user info.
  */
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+
+/**
+ * Tag groups to add to named user.
+ */
+@property (nonatomic, copy) NSDictionary *pendingAddTags;
+
+/**
+ * Tag groups to remove from named user.
+ */
+@property (nonatomic, copy) NSDictionary *pendingRemoveTags;
+
+/**
+ * The tag groups API client.
+ */
+@property (nonatomic, strong) UATagGroupsAPIClient *tagGroupsAPIClient;
 
 /**
  * Initializes the Named User with the specified data store.

@@ -28,6 +28,8 @@
 #import "UAPreferenceDataStore.h"
 #import "UANamedUserAPIClient.h"
 #import "UAPush+Internal.h"
+#import "UATagGroupsAPIClient.h"
+#import "UATagUtils.h"
 
 #define kUAMaxNamedUserIDLength 128
 
@@ -35,7 +37,9 @@ NSString *const UANamedUserIDKey = @"UANamedUserID";
 NSString *const UANamedUserChangeTokenKey = @"UANamedUserChangeToken";
 NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 
-
+// Named user tag group keys
+NSString *const UANamedUserAddTagGroupsSettingsKey = @"UANamedUserAddTagGroups";
+NSString *const UANamedUserRemoveTagGroupsSettingsKey = @"UANamedUserRemoveTagGroups";
 
 @implementation UANamedUser
 
@@ -44,6 +48,7 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
     if (self) {
         self.dataStore = dataStore;
         self.namedUserAPIClient = [UANamedUserAPIClient clientWithConfig:config];
+        self.tagGroupsAPIClient = [UATagGroupsAPIClient clientWithConfig:config];
     }
     
     return self;
@@ -122,6 +127,22 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
     return [self.dataStore objectForKey:UANamedUserLastUpdatedTokenKey];
 }
 
+- (NSDictionary *)pendingAddTags {
+    return [self.dataStore objectForKey:UANamedUserAddTagGroupsSettingsKey];
+}
+
+- (void)setPendingAddTags:(NSDictionary *)addTagGroups {
+    [self.dataStore setObject:addTagGroups forKey:UANamedUserAddTagGroupsSettingsKey];
+}
+
+- (NSDictionary *)pendingRemoveTags {
+    return [self.dataStore objectForKey:UANamedUserRemoveTagGroupsSettingsKey];
+}
+
+- (void)setPendingRemoveTags:(NSDictionary *)removeTagGroups {
+    [self.dataStore setObject:removeTagGroups forKey:UANamedUserRemoveTagGroupsSettingsKey];
+}
+
 - (void)associateNamedUser {
     NSString *token = self.changeToken;
     [self.namedUserAPIClient associate:self.identifier channelID:[UAirship push].channelID
@@ -156,6 +177,171 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
     UA_LDEBUG(@"NamedUser - force named user update.");
     self.changeToken = [NSUUID UUID].UUIDString;
     [self update];
+}
+
+- (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
+
+    NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
+
+    if (!normalizedTags.count) {
+        UA_LERR(@"The tags array cannot be empty.");
+        return;
+    }
+
+    if (!tagGroupID) {
+        UA_LERR(@"The tag group ID string cannot be nil.");
+        return;
+    }
+
+    NSMutableDictionary *tagsToAdd = [NSMutableDictionary dictionaryWithDictionary:self.pendingAddTags];
+    NSMutableDictionary *tagsToRemove = [NSMutableDictionary dictionaryWithDictionary:self.pendingRemoveTags];
+
+    // Check if remove tags contain any tags to add.
+    if (tagsToRemove[tagGroupID]) {
+        NSMutableArray *removeTagsArray = [NSMutableArray arrayWithArray:tagsToRemove[tagGroupID]];
+        [removeTagsArray removeObjectsInArray:normalizedTags];
+        if (removeTagsArray.count) {
+            tagsToRemove[tagGroupID] = removeTagsArray;
+        } else {
+            [tagsToRemove removeObjectForKey:tagGroupID];
+        }
+
+        [self setPendingRemoveTags:tagsToRemove];
+    }
+
+    // Combine the tags to be added with pendingAddTags.
+    if (tagsToAdd[tagGroupID]) {
+        NSMutableSet *addTagsSet = [NSMutableSet setWithArray:tagsToAdd[tagGroupID]];
+        [addTagsSet addObjectsFromArray:normalizedTags];
+        if (addTagsSet.count) {
+            tagsToAdd[tagGroupID] = [addTagsSet allObjects];
+        } else {
+            [tagsToAdd removeObjectForKey:tagGroupID];
+        }
+    } else {
+        tagsToAdd[tagGroupID] = normalizedTags;
+    }
+
+    [self setPendingAddTags:tagsToAdd];
+}
+
+- (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
+
+    NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
+
+    if (!normalizedTags.count) {
+        UA_LERR(@"The tags array cannot be empty.");
+        return;
+    }
+
+    if (!tagGroupID) {
+        UA_LERR(@"The tag group ID string cannot be nil.");
+        return;
+    }
+
+    NSMutableDictionary *tagsToRemove = [NSMutableDictionary dictionaryWithDictionary:self.pendingRemoveTags];
+    NSMutableDictionary *tagsToAdd = [NSMutableDictionary dictionaryWithDictionary:self.pendingAddTags];
+
+    // Check if add tags contain any tags to be removed.
+    if (tagsToAdd[tagGroupID]) {
+        NSMutableArray *addTagsArray = [NSMutableArray arrayWithArray:tagsToAdd[tagGroupID]];
+        [addTagsArray removeObjectsInArray:normalizedTags];
+        if (addTagsArray.count) {
+            tagsToAdd[tagGroupID] = addTagsArray;
+        } else {
+            [tagsToAdd removeObjectForKey:tagGroupID];
+        }
+
+        [self setPendingAddTags:tagsToAdd];
+    }
+
+    // Combine the tags to be removed with pendingRemoveTags.
+    if (tagsToRemove[tagGroupID]) {
+        NSMutableSet *removeTagsSet = [NSMutableSet setWithArray:tagsToRemove[tagGroupID]];
+        [removeTagsSet addObjectsFromArray:normalizedTags];
+        if (removeTagsSet.count) {
+            tagsToRemove[tagGroupID] = [removeTagsSet allObjects];
+        } else {
+            [tagsToRemove removeObjectForKey:tagGroupID];
+        }
+    } else {
+        tagsToRemove[tagGroupID] = normalizedTags;
+    }
+
+    [self setPendingRemoveTags:tagsToRemove];
+}
+
+- (void)updateTags {
+
+    if (!self.pendingAddTags.count && !self.pendingRemoveTags.count) {
+        return;
+    }
+
+    // Get a copy of the current add and remove pending tags
+    NSMutableDictionary *addTags = [self.pendingAddTags mutableCopy];
+    NSMutableDictionary *removeTags = [self.pendingRemoveTags mutableCopy];
+
+    // Clear the add and remove pending tags
+    self.pendingAddTags = nil;
+    self.pendingRemoveTags = nil;
+
+    UATagGroupsAPIClientSuccessBlock successBlock = ^{
+        UA_LINFO(@"Named user tags updated successfully.");
+    };
+
+    UATagGroupsAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
+        UA_LDEBUG(@"Named user tags failed to update.");
+
+        NSInteger status = request.response.statusCode;
+        if (status != 400 && status != 403) {
+
+            // If there are new pendingRemoveTags since last request,
+            // check if addTags contain any tags to be removed.
+            if (self.pendingRemoveTags.count) {
+                for (NSString *group in self.pendingRemoveTags) {
+                    if (group && addTags[group]) {
+                        NSArray *pendingRemoveTagsArray = [NSArray arrayWithArray:self.pendingRemoveTags[group]];
+                        [addTags removeObjectsForKeys:pendingRemoveTagsArray];
+                    }
+                }
+            }
+
+            // If there are new pendingAddTags since last request,
+            // check if removeTags contain any tags to add.
+            if (self.pendingAddTags.count) {
+                for (NSString *group in self.pendingAddTags) {
+                    if (group && removeTags[group]) {
+                        NSArray *pendingAddTagsArray = [NSArray arrayWithArray:self.pendingAddTags[group]];
+                        [removeTags removeObjectsForKeys:pendingAddTagsArray];
+                    }
+                }
+            }
+
+            // If there are new pendingRemoveTags since last request,
+            // combine the new pendingRemoveTags with removeTags.
+            if (self.pendingRemoveTags.count) {
+                [removeTags addEntriesFromDictionary:self.pendingRemoveTags];
+            }
+
+            // If there are new pendingAddTags since last request,
+            // combine the new pendingAddTags with addTags.
+            if (self.pendingAddTags.count) {
+                [addTags addEntriesFromDictionary:self.pendingAddTags];
+            }
+
+            // Set self.pendingAddTags as addTags
+            self.pendingAddTags = addTags;
+
+            // Set self.pendingRemoveTags as removeTags
+            self.pendingRemoveTags = removeTags;
+        }
+    };
+
+    [self.tagGroupsAPIClient updateNamedUserTags:self.identifier
+                                             add:addTags
+                                          remove:removeTags
+                                       onSuccess:successBlock
+                                       onFailure:failureBlock];
 }
 
 @end

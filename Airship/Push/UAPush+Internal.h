@@ -228,12 +228,6 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 - (void)channelPreviouslyExisted;
 
 /**
- * Used to trim whitespace and filter out tags with unacceptable tag length
- * @param tags Tags as an NSArray.
- */
--(NSArray *)normalizeTags:(NSArray *)tags;
-
-/**
  * Creates a UAChannelRegistrationPayload.
  *
  * @return A UAChannelRegistrationPayload payload.

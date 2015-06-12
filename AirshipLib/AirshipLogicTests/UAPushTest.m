@@ -352,37 +352,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     XCTAssertNotEqualObjects(tags, self.push.tags, @"tag with 128 characters should not set");
 }
 
-/**
- * Tests tag normalization when tag includes whitespace
- */
-- (void)testNormalizeTagsWhitespaceRemoval {
-    NSArray *tags = @[@"   tag-one   ", @"tag-two   "];
-    NSArray *tagsNoSpaces = @[@"tag-one", @"tag-two"];
-    [self.push normalizeTags:tags];
-
-    XCTAssertEqualObjects(tagsNoSpaces, [self.push normalizeTags:tags], @"whitespace was trimmed from tags");
-}
-
-/**
- * Tests tag normalization when tag has maximum acceptable length
- */
-- (void)testNormalizeTagsMaxTagSize {
-    NSArray *tags = @[[@"" stringByPaddingToLength:127 withString: @"." startingAtIndex:0]];
-
-    XCTAssertEqualObjects(tags, [self.push normalizeTags:tags], @"tag with 127 characters should set");
-}
-
-/**
- * Tests tag normalization when tag has greater than maximum acceptable length
- */
-- (void)testNormalizeTagsOverMaxTagSizeRemoval {
-    NSArray *tags = @[[@"" stringByPaddingToLength:128 withString: @"." startingAtIndex:0]];
-    [self.push normalizeTags:tags];
-
-    XCTAssertNotEqualObjects(tags, [self.push normalizeTags:tags], @"tag with 128 characters should not set");
-}
-
-
 - (void)testAddTags {
     self.push.tags = nil;
 

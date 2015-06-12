@@ -43,9 +43,8 @@
 #import "UAUserNotificationCategory+Internal.h"
 #import "UAInboxUtils.h"
 #import "UATagGroupsAPIClient.h"
+#import "UATagUtils.h"
 
-#define kUAMinTagLength 1
-#define kUAMaxTagLength 127
 #define kUANotificationActionKey @"com.urbanairship.interactive_actions"
 
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
@@ -255,7 +254,7 @@ NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
         currentTags = [NSArray array];
     }
 
-    NSArray *normalizedTags = [self normalizeTags:currentTags];
+    NSArray *normalizedTags = [UATagUtils normalizeTags:currentTags];
 
     //sync tags to prevent the tags property invocation from constantly logging tag set failure
     if ([currentTags count] != [normalizedTags count]) {
@@ -266,24 +265,7 @@ NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
 }
 
 - (void)setTags:(NSArray *)tags {
-    [self.dataStore setObject:[self normalizeTags:tags] forKey:UAPushTagsSettingsKey];
-}
-
-- (NSArray *)normalizeTags:(NSArray *)tags {
-    NSMutableArray *normalizedTags = [NSMutableArray array];
-
-    for (NSString *tag in tags) {
-
-        NSString *trimmedTag = [tag stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-
-        if ([trimmedTag length] >= kUAMinTagLength && [trimmedTag length] <= kUAMaxTagLength) {
-            [normalizedTags addObject:trimmedTag];
-        } else {
-            UA_LERR(@"Tags must be > 0 and < 128 characters in length, tag %@ has been removed from the tag set", tag);
-        }
-    }
-
-    return [NSArray arrayWithArray:normalizedTags];
+    [self.dataStore setObject:[UATagUtils normalizeTags:tags] forKey:UAPushTagsSettingsKey];
 }
 
 - (NSDictionary *)pendingAddTags {
@@ -540,7 +522,7 @@ NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
 
 - (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
 
-    NSArray *normalizedTags = [self normalizeTags:tags];
+    NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
 
     if (!normalizedTags.count) {
         UA_LERR(@"The tags array cannot be empty.");
@@ -586,7 +568,7 @@ NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
 
-    NSArray *normalizedTags = [self normalizeTags:tags];
+    NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
 
     if (!normalizedTags.count) {
         UA_LERR(@"The tags array cannot be empty.");
@@ -946,7 +928,7 @@ BOOL deferChannelCreationOnForeground = false;
         return;
     }
 
-    // Get a copy of the current add and remove pending tags'
+    // Get a copy of the current add and remove pending tags
     NSMutableDictionary *addTags = [self.pendingAddTags mutableCopy];
     NSMutableDictionary *removeTags = [self.pendingRemoveTags mutableCopy];
 
@@ -973,7 +955,6 @@ BOOL deferChannelCreationOnForeground = false;
                         [addTags removeObjectsForKeys:pendingRemoveTagsArray];
                     }
                 }
-
             }
 
             // If there are new pendingAddTags since last request,

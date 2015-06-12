@@ -366,16 +366,20 @@
 @property (nonatomic, copy) NSString *alias;
 
 ///---------------------------------------------------------------------------------------
-/// @name Tags
+/// @name Named User
 ///---------------------------------------------------------------------------------------
-
-/** Tags for this device. */
-@property (nonatomic, copy) NSArray *tags;
 
 /**
  * Named user for this device.
  */
 @property (nonatomic, strong) UANamedUser *namedUser;
+
+///---------------------------------------------------------------------------------------
+/// @name Tags
+///---------------------------------------------------------------------------------------
+
+/** Tags for this device. */
+@property (nonatomic, copy) NSArray *tags;
 
 /**
  * Allows setting tags from the device. Tags can be set from either the server or the device, but
