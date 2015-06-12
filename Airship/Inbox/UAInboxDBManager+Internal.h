@@ -33,6 +33,8 @@
 #define kUAInboxDBEntityName @"UAInboxMessage"
 
 @class UAConfig;
+@class UAInboxMessage;
+@class UAInboxMessageData;
 
 
 @interface UAInboxDBManager : NSObject
@@ -49,6 +51,44 @@
  * @param config The Urban Airship config.
  */
 - (instancetype)initWithConfig:(UAConfig *)config;
+
+/**
+ * Fetches messages with a specified predicate, on a given context.
+ *
+ * @param predicate An NSPredicate querying a subset of messages.
+ * @param context The context on which to perform the fetch.
+ * @param completionHandler An optional completion handler called when the fetch is complete.
+ */
+- (void)fetchMessagesWithPredicate:(NSPredicate *)predicate
+                           context:(NSManagedObjectContext *)context
+                 completionHandler:(void(^)(NSArray *messages))completionHandler;
+
+/**
+ * Updates an existing message in the inbox.
+ *
+ * @param dictionary A dictionary with keys and values conforming to the
+ * Urban Airship JSON API for retrieving inbox messages.
+ * @param context The context on which to perform the update
+ *
+ * @return YES if the message was updated, NO otherwise.
+ */
+- (BOOL)updateMessageWithDictionary:(NSDictionary *)dictionary context:(NSManagedObjectContext *)context;
+
+/**
+ * Adds a message to the inbox.
+ * @param dictionary A dictionary with keys and values conforming to the
+ * Urban Airship JSON API for retrieving inbox messages.
+ * @param context The context on which to perform the operation
+ * @return A message, populated with data from the message dictionary.
+ */
+- (UAInboxMessage *)addMessageFromDictionary:(NSDictionary *)dictionary context:(NSManagedObjectContext *)context;
+
+/**
+ * Deletes a list of messages from the database
+ * @param messages NSArray of UAInboxMessages to be deleted
+ * @param context The context on which to perform the operation
+ */
+- (void)deleteMessages:(NSArray *)messages context:(NSManagedObjectContext *)context;
 
 @end
 

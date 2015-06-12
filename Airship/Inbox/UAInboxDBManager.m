@@ -28,6 +28,8 @@
 #import "UAInboxDBManager+Internal.h"
 #import "UAConfig.h"
 #import "UAUtils.h"
+#import "UAInboxMessage+Internal.h"
+#import "UAInboxMessageData.h"
 
 
 @interface UAInboxDBManager()
@@ -203,5 +205,110 @@
     return _storeURL;
 }
 
+- (void)fetchMessagesWithPredicate:(NSPredicate *)predicate
+                           context:(NSManagedObjectContext *)context
+                 completionHandler:(void(^)(NSArray *messages))completionHandler {
+
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    request.entity = [NSEntityDescription entityForName:kUAInboxDBEntityName
+                                 inManagedObjectContext:context];
+
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"messageSent" ascending:NO];
+    request.sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
+    request.predicate = predicate;
+
+    [context performBlock:^{
+        NSArray *resultData = [context executeFetchRequest:request error:nil];
+
+        NSMutableArray *resultMessages = [NSMutableArray array];
+        for (UAInboxMessageData *data in resultData) {
+            [resultMessages addObject:[UAInboxMessage messageWithData:data]];
+        }
+
+        if (completionHandler) {
+            completionHandler(resultMessages);
+        }
+    }];
+}
+
+- (void)updateMessageData:(UAInboxMessageData *)data withDictionary:(NSDictionary *)dict {
+
+    dict = [dict dictionaryWithValuesForKeys:[[dict keysOfEntriesPassingTest:^BOOL(id key, id obj, BOOL *stop) {
+        return ![obj isEqual:[NSNull null]];
+    }] allObjects]];
+
+    if (!data.isGone) {
+        data.messageID = dict[@"message_id"];
+        data.contentType = dict[@"content_type"];
+        data.title = dict[@"title"];
+        data.extra = dict[@"extra"];
+        data.messageBodyURL = [NSURL URLWithString:dict[@"message_body_url"]];
+        data.messageURL = [NSURL URLWithString:dict[@"message_url"]];
+        data.unread = [dict[@"unread"] boolValue];
+        data.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:dict[@"message_sent"]];
+        data.rawMessageObject = dict;
+
+        NSString *messageExpiration = dict[@"message_expiry"];
+        if (messageExpiration) {
+            data.messageExpiration = [[UAUtils ISODateFormatterUTC] dateFromString:messageExpiration];
+        } else {
+            data.messageExpiration = nil;
+        }
+    }
+}
+
+- (BOOL)updateMessageWithDictionary:(NSDictionary *)dictionary context:(NSManagedObjectContext *)context {
+    NSString *messageID = dictionary[@"message_id"];
+
+    if (!messageID) {
+        UA_LDEBUG(@"Missing message ID: %@", dictionary);
+        return NO;
+    }
+
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    request.entity = [NSEntityDescription entityForName:kUAInboxDBEntityName
+                                 inManagedObjectContext:context];
+    request.predicate = [NSPredicate predicateWithFormat:@"messageID == %@", messageID];
+    request.fetchLimit = 1;
+
+    NSArray *resultData = [context executeFetchRequest:request error:nil];
+
+    UAInboxMessageData *data;
+    if (resultData.count) {
+        data = [resultData lastObject];
+        [self updateMessageData:data withDictionary:dictionary];
+        return YES;
+    }
+
+    return NO;
+}
+
+- (UAInboxMessage *)addMessageFromDictionary:(NSDictionary *)dictionary context:(NSManagedObjectContext *)context {
+    UAInboxMessageData *data = (UAInboxMessageData *)[NSEntityDescription insertNewObjectForEntityForName:kUAInboxDBEntityName
+                                                                                   inManagedObjectContext:context];
+
+    dictionary = [dictionary dictionaryWithValuesForKeys:[[dictionary keysOfEntriesPassingTest:^BOOL(id key, id obj, BOOL *stop) {
+        return ![obj isEqual:[NSNull null]];
+    }] allObjects]];
+
+    UAInboxMessage *message = [UAInboxMessage messageWithData:data];
+
+    [self updateMessageData:message.data withDictionary:dictionary];
+
+    [context save:nil];
+
+    return message;
+}
+
+- (void)deleteMessages:(NSArray *)messages context:(NSManagedObjectContext *)context {
+    for (UAInboxMessage *message in messages) {
+        if ([message isKindOfClass:[UAInboxMessage class]]) {
+            UALOG(@"Deleting: %@", message.messageID);
+            [context deleteObject:message.data];
+        }
+    }
+
+    [context save:nil];
+}
 
 @end

@@ -128,13 +128,20 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
         retrieveMessageListFailureBlock = nil;
     }];
 
-    void (^completionBlock)() = ^{
+    void (^completionBlock)(BOOL) = ^(BOOL success){
         if (self.retrieveOperationCount > 0) {
             self.retrieveOperationCount--;
         }
 
-        if (retrieveMessageListSuccessBlock) {
-            retrieveMessageListSuccessBlock();
+        if (success) {
+
+            if (retrieveMessageListSuccessBlock) {
+                retrieveMessageListSuccessBlock();
+            }
+        } else {
+            if (retrieveMessageListFailureBlock) {
+                retrieveMessageListFailureBlock();
+            }
         }
 
         [self sendMessageListUpdatedNotification];
@@ -148,17 +155,21 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
         if (status == 200) {
             UA_LDEBUG(@"Refreshing message list.");
 
+            // Synchronize local messages with the response on the private context
             [self syncMessagesWithResponse:messages completionHandler:^{
-                [self refreshInboxWithCompletionHandler:completionBlock];
+                // Push changes onto the main context
+                [self refreshInboxWithCompletionHandler:^{
+                    completionBlock(YES);
+                }];
             }];
         } else {
-            UA_LDEBUG(@"Retrieve message list succeeded with messages: %@", self.messages);
-            completionBlock();
+            UA_LDEBUG(@"Retrieve message list succeeded with status: %ld", (long)status);
+            completionBlock(YES);
         }
 
     } onFailure:^(UAHTTPRequest *request){
         UA_LDEBUG(@"Retrieve message list failed with status: %ld", (long)request.response.statusCode);
-        completionBlock();
+        completionBlock(NO);
     }];
 
     return disposable;
@@ -175,14 +186,17 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
     }];
 
     UA_LDEBUG(@"Marking messages as read %@.", messages);
-    [self.inboxDBManager.mainContext performBlockAndWait:^{
+
+    NSManagedObjectContext *context = self.inboxDBManager.mainContext;
+
+    [context performBlockAndWait:^{
         for (UAInboxMessage *message in messages) {
             if ([message isKindOfClass:[UAInboxMessage class]] && !message.data.isGone) {
                 message.data.unreadClient = NO;
             }
         }
 
-        [self.inboxDBManager.mainContext save:nil];
+        [context save:nil];
     }];
 
     [self refreshInboxWithCompletionHandler:^{
@@ -212,7 +226,10 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
     }];
 
     UA_LDEBUG(@"Marking messages as deleted %@.", messages);
-    [self.inboxDBManager.mainContext performBlockAndWait:^{
+
+    NSManagedObjectContext *context = self.inboxDBManager.mainContext;
+
+    [context performBlockAndWait:^{
 
         for (UAInboxMessage *message in messages) {
             if ([message isKindOfClass:[UAInboxMessage class]] && !message.data.isGone) {
@@ -220,7 +237,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
             }
         }
 
-        [self.inboxDBManager.mainContext save:nil];
+        [context save:nil];
     }];
 
 
@@ -254,78 +271,16 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 #pragma mark Internal/Helper Methods
 
 /**
- * Fetches messages with a specified predicate, on a given context.
+ * Synchronizes local messages with response from a remote message retrieval, on the private context.
  *
- * @param predicate An NSPredicate querying a subset of messages.
- * @param context The context on which to perform the fetch.
- * @param completionHandler An optional completion handler called when the fetch is complete.
- */
-- (void)fetchMessagesWithPredicate:(NSPredicate *)predicate
-                           context:(NSManagedObjectContext *)context
-                 completionHandler:(UAInboxMessageFetchCompletionHandler)completionHandler {
-
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    request.entity = [NSEntityDescription entityForName:kUAInboxDBEntityName
-                                 inManagedObjectContext:context];
-
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"messageSent" ascending:NO];
-    request.sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
-    request.predicate = predicate;
-
-    [context performBlock:^{
-        NSArray *resultData = [context executeFetchRequest:request error:nil];
-
-        NSMutableArray *resultMessages = [NSMutableArray array];
-        for (UAInboxMessageData *data in resultData) {
-            [resultMessages addObject:[UAInboxMessage messageWithData:data]];
-        }
-
-        if (completionHandler) {
-            completionHandler(resultMessages);
-        }
-    }];
-}
-
-/**
- * Updates the provided message data object with information contained in the provided dictionary.
- * @param data An instance of UAInboxMessageData.
- @ @param dict An NSDictionary with updated message content.
- */
-- (void)updateMessageData:(UAInboxMessageData *)data withDictionary:(NSDictionary *)dict {
-
-    dict = [dict dictionaryWithValuesForKeys:[[dict keysOfEntriesPassingTest:^BOOL(id key, id obj, BOOL *stop) {
-        return ![obj isEqual:[NSNull null]];
-    }] allObjects]];
-
-    if (!data.isGone) {
-        data.messageID = dict[@"message_id"];
-        data.contentType = dict[@"content_type"];
-        data.title = dict[@"title"];
-        data.extra = dict[@"extra"];
-        data.messageBodyURL = [NSURL URLWithString:dict[@"message_body_url"]];
-        data.messageURL = [NSURL URLWithString:dict[@"message_url"]];
-        data.unread = [dict[@"unread"] boolValue];
-        data.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:dict[@"message_sent"]];
-        data.rawMessageObject = dict;
-
-        NSString *messageExpiration = dict[@"message_expiry"];
-        if (messageExpiration) {
-            data.messageExpiration = [[UAUtils ISODateFormatterUTC] dateFromString:messageExpiration];
-        } else {
-            data.messageExpiration = nil;
-        }
-    }
-}
-
-/**
- * Synchronizes local messages with response from a remote fetch.
- *
- * @param messages The messages returned from a remote fetch.
+ * @param messages The messages returned from a remote message retrieval.
  * @param completionHandler An optional completion handler run when the sync is complete.
  */
 - (void)syncMessagesWithResponse:(NSArray *)messages completionHandler:(void(^)())completionHandler {
-    [self.inboxDBManager.privateContext performBlock:^{
 
+    NSManagedObjectContext *context = self.inboxDBManager.privateContext;
+
+    [context performBlock:^{
         // Track the response messageIDs so we can remove any messages that are
         // no longer in the response.
         NSMutableSet *responseMessageIDs = [NSMutableSet set];
@@ -338,42 +293,25 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
                 continue;
             }
 
-            NSFetchRequest *request = [[NSFetchRequest alloc] init];
-            request.entity = [NSEntityDescription entityForName:kUAInboxDBEntityName
-                                         inManagedObjectContext:self.inboxDBManager.privateContext];
-            request.predicate = [NSPredicate predicateWithFormat:@"messageID == %@", messageID];
-            request.fetchLimit = 1;
-
-            NSArray *resultData = [self.inboxDBManager.privateContext executeFetchRequest:request error:nil];
-
-            UAInboxMessageData *data;
-            if (resultData.count) {
-                data = [resultData lastObject];
-            } else {
-                data = [NSEntityDescription insertNewObjectForEntityForName:kUAInboxDBEntityName
-                                                     inManagedObjectContext:self.inboxDBManager.privateContext];
+            if (![self.inboxDBManager updateMessageWithDictionary:messagePayload context:context]) {
+                [self.inboxDBManager addMessageFromDictionary:messagePayload context:context];
             }
-
-            [self updateMessageData:data withDictionary:messagePayload];
 
             [responseMessageIDs addObject:messagePayload[@"message_id"]];
         }
 
         // Delete any messages that are not in the response
-        NSFetchRequest *request = [[NSFetchRequest alloc] init];
-        NSEntityDescription *entity = [NSEntityDescription entityForName:kUAInboxDBEntityName
-                                                  inManagedObjectContext:self.inboxDBManager.privateContext];
-        [request setEntity:entity];
-        [request setPredicate:[NSPredicate predicateWithFormat:@"NOT (messageID IN %@)", responseMessageIDs]];
 
-        NSArray *deletedMessages = [self.inboxDBManager.privateContext executeFetchRequest:request error:nil];
-        for (UAInboxMessageData *data in deletedMessages) {
-            UA_LDEBUG(@"Removing messages from coredata: %@", data.messageID);
-            [self.inboxDBManager.privateContext deleteObject:data];
-        }
-
-        // Save changes
-        [self.inboxDBManager.privateContext save:nil];
+        // Delete server side deleted messages
+        NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"NOT (messageID IN %@)", responseMessageIDs];
+        [self.inboxDBManager fetchMessagesWithPredicate:deletedPredicate
+                                                context:context
+                                      completionHandler:^(NSArray *deletedMessages){
+             if (deletedMessages.count) {
+                 UA_LDEBUG(@"Server deleted messages: %@", deletedMessages);
+                 [self.inboxDBManager deleteMessages:deletedMessages context:context];
+             }
+        }];
 
         if (completionHandler) {
             completionHandler();
@@ -381,19 +319,20 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
     }];
 }
 
-
 /**
  * Updates messages on the main context.
- * @param messages An array of messages bound to the private context
- * @param completionHandler An optional completion handler called when the update is complete.
+ * @param messages An array of UAInboxMessage objects bound to the private context
+ * @param completionHandler An optional completion handler called when the update is complete
  */
 - (void)updateMessagesOnMainContext:(NSArray *)messages withCompletionHandler:(void (^)(void))completionHandler {
     NSArray *objectIDs = [messages valueForKeyPath:@"data.objectID"];
 
+    NSManagedObjectContext *context = self.inboxDBManager.mainContext;
+
     // Use the prefetch results to fetch the messages on the main context
-    [self fetchMessagesWithPredicate:[NSPredicate predicateWithFormat:@"self IN %@", objectIDs]
-                             context:self.inboxDBManager.mainContext
-                   completionHandler:^(NSArray *messages) {
+    [self.inboxDBManager fetchMessagesWithPredicate:[NSPredicate predicateWithFormat:@"self IN %@", objectIDs]
+                                            context:context
+                                  completionHandler:^(NSArray *messages) {
 
         NSInteger unreadCount = 0;
 
@@ -420,13 +359,13 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 }
 
 /**
- * Pre-fetches messages on the private context.
+ * Pre-fetches messages on the private context
  * @param completionHandler Optional completion handler taking the pre-fetched messages as an argument
  */
 - (void)prefetchMessagesWithCompletionHandler:(void (^)(NSArray *messages))completionHandler {
     NSString *predicateFormat = @"(messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)";
     NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateFormat, [NSDate date]];
-    [self fetchMessagesWithPredicate:predicate context:self.inboxDBManager.privateContext completionHandler:^(NSArray *messages) {
+    [self.inboxDBManager fetchMessagesWithPredicate:predicate context:self.inboxDBManager.privateContext completionHandler:^(NSArray *messages) {
         completionHandler(messages);
     }];
 }
@@ -449,9 +388,9 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
  */
 - (void)fetchLocallyReadMessagesWithCompletionHandler:(void (^)(NSArray *messages))completionHandler {
     // Locally read messages
-    [self fetchMessagesWithPredicate:[NSPredicate predicateWithFormat:@"unreadClient == NO && unread == YES"]
-                             context:self.inboxDBManager.privateContext
-                   completionHandler:completionHandler];
+    [self.inboxDBManager fetchMessagesWithPredicate:[NSPredicate predicateWithFormat:@"unreadClient == NO && unread == YES"]
+                                            context:self.inboxDBManager.privateContext
+                                  completionHandler:completionHandler];
 }
 
 /**
@@ -459,13 +398,13 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
  * @param completionHandler An optional completion handler called when the fetch is complete
  */
 - (void)fetchLocallyDeletedMessagesWithCompletionHandler:(void (^)(NSArray *messages))completionHandler {
-    [self fetchMessagesWithPredicate:[NSPredicate predicateWithFormat:@"deletedClient == YES"]
-                             context:self.inboxDBManager.privateContext
-                   completionHandler:completionHandler];
+    [self.inboxDBManager fetchMessagesWithPredicate:[NSPredicate predicateWithFormat:@"deletedClient == YES"]
+                                            context:self.inboxDBManager.privateContext
+                                  completionHandler:completionHandler];
 }
 
 /**
- * Synchronizes local read messages state with the server.
+ * Synchronizes local read messages state with the server, on the private context.
  */
 - (void)syncReadMessageState {
     [self fetchLocallyReadMessagesWithCompletionHandler:^(NSArray *locallyReadMessages) {
@@ -476,10 +415,12 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 
         UA_LDEBUG(@"Synchronizing locally read messages %@ on server.", locallyReadMessages);
 
+        NSManagedObjectContext *context = self.inboxDBManager.privateContext;
+
         [self.client performBatchMarkAsReadForMessages:locallyReadMessages onSuccess:^{
 
             // Mark the messages as read on the private context
-            [self.inboxDBManager.privateContext performBlock:^{
+            [context performBlock:^{
                 for (UAInboxMessage *message in locallyReadMessages) {
                     UA_LDEBUG(@"Successfully synchronized locally read messages on server.");
 
@@ -488,7 +429,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
                     }
                 }
 
-                [self.inboxDBManager.privateContext save:nil];
+                [context save:nil];
             }];
 
         } onFailure:^(UAHTTPRequest *request) {
@@ -499,7 +440,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 }
 
 /**
- * Synchronizes local deleted message state with the server.
+ * Synchronizes local deleted message state with the server, on the private context.
  */
 - (void)syncDeletedMessageState {
     [self fetchLocallyDeletedMessagesWithCompletionHandler:^(NSArray *locallyDeletedMessages) {
@@ -519,7 +460,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 }
 
 /**
- * Synchronizes any local read or deleted message state with the server.
+ * Synchronizes any local read or deleted message state with the server, on the private context.
  */
 - (void)syncLocalMessageState {
     [self syncReadMessageState];
