@@ -20,13 +20,19 @@
  * Test that if takeOff is called on a background thread that an exception is thrown.
  */
 - (void)testExceptionForTakeOffOnNotTheMainThread {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        XCTAssertFalse([[NSThread currentThread] isMainThread], @"Test invalid, running on the main thread");
-        XCTAssertThrowsSpecificNamed(
-            [UAirship takeOff],
-            NSException, UAirshipTakeOffBackgroundThreadException,
-            @"Calling takeOff on a background thread should throw a UAirshipTakeOffBackgroundThreadException");
+
+    XCTestExpectation *takeOffCalled = [self expectationWithDescription:@"Takeoff called"];
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        XCTAssertThrowsSpecificNamed([UAirship takeOff],
+                                     NSException, UAirshipTakeOffBackgroundThreadException,
+                                     @"Calling takeOff on a background thread should throw a UAirshipTakeOffBackgroundThreadException");
+        [takeOffCalled fulfill];
     });
+
+
+    // Wait for the test expectations
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 @end
