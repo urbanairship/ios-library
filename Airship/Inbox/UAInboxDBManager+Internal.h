@@ -68,7 +68,7 @@
  *
  * @param dictionary A dictionary with keys and values conforming to the
  * Urban Airship JSON API for retrieving inbox messages.
- * @param context The context on which to perform the update
+ * @param context The context on which to perform the update.
  *
  * @return YES if the message was updated, NO otherwise.
  */
@@ -78,15 +78,15 @@
  * Adds a message to the inbox.
  * @param dictionary A dictionary with keys and values conforming to the
  * Urban Airship JSON API for retrieving inbox messages.
- * @param context The context on which to perform the operation
+ * @param context The context on which to perform the operation.
  * @return A message, populated with data from the message dictionary.
  */
 - (UAInboxMessage *)addMessageFromDictionary:(NSDictionary *)dictionary context:(NSManagedObjectContext *)context;
 
 /**
- * Deletes a list of messages from the database
- * @param messages NSArray of UAInboxMessages to be deleted
- * @param context The context on which to perform the operation
+ * Deletes a list of messages from the database.
+ * @param messages NSArray of UAInboxMessages to be deleted.
+ * @param context The context on which to perform the operation.
  */
 - (void)deleteMessages:(NSArray *)messages context:(NSManagedObjectContext *)context;
 

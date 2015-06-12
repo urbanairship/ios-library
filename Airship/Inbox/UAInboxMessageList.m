@@ -300,9 +300,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
             [responseMessageIDs addObject:messagePayload[@"message_id"]];
         }
 
-        // Delete any messages that are not in the response
-
-        // Delete server side deleted messages
+        // Delete server-side deleted messages
         NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"NOT (messageID IN %@)", responseMessageIDs];
         [self.inboxDBManager fetchMessagesWithPredicate:deletedPredicate
                                                 context:context
@@ -321,8 +319,8 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 
 /**
  * Updates messages on the main context.
- * @param messages An array of UAInboxMessage objects bound to the private context
- * @param completionHandler An optional completion handler called when the update is complete
+ * @param messages An array of UAInboxMessage objects bound to the private context.
+ * @param completionHandler An optional completion handler called when the update is complete.
  */
 - (void)updateMessagesOnMainContext:(NSArray *)messages withCompletionHandler:(void (^)(void))completionHandler {
     NSArray *objectIDs = [messages valueForKeyPath:@"data.objectID"];
@@ -359,8 +357,8 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 }
 
 /**
- * Pre-fetches messages on the private context
- * @param completionHandler Optional completion handler taking the pre-fetched messages as an argument
+ * Pre-fetches messages on the private context.
+ * @param completionHandler Optional completion handler taking the pre-fetched messages as an argument.
  */
 - (void)prefetchMessagesWithCompletionHandler:(void (^)(NSArray *messages))completionHandler {
     NSString *predicateFormat = @"(messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)";
@@ -395,7 +393,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 
 /**
  * Fetches locally deleted messages on the private context.
- * @param completionHandler An optional completion handler called when the fetch is complete
+ * @param completionHandler An optional completion handler called when the fetch is complete.
  */
 - (void)fetchLocallyDeletedMessagesWithCompletionHandler:(void (^)(NSArray *messages))completionHandler {
     [self.inboxDBManager fetchMessagesWithPredicate:[NSPredicate predicateWithFormat:@"deletedClient == YES"]
