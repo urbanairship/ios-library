@@ -84,7 +84,6 @@ static UAUser *mockUser = nil;
 - (void)tearDown {
     [self.mockUser stopMocking];
 
-    [self.messageList.queue cancelAllOperations];
     [self waitUntilAllOperationsAreFinished];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListWillUpdateNotification object:nil];
@@ -181,6 +180,7 @@ static UAUser *mockUser = nil;
     } withFailureBlock:^{
         fail = YES;
     }];
+
     [self waitUntilAllOperationsAreFinished];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
@@ -223,7 +223,7 @@ static UAUser *mockUser = nil;
     //disposal should prevent the successBlock from being executed in the trigger function
     //otherwise we should see unexpected callbacks
     trigger();
-    
+
     [self waitUntilAllOperationsAreFinished];
 
     XCTAssertFalse(fail, @"callback blocks should not have been executed");
@@ -248,8 +248,6 @@ static UAUser *mockUser = nil;
             failureBlock(nil);
         };
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
-
-
 
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
@@ -276,10 +274,6 @@ static UAUser *mockUser = nil;
 
 // Helper method to finish any pending operations on the message list.
 - (void)waitUntilAllOperationsAreFinished {
-    // Wait for the message list to finish
-    while (self.messageList.queue.operationCount > 0)  {
-        [[NSRunLoop mainRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
-    }
 
     UATestSynchronizer *testSynchronizer = [[UATestSynchronizer alloc] init];
 

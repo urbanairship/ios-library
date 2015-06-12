@@ -28,7 +28,7 @@
 #import "UAInboxMessage.h"
 #import "UAInboxMessage+Internal.h"
 #import "UAInbox.h"
-#import "UAInboxDBManager.h"
+#import "UAInboxDBManager+Internal.h"
 #import "UAInboxMessageList+Internal.h"
 #import "UAInboxAPIClient.h"
 #import "UAConfig.h"
@@ -61,10 +61,10 @@
 
 - (void)setUp {
     [super setUp];
-    self.dbManager = [[UAInboxDBManager alloc] initWithConfig:[UAConfig config]];
-    [self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"12345"]];
-    self.message = [[self.dbManager fetchMessagesWithPredicate:nil] objectAtIndex:0];
 
+    self.dbManager = [[UAInboxDBManager alloc] initWithConfig:[UAConfig config]];
+
+    self.message = [self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"12345"] context:self.dbManager.mainContext];
     self.message.data.unread = YES;
     //this is normally set when a message is associated with the message list, needed for
     //sending (deprecated) UAInboxMessageListObserver callbacks
@@ -78,15 +78,16 @@
     // Put teardown code here; it will be run once, after the last test case.
     //undo observer sign-ups
     [self.mockMessageListObserver stopMocking];
-    [self.dbManager deleteMessages:[self.dbManager fetchMessagesWithPredicate:nil]];
-    [super tearDown];
+    [self.dbManager fetchMessagesWithPredicate:nil context:self.dbManager.mainContext completionHandler:^(NSArray *messages){
+        [self.dbManager deleteMessages:messages context:self.dbManager.mainContext];
+    }];
 }
-
 
 /**
  * Test isExpired
  */
 - (void)testIsExpired {
+
     NSDate *currentDate = [NSDate date];
 
     // Mock the date to always return currentDate
