@@ -39,30 +39,4 @@
     XCTAssertTrue([location isKindOfClass:[UALocationService class]]);
 }
 
-- (void)testExceptionForTakeOffOnNotTheMainThread {
-    
-    [UAirship land]; // Reset the shared instance
-    
-    NSThread *thread = [[NSThread alloc] initWithTarget:self selector:@selector(takeOffException) object:nil];
-    [thread start];
-    do {
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
-    } while(![thread isFinished]);
-    
-    [UAirship takeOff]; // Recreate the shared instance
-}
-
-// A helper method that calls takeOff; intended to be called from a background thread.
-- (void)takeOffException {
-    @autoreleasepool {
-    
-        NSLog(@"Testing [UAirship takeOff:nil] in background thread %@", [NSThread currentThread]); 
-        XCTAssertFalse([[NSThread currentThread] isMainThread], @"Test invalid, running on the main thread");
-        XCTAssertThrowsSpecificNamed(
-                                    [UAirship takeOff],
-                                    NSException, UAirshipTakeOffBackgroundThreadException,
-                                    @"Calling takeOff on a background thread should throw a UAirshipTakeOffBackgroundThreadException");
-    
-    }
-}
 @end

@@ -49,6 +49,7 @@
 		4905C4E718246339001D48E3 /* NSString+UAURLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 4905C4E418246339001D48E3 /* NSString+UAURLEncoding.m */; };
 		490710BC184D3EAB00E494AF /* UAWebViewCallDataTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 490710BB184D3EAB00E494AF /* UAWebViewCallDataTest.m */; };
 		49226C8318A3045900D4A57A /* UAURLProtocolTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85427D17F2164500D2DE10 /* UAURLProtocolTest.m */; };
+		4925AAAD1B2B9D00002F045D /* UAirshipTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4925AAAC1B2B9D00002F045D /* UAirshipTest.m */; };
 		4928D8F51AB24D010046E5BE /* UAUserNotificationCategory+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4928D8F41AB24D010046E5BE /* UAUserNotificationCategory+Internal.h */; };
 		4928D8F81AB364500046E5BE /* UAUserNotificationAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4928D8F71AB364500046E5BE /* UAUserNotificationAction+Internal.h */; };
 		4928D8FD1AB758C10046E5BE /* UAUserNotificationCategoryTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4928D8FC1AB758C10046E5BE /* UAUserNotificationCategoryTest.m */; };
@@ -420,6 +421,7 @@
 		4905C4E418246339001D48E3 /* NSString+UAURLEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UAURLEncoding.m"; sourceTree = "<group>"; };
 		490710BB184D3EAB00E494AF /* UAWebViewCallDataTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWebViewCallDataTest.m; sourceTree = "<group>"; };
 		491B845F198C44C200FB7A40 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
+		4925AAAC1B2B9D00002F045D /* UAirshipTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAirshipTest.m; sourceTree = "<group>"; };
 		4928D8F41AB24D010046E5BE /* UAUserNotificationCategory+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUserNotificationCategory+Internal.h"; sourceTree = "<group>"; };
 		4928D8F71AB364500046E5BE /* UAUserNotificationAction+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUserNotificationAction+Internal.h"; sourceTree = "<group>"; };
 		4928D8FC1AB758C10046E5BE /* UAUserNotificationCategoryTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUserNotificationCategoryTest.m; sourceTree = "<group>"; };
@@ -1277,6 +1279,7 @@
 				CCF0A53B17D139B200098A2B /* Location */,
 				CCF0A53C17D139D500098A2B /* User */,
 				CCF0A53D17D139DF00098A2B /* Util */,
+				4925AAAC1B2B9D00002F045D /* UAirshipTest.m */,
 				1F675944175682DF00C062E0 /* UAConfigTest.h */,
 				1F675945175682DF00C062E0 /* UAConfigTest.m */,
 				CCBFA2DF17B547B600F97E1D /* NSJSONSerialization_UAAdditionsTests.m */,
@@ -1729,15 +1732,6 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 0630;
-				TargetAttributes = {
-					4953A44D19A55E9900F8D111 = {
-						CreatedOnToolsVersion = 6.0;
-						TestTargetID = 49BADCC8198AF5F5000FF3D5;
-					};
-					49BADCC8198AF5F5000FF3D5 = {
-						CreatedOnToolsVersion = 6.0;
-					};
-				};
 			};
 			buildConfigurationList = 1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "AirshipLib" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1842,6 +1836,7 @@
 				49B7046C1A7AF9A6000F67A6 /* UAInAppMessageTest.m in Sources */,
 				CCD13DE219A4FCFD0007078C /* UAInteractiveNotificationEventTest.m in Sources */,
 				BBB87D63150574DE00971CEC /* UALocationProviderTests.m in Sources */,
+				4925AAAD1B2B9D00002F045D /* UAirshipTest.m in Sources */,
 				CC4AAE0C18C93EF2001F23B3 /* UAApplicationMetricsTest.m in Sources */,
 				76F9B4AE18D3CE2A00C438D4 /* JRSwizzle.m in Sources */,
 				4928D8FD1AB758C10046E5BE /* UAUserNotificationCategoryTest.m in Sources */,
