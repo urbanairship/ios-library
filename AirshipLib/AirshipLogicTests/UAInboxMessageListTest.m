@@ -32,6 +32,8 @@
 #import "UATestSynchronizer.h"
 #import "UAirship.h"
 #import "UAConfig.h"
+#import "UAInboxDBManager+Internal.h"
+#import "UAUtils.h"
 
 static UAUser *mockUser = nil;
 
@@ -84,7 +86,6 @@ static UAUser *mockUser = nil;
 - (void)tearDown {
     [self.mockUser stopMocking];
 
-    [self.messageList.queue cancelAllOperations];
     [self waitUntilAllOperationsAreFinished];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListWillUpdateNotification object:nil];
@@ -181,6 +182,7 @@ static UAUser *mockUser = nil;
     } withFailureBlock:^{
         fail = YES;
     }];
+
     [self waitUntilAllOperationsAreFinished];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
@@ -223,12 +225,52 @@ static UAUser *mockUser = nil;
     //disposal should prevent the successBlock from being executed in the trigger function
     //otherwise we should see unexpected callbacks
     trigger();
-    
+
     [self waitUntilAllOperationsAreFinished];
 
     XCTAssertFalse(fail, @"callback blocks should not have been executed");
 
     [self.mockMessageListNotificationObserver verify];
+}
+
+
+/**
+ * Tests the mark as read performance for marking 200 messages as read.
+ */
+- (void)testMarkMessagesReadPerformance {
+    [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListWillUpdateNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListUpdatedNotification object:nil];
+
+    for (int i = 0; i < 200; i++) {
+        [self.messageList.inboxDBManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:[NSUUID UUID].UUIDString]
+                                                          context:self.messageList.inboxDBManager.mainContext];
+    }
+
+    [self.messageList loadSavedMessages];
+
+    [self measureBlock:^{
+        [self.messageList markMessagesRead:self.messageList.messages completionHandler:nil];
+    }];
+}
+
+
+/**
+ * Tests the mark as read performance for marking 200 messages as deleted.
+ */
+- (void)testMarkMessagesDeletedPerformance {
+    [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListWillUpdateNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListUpdatedNotification object:nil];
+
+    for (int i = 0; i < 200; i++) {
+        [self.messageList.inboxDBManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:[NSUUID UUID].UUIDString]
+                                                          context:self.messageList.inboxDBManager.mainContext];
+    }
+
+    [self.messageList loadSavedMessages];
+
+    [self measureBlock:^{
+        [self.messageList markMessagesDeleted:self.messageList.messages completionHandler:nil];
+    }];
 }
 
 //if unsuccessful, the observer should get messageListWillLoad and inboxLoadFailed callbacks.
@@ -248,8 +290,6 @@ static UAUser *mockUser = nil;
             failureBlock(nil);
         };
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
-
-
 
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
@@ -276,10 +316,6 @@ static UAUser *mockUser = nil;
 
 // Helper method to finish any pending operations on the message list.
 - (void)waitUntilAllOperationsAreFinished {
-    // Wait for the message list to finish
-    while (self.messageList.queue.operationCount > 0)  {
-        [[NSRunLoop mainRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
-    }
 
     UATestSynchronizer *testSynchronizer = [[UATestSynchronizer alloc] init];
 
@@ -291,6 +327,18 @@ static UAUser *mockUser = nil;
 
     // Wait for main queue block to execute
     [testSynchronizer wait];
+}
+
+- (NSDictionary *)createMessageDictionaryWithMessageID:(NSString *)messageID {
+    return @{@"message_id": messageID,
+             @"title": @"someTitle",
+             @"content_type": @"someContentType",
+             @"extra": @{@"someKey":@"someValue"},
+             @"message_body_url": @"http://someMessageBodyUrl",
+             @"message_url": @"http://someMessageUrl",
+             @"unread": @"0",
+             @"message_sent": @"2013-08-13 00:16:22" };
+
 }
 
 @end

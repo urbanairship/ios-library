@@ -27,7 +27,6 @@
 #import "UAInbox.h"
 #import "UAInboxMessageData.h"
 #import "UAInboxAPIClient.h"
-#import "UAInboxDBManager.h"
 #import "UAInboxMessageList+Internal.h"
 #import "UAUtils.h"
 
@@ -135,6 +134,7 @@
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
     }
+
     return [timeoutDate timeIntervalSinceNow] > 0;
 }
 

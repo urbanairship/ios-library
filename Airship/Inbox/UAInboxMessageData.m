@@ -29,7 +29,6 @@
 #import "UAirship.h"
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
-#import "UAInboxDBManager.h"
 #import "UAHTTPConnection.h"
 #import "UAUtils.h"
 #import "UAGlobal.h"

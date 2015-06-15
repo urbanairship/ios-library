@@ -29,7 +29,6 @@
 #import "UAAddCustomEventAction.h"
 #import "UAAction+Internal.h"
 #import "UACustomEvent.h"
-#import "UAInboxDBManager.h"
 #import "UAInboxMessage.h"
 
 @interface UAAddCustomEventActionTest : XCTestCase
