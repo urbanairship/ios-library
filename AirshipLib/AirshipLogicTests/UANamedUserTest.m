@@ -425,7 +425,6 @@ void (^updateTagsFailureDoBlock)(NSInvocation *);
     XCTAssertEqualObjects(tagsNoSpaces, [self.namedUser.pendingAddTags valueForKey:groupID], @"whitespace was not trimmed from tags");
 
     NSArray *moreTags = @[@"   tag-two   ", @"tag-three   "];
-    NSArray *moreTagsNoSpaces = @[@"tag-two", @"tag-three"];
 
     [self.namedUser addTags:moreTags group:groupID];
 
@@ -449,7 +448,6 @@ void (^updateTagsFailureDoBlock)(NSInvocation *);
     XCTAssertEqualObjects(tagsNoSpaces, [self.namedUser.pendingRemoveTags valueForKey:groupID], @"whitespace was not trimmed from tags");
 
     NSArray *moreTags = @[@"   tag-two   ", @"tag-three   "];
-    NSArray *moreTagsNoSpaces = @[@"tag-two", @"tag-three"];
 
     [self.namedUser removeTags:moreTags group:groupID];
 
@@ -494,8 +492,8 @@ void (^updateTagsFailureDoBlock)(NSInvocation *);
     XCTAssertEqual((NSUInteger)2, self.namedUser.pendingAddTags.count, @"should still contain 2 tag groups");
 
     // test addTags with tags with whitespace
-    NSArray *whitespaceTags = @[@"tag1", @"tag2", @" tag3 "];
-    [self.namedUser addTags:tags group:@"another-tag-group"];
+    NSArray *whitespaceTags = @[@" tag1 ", @" tag2 ", @" tag3 "];
+    [self.namedUser addTags:whitespaceTags group:@"another-tag-group"];
     XCTAssertEqual((NSUInteger)2, self.namedUser.pendingAddTags.count, @"should contain 2 tag groups");
 
     self.namedUser.pendingAddTags = nil;
@@ -667,7 +665,6 @@ void (^updateTagsFailureDoBlock)(NSInvocation *);
                                                                                      onSuccess:OCMOCK_ANY
                                                                                      onFailure:OCMOCK_ANY];
 
-    NSArray *tags = @[@"tag2", @"tag4", @"tag5"];
     [self.namedUser updateTags];
 
     XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Update named user tag groups should fail.");

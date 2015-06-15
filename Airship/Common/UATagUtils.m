@@ -121,26 +121,28 @@
     return retVal;
 }
 
-+ (NSMutableDictionary *)addTags:(NSArray *)tagsToAdd group:(NSString *)tagGroup tags:(NSMutableDictionary *)pendingTags {
-    NSMutableSet *addTagsSet = [NSMutableSet setWithArray:pendingTags[tagGroup]];
++ (NSDictionary *)addTags:(NSArray *)tagsToAdd group:(NSString *)tagGroup tags:(NSDictionary *)pendingTags {
+    NSMutableDictionary *combinedTags = [NSMutableDictionary dictionaryWithDictionary:pendingTags];
+    NSMutableSet *addTagsSet = [NSMutableSet setWithArray:combinedTags[tagGroup]];
     [addTagsSet addObjectsFromArray:tagsToAdd];
     if (addTagsSet.count) {
-        pendingTags[tagGroup] = [addTagsSet allObjects];
+        combinedTags[tagGroup] = [addTagsSet allObjects];
     } else {
-        [pendingTags removeObjectForKey:tagGroup];
+        [combinedTags removeObjectForKey:tagGroup];
     }
-    return pendingTags;
+    return [NSDictionary dictionaryWithDictionary:combinedTags];
 }
 
-+ (NSMutableDictionary *)removeTags:(NSArray *)tagsToRemove group:(NSString *)tagGroup tags:(NSMutableDictionary *)pendingTags {
-    NSMutableArray *removeTagsArray = [NSMutableArray arrayWithArray:pendingTags[tagGroup]];
++ (NSDictionary *)removeTags:(NSArray *)tagsToRemove group:(NSString *)tagGroup tags:(NSDictionary *)pendingTags {
+    NSMutableDictionary *combinedTags = [NSMutableDictionary dictionaryWithDictionary:pendingTags];
+    NSMutableArray *removeTagsArray = [NSMutableArray arrayWithArray:combinedTags[tagGroup]];
     [removeTagsArray removeObjectsInArray:tagsToRemove];
     if (removeTagsArray.count) {
-        pendingTags[tagGroup] = removeTagsArray;
+        combinedTags[tagGroup] = removeTagsArray;
     } else {
-        [pendingTags removeObjectForKey:tagGroup];
+        [combinedTags removeObjectForKey:tagGroup];
     }
-    return pendingTags;
+    return [NSDictionary dictionaryWithDictionary:combinedTags];
 }
 
 @end
