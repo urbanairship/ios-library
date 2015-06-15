@@ -23,12 +23,32 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAInboxDBManager.h"
+#import <Foundation/Foundation.h>
+#import "UAGlobal.h"
 
-@interface UAInboxDBManager ()
-@property (nonatomic, strong) NSURL *storeURL;
-@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
-@property (nonatomic, strong) NSManagedObjectModel *managedObjectModel;
-@property (nonatomic, strong) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+
+#define UA_OLD_DB_NAME @"UAInbox.db"
+#define UA_CORE_DATA_STORE_NAME @"Inbox-%@.sqlite"
+#define UA_CORE_DATA_DIRECTORY_NAME @"UAInbox"
+#define kUAInboxDBEntityName @"UAInboxMessage"
+
+@class UAConfig;
+
+
+@interface UAInboxDBManager : NSObject
+
+@property (nonatomic, readonly) NSURL *storeURL;
+@property (nonatomic, readonly) NSManagedObjectContext *mainManagedObjectContext;
+@property (nonatomic, readonly) NSManagedObjectContext *privateManagedObjectContext;
+@property (nonatomic, readonly) NSManagedObjectModel *managedObjectModel;
+@property (nonatomic, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+
+
+/**
+ * Initializes the inbox db manager with the given config.
+ * @param config The Urban Airship config.
+ */
+- (instancetype)initWithConfig:(UAConfig *)config;
 
 @end
+

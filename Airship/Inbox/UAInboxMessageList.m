@@ -40,6 +40,7 @@
 NSString * const UAInboxMessageListWillUpdateNotification = @"com.urbanairship.notification.message_list_will_update";
 NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.notification.message_list_updated";
 
+typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 
 @implementation UAInboxMessageList
 
@@ -56,12 +57,9 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
         self.client = client;
         self.batchOperationCount = 0;
         self.retrieveOperationCount = 0;
-
         self.unreadCount = -1;
-        self.queue = [[NSOperationQueue alloc] init];
-        self.queue.maxConcurrentOperationCount = 1;
-
     }
+
     return self;
 }
 
@@ -122,7 +120,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     self.retrieveOperationCount++;
     [self sendMessageListWillUpdateNotification];
 
-
     __block UAInboxMessageListCallbackBlock retrieveMessageListSuccessBlock = successBlock;
     __block UAInboxMessageListCallbackBlock retrieveMessageListFailureBlock = failureBlock;
 
@@ -131,77 +128,37 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
         retrieveMessageListFailureBlock = nil;
     }];
 
-
-    // Fetch new messages
-    [self.client retrieveMessageListOnSuccess:^(NSInteger status, NSArray *messages, NSInteger unread) {
-        [self.queue addOperationWithBlock:^{
-            // Sync client state
-            [self syncLocalMessageState];
-
-            if (status == 200) {
-                UA_LDEBUG(@"Refreshing message list.");
-
-                NSMutableSet *responseMessageIDs = [NSMutableSet set];
-
-                // Convert dictionary to objects for convenience
-                for (NSDictionary *message in messages) {
-                    if (![self.inboxDBManager updateMessageWithDictionary:message]) {
-                        [self.inboxDBManager addMessageFromDictionary:message];
-                    }
-
-                    NSString *messageID = [message valueForKey:@"message_id"];
-                    if (messageID) {
-                        [responseMessageIDs addObject:messageID];
-                    }
-                }
-
-                // Delete server side deleted messages
-                NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"NOT (messageID IN %@)", responseMessageIDs];
-                NSArray *deletedMessages = [self.inboxDBManager fetchMessagesWithPredicate:deletedPredicate];
-                if (deletedMessages.count) {
-                    UA_LDEBUG(@"Server deleted messages: %@", deletedMessages);
-                    [self.inboxDBManager deleteMessages:deletedMessages];
-                }
-
-                // Block is dispatched on the main queue
-                [self refreshInboxWithCompletionHandler:^() {
-                    if (self.retrieveOperationCount > 0) {
-                        self.retrieveOperationCount--;
-                    }
-
-                    if (retrieveMessageListSuccessBlock) {
-                        retrieveMessageListSuccessBlock();
-                    }
-
-                    [self sendMessageListUpdatedNotification];
-                }];
-            } else {
-                UA_LDEBUG(@"Retrieve message list succeeded with messages: %@", self.messages);
-                dispatch_async(dispatch_get_main_queue(), ^() {
-                    if (self.retrieveOperationCount > 0) {
-                        self.retrieveOperationCount--;
-                    }
-
-                    if (retrieveMessageListSuccessBlock) {
-                        retrieveMessageListSuccessBlock();
-                    }
-
-                    [self sendMessageListUpdatedNotification];
-                });
-            }
-        }];
-
-    } onFailure:^(UAHTTPRequest *request){
+    void (^completionBlock)() = ^{
         if (self.retrieveOperationCount > 0) {
             self.retrieveOperationCount--;
         }
 
-        UA_LDEBUG(@"Retrieve message list failed with status: %ld", (long)request.response.statusCode);
-        if (retrieveMessageListFailureBlock) {
-            retrieveMessageListFailureBlock();
+        if (retrieveMessageListSuccessBlock) {
+            retrieveMessageListSuccessBlock();
         }
 
         [self sendMessageListUpdatedNotification];
+    };
+
+    // Fetch new messages
+    [self.client retrieveMessageListOnSuccess:^(NSInteger status, NSArray *messages, NSInteger unread) {
+        // Sync client state
+        [self syncLocalMessageState];
+
+        if (status == 200) {
+            UA_LDEBUG(@"Refreshing message list.");
+
+            [self syncMessagesWithResponse:messages completionHandler:^{
+                [self refreshInboxWithCompletionHandler:completionBlock];
+            }];
+        } else {
+            UA_LDEBUG(@"Retrieve message list succeeded with messages: %@", self.messages);
+            completionBlock();
+        }
+
+    } onFailure:^(UAHTTPRequest *request){
+        UA_LDEBUG(@"Retrieve message list failed with status: %ld", (long)request.response.statusCode);
+        completionBlock();
     }];
 
     return disposable;
@@ -217,34 +174,30 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
         inboxMessageListCompletionBlock = nil;
     }];
 
-
     UA_LDEBUG(@"Marking messages as read %@.", messages);
-
-    [self.queue addOperationWithBlock:^{
+    [self.inboxDBManager.mainManagedObjectContext performBlockAndWait:^{
         for (UAInboxMessage *message in messages) {
             if ([message isKindOfClass:[UAInboxMessage class]] && !message.data.isGone) {
                 message.data.unreadClient = NO;
             }
         }
 
-        [self.inboxDBManager saveContext];
-
-
-        // Block is dispatched on the main queue
-        [self refreshInboxWithCompletionHandler:^{
-            if (self.batchOperationCount > 0) {
-                self.batchOperationCount--;
-            }
-
-            if (inboxMessageListCompletionBlock) {
-                inboxMessageListCompletionBlock();
-            }
-
-            [self sendMessageListUpdatedNotification];
-        }];
-
-        [self syncLocalMessageState];
+        [self.inboxDBManager.mainManagedObjectContext save:nil];
     }];
+
+    [self refreshInboxWithCompletionHandler:^{
+        if (self.batchOperationCount > 0) {
+            self.batchOperationCount--;
+        }
+
+        if (inboxMessageListCompletionBlock) {
+            inboxMessageListCompletionBlock();
+        }
+
+        [self sendMessageListUpdatedNotification];
+    }];
+
+    [self syncLocalMessageState];
 
     return disposable;
 }
@@ -259,32 +212,32 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     }];
 
     UA_LDEBUG(@"Marking messages as deleted %@.", messages);
+    [self.inboxDBManager.mainManagedObjectContext performBlockAndWait:^{
 
-    [self.queue addOperationWithBlock:^{
         for (UAInboxMessage *message in messages) {
             if ([message isKindOfClass:[UAInboxMessage class]] && !message.data.isGone) {
                 message.data.deletedClient = YES;
             }
         }
 
-        [self.inboxDBManager saveContext];
-
-        // Block is dispatched on the main queue
-        [self refreshInboxWithCompletionHandler:^{
-            if (self.batchOperationCount > 0) {
-                self.batchOperationCount--;
-            }
-
-            if (inboxMessageListCompletionBlock) {
-                inboxMessageListCompletionBlock();
-            }
-
-            [self sendMessageListUpdatedNotification];
-        }];
-
-        [self syncLocalMessageState];
+        [self.inboxDBManager.mainManagedObjectContext save:nil];
     }];
 
+
+    // Block is dispatched on the main queue
+    [self refreshInboxWithCompletionHandler:^{
+        if (self.batchOperationCount > 0) {
+            self.batchOperationCount--;
+        }
+
+        if (inboxMessageListCompletionBlock) {
+            inboxMessageListCompletionBlock();
+        }
+
+        [self sendMessageListUpdatedNotification];
+    }];
+
+    [self syncLocalMessageState];
     return disposable;
 }
 
@@ -301,85 +254,104 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 #pragma mark Helpers
 
 /**
- * Helper method to refresh the inbox messages. Performs any blocking database
- * operations on a background queue, but updates the messages and calls the
- * specified completionHandler on the main queue.
+ * Helper method to refresh the inbox messages.
  *
  * @param completionHandler Optional completion handler.
  */
 - (void)refreshInboxWithCompletionHandler:(void (^)())completionHandler {
-    [self.queue addOperationWithBlock:^{
-        NSString *predicateFormat = @"(messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)";
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateFormat, [NSDate date]];
-        NSMutableArray *savedMessages = [[self.inboxDBManager fetchMessagesWithPredicate:predicate] mutableCopy];
+    NSString *predicateFormat = @"(messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)";
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateFormat, [NSDate date]];
 
-        NSInteger unreadCount = 0;
+    // TODO: prefetch messages on the private context
 
-        for (UAInboxMessage *msg in savedMessages) {
-            msg.inbox = self;
-            if (msg.unread) {
-                unreadCount ++;
-            }
+    [self fetchMessagesWithPredicate:predicate
+                             context:self.inboxDBManager.mainManagedObjectContext
+                   completionHandler:^(NSArray *messages) {
 
-            // Add messsage's body url to the cachable urls
-            [UAURLProtocol addCachableURL:msg.messageBodyURL];
-        }
+                       NSInteger unreadCount = 0;
 
-        UA_LINFO(@"Inbox messages updated.");
+                       for (UAInboxMessage *msg in messages) {
+                           msg.inbox = self;
+                           if (msg.unread) {
+                               unreadCount ++;
+                           }
 
-        UA_LDEBUG(@"Loaded saved messages: %@.", savedMessages);
-        dispatch_async(dispatch_get_main_queue(), ^() {
+                           // Add messsage's body url to the cachable urls
+                           [UAURLProtocol addCachableURL:msg.messageBodyURL];
+                       }
 
-            self.unreadCount = unreadCount;
-            self.messages = [NSArray arrayWithArray:savedMessages];
+                       UA_LINFO(@"Inbox messages updated.");
 
-            if (completionHandler) {
-                completionHandler();
-            }
-        });
-    }];
+                       UA_LDEBUG(@"Loaded saved messages: %@.", messages);
+                       self.unreadCount = unreadCount;
+                       self.messages = [NSArray arrayWithArray:messages];
+                       
+                       if (completionHandler) {
+                           completionHandler();
+                       }
+                   }];
 }
 
 /**
  * Syncs any locally deleted and read messages with Urban Airship.
  */
 - (void)syncLocalMessageState {
-    NSPredicate *locallyReadPredicate = [NSPredicate predicateWithFormat:@"unreadClient == NO && unread == YES"];
-    NSArray *locallyReadMessages = [self.inboxDBManager fetchMessagesWithPredicate:locallyReadPredicate];
 
-    UA_LDEBUG(@"Marking %@ read on server.", locallyReadMessages);
-    if (locallyReadMessages.count) {
-        [self.client performBatchMarkAsReadForMessages:locallyReadMessages onSuccess:^{
-            [self.queue addOperationWithBlock:^{
-                for (UAInboxMessage *message in locallyReadMessages) {
-                    UA_LDEBUG(@"Successfully marked messages read on server.");
-                    if ([message isKindOfClass:[UAInboxMessage class]] && !message.data.isGone) {
-                        message.data.unread = NO;
-                    }
-                }
-                [self.inboxDBManager saveContext];
-            }];
-        } onFailure:^(UAHTTPRequest *request) {
-            UA_LDEBUG(@"Failed to mark messages read.");
-        }];
-    }
+    // Locally read messages
+    [self fetchMessagesWithPredicate:[NSPredicate predicateWithFormat:@"unreadClient == NO && unread == YES"]
+                             context:self.inboxDBManager.privateManagedObjectContext
+                   completionHandler:^(NSArray *locallyReadMessages) {
 
-    NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deletedClient == YES"];
-    NSArray *deletedMessages = [self.inboxDBManager fetchMessagesWithPredicate:deletedPredicate];
+                       if (!locallyReadMessages.count) {
+                           // Nothing to do
+                           return;
+                       }
 
-    UA_LDEBUG(@"Deleting %@ on server.", deletedMessages);
-    if (deletedMessages.count) {
-        [self.client performBatchDeleteForMessages:deletedMessages onSuccess:^{
-            UA_LDEBUG(@"Successfully deleted messages on server.");
-        } onFailure:^(UAHTTPRequest *request) {
-            UA_LDEBUG(@"Failed to delete messages.");
-        }];
-    }
+                       UA_LDEBUG(@"Marking %@ read on server.", locallyReadMessages);
+
+                       [self.client performBatchMarkAsReadForMessages:locallyReadMessages onSuccess:^{
+
+                           // Mark the messages as read on the private context
+                           [self.inboxDBManager.privateManagedObjectContext performBlock:^{
+                               for (UAInboxMessage *message in locallyReadMessages) {
+                                   UA_LDEBUG(@"Successfully marked messages read on server.");
+
+                                   if (!message.data.isGone) {
+                                       message.data.unread = NO;
+                                   }
+                               }
+
+                               [self.inboxDBManager.privateManagedObjectContext save:nil];
+                           }];
+
+                       } onFailure:^(UAHTTPRequest *request) {
+                           UA_LDEBUG(@"Failed to mark messages read.");
+                       }];
+                   }];
+
+
+    // Locally deleted messages
+    [self fetchMessagesWithPredicate:[NSPredicate predicateWithFormat:@"deletedClient == YES"]
+                             context:self.inboxDBManager.privateManagedObjectContext
+                   completionHandler:^(NSArray *deletedMessages) {
+
+                       if (!deletedMessages.count) {
+                           // Nothing to do
+                           return;
+                       }
+
+                       UA_LDEBUG(@"Deleting %@ on server.", deletedMessages);
+
+                       [self.client performBatchDeleteForMessages:deletedMessages onSuccess:^{
+                           UA_LDEBUG(@"Successfully deleted messages on server.");
+                       } onFailure:^(UAHTTPRequest *request) {
+                           UA_LDEBUG(@"Failed to delete messages.");
+                       }];
+                   }];
 }
 
 
-#pragma mark -
-#pragma mark Get messages
+
 
 - (NSUInteger)messageCount {
     return [self.messages count];
@@ -420,4 +392,115 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
     return attributedString;
 }
 
+- (void)fetchMessagesWithPredicate:(NSPredicate *)predicate
+                           context:(NSManagedObjectContext *)context
+                 completionHandler:(UAInboxMessageFetchCompletionHandler)completionHandler {
+
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    request.entity = [NSEntityDescription entityForName:kUAInboxDBEntityName
+                                              inManagedObjectContext:context];
+
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"messageSent" ascending:NO];
+    request.sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
+    request.predicate = predicate;
+
+    // TODO: prefetch objects
+
+    [context performBlock:^{
+        NSArray *resultData = [context executeFetchRequest:request error:nil];
+
+        NSMutableArray *resultMessages = [NSMutableArray array];
+        for (UAInboxMessageData *data in resultData) {
+            [resultMessages addObject:[UAInboxMessage messageWithData:data]];
+        }
+
+        if (completionHandler) {
+            completionHandler(resultMessages);
+        }
+    }];
+}
+
+- (void)syncMessagesWithResponse:(NSArray *)messages completionHandler:(void(^)())completionHandler {
+    [self.inboxDBManager.privateManagedObjectContext performBlock:^{
+
+        // Track the response messageIDs so we can remove any messages that are
+        // no longer in the response.
+        NSMutableSet *responseMessageIDs = [NSMutableSet set];
+
+        for (NSDictionary *messagePayload in messages) {
+            NSString *messageID = messagePayload[@"message_id"];
+
+            if (!messageID) {
+                UA_LDEBUG(@"Missing message ID: %@", messagePayload);
+                continue;
+            }
+
+            NSFetchRequest *request = [[NSFetchRequest alloc] init];
+            request.entity = [NSEntityDescription entityForName:kUAInboxDBEntityName
+                                         inManagedObjectContext:self.inboxDBManager.privateManagedObjectContext];
+            request.predicate = [NSPredicate predicateWithFormat:@"messageID == %@", messageID];
+            request.fetchLimit = 1;
+
+            NSArray *resultData = [self.inboxDBManager.privateManagedObjectContext executeFetchRequest:request error:nil];
+
+            UAInboxMessageData *data;
+            if (resultData.count) {
+                data = [resultData lastObject];
+            } else {
+                data = [NSEntityDescription insertNewObjectForEntityForName:kUAInboxDBEntityName
+                                                     inManagedObjectContext:self.inboxDBManager.privateManagedObjectContext];
+            }
+
+            [self updateMessageData:data withDictionary:messagePayload];
+
+            [responseMessageIDs addObject:messagePayload[@"message_id"]];
+        }
+
+        // Delete any messages that are not in the response
+        NSFetchRequest *request = [[NSFetchRequest alloc] init];
+        NSEntityDescription *entity = [NSEntityDescription entityForName:kUAInboxDBEntityName
+                                                  inManagedObjectContext:self.inboxDBManager.privateManagedObjectContext];
+        [request setEntity:entity];
+        [request setPredicate:[NSPredicate predicateWithFormat:@"NOT (messageID IN %@)", responseMessageIDs]];
+
+        NSArray *deletedMessages = [self.inboxDBManager.privateManagedObjectContext executeFetchRequest:request error:nil];
+        for (UAInboxMessageData *data in deletedMessages) {
+            UA_LDEBUG(@"Removing messages from coredata: %@", data.messageID);
+            [self.inboxDBManager.privateManagedObjectContext deleteObject:data];
+        }
+
+        // Save changes
+        [self.inboxDBManager.privateManagedObjectContext save:nil];
+
+        if (completionHandler) {
+            completionHandler();
+        }
+    }];
+}
+
+- (void)updateMessageData:(UAInboxMessageData *)data withDictionary:(NSDictionary *)dict {
+
+    dict = [dict dictionaryWithValuesForKeys:[[dict keysOfEntriesPassingTest:^BOOL(id key, id obj, BOOL *stop) {
+        return ![obj isEqual:[NSNull null]];
+    }] allObjects]];
+
+    if (!data.isGone) {
+        data.messageID = dict[@"message_id"];
+        data.contentType = dict[@"content_type"];
+        data.title = dict[@"title"];
+        data.extra = dict[@"extra"];
+        data.messageBodyURL = [NSURL URLWithString:dict[@"message_body_url"]];
+        data.messageURL = [NSURL URLWithString:dict[@"message_url"]];
+        data.unread = [dict[@"unread"] boolValue];
+        data.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:dict[@"message_sent"]];
+        data.rawMessageObject = dict;
+        
+        NSString *messageExpiration = dict[@"message_expiry"];
+        if (messageExpiration) {
+            data.messageExpiration = [[UAUtils ISODateFormatterUTC] dateFromString:messageExpiration];
+        } else {
+            data.messageExpiration = nil;
+        }
+    }
+}
 @end
