@@ -728,4 +728,22 @@ void (^updateTagsFailureDoBlock)(NSInvocation *);
     XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Should call updateNamedUserTags request.");
 }
 
+/**
+ * Test clear pending named user tags when named user ID changes.
+ */
+- (void)testNamedUserIDChangeClearPendingTags {
+    self.namedUser.identifier = @"fakeNamedUser";
+    self.namedUser.pendingAddTags = self.addTagGroups;
+    self.namedUser.pendingRemoveTags = self.removeTagGroups;
+
+    XCTAssertEqual((NSUInteger)1, self.namedUser.pendingAddTags.count, @"Should contain 1 tag group");
+    XCTAssertEqual((NSUInteger)1, self.namedUser.pendingRemoveTags.count, @"Should contain 1 tag group");
+
+    // Change named user ID should clear the pending tags
+    self.namedUser.identifier = @"anotherNamedUser";
+
+    XCTAssertNil(self.namedUser.pendingAddTags, @"Pending add tags should be nil");
+    XCTAssertNil(self.namedUser.pendingRemoveTags, @"Pending remove tags should be nil");
+}
+
 @end

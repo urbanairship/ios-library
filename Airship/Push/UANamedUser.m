@@ -103,6 +103,10 @@ NSString *const UANamedUserRemoveTagGroupsSettingsKey = @"UANamedUserRemoveTagGr
         // Update the change token.
         self.changeToken = [NSUUID UUID].UUIDString;
 
+        // When named user ID change, clear pending named user tags.
+        self.pendingAddTags = nil;
+        self.pendingRemoveTags = nil;
+
         // Update named user.
         [self update];
 
