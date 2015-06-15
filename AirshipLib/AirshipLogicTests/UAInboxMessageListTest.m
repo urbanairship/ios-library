@@ -32,6 +32,8 @@
 #import "UATestSynchronizer.h"
 #import "UAirship.h"
 #import "UAConfig.h"
+#import "UAInboxDBManager+Internal.h"
+#import "UAUtils.h"
 
 static UAUser *mockUser = nil;
 
@@ -285,6 +287,36 @@ static UAUser *mockUser = nil;
 
     // Wait for main queue block to execute
     [testSynchronizer wait];
+}
+
+- (NSDictionary *)createMessageDictionaryWithMessageID:(NSString *)messageID {
+    return @{@"message_id": messageID,
+             @"title": @"someTitle",
+             @"content_type": @"someContentType",
+             @"extra": @{@"someKey":@"someValue"},
+             @"message_body_url": @"http://someMessageBodyUrl",
+             @"message_url": @"http://someMessageUrl",
+             @"unread": @"0",
+             @"message_sent": @"2013-08-13 00:16:22" };
+
+}
+
+- (void)testMarkAsReadPerformance {
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListWillUpdateNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListUpdatedNotification object:nil];
+
+
+    NSArray *messages = self.messageList.messages;
+
+    for (int i = 0; i < 200; i++) {
+        [self.messageList.inboxDBManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:[NSUUID UUID].UUIDString]
+                                                          context:self.messageList.inboxDBManager.mainContext];
+    }
+
+    [self measureBlock:^{
+        [self.messageList markMessagesRead:messages completionHandler:nil];
+    }];
 }
 
 @end
