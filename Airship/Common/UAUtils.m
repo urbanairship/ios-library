@@ -71,7 +71,10 @@
     sysctlbyname("hw.machine", NULL, &size, NULL, 0); 
     
     // Allocate the space to store name
-    char *name = malloc(size);
+    if !(char *name = malloc(size)) {
+        UA_LERR(@"Out of memory");
+        return nil;
+    };
     
     // Get the platform name
     sysctlbyname("hw.machine", name, &size, NULL, 0);
