@@ -101,7 +101,7 @@
     NSMutableDictionary *pendingDictionary = [NSMutableDictionary dictionary];
     [pendingDictionary setValue:pendingTags forKey:tagGroup];
 
-    NSDictionary *combinedDictionary = [UATagUtils addTags:tags group:tagGroup tags:pendingDictionary];
+    NSDictionary *combinedDictionary = [UATagUtils addPendingTags:tags group:tagGroup pendingTagsDictionary:pendingDictionary];
     XCTAssertEqual(combinedDictionary.count, 1, "there should be 1 tag group");
     NSMutableArray *tagGroupArray = [combinedDictionary valueForKey:tagGroup];
     XCTAssertTrue(tagGroupArray.count == 4, @"tags should have been added");
@@ -122,7 +122,7 @@
     NSMutableDictionary *pendingDictionary = [NSMutableDictionary dictionary];
     [pendingDictionary setValue:pendingTags forKey:tagGroup];
 
-    NSDictionary *combinedDictionary = [UATagUtils removeTags:tags group:tagGroup tags:pendingDictionary];
+    NSDictionary *combinedDictionary = [UATagUtils removePendingTags:tags group:tagGroup pendingTagsDictionary:pendingDictionary];
     XCTAssertEqual(combinedDictionary.count, 1, "there should be 1 tag group");
     NSMutableArray *tagGroupArray = [combinedDictionary valueForKey:tagGroup];
     XCTAssertTrue(tagGroupArray.count == 2, @"tags should have been removed");

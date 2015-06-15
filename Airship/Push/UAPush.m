@@ -529,10 +529,10 @@ NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
     }
 
     // Check if remove tags contain any tags to add.
-    [self setPendingRemoveTags:[UATagUtils removeTags:normalizedTags group:tagGroupID tags:self.pendingRemoveTags]];
+    [self setPendingRemoveTags:[UATagUtils removePendingTags:normalizedTags group:tagGroupID pendingTagsDictionary:self.pendingRemoveTags]];
 
     // Combine the tags to be added with pendingAddTags.
-    [self setPendingAddTags:[UATagUtils addTags:normalizedTags group:tagGroupID tags:self.pendingAddTags]];
+    [self setPendingAddTags:[UATagUtils addPendingTags:normalizedTags group:tagGroupID pendingTagsDictionary:self.pendingAddTags]];
 }
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
@@ -544,10 +544,10 @@ NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
     }
 
     // Check if add tags contain any tags to be removed.
-    [self setPendingAddTags:[UATagUtils removeTags:normalizedTags group:tagGroupID tags:self.pendingAddTags]];
+    [self setPendingAddTags:[UATagUtils removePendingTags:normalizedTags group:tagGroupID pendingTagsDictionary:self.pendingAddTags]];
 
     // Combine the tags to be removed with pendingRemoveTags.
-    [self setPendingRemoveTags:[UATagUtils addTags:normalizedTags group:tagGroupID tags:self.pendingRemoveTags]];
+    [self setPendingRemoveTags:[UATagUtils addPendingTags:normalizedTags group:tagGroupID pendingTagsDictionary:self.pendingRemoveTags]];
 }
 
 - (void)setBadgeNumber:(NSInteger)badgeNumber {

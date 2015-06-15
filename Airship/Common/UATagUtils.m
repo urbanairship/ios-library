@@ -114,14 +114,14 @@
 
     NSString *trimmedTagGroup = [tagGroup stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 
-    if (!trimmedTagGroup || [trimmedTagGroup length] == 0) {
+    if (!trimmedTagGroup.length) {
         UA_LERR(@"The tag group ID string cannot be nil or length must be greater 0.");
         retVal = NO;
     }
     return retVal;
 }
 
-+ (NSDictionary *)addTags:(NSArray *)tagsToAdd group:(NSString *)tagGroup tags:(NSDictionary *)pendingTags {
++ (NSDictionary *)addPendingTags:(NSArray *)tagsToAdd group:(NSString *)tagGroup pendingTagsDictionary:(NSDictionary *)pendingTags {
     NSMutableDictionary *combinedTags = [NSMutableDictionary dictionaryWithDictionary:pendingTags];
     NSMutableSet *addTagsSet = [NSMutableSet setWithArray:combinedTags[tagGroup]];
     [addTagsSet addObjectsFromArray:tagsToAdd];
@@ -133,7 +133,7 @@
     return [NSDictionary dictionaryWithDictionary:combinedTags];
 }
 
-+ (NSDictionary *)removeTags:(NSArray *)tagsToRemove group:(NSString *)tagGroup tags:(NSDictionary *)pendingTags {
++ (NSDictionary *)removePendingTags:(NSArray *)tagsToRemove group:(NSString *)tagGroup pendingTagsDictionary:(NSDictionary *)pendingTags {
     NSMutableDictionary *combinedTags = [NSMutableDictionary dictionaryWithDictionary:pendingTags];
     NSMutableArray *removeTagsArray = [NSMutableArray arrayWithArray:combinedTags[tagGroup]];
     [removeTagsArray removeObjectsInArray:tagsToRemove];

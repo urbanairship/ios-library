@@ -92,7 +92,7 @@ typedef NS_OPTIONS(NSInteger, UATagType) {
  * @param pendingTags The pending tags to add to.
  * @return The combined tags.
  */
-+ (NSDictionary *)addTags:(NSArray *)tagsToAdd group:(NSString *)tagGroup tags:(NSDictionary *)pendingTags;
++ (NSDictionary *)addPendingTags:(NSArray *)tagsToAdd group:(NSString *)tagGroup pendingTagsDictionary:(NSDictionary *)pendingTags;
 
 /**
  * Remove tags from pending tags.
@@ -101,6 +101,6 @@ typedef NS_OPTIONS(NSInteger, UATagType) {
  * @param pendingTags The pending tags to remove tags from.
  * @return The combined tags.
  */
-+ (NSDictionary *)removeTags:(NSArray *)tagsToRemove group:(NSString *)tagGroup tags:(NSDictionary *)pendingTags;
++ (NSDictionary *)removePendingTags:(NSArray *)tagsToRemove group:(NSString *)tagGroup pendingTagsDictionary:(NSDictionary *)pendingTags;
 
 @end

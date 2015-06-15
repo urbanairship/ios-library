@@ -469,29 +469,29 @@ void (^updateTagsFailureDoBlock)(NSInvocation *);
     XCTAssertEqualObjects([self.dataStore valueForKey:UANamedUserAddTagGroupsSettingsKey], self.namedUser.pendingAddTags,
                           @"pendingAddTags are not stored correctly in standardUserDefaults");
 
-    // test addTags
+    // Test addTags
     NSArray *tags = @[@"tag1", @"tag2", @"tag3"];
     [self.namedUser addTags:tags group:@"another-tag-group"];
 
     XCTAssertEqual((NSUInteger)2, self.namedUser.pendingAddTags.count, @"should contain 2 tag groups");
 
-    // test addTags with overlapping tags in same group
+    // Test addTags with overlapping tags in same group
     NSArray *tags2 = @[@"tag3", @"tag4", @"tag5"];
     [self.namedUser addTags:tags2 group:@"another-tag-group"];
     XCTAssertEqual((NSUInteger)2, self.namedUser.pendingAddTags.count, @"should contain 2 tag groups");
     NSArray *anotherTagArray = [self.namedUser.pendingAddTags objectForKey:@"another-tag-group"];
     XCTAssertEqual((NSUInteger)5, anotherTagArray.count, @"should contain 5 tags in array");
 
-    // test addTags with empty tags
+    // Test addTags with empty tags
     NSArray *emptyTagsArray = @[];
     [self.namedUser addTags:emptyTagsArray group:@"some-tag-group"];
     XCTAssertEqual((NSUInteger)2, self.namedUser.pendingAddTags.count, @"should still contain 2 tag groups");
 
-    // test addTags with nil group ID
+    // Test addTags with nil group ID
     [self.namedUser addTags:tags2 group:nil];
     XCTAssertEqual((NSUInteger)2, self.namedUser.pendingAddTags.count, @"should still contain 2 tag groups");
 
-    // test addTags with tags with whitespace
+    // Test addTags with tags with whitespace
     NSArray *whitespaceTags = @[@" tag1 ", @" tag2 ", @" tag3 "];
     [self.namedUser addTags:whitespaceTags group:@"another-tag-group"];
     XCTAssertEqual((NSUInteger)2, self.namedUser.pendingAddTags.count, @"should contain 2 tag groups");
