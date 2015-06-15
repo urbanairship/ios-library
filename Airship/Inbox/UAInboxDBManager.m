@@ -47,7 +47,7 @@
 - (instancetype)initWithConfig:(UAConfig *)config {
     self = [super init];
     if (self) {
-        self.storeName = [NSString stringWithFormat:UA_CORE_DATA_STORE_NAME, config.appKey];
+        self.storeName = [NSString stringWithFormat:kUACoreDataStoreName, config.appKey];
     }
 
     return self;
@@ -57,7 +57,7 @@
     @synchronized(self) {
         if (!_mainContext) {
             NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-            if (coordinator != nil) {
+            if (coordinator) {
                 _mainContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
                 [_mainContext setPersistentStoreCoordinator:coordinator];
 
@@ -75,7 +75,7 @@
     @synchronized(self) {
         if (!_privateContext) {
             NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-            if (coordinator != nil) {
+            if (coordinator) {
                 _privateContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
                 [_privateContext setPersistentStoreCoordinator:coordinator];
 
@@ -175,7 +175,7 @@
             UA_LERR(@"Error adding persistent store: %@, %@", error, [error userInfo]);
 
             [[NSFileManager defaultManager] removeItemAtURL:self.storeURL error:nil];
-            [_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:self.storeURL options:nil error:&error];
+            [_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:self.storeURL options:nil error:nil];
         }
     }
 
@@ -186,15 +186,14 @@
     if (!_storeURL) {
         NSFileManager *fm = [NSFileManager defaultManager];
         NSURL *libraryDirectoryURL = [[fm URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
-        NSURL *directoryURL = [libraryDirectoryURL URLByAppendingPathComponent: UA_CORE_DATA_DIRECTORY_NAME];
+        NSURL *directoryURL = [libraryDirectoryURL URLByAppendingPathComponent:kUACoreDataStoreName];
 
         // Create the store directory if it doesnt exist
         if (![fm fileExistsAtPath:[directoryURL path]]) {
             NSError *error = nil;
             if (![fm createDirectoryAtURL:directoryURL withIntermediateDirectories:YES attributes:nil error:&error]) {
                 UA_LERR(@"Error creating inbox directory %@: %@", [directoryURL lastPathComponent], error);
-            }
-            else {
+            } else {
                 [UAUtils addSkipBackupAttributeToItemAtURL:directoryURL];
             }
         }
@@ -309,6 +308,10 @@
     }
 
     [context save:nil];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

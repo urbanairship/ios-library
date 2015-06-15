@@ -1,4 +1,3 @@
-
 /*
  Copyright 2009-2015 Urban Airship Inc. All rights reserved.
 
@@ -135,6 +134,7 @@
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
     }
+
     return [timeoutDate timeIntervalSinceNow] > 0;
 }
 

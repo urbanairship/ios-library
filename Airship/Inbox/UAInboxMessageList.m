@@ -330,7 +330,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 }
 
 /**
- * Refreshes the publically exposed inbox messages, by prefetching on the private
+ * Refreshes the publicly exposed inbox messages, by prefetching on the private
  * context and then updating on the main context.
  *
  * @param completionHandler Optional completion handler.

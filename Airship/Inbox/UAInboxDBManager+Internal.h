@@ -27,9 +27,8 @@
 #import "UAGlobal.h"
 
 
-#define UA_OLD_DB_NAME @"UAInbox.db"
-#define UA_CORE_DATA_STORE_NAME @"Inbox-%@.sqlite"
-#define UA_CORE_DATA_DIRECTORY_NAME @"UAInbox"
+#define kUACoreDataStoreName @"Inbox-%@.sqlite"
+#define kUACoreDataDirectory @"UAInbox"
 #define kUAInboxDBEntityName @"UAInboxMessage"
 
 @class UAConfig;
@@ -39,12 +38,32 @@
 
 @interface UAInboxDBManager : NSObject
 
-@property (nonatomic, readonly) NSURL *storeURL;
-@property (nonatomic, readonly) NSManagedObjectContext *mainContext;
-@property (nonatomic, readonly) NSManagedObjectContext *privateContext;
-@property (nonatomic, readonly) NSManagedObjectModel *managedObjectModel;
-@property (nonatomic, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+/**
+ * The URL for the core data store.
+ */
+@property (readonly) NSURL *storeURL;
 
+/**
+ * Manged object context on the main queue. Any public inbox messages must be fetched
+ * from this context to avoid concurrency violations.
+ */
+@property (readonly) NSManagedObjectContext *mainContext;
+
+/**
+ * Managed object context on a private queue. Should only be used
+ * to perform background operations and prefetching.
+ */
+@property (readonly) NSManagedObjectContext *privateContext;
+
+/**
+ * The managed object model for inbox messages.
+ */
+@property (readonly) NSManagedObjectModel *managedObjectModel;
+
+/**
+ * The core data persistent store coordinator.
+ */
+@property (readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
 /**
  * Initializes the inbox db manager with the given config.
