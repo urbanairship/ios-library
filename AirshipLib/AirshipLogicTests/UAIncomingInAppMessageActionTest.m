@@ -151,6 +151,22 @@
 }
 
 /**
+ * Test performWithArguments conforms to the following:
+ * - Messages are saved in UASituationBackgroundPush/UASituationForegroundPush
+ * - In this case if there's a message ID in the APNS metadata, an open inbox action is inserted,
+ *   but only if one wasn't already present
+ * - Pending messages are cleared and a direct open event is dispatched in UASituationLaunchedFromPush and 
+ *   UASituationForegroundInteractiveButton/UASituationBackgroundInteractiveButton
+ */
+- (void)testPerform {
+    [self validatePerformWithArguments:self.arguments];
+    [self validatePerformWithArguments:self.argumentsWithOpenInbox];
+    [self validatePerformWithArguments:self.argumentsWithRichPush];
+}
+
+// Helper methods for testPerfom
+
+/**
  * Validate that in situations where the IAM should be saved as pending,
  * it is saved, and the send ID as well as the open inbox action (if applicable)
  * are set.
@@ -259,19 +275,6 @@
     }
 }
 
-/**
- * Test performWithArguments conforms to the following:
- * - Messages are saved in UASituationBackgroundPush/UASituationForegroundPush
- * - In this case if there's a message ID in the APNS metadata, an open inbox action is inserted,
- *   but only if one wasn't already present
- * - Pending messages are cleared and a direct open event is dispatched in UASituationLaunchedFromPush and 
- *   UASituationForegroundInteractiveButton/UASituationBackgroundInteractiveButton
- */
-- (void)testPerform {
-    [self validatePerformWithArguments:self.arguments];
-    [self validatePerformWithArguments:self.argumentsWithOpenInbox];
-    [self validatePerformWithArguments:self.argumentsWithRichPush];
-}
 
 
 @end
