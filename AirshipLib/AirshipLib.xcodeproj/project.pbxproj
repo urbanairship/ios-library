@@ -903,6 +903,7 @@
 				1F610DC317835C3A00BCD96E /* UAInbox.m */,
 				1F610DC417835C3A00BCD96E /* UAInboxAPIClient.h */,
 				1F610DC517835C3A00BCD96E /* UAInboxAPIClient.m */,
+				CCB7DF5C17BBF71000CEDC56 /* UAInboxDBManager+Internal.h */,
 				1F610DC717835C3A00BCD96E /* UAInboxDBManager.m */,
 				49C1F08B197DDB5600DD67DE /* UAInboxMessage+Internal.h */,
 				49C1F07D1978523300DD67DE /* UAInboxMessage.h */,
@@ -919,7 +920,6 @@
 				1F610DD417835C3A00BCD96E /* UAInboxUtils.m */,
 				CC523FAE17B985F700233005 /* UAJSONValueTransformer.h */,
 				CC523FAF17B985F700233005 /* UAJSONValueTransformer.m */,
-				CCB7DF5C17BBF71000CEDC56 /* UAInboxDBManager+Internal.h */,
 			);
 			path = Inbox;
 			sourceTree = "<group>";

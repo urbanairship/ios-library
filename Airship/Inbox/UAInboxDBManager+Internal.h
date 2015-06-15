@@ -36,6 +36,10 @@
 @class UAInboxMessageData;
 
 
+/**
+ * Manager class for the Rich Push CoreData store. Use this class
+ * to add, delete, fetch and update messages in the database.
+ */
 @interface UAInboxDBManager : NSObject
 
 /**
@@ -44,14 +48,18 @@
 @property (readonly) NSURL *storeURL;
 
 /**
- * Manged object context on the main queue. Any public inbox messages must be fetched
- * from this context to avoid concurrency violations.
+ * Manged object context on the main queue. Any publically visible inbox messages must be fetched
+ * from this context, and any user-initiated mutations to the messages must be performed on this context to
+ * to avoid concurrency violations. Messages fetched from this context can only be safely read or modified
+ * from the main queue.
  */
 @property (readonly) NSManagedObjectContext *mainContext;
 
 /**
  * Managed object context on a private queue. Should only be used
- * to perform background operations and prefetching.
+ * to perform background operations and prefetching, where messages are loaded on the
+ * private context so that they can be cached and quickly read on the main context. Messages
+ * fetched from this context can only be safely read or modified from its associated worker queue.
  */
 @property (readonly) NSManagedObjectContext *privateContext;
 
