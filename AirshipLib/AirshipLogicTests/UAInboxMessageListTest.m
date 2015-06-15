@@ -307,15 +307,15 @@ static UAUser *mockUser = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListUpdatedNotification object:nil];
 
 
-    NSArray *messages = self.messageList.messages;
-
     for (int i = 0; i < 200; i++) {
         [self.messageList.inboxDBManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:[NSUUID UUID].UUIDString]
                                                           context:self.messageList.inboxDBManager.mainContext];
     }
 
+    [self.messageList loadSavedMessages];
+
     [self measureBlock:^{
-        [self.messageList markMessagesRead:messages completionHandler:nil];
+        [self.messageList markMessagesRead:self.messageList.messages completionHandler:nil];
     }];
 }
 
