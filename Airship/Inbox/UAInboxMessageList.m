@@ -185,33 +185,40 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
         inboxMessageListCompletionBlock = nil;
     }];
 
-    UA_LDEBUG(@"Marking messages as read %@.", messages);
+    // Gather the object IDs so we can perform the operation on the private context
+    NSArray *objectIDs = [messages valueForKeyPath:@"data.objectID"];
 
-    NSManagedObjectContext *context = self.inboxDBManager.mainContext;
+    // Fetch the objects on the private context
+    NSManagedObjectContext *context = self.inboxDBManager.privateContext;
 
-    [context performBlockAndWait:^{
-        for (UAInboxMessage *message in messages) {
-            if ([message isKindOfClass:[UAInboxMessage class]] && !message.data.isGone) {
-                message.data.unreadClient = NO;
-            }
-        }
+    [self.inboxDBManager fetchMessagesWithPredicate:[NSPredicate predicateWithFormat:@"self IN %@", objectIDs]
+                                            context:context
+                                  completionHandler:^(NSArray *messages) {
 
-        [context save:nil];
-    }];
+                                      UA_LDEBUG(@"Marking messages as read %@.", messages);
+                                      for (UAInboxMessage *message in messages) {
+                                          if ([message isKindOfClass:[UAInboxMessage class]] && !message.data.isGone) {
+                                              message.data.unreadClient = NO;
+                                          }
+                                      }
 
-    [self refreshInboxWithCompletionHandler:^{
-        if (self.batchOperationCount > 0) {
-            self.batchOperationCount--;
-        }
+                                      [context save:nil];
 
-        if (inboxMessageListCompletionBlock) {
-            inboxMessageListCompletionBlock();
-        }
+                                      // Refresh the messages
+                                      [self refreshInboxWithCompletionHandler:^{
+                                          if (self.batchOperationCount > 0) {
+                                              self.batchOperationCount--;
+                                          }
 
-        [self sendMessageListUpdatedNotification];
-    }];
+                                          if (inboxMessageListCompletionBlock) {
+                                              inboxMessageListCompletionBlock();
+                                          }
 
-    [self syncLocalMessageState];
+                                          [self sendMessageListUpdatedNotification];
+                                      }];
+
+                                      [self syncLocalMessageState];
+                                  }];
 
     return disposable;
 }
@@ -225,36 +232,43 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
         inboxMessageListCompletionBlock = nil;
     }];
 
-    UA_LDEBUG(@"Marking messages as deleted %@.", messages);
 
-    NSManagedObjectContext *context = self.inboxDBManager.mainContext;
+    // Gather the object IDs so we can perform the operation on the private context
+    NSArray *objectIDs = [messages valueForKeyPath:@"data.objectID"];
 
-    [context performBlockAndWait:^{
+    // Fetch the objects on the private context
+    NSManagedObjectContext *context = self.inboxDBManager.privateContext;
 
-        for (UAInboxMessage *message in messages) {
-            if ([message isKindOfClass:[UAInboxMessage class]] && !message.data.isGone) {
-                message.data.deletedClient = YES;
-            }
-        }
+    [self.inboxDBManager fetchMessagesWithPredicate:[NSPredicate predicateWithFormat:@"self IN %@", objectIDs]
+                                            context:context
+                                  completionHandler:^(NSArray *messages) {
 
-        [context save:nil];
-    }];
+                                      UA_LDEBUG(@"Marking messages as deleted %@.", messages);
+                                      for (UAInboxMessage *message in messages) {
+                                          if ([message isKindOfClass:[UAInboxMessage class]] && !message.data.isGone) {
+                                              message.data.deletedClient = YES;
+                                          }
+                                      }
+
+                                      [context save:nil];
+
+                                      // Refresh the messages
+                                      [self refreshInboxWithCompletionHandler:^{
+                                          if (self.batchOperationCount > 0) {
+                                              self.batchOperationCount--;
+                                          }
+
+                                          if (inboxMessageListCompletionBlock) {
+                                              inboxMessageListCompletionBlock();
+                                          }
+
+                                          [self sendMessageListUpdatedNotification];
+                                      }];
+
+                                      [self syncLocalMessageState];
+                                  }];
 
 
-    // Block is dispatched on the main queue
-    [self refreshInboxWithCompletionHandler:^{
-        if (self.batchOperationCount > 0) {
-            self.batchOperationCount--;
-        }
-
-        if (inboxMessageListCompletionBlock) {
-            inboxMessageListCompletionBlock();
-        }
-
-        [self sendMessageListUpdatedNotification];
-    }];
-
-    [self syncLocalMessageState];
     return disposable;
 }
 
@@ -265,7 +279,6 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
         [self sendMessageListUpdatedNotification];
     }];
 }
-
 
 #pragma mark -
 #pragma mark Internal/Helper Methods
@@ -357,9 +370,9 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
                   // Add messsage's body url to the cachable urls
                   [UAURLProtocol addCachableURL:msg.messageBodyURL];
               }
-              
+
               UA_LINFO(@"Inbox messages updated.");
-              
+
               UA_LDEBUG(@"Loaded saved messages: %@.", messages);
               self.unreadCount = unreadCount;
               self.messages = [NSArray arrayWithArray:messages];
