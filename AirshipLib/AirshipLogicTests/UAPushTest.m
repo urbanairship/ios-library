@@ -2478,7 +2478,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     XCTAssertEqualObjects(tagsNoSpaces, [self.push.pendingAddTags valueForKey:groupID], @"whitespace was not trimmed from tags");
 
     NSArray *moreTags = @[@"   tag-two   ", @"tag-three   "];
-    NSArray *moreTagsNoSpaces = @[@"tag-two", @"tag-three"];
 
     [self.push addTags:moreTags group:groupID];
 
@@ -2502,7 +2501,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     XCTAssertEqualObjects(tagsNoSpaces, [self.push.pendingRemoveTags valueForKey:groupID], @"whitespace was not trimmed from tags");
 
     NSArray *moreTags = @[@"   tag-two   ", @"tag-three   "];
-    NSArray *moreTagsNoSpaces = @[@"tag-two", @"tag-three"];
 
     [self.push removeTags:moreTags group:groupID];
 
@@ -2547,9 +2545,11 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     XCTAssertEqual((NSUInteger)2, self.push.pendingAddTags.count, @"should still contain 2 tag groups");
 
     // test addTags with tags with whitespace
-    NSArray *whitespaceTags = @[@"tag1", @"tag2", @" tag3 "];
-    [self.push addTags:tags group:@"another-tag-group"];
+    NSArray *whitespaceTags = @[@"tag1", @"tag2", @" tag6 "];
+    [self.push addTags:whitespaceTags group:@"another-tag-group"];
     XCTAssertEqual((NSUInteger)2, self.push.pendingAddTags.count, @"should contain 2 tag groups");
+    anotherTagArray = [self.push.pendingAddTags objectForKey:@"another-tag-group"];
+    XCTAssertEqual((NSUInteger)6, anotherTagArray.count, @"should contain 6 tags in array");
 
     self.push.pendingAddTags = nil;
     XCTAssertEqual((NSUInteger)0, self.push.pendingAddTags.count, @"pendingAddTags should return an empty dictionary when set to nil");

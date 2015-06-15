@@ -78,4 +78,29 @@ typedef NS_OPTIONS(NSInteger, UATagType) {
  */
 + (NSArray *)normalizeTags:(NSArray *)tags;
 
+/**
+ * Check if tags and tagGroupID are not empty.
+ * @param tags Tags as an NSArray.
+ * @param tagGroup Tag group ID as an NSString.
+ */
++ (BOOL)isValid:(NSArray *)tags group:(NSString *)tagGroup;
+
+/**
+ * Add tags to pending tags.
+ * @param tagsToAdd Tags to combine with pending tags.
+ * @param tagGroup Tag group ID to combine with pending tags.
+ * @param pendingTags The pending tags to add to.
+ * @return The combined tags.
+ */
++ (NSMutableDictionary *)addTags:(NSArray *)tagsToAdd group:(NSString *)tagGroup tags:(NSMutableDictionary *)pendingTags;
+
+/**
+ * Remove tags from pending tags.
+ * @param tagsToRemove Tags to remove from pending tags.
+ * @param tagGroup Tag groupID to combine with pending tags.
+ * @param pendingTags The pending tags to remove tags from.
+ * @return The combined tags.
+ */
++ (NSMutableDictionary *)removeTags:(NSArray *)tagsToRemove group:(NSString *)tagGroup tags:(NSMutableDictionary *)pendingTags;
+
 @end
