@@ -42,9 +42,9 @@
 #import "UAConfig.h"
 #import "UAUserNotificationCategory+Internal.h"
 #import "UAInboxUtils.h"
+#import "UATagGroupsAPIClient.h"
+#import "UATagUtils.h"
 
-#define kUAMinTagLength 1
-#define kUAMaxTagLength 127
 #define kUANotificationActionKey @"com.urbanairship.interactive_actions"
 
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
@@ -71,6 +71,10 @@ NSString *const UAPushEnabledKey = @"UAPushEnabled";
 // Quiet time dictionary keys
 NSString *const UAPushQuietTimeStartKey = @"start";
 NSString *const UAPushQuietTimeEndKey = @"end";
+
+// Channel tag group keys
+NSString *const UAPushAddTagGroupsSettingsKey = @"UAPushAddTagGroups";
+NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
 
 @implementation UAPush
 
@@ -106,6 +110,8 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 
         self.channelRegistrar = [UAChannelRegistrar channelRegistrarWithConfig:config];
         self.channelRegistrar.delegate = self;
+
+        self.tagGroupsAPIClient = [UATagGroupsAPIClient clientWithConfig:config];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(applicationDidBecomeActive)
@@ -248,7 +254,7 @@ NSString *const UAPushQuietTimeEndKey = @"end";
         currentTags = [NSArray array];
     }
 
-    NSArray *normalizedTags = [self normalizeTags:currentTags];
+    NSArray *normalizedTags = [UATagUtils normalizeTags:currentTags];
 
     //sync tags to prevent the tags property invocation from constantly logging tag set failure
     if ([currentTags count] != [normalizedTags count]) {
@@ -259,24 +265,23 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 }
 
 - (void)setTags:(NSArray *)tags {
-    [self.dataStore setObject:[self normalizeTags:tags] forKey:UAPushTagsSettingsKey];
+    [self.dataStore setObject:[UATagUtils normalizeTags:tags] forKey:UAPushTagsSettingsKey];
 }
 
--(NSArray *)normalizeTags:(NSArray *)tags {
-    NSMutableArray *normalizedTags = [[NSMutableArray alloc] init];
+- (NSDictionary *)pendingAddTags {
+    return [self.dataStore objectForKey:UAPushAddTagGroupsSettingsKey];
+}
 
-    for (NSString *tag in tags) {
+- (void)setPendingAddTags:(NSDictionary *)addTagGroups {
+    [self.dataStore setObject:addTagGroups forKey:UAPushAddTagGroupsSettingsKey];
+}
 
-        NSString *trimmedTag = [tag stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+- (NSDictionary *)pendingRemoveTags {
+    return [self.dataStore objectForKey:UAPushRemoveTagGroupsSettingsKey];
+}
 
-        if ([trimmedTag length] >= kUAMinTagLength && [trimmedTag length] <= kUAMaxTagLength) {
-            [normalizedTags addObject:trimmedTag];
-        } else {
-            UA_LERR(@"Tags must be > 0 and < 128 characters in length, tag %@ has been removed from the tag set", tag);
-        }
-    }
-
-    return [NSArray arrayWithArray:normalizedTags];
+- (void)setPendingRemoveTags:(NSDictionary *)removeTagGroups {
+    [self.dataStore setObject:removeTagGroups forKey:UAPushRemoveTagGroupsSettingsKey];
 }
 
 - (BOOL)userPushNotificationsEnabled {
@@ -388,7 +393,6 @@ NSString *const UAPushQuietTimeEndKey = @"end";
     [allCategories unionSet:self.userNotificationCategories];
     self.allUserNotificationCategories = allCategories;
 }
-
 
 - (NSDictionary *)quietTime {
     return [self.dataStore dictionaryForKey:UAPushQuietTimeSettingsKey];
@@ -513,6 +517,39 @@ NSString *const UAPushQuietTimeEndKey = @"end";
     [self.dataStore setObject:mutableTags forKey:UAPushTagsSettingsKey];
 }
 
+#pragma mark -
+#pragma mark Open APIs - UA Tag Groups APIs
+
+- (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
+
+    NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
+
+    if (![UATagUtils isValid:normalizedTags group:tagGroupID]) {
+        return;
+    }
+
+    // Check if remove tags contain any tags to add.
+    [self setPendingRemoveTags:[UATagUtils removePendingTags:normalizedTags group:tagGroupID pendingTagsDictionary:self.pendingRemoveTags]];
+
+    // Combine the tags to be added with pendingAddTags.
+    [self setPendingAddTags:[UATagUtils addPendingTags:normalizedTags group:tagGroupID pendingTagsDictionary:self.pendingAddTags]];
+}
+
+- (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
+
+    NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
+
+    if (![UATagUtils isValid:normalizedTags group:tagGroupID]) {
+        return;
+    }
+
+    // Check if add tags contain any tags to be removed.
+    [self setPendingAddTags:[UATagUtils removePendingTags:normalizedTags group:tagGroupID pendingTagsDictionary:self.pendingAddTags]];
+
+    // Combine the tags to be removed with pendingRemoveTags.
+    [self setPendingRemoveTags:[UATagUtils addPendingTags:normalizedTags group:tagGroupID pendingTagsDictionary:self.pendingRemoveTags]];
+}
+
 - (void)setBadgeNumber:(NSInteger)badgeNumber {
 
     if ([[UIApplication sharedApplication] applicationIconBadgeNumber] == badgeNumber) {
@@ -528,7 +565,7 @@ NSString *const UAPushQuietTimeEndKey = @"end";
     // an update call
     if (self.autobadgeEnabled && (self.deviceToken || self.channelID)) {
         UA_LDEBUG(@"Sending autobadge update to UA server.");
-        [self updateRegistrationForcefully:YES];
+        [self updateChannelRegistrationForcefully:YES];
     }
 }
 
@@ -699,7 +736,7 @@ BOOL deferChannelCreationOnForeground = false;
 
     if ([self.dataStore boolForKey:UAPushChannelCreationOnForeground]) {
         UA_LTRACE(@"Application did become active. Updating registration.");
-        [self updateRegistrationForcefully:NO];
+        [self updateChannelRegistrationForcefully:NO];
     }
 }
 
@@ -711,7 +748,7 @@ BOOL deferChannelCreationOnForeground = false;
 
     // Create a channel if we do not have a channel ID
     if (!self.channelID) {
-        [self updateRegistrationForcefully:NO];
+        [self updateChannelRegistrationForcefully:NO];
     }
 }
 
@@ -788,7 +825,25 @@ BOOL deferChannelCreationOnForeground = false;
     }
 }
 
-- (void)updateRegistrationForcefully:(BOOL)forcefully {
+- (void)updateRegistration {
+
+    // Update channel tag groups
+    [self updateChannelTagGroups];
+
+    // APNS registration will cause a channel registration
+    if (self.shouldUpdateAPNSRegistration) {
+        UA_LDEBUG(@"APNS registration is out of date, updating.");
+        [self updateAPNSRegistration];
+    } if (self.userPushNotificationsEnabled && !self.channelID) {
+        UA_LDEBUG(@"Push is enabled but we have not yet tried to generate a channel ID. "
+                  "Urban Airship registration will automatically run when the device token is registered,"
+                  "the next time the app is backgrounded, or the next time the app is foregrounded.");
+    } else {
+        [self updateChannelRegistrationForcefully:NO];
+    }
+}
+
+- (void)updateChannelRegistrationForcefully:(BOOL)forcefully {
     // Only cancel in flight requests if the channel is already created
     if (self.channelID) {
         [self.channelRegistrar cancelAllRequests];
@@ -805,22 +860,111 @@ BOOL deferChannelCreationOnForeground = false;
                                       forcefully:forcefully];
 }
 
-- (void)updateRegistration {
-    // APNS registration will cause a channel registration
-    if (self.shouldUpdateAPNSRegistration) {
-        UA_LDEBUG(@"APNS registration is out of date, updating.");
-        [self updateAPNSRegistration];
+- (void)resetPendingTagsWithAddTags:(NSMutableDictionary *)addTags removeTags:(NSMutableDictionary *)removeTags {
+    // If there are new pendingRemoveTags since last request,
+    // check if addTags contain any tags to be removed.
+    if (self.pendingRemoveTags.count) {
+        for (NSString *group in self.pendingRemoveTags) {
+            if (group && addTags[group]) {
+                NSArray *pendingRemoveTagsArray = [NSArray arrayWithArray:self.pendingRemoveTags[group]];
+                [addTags removeObjectsForKeys:pendingRemoveTagsArray];
+            }
+        }
+    }
+
+    // If there are new pendingAddTags since last request,
+    // check if removeTags contain any tags to add.
+    if (self.pendingAddTags.count) {
+        for (NSString *group in self.pendingAddTags) {
+            if (group && removeTags[group]) {
+                NSArray *pendingAddTagsArray = [NSArray arrayWithArray:self.pendingAddTags[group]];
+                [removeTags removeObjectsForKeys:pendingAddTagsArray];
+            }
+        }
+    }
+
+    // If there are new pendingRemoveTags since last request,
+    // combine the new pendingRemoveTags with removeTags.
+    if (self.pendingRemoveTags.count) {
+        [removeTags addEntriesFromDictionary:self.pendingRemoveTags];
+    }
+
+    // If there are new pendingAddTags since last request,
+    // combine the new pendingAddTags with addTags.
+    if (self.pendingAddTags.count) {
+        [addTags addEntriesFromDictionary:self.pendingAddTags];
+    }
+
+    // Set self.pendingAddTags as addTags
+    self.pendingAddTags = addTags;
+
+    // Set self.pendingRemoveTags as removeTags
+    self.pendingRemoveTags = removeTags;
+}
+
+- (void)updateChannelTagGroups {
+    if (!self.pendingAddTags.count && !self.pendingRemoveTags.count) {
         return;
     }
 
-    if (self.userPushNotificationsEnabled && !self.channelID) {
-        UA_LDEBUG(@"Push is enabled but we have not yet tried to generate a channel ID. "
-                  "Urban Airship registration will automatically run when the device token is registered,"
-                  "the next time the app is backgrounded, or the next time the app is foregrounded.");
+    // Get a copy of the current add and remove pending tags
+    NSMutableDictionary *addTags = [self.pendingAddTags mutableCopy];
+    NSMutableDictionary *removeTags = [self.pendingRemoveTags mutableCopy];
+
+    // On failure or background task expiration we need to reset the pending tags
+    void (^resetPendingTags)() = ^{
+        [self resetPendingTagsWithAddTags:addTags removeTags:removeTags];
+    };
+
+    __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+        UA_LTRACE(@"Tag groups background task expired.");
+        if (resetPendingTags) {
+            resetPendingTags();
+        }
+        @synchronized(self) {
+            [self.tagGroupsAPIClient cancelAllRequests];
+        }
+        if (backgroundTask != UIBackgroundTaskInvalid) {
+            [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+            backgroundTask = UIBackgroundTaskInvalid;
+        }
+    }];
+
+    if (backgroundTask == UIBackgroundTaskInvalid) {
+        UA_LTRACE("Background task unavailable, skipping tag groups update.");
         return;
     }
 
-    [self updateRegistrationForcefully:NO];
+    // Clear the add and remove pending tags
+    self.pendingAddTags = nil;
+    self.pendingRemoveTags = nil;
+
+    UATagGroupsAPIClientSuccessBlock successBlock = ^{
+        UA_LINFO(@"Tag groups updated successfully.");
+
+        // End background task
+        [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+        backgroundTask = UIBackgroundTaskInvalid;
+    };
+
+    UATagGroupsAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
+        UA_LDEBUG(@"Tag groups failed to update.");
+
+        NSInteger status = request.response.statusCode;
+        if (status != 400 && status != 403) {
+            resetPendingTags();
+        }
+
+        // End background task
+        [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+        backgroundTask = UIBackgroundTaskInvalid;
+    };
+
+    [self.tagGroupsAPIClient updateChannelTags:self.channelID
+                                           add:addTags
+                                        remove:removeTags
+                                     onSuccess:successBlock
+                                     onFailure:failureBlock];
 }
 
 - (void)updateAPNSRegistration {
@@ -842,7 +986,7 @@ BOOL deferChannelCreationOnForeground = false;
                                                                                             categories:categories]];
         } else if (!self.allowUnregisteringUserNotificationTypes) {
             UA_LDEBUG(@"Skipping unregistered for user notification types.");
-            [self updateRegistrationForcefully:NO];
+            [self updateChannelRegistrationForcefully:NO];
         } else if ([application currentUserNotificationSettings].types != UIUserNotificationTypeNone) {
             UA_LDEBUG(@"Unregistering for user notification types.");
 
@@ -854,7 +998,7 @@ BOOL deferChannelCreationOnForeground = false;
                                                                                             categories:nil]];
         } else {
             UA_LDEBUG(@"Already unregistered for user notification types. To re-register, set userPushNotificationsEnabled to YES and/or modify iOS Settings.");
-            [self updateRegistrationForcefully:NO];
+            [self updateChannelRegistrationForcefully:NO];
         }
 
     } else {
@@ -867,7 +1011,7 @@ BOOL deferChannelCreationOnForeground = false;
 
             // Registering for only UIRemoteNotificationTypeNone will not result in a
             // device token registration call. Instead update chanel registration directly.
-            [self updateRegistrationForcefully:NO];
+            [self updateChannelRegistrationForcefully:NO];
         }
     }
 
@@ -896,7 +1040,7 @@ BOOL deferChannelCreationOnForeground = false;
     if (inBackground && self.channelID) {
         UA_LDEBUG(@"Skipping device registration. The app is currently backgrounded.");
     } else {
-        [self updateRegistrationForcefully:NO];
+        [self updateChannelRegistrationForcefully:NO];
     }
 }
 
@@ -915,7 +1059,7 @@ BOOL deferChannelCreationOnForeground = false;
     }
 
     if (![payload isEqualToPayload:[self createChannelPayload]]) {
-        [self updateRegistrationForcefully:NO];
+        [self updateChannelRegistrationForcefully:NO];
     } else {
         [self endRegistrationBackgroundTask];
     }

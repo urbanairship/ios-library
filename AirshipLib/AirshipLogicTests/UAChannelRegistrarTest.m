@@ -134,14 +134,14 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
 
 - (void)tearDown {
-    [super tearDown];
-    
     [self.mockedChannelClient stopMocking];
     [self.mockedRegistrarDelegate stopMocking];
     [self.mockedUANamedUser stopMocking];
     [self.mockedUAConfig stopMocking];
     [self.mockedUAPush stopMocking];
     [self.mockedUAirship stopMocking];
+
+    [super tearDown];
 }
 
 /**

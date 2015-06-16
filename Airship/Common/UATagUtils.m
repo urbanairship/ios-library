@@ -27,6 +27,9 @@
 #import "UAGlobal.h"
 #import "UAUtils.h"
 
+#define kUAMinTagLength 1
+#define kUAMaxTagLength 127
+
 @implementation UATagUtils
 
 + (NSArray *)createTags:(UATagType) tagFlags {
@@ -82,6 +85,64 @@
     UALOG(@"Created Tags: %@", [tags description]);
     
     return tags;
+}
+
++ (NSArray *)normalizeTags:(NSArray *)tags {
+    NSMutableArray *normalizedTags = [NSMutableArray array];
+
+    for (NSString *tag in tags) {
+
+        NSString *trimmedTag = [tag stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+
+        if ([trimmedTag length] >= kUAMinTagLength && [trimmedTag length] <= kUAMaxTagLength) {
+            [normalizedTags addObject:trimmedTag];
+        } else {
+            UA_LERR(@"Tags must be > 0 and < 128 characters in length, tag %@ has been removed from the tag set", tag);
+        }
+    }
+
+    return [NSArray arrayWithArray:normalizedTags];
+}
+
++ (BOOL)isValid:(NSArray *)tags group:(NSString *)tagGroup {
+    BOOL retVal = YES;
+
+    if (!tags.count) {
+        UA_LERR(@"The tags array cannot be empty.");
+        retVal = NO;
+    }
+
+    NSString *trimmedTagGroup = [tagGroup stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+
+    if (!trimmedTagGroup.length) {
+        UA_LERR(@"The tag group ID string cannot be nil or length must be greater 0.");
+        retVal = NO;
+    }
+    return retVal;
+}
+
++ (NSDictionary *)addPendingTags:(NSArray *)tagsToAdd group:(NSString *)tagGroup pendingTagsDictionary:(NSDictionary *)pendingTags {
+    NSMutableDictionary *combinedTags = [NSMutableDictionary dictionaryWithDictionary:pendingTags];
+    NSMutableSet *addTagsSet = [NSMutableSet setWithArray:combinedTags[tagGroup]];
+    [addTagsSet addObjectsFromArray:tagsToAdd];
+    if (addTagsSet.count) {
+        combinedTags[tagGroup] = [addTagsSet allObjects];
+    } else {
+        [combinedTags removeObjectForKey:tagGroup];
+    }
+    return [NSDictionary dictionaryWithDictionary:combinedTags];
+}
+
++ (NSDictionary *)removePendingTags:(NSArray *)tagsToRemove group:(NSString *)tagGroup pendingTagsDictionary:(NSDictionary *)pendingTags {
+    NSMutableDictionary *combinedTags = [NSMutableDictionary dictionaryWithDictionary:pendingTags];
+    NSMutableArray *removeTagsArray = [NSMutableArray arrayWithArray:combinedTags[tagGroup]];
+    [removeTagsArray removeObjectsInArray:tagsToRemove];
+    if (removeTagsArray.count) {
+        combinedTags[tagGroup] = removeTagsArray;
+    } else {
+        [combinedTags removeObjectForKey:tagGroup];
+    }
+    return [NSDictionary dictionaryWithDictionary:combinedTags];
 }
 
 @end

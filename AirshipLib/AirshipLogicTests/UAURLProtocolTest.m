@@ -39,6 +39,7 @@
 @property (nonatomic, strong) UAURLProtocol *urlProtocol;
 
 @property (nonatomic, strong) id connection;
+
 @property (nonatomic, strong) UAHTTPConnectionSuccessBlock connectionSuccessBlock;
 @property (nonatomic, strong) UAHTTPConnectionFailureBlock connectionFailureBlock;
 @property (nonatomic, strong) UAHTTPRequest *connectionRequest;
@@ -60,7 +61,7 @@
 
 
 
-    self.connection = [OCMockObject partialMockForObject:[[UAHTTPConnection alloc] init]];
+    self.connection = [OCMockObject mockForClass:[UAHTTPConnection class]];
 
 
     // Stub the connection connectionWithRequest:successBlock:failureBlock:
@@ -79,7 +80,6 @@
     }] connectionWithRequest:OCMOCK_ANY
                 successBlock:OCMOCK_ANY
                 failureBlock:OCMOCK_ANY];
-
 
 
     [UAURLProtocol addCachableURL:self.cachableURL];
@@ -179,7 +179,6 @@
  * If-Modified-Since header if its a new request.
  */
 - (void)testStartLoadingRequestHeaders {
-
     NSData *data = [@"SomeData" dataUsingEncoding:NSUTF8StringEncoding];
 
     __block UAHTTPRequest *request = [self createResponseRequestWithUrl:self.urlProtocol.request.URL

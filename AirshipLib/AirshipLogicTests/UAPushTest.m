@@ -44,6 +44,7 @@
 #import "UAMutableUserNotificationCategory.h"
 #import "UAPreferenceDataStore.h"
 #import "UAConfig.h"
+#import "UATagGroupsAPIClient.h"
 
 @interface UAPushTest : XCTestCase
 @property (nonatomic, strong) id mockedApplication;
@@ -57,11 +58,15 @@
 @property (nonatomic, strong) id mockUAUser;
 @property (nonatomic, strong) id mockUIUserNotificationSettings;
 @property (nonatomic, strong) id mockDefaultUserNotificationCategories;
+@property (nonatomic, strong) id mockTagGroupsAPIClient;
 
 @property (nonatomic, strong) UAPush *push;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 @property (nonatomic, strong) NSDictionary *notification;
+@property (nonatomic, strong) NSMutableDictionary *addTagGroups;
+@property (nonatomic, strong) NSMutableDictionary *removeTagGroups;
+@property (nonatomic, strong) UAHTTPRequest *channelTagsFailureRequest;
 
 @end
 
@@ -69,6 +74,8 @@
 
 NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
+void (^updateChannelTagsSuccessDoBlock)(NSInvocation *);
+void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
 - (void)setUp {
     [super setUp];
@@ -94,6 +101,18 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                                   },
                           @"someActionKey": @"someActionValue",
                           };
+
+    self.addTagGroups = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *tagsToAdd = [NSMutableDictionary dictionary];
+    NSArray *addTagsArray = @[@"tag1", @"tag2", @"tag3"];
+    [tagsToAdd setValue:addTagsArray forKey:@"tag_group"];
+    self.addTagGroups = tagsToAdd;
+
+    self.removeTagGroups = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *tagsToRemove = [NSMutableDictionary dictionary];
+    NSArray *removeTagsArray = @[@"tag3", @"tag4", @"tag5"];
+    [tagsToRemove setValue:removeTagsArray forKey:@"tag_group"];
+    self.removeTagGroups = tagsToRemove;
 
     // Set up a mocked application
     self.mockedApplication = [OCMockObject niceMockForClass:[UIApplication class]];
@@ -132,6 +151,25 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     self.mockDefaultUserNotificationCategories = [OCMockObject niceMockForClass:[UAUserNotificationCategories class]];
 
     self.push.registrationDelegate = self.mockRegistrationDelegate;
+
+    self.mockTagGroupsAPIClient = [OCMockObject niceMockForClass:[UATagGroupsAPIClient class]];
+    self.push.tagGroupsAPIClient = self.mockTagGroupsAPIClient;
+
+    self.channelTagsFailureRequest = [[UAHTTPRequest alloc] init];
+
+    updateChannelTagsSuccessDoBlock = ^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:5];
+        UATagGroupsAPIClientSuccessBlock successBlock = (__bridge UATagGroupsAPIClientSuccessBlock)arg;
+        successBlock();
+    };
+
+    updateChannelTagsFailureDoBlock = ^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:6];
+        UATagGroupsAPIClientFailureBlock failureBlock = (__bridge UATagGroupsAPIClientFailureBlock)arg;
+        failureBlock(self.channelTagsFailureRequest);
+    };
 }
 
 - (void)tearDown {
@@ -151,6 +189,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [self.mockUAUser stopMocking];
     [self.mockUIUserNotificationSettings stopMocking];
     [self.mockDefaultUserNotificationCategories stopMocking];
+    [self.mockTagGroupsAPIClient stopMocking];
 
     // We hide this class in a few tests. Its only available on iOS8.
     [UIUserNotificationSettings revealClass];
@@ -312,37 +351,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     XCTAssertNotEqualObjects(tags, self.push.tags, @"tag with 128 characters should not set");
 }
-
-/**
- * Tests tag normalization when tag includes whitespace
- */
-- (void)testNormalizeTagsWhitespaceRemoval {
-    NSArray *tags = @[@"   tag-one   ", @"tag-two   "];
-    NSArray *tagsNoSpaces = @[@"tag-one", @"tag-two"];
-    [self.push normalizeTags:tags];
-
-    XCTAssertEqualObjects(tagsNoSpaces, [self.push normalizeTags:tags], @"whitespace was trimmed from tags");
-}
-
-/**
- * Tests tag normalization when tag has maximum acceptable length
- */
-- (void)testNormalizeTagsMaxTagSize {
-    NSArray *tags = @[[@"" stringByPaddingToLength:127 withString: @"." startingAtIndex:0]];
-
-    XCTAssertEqualObjects(tags, [self.push normalizeTags:tags], @"tag with 127 characters should set");
-}
-
-/**
- * Tests tag normalization when tag has greater than maximum acceptable length
- */
-- (void)testNormalizeTagsOverMaxTagSizeRemoval {
-    NSArray *tags = @[[@"" stringByPaddingToLength:128 withString: @"." startingAtIndex:0]];
-    [self.push normalizeTags:tags];
-
-    XCTAssertNotEqualObjects(tags, [self.push normalizeTags:tags], @"tag with 128 characters should not set");
-}
-
 
 - (void)testAddTags {
     self.push.tags = nil;
@@ -1163,7 +1171,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
         [[[self.mockedApplication expect] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
-        [self.push updateRegistrationForcefully:YES];
+        [self.push updateChannelRegistrationForcefully:YES];
         XCTAssertNoThrow([self.mockedChannelRegistrar verify],
                          @"updateRegistration should register with the channel registrar if push is enabled.");
 
@@ -1186,7 +1194,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [[[self.mockedApplication expect] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
 
-    [self.push updateRegistrationForcefully:YES];
+    [self.push updateChannelRegistrationForcefully:YES];
     XCTAssertNoThrow([self.mockedChannelRegistrar verify],
                      @"updateRegistration should unregister with the channel registrar if push is disabled.");
 
@@ -1204,7 +1212,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                                                     withPayload:OCMOCK_ANY
                                                      forcefully:YES];
 
-    [self.push updateRegistrationForcefully:YES];
+    [self.push updateChannelRegistrationForcefully:YES];
 
 
     XCTAssertNoThrow([self.mockedChannelRegistrar verify],
@@ -1215,7 +1223,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     self.push.registrationBackgroundTask = 30;
     [[self.mockedApplication reject] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
-    [self.push updateRegistrationForcefully:YES];
+    [self.push updateChannelRegistrationForcefully:YES];
 
     XCTAssertNoThrow([self.mockedApplication verify], @"A background task should not be requested if one already exists");
 }
@@ -1260,7 +1268,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                                                     withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
                                                      forcefully:YES];
 
-    [self.push updateRegistrationForcefully:YES];
+    [self.push updateChannelRegistrationForcefully:YES];
 
     XCTAssertNoThrow([self.mockedChannelRegistrar verify],
                      @"payload is not being created with expected values");
@@ -1453,7 +1461,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
     [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY channelLocation:OCMOCK_ANY withPayload:[OCMArg checkWithBlock:checkPayloadBlock] forcefully:YES];
 
-    [self.push updateRegistrationForcefully:YES];
+    [self.push updateChannelRegistrationForcefully:YES];
 
     XCTAssertNoThrow([self.mockedChannelRegistrar verify],
                      @"payload is not being created with expected values");
@@ -1477,7 +1485,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                                                     withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
                                                      forcefully:YES];
 
-    [self.push updateRegistrationForcefully:YES];
+    [self.push updateChannelRegistrationForcefully:YES];
 
     XCTAssertNoThrow([self.mockedChannelRegistrar verify],
                      @"payload is including tags when device tags is NO");
@@ -1501,7 +1509,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                                                     withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
                                                      forcefully:YES];
 
-    [self.push updateRegistrationForcefully:YES];
+    [self.push updateChannelRegistrationForcefully:YES];
 
     XCTAssertNoThrow([self.mockedChannelRegistrar verify],
                      @"payload is not including the correct badge when auto badge is enabled");
@@ -1524,7 +1532,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                                                     withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
                                                      forcefully:YES];
 
-    [self.push updateRegistrationForcefully:YES];
+    [self.push updateChannelRegistrationForcefully:YES];
 
     XCTAssertNoThrow([self.mockedChannelRegistrar verify],
                      @"payload should not include quiet time if quiet time is disabled");
@@ -2455,6 +2463,342 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [self.dataStore removeObjectForKey:@"UAChannelLocation"];
 
     XCTAssertNil(self.push.channelLocation, @"Channel location should be nil");
+}
+
+/**
+ * Tests tag group addition when tag group contains white space
+ */
+- (void)testAddTagGroupWhitespaceRemoval {
+    NSArray *tags = @[@"   tag-one   ", @"tag-two   "];
+    NSArray *tagsNoSpaces = @[@"tag-one", @"tag-two"];
+    NSString *groupID = @"test_group_id";
+
+    [self.push addTags:tags group:groupID];
+
+    XCTAssertEqualObjects(tagsNoSpaces, [self.push.pendingAddTags valueForKey:groupID], @"whitespace was not trimmed from tags");
+
+    NSArray *moreTags = @[@"   tag-two   ", @"tag-three   "];
+
+    [self.push addTags:moreTags group:groupID];
+
+    NSMutableArray *combinedTags = [NSMutableArray arrayWithArray:@[@"tag-one", @"tag-two", @"tag-three"]];
+
+    [combinedTags removeObjectsInArray:[self.push.pendingAddTags valueForKey:groupID]];
+
+    XCTAssertTrue(combinedTags.count == 0, @"whitespace was not trimmed from tags");
+}
+
+/**
+ * Tests tag group removal when tag group contains white space
+ */
+- (void)testRemoveTagGroupWhitespaceRemoval {
+    NSArray *tags = @[@"   tag-one   ", @"tag-two   "];
+    NSArray *tagsNoSpaces = @[@"tag-one", @"tag-two"];
+    NSString *groupID = @"test_group_id";
+
+    [self.push removeTags:tags group:groupID];
+
+    XCTAssertEqualObjects(tagsNoSpaces, [self.push.pendingRemoveTags valueForKey:groupID], @"whitespace was not trimmed from tags");
+
+    NSArray *moreTags = @[@"   tag-two   ", @"tag-three   "];
+
+    [self.push removeTags:moreTags group:groupID];
+
+    NSMutableArray *combinedTags = [NSMutableArray arrayWithArray:@[@"tag-one", @"tag-two", @"tag-three"]];
+
+    [combinedTags removeObjectsInArray:[self.push.pendingRemoveTags valueForKey:groupID]];
+
+    XCTAssertTrue(combinedTags.count == 0, @"whitespace was not trimmed from tags");
+}
+
+/**
+ * Test pendingAddTags.
+ */
+- (void)testPendingAddTags {
+    self.push.pendingAddTags = self.addTagGroups;
+
+    XCTAssertEqual((NSUInteger)1, self.push.pendingAddTags.count, @"should contain 1 tag group");
+    XCTAssertEqualObjects(self.addTagGroups, self.push.pendingAddTags, @"pendingAddTags are not stored correctly");
+    XCTAssertEqualObjects([self.dataStore valueForKey:UAPushAddTagGroupsSettingsKey], self.push.pendingAddTags,
+                          @"pendingAddTags are not stored correctly in standardUserDefaults");
+
+    // test addTags
+    NSArray *tags = @[@"tag1", @"tag2", @"tag3"];
+    [self.push addTags:tags group:@"another-tag-group"];
+
+    XCTAssertEqual((NSUInteger)2, self.push.pendingAddTags.count, @"should contain 2 tag groups");
+
+    // test addTags with overlapping tags in same group
+    NSArray *tags2 = @[@"tag3", @"tag4", @"tag5"];
+    [self.push addTags:tags2 group:@"another-tag-group"];
+    XCTAssertEqual((NSUInteger)2, self.push.pendingAddTags.count, @"should contain 2 tag groups");
+    NSArray *anotherTagArray = [self.push.pendingAddTags objectForKey:@"another-tag-group"];
+    XCTAssertEqual((NSUInteger)5, anotherTagArray.count, @"should contain 5 tags in array");
+
+    // test addTags with empty tags
+    NSArray *emptyTagsArray = @[];
+    [self.push addTags:emptyTagsArray group:@"some-tag-group"];
+    XCTAssertEqual((NSUInteger)2, self.push.pendingAddTags.count, @"should still contain 2 tag groups");
+
+    // test addTags with nil group ID
+    [self.push addTags:tags2 group:nil];
+    XCTAssertEqual((NSUInteger)2, self.push.pendingAddTags.count, @"should still contain 2 tag groups");
+
+    // test addTags with tags with whitespace
+    NSArray *whitespaceTags = @[@"tag1", @"tag2", @" tag6 "];
+    [self.push addTags:whitespaceTags group:@"another-tag-group"];
+    XCTAssertEqual((NSUInteger)2, self.push.pendingAddTags.count, @"should contain 2 tag groups");
+    anotherTagArray = [self.push.pendingAddTags objectForKey:@"another-tag-group"];
+    XCTAssertEqual((NSUInteger)6, anotherTagArray.count, @"should contain 6 tags in array");
+
+    self.push.pendingAddTags = nil;
+    XCTAssertEqual((NSUInteger)0, self.push.pendingAddTags.count, @"pendingAddTags should return an empty dictionary when set to nil");
+    XCTAssertEqual((NSUInteger)0, [[self.dataStore valueForKey:UAPushAddTagGroupsSettingsKey] count],
+                   @"pendingAddTags not being cleared in standardUserDefaults");
+}
+
+/**
+ * Test pendingAddTags when pendingRemoveTags overlap.
+ */
+- (void)testAddTagGroupsOverlap {
+    self.push.pendingAddTags = nil;
+    self.push.pendingRemoveTags = self.removeTagGroups;
+    NSArray *removeTagsArray = [self.push.pendingRemoveTags objectForKey:@"tag_group"];
+    XCTAssertEqual((NSUInteger)3, removeTagsArray.count, @"should contain 3 tags in array");
+
+    NSArray *tags = @[@"tag1", @"tag2", @"tag3"];
+    [self.push addTags:tags group:@"tag_group"];
+    NSArray *updatedRemoveTagsArray = [self.push.pendingRemoveTags objectForKey:@"tag_group"];
+    XCTAssertEqual((NSUInteger)2, updatedRemoveTagsArray.count, @"should contain 2 tags in array");
+
+    NSArray *addTagsArray = [self.push.pendingAddTags objectForKey:@"tag_group"];
+    XCTAssertEqual((NSUInteger)3, addTagsArray.count, @"should contain 3 tags in array");
+}
+
+/**
+ * Test pendingRemoveTags.
+ */
+- (void)testRemoveTagGroups {
+    self.push.pendingRemoveTags = self.removeTagGroups;
+
+    XCTAssertEqual((NSUInteger)1, self.push.pendingRemoveTags.count, @"should contain 1 tag group");
+    XCTAssertEqualObjects(self.removeTagGroups, self.push.pendingRemoveTags, @"pendingRemoveTags are not stored correctly");
+    XCTAssertEqualObjects([self.dataStore valueForKey:UAPushRemoveTagGroupsSettingsKey], self.push.pendingRemoveTags,
+                          @"pendingRemoveTags are not stored correctly in standardUserDefaults");
+
+    // test removeTags
+    NSArray *tags = @[@"tag1", @"tag2", @"tag3"];
+    [self.push removeTags:tags group:@"another-tag-group"];
+
+    XCTAssertEqual((NSUInteger)2, self.push.pendingRemoveTags.count, @"should contain 2 tag groups");
+
+    // test removeTags with overlapping tags in same group
+    NSArray *tags2 = @[@"tag3", @"tag4", @"tag5"];
+    [self.push removeTags:tags2 group:@"another-tag-group"];
+    XCTAssertEqual((NSUInteger)2, self.push.pendingRemoveTags.count, @"should contain 2 tag groups");
+    NSArray *anotherTagArray = [self.push.pendingRemoveTags objectForKey:@"another-tag-group"];
+    XCTAssertEqual((NSUInteger)5, anotherTagArray.count, @"should contain 5 tags");
+
+    // test removeTags with empty tags
+    NSArray *emptyTagsArray = @[];
+    [self.push removeTags:emptyTagsArray group:@"some-tag-group"];
+    XCTAssertEqual((NSUInteger)2, self.push.pendingRemoveTags.count, @"should still contain 2 tag groups");
+
+    // test removeTags with nil group ID
+    [self.push addTags:tags2 group:nil];
+    XCTAssertEqual((NSUInteger)2, self.push.pendingRemoveTags.count, @"should still contain 2 tag groups");
+
+    // test removeTags with empty group ID
+    [self.push addTags:tags2 group:@""];
+    XCTAssertEqual((NSUInteger)2, self.push.pendingRemoveTags.count, @"should still contain 2 tag groups");
+
+    self.push.pendingRemoveTags = nil;
+    XCTAssertEqual((NSUInteger)0, self.push.pendingRemoveTags.count, @"pendingRemoveTags should return an empty dictionary when set to nil");
+    XCTAssertEqual((NSUInteger)0, [[self.dataStore valueForKey:UAPushRemoveTagGroupsSettingsKey] count],
+                   @"pendingRemoveTags not being cleared in standardUserDefaults");
+}
+
+/**
+ * Test pendingRemoveTags when pendingAddTags overlap.
+ */
+- (void)testRemoveTagGroupsOverlap {
+    self.push.pendingRemoveTags = nil;
+    self.push.pendingAddTags = self.addTagGroups;
+    NSArray *addTagsArray = [self.push.pendingAddTags objectForKey:@"tag_group"];
+    XCTAssertEqual((NSUInteger)3, addTagsArray.count, @"should contain 3 tags in array");
+
+    NSArray *tags = @[@"tag3", @"tag4", @"tag5"];
+    [self.push removeTags:tags group:@"tag_group"];
+    NSArray *updatedAddTagsArray = [self.push.pendingAddTags objectForKey:@"tag_group"];
+    XCTAssertEqual((NSUInteger)2, updatedAddTagsArray.count, @"should contain 2 tags in array");
+
+    NSArray *removeTagsArray = [self.push.pendingRemoveTags objectForKey:@"tag_group"];
+    XCTAssertEqual((NSUInteger)3, removeTagsArray.count, @"should contain 3 tags in array");
+}
+
+/**
+ * Test pending tags intersect.
+ */
+- (void)testRemoveTagGroupsIntersect {
+    self.push.pendingRemoveTags = nil;
+    self.push.pendingAddTags = nil;
+
+    NSArray *tags = @[@"tag1", @"tag2", @"tag3"];
+
+    [self.push addTags:tags group:@"tagGroup"];
+
+    NSArray *addTags = [self.push.pendingAddTags objectForKey:@"tagGroup"];
+    XCTAssertEqual((NSUInteger)3, addTags.count, @"should contain 3 tags in array");
+
+    [self.push removeTags:tags group:@"tagGroup"];
+    XCTAssertNil([self.push.pendingAddTags objectForKey:@"tagGroup"], @"tags should be nil");
+    NSArray *removeTags = [self.push.pendingRemoveTags objectForKey:@"tagGroup"];
+    XCTAssertEqual((NSUInteger)3, removeTags.count, @"should contain 3 tags in array");
+
+    [self.push addTags:tags group:@"tagGroup"];
+    XCTAssertNil([self.push.pendingRemoveTags objectForKey:@"tagGroup"], @"tags should be nil");
+    addTags = [self.push.pendingAddTags objectForKey:@"tagGroup"];
+    XCTAssertEqual((NSUInteger)3, addTags.count, @"should contain 3 tags in array");
+}
+
+/**
+ * Test successful update channel tags.
+ */
+- (void)testUpdateChannelTags {
+    self.push.channelID = @"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE";
+    self.push.pendingAddTags = self.addTagGroups;
+    self.push.pendingRemoveTags = self.removeTagGroups;
+
+    // Expect the tagGroupsAPIClient to update channel tags and call the success block
+    [[[self.mockTagGroupsAPIClient expect] andDo:updateChannelTagsSuccessDoBlock] updateChannelTags:OCMOCK_ANY
+                                                                                                add:OCMOCK_ANY
+                                                                                             remove:OCMOCK_ANY
+                                                                                          onSuccess:OCMOCK_ANY
+                                                                                          onFailure:OCMOCK_ANY];
+
+    // Mock background task so background task check passes
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    [self.push updateRegistration];
+
+    XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Update channel tag groups should succeed.");
+    XCTAssertEqual((NSUInteger)0, self.push.pendingAddTags.count, @"pendingAddTags should return an empty dictionary");
+    XCTAssertEqual((NSUInteger)0, self.push.pendingRemoveTags.count, @"pendingRemoveTags should return an empty dictionary");
+}
+
+/**
+ * Test update channel tags fails and restores original pending tags.
+ */
+- (void)testUpdateChannelTagGroupsFails {
+    self.push.channelID = nil;
+    self.push.pendingAddTags = self.addTagGroups;
+    self.push.pendingRemoveTags = self.removeTagGroups;
+
+    // Expect the tagGroupsAPIClient to fail to update channel tags and call the failure block
+    [[[self.mockTagGroupsAPIClient expect] andDo:updateChannelTagsFailureDoBlock] updateChannelTags:OCMOCK_ANY
+                                                                                                add:OCMOCK_ANY
+                                                                                             remove:OCMOCK_ANY
+                                                                                          onSuccess:OCMOCK_ANY
+                                                                                          onFailure:OCMOCK_ANY];
+
+    // Mock background task so background task check passes
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    [self.push updateRegistration];
+
+    XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Update channel tag groups should fail.");
+    XCTAssertEqual((NSUInteger)1, self.push.pendingAddTags.count, @"should contain 1 tag group");
+    XCTAssertEqual((NSUInteger)1, self.push.pendingRemoveTags.count, @"should contain 1 tag group");
+}
+
+/**
+ * Test failed update channel tags restores original pending tags and current pending tags.
+ */
+- (void)testUpdateChannelTagGroupsFailsPendingTags {
+    self.push.channelID = @"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE";
+    self.push.pendingAddTags = self.addTagGroups;
+    self.push.pendingRemoveTags = self.removeTagGroups;
+
+    // Expect the tagGroupsAPIClient to fail to update channel tags and call the failure block
+    [[[self.mockTagGroupsAPIClient expect] andDo:updateChannelTagsFailureDoBlock] updateChannelTags:OCMOCK_ANY
+                                                                                                add:OCMOCK_ANY
+                                                                                             remove:OCMOCK_ANY
+                                                                                          onSuccess:OCMOCK_ANY
+                                                                                          onFailure:OCMOCK_ANY];
+
+    // Mock background task so background task check passes
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    NSArray *tags = @[@"tag2", @"tag4", @"tag5"];
+    [self.push updateRegistration];
+    [self.push removeTags:tags group:@"tag_group"]; // move code to handle before failure block is called
+
+
+    XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Update channel tag groups should fail.");
+    XCTAssertEqual((NSUInteger)1, self.push.pendingAddTags.count, @"should contain 1 tag group");
+    XCTAssertEqual((NSUInteger)1, self.push.pendingRemoveTags.count, @"should contain 1 tag group");
+}
+
+/**
+ * Test update channel tags with both empty add and remove tags skips request.
+ */
+- (void)testUpdateChannelTagGroupsEmptyTags {
+    self.push.channelID = @"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE";
+
+    // Should not call updateChannelTagGroups
+    [[self.mockTagGroupsAPIClient reject] updateChannelTags:OCMOCK_ANY
+                                                        add:OCMOCK_ANY
+                                                     remove:OCMOCK_ANY
+                                                  onSuccess:OCMOCK_ANY
+                                                  onFailure:OCMOCK_ANY];
+
+    [self.push updateRegistration];
+
+    XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Should skip updateChannelTags request.");
+}
+
+/**
+ * Test update channel tags with empty add tags still makes request.
+ */
+- (void)testUpdateChannelTagGroupsEmptyAddTags {
+    self.push.channelID = @"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE";
+    self.push.pendingAddTags = self.addTagGroups;
+
+    // Call updateChannelTagGroups
+    [[self.mockTagGroupsAPIClient expect] updateChannelTags:OCMOCK_ANY
+                                                        add:OCMOCK_ANY
+                                                     remove:OCMOCK_ANY
+                                                  onSuccess:OCMOCK_ANY
+                                                  onFailure:OCMOCK_ANY];
+
+    // Mock background task so background task check passes
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    [self.push updateRegistration];
+
+    XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Should call updateChannelTags request.");
+}
+
+/**
+ * Test update channel tags with empty remove tags still makes request.
+ */
+- (void)testUpdateChannelTagGroupsEmptyRemoveTags {
+    self.push.channelID = @"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE";
+    self.push.pendingRemoveTags = self.removeTagGroups;
+
+    // Call updateChannelTagGroups
+    [[self.mockTagGroupsAPIClient expect] updateChannelTags:OCMOCK_ANY
+                                                        add:OCMOCK_ANY
+                                                     remove:OCMOCK_ANY
+                                                  onSuccess:OCMOCK_ANY
+                                                  onFailure:OCMOCK_ANY];
+
+    // Mock background task so background task check passes
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    [self.push updateRegistration];
+
+    XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Should call updateChannelTags request.");
 }
 
 @end

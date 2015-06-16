@@ -44,4 +44,27 @@
  */
 - (void)forceUpdate;
 
+/**
+ * Add tags to named user tags. To update the server,
+ * make all of your changes, then call `updateTags`.
+ *
+ * @param tags Array of tags to add.
+ * @param tagGroupID Tag group ID string.
+ */
+- (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID;
+
+/**
+ * Removes tags from named user tags. To update the server,
+ * make all of your changes, then call `updateTags`.
+ *
+ * @param tags Array of tags to remove.
+ * @param tagGroupID Tag group ID string.
+ */
+- (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID;
+
+/**
+ * Update named user tags.
+ */
+- (void)updateTags;
+
 @end

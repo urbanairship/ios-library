@@ -28,6 +28,8 @@
 #import "UAPreferenceDataStore.h"
 #import "UANamedUserAPIClient.h"
 #import "UAPush+Internal.h"
+#import "UATagGroupsAPIClient.h"
+#import "UATagUtils.h"
 
 #define kUAMaxNamedUserIDLength 128
 
@@ -35,7 +37,9 @@ NSString *const UANamedUserIDKey = @"UANamedUserID";
 NSString *const UANamedUserChangeTokenKey = @"UANamedUserChangeToken";
 NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 
-
+// Named user tag group keys
+NSString *const UANamedUserAddTagGroupsSettingsKey = @"UANamedUserAddTagGroups";
+NSString *const UANamedUserRemoveTagGroupsSettingsKey = @"UANamedUserRemoveTagGroups";
 
 @implementation UANamedUser
 
@@ -44,6 +48,7 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
     if (self) {
         self.dataStore = dataStore;
         self.namedUserAPIClient = [UANamedUserAPIClient clientWithConfig:config];
+        self.tagGroupsAPIClient = [UATagGroupsAPIClient clientWithConfig:config];
     }
     
     return self;
@@ -98,6 +103,10 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
         // Update the change token.
         self.changeToken = [NSUUID UUID].UUIDString;
 
+        // When named user ID change, clear pending named user tags.
+        self.pendingAddTags = nil;
+        self.pendingRemoveTags = nil;
+
         // Update named user.
         [self update];
 
@@ -120,6 +129,22 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 
 - (NSString *)lastUpdatedToken {
     return [self.dataStore objectForKey:UANamedUserLastUpdatedTokenKey];
+}
+
+- (NSDictionary *)pendingAddTags {
+    return [self.dataStore objectForKey:UANamedUserAddTagGroupsSettingsKey];
+}
+
+- (void)setPendingAddTags:(NSDictionary *)addTagGroups {
+    [self.dataStore setObject:addTagGroups forKey:UANamedUserAddTagGroupsSettingsKey];
+}
+
+- (NSDictionary *)pendingRemoveTags {
+    return [self.dataStore objectForKey:UANamedUserRemoveTagGroupsSettingsKey];
+}
+
+- (void)setPendingRemoveTags:(NSDictionary *)removeTagGroups {
+    [self.dataStore setObject:removeTagGroups forKey:UANamedUserRemoveTagGroupsSettingsKey];
 }
 
 - (void)associateNamedUser {
@@ -156,6 +181,143 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
     UA_LDEBUG(@"NamedUser - force named user update.");
     self.changeToken = [NSUUID UUID].UUIDString;
     [self update];
+}
+
+- (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
+
+    NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
+
+    if (![UATagUtils isValid:normalizedTags group:tagGroupID]) {
+        return;
+    }
+
+    // Check if remove tags contain any tags to add.
+    [self setPendingRemoveTags:[UATagUtils removePendingTags:normalizedTags group:tagGroupID pendingTagsDictionary:self.pendingRemoveTags]];
+
+    // Combine the tags to be added with pendingAddTags.
+    [self setPendingAddTags:[UATagUtils addPendingTags:normalizedTags group:tagGroupID pendingTagsDictionary:self.pendingAddTags]];
+}
+
+- (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
+
+    NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
+
+    if (![UATagUtils isValid:normalizedTags group:tagGroupID]) {
+        return;
+    }
+
+    // Check if add tags contain any tags to be removed.
+    [self setPendingAddTags:[UATagUtils removePendingTags:normalizedTags group:tagGroupID pendingTagsDictionary:self.pendingAddTags]];
+
+    // Combine the tags to be removed with pendingRemoveTags.
+    [self setPendingRemoveTags:[UATagUtils addPendingTags:normalizedTags group:tagGroupID pendingTagsDictionary:self.pendingRemoveTags]];
+}
+
+- (void)resetPendingTagsWithAddTags:(NSMutableDictionary *)addTags removeTags:(NSMutableDictionary *)removeTags {
+    // If there are new pendingRemoveTags since last request,
+    // check if addTags contain any tags to be removed.
+    if (self.pendingRemoveTags.count) {
+        for (NSString *group in self.pendingRemoveTags) {
+            if (group && addTags[group]) {
+                NSArray *pendingRemoveTagsArray = [NSArray arrayWithArray:self.pendingRemoveTags[group]];
+                [addTags removeObjectsForKeys:pendingRemoveTagsArray];
+            }
+        }
+    }
+
+    // If there are new pendingAddTags since last request,
+    // check if removeTags contain any tags to add.
+    if (self.pendingAddTags.count) {
+        for (NSString *group in self.pendingAddTags) {
+            if (group && removeTags[group]) {
+                NSArray *pendingAddTagsArray = [NSArray arrayWithArray:self.pendingAddTags[group]];
+                [removeTags removeObjectsForKeys:pendingAddTagsArray];
+            }
+        }
+    }
+
+    // If there are new pendingRemoveTags since last request,
+    // combine the new pendingRemoveTags with removeTags.
+    if (self.pendingRemoveTags.count) {
+        [removeTags addEntriesFromDictionary:self.pendingRemoveTags];
+    }
+
+    // If there are new pendingAddTags since last request,
+    // combine the new pendingAddTags with addTags.
+    if (self.pendingAddTags.count) {
+        [addTags addEntriesFromDictionary:self.pendingAddTags];
+    }
+
+    // Set self.pendingAddTags as addTags
+    self.pendingAddTags = addTags;
+
+    // Set self.pendingRemoveTags as removeTags
+    self.pendingRemoveTags = removeTags;
+}
+
+- (void)updateTags {
+    if (!self.pendingAddTags.count && !self.pendingRemoveTags.count) {
+        return;
+    }
+
+    // Get a copy of the current add and remove pending tags
+    NSMutableDictionary *addTags = [self.pendingAddTags mutableCopy];
+    NSMutableDictionary *removeTags = [self.pendingRemoveTags mutableCopy];
+
+    // On failure or background task expiration we need to reset the pending tags
+    void (^resetPendingTags)() = ^{
+        [self resetPendingTagsWithAddTags:addTags removeTags:removeTags];
+    };
+
+    __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+        UA_LTRACE(@"NamedUser background task expired.");
+        if (resetPendingTags) {
+            resetPendingTags();
+        }
+        @synchronized(self) {
+            [self.tagGroupsAPIClient cancelAllRequests];
+        }
+        if (backgroundTask != UIBackgroundTaskInvalid) {
+            [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+            backgroundTask = UIBackgroundTaskInvalid;
+        }
+    }];
+
+    if (backgroundTask == UIBackgroundTaskInvalid) {
+        UA_LTRACE("Background task unavailable, skipping named user tags update.");
+        return;
+    }
+
+    // Clear the add and remove pending tags
+    self.pendingAddTags = nil;
+    self.pendingRemoveTags = nil;
+
+    UATagGroupsAPIClientSuccessBlock successBlock = ^{
+        UA_LINFO(@"Named user tags updated successfully.");
+
+        // End background task
+        [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+        backgroundTask = UIBackgroundTaskInvalid;
+    };
+
+    UATagGroupsAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
+        UA_LDEBUG(@"Named user tags failed to update.");
+
+        NSInteger status = request.response.statusCode;
+        if (status != 400 && status != 403) {
+            resetPendingTags();
+        }
+
+        // End background task
+        [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+        backgroundTask = UIBackgroundTaskInvalid;
+    };
+
+    [self.tagGroupsAPIClient updateNamedUserTags:self.identifier
+                                             add:addTags
+                                          remove:removeTags
+                                       onSuccess:successBlock
+                                       onFailure:failureBlock];
 }
 
 @end

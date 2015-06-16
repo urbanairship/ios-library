@@ -366,16 +366,20 @@
 @property (nonatomic, copy) NSString *alias;
 
 ///---------------------------------------------------------------------------------------
-/// @name Tags
+/// @name Named User
 ///---------------------------------------------------------------------------------------
-
-/** Tags for this device. */
-@property (nonatomic, copy) NSArray *tags;
 
 /**
  * Named user for this device.
  */
 @property (nonatomic, strong) UANamedUser *namedUser;
+
+///---------------------------------------------------------------------------------------
+/// @name Tags
+///---------------------------------------------------------------------------------------
+
+/** Tags for this device. */
+@property (nonatomic, copy) NSArray *tags;
 
 /**
  * Allows setting tags from the device. Tags can be set from either the server or the device, but
@@ -432,6 +436,28 @@
  * @param tags Array of tags to be removed
  */
 - (void)removeTags:(NSArray *)tags;
+
+///---------------------------------------------------------------------------------------
+/// @name Tag Groups
+///---------------------------------------------------------------------------------------
+
+/**
+ * Add tags to channel tag groups. To update the server,
+ * make all of your changes, then call `updateRegistration`.
+ *
+ * @param tags Array of tags to add.
+ * @param tagGroupID Tag group ID string.
+ */
+- (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID;
+
+/**
+ * Removes tags from channel tag groups. To update the server,
+ * make all of your changes, then call `updateRegistration`.
+ *
+ * @param tags Array of tags to remove.
+ * @param tagGroupID Tag group ID string.
+ */
+- (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID;
 
 ///---------------------------------------------------------------------------------------
 /// @name Quiet Time
