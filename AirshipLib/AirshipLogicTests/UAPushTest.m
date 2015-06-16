@@ -2676,6 +2676,9 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                                                                           onSuccess:OCMOCK_ANY
                                                                                           onFailure:OCMOCK_ANY];
 
+    // Mock background task so background task check passes
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
     [self.push updateRegistration];
 
     XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Update channel tag groups should succeed.");
@@ -2698,6 +2701,9 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                                                                           onSuccess:OCMOCK_ANY
                                                                                           onFailure:OCMOCK_ANY];
 
+    // Mock background task so background task check passes
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
     [self.push updateRegistration];
 
     XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Update channel tag groups should fail.");
@@ -2719,6 +2725,9 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                                                                              remove:OCMOCK_ANY
                                                                                           onSuccess:OCMOCK_ANY
                                                                                           onFailure:OCMOCK_ANY];
+
+    // Mock background task so background task check passes
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
     NSArray *tags = @[@"tag2", @"tag4", @"tag5"];
     [self.push updateRegistration];
@@ -2762,6 +2771,9 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                                   onSuccess:OCMOCK_ANY
                                                   onFailure:OCMOCK_ANY];
 
+    // Mock background task so background task check passes
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
     [self.push updateRegistration];
 
     XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Should call updateChannelTags request.");
@@ -2780,6 +2792,9 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                                      remove:OCMOCK_ANY
                                                   onSuccess:OCMOCK_ANY
                                                   onFailure:OCMOCK_ANY];
+
+    // Mock background task so background task check passes
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
     [self.push updateRegistration];
 
