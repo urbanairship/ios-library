@@ -25,16 +25,10 @@
 
 #import <Foundation/Foundation.h>
 
-#import "sqlite3.h"
-
-
 /**
  * Interface wrapping sqlite database operations
  */
-@interface UASQLite : NSObject {
-    sqlite3 *_db;
-}
-
+@interface UASQLite : NSObject
 
 /**
  * Number of retries before timeout, defaults to 1
