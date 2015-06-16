@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UASQLite.h"
+#import "UASQLite+Internal.h"
 #import "UAGlobal.h"
 
 #import "sqlite3.h"

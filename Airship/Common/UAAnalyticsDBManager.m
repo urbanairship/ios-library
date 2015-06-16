@@ -27,7 +27,7 @@
 
 #import "UAirship.h"
 #import "UAEvent.h"
-#import "UASQLite.h"
+#import "UASQLite+Internal.h"
 
 #define DB_NAME @"UAAnalyticsDB"
 #define CREATE_TABLE_CMD @"CREATE TABLE analytics (_id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR(255), event_id VARCHAR(255), time VARCHAR(255), data BLOB, session_id VARCHAR(255), event_size VARCHAR(255))"
