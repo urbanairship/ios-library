@@ -264,7 +264,7 @@ NSString *const UANamedUserRemoveTagGroupsSettingsKey = @"UANamedUserRemoveTagGr
     NSMutableDictionary *addTags = [self.pendingAddTags mutableCopy];
     NSMutableDictionary *removeTags = [self.pendingRemoveTags mutableCopy];
 
-    // On failure or background task expires we need to reset the pending tags
+    // On failure or background task expiration we need to reset the pending tags
     void (^resetPendingTags)() = ^{
         [self resetPendingTagsWithAddTags:addTags removeTags:removeTags];
     };
@@ -304,7 +304,7 @@ NSString *const UANamedUserRemoveTagGroupsSettingsKey = @"UANamedUserRemoveTagGr
         UA_LDEBUG(@"Named user tags failed to update.");
 
         NSInteger status = request.response.statusCode;
-        if (status != 400 && status != 403 && resetPendingTags) {
+        if (status != 400 && status != 403) {
             resetPendingTags();
         }
 
