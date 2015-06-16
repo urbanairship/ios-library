@@ -90,6 +90,14 @@ typedef void (^UATagGroupsAPIClientFailureBlock)(UAHTTPRequest *request);
                   onFailure:(UATagGroupsAPIClientFailureBlock)failureBlock;
 
 /**
+ * Cancel all current and pending requests.
+ *
+ * Note: This could prevent the onSuccess and onFailure callbacks from being triggered
+ * in any current requests.
+ */
+- (void)cancelAllRequests;
+
+/**
  * Indicates whether the client should attempt to automatically retry HTTP connections
  * under recoverable conditions (most 5xx status codes, reachability errors, etc).
  * In this case, the client will perform exponential backoff and schedule reconnections

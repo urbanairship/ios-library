@@ -49,6 +49,7 @@
 @property (nonatomic, strong) NSMutableDictionary *addTagGroups;
 @property (nonatomic, strong) NSMutableDictionary *removeTagGroups;
 @property (nonatomic, strong) UAHTTPRequest *tagsFailureRequest;
+@property (nonatomic, strong) id mockApplication;
 
 @end
 
@@ -79,6 +80,8 @@ void (^updateTagsFailureDoBlock)(NSInvocation *);
     self.namedUser = [[UANamedUser alloc] initWithConfig:[UAConfig config] dataStore:self.dataStore];
     self.mockedNamedUserClient = [OCMockObject niceMockForClass:[UANamedUserAPIClient class]];
     self.namedUser.namedUserAPIClient = self.mockedNamedUserClient;
+    self.mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
 
     // set up the named user
     self.namedUser.identifier = @"fakeNamedUser";
@@ -140,6 +143,7 @@ void (^updateTagsFailureDoBlock)(NSInvocation *);
     [self.mockedAirship stopMocking];
     [self.mockedUAPush stopMocking];
     [self.mockTagGroupsAPIClient stopMocking];
+    [self.mockApplication stopMocking];
 
     [super tearDown];
 }
@@ -621,6 +625,9 @@ void (^updateTagsFailureDoBlock)(NSInvocation *);
                                                                                      onSuccess:OCMOCK_ANY
                                                                                      onFailure:OCMOCK_ANY];
 
+    // Mock background task so background task check passes
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
     [self.namedUser updateTags];
 
     XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Update named user tag groups should succeed.");
@@ -643,6 +650,9 @@ void (^updateTagsFailureDoBlock)(NSInvocation *);
                                                                                      onSuccess:OCMOCK_ANY
                                                                                      onFailure:OCMOCK_ANY];
 
+    // Mock background task so background task check passes
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
     [self.namedUser updateTags];
 
     XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Update named user tag groups should fail.");
@@ -664,6 +674,9 @@ void (^updateTagsFailureDoBlock)(NSInvocation *);
                                                                                         remove:OCMOCK_ANY
                                                                                      onSuccess:OCMOCK_ANY
                                                                                      onFailure:OCMOCK_ANY];
+
+    // Mock background task so background task check passes
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
     [self.namedUser updateTags];
 
@@ -704,6 +717,9 @@ void (^updateTagsFailureDoBlock)(NSInvocation *);
                                                     onSuccess:OCMOCK_ANY
                                                     onFailure:OCMOCK_ANY];
 
+    // Mock background task so background task check passes
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
     [self.namedUser updateTags];
 
     XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Should call updateNamedUserTags request.");
@@ -722,6 +738,9 @@ void (^updateTagsFailureDoBlock)(NSInvocation *);
                                                        remove:OCMOCK_ANY
                                                     onSuccess:OCMOCK_ANY
                                                     onFailure:OCMOCK_ANY];
+
+    // Mock background task so background task check passes
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
     [self.namedUser updateTags];
 
