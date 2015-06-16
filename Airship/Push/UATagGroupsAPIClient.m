@@ -68,6 +68,10 @@
     return [[self alloc] initWithConfig:config];
 }
 
+- (void)cancelAllRequests {
+    [self.requestEngine cancelAllRequests];
+}
+
 - (void)updateChannelTags:(NSString *)channelId
                       add:(NSDictionary *)addTags
                    remove:(NSDictionary *)removeTags
