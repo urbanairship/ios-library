@@ -54,9 +54,9 @@
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.config] config];
 
+
     self.mockRequestEngine = [OCMockObject niceMockForClass:[UAHTTPRequestEngine class]];
-    self.client = [UATagGroupsAPIClient clientWithConfig:self.config];
-    self.client.requestEngine = self.mockRequestEngine;
+
 
     self.addTags = [[NSMutableDictionary alloc] init];
     NSMutableDictionary *tagsToAdd = [NSMutableDictionary dictionary];
@@ -69,6 +69,9 @@
     NSArray *removeTagsArray = @[@"tag3", @"tag4", @"tag5"];
     [tagsToRemove setValue:removeTagsArray forKey:@"tag_group"];
     [self.removeTags setValue:tagsToRemove forKey:@"remove"];
+
+    self.client = [UATagGroupsAPIClient clientWithConfig:self.config];
+    self.client.requestEngine = self.mockRequestEngine;
 }
 
 - (void)tearDown {
@@ -122,7 +125,12 @@
                                       onSuccess:OCMOCK_ANY
                                       onFailure:OCMOCK_ANY];
 
-    [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE" addTags:self.addTags removeTags:self.removeTags onSuccess:nil onFailure:nil];
+    [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+                           addTags:self.addTags
+                        removeTags:self.removeTags
+                         onSuccess:nil
+                         onFailure:nil];
+
     XCTAssertNoThrow([self.mockRequestEngine verify],
                      @"Update channel tag groups should call retry on 5xx status codes.");
 }
@@ -151,7 +159,11 @@
                                       onSuccess:OCMOCK_ANY
                                       onFailure:OCMOCK_ANY];
 
-    [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE" addTags:self.addTags removeTags:self.removeTags onSuccess:nil onFailure:nil];
+    [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+                           addTags:self.addTags
+                        removeTags:self.removeTags
+                         onSuccess:nil
+                         onFailure:nil];
     XCTAssertNoThrow([self.mockRequestEngine verify],
                      @"Update channel tag groups should succeed on 2xx status codes.");
 }
@@ -176,9 +188,12 @@
         successBlock(request, 0);
     }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
-    [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE" addTags:self.addTags removeTags:self.removeTags onSuccess:^{
-        onSuccessCalled = YES;
-    } onFailure:nil];
+    [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+                           addTags:self.addTags
+                        removeTags:self.removeTags
+                         onSuccess:^{
+                             onSuccessCalled = YES;
+                         } onFailure:nil];
 
     XCTAssertTrue(onSuccessCalled, @"Update channel tag groups should call onSuccess block when its successful.");
 }
@@ -200,8 +215,12 @@
         failureBlock(request, 0);
     }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
-    [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE" addTags:self.addTags removeTags:self.removeTags onSuccess:nil onFailure:^(UAHTTPRequest *request) {
-        failedRequest = request;
+    [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+                           addTags:self.addTags
+                        removeTags:self.removeTags
+                         onSuccess:nil
+                         onFailure:^(UAHTTPRequest *request) {
+                             failedRequest = request;
     }];
 
     XCTAssertEqualObjects(request, failedRequest, @"Failure block should return the failed request.");
@@ -252,7 +271,11 @@
                                       onSuccess:OCMOCK_ANY
                                       onFailure:OCMOCK_ANY];
 
-    [self.client updateNamedUserTags:@"fake-named-user" addTags:self.addTags removeTags:self.removeTags onSuccess:nil onFailure:nil];
+    [self.client updateNamedUserTags:@"fake-named-user"
+                             addTags:self.addTags
+                          removeTags:self.removeTags
+                           onSuccess:nil
+                           onFailure:nil];
     XCTAssertNoThrow([self.mockRequestEngine verify],
                      @"Update named user tags should call retry on 5xx status codes.");
 }
@@ -281,7 +304,11 @@
                                       onSuccess:OCMOCK_ANY
                                       onFailure:OCMOCK_ANY];
 
-    [self.client updateNamedUserTags:@"fake-named-user" addTags:self.addTags removeTags:self.removeTags onSuccess:nil onFailure:nil];
+    [self.client updateNamedUserTags:@"fake-named-user"
+                             addTags:self.addTags
+                          removeTags:self.removeTags
+                           onSuccess:nil
+                           onFailure:nil];
     XCTAssertNoThrow([self.mockRequestEngine verify],
                      @"Update named user tags should succeed on 2xx status codes.");
 }
@@ -306,9 +333,12 @@
         successBlock(request, 0);
     }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
-    [self.client updateNamedUserTags:@"fake-named-user" addTags:self.addTags removeTags:self.removeTags onSuccess:^{
-        onSuccessCalled = YES;
-    } onFailure:nil];
+    [self.client updateNamedUserTags:@"fake-named-user"
+                             addTags:self.addTags
+                          removeTags:self.removeTags
+                           onSuccess:^{
+                               onSuccessCalled = YES;
+                           } onFailure:nil];
 
     XCTAssertTrue(onSuccessCalled, @"Update named user tags should call onSuccess block when its successful.");
 }
@@ -322,7 +352,7 @@
 
     UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
 
-    // Expect the run request and call the failure block
+    // Expect the run request and call the failure block.
     [[[self.mockRequestEngine stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:6];
@@ -330,8 +360,12 @@
         failureBlock(request, 0);
     }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
-    [self.client updateNamedUserTags:@"fake-named-user" addTags:self.addTags removeTags:self.removeTags onSuccess:nil onFailure:^(UAHTTPRequest *request) {
-        failedRequest = request;
+    [self.client updateNamedUserTags:@"fake-named-user"
+                             addTags:self.addTags
+                          removeTags:self.removeTags
+                           onSuccess:nil
+                           onFailure:^(UAHTTPRequest *request) {
+                               failedRequest = request;
     }];
 
     XCTAssertEqualObjects(request, failedRequest, @"Failure block should return the failed request.");

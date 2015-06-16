@@ -84,8 +84,6 @@
  }
 
 - (void)tearDown {
-    [super tearDown];
-
     [self.mockAirship stopMocking];
     [self.mockedKeychainClass stopMocking];
     [self.mockLocaleClass stopMocking];
@@ -93,8 +91,9 @@
     [self.mockPush stopMocking];
     [self.mockDBManager stopMocking];
     [self.mockApplication stopMocking];
-
     [self.dataStore removeAll];
+
+    [super tearDown];
 }
 
 - (void)testRequestTimezoneHeader {
