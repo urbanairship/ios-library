@@ -388,8 +388,20 @@
  * 
  * Set this to `NO` to prevent the device from sending any tag information to the server when using
  * server-side tagging. Defaults to `YES`.
+ *
+ * @deprecated As of version 6.1.0. Replaced with channelTagRegistrationEnabled.
  */
-@property (nonatomic, assign, getter=isDeviceTagsEnabled) BOOL deviceTagsEnabled;
+@property (nonatomic, assign) BOOL deviceTagsEnabled __attribute__((deprecated("As of version 6.1.0.")));
+
+/**
+ * Allows setting tags from the device. Tags can be set from either the server or the device, but
+ * not both (without synchronizing the data), so use this flag to explicitly enable or disable
+ * the device-side flags.
+ *
+ * Set this to `NO` to prevent the device from sending any tag information to the server when using
+ * server-side tagging. Defaults to `YES`.
+ */
+@property (nonatomic, assign, getter=isChannelTagRegistrationEnabled) BOOL channelTagRegistrationEnabled;
 
 /**
  * Adds a tag to the list of tags for the device.
