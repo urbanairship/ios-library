@@ -76,6 +76,9 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 NSString *const UAPushAddTagGroupsSettingsKey = @"UAPushAddTagGroups";
 NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
 
+// The default device tag group.
+NSString *const UAPushDefaultDeviceTagGroup = @"device";
+
 @implementation UAPush
 
 // Both getter and setter are custom here, so give the compiler a hand with the synthesizing
@@ -94,7 +97,7 @@ NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
     if (self) {
         self.dataStore = dataStore;
 
-        self.deviceTagsEnabled = YES;
+        self.channelTagRegistrationEnabled = YES;
         self.requireAuthorizationForDefaultCategories = YES;
         self.backgroundPushNotificationsEnabledByDefault = YES;
 
@@ -327,6 +330,14 @@ NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
     }
 }
 
+- (BOOL)deviceTagsEnabled {
+    return self.channelTagRegistrationEnabled;
+}
+
+- (void)setDeviceTagsEnabled:(BOOL)deviceTagsEnabled {
+    self.channelTagRegistrationEnabled = deviceTagsEnabled;
+}
+
 - (BOOL)shouldUseUIUserNotificationCategories {
     return [UIUserNotificationCategory class] != nil;
 }
@@ -522,6 +533,11 @@ NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
 
 - (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
 
+    if (self.channelTagRegistrationEnabled && [UAPushDefaultDeviceTagGroup isEqualToString:tagGroupID]) {
+        UA_LERR(@"Unable to add tags %@ to device tag group when channelTagRegistrationEnabled is true.", [tags description]);
+        return;
+    }
+
     NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
 
     if (![UATagUtils isValid:normalizedTags group:tagGroupID]) {
@@ -536,6 +552,11 @@ NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
 }
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
+
+    if (self.channelTagRegistrationEnabled && [UAPushDefaultDeviceTagGroup isEqualToString:tagGroupID]) {
+        UA_LERR(@"Unable to add tags %@ to device tag group when channelTagRegistrationEnabled is true.", [tags description]);
+        return;
+    }
 
     NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
 
@@ -776,8 +797,8 @@ BOOL deferChannelCreationOnForeground = false;
     payload.optedIn = [self userPushNotificationsAllowed];
     payload.backgroundEnabled = [self backgroundPushNotificationsAllowed];
 
-    payload.setTags = self.deviceTagsEnabled;
-    payload.tags = self.deviceTagsEnabled ? [self.tags copy]: nil;
+    payload.setTags = self.channelTagRegistrationEnabled;
+    payload.tags = self.channelTagRegistrationEnabled ? [self.tags copy]: nil;
 
     payload.alias = self.alias;
 

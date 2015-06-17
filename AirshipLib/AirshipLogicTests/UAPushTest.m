@@ -1234,7 +1234,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     // Set up UAPush to give a full, opted in payload
     self.push.deviceToken = validDeviceToken;
     self.push.alias = @"ALIAS";
-    self.push.deviceTagsEnabled = YES;
+    self.push.channelTagRegistrationEnabled = YES;
     self.push.tags = @[@"tag-one"];
     self.push.autobadgeEnabled = NO;
     self.push.quietTimeEnabled = YES;
@@ -1438,7 +1438,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     // Set up UAPush to give minimum payload
     self.push.deviceToken = nil;
     self.push.alias = nil;
-    self.push.deviceTagsEnabled = NO;
+    self.push.channelTagRegistrationEnabled = NO;
     self.push.autobadgeEnabled = NO;
     self.push.quietTimeEnabled = NO;
 
@@ -1470,7 +1470,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
 - (void)testRegistrationPayloadDeviceTagsDisabled {
     self.push.userPushNotificationsEnabled = YES;
-    self.push.deviceTagsEnabled = NO;
+    self.push.channelTagRegistrationEnabled = NO;
     self.push.tags = @[@"tag-one"];
 
     // Check that the payload setTags is NO and the tags is nil
@@ -2659,6 +2659,44 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     XCTAssertNil([self.push.pendingRemoveTags objectForKey:@"tagGroup"], @"tags should be nil");
     addTags = [self.push.pendingAddTags objectForKey:@"tagGroup"];
     XCTAssertEqual((NSUInteger)3, addTags.count, @"should contain 3 tags in array");
+}
+
+/**
+ * Test adding and removing tags to device tag group pass when channelTagRegistrationEnabled is false.
+ */
+- (void)testChannelTagReigstrationDisabled {
+    self.push.channelTagRegistrationEnabled = NO;
+    self.push.pendingAddTags = nil;
+    self.push.pendingRemoveTags = nil;
+
+    NSArray *tagsToAdd = @[@"tag1", @"tag2", @"tag3"];
+    [self.push addTags:tagsToAdd group:@"device"];
+
+    NSArray *addTags = [self.push.pendingAddTags objectForKey:@"device"];
+    XCTAssertEqual((NSUInteger)3, addTags.count, @"should contain 3 tags in array");
+
+    NSArray *tagsToRemove = @[@"tag4", @"tag5", @"tag6"];
+    [self.push removeTags:tagsToRemove group:@"device"];
+
+    NSArray *removeTags = [self.push.pendingRemoveTags objectForKey:@"device"];
+    XCTAssertEqual((NSUInteger)3, removeTags.count, @"should contain 3 tags in array");
+}
+
+/**
+ * Test adding and removing tags to device tag group fails when channelTagRegistrationEnabled is true.
+ */
+- (void)testChannelTagRegistrationEnabled {
+    self.push.channelTagRegistrationEnabled = YES;
+    self.push.pendingAddTags = nil;
+    self.push.pendingRemoveTags = nil;
+
+    NSArray *tagsToAdd = @[@"tag1", @"tag2", @"tag3"];
+    [self.push addTags:tagsToAdd group:@"device"];
+    XCTAssertNil([self.push.pendingAddTags objectForKey:@"device"], @"tags should be nil");
+
+    NSArray *tagsToRemove = @[@"tag4", @"tag5", @"tag6"];
+    [self.push removeTags:tagsToRemove group:@"device"];
+    XCTAssertNil([self.push.pendingRemoveTags objectForKey:@"device"], @"tags should be nil");
 }
 
 /**
