@@ -25,19 +25,15 @@
 
 #import <XCTest/XCTest.h>
 #import "UAAction+Internal.h"
-#import "UATestSynchronizer.h"
 
 @interface UAActionTest : XCTestCase
 @property (nonatomic, strong) UAActionArguments *emptyArgs;
-@property (nonatomic, strong) UATestSynchronizer *sync;
 @end
 
 @implementation UAActionTest
 
 - (void)setUp {
     self.emptyArgs = [UAActionArguments argumentsWithValue:nil withSituation:UASituationManualInvocation];
-    self.sync = [[UATestSynchronizer alloc] init];
-
     [super setUp];
 }
 
@@ -144,8 +140,7 @@
  * the action being performed on the UI thread.
  */
 - (void)testRunOnBackgroundThread {
-
-    __block BOOL ran = NO;
+    XCTestExpectation *testExpecation = [self expectationWithDescription:@"action finished"];
 
     BOOL (^isMainThread)(void) = ^{
         return [[NSThread currentThread] isEqual:[NSThread mainThread]];
@@ -160,14 +155,11 @@
         XCTAssertFalse(isMainThread(), @"we should be on a background thread");
         [action runWithArguments:nil completionHandler:^(UAActionResult *result) {
             XCTAssertTrue(isMainThread(), @"we should be on the main thread");
-            ran = YES;
-            [self.sync continue];
+            [testExpecation fulfill];
         }];
     });
 
-    [self.sync wait];
-
-    XCTAssertTrue(ran, @"action should have been run");
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 /*
@@ -175,8 +167,7 @@
  * the work being marshalled back onto the main thread.
  */
 - (void)testFinishOnBackgroundThread {
-
-    __block BOOL ran = NO;
+    XCTestExpectation *testExpecation = [self expectationWithDescription:@"action finished"];
 
     BOOL (^isMainThread)(void) = ^{
         return [[NSThread currentThread] isEqual:[NSThread mainThread]];
@@ -186,18 +177,15 @@
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             XCTAssertFalse(isMainThread(), @"we should be on a background thread");
             handler([UAActionResult emptyResult]);
-            [self.sync continue];
         });
     }];
 
     [action runWithArguments:nil completionHandler:^(UAActionResult *result) {
-        ran = YES;
         XCTAssertTrue(isMainThread(), @"we should be back on the main thread");
+        [testExpecation fulfill];
     }];
 
-    [self.sync wait];
-
-    XCTAssertTrue(ran, @"action should have been run");
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 /*
