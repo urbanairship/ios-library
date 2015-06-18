@@ -68,10 +68,15 @@
     
     // Set 'oldp' parameter to NULL to get the size of the data
     // returned so we can allocate appropriate amount of space
-    sysctlbyname("hw.machine", NULL, &size, NULL, 0); 
+    sysctlbyname("hw.machine", NULL, &size, NULL, 0);
+
+    char *name;
     
     // Allocate the space to store name
-    char *name = malloc(size);
+    if (!(name = malloc(size))) {
+        UA_LERR(@"Out of memory");
+        return nil;
+    };
     
     // Get the platform name
     sysctlbyname("hw.machine", name, &size, NULL, 0);
