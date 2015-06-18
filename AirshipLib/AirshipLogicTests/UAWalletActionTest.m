@@ -118,8 +118,8 @@
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"a string" withSituation:UASituationManualInvocation];
 
     [walletAction performWithArguments:args completionHandler:^(UAActionResult *result) {
-        XCTAssertEqual(UAActionFetchResultFailed, result.fetchResult,
-                       @"Attempting to add a duplicate pass should result in failed fetch results.");
+        XCTAssertEqual(UAActionFetchResultNewData, result.fetchResult,
+                       @"An attempt to add a duplicate pass should result in UAActionFetchResultNewData.");
 
         completionBlockCalled = YES;
     }];

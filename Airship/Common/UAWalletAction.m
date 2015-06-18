@@ -116,14 +116,14 @@
 
         if (error) {
             UA_LDEBUG(@"Failed to initialize a pass %@", [error description]);
-            completionHandler([UAActionResult resultWithError:error withFetchResult:UAActionFetchResultFailed]);
+            completionHandler([UAActionResult resultWithError:error withFetchResult:UAActionFetchResultNewData]);
             return;
         }
 
         if (pass && display) {
             if ([self.passLibrary containsPass:pass]) {
                 UA_LDEBUG(@"Passbook library already contains the pass %@, skipping add", pass.localizedName);
-                completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultFailed]);
+                completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
                 return;
             }
 
