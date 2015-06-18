@@ -47,6 +47,8 @@
 #define kUAOverlayInboxMessageActionDefaultRegistryName @"^mco"
 #define kUAPasteboardActionDefaultRegistryName @"clipboard_action"
 #define kUAPasteboardActionDefaultRegistryAlias @"^c"
+#define kUAWalletActionDefaultRegistryName @"wallet_action"
+#define kUAWalletActionDefaultRegistryAlias @"^w"
 
 
 #define kUALandingPageActionLastOpenTimeLimitInSeconds @(7 * 86400) // 1 week

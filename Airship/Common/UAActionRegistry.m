@@ -39,6 +39,7 @@
 #import "UADisplayInboxAction.h"
 #import "UAPasteboardAction.h"
 #import "UAOverlayInboxMessageAction.h"
+#import "UAWalletAction.h"
 
 @implementation UAActionRegistry
 @dynamic registeredEntries;
@@ -344,6 +345,10 @@
                predicate:^(UAActionArguments *args) {
                    return (BOOL)(args.situation != UASituationForegroundPush);
                }];
+
+    // Wallet Action
+    [self registerAction:[[UAWalletAction alloc] init]
+                   names:@[kUAWalletActionDefaultRegistryAlias, kUAWalletActionDefaultRegistryName]];
 }
 
 @end
