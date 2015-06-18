@@ -201,7 +201,7 @@
 		BB8860D2159A7E9600584445 /* UAUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FC71652129597F9003BDD2B /* UAUser.h */; };
 		BB8860D6159A7E9600584445 /* UAAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F23001212B2B7BA001DB898 /* UAAnalytics.h */; };
 		BB8860D7159A7E9600584445 /* UATagUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F2B10C312DD01B60020843D /* UATagUtils.h */; };
-		BB8860D8159A7E9600584445 /* UASQLite.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7B412FC787900057449 /* UASQLite.h */; };
+		BB8860D8159A7E9600584445 /* UASQLite+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7B412FC787900057449 /* UASQLite+Internal.h */; };
 		BB8860D9159A7E9600584445 /* UAHTTPConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7B612FC787900057449 /* UAHTTPConnection.h */; };
 		BB8860DA159A7E9600584445 /* UAEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7B812FC787900057449 /* UAEvent.h */; };
 		BB8860DB159A7E9600584445 /* UAAnalyticsDBManager.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7BA12FC787900057449 /* UAAnalyticsDBManager.h */; };
@@ -743,7 +743,7 @@
 		D51846BF1300B92200A40CAC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		D5A4B9431300A8F200002F71 /* AirshipTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AirshipTest-Info.plist"; sourceTree = "<group>"; };
 		D5BED7B312FC787900057449 /* UASQLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UASQLite.m; sourceTree = "<group>"; };
-		D5BED7B412FC787900057449 /* UASQLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UASQLite.h; sourceTree = "<group>"; };
+		D5BED7B412FC787900057449 /* UASQLite+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UASQLite+Internal.h"; sourceTree = "<group>"; };
 		D5BED7B512FC787900057449 /* UAHTTPConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAHTTPConnection.m; sourceTree = "<group>"; };
 		D5BED7B612FC787900057449 /* UAHTTPConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAHTTPConnection.h; sourceTree = "<group>"; };
 		D5BED7B712FC787900057449 /* UAEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEvent.m; sourceTree = "<group>"; };
@@ -1527,7 +1527,7 @@
 				1F610E0817835C6700BCD96E /* UAConfig.h */,
 				1F610E0917835C6700BCD96E /* UAConfig+Internal.h */,
 				1F610DB117835C2200BCD96E /* UAConfig.m */,
-				D5BED7B412FC787900057449 /* UASQLite.h */,
+				D5BED7B412FC787900057449 /* UASQLite+Internal.h */,
 				D5BED7B312FC787900057449 /* UASQLite.m */,
 				49EECA8917CBD4BC00DE0AFB /* UADisposable.h */,
 				49EECA8A17CBD4BC00DE0AFB /* UADisposable.m */,
@@ -1582,7 +1582,7 @@
 				CCE34AF219C2646500A8EFC0 /* UAEventAppBackground.h in Headers */,
 				CCF4462A1947D252003E04E7 /* UACustomEvent.h in Headers */,
 				BB8860D7159A7E9600584445 /* UATagUtils.h in Headers */,
-				BB8860D8159A7E9600584445 /* UASQLite.h in Headers */,
+				BB8860D8159A7E9600584445 /* UASQLite+Internal.h in Headers */,
 				767D0D571A731937008CEC8A /* UANamedUser+Internal.h in Headers */,
 				CCE34AF819C2647A00A8EFC0 /* UAEventDeviceRegistration.h in Headers */,
 				BB8860D9159A7E9600584445 /* UAHTTPConnection.h in Headers */,
