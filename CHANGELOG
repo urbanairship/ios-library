@@ -26,6 +26,23 @@ Known issues with iOS 8.0.0 that may impact your application:
   in the set registered with iOS. You may see notification actions with the wrong color
   or authorization required status (Radar #18385104).
 
+---------------------
+6.1.0 - June 22, 2015
+---------------------
+- Support for channel and named user tag groups.
+- Added new action "open_mc_overlay_action" that displays an inbox messages in a landing page.
+- Updated "open_mc_action" action to fall back to displaying an inbox messages in a landing page if
+  the inbox delegate is not assigned.
+- Notification opens that are associated with an inbox message will now automatically trigger the
+  "open_mc_action" action if neither the "open_mc_overlay_action" or "open_mc_action" is present.
+- Added pasteboard action that allows copying text to the pasteboard.
+- Added channel capture test tool to retrieve the Urban Airship Channel ID from a device for testing
+  and diagnostics in end user devices.
+- Added new action "wallet_action" that allows downloads and displays a Passbook pass.
+- Fixed coredata concurrency violations.
+- Fixed automatic app delegate setup for swift applications.
+- Fixed invalid architectures issue when building applications with AirshipKit.
+
 ----------------------
 6.0.2 - April 28, 2015
 ----------------------
