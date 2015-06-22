@@ -179,7 +179,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 - (UADisposable *)markMessagesRead:(NSArray *)messages completionHandler:(UAInboxMessageListCallbackBlock)completionHandler {
     // Gather the object IDs so we can perform the operation on the private context
     NSArray *objectIDs = [messages valueForKeyPath:@"data.objectID"];
-    if (objectIDs.count) {
+    if (!objectIDs.count) {
         return nil;
     }
 
@@ -229,7 +229,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 - (UADisposable *)markMessagesDeleted:(NSArray *)messages completionHandler:(UAInboxMessageListCallbackBlock)completionHandler{
     // Gather the object IDs so we can perform the operation on the private context
     NSArray *objectIDs = [messages valueForKeyPath:@"data.objectID"];
-    if (objectIDs.count) {
+    if (!objectIDs.count) {
         return nil;
     }
 
