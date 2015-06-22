@@ -554,7 +554,7 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
 
     if (self.channelTagRegistrationEnabled && [UAPushDefaultDeviceTagGroup isEqualToString:tagGroupID]) {
-        UA_LERR(@"Unable to add tags %@ to device tag group when channelTagRegistrationEnabled is true.", [tags description]);
+        UA_LERR(@"Unable to remove tags %@ from device tag group when channelTagRegistrationEnabled is true.", [tags description]);
         return;
     }
 
