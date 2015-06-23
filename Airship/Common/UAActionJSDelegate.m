@@ -122,7 +122,9 @@ completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
         if (errorMessage) {
             // JSONify the error message
             errorMessage = [NSJSONSerialization stringWithObject:errorMessage acceptingFragments:YES];
-            script = [NSString stringWithFormat:@"UAirship.finishAction(new Error(%@), null, %@);", errorMessage, callbackID];
+            script = [NSString stringWithFormat:@"var error = new Error();\
+                                                  error.message = %@; \
+                                                  UAirship.finishAction(error, null, %@)", errorMessage, callbackID];
         } else if (resultString) {
             script = [NSString stringWithFormat:@"UAirship.finishAction(null, %@, %@);", resultString, callbackID];
         }
@@ -242,7 +244,9 @@ completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
                 errorString = [NSJSONSerialization stringWithObject:errorString acceptingFragments:YES];
                 callbackID = [NSJSONSerialization stringWithObject:callbackID acceptingFragments:YES];
 
-                NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(new Error(%@), null, %@);", errorString, callbackID];
+                NSString *script = [NSString stringWithFormat:@"var error = new Error();\
+                                                                error.message = %@; \
+                                                                UAirship.finishAction(error, null, %@);", errorString, callbackID];
                 if (completionHandler) {
                     completionHandler(script);
                 }
