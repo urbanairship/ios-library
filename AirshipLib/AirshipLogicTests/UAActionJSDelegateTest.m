@@ -63,14 +63,19 @@
     [super tearDown];
 }
 
+- (void)performWebViewCallWithURL:(NSURL *)url completionHandler:(void (^)(NSString *))handler {
+    [self.jsDelegate callWithData:[UAWebViewCallData callDataForURL:url webView:nil]
+            withCompletionHandler:handler];
+}
+
 /**
  * Helper method for verifying the correctness of JS delegate
  * calls and resulting callbacks
  */
-- (void)verifyWebViewCallWithData:(UAWebViewCallData *)data
-                   expectingError:(BOOL)expectingError
-                   expectedResult:(id)expectedResult
-                       callbackID:(NSString *)callbackID {
+- (void)verifyWebViewCallWithURL:(NSURL *)url
+                  expectingError:(BOOL)expectingError
+                  expectedResult:(id)expectedResult
+                      callbackID:(NSString *)callbackID {
     __block id resultValue;
     __block NSDictionary *errorValue;
     __block BOOL finished = NO;
@@ -91,7 +96,7 @@
 
     // Call the JS Delegate with the data. The resulting script in the completion handler should be
     // some form of UAirship.finishAction, which we verify below
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
+    [self performWebViewCallWithURL:url completionHandler:^(NSString *script){
         // if a callback ID was passed, evaluate the resulting script and compare actual and expected
         // results/errors
         if (callbackID) {
@@ -127,20 +132,13 @@
 
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-action-cb/callback-ID-1?test_action=%22hi%22"];
-    UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
-                                                        webView:nil];
 
-    [self verifyWebViewCallWithData:data expectingError:NO expectedResult:@"hi" callbackID:@"callback-ID-1"];
+    [self verifyWebViewCallWithURL:url expectingError:NO expectedResult:@"hi" callbackID:@"callback-ID-1"];
 
     //this produces an unserializable result, which should be converted into a string description
     url = [NSURL URLWithString:@"uairship://run-action-cb/callback-ID-2?unserializable=%22hi%22"];
-    data = [UAWebViewCallData callDataForURL:url
-                                     webView:nil];
 
-    [self verifyWebViewCallWithData:data expectingError:NO expectedResult:self.description callbackID:@"callback-ID-2"];
-
-    [self.registry removeEntryWithName:@"test_action"];
-    [self.registry removeEntryWithName:@"unserializable"];
+    [self verifyWebViewCallWithURL:url expectingError:NO expectedResult:self.description callbackID:@"callback-ID-2"];
 }
 
 /**
@@ -149,8 +147,6 @@
 - (void)testRunActionCBInvalidArgs {
     // Invalid action argument value because it is not properly JSON encoded
     NSURL *url = [NSURL URLWithString:@"uairship://run-action-cb/callback-ID-1?test_action=blah"];
-    UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
-                                                        webView:nil];
 
     UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         handler([UAActionResult resultWithValue:@"howdy"]);
@@ -158,9 +154,7 @@
 
     [self.registry registerAction:test name:@"test_action"];
 
-    [self verifyWebViewCallWithData:data expectingError:YES expectedResult:nil callbackID:@"callback-ID-1"];
-
-    [self.registry removeEntryWithName:@"test_action"];
+    [self verifyWebViewCallWithURL:url expectingError:YES expectedResult:nil callbackID:@"callback-ID-1"];
 }
 
 /**
@@ -169,10 +163,8 @@
 - (void)testRunActionCBInvalidAction {
     // This action doesn't exist, so should result in an error
     NSURL *url = [NSURL URLWithString:@"uairship://run-action-cb/callback-ID-1?bogus_action=%22hi%22"];
-    UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
-                                                        webView:nil];
 
-    [self verifyWebViewCallWithData:data expectingError:YES expectedResult:nil callbackID:@"callback-ID-1"];
+    [self verifyWebViewCallWithURL:url expectingError:YES expectedResult:nil callbackID:@"callback-ID-1"];
 }
 
 /**
@@ -186,12 +178,8 @@
     [self.registry registerAction:test name:@"test_action"];
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-action-cb/callback-ID-1?test_action"];
-    UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
-                                                        webView:nil];
 
-    [self verifyWebViewCallWithData:data expectingError:NO expectedResult:@"howdy" callbackID:@"callback-ID-1"];
-
-    [self.registry removeEntryWithName:@"test_action"];
+    [self verifyWebViewCallWithURL:url expectingError:NO expectedResult:@"howdy" callbackID:@"callback-ID-1"];
 }
 
 /**
@@ -207,14 +195,10 @@
     [self.registry registerAction:test name:@"test_action"];
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-action-cb?test_action"];
-    UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
-                                                        webView:nil];\
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
+    [self performWebViewCallWithURL:url completionHandler:^(NSString *script) {
         XCTAssertTrue(ran, @"the action should have run");
     }];
-
-    [self.registry removeEntryWithName:@"test_action"];
 }
 
 /**
@@ -240,19 +224,14 @@
 
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-actions?test_action=%22hi%22&also_test_action"];
-    UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
-                                                        webView:nil];
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
+    [self performWebViewCallWithURL:url completionHandler:^(NSString *script) {
         result = script;
     }];
 
     XCTAssertNil(result, @"run-basic-actions should not produce a script result");
     XCTAssertTrue(ran, @"the action should have run");
     XCTAssertTrue(alsoRan, @"the other action should have run");
-
-    [self.registry removeEntryWithName:@"test_action"];
-    [self.registry removeEntryWithName:@"also_test_action"];
 }
 
 /**
@@ -262,10 +241,8 @@
     __block NSString *result;
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-actions?bogus_action=%22hi$22"];
-    UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
-                                                        webView:nil];
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
+    [self performWebViewCallWithURL:url completionHandler:^(NSString *script) {
         result = script;
     }];
 
@@ -289,17 +266,13 @@
 
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-actions?test_action=blah"];
-    UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
-                                                        webView:nil];
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
+    [self performWebViewCallWithURL:url completionHandler:^(NSString *script) {
         result = script;
     }];
 
     XCTAssertFalse(ran, @"no action should have run");
     XCTAssertNil(result, @"run-basic-actions should not produce a script result");
-
-    [self.registry removeEntryWithName:@"test_action"];
 }
 
 /**
@@ -318,17 +291,13 @@
 
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-actions?test_action&test_action"];
-    UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
-                                                        webView:nil];
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
+    [self performWebViewCallWithURL:url completionHandler:^(NSString *script) {
         result = script;
     }];
 
     XCTAssertNil(result, @"run-actions should not produce a script result");
     XCTAssertEqual(runCount, 2, @"the action should have run 2 times");
-
-    [self.registry removeEntryWithName:@"test_action"];
 }
 
 /**
@@ -353,20 +322,14 @@
     [self.registry registerAction:alsoTest name:@"also_test_action"];
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-basic-actions?test_action=hi&also_test_action"];
-    
-    UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
-                                                        webView:nil];
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
+    [self performWebViewCallWithURL:url completionHandler:^(NSString *script) {
         result = script;
     }];
 
     XCTAssertNil(result, @"run-basic-actions should not produce a script result");
     XCTAssertTrue(ran, @"the action should have run");
     XCTAssertTrue(alsoRan, @"the other action should have run");
-
-    [self.registry removeEntryWithName:@"test_action"];
-    [self.registry removeEntryWithName:@"also_test_action"];
 }
 
 /**
@@ -385,17 +348,13 @@
 
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-basic-actions?test_action&test_action"];
-    UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
-                                                        webView:nil];
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
+    [self performWebViewCallWithURL:url completionHandler:^(NSString *script) {
         result = script;
     }];
 
     XCTAssertNil(result, @"run-basic-actions should not produce a script result");
     XCTAssertEqual(runCount, 2, @"the action should have run 2 times");
-
-    [self.registry removeEntryWithName:@"test_action"];
 }
 
 /**
@@ -405,10 +364,8 @@
     __block NSString *result;
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-basic-actions?bogus_action=hi"];
-    UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
-                                                        webView:nil];
 
-    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script) {
+    [self performWebViewCallWithURL:url completionHandler:^(NSString *script) {
         result = script;
     }];
 
