@@ -130,7 +130,6 @@
 
     [self.registry registerAction:unserializable name:@"unserializable"];
 
-
     NSURL *url = [NSURL URLWithString:@"uairship://run-action-cb/callback-ID-1?test_action=%22hi%22"];
 
     [self verifyWebViewCallWithURL:url expectingError:NO expectedResult:@"hi" callbackID:@"callback-ID-1"];
@@ -222,7 +221,6 @@
     [self.registry registerAction:test name:@"test_action"];
     [self.registry registerAction:alsoTest name:@"also_test_action"];
 
-
     NSURL *url = [NSURL URLWithString:@"uairship://run-actions?test_action=%22hi%22&also_test_action"];
 
     [self performWebViewCallWithURL:url completionHandler:^(NSString *script) {
@@ -256,14 +254,12 @@
     __block NSString *result;
     __block BOOL ran = NO;
 
-
     UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
     [self.registry registerAction:test name:@"test_action"];
-
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-actions?test_action=blah"];
 
@@ -288,7 +284,6 @@
     }];
 
     [self.registry registerAction:test name:@"test_action"];
-
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-actions?test_action&test_action"];
 
@@ -345,7 +340,6 @@
     }];
 
     [self.registry registerAction:test name:@"test_action"];
-
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-basic-actions?test_action&test_action"];
 
