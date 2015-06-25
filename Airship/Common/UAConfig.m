@@ -288,7 +288,6 @@
                                                          mutabilityOption:NSPropertyListImmutable
                                                                    format:nil
                                                          errorDescription:nil];
-            //UA_LTRACE(@"Embedded Profile Plist dict:\n%@", [plistDict description]);
         }
     }
 

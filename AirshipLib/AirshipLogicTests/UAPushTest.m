@@ -120,7 +120,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     // Set up mocked UIUserNotificationSettings
     self.mockUIUserNotificationSettings = [OCMockObject niceMockForClass:[UIUserNotificationSettings class]];
-    //[[[self.mockedApplication stub] andReturn:self.mockUIUserNotificationSettings] currentUserNotificationSettings];
 
     // Set up a mocked device api client
     self.mockedChannelRegistrar = [OCMockObject niceMockForClass:[UAChannelRegistrar class]];
