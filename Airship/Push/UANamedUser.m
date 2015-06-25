@@ -293,16 +293,12 @@ NSString *const UANamedUserRemoveTagGroupsSettingsKey = @"UANamedUserRemoveTagGr
     self.pendingRemoveTags = nil;
 
     UATagGroupsAPIClientSuccessBlock successBlock = ^{
-        UA_LINFO(@"Named user tags updated successfully.");
-
         // End background task
         [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
         backgroundTask = UIBackgroundTaskInvalid;
     };
 
     UATagGroupsAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
-        UA_LDEBUG(@"Named user tags failed to update.");
-
         NSInteger status = request.response.statusCode;
         if (status != 400 && status != 403) {
             resetPendingTags();

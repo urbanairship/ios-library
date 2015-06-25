@@ -40,6 +40,8 @@
 #define kUATagGroupsNamedUserIdKey @"named_user_id"
 #define kUATagGroupsAddKey @"add"
 #define kUATagGroupsRemoveKey @"remove"
+#define kUATagGroupsResponseObjectWarningsKey @"warnings"
+#define kUATagGroupsResponseObjectErrorKey @"error"
 
 @interface UATagGroupsAPIClient()
 
@@ -70,6 +72,52 @@
 
 - (void)cancelAllRequests {
     [self.requestEngine cancelAllRequests];
+}
+
+- (NSDictionary *)responseObjectForRequest:(UAHTTPRequest *)request {
+    id responseObject = [NSJSONSerialization objectWithString:request.responseString];
+    if ([responseObject isKindOfClass:[NSDictionary class]]) {
+        return responseObject;
+    }
+    UA_LDEBUG(@"Unable to parse tag groups response object");
+    return nil;
+}
+
+- (NSString *)errorForRequest:(UAHTTPRequest *)request {
+    id error = [self responseObjectForRequest:request][kUATagGroupsResponseObjectErrorKey];
+    if (error) {
+        if ([error isKindOfClass:[NSString class]]) {
+            return error;
+        } else {
+            UA_LDEBUG(@"Unable to parse tag groups response error");
+        }
+    }
+    return nil;
+}
+
+- (NSArray *)warningsForRequest:(UAHTTPRequest *)request {
+    id warnings = [self responseObjectForRequest:request][kUATagGroupsResponseObjectWarningsKey];
+    if (warnings) {
+        if ([warnings isKindOfClass:[NSArray class]]) {
+            return warnings;
+        } else {
+            UA_LDEBUG(@"Unable to parse tag groups response warnings: %@", warnings);
+        }
+    }
+    return nil;
+}
+
+- (void)logTagGroupResponseErrorForRequest:(UAHTTPRequest *)request prefix:(NSString *)prefix {
+    UA_LDEBUG(@" %@ tag groups update failed with error: %@", prefix, [self errorForRequest:request]);
+}
+
+- (void)logTagGroupResponseWarningsForRequest:(UAHTTPRequest *)request prefix:(NSString *)prefix {
+    NSArray *warnings = [self warningsForRequest:request];
+    if (warnings) {
+        UA_LDEBUG(@"%@ tag groups update completed with warnings: %@", prefix, warnings);
+    } else {
+        UA_LINFO(@"%@ tag groups update completed successfully", prefix);
+    }
 }
 
 - (void)updateChannelTags:(NSString *)channelId
@@ -120,12 +168,16 @@
         NSString *responseString = request.responseString;
         UA_LTRACE(@"Retrieved channel tag groups response: %@", responseString);
 
+        [self logTagGroupResponseWarningsForRequest:request prefix:@"Channel"];
+
         if (successBlock) {
             successBlock();
         } else {
             UA_LERR(@"Missing successBlock");
         }
     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
+        [self logTagGroupResponseErrorForRequest:request prefix:@"Channel"];
+
         [UAUtils logFailedRequest:request withMessage:@"Updating channel tag groups"];
 
         if (failureBlock) {
@@ -184,6 +236,8 @@
         NSString *responseString = request.responseString;
         UA_LTRACE(@"Retrieved named user tags response: %@", responseString);
 
+        [self logTagGroupResponseWarningsForRequest:request prefix:@"Named user"];
+
         if (successBlock) {
             successBlock();
         } else {
@@ -191,6 +245,8 @@
         }
     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
         [UAUtils logFailedRequest:request withMessage:@"Updating named user tags"];
+
+        [self logTagGroupResponseErrorForRequest:request prefix:@"Named user"];
 
         if (failureBlock) {
             failureBlock(request);
