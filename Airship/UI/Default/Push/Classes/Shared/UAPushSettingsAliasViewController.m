@@ -60,10 +60,12 @@ enum {
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     self.aliasField.text = [UAirship push].alias;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
     // This will occur before the text field finishes on its own when popping the view controller
     [self.view.window endEditing:animated];
 }
