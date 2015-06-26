@@ -98,8 +98,6 @@
          sessionID,
          [NSString stringWithFormat:@"%lu", (unsigned long)event.estimatedSize]];
     });
-    //UALOG(@"DB Count %d", [self eventCount]);
-    //UALOG(@"DB Size %d", [self sizeInBytes]);
 }
 
 //If max<0, it will get all data.

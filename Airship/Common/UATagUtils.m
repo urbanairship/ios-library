@@ -53,9 +53,7 @@
         NSString *countryCode = [locale objectForKey: NSLocaleCountryCode];
         
         //Prefix the tag with "country_" to avoid collisions w/ language
-        //[tags addObject:countryCode];
         [tags addObject:[NSString stringWithFormat:@"country_%@", countryCode]];
-        //UALOG(@"%@",[locale displayNameForKey:NSLocaleCountryCode value:countryCode]);
     }
     
     if (tagFlags & UATagTypeLanguage) {
@@ -64,9 +62,7 @@
         NSString *languageCode = [locale objectForKey: NSLocaleLanguageCode];
         
         //Prefix the tag with "language_" to avoid collisions w/ country
-        //[tags addObject:languageCode];
         [tags addObject:[NSString stringWithFormat:@"language_%@",languageCode]];
-        //UALOG(@"%@",[locale displayNameForKey:NSLocaleLanguageCode value:languageCode]);
     }
     
     if (tagFlags & UATagTypeDeviceType) {

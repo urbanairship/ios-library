@@ -47,9 +47,6 @@ static NSString *_cachedDeviceID = nil;
 @implementation UAKeychainUtils
 
 + (BOOL)createKeychainValueForUsername:(NSString *)username withPassword:(NSString *)password forIdentifier:(NSString *)identifier {
-
-    //UALOG(@"Storing Username: %@ and Password: %@", username, password);
-
     NSMutableDictionary *userDictionary = [UAKeychainUtils searchDictionaryWithIdentifier:identifier];
 
     // Set access permission - we use the keychain for it's stickiness, not security,
@@ -165,8 +162,6 @@ static NSString *_cachedDeviceID = nil;
 #pragma UA Device ID
 
 + (NSString *)createDeviceID {
-    //UALOG(@"Storing Username: %@ and Password: %@", username, password);
-
     NSString *deviceID = [NSUUID UUID].UUIDString;
 
     NSMutableDictionary *keychainValues = [UAKeychainUtils searchDictionaryWithIdentifier:kUAKeychainDeviceIDKey];

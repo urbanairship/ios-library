@@ -115,7 +115,6 @@
                 body = [self gzipCompress:_request.body]; //returns nil if compression fails
                 if (body) {
                     [urlRequest setValue:@"gzip" forHTTPHeaderField:@"Content-Encoding"];
-                    //UA_LDEBUG(@"Sending compressed body. Original size: %d Compressed size: %d", [request.body length], [body length]);
                 } else {
                     UA_LDEBUG(@"Body compression failed.");
                 }

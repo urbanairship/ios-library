@@ -46,7 +46,6 @@
 
     // The alert is a a dictionary with more details, let's just get the message without localization
     // This should be customized to fit your message details or usage scenario
-    //message = [[alertDict valueForKey:@"alert"] valueForKey:@"body"];
 
     UA_LDEBUG(@"Received an alert in the foreground with a body.");
     
