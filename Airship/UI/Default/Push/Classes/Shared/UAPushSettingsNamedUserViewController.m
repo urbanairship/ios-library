@@ -51,12 +51,23 @@ enum {
 
     self.title = @"Device Named User";
 
-    UITextField *strongNamedUserField = self.namedUserField;
-    strongNamedUserField.text = [UAirship push].namedUser.identifier;
-    strongNamedUserField.clearsOnBeginEditing = YES;
-    strongNamedUserField.accessibilityLabel = @"Edit NamedUser";
+    // Don't clear the text field pre-emptively
+    self.namedUserField.clearsOnBeginEditing = NO;
+    self.namedUserField.accessibilityLabel = @"Edit NamedUser";
     self.textLabel.text = @"Assign a named user ID to a device or a group of devices to simplify "
     @"the process of sending notifications.";
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    self.namedUserField.text = [UAirship push].namedUser.identifier;
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+
+    // This will occur before the text field finishes on its own when popping the view controller
+    [self.view.window endEditing:animated];
 }
 
 #pragma mark -
@@ -118,7 +129,6 @@ enum {
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
-
     NSString *newNamedUser = self.namedUserField.text;
 
     // Trim leading whitespace
