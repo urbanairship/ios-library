@@ -53,11 +53,23 @@ enum {
     self.title = @"Device Alias";
 
     UITextField *strongAliasField = self.aliasField;
-    strongAliasField.text = [UAirship push].alias;
-    strongAliasField.clearsOnBeginEditing = YES;
+
+    // Don't clear the text field pre-emptively
+    strongAliasField.clearsOnBeginEditing = NO;
     strongAliasField.accessibilityLabel = @"Edit Alias";
     self.textLabel.text = @"Assign an alias to a device or a group of devices to simplify "
                      @"the process of sending notifications.";
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    self.aliasField.text = [UAirship push].alias;
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    // This will occur before the text field finishes on its own when popping the view controller
+    [self.view.window endEditing:animated];
 }
 
 #pragma mark -
