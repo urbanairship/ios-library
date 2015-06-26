@@ -51,9 +51,11 @@ enum {
 
     self.title = @"Device Named User";
 
+    UITextField *strongNamedUserField = self.namedUserField;
+
     // Don't clear the text field pre-emptively
-    self.namedUserField.clearsOnBeginEditing = NO;
-    self.namedUserField.accessibilityLabel = @"Edit NamedUser";
+    strongNamedUserField.clearsOnBeginEditing = NO;
+    strongNamedUserField.accessibilityLabel = @"Edit NamedUser";
     self.textLabel.text = @"Assign a named user ID to a device or a group of devices to simplify "
     @"the process of sending notifications.";
 }

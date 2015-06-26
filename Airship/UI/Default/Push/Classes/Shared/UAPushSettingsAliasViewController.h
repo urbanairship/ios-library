@@ -30,7 +30,7 @@
 
 // These IBOutlets needs to be strong because they have to be re-created and
 // added back to the view for iOS 6.
-@property (nonatomic, strong) IBOutlet UITableView *tableView;
+@property (nonatomic, weak) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) IBOutlet UITableViewCell *aliasCell;
 @property (nonatomic, strong) IBOutlet UITableViewCell *textCell;
 @property (nonatomic, strong) IBOutlet UILabel *textLabel;

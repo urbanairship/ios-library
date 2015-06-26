@@ -52,9 +52,11 @@ enum {
 
     self.title = @"Device Alias";
 
+    UITextField *strongAliasField = self.aliasField;
+
     // Don't clear the text field pre-emptively
-    self.aliasField.clearsOnBeginEditing = NO;
-    self.aliasField.accessibilityLabel = @"Edit Alias";
+    strongAliasField.clearsOnBeginEditing = NO;
+    strongAliasField.accessibilityLabel = @"Edit Alias";
     self.textLabel.text = @"Assign an alias to a device or a group of devices to simplify "
                      @"the process of sending notifications.";
 }
