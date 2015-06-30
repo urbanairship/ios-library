@@ -88,18 +88,18 @@
 
     // Ensure that the simulator falls back to the inProduction flag as it was set if there isn't a profile
 
-    UAConfig *configInProduction =[[UAConfig alloc] init];
+    UAConfig *configInProduction = [[UAConfig alloc] init];
     configInProduction.profilePath = nil;
     configInProduction.inProduction = YES;
     configInProduction.detectProvisioningMode = YES;
     configInProduction.isSimulator = YES;
     XCTAssertTrue(configInProduction.inProduction, @"Simulators with provisioning detection enabled should return the production value as set.");
 
-    UAConfig *configInDevelopment =[[UAConfig alloc] init];
+    UAConfig *configInDevelopment = [[UAConfig alloc] init];
     configInDevelopment.profilePath = nil;
     configInDevelopment.inProduction = NO;
     configInDevelopment.detectProvisioningMode = YES;
-    configInProduction.isSimulator = YES;
+    configInDevelopment.isSimulator = YES;
     XCTAssertFalse(configInDevelopment.inProduction, @"Simulators with provisioning detection enabled should return the production value as set.");
 }
 
