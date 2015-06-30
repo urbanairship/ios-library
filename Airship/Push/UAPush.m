@@ -176,13 +176,13 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
                                                                              error:NULL];
 
     if ([regex numberOfMatchesInString:deviceToken options:0 range:NSMakeRange(0, [deviceToken length])]) {
-        UA_LERR(@"Device token %@ contains invalid characters.  Only hex characters are allowed", deviceToken);
+        UA_LERR(@"Device token %@ contains invalid characters. Only hex characters are allowed.", deviceToken);
         return;
     }
 
-    // 64 - device tokens are 32 bytes long, each byte is 2 characters
-    if ([deviceToken length] != 64) {
-        UA_LWARN(@"Device token %@ should be only 32 bytes (64 characters) long", deviceToken);
+    // Device tokens are 32 to 100 bytes in binary format, each byte is 2 hex characters
+    if (deviceToken.length < 64 || deviceToken.length > 200) {
+        UA_LWARN(@"Device token %@ should be 64 to 200 hex characters (32 to 100 bytes) long.", deviceToken);
     }
 
     [self.dataStore setObject:deviceToken forKey:UAPushDeviceTokenKey];
