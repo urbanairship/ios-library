@@ -33,11 +33,11 @@
 @implementation IOS8BugsTests
 
 /**
- * Test for UIUserNotificationAction isEqual mutates the desctructive and
- * authenticationRequired bools. Note: once this fails that means Apple fixed the
- * issue.
+ * Test for an iOS8 bug that causes UIUserNotificationAction's isEqual method to mutate the isDestructive and
+ * isAuthenticationRequired bools. This bug is fixed in iOS9 s1.
  */
-- (void)testUIUserNotificationActionIsEqualIsBroke {
+- (void)testUIUserNotificationActionIsEqualIsNotBroke {
+
     UIMutableUserNotificationAction *action = [[UIMutableUserNotificationAction alloc] init];
     action.destructive = YES;
     action.authenticationRequired = YES;
@@ -46,16 +46,19 @@
     anotherAction.destructive = NO;
     anotherAction.authenticationRequired = NO;
 
-    // Verify the first action is descrtructive and requires authentication
+    // Verify the first action is destructive and requires authentication
     XCTAssertTrue(action.isDestructive);
     XCTAssertTrue(action.isAuthenticationRequired);
 
     // Compare
     [action isEqual:anotherAction];
 
-    // Verify the first action properties were mutated
-    XCTAssertFalse(action.isDestructive);
-    XCTAssertFalse(action.isAuthenticationRequired);
+    // Test that isEquals no longer mutates isDestructive and isAuthenticationRequired bools in iOS9+
+    if ([NSProcessInfo processInfo].operatingSystemVersion.majorVersion >= 9) {
+        // Verify the first action properties were NOT mutated
+        XCTAssertTrue(action.isDestructive);
+        XCTAssertTrue(action.isAuthenticationRequired);
+    }
 }
 
 @end
