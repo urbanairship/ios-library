@@ -1,8 +1,7 @@
-iOS Urban Airship Library
-=========================
+# iOS Urban Airship Library
 
-Overview
---------
+
+## Overview
 
 Urban Airship's libUAirship is a drop-in static library that provides a simple way to
 integrate Urban Airship services into your iOS applications. If you just want to
@@ -10,17 +9,36 @@ include the library in your app, you can download ``libUAirship-latest.zip`` fro
 http://urbanairship.com/resources/developer-resources. This zip contains a pre-compiled
 universal library for armv7/armv7s/arm64/i386/x86_64 (``libUAirship-x.y.z.a``).
 
-Resources
-----------
+
+## iOS 8 Notes (Updated September 25, 2014)
+
+Known issues with iOS 8.0.0 that may impact your application:
+- Applications do not enter the 'active' state when started from an interactive notification 
+and subsequent app sessions do not receive the application:didBecomeActive delegate call or
+UIApplicationDidBecomeActiveNotification notification. The application state never
+transitions out of 'inactive' (Radar #18179525). This will impact the accuracy of
+reporting for applications using interactive notifications.
+- Background refresh always appears to be enabled in an application even when disabled in
+settings and background push will not be delivered. Push registration will consider a
+device in this situation able to receive a background notification when it cannot. (Radar #18298439)
+- Registering for UIUserNotificationTypeNone will prevent a re-registration until the device
+has been restarted and the settings are manually updated in Settings.app. There is a
+workaround for this issue in UA SDK 5.0.0. (Radar #17878212)
+- The boolean properties on UIUserNotificationAction are mutated in the
+UIUserNotificationCategory isEqual: method, so the authorizationRequired and destructive
+properties on an action may receive values from actions in other categories
+in the set registered with iOS. You may see notification actions with the wrong color
+or authorization required status (Radar #18385104).
+
+## Resources
+
 - Urban Airship iOS Library Reference: http://docs.urbanairship.com/reference/libraries/ios/latest/
 - Getting started guide: http://docs.urbanairship.com/build/ios.html
 - Library Upgrade Guides: http://docs.urbanairship.com/topic_guides/ios_migration.html
 
-Working with the Library
-------------------------
+## Working with the Library
 
-Copy libUAirship Files
-######################
+### Copy libUAirship Files
 
 Download and unzip the latest version of libUAirship.  If you are using one of our sample
 projects, copy the ``Airship`` directory into the same directory as your project::
@@ -30,8 +48,7 @@ projects, copy the ``Airship`` directory into the same directory as your project
 If you are not using a sample project, you'll need to import the source files for the User 
 Interface into your project. These are located under /Airship/UI/Default
 
-Required Libraries
-##################
+### Required Libraries
 
 The core library requires your application to link against the following Frameworks (sample UIs
 have additional linking requirements)::
@@ -49,8 +66,7 @@ have additional linking requirements)::
     CoreTelephony.framework
     CoreLocation.framework
 
-Build Settings
-##############
+### Build Settings
 
 **Compiler**
 Xcode 6 is required for all projects and the static library. Projects must target >= iOS6.
@@ -58,18 +74,15 @@ Xcode 6 is required for all projects and the static library. Projects must targe
 **Header search path**                          
 Ensure that your build target's header search path includes the Airship directory.
 
-Quickstart
-----------
+## Quickstart
 
-Prerequisite
-############
+### Prerequisite
 
 Before getting started you must perform the steps outlined above.
 
 In addition you'll need to include *UAirship.h* and *UAPush.h* in your source files.
 
-The AirshipConfig File
-######################
+### The AirshipConfig File
 
 The library uses a .plist configuration file named `AirshipConfig.plist` to manage your production and development
 application profiles. Example copies of this file are available in all of the sample projects. Place this file
@@ -78,8 +91,7 @@ view all the possible keys and values, visit http://docs.urbanairship.com/ios-li
 
 You can also edit the file as plain-text:
 
-.. code:: xml
-
+```xml
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
     <plist version="1.0">
@@ -96,6 +108,7 @@ You can also edit the file as plain-text:
       <string>Your Production App Secret</string>
     </dict>
     </plist>
+```
 
 If you are using development builds and testing using the Apple sandbox set `inProduction` to `false`. For
 App Store and Ad-Hoc builds, set it to `true`. You may also allow the library to auto-detect the production
@@ -104,13 +117,11 @@ mode by setting `detectProvisioningMode` to `true`.
 Advanced users may add scripting or preprocessing logic to this .plist file to automate the switch from
 development to production keys based on the build type.
 
-Push Integration
-################
+### Push Integration
 
 To enable push notifications, you will need to make several additions to your application delegate.
     
-.. code:: obj-c
-
+```obj-c
     - (BOOL)application:(UIApplication *)application 
             didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
@@ -153,17 +164,17 @@ To enable push notifications, you will need to make several additions to your ap
 
         return YES;
     }
+```
     
 To enable push later on in your application:
 
-.. code:: obj-c
-
+```obj-c
     // Somewhere in the app, this will enable push (setting it to NO will disable push,
     // which will trigger the proper registration or de-registration code in the library).
     [UAirship push].userPushNotificationsEnabled = YES;
+```
 
-Logging
--------
+## Logging
 
 Logging can be configured through either the AirshipConfig.plist file or directly in code. The
 default log level for production apps is `UALogLevelError` and the default for development apps
@@ -171,81 +182,72 @@ is `UALogLevelDebug`.
 
 In `AirshipConfig.plist`, set `LOG_LEVEL` to one of the following integer values:
 
-.. code:: obj-c
-
+```obj-c
     None = 0
     Error = 1
     Warn = 2
     Info = 3
     Debug = 4
     Trace = 5
+```
 
 To set the log level in code, call `setLogLevel` after `takeOff`:
 
-.. code:: obj-c
-
+```obj-c
     [UAirship setLogLevel:UALogLevelWarn];
+```
 
 The available log levels are:
 
-.. code:: obj-c
-
+```obj-c
     UALogLevelNone
     UALogLevelError
     UALogLevelWarn
     UALogLevelInfo
     UALogLevelDebug
     UALogLevelTrace
+```
 
+## Building the Library
 
-Building the Library
---------------------
 Source can be found at https://github.com/urbanairship/ios-library
 
-Running Tests
-#############
+### Running Tests
 
 The unit tests in this project require OCMock. OCMock can be installed automatically
 with the use of our install script, scripts/mock_setup.sh.
 
-Building for Distribution
-#########################
+### Building for Distribution
 
 To build full and push-only static libraries from the command line, run the distribution script:
-
-.. code:: bash
-    
+ 
     ./Deploy/distribute.sh
+
 
 This will produce static libraries (.a files) in /Airship and create the samples and Airship library distribution zip file in
 Deploy/output
 
-Contributing Code
------------------
+## Contributing Code
 
 We accept pull requests! If you would like to submit a pull request, please fill out and submit a
 Code Contribution Agreement (http://urbanairship.com/legal/contribution-agreement/).
 
 
-Third Party Packages
---------------------
+## Third Party Packages
 
-Core Library
-############
-
-===================  ========  ======================================================
-Third party Package  License   Copyright / Creator 
-===================  ========  ======================================================
-Base64               BSD       Copyright 2009-2010 Matt Gallagher.
-Reachability         BSD       Copyright (C) 2010 Apple Inc.
-===================  ========  ======================================================
+### Core Library
 
 
-Test Code
-#########
+Third party Package | License   | Copyright / Creator 
+------------------- | --------- | -----------------------------------
+Base64              | BSD       | Copyright 2009-2010 Matt Gallagher.
+Reachability        | BSD       | Copyright (C) 2010 Apple Inc.
 
-===================  ========  ================================
-Third party Package  License   Copyright / Creator
-===================  ========  ================================
-JRSwizzle            MIT       Copyright 2012 Jonathan Rentzsch
-===================  ========  ================================
+
+### Test Code
+
+Third party Package | License   | Copyright / Creator 
+------------------- | --------- | -----------------------------------
+JRSwizzle           | MIT       | Copyright 2012 Jonathan Rentzsch
+
+
