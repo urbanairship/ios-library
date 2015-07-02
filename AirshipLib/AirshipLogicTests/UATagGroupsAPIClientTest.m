@@ -90,7 +90,7 @@
 
         for (NSInteger i = 500; i < 600; i++) {
             UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-            request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:i HTTPVersion:nil headerFields:nil];
+            request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
 
             // If shouldRetryOnConnection is NO, never retry
             self.client.shouldRetryOnConnectionError = NO;
@@ -111,7 +111,7 @@
 
         // Check that it returns NO for 400 status codes
         UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:400 HTTPVersion:nil headerFields:nil];
+        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
         if (retryBlock(request)) {
             return NO;
         }
@@ -144,7 +144,7 @@
 
         for (NSInteger i = 200; i < 300; i++) {
             UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-            request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:i HTTPVersion:nil headerFields:nil];
+            request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
             if (!whereBlock(request)) {
                 return NO;
             }
@@ -348,7 +348,7 @@
 
         for (NSInteger i = 500; i < 600; i++) {
             UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-            request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:i HTTPVersion:nil headerFields:nil];
+            request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
 
             // If shouldRetryOnConnection is NO, never retry
             self.client.shouldRetryOnConnectionError = NO;
@@ -369,7 +369,7 @@
 
         // Check that it returns NO for 400 status codes
         UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:400 HTTPVersion:nil headerFields:nil];
+        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
         if (retryBlock(request)) {
             return NO;
         }
@@ -401,7 +401,7 @@
 
         for (NSInteger i = 200; i < 300; i++) {
             UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-            request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:i HTTPVersion:nil headerFields:nil];
+            request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
             if (!whereBlock(request)) {
                 return NO;
             }

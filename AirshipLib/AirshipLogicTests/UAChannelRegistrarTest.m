@@ -311,7 +311,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
  * create a new channel ID.
  */
 - (void)testChannelConflictNewChannel {
-    self.channelFailureRequest.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:409 HTTPVersion:nil headerFields:nil];
+    self.channelFailureRequest.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:409 HTTPVersion:nil headerFields:nil];
 
     //Expect the channel client to update channel and call the update block
     [[[self.mockedChannelClient expect] andDo:channelUpdateFailureDoBlock] updateChannelWithLocation:@"someLocation"
@@ -341,7 +341,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
  * channel.
  */
 - (void)testChannelConflictFailed {
-    self.channelFailureRequest.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:409 HTTPVersion:nil headerFields:nil];
+    self.channelFailureRequest.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:409 HTTPVersion:nil headerFields:nil];
 
     //Expect the channel client to update channel and call the update block
     [[[self.mockedChannelClient expect] andDo:channelUpdateFailureDoBlock] updateChannelWithLocation:@"someLocation"
