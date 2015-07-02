@@ -123,10 +123,6 @@
     [self.whitelist addEntry:@"*://www.urbanairship.com"];
 
     // Reject
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wformat"
-    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:nil]]);
-#pragma clang diagnostic pop
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@""]]);
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"urbanairship.com"]]);
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"www.urbanairship.com"]]);
