@@ -961,16 +961,12 @@ BOOL deferChannelCreationOnForeground = false;
     self.pendingRemoveTags = nil;
 
     UATagGroupsAPIClientSuccessBlock successBlock = ^{
-        UA_LINFO(@"Tag groups updated successfully.");
-
         // End background task
         [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
         backgroundTask = UIBackgroundTaskInvalid;
     };
 
     UATagGroupsAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
-        UA_LDEBUG(@"Tag groups failed to update.");
-
         NSInteger status = request.response.statusCode;
         if (status != 400 && status != 403) {
             resetPendingTags();

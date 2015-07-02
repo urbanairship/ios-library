@@ -40,6 +40,8 @@
 #define kUATagGroupsNamedUserIdKey @"named_user_id"
 #define kUATagGroupsAddKey @"add"
 #define kUATagGroupsRemoveKey @"remove"
+#define kUATagGroupsResponseObjectWarningsKey @"warnings"
+#define kUATagGroupsResponseObjectErrorKey @"error"
 
 @interface UATagGroupsAPIClient()
 
@@ -70,6 +72,34 @@
 
 - (void)cancelAllRequests {
     [self.requestEngine cancelAllRequests];
+}
+
+- (void)logSuccessfulTagGroupRequest:(UAHTTPRequest *)request prefix:(NSString *)prefix {
+    id warnings;
+    id responseObject = [NSJSONSerialization objectWithString:request.responseString];
+    if ([responseObject isKindOfClass:[NSDictionary class]]) {
+        warnings = responseObject[kUATagGroupsResponseObjectWarningsKey];
+    }
+
+    if (warnings) {
+        UA_LINFO(@"%@ tag groups update completed successfully with warnings: %@", prefix, warnings);
+    } else {
+        UA_LINFO(@"%@ tag groups update complted successfully.", prefix);
+    }
+}
+
+- (void)logFailedTagGroupRequest:(UAHTTPRequest *)request prefix:(NSString *)prefix {
+    id error;
+    id responseObject = [NSJSONSerialization objectWithString:request.responseString];
+    if ([responseObject isKindOfClass:[NSDictionary class]]) {
+        error = responseObject[kUATagGroupsResponseObjectErrorKey];
+    }
+
+    if (error) {
+        UA_LINFO(@"%@ tag groups update failed with error: %@", prefix, error);
+    } else {
+        UA_LINFO(@"%@ tag groups update failed.", prefix);
+    }
 }
 
 - (void)updateChannelTags:(NSString *)channelId
@@ -117,8 +147,8 @@
         }
         return NO;
     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        NSString *responseString = request.responseString;
-        UA_LTRACE(@"Retrieved channel tag groups response: %@", responseString);
+        UA_LTRACE(@"Retrieved channel tag groups response: %@", request.responseString);
+        [self logSuccessfulTagGroupRequest:request prefix:@"Channel"];
 
         if (successBlock) {
             successBlock();
@@ -127,6 +157,7 @@
         }
     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
         [UAUtils logFailedRequest:request withMessage:@"Updating channel tag groups"];
+        [self logFailedTagGroupRequest:request prefix:@"Channel"];
 
         if (failureBlock) {
             failureBlock(request);
@@ -181,8 +212,8 @@
         }
         return NO;
     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        NSString *responseString = request.responseString;
-        UA_LTRACE(@"Retrieved named user tags response: %@", responseString);
+        UA_LTRACE(@"Retrieved named user tags response: %@", request.responseString);
+        [self logSuccessfulTagGroupRequest:request prefix:@"Named user"];
 
         if (successBlock) {
             successBlock();
@@ -191,6 +222,7 @@
         }
     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
         [UAUtils logFailedRequest:request withMessage:@"Updating named user tags"];
+        [self logFailedTagGroupRequest:request prefix:@"Named user"];
 
         if (failureBlock) {
             failureBlock(request);
