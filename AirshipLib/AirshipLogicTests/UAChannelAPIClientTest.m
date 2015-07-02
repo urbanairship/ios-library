@@ -76,7 +76,7 @@
 
         for (NSInteger i = 500; i < 600; i++) {
             UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-            request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:i HTTPVersion:nil headerFields:nil];
+            request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
 
             // If shouldRetryOnConnection is NO, never retry
             self.client.shouldRetryOnConnectionError = NO;
@@ -98,7 +98,7 @@
 
         // Check that it returns NO for 400 status codes
         UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:400 HTTPVersion:nil headerFields:nil];
+        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
         if (retryBlock(request)) {
             return NO;
         }
@@ -125,17 +125,17 @@
         UAHTTPRequestEngineWhereBlock whereBlock = obj;
         UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
 
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:nil];
+        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
         if (!whereBlock(request)) {
             return NO;
         }
 
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:201 HTTPVersion:nil headerFields:nil];
+        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:201 HTTPVersion:nil headerFields:nil];
         if (!whereBlock(request)) {
             return NO;
         }
 
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:400 HTTPVersion:nil headerFields:nil];
+        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
         if (whereBlock(request)) {
             return NO;
         }
@@ -166,7 +166,7 @@
     NSString *response = @"{ \"ok\":true, \"channel_id\": \"someChannelID\"}";
     request.responseData = [response dataUsingEncoding:NSUTF8StringEncoding];
 
-    request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{@"Location":@"someChannelLocation"}];
+    request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{@"Location":@"someChannelLocation"}];
 
     // Expect the run request and call the success block
     [[[self.mockRequestEngine stub] andDo:^(NSInvocation *invocation) {
@@ -271,7 +271,7 @@
 
         for (NSInteger i = 500; i < 600; i++) {
             UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-            request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:i HTTPVersion:nil headerFields:nil];
+            request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
 
             // If shouldRetryOnConnection is NO, never retry
             self.client.shouldRetryOnConnectionError = NO;
@@ -288,7 +288,7 @@
 
         // Check that it returns NO for 400 status codes
         UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:400 HTTPVersion:nil headerFields:nil];
+        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
         if (retryBlock(request)) {
             return NO;
         }
@@ -315,17 +315,17 @@
         UAHTTPRequestEngineWhereBlock whereBlock = obj;
         UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
 
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:nil];
+        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
         if (!whereBlock(request)) {
             return NO;
         }
 
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:201 HTTPVersion:nil headerFields:nil];
+        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:201 HTTPVersion:nil headerFields:nil];
         if (!whereBlock(request)) {
             return NO;
         }
 
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:400 HTTPVersion:nil headerFields:nil];
+        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
         if (whereBlock(request)) {
             return NO;
         }

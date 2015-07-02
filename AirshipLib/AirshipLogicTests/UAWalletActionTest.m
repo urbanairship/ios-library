@@ -126,7 +126,7 @@
 
     // Call the success block with a 200
     UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-    request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:nil];
+    request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
 
     request.responseData = [NSData data];
     

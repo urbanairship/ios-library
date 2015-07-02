@@ -123,7 +123,6 @@
     [self.whitelist addEntry:@"*://www.urbanairship.com"];
 
     // Reject
-    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:nil]]);
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@""]]);
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"urbanairship.com"]]);
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"www.urbanairship.com"]]);
