@@ -3,32 +3,8 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
-
------------
-iOS 8 Notes (Updated September 25, 2014)
------------
-
-Known issues with iOS 8.0.0 that may impact your application:
-- Applications do not enter the 'active' state when started from an interactive notification
-  and subsequent app sessions do not receive the application:didBecomeActive delegate call or
-  UIApplicationDidBecomeActiveNotification notification. The application state never
-  transitions out of 'inactive' (Radar #18179525). This will impact the accuracy of
-  reporting for applications using interactive notifications.
-- Background refresh always appears to be enabled in an application even when disabled in
-  settings and background push will not be delivered. Push registration will consider a
-  device in this situation able to receive a background notification when it cannot. (Radar #18298439)
-- Registering for UIUserNotificationTypeNone will prevent a re-registration until the device
-  has been restarted and the settings are manually updated in Settings.app. There is a
-  workaround for this issue in UA SDK 5.0.0. (Radar #17878212)
-- The boolean properties on UIUserNotificationAction are mutated in the
-  UIUserNotificationCategory isEqual: method, so the authorizationRequired and destructive
-  properties on an action may receive values from actions in other categories
-  in the set registered with iOS. You may see notification actions with the wrong color
-  or authorization required status (Radar #18385104).
-
----------------------
 6.1.0 - June 22, 2015
----------------------
+=====================
 - Support for channel and named user tag groups.
 - Added new action "open_mc_overlay_action" that displays an inbox messages in a landing page.
 - Updated "open_mc_action" action to fall back to displaying an inbox messages in a landing page if
@@ -43,23 +19,20 @@ Known issues with iOS 8.0.0 that may impact your application:
 - Fixed automatic app delegate setup for swift applications.
 - Fixed invalid architectures issue when building applications with AirshipKit.
 
-----------------------
 6.0.2 - April 28, 2015
-----------------------
+======================
 - Prefixed all constants in public headers with 'UA'.
 - Fixed race condition preventing the display of in-app messages on some devices.
 - Fixed missing InboxMessage metadata when running an action from a WebView with an associated message.
 - Fixed Urban Airship Javascript bridge when running actions that returns a result with unescaped JSON values.
 
----------------------
 6.0.1 - April 9, 2015
----------------------
+=====================
 - Fixed issue where displaying an in-app message in certain
   circumstances could cause an autolayout crash.
 
-----------------------
 6.0.0 - March 31, 2015
-----------------------
+======================
 - Support for in-app messaging.
 - Support for associating and disassociating a channel to a named user.
 - Added new region events for proximity triggers.
@@ -75,42 +48,36 @@ Known issues with iOS 8.0.0 that may impact your application:
 - Fixed Urban Airship Javascript bridge when the associated InboxMessage contains invalid characters in its title.
 - Fixed Inbox not repopulating its messages when an upgrade causes the inbox's internal cache to be dropped.
 
--------------------------
 5.1.1 - December 11, 2014
--------------------------
+=========================
 - Add workaound for possible CoreTelephony crash.
 - Fix compiler warnings in UAInboxMessageListController.
 
-------------------------
 5.1.0 - December 2, 2014
-------------------------
+========================
 - Added whitelisting to Urban Airship Javascript interface injection.
 - Added UAWebViewDelegate to simplify Urban Airship Javascript interface injection into custom webview implementations.
   - Prevents the Urban Airship Javascript interface from being injected multiple times into a page with frames.
 - Fixed crash when using the Share Action on iPad devices.
 
------------------------
 5.0.3 - October 8, 2014
------------------------
+=======================
  - Fixed missing headers in AirshipKit.
  - Fixed custom events attribution from a message center page if the page was
    displayed using the UALandingPageOverlayController.
 
---------------------------
 5.0.2 - September 25, 2014
---------------------------
+==========================
  - Fixed issue where inbox messages were coming back after being deleted.
 
---------------------------
 5.0.1 - September 23, 2014
---------------------------
+==========================
  - Verify channel location exists during channel creation.
  - Fixed "No Messages" not being displayed for Inbox.
  - Updated build scripts to handle paths with spaces.
 
---------------------------
 5.0.0 - September 17, 2014
---------------------------
+==========================
 
 New Features
 ------------
@@ -165,9 +132,8 @@ Documentation Updates
 - The generated (header) documentation (in reference-docs) now has complete coverage of our public interface,
   including enums and block types.
 
---------------------------
 4.0.4 - September 10, 2014
---------------------------
+==========================
  - Fixed iOS 8 push prompt on first-run and immediate opt-out.
  - Fixed quiet time setting not persisting between application restarts.
  - Added work around for iOS 8 registration bug where disabling push registering prevents registering for notification types
@@ -177,21 +143,18 @@ Documentation Updates
    keys (NSLocationAlwaysUsageDescription and NSLocationWhenInUseUsageDescription) to the application's info.plist. You must also manually
    request the correct authorization before starting location on Urban Airship by calling either requestWhenInUseAuthorization or requestAlwaysAuthorization on CLLocationManager.
 
------------------------
 4.0.3 - August 28, 2014
------------------------
+=======================
  - Fix undefined symbols build issue when building against the iOS 5 version of the static library.
 
------------------------
 4.0.2 - August 18, 2014
------------------------
+=======================
 This update is only required if building against the iOS 8 SDK.
 
 - Add basic support for new iOS 8 notification registration.
 
----------------------
 4.0.1 - July 25, 2014
----------------------
+=====================
 - Tag utility now uses OS preferred language.
 - Renamed methods to prevent false positives when apps are scanned by Apple for use of undocumented APIs.
 - Aliases and tags are now trimmed to prevent device registration errors.
@@ -201,9 +164,8 @@ This update is only required if building against the iOS 8 SDK.
 - Fixed possible crash with background tasks.
 
 
-----------------------
 4.0.0 - March 25, 2014
-----------------------
+======================
 - Added Urban Airship Actions framework - a generic framework that provides a convenient way to
   automatically perform tasks by name in response to push notifications, Rich App Page interactions and JavaScript.
 - Introduced a new device identifier, the Channel ID, which will replace the device token as the push address in Urban
@@ -214,9 +176,8 @@ This update is only required if building against the iOS 8 SDK.
 - Added Javascript interface methods - getMessageSentDateMS, getMessageSentDate, getMessageTitle, getMessageId, getUserId and getDeviceModel
   to match the Android Urban Airship Javascript interface.
 
---------------------------------------------
 3.1.1 (Internal Release) - November 21, 2013
---------------------------------------------
+============================================
 - Added logging channel id
 - Added 3.0.2 changes:
   - Moved headers to project level.
@@ -224,42 +185,36 @@ This update is only required if building against the iOS 8 SDK.
   - Fixed duplicate notification handling on background push applications.
   - Fixed possible crash with auto app integration when sending performSelector methods to the app delegate.
 
--------------------------
 3.0.4 - March 4, 2014
--------------------------
+=====================
 - Allow registrations in the background.
 - Fix an issue with inbox count.
 
--------------------------
 3.0.3 - February 18, 2014
--------------------------
+=========================
 - Fix detectProvisioningMode behavior when inProduction is not set.
 
--------------------------
 3.0.2 - November 21, 2013
--------------------------
+=========================
 - Moved headers to project level.
 - Fixed possible crash on iOS5 when opening rich push messages with embedded images.
 - Fixed duplicate notification handling on background push applications.
 - Fixed possible crash with auto app integration when sending performSelector methods to the app delegate.
 
---------------------------------------------
 3.1.0 (Internal Release) - November 14, 2013
---------------------------------------------
+============================================
 - Added ability to address opted out devices through channels.
 
------------------------
 3.0.1 - October 9, 2013
------------------------
+=======================
 - Added Inbox message caching through UAURLProtocol.
 - Added deleting expired Inbox messages even when the device is offline.
 - Added deviceToken validation checks when being set in UAPush.
 - Fixed bug where server side deleted Inbox messages were not being deleted on the client.
 - Fixed several 64 bit warnings.
 
---------------------------
 3.0.0 - September 18, 2013
---------------------------
+==========================
 - Removed iOS 4 support. This library version supports iOS 5, 6 and 7.
 - Converted to ARC (Automatic Reference Counting).
 - Removed SBJSON and replaced with NSJSONSerialization.
@@ -272,41 +227,35 @@ This update is only required if building against the iOS 8 SDK.
 - UAPush has a registrationDelegate and the "delegate" property has been deprecated and renamed pushNotificationDelegate.
 - UAInboxMessageList/UAInboxMessage exposes new block and delegate-based APIs.
 
---------------------------
 2.1.0 - September 18, 2013
---------------------------
+==========================
 - Added background push notification support.
 - Added 64bit compatibility when building from source (Shipped binaries only contain 32bit support).
 - Improved the automatic integration feature by allowing app delegates to inherit from additional classes and protocols.
 - Fixed inbox message webview layout for iOS7 in sample UI.
 - Fixed a possible crash in UAObservable.
 
--------------------------
 2.0.4 - September 5, 2013
--------------------------
+=========================
 - Fixed a bug that could cause failing Inbox API requests to retry indefinitely.
 - Fixed Inbox database schema error resulting in the Inbox message list to be unavailable when the device is offline.
 
--------------------------
 2.0.3 - August 23, 2013
--------------------------
+=======================
 - Fixed an analytics bug where opening an application for the first time from a push notification would not count it
 as a direct open.
 
--------------------------
 2.0.2 - August 15, 2013
--------------------------
+=======================
 - Added the entire raw message object to UAInboxMessage to be able to retrieve data that is missing from the model.
 
--------------------------
 2.0.1 - August 7, 2013
--------------------------
+======================
 - Fixed a bug in UAHTTPConnectionOperation causing intermittent crashes
   during push registration.
   
--------------------------
 2.0.0 - July 23, 2013
--------------------------
+=====================
 - Replaced the NSDictionary passed to takeOff with a UAConfig model object. More configuration
   options are available and can be set directly on the object (or through the AirshipConfig.plist).
 - New AirshipConfig.plist format. The new key names match the property names on UAConfig, though the old
@@ -341,9 +290,8 @@ as a direct open.
 - Added built-in variables for JavaScript embedded in rich push messages: UAirship.messageSentDate,
   UAirship.messageSentDateMS, and UAirship.messageTitle.
 
--------------------------
 1.4.0 - Feb 7, 2013
--------------------------
+===================
 - Removed all IAP/Subscriptions code from libUAirship-version.a. Applications using subscriptions
   or in-app purchase must use libUAirshipFull-version.a. libUAirshipPush is no longer distributed
   as libUAirship is taking its place.
@@ -356,15 +304,13 @@ as a direct open.
 - The library no longer displays UIAlertViews with error messages - look for errors in the console log.
 - Added hooks for internal CI systems.
 
--------------------------
 1.3.7 Nov 28, 2012
--------------------------
+==================
 - fixed crash in UAAnalyticsDBManager that occured when adding events
 in a background task
 
--------------------------
 1.3.6 Nov 28, 2012
--------------------------
+==================
 - fixed crash on [UAirship land] associated with releasing key/value observers
   in the wrong order
 - updated logging, added UALogLevel enum to set logging preferences in UAGlobal
@@ -373,9 +319,8 @@ in a background task
 - updated splash screens and GUI to support iPhone 5
 - started caching UA-ID to speed up analytics 
 
--------------------------
 1.3.5 Nov 14, 2012
--------------------------
+==================
 - fixed crash because of weak reference in UAPush to NSUserDefaults
 - fixed issue in UAPush when unregistering with a nil device token
 - added ability to set a default value for push in NSUserDefaults, previously
@@ -383,9 +328,8 @@ in a background task
 - updated PushSample app to demonstrate new push functionality
 - updated README with new documentation
 
--------------------------
 1.3.4 Oct 23, 2012
--------------------------
+==================
 - fixed issue when displaying cached Rich Push messages with UTF8
 - fixed edge case where a location event could be discarded while waiting
   for user to allow location based services
@@ -394,9 +338,8 @@ in a background task
 - moved deviceTokenHasChanged observation to UAUser
 - added queuing for analytics read/write access 
 
--------------------------
 1.3.3 Sep 17, 2012
--------------------------
+==================
 - Updated projects for iOS 6 and Xcode 4.5
 - Added exception when [UAirship takeOff:<options>] is called 
   on a thread other than the main thread
@@ -404,9 +347,8 @@ in a background task
   then re registered
 - Added delegate callback for the significant change location service
 
--------------------------
 1.3.2 Aug 15, 2012
--------------------------
+==================
 - Updated sample projects and UI to reflect new registration workflow
 - Quiet time fixes in sample app
 - Fixed alias migration bug
@@ -414,15 +356,13 @@ in a background task
 - Deprecated unRegisterDeviceToken
 - Fixed unit tests
 
--------------------------
 1.3.1 Aug 7, 2012
--------------------------
+=================
 - Fixed issue with unregistration that prevented
   subsequent registration
 
---------------------------
 1.3.0 - Aug 7, 2012
---------------------------
+===================
 - Deprecated registration related methods in UAirship and moved them to UAPush
 - Changed behavior for alias,tags, and quiet time, property setters no longer
   automatically trigger a registration API call, refer to UAPush.h for details
@@ -430,9 +370,8 @@ in a background task
   registration update
 - Added auto retry for certain server responses in UAPush during registration
 
---------------------------
 1.2.2 - June 18, 2012
---------------------------
+=====================
 - Fixed problem reporting hard push conversions in some situations
 - Updated UALocationService to shut down single location tasks in a timely
   manner when unrecoverable CLLocationManager errors occurred
@@ -441,46 +380,38 @@ in a background task
 - Changed UALocationService delegate callbacks when the location service cannot
   retrieve a location that meets accuracy requirements
 
-	
---------------------------
 1.2.1 - April 26, 2012
---------------------------
+======================
 - Dropped support for iOS versions prior to 4.0
 - Location service improvements
 - Fixed crash when reporting location to UALocationService from background thread
 - Modified UALocationServiceNSDefaultsKey values to contain the "UALocationService" prefix
 - CoreTelephony is now required
 
---------------------------
 1.2.0 - April 3, 2012
---------------------------
+=====================
 - Added location support
 - IAP and Subscription content URL cache fixes
 
 1.1.5 - March 28, 2012
---------------------------
+======================
 - Removed all UDID usage
 - Added UA-specific device ID
 - Added the ability for devs to access the UAUser ID through a Settings.bundle for support purposes
 
---------------------------
 1.1.4 - January 26, 2012
---------------------------
+==========================
 - Added nil product check to pending download and decompression logic
 - Cleared sessions have an empty string session_id value after app backgrounding 
 
---------------------------
 1.1.3 - December 30, 2011
---------------------------
-
+==========================
 - Fixed incompatibility between ASIHTTPRequest and UA_ASIHTTPRequest introduced in recent update
 - Fixed Subscriptions decompression path bug that resulted in content unzipping into a
   content key subdirectory
 
---------------------------
 1.1.2 - December 20, 2011
---------------------------
-
+==========================
 - Updated HTTP client libraries
 - IAP and Subscription content URLs are cached for 24 hours after purchase
 - Improvements to resuming incomplete installs for IAP and Subscription content
@@ -492,41 +423,42 @@ in a background task
 - FIX: Tag API is working properly
 - FIX: Inbox "Mark as Read" button is unavailable once a message is marked as read
 
---------------------------
 1.1.1 - October 23, 2011
---------------------------
-
+==========================
 - Registrations will no longer be performed when the app is running in the background
 - FIX: Background download tasks will only be created when there are pending downloads.
 - FIX: Properly release UIAlertView displayed in the Inbox UI when messages arrive while the app
   is running.
 
---------------------------
 1.1.0 - October 10, 2011
---------------------------
-
-General:
+==========================
+General
+-------
 - Code-level docs are available at http://urbanairship.com/docs/ios-lib/ (a work in progress)
 - Silenced analytics/reports-related logging by default.
 - Added new iOS5-related analytics events
 - Trim whitespace from AirshipConfig.plist keys and secrets
 - Removed the need for extra linker flags (all_load and the weak ref to libSystem.B)
 
-IAP:
+IAP
+---
 - Fixed decompression failure error message text in In-App Purchase
 
-Push:
+Push
+----
 - Fix URL-encoding issue in UAPush single-tag methods
 - UAPushNotificationDelegate's methods are now optional
 - Fixed a UAPushNotificationDelegate selector with an empty parameter name
 
-Subscriptions:
+Subscriptions
+-------------
 - Fixed a bug in the autorenewable product renewal flow. Renewals are now handled properly.
 - Fixed a bug in the SKTransaction handling when both SubscriptionLib and StoreFrontLib were used.
 - Fixed a bug in subscription receipt validation. Transactions are now kept open until a receipt
   is validated.
 
-InboxLib:
+InboxLib
+--------
 - Major updates to InboxLib and the Rich Push Inbox sample
 - Methods and properties related to setting the "active" inbox have been eliminated or renamed
 - UAInboxAlertProtocol has been removed
@@ -540,13 +472,15 @@ InboxLib:
 - See http://support.urbanairship.com/customer/portal/articles/200710-upgrading-to-rich-push-in-1-1-
   for information on specific items added, removed or modified
 
-Inbox Protocols:
+Inbox Protocols
+---------------
 - UAInboxMessageListObserver breaks out batch update events in explicit success/failure methods
 - Cleaner separation from UAUser observer patterns
 - New UAInboxPushHandlerDelegate protocol allows for a user-specified delegate to respond to 
   incoming in-app messages
 
-Inbox UI Classes:
+Inbox UI Classes
+----------------
 - iPad specific classes and xib files have been removed
 - iPhone interfaces have been generalized to be adaptable to the iPad UI idiom
 - New UAInboxOverlayController allows for displaying incoming Rich Push messages 
@@ -557,15 +491,14 @@ Inbox UI Classes:
 - The InboxSample project allows you to select between multiple UI classes on the fly 
   as a quick overview of the different inbox interface styles
 
--------------------------
 1.0.7 - August 29, 2011
--------------------------
+=========================
 - Rebuilt 1.0.6 in Xcode 4.1 to address an armv7 issue in the Xcode 4.2 generated static library
 
------------------------
 1.0.6 - August 26, 2011
------------------------
-Autorenewable Subscriptions:
+=======================
+Autorenewable Subscriptions
+---------------------------
 - Added Autorenewable subscription support. Purchasing is identical to the non-autorenewable process.
 - Added a restore process that will work on multiple devices without email entry. To trigger
   a restore, call UASubscriptionManager's restoreAutorenewables method. The subscription list will
@@ -574,7 +507,8 @@ Autorenewable Subscriptions:
   details on their use).
 - Added UASubscriptionAlertType value that indicates restore failure: UASubscriptionAlertFailedRestore
 
-Newsstand and Other Subscription Updates:
+Newsstand and Other Subscription Updates
+----------------------------------------
 - The inventory now has an availableProducts property that contains items that are available for sale.
 - Added contentForKey: convenience getter to UASubscriptionInventory
 - Added publish date for subscription content
@@ -582,17 +516,20 @@ Newsstand and Other Subscription Updates:
 - Subscription content is now placed in a subdirectory named with the content key OR the specified
   product ID if it is available
 
-Subscription Sample UI:
+Subscription Sample UI
+----------------------
 - The "Settings" button has been replaced with a "Restore" button.
 - The email entry interstitial UIAlertView has been removed.
 - Modified sample app to use the product ID string rather than the subscription product object
 
-iOS5-Specific Updates:
+iOS5-Specific Updates
+---------------------
 - Fixed modal view issues in each sample UI
 - Fixed a crash caused by the unread count graphic in the Inbox UI
 - Updated purchase calls so they no longer use iOS5-deprecated purchase methods
 
-Misc updates:
+Misc updates
+------------
 - UAUser may now be instantiated before takeOff so that you can add observers for the creation process.
 - Added UAUserStateCreating value to the UAUserState enum
 - Fixed crash in IAP library caused when a product was purchased multiple times in a single app session.
@@ -604,9 +541,8 @@ Misc updates:
 - Better documentation. New AR functionality is documented in headers.
 - Updates for Xcode 4.1 and 4.2 beta
 
-----------------------
 1.0.5 - April 26, 2011
-----------------------
+======================
 - Fixed bug where the StoreFront sample UI would not return control to the original window.
 - Fixed bug where product_id was missing from subscription objects.
 - Fixed enum collisions with external libraries.
@@ -624,9 +560,8 @@ Misc updates:
 - Library is now a single arm6/arm7/i386 universal release file.
 - Xcode4 support for all projects.
 
--------------------------
 1.0.4 - February 23, 2011
--------------------------
+=========================
 - Added Analytics to all products and samples. Gathering basic device data and tracking app state
 to determine push conversion related data. Can be enabled/disabled via takeOffOptions, on by default.
 - Added a completely re-worked PushLib with an all new sample project and UI. Includes a number
@@ -637,25 +572,22 @@ of handlers for making push, alias, tags, and auto-badge much simpler to use.
 - Fixed enum linker collisions on Reachability and asihttp.
 - Fixed IAP iPad UI crash in landscape mode.
 
-------------------------
 1.0.3 - January 31, 2011
-------------------------
+========================
 - Updated copyrights
 - Fixed storeFrontWillHide delegate call. Removed storeFrontDidHide. 
 - Updated all projects to use Clang/LLVM 1.6 as default (fully compatible now)
 - Fixed numerous LLVM/Analyzer warnings
 
-------------------------
 1.0.2 - January 27, 2011
-------------------------
+========================
 - Fixed bug causing downloads to still go to NSDocuments instead of NSLibrary
 - Removed category on UIDevice, eliminating -all_load flag requirement, and moved the functionality to UAUtils
 - Fixed dateFormatter to require GMT and en_us_posix locale
 - Fixed bug where download directory intermediate dirs were not initialized
 
-------------------------
 1.0.1 - January 20, 2011
-------------------------
+========================
 - Fixed bug that would erroneously cause subscription transactions to finish early with rare network issues.
 - Moved keys to AirshipConfig.plist
 - Added missing -all_load linker flags
@@ -664,4 +596,5 @@ of handlers for making push, alias, tags, and auto-badge much simpler to use.
 - Updated README
 
 1.0.0 - December 27, 2010
+=========================
 - First Static Library Release
