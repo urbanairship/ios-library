@@ -64,7 +64,7 @@ mv "${OUTPUT_PATH}/InboxSample" "${OUTPUT_PATH}/RichPushSample"
 
 # Copy LICENSE, README and CHANGELOG
 cp "${ROOT_PATH}/CHANGELOG" "${OUTPUT_PATH}"
-cp "${ROOT_PATH}/README.rst" "${OUTPUT_PATH}"
+cp "${ROOT_PATH}/README.md" "${OUTPUT_PATH}"
 cp "${ROOT_PATH}/LICENSE" "${OUTPUT_PATH}"
 
 # Build info
@@ -80,7 +80,7 @@ if test -f $ROOT_PATH/BUILD_INFO;
 fi
 
 cd $OUTPUT_PATH
-for PACKAGE in RichPushSample PushSample Airship AirshipKit reference-docs LICENSE CHANGELOG README.rst BUILD_INFO; do
+for PACKAGE in RichPushSample PushSample Airship AirshipKit reference-docs LICENSE CHANGELOG README.md BUILD_INFO; do
 	zip -r libUAirship-latest.zip $PACKAGE --exclude=*.DS_Store*
 done
 cd -
