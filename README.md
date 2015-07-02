@@ -24,7 +24,7 @@ device in this situation able to receive a background notification when it canno
 - Registering for UIUserNotificationTypeNone will prevent a re-registration until the device
 has been restarted and the settings are manually updated in Settings.app. There is a
 workaround for this issue in UA SDK 5.0.0. (Radar #17878212)
-- The boolean properties on UIUserNotificationAction are mutated in the
+- **Resolved in iOS 9** The boolean properties on UIUserNotificationAction are mutated in the
 UIUserNotificationCategory isEqual: method, so the authorizationRequired and destructive
 properties on an action may receive values from actions in other categories
 in the set registered with iOS. You may see notification actions with the wrong color
