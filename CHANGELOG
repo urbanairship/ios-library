@@ -3,6 +3,11 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+6.1.1 - July 6, 2015
+====================
+- Improved tag group error logging.
+- Fixed nullability warnings.
+
 6.1.0 - June 22, 2015
 =====================
 - Support for channel and named user tag groups.
