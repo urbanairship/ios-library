@@ -139,4 +139,13 @@
  */
 + (UIViewController *)topController;
 
+/**
+ * Returns the main screen's bounds, in orientation-dependent coordinates.
+ * As this is the default behavior in iOS 8, the method is intended as a
+ * utility for backwards compatibility.
+ *
+ * @return A CGRect representing the main screen's bounds, in orientation-dependent coordinates.
+ */
++ (CGRect)orientationDependentScreenBounds;
+
 @end

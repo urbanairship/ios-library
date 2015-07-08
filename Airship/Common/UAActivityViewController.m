@@ -24,6 +24,7 @@
  */
 
 #import "UAActivityViewController.h"
+#import "UAUtils.h"
 
 @implementation UAActivityViewController
 
@@ -35,26 +36,7 @@
 }
 
 - (CGRect)sourceRect {
-    float deviceVersion = [[UIDevice currentDevice].systemVersion floatValue];
-    CGRect screenBounds = [UIScreen mainScreen].bounds;
-
-    // iOS 7.x iPad
-    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad &&
-        deviceVersion >= 7.0 && deviceVersion < 8.0) {
-
-        CGFloat width = CGRectGetWidth(screenBounds);
-        CGFloat height = CGRectGetHeight(screenBounds);
-        UIInterfaceOrientation interfaceOrientation = [UIApplication sharedApplication].statusBarOrientation;
-
-        if (UIInterfaceOrientationIsPortrait(interfaceOrientation)) {
-            screenBounds.size = CGSizeMake(width, height);
-        } else {
-            screenBounds.size = CGSizeMake(height, width);
-        }
-
-        // Return a smaller rectangle by 25% on each axis, producing a 50% smaller rectangle inset.
-        return CGRectInset(screenBounds, CGRectGetWidth(screenBounds)/4.0, CGRectGetHeight(screenBounds)/4.0);
-    }
+    CGRect screenBounds = [UAUtils orientationDependentScreenBounds];
 
     // Return a smaller rectangle by 25% on each axis, producing a 50% smaller rectangle inset.
     return CGRectInset(screenBounds, CGRectGetWidth(screenBounds)/4.0, CGRectGetHeight(screenBounds)/4.0);

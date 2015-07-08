@@ -470,15 +470,15 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         NSData *serializedEventData = (NSData *)[event objectForKey:@"data"];
         
         if (serializedEventData) {
-            NSString *errString = nil;
+            NSError *err;
             eventData = (NSMutableDictionary *)[NSPropertyListSerialization
-                                                propertyListFromData:serializedEventData
-                                                mutabilityOption:NSPropertyListMutableContainersAndLeaves
-                                                format:NULL /* an out param */
-                                                errorDescription:&errString];
+                                                propertyListWithData:serializedEventData
+                                                             options:NSPropertyListMutableContainersAndLeaves
+                                                              format:NULL /* an out param */
+                                                               error:&err];
             
-            if (errString) {
-                UA_LTRACE("Deserialization Error: %@", errString);
+            if (err) {
+                UA_LTRACE("Deserialization Error: %@", [err localizedDescription]);
             }
         }
         

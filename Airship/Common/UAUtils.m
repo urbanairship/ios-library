@@ -234,4 +234,20 @@
     return topController;
 }
 
++ (CGRect )orientationDependentScreenBounds {
+    CGRect screenBounds = [UIScreen mainScreen].bounds;
+
+    float deviceVersion = [[UIDevice currentDevice].systemVersion floatValue];
+
+    if (deviceVersion < 8.0) {
+        UIInterfaceOrientation interfaceOrientation = [UIApplication sharedApplication].statusBarOrientation;
+
+        if (UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
+            screenBounds.size = CGSizeMake(CGRectGetHeight(screenBounds), CGRectGetWidth(screenBounds));
+        }
+    }
+
+    return screenBounds;
+}
+
 @end
