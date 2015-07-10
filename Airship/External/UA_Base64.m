@@ -78,9 +78,9 @@ static unsigned char base64DecodeLookup[256] =
 //    outputLength.
 //
 void *UA_NewBase64Decode(
-    const char *inputBuffer,
-    size_t length,
-    size_t *outputLength)
+                         const char *inputBuffer,
+                         size_t length,
+                         size_t *outputLength)
 {
     if (length == -1)
     {
@@ -114,19 +114,21 @@ void *UA_NewBase64Decode(
             }
         }
 
-    //
-    // Store the 6 bits from each of the 4 characters as 3 bytes
-    //
-    // (Uses improved bounds checking suggested by Alexandre Colucci)
-    //
-    if(accumulateIndex >= 2)  
-        outputBuffer[j] = (accumulated[0] << 2) | (accumulated[1] >> 4);  
-    if(accumulateIndex >= 3)  
-        outputBuffer[j + 1] = (accumulated[1] << 4) | (accumulated[2] >> 2);  
-    if(accumulateIndex >= 4)  
-        outputBuffer[j + 2] = (accumulated[2] << 6) | accumulated[3];
-    j += accumulateIndex - 1;
-      }
+        //
+        // Store the 6 bits from each of the 4 characters as 3 bytes
+        //
+        // (Uses improved bounds checking suggested by Alexandre Colucci)
+        //
+        if(accumulateIndex >= 2)
+            outputBuffer[j] = (accumulated[0] << 2) | (accumulated[1] >> 4);
+        if(accumulateIndex >= 3)
+            outputBuffer[j + 1] = (accumulated[1] << 4) | (accumulated[2] >> 2);
+        if(accumulateIndex >= 4)
+            outputBuffer[j + 2] = (accumulated[2] << 6) | accumulated[3];
+
+        if (accumulateIndex)
+            j += accumulateIndex - 1;
+    }
 
     if (outputLength)
     {
