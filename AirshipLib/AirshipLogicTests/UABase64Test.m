@@ -84,6 +84,12 @@ NSString *easure64 = @"ZWFzdXJlLg==";
     XCTAssertTrue([decodedString isEqualToString:easure]);
 }
 
+- (void)testBase64DecodeInvalidString {
+    XCTAssertNoThrow(UA_dataFromBase64String(@"."));
+    XCTAssertNoThrow(UA_dataFromBase64String(@" "));
+    XCTAssertNoThrow(UA_dataFromBase64String(nil));
+}
+
 //void *UA_NewBase64Decode(
 //                         const char *inputBuffer,
 //                         size_t length,
