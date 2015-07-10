@@ -3,6 +3,10 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+6.1.2 - July 10, 2015
+=====================
+- Fixed possible NSInvalidArgumentException on app foreground due to data decoding error.
+
 6.1.1 - July 6, 2015
 ====================
 - Improved tag group error logging.
