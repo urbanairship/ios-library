@@ -23,13 +23,12 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "InboxSampleCommon.h"
+
 #import "InboxSampleViewController.h"
 #import "InboxSampleAppDelegate.h"
-#import "UAirship.h"
-#import "UAInbox.h"
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageViewController.h"
-#import "UALandingPageOverlayController.h"
 #import "InboxSampleUserInterface.h"
 #import "InboxSampleModalUserInterface.h"
 #import "InboxSamplePopoverUserInterface.h"

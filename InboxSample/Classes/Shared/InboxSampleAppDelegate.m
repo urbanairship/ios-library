@@ -23,15 +23,10 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "InboxSampleAppDelegate.h"
+#import "InboxSampleCommon.h"
 
+#import "InboxSampleAppDelegate.h"
 #import "InboxSampleViewController.h"
-#import "UAInboxPushHandler.h"
-#import "UAAnalytics.h"
-#import "UAirship.h"
-#import "UAPush.h"
-#import "UAInbox.h"
-#import "UAInboxMessageList.h"
 #import "InboxDelegate.h"
 #import "PushNotificationDelegate.h"
 

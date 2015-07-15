@@ -195,6 +195,7 @@
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		493FB10319C100BF006424E2 /* NSString+UASizeWithFontCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UASizeWithFontCompatibility.h"; sourceTree = "<group>"; };
 		493FB10419C100BF006424E2 /* NSString+UASizeWithFontCompatibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UASizeWithFontCompatibility.m"; sourceTree = "<group>"; };
+		4997FA1E1B55C580002D4E05 /* UACommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACommon.h; sourceTree = "<group>"; };
 		49C0CB0619BA3CCC00771F4F /* NSString+UALocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UALocalization.h"; sourceTree = "<group>"; };
 		49C0CB0719BA3CCC00771F4F /* NSString+UALocalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UALocalization.m"; sourceTree = "<group>"; };
 		49C0CB0A19BA3ECF00771F4F /* UAPushLocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushLocalization.h; sourceTree = "<group>"; };
@@ -208,6 +209,7 @@
 		49C0CB5019BA5E3300771F4F /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/UAInteractiveNotifications.strings"; sourceTree = "<group>"; };
 		49C0CB5119BA5E3300771F4F /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/UAInteractiveNotifications.strings"; sourceTree = "<group>"; };
 		49C0CB9819BA648300771F4F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UAPushUI.strings; sourceTree = "<group>"; };
+		49E23C701B56DF5600DC9525 /* PushSampleCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushSampleCommon.h; sourceTree = "<group>"; };
 		767D0D3F1A72CF4C008CEC8A /* UAPushSettingsNamedUserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsNamedUserViewController.h; sourceTree = "<group>"; };
 		767D0D401A72CF4C008CEC8A /* UAPushSettingsNamedUserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsNamedUserViewController.m; sourceTree = "<group>"; };
 		767D0D4E1A72F827008CEC8A /* UAPushSettingsNamedUserView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsNamedUserView.xib; sourceTree = "<group>"; };
@@ -400,6 +402,7 @@
 		18C02946124F216B00D49CD5 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				49E23C701B56DF5600DC9525 /* PushSampleCommon.h */,
 				1FCBB64E176237BA00F42F07 /* SampleAppDelegate.h */,
 				1FCBB64F176237BA00F42F07 /* SampleAppDelegate.m */,
 				18C02948124F216B00D49CD5 /* SampleViewController.h */,
@@ -543,6 +546,7 @@
 			isa = PBXGroup;
 			children = (
 				49C0CB4319BA5E3300771F4F /* Resources */,
+				4997FA1E1B55C580002D4E05 /* UACommon.h */,
 				493FB10319C100BF006424E2 /* NSString+UASizeWithFontCompatibility.h */,
 				493FB10419C100BF006424E2 /* NSString+UASizeWithFontCompatibility.m */,
 				49C0CB0619BA3CCC00771F4F /* NSString+UALocalization.h */,

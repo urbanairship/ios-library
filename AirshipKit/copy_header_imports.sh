@@ -8,7 +8,7 @@ FRAMEWORK_HEADERS_DIR="${BUILT_PRODUCTS_DIR}/AirshipKit.framework/Headers"
 cd $FRAMEWORK_HEADERS_DIR
 rm -rf *.h
 
-# Find all public headers, excluding internal and UI
+# Find all public headers in the Airship directory, excluding UI
 # Copy headers to the framework headers directory
 
 cd $AIRSHIP_DIR

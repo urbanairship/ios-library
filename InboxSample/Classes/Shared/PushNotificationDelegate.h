@@ -24,7 +24,8 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAPush.h"
+
+#import "InboxSampleCommon.h"
 
 /**
  * A UAPushNotificationDelegate implementation to display an alert when receiving

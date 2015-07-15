@@ -23,9 +23,9 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "PushSampleCommon.h"
+
 #import "SampleViewController.h"
-#import "UAPush.h"
-#import "UAirship.h"
 #import "UAPushLocalization.h"
 #import "UAPushSettingsViewController.h"
 #import "UAPushMoreSettingsViewController.h"

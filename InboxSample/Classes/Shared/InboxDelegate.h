@@ -24,7 +24,8 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAInbox.h"
+
+#import "InboxSampleCommon.h"
 
 /**
  * Urban Airship Inbox to display the inbox or inbox message.

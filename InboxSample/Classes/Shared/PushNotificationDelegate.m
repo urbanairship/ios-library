@@ -23,9 +23,9 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "InboxSampleCommon.h"
+
 #import "PushNotificationDelegate.h"
-#import "UAUtils.h"
-#import "UAInboxUtils.h"
 #import "UAInboxLocalization.h"
 
 @implementation PushNotificationDelegate
