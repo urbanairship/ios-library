@@ -1805,7 +1805,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "";
+			shellScript = "\"$SRCROOT/../scripts/generate_header_imports.sh\"";
 		};
 		49C67201184EB2E50088F210 /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
