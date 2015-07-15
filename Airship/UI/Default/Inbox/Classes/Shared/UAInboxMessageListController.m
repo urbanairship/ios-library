@@ -23,17 +23,12 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "UACommon.h"
+
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageListCell.h"
 #import "UAInboxMessageViewController.h"
 #import "UAInboxLocalization.h"
-#import "UAInbox.h"
-#import "UAGlobal.h"
-#import "UAInboxMessage.h"
-#import "UAInboxMessageList.h"
-#import "UAirship.h"
-
-#import "UAURLProtocol.h"
 
 /*
  * List-view image controls: default image path and cache values

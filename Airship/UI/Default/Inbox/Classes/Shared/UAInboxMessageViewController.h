@@ -24,9 +24,9 @@
  */
 
 #import <UIKit/UIKit.h>
-#import "UAInboxMessage.h"
-#import "UARichContentWindow.h"
+#import "UACommon.h"
 
+@class UAInboxMessage;
 
 /**
  * This class is a reference implementation of a view controller embedding

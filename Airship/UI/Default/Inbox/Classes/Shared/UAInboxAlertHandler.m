@@ -23,12 +23,10 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAInbox.h"
+#import "UACommon.h"
+
 #import "UAInboxAlertHandler.h"
 #import "UAInboxLocalization.h"
-
-#import "UAInboxPushHandler.h"
-#import "UAInboxMessageList.h"
 
 @interface UAInboxAlertHandler()
 @property(nonatomic, copy) UAInboxAlertHandlerViewBlock viewBlock;

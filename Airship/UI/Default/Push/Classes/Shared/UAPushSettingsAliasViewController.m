@@ -23,10 +23,10 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "UACommon.h"
+
 #import "UAPushSettingsAliasViewController.h"
-#import "UAPush.h"
 #import "NSString+UASizeWithFontCompatibility.h"
-#import "UAirship.h"
 
 enum {
     SectionDesc        = 0,

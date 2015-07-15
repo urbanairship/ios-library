@@ -23,14 +23,10 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAInbox.h"
+#import "UACommon.h"
+
 #import "UAInboxMessageViewController.h"
 #import "UAInboxLocalization.h"
-#import "UAInboxMessageList.h"
-#import "UAWebViewDelegate.h"
-#import "UAUtils.h"
-#import "UIWebView+UAAdditions.h"
-#import "UAirship.h"
 
 #define kMessageUp 0
 #define kMessageDown 1

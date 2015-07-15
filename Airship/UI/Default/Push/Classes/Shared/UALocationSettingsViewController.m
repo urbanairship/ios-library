@@ -23,13 +23,11 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "UACommon.h"
+
 #import "UALocationSettingsViewController.h"
 #import "UAMapPresentationController.h"
-#import "UAGlobal.h"
-#import "UALocationCommonValues.h"
 #import "UAMapPresentationController.h"
-#import "UAirship.h"
-#import "UALocationService.h"
 
 @implementation UALocationSettingsViewController
 

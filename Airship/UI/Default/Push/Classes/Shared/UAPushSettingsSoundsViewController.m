@@ -23,7 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAGlobal.h"
+#import "UACommon.h"
+
 #import "UAPushSettingsSoundsViewController.h"
 #import "NSString+UASizeWithFontCompatibility.h"
 

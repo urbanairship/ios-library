@@ -23,17 +23,15 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "UACommon.h"
+
 #import "UAPushMoreSettingsViewController.h"
-#import "UAirship.h"
-#import "UAPush.h"
 #import "UAPushLocalization.h"
 #import "UAPushSettingsAliasViewController.h"
 #import "UAPushSettingsNamedUserViewController.h"
 #import "UAPushSettingsTagsViewController.h"
 #import "UAPushSettingsSoundsViewController.h"
 #import "UALocationSettingsViewController.h"
-#import "UAUser.h"
-#import "UAConfig.h"
 
 #define kUAPushDeviceTokenPath @"deviceToken"
 #define kUAPushChannelIDPath @"channelID"

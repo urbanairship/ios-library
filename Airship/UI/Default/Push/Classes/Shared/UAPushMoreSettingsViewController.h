@@ -27,8 +27,6 @@
 #import <CoreLocation/CoreLocation.h>
 #import <MessageUI/MessageUI.h>
 
-#import "UAPush.h"
-
 @interface UAPushMoreSettingsViewController : UIViewController <UITableViewDelegate,
                                                                 UITableViewDataSource,
                                                                 MFMailComposeViewControllerDelegate>

@@ -24,8 +24,8 @@
  */
 
 #import <UIKit/UIKit.h>
-#import "UABeveledLoadingIndicator.h"
-#import "UAInboxMessage.h"
+
+@class UAInboxMessage;
 
 /**
  * This class is a reference implementation of a table view controller drawing from the inbox
