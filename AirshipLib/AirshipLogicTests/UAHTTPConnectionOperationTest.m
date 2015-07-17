@@ -28,12 +28,10 @@
 #import "UAHTTPConnection+Test.h"
 #import "UAHTTPConnection+Test.h" 
 #import "UADelayOperation.h"
-#import "UATestSynchronizer.h"
 #import "NSObject+AnonymousKVO.h"
 
 @interface UAHTTPConnectionOperationTest()
-@property (nonatomic, strong) UAHTTPConnectionOperation *operation;
-@property (nonatomic, strong) UATestSynchronizer *sync;
+@property (nonatomic, strong) UAHTTPRequest *request;
 @end
 
 @implementation UAHTTPConnectionOperationTest
@@ -43,94 +41,137 @@
 - (void)setUp {
     [super setUp];
 
-    self.sync = [[UATestSynchronizer alloc] init];
+    self.request = [UAHTTPRequest requestWithURLString:@"http://jkhadfskhjladfsjklhdfas.com"];
 
     [UAHTTPConnection swizzle];
-
-    UAHTTPRequest *request = [UAHTTPRequest requestWithURLString:@"http://jkhadfskhjladfsjklhdfas.com"];
-
-    self.operation = [UAHTTPConnectionOperation operationWithRequest:request onSuccess:^(UAHTTPRequest *request) {
-        XCTAssertNil(request.error, @"there should be no error on success");
-        // signal completion
-        [self.sync continue];
-    } onFailure: ^(UAHTTPRequest *request) {
-        XCTAssertNotNil(request.error, @"there should be an error on failure");
-        // signal completion
-        [self.sync continue];
-    }];
-
-    [UAHTTPConnection succeed];
 }
-
 
 - (void)tearDown {
     // Tear-down code here.
     [UAHTTPConnection unSwizzle];
-    self.operation = nil;
+    self.request = nil;
     [super tearDown];
 }
 
 /* tests */
 
-
 - (void)testDefaults {
-    XCTAssertEqual(self.operation.isConcurrent, YES, @"UAHTTPConnectionOperations are concurrent (asynchronous)");
-    XCTAssertEqual(self.operation.isExecuting, NO, @"isExecuting will not be set until the operation begins");
-    XCTAssertEqual(self.operation.isCancelled, NO, @"isCancelled defaults to NO");
-    XCTAssertEqual(self.operation.isFinished, NO, @"isFinished defaults to NO");
+
+    UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:self.request onSuccess:nil onFailure:nil];
+
+    XCTAssertEqual(operation.isConcurrent, YES, @"UAHTTPConnectionOperations are concurrent (asynchronous)");
+    XCTAssertEqual(operation.isExecuting, NO, @"isExecuting will not be set until the operation begins");
+    XCTAssertEqual(operation.isCancelled, NO, @"isCancelled defaults to NO");
+    XCTAssertEqual(operation.isFinished, NO, @"isFinished defaults to NO");
 }
 
 - (void)testSuccessCase {
     [UAHTTPConnection succeed];
-    [self.operation start];
-    XCTAssertTrue([self.sync wait], @"timeout should not be reached");
+
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"operation finished"];
+
+    UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:self.request onSuccess:^(UAHTTPRequest *request) {
+        XCTAssertNil(request.error, @"there should be no error on success");
+        [testExpectation fulfill];
+    } onFailure:nil];
+
+    [operation start];
+
+    [self waitForExpectationsWithTimeout:10 handler:^(NSError *error) {
+        if (error) {
+            XCTFail(@"Failed to run operation with error %@.", error);
+        }
+    }];
 }
 
 - (void)testFailureCase {
     [UAHTTPConnection fail];
-    [self.operation start];
-    XCTAssertTrue([self.sync wait], @"timeout should not be reached");
+
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"operation finished"];
+
+    UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:self.request
+                                                                                 onSuccess:nil
+                                                                                 onFailure: ^(UAHTTPRequest *request) {
+
+                                                                                     XCTAssertNotNil(request.error, @"there should be an error on failure");
+                                                                                     [testExpectation fulfill];
+                                                                                 }];
+
+    [operation start];
+
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+        if (error) {
+            XCTFail(@"Failed to run operation with error %@.", error);
+        }
+    }];
 }
 
 - (void)testStart {
-    [self.operation start];
-    XCTAssertTrue([self.sync wait], @"timeout should not be reached");
+    [UAHTTPConnection succeed];
 
-    XCTAssertEqual(self.operation.isExecuting, NO, @"the operation should no longer be executing");
-    XCTAssertEqual(self.operation.isFinished, YES, @"the operation should be finished");
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"operation finished"];
+
+    UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:self.request onSuccess:^(UAHTTPRequest *request) {
+        XCTAssertNil(request.error, @"there should be no error on success");
+
+        [testExpectation fulfill];
+    } onFailure:nil];
+
+    [operation start];
+
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError *error) {
+        if (error) {
+            XCTFail(@"Failed to run operation with error %@.", error);
+        }
+    }];
+
+    XCTAssertEqual(operation.isExecuting, NO, @"the operation should no longer be executing");
+    XCTAssertEqual(operation.isFinished, YES, @"the operation should be finished");
 }
 
 - (void)testPreemptiveCancel {
-    [self.operation cancel];
-    XCTAssertEqual(self.operation.isCancelled, YES, @"you can cancel operations before they have started");
 
-    [self.operation start];
-    XCTAssertEqual(self.operation.isExecuting, NO, @"start should have no effect after cancellation");
-    XCTAssertEqual(self.operation.isFinished, YES, @"cancelled operations always move to the finished state");
+    UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:self.request onSuccess:nil onFailure:nil];
+
+    [operation cancel];
+    XCTAssertEqual(operation.isCancelled, YES, @"you can cancel operations before they have started");
+
+    [operation start];
+    XCTAssertEqual(operation.isExecuting, NO, @"start should have no effect after cancellation");
+    XCTAssertEqual(operation.isFinished, YES, @"cancelled operations always move to the finished state");
 }
 
 
 - (void)testQueueCancel {
+
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"operation finished"];
+
     //create a serial queue
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     queue.maxConcurrentOperationCount = 1;
 
+    UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:self.request onSuccess:nil onFailure:nil];
+
     //add a long running delay in front of our http connection operation
     UADelayOperation *delayOperation = [UADelayOperation operationWithDelayInSeconds:25];
     [queue addOperation:delayOperation];
-    [queue addOperation:self.operation];
+    [queue addOperation:operation];
 
     UADisposable *subscription = [queue observeAtKeyPath:@"operationCount" withBlock:^(id value){
         //stop spinning once the operationCount has reached zero
         if ([value isEqual:@0]) {
-            [self.sync continue];
+            [testExpectation fulfill];
         }
     }];
 
     //this should eventually drop the operation count, although the change will not be instantaneous
     [queue cancelAllOperations];
 
-    [self.sync wait];
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError *error) {
+        if (error) {
+            XCTFail(@"Failed to run operation with error %@.", error);
+        }
+    }];
 
     //we should have an operation count of zero
     XCTAssertTrue(queue.operationCount == 0, @"queue operation count should be zero");
@@ -139,13 +180,14 @@
 }
 
 - (void)testInFlightCancel {
+    UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:self.request onSuccess:nil onFailure:nil];
 
-    [self.operation start];
-    [self.operation cancel];
+    [operation start];
+    [operation cancel];
 
-    XCTAssertEqual(self.operation.isCancelled, YES, @"operation should have moved to the cancelled state");
-    XCTAssertEqual(self.operation.isExecuting, NO, @"start should have no effect after cancellation");
-    XCTAssertEqual(self.operation.isFinished, YES, @"cancelled operations always move to the finished state");
+    XCTAssertEqual(operation.isCancelled, YES, @"operation should have moved to the cancelled state");
+    XCTAssertEqual(operation.isExecuting, NO, @"start should have no effect after cancellation");
+    XCTAssertEqual(operation.isFinished, YES, @"cancelled operations always move to the finished state");
 }
 
 @end

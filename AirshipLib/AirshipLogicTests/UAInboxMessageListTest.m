@@ -29,7 +29,6 @@
 #import "UAInboxMessageList+Internal.h"
 #import "UAInboxAPIClient.h"
 #import "UAActionArguments+Internal.h"
-#import "UATestSynchronizer.h"
 #import "UAirship.h"
 #import "UAConfig.h"
 #import "UAInboxDBManager+Internal.h"
@@ -86,8 +85,6 @@ static UAUser *mockUser = nil;
 - (void)tearDown {
     [self.mockUser stopMocking];
 
-    [self waitUntilAllOperationsAreFinished];
-
     [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListWillUpdateNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListUpdatedNotification object:nil];
 
@@ -106,7 +103,6 @@ static UAUser *mockUser = nil;
     } withFailureBlock:^{
         XCTFail(@"No user should no-op");
     }];
-    [self waitUntilAllOperationsAreFinished];
 }
 
 #pragma mark block-based methods
@@ -134,6 +130,9 @@ static UAUser *mockUser = nil;
 //the succcessBlock should be executed.
 //the UADisposable returned should be non-nil.
 - (void)testRetrieveMessageListWithBlocksSuccess {
+
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"request finished"];
+
     [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
@@ -149,10 +148,17 @@ static UAUser *mockUser = nil;
 
     UADisposable *disposable = [self.messageList retrieveMessageListWithSuccessBlock:^{
         fail = NO;
+        [testExpectation fulfill];
     } withFailureBlock:^{
         fail = YES;
+        [testExpectation fulfill];
     }];
-    [self waitUntilAllOperationsAreFinished];
+
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError *error){
+        if (error) {
+            XCTFail(@"Failed to run request with error %@.", error);
+        }
+    }];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
     XCTAssertFalse(fail, @"success block should have been called");
@@ -165,6 +171,8 @@ static UAUser *mockUser = nil;
 //the failureBlock should be executed.
 //the UADisposable returned should be non-nil.
 - (void)testRetrieveMessageListWithBlocksFailure {
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"request finished"];
+
     [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
@@ -179,11 +187,17 @@ static UAUser *mockUser = nil;
 
     UADisposable *disposable = [self.messageList retrieveMessageListWithSuccessBlock:^{
         fail = NO;
+        [testExpectation fulfill];
     } withFailureBlock:^{
         fail = YES;
+        [testExpectation fulfill];
     }];
 
-    [self waitUntilAllOperationsAreFinished];
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError *error){
+        if (error) {
+            XCTFail(@"Failed to run request with error %@.", error);
+        }
+    }];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
     XCTAssertTrue(fail, @"failure block should have been called");
@@ -195,6 +209,8 @@ static UAUser *mockUser = nil;
 //UAInboxMessageListWillUpdateNotification and UAInboxMessageListUpdatedNotification should be emitted.
 //if dispose is called on the disposable, the succcessBlock should not be executed.
 - (void)testRetrieveMessageListWithBlocksSuccessDisposal {
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"request finished"];
+
     __block void (^trigger)(void) = ^{
         XCTFail(@"trigger function should have been reset");
     };
@@ -216,8 +232,10 @@ static UAUser *mockUser = nil;
 
     UADisposable *disposable = [self.messageList retrieveMessageListWithSuccessBlock:^{
         fail = YES;
+        [testExpectation fulfill];
     } withFailureBlock:^{
         fail = YES;
+        [testExpectation fulfill];
     }];
 
     [disposable dispose];
@@ -226,7 +244,15 @@ static UAUser *mockUser = nil;
     //otherwise we should see unexpected callbacks
     trigger();
 
-    [self waitUntilAllOperationsAreFinished];
+    if (!fail) {
+        [testExpectation fulfill];
+    }
+
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError *error){
+        if (error) {
+            XCTFail(@"Failed to run request with error %@.", error);
+        }
+    }];
 
     XCTAssertFalse(fail, @"callback blocks should not have been executed");
 
@@ -278,6 +304,8 @@ static UAUser *mockUser = nil;
 //if dispose is called on the disposable, the failureBlock should not be executed.
 - (void)testRetrieveMessageListWithBlocksFailureDisposal {
 
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"request finished"];
+
     __block void (^trigger)(void) = ^{
         XCTFail(@"trigger function should have been reset");
     };
@@ -298,10 +326,11 @@ static UAUser *mockUser = nil;
 
     UADisposable *disposable = [self.messageList retrieveMessageListWithSuccessBlock:^{
         fail = YES;
+        [testExpectation fulfill];
     } withFailureBlock:^{
         fail = YES;
+        [testExpectation fulfill];
     }];
-    [self waitUntilAllOperationsAreFinished];
 
     [disposable dispose];
 
@@ -309,24 +338,19 @@ static UAUser *mockUser = nil;
     //otherwise we should see unexpected callbacks
     trigger();
 
+    if (!fail) {
+        [testExpectation fulfill];
+    }
+
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError *error){
+        if (error) {
+            XCTFail(@"Failed to run request with error %@.", error);
+        }
+    }];
+
     XCTAssertFalse(fail, @"callback blocks should not have been executed");
 
     [self.mockMessageListNotificationObserver verify];
-}
-
-// Helper method to finish any pending operations on the message list.
-- (void)waitUntilAllOperationsAreFinished {
-
-    UATestSynchronizer *testSynchronizer = [[UATestSynchronizer alloc] init];
-
-    // Dispatch a block on the main queue. This allow us to wait for everything thats
-    // on the main queue at this exact moment to finish
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [testSynchronizer continue];
-    });
-
-    // Wait for main queue block to execute
-    [testSynchronizer wait];
 }
 
 - (NSDictionary *)createMessageDictionaryWithMessageID:(NSString *)messageID {
