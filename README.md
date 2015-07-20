@@ -48,24 +48,6 @@ projects, copy the ``Airship`` directory into the same directory as your project
 If you are not using a sample project, you'll need to import the source files for the User 
 Interface into your project. These are located under /Airship/UI/Default
 
-### Required Libraries
-
-The core library requires your application to link against the following Frameworks (sample UIs
-have additional linking requirements)::
-
-    libUAirship-<current_version>.a
-    CFNetwork.framework
-    CoreGraphics.framework
-    Foundation.framework
-    MobileCoreServices.framework
-    Security.framework
-    SystemConfiguration.framework
-    UIKit.framework
-    libz.dylib
-    libsqlite3.dylib
-    CoreTelephony.framework
-    CoreLocation.framework
-
 ### Build Settings
 
 **Compiler**
