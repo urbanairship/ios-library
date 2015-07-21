@@ -36,7 +36,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-static NSMutableSet *overlayControllers = nil;
+static NSMutableSet *overlayControllers_ = nil;
 
 @interface UALandingPageOverlayController()
 
@@ -73,7 +73,7 @@ static NSMutableSet *overlayControllers = nil;
  */
 + (void)initialize {
     if (self == [UALandingPageOverlayController class]) {
-        overlayControllers = [[NSMutableSet alloc] initWithCapacity:1];
+        overlayControllers_ = [[NSMutableSet alloc] initWithCapacity:1];
     }
 }
 
@@ -81,7 +81,7 @@ static NSMutableSet *overlayControllers = nil;
     // Close existing windows
     [UALandingPageOverlayController closeAll:NO];
     // Add the overlay controller to our static collection
-    [overlayControllers addObject:overlayController];
+    [overlayControllers_ addObject:overlayController];
     //load it
     [overlayController load];
 }
@@ -108,7 +108,7 @@ static NSMutableSet *overlayControllers = nil;
 }
 
 + (void)closeAll:(BOOL)animated {
-    for (UALandingPageOverlayController *oc in overlayControllers) {
+    for (UALandingPageOverlayController *oc in overlayControllers_) {
         [oc closeWebView:oc.webView animated:animated];
     }
 }
@@ -339,7 +339,7 @@ static NSMutableSet *overlayControllers = nil;
 
     void (^remove)(void) = ^{
         [self.overlayView removeFromSuperview];
-        [overlayControllers removeObject:self];
+        [overlayControllers_ removeObject:self];
     };
 
     if (animated) {

@@ -58,7 +58,7 @@ NSString * const UAResetKeychainKey = @"com.urbanairship.reset_keychain";
 
 NSString * const UALibraryVersion = @"com.urbanairship.library_version";
 
-static UAirship *_sharedAirship;
+static UAirship *sharedAirship_;
 
 // Its possible that plugins that use load to call takeoff will trigger after
 // handleAppDidFinishLaunchingNotification.  We need to store that notification
@@ -160,7 +160,7 @@ UALogLevel uaLogLevel = UALogLevelError;
  */
 + (void)executeUnsafeTakeOff:(UAConfig *)config {
     // Airships only take off once!
-    if (_sharedAirship) {
+    if (sharedAirship_) {
         return;
     }
 
@@ -230,20 +230,20 @@ UALogLevel uaLogLevel = UALogLevelError;
     [dataStore setObject:currentDeviceId forKey:@"deviceId"];
 
     // Create Airship
-    _sharedAirship = [[UAirship alloc] initWithConifg:config dataStore:dataStore];
+    sharedAirship_ = [[UAirship alloc] initWithConifg:config dataStore:dataStore];
 
     // Save the version
     if ([UA_VERSION isEqualToString:@"0.0.0"]) {
         UA_LERR(@"_UA_VERSION is undefined - this commonly indicates an issue with the build configuration, UA_VERSION will be set to \"0.0.0\".");
     } else {
-        NSString *previousVersion = [_sharedAirship.dataStore stringForKey:UALibraryVersion];
+        NSString *previousVersion = [sharedAirship_.dataStore stringForKey:UALibraryVersion];
         if (![UA_VERSION isEqualToString:previousVersion]) {
             [dataStore setObject:UA_VERSION forKey:UALibraryVersion];
 
             // Temp workaround for MB-1047 where model changes to the inbox
             // will drop the inbox and the last-modified-time will prevent
             // repopulating the messages.
-            [_sharedAirship.sharedInbox.client clearLastModifiedTime];
+            [sharedAirship_.sharedInbox.client clearLastModifiedTime];
 
             if (previousVersion) {
                 UA_LINFO(@"Urban Airship library version changed from %@ to %@.", previousVersion, UA_VERSION);
@@ -253,12 +253,12 @@ UALogLevel uaLogLevel = UALogLevelError;
 
 
     // Create the user if it does not exist
-    if (!_sharedAirship.sharedInboxUser.isCreated) {
-        [_sharedAirship.sharedInboxUser createUser];
+    if (!sharedAirship_.sharedInboxUser.isCreated) {
+        [sharedAirship_.sharedInboxUser createUser];
     }
 
     // Automatic setup
-    if (_sharedAirship.config.automaticSetupEnabled) {
+    if (sharedAirship_.config.automaticSetupEnabled) {
         UA_LINFO(@"Automatic setup enabled.");
         dispatch_once(&proxyDelegateOnceToken_, ^{
             @synchronized ([UIApplication sharedApplication]) {
@@ -269,7 +269,7 @@ UALogLevel uaLogLevel = UALogLevelError;
 
     // Validate any setup issues
     if (!config.inProduction) {
-        [_sharedAirship validate];
+        [sharedAirship_ validate];
     }
 
     if (_appDidFinishLaunchingNotification) {
@@ -286,13 +286,13 @@ UALogLevel uaLogLevel = UALogLevelError;
 
     [[NSNotificationCenter defaultCenter] removeObserver:[UAirship class] name:UIApplicationDidFinishLaunchingNotification object:nil];
 
-    if (!_sharedAirship) {
+    if (!sharedAirship_) {
         _appDidFinishLaunchingNotification = notification;
 
         // Log takeoff errors on the next run loop to give time for apps that
         // use class loader to call takeoff.
         dispatch_async(dispatch_get_main_queue(), ^() {
-            if (!_sharedAirship) {
+            if (!sharedAirship_) {
                 UA_LERR(@"[UAirship takeOff] was not called in application:didFinishLaunchingWithOptions:");
                 UA_LERR(@"Please ensure that [UAirship takeOff] is called synchronously before application:didFinishLaunchingWithOptions: returns");
             }
@@ -303,11 +303,11 @@ UALogLevel uaLogLevel = UALogLevelError;
 
     NSDictionary *remoteNotification = [notification.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
 
-    [_sharedAirship.analytics launchedFromNotification:remoteNotification];
+    [sharedAirship_.analytics launchedFromNotification:remoteNotification];
 
     //Send Startup Analytics Info
     //init first event
-    [_sharedAirship.analytics addEvent:[UAEventAppInit event]];
+    [sharedAirship_.analytics addEvent:[UAEventAppInit event]];
 
 
     // If the device is running iOS7 or greater, and the app delegate responds to
@@ -318,13 +318,13 @@ UALogLevel uaLogLevel = UALogLevelError;
     && kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0;
 
     if (remoteNotification && !skipNotifyPush) {
-        [_sharedAirship.sharedPush appReceivedRemoteNotification:remoteNotification
+        [sharedAirship_.sharedPush appReceivedRemoteNotification:remoteNotification
                                                 applicationState:[UIApplication sharedApplication].applicationState];
     }
 
     // Register now
-    if (_sharedAirship.config.automaticSetupEnabled) {
-        [_sharedAirship.sharedPush updateRegistration];
+    if (sharedAirship_.config.automaticSetupEnabled) {
+        [sharedAirship_.sharedPush updateRegistration];
     }
 }
 
@@ -339,41 +339,41 @@ UALogLevel uaLogLevel = UALogLevelError;
 }
 
 + (void)land {
-    if (!_sharedAirship) {
+    if (!sharedAirship_) {
         return;
     }
 
     // Invalidate UAAnalytics timer and cancel all queued operations
-    [_sharedAirship.analytics stopSends];
+    [sharedAirship_.analytics stopSends];
 
     // Invalidate UAInAppMessaging autodisplay timer
-    [_sharedAirship.sharedInAppMessaging invalidateAutoDisplayTimer];
+    [sharedAirship_.sharedInAppMessaging invalidateAutoDisplayTimer];
 
     // Finally, release the airship!
-    _sharedAirship = nil;
+    sharedAirship_ = nil;
 
     // Reset the dispatch_once_t flag for testing
     takeOffPred_ = 0;
 }
 
 + (UAirship *)shared {
-    return _sharedAirship;
+    return sharedAirship_;
 }
 
 + (UAPush *)push {
-    return _sharedAirship.sharedPush;
+    return sharedAirship_.sharedPush;
 }
 
 + (UAInbox *)inbox {
-    return _sharedAirship.sharedInbox;
+    return sharedAirship_.sharedInbox;
 }
 
 + (UAUser *)inboxUser {
-    return _sharedAirship.sharedInboxUser;
+    return sharedAirship_.sharedInboxUser;
 }
 
 + (UAInAppMessaging *)inAppMessaging {
-    return _sharedAirship.sharedInAppMessaging;
+    return sharedAirship_.sharedInAppMessaging;
 }
 
 + (NSString *)createUserAgentForAppKey:(NSString *)appKey {

@@ -30,7 +30,7 @@
 
 #import <Security/Security.h>
 
-static NSString *_cachedDeviceID = nil;
+static NSString *cachedDeviceID_ = nil;
 
 @interface UAKeychainUtils()
 + (NSMutableDictionary *)searchDictionaryWithIdentifier:(NSString *)identifier;
@@ -188,8 +188,8 @@ static NSString *_cachedDeviceID = nil;
 
 + (NSString *)getDeviceID {
 
-    if (_cachedDeviceID) {
-        return _cachedDeviceID;
+    if (cachedDeviceID_) {
+        return cachedDeviceID_;
     }
 
     //Get password next
@@ -249,7 +249,7 @@ static NSString *_cachedDeviceID = nil;
         UA_LDEBUG(@"Generated new Device ID: %@", deviceID);
     }
 
-    _cachedDeviceID = [deviceID copy];
+    cachedDeviceID_ = [deviceID copy];
 
     return deviceID;
 }

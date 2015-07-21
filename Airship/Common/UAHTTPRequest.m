@@ -25,7 +25,7 @@
 
 #import "UAHTTPRequest+Internal.h"
 
-static NSString *defaultUserAgentString;
+static NSString *defaultUserAgentString_;
 
 @implementation UAHTTPRequest
 
@@ -38,7 +38,7 @@ static NSString *defaultUserAgentString;
 }
 
 + (void)setDefaultUserAgentString:(NSString *)userAgent {
-    defaultUserAgentString = [userAgent copy];
+    defaultUserAgentString_ = [userAgent copy];
 }
 
 - (instancetype)initWithURL:(NSURL *)url {
@@ -48,8 +48,8 @@ static NSString *defaultUserAgentString;
         self.headers = [[NSMutableDictionary alloc] init];
 
         // Set Defaults
-        if (defaultUserAgentString) {
-            [self addRequestHeader:@"User-Agent" value:defaultUserAgentString];
+        if (defaultUserAgentString_) {
+            [self addRequestHeader:@"User-Agent" value:defaultUserAgentString_];
         }
 
         self.HTTPMethod = @"GET";
