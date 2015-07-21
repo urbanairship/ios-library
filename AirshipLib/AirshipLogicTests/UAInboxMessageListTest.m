@@ -35,7 +35,7 @@
 #import "UAInboxDBManager+Internal.h"
 #import "UAUtils.h"
 
-static UAUser *mockUser = nil;
+static UAUser *mockUser_ = nil;
 
 @protocol UAInboxMessageListMockNotificationObserver
 - (void)messageListWillUpdate;

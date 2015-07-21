@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-static BOOL _succeed = YES;
+static BOOL succeed_ = YES;
 
 #import "UAHTTPConnection+Test.h"
 #import "JRSwizzle.h"
@@ -31,11 +31,11 @@ static BOOL _succeed = YES;
 @implementation UAHTTPConnection (Test)
 
 + (void)succeed {
-    _succeed = YES;
+    succeed_ = YES;
 }
 
 + (void)fail {
-    _succeed = NO;
+    succeed_ = NO;
 }
 
 + (void)swizzle {
@@ -67,7 +67,7 @@ static BOOL _succeed = YES;
 }
 
 - (BOOL)startWithoutIO {
-    if (_succeed) {
+    if (succeed_) {
         [self sendSuccess];
     } else {
         [self sendFailure];
