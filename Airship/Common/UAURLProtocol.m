@@ -41,8 +41,8 @@
 
 @implementation UAURLProtocol
 
-static NSMutableOrderedSet *cachableURLs = nil;
-static NSURLCache *cache = nil;
+static NSMutableOrderedSet *cachableURLs_ = nil;
+static NSURLCache *cache_ = nil;
 
 
 + (BOOL)canInitWithRequest:(NSURLRequest *)request {
@@ -63,17 +63,17 @@ static NSURLCache *cache = nil;
 
 + (NSMutableOrderedSet *)cachableURLs {
     @synchronized(self) {
-        if (!cachableURLs) {
-            cachableURLs = [NSMutableOrderedSet orderedSet];
+        if (!cachableURLs_) {
+            cachableURLs_ = [NSMutableOrderedSet orderedSet];
         }
     }
 
-    return cachableURLs;
+    return cachableURLs_;
 }
 
 + (NSURLCache *)cache {
     @synchronized(self) {
-        if (!cache) {
+        if (!cache_) {
 
             NSString *diskCachePath = nil;
             NSArray *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
@@ -86,13 +86,13 @@ static NSURLCache *cache = nil;
                                                            attributes:nil error:NULL];
             }
 
-            cache = [[NSURLCache alloc] initWithMemoryCapacity:kUACacheMemorySizeInMB
+            cache_ = [[NSURLCache alloc] initWithMemoryCapacity:kUACacheMemorySizeInMB
                                                   diskCapacity:[UAirship shared].config.cacheDiskSizeInMB
                                                       diskPath:diskCachePath];
         }
     }
 
-    return cache;
+    return cache_;
 }
 
 + (void)clearCache {
