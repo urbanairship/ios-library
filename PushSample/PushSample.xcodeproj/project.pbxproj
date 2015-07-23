@@ -157,7 +157,6 @@
 		49C0CB3819BA5DFE00771F4F /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/UAInteractiveNotifications.strings"; sourceTree = "<group>"; };
 		49C0CB3919BA5DFE00771F4F /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/UAInteractiveNotifications.strings"; sourceTree = "<group>"; };
 		49C0CB9C19BA677B00771F4F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UAPushUI.strings; sourceTree = "<group>"; };
-		49FF764C1B56CF0700F12FCA /* PushSampleCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushSampleCommon.h; sourceTree = "<group>"; };
 		767D0D6F1A783E41008CEC8A /* UAPushSettingsNamedUserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsNamedUserViewController.m; sourceTree = "<group>"; };
 		767D0D701A783E41008CEC8A /* UAPushSettingsNamedUserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsNamedUserViewController.h; sourceTree = "<group>"; };
 		767D0D731A783E8E008CEC8A /* UAPushSettingsNamedUserView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsNamedUserView.xib; sourceTree = "<group>"; };
@@ -346,7 +345,6 @@
 				1FE3959D177A25DC00388531 /* SampleAppDelegate.h */,
 				18C02948124F216B00D49CD5 /* SampleViewController.h */,
 				18C02949124F216B00D49CD5 /* SampleViewController.m */,
-				49FF764C1B56CF0700F12FCA /* PushSampleCommon.h */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
