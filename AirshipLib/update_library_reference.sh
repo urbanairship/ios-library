@@ -65,4 +65,15 @@ do
         chgrp staff "$TEMP_DIR/$prj_name.tmp"
 	    mv "$TEMP_DIR/$prj_name.tmp" "$prj_setting_file"
 	fi
+
+    lib="Lib"
+    lib_prj_name="$prj_name$lib"
+    lib_prj_setting_file="$prj_root/$lib_prj_name.xcodeproj/project.pbxproj"
+    if [ -f "$lib_prj_setting_file" ]; then
+        echo "update library reference in $lib_prj_setting_file"
+        sed "s/\($lib_base_name[^ ]*-\)[0-9]*\.[0-9]*\.[0-9]*\(\.$EXECUTABLE_EXTENSION\)/\1$version\2/g" "$lib_prj_setting_file" > "$TEMP_DIR/$lib_prj_name.tmp"
+        chgrp staff "$TEMP_DIR/$lib_prj_name.tmp"
+        mv "$TEMP_DIR/$lib_prj_name.tmp" "$lib_prj_setting_file"
+    fi
+
 done
