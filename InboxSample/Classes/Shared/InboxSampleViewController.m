@@ -71,14 +71,18 @@ typedef NS_ENUM(NSInteger, InboxStyle) {
     // navigates back to the inbox message list.
     //
     // mlc.closeBlock = ^(BOOL animated) {
-    //     [self.userInterface hideInbox];
+    //     if ([self.userInterface isVisible]) {
+    //         [self.userInterface hideInbox];
+    //     }
     // };
 
     return mlc;
 }
 
 - (void)inboxDone:(id)sender {
-    [self.userInterface hideInbox];
+    if ([self.userInterface isVisible]) {
+        [self.userInterface hideInbox];
+    }
 }
 
 /*
@@ -103,7 +107,9 @@ typedef NS_ENUM(NSInteger, InboxStyle) {
  * Displays the inbox.
  */
 - (void)showInbox {
-    [self.userInterface showInbox];
+    if (![self.userInterface isVisible]) {
+        [self.userInterface showInbox];
+    }
 }
 
 - (void)setStyle:(enum InboxStyle)style {
