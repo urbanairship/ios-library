@@ -101,7 +101,7 @@
 }
 
 //If max<0, it will get all data.
-- (NSArray *)getEvents:(NSUInteger)max {
+- (NSArray *)getEvents:(UInt32)max {
     __block NSArray *result = nil;
     dispatch_sync(dbQueue, ^{
         result = [self.db executeQuery:@"SELECT * FROM analytics ORDER BY _id LIMIT ?", [NSNumber numberWithUnsignedInteger:max]];
