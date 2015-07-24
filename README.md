@@ -55,11 +55,17 @@ Xcode 6 is required for all projects and the static library. Projects must targe
 
 **Enable Modules**
 Modules are enabled by default in new projects starting with Xcode 5. We recommend enabling
-modules and link frameworks. In the project's Build Settings, search for ``Enable Modules``
-and set it to ``YES`` then set ``Link Frameworks`` to ``YES``.
+modules and the automatic linking of frameworks. In the project's Build Settings, search for
+``Enable Modules`` and set it to ``YES`` then set ``Link Frameworks Automatically`` to ``YES``.
 
 **Header search path**                          
 Ensure that your build target's header search path includes the Airship directory.
+
+**Linker Flags (for static library)**
+Add "-ObjC -lz -lsqlite3" linker flag to *Other Linker Flags* to prevent "Selector Not Recognized"
+runtime exceptions and to include linkage to libz and libsqlite3. The linker flag
+"-Wl,-force_load,$(LIB_DIRECTORY)/libUAirship-<version>.a" may be used in instances where using
+the -ObjC linker flag is undesirable.
 
 ## Quickstart
 
