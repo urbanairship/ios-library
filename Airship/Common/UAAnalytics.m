@@ -225,7 +225,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     }
 
     if (!self.isEnabled) {
-        UA_LTRACE("Analytics disabled, ignoring event: %@", event.eventType);
+        UA_LTRACE(@"Analytics disabled, ignoring event: %@", event.eventType);
         return;
     }
 
@@ -478,7 +478,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
                                                                error:&err];
             
             if (err) {
-                UA_LTRACE("Deserialization Error: %@", [err localizedDescription]);
+                UA_LTRACE(@"Deserialization Error: %@", [err localizedDescription]);
             }
         }
         
