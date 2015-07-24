@@ -39,9 +39,14 @@
 
 @interface UALocationProviderTests : XCTestCase
 
-@property (nonatomic, strong) id<UALocationProviderDelegate> mockUALocationService;
+@property (nonatomic, strong) id mockUALocationService;
 @property (nonatomic, strong) CLLocation *testLocationPDX;
 @property (nonatomic, strong) CLLocation *testLocationSFO;
+
+@property (nonatomic, strong) id mockCurrentDevice;
+@property (nonatomic, strong) id mockMainBundle;
+@property (nonatomic, strong) id mockLocationManager;
+
 @end
 
 @implementation UALocationProviderTests
@@ -50,12 +55,21 @@
     self.mockUALocationService = [OCMockObject niceMockForProtocol:@protocol(UALocationProviderDelegate)];
     self.testLocationPDX = [UALocationTestUtils testLocationPDX];
     self.testLocationSFO = [UALocationTestUtils testLocationSFO];
+
+    self.mockCurrentDevice = [OCMockObject niceMockForClass:[UIDevice class]];
+    [[[self.mockCurrentDevice stub] andReturn:self.mockCurrentDevice] currentDevice];
+
+    self.mockMainBundle = [OCMockObject niceMockForClass:[NSBundle class]];
+    [[[self.mockMainBundle stub] andReturn:self.mockMainBundle] mainBundle];
+
+    self.mockLocationManager = [OCMockObject niceMockForClass:[CLLocationManager class]];
 }
 
 - (void)tearDown {
-    self.mockUALocationService = nil;
-    self.testLocationPDX = nil;
-    self.testLocationSFO = nil;
+    [self.mockUALocationService stopMocking];
+    [self.mockMainBundle stopMocking];
+    [self.mockCurrentDevice stopMocking];
+    [self.mockLocationManager stopMocking];
 }
 
 #pragma mark -
@@ -390,6 +404,48 @@
     XCTAssertEqual(significantChange.serviceStatus, UALocationProviderNotUpdating);
     [mockLocationManager verify];
     [mockLocationManager stopMocking];
+}
+
+/**
+ * Test that allowsBackgroundLocationUpdates is set to YES on iOS 9 only if the
+ * background modes include location updates.
+ */
+- (void)testSetAllowsBackgroundLocationEnabled {
+    // Stub the system version to be 9.0
+    [(UIDevice *)[[self.mockCurrentDevice stub] andReturn:@"9.0"] systemVersion];
+
+    // Add location to the background modes
+    [[[self.mockMainBundle stub] andReturn:@[@"location"]] objectForInfoDictionaryKey:@"UIBackgroundModes"];
+
+    // Expect the locationManager's allowsBackgroundLocationUpdates is set to YES
+    [[self.mockLocationManager expect] setValue:@(YES) forKey:@"allowsBackgroundLocationUpdates"];
+
+    // Create the provider
+    UABaseLocationProvider *baseProvider = [[UABaseLocationProvider alloc] initWithDelegate:nil locationManager:self.mockLocationManager];
+
+    // Verify the lcoation manager allowsBackgroundLocationUpdates was set to YES
+    [self.mockLocationManager verify];
+}
+
+/**
+ * Test that allowsBackgroundLocationUpdates is not set to YES on iOS 9 if the
+ * background modes does not include location updates.
+ */
+- (void)testDoNotSetAllowsBackgroundLocationEnabled {
+    // Stub the system version to be 9.0
+    [(UIDevice *)[[self.mockCurrentDevice stub] andReturn:@"9.0"] systemVersion];
+
+    // Return an empty array of backgroudn modes
+    [[[self.mockMainBundle stub] andReturn:@[]] objectForInfoDictionaryKey:@"UIBackgroundModes"];
+
+    // Reject setting allowsBackgroundLocationUpdates on the locationManager
+    [[self.mockLocationManager reject] setValue:@(YES) forKey:@"allowsBackgroundLocationUpdates"];
+
+    // Create the provider
+    UABaseLocationProvider *baseProvider = [[UABaseLocationProvider alloc] initWithDelegate:nil locationManager:self.mockLocationManager];
+
+    // Verify the lcoation manager allowsBackgroundLocationUpdates was not set to YES
+    [self.mockLocationManager verify];
 }
 
 

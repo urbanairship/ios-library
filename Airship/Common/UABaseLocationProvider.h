@@ -137,6 +137,14 @@
  */
 - (instancetype)initWithDelegate:(id<UALocationProviderDelegate>)delegate;
 
+/**
+ * Initializes the object with a delegate
+ * @param delegate Delegate object that implements the UALocationProviderDelegate protocol
+ * @param locationManager A CLLocationManager instance.
+ */
+- (instancetype)initWithDelegate:(id<UALocationProviderDelegate>)delegate
+                 locationManager:(CLLocationManager *)locationManager;
+
 ///---------------------------------------------------------------------------------------
 /// @name Location Accuracy
 ///---------------------------------------------------------------------------------------

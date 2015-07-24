@@ -1,16 +1,16 @@
 /*
  Copyright 2009-2015 Urban Airship Inc. All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
- 
+
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
- 
+
  2. Redistributions in binary form must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided with the distribution.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
@@ -50,11 +50,15 @@
     return [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIBackgroundModes"] containsObject:@"location"];
 }
 
-- (instancetype)init {
+- (instancetype)initWithDelegate:(id<UALocationProviderDelegate>)delegate
+                 locationManager:(CLLocationManager *)locationManager  {
+
     self = [super init];
-    if (self){
-        self.locationManager = [[CLLocationManager alloc] init];
+    if (self) {
+        self.locationManager = locationManager;
         self.locationManager.delegate = self;
+        self.delegate = delegate;
+
 
         // in iOS 9 and above, background location updates must be explicitly requested at runtime, but this can only
         // be done safely if the related background mode is set in the Info.plist.
@@ -70,16 +74,21 @@
     return self;
 }
 
-- (instancetype)initWithDelegate:(id<UALocationProviderDelegate>)delegate {
-    self = [self init];
-    if (self && [delegate conformsToProtocol:@protocol(UALocationProviderDelegate)]) {
-        self.delegate = delegate;
-    }
+- (instancetype)init {
+    self = [self initWithDelegate:nil
+                  locationManager:[[CLLocationManager alloc] init]];
     return self;
 }
 
+- (instancetype)initWithDelegate:(id<UALocationProviderDelegate>)delegate {
+    self = [self initWithDelegate:delegate
+                  locationManager:[[CLLocationManager alloc] init]];
+    return self;
+}
+
+
 - (NSString *)description {
-    return [NSString stringWithFormat:@"Provider:%@, Purpose:%@, Updating:%ld, desiredAccuracy %f, distanceFilter %f", 
+    return [NSString stringWithFormat:@"Provider:%@, Purpose:%@, Updating:%ld, desiredAccuracy %f, distanceFilter %f",
             self.provider,
             self.purpose,
             (long)self.serviceStatus,
@@ -130,15 +139,15 @@
 // delegate callbacks here
 - (void)startReportingLocation {
     self.serviceStatus = UALocationProviderUpdating;
-}    
+}
 
 - (void)stopReportingLocation {
     self.serviceStatus = UALocationProviderNotUpdating;
 }
-    
+
 #pragma mark -
 #pragma mark CLLocationManger Delegate
-    
+
 /* iOS 4.2 or better */
 // This is the nuclear option. Subclasses should implement specific action
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
@@ -171,7 +180,7 @@
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
     // Catch kCLErrorDenied for iOS < 4.2. Also, catch the errors that would stop the service, vs. other
     // errors which would just indicate that the service is in a transient error state that might clear
-    // up given time. 
+    // up given time.
     switch (error.code) {
         case kCLErrorDenied:
             [self stopReportingLocation];
@@ -206,14 +215,14 @@
     if (old > self.maximumElapsedTimeForCachedLocation) {
         return NO;
     }
-    
+
     // accuracy values less than zero represent invalid lat/long values
     // If altitude becomes important in the future, add the check here for verticalAccuracy
     if (newLocation.horizontalAccuracy < 0) {
         UA_LTRACE(@"Location %@ did not met accuracy requirements", newLocation);
         return NO;
     }
-    
+
     return YES;
 }
 
