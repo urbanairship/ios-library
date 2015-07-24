@@ -52,7 +52,12 @@ Interface into your project. These are located under /Airship/UI/Default
 
 **Compiler**
 Xcode 6 is required for all projects and the static library. Projects must target >= iOS6.
-     
+
+**Enable Modules**
+Modules are enabled by default in new projects starting with Xcode 5. We recommend enabling
+modules and link frameworks. In the project's Build Settings, search for ``Enable Modules``
+and set it to ``YES`` then set ``Link Frameworks`` to ``YES``.
+
 **Header search path**                          
 Ensure that your build target's header search path includes the Airship directory.
 

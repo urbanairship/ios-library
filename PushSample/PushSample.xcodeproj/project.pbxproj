@@ -47,12 +47,6 @@
 		493977E119B7CE660063C58F /* UALocationSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935DAA152B60BD006E6A92 /* UALocationSettingsViewController.m */; };
 		493977E219B7CE660063C58F /* UAMapPresentationController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935DAC152B60BD006E6A92 /* UAMapPresentationController.m */; };
 		493977E319B7CE660063C58F /* SampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3959C177A25DC00388531 /* SampleAppDelegate.m */; };
-		493977E619B7CE660063C58F /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB935DB0152B614A006E6A92 /* MapKit.framework */; };
-		493977E719B7CE660063C58F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB935DA4152B6081006E6A92 /* CoreLocation.framework */; };
-		493977E919B7CE660063C58F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
-		493977EA19B7CE660063C58F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
-		493977F419B7CE660063C58F /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5184E901315F35B00A40CAC /* AudioToolbox.framework */; };
-		493977F519B7CE660063C58F /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5184E921315F36300A40CAC /* MessageUI.framework */; };
 		49914C281B0FEADA001078AB /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 49914C251B0FEAD0001078AB /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		49914C291B0FEAE9001078AB /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49914C251B0FEAD0001078AB /* AirshipKit.framework */; };
 		49C0CB1119BA5AA800771F4F /* NSString+UALocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C0CB0E19BA5AA800771F4F /* NSString+UALocalization.m */; };
@@ -70,7 +64,6 @@
 		BB935DAD152B60BD006E6A92 /* UALocationDemoAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935DA8152B60BD006E6A92 /* UALocationDemoAnnotation.m */; };
 		BB935DAE152B60BD006E6A92 /* UALocationSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935DAA152B60BD006E6A92 /* UALocationSettingsViewController.m */; };
 		BB935DAF152B60BD006E6A92 /* UAMapPresentationController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935DAC152B60BD006E6A92 /* UAMapPresentationController.m */; };
-		BB935DB1152B614A006E6A92 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB935DB0152B614A006E6A92 /* MapKit.framework */; };
 		BB935DB4152B61DB006E6A92 /* UALocationSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BB935DB2152B61DB006E6A92 /* UALocationSettingsViewController.xib */; };
 		BB935DB5152B61DB006E6A92 /* UAMapPresentationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BB935DB3152B61DB006E6A92 /* UAMapPresentationViewController.xib */; };
 		CC9EA97219CA347D0003D393 /* NSString+UASizeWithFontCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = CC9EA97119CA347D0003D393 /* NSString+UASizeWithFontCompatibility.m */; };
@@ -82,8 +75,6 @@
 		D5184E8C1315F33900A40CAC /* UAPushSettingsTagsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D5184E881315F33900A40CAC /* UAPushSettingsTagsViewController.xib */; };
 		D5184E8D1315F33900A40CAC /* UAPushSettingsSoundsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D5184E891315F33900A40CAC /* UAPushSettingsSoundsViewController.xib */; };
 		D5184E8E1315F33900A40CAC /* UAPushSettingsAddTagViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D5184E8A1315F33900A40CAC /* UAPushSettingsAddTagViewController.xib */; };
-		D5184E911315F35B00A40CAC /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5184E901315F35B00A40CAC /* AudioToolbox.framework */; };
-		D5184E931315F36300A40CAC /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5184E921315F36300A40CAC /* MessageUI.framework */; };
 		D5184E981315F39C00A40CAC /* pig.caf in Resources */ = {isa = PBXBuildFile; fileRef = D5184E941315F39C00A40CAC /* pig.caf */; };
 		D5184E991315F39C00A40CAC /* frog.caf in Resources */ = {isa = PBXBuildFile; fileRef = D5184E951315F39C00A40CAC /* frog.caf */; };
 		D5184E9A1315F39C00A40CAC /* cow.caf in Resources */ = {isa = PBXBuildFile; fileRef = D5184E961315F39C00A40CAC /* cow.caf */; };
@@ -217,10 +208,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB935DB1152B614A006E6A92 /* MapKit.framework in Frameworks */,
 				184E3FD5129E4D1D004465C8 /* libUAirship-6.1.2.a in Frameworks */,
-				D5184E911315F35B00A40CAC /* AudioToolbox.framework in Frameworks */,
-				D5184E931315F36300A40CAC /* MessageUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -229,12 +217,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				49914C291B0FEAE9001078AB /* AirshipKit.framework in Frameworks */,
-				493977E619B7CE660063C58F /* MapKit.framework in Frameworks */,
-				493977E719B7CE660063C58F /* CoreLocation.framework in Frameworks */,
-				493977E919B7CE660063C58F /* UIKit.framework in Frameworks */,
-				493977EA19B7CE660063C58F /* CoreGraphics.framework in Frameworks */,
-				493977F419B7CE660063C58F /* AudioToolbox.framework in Frameworks */,
-				493977F519B7CE660063C58F /* MessageUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -736,6 +718,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUILD_STYLE = Debug;
+				CLANG_ENABLE_MODULES = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -769,6 +752,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUILD_STYLE = Release;
+				CLANG_ENABLE_MODULES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -798,6 +782,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUILD_STYLE = Debug;
+				CLANG_ENABLE_MODULES = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = ../Airship/;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -829,6 +814,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUILD_STYLE = Release;
+				CLANG_ENABLE_MODULES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = ../Airship/;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;

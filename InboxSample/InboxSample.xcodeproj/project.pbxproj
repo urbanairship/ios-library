@@ -41,7 +41,6 @@
 		4939776C19B691100063C58F /* UAInboxMessageListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57821214182289003FA039 /* UAInboxMessageListController.m */; };
 		4939776D19B691100063C58F /* UAInboxMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57821414182289003FA039 /* UAInboxMessageViewController.m */; };
 		4939776F19B691100063C58F /* UADateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F54E0231772555F0037A20E /* UADateUtils.m */; };
-		4939777619B691100063C58F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAF50FCA81BD0007E1BE /* UIKit.framework */; };
 		493977A019B7C1E70063C58F /* InboxSampleModalUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4939779A19B7C1E70063C58F /* InboxSampleModalUserInterface.m */; };
 		493977A119B7C1E70063C58F /* InboxSampleNavigationUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4939779C19B7C1E70063C58F /* InboxSampleNavigationUserInterface.m */; };
 		493977A219B7C1E70063C58F /* InboxSamplePopoverUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4939779E19B7C1E70063C58F /* InboxSamplePopoverUserInterface.m */; };
@@ -198,7 +197,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				49D528031B0FF275006E35FB /* AirshipKit.framework in Frameworks */,
-				4939777619B691100063C58F /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -699,6 +697,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUILD_STYLE = Debug;
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -737,6 +736,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUILD_STYLE = Release;
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -770,6 +770,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUILD_STYLE = Debug;
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -808,6 +809,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUILD_STYLE = Release;
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
