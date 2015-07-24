@@ -268,6 +268,7 @@
 		CC4AAE0718C93ECF001F23B3 /* UAApplicationMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = CC4AAE0318C93ECF001F23B3 /* UAApplicationMetrics.h */; };
 		CC4AAE0918C93ECF001F23B3 /* UAApplicationMetrics.m in Sources */ = {isa = PBXBuildFile; fileRef = CC4AAE0418C93ECF001F23B3 /* UAApplicationMetrics.m */; };
 		CC4AAE0C18C93EF2001F23B3 /* UAApplicationMetricsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC4AAE0B18C93EF2001F23B3 /* UAApplicationMetricsTest.m */; };
+		CC4F18591B62B8D300C9FAE1 /* UABaseLocationProvider+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC4F18581B62B8D300C9FAE1 /* UABaseLocationProvider+Internal.h */; };
 		CC523FB017B985F800233005 /* UAJSONValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = CC523FAE17B985F700233005 /* UAJSONValueTransformer.h */; };
 		CC523FB117B985F800233005 /* UAJSONValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = CC523FAF17B985F700233005 /* UAJSONValueTransformer.m */; };
 		CC523FC317BA8AC200233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FC217BA8AC200233005 /* CoreData.framework */; };
@@ -638,6 +639,7 @@
 		CC4AAE0318C93ECF001F23B3 /* UAApplicationMetrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAApplicationMetrics.h; sourceTree = "<group>"; };
 		CC4AAE0418C93ECF001F23B3 /* UAApplicationMetrics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAApplicationMetrics.m; sourceTree = "<group>"; };
 		CC4AAE0B18C93EF2001F23B3 /* UAApplicationMetricsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAApplicationMetricsTest.m; sourceTree = "<group>"; };
+		CC4F18581B62B8D300C9FAE1 /* UABaseLocationProvider+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UABaseLocationProvider+Internal.h"; sourceTree = "<group>"; };
 		CC523FAE17B985F700233005 /* UAJSONValueTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAJSONValueTransformer.h; sourceTree = "<group>"; };
 		CC523FAF17B985F700233005 /* UAJSONValueTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAJSONValueTransformer.m; sourceTree = "<group>"; };
 		CC523FC217BA8AC200233005 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -864,6 +866,7 @@
 			isa = PBXGroup;
 			children = (
 				BBB87E3515057CF200971CEC /* UABaseLocationProvider.h */,
+				CC4F18581B62B8D300C9FAE1 /* UABaseLocationProvider+Internal.h */,
 				BBB87E3615057CF200971CEC /* UABaseLocationProvider.m */,
 				BB42FB741509553F00FC4B1B /* UALocationCommonValues.h */,
 				BB42FB7D150969F200FC4B1B /* UALocationCommonValues.m */,
@@ -1654,6 +1657,7 @@
 				6116522A1A2D26D5007C96D0 /* UACircularRegion.h in Headers */,
 				492ADA1018C959CB0032C491 /* UACloseWindowAction.h in Headers */,
 				BB8860E1159A7E9600584445 /* UALocationService+Internal.h in Headers */,
+				CC4F18591B62B8D300C9FAE1 /* UABaseLocationProvider+Internal.h in Headers */,
 				CCA3A4EB17FCB3A8009C7371 /* UAActionRegistryEntry.h in Headers */,
 				CC3870391B308BA600746D07 /* UATagGroupsAPIClient.h in Headers */,
 				CC8542C717F4B81600D2DE10 /* UAAggregateActionResult.h in Headers */,

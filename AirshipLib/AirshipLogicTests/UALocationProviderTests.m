@@ -28,7 +28,7 @@
 #import <XCTest/XCTest.h>
 #import "UALocationTestUtils.h"
 #import "UALocationCommonValues.h"
-#import "UABaseLocationProvider.h"
+#import "UABaseLocationProvider+Internal.h"
 #import "UAStandardLocationProvider.h"
 #import "UASignificantChangeProvider.h"
 
@@ -39,7 +39,7 @@
 
 @interface UALocationProviderTests : XCTestCase
 
-@property (nonatomic, strong) id mockUALocationService;
+@property (nonatomic, strong) id<UALocationProviderDelegate> mockUALocationService;
 @property (nonatomic, strong) CLLocation *testLocationPDX;
 @property (nonatomic, strong) CLLocation *testLocationSFO;
 
@@ -66,7 +66,7 @@
 }
 
 - (void)tearDown {
-    [self.mockUALocationService stopMocking];
+    [(id) self.mockUALocationService stopMocking];
     [self.mockMainBundle stopMocking];
     [self.mockCurrentDevice stopMocking];
     [self.mockLocationManager stopMocking];
@@ -421,7 +421,7 @@
     [[self.mockLocationManager expect] setValue:@(YES) forKey:@"allowsBackgroundLocationUpdates"];
 
     // Create the provider
-    UABaseLocationProvider *baseProvider = [[UABaseLocationProvider alloc] initWithDelegate:nil locationManager:self.mockLocationManager];
+    UABaseLocationProvider *baseProvider = [[UABaseLocationProvider alloc] initWithLocationManager:self.mockLocationManager];
 
     // Verify the lcoation manager allowsBackgroundLocationUpdates was set to YES
     [self.mockLocationManager verify];
@@ -442,7 +442,7 @@
     [[self.mockLocationManager reject] setValue:@(YES) forKey:@"allowsBackgroundLocationUpdates"];
 
     // Create the provider
-    UABaseLocationProvider *baseProvider = [[UABaseLocationProvider alloc] initWithDelegate:nil locationManager:self.mockLocationManager];
+    UABaseLocationProvider *baseProvider = [[UABaseLocationProvider alloc] initWithLocationManager:self.mockLocationManager];
 
     // Verify the lcoation manager allowsBackgroundLocationUpdates was not set to YES
     [self.mockLocationManager verify];

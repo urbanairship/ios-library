@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UABaseLocationProvider.h"
+#import "UABaseLocationProvider+Internal.h"
 #import "UAGlobal.h"
 #import "UAEvent.h"
 #import "UAirship.h"
@@ -50,15 +50,12 @@
     return [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIBackgroundModes"] containsObject:@"location"];
 }
 
-- (instancetype)initWithDelegate:(id<UALocationProviderDelegate>)delegate
-                 locationManager:(CLLocationManager *)locationManager  {
+- (instancetype)initWithLocationManager:(CLLocationManager *)locationManager {
 
     self = [super init];
     if (self) {
         self.locationManager = locationManager;
         self.locationManager.delegate = self;
-        self.delegate = delegate;
-
 
         // in iOS 9 and above, background location updates must be explicitly requested at runtime, but this can only
         // be done safely if the related background mode is set in the Info.plist.
@@ -75,14 +72,15 @@
 }
 
 - (instancetype)init {
-    self = [self initWithDelegate:nil
-                  locationManager:[[CLLocationManager alloc] init]];
+    self = [self initWithLocationManager:[[CLLocationManager alloc] init]];
     return self;
 }
 
 - (instancetype)initWithDelegate:(id<UALocationProviderDelegate>)delegate {
-    self = [self initWithDelegate:delegate
-                  locationManager:[[CLLocationManager alloc] init]];
+    self = [self init];
+    if (self) {
+        self.delegate = delegate;
+    }
     return self;
 }
 
