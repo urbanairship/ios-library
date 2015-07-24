@@ -34,6 +34,7 @@
 @interface UABaseLocationProvider ()
 // Stop reporting any location service
 - (void)stopAllReporting;
+@property(readonly, nonatomic) BOOL isBackgroundLocationAvailable;
 @end
 
 @implementation UABaseLocationProvider
@@ -57,21 +58,9 @@
 
         // in iOS 9 and above, background location updates must be explicitly requested at runtime, but this can only
         // be done safely if the related background mode is set in the Info.plist.
-        SEL setAllowsBackgroundLocationUpdates = NSSelectorFromString(@"setAllowsBackgroundLocationUpdates:");
-
-        if ([self isBackgroundLocationAvailable]) {
-            if ([self.locationManager respondsToSelector:setAllowsBackgroundLocationUpdates]) {
-
-                // TODO: set the property directly when building with Xcode 7 and above
-                BOOL arg = YES;
-
-                NSMethodSignature* signature = [[self.locationManager class] instanceMethodSignatureForSelector:setAllowsBackgroundLocationUpdates];
-                NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:signature];
-                [invocation setTarget: self.locationManager];
-                [invocation setSelector:setAllowsBackgroundLocationUpdates];
-                [invocation setArgument:&arg atIndex:2];
-                [invocation invoke];
-            }
+        if ([[UIDevice currentDevice].systemVersion floatValue] >= 9.0 && self.isBackgroundLocationAvailable) {
+            // TODO: set the property directly when building with Xcode 7 and above
+            [self.locationManager setValue:@(YES) forKey:@"allowsBackgroundLocationUpdates"];
         }
 
         self.provider = UALocationServiceProviderUnknown;
