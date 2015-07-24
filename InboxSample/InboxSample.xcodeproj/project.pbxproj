@@ -158,7 +158,6 @@
 		49C0CB9119BA638A00771F4F /* UAInboxLocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxLocalization.h; sourceTree = "<group>"; };
 		49D527F71B0FF24D006E35FB /* AirshipKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipKit.xcodeproj; path = ../AirshipKit/AirshipKit.xcodeproj; sourceTree = "<group>"; };
 		49E001AF154F6535009305B7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
-		49FF76491B56CB6D00F12FCA /* InboxSampleCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSampleCommon.h; sourceTree = "<group>"; };
 		49FF764A1B56CBB700F12FCA /* UACommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACommon.h; sourceTree = "<group>"; };
 		76F5B71919C37DD6003C07A0 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		9A50FAE80FCA81810007E1BE /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -233,7 +232,6 @@
 			isa = PBXGroup;
 			children = (
 				49D34B7D19B0FF5800C4E82C /* User Interfaces */,
-				49FF76491B56CB6D00F12FCA /* InboxSampleCommon.h */,
 				E9CB367C12B89BCA002E39EA /* InboxSampleAppDelegate.h */,
 				E9CB367D12B89BCA002E39EA /* InboxSampleAppDelegate.m */,
 				E9CB367E12B89BCA002E39EA /* InboxSampleViewController.h */,

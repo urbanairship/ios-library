@@ -23,6 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// Import the Urban Airship umbrella header, using either
+// the framework or the header search paths
 #if __has_include("AirshipKit/AirshipKit.h")
 #import <AirshipKit/AirshipKit.h>
 #else
