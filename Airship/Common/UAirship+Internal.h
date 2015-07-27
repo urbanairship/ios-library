@@ -32,13 +32,15 @@
 
 @interface UAirship()
 
+NS_ASSUME_NONNULL_BEGIN
+
 // Setters for public readonly-getters
 @property (nonatomic, strong) UALocationService *locationService;
 @property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UAAnalytics *analytics;
 @property (nonatomic, strong) UAActionRegistry *actionRegistry;
 @property (nonatomic, assign) BOOL remoteNotificationBackgroundModeEnabled;
-@property (nonatomic, strong) id<UAJavaScriptDelegate> actionJSDelegate;
+@property (nonatomic, strong, nullable) id<UAJavaScriptDelegate> actionJSDelegate;
 @property (nonatomic, strong) UAApplicationMetrics *applicationMetrics;
 @property (nonatomic, strong) UAWhitelist *whitelist;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
@@ -73,7 +75,7 @@
  * App 1.0 (iPad; iPhone OS <version>; UALib <version>; <app key>; en_US)
  * @return The user agent string.
  */
-+ (NSString *)createUserAgentForAppKey:(NSString *)appKey;
++ (nonnull NSString *)createUserAgentForAppKey:(NSString *)appKey;
 
 /**
  * Handle app init. This should be called from NSNotification center
@@ -95,5 +97,6 @@
  */
 + (void)land;
 
+NS_ASSUME_NONNULL_END
 
 @end

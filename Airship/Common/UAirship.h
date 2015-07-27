@@ -37,7 +37,10 @@
 @class UAActionRegistry;
 @class UAInAppMessaging;
 
+
 UA_VERSION_INTERFACE(UAirshipVersion)
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The takeOff method must be called on the main thread. Not doing so results in 
@@ -55,7 +58,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 /**
  * The application configuration. This is set on takeOff.
  */
-@property (nonatomic, strong, readonly) UAConfig *config;
+@property (nonatomic, strong, readonly, null_resettable) UAConfig *config;
 
 /**
  * The shared analytics manager. There are not currently any user-defined events,
@@ -88,7 +91,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  *
  * NOTE: this delegate is not retained.
  */
-@property (nonatomic, weak) id<UAJavaScriptDelegate> jsDelegate;
+@property (nonatomic, weak, nullable) id<UAJavaScriptDelegate> jsDelegate;
 
 /**
  * The whitelist used for validating webview URLs.
@@ -142,7 +145,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * @param config The populated UAConfig to use.
  *
  */
-+ (void)takeOff:(UAConfig *)config;
++ (void)takeOff:(nullable UAConfig *)config;
 
 /**
  * Simplified `takeOff` method that uses `AirshipConfig.plist` for initialization.
@@ -158,7 +161,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  *
  * @return The `UAirship` instance.
  */
-+ (UAirship *)shared;
++ (nullable UAirship *)shared;
 
 /**
  * Returns the `UAPush` instance. Used for configuring and managing push
@@ -166,26 +169,29 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  *
  * @return The `UAPush` instance.
  */
-+ (UAPush *)push;
++ (nullable UAPush *)push;
 
 /**
  * Returns the `UAInbox` instance. Provides access to the inbox messages.
  *
  * @return The `UAInbox` instance.
  */
-+ (UAInbox *)inbox;
++ (nullable UAInbox *)inbox;
 
 /**
  * Returns the `UAUser` instance.
  *
  * @return The `UAUser` instance.
  */
-+ (UAUser *)inboxUser;
++ (nullable UAUser *)inboxUser;
 
 /**
  * Returns the `UAInAppMessaging` instance. Used for customizing
  * in-app notifications.
  */
-+ (UAInAppMessaging *)inAppMessaging;
++ (nullable UAInAppMessaging *)inAppMessaging;
+
+NS_ASSUME_NONNULL_END
 
 @end
+
