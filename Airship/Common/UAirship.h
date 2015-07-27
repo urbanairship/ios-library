@@ -124,6 +124,15 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 + (void)setLogLevel:(UALogLevel)level;
 
+/**
+ * Enables or disables logging implementation errors with emoji to make it stand
+ * out in the console. It is enabled by default, and will be disabled for production
+ * applications.
+ *
+ * @param enabled If `YES`, loud implementation error logging is enabled.
+ */
++ (void)setLoudImpErrorLogging:(BOOL)enabled;
+
 ///---------------------------------------------------------------------------------------
 /// @name Lifecycle
 ///---------------------------------------------------------------------------------------

@@ -203,6 +203,13 @@ The available log levels are:
     UALogLevelTrace
 ```
 
+Logs for implementation errors will be prefixed with ':rotating_light:Urban Airship Implementation Error:rotating_light:' in
+debug mode. The emoji can be removed by disabling loud implementation errors before takeOff by calling: 
+
+```obj-c
+    [UAirship setLoudImpErrorLogging:NO];
+```
+
 ## Building the Library
 
 Source can be found at https://github.com/urbanairship/ios-library
