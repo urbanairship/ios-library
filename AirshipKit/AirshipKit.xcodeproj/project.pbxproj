@@ -92,7 +92,7 @@
 			buildPhases = (
 				494DD9521B0EB677009C134E /* Sources */,
 				494DD9531B0EB677009C134E /* Frameworks */,
-				494DD9771B0EBC8E009C134E /* ShellScript */,
+				4997FA371B55D96D002D4E05 /* ShellScript */,
 				494DD9541B0EB677009C134E /* Headers */,
 				494DD9551B0EB677009C134E /* Resources */,
 			);
@@ -147,7 +147,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		494DD9771B0EBC8E009C134E /* ShellScript */ = {
+		4997FA371B55D96D002D4E05 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -158,7 +158,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT/generate_header_imports.sh\"";
+			shellScript = "\"$SRCROOT/copy_header_imports.sh\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 

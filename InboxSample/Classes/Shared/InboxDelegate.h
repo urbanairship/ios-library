@@ -24,7 +24,12 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAInbox.h"
+
+#if __has_include("AirshipKit/AirshipKit.h")
+#import <AirshipKit/AirshipKit.h>
+#else
+#import "AirshipLib.h"
+#endif
 
 /**
  * Urban Airship Inbox to display the inbox or inbox message.

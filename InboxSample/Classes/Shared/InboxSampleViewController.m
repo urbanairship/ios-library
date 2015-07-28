@@ -23,13 +23,16 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if __has_include("AirshipKit/AirshipKit.h")
+#import <AirshipKit/AirshipKit.h>
+#else
+#import "AirshipLib.h"
+#endif
+
 #import "InboxSampleViewController.h"
 #import "InboxSampleAppDelegate.h"
-#import "UAirship.h"
-#import "UAInbox.h"
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageViewController.h"
-#import "UALandingPageOverlayController.h"
 #import "InboxSampleUserInterface.h"
 #import "InboxSampleModalUserInterface.h"
 #import "InboxSamplePopoverUserInterface.h"

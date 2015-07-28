@@ -24,7 +24,8 @@
  */
 
 #import <UIKit/UIKit.h>
-#import "UAInboxMessage.h"
+
+@class UAInboxMessage;
 
 /**
  * The UITableViewCell subclass used by UAInboxMessageListController.

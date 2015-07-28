@@ -24,7 +24,12 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAPush.h"
+
+#if __has_include("AirshipKit/AirshipKit.h")
+#import <AirshipKit/AirshipKit.h>
+#else
+#import "AirshipLib.h"
+#endif
 
 /**
  * A UAPushNotificationDelegate implementation to display an alert when receiving

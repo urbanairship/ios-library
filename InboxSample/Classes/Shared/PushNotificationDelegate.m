@@ -23,9 +23,13 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if __has_include("AirshipKit/AirshipKit.h")
+#import <AirshipKit/AirshipKit.h>
+#else
+#import "AirshipLib.h"
+#endif
+
 #import "PushNotificationDelegate.h"
-#import "UAUtils.h"
-#import "UAInboxUtils.h"
 #import "UAInboxLocalization.h"
 
 @implementation PushNotificationDelegate

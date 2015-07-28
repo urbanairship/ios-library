@@ -23,9 +23,9 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "UACommon.h"
+
 #import "UAPushSettingsAddTagViewController.h"
-#import "UAPush.h"
-#import "UATagUtils.h"
 #import "NSString+UASizeWithFontCompatibility.h"
 
 enum TagSections {
