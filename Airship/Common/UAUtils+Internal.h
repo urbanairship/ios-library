@@ -23,56 +23,40 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEventAppExit.h"
-#import "UAEvent+Internal.h"
-#import "UAAnalytics.h"
-#import "UAirship.h"
-#import "UAUtils+Internal.h"
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import "UAUtils.h"
 
-@implementation UAEventAppExit
+/**
+ * Represents the possible connection types.
+ */
+typedef NS_ENUM(NSInteger, UAConnectionType) {
+    /**
+     * No connection.
+     */
+    UAConnectionTypeNone,
 
-+ (instancetype)event {
-    UAEventAppExit *event = [[self alloc] init];
-    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+    /**
+     * Cell connection.
+     */
+    UAConnectionTypeCell,
 
-    UAAnalytics *analytics = [UAirship shared].analytics;
+    /**
+     * Wifi connection.
+     */
+    UAConnectionTypeWifi
+};
 
-    [data setValue:analytics.conversionSendID forKey:@"push_id"];
-    [data setValue:analytics.conversionRichPushID forKey:@"rich_push_id"];
+/**
+ * The UAUtils object provides an interface for utility methods.
+ */
+@interface UAUtils ()
 
-
-    [data setValue:[self connectionType] forKey:@"connection_type"];
-
-    event.data = [data mutableCopy];
-    return event;
-}
-
-+ (NSString *)connectionType {
-
-    NSString *connectionType;
-    switch ([UAUtils connectionType]) {
-        case UAConnectionTypeNone:
-            connectionType = @"none";
-            break;
-        case UAConnectionTypeCell:
-            connectionType = @"cell";
-            break;
-        case UAConnectionTypeWifi:
-            connectionType = @"wifi";
-            break;
-        default:
-            break;
-    }
-
-    return connectionType;
-}
-
-- (NSString *)eventType {
-    return @"app_exit";
-}
-
-- (NSUInteger)estimatedSize {
-    return kUAEventAppExitSize;
-}
+/**
+ * Gets the current connection type.
+ * Possible values are "cell", "wifi", or "none".
+ * @return The current connection type as a string.
+ */
++ (UAConnectionType)connectionType;
 
 @end

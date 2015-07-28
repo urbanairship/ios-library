@@ -29,7 +29,7 @@
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAUser.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 @implementation UAEventAppInit
 

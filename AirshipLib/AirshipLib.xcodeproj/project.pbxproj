@@ -142,6 +142,7 @@
 		611652261A2D26BD007C96D0 /* UAProximityRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = 611652241A2D26BD007C96D0 /* UAProximityRegion.m */; };
 		6116522A1A2D26D5007C96D0 /* UACircularRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 611652281A2D26D5007C96D0 /* UACircularRegion.h */; };
 		6116522B1A2D26D5007C96D0 /* UACircularRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = 611652291A2D26D5007C96D0 /* UACircularRegion.m */; };
+		612C48D31B68206600B61D09 /* UAUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 612C48D21B68206600B61D09 /* UAUtils+Internal.h */; };
 		612ED4D51A3785E500DD7762 /* UARegionEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 612ED4D31A3785E500DD7762 /* UARegionEventTest.m */; };
 		612ED4D81A378BCA00DD7762 /* UARegionEvent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 612ED4D61A378BA100DD7762 /* UARegionEvent+Internal.h */; };
 		612ED4DD1A38DE3900DD7762 /* UACircularRegion+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 612ED4DA1A37D08200DD7762 /* UACircularRegion+Internal.h */; };
@@ -528,6 +529,7 @@
 		611652241A2D26BD007C96D0 /* UAProximityRegion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAProximityRegion.m; sourceTree = "<group>"; };
 		611652281A2D26D5007C96D0 /* UACircularRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACircularRegion.h; sourceTree = "<group>"; };
 		611652291A2D26D5007C96D0 /* UACircularRegion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACircularRegion.m; sourceTree = "<group>"; };
+		612C48D21B68206600B61D09 /* UAUtils+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUtils+Internal.h"; sourceTree = "<group>"; };
 		612ED4D31A3785E500DD7762 /* UARegionEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARegionEventTest.m; sourceTree = "<group>"; };
 		612ED4D61A378BA100DD7762 /* UARegionEvent+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UARegionEvent+Internal.h"; sourceTree = "<group>"; };
 		612ED4D91A37D06E00DD7762 /* UAProximityRegion+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAProximityRegion+Internal.h"; sourceTree = "<group>"; };
@@ -984,6 +986,7 @@
 				1F2B10C312DD01B60020843D /* UATagUtils.h */,
 				1F2B10C412DD01B60020843D /* UATagUtils.m */,
 				D9983E8C1238462100B7E69F /* UAUtils.h */,
+				612C48D21B68206600B61D09 /* UAUtils+Internal.h */,
 				D9983E8B1238462100B7E69F /* UAUtils.m */,
 				1FE43798128B589000D38A14 /* UAKeychainUtils.h */,
 				1FE43799128B589000D38A14 /* UAKeychainUtils.m */,
@@ -1589,6 +1592,7 @@
 				49E9C9C1183AD42300B7BCFF /* UAWebViewCallData.h in Headers */,
 				BB8860DA159A7E9600584445 /* UAEvent.h in Headers */,
 				767D0D3D1A71CC16008CEC8A /* UANamedUserAPIClient.h in Headers */,
+				612C48D31B68206600B61D09 /* UAUtils+Internal.h in Headers */,
 				4946199C1A11A49D00E138C0 /* UAWhitelist.h in Headers */,
 				CC2950F81949040300E905E3 /* UAEvent+Internal.h in Headers */,
 				49FCCB191912C6640057D1C4 /* UAActionArguments+Internal.h in Headers */,

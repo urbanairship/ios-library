@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 // Frameworks
 #import <CommonCrypto/CommonDigest.h>

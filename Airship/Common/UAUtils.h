@@ -29,41 +29,9 @@
 @class UAHTTPRequest;
 
 /**
- * Represents the possible connection types.
- */
-typedef NS_ENUM(NSInteger, UAConnectionType) {
-    /**
-     * No connection.
-     */
-    UAConnectionTypeNone,
-
-    /**
-     * Cell connection.
-     */
-    UAConnectionTypeCell,
-
-    /**
-     * Wifi connection.
-     */
-    UAConnectionTypeWifi
-};
-
-/**
  * The UAUtils object provides an interface for utility methods.
  */
 @interface UAUtils : NSObject
-
-
-///---------------------------------------------------------------------------------------
-/// @name Network Utils
-///---------------------------------------------------------------------------------------
-
-/**
- * Gets the current connection type.
- * Possible values are "cell", "wifi", or "none".
- * @return The current connection type as a string.
- */
-+ (UAConnectionType)connectionType;
 
 ///---------------------------------------------------------------------------------------
 /// @name Device ID Utils
