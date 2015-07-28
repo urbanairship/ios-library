@@ -23,18 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if __has_include("UAInboxMessageViewController.h")
-
-#import "NSString+UALocalization.h"
-#import "NSString+UASizeWithFontCompatibility.h"
-#import "UADateUtils.h"
-
 #import "UAInboxAlertHandler.h"
-#import "UAInboxLocalization.h"
 #import "UAInboxMessageListCell.h"
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageViewController.h"
 
-#else
-#pragma GCC error "Urban Airship UI Headers are not in the header search path."
-#endif
