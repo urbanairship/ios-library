@@ -58,7 +58,7 @@
 /**
  * Gets analytics events via sqlite query
  *
- * @param max Integer representing the sqlite query limit, max < 0 returns all the data
+ * @param max Max number of events. The value will be clipped to INT32_MAX.
  * @return An array of analytics events from the DB
  */
 - (NSArray *)getEvents:(NSUInteger)max;
