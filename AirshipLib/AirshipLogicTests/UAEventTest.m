@@ -39,7 +39,7 @@
 #import "UAEventAppForeground.h"
 #import "UAEventDeviceRegistration.h"
 #import "UAEventPushReceived.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 
 
@@ -121,7 +121,7 @@
 
     [[[self.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
-    [[[self.utils stub] andReturnValue:OCMOCK_VALUE(UAConnectionTypeCell)] connectionType];
+    [[[self.utils stub] andReturnValue:OCMOCK_VALUE(kUAConnectionTypeCell)] connectionType];
 
     NSDictionary *expectedData = @{@"user_id": @"user ID",
                                    @"connection_type": @"cell",
@@ -156,7 +156,7 @@
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE(YES)] isDaylightSavingTime];
 
-    [[[self.utils stub] andReturnValue:OCMOCK_VALUE(UAConnectionTypeCell)] connectionType];
+    [[[self.utils stub] andReturnValue:OCMOCK_VALUE(kUAConnectionTypeCell)] connectionType];
 
     [(UIDevice *)[[self.currentDevice stub] andReturn:@"os version"]systemVersion];
 
@@ -192,7 +192,7 @@
     [[[self.analytics stub] andReturn:@"push ID"] conversionSendID];
     [[[self.analytics stub] andReturn:@"rich push ID"] conversionRichPushID];
 
-    [[[self.utils stub] andReturnValue:OCMOCK_VALUE(UAConnectionTypeCell)] connectionType];
+    [[[self.utils stub] andReturnValue:OCMOCK_VALUE(kUAConnectionTypeCell)] connectionType];
     
     NSDictionary *expectedData = @{@"connection_type": @"cell",
                                    @"push_id": @"push ID",

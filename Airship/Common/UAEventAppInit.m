@@ -49,7 +49,7 @@
 
     [data setValue:[UAirship inboxUser].username forKey:@"user_id"];
 
-    [data setValue:[self connectionType] forKey:@"connection_type"];
+    [data setValue:[UAUtils connectionType] forKey:@"connection_type"];
     [data setValue:[self carrierName] forKey:@"carrier"];
 
     [data setValue:[self notificationTypes] forKey:@"notification_types"];
@@ -74,26 +74,6 @@
 
 - (NSString *)eventType {
     return @"app_init";
-}
-
-- (NSString *)connectionType {
-
-    NSString *connectionType;
-    switch ([UAUtils connectionType]) {
-        case UAConnectionTypeNone:
-            connectionType = @"none";
-            break;
-        case UAConnectionTypeCell:
-            connectionType = @"cell";
-            break;
-        case UAConnectionTypeWifi:
-            connectionType = @"wifi";
-            break;
-        default:
-            break;
-    }
-
-    return connectionType;
 }
 
 - (NSUInteger)estimatedSize {

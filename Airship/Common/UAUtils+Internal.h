@@ -27,25 +27,9 @@
 #import <UIKit/UIKit.h>
 #import "UAUtils.h"
 
-/**
- * Represents the possible connection types.
- */
-typedef NS_ENUM(NSInteger, UAConnectionType) {
-    /**
-     * No connection.
-     */
-    UAConnectionTypeNone,
-
-    /**
-     * Cell connection.
-     */
-    UAConnectionTypeCell,
-
-    /**
-     * Wifi connection.
-     */
-    UAConnectionTypeWifi
-};
+#define kUAConnectionTypeNone @"none"
+#define kUAConnectionTypeCell @"cell"
+#define kUAConnectionTypeWifi @"wifi"
 
 /**
  * The UAUtils object provides an interface for utility methods.
@@ -57,6 +41,6 @@ typedef NS_ENUM(NSInteger, UAConnectionType) {
  * Possible values are "cell", "wifi", or "none".
  * @return The current connection type as a string.
  */
-+ (UAConnectionType)connectionType;
++ (NSString *)connectionType;
 
 @end

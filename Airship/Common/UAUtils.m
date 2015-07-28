@@ -47,9 +47,9 @@
 
 @implementation UAUtils
 
-+ (UAConnectionType)connectionType {
++ (NSString *)connectionType {
 
-    UAConnectionType connectionType;
+    NSString *connectionType;
 
     SCNetworkReachabilityFlags flags;
     SCNetworkReachabilityRef reachabilityRef;
@@ -69,7 +69,7 @@
     Boolean success = SCNetworkReachabilityGetFlags(reachabilityRef, &flags);
     CFRelease(reachabilityRef);
 
-    connectionType = UAConnectionTypeNone;
+    connectionType = kUAConnectionTypeNone;
 
     // Return early if flags don't return, a connection is required, or the network is unreachable
     if (!success || (flags & kSCNetworkReachabilityFlagsReachable) == 0) {
@@ -77,18 +77,18 @@
     }
 
     if ((flags & kSCNetworkReachabilityFlagsConnectionRequired) == 0) {
-        connectionType = UAConnectionTypeWifi;
+        connectionType = kUAConnectionTypeWifi;
     }
 
     if ((((flags & kSCNetworkReachabilityFlagsConnectionOnDemand ) != 0) ||
          (flags & kSCNetworkReachabilityFlagsConnectionOnTraffic) != 0)) {
         if ((flags & kSCNetworkReachabilityFlagsInterventionRequired) == 0) {
-            connectionType = UAConnectionTypeWifi;
+            connectionType = kUAConnectionTypeWifi;
         }
     }
 
     if ((flags & kSCNetworkReachabilityFlagsIsWWAN) == kSCNetworkReachabilityFlagsIsWWAN) {
-        connectionType = UAConnectionTypeCell;
+        connectionType = kUAConnectionTypeCell;
     }
 
     return connectionType;
