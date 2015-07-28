@@ -46,7 +46,9 @@ projects, copy the ``Airship`` directory into the same directory as your project
     cp -r Airship /SomeDirectory/ (where /SomeDirectory/YourProject/ is your project)
 
 If you are not using a sample project, you'll need to import the source files for the User 
-Interface into your project. These are located under /Airship/UI/Default
+Interface into your project. These are located under /Airship/UI/Default. If you are using
+Swift, we also provide a bridging header located in /Airship/UI, named 
+"UA-Sample-Bridging-Header.h", to facilitate importing the sample UI.
 
 ### Build Settings
 
