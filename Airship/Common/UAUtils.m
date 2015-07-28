@@ -76,35 +76,18 @@
         return connectionType;
     }
 
-    if ((flags & kSCNetworkReachabilityFlagsConnectionRequired) == 0)
-    {
-        /*
-         If the target host is reachable and no connection is required then we'll assume (for now) that you're on Wi-Fi...
-         */
+    if ((flags & kSCNetworkReachabilityFlagsConnectionRequired) == 0) {
         connectionType = UAConnectionTypeWifi;
     }
 
     if ((((flags & kSCNetworkReachabilityFlagsConnectionOnDemand ) != 0) ||
-         (flags & kSCNetworkReachabilityFlagsConnectionOnTraffic) != 0))
-    {
-        /*
-         ... and the connection is on-demand (or on-traffic) if the calling application is using the CFSocketStream or higher APIs...
-         */
-
-        if ((flags & kSCNetworkReachabilityFlagsInterventionRequired) == 0)
-        {
-            /*
-             ... and no [user] intervention is needed...
-             */
+         (flags & kSCNetworkReachabilityFlagsConnectionOnTraffic) != 0)) {
+        if ((flags & kSCNetworkReachabilityFlagsInterventionRequired) == 0) {
             connectionType = UAConnectionTypeWifi;
         }
     }
 
-    if ((flags & kSCNetworkReachabilityFlagsIsWWAN) == kSCNetworkReachabilityFlagsIsWWAN)
-    {
-        /*
-         ... but WWAN connections are OK if the calling application is using the CFNetwork APIs.
-         */
+    if ((flags & kSCNetworkReachabilityFlagsIsWWAN) == kSCNetworkReachabilityFlagsIsWWAN) {
         connectionType = UAConnectionTypeCell;
     }
 
