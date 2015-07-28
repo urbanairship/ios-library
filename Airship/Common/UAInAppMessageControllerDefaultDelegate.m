@@ -30,6 +30,7 @@
 #import "UAInAppMessaging.h"
 #import "UAInAppMessageButtonActionBinding.h"
 #import "UAUserNotificationCategory.h"
+#import "UAUtils.h"
 
 
 #define kUAInAppMessageAnimationDuration 0.2
@@ -151,11 +152,11 @@
  */
 - (void)buildLayoutWithParent:(UIView *)parentView messageView:(UIView *)messageView {
     CGFloat horizontalMargin = 0;
-    CGRect screenRect = [UIScreen mainScreen].applicationFrame;
-    CGFloat screenWidth = CGRectGetWidth(screenRect);
+    CGRect screenBounds = [UAUtils orientationDependentScreenBounds];
+    CGFloat screenWidth = CGRectGetWidth(screenBounds);
 
     // On an iPad, messages are 45% of the fixed screen width in landscape
-    CGFloat longWidth = MAX(screenWidth, CGRectGetHeight(screenRect));
+    CGFloat longWidth = MAX(screenWidth, CGRectGetHeight(screenBounds));
     CGFloat actualLongWidth = longWidth * kUAInAppMessagePadScreenWidthPercentage;
 
     // On a phone, messages are always 95% of current screen width

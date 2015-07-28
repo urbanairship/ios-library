@@ -284,10 +284,10 @@
         NSString *plistString = nil;
         if ([scanner scanUpToString:@"</plist>" intoString:&plistString]) {
             NSData *data = [[plistString stringByAppendingString:@"</plist>"] dataUsingEncoding:NSUTF8StringEncoding];
-            plistDict = [NSPropertyListSerialization propertyListFromData:data
-                                                         mutabilityOption:NSPropertyListImmutable
+            plistDict = [NSPropertyListSerialization propertyListWithData:data
+                                                                  options:NSPropertyListImmutable
                                                                    format:nil
-                                                         errorDescription:nil];
+                                                                    error:nil];
         }
     }
 
