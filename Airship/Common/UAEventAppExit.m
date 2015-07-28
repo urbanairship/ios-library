@@ -27,6 +27,7 @@
 #import "UAEvent+Internal.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
+#import "UAUtils.h"
 
 @implementation UAEventAppExit
 
@@ -40,12 +41,31 @@
     [data setValue:analytics.conversionRichPushID forKey:@"rich_push_id"];
 
 
-    [data setValue:[event connectionType] forKey:@"connection_type"];
+    [data setValue:[self connectionType] forKey:@"connection_type"];
 
     event.data = [data mutableCopy];
     return event;
 }
 
++ (NSString *)connectionType {
+
+    NSString *connectionType;
+    switch ([UAUtils connectionType]) {
+        case UAConnectionTypeNone:
+            connectionType = @"none";
+            break;
+        case UAConnectionTypeCell:
+            connectionType = @"cell";
+            break;
+        case UAConnectionTypeWifi:
+            connectionType = @"wifi";
+            break;
+        default:
+            break;
+    }
+
+    return connectionType;
+}
 
 - (NSString *)eventType {
     return @"app_exit";

@@ -27,11 +27,9 @@
 #import <CoreTelephony/CTCarrier.h>
 
 #import "UAEvent+Internal.h"
-#import "UA_Reachability.h"
 #import "UAPush.h"
 #import "UAirship.h"
-
-@implementation UAEvent
+#import "UAUtils.h"
 
 /*
  * Fix for CTTelephonyNetworkInfo bug where instances might receive
@@ -42,6 +40,8 @@
  */
 static CTTelephonyNetworkInfo *netInfo_;
 static dispatch_once_t netInfoDispatchToken_;
+
+@implementation UAEvent
 
 - (instancetype)init {
     self = [super init];
@@ -87,31 +87,6 @@ static dispatch_once_t netInfoDispatchToken_;
             self.eventID, self.eventType, self.time, self.data];
 }
 
-- (NSString *)connectionType {
-    // Capture connection type using Reachability
-    NetworkStatus netStatus = [[Reachability reachabilityForInternetConnection] currentReachabilityStatus];
-    NSString *connectionTypeString = @"";
-    switch (netStatus) {
-        case UA_NotReachable:
-        {
-            connectionTypeString = @"none";//this should never be sent
-            break;
-        }
-        case UA_ReachableViaWWAN:
-        {
-            connectionTypeString = @"cell";
-            break;
-        }
-        case UA_ReachableViaWiFi:
-        {
-            connectionTypeString = @"wifi";
-            break;
-        }
-    }
-
-    return connectionTypeString;
-}
-
 - (NSString *)carrierName {
     dispatch_once(&netInfoDispatchToken_, ^{
         netInfo_ = [[CTTelephonyNetworkInfo alloc] init];
@@ -144,7 +119,3 @@ static dispatch_once_t netInfoDispatchToken_;
 }
 
 @end
-
-
-
-

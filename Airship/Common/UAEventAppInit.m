@@ -29,7 +29,7 @@
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAUser.h"
-
+#import "UAUtils.h"
 
 @implementation UAEventAppInit
 
@@ -48,6 +48,7 @@
     [data setValue:analytics.conversionRichPushID forKey:@"rich_push_id"];
 
     [data setValue:[UAirship inboxUser].username forKey:@"user_id"];
+
     [data setValue:[self connectionType] forKey:@"connection_type"];
     [data setValue:[self carrierName] forKey:@"carrier"];
 
@@ -73,6 +74,26 @@
 
 - (NSString *)eventType {
     return @"app_init";
+}
+
+- (NSString *)connectionType {
+
+    NSString *connectionType;
+    switch ([UAUtils connectionType]) {
+        case UAConnectionTypeNone:
+            connectionType = @"none";
+            break;
+        case UAConnectionTypeCell:
+            connectionType = @"cell";
+            break;
+        case UAConnectionTypeWifi:
+            connectionType = @"wifi";
+            break;
+        default:
+            break;
+    }
+
+    return connectionType;
 }
 
 - (NSUInteger)estimatedSize {

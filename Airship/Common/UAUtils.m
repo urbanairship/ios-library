@@ -27,6 +27,7 @@
 
 // Frameworks
 #import <CommonCrypto/CommonDigest.h>
+#import <SystemConfiguration/SCNetworkReachability.h>
 
 // UA external libraries
 #import "UA_Base64.h"
@@ -42,8 +43,73 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <sys/xattr.h>
+#import <netinet/in.h>
 
 @implementation UAUtils
+
++ (UAConnectionType)connectionType {
+
+    UAConnectionType connectionType;
+
+    SCNetworkReachabilityFlags flags;
+    SCNetworkReachabilityRef reachabilityRef;
+
+    struct sockaddr_in zeroAddress;
+
+    // Put sizeof(zeroAddress) number of 0-bytes at address &zeroAddress
+    bzero(&zeroAddress, sizeof(zeroAddress));
+
+    // Set length of sockaddr_in struct
+    zeroAddress.sin_len = sizeof(zeroAddress);
+
+    // Set address family to internetwork: UDP, TCP, etc.
+    zeroAddress.sin_family = AF_INET;
+
+    reachabilityRef = SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, (const struct sockaddr*)&zeroAddress);
+    Boolean success = SCNetworkReachabilityGetFlags(reachabilityRef, &flags);
+    CFRelease(reachabilityRef);
+
+    connectionType = UAConnectionTypeNone;
+
+    // Return early if flags don't return, a connection is required, or the network is unreachable
+    if (!success || (flags & kSCNetworkReachabilityFlagsReachable) == 0) {
+        return connectionType;
+    }
+
+    if ((flags & kSCNetworkReachabilityFlagsConnectionRequired) == 0)
+    {
+        /*
+         If the target host is reachable and no connection is required then we'll assume (for now) that you're on Wi-Fi...
+         */
+        connectionType = UAConnectionTypeWifi;
+    }
+
+    if ((((flags & kSCNetworkReachabilityFlagsConnectionOnDemand ) != 0) ||
+         (flags & kSCNetworkReachabilityFlagsConnectionOnTraffic) != 0))
+    {
+        /*
+         ... and the connection is on-demand (or on-traffic) if the calling application is using the CFSocketStream or higher APIs...
+         */
+
+        if ((flags & kSCNetworkReachabilityFlagsInterventionRequired) == 0)
+        {
+            /*
+             ... and no [user] intervention is needed...
+             */
+            connectionType = UAConnectionTypeWifi;
+        }
+    }
+
+    if ((flags & kSCNetworkReachabilityFlagsIsWWAN) == kSCNetworkReachabilityFlagsIsWWAN)
+    {
+        /*
+         ... but WWAN connections are OK if the calling application is using the CFNetwork APIs.
+         */
+        connectionType = UAConnectionTypeCell;
+    }
+
+    return connectionType;
+}
 
 + (NSString *)deviceID {
     return [UAKeychainUtils getDeviceID];

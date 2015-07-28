@@ -29,9 +29,43 @@
 @class UAHTTPRequest;
 
 /**
+ * Represents the possible priorities for an event.
+ */
+typedef NS_ENUM(NSInteger, UAConnectionType) {
+    /**
+     * Low priority event. When added in the background, it will not schedule a send
+     * if the last send was within 15 mins. Adding in the foreground will schedule
+     * sends normally.
+     */
+    UAConnectionTypeNone,
+
+    /**
+     * Normal priority event. Sends will be scheduled based on the batching time.
+     */
+    UAConnectionTypeCell,
+
+    /**
+     * High priority event. A send will be scheduled immediately.
+     */
+    UAConnectionTypeWifi
+};
+
+/**
  * The UAUtils object provides an interface for utility methods.
  */
 @interface UAUtils : NSObject
+
+
+///---------------------------------------------------------------------------------------
+/// @name Network Utils
+///---------------------------------------------------------------------------------------
+
+/**
+ * Gets the current connection type.
+ * Possible values are "cell", "wifi", or "none".
+ * @return The current connection type as a string.
+ */
++ (UAConnectionType)connectionType;
 
 ///---------------------------------------------------------------------------------------
 /// @name Device ID Utils
