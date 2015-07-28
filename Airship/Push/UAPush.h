@@ -28,7 +28,6 @@
 #import "UAChannelRegistrar.h"
 #import "UANamedUser.h"
 
-NS_ASSUME_NONNULL_BEGIN
 
 //---------------------------------------------------------------------------------------
 // UARegistrationDelegate
@@ -119,8 +118,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param notification The notification dictionary.
  * @param completionHandler Should be called with a UIBackgroundFetchResult as soon as possible, so the system can accurately estimate its power and data cost.
  */
-- (void)receivedForegroundNotification:(NSDictionary *)notification
-                fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
+- (void)receivedForegroundNotification:(NSDictionary *)notification fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
 
 /**
  * Called when a push notification is received while the app is running in the background
@@ -138,8 +136,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param notification The notification dictionary.
  * @param completionHandler Should be called with a UIBackgroundFetchResult as soon as possible, so the system can accurately estimate its power and data cost.
  */
-- (void)receivedBackgroundNotification:(NSDictionary *)notification
-                fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
+- (void)receivedBackgroundNotification:(NSDictionary *)notification fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
 
 /**
  * Called when the app is started or resumed because a user opened a notification.
@@ -156,8 +153,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param notification The notification dictionary.
  * @param completionHandler Should be called with a UIBackgroundFetchResult as soon as possible, so the system can accurately estimate its power and data cost.
  */
-- (void)launchedFromNotification:(NSDictionary *)notification
-          fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
+- (void)launchedFromNotification:(NSDictionary *)notification fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
 
 /**
  * Called when the app is started from a user notification action button with foreground activation mode.
@@ -166,9 +162,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param identifier The user notification action identifier.
  * @param completionHandler Should be called as soon as possible.
  */
-- (void)launchedFromNotification:(NSDictionary *)notification
-                actionIdentifier:(NSString *)identifier
-               completionHandler:(void (^)())completionHandler;
+- (void)launchedFromNotification:(NSDictionary *)notification actionIdentifier:(NSString *)identifier completionHandler:(void (^)())completionHandler;
 
 
 /**
@@ -178,9 +172,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param identifier The user notification action identifier.
  * @param completionHandler Should be called as soon as possible.
  */
-- (void)receivedBackgroundNotification:(NSDictionary *)notification
-                      actionIdentifier:(NSString *)identifier
-                     completionHandler:(void (^)())completionHandler;
+- (void)receivedBackgroundNotification:(NSDictionary *)notification actionIdentifier:(NSString *)identifier completionHandler:(void (^)())completionHandler;
 
 
 @end
@@ -197,7 +189,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAPush : NSObject <UAChannelRegistrarDelegate>
 
 
-+ (nullable instancetype)shared __attribute__((deprecated("As of version 6.0.0. Use [UAirship push] instead.")));
++ (instancetype)shared __attribute__((deprecated("As of version 6.0.0. Use [UAirship push] instead.")));
 
 
 ///---------------------------------------------------------------------------------------
@@ -275,12 +267,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The device token for this device, as a hex string.
  */
-@property (nonatomic, copy, readonly, nullable) NSString *deviceToken;
+@property (nonatomic, copy, readonly) NSString *deviceToken;
 
 /**
  * The channel ID for this device.
  */
-@property (nonatomic, copy, readonly, nullable) NSString *channelID;
+@property (nonatomic, copy, readonly) NSString *channelID;
 
 /**
  * Notification types this app will request from APNS. Changes to this value
@@ -323,17 +315,17 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Set a delegate that implements the UAPushNotificationDelegate protocol.
  */
-@property (nonatomic, weak, nullable) id<UAPushNotificationDelegate> pushNotificationDelegate;
+@property (nonatomic, weak) id<UAPushNotificationDelegate> pushNotificationDelegate;
 
 /**
  * Set a delegate that implements the UARegistrationDelegate protocol.
  */
-@property (nonatomic, weak, nullable) id<UARegistrationDelegate> registrationDelegate;
+@property (nonatomic, weak) id<UARegistrationDelegate> registrationDelegate;
 
 /**
  * Notification that launched the application
  */
-@property (nonatomic, readonly, strong, nullable) NSDictionary *launchNotification;
+@property (nonatomic, readonly, strong) NSDictionary *launchNotification;
 
 
 ///---------------------------------------------------------------------------------------
@@ -371,7 +363,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
  
 /** Alias for this device */
-@property (nonatomic, copy, nullable) NSString *alias;
+@property (nonatomic, copy) NSString *alias;
 
 ///---------------------------------------------------------------------------------------
 /// @name Named User
@@ -486,10 +478,10 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Quiet time settings for this device.
  */
-@property (nonatomic, copy, readonly, nullable) NSDictionary *quietTime;
+@property (nonatomic, copy, readonly) NSDictionary *quietTime;
 
 /**
- * Time Zone for quiet time. If the time zone is not set, the current
+ * Time Zone for quiet time.  If the time zone is not set, the current
  * local time zone is returned.
  */
 @property (nonatomic, strong) NSTimeZone *timeZone;
@@ -515,10 +507,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param endHour Quiet time end hour. Only 0-23 is valid.
  * @param endMinute Quiet time end minute. Only 0-59 is valid.
  */
--(void)setQuietTimeStartHour:(NSUInteger)startHour
-                 startMinute:(NSUInteger)startMinute
-                     endHour:(NSUInteger)endHour
-                   endMinute:(NSUInteger)endMinute;
+-(void)setQuietTimeStartHour:(NSUInteger)startHour startMinute:(NSUInteger)startMinute
+                     endHour:(NSUInteger)endHour endMinute:(NSUInteger)endMinute;
 
 
 ///---------------------------------------------------------------------------------------
@@ -545,8 +535,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param notification The notification payload, as passed to your application delegate.
  * @param state The application state at the time the notification was received.
  */
-- (void)appReceivedRemoteNotification:(NSDictionary *)notification
-                     applicationState:(UIApplicationState)state;
+- (void)appReceivedRemoteNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state;
 
 /**
  * Handle incoming push notifications. This method will record push conversions, parse the notification
@@ -556,9 +545,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param state The application state at the time the notification was received.
  * @param completionHandler Should be called with a UIBackgroundFetchResult as soon as possible, so the system can accurately estimate its power and data cost.
  */
-- (void)appReceivedRemoteNotification:(NSDictionary *)notification
-                     applicationState:(UIApplicationState)state
-               fetchCompletionHandler:(nullable void (^)(UIBackgroundFetchResult result))completionHandler;
+- (void)appReceivedRemoteNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
 
 /**
  * Handle device token registration. Associates the
@@ -583,10 +570,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @param state The application state at the time the notification was received.
  * @param completionHandler The completion handler.
  */
-- (void)appReceivedActionWithIdentifier:(NSString *)identifier
-                           notification:(NSDictionary *)notification
-                       applicationState:(UIApplicationState)state
-                      completionHandler:(void (^)())completionHandler;
+- (void)appReceivedActionWithIdentifier:(NSString *)identifier notification:(NSDictionary *)notification applicationState:(UIApplicationState)state completionHandler:(void (^)())completionHandler;
 
 @end
-NS_ASSUME_NONNULL_END

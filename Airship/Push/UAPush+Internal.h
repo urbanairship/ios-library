@@ -30,8 +30,6 @@
 @class UAConfig;
 @class UATagGroupsAPIClient;
 
-NS_ASSUME_NONNULL_BEGIN
-
 /**
  * User push notification enabled data store key.
  */
@@ -117,12 +115,12 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 /**
  * Device token as a string.
  */
-@property (nonatomic, copy, nullable) NSString *deviceToken;
+@property (nonatomic, copy) NSString *deviceToken;
 
 /**
  * Channel ID as a string.
  */
-@property (nonatomic, copy, nullable) NSString *channelID;
+@property (nonatomic, copy) NSString *channelID;
 
 /**
  * Channel location as a string.
@@ -287,4 +285,3 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 - (void)updateAllUserNotificationCategories;
 
 @end
-NS_ASSUME_NONNULL_END
