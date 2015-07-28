@@ -29,23 +29,21 @@
 @class UAHTTPRequest;
 
 /**
- * Represents the possible priorities for an event.
+ * Represents the possible connection types.
  */
 typedef NS_ENUM(NSInteger, UAConnectionType) {
     /**
-     * Low priority event. When added in the background, it will not schedule a send
-     * if the last send was within 15 mins. Adding in the foreground will schedule
-     * sends normally.
+     * No connection.
      */
     UAConnectionTypeNone,
 
     /**
-     * Normal priority event. Sends will be scheduled based on the batching time.
+     * Cell connection.
      */
     UAConnectionTypeCell,
 
     /**
-     * High priority event. A send will be scheduled immediately.
+     * Wifi connection.
      */
     UAConnectionTypeWifi
 };
