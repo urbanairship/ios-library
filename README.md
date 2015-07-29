@@ -46,8 +46,8 @@ projects, copy the ``Airship`` directory into the same directory as your project
     cp -r Airship /SomeDirectory/ (where /SomeDirectory/YourProject/ is your project)
 
 If you are not using a sample project, you'll need to import the source files for the User 
-Interface into your project. These are located under /Airship/UI/Default. If you are using
-Swift, we also provide a bridging header located in /Airship/UI, named 
+Interface into your project. These are located under Airship/UI/Default. If you are using
+Swift, we also provide a bridging header located in Airship/UI, named
 "UA-UI-Bridging-Header.h", to facilitate importing the sample UI.
 
 ### Build Settings
@@ -66,7 +66,7 @@ Ensure that your build target's header search path includes the Airship director
 **Linker Flags (for static library)**
 Add "-ObjC -lz -lsqlite3" linker flag to *Other Linker Flags* to prevent "Selector Not Recognized"
 runtime exceptions and to include linkage to libz and libsqlite3. The linker flag
-"-Wl,-force_load,$(LIB_DIRECTORY)/libUAirship-<version>.a" may be used in instances where using
+"`-force_load <path to library>/libUAirship-<version>.a" may be used in instances where using
 the -ObjC linker flag is undesirable.
 
 ## Quickstart
@@ -214,12 +214,10 @@ with the use of our install script, scripts/mock_setup.sh.
 
 ### Building for Distribution
 
-To build full and push-only static libraries from the command line, run the distribution script:
+1. Update `scripts/configure-xcode-version.sh` with the path to the app bundle for the version of Xcode (e.g. /Applications/Xcode7-beta4.app) that you want to build with.
+2. Run the distribution script `./Deploy/distribute.sh`
  
-    ./Deploy/distribute.sh
-
-
-This will produce static libraries (.a files) in /Airship and create the samples and Airship library distribution zip file in
+This will produce static libraries (.a files) in Airship and create the samples and Airship library distribution zip file in
 Deploy/output
 
 ## Contributing Code
