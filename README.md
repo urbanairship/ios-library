@@ -64,9 +64,9 @@ modules and the automatic linking of frameworks. In the project's Build Settings
 Ensure that your build target's header search path includes the Airship directory.
 
 **Linker Flags (for static library)**
-Add "-ObjC -lz -lsqlite3" linker flag to *Other Linker Flags* to prevent "Selector Not Recognized"
+Add `-ObjC -lz -lsqlite3` linker flag to *Other Linker Flags* to prevent "Selector Not Recognized"
 runtime exceptions and to include linkage to libz and libsqlite3. The linker flag
-"-force_load <path to library>/libUAirship-<version>.a" may be used in instances where using
+`-force_load <path to library>/libUAirship-<version>.a` may be used in instances where using
 the -ObjC linker flag is undesirable.
 
 ## Quickstart
