@@ -3,6 +3,14 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+6.1.3 - July 28, 2015
+=====================
+- Location service now sets allowsBackgroundLocationUpdates on iOS 9 devices if background location is enabled in
+  the application's capabilities.
+- Added a UA-UI-Bridging.h header for Swift applications.
+- Samples are now compatible with AirshipKit.
+- Fixed crash in the Inbox sample caused by displaying the message list when it is already visible.
+
 6.1.2 - July 10, 2015
 =====================
 - Fixed possible NSInvalidArgumentException on app foreground due to data decoding error.

@@ -195,6 +195,7 @@
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		493FB10319C100BF006424E2 /* NSString+UASizeWithFontCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UASizeWithFontCompatibility.h"; sourceTree = "<group>"; };
 		493FB10419C100BF006424E2 /* NSString+UASizeWithFontCompatibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UASizeWithFontCompatibility.m"; sourceTree = "<group>"; };
+		4997FA1E1B55C580002D4E05 /* UACommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACommon.h; sourceTree = "<group>"; };
 		49C0CB0619BA3CCC00771F4F /* NSString+UALocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UALocalization.h"; sourceTree = "<group>"; };
 		49C0CB0719BA3CCC00771F4F /* NSString+UALocalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UALocalization.m"; sourceTree = "<group>"; };
 		49C0CB0A19BA3ECF00771F4F /* UAPushLocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushLocalization.h; sourceTree = "<group>"; };
@@ -543,6 +544,7 @@
 			isa = PBXGroup;
 			children = (
 				49C0CB4319BA5E3300771F4F /* Resources */,
+				4997FA1E1B55C580002D4E05 /* UACommon.h */,
 				493FB10319C100BF006424E2 /* NSString+UASizeWithFontCompatibility.h */,
 				493FB10419C100BF006424E2 /* NSString+UASizeWithFontCompatibility.m */,
 				49C0CB0619BA3CCC00771F4F /* NSString+UALocalization.h */,

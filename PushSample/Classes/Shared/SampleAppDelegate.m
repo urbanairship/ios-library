@@ -23,12 +23,15 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "SampleAppDelegate.h"
+// Import the Urban Airship umbrella header, using either
+// the framework or the header search paths
+#if __has_include("AirshipKit/AirshipKit.h")
+#import <AirshipKit/AirshipKit.h>
+#else
+#import "AirshipLib.h"
+#endif
 
-#import "UAConfig.h"
-#import "UAirship.h"
-#import "UAPush.h"
-#import "UAAnalytics.h"
+#import "SampleAppDelegate.h"
 #import "UAPushNotificationHandler.h"
 
 #define kSimulatorWarningDisabledKey @"ua-simulator-warning-disabled"
@@ -82,7 +85,6 @@
     self.pushHandler = [[UAPushNotificationHandler alloc] init];
     [UAirship push].pushNotificationDelegate = self.pushHandler;
 
-
     // User notifications will not be enabled until userPushNotificationsEnabled is
     // set YES on UAPush. Once enabled, the setting will be persisted and the user
     // will be prompted to allow notifications. You should wait for a more appropriate
@@ -99,7 +101,6 @@
     // Set the icon badge to zero on resume (optional)
     [[UAirship push] resetBadge];
 }
-
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     

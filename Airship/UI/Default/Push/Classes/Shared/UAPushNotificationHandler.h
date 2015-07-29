@@ -24,7 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAPush.h"
+#import "UACommon.h"
 
 @interface UAPushNotificationHandler : NSObject<UAPushNotificationDelegate>
 

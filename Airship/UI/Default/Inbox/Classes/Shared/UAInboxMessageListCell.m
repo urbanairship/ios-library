@@ -23,8 +23,9 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "UACommon.h"
+
 #import "UAInboxMessageListCell.h"
-#import "UAGlobal.h"
 #import "UADateUtils.h"
 
 @implementation UAInboxMessageListCell

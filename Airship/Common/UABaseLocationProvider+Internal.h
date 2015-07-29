@@ -23,39 +23,17 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
+#import "UABaseLocationProvider.h"
 
-@class UAInboxMessage;
+@interface UABaseLocationProvider ()
 
-/**
- * The UITableViewCell subclass used by UAInboxMessageListController.
- */
-@interface UAInboxMessageListCell : UITableViewCell
 
 /**
- *Displays the message date.
+ * Initializes the object with a location manager.
+ * @param locationManager A CLLocationManager instance.
+ * @returns An initialized location provider.
  */
-@property (nonatomic, weak) IBOutlet UILabel *dateView;
-
-/**
- * Displays the message title.
- */
-@property (nonatomic, weak) IBOutlet UILabel *title;
-
-/**
- * Indicates whether a message has previously been read.
- */
-@property (nonatomic, weak) IBOutlet UIView *unreadIndicator;
-
-/**
- * The message icon.
- */
-@property (nonatomic, weak) IBOutlet UIImageView *listIconView;
-
-/**
- * Set the UAInboxMessage associated with this cell.
- * @param message The associated UAInboxMessage object.
- */
-- (void)setData:(UAInboxMessage *)message;
+- (instancetype)initWithLocationManager:(CLLocationManager *)locationManager;
 
 @end
+

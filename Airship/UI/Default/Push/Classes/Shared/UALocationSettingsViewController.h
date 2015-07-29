@@ -24,7 +24,8 @@
  */
 
 #import <UIKit/UIKit.h>
-#import "UALocationService.h"
+
+@class UALocationService;
 
 @interface UALocationSettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UALocationServiceDelegate>
 

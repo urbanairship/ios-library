@@ -23,15 +23,16 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "InboxSampleAppDelegate.h"
+// Import the Urban Airship umbrella header, using either
+// the framework or the header search paths
+#if __has_include("AirshipKit/AirshipKit.h")
+#import <AirshipKit/AirshipKit.h>
+#else
+#import "AirshipLib.h"
+#endif
 
+#import "InboxSampleAppDelegate.h"
 #import "InboxSampleViewController.h"
-#import "UAInboxPushHandler.h"
-#import "UAAnalytics.h"
-#import "UAirship.h"
-#import "UAPush.h"
-#import "UAInbox.h"
-#import "UAInboxMessageList.h"
 #import "InboxDelegate.h"
 #import "PushNotificationDelegate.h"
 

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		184E3FD5129E4D1D004465C8 /* libUAirship-6.1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 184E3FD4129E4D1D004465C8 /* libUAirship-6.1.2.a */; };
+		184E3FD5129E4D1D004465C8 /* libUAirship-6.1.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 184E3FD4129E4D1D004465C8 /* libUAirship-6.1.3.a */; };
 		18C02958124F216B00D49CD5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02947124F216B00D49CD5 /* main.m */; };
 		18C02959124F216B00D49CD5 /* SampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02949124F216B00D49CD5 /* SampleViewController.m */; };
 		18C0295B124F216B00D49CD5 /* MainWindow_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18C0294D124F216B00D49CD5 /* MainWindow_Pad.xib */; };
@@ -122,7 +122,7 @@
 		0D2E042C11AA5D1E00C4CD8A /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		0D2E049311AA5DB100C4CD8A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		0D2E04AC11AA5E9700C4CD8A /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		184E3FD4129E4D1D004465C8 /* libUAirship-6.1.2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-6.1.2.a"; path = "../Airship/libUAirship-6.1.2.a"; sourceTree = SOURCE_ROOT; };
+		184E3FD4129E4D1D004465C8 /* libUAirship-6.1.3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-6.1.3.a"; path = "../Airship/libUAirship-6.1.3.a"; sourceTree = SOURCE_ROOT; };
 		18C02947124F216B00D49CD5 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Classes/Shared/main.m; sourceTree = "<group>"; };
 		18C02948124F216B00D49CD5 /* SampleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleViewController.h; sourceTree = "<group>"; };
 		18C02949124F216B00D49CD5 /* SampleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SampleViewController.m; sourceTree = "<group>"; };
@@ -143,6 +143,7 @@
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		493977F919B7CE660063C58F /* PushSample-Kit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PushSample-Kit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		49914C201B0FEACF001078AB /* AirshipKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipKit.xcodeproj; path = ../AirshipKit/AirshipKit.xcodeproj; sourceTree = "<group>"; };
+		4997FA221B55C5BC002D4E05 /* UACommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACommon.h; sourceTree = "<group>"; };
 		49C0CB0D19BA5AA800771F4F /* NSString+UALocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UALocalization.h"; sourceTree = "<group>"; };
 		49C0CB0E19BA5AA800771F4F /* NSString+UALocalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UALocalization.m"; sourceTree = "<group>"; };
 		49C0CB1319BA5AB700771F4F /* UAPushLocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushLocalization.h; sourceTree = "<group>"; };
@@ -208,7 +209,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				184E3FD5129E4D1D004465C8 /* libUAirship-6.1.2.a in Frameworks */,
+				184E3FD5129E4D1D004465C8 /* libUAirship-6.1.3.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,7 +227,7 @@
 		184E3FD3129E4D11004465C8 /* Support */ = {
 			isa = PBXGroup;
 			children = (
-				184E3FD4129E4D1D004465C8 /* libUAirship-6.1.2.a */,
+				184E3FD4129E4D1D004465C8 /* libUAirship-6.1.3.a */,
 			);
 			name = Support;
 			sourceTree = "<group>";
@@ -455,6 +456,7 @@
 		49C0CB0B19BA5AA800771F4F /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				4997FA221B55C5BC002D4E05 /* UACommon.h */,
 				CC9EA97019CA347D0003D393 /* NSString+UASizeWithFontCompatibility.h */,
 				CC9EA97119CA347D0003D393 /* NSString+UASizeWithFontCompatibility.m */,
 				49C0CB2B19BA5DFE00771F4F /* Resources */,
@@ -791,7 +793,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = "../Airship/**";
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "PushSample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
@@ -819,7 +821,7 @@
 				FRAMEWORK_SEARCH_PATHS = ../Airship/;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = "../Airship/**";
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "PushSample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";

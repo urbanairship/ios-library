@@ -22,12 +22,11 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#import "UAMapPresentationController.h"
-#import "UAGlobal.h"
-#import "UALocationDemoAnnotation.h"
-#import "UALocationService.h"
-#import "UAGlobal.h"
 
+#import "UACommon.h"
+
+#import "UAMapPresentationController.h"
+#import "UALocationDemoAnnotation.h"
 @implementation UAMapPresentationController
 
 #pragma mark -

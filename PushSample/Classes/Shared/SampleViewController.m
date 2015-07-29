@@ -23,9 +23,13 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if __has_include("AirshipKit/AirshipKit.h")
+#import <AirshipKit/AirshipKit.h>
+#else
+#import "AirshipLib.h"
+#endif
+
 #import "SampleViewController.h"
-#import "UAPush.h"
-#import "UAirship.h"
 #import "UAPushLocalization.h"
 #import "UAPushSettingsViewController.h"
 #import "UAPushMoreSettingsViewController.h"

@@ -23,12 +23,10 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAirship.h"
-#import "UAPush.h"
+#import "UACommon.h"
+
 #import "UAPushLocalization.h"
 #import "UAPushSettingsViewController.h"
-#import "UALocationService.h"
-#import "UAAnalytics.h"
 
 // Overall counts for sectioned table view
 enum {

@@ -26,56 +26,6 @@
 #if __has_include("AirshipKit/AirshipKit.h")
 #import <AirshipKit/AirshipKit.h>
 #else
-#import "AirshipLib.h"
+#import "AirshipLib.h" 
 #endif
 
-#import "InboxDelegate.h"
-#import "UAInboxAlertHandler.h"
-#import "InboxSampleAppDelegate.h"
-#import "InboxSampleViewController.h"
-
-@interface InboxDelegate()
-@property (nonatomic, strong) UAInboxAlertHandler *alertHandler;
-@end
-
-@implementation InboxDelegate
-
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        self.alertHandler = [[UAInboxAlertHandler alloc] init];
-    }
-    return self;
-}
-
-
-/*
- Called when a new rich push message is available for viewing.
- */
-- (void)richPushMessageAvailable:(UAInboxMessage *)message {
-    // Display an alert, and if the user taps "View", display the message
-    NSString *alertText = message.title;
-    [self.alertHandler showNewMessageAlert:alertText withViewBlock:^{
-        [self showInboxMessage:message];
-    }];
-}
-
-/**
- * Called when the inbox is requested to be displayed.
- */
-- (void)showInbox {
-    InboxSampleAppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
-    [appDelegate.viewController showInbox];
-}
-
-/*
- * Called when an inbox gmessage is requested to be displayed.
- *
- * @param message The message to display.
- */
-- (void)showInboxMessage:(UAInboxMessage *)inboxMessage {
-    InboxSampleAppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
-    [appDelegate.viewController showInboxMessage:inboxMessage];
-}
-
-@end

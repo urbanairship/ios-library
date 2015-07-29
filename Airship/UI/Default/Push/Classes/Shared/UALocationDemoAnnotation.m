@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #import "UALocationDemoAnnotation.h"
-#import "UAGlobal.h"
+#import "UACommon.h"
 
 @interface UALocationDemoAnnotation()
 
