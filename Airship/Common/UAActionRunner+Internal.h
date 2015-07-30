@@ -25,6 +25,8 @@
 
 #import "UAActionRunner.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UAActionRunner ()
 
 /**
@@ -43,8 +45,10 @@
  */
 + (void)runActionsWithActionValues:(NSDictionary *)actionValues
                          situation:(UASituation)situation
-                          metadata:(NSDictionary *)metadata
-                 completionHandler:(UAActionCompletionHandler)completionHandler;
+                          metadata:(nullable NSDictionary *)metadata
+                 completionHandler:(nullable UAActionCompletionHandler)completionHandler;
 
 @end
+
+NS_ASSUME_NONNULL_END
 

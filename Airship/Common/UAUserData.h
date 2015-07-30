@@ -25,6 +25,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Model object for holding user data.
  */
@@ -52,13 +54,17 @@
  * The user name.
  */
 @property (nonatomic, readonly, copy) NSString *username;
+
 /**
  * The password.
  */
 @property (nonatomic, readonly, copy) NSString *password;
+
 /**
  * The url as a string.
  */
 @property (nonatomic, readonly, copy) NSString *url;
 
 @end
+
+NS_ASSUME_NONNULL_END

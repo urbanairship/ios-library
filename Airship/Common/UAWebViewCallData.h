@@ -28,6 +28,8 @@
 
 @class UAInboxMessage;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Model object for holding data associated with JS delegate calls 
  */
@@ -50,23 +52,23 @@
  * @param message The UAInboxMessage associated with the webview.
  * @return An instance of UAWebViewCallData.
  */
-+ (UAWebViewCallData *)callDataForURL:(NSURL *)url webView:(UIWebView *)webView message:(UAInboxMessage *)message;
++ (UAWebViewCallData *)callDataForURL:(NSURL *)url webView:(UIWebView *)webView message:(nullable UAInboxMessage *)message;
 
 /**
  * A name, derived from the host passed in the delegate call URL.
  * This is typically the name of a command.
  */
-@property (nonatomic, copy) NSString *name;
+@property (nonatomic, copy, nullable) NSString *name;
 
 /**
  * The argument strings passed in the call.
  */
-@property (nonatomic, strong) NSArray *arguments;
+@property (nonatomic, strong, nullable) NSArray *arguments;
 
 /**
  * The query options passed in the call.
  */
-@property (nonatomic, strong) NSDictionary *options;
+@property (nonatomic, strong, nullable) NSDictionary *options;
 
 /**
  * The UIWebView initiating the call.
@@ -81,6 +83,8 @@
 /**
  * The UAInboxMessage associated with the webview.
  */
-@property (nonatomic, strong) UAInboxMessage *message;
+@property (nonatomic, strong, nullable) UAInboxMessage *message;
 
 @end
+
+NS_ASSUME_NONNULL_END

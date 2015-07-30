@@ -73,7 +73,7 @@
 /**
  * The actual HTTP connection, created and run once the operation begins execution.
  */
-@property (nonatomic, strong) UAHTTPConnection *connection;
+@property (nonatomic, strong, nullable) UAHTTPConnection *connection;
 
 @end
 

@@ -28,6 +28,8 @@
 #define kUAProximityRegionMaxRSSI 100 // 100 dBm
 #define kUAProximityRegionMinRSSI -100 // -100 dBm
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UAProximityRegion ()
 
 /**
@@ -51,3 +53,5 @@
 - (BOOL)isValid;
 
 @end
+
+NS_ASSUME_NONNULL_END

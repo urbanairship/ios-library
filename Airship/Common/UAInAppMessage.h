@@ -57,6 +57,8 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
 @class UAInAppMessageButtonActionBinding;
 @class UAUserNotificationCategory;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Model object representing in-app message data.
  */
@@ -86,7 +88,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
  * @param message The message the receiver is being compared to.
  * @return `YES` if the two messages are equal by value, `NO` otherwise.
  */
-- (BOOL)isEqualToMessage:(UAInAppMessage *)message;
+- (BOOL)isEqualToMessage:(nullable UAInAppMessage *)message;
 
 /**
  * The in-app message payload in NSDictionary format
@@ -96,7 +98,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
 /**
  * The unique identifier for the message (to be set from the associated send ID)
  */
-@property(nonatomic, copy) NSString *identifier;
+@property(nonatomic, copy, nullable) NSString *identifier;
 
 // Top level
 
@@ -109,7 +111,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
 /**
  * Optional key value extras.
  */
-@property(nonatomic, copy) NSDictionary *extra;
+@property(nonatomic, copy, nullable) NSDictionary *extra;
 
 // Display
 
@@ -123,7 +125,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
 /**
  * The alert message.
  */
-@property(nonatomic, copy) NSString *alert;
+@property(nonatomic, copy, nullable) NSString *alert;
 
 /**
  * The screen position. Defaults to `UAInAppMessagePositionBottom`.
@@ -139,12 +141,12 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
 /**
  * The primary color.
  */
-@property(nonatomic, strong) UIColor *primaryColor;
+@property(nonatomic, strong, nullable) UIColor *primaryColor;
 
 /**
  * The secondary color.
  */
-@property(nonatomic, strong) UIColor *secondaryColor;
+@property(nonatomic, strong, nullable) UIColor *secondaryColor;
 
 
 // Actions
@@ -154,7 +156,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
  * This value will determine which buttons are present and their
  * localized titles.
  */
-@property(nonatomic, copy) NSString *buttonGroup;
+@property(nonatomic, copy, nullable) NSString *buttonGroup;
 
 /**
  * A dictionary mapping button group keys to dictionaries
@@ -162,14 +164,14 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
  * action(s) will be run when the user taps the associated
  * button.
  */
-@property(nonatomic, copy) NSDictionary *buttonActions;
+@property(nonatomic, copy, nullable) NSDictionary *buttonActions;
 
 /**
  * A dictionary mapping an action name to an action argument.
  * The relevant action will be run when the user taps or "clicks"
  * on the message.
  */
-@property(nonatomic, copy) NSDictionary *onClick;
+@property(nonatomic, copy, nullable) NSDictionary *onClick;
 
 /**
  * The chosen notification action context. If there are notification actions defined for
@@ -182,20 +184,23 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
  * An array of UAUserNotificationAction instances corresponding to the left-to-right order
  * of interactive message buttons.
  */
-@property(nonatomic, readonly) NSArray *notificationActions;
+@property(nonatomic, readonly, nullable) NSArray *notificationActions;
 
 /**
  * A UAUserNotificationCategory instance,
  * corresponding to to the button group of the message.
  * If no matching category is found, this property will be nil.
  */
-@property(nonatomic, readonly) UAUserNotificationCategory *buttonCategory;
+@property(nonatomic, readonly, nullable) UAUserNotificationCategory *buttonCategory;
 
 /**
  * An array of UAInAppMessageButtonActionBinding instances,
  * corresponding to the left-to-right order of interactive message
  * buttons.
  */
-@property(nonatomic, readonly) NSArray *buttonActionBindings;
+@property(nonatomic, readonly, nullable) NSArray *buttonActionBindings;
 
 @end
+
+NS_ASSUME_NONNULL_END
+

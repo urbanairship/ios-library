@@ -25,6 +25,8 @@
 
 #import "UAAction.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UAAction ()
 
 /**
@@ -32,14 +34,14 @@
  * In the base class, this block is executed by the default implementation of
  * [UAAction performWithArguments:withCompletionHandler:]
  */
-@property (nonatomic, copy) UAActionBlock actionBlock;
+@property (nonatomic, copy, nullable) UAActionBlock actionBlock;
 
 /**
  * A block that indicates whether the action is willing to accept the provided arguments.
  * In the base class, this block is executed by the default implementation of
  * [UAAction acceptsArguments:]
  */
-@property (nonatomic, copy) UAActionPredicate acceptsArgumentsBlock;
+@property (nonatomic, copy, nullable) UAActionPredicate acceptsArgumentsBlock;
 
 /**
  * Performs the action, with pre/post execution calls, if it accepts the provided arguments.
@@ -57,3 +59,5 @@
 
 
 @end
+
+NS_ASSUME_NONNULL_END

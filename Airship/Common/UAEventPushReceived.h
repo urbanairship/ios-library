@@ -28,6 +28,8 @@
 
 #import "UAEvent.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Event when a push notification is received.
  */
@@ -40,3 +42,5 @@
 + (instancetype)eventWithNotification:(NSDictionary *)notification;
 
 @end
+
+NS_ASSUME_NONNULL_END

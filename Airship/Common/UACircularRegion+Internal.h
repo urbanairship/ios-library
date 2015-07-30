@@ -28,6 +28,8 @@
 #define kUACircularRegionMaxRadius 100000 // 100 kilometers
 #define kUACircularRegionMinRadius .1 // 100 millimeters
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UACircularRegion ()
 
 /**
@@ -49,3 +51,5 @@
 - (BOOL)isValid;
 
 @end
+
+NS_ASSUME_NONNULL_END

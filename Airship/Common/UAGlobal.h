@@ -112,7 +112,7 @@ extern UALogLevel uaLogLevel; // Default is UALogLevelError
 
 #define UA_VERSION_INTERFACE(CLASSNAME) \
 @interface CLASSNAME : NSObject         \
-+ (NSString *)get;                      \
++ (nonnull NSString *)get;                      \
 @end
 
 

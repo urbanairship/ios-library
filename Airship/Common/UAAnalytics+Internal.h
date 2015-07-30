@@ -61,28 +61,30 @@
 @class UAEvent;
 @class UAHTTPRequest;
 @class UAAnalyticsDBManager;
-@interface UAAnalytics ()
 
+NS_ASSUME_NONNULL_BEGIN
+
+@interface UAAnalytics ()
 
 /**
  * The conversion send ID.
  */
-@property (nonatomic, copy) NSString *conversionSendID;
+@property (nonatomic, copy, nullable) NSString *conversionSendID;
 
 /**
  * The conversion rich push ID.
  */
-@property (nonatomic, copy) NSString *conversionRichPushID;
+@property (nonatomic, copy, nullable) NSString *conversionRichPushID;
 
 /**
  * The current session ID.
  */
-@property (nonatomic, copy) NSString *sessionID;
+@property (nonatomic, copy, nullable) NSString *sessionID;
 
 /**
  * The notification as an NSDictionary.
  */
-@property (nonatomic, strong) NSDictionary *notificationUserInfo;
+@property (nonatomic, strong, nullable) NSDictionary *notificationUserInfo;
 
 /**
  * The maximum size in bytes that the event queue is allowed
@@ -136,7 +138,7 @@
 /**
  * Timer to schedule event uploads.
  */
-@property (nonatomic, strong) NSTimer *sendTimer;
+@property (nonatomic, strong, nullable) NSTimer *sendTimer;
 
 /**
  * The earliest time to schedule the intial event upload when adding normal
@@ -274,3 +276,5 @@
 - (NSTimeInterval)timeToWaitBeforeSendingNextBatch;
 
 @end
+
+NS_ASSUME_NONNULL_END

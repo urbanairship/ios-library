@@ -25,11 +25,15 @@
 
 #import "UAActionArguments.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UAActionArguments ()
 
 @property (nonatomic, readonly) NSString *situationString;
-@property (nonatomic, copy) NSDictionary *metadata;
+@property (nonatomic, copy, nullable) NSDictionary *metadata;
 @property (nonatomic, assign) UASituation situation;
-@property (nonatomic, strong) id value;
+@property (nonatomic, strong, nullable) id value;
 
 @end
+
+NS_ASSUME_NONNULL_END

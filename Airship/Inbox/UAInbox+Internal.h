@@ -29,7 +29,10 @@
 @class UAConfig;
 @class UAPreferenceDataStore;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UAInbox ()
+
 
 /**
  * The inbox api client.
@@ -48,6 +51,10 @@
  * @param dataStore The preference data store.
  * @return The user's inbox.
  */
-+ (instancetype)inboxWithUser:(UAUser *)user config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)inboxWithUser:(UAUser *)user
+                       config:(UAConfig *)config
+                    dataStore:(UAPreferenceDataStore *)dataStore;
 
 @end
+
+NS_ASSUME_NONNULL_END

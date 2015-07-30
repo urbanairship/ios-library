@@ -28,6 +28,8 @@
 
 @class UAInAppMessage;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Delegate protocol for providing custom UI to the
  * UAInAppMessageController.
@@ -95,3 +97,5 @@
 - (void)messageView:(UIView *)messageView animateOutWithParentView:(UIView *)parentView completionHandler:(void (^)(void))completionHandler;
 
 @end
+
+NS_ASSUME_NONNULL_END

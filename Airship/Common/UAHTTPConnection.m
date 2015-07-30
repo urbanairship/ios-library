@@ -30,10 +30,7 @@
 #import "UA_Base64.h"
 #import <zlib.h>
 
-
-
 @implementation UAHTTPConnection
-
 
 + (instancetype)connectionWithRequest:(UAHTTPRequest *)httpRequest {
     return [[self alloc] initWithRequest:httpRequest];

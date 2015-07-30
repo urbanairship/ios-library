@@ -26,6 +26,8 @@
 #import <UIKit/UIKit.h>
 #import "UAInAppMessage.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * View class for in-app messages.
  */
@@ -48,14 +50,16 @@
 @property(nonatomic, readonly)  UILabel *messageLabel;
 
 /**
- * Button one (may be nil).
+ * Button one.
  */
-@property(nonatomic, readonly)  UIButton *button1;
+@property(nonatomic, readonly, nullable)  UIButton *button1;
 
 /**
- * Button two (may be nil).
+ * Button two.
  */
-@property(nonatomic, readonly)  UIButton *button2;
+@property(nonatomic, readonly, nullable)  UIButton *button2;
 
 @end
+
+NS_ASSUME_NONNULL_END
 

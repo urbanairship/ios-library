@@ -26,6 +26,8 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * A UAProximityRegion defines a proximity region with an identifier, major and minor.
  */
@@ -34,17 +36,17 @@
 /**
  * The proximity region's latitude in degress.
  */
-@property (nonatomic, strong) NSNumber *latitude;
+@property (nonatomic, strong, nullable) NSNumber *latitude;
 
 /**
  * The proximity region's longitude in degrees.
  */
-@property (nonatomic, strong) NSNumber *longitude;
+@property (nonatomic, strong, nullable) NSNumber *longitude;
 
 /**
  * The proximity region's received signal strength indication in dBm.
  */
-@property (nonatomic, strong) NSNumber *RSSI;
+@property (nonatomic, strong, nullable) NSNumber *RSSI;
 
 /**
  * Factory method for creating a proximity region.
@@ -55,6 +57,10 @@
  *
  * @return Proximity region object or `nil` if error occurs.
  */
-+ (instancetype)proximityRegionWithID:(NSString *)proximityID major:(NSNumber *)major minor:(NSNumber *)minor;
++ (nullable instancetype)proximityRegionWithID:(NSString *)proximityID
+                                         major:(NSNumber *)major
+                                         minor:(NSNumber *)minor;
 
 @end
+
+NS_ASSUME_NONNULL_END

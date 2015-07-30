@@ -47,6 +47,7 @@ typedef NS_ENUM(NSInteger, UAEventPriority) {
     UAEventPriorityHigh
 };
 
+NS_ASSUME_NONNULL_BEGIN
 
 @interface UAEvent ()
 
@@ -70,7 +71,6 @@ typedef NS_ENUM(NSInteger, UAEventPriority) {
  */
 @property (nonatomic, readonly) UAEventPriority priority;
 
-
 /**
  * Gets the current connection type.
  * Possible values are "cell", "wifi", or "none".
@@ -90,4 +90,7 @@ typedef NS_ENUM(NSInteger, UAEventPriority) {
  * @return The current notification types as a string array.
  */
 - (NSArray *)notificationTypes;
+
 @end
+
+NS_ASSUME_NONNULL_END

@@ -68,6 +68,9 @@ typedef NS_ENUM(NSInteger, UASituation) {
     UASituationBackgroundInteractiveButton
 };
 
+
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Contains the arguments passed into an action during execution.
  */
@@ -79,7 +82,7 @@ typedef NS_ENUM(NSInteger, UASituation) {
  * @param value The value associated with the arguments.
  * @param situation The situation of the action.
  */
-+ (instancetype)argumentsWithValue:(id)value
++ (instancetype)argumentsWithValue:(nullable id)value
                      withSituation:(UASituation)situation;
 
 
@@ -90,9 +93,9 @@ typedef NS_ENUM(NSInteger, UASituation) {
  * @param situation The situation of the action.
  * @param metadata for the action - e.g. webview, payload, etc.
  */
-+ (instancetype)argumentsWithValue:(id)value
++ (instancetype)argumentsWithValue:(nullable id)value
                      withSituation:(UASituation)situation
-                          metadata:(NSDictionary *) metadata;
+                          metadata:(nullable NSDictionary *)metadata;
 
 /**
  * Represents a situation in which the action was triggered from a
@@ -142,12 +145,14 @@ extern NSString * const UAActionMetadataRegisteredName;
 /**
  * The value associated with the action
  */
-@property (nonatomic, strong, readonly) id value;
+@property (nonatomic, strong, readonly, nullable) id value;
 
 /**
  * The argument's metadata. Metadata provides more information
  * about the environment that the action was triggered from. 
  */
-@property (nonatomic, copy, readonly) NSDictionary *metadata;
+@property (nonatomic, copy, readonly, nullable) NSDictionary *metadata;
 
 @end
+
+NS_ASSUME_NONNULL_END

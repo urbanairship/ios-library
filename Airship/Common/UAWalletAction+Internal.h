@@ -29,6 +29,7 @@
 #import "UAWalletAction.h"
 #import "UAHTTPConnection.h"
 
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Downloads and displays a Passbook Pass in an 'Add Pass' alert dialog. It will download and cache a
@@ -49,7 +50,6 @@
  */
 @interface UAWalletAction ()
 
-
 /**
  * The pass library.
  */
@@ -58,7 +58,9 @@
 /**
  * The connection used to retrieve passes.
  */
-@property(nonatomic, strong) UAHTTPConnection *connection;
+@property(nonatomic, strong, nullable) UAHTTPConnection *connection;
 
 @end
+
+NS_ASSUME_NONNULL_END
 

@@ -25,6 +25,8 @@
 
 #import "UAHTTPConnection.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UAHTTPConnection()
 
 /**
@@ -35,23 +37,25 @@
 /**
  * The URL response for the connection's request.
  */
-@property (nonatomic, strong) NSHTTPURLResponse *urlResponse;
+@property (nonatomic, strong, nullable) NSHTTPURLResponse *urlResponse;
 
 /**
  * The response data for the connection's request.
  */
-@property (nonatomic, strong) NSMutableData *responseData;
+@property (nonatomic, strong, nullable) NSMutableData *responseData;
 
 /**
  * The connection sending the message.
  */
-@property (nonatomic, strong) NSURLConnection *urlConnection;
+@property (nonatomic, strong, nullable) NSURLConnection *urlConnection;
 
 /**
  * Compress the data with GZIP.
  * @param uncompressedData Data to be compressed.
  * @return Compressed data.
  */
-- (NSData *)gzipCompress:(NSData *)uncompressedData;
+- (nullable NSData *)gzipCompress:(NSData *)uncompressedData;
 
 @end
+
+NS_ASSUME_NONNULL_END

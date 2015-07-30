@@ -25,12 +25,15 @@
 
 #import "UACustomEvent.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UACustomEvent ()
 
 /**
  * The send ID that triggered the event.
  */
-@property (nonatomic, copy) NSString *conversionSendID;
-
+@property (nonatomic, copy, nullable) NSString *conversionSendID;
 
 @end
+
+NS_ASSUME_NONNULL_END

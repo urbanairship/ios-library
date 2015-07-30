@@ -27,11 +27,13 @@
 
 @class UAWebViewCallData;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * A completion handler used to pass the result of a UAJavaScriptDelegate call.
  * The value passed may be nil.
  */
-typedef void (^UAJavaScriptDelegateCompletionHandler)(NSString *script);
+typedef void (^UAJavaScriptDelegateCompletionHandler)(NSString * __nullable script);
 
 /**
  * A standard protocol for accessing native Objective-C functionality from webview
@@ -76,3 +78,5 @@ typedef void (^UAJavaScriptDelegateCompletionHandler)(NSString *script);
    withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler;
 
 @end
+
+NS_ASSUME_NONNULL_END

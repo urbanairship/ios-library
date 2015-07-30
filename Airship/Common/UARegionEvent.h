@@ -31,22 +31,6 @@
 @class UACircularRegion;
 
 /**
- * A UARegion event captures information regarding a region event for
- * UAAnalytics.
- */
-@interface UARegionEvent : UAEvent
-
-/**
- * A proximity region with an identifier, major and minor.
- */
-@property (nonatomic, strong) UAProximityRegion *proximityRegion;
-
-/**
- * A circular region with a radius, and latitude/longitude from its center.
- */
-@property (nonatomic, strong) UACircularRegion *circularRegion;
-
-/**
  * Represents the boundary crossing event type.
  */
 typedef NS_ENUM(NSInteger, UABoundaryEvent) {
@@ -61,6 +45,24 @@ typedef NS_ENUM(NSInteger, UABoundaryEvent) {
     UABoundaryEventExit = 2,
 };
 
+NS_ASSUME_NONNULL_BEGIN
+
+/**
+ * A UARegion event captures information regarding a region event for
+ * UAAnalytics.
+ */
+@interface UARegionEvent : UAEvent
+
+/**
+ * A proximity region with an identifier, major and minor.
+ */
+@property (nonatomic, strong, nullable) UAProximityRegion *proximityRegion;
+
+/**
+ * A circular region with a radius, and latitude/longitude from its center.
+ */
+@property (nonatomic, strong, nullable) UACircularRegion *circularRegion;
+
 /**
  * Factory method for creating a region event.
  *
@@ -70,6 +72,10 @@ typedef NS_ENUM(NSInteger, UABoundaryEvent) {
  *
  * @return Region event object or `nil` if error occurs.
  */
-+ (instancetype)regionEventWithRegionID:(NSString *)regionID source:(NSString *)source boundaryEvent:(UABoundaryEvent)boundaryEvent;
++ (nullable instancetype)regionEventWithRegionID:(NSString *)regionID
+                                          source:(NSString *)source
+                                   boundaryEvent:(UABoundaryEvent)boundaryEvent;
 
 @end
+
+NS_ASSUME_NONNULL_END

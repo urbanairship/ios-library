@@ -36,6 +36,8 @@
 @class UAAnalytics;
 @class UAPush;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UAInAppMessaging ()
 
 /**
@@ -58,3 +60,5 @@
 - (void)invalidateAutoDisplayTimer;
 
 @end
+
+NS_ASSUME_NONNULL_END

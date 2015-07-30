@@ -31,6 +31,8 @@
 @class UAUser;
 @class UAConfig;
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef void (^UAUserAPIClientCreateSuccessBlock)(UAUserData *data, NSDictionary *payload);
 typedef void (^UAUserAPIClientUpdateSuccessBlock)();
 typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
@@ -88,3 +90,5 @@ typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
 @property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
 
 @end
+
+NS_ASSUME_NONNULL_END

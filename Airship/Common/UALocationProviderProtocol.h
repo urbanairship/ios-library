@@ -26,6 +26,8 @@
 /** Required for building a location provider */
 #import "UALocationCommonValues.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol UALocationProviderProtocol <NSObject>
 @required
 /**
@@ -56,7 +58,7 @@
 /**
  * The UALocationProviderDelegate that will receive updates.
  */
-@property (nonatomic, assign) id delegate;
+@property (nonatomic, assign, nullable) id delegate;
 
 /**
  * Purpose for location services shown to user
@@ -65,7 +67,7 @@
  * programatically.
  * @return An NSString with the current purpose
  */
-- (NSString *)purpose;
+- (nullable NSString *)purpose;
 
 /**
  * Starts updating location.
@@ -76,4 +78,8 @@
  * Stops providing location updates.
  */
 - (void)stopReportingLocation;
+
 @end
+
+NS_ASSUME_NONNULL_END
+

@@ -29,6 +29,8 @@
 
 @class UAInAppMessage;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * In-app message resolution event.
  */
@@ -62,8 +64,8 @@
  * @return The resolution event.
  */
 + (instancetype)buttonClickedResolutionWithMessage:(UAInAppMessage *)message
-                                  buttonIdentifier:(NSString *)buttonID
-                                       buttonTitle:(NSString *)buttonTitle
+                                  buttonIdentifier:(nullable NSString *)buttonID
+                                       buttonTitle:(nullable NSString *)buttonTitle
                                    displayDuration:(NSTimeInterval)duration;
 
 
@@ -104,4 +106,8 @@
  * @return The resolution event.
  */
 + (instancetype)directOpenResolutionWithMessage:(UAInAppMessage *)message;
+
 @end
+
+NS_ASSUME_NONNULL_END
+
