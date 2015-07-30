@@ -81,6 +81,17 @@ typedef NS_ENUM(NSInteger, UALogLevel) {
         } \
     } while(0)
 
+#define UA_LEVEL_LOG_IMPLEMENTATION(fmt, ...) \
+    do { \
+        if (uaLoggingEnabled && uaLogLevel >= UALogLevelError) { \
+            if (uaLoudImpErrorLoggingEnabled) { \
+                NSLog((@"🚨Urban Airship Implementation Error🚨 - " fmt), ##__VA_ARGS__); \
+            } else { \
+                NSLog((@"Urban Airship Implementation Error - " fmt), ##__VA_ARGS__); \
+            } \
+        } \
+    } while(0)
+
 //only log thread if #UA_LOG_THREAD is defined
 #ifdef UA_LOG_THREAD
 #define UA_LEVEL_LOG UA_LEVEL_LOG_THREAD
@@ -88,14 +99,16 @@ typedef NS_ENUM(NSInteger, UALogLevel) {
 #define UA_LEVEL_LOG UA_LEVEL_LOG_NO_THREAD
 #endif
 
-extern BOOL uaLoggingEnabled; // Default is true
+extern BOOL uaLoggingEnabled; // Default is YES
 extern UALogLevel uaLogLevel; // Default is UALogLevelError
+extern BOOL uaLoudImpErrorLoggingEnabled; // Default is YES
 
 #define UA_LTRACE(fmt, ...) UA_LEVEL_LOG(UALogLevelTrace, @"T", fmt, ##__VA_ARGS__)
 #define UA_LDEBUG(fmt, ...) UA_LEVEL_LOG(UALogLevelDebug, @"D", fmt, ##__VA_ARGS__)
 #define UA_LINFO(fmt, ...) UA_LEVEL_LOG(UALogLevelInfo, @"I", fmt, ##__VA_ARGS__)
 #define UA_LWARN(fmt, ...) UA_LEVEL_LOG(UALogLevelWarn, @"W", fmt, ##__VA_ARGS__)
 #define UA_LERR(fmt, ...) UA_LEVEL_LOG(UALogLevelError, @"E", fmt, ##__VA_ARGS__)
+#define UA_LIMPERR(fmt, ...) UA_LEVEL_LOG_IMPLEMENTATION(fmt, ##__VA_ARGS__)
 
 #define UALOG UA_LDEBUG
 

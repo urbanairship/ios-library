@@ -73,6 +73,7 @@ static dispatch_once_t proxyDelegateOnceToken_;
 // Default to ON and ERROR - options/plist will override
 BOOL uaLoggingEnabled = YES;
 UALogLevel uaLogLevel = UALogLevelError;
+BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 @implementation UAirship
 
@@ -84,6 +85,10 @@ UALogLevel uaLogLevel = UALogLevelError;
 
 + (void)setLogLevel:(UALogLevel)level {
     uaLogLevel = level;
+}
+
++ (void)setLoudImpErrorLogging:(BOOL)enabled{
+    uaLoudImpErrorLoggingEnabled = enabled;
 }
 
 + (void)load {
@@ -166,11 +171,13 @@ UALogLevel uaLogLevel = UALogLevelError;
 
     [UAirship setLogLevel:config.logLevel];
 
+    if (config.inProduction) {
+        [UAirship setLoudImpErrorLogging:NO];
+    }
+
     // Ensure that app credentials have been passed in
     if (![config validate]) {
-
-        UA_LERR(@"The AirshipConfig.plist file is missing and no application credentials were specified at runtime.");
-
+        UA_LIMPERR(@"The AirshipConfig.plist file is missing and no application credentials were specified at runtime.");
         // Bail now. Don't continue the takeOff sequence.
         return;
     }
@@ -234,7 +241,7 @@ UALogLevel uaLogLevel = UALogLevelError;
 
     // Save the version
     if ([UA_VERSION isEqualToString:@"0.0.0"]) {
-        UA_LERR(@"_UA_VERSION is undefined - this commonly indicates an issue with the build configuration, UA_VERSION will be set to \"0.0.0\".");
+        UA_LIMPERR(@"_UA_VERSION is undefined - this commonly indicates an issue with the build configuration, UA_VERSION will be set to \"0.0.0\".");
     } else {
         NSString *previousVersion = [sharedAirship_.dataStore stringForKey:UALibraryVersion];
         if (![UA_VERSION isEqualToString:previousVersion]) {
@@ -413,7 +420,7 @@ UALogLevel uaLogLevel = UALogLevelError;
             if ([delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)]
                 && ![delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
 
-                UA_LWARN(@"Application is set up to receive background notifications, but the app delegate only implements application:didReceiveRemoteNotification: and not application:didReceiveRemoteNotification:fetchCompletionHandler. application:didReceiveRemoteNotification: will be ignored.");
+                UA_LIMPERR(@"Application is set up to receive background notifications, but the app delegate only implements application:didReceiveRemoteNotification: and not application:didReceiveRemoteNotification:fetchCompletionHandler. application:didReceiveRemoteNotification: will be ignored.");
             }
         } else {
             id delegate = [UIApplication sharedApplication].delegate;
@@ -423,11 +430,11 @@ UALogLevel uaLogLevel = UALogLevelError;
             if ([delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)]
                 && ![delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
 
-                UA_LWARN(@"Application is set up to receive background notifications, but the app delegate does not implements application:didReceiveRemoteNotification:fetchCompletionHandler:. Use either UAirship automaticSetupEnabled or implement a proper application:didReceiveRemoteNotification:fetchCompletionHandler: in the app delegate.");
+                UA_LIMPERR(@"Application is set up to receive background notifications, but the app delegate does not implements application:didReceiveRemoteNotification:fetchCompletionHandler:. Use either UAirship automaticSetupEnabled or implement a proper application:didReceiveRemoteNotification:fetchCompletionHandler: in the app delegate.");
             }
         }
     } else if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
-        UA_LWARN(@"Application is not configured for background notifications. "
+        UA_LIMPERR(@"Application is not configured for background notifications. "
                  @"Please enable remote notifications in the application's background modes.");
     }
 
@@ -439,27 +446,29 @@ UALogLevel uaLogLevel = UALogLevelError;
         if ([pushDelegate respondsToSelector:@selector(receivedForegroundNotification:)]
             && ! [pushDelegate respondsToSelector:@selector(receivedForegroundNotification:fetchCompletionHandler:)]) {
 
-             UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedForegroundNotification:fetchCompletionHandler: instead of receivedForegroundNotification:. receivedForegroundNotification: will still be called.");
+             UA_LIMPERR(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedForegroundNotification:fetchCompletionHandler: instead of receivedForegroundNotification:. receivedForegroundNotification: will still be called.");
 
         }
 
         if ([pushDelegate respondsToSelector:@selector(launchedFromNotification:)]
             && ! [pushDelegate respondsToSelector:@selector(launchedFromNotification:fetchCompletionHandler:)]) {
 
-            UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement launchedFromNotification:fetchCompletionHandler: instead of launchedFromNotification:. launchedFromNotification: will still be called.");
+            UA_LIMPERR(@"Application is configured with background remote notifications. PushNotificationDelegate should implement launchedFromNotification:fetchCompletionHandler: instead of launchedFromNotification:. launchedFromNotification: will still be called.");
         }
 
         if ([pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:)]
             && ! [pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:fetchCompletionHandler:)]) {
 
-            UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedBackgroundNotification:fetchCompletionHandler: instead of receivedBackgroundNotification:. receivedBackgroundNotification: will still be called.");
+            UA_LIMPERR(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedBackgroundNotification:fetchCompletionHandler: instead of receivedBackgroundNotification:. receivedBackgroundNotification: will still be called.");
         }
     }
 
     // -ObjC linker flag is set
     if (![[NSJSONSerialization class] respondsToSelector:@selector(stringWithObject:)]) {
-        UA_LERR(@"UAirship library requires the '-ObjC' linker flag set in 'Other linker flags'.");
+        UA_LIMPERR(@"UAirship library requires the '-ObjC' linker flag set in 'Other linker flags'.");
     }
+
 }
+
 @end
 
