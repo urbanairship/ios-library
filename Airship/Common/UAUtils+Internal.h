@@ -23,36 +23,24 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEventAppExit.h"
-#import "UAEvent+Internal.h"
-#import "UAAnalytics.h"
-#import "UAirship.h"
-#import "UAUtils+Internal.h"
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import "UAUtils.h"
 
-@implementation UAEventAppExit
+#define kUAConnectionTypeNone @"none"
+#define kUAConnectionTypeCell @"cell"
+#define kUAConnectionTypeWifi @"wifi"
 
-+ (instancetype)event {
-    UAEventAppExit *event = [[self alloc] init];
-    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+/**
+ * The UAUtils object provides an interface for utility methods.
+ */
+@interface UAUtils ()
 
-    UAAnalytics *analytics = [UAirship shared].analytics;
-
-    [data setValue:analytics.conversionSendID forKey:@"push_id"];
-    [data setValue:analytics.conversionRichPushID forKey:@"rich_push_id"];
-
-
-    [data setValue:[UAUtils connectionType] forKey:@"connection_type"];
-
-    event.data = [data mutableCopy];
-    return event;
-}
-
-- (NSString *)eventType {
-    return @"app_exit";
-}
-
-- (NSUInteger)estimatedSize {
-    return kUAEventAppExitSize;
-}
+/**
+ * Gets the current connection type.
+ * Possible values are "cell", "wifi", or "none".
+ * @return The current connection type as a string.
+ */
++ (NSString *)connectionType;
 
 @end

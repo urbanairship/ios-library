@@ -33,13 +33,13 @@
 #import "UAEvent.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
-#import "UA_Reachability.h"
 #import "UAEventAppInit.h"
 #import "UAEventAppExit.h"
 #import "UAEventAppBackground.h"
 #import "UAEventAppForeground.h"
 #import "UAEventDeviceRegistration.h"
 #import "UAEventPushReceived.h"
+#import "UAUtils+Internal.h"
 
 
 
@@ -55,7 +55,7 @@
 @property (nonatomic, strong) id push;
 @property (nonatomic, strong) id currentDevice;
 @property (nonatomic, strong) id user;
-
+@property (nonatomic, strong) id utils;
 
 @end
 
@@ -75,8 +75,7 @@
     [[[self.airship stub] andReturn:self.push] push];
     [[[self.airship stub] andReturn:self.user] inboxUser];
 
-    self.reachability = [OCMockObject niceMockForClass:[Reachability class]];
-    [[[self.reachability stub] andReturn:self.reachability] reachabilityForInternetConnection];
+    self.utils = [OCMockObject niceMockForClass:[UAUtils class]];
 
     self.timeZone = [OCMockObject niceMockForClass:[NSTimeZone class]];
     [[[self.timeZone stub] andReturn:self.timeZone] defaultTimeZone];
@@ -93,13 +92,12 @@
 - (void)tearDown {
     [self.analytics stopMocking];
     [self.airship stopMocking];
-    [self.reachability stopMocking];
     [self.timeZone stopMocking];
     [self.airshipVersion stopMocking];
     [self.application stopMocking];
     [self.push stopMocking];
     [self.currentDevice stopMocking];
-    [self.currentDevice stopMocking];
+    [self.utils stopMocking];
 
     [super tearDown];
 }
@@ -110,7 +108,6 @@
 - (void)testAppInitEvent {
     [[[self.user stub] andReturn:@"user ID"] username];
 
-    [[[self.reachability stub] andReturnValue:@(UA_ReachableViaWWAN)] currentReachabilityStatus];
     [[[self.analytics stub] andReturn:@"push ID"] conversionSendID];
     [[[self.analytics stub] andReturn:@"rich push ID"] conversionRichPushID];
 
@@ -123,6 +120,8 @@
     [[[self.airshipVersion stub] andReturn:@"airship version"] get];
 
     [[[self.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
+
+    [[[self.utils stub] andReturnValue:OCMOCK_VALUE(kUAConnectionTypeCell)] connectionType];
 
     NSDictionary *expectedData = @{@"user_id": @"user ID",
                                    @"connection_type": @"cell",
@@ -138,6 +137,7 @@
 
 
     UAEventAppInit *event = [UAEventAppInit event];
+
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_init", @"Event type is unexpected.");
     XCTAssertEqual(event.estimatedSize, kUAEventAppInitSize, @"Event is reporting wrong estimated size.");
@@ -150,12 +150,13 @@
  */
 - (void)testAppForegroundEvent {
     [[[self.user stub] andReturn:@"user ID"] username];
-    [[[self.reachability stub] andReturnValue:@(UA_ReachableViaWWAN)] currentReachabilityStatus];
     [[[self.analytics stub] andReturn:@"push ID"] conversionSendID];
     [[[self.analytics stub] andReturn:@"rich push ID"] conversionRichPushID];
 
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE(YES)] isDaylightSavingTime];
+
+    [[[self.utils stub] andReturnValue:OCMOCK_VALUE(kUAConnectionTypeCell)] connectionType];
 
     [(UIDevice *)[[self.currentDevice stub] andReturn:@"os version"]systemVersion];
 
@@ -175,6 +176,7 @@
 
 
     UAEventAppForeground *event = [UAEventAppForeground event];
+
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_foreground", @"Event type is unexpected.");
     XCTAssertEqual(event.estimatedSize, kUAEventAppInitSize, @"Event is reporting wrong estimated size.");
@@ -187,10 +189,11 @@
  */
 - (void)testAppExitEvent {
 
-    [[[self.reachability stub] andReturnValue:@(UA_ReachableViaWWAN)] currentReachabilityStatus];
     [[[self.analytics stub] andReturn:@"push ID"] conversionSendID];
     [[[self.analytics stub] andReturn:@"rich push ID"] conversionRichPushID];
 
+    [[[self.utils stub] andReturnValue:OCMOCK_VALUE(kUAConnectionTypeCell)] connectionType];
+    
     NSDictionary *expectedData = @{@"connection_type": @"cell",
                                    @"push_id": @"push ID",
                                    @"rich_push_id": @"rich push ID"};
@@ -233,7 +236,6 @@
     XCTAssertEqual(event.estimatedSize, kUAEventDeviceRegistrationSize, @"Event is reporting wrong estimated size.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
-
 
 /**
  * Test push received event
