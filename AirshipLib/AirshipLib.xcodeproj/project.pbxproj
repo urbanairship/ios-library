@@ -133,7 +133,6 @@
 		49E9C9C6183C28E900B7BCFF /* UAActionJSDelegateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49E9C9C5183C28E900B7BCFF /* UAActionJSDelegateTest.m */; };
 		49EECA8B17CBD4BC00DE0AFB /* UADisposable.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECA8917CBD4BC00DE0AFB /* UADisposable.h */; };
 		49EECA8C17CBD4BC00DE0AFB /* UADisposable.m in Sources */ = {isa = PBXBuildFile; fileRef = 49EECA8A17CBD4BC00DE0AFB /* UADisposable.m */; };
-		49F2122918AC0DD800136622 /* UATestSynchronizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F2122818AC0DD800136622 /* UATestSynchronizer.m */; };
 		49F2123018AD5A2800136622 /* NSObject+AnonymousKVO.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F2122F18AD5A2800136622 /* NSObject+AnonymousKVO.m */; };
 		49F437521810B5B400182D06 /* UAModifyTagsAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49F437501810B5B400182D06 /* UAModifyTagsAction.h */; };
 		49F437541810B5B400182D06 /* UAModifyTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F437511810B5B400182D06 /* UAModifyTagsAction.m */; };
@@ -519,8 +518,6 @@
 		49E9C9C5183C28E900B7BCFF /* UAActionJSDelegateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionJSDelegateTest.m; sourceTree = "<group>"; };
 		49EECA8917CBD4BC00DE0AFB /* UADisposable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADisposable.h; sourceTree = "<group>"; };
 		49EECA8A17CBD4BC00DE0AFB /* UADisposable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADisposable.m; sourceTree = "<group>"; };
-		49F2122718AC0DD800136622 /* UATestSynchronizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UATestSynchronizer.h; sourceTree = "<group>"; };
-		49F2122818AC0DD800136622 /* UATestSynchronizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATestSynchronizer.m; sourceTree = "<group>"; };
 		49F2122E18AD5A2800136622 /* NSObject+AnonymousKVO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+AnonymousKVO.h"; sourceTree = "<group>"; };
 		49F2122F18AD5A2800136622 /* NSObject+AnonymousKVO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+AnonymousKVO.m"; sourceTree = "<group>"; };
 		49F437501810B5B400182D06 /* UAModifyTagsAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAModifyTagsAction.h; sourceTree = "<group>"; };
@@ -1182,8 +1179,6 @@
 				7BB6790D1429288D00B877DB /* Supporting Files */,
 				49F2122E18AD5A2800136622 /* NSObject+AnonymousKVO.h */,
 				49F2122F18AD5A2800136622 /* NSObject+AnonymousKVO.m */,
-				49F2122718AC0DD800136622 /* UATestSynchronizer.h */,
-				49F2122818AC0DD800136622 /* UATestSynchronizer.m */,
 				CCEB1F8219CB61C500624FF4 /* IOS8BugsTests.m */,
 			);
 			path = AirshipLogicTests;
@@ -1872,7 +1867,6 @@
 				CC8925C51AF82037004565EE /* UAPasteboardActionTest.m in Sources */,
 				CCA3A4F717FF1506009C7371 /* UAActionRegistryTest.m in Sources */,
 				CC7DC959183E97D000E95BB8 /* UAChannelRegistrarTest.m in Sources */,
-				49F2122918AC0DD800136622 /* UATestSynchronizer.m in Sources */,
 				4995C6B3180DC5D3004F8724 /* UATagActionsTest.m in Sources */,
 				BB484B2B15910C370097B38C /* UALocationTestUtils.m in Sources */,
 				49C6721C1857CB040088F210 /* UANativeBridgeTest.m in Sources */,
