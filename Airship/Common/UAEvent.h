@@ -32,6 +32,8 @@
 #define kUAEventDeviceRegistrationSize    (NSUInteger) 200//153 w/ only user info
 #define kUAEventPushReceivedSize          (NSUInteger) 200//160 w/ uuid push info
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * This base class encapsulates analytics events.
  */
@@ -71,3 +73,4 @@
 
 @end
 
+NS_ASSUME_NONNULL_END

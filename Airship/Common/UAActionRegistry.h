@@ -53,13 +53,15 @@
 
 #define kUALandingPageActionLastOpenTimeLimitInSeconds @(7 * 86400) // 1 week
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * This class is responsible for runtime-persisting actions and associating
  * them with names and predicates.
  */
 @interface UAActionRegistry : NSObject
 
-+ (instancetype)shared __attribute__((deprecated("As of version 6.0.0. Use [UAirship shared].actionRegistry instead.")));
++ (nullable instancetype)shared __attribute__((deprecated("As of version 6.0.0. Use [UAirship shared].actionRegistry instead.")));
 
 /**
  * A set of the current registered entries
@@ -88,7 +90,7 @@
  */
 -(BOOL)registerAction:(UAAction *)action
                  name:(NSString *)name
-            predicate:(UAActionPredicate)predicate;
+            predicate:(nullable UAActionPredicate)predicate;
 
 /**
  * Registers an action with a predicate.
@@ -106,7 +108,7 @@
  */
 -(BOOL)registerAction:(UAAction *)action
                  names:(NSArray *)names
-            predicate:(UAActionPredicate)predicate;
+            predicate:(nullable UAActionPredicate)predicate;
 
 /**
  * Registers an action.
@@ -145,7 +147,7 @@
  * @return The UAActionRegistryEntry for the name or alias if registered, 
  * nil otherwise.
  */
--(UAActionRegistryEntry *)registryEntryWithName:(NSString *)name;
+-(nullable UAActionRegistryEntry *)registryEntryWithName:(NSString *)name;
 
 
 /**
@@ -174,7 +176,7 @@
  * is unable to be found with the given name or if the registered entry
  * is reserved.
  */
-- (BOOL)updatePredicate:(UAActionPredicate)predicate forEntryWithName:(NSString *)name;
+- (BOOL)updatePredicate:(nullable UAActionPredicate)predicate forEntryWithName:(NSString *)name;
 
 /**
  * Updates the default action for a registered entry.
@@ -218,6 +220,6 @@
  */
 - (BOOL)addName:(NSString *)name forEntryWithName:(NSString *)entryName;
 
-
-
 @end
+
+NS_ASSUME_NONNULL_END

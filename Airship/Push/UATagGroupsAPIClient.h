@@ -30,6 +30,8 @@
 @class UAHTTPRequest;
 @class UAConfig;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * A block called when tag groups update succeeded.
  */
@@ -67,8 +69,8 @@ typedef void (^UATagGroupsAPIClientFailureBlock)(UAHTTPRequest *request);
  *        the named user tags update was unsuccessful.
  */
 - (void)updateChannelTags:(NSString *)channelId
-                      add:(NSDictionary *)addTags
-                   remove:(NSDictionary *)removeTags
+                      add:(nullable NSDictionary *)addTags
+                   remove:(nullable NSDictionary *)removeTags
                 onSuccess:(UATagGroupsAPIClientSuccessBlock)successBlock
                 onFailure:(UATagGroupsAPIClientFailureBlock)failureBlock;
 
@@ -84,8 +86,8 @@ typedef void (^UATagGroupsAPIClientFailureBlock)(UAHTTPRequest *request);
  *        the named user tags update was unsuccessful.
  */
 - (void)updateNamedUserTags:(NSString *)identifier
-                        add:(NSDictionary *)addTags
-                     remove:(NSDictionary *)removeTags
+                        add:(nullable NSDictionary *)addTags
+                     remove:(nullable NSDictionary *)removeTags
                   onSuccess:(UATagGroupsAPIClientSuccessBlock)successBlock
                   onFailure:(UATagGroupsAPIClientFailureBlock)failureBlock;
 
@@ -111,3 +113,5 @@ typedef void (^UATagGroupsAPIClientFailureBlock)(UAHTTPRequest *request);
 @property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
 
 @end
+
+NS_ASSUME_NONNULL_END

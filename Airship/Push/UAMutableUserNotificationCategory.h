@@ -24,6 +24,8 @@
  */
 #import "UAUserNotificationCategory.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Clone of UIMutableUserNotificationCategory for iOS 7 support.
  */
@@ -42,12 +44,14 @@
  * @param actions An array of UAUserNotificationAction objects representing the actions to display for the given context.
  * @param context The context in which the alert is displayed.
  */
-- (void)setActions:(NSArray *)actions
+- (void)setActions:(nullable NSArray *)actions
         forContext:(UIUserNotificationActionContext)context;
 
 /**
  * The name of the action group.
  */
-@property(nonatomic, copy) NSString *identifier;
+@property(nonatomic, copy, nullable) NSString *identifier;
 
 @end
+
+NS_ASSUME_NONNULL_END

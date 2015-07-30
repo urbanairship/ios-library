@@ -25,6 +25,8 @@
 
 #import "UABaseLocationProvider.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * The significant change provider uses the significant change service 
  * provided by the CLLocationManager. This uses cell towers for triangulation for
@@ -53,5 +55,8 @@
  * @param delegateOrNil A UALocationProviderDelegate or `nil`
  * @return Provider with the parameter as the assiged delegate
  */
-+ (UASignificantChangeProvider *)providerWithDelegate:(id<UALocationProviderDelegate>)delegateOrNil;
++ (UASignificantChangeProvider *)providerWithDelegate:(nullable id<UALocationProviderDelegate>)delegateOrNil;
+
 @end
+
+NS_ASSUME_NONNULL_END

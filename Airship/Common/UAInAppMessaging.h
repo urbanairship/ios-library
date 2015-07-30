@@ -29,6 +29,8 @@
 
 @class UAInAppMessage;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Delegate protocol for receiving in-app messaging related
  * callbacks.
@@ -81,7 +83,7 @@
 /**
  * The pending in-app message.
  */
-@property(nonatomic, copy) UAInAppMessage *pendingMessage;
+@property(nonatomic, copy, nullable) UAInAppMessage *pendingMessage;
 
 /**
  * Enables/disables auto-display of in-app messages.
@@ -115,11 +117,13 @@
 /**
  * An optional delegate to receive in-app messaging related callbacks.
  */
-@property(nonatomic, weak) id<UAInAppMessagingDelegate> messagingDelegate;
+@property(nonatomic, weak, nullable) id<UAInAppMessagingDelegate> messagingDelegate;
 
 /**
  * A optional delegate for configuring and providing custom UI during message display.
  */
-@property(nonatomic, weak) id<UAInAppMessageControllerDelegate> messageControllerDelegate;
+@property(nonatomic, weak, nullable) id<UAInAppMessageControllerDelegate> messageControllerDelegate;
 
 @end
+
+NS_ASSUME_NONNULL_END

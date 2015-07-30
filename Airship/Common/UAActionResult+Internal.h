@@ -25,6 +25,8 @@
 
 #import "UAActionResult.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UAActionResult ()
 
 /**
@@ -41,7 +43,7 @@
 /**
  * The result value produced when running an action (can be nil).
  */
-@property (nonatomic, strong) id value;
+@property (nonatomic, strong, nullable) id value;
 
 /**
  * An optional UAActionFetchResult that can be set if the action performed a background fetch.
@@ -51,7 +53,7 @@
 /**
  * An optional error value that can be set if the action was unable to perform its work successfully.
  */
-@property (nonatomic, strong) NSError *error;
+@property (nonatomic, strong, nullable) NSError *error;
 
 /**
  * The actions run status.
@@ -60,4 +62,6 @@
 
 
 @end
+
+NS_ASSUME_NONNULL_END
 

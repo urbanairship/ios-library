@@ -34,6 +34,8 @@
 @class UAPreferenceDataStore;
 @class UAPush;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UAUser()
 
 /**
@@ -78,17 +80,17 @@
 /**
  * The user name.
  */
-@property (nonatomic, copy) NSString *username;
+@property (nonatomic, copy, nullable) NSString *username;
 
 /**
  * The user's password.
  */
-@property (nonatomic, copy) NSString *password;
+@property (nonatomic, copy, nullable) NSString *password;
 
 /**
  * The user's url.
  */
-@property (nonatomic, copy) NSString *url;
+@property (nonatomic, copy, nullable) NSString *url;
 
 /**
  * Background task identifier used to perform user updates in the background.
@@ -116,4 +118,6 @@
 @property (nonatomic, strong) UAConfig *config;
 
 @end
+
+NS_ASSUME_NONNULL_END
 

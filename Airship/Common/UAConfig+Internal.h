@@ -25,6 +25,8 @@
 
 #import "UAConfig.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*
  * Testing extensions to UAConfig
  */
@@ -45,7 +47,7 @@
 /*
  * The master secret for running functional tests. Not for use in production!
  */
-@property (nonatomic, copy) NSString *testingMasterSecret;
+@property (nonatomic, copy, nullable) NSString *testingMasterSecret;
 
 /**
  * Defaults to `YES` if the current device is a simulator. Exposed for testing/mocking purposes.
@@ -77,5 +79,7 @@
 + (NSDictionary *)normalizeDictionary:(NSDictionary *)keyedValues;
 
 @end
+
+NS_ASSUME_NONNULL_END
 
 

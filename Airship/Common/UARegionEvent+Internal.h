@@ -53,6 +53,7 @@
 #define kUACircularRegionKey @"circular_region"
 #define kUACircularRegionRadiusKey @"radius"
 
+NS_ASSUME_NONNULL_BEGIN
 
 @interface UARegionEvent ()
 
@@ -74,26 +75,28 @@
 /**
  * Validates region event RSSI.
  */
-+ (BOOL)regionEventRSSIIsValid:(NSNumber *)RSSI;
++ (BOOL)regionEventRSSIIsValid:(nullable NSNumber *)RSSI;
 
 /**
  * Validates region event radius.
  */
-+ (BOOL)regionEventRadiusIsValid:(NSNumber *)radius;
++ (BOOL)regionEventRadiusIsValid:(nullable NSNumber *)radius;
 
 /**
  * Validates region event latitude.
  */
-+ (BOOL)regionEventLatitudeIsValid:(NSNumber *)latitude;
++ (BOOL)regionEventLatitudeIsValid:(nullable NSNumber *)latitude;
 
 /**
  * Validates region event longitude.
  */
-+ (BOOL)regionEventLongitudeIsValid:(NSNumber *)longitude;
++ (BOOL)regionEventLongitudeIsValid:(nullable NSNumber *)longitude;
 
 /**
  * Validates region event character count.
  */
-+ (BOOL)regionEventCharacterCountIsValid:(NSString *)string;
++ (BOOL)regionEventCharacterCountIsValid:(nullable NSString *)string;
 
 @end
+
+NS_ASSUME_NONNULL_END

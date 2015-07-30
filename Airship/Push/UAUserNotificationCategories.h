@@ -28,6 +28,8 @@
 
 @class UAUserNotificationCategory;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Utility methods to create categories from plist files or NSDictionaries.
  */
@@ -74,6 +76,9 @@
  * to construct UIUserNotificationAction for the category.
  * @return The user notification category created or `nil` if an error occurred.
  */
-+ (UAUserNotificationCategory *)createCategory:(NSString *)categoryId actions:(NSArray *)actionDefinitions;
++ (UAUserNotificationCategory *)createCategory:(NSString *)categoryId
+                                       actions:(NSArray *)actionDefinitions;
 
 @end
+
+NS_ASSUME_NONNULL_END

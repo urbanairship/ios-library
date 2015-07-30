@@ -30,6 +30,8 @@
 
 @class UAInboxMessage;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * This class provides an interface for displaying overlay window over
  * the app's UI without totally obscuring it, which loads a landing
@@ -42,14 +44,14 @@
  * @param url The URL of the landing page to display
  * @param headers The headers to include with the request
  */
-+ (void)showURL:(NSURL *)url withHeaders:(NSDictionary *)headers;
++ (void)showURL:(NSURL *)url withHeaders:(nullable NSDictionary *)headers;
 
 /**
  * Creates and displays a landing page overlay from a Rich Push message.
  * @param message The Rich Push message to display.
  * @param headers The headers to include with the request.
  */
-+ (void)showMessage:(UAInboxMessage *)message withHeaders:(NSDictionary *)headers;
++ (void)showMessage:(UAInboxMessage *)message withHeaders:(nullable NSDictionary *)headers;
 
 /**
  * Creates and displays a landing page overlay from a Rich Push message.
@@ -64,3 +66,5 @@
 + (void)closeAll:(BOOL)animated;
 
 @end
+
+NS_ASSUME_NONNULL_END

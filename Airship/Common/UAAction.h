@@ -29,6 +29,8 @@
 
 @class UAAction;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * A custom block that can be used to limit the scope of an action.
  */
@@ -128,6 +130,8 @@ __attribute__((deprecated("As of version 6.0.0. Use performWithArguments:complet
  * @param predicateBlock A UAActionPredicate limiting the scope of the arguments.
  */
 + (instancetype)actionWithBlock:(UAActionBlock)actionBlock
-             acceptingArguments:(UAActionPredicate)predicateBlock;
+             acceptingArguments:(nullable UAActionPredicate)predicateBlock;
 
 @end
+
+NS_ASSUME_NONNULL_END

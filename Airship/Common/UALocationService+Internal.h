@@ -28,8 +28,10 @@
 #import "UALocationService.h"
 #import "UABaseLocationProvider.h"
 
-
 @class UALocationEvent;
+
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UALocationService () {
 
   @private
@@ -41,8 +43,8 @@
 
 // Override property declarations for implementation and testing
 //
-@property (nonatomic, strong) CLLocation *lastReportedLocation;
-@property (nonatomic, strong) NSDate *dateOfLastLocation;
+@property (nonatomic, strong, nullable) CLLocation *lastReportedLocation;
+@property (nonatomic, strong, nullable) NSDate *dateOfLastLocation;
 @property (nonatomic, assign) BOOL shouldStartReportingStandardLocation;
 @property (nonatomic, assign) BOOL shouldStartReportingSignificantChange;
 
@@ -51,7 +53,7 @@
  * the single location service times out before acquiring a location that meets
  * accuracy requirements setup in desiredAccuracy
  */
-@property (nonatomic, strong) CLLocation *bestAvailableSingleLocation;
+@property (nonatomic, strong, nullable) CLLocation *bestAvailableSingleLocation;
 
 /**
  * Background identifier for the singleLocationService
@@ -95,21 +97,21 @@
 // Private setters for location providers
 // Custom get/set methods that have the side effect of setting the provider delegate
 // This also sets the desiredAccuracy and distanceFilter from the standard defaults
-- (UAStandardLocationProvider *)standardLocationProvider;
-- (void)setStandardLocationProvider:(UAStandardLocationProvider *)standardLocationProvider;
+- (nullable UAStandardLocationProvider *)standardLocationProvider;
+- (void)setStandardLocationProvider:(nullable UAStandardLocationProvider *)standardLocationProvider;
 
 // Side effect of setting the delegate
-- (UASignificantChangeProvider *)significantChangeProvider;
-- (void)setSignificantChangeProvider:(UASignificantChangeProvider *)significantChangeProvider;
+- (nullable UASignificantChangeProvider *)significantChangeProvider;
+- (void)setSignificantChangeProvider:(nullable UASignificantChangeProvider *)significantChangeProvider;
 
 // This method also sets the delegate of the provider. 
 // This method DOES NOT change the distanceFilter or desiredAccuracy
-- (UAStandardLocationProvider *)singleLocationProvider;
-- (void)setSingleLocationProvider:(UAStandardLocationProvider*)singleLocationProvider;
+- (nullable UAStandardLocationProvider *)singleLocationProvider;
+- (void)setSingleLocationProvider:(nullable UAStandardLocationProvider*)singleLocationProvider;
 
 // Convenience method to set properties common to all providers
 // currently sets the delegate
-- (void)setCommonPropertiesOnProvider:(id <UALocationProviderProtocol>)locationProvider;
+- (void)setCommonPropertiesOnProvider:(nullable id <UALocationProviderProtocol>)locationProvider;
 
 // convenience method for calling enabled and authorized
 - (BOOL)isLocationServiceEnabledAndAuthorized;
@@ -131,7 +133,7 @@
  * Has the side effect of setting the delegate on the provider to self if the
  * delegate is nil.
  */
-- (void)startReportingLocationWithProvider:(id<UALocationProviderProtocol>)locationProvider;
+- (void)startReportingLocationWithProvider:(nullable id<UALocationProviderProtocol>)locationProvider;
 
 /**
  * Standard location location update
@@ -167,4 +169,7 @@
 // This method registers the user defaults necessary for the UALocation Service. You should
 // not need to call this method directly, it is called in UAirship.
 + (void)registerNSUserDefaults;
+
 @end
+
+NS_ASSUME_NONNULL_END

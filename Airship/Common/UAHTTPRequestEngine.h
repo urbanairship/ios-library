@@ -31,6 +31,8 @@
 #import <Foundation/Foundation.h>
 #import "UAHTTPConnection.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef BOOL (^UAHTTPRequestEngineWhereBlock)(UAHTTPRequest *request);
 typedef void (^UAHTTPRequestEngineSuccessBlock)(UAHTTPRequest *request, NSUInteger lastDelay);
 typedef void (^UAHTTPRequestEngineFailureBlock)(UAHTTPRequest *request, NSUInteger lastDelay);
@@ -113,5 +115,6 @@ typedef void (^UAHTTPRequestEngineFailureBlock)(UAHTTPRequest *request, NSUInteg
  */
 @property (nonatomic, readonly, strong) NSOperationQueue *queue;
 
-
 @end
+
+NS_ASSUME_NONNULL_END

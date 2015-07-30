@@ -52,9 +52,10 @@
         self.isSimulator = ([[[UIDevice currentDevice] model] rangeOfString:@"Simulator"].location != NSNotFound);
         self.cacheDiskSizeInMB = 100;
         self.clearUserOnAppRestore = NO;
-        self.whitelist = [NSArray array];
+        self.whitelist = @[];
         self.clearNamedUserOnAppRestore = NO;
         self.channelCaptureEnabled = YES;
+        self.customConfig = @{};
     }
 
     return self;

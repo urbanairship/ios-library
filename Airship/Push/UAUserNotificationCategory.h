@@ -26,6 +26,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Clone of UIUserNotificationCategory for iOS 7 support.
  */
@@ -34,20 +36,22 @@
 /**
  * The name of the action group.
  */
-@property(nonatomic, copy, readonly) NSString *identifier;
+@property(nonatomic, copy, readonly, nullable) NSString *identifier;
 
 /**
  * Returns the actions to be displayed for the given notification context.
  *
  * @param context The context in which the notification is displayed.
  */
-- (NSArray *)actionsForContext:(UIUserNotificationActionContext)context;
+- (nullable NSArray *)actionsForContext:(UIUserNotificationActionContext)context;
 
 /**
  * Tests for equality by value.
  *
  * @param category An instance of UAUserNotificationCategory.
  */
-- (BOOL)isEqualToCategory:(UAUserNotificationCategory *)category;
+- (BOOL)isEqualToCategory:(nullable UAUserNotificationCategory *)category;
 
 @end
+
+NS_ASSUME_NONNULL_END

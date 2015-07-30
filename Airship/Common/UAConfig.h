@@ -27,6 +27,8 @@
 
 #import "UAGlobal.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * The UAConfig object provides an interface for passing common configurable values to [UAirship takeOff].
  * The simplest way to use this class is to add an AirshipConfig.plist file in your app's bundle and set
@@ -42,12 +44,12 @@
 /**
  * The current app key (resolved using the inProduction flag).
  */
-@property (nonatomic, readonly) NSString *appKey;
+@property (nonatomic, readonly, nullable) NSString *appKey;
 
 /**
  * The current app secret (resolved using the inProduction flag).
  */
-@property (nonatomic, readonly) NSString *appSecret;
+@property (nonatomic, readonly, nullable) NSString *appSecret;
 
 /**
  * The current log level for the library's UA_L<level> macros (resolved using the inProduction flag).
@@ -74,27 +76,27 @@
  * The development app key. This should match the application on go.urbanairship.com that is
  * configured with your development push certificate.
  */
-@property (nonatomic, copy) NSString *developmentAppKey;
+@property (nonatomic, copy, nullable) NSString *developmentAppKey;
 
 /**
  * The development app secret. This should match the application on go.urbanairship.com that is
  * configured with your development push certificate.
  */
-@property (nonatomic, copy) NSString *developmentAppSecret;
+@property (nonatomic, copy, nullable) NSString *developmentAppSecret;
 
 /**
  * The production app key. This should match the application on go.urbanairship.com that is
  * configured with your production push certificate. This is used for App Store, Ad-Hoc and Enterprise
  * app configurations.
  */
-@property (nonatomic, copy) NSString *productionAppKey;
+@property (nonatomic, copy, nullable) NSString *productionAppKey;
 
 /**
  * The production app secret. This should match the application on go.urbanairship.com that is
  * configured with your production push certificate. This is used for App Store, Ad-Hoc and Enterprise
  * app configurations.
  */
-@property (nonatomic, copy) NSString *productionAppSecret;
+@property (nonatomic, copy, nullable) NSString *productionAppSecret;
 
 /**
  * The log level used for development apps. Defaults to `UALogLevelDebug` (4).
@@ -242,3 +244,5 @@
 - (BOOL)validate;
 
 @end
+
+NS_ASSUME_NONNULL_END

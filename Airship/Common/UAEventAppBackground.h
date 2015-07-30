@@ -25,9 +25,13 @@
 
 #import "UAEventAppExit.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Event when app is backgrounded.
  */
 @interface UAEventAppBackground : UAEventAppExit
 
 @end
+
+NS_ASSUME_NONNULL_END

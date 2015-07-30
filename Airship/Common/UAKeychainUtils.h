@@ -27,6 +27,8 @@
 
 #define kUAKeychainDeviceIDKey @"com.urbanairship.deviceID"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * The UAKeychainUtils object provides an interface for keychain related methods.
  */
@@ -63,16 +65,16 @@
 /**
  * Get the key chain's password.
  * @param identifier The identifier for the key chain.
- * @return The password as an NSString or an empty string if an error occurred.
+ * @return The password as an NSString or nil if an error occurred.
  */
-+ (NSString *)getPassword:(NSString *)identifier;
++ (nullable NSString *)getPassword:(NSString *)identifier;
 
 /**
  * Get the key chain's username.
  * @param identifier The identifier for the key chain.
- * @return The username as an NSString or an empty string if an error occurred.
+ * @return The username as an NSString or nil if an error occurred.
  */
-+ (NSString *)getUsername:(NSString *)identifier;
++ (nullable NSString *)getUsername:(NSString *)identifier;
 
 /**
  * Gets the device ID, creating or refreshing if necessary. Device IDs will be regenerated if a
@@ -83,3 +85,5 @@
 + (NSString *)getDeviceID;
 
 @end
+
+NS_ASSUME_NONNULL_END

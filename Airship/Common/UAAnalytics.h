@@ -30,6 +30,8 @@
 @class UAConfig;
 @class UAPreferenceDataStore;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * The UAAnalytics object provides an interface to the Urban Airship Analytics API.
  */
@@ -38,17 +40,17 @@
 /**
  * The conversion send ID.
  */
-@property (nonatomic, copy, readonly) NSString *conversionSendID;
+@property (nonatomic, copy, readonly, nullable) NSString *conversionSendID;
 
 /**
  * The conversion rich push ID.
  */
-@property (nonatomic, copy, readonly) NSString *conversionRichPushID;
+@property (nonatomic, copy, readonly, nullable) NSString *conversionRichPushID;
 
 /**
  * The current session ID.
  */
-@property (nonatomic, copy, readonly) NSString *sessionID;
+@property (nonatomic, copy, readonly, nullable) NSString *sessionID;
 
 /**
  * The oldest event time as an NSTimeInterval.
@@ -86,3 +88,5 @@
 - (NSDate *)lastSendTime;
 
 @end
+
+NS_ASSUME_NONNULL_END

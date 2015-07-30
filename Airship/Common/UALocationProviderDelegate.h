@@ -25,6 +25,8 @@
 
 #import <CoreLocation/CoreLocation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol UALocationProviderProtocol;
 
 /**
@@ -66,3 +68,5 @@
       didUpdateLocations:(NSArray *)locations;
 
 @end
+
+NS_ASSUME_NONNULL_END

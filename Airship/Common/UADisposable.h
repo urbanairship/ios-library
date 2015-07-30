@@ -25,6 +25,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * A block to be executed when a `UADisposable` is disposed.
  */
@@ -51,3 +53,5 @@ typedef void (^UADisposalBlock)(void);
 - (void)dispose;
 
 @end
+
+NS_ASSUME_NONNULL_END

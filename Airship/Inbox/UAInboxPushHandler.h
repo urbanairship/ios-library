@@ -28,6 +28,8 @@
 @class UAInboxMessage;
 @class UAInboxMessageList;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * This protocol defines a delegate method that is called
  * when a push notification arrives with a rich push message ID
@@ -94,13 +96,15 @@ __attribute__((deprecated("As of version 6.1.0.")))
 /**
  * The message ID of the most recent rich push as an NSString.
  */
-@property (nonatomic, copy, readonly) NSString *viewingMessageID;
+@property (nonatomic, copy, readonly, nullable) NSString *viewingMessageID;
 
 /**
  * The delegate that should be notified when an incoming push is handled,
  * as an object conforming to the UAInboxPushHandlerDelegate protocol.
  * NOTE: The delegate is not retained.
  */
-@property (nonatomic, weak) id <UAInboxPushHandlerDelegate> delegate;
+@property (nonatomic, weak, nullable) id <UAInboxPushHandlerDelegate> delegate;
 
 @end
+
+NS_ASSUME_NONNULL_END

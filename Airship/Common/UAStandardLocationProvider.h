@@ -25,6 +25,8 @@
 
 #import "UABaseLocationProvider.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * The UAStandardLocationProvider encapsulates the functionality of the CLLocationManager running
  * the standard location service. 
@@ -57,5 +59,8 @@
  * @param serviceDelegateOrNil Delegate object or `nil`.
  * @return Standard location provider.
  */
-+ (UAStandardLocationProvider *)providerWithDelegate:(id<UALocationProviderDelegate>)serviceDelegateOrNil;
++ (UAStandardLocationProvider *)providerWithDelegate:(nullable id<UALocationProviderDelegate>)serviceDelegateOrNil;
+
 @end
+
+NS_ASSUME_NONNULL_END

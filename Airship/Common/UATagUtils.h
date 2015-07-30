@@ -57,12 +57,12 @@ typedef NS_OPTIONS(NSInteger, UATagType) {
     UATagTypeDeviceType           = 1 << 4
 };
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * The UATagUtils object provides an interface for creating tags.
  */
-@interface UATagUtils : NSObject {
-
-}
+@interface UATagUtils : NSObject
 
 /**
  * Creates an autoreleased NSArray containing tags specified in the
@@ -70,7 +70,7 @@ typedef NS_OPTIONS(NSInteger, UATagType) {
  * @param tags to create
  * @return The tags as an NSArray.
  */
-+ (NSArray *)createTags:(UATagType) tags;
++ (NSArray *)createTags:(UATagType)tags;
 
 /**
  * Used to trim whitespace and filter out tags with unacceptable tag length
@@ -104,3 +104,5 @@ typedef NS_OPTIONS(NSInteger, UATagType) {
 + (NSDictionary *)removePendingTags:(NSArray *)tagsToRemove group:(NSString *)tagGroup pendingTagsDictionary:(NSDictionary *)pendingTags;
 
 @end
+
+NS_ASSUME_NONNULL_END

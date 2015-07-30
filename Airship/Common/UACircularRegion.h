@@ -26,6 +26,8 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * A UACircularRegion defines a circular region with a radius, and latitude and longitude from its center.
  */
@@ -43,3 +45,5 @@
 + (instancetype)circularRegionWithRadius:(NSNumber *)radius latitude:(NSNumber *)latitude longitude:(NSNumber *)longitude;
 
 @end
+
+NS_ASSUME_NONNULL_END

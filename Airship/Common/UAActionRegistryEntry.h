@@ -26,6 +26,8 @@
 #import <Foundation/Foundation.h>
 #import "UAAction.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * An entry in the UAActionRegistry.
  */
@@ -39,7 +41,7 @@
 /**
  * The entry's predicate.
  */
-@property (nonatomic, copy) UAActionPredicate predicate;
+@property (nonatomic, copy, nullable) UAActionPredicate predicate;
 
 /**
  * Registered names
@@ -63,3 +65,5 @@
 + (instancetype)entryForAction:(UAAction *)action predicate:(UAActionPredicate)predicate;
 
 @end
+
+NS_ASSUME_NONNULL_END

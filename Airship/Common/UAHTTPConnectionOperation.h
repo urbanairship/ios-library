@@ -26,6 +26,8 @@
 #import <Foundation/Foundation.h>
 #import "UAHTTPConnection.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Represents a UAHTTPConnection as an abstract unit of work, which can be
  * run in serial or parallel in an NSOperationQueue.  All connection success and failure
@@ -54,3 +56,5 @@
                  onFailure:(UAHTTPConnectionFailureBlock)failureBlock;
 
 @end
+
+NS_ASSUME_NONNULL_END

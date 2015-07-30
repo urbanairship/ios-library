@@ -25,6 +25,8 @@
 
 #import "UAActionRegistryEntry.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UAActionRegistryEntry()
 
 @property (nonatomic, strong) NSMutableArray *mutableNames;
@@ -37,3 +39,5 @@
 - (void)addSituationOverride:(UASituation)situation withAction:(UAAction *)action;
 
 @end
+
+NS_ASSUME_NONNULL_END

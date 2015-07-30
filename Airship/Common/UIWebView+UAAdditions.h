@@ -26,6 +26,8 @@
 #import <UIKit/UIKit.h>
 #import "UAInboxMessage.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Category extensions for Urban Airship web view additions.
  */
@@ -39,3 +41,5 @@
 - (void)injectInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation;
 
 @end
+
+NS_ASSUME_NONNULL_END

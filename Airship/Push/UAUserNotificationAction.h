@@ -26,6 +26,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Clone of UIUserNotificationAction for iOS 7 support.
  */
@@ -34,12 +36,12 @@
 /**
  * The string that you use internally to identify the action.
  */
-@property(nonatomic, copy, readonly) NSString *identifier;
+@property(nonatomic, copy, readonly, nullable) NSString *identifier;
 
 /**
  * The localized string to use as the button title for the action.
  */
-@property(nonatomic, copy, readonly) NSString *title;
+@property(nonatomic, copy, readonly, nullable) NSString *title;
 
 /**
  * The mode in which to run the app when the action is performed.
@@ -61,6 +63,8 @@
  *
  * @param notificationAction An instance of UAUserNotificationAction.
  */
-- (BOOL)isEqualToAction:(UAUserNotificationAction *)notificationAction;
+- (BOOL)isEqualToAction:(nullable UAUserNotificationAction *)notificationAction;
 
 @end
+
+NS_ASSUME_NONNULL_END

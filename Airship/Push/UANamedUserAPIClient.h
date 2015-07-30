@@ -29,6 +29,8 @@
 @class UAHTTPRequest;
 @class UAConfig;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * A block called when named user association or disassociation succeeded.
  */
@@ -96,3 +98,5 @@ typedef void (^UANamedUserAPIClientFailureBlock)(UAHTTPRequest *request);
 @property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
 
 @end
+
+NS_ASSUME_NONNULL_END

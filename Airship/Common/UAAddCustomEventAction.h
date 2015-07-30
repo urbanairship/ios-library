@@ -36,6 +36,8 @@ typedef NS_ENUM(NSInteger, UAAddCustomEventActionErrorCode) {
     UAAddCustomEventActionErrorCodeInvalidEventName
 };
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * The domain for errors encountered when running a `UAAddCustomEventAction`.
  */
@@ -66,3 +68,5 @@ extern NSString * const UAAddCustomEventActionErrorDomain;
 @interface UAAddCustomEventAction : UAAction
 
 @end
+
+NS_ASSUME_NONNULL_END

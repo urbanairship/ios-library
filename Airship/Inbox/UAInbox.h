@@ -32,6 +32,8 @@
 @class UAInboxAPIClient;
 @class UAInboxMessage;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Delegate protocol for receiving callbacks related to
  * Rich Push message delivery and display.
@@ -71,7 +73,7 @@
  */
 @interface UAInbox : NSObject
 
-+ (instancetype)shared __attribute__((deprecated("As of version 6.0.0. Use [UAirship inbox] instead.")));
++ (nullable instancetype)shared __attribute__((deprecated("As of version 6.0.0. Use [UAirship inbox] instead.")));
 
 /**
  * The list of Rich Push Inbox messages.
@@ -81,7 +83,7 @@
 /**
  * Handles incoming rich push messages.
  */
-@property (nonatomic, strong) UAInboxPushHandler *pushHandler __attribute__((deprecated("As of version 6.1.0.")));
+@property (nonatomic, strong, nullable) UAInboxPushHandler *pushHandler __attribute__((deprecated("As of version 6.1.0.")));
 
 /**
  * The Inbox API Client
@@ -94,6 +96,8 @@
  * as an object conforming to the UAInboxDelegate protocol.
  * NOTE: The delegate is not retained.
  */
-@property (nonatomic, weak) id <UAInboxDelegate> delegate;
+@property (nonatomic, weak, nullable) id <UAInboxDelegate> delegate;
 
 @end
+
+NS_ASSUME_NONNULL_END

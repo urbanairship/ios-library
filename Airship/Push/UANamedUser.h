@@ -27,6 +27,8 @@
 
 @class UAPreferenceDataStore;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * The named user is an alternate method of identifying the device. Once a named
  * user is associated to the device, it can be used to send push notifications
@@ -37,7 +39,7 @@
 /**
  * The named user ID for this device.
  */
-@property (nonatomic, copy) NSString *identifier;
+@property (nonatomic, copy, nullable) NSString *identifier;
 
 /**
  * Force updating the association or disassociation of the current named user ID.
@@ -68,3 +70,5 @@
 - (void)updateTags;
 
 @end
+
+NS_ASSUME_NONNULL_END

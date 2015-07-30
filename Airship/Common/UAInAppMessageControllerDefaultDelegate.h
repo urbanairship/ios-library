@@ -26,6 +26,8 @@
 #import <Foundation/Foundation.h>
 #import "UAInAppMessageControllerDelegate.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Default instance of UAInAppMessageControllerDelegate, used internally by UAInAppMessageController
  * to implement default UI and behavior.
@@ -89,3 +91,5 @@
 - (void)messageView:(UIView *)messageView animateOutWithParentView:(UIView *)parentView completionHandler:(void (^)(void))completionHandler;
 
 @end
+
+NS_ASSUME_NONNULL_END

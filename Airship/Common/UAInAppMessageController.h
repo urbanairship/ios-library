@@ -29,6 +29,8 @@
 
 @class UAInAppMessage;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Controller interface for showing and dismissing in-app
  * messages.
@@ -62,4 +64,7 @@
 @property(nonatomic, readonly) UAInAppMessage *message;
 
 @end
+
+NS_ASSUME_NONNULL_END
+
 
