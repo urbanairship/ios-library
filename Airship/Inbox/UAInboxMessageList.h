@@ -80,7 +80,7 @@ extern NSString * const UAInboxMessageListUpdatedNotification;
  * @param messages The array of messages to be marked deleted.
  * @param completionHandler An optional completion handler.
  * @return A UADisposable token which can be used to cancel callback execution,
- * or nil if the array of messages to mark read is empty.
+ * or nil if the array of messages to mark deleted is empty.
  */
 - (nullable UADisposable *)markMessagesDeleted:(NSArray *)messages
                              completionHandler:(nullable UAInboxMessageListCallbackBlock)completionHandler;
