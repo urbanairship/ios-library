@@ -29,7 +29,6 @@
 #import "UAEvent+Internal.h"
 #import "UAPush.h"
 #import "UAirship.h"
-#import "UAUtils.h"
 
 /*
  * Fix for CTTelephonyNetworkInfo bug where instances might receive

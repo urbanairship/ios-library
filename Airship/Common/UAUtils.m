@@ -43,14 +43,11 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <sys/xattr.h>
-#import <netinet/in.h>
+#include <netinet/in.h>
 
 @implementation UAUtils
 
 + (NSString *)connectionType {
-
-    NSString *connectionType;
-
     SCNetworkReachabilityFlags flags;
     SCNetworkReachabilityRef reachabilityRef;
 
@@ -69,12 +66,12 @@
     Boolean success = SCNetworkReachabilityGetFlags(reachabilityRef, &flags);
     CFRelease(reachabilityRef);
 
-    connectionType = kUAConnectionTypeNone;
-
     // Return early if flags don't return, a connection is required, or the network is unreachable
     if (!success || (flags & kSCNetworkReachabilityFlagsReachable) == 0) {
-        return connectionType;
+        return kUAConnectionTypeNone;
     }
+
+    NSString *connectionType = kUAConnectionTypeNone;
 
     if ((flags & kSCNetworkReachabilityFlagsConnectionRequired) == 0) {
         connectionType = kUAConnectionTypeWifi;
