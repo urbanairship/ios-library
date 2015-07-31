@@ -165,7 +165,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         [self saveUserData];
 
         //if we didn't send a device token or a channel on creation, try again
-        if (![payload valueForKey:@"device_tokens"] || ![payload valueForKey:@"ios_channels"]) {
+        if (![payload valueForKey:@"ios_channels"]) {
             [self updateUser];
         }
 
@@ -179,7 +179,6 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
 
     [self.apiClient createUserWithChannelID:self.push.channelID
-                                deviceToken:self.push.deviceToken
                                   onSuccess:success
                                   onFailure:failure];
 }
@@ -188,15 +187,12 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 #pragma mark Update
 
 -(void)updateUser {
-    NSString *deviceToken = self.push.deviceToken;
-    NSString *channelID = self.push.channelID;
-
     if (!self.isCreated) {
         UA_LDEBUG(@"Skipping user update, user not created yet.");
         return;
     }
 
-    if (!channelID && !deviceToken) {
+    if (!self.push.channelID.length) {
         UA_LDEBUG(@"Skipping user update, no device token or channel.");
         return;
     }
@@ -209,8 +205,8 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     }
 
     [self.apiClient updateUser:self
-                   deviceToken:deviceToken
-                     channelID:channelID
+                   deviceToken:self.push.deviceToken
+                     channelID:self.push.channelID
                      onSuccess:^{
                          UA_LINFO(@"Updated user %@ successfully.", self.username);
                          [self invalidateUserUpdateBackgroundTask];
@@ -241,12 +237,11 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     
     self.isObservingDeviceRegistrationChanges = YES;
 
-    // Listen for changes to the device token and channel ID
-    [self.push addObserver:self forKeyPath:@"deviceToken" options:0 context:NULL];
+    // Listen for changes to the channel ID
     [self.push addObserver:self forKeyPath:@"channelID" options:0 context:NULL];
 
-    // Update the user if we already have a channelID or device token
-    if (self.push.deviceToken || self.push.channelID) {
+    // Update the user if we already have a channelID
+    if (self.push.channelID) {
         [self updateUser];
         return;
     }
@@ -256,14 +251,8 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                      ofObject:(id)object
                        change:(NSDictionary *)change
                       context:(void *)context {
-    
-    if ([keyPath isEqualToString:@"deviceToken"]) {
-        // Only update user if we do not have a channel ID
-        if (!self.push.channelID) {
-            UA_LTRACE(@"KVO device token modified. Updating user.");
-            [self updateUser];
-        }
-    } else if ([keyPath isEqualToString:@"channelID"]) {
+
+    if ([keyPath isEqualToString:@"channelID"]) {
         UA_LTRACE(@"KVO channel ID modified. Updating user.");
         [self updateUser];
     }
@@ -271,7 +260,6 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
 -(void)unregisterForDeviceRegistrationChanges {
     if (self.isObservingDeviceRegistrationChanges) {
-        [self.push removeObserver:self forKeyPath:@"deviceToken"];
         [self.push removeObserver:self forKeyPath:@"channelID"];
         self.isObservingDeviceRegistrationChanges = NO;
     }

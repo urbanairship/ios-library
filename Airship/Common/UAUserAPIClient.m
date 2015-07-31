@@ -63,7 +63,6 @@
 }
 
 - (void)createUserWithChannelID:(NSString *)channelID
-                    deviceToken:(NSString *)deviceToken
                       onSuccess:(UAUserAPIClientCreateSuccessBlock)successBlock
                       onFailure:(UAUserAPIClientFailureBlock)failureBlock {
 
@@ -71,8 +70,6 @@
 
     if (channelID.length) {
         [payload setObject:@[channelID] forKey:@"ios_channels"];
-    } else if (deviceToken.length) {
-        [payload setObject:@[deviceToken] forKey:@"device_tokens"];
     }
 
     UAHTTPRequest *request = [self requestToCreateUserWithPayload:payload];
@@ -117,7 +114,6 @@
          onFailure:(UAUserAPIClientFailureBlock)failureBlock {
 
 
-
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];
 
     if (channelID.length) {
@@ -126,8 +122,6 @@
         if (deviceToken.length) {
             [payload setValue:@{@"remove": @[deviceToken]} forKey:@"device_tokens"];
         }
-    } else if (deviceToken.length) {
-        [payload setValue:@{@"add": @[deviceToken]} forKey:@"device_tokens"];
     }
 
     UAHTTPRequest *request = [self requestToUpdateUser:user payload:payload];
