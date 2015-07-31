@@ -75,6 +75,11 @@ typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
          onFailure:(UAUserAPIClientFailureBlock)failureBlock;
 
 /**
+ * Cancels all requests.
+ */
+- (void)cancelAllRequests;
+
+/**
  * The client's request engine.
  */
 @property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;

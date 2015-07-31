@@ -197,4 +197,8 @@
     return request;
 }
 
+- (void)cancelAllRequests {
+    [self.requestEngine cancelAllRequests];
+}
+
 @end

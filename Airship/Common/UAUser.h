@@ -60,9 +60,4 @@ extern NSString * const UAUserCreatedNotification;
  */
 @property (nonatomic, readonly, copy) NSString *url;
 
-/**
- * Background task identifier used to perform user updates in the background.
- */
-@property (nonatomic, assign, readonly) UIBackgroundTaskIdentifier userUpdateBackgroundTask;
-
 @end

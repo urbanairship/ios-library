@@ -65,7 +65,6 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     if (self) {
         self.config = config;
         self.apiClient = [UAUserAPIClient clientWithConfig:config];
-        self.userUpdateBackgroundTask = UIBackgroundTaskInvalid;
         self.dataStore = dataStore;
         self.push = push;
 
@@ -151,8 +150,18 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         return;
     }
 
-    self.creatingUser = YES;
 
+    __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+        [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+        [self.apiClient cancelAllRequests];
+    }];
+
+    if (backgroundTask == UIBackgroundTaskInvalid) {
+        UA_LDEBUG(@"Unable to create background task to create user.");
+        return;
+    }
+
+    self.creatingUser = YES;
 
     UAUserAPIClientCreateSuccessBlock success = ^(UAUserData *data, NSDictionary *payload) {
         UA_LINFO(@"Created user %@.", data.username);
@@ -170,11 +179,13 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         }
 
         [self sendUserCreatedNotification];
+        [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
     };
 
     UAUserAPIClientFailureBlock failure = ^(UAHTTPRequest *request) {
         UA_LINFO(@"Failed to create user");
         self.creatingUser = NO;
+        [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
     };
 
 
@@ -197,35 +208,30 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         return;
     }
 
+    __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+        [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+        [self.apiClient cancelAllRequests];
+    }];
 
-    if (self.userUpdateBackgroundTask == UIBackgroundTaskInvalid) {
-        self.userUpdateBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-            [self invalidateUserUpdateBackgroundTask];
-        }];
+    if (backgroundTask == UIBackgroundTaskInvalid) {
+        UA_LDEBUG(@"Unable to create background task to update user.");
+        return;
     }
+
 
     [self.apiClient updateUser:self
                    deviceToken:self.push.deviceToken
                      channelID:self.push.channelID
                      onSuccess:^{
                          UA_LINFO(@"Updated user %@ successfully.", self.username);
-                         [self invalidateUserUpdateBackgroundTask];
+                         [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
                      }
                      onFailure:^(UAHTTPRequest *request) {
                          UA_LDEBUG(@"Failed to update user.");
-                         [self invalidateUserUpdateBackgroundTask];
+                         [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
                      }];
+
 }
-
-- (void)invalidateUserUpdateBackgroundTask {
-    if (self.userUpdateBackgroundTask != UIBackgroundTaskInvalid) {
-        UA_LTRACE(@"Ending user update background task %lu.", (unsigned long)self.userUpdateBackgroundTask);
-
-        [[UIApplication sharedApplication] endBackgroundTask:self.userUpdateBackgroundTask];
-        self.userUpdateBackgroundTask = UIBackgroundTaskInvalid;
-    }
-}
-
 
 #pragma mark -
 #pragma mark Device Token Listener
