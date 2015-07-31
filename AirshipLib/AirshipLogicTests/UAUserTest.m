@@ -129,9 +129,9 @@
 
     XCTAssertFalse(self.user.creatingUser, @"Should be finished creating user after the success block is called");
     XCTAssertNoThrow([self.mockUserClient verify], @"User should call the client to be created");
-    XCTAssertEqual(self.user.username, userData.username, @"Username should be set when user created successfully.");
-    XCTAssertEqual(self.user.password, userData.password, @"Password should be set when user created successfully.");
-    XCTAssertEqual(self.user.url, userData.url, @"URL should be set when user created successfully.");
+    XCTAssertEqualObjects(self.user.username, userData.username, @"Username should be set when user created successfully.");
+    XCTAssertEqualObjects(self.user.password, userData.password, @"Password should be set when user created successfully.");
+    XCTAssertEqualObjects(self.user.url, userData.url, @"URL should be set when user created successfully.");
 }
 
 /**

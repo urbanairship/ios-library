@@ -55,21 +55,21 @@
  */
 - (void)testSituationString {
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"whatever" withSituation:UASituationManualInvocation];
-    XCTAssertEqual(args.situationString, @"Manual Invocation", @"situation string should read 'Manual Invocation'");
+    XCTAssertEqualObjects(args.situationString, @"Manual Invocation", @"situation string should read 'Manual Invocation'");
     args.situation = UASituationBackgroundPush;
-    XCTAssertEqual(args.situationString, @"Background Push", @"situation string should read 'Background Push'");
+    XCTAssertEqualObjects(args.situationString, @"Background Push", @"situation string should read 'Background Push'");
     args.situation = UASituationForegroundPush;
-    XCTAssertEqual(args.situationString, @"Foreground Push", @"situation string should read 'Foreground Push'");
+    XCTAssertEqualObjects(args.situationString, @"Foreground Push", @"situation string should read 'Foreground Push'");
     args.situation = UASituationLaunchedFromPush;
-    XCTAssertEqual(args.situationString, @"Launched from Push", @"situation string should read 'Launched from Push'");
+    XCTAssertEqualObjects(args.situationString, @"Launched from Push", @"situation string should read 'Launched from Push'");
     args.situation = UASituationWebViewInvocation;
-    XCTAssertEqual(args.situationString, @"Webview Invocation", @"situation string should read 'Webview Invocation'");
+    XCTAssertEqualObjects(args.situationString, @"Webview Invocation", @"situation string should read 'Webview Invocation'");
     args.situation = UASituationForegroundInteractiveButton;
-    XCTAssertEqual(args.situationString, @"Foreground Interactive Button", @"situation string should read 'Foreground Interactive Button'");
+    XCTAssertEqualObjects(args.situationString, @"Foreground Interactive Button", @"situation string should read 'Foreground Interactive Button'");
     args.situation = UASituationBackgroundInteractiveButton;
-    XCTAssertEqual(args.situationString, @"Background Interactive Button", @"situation string should read 'Background Interactive Button'");
+    XCTAssertEqualObjects(args.situationString, @"Background Interactive Button", @"situation string should read 'Background Interactive Button'");
     args.situation = 567;
-    XCTAssertEqual(args.situationString, @"Manual Invocation", @"situation string should read 'Manual Invocation'");
+    XCTAssertEqualObjects(args.situationString, @"Manual Invocation", @"situation string should read 'Manual Invocation'");
 }
 
 /*
