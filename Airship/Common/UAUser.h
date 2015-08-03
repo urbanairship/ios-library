@@ -60,4 +60,11 @@ extern NSString * const UAUserCreatedNotification;
  */
 @property (nonatomic, readonly, copy) NSString *url;
 
+/**
+ * Background task identifier used to perform user updates in the background.
+ *
+ * @deprecated As of version 6.1.4. This property is no longer used.
+ */
+@property (nonatomic, assign, readonly) UIBackgroundTaskIdentifier userUpdateBackgroundTask __attribute__((deprecated("As of version 6.1.4")));
+
 @end
