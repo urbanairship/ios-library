@@ -195,7 +195,7 @@
                                }];
 
     XCTAssertNoThrow([self.mockRequestEngine verify], @"Create user should make a create user request.");
-    XCTAssertEqual(failureRequest, request, @"Failure should pass the failed request back");
+    XCTAssertEqualObjects(failureRequest, request, @"Failure should pass the failed request back");
 }
 
 /**
@@ -369,7 +369,7 @@
                   }];
 
     XCTAssertNoThrow([self.mockRequestEngine verify], @"Update user should make an update user request.");
-    XCTAssertEqual(failureRequest, request, @"Failure should pass the failed request back");
+    XCTAssertEqualObjects(failureRequest, request, @"Failure should pass the failed request back");
 }
 
 

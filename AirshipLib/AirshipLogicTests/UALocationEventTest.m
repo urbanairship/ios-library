@@ -45,10 +45,10 @@
 
     [self validateLocationForEvent:event];
 
-    XCTAssertEqual(@"NONE", [event.data valueForKey:UALocationEventDesiredAccuracyKey]);
-    XCTAssertEqual(@"NONE", [event.data valueForKey:UALocationEventDistanceFilterKey]);
-    XCTAssertEqual(@"CHANGE", [event.data valueForKey:UALocationEventUpdateTypeKey]);
-    XCTAssertEqual(@"testLocation", [event.data valueForKey:UALocationEventProviderKey]);
+    XCTAssertEqualObjects(@"NONE", [event.data valueForKey:UALocationEventDesiredAccuracyKey]);
+    XCTAssertEqualObjects(@"NONE", [event.data valueForKey:UALocationEventDistanceFilterKey]);
+    XCTAssertEqualObjects(@"CHANGE", [event.data valueForKey:UALocationEventUpdateTypeKey]);
+    XCTAssertEqualObjects(@"testLocation", [event.data valueForKey:UALocationEventProviderKey]);
 }
 
 // Test creating a single location update event
@@ -62,8 +62,8 @@
 
     XCTAssertEqualObjects(@"150", [event.data valueForKey:UALocationEventDesiredAccuracyKey]);
     XCTAssertEqualObjects(@"100", [event.data valueForKey:UALocationEventDistanceFilterKey]);
-    XCTAssertEqual(@"SINGLE", [event.data valueForKey:UALocationEventUpdateTypeKey]);
-    XCTAssertEqual(@"testLocation", [event.data valueForKey:UALocationEventProviderKey]);
+    XCTAssertEqualObjects(@"SINGLE", [event.data valueForKey:UALocationEventUpdateTypeKey]);
+    XCTAssertEqualObjects(@"testLocation", [event.data valueForKey:UALocationEventProviderKey]);
 }
 
 // Test creating a standard location update event
@@ -77,8 +77,8 @@
 
     XCTAssertEqualObjects(@"150", [event.data valueForKey:UALocationEventDesiredAccuracyKey]);
     XCTAssertEqualObjects(@"100", [event.data valueForKey:UALocationEventDistanceFilterKey]);
-    XCTAssertEqual(@"CONTINUOUS", [event.data valueForKey:UALocationEventUpdateTypeKey]);
-    XCTAssertEqual(@"testLocation", [event.data valueForKey:UALocationEventProviderKey]);
+    XCTAssertEqualObjects(@"CONTINUOUS", [event.data valueForKey:UALocationEventUpdateTypeKey]);
+    XCTAssertEqualObjects(@"testLocation", [event.data valueForKey:UALocationEventProviderKey]);
 }
 
 // Test creating a location event without an update type
@@ -92,8 +92,8 @@
 
     XCTAssertEqualObjects(@"150", [event.data valueForKey:UALocationEventDesiredAccuracyKey]);
     XCTAssertEqualObjects(@"100", [event.data valueForKey:UALocationEventDistanceFilterKey]);
-    XCTAssertEqual(@"NONE", [event.data valueForKey:UALocationEventUpdateTypeKey]);
-    XCTAssertEqual(@"testLocation", [event.data valueForKey:UALocationEventProviderKey]);
+    XCTAssertEqualObjects(@"NONE", [event.data valueForKey:UALocationEventUpdateTypeKey]);
+    XCTAssertEqualObjects(@"testLocation", [event.data valueForKey:UALocationEventProviderKey]);
 }
 
 // Helper method to validate the location data

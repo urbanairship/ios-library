@@ -72,7 +72,7 @@
     NSString *jsonString = [NSJSONSerialization stringWithObject:self error:&error];
     XCTAssertNil(jsonString, @"invalid (non-serializable) objects should result in a nil value");
     XCTAssertNotNil(error, @"invalid objects should result in an error");
-    XCTAssertEqual(error.domain, UAJSONSerializationErrorDomain, @"error domain should be UAJSONSerializationErrorDomain");
+    XCTAssertEqualObjects(error.domain, UAJSONSerializationErrorDomain, @"error domain should be UAJSONSerializationErrorDomain");
     XCTAssertEqual(error.code, UAJSONSerializationErrorCodeInvalidObject, @"error code should be UAJSONSerializationErrorCodeInvalidObject");
 }
 

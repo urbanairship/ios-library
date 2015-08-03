@@ -59,7 +59,7 @@
     };
 
     XCTAssertFalse([action acceptsArguments:self.emptyArgs], @"Base UAAction should return the acceptsArgumentsBlock if defined");
-    XCTAssertEqual(blockArgs, self.emptyArgs, @"Base acceptsArgumentBlock should have the same arguments parameter as acceptsArguments");
+    XCTAssertEqualObjects(blockArgs, self.emptyArgs, @"Base acceptsArgumentBlock should have the same arguments parameter as acceptsArguments");
 
     action.acceptsArgumentsBlock = ^(UAActionArguments *args) {
         return YES;
@@ -103,7 +103,7 @@
 
     XCTAssertEqualObjects(blockResult.value, @"hi", @"performWithArguments:withCompletionHandler: should call the actionBlock");
     XCTAssertEqual(blockResult.fetchResult, UAActionFetchResultNewData, @"performWithArguments:withCompletionHandler: should call the actionBlock");
-    XCTAssertEqual(blockArgs, self.emptyArgs, @"performWithArguments block should be passed the same arguments performWithArguments:withCompletionHandler:");
+    XCTAssertEqualObjects(blockArgs, self.emptyArgs, @"performWithArguments block should be passed the same arguments performWithArguments:withCompletionHandler:");
 }
 
 /*
@@ -131,8 +131,8 @@
 
     XCTAssertEqualObjects(blockResult.value, @"hi", @"runWithArguments:withCompletionHandler: did not return the result defined by the action");
     XCTAssertEqual(blockResult.fetchResult, UAActionFetchResultNewData, @"runWithArguments:withCompletionHandler: did not return the result defined by the action");
-    XCTAssertEqual(blockPerformArgs, self.emptyArgs, @"runWithArguments:withCompletionHandler: is not passing in the run arguments to the actions performWithArguments:withCompletionHandler:");
-    XCTAssertEqual(blockAcceptsArgs, self.emptyArgs, @"runWithArguments:withCompletionHandler: is not passing in the run arguments to the actions acceptsArguments:");
+    XCTAssertEqualObjects(blockPerformArgs, self.emptyArgs, @"runWithArguments:withCompletionHandler: is not passing in the run arguments to the actions performWithArguments:withCompletionHandler:");
+    XCTAssertEqualObjects(blockAcceptsArgs, self.emptyArgs, @"runWithArguments:withCompletionHandler: is not passing in the run arguments to the actions acceptsArguments:");
 }
 
 /*

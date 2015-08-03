@@ -78,7 +78,7 @@
 - (void)testInitWithDelegate {
     UABaseLocationProvider *base = [[UABaseLocationProvider alloc] initWithDelegate:self.mockUALocationService];
 
-    XCTAssertEqual(UALocationServiceProviderUnknown, base.provider, @"Base Provider should be UNKNOWN");
+    XCTAssertEqualObjects(UALocationServiceProviderUnknown, base.provider, @"Base Provider should be UNKNOWN");
     XCTAssertEqualObjects(self.mockUALocationService, base.delegate, @"Location provider delegate is not being set.");
     XCTAssertEqual(300.0, base.maximumElapsedTimeForCachedLocation, @"Default maximumElapsedTimeForCachedLocation is not set");
 }
@@ -86,7 +86,7 @@
 - (void)testStandardInitWithDelegate {
     UAStandardLocationProvider *standard = [UAStandardLocationProvider providerWithDelegate:self.mockUALocationService];
 
-    XCTAssertEqual(UALocationServiceProviderGps, standard.provider, @"Standard Provider should be GPS");
+    XCTAssertEqualObjects(UALocationServiceProviderGps, standard.provider, @"Standard Provider should be GPS");
     XCTAssertEqualObjects(self.mockUALocationService, standard.delegate, @"Location provider delegate is not being set.");
     XCTAssertEqual(300.0, standard.maximumElapsedTimeForCachedLocation, @"Default maximumElapsedTimeForCachedLocation is not set");
 }
@@ -94,7 +94,7 @@
 - (void)testSignificantChangeInitWithDelegate {
     UASignificantChangeProvider *significant = [UASignificantChangeProvider providerWithDelegate:self.mockUALocationService];
 
-    XCTAssertEqual(UALocationServiceProviderNetwork, significant.provider, @"Standard Provider should be NETWORK");
+    XCTAssertEqualObjects(UALocationServiceProviderNetwork, significant.provider, @"Standard Provider should be NETWORK");
     XCTAssertEqualObjects(self.mockUALocationService, significant.delegate, @"Location provider delegate is not being set.");
     XCTAssertEqual(300.0, significant.maximumElapsedTimeForCachedLocation, @"Default maximumElapsedTimeForCachedLocation is not set");
 }

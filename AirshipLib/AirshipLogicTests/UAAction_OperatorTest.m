@@ -401,7 +401,7 @@
     }];
 
     XCTAssertFalse(didContinuationActionRun, @"The continuation action should not run if the original action returns an error.");
-    XCTAssertEqual(result, errorResult, @"Completion handler should be called with the original result if the continuation action is not called.");
+    XCTAssertEqualObjects(result, errorResult, @"Completion handler should be called with the original result if the continuation action is not called.");
 }
 
 /**

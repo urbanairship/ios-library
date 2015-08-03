@@ -38,8 +38,8 @@
 
     UAActionRegistryEntry *entry = [UAActionRegistryEntry entryForAction:action predicate:predicate];
 
-    XCTAssertEqual(entry.action, action, @"UAActionEntry is not setting the action correctly");
-    XCTAssertEqual(entry.predicate, predicate, @"UAActionEntry is not setting the predicate correctly");
+    XCTAssertEqualObjects(entry.action, action, @"UAActionEntry is not setting the action correctly");
+    XCTAssertEqualObjects(entry.predicate, predicate, @"UAActionEntry is not setting the predicate correctly");
 }
 
 @end

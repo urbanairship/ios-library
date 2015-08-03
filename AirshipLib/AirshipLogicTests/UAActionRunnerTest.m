@@ -303,7 +303,7 @@ NSString *anotherActionName = @"AnotherActionName";
 
     // Verify the predicate is called
     [self.registry registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
-        XCTAssertEqual(@"value", args.value, @"Runner should pass the supplied value to the action");
+        XCTAssertEqualObjects(@"value", args.value, @"Runner should pass the supplied value to the action");
         XCTAssertEqual(UASituationManualInvocation, args.situation, @"Runner should pass the situation to the action");
 
         NSDictionary  *expectedMetadata = @{ @"meta key": @"meta value", UAActionMetadataRegisteredName: actionName };
