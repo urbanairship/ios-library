@@ -65,7 +65,6 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     if (self) {
         self.config = config;
         self.apiClient = [UAUserAPIClient clientWithConfig:config];
-        self.userUpdateBackgroundTask = UIBackgroundTaskInvalid;
         self.dataStore = dataStore;
         self.push = push;
 
@@ -114,7 +113,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         }
     }
     
-    //Update keychain with latest username and password
+    // Update keychain with latest username and password
     [UAKeychainUtils updateKeychainValueForUsername:self.username
                                        withPassword:self.password
                                       forIdentifier:self.config.appKey];
@@ -151,8 +150,18 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         return;
     }
 
-    self.creatingUser = YES;
+    __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+        [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+        backgroundTask = UIBackgroundTaskInvalid;
+        [self.apiClient cancelAllRequests];
+    }];
 
+    if (backgroundTask == UIBackgroundTaskInvalid) {
+        UA_LDEBUG(@"Unable to create background task to create user.");
+        return;
+    }
+
+    self.creatingUser = YES;
 
     UAUserAPIClientCreateSuccessBlock success = ^(UAUserData *data, NSDictionary *payload) {
         UA_LINFO(@"Created user %@.", data.username);
@@ -164,22 +173,25 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
         [self saveUserData];
 
-        //if we didn't send a device token or a channel on creation, try again
-        if (![payload valueForKey:@"device_tokens"] || ![payload valueForKey:@"ios_channels"]) {
+        // if we didn't send a channel on creation, try again
+        if (![payload valueForKey:@"ios_channels"]) {
             [self updateUser];
         }
 
         [self sendUserCreatedNotification];
+        [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+        backgroundTask = UIBackgroundTaskInvalid;
     };
 
     UAUserAPIClientFailureBlock failure = ^(UAHTTPRequest *request) {
         UA_LINFO(@"Failed to create user");
         self.creatingUser = NO;
+        [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+        backgroundTask = UIBackgroundTaskInvalid;
     };
 
 
     [self.apiClient createUserWithChannelID:self.push.channelID
-                                deviceToken:self.push.deviceToken
                                   onSuccess:success
                                   onFailure:failure];
 }
@@ -188,48 +200,42 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 #pragma mark Update
 
 -(void)updateUser {
-    NSString *deviceToken = self.push.deviceToken;
-    NSString *channelID = self.push.channelID;
-
     if (!self.isCreated) {
         UA_LDEBUG(@"Skipping user update, user not created yet.");
         return;
     }
 
-    if (!channelID && !deviceToken) {
-        UA_LDEBUG(@"Skipping user update, no device token or channel.");
+    if (!self.push.channelID.length) {
+        UA_LDEBUG(@"Skipping user update, no channel.");
         return;
     }
 
+    __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+        [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+        backgroundTask = UIBackgroundTaskInvalid;
+        [self.apiClient cancelAllRequests];
+    }];
 
-    if (self.userUpdateBackgroundTask == UIBackgroundTaskInvalid) {
-        self.userUpdateBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-            [self invalidateUserUpdateBackgroundTask];
-        }];
+    if (backgroundTask == UIBackgroundTaskInvalid) {
+        UA_LDEBUG(@"Unable to create background task to update user.");
+        return;
     }
 
     [self.apiClient updateUser:self
-                   deviceToken:deviceToken
-                     channelID:channelID
+                   deviceToken:self.push.deviceToken
+                     channelID:self.push.channelID
                      onSuccess:^{
                          UA_LINFO(@"Updated user %@ successfully.", self.username);
-                         [self invalidateUserUpdateBackgroundTask];
+                         [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+                         backgroundTask = UIBackgroundTaskInvalid;
                      }
                      onFailure:^(UAHTTPRequest *request) {
                          UA_LDEBUG(@"Failed to update user.");
-                         [self invalidateUserUpdateBackgroundTask];
+                         [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+                         backgroundTask = UIBackgroundTaskInvalid;
                      }];
+
 }
-
-- (void)invalidateUserUpdateBackgroundTask {
-    if (self.userUpdateBackgroundTask != UIBackgroundTaskInvalid) {
-        UA_LTRACE(@"Ending user update background task %lu.", (unsigned long)self.userUpdateBackgroundTask);
-
-        [[UIApplication sharedApplication] endBackgroundTask:self.userUpdateBackgroundTask];
-        self.userUpdateBackgroundTask = UIBackgroundTaskInvalid;
-    }
-}
-
 
 #pragma mark -
 #pragma mark Device Token Listener
@@ -241,12 +247,11 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     
     self.isObservingDeviceRegistrationChanges = YES;
 
-    // Listen for changes to the device token and channel ID
-    [self.push addObserver:self forKeyPath:@"deviceToken" options:0 context:NULL];
+    // Listen for changes to the channel ID
     [self.push addObserver:self forKeyPath:@"channelID" options:0 context:NULL];
 
-    // Update the user if we already have a channelID or device token
-    if (self.push.deviceToken || self.push.channelID) {
+    // Update the user if we already have a channelID
+    if (self.push.channelID) {
         [self updateUser];
         return;
     }
@@ -256,14 +261,8 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                      ofObject:(id)object
                        change:(NSDictionary *)change
                       context:(void *)context {
-    
-    if ([keyPath isEqualToString:@"deviceToken"]) {
-        // Only update user if we do not have a channel ID
-        if (!self.push.channelID) {
-            UA_LTRACE(@"KVO device token modified. Updating user.");
-            [self updateUser];
-        }
-    } else if ([keyPath isEqualToString:@"channelID"]) {
+
+    if ([keyPath isEqualToString:@"channelID"]) {
         UA_LTRACE(@"KVO channel ID modified. Updating user.");
         [self updateUser];
     }
@@ -271,7 +270,6 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
 -(void)unregisterForDeviceRegistrationChanges {
     if (self.isObservingDeviceRegistrationChanges) {
-        [self.push removeObserver:self forKeyPath:@"deviceToken"];
         [self.push removeObserver:self forKeyPath:@"channelID"];
         self.isObservingDeviceRegistrationChanges = NO;
     }
