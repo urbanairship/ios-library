@@ -387,7 +387,11 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /** Tags for this device. */
+#if __has_feature(objc_generics)
+@property (nonatomic, copy) NSArray<NSString *> *tags;
+#else
 @property (nonatomic, copy) NSArray *tags;
+#endif
 
 /**
  * Allows setting tags from the device. Tags can be set from either the server or the device, but
@@ -432,8 +436,11 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param tags Array of new tags
  */
-
+#if __has_feature(objc_generics)
+- (void)addTags:(NSArray<NSString *> *)tags;
+#else
 - (void)addTags:(NSArray *)tags;
+#endif
 
 /**
  * Removes a tag from the current tag list. To update the server, make all of your changes, then call
@@ -455,7 +462,11 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param tags Array of tags to be removed
  */
+#if __has_feature(objc_generics)
+- (void)removeTags:(NSArray<NSString *> *)tags;
+#else
 - (void)removeTags:(NSArray *)tags;
+#endif
 
 ///---------------------------------------------------------------------------------------
 /// @name Tag Groups
@@ -468,7 +479,11 @@ NS_ASSUME_NONNULL_BEGIN
  * @param tags Array of tags to add.
  * @param tagGroupID Tag group ID string.
  */
+#if __has_feature(objc_generics)
+- (void)addTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID;
+#else
 - (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID;
+#endif
 
 /**
  * Removes tags from channel tag groups. To update the server,
@@ -477,7 +492,11 @@ NS_ASSUME_NONNULL_BEGIN
  * @param tags Array of tags to remove.
  * @param tagGroupID Tag group ID string.
  */
+#if __has_feature(objc_generics)
+- (void)removeTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID;
+#else
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID;
+#endif
 
 ///---------------------------------------------------------------------------------------
 /// @name Quiet Time
