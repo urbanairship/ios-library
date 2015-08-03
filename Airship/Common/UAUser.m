@@ -152,6 +152,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
     __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
         [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+        backgroundTask = UIBackgroundTaskInvalid;
         [self.apiClient cancelAllRequests];
     }];
 
@@ -179,12 +180,14 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
         [self sendUserCreatedNotification];
         [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+        backgroundTask = UIBackgroundTaskInvalid;
     };
 
     UAUserAPIClientFailureBlock failure = ^(UAHTTPRequest *request) {
         UA_LINFO(@"Failed to create user");
         self.creatingUser = NO;
         [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+        backgroundTask = UIBackgroundTaskInvalid;
     };
 
 
@@ -209,6 +212,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
     __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
         [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+        backgroundTask = UIBackgroundTaskInvalid;
         [self.apiClient cancelAllRequests];
     }];
 
@@ -223,10 +227,12 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                      onSuccess:^{
                          UA_LINFO(@"Updated user %@ successfully.", self.username);
                          [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+                         backgroundTask = UIBackgroundTaskInvalid;
                      }
                      onFailure:^(UAHTTPRequest *request) {
                          UA_LDEBUG(@"Failed to update user.");
                          [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+                         backgroundTask = UIBackgroundTaskInvalid;
                      }];
 
 }
