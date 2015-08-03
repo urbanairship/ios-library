@@ -113,7 +113,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         }
     }
     
-    //Update keychain with latest username and password
+    // Update keychain with latest username and password
     [UAKeychainUtils updateKeychainValueForUsername:self.username
                                        withPassword:self.password
                                       forIdentifier:self.config.appKey];
@@ -150,7 +150,6 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         return;
     }
 
-
     __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
         [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
         [self.apiClient cancelAllRequests];
@@ -173,7 +172,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
         [self saveUserData];
 
-        //if we didn't send a device token or a channel on creation, try again
+        // if we didn't send a channel on creation, try again
         if (![payload valueForKey:@"ios_channels"]) {
             [self updateUser];
         }
@@ -204,7 +203,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     }
 
     if (!self.push.channelID.length) {
-        UA_LDEBUG(@"Skipping user update, no device token or channel.");
+        UA_LDEBUG(@"Skipping user update, no channel.");
         return;
     }
 
@@ -217,7 +216,6 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         UA_LDEBUG(@"Unable to create background task to update user.");
         return;
     }
-
 
     [self.apiClient updateUser:self
                    deviceToken:self.push.deviceToken

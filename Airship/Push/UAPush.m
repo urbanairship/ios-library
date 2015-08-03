@@ -1099,8 +1099,8 @@ BOOL deferChannelCreationOnForeground = false;
               existing:(BOOL)existing {
 
     if (channelID && channelLocation) {
-        // WARNING: order matters here. Some things obvserve channelID being changed,
-        // and if we do not have a channel location set the channelID will return nil.
+        // WARNING: Order matters here. Some things observe channelID being changed,
+        // and if we do not have a channel location set, the channelID will return nil.
         self.channelLocation = channelLocation;
         self.channelID = channelID;
 

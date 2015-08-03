@@ -120,7 +120,7 @@
                                       onFailure:OCMOCK_ANY];
 
 
-    [self.client createUserWithChannelID:@"channelID" deviceToken:@"deviceToken" onSuccess:nil onFailure:nil];
+    [self.client createUserWithChannelID:@"channelID" onSuccess:nil onFailure:nil];
     XCTAssertNoThrow([self.mockRequestEngine verify], @"Create user should call retry on 500 status codes and succeed on 201.");
 }
 
@@ -152,7 +152,6 @@
 
 
     [self.client createUserWithChannelID:@"channelID"
-                             deviceToken:@"deviceToken"
                                onSuccess:^(UAUserData *data, NSDictionary *payload) {
                                    successData = data;
                                    successPayload = payload;
@@ -188,7 +187,6 @@
 
 
     [self.client createUserWithChannelID:@"channelID"
-                             deviceToken:@"deviceToken"
                                onSuccess:nil
                                onFailure:^(UAHTTPRequest *request) {
                                    failureRequest = request;
@@ -218,40 +216,11 @@
                                        onFailure:OCMOCK_ANY];
 
      [self.client createUserWithChannelID:@"channelID"
-                              deviceToken:@"deviceToken"
                                 onSuccess:nil
                                 onFailure:nil];
 
     XCTAssertNoThrow([self.mockRequestEngine verify], @"Create user should make a create user request.");
 }
-
-/**
- * Test create user request with only a device token
- */
--(void)testCreateUserRequestDeviceToken {
-    NSDictionary *expectedRequestBody = @{@"ua_device_id": @"deviceID", @"device_tokens": @[@"deviceToken"]};
-
-    BOOL (^checkRequestBlock)(id)= ^(id obj){
-        UAHTTPRequest *request = obj;
-        NSString *requestString = [[NSString alloc] initWithData:request.body encoding:NSUTF8StringEncoding];
-        id data = [NSJSONSerialization objectWithString:requestString];
-        return [expectedRequestBody isEqualToDictionary:data];
-    };
-
-    [[self.mockRequestEngine expect] runRequest:[OCMArg checkWithBlock:checkRequestBlock]
-                                   succeedWhere:OCMOCK_ANY
-                                     retryWhere:OCMOCK_ANY
-                                      onSuccess:OCMOCK_ANY
-                                      onFailure:OCMOCK_ANY];
-
-    [self.client createUserWithChannelID:nil
-                             deviceToken:@"deviceToken"
-                               onSuccess:nil
-                               onFailure:nil];
-
-    XCTAssertNoThrow([self.mockRequestEngine verify], @"Create user should make a create user request.");
-}
-
 
 /**
  * Test update user retry
@@ -413,18 +382,6 @@
                                       onFailure:OCMOCK_ANY];
 
     [self.client updateUser:self.mockUser deviceToken:nil channelID:@"channel" onSuccess:nil onFailure:nil];
-    XCTAssertNoThrow([self.mockRequestEngine verify], @"Create user should make a create user request.");
-
-
-    // Verify we add a device token if there is no channel ID
-    expectedRequestBody = @{@"device_tokens": @{@"add" : @[@"deviceToken"]}};
-    [[self.mockRequestEngine expect] runRequest:[OCMArg checkWithBlock:checkRequestBlock]
-                                   succeedWhere:OCMOCK_ANY
-                                     retryWhere:OCMOCK_ANY
-                                      onSuccess:OCMOCK_ANY
-                                      onFailure:OCMOCK_ANY];
-
-    [self.client updateUser:self.mockUser deviceToken:@"deviceToken" channelID:@"" onSuccess:nil onFailure:nil];
     XCTAssertNoThrow([self.mockRequestEngine verify], @"Create user should make a create user request.");
 }
 
