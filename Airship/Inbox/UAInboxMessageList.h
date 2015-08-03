@@ -122,7 +122,11 @@ extern NSString * const UAInboxMessageListUpdatedNotification;
 /**
  * The list of messages on disk as an NSArray.
  */
+#if __has_feature(objc_generics)
+@property (atomic, readonly, strong) NSArray<UAInboxMessage *> *messages;
+#else
 @property (atomic, readonly, strong) NSArray *messages;
+#endif
 
 /**
  * The number of messages that are currently unread or -1
