@@ -70,14 +70,6 @@ typedef NS_ENUM(NSInteger, UAEventPriority) {
  */
 @property (nonatomic, readonly) UAEventPriority priority;
 
-
-/**
- * Gets the current connection type.
- * Possible values are "cell", "wifi", or "none".
- * @return The current connection type as a string.
- */
-- (NSString *)connectionType;
-
 /**
  * Gets the carrier's name.
  * @returns The carrier's name.
@@ -90,4 +82,5 @@ typedef NS_ENUM(NSInteger, UAEventPriority) {
  * @return The current notification types as a string array.
  */
 - (NSArray *)notificationTypes;
+
 @end

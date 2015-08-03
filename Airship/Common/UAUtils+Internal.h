@@ -24,49 +24,23 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import "UAUtils.h"
+
+#define kUAConnectionTypeNone @"none"
+#define kUAConnectionTypeCell @"cell"
+#define kUAConnectionTypeWifi @"wifi"
 
 /**
- * Convenience interface for synchronizing tests across runloop iterations with dispatch semaphores.
+ * The UAUtils object provides an interface for utility methods.
  */
-@interface UATestSynchronizer : NSObject
-
-
-/**
- * The dispatch semaphore used for synchronization
- */
-@property (nonatomic, strong) dispatch_semaphore_t semaphore;    // GCD objects use ARC
+@interface UAUtils ()
 
 /**
- * How long the runloop should spin for each iteration while waiting.
- * Default is 0.1 seconds.
+ * Gets the current connection type.
+ * Possible values are "cell", "wifi", or "none".
+ * @return The current connection type as a string.
  */
-@property (nonatomic, assign) NSTimeInterval runLoopInterval;
-/**
- * How long to wait for a completion signal before timing out.
- * Default is 2 seconds.
- */
-@property (nonatomic, assign) NSTimeInterval defaultTimeoutInterval;
-
-/**
- * Spin the run loop iteratively until either a completion signal is delivered,
- * or the timeout is reached.
- *
- * @return `NO` if the timeout was reached, `YES` otherwise.
- */
-- (BOOL)wait;
-
-/**
- * Sping the run loop iteratively until either a completion signal is delivered,
- * or the timeout is reached.
- *
- * @param interval The desired timeout interval.
- * @return `NO` if the timeout was reached, `YES` otherwise.
- */
-- (BOOL)waitWithTimeoutInterval:(NSTimeInterval)interval;
-
-/**
- * Delivers a completion signal on the semaphore.
- */
-- (void)continue;
++ (NSString *)connectionType;
 
 @end

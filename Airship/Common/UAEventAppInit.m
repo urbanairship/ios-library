@@ -29,7 +29,7 @@
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAUser.h"
-
+#import "UAUtils+Internal.h"
 
 @implementation UAEventAppInit
 
@@ -48,7 +48,8 @@
     [data setValue:analytics.conversionRichPushID forKey:@"rich_push_id"];
 
     [data setValue:[UAirship inboxUser].username forKey:@"user_id"];
-    [data setValue:[self connectionType] forKey:@"connection_type"];
+
+    [data setValue:[UAUtils connectionType] forKey:@"connection_type"];
     [data setValue:[self carrierName] forKey:@"carrier"];
 
     [data setValue:[self notificationTypes] forKey:@"notification_types"];

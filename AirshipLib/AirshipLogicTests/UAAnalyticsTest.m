@@ -151,28 +151,28 @@
     [[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(NO)] userPushNotificationsAllowed];
 
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
-    XCTAssertEqual([headers objectForKey:@"X-UA-Channel-Opted-In"], @"false");
+    XCTAssertEqualObjects([headers objectForKey:@"X-UA-Channel-Opted-In"], @"false");
 }
 
 - (void)testRequestChannelOptInYesHeader {
     [[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(YES)] userPushNotificationsAllowed];
 
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
-    XCTAssertEqual([headers objectForKey:@"X-UA-Channel-Opted-In"], @"true");
+    XCTAssertEqualObjects([headers objectForKey:@"X-UA-Channel-Opted-In"], @"true");
 }
 
 - (void)testRequestChannelBackgroundEnabledNoHeader {
     [[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(NO)] backgroundPushNotificationsAllowed];
 
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
-    XCTAssertEqual([headers objectForKey:@"X-UA-Channel-Background-Enabled"], @"false");
+    XCTAssertEqualObjects([headers objectForKey:@"X-UA-Channel-Background-Enabled"], @"false");
 }
 
 - (void)testRequestChannelBackgroundEnabledYesHeader {
     [[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(YES)] backgroundPushNotificationsAllowed];
 
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
-    XCTAssertEqual([headers objectForKey:@"X-UA-Channel-Background-Enabled"], @"true");
+    XCTAssertEqualObjects([headers objectForKey:@"X-UA-Channel-Background-Enabled"], @"true");
 }
 
 - (void)restoreSavedUploadEventSettingsEmptyDataStore {

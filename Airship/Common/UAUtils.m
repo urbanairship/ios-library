@@ -23,10 +23,11 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 // Frameworks
 #import <CommonCrypto/CommonDigest.h>
+#import <SystemConfiguration/SCNetworkReachability.h>
 
 // UA external libraries
 #import "UA_Base64.h"
@@ -42,8 +43,53 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <sys/xattr.h>
+#include <netinet/in.h>
 
 @implementation UAUtils
+
++ (NSString *)connectionType {
+    SCNetworkReachabilityFlags flags;
+    SCNetworkReachabilityRef reachabilityRef;
+
+    struct sockaddr_in zeroAddress;
+
+    // Put sizeof(zeroAddress) number of 0-bytes at address &zeroAddress
+    bzero(&zeroAddress, sizeof(zeroAddress));
+
+    // Set length of sockaddr_in struct
+    zeroAddress.sin_len = sizeof(zeroAddress);
+
+    // Set address family to internetwork: UDP, TCP, etc.
+    zeroAddress.sin_family = AF_INET;
+
+    reachabilityRef = SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, (const struct sockaddr*)&zeroAddress);
+    Boolean success = SCNetworkReachabilityGetFlags(reachabilityRef, &flags);
+    CFRelease(reachabilityRef);
+
+    // Return early if flags don't return, a connection is required, or the network is unreachable
+    if (!success || (flags & kSCNetworkReachabilityFlagsReachable) == 0) {
+        return kUAConnectionTypeNone;
+    }
+
+    NSString *connectionType = kUAConnectionTypeNone;
+
+    if ((flags & kSCNetworkReachabilityFlagsConnectionRequired) == 0) {
+        connectionType = kUAConnectionTypeWifi;
+    }
+
+    if ((((flags & kSCNetworkReachabilityFlagsConnectionOnDemand ) != 0) ||
+         (flags & kSCNetworkReachabilityFlagsConnectionOnTraffic) != 0)) {
+        if ((flags & kSCNetworkReachabilityFlagsInterventionRequired) == 0) {
+            connectionType = kUAConnectionTypeWifi;
+        }
+    }
+
+    if ((flags & kSCNetworkReachabilityFlagsIsWWAN) == kSCNetworkReachabilityFlagsIsWWAN) {
+        connectionType = kUAConnectionTypeCell;
+    }
+
+    return connectionType;
+}
 
 + (NSString *)deviceID {
     return [UAKeychainUtils getDeviceID];

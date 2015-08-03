@@ -27,15 +27,12 @@
 #import "UAOpenExternalURLAction.h"
 #import <OCMock/OCMock.h>
 #import "UAAction+Operators.h"
-#import "UATestSynchronizer.h"
 #import "UAActionArguments+Internal.h"
 
 @interface UAOpenExternalURLActionTest : XCTestCase
 
 @property (nonatomic, strong) UAActionArguments *emptyArgs;
 @property (nonatomic, strong) UAActionArguments *arguments;
-@property (nonatomic, strong) UATestSynchronizer *sync;
-@property (nonatomic, strong) UAAction *action;
 @property (nonatomic, strong) id mockApplication;
 
 @end
@@ -43,17 +40,10 @@
 
 @implementation UAOpenExternalURLActionTest
 
-
-
 - (void)setUp {
     [super setUp];
 
-    self.sync = [[UATestSynchronizer alloc] init];
-
     self.arguments = [[UAActionArguments alloc] init];
-    self.action = [[[UAOpenExternalURLAction alloc] init] postExecution:^(UAActionArguments *args, UAActionResult *result){
-        [self.sync continue];
-    }];
     self.mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
 }
@@ -67,33 +57,42 @@
 * Test accepts valid arguments
 */
 - (void)testAcceptsArguments {
+
+    UAAction *action = [[[UAOpenExternalURLAction alloc] init] postExecution:nil];
+
     self.arguments.value = @"http://some-valid-url";
-    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accept valid string URLs");
+    XCTAssertTrue([action acceptsArguments:self.arguments], @"action should accept valid string URLs");
 
     self.arguments.situation = UASituationManualInvocation;
-    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accept any situations that is not UASituationBackgroundPush");
+    XCTAssertTrue([action acceptsArguments:self.arguments], @"action should accept any situations that is not UASituationBackgroundPush");
 
     self.arguments.value = [NSURL URLWithString:@"http://some-valid-url"];
-    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accept NSURLs");
+    XCTAssertTrue([action acceptsArguments:self.arguments], @"action should accept NSURLs");
 
     self.arguments.value = nil;
-    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should not accept a nil value");
+    XCTAssertFalse([action acceptsArguments:self.arguments], @"action should not accept a nil value");
 
     self.arguments.value = @3213;
-    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should not accept an invalid url");
+    XCTAssertFalse([action acceptsArguments:self.arguments], @"action should not accept an invalid url");
 
     self.arguments.value = @"oh hi";
-    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should not accept an invalid url");
+    XCTAssertFalse([action acceptsArguments:self.arguments], @"action should not accept an invalid url");
 
     self.arguments.value = @"http://some-valid-url";
     self.arguments.situation = UASituationBackgroundPush;
-    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should not accept arguments with UASituationBackgroundPush situation");
+    XCTAssertFalse([action acceptsArguments:self.arguments], @"action should not accept arguments with UASituationBackgroundPush situation");
 }
 
 /**
  * Test perform with a string URL
  */
 - (void)testPerformWithStringURL {
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"request finished"];
+
+    UAAction *action = [[[UAOpenExternalURLAction alloc] init] postExecution:^(UAActionArguments *args, UAActionResult *result){
+        [testExpectation fulfill];
+    }];
+
     __block UAActionResult *result;
 
     self.arguments.value = @"ftp://some-valid-url";
@@ -101,11 +100,15 @@
 
     [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE(YES)] openURL:[NSURL URLWithString:self.arguments.value]];
 
-    [self.action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
+    [action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
         result = performResult;
     }];
 
-    [self.sync wait];
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+        if (error) {
+            XCTFail(@"Failed to run action with error %@.", error);
+        }
+    }];
 
     XCTAssertNoThrow([self.mockApplication verify], @"application should try to open the url");
     XCTAssertEqualObjects(result.value, self.arguments.value, @"results value should be the url");
@@ -117,6 +120,12 @@
  * Test perform with a NSURL
  */
 - (void)testPerformWithNSURL {
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"request finished"];
+
+    UAAction *action = [[[UAOpenExternalURLAction alloc] init] postExecution:^(UAActionArguments *args, UAActionResult *result){
+        [testExpectation fulfill];
+    }];
+
     __block UAActionResult *result;
 
     self.arguments.value = [NSURL URLWithString:@"scheme://some-valid-url"];
@@ -124,11 +133,15 @@
 
     [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE(YES)] openURL:self.arguments.value];
 
-    [self.action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
+    [action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
         result = performResult;
     }];
 
-    [self.sync wait];
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+        if (error) {
+            XCTFail(@"Failed to run action with error %@.", error);
+        }
+    }];
 
     XCTAssertNoThrow([self.mockApplication verify], @"application should try to open the url");
     XCTAssertEqualObjects(result.value, ((NSURL *)self.arguments.value).absoluteString, @"results value should be the url");
@@ -139,6 +152,12 @@
  * Test perform when the application is unable to open the URL it returns an error
  */
 - (void)testPerformError {
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"request finished"];
+
+    UAAction *action = [[[UAOpenExternalURLAction alloc] init] postExecution:^(UAActionArguments *args, UAActionResult *result){
+        [testExpectation fulfill];
+    }];
+
     __block UAActionResult *result;
 
     self.arguments.value = [NSURL URLWithString:@"scheme://some-valid-url"];
@@ -146,11 +165,15 @@
 
     [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE(NO)] openURL:OCMOCK_ANY];
 
-    [self.action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
+    [action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
         result = performResult;
     }];
 
-    [self.sync wait];
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+        if (error) {
+            XCTFail(@"Failed to run action with error %@.", error);
+        }
+    }];
 
     XCTAssertNoThrow([self.mockApplication verify], @"application should try to open the url");
     XCTAssertNotNil(result.error, @"result should have an error if the application failed to open the url");
@@ -162,27 +185,48 @@
  * Test normalizing phone URLs
  */
 - (void)testPerformWithPhoneURL {
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"request finished"];
+
+    UAAction *action = [[[UAOpenExternalURLAction alloc] init] postExecution:^(UAActionArguments *args, UAActionResult *result){
+        [testExpectation fulfill];
+    }];
+
     __block UAActionResult *result;
 
     self.arguments.value = [NSURL URLWithString:@"sms://+1(541)555%2032195%202241%202313"];
     [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE(YES)] openURL:[NSURL URLWithString:@"sms:+15415553219522412313"]];
 
-    [self.action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
+    [action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
         result = performResult;
     }];
 
-    [self.sync wait];
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+        if (error) {
+            XCTFail(@"Failed to run action with error %@.", error);
+        }
+    }];
+
 
     XCTAssertEqualObjects(result.value, @"sms:+15415553219522412313", @"results value should be normalized phone number");
+
+    testExpectation = [self expectationWithDescription:@"request finished"];
+
+    action = [[[UAOpenExternalURLAction alloc] init] postExecution:^(UAActionArguments *args, UAActionResult *result){
+        [testExpectation fulfill];
+    }];
 
     self.arguments.value = @"tel://+1541555adfasdfa%2032195%202241%202313";
     [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE(YES)] openURL:[NSURL URLWithString:@"tel:+15415553219522412313"]];
 
-    [self.action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
+    [action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
         result = performResult;
     }];
 
-    [self.sync wait];
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+        if (error) {
+            XCTFail(@"Failed to run action with error %@.", error);
+        }
+    }];
 
     XCTAssertEqualObjects(result.value, @"tel:+15415553219522412313", @"results value should be normalized phone number");
 }
@@ -191,27 +235,48 @@
  * Test normalizing apple iTunes URLs
  */
 - (void)testPerformWithiTunesURL {
+
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"request finished"];
+
+    UAAction *action = [[[UAOpenExternalURLAction alloc] init] postExecution:^(UAActionArguments *args, UAActionResult *result){
+        [testExpectation fulfill];
+    }];
+
     __block UAActionResult *result;
 
     self.arguments.value = [NSURL URLWithString:@"app://itunes.apple.com/some-app"];
     [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE(YES)] openURL:[NSURL URLWithString:@"http://itunes.apple.com/some-app"]];
 
-    [self.action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
+    [action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
         result = performResult;
     }];
 
-    [self.sync wait];
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+        if (error) {
+            XCTFail(@"Failed to run action with error %@.", error);
+        }
+    }];
 
     XCTAssertEqualObjects(result.value, @"http://itunes.apple.com/some-app", @"results value should be http iTunes link");
+
+    testExpectation = [self expectationWithDescription:@"request finished"];
+
+    action = [[[UAOpenExternalURLAction alloc] init] postExecution:^(UAActionArguments *args, UAActionResult *result){
+        [testExpectation fulfill];
+    }];
 
     self.arguments.value = @"app://phobos.apple.com/some-app";
     [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE(YES)] openURL:[NSURL URLWithString:@"http://phobos.apple.com/some-app"]];
 
-    [self.action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
+    [action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
         result = performResult;
     }];
 
-    [self.sync wait];
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+        if (error) {
+            XCTFail(@"Failed to run action with error %@.", error);
+        }
+    }];
 
     XCTAssertEqualObjects(result.value, @"http://phobos.apple.com/some-app", @"results value should be http iTunes link");
 }

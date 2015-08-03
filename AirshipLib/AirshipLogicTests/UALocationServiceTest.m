@@ -424,7 +424,7 @@
     pdx = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(50, 50) altitude:100.0 horizontalAccuracy:12.0 verticalAccuracy:5 timestamp:[NSDate date]];
     [[_mockLocationService reject] stopSingleLocationWithLocation:OCMOCK_ANY];
     [_locationService singleLocationDidUpdateLocations:@[sfo, pdx]];
-    XCTAssertEqual(pdx, _locationService.bestAvailableSingleLocation);
+    XCTAssertEqualObjects(pdx, _locationService.bestAvailableSingleLocation);
     [mockDelegate stopMocking];
 }
 

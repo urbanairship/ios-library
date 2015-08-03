@@ -44,6 +44,7 @@
 @property (nonatomic, strong) UAPush *push;
 @property (nonatomic, strong) id mockUserClient;
 @property (nonatomic, strong) id mockKeychainUtils;
+@property (nonatomic, strong) id mockApplication;
 
 @end
 
@@ -63,12 +64,15 @@
 
     self.user = [UAUser userWithPush:self.push config:self.config dataStore:self.dataStore];
     self.mockUserClient = [OCMockObject partialMockForObject:self.user.apiClient];
+
+    self.mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
  }
 
 - (void)tearDown {
     [self.mockUserClient stopMocking];
     [self.mockKeychainUtils stopMocking];
-
+    [self.mockApplication stopMocking];
     [self.dataStore removeAll];
 
     [super tearDown];
@@ -101,14 +105,16 @@
 
     void (^andDoBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
+        [invocation getArgument:&arg atIndex:3];
         successBlock = (__bridge UAUserAPIClientCreateSuccessBlock)arg;
     };
 
     [[[self.mockUserClient expect] andDo:andDoBlock] createUserWithChannelID:@"some-channel"
-                                                                 deviceToken:OCMOCK_ANY
                                                                    onSuccess:OCMOCK_ANY
                                                                    onFailure:OCMOCK_ANY];
+
+    // Mock background task so background task check passes
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
     // Expect it to create and update the keychain
     [[[self.mockKeychainUtils expect] andReturnValue:OCMOCK_VALUE(YES)] createKeychainValueForUsername:userData.username
@@ -129,9 +135,9 @@
 
     XCTAssertFalse(self.user.creatingUser, @"Should be finished creating user after the success block is called");
     XCTAssertNoThrow([self.mockUserClient verify], @"User should call the client to be created");
-    XCTAssertEqual(self.user.username, userData.username, @"Username should be set when user created successfully.");
-    XCTAssertEqual(self.user.password, userData.password, @"Password should be set when user created successfully.");
-    XCTAssertEqual(self.user.url, userData.url, @"URL should be set when user created successfully.");
+    XCTAssertEqualObjects(self.user.username, userData.username, @"Username should be set when user created successfully.");
+    XCTAssertEqualObjects(self.user.password, userData.password, @"Password should be set when user created successfully.");
+    XCTAssertEqualObjects(self.user.url, userData.url, @"URL should be set when user created successfully.");
 }
 
 /**
@@ -141,22 +147,22 @@
     UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
     self.push.channelID = @"some-channel";
     self.push.channelLocation = @"some-channel-location";
-    self.push.deviceToken = nil;
 
     __block UAUserAPIClientFailureBlock failureBlock;
 
     void (^andDoBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:5];
+        [invocation getArgument:&arg atIndex:4];
         failureBlock = (__bridge UAUserAPIClientFailureBlock)arg;
     };
 
-    self.push.channelID = @"some-channel";
-
     [[[self.mockUserClient expect] andDo:andDoBlock] createUserWithChannelID:@"some-channel"
-                                                                 deviceToken:nil
                                                                    onSuccess:OCMOCK_ANY
                                                                    onFailure:OCMOCK_ANY];
+
+    // Mock background task so background task check passes
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
     [self.user createUser];
 
     XCTAssertTrue(self.user.creatingUser, @"Should be creating user before the success block is called.");
@@ -183,6 +189,9 @@
                                    channelID:@"some-channel"
                                    onSuccess:OCMOCK_ANY
                                    onFailure:OCMOCK_ANY];
+
+    // Mock background task so background task check passes
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
     [self.user updateUser];
     
@@ -231,36 +240,10 @@
     XCTAssertNoThrow([self.mockUserClient verify], @"User should not update if a default user is not created yet.");
 }
 
-/**
- * Test registering as an observer for UAPush registration changes
- */
--(void)testRegisterForDeviceRegistrationChanges {
-    [self.user unregisterForDeviceRegistrationChanges];
-
-    XCTAssertFalse(self.user.isObservingDeviceRegistrationChanges, @"We should not be observing registration changes initially.");
-
-    id mockPush = [OCMockObject partialMockForObject:self.push];
-
-    [[mockPush expect] addObserver:self.user forKeyPath:@"deviceToken" options:0 context:NULL];
-    [[mockPush expect] addObserver:self.user forKeyPath:@"channelID" options:0 context:NULL];
-
-    [self.user registerForDeviceRegistrationChanges];
-
-    XCTAssertTrue(self.user.isObservingDeviceRegistrationChanges, @"We should be observing registration changes after registeringForDeviceRegistrationChanges.");
-    XCTAssertNoThrow([mockPush verify], @"User should add itself as an observer for device token and channel ID.");
-
-    [[mockPush reject] addObserver:self.user forKeyPath:@"deviceToken" options:0 context:NULL];
-    [[mockPush reject] addObserver:self.user forKeyPath:@"channelID" options:0 context:NULL];
-    [self.user registerForDeviceRegistrationChanges];
-
-    XCTAssertNoThrow([mockPush verify], @"User should not be able to register twice for KVO.");
-
-    [mockPush stopMocking];
-}
 
 /**
  * Test registering as an observer for UAPush registration changes
- * calls update if the channel or device token is available.
+ * calls update if the channel is available.
  */
 -(void)testRegisterForDeviceRegistrationChangesChannelIDAvailable {
     self.push.channelID = @"some-channel";
@@ -278,6 +261,8 @@
                                    onSuccess:OCMOCK_ANY
                                    onFailure:OCMOCK_ANY];
 
+    // Mock background task so background task check passes
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
     [self.user unregisterForDeviceRegistrationChanges];
     [self.user registerForDeviceRegistrationChanges];
@@ -295,7 +280,6 @@
 
     XCTAssertTrue(self.user.isObservingDeviceRegistrationChanges, @"We should be observing registration changes after registeringForDeviceRegistrationChanges.");
 
-    [[mockPush expect] removeObserver:self.user forKeyPath:@"deviceToken"];
     [[mockPush expect] removeObserver:self.user forKeyPath:@"channelID"];
 
     [self.user unregisterForDeviceRegistrationChanges];
@@ -303,7 +287,6 @@
     XCTAssertFalse(self.user.isObservingDeviceRegistrationChanges, @"We should not be observing registration changes after unregisteringForDeviceRegistrationChanges.");
     XCTAssertNoThrow([mockPush verify], @"User should remove itself as an observer for device token and channel ID.");
 
-    [[mockPush reject] removeObserver:self.user forKeyPath:@"deviceToken"];
     [[mockPush reject] removeObserver:self.user forKeyPath:@"channelID"];
     [self.user unregisterForDeviceRegistrationChanges];
 
@@ -312,7 +295,7 @@
 }
 
 /**
- * Test observer changes to device token and channel ID updates the user
+ * Test observer changes to channel ID updates the user
  */
 -(void)testObserveValueForKeyPath {
     self.push.channelID = @"some-channel";
@@ -329,30 +312,15 @@
                                    onSuccess:OCMOCK_ANY
                                    onFailure:OCMOCK_ANY];
 
+    // Mock background task so background task check passes
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
     [self.user observeValueForKeyPath:@"channelID" ofObject:nil change:nil context:nil];
-    XCTAssertNoThrow([self.mockUserClient verify], @"User should call the client to be updated.");
 
-    self.push.channelID = nil;
-    [[self.mockUserClient expect] updateUser:OCMOCK_ANY
-                                 deviceToken:OCMOCK_ANY
-                                   channelID:OCMOCK_ANY
-                                   onSuccess:OCMOCK_ANY
-                                   onFailure:OCMOCK_ANY];
-
-    [self.user observeValueForKeyPath:@"deviceToken" ofObject:nil change:nil context:nil];
-    XCTAssertNoThrow([self.mockUserClient verify], @"User should call the client to be updated.");
-
-
-    // Device token changes should be ignored if we have a channel ID
+    // Change the channel ID
     self.push.channelID = @"channelID";
-    [[self.mockUserClient reject] updateUser:OCMOCK_ANY
-                                 deviceToken:OCMOCK_ANY
-                                   channelID:OCMOCK_ANY
-                                   onSuccess:OCMOCK_ANY
-                                   onFailure:OCMOCK_ANY];
 
-    [self.user observeValueForKeyPath:@"deviceToken" ofObject:nil change:nil context:nil];
-    XCTAssertNoThrow([self.mockUserClient verify], @"User should not call the client to be updated on device token changes if we have a channel ID.");
+    XCTAssertNoThrow([self.mockUserClient verify]);
 }
 
 @end

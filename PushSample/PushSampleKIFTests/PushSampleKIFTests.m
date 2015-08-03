@@ -154,7 +154,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     [tester tapViewWithAccessibilityLabel:@"Alias"];
 
     // edit the alias with the uniqueAlias
-    [tester enterText:uniqueAlias intoViewWithAccessibilityLabel:@"Edit Alias"];
+    [tester clearTextFromAndThenEnterText:uniqueAlias intoViewWithAccessibilityLabel:@"Edit Alias"];
 
     // save the alias and go back
     // in iOS 7+, we need to tap the keyboard's done button
@@ -189,7 +189,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     [tester tapViewWithAccessibilityLabel:@"Named User"];
 
     // edit the named user with the uniqueNamedUser
-    [tester enterText:uniqueNamedUser intoViewWithAccessibilityLabel:@"Edit NamedUser"];
+    [tester clearTextFromAndThenEnterText:uniqueNamedUser intoViewWithAccessibilityLabel:@"Edit NamedUser"];
 
     // save the named user and go back
     // in iOS 7+, we need to tap the keyboard's done button
