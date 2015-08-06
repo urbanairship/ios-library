@@ -84,7 +84,7 @@
     if (warnings) {
         UA_LINFO(@"%@ tag groups update completed successfully with warnings: %@", prefix, warnings);
     } else {
-        UA_LINFO(@"%@ tag groups update complted successfully.", prefix);
+        UA_LINFO(@"%@ tag groups update completed successfully.", prefix);
     }
 }
 
