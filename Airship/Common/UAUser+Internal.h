@@ -67,10 +67,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)createUser;
 
-/**
- * Invalidate the user update background task.
- */
-- (void)invalidateUserUpdateBackgroundTask;
 
 /**
  * The user api client
@@ -92,10 +88,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy, nullable) NSString *url;
 
-/**
- * Background task identifier used to perform user updates in the background.
- */
-@property (nonatomic, assign) UIBackgroundTaskIdentifier userUpdateBackgroundTask;
 
 /**
  * Flag indicating if the device registration changes are being observed or not

@@ -23,67 +23,24 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEvent.h"
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import "UAUtils.h"
+
+#define kUAConnectionTypeNone @"none"
+#define kUAConnectionTypeCell @"cell"
+#define kUAConnectionTypeWifi @"wifi"
 
 /**
- * Represents the possible priorities for an event.
+ * The UAUtils object provides an interface for utility methods.
  */
-typedef NS_ENUM(NSInteger, UAEventPriority) {
-    /**
-     * Low priority event. When added in the background, it will not schedule a send
-     * if the last send was within 15 mins. Adding in the foreground will schedule
-     * sends normally.
-     */
-    UAEventPriorityLow,
-
-    /**
-     * Normal priority event. Sends will be scheduled based on the batching time.
-     */
-    UAEventPriorityNormal,
-
-    /**
-     * High priority event. A send will be scheduled immediately.
-     */
-    UAEventPriorityHigh
-};
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface UAEvent ()
+@interface UAUtils ()
 
 /**
- * The time the event was created.
+ * Gets the current connection type.
+ * Possible values are "cell", "wifi", or "none".
+ * @return The current connection type as a string.
  */
-@property (nonatomic, copy) NSString *time;
-
-/**
- * The unique event ID.
- */
-@property (nonatomic, copy) NSString *eventID;
-
-/**
- * The event's data.
- */
-@property (nonatomic, strong) NSDictionary *data;
-
-/**
- * The event's priority.
- */
-@property (nonatomic, readonly) UAEventPriority priority;
-
-/**
- * Gets the carrier's name.
- * @returns The carrier's name.
- */
-- (NSString *)carrierName;
-
-/**
- * Gets the current enabled notification types as a string array.
- *
- * @return The current notification types as a string array.
- */
-- (NSArray *)notificationTypes;
++ (NSString *)connectionType;
 
 @end
-
-NS_ASSUME_NONNULL_END

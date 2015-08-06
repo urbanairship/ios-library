@@ -183,7 +183,7 @@
     UAInAppMessage *pending = [UAirship inAppMessaging].pendingMessage;
 
     // test that the push send id is set as the IAM identifier
-    XCTAssertEqual(pending.identifier, sendId);
+    XCTAssert([pending.identifier isEqualToString:sendId]);
 
     NSString *inboxMessageID = [UAInboxUtils inboxMessageIDFromNotification:args.metadata[UAActionMetadataPushPayloadKey]];
     // test that if there was an inbox message ID, an open inbox action is inserted in its place

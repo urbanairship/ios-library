@@ -1099,8 +1099,10 @@ BOOL deferChannelCreationOnForeground = false;
               existing:(BOOL)existing {
 
     if (channelID && channelLocation) {
-        self.channelID = channelID;
+        // WARNING: Order matters here. Some things observe channelID being changed,
+        // and if we do not have a channel location set, the channelID will return nil.
         self.channelLocation = channelLocation;
+        self.channelID = channelID;
 
         if (uaLogLevel >= UALogLevelError) {
             NSLog(@"Created channel with ID: %@", self.channelID);

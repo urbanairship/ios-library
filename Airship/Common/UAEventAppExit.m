@@ -27,6 +27,7 @@
 #import "UAEvent+Internal.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
+#import "UAUtils+Internal.h"
 
 @implementation UAEventAppExit
 
@@ -40,12 +41,11 @@
     [data setValue:analytics.conversionRichPushID forKey:@"rich_push_id"];
 
 
-    [data setValue:[event connectionType] forKey:@"connection_type"];
+    [data setValue:[UAUtils connectionType] forKey:@"connection_type"];
 
     event.data = [data mutableCopy];
     return event;
 }
-
 
 - (NSString *)eventType {
     return @"app_exit";
