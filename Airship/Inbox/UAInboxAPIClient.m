@@ -74,6 +74,11 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
     request.username = self.user.username;
     request.password = self.user.password;
 
+    NSString *channelID = [UAirship push].channelID;
+    if (channelID) {
+        [request addRequestHeader:kUAChannelIDHeader value:channelID];
+    }
+
     NSString *lastModified = [self.dataStore stringForKey:[NSString stringWithFormat:UALastMessageListModifiedTime, self.user.username]];
     if (lastModified) {
         [request addRequestHeader:@"If-Modified-Since" value:lastModified];
@@ -109,12 +114,10 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
 
     NSString *channelID = [UAirship push].channelID;
     if (channelID) {
-        [request addRequestHeader:kUAChannelID value:channelID];
+        [request addRequestHeader:kUAChannelIDHeader value:channelID];
     }
 
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
-
-
 
     UA_LTRACE(@"Request to perform batch delete: %@  body: %@", requestUrl, body);
     return request;
@@ -147,7 +150,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
 
     NSString *channelID = [UAirship push].channelID;
     if (channelID) {
-        [request addRequestHeader:kUAChannelID value:channelID];
+        [request addRequestHeader:kUAChannelIDHeader value:channelID];
     }
 
     UA_LTRACE(@"Request to perfom batch mark messages as read: %@ body: %@", requestUrl, body);

@@ -32,7 +32,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define kUAChannelID @"X-UA-Channel-ID"
+#define kUAChannelIDHeader @"X-UA-Channel-ID"
 
 typedef void (^UAInboxClientFailureBlock)(UAHTTPRequest *request);
 typedef void (^UAInboxClientSuccessBlock)(void);
