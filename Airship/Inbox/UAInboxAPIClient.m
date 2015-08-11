@@ -31,6 +31,8 @@
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAPreferenceDataStore.h"
+#import "UAirship.h"
+#import "UAPush.h"
 
 @interface UAInboxAPIClient()
 
@@ -104,7 +106,15 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
     request.password = self.user.password;
 
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
+
+    NSString *channelID = [UAirship push].channelID;
+    if (channelID) {
+        [request addRequestHeader:kUAChannelID value:channelID];
+    }
+
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
+
+
 
     UA_LTRACE(@"Request to perform batch delete: %@  body: %@", requestUrl, body);
     return request;
@@ -135,6 +145,11 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
 
+    NSString *channelID = [UAirship push].channelID;
+    if (channelID) {
+        [request addRequestHeader:kUAChannelID value:channelID];
+    }
+
     UA_LTRACE(@"Request to perfom batch mark messages as read: %@ body: %@", requestUrl, body);
     return request;
 }
@@ -144,7 +159,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
                            onFailure:(UAInboxClientFailureBlock)failureBlock {
 
     UAHTTPRequest *retrieveRequest = [self requestToRetrieveMessageList];
-    
+
     [self.requestEngine
       runRequest:retrieveRequest
       succeedWhere:^(UAHTTPRequest *request){
