@@ -149,6 +149,8 @@
 		61362D541B28E2BF0011C058 /* UAWalletAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 61362D521B28E2BF0011C058 /* UAWalletAction.h */; };
 		61362D551B28E2BF0011C058 /* UAWalletAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 61362D531B28E2BF0011C058 /* UAWalletAction.m */; };
 		614F0DAC1A3B773E00F00AAB /* UACircularRegionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 614F0DAB1A3B773E00F00AAB /* UACircularRegionTest.m */; };
+		61A070991B7A5B9E00819091 /* UAInboxAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 61A070981B7A5B9E00819091 /* UAInboxAPIClientTest.m */; };
+		61A0709F1B7A7B0700819091 /* UAInboxAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 61A0709E1B7A7AEE00819091 /* UAInboxAPIClient+Internal.h */; };
 		61D6AD181A2D18C10032420C /* UARegionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 61D6AD161A2D18C10032420C /* UARegionEvent.h */; };
 		61D6AD191A2D18C10032420C /* UARegionEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D6AD171A2D18C10032420C /* UARegionEvent.m */; };
 		61D8FE4E1A3B76F100E21EBB /* UAProximityRegionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D8FE4D1A3B76F100E21EBB /* UAProximityRegionTest.m */; };
@@ -535,6 +537,8 @@
 		61362D521B28E2BF0011C058 /* UAWalletAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAWalletAction.h; sourceTree = "<group>"; };
 		61362D531B28E2BF0011C058 /* UAWalletAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWalletAction.m; sourceTree = "<group>"; };
 		614F0DAB1A3B773E00F00AAB /* UACircularRegionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACircularRegionTest.m; sourceTree = "<group>"; };
+		61A070981B7A5B9E00819091 /* UAInboxAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxAPIClientTest.m; sourceTree = "<group>"; };
+		61A0709E1B7A7AEE00819091 /* UAInboxAPIClient+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInboxAPIClient+Internal.h"; sourceTree = "<group>"; };
 		61D6AD161A2D18C10032420C /* UARegionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARegionEvent.h; sourceTree = "<group>"; };
 		61D6AD171A2D18C10032420C /* UARegionEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARegionEvent.m; sourceTree = "<group>"; };
 		61D8FE4D1A3B76F100E21EBB /* UAProximityRegionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAProximityRegionTest.m; sourceTree = "<group>"; };
@@ -909,6 +913,7 @@
 				1F610DC417835C3A00BCD96E /* UAInboxAPIClient.h */,
 				1F610DC517835C3A00BCD96E /* UAInboxAPIClient.m */,
 				CCB7DF5C17BBF71000CEDC56 /* UAInboxDBManager+Internal.h */,
+				61A0709E1B7A7AEE00819091 /* UAInboxAPIClient+Internal.h */,
 				1F610DC717835C3A00BCD96E /* UAInboxDBManager.m */,
 				49C1F08B197DDB5600DD67DE /* UAInboxMessage+Internal.h */,
 				49C1F07D1978523300DD67DE /* UAInboxMessage.h */,
@@ -1421,6 +1426,7 @@
 			children = (
 				495526AB17D95552009BC301 /* UAInboxMessageListTest.m */,
 				495526AC17D95552009BC301 /* UAInboxMessageTest.m */,
+				61A070981B7A5B9E00819091 /* UAInboxAPIClientTest.m */,
 			);
 			name = Inbox;
 			sourceTree = "<group>";
@@ -1681,6 +1687,7 @@
 				4928D90C1ABA37A30046E5BE /* UAInAppMessaging.h in Headers */,
 				CC85427817F2130700D2DE10 /* UAURLProtocol.h in Headers */,
 				76792D10178E12A10054F8AD /* UAHTTPRequest.h in Headers */,
+				61A0709F1B7A7B0700819091 /* UAInboxAPIClient+Internal.h in Headers */,
 				49DCFAC01831B580002CD5FB /* UAJavaScriptDelegate.h in Headers */,
 				CC4AAE0718C93ECF001F23B3 /* UAApplicationMetrics.h in Headers */,
 				76792D13178E13810054F8AD /* UAHTTPRequest+Internal.h in Headers */,
@@ -1904,6 +1911,7 @@
 				49C665301A1EAFEF00E5D650 /* UAWebViewDelegateTest.m in Sources */,
 				CCF4462F1947D265003E04E7 /* UACustomEventTest.m in Sources */,
 				61D8FE4E1A3B76F100E21EBB /* UAProximityRegionTest.m in Sources */,
+				61A070991B7A5B9E00819091 /* UAInboxAPIClientTest.m in Sources */,
 				49942CDB17B19A3B007E5FB1 /* UADelayOperationTest.m in Sources */,
 				490710BC184D3EAB00E494AF /* UAWebViewCallDataTest.m in Sources */,
 				49B704741A7C53E5000F67A6 /* UAColorUtilsTest.m in Sources */,
