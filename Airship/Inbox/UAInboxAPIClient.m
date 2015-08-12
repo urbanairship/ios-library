@@ -74,10 +74,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
     request.username = self.user.username;
     request.password = self.user.password;
 
-    NSString *channelID = [UAirship push].channelID;
-    if (channelID) {
-        [request addRequestHeader:kUAChannelIDHeader value:channelID];
-    }
+    [request addRequestHeader:kUAChannelIDHeader value:[UAirship push].channelID];
 
     NSString *lastModified = [self.dataStore stringForKey:[NSString stringWithFormat:UALastMessageListModifiedTime, self.user.username]];
     if (lastModified) {
@@ -112,10 +109,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
 
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
 
-    NSString *channelID = [UAirship push].channelID;
-    if (channelID) {
-        [request addRequestHeader:kUAChannelIDHeader value:channelID];
-    }
+    [request addRequestHeader:kUAChannelIDHeader value:[UAirship push].channelID];
 
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
 
@@ -148,10 +142,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
 
-    NSString *channelID = [UAirship push].channelID;
-    if (channelID) {
-        [request addRequestHeader:kUAChannelIDHeader value:channelID];
-    }
+    [request addRequestHeader:kUAChannelIDHeader value:[UAirship push].channelID];
 
     UA_LTRACE(@"Request to perfom batch mark messages as read: %@ body: %@", requestUrl, body);
     return request;
