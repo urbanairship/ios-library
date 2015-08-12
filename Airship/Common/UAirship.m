@@ -258,12 +258,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         }
     }
 
-
-    // Create the user if it does not exist
-    if (!sharedAirship_.sharedInboxUser.isCreated) {
-        [sharedAirship_.sharedInboxUser createUser];
-    }
-
     // Automatic setup
     if (sharedAirship_.config.automaticSetupEnabled) {
         UA_LINFO(@"Automatic setup enabled.");

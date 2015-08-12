@@ -147,6 +147,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
 - (void)createUser {
     if (self.isCreated) {
+        UA_LDEBUG(@"User already created");
         return;
     }
 
@@ -252,8 +253,11 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
     // Update the user if we already have a channelID
     if (self.push.channelID) {
-        [self updateUser];
-        return;
+        if (self.isCreated) {
+            [self updateUser];
+        } else {
+            [self createUser];
+        }
     }
 }
 
@@ -264,7 +268,11 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
     if ([keyPath isEqualToString:@"channelID"]) {
         UA_LTRACE(@"KVO channel ID modified. Updating user.");
-        [self updateUser];
+        if (self.isCreated) {
+            [self updateUser];
+        } else {
+            [self createUser];
+        }
     }
 }
 
