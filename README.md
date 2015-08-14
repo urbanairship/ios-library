@@ -47,8 +47,6 @@ Installation"
 
 ### Static Library Installation
 
-The static library can be downloaded as a zip file or built directly from source. 
-
 #### Downloading libUAirship
 [Download](https://bintray.com/urbanairship/iOS/urbanairship-sdk/_latestVersion) and unzip the latest 
 version of libUAirship. If you are using one of our sample projects, copy the ``Airship`` directory 
@@ -59,33 +57,23 @@ into the same directory as your project::
 ```
 
 If you are not using a sample project, you'll need to import the source files for the User 
-Interface into your project. These are located under Airship/UI/Default. If you are using
-Swift, we also provide a bridging header located in Airship/UI, named
-"UA-UI-Bridging-Header.h", to facilitate importing the sample UI. Ensure *UAirship.h* and 
+Interface into your project. These are located under Airship/UI/Default. Ensure *UAirship.h* and 
 *UAPush.h* are included in your source files.
 
-#### Building libUAirship from Source
-
-[Source can be found here.](https://github.com/urbanairship/ios-library)
-
-- Update `scripts/configure-xcode-version.sh` with the path to the app bundle for the version of Xcode (e.g. /Applications/Xcode7-beta4.app) that you want to build with.
- Run the distribution script `./Deploy/distribute.sh`
- 
-This will produce a static library (.a file) in the Airship folder as well as the sample projects and Airship library distribution zip file in
-Deploy/output
-
-### AirshipKit Installation
+#### AirshipKit Installation
 
 - Include AirshipKit as a project dependency by dragging AirshipKit.xcodeproj out of the AirshipKit folder and into your app project in Xcode (directly under the top level of the project structure). Now AirshipKit will be built at compile-time for the active architecture.
 
--Link against the embedded framework by adding the AirshipKit.framework file to the Embedded Binaries section in the `General` tab for your target. This should also add it to the Linked Frameworks and Libraries section.
+- Link against the embedded framework by adding the AirshipKit.framework file to the Embedded Binaries section in the `General` tab for your target. This should also add it to the Linked Frameworks and Libraries section.
+
+- Add the bridging header located in Airship/UI, named "UA-UI-Bridging-Header.h" to use the sample UI.
 
 ### Setup
 
 #### Adding Required Build Settings
 
 **Compiler**
-Xcode 6.3 is required for all projects and the static library. Projects must target >= iOS6.
+Xcode 6.3+ is required for all projects and the static library. Projects must target >= iOS6.
 
 **Enable Modules**
 Modules are enabled by default in new projects starting with Xcode 5. We recommend enabling
@@ -101,7 +89,7 @@ runtime exceptions and to include linkage to libz and libsqlite3. The linker fla
 `-force_load <path to library>/libUAirship-<version>.a` may be used in instances where using
 the -ObjC linker flag is undesirable.
 
-#### Adding an AirshipConfig File
+#### Adding an Airship Config File
 
 The library uses a .plist configuration file named `AirshipConfig.plist` to manage your production and development
 application profiles. Example copies of this file are available in all of the sample projects. Place this file
@@ -136,7 +124,7 @@ mode by setting `detectProvisioningMode` to `true`.
 Advanced users may add scripting or preprocessing logic to this .plist file to automate the switch from
 development to production keys based on the build type.
 
-#### AppDelegate additions
+#### App Delegate additions
 
 To enable push notifications, you will need to make several additions to your application delegate.
     
@@ -226,6 +214,16 @@ debug mode. The emoji can be removed by disabling loud implementation errors bef
 ```obj-c
     [UAirship setLoudImpErrorLogging:NO];
 ```
+
+## Building libUAirship from Source
+
+[Source can be found here.](https://github.com/urbanairship/ios-library)
+
+- Update `scripts/configure-xcode-version.sh` with the path to the app bundle for the version of Xcode (e.g. /Applications/Xcode7-beta4.app) that you want to build with.
+ Run the distribution script `./Deploy/distribute.sh`
+
+This will produce a static library (.a file) in the Airship folder as well as the sample projects and Airship library distribution zip file in
+Deploy/output
 
 ## Testing
 
