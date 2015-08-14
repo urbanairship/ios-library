@@ -60,7 +60,7 @@ If you are not using a sample project, you'll need to import the source files fo
 Interface into your project. These are located under Airship/UI/Default. Ensure *UAirship.h* and 
 *UAPush.h* are included in your source files.
 
-#### AirshipKit Installation
+### AirshipKit Installation
 
 - Include AirshipKit as a project dependency by dragging AirshipKit.xcodeproj out of the AirshipKit folder and into your app project in Xcode (directly under the top level of the project structure). Now AirshipKit will be built at compile-time for the active architecture.
 
