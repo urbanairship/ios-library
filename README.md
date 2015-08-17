@@ -4,13 +4,13 @@
 ## Overview
 
 Urban Airship's libUAirship is a drop-in static library that provides a simple way to
-integrate Urban Airship services into your iOS applications. If you just want to
+integrate Urban Airship services into your iOS applications. If you want to
 include the library in your app, you can download ``libUAirship-latest.zip`` from
-http://urbanairship.com/resources/developer-resources. This zip contains a pre-compiled
-universal library for armv7/armv7s/arm64/i386/x86_64 (``libUAirship-x.y.z.a``).
+[Developer Resources](http://urbanairship.com/resources/developer-resources). This zip
+contains a pre-compiled universal library for armv7/armv7s/arm64/i386/x86_64 (`libUAirship-x.y.z.a`)
+as well as the subproject necessary for building AirshipKit.
 
-
-## iOS 8 Notes (Updated September 25, 2014)
+## iOS 8 Notes (Updated Aug 12, 2015)
 
 Known issues with iOS 8.0.0 that may impact your application:
 - Applications do not enter the 'active' state when started from an interactive notification 
@@ -32,57 +32,62 @@ or authorization required status (Radar #18385104).
 
 ## Resources
 
-- Urban Airship iOS Library Reference: http://docs.urbanairship.com/reference/libraries/ios/latest/
-- Getting started guide: http://docs.urbanairship.com/build/ios.html
-- Library Upgrade Guides: http://docs.urbanairship.com/topic_guides/ios_migration.html
+- [Urban Airship iOS Library Reference](http://docs.urbanairship.com/reference/libraries/ios/latest/)
+- [Getting started guide](http://docs.urbanairship.com/build/ios.html)
+- [Library Upgrade Guides](http://docs.urbanairship.com/topic_guides/ios_migration.html)
 
-## Working with the Library
+## Quickstart
 
-### Copy libUAirship Files
+Xcode 6.3+ is required for all projects and the static library. Projects must target >= iOS6.
 
-Download and unzip the latest version of libUAirship.  If you are using one of our sample
-projects, copy the ``Airship`` directory into the same directory as your project::
+[Download](https://bintray.com/urbanairship/iOS/urbanairship-sdk/_latestVersion) and unzip the latest 
+version of libUAirship. If you are using one of our sample projects, copy the ``Airship`` directory 
+into the same directory as your project::
 
+```sh
     cp -r Airship /SomeDirectory/ (where /SomeDirectory/YourProject/ is your project)
+```
 
 If you are not using a sample project, you'll need to import the source files for the User 
-Interface into your project. These are located under Airship/UI/Default. If you are using
-Swift, we also provide a bridging header located in Airship/UI, named
-"UA-UI-Bridging-Header.h", to facilitate importing the sample UI.
+Interface into your project. These are located under Airship/UI/Default. Ensure *UAirship.h* and 
+*UAPush.h* are included in your source files.
 
-### Build Settings
-
-**Compiler**
-Xcode 6 is required for all projects and the static library. Projects must target >= iOS6.
-
-**Enable Modules**
 Modules are enabled by default in new projects starting with Xcode 5. We recommend enabling
 modules and the automatic linking of frameworks. In the project's Build Settings, search for
 ``Enable Modules`` and set it to ``YES`` then set ``Link Frameworks Automatically`` to ``YES``.
 
-**Header search path**                          
-Ensure that your build target's header search path includes the Airship directory.
+New applications with iOS 8 or above as a deployment target may opt to link against AirshipKit.framework 
+instead of libUAirship. Because AirshipKit is an embedded framework as opposed to a static library, 
+applications using this framework can take advantage of features such as module-style import and automatic 
+bridging to the Swift language. Be aware, however, that embedded frameworks are not supported on iOS 7 and 
+below. Further instructions on how to set up AirshipKit can be found below under the header "AirshipKit Setup"
 
-**Linker Flags (for static library)**
-Add `-ObjC -lz -lsqlite3` linker flag to *Other Linker Flags* to prevent "Selector Not Recognized"
-runtime exceptions and to include linkage to libz and libsqlite3. The linker flag
-`-force_load <path to library>/libUAirship-<version>.a` may be used in instances where using
-the -ObjC linker flag is undesirable.
 
-## Quickstart
+### Static Library Setup
 
-### Prerequisite
+- Add the Airship directory to your build target's header search path.
 
-Before getting started you must perform the steps outlined above.
+- Add `-ObjC -lz -lsqlite3` linker flag to *Other Linker Flags* to prevent "Selector Not Recognized"
+runtime exceptions and to include linkage to libz and libsqlite3. The linker flag `-force_load <path to 
+library>/libUAirship-<version>.a` may be used in instances where using the -ObjC linker flag is undesirable.
 
-In addition you'll need to include *UAirship.h* and *UAPush.h* in your source files.
+- Link against the static library, add the libUAirship.a file to the Link Binary With Libraries section in the Build Phases tab for your target.
 
-### The AirshipConfig File
+### AirshipKit Setup
+
+- Include AirshipKit as a project dependency by dragging AirshipKit.xcodeproj out of the AirshipKit folder and into your app project in Xcode (directly under the top level of the project structure). Now AirshipKit will be built at compile-time for the active architecture.
+
+- Link against the embedded framework by adding the AirshipKit.framework file to the Embedded Binaries section in the `General` tab for your target. This should also add it to the Linked Frameworks and Libraries section.
+
+- Add the bridging header located in Airship/UI, named "UA-UI-Bridging-Header.h" to use the sample UI.
+
+
+#### Adding an Airship Config File
 
 The library uses a .plist configuration file named `AirshipConfig.plist` to manage your production and development
 application profiles. Example copies of this file are available in all of the sample projects. Place this file
 in your project and set the following values to the ones in your application at http://go.urbanairship.com.  To 
-view all the possible keys and values, visit http://docs.urbanairship.com/ios-lib/Classes/UAConfig.html
+view all the possible keys and values, see the [UAConfig class reference](http://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAConfig.html)
 
 You can also edit the file as plain-text:
 
@@ -112,7 +117,7 @@ mode by setting `detectProvisioningMode` to `true`.
 Advanced users may add scripting or preprocessing logic to this .plist file to automate the switch from
 development to production keys based on the build type.
 
-### Push Integration
+#### App Delegate additions
 
 To enable push notifications, you will need to make several additions to your application delegate.
     
@@ -142,13 +147,6 @@ To enable push notifications, you will need to make several additions to your ap
 
         // Set the icon badge to zero on startup (optional)
         [[UAirship push] resetBadge];
-
-        // Set the notification types required for the app (optional). This value defaults
-        // to badge, alert and sound, so it's only necessary to set it if you want
-        // to add or remove types.
-        [UAirship push].userNotificationTypes = (UIUserNotificationTypeAlert |
-                                                 UIUserNotificationTypeBadge |
-                                                 UIUserNotificationTypeSound);
 
         // User notifications will not be enabled until userPushNotificationsEnabled is
         // set YES on UAPush. Once enabled, the setting will be persisted and the user
@@ -210,44 +208,40 @@ debug mode. The emoji can be removed by disabling loud implementation errors bef
     [UAirship setLoudImpErrorLogging:NO];
 ```
 
-## Building the Library
+## Building libUAirship from Source
 
-Source can be found at https://github.com/urbanairship/ios-library
+[Source can be found here.](https://github.com/urbanairship/ios-library)
 
-### Running Tests
+- Update `scripts/configure-xcode-version.sh` with the path to the app bundle for the version of Xcode (e.g. /Applications/Xcode7-beta4.app) that you want to build with.
+ Run the distribution script `./Deploy/distribute.sh`
+
+This will produce a static library (.a file) in the Airship folder as well as the sample projects and Airship library distribution zip file in
+Deploy/output
+
+## Testing
 
 The unit tests in this project require OCMock. OCMock can be installed automatically
 with the use of our install script, scripts/mock_setup.sh.
-
-### Building for Distribution
-
-1. Update `scripts/configure-xcode-version.sh` with the path to the app bundle for the version of Xcode (e.g. /Applications/Xcode7-beta4.app) that you want to build with.
-2. Run the distribution script `./Deploy/distribute.sh`
- 
-This will produce static libraries (.a files) in Airship and create the samples and Airship library distribution zip file in
-Deploy/output
-
-## Contributing Code
-
-We accept pull requests! If you would like to submit a pull request, please fill out and submit a
-Code Contribution Agreement (http://urbanairship.com/legal/contribution-agreement/).
 
 
 ## Third Party Packages
 
 ### Core Library
 
-
 Third party Package | License   | Copyright / Creator 
 ------------------- | --------- | -----------------------------------
 Base64              | BSD       | Copyright 2009-2010 Matt Gallagher.
-Reachability        | BSD       | Copyright (C) 2010 Apple Inc.
-
 
 ### Test Code
 
 Third party Package | License   | Copyright / Creator 
 ------------------- | --------- | -----------------------------------
 JRSwizzle           | MIT       | Copyright 2012 Jonathan Rentzsch
+
+
+## Contributing Code
+
+We accept pull requests! If you would like to submit a pull request, please fill out and submit a
+Code Contribution Agreement (http://urbanairship.com/legal/contribution-agreement/).
 
 
