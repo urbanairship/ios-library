@@ -273,10 +273,12 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                       context:(void *)context {
 
     if ([keyPath isEqualToString:@"channelID"]) {
-        UA_LTRACE(@"KVO channel ID modified. Updating user.");
+        UA_LTRACE(@"KVO channel ID modified");
         if (self.isCreated) {
+            UA_LTRACE(@"Updating user");
             [self updateUser];
         } else {
+            UA_LTRACE(@"Creating user");
             [self createUser];
         }
     }
