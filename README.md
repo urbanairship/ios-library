@@ -38,16 +38,8 @@ or authorization required status (Radar #18385104).
 
 ## Quickstart
 
-New applications with iOS 8 or above as a deployment target may opt to link against AirshipKit.framework 
-instead of libUAirship. Because AirshipKit is an embedded framework as opposed to a static library, 
-applications using this framework can take advantage of features such as module-style import and automatic 
-bridging to the Swift language. Be aware, however, that embedded frameworks are not supported on iOS 7 and 
-below. Further instructions on how to set up AirshipKit can be found below under the header "AirshipKit 
-Installation"
+Xcode 6.3+ is required for all projects and the static library. Projects must target >= iOS6.
 
-### Static Library Installation
-
-#### Downloading libUAirship
 [Download](https://bintray.com/urbanairship/iOS/urbanairship-sdk/_latestVersion) and unzip the latest 
 version of libUAirship. If you are using one of our sample projects, copy the ``Airship`` directory 
 into the same directory as your project::
@@ -60,7 +52,28 @@ If you are not using a sample project, you'll need to import the source files fo
 Interface into your project. These are located under Airship/UI/Default. Ensure *UAirship.h* and 
 *UAPush.h* are included in your source files.
 
-### AirshipKit Installation
+Modules are enabled by default in new projects starting with Xcode 5. We recommend enabling
+modules and the automatic linking of frameworks. In the project's Build Settings, search for
+``Enable Modules`` and set it to ``YES`` then set ``Link Frameworks Automatically`` to ``YES``.
+
+New applications with iOS 8 or above as a deployment target may opt to link against AirshipKit.framework 
+instead of libUAirship. Because AirshipKit is an embedded framework as opposed to a static library, 
+applications using this framework can take advantage of features such as module-style import and automatic 
+bridging to the Swift language. Be aware, however, that embedded frameworks are not supported on iOS 7 and 
+below. Further instructions on how to set up AirshipKit can be found below under the header "AirshipKit Setup"
+
+
+### Static Library Setup
+
+- Add the Airship directory to your build target's header search path.
+
+- Add `-ObjC -lz -lsqlite3` linker flag to *Other Linker Flags* to prevent "Selector Not Recognized"
+runtime exceptions and to include linkage to libz and libsqlite3. The linker flag `-force_load <path to 
+library>/libUAirship-<version>.a` may be used in instances where using the -ObjC linker flag is undesirable.
+
+- Link against the static library, add the libUAirship.a file to the Link Binary With Libraries section in the Build Phases tab for your target.
+
+### AirshipKit Setup
 
 - Include AirshipKit as a project dependency by dragging AirshipKit.xcodeproj out of the AirshipKit folder and into your app project in Xcode (directly under the top level of the project structure). Now AirshipKit will be built at compile-time for the active architecture.
 
@@ -68,33 +81,13 @@ Interface into your project. These are located under Airship/UI/Default. Ensure 
 
 - Add the bridging header located in Airship/UI, named "UA-UI-Bridging-Header.h" to use the sample UI.
 
-### Setup
-
-#### Adding Required Build Settings
-
-**Compiler**
-Xcode 6.3+ is required for all projects and the static library. Projects must target >= iOS6.
-
-**Enable Modules**
-Modules are enabled by default in new projects starting with Xcode 5. We recommend enabling
-modules and the automatic linking of frameworks. In the project's Build Settings, search for
-``Enable Modules`` and set it to ``YES`` then set ``Link Frameworks Automatically`` to ``YES``.
-
-**Header search path**                          
-Ensure that your build target's header search path includes the Airship directory.
-
-**Linker Flags (for static library)**
-Add `-ObjC -lz -lsqlite3` linker flag to *Other Linker Flags* to prevent "Selector Not Recognized"
-runtime exceptions and to include linkage to libz and libsqlite3. The linker flag
-`-force_load <path to library>/libUAirship-<version>.a` may be used in instances where using
-the -ObjC linker flag is undesirable.
 
 #### Adding an Airship Config File
 
 The library uses a .plist configuration file named `AirshipConfig.plist` to manage your production and development
 application profiles. Example copies of this file are available in all of the sample projects. Place this file
 in your project and set the following values to the ones in your application at http://go.urbanairship.com.  To 
-view all the possible keys and values, see the [UAConfig class referece](http://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAConfig.html)
+view all the possible keys and values, see the [UAConfig class reference](http://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAConfig.html)
 
 You can also edit the file as plain-text:
 
