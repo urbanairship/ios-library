@@ -147,7 +147,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
 - (void)createUser {
 
-    if (![UAirship push].channelID) {
+    if (!self.push.channelID) {
         UA_LDEBUG(@"Skipping user creation, no channel");
         return;
     }
