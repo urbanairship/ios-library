@@ -2031,6 +2031,87 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 }
 
 /**
+ * Test handling receiving notification actions triggered with an identifier and responseInfo for
+ * background activation mode.
+ */
+- (void)testOnReceiveActionWithIdentifierResponseInfoBackground {
+    UIMutableUserNotificationAction *foregroundAction = [[UIMutableUserNotificationAction alloc] init];
+    foregroundAction.activationMode = UIUserNotificationActivationModeForeground;
+    foregroundAction.identifier = @"foregroundIdentifier";
+
+    UIMutableUserNotificationAction *backgroundAction = [[UIMutableUserNotificationAction alloc] init];
+    backgroundAction.activationMode = UIUserNotificationActivationModeBackground;
+    backgroundAction.identifier = @"backgroundIdentifier";
+
+    NSDictionary *expectedResponseInfo;
+    NSDictionary *expectedMetadata;
+
+    // TODO: remove this conditional behavior once we start building with Xcode 7
+    if ([[UIDevice currentDevice].systemVersion floatValue] >= 9.0) {
+        // backgroundAction.behavior = UIUserNotificationActionBehaviorTextInput
+        [backgroundAction setValue:@(1) forKey:@"behavior"];
+
+        expectedResponseInfo = @{@"UIUserNotificationActionResponseTypedTextKey":@"howdy"};
+        expectedMetadata = @{ UAActionMetadataUserNotificationActionIDKey: @"backgroundIdentifier",
+                              UAActionMetadataPushPayloadKey: self.notification,
+                              UAActionMetadataResponseInfoKey: expectedResponseInfo};
+    } else {
+        expectedMetadata = @{ UAActionMetadataUserNotificationActionIDKey: @"backgroundIdentifier",
+                              UAActionMetadataPushPayloadKey: self.notification };
+    }
+
+    UIMutableUserNotificationCategory *category = [[UIMutableUserNotificationCategory alloc] init];
+    [category setActions:@[foregroundAction, backgroundAction] forContext:UIUserNotificationActionContextMinimal];
+    category.identifier = @"notificationCategory";
+
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:0 categories:[NSSet setWithArray:@[category]]];
+    [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
+
+    __block BOOL completionHandlerCalled = NO;
+
+    BOOL (^handlerCheck)(id obj) = ^(id obj) {
+        void (^handler)(UAActionResult *) = obj;
+        if (handler) {
+            handler([UAActionResult emptyResult]);
+        }
+        return YES;
+    };
+
+    // Expected actions payload
+    NSMutableDictionary *expectedActionPayload = [NSMutableDictionary dictionary];
+    [expectedActionPayload addEntriesFromDictionary:self.notification[@"com.urbanairship.interactive_actions"][@"backgroundIdentifier"]];
+    expectedActionPayload[kUAIncomingPushActionRegistryName] = self.notification;
+
+    [[self.mockActionRunner expect]runActionsWithActionValues:expectedActionPayload
+                                                    situation:UASituationBackgroundInteractiveButton
+                                                     metadata:expectedMetadata
+                                            completionHandler:[OCMArg checkWithBlock:handlerCheck]];
+
+
+    [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateBackground];
+    [[self.mockedAnalytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isKindOfClass:[UAInteractiveNotificationEvent class]];
+    }]];
+
+    [self.push appReceivedActionWithIdentifier:@"backgroundIdentifier"
+                                  notification:self.notification
+                                  responseInfo:expectedResponseInfo
+                              applicationState:UIApplicationStateBackground
+                             completionHandler:^{
+                                 completionHandlerCalled = YES;
+                             }];
+
+
+    XCTAssertNoThrow([self.mockActionRunner verify],
+                     @"Actions should run for notification action button");
+
+    XCTAssertNoThrow([self.mockedAnalytics verify],
+                     @"Analytics should be notified of the incoming notification");
+
+    XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
+}
+
+/**
  * Test handling receiving notification actions triggered with an identifier for
  * foreground activation mode.
  */
@@ -2821,6 +2902,23 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [self.push updateRegistration];
 
     XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Should call updateChannelTags request.");
+}
+
+/**
+ * Test that UIUserNotificationActionResponseTypedTextKey maps to the string
+ * we expect it to. This must be run in the Xcode 7 beta in order to
+ * achieve a meaningful result.
+ *
+ * TODO: remove once building with Xcode 7.
+ */
+- (void)testUIUserNotificationActionResponseTypedTextKey {
+    NSString *key;
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
+    key = @"UIUserNotificationActionResponseTypedTextKey";
+#else
+    key = UIUserNotificationActionResponseTypedTextKey;
+#endif
+    XCTAssertEqualObjects(key, @"UIUserNotificationActionResponseTypedTextKey");
 }
 
 @end

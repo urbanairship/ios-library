@@ -607,6 +607,21 @@ NS_ASSUME_NONNULL_BEGIN
                        applicationState:(UIApplicationState)state
                       completionHandler:(void (^)())completionHandler;
 
+/**
+ * Handle interactive notification actions with response info.
+ *
+ * @param identifier The identifier of the button that was triggered.
+ * @param notification The notification payload, as passed to your application delegate.
+ * @param responseInfo The response info, as passed to your application delegate.
+ * @param state The application state at the time the notification was received.
+ * @param completionHandler The completion handler.
+ */
+- (void)appReceivedActionWithIdentifier:(NSString *)identifier
+                           notification:(NSDictionary *)notification
+                           responseInfo:(nullable NSDictionary *)responseInfo
+                       applicationState:(UIApplicationState)state
+                      completionHandler:(void (^)())completionHandler;
+
 @end
 
 NS_ASSUME_NONNULL_END

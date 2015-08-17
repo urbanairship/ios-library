@@ -670,10 +670,23 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
                        applicationState:(UIApplicationState)state
                       completionHandler:(void (^)())completionHandler {
 
-    UA_LINFO(@"Received remote notification button interaction: %@ notification: %@", identifier, notification);
+    [self appReceivedActionWithIdentifier:identifier notification:notification responseInfo:nil applicationState:state completionHandler:completionHandler];
+
+}
+
+- (void)appReceivedActionWithIdentifier:(NSString *)identifier
+                           notification:(NSDictionary *)notification
+                           responseInfo:(NSDictionary *)responseInfo
+                       applicationState:(UIApplicationState)state
+                      completionHandler:(void (^)())completionHandler {
+
+    if (responseInfo) {
+        UA_LINFO(@"Received remote notification interaction: %@ notification: %@, response info: %@", identifier, notification, responseInfo);
+    } else {
+        UA_LINFO(@"Received remote notification interaction: %@ notification: %@", identifier, notification);
+    }
 
     [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
-
 
     NSString *categoryID = notification[@"aps"][@"category"];
     NSSet *categories = [[UIApplication sharedApplication] currentUserNotificationSettings].categories;
@@ -714,7 +727,6 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
                                                                                            categoryID:categoryID
                                                                                          notification:notification]];
 
-    // Pull the action payload for the button identifier
     NSMutableDictionary *actionsPayload = [NSMutableDictionary dictionaryWithDictionary:notification[kUANotificationActionKey][identifier]];
 
     // Add incoming push action
@@ -725,8 +737,10 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
     UASituationBackgroundInteractiveButton : UASituationForegroundInteractiveButton;
 
     // Action metadata
-    NSDictionary *metadata = @{ UAActionMetadataUserNotificationActionIDKey: identifier,
-                                UAActionMetadataPushPayloadKey: notification };
+    NSMutableDictionary *metadata = [@{ UAActionMetadataUserNotificationActionIDKey: identifier,
+                                                     UAActionMetadataPushPayloadKey: notification } mutableCopy];
+    // Add the text response to the metadata if it's available
+    [metadata setValue:responseInfo forKey:UAActionMetadataResponseInfoKey];
 
     // Run the actions
     [UAActionRunner runActionsWithActionValues:actionsPayload
@@ -739,6 +753,7 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
                              }];
 
 }
+
 
 - (void)updateBadgeFromNotification:(NSDictionary *)notification {
     NSDictionary *apsDict = [notification objectForKey:@"aps"];
