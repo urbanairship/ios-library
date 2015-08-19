@@ -264,7 +264,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     XCTAssertEqualObjects([self.dataStore valueForKey:UAPushTagsSettingsKey], self.push.tags,
                           @"tags are not stored correctly in standardUserDefaults");
 
-    self.push.tags = nil;
+    self.push.tags = @[];
     XCTAssertEqual((NSUInteger)0, self.push.tags.count, @"tags should return an empty array even when set to nil");
     XCTAssertEqual((NSUInteger)0, [[self.dataStore valueForKey:UAPushTagsSettingsKey] count],
                    @"tags are not being cleared in standardUserDefaults");
@@ -352,7 +352,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 }
 
 - (void)testAddTags {
-    self.push.tags = nil;
+    self.push.tags = @[];
 
     [self.push addTags:@[@"tag-one", @"tag-two"]];
     XCTAssertEqualObjects([NSSet setWithArray:(@[@"tag-one", @"tag-two"])], [NSSet setWithArray:self.push.tags],
@@ -373,16 +373,12 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                           @"Add tags should add unique tags even if some of them are duplicate");
 
     // Try to add an nil set of tags
-    XCTAssertNoThrow([self.push addTags:nil],
-                     @"Should not throw when adding a nil set of tags");
-
-    // Try to add an nil set of tags
     XCTAssertNoThrow([self.push addTags:[NSArray array]],
                      @"Should not throw when adding an empty tag array");
 }
 
 - (void)testAddTag {
-    self.push.tags = nil;
+    self.push.tags = @[];
 
     [self.push addTag:@"tag-one"];
     XCTAssertEqualObjects((@[@"tag-one"]), self.push.tags,
@@ -396,14 +392,10 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [self.push addTag:@"tag-two"];
     XCTAssertEqualObjects((@[@"tag-one", @"tag-two"]), self.push.tags,
                           @"Adding another tag to tags fails");
-
-    // Try to add an nil tag
-    XCTAssertThrows([self.push addTag:nil],
-                    @"Should throw when adding a nil tag");
 }
 
 - (void)testRemoveTag {
-    self.push.tags = nil;
+    self.push.tags = @[];
     XCTAssertNoThrow([self.push removeTag:@"some-tag"],
                      @"Should not throw when removing a tag when tags are empty");
 
@@ -414,13 +406,11 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [self.push removeTag:@"some-tag"];
     XCTAssertEqualObjects((@[@"some-other-tag"]), self.push.tags,
                           @"Remove tag from device should actually remove the tag");
-
-    XCTAssertThrows([self.push removeTag:nil],
-                    @"Should throw when removing a nil tag");
 }
 
 - (void)testRemoveTags {
-    self.push.tags = nil;
+    self.push.tags = @[];
+
     XCTAssertNoThrow([self.push removeTags:@[@"some-tag"]],
                      @"Should not throw when removing tags when current tags are empty");
 
@@ -431,9 +421,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [self.push removeTags:@[@"some-tag"]];
     XCTAssertEqualObjects((@[@"some-other-tag"]), self.push.tags,
                           @"Remove tags from device should actually remove the tag");
-
-    XCTAssertNoThrow([self.push removeTags:nil],
-                     @"Should throw when removing a nil set of tags");
 }
 
 /**
@@ -694,7 +681,9 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                           [self.dataStore stringForKey:UAPushTimeZoneSettingsKey],
                           @"timezone should be stored in standardUserDefaults");
 
-    self.push.timeZone = nil;
+    // Clear the timezone from preferences
+    [self.dataStore removeObjectForKey:UAPushTimeZoneSettingsKey];
+
 
     XCTAssertEqualObjects([self.push.defaultTimeZoneForQuietTime abbreviation],
                           [self.push.timeZone abbreviation],
@@ -781,7 +770,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  * defaults user notification categories.
  */
 - (void)testRequireAuthorizationForDefaultCategories {
-    self.push.userNotificationCategories = nil;
+    self.push.userNotificationCategories = [NSSet set];
     self.push.userPushNotificationsEnabled = YES;
 
     NSSet *defaultSet = [NSSet setWithArray:@[[[UIUserNotificationCategory alloc] init], [[UIUserNotificationCategory alloc] init]]];
@@ -2348,7 +2337,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     self.push.userNotificationTypes = UIUserNotificationTypeBadge;
 
     XCTAssertTrue(self.push.shouldUpdateAPNSRegistration, "Any APNS changes should update the flag.");
-    XCTAssertEqual(self.push.userNotificationTypes, self.push.notificationTypes, @"Setting one type should set the the other type.");
+    XCTAssertEqual((NSUInteger)self.push.userNotificationTypes, (NSUInteger)self.push.notificationTypes, @"Setting one type should set the the other type.");
 }
 
 /**
@@ -2358,7 +2347,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     self.push.notificationTypes = UIRemoteNotificationTypeAlert;
 
     XCTAssertTrue(self.push.shouldUpdateAPNSRegistration, "Any APNS changes should update the flag.");
-    XCTAssertEqual(self.push.userNotificationTypes, self.push.notificationTypes, @"Setting one type should set the the other type.");
+    XCTAssertEqual((NSUInteger)self.push.userNotificationTypes, (NSUInteger)self.push.notificationTypes, @"Setting one type should set the the other type.");
 }
 
 
@@ -2539,8 +2528,8 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [self.push addTags:emptyTagsArray group:@"some-tag-group"];
     XCTAssertEqual((NSUInteger)2, self.push.pendingAddTags.count, @"should still contain 2 tag groups");
 
-    // test addTags with nil group ID
-    [self.push addTags:tags2 group:nil];
+    // test addTags with an empty group ID
+    [self.push addTags:tags2 group:@""];
     XCTAssertEqual((NSUInteger)2, self.push.pendingAddTags.count, @"should still contain 2 tag groups");
 
     // test addTags with tags with whitespace
@@ -2601,10 +2590,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     // test removeTags with empty tags
     NSArray *emptyTagsArray = @[];
     [self.push removeTags:emptyTagsArray group:@"some-tag-group"];
-    XCTAssertEqual((NSUInteger)2, self.push.pendingRemoveTags.count, @"should still contain 2 tag groups");
-
-    // test removeTags with nil group ID
-    [self.push addTags:tags2 group:nil];
     XCTAssertEqual((NSUInteger)2, self.push.pendingRemoveTags.count, @"should still contain 2 tag groups");
 
     // test removeTags with empty group ID

@@ -98,13 +98,13 @@
 
     UAAction *foo = [action bind:bangBindBlock];
 
-    [foo runWithArguments:nil completionHandler:^(UAActionResult *result) {
+    [foo runWithArguments:self.emptyArgs completionHandler:^(UAActionResult *result) {
         blockResult = result;
     }];
 
     UAAction *bar = bangBindBlock(actionBlock, predicate);
 
-    [bar runWithArguments:nil completionHandler:^(UAActionResult *result) {
+    [bar runWithArguments:self.emptyArgs completionHandler:^(UAActionResult *result) {
         blockResult2 = result;
     }];
 
@@ -125,11 +125,11 @@
     foo = [wrap(actionBlock, predicate) bind:wrap];
     bar = wrap(actionBlock, predicate);
 
-    [foo runWithArguments:nil completionHandler:^(UAActionResult *result) {
+    [foo runWithArguments:self.emptyArgs completionHandler:^(UAActionResult *result) {
         blockResult = result;
     }];
 
-    [bar runWithArguments:nil completionHandler:^(UAActionResult *result) {
+    [bar runWithArguments:self.emptyArgs completionHandler:^(UAActionResult *result) {
         blockResult2 = result;
     }];
 
@@ -161,11 +161,11 @@
 
     UAAction *baz = [foo bind:nestedBind];
 
-    [bar runWithArguments:nil completionHandler:^(UAActionResult *result) {
+    [bar runWithArguments:self.emptyArgs completionHandler:^(UAActionResult *result) {
         blockResult = result;
     }];
 
-    [baz runWithArguments:nil completionHandler:^(UAActionResult *result) {
+    [baz runWithArguments:self.emptyArgs completionHandler:^(UAActionResult *result) {
         blockResult2 = result;
     }];
 
@@ -192,7 +192,7 @@
         handler([UAActionResult resultWithValue:@"simpleResult"]);
     }];
 
-    [action performWithArguments:nil completionHandler:saveBlockResult];
+    [action performWithArguments:self.emptyArgs completionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult", @"the result value should be 'simpleResult'");
 
     //a bind block defines a transformation between action blocks, and between predicates, and returns a new action
@@ -221,7 +221,7 @@
     UAAction *actionToTheMax = [action bind:bindBlock];
 
     //now when we run the new action, we should see the concatenation in the results
-    [actionToTheMax performWithArguments:nil completionHandler:saveBlockResult];
+    [actionToTheMax performWithArguments:self.emptyArgs completionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult to the Max!!!!", @"the result value should be 'simpleResult to the Max!!!!'");
 
     //the original result isn't hardcoded into the transformation, we can take anything to the max
@@ -231,7 +231,7 @@
 
     UAAction *hoboToTheMax = [hobo bind:bindBlock];
 
-    [hoboToTheMax performWithArguments:nil completionHandler:saveBlockResult];
+    [hoboToTheMax performWithArguments:self.emptyArgs completionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"hobo to the Max!!!!", @"the result value should be 'hobo to the Max!!!!'");
 }
 
@@ -254,7 +254,7 @@
         handler([UAActionResult resultWithValue:@"simpleResult"]);
     }];
 
-    [action performWithArguments:nil completionHandler:saveBlockResult];
+    [action performWithArguments:self.emptyArgs completionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult", @"the result value should be 'simpleResult'");
 
     //an action lift block defines a transformation between action blocks
@@ -276,7 +276,7 @@
     //resulting action will inherit the receiver's argument validation logic
     UAAction *actionToTheMax = [action lift:liftBlock];
 
-    [actionToTheMax performWithArguments:nil completionHandler:saveBlockResult];
+    [actionToTheMax performWithArguments:self.emptyArgs completionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult to the Max!!!!", @"the result value should be 'simpleResult to the Max!!!!'");
 }
 
@@ -299,7 +299,7 @@
         return (BOOL)![args.value isEqual:@"foo"];
     }];
 
-    [action performWithArguments:nil completionHandler:saveBlockResult];
+    [action performWithArguments:self.emptyArgs completionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult", @"the result value should be 'simpleResult'");
 
     UAActionArguments *fooArgs = [UAActionArguments argumentsWithValue:@"foo" withSituation:UASituationManualInvocation];
@@ -336,7 +336,7 @@
     //both the original action and acceptsArguments logic have been preserved but extended.
     UAAction *actionToTheMax = [action lift:actionLiftBlock transformingPredicate:predicateLiftBlock];
 
-    [actionToTheMax performWithArguments:nil completionHandler:saveBlockResult];
+    [actionToTheMax performWithArguments:self.emptyArgs completionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult to the Max!!!!", @"the result value should be 'simpleResult to the Max!!!!'");
 
     UAActionArguments *barArgs = [UAActionArguments argumentsWithValue:@"bar" withSituation:UASituationManualInvocation];
@@ -405,25 +405,6 @@
 }
 
 /**
- * Test continueWith when passing a nil continuation action
- */
-- (void)testContinueWithNilAction {
-    __block UAActionResult *result;
-
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
-        return completionHandler([UAActionResult resultWithValue:@"originalResult"]);
-    }];
-
-
-    action = [action continueWith:nil];
-    [action runWithArguments:self.emptyArgs completionHandler:^(UAActionResult *actionResult) {
-        result = actionResult;
-    }];
-
-    XCTAssertEqualObjects(result.value, @"originalResult", @"Continue with should ignore a nil continue with action and just return the original action's result");
-}
-
-/**
  * Test the filter operator behavior when a predicate returns YES
  */
 - (void)testFilterYesPredicate {
@@ -485,28 +466,6 @@
     XCTAssertNil(result.value, @"Run should return a empty result if the filter returns NO");
 }
 
-/**
- * Test the filter operator with a nil predicate block does not change the actions
- * run behavior
- */
-- (void)testFilterNilPredicate {
-    __block BOOL didPerform = NO;
-
-    UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
-
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
-        didPerform = YES;
-        return completionHandler(expectedResult);
-    }];
-
-    action = [action filter:nil];
-
-    [action runWithArguments:self.emptyArgs completionHandler:^(UAActionResult *result) {
-        XCTAssertEqualObjects(result, expectedResult, @"Filter result is unexpected");
-    }];
-
-    XCTAssertTrue(didPerform, @"Action should still perform if the predicate is nil");
-}
 
 /**
  * Test the map operator only changes the arguments passed into the original action
@@ -535,27 +494,6 @@
     XCTAssertEqualObjects(result, expectedResult, @"Mapped action operator produces unexpected results");
 }
 
-/**
- * Test the map operator nil block does not change the arguments passed to the
- * original action
- */
-- (void)testMapNilBlock {
-    UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
-    __block UAActionResult *result;
-
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
-        XCTAssertEqualObjects(self.emptyArgs, args, @"Action is not receiving correct args");
-        return completionHandler(expectedResult);
-    }];
-
-    action = [action map:nil];
-
-    [action runWithArguments:self.emptyArgs completionHandler:^(UAActionResult *actionResult) {
-        result = actionResult;
-    }];
-
-    XCTAssertEqualObjects(result, expectedResult, @"Mapped action operator with nil block produces unexpected results");
-}
 
 /*
  * Test preExecution operator performs a UAActionPreExecutionBlock before
@@ -587,26 +525,6 @@
     XCTAssertTrue(didPerform, @"Pre execution block is preventing the original action from running");
 }
 
-/*
- * Test preExecution operator with a nil block does not hinder the original action
- */
-- (void)testPreExecutionNilBlock {
-    __block BOOL didPerform = NO;
-
-    UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
-
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
-        didPerform = YES;
-        return completionHandler(expectedResult);
-    }];
-
-    action = [action preExecution:nil];
-    [action runWithArguments:self.emptyArgs completionHandler:^(UAActionResult *result) {
-        XCTAssertEqualObjects(result, expectedResult, @"preExecution result is unexpected");
-    }];
-
-    XCTAssertTrue(didPerform, @"Nil pre execution block is preventing the original action from running");
-}
 
 /*
  * Test postExecution operator performs a UAActionPostExecutionBlock after
@@ -641,24 +559,5 @@
     XCTAssertTrue(didPerform, @"Post execution block is preventing the original action from running");
 }
 
-/*
- * Test postExecution operator with a nil block does not hinder the original action
- */
-- (void)testPostExecutionNilBlock {
-    __block BOOL didPerform = NO;
-    UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
-
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
-        didPerform = YES;
-        return completionHandler(expectedResult);
-    }];
-    
-    action = [action postExecution:nil];
-    [action runWithArguments:self.emptyArgs completionHandler:^(UAActionResult *result) {
-        XCTAssertEqualObjects(result, expectedResult, @"postExecution result is unexpected");
-    }];
-    
-    XCTAssertTrue(didPerform, @"Nil post execution block is preventing the original action from running");
-}
 
 @end

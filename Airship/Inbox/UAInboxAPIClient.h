@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef void (^UAInboxClientFailureBlock)(UAHTTPRequest *request);
 typedef void (^UAInboxClientSuccessBlock)(void);
-typedef void (^UAInboxClientMessageRetrievalSuccessBlock)(NSInteger status, NSArray *messages, NSInteger unread);
+typedef void (^UAInboxClientMessageRetrievalSuccessBlock)(NSInteger status,  NSArray * __nullable messages, NSInteger unread);
 
 
 /**

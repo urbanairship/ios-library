@@ -67,7 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * A UAChannelRegistrarDelegate delegate.
  */
-@property (nonatomic, weak) id<UAChannelRegistrarDelegate> delegate;
+@property (nonatomic, weak, nullable) id<UAChannelRegistrarDelegate> delegate;
 
 /**
  * Register the device with Urban Airship.

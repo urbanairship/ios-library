@@ -93,8 +93,6 @@
     UAAction *action = [[UAAction alloc] init];
     [self.registry registerReservedAction:action name:@"reserved" predicate:nil];
 
-    XCTAssertFalse([self.registry registerAction:nil name:@"some-name"], @"Should not be able to register a nil action");
-    XCTAssertFalse([self.registry registerAction:action name:nil], @"Should not be able to register an entry under a nil name.");
     XCTAssertFalse([self.registry registerAction:action name:@"reserved"], @"Should not be able to register a reserved action name.");
 }
 
@@ -153,7 +151,6 @@
     UAAction *situationOverrideAction = [[UAAction alloc] init];
 
     XCTAssertFalse([self.registry addSituationOverride:UASituationForegroundPush forEntryWithName:@"name" action:situationOverrideAction], @"Situation return NO if the registry for the name does not exist.");
-    XCTAssertFalse([self.registry addSituationOverride:UASituationForegroundPush forEntryWithName:nil action:situationOverrideAction], @"Situation return NO if the name is nil.");
     XCTAssertFalse([self.registry addSituationOverride:UASituationForegroundPush forEntryWithName:kUAIncomingPushActionRegistryName action:situationOverrideAction], @"Situation return NO if the action is reserved.");
 }
 
@@ -213,10 +210,7 @@
     [self.registry registerReservedAction:action name:@"reserved" predicate:predicate];
     [self.registry registerAction:action name:@"name"];
 
-    XCTAssertFalse([self.registry updateAction:nil forEntryWithName:@"not-found"], @"Update action should return NO if the registry for the name does not exist.");
-
-    XCTAssertFalse([self.registry updateAction:nil forEntryWithName:@"name"], @"Update action should return NO if the action is nil.");
-    [self validateActionIsRegistered:action names:@[@"name"] predicate:nil];
+    XCTAssertFalse([self.registry updateAction:action forEntryWithName:@"not-found"], @"Update action should return NO if the registry for the name does not exist.");
 
     XCTAssertFalse([self.registry updateAction:action forEntryWithName:@"reserved"], @"Update action should return NO if the entry is reserved");
     [self validateActionIsRegistered:action names:@[@"reserved"] predicate:predicate];
