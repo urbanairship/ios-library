@@ -58,7 +58,7 @@
 */
 - (void)testAcceptsArguments {
 
-    UAAction *action = [[[UAOpenExternalURLAction alloc] init] postExecution:nil];
+    UAAction *action = [[UAOpenExternalURLAction alloc] init];
 
     self.arguments.value = @"http://some-valid-url";
     XCTAssertTrue([action acceptsArguments:self.arguments], @"action should accept valid string URLs");

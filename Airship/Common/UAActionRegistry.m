@@ -211,7 +211,8 @@
 }
 
 - (BOOL)addSituationOverride:(UASituation)situation
-            forEntryWithName:(NSString *)name action:(UAAction *)action {
+            forEntryWithName:(NSString *)name
+                      action:(UAAction *)action {
     if (!name) {
         return NO;
     }

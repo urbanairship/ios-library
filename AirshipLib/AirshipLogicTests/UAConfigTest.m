@@ -62,7 +62,7 @@
 }
 
 - (void)testMissingEmbeddedProfile {
-    XCTAssertTrue([UAConfig isProductionProvisioningProfile:nil], @"Missing profiles should result in a production mode determination.");
+    XCTAssertTrue([UAConfig isProductionProvisioningProfile:@""], @"Missing profiles should result in a production mode determination.");
 }
 
 - (void)testDeviceTypeDetermination {

@@ -24,6 +24,8 @@
  */
 
 #import <XCTest/XCTest.h>
+#import <OCMock/OCMock.h>
+
 #import <JavaScriptCore/JavaScriptCore.h>
 #import "UANativeBridge.h"
 #import "UAWebViewCallData.h"
@@ -31,12 +33,16 @@
 @interface UANativeBridgeTest : XCTestCase
 @property (nonatomic, strong) JSContext *jsc;
 @property (nonatomic, copy) NSString *nativeBridge;
+@property (nonatomic, strong) id mockWebView;
+
 @end
 
 @implementation UANativeBridgeTest
 
 - (void)setUp {
     [super setUp];
+
+    self.mockWebView = [OCMockObject niceMockForClass:[UIWebView class]];
 
     NSData *data = [NSData dataWithBytes:(const char *)UANativeBridge_js length:UANativeBridge_js_len];
     self.nativeBridge = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
@@ -52,6 +58,7 @@
 }
 
 - (void)tearDown {
+    [self.mockWebView stopMocking];
     [super tearDown];
 }
 
@@ -134,7 +141,7 @@
 
     //mock UAirship.invoke that immediately calls UAirship.finishAction with a result string and the passed callback ID
     self.jsc[@"UAirship"][@"invoke"] = ^(NSString *url) {
-        UAWebViewCallData *data = [UAWebViewCallData callDataForURL:[NSURL URLWithString:url] webView:nil];
+        UAWebViewCallData *data = [UAWebViewCallData callDataForURL:[NSURL URLWithString:url] webView:self.mockWebView];
         NSString *cbID = [data.arguments firstObject];
         invoked = YES;
         command = data.name;

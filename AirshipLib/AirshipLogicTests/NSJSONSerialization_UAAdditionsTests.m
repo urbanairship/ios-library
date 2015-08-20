@@ -42,10 +42,6 @@
     XCTAssertEqualObjects(@"{\"stringKey\":\"stringValue\",\"intKey\":1}", jsonString, @"stringWithObject produces unexpected json strings");
 }
 
-- (void)testStringWithNilObject {
-    XCTAssertNil([NSJSONSerialization stringWithObject:nil], @"stringWithObject should return nil if the object is nil");
-}
-
 - (void)testStringWithStringObject {
     NSString *string = @"gosh folks, you sure look swell";
     NSString *jsonString = [NSJSONSerialization stringWithObject:string acceptingFragments:YES];
@@ -88,10 +84,5 @@
     NSString *jsonString = @"some invalid json string";
     XCTAssertNil([NSJSONSerialization objectWithString:jsonString], @"objectWithString should return nil for invalid json strings");
 }
-
-- (void)testobjectWithNilStringRaises {
-   XCTAssertNil([NSJSONSerialization objectWithString:nil], @"objectWithString should return nil for invalid json strings");
-}
-
 
 @end

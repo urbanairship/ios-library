@@ -168,7 +168,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)addSituationOverride:(UASituation)situation
             forEntryWithName:(NSString *)name
-                      action:(UAAction *)action;
+                      action:(nullable UAAction *)action;
 
 
 /**

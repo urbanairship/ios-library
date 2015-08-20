@@ -127,7 +127,7 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 /**
  * Channel location as a string.
  */
-@property (nonatomic, copy) NSString *channelLocation;
+@property (nonatomic, copy, nullable) NSString *channelLocation;
 
 /**
  * The UAChannelRegistrar that handles registering the device with Urban Airship.

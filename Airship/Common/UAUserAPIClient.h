@@ -71,7 +71,7 @@ typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
  * @param failureBlock A UAUserAPIClientFailureBlock that will be called if the update was unsuccessful.
  */
 - (void)updateUser:(UAUser *)user
-       deviceToken:(NSString *)deviceToken
+       deviceToken:(nullable NSString *)deviceToken
          channelID:(NSString *)channelID
          onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock
          onFailure:(UAUserAPIClientFailureBlock)failureBlock;

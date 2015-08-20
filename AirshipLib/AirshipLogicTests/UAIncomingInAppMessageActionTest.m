@@ -175,7 +175,7 @@
 
     id existingOpenInboxAction = [args.value valueForKeyPath:@"actions.on_click.^mc"];
 
-    [self.action runWithArguments:args completionHandler:nil];
+    [self.action runWithArguments:args completionHandler:^(UAActionResult *result) {}];
 
     id apnsPayload = args.metadata[UAActionMetadataPushPayloadKey];
     NSString *sendId = apnsPayload[@"_"];
@@ -215,7 +215,7 @@
 
             return NO;
         }]];
-        [self.action runWithArguments:args completionHandler:nil];
+        [self.action runWithArguments:args completionHandler:^(UAActionResult *result) {}];
         [self.mockAnalytics verify];
 
         UAInAppMessage *pending = [UAirship inAppMessaging].pendingMessage;
@@ -230,9 +230,7 @@
  */
 - (void)validateClearSituationWithArgs:(UAActionArguments *)args pending:(BOOL)pending {
     if (pending) {
-        // store the message as pending ahead of time
-        UAActionArguments *saveArgs = [UAActionArguments argumentsWithValue:args.value withSituation:UASituationForegroundPush metadata:args.metadata];
-        [self.action runWithArguments:saveArgs completionHandler:nil];
+        [self.action runWithArguments:args completionHandler:^(UAActionResult *result) {}];
     }
 
     [self validateClearSituationWithArgs:args];

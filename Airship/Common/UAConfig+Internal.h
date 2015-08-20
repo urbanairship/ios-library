@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
  * The provisioning profile path to use for this configuration. It defaults to the `embedded.mobileprovision` file
  * included with app packages, but it may be customized for testing purposes.
  */
-@property (nonatomic, copy) NSString *profilePath;
+@property (nonatomic, copy, nullable) NSString *profilePath;
 
 /*
  * The master secret for running functional tests. Not for use in production!
