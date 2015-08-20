@@ -38,7 +38,7 @@ or authorization required status (Radar #18385104).
 
 ## Quickstart
 
-Xcode 6.3+ is required for all projects and the static library. Projects must target >= iOS6.
+Xcode 6.4+ is required for all projects and the static library. Projects must target >= iOS6.
 
 [Download](https://bintray.com/urbanairship/iOS/urbanairship-sdk/_latestVersion) and unzip the latest 
 version of libUAirship. If you are using one of our sample projects, copy the ``Airship`` directory 
