@@ -31,6 +31,8 @@
 @class UAUser;
 @class UAConfig;
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef void (^UAUserAPIClientCreateSuccessBlock)(UAUserData *data, NSDictionary *payload);
 typedef void (^UAUserAPIClientUpdateSuccessBlock)();
 typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
@@ -69,7 +71,7 @@ typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
  * @param failureBlock A UAUserAPIClientFailureBlock that will be called if the update was unsuccessful.
  */
 - (void)updateUser:(UAUser *)user
-       deviceToken:(NSString *)deviceToken
+       deviceToken:(nullable NSString *)deviceToken
          channelID:(NSString *)channelID
          onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock
          onFailure:(UAUserAPIClientFailureBlock)failureBlock;
@@ -85,3 +87,5 @@ typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
 @property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
 
 @end
+
+NS_ASSUME_NONNULL_END

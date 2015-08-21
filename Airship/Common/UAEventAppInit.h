@@ -26,6 +26,8 @@
 #import <Foundation/Foundation.h>
 #import "UAEvent.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Event when app is initialized.
  */
@@ -42,5 +44,6 @@
  */
 - (NSMutableDictionary *)gatherData;
 
-
 @end
+
+NS_ASSUME_NONNULL_END

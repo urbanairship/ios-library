@@ -52,9 +52,6 @@ NSString *anotherActionName = @"AnotherActionName";
 }
 
 - (void)tearDown {
-    // Clear possible actions that were registered in the tests
-    [self.registry registerAction:nil name:actionName];
-    [self.registry registerAction:nil name:anotherActionName];
     [self.mockAirship stopMocking];
 
     [super tearDown];

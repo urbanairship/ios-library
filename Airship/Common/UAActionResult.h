@@ -74,6 +74,8 @@ typedef NS_ENUM(NSInteger, UAActionStatus) {
     UAActionStatusError
 };
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * A class that holds the results of running an action, with optional metadata.
  */
@@ -82,7 +84,7 @@ typedef NS_ENUM(NSInteger, UAActionStatus) {
 /**
  * The result value produced when running an action (can be nil).
  */
-@property (nonatomic, strong, readonly) id value;
+@property (nonatomic, strong, readonly, nullable) id value;
 
 /**
  * An optional UAActionFetchResult that can be set if the action performed a background fetch.
@@ -92,7 +94,7 @@ typedef NS_ENUM(NSInteger, UAActionStatus) {
 /**
  * An optional error value that can be set if the action was unable to perform its work successfully.
  */
-@property (nonatomic, strong, readonly) NSError *error;
+@property (nonatomic, strong, readonly, nullable) NSError *error;
 
 /**
  * The action's run status.
@@ -106,7 +108,7 @@ typedef NS_ENUM(NSInteger, UAActionStatus) {
  * @param value An id typed value object.
  * @return An instance of UAActionResult.
  */
-+ (instancetype)resultWithValue:(id)value;
++ (instancetype)resultWithValue:(nullable id)value;
 
 /**
  * Creates a UAActionResult with the supplied value and fetch result. The `error` property
@@ -116,7 +118,7 @@ typedef NS_ENUM(NSInteger, UAActionStatus) {
  * @param fetchResult A UAActionFetchResult enum value.
  * @return An instance of UAActionResult.
  */
-+ (instancetype)resultWithValue:(id)result withFetchResult:(UAActionFetchResult)fetchResult;
++ (instancetype)resultWithValue:(nullable id)result withFetchResult:(UAActionFetchResult)fetchResult;
 
 /**
  * Creates an "empty" UAActionResult with the value, fetch result and error set to
@@ -142,5 +144,6 @@ typedef NS_ENUM(NSInteger, UAActionStatus) {
  */
 + (instancetype)resultWithError:(NSError *)error withFetchResult:(UAActionFetchResult)fetchResult;
 
-
 @end
+
+NS_ASSUME_NONNULL_END

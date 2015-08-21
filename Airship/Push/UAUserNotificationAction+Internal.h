@@ -25,6 +25,8 @@
 
 #import "UAUserNotificationAction.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UAUserNotificationAction ()
 
 /**
@@ -35,3 +37,5 @@
 - (UIUserNotificationAction *)asUIUserNotificationAction;
 
 @end
+
+NS_ASSUME_NONNULL_END

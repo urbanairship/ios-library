@@ -77,21 +77,6 @@
 }
 
 /**
- * Test the event payload when its created with empty objects.
- */
-- (void)testEventDataEmpty {
-    UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:nil
-                                                                                             categoryID:nil
-                                                                                           notification:nil];
-
-
-    NSDictionary *expectedData = @{@"foreground": @"true"};
-
-    XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
-    XCTAssertNotNil(event.eventID, @"Event should have an ID");
-}
-
-/**
  * Test the event payload when its created with a foreground action.
  */
 - (void)testEventDataForegroundAction {

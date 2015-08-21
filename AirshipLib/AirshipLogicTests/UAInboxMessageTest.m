@@ -78,9 +78,10 @@
     // Put teardown code here; it will be run once, after the last test case.
     //undo observer sign-ups
     [self.mockMessageListObserver stopMocking];
-    [self.dbManager fetchMessagesWithPredicate:nil context:self.dbManager.mainContext completionHandler:^(NSArray *messages){
+    [self.dbManager fetchMessagesWithPredicate:[NSPredicate predicateWithValue:true] context:self.dbManager.mainContext completionHandler:^(NSArray *messages){
         [self.dbManager deleteMessages:messages context:self.dbManager.mainContext];
     }];
+    [super tearDown];
 }
 
 /**

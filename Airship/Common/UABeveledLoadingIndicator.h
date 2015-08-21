@@ -25,6 +25,8 @@
 
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * An abstraction around a nicer looking
  * loading indicator that embeds a UIActivityIndicatorView
@@ -37,7 +39,7 @@
  * a container rect size of 100 x 100.
  * @return A new UABeveledLoadingIndicator.
  */
-+ (UABeveledLoadingIndicator *)indicator;
++ (instancetype)indicator;
 
 /**
  * Show and animate the indicator
@@ -50,3 +52,5 @@
 - (void)hide;
 
 @end
+
+NS_ASSUME_NONNULL_END

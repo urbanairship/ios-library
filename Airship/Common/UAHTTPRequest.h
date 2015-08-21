@@ -26,6 +26,9 @@
 #import <Foundation/Foundation.h>
 
 @class UAHTTPRequest;
+
+NS_ASSUME_NONNULL_BEGIN
+
 typedef void (^UAHTTPConnectionSuccessBlock)(UAHTTPRequest *request);
 typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 
@@ -52,18 +55,18 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 /**
  * The user name for basic authorization.
  */
-@property (nonatomic, copy) NSString *username;
+@property (nonatomic, copy, nullable) NSString *username;
 
 /**
  * The user password for basic authorization.
  */
-@property (nonatomic, copy) NSString *password;
+@property (nonatomic, copy, nullable) NSString *password;
 
-@property (nonatomic, strong) NSURL *mainDocumentURL;
+@property (nonatomic, strong, nullable) NSURL *mainDocumentURL;
 /**
  * The body of the request.
  */
-@property (nonatomic, strong) NSMutableData *body;
+@property (nonatomic, strong, nullable) NSMutableData *body;
 
 /**
  * Boolean to compress the request's body.
@@ -75,27 +78,27 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 /**
  * Contextual data containing optional user info for access later.
  */
-@property (nonatomic, strong) id userInfo;
+@property (nonatomic, strong, nullable) id userInfo;
 
 /**
  * The response.
  */
-@property (nonatomic, readonly, strong) NSHTTPURLResponse *response;
+@property (nonatomic, readonly, strong, nullable) NSHTTPURLResponse *response;
 
 /**
  * The response string.
  */
-@property (nonatomic, readonly, copy) NSString *responseString;
+@property (nonatomic, readonly, copy, nullable) NSString *responseString;
 
 /**
  * The response data.
  */
-@property (nonatomic, readonly, strong) NSData *responseData;
+@property (nonatomic, readonly, strong, nullable) NSData *responseData;
 
 /**
  * The error related to the request.
  */
-@property (nonatomic, readonly, strong) NSError *error;
+@property (nonatomic, readonly, strong, nullable) NSError *error;
 
 /**
  * Create a request with the URL string.
@@ -143,4 +146,7 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 - (void)appendBodyData:(NSData *)data;
 
 @end
+
+NS_ASSUME_NONNULL_END
+
 

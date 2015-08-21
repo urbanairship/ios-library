@@ -25,6 +25,10 @@
 
 #import <Foundation/Foundation.h>
 
+#define kUASkipProtocolHeader @"UA-Client-Protocol"
+#define kUACacheMemorySizeInMB  5 * 1024 * 1024 // 5 MB
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  * A NSURLProtocol that caches successful responses to requests
@@ -34,8 +38,6 @@
  */
 @interface UAURLProtocol : NSURLProtocol
 
-#define kUASkipProtocolHeader @"UA-Client-Protocol"
-#define kUACacheMemorySizeInMB  5 * 1024 * 1024 // 5 MB
 
 /**
  * Adds a URL to be handled and cached by the Protocol.
@@ -55,4 +57,7 @@
  * Clears the URL cache
  */
 + (void)clearCache;
+
 @end
+
+NS_ASSUME_NONNULL_END

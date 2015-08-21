@@ -49,7 +49,6 @@
  * Test an empty white list rejects all URLs.
  */
 - (void)testEmptyWhitelist {
-    XCTAssertFalse([self.whitelist isWhitelisted:nil]);
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"urbanairship.com"]]);
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"www.urbanairship.com"]]);
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"http://www.urbanairship.com"]]);
@@ -79,7 +78,6 @@
 - (void)testInvalidPatterns {
     // Not a URL
     XCTAssertFalse([self.whitelist addEntry:@"not a url"]);
-    XCTAssertFalse([self.whitelist addEntry:nil]);
 
     // Missing schemes
     XCTAssertFalse([self.whitelist addEntry:@"www.urbanairship.com"]);
@@ -188,9 +186,6 @@
 - (void)testHostWildcard {
     XCTAssertTrue([self.whitelist addEntry:@"http://*"]);
 
-    // Reject
-    XCTAssertFalse([self.whitelist isWhitelisted:nil]);
-
     // Accept
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"http://what.urbanairship.com"]]);
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"http:///android-asset/test.html"]]);
@@ -244,13 +239,10 @@
     XCTAssertTrue([self.whitelist addEntry:@"file:///foo/bar.html"]);
     XCTAssertTrue([self.whitelist addEntry:@"file:///foo/*"]);
 
-
     // Reject
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"file:///foooooooo/bar.html"]]);
-    XCTAssertFalse([self.whitelist isWhitelisted:nil]);
 
     // Accept
-
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"file:///foo/test.html"]]);
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"file:///foo/bar/index.html"]]);
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"file:///foo/bar.html"]]);

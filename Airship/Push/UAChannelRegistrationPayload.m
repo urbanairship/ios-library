@@ -25,8 +25,6 @@
 
 #import "UAChannelRegistrationPayload.h"
 
-
-
 @implementation UAChannelRegistrationPayload
 
 - (NSData *)asJSONData {

@@ -110,11 +110,6 @@
     latitude = @(-91);
     circularRegion = [UACircularRegion circularRegionWithRadius:radius latitude:latitude longitude:longitude];
     XCTAssertNil(circularRegion, @"Circular region should be nil if latitude fails to set.");
-
-    // test nil latitude
-    latitude = nil;
-    circularRegion = [UACircularRegion circularRegionWithRadius:radius latitude:nil longitude:longitude];
-    XCTAssertNil(circularRegion, @"Nil latitudes should fail validation.");
 }
 
 /**

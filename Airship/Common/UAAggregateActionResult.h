@@ -27,6 +27,8 @@
 #import "UAActionResult.h"
 #import "UAAction.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Convenience class for aggregating and merging multiple UAActionResults.
  */
@@ -50,3 +52,5 @@
 - (UAActionResult *)resultForAction:(NSString*)actionName;
 
 @end
+
+NS_ASSUME_NONNULL_END

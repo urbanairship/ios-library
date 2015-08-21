@@ -28,6 +28,8 @@
 
 @class UAInboxDBManager;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UAInboxMessageList ()
 
 @property (nonatomic, strong) UAInboxAPIClient *client;
@@ -45,7 +47,10 @@
  */
 - (void)loadSavedMessages;
 
-
-+ (instancetype)messageListWithUser:(UAUser *)user client:(UAInboxAPIClient *)client config:(UAConfig *)config;
++ (instancetype)messageListWithUser:(UAUser *)user
+                             client:(UAInboxAPIClient *)client
+                             config:(UAConfig *)config;
 
 @end
+
+NS_ASSUME_NONNULL_END

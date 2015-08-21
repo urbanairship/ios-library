@@ -29,6 +29,8 @@
 @class UAConfig;
 @class UATagGroupsAPIClient;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UANamedUser ()
 
 /**
@@ -59,12 +61,12 @@ extern NSString *const UANamedUserRemoveTagGroupsSettingsKey;
 /**
  * The change token tracks the start of setting the named user ID.
  */
-@property (nonatomic, copy) NSString *changeToken;
+@property (nonatomic, copy, nullable) NSString *changeToken;
 
 /**
  * The last updated token tracks when the named user ID was set successfully.
  */
-@property (nonatomic, copy) NSString *lastUpdatedToken;
+@property (nonatomic, copy, nullable) NSString *lastUpdatedToken;
 
 /**
  * The named user API client.
@@ -79,12 +81,12 @@ extern NSString *const UANamedUserRemoveTagGroupsSettingsKey;
 /**
  * Tag groups to add to named user.
  */
-@property (nonatomic, copy) NSDictionary *pendingAddTags;
+@property (nonatomic, copy, nullable) NSDictionary *pendingAddTags;
 
 /**
  * Tag groups to remove from named user.
  */
-@property (nonatomic, copy) NSDictionary *pendingRemoveTags;
+@property (nonatomic, copy, nullable) NSDictionary *pendingRemoveTags;
 
 /**
  * The tag groups API client.
@@ -96,7 +98,8 @@ extern NSString *const UANamedUserRemoveTagGroupsSettingsKey;
  * @param config The Urban Airship config.
  * @param dataStore The shared preference data store.
  */
-- (instancetype)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
+- (instancetype)initWithConfig:(UAConfig *)config
+                     dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
  * Updates the association or disassociation of the current named user ID.
@@ -109,3 +112,5 @@ extern NSString *const UANamedUserRemoveTagGroupsSettingsKey;
 - (void)disassociateNamedUserIfNil;
 
 @end
+
+NS_ASSUME_NONNULL_END

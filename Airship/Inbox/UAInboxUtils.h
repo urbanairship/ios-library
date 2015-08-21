@@ -25,6 +25,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Rich Push helper methods.
  */
@@ -36,7 +38,7 @@
  * @param notification The notification dictionary.
  * @return a message ID if found, `nil` otherwise
  */
-+ (NSString *)inboxMessageIDFromNotification:(NSDictionary *)notification;
++ (nullable NSString *)inboxMessageIDFromNotification:(NSDictionary *)notification;
 
 
 /**
@@ -46,6 +48,8 @@
  * @param values The value of the inbox message ID from a notification.
  * @return a message ID if found, `nil` otherwise
  */
-+ (NSString *)inboxMessageIDFromValue:(id)values;
++ (nullable NSString *)inboxMessageIDFromValue:(id)values;
 
 @end
+
+NS_ASSUME_NONNULL_END

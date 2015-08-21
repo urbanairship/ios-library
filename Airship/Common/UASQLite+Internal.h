@@ -25,6 +25,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Interface wrapping sqlite database operations
  */
@@ -38,7 +40,7 @@
 /**
  * Path string to the sqlite DB
  */
-@property (nonatomic, copy) NSString *dbPath;
+@property (nonatomic, copy, nullable) NSString *dbPath;
 
 /**
  * Initializes sqlite DB with provided path string
@@ -66,7 +68,7 @@
  *
  * @return Last error message string
  */
-- (NSString*)lastErrorMessage;
+- (nullable NSString*)lastErrorMessage;
 
 /**
  * Gets the last sqlite error code
@@ -82,7 +84,7 @@
  * @param ... Variable argument list
  * @return Last error code int
  */
-- (NSArray *)executeQuery:(NSString *)sql, ...;
+- (nullable NSArray *)executeQuery:(NSString *)sql, ...;
 
 /**
  * Executes query on database given the database string and arguments
@@ -90,7 +92,7 @@
  * @param args Array of arguments
  * @return Last error code int
  */
-- (NSArray *)executeQuery:(NSString *)sql arguments:(NSArray *)args;
+- (nullable NSArray *)executeQuery:(NSString *)sql arguments:(nullable NSArray *)args;
 
 /**
  * Executes update on database
@@ -108,7 +110,7 @@
  * @param args Arguments array
  * @return YES if update succeeded, NO if update failed
  */
-- (BOOL)executeUpdate:(NSString *)sql arguments:(NSArray *)args;
+- (BOOL)executeUpdate:(NSString *)sql arguments:(nullable NSArray *)args;
 
 /**
  * Executes commit transaction on database
@@ -155,3 +157,5 @@
 - (BOOL)indexExists:(NSString*)indexName;
 
 @end
+
+NS_ASSUME_NONNULL_END

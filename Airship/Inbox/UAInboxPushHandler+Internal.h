@@ -25,9 +25,8 @@
 
 #import "UAInboxPushHandler.h"
 
-
 @interface UAInboxPushHandler ()
 
-@property (nonatomic, copy) NSString *viewingMessageID;
+@property (nonatomic, copy, nullable) NSString *viewingMessageID;
 
 @end

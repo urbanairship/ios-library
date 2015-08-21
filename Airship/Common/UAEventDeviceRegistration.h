@@ -25,6 +25,8 @@
 
 #import "UAEvent.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Event when device registration occurred.
  */
@@ -36,3 +38,5 @@
 + (instancetype)event;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -57,29 +57,38 @@ typedef NS_OPTIONS(NSInteger, UATagType) {
     UATagTypeDeviceType           = 1 << 4
 };
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * The UATagUtils object provides an interface for creating tags.
  */
-@interface UATagUtils : NSObject {
-
-}
+@interface UATagUtils : NSObject
 
 /**
  * Creates an autoreleased NSArray containing tags specified in the
  * tags parameter, a bit field accepting UATagType flags.
+ *
  * @param tags to create
  * @return The tags as an NSArray.
  */
-+ (NSArray *)createTags:(UATagType) tags;
++ (NSArray *)createTags:(UATagType)tags;
 
 /**
- * Used to trim whitespace and filter out tags with unacceptable tag length
+ * Used to trim whitespace and filter out tags with unacceptable tag length.
+ *
+ * @note This method is for internal use only. It is called when tags are set.
  * @param tags Tags as an NSArray.
  */
+#if __has_feature(objc_generics)
++ (NSArray<NSString *> *)normalizeTags:(NSArray *)tags;
+#else
 + (NSArray *)normalizeTags:(NSArray *)tags;
+#endif
 
 /**
  * Check if tags and tagGroupID are not empty.
+ *
+ * @note This method is for internal use only. It is called when modifying tag groups.
  * @param tags Tags as an NSArray.
  * @param tagGroup Tag group ID as an NSString.
  */
@@ -87,6 +96,8 @@ typedef NS_OPTIONS(NSInteger, UATagType) {
 
 /**
  * Add tags to pending tags.
+ *
+ * @note This method is for internal use only. It is called when modifying tag groups.
  * @param tagsToAdd Tags to combine with pending tags.
  * @param tagGroup Tag group ID to combine with pending tags.
  * @param pendingTags The pending tags to add to.
@@ -96,6 +107,8 @@ typedef NS_OPTIONS(NSInteger, UATagType) {
 
 /**
  * Remove tags from pending tags.
+ *
+ * @note This method is for internal use only. It is called when modifying tag groups.
  * @param tagsToRemove Tags to remove from pending tags.
  * @param tagGroup Tag groupID to combine with pending tags.
  * @param pendingTags The pending tags to remove tags from.
@@ -104,3 +117,5 @@ typedef NS_OPTIONS(NSInteger, UATagType) {
 + (NSDictionary *)removePendingTags:(NSArray *)tagsToRemove group:(NSString *)tagGroup pendingTagsDictionary:(NSDictionary *)pendingTags;
 
 @end
+
+NS_ASSUME_NONNULL_END

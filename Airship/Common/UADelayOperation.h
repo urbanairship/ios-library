@@ -25,6 +25,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * An NSOperation that sleeps for a specified number of seconds before completing.
  *
@@ -44,3 +46,5 @@
 @property (nonatomic, assign, readonly) NSTimeInterval seconds;
 
 @end
+
+NS_ASSUME_NONNULL_END

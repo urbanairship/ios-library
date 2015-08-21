@@ -114,9 +114,4 @@
     XCTAssertNil(c);
 }
 
-- (void)testNilColor {
-    NSString *hexString = [UAColorUtils hexStringWithColor:nil];
-    XCTAssertNil(hexString);
-}
-
 @end

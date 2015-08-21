@@ -50,6 +50,8 @@ typedef NS_ENUM(NSInteger, UALocationServiceError) {
     UALocationServiceTimedOut
 };
 
+NS_ASSUME_NONNULL_BEGIN
+
 // The different service provider types, for UAAnalytics
 typedef NSString UALocationServiceProviderType;
 extern UALocationServiceProviderType * const UALocationServiceProviderGps;
@@ -69,3 +71,5 @@ extern UALocationServiceNSDefaultsKey * const UASingleLocationTimeoutKey;
 
 typedef NSString UALocationServiceErrorDomain;
 extern UALocationServiceErrorDomain * const UALocationServiceTimeoutError;
+
+NS_ASSUME_NONNULL_END

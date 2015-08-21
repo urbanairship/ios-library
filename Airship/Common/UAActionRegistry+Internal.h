@@ -29,6 +29,8 @@
 #define kUAIncomingInAppMessageActionDefaultRegistryName @"com.urbanairship.in_app"
 #define kUACloseWindowActionRegistryName @"__close_window_action"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UAActionRegistry ()
 
 /**
@@ -51,7 +53,7 @@
  */
 - (BOOL)registerReservedAction:(UAAction *)action
                           name:(NSString *)name
-                     predicate:(UAActionPredicate)predicate;
+                     predicate:(nullable UAActionPredicate)predicate;
 
 /**
  * Registers default actions.
@@ -59,3 +61,5 @@
 - (void)registerDefaultActions;
 
 @end
+
+NS_ASSUME_NONNULL_END

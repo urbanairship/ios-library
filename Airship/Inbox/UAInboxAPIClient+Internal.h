@@ -24,46 +24,38 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+
+#import "UAInboxAPIClient.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Clone of UIUserNotificationAction for iOS 7 support.
+ * A high level abstraction for performing Rich Push API requests.
  */
-@interface UAUserNotificationAction : NSObject
+@interface UAInboxAPIClient ()
 
 /**
- * The string that you use internally to identify the action.
- */
-@property(nonatomic, copy, readonly, nullable) NSString *identifier;
-
-/**
- * The localized string to use as the button title for the action.
- */
-@property(nonatomic, copy, readonly, nullable) NSString *title;
-
-/**
- * The mode in which to run the app when the action is performed.
- */
-@property(nonatomic, assign, readonly) UIUserNotificationActivationMode activationMode;
-
-/**
- * A Boolean value indicating whether the user must unlock the device before the action is performed.
- */
-@property(nonatomic, assign, readonly, getter=isAuthenticationRequired) BOOL authenticationRequired;
-
-/**
- * A Boolean value indicating whether the action is destructive
- */
-@property(nonatomic, assign, readonly, getter=isDestructive) BOOL destructive;
-
-/**
- * Tests for equality by value.
+ * Builds request to retrieve message list.
  *
- * @param notificationAction An instance of UAUserNotificationAction.
+ * @return a UAHTTPRequest instance for a message list request.
  */
-- (BOOL)isEqualToAction:(nullable UAUserNotificationAction *)notificationAction;
+- (UAHTTPRequest *)requestToRetrieveMessageList;
+
+/**
+ * Builds request to delete array of messages.
+ *
+ * @param messages Array of messages to mark read.
+ * @return a UAHTTPRequest instance for a batch delete request.
+ */
+- (UAHTTPRequest *)requestToPerformBatchDeleteForMessages:(NSArray *)messages;
+
+/**
+ * Builds request to mark array of messages read.
+ *
+ * @param messages Array of messages to mark read.
+ * @return a UAHTTPRequest instance for a batch mark read request.
+ */
+- (UAHTTPRequest *)requestToPerformBatchMarkReadForMessages:(NSArray *)messages;
 
 @end
 

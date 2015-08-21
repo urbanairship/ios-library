@@ -107,7 +107,7 @@
     // Allocate the space to store name
     if (!(name = malloc(size))) {
         UA_LERR(@"Out of memory");
-        return nil;
+        return @"";
     };
     
     // Get the platform name

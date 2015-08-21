@@ -28,6 +28,8 @@
 #import "UALocationProviderProtocol.h"
 #import "UALocationCommonValues.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * This is the base class for location providers. You should not
  * implement this class directly. See the 
@@ -92,7 +94,7 @@
  * programatically.
  * @return An NSString with the current purpose
  */
-- (NSString *)purpose;
+- (nullable NSString *)purpose;
 
 /**
  * The most recently received location available from the CLLocationManager object. This may be more accurate than
@@ -100,7 +102,7 @@
  * @return The most recent location, if one is available
  * @return nil if no recent location is available
  */
-- (CLLocation *)location;
+- (nullable CLLocation *)location;
 
 ///---------------------------------------------------------------------------------------
 /// @name Location Service methods
@@ -108,7 +110,7 @@
 
 
 /// Delegate that receives location updates 
-@property (nonatomic, weak) id<UALocationProviderDelegate> delegate;
+@property (nonatomic, weak, nullable) id<UALocationProviderDelegate> delegate;
 
 /** 
  * Status of the location service.
@@ -135,7 +137,7 @@
  * Initializes the object with a delegate
  * @param delegate Delegate object that implements the UALocationProviderDelegate protocol
  */
-- (instancetype)initWithDelegate:(id<UALocationProviderDelegate>)delegate;
+- (instancetype)initWithDelegate:(nullable id<UALocationProviderDelegate>)delegate;
 
 ///---------------------------------------------------------------------------------------
 /// @name Location Accuracy
@@ -169,3 +171,5 @@
 - (void)stopReportingLocation;
 
 @end
+
+NS_ASSUME_NONNULL_END

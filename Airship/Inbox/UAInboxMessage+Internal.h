@@ -27,10 +27,15 @@
 #import "UAInboxAPIClient.h"
 #import "UAInboxMessageData.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UAInboxMessage ()
+
 @property (nonatomic, strong) UAInboxMessageData *data;
 @property (nonatomic, weak) UAInboxMessageList *inbox;
 
 + (instancetype)messageWithData:(UAInboxMessageData *)data;
 
 @end
+
+NS_ASSUME_NONNULL_END

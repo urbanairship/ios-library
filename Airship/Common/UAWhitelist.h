@@ -27,6 +27,8 @@
 
 @class UAConfig;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Class for whitelisting and verifying webview URLs.
  *
@@ -72,3 +74,5 @@
 - (BOOL)isWhitelisted:(NSURL *)url;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -262,7 +262,7 @@
     [self.action performWithArguments:args completionHandler:^(UAActionResult *result) {
         finished = YES;
         XCTAssertEqual(result.fetchResult, fetchResult,
-                       @"fetch result %ud should match expect result %ud", result.fetchResult, fetchResult);
+                       @"fetch result %ld should match expect result %ld", result.fetchResult, fetchResult);
     }];
 
     [self.mockURLProtocol verify];

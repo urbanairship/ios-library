@@ -28,6 +28,8 @@
 @class UAConfig;
 @class UAPush;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * ChannelCapture checks the device clipboard for an expected token on app
  * foreground and displays an alert view that allows the user to copy the Channel
@@ -46,3 +48,5 @@
 + (instancetype)channelCaptureWithConfig:(UAConfig *)config push:(UAPush *)push;
 
 @end
+
+NS_ASSUME_NONNULL_END

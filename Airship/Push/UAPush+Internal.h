@@ -30,6 +30,8 @@
 @class UAConfig;
 @class UATagGroupsAPIClient;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * User push notification enabled data store key.
  */
@@ -115,17 +117,17 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 /**
  * Device token as a string.
  */
-@property (nonatomic, copy) NSString *deviceToken;
+@property (nonatomic, copy, nullable) NSString *deviceToken;
 
 /**
  * Channel ID as a string.
  */
-@property (nonatomic, copy) NSString *channelID;
+@property (nonatomic, copy, nullable) NSString *channelID;
 
 /**
  * Channel location as a string.
  */
-@property (nonatomic, copy) NSString *channelLocation;
+@property (nonatomic, copy, nullable) NSString *channelLocation;
 
 /**
  * The UAChannelRegistrar that handles registering the device with Urban Airship.
@@ -157,12 +159,12 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 /**
  * Tag groups to add to channel.
  */
-@property (nonatomic, copy) NSDictionary *pendingAddTags;
+@property (nonatomic, copy, nullable) NSDictionary *pendingAddTags;
 
 /**
  * Tag groups to remove from channel.
  */
-@property (nonatomic, copy) NSDictionary *pendingRemoveTags;
+@property (nonatomic, copy, nullable) NSDictionary *pendingRemoveTags;
 
 /**
  * The tag groups API client.
@@ -285,3 +287,5 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 - (void)updateAllUserNotificationCategories;
 
 @end
+
+NS_ASSUME_NONNULL_END

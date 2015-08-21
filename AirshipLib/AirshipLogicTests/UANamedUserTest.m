@@ -491,10 +491,6 @@ void (^updateTagsFailureDoBlock)(NSInvocation *);
     [self.namedUser addTags:emptyTagsArray group:@"some-tag-group"];
     XCTAssertEqual((NSUInteger)2, self.namedUser.pendingAddTags.count, @"should still contain 2 tag groups");
 
-    // Test addTags with nil group ID
-    [self.namedUser addTags:tags2 group:nil];
-    XCTAssertEqual((NSUInteger)2, self.namedUser.pendingAddTags.count, @"should still contain 2 tag groups");
-
     // Test addTags with tags with whitespace
     NSArray *whitespaceTags = @[@" tag1 ", @" tag2 ", @" tag3 "];
     [self.namedUser addTags:whitespaceTags group:@"another-tag-group"];
@@ -551,10 +547,6 @@ void (^updateTagsFailureDoBlock)(NSInvocation *);
     // test removeTags with empty tags
     NSArray *emptyTagsArray = @[];
     [self.namedUser removeTags:emptyTagsArray group:@"some-tag-group"];
-    XCTAssertEqual((NSUInteger)2, self.namedUser.pendingRemoveTags.count, @"should still contain 2 tag groups");
-
-    // test removeTags with nil group ID
-    [self.namedUser addTags:tags2 group:nil];
     XCTAssertEqual((NSUInteger)2, self.namedUser.pendingRemoveTags.count, @"should still contain 2 tag groups");
 
     // test removeTags with empty group ID
