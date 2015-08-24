@@ -33,6 +33,8 @@
 
 @class UAInboxMessage;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * A UACustomEvent captures information regarding a custom event for
  * UAAnalytics.
@@ -55,7 +57,7 @@
  * @param eventValue The value of the event as a string. The value must be a valid
  * number between -2^31 and 2^31 - 1 or it will be ignored.
  */
-+ (instancetype)eventWithName:(NSString *)eventName valueFromString:(NSString *)eventValue;
++ (instancetype)eventWithName:(NSString *)eventName valueFromString:(nullable NSString *)eventValue;
 
 /**
  * Factory method for creating a custom event with a value.
@@ -65,13 +67,13 @@
  * @param eventValue The value of the event. The value must be between -2^31 and
  * 2^31 - 1 or it will be ignored.
  */
-+ (instancetype)eventWithName:(NSString *)eventName value:(NSNumber *)eventValue;
++ (instancetype)eventWithName:(NSString *)eventName value:(nullable NSNumber *)eventValue;
 
 /**
  * The event's value. The value must be between -2^31 and
  * 2^31 - 1 or it will be ignored.
  */
-@property (nonatomic, strong) NSDecimalNumber *eventValue;
+@property (nonatomic, strong, nullable) NSDecimalNumber *eventValue;
 
 /**
  * The event's name. The name's length must not exceed 255 characters or it will
@@ -83,19 +85,19 @@
  * The event's interaction ID. The ID's length must not exceed 255 characters or it will
  * be ignored.
  */
-@property (nonatomic, copy) NSString *interactionID;
+@property (nonatomic, copy, nullable) NSString *interactionID;
 
 /**
  * The event's interaction type. The type's length must not exceed 255 characters or it will
  * be ignored.
  */
-@property (nonatomic, copy) NSString *interactionType;
+@property (nonatomic, copy, nullable) NSString *interactionType;
 
 /**
  * The event's interaction ID. The ID's length must not exceed 255 characters or it will
  * be ignored.
  */
-@property (nonatomic, copy) NSString *transactionID;
+@property (nonatomic, copy, nullable) NSString *transactionID;
 
 /**
  * Sets the custom event's interaction type and ID from a UAInboxMessage.
@@ -103,4 +105,7 @@
  * and ID from.
  */
 - (void)setInteractionFromMessage:(UAInboxMessage *)message;
+
 @end
+
+NS_ASSUME_NONNULL_END

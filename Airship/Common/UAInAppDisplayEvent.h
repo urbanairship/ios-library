@@ -29,6 +29,8 @@
 
 @class UAInAppMessage;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * In-app message display event.
  */
@@ -42,3 +44,5 @@
 + (instancetype)eventWithMessage:(UAInAppMessage *)message;
 
 @end
+
+NS_ASSUME_NONNULL_END

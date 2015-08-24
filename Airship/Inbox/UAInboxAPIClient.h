@@ -30,9 +30,13 @@
 @class UAConfig;
 @class UAPreferenceDataStore;
 
+NS_ASSUME_NONNULL_BEGIN
+
+#define kUAChannelIDHeader @"X-UA-Channel-ID"
+
 typedef void (^UAInboxClientFailureBlock)(UAHTTPRequest *request);
 typedef void (^UAInboxClientSuccessBlock)(void);
-typedef void (^UAInboxClientMessageRetrievalSuccessBlock)(NSInteger status, NSArray *messages, NSInteger unread);
+typedef void (^UAInboxClientMessageRetrievalSuccessBlock)(NSInteger status,  NSArray * __nullable messages, NSInteger unread);
 
 
 /**
@@ -47,7 +51,9 @@ typedef void (^UAInboxClientMessageRetrievalSuccessBlock)(NSInteger status, NSAr
  * @param config The Urban Airship config.
  * @return UAInboxAPIClient instance.
  */
-+ (instancetype)clientWithUser:(UAUser *)user config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)clientWithUser:(UAUser *)user
+                        config:(UAConfig *)config
+                     dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
  * Retrieves the full message list from the server.
@@ -93,3 +99,5 @@ typedef void (^UAInboxClientMessageRetrievalSuccessBlock)(NSInteger status, NSAr
 - (void)clearLastModifiedTime;
 
 @end
+
+NS_ASSUME_NONNULL_END

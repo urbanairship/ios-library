@@ -128,8 +128,12 @@
     [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
                                add:self.addTags
                             remove:self.removeTags
-                         onSuccess:nil
-                         onFailure:nil];
+                         onSuccess:^{
+                             XCTFail(@"Success block should not be called on retry");
+                         }
+                         onFailure:^(UAHTTPRequest *request) {
+                             XCTFail(@"Failure block should not be called on retry");
+                         }];
 
     XCTAssertNoThrow([self.mockRequestEngine verify],
                      @"Update channel tag groups should call retry on 5xx status codes.");
@@ -162,8 +166,8 @@
     [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
                                add:self.addTags
                             remove:self.removeTags
-                         onSuccess:nil
-                         onFailure:nil];
+                         onSuccess:^(){}
+                         onFailure:^(UAHTTPRequest *request){}];
     XCTAssertNoThrow([self.mockRequestEngine verify],
                      @"Update channel tag groups should succeed on 2xx status codes.");
 }
@@ -193,7 +197,7 @@
                             remove:self.removeTags
                          onSuccess:^{
                              onSuccessCalled = YES;
-                         } onFailure:nil];
+                         } onFailure:^(UAHTTPRequest *request){}];
 
     XCTAssertTrue(onSuccessCalled, @"Update channel tag groups should call onSuccess block when its successful.");
 }
@@ -218,26 +222,12 @@
     [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
                                add:self.addTags
                             remove:self.removeTags
-                         onSuccess:nil
+                         onSuccess:^{}
                          onFailure:^(UAHTTPRequest *request) {
                              failedRequest = request;
     }];
 
     XCTAssertEqualObjects(request, failedRequest, @"Failure block should return the failed request.");
-}
-
-/**
- * Test update channel tags with nil channel skips request.
- */
-- (void)testUpdateChannelTagsNilChannel {
-    [[self.mockRequestEngine reject] runRequest:OCMOCK_ANY
-                                   succeedWhere:OCMOCK_ANY
-                                     retryWhere:OCMOCK_ANY
-                                      onSuccess:OCMOCK_ANY
-                                      onFailure:OCMOCK_ANY];
-
-    [self.client updateChannelTags:nil add:self.addTags remove:self.removeTags onSuccess:nil onFailure:nil];
-    XCTAssertNoThrow([self.mockRequestEngine verify], @"Update channel tags should not make a request with a nil channel.");
 }
 
 /**
@@ -272,8 +262,8 @@
     [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
                                add:emptyAddTags
                             remove:self.removeTags
-                         onSuccess:nil
-                         onFailure:nil];
+                         onSuccess:^{}
+                         onFailure:^(UAHTTPRequest *request){}];
 
     XCTAssertNoThrow([self.mockRequestEngine verify], @"Update channel tags should run with valid payload.");
 }
@@ -310,8 +300,8 @@
     [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
                                add:self.addTags
                             remove:emptyRemoveTags
-                         onSuccess:nil
-                         onFailure:nil];
+                         onSuccess:^{}
+                         onFailure:^(UAHTTPRequest *request){}];
 
     XCTAssertNoThrow([self.mockRequestEngine verify], @"Update channel tags should run with valid payload.");
 }
@@ -333,8 +323,8 @@
     [self.client updateChannelTags:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
                                add:emptyAddTags
                             remove:emptyRemoveTags
-                         onSuccess:nil
-                         onFailure:nil];
+                         onSuccess:^{}
+                         onFailure:^(UAHTTPRequest *request){}];
     XCTAssertNoThrow([self.mockRequestEngine verify], @"Update channel tags should not make a request with both empty tags.");
 }
 
@@ -386,8 +376,8 @@
     [self.client updateNamedUserTags:@"fake-named-user"
                                  add:self.addTags
                               remove:self.removeTags
-                           onSuccess:nil
-                           onFailure:nil];
+                           onSuccess:^{}
+                           onFailure:^(UAHTTPRequest *request){}];
     XCTAssertNoThrow([self.mockRequestEngine verify],
                      @"Update named user tags should call retry on 5xx status codes.");
 }
@@ -419,8 +409,8 @@
     [self.client updateNamedUserTags:@"fake-named-user"
                                  add:self.addTags
                               remove:self.removeTags
-                           onSuccess:nil
-                           onFailure:nil];
+                           onSuccess:^{}
+                           onFailure:^(UAHTTPRequest *request){}];
     XCTAssertNoThrow([self.mockRequestEngine verify],
                      @"Update named user tags should succeed on 2xx status codes.");
 }
@@ -450,7 +440,7 @@
                               remove:self.removeTags
                            onSuccess:^{
                                onSuccessCalled = YES;
-                           } onFailure:nil];
+                           } onFailure:^(UAHTTPRequest *request){}];
 
     XCTAssertTrue(onSuccessCalled, @"Update named user tags should call onSuccess block when its successful.");
 }
@@ -475,26 +465,12 @@
     [self.client updateNamedUserTags:@"fake-named-user"
                                  add:self.addTags
                               remove:self.removeTags
-                           onSuccess:nil
+                           onSuccess:^{}
                            onFailure:^(UAHTTPRequest *request) {
                                failedRequest = request;
     }];
 
     XCTAssertEqualObjects(request, failedRequest, @"Failure block should return the failed request.");
-}
-
-/**
- * Test update named user tags with nil named user ID skips request.
- */
-- (void)testUpdateNamedUserTagsNilNamedUser {
-    [[self.mockRequestEngine reject] runRequest:OCMOCK_ANY
-                                   succeedWhere:OCMOCK_ANY
-                                     retryWhere:OCMOCK_ANY
-                                      onSuccess:OCMOCK_ANY
-                                      onFailure:OCMOCK_ANY];
-
-    [self.client updateNamedUserTags:nil add:self.addTags remove:self.removeTags onSuccess:nil onFailure:nil];
-    XCTAssertNoThrow([self.mockRequestEngine verify], @"Update named user tags should not make a request with a nil named user.");
 }
 
 /**
@@ -529,8 +505,8 @@
     [self.client updateNamedUserTags:@"fake-named-user"
                                add:emptyAddTags
                             remove:self.removeTags
-                         onSuccess:nil
-                         onFailure:nil];
+                           onSuccess:^{}
+                         onFailure:^(UAHTTPRequest *request){}];
 
     XCTAssertNoThrow([self.mockRequestEngine verify], @"Update named user tags should run with valid payload.");
 }
@@ -567,8 +543,8 @@
     [self.client updateNamedUserTags:@"fake-named-user"
                                add:self.addTags
                             remove:emptyRemoveTags
-                         onSuccess:nil
-                         onFailure:nil];
+                           onSuccess:^{}
+                         onFailure:^(UAHTTPRequest *request){}];
 
     XCTAssertNoThrow([self.mockRequestEngine verify], @"Update named user tags should run with valid payload.");
 }
@@ -589,8 +565,8 @@
     [self.client updateNamedUserTags:@"fake-named-user"
                                add:emptyAddTags
                             remove:emptyRemoveTags
-                         onSuccess:nil
-                         onFailure:nil];
+                           onSuccess:^{}
+                         onFailure:^(UAHTTPRequest *request){}];
     XCTAssertNoThrow([self.mockRequestEngine verify], @"Update named user tags should not make a request with both empty tags.");
 }
 

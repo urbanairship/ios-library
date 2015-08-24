@@ -58,6 +58,10 @@ static NSMutableDictionary *originalMethods_;
                             implementation:(IMP)UAApplicationHandleActionWithIdentifierForRemoteNotificationCompletionHandler
                                      class:class];
 
+    SEL responseInfoSelector = NSSelectorFromString(@"application:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:");
+
+    [UAAppDelegateProxy swizzle:responseInfoSelector implementation:(IMP)UAApplicationHandleActionWithIdentifierForRemoteNotificationWithResponseInfoCompletionHandler class:class];
+
     // application:didReceiveRemoteNotification:fetchCompletionHandler:
     // Needs to be above setting application:didReceiveRemoteNotification: because we
     // need to check if the delegate implments that selector before we add an implmeentation
@@ -140,7 +144,7 @@ void UAApplicationDidReceiveRemoteNotification(id self, SEL _cmd, UIApplication 
 
     IMP original = [UAAppDelegateProxy originalImplementation:_cmd class:[self class]];
     if (original) {
-        ((void(*)(id,SEL, UIApplication*, NSDictionary*))original)(self, _cmd, application, userInfo);
+        ((void(*)(id, SEL, UIApplication *, NSDictionary*))original)(self, _cmd, application, userInfo);
     }
 }
 
@@ -149,7 +153,7 @@ void UAApplicationDidRegisterForRemoteNotificationsWithDeviceToken(id self, SEL 
 
     IMP original = [UAAppDelegateProxy originalImplementation:_cmd class:[self class]];
     if (original) {
-        ((void(*)(id,SEL, UIApplication*, NSData*))original)(self, _cmd, application, deviceToken);
+        ((void(*)(id, SEL, UIApplication *, NSData*))original)(self, _cmd, application, deviceToken);
     }
 }
 
@@ -158,7 +162,7 @@ void UAApplicationDidRegisterUserNotificationSettings(id self, SEL _cmd, UIAppli
 
     IMP original = [UAAppDelegateProxy originalImplementation:_cmd class:[self class]];
     if (original) {
-        ((void(*)(id,SEL, UIApplication*, UIUserNotificationSettings*))original)(self, _cmd, application, settings);
+        ((void(*)(id, SEL, UIApplication *, UIUserNotificationSettings*))original)(self, _cmd, application, settings);
     }
 }
 
@@ -167,7 +171,7 @@ void UAApplicationDidFailToRegisterForRemoteNotificationsWithError(id self, SEL 
 
     IMP original = [UAAppDelegateProxy originalImplementation:_cmd class:[self class]];
     if (original) {
-        ((void(*)(id,SEL, UIApplication*, NSError*))original)(self, _cmd, application, error);
+        ((void(*)(id, SEL, UIApplication *, NSError*))original)(self, _cmd, application, error);
     }
 }
 
@@ -212,7 +216,7 @@ void UAApplicationDidReceiveRemoteNotificationFetchCompletionHandler(id self,
         };
 
         // Call the original implementation
-        ((void(*)(id,SEL, UIApplication*, NSDictionary *, void (^)(UIBackgroundFetchResult)))original)(self, _cmd, application, userInfo, completionHandler);
+        ((void(*)(id, SEL, UIApplication *, NSDictionary *, void (^)(UIBackgroundFetchResult)))original)(self, _cmd, application, userInfo, completionHandler);
     }
 
     // Our completion handler is called by the action framework on the main queue
@@ -269,12 +273,64 @@ void UAApplicationHandleActionWithIdentifierForRemoteNotificationCompletionHandl
         };
 
         // Call the original implementation
-        ((void(*)(id,SEL, UIApplication*, NSString *, NSDictionary *, void (^)()))original)(self, _cmd, application, identifier, userInfo, completionHandler);
+        ((void(*)(id, SEL, UIApplication *, NSString *, NSDictionary *, void (^)()))original)(self, _cmd, application, identifier, userInfo, completionHandler);
     }
 
     // Our completion handler is called by the action framework on the main queue
     [[UAirship push] appReceivedActionWithIdentifier:identifier
                                         notification:userInfo
+                                    applicationState:application.applicationState
+                                   completionHandler:^{
+                                       resultCount++;
+
+                                       if (expectedCount == resultCount) {
+                                           handler();
+                                       }
+                                   }];
+}
+
+void UAApplicationHandleActionWithIdentifierForRemoteNotificationWithResponseInfoCompletionHandler(id self,
+                                                                                   SEL _cmd,
+                                                                                   UIApplication *application,
+                                                                                   NSString *identifier,
+                                                                                   NSDictionary *userInfo,
+                                                                                   NSDictionary *responseInfo,
+                                                                                   void (^handler)()) {
+    __block NSUInteger resultCount = 0;
+    __block NSUInteger expectedCount = 1;
+
+    IMP original = [UAAppDelegateProxy originalImplementation:_cmd class:[self class]];
+    if (original) {
+        expectedCount = 2;
+
+        __block BOOL completionHandlerCalled = NO;
+        void (^completionHandler)() = ^() {
+
+            // Make sure the app's completion handler is called on the main queue
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (completionHandlerCalled) {
+                    UA_LERR(@"Completion handler called multiple times.");
+                    return;
+                }
+
+                completionHandlerCalled = YES;
+                resultCount++;
+
+                if (expectedCount == resultCount) {
+                    handler();
+                }
+            });
+
+        };
+
+        // Call the original implementation
+        ((void(*)(id, SEL, UIApplication *, NSString *, NSDictionary *, NSDictionary *, void (^)()))original)(self, _cmd, application, identifier, userInfo, responseInfo, completionHandler);
+    }
+
+    // Our completion handler is called by the action framework on the main queue
+    [[UAirship push] appReceivedActionWithIdentifier:identifier
+                                        notification:userInfo
+                                        responseInfo:responseInfo
                                     applicationState:application.applicationState
                                    completionHandler:^{
                                        resultCount++;

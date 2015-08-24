@@ -29,6 +29,7 @@
 @class UAEvent;
 @class UASQLite;
 
+NS_ASSUME_NONNULL_BEGIN
 
 /**
 * Primary interface for working with the analytics DB
@@ -113,3 +114,5 @@
 - (NSUInteger)sizeInBytes;
 
 @end
+
+NS_ASSUME_NONNULL_END

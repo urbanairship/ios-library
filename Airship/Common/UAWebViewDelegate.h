@@ -28,6 +28,8 @@
 
 #import "UARichContentWindow.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class UAInboxMessage;
 
 /**
@@ -39,12 +41,14 @@
 /**
  * Optional delegate to forward any UIWebViewDelegate calls.
  */
-@property (nonatomic, weak) id <UIWebViewDelegate> forwardDelegate;
+@property (nonatomic, weak, nullable) id <UIWebViewDelegate> forwardDelegate;
 
 /**
  * The rich content window. Optional, needed to support closing the webview from
  * the Urban Airship Javascript interface.
  */
-@property (nonatomic, weak) id <UARichContentWindow> richContentWindow;
+@property (nonatomic, weak, nullable) id <UARichContentWindow> richContentWindow;
 
 @end
+
+NS_ASSUME_NONNULL_END

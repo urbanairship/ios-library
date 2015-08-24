@@ -57,7 +57,9 @@
 
 - (void)testDefaults {
 
-    UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:self.request onSuccess:nil onFailure:nil];
+    UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:self.request
+                                                                                 onSuccess:^(UAHTTPRequest *request){}
+                                                                                 onFailure:^(UAHTTPRequest *request){}];
 
     XCTAssertEqual(operation.isConcurrent, YES, @"UAHTTPConnectionOperations are concurrent (asynchronous)");
     XCTAssertEqual(operation.isExecuting, NO, @"isExecuting will not be set until the operation begins");
@@ -73,7 +75,7 @@
     UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:self.request onSuccess:^(UAHTTPRequest *request) {
         XCTAssertNil(request.error, @"there should be no error on success");
         [testExpectation fulfill];
-    } onFailure:nil];
+    } onFailure:^(UAHTTPRequest *request){}];
 
     [operation start];
 
@@ -90,8 +92,8 @@
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"operation finished"];
 
     UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:self.request
-                                                                                 onSuccess:nil
-                                                                                 onFailure: ^(UAHTTPRequest *request) {
+                                                                                 onSuccess:^(UAHTTPRequest *request){}
+                                                                                 onFailure:^(UAHTTPRequest *request) {
 
                                                                                      XCTAssertNotNil(request.error, @"there should be an error on failure");
                                                                                      [testExpectation fulfill];
@@ -115,7 +117,7 @@
         XCTAssertNil(request.error, @"there should be no error on success");
 
         [testExpectation fulfill];
-    } onFailure:nil];
+    } onFailure:^(UAHTTPRequest *request){}];
 
     [operation start];
 
@@ -131,7 +133,9 @@
 
 - (void)testPreemptiveCancel {
 
-    UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:self.request onSuccess:nil onFailure:nil];
+    UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:self.request
+                                                                                 onSuccess:^(UAHTTPRequest *request){}
+                                                                                 onFailure:^(UAHTTPRequest *request){}];
 
     [operation cancel];
     XCTAssertEqual(operation.isCancelled, YES, @"you can cancel operations before they have started");
@@ -150,7 +154,9 @@
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     queue.maxConcurrentOperationCount = 1;
 
-    UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:self.request onSuccess:nil onFailure:nil];
+    UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:self.request
+                                                                                 onSuccess:^(UAHTTPRequest *request){}
+                                                                                 onFailure:^(UAHTTPRequest *request){}];
 
     //add a long running delay in front of our http connection operation
     UADelayOperation *delayOperation = [UADelayOperation operationWithDelayInSeconds:25];
@@ -180,7 +186,9 @@
 }
 
 - (void)testInFlightCancel {
-    UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:self.request onSuccess:nil onFailure:nil];
+    UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:self.request
+                                                                                 onSuccess:^(UAHTTPRequest *request){}
+                                                                                 onFailure:^(UAHTTPRequest *request){}];
 
     [operation start];
     [operation cancel];

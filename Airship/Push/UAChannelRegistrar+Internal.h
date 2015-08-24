@@ -29,6 +29,8 @@
 @class UAChannelAPIClient;
 @class UAConfig;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UAChannelRegistrar ()
 
 
@@ -41,7 +43,7 @@
 /**
  * The last successful payload that was registered.
  */
-@property (nonatomic, strong) UAChannelRegistrationPayload *lastSuccessPayload;
+@property (nonatomic, strong, nullable) UAChannelRegistrationPayload *lastSuccessPayload;
 
 
 /**
@@ -56,6 +58,7 @@
  */
 + (instancetype)channelRegistrarWithConfig:(UAConfig *)config;
 
-
 @end
+
+NS_ASSUME_NONNULL_END
 

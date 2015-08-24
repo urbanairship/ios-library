@@ -26,6 +26,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 extern NSString * const UAUserCreatedNotification;
 
 /**
@@ -48,17 +50,17 @@ extern NSString * const UAUserCreatedNotification;
 /**
  * The user name.
  */
-@property (nonatomic, readonly, copy) NSString *username;
+@property (nonatomic, readonly, copy, nullable) NSString *username;
 
 /**
  * The user password.
  */
-@property (nonatomic, readonly, copy) NSString *password;
+@property (nonatomic, readonly, copy, nullable) NSString *password;
 
 /**
  * The user url.
  */
-@property (nonatomic, readonly, copy) NSString *url;
+@property (nonatomic, readonly, copy, nullable) NSString *url;
 
 /**
  * Background task identifier used to perform user updates in the background.
@@ -68,3 +70,6 @@ extern NSString * const UAUserCreatedNotification;
 @property (nonatomic, assign, readonly) UIBackgroundTaskIdentifier userUpdateBackgroundTask __attribute__((deprecated("As of version 6.1.4")));
 
 @end
+
+NS_ASSUME_NONNULL_END
+

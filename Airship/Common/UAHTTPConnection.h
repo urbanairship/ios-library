@@ -26,12 +26,12 @@
 #import <Foundation/Foundation.h>
 #import "UAHTTPRequest.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * A wrapper for NSURLConnection implementing the NSURLConnectionDelegate protocol.
  */
-@interface UAHTTPConnection : NSObject <NSURLConnectionDelegate> {
-
-}
+@interface UAHTTPConnection : NSObject <NSURLConnectionDelegate>
 
 /**
  * The connection sending the message.
@@ -46,27 +46,27 @@
 /**
  * The connection delegate.
  */
-@property (nonatomic, weak) id delegate;
+@property (nonatomic, weak, nullable) id delegate;
 
 /**
  * The connection success selector.
  */
-@property (nonatomic, assign) SEL successSelector;
+@property (nonatomic, assign, nullable) SEL successSelector;
 
 /**
  * The connection failure selector.
  */
-@property (nonatomic, assign) SEL failureSelector;
+@property (nonatomic, assign, nullable) SEL failureSelector;
 
 /**
  * The connection success block.
  */
-@property (nonatomic, copy) UAHTTPConnectionSuccessBlock successBlock;
+@property (nonatomic, copy, nullable) UAHTTPConnectionSuccessBlock successBlock;
 
 /**
  * The connection failure block.
  */
-@property (nonatomic, copy) UAHTTPConnectionFailureBlock failureBlock;
+@property (nonatomic, copy, nullable) UAHTTPConnectionFailureBlock failureBlock;
 
 /**
  * The queue on which to dispatch block and delegate callbacks.
@@ -74,7 +74,7 @@
  * If unset, callbacks will occur on the thread from which the connection was started.
  * Note: you cannot reschedule the delegate queue once a connection is in flight.
  */
-@property (nonatomic, strong) NSOperationQueue *delegateQueue;
+@property (nonatomic, strong, nullable) NSOperationQueue *delegateQueue;
 
 /**
  * Class factory method for creating a UAHTTPConnection.
@@ -139,3 +139,5 @@
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection;
 
 @end
+
+NS_ASSUME_NONNULL_END

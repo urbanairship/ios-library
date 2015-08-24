@@ -25,6 +25,7 @@
 
 #import "UAAction.h"
 
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Requests an inbox message to be displayed in an overlay.
@@ -60,3 +61,5 @@ typedef NS_ENUM(NSInteger, UAOverlayInboxMessageActionErrorCode) {
  * The domain for errors encountered when running a `UAOverlayInboxMessageAction`.
  */
 extern NSString * const UAOverlayInboxMessageActionErrorDomain;
+
+NS_ASSUME_NONNULL_END

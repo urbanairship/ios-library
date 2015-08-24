@@ -35,12 +35,14 @@
 @class UAInboxMessage;
 @class UAInboxMessageData;
 
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Manager class for the Rich Push CoreData store. Use this class
  * to add, delete, fetch and update messages in the database.
  */
 @interface UAInboxDBManager : NSObject
+
 
 /**
  * The URL for the core data store.
@@ -119,3 +121,4 @@
 
 @end
 
+NS_ASSUME_NONNULL_END

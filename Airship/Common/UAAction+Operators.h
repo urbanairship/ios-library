@@ -35,6 +35,8 @@ typedef NS_ENUM(NSInteger, UAActionOperatorErrorCode) {
     UAActionOperatorErrorCodeChildActionRejectedArgs
 };
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * The domain for errors encountered during an action operator.
  */
@@ -53,27 +55,27 @@ typedef void (^UAActionPostExecutionBlock)(UAActionArguments *, UAActionResult *
 /**
  * A block that defines a means of merging two UAActionResult instances into one value.
  */
-typedef UAActionResult * (^UAActionFoldResultsBlock)(UAActionResult *, UAActionResult *);
+typedef UAActionResult * __nonnull (^UAActionFoldResultsBlock)(UAActionResult *, UAActionResult *);
 
 /**
  * A block that defines a means of tranforming one UAActionArguments to another
  */
-typedef UAActionArguments * (^UAActionMapArgumentsBlock)(UAActionArguments *);
+typedef UAActionArguments * __nonnull (^UAActionMapArgumentsBlock)(UAActionArguments *);
 
 /**
  * A block defining a monadic bind operation.
  */
-typedef UAAction * (^UAActionBindBlock)(UAActionBlock, UAActionPredicate);
+typedef UAAction * __nonnull (^UAActionBindBlock)(UAActionBlock, UAActionPredicate);
 
 /**
  * A block defining a monadic lift operation on the action block
  */
-typedef UAActionBlock (^UAActionLiftBlock)(UAActionBlock);
+typedef __nonnull UAActionBlock (^UAActionLiftBlock)(UAActionBlock);
 
 /**
  * A block defining a monadic lift operation on the predicate block
  */
-typedef UAActionPredicate (^UAActionPredicateLiftBlock)(UAActionPredicate);
+typedef __nonnull UAActionPredicate (^UAActionPredicateLiftBlock)(UAActionPredicate);
 
 
 @interface UAAction (Operators)
@@ -165,3 +167,5 @@ typedef UAActionPredicate (^UAActionPredicateLiftBlock)(UAActionPredicate);
 - (UAAction *)postExecution:(UAActionPostExecutionBlock)postExecutionBlock;
 
 @end
+
+NS_ASSUME_NONNULL_END

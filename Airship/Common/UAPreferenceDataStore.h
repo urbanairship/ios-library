@@ -25,6 +25,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Wrapper around NSUserDefaults that automatically applies a key prefix
  * to all entries.
@@ -59,31 +61,31 @@
  * Returns the string associated with the key.
  * @param key The preference key.
  */
-- (NSString *)stringForKey:(NSString *)key;
+- (nullable NSString *)stringForKey:(NSString *)key;
 
 /**
  * Returns the array associated with the key.
  * @param key The preference key.
  */
-- (NSArray *)arrayForKey:(NSString *)key;
+- (nullable NSArray *)arrayForKey:(NSString *)key;
 
 /**
  * Returns the dictionary associated with the key.
  * @param key The preference key.
  */
-- (NSDictionary *)dictionaryForKey:(NSString *)key;
+- (nullable NSDictionary *)dictionaryForKey:(NSString *)key;
 
 /**
  * Returns the data associated with the key.
  * @param key The preference key.
  */
-- (NSData *)dataForKey:(NSString *)key;
+- (nullable NSData *)dataForKey:(NSString *)key;
 
 /**
  * Returns the string array associated with the key.
  * @param key The preference key.
  */
-- (NSArray *)stringArrayForKey:(NSString *)key;
+- (nullable NSArray *)stringArrayForKey:(NSString *)key;
 
 /**
  * Returns the integer associated with the key.
@@ -103,7 +105,6 @@
  */
 - (double)doubleForKey:(NSString *)key;
 
-
 /**
  * Returns the BOOL associated with the key.
  * @param key The preference key.
@@ -114,7 +115,7 @@
  * Returns the URL associated with the key.
  * @param key The preference key.
  */
-- (NSURL *)URLForKey:(NSString *)key;
+- (nullable NSURL *)URLForKey:(NSString *)key;
 
 /**
  * Sets the value of the specified key.
@@ -149,15 +150,14 @@
  * @param url The preference value.
  * @param key The preference key.
  */
-- (void)setURL:(NSURL *)url forKey:(NSString *)key;
+- (void)setURL:(nullable NSURL *)url forKey:(NSString *)key;
 
 /**
  * Sets the value of the specified key.
  * @param value The preference value.
  * @param key The preference key.
  */
-- (void)setObject:(id)value forKey:(NSString *)key;
-
+- (void)setObject:(nullable id)value forKey:(NSString *)key;
 
 /**
  * Removes all the keys that start with the data store's key prefix.
@@ -165,3 +165,5 @@
 - (void)removeAll;
 
 @end
+
+NS_ASSUME_NONNULL_END

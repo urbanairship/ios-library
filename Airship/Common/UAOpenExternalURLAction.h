@@ -36,6 +36,8 @@ typedef NS_ENUM(NSInteger, UAOpenExternalURLActionErrorCode) {
     UAOpenExternalURLActionErrorCodeURLFailedToOpen
 };
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * The domain for errors encountered when running a `UAOpenExternalURLAction`.
  */
@@ -60,3 +62,5 @@ extern NSString * const UAOpenExternalURLActionErrorDomain;
 @interface UAOpenExternalURLAction : UAAction
 
 @end
+
+NS_ASSUME_NONNULL_END

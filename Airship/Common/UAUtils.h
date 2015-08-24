@@ -28,6 +28,8 @@
 
 @class UAHTTPRequest;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * The UAUtils object provides an interface for utility methods.
  */
@@ -130,14 +132,14 @@
  *
  * @return The main window, or `nil` if the window cannot be found.
  */
-+ (UIWindow *)mainWindow;
++ (nullable UIWindow *)mainWindow;
 
 /**
  * A utility method that grabs the top-most view controller for the main application window.
  * May return nil if a suitable view controller cannot be found.
  * @return The top-most view controller or `nil` if controller cannot be found.
  */
-+ (UIViewController *)topController;
++ (nullable UIViewController *)topController;
 
 /**
  * Returns the main screen's bounds, in orientation-dependent coordinates.
@@ -149,3 +151,5 @@
 + (CGRect)orientationDependentScreenBounds;
 
 @end
+
+NS_ASSUME_NONNULL_END

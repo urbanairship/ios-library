@@ -153,7 +153,8 @@
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         XCTAssertFalse(isMainThread(), @"we should be on a background thread");
-        [action runWithArguments:nil completionHandler:^(UAActionResult *result) {
+        [action runWithArguments:[UAActionArguments argumentsWithValue:nil withSituation:UASituationManualInvocation]
+               completionHandler:^(UAActionResult *result) {
             XCTAssertTrue(isMainThread(), @"we should be on the main thread");
             [testExpecation fulfill];
         }];
@@ -180,7 +181,8 @@
         });
     }];
 
-    [action runWithArguments:nil completionHandler:^(UAActionResult *result) {
+    [action runWithArguments:[UAActionArguments argumentsWithValue:nil withSituation:UASituationManualInvocation]
+           completionHandler:^(UAActionResult *result) {
         XCTAssertTrue(isMainThread(), @"we should be back on the main thread");
         [testExpecation fulfill];
     }];

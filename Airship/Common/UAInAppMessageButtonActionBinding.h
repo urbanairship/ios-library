@@ -35,17 +35,17 @@
 /**
  * The title of the button.
  */
-@property(nonatomic, copy) NSString *title;
+@property(nonatomic, copy, nullable) NSString *title;
 
 /**
  * The button's identifier.
  */
-@property(nonatomic, copy) NSString *identifier;
+@property(nonatomic, copy, nullable) NSString *identifier;
 /**
  * A dictionary mapping action names to action values, to
  * be run when the button is pressed.
  */
-@property(nonatomic, copy) NSDictionary *actions;
+@property(nonatomic, copy, nullable) NSDictionary *actions;
 
 /**
  * The action's situation.

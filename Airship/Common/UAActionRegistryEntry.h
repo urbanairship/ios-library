@@ -26,6 +26,8 @@
 #import <Foundation/Foundation.h>
 #import "UAAction.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * An entry in the UAActionRegistry.
  */
@@ -39,12 +41,16 @@
 /**
  * The entry's predicate.
  */
-@property (nonatomic, copy) UAActionPredicate predicate;
+@property (nonatomic, copy, nullable) UAActionPredicate predicate;
 
 /**
  * Registered names
  */
+#if __has_feature(objc_generics)
+@property (nonatomic, readonly) NSArray<NSString *> *names;
+#else
 @property (nonatomic, readonly) NSArray *names;
+#endif
 
 
 /**
@@ -63,3 +69,5 @@
 + (instancetype)entryForAction:(UAAction *)action predicate:(UAActionPredicate)predicate;
 
 @end
+
+NS_ASSUME_NONNULL_END

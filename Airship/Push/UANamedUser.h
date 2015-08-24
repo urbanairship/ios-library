@@ -27,6 +27,8 @@
 
 @class UAPreferenceDataStore;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * The named user is an alternate method of identifying the device. Once a named
  * user is associated to the device, it can be used to send push notifications
@@ -37,7 +39,7 @@
 /**
  * The named user ID for this device.
  */
-@property (nonatomic, copy) NSString *identifier;
+@property (nonatomic, copy, nullable) NSString *identifier;
 
 /**
  * Force updating the association or disassociation of the current named user ID.
@@ -51,7 +53,11 @@
  * @param tags Array of tags to add.
  * @param tagGroupID Tag group ID string.
  */
+#if __has_feature(objc_generics)
+- (void)addTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID;
+#else
 - (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID;
+#endif
 
 /**
  * Removes tags from named user tags. To update the server,
@@ -60,7 +66,11 @@
  * @param tags Array of tags to remove.
  * @param tagGroupID Tag group ID string.
  */
+#if __has_feature(objc_generics)
+- (void)removeTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID;
+#else
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID;
+#endif
 
 /**
  * Update named user tags.
@@ -68,3 +78,5 @@
 - (void)updateTags;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -30,6 +30,8 @@
 @class UAInboxMessageList;
 @class UAInboxMessage;
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
 
 /**
@@ -86,7 +88,7 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
  *
  * A nil value indicates it will never expire.
  */
-@property (nonatomic, readonly) NSDate *messageExpiration;
+@property (nonatomic, readonly, nullable) NSDate *messageExpiration;
 
 /**
  * The message title.
@@ -118,10 +120,10 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
  * Mark the message as read.
  *
  * @param completionHandler A block to be executed on completion.
- * @return A UADisposable which can be used to cancel callback execution.
+ * @return A UADisposable which can be used to cancel callback execution, or nil
+ * if the message is already marked read.
  */
-- (UADisposable *)markMessageReadWithCompletionHandler:(UAInboxMessageCallbackBlock)completionHandler;
-
+- (nullable UADisposable *)markMessageReadWithCompletionHandler:(nullable UAInboxMessageCallbackBlock)completionHandler;
 
 /**
  * YES if the message is expired, NO otherwise
@@ -129,3 +131,5 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
 - (BOOL)isExpired;
 
 @end
+
+NS_ASSUME_NONNULL_END

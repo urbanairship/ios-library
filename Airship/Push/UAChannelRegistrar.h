@@ -27,6 +27,8 @@
 
 @class UAChannelRegistrationPayload;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * The UAChannelRegistrarDelegate protocol for registration events.
  */
@@ -65,7 +67,7 @@
 /**
  * A UAChannelRegistrarDelegate delegate.
  */
-@property (nonatomic, weak) id<UAChannelRegistrarDelegate> delegate;
+@property (nonatomic, weak, nullable) id<UAChannelRegistrarDelegate> delegate;
 
 /**
  * Register the device with Urban Airship.
@@ -75,8 +77,8 @@
  * @param payload The payload for the registration.
  * @param forcefully To force the registration, skipping duplicate request checks.
  */
-- (void)registerWithChannelID:(NSString *)channelID
-              channelLocation:(NSString *)channelLocation
+- (void)registerWithChannelID:(nullable NSString *)channelID
+              channelLocation:(nullable NSString *)channelLocation
                   withPayload:(UAChannelRegistrationPayload *)payload
                    forcefully:(BOOL)forcefully;
 
@@ -89,4 +91,6 @@
 - (void)cancelAllRequests;
 
 @end
+
+NS_ASSUME_NONNULL_END
 

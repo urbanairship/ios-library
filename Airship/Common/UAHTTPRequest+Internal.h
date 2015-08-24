@@ -25,10 +25,15 @@
 
 #import "UAHTTPRequest.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UAHTTPRequest()
 
-@property (nonatomic, strong) NSHTTPURLResponse *response;
-@property (nonatomic, strong) NSData *responseData;
-@property (nonatomic, strong) NSError *error;
+@property (nonatomic, strong, nullable) NSHTTPURLResponse *response;
+@property (nonatomic, strong, nullable) NSData *responseData;
+@property (nonatomic, strong, nullable) NSError *error;
 @property (nonatomic, strong) NSURL *url;
+
 @end
+
+NS_ASSUME_NONNULL_END

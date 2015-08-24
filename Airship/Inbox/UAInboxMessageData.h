@@ -26,6 +26,8 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * CoreData class representing the backing data for
  * a UAInboxMessage.
@@ -75,7 +77,7 @@
  *
  * A nil value indicates it will never expire
  */
-@property (nonatomic, strong) NSDate *messageExpiration;
+@property (nonatomic, strong, nullable) NSDate *messageExpiration;
 
 /** The message title */
 @property (nonatomic, copy) NSString *title;
@@ -102,6 +104,6 @@
  */
 @property (nonatomic, readonly) BOOL isGone;
 
-
-
 @end
+
+NS_ASSUME_NONNULL_END

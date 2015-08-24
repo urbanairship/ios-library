@@ -30,6 +30,8 @@
 @class UAHTTPRequest;
 @class UAConfig;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * A block called when the channel ID creation succeeded.
  *
@@ -115,3 +117,5 @@ typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
 @property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -28,6 +28,8 @@
 #import "UAActionRegistry.h"
 #import "UAAggregateActionResult.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * A helper class for running actions by name or by reference.
  */
@@ -44,7 +46,7 @@
  * @param situation The action's situation.
  */
 + (void)runActionWithName:(NSString *)actionName
-                    value:(id)value
+                    value:(nullable id)value
                 situation:(UASituation)situation;
 
 /**
@@ -59,7 +61,7 @@
  * @param metadata The action's metadata.
  */
 + (void)runActionWithName:(NSString *)actionName
-                    value:(id)value
+                    value:(nullable id)value
                 situation:(UASituation)situation
                  metadata:(NSDictionary *)metadata;
 
@@ -75,7 +77,7 @@
  * @param completionHandler Optional completion handler to run when the action completes.
  */
 + (void)runActionWithName:(NSString *)actionName
-                    value:(id)value
+                    value:(nullable id)value
                 situation:(UASituation)situation
         completionHandler:(UAActionCompletionHandler)completionHandler;
 
@@ -92,10 +94,10 @@
  * @param completionHandler Optional completion handler to run when the action completes.
  */
 + (void)runActionWithName:(NSString *)actionName
-                value:(id)value
+                value:(nullable id)value
             situation:(UASituation)situation
-             metadata:(NSDictionary *)metadata
-    completionHandler:(UAActionCompletionHandler)completionHandler;
+             metadata:(nullable NSDictionary *)metadata
+    completionHandler:(nullable UAActionCompletionHandler)completionHandler;
 
 
 
@@ -107,7 +109,7 @@
  * @param situation The action's situation.
  */
 + (void)runAction:(UAAction *)action
-            value:(id)value
+            value:(nullable id)value
         situation:(UASituation)situation;
 
 /**
@@ -119,9 +121,9 @@
  * @param metadata The action's metadata.
  */
 + (void)runAction:(UAAction *)action
-            value:(id)value
+            value:(nullable id)value
         situation:(UASituation)situation
-         metadata:(NSDictionary *)metadata;
+         metadata:(nullable NSDictionary *)metadata;
 
 /**
  * Runs an action.
@@ -132,7 +134,7 @@
  * @param completionHandler Optional completion handler to run when the action completes.
  */
 + (void)runAction:(UAAction *)action
-            value:(id)value
+            value:(nullable id)value
         situation:(UASituation)situation
 completionHandler:(UAActionCompletionHandler)completionHandler;
 
@@ -147,10 +149,11 @@ completionHandler:(UAActionCompletionHandler)completionHandler;
  * @param completionHandler Optional completion handler to run when the action completes.
  */
 + (void)runAction:(UAAction *)action
-            value:(id)value
+            value:(nullable id)value
         situation:(UASituation)situation
-         metadata:(NSDictionary *)metadata
-completionHandler:(UAActionCompletionHandler)completionHandler;
-
+         metadata:(nullable NSDictionary *)metadata
+completionHandler:(nullable UAActionCompletionHandler)completionHandler;
 
 @end
+
+NS_ASSUME_NONNULL_END

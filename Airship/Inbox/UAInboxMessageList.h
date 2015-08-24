@@ -28,6 +28,7 @@
 #import "UAUser.h"
 #import "UADisposable.h"
 
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  * A completion block for message list operations.
@@ -66,9 +67,11 @@ extern NSString * const UAInboxMessageListUpdatedNotification;
  *
  * @param messages The array of messages to be marked read.
  * @param completionHandler An optional completion handler.
- * @return A UADisposable token which can be used to cancel callback execution.
+ * @return A UADisposable token which can be used to cancel callback execution,
+ * or nil if the array of messages to mark read is empty.
  */
-- (UADisposable *)markMessagesRead:(NSArray *)messages completionHandler:(UAInboxMessageListCallbackBlock)completionHandler;
+- (nullable UADisposable *)markMessagesRead:(NSArray *)messages
+                          completionHandler:(nullable UAInboxMessageListCallbackBlock)completionHandler;
 
 /**
  * Marks messages deleted. They will be marked locally as deleted and synced with
@@ -76,9 +79,11 @@ extern NSString * const UAInboxMessageListUpdatedNotification;
  *
  * @param messages The array of messages to be marked deleted.
  * @param completionHandler An optional completion handler.
- * @return A UADisposable token which can be used to cancel callback execution.
+ * @return A UADisposable token which can be used to cancel callback execution,
+ * or nil if the array of messages to mark deleted is empty.
  */
-- (UADisposable *)markMessagesDeleted:(NSArray *)messages completionHandler:(UAInboxMessageListCallbackBlock)completionHandler;
+- (nullable UADisposable *)markMessagesDeleted:(NSArray *)messages
+                             completionHandler:(nullable UAInboxMessageListCallbackBlock)completionHandler;
 
 /**
  * Fetch new messages from the server. If the associated user has not yet
@@ -89,8 +94,8 @@ extern NSString * const UAInboxMessageListUpdatedNotification;
  * @return A UADisposable token which can be used to cancel callback execution.
  * This value will be nil if the associated user has not yet been created.
  */
-- (UADisposable *)retrieveMessageListWithSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
-                                     withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock;
+- (nullable UADisposable *)retrieveMessageListWithSuccessBlock:(nullable UAInboxMessageListCallbackBlock)successBlock
+                                              withFailureBlock:(nullable UAInboxMessageListCallbackBlock)failureBlock;
 
 /**
  * Returns the number of messages currently in the inbox.
@@ -101,21 +106,27 @@ extern NSString * const UAInboxMessageListUpdatedNotification;
 /**
  * Returns the message associated with a particular URL.
  * @param url The URL of the message
- * @return The associated UAInboxMessage object.
+ * @return The associated UAInboxMessage object or nil if a message was
+ * unable to be found.
  */
-- (UAInboxMessage *)messageForBodyURL:(NSURL *)url;
+- (nullable UAInboxMessage *)messageForBodyURL:(NSURL *)url;
 
 /**
  * Returns the message associated with a particular ID.
  * @param messageID The message ID as an NSString.
- * @return The associated UAInboxMessage object.
+ * @return The associated UAInboxMessage object or nil if a message was
+ * unable to be found.
  */
-- (UAInboxMessage *)messageForID:(NSString *)messageID;
+- (nullable UAInboxMessage *)messageForID:(NSString *)messageID;
 
 /**
  * The list of messages on disk as an NSArray.
  */
+#if __has_feature(objc_generics)
+@property (atomic, readonly, strong) NSArray<UAInboxMessage *> *messages;
+#else
 @property (atomic, readonly, strong) NSArray *messages;
+#endif
 
 /**
  * The number of messages that are currently unread or -1
@@ -136,3 +147,5 @@ extern NSString * const UAInboxMessageListUpdatedNotification;
 @property (readonly) BOOL isBatchUpdating;
 
 @end
+
+NS_ASSUME_NONNULL_END

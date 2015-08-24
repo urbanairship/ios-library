@@ -26,6 +26,8 @@
 #import <Foundation/Foundation.h>
 #import "UAEvent.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * A UAInteractiveNotificationEvent captures information regarding an interactive
  * notification event for UAAnalytics.
@@ -43,3 +45,5 @@
                                  categoryID:(NSString *)category
                                notification:(NSDictionary *)notification;
 @end
+
+NS_ASSUME_NONNULL_END

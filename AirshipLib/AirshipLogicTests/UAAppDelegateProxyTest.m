@@ -500,6 +500,74 @@
 
 }
 
+/*
+ * Tests adding application:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler: calls
+ * through to UAPush and the original delegate.
+ */
+- (void)testProxyAppReceivedActionWithIdentifierWithResponseInfo {
+    XCTestExpectation *callBackFinished = [self expectationWithDescription:@"App delegate callback called"];
+
+    NSDictionary *expectedNotification = @{@"oh": @"hi"};
+    NSDictionary *expectedResponseInfo = @{@"UIUserNotificationActionResponseTypedTextKey": @"shucks howdy"};
+
+    // Add implementation to the app delegate
+    __block BOOL appDelegateCalled;
+    [self addAppDelegateImplementation:@selector(application:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:)
+                                 block:^(id self, UIApplication *application, NSString *identifier, NSDictionary *notification, NSDictionary *responseInfo, void (^completion)() ) {
+
+                                     appDelegateCalled = YES;
+
+                                     // Verify the parameters
+                                     XCTAssertEqualObjects([UIApplication sharedApplication], application);
+                                     XCTAssertEqualObjects(expectedNotification, notification);
+                                     XCTAssertEqualObjects(expectedResponseInfo, responseInfo);
+                                     XCTAssertEqualObjects(@"action!", identifier);
+
+                                     XCTAssertNotNil(completion);
+                                     completion();
+                                 }];
+
+
+    // Stub the implementation for UAPush that calls an expected fetch result
+    __block BOOL pushCalled;
+    void (^pushBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
+        pushCalled = YES;
+        void *arg;
+        [invocation getArgument:&arg atIndex:6];
+        void (^handler)() = (__bridge void (^)())arg;
+        handler();
+    };
+
+    [[[self.mockPush stub] andDo:pushBlock] appReceivedActionWithIdentifier:@"action!"
+                                                               notification:expectedNotification
+                                                               responseInfo:expectedResponseInfo
+                                                           applicationState:UIApplicationStateActive
+                                                          completionHandler:OCMOCK_ANY];
+
+
+    // Proxy the delegate
+    [UAAppDelegateProxy proxyAppDelegate];
+
+    __block BOOL completionHandlerCalled;
+
+    // Verify that the expected value is returned from combining the two results
+    [self.delegate application:[UIApplication sharedApplication]
+    handleActionWithIdentifier:@"action!"
+         forRemoteNotification:expectedNotification
+             withResponseInfo:expectedResponseInfo
+             completionHandler:^(){
+                 [callBackFinished fulfill];
+                 completionHandlerCalled = YES;
+             }];
+
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+        XCTAssertTrue(pushCalled);
+        XCTAssertTrue(completionHandlerCalled);
+        XCTAssertTrue(appDelegateCalled);
+    }];
+    
+}
+
 /**
  * Adds a block based implementation to the app delegate with the given selector.
  *
@@ -511,6 +579,12 @@
     struct objc_method_description description = protocol_getMethodDescription(@protocol(UIApplicationDelegate), selector, NO, YES);
     IMP implementation = imp_implementationWithBlock(block);
     class_addMethod(self.generatedClass, selector, implementation, description.types);
+}
+
+/**
+ * Dummy implementation of iOS 9 app-delegate method, so that Xcode 6 does not complain.
+ */
+- (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo withResponseInfo:(NSDictionary *)responseInfo completionHandler:(void (^)())completionHandler {
 }
 
 @end

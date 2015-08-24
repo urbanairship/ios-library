@@ -422,6 +422,7 @@
 
     // Create the provider
     UABaseLocationProvider *baseProvider = [[UABaseLocationProvider alloc] initWithLocationManager:self.mockLocationManager];
+    XCTAssertNotNil(baseProvider);
 
     // Verify the lcoation manager allowsBackgroundLocationUpdates was set to YES
     [self.mockLocationManager verify];
@@ -443,6 +444,7 @@
 
     // Create the provider
     UABaseLocationProvider *baseProvider = [[UABaseLocationProvider alloc] initWithLocationManager:self.mockLocationManager];
+    XCTAssertNotNil(baseProvider);
 
     // Verify the lcoation manager allowsBackgroundLocationUpdates was not set to YES
     [self.mockLocationManager verify];

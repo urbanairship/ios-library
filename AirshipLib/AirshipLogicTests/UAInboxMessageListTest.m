@@ -137,7 +137,7 @@ static UAUser *mockUser_ = nil;
         void *arg;
         [invocation getArgument:&arg atIndex:2];
         UAInboxClientMessageRetrievalSuccessBlock successBlock = (__bridge UAInboxClientMessageRetrievalSuccessBlock) arg;
-        successBlock(304, nil, 0);
+        successBlock(304, @[], 0);
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
 
@@ -177,7 +177,7 @@ static UAUser *mockUser_ = nil;
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAInboxClientFailureBlock failureBlock = (__bridge UAInboxClientFailureBlock) arg;
-        failureBlock(nil);
+        failureBlock([[UAHTTPRequest alloc] init]);
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
@@ -315,7 +315,7 @@ static UAUser *mockUser_ = nil;
         [invocation getArgument:&arg atIndex:3];
         UAInboxClientFailureBlock failureBlock = (__bridge UAInboxClientFailureBlock) arg;
         trigger = ^{
-            failureBlock(nil);
+            failureBlock([[UAHTTPRequest alloc] init]);
         };
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 

@@ -25,6 +25,8 @@
 
 #import "UAUserNotificationAction.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Clone of UIMutableUserNotificationAction for iOS 7 support.
  */
@@ -40,12 +42,12 @@
 /**
  * The string that you use internally to identify the action.
  */
-@property(nonatomic, copy) NSString *identifier;
+@property(nonatomic, copy, nullable) NSString *identifier;
 
 /**
  * The localized string to use as the button title for the action.
  */
-@property(nonatomic, copy) NSString *title;
+@property(nonatomic, copy, nullable) NSString *title;
 
 /**
  * The mode in which to run the app when the action is performed.
@@ -63,3 +65,5 @@
 @property(nonatomic, assign, getter=isDestructive) BOOL destructive;
 
 @end
+
+NS_ASSUME_NONNULL_END

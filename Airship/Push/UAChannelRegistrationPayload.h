@@ -47,6 +47,8 @@
 #define kUABackgroundEnabledJSONKey @"background"
 
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Model object encapsulating the data relevant to a creation or updates processed by UAChannelAPIClient.
  */
@@ -55,12 +57,12 @@
 /**
  * The user ID.
  */
-@property (nonatomic, copy) NSString *userID;
+@property (nonatomic, copy, nullable) NSString *userID;
 
 /**
  * The device ID.
  */
-@property (nonatomic, copy) NSString *deviceID;
+@property (nonatomic, copy, nullable) NSString *deviceID;
 
 /**
  * This flag indicates that the user is able to receive push notifications.
@@ -80,27 +82,31 @@
 /**
  * The tags for this device.
  */
-@property (nonatomic, strong) NSArray *tags;
+#if __has_feature(objc_generics)
+@property (nonatomic, strong, nullable) NSArray<NSString *> *tags;
+#else
+@property (nonatomic, strong, nullable) NSArray *tags;
+#endif
 
 /**
  * The alias for this device.
  */
-@property (nonatomic, copy) NSString *alias;
+@property (nonatomic, copy, nullable) NSString *alias;
 
 /**
  * Quiet time settings for this device.
  */
-@property (nonatomic, strong) NSDictionary *quietTime;
+@property (nonatomic, strong, nullable) NSDictionary *quietTime;
 
 /**
  * The time zone for this device.
  */
-@property (nonatomic, copy) NSString *timeZone;
+@property (nonatomic, copy, nullable) NSString *timeZone;
 
 /**
  * The badge for this device.
  */
-@property (nonatomic, strong) NSNumber *badge;
+@property (nonatomic, strong, nullable) NSNumber *badge;
 
 
 /**
@@ -121,5 +127,8 @@
  * @return YES if the contents of the payload are equal to the contents of the
  *         receiving payload, otherwise NO.
  */
-- (BOOL)isEqualToPayload:(UAChannelRegistrationPayload *)payload;
+- (BOOL)isEqualToPayload:(nullable UAChannelRegistrationPayload *)payload;
+
 @end
+
+NS_ASSUME_NONNULL_END

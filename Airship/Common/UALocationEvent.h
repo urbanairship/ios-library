@@ -30,6 +30,8 @@
 #import "UAEvent.h"
 #import "UALocationProviderProtocol.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /** Keys and values for location analytics */
 typedef NSString UALocationEventAnalyticsKey;
 extern UALocationEventAnalyticsKey * const UALocationEventForegroundKey; 
@@ -69,9 +71,9 @@ extern NSString * const UAAnalyticsValueNone;
  * @return UALocationEvent populated with the necessary values
  */
 + (UALocationEvent *)locationEventWithLocation:(CLLocation *)location
-                                  providerType:(UALocationServiceProviderType *)providerType
-                               desiredAccuracy:(NSNumber *)desiredAccuracy
-                                distanceFilter:(NSNumber *)distanceFilter;
+                                  providerType:(nullable UALocationServiceProviderType *)providerType
+                               desiredAccuracy:(nullable NSNumber *)desiredAccuracy
+                                distanceFilter:(nullable NSNumber *)distanceFilter;
 
 
 /**
@@ -84,9 +86,9 @@ extern NSString * const UAAnalyticsValueNone;
  * @return UALocationEvent populated with the necessary values
  */
 + (UALocationEvent *)singleLocationEventWithLocation:(CLLocation *)location
-                                        providerType:(UALocationServiceProviderType *)providerType
-                                     desiredAccuracy:(NSNumber *)desiredAccuracy
-                                      distanceFilter:(NSNumber *)distanceFilter;
+                                        providerType:(nullable UALocationServiceProviderType *)providerType
+                                     desiredAccuracy:(nullable NSNumber *)desiredAccuracy
+                                      distanceFilter:(nullable NSNumber *)distanceFilter;
 
 
 /**
@@ -97,7 +99,7 @@ extern NSString * const UAAnalyticsValueNone;
  * @return UALocationEvent populated with the necessary values
  */
 + (UALocationEvent *)significantChangeLocationEventWithLocation:(CLLocation *)location
-                                                   providerType:(UALocationServiceProviderType *)providerType;
+                                                   providerType:(nullable UALocationServiceProviderType *)providerType;
 
 /**
  * Creates a UALocationEvent for a standard location change.
@@ -109,11 +111,11 @@ extern NSString * const UAAnalyticsValueNone;
  * @return UALocationEvent populated with the necessary values
  */
 + (UALocationEvent *)standardLocationEventWithLocation:(CLLocation *)location
-                                          providerType:(UALocationServiceProviderType *)providerType
-                                       desiredAccuracy:(NSNumber *)desiredAccuracy
-                                        distanceFilter:(NSNumber *)distanceFilter;
+                                          providerType:(nullable UALocationServiceProviderType *)providerType
+                                       desiredAccuracy:(nullable NSNumber *)desiredAccuracy
+                                        distanceFilter:(nullable NSNumber *)distanceFilter;
 
 
-
+NS_ASSUME_NONNULL_END
 
 @end

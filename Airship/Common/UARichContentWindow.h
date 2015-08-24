@@ -26,6 +26,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Protocol for mediating the display of rich content pages
  */
@@ -42,3 +44,5 @@
 - (void)closeWebView:(UIWebView *)webView animated:(BOOL)animated;
 
 @end
+
+NS_ASSUME_NONNULL_END

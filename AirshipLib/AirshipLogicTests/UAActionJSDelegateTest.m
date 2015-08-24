@@ -38,6 +38,7 @@
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) JSContext *jsContext;
 @property (nonatomic, copy) NSString *nativeBridge;
+@property (nonatomic, strong) id mockWebView;
 @end
 
 @implementation UAActionJSDelegateTest
@@ -56,15 +57,18 @@
 
     // UAirship is only used for storage here, since it's normally injected when setting up a UIWebView
     [self.jsContext evaluateScript:@"UAirship = {}"];
+
+    self.mockWebView = [OCMockObject niceMockForClass:[UIWebView class]];
 }
 
 - (void)tearDown {
     [self.mockAirship stopMocking];
+    [self.mockWebView stopMocking];
     [super tearDown];
 }
 
 - (void)performWebViewCallWithURL:(NSURL *)url completionHandler:(void (^)(NSString *))handler {
-    [self.jsDelegate callWithData:[UAWebViewCallData callDataForURL:url webView:nil]
+    [self.jsDelegate callWithData:[UAWebViewCallData callDataForURL:url webView:self.mockWebView]
             withCompletionHandler:handler];
 }
 

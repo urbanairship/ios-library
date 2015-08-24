@@ -82,12 +82,8 @@
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
     XCTAssertEqualObjects(event.eventName, @"event name", "255 character event name should be valid");
 
-    event.eventName = nil;
-    XCTAssertNil(event.eventName, @"Event names should be able to be cleared");
-
-
     event.eventName =  [@"" stringByPaddingToLength:256 withString:@"EVENT_NAME" startingAtIndex:0];
-    XCTAssertNil(event.eventName, @"Event names larger than 255 characters should be ignored");
+    XCTAssertEqualObjects(event.eventName, @"event name", @"Event names larger than 255 characters should be ignored");
 
     NSString *eventName = [@"" stringByPaddingToLength:255 withString:@"EVENT_NAME" startingAtIndex:0];
     event.eventName =  eventName;
@@ -271,9 +267,6 @@
 - (void)testIsValid {
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name" value:nil];
     XCTAssertTrue([event isValid], @"Event has a valid event name");
-
-    event.eventName = nil;
-    XCTAssertFalse([event isValid], @"Event should be invalid when it does not have an event name");
 
     event.eventName = @"";
     XCTAssertFalse([event isValid], @"Event should be invalid when it does not have an event name");

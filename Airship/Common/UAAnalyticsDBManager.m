@@ -110,7 +110,7 @@
     dispatch_sync(dbQueue, ^{
         result = [self.db executeQuery:@"SELECT * FROM analytics ORDER BY _id LIMIT ?", [NSNumber numberWithUnsignedInteger:max]];
     });
-    return result;
+    return result ?: @[];
 }
 
 - (NSArray *)getEventByEventID:(NSString *)eventID {
@@ -118,7 +118,7 @@
     dispatch_sync(dbQueue, ^{
         result = [self.db executeQuery:@"SELECT * FROM analytics WHERE event_id = ?", eventID];
     });
-    return result;
+    return result ?: @[];
 }
 
 - (void)deleteEvent:(NSNumber *)eventID {
