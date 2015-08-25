@@ -50,6 +50,9 @@
 @property(nonatomic, assign) BOOL swipeDetected;
 @property(nonatomic, assign) BOOL tapDetected;
 @property(nonatomic, assign) BOOL longPressDetected;
+@property (nonatomic, assign) BOOL isShown;
+@property (nonatomic, assign) BOOL isDismissed;
+
 
 /**
  * A timer set for the duration of the message, after wich the view is dismissed.

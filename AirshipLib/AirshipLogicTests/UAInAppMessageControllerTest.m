@@ -163,7 +163,6 @@
 
     [self.mockUserDelegate verify];
     [self.mockParentView verify];
-    XCTAssertTrue(self.testController.isShown);
 }
 
 /**
@@ -181,7 +180,6 @@
 
     [self.mockDefaultDelegate verify];
     [self.mockParentView verify];
-    XCTAssertTrue(self.testController.isShown);
 }
 
 /**
@@ -213,7 +211,6 @@
     [self.mockUserDelegate verify];
     [self.mockMessageView verify];
     [self.mockParentView verify];
-    XCTAssertTrue(self.testController.isShown);
 }
 
 /**
@@ -241,16 +238,6 @@
     [self.mockDefaultDelegate verify];
     [self.mockMessageView verify];
     [self.mockParentView verify];
-    XCTAssertTrue(self.testController.isShown);
-}
-
-- (BOOL)checkPanGestureRecognizer:(id)value {
-    UIPanGestureRecognizer *gesture = value;
-    if (gesture.delaysTouchesBegan || gesture.delaysTouchesEnded || gesture.cancelsTouchesInView) {
-        return NO;
-    }
-
-    return YES;
 }
 
 /**
@@ -331,16 +318,23 @@
 // Helper methods
 
 /**
+ * Checks that the pan gesture recognizer has been added and properly configured
+ */
+- (BOOL)checkPanGestureRecognizer:(id)value {
+    UIPanGestureRecognizer *gesture = value;
+    if (gesture.delaysTouchesBegan || gesture.delaysTouchesEnded || gesture.cancelsTouchesInView) {
+        return NO;
+    }
+
+    return YES;
+}
+
+/**
  * Expects that the pan gesture recognizer has been set and properly configured
  */
 - (void)expectPanGestureRecognizerSetup {
     [[self.mockParentView expect] addGestureRecognizer:[OCMArg checkWithBlock:^BOOL(id value) {
-        UIPanGestureRecognizer *gesture = value;
-        if (gesture.delaysTouchesBegan || gesture.delaysTouchesEnded || gesture.cancelsTouchesInView) {
-            return NO;
-        }
-
-        return YES;
+        return [self checkPanGestureRecognizer:value];
     }]];
 }
 

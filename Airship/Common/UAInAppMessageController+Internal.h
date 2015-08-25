@@ -40,17 +40,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong, nullable) id <UAInAppMessageControllerDelegate> userDelegate;
 
-/**
- * Stores the display state of the in app message
- */
-@property (nonatomic, assign) BOOL isShown;
-
-/**
- * Stores the state of dismissal
- */
-@property (nonatomic, assign) BOOL isDismissed;
-
-
 @end
 
 NS_ASSUME_NONNULL_END
