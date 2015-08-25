@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAInAppMessageController.h"
+#import "UAInAppMessageController+Internal.h"
 #import "UAInAppMessage.h"
 #import "UAUtils.h"
 #import "UAInAppMessageButtonActionBinding.h"
@@ -46,14 +46,10 @@
 @property(nonatomic, strong) UIView *messageView;
 @property(nonatomic, copy) void (^dismissalBlock)(UAInAppMessageController *);
 @property(nonatomic, strong) NSDate *startDisplayDate;
-@property(nonatomic, strong) id<UAInAppMessageControllerDelegate> userDelegate;
-@property(nonatomic, strong) UAInAppMessageControllerDefaultDelegate *defaultDelegate;
 @property(nonatomic, strong) UIPanGestureRecognizer *panGestureRecognizer;
 @property(nonatomic, assign) BOOL swipeDetected;
 @property(nonatomic, assign) BOOL tapDetected;
 @property(nonatomic, assign) BOOL longPressDetected;
-@property(nonatomic, assign) BOOL isShown;
-@property(nonatomic, assign) BOOL isDismissed;
 
 /**
  * A timer set for the duration of the message, after wich the view is dismissed.
