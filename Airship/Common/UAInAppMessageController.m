@@ -42,17 +42,16 @@
 
 @interface UAInAppMessageController ()
 
-@property(nonatomic, strong) UAInAppMessage *message;
-@property(nonatomic, strong) UIView *messageView;
-@property(nonatomic, copy) void (^dismissalBlock)(UAInAppMessageController *);
-@property(nonatomic, strong) NSDate *startDisplayDate;
-@property(nonatomic, strong) UIPanGestureRecognizer *panGestureRecognizer;
-@property(nonatomic, assign) BOOL swipeDetected;
-@property(nonatomic, assign) BOOL tapDetected;
-@property(nonatomic, assign) BOOL longPressDetected;
+@property (nonatomic, strong) UAInAppMessage *message;
+@property (nonatomic, strong) UIView *messageView;
+@property (nonatomic, copy) void (^dismissalBlock)(UAInAppMessageController *);
+@property (nonatomic, strong) NSDate *startDisplayDate;
+@property (nonatomic, strong) UIPanGestureRecognizer *panGestureRecognizer;
+@property (nonatomic, assign) BOOL swipeDetected;
+@property (nonatomic, assign) BOOL tapDetected;
+@property (nonatomic, assign) BOOL longPressDetected;
 @property (nonatomic, assign) BOOL isShown;
 @property (nonatomic, assign) BOOL isDismissed;
-
 
 /**
  * A timer set for the duration of the message, after wich the view is dismissed.

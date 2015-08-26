@@ -180,6 +180,7 @@
 
     [self.mockDefaultDelegate verify];
     [self.mockParentView verify];
+
 }
 
 /**
@@ -255,7 +256,7 @@
     [[self.mockParentView expect] removeGestureRecognizer:OCMOCK_ANY];
 
     // Set up animate out expectation
-    XCTestExpectation *testExpecation = [self expectationWithDescription:@"User delegate dimiss finished."];
+    XCTestExpectation *testExpecation = [self expectationWithDescription:@"User delegate dismiss finished."];
 
     // Properly return parent view when superview is called on mockMessageView
     [[[self.mockMessageView stub] andReturn:self.mockParentView] superview];
@@ -272,7 +273,7 @@
         }
     }];
 
-    // Verfiy teardown expectations
+    // Verify teardown expectations
     [self.mockMessageView verify];
     [self.mockParentView verify];
 }
@@ -285,12 +286,12 @@
     self.testController.userDelegate = nil;
 
     // Set up animate out expectation
-    XCTestExpectation *testExpecation = [self expectationWithDescription:@"Default delegate dimiss finished."];
+    XCTestExpectation *testExpecation = [self expectationWithDescription:@"Default delegate dismiss finished."];
 
     // Display the in-app message
     [self.testController show];
 
-    // Dismissing should remove gestures are user interaction
+    // Dismissing should remove gestures and set user interaction to NO
     [[self.mockMessageView expect] setUserInteractionEnabled:NO];
     [[self.mockParentView expect] removeGestureRecognizer:OCMOCK_ANY];
 
@@ -310,7 +311,7 @@
         }
     }];
 
-    // Verfiy teardown expectations
+    // Verify teardown expectations
     [self.mockMessageView verify];
     [self.mockParentView verify];
 }
