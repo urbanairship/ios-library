@@ -117,22 +117,6 @@
 
 @implementation UAInboxMessageListController
 
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
-
-        self.cellReusableId = @"UAInboxMessageListCell";
-        self.cellNibName = @"UAInboxMessageListCell";
-
-        self.shouldShowAlerts = YES;
-        self.iconCache = [[NSCache alloc] init];
-        self.iconCache.countLimit = kUAIconImageCacheMaxCount;
-        self.iconCache.totalCostLimit = kUAIconImageCacheMaxByteCost;
-        self.currentIconURLRequests = [NSMutableDictionary dictionary];
-    }
-
-    return self;
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
 
@@ -152,6 +136,15 @@
     [self createToolbarItems];
 
     [self updateNavigationTitleText];
+
+    self.cellReusableId = @"UAInboxMessageListCell";
+    self.cellNibName = @"UAInboxMessageListCell";
+
+    self.shouldShowAlerts = YES;
+    self.iconCache = [[NSCache alloc] init];
+    self.iconCache.countLimit = kUAIconImageCacheMaxCount;
+    self.iconCache.totalCostLimit = kUAIconImageCacheMaxByteCost;
+    self.currentIconURLRequests = [NSMutableDictionary dictionary];
 }
 
 - (void)createToolbarItems {

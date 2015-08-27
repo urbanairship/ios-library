@@ -97,11 +97,39 @@
                     <connections>
                         <segue destination="9pv-A4-QxB" kind="relationship" relationship="viewControllers" id="u7Y-xg-7CH"/>
                         <segue destination="8rJ-Kc-sve" kind="relationship" relationship="viewControllers" id="lzU-1b-eKA"/>
+                        <segue destination="uCE-kh-Bmv" kind="relationship" relationship="viewControllers" id="HV1-RJ-HBH"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="0.0" y="0.0"/>
+            <point key="canvasLocation" x="-540" y="636"/>
+        </scene>
+        <!--Inbox-->
+        <scene sceneID="jra-5K-cKn">
+            <objects>
+                <navigationController id="uCE-kh-Bmv" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Inbox" id="puz-9M-buY"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="QwL-7h-v1G">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="gZ5-Hw-Q4m" kind="relationship" relationship="rootViewController" id="sIe-xt-BhN"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="l9m-dy-eg9" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="750" y="1058"/>
+        </scene>
+        <!--Inbox-->
+        <scene sceneID="NvI-WN-tRz">
+            <objects>
+                <viewController title="Inbox" id="gZ5-Hw-Q4m" customClass="UAInboxMessageListController" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="3Bi-uC-yfA"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="m6B-S2-ZqU" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1554" y="1058"/>
         </scene>
     </scenes>
     <resources>
