@@ -32,10 +32,13 @@
 #import "UAirship.h"
 #import "UAHTTPRequest+Internal.h"
 #import "UAConfig.h"
+#import "UAAnalytics+Internal.h"
+
 @interface UAChannelAPIClientTest : XCTestCase
 
 @property (nonatomic, strong) id mockRequestEngine;
 @property (nonatomic, strong) id mockAirship;
+@property (nonatomic, strong) id mockAnalytics;
 @property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UAChannelAPIClient *client;
 
@@ -56,11 +59,15 @@
     self.mockRequestEngine = [OCMockObject niceMockForClass:[UAHTTPRequestEngine class]];
     self.client = [UAChannelAPIClient clientWithConfig:self.config];
     self.client.requestEngine = self.mockRequestEngine;
+
+    self.mockAnalytics = [OCMockObject niceMockForClass:[UAAnalytics class]];
+    [[[self.mockAirship stub] andReturn:self.mockAnalytics] analytics];
 }
 
 - (void)tearDown {
     [self.mockRequestEngine stopMocking];
     [self.mockAirship stopMocking];
+    [self.mockAnalytics stopMocking];
 
     [super tearDown];
 }
@@ -160,8 +167,8 @@
 }
 
 /**
- * Test create channel calls the onSuccessBlock with the response channel ID
- * when the request is successful.
+ * Test create channel calls the onSuccessBlock with the response channel ID 
+ * and makes an analytics request when the request is successful.
  */
 - (void)testCreateChannelOnSuccess {
     __block NSString *channelID;
@@ -173,6 +180,9 @@
     request.responseData = [response dataUsingEncoding:NSUTF8StringEncoding];
 
     request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{@"Location":@"someChannelLocation"}];
+
+    // Expect that analytics gets sent with no delay
+    [[self.mockAnalytics expect] sendWithDelay:0];
 
     // Expect the run request and call the success block
     [[[self.mockRequestEngine stub] andDo:^(NSInvocation *invocation) {
@@ -192,6 +202,8 @@
 
     XCTAssertEqualObjects(@"someChannelID", channelID, @"Channel ID should match someChannelID from the response");
     XCTAssertEqualObjects(@"someChannelLocation", channelLocation, @"Channel location should match location header from the response");
+
+    [self.mockAnalytics verify];
 }
 
 /**

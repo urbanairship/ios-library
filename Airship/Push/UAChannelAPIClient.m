@@ -29,6 +29,8 @@
 #import "UAHTTPConnectionOperation.h"
 #import "UAConfig.h"
 #import "UAUtils.h"
+#import "UAirship.h"
+#import "UAAnalytics+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 
 
@@ -116,6 +118,10 @@
         } else {
             UA_LERR(@"missing successBlock");
         }
+
+        // Send analytics events
+        [[UAirship shared].analytics sendWithDelay:0];
+
     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
         [UAUtils logFailedRequest:request withMessage:@"Creating channel"];
 
