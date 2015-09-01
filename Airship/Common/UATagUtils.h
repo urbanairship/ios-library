@@ -61,7 +61,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The UATagUtils object provides an interface for creating tags.
+ *
+ * @deprecated As of version 6.3.0. Use device properties instead.
  */
+__attribute__((deprecated("As of version 6.3.0. Use device properties instead.")))
 @interface UATagUtils : NSObject
 
 /**
