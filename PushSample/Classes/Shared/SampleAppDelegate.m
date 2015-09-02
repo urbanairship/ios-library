@@ -36,6 +36,8 @@
 
 #define kSimulatorWarningDisabledKey @"ua-simulator-warning-disabled"
 
+UA_SUPPRESS_UI_DEPRECATION_WARNINGS
+
 @interface SampleAppDelegate()
 @property (nonatomic, strong) UAPushNotificationHandler *pushHandler;
 @end

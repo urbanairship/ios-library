@@ -29,3 +29,11 @@
 #import "AirshipLib.h" 
 #endif
 
+#define UA_SAMPLE_UI_MIN_SUPPORTED_SDK 60000
+
+// Suppress all warnings unless the user's base sdk is newer than the airship's base sdk
+#if (IPHONE_OS_VERSION_MIN_REQUIRED <= UA_SAMPLE_UI_MIN_SUPPORTED_SDK)
+#define UA_SUPPRESS_UI_DEPRECATION_WARNINGS _Pragma("clang diagnostic ignored \"-Wdeprecated-declarations\"")
+#else
+#define UA_SUPPRESS_UI_DEPRECATION_WARNINGS
+#endif
