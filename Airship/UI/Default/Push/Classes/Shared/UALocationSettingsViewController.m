@@ -29,6 +29,8 @@
 #import "UAMapPresentationController.h"
 #import "UAMapPresentationController.h"
 
+UA_SUPPRESS_UI_DEPRECATION_WARNINGS
+
 @implementation UALocationSettingsViewController
 
 - (void)viewDidLoad {
