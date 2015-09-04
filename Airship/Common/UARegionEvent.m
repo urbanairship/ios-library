@@ -39,10 +39,6 @@
     return UAEventPriorityHigh;
 }
 
-- (NSUInteger)estimatedSize {
-    return kUARegionEventSize;
-}
-
 - (BOOL)isValid {
     if (![UARegionEvent regionEventCharacterCountIsValid:self.regionID]) {
         UA_LERR(@"Region ID must not be greater than %d characters or less than %d character in length.", kUARegionEventMaxCharacters, kUARegionEventMinCharacters);

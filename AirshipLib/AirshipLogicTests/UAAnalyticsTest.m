@@ -396,16 +396,12 @@
     // Mock valid event
     id mockEvent = [OCMockObject niceMockForClass:[UAEvent class]];
     [[[mockEvent stub] andReturnValue:OCMOCK_VALUE(YES)] isValid];
-    [[[mockEvent stub] andReturnValue:OCMOCK_VALUE((NSUInteger)11)] estimatedSize];
 
     // Ensure addEvent:withSessionID is called
     [[self.mockDBManager expect] addEvent:OCMOCK_ANY withSessionID:OCMOCK_ANY];
 
     // Add valid event
     [self.analytics addEvent:mockEvent];
-
-    // Assert that the database size increased by the estimated event size
-    XCTAssertEqual(self.analytics.databaseSize, 11);
 
     [self.mockDBManager verify];
     [mockEvent stopMocking];

@@ -58,10 +58,6 @@
     return UAEventPriorityHigh;
 }
 
-- (NSUInteger)estimatedSize {
-    return kUAInteractiveNotificationEventSize;
-}
-
 @end
 
 

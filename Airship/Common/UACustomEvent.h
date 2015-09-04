@@ -29,7 +29,6 @@
 #define kUAInteractionMCRAP @"ua_mcrap"
 
 #define kUACustomEventCharacterLimit 255
-#define kUACustomEventSize 800
 
 @class UAInboxMessage;
 

@@ -58,10 +58,6 @@
     return event;
 }
 
-- (NSUInteger)estimatedSize {
-    return kUACustomEventSize;
-}
-
 - (BOOL)isValid {
     return self.eventName.length > 0;
 }

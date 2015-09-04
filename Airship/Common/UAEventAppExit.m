@@ -51,8 +51,4 @@
     return @"app_exit";
 }
 
-- (NSUInteger)estimatedSize {
-    return kUAEventAppExitSize;
-}
-
 @end

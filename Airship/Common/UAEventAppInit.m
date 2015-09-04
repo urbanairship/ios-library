@@ -76,8 +76,4 @@
     return @"app_init";
 }
 
-- (NSUInteger)estimatedSize {
-    return kUAEventAppInitSize;
-}
-
 @end

@@ -26,7 +26,7 @@
 #import "UAAnalyticsDBManager.h"
 
 #import "UAirship.h"
-#import "UAEvent.h"
+#import "UAEvent+Internal.h"
 #import "UASQLite+Internal.h"
 
 #define DB_NAME @"UAAnalyticsDB"
@@ -88,7 +88,7 @@
     if (!serializedData) {
         serializedData = [@"" dataUsingEncoding:NSUTF8StringEncoding];
     }
-        
+
     dispatch_async(dbQueue, ^{
         [self.db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?)",
          event.eventType,
@@ -96,7 +96,7 @@
          event.time,
          serializedData,
          sessionID,
-         [NSString stringWithFormat:@"%lu", (unsigned long)event.estimatedSize]];
+         [NSString stringWithFormat:@"%lu", (unsigned long)event.jsonEventSize]];
     });
 }
 

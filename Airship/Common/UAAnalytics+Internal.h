@@ -110,17 +110,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSUInteger minBatchInterval;
 
 /**
- * The size of the database.
- */
-@property (nonatomic, assign) NSUInteger databaseSize;
-
-/**
- * The oldest event time as an NSTimeInterval.
- */
-@property (nonatomic, assign) NSTimeInterval oldestEventTime;
-
-
-/**
  * The UAConfig object containing the configuration values.
  */
 @property (nonatomic, strong) UAConfig *config;
@@ -179,11 +168,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)saveUploadEventSettings;
 
 /**
- * Resets the event's database oldestEventTime.
- */
-- (void)resetEventsDatabaseStatus;
-
-/**
  * Schedule an event upload.
  * @param delay The delay in seconds from now.
  */
@@ -231,12 +215,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @return Event data as an NSArray.
  */
 - (NSArray *)prepareEventsForUpload;
-
-/**
- * Removes old events from the database until the
- * size of the database is less then databaseSize
- */
-- (void)pruneEvents;
 
 /**
  * Checks a event dictionary for expected fields and values.

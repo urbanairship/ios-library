@@ -218,7 +218,6 @@
 - (void)verifyEvent:(UAInAppResolutionEvent *)event expectedData:(NSDictionary *)expectedData {
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"in_app_resolution", @"Event type is unexpected.");
-    XCTAssertEqual(event.estimatedSize, 320, @"Event is reporting wrong estimated size.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
     XCTAssertTrue([event isValid], @"Event should be valid if it has a in-app message ID.");
 }

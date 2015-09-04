@@ -25,8 +25,6 @@
 
 #import "UAEvent.h"
 
-#define kUAInAppResolutionEventSize (NSUInteger) 320
-
 @class UAInAppMessage;
 
 NS_ASSUME_NONNULL_BEGIN

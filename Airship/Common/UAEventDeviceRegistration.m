@@ -48,8 +48,4 @@
     return @"device_registration";
 }
 
-- (NSUInteger)estimatedSize {
-    return kUAEventDeviceRegistrationSize;
-}
-
 @end

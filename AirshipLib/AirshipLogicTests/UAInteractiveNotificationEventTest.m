@@ -52,23 +52,6 @@
 }
 
 /**
- * Test the estimated size of the event. Should always return 350 regardless
- * of the actual event data.
- */
-- (void)testEstimatedSize {
-    // Empty
-    UAInteractiveNotificationEvent *event = [[UAInteractiveNotificationEvent alloc] init];
-    XCTAssertEqual(event.estimatedSize, 350, @"Event should have a set estimated size." );
-
-    // With data
-    event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
-                                                             categoryID:@"category_id"
-                                                           notification:self.notification];
-
-    XCTAssertEqual(event.estimatedSize, 350, @"Event should have a set estimated size." );
-}
-
-/**
  * Test the event type is interactive_notification_action.
  */
 - (void)testEventType {

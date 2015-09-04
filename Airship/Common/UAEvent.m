@@ -61,23 +61,6 @@ static dispatch_once_t netInfoDispatchToken_;
     return UAEventPriorityNormal;
 }
 
-- (NSUInteger)estimatedSize {
-    NSMutableDictionary *eventDictionary = [NSMutableDictionary dictionary];
-    [eventDictionary setValue:self.eventType forKey:@"type"];
-    [eventDictionary setValue:self.time forKey:@"time"];
-    [eventDictionary setValue:self.eventID forKey:@"event_id"];
-    [eventDictionary setValue:self.data forKey:@"data"];
-    
-
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:eventDictionary
-                                                        options:0
-                                                          error:nil];
-    
-    UA_LTRACE(@"Estimated event size: %lu", (unsigned long)[jsonData length]);
-    
-    return [jsonData length];
-}
-
 - (NSString *)description {
     return [NSString stringWithFormat:@"UAEvent ID: %@ type: %@ time: %@ data: %@",
             self.eventID, self.eventType, self.time, self.data];
@@ -108,6 +91,20 @@ static dispatch_once_t netInfoDispatchToken_;
     }
 
     return notificationTypes;
+}
+
+- (NSUInteger)jsonEventSize {
+    NSMutableDictionary *eventDictionary = [NSMutableDictionary dictionary];
+    [eventDictionary setValue:self.eventType forKey:@"type"];
+    [eventDictionary setValue:self.time forKey:@"time"];
+    [eventDictionary setValue:self.eventID forKey:@"event_id"];
+    [eventDictionary setValue:self.data forKey:@"data"];
+
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:eventDictionary
+                                                       options:0
+                                                         error:nil];
+
+    return [jsonData length];
 }
 
 - (id)debugQuickLookObject {

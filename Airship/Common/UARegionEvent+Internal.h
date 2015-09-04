@@ -34,8 +34,6 @@
 #define kUARegionEventMaxCharacters 255
 #define kUARegionEventMinCharacters 1
 
-#define kUARegionEventSize 1000
-
 #define kUARegionSourceKey @"source"
 #define kUARegionIDKey @"region_id"
 #define kUARegionBoundaryEventKey @"action"

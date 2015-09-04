@@ -28,11 +28,6 @@
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
 
-#define kUAEventAppInitSize               (NSUInteger) 450//397 w/ push ID, no inbox ID
-#define kUAEventAppExitSize               (NSUInteger) 200//136 w/ only network type
-
-#define kUAEventDeviceRegistrationSize    (NSUInteger) 200//153 w/ only user info
-#define kUAEventPushReceivedSize          (NSUInteger) 200//160 w/ uuid push info
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -60,11 +55,6 @@ NS_ASSUME_NONNULL_BEGIN
  * The event's type.
  */
 @property (nonatomic, readonly) NSString *eventType;
-
-/**
- * The event's estimated size.
- */
-@property (nonatomic, readonly) NSUInteger estimatedSize;
 
 
 /**

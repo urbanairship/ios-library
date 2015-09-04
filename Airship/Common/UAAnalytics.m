@@ -78,8 +78,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
             [self.dataStore setBool:YES forKey:kUAAnalyticsEnabled];
         }
 
-        [self resetEventsDatabaseStatus];
-
         [self restoreSavedUploadEventSettings];
 
         // Save defaults to store lastSendTime if this was an initial condition
@@ -230,14 +228,9 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     }
 
     UA_LDEBUG(@"Adding %@ event %@.", event.eventType, event.eventID);
-
     [self.analyticDBManager addEvent:event withSessionID:self.sessionID];
-    UA_LTRACE(@"Added: %@.", event);
 
-    self.databaseSize += event.estimatedSize;
-    if (self.oldestEventTime == 0) {
-        self.oldestEventTime = [event.time doubleValue];
-    }
+    UA_LTRACE(@"Added: %@.", event);
 
     switch (event.priority) {
         case UAEventPriorityHigh:
@@ -336,23 +329,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 #pragma mark -
 #pragma mark Send Logic
 
-- (void)resetEventsDatabaseStatus {
-    self.databaseSize = [self.analyticDBManager sizeInBytes];
-
-    NSArray *events = [self.analyticDBManager getEvents:1];
-    if ([events count] > 0) {
-        NSDictionary *event = [events objectAtIndex:0];
-        self.oldestEventTime = [[event objectForKey:@"time"] doubleValue];
-    } else {
-        self.oldestEventTime = 0;
-    }
-
-    UA_LTRACE(@"Database size: %ld", (long)self.databaseSize);
-    UA_LTRACE(@"Oldest Event: %f", self.oldestEventTime);
-}
-
 - (BOOL)hasEventsToSend {
-    return self.databaseSize > 0 && [self.analyticDBManager eventCount] > 0;
+    return [self.analyticDBManager eventCount] > 0;
 }
 
 - (UAHTTPRequest*)analyticsRequest {
@@ -411,14 +389,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [self invalidateTimer];
 }
 
-- (void)pruneEvents {
-    // Delete older events until the database size is met
-    while (self.databaseSize > self.maxTotalDBSize) {
-        UA_LTRACE(@"Database exceeds max size of %ld bytes... Deleting oldest session.", (long)self.maxTotalDBSize);
-        [self.analyticDBManager deleteOldestSession];
-        [self resetEventsDatabaseStatus];
-    }
-}
 
 - (BOOL)isEventValid:(NSMutableDictionary *)event {
     return [[event objectForKey:@"event_size"]  respondsToSelector:NSSelectorFromString(@"intValue")] &&
@@ -434,14 +404,22 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 // Loop through events and discard DB-only items, format the JSON data field
 // as a dictionary
 - (NSArray *)prepareEventsForUpload {
-    
-    [self pruneEvents];
+    NSUInteger databaseSize = [self.analyticDBManager sizeInBytes];
+
+    // Delete older events until the database size is met
+    while (databaseSize > self.maxTotalDBSize) {
+        UA_LTRACE(@"Database exceeds max size of %ld bytes... Deleting oldest session.", (long)self.maxTotalDBSize);
+        [self.analyticDBManager deleteOldestSession];
+        databaseSize = [self.analyticDBManager sizeInBytes];
+    }
+
 
     if (![self hasEventsToSend]) {
         return nil;
     }
 
-    NSUInteger avgEventSize = self.databaseSize / [self.analyticDBManager eventCount];
+    NSUInteger avgEventSize = databaseSize / [self.analyticDBManager eventCount];
+
     int actualSize = 0;
     NSUInteger batchEventCount = 0;
     
@@ -539,7 +517,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
         if ([request.response statusCode] == 200) {
             [self.analyticDBManager deleteEvents:events];
-            [self resetEventsDatabaseStatus];
         } else {
             UA_LTRACE(@"Analytics upload request failed: %ld", (long)[request.response statusCode]);
         }

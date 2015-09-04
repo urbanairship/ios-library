@@ -55,8 +55,4 @@
     return @"push_received";
 }
 
-- (NSUInteger)estimatedSize {
-    return kUAEventPushReceivedSize;
-}
-
 @end
