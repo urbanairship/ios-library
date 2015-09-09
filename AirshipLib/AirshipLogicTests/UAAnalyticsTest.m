@@ -437,6 +437,10 @@
  * Expects that a timer is added with specified delay when sendWithDelay: is called.
  */
 - (void)testSendWithDelay {
+
+    // Mock channel ID to pass channel ID check
+    [[[self.mockPush stub] andReturn:OCMOCK_ANY] channelID];
+
     // Partial mock analytics just so we can pass hasEventsToSend checkout without adding an event
     id mockAnalytics = [OCMockObject partialMockForObject:self.analytics];
     [[[mockAnalytics stub] andReturnValue:OCMOCK_VALUE(YES)] hasEventsToSend];
@@ -544,6 +548,10 @@
  * Expects that a new timer is not added when timer delay date from now is sooner than the timer's fire date.
  */
 - (void)testSendWithDelayExistingShorterTimerDelay {
+
+    // Mock channel ID to pass channel ID check
+    [[[self.mockPush stub] andReturn:OCMOCK_ANY] channelID];
+
     // Partial mock analytics just so we can pass hasEventsToSend checkout without adding an event
     id mockAnalytics = [OCMockObject partialMockForObject:self.analytics];
 
@@ -571,6 +579,10 @@
  * Expects that a new timer is added when timer delay date from now is sooner than the timer's fire date.
  */
 - (void)testSendWithDelayExistingLongerTimerDelay {
+
+    // Mock channel ID to pass channel ID check
+    [[[self.mockPush stub] andReturn:OCMOCK_ANY] channelID];
+
     // Partial mock analytics just so we can pass hasEventsToSend checkout without adding an event
     id mockAnalytics = [OCMockObject partialMockForObject:self.analytics];
 

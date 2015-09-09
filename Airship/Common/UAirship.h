@@ -170,7 +170,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  *
  * @return The `UAirship` instance.
  */
-+ (nullable UAirship *)shared;
++ (null_unspecified UAirship *)shared;
 
 /**
  * Returns the `UAPush` instance. Used for configuring and managing push
@@ -178,27 +178,27 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  *
  * @return The `UAPush` instance.
  */
-+ (nullable UAPush *)push;
++ (null_unspecified UAPush *)push;
 
 /**
  * Returns the `UAInbox` instance. Provides access to the inbox messages.
  *
  * @return The `UAInbox` instance.
  */
-+ (nullable UAInbox *)inbox;
++ (null_unspecified UAInbox *)inbox;
 
 /**
  * Returns the `UAUser` instance.
  *
  * @return The `UAUser` instance.
  */
-+ (nullable UAUser *)inboxUser;
++ (null_unspecified UAUser *)inboxUser;
 
 /**
  * Returns the `UAInAppMessaging` instance. Used for customizing
  * in-app notifications.
  */
-+ (nullable UAInAppMessaging *)inAppMessaging;
++ (null_unspecified UAInAppMessaging *)inAppMessaging;
 
 NS_ASSUME_NONNULL_END
 

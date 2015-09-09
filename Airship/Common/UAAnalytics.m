@@ -590,6 +590,11 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 - (void)sendWithDelay:(NSTimeInterval)delay {
     UA_LTRACE(@"Attempting to send update.");
 
+    if (![UAirship push].channelID) {
+        UA_LTRACE("No channel ID, skipping send.");
+        return;
+    }
+
     if (!self.config.analyticsEnabled) {
         UA_LTRACE("Analytics disabled.");
         return;
