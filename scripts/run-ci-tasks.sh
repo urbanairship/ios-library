@@ -5,7 +5,7 @@ SCRIPT_DIRECTORY=`dirname "$0"`
 ROOT_PATH=`dirname "${0}"`/../
 
 # Destination for tests
-TEST_DESTINATION='platform=iOS Simulator,OS=latest,name=Resizable iPhone'
+TEST_DESTINATION='platform=iOS Simulator,OS=latest,name=iPhone 6s'
 
 # Target iOS SDK when building the projects
 TARGET_SDK='iphonesimulator'
