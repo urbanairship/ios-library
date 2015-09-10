@@ -20,7 +20,7 @@
 # export XCODE_5_1_1_APP=/Applications/Xcode-5.1.1.app
 # export XCODE_6_BETA_5_APP=/Applications/Xcode6-Beta5.app
 
-XCODE_APP=$XCODE_6_4_APP
+XCODE_APP=$XCODE_7_GM
 
 if [ -z "$XCODE_APP" ]; then
   echo "Looks like you're missing Xcode!"
