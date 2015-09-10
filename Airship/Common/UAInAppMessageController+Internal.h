@@ -23,17 +23,25 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if __has_include("AirshipKit/AirshipKit.h")
-#import <AirshipKit/AirshipKit.h>
-#else
-#import "AirshipLib.h" 
-#endif
+#import "UAInAppMessageController.h"
 
-#define UA_SAMPLE_UI_MIN_SUPPORTED_SDK 60000
 
-// Suppress all warnings unless the user's base sdk is newer than the airship's base sdk
-#if (IPHONE_OS_VERSION_MIN_REQUIRED <= UA_SAMPLE_UI_MIN_SUPPORTED_SDK)
-#define UA_SUPPRESS_UI_DEPRECATION_WARNINGS _Pragma("clang diagnostic ignored \"-Wdeprecated-declarations\"")
-#else
-#define UA_SUPPRESS_UI_DEPRECATION_WARNINGS
-#endif
+@class UAInAppMessage;
+@class UAInAppMessageControllerDefaultDelegate;
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface UAInAppMessageController ()
+
+@property (nonatomic, strong) UAInAppMessageControllerDefaultDelegate *defaultDelegate;
+
+/**
+ * The optional controller delegate that can be implemented by the user
+ */
+@property (nonatomic, strong, nullable) id <UAInAppMessageControllerDelegate> userDelegate;
+
+@end
+
+NS_ASSUME_NONNULL_END
+
+

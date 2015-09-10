@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1F4230C016C09876004B52C1 /* libUAirship-6.2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB88612C159A7E9600584445 /* libUAirship-6.2.0.a */; };
+		1F4230C016C09876004B52C1 /* libUAirship-6.2.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB88612C159A7E9600584445 /* libUAirship-6.2.1.a */; };
 		1F4EDB3C1831839A00F77343 /* UAAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4995C62217FA3D71004F8724 /* UAAction+Internal.h */; };
 		1F55FB6D181A34DD002AA192 /* UABeveledLoadingIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F55FB6B181A34DD002AA192 /* UABeveledLoadingIndicator.h */; };
 		1F55FB6F181A34DD002AA192 /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F55FB6C181A34DD002AA192 /* UABeveledLoadingIndicator.m */; };
@@ -149,8 +149,10 @@
 		61362D541B28E2BF0011C058 /* UAWalletAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 61362D521B28E2BF0011C058 /* UAWalletAction.h */; };
 		61362D551B28E2BF0011C058 /* UAWalletAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 61362D531B28E2BF0011C058 /* UAWalletAction.m */; };
 		614F0DAC1A3B773E00F00AAB /* UACircularRegionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 614F0DAB1A3B773E00F00AAB /* UACircularRegionTest.m */; };
+		619C29861B8545370025AA65 /* UAInAppMessageController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 619C29851B8545370025AA65 /* UAInAppMessageController+Internal.h */; };
 		61A070991B7A5B9E00819091 /* UAInboxAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 61A070981B7A5B9E00819091 /* UAInboxAPIClientTest.m */; };
 		61A0709F1B7A7B0700819091 /* UAInboxAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 61A0709E1B7A7AEE00819091 /* UAInboxAPIClient+Internal.h */; };
+		61CD88131B82667E00B2CEA5 /* UAInAppMessageControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 61CD88121B82667E00B2CEA5 /* UAInAppMessageControllerTest.m */; };
 		61D6AD181A2D18C10032420C /* UARegionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 61D6AD161A2D18C10032420C /* UARegionEvent.h */; };
 		61D6AD191A2D18C10032420C /* UARegionEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D6AD171A2D18C10032420C /* UARegionEvent.m */; };
 		61D8FE4E1A3B76F100E21EBB /* UAProximityRegionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D8FE4D1A3B76F100E21EBB /* UAProximityRegionTest.m */; };
@@ -537,8 +539,10 @@
 		61362D521B28E2BF0011C058 /* UAWalletAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAWalletAction.h; sourceTree = "<group>"; };
 		61362D531B28E2BF0011C058 /* UAWalletAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWalletAction.m; sourceTree = "<group>"; };
 		614F0DAB1A3B773E00F00AAB /* UACircularRegionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACircularRegionTest.m; sourceTree = "<group>"; };
+		619C29851B8545370025AA65 /* UAInAppMessageController+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageController+Internal.h"; sourceTree = "<group>"; };
 		61A070981B7A5B9E00819091 /* UAInboxAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxAPIClientTest.m; sourceTree = "<group>"; };
 		61A0709E1B7A7AEE00819091 /* UAInboxAPIClient+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInboxAPIClient+Internal.h"; sourceTree = "<group>"; };
+		61CD88121B82667E00B2CEA5 /* UAInAppMessageControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageControllerTest.m; sourceTree = "<group>"; };
 		61D6AD161A2D18C10032420C /* UARegionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARegionEvent.h; sourceTree = "<group>"; };
 		61D6AD171A2D18C10032420C /* UARegionEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARegionEvent.m; sourceTree = "<group>"; };
 		61D8FE4D1A3B76F100E21EBB /* UAProximityRegionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAProximityRegionTest.m; sourceTree = "<group>"; };
@@ -593,7 +597,7 @@
 		BB42FB7D150969F200FC4B1B /* UALocationCommonValues.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationCommonValues.m; sourceTree = "<group>"; };
 		BB484B2915910C370097B38C /* UALocationTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationTestUtils.h; path = ../../TestCommon/LocationTest/UALocationTestUtils.h; sourceTree = "<group>"; };
 		BB484B2A15910C370097B38C /* UALocationTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALocationTestUtils.m; path = ../../TestCommon/LocationTest/UALocationTestUtils.m; sourceTree = "<group>"; };
-		BB88612C159A7E9600584445 /* libUAirship-6.2.0.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-6.2.0.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB88612C159A7E9600584445 /* libUAirship-6.2.1.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-6.2.1.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB926B3C1540D1D000003975 /* UAAnalytics+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAAnalytics+Internal.h"; sourceTree = "<group>"; };
 		BBB87D56150574DE00971CEC /* CLLocationManager+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CLLocationManager+Test.h"; sourceTree = "<group>"; };
 		BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CLLocationManager+Test.m"; sourceTree = "<group>"; };
@@ -765,7 +769,7 @@
 				49C6721E1857CE840088F210 /* JavaScriptCore.framework in Frameworks */,
 				760D14BA17C2C9E600BBE6E6 /* XCTest.framework in Frameworks */,
 				CC523FC317BA8AC200233005 /* CoreData.framework in Frameworks */,
-				1F4230C016C09876004B52C1 /* libUAirship-6.2.0.a in Frameworks */,
+				1F4230C016C09876004B52C1 /* libUAirship-6.2.1.a in Frameworks */,
 				BBB87E5115057EEA00971CEC /* libOCMock.a in Frameworks */,
 				BBB87E4F15057EC400971CEC /* CoreLocation.framework in Frameworks */,
 				7B909D431429363300D0AB36 /* Security.framework in Frameworks */,
@@ -801,7 +805,7 @@
 			isa = PBXGroup;
 			children = (
 				7BB679061429288D00B877DB /* AirshipLogicTests.xctest */,
-				BB88612C159A7E9600584445 /* libUAirship-6.2.0.a */,
+				BB88612C159A7E9600584445 /* libUAirship-6.2.1.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1125,6 +1129,7 @@
 				49B7046B1A7AF9A6000F67A6 /* UAInAppMessageTest.m */,
 				CCE1E63D1ABA3E120023D254 /* UAInAppDisplayEventTest.m */,
 				CC82794C1ABB491B00C416E7 /* UAInAppResolutionEventTest.m */,
+				61CD88121B82667E00B2CEA5 /* UAInAppMessageControllerTest.m */,
 				49A61A881AC1DDE200BC5E68 /* UAInAppMessagingTest.m */,
 			);
 			name = InAppMessage;
@@ -1154,6 +1159,7 @@
 			isa = PBXGroup;
 			children = (
 				49D7FF481A8E92390017A11C /* UAInAppMessageController.h */,
+				619C29851B8545370025AA65 /* UAInAppMessageController+Internal.h */,
 				49D7FF491A8E92390017A11C /* UAInAppMessageController.m */,
 				49D7FF4A1A8E92390017A11C /* UAInAppMessageView.h */,
 				49D7FF4B1A8E92390017A11C /* UAInAppMessageView.m */,
@@ -1675,6 +1681,7 @@
 				612ED4D81A378BCA00DD7762 /* UARegionEvent+Internal.h in Headers */,
 				CC8279481ABB2D3400C416E7 /* UAInAppResolutionEvent.h in Headers */,
 				495048B7173B11A500F8B5BE /* UAHTTPConnection+Internal.h in Headers */,
+				619C29861B8545370025AA65 /* UAInAppMessageController+Internal.h in Headers */,
 				76E5356219475F8E0020335C /* UAAddCustomEventAction.h in Headers */,
 				494BF70A1762789D00B25E12 /* UAUser+Internal.h in Headers */,
 				1F4EDB3C1831839A00F77343 /* UAAction+Internal.h in Headers */,
@@ -1736,7 +1743,7 @@
 			);
 			name = AirshipLib;
 			productName = AirshipLib;
-			productReference = BB88612C159A7E9600584445 /* libUAirship-6.2.0.a */;
+			productReference = BB88612C159A7E9600584445 /* libUAirship-6.2.1.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -1850,6 +1857,7 @@
 				495526B117D95552009BC301 /* UAInboxMessageListTest.m in Sources */,
 				49B7046C1A7AF9A6000F67A6 /* UAInAppMessageTest.m in Sources */,
 				CCD13DE219A4FCFD0007078C /* UAInteractiveNotificationEventTest.m in Sources */,
+				61CD88131B82667E00B2CEA5 /* UAInAppMessageControllerTest.m in Sources */,
 				BBB87D63150574DE00971CEC /* UALocationProviderTests.m in Sources */,
 				4925AAAD1B2B9D00002F045D /* UAirshipTest.m in Sources */,
 				CC4AAE0C18C93EF2001F23B3 /* UAApplicationMetricsTest.m in Sources */,
@@ -2290,6 +2298,11 @@
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INSTALL_PATH = /Airship;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_CFLAGS = (
+					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
+					"$(inherited)",
+					"-fembed-bitcode",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "UAirship-$(CURRENT_PROJECT_VERSION)";
 				RUN_CLANG_STATIC_ANALYZER = YES;

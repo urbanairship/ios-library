@@ -32,7 +32,7 @@
 #pragma mark -
 #pragma mark Memory
 
-
+UA_SUPPRESS_UI_DEPRECATION_WARNINGS
 
 #pragma mark -
 #pragma mark View Cycle

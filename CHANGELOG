@@ -3,6 +3,13 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+6.2.1 - September 10, 2015
+==========================
+- Built with Xcode 7 GM.
+- Added bitcode support.
+- Updated UAirship, UAPush, UAInbox, and UAUser nullability attribute to be null_unspecified instead of nullable.
+- Fixed rotation in push sample.
+
 6.2.0 - August 21, 2015
 =======================
 - Added nullability attributes.

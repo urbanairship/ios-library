@@ -28,6 +28,8 @@
 
 #import <AudioToolbox/AudioServices.h>
 
+UA_SUPPRESS_UI_DEPRECATION_WARNINGS
+
 @implementation UAPushNotificationHandler
 
 - (void)displayNotificationAlert:(NSString *)alertMessage {
