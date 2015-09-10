@@ -45,7 +45,7 @@
 #import "UAPreferenceDataStore.h"
 #import "UALocationService.h"
 #import "UARegionEvent+Internal.h"
-
+#import "UAAssociateIdentifiersEvent+Internal.h"
 
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
@@ -681,6 +681,10 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     }
 
     [self.dataStore setBool:enabled forKey:kUAAnalyticsEnabled];
+}
+
+- (void)associateDeviceIdentifiers:(UAAssociatedIdentifiers *)associatedIdentifiers {
+    [self addEvent:[UAAssociateIdentifiersEvent eventWithIDs:associatedIdentifiers]];
 }
 
 - (NSString *)locationPermission {

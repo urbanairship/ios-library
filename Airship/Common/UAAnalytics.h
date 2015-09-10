@@ -29,6 +29,7 @@
 @class UAEvent;
 @class UAConfig;
 @class UAPreferenceDataStore;
+@class UAAssociatedIdentifiers;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -73,6 +74,15 @@ NS_ASSUME_NONNULL_BEGIN
  * @param event The event to be triggered
  */
 - (void)addEvent:(UAEvent *)event;
+
+/**
+ * Associates identifiers with the device. This call will add a special event
+ * that will be batched and sent up with our other analytic events. Previous
+ * associated identifiers will be replaced.
+ *
+ * @param associatedIdentifiers The associated identifiers.
+ */
+- (void)associateDeviceIdentifiers:(UAAssociatedIdentifiers *)associatedIdentifiers;
 
 /**
  * Handle incoming push notifications.

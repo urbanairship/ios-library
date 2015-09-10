@@ -35,6 +35,7 @@
 #import "UAirship.h"
 #import "UAAnalyticsDBManager.h"
 #import "UAEvent+Internal.h"
+#import "UAAssociateIdentifiersEvent+Internal.h"
 
 @interface UAAnalyticsTest()
 @property (nonatomic, strong) UAAnalytics *analytics;
@@ -568,6 +569,30 @@
     XCTAssertEqualWithAccuracy([[self.analytics.sendTimer fireDate] timeIntervalSince1970], [[NSDate date] timeIntervalSince1970] + 10, 2);
 
     [mockAnalytics stopMocking];
+}
+
+/**
+ * Test associateIdentifiers: adds an UAAssociateIdentifiersEvent with the
+ * expected identifiers.
+ */
+- (void)testAssociateDeviceIdentifiers {
+
+    NSDictionary *identifiers = @{@"some identifer": @"some value"};
+
+    [[self.mockDBManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        if (![obj isKindOfClass:[UAAssociateIdentifiersEvent class]]) {
+            return NO;
+        }
+
+        UAAssociateIdentifiersEvent *event = obj;
+        return [event.data isEqualToDictionary:identifiers];
+    }] withSessionID:OCMOCK_ANY];
+
+    // Associate the identifers
+    [self.analytics associateDeviceIdentifiers:[UAAssociatedIdentifiers identifiersWithDictionary:identifiers]];
+
+    // Verify the event was added
+    [self.mockDBManager verify];
 }
 
 /**
