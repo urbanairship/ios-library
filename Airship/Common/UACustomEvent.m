@@ -27,8 +27,16 @@
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAInboxMessage.h"
+#import "NSJSONSerialization+UAAdditions.h"
+
+@interface UACustomEvent()
+@property(nonatomic, strong) NSMutableDictionary *properties;
+@end
 
 @implementation UACustomEvent
+
+const NSUInteger UACustomEventCharacterLimit = 255;
+const NSUInteger UACustomEventMaxPropertiesCount = 20;
 
 - (NSString *)eventType {
     return @"custom_event";
@@ -39,6 +47,7 @@
     if (self) {
         self.eventName = eventName;
         self.eventValue = eventValue;
+        self.properties = [NSMutableDictionary dictionary];
     }
 
     return self;
@@ -54,57 +63,28 @@
 }
 
 + (instancetype)eventWithName:(NSString *)eventName value:(NSDecimalNumber *)eventValue {
-    UACustomEvent *event = [[self alloc] initWithName:eventName withValue:eventValue];
-    return event;
+    return [[self alloc] initWithName:eventName withValue:eventValue];
 }
 
-- (BOOL)isValid {
-    return self.eventName.length > 0;
+- (void)setBoolProperty:(BOOL)value forKey:(NSString *)key {
+    [self.properties setValue:@(value) forKey:key];
 }
 
-- (void)setEventName:(NSString *)eventName {
-    if (eventName.length > kUACustomEventCharacterLimit) {
-        UA_LERR(@"Event name is larger than %d characters.", kUACustomEventCharacterLimit);
-    } else {
-        _eventName = [eventName copy];
-    }
+- (void)setStringProperty:(NSString *)value forKey:(NSString *)key {
+    [self.properties setValue:[value copy] forKey:key];
 }
 
-- (void)setInteractionID:(NSString *)interactionID {
-    if (interactionID.length > kUACustomEventCharacterLimit) {
-        UA_LERR(@"Event interaction ID is larger than %d characters.", kUACustomEventCharacterLimit);
-    } else {
-        _interactionID = [interactionID copy];
-    }
+- (void)setNumberProperty:(NSNumber *)value forKey:(NSString *)key {
+    [self.properties setValue:[value copy] forKey:key];
 }
 
-- (void)setInteractionType:(NSString *)interactionType {
-    if (interactionType.length > kUACustomEventCharacterLimit) {
-        UA_LERR(@"Event interaction type is larger than %d characters.", kUACustomEventCharacterLimit);
-    } else {
-        _interactionType = [interactionType copy];
-    }
-}
-
-- (void)setTransactionID:(NSString *)transactionID {
-    if (transactionID.length > kUACustomEventCharacterLimit) {
-        UA_LERR(@"Event transaction ID is larger than %d characters.", kUACustomEventCharacterLimit);
-    } else {
-        _transactionID = [transactionID copy];
-    }
+- (void)setStringArrayProperty:(NSArray *)value forKey:(NSString *)key {
+    [self.properties setValue:[value copy] forKey:key];
 }
 
 - (void)setEventValue:(NSDecimalNumber *)eventValue {
-    if ([eventValue isEqualToNumber:[NSDecimalNumber notANumber]]) {
-        return;
-    }
-
     if (!eventValue) {
         _eventValue = nil;
-    } else if ([eventValue compare:@(INT32_MAX)] > 0) {
-        UA_LERR(@"Event value %@ is larger than 2^31-1", self.eventValue);
-    } else if ([eventValue compare:@(INT32_MIN)] < 0) {
-        UA_LERR(@"Event value %@ is smaller than -2^31", self.eventValue);
     } else {
         if ([eventValue isKindOfClass:[NSDecimalNumber class]]) {
             _eventValue = eventValue;
@@ -113,6 +93,92 @@
         }
     }
 }
+
+
+- (BOOL)isValid {
+    BOOL isValid = YES;
+
+    if (!self.eventName.length || self.eventName.length > UACustomEventCharacterLimit) {
+        UA_LERR(@"Event name must be between 1 and %lu characters.", (unsigned long)UACustomEventCharacterLimit);
+        isValid = NO;
+    }
+
+    if (self.interactionType.length > UACustomEventCharacterLimit) {
+        UA_LERR(@"Event interaction type is larger than %lu characters.", (unsigned long)UACustomEventCharacterLimit);
+        isValid = NO;
+    }
+
+    if (self.interactionID.length > UACustomEventCharacterLimit) {
+        UA_LERR(@"Event interaction ID is larger than %lu characters.", (unsigned long)UACustomEventCharacterLimit);
+        isValid = NO;
+    }
+
+    if (self.transactionID.length > UACustomEventCharacterLimit) {
+        UA_LERR(@"Event transaction ID is larger than %lu characters.", (unsigned long)UACustomEventCharacterLimit);
+        isValid = NO;
+    }
+
+    if (self.eventValue) {
+        if ([self.eventValue isEqualToNumber:[NSDecimalNumber notANumber]]) {\
+            UA_LERR(@"Event value is not a number.");
+            isValid = NO;
+        } else if ([self.eventValue compare:@(INT32_MAX)] > 0) {
+            UA_LERR(@"Event value %@ is larger than 2^31-1.", self.eventValue);
+            isValid = NO;
+        } else if ([self.eventValue compare:@(INT32_MIN)] < 0) {
+            UA_LERR(@"Event value %@ is smaller than -2^31.", self.eventValue);
+            isValid = NO;
+        }
+    }
+
+    if (self.properties.count > UACustomEventMaxPropertiesCount) {
+        UA_LERR(@"Event contains more than %lu properties.", UACustomEventMaxPropertiesCount);
+        isValid = NO;
+    }
+
+    for (id key in self.properties) {
+        id value = [self.properties valueForKey:key];
+        if ([value isKindOfClass:[NSArray class]]) {
+            NSArray *array = (NSArray *)value;
+            if (array.count > UACustomEventMaxPropertiesCount) {
+                UA_LERR(@"Array property %@ exceeds more than %lu entries.", key, UACustomEventMaxPropertiesCount);
+                isValid = NO;
+            }
+
+            // Arrays can only contains Strings
+            for (id arrayProperty in array) {
+                if (![arrayProperty isKindOfClass:[NSString class]]) {
+                    isValid = NO;
+                    UA_LERR(@"Array property %@ contains an invalid object: %@", key, arrayProperty);
+                    continue;
+                }
+
+                if (((NSString *)arrayProperty).length > UACustomEventCharacterLimit) {
+                    UA_LERR(@"Array property %@ contains a String that is larger than %lu characters.", key, (unsigned long)UACustomEventCharacterLimit);
+                    isValid = NO;
+                }
+            }
+        } else if ([value isKindOfClass:[NSString class]]) {
+            NSString *stringProperty = (NSString *)value;
+            if (stringProperty.length > UACustomEventCharacterLimit) {
+                UA_LERR(@"Property %@ is larger than %lu characters.", key, (unsigned long)UACustomEventCharacterLimit);
+                isValid = NO;
+            }
+        } else if ([value isKindOfClass:[NSNumber class]]) {
+            NSNumber *numberProperty = (NSNumber *)value;
+            if ([numberProperty isEqualToNumber:[NSDecimalNumber notANumber]]) {
+                UA_LERR(@"Property %@ contains an invalid number.", key);
+                isValid = NO;
+            }
+        } else {
+            UA_LERR(@"Property %@ contains an invalid object: %@", key, value);
+            isValid = NO;
+        }
+    }
+
+    return isValid;
+}
+
 
 - (void)setInteractionFromMessage:(UAInboxMessage *)message {
     if (message) {
@@ -154,6 +220,23 @@
         [dictionary setValue:@([number longLongValue]) forKey:@"event_value"];
     }
 
+    NSMutableDictionary *stringifiedProperties = [NSMutableDictionary dictionary];
+
+    for (id key in self.properties) {
+        id value = [self.properties valueForKey:key];
+
+        if ([value isKindOfClass:[NSArray class]]) {
+            [stringifiedProperties setValue:value forKey:key];
+        } else {
+            NSString *stringifiedValue = [NSJSONSerialization stringWithObject:value acceptingFragments:YES error:nil];
+            [stringifiedProperties setValue:stringifiedValue forKey:key];
+        }
+    }
+
+    if (stringifiedProperties.count) {
+        [dictionary setValue:stringifiedProperties forKey:@"properties"];
+    }
+    
     return [dictionary mutableCopy];
 }
 

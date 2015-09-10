@@ -27,8 +27,18 @@
 #import "UAEvent.h"
 
 #define kUAInteractionMCRAP @"ua_mcrap"
-
 #define kUACustomEventCharacterLimit 255
+
+/**
+ * The max character limit for Strings.
+ */
+extern const NSUInteger UACustomEventCharacterLimit;
+
+/**
+ * The max number of properties.
+ */
+extern const NSUInteger UACustomEventMaxPropertiesCount;
+
 
 @class UAInboxMessage;
 
@@ -44,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Factory method for creating a custom event.
  *
  * @param eventName The name of the event. The event's name must not exceed
- * 255 characters or it will be ignored.
+ * 255 characters or it will invalidate the event.
  */
 + (instancetype)eventWithName:(NSString *)eventName;
 
@@ -52,9 +62,9 @@ NS_ASSUME_NONNULL_BEGIN
  * Factory method for creating a custom event with a value from a string.
  *
  * @param eventName The name of the event. The event's name must not exceed
- * 255 characters or it will be ignored.
+ * 255 characters or it will invalidate the event.
  * @param eventValue The value of the event as a string. The value must be a valid
- * number between -2^31 and 2^31 - 1 or it will be ignored.
+ * number between -2^31 and 2^31 - 1 or it will invalidate the event.
  */
 + (instancetype)eventWithName:(NSString *)eventName valueFromString:(nullable NSString *)eventValue;
 
@@ -62,39 +72,39 @@ NS_ASSUME_NONNULL_BEGIN
  * Factory method for creating a custom event with a value.
  *
  * @param eventName The name of the event. The event's name must not exceed
- * 255 characters or it will be ignored.
+ * 255 characters or it will invalidate the event.
  * @param eventValue The value of the event. The value must be between -2^31 and
- * 2^31 - 1 or it will be ignored.
+ * 2^31 - 1 or it will invalidate the event.
  */
 + (instancetype)eventWithName:(NSString *)eventName value:(nullable NSNumber *)eventValue;
 
 /**
  * The event's value. The value must be between -2^31 and
- * 2^31 - 1 or it will be ignored.
+ * 2^31 - 1 or it will invalidate the event.
  */
 @property (nonatomic, strong, nullable) NSDecimalNumber *eventValue;
 
 /**
  * The event's name. The name's length must not exceed 255 characters or it will
- * be ignored.
+ * invalidate the event.
  */
 @property (nonatomic, copy) NSString *eventName;
 
 /**
  * The event's interaction ID. The ID's length must not exceed 255 characters or it will
- * be ignored.
+ * invalidate the event.
  */
 @property (nonatomic, copy, nullable) NSString *interactionID;
 
 /**
  * The event's interaction type. The type's length must not exceed 255 characters or it will
- * be ignored.
+ * invalidate the event.
  */
 @property (nonatomic, copy, nullable) NSString *interactionType;
 
 /**
  * The event's interaction ID. The ID's length must not exceed 255 characters or it will
- * be ignored.
+ * invalidate the event.
  */
 @property (nonatomic, copy, nullable) NSString *transactionID;
 
@@ -104,6 +114,46 @@ NS_ASSUME_NONNULL_BEGIN
  * and ID from.
  */
 - (void)setInteractionFromMessage:(UAInboxMessage *)message;
+
+/**
+ * Sets a custom BOOL property.
+ *
+ * @param value The property value.
+ * @param key The property key.
+ */
+- (void)setBoolProperty:(BOOL)value forKey:(NSString *)key;
+
+/**
+ * Sets a custom String property. The value's length must not exceed 255 characters
+ * or it will invalidate the event.
+ *
+ * @param value The property value.
+ * @param key The property key.
+ */
+- (void)setStringProperty:(NSString *)value forKey:(NSString *)key;
+
+/**
+ * Sets a custom Number property.
+ *
+ * @param value The property value.
+ * @param key The property key.
+ */
+- (void)setNumberProperty:(NSNumber *)value forKey:(NSString *)key;
+
+/**
+ * Sets a custom String array property. The array must not exceed 20 entries and
+ * each entry's length must not exceed 255 characters or it will invalidate the event.
+ *
+ * @param value The property value.
+ * @param key The property key.
+ */
+#if __has_feature(objc_generics)
+- (void)setStringArrayProperty:(NSArray<NSString *> *)value forKey:(NSString *)key;
+#else
+- (void)setStringArrayProperty:(NSArray *)value forKey:(NSString *)key;
+#endif
+
+
 
 @end
 

@@ -286,6 +286,39 @@
 
 
 /**
+ * Test settings properties on a custom event.
+ */
+- (void)testSetCustomProperties {
+    NSDictionary *dict = @{ @"event_name": @"event name",
+                            @"properties": @{
+                                    @"array": @[@"string", @"another string"],
+                                    @"bool": @YES,
+                                    @"number": @123,
+                                    @"string": @"string value" } };
+
+
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:dict
+                                                      withSituation:UASituationManualInvocation];
+
+    UAActionResult *expectedResult = [UAActionResult emptyResult];
+
+    [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UACustomEvent *event = obj;
+        return [event.eventName isEqualToString:@"event name"] &&
+        [event.data[@"properties"][@"bool"] isEqualToString:@"true"] &&
+        [event.data[@"properties"][@"number"] isEqualToString:@"123"] &&
+        [event.data[@"properties"][@"array"] isEqualToArray:dict[@"properties"][@"array"]] &&
+        [event.data[@"properties"][@"string"] isEqualToString:@"\"string value\""];
+    }]];
+
+    [self verifyPerformWithArgs:args withExpectedResult:expectedResult];
+
+    // Verify the event was added
+    XCTAssertNoThrow([self.analytics verify], @"Custom event should have been added.");
+}
+
+
+/**
  * Helper method to verify perform.
  */
 - (void)verifyPerformWithArgs:(UAActionArguments *)args
