@@ -102,6 +102,7 @@
 		49B7046F1A7C4DCC000F67A6 /* UAColorUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B7046D1A7C4DCC000F67A6 /* UAColorUtils.h */; };
 		49B704711A7C4DCC000F67A6 /* UAColorUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B7046E1A7C4DCC000F67A6 /* UAColorUtils.m */; };
 		49B704741A7C53E5000F67A6 /* UAColorUtilsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B704731A7C53E5000F67A6 /* UAColorUtilsTest.m */; };
+		49BB73C61BA0DC9C00F96033 /* UAInAppMessageView+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BB73C51BA0DC9C00F96033 /* UAInAppMessageView+Internal.h */; settings = {ASSET_TAGS = (); }; };
 		49BEBF5C1AAA5D6700740665 /* UAUserNotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BEBF5A1AAA5D6700740665 /* UAUserNotificationAction.h */; };
 		49BEBF5E1AAA5D6700740665 /* UAUserNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49BEBF5B1AAA5D6700740665 /* UAUserNotificationAction.m */; };
 		49BEBF631AAA5DC000740665 /* UAMutableUserNotificationCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BEBF611AAA5DC000740665 /* UAMutableUserNotificationCategory.h */; };
@@ -490,6 +491,7 @@
 		49B7046D1A7C4DCC000F67A6 /* UAColorUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAColorUtils.h; sourceTree = "<group>"; };
 		49B7046E1A7C4DCC000F67A6 /* UAColorUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAColorUtils.m; sourceTree = "<group>"; };
 		49B704731A7C53E5000F67A6 /* UAColorUtilsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAColorUtilsTest.m; sourceTree = "<group>"; };
+		49BB73C51BA0DC9C00F96033 /* UAInAppMessageView+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageView+Internal.h"; sourceTree = "<group>"; };
 		49BEBF5A1AAA5D6700740665 /* UAUserNotificationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAUserNotificationAction.h; sourceTree = "<group>"; };
 		49BEBF5B1AAA5D6700740665 /* UAUserNotificationAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUserNotificationAction.m; sourceTree = "<group>"; };
 		49BEBF611AAA5DC000740665 /* UAMutableUserNotificationCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMutableUserNotificationCategory.h; sourceTree = "<group>"; };
@@ -1165,6 +1167,7 @@
 				49D7FF481A8E92390017A11C /* UAInAppMessageController.h */,
 				619C29851B8545370025AA65 /* UAInAppMessageController+Internal.h */,
 				49D7FF491A8E92390017A11C /* UAInAppMessageController.m */,
+				49BB73C51BA0DC9C00F96033 /* UAInAppMessageView+Internal.h */,
 				49D7FF4A1A8E92390017A11C /* UAInAppMessageView.h */,
 				49D7FF4B1A8E92390017A11C /* UAInAppMessageView.m */,
 				49A61A951AC327FC00BC5E68 /* UAInAppMessageControllerDelegate.h */,
@@ -1682,6 +1685,7 @@
 				762941AB1A016EB60077CDC1 /* UAActivityViewController.h in Headers */,
 				612ED4DE1A38DE3B00DD7762 /* UAProximityRegion+Internal.h in Headers */,
 				49416D6818C513F500A18B72 /* UALandingPageOverlayController.h in Headers */,
+				49BB73C61BA0DC9C00F96033 /* UAInAppMessageView+Internal.h in Headers */,
 				612ED4D81A378BCA00DD7762 /* UARegionEvent+Internal.h in Headers */,
 				CC8279481ABB2D3400C416E7 /* UAInAppResolutionEvent.h in Headers */,
 				495048B7173B11A500F8B5BE /* UAHTTPConnection+Internal.h in Headers */,

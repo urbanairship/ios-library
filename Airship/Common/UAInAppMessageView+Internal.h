@@ -23,37 +23,17 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAActivityViewController.h"
-#import "UAUtils.h"
+#import "UAInAppMessageView.h"
 
-@implementation UAActivityViewController
+NS_ASSUME_NONNULL_BEGIN
 
-- (void)viewDidDisappear:(BOOL)animated {
-    [super viewDidDisappear:animated];
-    if (self.dismissalBlock) {
-        self.dismissalBlock();
-    }
-}
+@interface UAInAppMessageView ()
 
-- (CGRect)sourceRect {
-    CGRect windowBounds = [UAUtils orientationDependentWindowBounds];
-
-    // Return a smaller rectangle by 25% on each axis, producing a 50% smaller rectangle inset.
-    return CGRectInset(windowBounds, CGRectGetWidth(windowBounds)/4.0, CGRectGetHeight(windowBounds)/4.0);
-}
-
-// Called whenever a rotation is about to occur for iOS 8.0+ iPad
-- (void)popoverPresentationController:(UIPopoverPresentationController *)popoverPresentationController
-          willRepositionPopoverToRect:(inout CGRect *)rect
-                               inView:(inout UIView *__autoreleasing *)view {
-    // Override the passed rect with our desired dimensions
-    *rect = [self sourceRect];
-}
-
-// Called whenever a rotation is about to occur for iOS 7.x iPad
-- (void)popoverController:(UIPopoverController *)popoverController willRepositionPopoverToRect:(inout CGRect *)rect inView:(inout UIView *__autoreleasing *)view {
-    // Override the passed rect with our desired dimensions
-    *rect = [self sourceRect];
-}
+/**
+ * Block invoked whenever the [UIView layoutSubviews] method is called.
+ */
+@property(nonatomic, copy) void (^onLayoutSubviews)(void);
 
 @end
+
+NS_ASSUME_NONNULL_END

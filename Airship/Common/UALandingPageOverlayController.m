@@ -36,7 +36,32 @@
 
 #import <QuartzCore/QuartzCore.h>
 
+#define kUALandingPageOverlayControllerWebViewPadding 15
+
 static NSMutableSet *overlayControllers_ = nil;
+
+/**
+ * A simple UIView subclass to allow hooking into the layoutSubviews method
+ */
+@interface UALandingPageOverlayView : UIView
+
+/**
+ * Block invoked whenever the [UIView layoutSubviews] method is called.
+ */
+@property(nonatomic, copy) void (^onLayoutSubviews)(void);
+
+@end
+
+@implementation UALandingPageOverlayView
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    if (self.onLayoutSubviews) {
+        self.onLayoutSubviews();
+    }
+}
+
+@end
 
 @interface UALandingPageOverlayController()
 
@@ -60,9 +85,14 @@ static NSMutableSet *overlayControllers_ = nil;
  */
 @property (nonatomic, strong) UAInboxMessage *message;
 @property (nonatomic, strong) UIViewController *parentViewController;
-@property (nonatomic, strong) UIView *overlayView;
+@property (nonatomic, strong) UALandingPageOverlayView *overlayView;
+@property (nonatomic, strong) UIView *background;
+@property (nonatomic, strong) UIView *backgroundInset;
+@property (nonatomic, strong) UIButton *closeButton;
+@property (nonatomic, strong) UABespokeCloseView *closeButtonView;
 @property (nonatomic, strong) UABeveledLoadingIndicator *loadingIndicator;
 @property (nonatomic, strong) UAWebViewDelegate *webViewDelegate;
+@property (nonatomic, assign) UIUserInterfaceSizeClass lastHorizontalSizeClass;
 
 @end
 
@@ -110,6 +140,21 @@ static NSMutableSet *overlayControllers_ = nil;
 + (void)closeAll:(BOOL)animated {
     for (UALandingPageOverlayController *oc in overlayControllers_) {
         [oc closeWebView:oc.webView animated:animated];
+    }
+}
+
+
+/**
+ * Helper method for determining the display environment. Size classes will be used if
+ * available, otherwise the method will fall back on the user interface idiom.
+ */
++ (BOOL)isRegularDisplayEnvironment {
+    UIWindow *mainWindow = [UAUtils mainWindow];
+    if ([mainWindow respondsToSelector:@selector(traitCollection)]) {
+        return mainWindow.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular &&
+        mainWindow.traitCollection.verticalSizeClass == UIUserInterfaceSizeClassRegular;
+    } else {
+        return [UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad;
     }
 }
 
@@ -168,63 +213,46 @@ static NSMutableSet *overlayControllers_ = nil;
                                                   object:nil];
 }
 
-- (void)buildOverlay {
+/**
+ * Sets the geometry of the landing page depending on the display environment.
+ * This method will be called once during initial display, as well as any time
+ * the display environment changes prior to dismissal.
+ */
+- (void)updateLayout {
 
     UIView *parentView = self.parentViewController.view;
-
-    // Note that we're using parentView.bounds instead of frame here, so that we'll have the correct dimensions if the
-    // Parent view is autorotated or otherwised transformed.
-
-    self.overlayView = [[UIView alloc] initWithFrame:
-                        CGRectMake(0, 0, CGRectGetWidth(parentView.bounds), CGRectGetHeight(parentView.bounds))];
 
     self.overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.overlayView.autoresizesSubviews = YES;
     self.overlayView.center = CGPointMake(CGRectGetWidth(parentView.bounds)/2.0, CGRectGetHeight(parentView.bounds)/2.0);
-    self.overlayView.alpha = 0.0;
-    self.overlayView.backgroundColor = [UIColor clearColor];
 
-    // Padding for the the webview
-    NSInteger webViewPadding = 15;
+    NSUInteger webViewPadding = kUALandingPageOverlayControllerWebViewPadding;
 
-    // Add the window background
-    UIView *background = [[UIView alloc] initWithFrame:CGRectInset(self.overlayView.frame, 0, webViewPadding)];
-
-    // Set size for iPad (540 x 620 + webView padding)
-    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-        background.frame = CGRectMake(0.0, 0.0, 540.0 + webViewPadding, 620.0 + webViewPadding);
+    // Set size for regular width (540 x 620 + webView padding)
+    if ([UALandingPageOverlayController isRegularDisplayEnvironment]) {
+        self.background.frame = CGRectMake(0.0, 0.0, 540.0 + webViewPadding, 620.0 + webViewPadding);
+    } else {
+        self.background.frame = CGRectInset(self.overlayView.frame, 0, webViewPadding);
     }
 
     // Center the background in the middle of the overlay
-    background.center = CGPointMake(CGRectGetWidth(self.overlayView.frame)/2.0, CGRectGetHeight(self.overlayView.frame)/2.0);
+    self.background.center = CGPointMake(CGRectGetWidth(self.overlayView.frame)/2.0, CGRectGetHeight(self.overlayView.frame)/2.0);
 
-    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-        background.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin |
+    if ([UALandingPageOverlayController isRegularDisplayEnvironment]) {
+        self.background.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin |
         UIViewAutoresizingFlexibleTopMargin |
         UIViewAutoresizingFlexibleRightMargin |
         UIViewAutoresizingFlexibleBottomMargin;
     } else {
-        background.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        self.background.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     }
 
-    // Make the background transparent, so that the close button can safely overlap the corner of the webView
-    background.backgroundColor = [UIColor clearColor];
-
-    [self.overlayView addSubview:background];
-
-    // Create and add a background inset that will serve as the visible background to the webview
-    UIView *backgroundInset = [[UIView alloc] initWithFrame:
-                               CGRectInset(CGRectMake(0,0,CGRectGetWidth(background.frame),CGRectGetHeight(background.frame)),
-                                           webViewPadding, webViewPadding)];
-    backgroundInset.backgroundColor = [UIColor whiteColor];
-    backgroundInset.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-
-    [background addSubview:backgroundInset];
+    self.backgroundInset.frame = CGRectInset(CGRectMake(0,0,CGRectGetWidth(self.background.frame),CGRectGetHeight(self.background.frame)), webViewPadding, webViewPadding);
 
     // Set the webView's frame to be identical to the background inset
-    self.webView.frame = CGRectMake(webViewPadding, webViewPadding, CGRectGetWidth(backgroundInset.frame), CGRectGetHeight(backgroundInset.frame));
+    self.webView.frame = CGRectMake(webViewPadding, webViewPadding, CGRectGetWidth(self.backgroundInset.frame), CGRectGetHeight(self.backgroundInset.frame));
 
-    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+    if ([UALandingPageOverlayController isRegularDisplayEnvironment]) {
         self.webView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin |
         UIViewAutoresizingFlexibleTopMargin |
         UIViewAutoresizingFlexibleRightMargin |
@@ -233,37 +261,92 @@ static NSMutableSet *overlayControllers_ = nil;
         self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     }
 
-    [background addSubview:self.webView];
+    self.loadingIndicator.center = CGPointMake(CGRectGetWidth(self.webView.frame)/2.0, CGRectGetHeight(self.webView.frame)/2.0);
+
+    if ([UALandingPageOverlayController isRegularDisplayEnvironment]) {
+        self.closeButton.autoresizingMask = UIViewAutoresizingNone;
+    } else {
+        self.closeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
+    }
+
+    [self.closeButton setFrame:CGRectMake(
+                                     CGRectGetWidth(self.background.frame) - CGRectGetWidth(self.closeButtonView.frame),
+                                     0,
+                                     CGRectGetWidth(self.closeButtonView.frame),
+                                     CGRectGetHeight(self.closeButtonView.frame))];
+}
+
+- (void)buildOverlay {
+
+    UIView *parentView = self.parentViewController.view;
+
+    // Note that we're using parentView.bounds instead of frame here, so that we'll have the correct dimensions if the
+    // Parent view is autorotated or otherwised transformed.
+
+    self.overlayView = [[UALandingPageOverlayView alloc] initWithFrame:
+                        CGRectMake(0, 0, CGRectGetWidth(parentView.bounds), CGRectGetHeight(parentView.bounds))];
+    self.overlayView.alpha = 0.0;
+    self.overlayView.backgroundColor = [UIColor clearColor];
+
+    // Update the layout whenever the bounds change, if needed
+    __weak UALandingPageOverlayController *weakSelf = self;
+    self.overlayView.onLayoutSubviews = ^{
+        UALandingPageOverlayController *strongSelf = weakSelf;
+        // If we're running on iOS 8 or above
+        if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
+            // Get the current horizontal size class
+            UIUserInterfaceSizeClass horizontalSizeClass = [UAUtils mainWindow].traitCollection.horizontalSizeClass;
+            // If the there has been a change, update layout constraints
+            if (horizontalSizeClass != self.lastHorizontalSizeClass) {
+                strongSelf.lastHorizontalSizeClass = horizontalSizeClass;
+                [strongSelf updateLayout];
+            }
+        }
+    };
+
+    if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
+        self.lastHorizontalSizeClass = [UAUtils mainWindow].traitCollection.horizontalSizeClass;
+    }
+    // Padding for the the webview
+    NSInteger webViewPadding = kUALandingPageOverlayControllerWebViewPadding;
+
+    // Add the window background
+    self.background = [[UIView alloc] initWithFrame:CGRectInset(self.overlayView.frame, 0, webViewPadding)];
+
+    // Make the background transparent, so that the close button can safely overlap the corner of the webView
+    self.background.backgroundColor = [UIColor clearColor];
+
+    [self.overlayView addSubview:self.background];
+
+    // Create and add a background inset that will serve as the visible background to the webview
+    self.backgroundInset = [[UIView alloc] initWithFrame:
+                               CGRectInset(CGRectMake(0,0,CGRectGetWidth(self.background.frame),CGRectGetHeight(self.background.frame)),
+                                           webViewPadding, webViewPadding)];
+    self.backgroundInset.backgroundColor = [UIColor whiteColor];
+    self.backgroundInset.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+
+    [self.background addSubview:self.backgroundInset];
+    [self.background addSubview:self.webView];
 
     // Add the loading indicator and center it in the middle of the webView
     [self.webView addSubview:self.loadingIndicator];
-    self.loadingIndicator.center = CGPointMake(CGRectGetWidth(self.webView.frame)/2.0, CGRectGetHeight(self.webView.frame)/2.0);
 
     // Add the close button
-    UABespokeCloseView *closeButtonView = [[UABespokeCloseView alloc] initWithFrame:CGRectMake(0.0, 0.0, 35.0, 35.0)];
+    self.closeButtonView = [[UABespokeCloseView alloc] initWithFrame:CGRectMake(0.0, 0.0, 35.0, 35.0)];
 
     // Technically UABespokeCloseView is a not a UIButton, so we will be adding it as a subView of an actual, transparent one.
-    closeButtonView.userInteractionEnabled = NO;
+    self.closeButtonView.userInteractionEnabled = NO;
 
-    UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-        closeButton.autoresizingMask = UIViewAutoresizingNone;
-    } else {
-        closeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
-    }
-
-    [closeButton setFrame:CGRectMake(
-                                     CGRectGetWidth(background.frame) - CGRectGetWidth(closeButtonView.frame),
-                                     0,
-                                     CGRectGetWidth(closeButtonView.frame),
-                                     CGRectGetHeight(closeButtonView.frame))];
-
-    [closeButton addSubview:closeButtonView];
+    self.closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.closeButton addSubview:self.closeButtonView];
 
     // Tapping the button will finish the overlay and dismiss all views
-    [closeButton addTarget:self action:@selector(finish) forControlEvents:UIControlEventTouchUpInside];
+    [self.closeButton addTarget:self action:@selector(finish) forControlEvents:UIControlEventTouchUpInside];
 
-    [background addSubview:closeButton];
+    [self.background addSubview:self.closeButton];
+
+    // Update the layout for the current display context
+    [self updateLayout];
 
     [self.overlayView layoutSubviews];
 }

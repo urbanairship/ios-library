@@ -25,7 +25,7 @@
 
 #import "UAInAppMessageControllerDefaultDelegate.h"
 #import "UAInAppMessage.h"
-#import "UAInAppMessageView.h"
+#import "UAInAppMessageView+Internal.h"
 #import "UAirship.h"
 #import "UAInAppMessaging.h"
 #import "UAInAppMessageButtonActionBinding.h"
@@ -42,6 +42,9 @@
 @property(nonatomic, assign) UAInAppMessagePosition position;
 @property(nonatomic, strong) UIColor *primaryColor;
 @property(nonatomic, strong) UIColor *secondaryColor;
+@property(nonatomic, strong) NSArray *layoutConstraints;
+@property(nonatomic, copy) void (^updateLayoutConstraintsBlock)(void);
+@property(nonatomic, assign) UIUserInterfaceSizeClass lastHorizontalSizeClass;
 @property(nonatomic, assign) BOOL isInverted;
 
 @end
@@ -144,25 +147,91 @@
     // Configure default colors
     [self configureColorsWithMessageView:messageView inverted:NO];
 
+    // Update layout constraints if needed
+    messageView.onLayoutSubviews = ^{
+        [self updateLayoutConstraintsIfNeeded];
+    };
+
     return messageView;
 }
+
+- (void)updateLayoutConstraintsWithParent:(UIView *)parentView metrics:(id)metrics views:(id)views {
+
+    NSString *verticalLayout;
+
+    // Place the message view flush against the top or bottom of the parent, depending on position
+    if (self.position == UAInAppMessagePositionBottom) {
+        verticalLayout = @"V:[messageView]|";
+    } else {
+        verticalLayout = @"V:|[messageView]";
+    }
+
+    NSString *regularWidthHorizontalLayout = @"[messageView(regularMessageWidth)]";
+    NSString *compactWidthHorizontalLayout = @"H:|-horizontalMargin-[messageView]-horizontalMargin-|";
+
+    NSString *horizontalLayout;
+
+    UIWindow *window = [UAUtils mainWindow];
+    if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
+
+        UITraitCollection *traitCollection = window.traitCollection;
+
+        UIUserInterfaceSizeClass horizontalSizeClass = traitCollection.horizontalSizeClass;
+        UIUserInterfaceSizeClass verticalSizeClass = traitCollection.verticalSizeClass;
+
+        if (horizontalSizeClass == UIUserInterfaceSizeClassRegular && verticalSizeClass == UIUserInterfaceSizeClassRegular) {
+            horizontalLayout = regularWidthHorizontalLayout;
+        } else {
+            horizontalLayout = compactWidthHorizontalLayout;
+        }
+    } else {
+        // If the UI idiom is iPad, use the fixed width, otherwise offset it with the horizontal margins
+        if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+            horizontalLayout = regularWidthHorizontalLayout;
+        } else {
+            horizontalLayout = compactWidthHorizontalLayout;
+        }
+    }
+
+
+    if (self.layoutConstraints) {
+        [parentView removeConstraints:self.layoutConstraints];
+    }
+
+    NSMutableArray *allConstraints = [NSMutableArray array];
+
+    for (NSString *expression in @[verticalLayout, horizontalLayout]) {
+        NSArray *constraints = [NSLayoutConstraint constraintsWithVisualFormat:expression
+                                                                       options:0
+                                                                       metrics:metrics
+                                                                         views:views];
+        [allConstraints addObjectsFromArray:constraints];
+
+    }
+
+    self.layoutConstraints = allConstraints;
+
+    [parentView addConstraints:allConstraints];
+};
 
 /**
  * Adds layout constraints to the message view.
  */
 - (void)buildLayoutWithParent:(UIView *)parentView messageView:(UIView *)messageView {
     CGFloat horizontalMargin = 0;
-    CGRect screenBounds = [UAUtils orientationDependentScreenBounds];
-    CGFloat screenWidth = CGRectGetWidth(screenBounds);
+    CGRect windowBounds = [UAUtils orientationDependentWindowBounds];
+    CGFloat screenWidth = CGRectGetWidth(windowBounds);
 
-    // On an iPad, messages are 45% of the fixed screen width in landscape
-    CGFloat longWidth = MAX(screenWidth, CGRectGetHeight(screenBounds));
-    CGFloat actualLongWidth = longWidth * kUAInAppMessagePadScreenWidthPercentage;
+    // For the horizontal and vertical regular size class, messages are 45% of the fixed screen width in landscape
+    CGFloat longWidth = MAX(screenWidth, CGRectGetHeight(windowBounds));
+    CGFloat regularMessageWidth = longWidth * kUAInAppMessagePadScreenWidthPercentage;
 
-    // On a phone, messages are always 95% of current screen width
-    horizontalMargin = (screenWidth - screenWidth*kUAInAppMessageiPhoneScreenWidthPercentage)/2.0;
+    // For the horizontal or vertical compact size class, messages are always 95% of current screen width
+    CGFloat compactMessageWidth = screenWidth*kUAInAppMessageiPhoneScreenWidthPercentage;
 
-    id metrics = @{@"horizontalMargin":@(horizontalMargin), @"longWidth":@(actualLongWidth)};
+    horizontalMargin = (screenWidth - compactMessageWidth)/2.0;
+
+    id metrics = @{@"horizontalMargin":@(horizontalMargin), @"regularMessageWidth":@(regularMessageWidth)};
     id views = @{@"messageView":messageView};
 
     [parentView addSubview:messageView];
@@ -175,32 +244,32 @@
                                                            attribute:NSLayoutAttributeCenterX multiplier:1
                                                             constant:0]];
 
-    NSString *verticalLayout;
-    NSString *horizontalLayout;
+    // Executing this block will calculate/recalculate layout constraints
+    __weak UAInAppMessageControllerDefaultDelegate *weakSelf = self;
+    self.updateLayoutConstraintsBlock = ^{
+        UAInAppMessageControllerDefaultDelegate *strongSelf = weakSelf;
 
-    // Place the message view flush against the top or bottom of the parent, depending on position
-    if (self.position == UAInAppMessagePositionBottom) {
-        verticalLayout = @"V:[messageView]|";
-    } else {
-        verticalLayout = @"V:|[messageView]";
-    }
+        [strongSelf updateLayoutConstraintsWithParent:parentView metrics:metrics views:views];
+    };
 
-    // If the UI idiom is iPad, use the fixed width, otherwise offset it with the horizontal margins
-    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-        horizontalLayout = @"[messageView(longWidth)]";
-    } else {
-        horizontalLayout = @"H:|-horizontalMargin-[messageView]-horizontalMargin-|";
-    }
+    self.updateLayoutConstraintsBlock();
+}
 
-    for (NSString *expression in @[verticalLayout, horizontalLayout]) {
-        [parentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:expression
-                                                                           options:0
-                                                                           metrics:metrics
-                                                                             views:views]];
+- (void)updateLayoutConstraintsIfNeeded {
+    // If we're running on iOS 8 or above
+    if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
+        // Get the current horizontal size class
+        UIUserInterfaceSizeClass horizontalSizeClass = [UAUtils mainWindow].traitCollection.horizontalSizeClass;
+        // If there has been a change, update layout constraints
+        if (horizontalSizeClass != self.lastHorizontalSizeClass) {
+            self.lastHorizontalSizeClass = horizontalSizeClass;
+            self.updateLayoutConstraintsBlock();
+        }
     }
 }
 
 - (UIView *)viewForMessage:(UAInAppMessage *)message parentView:(UIView *)parentView {
+
     // Build the messageView, configuring it with data from the message
     UIView *messageView = [self buildMessageViewForMessage:message];
 
