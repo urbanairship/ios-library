@@ -51,6 +51,9 @@ mkdir -p $OUTPUT_PATH
 # Verify architectures in the fat binary
 lipo "${OUTPUT_PATH}/Airship/libUAirship-$VERSION.a" -verify_arch armv7 armv7s i386 x86_64 arm64
 
+# Verify bitcode is enabled in the fat binary
+otool -l "${OUTPUT_PATH}/Airship/libUAirship-$VERSION.a" | grep __LLVM
+ 
 ./$SCRIPT_DIRECTORY/package_sample.sh $SCRIPT_DIRECTORY/../InboxSample $OUTPUT_PATH
 ./$SCRIPT_DIRECTORY/package_sample.sh $SCRIPT_DIRECTORY/../PushSample $OUTPUT_PATH
 "${ROOT_PATH}/scripts/build_docs.sh"
