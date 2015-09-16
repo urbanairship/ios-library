@@ -234,11 +234,6 @@
 		BB886119159A7E9600584445 /* UAStandardLocationProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E1815057C7F00971CEC /* UAStandardLocationProvider.m */; };
 		BB88611A159A7E9600584445 /* UABaseLocationProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E3615057CF200971CEC /* UABaseLocationProvider.m */; };
 		BB88611B159A7E9600584445 /* UALocationCommonValues.m in Sources */ = {isa = PBXBuildFile; fileRef = BB42FB7D150969F200FC4B1B /* UALocationCommonValues.m */; };
-		BB88611D159A7E9600584445 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB87D661505758100971CEC /* CoreLocation.framework */; };
-		BB886120159A7E9600584445 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
-		BB886121159A7E9600584445 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9FD198B122DB5D000522B4E /* SystemConfiguration.framework */; };
-		BB886122159A7E9600584445 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 633146B3122FA474008F2D48 /* UIKit.framework */; };
-		BB886127159A7E9600584445 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F23FFE912B1B09C001DB898 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		BBB87D5F150574DE00971CEC /* CLLocationManager+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */; };
 		BBB87D63150574DE00971CEC /* UALocationProviderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D5C150574DE00971CEC /* UALocationProviderTests.m */; };
 		BBB87D64150574DE00971CEC /* UALocationServiceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D5D150574DE00971CEC /* UALocationServiceTest.m */; };
@@ -790,11 +785,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB88611D159A7E9600584445 /* CoreLocation.framework in Frameworks */,
-				BB886120159A7E9600584445 /* Foundation.framework in Frameworks */,
-				BB886121159A7E9600584445 /* SystemConfiguration.framework in Frameworks */,
-				BB886122159A7E9600584445 /* UIKit.framework in Frameworks */,
-				BB886127159A7E9600584445 /* CoreTelephony.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1735,7 +1725,7 @@
 				BB8860B0159A7E9600584445 /* Headers */,
 				BB8860EB159A7E9600584445 /* Sources */,
 				BB88611C159A7E9600584445 /* Frameworks */,
-				494FB59919919392000CF253 /* ShellScript */,
+				494FB59919919392000CF253 /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -1796,13 +1786,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		494FB59919919392000CF253 /* ShellScript */ = {
+		494FB59919919392000CF253 /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Run Script";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2237,7 +2228,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_MODULES_AUTOLINK = NO;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
@@ -2278,7 +2271,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_MODULES_AUTOLINK = NO;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
@@ -2364,7 +2359,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_MODULES_AUTOLINK = NO;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
