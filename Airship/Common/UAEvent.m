@@ -23,9 +23,6 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <CoreTelephony/CTTelephonyNetworkInfo.h>
-#import <CoreTelephony/CTCarrier.h>
-
 #import "UAEvent+Internal.h"
 #import "UAPush.h"
 #import "UAirship.h"

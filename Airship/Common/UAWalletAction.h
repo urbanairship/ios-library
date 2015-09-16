@@ -24,6 +24,7 @@
  */
 
 #import "UAAction.h"
+#import <Passkit/Passkit.h>
 
 /**
  * Downloads and displays a Passbook Pass in an 'Add Pass' alert dialog. It will download and cache a

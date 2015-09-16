@@ -23,8 +23,6 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <PassKit/PassKit.h>
-
 #import "UAWalletAction.h"
 #import "UAGlobal.h"
 #import "UAURLProtocol.h"
