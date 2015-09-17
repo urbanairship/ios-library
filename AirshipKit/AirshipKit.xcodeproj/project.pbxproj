@@ -7,19 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		490FE2131BA8E5DE008FB649 /* AirshipCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 490FE2111BA8E5DE008FB649 /* AirshipCore.h */; settings = {ASSET_TAGS = (); }; };
+		490FE2141BA8E5DE008FB649 /* AirshipCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 490FE2121BA8E5DE008FB649 /* AirshipCore.m */; settings = {ASSET_TAGS = (); }; };
 		494DD95D1B0EB677009C134E /* AirshipKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 494DD95C1B0EB677009C134E /* AirshipKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		494DDC261B0FD6A1009C134E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DDC251B0FD6A1009C134E /* libsqlite3.dylib */; };
 		494DDC281B0FD6A6009C134E /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DDC271B0FD6A6009C134E /* libz.dylib */; };
-		49D5281D1B17DFE7006E35FB /* libUAirship-6.2.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 49D5281C1B17DFE7006E35FB /* libUAirship-6.2.1.a */; };
+		49D5281D1B17DFE7006E35FB /* libUAirship-6.2.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 49D5281C1B17DFE7006E35FB /* libUAirship-6.2.2.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		490FE2111BA8E5DE008FB649 /* AirshipCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipCore.h; sourceTree = "<group>"; };
+		490FE2121BA8E5DE008FB649 /* AirshipCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AirshipCore.m; sourceTree = "<group>"; };
 		494DD9571B0EB677009C134E /* AirshipKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		494DD95B1B0EB677009C134E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		494DD95C1B0EB677009C134E /* AirshipKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipKit.h; sourceTree = "<group>"; };
 		494DDC251B0FD6A1009C134E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		494DDC271B0FD6A6009C134E /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		49D5281C1B17DFE7006E35FB /* libUAirship-6.2.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-6.2.1.a"; path = "../Airship/libUAirship-6.2.1.a"; sourceTree = "<group>"; };
+		49D5281C1B17DFE7006E35FB /* libUAirship-6.2.2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-6.2.2.a"; path = "../Airship/libUAirship-6.2.2.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,7 +33,7 @@
 			files = (
 				494DDC281B0FD6A6009C134E /* libz.dylib in Frameworks */,
 				494DDC261B0FD6A1009C134E /* libsqlite3.dylib in Frameworks */,
-				49D5281D1B17DFE7006E35FB /* libUAirship-6.2.1.a in Frameworks */,
+				49D5281D1B17DFE7006E35FB /* libUAirship-6.2.2.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -39,7 +43,7 @@
 		494DD94D1B0EB677009C134E = {
 			isa = PBXGroup;
 			children = (
-				49D5281C1B17DFE7006E35FB /* libUAirship-6.2.1.a */,
+				49D5281C1B17DFE7006E35FB /* libUAirship-6.2.2.a */,
 				494DDC271B0FD6A6009C134E /* libz.dylib */,
 				494DDC251B0FD6A1009C134E /* libsqlite3.dylib */,
 				494DD9591B0EB677009C134E /* AirshipKit */,
@@ -58,6 +62,8 @@
 		494DD9591B0EB677009C134E /* AirshipKit */ = {
 			isa = PBXGroup;
 			children = (
+				490FE2111BA8E5DE008FB649 /* AirshipCore.h */,
+				490FE2121BA8E5DE008FB649 /* AirshipCore.m */,
 				494DD95C1B0EB677009C134E /* AirshipKit.h */,
 				494DD95A1B0EB677009C134E /* Supporting Files */,
 			);
@@ -79,6 +85,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				490FE2131BA8E5DE008FB649 /* AirshipCore.h in Headers */,
 				494DD95D1B0EB677009C134E /* AirshipKit.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -90,9 +97,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 494DD96D1B0EB677009C134E /* Build configuration list for PBXNativeTarget "AirshipKit" */;
 			buildPhases = (
+				4997FA371B55D96D002D4E05 /* ShellScript */,
 				494DD9521B0EB677009C134E /* Sources */,
 				494DD9531B0EB677009C134E /* Frameworks */,
-				4997FA371B55D96D002D4E05 /* ShellScript */,
 				494DD9541B0EB677009C134E /* Headers */,
 				494DD9551B0EB677009C134E /* Resources */,
 			);
@@ -167,6 +174,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				490FE2141BA8E5DE008FB649 /* AirshipCore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

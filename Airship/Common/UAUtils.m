@@ -27,7 +27,6 @@
 
 // Frameworks
 #import <CommonCrypto/CommonDigest.h>
-#import <SystemConfiguration/SCNetworkReachability.h>
 
 // UA external libraries
 #import "UA_Base64.h"
