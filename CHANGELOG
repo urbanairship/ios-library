@@ -3,6 +3,13 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+6.2.2 - September 17, 2015
+==========================
+- Disabled modules in the static library to resolve Xcode 7 module cache warnings.
+  Note: While this change should be backwards compatible with most existing apps, Swift apps
+  built against the static library will need to explicitly link against CoreTelephony.framework
+  when building with Xcode 6.4.
+
 6.2.1 - September 14, 2015
 ==========================
 - Added a separate build compiled with Xcode 7 for bitcode support.

@@ -27,6 +27,17 @@
 #import "UAJavaScriptDelegate.h"
 #import "UAWhitelist.h"
 
+// Frameworks
+#import <SystemConfiguration/SystemConfiguration.h>
+#import <CoreTelephony/CTTelephonyNetworkInfo.h>
+#import <CoreTelephony/CTCarrier.h>
+#import <PassKit/PassKit.h>
+#import <CoreData/CoreData.h>
+#import <CoreLocation/CoreLocation.h>
+#import <Security/Security.h>
+#import <QuartzCore/QuartzCore.h>
+#import <Availability.h>
+
 @class UAConfig;
 @class UAAnalytics;
 @class UALocationService;
