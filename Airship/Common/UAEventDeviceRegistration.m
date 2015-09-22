@@ -36,7 +36,10 @@
 
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
 
-    [data setValue:[UAirship push].deviceToken forKey:@"device_token"];
+    if ([UAirship push].pushTokenRegistrationEnabled) {
+        [data setValue:[UAirship push].deviceToken forKey:@"device_token"];
+    }
+
     [data setValue:[UAirship push].channelID forKey:@"channel_id"];
     [data setValue:[UAirship inboxUser].username forKey:@"user_id"];
 

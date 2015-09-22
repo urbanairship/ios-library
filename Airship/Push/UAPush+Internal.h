@@ -43,6 +43,11 @@ extern NSString *const UAUserPushNotificationsEnabledKey;
 extern NSString *const UABackgroundPushNotificationsEnabledKey;
 
 /**
+ * Device token sent during channel registration enabled data store key.
+ */
+extern NSString *const UAPushTokenRegistrationEnabledKey;
+
+/**
  * Alias data store key.
  */
 extern NSString *const UAPushAliasSettingsKey;

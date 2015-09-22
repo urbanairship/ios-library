@@ -361,7 +361,10 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [request addRequestHeader:@"X-UA-Locale-Language" value:[[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode]];
     [request addRequestHeader:@"X-UA-Locale-Country" value:[[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleCountryCode]];
     [request addRequestHeader:@"X-UA-Locale-Variant" value:[[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleVariantCode]];
-    [request addRequestHeader:@"X-UA-Push-Address" value:[UAirship push].deviceToken];
+
+    if ([UAirship push].pushTokenRegistrationEnabled) {
+        [request addRequestHeader:@"X-UA-Push-Address" value:[UAirship push].deviceToken];
+    }
     [request addRequestHeader:@"X-UA-Channel-ID" value:[UAirship push].channelID];
     [request addRequestHeader:@"X-UA-Location-Permission" value:[self locationPermission]];
     [request addRequestHeader:@"X-UA-Location-Service-Enabled" value:[UALocationService airshipLocationServiceEnabled] ? @"true" : @"false"];
