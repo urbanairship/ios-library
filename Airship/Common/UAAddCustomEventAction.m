@@ -57,6 +57,7 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
     NSString *interactionID = [self parseStringFromDictionary:dict key:@"interaction_id"];
     NSString *interactionType = [self parseStringFromDictionary:dict key:@"interaction_type"];
     NSString *transactionID = [self parseStringFromDictionary:dict key:@"transaction_id"];
+    id properties = dict[@"properties"];
 
     UACustomEvent *event = [UACustomEvent eventWithName:eventName valueFromString:eventValue];
     event.transactionID = transactionID;
@@ -73,6 +74,29 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
 
     // Set the conversion send ID if the action was triggered from a push
     event.conversionSendID = arguments.metadata[UAActionMetadataPushPayloadKey][@"_"];
+
+    if (properties && [properties isKindOfClass:[NSDictionary class]]) {
+        for (id key in properties) {
+
+            if (![key isKindOfClass:[NSString class]]) {
+                UA_LWARN(@"Only String keys are allowed for custom event properties.");
+                continue;
+            }
+
+            id value = properties[key];
+
+            if ([value isKindOfClass:[NSString class]]) {
+                [event setStringProperty:value forKey:key];
+            } else if ([value isKindOfClass:[NSArray class]]) {
+                [event setStringArrayProperty:value forKey:key];
+            } else if ([value isKindOfClass:[NSNumber class]]) {
+                // BOOLs come in as NSNumbers
+                [event setNumberProperty:value forKey:key];
+            } else {
+                UA_LWARN(@"Property %@ contains an invalid object: %@", key, value);
+            }
+        }
+    }
 
     if ([event isValid]) {
         [[UAirship shared].analytics addEvent:event];

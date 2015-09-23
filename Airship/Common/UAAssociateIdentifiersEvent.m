@@ -23,24 +23,46 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEvent.h"
+#import "UAAssociateIdentifiersEvent+Internal.h"
+#import "UAEvent+Internal.h"
+#import "UAGlobal.h"
 
-@class UAInAppMessage;
+@implementation UAAssociateIdentifiersEvent
 
-NS_ASSUME_NONNULL_BEGIN
++ (instancetype)eventWithIDs:(UAAssociatedIdentifiers *)identifiers {
+    UAAssociateIdentifiersEvent *event = [[self alloc] init];
+    event.data = [NSDictionary dictionaryWithDictionary:identifiers.allIDs];
+    return event;
+}
 
-/**
- * In-app message display event.
- */
-@interface UAInAppDisplayEvent : UAEvent
 
-/**
- * Factory method to create a UAInAppDisplayEvent event.
- * @param message The in-app message.
- * @return A in-app display event.
- */
-+ (instancetype)eventWithMessage:(UAInAppMessage *)message;
+- (BOOL)isValid {
+    BOOL isValid = YES;
+
+    if (self.data.count > UAAssociatedIdentifiersMaxCount) {
+        UA_LERR(@"Associated identifiers count exceed %lu", (unsigned long)UAAssociatedIdentifiersMaxCount);
+        isValid = NO;
+    }
+
+    for (NSString *key in self.data) {
+        NSString *value = self.data[key];
+
+        if (key.length > UAAssociatedIdentifiersMaxCharacterCount) {
+            UA_LERR(@"Associated identifier %@ exceeds %lu characters", key, (unsigned long)UAAssociatedIdentifiersMaxCharacterCount);
+            isValid = NO;
+        }
+
+        if (value.length > UAAssociatedIdentifiersMaxCharacterCount) {
+            UA_LERR(@"Associated identifier %@ value exceeds %lu characters", key, (unsigned long)UAAssociatedIdentifiersMaxCharacterCount);
+            isValid = NO;
+        }
+    }
+
+    return isValid;
+}
+
+- (NSString *)eventType {
+    return @"associate_identifiers";
+}
 
 @end
-
-NS_ASSUME_NONNULL_END

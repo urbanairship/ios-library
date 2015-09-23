@@ -23,24 +23,44 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEvent.h"
+#import <XCTest/XCTest.h>
+#import "UAInstallAttributionEvent.h"
 
-@class UAInAppMessage;
-
-NS_ASSUME_NONNULL_BEGIN
-
-/**
- * In-app message display event.
- */
-@interface UAInAppDisplayEvent : UAEvent
-
-/**
- * Factory method to create a UAInAppDisplayEvent event.
- * @param message The in-app message.
- * @return A in-app display event.
- */
-+ (instancetype)eventWithMessage:(UAInAppMessage *)message;
+@interface UAInstallAttributionEventTest : XCTestCase
 
 @end
 
-NS_ASSUME_NONNULL_END
+@implementation UAInstallAttributionEventTest
+
+/**
+ * Test the event's type.
+ */
+- (void)testType {
+    XCTAssertEqualObjects(@"install_attribution", [UAInstallAttributionEvent event].eventType);
+}
+
+/**
+ * Test the event's data with purchase and impression dates.
+ */
+- (void)testData {
+    NSDate *purchaseDate = [NSDate dateWithTimeIntervalSince1970:100.0];
+    NSDate *iAdImpressionDate = [NSDate dateWithTimeIntervalSince1970:1000.0];
+
+    UAInstallAttributionEvent *event = [UAInstallAttributionEvent eventWithAppPurchaseDate:purchaseDate
+                                                                         iAdImpressionDate:iAdImpressionDate];
+
+    XCTAssertEqualObjects(@"100.000000", [event.data objectForKey:@"app_store_purchase_date"]);
+    XCTAssertEqualObjects(@"1000.000000", [event.data objectForKey:@"app_store_ad_impression_date"]);
+    XCTAssertTrue(event.isValid);
+}
+
+/**
+ * Test the event's data with no dates.
+ */
+- (void)testDataNoDates {
+    UAInstallAttributionEvent *event = [UAInstallAttributionEvent event];
+    XCTAssertEqual(0, event.data.count);
+    XCTAssertTrue(event.isValid);
+}
+
+@end

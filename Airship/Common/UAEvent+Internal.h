@@ -72,6 +72,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) UAEventPriority priority;
 
 /**
+ * The JSON event size in bytes.
+ */
+@property (nonatomic, readonly) NSUInteger jsonEventSize;
+
+/**
  * Gets the carrier's name.
  * @returns The carrier's name.
  */
@@ -83,6 +88,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return The current notification types as a string array.
  */
 - (NSArray *)notificationTypes;
+
 
 @end
 

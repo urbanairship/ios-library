@@ -1,16 +1,16 @@
 /*
  Copyright 2009-2015 Urban Airship Inc. All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
- 
+
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
- 
+
  2. Redistributions in binary form must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided with the distribution.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
@@ -24,44 +24,65 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
-#import <CoreTelephony/CTTelephonyNetworkInfo.h>
-#import <CoreTelephony/CTCarrier.h>
-
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * This base class encapsulates analytics events.
+ * Defines analytic identifiers to be associated with
+ * the device.
  */
-@interface UAEvent : NSObject
+@interface UAAssociatedIdentifiers : NSObject
 
 /**
- * The time the event was created.
+ * Maximum number of associated IDs that can be set.
  */
-@property (nonatomic, readonly, copy) NSString *time;
+extern NSUInteger const UAAssociatedIdentifiersMaxCount;
 
 /**
- * The unique event ID.
+ * Character limit for associated IDs or keys.
  */
-@property (nonatomic, readonly, copy) NSString *eventID;
+extern NSUInteger const UAAssociatedIdentifiersMaxCharacterCount;
 
 /**
- * The event's data.
+ * Factory method to create an empty identifiers object.
+ * @return The created associated identifiers.
  */
-@property (nonatomic, readonly, strong) NSDictionary *data;
-
-/**
- * The event's type.
- */
-@property (nonatomic, readonly) NSString *eventType;
++ (instancetype)identifiers;
 
 
 /**
- * Checks if the event is valid. Invalid events will be dropped.
- * @return YES if the event is valid.
+ * Factory method to create an associated identifiers instance with a dictionary
+ * of custom identifiers.
+ * @return The created associated identifiers.
  */
-- (BOOL)isValid;
+#if __has_feature(objc_generics)
++ (instancetype)identifiersWithDictionary:(NSDictionary<NSString *, NSString *> *)identifiers;
+#else
++ (instancetype)identifiersWithDictionary:(NSDictionary *)identifiers;
+#endif
+
+/**
+ * The advertising ID.
+ */
+@property (nonatomic, copy, nullable) NSString *advertisingID;
+
+/**
+ * The application's vendor ID.
+ */
+@property (nonatomic, copy, nullable) NSString *vendorID;
+
+
+/**
+ * A map of all the associated identifiers.
+ */
+@property (nonatomic, readonly) NSDictionary *allIDs;
+
+/**
+ * Sets an identifier mapping.
+ * @param identifier The value of the identifier, or `nil` to remove the identifier.
+ * @parm key The key for the identifier
+ */
+- (void)setIdentifier:(nullable NSString *)identifier forKey:(NSString *)key;
 
 @end
 

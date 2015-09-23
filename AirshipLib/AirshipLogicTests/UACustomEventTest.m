@@ -80,14 +80,14 @@
  */
 - (void)testSetCustomEventName {
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
-    XCTAssertEqualObjects(event.eventName, @"event name", "255 character event name should be valid");
+    XCTAssertTrue(event.isValid);
 
     event.eventName =  [@"" stringByPaddingToLength:256 withString:@"EVENT_NAME" startingAtIndex:0];
-    XCTAssertEqualObjects(event.eventName, @"event name", @"Event names larger than 255 characters should be ignored");
+    XCTAssertFalse(event.isValid);
 
     NSString *eventName = [@"" stringByPaddingToLength:255 withString:@"EVENT_NAME" startingAtIndex:0];
     event.eventName =  eventName;
-    XCTAssertEqualObjects(event.eventName, eventName, "255 character event name should be valid");
+    XCTAssertTrue(event.isValid);
 }
 
 /**
@@ -100,13 +100,13 @@
     NSString *interactionID = [@"" stringByPaddingToLength:255 withString:@"INTERACTION_ID" startingAtIndex:0];
 
     event.interactionID = interactionID;
-    XCTAssertEqualObjects(interactionID, event.interactionID, "255 character interaction IDs should be valid");
+    XCTAssertTrue(event.isValid);
 
     event.interactionID = nil;
-    XCTAssertNil(event.interactionID, @"Interaction ID should be able to be cleared");
+    XCTAssertTrue(event.isValid);
 
     event.interactionID = [@"" stringByPaddingToLength:256 withString:@"INTERACTION_ID" startingAtIndex:0];
-    XCTAssertNil(event.interactionID, @"Interaction IDs larger than 255 characters should be ignored");
+    XCTAssertFalse(event.isValid);
 }
 
 /**
@@ -119,13 +119,13 @@
     NSString *interactionType = [@"" stringByPaddingToLength:255 withString:@"INTERACTION_TYPE" startingAtIndex:0];
 
     event.interactionType = interactionType;
-    XCTAssertEqualObjects(interactionType, event.interactionType, "255 character interaction Types should be valid");
+    XCTAssertTrue(event.isValid);
 
     event.interactionType = nil;
-    XCTAssertNil(event.interactionType, @"Interaction type should be able to be cleared");
+    XCTAssertTrue(event.isValid);
 
     event.interactionType = [@"" stringByPaddingToLength:256 withString:@"INTERACTION_TYPE" startingAtIndex:0];
-    XCTAssertNil(event.interactionType, @"Interaction types larger than 255 characters should be ignored");
+    XCTAssertFalse(event.isValid);
 }
 
 /**
@@ -138,13 +138,13 @@
     NSString *transactionID = [@"" stringByPaddingToLength:255 withString:@"TRANSACTION_ID" startingAtIndex:0];
 
     event.transactionID = transactionID;
-    XCTAssertEqualObjects(transactionID, event.transactionID, "255 character transaction ID should be valid");
+    XCTAssertTrue(event.isValid);
 
     event.transactionID = nil;
-    XCTAssertNil(event.transactionID, @"Transaction ID should be able to be cleared");
+    XCTAssertTrue(event.isValid);
 
     event.transactionID = [@"" stringByPaddingToLength:256 withString:@"TRANSACTION_ID" startingAtIndex:0];
-    XCTAssertNil(event.transactionID, @"Transaction IDs larger than 255 characters should be ignored");
+    XCTAssertFalse(event.isValid);
 }
 
 /**
@@ -153,40 +153,44 @@
 - (void)testSetEventValueString {
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name" valueFromString:@"100.00"];
     XCTAssertEqualObjects(@(100.00), event.eventValue, @"Event value should be set from a valid numeric string.");
+    XCTAssertTrue(event.isValid);
 
     // Max value
     NSNumber *maxValue = @(INT32_MAX);
     event = [UACustomEvent eventWithName:@"event name" valueFromString:[maxValue stringValue]];
     XCTAssertEqualObjects(maxValue, event.eventValue, @"Event value should be set from a valid numeric string.");
+    XCTAssertTrue(event.isValid);
 
     // Above Max
     NSDecimalNumber *aboveMax = [NSDecimalNumber decimalNumberWithDecimal:[maxValue decimalValue]];
     aboveMax = [aboveMax decimalNumberByAdding:[NSDecimalNumber decimalNumberWithString:@"0.000001"]];
     event = [UACustomEvent eventWithName:@"event name" valueFromString:[aboveMax stringValue]];
-    XCTAssertNil(event.eventValue, @"Event values that are too large should be ignored.");
+    XCTAssertFalse(event.isValid);
 
     // Min value
     NSNumber *minValue = @(INT32_MIN);
     event = [UACustomEvent eventWithName:@"event name" valueFromString:[minValue stringValue]];
     XCTAssertEqualObjects(minValue, event.eventValue, @"Event value should be set from a valid numeric string.");
+    XCTAssertTrue(event.isValid);
 
     // Below min
     NSDecimalNumber *belowMin = [NSDecimalNumber decimalNumberWithDecimal:[minValue decimalValue]];
     belowMin = [belowMin decimalNumberBySubtracting:[NSDecimalNumber decimalNumberWithString:@"0.000001"]];
     event = [UACustomEvent eventWithName:@"event name" valueFromString:[belowMin stringValue]];
-    XCTAssertNil(event.eventValue, @"Event values that are too small should be ignored.");
+    XCTAssertFalse(event.isValid);
 
     // 0
     event = [UACustomEvent eventWithName:@"event name" valueFromString:@"0"];
     XCTAssertEqualObjects(@(0), event.eventValue, @"Event value should be set from a valid numeric string.");
+    XCTAssertTrue(event.isValid);
 
     // nil
     event = [UACustomEvent eventWithName:@"event name" valueFromString:nil];
-    XCTAssertNil(event.eventValue, @"Event values that nil should be ignored.");
+    XCTAssertTrue(event.isValid);
 
     // NaN
     event = [UACustomEvent eventWithName:@"event name" valueFromString:@"blah"];
-    XCTAssertNil(event.eventValue, @"Event values that are not numbers should be ignored");
+    XCTAssertFalse(event.isValid);
 }
 
 /**
@@ -194,41 +198,41 @@
  */
 - (void)testSetEventValueNSNumber {
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name" value:@(100)];
-    XCTAssertEqualObjects(@(100.00), event.eventValue, @"Event value should be set from a valid numeric string.");
+    XCTAssertTrue(event.isValid);
 
     // Max value
     NSNumber *maxValue = @(INT32_MAX);
     event = [UACustomEvent eventWithName:@"event name" value:maxValue];
-    XCTAssertEqualObjects(maxValue, event.eventValue, @"Event value should be set from a valid numeric string.");
+    XCTAssertTrue(event.isValid);
 
     // Above Max
     NSDecimalNumber *aboveMax = [NSDecimalNumber decimalNumberWithDecimal:[maxValue decimalValue]];
     aboveMax = [aboveMax decimalNumberByAdding:[NSDecimalNumber decimalNumberWithString:@"0.000001"]];
     event = [UACustomEvent eventWithName:@"event name" value:aboveMax];
-    XCTAssertNil(event.eventValue, @"Event values that are too large should be ignored.");
+    XCTAssertFalse(event.isValid);
 
     // Min value
     NSNumber *minValue = @(INT32_MIN);
     event = [UACustomEvent eventWithName:@"event name" value:minValue];
-    XCTAssertEqualObjects(minValue, event.eventValue, @"Event value should be set from a valid numeric string.");
+    XCTAssertTrue(event.isValid);
 
     // Below min
     NSDecimalNumber *belowMin = [NSDecimalNumber decimalNumberWithDecimal:[minValue decimalValue]];
     belowMin = [belowMin decimalNumberBySubtracting:[NSDecimalNumber decimalNumberWithString:@"0.000001"]];
     event = [UACustomEvent eventWithName:@"event name" value:belowMin];
-    XCTAssertNil(event.eventValue, @"Event values that are too small should be ignored.");
+    XCTAssertFalse(event.isValid);
 
     // 0
     event = [UACustomEvent eventWithName:@"event name" value:@(0)];
-    XCTAssertEqualObjects(@(0), event.eventValue, @"Event value should be set from a valid numeric string.");
+    XCTAssertTrue(event.isValid);
 
     // nil
     event = [UACustomEvent eventWithName:@"event name" value:nil];
-    XCTAssertNil(event.eventValue, @"Nil event values should be ignored.");
+    XCTAssertTrue(event.isValid);
 
     // NaN
     event = [UACustomEvent eventWithName:@"event name" value:[NSDecimalNumber notANumber]];
-    XCTAssertNil(event.eventValue, @"NSDecimalNumbers that are equal to notANumber should be ignored.");
+    XCTAssertFalse(event.isValid);
 }
 
 
@@ -261,18 +265,187 @@
     XCTAssertEqualObjects(@"directSendID", [event.data objectForKey:@"conversion_send_id"], @"Send ID should be set.");
 }
 
-/**
- * Test event is valid only when it has a set event name.
- */
-- (void)testIsValid {
-    UACustomEvent *event = [UACustomEvent eventWithName:@"event name" value:nil];
-    XCTAssertTrue([event isValid], @"Event has a valid event name");
 
-    event.eventName = @"";
-    XCTAssertFalse([event isValid], @"Event should be invalid when it does not have an event name");
+/**
+ * Test setting the string array properties leaves it untouched in the event's data.
+ */
+- (void)testSetStringArrayProperty {
+    NSArray *expectedValue = @[@"string", @"true", @"false", @"123"];
+
+    UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
+    [event setStringArrayProperty:expectedValue forKey:@"array"];
+
+    id eventValue = event.data[@"properties"][@"array"];
+    XCTAssertEqualObjects(expectedValue, eventValue);
+    XCTAssertTrue(event.isValid);
+}
+
+/**
+ * Test setting the string property stringifies it in the event's data.
+ */
+- (void)testSetStringProperty {
+    UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
+    [event setStringProperty:@"some string" forKey:@"string"];
+
+    id eventValue = event.data[@"properties"][@"string"];
+    XCTAssertEqualObjects(@"\"some string\"", eventValue);
+    XCTAssertTrue(event.isValid);
 }
 
 
+/**
+ * Test setting the string property stringifies it in the event's data.
+ */
+- (void)testSetBoolProperty {
+    UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
+    [event setBoolProperty:true forKey:@"true"];
+    [event setBoolProperty:false forKey:@"false"];
+    [event setBoolProperty:YES forKey:@"YES"];
+    [event setBoolProperty:NO forKey:@"NO"];
+
+    id eventValue = event.data[@"properties"][@"true"];
+    XCTAssertEqualObjects(@"true", eventValue);
+
+    eventValue = event.data[@"properties"][@"false"];
+    XCTAssertEqualObjects(@"false", eventValue);
+
+    eventValue = event.data[@"properties"][@"YES"];
+    XCTAssertEqualObjects(@"true", eventValue);
+
+    eventValue = event.data[@"properties"][@"NO"];
+    XCTAssertEqualObjects(@"false", eventValue);
+
+    XCTAssertTrue(event.isValid);
+}
+
+
+/**
+ * Test setting the number property stringifies it in the event's data.
+ */
+- (void)testSetNumberProperty {
+    UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
+    [event setNumberProperty:[NSNumber numberWithBool:YES] forKey:@"bool"];
+    [event setNumberProperty:[NSNumber numberWithChar:'c'] forKey:@"char"];
+    [event setNumberProperty:[NSNumber numberWithDouble:123.456789] forKey:@"double"];
+    [event setNumberProperty:[NSNumber numberWithFloat:123.4f] forKey:@"float"];
+    [event setNumberProperty:[NSNumber numberWithInt:123] forKey:@"int"];
+    [event setNumberProperty:[NSNumber numberWithInteger:1234] forKey:@"integer"];
+    [event setNumberProperty:[NSNumber numberWithLong:123l] forKey:@"long"];
+    [event setNumberProperty:[NSNumber numberWithLongLong:123l] forKey:@"long long"];
+    [event setNumberProperty:[NSNumber numberWithShort:1] forKey:@"short"];
+    [event setNumberProperty:[NSNumber numberWithUnsignedChar:'c'] forKey:@"unsigned char"];
+    [event setNumberProperty:[NSNumber numberWithUnsignedInt:123] forKey:@"unsigned int"];
+    [event setNumberProperty:[NSNumber numberWithUnsignedInteger:123] forKey:@"unsigned int"];
+    [event setNumberProperty:[NSNumber numberWithUnsignedLong:123l] forKey:@"unsigned long"];
+    [event setNumberProperty:[NSNumber numberWithUnsignedLongLong:123l] forKey:@"unsigned long long"];
+    [event setNumberProperty:[NSNumber numberWithUnsignedShort:1] forKey:@"unsigned short"];
+
+    // Number booleans are treated as booleans
+    id eventValue = event.data[@"properties"][@"bool"];
+    XCTAssertEqualObjects(@"true", eventValue);
+
+    eventValue = event.data[@"properties"][@"char"];
+    XCTAssertEqualObjects(@"99", eventValue);
+
+    eventValue = event.data[@"properties"][@"double"];
+    XCTAssertEqualObjects(@"123.456789", eventValue);
+
+    eventValue = event.data[@"properties"][@"float"];
+    XCTAssertEqualObjects(@"123.4", eventValue);
+
+    eventValue = event.data[@"properties"][@"int"];
+    XCTAssertEqualObjects(@"123", eventValue);
+
+    eventValue = event.data[@"properties"][@"integer"];
+    XCTAssertEqualObjects(@"1234", eventValue);
+
+    eventValue = event.data[@"properties"][@"long"];
+    XCTAssertEqualObjects(@"123", eventValue);
+
+    eventValue = event.data[@"properties"][@"long long"];
+    XCTAssertEqualObjects(@"123", eventValue);
+
+    eventValue = event.data[@"properties"][@"short"];
+    XCTAssertEqualObjects(@"1", eventValue);
+
+    eventValue = event.data[@"properties"][@"unsigned char"];
+    XCTAssertEqualObjects(@"99", eventValue);
+
+    eventValue = event.data[@"properties"][@"unsigned int"];
+    XCTAssertEqualObjects(@"123", eventValue);
+
+    eventValue = event.data[@"properties"][@"unsigned long"];
+    XCTAssertEqualObjects(@"123", eventValue);
+
+    eventValue = event.data[@"properties"][@"unsigned long long"];
+    XCTAssertEqualObjects(@"123", eventValue);
+
+    eventValue = event.data[@"properties"][@"unsigned short"];
+    XCTAssertEqualObjects(@"1", eventValue);
+
+    XCTAssertTrue(event.isValid);
+}
+
+/**
+ * Test max number of properties is 20.
+ */
+- (void)testMaxProperites {
+    UACustomEvent *event = [UACustomEvent eventWithName:@"name"];
+
+    for (int i = 0; i < 20; i++) {
+        [event setStringProperty:@"value" forKey:[@(i) description]];
+    }
+    XCTAssertTrue(event.isValid);
+
+    // Add another
+    [event setStringProperty:@"value" forKey:@"21"];
+
+    // Should be invalid
+    XCTAssertFalse(event.isValid);
+}
+
+/**
+ * Test max length of string arrays is 20.
+ */
+- (void)testMaxStringArrayProperties {
+    UACustomEvent *event = [UACustomEvent eventWithName:@"name"];
+
+    NSMutableArray *array = [NSMutableArray array];
+    for (int i = 0; i < 20; i++) {
+        [array addObject:@"value"];
+    }
+    [event setStringArrayProperty:array forKey:@"array"];
+    XCTAssertTrue(event.isValid);
+
+    // Add another
+    [array addObject:@"value"];
+    [event setStringArrayProperty:array forKey:@"array"];
+
+    // Should be invalid
+    XCTAssertFalse(event.isValid);
+}
+
+/**
+ * Test max length of a string property in a string array
+ */
+- (void)testStringArrayPropertiesMaxStringLength {
+    UACustomEvent *event = [UACustomEvent eventWithName:@"name"];
+
+    NSMutableArray *array = [NSMutableArray array];
+
+    // Add a array with a string at max characters
+    [array addObject:[@"" stringByPaddingToLength:255 withString:@"MAX_LENGTH" startingAtIndex:0]];
+    [event setStringArrayProperty:array forKey:@"at_max"];
+
+    XCTAssertTrue(event.isValid);
+
+    // Add another above max characters
+    [array addObject:[@"" stringByPaddingToLength:256 withString:@"MAX_LENGTH" startingAtIndex:0]];
+    [event setStringArrayProperty:array forKey:@"above_max"];
+
+    // Should be invalid
+    XCTAssertFalse(event.isValid);
+}
 
 @end
 

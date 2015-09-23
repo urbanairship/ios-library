@@ -23,24 +23,33 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEvent.h"
+#import <XCTest/XCTest.h>
+#import "UAAssociateIdentifiersEvent+Internal.h"
 
-@class UAInAppMessage;
-
-NS_ASSUME_NONNULL_BEGIN
-
-/**
- * In-app message display event.
- */
-@interface UAInAppDisplayEvent : UAEvent
-
-/**
- * Factory method to create a UAInAppDisplayEvent event.
- * @param message The in-app message.
- * @return A in-app display event.
- */
-+ (instancetype)eventWithMessage:(UAInAppMessage *)message;
+@interface UAAssociateIdentifiersEventTest : XCTestCase
 
 @end
 
-NS_ASSUME_NONNULL_END
+@implementation UAAssociateIdentifiersEventTest
+
+/**
+ * Test the event's type.
+ */
+- (void)testType {
+    XCTAssertEqualObjects(@"associate_identifiers", [[UAAssociateIdentifiersEvent alloc] init].eventType);
+}
+
+/**
+ * Test the event's data
+ */
+- (void)testData {
+    UAAssociatedIdentifiers *identifiers = [UAAssociatedIdentifiers identifiers];
+    identifiers.vendorID = @"vendor ID";
+    identifiers.advertisingID = @"ad ID";
+
+    UAAssociateIdentifiersEvent *event = [UAAssociateIdentifiersEvent eventWithIDs:identifiers];
+
+    XCTAssertEqualObjects(identifiers.allIDs, event.data);
+}
+
+@end

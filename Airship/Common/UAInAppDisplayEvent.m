@@ -52,10 +52,6 @@
     return @"in_app_display";
 }
 
-- (NSUInteger)estimatedSize {
-    return kUAInAppDisplayEventSize;
-}
-
 - (BOOL)isValid {
     return self.data[@"id"] != nil;
 }

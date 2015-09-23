@@ -24,23 +24,14 @@
  */
 
 #import "UAEvent.h"
+#import "UAAssociatedIdentifiers.h"
 
-@class UAInAppMessage;
-
-NS_ASSUME_NONNULL_BEGIN
-
-/**
- * In-app message display event.
- */
-@interface UAInAppDisplayEvent : UAEvent
+@interface UAAssociateIdentifiersEvent : UAEvent
 
 /**
- * Factory method to create a UAInAppDisplayEvent event.
- * @param message The in-app message.
- * @return A in-app display event.
+ * Factory method to create a UAAssociateIdentifiersEvent.
+ * @return A UAAssociatedIdentifiersEvent instance.
  */
-+ (instancetype)eventWithMessage:(UAInAppMessage *)message;
++ (instancetype)eventWithIDs:(UAAssociatedIdentifiers *)identifiers;
 
 @end
-
-NS_ASSUME_NONNULL_END

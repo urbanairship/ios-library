@@ -23,24 +23,24 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEvent.h"
+#import <XCTest/XCTest.h>
+#import "UAAssociatedIdentifiers.h"
 
-@class UAInAppMessage;
-
-NS_ASSUME_NONNULL_BEGIN
-
-/**
- * In-app message display event.
- */
-@interface UAInAppDisplayEvent : UAEvent
-
-/**
- * Factory method to create a UAInAppDisplayEvent event.
- * @param message The in-app message.
- * @return A in-app display event.
- */
-+ (instancetype)eventWithMessage:(UAInAppMessage *)message;
-
+@interface UAAssociatedIdentifiersTest : XCTestCase
 @end
 
-NS_ASSUME_NONNULL_END
+@implementation UAAssociatedIdentifiersTest
+
+/**
+ * Test identifier ID mapping
+ */
+- (void)testIDs {
+    UAAssociatedIdentifiers *identifiers = [UAAssociatedIdentifiers identifiersWithDictionary:@{@"custom key": @"custom value"}];
+    identifiers.vendorID = @"vendor ID";
+    identifiers.advertisingID = @"advertising ID";
+    [identifiers setIdentifier:@"another custom value" forKey:@"another custom key"];
+
+    XCTAssertEqualObjects(@"vendor ID", identifiers.allIDs[@"com.urbanairship.vendor"]);
+}
+
+@end

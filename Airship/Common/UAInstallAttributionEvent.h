@@ -25,21 +25,26 @@
 
 #import "UAEvent.h"
 
-@class UAInAppMessage;
-
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * In-app message display event.
+ * Event to track install attributions.
  */
-@interface UAInAppDisplayEvent : UAEvent
+@interface UAInstallAttributionEvent : UAEvent
 
 /**
- * Factory method to create a UAInAppDisplayEvent event.
- * @param message The in-app message.
- * @return A in-app display event.
+ * Factory method to create a UAInstallAttributionEvent.
+ * @return UAInstallAttributionEvent instance.
  */
-+ (instancetype)eventWithMessage:(UAInAppMessage *)message;
++ (instancetype)event;
+
+/**
+ * Factory method to create a UAInstallAttributionEvent.
+ * @param appPurchaseDate The app purchase date.
+ * @param iAdImpressionDate The iAD impression date.
+ * @return UAInstallAttributionEvent instance.
+ */
++ (instancetype)eventWithAppPurchaseDate:(NSDate *)appPurchaseDate iAdImpressionDate:(NSDate *)iAdImpressionDate;
 
 @end
 

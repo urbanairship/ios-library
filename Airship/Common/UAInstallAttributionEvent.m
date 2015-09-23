@@ -23,24 +23,31 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEvent.h"
+#import "UAInstallAttributionEvent.h"
+#import "UAEvent+Internal.h"
 
-@class UAInAppMessage;
+@implementation UAInstallAttributionEvent
 
-NS_ASSUME_NONNULL_BEGIN
++ (instancetype)event {
+    return [[self alloc] init];
+}
 
-/**
- * In-app message display event.
- */
-@interface UAInAppDisplayEvent : UAEvent
++ (instancetype)eventWithAppPurchaseDate:(NSDate *)appPurchaseDate
+                       iAdImpressionDate:(NSDate *)iAdImpressionDate {
+    UAInstallAttributionEvent *event = [[self alloc] init];
 
-/**
- * Factory method to create a UAInAppDisplayEvent event.
- * @param message The in-app message.
- * @return A in-app display event.
- */
-+ (instancetype)eventWithMessage:(UAInAppMessage *)message;
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+    data[@"app_store_purchase_date"] = [NSString stringWithFormat:@"%f", [appPurchaseDate timeIntervalSince1970]];
+    data[@"app_store_ad_impression_date"] = [NSString stringWithFormat:@"%f", [iAdImpressionDate timeIntervalSince1970]];
+
+    // Set an immutable copy of the data
+    event.data = [data copy];
+
+    return event;
+}
+
+- (NSString *)eventType {
+    return @"install_attribution";
+}
 
 @end
-
-NS_ASSUME_NONNULL_END
