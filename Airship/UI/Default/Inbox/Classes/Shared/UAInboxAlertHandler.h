@@ -24,6 +24,9 @@
  */
 
 #import <UIKit/UIKit.h>
+#import "UACommon.h"
+
+UA_SUPPRESS_UI_DEPRECATION_WARNINGS
 
 typedef void (^UAInboxAlertHandlerViewBlock)(void);
 

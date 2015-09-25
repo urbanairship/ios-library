@@ -29,8 +29,12 @@
 #import "AirshipLib.h"
 #endif
 
+#import "UACommon.h"
+
 #import "PushNotificationDelegate.h"
 #import "UAInboxLocalization.h"
+
+UA_SUPPRESS_UI_DEPRECATION_WARNINGS
 
 @implementation PushNotificationDelegate
 

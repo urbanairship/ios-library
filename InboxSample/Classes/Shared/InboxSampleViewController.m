@@ -38,6 +38,8 @@
 #import "InboxSamplePopoverUserInterface.h"
 #import "InboxSampleNavigationUserInterface.h"
 
+UA_SUPPRESS_UI_DEPRECATION_WARNINGS
+
 typedef NS_ENUM(NSInteger, InboxStyle) {
     InboxStyleModal,
     InboxStyleNavigation

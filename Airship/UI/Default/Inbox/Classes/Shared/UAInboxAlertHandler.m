@@ -28,6 +28,8 @@
 #import "UAInboxAlertHandler.h"
 #import "UAInboxLocalization.h"
 
+UA_SUPPRESS_UI_DEPRECATION_WARNINGS
+
 @interface UAInboxAlertHandler()
 @property(nonatomic, copy) UAInboxAlertHandlerViewBlock viewBlock;
 @end
