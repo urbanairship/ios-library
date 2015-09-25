@@ -279,8 +279,8 @@
     return topController;
 }
 
-+ (CGRect )orientationDependentScreenBounds {
-    CGRect screenBounds = [UIScreen mainScreen].bounds;
++ (CGRect )orientationDependentWindowBounds {
+    CGRect windowBounds = [self mainWindow].bounds;
 
     float deviceVersion = [[UIDevice currentDevice].systemVersion floatValue];
 
@@ -288,11 +288,11 @@
         UIInterfaceOrientation interfaceOrientation = [UIApplication sharedApplication].statusBarOrientation;
 
         if (UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
-            screenBounds.size = CGSizeMake(CGRectGetHeight(screenBounds), CGRectGetWidth(screenBounds));
+            windowBounds.size = CGSizeMake(CGRectGetHeight(windowBounds), CGRectGetWidth(windowBounds));
         }
     }
 
-    return screenBounds;
+    return windowBounds;
 }
 
 @end

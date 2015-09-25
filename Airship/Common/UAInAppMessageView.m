@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAInAppMessageView.h"
+#import "UAInAppMessageView+Internal.h"
 
 // shadow offset on the y axis of 1 point
 #define kUAInAppMessageViewShadowOffsetY 1
@@ -119,7 +119,10 @@
 
         [self buildLayoutWithPosition:position numberOfButtons:numberOfButtons];
 
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarFrameDidChange:) name:UIApplicationDidChangeStatusBarFrameNotification object:nil];
+        // If the message is at the top, listen for changes to the status bar frame
+        if (position == UAInAppMessagePositionTop) {
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarFrameDidChange:) name:UIApplicationDidChangeStatusBarFrameNotification object:nil];
+        }
     }
 
     return self;
@@ -308,6 +311,14 @@
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+
+    if (self.onLayoutSubviews) {
+        self.onLayoutSubviews();
+    }
 }
 
 @end
