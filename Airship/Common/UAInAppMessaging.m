@@ -67,6 +67,8 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         self.defaultPrimaryColor = kUAInAppMessageDefaultPrimaryColor;
         self.defaultSecondaryColor = kUAInAppMessageDefaultSecondaryColor;
 
+        self.displayASAP = NO;
+
         self.dataStore = dataStore;
         self.analytics = analytics;
 

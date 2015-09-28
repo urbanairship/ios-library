@@ -59,8 +59,13 @@
         case UASituationBackgroundPush:
         case UASituationForegroundPush:
             // If the in-app message was received in the foreground or background
-            // store it to be displayed for later
+            // store it as pending
             [self savePendingMessageWithArguments:arguments];
+
+            // If auto display and displayASAP are enabled, display it now
+            if ([UAirship inAppMessaging].isAutoDisplayEnabled && [UAirship inAppMessaging].displayASAP) {
+                [[UAirship inAppMessaging] displayPendingMessage];
+            }
             break;
         case UASituationLaunchedFromPush:
         case UASituationBackgroundInteractiveButton:
