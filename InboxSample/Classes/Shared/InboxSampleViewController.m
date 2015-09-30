@@ -29,6 +29,8 @@
 #import "AirshipLib.h"
 #endif
 
+#import "UACommon.h"
+
 #import "InboxSampleViewController.h"
 #import "InboxSampleAppDelegate.h"
 #import "UAInboxMessageListController.h"

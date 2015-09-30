@@ -23,8 +23,9 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "InboxSamplePopoverUserInterface.h"
 #import "UACommon.h"
+
+#import "InboxSamplePopoverUserInterface.h"
 
 UA_SUPPRESS_UI_DEPRECATION_WARNINGS
 
