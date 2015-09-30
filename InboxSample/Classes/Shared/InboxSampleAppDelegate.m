@@ -35,8 +35,11 @@
 #import "InboxSampleViewController.h"
 #import "InboxDelegate.h"
 #import "PushNotificationDelegate.h"
+#import "UACommon.h"
 
 #define kSimulatorWarningDisabledKey @"ua-simulator-warning-disabled"
+
+UA_SUPPRESS_UI_DEPRECATION_WARNINGS
 
 @interface InboxSampleAppDelegate()
 @property (nonatomic, strong) InboxDelegate *inboxDelegate;

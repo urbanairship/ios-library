@@ -23,7 +23,11 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "UACommon.h"
+
 #import "InboxSamplePopoverUserInterface.h"
+
+UA_SUPPRESS_UI_DEPRECATION_WARNINGS
 
 @interface InboxSamplePopoverUserInterface ()
 @property(nonatomic, strong) UINavigationController *navigationController;

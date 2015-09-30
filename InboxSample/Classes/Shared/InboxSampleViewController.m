@@ -29,6 +29,8 @@
 #import "AirshipLib.h"
 #endif
 
+#import "UACommon.h"
+
 #import "InboxSampleViewController.h"
 #import "InboxSampleAppDelegate.h"
 #import "UAInboxMessageListController.h"
@@ -37,6 +39,8 @@
 #import "InboxSampleModalUserInterface.h"
 #import "InboxSamplePopoverUserInterface.h"
 #import "InboxSampleNavigationUserInterface.h"
+
+UA_SUPPRESS_UI_DEPRECATION_WARNINGS
 
 typedef NS_ENUM(NSInteger, InboxStyle) {
     InboxStyleModal,
