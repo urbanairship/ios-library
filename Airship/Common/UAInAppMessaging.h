@@ -120,7 +120,7 @@ NS_ASSUME_NONNULL_BEGIN
  * the foreground it will be automatically displayed as soon as it has been received. Otherwise 
  * the message will be stored as pending. Defaults to `NO`.
  */
-@property(nonatomic, assign) BOOL displayASAP;
+@property(nonatomic, assign, getter=isDisplayASAPEnabled) BOOL displayASAPEnabled;
 
 /**
  * An optional delegate to receive in-app messaging related callbacks.

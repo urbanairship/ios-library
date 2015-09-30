@@ -63,6 +63,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic, readonly) UAInAppMessage *message;
 
+/**
+ * Whether the associated in-app message is currently showing
+ */
+@property (nonatomic, readonly) BOOL isShowing;
+
+
 @end
 
 NS_ASSUME_NONNULL_END
