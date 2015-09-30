@@ -114,24 +114,19 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 - (void)scheduleAutoDisplayTimer:(BOOL)displayForcefully {
     [self invalidateAutoDisplayTimer];
 
-    SEL selector;
-    if (displayForcefully) {
-        selector = @selector(displayPendingMessage);
-    } else {
-        selector = @selector(displayPendingMessageUnforcefully);
-    }
-
     self.autoDisplayTimer = [NSTimer timerWithTimeInterval:self.displayDelay
                                                     target:self
-                                                  selector:selector
-                                                  userInfo:nil
+                                                  selector:@selector(autoDisplayTimerFired:)
+                                                  userInfo:@(displayForcefully)
                                                    repeats:NO];
 
     [[NSRunLoop currentRunLoop] addTimer:self.autoDisplayTimer forMode:NSDefaultRunLoopMode];
 }
 
-- (void)displayPendingMessageUnforcefully {
-    [self displayPendingMessage:NO];
+- (void)autoDisplayTimerFired:(NSTimer *)timer {
+    NSNumber *userInfo = timer.userInfo;
+    BOOL forcefully = userInfo.boolValue;
+    [self displayPendingMessage:forcefully];
 }
 
 // UIKeyboardDidShowNotification event callback
@@ -272,10 +267,8 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
                                                           self.messageController = nil;
                                                       }
                                                       // If necessary, schedule automatic display of the next pending message
-                                                      if (self.pendingMessage) {
-                                                          if (self.isAutoDisplayEnabled && self.isDisplayASAPEnabled) {
-                                                              [self scheduleAutoDisplayTimer:NO];
-                                                          }
+                                                      if (self.pendingMessage && self.autoDisplayEnabled && self.isDisplayASAPEnabled) {
+                                                          [self scheduleAutoDisplayTimer:NO];
                                                       }
                                                   }];
 
