@@ -208,6 +208,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, getter=isChannelCaptureEnabled) BOOL channelCaptureEnabled;
 
 /**
+ * Flag indicating whether delayed channel creation is enabled. If set to `YES` channel 
+ * creation will not occur until channel creation is manually enabled.
+ *
+ * Defaults to `NO`.
+ */
+@property (nonatomic, assign, getter=isChannelCreationDelayEnabled) BOOL channelCreationDelayEnabled;
+
+/**
  * Dictionary of custom config values.
  */
 @property (nonatomic, copy) NSDictionary *customConfig;

@@ -189,6 +189,7 @@
     XCTAssertEqual(config.developmentLogLevel, 1, @"Development log level was improperly loaded.");
     XCTAssertEqual(config.productionLogLevel, 5, @"Production log level was improperly loaded.");
     XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode was improperly loaded.");
+    XCTAssertTrue(config.channelCreationDelayEnabled, @"channelCreationDelayEnabled was improperly loaded.");
 
     //special case this one since we have to disable detectProvisioningMode
     config.detectProvisioningMode = NO;
@@ -211,6 +212,7 @@
     XCTAssertEqual(config.developmentLogLevel, 1, @"Development log level was improperly loaded.");
     XCTAssertEqual(config.productionLogLevel, 5, @"Production log level was improperly loaded.");
     XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode was improperly loaded.");
+    XCTAssertTrue(config.channelCreationDelayEnabled, @"channelCreationDelayEnabled was improperly loaded.");
 
     //special case this one since we have to disable detectProvisioningMode
     config.detectProvisioningMode = NO;

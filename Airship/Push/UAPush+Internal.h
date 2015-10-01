@@ -120,6 +120,14 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 @property (nonatomic, copy, nullable) NSString *deviceToken;
 
 /**
+ * Allows disabling channel registration before a channel is created.  Channel registration will resume
+ * when this flag is set to `YES`.
+ *
+ * Set this to `NO` to disable channel registration. Defaults to `YES`.
+ */
+@property (nonatomic, assign, getter=isChannelCreationEnabled) BOOL channelCreationEnabled;
+
+/**
  * Channel ID as a string.
  */
 @property (nonatomic, copy, nullable) NSString *channelID;

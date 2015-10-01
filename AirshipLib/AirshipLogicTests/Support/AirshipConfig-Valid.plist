@@ -23,5 +23,7 @@
 	</dict>
 	<key>inProduction</key>
 	<true/>
+	<key>channelCreationDelayEnabled</key>
+	<true/>
 </dict>
 </plist>

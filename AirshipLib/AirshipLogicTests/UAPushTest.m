@@ -1141,6 +1141,76 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     XCTAssertFalse(self.push.shouldUpdateAPNSRegistration, @"updateRegistration should handle APNS registration updates if shouldUpdateAPNSRegistration is YES.");
 }
 
+/**
+ * Tests update registration when channel creation flag is disabled.
+ */
+- (void)testChannelCreationFlagDisabled {
+
+    // Prevent beginRegistrationBackgroundTask early return
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    // Test when channel creation is disabled
+    self.push.channelCreationEnabled = NO;
+    [[self.mockedChannelRegistrar reject] registerWithChannelID:OCMOCK_ANY channelLocation:OCMOCK_ANY withPayload:OCMOCK_ANY forcefully:NO];
+
+    [self.push updateChannelRegistrationForcefully:NO];
+
+    [self.mockedChannelRegistrar verify];
+}
+
+/**
+ * Tests update registration when channel creation flag is enabled.
+ */
+- (void)testChannelCreationFlagEnabled {
+
+    // Prevent beginRegistrationBackgroundTask early return
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    // Test when channel creation is enabled
+    self.push.channelCreationEnabled = YES;
+    [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY channelLocation:OCMOCK_ANY withPayload:OCMOCK_ANY forcefully:NO];
+
+    [self.push updateChannelRegistrationForcefully:NO];
+
+    [self.mockedChannelRegistrar verify];
+}
+
+/**
+ * Tests enabling channel delay after channel ID has been registered.
+ */
+- (void)testEnableChannelDelayWithChannelID {
+
+    // Set channelCreationDelayEnabled to NO
+    UAConfig *config = [UAConfig defaultConfig];
+    config.channelCreationDelayEnabled = NO;
+
+    // Init push
+    self.push =  [UAPush pushWithConfig:config dataStore:self.dataStore];
+
+    // Ensure channel creation enabled is YES
+    XCTAssertTrue(self.push.channelCreationEnabled);
+
+    // Set channelCreationDelayEnabled to YES
+    config = [UAConfig defaultConfig];
+    config.channelCreationDelayEnabled = YES;
+
+    // Init push
+    self.push =  [UAPush pushWithConfig:config dataStore:self.dataStore];
+
+    // Ensure channel creation enabled is NO
+    XCTAssertFalse(self.push.channelCreationEnabled);
+
+    // Mock the datastore to populate a mock channel location and channel id in UAPush init
+    id mockDataStore = [OCMockObject niceMockForClass:[UAPreferenceDataStore class]];
+    [[[mockDataStore stub] andReturn:@"someChannelLocation"] stringForKey:UAPushChannelLocationKey];
+    [[[mockDataStore stub] andReturn:@"someChannelID"] stringForKey:UAPushChannelIDKey];
+
+    self.push =  [UAPush pushWithConfig:config dataStore:mockDataStore];
+
+    // Ensure channel creation enabled is YES
+    XCTAssertTrue(self.push.channelCreationEnabled);
+}
+
 - (void)testUpdateRegistrationForcefullyPushEnabled {
     self.push.userPushNotificationsEnabled = YES;
     self.push.deviceToken = validDeviceToken;

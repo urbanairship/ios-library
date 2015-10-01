@@ -116,6 +116,10 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
 
         self.tagGroupsAPIClient = [UATagGroupsAPIClient clientWithConfig:config];
 
+        // Check config to see if user wants to delay channel creation
+        // If channel ID is nil then channelCreationEnabled
+        self.channelCreationEnabled = self.channelID || !config.channelCreationDelayEnabled;
+
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(applicationDidBecomeActive)
                                                      name:UIApplicationDidBecomeActiveNotification
@@ -285,6 +289,13 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
 
 - (void)setPendingRemoveTags:(NSDictionary *)removeTagGroups {
     [self.dataStore setObject:removeTagGroups forKey:UAPushRemoveTagGroupsSettingsKey];
+}
+
+- (void)enableChannelCreation {
+    if (!self.channelCreationEnabled) {
+        self.channelCreationEnabled = YES;
+        [self updateRegistration];
+    }
 }
 
 - (BOOL)userPushNotificationsEnabled {
@@ -872,7 +883,7 @@ BOOL deferChannelCreationOnForeground = false;
         [self updateAPNSRegistration];
     } if (self.userPushNotificationsEnabled && !self.channelID) {
         UA_LDEBUG(@"Push is enabled but we have not yet tried to generate a channel ID. "
-                  "Urban Airship registration will automatically run when the device token is registered,"
+                  "Urban Airship registration will automatically run when the device token is registered, "
                   "the next time the app is backgrounded, or the next time the app is foregrounded.");
     } else {
         [self updateChannelRegistrationForcefully:NO];
@@ -881,8 +892,9 @@ BOOL deferChannelCreationOnForeground = false;
 
 - (void)updateChannelRegistrationForcefully:(BOOL)forcefully {
     // Only cancel in flight requests if the channel is already created
-    if (self.channelID) {
-        [self.channelRegistrar cancelAllRequests];
+    if (!self.channelCreationEnabled) {
+        UA_LDEBUG(@"Channel registration is currently disabled.");
+        return;
     }
 
     if (![self beginRegistrationBackgroundTask]) {
