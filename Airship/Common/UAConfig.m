@@ -56,6 +56,7 @@
         self.clearNamedUserOnAppRestore = NO;
         self.channelCaptureEnabled = YES;
         self.customConfig = @{};
+        self.channelCreationDelayEnabled = NO;
     }
 
     return self;
@@ -84,7 +85,8 @@
             "Whitelist: %@\n"
             "Clear named user on App Restore: %d\n"
             "Channel Capture Enabled: %d\n"
-            "Custom Config: %@\n",
+            "Custom Config: %@\n"
+            "Delay Channel Creation: %d\n",
             self.appKey,
             self.appSecret,
             self.inProduction,
@@ -107,7 +109,8 @@
             self.whitelist,
             self.clearNamedUserOnAppRestore,
             self.channelCaptureEnabled,
-            self.customConfig];
+            self.customConfig,
+            self.channelCreationDelayEnabled];
 }
 
 #pragma mark -

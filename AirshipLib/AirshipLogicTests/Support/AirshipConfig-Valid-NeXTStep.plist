@@ -8,4 +8,5 @@
 	developmentLogLevel = 1;
 	inProduction = YES;
 	"detectProvisioningMode" = YES;
+	"channelCreationDelayEnabled" = YES;
 }
