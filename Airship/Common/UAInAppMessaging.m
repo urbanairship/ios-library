@@ -67,6 +67,8 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         self.defaultPrimaryColor = kUAInAppMessageDefaultPrimaryColor;
         self.defaultSecondaryColor = kUAInAppMessageDefaultSecondaryColor;
 
+        self.displayASAPEnabled = NO;
+
         self.dataStore = dataStore;
         self.analytics = analytics;
 
@@ -109,16 +111,22 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     self.autoDisplayTimer = nil;
 }
 
-- (void)scheduleAutoDisplayTimer {
+- (void)scheduleAutoDisplayTimer:(BOOL)displayForcefully {
     [self invalidateAutoDisplayTimer];
 
     self.autoDisplayTimer = [NSTimer timerWithTimeInterval:self.displayDelay
                                                     target:self
-                                                  selector:@selector(displayPendingMessage)
-                                                  userInfo:nil
+                                                  selector:@selector(autoDisplayTimerFired:)
+                                                  userInfo:@(displayForcefully)
                                                    repeats:NO];
 
     [[NSRunLoop currentRunLoop] addTimer:self.autoDisplayTimer forMode:NSDefaultRunLoopMode];
+}
+
+- (void)autoDisplayTimerFired:(NSTimer *)timer {
+    NSNumber *userInfo = timer.userInfo;
+    BOOL forcefully = userInfo.boolValue;
+    [self displayPendingMessage:forcefully];
 }
 
 // UIKeyboardDidShowNotification event callback
@@ -134,7 +142,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 // UIApplicationDidBecomeActiveNotification event callback
 - (void)applicationDidBecomeActive {
     if (self.isAutoDisplayEnabled) {
-        [self scheduleAutoDisplayTimer];
+        [self scheduleAutoDisplayTimer:YES];
     }
 }
 
@@ -171,7 +179,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         [self.analytics addEvent:event];
     }
 
-    UA_LINFO(@"Storing in-app message to display on next foreground: %@.", message);
+    UA_LINFO(@"Storing pending in-app message: %@.", message);
     [self.dataStore setObject:message.payload forKey:kUAPendingInAppMessageDataStoreKey];
 
     // Call the delegate, if needed
@@ -179,6 +187,11 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     if ([strongDelegate respondsToSelector:@selector(pendingMessageAvailable:)]) {
         [strongDelegate pendingMessageAvailable:message];
     };
+
+    // If auto display and displayASAP are enabled, display the message as soon as possible
+    if (self.isAutoDisplayEnabled && self.isDisplayASAPEnabled) {
+        [self displayMessage:message forcefully:NO];
+    }
 }
 
 - (BOOL)isAutoDisplayEnabled {
@@ -199,11 +212,15 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     }
 }
 
-- (void)displayPendingMessage {
-    [self displayMessage:self.pendingMessage];
+- (void)displayPendingMessage:(BOOL)forcefully {
+    [self displayMessage:self.pendingMessage forcefully:forcefully];
 }
 
-- (void)displayMessage:(UAInAppMessage *)message {
+- (void)displayPendingMessage {
+    [self displayPendingMessage:YES];
+}
+
+- (void)displayMessage:(UAInAppMessage * __nonnull)message forcefully:(BOOL)forcefully {
     if (!message) {
         return;
     }
@@ -242,12 +259,16 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
     controller = [UAInAppMessageController controllerWithMessage:message
                                                         delegate:self.messageControllerDelegate
-                                                  dismissalBlock:^(UAInAppMessageController *dismissedController){
+                                                  dismissalBlock:^(UAInAppMessageController *dismissedController) {
                                                       // Delete the pending payload once it's dismissed
                                                       [self deletePendingMessage:message];
                                                       // Release the message controller if it hasn't been replaced
                                                       if ([self.messageController isEqual:dismissedController]) {
                                                           self.messageController = nil;
+                                                      }
+                                                      // If necessary, schedule automatic display of the next pending message
+                                                      if (self.pendingMessage && self.autoDisplayEnabled && self.isDisplayASAPEnabled) {
+                                                          [self scheduleAutoDisplayTimer:NO];
                                                       }
                                                   }];
 
@@ -257,30 +278,39 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         [strongDelegate messageWillBeDisplayed:message];
     };
 
-    // Dismiss any existing message and attempt to show the new one
-    [self.messageController dismiss];
-    UAInAppMessageController *strongController = controller;
-    self.messageController = strongController;;
-    BOOL displayed = [strongController show];
+    // There's not a message already showing, or if we're displaying forcefully
+    if (!self.messageController.isShowing || forcefully) {
 
-    // If the display was successful
-    if (displayed) {
-        // Send a display event if it's the first time we are displaying this IAM
-        NSString *lastDisplayedIAM = [self.dataStore valueForKey:UALastDisplayedInAppMessageID];
-        if (message.identifier && ![message.identifier isEqualToString:lastDisplayedIAM]) {
-            UAInAppDisplayEvent *event = [UAInAppDisplayEvent eventWithMessage:message];
-            [self.analytics addEvent:event];
+        // Dismiss any existing message and attempt to show the new one
+        [self.messageController dismiss];
 
-            // Set the ID as the last displayed so we dont send duplicate display events
-            [self.dataStore setValue:message.identifier forKey:UALastDisplayedInAppMessageID];
+        UAInAppMessageController *strongController = controller;
+        self.messageController = strongController;
+        BOOL displayed = [strongController show];
+
+        // If the display was successful
+        if (displayed) {
+            // Send a display event if it's the first time we are displaying this IAM
+            NSString *lastDisplayedIAM = [self.dataStore valueForKey:UALastDisplayedInAppMessageID];
+            if (message.identifier && ![message.identifier isEqualToString:lastDisplayedIAM]) {
+                UAInAppDisplayEvent *event = [UAInAppDisplayEvent eventWithMessage:message];
+                [self.analytics addEvent:event];
+
+                // Set the ID as the last displayed so we dont send duplicate display events
+                [self.dataStore setValue:message.identifier forKey:UALastDisplayedInAppMessageID];
+            }
+        } else {
+            UA_LDEBUG(@"Unable to display in-app message: %@", message);
+            if (!self.messageController) {
+                UA_LTRACE(@"In-app message controller is nil");
+            }
+            self.messageController = nil;
         }
-    } else {
-        UA_LDEBUG(@"Unable to display in-app message: %@", message);
-        if (!self.messageController) {
-            UA_LTRACE(@"In-app message controller is nil");
-        }
-        self.messageController = nil;
     }
+}
+
+- (void)displayMessage:(UAInAppMessage *)message {
+    [self displayMessage:message forcefully:YES];
 }
 
 - (void)dealloc {

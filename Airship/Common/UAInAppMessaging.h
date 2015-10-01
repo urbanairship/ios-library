@@ -115,6 +115,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, assign) NSTimeInterval displayDelay;
 
 /**
+ * Whether to display an incoming message as soon as possible, as opposed to on app foreground
+ * transitions. If set to `YES`, and if automatic display is enabled, when a message arrives in 
+ * the foreground it will be automatically displayed as soon as it has been received. Otherwise 
+ * the message will be stored as pending. Defaults to `NO`.
+ */
+@property(nonatomic, assign, getter=isDisplayASAPEnabled) BOOL displayASAPEnabled;
+
+/**
  * An optional delegate to receive in-app messaging related callbacks.
  */
 @property(nonatomic, weak, nullable) id<UAInAppMessagingDelegate> messagingDelegate;

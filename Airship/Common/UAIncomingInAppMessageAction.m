@@ -59,7 +59,7 @@
         case UASituationBackgroundPush:
         case UASituationForegroundPush:
             // If the in-app message was received in the foreground or background
-            // store it to be displayed for later
+            // store it as pending
             [self savePendingMessageWithArguments:arguments];
             break;
         case UASituationLaunchedFromPush:

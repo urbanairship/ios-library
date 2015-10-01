@@ -212,6 +212,10 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+- (BOOL)isShowing {
+    return self.isShown && !self.isDismissed;
+}
+
 - (BOOL)show {
 
     if (self.isShown) {
