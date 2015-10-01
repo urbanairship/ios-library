@@ -22,12 +22,15 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#import "UACommon.h"
 
 #import "UAInboxMessageViewController.h"
 #import "UAInboxLocalization.h"
 
 #define kMessageUp 0
 #define kMessageDown 1
+
+UA_SUPPRESS_UI_DEPRECATION_WARNINGS
 
 @interface UAInboxMessageViewController ()
 
