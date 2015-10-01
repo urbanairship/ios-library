@@ -33,7 +33,12 @@ typedef void (^UAInboxAlertHandlerViewBlock)(void);
 
 @interface UAInboxAlertHandler : NSObject <UIAlertViewDelegate>
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 @property(nonatomic, strong) UIAlertView *notificationAlert;
+
+#pragma clang diagnostic pop
 
 - (void)showNewMessageAlert:(NSString *)message withViewBlock:(UAInboxAlertHandlerViewBlock)viewBlock;
 
