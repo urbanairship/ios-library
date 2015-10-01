@@ -46,13 +46,18 @@
     self.arguments = [[UAActionArguments alloc] init];
 
     self.action = [[UAWalletAction alloc] init];
+
 }
 
 /**
  * Test accepts valid string arguments.
  */
 - (void)testAcceptsArguments {
-    self.arguments.value = @"a valid string url";
+    // Mock the PKPassLibrary availability
+    id mockPassLibrary = [OCMockObject niceMockForClass:[PKPassLibrary class]];
+    [[[mockPassLibrary stub] andReturnValue:OCMOCK_VALUE(YES)] isPassLibraryAvailable];
+
+    self.arguments.value = @"a valid string";
 
     UASituation validSituations[6] = {
         UASituationForegroundPush,
@@ -67,6 +72,7 @@
         self.arguments.situation = validSituations[i];
         XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accept valid string URLs");
     }
+
 }
 
 /**
