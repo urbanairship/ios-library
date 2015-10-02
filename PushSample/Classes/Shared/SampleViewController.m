@@ -58,10 +58,6 @@
     return vc;
 }
 
-- (IBAction)enableChannelCreation:(id)sender {
-    [[UAirship shared].push ]
-}
-
 - (IBAction)buttonPressed:(id)sender {
     UIViewController *root;
     if (sender == self.settingsButton) {

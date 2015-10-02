@@ -3,6 +3,15 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+6.3.0 - October 1, 2015
+=======================
+- Added support for custom defined properties in custom events.
+- Added support for setting associated device identifiers for analytics.
+- Added install attribution event to track install attributions.
+- In-app messaging now has a display ASAP mode, which will display incoming
+  messages as soon as possible when they arrive in the foreground.
+- Fixed displaying in-app messages and landing pages in split view multitasking.
+
 6.2.2 - September 17, 2015
 ==========================
 - Disabled modules in the static library to resolve Xcode 7 module cache warnings.
