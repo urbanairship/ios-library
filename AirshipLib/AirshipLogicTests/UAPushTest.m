@@ -624,6 +624,29 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
 }
 
+/**
+ * Test enabling or disabling pushTokenRegistrationEnabled saves its settings
+ * to NSUserDefaults and triggers a channel registration update.
+ */
+- (void)testPushTokenRegistrationEnabled {
+    self.push.pushTokenRegistrationEnabled = NO;
+
+    // Add a device token so we get a device api callback
+    [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:OCMOCK_ANY
+                                                     forcefully:NO];
+
+    self.push.pushTokenRegistrationEnabled = YES;
+
+    XCTAssertTrue([self.dataStore boolForKey:UAPushTokenRegistrationEnabledKey],
+                  @"pushTokenRegistrationEnabled should be stored in standardUserDefaults");
+
+    self.push.pushTokenRegistrationEnabled = NO;
+    XCTAssertFalse([self.dataStore boolForKey:UAPushTokenRegistrationEnabledKey],
+                   @"pushTokenRegistrationEnabled should be stored in standardUserDefaults");
+}
+
 - (void)testSetQuietTime {
     [self.push setQuietTimeStartHour:12 startMinute:30 endHour:14 endMinute:58];
 
@@ -1286,10 +1309,14 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     XCTAssertNoThrow([self.mockedApplication verify], @"A background task should not be requested if one already exists");
 }
 
+/**
+ * Test registration payload when pushTokenRegistrationEnabled is YES include device token
+ */
 - (void)testRegistrationPayload {
     [UIUserNotificationSettings hideClass];
 
     // Set up UAPush to give a full, opted in payload
+    self.push.pushTokenRegistrationEnabled = YES;
     self.push.deviceToken = validDeviceToken;
     self.push.alias = @"ALIAS";
     self.push.channelTagRegistrationEnabled = YES;
@@ -1333,14 +1360,53 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 }
 
 /**
+ * Test registration payload when pushTokenRegistrationEnabled is NO does not include device token
+ */
+- (void)testRegistrationPayloadPushTokenRegistrationEnabledNo {
+    [UIUserNotificationSettings hideClass];
+
+    // Set up UAPush to give a full, opted in payload
+    self.push.pushTokenRegistrationEnabled = NO;
+    self.push.deviceToken = validDeviceToken;
+    self.push.alias = @"ALIAS";
+    self.push.channelTagRegistrationEnabled = YES;
+    self.push.tags = @[@"tag-one"];
+    self.push.autobadgeEnabled = NO;
+    self.push.quietTimeEnabled = YES;
+    self.push.timeZone = [NSTimeZone timeZoneWithName:@"Pacific/Auckland"];
+    [self.push setQuietTimeStartHour:12 startMinute:0 endHour:12 endMinute:0];
+
+    // Opt in requirements
+    self.push.userPushNotificationsEnabled = YES;
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIRemoteNotificationTypeAlert)] enabledRemoteNotificationTypes];
+
+    BOOL (^checkPayloadBlock)(id obj) = ^BOOL(id obj) {
+        UAChannelRegistrationPayload *payload = (UAChannelRegistrationPayload *)obj;
+        return payload.pushAddress == nil;
+    };
+
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+    [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
+                                                     forcefully:YES];
+
+    [self.push updateChannelRegistrationForcefully:YES];
+
+    XCTAssertNoThrow([self.mockedChannelRegistrar verify],
+                     @"payload is not being created with expected values");
+}
+
+/**
  * Test when backgroundPushNotificationsAllowed is YES when running >= iOS8,
  * device token is available, remote-notification background mode is enabled,
- * backgroundRefreshStatus is allowed, and backgroundPushNotificationsEnabled is
- * enabled.
+ * backgroundRefreshStatus is allowed, backgroundPushNotificationsEnabled is
+ * enabled and pushTokenRegistrationEnabled is YES.
  */
 - (void)testBackgroundPushNotificationsAllowedIOS8 {
     self.push.deviceToken = validDeviceToken;
     self.push.backgroundPushNotificationsEnabled = YES;
+    self.push.pushTokenRegistrationEnabled = YES;
     [[[self.mockedAirship stub] andReturnValue:OCMOCK_VALUE(YES)] remoteNotificationBackgroundModeEnabled];
     [[[self.mockedApplication stub] andReturnValue:@(UIBackgroundRefreshStatusAvailable)] backgroundRefreshStatus];
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(YES)] isRegisteredForRemoteNotifications];
@@ -1352,12 +1418,13 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 /**
  * Test when backgroundPushNotificationsAllowed is YES when running on < iOS8,
  * device token is available, remote-notification background mode is enabled,
- * backgroundRefreshStatus is allowed, and backgroundPushNotificationsEnabled is
- * enabled.
+ * backgroundRefreshStatus is allowed, backgroundPushNotificationsEnabled is
+ * enabled and pushTokenRegistrationEnabled is YES.
  */
 - (void)testBackgroundPushNotificationsAllowed {
     [UIUserNotificationSettings hideClass];
     self.push.userPushNotificationsEnabled = YES;
+    self.push.pushTokenRegistrationEnabled = YES;
     self.push.deviceToken = validDeviceToken;
     self.push.backgroundPushNotificationsEnabled = YES;
     [[[self.mockedAirship stub] andReturnValue:OCMOCK_VALUE(YES)] remoteNotificationBackgroundModeEnabled];
@@ -1447,6 +1514,22 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 }
 
 /**
+ * Test when backgroundPushNotificationsAllowed is NO when
+ * pushTokenRegistrationEnabled is NO.
+ */
+- (void)testBackgroundPushNotificationsPushTokenRegistrationEnabledNo {
+    self.push.deviceToken = validDeviceToken;
+    self.push.backgroundPushNotificationsEnabled = YES;
+    self.push.pushTokenRegistrationEnabled = NO;
+    [[[self.mockedAirship stub] andReturnValue:OCMOCK_VALUE(YES)] remoteNotificationBackgroundModeEnabled];
+    [[[self.mockedApplication stub] andReturnValue:@(UIBackgroundRefreshStatusAvailable)] backgroundRefreshStatus];
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(YES)] isRegisteredForRemoteNotifications];
+
+    XCTAssertFalse(self.push.backgroundPushNotificationsAllowed,
+                   @"BackgroundPushNotificationsAllowed should be NO");
+}
+
+/**
  * Test that backgroundPushNotificationsAllowed is NO when running on < iOS8. Background
  * push requires push to be opted in.
  */
@@ -1470,6 +1553,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [UIUserNotificationSettings hideClass];
 
     self.push.userPushNotificationsEnabled = YES;
+    self.push.pushTokenRegistrationEnabled = YES;
     self.push.deviceToken = validDeviceToken;
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIRemoteNotificationTypeAlert)] enabledRemoteNotificationTypes];
 
@@ -1478,10 +1562,26 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 }
 
 /**
+ * Test that UserPushNotificationallowed is NO on < iOS8 when pushTokenRegistrationEnabled is NO
+ */
+-(void)testUserPushNotificationsAllowedNo {
+    [UIUserNotificationSettings hideClass];
+
+    self.push.userPushNotificationsEnabled = YES;
+    self.push.pushTokenRegistrationEnabled = NO;
+    self.push.deviceToken = validDeviceToken;
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIRemoteNotificationTypeAlert)] enabledRemoteNotificationTypes];
+
+    XCTAssertFalse(self.push.userPushNotificationsAllowed,
+                  @"UserPushNotificationsAllowed should be NO");
+}
+
+/**
  * Test that UserPushNotificationallowed is YES on iOS 8
  */
 -(void)testUserPushNotificationsAllowedIOS8 {
     self.push.userPushNotificationsEnabled = YES;
+    self.push.pushTokenRegistrationEnabled = YES;
     self.push.deviceToken = validDeviceToken;
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(YES)] isRegisteredForRemoteNotifications];
 
@@ -1492,6 +1592,25 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                   @"UserPushNotificationsAllowed should be YES");
 }
 
+/**
+ * Test that UserPushNotificationallowed is NO on iOS 8 when pushTokenRegistrationEnabled is NO
+ */
+-(void)testUserPushNotificationsAllowedIOS8No {
+    self.push.userPushNotificationsEnabled = YES;
+    self.push.pushTokenRegistrationEnabled = NO;
+    self.push.deviceToken = validDeviceToken;
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(YES)] isRegisteredForRemoteNotifications];
+
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeBadge categories:nil];
+    [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
+
+    XCTAssertFalse(self.push.userPushNotificationsAllowed,
+                  @"UserPushNotificationsAllowed should be NO");
+}
+
+/**
+ * Test that UserPushNotificationallowed is NO on iOS 8
+ */
 - (void)testRegistrationPayloadNoDeviceToken {
     // Set up UAPush to give minimum payload
     self.push.deviceToken = nil;
@@ -2972,23 +3091,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [self.push updateRegistration];
 
     XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Should call updateChannelTags request.");
-}
-
-/**
- * Test that UIUserNotificationActionResponseTypedTextKey maps to the string
- * we expect it to. This must be run in the Xcode 7 beta in order to
- * achieve a meaningful result.
- *
- * TODO: remove once building with Xcode 7.
- */
-- (void)testUIUserNotificationActionResponseTypedTextKey {
-    NSString *key;
-#if __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
-    key = @"UIUserNotificationActionResponseTypedTextKey";
-#else
-    key = UIUserNotificationActionResponseTypedTextKey;
-#endif
-    XCTAssertEqualObjects(key, @"UIUserNotificationActionResponseTypedTextKey");
 }
 
 @end

@@ -49,6 +49,7 @@
 
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
+NSString *const UAPushTokenRegistrationEnabledKey = @"UAPushTokenRegistrationEnabled";
 
 NSString *const UAPushAliasSettingsKey = @"UAPushAlias";
 NSString *const UAPushTagsSettingsKey = @"UAPushTags";
@@ -100,6 +101,7 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
         self.channelTagRegistrationEnabled = YES;
         self.requireAuthorizationForDefaultCategories = YES;
         self.backgroundPushNotificationsEnabledByDefault = YES;
+        self.pushTokenRegistrationEnabled = YES;
 
         // Require use of the settings app to change push settings
         // but allow the app to unregister to keep things in sync
@@ -335,6 +337,19 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
 - (void)setBackgroundPushNotificationsEnabled:(BOOL)enabled {
     BOOL previousValue = self.backgroundPushNotificationsEnabled;
     [self.dataStore setBool:enabled forKey:UABackgroundPushNotificationsEnabledKey];
+
+    if (enabled != previousValue) {
+        [self updateRegistration];
+    }
+}
+
+- (BOOL)pushTokenRegistrationEnabled {
+    return [self.dataStore boolForKey:UAPushTokenRegistrationEnabledKey];
+}
+
+- (void)setPushTokenRegistrationEnabled:(BOOL)enabled {
+    BOOL previousValue = self.pushTokenRegistrationEnabled;
+    [self.dataStore setBool:enabled forKey:UAPushTokenRegistrationEnabledKey];
 
     if (enabled != previousValue) {
         [self updateRegistration];
@@ -818,7 +833,10 @@ BOOL deferChannelCreationOnForeground = false;
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     payload.deviceID = [UAUtils deviceID];
     payload.userID = [UAirship inboxUser].username;
-    payload.pushAddress = self.deviceToken;
+
+    if (self.pushTokenRegistrationEnabled) {
+        payload.pushAddress = self.deviceToken;
+    }
 
     payload.optedIn = [self userPushNotificationsAllowed];
     payload.backgroundEnabled = [self backgroundPushNotificationsAllowed];
@@ -845,17 +863,22 @@ BOOL deferChannelCreationOnForeground = false;
         return self.deviceToken
         && self.userPushNotificationsEnabled
         && [app currentUserNotificationSettings].types != UIUserNotificationTypeNone
-        && app.isRegisteredForRemoteNotifications;
+        && app.isRegisteredForRemoteNotifications
+        && self.pushTokenRegistrationEnabled;
 
     } else {
         return self.deviceToken
         && self.userPushNotificationsEnabled
-        && app.enabledRemoteNotificationTypes != UIRemoteNotificationTypeNone;
+        && app.enabledRemoteNotificationTypes != UIRemoteNotificationTypeNone
+        && self.pushTokenRegistrationEnabled;
     }
 }
 
 - (BOOL)backgroundPushNotificationsAllowed {
-    if (!self.deviceToken || !self.backgroundPushNotificationsEnabled || ![UAirship shared].remoteNotificationBackgroundModeEnabled) {
+    if (!self.deviceToken
+        || !self.backgroundPushNotificationsEnabled
+        || ![UAirship shared].remoteNotificationBackgroundModeEnabled
+        || !self.pushTokenRegistrationEnabled) {
         return NO;
     }
 

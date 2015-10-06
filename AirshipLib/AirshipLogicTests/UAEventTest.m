@@ -215,9 +215,10 @@
 }
 
 /**
- * Test device registration event
+ * Test device registration event when pushTokenRegistrationEnabled is YES.
  */
 - (void)testRegistrationEvent {
+    [[[self.push stub] andReturnValue:@YES] pushTokenRegistrationEnabled];
     [[[self.push stub] andReturn:@"a12312ad"] deviceToken];
     [[[self.push stub] andReturn:@"someChannelID"] channelID];
     [[[self.user stub] andReturn:@"someUserID"] username];
@@ -229,6 +230,25 @@
     UAEventDeviceRegistration *event = [UAEventDeviceRegistration event];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"device_registration", @"Event type is unexpected.");
+    XCTAssertNotNil(event.eventID, @"Event should have an ID");
+}
+
+/**
+ * Test device registration event when pushTokenRegistrationEnabled is NO.
+ */
+- (void)testRegistrationEventPushTokenRegistrationEnabledNo {
+    [[[self.push stub] andReturnValue:@NO] pushTokenRegistrationEnabled];
+    [[[self.push stub] andReturn:@"a12312ad"] deviceToken];
+    [[[self.push stub] andReturn:@"someChannelID"] channelID];
+    [[[self.user stub] andReturn:@"someUserID"] username];
+
+    NSDictionary *expectedData = @{@"channel_id": @"someChannelID",
+                                   @"user_id": @"someUserID"};
+
+    UAEventDeviceRegistration *event = [UAEventDeviceRegistration event];
+    XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
+    XCTAssertEqualObjects(event.eventType, @"device_registration", @"Event type is unexpected.");
+    XCTAssertEqual(event.estimatedSize, kUAEventDeviceRegistrationSize, @"Event is reporting wrong estimated size.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
 

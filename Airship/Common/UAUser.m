@@ -228,8 +228,13 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         return;
     }
 
+    NSString *deviceToken = nil;
+    if (self.push.pushTokenRegistrationEnabled) {
+        deviceToken = self.push.deviceToken;
+    }
+
     [self.apiClient updateUser:self
-                   deviceToken:self.push.deviceToken
+                   deviceToken:deviceToken
                      channelID:self.push.channelID
                      onSuccess:^{
                          UA_LINFO(@"Updated user %@ successfully.", self.username);

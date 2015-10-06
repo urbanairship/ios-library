@@ -199,11 +199,11 @@
 }
 
 /**
- * Test updateUser when no device token or channel ID is present
+ * Test updateUser when no channel ID is present
  */
--(void)testUpdateUserNoDeviceTokenOrChannelID {
+-(void)testUpdateUserNoChannelID {
     self.push.channelID = nil;
-    self.push.deviceToken = nil;
+    self.push.deviceToken = @"fakeDeviceToken";
 
     // Set up a default user
     self.user.username = @"username";
@@ -217,27 +217,87 @@
 
     [self.user updateUser];
 
-    XCTAssertNoThrow([self.mockUserClient verify], @"User should not update if the device token and channel ID is missing.");
+    XCTAssertNoThrow([self.mockUserClient verify], @"User should not update if the channel ID is missing.");
 }
 
-
 /**
- * Test updateUser no default user
+ * Test updateUser when pushTokenRegistrationEnabled is enabled
  */
--(void)testUpdateUserNoDefaultUser {
+-(void)testUpdateUserNoDeviceToken {
     self.push.channelID = @"some-channel";
+    self.push.channelLocation = @"some-location";
     self.push.deviceToken = @"aaaaa";
-    self.user.username = @"username";
 
-    [[self.mockUserClient reject] updateUser:OCMOCK_ANY
-                                 deviceToken:OCMOCK_ANY
-                                   channelID:OCMOCK_ANY
+    // Set up a default user
+    self.user.username = @"username";
+    self.user.password = @"password";
+
+    [[self.mockUserClient expect] updateUser:self.user
+                                 deviceToken:@"aaaaa"
+                                   channelID:@"some-channel"
                                    onSuccess:OCMOCK_ANY
                                    onFailure:OCMOCK_ANY];
 
+    // Mock background task so background task check passes
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
     [self.user updateUser];
 
-    XCTAssertNoThrow([self.mockUserClient verify], @"User should not update if a default user is not created yet.");
+    XCTAssertNoThrow([self.mockUserClient verify], @"User should call the client to be updated.");
+}
+
+/**
+ * Test updateUser when pushTokenRegistrationEnabled is enabled
+ */
+-(void)testUpdateUserPushTokenRegistrationEnabledYes {
+    self.push.pushTokenRegistrationEnabled = YES;
+    self.push.channelID = @"some-channel";
+    self.push.channelLocation = @"some-location";
+    self.push.deviceToken = @"aaaaa";
+
+    // Set up a default user
+    self.user.username = @"username";
+    self.user.password = @"password";
+
+    [[self.mockUserClient expect] updateUser:self.user
+                                 deviceToken:@"aaaaa"
+                                   channelID:@"some-channel"
+                                   onSuccess:OCMOCK_ANY
+                                   onFailure:OCMOCK_ANY];
+
+    // Mock background task so background task check passes
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    [self.user updateUser];
+
+    XCTAssertNoThrow([self.mockUserClient verify], @"User should call the client to be updated.");
+}
+
+/**
+ * Test updateUser when pushTokenRegistrationEnabled is disabled
+ */
+-(void)testUpdateUserPushTokenRegistrationEnabledNo {
+    self.push.pushTokenRegistrationEnabled = NO;
+    self.push.channelID = @"some-channel";
+    self.push.channelLocation = @"some-location";
+    self.push.deviceToken = @"aaaaa";
+
+    // Set up a default user
+    self.user.username = @"username";
+    self.user.password = @"password";
+
+    [[self.mockUserClient expect] updateUser:self.user
+                                 deviceToken:nil
+                                   channelID:@"some-channel"
+                                   onSuccess:OCMOCK_ANY
+                                   onFailure:OCMOCK_ANY];
+
+    // Mock background task so background task check passes
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    [self.user updateUser];
+
+    XCTAssertNoThrow([self.mockUserClient verify], @"User should call the client to be updated.");
 }
 
 

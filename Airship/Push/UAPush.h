@@ -227,6 +227,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign) BOOL userPushNotificationsEnabled;
 
+/**
+ * Enables/disables sending the device token during channel registration.
+ * Defaults to `YES`. If set to `NO`, the app will not be able to receive push
+ * notifications.
+ */
+@property (nonatomic, assign) BOOL pushTokenRegistrationEnabled;
 
 /**
  * This setting controls the underlying behavior of the SDK when user notifications are disabled.

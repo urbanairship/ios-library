@@ -135,9 +135,19 @@
 - (void)testRequestPushAddressHeader {
     NSString *deviceTokenString = @"123456789012345678901234567890";
     [[[self.mockPush stub] andReturn:deviceTokenString] deviceToken];
+    [[[self.mockPush stub] andReturnValue:@YES] pushTokenRegistrationEnabled];
 
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
     XCTAssertEqualObjects([headers objectForKey:@"X-UA-Push-Address"], deviceTokenString, @"Wrong device token in event headers");
+}
+
+- (void)testRequestPushAddressHeaderPushTokenRegistrationEnabledNo {
+    NSString *deviceTokenString = @"123456789012345678901234567890";
+    [[[self.mockPush stub] andReturn:deviceTokenString] deviceToken];
+    [[[self.mockPush stub] andReturnValue:@NO] pushTokenRegistrationEnabled];
+
+    NSDictionary *headers = [self.analytics analyticsRequest].headers;
+    XCTAssertNil([headers objectForKey:@"X-UA-Push-Address"], @"Device token should be nil when pushTokenRegistrationEnabled is NO.");
 }
 
 - (void)testRequestChannelIDHeader {
