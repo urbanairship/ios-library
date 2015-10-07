@@ -273,7 +273,7 @@
                                       onSuccess:OCMOCK_ANY
                                       onFailure:OCMOCK_ANY];
 
-    [self.client updateUser:self.mockUser deviceToken:@"deviceToken"
+    [self.client updateUser:self.mockUser
                   channelID:@"channelID"
                   onSuccess:^{}
                   onFailure:^(UAHTTPRequest *request){}];
@@ -305,7 +305,7 @@
                                                          onFailure:OCMOCK_ANY];
 
 
-    [self.client updateUser:self.mockUser deviceToken:@"deviceToken"
+    [self.client updateUser:self.mockUser
                   channelID:@"channelID"
                   onSuccess:^{
                       successBlockCalled = YES;
@@ -338,7 +338,6 @@
                                                          onFailure:OCMOCK_ANY];
 
     [self.client updateUser:self.mockUser
-                deviceToken:@"deviceToken"
                   channelID:@"channel"
                   onSuccess:^{}
                   onFailure:^(UAHTTPRequest *request) {
@@ -371,7 +370,7 @@
 
 
     // Verify we add a channel ID and remove the device token if they are both present
-    expectedRequestBody = @{@"device_tokens": @{@"remove" : @[@"deviceToken"]}, @"ios_channels": @{@"add" : @[@"channel"]}};
+    expectedRequestBody = @{@"ios_channels": @{@"add" : @[@"channel"]}};
     [[self.mockRequestEngine expect] runRequest:[OCMArg checkWithBlock:checkRequestBlock]
                                    succeedWhere:OCMOCK_ANY
                                      retryWhere:OCMOCK_ANY
@@ -381,7 +380,6 @@
 
 
     [self.client updateUser:self.mockUser
-                deviceToken:@"deviceToken"
                   channelID:@"channel"
                   onSuccess:^{}
                   onFailure:^(UAHTTPRequest *request) {}];
@@ -399,7 +397,6 @@
 
 
     [self.client updateUser:self.mockUser
-                deviceToken:nil
                   channelID:@"channel"
                   onSuccess:^{}
                   onFailure:^(UAHTTPRequest *request) {}];
