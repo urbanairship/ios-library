@@ -248,7 +248,6 @@
     UAEventDeviceRegistration *event = [UAEventDeviceRegistration event];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"device_registration", @"Event type is unexpected.");
-    XCTAssertEqual(event.estimatedSize, kUAEventDeviceRegistrationSize, @"Event is reporting wrong estimated size.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
 

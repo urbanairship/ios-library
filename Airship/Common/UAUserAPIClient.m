@@ -108,7 +108,6 @@
 }
 
 - (void)updateUser:(UAUser *)user
-       deviceToken:(NSString *)deviceToken
          channelID:(NSString *)channelID
          onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock
          onFailure:(UAUserAPIClientFailureBlock)failureBlock {
@@ -118,10 +117,6 @@
 
     if (channelID.length) {
         [payload setValue:@{@"add": @[channelID]} forKey:@"ios_channels"];
-
-        if (deviceToken.length) {
-            [payload setValue:@{@"remove": @[deviceToken]} forKey:@"device_tokens"];
-        }
     }
 
     UAHTTPRequest *request = [self requestToUpdateUser:user payload:payload];

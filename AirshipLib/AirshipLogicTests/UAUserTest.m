@@ -185,7 +185,6 @@
     self.user.password = @"password";
 
     [[self.mockUserClient expect] updateUser:self.user
-                                 deviceToken:@"aaaaa"
                                    channelID:@"some-channel"
                                    onSuccess:OCMOCK_ANY
                                    onFailure:OCMOCK_ANY];
@@ -210,7 +209,6 @@
     self.user.password = @"password";
 
     [[self.mockUserClient reject] updateUser:OCMOCK_ANY
-                                 deviceToken:OCMOCK_ANY
                                    channelID:OCMOCK_ANY
                                    onSuccess:OCMOCK_ANY
                                    onFailure:OCMOCK_ANY];
@@ -233,7 +231,6 @@
     self.user.password = @"password";
 
     [[self.mockUserClient expect] updateUser:self.user
-                                 deviceToken:@"aaaaa"
                                    channelID:@"some-channel"
                                    onSuccess:OCMOCK_ANY
                                    onFailure:OCMOCK_ANY];
@@ -260,7 +257,6 @@
     self.user.password = @"password";
 
     [[self.mockUserClient expect] updateUser:self.user
-                                 deviceToken:@"aaaaa"
                                    channelID:@"some-channel"
                                    onSuccess:OCMOCK_ANY
                                    onFailure:OCMOCK_ANY];
@@ -287,7 +283,6 @@
     self.user.password = @"password";
 
     [[self.mockUserClient expect] updateUser:self.user
-                                 deviceToken:nil
                                    channelID:@"some-channel"
                                    onSuccess:OCMOCK_ANY
                                    onFailure:OCMOCK_ANY];
@@ -316,7 +311,6 @@
 
     // Expect an update call when we register for device registration changes
     [[self.mockUserClient expect] updateUser:self.user
-                                 deviceToken:@"aaaaa"
                                    channelID:@"some-channel"
                                    onSuccess:OCMOCK_ANY
                                    onFailure:OCMOCK_ANY];
@@ -367,7 +361,6 @@
     self.user.password = @"password";
 
     [[self.mockUserClient expect] updateUser:OCMOCK_ANY
-                                 deviceToken:OCMOCK_ANY
                                    channelID:OCMOCK_ANY
                                    onSuccess:OCMOCK_ANY
                                    onFailure:OCMOCK_ANY];
