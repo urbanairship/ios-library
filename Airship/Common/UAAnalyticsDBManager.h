@@ -44,6 +44,20 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UASQLite *db;
 
 /**
+ * Gets the total size in bytes of the sqlite DB
+ *
+ * @return Integer representing the total size in bytes of sqlite DB
+ */
+@property (nonatomic, assign, readonly) NSUInteger sizeInBytes;
+
+/**
+ * Gets count of analytics events stored in sqlite DB
+ *
+ * @return Integer count of total stored analytics events
+ */
+@property (nonatomic, assign, readonly) NSUInteger eventCount;
+
+/**
  * Resets the database
  */
 - (void)resetDB;
@@ -97,21 +111,6 @@ NS_ASSUME_NONNULL_BEGIN
  * Deletes analytics events from sqlite DB using oldest session ID
  */
 - (void)deleteOldestSession;
-
-
-/**
- * Gets count of analytics events stored in sqlite DB
- *
- * @return Integer count of total stored analytics events
- */
-- (NSUInteger)eventCount;
-
-/**
- * Gets the total size in bytes of the sqlite DB
- *
- * @return Integer representing the total size in bytes of sqlite DB
- */
-- (NSUInteger)sizeInBytes;
 
 @end
 

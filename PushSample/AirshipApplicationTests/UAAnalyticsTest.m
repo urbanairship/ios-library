@@ -317,7 +317,7 @@
     }
     threadTestEnded = YES;
 
-    UAAnalyticsDBManager *analyticsDb = airshipAnalytics.analyticDBManager;
+    UAAnalyticsDBManager *analyticsDb = airshipAnalytics.analyticsDBManager;
 
     NSArray *bunchOevents = [analyticsDb getEvents:100];
     __block BOOL testFail = YES;

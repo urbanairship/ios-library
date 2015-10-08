@@ -143,9 +143,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL isEnteringForeground;
 
 /**
- * The analytic database manager.
+ * The analytics database manager.
  */
-@property (nonatomic, strong) UAAnalyticsDBManager *analyticDBManager;
+@property (nonatomic, strong) UAAnalyticsDBManager *analyticsDBManager;
 
 /**
  * Factory method to create an analytics instance.

@@ -28,7 +28,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Defines analytic identifiers to be associated with
+ * Defines analytics identifiers to be associated with
  * the device.
  */
 @interface UAAssociatedIdentifiers : NSObject
