@@ -42,12 +42,15 @@
 #import "UAEventPushReceived.h"
 #import "UAEventAppBackground.h"
 #import "UAEventAppForeground.h"
+#import "UAScreenTrackingEvent+Internal.h"
 #import "UAPreferenceDataStore.h"
 #import "UALocationService.h"
 #import "UARegionEvent+Internal.h"
 #import "UAAssociateIdentifiersEvent+Internal.h"
 
+
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
+
 
 #define kUALocationPermissionSystemLocationDisabled @"SYSTEM_LOCATION_DISABLED";
 #define kUALocationPermissionNotAllowed @"NOT_ALLOWED";
@@ -104,6 +107,11 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
                                                      name:UIApplicationDidBecomeActiveNotification
                                                    object:nil];
 
+        // Register for terminate notifications
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(willTerminate)
+                                                     name:UIApplicationWillTerminateNotification
+                                                   object:nil];
 
         [self startSession];
 
@@ -128,8 +136,15 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 #pragma mark -
 #pragma mark Application State
 
+- (void)returnedFromBackground {
+    UA_LTRACE(@"Returned from foreground.");
+}
+
 - (void)enterForeground {
     UA_LTRACE(@"Enter Foreground.");
+
+    // Start tracking previous screen before backgrounding began
+    [self trackScreen:self.previousScreen];
 
     // do not send the foreground event yet, as we are not actually in the foreground
     // (we are merely in the process of foregorunding)
@@ -139,6 +154,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 - (void)enterBackground {
     UA_LTRACE(@"Enter Background.");
+
+    [self stopTrackingScreen];
 
     // add app_background event
     [self addEvent:[UAEventAppBackground event]];
@@ -150,10 +167,15 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [self clearSession];
 }
 
+- (void)willTerminate {
+    UA_LTRACE(@"Application is terminating.");
+
+    [self stopTrackingScreen];
+}
 
 - (void)didBecomeActive {
     UA_LTRACE(@"Application did become active.");
-    
+
     // If this is the first 'inactive->active' transition in this session,
     // send 
     if (self.isEnteringForeground) {
@@ -706,6 +728,34 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
                 return kUALocationPermissionUnprompted;
         }
     }
+}
+
+- (void)trackScreen:(nullable NSString *)screen {
+
+    // Prevent duplicate calls to track same screen
+    if ([screen isEqualToString:self.currentScreen]) {
+        return;
+    }
+
+    // If there's a screen currently being tracked set it's stop time and add it to analytics
+    if (self.currentScreen) {
+        UAScreenTrackingEvent *ste = [UAScreenTrackingEvent eventWithScreen:self.currentScreen startTime:self.startTime];
+        ste.stopTime = [NSDate date].timeIntervalSince1970;
+        ste.previousScreen = self.previousScreen;
+
+        // Set previous screen to last tracked screen
+        self.previousScreen = self.currentScreen;
+
+        // Add screen tracking event to next analytics batch
+        [self addEvent:ste];
+    }
+
+    self.currentScreen = screen;
+    self.startTime = [NSDate date].timeIntervalSince1970;
+}
+
+- (void) stopTrackingScreen {
+    [self trackScreen:nil];
 }
 
 @end

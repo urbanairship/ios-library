@@ -36,6 +36,7 @@
 #import "UAAnalyticsDBManager.h"
 #import "UAEvent+Internal.h"
 #import "UAAssociateIdentifiersEvent+Internal.h"
+#import "UAScreenTrackingEvent+Internal.h"
 
 @interface UAAnalyticsTest()
 @property (nonatomic, strong) UAAnalytics *analytics;
@@ -637,6 +638,80 @@
     XCTAssertNotEqualWithAccuracy([[self.analytics.sendTimer fireDate] timeIntervalSince1970], [[NSDate date] timeIntervalSince1970] + 30, 2);
 
     [mockAnalytics stopMocking];
+}
+
+
+/**
+ * Test that tracking event adds itself on background
+ */
+- (void)testTrackingEventBackground{
+
+    [self.analytics trackScreen:@"tast_screen"];
+
+    // Expect that the event is added to the mock DB Manager upon background
+    [[self.mockDBManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        if (![obj isKindOfClass:[UAScreenTrackingEvent class]]) {
+            return NO;
+        }
+
+        UAScreenTrackingEvent *event = obj;
+
+        return [event.screen isEqualToString:@"tast_screen"];
+    }] withSessionID:OCMOCK_ANY];
+
+    // Enter background
+    [self.analytics enterBackground];
+
+    [self.mockDBManager verify];
+}
+
+/**
+ * Test tracking event adds itself and is set to nil on terminate event.
+ */
+- (void)testTrackingEventTerminate {
+
+    [self.analytics trackScreen:@"tast_screen"];
+
+    // Expect that the event is added to the mock DB Manager upon terminate
+    [[self.mockDBManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        if (![obj isKindOfClass:[UAScreenTrackingEvent class]]) {
+            return NO;
+        }
+
+        UAScreenTrackingEvent *event = obj;
+
+        return [event.screen isEqualToString:@"tast_screen"];
+    }] withSessionID:OCMOCK_ANY];
+
+    // Terminate
+    [self.analytics willTerminate];
+
+    [self.mockDBManager verify];
+}
+
+// Tests that starting a screen tracking event when one is already started adds the event with the correct start and stop times
+- (void)testStartTrackScreenAddEvent {
+
+    [self.analytics trackScreen:@"first_screen"];
+    __block NSTimeInterval approxStartTime = [NSDate date].timeIntervalSince1970;
+
+    // Expect that the mock event is added to the mock DB Manager
+    [[self.mockDBManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        if (![obj isKindOfClass:[UAScreenTrackingEvent class]]) {
+            return NO;
+        }
+
+        UAScreenTrackingEvent *event = obj;
+
+        XCTAssertEqualWithAccuracy(event.startTime, approxStartTime, 1);
+        XCTAssertEqualWithAccuracy(event.stopTime, [NSDate date].timeIntervalSince1970, 1);
+
+        return [event.screen isEqualToString:@"first_screen"];
+    }] withSessionID:OCMOCK_ANY];
+
+    [self.analytics trackScreen:@"second_screen"];
+
+    [self.mockDBManager verify];
 }
 
 #pragma Helpers

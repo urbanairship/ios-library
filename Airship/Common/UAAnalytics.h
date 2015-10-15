@@ -97,6 +97,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (NSDate *)lastSendTime;
 
+/**
+ * Initiates screen tracking for a specific app screen, must be called once per tracked screen.
+ * @param screen The screen's identifier as an NSString.
+ */
+- (void)trackScreen:(nullable NSString *)screen;
+
 @end
 
 NS_ASSUME_NONNULL_END

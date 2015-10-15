@@ -51,16 +51,18 @@
 // Minimum amount of time between background low priority event sends
 #define kMinBackgroundLowPriorityEventSendIntervalSeconds 900 // 900 seconds = 15 minutes
 
-
 #define kMaxTotalDBSizeUserDefaultsKey @"X-UA-Max-Total"
 #define kMaxBatchSizeUserDefaultsKey @"X-UA-Max-Batch"
 #define kMaxWaitUserDefaultsKey @"X-UA-Max-Wait"
 #define kMinBatchIntervalUserDefaultsKey @"X-UA-Min-Batch-Interval"
 #define kUAAnalyticsEnabled @"UAAnalyticsEnabled"
+#define kUABackgroundScreen @"UABackgroundScreen"
+
 
 @class UAEvent;
 @class UAHTTPRequest;
 @class UAAnalyticsDBManager;
+@class UAScreenTrackingEvent;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -198,6 +200,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)enterBackground;
 
 /**
+ * The application terminating.
+ */
+- (void)willTerminate;
+
+/**
  * The application did become active.
  */
 - (void)didBecomeActive;
@@ -252,6 +259,21 @@ NS_ASSUME_NONNULL_BEGIN
  * whichever is greater.
  */
 - (NSTimeInterval)timeToWaitBeforeSendingNextBatch;
+
+/**
+ * The current tracked screen.
+ */
+@property (nonatomic, strong, nullable) NSString *currentScreen;
+
+/**
+ * The previous tracked screen.
+ */
+@property (nonatomic, strong, nullable) NSString *previousScreen;
+
+/**
+ * The start time for current tracked screen.
+ */
+@property (nonatomic, assign) NSTimeInterval startTime;
 
 @end
 
