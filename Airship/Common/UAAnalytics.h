@@ -77,7 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Associates identifiers with the device. This call will add a special event
- * that will be batched and sent up with our other analytic events. Previous
+ * that will be batched and sent up with our other analytics events. Previous
  * associated identifiers will be replaced.
  *
  * @param associatedIdentifiers The associated identifiers.

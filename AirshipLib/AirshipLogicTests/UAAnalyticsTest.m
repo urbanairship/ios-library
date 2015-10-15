@@ -77,7 +77,7 @@
 
     UAConfig *config = [[UAConfig alloc] init];
     self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:self.dataStore];
-    self.analytics.analyticDBManager = self.mockDBManager;
+    self.analytics.analyticsDBManager = self.mockDBManager;
 
     self.mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];

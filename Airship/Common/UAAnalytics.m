@@ -68,7 +68,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 - (instancetype)initWithConfig:(UAConfig *)airshipConfig dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
-        self.analyticDBManager = [[UAAnalyticsDBManager alloc] init];
+        self.analyticsDBManager = [[UAAnalyticsDBManager alloc] init];
         // Set server to default if not specified in options
         self.config = airshipConfig;
         self.dataStore = dataStore;
@@ -228,7 +228,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     }
 
     UA_LDEBUG(@"Adding %@ event %@.", event.eventType, event.eventID);
-    [self.analyticDBManager addEvent:event withSessionID:self.sessionID];
+    [self.analyticsDBManager addEvent:event withSessionID:self.sessionID];
 
     UA_LTRACE(@"Added: %@.", event);
 
@@ -330,7 +330,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 #pragma mark Send Logic
 
 - (BOOL)hasEventsToSend {
-    return [self.analyticDBManager eventCount] > 0;
+    return self.analyticsDBManager.eventCount > 0;
 }
 
 - (UAHTTPRequest*)analyticsRequest {
@@ -407,13 +407,13 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 // Loop through events and discard DB-only items, format the JSON data field
 // as a dictionary
 - (NSArray *)prepareEventsForUpload {
-    NSUInteger databaseSize = [self.analyticDBManager sizeInBytes];
+    NSUInteger databaseSize = self.analyticsDBManager.sizeInBytes;
 
     // Delete older events until the database size is met
     while (databaseSize > self.maxTotalDBSize) {
         UA_LTRACE(@"Database exceeds max size of %ld bytes... Deleting oldest session.", (long)self.maxTotalDBSize);
-        [self.analyticDBManager deleteOldestSession];
-        databaseSize = [self.analyticDBManager sizeInBytes];
+        [self.analyticsDBManager deleteOldestSession];
+        databaseSize = self.analyticsDBManager.sizeInBytes;
     }
 
 
@@ -421,19 +421,19 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         return nil;
     }
 
-    NSUInteger avgEventSize = databaseSize / [self.analyticDBManager eventCount];
+    NSUInteger avgEventSize = databaseSize / self.analyticsDBManager.eventCount;
 
     int actualSize = 0;
     NSUInteger batchEventCount = 0;
     
-    NSArray *events = [self.analyticDBManager getEvents:self.maxBatchSize/avgEventSize];
+    NSArray *events = [self.analyticsDBManager getEvents:self.maxBatchSize/avgEventSize];
     NSArray *topLevelKeys = @[@"type", @"time", @"event_id", @"data"];
 
     for (NSMutableDictionary *event in events) {
         
         if (![self isEventValid:event]) {
             UA_LERR("Detected invalid event due to possible database corruption. Recreating database");
-            [self.analyticDBManager resetDB];
+            [self.analyticsDBManager resetDB];
             return nil;
         }
 
@@ -519,7 +519,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         [self updateAnalyticsParametersWithHeaderValues:request.response];
 
         if ([request.response statusCode] == 200) {
-            [self.analyticDBManager deleteEvents:events];
+            [self.analyticsDBManager deleteEvents:events];
         } else {
             UA_LTRACE(@"Analytics upload request failed: %ld", (long)[request.response statusCode]);
         }
@@ -680,7 +680,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     if ([self.dataStore boolForKey:kUAAnalyticsEnabled] && !enabled) {
         UA_LINFO(@"Deleting all analytics events.");
         [self stopSends];
-        [self.analyticDBManager resetDB];
+        [self.analyticsDBManager resetDB];
     }
 
     [self.dataStore setBool:enabled forKey:kUAAnalyticsEnabled];

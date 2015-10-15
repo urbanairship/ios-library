@@ -904,8 +904,8 @@ BOOL deferChannelCreationOnForeground = false;
     if (self.shouldUpdateAPNSRegistration) {
         UA_LDEBUG(@"APNS registration is out of date, updating.");
         [self updateAPNSRegistration];
-    } if (self.userPushNotificationsEnabled && !self.channelID) {
-        UA_LDEBUG(@"Push is enabled but we have not yet tried to generate a channel ID. "
+    } else if (self.userPushNotificationsEnabled && !self.channelID) {
+        UA_LDEBUG(@"Push is enabled but we have not yet generated a channel ID. "
                   "Urban Airship registration will automatically run when the device token is registered, "
                   "the next time the app is backgrounded, or the next time the app is foregrounded.");
     } else {
