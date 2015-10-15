@@ -153,6 +153,9 @@
 		619C29861B8545370025AA65 /* UAInAppMessageController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 619C29851B8545370025AA65 /* UAInAppMessageController+Internal.h */; };
 		61A070991B7A5B9E00819091 /* UAInboxAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 61A070981B7A5B9E00819091 /* UAInboxAPIClientTest.m */; };
 		61A0709F1B7A7B0700819091 /* UAInboxAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 61A0709E1B7A7AEE00819091 /* UAInboxAPIClient+Internal.h */; };
+		61BA01C81BC4A03F00078402 /* UAScreenTrackingEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 61BA01C61BC4A03F00078402 /* UAScreenTrackingEvent.m */; settings = {ASSET_TAGS = (); }; };
+		61BA01CA1BC4A19F00078402 /* UAScreenTrackingEvent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 61BA01C91BC4A19F00078402 /* UAScreenTrackingEvent+Internal.h */; settings = {ASSET_TAGS = (); }; };
+		61BA01CD1BC57D5400078402 /* UAScreenTrackingEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 61BA01CC1BC57D5400078402 /* UAScreenTrackingEventTest.m */; settings = {ASSET_TAGS = (); }; };
 		61CD88131B82667E00B2CEA5 /* UAInAppMessageControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 61CD88121B82667E00B2CEA5 /* UAInAppMessageControllerTest.m */; };
 		61D6AD181A2D18C10032420C /* UARegionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 61D6AD161A2D18C10032420C /* UARegionEvent.h */; };
 		61D6AD191A2D18C10032420C /* UARegionEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D6AD171A2D18C10032420C /* UARegionEvent.m */; };
@@ -548,6 +551,9 @@
 		619C29851B8545370025AA65 /* UAInAppMessageController+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageController+Internal.h"; sourceTree = "<group>"; };
 		61A070981B7A5B9E00819091 /* UAInboxAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxAPIClientTest.m; sourceTree = "<group>"; };
 		61A0709E1B7A7AEE00819091 /* UAInboxAPIClient+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInboxAPIClient+Internal.h"; sourceTree = "<group>"; };
+		61BA01C61BC4A03F00078402 /* UAScreenTrackingEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScreenTrackingEvent.m; sourceTree = "<group>"; };
+		61BA01C91BC4A19F00078402 /* UAScreenTrackingEvent+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAScreenTrackingEvent+Internal.h"; sourceTree = "<group>"; };
+		61BA01CC1BC57D5400078402 /* UAScreenTrackingEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScreenTrackingEventTest.m; sourceTree = "<group>"; };
 		61CD88121B82667E00B2CEA5 /* UAInAppMessageControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageControllerTest.m; sourceTree = "<group>"; };
 		61D6AD161A2D18C10032420C /* UARegionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARegionEvent.h; sourceTree = "<group>"; };
 		61D6AD171A2D18C10032420C /* UARegionEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARegionEvent.m; sourceTree = "<group>"; };
@@ -1249,6 +1255,7 @@
 				612ED4D31A3785E500DD7762 /* UARegionEventTest.m */,
 				61D8FE4D1A3B76F100E21EBB /* UAProximityRegionTest.m */,
 				614F0DAB1A3B773E00F00AAB /* UACircularRegionTest.m */,
+				61BA01CC1BC57D5400078402 /* UAScreenTrackingEventTest.m */,
 				CC20BE1D19589D450098CF35 /* UALocationEventTest.m */,
 				CCD13DE119A4FCFD0007078C /* UAInteractiveNotificationEventTest.m */,
 				CC9E61471B9F875C00ADF144 /* UAAssociateIdentifiersEventTest.m */,
@@ -1266,6 +1273,8 @@
 				BBB87E0B15057C7F00971CEC /* UALocationEvent.h */,
 				BBB87E0C15057C7F00971CEC /* UALocationEvent.m */,
 				CCDF66A119A5166B0043657E /* UACustomEvent+Internal.h */,
+				61BA01C91BC4A19F00078402 /* UAScreenTrackingEvent+Internal.h */,
+				61BA01C61BC4A03F00078402 /* UAScreenTrackingEvent.m */,
 				612ED4D61A378BA100DD7762 /* UARegionEvent+Internal.h */,
 				61D6AD161A2D18C10032420C /* UARegionEvent.h */,
 				61D6AD171A2D18C10032420C /* UARegionEvent.m */,
@@ -1713,6 +1722,7 @@
 				1F610DF217835C3A00BCD96E /* UAInboxPushHandler.h in Headers */,
 				494BF70D1762789D00B25E12 /* UAUserData.h in Headers */,
 				49BEBF631AAA5DC000740665 /* UAMutableUserNotificationCategory.h in Headers */,
+				61BA01CA1BC4A19F00078402 /* UAScreenTrackingEvent+Internal.h in Headers */,
 				4928D90C1ABA37A30046E5BE /* UAInAppMessaging.h in Headers */,
 				CCE0D2E11BA8C00B00E49E56 /* UAInstallAttributionEvent.h in Headers */,
 				CC85427817F2130700D2DE10 /* UAURLProtocol.h in Headers */,
@@ -1891,6 +1901,7 @@
 				4928D8FD1AB758C10046E5BE /* UAUserNotificationCategoryTest.m in Sources */,
 				CC5D25671B040D8700711629 /* UAOverlayInboxMessageActionTest.m in Sources */,
 				CC1D22A218037DD9005C8393 /* UAAggregateActionResultTest.m in Sources */,
+				61BA01CD1BC57D5400078402 /* UAScreenTrackingEventTest.m in Sources */,
 				CC38703C1B308C3100746D07 /* UATagGroupsAPIClientTest.m in Sources */,
 				BBB87D64150574DE00971CEC /* UALocationServiceTest.m in Sources */,
 				CCA3A4F317FF14DF009C7371 /* UAActionTest.m in Sources */,
@@ -1990,6 +2001,7 @@
 				767D0D381A71A938008CEC8A /* UANamedUser.m in Sources */,
 				BB886105159A7E9600584445 /* UAKeychainUtils.m in Sources */,
 				CC8542C117F4B81600D2DE10 /* UAActionResult.m in Sources */,
+				61BA01C81BC4A03F00078402 /* UAScreenTrackingEvent.m in Sources */,
 				BB886107159A7E9600584445 /* UAUser.m in Sources */,
 				49D7FF4D1A8E92390017A11C /* UAInAppMessageController.m in Sources */,
 				CC5D25641B040BF700711629 /* UAOverlayInboxMessageAction.m in Sources */,
