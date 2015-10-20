@@ -25,16 +25,26 @@
 
 #import "UAInteractiveNotificationEvent.h"
 #import "UAEvent+Internal.h"
+#import "UAGlobal.h"
 
 #define kUAInteractiveNotificationEventSize 350
 @implementation UAInteractiveNotificationEvent
 
+const NSUInteger UAInteractiveNotificationEventCharacterLimit = 255;
 
 + (instancetype)eventWithNotificationAction:(UIUserNotificationAction *)action
                                  categoryID:(NSString *)category
                                notification:(NSDictionary *)notification {
 
-    UAInteractiveNotificationEvent *event =  [[self alloc] init];
+    return [self eventWithNotificationAction:action categoryID:category notification:notification responseInfo:nil];
+}
+
++ (instancetype)eventWithNotificationAction:(UIUserNotificationAction *)action
+                                 categoryID:(NSString *)category
+                               notification:(NSDictionary *)notification
+                               responseInfo:(nullable NSDictionary *)responseInfo {
+
+    UAInteractiveNotificationEvent *event = [[self alloc] init];
 
     BOOL foreground = action.activationMode == UIUserNotificationActivationModeForeground;
 
@@ -44,6 +54,19 @@
     [data setValue:action.title forKey:@"button_description"];
     [data setValue:foreground ? @"true" : @"false" forKey:@"foreground"];
     [data setValue:notification[@"_"] forKey:@"send_id"];
+
+    if (responseInfo) {
+        NSDictionary *responseInfoDictionary = [NSDictionary dictionaryWithDictionary:responseInfo];
+        NSString *userInputString = [responseInfoDictionary valueForKey:@"UIUserNotificationActionResponseTypedTextKey"];
+        if (userInputString.length > UAInteractiveNotificationEventCharacterLimit) {
+            UA_LWARN(@"Interactive Notification %@ value exceeds %lu characters. Truncating to max chars", @"user_input", (unsigned long)
+                    UAInteractiveNotificationEventCharacterLimit);
+            userInputString = [userInputString substringToIndex:MIN(UAInteractiveNotificationEventCharacterLimit, userInputString.length)];
+        }
+
+        // Set the userInputString, which can be 0 - 255 characters. Empty string is acceptable.
+        [data setValue:userInputString forKey:@"user_input"];
+    }
 
     event.data = [NSDictionary dictionaryWithDictionary:data];
 
@@ -59,5 +82,3 @@
 }
 
 @end
-
-

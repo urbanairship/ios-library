@@ -751,7 +751,8 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
 
     [[UAirship shared].analytics addEvent:[UAInteractiveNotificationEvent eventWithNotificationAction:notificationAction
                                                                                            categoryID:categoryID
-                                                                                         notification:notification]];
+                                                                                         notification:notification
+                                                                                         responseInfo:responseInfo]];
 
     NSMutableDictionary *actionsPayload = [NSMutableDictionary dictionaryWithDictionary:notification[kUANotificationActionKey][identifier]];
 
