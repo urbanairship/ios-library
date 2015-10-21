@@ -30,7 +30,6 @@
 @interface UAInteractiveNotificationEventTest : XCTestCase
 @property (nonatomic, strong) NSDictionary *notification;
 @property (nonatomic, strong) UIMutableUserNotificationAction *action;
-@property (nonatomic, strong) NSDictionary *responseInfoDictionary;
 @end
 
 @implementation UAInteractiveNotificationEventTest
@@ -49,7 +48,6 @@
     self.action = [[UIMutableUserNotificationAction alloc] init];
     self.action.identifier = @"action_identifier";
     self.action.title = @"action_title";
-    self.responseInfoDictionary = @{@"UIUserNotificationActionResponseTypedTextKey": @"hello"};
 }
 
 /**
@@ -113,11 +111,12 @@
  * Test the event payload when its created with a responseInfo.
  */
 - (void)testEventResponseInfo {
+    NSDictionary *dictionary = @{@"UIUserNotificationActionResponseTypedTextKey": @"hello"};
 
     UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
                                                                                              categoryID:@"category_id"
                                                                                            notification:self.notification
-                                                                                           responseInfo:self.responseInfoDictionary];
+                                                                                           responseInfo:dictionary];
 
     NSDictionary *expectedData = @{@"foreground": @"true",
                                    @"button_id": @"action_identifier",
@@ -137,12 +136,13 @@
 
     NSString *overMaxUserInput = [@"" stringByPaddingToLength:256 withString:@"User_INPUT" startingAtIndex:0];
     NSDictionary *overMaxDictionary = @{@"UIUserNotificationActionResponseTypedTextKey": overMaxUserInput};
-    NSString *maxUserInput = [@"" stringByPaddingToLength:255 withString:@"User_INPUT" startingAtIndex:0];
 
     UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
                                                                                              categoryID:@"category_id"
                                                                                            notification:self.notification
                                                                                            responseInfo:overMaxDictionary];
+
+    NSString *maxUserInput = [@"" stringByPaddingToLength:255 withString:@"User_INPUT" startingAtIndex:0];
 
     NSDictionary *expectedData = @{@"foreground": @"true",
                                    @"button_id": @"action_identifier",
@@ -161,7 +161,6 @@
 
     NSString *maxUserInput = [@"" stringByPaddingToLength:255 withString:@"User_INPUT" startingAtIndex:0];
     NSDictionary *maxDictionary = @{@"UIUserNotificationActionResponseTypedTextKey": maxUserInput};
-
 
     UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
                                                                                              categoryID:@"category_id"

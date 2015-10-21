@@ -59,9 +59,9 @@ const NSUInteger UAInteractiveNotificationEventCharacterLimit = 255;
         NSDictionary *responseInfoDictionary = [NSDictionary dictionaryWithDictionary:responseInfo];
         NSString *userInputString = [responseInfoDictionary valueForKey:@"UIUserNotificationActionResponseTypedTextKey"];
         if (userInputString.length > UAInteractiveNotificationEventCharacterLimit) {
-            UA_LWARN(@"Interactive Notification %@ value exceeds %lu characters. Truncating to max chars", @"user_input", (unsigned long)
+            UA_LDEBUG(@"Interactive Notification %@ value exceeds %lu characters. Truncating to max chars", @"user_input", (unsigned long)
                     UAInteractiveNotificationEventCharacterLimit);
-            userInputString = [userInputString substringToIndex:MIN(UAInteractiveNotificationEventCharacterLimit, userInputString.length)];
+            userInputString = [userInputString substringToIndex:UAInteractiveNotificationEventCharacterLimit];
         }
 
         // Set the userInputString, which can be 0 - 255 characters. Empty string is acceptable.
