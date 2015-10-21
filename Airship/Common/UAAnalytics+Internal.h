@@ -56,7 +56,6 @@
 #define kMaxWaitUserDefaultsKey @"X-UA-Max-Wait"
 #define kMinBatchIntervalUserDefaultsKey @"X-UA-Min-Batch-Interval"
 #define kUAAnalyticsEnabled @"UAAnalyticsEnabled"
-#define kUABackgroundScreen @"UABackgroundScreen"
 
 
 @class UAEvent;

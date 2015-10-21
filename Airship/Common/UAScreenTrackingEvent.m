@@ -55,7 +55,7 @@
 }
 
 - (NSString *)eventType {
-    return @"UAScreenTrackingEvent";
+    return kUAScreenTrackingEventType;
 }
 
 - (NSTimeInterval)duration {

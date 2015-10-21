@@ -646,7 +646,7 @@
  */
 - (void)testTrackingEventBackground{
 
-    [self.analytics trackScreen:@"tast_screen"];
+    [self.analytics trackScreen:@"test_screen"];
 
     // Expect that the event is added to the mock DB Manager upon background
     [[self.mockDBManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -656,7 +656,7 @@
 
         UAScreenTrackingEvent *event = obj;
 
-        return [event.screen isEqualToString:@"tast_screen"];
+        return [event.screen isEqualToString:@"test_screen"];
     }] withSessionID:OCMOCK_ANY];
 
     // Enter background
@@ -670,7 +670,7 @@
  */
 - (void)testTrackingEventTerminate {
 
-    [self.analytics trackScreen:@"tast_screen"];
+    [self.analytics trackScreen:@"test_screen"];
 
     // Expect that the event is added to the mock DB Manager upon terminate
     [[self.mockDBManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -680,7 +680,7 @@
 
         UAScreenTrackingEvent *event = obj;
 
-        return [event.screen isEqualToString:@"tast_screen"];
+        return [event.screen isEqualToString:@"test_screen"];
     }] withSessionID:OCMOCK_ANY];
 
     // Terminate

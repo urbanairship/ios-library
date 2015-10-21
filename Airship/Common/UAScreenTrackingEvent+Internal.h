@@ -25,6 +25,8 @@
 
 #import "UAEvent.h"
 
+#define kUAScreenTrackingEventType @"screen_tracking"
+
 #define kUAScreenTrackingEventMaxCharacters 255
 #define kUAScreenTrackingEventMinCharacters 1
 

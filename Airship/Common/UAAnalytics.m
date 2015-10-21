@@ -136,10 +136,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 #pragma mark -
 #pragma mark Application State
 
-- (void)returnedFromBackground {
-    UA_LTRACE(@"Returned from foreground.");
-}
-
 - (void)enterForeground {
     UA_LTRACE(@"Enter Foreground.");
 
