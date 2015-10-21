@@ -48,7 +48,6 @@
     self.action = [[UIMutableUserNotificationAction alloc] init];
     self.action.identifier = @"action_identifier";
     self.action.title = @"action_title";
-
 }
 
 /**
@@ -106,6 +105,99 @@
                                                                                              categoryID:@"category_id"
                                                                                            notification:self.notification];
     XCTAssertEqual(UAEventPriorityHigh, event.priority);
+}
+
+/**
+ * Test the event payload when its created with a responseInfo.
+ */
+- (void)testEventResponseInfo {
+    NSDictionary *dictionary = @{@"UIUserNotificationActionResponseTypedTextKey": @"hello"};
+
+    UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
+                                                                                             categoryID:@"category_id"
+                                                                                           notification:self.notification
+                                                                                           responseInfo:dictionary];
+
+    NSDictionary *expectedData = @{@"foreground": @"true",
+                                   @"button_id": @"action_identifier",
+                                   @"button_description": @"action_title",
+                                   @"button_group": @"category_id",
+                                   @"send_id": @"send ID",
+                                   @"user_input": @"hello"};
+
+    XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
+    XCTAssertNotNil(event.eventID, @"Event should have an ID");
+}
+
+/**
+ * Test when the user_input has greater than max acceptable length gets truncated.
+ */
+- (void)testEventOverMaxUserInput {
+
+    NSString *overMaxUserInput = [@"" stringByPaddingToLength:256 withString:@"User_INPUT" startingAtIndex:0];
+    NSDictionary *overMaxDictionary = @{@"UIUserNotificationActionResponseTypedTextKey": overMaxUserInput};
+
+    UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
+                                                                                             categoryID:@"category_id"
+                                                                                           notification:self.notification
+                                                                                           responseInfo:overMaxDictionary];
+
+    NSString *maxUserInput = [@"" stringByPaddingToLength:255 withString:@"User_INPUT" startingAtIndex:0];
+
+    NSDictionary *expectedData = @{@"foreground": @"true",
+                                   @"button_id": @"action_identifier",
+                                   @"button_description": @"action_title",
+                                   @"button_group": @"category_id",
+                                   @"send_id": @"send ID",
+                                   @"user_input": maxUserInput};
+
+    XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
+}
+
+/**
+ * Test when the user_input has max acceptable length.
+ */
+- (void)testEventMaxUserInput {
+
+    NSString *maxUserInput = [@"" stringByPaddingToLength:255 withString:@"User_INPUT" startingAtIndex:0];
+    NSDictionary *maxDictionary = @{@"UIUserNotificationActionResponseTypedTextKey": maxUserInput};
+
+    UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
+                                                                                             categoryID:@"category_id"
+                                                                                           notification:self.notification
+                                                                                           responseInfo:maxDictionary];
+
+    NSDictionary *expectedData = @{@"foreground": @"true",
+                                   @"button_id": @"action_identifier",
+                                   @"button_description": @"action_title",
+                                   @"button_group": @"category_id",
+                                   @"send_id": @"send ID",
+                                   @"user_input": maxUserInput};
+
+    XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
+}
+
+/**
+ * Test when the user_input is an empty string.
+ */
+- (void)testEventEmptyUserInput {
+
+    NSString *emptyString = @"";
+    NSDictionary *emptyDictionary = @{@"UIUserNotificationActionResponseTypedTextKey": emptyString};
+
+    UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
+                                                                                             categoryID:@"category_id"
+                                                                                           notification:self.notification
+                                                                                           responseInfo:emptyDictionary];
+
+    NSDictionary *expectedData = @{@"foreground": @"true",
+                                   @"button_id": @"action_identifier",
+                                   @"button_description": @"action_title",
+                                   @"button_group": @"category_id",
+                                   @"send_id": @"send ID",
+                                   @"user_input": emptyString};
+
+    XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
 }
 
 @end

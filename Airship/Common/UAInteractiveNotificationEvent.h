@@ -44,6 +44,20 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)eventWithNotificationAction:(UIUserNotificationAction *)action
                                  categoryID:(NSString *)category
                                notification:(NSDictionary *)notification;
+
+/**
+ * Factory method for creating an interactive notification event.
+ *
+ * @param action The triggered UIUserNotificationAction.
+ * @param category The category in the notification.
+ * @param notification The notification.
+ * @param responseInfo The response info, as passed to your application delegate.
+ */
++ (instancetype)eventWithNotificationAction:(UIUserNotificationAction *)action
+                                 categoryID:(NSString *)category
+                               notification:(NSDictionary *)notification
+                               responseInfo:(nullable NSDictionary *)responseInfo;
+
 @end
 
 NS_ASSUME_NONNULL_END
