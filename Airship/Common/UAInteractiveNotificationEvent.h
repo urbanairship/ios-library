@@ -26,11 +26,6 @@
 #import <Foundation/Foundation.h>
 #import "UAEvent.h"
 
-/**
- * The max character limit for Strings.
- */
-extern const NSUInteger UAInteractiveNotificationEventCharacterLimit;
-
 NS_ASSUME_NONNULL_BEGIN
 
 /**
