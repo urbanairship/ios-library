@@ -25,6 +25,8 @@
 
 #import "UAAction.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class UAInboxMessage;
 
 /**
@@ -52,4 +54,24 @@
  */
 @interface UADisplayInboxAction : UAAction
 
+
+/**
+ * Called when the action attempts to display the inbox message.
+ * This method should not ordinarily be called directly.
+ *
+ * @param message The inbox message.
+ * @param situation The argument's situation.
+ */
+- (void)displayInboxMessage:(UAInboxMessage *)message situation:(UASituation)situation;
+
+/**
+ * Called when the action attempts to display the inbox.
+ * This method should not ordinarily be called directly.
+ *
+ * @param situation The argument's situation.
+ */
+- (void)displayInboxWithSituation:(UASituation)situation;
+
 @end
+
+NS_ASSUME_NONNULL_END
