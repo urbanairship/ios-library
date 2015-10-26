@@ -74,11 +74,15 @@ UAirship.runAction = function(actionName, argument, callback) {
     function onready(err, data) {
         delete window[callbackKey];
 
-        if(err) {
-            return callback(err);
+        if (!callback) {
+            return;
         }
 
-        callback(null, data);
+        if(err) {
+            callback(err);
+        } else {
+            callback(null, data);
+        }
     }
 
     UAirship.invoke(url);
