@@ -66,7 +66,8 @@ typedef NS_ENUM(NSInteger, InboxStyle) {
  Builds a new instance of the message list controller, configuring buttons and closeBlock implemenations.
  */
 - (UAInboxMessageListController *)buildMessageListController {
-    UAInboxMessageListController *mlc = [[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil];
+    UAInboxMessageListController *mlc = [[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController"
+                                                                                       bundle:[NSBundle bundleForClass:[UAInboxMessageListController class]]];
     mlc.title = @"Inbox";
 
     mlc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone

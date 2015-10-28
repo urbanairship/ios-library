@@ -24,6 +24,7 @@
  */
 
 #import "NSString+UALocalization.h"
+#import "UACommon.h"
 
 @implementation NSString (UALocalization)
 
@@ -31,15 +32,17 @@
                                table:(NSString *)table
                       fallbackLocale:(NSString *)fallbackLocale {
 
+    NSBundle *bundle = [NSBundle bundleForClass:[UACommon class]];
+
     // This empty string has a space in it, so as not to be treated as equivalent to nil
     // by the NSBundle method
     NSString *missing = @" ";
 
-    NSString *string = [[NSBundle mainBundle] localizedStringForKey:key value:missing table:table];
+    NSString *string = [bundle localizedStringForKey:key value:missing table:table];
 
     // If a localized string can't be found for the desired language, fall back to "en"
     if ([string isEqualToString:missing]) {
-        NSString *fallbackPath = [[NSBundle mainBundle] pathForResource:fallbackLocale ofType:@"lproj"];
+        NSString *fallbackPath = [bundle pathForResource:fallbackLocale ofType:@"lproj"];
         string = [[NSBundle bundleWithPath:fallbackPath] localizedStringForKey:key value:key table:table];
     }
 

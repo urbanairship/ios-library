@@ -379,27 +379,31 @@ static NSUInteger locationRowCount = 1;
 }
 
 - (void)tableView:(UITableView *)view didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+
     UITableView *strongTableView = self.tableView;
 
     if (indexPath.section == SectionDeviceToken) {
         if (indexPath.row == DeviceTokenSectionAliasCell) {
             if (!self.aliasViewController) {
                 self.aliasViewController = [[UAPushSettingsAliasViewController alloc]
-                                            initWithNibName:@"UAPushSettingsAliasView" bundle:nil];
+                                            initWithNibName:@"UAPushSettingsAliasView"
+                                            bundle:[NSBundle bundleForClass:[UAPushSettingsAliasViewController class]]];
             }
             [self.navigationController pushViewController:self.aliasViewController animated:YES];
 
         } else if (indexPath.row == DeviceTokenSectionNamedUserCell) {
             if (!self.namedUserViewController) {
                 self.namedUserViewController = [[UAPushSettingsNamedUserViewController alloc]
-                                       initWithNibName:@"UAPushSettingsNamedUserView" bundle:nil];
+                                       initWithNibName:@"UAPushSettingsNamedUserView"
+                                                bundle:[NSBundle bundleForClass:[UAPushSettingsNamedUserViewController class]]];
             }
             [self.navigationController pushViewController:self.namedUserViewController animated:YES];
             
         } else if (indexPath.row == DeviceTokenSectionTagsCell) {
             if (!self.tagsViewController) {
                 self.tagsViewController = [[UAPushSettingsTagsViewController alloc]
-                                      initWithNibName:@"UAPushSettingsTagsViewController" bundle:nil];
+                                      initWithNibName:@"UAPushSettingsTagsViewController"
+                                           bundle:[NSBundle bundleForClass:[UAPushSettingsTagsViewController class]]];
             }
             [self.navigationController pushViewController:self.tagsViewController animated:YES];
             
@@ -409,7 +413,8 @@ static NSUInteger locationRowCount = 1;
     } else if (indexPath.section == SectionHelp) {
         if (indexPath.row == HelpSectionSounds) {
             UAPushSettingsSoundsViewController *soundsViewController = [[UAPushSettingsSoundsViewController alloc] 
-                                                                         initWithNibName:@"UAPushSettingsSoundsViewController" bundle:nil];
+                                                                         initWithNibName:@"UAPushSettingsSoundsViewController"
+                                                                        bundle:[NSBundle bundleForClass:[UAPushSettingsSoundsViewController class]]];
             [self.navigationController pushViewController:soundsViewController animated:YES];
         } else {
             [strongTableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -419,7 +424,7 @@ static NSUInteger locationRowCount = 1;
     } else if (indexPath.section == SectionLocation) {
         UALocationSettingsViewController* locationViewController = [[UALocationSettingsViewController alloc] 
                                                                      initWithNibName:@"UALocationSettingsViewController" 
-                                                                     bundle:nil];
+                                                                     bundle:[NSBundle bundleForClass:[UALocationSettingsViewController class]]];
         [self.navigationController pushViewController:locationViewController animated:YES];
         [strongTableView deselectRowAtIndexPath:indexPath animated:YES];
     }

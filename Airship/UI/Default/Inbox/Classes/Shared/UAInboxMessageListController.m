@@ -309,7 +309,8 @@
     }
     //otherwise, push over a new message view
     else {
-        mvc = [[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil];
+        mvc = [[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController"
+                                                             bundle:[NSBundle bundleForClass:[UAInboxMessageViewController class]]];
         mvc.closeBlock = ^(BOOL animated){
             // Call the close block if present
             if (self.closeBlock) {
@@ -471,7 +472,9 @@
     // Reuse cell - all the cells are (UAInboxMessageListCell *)
     UAInboxMessageListCell *cell = (UAInboxMessageListCell *)[tableView dequeueReusableCellWithIdentifier:self.cellReusableId];
     if (!cell) {
-        cell = [[[NSBundle mainBundle] loadNibNamed:self.cellNibName owner:nil options:nil] firstObject];
+        cell = [[[NSBundle bundleForClass:[UAInboxMessageListCell class]] loadNibNamed:self.cellNibName
+                                                                                 owner:nil
+                                                                               options:nil] firstObject];
     }
 
     UAInboxMessage *message = [self.messages objectAtIndex:(NSUInteger)indexPath.row];
