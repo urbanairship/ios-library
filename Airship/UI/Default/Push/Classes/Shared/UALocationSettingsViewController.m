@@ -114,7 +114,7 @@ UA_SUPPRESS_UI_DEPRECATION_WARNINGS
 
 - (IBAction)mapLocationPressed:(id)sender{
     UAMapPresentationController *mapController = [[UAMapPresentationController alloc] initWithNibName:@"UAMapPresentationViewController"
-                                                                                               bundle:[NSBundle mainBundle]];
+                                                                                               bundle:[NSBundle bundleForClass:[UAMapPresentationController class]]];
     mapController.locations = self.reportedLocations;
     [self.navigationController pushViewController:mapController animated:YES];
 }

@@ -37,8 +37,9 @@
 @implementation SampleViewController
 
 - (UAPushSettingsViewController *)buildAPNSSettingsViewController {
+
     UAPushSettingsViewController *vc = [[UAPushSettingsViewController alloc] initWithNibName:@"UAPushSettingsView"
-                                                                                      bundle:nil];
+                                                                                      bundle:[NSBundle bundleForClass:[UAPushSettingsViewController class]]];
 
     vc.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                            target:self
@@ -48,8 +49,9 @@
 }
 
 - (UAPushMoreSettingsViewController *)buildTokenSettingsViewController {
+
     UAPushMoreSettingsViewController *vc = [[UAPushMoreSettingsViewController alloc] initWithNibName:@"UAPushMoreSettingsView"
-                                                                                              bundle:nil];
+                                                                                              bundle:[NSBundle bundleForClass:[UAPushMoreSettingsViewController class]]];
     vc.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
                                               initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                               target:self

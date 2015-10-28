@@ -33,10 +33,11 @@
 		1FCBB650176237BA00F42F07 /* SampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB64F176237BA00F42F07 /* SampleAppDelegate.m */; };
 		1FCCBC191A0EB6DE00B256F0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1FCCBC181A0EB6DE00B256F0 /* Images.xcassets */; };
 		493FB10519C100BF006424E2 /* NSString+UASizeWithFontCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 493FB10419C100BF006424E2 /* NSString+UASizeWithFontCompatibility.m */; };
+		49813D101BDFFDCB00D8C3FA /* UACommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 49813D0F1BDFFDCB00D8C3FA /* UACommon.m */; settings = {ASSET_TAGS = (); }; };
 		49C0CB0819BA3CCC00771F4F /* NSString+UALocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C0CB0719BA3CCC00771F4F /* NSString+UALocalization.m */; };
 		49C0CB5219BA5E3300771F4F /* UAInteractiveNotifications.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49C0CB4419BA5E3300771F4F /* UAInteractiveNotifications.strings */; };
 		49C0CB9919BA648300771F4F /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49C0CB9719BA648300771F4F /* UAPushUI.strings */; };
-		7615E88D1B5D9FD5006891F8 /* libUAirship-6.1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-6.1.2.a */; };
+		7615E88D1B5D9FD5006891F8 /* libUAirship-6.3.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-6.3.0.a */; };
 		7622C9E21A8A738900399992 /* UAPushSettingsNamedUserView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 767D0D4E1A72F827008CEC8A /* UAPushSettingsNamedUserView.xib */; };
 		7622C9E31A8A73B100399992 /* UAPushSettingsNamedUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 767D0D401A72CF4C008CEC8A /* UAPushSettingsNamedUserViewController.m */; };
 		76811EEE17EBA63700874D1F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -195,6 +196,7 @@
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		493FB10319C100BF006424E2 /* NSString+UASizeWithFontCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UASizeWithFontCompatibility.h"; sourceTree = "<group>"; };
 		493FB10419C100BF006424E2 /* NSString+UASizeWithFontCompatibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UASizeWithFontCompatibility.m"; sourceTree = "<group>"; };
+		49813D0F1BDFFDCB00D8C3FA /* UACommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACommon.m; sourceTree = "<group>"; };
 		4997FA1E1B55C580002D4E05 /* UACommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACommon.h; sourceTree = "<group>"; };
 		49C0CB0619BA3CCC00771F4F /* NSString+UALocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UALocalization.h"; sourceTree = "<group>"; };
 		49C0CB0719BA3CCC00771F4F /* NSString+UALocalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UALocalization.m"; sourceTree = "<group>"; };
@@ -260,7 +262,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7615E88D1B5D9FD5006891F8 /* libUAirship-6.1.2.a in Frameworks */,
+				7615E88D1B5D9FD5006891F8 /* libUAirship-6.3.0.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -452,7 +454,7 @@
 		18C02963124F21B800D49CD5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BBC923F515AC8F6000EE7C2A /* libUAirship-6.1.2.a */,
+				BBC923F515AC8F6000EE7C2A /* libUAirship-6.3.0.a */,
 				7B909D40142935C900D0AB36 /* AirshipLogicTests.xctest */,
 			);
 			name = Products;
@@ -544,11 +546,12 @@
 			isa = PBXGroup;
 			children = (
 				49C0CB4319BA5E3300771F4F /* Resources */,
-				4997FA1E1B55C580002D4E05 /* UACommon.h */,
 				493FB10319C100BF006424E2 /* NSString+UASizeWithFontCompatibility.h */,
 				493FB10419C100BF006424E2 /* NSString+UASizeWithFontCompatibility.m */,
 				49C0CB0619BA3CCC00771F4F /* NSString+UALocalization.h */,
 				49C0CB0719BA3CCC00771F4F /* NSString+UALocalization.m */,
+				4997FA1E1B55C580002D4E05 /* UACommon.h */,
+				49813D0F1BDFFDCB00D8C3FA /* UACommon.m */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -776,10 +779,10 @@
 			remoteRef = 7B909D3F142935C900D0AB36 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BBC923F515AC8F6000EE7C2A /* libUAirship-6.1.2.a */ = {
+		BBC923F515AC8F6000EE7C2A /* libUAirship-6.3.0.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-6.1.2.a";
+			path = "libUAirship-6.3.0.a";
 			remoteRef = BBC923F415AC8F6000EE7C2A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -877,6 +880,7 @@
 				1890BABF1251B5E900E6EBF1 /* UAPushSettingsAliasViewController.m in Sources */,
 				1890BAC11251B5E900E6EBF1 /* UAPushSettingsViewController.m in Sources */,
 				1F7FD3F912F79AFF00317B96 /* UAPushSettingsTagsViewController.m in Sources */,
+				49813D101BDFFDCB00D8C3FA /* UACommon.m in Sources */,
 				1F7FD45512F8956900317B96 /* UAPushSettingsAddTagViewController.m in Sources */,
 				1F7FD5EF12F8DE2200317B96 /* UAPushSettingsSoundsViewController.m in Sources */,
 				1F6DA58712F9F61E00496A5C /* UAPushNotificationHandler.m in Sources */,

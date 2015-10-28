@@ -47,6 +47,8 @@
 		4939782819B7E01B0063C58F /* InboxSampleModalUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4939779A19B7C1E70063C58F /* InboxSampleModalUserInterface.m */; };
 		4939782919B7E01B0063C58F /* InboxSampleNavigationUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4939779C19B7C1E70063C58F /* InboxSampleNavigationUserInterface.m */; };
 		4939782A19B7E01B0063C58F /* InboxSamplePopoverUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4939779E19B7C1E70063C58F /* InboxSamplePopoverUserInterface.m */; };
+		49A2CFA61BE044CA006637B6 /* UACommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 49A2CFA51BE044CA006637B6 /* UACommon.m */; settings = {ASSET_TAGS = (); }; };
+		49BBE3D71BE1506A00B9B296 /* UACommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 49A2CFA51BE044CA006637B6 /* UACommon.m */; };
 		49C0CB8919BA634F00771F4F /* NSString+UALocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C0CB7D19BA634F00771F4F /* NSString+UALocalization.m */; };
 		49C0CB8A19BA634F00771F4F /* NSString+UALocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C0CB7D19BA634F00771F4F /* NSString+UALocalization.m */; };
 		49C0CB8B19BA634F00771F4F /* UAInteractiveNotifications.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49C0CB7F19BA634F00771F4F /* UAInteractiveNotifications.strings */; };
@@ -143,6 +145,7 @@
 		4939779D19B7C1E70063C58F /* InboxSamplePopoverUserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSamplePopoverUserInterface.h; sourceTree = "<group>"; };
 		4939779E19B7C1E70063C58F /* InboxSamplePopoverUserInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxSamplePopoverUserInterface.m; sourceTree = "<group>"; };
 		4939779F19B7C1E70063C58F /* InboxSampleUserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSampleUserInterface.h; sourceTree = "<group>"; };
+		49A2CFA51BE044CA006637B6 /* UACommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACommon.m; sourceTree = "<group>"; };
 		49C0CB7C19BA634F00771F4F /* NSString+UALocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UALocalization.h"; sourceTree = "<group>"; };
 		49C0CB7D19BA634F00771F4F /* NSString+UALocalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UALocalization.m"; sourceTree = "<group>"; };
 		49C0CB8019BA634F00771F4F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/UAInteractiveNotifications.strings; sourceTree = "<group>"; };
@@ -317,6 +320,7 @@
 			isa = PBXGroup;
 			children = (
 				49FF764A1B56CBB700F12FCA /* UACommon.h */,
+				49A2CFA51BE044CA006637B6 /* UACommon.m */,
 				CC9EA97519CA34B20003D393 /* NSString+UASizeWithFontCompatibility.h */,
 				CC9EA97619CA34B20003D393 /* NSString+UASizeWithFontCompatibility.m */,
 				49C0CB7C19BA634F00771F4F /* NSString+UALocalization.h */,
@@ -618,6 +622,7 @@
 				49C0CB8919BA634F00771F4F /* NSString+UALocalization.m in Sources */,
 				E9CB368012B89BCA002E39EA /* InboxSampleAppDelegate.m in Sources */,
 				493977A119B7C1E70063C58F /* InboxSampleNavigationUserInterface.m in Sources */,
+				49A2CFA61BE044CA006637B6 /* UACommon.m in Sources */,
 				493977A219B7C1E70063C58F /* InboxSamplePopoverUserInterface.m in Sources */,
 				CCAF06BD1B0B9BD7007392A7 /* InboxDelegate.m in Sources */,
 				CC9EA97719CA34B20003D393 /* NSString+UASizeWithFontCompatibility.m in Sources */,
@@ -636,6 +641,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49BBE3D71BE1506A00B9B296 /* UACommon.m in Sources */,
 				4939782819B7E01B0063C58F /* InboxSampleModalUserInterface.m in Sources */,
 				49C0CB8A19BA634F00771F4F /* NSString+UALocalization.m in Sources */,
 				4939782919B7E01B0063C58F /* InboxSampleNavigationUserInterface.m in Sources */,
