@@ -3,6 +3,12 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+6.4.0 - October 29, 2015
+========================
+- Added a flag to disable sending the device token with channel registration.
+- Added support for screen tracking.
+- Updated sample UI to search for bundle resources by class.
+
 6.3.0 - October 1, 2015
 =======================
 - Added support for custom defined properties in custom events.
