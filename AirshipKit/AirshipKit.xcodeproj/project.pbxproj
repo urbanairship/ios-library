@@ -7,13 +7,37 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		490FE2131BA8E5DE008FB649 /* AirshipCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 490FE2111BA8E5DE008FB649 /* AirshipCore.h */; settings = {ASSET_TAGS = (); }; };
-		490FE2141BA8E5DE008FB649 /* AirshipCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 490FE2121BA8E5DE008FB649 /* AirshipCore.m */; settings = {ASSET_TAGS = (); }; };
+		490FE2131BA8E5DE008FB649 /* AirshipCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 490FE2111BA8E5DE008FB649 /* AirshipCore.h */; };
+		490FE2141BA8E5DE008FB649 /* AirshipCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 490FE2121BA8E5DE008FB649 /* AirshipCore.m */; };
 		494DD95D1B0EB677009C134E /* AirshipKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 494DD95C1B0EB677009C134E /* AirshipKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		494DDC261B0FD6A1009C134E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DDC251B0FD6A1009C134E /* libsqlite3.dylib */; };
 		494DDC281B0FD6A6009C134E /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DDC271B0FD6A6009C134E /* libz.dylib */; };
-		49D5281D1B17DFE7006E35FB /* libUAirship-6.4.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 49D5281C1B17DFE7006E35FB /* libUAirship-6.4.0.a */; };
+		D28B13831BE3C55900555685 /* libUAirship-6.4.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D28B137E1BE3C54A00555685 /* libUAirship-6.4.0.a */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D28B137D1BE3C54A00555685 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D28B13781BE3C54A00555685 /* AirshipLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BB88612C159A7E9600584445;
+			remoteInfo = AirshipLib;
+		};
+		D28B137F1BE3C54A00555685 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D28B13781BE3C54A00555685 /* AirshipLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7BB679061429288D00B877DB;
+			remoteInfo = AirshipLogicTests;
+		};
+		D28B13811BE3C55600555685 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D28B13781BE3C54A00555685 /* AirshipLib.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = BB8860A7159A7E9600584445;
+			remoteInfo = AirshipLib;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		490FE2111BA8E5DE008FB649 /* AirshipCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipCore.h; sourceTree = "<group>"; };
@@ -23,7 +47,7 @@
 		494DD95C1B0EB677009C134E /* AirshipKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipKit.h; sourceTree = "<group>"; };
 		494DDC251B0FD6A1009C134E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		494DDC271B0FD6A6009C134E /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		49D5281C1B17DFE7006E35FB /* libUAirship-6.4.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-6.4.0.a"; path = "../Airship/libUAirship-6.4.0.a"; sourceTree = "<group>"; };
+		D28B13781BE3C54A00555685 /* AirshipLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipLib.xcodeproj; path = ../AirshipLib/AirshipLib.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,9 +55,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D28B13831BE3C55900555685 /* libUAirship-6.4.0.a in Frameworks */,
 				494DDC281B0FD6A6009C134E /* libz.dylib in Frameworks */,
 				494DDC261B0FD6A1009C134E /* libsqlite3.dylib in Frameworks */,
-				49D5281D1B17DFE7006E35FB /* libUAirship-6.4.0.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -43,11 +67,11 @@
 		494DD94D1B0EB677009C134E = {
 			isa = PBXGroup;
 			children = (
-				49D5281C1B17DFE7006E35FB /* libUAirship-6.4.0.a */,
 				494DDC271B0FD6A6009C134E /* libz.dylib */,
 				494DDC251B0FD6A1009C134E /* libsqlite3.dylib */,
 				494DD9591B0EB677009C134E /* AirshipKit */,
 				494DD9581B0EB677009C134E /* Products */,
+				D28B13781BE3C54A00555685 /* AirshipLib.xcodeproj */,
 			);
 			sourceTree = "<group>";
 		};
@@ -78,6 +102,15 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		D28B13791BE3C54A00555685 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D28B137E1BE3C54A00555685 /* libUAirship-6.4.0.a */,
+				D28B13801BE3C54A00555685 /* AirshipLogicTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -106,6 +139,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				D28B13821BE3C55600555685 /* PBXTargetDependency */,
 			);
 			name = AirshipKit;
 			productName = AirshipKit;
@@ -136,12 +170,35 @@
 			mainGroup = 494DD94D1B0EB677009C134E;
 			productRefGroup = 494DD9581B0EB677009C134E /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = D28B13791BE3C54A00555685 /* Products */;
+					ProjectRef = D28B13781BE3C54A00555685 /* AirshipLib.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				494DD9561B0EB677009C134E /* AirshipKit */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		D28B137E1BE3C54A00555685 /* libUAirship-6.4.0.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libUAirship-6.4.0.a";
+			remoteRef = D28B137D1BE3C54A00555685 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D28B13801BE3C54A00555685 /* AirshipLogicTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipLogicTests.xctest;
+			remoteRef = D28B137F1BE3C54A00555685 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		494DD9551B0EB677009C134E /* Resources */ = {
@@ -179,6 +236,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D28B13821BE3C55600555685 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipLib;
+			targetProxy = D28B13811BE3C55600555685 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		494DD96B1B0EB677009C134E /* Debug */ = {
