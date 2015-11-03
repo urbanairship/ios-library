@@ -32,57 +32,6 @@
 
 @implementation UATagUtils
 
-+ (NSArray *)createTags:(UATagType) tagFlags {
-    
-    NSMutableArray *tags = [[NSMutableArray alloc] init];
-    
-    // Full time zone - geopolitical descriptor
-    if (tagFlags & UATagTypeTimeZone) {
-        [tags addObject:[[NSTimeZone localTimeZone] name]];
-    }
-    
-    // Abbreviated time zone - WARNING: this will contain daylight
-    // savings time info
-    if (tagFlags & UATagTypeTimeZoneAbbreviation) {
-        [tags addObject:[[NSTimeZone localTimeZone] abbreviation]];
-    }
-    
-    if (tagFlags & UATagTypeCountry) {
-        // Get user's country code based on currentLocale
-        NSLocale *locale = [NSLocale autoupdatingCurrentLocale];
-        NSString *countryCode = [locale objectForKey: NSLocaleCountryCode];
-        
-        //Prefix the tag with "country_" to avoid collisions w/ language
-        [tags addObject:[NSString stringWithFormat:@"country_%@", countryCode]];
-    }
-    
-    if (tagFlags & UATagTypeLanguage) {
-        // Get user's language code based on currentLocale
-        NSLocale *locale = [NSLocale autoupdatingCurrentLocale];
-        NSString *languageCode = [locale objectForKey: NSLocaleLanguageCode];
-        
-        //Prefix the tag with "language_" to avoid collisions w/ country
-        [tags addObject:[NSString stringWithFormat:@"language_%@",languageCode]];
-    }
-    
-    if (tagFlags & UATagTypeDeviceType) {
-        NSString *deviceModel = [UAUtils deviceModelName];
-        
-        if ([deviceModel hasPrefix:@"iPad"]) {
-            [tags addObject:@"iPad"];
-        } else if ([deviceModel hasPrefix:@"iPod"]) {
-            [tags addObject:@"iPod"];
-        } else {
-            [tags addObject:@"iPhone"];
-        }
-
-    }
-    
-    UALOG(@"Created Tags: %@", [tags description]);
-    
-    return tags;
-}
-
 + (NSArray *)normalizeTags:(NSArray *)tags {
     NSMutableArray *normalizedTags = [NSMutableArray array];
 

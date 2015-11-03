@@ -30,7 +30,6 @@
 #import "UAInboxMessage.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxUtils.h"
-#import "UAInboxPushHandler+Internal.h"
 #import "UALandingPageOverlayController.h"
 
 #define kUADisplayInboxActionMessageIDPlaceHolder @"auto"
@@ -55,46 +54,12 @@
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
-    // TODO: Remove in 7.0.0
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    UAInboxPushHandler *handler = [UAirship inbox].pushHandler;
-    id<UAInboxPushHandlerDelegate> deprecatedInboxDelegate = handler.delegate;
-#pragma clang diagnostic pop
-
-    // TODO: Remove in 7.0.0
     NSString *messageID = [UAInboxUtils inboxMessageIDFromValue:arguments.value];
-    if (messageID && ![[messageID lowercaseString] isEqualToString:kUADisplayInboxActionMessageIDPlaceHolder] && ![UAirship inbox].delegate) {
-        switch (arguments.situation) {
-            case UASituationForegroundPush:
-                handler.viewingMessageID = messageID;
-                [deprecatedInboxDelegate richPushNotificationArrived:[arguments.metadata objectForKey:UAActionMetadataPushPayloadKey]];
-                break;
-            case UASituationLaunchedFromPush:
-                handler.viewingMessageID = messageID;
-                handler.hasLaunchMessage = YES;
-                [deprecatedInboxDelegate applicationLaunchedWithRichPushNotification:[arguments.metadata objectForKey:UAActionMetadataPushPayloadKey]];
-                break;
-            default:
-                break;
-        }
-    }
-
     [self fetchMessage:messageID arguments:arguments completionHandler:^(UAInboxMessage *message, UAActionFetchResult fetchResult) {
         if (message) {
             [self displayInboxMessage:message situation:arguments.situation];
         } else {
             [self displayInboxWithSituation:arguments.situation];
-        }
-
-        // TODO: Remove in 7.0.0
-        if (handler.hasLaunchMessage) {
-            handler.hasLaunchMessage = NO;
-        }
-
-        // TODO: Remove in 7.0.0
-        if (handler.viewingMessageID) {
-            handler.viewingMessageID = nil;
         }
 
         completionHandler([UAActionResult resultWithValue:nil withFetchResult:fetchResult]);
@@ -109,26 +74,15 @@
 - (void)displayInboxMessage:(UAInboxMessage *)message situation:(UASituation)situation {
     id<UAInboxDelegate> inboxDelegate = [UAirship inbox].delegate;
 
-    // TODO: Remove calling the deprecatedInboxDelegate in 7.0.0
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    id<UAInboxPushHandlerDelegate> deprecatedInboxDelegate = [UAirship inbox].pushHandler.delegate;
-#pragma clang diagnostic pop
-
     switch (situation) {
         case UASituationForegroundPush:
             if ([inboxDelegate respondsToSelector:@selector(richPushMessageAvailable:)]) {
                 [inboxDelegate richPushMessageAvailable:message];
-            } else if (!inboxDelegate && [deprecatedInboxDelegate respondsToSelector:@selector(richPushMessageAvailable:)]) {
-                [deprecatedInboxDelegate richPushMessageAvailable:message];
             }
             break;
         case UASituationLaunchedFromPush:
             if ([inboxDelegate respondsToSelector:@selector(showInboxMessage:)]) {
                 [inboxDelegate showInboxMessage:message];
-            } else if (!inboxDelegate && [deprecatedInboxDelegate respondsToSelector:@selector(launchRichPushMessageAvailable:)]) {
-                [deprecatedInboxDelegate launchRichPushMessageAvailable:message];
             } else {
                 [UALandingPageOverlayController showMessage:message];
             }
@@ -138,8 +92,6 @@
         case UASituationForegroundInteractiveButton:
             if ([inboxDelegate respondsToSelector:@selector(showInboxMessage:)]) {
                 [inboxDelegate showInboxMessage:message];
-            } else if (!inboxDelegate && [deprecatedInboxDelegate respondsToSelector:@selector(showInboxMessage:)]) {
-                [deprecatedInboxDelegate showInboxMessage:message];
             } else {
                 [UALandingPageOverlayController showMessage:message];
             }
@@ -162,18 +114,8 @@
     }
 
     id<UAInboxDelegate> inboxDelegate = [UAirship inbox].delegate;
-
-    // TODO: Remove calling the deprecatedInboxDelegate in 7.0.0
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    id<UAInboxPushHandlerDelegate> deprecatedInboxDelegate = [UAirship inbox].pushHandler.delegate;
-#pragma clang diagnostic pop
-
     if ([inboxDelegate respondsToSelector:@selector(showInbox)]) {
         [inboxDelegate showInbox];
-    } else if (!inboxDelegate && [deprecatedInboxDelegate respondsToSelector:@selector(showInbox)]) {
-        [deprecatedInboxDelegate showInbox];
     }
 }
 

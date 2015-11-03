@@ -44,12 +44,7 @@ enum TagSections {
     self.title = @"New Tag";
     
     self.tagField.text = @"";
-    
-    if (!self.presetTags) {
-        self.presetTags = [UATagUtils createTags:
-                           UATagTypeCountry|UATagTypeDeviceType|UATagTypeLanguage|UATagTypeTimeZone|UATagTypeTimeZoneAbbreviation];
-    }
-    
+
     //Create an add button in the nav bar
     if (self.cancelButton == nil) {
         self.cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)];

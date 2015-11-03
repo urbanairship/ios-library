@@ -99,27 +99,12 @@
     //override
 }
 
-- (void)performWithArguments:(UAActionArguments *)args
-                  actionName:(NSString *)name
-           completionHandler:(UAActionCompletionHandler)completionHandler {
-
-
+- (void)performWithArguments:(UAActionArguments *)args completionHandler:(UAActionCompletionHandler)completionHandler {
     if (self.actionBlock) {
         self.actionBlock(args, completionHandler);
     } else {
         completionHandler([UAActionResult emptyResult]);
     }
-}
-
-- (void)performWithArguments:(UAActionArguments *)args completionHandler:(UAActionCompletionHandler)completionHandler {
-    NSString *actionName = args.metadata[UAActionMetadataRegisteredName];
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    // Replace with calling the action block after performWithArguments:actionName:completionHandler: is removed
-    [self performWithArguments:args actionName:actionName completionHandler:completionHandler];
-#pragma clang diagnostic pop
-
 }
 
 - (void)didPerformWithArguments:(UAActionArguments *)arguments

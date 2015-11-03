@@ -61,8 +61,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAActionRegistry : NSObject
 
-+ (null_unspecified instancetype)shared __attribute__((deprecated("As of version 6.0.0. Use [UAirship shared].actionRegistry instead.")));
-
 /**
  * A set of the current registered entries
  */

@@ -435,7 +435,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     // Make sure push is set to NO
     XCTAssertFalse(self.push.userPushNotificationsEnabled, @"userPushNotificationsEnabled should default to NO");
 
-    [[self.mockedApplication expect] registerForRemoteNotificationTypes:self.push.notificationTypes];
+    [[self.mockedApplication expect] registerForRemoteNotificationTypes:self.push.userNotificationTypes];
 
     self.push.userPushNotificationsEnabled = YES;
 
@@ -723,7 +723,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     [UIUserNotificationSettings hideClass];
     self.push.userPushNotificationsEnabled = YES;
-    self.push.notificationTypes = UIRemoteNotificationTypeSound;
+    self.push.userNotificationTypes = UIUserNotificationTypeSound;
     self.push.shouldUpdateAPNSRegistration = YES;
 
     [[self.mockedApplication expect] registerForRemoteNotificationTypes:UIRemoteNotificationTypeSound];
@@ -735,13 +735,13 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     XCTAssertFalse(self.push.shouldUpdateAPNSRegistration, @"Updating APNS registration should set shouldUpdateAPNSRegistration to NO");
 }
 
-/**
+/**s
  * Test update apns registration when user notifications are disabled on < iOS8.
  */
 - (void)testUpdateAPNSRegistrationUserNotificationsDisabled {
     [UIUserNotificationSettings hideClass];
     self.push.userPushNotificationsEnabled = NO;
-    self.push.notificationTypes = UIRemoteNotificationTypeSound;
+    self.push.userNotificationTypes = UIUserNotificationTypeNone;
     self.push.shouldUpdateAPNSRegistration = YES;
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
@@ -970,7 +970,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 - (void)testHandleDeviceTokenRegistration {
     [UIUserNotificationSettings hideClass];
 
-    self.push.notificationTypes = UIRemoteNotificationTypeSound;
+    self.push.userNotificationTypes = UIUserNotificationTypeSound;
     self.push.userPushNotificationsEnabled = YES;
     self.push.deviceToken = nil;
 
@@ -1004,7 +1004,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  * update registration if we already have a channel
  */
 - (void)testHandleDeviceTokenRegistrationBackground {
-    self.push.notificationTypes = UIRemoteNotificationTypeSound;
+    self.push.userNotificationTypes = UIUserNotificationTypeSound;
     self.push.userPushNotificationsEnabled = YES;
     self.push.deviceToken = nil;
     self.push.channelID = @"channel";
@@ -1040,7 +1040,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 - (void)testHandleDeviceTokenRegistrationBackgroundChannelCreation {
     [UIUserNotificationSettings hideClass];
 
-    self.push.notificationTypes = UIRemoteNotificationTypeSound;
+    self.push.userNotificationTypes = UIUserNotificationTypeSound;
     self.push.userPushNotificationsEnabled = YES;
     self.push.deviceToken = nil;
     self.push.channelID = nil;
@@ -2599,27 +2599,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [mockPush verify];
     [mockPush stopMocking];
 }
-
-/**
- * Test set user notification types.
- */
-- (void)testSetUserNotificationTypes {
-    self.push.userNotificationTypes = UIUserNotificationTypeBadge;
-
-    XCTAssertTrue(self.push.shouldUpdateAPNSRegistration, "Any APNS changes should update the flag.");
-    XCTAssertEqual((NSUInteger)self.push.userNotificationTypes, (NSUInteger)self.push.notificationTypes, @"Setting one type should set the the other type.");
-}
-
-/**
- * Test set remote notification types.
- */
-- (void)testSetRemoteNotificationTypes {
-    self.push.notificationTypes = UIRemoteNotificationTypeAlert;
-
-    XCTAssertTrue(self.push.shouldUpdateAPNSRegistration, "Any APNS changes should update the flag.");
-    XCTAssertEqual((NSUInteger)self.push.userNotificationTypes, (NSUInteger)self.push.notificationTypes, @"Setting one type should set the the other type.");
-}
-
 
 /**
  * Test when allowUnregisteringUserNotificationTypes is NO it prevents UAPush from

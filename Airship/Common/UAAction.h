@@ -86,21 +86,6 @@ typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler com
 - (void)didPerformWithArguments:(UAActionArguments *)arguments
                      withResult:(UAActionResult *)result;
 
-/**
- * Performs the action.
- *
- * Subclasses of UAAction should override this method to define custom behavior.
- *
- * @note You should not ordinarily call this method directly. Instead, use the `UAActionRunner`.
- * @param arguments A UAActionArguments value representing the arguments passed to the action.
- * @param name A NSString representing the name of the action.
- * @param completionHandler A UAActionCompletionHandler that will be called when the action has finished executing.
- */
-- (void)performWithArguments:(UAActionArguments *)arguments
-                  actionName:(NSString *)name
-           completionHandler:(UAActionCompletionHandler)completionHandler
-__attribute__((deprecated("As of version 6.0.0. Use performWithArguments:completionHandler: instead. The name of the action is now accessible through the arguments metadata.")));
-
 
 /**
  * Performs the action.

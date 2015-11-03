@@ -28,7 +28,6 @@
 #import "UAGlobal.h"
 
 @class UAInboxMessageList;
-@class UAInboxPushHandler;
 @class UAInboxAPIClient;
 @class UAInboxMessage;
 
@@ -73,17 +72,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAInbox : NSObject
 
-+ (null_unspecified instancetype)shared __attribute__((deprecated("As of version 6.0.0. Use [UAirship inbox] instead.")));
-
 /**
  * The list of Rich Push Inbox messages.
  */
 @property (nonatomic, strong) UAInboxMessageList *messageList;
-
-/**
- * Handles incoming rich push messages.
- */
-@property (nonatomic, strong, nullable) UAInboxPushHandler *pushHandler __attribute__((deprecated("As of version 6.1.0.")));
 
 /**
  * The Inbox API Client

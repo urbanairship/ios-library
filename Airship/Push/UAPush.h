@@ -196,10 +196,6 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma clang diagnostic push
 @interface UAPush : NSObject <UAChannelRegistrarDelegate>
 
-
-+ (null_unspecified instancetype)shared __attribute__((deprecated("As of version 6.0.0. Use [UAirship push] instead.")));
-
-
 ///---------------------------------------------------------------------------------------
 /// @name Push Notifications
 ///---------------------------------------------------------------------------------------
@@ -287,17 +283,6 @@ NS_ASSUME_NONNULL_BEGIN
  * The channel ID for this device.
  */
 @property (nonatomic, copy, readonly, nullable) NSString *channelID;
-
-/**
- * Notification types this app will request from APNS. Changes to this value
- * will not take effect the next time the app registers with
- * updateRegistration.
- *
- * Defaults to alert, sound and badge.
- *
- * @deprecated As of version 5.0. Replaced with userNotificationTypes.
- */
-@property (nonatomic, assign) UIRemoteNotificationType notificationTypes __attribute__((deprecated("As of version 5.0")));
 
 /**
  * User Notification types this app will request from APNS. Changes to this value
@@ -398,18 +383,6 @@ NS_ASSUME_NONNULL_BEGIN
 #else
 @property (nonatomic, copy) NSArray *tags;
 #endif
-
-/**
- * Allows setting tags from the device. Tags can be set from either the server or the device, but
- * not both (without synchronizing the data), so use this flag to explicitly enable or disable
- * the device-side flags.
- * 
- * Set this to `NO` to prevent the device from sending any tag information to the server when using
- * server-side tagging. Defaults to `YES`.
- *
- * @deprecated As of version 6.1.0. Replaced with channelTagRegistrationEnabled.
- */
-@property (nonatomic, assign) BOOL deviceTagsEnabled __attribute__((deprecated("As of version 6.1.0.")));
 
 /**
  * Allows setting tags from the device. Tags can be set from either the server or the device, but

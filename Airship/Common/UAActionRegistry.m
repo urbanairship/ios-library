@@ -44,10 +44,6 @@
 @implementation UAActionRegistry
 @dynamic registeredEntries;
 
-+ (instancetype)shared {
-    return [UAirship shared].actionRegistry;
-}
-
 - (instancetype)init {
     self = [super init];
     if (self) {

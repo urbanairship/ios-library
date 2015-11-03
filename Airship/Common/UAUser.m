@@ -40,10 +40,6 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
 @implementation UAUser
 
-+ (UAUser *)defaultUser {
-    return [UAirship inboxUser];
-}
-
 + (void)setDefaultUsername:(NSString *)defaultUsername withPassword:(NSString *)defaultPassword {
 
     NSString *storedUsername = [UAKeychainUtils getUsername:[UAirship shared].config.appKey];
