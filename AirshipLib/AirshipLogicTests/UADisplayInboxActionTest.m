@@ -30,7 +30,6 @@
 #import "UADisplayInboxAction.h"
 #import "UAActionArguments+Internal.h"
 #import "UAInbox+Internal.h"
-#import "UAInboxPushHandler.h"
 #import "UAInboxMessageList.h"
 #import "UAirship.h"
 #import "UAInboxMessage.h"
@@ -42,7 +41,6 @@
 @property (nonatomic, strong) NSDictionary *notification;
 
 @property (nonatomic, strong) id mockMessage;
-@property (nonatomic, strong) id mockPushHandlerDelegate;
 @property (nonatomic, strong) id mockInboxDelegate;
 
 @property (nonatomic, strong) id mockAirship;
@@ -57,7 +55,6 @@
     [super setUp];
 
     self.action = [[UADisplayInboxAction alloc] init];
-    self.mockPushHandlerDelegate = [OCMockObject niceMockForProtocol:@protocol(UAInboxPushHandlerDelegate)];
     self.mockInboxDelegate = [OCMockObject niceMockForProtocol:@protocol(UAInboxDelegate)];
 
     self.notification = @{@"_uamid": @"UAMID"};
@@ -69,7 +66,6 @@
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
 
     UAInbox *inbox = [[UAInbox alloc] init];
-    inbox.pushHandler = [[UAInboxPushHandler alloc] init];
     inbox.messageList = self.mockMessageList;
     [[[self.mockAirship stub] andReturn:inbox] inbox];
 
@@ -79,7 +75,6 @@
 - (void)tearDown {
     [self.mockAirship stopMocking];
     [self.mockMessageList stopMocking];
-    [self.mockPushHandlerDelegate stopMocking];
     [self.mockInboxDelegate stopMocking];
     [self.mockLandingPageOverlayController stopMocking];
 
@@ -322,209 +317,5 @@
         return YES;
     }]];
 }
-
-
-#pragma mark -
-#pragma mark Deprecated UAInboxPushHandlerDelegate tests
-
-/**
- * Test perform calls richPushNotificationArrived: on the deprecated inbox delegate
- * in situation UASituationForegroundPush when a message ID is available.
- */
-- (void)testPerfromSendsRichPushNotificationArrivedDeprecated {
-    [UAirship inbox].pushHandler.delegate = self.mockPushHandlerDelegate;
-
-    // Set up the action arguments for UASituationForegroundPush
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
-                                                      withSituation:UASituationForegroundPush
-                                                           metadata:@{UAActionMetadataPushPayloadKey: self.notification}];
-
-    // Return the message for the message ID
-    [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
-
-    // Should notify the delegate of the notification
-    [[self.mockPushHandlerDelegate expect] richPushNotificationArrived:self.notification];
-
-    // Perform the action
-    [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
-
-    // Verify the delegate was called
-    [self.mockPushHandlerDelegate verify];
-}
-
-/**
- * Test perform calls launchRichPushMessageAvailable: on the deprecated inbox delegate
- * in situation UASituationForegroundPush when the message is available.
- */
-- (void)testPerformRichPushMessageAvailableDeprecated {
-    [UAirship inbox].pushHandler.delegate = self.mockPushHandlerDelegate;
-
-    // Set up the action arguments for UASituationForegroundPush for MCRAP
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
-                                                      withSituation:UASituationForegroundPush
-                                                           metadata:@{UAActionMetadataPushPayloadKey: self.notification}];
-
-    // Return the message for the message ID
-    [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
-
-    // Should notify the delegate of the notification
-    [[self.mockPushHandlerDelegate expect] richPushMessageAvailable:self.mockMessage];
-
-    // Perform the action
-    [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
-
-    // Verify delegate calls
-    [self.mockPushHandlerDelegate verify];
-}
-
-/**
- * Test perform calls applicationLaunchedWithRichPushNotification: on the deprecated inbox delegate
- * in situation UASituationLaunchedFromPush when a message ID is available.
- */
-- (void)testPerfromSendsLaunchRichPushNotificationArrivedDeprecated {
-    [UAirship inbox].pushHandler.delegate = self.mockPushHandlerDelegate;
-
-    // Set up the action arguments for UASituationLaunchedFromPush
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
-                                                      withSituation:UASituationLaunchedFromPush
-                                                           metadata:@{UAActionMetadataPushPayloadKey: self.notification}];
-
-    // Return the message for the message ID
-    [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
-
-    // Should notify the delegate of the notification
-    [[self.mockPushHandlerDelegate expect] applicationLaunchedWithRichPushNotification:self.notification];
-
-    // Perform the action
-    [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
-
-    // Verify delegate calls
-    [self.mockPushHandlerDelegate verify];
-}
-
-
-/**
- * Test perform calls launchRichPushMessageAvailable: on the deprecated inbox delegate
- * in situation UASituationLaunchedFromPush when the message is available.
- */
-- (void)testPerformLaunchRichPushMessageAvailableDeprecated {
-    [UAirship inbox].pushHandler.delegate = self.mockPushHandlerDelegate;
-
-    // Set up the action arguments for UASituationLaunchedFromPush
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
-                                                      withSituation:UASituationLaunchedFromPush
-                                                           metadata:@{UAActionMetadataPushPayloadKey: self.notification}];
-
-    // Return the message for the message ID
-    [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
-
-    // Should notify the delegate of the message
-    [[self.mockPushHandlerDelegate expect] launchRichPushMessageAvailable:self.mockMessage];
-
-    // Perform the action
-    [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
-
-    // Verify delegate calls
-    [self.mockPushHandlerDelegate verify];
-}
-
-/**
- * Test perform calls showInboxMessage: on the deprecated inbox delegate
- * when the message is already available in the message list.
- */
-- (void)testPerformShowInboxMessageMessageAvailableDeprecated {
-    [UAirship inbox].pushHandler.delegate = self.mockPushHandlerDelegate;
-
-    // Set up the action arguments
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
-                                                      withSituation:UASituationManualInvocation];
-
-    // Return the message for the message ID
-    [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
-
-    // Should notify the delegate of the message
-    [[self.mockPushHandlerDelegate expect] showInboxMessage:self.mockMessage];
-
-    // Perform the action
-    [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
-
-    // Verify delegate calls
-    [self.mockPushHandlerDelegate verify];
-}
-
-/**
- * Test perform calls showInboxMessage: on the deprecated inbox delegate
- * after the message list is refreshed.
- */
-- (void)testPerformShowInboxMessageAfterMessageListRefreshDeprecated {
-    [UAirship inbox].pushHandler.delegate = self.mockPushHandlerDelegate;
-
-    // Set up the action arguments
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
-                                                      withSituation:UASituationForegroundInteractiveButton];
-
-    // Should notify the delegate of the notification
-    [[self.mockPushHandlerDelegate expect] showInboxMessage:self.mockMessage];
-
-    // Need to stub a message list result so the action is able to finish
-    [self stubMessageListRefreshWithSuccessBlock:^{
-        [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
-    }];
-
-    // Perform the action
-    [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNewData];
-
-    // Verify delegate calls
-    [self.mockPushHandlerDelegate verify];
-}
-
-/**
- * Test perform calls showInbox on the deprecated inbox delegate if the message
- * is unavailable in the message list and the message list is able to be refreshed.
- */
-- (void)testPerformShowInboxAfterMessageListRefreshDeprecated {
-    [UAirship inbox].pushHandler.delegate = self.mockPushHandlerDelegate;
-
-    // Set up the action arguments
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
-                                                      withSituation:UASituationForegroundInteractiveButton];
-
-    // Should notify the delegate of the notification
-    [[self.mockPushHandlerDelegate expect] showInbox];
-
-    // Need to stub a message list result so the action is able to finish
-    [self stubMessageListRefreshWithSuccessBlock:nil];
-
-    // Perform the action
-    [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNewData];
-
-    // Verify delegate calls
-    [self.mockPushHandlerDelegate verify];
-}
-
-/**
- * Test perform calls showInbox on the deprecated inbox delegate if the message
- * is unavailable in the message list and the message list fails to refresh.
- */
-- (void)testPerformShowInboxMessageListFailedToRefreshDeprecated {
-    [UAirship inbox].pushHandler.delegate = self.mockPushHandlerDelegate;
-
-    // Set up the action arguments
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
-                                                      withSituation:UASituationWebViewInvocation];
-
-    // Stub the message list to fail on refresh
-    [self stubMessageListRefreshWithFailureBlock:nil];
-
-    // Should notify the delegate of the message
-    [[self.mockPushHandlerDelegate expect] showInbox];
-
-    // Perform the action
-    [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultFailed];
-
-    // Verify delegate calls
-    [self.mockPushHandlerDelegate verify];
-}
-
 
 @end

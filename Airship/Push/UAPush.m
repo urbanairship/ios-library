@@ -85,10 +85,6 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
 // Both getter and setter are custom here, so give the compiler a hand with the synthesizing
 @synthesize requireSettingsAppToDisableUserNotifications = _requireSettingsAppToDisableUserNotifications;
 
-+ (instancetype)shared {
-    return [UAirship push];
-}
-
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -356,14 +352,6 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
     }
 }
 
-- (BOOL)deviceTagsEnabled {
-    return self.channelTagRegistrationEnabled;
-}
-
-- (void)setDeviceTagsEnabled:(BOOL)deviceTagsEnabled {
-    self.channelTagRegistrationEnabled = deviceTagsEnabled;
-}
-
 - (BOOL)shouldUseUIUserNotificationCategories {
     return [UIUserNotificationCategory class] != nil;
 }
@@ -460,29 +448,12 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
     return [NSTimeZone localTimeZone];
 }
 
-- (void)setNotificationTypes:(UIRemoteNotificationType)notificationTypes {
-    if ([UAPush deviceSupportsUserNotifications]) {
-        UA_LWARN(@"Remote notification types are deprecated, use userNotificationTypes instead.");
-
-        if (notificationTypes == UIRemoteNotificationTypeNone) {
-            UA_LWARN(@"Registering for UIRemoteNotificationTypeNone may disable the ability to register for other types without restarting the device first.");
-        }
-
-        UIUserNotificationType all = UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound;
-        _userNotificationTypes = all & notificationTypes;
-    }
-    _notificationTypes = notificationTypes;
-
-    self.shouldUpdateAPNSRegistration = YES;
-}
-
 - (void)setUserNotificationTypes:(UIUserNotificationType)userNotificationTypes {
     if (userNotificationTypes == UIUserNotificationTypeNone && [UAPush deviceSupportsUserNotifications]) {
         UA_LWARN(@"Registering for UIUserNotificationTypeNone may disable the ability to register for other types without restarting the device first.");
     }
 
     _userNotificationTypes = userNotificationTypes;
-    _notificationTypes = (UIRemoteNotificationType) userNotificationTypes;
 
     self.shouldUpdateAPNSRegistration = YES;
 }
@@ -1071,8 +1042,8 @@ BOOL deferChannelCreationOnForeground = false;
 
     } else {
         if (self.userPushNotificationsEnabled) {
-            UA_LDEBUG(@"Registering for remote notification types %ld.", (long)_notificationTypes);
-            [[UIApplication sharedApplication] registerForRemoteNotificationTypes:_notificationTypes];
+            UA_LDEBUG(@"Registering for remote notification types %ld.", (long)_userNotificationTypes);
+            [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationType)_userNotificationTypes];
         } else {
             UA_LDEBUG(@"Unregistering for remote notifications.");
             [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeNone];

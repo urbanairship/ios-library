@@ -36,12 +36,6 @@ extern NSString * const UAUserCreatedNotification;
 @interface UAUser : NSObject
 
 /**
- * Returns the singleton user instance.
- * @return The singleton user instance.
- */
-+ (UAUser *)defaultUser __attribute__((deprecated("As of version 6.0.0. Use [UAirship inboxUser] instead.")));
-
-/**
  * Indicates whether the default user has been created.
  * @return `YES` if the user has been created, `NO` otherwise.
  */
@@ -61,13 +55,6 @@ extern NSString * const UAUserCreatedNotification;
  * The user url.
  */
 @property (nonatomic, readonly, copy, nullable) NSString *url;
-
-/**
- * Background task identifier used to perform user updates in the background.
- *
- * @deprecated As of version 6.1.4. This property is no longer used.
- */
-@property (nonatomic, assign, readonly) UIBackgroundTaskIdentifier userUpdateBackgroundTask __attribute__((deprecated("As of version 6.1.4")));
 
 @end
 

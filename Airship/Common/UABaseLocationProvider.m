@@ -60,8 +60,7 @@
         // in iOS 9 and above, background location updates must be explicitly requested at runtime, but this can only
         // be done safely if the related background mode is set in the Info.plist.
         if ([[UIDevice currentDevice].systemVersion floatValue] >= 9.0 && self.isBackgroundLocationAvailable) {
-            // TODO: set the property directly when building with Xcode 7 and above
-            [self.locationManager setValue:@(YES) forKey:@"allowsBackgroundLocationUpdates"];
+            self.locationManager.allowsBackgroundLocationUpdates = YES;
         }
 
         self.provider = UALocationServiceProviderUnknown;

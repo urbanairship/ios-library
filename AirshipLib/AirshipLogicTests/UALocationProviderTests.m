@@ -418,7 +418,7 @@
     [[[self.mockMainBundle stub] andReturn:@[@"location"]] objectForInfoDictionaryKey:@"UIBackgroundModes"];
 
     // Expect the locationManager's allowsBackgroundLocationUpdates is set to YES
-    [[self.mockLocationManager expect] setValue:@(YES) forKey:@"allowsBackgroundLocationUpdates"];
+    [[self.mockLocationManager expect] setAllowsBackgroundLocationUpdates:YES];
 
     // Create the provider
     UABaseLocationProvider *baseProvider = [[UABaseLocationProvider alloc] initWithLocationManager:self.mockLocationManager];

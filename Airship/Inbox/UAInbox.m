@@ -26,24 +26,13 @@
 #import "UAInbox+Internal.h"
 #import "UAirship.h"
 #import "UAInboxMessageList.h"
-#import "UAInboxPushHandler.h"
 #import "UAInboxMessage.h"
 #import "UAUser.h"
 #import "UAInboxMessageList+Internal.h"
 
 @implementation UAInbox
 
-+ (instancetype)shared {
-    return [UAirship inbox];
-}
-
 - (void)dealloc {
-    // TODO: Remove in 7.0.0
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    self.pushHandler = nil;
-#pragma clang diagnostic pop
-
     [self.client cancelAllRequests];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -54,12 +43,6 @@
         self.user = user;
         self.client = [UAInboxAPIClient clientWithUser:user config:config dataStore:dataStore];
         self.messageList = [UAInboxMessageList messageListWithUser:self.user client:self.client config:config];
-
-        // TODO: Remove in 7.0.0
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        self.pushHandler = [[UAInboxPushHandler alloc] init];
-#pragma clang diagnostic pop
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(enterForeground)

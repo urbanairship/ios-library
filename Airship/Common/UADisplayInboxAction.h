@@ -32,10 +32,9 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Requests the inbox be displayed.
  *
- * The action will call the UAInboxDelegate or the UAInboxPushHandlerDelegate
- * if the UAInboxDelegate is not available. If the specified message is available
- * showInboxMessage: will be called for every accepted situation except UASituationForegroundPush
- * where richPushMessageAvailable: will be called instead.
+ * The action will call the UAInboxDelegate showInboxMessage: if the specified message
+ * for every accepted situation except UASituationForegroundPush where
+ * richPushMessageAvailable: will be called instead.
  *
  * If the message is unavailable because the message is not in the message list or
  * the message ID was not supplied then showInbox will be called for every situation

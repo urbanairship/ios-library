@@ -132,7 +132,7 @@ const NSUInteger UACustomEventMaxPropertiesCount = 20;
     }
 
     if (self.properties.count > UACustomEventMaxPropertiesCount) {
-        UA_LERR(@"Event contains more than %lu properties.", UACustomEventMaxPropertiesCount);
+        UA_LERR(@"Event contains more than %lu properties.", (unsigned long)UACustomEventMaxPropertiesCount);
         isValid = NO;
     }
 
@@ -141,7 +141,7 @@ const NSUInteger UACustomEventMaxPropertiesCount = 20;
         if ([value isKindOfClass:[NSArray class]]) {
             NSArray *array = (NSArray *)value;
             if (array.count > UACustomEventMaxPropertiesCount) {
-                UA_LERR(@"Array property %@ exceeds more than %lu entries.", key, UACustomEventMaxPropertiesCount);
+                UA_LERR(@"Array property %@ exceeds more than %lu entries.", key, (unsigned long)UACustomEventMaxPropertiesCount);
                 isValid = NO;
             }
 

@@ -36,8 +36,6 @@ NSString * const UAActionMetadataUserNotificationActionIDKey = @"com.urbanairshi
 
 NSString * const UAActionMetadataResponseInfoKey = @"com.urbanairship.response_info";
 
-UASituation const UASituationForegoundInteractiveButton = UASituationForegroundInteractiveButton;
-
 @implementation UAActionArguments
 
 - (instancetype)initWithValue:(id)value
