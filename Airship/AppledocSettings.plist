@@ -13,13 +13,10 @@
 		<string>AirshipKit.framework</string>
 		<string>UAAppDelegate.h</string>
 		<string>UAAppDelegateProxy.h</string>
-		<string>UAChannelAPIClient.h</string>
 		<string>UADeviceAPIClient.h</string>
 		<string>UANamedUserAPIClient.h</string>
-		<string>UAUserAPIClient.h</string>
 		<string>UAChannelRegistrar.h</string>
 		<string>UAUserData.h</string>
-		<string>UAChannelRegistrationPayload.h</string>
 		<string>UADeviceRegistrationPayload.h</string>
 		<string>UAInboxDBManager.h</string>
 		<string>UAIncomingPushAction.h</string>
@@ -45,7 +42,6 @@
 		<string>UAInAppResolutionEvent.h</string>
 		<string>UAKeychainUtils.h</string>
 		<string>UAPreferenceDataStore.h</string>
-		<string>UATagGroupsAPIClient.h</string>
 		<string>UAColorUtils.h</string>
 		<string>UAURLProtocol.h</string>
 		<string>NSJSONSerialization+UAAdditions.h</string>

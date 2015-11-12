@@ -34,7 +34,7 @@
 #import "UAUtils.h"
 #import "UAActionRegistry+Internal.h"
 #import "UAActionRunner+Internal.h"
-#import "UAChannelRegistrationPayload.h"
+#import "UAChannelRegistrationPayload+Internal.h"
 #import "UAUser.h"
 #import "UAInteractiveNotificationEvent.h"
 #import "UAUserNotificationCategories+Internal.h"
@@ -42,7 +42,7 @@
 #import "UAConfig.h"
 #import "UAUserNotificationCategory+Internal.h"
 #import "UAInboxUtils.h"
-#import "UATagGroupsAPIClient.h"
+#import "UATagGroupsAPIClient+Internal.h"
 #import "UATagUtils.h"
 
 #define kUANotificationActionKey @"com.urbanairship.interactive_actions"

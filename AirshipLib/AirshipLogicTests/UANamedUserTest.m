@@ -30,10 +30,10 @@
 #import "UAPreferenceDataStore.h"
 #import "UANamedUser.h"
 #import "UANamedUser+Internal.h"
-#import "UANamedUserAPIClient.h"
+#import "UANamedUserAPIClient+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAConfig.h"
-#import "UATagGroupsAPIClient.h"
+#import "UATagGroupsAPIClient+Internal.h"
 
 @interface UANamedUserTest : XCTestCase
 

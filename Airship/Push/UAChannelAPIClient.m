@@ -23,9 +23,9 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAChannelAPIClient.h"
+#import "UAChannelAPIClient+Internal.h"
 #import "UAHTTPRequestEngine.h"
-#import "UAChannelRegistrationPayload.h"
+#import "UAChannelRegistrationPayload+Internal.h"
 #import "UAHTTPConnectionOperation.h"
 #import "UAConfig.h"
 #import "UAUtils.h"

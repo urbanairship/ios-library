@@ -26,9 +26,9 @@
 #import "UANamedUser+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAPreferenceDataStore.h"
-#import "UANamedUserAPIClient.h"
+#import "UANamedUserAPIClient+Internal.h"
 #import "UAPush+Internal.h"
-#import "UATagGroupsAPIClient.h"
+#import "UATagGroupsAPIClient+Internal.h"
 #import "UATagUtils.h"
 
 #define kUAMaxNamedUserIDLength 128

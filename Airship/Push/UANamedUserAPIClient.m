@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UANamedUserAPIClient.h"
+#import "UANamedUserAPIClient+Internal.h"
 #import "UAConfig.h"
 #import "UAUtils.h"
 #import "UAHTTPRequestEngine.h"

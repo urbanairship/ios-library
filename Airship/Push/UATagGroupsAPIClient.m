@@ -24,7 +24,7 @@
  */
 
 
-#import "UATagGroupsAPIClient.h"
+#import "UATagGroupsAPIClient+Internal.h"
 #import "UAConfig.h"
 #import "UAUtils.h"
 #import "UAHTTPRequestEngine.h"

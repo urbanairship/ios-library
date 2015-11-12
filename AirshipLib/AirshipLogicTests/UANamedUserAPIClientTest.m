@@ -26,7 +26,7 @@
 #import <XCTest/XCTest.h>
 #import <OCMOCK/OCMock.h>
 #import "UAConfig.h"
-#import "UANamedUserAPIClient.h"
+#import "UANamedUserAPIClient+Internal.h"
 #import "UAirship.h"
 #import "UAHTTPRequestEngine.h"
 #import "UAHTTPRequest+Internal.h"
