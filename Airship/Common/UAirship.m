@@ -45,7 +45,7 @@
 #import "UAEventAppInit.h"
 #import "UAEventAppExit.h"
 #import "UAPreferenceDataStore.h"
-#import "UAInboxAPIClient.h"
+#import "UAInboxAPIClient+Internal.h"
 #import "UAInAppMessaging+Internal.h"
 #import "UAChannelCapture.h"
 #import "UAActionJSDelegate.h"

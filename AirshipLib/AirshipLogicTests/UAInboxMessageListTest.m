@@ -27,7 +27,7 @@
 #import <OCMock/OCMock.h>
 #import "UAInbox.h"
 #import "UAInboxMessageList+Internal.h"
-#import "UAInboxAPIClient.h"
+#import "UAInboxAPIClient+Internal.h"
 #import "UAActionArguments+Internal.h"
 #import "UAirship.h"
 #import "UAConfig.h"

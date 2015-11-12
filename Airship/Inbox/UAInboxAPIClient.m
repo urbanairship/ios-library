@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAInboxAPIClient.h"
+#import "UAInboxAPIClient+Internal.h"
 #import "UAInboxMessage.h"
 #import "UAHTTPRequestEngine.h"
 #import "UAConfig.h"

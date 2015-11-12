@@ -29,7 +29,7 @@
 #import "UAConfig.h"
 #import "UADisposable.h"
 #import "UAInbox.h"
-#import "UAInboxAPIClient.h"
+#import "UAInboxAPIClient+Internal.h"
 #import "UAInboxMessage+Internal.h"
 #import "UAInboxDBManager+Internal.h"
 #import "UAUtils.h"

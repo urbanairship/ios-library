@@ -15,16 +15,13 @@
 		<string>UAAppDelegateProxy.h</string>
 		<string>UAChannelAPIClient.h</string>
 		<string>UADeviceAPIClient.h</string>
-		<string>UAInboxAPIClient.h</string>
 		<string>UANamedUserAPIClient.h</string>
 		<string>UAUserAPIClient.h</string>
 		<string>UAChannelRegistrar.h</string>
 		<string>UAUserData.h</string>
 		<string>UAChannelRegistrationPayload.h</string>
 		<string>UADeviceRegistrationPayload.h</string>
-		<string>UADeviceRegistrationPayload.h</string>
 		<string>UAInboxDBManager.h</string>
-		<string>UAInboxMessageData.h</string>
 		<string>UAIncomingPushAction.h</string>
 		<string>UAIncomingRichPushAction.h</string>
 		<string>UACloseWindowAction.h</string>

@@ -30,7 +30,7 @@
 #import "UAInbox.h"
 #import "UAInboxDBManager+Internal.h"
 #import "UAInboxMessageList+Internal.h"
-#import "UAInboxAPIClient.h"
+#import "UAInboxAPIClient+Internal.h"
 #import "UAConfig.h"
 
 @interface UAInboxMessageTest : XCTestCase
