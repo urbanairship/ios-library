@@ -7,11 +7,32 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		613420381BD6C3D800236A18 /* urban-airship-pacific.png in Resources */ = {isa = PBXBuildFile; fileRef = 613420371BD6C3D800236A18 /* urban-airship-pacific.png */; settings = {ASSET_TAGS = (); }; };
+		61449C941BE13A6E00240C63 /* urban-airship-logo-pacific.png in Resources */ = {isa = PBXBuildFile; fileRef = 61449C931BE13A6E00240C63 /* urban-airship-logo-pacific.png */; settings = {ASSET_TAGS = (); }; };
+		614953E71BF106EE001E03AF /* AddNamedUserTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 614953E61BF106EE001E03AF /* AddNamedUserTableViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		614A39431BDFD611009CA7FB /* AddTagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 614A39421BDFD611009CA7FB /* AddTagsTableViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		614DA6031BE941DF0083B0AA /* LocationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 614DA6021BE941DF0083B0AA /* LocationTableViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		619A0D411BE81D7B00D9E863 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D401BE81D7B00D9E863 /* Images.xcassets */; settings = {ASSET_TAGS = (); }; };
+		619A0D421BE81EDC00D9E863 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D331BE7F29700D9E863 /* Roboto-Black.ttf */; };
+		619A0D431BE81EDC00D9E863 /* Roboto-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D341BE7F29700D9E863 /* Roboto-BlackItalic.ttf */; };
+		619A0D441BE81EDC00D9E863 /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D351BE7F29700D9E863 /* Roboto-Bold.ttf */; };
+		619A0D451BE81EDC00D9E863 /* Roboto-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D361BE7F29700D9E863 /* Roboto-BoldItalic.ttf */; };
+		619A0D461BE81EDC00D9E863 /* Roboto-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D371BE7F29700D9E863 /* Roboto-Italic.ttf */; };
+		619A0D471BE81EDC00D9E863 /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D381BE7F29700D9E863 /* Roboto-Light.ttf */; };
+		619A0D481BE81EDC00D9E863 /* Roboto-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D391BE7F29700D9E863 /* Roboto-LightItalic.ttf */; };
+		619A0D491BE81EDC00D9E863 /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D3A1BE7F29700D9E863 /* Roboto-Medium.ttf */; };
+		619A0D4A1BE81EDC00D9E863 /* Roboto-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D3B1BE7F29700D9E863 /* Roboto-MediumItalic.ttf */; };
+		619A0D4B1BE81EDC00D9E863 /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D3C1BE7F29700D9E863 /* Roboto-Regular.ttf */; };
+		619A0D4C1BE81EDC00D9E863 /* Roboto-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D3D1BE7F29700D9E863 /* Roboto-Thin.ttf */; };
+		619A0D4D1BE81EDC00D9E863 /* Roboto-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D3E1BE7F29700D9E863 /* Roboto-ThinItalic.ttf */; };
+		619A0D501BE8266100D9E863 /* AddAliasTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619A0D4F1BE8266100D9E863 /* AddAliasTableViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		61AD10D51BE7D88B0004C886 /* TagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61AD10D41BE7D88B0004C886 /* TagsTableViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		61CC1C0C1BEC296B00CA311B /* UACommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 61CC1C0B1BEC296B00CA311B /* UACommon.m */; settings = {ASSET_TAGS = (); }; };
+		61CC1C181BEC373600CA311B /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 61CC1C161BEC373600CA311B /* UAPushUI.strings */; settings = {ASSET_TAGS = (); }; };
 		CCDA35A71B8D233A00950AD5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA35A61B8D233A00950AD5 /* AppDelegate.swift */; };
 		CCDA35A91B8D233A00950AD5 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA35A81B8D233A00950AD5 /* HomeViewController.swift */; };
 		CCDA35AB1B8D233A00950AD5 /* PushSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA35AA1B8D233A00950AD5 /* PushSettingsViewController.swift */; };
 		CCDA35AE1B8D233A00950AD5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCDA35AC1B8D233A00950AD5 /* Main.storyboard */; };
-		CCDA35B01B8D233A00950AD5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CCDA35AF1B8D233A00950AD5 /* Assets.xcassets */; };
 		CCDA35B31B8D233A00950AD5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCDA35B11B8D233A00950AD5 /* LaunchScreen.storyboard */; };
 		CCDA35C41B8D237300950AD5 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = CCDA35C31B8D237300950AD5 /* AirshipConfig.plist */; settings = {ASSET_TAGS = (); }; };
 		CCDA35CB1B8D269700950AD5 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCDA35CA1B8D265B00950AD5 /* AirshipKit.framework */; };
@@ -31,27 +52,6 @@
 		CCDA36381B8FB05000950AD5 /* UAInboxMessageListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCDA36011B8FB04F00950AD5 /* UAInboxMessageListCell.xib */; settings = {ASSET_TAGS = (); }; };
 		CCDA36391B8FB05000950AD5 /* UAInboxMessageListController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCDA36021B8FB04F00950AD5 /* UAInboxMessageListController.xib */; settings = {ASSET_TAGS = (); }; };
 		CCDA363A1B8FB05000950AD5 /* UAInboxMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCDA36031B8FB04F00950AD5 /* UAInboxMessageViewController.xib */; settings = {ASSET_TAGS = (); }; };
-		CCDA363B1B8FB05000950AD5 /* UALocationDemoAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDA36081B8FB04F00950AD5 /* UALocationDemoAnnotation.m */; settings = {ASSET_TAGS = (); }; };
-		CCDA363C1B8FB05000950AD5 /* UALocationSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDA360A1B8FB04F00950AD5 /* UALocationSettingsViewController.m */; settings = {ASSET_TAGS = (); }; };
-		CCDA363D1B8FB05000950AD5 /* UAMapPresentationController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDA360C1B8FB04F00950AD5 /* UAMapPresentationController.m */; settings = {ASSET_TAGS = (); }; };
-		CCDA363E1B8FB05000950AD5 /* UAPushMoreSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDA360F1B8FB04F00950AD5 /* UAPushMoreSettingsViewController.m */; settings = {ASSET_TAGS = (); }; };
-		CCDA363F1B8FB05000950AD5 /* UAPushNotificationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDA36111B8FB04F00950AD5 /* UAPushNotificationHandler.m */; settings = {ASSET_TAGS = (); }; };
-		CCDA36401B8FB05000950AD5 /* UAPushSettingsAddTagViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDA36131B8FB04F00950AD5 /* UAPushSettingsAddTagViewController.m */; settings = {ASSET_TAGS = (); }; };
-		CCDA36411B8FB05000950AD5 /* UAPushSettingsAliasViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDA36151B8FB04F00950AD5 /* UAPushSettingsAliasViewController.m */; settings = {ASSET_TAGS = (); }; };
-		CCDA36421B8FB05000950AD5 /* UAPushSettingsNamedUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDA36171B8FB05000950AD5 /* UAPushSettingsNamedUserViewController.m */; settings = {ASSET_TAGS = (); }; };
-		CCDA36431B8FB05000950AD5 /* UAPushSettingsSoundsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDA36191B8FB05000950AD5 /* UAPushSettingsSoundsViewController.m */; settings = {ASSET_TAGS = (); }; };
-		CCDA36441B8FB05000950AD5 /* UAPushSettingsTagsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDA361B1B8FB05000950AD5 /* UAPushSettingsTagsViewController.m */; settings = {ASSET_TAGS = (); }; };
-		CCDA36451B8FB05000950AD5 /* UAPushSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDA361D1B8FB05000950AD5 /* UAPushSettingsViewController.m */; settings = {ASSET_TAGS = (); }; };
-		CCDA36461B8FB05000950AD5 /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = CCDA361F1B8FB05000950AD5 /* UAPushUI.strings */; settings = {ASSET_TAGS = (); }; };
-		CCDA36471B8FB05000950AD5 /* UALocationSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCDA36221B8FB05000950AD5 /* UALocationSettingsViewController.xib */; settings = {ASSET_TAGS = (); }; };
-		CCDA36481B8FB05000950AD5 /* UAMapPresentationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCDA36231B8FB05000950AD5 /* UAMapPresentationViewController.xib */; settings = {ASSET_TAGS = (); }; };
-		CCDA36491B8FB05000950AD5 /* UAPushMoreSettingsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCDA36241B8FB05000950AD5 /* UAPushMoreSettingsView.xib */; settings = {ASSET_TAGS = (); }; };
-		CCDA364A1B8FB05000950AD5 /* UAPushSettingsAddTagViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCDA36251B8FB05000950AD5 /* UAPushSettingsAddTagViewController.xib */; settings = {ASSET_TAGS = (); }; };
-		CCDA364B1B8FB05000950AD5 /* UAPushSettingsAliasView.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCDA36261B8FB05000950AD5 /* UAPushSettingsAliasView.xib */; settings = {ASSET_TAGS = (); }; };
-		CCDA364C1B8FB05000950AD5 /* UAPushSettingsNamedUserView.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCDA36271B8FB05000950AD5 /* UAPushSettingsNamedUserView.xib */; settings = {ASSET_TAGS = (); }; };
-		CCDA364D1B8FB05000950AD5 /* UAPushSettingsSoundsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCDA36281B8FB05000950AD5 /* UAPushSettingsSoundsViewController.xib */; settings = {ASSET_TAGS = (); }; };
-		CCDA364E1B8FB05000950AD5 /* UAPushSettingsTagsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCDA36291B8FB05000950AD5 /* UAPushSettingsTagsViewController.xib */; settings = {ASSET_TAGS = (); }; };
-		CCDA364F1B8FB05000950AD5 /* UAPushSettingsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCDA362A1B8FB05000950AD5 /* UAPushSettingsView.xib */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,12 +95,34 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		613420371BD6C3D800236A18 /* urban-airship-pacific.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "urban-airship-pacific.png"; sourceTree = "<group>"; };
+		61449C931BE13A6E00240C63 /* urban-airship-logo-pacific.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "urban-airship-logo-pacific.png"; sourceTree = "<group>"; };
+		614953E61BF106EE001E03AF /* AddNamedUserTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddNamedUserTableViewController.swift; sourceTree = "<group>"; };
+		614A39421BDFD611009CA7FB /* AddTagsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddTagsTableViewController.swift; sourceTree = "<group>"; };
+		614DA6021BE941DF0083B0AA /* LocationTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationTableViewController.swift; sourceTree = "<group>"; };
+		619A0D331BE7F29700D9E863 /* Roboto-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Black.ttf"; path = "Resources/Roboto/Roboto-Black.ttf"; sourceTree = "<group>"; };
+		619A0D341BE7F29700D9E863 /* Roboto-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-BlackItalic.ttf"; path = "Resources/Roboto/Roboto-BlackItalic.ttf"; sourceTree = "<group>"; };
+		619A0D351BE7F29700D9E863 /* Roboto-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Bold.ttf"; path = "Resources/Roboto/Roboto-Bold.ttf"; sourceTree = "<group>"; };
+		619A0D361BE7F29700D9E863 /* Roboto-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-BoldItalic.ttf"; path = "Resources/Roboto/Roboto-BoldItalic.ttf"; sourceTree = "<group>"; };
+		619A0D371BE7F29700D9E863 /* Roboto-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Italic.ttf"; path = "Resources/Roboto/Roboto-Italic.ttf"; sourceTree = "<group>"; };
+		619A0D381BE7F29700D9E863 /* Roboto-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Light.ttf"; path = "Resources/Roboto/Roboto-Light.ttf"; sourceTree = "<group>"; };
+		619A0D391BE7F29700D9E863 /* Roboto-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-LightItalic.ttf"; path = "Resources/Roboto/Roboto-LightItalic.ttf"; sourceTree = "<group>"; };
+		619A0D3A1BE7F29700D9E863 /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Medium.ttf"; path = "Resources/Roboto/Roboto-Medium.ttf"; sourceTree = "<group>"; };
+		619A0D3B1BE7F29700D9E863 /* Roboto-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-MediumItalic.ttf"; path = "Resources/Roboto/Roboto-MediumItalic.ttf"; sourceTree = "<group>"; };
+		619A0D3C1BE7F29700D9E863 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Regular.ttf"; path = "Resources/Roboto/Roboto-Regular.ttf"; sourceTree = "<group>"; };
+		619A0D3D1BE7F29700D9E863 /* Roboto-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Thin.ttf"; path = "Resources/Roboto/Roboto-Thin.ttf"; sourceTree = "<group>"; };
+		619A0D3E1BE7F29700D9E863 /* Roboto-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-ThinItalic.ttf"; path = "Resources/Roboto/Roboto-ThinItalic.ttf"; sourceTree = "<group>"; };
+		619A0D401BE81D7B00D9E863 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		619A0D4F1BE8266100D9E863 /* AddAliasTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddAliasTableViewController.swift; sourceTree = "<group>"; };
+		61AD10D41BE7D88B0004C886 /* TagsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagsTableViewController.swift; sourceTree = "<group>"; };
+		61CC1C0B1BEC296B00CA311B /* UACommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACommon.m; sourceTree = "<group>"; };
+		61CC1C0D1BEC297600CA311B /* UACommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACommon.h; sourceTree = "<group>"; };
+		61CC1C171BEC373600CA311B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Default/Push/Resources/en.lproj/UAPushUI.strings; sourceTree = "<group>"; };
 		CCDA35A31B8D233A00950AD5 /* SwiftSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCDA35A61B8D233A00950AD5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CCDA35A81B8D233A00950AD5 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		CCDA35AA1B8D233A00950AD5 /* PushSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushSettingsViewController.swift; sourceTree = "<group>"; };
 		CCDA35AD1B8D233A00950AD5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		CCDA35AF1B8D233A00950AD5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CCDA35B21B8D233A00950AD5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CCDA35B41B8D233A00950AD5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CCDA35C31B8D237300950AD5 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
@@ -137,39 +159,6 @@
 		CCDA36011B8FB04F00950AD5 /* UAInboxMessageListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInboxMessageListCell.xib; sourceTree = "<group>"; };
 		CCDA36021B8FB04F00950AD5 /* UAInboxMessageListController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInboxMessageListController.xib; sourceTree = "<group>"; };
 		CCDA36031B8FB04F00950AD5 /* UAInboxMessageViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInboxMessageViewController.xib; sourceTree = "<group>"; };
-		CCDA36071B8FB04F00950AD5 /* UALocationDemoAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationDemoAnnotation.h; sourceTree = "<group>"; };
-		CCDA36081B8FB04F00950AD5 /* UALocationDemoAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationDemoAnnotation.m; sourceTree = "<group>"; };
-		CCDA36091B8FB04F00950AD5 /* UALocationSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationSettingsViewController.h; sourceTree = "<group>"; };
-		CCDA360A1B8FB04F00950AD5 /* UALocationSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationSettingsViewController.m; sourceTree = "<group>"; };
-		CCDA360B1B8FB04F00950AD5 /* UAMapPresentationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMapPresentationController.h; sourceTree = "<group>"; };
-		CCDA360C1B8FB04F00950AD5 /* UAMapPresentationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMapPresentationController.m; sourceTree = "<group>"; };
-		CCDA360D1B8FB04F00950AD5 /* UAPushLocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushLocalization.h; sourceTree = "<group>"; };
-		CCDA360E1B8FB04F00950AD5 /* UAPushMoreSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushMoreSettingsViewController.h; sourceTree = "<group>"; };
-		CCDA360F1B8FB04F00950AD5 /* UAPushMoreSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushMoreSettingsViewController.m; sourceTree = "<group>"; };
-		CCDA36101B8FB04F00950AD5 /* UAPushNotificationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushNotificationHandler.h; sourceTree = "<group>"; };
-		CCDA36111B8FB04F00950AD5 /* UAPushNotificationHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushNotificationHandler.m; sourceTree = "<group>"; };
-		CCDA36121B8FB04F00950AD5 /* UAPushSettingsAddTagViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsAddTagViewController.h; sourceTree = "<group>"; };
-		CCDA36131B8FB04F00950AD5 /* UAPushSettingsAddTagViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsAddTagViewController.m; sourceTree = "<group>"; };
-		CCDA36141B8FB04F00950AD5 /* UAPushSettingsAliasViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsAliasViewController.h; sourceTree = "<group>"; };
-		CCDA36151B8FB04F00950AD5 /* UAPushSettingsAliasViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsAliasViewController.m; sourceTree = "<group>"; };
-		CCDA36161B8FB04F00950AD5 /* UAPushSettingsNamedUserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsNamedUserViewController.h; sourceTree = "<group>"; };
-		CCDA36171B8FB05000950AD5 /* UAPushSettingsNamedUserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsNamedUserViewController.m; sourceTree = "<group>"; };
-		CCDA36181B8FB05000950AD5 /* UAPushSettingsSoundsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsSoundsViewController.h; sourceTree = "<group>"; };
-		CCDA36191B8FB05000950AD5 /* UAPushSettingsSoundsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsSoundsViewController.m; sourceTree = "<group>"; };
-		CCDA361A1B8FB05000950AD5 /* UAPushSettingsTagsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsTagsViewController.h; sourceTree = "<group>"; };
-		CCDA361B1B8FB05000950AD5 /* UAPushSettingsTagsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsTagsViewController.m; sourceTree = "<group>"; };
-		CCDA361C1B8FB05000950AD5 /* UAPushSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsViewController.h; sourceTree = "<group>"; };
-		CCDA361D1B8FB05000950AD5 /* UAPushSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsViewController.m; sourceTree = "<group>"; };
-		CCDA36201B8FB05000950AD5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UAPushUI.strings; sourceTree = "<group>"; };
-		CCDA36221B8FB05000950AD5 /* UALocationSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UALocationSettingsViewController.xib; sourceTree = "<group>"; };
-		CCDA36231B8FB05000950AD5 /* UAMapPresentationViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAMapPresentationViewController.xib; sourceTree = "<group>"; };
-		CCDA36241B8FB05000950AD5 /* UAPushMoreSettingsView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushMoreSettingsView.xib; sourceTree = "<group>"; };
-		CCDA36251B8FB05000950AD5 /* UAPushSettingsAddTagViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsAddTagViewController.xib; sourceTree = "<group>"; };
-		CCDA36261B8FB05000950AD5 /* UAPushSettingsAliasView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsAliasView.xib; sourceTree = "<group>"; };
-		CCDA36271B8FB05000950AD5 /* UAPushSettingsNamedUserView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsNamedUserView.xib; sourceTree = "<group>"; };
-		CCDA36281B8FB05000950AD5 /* UAPushSettingsSoundsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsSoundsViewController.xib; sourceTree = "<group>"; };
-		CCDA36291B8FB05000950AD5 /* UAPushSettingsTagsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsTagsViewController.xib; sourceTree = "<group>"; };
-		CCDA362A1B8FB05000950AD5 /* UAPushSettingsView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsView.xib; sourceTree = "<group>"; };
 		CCDA362B1B8FB05000950AD5 /* UA-UI-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UA-UI-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -185,13 +174,61 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		613420361BD6C09B00236A18 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				619A0D401BE81D7B00D9E863 /* Images.xcassets */,
+				619A0D3F1BE7F2A000D9E863 /* Roboto */,
+				61449C931BE13A6E00240C63 /* urban-airship-logo-pacific.png */,
+				613420371BD6C3D800236A18 /* urban-airship-pacific.png */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		619A0D3F1BE7F2A000D9E863 /* Roboto */ = {
+			isa = PBXGroup;
+			children = (
+				619A0D331BE7F29700D9E863 /* Roboto-Black.ttf */,
+				619A0D341BE7F29700D9E863 /* Roboto-BlackItalic.ttf */,
+				619A0D351BE7F29700D9E863 /* Roboto-Bold.ttf */,
+				619A0D361BE7F29700D9E863 /* Roboto-BoldItalic.ttf */,
+				619A0D371BE7F29700D9E863 /* Roboto-Italic.ttf */,
+				619A0D381BE7F29700D9E863 /* Roboto-Light.ttf */,
+				619A0D391BE7F29700D9E863 /* Roboto-LightItalic.ttf */,
+				619A0D3A1BE7F29700D9E863 /* Roboto-Medium.ttf */,
+				619A0D3B1BE7F29700D9E863 /* Roboto-MediumItalic.ttf */,
+				619A0D3C1BE7F29700D9E863 /* Roboto-Regular.ttf */,
+				619A0D3D1BE7F29700D9E863 /* Roboto-Thin.ttf */,
+				619A0D3E1BE7F29700D9E863 /* Roboto-ThinItalic.ttf */,
+			);
+			name = Roboto;
+			sourceTree = "<group>";
+		};
+		61CC1C121BEC36A600CA311B /* PushUI */ = {
+			isa = PBXGroup;
+			children = (
+				61CC1C151BEC372800CA311B /* Resources */,
+			);
+			name = PushUI;
+			path = ../Airship/UI;
+			sourceTree = "<group>";
+		};
+		61CC1C151BEC372800CA311B /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				61CC1C161BEC373600CA311B /* UAPushUI.strings */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		CCDA359A1B8D233A00950AD5 = {
 			isa = PBXGroup;
 			children = (
+				CCDA35A51B8D233A00950AD5 /* SwiftSample */,
 				CCDA35D91B8FB04F00950AD5 /* InboxUI */,
+				61CC1C121BEC36A600CA311B /* PushUI */,
 				CCDA35C31B8D237300950AD5 /* AirshipConfig.plist */,
 				CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */,
-				CCDA35A51B8D233A00950AD5 /* SwiftSample */,
 				CCDA35A41B8D233A00950AD5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -210,8 +247,13 @@
 				CCDA35A61B8D233A00950AD5 /* AppDelegate.swift */,
 				CCDA35A81B8D233A00950AD5 /* HomeViewController.swift */,
 				CCDA35AA1B8D233A00950AD5 /* PushSettingsViewController.swift */,
+				614A39421BDFD611009CA7FB /* AddTagsTableViewController.swift */,
+				619A0D4F1BE8266100D9E863 /* AddAliasTableViewController.swift */,
+				614953E61BF106EE001E03AF /* AddNamedUserTableViewController.swift */,
+				61AD10D41BE7D88B0004C886 /* TagsTableViewController.swift */,
+				614DA6021BE941DF0083B0AA /* LocationTableViewController.swift */,
+				613420361BD6C09B00236A18 /* Resources */,
 				CCDA35AC1B8D233A00950AD5 /* Main.storyboard */,
-				CCDA35AF1B8D233A00950AD5 /* Assets.xcassets */,
 				CCDA35B11B8D233A00950AD5 /* LaunchScreen.storyboard */,
 				CCDA35B41B8D233A00950AD5 /* Info.plist */,
 			);
@@ -241,7 +283,6 @@
 			children = (
 				CCDA35DB1B8FB04F00950AD5 /* Common */,
 				CCDA35ED1B8FB04F00950AD5 /* Inbox */,
-				CCDA36041B8FB04F00950AD5 /* Push */,
 			);
 			path = Default;
 			sourceTree = "<group>";
@@ -253,6 +294,8 @@
 				CCDA35DD1B8FB04F00950AD5 /* NSString+UALocalization.m */,
 				CCDA35DE1B8FB04F00950AD5 /* NSString+UASizeWithFontCompatibility.h */,
 				CCDA35DF1B8FB04F00950AD5 /* NSString+UASizeWithFontCompatibility.m */,
+				61CC1C0D1BEC297600CA311B /* UACommon.h */,
+				61CC1C0B1BEC296B00CA311B /* UACommon.m */,
 				CCDA35E01B8FB04F00950AD5 /* Resources */,
 				CCDA35EC1B8FB04F00950AD5 /* UACommon.h */,
 			);
@@ -320,78 +363,6 @@
 				CCDA36011B8FB04F00950AD5 /* UAInboxMessageListCell.xib */,
 				CCDA36021B8FB04F00950AD5 /* UAInboxMessageListController.xib */,
 				CCDA36031B8FB04F00950AD5 /* UAInboxMessageViewController.xib */,
-			);
-			path = Shared;
-			sourceTree = "<group>";
-		};
-		CCDA36041B8FB04F00950AD5 /* Push */ = {
-			isa = PBXGroup;
-			children = (
-				CCDA36051B8FB04F00950AD5 /* Classes */,
-				CCDA361E1B8FB05000950AD5 /* Resources */,
-			);
-			path = Push;
-			sourceTree = "<group>";
-		};
-		CCDA36051B8FB04F00950AD5 /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-				CCDA36061B8FB04F00950AD5 /* Shared */,
-			);
-			path = Classes;
-			sourceTree = "<group>";
-		};
-		CCDA36061B8FB04F00950AD5 /* Shared */ = {
-			isa = PBXGroup;
-			children = (
-				CCDA36071B8FB04F00950AD5 /* UALocationDemoAnnotation.h */,
-				CCDA36081B8FB04F00950AD5 /* UALocationDemoAnnotation.m */,
-				CCDA36091B8FB04F00950AD5 /* UALocationSettingsViewController.h */,
-				CCDA360A1B8FB04F00950AD5 /* UALocationSettingsViewController.m */,
-				CCDA360B1B8FB04F00950AD5 /* UAMapPresentationController.h */,
-				CCDA360C1B8FB04F00950AD5 /* UAMapPresentationController.m */,
-				CCDA360D1B8FB04F00950AD5 /* UAPushLocalization.h */,
-				CCDA360E1B8FB04F00950AD5 /* UAPushMoreSettingsViewController.h */,
-				CCDA360F1B8FB04F00950AD5 /* UAPushMoreSettingsViewController.m */,
-				CCDA36101B8FB04F00950AD5 /* UAPushNotificationHandler.h */,
-				CCDA36111B8FB04F00950AD5 /* UAPushNotificationHandler.m */,
-				CCDA36121B8FB04F00950AD5 /* UAPushSettingsAddTagViewController.h */,
-				CCDA36131B8FB04F00950AD5 /* UAPushSettingsAddTagViewController.m */,
-				CCDA36141B8FB04F00950AD5 /* UAPushSettingsAliasViewController.h */,
-				CCDA36151B8FB04F00950AD5 /* UAPushSettingsAliasViewController.m */,
-				CCDA36161B8FB04F00950AD5 /* UAPushSettingsNamedUserViewController.h */,
-				CCDA36171B8FB05000950AD5 /* UAPushSettingsNamedUserViewController.m */,
-				CCDA36181B8FB05000950AD5 /* UAPushSettingsSoundsViewController.h */,
-				CCDA36191B8FB05000950AD5 /* UAPushSettingsSoundsViewController.m */,
-				CCDA361A1B8FB05000950AD5 /* UAPushSettingsTagsViewController.h */,
-				CCDA361B1B8FB05000950AD5 /* UAPushSettingsTagsViewController.m */,
-				CCDA361C1B8FB05000950AD5 /* UAPushSettingsViewController.h */,
-				CCDA361D1B8FB05000950AD5 /* UAPushSettingsViewController.m */,
-			);
-			path = Shared;
-			sourceTree = "<group>";
-		};
-		CCDA361E1B8FB05000950AD5 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				CCDA361F1B8FB05000950AD5 /* UAPushUI.strings */,
-				CCDA36211B8FB05000950AD5 /* Shared */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		CCDA36211B8FB05000950AD5 /* Shared */ = {
-			isa = PBXGroup;
-			children = (
-				CCDA36221B8FB05000950AD5 /* UALocationSettingsViewController.xib */,
-				CCDA36231B8FB05000950AD5 /* UAMapPresentationViewController.xib */,
-				CCDA36241B8FB05000950AD5 /* UAPushMoreSettingsView.xib */,
-				CCDA36251B8FB05000950AD5 /* UAPushSettingsAddTagViewController.xib */,
-				CCDA36261B8FB05000950AD5 /* UAPushSettingsAliasView.xib */,
-				CCDA36271B8FB05000950AD5 /* UAPushSettingsNamedUserView.xib */,
-				CCDA36281B8FB05000950AD5 /* UAPushSettingsSoundsViewController.xib */,
-				CCDA36291B8FB05000950AD5 /* UAPushSettingsTagsViewController.xib */,
-				CCDA362A1B8FB05000950AD5 /* UAPushSettingsView.xib */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -490,28 +461,33 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CCDA364A1B8FB05000950AD5 /* UAPushSettingsAddTagViewController.xib in Resources */,
-				CCDA36491B8FB05000950AD5 /* UAPushMoreSettingsView.xib in Resources */,
 				CCDA35B31B8D233A00950AD5 /* LaunchScreen.storyboard in Resources */,
-				CCDA364E1B8FB05000950AD5 /* UAPushSettingsTagsViewController.xib in Resources */,
 				CCDA36361B8FB05000950AD5 /* list-image-placeholder.png in Resources */,
-				CCDA36481B8FB05000950AD5 /* UAMapPresentationViewController.xib in Resources */,
-				CCDA35B01B8D233A00950AD5 /* Assets.xcassets in Resources */,
 				CCDA36371B8FB05000950AD5 /* list-image-placeholder@2x.png in Resources */,
-				CCDA36461B8FB05000950AD5 /* UAPushUI.strings in Resources */,
 				CCDA36391B8FB05000950AD5 /* UAInboxMessageListController.xib in Resources */,
-				CCDA364D1B8FB05000950AD5 /* UAPushSettingsSoundsViewController.xib in Resources */,
 				CCDA362E1B8FB05000950AD5 /* UAInteractiveNotifications.strings in Resources */,
 				CCDA35AE1B8D233A00950AD5 /* Main.storyboard in Resources */,
 				CCDA362F1B8FB05000950AD5 /* Settings.bundle in Resources */,
 				CCDA35C41B8D237300950AD5 /* AirshipConfig.plist in Resources */,
-				CCDA36471B8FB05000950AD5 /* UALocationSettingsViewController.xib in Resources */,
+				613420381BD6C3D800236A18 /* urban-airship-pacific.png in Resources */,
+				619A0D411BE81D7B00D9E863 /* Images.xcassets in Resources */,
 				CCDA36381B8FB05000950AD5 /* UAInboxMessageListCell.xib in Resources */,
 				CCDA363A1B8FB05000950AD5 /* UAInboxMessageViewController.xib in Resources */,
-				CCDA364C1B8FB05000950AD5 /* UAPushSettingsNamedUserView.xib in Resources */,
-				CCDA364B1B8FB05000950AD5 /* UAPushSettingsAliasView.xib in Resources */,
+				61CC1C181BEC373600CA311B /* UAPushUI.strings in Resources */,
+				61449C941BE13A6E00240C63 /* urban-airship-logo-pacific.png in Resources */,
 				CCDA36351B8FB05000950AD5 /* UAInboxUI.strings in Resources */,
-				CCDA364F1B8FB05000950AD5 /* UAPushSettingsView.xib in Resources */,
+				619A0D421BE81EDC00D9E863 /* Roboto-Black.ttf in Resources */,
+				619A0D431BE81EDC00D9E863 /* Roboto-BlackItalic.ttf in Resources */,
+				619A0D441BE81EDC00D9E863 /* Roboto-Bold.ttf in Resources */,
+				619A0D451BE81EDC00D9E863 /* Roboto-BoldItalic.ttf in Resources */,
+				619A0D461BE81EDC00D9E863 /* Roboto-Italic.ttf in Resources */,
+				619A0D471BE81EDC00D9E863 /* Roboto-Light.ttf in Resources */,
+				619A0D481BE81EDC00D9E863 /* Roboto-LightItalic.ttf in Resources */,
+				619A0D491BE81EDC00D9E863 /* Roboto-Medium.ttf in Resources */,
+				619A0D4A1BE81EDC00D9E863 /* Roboto-MediumItalic.ttf in Resources */,
+				619A0D4B1BE81EDC00D9E863 /* Roboto-Regular.ttf in Resources */,
+				619A0D4C1BE81EDC00D9E863 /* Roboto-Thin.ttf in Resources */,
+				619A0D4D1BE81EDC00D9E863 /* Roboto-ThinItalic.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -524,25 +500,20 @@
 			files = (
 				CCDA35AB1B8D233A00950AD5 /* PushSettingsViewController.swift in Sources */,
 				CCDA36301B8FB05000950AD5 /* UADateUtils.m in Sources */,
-				CCDA36441B8FB05000950AD5 /* UAPushSettingsTagsViewController.m in Sources */,
-				CCDA363E1B8FB05000950AD5 /* UAPushMoreSettingsViewController.m in Sources */,
-				CCDA363F1B8FB05000950AD5 /* UAPushNotificationHandler.m in Sources */,
 				CCDA36321B8FB05000950AD5 /* UAInboxMessageListCell.m in Sources */,
-				CCDA363D1B8FB05000950AD5 /* UAMapPresentationController.m in Sources */,
+				61AD10D51BE7D88B0004C886 /* TagsTableViewController.swift in Sources */,
+				614953E71BF106EE001E03AF /* AddNamedUserTableViewController.swift in Sources */,
+				61CC1C0C1BEC296B00CA311B /* UACommon.m in Sources */,
 				CCDA35A71B8D233A00950AD5 /* AppDelegate.swift in Sources */,
-				CCDA363C1B8FB05000950AD5 /* UALocationSettingsViewController.m in Sources */,
 				CCDA36311B8FB05000950AD5 /* UAInboxAlertHandler.m in Sources */,
+				614A39431BDFD611009CA7FB /* AddTagsTableViewController.swift in Sources */,
 				CCDA36341B8FB05000950AD5 /* UAInboxMessageViewController.m in Sources */,
-				CCDA36401B8FB05000950AD5 /* UAPushSettingsAddTagViewController.m in Sources */,
-				CCDA363B1B8FB05000950AD5 /* UALocationDemoAnnotation.m in Sources */,
-				CCDA36421B8FB05000950AD5 /* UAPushSettingsNamedUserViewController.m in Sources */,
-				CCDA36411B8FB05000950AD5 /* UAPushSettingsAliasViewController.m in Sources */,
+				614DA6031BE941DF0083B0AA /* LocationTableViewController.swift in Sources */,
 				CCDA362D1B8FB05000950AD5 /* NSString+UASizeWithFontCompatibility.m in Sources */,
 				CCDA362C1B8FB05000950AD5 /* NSString+UALocalization.m in Sources */,
 				CCDA35A91B8D233A00950AD5 /* HomeViewController.swift in Sources */,
+				619A0D501BE8266100D9E863 /* AddAliasTableViewController.swift in Sources */,
 				CCDA36331B8FB05000950AD5 /* UAInboxMessageListController.m in Sources */,
-				CCDA36451B8FB05000950AD5 /* UAPushSettingsViewController.m in Sources */,
-				CCDA36431B8FB05000950AD5 /* UAPushSettingsSoundsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -557,6 +528,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		61CC1C161BEC373600CA311B /* UAPushUI.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				61CC1C171BEC373600CA311B /* en */,
+			);
+			name = UAPushUI.strings;
+			sourceTree = "<group>";
+		};
 		CCDA35AC1B8D233A00950AD5 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -595,14 +574,6 @@
 				CCDA35FD1B8FB04F00950AD5 /* en */,
 			);
 			name = UAInboxUI.strings;
-			sourceTree = "<group>";
-		};
-		CCDA361F1B8FB05000950AD5 /* UAPushUI.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CCDA36201B8FB05000950AD5 /* en */,
-			);
-			name = UAPushUI.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

@@ -26,57 +26,39 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import UIKit
 import AirshipKit
 
-class HomeViewController: UIViewController {
+class AddNamedUserTableViewController: UITableViewController, UITextFieldDelegate {
 
-    @IBOutlet var enablePushButton: UIButton!
-    @IBOutlet var channelIDButton: UIButton!
+    @IBOutlet var addNamedUserTextField: UITextField!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        NSNotificationCenter.defaultCenter().addObserver(
-            self,
-            selector: "channelIDUpdated",
-            name: "channelIDUpdated",
-            object: nil);
-
-        channelIDButton.hidden = false
-        enablePushButton.hidden = true
-
-        channelIDButton.setTitle(NSLocalizedString("UA_Copied_To_Clipboard", tableName: "UAPushUI", comment: "Copied to clipboard string"), forState: UIControlState.Highlighted)
+        self.addNamedUserTextField.delegate = self
     }
 
     override func viewWillAppear(animated: Bool) {
-        refreshView()
-    }
-
-    func refreshView () {
-        if (UAirship.push().userPushNotificationsEnabled) {
-            channelIDButton.setTitle(UAirship.push().channelID, forState: UIControlState.Normal)
-            channelIDButton.hidden = false
-            enablePushButton.hidden = true
-            return
+        if ((UAirship.push().namedUser.identifier) != nil) {
+            addNamedUserTextField.text = UAirship.push().namedUser.identifier
         }
     }
 
-    @IBAction func buttonTapped(sender: UIButton) {
-
-        if (sender == enablePushButton) {
-            UAirship.push().userPushNotificationsEnabled = true
-        }
-
-        //The channel ID will need to wait for push registration to return the channel ID
-        if (sender == channelIDButton) {
-            if ((UAirship.push().channelID) != nil) {
-                UIPasteboard.generalPasteboard().string = UAirship.push().channelID
-            }
-        }
-
-        refreshView()
+    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        return false
     }
 
-    func channelIDUpdated () {
-        refreshView()
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+
+        if (textField.text?.characters.count > 0){
+            UAirship.push().namedUser.identifier = textField.text
+        } else {
+            UAirship.push().namedUser.identifier = nil
+        }
+
+        UAirship.push().updateRegistration()
+
+        navigationController?.popViewControllerAnimated(true)
+
+        return true
     }
 }
-

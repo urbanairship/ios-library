@@ -27,7 +27,7 @@ import UIKit
 import AirshipKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
 
     let simulatorWarningDisabledKey = "ua-simulator-warning-disabled"
 
@@ -35,7 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 
-        [self.failIfSimulator()]
+        self.failIfSimulator()
 
         // Set log level for debugging config loading (optional)
         // It will be set to the value in the loaded config upon takeOff
@@ -65,20 +65,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // notifications.
         // UAirship.push()?.userPushNotificationsEnabled = true
 
-        UAirship.push()?.userPushNotificationsEnabled = true
-
-
         return true
     }
 
     func failIfSimulator() {
         // If its not a simulator return early
         if (TARGET_OS_SIMULATOR == 0 && TARGET_IPHONE_SIMULATOR == 0) {
-            return;
+            return
         }
 
         if (NSUserDefaults.standardUserDefaults().boolForKey(self.simulatorWarningDisabledKey)) {
-            return;
+            return
         }
 
         let alertController = UIAlertController(title: "Notice", message: "You will not be able to receive push notifications in the simulator.", preferredStyle: .Alert)
@@ -90,12 +87,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil)
         alertController.addAction(cancelAction)
 
-
         // Let the UI finish launching first so it doesn't complain about the lack of a root view controller
         // Delay execution of the block for 1/2 second.
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(0.5 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
             self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
         }
     }
+    
+    func registrationSucceededForChannelID(channelID: String, deviceToken: String) {
+        NSNotificationCenter.defaultCenter().postNotificationName(
+            "channelIDUpdated",
+            object: self,
+            userInfo:nil)
+    }
+
 }
 
