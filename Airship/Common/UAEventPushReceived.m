@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEventPushReceived.h"
+#import "UAEventPushReceived+Internal.h"
 #import "UAInboxUtils.h"
 #import "UAEvent+Internal.h"
 

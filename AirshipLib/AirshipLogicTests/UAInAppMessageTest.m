@@ -29,7 +29,7 @@
 
 #import "UAInAppMessage.h"
 #import "UAirship+Internal.h"
-#import "UAPreferenceDataStore.h"
+#import "UAPreferenceDataStore+Internal.h"
 
 @interface UAInAppMessageTest : XCTestCase
 @property(nonatomic, strong) id mockAirship;

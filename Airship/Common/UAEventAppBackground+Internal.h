@@ -23,24 +23,15 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
-#import "UAUtils.h"
+#import "UAEventAppExit+Internal.h"
 
-#define kUAConnectionTypeNone @"none"
-#define kUAConnectionTypeCell @"cell"
-#define kUAConnectionTypeWifi @"wifi"
+NS_ASSUME_NONNULL_BEGIN
 
 /**
- * The UAUtils object provides an interface for utility methods.
+ * Event when app is backgrounded.
  */
-@interface UAUtils ()
-
-/**
- * Gets the current connection type.
- * Possible values are "cell", "wifi", or "none".
- * @return The current connection type as a string.
- */
-+ (NSString *)connectionType;
+@interface UAEventAppBackground : UAEventAppExit
 
 @end
+
+NS_ASSUME_NONNULL_END

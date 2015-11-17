@@ -24,7 +24,7 @@
  */
 
 #import "UADelayOperationTest.h"
-#import "UADelayOperation.h"
+#import "UADelayOperation+Internal.h"
 
 @interface UADelayOperationTest()
 @property (nonatomic, strong) NSOperationQueue *queue;

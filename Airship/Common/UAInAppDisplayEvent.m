@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAInAppDisplayEvent.h"
+#import "UAInAppDisplayEvent+Internal.h"
 #import "UAInAppMessage.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"

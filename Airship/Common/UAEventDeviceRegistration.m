@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEventDeviceRegistration.h"
+#import "UAEventDeviceRegistration+Internal.h"
 #import "UAEvent+Internal.h"
 #import "UAPush.h"
 #import "UAUser.h"

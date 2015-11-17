@@ -4,9 +4,9 @@
 #import <OCMock/OCMock.h>
 #import "UAInAppMessaging+Internal.h"
 #import "UAInAppmessage.h"
-#import "UAInAppMessageController.h"
+#import "UAInAppMessageController+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAPreferenceDataStore.h"
+#import "UAPreferenceDataStore+Internal.h"
 #import "UAPush.h"
 #import "UAAnalytics.h"
 

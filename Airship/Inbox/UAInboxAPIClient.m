@@ -25,12 +25,12 @@
 
 #import "UAInboxAPIClient+Internal.h"
 #import "UAInboxMessage.h"
-#import "UAHTTPRequestEngine.h"
+#import "UAHTTPRequestEngine+Internal.h"
 #import "UAConfig.h"
 #import "UAUser.h"
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAPreferenceDataStore.h"
+#import "UAPreferenceDataStore+Internal.h"
 #import "UAirship.h"
 #import "UAPush.h"
 

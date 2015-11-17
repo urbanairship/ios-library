@@ -22,17 +22,127 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#import <Foundation/Foundation.h>
 
-#import "UAHTTPRequest.h"
+@class UAHTTPRequest;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface UAHTTPRequest()
+typedef void (^UAHTTPConnectionSuccessBlock)(UAHTTPRequest *request);
+typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 
-@property (nonatomic, strong, nullable) NSHTTPURLResponse *response;
-@property (nonatomic, strong, nullable) NSData *responseData;
-@property (nonatomic, strong, nullable) NSError *error;
+/**
+ * Wraps NSURLRequest, to be used in conjunction with UAHTTPConnection.
+ */
+@interface UAHTTPRequest : NSObject
+
+/**
+ * The URL for the request.
+ */
 @property (nonatomic, strong) NSURL *url;
+
+/**
+ * The dictionary containing the request's header fields.
+ */
+@property (nonatomic, strong) NSDictionary *headers;
+
+/**
+ * The HTTP request method.
+ */
+@property (nonatomic, copy) NSString *HTTPMethod;
+
+/**
+ * The user name for basic authorization.
+ */
+@property (nonatomic, copy, nullable) NSString *username;
+
+/**
+ * The user password for basic authorization.
+ */
+@property (nonatomic, copy, nullable) NSString *password;
+
+@property (nonatomic, strong, nullable) NSURL *mainDocumentURL;
+/**
+ * The body of the request.
+ */
+@property (nonatomic, strong, nullable) NSMutableData *body;
+
+/**
+ * Boolean to compress the request's body.
+ * @return YES will enable GZIP and compress the body.
+ * @return NO will not compress the body.
+ */
+@property (nonatomic, assign) BOOL compressBody;
+
+/**
+ * Contextual data containing optional user info for access later.
+ */
+@property (nonatomic, strong, nullable) id userInfo;
+
+/**
+ * The response.
+ */
+@property (nonatomic, strong, nullable) NSHTTPURLResponse *response;
+
+/**
+ * The response string.
+ */
+@property (nonatomic, readonly, copy, nullable) NSString *responseString;
+
+/**
+ * The response data.
+ */
+@property (nonatomic, strong, nullable) NSData *responseData;
+
+/**
+ * The error related to the request.
+ */
+@property (nonatomic, strong, nullable) NSError *error;
+
+/**
+ * Create a request with the URL string.
+ * @param urlString The URL string.
+ * @return The request with the specified URL string.
+ */
++ (instancetype)requestWithURLString:(NSString *)urlString;
+
+/**
+ * Create a request with the URL.
+ * @param url The URL.
+ * @return The request with the specified URL.
+ */
++ (instancetype)requestWithURL:(NSURL *)url;
+
+/**
+ * Set the default user agent.
+ * @param userAgent The user agent string.
+ */
++ (void)setDefaultUserAgentString:(NSString *)userAgent;
+
+/**
+ * UAHTTPRequest initializer taking a URL string.
+ * @param urlString The URL string.
+ */
+- (instancetype)initWithURLString:(NSString *)urlString;
+
+/**
+ * UAHTTPRequest initializer taking a URL.
+ * @param url The URL.
+ */
+- (instancetype)initWithURL:(NSURL *)url;
+
+/**
+ * Add a request header.
+ * @param header The header string to be added.
+ * @param value The value string to be added.
+ */
+- (void)addRequestHeader:(NSString *)header value:(NSString *)value;
+
+/**
+ * Append data to the body.
+ * @param data The data to be added to the body.
+ */
+- (void)appendBodyData:(NSData *)data;
 
 @end
 

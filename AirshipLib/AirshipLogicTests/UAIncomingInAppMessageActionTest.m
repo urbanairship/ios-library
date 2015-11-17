@@ -27,7 +27,7 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "UAirship.h"
-#import "UAPreferenceDataStore.h"
+#import "UAPreferenceDataStore+Internal.h"
 #import "UAIncomingInAppMessageAction.h"
 #import "UAInAppMessage.h"
 #import "UAInAppMessaging+Internal.h"
@@ -36,7 +36,7 @@
 #import "UAActionRegistry.h"
 #import "UAInboxUtils.h"
 #import "UAAnalytics.h"
-#import "UAInAppResolutionEvent.h"
+#import "UAInAppResolutionEvent+Internal.h"
 
 @interface UAIncomingInAppMessageActionTest : XCTestCase
 @property(nonatomic, strong) NSDictionary *payload;

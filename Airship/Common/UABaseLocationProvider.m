@@ -24,6 +24,7 @@
  */
 
 #import "UABaseLocationProvider+Internal.h"
+#import "UALocationProviderProtocol.h"
 #import "UAGlobal.h"
 #import "UAEvent.h"
 #import "UAirship.h"

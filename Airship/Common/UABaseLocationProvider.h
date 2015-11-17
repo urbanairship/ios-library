@@ -25,10 +25,10 @@
 
 #import <CoreLocation/CoreLocation.h>
 #import "UALocationProviderDelegate.h"
-#import "UALocationProviderProtocol.h"
 #import "UALocationCommonValues.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
 
 /**
  * This is the base class for location providers. You should not

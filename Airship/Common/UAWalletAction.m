@@ -26,7 +26,7 @@
 #import "UAWalletAction.h"
 #import "UAGlobal.h"
 #import "UAURLProtocol.h"
-#import "UAHTTPRequest.h"
+#import "UAHTTPRequest+Internal.h"
 #import "UAActionRegistry.h"
 #import "UAUtils.h"
 #import "UAWalletAction+Internal.h"

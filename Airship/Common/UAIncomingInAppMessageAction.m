@@ -32,7 +32,7 @@
 #import "UAInAppMessaging.h"
 #import "UAInboxUtils.h"
 #import "UAirship.h"
-#import "UAInAppResolutionEvent.h"
+#import "UAInAppResolutionEvent+Internal.h"
 #import "UAAnalytics.h"
 
 @implementation UAIncomingInAppMessageAction

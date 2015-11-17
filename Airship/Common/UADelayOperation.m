@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UADelayOperation.h"
+#import "UADelayOperation+Internal.h"
 
 @interface UADelayOperation()
 @property (nonatomic, assign) NSTimeInterval seconds;

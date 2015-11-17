@@ -24,7 +24,7 @@
  */
 
 #import <XCTest/XCTest.h>
-#import "UACloseWindowAction.h"
+#import "UACloseWindowAction+Internal.h"
 #import <OCMock/OCMock.h>
 #import "UARichContentWindow.h"
 #import "UAActionArguments+Internal.h"

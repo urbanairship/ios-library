@@ -26,12 +26,13 @@
 #import <XCTest/XCTest.h>
 #import "UAUser+Internal.h"
 #import "UAUserAPIClient.h"
-#import "UAUserData.h"
-#import "UAKeychainUtils.h"
+#import "UAUserData+Internal.h"
+#import "UAKeychainUtils+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAConfig+Internal.h"
-#import "UAPreferenceDataStore.h"
+#import "UAPreferenceDataStore+Internal.h"
+#import "UAHTTPRequest+Internal.h"
 
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>

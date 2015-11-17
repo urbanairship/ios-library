@@ -23,9 +23,9 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAHTTPRequestEngine.h"
-#import "UADelayOperation.h"
-#import "UAHTTPConnectionOperation.h"
+#import "UAHTTPRequestEngine+Internal.h"
+#import "UADelayOperation+Internal.h"
+#import "UAHTTPConnectionOperation+Internal.h"
 #import "UAGlobal.h"
 
 @interface UAHTTPRequestEngine()

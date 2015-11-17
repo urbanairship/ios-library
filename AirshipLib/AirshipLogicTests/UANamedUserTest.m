@@ -27,13 +27,14 @@
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
 #import "UAirship+Internal.h"
-#import "UAPreferenceDataStore.h"
+#import "UAPreferenceDataStore+Internal.h"
 #import "UANamedUser.h"
 #import "UANamedUser+Internal.h"
 #import "UANamedUserAPIClient+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAConfig.h"
 #import "UATagGroupsAPIClient+Internal.h"
+#import "UAHTTPRequest+Internal.h"
 
 @interface UANamedUserTest : XCTestCase
 

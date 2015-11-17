@@ -24,7 +24,7 @@
  */
 #import "UAAction.h"
 #import "UAWalletAction.h"
-#import "UAHTTPConnection.h"
+#import "UAHTTPConnection+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

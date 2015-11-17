@@ -25,12 +25,17 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import <SystemConfiguration/SCNetworkReachability.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
 @class UAHTTPRequest;
 
-NS_ASSUME_NONNULL_BEGIN
+#define kUAConnectionTypeNone @"none"
+#define kUAConnectionTypeCell @"cell"
+#define kUAConnectionTypeWifi @"wifi"
 
 /**
  * The UAUtils object provides an interface for utility methods.
@@ -84,7 +89,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @name UI Formatting Helpers
 ///---------------------------------------------------------------------------------------
 
-+ (NSString *)pluralize:(int)count 
++ (NSString *)pluralize:(int)count
            singularForm:(NSString*)singular
              pluralForm:(NSString*)plural;
 
@@ -106,8 +111,8 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Creates an ISO dateFormatter (UTC) with the following attributes:
  * locale set to 'en_US_POSIX', timestyle set to 'NSDateFormatterFullStyle',
- * date format set to 'yyyy-MM-dd'T'HH:mm:ss'. The formatter returned by this method 
- * is identical to that of `ISODateFormatterUTC`, except that the format matches the optional 
+ * date format set to 'yyyy-MM-dd'T'HH:mm:ss'. The formatter returned by this method
+ * is identical to that of `ISODateFormatterUTC`, except that the format matches the optional
  * `T` delimiter between date and time.
  *
  * @return A DateFormatter with the default attributes, matching the optional `T` delimiter.
@@ -151,6 +156,13 @@ NS_ASSUME_NONNULL_BEGIN
  * @return A CGRect representing the main window's bounds, in orientation-dependent coordinates.
  */
 + (CGRect)orientationDependentWindowBounds;
+
+/**
+ * Gets the current connection type.
+ * Possible values are "cell", "wifi", or "none".
+ * @return The current connection type as a string.
+ */
++ (NSString *)connectionType;
 
 @end
 

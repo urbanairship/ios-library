@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAPreferenceDataStore.h"
+#import "UAPreferenceDataStore+Internal.h"
 
 @interface UAPreferenceDataStore()
 @property (nonatomic, strong) NSUserDefaults *defaults;

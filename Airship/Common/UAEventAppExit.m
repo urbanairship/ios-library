@@ -23,11 +23,11 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEventAppExit.h"
+#import "UAEventAppExit+Internal.h"
 #import "UAEvent+Internal.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
-#import "UAUtils+Internal.h"
+#import "UAUtils.h"
 
 @implementation UAEventAppExit
 

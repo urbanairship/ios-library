@@ -25,14 +25,17 @@
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
-#import "UAHTTPRequestEngine.h"
+#import "UAHTTPRequestEngine+Internal.h"
 #import "UAUserAPIClient.h"
 #import "UAHTTPRequest+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAUtils.h"
 #import "UAConfig+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAUser.h"
+#import "UAUserAPIClient.h"
+#import "UAUser+Internal.h"
+#import "UAUserData+Internal.h"
+
 
 @interface UAUserAPIClientTest : XCTestCase
 @property (nonatomic, strong) UAUserAPIClient *client;

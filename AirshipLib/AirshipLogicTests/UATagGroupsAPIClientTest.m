@@ -29,7 +29,7 @@
 #import "UAConfig.h"
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UAirship.h"
-#import "UAHTTPRequestEngine.h"
+#import "UAHTTPRequestEngine+Internal.h"
 #import "UAHTTPRequest+Internal.h"
 
 @interface UATagGroupsAPIClientTest : XCTestCase

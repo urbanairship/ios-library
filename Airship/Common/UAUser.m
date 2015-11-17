@@ -24,12 +24,13 @@
  */
 
 #import "UAUser+Internal.h"
+#import "UAUserData+Internal.h"
 #import "UAUserAPIClient.h"
 #import "UAPush.h"
 #import "UAUtils.h"
 #import "UAConfig.h"
-#import "UAKeychainUtils.h"
-#import "UAPreferenceDataStore.h"
+#import "UAKeychainUtils+Internal.h"
+#import "UAPreferenceDataStore+Internal.h"
 #import "UAirship.h"
 
 NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.user_created";

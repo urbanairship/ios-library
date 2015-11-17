@@ -27,7 +27,7 @@
 #import <OCMOCK/OCMock.h>
 #import "UAAnalytics.h"
 #import "UAirship.h"
-#import "UAInAppResolutionEvent.h"
+#import "UAInAppResolutionEvent+Internal.h"
 #import "UAInAppMessage.h"
 #import "UAUtils.h"
 

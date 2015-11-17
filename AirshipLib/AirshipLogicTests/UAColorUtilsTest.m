@@ -25,7 +25,7 @@
 
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
-#import "UAColorUtils.h"
+#import "UAColorUtils+Internal.h"
 
 @interface UAColorUtilsTest : XCTestCase
 @end

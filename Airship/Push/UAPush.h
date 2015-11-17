@@ -24,9 +24,8 @@
  */
 
 #import "UAGlobal.h"
-#import "UAHTTPConnection.h"
-#import "UAChannelRegistrar.h"
 #import "UANamedUser.h"
+#import "UAChannelRegistrar.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -194,7 +193,7 @@ NS_ASSUME_NONNULL_BEGIN
  * This singleton provides an interface to the functionality provided by the Urban Airship iOS Push API.
  */
 #pragma clang diagnostic push
-@interface UAPush : NSObject <UAChannelRegistrarDelegate>
+@interface UAPush : NSObject
 
 ///---------------------------------------------------------------------------------------
 /// @name Push Notifications

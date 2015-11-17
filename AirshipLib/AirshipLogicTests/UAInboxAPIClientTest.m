@@ -30,7 +30,7 @@
 #import "UAirship+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAUser+Internal.h"
-#import "UAPreferenceDataStore.h"
+#import "UAPreferenceDataStore+Internal.h"
 #import "UAInboxAPIClient+Internal.h"
 
 @interface UAInboxAPIClientTest : XCTestCase

@@ -27,7 +27,7 @@
 #import <OCMock/OCMock.h>
 #import "UALandingPageAction.h"
 #import "UAURLProtocol.h"
-#import "UAHTTPConnection.h"
+#import "UAHTTPConnection+Internal.h"
 #import "UALandingPageOverlayController.h"
 #import "UAAction+Internal.h"
 #import "UAirship.h"

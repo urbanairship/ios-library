@@ -25,7 +25,7 @@
 
 
 #import "UAApplicationMetrics+Internal.h"
-#import "UAPreferenceDataStore.h"
+#import "UAPreferenceDataStore+Internal.h"
 
 @interface UAApplicationMetrics()
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
