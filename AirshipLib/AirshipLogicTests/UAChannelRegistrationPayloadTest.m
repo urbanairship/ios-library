@@ -24,7 +24,7 @@
  */
 
 #import <XCTest/XCTest.h>
-#import "UAChannelRegistrationPayload.h"
+#import "UAChannelRegistrationPayload+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAPush+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"

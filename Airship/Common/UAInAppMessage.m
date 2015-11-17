@@ -25,11 +25,11 @@
 
 #import "UAInAppMessage.h"
 #import "UAUtils.h"
-#import "UAColorUtils.h"
+#import "UAColorUtils+Internal.h"
 #import "UAInAppMessageButtonActionBinding.h"
 #import "UAActionArguments.h"
 #import "UAirship+Internal.h"
-#import "UAPreferenceDataStore.h"
+#import "UAPreferenceDataStore+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAUserNotificationCategories+Internal.h"
 #import "UAMutableUserNotificationCategory.h"

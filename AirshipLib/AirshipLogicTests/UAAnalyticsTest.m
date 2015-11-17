@@ -29,11 +29,11 @@
 #import "UAAnalyticsTest.h"
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
-#import "UAKeychainUtils.h"
+#import "UAKeychainUtils+Internal.h"
 #import "UAPush+Internal.h"
-#import "UAPreferenceDataStore.h"
+#import "UAPreferenceDataStore+Internal.h"
 #import "UAirship.h"
-#import "UAAnalyticsDBManager.h"
+#import "UAAnalyticsDBManager+Internal.h"
 #import "UAEvent+Internal.h"
 #import "UAAssociateIdentifiersEvent+Internal.h"
 #import "UAScreenTrackingEvent+Internal.h"

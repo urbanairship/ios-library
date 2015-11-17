@@ -23,9 +23,9 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAHTTPConnectionOperation.h"
+#import "UAHTTPConnectionOperation+Internal.h"
 #import "UAGlobal.h"
-#import "UAHTTPConnection.h"
+#import "UAHTTPConnection+Internal.h"
 
 @interface UAHTTPConnectionOperation()
 

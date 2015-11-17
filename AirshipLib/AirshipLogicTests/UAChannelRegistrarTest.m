@@ -26,9 +26,9 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
-#import "UAChannelAPIClient.h"
+#import "UAChannelAPIClient+Internal.h"
 #import "UAChannelRegistrar+Internal.h"
-#import "UAChannelRegistrationPayload.h"
+#import "UAChannelRegistrationPayload+Internal.h"
 #import "UAHTTPRequest+Internal.h"
 #import "UAPush.h"
 #import "UAConfig.h"

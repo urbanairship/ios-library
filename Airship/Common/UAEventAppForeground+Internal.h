@@ -24,53 +24,11 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
-#import "UAInAppMessageControllerDelegate.h"
-
-@class UAInAppMessage;
-
-NS_ASSUME_NONNULL_BEGIN
+#import "UAEventAppInit+Internal.h"
 
 /**
- * Controller interface for showing and dismissing in-app
- * messages.
+ * Event when app is in the foreground.
  */
-@interface UAInAppMessageController : NSObject<UIGestureRecognizerDelegate>
-
-/**
- * UAInAppMessageController initializer.
- * @param message An instance of UAInAppMessage.
- * @param delegate An object implementing the UAInAppMessageControllerDelegate protocol.
- * @param dismissalBlock A block that will be executed once the message is dismissed.
- * @return An instance of UAInAppMessageController.
- */
-+ (instancetype)controllerWithMessage:(UAInAppMessage *)message
-                             delegate:(id<UAInAppMessageControllerDelegate>)delegate
-                       dismissalBlock:(void(^)(UAInAppMessageController *))dismissalBlock;
-/**
- * Show the associated message. If the message has already been shown,
- * this will be a no-op.
- *
- * @return `YES` if the message could be displayed, `NO` otherwise.
- */
-- (BOOL)show;
-
-/**
- * Dismiss the associated message. If the message has already been dismissed,
- * this will be a no-op.
- */
-- (void)dismiss;
-
-@property(nonatomic, readonly) UAInAppMessage *message;
-
-/**
- * Whether the associated in-app message is currently showing
- */
-@property (nonatomic, readonly) BOOL isShowing;
-
+@interface UAEventAppForeground : UAEventAppInit
 
 @end
-
-NS_ASSUME_NONNULL_END
-
-

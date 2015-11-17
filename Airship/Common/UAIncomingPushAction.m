@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAIncomingPushAction.h"
+#import "UAIncomingPushAction+Internal.h"
 #import "UAPush.h"
 #import "UAirship.h"
 #import "UAConfig.h"

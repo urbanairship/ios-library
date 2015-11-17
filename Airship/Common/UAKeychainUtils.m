@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAKeychainUtils.h"
+#import "UAKeychainUtils+Internal.h"
 #import "UAGlobal.h"
 #import "UAirship.h"
 #import "UAUtils.h"

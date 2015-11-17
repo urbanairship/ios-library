@@ -24,11 +24,11 @@
  */
 
 #import "UAChannelRegistrar+Internal.h"
-#import "UAChannelAPIClient.h"
+#import "UAChannelAPIClient+Internal.h"
 #import "UAGlobal.h"
 #import "UAUtils.h"
-#import "UAChannelRegistrationPayload.h"
-#import "UAHTTPRequest.h"
+#import "UAChannelRegistrationPayload+Internal.h"
+#import "UAHTTPRequest+Internal.h"
 #import "UAConfig.h"
 
 @implementation UAChannelRegistrar

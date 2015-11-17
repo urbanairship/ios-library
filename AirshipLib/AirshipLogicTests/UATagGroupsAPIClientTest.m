@@ -27,9 +27,9 @@
 #import <XCTest/XCTest.h>
 #import <OCMOCK/OCMock.h>
 #import "UAConfig.h"
-#import "UATagGroupsAPIClient.h"
+#import "UATagGroupsAPIClient+Internal.h"
 #import "UAirship.h"
-#import "UAHTTPRequestEngine.h"
+#import "UAHTTPRequestEngine+Internal.h"
 #import "UAHTTPRequest+Internal.h"
 
 @interface UATagGroupsAPIClientTest : XCTestCase

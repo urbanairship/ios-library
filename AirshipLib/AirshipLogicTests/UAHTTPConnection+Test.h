@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAHTTPConnection.h"
+#import "UAHTTPConnection+Internal.h"
 
 /**
  * Quick and dirty category for faking UAHTTPConnections.

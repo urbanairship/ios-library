@@ -11,49 +11,12 @@
 		<string>UI</string>
 		<string>*+Internal.h</string>
 		<string>AirshipKit.framework</string>
-		<string>UAAppDelegate.h</string>
-		<string>UAAppDelegateProxy.h</string>
-		<string>UAChannelAPIClient.h</string>
-		<string>UADeviceAPIClient.h</string>
-		<string>UAInboxAPIClient.h</string>
-		<string>UANamedUserAPIClient.h</string>
-		<string>UAUserAPIClient.h</string>
-		<string>UAChannelRegistrar.h</string>
-		<string>UAUserData.h</string>
-		<string>UAChannelRegistrationPayload.h</string>
-		<string>UADeviceRegistrationPayload.h</string>
-		<string>UADeviceRegistrationPayload.h</string>
-		<string>UAInboxDBManager.h</string>
-		<string>UAInboxMessageData.h</string>
-		<string>UAIncomingPushAction.h</string>
-		<string>UAIncomingRichPushAction.h</string>
-		<string>UACloseWindowAction.h</string>
-		<string>UAInteractiveNotificationEvent.h</string>
-		<string>UAEventAppInit.h</string>
-		<string>UAEventAppExit.h</string>
-		<string>UAEventAppBackground.h</string>
-		<string>UAEventAppForeground.h</string>
-		<string>UAEventDeviceRegistration.h</string>
-		<string>UAEventPushReceived.h</string>
-		<string>UAHTTPConnection.h</string>
-		<string>UAHTTPConnectionOperation.h</string>
-		<string>UAHTTPRequestEngine.h</string>
-		<string>UAHTTPRequest.h</string>
 		<string>UAUtils.h</string>
-		<string>UAAnalyticsDBManager.h</string>
-		<string>UASQLite.h</string>
-		<string>UALocationProviderProtocol.h</string>
-		<string>UAInAppMessageController.h</string>
-		<string>UAInAppDisplayEvent.h</string>
-		<string>UAInAppResolutionEvent.h</string>
-		<string>UAKeychainUtils.h</string>
-		<string>UAPreferenceDataStore.h</string>
-		<string>UATagGroupsAPIClient.h</string>
-		<string>UAColorUtils.h</string>
-		<string>UAURLProtocol.h</string>
 		<string>NSJSONSerialization+UAAdditions.h</string>
 		<string>NSString+UAURLEncoding.h</string>
-		<string>UADelayOperation.h</string>
+		<string>UALocationProviderProtocol.h</string>
+		<string>UAUserAPIClient.h</string>
+		<string>UAURLProtocol.h</string>
 	</array>
 	<key>--project-company</key>
 	<string>Urban Airship</string>

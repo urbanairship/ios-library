@@ -24,10 +24,10 @@
  */
 
 #import "UAHTTPRequestEngineTest.h"
-#import "UAHTTPRequestEngine.h"
+#import "UAHTTPRequestEngine+Internal.h"
 #import "UAHTTPConnection+Test.h"
-#import "UAHTTPConnectionOperation.h"
-#import "UADelayOperation.h"
+#import "UAHTTPConnectionOperation+Internal.h"
+#import "UADelayOperation+Internal.h"
 #import <OCMock/OCMock.h>
 
 @interface UAHTTPRequestEngineTest()

@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAColorUtils.h"
+#import "UAColorUtils+Internal.h"
 #import "UAGlobal.h"
 
 @implementation UAColorUtils

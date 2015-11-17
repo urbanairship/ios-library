@@ -25,12 +25,12 @@
 
 #import "UAInAppMessaging+Internal.h"
 #import "UAInAppMessage.h"
-#import "UAPreferenceDataStore.h"
+#import "UAPreferenceDataStore+Internal.h"
 #import "UAActionRunner.h"
-#import "UAInAppMessageController.h"
-#import "UAInAppDisplayEvent.h"
+#import "UAInAppMessageController+Internal.h"
+#import "UAInAppDisplayEvent+Internal.h"
 #import "UAAnalytics.h"
-#import "UAInAppResolutionEvent.h"
+#import "UAInAppResolutionEvent+Internal.h"
 
 NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID";
 

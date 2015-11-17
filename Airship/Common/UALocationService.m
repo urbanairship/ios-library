@@ -31,6 +31,8 @@
 #import "UAirship.h"
 #import "UALocationEvent.h"
 #import "UAAnalytics.h"
+#import "UALocationProviderProtocol.h"
+
 
 #define kUALocationServiceDefaultPurpose @"Push to Location"
 #define kUALocationServiceSingleLocationDefaultTimeout 30.0

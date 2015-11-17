@@ -117,7 +117,7 @@ extern NSString *const UAPushAddTagGroupsSettingsKey;
  */
 extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 
-@interface UAPush ()
+@interface UAPush () <UAChannelRegistrarDelegate>
 
 /**
  * Device token as a string.

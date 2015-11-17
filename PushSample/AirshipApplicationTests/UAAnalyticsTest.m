@@ -28,17 +28,17 @@
 #import <XCTest/XCTest.h>
 
 #import "UAConfig.h"
-#import "UAAnalyticsDBManager.h"
+#import "UAAnalyticsDBManager+Internal.h"
 #import "UAEvent.h"
 #import "UALocationEvent.h"
 #import "UAAnalytics+Internal.h"
 #import "UAirship+Internal.h"
 #import "UALocationTestUtils.h"
-#import "UAEventPushReceived.h"
-#import "UAEventAppForeground.h"
-#import "UAEventAppInit.h"
-#import "UAEventAppBackground.h"
-#import "UAPreferenceDataStore.h"
+#import "UAEventPushReceived+Internal.h"
+#import "UAEventAppForeground+Internal.h"
+#import "UAEventAppInit+Internal.h"
+#import "UAEventAppBackground+Internal.h"
+#import "UAPreferenceDataStore+Internal.h"
 
 /* This class involves lots of async calls to the web
  Care should be taken to mock out responses and calls, race conditions

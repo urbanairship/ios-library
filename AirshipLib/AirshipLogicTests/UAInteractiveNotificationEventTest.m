@@ -24,7 +24,7 @@
  */
 
 #import <XCTest/XCTest.h>
-#import "UAInteractiveNotificationEvent.h"
+#import "UAInteractiveNotificationEvent+Internal.h"
 #import "UAEvent+Internal.h"
 
 @interface UAInteractiveNotificationEventTest : XCTestCase

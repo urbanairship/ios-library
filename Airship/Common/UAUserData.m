@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAUserData.h"
+#import "UAUserData+Internal.h"
 
 @interface UAUserData()
 

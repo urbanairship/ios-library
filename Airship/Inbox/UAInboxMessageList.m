@@ -29,12 +29,12 @@
 #import "UAConfig.h"
 #import "UADisposable.h"
 #import "UAInbox.h"
-#import "UAInboxAPIClient.h"
+#import "UAInboxAPIClient+Internal.h"
 #import "UAInboxMessage+Internal.h"
 #import "UAInboxDBManager+Internal.h"
 #import "UAUtils.h"
 #import "UAUser.h"
-#import "UAHTTPConnection.h"
+#import "UAHTTPConnection+Internal.h"
 #import "UAURLProtocol.h"
 
 NSString * const UAInboxMessageListWillUpdateNotification = @"com.urbanairship.notification.message_list_will_update";

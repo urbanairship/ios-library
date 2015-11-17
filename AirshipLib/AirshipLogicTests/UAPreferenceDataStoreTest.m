@@ -24,7 +24,7 @@
  */
 
 #import <XCTest/XCTest.h>
-#import "UAPreferenceDataStore.h"
+#import "UAPreferenceDataStore+Internal.h"
 
 @interface UAPreferenceDataStoreTest : XCTestCase
 

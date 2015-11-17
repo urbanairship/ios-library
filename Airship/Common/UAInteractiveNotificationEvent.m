@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAInteractiveNotificationEvent.h"
+#import "UAInteractiveNotificationEvent+Internal.h"
 #import "UAEvent+Internal.h"
 #import "UAGlobal.h"
 

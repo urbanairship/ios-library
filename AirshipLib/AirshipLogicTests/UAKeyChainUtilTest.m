@@ -24,7 +24,7 @@
  */
 
 #import <XCTest/XCTest.h>
-#import "UAKeychainUtils.h"
+#import "UAKeychainUtils+Internal.h"
 #import <OCMock/OCMock.h>
 
 @interface UAKeyChainUtilTest : XCTestCase

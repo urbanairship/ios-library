@@ -24,12 +24,12 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAUserData.h"
-#import "UAHTTPConnection.h"
 
 @class UAHTTPRequestEngine;
 @class UAUser;
 @class UAConfig;
+@class UAHTTPRequest;
+@class UAUserData;
 
 NS_ASSUME_NONNULL_BEGIN
 

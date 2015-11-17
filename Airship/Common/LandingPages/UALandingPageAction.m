@@ -27,7 +27,7 @@
 
 #import "UAGlobal.h"
 #import "UAURLProtocol.h"
-#import "UAHTTPConnection.h"
+#import "UAHTTPConnection+Internal.h"
 #import "UALandingPageOverlayController.h"
 #import "UAirship.h"
 #import "UAConfig.h"

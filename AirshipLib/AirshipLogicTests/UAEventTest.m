@@ -33,13 +33,13 @@
 #import "UAEvent.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
-#import "UAEventAppInit.h"
-#import "UAEventAppExit.h"
-#import "UAEventAppBackground.h"
-#import "UAEventAppForeground.h"
-#import "UAEventDeviceRegistration.h"
-#import "UAEventPushReceived.h"
-#import "UAUtils+Internal.h"
+#import "UAEventAppInit+Internal.h"
+#import "UAEventAppExit+Internal.h"
+#import "UAEventAppBackground+Internal.h"
+#import "UAEventAppForeground+Internal.h"
+#import "UAEventDeviceRegistration+Internal.h"
+#import "UAEventPushReceived+Internal.h"
+#import "UAUtils.h"
 
 
 

@@ -23,11 +23,40 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAHTTPConnection.h"
+#import <Foundation/Foundation.h>
+#import "UAHTTPRequest+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface UAHTTPConnection()
+/**
+ * A wrapper for NSURLConnection implementing the NSURLConnectionDelegate protocol.
+ */
+@interface UAHTTPConnection : NSObject <NSURLConnectionDelegate>
+
+/**
+ * The connection delegate.
+ */
+@property (nonatomic, weak, nullable) id delegate;
+
+/**
+ * The connection success selector.
+ */
+@property (nonatomic, assign, nullable) SEL successSelector;
+
+/**
+ * The connection failure selector.
+ */
+@property (nonatomic, assign, nullable) SEL failureSelector;
+
+/**
+ * The connection success block.
+ */
+@property (nonatomic, copy, nullable) UAHTTPConnectionSuccessBlock successBlock;
+
+/**
+ * The connection failure block.
+ */
+@property (nonatomic, copy, nullable) UAHTTPConnectionFailureBlock failureBlock;
 
 /**
  * The connection request as a UAHTTPRequest.
@@ -48,6 +77,77 @@ NS_ASSUME_NONNULL_BEGIN
  * The connection sending the message.
  */
 @property (nonatomic, strong, nullable) NSURLConnection *urlConnection;
+
+/**
+ * The queue on which to dispatch block and delegate callbacks.
+ *
+ * If unset, callbacks will occur on the thread from which the connection was started.
+ * Note: you cannot reschedule the delegate queue once a connection is in flight.
+ */
+@property (nonatomic, strong, nullable) NSOperationQueue *delegateQueue;
+
+/**
+ * Class factory method for creating a UAHTTPConnection.
+ * @param httpRequest An instance of UAHTTPRequest.
+ * @return A UAHTTPConnection with the specified httpRequest.
+ */
++ (instancetype)connectionWithRequest:(UAHTTPRequest *)httpRequest;
+
+/**
+ * Class factory method for creating a UAHTTPConnection.
+ * @param httpRequest An instance of UAHTTPRequest.
+ * @param delegate The delegate
+ * @param successSelector The selector to be called if the connection was successful.
+ * @param failureSelector The selector to be called if the connection was unsuccessful.
+ * @return A UAHTTPConnection with the specified httpRequest.
+ */
++ (instancetype)connectionWithRequest:(UAHTTPRequest *)httpRequest
+                             delegate:(id)delegate
+                              success:(SEL)successSelector
+                              failure:(SEL)failureSelector;
+
+/**
+ * Class factory method for creating a UAHTTPConnection.
+ * @param httpRequest An instance of UAHTTPRequest.
+ * @param successBlock A UAHTTPConnectionSuccessBlock that will be called if the connection was successful.
+ * @param failureBlock A UAHTTPConnectionFailureBlock that will be called if the connection was unsuccessful.
+ * @return A UAHTTPConnection with the specified httpRequest.
+ */
++ (instancetype)connectionWithRequest:(UAHTTPRequest *)httpRequest
+                         successBlock:(UAHTTPConnectionSuccessBlock)successBlock
+                         failureBlock:(UAHTTPConnectionFailureBlock)failureBlock;
+
+/**
+ * Initializer with the HTTP request.
+ * @param httpRequest An instance of UAHTTPRequest.
+ */
+- (instancetype)initWithRequest:(UAHTTPRequest *)httpRequest;
+
+/**
+ * Start the connection asynchronously.
+ * @return `YES` if the connection was started, otherwise `NO`.
+ */
+- (BOOL)start;
+
+/**
+ * Start the connection synchronously.
+ * @return `YES` if the connection was started, otherwise `NO`.
+ */
+- (BOOL)startSynchronous;
+
+/**
+ * Cancel the connection
+ */
+- (void)cancel;
+
+#pragma mark -
+#pragma mark NSURLConnectionDelegate
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSHTTPURLResponse *)response;
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data;
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection;
+
 
 /**
  * Compress the data with GZIP.

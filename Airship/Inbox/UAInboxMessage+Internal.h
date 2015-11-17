@@ -24,8 +24,8 @@
  */
 
 #import "UAInboxMessage.h"
-#import "UAInboxAPIClient.h"
-#import "UAInboxMessageData.h"
+#import "UAInboxAPIClient+Internal.h"
+#import "UAInboxMessageData+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

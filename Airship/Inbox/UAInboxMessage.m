@@ -25,8 +25,8 @@
 
 #import "UAInboxMessage+Internal.h"
 #import "UAInbox.h"
-#import "UAInboxMessageData.h"
-#import "UAInboxAPIClient.h"
+#import "UAInboxMessageData+Internal.h"
+#import "UAInboxAPIClient+Internal.h"
 #import "UAInboxMessageList+Internal.h"
 #import "UAUtils.h"
 

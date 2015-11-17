@@ -25,10 +25,12 @@
 
 #import "UAUserAPIClient.h"
 #import "UAConfig.h"
-#import "UAHTTPRequestEngine.h"
+#import "UAHTTPRequestEngine+Internal.h"
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAUser.h"
+#import "UAUserData+Internal.h"
+
 
 @interface UAUserAPIClient()
 @property (nonatomic, strong) UAConfig *config;

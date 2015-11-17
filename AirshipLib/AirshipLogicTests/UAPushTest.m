@@ -34,17 +34,18 @@
 #import "UAActionRegistry+Internal.h"
 #import "UAUtils.h"
 #import "UAUser.h"
-#import "UAChannelRegistrationPayload.h"
-#import "UAChannelRegistrar.h"
+#import "UAChannelRegistrationPayload+Internal.h"
+#import "UAChannelRegistrar+Internal.h"
 #import "UAEvent.h"
 #import "NSObject+HideClass.h"
-#import "UAInteractiveNotificationEvent.h"
+#import "UAInteractiveNotificationEvent+Internal.h"
 #import "UAUserNotificationCategories+Internal.h"
 #import "UAMutableUserNotificationAction.h"
 #import "UAMutableUserNotificationCategory.h"
-#import "UAPreferenceDataStore.h"
+#import "UAPreferenceDataStore+Internal.h"
 #import "UAConfig.h"
-#import "UATagGroupsAPIClient.h"
+#import "UATagGroupsAPIClient+Internal.h"
+#import "UAHTTPRequest+Internal.h"
 
 @interface UAPushTest : XCTestCase
 @property (nonatomic, strong) id mockedApplication;

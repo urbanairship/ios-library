@@ -24,10 +24,10 @@
  */
 
 
-#import "UATagGroupsAPIClient.h"
+#import "UATagGroupsAPIClient+Internal.h"
 #import "UAConfig.h"
 #import "UAUtils.h"
-#import "UAHTTPRequestEngine.h"
+#import "UAHTTPRequestEngine+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 
 #define kUATagGroupsRetryTimeInitialDelay 60    // 60 seconds

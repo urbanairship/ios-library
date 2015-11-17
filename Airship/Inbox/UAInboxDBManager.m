@@ -29,7 +29,7 @@
 #import "UAConfig.h"
 #import "UAUtils.h"
 #import "UAInboxMessage+Internal.h"
-#import "UAInboxMessageData.h"
+#import "UAInboxMessageData+Internal.h"
 
 
 @interface UAInboxDBManager()

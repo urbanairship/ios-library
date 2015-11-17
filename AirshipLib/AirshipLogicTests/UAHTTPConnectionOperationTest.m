@@ -24,10 +24,10 @@
  */
 
 #import "UAHTTPConnectionOperationTest.h"
-#import "UAHTTPConnectionOperation.h"
+#import "UAHTTPConnectionOperation+Internal.h"
 #import "UAHTTPConnection+Test.h"
 #import "UAHTTPConnection+Test.h" 
-#import "UADelayOperation.h"
+#import "UADelayOperation+Internal.h"
 #import "NSObject+AnonymousKVO.h"
 
 @interface UAHTTPConnectionOperationTest()

@@ -23,13 +23,13 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAInboxMessageData.h"
+#import "UAInboxMessageData+Internal.h"
 #import "UAInboxMessage+Internal.h"
 
 #import "UAirship.h"
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
-#import "UAHTTPConnection.h"
+#import "UAHTTPConnection+Internal.h"
 #import "UAUtils.h"
 #import "UAGlobal.h"
 

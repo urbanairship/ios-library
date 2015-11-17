@@ -27,7 +27,7 @@
 #import <OCMOCK/OCMock.h>
 #import "UAAnalytics.h"
 #import "UAirship.h"
-#import "UAInAppDisplayEvent.h"
+#import "UAInAppDisplayEvent+Internal.h"
 #import "UAInAppMessage.h"
 
 @interface UAInAppDisplayEventTest : XCTestCase

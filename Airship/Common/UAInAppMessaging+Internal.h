@@ -24,7 +24,7 @@
  */
 
 #import "UAInAppMessaging.h"
-#import "UAInAppMessageController.h"
+#import "UAInAppMessageController+Internal.h"
 
 // User defaults key for storing and retrieving pending messages
 #define kUAPendingInAppMessageDataStoreKey @"UAPendingInAppMessage"

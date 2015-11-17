@@ -26,9 +26,11 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
+#import "UALocationCommonValues.h"
 
 #import "UAEvent.h"
-#import "UALocationProviderProtocol.h"
+
+@protocol UALocationProviderProtocol;
 
 NS_ASSUME_NONNULL_BEGIN
 

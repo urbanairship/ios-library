@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAAnalyticsDBManager.h"
+#import "UAAnalyticsDBManager+Internal.h"
 
 #import "UAirship.h"
 #import "UAEvent+Internal.h"

@@ -23,8 +23,9 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAJSONValueTransformer.h"
+#import "UAInboxMessageData+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "UAJSONValueTransformer+Internal.h"
 
 @implementation UAJSONValueTransformer
 

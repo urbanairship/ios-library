@@ -24,12 +24,12 @@
  */
 
 #import <XCTest/XCTest.h>
-#import "UAIncomingPushAction.h"
+#import "UAIncomingPushAction+Internal.h"
 #import "UAPush.h"
 #import "UAirship+Internal.h"
 #import <OCMock/OCMock.h>
 #import "UAActionArguments+Internal.h"
-#import "UAPreferenceDataStore.h"
+#import "UAPreferenceDataStore+Internal.h"
 
 @interface UAIncomingPushActionTest : XCTestCase
 

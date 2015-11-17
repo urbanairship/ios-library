@@ -30,7 +30,7 @@
 #import "UAActionRunner+Internal.h"
 #import "UAirship.h"
 #import "UAInAppMessaging.h"
-#import "UAInAppResolutionEvent.h"
+#import "UAInAppResolutionEvent+Internal.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
 #import "UAInAppMessageControllerDefaultDelegate.h"

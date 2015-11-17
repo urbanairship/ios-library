@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UACloseWindowAction.h"
+#import "UACloseWindowAction+Internal.h"
 #import "UARichContentWindow.h"
 
 @implementation UACloseWindowAction

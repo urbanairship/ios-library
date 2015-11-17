@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEventAppBackground.h"
+#import "UAEventAppBackground+Internal.h"
 
 @implementation UAEventAppBackground
 

@@ -23,10 +23,10 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UANamedUserAPIClient.h"
+#import "UANamedUserAPIClient+Internal.h"
 #import "UAConfig.h"
 #import "UAUtils.h"
-#import "UAHTTPRequestEngine.h"
+#import "UAHTTPRequestEngine+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 
 #define kUANamedUserRetryTimeInitialDelay 60    // 60 seconds

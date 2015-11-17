@@ -23,20 +23,20 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAUtils+Internal.h"
+#import "UAUtils.h"
 
 // Frameworks
 #import <CommonCrypto/CommonDigest.h>
 
 // UA external libraries
 #import "UA_Base64.h"
-#import "UAHTTPConnection.h"
+#import "UAHTTPConnection+Internal.h"
 
 // UALib
 #import "UAUser.h"
 #import "UAirship.h"
 #import "UAConfig.h"
-#import "UAKeychainUtils.h"
+#import "UAKeychainUtils+Internal.h"
 
 // C includes
 #include <sys/types.h>
