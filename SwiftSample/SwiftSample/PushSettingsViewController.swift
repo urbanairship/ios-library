@@ -65,7 +65,7 @@ class PushSettingsViewController: UITableViewController {
 
         NSNotificationCenter.defaultCenter().addObserver(
             self,
-            selector: "channelIDUpdated",
+            selector: "refreshView",
             name: "channelIDUpdated",
             object: nil);
 
@@ -108,7 +108,6 @@ class PushSettingsViewController: UITableViewController {
             self.tagsSubtitleLabel?.text = UAirship.push().tags.joinWithSeparator(", ")
         } else {
             self.tagsSubtitleLabel?.text = NSLocalizedString("None", tableName: "UAPushUI", comment: "None")
-
         }
 
         // push cannot be deactivated, so remove switch and link to system settings.
@@ -153,18 +152,30 @@ class PushSettingsViewController: UITableViewController {
                 }
                 break
             case (tableView.indexPathForCell(channelIDCell)!.section, tableView.indexPathForCell(channelIDCell)!.row) :
-                UIPasteboard.generalPasteboard().string = channelIDSubtitleLabel?.text
+                if ((UAirship.push().channelID) != nil) {
+                    UIPasteboard.generalPasteboard().string = channelIDSubtitleLabel?.text
+                    showCopyMessage()
+                }
                 break
             case (tableView.indexPathForCell(namedUserCell)!.section, tableView.indexPathForCell(namedUserCell)!.row) :
-                UIPasteboard.generalPasteboard().string = namedUserSubtitleLabel?.text
+                if ((UAirship.push().namedUser.identifier) != nil) {
+                    UIPasteboard.generalPasteboard().string = namedUserSubtitleLabel?.text
+                    showCopyMessage()
+                }
                 break
             default:
                 break
         }
     }
     
-    func channelIDUpdated () {
-        refreshView()
+    func showCopyMessage () {
+        let message = UAInAppMessage()
+        message.alert = NSLocalizedString("UA_Copied_To_Clipboard", tableName: "UAPushUI", comment: "Copied to clipboard string")
+        message.position = UAInAppMessagePosition.Top
+        message.duration = 1.5
+        message.primaryColor = UIColor(red: 255/255, green: 200/255, blue: 40/255, alpha: 1)
+        message.secondaryColor = UIColor(red: 0/255, green: 105/255, blue: 143/255, alpha: 1)
+        UAirship.inAppMessaging().displayMessage(message)
     }
 }
 

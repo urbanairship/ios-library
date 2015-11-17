@@ -33,7 +33,7 @@ class AddAliasTableViewController: UITableViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.addAliasTextField.delegate = self
+        addAliasTextField.delegate = self
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -48,7 +48,6 @@ class AddAliasTableViewController: UITableViewController, UITextFieldDelegate {
 
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         self.view.endEditing(true)
-
 
         if (textField.text?.characters.count > 0){
             UAirship.push().alias = textField.text

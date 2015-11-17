@@ -36,14 +36,9 @@ class HomeViewController: UIViewController {
 
         NSNotificationCenter.defaultCenter().addObserver(
             self,
-            selector: "channelIDUpdated",
+            selector: "refreshView",
             name: "channelIDUpdated",
             object: nil);
-
-        channelIDButton.hidden = false
-        enablePushButton.hidden = true
-
-        channelIDButton.setTitle(NSLocalizedString("UA_Copied_To_Clipboard", tableName: "UAPushUI", comment: "Copied to clipboard string"), forState: UIControlState.Highlighted)
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -57,6 +52,8 @@ class HomeViewController: UIViewController {
             enablePushButton.hidden = true
             return
         }
+        channelIDButton.hidden = true
+        enablePushButton.hidden = true
     }
 
     @IBAction func buttonTapped(sender: UIButton) {
@@ -69,14 +66,16 @@ class HomeViewController: UIViewController {
         if (sender == channelIDButton) {
             if ((UAirship.push().channelID) != nil) {
                 UIPasteboard.generalPasteboard().string = UAirship.push().channelID
+                let message = UAInAppMessage()
+                message.alert = NSLocalizedString("UA_Copied_To_Clipboard", tableName: "UAPushUI", comment: "Copied to clipboard string")
+                message.position = UAInAppMessagePosition.Top
+                message.duration = 1.5
+                message.primaryColor = UIColor(red: 255/255, green: 200/255, blue: 40/255, alpha: 1)
+                message.secondaryColor = UIColor(red: 0/255, green: 105/255, blue: 143/255, alpha: 1)
+
+                UAirship.inAppMessaging().displayMessage(message)
             }
         }
-
-        refreshView()
-    }
-
-    func channelIDUpdated () {
-        refreshView()
     }
 }
 

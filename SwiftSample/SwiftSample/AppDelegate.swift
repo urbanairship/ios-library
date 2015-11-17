@@ -69,7 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
     }
 
     func failIfSimulator() {
-        // If its not a simulator return early
+        // If it's not a simulator return early
         if (TARGET_OS_SIMULATOR == 0 && TARGET_IPHONE_SIMULATOR == 0) {
             return
         }
