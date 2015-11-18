@@ -117,22 +117,6 @@
 
 @implementation UAInboxMessageListController
 
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
-
-        self.cellReusableId = @"UAInboxMessageListCell";
-        self.cellNibName = @"UAInboxMessageListCell";
-
-        self.shouldShowAlerts = YES;
-        self.iconCache = [[NSCache alloc] init];
-        self.iconCache.countLimit = kUAIconImageCacheMaxCount;
-        self.iconCache.totalCostLimit = kUAIconImageCacheMaxByteCost;
-        self.currentIconURLRequests = [NSMutableDictionary dictionary];
-    }
-
-    return self;
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
 
@@ -152,6 +136,15 @@
     [self createToolbarItems];
 
     [self updateNavigationTitleText];
+
+    self.cellReusableId = @"UAInboxMessageListCell";
+    self.cellNibName = @"UAInboxMessageListCell";
+
+    self.shouldShowAlerts = YES;
+    self.iconCache = [[NSCache alloc] init];
+    self.iconCache.countLimit = kUAIconImageCacheMaxCount;
+    self.iconCache.totalCostLimit = kUAIconImageCacheMaxByteCost;
+    self.currentIconURLRequests = [NSMutableDictionary dictionary];
 }
 
 - (void)createToolbarItems {
@@ -205,6 +198,8 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+
+    [[UAirship push] setBadgeNumber:[UAirship inbox].messageList.unreadCount];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UAInboxMessageListWillUpdateNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UAInboxMessageListUpdatedNotification object:nil];
