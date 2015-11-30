@@ -341,10 +341,6 @@
 		CCDF66A219A5166B0043657E /* UACustomEvent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDF66A119A5166B0043657E /* UACustomEvent+Internal.h */; };
 		CCDF66AE19A544590043657E /* UAShareAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDF66AC19A544590043657E /* UAShareAction.h */; };
 		CCDF66B019A544590043657E /* UAShareAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDF66AD19A544590043657E /* UAShareAction.m */; };
-		CCE0D2E11BA8C00B00E49E56 /* UAInstallAttributionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE0D2DF1BA8C00B00E49E56 /* UAInstallAttributionEvent.h */; };
-		CCE0D2E21BA8C00B00E49E56 /* UAInstallAttributionEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE0D2E01BA8C00B00E49E56 /* UAInstallAttributionEvent.m */; };
-		CCE0D2E41BA8C38F00E49E56 /* UAInstallAttributionEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE0D2E31BA8C38F00E49E56 /* UAInstallAttributionEventTest.m */; };
-		CCE1E6391ABA33C30023D254 /* UAInAppDisplayEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE1E6371ABA33C30023D254 /* UAInAppDisplayEvent.h */; };
 		CCE0D2E11BA8C00B00E49E56 /* UAInstallAttributionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE0D2DF1BA8C00B00E49E56 /* UAInstallAttributionEvent.h */; settings = {ASSET_TAGS = (); }; };
 		CCE0D2E21BA8C00B00E49E56 /* UAInstallAttributionEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE0D2E01BA8C00B00E49E56 /* UAInstallAttributionEvent.m */; settings = {ASSET_TAGS = (); }; };
 		CCE0D2E41BA8C38F00E49E56 /* UAInstallAttributionEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE0D2E31BA8C38F00E49E56 /* UAInstallAttributionEventTest.m */; settings = {ASSET_TAGS = (); }; };
@@ -376,6 +372,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = BB8860A7159A7E9600584445;
 			remoteInfo = AirshipLib;
+		};
+		492051331C0D0E0E00A7B36D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4920512B1C0D0C0A00A7B36D;
+			remoteInfo = AirshipResources;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -430,6 +433,7 @@
 		4905C4E418246339001D48E3 /* NSString+UAURLEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UAURLEncoding.m"; sourceTree = "<group>"; };
 		490710BB184D3EAB00E494AF /* UAWebViewCallDataTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWebViewCallDataTest.m; sourceTree = "<group>"; };
 		491B845F198C44C200FB7A40 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
+		4920512C1C0D0C0A00A7B36D /* AirshipResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipResources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		4925AAAC1B2B9D00002F045D /* UAirshipTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAirshipTest.m; sourceTree = "<group>"; };
 		4928D8F41AB24D010046E5BE /* UAUserNotificationCategory+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUserNotificationCategory+Internal.h"; sourceTree = "<group>"; };
 		4928D8F71AB364500046E5BE /* UAUserNotificationAction+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUserNotificationAction+Internal.h"; sourceTree = "<group>"; };
@@ -769,6 +773,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		492051291C0D0C0A00A7B36D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7BB679021429288D00B877DB /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -808,6 +819,7 @@
 			children = (
 				7BB679061429288D00B877DB /* AirshipLogicTests.xctest */,
 				BB88612C159A7E9600584445 /* libUAirship-6.4.0.a */,
+				4920512C1C0D0C0A00A7B36D /* AirshipResources.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -818,6 +830,7 @@
 				D9FD1A13122DB77000522B4E /* Airship */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				7BB6790C1429288D00B877DB /* AirshipLogicTests */,
+				4920512D1C0D0C0A00A7B36D /* AirshipResources */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				76F9B4AB18D3CE2A00C438D4 /* JRSwizzle */,
 				034768DFFF38A50411DB9C8B /* Products */,
@@ -1013,6 +1026,13 @@
 				1857645912AE0A2F001D7DCC /* update_library_reference.sh */,
 			);
 			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		4920512D1C0D0C0A00A7B36D /* AirshipResources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = AirshipResources;
 			sourceTree = "<group>";
 		};
 		4928D8E51AAA87110046E5BE /* Compatibility */ = {
@@ -1697,7 +1717,6 @@
 				4928D90C1ABA37A30046E5BE /* UAInAppMessaging.h in Headers */,
 				CCE0D2E11BA8C00B00E49E56 /* UAInstallAttributionEvent.h in Headers */,
 				CC85427817F2130700D2DE10 /* UAURLProtocol.h in Headers */,
-				61A0709F1B7A7B0700819091 /* UAInboxAPIClient+Internal.h in Headers */,
 				49DCFAC01831B580002CD5FB /* UAJavaScriptDelegate.h in Headers */,
 				CC0F49641B9A4F8500AF1EF6 /* UAAssociatedIdentifiers.h in Headers */,
 				CC4AAE0718C93ECF001F23B3 /* UAApplicationMetrics.h in Headers */,
@@ -1712,6 +1731,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		4920512B1C0D0C0A00A7B36D /* AirshipResources */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 492051321C0D0C0A00A7B36D /* Build configuration list for PBXNativeTarget "AirshipResources" */;
+			buildPhases = (
+				492051281C0D0C0A00A7B36D /* Sources */,
+				492051291C0D0C0A00A7B36D /* Frameworks */,
+				4920512A1C0D0C0A00A7B36D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AirshipResources;
+			productName = AirshipResources;
+			productReference = 4920512C1C0D0C0A00A7B36D /* AirshipResources.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
 		7BB679051429288D00B877DB /* AirshipLogicTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7BB679171429288D00B877DB /* Build configuration list for PBXNativeTarget "AirshipLogicTests" */;
@@ -1744,6 +1780,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				492051341C0D0E0E00A7B36D /* PBXTargetDependency */,
 			);
 			name = AirshipLib;
 			productName = AirshipLib;
@@ -1758,6 +1795,11 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 0630;
+				TargetAttributes = {
+					4920512B1C0D0C0A00A7B36D = {
+						CreatedOnToolsVersion = 7.0;
+					};
+				};
 			};
 			buildConfigurationList = 1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "AirshipLib" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1777,11 +1819,19 @@
 			targets = (
 				BB8860A7159A7E9600584445 /* AirshipLib */,
 				7BB679051429288D00B877DB /* AirshipLogicTests */,
+				4920512B1C0D0C0A00A7B36D /* AirshipResources */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4920512A1C0D0C0A00A7B36D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7BB679031429288D00B877DB /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1845,6 +1895,13 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		492051281C0D0C0A00A7B36D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7BB679011429288D00B877DB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2058,6 +2115,11 @@
 			target = BB8860A7159A7E9600584445 /* AirshipLib */;
 			targetProxy = 1F4230BA16C095B8004B52C1 /* PBXContainerItemProxy */;
 		};
+		492051341C0D0E0E00A7B36D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4920512B1C0D0C0A00A7B36D /* AirshipResources */;
+			targetProxy = 492051331C0D0E0E00A7B36D /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -2162,6 +2224,95 @@
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv7 armv7s arm64 i386 x86_64";
+			};
+			name = Release;
+		};
+		4920512F1C0D0C0A00A7B36D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COMBINE_HIDPI_IMAGES = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = AirshipResources/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipResources;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		492051301C0D0C0A00A7B36D /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COMBINE_HIDPI_IMAGES = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = AirshipResources/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipResources;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Coverage;
+		};
+		492051311C0D0C0A00A7B36D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COMBINE_HIDPI_IMAGES = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = AirshipResources/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipResources;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;
 		};
@@ -2467,6 +2618,16 @@
 				1DEB922308733DC00010E9CD /* Debug */,
 				CC3914A51790A6E20033094B /* Coverage */,
 				1DEB922408733DC00010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		492051321C0D0C0A00A7B36D /* Build configuration list for PBXNativeTarget "AirshipResources" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4920512F1C0D0C0A00A7B36D /* Debug */,
+				492051301C0D0C0A00A7B36D /* Coverage */,
+				492051311C0D0C0A00A7B36D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

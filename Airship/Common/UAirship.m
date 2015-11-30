@@ -60,6 +60,8 @@ NSString * const UALibraryVersion = @"com.urbanairship.library_version";
 
 static UAirship *sharedAirship_;
 
+static NSBundle *resourcesBundle_;
+
 // Its possible that plugins that use load to call takeoff will trigger after
 // handleAppDidFinishLaunchingNotification.  We need to store that notification
 // and call handleAppDidFinishLaunchingNotification in takeoff.
@@ -375,6 +377,20 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 + (UAInAppMessaging *)inAppMessaging {
     return sharedAirship_.sharedInAppMessaging;
+}
+
++ (NSBundle *)resources {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        // Don't assume that we are within the main bundle
+        NSBundle *containingBundle = [NSBundle bundleForClass:self];
+        // If AirshipResources is not present, the corresponding URL will be nil
+        NSURL *resourcesBundleURL = [containingBundle URLForResource:@"AirshipResources" withExtension:@"bundle"];
+        if (resourcesBundleURL) {
+            resourcesBundle_ = [NSBundle bundleWithURL:resourcesBundleURL];
+        }
+    });
+    return resourcesBundle_;
 }
 
 + (NSString *)createUserAgentForAppKey:(NSString *)appKey {
