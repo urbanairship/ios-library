@@ -184,6 +184,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         return;
     }
 
+    if (![self resources]) {
+        UA_LIMPERR(@"AirshipResources.bundle could not be found. If using the static library, you must add this file to your application's Copy Bundle Resources phase, or use the AirshipKit embedded framework");
+        // Bail now. Don't continue the takeOff sequence.
+        return;
+    }
+
     UA_LINFO(@"UAirship Take Off! Lib Version: %@ App Key: %@ Production: %@.",
              UA_VERSION, config.appKey, config.inProduction ?  @"YES" : @"NO");
 
