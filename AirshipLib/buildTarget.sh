@@ -36,7 +36,7 @@ EXECUTABLE_PATH=$(xcode_setting "EXECUTABLE_PATH")
 EXECUTABLE_FOLDER_PATH=$(xcode_setting "EXECUTABLE_FOLDER_PATH")
 PRODUCT_TYPE=$(xcode_setting "PRODUCT_TYPE")
 
-if [ $PRODUCT_TYPE == "com.apple.product-type.bundle" ]
+if [ $PRODUCT_TYPE = "com.apple.product-type.bundle" ]
 then
     TARGET_BUNDLE=true
     TARGET_COPY_PATH="$EXECUTABLE_FOLDER_PATH"
@@ -122,13 +122,12 @@ mkdir -p "${CREATING_UNIVERSAL_DIR}"
 
 LIPO="xcrun -sdk iphoneos lipo"
 
-echo "lipo: for current configuration (${CONFIGURATION}) creating output file: ${CREATING_UNIVERSAL_DIR}/${TARGET_LIPO_PATH}"
-echo "...outputing a universal armv7/armv7s/arm64/x86_64/i386 build to: ${CREATING_UNIVERSAL_DIR}"
-
-if [ $TARGET_BUNDLE ]
+if [ $TARGET_BUNDLE = true ]
 then
     cp -R ${CURRENTCONFIG_DEVICE_DIR}/${TARGET_COPY_PATH} ${DEPLOY_DIR}
 else
+    echo "lipo: for current configuration (${CONFIGURATION}) creating output file: ${CREATING_UNIVERSAL_DIR}/${TARGET_LIPO_PATH}"
+    echo "...outputing a universal armv7/armv7s/arm64/x86_64/i386 build to: ${CREATING_UNIVERSAL_DIR}"
     $LIPO -create -output "${CREATING_UNIVERSAL_DIR}/${TARGET_LIPO_PATH}" "${CURRENTCONFIG_DEVICE_DIR}/${TARGET_LIPO_PATH}" "${CURRENTCONFIG_SIMULATOR_DIR}/${TARGET_LIPO_PATH}"
 $LIPO -i "${CREATING_UNIVERSAL_DIR}/${TARGET_LIPO_PATH}"
     cp -R ${CREATING_UNIVERSAL_DIR}/${TARGET_COPY_PATH} ${DEPLOY_DIR}
