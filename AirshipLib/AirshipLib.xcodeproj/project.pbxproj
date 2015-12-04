@@ -81,6 +81,8 @@
 		495526B117D95552009BC301 /* UAInboxMessageListTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 495526AB17D95552009BC301 /* UAInboxMessageListTest.m */; };
 		495526B217D95552009BC301 /* UAInboxMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 495526AC17D95552009BC301 /* UAInboxMessageTest.m */; };
 		497B0EAA1836AB8700DA65BB /* NSString_UAURLEncodingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 497B0EA91836AB8700DA65BB /* NSString_UAURLEncodingTest.m */; };
+		49872F861C112E3F00B26CE7 /* UADefaultMessageCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 49872F841C112E3F00B26CE7 /* UADefaultMessageCenter.h */; settings = {ASSET_TAGS = (); }; };
+		49872F871C112E3F00B26CE7 /* UADefaultMessageCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 49872F851C112E3F00B26CE7 /* UADefaultMessageCenter.m */; settings = {ASSET_TAGS = (); }; };
 		49942CDB17B19A3B007E5FB1 /* UADelayOperationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49942CDA17B19A3B007E5FB1 /* UADelayOperationTest.m */; };
 		4995C63A180DBBC9004F8724 /* UAAddTagsAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 4995C638180DBBC9004F8724 /* UAAddTagsAction.h */; };
 		4995C63C180DBBC9004F8724 /* UAAddTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C639180DBBC9004F8724 /* UAAddTagsAction.m */; };
@@ -484,6 +486,8 @@
 		495526AB17D95552009BC301 /* UAInboxMessageListTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageListTest.m; sourceTree = "<group>"; };
 		495526AC17D95552009BC301 /* UAInboxMessageTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageTest.m; sourceTree = "<group>"; };
 		497B0EA91836AB8700DA65BB /* NSString_UAURLEncodingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSString_UAURLEncodingTest.m; sourceTree = "<group>"; };
+		49872F841C112E3F00B26CE7 /* UADefaultMessageCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADefaultMessageCenter.h; sourceTree = "<group>"; };
+		49872F851C112E3F00B26CE7 /* UADefaultMessageCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenter.m; sourceTree = "<group>"; };
 		49942CD917B19A3B007E5FB1 /* UADelayOperationTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADelayOperationTest.h; sourceTree = "<group>"; };
 		49942CDA17B19A3B007E5FB1 /* UADelayOperationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADelayOperationTest.m; sourceTree = "<group>"; };
 		4995C62217FA3D71004F8724 /* UAAction+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAAction+Internal.h"; sourceTree = "<group>"; };
@@ -1121,6 +1125,15 @@
 			name = HTTP;
 			sourceTree = "<group>";
 		};
+		49872F831C112DFF00B26CE7 /* MessageCenter */ = {
+			isa = PBXGroup;
+			children = (
+				49872F841C112E3F00B26CE7 /* UADefaultMessageCenter.h */,
+				49872F851C112E3F00B26CE7 /* UADefaultMessageCenter.m */,
+			);
+			name = MessageCenter;
+			sourceTree = "<group>";
+		};
 		4995C637180DBB97004F8724 /* Tags */ = {
 			isa = PBXGroup;
 			children = (
@@ -1561,6 +1574,7 @@
 		D9FD1C3A122DBCEA00522B4E /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				49872F831C112DFF00B26CE7 /* MessageCenter */,
 				49B704591A76FE53000F67A6 /* InAppMessages */,
 				1F55FB6A181A34B7002AA192 /* UI */,
 				49C671F2184EA8F90088F210 /* JS */,
@@ -1624,6 +1638,7 @@
 				76AA8EDD19B0F0A2005FD1C3 /* UAKeychainUtils+Internal.h in Headers */,
 				CCA3A5041803184D009C7371 /* UAActionRegistryEntry+Internal.h in Headers */,
 				76AA8EDB19B0F0A2005FD1C3 /* NSJSONSerialization+UAAdditions.h in Headers */,
+				49872F861C112E3F00B26CE7 /* UADefaultMessageCenter.h in Headers */,
 				49C6652B1A1E77DB00E5D650 /* UIWebView+UAAdditions.h in Headers */,
 				1F610E0417835C3A00BCD96E /* UAPush+Internal.h in Headers */,
 				49CE03281AA9374000257BD8 /* UAUserNotificationCategory.h in Headers */,
@@ -2126,6 +2141,7 @@
 				CC4AAE0918C93ECF001F23B3 /* UAApplicationMetrics.m in Sources */,
 				CC8542C917F4B81600D2DE10 /* UAAggregateActionResult.m in Sources */,
 				49C1F0801978523300DD67DE /* UAInboxMessage.m in Sources */,
+				49872F871C112E3F00B26CE7 /* UADefaultMessageCenter.m in Sources */,
 				1F610DE017835C3A00BCD96E /* UAInbox.m in Sources */,
 				1F610DEF17835C3A00BCD96E /* UAInboxMessageList.m in Sources */,
 				762941AD1A016EB60077CDC1 /* UAActivityViewController.m in Sources */,

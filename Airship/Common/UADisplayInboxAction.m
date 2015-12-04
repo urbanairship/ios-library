@@ -30,7 +30,7 @@
 #import "UAInboxMessage.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxUtils.h"
-#import "UALandingPageOverlayController.h"
+#import "UADefaultMessageCenter.h"
 
 #define kUADisplayInboxActionMessageIDPlaceHolder @"auto"
 
@@ -84,7 +84,7 @@
             if ([inboxDelegate respondsToSelector:@selector(showInboxMessage:)]) {
                 [inboxDelegate showInboxMessage:message];
             } else {
-                [UALandingPageOverlayController showMessage:message];
+                [[UAirship defaultMessageCenter] displayMessage:message];
             }
             break;
         case UASituationManualInvocation:
@@ -93,7 +93,7 @@
             if ([inboxDelegate respondsToSelector:@selector(showInboxMessage:)]) {
                 [inboxDelegate showInboxMessage:message];
             } else {
-                [UALandingPageOverlayController showMessage:message];
+                [[UAirship defaultMessageCenter] displayMessage:message];
             }
             break;
         case UASituationBackgroundPush:
@@ -116,6 +116,8 @@
     id<UAInboxDelegate> inboxDelegate = [UAirship inbox].delegate;
     if ([inboxDelegate respondsToSelector:@selector(showInbox)]) {
         [inboxDelegate showInbox];
+    } else {
+        [[UAirship defaultMessageCenter] display];
     }
 }
 

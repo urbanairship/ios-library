@@ -33,7 +33,7 @@
 #import "UAInboxMessageList.h"
 #import "UAirship.h"
 #import "UAInboxMessage.h"
-#import "UALandingPageOverlayController.h"
+#import "UADefaultMessageCenter.h"
 
 @interface UADisplayInboxActionTest : XCTestCase
 
@@ -45,7 +45,7 @@
 
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockMessageList;
-@property (nonatomic, strong) id mockLandingPageOverlayController;
+@property (nonatomic, strong) id mockDefaultMessageCenter;
 
 @end
 
@@ -61,22 +61,23 @@
 
     self.mockMessage = [OCMockObject niceMockForClass:[UAInboxMessage class]];
     self.mockMessageList = [OCMockObject niceMockForClass:[UAInboxMessageList class]];
+    self.mockDefaultMessageCenter = [OCMockObject niceMockForClass:[UADefaultMessageCenter class]];
 
     self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [[[self.mockAirship stub] andReturn:self.mockDefaultMessageCenter] defaultMessageCenter];
 
     UAInbox *inbox = [[UAInbox alloc] init];
     inbox.messageList = self.mockMessageList;
     [[[self.mockAirship stub] andReturn:inbox] inbox];
 
-    self.mockLandingPageOverlayController = [OCMockObject niceMockForClass:[UALandingPageOverlayController class]];
 }
 
 - (void)tearDown {
     [self.mockAirship stopMocking];
     [self.mockMessageList stopMocking];
     [self.mockInboxDelegate stopMocking];
-    [self.mockLandingPageOverlayController stopMocking];
+    [self.mockDefaultMessageCenter stopMocking];
 
     [super tearDown];
 }
@@ -258,9 +259,9 @@
 
 /**
  * Test the action performing with a message will fall back to displaying the
- * message in a landing page if no delegate is available.
+ * message in the default message center if no delegate is available.
  */
-- (void)testPerformFallsBackLandingPageController {
+- (void)testPerformWithMessageFallsBackDefaultMessageCenter {
     // Set up the action arguments
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
                                                       withSituation:UASituationManualInvocation];
@@ -268,14 +269,32 @@
     // Return the message for the message ID
     [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
 
-    // Should display in the landing page
-    [[self.mockLandingPageOverlayController expect] showMessage:self.mockMessage];
+    // Should display in the default message center
+    [[self.mockDefaultMessageCenter expect] displayMessage:self.mockMessage];
 
     // Perform the action
     [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
 
     // Verify it was displayed
-    [self.mockLandingPageOverlayController verify];
+    [self.mockDefaultMessageCenter verify];
+}
+
+/**
+ * Test the action performing without a message will fall back to displaying the
+ * the default message center if no delegate is available.
+ */
+- (void)testPerformWithoutMessageFallsBackDefaultMessageCenter {
+    // Set up the action arguments
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:nil withSituation:UASituationManualInvocation];
+
+    // Should display in the default message center
+    [[self.mockDefaultMessageCenter expect] display];
+
+    // Perform the action
+    [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
+
+    // Verify it was displayed
+    [self.mockDefaultMessageCenter verify];
 }
 
 

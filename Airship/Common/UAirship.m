@@ -49,6 +49,7 @@
 #import "UAInAppMessaging+Internal.h"
 #import "UAChannelCapture.h"
 #import "UAActionJSDelegate.h"
+#import "UADefaultMessageCenter.h"
 
 UA_VERSION_IMPLEMENTATION(UAirshipVersion, UA_VERSION)
 
@@ -135,6 +136,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
 
         self.sharedInAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.analytics dataStore:dataStore];
+
+        self.sharedDefaultMessageCenter = [[UADefaultMessageCenter alloc] init];
 
         self.channelCapture = [UAChannelCapture channelCaptureWithConfig:config push:self.sharedPush];
     }
@@ -383,6 +386,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 + (UAInAppMessaging *)inAppMessaging {
     return sharedAirship_.sharedInAppMessaging;
+}
+
++ (UADefaultMessageCenter *)defaultMessageCenter {
+    return sharedAirship_.sharedDefaultMessageCenter;
 }
 
 + (NSBundle *)resources {

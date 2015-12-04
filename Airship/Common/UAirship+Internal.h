@@ -68,6 +68,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong) UAInAppMessaging *sharedInAppMessaging;
 
+/**
+ * The default message center.
+ */
+@property (nonatomic, strong) UADefaultMessageCenter *sharedDefaultMessageCenter;
+
 
 /**
  * Creates the user agent string for a given appkey.
