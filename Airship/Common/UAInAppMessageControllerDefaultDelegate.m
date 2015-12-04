@@ -31,7 +31,7 @@
 #import "UAInAppMessageButtonActionBinding.h"
 #import "UAUserNotificationCategory.h"
 #import "UAUtils.h"
-#import "UALocalizationUtils.h"
+#import "NSString+UALocalizationAdditions.h"
 
 
 #define kUAInAppMessageAnimationDuration 0.2
@@ -107,7 +107,7 @@
 }
 
 - (NSString *)localizedButtonTitleForKey:(NSString *)key {
-    return [UALocalizationUtils localizedStringForKey:key table:@"UAInteractiveNotifications"];
+    return [key localizedStringWithTable:@"UAInteractiveNotifications"];
 }
 
 /**
