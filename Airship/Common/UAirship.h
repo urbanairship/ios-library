@@ -211,6 +211,12 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 + (null_unspecified UAInAppMessaging *)inAppMessaging;
 
+/**
+ * Returns the AirshipResources bundle, or nil if the the bundle
+ * cannot be located at runtime.
+ */
++ (nullable NSBundle *) resources;
+
 NS_ASSUME_NONNULL_END
 
 @end

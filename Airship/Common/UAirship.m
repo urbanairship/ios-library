@@ -60,6 +60,8 @@ NSString * const UALibraryVersion = @"com.urbanairship.library_version";
 
 static UAirship *sharedAirship_;
 
+static NSBundle *resourcesBundle_;
+
 // Its possible that plugins that use load to call takeoff will trigger after
 // handleAppDidFinishLaunchingNotification.  We need to store that notification
 // and call handleAppDidFinishLaunchingNotification in takeoff.
@@ -178,6 +180,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     // Ensure that app credentials have been passed in
     if (![config validate]) {
         UA_LIMPERR(@"The AirshipConfig.plist file is missing and no application credentials were specified at runtime.");
+        // Bail now. Don't continue the takeOff sequence.
+        return;
+    }
+
+    if (![self resources]) {
+        UA_LIMPERR(@"AirshipResources.bundle could not be found. If using the static library, you must add this file to your application's Copy Bundle Resources phase, or use the AirshipKit embedded framework");
         // Bail now. Don't continue the takeOff sequence.
         return;
     }
@@ -375,6 +383,20 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 + (UAInAppMessaging *)inAppMessaging {
     return sharedAirship_.sharedInAppMessaging;
+}
+
++ (NSBundle *)resources {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        // Don't assume that we are within the main bundle
+        NSBundle *containingBundle = [NSBundle bundleForClass:self];
+        // If AirshipResources is not present, the corresponding URL will be nil
+        NSURL *resourcesBundleURL = [containingBundle URLForResource:@"AirshipResources" withExtension:@"bundle"];
+        if (resourcesBundleURL) {
+            resourcesBundle_ = [NSBundle bundleWithURL:resourcesBundleURL];
+        }
+    });
+    return resourcesBundle_;
 }
 
 + (NSString *)createUserAgentForAppKey:(NSString *)appKey {

@@ -55,6 +55,10 @@ find "$dest_lib_root" -d 1 -name "$lib_base_name*.${EXECUTABLE_EXTENSION}" -exec
 echo "copy *.$EXECUTABLE_EXTENSION from ${BINARY_DIR} to $dest_lib_root"
 cp "${BINARY_DIR}"/*.$EXECUTABLE_EXTENSION "$dest_lib_root"
 
+# Copies any generated bundles to the Airship Folder
+echo "copy  *.bundle from ${BINARY_DIR} to $dest_lib_root"
+cp -R "${BINARY_DIR}"/*.bundle "$dest_lib_root"
+
 for prj_root in "${SRCROOT}"/../*Sample "${SRCROOT}"/../AirshipKit
 do
     prj_name="$(basename "$prj_root")"

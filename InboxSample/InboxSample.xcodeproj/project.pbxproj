@@ -47,6 +47,7 @@
 		4939782819B7E01B0063C58F /* InboxSampleModalUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4939779A19B7C1E70063C58F /* InboxSampleModalUserInterface.m */; };
 		4939782919B7E01B0063C58F /* InboxSampleNavigationUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4939779C19B7C1E70063C58F /* InboxSampleNavigationUserInterface.m */; };
 		4939782A19B7E01B0063C58F /* InboxSamplePopoverUserInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4939779E19B7C1E70063C58F /* InboxSamplePopoverUserInterface.m */; };
+		4996CFF21C0E884900BD8F15 /* AirshipResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4996CFF11C0E884900BD8F15 /* AirshipResources.bundle */; };
 		49A2CFA61BE044CA006637B6 /* UACommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 49A2CFA51BE044CA006637B6 /* UACommon.m */; settings = {ASSET_TAGS = (); }; };
 		49BBE3D71BE1506A00B9B296 /* UACommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 49A2CFA51BE044CA006637B6 /* UACommon.m */; };
 		49C0CB8919BA634F00771F4F /* NSString+UALocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C0CB7D19BA634F00771F4F /* NSString+UALocalization.m */; };
@@ -145,6 +146,7 @@
 		4939779D19B7C1E70063C58F /* InboxSamplePopoverUserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSamplePopoverUserInterface.h; sourceTree = "<group>"; };
 		4939779E19B7C1E70063C58F /* InboxSamplePopoverUserInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxSamplePopoverUserInterface.m; sourceTree = "<group>"; };
 		4939779F19B7C1E70063C58F /* InboxSampleUserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSampleUserInterface.h; sourceTree = "<group>"; };
+		4996CFF11C0E884900BD8F15 /* AirshipResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AirshipResources.bundle; path = ../Airship/AirshipResources.bundle; sourceTree = "<group>"; };
 		49A2CFA51BE044CA006637B6 /* UACommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACommon.m; sourceTree = "<group>"; };
 		49C0CB7C19BA634F00771F4F /* NSString+UALocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UALocalization.h"; sourceTree = "<group>"; };
 		49C0CB7D19BA634F00771F4F /* NSString+UALocalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UALocalization.m"; sourceTree = "<group>"; };
@@ -294,6 +296,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				4996CFF11C0E884900BD8F15 /* AirshipResources.bundle */,
 				49D527F71B0FF24D006E35FB /* AirshipKit.xcodeproj */,
 				184E3F3A129E4C0D004465C8 /* Support */,
 				D9FFC6EC124BFD3700E8BD30 /* Airship */,
@@ -571,6 +574,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4996CFF21C0E884900BD8F15 /* AirshipResources.bundle in Resources */,
 				18A27CB6125EDD6E0045D75B /* MainWindow.xib in Resources */,
 				E9CB369312B89C47002E39EA /* InboxSampleViewController.xib in Resources */,
 				D5C75C9612BC23BB0041239E /* InboxSampleViewControlleriPad.xib in Resources */,

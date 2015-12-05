@@ -50,6 +50,7 @@
 		49813D131BE01EB300D8C3FA /* UACommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 49813D121BE01EB300D8C3FA /* UACommon.m */; settings = {ASSET_TAGS = (); }; };
 		49914C281B0FEADA001078AB /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 49914C251B0FEAD0001078AB /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		49914C291B0FEAE9001078AB /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49914C251B0FEAD0001078AB /* AirshipKit.framework */; };
+		4996CFEE1C0E880E00BD8F15 /* AirshipResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4996CFEC1C0E87FC00BD8F15 /* AirshipResources.bundle */; };
 		49BBE3D91BE1516A00B9B296 /* UACommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 49813D121BE01EB300D8C3FA /* UACommon.m */; };
 		49C0CB1119BA5AA800771F4F /* NSString+UALocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C0CB0E19BA5AA800771F4F /* NSString+UALocalization.m */; };
 		49C0CB1219BA5AA800771F4F /* NSString+UALocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C0CB0E19BA5AA800771F4F /* NSString+UALocalization.m */; };
@@ -146,6 +147,7 @@
 		493977F919B7CE660063C58F /* PushSample-Kit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PushSample-Kit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		49813D121BE01EB300D8C3FA /* UACommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACommon.m; sourceTree = "<group>"; };
 		49914C201B0FEACF001078AB /* AirshipKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipKit.xcodeproj; path = ../AirshipKit/AirshipKit.xcodeproj; sourceTree = "<group>"; };
+		4996CFEC1C0E87FC00BD8F15 /* AirshipResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AirshipResources.bundle; path = ../Airship/AirshipResources.bundle; sourceTree = "<group>"; };
 		4997FA221B55C5BC002D4E05 /* UACommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACommon.h; sourceTree = "<group>"; };
 		49C0CB0D19BA5AA800771F4F /* NSString+UALocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UALocalization.h"; sourceTree = "<group>"; };
 		49C0CB0E19BA5AA800771F4F /* NSString+UALocalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UALocalization.m"; sourceTree = "<group>"; };
@@ -404,6 +406,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				4996CFEC1C0E87FC00BD8F15 /* AirshipResources.bundle */,
 				49914C201B0FEACF001078AB /* AirshipKit.xcodeproj */,
 				184E3FD3129E4D11004465C8 /* Support */,
 				1890B9111251B5E900E6EBF1 /* Airship */,
@@ -576,6 +579,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4996CFEE1C0E880E00BD8F15 /* AirshipResources.bundle in Resources */,
 				18C0295B124F216B00D49CD5 /* MainWindow_Pad.xib in Resources */,
 				18C0295D124F216B00D49CD5 /* MainWindow_Phone.xib in Resources */,
 				18C02961124F216B00D49CD5 /* SampleViewController.xib in Resources */,

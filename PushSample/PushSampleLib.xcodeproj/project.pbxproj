@@ -34,10 +34,11 @@
 		1FCCBC191A0EB6DE00B256F0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1FCCBC181A0EB6DE00B256F0 /* Images.xcassets */; };
 		493FB10519C100BF006424E2 /* NSString+UASizeWithFontCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 493FB10419C100BF006424E2 /* NSString+UASizeWithFontCompatibility.m */; };
 		49813D101BDFFDCB00D8C3FA /* UACommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 49813D0F1BDFFDCB00D8C3FA /* UACommon.m */; settings = {ASSET_TAGS = (); }; };
+		4996CFE21C0E86E100BD8F15 /* AirshipResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4996CFE11C0E86E100BD8F15 /* AirshipResources.bundle */; };
 		49C0CB0819BA3CCC00771F4F /* NSString+UALocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C0CB0719BA3CCC00771F4F /* NSString+UALocalization.m */; };
 		49C0CB5219BA5E3300771F4F /* UAInteractiveNotifications.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49C0CB4419BA5E3300771F4F /* UAInteractiveNotifications.strings */; };
 		49C0CB9919BA648300771F4F /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 49C0CB9719BA648300771F4F /* UAPushUI.strings */; };
-		7615E88D1B5D9FD5006891F8 /* libUAirship-6.3.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-6.3.0.a */; };
+		7615E88D1B5D9FD5006891F8 /* libUAirship-6.4.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-6.4.0.a */; };
 		7622C9E21A8A738900399992 /* UAPushSettingsNamedUserView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 767D0D4E1A72F827008CEC8A /* UAPushSettingsNamedUserView.xib */; };
 		7622C9E31A8A73B100399992 /* UAPushSettingsNamedUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 767D0D401A72CF4C008CEC8A /* UAPushSettingsNamedUserViewController.m */; };
 		76811EEE17EBA63700874D1F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -79,6 +80,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = AAB07268139719AC008AF393;
 			remoteInfo = KIF;
+		};
+		4996CFE01C0E86E100BD8F15 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 18C02962124F21B800D49CD5 /* AirshipLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4920512C1C0D0C0A00A7B36D;
+			remoteInfo = AirshipResources;
 		};
 		76811EE317EBA60100874D1F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -262,7 +270,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7615E88D1B5D9FD5006891F8 /* libUAirship-6.3.0.a in Frameworks */,
+				7615E88D1B5D9FD5006891F8 /* libUAirship-6.4.0.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -454,8 +462,9 @@
 		18C02963124F21B800D49CD5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BBC923F515AC8F6000EE7C2A /* libUAirship-6.3.0.a */,
+				BBC923F515AC8F6000EE7C2A /* libUAirship-6.4.0.a */,
 				7B909D40142935C900D0AB36 /* AirshipLogicTests.xctest */,
+				4996CFE11C0E86E100BD8F15 /* AirshipResources.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -744,6 +753,13 @@
 			remoteRef = 1FCBB566175AA0E200F42F07 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		4996CFE11C0E86E100BD8F15 /* AirshipResources.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipResources.bundle;
+			remoteRef = 4996CFE01C0E86E100BD8F15 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		76811EE417EBA60100874D1F /* Test Host.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
@@ -779,10 +795,10 @@
 			remoteRef = 7B909D3F142935C900D0AB36 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BBC923F515AC8F6000EE7C2A /* libUAirship-6.3.0.a */ = {
+		BBC923F515AC8F6000EE7C2A /* libUAirship-6.4.0.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-6.3.0.a";
+			path = "libUAirship-6.4.0.a";
 			remoteRef = BBC923F415AC8F6000EE7C2A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -815,6 +831,7 @@
 				1F7FD61C12F8E39900317B96 /* pig.caf in Resources */,
 				BB75D9AF151BEB1600F4241E /* UALocationSettingsViewController.xib in Resources */,
 				BBAAD871151D263F00A090CD /* UAMapPresentationViewController.xib in Resources */,
+				4996CFE21C0E86E100BD8F15 /* AirshipResources.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

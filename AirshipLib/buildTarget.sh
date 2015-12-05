@@ -34,14 +34,14 @@ SDK_NAME=$(xcode_setting "SDK_NAME")
 EXECUTABLE_NAME=$(xcode_setting "EXECUTABLE_NAME")
 EXECUTABLE_PATH=$(xcode_setting "EXECUTABLE_PATH")
 EXECUTABLE_FOLDER_PATH=$(xcode_setting "EXECUTABLE_FOLDER_PATH")
-PACKAGE_TYPE=$(xcode_setting "PACKAGE_TYPE")
+PRODUCT_TYPE=$(xcode_setting "PRODUCT_TYPE")
 
-if [ $PACKAGE_TYPE == "com.apple.package-type.wrapper.framework" ]
+if [ $PRODUCT_TYPE = "com.apple.product-type.bundle" ]
 then
-    TARGET_FRAMEWORK=true
+    TARGET_BUNDLE=true
     TARGET_COPY_PATH="$EXECUTABLE_FOLDER_PATH"
 else
-    TARGET_FRAMEWORK=false
+    TARGET_BUNDLE=false
     TARGET_COPY_PATH="$EXECUTABLE_NAME"
 fi
 
@@ -122,16 +122,16 @@ mkdir -p "${CREATING_UNIVERSAL_DIR}"
 
 LIPO="xcrun -sdk iphoneos lipo"
 
-echo "lipo: for current configuration (${CONFIGURATION}) creating output file: ${CREATING_UNIVERSAL_DIR}/${TARGET_LIPO_PATH}"
-echo "...outputing a universal armv7/armv7s/arm64/x86_64/i386 build to: ${CREATING_UNIVERSAL_DIR}"
-
-if [ $TARGET_FRAMEWORK ]
+if [ $TARGET_BUNDLE = true ]
 then
-    cp -R ${CURRENTCONFIG_DEVICE_DIR}/${EXECUTABLE_FORLDER_PATH} ${CREATING_UNIVERSAL_DIR}
+    cp -R ${CURRENTCONFIG_DEVICE_DIR}/${TARGET_COPY_PATH} ${DEPLOY_DIR}
+else
+    echo "lipo: for current configuration (${CONFIGURATION}) creating output file: ${CREATING_UNIVERSAL_DIR}/${TARGET_LIPO_PATH}"
+    echo "...outputing a universal armv7/armv7s/arm64/x86_64/i386 build to: ${CREATING_UNIVERSAL_DIR}"
+    $LIPO -create -output "${CREATING_UNIVERSAL_DIR}/${TARGET_LIPO_PATH}" "${CURRENTCONFIG_DEVICE_DIR}/${TARGET_LIPO_PATH}" "${CURRENTCONFIG_SIMULATOR_DIR}/${TARGET_LIPO_PATH}"
+$LIPO -i "${CREATING_UNIVERSAL_DIR}/${TARGET_LIPO_PATH}"
+    cp -R ${CREATING_UNIVERSAL_DIR}/${TARGET_COPY_PATH} ${DEPLOY_DIR}
 fi
 
-$LIPO -create -output "${CREATING_UNIVERSAL_DIR}/${TARGET_LIPO_PATH}" "${CURRENTCONFIG_DEVICE_DIR}/${TARGET_LIPO_PATH}" "${CURRENTCONFIG_SIMULATOR_DIR}/${TARGET_LIPO_PATH}"
-$LIPO -i "${CREATING_UNIVERSAL_DIR}/${TARGET_LIPO_PATH}"
-
 echo "Copying ${TARGET_COPY_PATH} to ${DEPLOY_DIR}"
-cp -R ${CREATING_UNIVERSAL_DIR}/${TARGET_COPY_PATH} ${DEPLOY_DIR}
+
