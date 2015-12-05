@@ -27,6 +27,7 @@
 #import "UAMutableUserNotificationCategory.h"
 #import "UAMutableUserNotificationAction.h"
 #import "UAGlobal.h"
+#import "NSString+UALocalizationAdditions.h"
 
 @implementation UAUserNotificationCategories
 
@@ -447,7 +448,8 @@
     for (NSDictionary *actionDefinition in actionDefinitions) {
         NSString *title;
         if (actionDefinition[@"title_resource"]) {
-            title = NSLocalizedStringWithDefaultValue(actionDefinition[@"title_resource"], @"UAInteractiveNotifications", [NSBundle mainBundle], actionDefinition[@"title"], nil);
+            title = [actionDefinition[@"title_resource"] localizedStringWithTable:@"UAInteractiveNotifications"
+                                                                     defaultValue:actionDefinition[@"title"]];
         } else if (actionDefinition[@"title"]) {
             title = actionDefinition[@"title"];
         }
