@@ -35,7 +35,7 @@
  *
  * @param table The table.
  * @param defaultValue The default value.
- * @return The localized string corresponding ot the key and table, or the default value if it cannot be found.
+ * @return The localized string corresponding to the key and table, or the default value if it cannot be found.
  */
 - (NSString *)localizedStringWithTable:(NSString *)table defaultValue:(NSString *)defaultValue;
 
@@ -45,7 +45,7 @@
  * allowing for developers to override or supplement any officially bundled localizations.
  *
  * @param table The table.
- * @return The localized string corresponding ot the key and table, or the key if it cannot be found.
+ * @return The localized string corresponding to the key and table, or the key if it cannot be found.
  */
 - (NSString *)localizedStringWithTable:(NSString *)table;
 

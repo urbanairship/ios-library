@@ -43,7 +43,7 @@
         string = NSLocalizedStringWithDefaultValue(self, table, resources, defaultValue, nil);
     }
 
-    // If the bundle wasn't loaded corectly, it's possible the result value could be nil.
+    // If the bundle wasn't loaded correctly, it's possible the result value could be nil.
     // Convert to the key as a last resort in this case.
     return string ?: defaultValue;
 }
