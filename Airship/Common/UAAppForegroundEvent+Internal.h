@@ -23,20 +23,12 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEvent.h"
-
-NS_ASSUME_NONNULL_BEGIN
-
-/**
- * Event when device registration occurred.
- */
-@interface UAEventDeviceRegistration : UAEvent
+#import <Foundation/Foundation.h>
+#import "UAAppInitEvent+Internal.h"
 
 /**
- * Factory method to create a UAEventDeviceRegistration.
+ * Event when app is in the foreground.
  */
-+ (instancetype)event;
+@interface UAAppForegroundEvent : UAAppInitEvent
 
 @end
-
-NS_ASSUME_NONNULL_END

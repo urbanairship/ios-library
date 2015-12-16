@@ -23,19 +23,20 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEventAppForeground+Internal.h"
-#import "UAEvent+Internal.h"
+#import "UAEvent.h"
 
-@implementation UAEventAppForeground
+NS_ASSUME_NONNULL_BEGIN
 
-- (NSMutableDictionary *)gatherData {
-    NSMutableDictionary *data = [super gatherData];
-    [data removeObjectForKey:@"foreground"];
-    return data;
-}
+/**
+ * Event when app exits.
+ */
+@interface UAAppExitEvent : UAEvent
 
-- (NSString *)eventType {
-    return @"app_foreground";
-}
+/**
+ * Factory method to create a UAAppExitEvent.
+ */
++ (instancetype)event;
 
 @end
+
+NS_ASSUME_NONNULL_END

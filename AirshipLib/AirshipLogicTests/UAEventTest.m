@@ -33,12 +33,12 @@
 #import "UAEvent.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
-#import "UAEventAppInit+Internal.h"
-#import "UAEventAppExit+Internal.h"
-#import "UAEventAppBackground+Internal.h"
-#import "UAEventAppForeground+Internal.h"
-#import "UAEventDeviceRegistration+Internal.h"
-#import "UAEventPushReceived+Internal.h"
+#import "UAAppInitEvent+Internal.h"
+#import "UAAppExitEvent+Internal.h"
+#import "UAAppBackgroundEvent+Internal.h"
+#import "UAAppForegroundEvent+Internal.h"
+#import "UADeviceRegistrationEvent+Internal.h"
+#import "UAPushReceivedEvent+Internal.h"
 #import "UAUtils.h"
 
 
@@ -136,7 +136,7 @@
                                    @"foreground": @"true"};
 
 
-    UAEventAppInit *event = [UAEventAppInit event];
+    UAAppInitEvent *event = [UAAppInitEvent event];
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_init", @"Event type is unexpected.");
@@ -174,7 +174,7 @@
                                    @"package_version": @""};
 
 
-    UAEventAppForeground *event = [UAEventAppForeground event];
+    UAAppForegroundEvent *event = [UAAppForegroundEvent event];
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_foreground", @"Event type is unexpected.");
@@ -196,7 +196,7 @@
                                    @"push_id": @"push ID",
                                    @"rich_push_id": @"rich push ID"};
 
-    UAEventAppExit *event = [UAEventAppExit event];
+    UAAppExitEvent *event = [UAAppExitEvent event];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_exit", @"Event type is unexpected.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
@@ -205,10 +205,10 @@
 /**
  * Test app background event
  */
-- (void)UAEventAppBackground {
+- (void)UAAppBackgroundEvent {
     NSDictionary *expectedData = @{@"class_name": @""};
 
-    UAEventAppBackground *event = [UAEventAppBackground event];
+    UAAppBackgroundEvent *event = [UAAppBackgroundEvent event];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_background", @"Event type is unexpected.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
@@ -227,7 +227,7 @@
                                    @"channel_id": @"someChannelID",
                                    @"user_id": @"someUserID"};
 
-    UAEventDeviceRegistration *event = [UAEventDeviceRegistration event];
+    UADeviceRegistrationEvent *event = [UADeviceRegistrationEvent event];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"device_registration", @"Event type is unexpected.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
@@ -245,7 +245,7 @@
     NSDictionary *expectedData = @{@"channel_id": @"someChannelID",
                                    @"user_id": @"someUserID"};
 
-    UAEventDeviceRegistration *event = [UAEventDeviceRegistration event];
+    UADeviceRegistrationEvent *event = [UADeviceRegistrationEvent event];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"device_registration", @"Event type is unexpected.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
@@ -262,7 +262,7 @@
     NSDictionary *expectedData = @{@"rich_push_id": @"rich push ID",
                                    @"push_id": @"push ID"};
 
-    UAEventPushReceived *event = [UAEventPushReceived eventWithNotification:notification];
+    UAPushReceivedEvent *event = [UAPushReceivedEvent eventWithNotification:notification];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"push_received", @"Event type is unexpected.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");

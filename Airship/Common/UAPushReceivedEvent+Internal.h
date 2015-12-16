@@ -33,10 +33,10 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Event when a push notification is received.
  */
-@interface UAEventPushReceived : UAEvent
+@interface UAPushReceivedEvent : UAEvent
 
 /**
- * Factory method to create a UAEventPushReceived.
+ * Factory method to create a UAPushReceivedEvent.
  * @param notification The received push notification.
  */
 + (instancetype)eventWithNotification:(NSDictionary *)notification;

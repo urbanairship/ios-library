@@ -24,17 +24,17 @@
  */
 
 #import <UIKit/UIKit.h>
-#import "UAEventAppInit+Internal.h"
+#import "UAAppInitEvent+Internal.h"
 #import "UAEvent+Internal.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAUser.h"
 #import "UAUtils.h"
 
-@implementation UAEventAppInit
+@implementation UAAppInitEvent
 
 + (instancetype)event {
-    UAEventAppInit *event = [[self alloc] init];
+    UAAppInitEvent *event = [[self alloc] init];
     event.data = [[event gatherData] mutableCopy];
     return event;
 }

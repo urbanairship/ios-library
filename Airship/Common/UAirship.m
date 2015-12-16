@@ -42,8 +42,8 @@
 #import "UAAppDelegateProxy+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAURLProtocol.h"
-#import "UAEventAppInit+Internal.h"
-#import "UAEventAppExit+Internal.h"
+#import "UAAppInitEvent+Internal.h"
+#import "UAAppExitEvent+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAInboxAPIClient+Internal.h"
 #import "UAInAppMessaging+Internal.h"
@@ -316,7 +316,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
     //Send Startup Analytics Info
     //init first event
-    [sharedAirship_.analytics addEvent:[UAEventAppInit event]];
+    [sharedAirship_.analytics addEvent:[UAAppInitEvent event]];
 
 
     // If the device is running iOS7 or greater, and the app delegate responds to
@@ -341,7 +341,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     [[NSNotificationCenter defaultCenter] removeObserver:[UAirship class]  name:UIApplicationWillTerminateNotification object:nil];
 
     // Add app_exit event
-    [[UAirship shared].analytics addEvent:[UAEventAppExit event]];
+    [[UAirship shared].analytics addEvent:[UAAppExitEvent event]];
 
     // Land it
     [UAirship land];
