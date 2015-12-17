@@ -23,36 +23,20 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEventPushReceived+Internal.h"
-#import "UAInboxUtils.h"
-#import "UAEvent+Internal.h"
+#import "UAEvent.h"
 
-@implementation UAEventPushReceived
+NS_ASSUME_NONNULL_BEGIN
 
-+ (instancetype)eventWithNotification:(NSDictionary *)notification {
-    UAEventPushReceived *event = [[self alloc] init];
+/**
+ * Event when device registration occurred.
+ */
+@interface UADeviceRegistrationEvent : UAEvent
 
-    NSMutableDictionary *data = [NSMutableDictionary dictionary];
-
-    NSString *richPushID = [UAInboxUtils inboxMessageIDFromNotification:notification];
-    if (richPushID) {
-        [data setValue:richPushID forKey:@"rich_push_id"];
-    }
-
-    // Add the std push ID, if present, else create a UUID
-    NSString *pushID = [notification objectForKey:@"_"];
-    if (pushID) {
-        [data setValue:pushID forKey:@"push_id"];
-    } else {
-        [data setValue:[NSUUID UUID].UUIDString forKey:@"push_id"];
-    }
-
-    event.data = [data mutableCopy];
-    return event;
-}
-
-- (NSString *)eventType {
-    return @"push_received";
-}
+/**
+ * Factory method to create a UADeviceRegistrationEvent.
+ */
++ (instancetype)event;
 
 @end
+
+NS_ASSUME_NONNULL_END

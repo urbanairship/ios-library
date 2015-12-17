@@ -34,10 +34,10 @@
 #import "UAAnalytics+Internal.h"
 #import "UAirship+Internal.h"
 #import "UALocationTestUtils.h"
-#import "UAEventPushReceived+Internal.h"
-#import "UAEventAppForeground+Internal.h"
-#import "UAEventAppInit+Internal.h"
-#import "UAEventAppBackground+Internal.h"
+#import "UAPushReceivedEvent+Internal.h"
+#import "UAAppForegroundEvent+Internal.h"
+#import "UAAppInitEvent+Internal.h"
+#import "UAAppBackgroundEvent+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 
 /* This class involves lots of async calls to the web
@@ -99,7 +99,7 @@
     [[[mockAnalytics stub] andDo:getSingleArg] addEvent:OCMOCK_ANY];
     [_analytics handleNotification:[NSDictionary dictionaryWithObject:@"stuff" forKey:@"key"] inApplicationState:UIApplicationStateActive];
     XCTAssertNotNil(arg);
-    XCTAssertTrue([arg isKindOfClass:[UAEventPushReceived class]]);
+    XCTAssertTrue([arg isKindOfClass:[UAPushReceivedEvent class]]);
     [mockAnalytics stopMocking];
 }
 
@@ -140,7 +140,7 @@
         __unsafe_unretained id unsafeArg = nil;
         [invocation getArgument:&unsafeArg atIndex:2];
         
-        if ([unsafeArg isKindOfClass:[UAEventAppForeground class]]) {
+        if ([unsafeArg isKindOfClass:[UAAppForegroundEvent class]]) {
             foregroundCount++;
         }
         
@@ -184,11 +184,11 @@
         [invocation getArgument:&arg atIndex:2];
 
         
-        if ([arg isKindOfClass:[UAEventAppForeground class]]) {
+        if ([arg isKindOfClass:[UAAppForegroundEvent class]]) {
             foregroundCount++;
             
             // save the push id for later
-            UAEventAppForeground *fgEvent = (UAEventAppForeground *)arg;
+            UAAppForegroundEvent *fgEvent = (UAAppForegroundEvent *)arg;
             eventPushID = [fgEvent.data objectForKey:@"push_id"];
         }
         
@@ -233,7 +233,7 @@
     };
     [[[mockAnalytics expect] andDo:getSingleArg] addEvent:OCMOCK_ANY];
     [_analytics enterBackground];
-    XCTAssertTrue([arg isKindOfClass:[UAEventAppBackground class]], @"Enter background should fire UAEventAppBackground");
+    XCTAssertTrue([arg isKindOfClass:[UAAppBackgroundEvent class]], @"Enter background should fire UAAppBackgroundEvent");
     [mockAnalytics verify];
     [mockAnalytics stopMocking];
 }
@@ -260,7 +260,7 @@
 
 // This test is not comprehensive for this method, as the method needs refactoring.
 - (void)testPrepareEventsForUpload {
-    UAEventAppForeground *appEvent = [UAEventAppForeground event];
+    UAAppForegroundEvent *appEvent = [UAAppForegroundEvent event];
 
     // If the events database is empty, everything crashes
     XCTAssertNotNil(appEvent);

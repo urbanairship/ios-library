@@ -23,12 +23,27 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEventAppBackground+Internal.h"
+#import <Foundation/Foundation.h>
+#import "UAEvent.h"
 
-@implementation UAEventAppBackground
+NS_ASSUME_NONNULL_BEGIN
 
-- (NSString *)eventType {
-    return @"app_background";
-}
+/**
+ * Event when app is initialized.
+ */
+@interface UAAppInitEvent : UAEvent
+
+/**
+ * Factory method to create a UAAppInitEvent.
+ */
++ (instancetype)event;
+
+
+/**
+ * Gathers the event data into a dictionary
+ */
+- (NSMutableDictionary *)gatherData;
 
 @end
+
+NS_ASSUME_NONNULL_END

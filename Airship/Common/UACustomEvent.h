@@ -103,7 +103,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSString *interactionType;
 
 /**
- * The event's interaction ID. The ID's length must not exceed 255 characters or it will
+ * The event's transaction ID. The ID's length must not exceed 255 characters or it will
  * invalidate the event.
  */
 @property (nonatomic, copy, nullable) NSString *transactionID;

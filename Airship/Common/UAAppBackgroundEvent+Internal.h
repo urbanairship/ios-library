@@ -23,12 +23,15 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import "UAEventAppInit+Internal.h"
+#import "UAAppExitEvent+Internal.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Event when app is in the foreground.
+ * Event when app is backgrounded.
  */
-@interface UAEventAppForeground : UAEventAppInit
+@interface UAAppBackgroundEvent : UAAppExitEvent
 
 @end
+
+NS_ASSUME_NONNULL_END

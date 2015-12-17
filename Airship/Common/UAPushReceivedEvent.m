@@ -23,27 +23,36 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import "UAEvent.h"
+#import "UAPushReceivedEvent+Internal.h"
+#import "UAInboxUtils.h"
+#import "UAEvent+Internal.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@implementation UAPushReceivedEvent
 
-/**
- * Event when app is initialized.
- */
-@interface UAEventAppInit : UAEvent
++ (instancetype)eventWithNotification:(NSDictionary *)notification {
+    UAPushReceivedEvent *event = [[self alloc] init];
 
-/**
- * Factory method to create a UAEventAppInit.
- */
-+ (instancetype)event;
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
 
+    NSString *richPushID = [UAInboxUtils inboxMessageIDFromNotification:notification];
+    if (richPushID) {
+        [data setValue:richPushID forKey:@"rich_push_id"];
+    }
 
-/**
- * Gathers the event data into a dictionary
- */
-- (NSMutableDictionary *)gatherData;
+    // Add the std push ID, if present, else create a UUID
+    NSString *pushID = [notification objectForKey:@"_"];
+    if (pushID) {
+        [data setValue:pushID forKey:@"push_id"];
+    } else {
+        [data setValue:[NSUUID UUID].UUIDString forKey:@"push_id"];
+    }
+
+    event.data = [data mutableCopy];
+    return event;
+}
+
+- (NSString *)eventType {
+    return @"push_received";
+}
 
 @end
-
-NS_ASSUME_NONNULL_END

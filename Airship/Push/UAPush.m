@@ -29,7 +29,7 @@
 #import "UANamedUser+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAAnalytics.h"
-#import "UAEventDeviceRegistration+Internal.h"
+#import "UADeviceRegistrationEvent+Internal.h"
 
 #import "UAUtils.h"
 #import "UAActionRegistry+Internal.h"
@@ -1072,7 +1072,7 @@ BOOL deferChannelCreationOnForeground = false;
     self.deviceToken = [deviceToken lowercaseString];
     UA_LINFO(@"Application registered device token: %@", self.deviceToken);
 
-    [[UAirship shared].analytics addEvent:[UAEventDeviceRegistration event]];
+    [[UAirship shared].analytics addEvent:[UADeviceRegistrationEvent event]];
 
     BOOL inBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
 

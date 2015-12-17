@@ -23,15 +23,19 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEventAppExit+Internal.h"
+#import "UAAppForegroundEvent+Internal.h"
+#import "UAEvent+Internal.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@implementation UAAppForegroundEvent
 
-/**
- * Event when app is backgrounded.
- */
-@interface UAEventAppBackground : UAEventAppExit
+- (NSMutableDictionary *)gatherData {
+    NSMutableDictionary *data = [super gatherData];
+    [data removeObjectForKey:@"foreground"];
+    return data;
+}
+
+- (NSString *)eventType {
+    return @"app_foreground";
+}
 
 @end
-
-NS_ASSUME_NONNULL_END

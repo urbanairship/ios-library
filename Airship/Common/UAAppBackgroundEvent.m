@@ -23,32 +23,12 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEventAppExit+Internal.h"
-#import "UAEvent+Internal.h"
-#import "UAAnalytics.h"
-#import "UAirship.h"
-#import "UAUtils.h"
+#import "UAAppBackgroundEvent+Internal.h"
 
-@implementation UAEventAppExit
-
-+ (instancetype)event {
-    UAEventAppExit *event = [[self alloc] init];
-    NSMutableDictionary *data = [NSMutableDictionary dictionary];
-
-    UAAnalytics *analytics = [UAirship shared].analytics;
-
-    [data setValue:analytics.conversionSendID forKey:@"push_id"];
-    [data setValue:analytics.conversionRichPushID forKey:@"rich_push_id"];
-
-
-    [data setValue:[UAUtils connectionType] forKey:@"connection_type"];
-
-    event.data = [data mutableCopy];
-    return event;
-}
+@implementation UAAppBackgroundEvent
 
 - (NSString *)eventType {
-    return @"app_exit";
+    return @"app_background";
 }
 
 @end

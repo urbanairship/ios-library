@@ -38,10 +38,10 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAPush+Internal.h"
 #import "UAUtils.h"
-#import "UAEventAppBackground+Internal.h"
-#import "UAEventPushReceived+Internal.h"
-#import "UAEventAppBackground+Internal.h"
-#import "UAEventAppForeground+Internal.h"
+#import "UAAppBackgroundEvent+Internal.h"
+#import "UAPushReceivedEvent+Internal.h"
+#import "UAAppBackgroundEvent+Internal.h"
+#import "UAAppForegroundEvent+Internal.h"
 #import "UAScreenTrackingEvent+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UALocationService.h"
@@ -154,7 +154,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [self stopTrackingScreen];
 
     // add app_background event
-    [self addEvent:[UAEventAppBackground event]];
+    [self addEvent:[UAAppBackgroundEvent event]];
 
     // Send immediately so we can end our background tasks as soon as possible
     [self sendWithDelay:0];
@@ -185,7 +185,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         [self startSession];
 
         //add app_foreground event
-        [self addEvent:[UAEventAppForeground event]];
+        [self addEvent:[UAAppForegroundEvent event]];
     }
 
 }
@@ -224,7 +224,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 - (void)handleNotification:(NSDictionary*)userInfo inApplicationState:(UIApplicationState)applicationState {
     switch (applicationState) {
         case UIApplicationStateActive:
-            [self addEvent:[UAEventPushReceived eventWithNotification:userInfo]];
+            [self addEvent:[UAPushReceivedEvent eventWithNotification:userInfo]];
             break;
         case UIApplicationStateInactive:
             self.notificationUserInfo = userInfo;

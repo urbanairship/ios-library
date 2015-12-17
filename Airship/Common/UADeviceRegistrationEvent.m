@@ -23,16 +23,16 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAEventDeviceRegistration+Internal.h"
+#import "UADeviceRegistrationEvent+Internal.h"
 #import "UAEvent+Internal.h"
 #import "UAPush.h"
 #import "UAUser.h"
 #import "UAirship.h"
 
-@implementation UAEventDeviceRegistration
+@implementation UADeviceRegistrationEvent
 
 + (instancetype)event {
-    UAEventDeviceRegistration *event = [[self alloc] init];
+    UADeviceRegistrationEvent *event = [[self alloc] init];
 
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
 
