@@ -14,7 +14,7 @@
         <!--Home-->
         <scene sceneID="hNz-n2-bh7">
             <objects>
-                <viewController title="Home" id="9pv-A4-QxB" customClass="HomeViewController" customModule="SwiftSample" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Home" id="9pv-A4-QxB" customClass="HomeViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Ia1-K6-d13"/>
                         <viewControllerLayoutGuide type="bottom" id="4ug-Mw-9AY"/>
@@ -33,7 +33,7 @@
                                     <color key="titleColor" red="0.18039215689999999" green="0.22352941179999999" blue="0.23137254900000001" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
                                 <connections>
-                                    <action selector="buttonTapped:" destination="9pv-A4-QxB" eventType="touchUpInside" id="TqZ-yX-cii"/>
+                                    <action selector="buttonTapped:" destination="9pv-A4-QxB" eventType="touchUpInside" id="ZRd-KL-E7Z"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UCg-eu-blq" userLabel="Enable Push Button">
@@ -47,7 +47,7 @@
                                     <color key="titleColor" red="0.18039215689999999" green="0.22352941179999999" blue="0.23137254900000001" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
                                 <connections>
-                                    <action selector="buttonTapped:" destination="9pv-A4-QxB" eventType="touchUpInside" id="Pcx-co-GZe"/>
+                                    <action selector="buttonTapped:" destination="9pv-A4-QxB" eventType="touchUpInside" id="vDg-uX-Abq"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -67,8 +67,8 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="Urban Airship" image="Homescreen" id="acW-dT-cKf"/>
                     <connections>
-                        <outlet property="channelIDButton" destination="iZm-tj-QRc" id="3qP-bJ-Xqd"/>
-                        <outlet property="enablePushButton" destination="UCg-eu-blq" id="4Tu-5f-4vT"/>
+                        <outlet property="channelIDButton" destination="iZm-tj-QRc" id="T5D-wW-iVv"/>
+                        <outlet property="enablePushButton" destination="UCg-eu-blq" id="40k-6K-g2a"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W5J-7L-Pyd" sceneMemberID="firstResponder"/>
@@ -121,7 +121,7 @@
         <!--Push Settings-->
         <scene sceneID="JAH-EW-D9D">
             <objects>
-                <tableViewController id="5WH-WV-JV0" customClass="PushSettingsViewController" customModule="SwiftSample" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="5WH-WV-JV0" customClass="PushSettingsViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="VFG-Bf-CM5">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="700"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -143,7 +143,7 @@
                                                     <rect key="frame" x="543" y="8" width="51" height="31"/>
                                                     <color key="onTintColor" red="0.53333333329999999" green="0.71372549019999998" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
                                                     <connections>
-                                                        <action selector="switchValueChanged:" destination="5WH-WV-JV0" eventType="valueChanged" id="a4e-1p-UZL"/>
+                                                        <action selector="switchValueChanged:" destination="5WH-WV-JV0" eventType="valueChanged" id="5MA-aL-mHM"/>
                                                     </connections>
                                                 </switch>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" fixedFrame="YES" text="Enable push notifications" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GL8-Me-1oV">
@@ -294,7 +294,7 @@
                                                     <color key="tintColor" red="0.53333333329999999" green="0.71372549019999998" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
                                                     <color key="onTintColor" red="0.53333333329999999" green="0.71372549019999998" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
                                                     <connections>
-                                                        <action selector="switchValueChanged:" destination="5WH-WV-JV0" eventType="valueChanged" id="gaz-3g-Wd4"/>
+                                                        <action selector="switchValueChanged:" destination="5WH-WV-JV0" eventType="valueChanged" id="voJ-u1-Exa"/>
                                                     </connections>
                                                 </switch>
                                             </subviews>
@@ -356,7 +356,7 @@
                                                     <color key="tintColor" red="0.53333333329999999" green="0.71372549019999998" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
                                                     <color key="onTintColor" red="0.53333333329999999" green="0.71372549019999998" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
                                                     <connections>
-                                                        <action selector="switchValueChanged:" destination="5WH-WV-JV0" eventType="valueChanged" id="BM1-pN-W3k"/>
+                                                        <action selector="switchValueChanged:" destination="5WH-WV-JV0" eventType="valueChanged" id="Fil-xB-4oz"/>
                                                     </connections>
                                                 </switch>
                                             </subviews>
@@ -384,24 +384,24 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="600" height="700"/>
                     <connections>
-                        <outlet property="aliasCell" destination="UZx-FQ-a2b" id="THI-gE-7Td"/>
-                        <outlet property="aliasSubtitleLabel" destination="CmA-C7-RAp" id="bMV-kV-fMl"/>
-                        <outlet property="analyticsSwitch" destination="huA-FJ-vQo" id="zxD-cK-hO0"/>
-                        <outlet property="channelIDCell" destination="jcR-ld-xRy" id="Bjy-ej-mAq"/>
-                        <outlet property="channelIDSubtitleLabel" destination="pe8-6h-9yl" id="rmr-Xk-GRN"/>
-                        <outlet property="getLocationCell" destination="uyF-jL-rIY" id="GoV-LF-cRf"/>
-                        <outlet property="locationEnabledCell" destination="5Nv-Eq-tvH" id="9gE-eh-A0N"/>
-                        <outlet property="locationEnabledLabel" destination="e85-ku-LR4" id="rbv-bb-tJ4"/>
-                        <outlet property="locationEnabledSubtitleLabel" destination="QG4-KP-fz8" id="EOv-Fg-dH0"/>
-                        <outlet property="locationEnabledSwitch" destination="4uc-cq-KyH" id="K7l-Ht-ngI"/>
-                        <outlet property="namedUserCell" destination="WKC-2B-kzg" id="6b0-Sy-SNg"/>
-                        <outlet property="namedUserSubtitleLabel" destination="TsS-Cu-LV2" id="WR8-04-MsD"/>
-                        <outlet property="pushEnabledCell" destination="m11-yj-3bF" id="T7b-BO-26C"/>
-                        <outlet property="pushEnabledSwitch" destination="cwK-B9-gRH" id="5Ps-zu-4Te"/>
-                        <outlet property="pushSettingsLabel" destination="V56-PR-6LX" id="eAL-BW-p9z"/>
-                        <outlet property="pushSettingsSubtitleLabel" destination="GL8-Me-1oV" id="oDP-df-hz0"/>
-                        <outlet property="tagsCell" destination="ghY-UU-QjX" id="Zl3-aw-Rbh"/>
-                        <outlet property="tagsSubtitleLabel" destination="FEB-lM-IIW" id="7aS-0b-tTd"/>
+                        <outlet property="aliasCell" destination="UZx-FQ-a2b" id="vW4-WP-V0H"/>
+                        <outlet property="aliasSubtitleLabel" destination="CmA-C7-RAp" id="4fx-PG-lqc"/>
+                        <outlet property="analyticsSwitch" destination="huA-FJ-vQo" id="HQ4-Pc-oik"/>
+                        <outlet property="channelIDCell" destination="jcR-ld-xRy" id="E3Z-pR-qTm"/>
+                        <outlet property="channelIDSubtitleLabel" destination="pe8-6h-9yl" id="eKM-99-tHu"/>
+                        <outlet property="getLocationCell" destination="uyF-jL-rIY" id="jf7-87-WcP"/>
+                        <outlet property="locationEnabledCell" destination="5Nv-Eq-tvH" id="yrz-ac-bao"/>
+                        <outlet property="locationEnabledLabel" destination="e85-ku-LR4" id="lYk-Fk-Md6"/>
+                        <outlet property="locationEnabledSubtitleLabel" destination="QG4-KP-fz8" id="ayT-6P-V3d"/>
+                        <outlet property="locationEnabledSwitch" destination="4uc-cq-KyH" id="c4i-Hs-uAG"/>
+                        <outlet property="namedUserCell" destination="WKC-2B-kzg" id="sLp-kU-fcU"/>
+                        <outlet property="namedUserSubtitleLabel" destination="TsS-Cu-LV2" id="fbQ-ay-24f"/>
+                        <outlet property="pushEnabledCell" destination="m11-yj-3bF" id="0UG-iu-ql5"/>
+                        <outlet property="pushEnabledSwitch" destination="cwK-B9-gRH" id="n4B-Mg-gaG"/>
+                        <outlet property="pushSettingsLabel" destination="V56-PR-6LX" id="9jv-5V-AbV"/>
+                        <outlet property="pushSettingsSubtitleLabel" destination="GL8-Me-1oV" id="Awp-ON-zSP"/>
+                        <outlet property="tagsCell" destination="ghY-UU-QjX" id="ZUy-rk-1pK"/>
+                        <outlet property="tagsSubtitleLabel" destination="FEB-lM-IIW" id="u9T-mC-J5f"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dbg-CF-RcU" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -411,7 +411,7 @@
         <!--Tags Table View Controller-->
         <scene sceneID="lz7-vV-ent">
             <objects>
-                <tableViewController id="6vT-vf-RRb" customClass="TagsTableViewController" customModule="SwiftSample" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="6vT-vf-RRb" customClass="TagsTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="2HY-iI-G0K">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -444,7 +444,7 @@
         <!--Add Tags Table View Controller-->
         <scene sceneID="kzT-G5-lb5">
             <objects>
-                <tableViewController id="ZKf-B1-TS3" customClass="AddTagsTableViewController" customModule="SwiftSample" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="ZKf-B1-TS3" customClass="AddTagsTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="26u-dF-Wfz">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -485,7 +485,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="600" height="600"/>
                     <connections>
-                        <outlet property="addCustomTagTextField" destination="Tbo-di-zVt" id="g57-1t-uhD"/>
+                        <outlet property="addCustomTagTextField" destination="Tbo-di-zVt" id="5Iy-cC-KKm"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Pjg-UQ-zsp" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -530,7 +530,7 @@
         <!--Add Alias Table View Controller-->
         <scene sceneID="8sO-Kh-XAD">
             <objects>
-                <tableViewController id="fWt-o9-Cuu" customClass="AddAliasTableViewController" customModule="SwiftSample" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="fWt-o9-Cuu" customClass="AddAliasTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="j8o-vh-ZgX">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -571,7 +571,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="600" height="600"/>
                     <connections>
-                        <outlet property="addAliasTextField" destination="M3Y-Fj-dcb" id="4FX-k4-X3w"/>
+                        <outlet property="addAliasTextField" destination="M3Y-Fj-dcb" id="N4N-r9-zTK"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6zw-4a-RC1" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -581,7 +581,7 @@
         <!--Location Table View Controller-->
         <scene sceneID="a9c-W0-khv">
             <objects>
-                <tableViewController id="Rtg-jp-5PO" customClass="LocationTableViewController" customModule="SwiftSample" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="Rtg-jp-5PO" customClass="LocationTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="l8c-lL-ZHg">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -652,9 +652,9 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="600" height="600"/>
                     <connections>
-                        <outlet property="activityIndicator" destination="2rN-JF-gwF" id="5em-Xw-xsE"/>
-                        <outlet property="latitudeCell" destination="3ll-kg-deN" id="vd0-2A-sOo"/>
-                        <outlet property="longitudeCell" destination="gmP-NW-LUZ" id="GP1-As-y9U"/>
+                        <outlet property="activityIndicator" destination="2rN-JF-gwF" id="2An-vC-5bR"/>
+                        <outlet property="latitudeCell" destination="3ll-kg-deN" id="wnR-v7-mtX"/>
+                        <outlet property="longitudeCell" destination="gmP-NW-LUZ" id="R3K-hx-Iiq"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="w0t-Cs-79x" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -664,7 +664,7 @@
         <!--Add Named User Table View Controller-->
         <scene sceneID="LMT-4B-sIm">
             <objects>
-                <tableViewController id="HPC-K8-DLt" customClass="AddNamedUserTableViewController" customModule="SwiftSample" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="HPC-K8-DLt" customClass="AddNamedUserTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="AGP-jP-D7M">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -705,7 +705,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="600" height="600"/>
                     <connections>
-                        <outlet property="addNamedUserTextField" destination="2Aw-mG-ZCd" id="WPG-Ou-Php"/>
+                        <outlet property="addNamedUserTextField" destination="2Aw-mG-ZCd" id="EcL-8Q-Enx"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bBH-cP-qaA" userLabel="First Responder" sceneMemberID="firstResponder"/>

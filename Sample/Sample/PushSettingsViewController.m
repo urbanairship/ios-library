@@ -1,0 +1,146 @@
+/*
+ Copyright 2009-2015 Urban Airship Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided with the distribution.
+
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+// Import the Urban Airship umbrella header, using either
+// the framework or the header search paths
+#if __has_include("AirshipKit/AirshipKit.h")
+#import <AirshipKit/AirshipKit.h>
+#else
+#import "AirshipLib.h"
+#endif
+
+#import "PushSettingsViewController.h"
+
+@interface PushSettingsViewController ()
+
+@end
+
+@implementation PushSettingsViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshView) name:@"channelIDUpdated" object:nil];
+}
+
+- (void)didBecomeActive {
+    [self refreshView];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [self refreshView];
+}
+
+- (IBAction)switchValueChanged:(id)sender {
+
+    if (self.pushEnabledSwitch.on) {
+        [UAirship push].userPushNotificationsEnabled = YES;
+    }
+
+    [UALocationService setAirshipLocationServiceEnabled:self.locationEnabledSwitch.on];
+
+    [UAirship shared].analytics.enabled = self.analyticsSwitch.on;
+}
+
+- (void)refreshView {
+
+    self.channelIDSubtitleLabel.text = [UAirship push].channelID;
+
+    self.aliasSubtitleLabel.text = [UAirship push].alias == nil ? NSLocalizedStringFromTable(@"None", @"UAPushUI", @"None") : [UAirship push].alias;
+
+    self.namedUserSubtitleLabel.text = [UAirship push].namedUser.identifier == nil ? NSLocalizedStringFromTable(@"None", @"UAPushUI", @"None") : [UAirship push].namedUser.identifier;
+
+    if ([UAirship push].tags.count > 0) {
+        self.tagsSubtitleLabel.text = [[UAirship push].tags componentsJoinedByString:@", "];
+    } else {
+        self.tagsSubtitleLabel.text = NSLocalizedStringFromTable(@"None", @"UAPushUI", @"None");
+    }
+
+    // push cannot be deactivated, so remove switch and link to system settings.
+    if ([UAirship push].userPushNotificationsEnabled) {
+        self.pushSettingsLabel.text = NSLocalizedStringFromTable(@"UA_Push_Settings_Title", @"UAPushUI", @"System Push Settings Label");
+
+        self.pushSettingsSubtitleLabel.text = [self pushTypeString];
+        self.pushEnabledSwitch.hidden = YES;
+        self.pushEnabledCell.selectionStyle = UITableViewCellSelectionStyleDefault;
+    }
+}
+
+- (NSString *)pushTypeString {
+    UIUserNotificationType types = [UIApplication sharedApplication].currentUserNotificationSettings.types;
+
+    NSMutableArray *typeArray = [NSMutableArray arrayWithCapacity:3];
+
+    if (types & UIUserNotificationTypeAlert) {
+        [typeArray addObject:NSLocalizedStringFromTable(@"UA_Notification_Type_Alerts", @"UAPushUI", @"Alerts")];
+    }
+
+    if (types & UIUserNotificationTypeBadge) {
+        [typeArray addObject:NSLocalizedStringFromTable(@"UA_Notification_Type_Badges", @"UAPushUI", @"Badges")];
+    }
+
+    if (types & UIUserNotificationTypeSound) {
+        [typeArray addObject:NSLocalizedStringFromTable(@"UA_Notification_Type_Sounds", @"UAPushUI", @"Sounds")];
+    }
+
+    if (types & UIUserNotificationTypeNone) {
+        return NSLocalizedStringFromTable(@"UA_Push_Settings_Link_Disabled_Title", @"UAPushUI", @"Pushes Currently Disabled");
+    }
+
+    return [typeArray componentsJoinedByString:@", "];
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+    if (indexPath.section == [tableView indexPathForCell:self.pushEnabledCell].section) {
+        if (indexPath.row == [tableView indexPathForCell:self.pushEnabledCell].row) {
+            if ([UAirship push].userPushNotificationsEnabled) {
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+            }
+        }
+    }
+
+    if (indexPath.section == [tableView indexPathForCell:self.channelIDCell].section) {
+        if (indexPath.row == [tableView indexPathForCell:self.channelIDCell].row) {
+            if ([UAirship push].channelID) {
+                [UIPasteboard generalPasteboard].string = self.channelIDSubtitleLabel.text;
+                [self showCopyMessage];
+            }
+        }
+    }
+}
+
+- (void)showCopyMessage {
+    UAInAppMessage *message = [[UAInAppMessage alloc] init];
+    message.alert = NSLocalizedStringFromTable(@"UA_Copied_To_Clipboard", @"UAPushUI", @"Copied to clipboard string");
+    message.position = UAInAppMessagePositionTop;
+    message.duration = 1.5;
+    message.primaryColor = [UIColor colorWithRed:255/255.f green:200/255.f blue:40/255.f alpha:1];
+    message.secondaryColor = [UIColor colorWithRed:0/255.f green:105/255.f blue:143/255.f alpha:1];
+    [[UAirship inAppMessaging] displayMessage:message];
+}
+
+@end
