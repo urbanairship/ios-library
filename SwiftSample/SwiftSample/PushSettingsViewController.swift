@@ -55,8 +55,7 @@ class PushSettingsViewController: UITableViewController {
             UAirship.push().userPushNotificationsEnabled = true
         }
 
-        UALocationService.setAirshipLocationServiceEnabled(true)
-        UALocationService.setAirshipLocationServiceEnabled(false)
+        UALocationService.setAirshipLocationServiceEnabled(locationEnabledSwitch.on)
         UAirship.shared().analytics.enabled = analyticsSwitch.on
     }
 
