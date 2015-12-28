@@ -156,12 +156,6 @@ class PushSettingsViewController: UITableViewController {
                     showCopyMessage()
                 }
                 break
-            case (tableView.indexPathForCell(namedUserCell)!.section, tableView.indexPathForCell(namedUserCell)!.row) :
-                if ((UAirship.push().namedUser.identifier) != nil) {
-                    UIPasteboard.generalPasteboard().string = namedUserSubtitleLabel?.text
-                    showCopyMessage()
-                }
-                break
             default:
                 break
         }
