@@ -24,11 +24,65 @@
  */
 
 #import "UADefaultMessageCenter.h"
+#import "UAirship.h"
+#import "UAInbox.h"
+#import "UAInboxMessage.h"
+#import "UAUtils.h"
+#import "UAMessageCenterLocalization.h"
+#import "UADefaultMessageCenterListViewController.h"
+#import "UADefaultMessageCenterMessageViewController.h"
+
+@interface UADefaultMessageCenter()
+
+@property(nonatomic, strong) UADefaultMessageCenterListViewController *listController;
+@property(nonatomic, strong) UINavigationController *navigationController;
+
+@end
 
 @implementation UADefaultMessageCenter
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.title = @"Messages";
+    }
+    return self;
+}
+
+
 - (void)display:(BOOL)animated {
-    // Todo: display logic
+    if (!self.listController) {
+        NSBundle *airshipResources = [UAirship resources];
+
+        UADefaultMessageCenterListViewController *lvc;
+        lvc = [[UADefaultMessageCenterListViewController alloc] initWithNibName:@"UADefaultMessageCenterListViewController"
+                                                                         bundle:airshipResources];
+        lvc.title = @"Messages";
+        lvc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                                             target:self
+                                                                                             action:@selector(dismiss)];
+
+        UADefaultMessageCenterMessageViewController *mvc;
+        mvc = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController"
+                                                                            bundle:[UAirship resources]];
+
+        UINavigationController *listnav = [[UINavigationController alloc] initWithRootViewController:lvc];
+        UINavigationController *messagenav = [[UINavigationController alloc] initWithRootViewController:mvc];
+
+        self.listController = lvc;
+        self.navigationController = listnav;
+
+        UISplitViewController *svc = [[UISplitViewController alloc] initWithNibName:nil bundle:nil];
+
+        // display both view controllers in horizontally regular contexts
+        svc.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
+
+        svc.delegate = lvc;
+        svc.viewControllers = @[listnav, messagenav];
+        svc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+
+        [[UAUtils topController] presentViewController:svc animated:animated completion:nil];
+    }
 }
 
 - (void)display {
@@ -36,11 +90,22 @@
 }
 
 - (void)displayMessage:(UAInboxMessage *)message animated:(BOOL)animated {
-    // Todo: display logic
+    [self display:animated];
+    [self.listController displayMessage:message];
 }
 
 - (void)displayMessage:(UAInboxMessage *)message {
-    [self displayMessage:message animated:YES];
+    [self displayMessage:message animated:NO];
+}
+
+- (void)dismiss:(BOOL)animated {
+    [self.navigationController.presentingViewController dismissViewControllerAnimated:animated completion:nil];
+    self.listController = nil;
+    self.navigationController = nil;
+}
+
+- (void)dismiss {
+    [self dismiss:YES];
 }
 
 @end

@@ -23,59 +23,38 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import "UADefaultMessageCenterListCell.h"
+#import "UAInboxMessage.h"
+#import "UAMessageCenterDateUtils.h"
 
-@class UAInboxMessage;
+@implementation UADefaultMessageCenterListCell
 
-/**
- * The UADefaultMessageCenter class provides a default implementation of a
- * message center, as well as a high-level interface for its configuration and display.
- */
-@interface UADefaultMessageCenter : NSObject
+- (void)setData:(UAInboxMessage *)message {
+    self.date.text = [UAMessageCenterDateUtils formattedDateRelativeToNow:message.messageSent];
+    self.title.text = message.title;
+    self.unreadIndicator.hidden = !message.unread;
+}
 
-/**
- * The title of the message center.
- */
-@property (nonatomic, strong) NSString *title;
+// Override to prevent the default implementation from covering up the unread indicator
+ - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+     if (selected) {
+         UIColor *defaultColor = self.unreadIndicator.backgroundColor;
+         [super setSelected:selected animated:animated];
+         self.unreadIndicator.backgroundColor = defaultColor;
+     } else {
+         [super setSelected:selected animated:animated];
+     }
+}
 
-/**
- * Display the message center.
- *
- * @param animated Whether the transition should be animated.
- */
-- (void)display:(BOOL)animated;
-
-/**
- * Display the message center, with implicit animation.
- */
-- (void)display;
-
-/**
- * Display the given message.
- *
- * @param message The message.
- * @param animated Whether the transition should be animated.
- */
-- (void)displayMessage:(UAInboxMessage *)message animated:(BOOL)animated;
-
-/**
- * Display the given message, with implicit animation.
- *
- * @pararm message The message.
- */
-- (void)displayMessage:(UAInboxMessage *)message;
-
-/**
- * Dismiss the message center.
- *
- * @param animated Whether the transition should be animated.
- */
-- (void)dismiss:(BOOL)animated;
-
-/**
- * Dismiss the message center with implicit animation.
- */
-- (void)dismiss;
+// Override to prevent the default implementation from covering up the unread indicator
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
+    if (highlighted) {
+        UIColor *defaultColor = self.unreadIndicator.backgroundColor;
+        [super setHighlighted:highlighted animated:animated];
+        self.unreadIndicator.backgroundColor = defaultColor;
+    } else {
+        [super setHighlighted:highlighted animated:animated];
+    }
+}
 
 @end

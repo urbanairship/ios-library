@@ -23,59 +23,36 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "UARichContentWindow.h"
 
 @class UAInboxMessage;
 
 /**
- * The UADefaultMessageCenter class provides a default implementation of a
- * message center, as well as a high-level interface for its configuration and display.
+ * Default implementation of a view controller for reading Message Center messages.
  */
-@interface UADefaultMessageCenter : NSObject
+@interface UADefaultMessageCenterMessageViewController : UIViewController <UIWebViewDelegate, UARichContentWindow>
 
 /**
- * The title of the message center.
+ * The UAInboxMessage being displayed.
  */
-@property (nonatomic, strong) NSString *title;
+@property (nonatomic, strong) UAInboxMessage *message;
 
 /**
- * Display the message center.
- *
- * @param animated Whether the transition should be animated.
+ * Block that will be invoked when this class receives a closeWindow message from the webView.
  */
-- (void)display:(BOOL)animated;
+@property (nonatomic, copy) void (^closeBlock)(BOOL animated);
 
 /**
- * Display the message center, with implicit animation.
+ * Load a UAInboxMessage at a particular index in the message list.
+ * @param index The corresponding index in the message list as an integer.
  */
-- (void)display;
+- (void)loadMessageAtIndex:(NSUInteger)index;
 
 /**
- * Display the given message.
- *
- * @param message The message.
- * @param animated Whether the transition should be animated.
+ * Load a UAInboxMessage by message ID.
+ * @param mid The message ID as an NSString.
  */
-- (void)displayMessage:(UAInboxMessage *)message animated:(BOOL)animated;
-
-/**
- * Display the given message, with implicit animation.
- *
- * @pararm message The message.
- */
-- (void)displayMessage:(UAInboxMessage *)message;
-
-/**
- * Dismiss the message center.
- *
- * @param animated Whether the transition should be animated.
- */
-- (void)dismiss:(BOOL)animated;
-
-/**
- * Dismiss the message center with implicit animation.
- */
-- (void)dismiss;
+- (void)loadMessageForID:(NSString *)mid;
 
 @end

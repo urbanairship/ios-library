@@ -24,58 +24,10 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
 
-@class UAInboxMessage;
 
-/**
- * The UADefaultMessageCenter class provides a default implementation of a
- * message center, as well as a high-level interface for its configuration and display.
- */
-@interface UADefaultMessageCenter : NSObject
+@interface UAMessageCenterDateUtils : NSObject
 
-/**
- * The title of the message center.
- */
-@property (nonatomic, strong) NSString *title;
-
-/**
- * Display the message center.
- *
- * @param animated Whether the transition should be animated.
- */
-- (void)display:(BOOL)animated;
-
-/**
- * Display the message center, with implicit animation.
- */
-- (void)display;
-
-/**
- * Display the given message.
- *
- * @param message The message.
- * @param animated Whether the transition should be animated.
- */
-- (void)displayMessage:(UAInboxMessage *)message animated:(BOOL)animated;
-
-/**
- * Display the given message, with implicit animation.
- *
- * @pararm message The message.
- */
-- (void)displayMessage:(UAInboxMessage *)message;
-
-/**
- * Dismiss the message center.
- *
- * @param animated Whether the transition should be animated.
- */
-- (void)dismiss:(BOOL)animated;
-
-/**
- * Dismiss the message center with implicit animation.
- */
-- (void)dismiss;
++ (NSString *)formattedDateRelativeToNow:(NSDate *)date;
 
 @end

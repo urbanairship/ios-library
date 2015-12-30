@@ -137,7 +137,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         self.sharedInAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.analytics dataStore:dataStore];
 
-        self.sharedDefaultMessageCenter = [[UADefaultMessageCenter alloc] init];
+        // Only create the default message center if running iOS 8 and above
+        if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
+            self.sharedDefaultMessageCenter = [[UADefaultMessageCenter alloc] init];
+        }
 
         self.channelCapture = [UAChannelCapture channelCaptureWithConfig:config push:self.sharedPush];
     }

@@ -23,59 +23,39 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
 @class UAInboxMessage;
 
 /**
- * The UADefaultMessageCenter class provides a default implementation of a
- * message center, as well as a high-level interface for its configuration and display.
+ * The UITableViewCell subclass used by the default message center.
  */
-@interface UADefaultMessageCenter : NSObject
+@interface UADefaultMessageCenterListCell : UITableViewCell
 
 /**
- * The title of the message center.
+ * Displays the message date.
  */
-@property (nonatomic, strong) NSString *title;
+@property (nonatomic, weak) IBOutlet UILabel *date;
 
 /**
- * Display the message center.
- *
- * @param animated Whether the transition should be animated.
+ * Displays the message title.
  */
-- (void)display:(BOOL)animated;
+@property (nonatomic, weak) IBOutlet UILabel *title;
 
 /**
- * Display the message center, with implicit animation.
+ * Indicates whether a message has previously been read.
  */
-- (void)display;
+@property (nonatomic, weak) IBOutlet UIView *unreadIndicator;
 
 /**
- * Display the given message.
- *
- * @param message The message.
- * @param animated Whether the transition should be animated.
+ * The message icon view.
  */
-- (void)displayMessage:(UAInboxMessage *)message animated:(BOOL)animated;
+@property (nonatomic, weak) IBOutlet UIImageView *listIconView;
 
 /**
- * Display the given message, with implicit animation.
- *
- * @pararm message The message.
+ * Configures the cell according to the associated message object.
+ * @param message The associated message object.
  */
-- (void)displayMessage:(UAInboxMessage *)message;
-
-/**
- * Dismiss the message center.
- *
- * @param animated Whether the transition should be animated.
- */
-- (void)dismiss:(BOOL)animated;
-
-/**
- * Dismiss the message center with implicit animation.
- */
-- (void)dismiss;
+- (void)setData:(UAInboxMessage *)message;
 
 @end

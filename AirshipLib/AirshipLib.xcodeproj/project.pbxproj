@@ -58,6 +58,7 @@
 		492ADA0C18C958E50032C491 /* UARichContentWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 492ADA0B18C958E50032C491 /* UARichContentWindow.h */; };
 		492ADA1018C959CB0032C491 /* UACloseWindowAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 492ADA0E18C959CB0032C491 /* UACloseWindowAction+Internal.h */; };
 		492ADA1218C959CB0032C491 /* UACloseWindowAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 492ADA0F18C959CB0032C491 /* UACloseWindowAction.m */; };
+		492BA2FF1C20F83100A252C8 /* UAMessageCenterUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 492BA2FD1C20F83100A252C8 /* UAMessageCenterUI.strings */; settings = {ASSET_TAGS = (); }; };
 		49416D5F18C025E900A18B72 /* UALandingPageActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49416D5E18C025E900A18B72 /* UALandingPageActionTest.m */; };
 		49416D6218C513D500A18B72 /* UABespokeCloseView.h in Headers */ = {isa = PBXBuildFile; fileRef = 49416D6018C513D500A18B72 /* UABespokeCloseView.h */; };
 		49416D6418C513D500A18B72 /* UABespokeCloseView.m in Sources */ = {isa = PBXBuildFile; fileRef = 49416D6118C513D500A18B72 /* UABespokeCloseView.m */; };
@@ -136,6 +137,18 @@
 		49E9C9C1183AD42300B7BCFF /* UAWebViewCallData.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E9C9BF183AD42300B7BCFF /* UAWebViewCallData.h */; };
 		49E9C9C3183AD42300B7BCFF /* UAWebViewCallData.m in Sources */ = {isa = PBXBuildFile; fileRef = 49E9C9C0183AD42300B7BCFF /* UAWebViewCallData.m */; };
 		49E9C9C6183C28E900B7BCFF /* UAActionJSDelegateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49E9C9C5183C28E900B7BCFF /* UAActionJSDelegateTest.m */; };
+		49EB68D81C1FA9DE00D05BCE /* UADefaultMessageCenterListCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EB68D61C1FA9DE00D05BCE /* UADefaultMessageCenterListCell.h */; settings = {ASSET_TAGS = (); }; };
+		49EB68D91C1FA9DE00D05BCE /* UADefaultMessageCenterListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 49EB68D71C1FA9DE00D05BCE /* UADefaultMessageCenterListCell.m */; settings = {ASSET_TAGS = (); }; };
+		49EB68DC1C1FAAAE00D05BCE /* UADefaultMessageCenterListViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EB68DA1C1FAAAE00D05BCE /* UADefaultMessageCenterListViewController.h */; settings = {ASSET_TAGS = (); }; };
+		49EB68DD1C1FAAAE00D05BCE /* UADefaultMessageCenterListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49EB68DB1C1FAAAE00D05BCE /* UADefaultMessageCenterListViewController.m */; settings = {ASSET_TAGS = (); }; };
+		49EB68E01C1FABFE00D05BCE /* UADefaultMessageCenterMessageViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EB68DE1C1FABFE00D05BCE /* UADefaultMessageCenterMessageViewController.h */; settings = {ASSET_TAGS = (); }; };
+		49EB68E11C1FABFE00D05BCE /* UADefaultMessageCenterMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49EB68DF1C1FABFE00D05BCE /* UADefaultMessageCenterMessageViewController.m */; settings = {ASSET_TAGS = (); }; };
+		49EB68E41C1FAD5D00D05BCE /* UAMessageCenterDateUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EB68E21C1FAD5D00D05BCE /* UAMessageCenterDateUtils.h */; settings = {ASSET_TAGS = (); }; };
+		49EB68E51C1FAD5D00D05BCE /* UAMessageCenterDateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 49EB68E31C1FAD5D00D05BCE /* UAMessageCenterDateUtils.m */; settings = {ASSET_TAGS = (); }; };
+		49EB68E71C1FADC600D05BCE /* UAMessageCenterLocalization.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EB68E61C1FADC600D05BCE /* UAMessageCenterLocalization.h */; settings = {ASSET_TAGS = (); }; };
+		49EB68EB1C1FC0DF00D05BCE /* UADefaultMessageCenterListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 49EB68E81C1FC0DF00D05BCE /* UADefaultMessageCenterListCell.xib */; settings = {ASSET_TAGS = (); }; };
+		49EB68EC1C1FC0DF00D05BCE /* UADefaultMessageCenterListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 49EB68E91C1FC0DF00D05BCE /* UADefaultMessageCenterListViewController.xib */; settings = {ASSET_TAGS = (); }; };
+		49EB68ED1C1FC0DF00D05BCE /* UADefaultMessageCenterMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 49EB68EA1C1FC0DF00D05BCE /* UADefaultMessageCenterMessageViewController.xib */; settings = {ASSET_TAGS = (); }; };
 		49EECA8B17CBD4BC00DE0AFB /* UADisposable.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECA8917CBD4BC00DE0AFB /* UADisposable.h */; };
 		49EECA8C17CBD4BC00DE0AFB /* UADisposable.m in Sources */ = {isa = PBXBuildFile; fileRef = 49EECA8A17CBD4BC00DE0AFB /* UADisposable.m */; };
 		49F2123018AD5A2800136622 /* NSObject+AnonymousKVO.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F2122F18AD5A2800136622 /* NSObject+AnonymousKVO.m */; };
@@ -460,6 +473,7 @@
 		492ADA0B18C958E50032C491 /* UARichContentWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARichContentWindow.h; sourceTree = "<group>"; };
 		492ADA0E18C959CB0032C491 /* UACloseWindowAction+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UACloseWindowAction+Internal.h"; sourceTree = "<group>"; };
 		492ADA0F18C959CB0032C491 /* UACloseWindowAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACloseWindowAction.m; sourceTree = "<group>"; };
+		492BA2FE1C20F83100A252C8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = AirshipResources/Localization/en.lproj/UAMessageCenterUI.strings; sourceTree = SOURCE_ROOT; };
 		49416D5E18C025E900A18B72 /* UALandingPageActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALandingPageActionTest.m; sourceTree = "<group>"; };
 		49416D6018C513D500A18B72 /* UABespokeCloseView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABespokeCloseView.h; sourceTree = "<group>"; };
 		49416D6118C513D500A18B72 /* UABespokeCloseView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABespokeCloseView.m; sourceTree = "<group>"; };
@@ -546,6 +560,18 @@
 		49E9C9BF183AD42300B7BCFF /* UAWebViewCallData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAWebViewCallData.h; sourceTree = "<group>"; };
 		49E9C9C0183AD42300B7BCFF /* UAWebViewCallData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWebViewCallData.m; sourceTree = "<group>"; };
 		49E9C9C5183C28E900B7BCFF /* UAActionJSDelegateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionJSDelegateTest.m; sourceTree = "<group>"; };
+		49EB68D61C1FA9DE00D05BCE /* UADefaultMessageCenterListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADefaultMessageCenterListCell.h; sourceTree = "<group>"; };
+		49EB68D71C1FA9DE00D05BCE /* UADefaultMessageCenterListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterListCell.m; sourceTree = "<group>"; };
+		49EB68DA1C1FAAAE00D05BCE /* UADefaultMessageCenterListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADefaultMessageCenterListViewController.h; sourceTree = "<group>"; };
+		49EB68DB1C1FAAAE00D05BCE /* UADefaultMessageCenterListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterListViewController.m; sourceTree = "<group>"; };
+		49EB68DE1C1FABFE00D05BCE /* UADefaultMessageCenterMessageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADefaultMessageCenterMessageViewController.h; sourceTree = "<group>"; };
+		49EB68DF1C1FABFE00D05BCE /* UADefaultMessageCenterMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterMessageViewController.m; sourceTree = "<group>"; };
+		49EB68E21C1FAD5D00D05BCE /* UAMessageCenterDateUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterDateUtils.h; sourceTree = "<group>"; };
+		49EB68E31C1FAD5D00D05BCE /* UAMessageCenterDateUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterDateUtils.m; sourceTree = "<group>"; };
+		49EB68E61C1FADC600D05BCE /* UAMessageCenterLocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterLocalization.h; sourceTree = "<group>"; };
+		49EB68E81C1FC0DF00D05BCE /* UADefaultMessageCenterListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UADefaultMessageCenterListCell.xib; sourceTree = "<group>"; };
+		49EB68E91C1FC0DF00D05BCE /* UADefaultMessageCenterListViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UADefaultMessageCenterListViewController.xib; sourceTree = "<group>"; };
+		49EB68EA1C1FC0DF00D05BCE /* UADefaultMessageCenterMessageViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UADefaultMessageCenterMessageViewController.xib; sourceTree = "<group>"; };
 		49EECA8917CBD4BC00DE0AFB /* UADisposable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADisposable.h; sourceTree = "<group>"; };
 		49EECA8A17CBD4BC00DE0AFB /* UADisposable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADisposable.m; sourceTree = "<group>"; };
 		49F2122E18AD5A2800136622 /* NSObject+AnonymousKVO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+AnonymousKVO.h"; sourceTree = "<group>"; };
@@ -931,6 +957,7 @@
 		1F55FB6A181A34B7002AA192 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				49EB68D51C1FA9B200D05BCE /* MessageCenter */,
 				49D7FF471A8E92180017A11C /* InAppMessages */,
 				49416D5718BECBC300A18B72 /* LandingPages */,
 				1F55FB6B181A34DD002AA192 /* UABeveledLoadingIndicator.h */,
@@ -1054,6 +1081,9 @@
 		4920512D1C0D0C0A00A7B36D /* AirshipResources */ = {
 			isa = PBXGroup;
 			children = (
+				49EB68E81C1FC0DF00D05BCE /* UADefaultMessageCenterListCell.xib */,
+				49EB68E91C1FC0DF00D05BCE /* UADefaultMessageCenterListViewController.xib */,
+				49EB68EA1C1FC0DF00D05BCE /* UADefaultMessageCenterMessageViewController.xib */,
 				4920514C1C0E6BEA00A7B36D /* Localization */,
 			);
 			path = AirshipResources;
@@ -1062,6 +1092,7 @@
 		4920514C1C0E6BEA00A7B36D /* Localization */ = {
 			isa = PBXGroup;
 			children = (
+				492BA2FD1C20F83100A252C8 /* UAMessageCenterUI.strings */,
 				4920514D1C0E6BEA00A7B36D /* UAInteractiveNotifications.strings */,
 			);
 			name = Localization;
@@ -1130,6 +1161,9 @@
 			children = (
 				49872F841C112E3F00B26CE7 /* UADefaultMessageCenter.h */,
 				49872F851C112E3F00B26CE7 /* UADefaultMessageCenter.m */,
+				49EB68E21C1FAD5D00D05BCE /* UAMessageCenterDateUtils.h */,
+				49EB68E31C1FAD5D00D05BCE /* UAMessageCenterDateUtils.m */,
+				49EB68E61C1FADC600D05BCE /* UAMessageCenterLocalization.h */,
 			);
 			name = MessageCenter;
 			sourceTree = "<group>";
@@ -1227,6 +1261,19 @@
 				49A61A991AC32B9800BC5E68 /* UAInAppMessageControllerDefaultDelegate.m */,
 			);
 			name = InAppMessages;
+			sourceTree = "<group>";
+		};
+		49EB68D51C1FA9B200D05BCE /* MessageCenter */ = {
+			isa = PBXGroup;
+			children = (
+				49EB68D61C1FA9DE00D05BCE /* UADefaultMessageCenterListCell.h */,
+				49EB68D71C1FA9DE00D05BCE /* UADefaultMessageCenterListCell.m */,
+				49EB68DA1C1FAAAE00D05BCE /* UADefaultMessageCenterListViewController.h */,
+				49EB68DB1C1FAAAE00D05BCE /* UADefaultMessageCenterListViewController.m */,
+				49EB68DE1C1FABFE00D05BCE /* UADefaultMessageCenterMessageViewController.h */,
+				49EB68DF1C1FABFE00D05BCE /* UADefaultMessageCenterMessageViewController.m */,
+			);
+			name = MessageCenter;
 			sourceTree = "<group>";
 		};
 		76F9B4AB18D3CE2A00C438D4 /* JRSwizzle */ = {
@@ -1633,6 +1680,7 @@
 				CC313A9919A66DBE00134A9F /* UAUserNotificationCategories.h in Headers */,
 				4928D8F51AB24D010046E5BE /* UAUserNotificationCategory+Internal.h in Headers */,
 				CC8542CB17F4B81600D2DE10 /* UAIncomingPushAction+Internal.h in Headers */,
+				49EB68D81C1FA9DE00D05BCE /* UADefaultMessageCenterListCell.h in Headers */,
 				4905C4E518246339001D48E3 /* NSString+UAURLEncoding.h in Headers */,
 				CCD7FCF11AA5383100A20B05 /* UAActionRunner+Internal.h in Headers */,
 				76AA8EDD19B0F0A2005FD1C3 /* UAKeychainUtils+Internal.h in Headers */,
@@ -1665,6 +1713,7 @@
 				76AA8EDC19B0F0A2005FD1C3 /* UAAction.h in Headers */,
 				BB8860E7159A7E9600584445 /* UALocationProviderProtocol.h in Headers */,
 				CCBA4F891AC108C100857572 /* UADisplayInboxAction.h in Headers */,
+				49EB68E01C1FABFE00D05BCE /* UADefaultMessageCenterMessageViewController.h in Headers */,
 				CC7DC94C183E978A00E95BB8 /* UAChannelRegistrar.h in Headers */,
 				CCDF66AE19A544590043657E /* UAShareAction.h in Headers */,
 				BB8860E8159A7E9600584445 /* UALocationProviderDelegate.h in Headers */,
@@ -1672,6 +1721,7 @@
 				BB8860DA159A7E9600584445 /* UAEvent.h in Headers */,
 				767D0D3D1A71CC16008CEC8A /* UANamedUserAPIClient+Internal.h in Headers */,
 				612C48D31B68206600B61D09 /* UAUtils.h in Headers */,
+				49EB68DC1C1FAAAE00D05BCE /* UADefaultMessageCenterListViewController.h in Headers */,
 				4946199C1A11A49D00E138C0 /* UAWhitelist.h in Headers */,
 				CC2950F81949040300E905E3 /* UAEvent+Internal.h in Headers */,
 				49FCCB191912C6640057D1C4 /* UAActionArguments+Internal.h in Headers */,
@@ -1724,6 +1774,7 @@
 				CC4F18591B62B8D300C9FAE1 /* UABaseLocationProvider+Internal.h in Headers */,
 				CCA3A4EB17FCB3A8009C7371 /* UAActionRegistryEntry.h in Headers */,
 				CC3870391B308BA600746D07 /* UATagGroupsAPIClient+Internal.h in Headers */,
+				49EB68E71C1FADC600D05BCE /* UAMessageCenterLocalization.h in Headers */,
 				CC8542C717F4B81600D2DE10 /* UAAggregateActionResult.h in Headers */,
 				BB8860EA159A7E9600584445 /* UAAnalytics+Internal.h in Headers */,
 				1F610DBD17835C2200BCD96E /* UAirship.h in Headers */,
@@ -1767,6 +1818,7 @@
 				CC0F49641B9A4F8500AF1EF6 /* UAAssociatedIdentifiers.h in Headers */,
 				CC4AAE0718C93ECF001F23B3 /* UAApplicationMetrics.h in Headers */,
 				76792D13178E13810054F8AD /* UAHTTPRequest+Internal.h in Headers */,
+				49EB68E41C1FAD5D00D05BCE /* UAMessageCenterDateUtils.h in Headers */,
 				CC523FB017B985F800233005 /* UAJSONValueTransformer+Internal.h in Headers */,
 				CCE34AEC19C2644500A8EFC0 /* UAAppExitEvent+Internal.h in Headers */,
 				49EECA8B17CBD4BC00DE0AFB /* UADisposable.h in Headers */,
@@ -1883,6 +1935,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49EB68EC1C1FC0DF00D05BCE /* UADefaultMessageCenterListViewController.xib in Resources */,
+				49EB68ED1C1FC0DF00D05BCE /* UADefaultMessageCenterMessageViewController.xib in Resources */,
+				49EB68EB1C1FC0DF00D05BCE /* UADefaultMessageCenterListCell.xib in Resources */,
+				492BA2FF1C20F83100A252C8 /* UAMessageCenterUI.strings in Resources */,
 				492051591C0E6BEA00A7B36D /* UAInteractiveNotifications.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2055,6 +2111,7 @@
 			files = (
 				61362D551B28E2BF0011C058 /* UAWalletAction.m in Sources */,
 				7676AA0C18C4EF5B00B4E5B4 /* UAAppDelegateProxy.m in Sources */,
+				49EB68E51C1FAD5D00D05BCE /* UAMessageCenterDateUtils.m in Sources */,
 				CC8542B917F4B81600D2DE10 /* UAActionArguments.m in Sources */,
 				4995C642180DBBDD004F8724 /* UARemoveTagsAction.m in Sources */,
 				4946199E1A11A49D00E138C0 /* UAWhitelist.m in Sources */,
@@ -2062,6 +2119,7 @@
 				CC0F49651B9A4F8500AF1EF6 /* UAAssociatedIdentifiers.m in Sources */,
 				4928D90E1ABA37A30046E5BE /* UAInAppMessaging.m in Sources */,
 				49416D6A18C513F500A18B72 /* UALandingPageOverlayController.m in Sources */,
+				49EB68D91C1FA9DE00D05BCE /* UADefaultMessageCenterListCell.m in Sources */,
 				BB8860EE159A7E9600584445 /* UAUtils.m in Sources */,
 				CC0F49691B9A54BD00AF1EF6 /* UAAssociateIdentifiersEvent.m in Sources */,
 				49416D6418C513D500A18B72 /* UABespokeCloseView.m in Sources */,
@@ -2069,6 +2127,7 @@
 				CCF4462C1947D252003E04E7 /* UACustomEvent.m in Sources */,
 				CCE34AF419C2646500A8EFC0 /* UAAppBackgroundEvent.m in Sources */,
 				1F55FB6F181A34DD002AA192 /* UABeveledLoadingIndicator.m in Sources */,
+				49EB68DD1C1FAAAE00D05BCE /* UADefaultMessageCenterListViewController.m in Sources */,
 				CCA3A4ED17FCB3A8009C7371 /* UAActionRegistryEntry.m in Sources */,
 				CC1F43991A1D388800D3A227 /* UAWebViewDelegate.m in Sources */,
 				1F610DBE17835C2200BCD96E /* UAirship.m in Sources */,
@@ -2081,6 +2140,7 @@
 				49B7045E1A76FF3C000F67A6 /* UAInAppMessage.m in Sources */,
 				49973CEF1A97BFDE009B5EB1 /* UAIncomingInAppMessageAction.m in Sources */,
 				CCE34AFA19C2647A00A8EFC0 /* UADeviceRegistrationEvent.m in Sources */,
+				49EB68E11C1FABFE00D05BCE /* UADefaultMessageCenterMessageViewController.m in Sources */,
 				767D0D381A71A938008CEC8A /* UANamedUser.m in Sources */,
 				BB886105159A7E9600584445 /* UAKeychainUtils.m in Sources */,
 				CC8542C117F4B81600D2DE10 /* UAActionResult.m in Sources */,
@@ -2196,6 +2256,14 @@
 				492051581C0E6BEA00A7B36D /* zh-Hant */,
 			);
 			name = UAInteractiveNotifications.strings;
+			sourceTree = "<group>";
+		};
+		492BA2FD1C20F83100A252C8 /* UAMessageCenterUI.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				492BA2FE1C20F83100A252C8 /* en */,
+			);
+			name = UAMessageCenterUI.strings;
 			sourceTree = "<group>";
 		};
 		7BB6790F1429288D00B877DB /* InfoPlist.strings */ = {
@@ -2325,6 +2393,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = AirshipResources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipResources;
@@ -2353,6 +2422,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = AirshipResources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipResources;
@@ -2381,6 +2451,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = AirshipResources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipResources;
