@@ -61,7 +61,7 @@
 @property (nonatomic, weak) IBOutlet UILabel *coverLabel;
 
 /**
- * Convenience accessor for the messages currently available for display
+ * Convenience accessor for the messages currently available for display.
  */
 @property (nonatomic, readonly) NSArray *messages;
 
@@ -172,12 +172,11 @@
     [self.webView loadRequest:requestObj];
 }
 
-
 #pragma mark UIWebViewDelegate
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
     // Mark message as read after it has finished loading
-    if(self.message.unread) {
+    if (self.message.unread) {
         [self.message markMessageReadWithCompletionHandler:nil];
     }
 
@@ -206,31 +205,18 @@
     if (self.messages.count) {
         // If the index path is still accessible,
         // find the nearest accessible neighbor
-        NSUInteger index = self.messageIndex;
-        while (self.messages.count <= index) {
-            index--;
-        }
+        NSUInteger index = MIN(self.messages.count - 1, self.messageIndex);
 
         UAInboxMessage *currentMessageAtIndex = [self.messages objectAtIndex:index];
 
         if (self.message) {
-
-            // if the displayed message is no longer at the currently selected index path
-            if (![self.message isEqual:currentMessageAtIndex]) {
+            // if the index has changed
+            if (![self.message.messageID isEqual:currentMessageAtIndex.messageID]) {
                 // reload the message at that index
                 [self loadMessageAtIndex:index];
             } else {
-                // Refresh the new instance of the current message
-                NSString *messageID = self.message.messageID;
-                self.message = nil;
-                if (messageID) {
-                    for (UAInboxMessage *message in self.messages) {
-                        if ([message.messageID isEqualToString:messageID]) {
-                            self.message = message;
-                            break;
-                        }
-                    }
-                }
+                // refresh the stored instance
+                self.message = currentMessageAtIndex;
             }
         }
 

@@ -186,10 +186,7 @@
     // If a cell was previously selected and there are messages to display
     if (self.selectedIndexPath && self.messages.count) {
         // Find the corresponding row or its nearest accessible neighbor
-        NSInteger row = self.selectedIndexPath.row;
-        while (self.messages.count <= row) {
-            row--;
-        }
+        NSInteger row = MIN((NSInteger)self.messages.count - 1, self.selectedIndexPath.row);
 
         // If the message previously at that index is no longer present
         if (self.selectedIndexPath.row != row) {
@@ -305,7 +302,7 @@
 
         UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:mvc];
 
-        // note: not sure why ths is necessary but the navigation controller isn't sized properly otherwise
+        // note: not sure why this is necessary but the navigation controller isn't sized properly otherwise
         [nav.view layoutSubviews];
         [self showDetailViewController:nav sender:self];
     }
@@ -397,7 +394,7 @@
 
         UITableView *strongMessageTable = self.messageTable;
         NSUInteger count = [strongMessageTable.indexPathsForSelectedRows count];
-        if (count == 0) {
+        if (!count) {
             self.deleteItem.title = deleteStr;
             self.markAsReadButtonItem.title = markReadStr;
             self.deleteItem.enabled = NO;
@@ -414,7 +411,7 @@
                 self.markAsReadButtonItem.enabled = NO;
             } else {
                 self.deleteItem.enabled = YES;
-                if (unreadCountInSelection != 0) {
+                if (unreadCountInSelection) {
                     self.markAsReadButtonItem.enabled = YES;
                 } else {
                     self.markAsReadButtonItem.enabled = NO;
@@ -432,9 +429,13 @@
 
 - (void)deleteMessageAtIndexPath:(NSIndexPath *)indexPath {
 
-    if (!indexPath) return; //require an index path (for safety with literal below)
+    if (!indexPath) {
+        //require an index path (for safety with literal below)
+        return;
+    }
 
     UAInboxMessage *message = [self.messages objectAtIndex:(NSUInteger)indexPath.row];
+
     if (message) {
         [[UAirship inbox].messageList markMessagesDeleted:@[message] completionHandler:^{
             [self refreshAfterBatchUpdate];
@@ -444,12 +445,7 @@
 
 - (UIImage *)placeholderImage {
     if (! _placeholderImage) {
-        UIView *placeholderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
-        placeholderView.backgroundColor = [UIColor grayColor];
-        UIGraphicsBeginImageContextWithOptions(placeholderView.bounds.size, placeholderView.opaque, [[UIScreen mainScreen] scale]);
-        [placeholderView.layer renderInContext:UIGraphicsGetCurrentContext()];
-        self.placeholderImage = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
+        _placeholderImage =[UIImage imageNamed:@"UADefaultMessageCenterPlaceholderIcon.png" inBundle:[UAirship resources] compatibleWithTraitCollection:nil];
     }
     return _placeholderImage;
 }
@@ -655,7 +651,7 @@
         [UAURLProtocol addCachableURL:iconListURL];
 
         // NOTE: All add/remove operations on the cache & in-progress set should be done
-        // on the main thread. They'll be cleared below in a dispatch_asynch/main queue block.
+        // on the main thread. They'll be cleared below in a dispatch_async/main queue block.
 
         // Next, check to see if we're currently requesting the icon
         // Add the index path to the set of paths to update when a request is completed and then proceed if necessary
@@ -669,7 +665,6 @@
             [self.currentIconURLRequests setValue:[NSMutableSet setWithObject:indexPath] forKey:iconListURLString];
         }
 
-        // Use a weak reference to self in case our UI disappears while we're off in my butt
         __weak UADefaultMessageCenterListViewController *weakSelf = self;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0ul), ^{
 

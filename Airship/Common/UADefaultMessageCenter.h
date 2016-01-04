@@ -47,7 +47,7 @@
 - (void)display:(BOOL)animated;
 
 /**
- * Display the message center, with implicit animation.
+ * Display the message center with animation.
  */
 - (void)display;
 
@@ -60,7 +60,7 @@
 - (void)displayMessage:(UAInboxMessage *)message animated:(BOOL)animated;
 
 /**
- * Display the given message, with implicit animation.
+ * Display the given message without animation.
  *
  * @pararm message The message.
  */
@@ -74,7 +74,7 @@
 - (void)dismiss:(BOOL)animated;
 
 /**
- * Dismiss the message center with implicit animation.
+ * Dismiss the message center with animation.
  */
 - (void)dismiss;
 

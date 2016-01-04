@@ -44,7 +44,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.title = @"Messages";
+        self.title = UAMessageCenterLocalizedString(@"UA_Message_Center_Title");
     }
     return self;
 }
@@ -57,14 +57,14 @@
         UADefaultMessageCenterListViewController *lvc;
         lvc = [[UADefaultMessageCenterListViewController alloc] initWithNibName:@"UADefaultMessageCenterListViewController"
                                                                          bundle:airshipResources];
-        lvc.title = @"Messages";
+        lvc.title = self.title;
         lvc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                              target:self
                                                                                              action:@selector(dismiss)];
 
         UADefaultMessageCenterMessageViewController *mvc;
         mvc = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController"
-                                                                            bundle:[UAirship resources]];
+                                                                            bundle:airshipResources];
 
         UINavigationController *listnav = [[UINavigationController alloc] initWithRootViewController:lvc];
         UINavigationController *messagenav = [[UINavigationController alloc] initWithRootViewController:mvc];
