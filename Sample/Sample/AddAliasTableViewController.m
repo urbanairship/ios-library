@@ -65,7 +65,7 @@
     NSRange range = [newAlias rangeOfString:@"^\\s*" options:NSRegularExpressionSearch];
     NSString *result = [newAlias stringByReplacingCharactersInRange:range withString:@""];
 
-    if ([result length] != 0) {
+    if ([result length]) {
         [UAirship push].alias = result;
     } else {
         textField.text = nil;

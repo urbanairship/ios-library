@@ -72,7 +72,7 @@
 
     self.namedUserSubtitleLabel.text = [UAirship push].namedUser.identifier == nil ? NSLocalizedStringFromTable(@"None", @"UAPushUI", @"None") : [UAirship push].namedUser.identifier;
 
-    if ([UAirship push].tags.count > 0) {
+    if ([UAirship push].tags.count) {
         self.tagsSubtitleLabel.text = [[UAirship push].tags componentsJoinedByString:@", "];
     } else {
         self.tagsSubtitleLabel.text = NSLocalizedStringFromTable(@"None", @"UAPushUI", @"None");

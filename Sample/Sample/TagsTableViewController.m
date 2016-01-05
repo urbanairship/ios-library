@@ -73,7 +73,7 @@ NSString *addTagsSegue = @"addTagsSegue";
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"tagCell" forIndexPath:indexPath];
 
-    if ([cell isEqual:nil]) {
+    if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"tagCell"];
     }
     cell.textLabel.text = [UAirship push].tags[indexPath.row];

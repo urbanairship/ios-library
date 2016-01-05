@@ -59,7 +59,7 @@
     NSRange range = [newTag rangeOfString:@"^\\s*" options:NSRegularExpressionSearch];
     NSString *result = [newTag stringByReplacingCharactersInRange:range withString:@""];
 
-    if ([result length] != 0) {
+    if ([result length]) {
         [[UAirship push] addTag:newTag];
     } else {
         return NO;

@@ -65,7 +65,7 @@
     NSRange range = [newNamedUser rangeOfString:@"^\\s*" options:NSRegularExpressionSearch];
     NSString *result = [newNamedUser stringByReplacingCharactersInRange:range withString:@""];
 
-    if ([result length] != 0) {
+    if ([result length]) {
         [UAirship push].namedUser.identifier = result;
     } else {
         textField.text = nil;
