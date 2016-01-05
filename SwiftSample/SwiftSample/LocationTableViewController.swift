@@ -68,11 +68,11 @@ class LocationTableViewController: UITableViewController, UALocationServiceDeleg
 
         if !(locationServiceEnabled && locationServiceAuthorized && airshipAllowedToUseLocation) {
 
-            let alertView: UIAlertController = UIAlertController(title: "Location Error", message: "The location service is either, not authorized, enabled, or Urban Airship does not have permission to use it.",
+            let alertController: UIAlertController = UIAlertController(title: "Location Error", message: "The location service is either, not authorized, enabled, or Urban Airship does not have permission to use it.",
                 preferredStyle: UIAlertControllerStyle.Alert)
 
-            alertView.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Cancel, handler: nil))
-            self.presentViewController(alertView, animated: true, completion: nil)
+            alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Cancel, handler: nil))
+            self.presentViewController(alertController, animated: true, completion: nil)
 
             return false
         }
