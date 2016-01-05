@@ -84,6 +84,7 @@
 		497B0EAA1836AB8700DA65BB /* NSString_UAURLEncodingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 497B0EA91836AB8700DA65BB /* NSString_UAURLEncodingTest.m */; };
 		49872F861C112E3F00B26CE7 /* UADefaultMessageCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 49872F841C112E3F00B26CE7 /* UADefaultMessageCenter.h */; settings = {ASSET_TAGS = (); }; };
 		49872F871C112E3F00B26CE7 /* UADefaultMessageCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 49872F851C112E3F00B26CE7 /* UADefaultMessageCenter.m */; settings = {ASSET_TAGS = (); }; };
+		498F6A061C3B4BB400088B01 /* UADefaultMessageCenterPlaceholderIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 498F6A051C3B4BB400088B01 /* UADefaultMessageCenterPlaceholderIcon.png */; settings = {ASSET_TAGS = (); }; };
 		49942CDB17B19A3B007E5FB1 /* UADelayOperationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49942CDA17B19A3B007E5FB1 /* UADelayOperationTest.m */; };
 		4995C63A180DBBC9004F8724 /* UAAddTagsAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 4995C638180DBBC9004F8724 /* UAAddTagsAction.h */; };
 		4995C63C180DBBC9004F8724 /* UAAddTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C639180DBBC9004F8724 /* UAAddTagsAction.m */; };
@@ -502,6 +503,7 @@
 		497B0EA91836AB8700DA65BB /* NSString_UAURLEncodingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSString_UAURLEncodingTest.m; sourceTree = "<group>"; };
 		49872F841C112E3F00B26CE7 /* UADefaultMessageCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADefaultMessageCenter.h; sourceTree = "<group>"; };
 		49872F851C112E3F00B26CE7 /* UADefaultMessageCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenter.m; sourceTree = "<group>"; };
+		498F6A051C3B4BB400088B01 /* UADefaultMessageCenterPlaceholderIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UADefaultMessageCenterPlaceholderIcon.png; sourceTree = "<group>"; };
 		49942CD917B19A3B007E5FB1 /* UADelayOperationTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADelayOperationTest.h; sourceTree = "<group>"; };
 		49942CDA17B19A3B007E5FB1 /* UADelayOperationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADelayOperationTest.m; sourceTree = "<group>"; };
 		4995C62217FA3D71004F8724 /* UAAction+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAAction+Internal.h"; sourceTree = "<group>"; };
@@ -1081,6 +1083,7 @@
 		4920512D1C0D0C0A00A7B36D /* AirshipResources */ = {
 			isa = PBXGroup;
 			children = (
+				498F6A051C3B4BB400088B01 /* UADefaultMessageCenterPlaceholderIcon.png */,
 				49EB68E81C1FC0DF00D05BCE /* UADefaultMessageCenterListCell.xib */,
 				49EB68E91C1FC0DF00D05BCE /* UADefaultMessageCenterListViewController.xib */,
 				49EB68EA1C1FC0DF00D05BCE /* UADefaultMessageCenterMessageViewController.xib */,
@@ -1936,6 +1939,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				49EB68EC1C1FC0DF00D05BCE /* UADefaultMessageCenterListViewController.xib in Resources */,
+				498F6A061C3B4BB400088B01 /* UADefaultMessageCenterPlaceholderIcon.png in Resources */,
 				49EB68ED1C1FC0DF00D05BCE /* UADefaultMessageCenterMessageViewController.xib in Resources */,
 				49EB68EB1C1FC0DF00D05BCE /* UADefaultMessageCenterListCell.xib in Resources */,
 				492BA2FF1C20F83100A252C8 /* UAMessageCenterUI.strings in Resources */,
