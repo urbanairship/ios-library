@@ -47,6 +47,7 @@
 @class UAInbox;
 @class UAActionRegistry;
 @class UAInAppMessaging;
+@class UADefaultMessageCenter;
 
 
 UA_VERSION_INTERFACE(UAirshipVersion)
@@ -210,6 +211,12 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * in-app notifications.
  */
 + (null_unspecified UAInAppMessaging *)inAppMessaging;
+
+/**
+ * Returns the `UADefaultMessageCenter` instance. Used for customizing
+ * and displaying the default message center.
+ */
++ (null_unspecified UADefaultMessageCenter *)defaultMessageCenter;
 
 /**
  * Returns the AirshipResources bundle, or nil if the the bundle
