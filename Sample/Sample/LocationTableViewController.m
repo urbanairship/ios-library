@@ -23,14 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Import the Urban Airship umbrella header, using either
-// the framework or the header search paths
-#if __has_include("AirshipKit/AirshipKit.h")
+// Import the Urban Airship umbrella header using the framework
 #import <AirshipKit/AirshipKit.h>
-#else
-#import "AirshipLib.h"
-#endif
-
 #import "LocationTableViewController.h"
 
 @interface LocationTableViewController ()
@@ -99,11 +93,11 @@
 #pragma mark UALocationServiceDelegate
 
 - (void)locationService:(UALocationService *)service didFailWithError:(NSError *)error {
-    UALOG(@"LOCATION_ERROR, %@", error.description);
+    NSLog(@"LOCATION_ERROR, %@", error.description);
 }
 
 - (void)locationService:(UALocationService *)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-    UALOG(@"LOCATION_AUTHORIZATION_STATUS %u", status);
+    NSLog(@"LOCATION_AUTHORIZATION_STATUS %u", status);
 }
 
 - (void)locationService:(UALocationService *)service didUpdateLocations:(NSArray *)locations {
@@ -112,7 +106,7 @@
 
     CLLocation *newLocation = [locations lastObject];
 
-    UALOG(@"LOCATION_UPDATE LAT:%f LONG:%f", newLocation.coordinate.latitude, newLocation.coordinate.longitude);
+    NSLog(@"LOCATION_UPDATE LAT:%f LONG:%f", newLocation.coordinate.latitude, newLocation.coordinate.longitude);
 
     self.latitudeCell.detailTextLabel.text = [[NSString alloc] initWithFormat:@"%f", newLocation.coordinate.latitude];
     self.longitudeCell.detailTextLabel.text = [[NSString alloc] initWithFormat:@"%f", newLocation.coordinate.longitude];

@@ -23,14 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Import the Urban Airship umbrella header, using either
-// the framework or the header search paths
-#if __has_include("AirshipKit/AirshipKit.h")
+// Import the Urban Airship umbrella header using the framework
 #import <AirshipKit/AirshipKit.h>
-#else
-#import "AirshipLib.h"
-#endif
-
 #import "AddAliasTableViewController.h"
 
 @interface AddAliasTableViewController ()
@@ -65,7 +59,7 @@
     NSRange range = [newAlias rangeOfString:@"^\\s*" options:NSRegularExpressionSearch];
     NSString *result = [newAlias stringByReplacingCharactersInRange:range withString:@""];
 
-    if ([result length]) {
+    if (result.length) {
         [UAirship push].alias = result;
     } else {
         textField.text = nil;

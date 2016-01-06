@@ -23,14 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Import the Urban Airship umbrella header, using either
-// the framework or the header search paths
-#if __has_include("AirshipKit/AirshipKit.h")
+// Import the Urban Airship umbrella header using the framework
 #import <AirshipKit/AirshipKit.h>
-#else
-#import "AirshipLib.h"
-#endif
-
 #import "HomeViewController.h"
 
 @interface HomeViewController ()

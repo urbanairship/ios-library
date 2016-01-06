@@ -23,14 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Import the Urban Airship umbrella header, using either
-// the framework or the header search paths
-#if __has_include("AirshipKit/AirshipKit.h")
+// Import the Urban Airship umbrella header using the framework
 #import <AirshipKit/AirshipKit.h>
-#else
-#import "AirshipLib.h"
-#endif
-
 #import "AddTagsTableViewController.h"
 
 @interface AddTagsTableViewController ()
@@ -59,7 +53,7 @@
     NSRange range = [newTag rangeOfString:@"^\\s*" options:NSRegularExpressionSearch];
     NSString *result = [newTag stringByReplacingCharactersInRange:range withString:@""];
 
-    if ([result length]) {
+    if (result.length) {
         [[UAirship push] addTag:newTag];
     } else {
         return NO;

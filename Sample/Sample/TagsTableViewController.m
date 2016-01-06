@@ -23,23 +23,17 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Import the Urban Airship umbrella header, using either
-// the framework or the header search paths
-#if __has_include("AirshipKit/AirshipKit.h")
+// Import the Urban Airship umbrella header using the framework
 #import <AirshipKit/AirshipKit.h>
-#else
-#import "AirshipLib.h"
-#endif
-
 #import "TagsTableViewController.h"
+
+#define kUAAddTagsSegue @"addTagsSegue"
 
 @interface TagsTableViewController ()
 
 @end
 
 @implementation TagsTableViewController
-
-NSString *addTagsSegue = @"addTagsSegue";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -57,7 +51,7 @@ NSString *addTagsSegue = @"addTagsSegue";
 }
 
 - (void)addTag:(id)sender {
-    [self performSegueWithIdentifier:addTagsSegue sender:self];
+    [self performSegueWithIdentifier:kUAAddTagsSegue sender:self];
 }
 
 #pragma mark - Table view data source
