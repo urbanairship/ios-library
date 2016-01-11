@@ -166,7 +166,7 @@ NS_ASSUME_NONNULL_BEGIN
  * back to the inProduction property as set in code or the AirshipConfig.plist
  * file.
  */
-@property (nonatomic, assign) BOOL detectProvisioningMode;
+@property (nonatomic, assign, getter=isDetectProvisioningMode) BOOL detectProvisioningMode;
 
 
 /**

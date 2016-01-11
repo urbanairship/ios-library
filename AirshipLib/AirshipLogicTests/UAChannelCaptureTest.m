@@ -65,7 +65,6 @@
     self.config.developmentAppKey = @"App key";
     self.config.developmentAppSecret = @"App secret";
     self.config.inProduction = NO;
-    self.config.isInProductionExplicitlySet = YES;
 
     self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config push:self.mockPush];
 }

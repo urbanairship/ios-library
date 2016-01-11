@@ -29,6 +29,9 @@
 
 @implementation UAConfig
 
+@synthesize inProduction = _inProduction;
+@synthesize detectProvisioningMode = _detectProvisioningMode;
+
 #pragma mark -
 #pragma mark Object Lifecycle
 - (void)dealloc {
@@ -57,8 +60,9 @@
         self.channelCaptureEnabled = YES;
         self.customConfig = @{};
         self.channelCreationDelayEnabled = NO;
-        self.isDetectProvisioningModeExplicitlySet = NO;
-        self.isInProductionExplicitlySet = NO;
+        self.defaultDetectProvisioningMode = YES;
+        _inProduction = NO;
+        _detectProvisioningMode = NO;
     }
 
     return self;
@@ -133,10 +137,6 @@
         [config setValuesForKeysWithDictionary:normalizedDictionary];
 
         UA_LTRACE(@"Config options: %@", [normalizedDictionary description]);
-
-        // Check if detectProvisioningMode or inProduction were explicity set in AirshipConfig.plist
-        config.isDetectProvisioningModeExplicitlySet = [normalizedDictionary objectForKey:@"detectProvisioningMode"] ? YES : NO;
-        config.isInProductionExplicitlySet = [normalizedDictionary objectForKey:@"inProduction"] ? YES : NO;
     }
     return config;
 }
@@ -161,12 +161,21 @@
 }
 
 - (BOOL)isInProduction {
-    if (self.isDetectProvisioningModeExplicitlySet || self.isInProductionExplicitlySet) {
-        return self.detectProvisioningMode ? [self usesProductionPushServer] : _inProduction;
-    } else {
-        self.detectProvisioningMode = YES;
-        return [self usesProductionPushServer];
-    }
+    return self.detectProvisioningMode ? [self usesProductionPushServer] : _inProduction;
+}
+
+- (BOOL)isDetectProvisioningMode {
+    return _detectProvisioningMode || self.defaultDetectProvisioningMode;
+}
+
+- (void)setDetectProvisioningMode:(BOOL)detectProvisioningMode {
+    self.defaultDetectProvisioningMode = NO;
+    _detectProvisioningMode = detectProvisioningMode;
+}
+
+- (void)setInProduction:(BOOL)inProduction {
+    self.defaultDetectProvisioningMode = NO;
+    _inProduction = inProduction;
 }
 
 #pragma mark -
