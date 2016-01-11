@@ -130,26 +130,100 @@
     config.productionAppSecret = @"prodAppSecret";
     config.productionLogLevel = UALogLevelNone;//not the default
 
-    XCTAssertFalse(config.inProduction, @"inProduction defaults to NO.");
-    XCTAssertFalse(config.detectProvisioningMode, @"detectProvisioningMode defaults to NO.");
-
-    XCTAssertEqualObjects(config.appKey, config.developmentAppKey, @"Incorrect app key resolution.");
-    XCTAssertEqualObjects(config.appSecret, config.developmentAppSecret, @"Incorrect app secret resolution.");
-    XCTAssertEqual(config.logLevel, config.developmentLogLevel, @"Incorrect log level resolution.");
-
-    config.inProduction = YES;
+    XCTAssertTrue(config.inProduction, @"inProduction defaults to YES.");
+    XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode defaults to YES.");
     XCTAssertEqualObjects(config.appKey, config.productionAppKey, @"Incorrect app key resolution.");
     XCTAssertEqualObjects(config.appSecret, config.productionAppSecret, @"Incorrect app secret resolution.");
     XCTAssertEqual(config.logLevel, config.productionLogLevel, @"Incorrect log level resolution.");
 
     config.inProduction = NO;
+    config.isInProductionExplicitlySet = YES;
+    config.detectProvisioningMode = NO;
+    config.isDetectProvisioningModeExplicitlySet = YES;
+    XCTAssertEqualObjects(config.appKey, config.developmentAppKey, @"Incorrect app key resolution.");
+    XCTAssertEqualObjects(config.appSecret, config.developmentAppSecret, @"Incorrect app secret resolution.");
+    XCTAssertEqual(config.logLevel, config.developmentLogLevel, @"Incorrect log level resolution.");
+
+    config.inProduction = YES;
+    config.isInProductionExplicitlySet = YES;
+    XCTAssertEqualObjects(config.appKey, config.productionAppKey, @"Incorrect app key resolution.");
+    XCTAssertEqualObjects(config.appSecret, config.productionAppSecret, @"Incorrect app secret resolution.");
+    XCTAssertEqual(config.logLevel, config.productionLogLevel, @"Incorrect log level resolution.");
+
+    config.inProduction = NO;
+    config.isInProductionExplicitlySet = YES;
     config.detectProvisioningMode = YES;
+    config.isDetectProvisioningModeExplicitlySet = YES;
 
     XCTAssertTrue(config.inProduction, @"The embedded provisioning profile is a production profile.");
 
     // ensure that our dispatch_once block works when wrapping the in production flag
     config.profilePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"development-embedded" ofType:@"mobileprovision"];
     XCTAssertTrue(config.inProduction, @"The development profile path should not be used as the file will only be read once.");
+}
+
+/**
+ * Test detectProvisioningMode = YES when neither detectProvisioningMode or inProduction
+ * is explicity set in AirshipConfig.plist
+ */
+- (void)testDetectProvisioningModeDefault {
+    NSString *plistPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"AirshipConfig-Without-InProduction-And-DetectProvisioningMode" ofType:@"plist"];
+
+    NSString *validAppValue = @"0A00000000000000000000";
+    UAConfig *config = [UAConfig configWithContentsOfFile:plistPath];
+
+    XCTAssertTrue([config validate], @"AirshipConfig (modern) File is invalid.");
+    XCTAssertFalse(config.isDetectProvisioningModeExplicitlySet, @"isDetectProvisioningModeExplicitlySet should be false");
+    XCTAssertFalse(config.isInProductionExplicitlySet, @"isInProductionExplicitlySet should be false");
+    XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode should default to true");
+}
+
+/**
+ * Test detectProvisioningMode = YES when detectProvisioningMode is explicity set in AirshipConfig.plist
+ */
+- (void)testDetectProvisioningModeExplicitlySet {
+    NSString *plistPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"AirshipConfig-DetectProvisioningMode" ofType:@"plist"];
+
+
+    NSString *validAppValue = @"0A00000000000000000000";
+    UAConfig *config = [UAConfig configWithContentsOfFile:plistPath];
+
+    XCTAssertTrue([config validate], @"AirshipConfig (modern) File is invalid.");
+    XCTAssertTrue(config.isDetectProvisioningModeExplicitlySet, @"isDetectProvisioningModeExplicitlySet should be true");
+    XCTAssertFalse(config.isInProductionExplicitlySet, @"isInProductionExplicitlySet should be false");
+    XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode should be true");
+}
+
+/**
+ * Test inProduction = YES when inProduction is explicitly set in AirshipConfig.plist
+ */
+- (void)testInProductionExplicitlySet {
+    NSString *plistPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"AirshipConfig-InProduction" ofType:@"plist"];
+
+
+    NSString *validAppValue = @"0A00000000000000000000";
+    UAConfig *config = [UAConfig configWithContentsOfFile:plistPath];
+
+    XCTAssertTrue([config validate], @"AirshipConfig (modern) File is invalid.");
+    XCTAssertFalse(config.isDetectProvisioningModeExplicitlySet, @"isDetectProvisioningModeExplicitlySet should be false");
+    XCTAssertTrue(config.isInProductionExplicitlySet, @"isInProductionExplicitlySet should be true");
+    XCTAssertTrue(config.inProduction, @"inProduction should be true");
+}
+
+/**
+ * Test when both detectProvisioningMode and inProduction is explicitly set in AirshipConfig.plist
+ */
+- (void)testDetectProvisioningModeAndInProductionExplicitlySet {
+    NSString *plistPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"AirshipConfig-Valid" ofType:@"plist"];
+
+    NSString *validAppValue = @"0A00000000000000000000";
+    UAConfig *config = [UAConfig configWithContentsOfFile:plistPath];
+
+    XCTAssertTrue([config validate], @"AirshipConfig (modern) File is invalid.");
+    XCTAssertTrue(config.isDetectProvisioningModeExplicitlySet, @"isDetectProvisioningModeExplicitlySet should be true");
+    XCTAssertTrue(config.isInProductionExplicitlySet, @"isInProductionExplicitlySet should be true");
+    XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode should be true");
+    XCTAssertTrue(config.inProduction, @"inProduction should be true");
 }
 
 - (void)testOldPlistFormat {

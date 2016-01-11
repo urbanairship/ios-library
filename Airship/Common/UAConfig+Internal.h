@@ -55,6 +55,22 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL isSimulator;
 
 /**
+ * Flag indicating whether the detectProvisioningMode flag was explicitly set in
+ * the `AirshipConfig.plist` file.
+ *
+ * Defaults to `NO`.
+ */
+@property (nonatomic, assign) BOOL isDetectProvisioningModeExplicitlySet;
+
+/**
+ * Flag indicating whether the inProduction flag was explicitly set in
+ * the `AirshipConfig.plist` file.
+ *
+ * Defaults to `NO`.
+ */
+@property (nonatomic, assign) BOOL isInProductionExplicitlySet;
+
+/**
  * Determines whether or not the app is currently configured to use the APNS production servers.
  * @return `YES` if using production servers, `NO` if development servers or if the app is not properly
  * configured for push.

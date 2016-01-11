@@ -57,6 +57,8 @@
         self.channelCaptureEnabled = YES;
         self.customConfig = @{};
         self.channelCreationDelayEnabled = NO;
+        self.isDetectProvisioningModeExplicitlySet = NO;
+        self.isInProductionExplicitlySet = NO;
     }
 
     return self;
@@ -131,6 +133,10 @@
         [config setValuesForKeysWithDictionary:normalizedDictionary];
 
         UA_LTRACE(@"Config options: %@", [normalizedDictionary description]);
+
+        // Check if detectProvisioningMode or inProduction were explicity set in AirshipConfig.plist
+        config.isDetectProvisioningModeExplicitlySet = [normalizedDictionary objectForKey:@"detectProvisioningMode"] ? YES : NO;
+        config.isInProductionExplicitlySet = [normalizedDictionary objectForKey:@"inProduction"] ? YES : NO;
     }
     return config;
 }
@@ -155,7 +161,12 @@
 }
 
 - (BOOL)isInProduction {
-    return self.detectProvisioningMode ? [self usesProductionPushServer] : _inProduction;
+    if (self.isDetectProvisioningModeExplicitlySet || self.isInProductionExplicitlySet) {
+        return self.detectProvisioningMode ? [self usesProductionPushServer] : _inProduction;
+    } else {
+        self.detectProvisioningMode = YES;
+        return [self usesProductionPushServer];
+    }
 }
 
 #pragma mark -
