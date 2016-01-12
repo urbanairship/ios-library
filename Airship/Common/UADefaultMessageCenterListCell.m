@@ -26,6 +26,7 @@
 #import "UADefaultMessageCenterListCell.h"
 #import "UAInboxMessage.h"
 #import "UAMessageCenterDateUtils.h"
+#import "UADefaultMessageCenterStyle.h"
 
 @implementation UADefaultMessageCenterListCell
 
@@ -33,6 +34,54 @@
     self.date.text = [UAMessageCenterDateUtils formattedDateRelativeToNow:message.messageSent];
     self.title.text = message.title;
     self.unreadIndicator.hidden = !message.unread;
+}
+
+- (void)setStyle:(UADefaultMessageCenterStyle *)style {
+    _style = style;
+
+    BOOL hidden = !style.iconsEnabled;
+    self.listIconView.hidden = hidden;
+
+    // if the icon view is hidden, set a zero width constraint to allow related views to fill its space
+    if (hidden) {
+        UIImageView *iconView = self.listIconView;
+        [self.listIconView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[iconView(==0)]"
+                                                                                  options:0
+                                                                                  metrics:nil
+                                                                                    views:NSDictionaryOfVariableBindings(iconView)]];
+    }
+
+    self.listIconView.hidden = !style.iconsEnabled;
+
+    if (style.cellColor) {
+        self.backgroundColor = style.cellColor;
+    }
+
+    if (style.cellHighlightedColor) {
+        UIView *bgColorView = [[UIView alloc] init];
+        bgColorView.backgroundColor = style.cellHighlightedColor;
+        self.selectedBackgroundView = bgColorView;
+    }
+
+    if (style.cellTitleFont) {
+        self.title.font = style.cellTitleFont;
+    }
+    if (style.cellTitleColor) {
+        self.title.textColor = style.cellTitleColor;
+    }
+    if (style.cellTitleHighlightedColor) {
+        self.title.highlightedTextColor = style.cellTitleHighlightedColor;
+    }
+    if (style.cellDateFont) {
+        self.date.font = style.cellDateFont;
+    }
+    if (style.cellDateColor) {
+        self.date.textColor = style.cellDateColor;
+    }
+
+    if (style.cellDateHighlightedColor) {
+        self.date.highlightedTextColor = style.cellDateHighlightedColor;
+    }
 }
 
 // Override to prevent the default implementation from covering up the unread indicator
@@ -52,6 +101,7 @@
         UIColor *defaultColor = self.unreadIndicator.backgroundColor;
         [super setHighlighted:highlighted animated:animated];
         self.unreadIndicator.backgroundColor = defaultColor;
+
     } else {
         [super setHighlighted:highlighted animated:animated];
     }

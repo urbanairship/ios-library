@@ -31,6 +31,7 @@
 #import "UAMessageCenterLocalization.h"
 #import "UADefaultMessageCenterListViewController.h"
 #import "UADefaultMessageCenterMessageViewController.h"
+#import "UADefaultMessageCenterStyle.h"
 
 @interface UADefaultMessageCenter()
 
@@ -58,6 +59,7 @@
         lvc = [[UADefaultMessageCenterListViewController alloc] initWithNibName:@"UADefaultMessageCenterListViewController"
                                                                          bundle:airshipResources];
         lvc.title = self.title;
+        lvc.style = self.style;
         lvc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                              target:self
                                                                                              action:@selector(dismiss)];
@@ -65,14 +67,37 @@
         UADefaultMessageCenterMessageViewController *mvc;
         mvc = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController"
                                                                             bundle:airshipResources];
+        mvc.style = self.style;
 
         UINavigationController *listnav = [[UINavigationController alloc] initWithRootViewController:lvc];
         UINavigationController *messagenav = [[UINavigationController alloc] initWithRootViewController:mvc];
+
+        if (self.style.navigationBarColor) {
+            listnav.navigationBar.barTintColor = self.style.navigationBarColor;
+            messagenav.navigationBar.barTintColor = self.style.navigationBarColor;
+        }
+
+        NSMutableDictionary *titleAttributes = [NSMutableDictionary dictionary];
+
+        if (self.style.titleColor) {
+            titleAttributes[UITextAttributeTextColor] = self.style.titleColor;
+        }
+
+        if (self.style.titleFont) {
+            titleAttributes[UITextAttributeFont] = self.style.titleFont;
+        }
+
+        listnav.navigationBar.titleTextAttributes = titleAttributes;
+        messagenav.navigationBar.titleTextAttributes = titleAttributes;
 
         self.listController = lvc;
         self.navigationController = listnav;
 
         UISplitViewController *svc = [[UISplitViewController alloc] initWithNibName:nil bundle:nil];
+
+        if (self.style.tintColor) {
+            svc.view.tintColor = self.style.tintColor;
+        }
 
         // display both view controllers in horizontally regular contexts
         svc.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;

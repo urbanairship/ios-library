@@ -135,6 +135,8 @@
 		49D7FF4E1A8E92390017A11C /* UAInAppMessageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D7FF4A1A8E92390017A11C /* UAInAppMessageView.h */; };
 		49D7FF4F1A8E92390017A11C /* UAInAppMessageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D7FF4B1A8E92390017A11C /* UAInAppMessageView.m */; };
 		49DCFAC01831B580002CD5FB /* UAJavaScriptDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 49DCFABF1831B580002CD5FB /* UAJavaScriptDelegate.h */; };
+		49DD021C1C447EB700EB4E45 /* UADefaultMessageCenterStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 49DD021A1C447EB700EB4E45 /* UADefaultMessageCenterStyle.h */; settings = {ASSET_TAGS = (); }; };
+		49DD021D1C447EB700EB4E45 /* UADefaultMessageCenterStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 49DD021B1C447EB700EB4E45 /* UADefaultMessageCenterStyle.m */; settings = {ASSET_TAGS = (); }; };
 		49E9C9C1183AD42300B7BCFF /* UAWebViewCallData.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E9C9BF183AD42300B7BCFF /* UAWebViewCallData.h */; };
 		49E9C9C3183AD42300B7BCFF /* UAWebViewCallData.m in Sources */ = {isa = PBXBuildFile; fileRef = 49E9C9C0183AD42300B7BCFF /* UAWebViewCallData.m */; };
 		49E9C9C6183C28E900B7BCFF /* UAActionJSDelegateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49E9C9C5183C28E900B7BCFF /* UAActionJSDelegateTest.m */; };
@@ -562,6 +564,8 @@
 		49D7FF4A1A8E92390017A11C /* UAInAppMessageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageView.h; sourceTree = "<group>"; };
 		49D7FF4B1A8E92390017A11C /* UAInAppMessageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageView.m; sourceTree = "<group>"; };
 		49DCFABF1831B580002CD5FB /* UAJavaScriptDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAJavaScriptDelegate.h; sourceTree = "<group>"; };
+		49DD021A1C447EB700EB4E45 /* UADefaultMessageCenterStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADefaultMessageCenterStyle.h; sourceTree = "<group>"; };
+		49DD021B1C447EB700EB4E45 /* UADefaultMessageCenterStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterStyle.m; sourceTree = "<group>"; };
 		49E9C9BF183AD42300B7BCFF /* UAWebViewCallData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAWebViewCallData.h; sourceTree = "<group>"; };
 		49E9C9C0183AD42300B7BCFF /* UAWebViewCallData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWebViewCallData.m; sourceTree = "<group>"; };
 		49E9C9C5183C28E900B7BCFF /* UAActionJSDelegateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionJSDelegateTest.m; sourceTree = "<group>"; };
@@ -1173,6 +1177,8 @@
 				49EB68E21C1FAD5D00D05BCE /* UAMessageCenterDateUtils.h */,
 				49EB68E31C1FAD5D00D05BCE /* UAMessageCenterDateUtils.m */,
 				49EB68E61C1FADC600D05BCE /* UAMessageCenterLocalization.h */,
+				49DD021A1C447EB700EB4E45 /* UADefaultMessageCenterStyle.h */,
+				49DD021B1C447EB700EB4E45 /* UADefaultMessageCenterStyle.m */,
 			);
 			name = MessageCenter;
 			sourceTree = "<group>";
@@ -1773,6 +1779,7 @@
 				4905C4DF182458AC001D48E3 /* UAActionJSDelegate.h in Headers */,
 				CCDD37C818089E5700B8866E /* UAOpenExternalURLAction.h in Headers */,
 				CC8542BB17F4B81600D2DE10 /* UAActionRegistry.h in Headers */,
+				49DD021C1C447EB700EB4E45 /* UADefaultMessageCenterStyle.h in Headers */,
 				CC0F49681B9A54BD00AF1EF6 /* UAAssociateIdentifiersEvent+Internal.h in Headers */,
 				1F610DE217835C3A00BCD96E /* UAInboxAPIClient+Internal.h in Headers */,
 				49C671FF184EAB640088F210 /* UANativeBridge.h in Headers */,
@@ -2168,6 +2175,7 @@
 				BB88610B159A7E9600584445 /* UAAnalytics.m in Sources */,
 				BB88610D159A7E9600584445 /* UATagUtils.m in Sources */,
 				CC7DC94E183E978A00E95BB8 /* UAChannelRegistrar.m in Sources */,
+				49DD021D1C447EB700EB4E45 /* UADefaultMessageCenterStyle.m in Sources */,
 				49BEBF6B1AAA5DDC00740665 /* UAMutableUserNotificationAction.m in Sources */,
 				61D6AD191A2D18C10032420C /* UARegionEvent.m in Sources */,
 				49A61A9C1AC32B9800BC5E68 /* UAInAppMessageControllerDefaultDelegate.m in Sources */,

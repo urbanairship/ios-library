@@ -27,6 +27,7 @@
 #import <UIKit/UIKit.h>
 
 @class UAInboxMessage;
+@class UADefaultMessageCenterStyle;
 
 /**
  * The UADefaultMessageCenter class provides a default implementation of a
@@ -38,6 +39,11 @@
  * The title of the message center.
  */
 @property (nonatomic, strong) NSString *title;
+
+/**
+ * The style to apply to the default message center.
+ */
+@property (nonatomic, strong) UADefaultMessageCenterStyle *style;
 
 /**
  * Display the message center.
