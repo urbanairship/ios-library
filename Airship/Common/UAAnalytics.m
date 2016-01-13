@@ -227,7 +227,9 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
             [self addEvent:[UAPushReceivedEvent eventWithNotification:userInfo]];
             break;
         case UIApplicationStateInactive:
-            self.notificationUserInfo = userInfo;
+            if (![UAUtils isBackgroundPush:userInfo]) {
+                self.notificationUserInfo = userInfo;
+            }
             break;
         case UIApplicationStateBackground:
             break;

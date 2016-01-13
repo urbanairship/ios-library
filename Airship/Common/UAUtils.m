@@ -295,4 +295,19 @@
     return windowBounds;
 }
 
++ (BOOL)isBackgroundPush:(NSDictionary *)notification {
+    BOOL isBackground = NO;
+    NSDictionary *apsDict = [notification objectForKey:@"aps"];
+    if (apsDict) {
+        id alert = [apsDict objectForKey:@"alert"];
+        NSString *badgeNumber = [apsDict objectForKey:@"badge"];
+        NSString *soundName = [apsDict objectForKey:@"sound"];
+
+        if (!alert && !badgeNumber && !soundName) {
+            isBackground = YES;
+        }
+    }
+    return isBackground;
+}
+
 @end

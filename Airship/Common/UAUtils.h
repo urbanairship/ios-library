@@ -164,6 +164,17 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (NSString *)connectionType;
 
+///---------------------------------------------------------------------------------------
+/// @name Notification payload
+///---------------------------------------------------------------------------------------
+
+/**
+ * Determine if the notification payload is a background push (no notification elements).
+ * @param notification The notification payload
+ * @return `YES` if it is a background push, `NO` otherwise
+ */
++ (BOOL)isBackgroundPush:(NSDictionary *)notification;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -617,8 +617,13 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
 
         case UIApplicationStateInactive:
             UA_LTRACE(@"Received a notification when application state is UIApplicationStateInactive");
-            situation = UASituationLaunchedFromPush;
-            self.launchNotification = notification;
+
+            if ([UAUtils isBackgroundPush:notification]) {
+                situation = UASituationBackgroundPush;
+            } else {
+                situation = UASituationLaunchedFromPush;
+                self.launchNotification = notification;
+            }
             break;
 
         case UIApplicationStateBackground:
