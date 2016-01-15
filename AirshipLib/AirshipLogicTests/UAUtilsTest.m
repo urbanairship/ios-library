@@ -72,4 +72,55 @@
     [self validateDateFormatter:[UAUtils ISODateFormatterUTCWithDelimiter] withFormatString: @"2020-12-15T11:45:22"];
 }
 
+/**
+ * Test backgroundPush is YES when no notification alerts exist in the payload.
+ */
+- (void)testIsBackgroundPushYes {
+
+    NSDictionary *emptyNotification = @{
+                                        @"aps": @{
+                                                @"content-available": @1
+                                                }
+                                        };
+
+    XCTAssertTrue([UAUtils isBackgroundPush:emptyNotification], @"Should be a background push");
+}
+
+/**
+ * Test backgroundPush is NO when at least one notification alert exist in the payload.
+ */
+- (void)testIsBackgroundPushNo {
+
+    NSDictionary *alertNotification = @{
+                                        @"aps": @{
+                                                @"alert": @"hello world"
+                                                }
+                                        };
+
+    NSDictionary *badgeNotification = @{
+                                        @"aps": @{
+                                                @"badge": @2
+                                                }
+                                        };
+
+    NSDictionary *soundNotification = @{
+                                        @"aps": @{
+                                                @"sound": @"cat"
+                                                }
+                                        };
+
+    NSDictionary *notification = @{
+                                   @"aps": @{
+                                           @"alert": @"hello world",
+                                           @"badge": @2,
+                                           @"sound": @"cat"
+                                           }
+                                   };
+
+    XCTAssertFalse([UAUtils isBackgroundPush:alertNotification], @"Should not be a background push");
+    XCTAssertFalse([UAUtils isBackgroundPush:badgeNotification],@"Should not be a background push");
+    XCTAssertFalse([UAUtils isBackgroundPush:soundNotification],@"Should not be a background push");
+    XCTAssertFalse([UAUtils isBackgroundPush:notification],@"Should not be a background push");
+}
+
 @end

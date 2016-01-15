@@ -65,6 +65,7 @@
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 @property (nonatomic, strong) NSDictionary *notification;
+@property (nonatomic, strong) NSDictionary *emptyNotification;
 @property (nonatomic, strong) NSMutableDictionary *addTagGroups;
 @property (nonatomic, strong) NSMutableDictionary *removeTagGroups;
 @property (nonatomic, strong) UAHTTPRequest *channelTagsFailureRequest;
@@ -102,6 +103,12 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                   },
                           @"someActionKey": @"someActionValue",
                           };
+
+    self.emptyNotification = @{
+                               @"aps": @{
+                                       @"content-available": @1
+                                       }
+                               };
 
     self.addTagGroups = [[NSMutableDictionary alloc] init];
     NSMutableDictionary *tagsToAdd = [NSMutableDictionary dictionary];
@@ -1885,6 +1892,17 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateInactive];
     XCTAssertNotNil(self.push.launchNotification, @"Launch notification should be set in an inactive state");
+}
+
+/**
+ * Test a background push (no notification elements) received when app is inactive
+ * skip setting the conversionSendId.
+ */
+- (void)testBackgroundPushInactiveSkipConversionSendId {
+    self.push.launchNotification = nil;
+    [self.push appReceivedRemoteNotification:self.emptyNotification applicationState:UIApplicationStateInactive];
+
+    XCTAssertNil(self.push.launchNotification, @"Launch notification should not be set with a background push.");
 }
 
 /**
