@@ -96,8 +96,8 @@ You can also edit the file as plain-text:
     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
     <plist version="1.0">
     <dict>
-      <key>inProduction</key>
-      <false/>
+      <key>detectProvisioningMode</key>
+      <true/>
       <key>developmentAppKey</key>
       <string>Your Development App Key</string>
       <key>developmentAppSecret</key>
@@ -110,9 +110,7 @@ You can also edit the file as plain-text:
     </plist>
 ```
 
-If you are using development builds and testing using the Apple sandbox set `inProduction` to `false`. For
-App Store and Ad-Hoc builds, set it to `true`. You may also allow the library to auto-detect the production
-mode by setting `detectProvisioningMode` to `true`.
+The library will auto-detect the production mode when setting `detectProvisioningMode` to `true`.
 
 Advanced users may add scripting or preprocessing logic to this .plist file to automate the switch from
 development to production keys based on the build type.

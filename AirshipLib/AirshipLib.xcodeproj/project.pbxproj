@@ -199,6 +199,9 @@
 		76AA8EDD19B0F0A2005FD1C3 /* UAKeychainUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE43798128B589000D38A14 /* UAKeychainUtils+Internal.h */; };
 		76B4E01619A4038000603F8A /* UAInteractiveNotificationEvent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 76B4E01419A4038000603F8A /* UAInteractiveNotificationEvent+Internal.h */; };
 		76B4E01819A4038000603F8A /* UAInteractiveNotificationEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 76B4E01519A4038000603F8A /* UAInteractiveNotificationEvent.m */; };
+		76BB751E1C443B930027CF9D /* AirshipConfig-DetectProvisioningMode.plist in Resources */ = {isa = PBXBuildFile; fileRef = 76BB751D1C443B930027CF9D /* AirshipConfig-DetectProvisioningMode.plist */; };
+		76BB75201C443BA20027CF9D /* AirshipConfig-InProduction.plist in Resources */ = {isa = PBXBuildFile; fileRef = 76BB751F1C443BA20027CF9D /* AirshipConfig-InProduction.plist */; };
+		76BB75221C443BB00027CF9D /* AirshipConfig-Without-InProduction-And-DetectProvisioningMode.plist in Resources */ = {isa = PBXBuildFile; fileRef = 76BB75211C443BB00027CF9D /* AirshipConfig-Without-InProduction-And-DetectProvisioningMode.plist */; };
 		76E5356219475F8E0020335C /* UAAddCustomEventAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 76E5356019475F8E0020335C /* UAAddCustomEventAction.h */; };
 		76E5356319475F8E0020335C /* UAAddCustomEventAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 76E5356119475F8E0020335C /* UAAddCustomEventAction.m */; };
 		76E53565194760540020335C /* UAAddCustomEventActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 76E53564194760540020335C /* UAAddCustomEventActionTest.m */; };
@@ -622,6 +625,9 @@
 		769FD9911B2B7316005BE77F /* UATagUtilsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATagUtilsTest.m; sourceTree = "<group>"; };
 		76B4E01419A4038000603F8A /* UAInteractiveNotificationEvent+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInteractiveNotificationEvent+Internal.h"; sourceTree = "<group>"; };
 		76B4E01519A4038000603F8A /* UAInteractiveNotificationEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInteractiveNotificationEvent.m; sourceTree = "<group>"; };
+		76BB751D1C443B930027CF9D /* AirshipConfig-DetectProvisioningMode.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "AirshipConfig-DetectProvisioningMode.plist"; path = "Support/AirshipConfig-DetectProvisioningMode.plist"; sourceTree = "<group>"; };
+		76BB751F1C443BA20027CF9D /* AirshipConfig-InProduction.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "AirshipConfig-InProduction.plist"; path = "Support/AirshipConfig-InProduction.plist"; sourceTree = "<group>"; };
+		76BB75211C443BB00027CF9D /* AirshipConfig-Without-InProduction-And-DetectProvisioningMode.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "AirshipConfig-Without-InProduction-And-DetectProvisioningMode.plist"; path = "Support/AirshipConfig-Without-InProduction-And-DetectProvisioningMode.plist"; sourceTree = "<group>"; };
 		76E5356019475F8E0020335C /* UAAddCustomEventAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAddCustomEventAction.h; sourceTree = "<group>"; };
 		76E5356119475F8E0020335C /* UAAddCustomEventAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAddCustomEventAction.m; sourceTree = "<group>"; };
 		76E53564194760540020335C /* UAAddCustomEventActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAddCustomEventActionTest.m; sourceTree = "<group>"; };
@@ -1307,6 +1313,9 @@
 		7BB6790D1429288D00B877DB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				76BB751D1C443B930027CF9D /* AirshipConfig-DetectProvisioningMode.plist */,
+				76BB751F1C443BA20027CF9D /* AirshipConfig-InProduction.plist */,
+				76BB75211C443BB00027CF9D /* AirshipConfig-Without-InProduction-And-DetectProvisioningMode.plist */,
 				1F675958175900BC00C062E0 /* AirshipConfig-Valid.plist */,
 				1F6759501756C24100C062E0 /* AirshipConfig-Valid-Legacy-NeXTStep.plist */,
 				1F6759511756C24100C062E0 /* AirshipConfig-Valid-NeXTStep.plist */,
@@ -1952,13 +1961,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				7BB679111429288D00B877DB /* InfoPlist.strings in Resources */,
+				76BB75221C443BB00027CF9D /* AirshipConfig-Without-InProduction-And-DetectProvisioningMode.plist in Resources */,
 				7BB679131429288D00B877DB /* UAUtilsTest.h in Resources */,
+				76BB751E1C443B930027CF9D /* AirshipConfig-DetectProvisioningMode.plist in Resources */,
 				CC313AA019A7BF5C00134A9F /* CustomNotificationCategories.plist in Resources */,
 				1F67594A1756A97B00C062E0 /* development-embedded.mobileprovision in Resources */,
 				1F67594F1756B9BD00C062E0 /* production-embedded.mobileprovision in Resources */,
 				1F6759521756C24200C062E0 /* AirshipConfig-Valid-Legacy-NeXTStep.plist in Resources */,
 				1F6759531756C24200C062E0 /* AirshipConfig-Valid-NeXTStep.plist in Resources */,
 				1F675959175900BC00C062E0 /* AirshipConfig-Valid.plist in Resources */,
+				76BB75201C443BA20027CF9D /* AirshipConfig-InProduction.plist in Resources */,
 				492051671C0E77D900A7B36D /* AirshipResources.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

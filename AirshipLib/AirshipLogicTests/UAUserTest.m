@@ -55,6 +55,7 @@
     [super setUp];
 
     self.config = [[UAConfig alloc] init];
+    self.config.inProduction = NO;
     self.config.developmentAppKey = @"9Q1tVTl0RF16baYKYp8HPQ";
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"user.test."];
     self.push = [UAPush pushWithConfig:self.config dataStore:self.dataStore];

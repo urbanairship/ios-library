@@ -52,7 +52,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Defaults to `YES` if the current device is a simulator. Exposed for testing/mocking purposes.
  */
-@property (nonatomic, assign) BOOL isSimulator;
+@property (nonatomic, readonly) BOOL isSimulator;
+
+/**
+ * Defaults the defaultDetectProvisioningMode flag to `YES`.
+ */
+@property (nonatomic, assign) BOOL defaultDetectProvisioningMode;
 
 /**
  * Determines whether or not the app is currently configured to use the APNS production servers.

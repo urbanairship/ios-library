@@ -66,22 +66,9 @@
 }
 
 - (void)testDeviceTypeDetermination {
-    // Make sure we're correctly determining whether or not the config lives on a simulator
-    id mockDeviceClass = [OCMockObject niceMockForClass:[UIDevice class]];
-    [[[mockDeviceClass stub] andReturn:mockDeviceClass] currentDevice];
-    [[[mockDeviceClass expect] andReturn:@"AFakeiPhoneSimulator"] model];
-
     // First make sure the simulator string works
     UAConfig *simulatorConfig = [[UAConfig alloc] init];
     XCTAssertTrue(simulatorConfig.isSimulator, @"The configuration init method incorrectly determined the isSimulator value on a simulator.");
-
-    // Now make sure the device model string works
-    [[[mockDeviceClass expect] andReturn:@"ARealiPhoneDevice"] model];
-    UAConfig *deviceConfig = [[UAConfig alloc] init];
-    XCTAssertFalse(deviceConfig.isSimulator, @"The configuration init method incorrectly determined the isSimulator value on a device.");
-
-    // OK, back to normal
-    [mockDeviceClass stopMocking];
 }
 
 - (void)testSimulatorFallback {
@@ -92,14 +79,12 @@
     configInProduction.profilePath = nil;
     configInProduction.inProduction = YES;
     configInProduction.detectProvisioningMode = YES;
-    configInProduction.isSimulator = YES;
     XCTAssertTrue(configInProduction.inProduction, @"Simulators with provisioning detection enabled should return the production value as set.");
 
     UAConfig *configInDevelopment = [[UAConfig alloc] init];
     configInDevelopment.profilePath = nil;
     configInDevelopment.inProduction = NO;
     configInDevelopment.detectProvisioningMode = YES;
-    configInDevelopment.isSimulator = YES;
     XCTAssertFalse(configInDevelopment.inProduction, @"Simulators with provisioning detection enabled should return the production value as set.");
 }
 
@@ -111,7 +96,6 @@
     configInDevelopment.profilePath = nil;
     configInDevelopment.inProduction = NO;
     configInDevelopment.detectProvisioningMode = YES;
-    configInDevelopment.isSimulator = YES;
     XCTAssertFalse(configInDevelopment.inProduction, @"Devices without embedded provisioning profiles AND provisioning detection enabled should return YES for inProduction as a safety measure.");
 }
 
@@ -130,26 +114,81 @@
     config.productionAppSecret = @"prodAppSecret";
     config.productionLogLevel = UALogLevelNone;//not the default
 
-    XCTAssertFalse(config.inProduction, @"inProduction defaults to NO.");
-    XCTAssertFalse(config.detectProvisioningMode, @"detectProvisioningMode defaults to NO.");
-
-    XCTAssertEqualObjects(config.appKey, config.developmentAppKey, @"Incorrect app key resolution.");
-    XCTAssertEqualObjects(config.appSecret, config.developmentAppSecret, @"Incorrect app secret resolution.");
-    XCTAssertEqual(config.logLevel, config.developmentLogLevel, @"Incorrect log level resolution.");
-
-    config.inProduction = YES;
+    XCTAssertTrue(config.inProduction, @"inProduction defaults to YES.");
+    XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode defaults to YES.");
     XCTAssertEqualObjects(config.appKey, config.productionAppKey, @"Incorrect app key resolution.");
     XCTAssertEqualObjects(config.appSecret, config.productionAppSecret, @"Incorrect app secret resolution.");
     XCTAssertEqual(config.logLevel, config.productionLogLevel, @"Incorrect log level resolution.");
 
     config.inProduction = NO;
-    config.detectProvisioningMode = YES;
+    XCTAssertFalse(config.detectProvisioningMode, @"detectProvisioningMode defaults to NO.");
+    XCTAssertEqualObjects(config.appKey, config.developmentAppKey, @"Incorrect app key resolution.");
+    XCTAssertEqualObjects(config.appSecret, config.developmentAppSecret, @"Incorrect app secret resolution.");
+    XCTAssertEqual(config.logLevel, config.developmentLogLevel, @"Incorrect log level resolution.");
 
+    config.inProduction = YES;
+    XCTAssertFalse(config.detectProvisioningMode, @"detectProvisioningMode defaults to NO.");
+    XCTAssertEqualObjects(config.appKey, config.productionAppKey, @"Incorrect app key resolution.");
+    XCTAssertEqualObjects(config.appSecret, config.productionAppSecret, @"Incorrect app secret resolution.");
+    XCTAssertEqual(config.logLevel, config.productionLogLevel, @"Incorrect log level resolution.");
+
+    config.detectProvisioningMode = YES;
+    XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode defaults to YES.");
     XCTAssertTrue(config.inProduction, @"The embedded provisioning profile is a production profile.");
 
     // ensure that our dispatch_once block works when wrapping the in production flag
     config.profilePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"development-embedded" ofType:@"mobileprovision"];
     XCTAssertTrue(config.inProduction, @"The development profile path should not be used as the file will only be read once.");
+}
+
+/**
+ * Test detectProvisioningMode = YES when neither detectProvisioningMode or inProduction
+ * is explicity set in AirshipConfig.plist
+ */
+- (void)testDetectProvisioningModeDefault {
+    NSString *plistPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"AirshipConfig-Without-InProduction-And-DetectProvisioningMode" ofType:@"plist"];
+
+    UAConfig *config = [UAConfig configWithContentsOfFile:plistPath];
+
+    XCTAssertTrue([config validate], @"AirshipConfig (modern) File is invalid.");
+    XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode should default to true");
+}
+
+/**
+ * Test detectProvisioningMode = YES when detectProvisioningMode is explicity set in AirshipConfig.plist
+ */
+- (void)testDetectProvisioningModeExplicitlySet {
+    NSString *plistPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"AirshipConfig-DetectProvisioningMode" ofType:@"plist"];
+
+    UAConfig *config = [UAConfig configWithContentsOfFile:plistPath];
+
+    XCTAssertTrue([config validate], @"AirshipConfig (modern) File is invalid.");
+    XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode should be true");
+}
+
+/**
+ * Test inProduction = YES when inProduction is explicitly set in AirshipConfig.plist
+ */
+- (void)testInProductionExplicitlySet {
+    NSString *plistPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"AirshipConfig-InProduction" ofType:@"plist"];
+
+    UAConfig *config = [UAConfig configWithContentsOfFile:plistPath];
+
+    XCTAssertTrue([config validate], @"AirshipConfig (modern) File is invalid.");
+    XCTAssertTrue(config.inProduction, @"inProduction should be true");
+}
+
+/**
+ * Test when both detectProvisioningMode and inProduction is explicitly set in AirshipConfig.plist
+ */
+- (void)testDetectProvisioningModeAndInProductionExplicitlySet {
+    NSString *plistPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"AirshipConfig-Valid" ofType:@"plist"];
+
+    UAConfig *config = [UAConfig configWithContentsOfFile:plistPath];
+
+    XCTAssertTrue([config validate], @"AirshipConfig (modern) File is invalid.");
+    XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode should be true");
+    XCTAssertTrue(config.inProduction, @"inProduction should be true");
 }
 
 - (void)testOldPlistFormat {
