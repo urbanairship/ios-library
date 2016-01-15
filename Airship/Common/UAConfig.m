@@ -52,7 +52,6 @@
         self.analyticsEnabled = YES;
         self.profilePath = [[NSBundle mainBundle] pathForResource:@"embedded" ofType:@"mobileprovision"];
         usesProductionPushServer_ = NO;
-        self.isSimulator = ([[[UIDevice currentDevice] model] rangeOfString:@"Simulator"].location != NSNotFound);
         self.cacheDiskSizeInMB = 100;
         self.clearUserOnAppRestore = NO;
         self.whitelist = @[];
@@ -376,6 +375,16 @@
     // Be leniant and no-op for other undefined keys
     // The `super` implementation throws an exception. We'll just log.
     UA_LDEBUG(@"Ignoring invalid UAConfig key: %@", key);
+}
+
+- (BOOL)isSimulator {
+#if TARGET_OS_SIMULATOR
+    UA_LTRACE(@"Running on simulator");
+    return YES;
+#else
+    UA_LTRACE(@"NOT running on simulator");
+    return NO;
+#endif
 }
 
 @end

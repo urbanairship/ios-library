@@ -26,7 +26,6 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "UAConfig.h"
-#import "UAConfig+Internal.h"
 #import "UAChannelCapture.h"
 #import "UAPush.h"
 #import "UA_Base64.h"

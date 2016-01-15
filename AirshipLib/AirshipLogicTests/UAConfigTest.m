@@ -66,22 +66,9 @@
 }
 
 - (void)testDeviceTypeDetermination {
-    // Make sure we're correctly determining whether or not the config lives on a simulator
-    id mockDeviceClass = [OCMockObject niceMockForClass:[UIDevice class]];
-    [[[mockDeviceClass stub] andReturn:mockDeviceClass] currentDevice];
-    [[[mockDeviceClass expect] andReturn:@"AFakeiPhoneSimulator"] model];
-
     // First make sure the simulator string works
     UAConfig *simulatorConfig = [[UAConfig alloc] init];
     XCTAssertTrue(simulatorConfig.isSimulator, @"The configuration init method incorrectly determined the isSimulator value on a simulator.");
-
-    // Now make sure the device model string works
-    [[[mockDeviceClass expect] andReturn:@"ARealiPhoneDevice"] model];
-    UAConfig *deviceConfig = [[UAConfig alloc] init];
-    XCTAssertFalse(deviceConfig.isSimulator, @"The configuration init method incorrectly determined the isSimulator value on a device.");
-
-    // OK, back to normal
-    [mockDeviceClass stopMocking];
 }
 
 - (void)testSimulatorFallback {
@@ -92,14 +79,12 @@
     configInProduction.profilePath = nil;
     configInProduction.inProduction = YES;
     configInProduction.detectProvisioningMode = YES;
-    configInProduction.isSimulator = YES;
     XCTAssertTrue(configInProduction.inProduction, @"Simulators with provisioning detection enabled should return the production value as set.");
 
     UAConfig *configInDevelopment = [[UAConfig alloc] init];
     configInDevelopment.profilePath = nil;
     configInDevelopment.inProduction = NO;
     configInDevelopment.detectProvisioningMode = YES;
-    configInDevelopment.isSimulator = YES;
     XCTAssertFalse(configInDevelopment.inProduction, @"Simulators with provisioning detection enabled should return the production value as set.");
 }
 
@@ -111,7 +96,6 @@
     configInDevelopment.profilePath = nil;
     configInDevelopment.inProduction = NO;
     configInDevelopment.detectProvisioningMode = YES;
-    configInDevelopment.isSimulator = YES;
     XCTAssertFalse(configInDevelopment.inProduction, @"Devices without embedded provisioning profiles AND provisioning detection enabled should return YES for inProduction as a safety measure.");
 }
 
