@@ -41,18 +41,6 @@
 		76AE35411C2B6D2900D7F3B9 /* UAInteractiveNotifications.strings in Resources */ = {isa = PBXBuildFile; fileRef = 76AE34F31C2B6D2900D7F3B9 /* UAInteractiveNotifications.strings */; };
 		76AE35421C2B6D2900D7F3B9 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 76AE34FB1C2B6D2900D7F3B9 /* Settings.bundle */; };
 		76AE35431C2B6D2900D7F3B9 /* UACommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 76AE34FF1C2B6D2900D7F3B9 /* UACommon.m */; };
-		76AE35441C2B6D2900D7F3B9 /* UADateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 76AE35041C2B6D2900D7F3B9 /* UADateUtils.m */; };
-		76AE35451C2B6D2900D7F3B9 /* UAInboxAlertHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 76AE35061C2B6D2900D7F3B9 /* UAInboxAlertHandler.m */; };
-		76AE35461C2B6D2900D7F3B9 /* UAInboxMessageListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 76AE35091C2B6D2900D7F3B9 /* UAInboxMessageListCell.m */; };
-		76AE35471C2B6D2900D7F3B9 /* UAInboxMessageListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76AE350B1C2B6D2900D7F3B9 /* UAInboxMessageListController.m */; };
-		76AE35481C2B6D2900D7F3B9 /* UAInboxMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76AE350D1C2B6D2900D7F3B9 /* UAInboxMessageViewController.m */; };
-		76AE35491C2B6D2900D7F3B9 /* UAInboxUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 76AE350F1C2B6D2900D7F3B9 /* UAInboxUI.strings */; };
-		76AE354A1C2B6D2900D7F3B9 /* list-image-placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 76AE35121C2B6D2900D7F3B9 /* list-image-placeholder.png */; };
-		76AE354B1C2B6D2900D7F3B9 /* list-image-placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 76AE35131C2B6D2900D7F3B9 /* list-image-placeholder@2x.png */; };
-		76AE354C1C2B6D2900D7F3B9 /* UAInboxMessageListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 76AE35141C2B6D2900D7F3B9 /* UAInboxMessageListCell.xib */; };
-		76AE354D1C2B6D2900D7F3B9 /* UAInboxMessageListController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 76AE35151C2B6D2900D7F3B9 /* UAInboxMessageListController.xib */; };
-		76AE354E1C2B6D2900D7F3B9 /* UAInboxMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 76AE35161C2B6D2900D7F3B9 /* UAInboxMessageViewController.xib */; };
-		76AE355A1C2B6D2900D7F3B9 /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 76AE35321C2B6D2900D7F3B9 /* UAPushUI.strings */; };
 		76AE35651C2B6FD600D7F3B9 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */; };
 /* End PBXBuildFile section */
 
@@ -151,24 +139,6 @@
 		76AE34FD1C2B6D2900D7F3B9 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/UAInteractiveNotifications.strings"; sourceTree = "<group>"; };
 		76AE34FE1C2B6D2900D7F3B9 /* UACommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACommon.h; sourceTree = "<group>"; };
 		76AE34FF1C2B6D2900D7F3B9 /* UACommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACommon.m; sourceTree = "<group>"; };
-		76AE35031C2B6D2900D7F3B9 /* UADateUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADateUtils.h; sourceTree = "<group>"; };
-		76AE35041C2B6D2900D7F3B9 /* UADateUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADateUtils.m; sourceTree = "<group>"; };
-		76AE35051C2B6D2900D7F3B9 /* UAInboxAlertHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxAlertHandler.h; sourceTree = "<group>"; };
-		76AE35061C2B6D2900D7F3B9 /* UAInboxAlertHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxAlertHandler.m; sourceTree = "<group>"; };
-		76AE35071C2B6D2900D7F3B9 /* UAInboxLocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxLocalization.h; sourceTree = "<group>"; };
-		76AE35081C2B6D2900D7F3B9 /* UAInboxMessageListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxMessageListCell.h; sourceTree = "<group>"; };
-		76AE35091C2B6D2900D7F3B9 /* UAInboxMessageListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageListCell.m; sourceTree = "<group>"; };
-		76AE350A1C2B6D2900D7F3B9 /* UAInboxMessageListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxMessageListController.h; sourceTree = "<group>"; };
-		76AE350B1C2B6D2900D7F3B9 /* UAInboxMessageListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageListController.m; sourceTree = "<group>"; };
-		76AE350C1C2B6D2900D7F3B9 /* UAInboxMessageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxMessageViewController.h; sourceTree = "<group>"; };
-		76AE350D1C2B6D2900D7F3B9 /* UAInboxMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageViewController.m; sourceTree = "<group>"; };
-		76AE35101C2B6D2900D7F3B9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UAInboxUI.strings; sourceTree = "<group>"; };
-		76AE35121C2B6D2900D7F3B9 /* list-image-placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-image-placeholder.png"; sourceTree = "<group>"; };
-		76AE35131C2B6D2900D7F3B9 /* list-image-placeholder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-image-placeholder@2x.png"; sourceTree = "<group>"; };
-		76AE35141C2B6D2900D7F3B9 /* UAInboxMessageListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInboxMessageListCell.xib; sourceTree = "<group>"; };
-		76AE35151C2B6D2900D7F3B9 /* UAInboxMessageListController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInboxMessageListController.xib; sourceTree = "<group>"; };
-		76AE35161C2B6D2900D7F3B9 /* UAInboxMessageViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInboxMessageViewController.xib; sourceTree = "<group>"; };
-		76AE35331C2B6D2900D7F3B9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UAPushUI.strings; sourceTree = "<group>"; };
 		76AE353E1C2B6D2900D7F3B9 /* UA-UI-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UA-UI-Bridging-Header.h"; sourceTree = "<group>"; };
 		76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -342,17 +312,6 @@
 		76AE35021C2B6D2900D7F3B9 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				76AE35031C2B6D2900D7F3B9 /* UADateUtils.h */,
-				76AE35041C2B6D2900D7F3B9 /* UADateUtils.m */,
-				76AE35051C2B6D2900D7F3B9 /* UAInboxAlertHandler.h */,
-				76AE35061C2B6D2900D7F3B9 /* UAInboxAlertHandler.m */,
-				76AE35071C2B6D2900D7F3B9 /* UAInboxLocalization.h */,
-				76AE35081C2B6D2900D7F3B9 /* UAInboxMessageListCell.h */,
-				76AE35091C2B6D2900D7F3B9 /* UAInboxMessageListCell.m */,
-				76AE350A1C2B6D2900D7F3B9 /* UAInboxMessageListController.h */,
-				76AE350B1C2B6D2900D7F3B9 /* UAInboxMessageListController.m */,
-				76AE350C1C2B6D2900D7F3B9 /* UAInboxMessageViewController.h */,
-				76AE350D1C2B6D2900D7F3B9 /* UAInboxMessageViewController.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -360,7 +319,6 @@
 		76AE350E1C2B6D2900D7F3B9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				76AE350F1C2B6D2900D7F3B9 /* UAInboxUI.strings */,
 				76AE35111C2B6D2900D7F3B9 /* Shared */,
 			);
 			path = Resources;
@@ -369,11 +327,6 @@
 		76AE35111C2B6D2900D7F3B9 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				76AE35121C2B6D2900D7F3B9 /* list-image-placeholder.png */,
-				76AE35131C2B6D2900D7F3B9 /* list-image-placeholder@2x.png */,
-				76AE35141C2B6D2900D7F3B9 /* UAInboxMessageListCell.xib */,
-				76AE35151C2B6D2900D7F3B9 /* UAInboxMessageListController.xib */,
-				76AE35161C2B6D2900D7F3B9 /* UAInboxMessageViewController.xib */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -389,7 +342,6 @@
 		76AE35311C2B6D2900D7F3B9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				76AE35321C2B6D2900D7F3B9 /* UAPushUI.strings */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -493,22 +445,15 @@
 				764693B81C237B630090FE40 /* LaunchScreen.storyboard in Resources */,
 				764694151C238E7C0090FE40 /* Roboto-LightItalic.ttf in Resources */,
 				764694171C238E7C0090FE40 /* Roboto-MediumItalic.ttf in Resources */,
-				76AE354B1C2B6D2900D7F3B9 /* list-image-placeholder@2x.png in Resources */,
-				76AE354A1C2B6D2900D7F3B9 /* list-image-placeholder.png in Resources */,
 				7646940D1C238E7C0090FE40 /* Images.xcassets in Resources */,
 				764694141C238E7C0090FE40 /* Roboto-Light.ttf in Resources */,
-				76AE354D1C2B6D2900D7F3B9 /* UAInboxMessageListController.xib in Resources */,
 				7646941B1C238E7C0090FE40 /* urban-airship-logo-pacific.png in Resources */,
 				764693C01C237CAB0090FE40 /* Main.storyboard in Resources */,
-				76AE354E1C2B6D2900D7F3B9 /* UAInboxMessageViewController.xib in Resources */,
 				764694101C238E7C0090FE40 /* Roboto-BlackItalic.ttf in Resources */,
 				76AE35651C2B6FD600D7F3B9 /* AirshipConfig.plist in Resources */,
-				76AE354C1C2B6D2900D7F3B9 /* UAInboxMessageListCell.xib in Resources */,
 				7646941A1C238E7C0090FE40 /* Roboto-ThinItalic.ttf in Resources */,
 				76AE35411C2B6D2900D7F3B9 /* UAInteractiveNotifications.strings in Resources */,
-				76AE35491C2B6D2900D7F3B9 /* UAInboxUI.strings in Resources */,
 				76AE35421C2B6D2900D7F3B9 /* Settings.bundle in Resources */,
-				76AE355A1C2B6D2900D7F3B9 /* UAPushUI.strings in Resources */,
 				7646941C1C238E7C0090FE40 /* urban-airship-pacific.png in Resources */,
 				7646940E1C238E7C0090FE40 /* LICENSE.txt in Resources */,
 				764694131C238E7C0090FE40 /* Roboto-Italic.ttf in Resources */,
@@ -525,12 +470,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				76AE35481C2B6D2900D7F3B9 /* UAInboxMessageViewController.m in Sources */,
 				764693B01C237B630090FE40 /* PushSettingsViewController.m in Sources */,
 				764693AA1C237B630090FE40 /* AppDelegate.m in Sources */,
-				76AE35461C2B6D2900D7F3B9 /* UAInboxMessageListCell.m in Sources */,
 				764693F71C238A5E0090FE40 /* TagsTableViewController.m in Sources */,
-				76AE35471C2B6D2900D7F3B9 /* UAInboxMessageListController.m in Sources */,
 				764693F11C2389D50090FE40 /* AddAliasTableViewController.m in Sources */,
 				764693AD1C237B630090FE40 /* HomeViewController.m in Sources */,
 				764693A71C237B630090FE40 /* main.m in Sources */,
@@ -538,8 +480,6 @@
 				76AE353F1C2B6D2900D7F3B9 /* NSString+UALocalization.m in Sources */,
 				76AE35431C2B6D2900D7F3B9 /* UACommon.m in Sources */,
 				764693F41C2389E90090FE40 /* AddNamedUserTableViewController.m in Sources */,
-				76AE35451C2B6D2900D7F3B9 /* UAInboxAlertHandler.m in Sources */,
-				76AE35441C2B6D2900D7F3B9 /* UADateUtils.m in Sources */,
 				764693EE1C2389B40090FE40 /* AddTagsTableViewController.m in Sources */,
 				764693FA1C238A770090FE40 /* LocationTableViewController.m in Sources */,
 			);
@@ -578,22 +518,6 @@
 				76AE34FD1C2B6D2900D7F3B9 /* zh-Hant */,
 			);
 			name = UAInteractiveNotifications.strings;
-			sourceTree = "<group>";
-		};
-		76AE350F1C2B6D2900D7F3B9 /* UAInboxUI.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				76AE35101C2B6D2900D7F3B9 /* en */,
-			);
-			name = UAInboxUI.strings;
-			sourceTree = "<group>";
-		};
-		76AE35321C2B6D2900D7F3B9 /* UAPushUI.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				76AE35331C2B6D2900D7F3B9 /* en */,
-			);
-			name = UAPushUI.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
