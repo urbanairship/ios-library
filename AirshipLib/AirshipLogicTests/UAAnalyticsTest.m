@@ -640,6 +640,21 @@
     [mockAnalytics stopMocking];
 }
 
+/**
+ * Test a MISSING_SEND_ID string is sent when the conversionSendID is missing.
+ */
+- (void)testMissingSendID {
+    NSDictionary *notification = @{
+                                   @"aps": @{
+                                           @"alert": @"sample alert!"
+                                           }
+                                   };
+
+    [self.analytics launchedFromNotification:notification];
+
+    XCTAssertEqual(@"MISSING_SEND_ID", self.analytics.conversionSendID, @"ConversionSendID should be MISSING_SEND_ID");
+}
+
 
 /**
  * Test that tracking event adds itself on background

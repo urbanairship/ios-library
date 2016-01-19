@@ -39,12 +39,12 @@
         [data setValue:richPushID forKey:@"rich_push_id"];
     }
 
-    // Add the std push ID, if present, else create a UUID
+    // Add the std push ID, if present, else send "MISSING_SEND_ID"
     NSString *pushID = [notification objectForKey:@"_"];
     if (pushID) {
         [data setValue:pushID forKey:@"push_id"];
     } else {
-        [data setValue:[NSUUID UUID].UUIDString forKey:@"push_id"];
+        [data setValue:@"MISSING_SEND_ID" forKey:@"push_id"];
     }
 
     event.data = [data mutableCopy];
