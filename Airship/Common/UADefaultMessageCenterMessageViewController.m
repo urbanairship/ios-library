@@ -172,9 +172,54 @@
     [self.webView loadRequest:requestObj];
 }
 
+- (void)displayAlert:(BOOL)retry {
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:UAMessageCenterLocalizedString(@"UA_Error_Connection")
+                                                                   message:UAMessageCenterLocalizedString(@"UA_Error_Loading_Message")
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+
+    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:UAMessageCenterLocalizedString(@"UA_OK")
+                                                            style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {}];
+    
+    [alert addAction:defaultAction];
+
+    if (retry) {
+        UIAlertAction *retryAction = [UIAlertAction actionWithTitle:UAMessageCenterLocalizedString(@"UA_Retry")
+                                                              style:UIAlertActionStyleDefault
+                                                            handler:^(UIAlertAction * _Nonnull action) {
+                                                                [self loadMessageAtIndex:self.messageIndex];
+        }];
+
+        [alert addAction:retryAction];
+    }
+
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 #pragma mark UIWebViewDelegate
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
+
+    NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:wv.request];
+    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)cachedResponse.response;
+    NSInteger status = httpResponse.statusCode;
+    NSString *blank = @"about:blank";
+
+    // If the server returns something in the error range, load a blank page
+    if (status >= 400 && status <= 599) {
+        [wv loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:blank]]];
+        if (status >= 500) {
+            // Display a retry alert
+            [self displayAlert:YES];
+        } else {
+            // Display a generic alert
+            [self displayAlert:NO];
+        }
+        return;
+    } else if ([wv.request.URL.absoluteString isEqualToString:blank]) {
+        return;
+    }
+
     // Mark message as read after it has finished loading
     if (self.message.unread) {
         [self.message markMessageReadWithCompletionHandler:nil];
@@ -187,7 +232,7 @@
     if (error.code == NSURLErrorCancelled)
         return;
     UALOG(@"Failed to load message: %@", error);
-    // Todo: default/customizable error pages
+    [self displayAlert:YES];
 }
 
 #pragma mark UARichContentWindow

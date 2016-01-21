@@ -182,13 +182,25 @@
     [self addChildViewController:tableController];
 }
 
+- (void)displayAlert {
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:UAMessageCenterLocalizedString(@"UA_Error_Connection")
+                                                                   message:UAMessageCenterLocalizedString(@"UA_Error_Loading_Message_List")
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+
+    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {}];
+
+    [alert addAction:defaultAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 - (void)refreshStateChanged:(UIRefreshControl *)sender {
     if (sender.refreshing) {
         [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
             [sender endRefreshing];
         } withFailureBlock:^ {
             [sender endRefreshing];
-            // todo: display error message
+            [self displayAlert];
         }];
     }
 }
