@@ -26,6 +26,7 @@
 #import "UAPushReceivedEvent+Internal.h"
 #import "UAInboxUtils.h"
 #import "UAEvent+Internal.h"
+#import "UAAnalytics+Internal.h"
 
 @implementation UAPushReceivedEvent
 
@@ -44,7 +45,7 @@
     if (pushID) {
         [data setValue:pushID forKey:@"push_id"];
     } else {
-        [data setValue:@"MISSING_SEND_ID" forKey:@"push_id"];
+        [data setValue:kUAMissingSendID forKey:@"push_id"];
     }
 
     event.data = [data mutableCopy];
