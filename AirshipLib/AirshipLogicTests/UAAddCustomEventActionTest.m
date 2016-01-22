@@ -260,7 +260,9 @@
                            @"interaction_type": @"interaction type",
                            @"interaction_id": @"interaction ID"};
 
-    NSDictionary *notification = @{ @"_": @"send ID", @"apns": @{@"alert": @"oh hi"} };
+    NSDictionary *notification = @{ @"_": @"send ID",
+                                    @"com.urbanairship.metadata": @"send metadata",
+                                    @"apns": @{@"alert": @"oh hi"} };
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:dict
                                                       withSituation:UASituationManualInvocation
@@ -275,7 +277,8 @@
         [event.eventValue isEqualToNumber:@(123.45)] &&
         [event.interactionType isEqualToString:@"interaction type"] &&
         [event.interactionID isEqualToString:@"interaction ID"] &&
-        [event.data[@"conversion_send_id"] isEqualToString:@"send ID"];
+        [event.data[@"conversion_send_id"] isEqualToString:@"send ID"] &&
+        [event.data[@"conversion_send_metadata"] isEqualToString:@"send metadata"];
     }]];
 
     [self verifyPerformWithArgs:args withExpectedResult:expectedResult];

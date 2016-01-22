@@ -109,6 +109,7 @@
     [[[self.user stub] andReturn:@"user ID"] username];
 
     [[[self.analytics stub] andReturn:@"push ID"] conversionSendID];
+    [[[self.analytics stub] andReturn:@"base64metadataString"] conversionSendMetadata];
     [[[self.analytics stub] andReturn:@"rich push ID"] conversionRichPushID];
 
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
@@ -126,6 +127,7 @@
     NSDictionary *expectedData = @{@"user_id": @"user ID",
                                    @"connection_type": @"cell",
                                    @"push_id": @"push ID",
+                                   @"metadata": @"base64metadataString",
                                    @"rich_push_id": @"rich push ID",
                                    @"time_zone": @2000,
                                    @"daylight_savings": @"true",
@@ -150,6 +152,7 @@
 - (void)testAppForegroundEvent {
     [[[self.user stub] andReturn:@"user ID"] username];
     [[[self.analytics stub] andReturn:@"push ID"] conversionSendID];
+    [[[self.analytics stub] andReturn:@"base64metadataString"] conversionSendMetadata];
     [[[self.analytics stub] andReturn:@"rich push ID"] conversionRichPushID];
 
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
@@ -165,6 +168,7 @@
     NSDictionary *expectedData = @{@"user_id": @"user ID",
                                    @"connection_type": @"cell",
                                    @"push_id": @"push ID",
+                                   @"metadata": @"base64metadataString",
                                    @"rich_push_id": @"rich push ID",
                                    @"time_zone": @2000,
                                    @"daylight_savings": @"true",
@@ -188,12 +192,14 @@
 - (void)testAppExitEvent {
 
     [[[self.analytics stub] andReturn:@"push ID"] conversionSendID];
+    [[[self.analytics stub] andReturn:@"base64metadataString"] conversionSendMetadata];
     [[[self.analytics stub] andReturn:@"rich push ID"] conversionRichPushID];
 
     [[[self.utils stub] andReturnValue:OCMOCK_VALUE(kUAConnectionTypeCell)] connectionType];
     
     NSDictionary *expectedData = @{@"connection_type": @"cell",
                                    @"push_id": @"push ID",
+                                   @"metadata": @"base64metadataString",
                                    @"rich_push_id": @"rich push ID"};
 
     UAAppExitEvent *event = [UAAppExitEvent event];
