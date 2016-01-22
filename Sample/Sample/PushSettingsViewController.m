@@ -37,6 +37,18 @@
     [super viewDidLoad];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshView) name:@"channelIDUpdated" object:nil];
+
+    // Initialize switches
+    self.pushEnabledSwitch.on = [UAirship push].userPushNotificationsEnabled;
+    self.locationEnabledSwitch.on = [UALocationService airshipLocationServiceEnabled];
+    self.analyticsSwitch.on = [UAirship shared].analytics.enabled;
+
+    // Add observer to didBecomeActive to update upon retrun from system settings screen
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didBecomeActive) name:@"UIApplicationDidBecomeActiveNotification" object:nil];
+
+    self.locationEnabledLabel.text = NSLocalizedStringFromTable(@"UA_Location_Enabled", @"UAPushUI", @"Location Enabled label");
+    self.locationEnabledSubtitleLabel.text = NSLocalizedStringFromTable(@"UA_Location_Enabled_Detail", @"UAPushUI", @"Enable GPS and WIFI Based Location detail label");
+    self.getLocationCell.textLabel.text = NSLocalizedStringFromTable(@"UA_Get_Location", @"UAPushUI", @"Get location label");
 }
 
 - (void)didBecomeActive {
