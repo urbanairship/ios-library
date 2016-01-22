@@ -212,6 +212,14 @@
         valid = NO;
     }
 
+    if ([self.developmentAppKey isEqualToString:self.productionAppKey]) {
+        UA_LWARN(@"Production App Key matches Development App Key.");
+    }
+
+    if ([self.developmentAppSecret isEqualToString:self.productionAppSecret]) {
+        UA_LWARN(@"Production App Secret matches Development App Secret.");
+    }
+
     return valid;
 }
 
