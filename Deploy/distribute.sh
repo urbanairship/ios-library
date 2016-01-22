@@ -55,16 +55,13 @@ lipo "${OUTPUT_PATH}/Airship/libUAirship-$VERSION.a" -verify_arch armv7 armv7s i
 # TODO: renable it once we no longer build with Xcode 6.4
 # otool -l "${OUTPUT_PATH}/Airship/libUAirship-$VERSION.a" | grep __LLVM
  
-./$SCRIPT_DIRECTORY/package_sample.sh $SCRIPT_DIRECTORY/../InboxSample $OUTPUT_PATH
-./$SCRIPT_DIRECTORY/package_sample.sh $SCRIPT_DIRECTORY/../PushSample $OUTPUT_PATH
+./$SCRIPT_DIRECTORY/package_sample.sh $SCRIPT_DIRECTORY/../SwiftSample $OUTPUT_PATH
+./$SCRIPT_DIRECTORY/package_sample.sh $SCRIPT_DIRECTORY/../Sample $OUTPUT_PATH
 "${ROOT_PATH}/scripts/build_docs.sh"
 
 # Copy the generated docs
 mkdir -p "${OUTPUT_PATH}/reference-docs/"
 cp -R "${ROOT_PATH}/docs/html/" "${OUTPUT_PATH}/reference-docs/"
-
-# Rename InboxSample to RichPushSample
-mv "${OUTPUT_PATH}/InboxSample" "${OUTPUT_PATH}/RichPushSample"
 
 # Copy LICENSE, README and CHANGELOG
 cp "${ROOT_PATH}/CHANGELOG" "${OUTPUT_PATH}"
@@ -84,7 +81,7 @@ if test -f $ROOT_PATH/BUILD_INFO;
 fi
 
 cd $OUTPUT_PATH
-for PACKAGE in RichPushSample PushSample Airship AirshipKit reference-docs LICENSE CHANGELOG README.md BUILD_INFO; do
+for PACKAGE in Sample SwiftSample Airship AirshipKit reference-docs LICENSE CHANGELOG README.md BUILD_INFO; do
 	zip -r libUAirship-latest.zip $PACKAGE --exclude=*.DS_Store*
 done
 cd -
