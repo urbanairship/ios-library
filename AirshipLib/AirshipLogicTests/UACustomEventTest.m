@@ -272,7 +272,7 @@
     [[[self.analytics stub] andReturn:@"send metadata"] conversionSendMetadata];
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
 
-    XCTAssertEqualObjects(@"send metadata", [event.data objectForKey:@"conversion_send_metadata"], @"Send Metadata should be set.");
+    XCTAssertEqualObjects(@"send metadata", [event.data objectForKey:@"conversion_metadata"], @"Send Metadata should be set.");
 }
 
 /**
@@ -282,7 +282,7 @@
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
     event.conversionSendMetadata = @"base64metadataString";
 
-    XCTAssertEqualObjects(@"base64metadataString", [event.data objectForKey:@"conversion_send_metadata"], @"Send Metadata should be set.");
+    XCTAssertEqualObjects(@"base64metadataString", [event.data objectForKey:@"conversion_metadata"], @"Send Metadata should be set.");
 }
 
 /**

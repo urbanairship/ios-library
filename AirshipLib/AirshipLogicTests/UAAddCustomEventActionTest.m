@@ -278,7 +278,7 @@
         [event.interactionType isEqualToString:@"interaction type"] &&
         [event.interactionID isEqualToString:@"interaction ID"] &&
         [event.data[@"conversion_send_id"] isEqualToString:@"send ID"] &&
-        [event.data[@"conversion_send_metadata"] isEqualToString:@"send metadata"];
+        [event.data[@"conversion_metadata"] isEqualToString:@"send metadata"];
     }]];
 
     [self verifyPerformWithArgs:args withExpectedResult:expectedResult];

@@ -262,11 +262,13 @@
  */
 - (void)testPushReceivedEvent {
     id notification = @{ @"_": @"push ID",
-                         @"_uamid": @"rich push ID" };
+                         @"_uamid": @"rich push ID",
+                         @"com.urbanairship.metadata": @"base64metadataString"};
 
 
     NSDictionary *expectedData = @{@"rich_push_id": @"rich push ID",
-                                   @"push_id": @"push ID"};
+                                   @"push_id": @"push ID",
+                                   @"metadata": @"base64metadataString"};
 
     UAPushReceivedEvent *event = [UAPushReceivedEvent eventWithNotification:notification];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
