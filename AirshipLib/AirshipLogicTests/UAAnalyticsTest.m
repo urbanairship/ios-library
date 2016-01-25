@@ -656,9 +656,9 @@
 }
 
 /**
- * Test the conversionSendMetadata is sent.
+ * Test the conversionPushMetadata is sent.
  */
-- (void)testConversionSendMetadata {
+- (void)testConversionPushMetadata {
     NSDictionary *notification = @{
                                    @"aps": @{
                                            @"alert": @"sample alert!"
@@ -669,13 +669,13 @@
     [self.analytics launchedFromNotification:notification];
 
     XCTAssertEqual(@"MISSING_SEND_ID", self.analytics.conversionSendID, @"ConversionSendID should be MISSING_SEND_ID");
-    XCTAssertEqual(@"THE_BASE64_METADATA_STRING", self.analytics.conversionSendMetadata, @"ConversionSendMetadata should be set");
+    XCTAssertEqual(@"THE_BASE64_METADATA_STRING", self.analytics.conversionPushMetadata, @"ConversionPushMetadata should be set");
 }
 
 /**
- * Test conversionSendMetadata is nil when it is missing from the payload.
+ * Test conversionPushMetadata is nil when it is missing from the payload.
  */
-- (void)testMissingConversionSendMetadata {
+- (void)testMissingConversionPushMetadata {
     NSDictionary *notification = @{
                                    @"aps": @{
                                            @"alert": @"sample alert!"
@@ -685,7 +685,7 @@
     [self.analytics launchedFromNotification:notification];
 
     XCTAssertEqual(@"MISSING_SEND_ID", self.analytics.conversionSendID, @"ConversionSendID should be MISSING_SEND_ID");
-    XCTAssertNil(self.analytics.conversionSendMetadata, @"ConversionSendMetadata should be nil if missing.");
+    XCTAssertNil(self.analytics.conversionPushMetadata, @"ConversionPushMetadata should be nil if missing.");
 }
 
 /**

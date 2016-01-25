@@ -64,7 +64,7 @@
 - (void)testExpiredResolutionEvent {
     self.message.expiry = [NSDate date];
     [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendID];
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendMetadata];
+    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionPushMetadata];
 
     NSDateFormatter *formatter = [UAUtils ISODateFormatterUTCWithDelimiter];
 
@@ -74,7 +74,7 @@
 
     NSDictionary *expectedData = @{ @"id": self.message.identifier,
                                     @"conversion_send_id": [self.analytics conversionSendID],
-                                    @"conversion_metadata": [self.analytics conversionSendMetadata],
+                                    @"conversion_metadata": [self.analytics conversionPushMetadata],
                                     @"resolution": expectedResolution };
 
 
@@ -90,7 +90,7 @@
     replacement.identifier = [NSUUID UUID].UUIDString;
 
     [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendID];
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendMetadata];
+    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionPushMetadata];
 
 
     NSDictionary *expectedResolution = @{ @"type": @"replaced",
@@ -98,7 +98,7 @@
 
     NSDictionary *expectedData = @{ @"id": self.message.identifier,
                                     @"conversion_send_id": [self.analytics conversionSendID],
-                                    @"conversion_metadata": [self.analytics conversionSendMetadata],
+                                    @"conversion_metadata": [self.analytics conversionPushMetadata],
                                     @"resolution": expectedResolution };
 
 
@@ -115,7 +115,7 @@
     self.message.buttonGroup = @"button group";
 
     [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendID];
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendMetadata];
+    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionPushMetadata];
 
 
     NSDictionary *expectedResolution = @{ @"type": @"button_click",
@@ -126,7 +126,7 @@
 
     NSDictionary *expectedData = @{ @"id": self.message.identifier,
                                     @"conversion_send_id": [self.analytics conversionSendID],
-                                    @"conversion_metadata": [self.analytics conversionSendMetadata],
+                                    @"conversion_metadata": [self.analytics conversionPushMetadata],
                                     @"resolution": expectedResolution };
 
 
@@ -144,7 +144,7 @@
  */
 - (void)testMessageClickedResolutionEvent {
     [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendID];
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendMetadata];
+    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionPushMetadata];
 
 
     NSDictionary *expectedResolution = @{ @"type": @"message_click",
@@ -152,7 +152,7 @@
 
     NSDictionary *expectedData = @{ @"id": self.message.identifier,
                                     @"conversion_send_id": [self.analytics conversionSendID],
-                                    @"conversion_metadata": [self.analytics conversionSendMetadata],
+                                    @"conversion_metadata": [self.analytics conversionPushMetadata],
                                     @"resolution": expectedResolution };
 
 
@@ -167,7 +167,7 @@
  */
 - (void)testDismissedResolutionEvent {
     [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendID];
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendMetadata];
+    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionPushMetadata];
 
 
     NSDictionary *expectedResolution = @{ @"type": @"user_dismissed",
@@ -175,7 +175,7 @@
 
     NSDictionary *expectedData = @{ @"id": self.message.identifier,
                                     @"conversion_send_id": [self.analytics conversionSendID],
-                                    @"conversion_metadata": [self.analytics conversionSendMetadata],
+                                    @"conversion_metadata": [self.analytics conversionPushMetadata],
                                     @"resolution": expectedResolution };
 
 
@@ -190,7 +190,7 @@
  */
 - (void)testTimedOutResolutionEvent {
     [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendID];
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendMetadata];
+    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionPushMetadata];
 
 
 
@@ -199,7 +199,7 @@
 
     NSDictionary *expectedData = @{ @"id": self.message.identifier,
                                     @"conversion_send_id": [self.analytics conversionSendID],
-                                    @"conversion_metadata": [self.analytics conversionSendMetadata],
+                                    @"conversion_metadata": [self.analytics conversionPushMetadata],
                                     @"resolution": expectedResolution };
 
 
@@ -214,13 +214,13 @@
  */
 - (void)testDirectOpenResolutionEvent {
     [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendID];
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendMetadata];
+    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionPushMetadata];
 
     NSDictionary *expectedResolution = @{ @"type": @"direct_open" };
 
     NSDictionary *expectedData = @{ @"id": self.message.identifier,
                                     @"conversion_send_id": [self.analytics conversionSendID],
-                                    @"conversion_metadata": [self.analytics conversionSendMetadata],
+                                    @"conversion_metadata": [self.analytics conversionPushMetadata],
                                     @"resolution": expectedResolution };
 
 

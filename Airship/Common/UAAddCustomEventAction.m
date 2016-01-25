@@ -77,7 +77,7 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
     event.conversionSendID = arguments.metadata[UAActionMetadataPushPayloadKey][@"_"];
 
     // Set the conversion send Metadata if the action was triggered from a push
-    event.conversionSendMetadata = arguments.metadata[UAActionMetadataPushPayloadKey][kUAConversionSendMetadata];
+    event.conversionPushMetadata = arguments.metadata[UAActionMetadataPushPayloadKey][kUAPushMetadata];
 
     if (properties && [properties isKindOfClass:[NSDictionary class]]) {
         for (id key in properties) {

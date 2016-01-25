@@ -57,7 +57,7 @@
 #define kMinBatchIntervalUserDefaultsKey @"X-UA-Min-Batch-Interval"
 #define kUAAnalyticsEnabled @"UAAnalyticsEnabled"
 #define kUAMissingSendID @"MISSING_SEND_ID"
-#define kUAConversionSendMetadata @"com.urbanairship.metadata"
+#define kUAPushMetadata @"com.urbanairship.metadata"
 
 @class UAEvent;
 @class UAHTTPRequest;
@@ -74,9 +74,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSString *conversionSendID;
 
 /**
- * The conversion send metadata.
+ * The conversion push metadata.
  */
-@property (nonatomic, copy, nullable) NSString *conversionSendMetadata;
+@property (nonatomic, copy, nullable) NSString *conversionPushMetadata;
 
 /**
  * The conversion rich push ID.

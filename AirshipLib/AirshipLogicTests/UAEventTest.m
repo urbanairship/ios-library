@@ -109,7 +109,7 @@
     [[[self.user stub] andReturn:@"user ID"] username];
 
     [[[self.analytics stub] andReturn:@"push ID"] conversionSendID];
-    [[[self.analytics stub] andReturn:@"base64metadataString"] conversionSendMetadata];
+    [[[self.analytics stub] andReturn:@"base64metadataString"] conversionPushMetadata];
     [[[self.analytics stub] andReturn:@"rich push ID"] conversionRichPushID];
 
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
@@ -152,7 +152,7 @@
 - (void)testAppForegroundEvent {
     [[[self.user stub] andReturn:@"user ID"] username];
     [[[self.analytics stub] andReturn:@"push ID"] conversionSendID];
-    [[[self.analytics stub] andReturn:@"base64metadataString"] conversionSendMetadata];
+    [[[self.analytics stub] andReturn:@"base64metadataString"] conversionPushMetadata];
     [[[self.analytics stub] andReturn:@"rich push ID"] conversionRichPushID];
 
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
@@ -192,7 +192,7 @@
 - (void)testAppExitEvent {
 
     [[[self.analytics stub] andReturn:@"push ID"] conversionSendID];
-    [[[self.analytics stub] andReturn:@"base64metadataString"] conversionSendMetadata];
+    [[[self.analytics stub] andReturn:@"base64metadataString"] conversionPushMetadata];
     [[[self.analytics stub] andReturn:@"rich push ID"] conversionRichPushID];
 
     [[[self.utils stub] andReturnValue:OCMOCK_VALUE(kUAConnectionTypeCell)] connectionType];

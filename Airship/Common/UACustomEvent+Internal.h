@@ -35,9 +35,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSString *conversionSendID;
 
 /**
- * The conversion send metadata.
+ * The conversion push metadata.
  */
-@property (nonatomic, copy, nullable) NSString *conversionSendMetadata;
+@property (nonatomic, copy, nullable) NSString *conversionPushMetadata;
 
 @end
 

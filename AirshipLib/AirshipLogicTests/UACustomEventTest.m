@@ -266,23 +266,23 @@
 }
 
 /**
- * Test event includes conversion send metadata if available.
+ * Test event includes conversion push metadata if available.
  */
-- (void)testConversionSendMetadata {
-    [[[self.analytics stub] andReturn:@"send metadata"] conversionSendMetadata];
+- (void)testConversionPushMetadata {
+    [[[self.analytics stub] andReturn:@"send metadata"] conversionPushMetadata];
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
 
     XCTAssertEqualObjects(@"send metadata", [event.data objectForKey:@"conversion_metadata"], @"Send Metadata should be set.");
 }
 
 /**
- * Test setting the event conversion send metadata.
+ * Test setting the event conversion push metadata.
  */
-- (void)testSettingConversionSendMetadata {
+- (void)testSettingConversionPushMetadata {
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
-    event.conversionSendMetadata = @"base64metadataString";
+    event.conversionPushMetadata = @"base64metadataString";
 
-    XCTAssertEqualObjects(@"base64metadataString", [event.data objectForKey:@"conversion_metadata"], @"Send Metadata should be set.");
+    XCTAssertEqualObjects(@"base64metadataString", [event.data objectForKey:@"conversion_metadata"], @"Push metadata should be set.");
 }
 
 /**
