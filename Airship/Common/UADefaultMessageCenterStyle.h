@@ -39,6 +39,11 @@
 @property(nonatomic, strong) UIColor *listColor;
 
 /**
+ * The tint color of the "pull to refresh" control
+ */
+@property(nonatomic, strong) UIColor *refreshTintColor;
+
+/**
  * Whether icons are enabled. Defaults to `NO`.
  */
 @property(nonatomic, assign) BOOL iconsEnabled;

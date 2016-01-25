@@ -114,6 +114,11 @@
  */
 @property (nonatomic, strong) NSCache *iconCache;
 
+/**
+ * A refresh control used for "pull to refresh" behavior.
+ */
+@property (nonatomic, strong) UIRefreshControl *refreshControl;
+
 @end
 
 @implementation UADefaultMessageCenterListViewController
@@ -124,6 +129,7 @@
         self.iconCache.countLimit = kUAIconImageCacheMaxCount;
         self.iconCache.totalCostLimit = kUAIconImageCacheMaxByteCost;
         self.currentIconURLRequests = [NSMutableDictionary dictionary];
+        self.refreshControl = [[UIRefreshControl alloc] init];
     }
 
     return self;
@@ -156,8 +162,36 @@
     if (self.style.cellSeparatorColor) {
         self.messageTable.separatorColor = self.style.cellSeparatorColor;
     }
+
+    [self.refreshControl addTarget:self action:@selector(refreshStateChanged:) forControlEvents:UIControlEventValueChanged];
+
+    UITableViewController *tableController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
+    tableController.view = self.messageTable;
+    tableController.refreshControl = self.refreshControl;
+
+    if (self.style.listColor) {
+        self.refreshControl.backgroundColor = self.style.listColor;
+    }
+
+    if (self.style.refreshTintColor) {
+        self.refreshControl.tintColor = self.style.refreshTintColor;
+    }
+
+    // This allows us to use the UITableViewController for managing the refresh control, while keeping the
+    // outer chrome of the list view controller intact
+    [self addChildViewController:tableController];
 }
 
+- (void)refreshStateChanged:(UIRefreshControl *)sender {
+    if (sender.refreshing) {
+        [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
+            [sender endRefreshing];
+        } withFailureBlock:^ {
+            [sender endRefreshing];
+            // todo: display error message
+        }];
+    }
+}
 
 // Note: since the message list is refreshed with new model objects when reloaded,
 // we can't reliably hold onto any single instance. This method is merely for convenience.
