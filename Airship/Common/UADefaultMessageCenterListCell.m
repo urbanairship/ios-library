@@ -66,15 +66,19 @@
     if (style.cellTitleFont) {
         self.title.font = style.cellTitleFont;
     }
+
     if (style.cellTitleColor) {
         self.title.textColor = style.cellTitleColor;
     }
+
     if (style.cellTitleHighlightedColor) {
         self.title.highlightedTextColor = style.cellTitleHighlightedColor;
     }
+
     if (style.cellDateFont) {
         self.date.font = style.cellDateFont;
     }
+    
     if (style.cellDateColor) {
         self.date.textColor = style.cellDateColor;
     }

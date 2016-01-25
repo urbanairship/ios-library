@@ -87,8 +87,10 @@
             titleAttributes[UITextAttributeFont] = self.style.titleFont;
         }
 
-        listnav.navigationBar.titleTextAttributes = titleAttributes;
-        messagenav.navigationBar.titleTextAttributes = titleAttributes;
+        if (titleAttributes.count) {
+            listnav.navigationBar.titleTextAttributes = titleAttributes;
+            messagenav.navigationBar.titleTextAttributes = titleAttributes;
+        }
 
         self.listController = lvc;
         self.navigationController = listnav;

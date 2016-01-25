@@ -380,7 +380,9 @@
             titleAttributes[UITextAttributeFont] = self.style.titleFont;
         }
 
-        nav.navigationBar.titleTextAttributes = titleAttributes;
+        if (titleAttributes.count) {
+            nav.navigationBar.titleTextAttributes = titleAttributes;
+        }
 
         // note: not sure why this is necessary but the navigation controller isn't sized properly otherwise
         [nav.view layoutSubviews];
