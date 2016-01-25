@@ -56,7 +56,7 @@
 #define kMaxWaitUserDefaultsKey @"X-UA-Max-Wait"
 #define kMinBatchIntervalUserDefaultsKey @"X-UA-Min-Batch-Interval"
 #define kUAAnalyticsEnabled @"UAAnalyticsEnabled"
-
+#define kUAMissingSendID @"MISSING_SEND_ID"
 
 @class UAEvent;
 @class UAHTTPRequest;

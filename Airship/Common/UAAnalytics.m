@@ -681,8 +681,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     if (self.notificationUserInfo) {
 
         // If the server did not send a push ID (likely because the payload did not have room)
-        // generate an ID for the server to use
-        self.conversionSendID = [self.notificationUserInfo objectForKey:@"_"] ?: [NSUUID UUID].UUIDString;
+        // then send "MISSING_SEND_ID"
+        self.conversionSendID = [self.notificationUserInfo objectForKey:@"_"] ?: kUAMissingSendID;
 
         NSString *richPushID = [UAInboxUtils inboxMessageIDFromNotification:self.notificationUserInfo];
         if (richPushID) {

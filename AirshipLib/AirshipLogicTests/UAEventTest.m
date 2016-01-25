@@ -268,4 +268,20 @@
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
 
+/**
+ * Test push received event without a push ID will send "MISSING_SEND_ID".
+ */
+- (void)testPushReceivedEventNoPushID {
+    id notification = @{ @"_uamid": @"rich push ID" };
+
+
+    NSDictionary *expectedData = @{@"rich_push_id": @"rich push ID",
+                                   @"push_id": @"MISSING_SEND_ID"};
+
+    UAPushReceivedEvent *event = [UAPushReceivedEvent eventWithNotification:notification];
+    XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
+    XCTAssertEqualObjects(event.eventType, @"push_received", @"Event type is unexpected.");
+    XCTAssertNotNil(event.eventID, @"Event should have an ID");
+}
+
 @end
