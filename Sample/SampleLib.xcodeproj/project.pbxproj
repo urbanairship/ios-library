@@ -55,6 +55,7 @@
 		76AE35421C2B6D2900D7F3B9 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 76AE34FB1C2B6D2900D7F3B9 /* Settings.bundle */; };
 		76AE35431C2B6D2900D7F3B9 /* UACommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 76AE34FF1C2B6D2900D7F3B9 /* UACommon.m */; };
 		76AE35651C2B6FD600D7F3B9 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */; };
+		CC2C2A731C5831E9003A7BA6 /* MessageCenterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CC36D3A91C57FC5900BDCA34 /* MessageCenterViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -180,6 +181,8 @@
 		76AE34FF1C2B6D2900D7F3B9 /* UACommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACommon.m; sourceTree = "<group>"; };
 		76AE353E1C2B6D2900D7F3B9 /* UA-UI-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UA-UI-Bridging-Header.h"; sourceTree = "<group>"; };
 		76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
+		CC36D3A81C57FC5900BDCA34 /* MessageCenterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageCenterViewController.h; sourceTree = "<group>"; };
+		CC36D3A91C57FC5900BDCA34 /* MessageCenterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageCenterViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -240,6 +243,8 @@
 				764693F61C238A5E0090FE40 /* TagsTableViewController.m */,
 				764693F81C238A770090FE40 /* LocationTableViewController.h */,
 				764693F91C238A770090FE40 /* LocationTableViewController.m */,
+				CC36D3A81C57FC5900BDCA34 /* MessageCenterViewController.h */,
+				CC36D3A91C57FC5900BDCA34 /* MessageCenterViewController.m */,
 				764693BF1C237CAB0090FE40 /* Main.storyboard */,
 				764693B61C237B630090FE40 /* LaunchScreen.storyboard */,
 				764693B91C237B630090FE40 /* Info.plist */,
@@ -535,6 +540,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC2C2A731C5831E9003A7BA6 /* MessageCenterViewController.m in Sources */,
 				764693B01C237B630090FE40 /* PushSettingsViewController.m in Sources */,
 				616A70FC1C471611000BFBCC /* UAInboxMessageListCell.m in Sources */,
 				616A70FE1C471611000BFBCC /* UAInboxMessageViewController.m in Sources */,

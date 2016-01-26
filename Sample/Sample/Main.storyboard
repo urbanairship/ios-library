@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="49e-Tb-3d3">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="49e-Tb-3d3">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -98,7 +98,7 @@
         <!--Message Center-->
         <scene sceneID="jra-5K-cKn">
             <objects>
-                <navigationController id="uCE-kh-Bmv" sceneMemberID="viewController">
+                <navigationController id="uCE-kh-Bmv" customClass="MessageCenterViewController" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Message Center" image="Inbox" id="puz-9M-buY"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="QwL-7h-v1G">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -110,9 +110,6 @@
                             <color key="textColor" red="0.039215686270000001" green="0.3411764706" blue="0.49019607840000001" alpha="1" colorSpace="calibratedRGB"/>
                         </textAttributes>
                     </navigationBar>
-                    <connections>
-                        <segue destination="gZ5-Hw-Q4m" kind="relationship" relationship="rootViewController" id="sIe-xt-BhN"/>
-                    </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="l9m-dy-eg9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -514,18 +511,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JQR-Bm-cnM" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="679" y="343"/>
-        </scene>
-        <!--Message Center-->
-        <scene sceneID="NvI-WN-tRz">
-            <objects>
-                <viewController title="Message Center" id="gZ5-Hw-Q4m" customClass="UAInboxMessageListController" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" id="3Bi-uC-yfA"/>
-                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="600" height="600"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="m6B-S2-ZqU" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1411" y="1085"/>
         </scene>
         <!--Add Alias Table View Controller-->
         <scene sceneID="8sO-Kh-XAD">
