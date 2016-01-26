@@ -43,7 +43,6 @@
 /* Begin PBXFileReference section */
 		490FE2111BA8E5DE008FB649 /* AirshipCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipCore.h; sourceTree = "<group>"; };
 		490FE2121BA8E5DE008FB649 /* AirshipCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AirshipCore.m; sourceTree = "<group>"; };
-		492051421C0D176400A7B36D /* AirshipResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AirshipResources.bundle; path = ../Airship/AirshipResources.bundle; sourceTree = "<group>"; };
 		494DD9571B0EB677009C134E /* AirshipKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		494DD95B1B0EB677009C134E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		494DD95C1B0EB677009C134E /* AirshipKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipKit.h; sourceTree = "<group>"; };
@@ -70,7 +69,6 @@
 			isa = PBXGroup;
 			children = (
 				4997B3F71C4040DC00C80C14 /* AirshipLib.xcodeproj */,
-				492051421C0D176400A7B36D /* AirshipResources.bundle */,
 				494DDC271B0FD6A6009C134E /* libz.dylib */,
 				494DDC251B0FD6A1009C134E /* libsqlite3.dylib */,
 				494DD9591B0EB677009C134E /* AirshipKit */,
