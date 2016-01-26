@@ -48,6 +48,10 @@
         [data setValue:kUAMissingSendID forKey:@"push_id"];
     }
 
+    // Add the metadata only if present
+    NSString *metadata = [notification objectForKey:kUAPushMetadata];
+    [data setValue:metadata forKey:@"metadata"];
+
     event.data = [data mutableCopy];
     return event;
 }

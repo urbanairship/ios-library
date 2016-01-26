@@ -655,6 +655,38 @@
     XCTAssertEqual(@"MISSING_SEND_ID", self.analytics.conversionSendID, @"ConversionSendID should be MISSING_SEND_ID");
 }
 
+/**
+ * Test the conversionPushMetadata is sent.
+ */
+- (void)testConversionPushMetadata {
+    NSDictionary *notification = @{
+                                   @"aps": @{
+                                           @"alert": @"sample alert!"
+                                           },
+                                   @"com.urbanairship.metadata": @"THE_BASE64_METADATA_STRING"
+                                   };
+
+    [self.analytics launchedFromNotification:notification];
+
+    XCTAssertEqual(@"MISSING_SEND_ID", self.analytics.conversionSendID, @"ConversionSendID should be MISSING_SEND_ID");
+    XCTAssertEqual(@"THE_BASE64_METADATA_STRING", self.analytics.conversionPushMetadata, @"ConversionPushMetadata should be set");
+}
+
+/**
+ * Test conversionPushMetadata is nil when it is missing from the payload.
+ */
+- (void)testMissingConversionPushMetadata {
+    NSDictionary *notification = @{
+                                   @"aps": @{
+                                           @"alert": @"sample alert!"
+                                           }
+                                   };
+
+    [self.analytics launchedFromNotification:notification];
+
+    XCTAssertEqual(@"MISSING_SEND_ID", self.analytics.conversionSendID, @"ConversionSendID should be MISSING_SEND_ID");
+    XCTAssertNil(self.analytics.conversionPushMetadata, @"ConversionPushMetadata should be nil if missing.");
+}
 
 /**
  * Test that tracking event adds itself on background

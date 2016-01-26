@@ -27,6 +27,7 @@
 #import "UACustomEvent+Internal.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
+#import "UAAnalytics+Internal.h"
 
 NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionError";
 
@@ -74,6 +75,9 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
 
     // Set the conversion send ID if the action was triggered from a push
     event.conversionSendID = arguments.metadata[UAActionMetadataPushPayloadKey][@"_"];
+
+    // Set the conversion send Metadata if the action was triggered from a push
+    event.conversionPushMetadata = arguments.metadata[UAActionMetadataPushPayloadKey][kUAPushMetadata];
 
     if (properties && [properties isKindOfClass:[NSDictionary class]]) {
         for (id key in properties) {

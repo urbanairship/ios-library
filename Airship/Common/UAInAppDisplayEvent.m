@@ -38,6 +38,7 @@
         NSMutableDictionary *data = [NSMutableDictionary dictionary];
         [data setValue:message.identifier forKey:@"id"];
         [data setValue:[UAirship shared].analytics.conversionSendID forKey:@"conversion_send_id"];
+        [data setValue:[UAirship shared].analytics.conversionPushMetadata forKey:@"conversion_metadata"];
         self.data = [data copy];
         return self;
     }

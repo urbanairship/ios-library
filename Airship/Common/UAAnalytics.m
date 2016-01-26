@@ -672,6 +672,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     self.sessionID = @"";
     self.conversionSendID = nil;
     self.conversionRichPushID = nil;
+    self.conversionPushMetadata = nil;
 }
 
 - (void)startSession {
@@ -683,6 +684,9 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         // If the server did not send a push ID (likely because the payload did not have room)
         // then send "MISSING_SEND_ID"
         self.conversionSendID = [self.notificationUserInfo objectForKey:@"_"] ?: kUAMissingSendID;
+
+        // If the server did not send the metadata, then set it to nil
+        self.conversionPushMetadata = [self.notificationUserInfo objectForKey:kUAPushMetadata] ?: nil;
 
         NSString *richPushID = [UAInboxUtils inboxMessageIDFromNotification:self.notificationUserInfo];
         if (richPushID) {

@@ -197,6 +197,10 @@ const NSUInteger UACustomEventMaxPropertiesCount = 20;
     NSString *sendID = self.conversionSendID ?:[UAirship shared].analytics.conversionSendID;
     [dictionary setValue:sendID forKey:@"conversion_send_id"];
 
+    // Conversion Send Metadata
+    NSString *sendMetadata = self.conversionPushMetadata ?:[UAirship shared].analytics.conversionPushMetadata;
+    [dictionary setValue:sendMetadata forKey:@"conversion_metadata"];
+
     // Interaction
     [dictionary setValue:self.interactionID forKey:@"interaction_id"];
     [dictionary setValue:self.interactionType forKey:@"interaction_type"];

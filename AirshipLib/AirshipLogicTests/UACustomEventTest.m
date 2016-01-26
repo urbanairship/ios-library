@@ -265,6 +265,25 @@
     XCTAssertEqualObjects(@"directSendID", [event.data objectForKey:@"conversion_send_id"], @"Send ID should be set.");
 }
 
+/**
+ * Test event includes conversion push metadata if available.
+ */
+- (void)testConversionPushMetadata {
+    [[[self.analytics stub] andReturn:@"send metadata"] conversionPushMetadata];
+    UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
+
+    XCTAssertEqualObjects(@"send metadata", [event.data objectForKey:@"conversion_metadata"], @"Send Metadata should be set.");
+}
+
+/**
+ * Test setting the event conversion push metadata.
+ */
+- (void)testSettingConversionPushMetadata {
+    UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
+    event.conversionPushMetadata = @"base64metadataString";
+
+    XCTAssertEqualObjects(@"base64metadataString", [event.data objectForKey:@"conversion_metadata"], @"Push metadata should be set.");
+}
 
 /**
  * Test setting the string array properties leaves it untouched in the event's data.

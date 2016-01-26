@@ -38,8 +38,8 @@
     UAAnalytics *analytics = [UAirship shared].analytics;
 
     [data setValue:analytics.conversionSendID forKey:@"push_id"];
+    [data setValue:analytics.conversionPushMetadata forKey:@"metadata"];
     [data setValue:analytics.conversionRichPushID forKey:@"rich_push_id"];
-
 
     [data setValue:[UAUtils connectionType] forKey:@"connection_type"];
 

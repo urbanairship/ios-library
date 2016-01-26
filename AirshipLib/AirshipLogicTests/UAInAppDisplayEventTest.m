@@ -61,10 +61,12 @@
     UAInAppMessage *message = [[UAInAppMessage alloc] init];
     message.identifier = [NSUUID UUID].UUIDString;
     [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendID];
+    [[[self.analytics stub] andReturn:@"base64metadataString"] conversionPushMetadata];
 
 
     NSDictionary *expectedData = @{ @"id": message.identifier,
-                                    @"conversion_send_id": [self.analytics conversionSendID] };
+                                    @"conversion_send_id": [self.analytics conversionSendID],
+                                    @"conversion_metadata": [self.analytics conversionPushMetadata]};
 
 
 

@@ -45,6 +45,7 @@
     UAAnalytics *analytics = [UAirship shared].analytics;
 
     [data setValue:analytics.conversionSendID forKey:@"push_id"];
+    [data setValue:analytics.conversionPushMetadata forKey:@"metadata"];
     [data setValue:analytics.conversionRichPushID forKey:@"rich_push_id"];
 
     [data setValue:[UAirship inboxUser].username forKey:@"user_id"];
