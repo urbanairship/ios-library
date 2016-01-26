@@ -27,11 +27,14 @@
 #import "UARichContentWindow.h"
 
 @class UAInboxMessage;
+@class UADefaultMessageCenterStyle;
 
 /**
  * Default implementation of a view controller for reading Message Center messages.
  */
 @interface UADefaultMessageCenterMessageViewController : UIViewController <UIWebViewDelegate, UARichContentWindow>
+
+@property (nonatomic, strong) UADefaultMessageCenterStyle *style;
 
 /**
  * The UAInboxMessage being displayed.

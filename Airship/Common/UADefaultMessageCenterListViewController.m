@@ -32,6 +32,7 @@
 #import "UAInboxMessageList.h"
 #import "UAURLProtocol.h"
 #import "UAMessageCenterLocalization.h"
+#import "UADefaultMessageCenterStyle.h"
 
 /*
  * List-view image controls: default image path and cache values
@@ -46,7 +47,7 @@
 /**
  * The placeholder image to display in lieu of the icon
  */
-@property (nonatomic, strong) UIImage *placeholderImage;
+@property (nonatomic, strong) UIImage *placeholderIcon;
 
 /**
  * The table view of message list cells
@@ -67,6 +68,11 @@
  * Label displayed in the coverView
  */
 @property (nonatomic, weak) IBOutlet UILabel *coverLabel;
+
+/**
+ * The default tint color to use when overriding the inherited tint.
+ */
+@property (nonatomic, strong) UIColor *defaultTintColor;
 
 /**
  * Bar button items for navigation bar and toolbar
@@ -108,6 +114,11 @@
  */
 @property (nonatomic, strong) NSCache *iconCache;
 
+/**
+ * A refresh control used for "pull to refresh" behavior.
+ */
+@property (nonatomic, strong) UIRefreshControl *refreshControl;
+
 @end
 
 @implementation UADefaultMessageCenterListViewController
@@ -118,6 +129,7 @@
         self.iconCache.countLimit = kUAIconImageCacheMaxCount;
         self.iconCache.totalCostLimit = kUAIconImageCacheMaxByteCost;
         self.currentIconURLRequests = [NSMutableDictionary dictionary];
+        self.refreshControl = [[UIRefreshControl alloc] init];
     }
 
     return self;
@@ -142,13 +154,71 @@
     [self createToolbarItems];
 
     self.coverLabel.text = UAMessageCenterLocalizedString(@"UA_No_Messages");
+
+    if (self.style.listColor) {
+        self.messageTable.backgroundColor = self.style.listColor;
+    }
+
+    if (self.style.cellSeparatorColor) {
+        self.messageTable.separatorColor = self.style.cellSeparatorColor;
+    }
+
+    [self.refreshControl addTarget:self action:@selector(refreshStateChanged:) forControlEvents:UIControlEventValueChanged];
+
+    UITableViewController *tableController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
+    tableController.view = self.messageTable;
+    tableController.refreshControl = self.refreshControl;
+
+    if (self.style.listColor) {
+        self.refreshControl.backgroundColor = self.style.listColor;
+    }
+
+    if (self.style.refreshTintColor) {
+        self.refreshControl.tintColor = self.style.refreshTintColor;
+    }
+
+    // This allows us to use the UITableViewController for managing the refresh control, while keeping the
+    // outer chrome of the list view controller intact
+    [self addChildViewController:tableController];
 }
 
+- (void)displayAlert {
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:UAMessageCenterLocalizedString(@"UA_Error_Connection")
+                                                                   message:UAMessageCenterLocalizedString(@"UA_Error_Loading_Message_List")
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+
+    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {}];
+
+    [alert addAction:defaultAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)refreshStateChanged:(UIRefreshControl *)sender {
+    if (sender.refreshing) {
+        [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
+            [sender endRefreshing];
+        } withFailureBlock:^ {
+            [sender endRefreshing];
+            [self displayAlert];
+        }];
+    }
+}
 
 // Note: since the message list is refreshed with new model objects when reloaded,
 // we can't reliably hold onto any single instance. This method is merely for convenience.
 - (NSArray *)messages {
     return [UAirship inbox].messageList.messages;
+}
+
+- (UIColor *)defaultTintColor {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        // grab the default tint color from a dummy view
+        UIView* view = [[UIView alloc] init];
+        self.defaultTintColor = view.tintColor;
+    });
+    return _defaultTintColor;
 }
 
 - (void)createToolbarItems {
@@ -162,6 +232,9 @@
                                                                target:self
                                                                action:@selector(selectAllButtonPressed:)];
 
+    // Override any inherited tint color, to avoid potential clashes
+    self.selectAllButtonItem.tintColor = self.defaultTintColor;
+
 
     self.deleteItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"UA_Delete")
                                                        style:UIBarButtonItemStylePlain
@@ -172,6 +245,9 @@
     self.markAsReadButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"UA_Mark_as_Read")
                                                                  style:UIBarButtonItemStylePlain
                                                                 target:self action:@selector(batchUpdateButtonPressed:)];
+
+    // Override any inherited tint color, to avoid potential clashes
+    self.markAsReadButtonItem.tintColor = self.defaultTintColor;
 
     self.toolbarItems = @[self.selectAllButtonItem, flexibleSpace, self.deleteItem, flexibleSpace, self.markAsReadButtonItem];
 
@@ -301,6 +377,24 @@
         self.messageViewController = mvc;
 
         UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:mvc];
+
+        if (self.style.navigationBarColor) {
+            nav.navigationBar.barTintColor = self.style.navigationBarColor;
+        }
+
+        NSMutableDictionary *titleAttributes = [NSMutableDictionary dictionary];
+
+        if (self.style.titleColor) {
+            titleAttributes[UITextAttributeTextColor] = self.style.titleColor;
+        }
+
+        if (self.style.titleFont) {
+            titleAttributes[UITextAttributeFont] = self.style.titleFont;
+        }
+
+        if (titleAttributes.count) {
+            nav.navigationBar.titleTextAttributes = titleAttributes;
+        }
 
         // note: not sure why this is necessary but the navigation controller isn't sized properly otherwise
         [nav.view layoutSubviews];
@@ -443,11 +537,15 @@
     }
 }
 
-- (UIImage *)placeholderImage {
-    if (! _placeholderImage) {
-        _placeholderImage =[UIImage imageNamed:@"UADefaultMessageCenterPlaceholderIcon.png" inBundle:[UAirship resources] compatibleWithTraitCollection:nil];
+- (UIImage *)placeholderIcon {
+    if (self.style.placeholderIcon) {
+        return self.style.placeholderIcon;
     }
-    return _placeholderImage;
+
+    if (! _placeholderIcon) {
+        _placeholderIcon =[UIImage imageNamed:@"UADefaultMessageCenterPlaceholderIcon.png" inBundle:[UAirship resources] compatibleWithTraitCollection:nil];
+    }
+    return _placeholderIcon;
 }
 
 #pragma mark -
@@ -464,6 +562,7 @@
         cell = [[bundle loadNibNamed:nibName owner:nil options:nil] firstObject];
     }
 
+    cell.style = self.style;
     UAInboxMessage *message = [self.messages objectAtIndex:(NSUInteger)indexPath.row];
     [cell setData:message];
 
@@ -477,12 +576,12 @@
             [self retrieveIconForIndexPath:indexPath];
         }
 
-        UIImage *placeholderImage = self.placeholderImage;
+        UIImage *placeholderIcon = self.placeholderIcon;
 
         CGRect frame = cell.listIconView.frame;
 
         // If a download is deferred or in progress, set a placeholder image
-        localImageView.image = placeholderImage;
+        localImageView.image = placeholderIcon;
 
         // Resize to match the original frame if needed
         cell.listIconView.frame = CGRectMake(frame.origin.x, frame.origin.y, CGRectGetWidth(frame), CGRectGetHeight(frame));

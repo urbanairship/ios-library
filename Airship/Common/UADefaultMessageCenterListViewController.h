@@ -26,12 +26,18 @@
 #import <UIKit/UIKit.h>
 
 @class UAInboxMessage;
+@class UADefaultMessageCenterStyle;
 
 /**
  * Default implementation of a list-style Message Center UI.
  */
 @interface UADefaultMessageCenterListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
     UIScrollViewDelegate, UISplitViewControllerDelegate>
+
+/**
+ * The style to apply to the list.
+ */
+@property (nonatomic, strong) UADefaultMessageCenterStyle *style;
 
 /**
  * Block that will be invoked when a message view controller receives a closeWindow message
