@@ -164,7 +164,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     }
 
     dispatch_once(&takeOffPred_, ^{
-        [UAirship executeUnsafeTakeOff:config];
+        [UAirship executeUnsafeTakeOff:[config copy]];
     });
 }
 
