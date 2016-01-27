@@ -7,18 +7,24 @@
 #
 # More info: see this Stack Overflow question: http://stackoverflow.com/questions/3520977/build-fat-static-library-device-simulator-using-xcode-and-sdk-4
 
-# TODO: use options for passing in the Xcode 4.4 path rather than an argument
 
-[ "$#" -ge 1 ] || { echo "1 argument (Build Target) required, $# provided" >&2; exit 1; }
+if [[ $# -ne 2 ]] ; then
+    echo 'Need to specify project path and target'
+    exit 0
+fi
+
+ROOT_PATH=`dirname "${0}"`/../
+
+# Set the xcode version
+source "${ROOT_PATH}"/scripts/configure_xcode_version.sh
 
 #################[ Tests: helps workaround any future bugs in Xcode ]########
 #
 DEBUG_THIS_SCRIPT="true"
 
 CONFIGURATION="Release"
-PROJECT_PATH=`dirname "$0"`/AirshipLib.xcodeproj
-
-TARGET_NAME="${1}"
+PROJECT_PATH="${1}"
+TARGET_NAME="${2}"
 
 XCODE_SETTINGS=$(mktemp -t $TARGET_NAME.settings)
 

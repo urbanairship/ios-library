@@ -23,10 +23,12 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+ROOT_PATH=`dirname "${0}"`/../
+source "${ROOT_PATH}"/scripts/configure_xcode_version.sh
 
 TARGET_NAME="AirshipLib"
 TEMP_DIR=$(mktemp -d -t $TARGET_NAME)
-PROJECT_PATH=`dirname "$0"`/AirshipLib.xcodeproj
+PROJECT_PATH="${ROOT_PATH}/AirshipLib/AirshipLib.xcodeproj"
 XCODE_SETTINGS="${TEMP_DIR}/${TARGET_NAME}.settings"
 
 # Query the Xcode Project for the current settings, based on the current target
