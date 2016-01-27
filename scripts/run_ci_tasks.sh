@@ -11,38 +11,28 @@ start_time=`date +%s`
 
 source "${SCRIPT_DIRECTORY}/configure_xcode_version.sh"
 
-"${SCRIPT_DIRECTORY}/build_distribution.sh"
+source "${SCRIPT_DIRECTORY}/build_distribution.sh"
 
 # Set a derived data path for all scheme-based builds (for tests)
 DERIVED_DATA=$(mktemp -d /tmp/ci-derived-data-XXXXX)
 
 
-# TODO build new samples
-## Build All Sample Projects
-## Use Debug configurations and a simulator SDK so the build process doesn't attempt to sign the output
-#
-## Build Distrbution Projects First
-## InboxSample targets
-#xcrun xcodebuild -project "${ROOT_PATH}/InboxSample/InboxSample.xcodeproj" -configuration Debug -sdk $TARGET_SDK
-#
-## PushSample targets
-#xcrun xcodebuild -project "${ROOT_PATH}/PushSample/PushSample.xcodeproj" -configuration Debug -sdk $TARGET_SDK
-#
-## Build 'lib' projects and targets
-## build InboxSampleLib targets - use scheme so that AirshipLib is built
-#xcrun xcodebuild -project "${ROOT_PATH}/InboxSample/InboxSampleLib.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme InboxSample -configuration Debug -sdk $TARGET_SDK
-#xcrun xcodebuild -project "${ROOT_PATH}/InboxSample/InboxSample.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme InboxSample-Kit -configuration Debug -sdk $TARGET_SDK
-#
-## build PushSampleLib targets - use scheme so that AirshipLib is built
-#xcrun xcodebuild -project "${ROOT_PATH}/PushSample/PushSampleLib.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme PushSample -configuration Debug -sdk $TARGET_SDK
-#xcrun xcodebuild -project "${ROOT_PATH}/PushSample/PushSample.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme PushSample-Kit -configuration Debug -sdk $TARGET_SDK
+# Build All Sample Projects
+# Use Debug configurations and a simulator SDK so the build process doesn't attempt to sign the output
+
+# Sample
+xcrun xcodebuild -project "${ROOT_PATH}/Sample/Sample.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme Sample -configuration Debug -sdk $TARGET_SDK -destination "${TEST_DESTINATION}"
+xcrun xcodebuild -project "${ROOT_PATH}/Sample/SampleLib.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme Sample -configuration Debug -sdk $TARGET_SDK -destination "${TEST_DESTINATION}"
+
+# # Swift Smaple
+xcrun xcodebuild -project "${ROOT_PATH}/SwiftSample/SwiftSample.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme SwiftSample -configuration Debug -sdk $TARGET_SDK  -destination "${TEST_DESTINATION}"
+xcrun xcodebuild -project "${ROOT_PATH}/SwiftSample/SwiftSampleLib.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme SwiftSample -configuration Debug -sdk $TARGET_SDK -destination "${TEST_DESTINATION}"
 
 ##################################################################################################
 # Run the Tests!
 ##################################################################################################
 
-# TODO set up mock for new samples
-#"${SCRIPT_DIRECTORY}/mock_setup.sh"
+source "${SCRIPT_DIRECTORY}/mock_setup.sh"
 
 rm -rf "${ROOT_PATH}/test-output"
 mkdir -p "${ROOT_PATH}/test-output"
