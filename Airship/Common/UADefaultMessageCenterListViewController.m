@@ -39,7 +39,7 @@
  */
 #define kUAPlaceholderIconImage @"ua-inbox-icon-placeholder"
 #define kUAIconImageCacheMaxCount 100
-#define kUAIconImageCacheMaxByteCost (1024 * 1024) /* 1MB */
+#define kUAIconImageCacheMaxByteCost (2 * 1024 * 1024) /* 2MB */
 #define kUADefaultMessageCenterListCellNibName @"UADefaultMessageCenterListCell"
 
 @interface UADefaultMessageCenterListViewController()
@@ -119,6 +119,11 @@
  */
 @property (nonatomic, strong) UIRefreshControl *refreshControl;
 
+/**
+ * A concurrent dispatch queue to use for fetching icon images.
+ */
+@property (nonatomic, strong) dispatch_queue_t iconFetchQueue;
+
 @end
 
 @implementation UADefaultMessageCenterListViewController
@@ -130,6 +135,7 @@
         self.iconCache.totalCostLimit = kUAIconImageCacheMaxByteCost;
         self.currentIconURLRequests = [NSMutableDictionary dictionary];
         self.refreshControl = [[UIRefreshControl alloc] init];
+        self.iconFetchQueue = dispatch_queue_create("com.urbanairship.messagecenter.ListIconQueue", DISPATCH_QUEUE_CONCURRENT);
     }
 
     return self;
@@ -573,7 +579,7 @@
         localImageView.image = [self.iconCache objectForKey:[self iconURLStringForMessage:message]];
     } else {
         if (!strongMessageTable.dragging && !strongMessageTable.decelerating) {
-            [self retrieveIconForIndexPath:indexPath];
+            [self retrieveIconForIndexPath:indexPath iconSize:localImageView.frame.size];
         }
 
         UIImage *placeholderIcon = self.placeholderIcon;
@@ -671,8 +677,9 @@
 
     NSArray *indexPaths = [self.messageTable indexPathsForRowsInRect:r];
     for (NSIndexPath *indexPath in indexPaths) {
+        UITableViewCell *cell = [self.messageTable cellForRowAtIndexPath:indexPath];
         UA_LTRACE(@"Loading row %ld. Title: %@", (long)indexPath.row, [self messageForIndexPath:indexPath].title);
-        [self retrieveIconForIndexPath:indexPath];
+        [self retrieveIconForIndexPath:indexPath iconSize:cell.imageView.frame.size];
     }
 }
 
@@ -718,19 +725,54 @@
 #pragma mark - List Icon Load + Fetch
 
 /**
+ * Scales a source image to the provided size.
+ */
+- (UIImage *)scaleImage:(UIImage *)source toSize:(CGSize)size {
+
+    CGFloat sourceWidth = source.size.width;
+    CGFloat sourceHeight = source.size.height;
+
+    CGFloat widthFactor = size.width / sourceWidth;
+    CGFloat heightFactor = size.height / sourceHeight;
+    CGFloat maxFactor = MAX(widthFactor, heightFactor);
+
+    CGFloat scaledWidth = truncf(sourceWidth * maxFactor);
+    CGFloat scaledHeight = truncf(sourceHeight * maxFactor);
+
+    CGAffineTransform transform = CGAffineTransformMakeScale(maxFactor, maxFactor);
+    CGSize transformSize = CGSizeApplyAffineTransform(source.size, transform);
+
+    // Note: passing 0.0 causes the function below to use the scale factor of the main screen
+    CGFloat transformScaleFactor = 0.0;
+
+    UIGraphicsBeginImageContextWithOptions(transformSize, YES, transformScaleFactor);
+
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
+
+    [source drawInRect:CGRectMake(0, 0, scaledWidth, scaledHeight)];
+    UIImage* scaledImage = UIGraphicsGetImageFromCurrentImageContext();
+
+    UIGraphicsEndImageContext();
+
+    return scaledImage;
+}
+
+/**
  * Retrieve the list view icon for all the currently visible index paths.
  */
 - (void)retrieveImagesForOnscreenRows {
     NSArray *visiblePaths = [self.messageTable indexPathsForVisibleRows];
     for (NSIndexPath *indexPath in visiblePaths) {
-        [self retrieveIconForIndexPath:indexPath];
+        UITableViewCell *cell = [self.messageTable cellForRowAtIndexPath:indexPath];
+        [self retrieveIconForIndexPath:indexPath iconSize:cell.imageView.frame.size];
     }
 }
 
 /**
  * Retrieves the list view icon for a given index path, if available.
  */
-- (void)retrieveIconForIndexPath:(NSIndexPath *)indexPath {
+- (void)retrieveIconForIndexPath:(NSIndexPath *)indexPath iconSize:(CGSize)iconSize {
 
     UAInboxMessage *message = [self.messages objectAtIndex:(NSUInteger)indexPath.row];
 
@@ -740,7 +782,6 @@
         // Nothing to do here
         return;
     }
-
 
     // If the icon isn't already in the cache
     if (![self.iconCache objectForKey:iconListURLString]) {
@@ -766,15 +807,14 @@
         }
 
         __weak UADefaultMessageCenterListViewController *weakSelf = self;
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0ul), ^{
+        dispatch_async(self.iconFetchQueue, ^{
 
             UA_LTRACE(@"Fetching RP Icon: %@", iconListURLString);
 
-            // This decodes the image at full size. Scaling can be added here
-            // as an additional enhancement if for some reason your resources
-            // are too large for a given device.
+            // Note: this decodes the source image at full size
             NSData *iconImageData = [NSData dataWithContentsOfURL:iconListURL];
             UIImage *iconImage = [UIImage imageWithData:iconImageData];
+            iconImage = [self scaleImage:iconImage toSize:iconSize];
 
             dispatch_async(dispatch_get_main_queue(), ^{
                 // Recapture self for the duration of this block
@@ -785,7 +825,7 @@
 
                     NSUInteger sizeInBytes = CGImageGetHeight(iconImage.CGImage) * CGImageGetBytesPerRow(iconImage.CGImage);
 
-                    [strongSelf.iconCache setObject:iconImage forKey:iconListURLString cost:sizeInBytes];
+                    [strongSelf.iconCache setObject:iconImage forKey:iconListURLString];
                     UA_LTRACE(@"Added image to cache (%@) with size in bytes: %lu", iconListURL, (unsigned long)sizeInBytes);
 
                     // Update cells directly rather than forcing a reload (which deselects)
