@@ -119,6 +119,11 @@
  */
 @property (nonatomic, strong) UIRefreshControl *refreshControl;
 
+/**
+ * A concurrent dispatch queue to use for fetching icon images.
+ */
+@property (nonatomic, strong) dispatch_queue_t iconFetchQueue;
+
 @end
 
 @implementation UADefaultMessageCenterListViewController
@@ -130,6 +135,7 @@
         self.iconCache.totalCostLimit = kUAIconImageCacheMaxByteCost;
         self.currentIconURLRequests = [NSMutableDictionary dictionary];
         self.refreshControl = [[UIRefreshControl alloc] init];
+        self.iconFetchQueue = dispatch_queue_create("com.urbanairship.messagecenter.ListIconQueue", DISPATCH_QUEUE_CONCURRENT);
     }
 
     return self;
@@ -720,17 +726,30 @@
 /**
  * Scales a source image to the provided size.
  */
-- (UIImage *)scaleImage:(UIImage *)source toSize:(CGSize)size {\
+- (UIImage *)scaleImage:(UIImage *)source toSize:(CGSize)size {
 
-    CGAffineTransform transform = CGAffineTransformMakeScale(size.width/source.size.width, size.height/source.size.height);
+    CGFloat sourceWidth = source.size.width;
+    CGFloat sourceHeight = source.size.height;
+
+    CGFloat widthFactor = size.width / sourceWidth;
+    CGFloat heightFactor = size.height / sourceHeight;
+    CGFloat maxFactor = MAX(widthFactor, heightFactor);
+
+    CGFloat scaledWidth = truncf(sourceWidth * maxFactor);
+    CGFloat scaledHeight = truncf(sourceHeight * maxFactor);
+
+    CGAffineTransform transform = CGAffineTransformMakeScale(maxFactor, maxFactor);
     CGSize transformSize = CGSizeApplyAffineTransform(source.size, transform);
 
     // Note: passing 0.0 causes the function below to use the scale factor of the main screen
-    CGFloat scaleFactor = 0.0;
+    CGFloat transformScaleFactor = 0.0;
 
-    UIGraphicsBeginImageContextWithOptions(transformSize, YES, scaleFactor);
+    UIGraphicsBeginImageContextWithOptions(transformSize, YES, transformScaleFactor);
 
-    [source drawInRect:CGRectMake(0, 0, size.width, size.height)];
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
+
+    [source drawInRect:CGRectMake(0, 0, scaledWidth, scaledHeight)];
     UIImage* scaledImage = UIGraphicsGetImageFromCurrentImageContext();
 
     UIGraphicsEndImageContext();
@@ -787,7 +806,7 @@
         }
 
         __weak UADefaultMessageCenterListViewController *weakSelf = self;
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0ul), ^{
+        dispatch_async(self.iconFetchQueue, ^{
 
             UA_LTRACE(@"Fetching RP Icon: %@", iconListURLString);
 
