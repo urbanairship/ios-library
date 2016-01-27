@@ -693,7 +693,8 @@
 #pragma mark - UISplitViewControllerDelegate
 
 - (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(UIViewController *)primaryViewController {
-    return self.selectedIndexPath == nil;
+    // Only collapse onto the primary (list) controller if there's no currently selected message or we're in batch editing mode
+    return self.selectedIndexPath == nil || self.editing;
 }
 
 - (UIViewController *)primaryViewControllerForExpandingSplitViewController:(UISplitViewController *)splitViewController {
