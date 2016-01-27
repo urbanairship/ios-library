@@ -1,5 +1,5 @@
 #!/bin/bash
-# ./set-ios-icons.sh <png file> <PushSample or InboxSample>
+# ./update_sample_icons.sh <png file> <PushSample or InboxSample>
 
 p=`dirname "$0"`
 f="${p}/../${2}/Resources/Images.xcassets/AppIcon.appiconset"

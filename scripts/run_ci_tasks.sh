@@ -9,9 +9,9 @@ TARGET_SDK='iphonesimulator'
 
 start_time=`date +%s`
 
-source "${SCRIPT_DIRECTORY}/configure-xcode-version.sh"
+source "${SCRIPT_DIRECTORY}/configure_xcode_version.sh"
 
-"${ROOT_PATH}/Deploy/distribute.sh"
+"${SCRIPT_DIRECTORY}/build_distribution.sh"
 
 # Set a derived data path for all scheme-based builds (for tests)
 DERIVED_DATA=$(mktemp -d /tmp/ci-derived-data-XXXXX)
@@ -49,10 +49,6 @@ mkdir -p "${ROOT_PATH}/test-output"
 
 # Run our Logic Tests
 xcrun xcodebuild -destination "${TEST_DESTINATION}" -project "${ROOT_PATH}/AirshipLib/AirshipLib.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme AirshipLib test | tee "${ROOT_PATH}/test-output/XCTEST-LOGIC.out"
-
-# TODO set up application tests
-## Run our Application Tests
-#xcrun xcodebuild -destination "${TEST_DESTINATION}" -project "${ROOT_PATH}/PushSample/PushSampleLib.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme PushSample test | tee "${ROOT_PATH}/test-output/XCTEST-APPLICATION.out"
 
 # delete derived data
 rm -rf "${DERIVED_DATA}"
