@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
  * the desired options. The plist keys use the same names as the properties on this class. Older, all-caps
  * keys are still supported, but you should migrate your properties file to make use of a number of new options.
  */
-@interface UAConfig : NSObject
+@interface UAConfig : NSObject <NSCopying>
 
 ///---------------------------------------------------------------------------------------
 /// @name Resolved Values

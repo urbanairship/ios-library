@@ -313,4 +313,36 @@
     XCTAssertEqualObjects(@"http://some-url.com", config.deviceAPIURL, @"Device API URL still contains trailing slash");
 }
 
+- (void) testCopyConfig {
+    NSString *plistPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"AirshipConfig-Valid" ofType:@"plist"];
+
+    UAConfig *config = [UAConfig configWithContentsOfFile:plistPath];
+    UAConfig *copy = [config copy];
+
+    XCTAssertEqualObjects(copy.description, config.description);
+    XCTAssertTrue(copy.developmentAppKey == config.developmentAppKey);
+    XCTAssertTrue(copy.developmentAppSecret == config.developmentAppSecret);
+    XCTAssertTrue(copy.productionAppKey == config.productionAppKey);
+    XCTAssertTrue(copy.productionAppSecret == config.productionAppSecret);
+    XCTAssertTrue(copy.deviceAPIURL == config.deviceAPIURL);
+    XCTAssertTrue(copy.analyticsURL == config.analyticsURL);
+    XCTAssertTrue(copy.landingPageContentURL == config.landingPageContentURL);
+    XCTAssertTrue(copy.developmentLogLevel == config.developmentLogLevel);
+    XCTAssertTrue(copy.productionLogLevel == config.productionLogLevel);
+    XCTAssertTrue(copy.inProduction == config.inProduction);
+    XCTAssertTrue(copy.detectProvisioningMode == config.detectProvisioningMode);
+    XCTAssertTrue(copy.automaticSetupEnabled == config.automaticSetupEnabled);
+    XCTAssertTrue(copy.analyticsEnabled == config.analyticsEnabled);
+    XCTAssertTrue(copy.profilePath == config.profilePath);
+    XCTAssertTrue(copy.cacheDiskSizeInMB == config.cacheDiskSizeInMB);
+    XCTAssertTrue(copy.clearUserOnAppRestore == config.clearUserOnAppRestore);
+    XCTAssertTrue(copy.whitelist == config.whitelist);
+    XCTAssertTrue(copy.clearNamedUserOnAppRestore == config.clearNamedUserOnAppRestore);
+    XCTAssertTrue(copy.channelCaptureEnabled == config.channelCaptureEnabled);
+    XCTAssertTrue(copy.customConfig == config.customConfig);
+    XCTAssertTrue(copy.channelCreationDelayEnabled == config.channelCreationDelayEnabled);
+    XCTAssertTrue(copy.defaultDetectProvisioningMode == config.defaultDetectProvisioningMode);
+}
+
+
 @end

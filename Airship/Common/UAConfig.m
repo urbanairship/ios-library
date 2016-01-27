@@ -65,6 +65,44 @@
     return self;
 }
 
+-(id)copyWithZone:(NSZone *)zone {
+    UAConfig *configCopy = [[[self class] alloc] init];
+
+    return [configCopy configWithConfig:self];
+}
+
+-(UAConfig *) configWithConfig:(UAConfig *) config {
+
+    if (config) {
+        _developmentAppKey = config.developmentAppKey;
+        _developmentAppSecret = config.developmentAppSecret;
+        _productionAppKey = config.productionAppKey;
+        _productionAppSecret = config.productionAppSecret;
+        _deviceAPIURL = config.deviceAPIURL;
+        _analyticsURL = config.analyticsURL;
+        _landingPageContentURL = config.landingPageContentURL;
+        _developmentLogLevel = config.developmentLogLevel;
+        _productionLogLevel = config.productionLogLevel;
+
+        _inProduction = config.inProduction;
+        _detectProvisioningMode = config.detectProvisioningMode;
+
+        _automaticSetupEnabled = config.automaticSetupEnabled;
+        _analyticsEnabled = config.analyticsEnabled;
+        _profilePath = config.profilePath;
+        _cacheDiskSizeInMB = config.cacheDiskSizeInMB;
+        _clearUserOnAppRestore = config.clearUserOnAppRestore;
+        _whitelist = config.whitelist;
+        _clearNamedUserOnAppRestore = config.clearNamedUserOnAppRestore;
+        _channelCaptureEnabled = config.channelCaptureEnabled;
+        _customConfig = config.customConfig;
+        _channelCreationDelayEnabled = config.channelCreationDelayEnabled;
+        _defaultDetectProvisioningMode = config.defaultDetectProvisioningMode;
+    }
+    
+    return config;
+}
+
 - (NSString *)description {
     return [NSString stringWithFormat:@"Resolved App Key: %@\n"
             "Resolved App Secret: %@\n"
