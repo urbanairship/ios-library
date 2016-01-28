@@ -59,6 +59,7 @@ static NSMutableSet *overlayControllers_ = nil;
     if (self.onLayoutSubviews) {
         self.onLayoutSubviews();
     }
+
 }
 
 @end
@@ -454,32 +455,17 @@ static NSMutableSet *overlayControllers_ = nil;
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
 
-    // Only retry if the page is temporarily unreachable due to recoverable conditions
-    NSSet *retryConditions = [NSSet setWithObjects:
-                              @(NSURLErrorTimedOut),
-                              @(NSURLErrorCannotFindHost),
-                              @(NSURLErrorCannotConnectToHost),
-                              @(NSURLErrorNetworkConnectionLost),
-                              @(NSURLErrorDNSLookupFailed),
-                              @(NSURLErrorNotConnectedToInternet), nil];
+    __typeof(self) __weak weakSelf = self;
 
-    if ([retryConditions containsObject:@(error.code)]) {
-        __typeof(self) __weak weakSelf = self;
-
-        // Wait twenty seconds, try again if necessary
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 20.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void){
-            __typeof(self) __strong strongSelf = weakSelf;
-            if (strongSelf) {
-                UA_LINFO(@"Retrying landing page url: %@", strongSelf.url);
-                [strongSelf load];
-            }
-        });
-    } else {
-        [self.loadingIndicator hide];
-        if (error.code != NSURLErrorCancelled) {
-            UALOG(@"Failed to load message: %@", [error localizedDescription]);
+    // Wait twenty seconds, try again if necessary
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 20.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void){
+        __typeof(self) __strong strongSelf = weakSelf;
+        if (strongSelf) {
+            UA_LINFO(@"Retrying landing page url: %@", strongSelf.url);
+            [strongSelf load];
         }
-    }
+    });
+
 }
 
 #pragma mark UARichContentWindow
