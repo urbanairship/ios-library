@@ -56,7 +56,7 @@
     [UAirship takeOff:config];
 
     // Print out the application configuration for debugging (optional)
-    UA_LDEBUG(@"Config:\n%@", [config description]);
+    NSLog(@"Config:\n%@", [config description]);
 
     // Set the icon badge to zero on startup (optional)
     [[UAirship push] resetBadge];
@@ -85,7 +85,7 @@
         return;
     }
 
-    UA_LDEBUG(@"You will not be able to receive push notifications in the simulator.");
+    NSLog(@"You will not be able to receive push notifications in the simulator.");
 
     if ([[NSUserDefaults standardUserDefaults] boolForKey:kSimulatorWarningDisabledKey]) {
         return;
