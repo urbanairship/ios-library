@@ -31,13 +31,11 @@
 #import "UAMessageCenterLocalization.h"
 #import "UADefaultMessageCenterListViewController.h"
 #import "UADefaultMessageCenterMessageViewController.h"
+#import "UADefaultMessageCenterSplitViewController.h"
 #import "UADefaultMessageCenterStyle.h"
 
 @interface UADefaultMessageCenter()
-
-@property(nonatomic, strong) UADefaultMessageCenterListViewController *listController;
-@property(nonatomic, strong) UINavigationController *navigationController;
-
+@property(nonatomic, strong) UADefaultMessageCenterSplitViewController *splitViewController;
 @end
 
 @implementation UADefaultMessageCenter
@@ -52,63 +50,22 @@
 
 
 - (void)display:(BOOL)animated {
-    if (!self.listController) {
-        NSBundle *airshipResources = [UAirship resources];
+    if (!self.splitViewController) {
 
-        UADefaultMessageCenterListViewController *lvc;
-        lvc = [[UADefaultMessageCenterListViewController alloc] initWithNibName:@"UADefaultMessageCenterListViewController"
-                                                                         bundle:airshipResources];
-        lvc.title = self.title;
-        lvc.style = self.style;
+        self.splitViewController = [[UADefaultMessageCenterSplitViewController alloc] initWithNibName:nil bundle:nil];
+
+        UADefaultMessageCenterListViewController *lvc = self.splitViewController.listViewController;
+
         lvc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                              target:self
                                                                                              action:@selector(dismiss)];
 
-        UADefaultMessageCenterMessageViewController *mvc;
-        mvc = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController"
-                                                                            bundle:airshipResources];
-        mvc.style = self.style;
+        self.splitViewController.style = self.style;
+        self.splitViewController.title = self.title;
 
-        UINavigationController *listnav = [[UINavigationController alloc] initWithRootViewController:lvc];
-        UINavigationController *messagenav = [[UINavigationController alloc] initWithRootViewController:mvc];
+        self.splitViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
 
-        if (self.style.navigationBarColor) {
-            listnav.navigationBar.barTintColor = self.style.navigationBarColor;
-            messagenav.navigationBar.barTintColor = self.style.navigationBarColor;
-        }
-
-        NSMutableDictionary *titleAttributes = [NSMutableDictionary dictionary];
-
-        if (self.style.titleColor) {
-            titleAttributes[UITextAttributeTextColor] = self.style.titleColor;
-        }
-
-        if (self.style.titleFont) {
-            titleAttributes[UITextAttributeFont] = self.style.titleFont;
-        }
-
-        if (titleAttributes.count) {
-            listnav.navigationBar.titleTextAttributes = titleAttributes;
-            messagenav.navigationBar.titleTextAttributes = titleAttributes;
-        }
-
-        self.listController = lvc;
-        self.navigationController = listnav;
-
-        UISplitViewController *svc = [[UISplitViewController alloc] initWithNibName:nil bundle:nil];
-
-        if (self.style.tintColor) {
-            svc.view.tintColor = self.style.tintColor;
-        }
-
-        // display both view controllers in horizontally regular contexts
-        svc.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
-
-        svc.delegate = lvc;
-        svc.viewControllers = @[listnav, messagenav];
-        svc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-
-        [[UAUtils topController] presentViewController:svc animated:animated completion:nil];
+        [[UAUtils topController] presentViewController:self.splitViewController animated:animated completion:nil];
     }
 }
 
@@ -118,7 +75,7 @@
 
 - (void)displayMessage:(UAInboxMessage *)message animated:(BOOL)animated {
     [self display:animated];
-    [self.listController displayMessage:message];
+    [self.splitViewController.listViewController displayMessage:message];
 }
 
 - (void)displayMessage:(UAInboxMessage *)message {
@@ -126,9 +83,8 @@
 }
 
 - (void)dismiss:(BOOL)animated {
-    [self.navigationController.presentingViewController dismissViewControllerAnimated:animated completion:nil];
-    self.listController = nil;
-    self.navigationController = nil;
+    [self.splitViewController.presentingViewController dismissViewControllerAnimated:animated completion:nil];
+    self.splitViewController = nil;
 }
 
 - (void)dismiss {

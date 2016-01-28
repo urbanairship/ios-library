@@ -45,10 +45,14 @@
     // if the icon view is hidden, set a zero width constraint to allow related views to fill its space
     if (hidden) {
         UIImageView *iconView = self.listIconView;
-        [self.listIconView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[iconView(==0)]"
-                                                                                  options:0
-                                                                                  metrics:nil
-                                                                                    views:NSDictionaryOfVariableBindings(iconView)]];
+
+        NSArray *zeroWidthConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:[iconView(0)]"
+                                                                                options:0
+                                                                                metrics:nil
+                                                                                  views:NSDictionaryOfVariableBindings(iconView)];
+
+        [self.listIconView addConstraints:zeroWidthConstraints];
+
     }
 
     self.listIconView.hidden = !style.iconsEnabled;
