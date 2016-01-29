@@ -112,7 +112,6 @@
     if (self.style.tintColor) {
         self.view.tintColor = self.style.tintColor;
     }
-
 }
 
 - (void)setTitle:(NSString *)title {

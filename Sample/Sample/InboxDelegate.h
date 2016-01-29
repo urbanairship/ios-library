@@ -23,39 +23,11 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import <AirshipKit/AirshipKit.h>
 
-@class UAInboxMessage;
+@interface InboxDelegate : NSObject <UAInboxDelegate>
 
-/**
- * The UITableViewCell subclass used by UAInboxMessageListController.
- */
-@interface UAInboxMessageListCell : UITableViewCell
-
-/**
- *Displays the message date.
- */
-@property (nonatomic, weak) IBOutlet UILabel *dateView;
-
-/**
- * Displays the message title.
- */
-@property (nonatomic, weak) IBOutlet UILabel *title;
-
-/**
- * Indicates whether a message has previously been read.
- */
-@property (nonatomic, weak) IBOutlet UIView *unreadIndicator;
-
-/**
- * The message icon.
- */
-@property (nonatomic, weak) IBOutlet UIImageView *listIconView;
-
-/**
- * Set the UAInboxMessage associated with this cell.
- * @param message The associated UAInboxMessage object.
- */
-- (void)setData:(UAInboxMessage *)message;
+- (instancetype)initWithRootViewController:(UIViewController *)rootViewController;
 
 @end

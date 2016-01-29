@@ -23,39 +23,36 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
+#import "InboxDelegate.h"
+#import "MessageCenterViewController.h"
 
-@class UAInboxMessage;
+@interface InboxDelegate ()
+@property(nonatomic, strong) UIViewController *rootViewController;
+@end
 
-/**
- * The UITableViewCell subclass used by UAInboxMessageListController.
- */
-@interface UAInboxMessageListCell : UITableViewCell
+@implementation InboxDelegate
 
-/**
- *Displays the message date.
- */
-@property (nonatomic, weak) IBOutlet UILabel *dateView;
+- (instancetype)initWithRootViewController:(UIViewController *)rootViewController {
+    self = [super init];
+    if (self) {
+        self.rootViewController = rootViewController;
+    }
+    return self;
+}
 
-/**
- * Displays the message title.
- */
-@property (nonatomic, weak) IBOutlet UILabel *title;
+- (MessageCenterViewController *)messageCenterViewController {
+    UITabBarController *tabBarController = (UITabBarController *)self.rootViewController;
+    return [tabBarController.viewControllers objectAtIndex:2];
+}
 
-/**
- * Indicates whether a message has previously been read.
- */
-@property (nonatomic, weak) IBOutlet UIView *unreadIndicator;
+- (void)showInboxMessage:(UAInboxMessage *)message {
+    [self showInbox];
+    [[self messageCenterViewController] displayMessage:message];
+}
 
-/**
- * The message icon.
- */
-@property (nonatomic, weak) IBOutlet UIImageView *listIconView;
-
-/**
- * Set the UAInboxMessage associated with this cell.
- * @param message The associated UAInboxMessage object.
- */
-- (void)setData:(UAInboxMessage *)message;
+- (void)showInbox {
+    UITabBarController *tabBarController = (UITabBarController *)self.rootViewController;
+    tabBarController.selectedIndex = 2;
+}
 
 @end
