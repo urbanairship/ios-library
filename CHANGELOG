@@ -3,6 +3,20 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+Version 7.0.0 - January 28, 2016
+================================
+- Includes support for out of the box Message Center. The Message Center can be themed to match the application
+  or it can be overridden with a custom Message Center implementation.
+- Landing pages will no longer show error pages, instead they will retry indefinitely every 20 seconds
+  until either the page loads successfully or the user exits the page.
+- Packaged SDK resources in Airship resources bundle.
+- Removed out dated Sample UI classes.
+- New unified sample that replaces the previous inbox and push sample. The sample is available in
+  both Swift and Objective-C.
+- detectProvisionMode now defaults to YES if neither detectProvisionMode and
+  inProduction are explicitly set.
+- Fixed detectProvisionMode incorrectly detecting the app running on a simulator.
+
 6.4.0 - October 29, 2015
 ========================
 - Added a flag to disable sending the device token with channel registration.
