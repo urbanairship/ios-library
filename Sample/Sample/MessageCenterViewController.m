@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2016 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2015 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -23,37 +23,30 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
-#import "UARichContentWindow.h"
+#import "MessageCenterViewController.h"
 
-@class UAInboxMessage;
-@class UADefaultMessageCenterStyle;
+@implementation MessageCenterViewController
 
-/**
- * Default implementation of a view controller for reading Message Center messages.
- */
-@interface UADefaultMessageCenterMessageViewController : UIViewController <UIWebViewDelegate, UARichContentWindow>
+- (void)awakeFromNib {
+    UADefaultMessageCenterStyle *style = [UADefaultMessageCenterStyle style];
 
-/**
- * The UAInboxMessage being displayed.
- */
-@property (nonatomic, strong) UAInboxMessage *message;
+    UIFont *robotoLight = [UIFont fontWithName:@"Roboto-Light" size:12.0];
+    UIFont *robotoBold = [UIFont fontWithName:@"Roboto-Bold" size:13.0];
+    UIFont *robotoRegular = [UIFont fontWithName:@"Roboto-Regular" size:17.0];
 
-/**
- * Block that will be invoked when this class receives a closeWindow message from the webView.
- */
-@property (nonatomic, copy) void (^closeBlock)(BOOL animated);
+    style.navigationBarColor = [UIColor colorWithRed:0.988 green:0.694 blue:0.106 alpha:1];
+    style.titleColor = [UIColor colorWithRed:0.039 green:0.341 blue:0.490 alpha:1];
+    style.tintColor = [UIColor colorWithRed:0.039 green:0.341 blue:0.490 alpha:1];
 
-/**
- * Load a UAInboxMessage at a particular index in the message list.
- * @param index The corresponding index in the message list as an integer.
- */
-- (void)loadMessageAtIndex:(NSUInteger)index;
+    style.titleFont = robotoRegular;
+    style.cellTitleFont = robotoBold;
+    style.cellDateFont = robotoLight;
 
-/**
- * Load a UAInboxMessage by message ID.
- * @param mid The message ID as an NSString.
- */
-- (void)loadMessageForID:(NSString *)mid;
+    self.style = style;
+}
+
+- (void)displayMessage:(UAInboxMessage *)message {
+    [self.listViewController displayMessage:message];
+}
 
 @end

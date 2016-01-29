@@ -23,37 +23,11 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
-#import "UARichContentWindow.h"
+#import <Foundation/Foundation.h>
+#import <AirshipKit/AirshipKit.h>
 
-@class UAInboxMessage;
-@class UADefaultMessageCenterStyle;
+@interface InboxDelegate : NSObject <UAInboxDelegate>
 
-/**
- * Default implementation of a view controller for reading Message Center messages.
- */
-@interface UADefaultMessageCenterMessageViewController : UIViewController <UIWebViewDelegate, UARichContentWindow>
-
-/**
- * The UAInboxMessage being displayed.
- */
-@property (nonatomic, strong) UAInboxMessage *message;
-
-/**
- * Block that will be invoked when this class receives a closeWindow message from the webView.
- */
-@property (nonatomic, copy) void (^closeBlock)(BOOL animated);
-
-/**
- * Load a UAInboxMessage at a particular index in the message list.
- * @param index The corresponding index in the message list as an integer.
- */
-- (void)loadMessageAtIndex:(NSUInteger)index;
-
-/**
- * Load a UAInboxMessage by message ID.
- * @param mid The message ID as an NSString.
- */
-- (void)loadMessageForID:(NSString *)mid;
+- (instancetype)initWithRootViewController:(UIViewController *)rootViewController;
 
 @end

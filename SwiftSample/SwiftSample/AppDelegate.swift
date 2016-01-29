@@ -32,6 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
     let simulatorWarningDisabledKey = "ua-simulator-warning-disabled"
 
     var window: UIWindow?
+    var inboxDelegate: InboxDelegate?
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 
@@ -64,6 +65,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
         // time to enable push to increase the likelihood that the user will accept
         // notifications.
         // UAirship.push()?.userPushNotificationsEnabled = true
+
+        // Set a custom delegate for handling message center events
+        self.inboxDelegate = InboxDelegate(rootViewController: (window?.rootViewController)!)
+        UAirship.inbox().delegate = self.inboxDelegate
 
         return true
     }

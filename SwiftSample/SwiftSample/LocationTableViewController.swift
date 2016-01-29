@@ -24,6 +24,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 import UIKit
+import AirshipKit
 
 class LocationTableViewController: UITableViewController, UALocationServiceDelegate {
 

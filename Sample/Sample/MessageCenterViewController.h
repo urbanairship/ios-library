@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2016 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2015 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -24,36 +24,10 @@
  */
 
 #import <UIKit/UIKit.h>
-#import "UARichContentWindow.h"
+#import <AirshipKit/AirshipKit.h>
 
-@class UAInboxMessage;
-@class UADefaultMessageCenterStyle;
+@interface MessageCenterViewController : UADefaultMessageCenterSplitViewController
 
-/**
- * Default implementation of a view controller for reading Message Center messages.
- */
-@interface UADefaultMessageCenterMessageViewController : UIViewController <UIWebViewDelegate, UARichContentWindow>
-
-/**
- * The UAInboxMessage being displayed.
- */
-@property (nonatomic, strong) UAInboxMessage *message;
-
-/**
- * Block that will be invoked when this class receives a closeWindow message from the webView.
- */
-@property (nonatomic, copy) void (^closeBlock)(BOOL animated);
-
-/**
- * Load a UAInboxMessage at a particular index in the message list.
- * @param index The corresponding index in the message list as an integer.
- */
-- (void)loadMessageAtIndex:(NSUInteger)index;
-
-/**
- * Load a UAInboxMessage by message ID.
- * @param mid The message ID as an NSString.
- */
-- (void)loadMessageForID:(NSString *)mid;
+- (void)displayMessage:(UAInboxMessage *)message;
 
 @end

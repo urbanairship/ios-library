@@ -19,7 +19,7 @@
                     <imageView opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="ihY-21-382">
                         <rect key="frame" x="26" y="12" width="59" height="47"/>
                         <constraints>
-                            <constraint firstAttribute="width" secondItem="ihY-21-382" secondAttribute="height" multiplier="1.25:1" id="FuL-D0-nKl"/>
+                            <constraint firstAttribute="width" secondItem="ihY-21-382" secondAttribute="height" multiplier="1.25:1" priority="999" id="FuL-D0-nKl"/>
                         </constraints>
                     </imageView>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" preservesSuperviewLayoutMargins="YES" text="Title" lineBreakMode="tailTruncation" numberOfLines="2" minimumFontSize="20" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9">
