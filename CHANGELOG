@@ -3,9 +3,14 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+Version 7.0.1 - February 5, 2016
+================================
+- Fixed Urban Airship JavaScript bridge when using the default Message Center.
+- Added tint color to the Swift Sample's Message Center.
+
 Version 7.0.0 - January 28, 2016
 ================================
-- Includes support for out of the box Message Center. The Message Center can be themed to match the application
+- Includes support for default Message Center. The Message Center can be themed to match the application
   or it can be overridden with a custom Message Center implementation.
 - Landing pages will no longer show error pages, instead they will retry indefinitely every 20 seconds
   until either the page loads successfully or the user exits the page.
@@ -94,7 +99,7 @@ Version 7.0.0 - January 28, 2016
 - Prefixed all constants in public headers with 'UA'.
 - Fixed race condition preventing the display of in-app messages on some devices.
 - Fixed missing InboxMessage metadata when running an action from a WebView with an associated message.
-- Fixed Urban Airship Javascript bridge when running actions that returns a result with unescaped JSON values.
+- Fixed Urban Airship JavaScript bridge when running actions that returns a result with unescaped JSON values.
 
 6.0.1 - April 9, 2015
 =====================
@@ -115,7 +120,7 @@ Version 7.0.0 - January 28, 2016
   and are now accessible from class methods on UAirship.
 - Removed action name from action method signatures. The action name is now available with the action arguments metadata.
 - UAPushNotificationHandler is no longer automatically set as the push handler if the class was present.
-- Fixed Urban Airship Javascript bridge when the associated InboxMessage contains invalid characters in its title.
+- Fixed Urban Airship JavaScript bridge when the associated InboxMessage contains invalid characters in its title.
 - Fixed Inbox not repopulating its messages when an upgrade causes the inbox's internal cache to be dropped.
 
 5.1.1 - December 11, 2014
@@ -125,9 +130,9 @@ Version 7.0.0 - January 28, 2016
 
 5.1.0 - December 2, 2014
 ========================
-- Added whitelisting to Urban Airship Javascript interface injection.
-- Added UAWebViewDelegate to simplify Urban Airship Javascript interface injection into custom webview implementations.
-  - Prevents the Urban Airship Javascript interface from being injected multiple times into a page with frames.
+- Added whitelisting to Urban Airship JavaScript interface injection.
+- Added UAWebViewDelegate to simplify Urban Airship JavaScript interface injection into custom webview implementations.
+  - Prevents the Urban Airship JavaScript interface from being injected multiple times into a page with frames.
 - Fixed crash when using the Share Action on iPad devices.
 
 5.0.3 - October 8, 2014
@@ -241,10 +246,10 @@ This update is only required if building against the iOS 8 SDK.
 - Introduced a new device identifier, the Channel ID, which will replace the device token as the push address in Urban
   Airship API calls.
 - Use background tasks for all registration and analytics traffic.
-- Refactored Urban Airship Javascript interface injection and webview url interception into UAWebViewTools and UIWebView+UAAdditions.
+- Refactored Urban Airship JavaScript interface injection and webview url interception into UAWebViewTools and UIWebView+UAAdditions.
 - Deprecated Urban Airship scheme "ua" in favor of the new scheme "uairship".
-- Added Javascript interface methods - getMessageSentDateMS, getMessageSentDate, getMessageTitle, getMessageId, getUserId and getDeviceModel
-  to match the Android Urban Airship Javascript interface.
+- Added JavaScript interface methods - getMessageSentDateMS, getMessageSentDate, getMessageTitle, getMessageId, getUserId and getDeviceModel
+  to match the Android Urban Airship JavaScript interface.
 
 3.1.1 (Internal Release) - November 21, 2013
 ============================================
@@ -537,7 +542,7 @@ InboxLib
 - UAInboxMessageList supports concurrent batch updates
 - Message extras are now retrieved and cached locally
 - Improvements to message and asset cache for performance
-- Improvements to Obj-C <-> Javascript bridge
+- Improvements to Obj-C <-> JavaScript bridge
 - Added message id and user id values to the message detail's JS environment
 - See http://support.urbanairship.com/customer/portal/articles/200710-upgrading-to-rich-push-in-1-1-
   for information on specific items added, removed or modified
