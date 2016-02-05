@@ -75,6 +75,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    self.webViewDelegate = [[UAWebViewDelegate alloc] init];
+    self.webViewDelegate.forwardDelegate = self;
+    self.webViewDelegate.richContentWindow = self;
+    self.webView.delegate = self.webViewDelegate;
+
     // Allow the webView to detect data types (e.g. phone numbers, addresses) at will
     [self.webView setDataDetectorTypes:UIDataDetectorTypeAll];
 
