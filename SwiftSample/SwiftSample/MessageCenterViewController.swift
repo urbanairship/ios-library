@@ -38,6 +38,7 @@ class MessageCenterViewController : UADefaultMessageCenterSplitViewController {
 
         style.navigationBarColor = UIColor(red: 0.988, green: 0.694, blue: 0.106, alpha: 1)
         style.titleColor = UIColor(red: 0.039, green: 0.341, blue: 0.490, alpha: 1)
+        style.tintColor = UIColor(red: 0.039, green: 0.341, blue: 0.490, alpha: 1)
 
         style.titleFont = robotoRegular
         style.cellTitleFont = robotoBold
