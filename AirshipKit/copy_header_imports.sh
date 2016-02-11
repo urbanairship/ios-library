@@ -6,7 +6,7 @@ SOURCE_LIB_HEADER="${AIRSHIP_DIR}/AirshipLib.h"
 TARGET_LIB_HEADER="${FRAMEWORK_HEADERS_DIR}/AirshipLib.h"
 
 # If there's already an AirshipLib.h in the framework headers directory
-if [ -a ${FRAMEWORK_HEADERS_DIR}/AirshipLib.h ]; then
+if [ -a "${FRAMEWORK_HEADERS_DIR}/AirshipLib.h" ]; then
     # If the contents haven't changed, exit early
     if diff -q "${SOURCE_LIB_HEADER}" "${TARGET_LIB_HEADER}" > /dev/null; then
         exit 0
