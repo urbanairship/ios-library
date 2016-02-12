@@ -3,6 +3,11 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+Version 7.0.2 - February 12, 2016
+=================================
+- Fixed submission problems due to the AirshipResources.bundle containing the CFBundleExecutable key.
+- Fixed unnecessary AirshipKit recompilations for build directories with spaces.
+
 Version 7.0.1 - February 5, 2016
 ================================
 - Fixed Urban Airship JavaScript bridge when using the default Message Center.
