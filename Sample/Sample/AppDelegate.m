@@ -82,7 +82,20 @@
     // notifications.
     // [UAirship push].userPushNotificationsEnabled = YES;
 
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshMessageCenterBadge) name:UAInboxMessageListUpdatedNotification object:nil];
+
     return YES;
+}
+
+- (void)refreshMessageCenterBadge {
+
+    UITabBarItem *messageCenterTab = [[[(UITabBarController *)self.window.rootViewController tabBar] items] objectAtIndex:2];
+
+    if ([UAirship inbox].messageList.unreadCount > 0) {
+        [messageCenterTab setBadgeValue:[NSString stringWithFormat:@"%ld", (long)[UAirship inbox].messageList.unreadCount]];
+    } else {
+        [messageCenterTab setBadgeValue:nil];
+    }
 }
 
 - (void)failIfSimulator {
@@ -116,6 +129,10 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [self.window.rootViewController presentViewController:alertController animated:YES completion:nil];
     });
+}
+
+-(void)applicationWillEnterForeground:(UIApplication *)application {
+    [self refreshMessageCenterBadge];
 }
 
 - (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(nonnull NSString *)deviceToken {

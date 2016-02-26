@@ -70,6 +70,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
         self.inboxDelegate = InboxDelegate(rootViewController: (window?.rootViewController)!)
         UAirship.inbox().delegate = self.inboxDelegate
 
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"refreshMessageCenterBadge", name: UAInboxMessageListUpdatedNotification, object: nil)
+
         return true
     }
 
@@ -98,7 +100,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
             self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
         }
     }
-    
+
+    func applicationWillEnterForeground(application: UIApplication) {
+        refreshMessageCenterBadge()
+    }
+
+    func refreshMessageCenterBadge() {
+
+        if self.window?.rootViewController is UITabBarController {
+            let messageCenterTab: UITabBarItem = (self.window!.rootViewController! as! UITabBarController).tabBar.items![2]
+
+            if (UAirship.inbox().messageList.unreadCount > 0) {
+                messageCenterTab.badgeValue = String(stringInterpolationSegment:UAirship.inbox().messageList.unreadCount)
+            } else {
+                messageCenterTab.badgeValue = nil
+            }
+        }
+    }
+
     func registrationSucceededForChannelID(channelID: String, deviceToken: String) {
         NSNotificationCenter.defaultCenter().postNotificationName(
             "channelIDUpdated",
