@@ -71,6 +71,10 @@ extern NSUInteger const UAAssociatedIdentifiersMaxCharacterCount;
  */
 @property (nonatomic, copy, nullable) NSString *vendorID;
 
+/**
+ * Indicates whether limited advertising tracking is enabled.
+ */
+@property (nonatomic, assign) BOOL limitedAdTrackingEnabled;
 
 /**
  * A map of all the associated identifiers.
