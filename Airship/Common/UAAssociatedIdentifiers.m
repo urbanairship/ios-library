@@ -27,6 +27,7 @@
 
 #define kUAAssociatedIdentifierIDFAKey @"com.urbanairship.idfa"
 #define kUAAssociatedIdentifierVendorKey @"com.urbanairship.vendor"
+#define kUAAssociatedIdentifierLimitedAdTrackingEnabledKey @"com.urbanairship.limited_ad_tracking_enabled"
 
 @interface UAAssociatedIdentifiers()
 @property (nonatomic, strong) NSMutableDictionary *mutableIDs;
@@ -70,6 +71,14 @@ NSUInteger const UAAssociatedIdentifiersMaxCharacterCount = 255;
 
 - (NSString *)vendorID {
     return [self.mutableIDs valueForKey:kUAAssociatedIdentifierVendorKey];
+}
+
+- (void)setLimitedAdTrackingEnabled:(BOOL)limitedAdTrackingEnabled {
+    [self setIdentifier:(limitedAdTrackingEnabled ? @"true" : @"false") forKey:kUAAssociatedIdentifierLimitedAdTrackingEnabledKey];
+}
+
+- (BOOL)limitedAdTrackingEnabled {
+    return [[self.mutableIDs valueForKey:kUAAssociatedIdentifierLimitedAdTrackingEnabledKey] isEqualToString:@"true"];
 }
 
 - (void)setIdentifier:(NSString *)identifier forKey:(NSString *)key {

@@ -46,6 +46,7 @@
     UAAssociatedIdentifiers *identifiers = [UAAssociatedIdentifiers identifiers];
     identifiers.vendorID = @"vendor ID";
     identifiers.advertisingID = @"ad ID";
+    identifiers.limitedAdTrackingEnabled = YES;
 
     UAAssociateIdentifiersEvent *event = [UAAssociateIdentifiersEvent eventWithIDs:identifiers];
 

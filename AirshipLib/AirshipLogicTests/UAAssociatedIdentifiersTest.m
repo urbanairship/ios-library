@@ -38,9 +38,18 @@
     UAAssociatedIdentifiers *identifiers = [UAAssociatedIdentifiers identifiersWithDictionary:@{@"custom key": @"custom value"}];
     identifiers.vendorID = @"vendor ID";
     identifiers.advertisingID = @"advertising ID";
+    identifiers.limitedAdTrackingEnabled = YES;
     [identifiers setIdentifier:@"another custom value" forKey:@"another custom key"];
 
     XCTAssertEqualObjects(@"vendor ID", identifiers.allIDs[@"com.urbanairship.vendor"]);
+    XCTAssertEqualObjects(@"advertising ID", identifiers.allIDs[@"com.urbanairship.idfa"]);
+    XCTAssertTrue(identifiers.limitedAdTrackingEnabled);
+    XCTAssertEqualObjects(@"true", identifiers.allIDs[@"com.urbanairship.limited_ad_tracking_enabled"]);
+    XCTAssertEqualObjects(@"another custom value", identifiers.allIDs[@"another custom key"]);
+
+    identifiers.limitedAdTrackingEnabled = NO;
+    XCTAssertFalse(identifiers.limitedAdTrackingEnabled);
+    XCTAssertEqualObjects(@"false", identifiers.allIDs[@"com.urbanairship.limited_ad_tracking_enabled"]);
 }
 
 @end
