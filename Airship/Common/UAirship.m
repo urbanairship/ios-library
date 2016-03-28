@@ -139,7 +139,11 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         // Only create the default message center if running iOS 8 and above
         if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
-            self.sharedDefaultMessageCenter = [[UADefaultMessageCenter alloc] init];
+            if ([UAirship resources]) {
+                self.sharedDefaultMessageCenter = [[UADefaultMessageCenter alloc] init];
+            } else {
+                UA_LINFO(@"Unable to initialize default message center: AirshipResources is missing");
+            }
         }
 
         self.channelCapture = [UAChannelCapture channelCaptureWithConfig:config push:self.sharedPush];
@@ -186,12 +190,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     // Ensure that app credentials have been passed in
     if (![config validate]) {
         UA_LIMPERR(@"The AirshipConfig.plist file is missing and no application credentials were specified at runtime.");
-        // Bail now. Don't continue the takeOff sequence.
-        return;
-    }
-
-    if (![self resources]) {
-        UA_LIMPERR(@"AirshipResources.bundle could not be found. If using the static library, you must add this file to your application's Copy Bundle Resources phase, or use the AirshipKit embedded framework");
         // Bail now. Don't continue the takeOff sequence.
         return;
     }
@@ -404,6 +402,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         NSURL *resourcesBundleURL = [containingBundle URLForResource:@"AirshipResources" withExtension:@"bundle"];
         if (resourcesBundleURL) {
             resourcesBundle_ = [NSBundle bundleWithURL:resourcesBundleURL];
+        }
+        if (!resourcesBundle_) {
+            UA_LIMPERR(@"AirshipResources.bundle could not be found. If using the static library, you must add this file to your application's Copy Bundle Resources phase, or use the AirshipKit embedded framework");
         }
     });
     return resourcesBundle_;
