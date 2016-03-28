@@ -30,6 +30,7 @@ import AirshipKit
 class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
 
     let simulatorWarningDisabledKey = "ua-simulator-warning-disabled"
+    let pushHandler = PushHandler()
 
     var window: UIWindow?
     var inboxDelegate: InboxDelegate?
@@ -69,6 +70,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
         // Set a custom delegate for handling message center events
         self.inboxDelegate = InboxDelegate(rootViewController: (window?.rootViewController)!)
         UAirship.inbox().delegate = self.inboxDelegate
+        UAirship.push().pushNotificationDelegate = pushHandler
 
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"refreshMessageCenterBadge", name: UAInboxMessageListUpdatedNotification, object: nil)
 
