@@ -149,6 +149,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 }
 
 + (void)takeOff {
+    if (![[NSBundle mainBundle] pathForResource:@"AirshipConfig" ofType:@"plist"]) {
+        UA_LIMPERR(@"AirshipConfig.plist file is missing. Unable to takeOff.");
+        // Bail now. Don't continue the takeOff sequence.
+        return;
+    }
+
     [UAirship takeOff:[UAConfig defaultConfig]];
 }
 
@@ -172,6 +178,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
  * This is an unsafe version of takeOff - use takeOff: instead for dispatch_once
  */
 + (void)executeUnsafeTakeOff:(UAConfig *)config {
+
     // Airships only take off once!
     if (sharedAirship_) {
         return;
@@ -183,9 +190,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         [UAirship setLoudImpErrorLogging:NO];
     }
 
-    // Ensure that app credentials have been passed in
+    // Ensure that app credentials are valid
     if (![config validate]) {
-        UA_LIMPERR(@"The AirshipConfig.plist file is missing and no application credentials were specified at runtime.");
+        UA_LIMPERR(@"The UAConfig is invalid, no application credentials were specified at runtime.");
         // Bail now. Don't continue the takeOff sequence.
         return;
     }
