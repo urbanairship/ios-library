@@ -108,7 +108,7 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
     } else {
         NSError *error = [NSError errorWithDomain:UAAddCustomEventActionErrorDomain
                                              code:UAAddCustomEventActionErrorCodeInvalidEventName
-                                         userInfo:@{NSLocalizedDescriptionKey:@"Invalid event. Verify event name is not empty and within 255 characters."}];
+                                         userInfo:@{NSLocalizedDescriptionKey:@"Invalid custom event. Verify the event name is specified, event value must be a number, and all values must not exceed 255 characters."}];
 
         completionHandler([UAActionResult resultWithError:error]);
     }
