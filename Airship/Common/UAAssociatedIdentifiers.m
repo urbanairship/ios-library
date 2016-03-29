@@ -53,7 +53,10 @@ NSUInteger const UAAssociatedIdentifiersMaxCharacterCount = 255;
 
 + (instancetype)identifiersWithDictionary:(NSDictionary *)identifiers {
     UAAssociatedIdentifiers *associatedIdentifiers = [[UAAssociatedIdentifiers alloc] init];
-    [associatedIdentifiers.mutableIDs setValuesForKeysWithDictionary:identifiers];
+
+    if (identifiers) {
+        [associatedIdentifiers.mutableIDs setValuesForKeysWithDictionary:identifiers];
+    }
     return associatedIdentifiers;
 }
 
@@ -79,6 +82,15 @@ NSUInteger const UAAssociatedIdentifiersMaxCharacterCount = 255;
 
 - (BOOL)limitedAdTrackingEnabled {
     return [[self.mutableIDs valueForKey:kUAAssociatedIdentifierLimitedAdTrackingEnabledKey] isEqualToString:@"true"];
+}
+
+- (void)setAdvertisingTrackingEnabled:(BOOL)advertisingTrackingEnabled {
+    // If advertisingTrackingEnabled is `YES`, store the limitedAdTrackingEnabled value as `false`
+    [self setIdentifier:(advertisingTrackingEnabled ? @"false" : @"true") forKey:kUAAssociatedIdentifierLimitedAdTrackingEnabledKey];
+}
+
+- (BOOL)advertisingTrackingEnabled {
+    return ![[self.mutableIDs valueForKey:kUAAssociatedIdentifierLimitedAdTrackingEnabledKey] isEqualToString:@"true"];
 }
 
 - (void)setIdentifier:(NSString *)identifier forKey:(NSString *)key {
