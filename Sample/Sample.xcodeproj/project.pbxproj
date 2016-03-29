@@ -18,6 +18,7 @@
 		493F51051C5B262100B050A1 /* Roboto-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 493F50F81C5B262100B050A1 /* Roboto-ThinItalic.ttf */; };
 		493F510B1C5B275100B050A1 /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 493F51091C5B275100B050A1 /* UAPushUI.strings */; };
 		493F51211C5B3A5100B050A1 /* InboxDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 493F51201C5B3A5100B050A1 /* InboxDelegate.m */; };
+		61A672FC1CAB3E5A00BAF58A /* PushHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 61A672FB1CAB3E5A00BAF58A /* PushHandler.m */; };
 		764693A71C237B630090FE40 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A61C237B630090FE40 /* main.m */; };
 		764693AA1C237B630090FE40 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A91C237B630090FE40 /* AppDelegate.m */; };
 		764693AD1C237B630090FE40 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693AC1C237B630090FE40 /* HomeViewController.m */; };
@@ -101,6 +102,8 @@
 		493F510A1C5B275100B050A1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UAPushUI.strings; sourceTree = "<group>"; };
 		493F511F1C5B3A5100B050A1 /* InboxDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxDelegate.h; sourceTree = "<group>"; };
 		493F51201C5B3A5100B050A1 /* InboxDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxDelegate.m; sourceTree = "<group>"; };
+		61A672FA1CAB3E5A00BAF58A /* PushHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushHandler.h; sourceTree = "<group>"; };
+		61A672FB1CAB3E5A00BAF58A /* PushHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushHandler.m; sourceTree = "<group>"; };
 		764693A21C237B630090FE40 /* Sample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		764693A61C237B630090FE40 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		764693A81C237B630090FE40 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -205,6 +208,8 @@
 			children = (
 				764693A81C237B630090FE40 /* AppDelegate.h */,
 				764693A91C237B630090FE40 /* AppDelegate.m */,
+				61A672FA1CAB3E5A00BAF58A /* PushHandler.h */,
+				61A672FB1CAB3E5A00BAF58A /* PushHandler.m */,
 				764693AB1C237B630090FE40 /* HomeViewController.h */,
 				764693AC1C237B630090FE40 /* HomeViewController.m */,
 				764693AE1C237B630090FE40 /* PushSettingsViewController.h */,
@@ -406,6 +411,7 @@
 			files = (
 				764693B01C237B630090FE40 /* PushSettingsViewController.m in Sources */,
 				764693AA1C237B630090FE40 /* AppDelegate.m in Sources */,
+				61A672FC1CAB3E5A00BAF58A /* PushHandler.m in Sources */,
 				764693F71C238A5E0090FE40 /* TagsTableViewController.m in Sources */,
 				764693F11C2389D50090FE40 /* AddAliasTableViewController.m in Sources */,
 				764693AD1C237B630090FE40 /* HomeViewController.m in Sources */,

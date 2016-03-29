@@ -27,11 +27,14 @@
 #import <AirshipKit/AirshipKit.h>
 #import "AppDelegate.h"
 #import "InboxDelegate.h"
+#import "PushHandler.h"
 
 #define kSimulatorWarningDisabledKey @"ua-simulator-warning-disabled"
 
 @interface AppDelegate ()
 @property(nonatomic, strong) InboxDelegate *inboxDelegate;
+@property(nonatomic, strong) PushHandler *pushHandler;
+
 @end
 
 @implementation AppDelegate
@@ -74,6 +77,9 @@
     // Set a custom delegate for handling message center events
     self.inboxDelegate = [[InboxDelegate alloc] initWithRootViewController:self.window.rootViewController];
     [UAirship inbox].delegate = self.inboxDelegate;
+
+    self.pushHandler = [[PushHandler alloc] init];
+    [UAirship push].pushNotificationDelegate = self.pushHandler;
 
     // User notifications will not be enabled until userPushNotificationsEnabled is
     // set YES on UAPush. Once enabled, the setting will be persisted and the user
