@@ -60,8 +60,6 @@
     // If the string couldn't be found in the main bundle, search AirshipResources
     NSBundle *fallbackBundle = [UAirship resources];
 
-
-
     NSString *string = [self sanitizedLocalizedStringWithTable:table primaryBundle:primaryBundle fallbackBundle:fallbackBundle];
     if (!string) {
         if (fallbackLocale) {
