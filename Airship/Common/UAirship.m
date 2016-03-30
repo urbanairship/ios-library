@@ -139,7 +139,11 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         // Only create the default message center if running iOS 8 and above
         if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
-            self.sharedDefaultMessageCenter = [[UADefaultMessageCenter alloc] init];
+            if ([UAirship resources]) {
+                self.sharedDefaultMessageCenter = [[UADefaultMessageCenter alloc] init];
+            } else {
+                UA_LINFO(@"Unable to initialize default message center: AirshipResources is missing");
+            }
         }
 
         self.channelCapture = [UAChannelCapture channelCaptureWithConfig:config push:self.sharedPush];
@@ -149,6 +153,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 }
 
 + (void)takeOff {
+    if (![[NSBundle mainBundle] pathForResource:@"AirshipConfig" ofType:@"plist"]) {
+        UA_LIMPERR(@"AirshipConfig.plist file is missing. Unable to takeOff.");
+        // Bail now. Don't continue the takeOff sequence.
+        return;
+    }
+
     [UAirship takeOff:[UAConfig defaultConfig]];
 }
 
@@ -172,6 +182,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
  * This is an unsafe version of takeOff - use takeOff: instead for dispatch_once
  */
 + (void)executeUnsafeTakeOff:(UAConfig *)config {
+
     // Airships only take off once!
     if (sharedAirship_) {
         return;
@@ -183,15 +194,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         [UAirship setLoudImpErrorLogging:NO];
     }
 
-    // Ensure that app credentials have been passed in
+    // Ensure that app credentials are valid
     if (![config validate]) {
-        UA_LIMPERR(@"The AirshipConfig.plist file is missing and no application credentials were specified at runtime.");
-        // Bail now. Don't continue the takeOff sequence.
-        return;
-    }
-
-    if (![self resources]) {
-        UA_LIMPERR(@"AirshipResources.bundle could not be found. If using the static library, you must add this file to your application's Copy Bundle Resources phase, or use the AirshipKit embedded framework");
+        UA_LIMPERR(@"The UAConfig is invalid, no application credentials were specified at runtime.");
         // Bail now. Don't continue the takeOff sequence.
         return;
     }
@@ -404,6 +409,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         NSURL *resourcesBundleURL = [containingBundle URLForResource:@"AirshipResources" withExtension:@"bundle"];
         if (resourcesBundleURL) {
             resourcesBundle_ = [NSBundle bundleWithURL:resourcesBundleURL];
+        }
+        if (!resourcesBundle_) {
+            UA_LIMPERR(@"AirshipResources.bundle could not be found. If using the static library, you must add this file to your application's Copy Bundle Resources phase, or use the AirshipKit embedded framework");
         }
     });
     return resourcesBundle_;

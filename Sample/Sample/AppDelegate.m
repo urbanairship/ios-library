@@ -27,11 +27,14 @@
 #import <AirshipKit/AirshipKit.h>
 #import "AppDelegate.h"
 #import "InboxDelegate.h"
+#import "PushHandler.h"
 
 #define kSimulatorWarningDisabledKey @"ua-simulator-warning-disabled"
 
 @interface AppDelegate ()
 @property(nonatomic, strong) InboxDelegate *inboxDelegate;
+@property(nonatomic, strong) PushHandler *pushHandler;
+
 @end
 
 @implementation AppDelegate
@@ -75,6 +78,9 @@
     self.inboxDelegate = [[InboxDelegate alloc] initWithRootViewController:self.window.rootViewController];
     [UAirship inbox].delegate = self.inboxDelegate;
 
+    self.pushHandler = [[PushHandler alloc] init];
+    [UAirship push].pushNotificationDelegate = self.pushHandler;
+
     // User notifications will not be enabled until userPushNotificationsEnabled is
     // set YES on UAPush. Once enabled, the setting will be persisted and the user
     // will be prompted to allow notifications. You should wait for a more appropriate
@@ -82,7 +88,20 @@
     // notifications.
     // [UAirship push].userPushNotificationsEnabled = YES;
 
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshMessageCenterBadge) name:UAInboxMessageListUpdatedNotification object:nil];
+
     return YES;
+}
+
+- (void)refreshMessageCenterBadge {
+
+    UITabBarItem *messageCenterTab = [[[(UITabBarController *)self.window.rootViewController tabBar] items] objectAtIndex:2];
+
+    if ([UAirship inbox].messageList.unreadCount > 0) {
+        [messageCenterTab setBadgeValue:[NSString stringWithFormat:@"%ld", (long)[UAirship inbox].messageList.unreadCount]];
+    } else {
+        [messageCenterTab setBadgeValue:nil];
+    }
 }
 
 - (void)failIfSimulator {
@@ -116,6 +135,10 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [self.window.rootViewController presentViewController:alertController animated:YES completion:nil];
     });
+}
+
+-(void)applicationWillEnterForeground:(UIApplication *)application {
+    [self refreshMessageCenterBadge];
 }
 
 - (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(nonnull NSString *)deviceToken {
