@@ -11,6 +11,7 @@
 		493F511D1C5B306C00B050A1 /* InboxDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 493F511C1C5B306C00B050A1 /* InboxDelegate.m */; };
 		4997B4041C40415E00C80C14 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4997B3F41C40402B00C80C14 /* AirshipKit.framework */; };
 		4997B4051C40415E00C80C14 /* AirshipKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4997B3F41C40402B00C80C14 /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		61A672F61CAB319C00BAF58A /* PushHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 61A672F51CAB319C00BAF58A /* PushHandler.m */; };
 		61F645A91C486FEE00B2C48B /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4997B3F41C40402B00C80C14 /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		764693A71C237B630090FE40 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A61C237B630090FE40 /* main.m */; };
 		764693AA1C237B630090FE40 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A91C237B630090FE40 /* AppDelegate.m */; };
@@ -96,6 +97,8 @@
 		493F511B1C5B306C00B050A1 /* InboxDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxDelegate.h; sourceTree = "<group>"; };
 		493F511C1C5B306C00B050A1 /* InboxDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxDelegate.m; sourceTree = "<group>"; };
 		4997B3EF1C40402B00C80C14 /* AirshipKitSource.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipKitSource.xcodeproj; path = ../AirshipKit/AirshipKitSource.xcodeproj; sourceTree = "<group>"; };
+		61A672F41CAB319C00BAF58A /* PushHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushHandler.h; sourceTree = "<group>"; };
+		61A672F51CAB319C00BAF58A /* PushHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushHandler.m; sourceTree = "<group>"; };
 		764693A21C237B630090FE40 /* Sample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		764693A61C237B630090FE40 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		764693A81C237B630090FE40 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -189,6 +192,8 @@
 			children = (
 				764693A81C237B630090FE40 /* AppDelegate.h */,
 				764693A91C237B630090FE40 /* AppDelegate.m */,
+				61A672F41CAB319C00BAF58A /* PushHandler.h */,
+				61A672F51CAB319C00BAF58A /* PushHandler.m */,
 				764693AB1C237B630090FE40 /* HomeViewController.h */,
 				764693AC1C237B630090FE40 /* HomeViewController.m */,
 				764693AE1C237B630090FE40 /* PushSettingsViewController.h */,
@@ -382,6 +387,7 @@
 			files = (
 				CC2C2A731C5831E9003A7BA6 /* MessageCenterViewController.m in Sources */,
 				764693B01C237B630090FE40 /* PushSettingsViewController.m in Sources */,
+				61A672F61CAB319C00BAF58A /* PushHandler.m in Sources */,
 				764693AA1C237B630090FE40 /* AppDelegate.m in Sources */,
 				764693F71C238A5E0090FE40 /* TagsTableViewController.m in Sources */,
 				764693F11C2389D50090FE40 /* AddAliasTableViewController.m in Sources */,
