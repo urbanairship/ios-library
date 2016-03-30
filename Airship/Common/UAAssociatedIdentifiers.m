@@ -77,11 +77,11 @@ NSUInteger const UAAssociatedIdentifiersMaxCharacterCount = 255;
 }
 
 - (void)setLimitedAdTrackingEnabled:(BOOL)limitedAdTrackingEnabled {
-    [self setIdentifier:(limitedAdTrackingEnabled ? @"true" : @"false") forKey:kUAAssociatedIdentifierLimitedAdTrackingEnabledKey];
+    [self setAdvertisingTrackingEnabled:!limitedAdTrackingEnabled];
 }
 
 - (BOOL)limitedAdTrackingEnabled {
-    return [[self.mutableIDs valueForKey:kUAAssociatedIdentifierLimitedAdTrackingEnabledKey] isEqualToString:@"true"];
+    return ![self advertisingTrackingEnabled];
 }
 
 - (void)setAdvertisingTrackingEnabled:(BOOL)advertisingTrackingEnabled {
