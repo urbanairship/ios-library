@@ -3,6 +3,13 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+Version 7.0.3 - March 30, 2016
+=================================
+- Added more specific UAConfig validation logging.
+- Improved custom Event logging.
+- Added PushHandler class and Message Center badging to Samples.
+- Improved support for when AirshipResources.bundle is unavailable.
+
 Version 7.0.2 - February 12, 2016
 =================================
 - Fixed submission problems due to the AirshipResources.bundle containing the CFBundleExecutable key.
