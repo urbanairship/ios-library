@@ -24,7 +24,7 @@
  */
 
 #import <XCTest/XCTest.h>
-#import "UAUserNotificationCategories.h"
+#import "UAUserNotificationCategories+Internal.h"
 #import "UAUserNotificationCategory.h"
 #import "UAUserNotificationAction.h"
 
@@ -33,6 +33,34 @@
 @end
 
 @implementation UAUserNotificationCategoriesTest
+
+- (void)testDefaultCategories {
+    NSSet *categories = [UAUserNotificationCategories defaultCategories];
+    XCTAssertEqual(27, categories.count);
+
+    // Require auth defaults to true for background actions
+    for (UAUserNotificationCategory *category in categories) {
+        for (UAUserNotificationAction *action in [category actionsForContext:UIUserNotificationActionContextDefault]) {
+            if (action.activationMode == UIUserNotificationActivationModeBackground) {
+                XCTAssertTrue(action.authenticationRequired);
+            }
+        }
+    }
+}
+
+- (void)testDefaultCategoriesOverrideAuth {
+    NSSet *categories = [UAUserNotificationCategories defaultCategoriesWithRequireAuth:NO];
+    XCTAssertEqual(27, categories.count);
+
+    // Verify require auth is false for background actions
+    for (UAUserNotificationCategory *category in categories) {
+        for (UAUserNotificationAction *action in [category actionsForContext:UIUserNotificationActionContextDefault]) {
+            if (action.activationMode == UIUserNotificationActivationModeBackground) {
+                XCTAssertFalse(action.authenticationRequired);
+            }
+        }
+    }
+}
 
 - (void)testCreateFromPlist {
     NSString *plistPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"CustomNotificationCategories" ofType:@"plist"];
@@ -93,6 +121,8 @@
     XCTAssertFalse(followAction.destructive);
 }
 
+
+
 - (void)testDoesNotCreateCategoryMissingTitle {
     NSArray *actions = @[@{@"identifier": @"yes",
                            @"foreground": @YES,
@@ -141,7 +171,6 @@
     XCTAssertEqual(UIUserNotificationActivationModeBackground, noAction.activationMode);
     XCTAssertFalse(noAction.authenticationRequired);
     XCTAssertTrue(noAction.destructive);
-
 }
 
 

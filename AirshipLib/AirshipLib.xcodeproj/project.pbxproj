@@ -354,6 +354,7 @@
 		CCBA4F891AC108C100857572 /* UADisplayInboxAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBA4F871AC108C100857572 /* UADisplayInboxAction.h */; };
 		CCBA4F8B1AC108C100857572 /* UADisplayInboxAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCBA4F881AC108C100857572 /* UADisplayInboxAction.m */; };
 		CCBA4F8E1AC10BBD00857572 /* UADisplayInboxActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCBA4F8D1AC10BBD00857572 /* UADisplayInboxActionTest.m */; };
+		CCBBC5E31CAC6953000CCD7F /* UANotificationCategories.plist in Resources */ = {isa = PBXBuildFile; fileRef = CCBBC5E21CAC6953000CCD7F /* UANotificationCategories.plist */; };
 		CCBFA2DB17B5436500F97E1D /* NSJSONSerialization+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CCBFA2D917B5436500F97E1D /* NSJSONSerialization+UAAdditions.m */; };
 		CCBFA2E017B547B600F97E1D /* NSJSONSerialization_UAAdditionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCBFA2DF17B547B600F97E1D /* NSJSONSerialization_UAAdditionsTests.m */; };
 		CCC0508C1A129C83000AE545 /* UAKeyChainUtilTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC0508B1A129C83000AE545 /* UAKeyChainUtilTest.m */; };
@@ -778,6 +779,7 @@
 		CCBA4F871AC108C100857572 /* UADisplayInboxAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADisplayInboxAction.h; sourceTree = "<group>"; };
 		CCBA4F881AC108C100857572 /* UADisplayInboxAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADisplayInboxAction.m; sourceTree = "<group>"; };
 		CCBA4F8D1AC10BBD00857572 /* UADisplayInboxActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADisplayInboxActionTest.m; sourceTree = "<group>"; };
+		CCBBC5E21CAC6953000CCD7F /* UANotificationCategories.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UANotificationCategories.plist; sourceTree = "<group>"; };
 		CCBFA2D817B5436500F97E1D /* NSJSONSerialization+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSJSONSerialization+UAAdditions.h"; sourceTree = "<group>"; };
 		CCBFA2D917B5436500F97E1D /* NSJSONSerialization+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSJSONSerialization+UAAdditions.m"; sourceTree = "<group>"; };
 		CCBFA2DF17B547B600F97E1D /* NSJSONSerialization_UAAdditionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSJSONSerialization_UAAdditionsTests.m; sourceTree = "<group>"; };
@@ -1102,6 +1104,7 @@
 				49EB68E91C1FC0DF00D05BCE /* UADefaultMessageCenterListViewController.xib */,
 				49EB68EA1C1FC0DF00D05BCE /* UADefaultMessageCenterMessageViewController.xib */,
 				4920514C1C0E6BEA00A7B36D /* Localization */,
+				CCBBC5E21CAC6953000CCD7F /* UANotificationCategories.plist */,
 			);
 			path = AirshipResources;
 			sourceTree = "<group>";
@@ -1963,6 +1966,7 @@
 			files = (
 				49EB68EC1C1FC0DF00D05BCE /* UADefaultMessageCenterListViewController.xib in Resources */,
 				498F6A061C3B4BB400088B01 /* UADefaultMessageCenterPlaceholderIcon.png in Resources */,
+				CCBBC5E31CAC6953000CCD7F /* UANotificationCategories.plist in Resources */,
 				49EB68ED1C1FC0DF00D05BCE /* UADefaultMessageCenterMessageViewController.xib in Resources */,
 				49EB68EB1C1FC0DF00D05BCE /* UADefaultMessageCenterListCell.xib in Resources */,
 				492BA2FF1C20F83100A252C8 /* UAMessageCenterUI.strings in Resources */,
