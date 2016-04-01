@@ -717,7 +717,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [self addEvent:[UAAssociateIdentifiersEvent eventWithIDs:associatedIdentifiers]];
 }
 
-- (UAAssociatedIdentifiers *)currentAssociatedDeviceIdentifiers{
+- (UAAssociatedIdentifiers *)currentAssociatedDeviceIdentifiers {
     NSDictionary *storedIDs = [self.dataStore objectForKey:kUAAssociatedIdentifiers];
     return [UAAssociatedIdentifiers identifiersWithDictionary:storedIDs];
 }

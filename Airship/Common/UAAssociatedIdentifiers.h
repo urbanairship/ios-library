@@ -52,7 +52,7 @@ extern NSUInteger const UAAssociatedIdentifiersMaxCharacterCount;
 
 /**
  * Factory method to create an associated identifiers instance with a dictionary
- * of custom identifiers.
+ * of custom identifiers (containing strings only).
  * @return The created associated identifiers.
  */
 #if __has_feature(objc_generics)
