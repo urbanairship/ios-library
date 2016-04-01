@@ -24,6 +24,7 @@
  */
 
 #import "UAAssociatedIdentifiers.h"
+#import "UAGlobal.h"
 
 #define kUAAssociatedIdentifierIDFAKey @"com.urbanairship.idfa"
 #define kUAAssociatedIdentifierVendorKey @"com.urbanairship.vendor"
@@ -53,7 +54,16 @@ NSUInteger const UAAssociatedIdentifiersMaxCharacterCount = 255;
 
 + (instancetype)identifiersWithDictionary:(NSDictionary *)identifiers {
     UAAssociatedIdentifiers *associatedIdentifiers = [[UAAssociatedIdentifiers alloc] init];
-    [associatedIdentifiers.mutableIDs setValuesForKeysWithDictionary:identifiers];
+
+    for (id key in identifiers) {
+        id value = identifiers[key];
+        if ([key isKindOfClass:[NSString class]] && [value isKindOfClass:[NSString class]]) {
+            [associatedIdentifiers setIdentifier:value forKey:key];
+        } else {
+            UA_LWARN(@"Unable to create associated identifiers instance when dictionary contains a non string key/value for key: %@", key);
+        }
+    }
+
     return associatedIdentifiers;
 }
 
@@ -74,11 +84,20 @@ NSUInteger const UAAssociatedIdentifiersMaxCharacterCount = 255;
 }
 
 - (void)setLimitedAdTrackingEnabled:(BOOL)limitedAdTrackingEnabled {
-    [self setIdentifier:(limitedAdTrackingEnabled ? @"true" : @"false") forKey:kUAAssociatedIdentifierLimitedAdTrackingEnabledKey];
+    [self setAdvertisingTrackingEnabled:!limitedAdTrackingEnabled];
 }
 
 - (BOOL)limitedAdTrackingEnabled {
-    return [[self.mutableIDs valueForKey:kUAAssociatedIdentifierLimitedAdTrackingEnabledKey] isEqualToString:@"true"];
+    return ![self advertisingTrackingEnabled];
+}
+
+- (void)setAdvertisingTrackingEnabled:(BOOL)advertisingTrackingEnabled {
+    // If advertisingTrackingEnabled is `YES`, store the limitedAdTrackingEnabled value as `false`
+    [self setIdentifier:(advertisingTrackingEnabled ? @"false" : @"true") forKey:kUAAssociatedIdentifierLimitedAdTrackingEnabledKey];
+}
+
+- (BOOL)advertisingTrackingEnabled {
+    return ![[self.mutableIDs valueForKey:kUAAssociatedIdentifierLimitedAdTrackingEnabledKey] isEqualToString:@"true"];
 }
 
 - (void)setIdentifier:(NSString *)identifier forKey:(NSString *)key {

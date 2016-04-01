@@ -47,6 +47,7 @@
 #import "UALocationService.h"
 #import "UARegionEvent+Internal.h"
 #import "UAAssociateIdentifiersEvent+Internal.h"
+#import "UAAssociatedIdentifiers.h"
 
 
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
@@ -57,6 +58,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 #define kUALocationPermissionAlwaysAllowed @"ALWAYS_ALLOWED";
 #define kUALocationPermissionForegroundAllowed @"FOREGROUND_ALLOWED";
 #define kUALocationPermissionUnprompted @"UNPROMPTED";
+#define kUAAssociatedIdentifiers @"UAAssociatedIdentifiers"
 
 @implementation UAAnalytics
 
@@ -711,7 +713,13 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 }
 
 - (void)associateDeviceIdentifiers:(UAAssociatedIdentifiers *)associatedIdentifiers {
+    [self.dataStore setObject:associatedIdentifiers.allIDs forKey:kUAAssociatedIdentifiers];
     [self addEvent:[UAAssociateIdentifiersEvent eventWithIDs:associatedIdentifiers]];
+}
+
+- (UAAssociatedIdentifiers *)currentAssociatedDeviceIdentifiers {
+    NSDictionary *storedIDs = [self.dataStore objectForKey:kUAAssociatedIdentifiers];
+    return [UAAssociatedIdentifiers identifiersWithDictionary:storedIDs];
 }
 
 - (NSString *)locationPermission {

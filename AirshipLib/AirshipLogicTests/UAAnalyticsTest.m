@@ -599,8 +599,10 @@
         return [event.data isEqualToDictionary:identifiers];
     }] withSessionID:OCMOCK_ANY];
 
-    // Associate the identifers
+    // Associate the identifiers
     [self.analytics associateDeviceIdentifiers:[UAAssociatedIdentifiers identifiersWithDictionary:identifiers]];
+
+    XCTAssertEqualObjects(identifiers, [self.analytics currentAssociatedDeviceIdentifiers].allIDs, @"DeviceIdentifiers should match");
 
     // Verify the event was added
     [self.mockDBManager verify];

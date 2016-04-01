@@ -52,7 +52,7 @@ extern NSUInteger const UAAssociatedIdentifiersMaxCharacterCount;
 
 /**
  * Factory method to create an associated identifiers instance with a dictionary
- * of custom identifiers.
+ * of custom identifiers (containing strings only).
  * @return The created associated identifiers.
  */
 #if __has_feature(objc_generics)
@@ -73,8 +73,14 @@ extern NSUInteger const UAAssociatedIdentifiersMaxCharacterCount;
 
 /**
  * Indicates whether limited advertising tracking is enabled.
+ * @deprecated As of version 7.1.0. Replaced with advertisingTrackingEnabled.
  */
-@property (nonatomic, assign) BOOL limitedAdTrackingEnabled;
+@property (nonatomic, assign) BOOL limitedAdTrackingEnabled __attribute__((deprecated("As of version 7.1.0. Use advertisingTrackingEnabled instead.")));
+
+/**
+ * Indicates whether the user has limited ad tracking.
+ */
+@property (nonatomic, assign) BOOL advertisingTrackingEnabled;
 
 /**
  * A map of all the associated identifiers.
