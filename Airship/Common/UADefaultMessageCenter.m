@@ -43,7 +43,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.title = UAMessageCenterLocalizedString(@"UA_Message_Center_Title");
+        self.title = UAMessageCenterLocalizedString(@"ua_message_center_title");
     }
     return self;
 }

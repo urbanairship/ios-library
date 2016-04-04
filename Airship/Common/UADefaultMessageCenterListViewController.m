@@ -150,7 +150,7 @@
                      action:@selector(editButtonPressed:)];
 
     self.cancelItem = [[UIBarButtonItem alloc]
-                       initWithTitle:UAMessageCenterLocalizedString(@"UA_Cancel")
+                       initWithTitle:UAMessageCenterLocalizedString(@"ua_cancel")
                        style:UIBarButtonItemStyleDone
                        target:self
                        action:@selector(cancelButtonPressed:)];
@@ -159,7 +159,7 @@
 
     [self createToolbarItems];
 
-    self.coverLabel.text = UAMessageCenterLocalizedString(@"UA_No_Messages");
+    self.coverLabel.text = UAMessageCenterLocalizedString(@"ua_empty_message_list");
 
     if (self.style.listColor) {
         self.messageTable.backgroundColor = self.style.listColor;
@@ -188,25 +188,12 @@
     [self addChildViewController:tableController];
 }
 
-- (void)displayAlert {
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:UAMessageCenterLocalizedString(@"UA_Error_Connection")
-                                                                   message:UAMessageCenterLocalizedString(@"UA_Error_Loading_Message_List")
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-
-    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
-                                                          handler:^(UIAlertAction * action) {}];
-
-    [alert addAction:defaultAction];
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
 - (void)refreshStateChanged:(UIRefreshControl *)sender {
     if (sender.refreshing) {
         [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
             [sender endRefreshing];
         } withFailureBlock:^ {
             [sender endRefreshing];
-            [self displayAlert];
         }];
     }
 }
@@ -233,7 +220,7 @@
                                                                                    target:nil
                                                                                    action:nil];
 
-    self.selectAllButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"UA_Select_All")
+    self.selectAllButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_select_all")
                                                                 style:UIBarButtonItemStylePlain
                                                                target:self
                                                                action:@selector(selectAllButtonPressed:)];
@@ -242,13 +229,13 @@
     self.selectAllButtonItem.tintColor = self.defaultTintColor;
 
 
-    self.deleteItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"UA_Delete")
+    self.deleteItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_delete")
                                                        style:UIBarButtonItemStylePlain
                                                       target:self
                                                       action:@selector(batchUpdateButtonPressed:)];
     self.deleteItem.tintColor = [UIColor redColor];
 
-    self.markAsReadButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"UA_Mark_as_Read")
+    self.markAsReadButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_mark_read")
                                                                  style:UIBarButtonItemStylePlain
                                                                 target:self action:@selector(batchUpdateButtonPressed:)];
 
@@ -489,8 +476,8 @@
 
 - (void)refreshBatchUpdateButtons {
     if (self.editing) {
-        NSString *deleteStr = UAMessageCenterLocalizedString(@"UA_Delete");
-        NSString *markReadStr = UAMessageCenterLocalizedString(@"UA_Mark_as_Read");
+        NSString *deleteStr = UAMessageCenterLocalizedString(@"ua_delete");
+        NSString *markReadStr = UAMessageCenterLocalizedString(@"ua_mark_read");
 
         UITableView *strongMessageTable = self.messageTable;
         NSUInteger count = [strongMessageTable.indexPathsForSelectedRows count];
@@ -520,9 +507,9 @@
         }
 
         if ([strongMessageTable.indexPathsForSelectedRows count] < [strongMessageTable numberOfRowsInSection:0]) {
-            self.selectAllButtonItem.title = UAMessageCenterLocalizedString(@"UA_Select_All");
+            self.selectAllButtonItem.title = UAMessageCenterLocalizedString(@"ua_select_all");
         } else {
-            self.selectAllButtonItem.title = UAMessageCenterLocalizedString(@"UA_Select_None");
+            self.selectAllButtonItem.title = UAMessageCenterLocalizedString(@"ua_select_none");
         }
     }
 }

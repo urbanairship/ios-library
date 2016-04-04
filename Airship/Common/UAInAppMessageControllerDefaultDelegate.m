@@ -107,7 +107,7 @@
 }
 
 - (NSString *)localizedButtonTitleForKey:(NSString *)key {
-    return [key localizedStringWithTable:@"UAInteractiveNotifications"];
+    return [key localizedStringWithTable:@"UrbanAirship"];
 }
 
 /**

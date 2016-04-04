@@ -84,12 +84,12 @@
     // Allow the webView to detect data types (e.g. phone numbers, addresses) at will
     [self.webView setDataDetectorTypes:UIDataDetectorTypeAll];
 
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"UA_Delete")
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_delete")
                                                                                style:UIBarButtonItemStylePlain
                                                                              target:self
                                                                              action:@selector(delete:)];
 
-    self.coverLabel.text = UAMessageCenterLocalizedString(@"UA_No_Message_Selected");
+    self.coverLabel.text = UAMessageCenterLocalizedString(@"ua_message_not_selected");
 
     if (self.message) {
         [self loadMessageForID:self.message.messageID];
@@ -179,18 +179,18 @@
 }
 
 - (void)displayAlert:(BOOL)retry {
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:UAMessageCenterLocalizedString(@"UA_Error_Connection")
-                                                                   message:UAMessageCenterLocalizedString(@"UA_Error_Loading_Message")
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:UAMessageCenterLocalizedString(@"ua_connection_error")
+                                                                   message:UAMessageCenterLocalizedString(@"ua_mc_failed_to_load")
                                                             preferredStyle:UIAlertControllerStyleAlert];
 
-    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:UAMessageCenterLocalizedString(@"UA_OK")
+    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:UAMessageCenterLocalizedString(@"ua_ok")
                                                             style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction * action) {}];
     
     [alert addAction:defaultAction];
 
     if (retry) {
-        UIAlertAction *retryAction = [UIAlertAction actionWithTitle:UAMessageCenterLocalizedString(@"UA_Retry")
+        UIAlertAction *retryAction = [UIAlertAction actionWithTitle:UAMessageCenterLocalizedString(@"ua_retry_button")
                                                               style:UIAlertActionStyleDefault
                                                             handler:^(UIAlertAction * _Nonnull action) {
                                                                 [self loadMessageAtIndex:self.messageIndex];

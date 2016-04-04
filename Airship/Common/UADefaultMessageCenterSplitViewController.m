@@ -56,7 +56,7 @@
     self.listNav = [[UINavigationController alloc] initWithRootViewController:lvc];
     self.messageNav = [[UINavigationController alloc] initWithRootViewController:mvc];
 
-    self.title = UAMessageCenterLocalizedString(@"UA_Message_Center_Title");
+    self.title = UAMessageCenterLocalizedString(@"ua_message_center_title");
 
     self.delegate = lvc;
     self.viewControllers = @[self.listNav, self.messageNav];
