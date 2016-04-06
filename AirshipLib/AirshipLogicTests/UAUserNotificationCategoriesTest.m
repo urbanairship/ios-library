@@ -36,7 +36,7 @@
 
 - (void)testDefaultCategories {
     NSSet *categories = [UAUserNotificationCategories defaultCategories];
-    XCTAssertEqual(27, categories.count);
+    XCTAssertEqual(37, categories.count);
 
     // Require auth defaults to true for background actions
     for (UAUserNotificationCategory *category in categories) {
@@ -50,7 +50,7 @@
 
 - (void)testDefaultCategoriesOverrideAuth {
     NSSet *categories = [UAUserNotificationCategories defaultCategoriesWithRequireAuth:NO];
-    XCTAssertEqual(27, categories.count);
+    XCTAssertEqual(37, categories.count);
 
     // Verify require auth is false for background actions
     for (UAUserNotificationCategory *category in categories) {
