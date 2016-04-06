@@ -3,6 +3,10 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+Version 7.0.4 - Apr 6, 2016
+=================================
+- Preserve transparency for scaled Message Center icons.
+
 Version 7.0.3 - March 30, 2016
 =================================
 - Added more specific UAConfig validation logging.
