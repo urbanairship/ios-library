@@ -745,7 +745,7 @@
     // Note: passing 0.0 causes the function below to use the scale factor of the main screen
     CGFloat transformScaleFactor = 0.0;
 
-    UIGraphicsBeginImageContextWithOptions(transformSize, YES, transformScaleFactor);
+    UIGraphicsBeginImageContextWithOptions(transformSize, NO, transformScaleFactor);
 
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
