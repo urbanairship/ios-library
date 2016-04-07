@@ -45,7 +45,6 @@
 		4905C4E518246339001D48E3 /* NSString+UAURLEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 4905C4E318246339001D48E3 /* NSString+UAURLEncoding.h */; };
 		4905C4E718246339001D48E3 /* NSString+UAURLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 4905C4E418246339001D48E3 /* NSString+UAURLEncoding.m */; };
 		490710BC184D3EAB00E494AF /* UAWebViewCallDataTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 490710BB184D3EAB00E494AF /* UAWebViewCallDataTest.m */; };
-		492051591C0E6BEA00A7B36D /* UAInteractiveNotifications.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4920514D1C0E6BEA00A7B36D /* UAInteractiveNotifications.strings */; };
 		492051661C0E738300A7B36D /* NSString_UALocalizationAdditionsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 492051651C0E738300A7B36D /* NSString_UALocalizationAdditionsTest.m */; };
 		492051671C0E77D900A7B36D /* AirshipResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4920512C1C0D0C0A00A7B36D /* AirshipResources.bundle */; };
 		49226C8318A3045900D4A57A /* UAURLProtocolTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85427D17F2164500D2DE10 /* UAURLProtocolTest.m */; };
@@ -58,7 +57,6 @@
 		492ADA0C18C958E50032C491 /* UARichContentWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 492ADA0B18C958E50032C491 /* UARichContentWindow.h */; };
 		492ADA1018C959CB0032C491 /* UACloseWindowAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 492ADA0E18C959CB0032C491 /* UACloseWindowAction+Internal.h */; };
 		492ADA1218C959CB0032C491 /* UACloseWindowAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 492ADA0F18C959CB0032C491 /* UACloseWindowAction.m */; };
-		492BA2FF1C20F83100A252C8 /* UAMessageCenterUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 492BA2FD1C20F83100A252C8 /* UAMessageCenterUI.strings */; };
 		493F50C81C5AA55400B050A1 /* UADefaultMessageCenterSplitViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 493F50C61C5AA55400B050A1 /* UADefaultMessageCenterSplitViewController.h */; };
 		493F50C91C5AA55400B050A1 /* UADefaultMessageCenterSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 493F50C71C5AA55400B050A1 /* UADefaultMessageCenterSplitViewController.m */; };
 		49416D5F18C025E900A18B72 /* UALandingPageActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49416D5E18C025E900A18B72 /* UALandingPageActionTest.m */; };
@@ -214,7 +212,6 @@
 		7BB679091429288D00B877DB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 633146B3122FA474008F2D48 /* UIKit.framework */; };
 		7BB6790A1429288D00B877DB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 		7BB6790B1429288D00B877DB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51846BF1300B92200A40CAC /* CoreGraphics.framework */; };
-		7BB679111429288D00B877DB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7BB6790F1429288D00B877DB /* InfoPlist.strings */; };
 		7BB679131429288D00B877DB /* UAUtilsTest.h in Resources */ = {isa = PBXBuildFile; fileRef = 7BB679121429288D00B877DB /* UAUtilsTest.h */; };
 		7BB679151429288D00B877DB /* UAUtilsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BB679141429288D00B877DB /* UAUtilsTest.m */; };
 		7BB6793F14292FF800B877DB /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB6793C14292FF800B877DB /* CFNetwork.framework */; };
@@ -355,6 +352,7 @@
 		CCBA4F8B1AC108C100857572 /* UADisplayInboxAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCBA4F881AC108C100857572 /* UADisplayInboxAction.m */; };
 		CCBA4F8E1AC10BBD00857572 /* UADisplayInboxActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCBA4F8D1AC10BBD00857572 /* UADisplayInboxActionTest.m */; };
 		CCBBC5E31CAC6953000CCD7F /* UANotificationCategories.plist in Resources */ = {isa = PBXBuildFile; fileRef = CCBBC5E21CAC6953000CCD7F /* UANotificationCategories.plist */; };
+		CCBBC64F1CB2F388000CCD7F /* UrbanAirship.strings in Resources */ = {isa = PBXBuildFile; fileRef = CCBBC62F1CB2F388000CCD7F /* UrbanAirship.strings */; };
 		CCBFA2DB17B5436500F97E1D /* NSJSONSerialization+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CCBFA2D917B5436500F97E1D /* NSJSONSerialization+UAAdditions.m */; };
 		CCBFA2E017B547B600F97E1D /* NSJSONSerialization_UAAdditionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCBFA2DF17B547B600F97E1D /* NSJSONSerialization_UAAdditionsTests.m */; };
 		CCC0508C1A129C83000AE545 /* UAKeyChainUtilTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC0508B1A129C83000AE545 /* UAKeyChainUtilTest.m */; };
@@ -463,15 +461,6 @@
 		490710BB184D3EAB00E494AF /* UAWebViewCallDataTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWebViewCallDataTest.m; sourceTree = "<group>"; };
 		491B845F198C44C200FB7A40 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
 		4920512C1C0D0C0A00A7B36D /* AirshipResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipResources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
-		4920514E1C0E6BEA00A7B36D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/UAInteractiveNotifications.strings; sourceTree = "<group>"; };
-		492051511C0E6BEA00A7B36D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UAInteractiveNotifications.strings; sourceTree = "<group>"; };
-		492051521C0E6BEA00A7B36D /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/UAInteractiveNotifications.strings; sourceTree = "<group>"; };
-		492051531C0E6BEA00A7B36D /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/UAInteractiveNotifications.strings; sourceTree = "<group>"; };
-		492051541C0E6BEA00A7B36D /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/UAInteractiveNotifications.strings; sourceTree = "<group>"; };
-		492051551C0E6BEA00A7B36D /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/UAInteractiveNotifications.strings; sourceTree = "<group>"; };
-		492051561C0E6BEA00A7B36D /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt; path = pt.lproj/UAInteractiveNotifications.strings; sourceTree = "<group>"; };
-		492051571C0E6BEA00A7B36D /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/UAInteractiveNotifications.strings"; sourceTree = "<group>"; };
-		492051581C0E6BEA00A7B36D /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/UAInteractiveNotifications.strings"; sourceTree = "<group>"; };
 		492051651C0E738300A7B36D /* NSString_UALocalizationAdditionsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSString_UALocalizationAdditionsTest.m; sourceTree = "<group>"; };
 		4925AAAC1B2B9D00002F045D /* UAirshipTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAirshipTest.m; sourceTree = "<group>"; };
 		4928D8F41AB24D010046E5BE /* UAUserNotificationCategory+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUserNotificationCategory+Internal.h"; sourceTree = "<group>"; };
@@ -482,7 +471,6 @@
 		492ADA0B18C958E50032C491 /* UARichContentWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARichContentWindow.h; sourceTree = "<group>"; };
 		492ADA0E18C959CB0032C491 /* UACloseWindowAction+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UACloseWindowAction+Internal.h"; sourceTree = "<group>"; };
 		492ADA0F18C959CB0032C491 /* UACloseWindowAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACloseWindowAction.m; sourceTree = "<group>"; };
-		492BA2FE1C20F83100A252C8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = AirshipResources/Localization/en.lproj/UAMessageCenterUI.strings; sourceTree = SOURCE_ROOT; };
 		493F50C61C5AA55400B050A1 /* UADefaultMessageCenterSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADefaultMessageCenterSplitViewController.h; sourceTree = "<group>"; };
 		493F50C71C5AA55400B050A1 /* UADefaultMessageCenterSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterSplitViewController.m; sourceTree = "<group>"; };
 		49416D5E18C025E900A18B72 /* UALandingPageActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALandingPageActionTest.m; sourceTree = "<group>"; };
@@ -646,7 +634,6 @@
 		7BB679061429288D00B877DB /* AirshipLogicTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipLogicTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BB679071429288D00B877DB /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		7BB6790E1429288D00B877DB /* AirshipLogicTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AirshipLogicTests-Info.plist"; sourceTree = "<group>"; };
-		7BB679101429288D00B877DB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		7BB679121429288D00B877DB /* UAUtilsTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAUtilsTest.h; sourceTree = "<group>"; };
 		7BB679141429288D00B877DB /* UAUtilsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAUtilsTest.m; sourceTree = "<group>"; };
 		7BB679161429288D00B877DB /* AirshipLogicTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AirshipLogicTests-Prefix.pch"; sourceTree = "<group>"; };
@@ -780,6 +767,37 @@
 		CCBA4F881AC108C100857572 /* UADisplayInboxAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADisplayInboxAction.m; sourceTree = "<group>"; };
 		CCBA4F8D1AC10BBD00857572 /* UADisplayInboxActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADisplayInboxActionTest.m; sourceTree = "<group>"; };
 		CCBBC5E21CAC6953000CCD7F /* UANotificationCategories.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UANotificationCategories.plist; sourceTree = "<group>"; };
+		CCBBC6301CB2F388000CCD7F /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC6311CB2F388000CCD7F /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC6321CB2F388000CCD7F /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC6331CB2F388000CCD7F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC6341CB2F388000CCD7F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC6351CB2F388000CCD7F /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/UrbanAirship.strings"; sourceTree = "<group>"; };
+		CCBBC6361CB2F388000CCD7F /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC6371CB2F388000CCD7F /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC6381CB2F388000CCD7F /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC6391CB2F388000CCD7F /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC63A1CB2F388000CCD7F /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC63B1CB2F388000CCD7F /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC63C1CB2F388000CCD7F /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC63D1CB2F388000CCD7F /* iw */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = iw; path = iw.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC63E1CB2F388000CCD7F /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC63F1CB2F388000CCD7F /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC6401CB2F388000CCD7F /* ms */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ms; path = ms.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC6411CB2F388000CCD7F /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC6421CB2F388000CCD7F /* no */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = no; path = no.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC6431CB2F388000CCD7F /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC6441CB2F388000CCD7F /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/UrbanAirship.strings"; sourceTree = "<group>"; };
+		CCBBC6451CB2F388000CCD7F /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt; path = pt.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC6461CB2F388000CCD7F /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC6471CB2F388000CCD7F /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC6481CB2F388000CCD7F /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC6491CB2F388000CCD7F /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC64A1CB2F388000CCD7F /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC64B1CB2F388000CCD7F /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC64C1CB2F388000CCD7F /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCBBC64D1CB2F388000CCD7F /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/UrbanAirship.strings"; sourceTree = "<group>"; };
+		CCBBC64E1CB2F388000CCD7F /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/UrbanAirship.strings"; sourceTree = "<group>"; };
 		CCBFA2D817B5436500F97E1D /* NSJSONSerialization+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSJSONSerialization+UAAdditions.h"; sourceTree = "<group>"; };
 		CCBFA2D917B5436500F97E1D /* NSJSONSerialization+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSJSONSerialization+UAAdditions.m"; sourceTree = "<group>"; };
 		CCBFA2DF17B547B600F97E1D /* NSJSONSerialization_UAAdditionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSJSONSerialization_UAAdditionsTests.m; sourceTree = "<group>"; };
@@ -1099,6 +1117,7 @@
 		4920512D1C0D0C0A00A7B36D /* AirshipResources */ = {
 			isa = PBXGroup;
 			children = (
+				CCBBC62E1CB2F388000CCD7F /* Localization */,
 				498F6A051C3B4BB400088B01 /* UADefaultMessageCenterPlaceholderIcon.png */,
 				49EB68E81C1FC0DF00D05BCE /* UADefaultMessageCenterListCell.xib */,
 				49EB68E91C1FC0DF00D05BCE /* UADefaultMessageCenterListViewController.xib */,
@@ -1112,8 +1131,6 @@
 		4920514C1C0E6BEA00A7B36D /* Localization */ = {
 			isa = PBXGroup;
 			children = (
-				492BA2FD1C20F83100A252C8 /* UAMessageCenterUI.strings */,
-				4920514D1C0E6BEA00A7B36D /* UAInteractiveNotifications.strings */,
 			);
 			name = Localization;
 			path = localization;
@@ -1337,7 +1354,6 @@
 				1F67594E1756B9BD00C062E0 /* production-embedded.mobileprovision */,
 				1F6759481756A97B00C062E0 /* development-embedded.mobileprovision */,
 				7BB6790E1429288D00B877DB /* AirshipLogicTests-Info.plist */,
-				7BB6790F1429288D00B877DB /* InfoPlist.strings */,
 				BB13C4241575706100541EF3 /* UABase64Test.m */,
 				7BB679161429288D00B877DB /* AirshipLogicTests-Prefix.pch */,
 				CC313A9F19A7BF5C00134A9F /* CustomNotificationCategories.plist */,
@@ -1577,6 +1593,14 @@
 				61A070981B7A5B9E00819091 /* UAInboxAPIClientTest.m */,
 			);
 			name = Inbox;
+			sourceTree = "<group>";
+		};
+		CCBBC62E1CB2F388000CCD7F /* Localization */ = {
+			isa = PBXGroup;
+			children = (
+				CCBBC62F1CB2F388000CCD7F /* UrbanAirship.strings */,
+			);
+			path = Localization;
 			sourceTree = "<group>";
 		};
 		CCD3158217CFBD45002E93A1 /* Push */ = {
@@ -1937,15 +1961,38 @@
 				Japanese,
 				French,
 				German,
-				en,
+				ar,
+				cs,
+				da,
 				de,
+				"es-419",
 				es,
+				fi,
 				fr,
+				hi,
+				hu,
+				id,
 				it,
+				iw,
 				ja,
+				ko,
+				ms,
+				nl,
+				no,
+				pl,
+				"pt-rPT",
 				pt,
+				ro,
+				ru,
+				sk,
+				sv,
+				th,
+				tr,
+				vi,
 				"zh-Hans",
 				"zh-Hant",
+				"pt-PT",
+				en,
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* AirshipLib */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -1967,10 +2014,9 @@
 				49EB68EC1C1FC0DF00D05BCE /* UADefaultMessageCenterListViewController.xib in Resources */,
 				498F6A061C3B4BB400088B01 /* UADefaultMessageCenterPlaceholderIcon.png in Resources */,
 				CCBBC5E31CAC6953000CCD7F /* UANotificationCategories.plist in Resources */,
+				CCBBC64F1CB2F388000CCD7F /* UrbanAirship.strings in Resources */,
 				49EB68ED1C1FC0DF00D05BCE /* UADefaultMessageCenterMessageViewController.xib in Resources */,
 				49EB68EB1C1FC0DF00D05BCE /* UADefaultMessageCenterListCell.xib in Resources */,
-				492BA2FF1C20F83100A252C8 /* UAMessageCenterUI.strings in Resources */,
-				492051591C0E6BEA00A7B36D /* UAInteractiveNotifications.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1978,7 +2024,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7BB679111429288D00B877DB /* InfoPlist.strings in Resources */,
 				76BB75221C443BB00027CF9D /* AirshipConfig-Without-InProduction-And-DetectProvisioningMode.plist in Resources */,
 				7BB679131429288D00B877DB /* UAUtilsTest.h in Resources */,
 				76BB751E1C443B930027CF9D /* AirshipConfig-DetectProvisioningMode.plist in Resources */,
@@ -2278,36 +2323,42 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		4920514D1C0E6BEA00A7B36D /* UAInteractiveNotifications.strings */ = {
+		CCBBC62F1CB2F388000CCD7F /* UrbanAirship.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				4920514E1C0E6BEA00A7B36D /* de */,
-				492051511C0E6BEA00A7B36D /* en */,
-				492051521C0E6BEA00A7B36D /* es */,
-				492051531C0E6BEA00A7B36D /* fr */,
-				492051541C0E6BEA00A7B36D /* it */,
-				492051551C0E6BEA00A7B36D /* ja */,
-				492051561C0E6BEA00A7B36D /* pt */,
-				492051571C0E6BEA00A7B36D /* zh-Hans */,
-				492051581C0E6BEA00A7B36D /* zh-Hant */,
+				CCBBC6301CB2F388000CCD7F /* ar */,
+				CCBBC6311CB2F388000CCD7F /* cs */,
+				CCBBC6321CB2F388000CCD7F /* da */,
+				CCBBC6331CB2F388000CCD7F /* de */,
+				CCBBC6341CB2F388000CCD7F /* en */,
+				CCBBC6351CB2F388000CCD7F /* es-419 */,
+				CCBBC6361CB2F388000CCD7F /* es */,
+				CCBBC6371CB2F388000CCD7F /* fi */,
+				CCBBC6381CB2F388000CCD7F /* fr */,
+				CCBBC6391CB2F388000CCD7F /* hi */,
+				CCBBC63A1CB2F388000CCD7F /* hu */,
+				CCBBC63B1CB2F388000CCD7F /* id */,
+				CCBBC63C1CB2F388000CCD7F /* it */,
+				CCBBC63D1CB2F388000CCD7F /* iw */,
+				CCBBC63E1CB2F388000CCD7F /* ja */,
+				CCBBC63F1CB2F388000CCD7F /* ko */,
+				CCBBC6401CB2F388000CCD7F /* ms */,
+				CCBBC6411CB2F388000CCD7F /* nl */,
+				CCBBC6421CB2F388000CCD7F /* no */,
+				CCBBC6431CB2F388000CCD7F /* pl */,
+				CCBBC6441CB2F388000CCD7F /* pt-PT */,
+				CCBBC6451CB2F388000CCD7F /* pt */,
+				CCBBC6461CB2F388000CCD7F /* ro */,
+				CCBBC6471CB2F388000CCD7F /* ru */,
+				CCBBC6481CB2F388000CCD7F /* sk */,
+				CCBBC6491CB2F388000CCD7F /* sv */,
+				CCBBC64A1CB2F388000CCD7F /* th */,
+				CCBBC64B1CB2F388000CCD7F /* tr */,
+				CCBBC64C1CB2F388000CCD7F /* vi */,
+				CCBBC64D1CB2F388000CCD7F /* zh-Hans */,
+				CCBBC64E1CB2F388000CCD7F /* zh-Hant */,
 			);
-			name = UAInteractiveNotifications.strings;
-			sourceTree = "<group>";
-		};
-		492BA2FD1C20F83100A252C8 /* UAMessageCenterUI.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				492BA2FE1C20F83100A252C8 /* en */,
-			);
-			name = UAMessageCenterUI.strings;
-			sourceTree = "<group>";
-		};
-		7BB6790F1429288D00B877DB /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				7BB679101429288D00B877DB /* en */,
-			);
-			name = InfoPlist.strings;
+			name = UrbanAirship.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

@@ -97,7 +97,7 @@
     for (NSDictionary *actionDefinition in actionDefinitions) {
         NSString *title;
         if (actionDefinition[@"title_resource"]) {
-            title = [actionDefinition[@"title_resource"] localizedStringWithTable:@"UAInteractiveNotifications"
+            title = [actionDefinition[@"title_resource"] localizedStringWithTable:@"UrbanAirship"
                                                                      defaultValue:actionDefinition[@"title"]];
         } else if (actionDefinition[@"title"]) {
             title = actionDefinition[@"title"];

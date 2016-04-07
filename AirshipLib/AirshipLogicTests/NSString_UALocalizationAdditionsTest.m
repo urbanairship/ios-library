@@ -38,10 +38,10 @@
  */
 - (void)testLocalizedStringWithTableDefaultValue {
 
-    NSString *localizedString = [@"ua_notification_button_yes" localizedStringWithTable:@"UAInteractiveNotifications" defaultValue:@"howdy"];
+    NSString *localizedString = [@"ua_notification_button_yes" localizedStringWithTable:@"UrbanAirship" defaultValue:@"howdy"];
     XCTAssertEqualObjects(localizedString, @"Yes");
 
-    NSString *badKeyString = [@"not_a_key" localizedStringWithTable:@"UAInteractiveNotifications" defaultValue:@"howdy"];
+    NSString *badKeyString = [@"not_a_key" localizedStringWithTable:@"UrbanAirship" defaultValue:@"howdy"];
 
     XCTAssertEqualObjects(badKeyString, @"howdy");
 
@@ -57,10 +57,10 @@
  */
 - (void)testLocalizedStringWithTable {
 
-    NSString *localizedString = [@"ua_notification_button_yes" localizedStringWithTable:@"UAInteractiveNotifications"];
+    NSString *localizedString = [@"ua_notification_button_yes" localizedStringWithTable:@"UrbanAirship"];
     XCTAssertEqualObjects(localizedString, @"Yes");
 
-    NSString *badKeyString = [@"not_a_key" localizedStringWithTable:@"UAInteractiveNotifications"];
+    NSString *badKeyString = [@"not_a_key" localizedStringWithTable:@"UrbanAirship"];
 
     XCTAssertEqualObjects(badKeyString, @"not_a_key");
 
