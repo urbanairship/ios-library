@@ -36,7 +36,8 @@
 @implementation UACustomEvent
 
 const NSUInteger UACustomEventCharacterLimit = 255;
-const NSUInteger UACustomEventMaxPropertiesCount = 20;
+const NSUInteger UACustomEventMaxPropertiesCount = 100;
+const NSUInteger UACustomEventMaxPropertyCollectionSize = 20;
 
 - (NSString *)eventType {
     return @"custom_event";
@@ -140,8 +141,8 @@ const NSUInteger UACustomEventMaxPropertiesCount = 20;
         id value = [self.properties valueForKey:key];
         if ([value isKindOfClass:[NSArray class]]) {
             NSArray *array = (NSArray *)value;
-            if (array.count > UACustomEventMaxPropertiesCount) {
-                UA_LERR(@"Array property %@ exceeds more than %lu entries.", key, (unsigned long)UACustomEventMaxPropertiesCount);
+            if (array.count > UACustomEventMaxPropertyCollectionSize) {
+                UA_LERR(@"Array property %@ exceeds more than %lu entries.", key, (unsigned long)UACustomEventMaxPropertyCollectionSize);
                 isValid = NO;
             }
 

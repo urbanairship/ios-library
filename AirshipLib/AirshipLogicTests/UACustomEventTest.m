@@ -406,18 +406,18 @@
 }
 
 /**
- * Test max number of properties is 20.
+ * Test max number of properties is 100.
  */
 - (void)testMaxProperites {
     UACustomEvent *event = [UACustomEvent eventWithName:@"name"];
 
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 100; i++) {
         [event setStringProperty:@"value" forKey:[@(i) description]];
     }
     XCTAssertTrue(event.isValid);
 
     // Add another
-    [event setStringProperty:@"value" forKey:@"21"];
+    [event setStringProperty:@"value" forKey:@"101"];
 
     // Should be invalid
     XCTAssertFalse(event.isValid);
