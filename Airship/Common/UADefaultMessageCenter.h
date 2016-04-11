@@ -46,6 +46,11 @@
 @property (nonatomic, strong) UADefaultMessageCenterStyle *style;
 
 /**
+ * An optional predicate for filtering messages.
+ */
+@property (nonatomic, strong) NSPredicate *filter;
+
+/**
  * Display the message center.
  *
  * @param animated Whether the transition should be animated.

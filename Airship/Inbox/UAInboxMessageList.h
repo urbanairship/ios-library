@@ -98,6 +98,16 @@ extern NSString * const UAInboxMessageListUpdatedNotification;
                                               withFailureBlock:(nullable UAInboxMessageListCallbackBlock)failureBlock;
 
 /**
+ * Returns the list of messages on disk as an NSArray, filtered by the supplied predicate.
+ * @param predicate The predicate to use as a filter over messages.
+ */
+#if __has_feature(objc_generics)
+- (NSArray<UAInboxMessage *> *)messagesFilteredUsingPredicate:(NSPredicate *)predicate;
+#else
+- (NSArray *)messagesFilteredUsingPredicate:(NSPredicate *)predicate;
+#endif
+
+/**
  * Returns the number of messages currently in the inbox.
  * @return The message count as an integer.
  */

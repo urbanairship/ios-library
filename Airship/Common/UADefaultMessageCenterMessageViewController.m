@@ -111,9 +111,14 @@
 }
 
 // Note: since the message list is refreshed with new model objects when reloaded,
-// we can't reliably hold onto any single instance. This method is merely for convenience.
+// we can't reliably hold onto any single instance. This method is mostly for convenience.
 - (NSArray *)messages {
-    return [UAirship inbox].messageList.messages;
+    NSArray *allMessages = [UAirship inbox].messageList.messages;
+    if (self.filter) {
+        return [allMessages filteredArrayUsingPredicate:self.filter];
+    } else {
+        return allMessages;
+    }
 }
 
 #pragma mark -

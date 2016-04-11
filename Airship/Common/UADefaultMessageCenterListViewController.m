@@ -199,9 +199,14 @@
 }
 
 // Note: since the message list is refreshed with new model objects when reloaded,
-// we can't reliably hold onto any single instance. This method is merely for convenience.
+// we can't reliably hold onto any single instance. This method is mostly for convenience.
 - (NSArray *)messages {
-    return [UAirship inbox].messageList.messages;
+    NSArray *allMessages = [UAirship inbox].messageList.messages;
+    if (self.filter) {
+        return [allMessages filteredArrayUsingPredicate:self.filter];
+    } else {
+        return allMessages;
+    }
 }
 
 - (UIColor *)defaultTintColor {
@@ -355,6 +360,9 @@
     //otherwise, push over a new message view
     else {
         mvc = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController" bundle:[UAirship resources]];
+
+        mvc.filter = self.filter;
+
         mvc.closeBlock = ^(BOOL animated){
             // Call the close block if present
             if (self.closeBlock) {
