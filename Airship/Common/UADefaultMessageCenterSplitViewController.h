@@ -35,6 +35,11 @@
 @interface UADefaultMessageCenterSplitViewController : UISplitViewController
 
 /**
+ * An optional predicate for filtering messages.
+ */
+@property (nonatomic, strong) NSPredicate *filter;
+
+/**
  * The style to apply to the message center
  */
 @property(nonatomic, strong) UADefaultMessageCenterStyle *style;

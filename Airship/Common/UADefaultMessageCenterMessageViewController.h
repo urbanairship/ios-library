@@ -40,6 +40,11 @@
 @property (nonatomic, strong) UAInboxMessage *message;
 
 /**
+ * An optional predicate for filtering messages.
+ */
+@property (nonatomic, strong) NSPredicate *filter;
+
+/**
  * Block that will be invoked when this class receives a closeWindow message from the webView.
  */
 @property (nonatomic, copy) void (^closeBlock)(BOOL animated);

@@ -34,6 +34,7 @@
 @interface UADefaultMessageCenterSplitViewController ()
 
 @property(nonatomic, strong) UADefaultMessageCenterListViewController *listViewController;
+@property(nonatomic, strong) UADefaultMessageCenterMessageViewController *messageViewController;
 @property (nonatomic, strong) UINavigationController *listNav;
 @property (nonatomic, strong) UINavigationController *messageNav;
 
@@ -46,12 +47,13 @@
     UADefaultMessageCenterListViewController *lvc;
     lvc = [[UADefaultMessageCenterListViewController alloc] initWithNibName:@"UADefaultMessageCenterListViewController"
                                                                      bundle:[UAirship resources]];
-
     UADefaultMessageCenterMessageViewController *mvc;
     mvc = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController"
                                                                         bundle:[UAirship resources]];
 
+
     self.listViewController = lvc;
+    self.messageViewController = mvc;
 
     self.listNav = [[UINavigationController alloc] initWithRootViewController:lvc];
     self.messageNav = [[UINavigationController alloc] initWithRootViewController:mvc];
@@ -112,6 +114,12 @@
     if (self.style.tintColor) {
         self.view.tintColor = self.style.tintColor;
     }
+}
+
+- (void)setFilter:(NSPredicate *)filter {
+    _filter = filter;
+    self.listViewController.filter = filter;
+    self.messageViewController.filter = filter;
 }
 
 - (void)setTitle:(NSString *)title {

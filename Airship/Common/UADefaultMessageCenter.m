@@ -53,6 +53,7 @@
     if (!self.splitViewController) {
 
         self.splitViewController = [[UADefaultMessageCenterSplitViewController alloc] initWithNibName:nil bundle:nil];
+        self.splitViewController.filter = self.filter;
 
         UADefaultMessageCenterListViewController *lvc = self.splitViewController.listViewController;
 

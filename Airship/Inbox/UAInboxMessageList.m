@@ -67,7 +67,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
     return [[UAInboxMessageList alloc] initWithUser:user client:client config:config];
 }
 
-#pragma mark Custom setters
+#pragma mark Accessors
 
 - (void)setMessages:(NSArray *)messages {
     @synchronized(self) {
@@ -93,6 +93,16 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 - (NSArray *)messages {
     @synchronized(self) {
         return _messages;
+    }
+}
+
+#if __has_feature(objc_generics)
+- (NSArray<UAInboxMessage *> *)messagesFilteredUsingPredicate:(NSPredicate *)predicate {
+#else
+- (NSArray *)messagesFilteredUsingPredicate:(NSPredicate *)predicate {
+#endif
+    @synchronized(self) {
+        return [_messages filteredArrayUsingPredicate:predicate];
     }
 }
 

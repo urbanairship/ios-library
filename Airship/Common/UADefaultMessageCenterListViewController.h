@@ -40,6 +40,11 @@
 @property (nonatomic, strong) UADefaultMessageCenterStyle *style;
 
 /**
+ * An optional predicate for filtering messages.
+ */
+@property (nonatomic, strong) NSPredicate *filter;
+
+/**
  * Block that will be invoked when a message view controller receives a closeWindow message
  * from the webView.
  */
