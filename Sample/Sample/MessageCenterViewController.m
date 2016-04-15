@@ -27,20 +27,8 @@
 
 @implementation MessageCenterViewController
 
-- (void)awakeFromNib {
-    UADefaultMessageCenterStyle *style = [UADefaultMessageCenterStyle style];
-
-    UIFont *robotoLight = [UIFont fontWithName:@"Roboto-Light" size:12.0];
-    UIFont *robotoBold = [UIFont fontWithName:@"Roboto-Bold" size:13.0];
-    UIFont *robotoRegular = [UIFont fontWithName:@"Roboto-Regular" size:17.0];
-
-    style.navigationBarColor = [UIColor colorWithRed:0.988 green:0.694 blue:0.106 alpha:1];
-    style.titleColor = [UIColor colorWithRed:0.039 green:0.341 blue:0.490 alpha:1];
-    style.tintColor = [UIColor colorWithRed:0.039 green:0.341 blue:0.490 alpha:1];
-
-    style.titleFont = robotoRegular;
-    style.cellTitleFont = robotoBold;
-    style.cellDateFont = robotoLight;
+-(void)viewWillLayoutSubviews {
+    UADefaultMessageCenterStyle *style = [UADefaultMessageCenterStyle styleWithDefaultFile];
 
     self.style = style;
 }

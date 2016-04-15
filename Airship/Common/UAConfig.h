@@ -185,6 +185,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy) NSString *landingPageContentURL;
 
+/**
+ * The Urban Airship default message center style configuration file.
+ */
+@property (nonatomic, copy) NSString *defaultMessageCenterStyleConfigFile;
 
 /**
  * If set to `YES`, the Urban Airship user will be cleared if the application is

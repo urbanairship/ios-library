@@ -21,5 +21,7 @@
 	</dict>
 	<key>channelCreationDelayEnabled</key>
 	<true/>
+	<key>defaultMessageCenterStyleConfigFile</key>
+	<string>ValidUAMessageCenterDefaultStyle</string>
 </dict>
 </plist>
