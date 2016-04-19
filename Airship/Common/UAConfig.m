@@ -98,7 +98,7 @@
         _customConfig = config.customConfig;
         _channelCreationDelayEnabled = config.channelCreationDelayEnabled;
         _defaultDetectProvisioningMode = config.defaultDetectProvisioningMode;
-        _defaultMessageCenterStyleConfigFile = config.defaultMessageCenterStyleConfigFile;
+        _messageCenterStyleConfigPath = config.messageCenterStyleConfigPath;
     }
     
     return config;
@@ -154,7 +154,7 @@
             self.channelCaptureEnabled,
             self.customConfig,
             self.channelCreationDelayEnabled,
-            self.defaultMessageCenterStyleConfigFile];
+            self.messageCenterStyleConfigPath];
 }
 
 #pragma mark -

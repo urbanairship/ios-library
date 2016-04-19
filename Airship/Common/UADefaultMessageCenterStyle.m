@@ -45,11 +45,6 @@
     return [[self alloc] init];
 }
 
-+ (instancetype)styleWithDefaultFile {
-    return [self styleWithContentsOfFile:
-            [[NSBundle mainBundle] pathForResource:[UAirship shared].config.defaultMessageCenterStyleConfigFile ofType:@"plist"]];
-}
-
 + (instancetype)styleWithContentsOfFile:(NSString *)path {
     UADefaultMessageCenterStyle *style = [UADefaultMessageCenterStyle style];
 
@@ -130,7 +125,7 @@
         // Validate and normalize icon images
         if ([key hasSuffix:@"Icon"]) {
             if (![value isKindOfClass:[NSString class]] || ![UIImage imageNamed:value]) {
-                UA_LDEBUG(@"Icon key must be a valid string representing an image file in the bundle.");
+                UA_LDEBUG(@"Icon key must be a valid image name string representing an image file in the bundle.");
                 continue;
             }
 

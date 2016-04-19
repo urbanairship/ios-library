@@ -33,20 +33,9 @@
 
 @interface UADefaultMessageCenterStyleTest : XCTestCase
 
-@property(strong, nonatomic) id mockStyle;
-
 @end
 
 @implementation UADefaultMessageCenterStyleTest
-
-- (void)setUp {
-
-    [super setUp];
-}
-
-- (void)tearDown {
-    [super tearDown];
-}
 
 
 // Just compare initial values to final value and return
@@ -90,10 +79,12 @@
 }
 
 - (void)testValidStyle {
-    NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"Valid-UAMessageCenterDefaultStyle" ofType:@"plist"];
 
     id mockImage = [OCMockObject niceMockForClass:[UIImage class]];
     [[[mockImage stub] andReturn:mockImage] imageNamed:OCMOCK_ANY];
+
+    NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"Valid-UAMessageCenterDefaultStyle" ofType:@"plist"];
+
 
     XCTAssertNoThrow([UADefaultMessageCenterStyle styleWithContentsOfFile:path],
                      @"Parsing a valid UAMessageCenterDefaultStyle file should never result in an exception");
@@ -122,6 +113,8 @@
     XCTAssertEqualObjects(redTestColor, validStyle.cellDateColor);
     XCTAssertEqualObjects(redTestColor, validStyle.cellDateHighlightedColor);
     XCTAssertEqualObjects(redTestColor, validStyle.cellSeparatorColor);
+
+    [mockImage stopMocking];
 }
 
 @end

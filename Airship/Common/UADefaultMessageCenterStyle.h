@@ -104,12 +104,7 @@
 + (instancetype)style;
 
 /**
- * Factory method to create UADefaultMessageCenterStyle from default file listed in AirshipConfig.plist.
- */
-+ (instancetype)styleWithDefaultFile;
-
-/**
- * Factory method to create UADefaultMessageCenterStyle from provided plist.
+ * Factory method to create UADefaultMessageCenterStyle from a provided plist.
  */
 + (instancetype)styleWithContentsOfFile:(NSString *)path;
 

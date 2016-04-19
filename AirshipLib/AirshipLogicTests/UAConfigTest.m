@@ -342,7 +342,7 @@
     XCTAssertTrue(copy.customConfig == config.customConfig);
     XCTAssertTrue(copy.channelCreationDelayEnabled == config.channelCreationDelayEnabled);
     XCTAssertTrue(copy.defaultDetectProvisioningMode == config.defaultDetectProvisioningMode);
-    XCTAssertTrue(copy.defaultMessageCenterStyleConfigFile == config.defaultMessageCenterStyleConfigFile);
+    XCTAssertTrue(copy.messageCenterStyleConfigPath == config.messageCenterStyleConfigPath);
 
 }
 

@@ -28,7 +28,7 @@
 @implementation MessageCenterViewController
 
 -(void)viewWillLayoutSubviews {
-    UADefaultMessageCenterStyle *style = [UADefaultMessageCenterStyle styleWithDefaultFile];
+    UADefaultMessageCenterStyle *style = [UADefaultMessageCenterStyle style];
 
     self.style = style;
 }

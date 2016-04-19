@@ -28,12 +28,14 @@
 
 @class UAInboxMessage;
 @class UADefaultMessageCenterStyle;
+@class UAConfig;
 
 /**
  * The UADefaultMessageCenter class provides a default implementation of a
  * message center, as well as a high-level interface for its configuration and display.
  */
 @interface UADefaultMessageCenter : NSObject
+
 
 /**
  * The title of the message center.
@@ -49,6 +51,14 @@
  * An optional predicate for filtering messages.
  */
 @property (nonatomic, strong) NSPredicate *filter;
+
+
+/**
+ * Factory method for creating message center with style specified in a config.
+ *
+ * @return A Message Center instance initialized with the style specified in the provided config.
+ */
++ (instancetype)messageCenterWithConfig:(UAConfig *)config;
 
 /**
  * Display the message center.
