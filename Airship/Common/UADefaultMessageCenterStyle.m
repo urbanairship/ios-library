@@ -27,6 +27,7 @@
 #import "UAirship.h"
 #import "UAConfig.h"
 #import "UAColorUtils+Internal.h"
+#import "UADefaultMessageCenterStyle.h"
 
 @implementation UADefaultMessageCenterStyle
 
