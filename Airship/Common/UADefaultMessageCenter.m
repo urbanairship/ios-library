@@ -51,7 +51,7 @@
 
 + (instancetype)messageCenterWithConfig:(UAConfig *)config {
     UADefaultMessageCenter *center = [[UADefaultMessageCenter alloc] init];
-    center.style = [UADefaultMessageCenterStyle styleWithContentsOfFile:config.messageCenterStyleConfigPath];
+    center.style = [UADefaultMessageCenterStyle styleWithContentsOfFile:config.messageCenterStyleConfig];
     return center;
 }
 

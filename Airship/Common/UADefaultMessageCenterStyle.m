@@ -45,8 +45,9 @@
     return [[self alloc] init];
 }
 
-+ (instancetype)styleWithContentsOfFile:(NSString *)path {
++ (instancetype)styleWithContentsOfFile:(NSString *)file {
     UADefaultMessageCenterStyle *style = [UADefaultMessageCenterStyle style];
+    NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"plist"];
 
     if (path) {
         NSDictionary *styleDict = [[NSDictionary alloc] initWithContentsOfFile:path];

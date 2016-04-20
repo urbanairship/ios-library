@@ -27,8 +27,8 @@
 
 @implementation MessageCenterViewController
 
--(void)viewWillLayoutSubviews {
-    UADefaultMessageCenterStyle *style = [UADefaultMessageCenterStyle style];
+-(void)viewWillAppear:(BOOL)animated {
+    UADefaultMessageCenterStyle *style = [UADefaultMessageCenterStyle styleWithContentsOfFile:[UAirship shared].config.messageCenterStyleConfig];
 
     self.style = style;
 }

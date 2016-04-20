@@ -29,20 +29,8 @@ import AirshipKit
 
 class MessageCenterViewController : UADefaultMessageCenterSplitViewController {
 
-    override func awakeFromNib() {
-        let style = UADefaultMessageCenterStyle()
-
-        let robotoLight = UIFont(name: "Roboto-Light", size: 12.0)
-        let robotoBold = UIFont(name: "Roboto-Bold", size: 14.0)
-        let robotoRegular = UIFont(name: "Roboto-Regular", size: 17.0)
-
-        style.navigationBarColor = UIColor(red: 0.988, green: 0.694, blue: 0.106, alpha: 1)
-        style.titleColor = UIColor(red: 0.039, green: 0.341, blue: 0.490, alpha: 1)
-        style.tintColor = UIColor(red: 0.039, green: 0.341, blue: 0.490, alpha: 1)
-
-        style.titleFont = robotoRegular
-        style.cellTitleFont = robotoBold
-        style.cellDateFont = robotoLight
+    override func viewWillAppear(animated: Bool) {
+        let style:UADefaultMessageCenterStyle = UADefaultMessageCenterStyle(contentsOfFile: UAirship.shared().config.messageCenterStyleConfig)
 
         self.style = style
     }

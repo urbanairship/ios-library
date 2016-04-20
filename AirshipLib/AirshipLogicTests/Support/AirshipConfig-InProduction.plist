@@ -23,7 +23,7 @@
 		<key>customKey</key>
 		<string>customValue</string>
 	</dict>
-	<key>messageCenterStyleConfigPath</key>
+	<key>messageCenterStyleConfig</key>
 	<string>ValidUAMessageCenterDefaultStyle</string>
 </dict>
 </plist>
