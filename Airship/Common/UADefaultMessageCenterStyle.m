@@ -75,71 +75,85 @@
 
         // Validate and normalize colors
         if ([key hasSuffix:@"Color"]) {
-
-            if (![value isKindOfClass:[NSString class]] || ![UAColorUtils colorWithHexString:value]) {
-                UA_LDEBUG(@"Color key %@ must be a valid string representing a valid color hexidecimal", key);
-                continue;
-            }
-
-            UIColor *color = [UAColorUtils colorWithHexString:value];
-            [normalizedValues setObject:color forKey:key];
-
+            [normalizedValues setValue:[UADefaultMessageCenterStyle createColor:value] forKey:key];
+            continue;
         }
 
         // Validate and normalize fonts
-        if ([key hasSuffix:@"Font"] && [value isKindOfClass:[NSDictionary class]]) {
-
-            if (![value isKindOfClass:[NSDictionary class]]) {
-                UA_LDEBUG(@"Font name must be a valid string stored under the key \"fontName\".");
-                continue;
-            }
-
-            NSString *fontName = value[@"fontName"];
-            NSString *fontSize = value[@"fontSize"];
-
-            if (![fontName isKindOfClass:[NSString class]]) {
-                UA_LDEBUG(@"Font name must be a valid string stored under the key \"fontName\".");
-                continue;
-            }
-
-            if (![fontSize isKindOfClass:[NSString class]]) {
-                UA_LDEBUG(@"Font size must be a valid string stored under the key \"fontSize\".");
-                continue;
-            }
-
-            if (!([fontSize doubleValue] > 0)) {
-                UA_LDEBUG(@"Font name must be a valid string representing a double greater than 0.");
-                continue;
-            }
-
-            // Ensure font exists in bundle
-            if (![UIFont fontWithName:fontName size:[fontSize doubleValue]]) {
-                UA_LDEBUG(@"Font must exist in app bundle.");
-                continue;
-            }
-
-            UIFont *font = [UIFont fontWithName:value[@"fontName"] size:[value[@"fontSize"] doubleValue]];
-            [normalizedValues setObject:font forKey:key];
+        if ([key hasSuffix:@"Font"]) {
+            [normalizedValues setValue:[UADefaultMessageCenterStyle createFont:value] forKey:key];
+            continue;
         }
 
         // Validate and normalize icon images
         if ([key hasSuffix:@"Icon"]) {
-            if (![value isKindOfClass:[NSString class]] || ![UIImage imageNamed:value]) {
-                UA_LDEBUG(@"Icon key must be a valid image name string representing an image file in the bundle.");
-                continue;
-            }
-
-            UIImage *image = [UIImage imageNamed:value];
-            [normalizedValues setObject:image forKey:key];
+            [normalizedValues setValue:[UADefaultMessageCenterStyle createIcon:value] forKey:key];
+            continue;
         }
 
         // Validate and normalize switches
         if ([key hasSuffix:@"Enabled"]) {
-            [normalizedValues setValue:value forKey:key];
+            [normalizedValues setValue:@([value boolValue]) forKey:key];
+            continue;
         }
     }
 
     return normalizedValues;
+}
+
++(UIColor *)createColor:(NSString *)colorString {
+
+    if (![colorString isKindOfClass:[NSString class]] || ![UAColorUtils colorWithHexString:colorString]) {
+        UA_LDEBUG(@"Color must be a valid string representing a valid color hexidecimal");
+        return nil;
+    }
+
+    return [UAColorUtils colorWithHexString:colorString];;
+}
+
++(UIFont *)createFont:(NSDictionary *)fontDict {
+
+    if (![fontDict isKindOfClass:[NSDictionary class]]) {
+        UA_LDEBUG(@"Font name must be a valid string stored under the key \"fontName\".");
+        return nil;
+    }
+
+    NSString *fontName = fontDict[@"fontName"];
+    NSString *fontSize = fontDict[@"fontSize"];
+
+    if (![fontName isKindOfClass:[NSString class]]) {
+        UA_LDEBUG(@"Font name must be a valid string stored under the key \"fontName\".");
+        return nil;
+    }
+
+    if (![fontSize isKindOfClass:[NSString class]]) {
+        UA_LDEBUG(@"Font size must be a valid string stored under the key \"fontSize\".");
+        return nil;
+    }
+
+    if (!([fontSize doubleValue] > 0)) {
+        UA_LDEBUG(@"Font name must be a valid string representing a double greater than 0.");
+        return nil;
+    }
+
+    // Ensure font exists in bundle
+    if (![UIFont fontWithName:fontName size:[fontSize doubleValue]]) {
+        UA_LDEBUG(@"Font must exist in app bundle.");
+        return nil;
+    }
+
+    return [UIFont fontWithName:fontDict[@"fontName"]
+                           size:[fontDict[@"fontSize"] doubleValue]];;
+}
+
++(UIImage *)createIcon:(NSString *)iconString {
+
+    if (![iconString isKindOfClass:[NSString class]] || ![UIImage imageNamed:iconString]) {
+        UA_LDEBUG(@"Icon key must be a valid image name string representing an image file in the bundle.");
+        return nil;
+    }
+
+    return [UIImage imageNamed:iconString];
 }
 
 #pragma mark -
