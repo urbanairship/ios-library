@@ -16,12 +16,14 @@
 	<string>5</string>
 	<key>detectProvisioningMode</key>
 	<true/>
+	<key>channelCreationDelayEnabled</key>
+	<true/>
 	<key>customConfig</key>
 	<dict>
 		<key>customKey</key>
 		<string>customValue</string>
 	</dict>
-	<key>channelCreationDelayEnabled</key>
-	<true/>
+	<key>messageCenterStyleConfig</key>
+	<string>ValidUAMessageCenterDefaultStyle</string>
 </dict>
 </plist>

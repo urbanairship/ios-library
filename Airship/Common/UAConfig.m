@@ -98,6 +98,7 @@
         _customConfig = config.customConfig;
         _channelCreationDelayEnabled = config.channelCreationDelayEnabled;
         _defaultDetectProvisioningMode = config.defaultDetectProvisioningMode;
+        _messageCenterStyleConfig = config.messageCenterStyleConfig;
     }
     
     return config;
@@ -127,7 +128,8 @@
             "Clear named user on App Restore: %d\n"
             "Channel Capture Enabled: %d\n"
             "Custom Config: %@\n"
-            "Delay Channel Creation: %d\n",
+            "Delay Channel Creation: %d\n"
+            "Default Message Center Style Config File: %@\n",
             self.appKey,
             self.appSecret,
             self.inProduction,
@@ -151,7 +153,8 @@
             self.clearNamedUserOnAppRestore,
             self.channelCaptureEnabled,
             self.customConfig,
-            self.channelCreationDelayEnabled];
+            self.channelCreationDelayEnabled,
+            self.messageCenterStyleConfig];
 }
 
 #pragma mark -

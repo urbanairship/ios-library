@@ -12,6 +12,7 @@
 		4997B4041C40415E00C80C14 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4997B3F41C40402B00C80C14 /* AirshipKit.framework */; };
 		4997B4051C40415E00C80C14 /* AirshipKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4997B3F41C40402B00C80C14 /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		61A672F61CAB319C00BAF58A /* PushHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 61A672F51CAB319C00BAF58A /* PushHandler.m */; };
+		61D703131CBEAF1E00DD6C57 /* UAMessageCenterDefaultStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 61D703121CBEAF1E00DD6C57 /* UAMessageCenterDefaultStyle.plist */; };
 		61F645A91C486FEE00B2C48B /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4997B3F41C40402B00C80C14 /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		764693A71C237B630090FE40 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A61C237B630090FE40 /* main.m */; };
 		764693AA1C237B630090FE40 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A91C237B630090FE40 /* AppDelegate.m */; };
@@ -99,6 +100,7 @@
 		4997B3EF1C40402B00C80C14 /* AirshipKitSource.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipKitSource.xcodeproj; path = ../AirshipKit/AirshipKitSource.xcodeproj; sourceTree = "<group>"; };
 		61A672F41CAB319C00BAF58A /* PushHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushHandler.h; sourceTree = "<group>"; };
 		61A672F51CAB319C00BAF58A /* PushHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushHandler.m; sourceTree = "<group>"; };
+		61D703121CBEAF1E00DD6C57 /* UAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UAMessageCenterDefaultStyle.plist; sourceTree = "<group>"; };
 		764693A21C237B630090FE40 /* Sample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		764693A61C237B630090FE40 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		764693A81C237B630090FE40 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -174,6 +176,7 @@
 			children = (
 				4997B3EF1C40402B00C80C14 /* AirshipKitSource.xcodeproj */,
 				764693A41C237B630090FE40 /* Sample */,
+				61D703121CBEAF1E00DD6C57 /* UAMessageCenterDefaultStyle.plist */,
 				76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */,
 				764693A31C237B630090FE40 /* Products */,
 			);
@@ -363,6 +366,7 @@
 				764694171C238E7C0090FE40 /* Roboto-MediumItalic.ttf in Resources */,
 				7646940D1C238E7C0090FE40 /* Images.xcassets in Resources */,
 				764694141C238E7C0090FE40 /* Roboto-Light.ttf in Resources */,
+				61D703131CBEAF1E00DD6C57 /* UAMessageCenterDefaultStyle.plist in Resources */,
 				493F50E51C5B12F300B050A1 /* UAPushUI.strings in Resources */,
 				7646941B1C238E7C0090FE40 /* urban-airship-logo-pacific.png in Resources */,
 				764693C01C237CAB0090FE40 /* Main.storyboard in Resources */,

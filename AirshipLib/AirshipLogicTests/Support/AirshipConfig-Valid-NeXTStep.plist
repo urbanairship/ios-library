@@ -9,4 +9,5 @@
 	inProduction = YES;
 	"detectProvisioningMode" = YES;
 	"channelCreationDelayEnabled" = YES;
+	"messageCenterStyleConfig" = "ValidUAMessageCenterDefaultStyle";
 }

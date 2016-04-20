@@ -103,4 +103,11 @@
  */
 + (instancetype)style;
 
+/**
+ * Factory method to create UADefaultMessageCenterStyle from a provided plist.
+ */
++ (instancetype)styleWithContentsOfFile:(NSString *)path;
+
+
+
 @end

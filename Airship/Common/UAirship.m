@@ -140,7 +140,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         // Only create the default message center if running iOS 8 and above
         if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
             if ([UAirship resources]) {
-                self.sharedDefaultMessageCenter = [[UADefaultMessageCenter alloc] init];
+                self.sharedDefaultMessageCenter = [UADefaultMessageCenter messageCenterWithConfig:self.config];
             } else {
                 UA_LINFO(@"Unable to initialize default message center: AirshipResources is missing");
             }

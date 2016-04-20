@@ -33,6 +33,7 @@
 #import "UADefaultMessageCenterMessageViewController.h"
 #import "UADefaultMessageCenterSplitViewController.h"
 #import "UADefaultMessageCenterStyle.h"
+#import "UAConfig.h"
 
 @interface UADefaultMessageCenter()
 @property(nonatomic, strong) UADefaultMessageCenterSplitViewController *splitViewController;
@@ -48,6 +49,11 @@
     return self;
 }
 
++ (instancetype)messageCenterWithConfig:(UAConfig *)config {
+    UADefaultMessageCenter *center = [[UADefaultMessageCenter alloc] init];
+    center.style = [UADefaultMessageCenterStyle styleWithContentsOfFile:config.messageCenterStyleConfig];
+    return center;
+}
 
 - (void)display:(BOOL)animated {
     if (!self.splitViewController) {

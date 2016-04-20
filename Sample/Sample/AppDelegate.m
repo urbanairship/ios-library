@@ -53,6 +53,8 @@
     // or set runtime properties here.
     UAConfig *config = [UAConfig defaultConfig];
 
+    config.messageCenterStyleConfig = @"UAMessageCenterDefaultStyle";
+
     // You can then programmatically override the plist values:
     // config.developmentAppKey = @"YourKey";
     // etc.

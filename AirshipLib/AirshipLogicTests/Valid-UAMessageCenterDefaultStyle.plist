@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>titleFont</key>
+	<dict>
+		<key>fontName</key>
+		<string>Helvetica</string>
+		<key>fontSize</key>
+		<string>11</string>
+	</dict>
+	<key>titleColor</key>
+	<string>#00FF00</string>
+	<key>tintColor</key>
+	<string>#00FF00</string>
+	<key>navigationBarColor</key>
+	<string>#00FF00</string>
+	<key>listColor</key>
+	<string>#00FF00</string>
+	<key>refreshTintColor</key>
+	<string>#00FF00</string>
+	<key>iconsEnabled</key>
+	<true/>
+	<key>placeholderIcon</key>
+	<string>testCake.jpg</string>
+	<key>cellTitleFont</key>
+	<dict>
+		<key>fontName</key>
+		<string>Helvetica</string>
+		<key>fontSize</key>
+		<string>11</string>
+	</dict>
+	<key>cellDateFont</key>
+	<dict>
+		<key>fontName</key>
+		<string>Helvetica</string>
+		<key>fontSize</key>
+		<string>11</string>
+	</dict>
+	<key>cellColor</key>
+	<string>#00FF00</string>
+	<key>cellHighlightedColor</key>
+	<string>#00FF00</string>
+	<key>cellTitleColor</key>
+	<string>#00FF00</string>
+	<key>cellTitleHighlightedColor</key>
+	<string>#00FF00</string>
+	<key>cellDateColor</key>
+	<string>#00FF00</string>
+	<key>cellDateHighlightedColor</key>
+	<string>#00FF00</string>
+	<key>cellSeparatorColor</key>
+	<string>#00FF00</string>
+</dict>
+</plist>

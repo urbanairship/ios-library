@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>titleFont</key>
+	<dict>
+		<key>fontName</key>
+		<string>Roboto-Regular</string>
+		<key>fontSize</key>
+		<string>17</string>
+	</dict>
+	<key>titleColor</key>
+	<string>#00698f</string>
+	<key>tintColor</key>
+	<string>#00698f</string>
+	<key>navigationBarColor</key>
+	<string>#eaaa00</string>
+	<key>listColor</key>
+	<string></string>
+	<key>refreshTintColor</key>
+	<string></string>
+	<key>iconsEnabled</key>
+	<false/>
+	<key>placeholderIcon</key>
+	<string></string>
+	<key>cellTitleFont</key>
+	<dict>
+		<key>fontName</key>
+		<string>Roboto-Bold</string>
+		<key>fontSize</key>
+		<string>13</string>
+	</dict>
+	<key>cellDateFont</key>
+	<dict>
+		<key>fontName</key>
+		<string>Roboto-Light</string>
+		<key>fontSize</key>
+		<string>17</string>
+	</dict>
+	<key>cellColor</key>
+	<string></string>
+	<key>cellHighlightedColor</key>
+	<string></string>
+	<key>cellTitleColor</key>
+	<string></string>
+	<key>cellTitleHighlightedColor</key>
+	<string></string>
+	<key>cellDateColor</key>
+	<string></string>
+	<key>cellDateHighlightedColor</key>
+	<string></string>
+	<key>cellSeparatorColor</key>
+	<string></string>
+</dict>
+</plist>

@@ -162,6 +162,8 @@
 		611652261A2D26BD007C96D0 /* UAProximityRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = 611652241A2D26BD007C96D0 /* UAProximityRegion.m */; };
 		6116522A1A2D26D5007C96D0 /* UACircularRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 611652281A2D26D5007C96D0 /* UACircularRegion.h */; };
 		6116522B1A2D26D5007C96D0 /* UACircularRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = 611652291A2D26D5007C96D0 /* UACircularRegion.m */; };
+		612855221CC575FC0009C0F6 /* Invalid-UAMessageCenterDefaultStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 612855201CC575FC0009C0F6 /* Invalid-UAMessageCenterDefaultStyle.plist */; };
+		612855231CC575FC0009C0F6 /* Valid-UAMessageCenterDefaultStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 612855211CC575FC0009C0F6 /* Valid-UAMessageCenterDefaultStyle.plist */; };
 		612C48D31B68206600B61D09 /* UAUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 612C48D21B68206600B61D09 /* UAUtils.h */; };
 		612ED4D51A3785E500DD7762 /* UARegionEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 612ED4D31A3785E500DD7762 /* UARegionEventTest.m */; };
 		612ED4D81A378BCA00DD7762 /* UARegionEvent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 612ED4D61A378BA100DD7762 /* UARegionEvent+Internal.h */; };
@@ -180,6 +182,7 @@
 		61D6AD181A2D18C10032420C /* UARegionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 61D6AD161A2D18C10032420C /* UARegionEvent.h */; };
 		61D6AD191A2D18C10032420C /* UARegionEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D6AD171A2D18C10032420C /* UARegionEvent.m */; };
 		61D8FE4E1A3B76F100E21EBB /* UAProximityRegionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D8FE4D1A3B76F100E21EBB /* UAProximityRegionTest.m */; };
+		61DBD4251CC559D400EAAB8B /* UADefaultMessageCenterStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 61DBD4241CC559D400EAAB8B /* UADefaultMessageCenterStyleTest.m */; };
 		61EA651D1B2F62F00032475C /* UAWalletActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 61EA651C1B2F62F00032475C /* UAWalletActionTest.m */; };
 		61EA65211B309A0C0032475C /* UAWalletAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 61EA65201B309A0C0032475C /* UAWalletAction+Internal.h */; };
 		760D14BA17C2C9E600BBE6E6 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 760D14B917C2C9E600BBE6E6 /* XCTest.framework */; };
@@ -585,6 +588,8 @@
 		611652241A2D26BD007C96D0 /* UAProximityRegion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAProximityRegion.m; sourceTree = "<group>"; };
 		611652281A2D26D5007C96D0 /* UACircularRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACircularRegion.h; sourceTree = "<group>"; };
 		611652291A2D26D5007C96D0 /* UACircularRegion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACircularRegion.m; sourceTree = "<group>"; };
+		612855201CC575FC0009C0F6 /* Invalid-UAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Invalid-UAMessageCenterDefaultStyle.plist"; sourceTree = "<group>"; };
+		612855211CC575FC0009C0F6 /* Valid-UAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Valid-UAMessageCenterDefaultStyle.plist"; sourceTree = "<group>"; };
 		612C48D21B68206600B61D09 /* UAUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAUtils.h; sourceTree = "<group>"; };
 		612ED4D31A3785E500DD7762 /* UARegionEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARegionEventTest.m; sourceTree = "<group>"; };
 		612ED4D61A378BA100DD7762 /* UARegionEvent+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UARegionEvent+Internal.h"; sourceTree = "<group>"; };
@@ -603,6 +608,7 @@
 		61D6AD161A2D18C10032420C /* UARegionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARegionEvent.h; sourceTree = "<group>"; };
 		61D6AD171A2D18C10032420C /* UARegionEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARegionEvent.m; sourceTree = "<group>"; };
 		61D8FE4D1A3B76F100E21EBB /* UAProximityRegionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAProximityRegionTest.m; sourceTree = "<group>"; };
+		61DBD4241CC559D400EAAB8B /* UADefaultMessageCenterStyleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterStyleTest.m; sourceTree = "<group>"; };
 		61EA651C1B2F62F00032475C /* UAWalletActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWalletActionTest.m; sourceTree = "<group>"; };
 		61EA65201B309A0C0032475C /* UAWalletAction+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAWalletAction+Internal.h"; sourceTree = "<group>"; };
 		633146B3122FA474008F2D48 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -1345,6 +1351,8 @@
 		7BB6790D1429288D00B877DB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				612855201CC575FC0009C0F6 /* Invalid-UAMessageCenterDefaultStyle.plist */,
+				612855211CC575FC0009C0F6 /* Valid-UAMessageCenterDefaultStyle.plist */,
 				76BB751D1C443B930027CF9D /* AirshipConfig-DetectProvisioningMode.plist */,
 				76BB751F1C443BA20027CF9D /* AirshipConfig-InProduction.plist */,
 				76BB75211C443BB00027CF9D /* AirshipConfig-Without-InProduction-And-DetectProvisioningMode.plist */,
@@ -1588,6 +1596,7 @@
 		CCB7DF5917BBF19E00CEDC56 /* Inbox */ = {
 			isa = PBXGroup;
 			children = (
+				61DBD4241CC559D400EAAB8B /* UADefaultMessageCenterStyleTest.m */,
 				495526AB17D95552009BC301 /* UAInboxMessageListTest.m */,
 				495526AC17D95552009BC301 /* UAInboxMessageTest.m */,
 				61A070981B7A5B9E00819091 /* UAInboxAPIClientTest.m */,
@@ -2033,6 +2042,8 @@
 				1F6759521756C24200C062E0 /* AirshipConfig-Valid-Legacy-NeXTStep.plist in Resources */,
 				1F6759531756C24200C062E0 /* AirshipConfig-Valid-NeXTStep.plist in Resources */,
 				1F675959175900BC00C062E0 /* AirshipConfig-Valid.plist in Resources */,
+				612855221CC575FC0009C0F6 /* Invalid-UAMessageCenterDefaultStyle.plist in Resources */,
+				612855231CC575FC0009C0F6 /* Valid-UAMessageCenterDefaultStyle.plist in Resources */,
 				76BB75201C443BA20027CF9D /* AirshipConfig-InProduction.plist in Resources */,
 				492051671C0E77D900A7B36D /* AirshipResources.bundle in Resources */,
 			);
@@ -2141,6 +2152,7 @@
 				4995C6B3180DC5D3004F8724 /* UATagActionsTest.m in Sources */,
 				BB484B2B15910C370097B38C /* UALocationTestUtils.m in Sources */,
 				49C6721C1857CB040088F210 /* UANativeBridgeTest.m in Sources */,
+				61DBD4251CC559D400EAAB8B /* UADefaultMessageCenterStyleTest.m in Sources */,
 				495526B217D95552009BC301 /* UAInboxMessageTest.m in Sources */,
 				CCE0D2E41BA8C38F00E49E56 /* UAInstallAttributionEventTest.m in Sources */,
 				495048A11738593000F8B5BE /* UAHTTPConnectionOperationTest.m in Sources */,

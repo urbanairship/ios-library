@@ -14,14 +14,16 @@
 	<string>    0A00000000000000000000     </string>
 	<key>productionLogLevel</key>
 	<string>5</string>
+	<key>inProduction</key>
+	<true/>
+	<key>channelCreationDelayEnabled</key>
+	<true/>
 	<key>customConfig</key>
 	<dict>
 		<key>customKey</key>
 		<string>customValue</string>
 	</dict>
-	<key>inProduction</key>
-	<true/>
-	<key>channelCreationDelayEnabled</key>
-	<true/>
+	<key>messageCenterStyleConfig</key>
+	<string>ValidUAMessageCenterDefaultStyle</string>
 </dict>
 </plist>
