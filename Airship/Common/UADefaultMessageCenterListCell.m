@@ -34,6 +34,10 @@
     self.date.text = [UAMessageCenterDateUtils formattedDateRelativeToNow:message.messageSent];
     self.title.text = message.title;
     self.unreadIndicator.hidden = !message.unread;
+    // Set default unread indicator background color to tintColor if tintColor is set
+    if (self.style.tintColor) {
+        self.unreadIndicator.backgroundColor = self.style.tintColor;
+    }
 }
 
 - (void)setStyle:(UADefaultMessageCenterStyle *)style {
