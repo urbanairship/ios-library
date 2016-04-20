@@ -46,6 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
         // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
         // or set runtime properties here.
         let config = UAConfig.defaultConfig()
+        config.messageCenterStyleConfig = "UAMessageCenterDefaultStyle"
 
         // You can then programmatically override the plist values:
         // config.developmentAppKey = "YourKey"

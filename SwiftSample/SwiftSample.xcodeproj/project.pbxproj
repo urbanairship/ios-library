@@ -31,6 +31,7 @@
 		619A0D501BE8266100D9E863 /* AddAliasTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619A0D4F1BE8266100D9E863 /* AddAliasTableViewController.swift */; };
 		61A672E81CA9F4B000BAF58A /* PushHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61A672E71CA9F4B000BAF58A /* PushHandler.swift */; };
 		61AD10D51BE7D88B0004C886 /* TagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61AD10D41BE7D88B0004C886 /* TagsTableViewController.swift */; };
+		61E392381CC81EEA00D994E3 /* UAMessageCenterDefaultStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 61E392371CC81EEA00D994E3 /* UAMessageCenterDefaultStyle.plist */; };
 		CCDA35A71B8D233A00950AD5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA35A61B8D233A00950AD5 /* AppDelegate.swift */; };
 		CCDA35A91B8D233A00950AD5 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA35A81B8D233A00950AD5 /* HomeViewController.swift */; };
 		CCDA35AB1B8D233A00950AD5 /* PushSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA35AA1B8D233A00950AD5 /* PushSettingsViewController.swift */; };
@@ -106,6 +107,7 @@
 		619A0D4F1BE8266100D9E863 /* AddAliasTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddAliasTableViewController.swift; sourceTree = "<group>"; };
 		61A672E71CA9F4B000BAF58A /* PushHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushHandler.swift; sourceTree = "<group>"; };
 		61AD10D41BE7D88B0004C886 /* TagsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagsTableViewController.swift; sourceTree = "<group>"; };
+		61E392371CC81EEA00D994E3 /* UAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UAMessageCenterDefaultStyle.plist; sourceTree = "<group>"; };
 		CCDA35A31B8D233A00950AD5 /* SwiftSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCDA35A61B8D233A00950AD5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CCDA35A81B8D233A00950AD5 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
@@ -174,6 +176,7 @@
 			children = (
 				CCDA35A51B8D233A00950AD5 /* SwiftSample */,
 				CCDA35C31B8D237300950AD5 /* AirshipConfig.plist */,
+				61E392371CC81EEA00D994E3 /* UAMessageCenterDefaultStyle.plist */,
 				CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */,
 				CCDA35A41B8D233A00950AD5 /* Products */,
 			);
@@ -318,6 +321,7 @@
 				613420381BD6C3D800236A18 /* urban-airship-pacific.png in Resources */,
 				619A0D411BE81D7B00D9E863 /* Images.xcassets in Resources */,
 				61449C941BE13A6E00240C63 /* urban-airship-logo-pacific.png in Resources */,
+				61E392381CC81EEA00D994E3 /* UAMessageCenterDefaultStyle.plist in Resources */,
 				619A0D421BE81EDC00D9E863 /* Roboto-Black.ttf in Resources */,
 				619A0D431BE81EDC00D9E863 /* Roboto-BlackItalic.ttf in Resources */,
 				619A0D441BE81EDC00D9E863 /* Roboto-Bold.ttf in Resources */,

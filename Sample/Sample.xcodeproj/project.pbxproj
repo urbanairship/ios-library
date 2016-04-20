@@ -19,6 +19,7 @@
 		493F510B1C5B275100B050A1 /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 493F51091C5B275100B050A1 /* UAPushUI.strings */; };
 		493F51211C5B3A5100B050A1 /* InboxDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 493F51201C5B3A5100B050A1 /* InboxDelegate.m */; };
 		61A672FC1CAB3E5A00BAF58A /* PushHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 61A672FB1CAB3E5A00BAF58A /* PushHandler.m */; };
+		61E392311CC81EA800D994E3 /* UAMessageCenterDefaultStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 61E392301CC81EA800D994E3 /* UAMessageCenterDefaultStyle.plist */; };
 		764693A71C237B630090FE40 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A61C237B630090FE40 /* main.m */; };
 		764693AA1C237B630090FE40 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A91C237B630090FE40 /* AppDelegate.m */; };
 		764693AD1C237B630090FE40 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693AC1C237B630090FE40 /* HomeViewController.m */; };
@@ -104,6 +105,7 @@
 		493F51201C5B3A5100B050A1 /* InboxDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxDelegate.m; sourceTree = "<group>"; };
 		61A672FA1CAB3E5A00BAF58A /* PushHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushHandler.h; sourceTree = "<group>"; };
 		61A672FB1CAB3E5A00BAF58A /* PushHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushHandler.m; sourceTree = "<group>"; };
+		61E392301CC81EA800D994E3 /* UAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UAMessageCenterDefaultStyle.plist; sourceTree = "<group>"; };
 		764693A21C237B630090FE40 /* Sample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		764693A61C237B630090FE40 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		764693A81C237B630090FE40 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -190,6 +192,7 @@
 			children = (
 				764693A41C237B630090FE40 /* Sample */,
 				76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */,
+				61E392301CC81EA800D994E3 /* UAMessageCenterDefaultStyle.plist */,
 				764693E01C2386B30090FE40 /* AirshipKit.xcodeproj */,
 				764693A31C237B630090FE40 /* Products */,
 			);
@@ -387,6 +390,7 @@
 				76AE35651C2B6FD600D7F3B9 /* AirshipConfig.plist in Resources */,
 				493F51021C5B262100B050A1 /* Roboto-MediumItalic.ttf in Resources */,
 				493F51041C5B262100B050A1 /* Roboto-Thin.ttf in Resources */,
+				61E392311CC81EA800D994E3 /* UAMessageCenterDefaultStyle.plist in Resources */,
 				7646941C1C238E7C0090FE40 /* urban-airship-pacific.png in Resources */,
 				7646940E1C238E7C0090FE40 /* LICENSE.txt in Resources */,
 				493F50FD1C5B262100B050A1 /* Roboto-BoldItalic.ttf in Resources */,

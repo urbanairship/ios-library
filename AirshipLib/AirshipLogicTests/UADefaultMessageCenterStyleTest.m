@@ -33,28 +33,37 @@
 
 @interface UADefaultMessageCenterStyleTest : XCTestCase
 
+@property (nonatomic, strong) id mockBundle;
+
 @end
 
 @implementation UADefaultMessageCenterStyleTest
 
+- (void)setUp {
+    self.mockBundle = [OCMockObject niceMockForClass:[NSBundle class]];
+    //[[[self.mockBundle stub] andReturn:self.mockBundle] mainBundle];
+    // Return class bundle instead of main bundle for tests
+    [[[self.mockBundle stub] andReturn:[NSBundle bundleForClass:[self class]]] mainBundle];
+}
+
+- (void)tearDown {
+    [self.mockBundle stopMocking];
+}
 
 // Just compare initial values to final value and return
 - (void)testInvalidStyle {
-    NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"Invalid-UAMessageCenterDefaultStyle" ofType:@"plist"];
-
     // Whatever is set in the xib (nil in this case)
     UADefaultMessageCenterStyle *defaultStyle = [[UADefaultMessageCenterStyle alloc] init];
 
     // ensure that unknown/improperly formatted values don't crash the app
-    XCTAssertNoThrow([UADefaultMessageCenterStyle styleWithContentsOfFile:path],
-                     @"Parsing an invalid UAMessageCenterDefaultStyle file should never result in an exception" );
+    XCTAssertNoThrow([UADefaultMessageCenterStyle styleWithContentsOfFile:@"Invalid-UAMessageCenterDefaultStyle"], @"Parsing an invalid UAMessageCenterDefaultStyle file should never result in an exception" );
 
-    UADefaultMessageCenterStyle *invalidStyle = [UADefaultMessageCenterStyle styleWithContentsOfFile:path];
+    UADefaultMessageCenterStyle *invalidStyle = [UADefaultMessageCenterStyle styleWithContentsOfFile:@"Invalid-UAMessageCenterDefaultStyle"];
 
     [UAirship defaultMessageCenter].style = invalidStyle;
 
     // the invalid style plist has one valid property - cellSeparatorColor, ensure this sets despite invalids
-    XCTAssertNotNil(invalidStyle.cellSeparatorColor, "cellSeparatorColor should be valid");
+    XCTAssertNotNil(invalidStyle.cellSeparatorColor, @"cellSeparatorColor should be valid");
 
     // properties in the invalid style plist should not override the corresponding (nil) default style properties
     // (except cellSeparatorColor)
@@ -83,13 +92,10 @@
     id mockImage = [OCMockObject niceMockForClass:[UIImage class]];
     [[[mockImage stub] andReturn:mockImage] imageNamed:OCMOCK_ANY];
 
-    NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"Valid-UAMessageCenterDefaultStyle" ofType:@"plist"];
-
-
-    XCTAssertNoThrow([UADefaultMessageCenterStyle styleWithContentsOfFile:path],
+    XCTAssertNoThrow([UADefaultMessageCenterStyle styleWithContentsOfFile:@"Valid-UAMessageCenterDefaultStyle"],
                      @"Parsing a valid UAMessageCenterDefaultStyle file should never result in an exception");
 
-    UADefaultMessageCenterStyle *validStyle = [UADefaultMessageCenterStyle styleWithContentsOfFile:path];
+    UADefaultMessageCenterStyle *validStyle = [UADefaultMessageCenterStyle styleWithContentsOfFile:@"Valid-UAMessageCenterDefaultStyle"];
 
     // Valid-UAMessageCenterDefaultStyle has these values set:
     UIFont *helveticaTestFont = [UIFont fontWithName:@"Helvetica" size:11];
