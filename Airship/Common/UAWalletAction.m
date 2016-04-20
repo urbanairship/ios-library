@@ -35,8 +35,8 @@
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
 
-    // if pass library isn't available reject all arguments
-    if (![PKPassLibrary isPassLibraryAvailable]) {
+    // If PassKit is missing, or if pass library isn't available reject all arguments
+    if (![PKPass class] || ![PKPassLibrary isPassLibraryAvailable]) {
         UA_LDEBUG(@"Unable to perform wallet action on this device - pass library unavailable.");
         return NO;
     }
