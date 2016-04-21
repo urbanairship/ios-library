@@ -3,6 +3,16 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+Version 7.1.0 - Apr 21, 2016
+=================================
+- Added Message Center unread indicator styling.
+- Added Message Center styling from a plist.
+- Added Message Center filtering.
+- Added Associated identifiers support and limited ad tracking.
+- Added new notification action categories.
+- Increased custom event property limit to 100.
+- Broadened localization support.
+
 Version 7.0.4 - Apr 6, 2016
 =================================
 - Preserve transparency for scaled Message Center icons.
