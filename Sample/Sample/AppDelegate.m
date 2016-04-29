@@ -31,7 +31,7 @@
 
 #define kSimulatorWarningDisabledKey @"ua-simulator-warning-disabled"
 
-@interface AppDelegate ()
+@interface AppDelegate () <UARegistrationDelegate>
 @property(nonatomic, strong) InboxDelegate *inboxDelegate;
 @property(nonatomic, strong) PushHandler *pushHandler;
 
@@ -82,6 +82,8 @@
 
     self.pushHandler = [[PushHandler alloc] init];
     [UAirship push].pushNotificationDelegate = self.pushHandler;
+
+    [UAirship push].registrationDelegate = self;
 
     // User notifications will not be enabled until userPushNotificationsEnabled is
     // set YES on UAPush. Once enabled, the setting will be persisted and the user
