@@ -34,7 +34,7 @@ class TagsTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let addButton:UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: "addTag")
+        let addButton:UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: #selector(TagsTableViewController.addTag))
         navigationItem.rightBarButtonItem = addButton
     }
 
