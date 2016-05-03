@@ -72,8 +72,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
         self.inboxDelegate = InboxDelegate(rootViewController: (window?.rootViewController)!)
         UAirship.inbox().delegate = self.inboxDelegate
         UAirship.push().pushNotificationDelegate = pushHandler
+        UAirship.push().registrationDelegate = self
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"refreshMessageCenterBadge", name: UAInboxMessageListUpdatedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(AppDelegate.refreshMessageCenterBadge), name: UAInboxMessageListUpdatedNotification, object: nil)
 
         return true
     }

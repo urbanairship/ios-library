@@ -36,7 +36,7 @@ class HomeViewController: UIViewController {
 
         NSNotificationCenter.defaultCenter().addObserver(
             self,
-            selector: "refreshView",
+            selector: #selector(HomeViewController.refreshView),
             name: "channelIDUpdated",
             object: nil);
     }
@@ -53,7 +53,7 @@ class HomeViewController: UIViewController {
             return
         }
         channelIDButton.hidden = true
-        enablePushButton.hidden = true
+        enablePushButton.hidden = false
     }
 
     @IBAction func buttonTapped(sender: UIButton) {

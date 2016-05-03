@@ -64,7 +64,7 @@ class PushSettingsViewController: UITableViewController {
 
         NSNotificationCenter.defaultCenter().addObserver(
             self,
-            selector: "refreshView",
+            selector: #selector(PushSettingsViewController.refreshView),
             name: "channelIDUpdated",
             object: nil);
 
@@ -76,7 +76,7 @@ class PushSettingsViewController: UITableViewController {
         // add observer to didBecomeActive to update upon retrun from system settings screen
         NSNotificationCenter.defaultCenter().addObserver(
             self,
-            selector: "didBecomeActive",
+            selector: #selector(PushSettingsViewController.didBecomeActive),
             name: UIApplicationDidBecomeActiveNotification,
             object: nil)
 

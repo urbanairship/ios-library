@@ -46,7 +46,7 @@ class LocationTableViewController: UITableViewController, UALocationServiceDeleg
 
         tableView.scrollEnabled = false
 
-        let refreshCoordinates: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Refresh, target: self, action:"refreshCoordinates")
+        let refreshCoordinates: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Refresh, target: self, action:#selector(LocationTableViewController.refreshCoordinates))
         navigationItem.rightBarButtonItem = refreshCoordinates
 
         self.refreshCoordinates()
