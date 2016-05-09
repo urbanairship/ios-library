@@ -57,7 +57,7 @@ extern NSString * const UAOpenExternalURLActionErrorDomain;
  *
  * Error: `UAOpenExternalURLActionErrorCodeURLFailedToOpen` if the URL could not be opened
  *
- * Fetch result: UAActionFetchResultNone
+ * Fetch result: UAActionFetchResultNoData
  */
 @interface UAOpenExternalURLAction : UAAction
 

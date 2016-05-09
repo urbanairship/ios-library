@@ -41,7 +41,7 @@
  * Error: nil
  *
  * Fetch result: Aggregate UAActionFetchResult from delegates when handling background pushes, otherwise
- * UAActionFetchResultNone
+ * UAActionFetchResultNoData
  */
 
 @interface UAIncomingPushAction : UAAction
