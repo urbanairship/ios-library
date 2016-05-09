@@ -39,7 +39,7 @@
  *
  * Error: nil
  *
- * Fetch result: UAActionFetchResultNone
+ * Fetch result: UAActionFetchResultNoData
  */
 @interface UARemoveTagsAction : UAModifyTagsAction
 
