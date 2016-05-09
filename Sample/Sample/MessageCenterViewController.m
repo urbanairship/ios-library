@@ -28,9 +28,8 @@
 @implementation MessageCenterViewController
 
 -(void)viewWillAppear:(BOOL)animated {
-    UADefaultMessageCenterStyle *style = [UADefaultMessageCenterStyle styleWithContentsOfFile:[UAirship shared].config.messageCenterStyleConfig];
-
-    self.style = style;
+    [super viewWillAppear:animated];
+    self.style = [UAirship defaultMessageCenter].style;
 }
 
 - (void)displayMessage:(UAInboxMessage *)message {

@@ -30,9 +30,8 @@ import AirshipKit
 class MessageCenterViewController : UADefaultMessageCenterSplitViewController {
 
     override func viewWillAppear(animated: Bool) {
-        let style:UADefaultMessageCenterStyle = UADefaultMessageCenterStyle(contentsOfFile: UAirship.shared().config.messageCenterStyleConfig)
-
-        self.style = style
+        super.viewWillAppear(animated);
+        self.style = UAirship.defaultMessageCenter().style
     }
 
     func displayMessage(message: UAInboxMessage) {
