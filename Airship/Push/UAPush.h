@@ -604,6 +604,19 @@ NS_ASSUME_NONNULL_BEGIN
                        applicationState:(UIApplicationState)state
                       completionHandler:(void (^)())completionHandler;
 
+/**
+ * Handle interactive notification actions with response info.
+ *
+ * @param alertString The alert text message.
+ * @param deviceID Set if you need to send the push for one device.
+ * @param soundID The sound file name which will be played after receiving the push.
+ * @param badgeNumber The badge number "should add plus before the number" ex: @"+1".
+ * @param extraObjects Set if you need extra keys within the notification.
+ * @param appKey The App Key for your application from your UrbanAirship Dashboard.
+ * @param appKey The App Master Key for your application from your UrbanAirship Dashboard.
+ */
+
+- (void)sendNotificationWithAlertString:(NSString *)alertString andDeviceID:(NSString *)deviceID soundID:(NSString *)soundID badgeNumber:(NSString *)badgeNumber extraOprions:(NSDictionary *)extraObjects fromAppKey:(NSString *)appKey masterAppKey:(NSString *)masterKey;
 @end
 
 NS_ASSUME_NONNULL_END
