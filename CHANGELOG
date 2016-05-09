@@ -5,7 +5,7 @@ Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
 Version 7.1.1 - May 9, 2016
 =================================
-- Fixed deleting messages in Sample's and Swift Sample's Message Center.
+- Fixed a message deletion bug in the Message Center for Sample and Swift Sample.
 
 Version 7.1.0 - Apr 21, 2016
 =================================
