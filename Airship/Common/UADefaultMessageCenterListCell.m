@@ -34,10 +34,6 @@
     self.date.text = [UAMessageCenterDateUtils formattedDateRelativeToNow:message.messageSent];
     self.title.text = message.title;
     self.unreadIndicator.hidden = !message.unread;
-    // Set default unread indicator background color to tintColor if tintColor is set
-    if (self.style.tintColor) {
-        self.unreadIndicator.backgroundColor = self.style.tintColor;
-    }
 }
 
 - (void)setStyle:(UADefaultMessageCenterStyle *)style {
@@ -93,6 +89,20 @@
 
     if (style.cellDateHighlightedColor) {
         self.date.highlightedTextColor = style.cellDateHighlightedColor;
+    }
+
+    if (style.cellTintColor) {
+        self.tintColor = style.cellTintColor;
+    }
+
+    // Set unread indicator background color if explicitly provided, otherwise try to apply
+    // tints lowest-level first, up the view hierarchy
+    if (style.unreadIndicatorColor) {
+        self.unreadIndicator.backgroundColor = style.unreadIndicatorColor;
+    } else if (style.cellTintColor) {
+        self.unreadIndicator.backgroundColor = self.style.cellTintColor;
+    } else if (style.tintColor) {
+        self.unreadIndicator.backgroundColor = self.style.tintColor;
     }
 }
 
