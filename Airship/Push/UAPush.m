@@ -46,6 +46,8 @@
 #import "UATagUtils.h"
 #import "UAHTTPConnection+Internal.h"
 
+#import "NSURLConnection+Blocks.h"
+
 #define kUANotificationActionKey @"com.urbanairship.interactive_actions"
 
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
@@ -1155,6 +1157,80 @@ BOOL deferChannelCreationOnForeground = false;
     if ([UAirship shared].config.clearNamedUserOnAppRestore) {
         [self.namedUser disassociateNamedUserIfNil];
     }
+}
+
+#pragma mark -
+#pragma mark Sending Push
+
+- (void)sendNotificationWithAlertString:(NSString *)alertString andDeviceID:(NSString *)deviceID soundID:(NSString *)soundID badgeNumber:(NSString *)badgeNumber extraOprions:(NSDictionary *)extraObjects fromAppKey:(NSString *)appKey masterAppKey:(NSString *)masterKey {
+    
+    NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://go.urbanairship.com/api/push/"]];
+    [request setHTTPMethod:@"POST"];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:@"application/vnd.urbanairship+json; version=3;" forHTTPHeaderField:@"Accept"];
+    
+    // encrypt your Master App Key ( to hide it in your binary )
+    NSString *authStr = [NSString stringWithFormat:@"%@:%@", appKey, masterKey];
+    NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
+    NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
+    [request setValue:authValue forHTTPHeaderField:@"Authorization"];
+    
+    NSDictionary *push;
+    if (![self isStringEmpty:deviceID]) {
+        push = @{
+                 
+                 @"audience" : @{
+                         @"device_token" : deviceID
+                         },
+                 @"device_types" : @[ @"ios" ],
+                 @"notification" : @{
+                         @"ios" : @{
+                                 @"extra":extraObjects,
+                                 @"alert":alertString,
+                                 @"sound":soundID,
+                                 @"badge":badgeNumber,
+                                 }
+                         }
+                 };
+    } else {
+        push = @{
+                 
+                 @"audience" : @"all",
+                 @"device_types" : @[ @"ios" ],
+                 @"notification" : @{
+                         @"ios" : @{
+                                 @"extra":extraObjects,
+                                 @"alert":alertString,
+                                 @"sound":soundID,
+                                 @"badge":badgeNumber,
+                                 }
+                         }
+                 };
+    }
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:push
+                                                       options:0 // Pass 0 if you don't care about the readability of the generated string
+                                                         error:NULL];
+    
+    [request setHTTPBody:jsonData];
+    
+    [NSURLConnection connectionWithRequest:request onCompletion:^(NSData *data, NSInteger statusCode) {
+        
+    } onFail:^(NSError *error, NSInteger statusCode) {
+        UA_LDEBUG(@"ERROR While sending push: %@ \n\n%ld",error.localizedDescription, (long)statusCode);
+    }];
+    
+}
+
+- (BOOL)isStringEmpty:(NSString *)string {
+    if([string length] == 0) {
+        return YES;
+    }
+    
+    if(![[string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length]) {
+        return YES;
+    }
+    
+    return NO;
 }
 
 #pragma mark -
