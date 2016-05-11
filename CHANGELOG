@@ -3,12 +3,18 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+Version 7.1.2 - May 11, 2016
+============================
+- Fixed Message Center style sometimes improperly ignores tint in toolbar.
+- Added Message Center cell tint and unread indicator color styling.
+
+
 Version 7.1.1 - May 9, 2016
-=================================
+===========================
 - Fixed a message deletion bug in the Message Center for Sample and Swift Sample.
 
 Version 7.1.0 - Apr 21, 2016
-=================================
+============================
 - Added Message Center unread indicator styling.
 - Added Message Center styling from a plist.
 - Added Message Center filtering.
@@ -18,11 +24,11 @@ Version 7.1.0 - Apr 21, 2016
 - Broadened localization support.
 
 Version 7.0.4 - Apr 6, 2016
-=================================
+===========================
 - Preserve transparency for scaled Message Center icons.
 
 Version 7.0.3 - March 30, 2016
-=================================
+==============================
 - Added more specific UAConfig validation logging.
 - Improved custom Event logging.
 - Added PushHandler class and Message Center badging to Samples.
@@ -48,9 +54,9 @@ Version 7.0.0 - January 28, 2016
 - Removed out dated Sample UI classes.
 - New unified sample that replaces the previous inbox and push sample. The sample is available in
   both Swift and Objective-C.
-- detectProvisionMode now defaults to YES if neither detectProvisionMode and
+- detectProvisioningMode now defaults to YES if neither detectProvisioningMode and
   inProduction are explicitly set.
-- Fixed detectProvisionMode incorrectly detecting the app running on a simulator.
+- Fixed detectProvisioningMode incorrectly detecting the app running on a simulator.
 
 6.4.0 - October 29, 2015
 ========================
