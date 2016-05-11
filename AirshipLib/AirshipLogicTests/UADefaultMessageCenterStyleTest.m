@@ -83,6 +83,8 @@
     XCTAssertEqualObjects(defaultStyle.cellTitleHighlightedColor, invalidStyle.cellTitleHighlightedColor);
     XCTAssertEqualObjects(defaultStyle.cellDateColor, invalidStyle.cellDateColor);
     XCTAssertEqualObjects(defaultStyle.cellDateHighlightedColor, invalidStyle.cellDateHighlightedColor);
+    XCTAssertEqualObjects(defaultStyle.cellTintColor, invalidStyle.cellTintColor);
+    XCTAssertEqualObjects(defaultStyle.unreadIndicatorColor, invalidStyle.unreadIndicatorColor);
     XCTAssertNotEqual(defaultStyle.cellSeparatorColor, invalidStyle.cellSeparatorColor);
 
 }
@@ -119,6 +121,8 @@
     XCTAssertEqualObjects(redTestColor, validStyle.cellDateColor);
     XCTAssertEqualObjects(redTestColor, validStyle.cellDateHighlightedColor);
     XCTAssertEqualObjects(redTestColor, validStyle.cellSeparatorColor);
+    XCTAssertEqualObjects(redTestColor, validStyle.cellTintColor);
+    XCTAssertEqualObjects(redTestColor, validStyle.unreadIndicatorColor);
 
     [mockImage stopMocking];
 }

@@ -136,6 +136,9 @@
         self.currentIconURLRequests = [NSMutableDictionary dictionary];
         self.refreshControl = [[UIRefreshControl alloc] init];
         self.iconFetchQueue = dispatch_queue_create("com.urbanairship.messagecenter.ListIconQueue", DISPATCH_QUEUE_CONCURRENT);
+
+        // grab the default tint color from a dummy view
+        self.defaultTintColor = [[UIView alloc] init].tintColor;
     }
 
     return self;
@@ -207,16 +210,6 @@
     } else {
         return allMessages;
     }
-}
-
-- (UIColor *)defaultTintColor {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        // grab the default tint color from a dummy view
-        UIView* view = [[UIView alloc] init];
-        self.defaultTintColor = view.tintColor;
-    });
-    return _defaultTintColor;
 }
 
 - (void)createToolbarItems {
