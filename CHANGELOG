@@ -5,9 +5,8 @@ Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
 Version 7.1.2 - May 11, 2016
 ============================
-- Fixed Message Center style sometimes improperly ignores tint in toolbar.
-- Added Message Center cell tint and unread indicator color styling.
-
+- Fixed tint color bug affecting some Message Center toolbar items.
+- Added cell tint and unread indicator color to Message Center styling.
 
 Version 7.1.1 - May 9, 2016
 ===========================
