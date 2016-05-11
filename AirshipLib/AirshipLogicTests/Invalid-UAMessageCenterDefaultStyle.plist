@@ -46,5 +46,9 @@
 	<dict/>
 	<key>cellSeparatorColor</key>
 	<string>#eaaa00</string>
+	<key>cellTintColor</key>
+	<string>&quot;nope&quot;</string>
+	<key>unreadIndicatorColor</key>
+	<string>35</string>
 </dict>
 </plist>
