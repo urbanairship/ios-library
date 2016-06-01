@@ -39,7 +39,6 @@
 #import "UADisplayInboxAction.h"
 #import "UAPasteboardAction.h"
 #import "UAOverlayInboxMessageAction.h"
-#import "UAWalletAction.h"
 
 @implementation UAActionRegistry
 @dynamic registeredEntries;
@@ -344,7 +343,7 @@
                }];
 
     // Wallet Action
-    [self registerAction:[[UAWalletAction alloc] init]
+    [self registerAction:[[UAOpenExternalURLAction alloc] init]
                    names:@[kUAWalletActionDefaultRegistryAlias, kUAWalletActionDefaultRegistryName]];
 }
 
