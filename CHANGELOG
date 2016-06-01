@@ -3,6 +3,15 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+Version 7.2.0 - June 1, 2016
+============================
+- Removed reference to the Passkit framework. This is to work around the App Store
+  incorrectly showing an app `Supports Wallet` when it does not contain wallet
+  capabilities (Radar #24942020).
+- Replaced the wallet action with the open external URL action.
+- App version segmentation now uses the short version string instead of the build number.
+- Added optional navigation bar opacity to Message Center styling.
+
 Version 7.1.2 - May 11, 2016
 ============================
 - Fixed tint color bug affecting some Message Center toolbar items.
