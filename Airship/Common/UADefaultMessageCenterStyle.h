@@ -34,6 +34,11 @@
 @property(nonatomic, strong) UIColor *navigationBarColor;
 
 /**
+ * Whether the navigation bar should be translucent.
+ */
+@property(nonatomic, assign) BOOL navigationBarOpaque;
+
+/**
  * The background color of the message list.
  */
 @property(nonatomic, strong) UIColor *listColor;

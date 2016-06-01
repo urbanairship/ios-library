@@ -71,6 +71,10 @@
     XCTAssertEqualObjects(defaultStyle.titleColor, invalidStyle.titleColor);
     XCTAssertEqualObjects(defaultStyle.tintColor, invalidStyle.tintColor);
     XCTAssertEqualObjects(defaultStyle.navigationBarColor, invalidStyle.navigationBarColor);
+
+    // in this case the two should differ, since we are defaulting to a YES value in the style
+    XCTAssertEqual(defaultStyle.navigationBarOpaque, invalidStyle.navigationBarOpaque);
+
     XCTAssertEqualObjects(defaultStyle.listColor, invalidStyle.listColor);
     XCTAssertEqualObjects(defaultStyle.refreshTintColor, invalidStyle.refreshTintColor);
     XCTAssertEqual(defaultStyle.iconsEnabled, invalidStyle.iconsEnabled);
@@ -108,6 +112,7 @@
     XCTAssertEqualObjects(redTestColor, validStyle.titleColor);
     XCTAssertEqualObjects(redTestColor, validStyle.tintColor);
     XCTAssertEqualObjects(redTestColor, validStyle.navigationBarColor);
+    XCTAssertTrue(validStyle.navigationBarOpaque);
     XCTAssertEqualObjects(redTestColor, validStyle.listColor);
     XCTAssertEqualObjects(redTestColor, validStyle.refreshTintColor);
     XCTAssertTrue(validStyle.iconsEnabled);

@@ -36,6 +36,9 @@
     if (self) {
         // Default to disabling icons
         self.iconsEnabled = NO;
+
+        // Default to navigation bar translucency to match UIKit
+        self.navigationBarOpaque = NO;
     }
 
     return self;
@@ -92,11 +95,7 @@
             continue;
         }
 
-        // Validate and normalize switches
-        if ([key hasSuffix:@"Enabled"]) {
-            [normalizedValues setValue:@([value boolValue]) forKey:key];
-            continue;
-        }
+        [normalizedValues setValue:value forKey:key];
     }
 
     return normalizedValues;
