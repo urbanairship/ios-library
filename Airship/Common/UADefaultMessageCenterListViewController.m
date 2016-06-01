@@ -376,6 +376,10 @@
             nav.navigationBar.barTintColor = self.style.navigationBarColor;
         }
 
+        if (self.style.navigationBarTranslucent) {
+            nav.navigationBar.translucent = self.style.navigationBarTranslucent;
+        }
+
         NSMutableDictionary *titleAttributes = [NSMutableDictionary dictionary];
 
         if (self.style.titleColor) {

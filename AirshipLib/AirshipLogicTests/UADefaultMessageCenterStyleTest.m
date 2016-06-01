@@ -71,6 +71,7 @@
     XCTAssertEqualObjects(defaultStyle.titleColor, invalidStyle.titleColor);
     XCTAssertEqualObjects(defaultStyle.tintColor, invalidStyle.tintColor);
     XCTAssertEqualObjects(defaultStyle.navigationBarColor, invalidStyle.navigationBarColor);
+    XCTAssertEqual(defaultStyle.navigationBarTranslucent, invalidStyle.navigationBarTranslucent);
     XCTAssertEqualObjects(defaultStyle.listColor, invalidStyle.listColor);
     XCTAssertEqualObjects(defaultStyle.refreshTintColor, invalidStyle.refreshTintColor);
     XCTAssertEqual(defaultStyle.iconsEnabled, invalidStyle.iconsEnabled);
@@ -108,6 +109,7 @@
     XCTAssertEqualObjects(redTestColor, validStyle.titleColor);
     XCTAssertEqualObjects(redTestColor, validStyle.tintColor);
     XCTAssertEqualObjects(redTestColor, validStyle.navigationBarColor);
+    XCTAssertFalse(validStyle.navigationBarTranslucent);
     XCTAssertEqualObjects(redTestColor, validStyle.listColor);
     XCTAssertEqualObjects(redTestColor, validStyle.refreshTintColor);
     XCTAssertTrue(validStyle.iconsEnabled);

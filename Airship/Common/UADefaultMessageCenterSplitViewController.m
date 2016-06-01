@@ -96,6 +96,11 @@
         self.messageNav.navigationBar.barTintColor = self.style.navigationBarColor;
     }
 
+    if (style.navigationBarTranslucent) {
+        self.listNav.navigationBar.translucent = style.navigationBarTranslucent;
+        self.messageNav.navigationBar.translucent = style.navigationBarTranslucent;
+    }
+
     NSMutableDictionary *titleAttributes = [NSMutableDictionary dictionary];
 
     if (self.style.titleColor) {

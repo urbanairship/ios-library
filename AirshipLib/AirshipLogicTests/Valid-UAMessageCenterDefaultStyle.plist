@@ -15,6 +15,8 @@
 	<string>#00FF00</string>
 	<key>navigationBarColor</key>
 	<string>#00FF00</string>
+	<key>navigationBarTranslucent</key>
+	<false/>
 	<key>listColor</key>
 	<string>#00FF00</string>
 	<key>refreshTintColor</key>
