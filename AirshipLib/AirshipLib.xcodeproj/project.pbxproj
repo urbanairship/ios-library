@@ -169,8 +169,6 @@
 		612ED4D81A378BCA00DD7762 /* UARegionEvent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 612ED4D61A378BA100DD7762 /* UARegionEvent+Internal.h */; };
 		612ED4DD1A38DE3900DD7762 /* UACircularRegion+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 612ED4DA1A37D08200DD7762 /* UACircularRegion+Internal.h */; };
 		612ED4DE1A38DE3B00DD7762 /* UAProximityRegion+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 612ED4D91A37D06E00DD7762 /* UAProximityRegion+Internal.h */; };
-		61362D541B28E2BF0011C058 /* UAWalletAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 61362D521B28E2BF0011C058 /* UAWalletAction.h */; };
-		61362D551B28E2BF0011C058 /* UAWalletAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 61362D531B28E2BF0011C058 /* UAWalletAction.m */; };
 		614F0DAC1A3B773E00F00AAB /* UACircularRegionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 614F0DAB1A3B773E00F00AAB /* UACircularRegionTest.m */; };
 		619194401BED590B00320855 /* UAChannelRegistrar+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6191943F1BED590B00320855 /* UAChannelRegistrar+Internal.h */; };
 		619C29861B8545370025AA65 /* UAInAppMessageController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 619C29851B8545370025AA65 /* UAInAppMessageController+Internal.h */; };
@@ -183,8 +181,6 @@
 		61D6AD191A2D18C10032420C /* UARegionEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D6AD171A2D18C10032420C /* UARegionEvent.m */; };
 		61D8FE4E1A3B76F100E21EBB /* UAProximityRegionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D8FE4D1A3B76F100E21EBB /* UAProximityRegionTest.m */; };
 		61DBD4251CC559D400EAAB8B /* UADefaultMessageCenterStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 61DBD4241CC559D400EAAB8B /* UADefaultMessageCenterStyleTest.m */; };
-		61EA651D1B2F62F00032475C /* UAWalletActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 61EA651C1B2F62F00032475C /* UAWalletActionTest.m */; };
-		61EA65211B309A0C0032475C /* UAWalletAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 61EA65201B309A0C0032475C /* UAWalletAction+Internal.h */; };
 		760D14BA17C2C9E600BBE6E6 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 760D14B917C2C9E600BBE6E6 /* XCTest.framework */; };
 		762941AB1A016EB60077CDC1 /* UAActivityViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 762941A91A016EB60077CDC1 /* UAActivityViewController.h */; };
 		762941AD1A016EB60077CDC1 /* UAActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 762941AA1A016EB60077CDC1 /* UAActivityViewController.m */; };
@@ -595,8 +591,6 @@
 		612ED4D61A378BA100DD7762 /* UARegionEvent+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UARegionEvent+Internal.h"; sourceTree = "<group>"; };
 		612ED4D91A37D06E00DD7762 /* UAProximityRegion+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAProximityRegion+Internal.h"; sourceTree = "<group>"; };
 		612ED4DA1A37D08200DD7762 /* UACircularRegion+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UACircularRegion+Internal.h"; sourceTree = "<group>"; };
-		61362D521B28E2BF0011C058 /* UAWalletAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAWalletAction.h; sourceTree = "<group>"; };
-		61362D531B28E2BF0011C058 /* UAWalletAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWalletAction.m; sourceTree = "<group>"; };
 		614F0DAB1A3B773E00F00AAB /* UACircularRegionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACircularRegionTest.m; sourceTree = "<group>"; };
 		6191943F1BED590B00320855 /* UAChannelRegistrar+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAChannelRegistrar+Internal.h"; sourceTree = "<group>"; };
 		619C29851B8545370025AA65 /* UAInAppMessageController+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageController+Internal.h"; sourceTree = "<group>"; };
@@ -609,8 +603,6 @@
 		61D6AD171A2D18C10032420C /* UARegionEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARegionEvent.m; sourceTree = "<group>"; };
 		61D8FE4D1A3B76F100E21EBB /* UAProximityRegionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAProximityRegionTest.m; sourceTree = "<group>"; };
 		61DBD4241CC559D400EAAB8B /* UADefaultMessageCenterStyleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterStyleTest.m; sourceTree = "<group>"; };
-		61EA651C1B2F62F00032475C /* UAWalletActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWalletActionTest.m; sourceTree = "<group>"; };
-		61EA65201B309A0C0032475C /* UAWalletAction+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAWalletAction+Internal.h"; sourceTree = "<group>"; };
 		633146B3122FA474008F2D48 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		760D14B917C2C9E600BBE6E6 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		762941A91A016EB60077CDC1 /* UAActivityViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAActivityViewController.h; sourceTree = "<group>"; };
@@ -1505,9 +1497,6 @@
 				CC8542A117F4B81600D2DE10 /* UAActionArguments.h */,
 				CC8542A217F4B81600D2DE10 /* UAActionArguments.m */,
 				49FCCB181912C6640057D1C4 /* UAActionArguments+Internal.h */,
-				61EA65201B309A0C0032475C /* UAWalletAction+Internal.h */,
-				61362D521B28E2BF0011C058 /* UAWalletAction.h */,
-				61362D531B28E2BF0011C058 /* UAWalletAction.m */,
 				CCA3A50017FF626C009C7371 /* UAActionRegistry+Internal.h */,
 				CC8542A317F4B81600D2DE10 /* UAActionRegistry.h */,
 				CC8542A417F4B81600D2DE10 /* UAActionRegistry.m */,
@@ -1565,7 +1554,6 @@
 				CCA3A4F217FF14DF009C7371 /* UAActionTest.m */,
 				CCA3A4F417FF14F8009C7371 /* UAActionArgumentsTest.m */,
 				CCA3A4F617FF1506009C7371 /* UAActionRegistryTest.m */,
-				61EA651C1B2F62F00032475C /* UAWalletActionTest.m */,
 				CCA3A4F817FF1515009C7371 /* UAActionResultTest.m */,
 				CCA3A4FA17FF1521009C7371 /* UAActionRunnerTest.m */,
 				CCA3A4FE17FF1582009C7371 /* UAActionRegistryEntryTest.m */,
@@ -1844,12 +1832,10 @@
 				49D11C02171E00980058E7C3 /* UAHTTPConnectionOperation+Internal.h in Headers */,
 				4995C63A180DBBC9004F8724 /* UAAddTagsAction.h in Headers */,
 				767D0D371A71A938008CEC8A /* UANamedUser.h in Headers */,
-				61362D541B28E2BF0011C058 /* UAWalletAction.h in Headers */,
 				49BEBF691AAA5DDC00740665 /* UAMutableUserNotificationAction.h in Headers */,
 				49D11C1217270C6E0058E7C3 /* UAHTTPRequestEngine+Internal.h in Headers */,
 				49BEBF5C1AAA5D6700740665 /* UAUserNotificationAction.h in Headers */,
 				49973CED1A97BFDE009B5EB1 /* UAIncomingInAppMessageAction.h in Headers */,
-				61EA65211B309A0C0032475C /* UAWalletAction+Internal.h in Headers */,
 				CCCCBFC51AE02BDA00C6600C /* UAChannelCapture.h in Headers */,
 				495048A71738812500F8B5BE /* UADelayOperation+Internal.h in Headers */,
 				49A61A9A1AC32B9800BC5E68 /* UAInAppMessageControllerDefaultDelegate.h in Headers */,
@@ -2160,7 +2146,6 @@
 				495048A41738778300F8B5BE /* UAHTTPConnection+Test.m in Sources */,
 				495048AE173996BF00F8B5BE /* UAHTTPRequestEngineTest.m in Sources */,
 				CCAF06D31B0E4DAC007392A7 /* UAAppDelegateProxyTest.m in Sources */,
-				61EA651D1B2F62F00032475C /* UAWalletActionTest.m in Sources */,
 				614F0DAC1A3B773E00F00AAB /* UACircularRegionTest.m in Sources */,
 				497B0EAA1836AB8700DA65BB /* NSString_UAURLEncodingTest.m in Sources */,
 				CCA3A4F917FF1515009C7371 /* UAActionResultTest.m in Sources */,
@@ -2200,7 +2185,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				61362D551B28E2BF0011C058 /* UAWalletAction.m in Sources */,
 				7676AA0C18C4EF5B00B4E5B4 /* UAAppDelegateProxy.m in Sources */,
 				49EB68E51C1FAD5D00D05BCE /* UAMessageCenterDateUtils.m in Sources */,
 				CC8542B917F4B81600D2DE10 /* UAActionArguments.m in Sources */,
