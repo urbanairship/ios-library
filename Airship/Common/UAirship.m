@@ -429,7 +429,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     NSDictionary *info = [bundle infoDictionary];
     
     NSString *appName = [info objectForKey:(NSString*)kCFBundleNameKey];
-    NSString *appVersion = [info objectForKey:(NSString*)kCFBundleVersionKey];
+    NSString *appVersion = [info objectForKey:@"CFBundleShortVersionString"];
     
     NSString *deviceModel = [device model];
     NSString *osName = [device systemName];
