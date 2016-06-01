@@ -366,7 +366,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [request addRequestHeader:@"X-UA-Sent-At" value:[NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]]];
 
     [request addRequestHeader:@"X-UA-Package-Name" value:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleIdentifierKey]];
-    [request addRequestHeader:@"X-UA-Package-Version" value:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey] ?: @""];
+    [request addRequestHeader:@"X-UA-Package-Version" value:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"] ?: @""];
     [request addRequestHeader:@"X-UA-ID" value:[UAUtils deviceID]];
     [request addRequestHeader:@"X-UA-User-ID" value:[UAirship inboxUser].username];
     [request addRequestHeader:@"X-UA-App-Key" value:[UAirship shared].config.appKey];
