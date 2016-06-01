@@ -96,9 +96,10 @@
         self.messageNav.navigationBar.barTintColor = self.style.navigationBarColor;
     }
 
-    if (style.navigationBarTranslucent) {
-        self.listNav.navigationBar.translucent = style.navigationBarTranslucent;
-        self.messageNav.navigationBar.translucent = style.navigationBarTranslucent;
+    // Only apply opaque property if a style is set
+    if (style) {
+        self.listNav.navigationBar.translucent = !style.navigationBarOpaque;
+        self.messageNav.navigationBar.translucent = !style.navigationBarOpaque;
     }
 
     NSMutableDictionary *titleAttributes = [NSMutableDictionary dictionary];

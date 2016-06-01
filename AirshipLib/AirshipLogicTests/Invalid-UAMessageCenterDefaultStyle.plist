@@ -15,8 +15,8 @@
 	<integer>0</integer>
 	<key>navigationBarColor</key>
 	<real>0</real>
-	<key>navigationBarTranslucent</key>
-	<date>2016-06-01T18:51:24Z</date>
+	<key>navigationBarOpaque</key>
+	<string>&quot;Howdy&quot;</string>
 	<key>listColor</key>
 	<false/>
 	<key>refreshTintColor</key>

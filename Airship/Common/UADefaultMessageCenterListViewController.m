@@ -376,8 +376,9 @@
             nav.navigationBar.barTintColor = self.style.navigationBarColor;
         }
 
-        if (self.style.navigationBarTranslucent) {
-            nav.navigationBar.translucent = self.style.navigationBarTranslucent;
+        // Only apply opaque property if a style is set
+        if (self.style) {
+            nav.navigationBar.translucent = !self.style.navigationBarOpaque;
         }
 
         NSMutableDictionary *titleAttributes = [NSMutableDictionary dictionary];
