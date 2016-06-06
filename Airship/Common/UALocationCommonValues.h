@@ -52,12 +52,6 @@ typedef NS_ENUM(NSInteger, UALocationServiceError) {
 
 NS_ASSUME_NONNULL_BEGIN
 
-// The different service provider types, for UAAnalytics
-typedef NSString UALocationServiceProviderType;
-extern UALocationServiceProviderType * const UALocationServiceProviderGps;
-extern UALocationServiceProviderType * const UALocationServiceProviderNetwork;
-extern UALocationServiceProviderType * const UALocationServiceProviderUnknown;
-
 // These are the keys for the stored UALocationService values in the NSUserDefaults
 typedef NSString UALocationServiceNSDefaultsKey;
 extern UALocationServiceNSDefaultsKey * const UALocationServiceAllowedKey;

@@ -73,6 +73,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong) UADefaultMessageCenter *sharedDefaultMessageCenter;
 
+/**
+ * The location manager.
+ */
+@property (nonatomic, strong) UALocation *sharedLocation;
+
 
 /**
  * Creates the user agent string for a given appkey.

@@ -26,6 +26,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import "UALocationProviderDelegate.h"
 #import "UALocationCommonValues.h"
+#import "UALocationEvent.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

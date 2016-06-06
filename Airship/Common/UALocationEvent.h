@@ -55,6 +55,11 @@ extern UALocationEventUpdateType * const UALocationEventUpdateTypeContinuous;
 extern UALocationEventUpdateType * const UALocationEventUpdateTypeSingle;
 extern UALocationEventUpdateType * const UALocationEventUpdateTypeNone;
 
+typedef NSString UALocationServiceProviderType;
+extern UALocationServiceProviderType *const UALocationServiceProviderGps;
+extern UALocationServiceProviderType *const UALocationServiceProviderNetwork;
+extern UALocationServiceProviderType *const UALocationServiceProviderUnknown;
+
 extern NSString * const UAAnalyticsValueNone;
 
 /** 

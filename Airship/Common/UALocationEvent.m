@@ -44,6 +44,9 @@ UALocationEventUpdateType * const UALocationEventUpdateTypeContinuous = @"CONTIN
 UALocationEventUpdateType * const UALocationEventUpdateTypeSingle = @"SINGLE";
 UALocationEventUpdateType * const UALocationEventUpdateTypeNone = @"NONE";
 
+UALocationServiceProviderType *const UALocationServiceProviderGps = @"GPS";
+UALocationServiceProviderType *const UALocationServiceProviderNetwork = @"NETWORK";
+UALocationServiceProviderType *const UALocationServiceProviderUnknown = @"UNKNOWN";
 
 NSString * const UAAnalyticsValueNone = @"NONE";
 

@@ -1,16 +1,16 @@
 /*
  Copyright 2009-2016 Urban Airship Inc. All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
- 
+
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
- 
+
  2. Redistributions in binary form must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided with the distribution.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
@@ -23,22 +23,44 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import "UALocation.h"
 
-#import "UALocationCommonValues.h"
+@class UAPreferenceDataStore;
+@class UAAnalytics;
 
-#pragma mark -
-#pragma mark NSUserPreferences keys for location service persistence
-UALocationServiceNSDefaultsKey *const UALocationServiceAllowedKey = @"UALocationServiceAllowed";
-UALocationServiceNSDefaultsKey *const UALocationServiceEnabledKey = @"UALocationServiceEnabled";
-UALocationServiceNSDefaultsKey *const UAStandardLocationServiceRestartKey = @"UALocationServiceStandardLocationServiceStatusRestart";
-UALocationServiceNSDefaultsKey *const UASignificantChangeServiceRestartKey = @"UALocationServiceSignificantChangeServiceStatusRestart";
-UALocationServiceNSDefaultsKey *const UAStandardLocationDistanceFilterKey = @"UALocationServiceStandardLocationDistanceFilter";
-UALocationServiceNSDefaultsKey *const UAStandardLocationDesiredAccuracyKey = @"UALocationServiceStandardLocationDesiredAccuracy";
-UALocationServiceNSDefaultsKey *const UASingleLocationDesiredAccuracyKey = @"UALocationServiceSingleLocationDesiredAccuracy";
-UALocationServiceNSDefaultsKey *const UASingleLocationTimeoutKey = @"UALocationServiceSingleLocationTimeout";
+@interface UALocation() <CLLocationManagerDelegate>
 
-#pragma mark -
-#pragma mark UALocationServiceErrors
-UALocationServiceErrorDomain *const UALocationServiceTimeoutError = @"UALocationServiceTimedOut";
+NS_ASSUME_NONNULL_BEGIN
+
+/**
+ * The location manager.
+ */
+@property (nonatomic, strong) CLLocationManager *locationManager;
+
+/**
+ * The data store.
+ */
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+
+/**
+ * The Urban Airship analytics.
+ */
+@property (nonatomic, strong) UAAnalytics *analytics;
+
+/**
+ * Flag indicating if location updates have been started or not.
+ */
+@property (nonatomic, assign, getter=isLocationUpdatesStarted) BOOL locationUpdatesStarted;
+
+/**
+ * Factory method to create a UALocation instance.
+ *
+ * @param analytics UAAnalytics instance.
+ * @param dataStore The preference data store.
+ * @return UALocation instance.
+ */
++ (instancetype)locationWithAnalytics:(UAAnalytics *)analytics dataStore:(UAPreferenceDataStore *)dataStore;
+
+NS_ASSUME_NONNULL_END
+
+@end

@@ -93,7 +93,9 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 /**
  * The UALocationService class provides an interface to both the location services on
  * device and the Urban Airship API.
+ * @deprecated Use UALocation instead.
  */
+__attribute__ ((deprecated("Use UALocation instead")))
 @interface UALocationService : NSObject<UALocationProviderDelegate>
 
 ///---------------------------------------------------------------------------------------
