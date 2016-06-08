@@ -47,15 +47,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)userWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
-/**
- * Registers for device registration changes on UAPush
- */
-- (void)registerForDeviceRegistrationChanges;
-
-/**
- * Unregisters for device registration changes on UAPush
- */
-- (void)unregisterForDeviceRegistrationChanges;
 
 /**
  * Updates the user's device token and or channel ID
@@ -88,11 +79,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy, nullable) NSString *url;
 
-
-/**
- * Flag indicating if the device registration changes are being observed or not
- */
-@property (nonatomic, assign) BOOL isObservingDeviceRegistrationChanges;
 
 /**
  * Flag indicating if the  user is being created

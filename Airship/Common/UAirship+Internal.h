@@ -46,7 +46,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UAChannelCapture *channelCapture;
 
-
 /**
  * The push manager.
  */
@@ -77,6 +76,11 @@ NS_ASSUME_NONNULL_BEGIN
  * The location manager.
  */
 @property (nonatomic, strong) UALocation *sharedLocation;
+
+/**
+ * The named user.
+ */
+@property (nonatomic, strong) UANamedUser *sharedNamedUser;
 
 
 /**

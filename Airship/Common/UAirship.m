@@ -40,6 +40,7 @@
 #import "UAActionRegistry.h"
 #import "UALocation+Internal.h"
 
+
 #import "UAAppDelegateProxy+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAURLProtocol.h"
@@ -51,6 +52,7 @@
 #import "UAChannelCapture.h"
 #import "UAActionJSDelegate.h"
 #import "UADefaultMessageCenter.h"
+#import "UANamedUser+Internal.h"
 
 UA_VERSION_IMPLEMENTATION(UAirshipVersion, UA_VERSION)
 
@@ -136,6 +138,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.sharedPush = [UAPush pushWithConfig:config dataStore:dataStore];
         self.sharedInboxUser = [UAUser userWithPush:self.sharedPush config:config dataStore:dataStore];
         self.sharedInbox = [UAInbox inboxWithUser:self.sharedInboxUser config:config dataStore:dataStore];
+        self.sharedNamedUser = [UANamedUser namedUserWithPush:self.sharedPush config:config dataStore:dataStore];
         self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore];
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
 
@@ -408,6 +411,11 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 + (UALocation *)location {
     return sharedAirship_.sharedLocation;
 }
+
++ (UANamedUser *)namedUser {
+    return sharedAirship_.sharedNamedUser;
+}
+
 
 + (NSBundle *)resources {
     static dispatch_once_t onceToken;

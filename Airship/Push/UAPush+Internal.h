@@ -237,10 +237,6 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
        channelLocation:(NSString *)channelLocation
               existing:(BOOL)existing;
 
-/**
- * Called when the channel previously existed.
- */
-- (void)channelPreviouslyExisted;
 
 /**
  * Creates a UAChannelRegistrationPayload.

@@ -24,13 +24,13 @@
  */
 
 #import "UANamedUser+Internal.h"
-#import "UAirship+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UANamedUserAPIClient+Internal.h"
 #import "UAPush+Internal.h"
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UATagUtils.h"
 #import "UAHTTPConnection+Internal.h"
+#import "UAConfig+Internal.h"
 
 #define kUAMaxNamedUserIDLength 128
 
@@ -44,15 +44,37 @@ NSString *const UANamedUserRemoveTagGroupsSettingsKey = @"UANamedUserRemoveTagGr
 
 @implementation UANamedUser
 
-- (instancetype)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
+        self.config = config;
+        self.push = push;
         self.dataStore = dataStore;
         self.namedUserAPIClient = [UANamedUserAPIClient clientWithConfig:config];
         self.tagGroupsAPIClient = [UATagGroupsAPIClient clientWithConfig:config];
+
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(channelCreated:)
+                                                     name:UAChannelCreatedEvent
+                                                   object:nil];
+
+
+        // Update the named user if necessary.
+        [self update];
     }
     
     return self;
+}
+
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+
++(instancetype) namedUserWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+    return [[UANamedUser alloc] initWithPush:push config:config dataStore:dataStore];
 }
 
 - (void)update {
@@ -68,7 +90,7 @@ NSString *const UANamedUserRemoveTagGroupsSettingsKey = @"UANamedUserRemoveTagGr
         return;
     }
 
-    if (![UAirship push].channelID) {
+    if (!self.push.channelID) {
         // Skip since we don't have a channel ID.
         UA_LDEBUG(@"The channel ID does not exist. Will retry when channel ID is available.");
         return;
@@ -150,7 +172,7 @@ NSString *const UANamedUserRemoveTagGroupsSettingsKey = @"UANamedUserRemoveTagGr
 
 - (void)associateNamedUser {
     NSString *token = self.changeToken;
-    [self.namedUserAPIClient associate:self.identifier channelID:[UAirship push].channelID
+    [self.namedUserAPIClient associate:self.identifier channelID:self.push.channelID
      onSuccess:^{
          self.lastUpdatedToken = token;
          UA_LDEBUG(@"Named user associated to channel successfully.");
@@ -162,7 +184,7 @@ NSString *const UANamedUserRemoveTagGroupsSettingsKey = @"UANamedUserRemoveTagGr
 
 - (void)disassociateNamedUser {
     NSString *token = self.changeToken;
-    [self.namedUserAPIClient disassociate:[UAirship push].channelID
+    [self.namedUserAPIClient disassociate:self.push.channelID
      onSuccess:^{
          self.lastUpdatedToken = token;
          UA_LDEBUG(@"Named user disassociated from channel successfully.");
@@ -316,5 +338,18 @@ NSString *const UANamedUserRemoveTagGroupsSettingsKey = @"UANamedUserRemoveTagGr
                                        onSuccess:successBlock
                                        onFailure:failureBlock];
 }
+
+- (void)channelCreated:(NSNotification *)notification {
+    BOOL existing = [notification.userInfo[UAChannelCreatedEventExistingKey] boolValue];
+
+    // If this channel previously existed, a named user may be associated to it.
+    if (existing && self.config.clearNamedUserOnAppRestore) {
+        [self disassociateNamedUserIfNil];
+    } else {
+        // Once we get a channel, update the named user if necessary.
+        [self update];
+    }
+}
+
 
 @end
