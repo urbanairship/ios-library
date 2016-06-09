@@ -37,6 +37,8 @@
 #import "UAJavaScriptDelegate.h"
 #import "UAWebViewCallData.h"
 #import "NSString+UAURLEncoding.h"
+#import "UANamedUser.h"
+#import "UAPush.h"
 
 @interface UAWebViewDelegate()
 @property (nonatomic, strong) NSMapTable *injectedWebViews;
@@ -178,6 +180,16 @@
      * Set the current message's title.
      */
     appendStringGetter(@"getMessageTitle", message.title);
+
+    /*
+     * Set the named User ID
+     */
+    appendStringGetter(@"getNamedUser", [UAirship namedUser].identifier);
+
+    /*
+     * Set the channel ID
+     */
+    appendStringGetter(@"getChannelId", [UAirship push].channelID);
 
     /*
      * Set the current message's sent date
