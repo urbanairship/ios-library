@@ -39,25 +39,26 @@ NS_ASSUME_NONNULL_BEGIN
  * @param numberOfButtons The number of buttons to display (0-2).
  */
 - (instancetype)initWithPosition:(UAInAppMessagePosition)position numberOfButtons:(NSUInteger)numberOfButtons;
+
 /**
  * The "tab" widget indicating swipability.
  */
-@property(nonatomic, readonly)  UIView *tab;
+@property(nonatomic, readonly) IBOutlet UIView *tab;
 
 /**
  * The message label displaying message alert content.
  */
-@property(nonatomic, readonly)  UILabel *messageLabel;
+@property(nonatomic, readonly) IBOutlet UILabel *messageLabel;
 
 /**
  * Button one.
  */
-@property(nonatomic, readonly, nullable)  UIButton *button1;
+@property(nonatomic, readonly, nullable) IBOutlet UIButton *button1;
 
 /**
  * Button two.
  */
-@property(nonatomic, readonly, nullable)  UIButton *button2;
+@property(nonatomic, readonly, nullable) IBOutlet UIButton *button2;
 
 @end
 

@@ -170,6 +170,7 @@
 		612ED4DD1A38DE3900DD7762 /* UACircularRegion+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 612ED4DA1A37D08200DD7762 /* UACircularRegion+Internal.h */; };
 		612ED4DE1A38DE3B00DD7762 /* UAProximityRegion+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 612ED4D91A37D06E00DD7762 /* UAProximityRegion+Internal.h */; };
 		614F0DAC1A3B773E00F00AAB /* UACircularRegionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 614F0DAB1A3B773E00F00AAB /* UACircularRegionTest.m */; };
+		6152719E1CFF41D1002F22BB /* UAInAppMessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6152719D1CFF41D1002F22BB /* UAInAppMessageView.xib */; };
 		619194401BED590B00320855 /* UAChannelRegistrar+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6191943F1BED590B00320855 /* UAChannelRegistrar+Internal.h */; };
 		619C29861B8545370025AA65 /* UAInAppMessageController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 619C29851B8545370025AA65 /* UAInAppMessageController+Internal.h */; };
 		61A070991B7A5B9E00819091 /* UAInboxAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 61A070981B7A5B9E00819091 /* UAInboxAPIClientTest.m */; };
@@ -596,6 +597,7 @@
 		612ED4D91A37D06E00DD7762 /* UAProximityRegion+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAProximityRegion+Internal.h"; sourceTree = "<group>"; };
 		612ED4DA1A37D08200DD7762 /* UACircularRegion+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UACircularRegion+Internal.h"; sourceTree = "<group>"; };
 		614F0DAB1A3B773E00F00AAB /* UACircularRegionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACircularRegionTest.m; sourceTree = "<group>"; };
+		6152719D1CFF41D1002F22BB /* UAInAppMessageView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInAppMessageView.xib; sourceTree = "<group>"; };
 		6191943F1BED590B00320855 /* UAChannelRegistrar+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAChannelRegistrar+Internal.h"; sourceTree = "<group>"; };
 		619C29851B8545370025AA65 /* UAInAppMessageController+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageController+Internal.h"; sourceTree = "<group>"; };
 		61A070981B7A5B9E00819091 /* UAInboxAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxAPIClientTest.m; sourceTree = "<group>"; };
@@ -1128,6 +1130,7 @@
 				49EB68E81C1FC0DF00D05BCE /* UADefaultMessageCenterListCell.xib */,
 				49EB68E91C1FC0DF00D05BCE /* UADefaultMessageCenterListViewController.xib */,
 				49EB68EA1C1FC0DF00D05BCE /* UADefaultMessageCenterMessageViewController.xib */,
+				6152719D1CFF41D1002F22BB /* UAInAppMessageView.xib */,
 				4920514C1C0E6BEA00A7B36D /* Localization */,
 				CCBBC5E21CAC6953000CCD7F /* UANotificationCategories.plist */,
 			);
@@ -2036,6 +2039,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6152719E1CFF41D1002F22BB /* UAInAppMessageView.xib in Resources */,
 				49EB68EC1C1FC0DF00D05BCE /* UADefaultMessageCenterListViewController.xib in Resources */,
 				498F6A061C3B4BB400088B01 /* UADefaultMessageCenterPlaceholderIcon.png in Resources */,
 				CCBBC5E31CAC6953000CCD7F /* UANotificationCategories.plist in Resources */,
