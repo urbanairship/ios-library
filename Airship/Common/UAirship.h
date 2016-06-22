@@ -36,6 +36,7 @@
 #import <Security/Security.h>
 #import <QuartzCore/QuartzCore.h>
 #import <Availability.h>
+#import <UserNotifications/UserNotifications.h>
 
 @class UAConfig;
 @class UAAnalytics;
