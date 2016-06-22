@@ -23,11 +23,11 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAUserNotificationCategory.h"
+#import "UANotificationCategory.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface UAUserNotificationCategory ()
+@interface UANotificationCategory ()
 
 /**
  * Converts a UAUserNotificationCategory into a UIUserNotificationCategory.

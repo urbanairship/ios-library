@@ -23,14 +23,14 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAUserNotificationCategory+Internal.h"
+#import "UANotificationCategory+Internal.h"
 #import "UAUserNotificationAction+Internal.h"
 
-@interface UAUserNotificationCategory ()
+@interface UANotificationCategory ()
 @property(nonatomic, copy) NSString *identifier;
 @end
 
-@implementation UAUserNotificationCategory
+@implementation UANotificationCategory
 
 /**
  * This implementation does nothing, because in practice one will always create
@@ -63,7 +63,7 @@
     return category;
 }
 
-- (BOOL)isEqualToCategory:(UAUserNotificationCategory *)category {
+- (BOOL)isEqualToCategory:(UANotificationCategory *)category {
     NSArray *minimalUAActions = [self actionsForContext:UIUserNotificationActionContextMinimal];
     NSArray *defaultUAActions = [self actionsForContext:UIUserNotificationActionContextDefault];
 

@@ -29,9 +29,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Clone of UIUserNotificationCategory for iOS 7 support.
+ * Clone of UNNotificationCategory for iOS 8-9 support.
  */
-@interface UAUserNotificationCategory : NSObject
+@interface UANotificationCategory : NSObject
 
 /**
  * The name of the action group.
