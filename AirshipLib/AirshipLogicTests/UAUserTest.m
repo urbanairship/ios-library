@@ -297,83 +297,28 @@
     XCTAssertNoThrow([self.mockUserClient verify], @"User should call the client to be updated.");
 }
 
-
 /**
- * Test registering as an observer for UAPush registration changes
- * calls update if the channel is available.
+ * Test observing channel created notifications.
  */
--(void)testRegisterForDeviceRegistrationChangesChannelIDAvailable {
-    self.push.channelID = @"some-channel";
-    self.push.channelLocation = @"some-location";
+-(void)testObserveChannelCreated {
     self.push.deviceToken = @"aaaaa";
 
     // Set up a default user
     self.user.username = @"username";
     self.user.password = @"password";
-
-    // Expect an update call when we register for device registration changes
-    [[self.mockUserClient expect] updateUser:self.user
-                                   channelID:@"some-channel"
-                                   onSuccess:OCMOCK_ANY
-                                   onFailure:OCMOCK_ANY];
 
     // Mock background task so background task check passes
     [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
-    [self.user unregisterForDeviceRegistrationChanges];
-    [self.user registerForDeviceRegistrationChanges];
-
-    XCTAssertNoThrow([self.mockUserClient verify], @"User should call the client to be updated.");
-}
-
-
-/**
- * Test unregistering as an observer for UAPush registration changes
- */
--(void)testUnregisterForDeviceRegistrationChanges {
-    [self.user registerForDeviceRegistrationChanges];
-    id mockPush = [OCMockObject partialMockForObject:self.push];
-
-    XCTAssertTrue(self.user.isObservingDeviceRegistrationChanges, @"We should be observing registration changes after registeringForDeviceRegistrationChanges.");
-
-    [[mockPush expect] removeObserver:self.user forKeyPath:@"channelID"];
-
-    [self.user unregisterForDeviceRegistrationChanges];
-
-    XCTAssertFalse(self.user.isObservingDeviceRegistrationChanges, @"We should not be observing registration changes after unregisteringForDeviceRegistrationChanges.");
-    XCTAssertNoThrow([mockPush verify], @"User should remove itself as an observer for device token and channel ID.");
-
-    [[mockPush reject] removeObserver:self.user forKeyPath:@"channelID"];
-    [self.user unregisterForDeviceRegistrationChanges];
-
-    XCTAssertNoThrow([mockPush verify], @"User should not be able to unregister twice for KVO.");
-    [mockPush stopMocking];
-}
-
-/**
- * Test observer changes to channel ID updates the user
- */
--(void)testObserveValueForKeyPath {
-    self.push.channelID = @"some-channel";
-    self.push.channelLocation = @"some-location";
-    self.push.deviceToken = @"aaaaa";
-    
-    // Set up a default user
-    self.user.username = @"username";
-    self.user.password = @"password";
-
+    // Expect an update call
     [[self.mockUserClient expect] updateUser:OCMOCK_ANY
                                    channelID:OCMOCK_ANY
                                    onSuccess:OCMOCK_ANY
                                    onFailure:OCMOCK_ANY];
 
-    // Mock background task so background task check passes
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+    // Create the channel
+    [self.push channelCreated:@"some-channel" channelLocation:@"some-location" existing:NO];
 
-    [self.user observeValueForKeyPath:@"channelID" ofObject:nil change:nil context:nil];
-
-    // Change the channel ID
-    self.push.channelID = @"channelID";
 
     XCTAssertNoThrow([self.mockUserClient verify]);
 }

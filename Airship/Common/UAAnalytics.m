@@ -44,7 +44,7 @@
 #import "UAAppForegroundEvent+Internal.h"
 #import "UAScreenTrackingEvent+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UALocationService.h"
+#import "UALocation.h"
 #import "UARegionEvent+Internal.h"
 #import "UAAssociateIdentifiersEvent+Internal.h"
 #import "UAAssociatedIdentifiers.h"
@@ -389,7 +389,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     }
     [request addRequestHeader:@"X-UA-Channel-ID" value:[UAirship push].channelID];
     [request addRequestHeader:@"X-UA-Location-Permission" value:[self locationPermission]];
-    [request addRequestHeader:@"X-UA-Location-Service-Enabled" value:[UALocationService airshipLocationServiceEnabled] ? @"true" : @"false"];
+
+    [request addRequestHeader:@"X-UA-Location-Service-Enabled" value:[UAirship location].locationUpdatesEnabled ? @"true" : @"false"];
 
     return request;
 }

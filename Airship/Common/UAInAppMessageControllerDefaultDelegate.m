@@ -45,8 +45,12 @@
 @property(nonatomic, strong) UIColor *secondaryColor;
 @property(nonatomic, strong) NSArray *layoutConstraints;
 @property(nonatomic, copy) void (^updateLayoutConstraintsBlock)(void);
-@property(nonatomic, assign) UIUserInterfaceSizeClass lastHorizontalSizeClass;
 @property(nonatomic, assign) BOOL isInverted;
+
+@property(nonatomic, assign) UIUserInterfaceSizeClass lastHorizontalSizeClass;
+
+@property(nonatomic, strong) NSLayoutConstraint *topConstraint;
+@property(nonatomic, strong) NSLayoutConstraint *bottomConstraint;
 
 @end
 
@@ -149,138 +153,109 @@
 
     // Update layout constraints if needed
     messageView.onLayoutSubviews = ^{
-        [self updateLayoutConstraintsIfNeeded];
+        self.updateLayoutConstraintsBlock();
     };
 
     return messageView;
 }
 
-- (void)updateLayoutConstraintsWithParent:(UIView *)parentView metrics:(id)metrics views:(id)views {
-
-    NSString *verticalLayout;
-
-    // Place the message view flush against the top or bottom of the parent, depending on position
-    if (self.position == UAInAppMessagePositionBottom) {
-        verticalLayout = @"V:[messageView]|";
-    } else {
-        verticalLayout = @"V:|[messageView]";
-    }
-
-    NSString *regularWidthHorizontalLayout = @"[messageView(regularMessageWidth)]";
-    NSString *compactWidthHorizontalLayout = @"H:|-horizontalMargin-[messageView]-horizontalMargin-|";
-
-    NSString *horizontalLayout;
-
-    UIWindow *window = [UAUtils mainWindow];
-    if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
-
-        UITraitCollection *traitCollection = window.traitCollection;
-
-        UIUserInterfaceSizeClass horizontalSizeClass = traitCollection.horizontalSizeClass;
-        UIUserInterfaceSizeClass verticalSizeClass = traitCollection.verticalSizeClass;
-
-        if (horizontalSizeClass == UIUserInterfaceSizeClassRegular && verticalSizeClass == UIUserInterfaceSizeClassRegular) {
-            horizontalLayout = regularWidthHorizontalLayout;
-        } else {
-            horizontalLayout = compactWidthHorizontalLayout;
-        }
-    } else {
-        // If the UI idiom is iPad, use the fixed width, otherwise offset it with the horizontal margins
-        if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-            horizontalLayout = regularWidthHorizontalLayout;
-        } else {
-            horizontalLayout = compactWidthHorizontalLayout;
-        }
-    }
-
-
-    if (self.layoutConstraints) {
-        [parentView removeConstraints:self.layoutConstraints];
-    }
-
-    NSMutableArray *allConstraints = [NSMutableArray array];
-
-    for (NSString *expression in @[verticalLayout, horizontalLayout]) {
-        NSArray *constraints = [NSLayoutConstraint constraintsWithVisualFormat:expression
-                                                                       options:0
-                                                                       metrics:metrics
-                                                                         views:views];
-        [allConstraints addObjectsFromArray:constraints];
-
-    }
-
-    self.layoutConstraints = allConstraints;
-
-    [parentView addConstraints:allConstraints];
-};
-
 /**
- * Adds layout constraints to the message view.
+ * Adds the message view to the parent view with default constraints and generates the
+ * updateLayoutConstraintsBlock for managing dynamic constraints.
  */
-- (void)buildLayoutWithParent:(UIView *)parentView messageView:(UIView *)messageView {
-    CGFloat horizontalMargin = 0;
-    CGRect windowBounds = [UAUtils orientationDependentWindowBounds];
-    CGFloat screenWidth = CGRectGetWidth(windowBounds);
-
-    // For the horizontal and vertical regular size class, messages are 45% of the fixed screen width in landscape
-    CGFloat longWidth = MAX(screenWidth, CGRectGetHeight(windowBounds));
-    CGFloat regularMessageWidth = longWidth * kUAInAppMessagePadScreenWidthPercentage;
-
-    // For the horizontal or vertical compact size class, messages are always 95% of current screen width
-    CGFloat compactMessageWidth = screenWidth*kUAInAppMessageiPhoneScreenWidthPercentage;
-
-    horizontalMargin = (screenWidth - compactMessageWidth)/2.0;
-
-    id metrics = @{@"horizontalMargin":@(horizontalMargin), @"regularMessageWidth":@(regularMessageWidth)};
-    id views = @{@"messageView":messageView};
-
-    [parentView addSubview:messageView];
-
-    // Center the message view in the parent (this cannot be expressed in VFL)
-    [parentView addConstraint:[NSLayoutConstraint constraintWithItem:messageView
-                                                           attribute:NSLayoutAttributeCenterX
-                                                           relatedBy:NSLayoutRelationEqual
-                                                              toItem:parentView
-                                                           attribute:NSLayoutAttributeCenterX multiplier:1
-                                                            constant:0]];
-
-    // Executing this block will calculate/recalculate layout constraints
-    __weak UAInAppMessageControllerDefaultDelegate *weakSelf = self;
-    self.updateLayoutConstraintsBlock = ^{
-        UAInAppMessageControllerDefaultDelegate *strongSelf = weakSelf;
-
-        [strongSelf updateLayoutConstraintsWithParent:parentView metrics:metrics views:views];
-    };
-
-    self.updateLayoutConstraintsBlock();
-}
-
-- (void)updateLayoutConstraintsIfNeeded {
-    // If we're running on iOS 8 or above
-    if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
-        // Get the current horizontal size class
-        UIUserInterfaceSizeClass horizontalSizeClass = [UAUtils mainWindow].traitCollection.horizontalSizeClass;
-        // If there has been a change, update layout constraints
-        if (horizontalSizeClass != self.lastHorizontalSizeClass) {
-            self.lastHorizontalSizeClass = horizontalSizeClass;
-            self.updateLayoutConstraintsBlock();
-        }
-    }
-}
-
 - (UIView *)viewForMessage:(UAInAppMessage *)message parentView:(UIView *)parentView {
 
     // Build the messageView, configuring it with data from the message
     UIView *messageView = [self buildMessageViewForMessage:message];
 
-    // Build and add the autolayout constraints that situate the message view in its parent
-    [self buildLayoutWithParent:parentView messageView:messageView];
+    [parentView addSubview:messageView];
+
+    // Activate center on X axis constraint
+    [NSLayoutConstraint constraintWithItem:messageView
+                                 attribute:NSLayoutAttributeCenterX
+                                 relatedBy:NSLayoutRelationEqual
+                                    toItem:parentView
+                                 attribute:NSLayoutAttributeCenterX
+                                multiplier:1
+                                  constant:0].active = YES;
+
+    if (self.position == UAInAppMessagePositionTop) {
+        // Top constraint is used for animating the message in the top position.
+        self.topConstraint = [NSLayoutConstraint constraintWithItem:messageView
+                                                          attribute:NSLayoutAttributeTop
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:parentView
+                                                          attribute:NSLayoutAttributeTop
+                                                         multiplier:1
+                                                           constant:-messageView.bounds.size.height];
+        self.topConstraint.active = YES;
+    } else if (self.position == UAInAppMessagePositionBottom) {
+        // Bottom constraint is used for animating the message in the bottom position.
+        self.bottomConstraint = [NSLayoutConstraint constraintWithItem:messageView
+                                                             attribute:NSLayoutAttributeBottom
+                                                             relatedBy:NSLayoutRelationEqual
+                                                                toItem:parentView
+                                                             attribute:NSLayoutAttributeBottom
+                                                            multiplier:1
+                                                              constant:messageView.bounds.size.height];
+
+        self.bottomConstraint.active = YES;
+    }
+
+    /**
+     * Any internal method calls for dynamically adding or removing constraints
+     * should be done from within this block.
+     */
+    __weak UAInAppMessageControllerDefaultDelegate *weakSelf = self;
+    self.updateLayoutConstraintsBlock = ^{
+        UAInAppMessageControllerDefaultDelegate *strongSelf = weakSelf;
+
+        // Update size class constraints
+        [strongSelf updateSizeClassConstraints:parentView messageView:messageView];
+    };
+
+    self.updateLayoutConstraintsBlock();
 
     return messageView;
 }
 
+- (void)updateSizeClassConstraints:(UIView *)parentView messageView:(UIView *)messageView {
+
+    // Get the current horizontal size class
+    UIUserInterfaceSizeClass horizontalSizeClass = [UAUtils mainWindow].traitCollection.horizontalSizeClass;
+    // If there has been no orientation change, return early
+    if (horizontalSizeClass == self.lastHorizontalSizeClass) {
+        return;
+    }
+
+    self.lastHorizontalSizeClass = horizontalSizeClass;
+
+    if (self.lastHorizontalSizeClass == UIUserInterfaceSizeClassCompact) {
+        // Unlike constants, multiplier changes require recreating the constraint
+        [NSLayoutConstraint constraintWithItem:messageView
+                                     attribute:NSLayoutAttributeWidth
+                                     relatedBy:NSLayoutRelationEqual
+                                        toItem:parentView
+                                     attribute:NSLayoutAttributeWidth
+                                    multiplier:kUAInAppMessageiPhoneScreenWidthPercentage
+                                      constant:0].active = YES;
+    } else if (self.lastHorizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        // Unlike constants, multiplier changes require recreating the constraint
+      [NSLayoutConstraint constraintWithItem:messageView
+                                   attribute:NSLayoutAttributeWidth
+                                   relatedBy:NSLayoutRelationEqual
+                                      toItem:parentView
+                                   attribute:NSLayoutAttributeWidth
+                                  multiplier:kUAInAppMessagePadScreenWidthPercentage
+                                    constant:0].active = YES;
+    }
+
+    [parentView layoutIfNeeded];
+    [messageView layoutIfNeeded];
+}
+
 - (UIControl *)messageView:(UIView *)messageView buttonAtIndex:(NSUInteger)index {
-    UAInAppMessageView *uaMessageView = (UAInAppMessageView *) messageView;
+    UAInAppMessageView *uaMessageView = (UAInAppMessageView *)messageView;
 
     // Index 0 corresponds to buton1, index 1 corresponds to button 2.
     if (index == 0) {
@@ -303,28 +278,31 @@
 }
 
 - (void)messageView:(UIView *)messageView animateInWithParentView:(UIView *)parentView completionHandler:(void (^)(void))completionHandler {
-    // Save and offset the message view's original center point for animation in
-    CGPoint originalCenter = messageView.center;
     if (self.position == UAInAppMessagePositionTop) {
-        messageView.center = CGPointMake(originalCenter.x, -(CGRectGetHeight(messageView.frame)/2));
+        self.topConstraint.constant = 0;
     } else if (self.position == UAInAppMessagePositionBottom) {
-        messageView.center = CGPointMake(originalCenter.x, CGRectGetHeight(parentView.frame) + CGRectGetHeight(messageView.frame)/2);
+        self.bottomConstraint.constant = 0;
     }
 
     [UIView animateWithDuration:kUAInAppMessageAnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-        messageView.center = originalCenter;
+        [parentView layoutIfNeeded];
+        [messageView layoutIfNeeded];
     } completion:^(BOOL finished) {
         completionHandler();
     }];
 }
 
 - (void)messageView:(UIView *)messageView animateOutWithParentView:(UIView *)parentView completionHandler:(void (^)(void))completionHandler {
+
+    if (self.position == UAInAppMessagePositionTop) {
+        self.topConstraint.constant = -messageView.bounds.size.height;
+    } else if (self.position == UAInAppMessagePositionBottom) {
+        self.bottomConstraint.constant = messageView.bounds.size.height;
+    }
+
     [UIView animateWithDuration:kUAInAppMessageAnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-        if (self.position == UAInAppMessagePositionTop) {
-            messageView.center = CGPointMake(messageView.center.x, -(CGRectGetHeight(messageView.frame)));
-        } else {
-            messageView.center = CGPointMake(messageView.center.x, messageView.center.y + (CGRectGetHeight(messageView.frame)));
-        }
+        [parentView layoutIfNeeded];
+        [messageView layoutIfNeeded];
     } completion:^(BOOL finished){
         completionHandler();
     }];

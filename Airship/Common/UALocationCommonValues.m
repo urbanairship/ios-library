@@ -28,10 +28,6 @@
 
 #import "UALocationCommonValues.h"
 
-UALocationServiceProviderType *const UALocationServiceProviderGps = @"GPS";
-UALocationServiceProviderType *const UALocationServiceProviderNetwork = @"NETWORK";
-UALocationServiceProviderType *const UALocationServiceProviderUnknown = @"UNKNOWN";
-
 #pragma mark -
 #pragma mark NSUserPreferences keys for location service persistence
 UALocationServiceNSDefaultsKey *const UALocationServiceAllowedKey = @"UALocationServiceAllowed";

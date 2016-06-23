@@ -38,6 +38,8 @@
 #import "UAApplicationMetrics.h"
 #import "UAInbox+Internal.h"
 #import "UAActionRegistry.h"
+#import "UALocation+Internal.h"
+
 
 #import "UAAppDelegateProxy+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
@@ -50,6 +52,7 @@
 #import "UAChannelCapture.h"
 #import "UAActionJSDelegate.h"
 #import "UADefaultMessageCenter.h"
+#import "UANamedUser+Internal.h"
 
 UA_VERSION_IMPLEMENTATION(UAirshipVersion, UA_VERSION)
 
@@ -104,6 +107,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 #pragma mark -
 #pragma mark Location Get/Set Methods
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 - (UALocationService *)locationService {
     if (!_locationService) {
         _locationService = [[UALocationService alloc] init];
@@ -111,6 +116,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
     return _locationService;
 }
+#pragma GCC diagnostic pop
 
 #pragma mark -
 #pragma mark Object Lifecycle
@@ -132,10 +138,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.sharedPush = [UAPush pushWithConfig:config dataStore:dataStore];
         self.sharedInboxUser = [UAUser userWithPush:self.sharedPush config:config dataStore:dataStore];
         self.sharedInbox = [UAInbox inboxWithUser:self.sharedInboxUser config:config dataStore:dataStore];
+        self.sharedNamedUser = [UANamedUser namedUserWithPush:self.sharedPush config:config dataStore:dataStore];
         self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore];
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
 
         self.sharedInAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.analytics dataStore:dataStore];
+        self.sharedLocation = [UALocation locationWithAnalytics:self.analytics dataStore:dataStore];
 
         // Only create the default message center if running iOS 8 and above
         if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
@@ -399,6 +407,15 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 + (UADefaultMessageCenter *)defaultMessageCenter {
     return sharedAirship_.sharedDefaultMessageCenter;
 }
+
++ (UALocation *)location {
+    return sharedAirship_.sharedLocation;
+}
+
++ (UANamedUser *)namedUser {
+    return sharedAirship_.sharedNamedUser;
+}
+
 
 + (NSBundle *)resources {
     static dispatch_once_t onceToken;

@@ -26,7 +26,6 @@
 #import <UIKit/UIKit.h>
 
 #import "UAPush+Internal.h"
-#import "UANamedUser+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAAnalytics.h"
 #import "UADeviceRegistrationEvent+Internal.h"
@@ -80,6 +79,11 @@ NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
 // The default device tag group.
 NSString *const UAPushDefaultDeviceTagGroup = @"device";
 
+NSString *const UAChannelCreatedEvent = @"com.urbanairship.push.channel_created";
+NSString *const UAChannelCreatedEventChannelKey = @"com.urbanairship.push.channel_id";
+NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.existing";
+
+
 @implementation UAPush
 
 // Both getter and setter are custom here, so give the compiler a hand with the synthesizing
@@ -107,7 +111,6 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
         self.userNotificationTypes = UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound;
         self.allUserNotificationCategories = [UAUserNotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories];
         self.registrationBackgroundTask = UIBackgroundTaskInvalid;
-        self.namedUser = [[UANamedUser alloc] initWithConfig:config dataStore:dataStore];
 
         self.channelRegistrar = [UAChannelRegistrar channelRegistrarWithConfig:config];
         self.channelRegistrar.delegate = self;
@@ -150,9 +153,6 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
         if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerForRemoteNotifications)] && [UAirship shared].remoteNotificationBackgroundModeEnabled) {
             [[UIApplication sharedApplication] registerForRemoteNotifications];
         }
-
-        // Update the named user if necessary.
-        [self.namedUser update];
     }
 
     return self;
@@ -352,6 +352,11 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
 
 - (BOOL)shouldUseUIUserNotificationCategories {
     return [UIUserNotificationCategory class] != nil;
+}
+
+// Deprecated
+- (UANamedUser *)namedUser {
+    return [UAirship namedUser];
 }
 
 /**
@@ -1100,13 +1105,10 @@ BOOL deferChannelCreationOnForeground = false;
             NSLog(@"Created channel with ID: %@", self.channelID);
         }
 
-        // If this channel previously existed, a named user may be associated to it.
-        if (existing && [UAirship shared].config.clearNamedUserOnAppRestore) {
-            [self.namedUser disassociateNamedUserIfNil];
-        } else {
-            // Once we get a channel, update the named user if necessary.
-            [self.namedUser update];
-        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelCreatedEvent
+                                                            object:self
+                                                          userInfo:@{UAChannelCreatedEventChannelKey: channelID,
+                                                                     UAChannelCreatedEventExistingKey: @(existing)}];
 
     } else {
         UA_LERR(@"Channel creation failed. Missing channelID: %@ or channelLocation: %@",
@@ -1114,12 +1116,6 @@ BOOL deferChannelCreationOnForeground = false;
     }
 }
 
--(void)channelPreviouslyExisted {
-    // If this channel previously existed, a named user may be associated to it.
-    if ([UAirship shared].config.clearNamedUserOnAppRestore) {
-        [self.namedUser disassociateNamedUserIfNil];
-    }
-}
 
 #pragma mark -
 #pragma mark Default Values

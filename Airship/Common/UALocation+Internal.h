@@ -23,44 +23,44 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
-#import "UAInAppMessage.h"
+#import "UALocation.h"
+
+@class UAPreferenceDataStore;
+@class UAAnalytics;
+
+@interface UALocation() <CLLocationManagerDelegate>
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * View class for in-app messages.
+ * The location manager.
  */
-@interface UAInAppMessageView : UIView
+@property (nonatomic, strong) CLLocationManager *locationManager;
 
 /**
- * UAInAppMessageView initializer.
- * @param position A `UAInAppMessagePosition` value, indicating screen position.
- * @param numberOfButtons The number of buttons to display (0-2).
+ * The data store.
  */
-- (instancetype)initWithPosition:(UAInAppMessagePosition)position numberOfButtons:(NSUInteger)numberOfButtons;
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 /**
- * The "tab" widget indicating swipability.
+ * The Urban Airship analytics.
  */
-@property(nonatomic, readonly) IBOutlet UIView *tab;
+@property (nonatomic, strong) UAAnalytics *analytics;
 
 /**
- * The message label displaying message alert content.
+ * Flag indicating if location updates have been started or not.
  */
-@property(nonatomic, readonly) IBOutlet UILabel *messageLabel;
+@property (nonatomic, assign, getter=isLocationUpdatesStarted) BOOL locationUpdatesStarted;
 
 /**
- * Button one.
+ * Factory method to create a UALocation instance.
+ *
+ * @param analytics UAAnalytics instance.
+ * @param dataStore The preference data store.
+ * @return UALocation instance.
  */
-@property(nonatomic, readonly, nullable) IBOutlet UIButton *button1;
-
-/**
- * Button two.
- */
-@property(nonatomic, readonly, nullable) IBOutlet UIButton *button2;
-
-@end
++ (instancetype)locationWithAnalytics:(UAAnalytics *)analytics dataStore:(UAPreferenceDataStore *)dataStore;
 
 NS_ASSUME_NONNULL_END
 
+@end
