@@ -68,6 +68,7 @@ NSString *const UAPushEnabledSettingsMigratedKey = @"UAPushEnabledSettingsMigrat
 // Old push enabled key
 NSString *const UAPushEnabledKey = @"UAPushEnabled";
 
+
 // Quiet time dictionary keys
 NSString *const UAPushQuietTimeStartKey = @"start";
 NSString *const UAPushQuietTimeEndKey = @"end";
@@ -132,10 +133,12 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
                                                      name:UIApplicationDidEnterBackgroundNotification
                                                    object:[UIApplication sharedApplication]];
 
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(applicationBackgroundRefreshStatusChanged)
-                                                     name:UIApplicationBackgroundRefreshStatusDidChangeNotification
-                                                   object:[UIApplication sharedApplication]];
+        if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(applicationBackgroundRefreshStatusChanged)
+                                                         name:UIApplicationBackgroundRefreshStatusDidChangeNotification
+                                                       object:[UIApplication sharedApplication]];
+        }
 
 
         // Do not remove migratePushSettings call from init. It needs to be run
@@ -452,7 +455,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 }
 
 - (void)setUserNotificationTypes:(UIUserNotificationType)userNotificationTypes {
-    if (userNotificationTypes == UIUserNotificationTypeNone) {
+    if (userNotificationTypes == UIUserNotificationTypeNone && [UAPush deviceSupportsUserNotifications]) {
         UA_LWARN(@"Registering for UIUserNotificationTypeNone may disable the ability to register for other types without restarting the device first.");
     }
 
@@ -462,7 +465,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 }
 
 - (void)setRequireSettingsAppToDisableUserNotifications:(BOOL)requireSettingsAppToDisableUserNotifications {
-    if (!requireSettingsAppToDisableUserNotifications) {
+    if (!requireSettingsAppToDisableUserNotifications && [UAPush deviceSupportsUserNotifications]) {
         UA_LWARN(@"Allowing the application to disable notifications in iOS 8+ will prevent your application from properly "
                  "opt-ing out of notifications that include \"content-available\" background components in "
                  "notifications that also include a user-visible component. Instead, direct users to the iOS "
@@ -472,7 +475,11 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 }
 
 - (BOOL)requireSettingsAppToDisableUserNotifications {
-    return _requireSettingsAppToDisableUserNotifications;
+    if ([UAPush deviceSupportsUserNotifications]) {
+        return _requireSettingsAppToDisableUserNotifications;
+    }
+
+    return NO;
 }
 
 #pragma mark -
@@ -835,11 +842,19 @@ BOOL deferChannelCreationOnForeground = false;
 - (BOOL)userPushNotificationsAllowed {
     UIApplication *app = [UIApplication sharedApplication];
 
-    return self.deviceToken
-    && self.userPushNotificationsEnabled
-    && [app currentUserNotificationSettings].types != UIUserNotificationTypeNone
-    && app.isRegisteredForRemoteNotifications
-    && self.pushTokenRegistrationEnabled;
+    if ([UAPush deviceSupportsUserNotifications]) {
+        return self.deviceToken
+        && self.userPushNotificationsEnabled
+        && [app currentUserNotificationSettings].types != UIUserNotificationTypeNone
+        && app.isRegisteredForRemoteNotifications
+        && self.pushTokenRegistrationEnabled;
+
+    } else {
+        return self.deviceToken
+        && self.userPushNotificationsEnabled
+        && app.enabledRemoteNotificationTypes != UIRemoteNotificationTypeNone
+        && self.pushTokenRegistrationEnabled;
+    }
 }
 
 - (BOOL)backgroundPushNotificationsAllowed {
@@ -855,7 +870,12 @@ BOOL deferChannelCreationOnForeground = false;
         return NO;
     }
 
-    return app.isRegisteredForRemoteNotifications;
+    if ([UAPush deviceSupportsUserNotifications]) {
+        return app.isRegisteredForRemoteNotifications;
+    } else {
+        // iOS 7 requires user notifications.
+        return self.userPushNotificationsEnabled;
+    }
 }
 
 - (void)updateRegistration {
@@ -1000,33 +1020,49 @@ BOOL deferChannelCreationOnForeground = false;
 - (void)updateAPNSRegistration {
     UIApplication *application = [UIApplication sharedApplication];
 
-    // Push Enabled
-    if (self.userPushNotificationsEnabled) {
+    if ([UAPush deviceSupportsUserNotifications]) {
 
-        // Store the default value if as the user notificaiton enabled value
-        if (![self.dataStore objectForKey:UAUserPushNotificationsEnabledKey]) {
-            [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
+        // Push Enabled
+        if (self.userPushNotificationsEnabled) {
+
+            // Store the default value if as the user notificaiton enabled value
+            if (![self.dataStore objectForKey:UAUserPushNotificationsEnabledKey]) {
+                [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
+            }
+
+            NSSet *categories = [self allUserNotificationCategories];
+            UA_LDEBUG(@"Registering for user notification types %ld.", (long)self.userNotificationTypes);
+            [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:self.userNotificationTypes
+                                                                                            categories:categories]];
+        } else if (!self.allowUnregisteringUserNotificationTypes) {
+            UA_LDEBUG(@"Skipping unregistered for user notification types.");
+            [self updateChannelRegistrationForcefully:NO];
+        } else if ([application currentUserNotificationSettings].types != UIUserNotificationTypeNone) {
+            UA_LDEBUG(@"Unregistering for user notification types.");
+
+            // This is likely a case where an SDK 5.0 user has been updated to SDK 6.0, so notify the developer.
+            if (self.requireSettingsAppToDisableUserNotifications) {
+                UA_LDEBUG(@"To re-register for push, userPushNotificationsEnabled must be set to YES and the user must use the iOS Settings app to enable notifications.");
+            }
+            [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone
+                                                                                            categories:nil]];
+        } else {
+            UA_LDEBUG(@"Already unregistered for user notification types. To re-register, set userPushNotificationsEnabled to YES and/or modify iOS Settings.");
+            [self updateChannelRegistrationForcefully:NO];
         }
 
-        NSSet *categories = [self allUserNotificationCategories];
-        UA_LDEBUG(@"Registering for user notification types %ld.", (long)self.userNotificationTypes);
-        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:self.userNotificationTypes
-                                                                                        categories:categories]];
-    } else if (!self.allowUnregisteringUserNotificationTypes) {
-        UA_LDEBUG(@"Skipping unregistered for user notification types.");
-        [self updateChannelRegistrationForcefully:NO];
-    } else if ([application currentUserNotificationSettings].types != UIUserNotificationTypeNone) {
-        UA_LDEBUG(@"Unregistering for user notification types.");
-
-        // This is likely a case where an SDK 5.0 user has been updated to SDK 6.0, so notify the developer.
-        if (self.requireSettingsAppToDisableUserNotifications) {
-            UA_LDEBUG(@"To re-register for push, userPushNotificationsEnabled must be set to YES and the user must use the iOS Settings app to enable notifications.");
-        }
-        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone
-                                                                                        categories:nil]];
     } else {
-        UA_LDEBUG(@"Already unregistered for user notification types. To re-register, set userPushNotificationsEnabled to YES and/or modify iOS Settings.");
-        [self updateChannelRegistrationForcefully:NO];
+        if (self.userPushNotificationsEnabled) {
+            UA_LDEBUG(@"Registering for remote notification types %ld.", (long)_userNotificationTypes);
+            [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationType)_userNotificationTypes];
+        } else {
+            UA_LDEBUG(@"Unregistering for remote notifications.");
+            [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeNone];
+
+            // Registering for only UIRemoteNotificationTypeNone will not result in a
+            // device token registration call. Instead update chanel registration directly.
+            [self updateChannelRegistrationForcefully:NO];
+        }
     }
 
     self.shouldUpdateAPNSRegistration = NO;
@@ -1171,8 +1207,11 @@ BOOL deferChannelCreationOnForeground = false;
             [self.dataStore removeObjectForKey:UAPushEnabledKey];
         } else {
             BOOL registeredForUserNotificationTypes;
-
-            registeredForUserNotificationTypes = [[UIApplication sharedApplication] currentUserNotificationSettings].types != UIUserNotificationTypeNone;
+            if ([UAPush deviceSupportsUserNotifications]) {
+                registeredForUserNotificationTypes = [[UIApplication sharedApplication] currentUserNotificationSettings].types != UIUserNotificationTypeNone;
+            } else {
+                registeredForUserNotificationTypes =[UIApplication sharedApplication].enabledRemoteNotificationTypes != UIRemoteNotificationTypeNone;
+            }
 
             if (registeredForUserNotificationTypes) {
                 UA_LDEBUG(@"Migrating userPushNotificationEnabled to YES because application has user notification types.");
@@ -1189,7 +1228,20 @@ BOOL deferChannelCreationOnForeground = false;
         return UIUserNotificationTypeNone;
     }
 
-    return [[UIApplication sharedApplication] currentUserNotificationSettings].types;
+    if ([UAPush deviceSupportsUserNotifications]) {
+        return [[UIApplication sharedApplication] currentUserNotificationSettings].types;
+    } else {
+        UIUserNotificationType all = UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound;
+        return [UIApplication sharedApplication].enabledRemoteNotificationTypes & all;
+    }
+}
+
+/**
+ * Check if the device supports user notifications (iOS 8+).
+ * @return `YES` if the UIUserNotificationSettings class is available, otherwise `NO`.
+ */
++ (BOOL)deviceSupportsUserNotifications {
+    return [UIUserNotificationSettings class] != Nil;
 }
 
 @end
