@@ -23,47 +23,28 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import "UANotificationCategories.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- * Clone of UIUserNotificationAction for iOS 7 support.
- */
-@interface UAUserNotificationAction : NSObject
+@interface UANotificationCategories ()
 
 /**
- * The string that you use internally to identify the action.
+ * Factory method to create the default set of user notification categories.
+ * Background user notification actions will default to requiring authorization.
+ * @return A set of user notification categories.
  */
-@property(nonatomic, copy, readonly, nullable) NSString *identifier;
++ (NSSet *)defaultCategories;
+
 
 /**
- * The localized string to use as the button title for the action.
- */
-@property(nonatomic, copy, readonly, nullable) NSString *title;
-
-/**
- * The mode in which to run the app when the action is performed.
- */
-@property(nonatomic, assign, readonly) UIUserNotificationActivationMode activationMode;
-
-/**
- * A Boolean value indicating whether the user must unlock the device before the action is performed.
- */
-@property(nonatomic, assign, readonly, getter=isAuthenticationRequired) BOOL authenticationRequired;
-
-/**
- * A Boolean value indicating whether the action is destructive
- */
-@property(nonatomic, assign, readonly, getter=isDestructive) BOOL destructive;
-
-/**
- * Tests for equality by value.
+ * Factory method to create the default set of user notification categories.
  *
- * @param notificationAction An instance of UAUserNotificationAction.
+ * @param requireAuth If background actions should default to requiring authorization or not.
+ * @return A set of user notification categories.
  */
-- (BOOL)isEqualToAction:(nullable UAUserNotificationAction *)notificationAction;
++ (NSSet *)defaultCategoriesWithRequireAuth:(BOOL)requireAuth;
+
 
 @end
 

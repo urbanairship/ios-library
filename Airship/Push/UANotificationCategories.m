@@ -23,14 +23,14 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAUserNotificationCategories.h"
-#import "UAMutableUserNotificationCategory.h"
-#import "UAMutableUserNotificationAction.h"
+#import "UANotificationCategories.h"
 #import "UAGlobal.h"
 #import "NSString+UALocalizationAdditions.h"
 #import "UAirship.h"
+#import "UANotificationCategory.h"
+#import "UANotificationAction.h"
 
-@implementation UAUserNotificationCategories
+@implementation UANotificationCategories
 
 + (NSSet *)defaultCategories {
     return [self defaultCategoriesWithRequireAuth:YES];
@@ -103,25 +103,33 @@
             title = actionDefinition[@"title"];
         }
 
+        NSString *actionId = actionDefinition[@"identifier"];
+
         if (!title) {
             UA_LERR(@"Error creating category: %@ for action: %@ due to missing required title.",
-                    categoryId, actionDefinition[@"identifier"]);
+                    categoryId, actionId);
             return nil;
         }
 
-        UAMutableUserNotificationAction *action = [[UAMutableUserNotificationAction alloc] init];
-        action.destructive = [actionDefinition[@"destructive"] boolValue];
-        action.activationMode = [actionDefinition[@"foreground"] boolValue] ? UIUserNotificationActivationModeForeground : UIUserNotificationActivationModeBackground;
-        action.title = title;
-        action.identifier = actionDefinition[@"identifier"];
-        action.authenticationRequired = [actionDefinition[@"authenticationRequired"] boolValue];
+        UNNotificationActionOptions options;
+        if ([actionDefinition[@"destructive"] boolValue]) {
+            options |= UNNotificationActionOptionDestructive;
+        }
+        if ([actionDefinition[@"foreground"] boolValue]) {
+            options |= UNNotificationActionOptionForeground;
+        }
+        if ([actionDefinition[@"authenticationRequired"] boolValue]) {
+            options |= UNNotificationActionOptionAuthenticationRequired;
+        }
+
+        UANotificationAction *action = [UANotificationAction actionWithIdentifier:actionId title:title options:options];
         [actions addObject:action];
     }
 
-    UAMutableUserNotificationCategory *category = [[UAMutableUserNotificationCategory alloc] init];
-    [category setActions:actions forContext:UIUserNotificationActionContextMinimal];
-    [category setActions:actions forContext:UIUserNotificationActionContextDefault];
-    category.identifier = categoryId;
+    UANotificationCategory *category = [UANotificationCategory categoryWithIdentifier:categoryId
+                                                                              actions:actions minimalActions:actions
+                                                                    intentIdentifiers:nil
+                                                                              options:NULL];
 
     return category;
 }

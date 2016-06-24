@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Utility methods to create categories from plist files or NSDictionaries.
  */
-@interface UAUserNotificationCategories : NSObject
+@interface UANotificationCategories : NSObject
 
 
 /**

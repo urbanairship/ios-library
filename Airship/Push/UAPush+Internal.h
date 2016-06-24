@@ -168,7 +168,7 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
  */
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
-@property (nonatomic, strong) NSSet *allUserNotificationCategories;
+@property (nonatomic, strong) NSSet *allNotificationCategories;
 
 /**
  * Tag groups to add to channel.
@@ -290,12 +290,12 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 - (void)updateAPNSRegistration;
 
 /**
- * Determines whether UIUserNotificationCategory is available for use.
+ * Determines whether UNNotificationCategory is available for use.
  */
-- (BOOL)shouldUseUIUserNotificationCategories;
+- (BOOL)shouldUseUNNotificationCategories;
 
 /**
- * Converts UAUserNotificationCategory to UIUserNotificationCategory on iOS 8.
+ * Converts UANotificationCategory to UNNotificationCategory on iOS 10, and UIUserNotificationCategory on prior versions.
  */
 - (NSSet *)normalizeCategories:(NSSet *)categories;
 

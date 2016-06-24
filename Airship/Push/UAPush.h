@@ -294,13 +294,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) UIUserNotificationType userNotificationTypes;
 
 /**
- * Custom user notification categories. Urban Airship default user notification
+ * Custom notification categories. Urban Airship default notification
  * categories will be unaffected by this field.
  *
  * Changes to this value will not take effect the next time the app registers
  * with updateRegistration.
  */
-@property (nonatomic, strong) NSSet *userNotificationCategories;
+@property (nonatomic, strong) NSSet *notificationCategories;
 
 /**
  * Sets authorization required for the default Urban Airship categories. Only applies

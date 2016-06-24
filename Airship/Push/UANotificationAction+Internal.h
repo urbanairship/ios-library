@@ -23,46 +23,25 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAUserNotificationAction.h"
+#import "UANotificationAction.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- * Clone of UIMutableUserNotificationAction for iOS 7 support.
- */
-@interface UAMutableUserNotificationAction : UAUserNotificationAction
+@interface UANotificationAction ()
 
 /**
- * Factory method for creating a UAMutableUserNotificationAction out of a UIUserNotificationAction. 
- * @param uiAction An instance of UIUserNotificationAction.
- * @return An instance of UAUserNotificationAction.
+ * Converts a UANotificationAction into a UIUserNotificationAction.
+ *
+ * @return An instance of UIUserNotificationAction.
  */
-+ (instancetype)actionWithUIUserNotificationAction:(UIUserNotificationAction *)uiAction;
+- (UIUserNotificationAction *)asUIUserNotificationAction;
 
 /**
- * The string that you use internally to identify the action.
+ * Converts a UANotificationAction into a UNNotificationAction.
+ *
+ * @return An instance of UNUNotificationAction.
  */
-@property(nonatomic, copy, nullable) NSString *identifier;
-
-/**
- * The localized string to use as the button title for the action.
- */
-@property(nonatomic, copy, nullable) NSString *title;
-
-/**
- * The mode in which to run the app when the action is performed.
- */
-@property(nonatomic, assign) UIUserNotificationActivationMode activationMode;
-
-/**
- * A Boolean value indicating whether the user must unlock the device before the action is performed.
- */
-@property(nonatomic, assign, getter=isAuthenticationRequired) BOOL authenticationRequired;
-
-/**
- * A Boolean value indicating whether the action is destructive
- */
-@property(nonatomic, assign, getter=isDestructive) BOOL destructive;
+- (UNNotificationAction *)asUNNotificationAction;
 
 @end
 

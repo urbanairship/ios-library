@@ -30,11 +30,18 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UANotificationCategory ()
 
 /**
- * Converts a UAUserNotificationCategory into a UIUserNotificationCategory.
+ * Converts a UANotificationCategory into a UIUserNotificationCategory.
  *
  * @return An instance of UIUserNotificationCategory.
  */
 - (UIUserNotificationCategory *)asUIUserNotificationCategory;
+
+/**
+ * Converts a UANotificationCategory into a UNNotificationCategory.
+ *
+ * @return An instance of UNNotificationCategory.
+ */
+- (UNNotificationCategory *)asUNNotificationCategory;
 
 @end
 

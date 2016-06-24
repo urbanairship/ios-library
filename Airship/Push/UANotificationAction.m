@@ -23,47 +23,55 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAUserNotificationAction.h"
-#import "UAUserNotificationAction+Internal.h"
+#import "UANotificationAction.h"
+#import "UANotificationAction+Internal.h"
 
-@interface UAUserNotificationAction ()
+@interface UANotificationAction ()
 
 @property(nonatomic, copy) NSString *identifier;
 @property(nonatomic, copy) NSString *title;
-@property(nonatomic, assign) UIUserNotificationActivationMode activationMode;
-@property(nonatomic, assign, getter=isAuthenticationRequired) BOOL authenticationRequired;
-@property(nonatomic, assign, getter=isDestructive) BOOL destructive;
+@property(nonatomic, assign) UNNotificationActionOptions options;
 
 @end
 
-@implementation UAUserNotificationAction
+@implementation UANotificationAction
 
-- (BOOL)isAuthenticationRequired {
-    return _authenticationRequired;
+- (instancetype)initWithIdentifier:(NSString *)identifier
+                             title:(NSString *)title
+                           options:(UNNotificationActionOptions)options {
+    self = [super init];
+
+    if (self) {
+        self.identifier = identifier;
+        self.title = title;
+        self.options = options;
+    }
+    return self;
 }
 
-- (BOOL)isDestructive {
-    return _destructive;
++ (instancetype)actionWithIdentifier:(NSString *)identifier
+                               title:(NSString *)title
+                             options:(UNNotificationActionOptions)options {
+    return [[self alloc] initWithIdentifier:identifier title:title options:options];
 }
 
 - (UIUserNotificationAction *)asUIUserNotificationAction {
     UIMutableUserNotificationAction *uiAction = [[UIMutableUserNotificationAction alloc] init];
     uiAction.identifier = self.identifier;
     uiAction.title = self.title;
-    uiAction.authenticationRequired = self.authenticationRequired;
-    uiAction.activationMode = self.activationMode;
-    uiAction.destructive = self.destructive;
+    if (self.options & UNNotificationActionOptionAuthenticationRequired) {
+        uiAction.authenticationRequired = YES;
+    }
+
+    uiAction.authenticationRequired = self.options & UNNotificationActionOptionAuthenticationRequired ? YES : NO;
+    uiAction.activationMode = self.options & UNNotificationActionOptionForeground ? UIUserNotificationActivationModeForeground : UIUserNotificationActivationModeBackground;
+    uiAction.destructive = self.options & UNNotificationActionOptionDestructive ? YES : NO;
 
     return uiAction;
 }
 
-- (BOOL)isEqualToAction:(UAUserNotificationAction *)notificationAction {
-    BOOL equalIdentifier = [self.identifier isEqualToString:notificationAction.identifier];
-    BOOL equalTitle = [self.title isEqualToString:notificationAction.title];
-    BOOL equalAuth = self.authenticationRequired == notificationAction.authenticationRequired;
-    BOOL equalActivationMode = self.activationMode == notificationAction.activationMode;
-    BOOL equalDestructive = self.destructive == notificationAction.destructive;
-    return equalIdentifier && equalTitle && equalAuth && equalActivationMode && equalDestructive;
+- (UNNotificationAction *)asUNNotificationAction {
+    return [UNNotificationAction actionWithIdentifier:self.identifier title:self.title options:self.options];
 }
 
 @end

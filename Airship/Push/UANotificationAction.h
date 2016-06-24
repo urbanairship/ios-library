@@ -22,35 +22,37 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#import "UAUserNotificationCategory.h"
+
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import <UserNotifications/UserNotifications.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Clone of UIMutableUserNotificationCategory for iOS 7 support.
+ * Clone of UNNotificationAction for iOS 8-10 support.
  */
-@interface UAMutableUserNotificationCategory : UAUserNotificationCategory
+@interface UANotificationAction : NSObject
 
 /**
- * Factory method for creating a UAMutableUserNotificationCategory out of a UIUserNotificationCategory.
- * @param uiCategory An instance of UIUserNotificationCategory.
- * @return An instance of UAUserNotificationCategory.
+ * The string that you use internally to identify the action.
  */
-+ (instancetype)categoryWithUIUserNotificationCategory:(UIUserNotificationCategory *)uiCategory;
+@property(nonatomic, copy, readonly, nullable) NSString *identifier;
 
 /**
- * Sets the actions to display for different alert styles.
- *
- * @param actions An array of UAUserNotificationAction objects representing the actions to display for the given context.
- * @param context The context in which the alert is displayed.
+ * The localized string to use as the button title for the action.
  */
-- (void)setActions:(nullable NSArray *)actions
-        forContext:(UIUserNotificationActionContext)context;
+@property(nonatomic, copy, readonly, nullable) NSString *title;
 
 /**
- * The name of the action group.
+ * The options with which to perform the action.
  */
-@property(nonatomic, copy, nullable) NSString *identifier;
+@property(assign, readonly, nonatomic) UNNotificationActionOptions options;
+
+
++ (instancetype)actionWithIdentifier:(NSString *)identifier
+                               title:(NSString *)title
+                             options:(UNNotificationActionOptions)options;
 
 @end
 

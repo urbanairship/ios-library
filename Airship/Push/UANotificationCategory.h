@@ -25,6 +25,9 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <UserNotifications/UserNotifications.h>
+
+@class UANotificationAction;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -36,21 +39,35 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The name of the action group.
  */
-@property(nonatomic, copy, readonly, nullable) NSString *identifier;
+@property(readonly, copy, nonatomic) NSString *identifier;
 
 /**
- * Returns the actions to be displayed for the given notification context.
- *
- * @param context The context in which the notification is displayed.
+ * The actions to display when a notification of this type is presented.
  */
-- (nullable NSArray *)actionsForContext:(UIUserNotificationActionContext)context;
+@property(readonly, copy, nonatomic) NSArray<UANotificationAction *> *actions;
 
 /**
- * Tests for equality by value.
- *
- * @param category An instance of UAUserNotificationCategory.
+ * The actions to display when space is limited.
  */
-- (BOOL)isEqualToCategory:(nullable UAUserNotificationCategory *)category;
+@property(readonly, copy, nonatomic) NSArray<UANotificationAction *> *minimalActions;
+
+/**
+ * The intents supported by notifications of this category
+ *
+ * Note: this property is only applicable on iOS 10 and above
+ */
+@property(readonly, copy, nonatomic) NSArray<NSString *> *intentIdentifiers;
+
+/**
+ * Options for how to handle notifications of this type.
+ */
+@property(readonly, assign, nonatomic) UNNotificationCategoryOptions options;
+
++ (instancetype)categoryWithIdentifier:(NSString *)identifier
+                               actions:(NSArray<UANotificationAction *> *)actions
+                        minimalActions:(NSArray<UANotificationAction *> *)minimalActions
+                     intentIdentifiers:(NSArray<NSString *> *)intentIdentifiers
+                               options:(UNNotificationCategoryOptions)options;
 
 @end
 

@@ -29,7 +29,7 @@
 #import "UAirship.h"
 #import "UAInAppMessaging.h"
 #import "UAInAppMessageButtonActionBinding.h"
-#import "UAUserNotificationCategory.h"
+#import "UANotificationCategory.h"
 #import "UAUtils.h"
 #import "NSString+UALocalizationAdditions.h"
 
