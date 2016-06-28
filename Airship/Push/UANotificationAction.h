@@ -49,7 +49,17 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property(assign, readonly, nonatomic) UNNotificationActionOptions options;
 
-
+/**
+ * Creates an action with the specified title and options.
+ * 
+ * @param identifier The unique string that you use internally to identify the action. 
+ * When the user selects the action, the system passes this string to your app and asks you to perform the related task. 
+ * This parameter must not be nil.
+ * @param title The localized string to display to the user. 
+ * This string is displayed in interface elements such as buttons that are used to represent actions. This parameter must not be nil.
+ * param options Additional options for how the action should be perform. Add options sparingly and only when you require the related behavior. 
+ * For a list of possible values, see UNNotificationActionOptions.
+ */
 + (instancetype)actionWithIdentifier:(NSString *)identifier
                                title:(NSString *)title
                              options:(UNNotificationActionOptions)options;

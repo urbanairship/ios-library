@@ -112,12 +112,15 @@
         }
 
         UNNotificationActionOptions options;
+
         if ([actionDefinition[@"destructive"] boolValue]) {
             options |= UNNotificationActionOptionDestructive;
         }
+
         if ([actionDefinition[@"foreground"] boolValue]) {
             options |= UNNotificationActionOptionForeground;
         }
+
         if ([actionDefinition[@"authenticationRequired"] boolValue]) {
             options |= UNNotificationActionOptionAuthenticationRequired;
         }

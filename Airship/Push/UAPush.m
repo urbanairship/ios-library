@@ -617,6 +617,22 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
     [self setBadgeNumber:0];
 }
 
+#pragma mark -
+
+#pragma mark UNUserNotificationDelegate callbacks
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler {
+    // TODO: implementation
+    completionHandler();
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
+    // TODO: implementation
+    completionHandler(NULL);
+}
+
+#pragma mark App delegate event handling
+
 - (void)appReceivedRemoteNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state {
     [self appReceivedRemoteNotification:notification applicationState:state fetchCompletionHandler:nil];
 }
