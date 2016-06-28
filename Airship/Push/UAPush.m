@@ -1037,6 +1037,7 @@ BOOL deferChannelCreationOnForeground = false;
 
 - (void)updateAPNSRegistration {
     UIApplication *application = [UIApplication sharedApplication];
+    long authTypes;
 
     // Push Enabled
     if (self.userPushNotificationsEnabled) {
@@ -1047,20 +1048,23 @@ BOOL deferChannelCreationOnForeground = false;
         }
 
         NSSet *categories = [self allUserNotificationCategories];
-        UA_LDEBUG(@"Registering for user notification types %ld.", (long)self.userNotificationTypes);
 
         // If >= iOS 10 use the new registration permissions prompt call
         if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
-
+            authTypes = (long)self.authorizedNotificationTypes;
             [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:self.authorizedNotificationTypes
                                                                             completionHandler:^(BOOL granted, NSError * _Nullable error) {
                                                                                 [application registerForRemoteNotifications];
                                                                             }];
 
         } else { // Otherwise if iOS 8 & 9 use the old register settings call
-        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:self.userNotificationTypes
-                                                                                        categories:categories]];
+            authTypes = (long)self.userNotificationTypes;
+            [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:self.userNotificationTypes
+                                                                                            categories:categories]];
         }
+
+        UA_LDEBUG(@"Registering for user notification types %ld.", authTypes);
+
     } else if (!self.allowUnregisteringUserNotificationTypes) {
         UA_LDEBUG(@"Skipping unregistered for user notification types.");
         [self updateChannelRegistrationForcefully:NO];
