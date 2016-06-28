@@ -23,34 +23,28 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import "UANotificationCategories.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- * Clone of UIUserNotificationCategory for iOS 7 support.
- */
-@interface UAUserNotificationCategory : NSObject
+@interface UANotificationCategories ()
 
 /**
- * The name of the action group.
+ * Factory method to create the default set of user notification categories.
+ * Background user notification actions will default to requiring authorization.
+ * @return A set of user notification categories.
  */
-@property(nonatomic, copy, readonly, nullable) NSString *identifier;
++ (NSSet *)defaultCategories;
+
 
 /**
- * Returns the actions to be displayed for the given notification context.
+ * Factory method to create the default set of user notification categories.
  *
- * @param context The context in which the notification is displayed.
+ * @param requireAuth If background actions should default to requiring authorization or not.
+ * @return A set of user notification categories.
  */
-- (nullable NSArray *)actionsForContext:(UIUserNotificationActionContext)context;
++ (NSSet *)defaultCategoriesWithRequireAuth:(BOOL)requireAuth;
 
-/**
- * Tests for equality by value.
- *
- * @param category An instance of UAUserNotificationCategory.
- */
-- (BOOL)isEqualToCategory:(nullable UAUserNotificationCategory *)category;
 
 @end
 
