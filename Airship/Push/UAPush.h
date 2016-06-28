@@ -24,6 +24,7 @@
  */
 
 #import "UAGlobal.h"
+#import "UAirship.h"
 #import "UANamedUser.h"
 #import "UAChannelRegistrar.h"
 
@@ -193,7 +194,7 @@ NS_ASSUME_NONNULL_BEGIN
  * This singleton provides an interface to the functionality provided by the Urban Airship iOS Push API.
  */
 #pragma clang diagnostic push
-@interface UAPush : NSObject
+@interface UAPush : NSObject <UNUserNotificationCenterDelegate>
 
 ///---------------------------------------------------------------------------------------
 /// @name Push Notifications
@@ -325,6 +326,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly, strong, nullable) NSDictionary *launchNotification;
 
+/**
+ * The current authorized notification types.
+ */
+@property (nonatomic, assign, readonly) NSUInteger authorizedNotificationTypes;
 
 ///---------------------------------------------------------------------------------------
 /// @name Autobadge

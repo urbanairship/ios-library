@@ -24,6 +24,7 @@
  */
 
 #import "UAPush.h"
+#import "UAirship.h"
 #import "UAChannelRegistrar+Internal.h"
 
 @class UAPreferenceDataStore;
@@ -183,6 +184,11 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
  * The tag groups API client.
  */
 @property (nonatomic, strong) UATagGroupsAPIClient *tagGroupsAPIClient;
+
+/**
+ * The current authorized notification types.
+ */
+@property (nonatomic, assign) NSUInteger authorizedNotificationTypes;
 
 /**
  * Factory method to create a push instance.
