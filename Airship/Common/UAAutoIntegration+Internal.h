@@ -25,19 +25,8 @@
 
 #import <Foundation/Foundation.h>
 
+@interface UAAutoIntegration : NSObject
 
-/**
- * This class swizzles the app delegate to intercept messsages required for Urban
- * Airship. This is useful for intercepting messages sent to the app delegate that
- * do not have corresponding NSNotificationCenter events (such as
- * application:didReceiveRemoteNotification: and other APNS-related calls).
- */
-NS_ROOT_CLASS
-@interface UAAppDelegateProxy
-
-/**
- * Swizzles the app delegate.
- */
-+ (void)proxyAppDelegate;
++ (void)integrate;
 
 @end
