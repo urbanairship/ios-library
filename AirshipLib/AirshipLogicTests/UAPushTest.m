@@ -49,6 +49,7 @@
 
 @interface UAPushTest : XCTestCase
 @property (nonatomic, strong) id mockedApplication;
+@property (nonatomic, strong) id mockedUserNotificationCenter;
 @property (nonatomic, strong) id mockedChannelRegistrar;
 @property (nonatomic, strong) id mockedAirship;
 @property (nonatomic, strong) id mockedAnalytics;
@@ -125,6 +126,10 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     // Set up a mocked application
     self.mockedApplication = [OCMockObject niceMockForClass:[UIApplication class]];
     [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
+
+    // Set up mocked User Notification Center
+    self.mockedUserNotificationCenter = [OCMockObject niceMockForClass:[UNUserNotificationCenter class]];
+    [[[self.mockedUserNotificationCenter stub] andReturn:self.mockedUserNotificationCenter] currentNotificationCenter];
 
     // Set up mocked UIUserNotificationSettings
     self.mockUIUserNotificationSettings = [OCMockObject niceMockForClass:[UIUserNotificationSettings class]];
@@ -446,7 +451,14 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     UIUserNotificationSettings *expected = [UIUserNotificationSettings settingsForTypes:self.push.userNotificationTypes
                                                                              categories:expectedCategories];
 
-    [[self.mockedApplication expect] registerUserNotificationSettings:expected];
+    // iOS 10+
+    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+        [[self.mockedUserNotificationCenter expect] requestAuthorizationWithOptions:(UNAuthorizationOptions)expected completionHandler:OCMOCK_ANY];
+
+    } else { // iOS 8 & 9
+        [[self.mockedApplication expect] registerUserNotificationSettings:expected];
+    }
+
     self.push.userPushNotificationsEnabled = YES;
 
     XCTAssertTrue(self.push.userPushNotificationsEnabled,
@@ -518,7 +530,14 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     UIUserNotificationSettings *expected = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone
                                                                              categories:nil];
-    [[self.mockedApplication expect] registerUserNotificationSettings:expected];
+
+    // iOS 10+
+    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+        [[self.mockedUserNotificationCenter expect] requestAuthorizationWithOptions:(UNAuthorizationOptions)expected completionHandler:OCMOCK_ANY];
+
+    } else { // iOS 8 & 9
+        [[self.mockedApplication expect] registerUserNotificationSettings:expected];
+    }
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
@@ -665,8 +684,13 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     UIUserNotificationSettings *expected = [UIUserNotificationSettings settingsForTypes:self.push.userNotificationTypes
                                                                              categories:self.push.userNotificationCategories];
 
-    [[self.mockedApplication expect] registerUserNotificationSettings:expected];
-    [self.push updateAPNSRegistration];
+    // iOS 10+
+    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+        [[self.mockedUserNotificationCenter expect] requestAuthorizationWithOptions:(UNAuthorizationOptions)expected completionHandler:OCMOCK_ANY];
+
+    } else { // iOS 8 & 9
+        [[self.mockedApplication expect] registerUserNotificationSettings:expected];
+    }    [self.push updateAPNSRegistration];
 
     XCTAssertNoThrow([self.mockedApplication verify],
                      @"should register for user notification settings when push is enabled");
@@ -693,7 +717,14 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     UIUserNotificationSettings *expected = [UIUserNotificationSettings settingsForTypes:self.push.userNotificationTypes
                                                                              categories:defaultSet];
 
-    [[self.mockedApplication expect] registerUserNotificationSettings:expected];
+    // iOS 10+
+    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+        [[self.mockedUserNotificationCenter expect] requestAuthorizationWithOptions:(UNAuthorizationOptions)expected completionHandler:OCMOCK_ANY];
+
+    } else { // iOS 8 & 9
+        [[self.mockedApplication expect] registerUserNotificationSettings:expected];
+    }
+
     [self.push updateAPNSRegistration];
 
     XCTAssertNoThrow([self.mockedApplication verify],
@@ -705,8 +736,14 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     expected = [UIUserNotificationSettings settingsForTypes:self.push.userNotificationTypes
                                                  categories:requiredAuthorizationSet];
+    // iOS 10+
+    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+        [[self.mockedUserNotificationCenter expect] requestAuthorizationWithOptions:(UNAuthorizationOptions)expected completionHandler:OCMOCK_ANY];
 
-    [[self.mockedApplication expect] registerUserNotificationSettings:expected];
+    } else { // iOS 8 & 9
+        [[self.mockedApplication expect] registerUserNotificationSettings:expected];
+    }
+
     [self.push updateAPNSRegistration];
 
     XCTAssertNoThrow([self.mockedApplication verify],
@@ -766,7 +803,14 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     UIUserNotificationSettings *expected = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone
                                                                              categories:nil];
 
-    [[self.mockedApplication expect] registerUserNotificationSettings:expected];
+    // iOS 10+
+    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+        [[self.mockedUserNotificationCenter expect] requestAuthorizationWithOptions:(UNAuthorizationOptions)expected completionHandler:OCMOCK_ANY];
+
+    } else { // iOS 8 & 9
+        [[self.mockedApplication expect] registerUserNotificationSettings:expected];
+    }
+
     [self.push updateAPNSRegistration];
 
     XCTAssertNoThrow([self.mockedApplication verify],
@@ -785,9 +829,16 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     self.push.userPushNotificationsEnabled = NO;
 
-    // Make sure we do not call registerUserNotificationSettings for none, if we are
+    // Make sure we do not register for none, if we are
     // already registered for none or it will prompt the user.
-    [[self.mockedApplication reject] registerUserNotificationSettings:OCMOCK_ANY];
+    // iOS 10+
+    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+        [[self.mockedUserNotificationCenter reject] requestAuthorizationWithOptions:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    } else { // iOS 8 & 9
+        [[self.mockedApplication reject] registerUserNotificationSettings:OCMOCK_ANY];
+    }
+
 
     [self.push updateAPNSRegistration];
 
@@ -1347,7 +1398,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 }
 
 /**
- * Test that UserPushNotificationallowed is YES on iOS 8
+ * Test that UserPushNotificationAllowed is YES when there are authorized notification types set
  */
 -(void)testUserPushNotificationsAllowedIOS8 {
     self.push.userPushNotificationsEnabled = YES;
@@ -1355,15 +1406,14 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     self.push.deviceToken = validDeviceToken;
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(YES)] isRegisteredForRemoteNotifications];
 
-    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeBadge categories:nil];
-    [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
+    self.push.authorizedNotificationTypes = UIUserNotificationTypeBadge;
 
     XCTAssertTrue(self.push.userPushNotificationsAllowed,
                   @"UserPushNotificationsAllowed should be YES");
 }
 
 /**
- * Test that UserPushNotificationallowed is NO on iOS 8 when pushTokenRegistrationEnabled is NO
+ * Test that UserPushNotificationAllowed is NO when there are no authorized notification types set
  */
 -(void)testUserPushNotificationsAllowedIOS8No {
     self.push.userPushNotificationsEnabled = YES;
@@ -1371,15 +1421,14 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     self.push.deviceToken = validDeviceToken;
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(YES)] isRegisteredForRemoteNotifications];
 
-    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeBadge categories:nil];
-    [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
+    self.push.authorizedNotificationTypes = UIUserNotificationTypeNone;
 
     XCTAssertFalse(self.push.userPushNotificationsAllowed,
                   @"UserPushNotificationsAllowed should be NO");
 }
 
 /**
- * Test that UserPushNotificationallowed is NO on iOS 8
+ * Test that UserPushNotificationAllowed is NO
  */
 - (void)testRegistrationPayloadNoDeviceToken {
     // Set up UAPush to give minimum payload
