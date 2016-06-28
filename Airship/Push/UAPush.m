@@ -66,6 +66,8 @@ NSString *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
 NSString *const UAPushChannelCreationOnForeground = @"UAPushChannelCreationOnForeground";
 NSString *const UAPushEnabledSettingsMigratedKey = @"UAPushEnabledSettingsMigrated";
 
+NSString *const UAPushTypesAuthorizedKey = @"UAPushTypesAuthorized";
+
 // Old push enabled key
 NSString *const UAPushEnabledKey = @"UAPushEnabled";
 
@@ -146,7 +148,7 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
 
         // Register for remote notifications right away if the background mode is enabled. This does not prompt for
         // permissions to show notifications, but starts the device token registration.
-        if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerForRemoteNotifications)] && [UAirship shared].remoteNotificationBackgroundModeEnabled) {
+        if ([UAirship shared].remoteNotificationBackgroundModeEnabled) {
             [[UIApplication sharedApplication] registerForRemoteNotifications];
         }
 
@@ -161,7 +163,7 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
     return [[UAPush alloc] initWithConfig:config dataStore:dataStore];
 }
 
-- (void)updateUserNotificationSettingsTypes {
+- (void)updateAuthorizedNotificationTypes {
 
     // If >= iOS 10
     if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
@@ -181,10 +183,25 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
                 mask |= UNAuthorizationOptionBadge;
             }
 
-            self.userNotificationSettingsTypes = mask;
+            if (self.authorizedNotificationTypes != mask) {
+                UA_LINFO(@"Authorized notification types changed from %ld to %ld.", (unsigned long)self.authorizedNotificationTypes, (unsigned long)mask);
+                self.authorizedNotificationTypes = mask;
+
+                // Store the preference change
+                [self.dataStore setInteger:self.authorizedNotificationTypes forKey:UAPushEnabledSettingsMigratedKey];
+            }
+
          }];
     } else { // iOS 8 & 9
-        self.userNotificationSettingsTypes = [[UIApplication sharedApplication] currentUserNotificationSettings].types;
+
+        if (self.authorizedNotificationTypes != [[UIApplication sharedApplication] currentUserNotificationSettings].types) {
+            UA_LINFO(@"Authorized notification types changed from %ld to %ld.", (unsigned long)self.authorizedNotificationTypes, (unsigned long)[[UIApplication sharedApplication] currentUserNotificationSettings].types);
+
+            self.authorizedNotificationTypes = [[UIApplication sharedApplication] currentUserNotificationSettings].types;
+
+            // Store the preference change
+            [self.dataStore setInteger:self.authorizedNotificationTypes forKey:UAPushEnabledSettingsMigratedKey];
+        }
     }
 }
 
@@ -793,7 +810,7 @@ BOOL deferChannelCreationOnForeground = false;
 
 - (void)applicationDidBecomeActive {
 
-    [self updateUserNotificationSettingsTypes];
+    [self updateAuthorizedNotificationTypes];
 
     if ([self.dataStore boolForKey:UAPushChannelCreationOnForeground]) {
         UA_LTRACE(@"Application did become active. Updating registration.");
@@ -817,11 +834,7 @@ BOOL deferChannelCreationOnForeground = false;
     UA_LTRACE(@"Background refresh status changed.");
 
     if ([UIApplication sharedApplication].backgroundRefreshStatus == UIBackgroundRefreshStatusAvailable) {
-
-    if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerForRemoteNotifications)]) {
         [[UIApplication sharedApplication] registerForRemoteNotifications];
-    }
-
     } else {
         [self updateRegistration];
     }
@@ -862,7 +875,7 @@ BOOL deferChannelCreationOnForeground = false;
 
     return self.deviceToken
     && self.userPushNotificationsEnabled
-    && [self currentEnabledNotificationTypes] != UIUserNotificationTypeNone
+    && self.authorizedNotificationTypes
     && app.isRegisteredForRemoteNotifications
     && self.pushTokenRegistrationEnabled;
 }
@@ -1039,7 +1052,7 @@ BOOL deferChannelCreationOnForeground = false;
         // If >= iOS 10 use the new registration permissions prompt call
         if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
 
-        [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:self.userNotificationTypes
+            [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:self.userNotificationTypes
                                                                             completionHandler:^(BOOL granted, NSError * _Nullable error) {
                                                                                 [application registerForRemoteNotifications];
                                                                             }];
@@ -1101,7 +1114,7 @@ BOOL deferChannelCreationOnForeground = false;
 
 // For iOS 8 & 9 user notification types registration completion via app delegate
 - (void)appRegisteredUserNotificationSettings {
-    UA_LINFO(@"Application did register with user notification types %ld.", (unsigned long)self.userNotificationSettingsTypes);
+    [self updateAuthorizedNotificationTypes];
     [[UIApplication sharedApplication] registerForRemoteNotifications];
 }
 
@@ -1223,7 +1236,7 @@ BOOL deferChannelCreationOnForeground = false;
         } else {
             BOOL registeredForUserNotificationTypes;
 
-            registeredForUserNotificationTypes = self.userNotificationSettingsTypes != UIUserNotificationTypeNone;
+            registeredForUserNotificationTypes = [[UIApplication sharedApplication] currentUserNotificationSettings].types != UIUserNotificationTypeNone;
 
             if (registeredForUserNotificationTypes) {
                 UA_LDEBUG(@"Migrating userPushNotificationEnabled to YES because application has user notification types.");
@@ -1240,7 +1253,7 @@ BOOL deferChannelCreationOnForeground = false;
         return UIUserNotificationTypeNone;
     }
 
-    return self.userNotificationSettingsTypes;
+    return self.authorizedNotificationTypes;
 }
 
 @end

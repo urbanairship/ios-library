@@ -326,6 +326,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly, strong, nullable) NSDictionary *launchNotification;
 
+/**
+ * The current authorized notification types.
+ */
+@property (nonatomic, assign, readonly) NSUInteger authorizedNotificationTypes;
 
 ///---------------------------------------------------------------------------------------
 /// @name Autobadge
