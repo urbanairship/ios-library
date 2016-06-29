@@ -43,6 +43,24 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (UNNotificationCategory *)asUNNotificationCategory;
 
+/**
+ * Tests for equivalence with a UIUserNotificationCategory. As UANotificationCategory is a
+ * drop-in replacement for UNNotificationCategory, any features not applicable
+ * in UIUserNotificationCategory will be ignored.
+ *
+ * @param category The UIUserNotificationCategory to compare with.
+ * @return `YES` if the two categories are equivalent, `NO` otherwise.
+ */
+- (BOOL)isEqualToUIUserNotificationCategory:(UIUserNotificationCategory *)category;
+
+/**
+ * Tests for equivalence with a UNNotificationCategory.
+ *
+ * @param category The UNNotificationCategory to compare with.
+ * @return `YES` if the two categories are equivalent, `NO` otherwise.
+ */
+- (BOOL)isEqualToUNNotificationCategory:(UNNotificationCategory *)category;
+
 @end
 
 NS_ASSUME_NONNULL_END

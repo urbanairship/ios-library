@@ -132,7 +132,7 @@
     UANotificationCategory *category = [UANotificationCategory categoryWithIdentifier:categoryId
                                                                               actions:actions minimalActions:actions
                                                                     intentIdentifiers:nil
-                                                                              options:NULL];
+                                                                              options:UNNotificationCategoryOptionNone];
 
     return category;
 }

@@ -125,4 +125,67 @@
                                                   options:self.options];
 }
 
+- (BOOL)isEqualToUIUserNotificationCategory:(UIUserNotificationCategory *)category {
+    NSArray *minimalUAActions = self.minimalActions;
+    NSArray *defaultUAActions = self.actions;
+
+    NSArray *minimalUIActions = [category actionsForContext:UIUserNotificationActionContextMinimal];
+    NSArray *defaultUIActions = [category actionsForContext:UIUserNotificationActionContextDefault];
+
+    if (minimalUAActions.count != minimalUIActions.count || defaultUAActions.count != defaultUIActions.count) {
+        return NO;
+    }
+
+    for (NSUInteger i = 0; i < minimalUAActions.count; i++) {
+        UANotificationAction *uaAction = minimalUAActions[i];
+        UIUserNotificationAction *uiAction = minimalUIActions[i];
+        if (![uaAction isEqualToUIUserNotificationAction:(UIUserNotificationAction *)uiAction]) {
+            return NO;
+        }
+    }
+
+    for (NSUInteger i = 0; i < defaultUAActions.count; i++) {
+        UANotificationAction *uaAction = defaultUAActions[i];
+        UIUserNotificationAction *uiAction = defaultUIActions[i];
+        if (![uaAction isEqualToUIUserNotificationAction:(UIUserNotificationAction *)uiAction]) {
+            return NO;
+        }
+    }
+
+    // identifiers are nullable, so they match as long as they are either equal or both nil
+    return [self.identifier isEqualToString:category.identifier] || (!self.identifier && !category.identifier);
+}
+
+- (BOOL)isEqualToUNNotificationCategory:(UNNotificationCategory *)category {
+    if (self.minimalActions.count != category.minimalActions.count || self.actions.count != category.actions.count) {
+        return NO;
+    }
+
+    for (NSUInteger i = 0; i < self.minimalActions.count; i++) {
+        UANotificationAction *uaAction = self.minimalActions[i];
+        UNNotificationAction *unAction = category.minimalActions[i];
+        if (![uaAction isEqualToUNNotificationAction:unAction]) {
+            return NO;
+        }
+    }
+
+    for (NSUInteger i = 0; i < self.actions.count; i++) {
+        UANotificationAction *uaAction = self.actions[i];
+        UNNotificationAction *unAction = category.actions[i];
+        if (![uaAction isEqualToUNNotificationAction:unAction]) {
+            return NO;
+        }
+    }
+
+    if (![self.intentIdentifiers isEqualToArray:category.intentIdentifiers]) {
+        return NO;
+    }
+
+    if (!(self.options == category.options)) {
+        return NO;
+    }
+
+    return [self.identifier isEqualToString:category.identifier];
+}
+
 @end

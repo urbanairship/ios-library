@@ -27,7 +27,7 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import <objc/runtime.h>
-#import "UAAppDelegateProxy+Internal.h"
+#import "UAAutoIntegration+Internal.h"
 #import "UAirship.h"
 #import "UAPush.h"
 

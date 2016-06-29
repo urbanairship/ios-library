@@ -39,9 +39,9 @@
 #import "UAEvent.h"
 #import "NSObject+HideClass.h"
 #import "UAInteractiveNotificationEvent+Internal.h"
-#import "UAUserNotificationCategories+Internal.h"
-#import "UAMutableUserNotificationAction.h"
-#import "UAMutableUserNotificationCategory.h"
+#import "UANotificationCategories+Internal.h"
+#import "UANotificationAction.h"
+#import "UANotificationCategory.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAConfig.h"
 #import "UATagGroupsAPIClient+Internal.h"
@@ -59,7 +59,7 @@
 @property (nonatomic, strong) id mockUAUtils;
 @property (nonatomic, strong) id mockUAUser;
 @property (nonatomic, strong) id mockUIUserNotificationSettings;
-@property (nonatomic, strong) id mockDefaultUserNotificationCategories;
+@property (nonatomic, strong) id mockDefaultNotificationCategories;
 @property (nonatomic, strong) id mockTagGroupsAPIClient;
 
 @property (nonatomic, strong) UAPush *push;
@@ -160,7 +160,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [[[self.mockedAirship stub] andReturn:self.mockUAUser] inboxUser];
     [[[self.mockUAUser stub] andReturn:@"someUser"] username];
 
-    self.mockDefaultUserNotificationCategories = [OCMockObject niceMockForClass:[UAUserNotificationCategories class]];
+    self.mockDefaultNotificationCategories = [OCMockObject niceMockForClass:[UAUserNotificationCategories class]];
 
     self.push.registrationDelegate = self.mockRegistrationDelegate;
 
@@ -200,7 +200,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [self.mockUAUtils stopMocking];
     [self.mockUAUser stopMocking];
     [self.mockUIUserNotificationSettings stopMocking];
-    [self.mockDefaultUserNotificationCategories stopMocking];
+    [self.mockDefaultNotificationCategories stopMocking];
     [self.mockTagGroupsAPIClient stopMocking];
 
     // We hide this class in a few tests. Its only available on iOS8.
@@ -677,7 +677,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 - (void)testUpdateAPNSRegistrationUserNotificationsEnabledIOS8 {
     self.push.userPushNotificationsEnabled = YES;
     self.push.shouldUpdateAPNSRegistration = YES;
-    [[[self.mockDefaultUserNotificationCategories stub] andReturn:[NSSet set]] defaultCategoriesWithRequireAuth:YES];
+    [[[self.mockDefaultNotificationCategories stub] andReturn:[NSSet set]] defaultCategoriesWithRequireAuth:YES];
 
     self.push.userNotificationCategories = [NSSet setWithArray:@[[[UIUserNotificationCategory alloc] init]]];
 
@@ -708,8 +708,8 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     NSSet *defaultSet = [NSSet setWithArray:@[[[UIUserNotificationCategory alloc] init], [[UIUserNotificationCategory alloc] init]]];
     NSSet *requiredAuthorizationSet = [NSSet setWithArray:@[[[UIUserNotificationCategory alloc] init]]];
-    [[[self.mockDefaultUserNotificationCategories stub] andReturn:defaultSet] defaultCategoriesWithRequireAuth:NO];
-    [[[self.mockDefaultUserNotificationCategories stub] andReturn:requiredAuthorizationSet] defaultCategoriesWithRequireAuth:YES];
+    [[[self.mockDefaultNotificationCategories stub] andReturn:defaultSet] defaultCategoriesWithRequireAuth:NO];
+    [[[self.mockDefaultNotificationCategories stub] andReturn:requiredAuthorizationSet] defaultCategoriesWithRequireAuth:YES];
 
 
     self.push.requireAuthorizationForDefaultCategories = NO;
@@ -769,7 +769,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     NSSet *defaultSet = [NSSet setWithArray:@[defaultCategory]];
     NSSet *customSet = [NSSet setWithArray:@[customCategory, anotherCustomCategory]];
 
-    [[[self.mockDefaultUserNotificationCategories stub] andReturn:defaultSet] defaultCategoriesWithRequireAuth:self.push.requireAuthorizationForDefaultCategories];
+    [[[self.mockDefaultNotificationCategories stub] andReturn:defaultSet] defaultCategoriesWithRequireAuth:self.push.requireAuthorizationForDefaultCategories];
     self.push.userNotificationCategories = customSet;
 
 
