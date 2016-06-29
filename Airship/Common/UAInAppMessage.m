@@ -31,9 +31,9 @@
 #import "UAirship+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAPush+Internal.h"
-#import "UAUserNotificationCategories+Internal.h"
-#import "UAMutableUserNotificationCategory.h"
-#import "UAUserNotificationAction.h"
+#import "UANotificationCategories+Internal.h"
+#import "UANotificationCategory.h"
+#import "UANotificationAction.h"
 
 // 30 days in seconds
 #define kUADefaultInAppMessageExpiryInterval 60 * 60 * 24 * 30
@@ -175,17 +175,12 @@
 
 - (UAUserNotificationCategory *)buttonCategory {
     if (self.buttonGroup) {
-        NSSet *categories = [UAirship push].allUserNotificationCategories;
+        NSSet *categories = [UAirship push].allNotificationCategories;
 
-        // id -> UAUserNotificationCategory/UIUserNotificationCategory
-        for (id category in categories) {
+        for (UANotificationCategory *category in categories) {
             // Find the category that matches our buttonGroup
-            if ([[category identifier] isEqualToString:self.buttonGroup]) {
-                if ([category isKindOfClass:[UIUserNotificationCategory class]]) {
-                    return [UAMutableUserNotificationCategory categoryWithUIUserNotificationCategory:category];
-                } else {
-                    return category;
-                }
+            if ([category.identifier isEqualToString:self.buttonGroup]) {
+                return category;
             }
         }
     }
@@ -193,15 +188,12 @@
     return nil;
 }
 
-- (UIUserNotificationActionContext)notificationActionContext {
-    if ([self.buttonCategory actionsForContext:UIUserNotificationActionContextMinimal].count) {
-        return UIUserNotificationActionContextMinimal;
-    }
-    return UIUserNotificationActionContextDefault;
-}
-
 - (NSArray *)notificationActions {
-    return [self.buttonCategory actionsForContext:self.notificationActionContext];
+    if (self.buttonCategory.minimalActions.count) {
+        return self.buttonCategory.minimalActions;
+    } else {
+        return self.buttonCategory.actions;
+    }
 }
 
 - (NSArray *)buttonActionBindings {

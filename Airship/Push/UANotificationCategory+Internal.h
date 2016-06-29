@@ -23,47 +23,43 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import "UANotificationCategory.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- * Clone of UIUserNotificationAction for iOS 7 support.
- */
-@interface UAUserNotificationAction : NSObject
+@interface UANotificationCategory ()
 
 /**
- * The string that you use internally to identify the action.
- */
-@property(nonatomic, copy, readonly, nullable) NSString *identifier;
-
-/**
- * The localized string to use as the button title for the action.
- */
-@property(nonatomic, copy, readonly, nullable) NSString *title;
-
-/**
- * The mode in which to run the app when the action is performed.
- */
-@property(nonatomic, assign, readonly) UIUserNotificationActivationMode activationMode;
-
-/**
- * A Boolean value indicating whether the user must unlock the device before the action is performed.
- */
-@property(nonatomic, assign, readonly, getter=isAuthenticationRequired) BOOL authenticationRequired;
-
-/**
- * A Boolean value indicating whether the action is destructive
- */
-@property(nonatomic, assign, readonly, getter=isDestructive) BOOL destructive;
-
-/**
- * Tests for equality by value.
+ * Converts a UANotificationCategory into a UIUserNotificationCategory.
  *
- * @param notificationAction An instance of UAUserNotificationAction.
+ * @return An instance of UIUserNotificationCategory.
  */
-- (BOOL)isEqualToAction:(nullable UAUserNotificationAction *)notificationAction;
+- (UIUserNotificationCategory *)asUIUserNotificationCategory;
+
+/**
+ * Converts a UANotificationCategory into a UNNotificationCategory.
+ *
+ * @return An instance of UNNotificationCategory.
+ */
+- (UNNotificationCategory *)asUNNotificationCategory;
+
+/**
+ * Tests for equivalence with a UIUserNotificationCategory. As UANotificationCategory is a
+ * drop-in replacement for UNNotificationCategory, any features not applicable
+ * in UIUserNotificationCategory will be ignored.
+ *
+ * @param category The UIUserNotificationCategory to compare with.
+ * @return `YES` if the two categories are equivalent, `NO` otherwise.
+ */
+- (BOOL)isEqualToUIUserNotificationCategory:(UIUserNotificationCategory *)category;
+
+/**
+ * Tests for equivalence with a UNNotificationCategory.
+ *
+ * @param category The UNNotificationCategory to compare with.
+ * @return `YES` if the two categories are equivalent, `NO` otherwise.
+ */
+- (BOOL)isEqualToUNNotificationCategory:(UNNotificationCategory *)category;
 
 @end
 

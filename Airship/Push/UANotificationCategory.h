@@ -22,35 +22,52 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#import "UAUserNotificationCategory.h"
+
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import <UserNotifications/UserNotifications.h>
+
+@class UANotificationAction;
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Clone of UIMutableUserNotificationCategory for iOS 7 support.
+ * Clone of UNNotificationCategory for iOS 8-9 support.
  */
-@interface UAMutableUserNotificationCategory : UAUserNotificationCategory
-
-/**
- * Factory method for creating a UAMutableUserNotificationCategory out of a UIUserNotificationCategory.
- * @param uiCategory An instance of UIUserNotificationCategory.
- * @return An instance of UAUserNotificationCategory.
- */
-+ (instancetype)categoryWithUIUserNotificationCategory:(UIUserNotificationCategory *)uiCategory;
-
-/**
- * Sets the actions to display for different alert styles.
- *
- * @param actions An array of UAUserNotificationAction objects representing the actions to display for the given context.
- * @param context The context in which the alert is displayed.
- */
-- (void)setActions:(nullable NSArray *)actions
-        forContext:(UIUserNotificationActionContext)context;
+@interface UANotificationCategory : NSObject
 
 /**
  * The name of the action group.
  */
-@property(nonatomic, copy, nullable) NSString *identifier;
+@property(readonly, copy, nonatomic) NSString *identifier;
+
+/**
+ * The actions to display when a notification of this type is presented.
+ */
+@property(readonly, copy, nonatomic) NSArray<UANotificationAction *> *actions;
+
+/**
+ * The actions to display when space is limited.
+ */
+@property(readonly, copy, nonatomic) NSArray<UANotificationAction *> *minimalActions;
+
+/**
+ * The intents supported by notifications of this category
+ *
+ * Note: this property is only applicable on iOS 10 and above
+ */
+@property(readonly, copy, nonatomic) NSArray<NSString *> *intentIdentifiers;
+
+/**
+ * Options for how to handle notifications of this type.
+ */
+@property(readonly, assign, nonatomic) UNNotificationCategoryOptions options;
+
++ (instancetype)categoryWithIdentifier:(NSString *)identifier
+                               actions:(NSArray<UANotificationAction *> *)actions
+                        minimalActions:(NSArray<UANotificationAction *> *)minimalActions
+                     intentIdentifiers:(NSArray<NSString *> *)intentIdentifiers
+                               options:(UNNotificationCategoryOptions)options;
 
 @end
 

@@ -24,6 +24,7 @@
  */
 
 #import "UAPush.h"
+#import "UAirship.h"
 #import "UAChannelRegistrar+Internal.h"
 
 @class UAPreferenceDataStore;
@@ -167,7 +168,7 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
  */
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
-@property (nonatomic, strong) NSSet *allUserNotificationCategories;
+@property (nonatomic, strong) NSSet *allNotificationCategories;
 
 /**
  * Tag groups to add to channel.
@@ -183,6 +184,16 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
  * The tag groups API client.
  */
 @property (nonatomic, strong) UATagGroupsAPIClient *tagGroupsAPIClient;
+
+/**
+ * The current authorized notification types.
+ */
+@property (nonatomic, assign) NSUInteger authorizedNotificationTypes;
+
+/**
+ * The APNS authorization status for the current app lifecycle.
+ */
+@property (nonatomic, assign) BOOL authorized;
 
 /**
  * Factory method to create a push instance.
@@ -280,12 +291,12 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 - (void)updateAPNSRegistration;
 
 /**
- * Determines whether UIUserNotificationCategory is available for use.
+ * Determines whether UNNotificationCategory is available for use.
  */
-- (BOOL)shouldUseUIUserNotificationCategories;
+- (BOOL)shouldUseUNNotificationCategories;
 
 /**
- * Converts UAUserNotificationCategory to UIUserNotificationCategory on iOS 8.
+ * Converts UANotificationCategory to UNNotificationCategory on iOS 10, and UIUserNotificationCategory on prior versions.
  */
 - (NSSet *)normalizeCategories:(NSSet *)categories;
 

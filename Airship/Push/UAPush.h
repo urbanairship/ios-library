@@ -24,6 +24,7 @@
  */
 
 #import "UAGlobal.h"
+#import "UAirship.h"
 #import "UANamedUser.h"
 #import "UAChannelRegistrar.h"
 
@@ -212,7 +213,7 @@ extern NSString *const UAChannelCreatedEventExistingKey;
  * This singleton provides an interface to the functionality provided by the Urban Airship iOS Push API.
  */
 #pragma clang diagnostic push
-@interface UAPush : NSObject
+@interface UAPush : NSObject <UNUserNotificationCenterDelegate>
 
 
 ///---------------------------------------------------------------------------------------
@@ -313,13 +314,13 @@ extern NSString *const UAChannelCreatedEventExistingKey;
 @property (nonatomic, assign) UIUserNotificationType userNotificationTypes;
 
 /**
- * Custom user notification categories. Urban Airship default user notification
+ * Custom notification categories. Urban Airship default notification
  * categories will be unaffected by this field.
  *
  * Changes to this value will not take effect the next time the app registers
  * with updateRegistration.
  */
-@property (nonatomic, strong) NSSet *userNotificationCategories;
+@property (nonatomic, strong) NSSet *notificationCategories;
 
 /**
  * Sets authorization required for the default Urban Airship categories. Only applies
@@ -345,6 +346,10 @@ extern NSString *const UAChannelCreatedEventExistingKey;
  */
 @property (nonatomic, readonly, strong, nullable) NSDictionary *launchNotification;
 
+/**
+ * The current authorized notification types.
+ */
+@property (nonatomic, assign, readonly) NSUInteger authorizedNotificationTypes;
 
 ///---------------------------------------------------------------------------------------
 /// @name Autobadge

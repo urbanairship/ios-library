@@ -25,32 +25,44 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <UserNotifications/UserNotifications.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Clone of UIUserNotificationCategory for iOS 7 support.
+ * Clone of UNNotificationAction for iOS 8-10 support.
  */
-@interface UAUserNotificationCategory : NSObject
+@interface UANotificationAction : NSObject
 
 /**
- * The name of the action group.
+ * The string that you use internally to identify the action.
  */
 @property(nonatomic, copy, readonly, nullable) NSString *identifier;
 
 /**
- * Returns the actions to be displayed for the given notification context.
- *
- * @param context The context in which the notification is displayed.
+ * The localized string to use as the button title for the action.
  */
-- (nullable NSArray *)actionsForContext:(UIUserNotificationActionContext)context;
+@property(nonatomic, copy, readonly, nullable) NSString *title;
 
 /**
- * Tests for equality by value.
- *
- * @param category An instance of UAUserNotificationCategory.
+ * The options with which to perform the action.
  */
-- (BOOL)isEqualToCategory:(nullable UAUserNotificationCategory *)category;
+@property(assign, readonly, nonatomic) UNNotificationActionOptions options;
+
+/**
+ * Creates an action with the specified title and options.
+ * 
+ * @param identifier The unique string that you use internally to identify the action. 
+ * When the user selects the action, the system passes this string to your app and asks you to perform the related task. 
+ * This parameter must not be nil.
+ * @param title The localized string to display to the user. 
+ * This string is displayed in interface elements such as buttons that are used to represent actions. This parameter must not be nil.
+ * param options Additional options for how the action should be perform. Add options sparingly and only when you require the related behavior. 
+ * For a list of possible values, see UNNotificationActionOptions.
+ */
++ (instancetype)actionWithIdentifier:(NSString *)identifier
+                               title:(NSString *)title
+                             options:(UNNotificationActionOptions)options;
 
 @end
 

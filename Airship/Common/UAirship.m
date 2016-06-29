@@ -41,7 +41,7 @@
 #import "UALocation+Internal.h"
 
 
-#import "UAAppDelegateProxy+Internal.h"
+#import "UAAutoIntegration+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAURLProtocol.h"
 #import "UAAppInitEvent+Internal.h"
@@ -290,7 +290,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         UA_LINFO(@"Automatic setup enabled.");
         dispatch_once(&proxyDelegateOnceToken_, ^{
             @synchronized ([UIApplication sharedApplication]) {
-                [UAAppDelegateProxy proxyAppDelegate];
+                [UAAutoIntegration integrate];
             }
         });
     }
