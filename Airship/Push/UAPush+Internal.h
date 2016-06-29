@@ -191,6 +191,11 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 @property (nonatomic, assign) NSUInteger authorizedNotificationTypes;
 
 /**
+ * The APNS authorization status for the current app lifecycle.
+ */
+@property (nonatomic, assign) BOOL authorized;
+
+/**
  * Factory method to create a push instance.
  * @param config The Urban Airship config
  * @param dataStore The preference data store.

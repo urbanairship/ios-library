@@ -166,7 +166,7 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
 - (void)updateAuthorizedNotificationTypes {
 
     // If >= iOS 10
-    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}] && self.authorized) {
         [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
 
             NSUInteger mask = 0;
@@ -1050,13 +1050,14 @@ BOOL deferChannelCreationOnForeground = false;
         NSSet *categories = [self allUserNotificationCategories];
 
         // If >= iOS 10 use the new registration permissions prompt call
-        if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+        if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}] && !self.authorized) {
             authTypes = (long)self.authorizedNotificationTypes;
             [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:self.authorizedNotificationTypes
                                                                             completionHandler:^(BOOL granted, NSError * _Nullable error) {
                                                                                 [application registerForRemoteNotifications];
                                                                             }];
 
+            self.authorized = YES;
         } else { // Otherwise if iOS 8 & 9 use the old register settings call
             authTypes = (long)self.userNotificationTypes;
             [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:self.userNotificationTypes
