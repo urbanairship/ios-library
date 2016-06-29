@@ -25,13 +25,14 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <UserNotifications/UserNotifications.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Clone of UIUserNotificationAction for iOS 7 support.
+ * Clone of UNNotificationAction for iOS 8-10 support.
  */
-@interface UAUserNotificationAction : NSObject
+@interface UANotificationAction : NSObject
 
 /**
  * The string that you use internally to identify the action.
@@ -44,26 +45,24 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy, readonly, nullable) NSString *title;
 
 /**
- * The mode in which to run the app when the action is performed.
+ * The options with which to perform the action.
  */
-@property(nonatomic, assign, readonly) UIUserNotificationActivationMode activationMode;
+@property(assign, readonly, nonatomic) UNNotificationActionOptions options;
 
 /**
- * A Boolean value indicating whether the user must unlock the device before the action is performed.
+ * Creates an action with the specified title and options.
+ * 
+ * @param identifier The unique string that you use internally to identify the action. 
+ * When the user selects the action, the system passes this string to your app and asks you to perform the related task. 
+ * This parameter must not be nil.
+ * @param title The localized string to display to the user. 
+ * This string is displayed in interface elements such as buttons that are used to represent actions. This parameter must not be nil.
+ * param options Additional options for how the action should be perform. Add options sparingly and only when you require the related behavior. 
+ * For a list of possible values, see UNNotificationActionOptions.
  */
-@property(nonatomic, assign, readonly, getter=isAuthenticationRequired) BOOL authenticationRequired;
-
-/**
- * A Boolean value indicating whether the action is destructive
- */
-@property(nonatomic, assign, readonly, getter=isDestructive) BOOL destructive;
-
-/**
- * Tests for equality by value.
- *
- * @param notificationAction An instance of UAUserNotificationAction.
- */
-- (BOOL)isEqualToAction:(nullable UAUserNotificationAction *)notificationAction;
++ (instancetype)actionWithIdentifier:(NSString *)identifier
+                               title:(NSString *)title
+                             options:(UNNotificationActionOptions)options;
 
 @end
 

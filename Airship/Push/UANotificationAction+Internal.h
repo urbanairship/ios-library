@@ -23,18 +23,25 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAUserNotificationAction.h"
+#import "UANotificationAction.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface UAUserNotificationAction ()
+@interface UANotificationAction ()
 
 /**
- * Converts a UAUserNotificationAction into a UIUserNotificationAction.
+ * Converts a UANotificationAction into a UIUserNotificationAction.
  *
  * @return An instance of UIUserNotificationAction.
  */
 - (UIUserNotificationAction *)asUIUserNotificationAction;
+
+/**
+ * Converts a UANotificationAction into a UNNotificationAction.
+ *
+ * @return An instance of UNUNotificationAction.
+ */
+- (UNNotificationAction *)asUNNotificationAction;
 
 @end
 

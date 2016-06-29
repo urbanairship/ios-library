@@ -23,28 +23,25 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAUserNotificationCategories.h"
+#import "UANotificationCategory.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface UAUserNotificationCategories ()
+@interface UANotificationCategory ()
 
 /**
- * Factory method to create the default set of user notification categories.
- * Background user notification actions will default to requiring authorization.
- * @return A set of user notification categories.
- */
-+ (NSSet *)defaultCategories;
-
-
-/**
- * Factory method to create the default set of user notification categories.
+ * Converts a UANotificationCategory into a UIUserNotificationCategory.
  *
- * @param requireAuth If background actions should default to requiring authorization or not.
- * @return A set of user notification categories.
+ * @return An instance of UIUserNotificationCategory.
  */
-+ (NSSet *)defaultCategoriesWithRequireAuth:(BOOL)requireAuth;
+- (UIUserNotificationCategory *)asUIUserNotificationCategory;
 
+/**
+ * Converts a UANotificationCategory into a UNNotificationCategory.
+ *
+ * @return An instance of UNNotificationCategory.
+ */
+- (UNNotificationCategory *)asUNNotificationCategory;
 
 @end
 

@@ -23,47 +23,10 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAUserNotificationAction.h"
+#import <Foundation/Foundation.h>
 
-NS_ASSUME_NONNULL_BEGIN
+@interface UAAutoIntegration : NSObject
 
-/**
- * Clone of UIMutableUserNotificationAction for iOS 7 support.
- */
-@interface UAMutableUserNotificationAction : UAUserNotificationAction
-
-/**
- * Factory method for creating a UAMutableUserNotificationAction out of a UIUserNotificationAction. 
- * @param uiAction An instance of UIUserNotificationAction.
- * @return An instance of UAUserNotificationAction.
- */
-+ (instancetype)actionWithUIUserNotificationAction:(UIUserNotificationAction *)uiAction;
-
-/**
- * The string that you use internally to identify the action.
- */
-@property(nonatomic, copy, nullable) NSString *identifier;
-
-/**
- * The localized string to use as the button title for the action.
- */
-@property(nonatomic, copy, nullable) NSString *title;
-
-/**
- * The mode in which to run the app when the action is performed.
- */
-@property(nonatomic, assign) UIUserNotificationActivationMode activationMode;
-
-/**
- * A Boolean value indicating whether the user must unlock the device before the action is performed.
- */
-@property(nonatomic, assign, getter=isAuthenticationRequired) BOOL authenticationRequired;
-
-/**
- * A Boolean value indicating whether the action is destructive
- */
-@property(nonatomic, assign, getter=isDestructive) BOOL destructive;
++ (void)integrate;
 
 @end
-
-NS_ASSUME_NONNULL_END

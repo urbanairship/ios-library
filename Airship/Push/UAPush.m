@@ -37,10 +37,10 @@
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAUser.h"
 #import "UAInteractiveNotificationEvent+Internal.h"
-#import "UAUserNotificationCategories+Internal.h"
+#import "UANotificationCategories+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAConfig.h"
-#import "UAUserNotificationCategory+Internal.h"
+#import "UANotificationCategory+Internal.h"
 #import "UAInboxUtils.h"
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UATagUtils.h"
@@ -107,7 +107,7 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
         self.allowUnregisteringUserNotificationTypes = YES;
 
         self.userNotificationTypes = UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound;
-        self.allUserNotificationCategories = [UAUserNotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories];
+        self.allNotificationCategories = [UANotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories];
         self.registrationBackgroundTask = UIBackgroundTaskInvalid;
         self.namedUser = [[UANamedUser alloc] initWithConfig:config dataStore:dataStore];
 
@@ -393,42 +393,36 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
     }
 }
 
-- (BOOL)shouldUseUIUserNotificationCategories {
-    return [UIUserNotificationCategory class] != nil;
+- (BOOL)shouldUseUNNotificationCategories {
+     return [UNNotificationCategory class] != nil;
 }
 
 /**
- * Converts UAUserNotificationCategory to UIUserNotificationCategory on iOS 8
+ * Converts sets of UANotificationCategory to UNNotificationCategory on iOS 10,
+ * and UIUserNotificationCategory on prior versions.
  */
 - (NSSet *)normalizeCategories:(NSSet *)categories {
-    if ([self shouldUseUIUserNotificationCategories]) {
-        NSMutableSet *newSet = [NSMutableSet set];
-        for (id category in categories) {
-            if ([category isKindOfClass:[UAUserNotificationCategory class]]) {
-                UIUserNotificationCategory *uiCategory = [category asUIUserNotificationCategory];
-                [newSet addObject:uiCategory];
-            } else {
-                [newSet addObject:category];
-            }
-        }
+    NSMutableSet *newSet = [NSMutableSet set];
 
-        return newSet;
+    if ([self shouldUseUNNotificationCategories]) {
+        for (UANotificationCategory *category in categories) {
+            UNNotificationCategory *unCategory = [category asUNNotificationCategory];
+            [newSet addObject:unCategory];
+        }
+    } else {
+        for (UANotificationCategory *category in categories) {
+            UIUserNotificationCategory *uiCategory = [category asUIUserNotificationCategory];
+            [newSet addObject:uiCategory];
+        }
     }
-    return categories;
+    return newSet;
 }
 
-- (void)setUserNotificationCategories:(NSSet *)categories {
-
-    categories = [self normalizeCategories:categories];
-
-    _userNotificationCategories = [categories filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
-        if ([self shouldUseUIUserNotificationCategories] && ![evaluatedObject isKindOfClass:[UIUserNotificationCategory class]]) {
-            return NO;
-        }
-
-        UIUserNotificationCategory *category = evaluatedObject;
+- (void)setNotificationCategories:(NSSet *)categories {
+    _notificationCategories = [categories filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+        UANotificationCategory *category = evaluatedObject;
         if ([category.identifier hasPrefix:@"ua_"]) {
-            UA_LERR(@"Ignoring category %@, only Urban Airship user notification categories are allowed to have prefix ua_.", category.identifier);
+            UA_LERR(@"Ignoring category %@, only Urban Airship notification categories are allowed to have prefix ua_.", category.identifier);
             return NO;
         }
 
@@ -437,27 +431,22 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
 
     self.shouldUpdateAPNSRegistration = YES;
 
-    [self updateAllUserNotificationCategories];
+    [self updateAllNotificationCategories];
 }
 
 - (void)setRequireAuthorizationForDefaultCategories:(BOOL)requireAuthorizationForDefaultCategories {
     _requireAuthorizationForDefaultCategories = requireAuthorizationForDefaultCategories;
-    [self updateAllUserNotificationCategories];
-}
-
-- (void)setAllUserNotificationCategories:(NSSet *)allUserNotificationCategories {
-    NSSet *normalizedCategories = [self normalizeCategories:allUserNotificationCategories];
-    _allUserNotificationCategories = normalizedCategories;
+    [self updateAllNotificationCategories];
 }
 
 /**
  * Caches a set of user notification categories based on the the current developer-supplied set and our default set with authorization settings.
  * Call this method whenever either changes to update the cache.
  */
-- (void)updateAllUserNotificationCategories {
-    NSMutableSet *allCategories = [NSMutableSet setWithSet:[UAUserNotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories]];
-    [allCategories unionSet:self.userNotificationCategories];
-    self.allUserNotificationCategories = allCategories;
+- (void)updateAllNotificationCategories {
+    NSMutableSet *allCategories = [NSMutableSet setWithSet:[UANotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories]];
+    [allCategories unionSet:self.notificationCategories];
+    self.allNotificationCategories = allCategories;
 }
 
 - (NSDictionary *)quietTime {
@@ -627,6 +616,22 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
 - (void)resetBadge {
     [self setBadgeNumber:0];
 }
+
+#pragma mark -
+
+#pragma mark UNUserNotificationDelegate callbacks
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler {
+    // TODO: implementation
+    completionHandler();
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
+    // TODO: implementation
+    completionHandler(NULL);
+}
+
+#pragma mark App delegate event handling
 
 - (void)appReceivedRemoteNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state {
     [self appReceivedRemoteNotification:notification applicationState:state fetchCompletionHandler:nil];
@@ -1047,7 +1052,8 @@ BOOL deferChannelCreationOnForeground = false;
             [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
         }
 
-        NSSet *categories = [self allUserNotificationCategories];
+        // Normalize our abstract categories to iOS-appropriate type
+        NSSet *categories = [self normalizeCategories:self.allNotificationCategories];
 
         // If >= iOS 10 use the new registration permissions prompt call
         if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}] && !self.authorized) {
@@ -1056,6 +1062,8 @@ BOOL deferChannelCreationOnForeground = false;
                                                                             completionHandler:^(BOOL granted, NSError * _Nullable error) {
                                                                                 [application registerForRemoteNotifications];
                                                                             }];
+            [[UNUserNotificationCenter currentNotificationCenter] setNotificationCategories:categories];
+
 
             self.authorized = YES;
         } else { // Otherwise if iOS 8 & 9 use the old register settings call
