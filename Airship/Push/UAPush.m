@@ -1252,14 +1252,23 @@ BOOL deferChannelCreationOnForeground = false;
             [self.dataStore setBool:previousValue forKey:UAUserPushNotificationsEnabledKey];
             [self.dataStore removeObjectForKey:UAPushEnabledKey];
         } else {
-            BOOL registeredForUserNotificationTypes;
 
-            registeredForUserNotificationTypes = [[UIApplication sharedApplication] currentUserNotificationSettings].types != UIUserNotificationTypeNone;
+            // If >= iOS 10
+            if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+                [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
+                    if (settings.authorizationStatus == UNAuthorizationStatusAuthorized) {
+                        UA_LDEBUG(@"Migrating userPushNotificationEnabled to YES because application was authorized for notifications");
+                        [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
+                    }
+                }];
+            } else { // iOS 8 & 9
+                if ( [[UIApplication sharedApplication] currentUserNotificationSettings].types != UIUserNotificationTypeNone) {
+                    UA_LDEBUG(@"Migrating userPushNotificationEnabled to YES because application was already registered for notification types");
+                    [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
 
-            if (registeredForUserNotificationTypes) {
-                UA_LDEBUG(@"Migrating userPushNotificationEnabled to YES because application has user notification types.");
-                [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
+                }
             }
+
         }
     }
 
