@@ -287,16 +287,6 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 - (void)updateAPNSRegistration;
 
 /**
- * Determines whether UNNotificationCategory is available for use.
- */
-- (BOOL)shouldUseUNNotificationCategories;
-
-/**
- * Converts UANotificationCategory to UNNotificationCategory on iOS 10, and UIUserNotificationCategory on prior versions.
- */
-- (NSSet *)normalizeCategories:(NSSet *)categories;
-
-/**
  * Updates the set of all known user notification categories by combining
  * the default and user supplied categories.
  */
