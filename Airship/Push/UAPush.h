@@ -48,6 +48,15 @@ extern NSString *const UAChannelCreatedEventChannelKey;
  */
 extern NSString *const UAChannelCreatedEventExistingKey;
 
+/**
+ * Notification options
+ */
+typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
+    UANotificationOptionBadge   = (1 << 0),
+    UANotificationOptionSound   = (1 << 1),
+    UANotificationOptionAlert   = (1 << 2),
+    UANotificationOptionCarPlay = (1 << 3)
+};
 
 //---------------------------------------------------------------------------------------
 // UARegistrationDelegate
@@ -305,13 +314,13 @@ extern NSString *const UAChannelCreatedEventExistingKey;
 @property (nonatomic, copy, readonly, nullable) NSString *channelID;
 
 /**
- * User Notification types this app will request from APNS. Changes to this value
+ * User Notification options this app will request from APNS. Changes to this value
  * will not take effect the next time the app registers with
  * updateRegistration.
  *
  * Defaults to alert, sound and badge.
  */
-@property (nonatomic, assign) UIUserNotificationType userNotificationTypes;
+@property (nonatomic, assign) UANotificationOptions notificationOptions;
 
 /**
  * Custom notification categories. Urban Airship default notification
@@ -347,9 +356,9 @@ extern NSString *const UAChannelCreatedEventExistingKey;
 @property (nonatomic, readonly, strong, nullable) NSDictionary *launchNotification;
 
 /**
- * The current authorized notification types.
+ * The current authorized notification options.
  */
-@property (nonatomic, assign, readonly) NSUInteger authorizedNotificationTypes;
+@property (nonatomic, assign, readonly) UANotificationOptions authorizedNotificationOptions;
 
 ///---------------------------------------------------------------------------------------
 /// @name Autobadge
@@ -374,11 +383,6 @@ extern NSString *const UAChannelCreatedEventExistingKey;
  */
 - (void)resetBadge;
 
-/**
- * Gets the current enabled notification types.
- * @return The current enabled notification types.
- */
-- (UIUserNotificationType)currentEnabledNotificationTypes;
 
 
 ///---------------------------------------------------------------------------------------

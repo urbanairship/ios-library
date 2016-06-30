@@ -186,14 +186,10 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 @property (nonatomic, strong) UATagGroupsAPIClient *tagGroupsAPIClient;
 
 /**
- * The current authorized notification types.
+ * The current authorized notification options.
  */
-@property (nonatomic, assign) NSUInteger authorizedNotificationTypes;
+@property (nonatomic, assign) UANotificationOptions authorizedNotificationOptions;
 
-/**
- * The APNS authorization status for the current app lifecycle.
- */
-@property (nonatomic, assign) BOOL authorized;
 
 /**
  * Factory method to create a push instance.

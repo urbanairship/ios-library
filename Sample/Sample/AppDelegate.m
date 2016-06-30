@@ -71,9 +71,9 @@
     // Set the notification types required for the app (optional). This value defaults
     // to badge, alert and sound, so it's only necessary to set it if you want
     // to add or remove types.
-    [UAirship push].userNotificationTypes = (UIUserNotificationTypeAlert |
-                                             UIUserNotificationTypeBadge |
-                                             UIUserNotificationTypeSound);
+    [UAirship push].notificationOptions = (UANotificationOptionAlert |
+                                           UANotificationOptionBadge |
+                                           UANotificationOptionSound);
 
 
     // Set a custom delegate for handling message center events
