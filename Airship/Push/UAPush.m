@@ -202,12 +202,16 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 #pragma mark -
 #pragma mark Device Token Get/Set Methods
 
-- (UANotificationOptions)authorizedNotificationTypes {
+- (UANotificationOptions)authorizedNotificationOptions {
+    if (!self.userPushNotificationsEnabled) {
+        return 0;
+    }
+
     return [self.dataStore integerForKey:UAPushTypesAuthorizedKey];
 }
 
 - (void)setAuthorizedNotificationOptions:(UANotificationOptions)types {
-    if ([self.dataStore objectForKey:UAPushTagsSettingsKey] != types) {
+    if ([self.dataStore integerForKey:UAPushTypesAuthorizedKey] != types) {
         [self.dataStore setInteger:(NSInteger)types forKey:UAPushTypesAuthorizedKey];
         [self updateRegistration];
     }
@@ -884,7 +888,7 @@ BOOL deferChannelCreationOnForeground = false;
 
     return self.deviceToken
     && self.userPushNotificationsEnabled
-    && self.authorizedNotificationTypes
+    && self.authorizedNotificationOptions
     && app.isRegisteredForRemoteNotifications
     && self.pushTokenRegistrationEnabled;
 }
