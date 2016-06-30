@@ -111,7 +111,7 @@
             return nil;
         }
 
-        UNNotificationActionOptions options;
+        UNNotificationActionOptions options = UNNotificationCategoryOptionNone;
 
         if ([actionDefinition[@"destructive"] boolValue]) {
             options |= UNNotificationActionOptionDestructive;

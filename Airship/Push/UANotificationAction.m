@@ -77,9 +77,9 @@
 - (BOOL)isEqualToUIUserNotificationAction:(UIUserNotificationAction *)notificationAction {
     BOOL equalIdentifier = [self.identifier isEqualToString:notificationAction.identifier];
     BOOL equalTitle = [self.title isEqualToString:notificationAction.title];
-    BOOL equalAuth = (self.options & UNNotificationActionOptionAuthenticationRequired) == notificationAction.authenticationRequired;
-    BOOL equalActivationMode = (self.options & UNNotificationActionOptionForeground) == (notificationAction.activationMode == UIUserNotificationActivationModeForeground);
-    BOOL equalDestructive = (self.options & UNNotificationActionOptionDestructive) == notificationAction.destructive;
+    BOOL equalAuth = (self.options & UNNotificationActionOptionAuthenticationRequired) > 0 == notificationAction.authenticationRequired;
+    BOOL equalActivationMode = (self.options & UNNotificationActionOptionForeground) > 0 == (notificationAction.activationMode == UIUserNotificationActivationModeForeground);
+    BOOL equalDestructive = (self.options & UNNotificationActionOptionDestructive) > 0 == notificationAction.destructive;
 
     return equalIdentifier && equalTitle && equalAuth && equalActivationMode && equalDestructive;
 }
