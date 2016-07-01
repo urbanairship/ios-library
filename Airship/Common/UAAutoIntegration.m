@@ -73,17 +73,27 @@ static UAAutoIntegration *instance_;
 
     Class class = [delegate class];
 
-    // application:didRegisterForRemoteNotificationsWithDeviceToken
+
+    // Device token
     [self swizzle:@selector(application:didRegisterForRemoteNotificationsWithDeviceToken:)
    implementation:(IMP)ApplicationDidRegisterForRemoteNotificationsWithDeviceToken class:class];
 
-    // application:didFailToRegisterForRemoteNotificationsWithError:
+    // Device token errors
     [self swizzle:@selector(application:didFailToRegisterForRemoteNotificationsWithError:)
    implementation:(IMP)ApplicationDidFailToRegisterForRemoteNotificationsWithError
             class:class];
 
-    // iOS 8/9 App delegate methods
-    if (![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+    // iOS 10+
+    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+
+        // Silent notifications
+        [self swizzle:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)
+       implementation:(IMP)ApplicationDidReceiveRemoteNotificationFetchCompletionHandler
+                class:class];
+
+
+    } else { // iOS 8 & 9
+
         // application:handleActionWithIdentifier:forRemoteNotification:completionHandler:
         [self swizzle:@selector(application:handleActionWithIdentifier:forRemoteNotification:completionHandler:)
        implementation:(IMP)ApplicationHandleActionWithIdentifierForRemoteNotificationCompletionHandler
@@ -93,10 +103,10 @@ static UAAutoIntegration *instance_;
 
         [self swizzle:responseInfoSelector implementation:(IMP)ApplicationHandleActionWithIdentifierForRemoteNotificationWithResponseInfoCompletionHandler class:class];
 
-        // application:didReceiveRemoteNotification:fetchCompletionHandler:
-        // Needs to be above setting application:didReceiveRemoteNotification: because we
-        // need to check if the delegate implments that selector before we add an implmeentation
-        // for it
+        // If we implement application:didReceiveRemoteNotification:fetchCompletionHandler: it prevents
+        // application:didReceiveRemoteNotification: from being called. Only implement it if the app does not implement,
+        // the app already implements application:didReceiveRemoteNotification:fetchCompletionHandler:, or if
+        // background push is enabled.
         if ([delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)] ||
             ![delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)] ||
             [UAirship shared].remoteNotificationBackgroundModeEnabled) {
