@@ -37,6 +37,8 @@
 #import "UAUser.h"
 #import "UAInteractiveNotificationEvent+Internal.h"
 #import "UANotificationCategories+Internal.h"
+#import "UANotificationCategory.h"
+#import "UANotificationAction.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAConfig.h"
 #import "UANotificationCategory+Internal.h"
@@ -607,29 +609,87 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     [self setBadgeNumber:0];
 }
 
-#pragma mark -
+- (void)handleNotificationActionWithIdentifier:(NSString *)identifier
+                                  notification:(NSDictionary *)notification
+                                  responseText:(NSString *)responseText
+                              applicationState:(UIApplicationState)state
+                             completionHandler:(void (^)())completionHandler {
 
-#pragma mark UNUserNotificationDelegate callbacks
+    if (responseText) {
+        UA_LINFO(@"Received notification interaction: %@ notification: %@, response text: %@", identifier, notification, responseText);
+    } else {
+        UA_LINFO(@"Received notification interaction: %@ notification: %@", identifier, notification);
+    }
 
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler {
-    // TODO: implementation
-    completionHandler();
+    [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
+
+    NSString *categoryID = notification[@"aps"][@"category"];
+    NSSet *categories = self.allNotificationCategories;
+
+    UANotificationCategory *notificationCategory;
+    UANotificationAction *notificationAction;
+
+    for (UANotificationCategory *possibleCategory in categories) {
+        if ([possibleCategory.identifier isEqualToString:categoryID]) {
+            notificationCategory = possibleCategory;
+            break;
+        }
+    }
+
+    if (!notificationCategory) {
+        UA_LERR(@"Unknown notification category identifier %@", categoryID);
+        completionHandler();
+        return;
+    }
+
+    NSMutableArray *possibleActions = [NSMutableArray arrayWithArray:notificationCategory.minimalActions];
+    [possibleActions addObjectsFromArray:notificationCategory.actions];
+
+    for (UANotificationAction *possibleAction in possibleActions) {
+        if ([possibleAction.identifier isEqualToString:identifier]) {
+            notificationAction = possibleAction;
+            break;
+        }
+    }
+
+    if (!notificationAction) {
+        UA_LERR(@"Unknown notification action identifier %@", identifier);
+        completionHandler();
+        return;
+    }
+
+    [[UAirship shared].analytics addEvent:[UAInteractiveNotificationEvent eventWithNotificationAction:notificationAction
+                                                                                           categoryID:categoryID
+                                                                                         notification:notification
+                                                                                         responseText:responseText]];
+
+    NSMutableDictionary *actionsPayload = [NSMutableDictionary dictionaryWithDictionary:notification[kUANotificationActionKey][identifier]];
+
+    // Add incoming push action
+    actionsPayload[kUAIncomingPushActionRegistryName] = notification;
+
+    // Situation for the actions
+    UASituation situation = notificationAction.options & UNNotificationActionOptionForeground ?
+    UASituationForegroundInteractiveButton : UASituationBackgroundInteractiveButton;
+
+    // Action metadata
+    NSMutableDictionary *metadata = [@{ UAActionMetadataUserNotificationActionIDKey: identifier,
+                                        UAActionMetadataPushPayloadKey: notification } mutableCopy];
+    // Add the text response to the metadata if it's available
+    [metadata setValue:responseText forKey:UAActionMetadataResponseInfoKey];
+
+    // Run the actions
+    [UAActionRunner runActionsWithActionValues:actionsPayload
+                                     situation:situation
+                                      metadata:metadata
+                             completionHandler:^(UAActionResult *result) {
+                                 if (completionHandler) {
+                                     completionHandler();
+                                 }
+                             }];
 }
 
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
-    // TODO: implementation
-    completionHandler(NULL);
-}
-
-#pragma mark App delegate event handling
-
-- (void)appReceivedRemoteNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state {
-    [self appReceivedRemoteNotification:notification applicationState:state fetchCompletionHandler:nil];
-}
-
-- (void)appReceivedRemoteNotification:(NSDictionary *)notification
-                     applicationState:(UIApplicationState)state
-               fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+- (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
     UA_LINFO(@"Application received remote notification: %@", notification);
 
@@ -697,6 +757,55 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
                                      completionHandler((UIBackgroundFetchResult)[result fetchResult]);
                                  }
                              }];
+
+}
+
+
+#pragma mark -
+
+#pragma mark UNUserNotificationDelegate callbacks
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler {
+
+    NSString *identifier = response.actionIdentifier;
+    NSDictionary *notification = response.notification.request.content.userInfo;
+    NSString *responseText;
+
+    if ([response isKindOfClass:[UNTextInputNotificationResponse class]]) {
+        responseText = ((UNTextInputNotificationResponse *)self).userText;
+    }
+
+    UIApplicationState state = [UIApplication sharedApplication].applicationState;
+
+    [self handleNotificationActionWithIdentifier:identifier
+                                    notification:notification
+                                    responseText:responseText
+                                applicationState:state
+                               completionHandler:completionHandler];
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
+
+    NSDictionary *notificationPayload = notification.request.content.userInfo;
+    [self handleNotification:notificationPayload
+            applicationState:[UIApplication sharedApplication].applicationState
+           completionHandler:^(UIBackgroundFetchResult fetchResult){
+               // TODO: support for other presentation options
+               completionHandler(UNNotificationPresentationOptionNone);
+           }];
+}
+
+#pragma mark App delegate event handling
+
+- (void)appReceivedRemoteNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state {
+    [self appReceivedRemoteNotification:notification applicationState:state fetchCompletionHandler:nil];
+}
+
+- (void)appReceivedRemoteNotification:(NSDictionary *)notification
+                     applicationState:(UIApplicationState)state
+               fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+
+    [self handleNotification:notification applicationState:state completionHandler:completionHandler];
 }
 
 - (void)appReceivedActionWithIdentifier:(NSString *)identifier
@@ -704,7 +813,10 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
                        applicationState:(UIApplicationState)state
                       completionHandler:(void (^)())completionHandler {
 
-    [self appReceivedActionWithIdentifier:identifier notification:notification responseInfo:nil applicationState:state completionHandler:completionHandler];
+    [self appReceivedActionWithIdentifier:identifier
+                             notification:notification
+                             responseInfo:nil applicationState:state
+                        completionHandler:completionHandler];
 
 }
 
@@ -714,79 +826,11 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
                        applicationState:(UIApplicationState)state
                       completionHandler:(void (^)())completionHandler {
 
-    if (responseInfo) {
-        UA_LINFO(@"Received remote notification interaction: %@ notification: %@, response info: %@", identifier, notification, responseInfo);
-    } else {
-        UA_LINFO(@"Received remote notification interaction: %@ notification: %@", identifier, notification);
-    }
-
-    [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
-
-    NSString *categoryID = notification[@"aps"][@"category"];
-    NSSet *categories = [[UIApplication sharedApplication] currentUserNotificationSettings].categories;
-
-    UIUserNotificationCategory *notificationCategory;
-    UIUserNotificationAction *notificationAction;
-
-    for (UIUserNotificationCategory *possibleCategory in categories) {
-        if ([possibleCategory.identifier isEqualToString:categoryID]) {
-            notificationCategory = possibleCategory;
-            break;
-        }
-    }
-
-    if (!notificationCategory) {
-        UA_LERR(@"Unknown notification category identifier %@", categoryID);
-        completionHandler();
-        return;
-    }
-
-    NSMutableArray *possibleActions = [NSMutableArray arrayWithArray:[notificationCategory actionsForContext:UIUserNotificationActionContextMinimal]];
-    [possibleActions addObjectsFromArray:[notificationCategory actionsForContext:UIUserNotificationActionContextDefault]];
-
-    for (UIUserNotificationAction *possibleAction in possibleActions) {
-        if ([possibleAction.identifier isEqualToString:identifier]) {
-            notificationAction = possibleAction;
-            break;
-        }
-    }
-
-    if (!notificationAction) {
-        UA_LERR(@"Unknown notification action identifier %@", identifier);
-        completionHandler();
-        return;
-    }
-
-    [[UAirship shared].analytics addEvent:[UAInteractiveNotificationEvent eventWithNotificationAction:notificationAction
-                                                                                           categoryID:categoryID
-                                                                                         notification:notification
-                                                                                         responseInfo:responseInfo]];
-
-    NSMutableDictionary *actionsPayload = [NSMutableDictionary dictionaryWithDictionary:notification[kUANotificationActionKey][identifier]];
-
-    // Add incoming push action
-    actionsPayload[kUAIncomingPushActionRegistryName] = notification;
-
-    // Situation for the actions
-    UASituation situation = notificationAction.activationMode == UIUserNotificationActivationModeBackground ?
-    UASituationBackgroundInteractiveButton : UASituationForegroundInteractiveButton;
-
-    // Action metadata
-    NSMutableDictionary *metadata = [@{ UAActionMetadataUserNotificationActionIDKey: identifier,
-                                                     UAActionMetadataPushPayloadKey: notification } mutableCopy];
-    // Add the text response to the metadata if it's available
-    [metadata setValue:responseInfo forKey:UAActionMetadataResponseInfoKey];
-
-    // Run the actions
-    [UAActionRunner runActionsWithActionValues:actionsPayload
-                                     situation:situation
-                                      metadata:metadata
-                             completionHandler:^(UAActionResult *result) {
-                                 if (completionHandler) {
-                                     completionHandler();
-                                 }
-                             }];
-
+    [self handleNotificationActionWithIdentifier:identifier
+                                    notification:notification
+                                    responseText:responseInfo[UIUserNotificationActionResponseTypedTextKey]
+                                applicationState:state
+                               completionHandler:completionHandler];
 }
 
 - (void)updateBadgeFromNotification:(NSDictionary *)notification {
