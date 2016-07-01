@@ -1101,17 +1101,30 @@ BOOL deferChannelCreationOnForeground = false;
         [categories addObject:[category asUNNotificationCategory]];
     }
 
-    NSUInteger options = self.userPushNotificationsEnabled ? self.notificationOptions : 0;
-
-    [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:options
-                                                                        completionHandler:^(BOOL granted, NSError * _Nullable error) {
-                                                                            [[UIApplication sharedApplication] registerForRemoteNotifications];
-                                                                            [self updateAuthorizedNotificationTypes];
-                                                                        }];
-
     [[UNUserNotificationCenter currentNotificationCenter] setNotificationCategories:categories];
 
-    UA_LDEBUG(@"Registering for user notification types %ld.", options);
+    if (self.userPushNotificationsEnabled) {
+        [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:self.notificationOptions
+                                                                            completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                                                                                UA_LDEBUG(@"Registering for user notification options %ld.", self.notificationOptions);
+
+                                                                                [[UIApplication sharedApplication] registerForRemoteNotifications];
+                                                                                [self updateAuthorizedNotificationTypes];
+
+                                                                            }];
+    } else {
+        [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
+            if (settings.authorizationStatus == UNAuthorizationStatusNotDetermined) {
+                // Return early so we dont trigger the user to accept notifications
+                return;
+            }
+
+            [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:UNAuthorizationOptionNone
+                                                                                completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                                                                                    UA_LDEBUG(@"Unregistered for user notification options");
+                                                                                }];
+        }];
+    }
 }
 
 
