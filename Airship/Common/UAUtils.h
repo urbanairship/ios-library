@@ -149,15 +149,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable UIViewController *)topController;
 
 /**
- * Returns the main window's bounds, in orientation-dependent coordinates.
- * As this is the default behavior in iOS 8, the method is intended as a
- * utility for backwards compatibility.
- *
- * @return A CGRect representing the main window's bounds, in orientation-dependent coordinates.
- */
-+ (CGRect)orientationDependentWindowBounds;
-
-/**
  * Gets the current connection type.
  * Possible values are "cell", "wifi", or "none".
  * @return The current connection type as a string.

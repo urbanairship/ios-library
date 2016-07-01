@@ -2041,7 +2041,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     NSDictionary *expectedMetadata;
 
     // TODO: remove this conditional behavior once we start building with Xcode 7
-    if ([[UIDevice currentDevice].systemVersion floatValue] >= 9.0) {
+    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){9, 0, 0}]) {
         // backgroundAction.behavior = UIUserNotificationActionBehaviorTextInput
         [backgroundAction setValue:@(1) forKey:@"behavior"];
 
@@ -2288,28 +2288,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     // Count should match
     XCTAssertEqual(mixedSet.count, normalizedSet.count);
-
-    id iOS7Push = [OCMockObject partialMockForObject:self.push];
-
-    // iOS < 8
-    [[[iOS7Push stub] andReturnValue:OCMOCK_VALUE(NO)] shouldUseUIUserNotificationCategories];
-
-    UAMutableUserNotificationCategory *otherUACategory = [[UAMutableUserNotificationCategory alloc] init];
-    otherUACategory.identifier = @"otherUACategory";
-
-    // UIUserNotificationCategory is not available at runtime on iOS 7 and below
-    NSSet *uaSet = [NSSet setWithArray:@[uaCategory, otherUACategory]];
-    normalizedSet = [iOS7Push normalizeCategories:uaSet];
-
-    // All should be the UA variant
-    for (UIUserNotificationCategory *category in normalizedSet) {
-        XCTAssertTrue([category isKindOfClass:[UAUserNotificationCategory class]]);
-    }
-
-    // Count should match
-    XCTAssertEqual(uaSet.count, normalizedSet.count);
-
-    [iOS7Push stopMocking];
 }
 
 /**

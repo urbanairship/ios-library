@@ -279,22 +279,6 @@
     return topController;
 }
 
-+ (CGRect )orientationDependentWindowBounds {
-    CGRect windowBounds = [self mainWindow].bounds;
-
-    float deviceVersion = [[UIDevice currentDevice].systemVersion floatValue];
-
-    if (deviceVersion < 8.0) {
-        UIInterfaceOrientation interfaceOrientation = [UIApplication sharedApplication].statusBarOrientation;
-
-        if (UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
-            windowBounds.size = CGSizeMake(CGRectGetHeight(windowBounds), CGRectGetWidth(windowBounds));
-        }
-    }
-
-    return windowBounds;
-}
-
 + (BOOL)isBackgroundPush:(NSDictionary *)notification {
     BOOL isBackground = NO;
     NSDictionary *apsDict = [notification objectForKey:@"aps"];

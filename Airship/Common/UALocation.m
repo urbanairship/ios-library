@@ -192,11 +192,6 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 }
 
 - (void)requestAuthorization {
-    // iOS7 and older we do not need to request authorization prior to starting location.
-    if (![self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
-        return;
-    }
-
     // Already requested
     if ([CLLocationManager authorizationStatus] != kCLAuthorizationStatusNotDetermined) {
         return;

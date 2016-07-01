@@ -54,7 +54,7 @@
     [action isEqual:anotherAction];
 
     // Test that isEquals no longer mutates isDestructive and isAuthenticationRequired bools in iOS9+
-    if ([NSProcessInfo processInfo].operatingSystemVersion.majorVersion >= 9) {
+    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){9, 0, 0}]) {
         // Verify the first action properties were NOT mutated
         XCTAssertTrue(action.isDestructive);
         XCTAssertTrue(action.isAuthenticationRequired);

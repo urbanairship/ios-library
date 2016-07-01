@@ -60,7 +60,7 @@
 
         // in iOS 9 and above, background location updates must be explicitly requested at runtime, but this can only
         // be done safely if the related background mode is set in the Info.plist.
-        if ([[UIDevice currentDevice].systemVersion floatValue] >= 9.0 && self.isBackgroundLocationAvailable) {
+        if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){9, 0, 0}] && self.isBackgroundLocationAvailable) {
             self.locationManager.allowsBackgroundLocationUpdates = YES;
         }
 

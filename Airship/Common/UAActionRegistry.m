@@ -261,12 +261,7 @@
 
     // Incoming in-app message action
     UAIncomingInAppMessageAction *iamAction = [[UAIncomingInAppMessageAction alloc] init];
-    [self registerReservedAction:iamAction name:kUAIncomingInAppMessageActionDefaultRegistryName predicate:^(UAActionArguments *args){
-        UA_IF_IOS7_OR_GREATER(return YES;)
-
-        // In-App Messages will not work on iOS 6 or below
-        return NO;
-    }];
+    [self registerReservedAction:iamAction name:kUAIncomingInAppMessageActionDefaultRegistryName predicate:nil];
 
     // Close window action
     UACloseWindowAction *closeWindowAction = [[UACloseWindowAction alloc] init];
