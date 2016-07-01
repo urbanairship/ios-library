@@ -67,10 +67,7 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
 }
 
 - (void)didBecomeActive {
-    // Magic can be slow
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-        [self checkClipboard];
-    });
+    [self checkClipboard];
 }
 
 /**
@@ -78,6 +75,7 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
  * the token is available.
  */
 - (void)checkClipboard {
+
     if ([self.alertView isVisible]) {
         return;
     }
@@ -91,57 +89,58 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
         return;
     }
 
-    NSData *base64Data = UA_dataFromBase64String(pasteBoardString);
-    if (!base64Data) {
-        return;
-    }
-
-    NSString *decodedPasteBoardString = [[NSString alloc] initWithData:base64Data encoding:NSUTF8StringEncoding];
-    if (!decodedPasteBoardString.length) {
-        return;
-    }
-
-    NSString *token = [self generateToken];
-    if (![decodedPasteBoardString hasPrefix:token]) {
-        return;
-    }
-
-    // Perform the magic
-
-    // Generate the URL
-    NSURL *url;
-    if (decodedPasteBoardString.length > token.length) {
-        // Generate the URL
-        NSString *urlString = [decodedPasteBoardString stringByReplacingOccurrencesOfString:token
-                                                                       withString:UAChannelBaseURL];
-
-        urlString = [urlString stringByReplacingOccurrencesOfString:UAChannelPlaceHolder
-                                                         withString:self.push.channelID];
-
-        urlString = [urlString stringByTrimmingCharactersInSet:
-                     [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-
-        url =[NSURL URLWithString:urlString];
-    }
-
-    // Display the alert view on the main queue
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if ([self.alertView isVisible]) {
+    // Do the heavy lifting off the main queue
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        NSData *base64Data = UA_dataFromBase64String(pasteBoardString);
+        if (!base64Data) {
             return;
         }
 
-        self.channelURL = url;
-        self.alertView = [[UIAlertView alloc] initWithTitle:@"Channel ID"
-                                                    message:self.push.channelID
-                                                   delegate:self
-                                          cancelButtonTitle:@"Cancel"
-                                          otherButtonTitles:@"Copy", url == nil ? nil : @"Save", nil];
+        NSString *decodedPasteBoardString = [[NSString alloc] initWithData:base64Data encoding:NSUTF8StringEncoding];
+        if (!decodedPasteBoardString.length) {
+            return;
+        }
 
-        [self.alertView show];
+        NSString *token = [self generateToken];
+        if (![decodedPasteBoardString hasPrefix:token]) {
+            return;
+        }
+
+        // Generate the URL
+        NSURL *url;
+        if (decodedPasteBoardString.length > token.length) {
+            // Generate the URL
+            NSString *urlString = [decodedPasteBoardString stringByReplacingOccurrencesOfString:token
+                                                                                     withString:UAChannelBaseURL];
+
+            urlString = [urlString stringByReplacingOccurrencesOfString:UAChannelPlaceHolder
+                                                             withString:self.push.channelID];
+
+            urlString = [urlString stringByTrimmingCharactersInSet:
+                         [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+
+            url = [NSURL URLWithString:urlString];
+        }
+
+        // Move back to the main queue to clear the clipboard and display the alert view
+        dispatch_async(dispatch_get_main_queue(), ^{
+
+            [UIPasteboard generalPasteboard].string = @"";
+
+            if ([self.alertView isVisible]) {
+                return;
+            }
+
+            self.channelURL = url;
+            self.alertView = [[UIAlertView alloc] initWithTitle:@"Channel ID"
+                                                        message:self.push.channelID
+                                                       delegate:self
+                                              cancelButtonTitle:@"Cancel"
+                                              otherButtonTitles:@"Copy", url == nil ? nil : @"Save", nil];
+            [self.alertView show];
+        });
     });
 
-    // Clear the clipboard
-    [UIPasteboard generalPasteboard].string = @"";
 }
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
