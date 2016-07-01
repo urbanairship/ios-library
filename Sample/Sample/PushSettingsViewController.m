@@ -95,23 +95,23 @@
 }
 
 - (NSString *)pushTypeString {
-    UIUserNotificationType types = [UIApplication sharedApplication].currentUserNotificationSettings.types;
+    UANotificationOptions options = [UAirship push].authorizedNotificationOptions;
 
     NSMutableArray *typeArray = [NSMutableArray arrayWithCapacity:3];
 
-    if (types & UIUserNotificationTypeAlert) {
+    if (options & UANotificationOptionAlert) {
         [typeArray addObject:NSLocalizedStringFromTable(@"UA_Notification_Type_Alerts", @"UAPushUI", @"Alerts")];
     }
 
-    if (types & UIUserNotificationTypeBadge) {
+    if (options & UANotificationOptionBadge) {
         [typeArray addObject:NSLocalizedStringFromTable(@"UA_Notification_Type_Badges", @"UAPushUI", @"Badges")];
     }
 
-    if (types & UIUserNotificationTypeSound) {
+    if (options & UANotificationOptionSound) {
         [typeArray addObject:NSLocalizedStringFromTable(@"UA_Notification_Type_Sounds", @"UAPushUI", @"Sounds")];
     }
 
-    if (types & UIUserNotificationTypeNone) {
+    if (![typeArray count]) {
         return NSLocalizedStringFromTable(@"UA_Push_Settings_Link_Disabled_Title", @"UAPushUI", @"Pushes Currently Disabled");
     }
 
