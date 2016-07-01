@@ -815,7 +815,8 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
     [self appReceivedActionWithIdentifier:identifier
                              notification:notification
-                             responseInfo:nil applicationState:state
+                             responseInfo:nil
+                         applicationState:state
                         completionHandler:completionHandler];
 
 }
@@ -826,9 +827,11 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
                        applicationState:(UIApplicationState)state
                       completionHandler:(void (^)())completionHandler {
 
+    NSString *responseText = responseInfo ? responseInfo[UIUserNotificationActionResponseTypedTextKey] : nil;
+
     [self handleNotificationActionWithIdentifier:identifier
                                     notification:notification
-                                    responseText:responseInfo[UIUserNotificationActionResponseTypedTextKey]
+                                    responseText:responseText
                                 applicationState:state
                                completionHandler:completionHandler];
 }
