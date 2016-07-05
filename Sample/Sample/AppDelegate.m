@@ -127,7 +127,8 @@
 
     UIAlertAction *disableAction = [UIAlertAction actionWithTitle:@"Disable Warning" style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction * action) {
-                                                              [[NSUserDefaults standardUserDefaults] setBool:YES forKey:kSimulatorWarningDisabledKey];}];
+                                                              [[NSUserDefaults standardUserDefaults] setBool:YES forKey:kSimulatorWarningDisabledKey];
+                                                          }];
 
     [alertController addAction:disableAction];
 

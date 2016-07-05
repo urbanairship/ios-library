@@ -40,8 +40,8 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    if ([UAirship push].namedUser.identifier) {
-        self.addNamedUserTextField.text = [UAirship push].namedUser.identifier;
+    if ([UAirship namedUser].identifier) {
+        self.addNamedUserTextField.text = [UAirship namedUser].identifier;
     }
 }
 
@@ -60,10 +60,10 @@
     NSString *result = [newNamedUser stringByReplacingCharactersInRange:range withString:@""];
 
     if (result.length) {
-        [UAirship push].namedUser.identifier = result;
+        [UAirship namedUser].identifier = result;
     } else {
         textField.text = nil;
-        [UAirship push].namedUser.identifier = nil;
+        [UAirship namedUser].identifier = nil;
     }
 
     [[UAirship push] updateRegistration];

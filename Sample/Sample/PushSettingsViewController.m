@@ -40,7 +40,7 @@
 
     // Initialize switches
     self.pushEnabledSwitch.on = [UAirship push].userPushNotificationsEnabled;
-    self.locationEnabledSwitch.on = [UALocationService airshipLocationServiceEnabled];
+    self.locationEnabledSwitch.on = [UAirship location].locationUpdatesEnabled;
     self.analyticsSwitch.on = [UAirship shared].analytics.enabled;
 
     // Add observer to didBecomeActive to update upon retrun from system settings screen
@@ -48,7 +48,6 @@
 
     self.locationEnabledLabel.text = NSLocalizedStringFromTable(@"UA_Location_Enabled", @"UAPushUI", @"Location Enabled label");
     self.locationEnabledSubtitleLabel.text = NSLocalizedStringFromTable(@"UA_Location_Enabled_Detail", @"UAPushUI", @"Enable GPS and WIFI Based Location detail label");
-    self.getLocationCell.textLabel.text = NSLocalizedStringFromTable(@"UA_Get_Location", @"UAPushUI", @"Get location label");
 }
 
 - (void)didBecomeActive {
@@ -61,11 +60,14 @@
 
 - (IBAction)switchValueChanged:(id)sender {
 
-    if (self.pushEnabledSwitch.on) {
+    // Only allow disabling user notifications on iOS 10+
+    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+        [UAirship push].userPushNotificationsEnabled = self.pushEnabledSwitch.on;
+    } else if (self.pushEnabledSwitch.on) {
         [UAirship push].userPushNotificationsEnabled = YES;
     }
 
-    [UALocationService setAirshipLocationServiceEnabled:self.locationEnabledSwitch.on];
+    [UAirship location].locationUpdatesEnabled = self.locationEnabledSwitch.on;
 
     [UAirship shared].analytics.enabled = self.analyticsSwitch.on;
 }
@@ -76,7 +78,7 @@
 
     self.aliasSubtitleLabel.text = [UAirship push].alias == nil ? NSLocalizedStringFromTable(@"None", @"UAPushUI", @"None") : [UAirship push].alias;
 
-    self.namedUserSubtitleLabel.text = [UAirship push].namedUser.identifier == nil ? NSLocalizedStringFromTable(@"None", @"UAPushUI", @"None") : [UAirship push].namedUser.identifier;
+    self.namedUserSubtitleLabel.text = [UAirship namedUser].identifier == nil ? NSLocalizedStringFromTable(@"None", @"UAPushUI", @"None") : [UAirship namedUser].identifier;
 
     if ([UAirship push].tags.count) {
         self.tagsSubtitleLabel.text = [[UAirship push].tags componentsJoinedByString:@", "];
@@ -84,10 +86,9 @@
         self.tagsSubtitleLabel.text = NSLocalizedStringFromTable(@"None", @"UAPushUI", @"None");
     }
 
-    // push cannot be deactivated, so remove switch and link to system settings.
-    if ([UAirship push].userPushNotificationsEnabled) {
+    // iOS 8 & 9 - user notifications cannot be disabled, so remove switch and link to system settings
+    if (![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}] && [UAirship push].userPushNotificationsEnabled) {
         self.pushSettingsLabel.text = NSLocalizedStringFromTable(@"UA_Push_Settings_Title", @"UAPushUI", @"System Push Settings Label");
-
         self.pushSettingsSubtitleLabel.text = [self pushTypeString];
         self.pushEnabledSwitch.hidden = YES;
         self.pushEnabledCell.selectionStyle = UITableViewCellSelectionStyleDefault;
@@ -121,9 +122,11 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
-    if (indexPath.section == [tableView indexPathForCell:self.pushEnabledCell].section) {
-        if (indexPath.row == [tableView indexPathForCell:self.pushEnabledCell].row) {
-            if ([UAirship push].userPushNotificationsEnabled) {
+
+    // iOS 8 & 9 - redirect push enabled cell to system settings
+    if (![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}] && [UAirship push].userPushNotificationsEnabled) {
+        if (indexPath.section == [tableView indexPathForCell:self.pushEnabledCell].section) {
+            if (indexPath.row == [tableView indexPathForCell:self.pushEnabledCell].row) {
                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
             }
         }

@@ -34,43 +34,43 @@ class TagsTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let addButton:UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: #selector(TagsTableViewController.addTag))
+        let addButton:UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.add, target: self, action: #selector(TagsTableViewController.addTag))
         navigationItem.rightBarButtonItem = addButton
     }
 
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         tableView.reloadData()
     }
 
     func addTag () {
-        performSegueWithIdentifier(addTagsSegue, sender: self)
+        performSegue(withIdentifier: addTagsSegue, sender: self)
     }
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return UAirship.push().tags.count
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCellWithIdentifier("tagCell", forIndexPath: indexPath)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        var cell = tableView.dequeueReusableCell(withIdentifier: "tagCell", for: indexPath)
 
         if cell.isEqual(nil) {
-            cell = UITableViewCell.init(style: UITableViewCellStyle.Default, reuseIdentifier:"tagCell")
+            cell = UITableViewCell.init(style: UITableViewCellStyle.default, reuseIdentifier:"tagCell")
         }
         cell.textLabel!.text = UAirship.push().tags[indexPath.row]
 
         return cell
     }
 
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if (editingStyle == .Delete &&
-            tableView.cellForRowAtIndexPath(indexPath)?.textLabel?.text?.isEmpty == false) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if (editingStyle == .delete &&
+            tableView.cellForRow(at: indexPath)?.textLabel?.text?.isEmpty == false) {
 
-            UAirship.push().removeTag((tableView.cellForRowAtIndexPath(indexPath)?.textLabel?.text)!)
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            UAirship.push().removeTag((tableView.cellForRow(at: indexPath)?.textLabel?.text)!)
+            tableView.deleteRows(at: [indexPath], with: .fade)
 
             UAirship.push().updateRegistration()
         }
