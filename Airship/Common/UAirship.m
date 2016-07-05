@@ -121,7 +121,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 #pragma mark -
 #pragma mark Object Lifecycle
 
-- (instancetype)initWithConifg:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
         self.remoteNotificationBackgroundModeEnabled = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIBackgroundModes"] containsObject:@"remote-notification"];
@@ -263,7 +263,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     [dataStore setObject:currentDeviceId forKey:@"deviceId"];
 
     // Create Airship
-    sharedAirship_ = [[UAirship alloc] initWithConifg:config dataStore:dataStore];
+    sharedAirship_ = [[UAirship alloc] initWithConfig:config dataStore:dataStore];
 
     // Save the version
     if ([UA_VERSION isEqualToString:@"0.0.0"]) {

@@ -173,7 +173,7 @@
     return payload;
 }
 
-- (UAUserNotificationCategory *)buttonCategory {
+- (UANotificationCategory *)buttonCategory {
     if (self.buttonGroup) {
         NSSet *categories = [UAirship push].allNotificationCategories;
 

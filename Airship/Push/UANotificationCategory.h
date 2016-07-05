@@ -52,9 +52,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly, copy, nonatomic) NSArray<UANotificationAction *> *minimalActions;
 
 /**
- * The intents supported by notifications of this category
+ * The intents supported by notifications of this category.
  *
- * Note: this property is only applicable on iOS 10 and above
+ * Note: This property is only applicable on iOS 10 and above.
  */
 @property(readonly, copy, nonatomic) NSArray<NSString *> *intentIdentifiers;
 

@@ -36,9 +36,9 @@
 @property(nonatomic, copy) NSArray<UANotificationAction *> *minimalActions;
 
 /**
- * The intents supported by notifications of this category
+ * The intents supported by notifications of this category.
  *
- * Note: this property is only applicable on iOS 10 and above
+ * Note: This property is only applicable on iOS 10 and above.
  */
 @property(nonatomic, copy) NSArray<NSString *> *intentIdentifiers;
 

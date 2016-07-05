@@ -188,7 +188,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * A UANotificationCategory instance,
- * corresponding to to the button group of the message.
+ * corresponding to the button group of the message.
  * If no matching category is found, this property will be nil.
  */
 @property(nonatomic, readonly, nullable) UANotificationCategory *buttonCategory;

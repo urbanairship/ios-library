@@ -68,9 +68,9 @@
     // Set the icon badge to zero on startup (optional)
     [[UAirship push] resetBadge];
 
-    // Set the notification types required for the app (optional). This value defaults
+    // Set the notification options required for the app (optional). This value defaults
     // to badge, alert and sound, so it's only necessary to set it if you want
-    // to add or remove types.
+    // to add or remove options.
     [UAirship push].notificationOptions = (UANotificationOptionAlert |
                                            UANotificationOptionBadge |
                                            UANotificationOptionSound);
