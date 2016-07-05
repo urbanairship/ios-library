@@ -615,12 +615,6 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
                               applicationState:(UIApplicationState)state
                              completionHandler:(void (^)())completionHandler {
 
-    if (responseText) {
-        UA_LINFO(@"Received notification interaction: %@ notification: %@, response text: %@", identifier, notification, responseText);
-    } else {
-        UA_LINFO(@"Received notification interaction: %@ notification: %@", identifier, notification);
-    }
-
     [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
 
     NSString *categoryID = notification[@"aps"][@"category"];
@@ -690,8 +684,6 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 }
 
 - (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-
-    UA_LINFO(@"Application received remote notification: %@", notification);
 
     [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
 
@@ -767,6 +759,8 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler {
 
+    UA_LINFO(@"Notification center delegate received response: %@", response);
+
     NSString *identifier = response.actionIdentifier;
     NSDictionary *notification = response.notification.request.content.userInfo;
     NSString *responseText;
@@ -777,14 +771,23 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
     UIApplicationState state = [UIApplication sharedApplication].applicationState;
 
-    [self handleNotificationActionWithIdentifier:identifier
-                                    notification:notification
-                                    responseText:responseText
-                                applicationState:state
-                               completionHandler:completionHandler];
+    if ([identifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
+        [self handleNotification:notification applicationState:state completionHandler:^(UIBackgroundFetchResult fetchResult){
+            completionHandler();
+        }];
+
+    } else {
+        [self handleNotificationActionWithIdentifier:identifier
+                                        notification:notification
+                                        responseText:responseText
+                                    applicationState:state
+                                   completionHandler:completionHandler];
+    }
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
+
+    UA_LDEBUG(@"Notification center will present notification: %@", notification);
 
     NSDictionary *notificationPayload = notification.request.content.userInfo;
     [self handleNotification:notificationPayload
@@ -792,7 +795,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
            completionHandler:^(UIBackgroundFetchResult fetchResult){
                // TODO: support for other presentation options
                completionHandler(UNNotificationPresentationOptionNone);
-           }];
+    }];
 }
 
 #pragma mark App delegate event handling
@@ -804,6 +807,8 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 - (void)appReceivedRemoteNotification:(NSDictionary *)notification
                      applicationState:(UIApplicationState)state
                fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+
+    UA_LINFO(@"Application received remote notification: %@", notification);
 
     [self handleNotification:notification applicationState:state completionHandler:completionHandler];
 }
@@ -828,6 +833,12 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
                       completionHandler:(void (^)())completionHandler {
 
     NSString *responseText = responseInfo ? responseInfo[UIUserNotificationActionResponseTypedTextKey] : nil;
+
+    if (responseText) {
+        UA_LINFO(@"App received notification action: %@ notification: %@, response text: %@", identifier, notification, responseText);
+    } else {
+        UA_LINFO(@"App received notification action: %@ notification: %@", identifier, notification);
+    }
 
     [self handleNotificationActionWithIdentifier:identifier
                                     notification:notification
