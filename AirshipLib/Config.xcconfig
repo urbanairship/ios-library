@@ -27,4 +27,4 @@ CURRENT_PROJECT_VERSION = 7.2.0
 RELEASE_OTHER_CFLAGS = -fembed-bitcode
 
 // Uncomment to include the preview build warning
-// RELEASE_OTHER_CFLAGS = $(inherited) -DUA_PREVIEW=1
+RELEASE_OTHER_CFLAGS = $(inherited) -DUA_PREVIEW=1

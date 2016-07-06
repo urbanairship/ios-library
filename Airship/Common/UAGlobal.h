@@ -149,8 +149,13 @@ NSLog(@"\n\n\n" \
       "\t *********************************************************\n" \
       "\t *             URBAN AIRSHIP PREVIEW RELEASE             *\n" \
       "\t *                                                       *\n" \
-      "\t * This is a preview Urban Airship release.  It is       *\n" \
-      "\t * not intended to be part of a production application.  *\n" \
+      "\t *  THIS URBAN AIRSHIP SDK IS RELEASED AS A DEVELOPER    *\n" \
+      "\t *  PREVIEW VERSION AND MAY CONTAIN BUGS, ERRORS,        *\n" \
+      "\t *  DEFECTS, HARMFUL COMPONENTS AND MAY NOT BE           *\n" \
+      "\t *  COMPATIBLE WITH THE FINAL VERSION OF THE APPLICABLE  *\n" \
+      "\t *  THIRD PARTY OPERATING SYSTEM. ACCORDINGLY, URBAN     *\n" \
+      "\t *  AIRSHIP IS PROVIDING THE LICENSE ON AN “AS IS”       *\n" \
+      "\t *  BASIS AND NOT FOR USE IN PRODUCTION.                 *\n" \
       "\t *                                                       *\n" \
       "\t *                                                       *\n" \
       "\t *                 _..--=--..._                          *\n" \
