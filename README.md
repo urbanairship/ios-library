@@ -16,9 +16,9 @@ THE LICENSE ON AN “AS IS” BASIS AND NOT FOR USE IN PRODUCTION.
 
 #### Integration Changes
 
-Auto integration now automically swizzles and sets the UNNotificaiotnCenter delegate. Applications can
-still set a delegate on UNNotificaiotnCenter without conflicting with Urban Airship. If automtic
-integration is disabled, UAPush needs to be either set as the UNNotificaiotnCenter delegate or
+Auto integration now automatically swizzles and sets the UNNotificationCenter delegate. Applications can
+still set a delegate on UNNotificationCenter without conflicting with Urban Airship. If automatic
+integration is disabled, UAPush needs to be either set as the UNNotificationCenter delegate or
 the application must forward calls to UAPush.
 
 #### Push Changes
