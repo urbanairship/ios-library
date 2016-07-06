@@ -181,7 +181,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) UIUserNotificationActionContext notificationActionContext;
 
 /**
- * An array of UAUserNotificationAction instances corresponding to the left-to-right order
+ * An array of UNNotificationAction instances corresponding to the left-to-right order
  * of interactive message buttons.
  */
 @property(nonatomic, readonly, nullable) NSArray *notificationActions;

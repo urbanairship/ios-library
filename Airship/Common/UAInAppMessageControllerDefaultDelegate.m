@@ -257,7 +257,7 @@
 - (UIControl *)messageView:(UIView *)messageView buttonAtIndex:(NSUInteger)index {
     UAInAppMessageView *uaMessageView = (UAInAppMessageView *)messageView;
 
-    // Index 0 corresponds to buton1, index 1 corresponds to button 2.
+    // Index 0 corresponds to button 1, index 1 corresponds to button 2.
     if (index == 0) {
         return uaMessageView.button1;
     } else {
