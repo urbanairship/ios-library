@@ -71,8 +71,11 @@
                   name:(NSString *)name
              predicate:(UAActionPredicate)predicate {
 
-    NSArray *names = name ? @[name] : nil;
-    return [self registerAction:action names:names predicate:predicate];
+    if (!name) {
+        return NO;
+    }
+
+    return [self registerAction:action names:@[name] predicate:predicate];
 }
 
 -(BOOL)registerAction:(UAAction *)action

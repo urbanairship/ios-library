@@ -40,7 +40,7 @@
  *
  * Note: This property is only applicable on iOS 10 and above.
  */
-@property(nonatomic, copy) NSArray<NSString *> *intentIdentifiers;
+@property(nonatomic, copy, nullable) NSArray<NSString *> *intentIdentifiers;
 
 /**
  * Options for how to handle notifications of this type.
@@ -70,8 +70,8 @@
 }
 
 + (instancetype)categoryWithIdentifier:(NSString *)identifier
-                               actions:(NSArray<UNNotificationAction *> *)actions
-                        minimalActions:(NSArray<UNNotificationAction *> *)minimalActions
+                               actions:(NSArray<UANotificationAction *> *)actions
+                        minimalActions:(NSArray<UANotificationAction *> *)minimalActions
                      intentIdentifiers:(NSArray<NSString *> *)intentIdentifiers
                                options:(UNNotificationCategoryOptions)options {
 

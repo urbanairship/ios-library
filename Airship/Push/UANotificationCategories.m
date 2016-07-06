@@ -91,7 +91,7 @@
     return categories;
 }
 
-+ (UAUserNotificationCategory *)createCategory:(NSString *)categoryId actions:(NSArray *)actionDefinitions {
++ (UANotificationCategory *)createCategory:(NSString *)categoryId actions:(NSArray *)actionDefinitions {
     NSMutableArray *actions = [NSMutableArray array];
 
     for (NSDictionary *actionDefinition in actionDefinitions) {
@@ -111,7 +111,7 @@
             return nil;
         }
 
-        UNNotificationActionOptions options = UNNotificationCategoryOptionNone;
+        UNNotificationActionOptions options = UNNotificationActionOptionNone;
 
         if ([actionDefinition[@"destructive"] boolValue]) {
             options |= UNNotificationActionOptionDestructive;
@@ -125,13 +125,16 @@
             options |= UNNotificationActionOptionAuthenticationRequired;
         }
 
-        UANotificationAction *action = [UANotificationAction actionWithIdentifier:actionId title:title options:options];
+        UANotificationAction *action = [UANotificationAction actionWithIdentifier:actionId
+                                                                            title:title
+                                                                          options:options];
         [actions addObject:action];
     }
 
     UANotificationCategory *category = [UANotificationCategory categoryWithIdentifier:categoryId
-                                                                              actions:actions minimalActions:actions
-                                                                    intentIdentifiers:nil
+                                                                              actions:actions
+                                                                       minimalActions:actions
+                                                                    intentIdentifiers:@[]
                                                                               options:UNNotificationCategoryOptionNone];
 
     return category;

@@ -26,7 +26,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-@class UAUserNotificationCategory;
+@class UANotificationCategory;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -73,11 +73,11 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param categoryId The category identifier
  * @param actionDefinitions An array of user notification action dictionaries used
- *        to construct UIUserNotificationAction for the category.
+ *        to construct UANotificationAction for the category.
  * @return The user notification category created or `nil` if an error occurred.
  */
-+ (UAUserNotificationCategory *)createCategory:(NSString *)categoryId
-                                       actions:(NSArray *)actionDefinitions;
++ (nullable UANotificationCategory *)createCategory:(NSString *)categoryId
+                                            actions:(NSArray *)actionDefinitions;
 
 @end
 

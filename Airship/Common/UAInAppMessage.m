@@ -175,7 +175,7 @@
 
 - (UANotificationCategory *)buttonCategory {
     if (self.buttonGroup) {
-        NSSet *categories = [UAirship push].allNotificationCategories;
+        NSSet *categories = [UAirship push].combinedCategories;
 
         for (UANotificationCategory *category in categories) {
             // Find the category that matches our buttonGroup
@@ -210,7 +210,7 @@
         binding.identifier = notificationAction.identifier;
 
         // choose the situation that matches the corresponding notificationAction's activation mode
-        if (notificationAction.options & UNNotificationActionOptionForeground > 0) {
+        if ((notificationAction.options & UNNotificationActionOptionForeground) > 0) {
             binding.situation = UASituationForegroundInteractiveButton;
         } else {
             binding.situation = UASituationBackgroundInteractiveButton;

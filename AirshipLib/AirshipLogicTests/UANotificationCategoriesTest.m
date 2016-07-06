@@ -83,7 +83,6 @@
     XCTAssertFalse(shareAction.options & UNNotificationActionOptionAuthenticationRequired);
     XCTAssertFalse(shareAction.options & UNNotificationActionOptionDestructive);
 
-
     // Yes no category
     UANotificationCategory *yesNo = [self findCategoryById:@"yes_no_category" set:categories];
     XCTAssertNotNil(yesNo);

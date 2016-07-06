@@ -46,6 +46,7 @@
 #import "UAConfig.h"
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UAHTTPRequest+Internal.h"
+#import "UANotificationCategory+Internal.h"
 
 @interface UAPushTest : XCTestCase
 @property (nonatomic, strong) id mockedApplication;
@@ -61,6 +62,7 @@
 @property (nonatomic, strong) id mockUIUserNotificationSettings;
 @property (nonatomic, strong) id mockDefaultNotificationCategories;
 @property (nonatomic, strong) id mockTagGroupsAPIClient;
+@property (nonatomic, strong) id mockProcessInfo;
 
 @property (nonatomic, strong) UAPush *push;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
@@ -70,6 +72,9 @@
 @property (nonatomic, strong) NSMutableDictionary *addTagGroups;
 @property (nonatomic, strong) NSMutableDictionary *removeTagGroups;
 @property (nonatomic, strong) UAHTTPRequest *channelTagsFailureRequest;
+
+@property (nonatomic, assign) NSUInteger testOSMajorVersion;
+
 
 @end
 
@@ -82,6 +87,20 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
 - (void)setUp {
     [super setUp];
+
+    self.testOSMajorVersion = 8;
+    self.mockProcessInfo = [OCMockObject niceMockForClass:[NSProcessInfo class]];
+    [[[self.mockProcessInfo stub] andReturn:self.mockProcessInfo] processInfo];
+
+    [[[[self.mockProcessInfo stub] andDo:^(NSInvocation *invocation) {
+        NSOperatingSystemVersion arg;
+        [invocation getArgument:&arg atIndex:2];
+
+        BOOL result = self.testOSMajorVersion >= arg.majorVersion;
+        [invocation setReturnValue:&result];
+    }] ignoringNonObjectArgs] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){0, 0, 0}];
+
+
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"uapush.test."];
     self.push =  [UAPush pushWithConfig:[UAConfig defaultConfig] dataStore:self.dataStore];
 
@@ -160,7 +179,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [[[self.mockedAirship stub] andReturn:self.mockUAUser] inboxUser];
     [[[self.mockUAUser stub] andReturn:@"someUser"] username];
 
-    self.mockDefaultNotificationCategories = [OCMockObject niceMockForClass:[UAUserNotificationCategories class]];
+    self.mockDefaultNotificationCategories = [OCMockObject niceMockForClass:[UANotificationCategories class]];
 
     self.push.registrationDelegate = self.mockRegistrationDelegate;
 
@@ -202,6 +221,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [self.mockUIUserNotificationSettings stopMocking];
     [self.mockDefaultNotificationCategories stopMocking];
     [self.mockTagGroupsAPIClient stopMocking];
+    [self.mockProcessInfo stopMocking];
 
     // We hide this class in a few tests. Its only available on iOS8.
     [UIUserNotificationSettings revealClass];
@@ -441,23 +461,21 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  * to NSUserDefaults and updates apns registration.
  */
 - (void)testUserPushNotificationsEnabledIOS8 {
+    self.testOSMajorVersion = 8;
     self.push.userPushNotificationsEnabled = NO;
 
-    NSSet *expectedCategories = self.push.allUserNotificationCategories;
-
-    // Make sure push is set to NO
-    XCTAssertFalse(self.push.userPushNotificationsEnabled, @"userPushNotificationsEnabled should default to NO");
-
-    UIUserNotificationSettings *expected = [UIUserNotificationSettings settingsForTypes:self.push.userNotificationTypes
-                                                                             categories:expectedCategories];
-
-    // iOS 10+
-    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
-        [[self.mockedUserNotificationCenter expect] requestAuthorizationWithOptions:(UNAuthorizationOptions)expected completionHandler:OCMOCK_ANY];
-
-    } else { // iOS 8 & 9
-        [[self.mockedApplication expect] registerUserNotificationSettings:expected];
+    NSMutableSet *expectedCategories = [NSMutableSet set];
+    for (UANotificationCategory *category in self.push.combinedCategories) {
+        [expectedCategories addObject:[category asUIUserNotificationCategory]];
     }
+
+    NSUInteger expectedTypes = self.push.notificationOptions;
+
+    [[self.mockedApplication expect] registerUserNotificationSettings:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UIUserNotificationSettings *settings = (UIUserNotificationSettings *)obj;
+        return expectedTypes == settings.types && expectedCategories.count == settings.categories.count;
+    }]];
+
 
     self.push.userPushNotificationsEnabled = YES;
 
@@ -509,6 +527,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  * to NSUserDefaults and updates registration.
  */
 - (void)testUserPushNotificationsDisabledIOS8 {
+    self.testOSMajorVersion = 8;
     self.push.userPushNotificationsEnabled = YES;
     self.push.deviceToken = validDeviceToken;
     self.push.shouldUpdateAPNSRegistration = NO;
@@ -531,14 +550,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     UIUserNotificationSettings *expected = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone
                                                                              categories:nil];
 
-    // iOS 10+
-    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
-        [[self.mockedUserNotificationCenter expect] requestAuthorizationWithOptions:(UNAuthorizationOptions)expected completionHandler:OCMOCK_ANY];
-
-    } else { // iOS 8 & 9
-        [[self.mockedApplication expect] registerUserNotificationSettings:expected];
-    }
-
+    [[self.mockedApplication expect] registerUserNotificationSettings:expected];
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
     self.push.requireSettingsAppToDisableUserNotifications = NO;
@@ -675,25 +687,26 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  * Test update apns registration when user notifications are enabled on >= iOS8.
  */
 - (void)testUpdateAPNSRegistrationUserNotificationsEnabledIOS8 {
+    self.testOSMajorVersion = 8;
     self.push.userPushNotificationsEnabled = YES;
     self.push.shouldUpdateAPNSRegistration = YES;
-    [[[self.mockDefaultNotificationCategories stub] andReturn:[NSSet set]] defaultCategoriesWithRequireAuth:YES];
+    self.push.customCategories = [NSSet set];
 
-    self.push.userNotificationCategories = [NSSet setWithArray:@[[[UIUserNotificationCategory alloc] init]]];
+    NSMutableSet *expectedCategories = [NSMutableSet set];
+    for (UANotificationCategory *category in self.push.combinedCategories) {
+        [expectedCategories addObject:[category asUIUserNotificationCategory]];
+    }
 
-    UIUserNotificationSettings *expected = [UIUserNotificationSettings settingsForTypes:self.push.userNotificationTypes
-                                                                             categories:self.push.userNotificationCategories];
+    NSUInteger expectedTypes = self.push.notificationOptions;
 
-    // iOS 10+
-    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
-        [[self.mockedUserNotificationCenter expect] requestAuthorizationWithOptions:(UNAuthorizationOptions)expected completionHandler:OCMOCK_ANY];
+    [[self.mockedApplication expect] registerUserNotificationSettings:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UIUserNotificationSettings *settings = (UIUserNotificationSettings *)obj;
+        return expectedTypes == settings.types && expectedCategories.count == settings.categories.count;
+    }]];
 
-    } else { // iOS 8 & 9
-        [[self.mockedApplication expect] registerUserNotificationSettings:expected];
-    }    [self.push updateAPNSRegistration];
+    [self.push updateAPNSRegistration];
 
-    XCTAssertNoThrow([self.mockedApplication verify],
-                     @"should register for user notification settings when push is enabled");
+    XCTAssertNoThrow([self.mockedApplication verify]);
 
     XCTAssertFalse(self.push.shouldUpdateAPNSRegistration, @"Updating APNS registration should set shouldUpdateAPNSRegistration to NO");
 }
@@ -703,91 +716,53 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  * defaults user notification categories.
  */
 - (void)testRequireAuthorizationForDefaultCategories {
-    self.push.userNotificationCategories = [NSSet set];
-    self.push.userPushNotificationsEnabled = YES;
+    // Clear the custom categories so we can check only UA categories in comibinedCategories.
+    self.push.customCategories = [NSSet set];
 
-    NSSet *defaultSet = [NSSet setWithArray:@[[[UIUserNotificationCategory alloc] init], [[UIUserNotificationCategory alloc] init]]];
-    NSSet *requiredAuthorizationSet = [NSSet setWithArray:@[[[UIUserNotificationCategory alloc] init]]];
-    [[[self.mockDefaultNotificationCategories stub] andReturn:defaultSet] defaultCategoriesWithRequireAuth:NO];
-    [[[self.mockDefaultNotificationCategories stub] andReturn:requiredAuthorizationSet] defaultCategoriesWithRequireAuth:YES];
-
-
-    self.push.requireAuthorizationForDefaultCategories = NO;
-
-    UIUserNotificationSettings *expected = [UIUserNotificationSettings settingsForTypes:self.push.userNotificationTypes
-                                                                             categories:defaultSet];
-
-    // iOS 10+
-    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
-        [[self.mockedUserNotificationCenter expect] requestAuthorizationWithOptions:(UNAuthorizationOptions)expected completionHandler:OCMOCK_ANY];
-
-    } else { // iOS 8 & 9
-        [[self.mockedApplication expect] registerUserNotificationSettings:expected];
-    }
-
-    [self.push updateAPNSRegistration];
-
-    XCTAssertNoThrow([self.mockedApplication verify],
-                     @"should register with default categories without requiring authorization");
-
-
+    XCTAssertTrue(self.push.combinedCategories.count);
 
     self.push.requireAuthorizationForDefaultCategories = YES;
+    for (UANotificationCategory *category in self.push.combinedCategories) {
+        for (UANotificationAction *action in category.actions) {
+            // Only check background actions
+            if ((action.options & UNNotificationActionOptionForeground) == 0) {
+                XCTAssertTrue((action.options & UNNotificationActionOptionAuthenticationRequired) > 0, @"Invalid options for action: %@", action.identifier);
 
-    expected = [UIUserNotificationSettings settingsForTypes:self.push.userNotificationTypes
-                                                 categories:requiredAuthorizationSet];
-    // iOS 10+
-    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
-        [[self.mockedUserNotificationCenter expect] requestAuthorizationWithOptions:(UNAuthorizationOptions)expected completionHandler:OCMOCK_ANY];
-
-    } else { // iOS 8 & 9
-        [[self.mockedApplication expect] registerUserNotificationSettings:expected];
+            }
+        }
     }
 
-    [self.push updateAPNSRegistration];
+    self.push.requireAuthorizationForDefaultCategories = NO;
+    for (UANotificationCategory *category in self.push.combinedCategories) {
+        for (UANotificationAction *action in category.actions) {
+            // Only check background actions
+            if ((action.options & UNNotificationActionOptionForeground) == 0) {
+                XCTAssertFalse((action.options & UNNotificationActionOptionAuthenticationRequired) > 0, @"Invalid options for action: %@", action.identifier);
 
-    XCTAssertNoThrow([self.mockedApplication verify],
-                     @"should register with requiredAuthorizationSet defaults categories");
+            }
+        }
+    }
 }
 
 /**
  * Test the user notification categories used to register is the union between
  * the default categories and the custom categories.
  */
-- (void)testUserNotificationCategories {
+- (void)testNotificationCategories {
     self.push.userPushNotificationsEnabled = YES;
 
-    UIMutableUserNotificationCategory *defaultCategory = [[UIMutableUserNotificationCategory alloc] init];
-    defaultCategory.identifier = @"defaultCategory";
-
-    UIMutableUserNotificationCategory *customCategory = [[UIMutableUserNotificationCategory alloc] init];
-    customCategory.identifier = @"customCategory";
-
-    UIMutableUserNotificationCategory *anotherCustomCategory = [[UIMutableUserNotificationCategory alloc] init];
-    anotherCustomCategory.identifier = @"anotherCustomCategory";
+    UANotificationCategory *defaultCategory = [UANotificationCategory categoryWithIdentifier:@"defaultCategory" actions:@[] minimalActions:@[] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+    UANotificationCategory *customCategory = [UANotificationCategory categoryWithIdentifier:@"customCategory" actions:@[] minimalActions:@[] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+    UANotificationCategory *anotherCustomCategory = [UANotificationCategory categoryWithIdentifier:@"anotherCustomCategory" actions:@[] minimalActions:@[] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
 
     NSSet *defaultSet = [NSSet setWithArray:@[defaultCategory]];
-    NSSet *customSet = [NSSet setWithArray:@[customCategory, anotherCustomCategory]];
-
     [[[self.mockDefaultNotificationCategories stub] andReturn:defaultSet] defaultCategoriesWithRequireAuth:self.push.requireAuthorizationForDefaultCategories];
-    self.push.userNotificationCategories = customSet;
 
+    NSSet *customSet = [NSSet setWithArray:@[customCategory, anotherCustomCategory]];
+    self.push.customCategories = customSet;
 
-    [[self.mockedApplication expect] registerUserNotificationSettings:[OCMArg checkWithBlock:^BOOL(id obj) {
-        NSSet *categories = ((UIUserNotificationSettings *)obj).categories;
-
-        // Should only have 3 categories - defaultCategory, customCategory, anotherCustomCategory.
-        if (categories.count != 3) {
-            return NO;
-        }
-
-        return YES;
-    }]];
-
-    [self.push updateAPNSRegistration];
-
-    XCTAssertNoThrow([self.mockedApplication verify],
-                     @"Registered categories should be the union of defaults and customs");
+    NSSet *expectedSet = [NSSet setWithArray:@[defaultCategory, customCategory, anotherCustomCategory]];
+    XCTAssertEqualObjects(self.push.combinedCategories, expectedSet);
 }
 
 
@@ -795,6 +770,8 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  * Test update apns registration when user notifications are disabled on >= iOS8.
  */
 - (void)testUpdateAPNSRegistrationUserNotificationsDisabledIOS8 {
+    self.testOSMajorVersion = 8;
+
     // Make sure we have previously registered types
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeBadge categories:nil];
     [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
@@ -803,14 +780,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     UIUserNotificationSettings *expected = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone
                                                                              categories:nil];
 
-    // iOS 10+
-    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
-        [[self.mockedUserNotificationCenter expect] requestAuthorizationWithOptions:(UNAuthorizationOptions)expected completionHandler:OCMOCK_ANY];
-
-    } else { // iOS 8 & 9
-        [[self.mockedApplication expect] registerUserNotificationSettings:expected];
-    }
-
+    [[self.mockedApplication expect] registerUserNotificationSettings:expected];
     [self.push updateAPNSRegistration];
 
     XCTAssertNoThrow([self.mockedApplication verify],
@@ -822,6 +792,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  * Test update apns does not register for 0 types if already is registered for none.
  */
 - (void)testUpdateAPNSRegistrationPushAlreadyDisabledIOS8 {
+    self.testOSMajorVersion = 8;
 
     // Make sure we have previously registered types
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone categories:nil];
@@ -831,14 +802,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     // Make sure we do not register for none, if we are
     // already registered for none or it will prompt the user.
-    // iOS 10+
-    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
-        [[self.mockedUserNotificationCenter reject] requestAuthorizationWithOptions:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    } else { // iOS 8 & 9
-        [[self.mockedApplication reject] registerUserNotificationSettings:OCMOCK_ANY];
-    }
-
+    [[self.mockedApplication reject] registerUserNotificationSettings:OCMOCK_ANY];
 
     [self.push updateAPNSRegistration];
 
@@ -846,7 +810,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                      @"should register UIUserNotificationTypeNone types and nil categories");
 }
 
-- (void)testSetBadgeNumberAutoBadgeEnabled{
+- (void)testSetBadgeNumberAutoBadgeEnabled {
     // Set the right values so we can check if a device api client call was made or not
     self.push.userPushNotificationsEnabled = YES;
     self.push.autobadgeEnabled = YES;
@@ -907,7 +871,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 - (void)testHandleDeviceTokenRegistration {
     [UIUserNotificationSettings hideClass];
 
-    self.push.userNotificationTypes = UIUserNotificationTypeSound;
     self.push.userPushNotificationsEnabled = YES;
     self.push.deviceToken = nil;
 
@@ -941,7 +904,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  * update registration if we already have a channel
  */
 - (void)testHandleDeviceTokenRegistrationBackground {
-    self.push.userNotificationTypes = UIUserNotificationTypeSound;
     self.push.userPushNotificationsEnabled = YES;
     self.push.deviceToken = nil;
     self.push.channelID = @"channel";
@@ -977,7 +939,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 - (void)testHandleDeviceTokenRegistrationBackgroundChannelCreation {
     [UIUserNotificationSettings hideClass];
 
-    self.push.userNotificationTypes = UIUserNotificationTypeSound;
     self.push.userPushNotificationsEnabled = YES;
     self.push.deviceToken = nil;
     self.push.channelID = nil;
@@ -1401,12 +1362,17 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  * Test that UserPushNotificationAllowed is YES when there are authorized notification types set
  */
 -(void)testUserPushNotificationsAllowedIOS8 {
+    self.testOSMajorVersion = 8;
+
     self.push.userPushNotificationsEnabled = YES;
     self.push.pushTokenRegistrationEnabled = YES;
     self.push.deviceToken = validDeviceToken;
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(YES)] isRegisteredForRemoteNotifications];
 
-    self.push.authorizedNotificationTypes = UIUserNotificationTypeBadge;
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeBadge categories:nil];
+    [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
+
+    [self.push updateAPNSRegistration];
 
     XCTAssertTrue(self.push.userPushNotificationsAllowed,
                   @"UserPushNotificationsAllowed should be YES");
@@ -1416,12 +1382,12 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  * Test that UserPushNotificationAllowed is NO when there are no authorized notification types set
  */
 -(void)testUserPushNotificationsAllowedIOS8No {
+    self.testOSMajorVersion = 8;
+
     self.push.userPushNotificationsEnabled = YES;
     self.push.pushTokenRegistrationEnabled = NO;
     self.push.deviceToken = validDeviceToken;
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(YES)] isRegisteredForRemoteNotifications];
-
-    self.push.authorizedNotificationTypes = UIUserNotificationTypeNone;
 
     XCTAssertFalse(self.push.userPushNotificationsAllowed,
                   @"UserPushNotificationsAllowed should be NO");
@@ -1965,20 +1931,17 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  * background activation mode.
  */
 - (void)testOnReceiveActionWithIdentifierBackground {
-    UIMutableUserNotificationAction *foregroundAction = [[UIMutableUserNotificationAction alloc] init];
-    foregroundAction.activationMode = UIUserNotificationActivationModeForeground;
-    foregroundAction.identifier = @"foregroundIdentifier";
+    UANotificationAction *foregroundAction = [UANotificationAction actionWithIdentifier:@"foregroundIdentifier" title:@"title" options:UNNotificationActionOptionForeground];
+    UANotificationAction *backgroundAction = [UANotificationAction actionWithIdentifier:@"backgroundIdentifier" title:@"title" options:0];
 
-    UIMutableUserNotificationAction *backgroundAction = [[UIMutableUserNotificationAction alloc] init];
-    backgroundAction.activationMode = UIUserNotificationActivationModeBackground;
-    backgroundAction.identifier = @"backgroundIdentifier";
+    UANotificationCategory *category = [UANotificationCategory categoryWithIdentifier:@"notificationCategory"
+                                                                              actions:@[foregroundAction, backgroundAction]
+                                                                       minimalActions:@[foregroundAction, backgroundAction]
+                                                                    intentIdentifiers:@[]
+                                                                              options:0];
 
-    UIMutableUserNotificationCategory *category = [[UIMutableUserNotificationCategory alloc] init];
-    [category setActions:@[foregroundAction, backgroundAction] forContext:UIUserNotificationActionContextMinimal];
-    category.identifier = @"notificationCategory";
 
-    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:0 categories:[NSSet setWithArray:@[category]]];
-    [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
+    self.push.customCategories = [NSSet setWithArray:@[category]];
 
     __block BOOL completionHandlerCalled = NO;
 
@@ -2029,37 +1992,24 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  * background activation mode.
  */
 - (void)testOnReceiveActionWithIdentifierResponseInfoBackground {
-    UIMutableUserNotificationAction *foregroundAction = [[UIMutableUserNotificationAction alloc] init];
-    foregroundAction.activationMode = UIUserNotificationActivationModeForeground;
-    foregroundAction.identifier = @"foregroundIdentifier";
+    UANotificationAction *foregroundAction = [UANotificationAction actionWithIdentifier:@"foregroundIdentifier" title:@"title" options:UNNotificationActionOptionForeground];
+    UANotificationAction *backgroundAction = [UANotificationAction actionWithIdentifier:@"backgroundIdentifier" title:@"title" options:0];
 
-    UIMutableUserNotificationAction *backgroundAction = [[UIMutableUserNotificationAction alloc] init];
-    backgroundAction.activationMode = UIUserNotificationActivationModeBackground;
-    backgroundAction.identifier = @"backgroundIdentifier";
+    UANotificationCategory *category = [UANotificationCategory categoryWithIdentifier:@"notificationCategory"
+                                                                              actions:@[foregroundAction, backgroundAction]
+                                                                       minimalActions:@[foregroundAction, backgroundAction]
+                                                                    intentIdentifiers:@[]
+                                                                              options:0];
 
-    NSDictionary *expectedResponseInfo;
-    NSDictionary *expectedMetadata;
 
-    // TODO: remove this conditional behavior once we start building with Xcode 7
-    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){9, 0, 0}]) {
-        // backgroundAction.behavior = UIUserNotificationActionBehaviorTextInput
-        [backgroundAction setValue:@(1) forKey:@"behavior"];
+    self.push.customCategories = [NSSet setWithArray:@[category]];
 
-        expectedResponseInfo = @{@"UIUserNotificationActionResponseTypedTextKey":@"howdy"};
-        expectedMetadata = @{ UAActionMetadataUserNotificationActionIDKey: @"backgroundIdentifier",
-                              UAActionMetadataPushPayloadKey: self.notification,
-                              UAActionMetadataResponseInfoKey: expectedResponseInfo};
-    } else {
-        expectedMetadata = @{ UAActionMetadataUserNotificationActionIDKey: @"backgroundIdentifier",
-                              UAActionMetadataPushPayloadKey: self.notification };
-    }
 
-    UIMutableUserNotificationCategory *category = [[UIMutableUserNotificationCategory alloc] init];
-    [category setActions:@[foregroundAction, backgroundAction] forContext:UIUserNotificationActionContextMinimal];
-    category.identifier = @"notificationCategory";
+    NSDictionary *expectedResponseInfo = @{@"UIUserNotificationActionResponseTypedTextKey":@"howdy"};
+    NSDictionary *expectedMetadata = @{ UAActionMetadataUserNotificationActionIDKey: @"backgroundIdentifier",
+                                        UAActionMetadataResponseInfoKey: @"howdy",
+                                       UAActionMetadataPushPayloadKey: self.notification };
 
-    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:0 categories:[NSSet setWithArray:@[category]]];
-    [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
 
     __block BOOL completionHandlerCalled = NO;
 
@@ -2110,20 +2060,17 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  * foreground activation mode.
  */
 - (void)testOnReceiveActionWithIdentifierForeground {
-    UIMutableUserNotificationAction *foregroundAction = [[UIMutableUserNotificationAction alloc] init];
-    foregroundAction.activationMode = UIUserNotificationActivationModeForeground;
-    foregroundAction.identifier = @"foregroundIdentifier";
+    UANotificationAction *foregroundAction = [UANotificationAction actionWithIdentifier:@"foregroundIdentifier" title:@"title" options:UNNotificationActionOptionForeground];
+    UANotificationAction *backgroundAction = [UANotificationAction actionWithIdentifier:@"backgroundIdentifier" title:@"title" options:0];
 
-    UIMutableUserNotificationAction *backgroundAction = [[UIMutableUserNotificationAction alloc] init];
-    backgroundAction.activationMode = UIUserNotificationActivationModeBackground;
-    backgroundAction.identifier = @"backgroundIdentifier";
+    UANotificationCategory *category = [UANotificationCategory categoryWithIdentifier:@"notificationCategory"
+                                                                              actions:@[foregroundAction, backgroundAction]
+                                                                       minimalActions:@[foregroundAction, backgroundAction]
+                                                                    intentIdentifiers:@[]
+                                                                              options:0];
 
-    UIMutableUserNotificationCategory *category = [[UIMutableUserNotificationCategory alloc] init];
-    [category setActions:@[foregroundAction, backgroundAction] forContext:UIUserNotificationActionContextMinimal];
-    category.identifier = @"notificationCategory";
 
-    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:0 categories:[NSSet setWithArray:@[category]]];
-    [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
+    self.push.customCategories = [NSSet setWithArray:@[category]];
 
     __block BOOL completionHandlerCalled = NO;
 
@@ -2265,129 +2212,11 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 }
 
 /**
- * Test that UAUserNotificationCategory is converted UIUserNotificationCategory iff iOS >= 8.
- */
-- (void)testNormalizeCategories {
-
-    UAMutableUserNotificationCategory *uaCategory = [[UAMutableUserNotificationCategory alloc] init];
-    uaCategory.identifier = @"uaCategory";
-
-    UIMutableUserNotificationCategory *uiCategory = [[UIMutableUserNotificationCategory alloc] init];
-    uiCategory.identifier = @"uiCategory";
-
-    UIMutableUserNotificationCategory *otherUICategory = [[UIMutableUserNotificationCategory alloc] init];
-    otherUICategory.identifier = @"otherUICategory";
-
-    NSSet *mixedSet = [NSSet setWithArray:@[uaCategory, uiCategory, otherUICategory]];
-    NSSet *normalizedSet = [self.push normalizeCategories:mixedSet];
-
-    // All should be the UI variant
-    for (UIUserNotificationCategory *category in normalizedSet) {
-        XCTAssertTrue([category isKindOfClass:[UIUserNotificationCategory class]]);
-    }
-
-    // Count should match
-    XCTAssertEqual(mixedSet.count, normalizedSet.count);
-}
-
-/**
- * Test setting user notification categories sanitizes category types according to OS version, 
- * and filters out any category with the reserved prefix "ua_".
- */
-- (void)testSetUserNotificationCategories {
-    id mockPush = [OCMockObject partialMockForObject:self.push];
-
-    UIMutableUserNotificationCategory *uaCategory = [[UIMutableUserNotificationCategory alloc] init];
-    uaCategory.identifier = @"ua_category";
-
-    UIMutableUserNotificationCategory *customCategory = [[UIMutableUserNotificationCategory alloc] init];
-    customCategory.identifier = @"customCategory";
-
-    UIMutableUserNotificationCategory *anotherCustomCategory = [[UIMutableUserNotificationCategory alloc] init];
-    anotherCustomCategory.identifier = @"anotherCustomCategory";
-
-    NSSet *categories = [NSSet setWithArray:@[uaCategory, customCategory, anotherCustomCategory]];
-    [[[mockPush expect] andReturn:categories] normalizeCategories:categories];
-
-    // Recast for convenience
-    UAPush *push = mockPush;
-
-    push.userNotificationCategories = categories;
-
-    [mockPush verify];
-
-    XCTAssertEqual(2, push.userNotificationCategories.count, @"Should filter out any categories with prefix ua_");
-    XCTAssertFalse([push.userNotificationCategories containsObject:uaCategory], @"Should filter out any categories with prefix ua_");
-    XCTAssertTrue([push.userNotificationCategories containsObject:customCategory], @"Should not filter out categories without prefix ua_");
-    XCTAssertTrue([push.userNotificationCategories containsObject:anotherCustomCategory], @"Should filter out any categories with prefix ua_");
-    XCTAssertTrue(push.shouldUpdateAPNSRegistration, "Any APNS changes should update the flag.");
-
-    [mockPush stopMocking];
-}
-
-/**
- * Test that setting all user notification categories sanitizes
- * category types.
- */
-- (void)testSetAllUserNotificationCategories {
-    id mockPush = [OCMockObject partialMockForObject:self.push];
-
-    UIMutableUserNotificationCategory *customCategory = [[UIMutableUserNotificationCategory alloc] init];
-    customCategory.identifier = @"customCategory";
-
-    UIMutableUserNotificationCategory *anotherCustomCategory = [[UIMutableUserNotificationCategory alloc] init];
-    anotherCustomCategory.identifier = @"anotherCustomCategory";
-
-    NSSet *categories = [NSSet setWithArray:@[customCategory, anotherCustomCategory]];
-
-    [[[mockPush expect] andReturn:categories] normalizeCategories:categories];
-
-    ((UAPush *)mockPush).allUserNotificationCategories = categories;
-
-    [mockPush verify];
-    [mockPush stopMocking];
-}
-
-/**
- * Test that updating all user notification categories results in unioning the
- * default categories with the user supplied categories.
- */
-- (void)testUpdateAllUserNotificationCategories {
-
-    id mockPush = [OCMockObject partialMockForObject:self.push];
-    // Recast for convenience
-    UAPush *push = mockPush;
-
-    UIMutableUserNotificationCategory *customCategory = [[UIMutableUserNotificationCategory alloc] init];
-    customCategory.identifier = @"customCategory";
-
-    UIMutableUserNotificationCategory *anotherCustomCategory = [[UIMutableUserNotificationCategory alloc] init];
-    anotherCustomCategory.identifier = @"anotherCustomCategory";
-
-    NSSet *userCategories = [NSSet setWithArray:@[customCategory, anotherCustomCategory]];
-    NSSet *defaultCategories = [UAUserNotificationCategories defaultCategoriesWithRequireAuth:push.requireAuthorizationForDefaultCategories];
-
-    push.userNotificationCategories = userCategories;
-
-    NSMutableSet *allCategories = [NSMutableSet setWithSet:push.userNotificationCategories];
-    NSSet *normalizedDefaultCategories = [push normalizeCategories:defaultCategories];
-    [allCategories unionSet:normalizedDefaultCategories];
-
-    [[mockPush expect] setAllUserNotificationCategories:[OCMArg any]];
-    [push updateAllUserNotificationCategories];
-
-    XCTAssertEqual(allCategories.count, push.allUserNotificationCategories.count,
-                   @"allCategories and push.allUserNotificationCategories should have the same count");
-
-    [mockPush verify];
-    [mockPush stopMocking];
-}
-
-/**
  * Test when allowUnregisteringUserNotificationTypes is NO it prevents UAPush from
  * unregistering user notification types.
  */
 - (void)testDisallowUnregisteringUserNotificationTypes {
+    self.testOSMajorVersion = 8;
     self.push.userPushNotificationsEnabled = YES;
     self.push.deviceToken = validDeviceToken;
     self.push.shouldUpdateAPNSRegistration = NO;

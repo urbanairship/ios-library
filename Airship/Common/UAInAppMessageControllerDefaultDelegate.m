@@ -260,10 +260,9 @@
     // Index 0 corresponds to buton1, index 1 corresponds to button 2.
     if (index == 0) {
         return uaMessageView.button1;
-    } else if (index == 1) {
+    } else {
         return uaMessageView.button2;
     }
-    return nil;
 }
 
 - (void)messageView:(UIView *)messageView didChangeTouchState:(BOOL)touchDown {

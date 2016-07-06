@@ -28,6 +28,8 @@
 #import "UANamedUser.h"
 #import "UAChannelRegistrar.h"
 
+@class UANotificationCategory;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -326,16 +328,22 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
  * Custom notification categories. Urban Airship default notification
  * categories will be unaffected by this field.
  *
- * Changes to this value will not take effect the next time the app registers
+ * Changes to this value will not take effect until the next time the app registers
  * with updateRegistration.
  */
-@property (nonatomic, strong) NSSet *notificationCategories;
+@property (nonatomic, strong) NSSet<UANotificationCategory *> *customCategories;
+
+/**
+ * The combined set of notification categories from `customCategories` set by the app
+ * and the Urban Airship provided categories.
+ */
+@property (nonatomic, readonly) NSSet<UANotificationCategory *> *combinedCategories;
 
 /**
  * Sets authorization required for the default Urban Airship categories. Only applies
  * to background user notification actions.
  *
- * Changes to this value will not take effect the next time the app registers
+ * Changes to this value will not take effect until the next time the app registers
  * with updateRegistration.
  */
 @property (nonatomic, assign) BOOL requireAuthorizationForDefaultCategories;

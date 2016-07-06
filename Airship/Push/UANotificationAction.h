@@ -37,12 +37,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The string that you use internally to identify the action.
  */
-@property(nonatomic, copy, readonly, nullable) NSString *identifier;
+@property(nonatomic, copy, readonly) NSString *identifier;
 
 /**
  * The localized string to use as the button title for the action.
  */
-@property(nonatomic, copy, readonly, nullable) NSString *title;
+@property(nonatomic, copy, readonly) NSString *title;
 
 /**
  * The options with which to perform the action.

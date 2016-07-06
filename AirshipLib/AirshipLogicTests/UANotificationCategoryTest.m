@@ -14,6 +14,7 @@
     [super setUp];
 
     UNNotificationActionOptions watOptions = UNNotificationActionOptionForeground | UNNotificationActionOptionDestructive;
+
     UANotificationAction *watAction = [UANotificationAction actionWithIdentifier:@"wat" title:@"Wat" options:watOptions];
 
     UNNotificationActionOptions yayOptions = UNNotificationActionOptionForeground | UNNotificationActionOptionDestructive;

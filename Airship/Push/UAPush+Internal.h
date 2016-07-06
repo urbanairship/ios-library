@@ -151,7 +151,7 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 /**
  * Notification that launched the application
  */
-@property (nonatomic, strong) NSDictionary *launchNotification;
+@property (nullable, nonatomic, strong) NSDictionary *launchNotification;
 
 /**
  * Background task identifier used to do any registration in the background.
@@ -168,7 +168,6 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
  */
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
-@property (nonatomic, strong) NSSet *allNotificationCategories;
 
 /**
  * Tag groups to add to channel.
@@ -286,11 +285,6 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
  */
 - (void)updateAPNSRegistration;
 
-/**
- * Updates the set of all known user notification categories by combining
- * the default and user supplied categories.
- */
-- (void)updateAllUserNotificationCategories;
 
 @end
 

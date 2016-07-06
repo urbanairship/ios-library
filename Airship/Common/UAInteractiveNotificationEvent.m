@@ -47,7 +47,7 @@ const NSUInteger UAInteractiveNotificationEventCharacterLimit = 255;
 
     UAInteractiveNotificationEvent *event = [[self alloc] init];
 
-    BOOL foreground = action.options & UNNotificationActionOptionForeground > 0;
+    BOOL foreground = (action.options & UNNotificationActionOptionForeground) > 0;
 
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
     [data setValue:category forKey:@"button_group"];

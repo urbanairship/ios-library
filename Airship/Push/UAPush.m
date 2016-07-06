@@ -113,7 +113,6 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
         self.allowUnregisteringUserNotificationTypes = YES;
 
         self.notificationOptions = UANotificationOptionSound|UANotificationOptionBadge|UANotificationOptionAlert;
-        self.allNotificationCategories = [UANotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories];
         self.registrationBackgroundTask = UIBackgroundTaskInvalid;
 
         self.channelRegistrar = [UAChannelRegistrar channelRegistrarWithConfig:config];
@@ -197,7 +196,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
             self.authorizedNotificationOptions = mask;
         }];
     } else { // iOS 8 & 9
-        self.authorizedNotificationOptions = [[UIApplication sharedApplication] currentUserNotificationSettings].types;
+        self.authorizedNotificationOptions = (UANotificationOptions)[[UIApplication sharedApplication] currentUserNotificationSettings].types;
     }
 }
 
@@ -211,7 +210,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
     // iOS 10 does not disable the types if they are already authorized. Hide any types
     // that are authorized but are no longer requested
-    return [self.dataStore integerForKey:UAPushTypesAuthorizedKey] & self.notificationOptions;
+    return (UANotificationOptions) [self.dataStore integerForKey:UAPushTypesAuthorizedKey] & self.notificationOptions;
 }
 
 - (void)setAuthorizedNotificationOptions:(UANotificationOptions)types {
@@ -411,8 +410,8 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     return [UAirship namedUser];
 }
 
-- (void)setNotificationCategories:(NSSet *)categories {
-    _notificationCategories = [categories filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+- (void)setCustomCategories:(NSSet<UANotificationCategory *> *)categories {
+    _customCategories = [categories filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
         UANotificationCategory *category = evaluatedObject;
         if ([category.identifier hasPrefix:@"ua_"]) {
             UA_LERR(@"Ignoring category %@, only Urban Airship notification categories are allowed to have prefix ua_.", category.identifier);
@@ -423,23 +422,18 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     }]];
 
     self.shouldUpdateAPNSRegistration = YES;
-
-    [self updateAllNotificationCategories];
 }
 
 - (void)setRequireAuthorizationForDefaultCategories:(BOOL)requireAuthorizationForDefaultCategories {
     _requireAuthorizationForDefaultCategories = requireAuthorizationForDefaultCategories;
-    [self updateAllNotificationCategories];
+
+    self.shouldUpdateAPNSRegistration = YES;
 }
 
-/**
- * Caches a set of user notification categories based on the the current developer-supplied set and our default set with authorization settings.
- * Call this method whenever either changes to update the cache.
- */
-- (void)updateAllNotificationCategories {
-    NSMutableSet *allCategories = [NSMutableSet setWithSet:[UANotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories]];
-    [allCategories unionSet:self.notificationCategories];
-    self.allNotificationCategories = allCategories;
+- (NSSet<UANotificationCategory *> *)combinedCategories {
+    NSMutableSet *categories = [NSMutableSet setWithSet:[UANotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories]];
+    [categories unionSet:self.customCategories];
+    return categories;
 }
 
 - (NSDictionary *)quietTime {
@@ -618,7 +612,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
 
     NSString *categoryID = notification[@"aps"][@"category"];
-    NSSet *categories = self.allNotificationCategories;
+    NSSet *categories = self.combinedCategories;
 
     UANotificationCategory *notificationCategory;
     UANotificationAction *notificationAction;
@@ -1108,14 +1102,17 @@ BOOL deferChannelCreationOnForeground = false;
     NSMutableSet *categories = [NSMutableSet set];
 
     // Normalize our abstract categories to iOS-appropriate type
-    for (UANotificationCategory *category in self.allNotificationCategories) {
+    for (UANotificationCategory *category in self.combinedCategories) {
         [categories addObject:[category asUNNotificationCategory]];
     }
 
     [[UNUserNotificationCenter currentNotificationCenter] setNotificationCategories:categories];
 
     if (self.userPushNotificationsEnabled) {
-        [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:self.notificationOptions
+        UNAuthorizationOptions options = (UNAuthorizationOptionAlert | UNAuthorizationOptionBadge | UNAuthorizationOptionSound | UNAuthorizationOptionCarPlay);
+        options &= self.notificationOptions;
+
+        [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:options
                                                                             completionHandler:^(BOOL granted, NSError * _Nullable error) {
                                                                                 UA_LDEBUG(@"Registering for user notification options %ld.", self.notificationOptions);
 
@@ -1147,7 +1144,7 @@ BOOL deferChannelCreationOnForeground = false;
         NSMutableSet *categories = [NSMutableSet set];
 
         // Normalize our abstract categories to iOS-appropriate type
-        for (UANotificationCategory *category in self.allNotificationCategories) {
+        for (UANotificationCategory *category in self.combinedCategories) {
             [categories addObject:[category asUIUserNotificationCategory]];
         }
 
@@ -1158,6 +1155,7 @@ BOOL deferChannelCreationOnForeground = false;
                                                                                         categories:categories]];
         UA_LDEBUG(@"Registering for user notification types %ld.", options);
 
+        [self updateAuthorizedNotificationTypes];
 
     } else if (!self.allowUnregisteringUserNotificationTypes) {
         UA_LDEBUG(@"Skipping unregistered for user notification types.");
