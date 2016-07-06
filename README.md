@@ -1,5 +1,51 @@
-# iOS Urban Airship Library
+# iOS 10 Urban Airship Developer Preview Release
 
+THIS URBAN AIRSHIP SDK IS RELEASED AS A DEVELOPER PREVIEW VERSION AND MAY CONTAIN BUGS,
+ERRORS, DEFECTS, HARMFUL COMPONENTS AND MAY NOT BE COMPATIBLE WITH THE FINAL VERSION OF
+THE APPLICABLE THIRD PARTY OPERATING SYSTEM. ACCORDINGLY, URBAN AIRSHIP IS PROVIDING
+THE LICENSE ON AN “AS IS” BASIS AND NOT FOR USE IN PRODUCTION.
+
+## Known Issues
+
+ - UAPushNotificationDelegate does not expose any new iOS 10 functionality.
+ - Actions may run twice if a remote notification is presented in the foreground.
+
+## Developer Preview Migration Guide
+
+### SDK 7.2.0 to 8.0.0 DP 1
+
+#### Integration Changes
+
+Auto integration now automically swizzles and sets the UNNotificaiotnCenter delegate. Applications can
+still set a delegate on UNNotificaiotnCenter without conflicting with Urban Airship. If automtic
+integration is disabled, UAPush needs to be either set as the UNNotificaiotnCenter delegate or
+the application must forward calls to UAPush.
+
+#### Push Changes
+
+Notification categories and types have been removed. Instead you can set UANotificationOptions
+and UANotificationCategory and the SDK will automatically convert the properties to the
+appropriate types depending on the OS version.
+
+```obj-c
+   // Old
+   - (UIUserNotificationType)currentEnabledNotificationTypes;
+   @property (nonatomic, assign) UIUserNotificationType userNotificationTypes;
+   @property (nonatomic, strong) NSSet *userNotificationCategories;
+```
+
+```obj-c
+   // New
+   @property (nonatomic, assign) UANotificationOptions notificationOptions;
+   @property (nonatomic, assign, readonly) UANotificationOptions authorizedNotificationOptions;
+   @property (nonatomic, strong) NSSet <UANotificationCategory *>customCategories;
+````
+
+#### Location Changes
+
+The old location module has been deprecated and will be removed in the next preview. A new simplified location module has been added
+and can be accessed directly from UAirship - [UAirship location]. The new location module only supports significant location change and
+contains a simplified interface to disable/enable location updates and allow location to update in the background.
 
 ## Overview
 
