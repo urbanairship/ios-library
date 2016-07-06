@@ -37,6 +37,7 @@ xcode_setting() {
 
 SRCROOT=$(xcode_setting "SRCROOT")
 SDK_NAME=$(xcode_setting "SDK_NAME")
+SDK_VERSION=$(xcode_setting "SDK_VERSION")
 EXECUTABLE_NAME=$(xcode_setting "EXECUTABLE_NAME")
 EXECUTABLE_PATH=$(xcode_setting "EXECUTABLE_PATH")
 EXECUTABLE_FOLDER_PATH=$(xcode_setting "EXECUTABLE_FOLDER_PATH")
@@ -72,10 +73,6 @@ mkdir -p ${DEPLOY_DIR}
 mkdir -p ${BUILD_ROOT}
 mkdir -p ${BUILD_LOGS}
 mkdir -p ${TARGET_BUILD_DIR}
-
-# First, work out the BASESDK version number
-#    (incidental: searching for substrings in sh is a nightmare! Sob)
-SDK_VERSION=$(echo ${SDK_NAME} | grep -o '.\{3\}$')
 
 ACTION="clean build"
 
