@@ -126,6 +126,8 @@
 				TargetAttributes = {
 					494DD9561B0EB677009C134E = {
 						CreatedOnToolsVersion = 6.3.1;
+						DevelopmentTeam = PGJV57GD94;
+						DevelopmentTeamName = "Urban Airship Inc.";
 					};
 				};
 			};
