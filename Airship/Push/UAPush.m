@@ -162,6 +162,8 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
         }
 
         [self updateAuthorizedNotificationTypes];
+
+        self.defaultPresentationOptions = UNNotificationPresentationOptionNone;
     }
 
     return self;
@@ -795,8 +797,12 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     [self handleNotification:notificationPayload
             applicationState:[UIApplication sharedApplication].applicationState
            completionHandler:^(UIBackgroundFetchResult fetchResult){
-               // TODO: support for other presentation options
-               completionHandler(UNNotificationPresentationOptionNone);
+               if ([self.pushNotificationDelegate respondsToSelector:@selector(presentationOptionsForNotification:)]) {
+                   UNNotificationPresentationOptions options = [self.pushNotificationDelegate presentationOptionsForNotification:notification];
+                   completionHandler(options);
+               } else {
+                   completionHandler(self.defaultPresentationOptions);
+               }
     }];
 }
 

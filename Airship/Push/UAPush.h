@@ -212,6 +212,15 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
                       actionIdentifier:(NSString *)identifier
                      completionHandler:(void (^)())completionHandler;
 
+/**
+ * Called when a notification has arrived in the foreground and is available for display.
+ *
+ * Note: this method is relevant only for iOS 10 and above.
+ *
+ * @param notification The notification.
+ * @return a UNNotificationPresentationOptions enum value indicating the presentation options for the notification.
+ */
+- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification;
 
 @end
 
@@ -367,6 +376,13 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
  * The current authorized notification options.
  */
 @property (nonatomic, assign, readonly) UANotificationOptions authorizedNotificationOptions;
+
+/**
+ * The default presentation options to use for foreground notifications.
+ *
+ * Note: this property is relevant only for iOS 10 and above.
+ */
+@property (nonatomic, assign) UNNotificationPresentationOptions defaultPresentationOptions;
 
 ///---------------------------------------------------------------------------------------
 /// @name Autobadge
