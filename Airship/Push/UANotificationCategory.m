@@ -31,11 +31,6 @@
 @property(nonatomic, copy) NSArray<UANotificationAction *> *actions;
 
 /**
- * The actions to display when space is limited.
- */
-@property(nonatomic, copy) NSArray<UANotificationAction *> *minimalActions;
-
-/**
  * The intents supported by notifications of this category.
  *
  * Note: This property is only applicable on iOS 10 and above.
@@ -53,7 +48,6 @@
 
 - (instancetype)initWithIdentifier:(NSString *)identifier
                            actions:(NSArray<UANotificationAction *> *)actions
-                    minimalActions:(NSArray<UANotificationAction *> *)minimalActions
                  intentIdentifiers:(NSArray<NSString *> *)intentIdentifiers
                            options:(UNNotificationCategoryOptions)options {
     self = [super init];
@@ -61,7 +55,6 @@
     if (self) {
         self.identifier = identifier;
         self.actions = actions;
-        self.minimalActions = actions;
         self.intentIdentifiers = intentIdentifiers;
         self.options = options;
     }
@@ -71,13 +64,11 @@
 
 + (instancetype)categoryWithIdentifier:(NSString *)identifier
                                actions:(NSArray<UANotificationAction *> *)actions
-                        minimalActions:(NSArray<UANotificationAction *> *)minimalActions
                      intentIdentifiers:(NSArray<NSString *> *)intentIdentifiers
                                options:(UNNotificationCategoryOptions)options {
 
     return [[self alloc] initWithIdentifier:identifier
                                     actions:actions
-                             minimalActions:minimalActions
                           intentIdentifiers:intentIdentifiers
                                     options:options];
 
@@ -87,61 +78,38 @@
     UIMutableUserNotificationCategory *category = [[UIMutableUserNotificationCategory alloc] init];
     category.identifier = self.identifier;
 
-    NSArray *defaultActions = self.actions;
-    NSMutableArray *defaultUIActions = [NSMutableArray array];
-    for (UANotificationAction *uaAction in defaultActions) {
-        [defaultUIActions addObject:[uaAction asUIUserNotificationAction]];
+    NSArray *uaActions = self.actions;
+    NSMutableArray *uiActions = [NSMutableArray array];
+    for (UANotificationAction *uaAction in uaActions) {
+        [uiActions addObject:[uaAction asUIUserNotificationAction]];
     }
 
-    [category setActions:defaultUIActions forContext:UIUserNotificationActionContextDefault];
-
-    NSArray *minimalActions = self.minimalActions;
-    NSMutableArray *minimalUIActions = [NSMutableArray array];
-    for (UANotificationAction *uaAction in minimalActions) {
-        [minimalUIActions addObject:[uaAction asUIUserNotificationAction]];
-    }
-
-    [category setActions:minimalUIActions forContext:UIUserNotificationActionContextMinimal];
+    [category setActions:uiActions forContext:UIUserNotificationActionContextDefault];
+    [category setActions:uiActions forContext:UIUserNotificationActionContextMinimal];
 
     return category;
 }
 
 - (UNNotificationCategory *)asUNNotificationCategory {
     NSMutableArray *actions = [NSMutableArray array];
-    NSMutableArray *minimalActions = [NSMutableArray array];
 
     for (UANotificationAction *action in self.actions) {
         [actions addObject:[action asUNNotificationAction]];
     }
 
-    for (UANotificationAction *minimalAction in self.minimalActions) {
-        [minimalActions addObject:[minimalAction asUNNotificationAction]];
-    }
-
     return [UNNotificationCategory categoryWithIdentifier:self.identifier
                                                   actions:actions
-                                           minimalActions:minimalActions
                                         intentIdentifiers:self.intentIdentifiers
                                                   options:self.options];
 }
 
 - (BOOL)isEqualToUIUserNotificationCategory:(UIUserNotificationCategory *)category {
-    NSArray *minimalUAActions = self.minimalActions;
     NSArray *defaultUAActions = self.actions;
 
-    NSArray *minimalUIActions = [category actionsForContext:UIUserNotificationActionContextMinimal];
     NSArray *defaultUIActions = [category actionsForContext:UIUserNotificationActionContextDefault];
 
-    if (minimalUAActions.count != minimalUIActions.count || defaultUAActions.count != defaultUIActions.count) {
+    if (defaultUAActions.count != defaultUIActions.count) {
         return NO;
-    }
-
-    for (NSUInteger i = 0; i < minimalUAActions.count; i++) {
-        UANotificationAction *uaAction = minimalUAActions[i];
-        UIUserNotificationAction *uiAction = minimalUIActions[i];
-        if (![uaAction isEqualToUIUserNotificationAction:(UIUserNotificationAction *)uiAction]) {
-            return NO;
-        }
     }
 
     for (NSUInteger i = 0; i < defaultUAActions.count; i++) {
@@ -157,16 +125,8 @@
 }
 
 - (BOOL)isEqualToUNNotificationCategory:(UNNotificationCategory *)category {
-    if (self.minimalActions.count != category.minimalActions.count || self.actions.count != category.actions.count) {
+    if (self.actions.count != category.actions.count) {
         return NO;
-    }
-
-    for (NSUInteger i = 0; i < self.minimalActions.count; i++) {
-        UANotificationAction *uaAction = self.minimalActions[i];
-        UNNotificationAction *unAction = category.minimalActions[i];
-        if (![uaAction isEqualToUNNotificationAction:unAction]) {
-            return NO;
-        }
     }
 
     for (NSUInteger i = 0; i < self.actions.count; i++) {

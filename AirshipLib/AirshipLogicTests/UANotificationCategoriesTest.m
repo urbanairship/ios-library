@@ -73,7 +73,6 @@
     UANotificationCategory *share = [self findCategoryById:@"share_category" set:categories];
     XCTAssertNotNil(share);
     XCTAssertEqual(1, share.actions.count);
-    XCTAssertEqual(1, share.minimalActions.count);
 
     // Share action in share category
     UANotificationAction  *shareAction = [self findActionById:@"share_button" category:share];
@@ -87,7 +86,6 @@
     UANotificationCategory *yesNo = [self findCategoryById:@"yes_no_category" set:categories];
     XCTAssertNotNil(yesNo);
     XCTAssertEqual(2, yesNo.actions.count);
-    XCTAssertEqual(2, yesNo.minimalActions.count);
 
     // Yes action in yes no category
     UANotificationAction  *yesAction = [self findActionById:@"yes_button" category:yesNo];
@@ -110,7 +108,6 @@
     UANotificationCategory *follow = [self findCategoryById:@"follow_category" set:categories];
     XCTAssertNotNil(follow);
     XCTAssertEqual(1, follow.actions.count);
-    XCTAssertEqual(1, follow.minimalActions.count);
 
     // Follow action in follow category
     UANotificationAction  *followAction = [self findActionById:@"follow_button" category:follow];
@@ -189,7 +186,7 @@
 }
 
 - (UANotificationAction  *)findActionById:(NSString *)identifier category:(UANotificationCategory *)category {
-    for (UANotificationAction  *action in category.minimalActions) {
+    for (UANotificationAction  *action in category.actions) {
         if ([action.identifier isEqualToString:identifier]) {
             return action;
         }

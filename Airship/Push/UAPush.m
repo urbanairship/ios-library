@@ -640,8 +640,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
         return;
     }
 
-    NSMutableArray *possibleActions = [NSMutableArray arrayWithArray:notificationCategory.minimalActions];
-    [possibleActions addObjectsFromArray:notificationCategory.actions];
+    NSMutableArray *possibleActions = [NSMutableArray arrayWithArray:notificationCategory.actions];
 
     for (UANotificationAction *possibleAction in possibleActions) {
         if ([possibleAction.identifier isEqualToString:identifier]) {
@@ -687,7 +686,10 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
                              }];
 }
 
-- (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+- (void)handleNotification:(NSDictionary *)notification
+          applicationState:(UIApplicationState)state
+    foregroundPresentation:(BOOL)foregroundPresentation
+         completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
     [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
 
@@ -742,7 +744,13 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     }
 
     // Action metadata
-    NSDictionary *metadata = @{ UAActionMetadataPushPayloadKey:notification };
+    NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
+    [metadata setValue:notification forKey:UAActionMetadataPushPayloadKey];
+
+    // Avoid setting an NSNumber NO value in case of nonzero conditionals
+    if (foregroundPresentation) {
+        [metadata setValue:@(foregroundPresentation) forKey:UAActionMetadataForegroundPresentationKey];
+    }
 
     // Run the actions
     [UAActionRunner runActionsWithActionValues:actionsPayload
@@ -756,12 +764,30 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
 }
 
+- (void)handleNotification:(NSDictionary *)notification
+          applicationState:(UIApplicationState)state
+         completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+
+    [self handleNotification:notification applicationState:state foregroundPresentation:NO completionHandler:completionHandler];
+}
+
+// To be called externally after presentation options are merged, or internally with manual integration
+- (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options {
+    BOOL foregroundPresentation = (options & UNNotificationPresentationOptionAlert) > 0;
+    NSDictionary *notificationPayload = notification.request.content.userInfo;
+    [self handleNotification:notificationPayload
+            applicationState:[UIApplication sharedApplication].applicationState
+      foregroundPresentation:foregroundPresentation
+           completionHandler:nil];
+}
+
 
 #pragma mark -
 
-#pragma mark UNUserNotificationDelegate callbacks
+#pragma mark UNUserNotificationDelegate event handling
 
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler {
+- (void)notificationCenterDidReceiveNotificationResponse:(UNNotificationResponse *)response
+                                   withCompletionHandler:(void (^)())completionHandler {
 
     UA_LINFO(@"Notification center delegate received response: %@", response);
 
@@ -789,21 +815,23 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     }
 }
 
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
+- (void)notificationCenterWillPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
 
     UA_LDEBUG(@"Notification center will present notification: %@", notification);
 
-    NSDictionary *notificationPayload = notification.request.content.userInfo;
-    [self handleNotification:notificationPayload
-            applicationState:[UIApplication sharedApplication].applicationState
-           completionHandler:^(UIBackgroundFetchResult fetchResult){
-               if ([self.pushNotificationDelegate respondsToSelector:@selector(presentationOptionsForNotification:)]) {
-                   UNNotificationPresentationOptions options = [self.pushNotificationDelegate presentationOptionsForNotification:notification];
-                   completionHandler(options);
-               } else {
-                   completionHandler(self.defaultPresentationOptions);
-               }
-    }];
+    UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
+
+    if ([self.pushNotificationDelegate respondsToSelector:@selector(presentationOptionsForNotification:)]) {
+        options = [self.pushNotificationDelegate presentationOptionsForNotification:notification];
+    } else {
+        options = self.defaultPresentationOptions;
+    }
+
+    completionHandler(options);
+
+    if (![UAirship shared].config.automaticSetupEnabled) {
+        [self handleForegroundNotification:notification mergedOptions:options];
+    }
 }
 
 #pragma mark App delegate event handling

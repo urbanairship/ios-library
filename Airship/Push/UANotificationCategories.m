@@ -133,7 +133,6 @@
 
     UANotificationCategory *category = [UANotificationCategory categoryWithIdentifier:categoryId
                                                                               actions:actions
-                                                                       minimalActions:actions
                                                                     intentIdentifiers:@[]
                                                                               options:UNNotificationCategoryOptionNone];
 

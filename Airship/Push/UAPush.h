@@ -233,7 +233,7 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
  * This singleton provides an interface to the functionality provided by the Urban Airship iOS Push API.
  */
 #pragma clang diagnostic push
-@interface UAPush : NSObject <UNUserNotificationCenterDelegate>
+@interface UAPush : NSObject
 
 
 ///---------------------------------------------------------------------------------------
@@ -588,6 +588,36 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
  * Add a `UARegistrationDelegate` to `UAPush` to receive success and failure callbacks.
  */
 - (void)updateRegistration;
+
+
+///---------------------------------------------------------------------------------------
+/// @name UserNotificationCenterDelegate hooks
+///---------------------------------------------------------------------------------------
+
+/**
+ * Handle incoming push notifications. This method will record push conversions, parse the notification
+ * and call the appropriate methods on your delegate.
+ *
+ * Note: this method is relevant only for iOS 10 and above.
+ *
+ * @param response The notification response object.
+ * @param completionHandler A completion handler. In manual integrations this should be the handler passed
+ * in the original delegate callback.
+ */
+- (void)notificationCenterDidReceiveNotificationResponse:(UNNotificationResponse *)response
+                                   withCompletionHandler:(void (^)())completionHandler;
+
+/**
+ * Handle notification presentation.
+ *
+ * Note: this method is relevant only for iOS 10 and above.
+ *
+ * @param notification The notification about to be presented.
+ * @param completionHandler A completion handler to be called with the desired notification presentation options. In manual
+ * integrations this should be the handler passed in the original delegate callback.
+ */
+- (void)notificationCenterWillPresentNotification:(UNNotification *)notification
+                            withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler;
 
 ///---------------------------------------------------------------------------------------
 /// @name AppDelegate hooks
