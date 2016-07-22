@@ -77,7 +77,7 @@
     id<UAPushNotificationDelegate> pushDelegate = [UAirship push].pushNotificationDelegate;
     if (!pushDelegate) {
         if (![UAirship shared].config.inProduction) {
-            UA_LWARN(@"Recieved a foreground push notification when the [UAirship push].pushNotificationDelegate is not set. Unable to show any UI.");
+            UA_LWARN(@"Received a foreground push notification when the [UAirship push].pushNotificationDelegate is not set. Unable to show any UI.");
         }
         completionHandler([UAActionResult emptyResult]);
         return;
