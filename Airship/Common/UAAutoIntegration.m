@@ -187,7 +187,9 @@ static UAAutoIntegration *instance_;
     if (method) {
         UA_LDEBUG(@"Swizzling implementation for %@ class %@", NSStringFromSelector(selector), class);
         IMP existing = method_setImplementation(method, implementation);
-        [self storeOriginalImplementation:existing selector:selector class:class];
+        if (implementation != existing) {
+            [self storeOriginalImplementation:existing selector:selector class:class];
+        }
     } else {
         struct objc_method_description description = protocol_getMethodDescription(@protocol(UIApplicationDelegate), selector, NO, YES);
         UA_LDEBUG(@"Adding implementation for %@ class %@", NSStringFromSelector(selector), class);
