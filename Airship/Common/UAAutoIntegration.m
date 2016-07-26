@@ -198,11 +198,13 @@ static UAAutoIntegration *instance_;
 }
 
 - (void)unswizzle:(SEL)selector class:(Class)class {
+
     Method method = class_getInstanceMethod(class, selector);
     IMP originalImplementation = [self originalImplementation:selector class:class];
     if (originalImplementation) {
         UA_LDEBUG(@"Unswizzling implementation for %@ class %@", NSStringFromSelector(selector), class);
         method_setImplementation(method, originalImplementation);
+        [self.originalMethods[NSStringFromClass(class)] removeObjectForKey:NSStringFromSelector(selector)];
     } else {
         UA_LDEBUG(@"No original implementation to unswizzle for %@ class %@", NSStringFromSelector(selector), class);
     }
