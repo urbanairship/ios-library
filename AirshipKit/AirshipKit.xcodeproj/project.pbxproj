@@ -14,6 +14,7 @@
 		494DDC261B0FD6A1009C134E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DDC251B0FD6A1009C134E /* libsqlite3.dylib */; };
 		494DDC281B0FD6A6009C134E /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DDC271B0FD6A6009C134E /* libz.dylib */; };
 		49D5281D1B17DFE7006E35FB /* libUAirship-8.0.0.dp1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 49D5281C1B17DFE7006E35FB /* libUAirship-8.0.0.dp1.a */; };
+
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		494DDC251B0FD6A1009C134E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		494DDC271B0FD6A6009C134E /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		49D5281C1B17DFE7006E35FB /* libUAirship-8.0.0.dp1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-8.0.0.dp1.a"; path = "../Airship/libUAirship-8.0.0.dp1.a"; sourceTree = "<group>"; };
+
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +38,7 @@
 				494DDC281B0FD6A6009C134E /* libz.dylib in Frameworks */,
 				494DDC261B0FD6A1009C134E /* libsqlite3.dylib in Frameworks */,
 				49D5281D1B17DFE7006E35FB /* libUAirship-8.0.0.dp1.a in Frameworks */,
+
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

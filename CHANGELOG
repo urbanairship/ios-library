@@ -3,13 +3,15 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
-Version 8.0.0 Developer Preview 1 - July 6, 2016
-================================================
+Version 8.0.0 Developer Previews 
+=================================
 THIS URBAN AIRSHIP SDK IS RELEASED AS A DEVELOPER PREVIEW VERSION AND MAY CONTAIN BUGS,
 ERRORS, DEFECTS, HARMFUL COMPONENTS AND MAY NOT BE COMPATIBLE WITH THE FINAL VERSION OF
 THE APPLICABLE THIRD PARTY OPERATING SYSTEM. ACCORDINGLY, URBAN AIRSHIP IS PROVIDING
 THE LICENSE ON AN “AS IS” BASIS AND NOT FOR USE IN PRODUCTION.
 
+Preview 1 - July 6, 2016
+------------------------
 Changes:
 - First iOS 10 compatibility release.
 - Added support for new UNNotification classes.
@@ -20,6 +22,10 @@ Changes:
 Developer preview APIs may not be final. Please see the README.md for migration guide
 and known issues.
 
+
+Version 7.2.1 - July 27, 2016
+=============================
+- Fixed bug that caused channel creation to potentially be disabled on first run.
 
 Version 7.2.0 - June 1, 2016
 ============================

@@ -105,7 +105,6 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
         self.channelTagRegistrationEnabled = YES;
         self.requireAuthorizationForDefaultCategories = YES;
         self.backgroundPushNotificationsEnabledByDefault = YES;
-        self.pushTokenRegistrationEnabled = YES;
 
         // Require use of the settings app to change push settings
         // but allow the app to unregister to keep things in sync
@@ -121,8 +120,13 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
         self.tagGroupsAPIClient = [UATagGroupsAPIClient clientWithConfig:config];
 
         // Check config to see if user wants to delay channel creation
-        // If channel ID is nil then channelCreationEnabled
-        self.channelCreationEnabled = self.channelID || !config.channelCreationDelayEnabled;
+        // If channel ID exists or channel creation delay is disabled then channelCreationEnabled
+        if (self.channelID || !config.isChannelCreationDelayEnabled) {
+            self.channelCreationEnabled = YES;
+        } else {
+            UA_LDEBUG(@"Channel creation disabled.");
+            self.channelCreationEnabled = NO;
+        }
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(applicationDidBecomeActive)
@@ -393,6 +397,10 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 }
 
 - (BOOL)pushTokenRegistrationEnabled {
+    if (![self.dataStore objectForKey:UAPushTokenRegistrationEnabledKey]) {
+        return YES;
+    }
+
     return [self.dataStore boolForKey:UAPushTokenRegistrationEnabledKey];
 }
 
@@ -962,7 +970,7 @@ BOOL deferChannelCreationOnForeground = false;
 - (void)updateChannelRegistrationForcefully:(BOOL)forcefully {
     // Only cancel in flight requests if the channel is already created
     if (!self.channelCreationEnabled) {
-        UA_LDEBUG(@"Channel registration is currently disabled.");
+        UA_LDEBUG(@"Channel creation is currently disabled.");
         return;
     }
 
