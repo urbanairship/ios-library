@@ -3,6 +3,10 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+Version 7.2.1 - July 27, 2016
+=============================
+- Fixed bug that caused channel creation to potentially be disabled on first run.
+
 Version 7.2.0 - June 1, 2016
 ============================
 - Removed reference to the Passkit framework. This is to work around the App Store
