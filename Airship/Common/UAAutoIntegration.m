@@ -32,12 +32,18 @@
 
 static UAAutoIntegration *instance_;
 
+@interface UAAutoIntegrationDummyDelegate : NSObject<UNUserNotificationCenterDelegate>
 
-@interface UAAutoIntegration()<UNUserNotificationCenterDelegate>
-@property (nonatomic, weak) id<UNUserNotificationCenterDelegate> appNotificationCenterDelegate;
-@property (nonatomic, strong) NSMutableDictionary *originalMethods;
 @end
 
+@implementation UAAutoIntegrationDummyDelegate
+
+@end
+
+@interface UAAutoIntegration()
+@property (nonatomic, strong) NSMutableDictionary *originalMethods;
+@property (nonatomic, strong) UAAutoIntegrationDummyDelegate *dummyNotificationDelegate;
+@end
 
 @implementation UAAutoIntegration
 
@@ -54,11 +60,11 @@ static UAAutoIntegration *instance_;
     });
 }
 
-
 - (instancetype)init {
     self = [super init];
     if (self) {
         self.originalMethods = [NSMutableDictionary dictionary];
+        self.dummyNotificationDelegate = [[UAAutoIntegrationDummyDelegate alloc] init];
     }
 
     return self;
@@ -135,11 +141,27 @@ static UAAutoIntegration *instance_;
         return;
     }
 
-    self.appNotificationCenterDelegate = [UNUserNotificationCenter currentNotificationCenter].delegate;
-    [UNUserNotificationCenter currentNotificationCenter].delegate = self;
-
     // setDelegate:
     [self swizzle:@selector(setDelegate:) implementation:(IMP)UserNotificationCenterSetDelegate class:class];
+
+    id notificationCenterDelegate = [UNUserNotificationCenter currentNotificationCenter].delegate;
+    if (notificationCenterDelegate) {
+        [self swizzleNotificationCenterDelegate:notificationCenterDelegate];
+    } else {
+        [UNUserNotificationCenter currentNotificationCenter].delegate = instance_.dummyNotificationDelegate;
+    }
+}
+
+- (void)swizzleNotificationCenterDelegate:(id<UNUserNotificationCenterDelegate>)delegate {
+    Class class = [delegate class];
+    [self swizzle:@selector(userNotificationCenter:willPresentNotification:withCompletionHandler:) implementation:(IMP)UserNotificationCenterWillPresentNotificationWithCompletionHandler class:class];
+    [self swizzle:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:) implementation:(IMP)UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler class:class];
+}
+
+-(void)unswizzleNotificationCenterDelegate:(id<UNUserNotificationCenterDelegate>)delegate {
+    Class class = [delegate class];
+    [self unswizzle:@selector(userNotificationCenter:willPresentNotification:withCompletionHandler:) class:class];
+    [self unswizzle:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:) class:class];
 }
 
 - (void)swizzle:(SEL)selector implementation:(IMP)implementation class:(Class)class {
@@ -147,7 +169,9 @@ static UAAutoIntegration *instance_;
     if (method) {
         UA_LDEBUG(@"Swizzling implementation for %@ class %@", NSStringFromSelector(selector), class);
         IMP existing = method_setImplementation(method, implementation);
-        [self storeOriginalImplementation:existing selector:selector class:class];
+        if (implementation != existing) {
+            [self storeOriginalImplementation:existing selector:selector class:class];
+        }
     } else {
         struct objc_method_description description = protocol_getMethodDescription(@protocol(UIApplicationDelegate), selector, NO, YES);
         UA_LDEBUG(@"Adding implementation for %@ class %@", NSStringFromSelector(selector), class);
@@ -155,6 +179,18 @@ static UAAutoIntegration *instance_;
     }
 }
 
+- (void)unswizzle:(SEL)selector class:(Class)class {
+
+    Method method = class_getInstanceMethod(class, selector);
+    IMP originalImplementation = [self originalImplementation:selector class:class];
+    if (originalImplementation) {
+        UA_LDEBUG(@"Unswizzling implementation for %@ class %@", NSStringFromSelector(selector), class);
+        method_setImplementation(method, originalImplementation);
+        [self.originalMethods[NSStringFromClass(class)] removeObjectForKey:NSStringFromSelector(selector)];
+    } else {
+        UA_LDEBUG(@"No original implementation to unswizzle for %@ class %@", NSStringFromSelector(selector), class);
+    }
+}
 
 - (void)storeOriginalImplementation:(IMP)implementation selector:(SEL)selector class:(Class)class {
     NSString *selectorString = NSStringFromSelector(selector);
@@ -165,9 +201,7 @@ static UAAutoIntegration *instance_;
     }
 
     self.originalMethods[classString][selectorString] = [NSValue valueWithPointer:implementation];
-
 }
-
 
 - (IMP)originalImplementation:(SEL)selector class:(Class)class {
     NSString *selectorString = NSStringFromSelector(selector);
@@ -189,20 +223,18 @@ static UAAutoIntegration *instance_;
 
 
 #pragma mark -
-#pragma mark UNUserNotificationCenterDelegate
+#pragma mark UNUserNotificationCenterDelegate swizzled methods
 
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center
-       willPresentNotification:(UNNotification *)notification
-         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))handler  {
-
+void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self, SEL _cmd, UNUserNotificationCenter *notificationCenter, UNNotification *notification, void (^handler)(UNNotificationPresentationOptions)) {
 
     __block UNNotificationPresentationOptions mergedPresentationOptions;
 
     __block NSUInteger resultCount = 0;
     __block NSUInteger expectedCount = 1;
 
-    id appNotificationCenterDelegate = instance_.appNotificationCenterDelegate;
-    if ([appNotificationCenterDelegate respondsToSelector:@selector(userNotificationCenter:willPresentNotification:withCompletionHandler:)]) {
+
+    IMP original = [instance_ originalImplementation:_cmd class:[self class]];
+    if (original) {
         expectedCount = 2;
 
         __block BOOL completionHandlerCalled = NO;
@@ -226,13 +258,12 @@ static UAAutoIntegration *instance_;
             });
         };
 
-        // Call the app's UNUserNotificationCenterDelegate
-        [appNotificationCenterDelegate userNotificationCenter:center willPresentNotification:notification withCompletionHandler:completionHandler];
+        ((void(*)(id, SEL, UNUserNotificationCenter *, UNNotification *, void (^)(UNNotificationPresentationOptions)))original)(self, _cmd, notificationCenter, notification, completionHandler);
     }
 
 
     // Call UAPush
-    [[UAirship push] userNotificationCenter:center
+    [[UAirship push] userNotificationCenter:notificationCenter
                     willPresentNotification:notification
                       withCompletionHandler:^(UNNotificationPresentationOptions options) {
 
@@ -249,16 +280,13 @@ static UAAutoIntegration *instance_;
                       }];
 }
 
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center
-didReceiveNotificationResponse:(UNNotificationResponse *)response
-         withCompletionHandler:(void(^)())handler {
-
+void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(id self, SEL _cmd, UNUserNotificationCenter *notificationCenter, UNNotificationResponse *response, void (^handler)()) {
 
     __block NSUInteger resultCount = 0;
     __block NSUInteger expectedCount = 1;
 
-    id appNotificationCenterDelegate = instance_.appNotificationCenterDelegate;
-    if ([appNotificationCenterDelegate respondsToSelector:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]) {
+    IMP original = [instance_ originalImplementation:_cmd class:[self class]];
+    if (original) {
         expectedCount = 2;
 
         __block BOOL completionHandlerCalled = NO;
@@ -281,14 +309,11 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
             });
         };
 
-        // Call the app's UNUserNotificationCenterDelegate
-        [appNotificationCenterDelegate userNotificationCenter:center
-                               didReceiveNotificationResponse:response
-                                        withCompletionHandler:completionHandler];
+        ((void(*)(id, SEL, UNUserNotificationCenter *, UNNotificationResponse *, void (^)()))original)(self, _cmd, notificationCenter, response, completionHandler);
     }
 
     // Call UAPush
-    [[UAirship push] userNotificationCenter:center
+    [[UAirship push] userNotificationCenter:notificationCenter
                     didReceiveNotificationResponse:response
                       withCompletionHandler:^() {
 
@@ -309,7 +334,23 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 
 
 void UserNotificationCenterSetDelegate(id self, SEL _cmd, id<UNUserNotificationCenterDelegate>delegate) {
-    instance_.appNotificationCenterDelegate = delegate;
+    id previousDelegate = [UNUserNotificationCenter currentNotificationCenter].delegate;
+    if (previousDelegate) {
+        [instance_ unswizzleNotificationCenterDelegate:previousDelegate];
+    }
+
+    // Call through to original setter
+    IMP original = [instance_ originalImplementation:_cmd class:[UNUserNotificationCenter class]];
+    if (original) {
+        ((void(*)(id, SEL, id))original)(self, _cmd, delegate);
+    }
+
+    if (!delegate) {
+        // set our dummy delegate back
+        [UNUserNotificationCenter currentNotificationCenter].delegate = instance_.dummyNotificationDelegate;
+    } else {
+        [instance_ swizzleNotificationCenterDelegate:delegate];
+    }
 }
 
 #pragma mark -
