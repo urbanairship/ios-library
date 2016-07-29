@@ -38,14 +38,6 @@ static UAAutoIntegration *instance_;
 
 @implementation UAAutoIntegrationDummyDelegate
 
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler {
-    //This is a dummy implementation, use respective C methods instead
-}
-
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
-    //This is a dummy implementation, use respective C methods instead
-}
-
 @end
 
 @interface UAAutoIntegration()
@@ -162,22 +154,12 @@ static UAAutoIntegration *instance_;
 
 - (void)swizzleNotificationCenterDelegate:(id<UNUserNotificationCenterDelegate>)delegate {
     Class class = [delegate class];
-    if (!class) {
-        UA_LERR(@"UNUserNotificationCenterDelegate not available, unable to perform automatic setup.");
-        return;
-    }
-
     [self swizzle:@selector(userNotificationCenter:willPresentNotification:withCompletionHandler:) implementation:(IMP)UserNotificationCenterWillPresentNotificationWithCompletionHandler class:class];
     [self swizzle:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:) implementation:(IMP)UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler class:class];
 }
 
 -(void)unswizzleNotificationCenterDelegate:(id<UNUserNotificationCenterDelegate>)delegate {
     Class class = [delegate class];
-    if (!class) {
-        UA_LERR(@"UNUserNotificationCenterDelegate not available, unable to perform automatic setup.");
-        return;
-    }
-
     [self unswizzle:@selector(userNotificationCenter:willPresentNotification:withCompletionHandler:) class:class];
     [self unswizzle:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:) class:class];
 }
