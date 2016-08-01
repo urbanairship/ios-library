@@ -29,6 +29,25 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * NSNotification event when the channel is created. The event
+ * will contain the channel ID under `UAChannelCreatedEventChannelKey`
+ * and a flag under `UAChannelCreatedEventExistingKey` indicating if the
+ * the channel was restored or a new channel was created.
+ */
+extern NSString *const UAChannelCreatedEvent;
+
+/**
+ * Channel ID key for the channel created event.
+ */
+extern NSString *const UAChannelCreatedEventChannelKey;
+
+/**
+ * Channel existing key for the channel created event.
+ */
+extern NSString *const UAChannelCreatedEventExistingKey;
+
+
 //---------------------------------------------------------------------------------------
 // UARegistrationDelegate
 //---------------------------------------------------------------------------------------
@@ -194,6 +213,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 #pragma clang diagnostic push
 @interface UAPush : NSObject
+
 
 ///---------------------------------------------------------------------------------------
 /// @name Push Notifications
@@ -370,7 +390,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Named user for this device.
  */
-@property (nonatomic, strong) UANamedUser *namedUser;
+@property (readonly) UANamedUser *namedUser;
 
 ///---------------------------------------------------------------------------------------
 /// @name Tags

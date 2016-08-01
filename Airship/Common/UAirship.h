@@ -43,6 +43,7 @@
 @class UAApplicationMetrics;
 @class UAPush;
 @class UAUser;
+@class UANamedUser;
 @class UAInbox;
 @class UAActionRegistry;
 @class UAInAppMessaging;
@@ -216,6 +217,11 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * and displaying the default message center.
  */
 + (null_unspecified UADefaultMessageCenter *)defaultMessageCenter;
+
+/**
+ * Returns the `UANamedUser` instance.
+ */
++ (null_unspecified UANamedUser *)namedUser;
 
 /**
  * Returns the AirshipResources bundle, or nil if the the bundle
