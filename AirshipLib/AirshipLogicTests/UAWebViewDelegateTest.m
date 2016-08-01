@@ -38,6 +38,8 @@
 #import "UAInboxMessageList.h"
 #import "UAActionJSDelegate.h"
 #import "UAWebViewCallData.h"
+#import "UAPush.h"
+#import "UANamedUser.h"
 
 @interface UAWebViewDelegateTest : XCTestCase
 
@@ -52,6 +54,9 @@
 @property (strong, nonatomic) id mockJSActionDelegate;
 @property (nonatomic, strong) id mockMessageList;
 @property (nonatomic, strong) id mockInbox;
+@property (nonatomic, strong) id mockPush;
+@property (nonatomic, strong) id mockNamedUser;
+
 @property (nonatomic, strong) JSContext *jsc;
 
 @end
@@ -67,6 +72,12 @@
 
     self.mockContentWindow = [OCMockObject niceMockForProtocol:@protocol(UARichContentWindow)];
     self.delegate.richContentWindow = self.mockContentWindow;
+
+    // Mock UAPush
+    self.mockPush = [OCMockObject niceMockForClass:[UAPush class]];
+
+    // Mock UANamedUser
+    self.mockNamedUser = [OCMockObject niceMockForClass:[UANamedUser class]];
 
     // Mock web view
     self.mockWebView = [OCMockObject niceMockForClass:[UIWebView class]];
@@ -88,6 +99,8 @@
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.mockUAUser] inboxUser];
     [[[self.mockAirship stub] andReturn:self.mockInbox] inbox];
+    [[[self.mockAirship stub] andReturn:self.mockPush] push];
+    [[[self.mockAirship stub] andReturn:self.mockNamedUser] namedUser];
 
     // Mock JS Action delegate
     self.mockJSActionDelegate = [OCMockObject niceMockForClass:[UAActionJSDelegate class]];
@@ -112,6 +125,8 @@
 
     [self.mockMessageList stopMocking];
     [self.mockInbox stopMocking];
+    [self.mockPush stopMocking];
+    [self.mockNamedUser stopMocking];
 
     [super tearDown];
 }
@@ -230,6 +245,8 @@
 - (void)testDidFinishPopulateJavascriptEnvironment {
     [[[self.mockUAUser stub] andReturn:@"user name"] username];
     [[[self.mockUIDevice stub] andReturn:@"device model"] model];
+    [[[self.mockPush stub] andReturn:@"channel ID"] channelID];
+    [[[self.mockNamedUser stub] andReturn:@"named user"] identifier];
 
     __block NSString *js;
 
@@ -257,6 +274,12 @@
 
     // Verify user ID
     XCTAssertEqualObjects(@"user name", [self.jsc evaluateScript:@"UAirship.getUserId()"].toString);
+
+    // Verify channel ID
+    XCTAssertEqualObjects(@"channel ID", [self.jsc evaluateScript:@"UAirship.getChannelId()"].toString);
+
+    // Verify named user
+    XCTAssertEqualObjects(@"named user", [self.jsc evaluateScript:@"UAirship.getNamedUser()"].toString);
 
     // Verify message ID is null
     XCTAssertTrue([self.jsc evaluateScript:@"UAirship.getMessageId()"].isNull);

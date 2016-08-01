@@ -46,7 +46,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UAChannelCapture *channelCapture;
 
-
 /**
  * The push manager.
  */
@@ -73,6 +72,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong) UADefaultMessageCenter *sharedDefaultMessageCenter;
 
+/**
+ * The named user.
+ */
+@property (nonatomic, strong) UANamedUser *sharedNamedUser;
 
 /**
  * Creates the user agent string for a given appkey.

@@ -1941,12 +1941,51 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  * Test channel created
  */
 - (void)testChannelCreated {
-    UAPush *push = self.push;
+    [self.push channelCreated:@"someChannelID" channelLocation:@"someLocation" existing:YES];
 
-    [push channelCreated:@"someChannelID" channelLocation:@"someLocation" existing:YES];
 
-    XCTAssertEqualObjects(push.channelID, @"someChannelID", @"The channel ID should be set on channel creation.");
-    XCTAssertEqualObjects(push.channelLocation, @"someLocation", @"The channel location should be set on channel creation.");
+    XCTAssertEqualObjects(self.push.channelID, @"someChannelID", @"The channel ID should be set on channel creation.");
+    XCTAssertEqualObjects(self.push.channelLocation, @"someLocation", @"The channel location should be set on channel creation.");
+}
+
+/**
+ * Test existing channel created posts an NSNotificaiton
+ */
+- (void)testExistingChannelCreatedNSNotification {
+    id observerMock = [OCMockObject observerMock];
+
+    id expectedUserInfo = @{ UAChannelCreatedEventExistingKey: @(YES),
+                             UAChannelCreatedEventChannelKey:@"someChannelID" };
+
+    [[NSNotificationCenter defaultCenter] addMockObserver:observerMock name:UAChannelCreatedEvent object:self.push];
+
+    // Expect the notification
+    [[observerMock expect] notificationWithName:UAChannelCreatedEvent object:self.push userInfo:expectedUserInfo];
+
+    [self.push channelCreated:@"someChannelID" channelLocation:@"someLocation" existing:YES];
+
+    [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
+}
+
+/**
+ * Test new channel created posts an NSNotificaiton
+ */
+- (void)testNewChannelCreatedNSNotification {
+    id observerMock = [OCMockObject observerMock];
+
+    id expectedUserInfo = @{ UAChannelCreatedEventExistingKey: @(NO),
+                             UAChannelCreatedEventChannelKey:@"someChannelID" };
+
+    [[NSNotificationCenter defaultCenter] addMockObserver:observerMock name:UAChannelCreatedEvent object:self.push];
+
+    // Expect the notification
+    [[observerMock expect] notificationWithName:UAChannelCreatedEvent object:self.push userInfo:expectedUserInfo];
+
+    [self.push channelCreated:@"someChannelID" channelLocation:@"someLocation" existing:NO];
+
+    [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
 }
 
 /**

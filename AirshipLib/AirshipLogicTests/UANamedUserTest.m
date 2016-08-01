@@ -51,6 +51,8 @@
 @property (nonatomic, strong) NSMutableDictionary *removeTagGroups;
 @property (nonatomic, strong) UAHTTPRequest *tagsFailureRequest;
 @property (nonatomic, strong) id mockApplication;
+@property (nonatomic, strong) id mockConfig;
+
 
 @end
 
@@ -72,13 +74,17 @@ void (^updateTagsFailureDoBlock)(NSInvocation *);
         [invocation setReturnValue:&_pushChannelID];
     }] channelID];
 
+    self.mockConfig = [OCMockObject niceMockForClass:[UAConfig class]];
+
+
     self.mockedAirship = [OCMockObject niceMockForClass:[UAirship class]];
     [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
     [[[self.mockedAirship stub] andReturn:self.mockedUAPush] push];
 
     self.pushChannelID = @"someChannel";
 
-    self.namedUser = [[UANamedUser alloc] initWithConfig:[UAConfig config] dataStore:self.dataStore];
+    self.namedUser = [UANamedUser namedUserWithPush:self.mockedUAPush config:self.mockConfig dataStore:self.dataStore];
+
     self.mockedNamedUserClient = [OCMockObject niceMockForClass:[UANamedUserAPIClient class]];
     self.namedUser.namedUserAPIClient = self.mockedNamedUserClient;
     self.mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
@@ -138,13 +144,13 @@ void (^updateTagsFailureDoBlock)(NSInvocation *);
 }
 
 - (void)tearDown {
-
     [self.dataStore removeAll];
     [self.mockedNamedUserClient stopMocking];
     [self.mockedAirship stopMocking];
     [self.mockedUAPush stopMocking];
     [self.mockTagGroupsAPIClient stopMocking];
     [self.mockApplication stopMocking];
+    [self.mockConfig stopMocking];
 
     [super tearDown];
 }
