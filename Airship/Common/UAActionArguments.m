@@ -29,6 +29,7 @@
 
 NSString * const UAActionMetadataWebViewKey = @"com.urbanairship.webview";
 NSString * const UAActionMetadataPushPayloadKey = @"com.urbanairship.payload";
+NSString * const UAActionMetadataForegroundPresentationKey = @"com.urbanairship.foreground_presentation";
 NSString * const UAActionMetadataInboxMessageKey = @"com.urbanairship.message";
 NSString * const UAActionMetadataRegisteredName = @"com.urbanairship.registered_name";
 

@@ -189,11 +189,7 @@
 }
 
 - (NSArray *)notificationActions {
-    if (self.buttonCategory.minimalActions.count) {
-        return self.buttonCategory.minimalActions;
-    } else {
-        return self.buttonCategory.actions;
-    }
+    return self.buttonCategory.actions;
 }
 
 - (NSArray *)buttonActionBindings {

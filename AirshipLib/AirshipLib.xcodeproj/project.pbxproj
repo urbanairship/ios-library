@@ -1901,7 +1901,7 @@
 				7BB679011429288D00B877DB /* Sources */,
 				7BB679021429288D00B877DB /* Frameworks */,
 				7BB679031429288D00B877DB /* Resources */,
-				7BB679041429288D00B877DB /* Run Script */,
+				499DBD571D502899001CDB32 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -2053,6 +2053,19 @@
 			shellPath = /bin/sh;
 			shellScript = "\"$SRCROOT/generate_header_imports.sh\"";
 		};
+		499DBD571D502899001CDB32 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# XCTest bundles must be codesigned the same way an app is if it wants access to the main bundle's features\n\ncodesign --verify --force --sign \"$CODE_SIGN_IDENTITY\" \"$CODESIGNING_FOLDER_PATH\"";
+		};
 		49C67201184EB2E50088F210 /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2066,20 +2079,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cd \"$SRCROOT/../Airship/Common/JS/\"\nxxd -i UANativeBridge.js UANativeBridge.c";
-		};
-		7BB679041429288D00B877DB /* Run Script */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# XCTest bundles must be codesigned the same way an app is if it wants access to the main bundle's features\ncodesign --verify --force --sign \"$CODE_SIGN_IDENTITY\" \"$CODESIGNING_FOLDER_PATH\"\n\n# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

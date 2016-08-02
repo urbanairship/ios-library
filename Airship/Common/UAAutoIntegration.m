@@ -28,7 +28,7 @@
 #import <objc/runtime.h>
 
 #import "UAirship+Internal.h"
-#import "UAPush.h"
+#import "UAPush+Internal.h"
 
 static UAAutoIntegration *instance_;
 
@@ -254,6 +254,7 @@ void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self,
 
                 if (expectedCount == resultCount) {
                     handler(mergedPresentationOptions);
+                    [[UAirship push] handleForegroundNotification:notification mergedOptions:mergedPresentationOptions];
                 }
             });
         };
@@ -263,10 +264,8 @@ void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self,
 
 
     // Call UAPush
-    [[UAirship push] userNotificationCenter:notificationCenter
-                    willPresentNotification:notification
-                      withCompletionHandler:^(UNNotificationPresentationOptions options) {
-
+    [[UAirship push] notificationCenterWillPresentNotification:notification
+                                         withCompletionHandler:^(UNNotificationPresentationOptions options) {
                           // Make sure the app's completion handler is called on the main queue
                           dispatch_async(dispatch_get_main_queue(), ^{
                               mergedPresentationOptions |= options;
@@ -275,6 +274,7 @@ void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self,
                               
                               if (expectedCount == resultCount) {
                                   handler(mergedPresentationOptions);
+                                  [[UAirship push] handleForegroundNotification:notification mergedOptions:mergedPresentationOptions];
                               }
                           });
                       }];
@@ -313,10 +313,8 @@ void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(i
     }
 
     // Call UAPush
-    [[UAirship push] userNotificationCenter:notificationCenter
-                    didReceiveNotificationResponse:response
-                      withCompletionHandler:^() {
-
+    [[UAirship push] notificationCenterDidReceiveNotificationResponse:response
+                                                withCompletionHandler:^() {
                           // Make sure we call it on the main queue
                           dispatch_async(dispatch_get_main_queue(), ^{
                               resultCount++;

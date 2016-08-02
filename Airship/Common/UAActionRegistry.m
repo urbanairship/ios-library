@@ -275,6 +275,11 @@
         return (BOOL)(args.situation != UASituationForegroundPush);
     };
 
+    UAActionPredicate tagsPredicate = ^(UAActionArguments *args) {
+        BOOL foregroundPresentation = args.metadata[UAActionMetadataForegroundPresentationKey] != nil;
+        return (BOOL)!foregroundPresentation;
+    };
+
     // Open external URL action
     UAOpenExternalURLAction *urlAction = [[UAOpenExternalURLAction alloc] init];
     [self registerAction:urlAction
@@ -284,12 +289,14 @@
 
     UAAddTagsAction *addTagsAction = [[UAAddTagsAction alloc] init];
     [self registerAction:addTagsAction
-                   names:@[kUAAddTagsActionDefaultRegistryName, kUAAddTagsActionDefaultRegistryAlias]];
+                   names:@[kUAAddTagsActionDefaultRegistryName, kUAAddTagsActionDefaultRegistryAlias]
+               predicate:tagsPredicate];
 
 
     UARemoveTagsAction *removeTagsAction = [[UARemoveTagsAction alloc] init];
     [self registerAction:removeTagsAction
-                   names:@[kUARemoveTagsActionDefaultRegistryName, kUARemoveTagsActionDefaultRegistryAlias]];
+                   names:@[kUARemoveTagsActionDefaultRegistryName, kUARemoveTagsActionDefaultRegistryAlias]
+               predicate:tagsPredicate];
 
     UALandingPageAction *landingPageAction = [[UALandingPageAction alloc] init];
     [self registerAction:landingPageAction

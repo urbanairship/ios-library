@@ -22,7 +22,7 @@
 
     NSArray *actions = @[watAction, yayAction];
 
-    self.uaCategory = [UANotificationCategory categoryWithIdentifier:@"abilities" actions:actions minimalActions:actions intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+    self.uaCategory = [UANotificationCategory categoryWithIdentifier:@"abilities" actions:actions intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
 }
 
 /**
