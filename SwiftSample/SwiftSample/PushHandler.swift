@@ -34,7 +34,7 @@ class PushHandler: NSObject, UAPushNotificationDelegate {
     func playNotificationSound(_ soundFilename: String) {
 
         let sound: NSString = NSString(string: soundFilename)
-        let path = Bundle.main().pathForResource(sound.deletingPathExtension, ofType: sound.pathExtension)
+        let path = Bundle.main.path(forResource: sound.deletingPathExtension, ofType: sound.pathExtension)
 
         guard (path != nil) else {
             print("Received an alert with a sound that cannot be found the application bundle: \(soundFilename)")
@@ -70,7 +70,7 @@ class PushHandler: NSObject, UAPushNotificationDelegate {
             let cancelAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
             alertController.addAction(cancelAction)
 
-            let topController = UIApplication.shared().keyWindow!.rootViewController! as UIViewController
+            let topController = UIApplication.shared.keyWindow!.rootViewController! as UIViewController
             alertController.popoverPresentationController?.sourceView = topController.view
 
             topController.present(alertController, animated:true, completion:nil)

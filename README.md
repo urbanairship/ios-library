@@ -7,8 +7,8 @@ THE LICENSE ON AN “AS IS” BASIS AND NOT FOR USE IN PRODUCTION.
 
 ## Known Issues
 
- - UAPushNotificationDelegate does not expose any new iOS 10 functionality.
- - Actions may run twice if a remote notification is presented in the foreground.
+ - UAPushNotificationDelegate support for iOS 10 features are potentially incomplete and
+   subject to change.
 
 ## Developer Preview Migration Guide
 

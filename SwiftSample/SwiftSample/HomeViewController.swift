@@ -34,10 +34,10 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        NotificationCenter.default().addObserver(
+        NotificationCenter.default.addObserver(
             self,
             selector: #selector(HomeViewController.refreshView),
-            name: "channelIDUpdated",
+            name: "channelIDUpdated" as NSNotification.Name,
             object: nil);
     }
 
@@ -65,7 +65,7 @@ class HomeViewController: UIViewController {
         //The channel ID will need to wait for push registration to return the channel ID
         if (sender == channelIDButton) {
             if ((UAirship.push().channelID) != nil) {
-                UIPasteboard.general().string = UAirship.push().channelID
+                UIPasteboard.general.string = UAirship.push().channelID
                 let message = UAInAppMessage()
                 message.alert = NSLocalizedString("UA_Copied_To_Clipboard", tableName: "UAPushUI", comment: "Copied to clipboard string")
                 message.position = UAInAppMessagePosition.top

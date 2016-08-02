@@ -64,10 +64,10 @@ class PushSettingsViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        NotificationCenter.default().addObserver(
+        NotificationCenter.default.addObserver(
             self,
             selector: #selector(PushSettingsViewController.refreshView),
-            name: "channelIDUpdated",
+            name: "channelIDUpdated" as NSNotification.Name,
             object: nil);
 
         // Initialize switches
@@ -76,7 +76,7 @@ class PushSettingsViewController: UITableViewController {
         analyticsSwitch.isOn = UAirship.shared().analytics.isEnabled
 
         // add observer to didBecomeActive to update upon retrun from system settings screen
-        NotificationCenter.default().addObserver(
+        NotificationCenter.default.addObserver(
             self,
             selector: #selector(PushSettingsViewController.didBecomeActive),
             name: NSNotification.Name.UIApplicationDidBecomeActive,
@@ -153,13 +153,13 @@ class PushSettingsViewController: UITableViewController {
 
                 // iOS 8 & 9 - redirect push enabled cell to system settings
                 if (!ProcessInfo().isOperatingSystemAtLeast(OperatingSystemVersion(majorVersion: 10, minorVersion: 0, patchVersion: 0)) && UAirship.push().userPushNotificationsEnabled) {
-                    UIApplication.shared().openURL(URL(string: UIApplicationOpenSettingsURLString)!)
+                    UIApplication.shared.openURL(URL(string: UIApplicationOpenSettingsURLString)!)
                 }
 
                 break
             case ((tableView.indexPath(for: channelIDCell)! as NSIndexPath).section, (tableView.indexPath(for: channelIDCell)! as NSIndexPath).row) :
                 if ((UAirship.push().channelID) != nil) {
-                    UIPasteboard.general().string = channelIDSubtitleLabel?.text
+                    UIPasteboard.general.string = channelIDSubtitleLabel?.text
                     showCopyMessage()
                 }
                 break
