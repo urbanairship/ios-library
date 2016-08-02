@@ -751,9 +751,9 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 - (void)testNotificationCategories {
     self.push.userPushNotificationsEnabled = YES;
 
-    UANotificationCategory *defaultCategory = [UANotificationCategory categoryWithIdentifier:@"defaultCategory" actions:@[] minimalActions:@[] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
-    UANotificationCategory *customCategory = [UANotificationCategory categoryWithIdentifier:@"customCategory" actions:@[] minimalActions:@[] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
-    UANotificationCategory *anotherCustomCategory = [UANotificationCategory categoryWithIdentifier:@"anotherCustomCategory" actions:@[] minimalActions:@[] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+    UANotificationCategory *defaultCategory = [UANotificationCategory categoryWithIdentifier:@"defaultCategory" actions:@[]  intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+    UANotificationCategory *customCategory = [UANotificationCategory categoryWithIdentifier:@"customCategory" actions:@[]  intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+    UANotificationCategory *anotherCustomCategory = [UANotificationCategory categoryWithIdentifier:@"anotherCustomCategory" actions:@[] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
 
     NSSet *defaultSet = [NSSet setWithArray:@[defaultCategory]];
     [[[self.mockDefaultNotificationCategories stub] andReturn:defaultSet] defaultCategoriesWithRequireAuth:self.push.requireAuthorizationForDefaultCategories];
@@ -1936,7 +1936,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     UANotificationCategory *category = [UANotificationCategory categoryWithIdentifier:@"notificationCategory"
                                                                               actions:@[foregroundAction, backgroundAction]
-                                                                       minimalActions:@[foregroundAction, backgroundAction]
                                                                     intentIdentifiers:@[]
                                                                               options:0];
 
@@ -1997,7 +1996,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     UANotificationCategory *category = [UANotificationCategory categoryWithIdentifier:@"notificationCategory"
                                                                               actions:@[foregroundAction, backgroundAction]
-                                                                       minimalActions:@[foregroundAction, backgroundAction]
                                                                     intentIdentifiers:@[]
                                                                               options:0];
 
@@ -2065,7 +2063,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     UANotificationCategory *category = [UANotificationCategory categoryWithIdentifier:@"notificationCategory"
                                                                               actions:@[foregroundAction, backgroundAction]
-                                                                       minimalActions:@[foregroundAction, backgroundAction]
                                                                     intentIdentifiers:@[]
                                                                               options:0];
 

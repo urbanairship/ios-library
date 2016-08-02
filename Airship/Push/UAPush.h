@@ -212,6 +212,15 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
                       actionIdentifier:(NSString *)identifier
                      completionHandler:(void (^)())completionHandler;
 
+/**
+ * Called when a notification has arrived in the foreground and is available for display.
+ *
+ * Note: this method is relevant only for iOS 10 and above.
+ *
+ * @param notification The notification.
+ * @return a UNNotificationPresentationOptions enum value indicating the presentation options for the notification.
+ */
+- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification;
 
 @end
 
@@ -224,7 +233,7 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
  * This singleton provides an interface to the functionality provided by the Urban Airship iOS Push API.
  */
 #pragma clang diagnostic push
-@interface UAPush : NSObject <UNUserNotificationCenterDelegate>
+@interface UAPush : NSObject
 
 
 ///---------------------------------------------------------------------------------------
@@ -367,6 +376,13 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
  * The current authorized notification options.
  */
 @property (nonatomic, assign, readonly) UANotificationOptions authorizedNotificationOptions;
+
+/**
+ * The default presentation options to use for foreground notifications.
+ *
+ * Note: this property is relevant only for iOS 10 and above.
+ */
+@property (nonatomic, assign) UNNotificationPresentationOptions defaultPresentationOptions;
 
 ///---------------------------------------------------------------------------------------
 /// @name Autobadge
@@ -572,6 +588,36 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
  * Add a `UARegistrationDelegate` to `UAPush` to receive success and failure callbacks.
  */
 - (void)updateRegistration;
+
+
+///---------------------------------------------------------------------------------------
+/// @name UserNotificationCenterDelegate hooks
+///---------------------------------------------------------------------------------------
+
+/**
+ * Handle incoming push notifications. This method will record push conversions, parse the notification
+ * and call the appropriate methods on your delegate.
+ *
+ * Note: this method is relevant only for iOS 10 and above.
+ *
+ * @param response The notification response object.
+ * @param completionHandler A completion handler. In manual integrations this should be the handler passed
+ * in the original delegate callback.
+ */
+- (void)notificationCenterDidReceiveNotificationResponse:(UNNotificationResponse *)response
+                                   withCompletionHandler:(void (^)())completionHandler;
+
+/**
+ * Handle notification presentation.
+ *
+ * Note: this method is relevant only for iOS 10 and above.
+ *
+ * @param notification The notification about to be presented.
+ * @param completionHandler A completion handler to be called with the desired notification presentation options. In manual
+ * integrations this should be the handler passed in the original delegate callback.
+ */
+- (void)notificationCenterWillPresentNotification:(UNNotification *)notification
+                            withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler;
 
 ///---------------------------------------------------------------------------------------
 /// @name AppDelegate hooks

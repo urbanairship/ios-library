@@ -285,6 +285,13 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
  */
 - (void)updateAPNSRegistration;
 
+/**
+ * Handles an incoming foreground UNNotification after all presentation options have been merged.
+ *
+ * @param notification The foreground notification
+ * @param options The merged notification presentation options.
+ */
+- (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options;
 
 @end
 

@@ -47,11 +47,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly, copy, nonatomic) NSArray<UANotificationAction *> *actions;
 
 /**
- * The actions to display when space is limited.
- */
-@property(readonly, copy, nonatomic) NSArray<UANotificationAction *> *minimalActions;
-
-/**
  * The intents supported by notifications of this category.
  *
  * Note: This property is only applicable on iOS 10 and above.
@@ -65,7 +60,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)categoryWithIdentifier:(NSString *)identifier
                                actions:(NSArray<UANotificationAction *> *)actions
-                        minimalActions:(NSArray<UANotificationAction *> *)minimalActions
                      intentIdentifiers:(NSArray<NSString *> *)intentIdentifiers
                                options:(UNNotificationCategoryOptions)options;
 
