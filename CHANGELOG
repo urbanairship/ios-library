@@ -10,6 +10,17 @@ ERRORS, DEFECTS, HARMFUL COMPONENTS AND MAY NOT BE COMPATIBLE WITH THE FINAL VER
 THE APPLICABLE THIRD PARTY OPERATING SYSTEM. ACCORDINGLY, URBAN AIRSHIP IS PROVIDING
 THE LICENSE ON AN “AS IS” BASIS AND NOT FOR USE IN PRODUCTION.
 
+Preview 2 - August 2, 2016
+--------------------------
+Changes:
+- Added support for foreground presentation options. Default options can be set on UAPush, or
+  per notification with presentationOptionsForNotification: method on the UAPushNotificationDelegate.
+- Added foreground presentation flag (UAActionMetadataForegroundPresentationKey) to action arguments
+  when running actions in situation UASituationForegroundPush.
+- UAAutoAppDelegate no longer replaces the UNNotificationDelegate, instead it will either set
+  a delegate if one is not already set or swizzle the existing delegate.
+- Updated to build with Xcode 8 beta 4.
+
 Preview 1 - July 6, 2016
 ------------------------
 Changes:

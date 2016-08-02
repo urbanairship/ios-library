@@ -74,7 +74,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
         UAirship.push().pushNotificationDelegate = pushHandler
         UAirship.push().registrationDelegate = self
 
-        NotificationCenter.default().addObserver(self, selector:#selector(AppDelegate.refreshMessageCenterBadge), name: NSNotification.Name.UAInboxMessageListUpdated, object: nil)
+        NotificationCenter.default.addObserver(self, selector:#selector(AppDelegate.refreshMessageCenterBadge), name: NSNotification.Name.UAInboxMessageListUpdated, object: nil)
 
         return true
     }
@@ -85,13 +85,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
             return
         }
 
-        if (UserDefaults.standard().bool(forKey: self.simulatorWarningDisabledKey)) {
+        if (UserDefaults.standard.bool(forKey: self.simulatorWarningDisabledKey)) {
             return
         }
 
         let alertController = UIAlertController(title: "Notice", message: "You will not be able to receive push notifications in the simulator.", preferredStyle: .alert)
         let disableAction = UIAlertAction(title: "Disable Warning", style: UIAlertActionStyle.default){ (UIAlertAction) -> Void in
-            UserDefaults.standard().set(true, forKey:self.simulatorWarningDisabledKey)
+            UserDefaults.standard.set(true, forKey:self.simulatorWarningDisabledKey)
         }
         alertController.addAction(disableAction)
 
@@ -100,7 +100,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
 
         // Let the UI finish launching first so it doesn't complain about the lack of a root view controller
         // Delay execution of the block for 1/2 second.
-        DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(0.5 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(0.5 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)) {
             self.window?.rootViewController?.present(alertController, animated: true, completion: nil)
         }
     }
@@ -123,7 +123,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
     }
 
     func registrationSucceeded(forChannelID channelID: String, deviceToken: String) {
-        NotificationCenter.default().post(
+        NotificationCenter.default.post(
             name: Notification.Name(rawValue: "channelIDUpdated"),
             object: self,
             userInfo:nil)
