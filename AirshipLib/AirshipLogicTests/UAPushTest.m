@@ -899,7 +899,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
 // testHandleDeviceTokenRegistrationIOS8
 
-
 /**
  * Test registering a device token in the background does not
  * update registration if we already have a channel
@@ -1617,7 +1616,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
     [self.push appReceivedRemoteNotification:self.notification];
-
 }
 
 /**
@@ -1985,7 +1983,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  * Test handling receiving notification actions triggered with an identifier for
  * background activation mode.
  */
-
 - (void)testOnReceiveActionWithIdentifierBackground {
     UANotificationAction *foregroundAction = [UANotificationAction actionWithIdentifier:@"foregroundIdentifier" title:@"title" options:UNNotificationActionOptionForeground];
     UANotificationAction *backgroundAction = [UANotificationAction actionWithIdentifier:@"backgroundIdentifier" title:@"title" options:0];
@@ -2162,7 +2159,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
 }
 
-
 /**
  * Test receiving a notification action with an unknown category does not run
  * any actions.
@@ -2200,7 +2196,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
 }
-
 
 /**
  * Test receiving a notification action with an unknown action does not run
@@ -2254,7 +2249,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
 }
-
 
 /**
  * Test when allowUnregisteringUserNotificationTypes is NO it prevents UAPush from

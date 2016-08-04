@@ -620,7 +620,6 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
                              completionHandler:(void (^)())completionHandler {
 
 
-
     NSString *categoryID = notification[@"aps"][@"category"];
     NSSet *categories = self.combinedCategories;
 
@@ -654,7 +653,6 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
         completionHandler();
         return;
     }
-
 
     [[UAirship shared].analytics addEvent:[UAInteractiveNotificationEvent eventWithNotificationAction:notificationAction
                                                                                            categoryID:categoryID
@@ -760,7 +758,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     BOOL foregroundPresentation = (options & UNNotificationPresentationOptionAlert) > 0;
     NSDictionary *notificationPayload = notification.request.content.userInfo;
     [self handleNotification:notificationPayload
-            situation:UASituationForegroundPush
+                   situation:UASituationForegroundPush
       foregroundPresentation:foregroundPresentation
            completionHandler:nil];
 }
@@ -788,8 +786,8 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
                        situation:UASituationLaunchedFromPush
           foregroundPresentation:NO
                completionHandler:^(UIBackgroundFetchResult fetchResult){
-            completionHandler();
-        }];
+                   completionHandler();
+               }];
 
     } else {
         [self handleNotificationActionWithIdentifier:identifier
@@ -873,7 +871,6 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
                            notification:(NSDictionary *)notification
                       completionHandler:(void (^)())completionHandler {
 
-
     [self appReceivedActionWithIdentifier:identifier
                              notification:notification
                              responseInfo:nil
@@ -899,7 +896,6 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
                                     responseText:responseText
                                completionHandler:completionHandler];
 }
-
 
 - (void)updateBadgeFromNotification:(NSDictionary *)notification {
     NSDictionary *apsDict = [notification objectForKey:@"aps"];
@@ -1212,7 +1208,7 @@ BOOL deferChannelCreationOnForeground = false;
         NSUInteger options = self.notificationOptions & (UANotificationOptionAlert | UANotificationOptionBadge | UANotificationOptionSound);
 
         [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:options
-                                                                                        categories:categories]];
+                                                                                                              categories:categories]];
         UA_LDEBUG(@"Registering for user notification types %ld.", options);
 
         [self updateAuthorizedNotificationTypes];
@@ -1391,10 +1387,8 @@ BOOL deferChannelCreationOnForeground = false;
                 if ( [[UIApplication sharedApplication] currentUserNotificationSettings].types != UIUserNotificationTypeNone) {
                     UA_LDEBUG(@"Migrating userPushNotificationEnabled to YES because application was already registered for notification types");
                     [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
-
                 }
             }
-
         }
     }
 
