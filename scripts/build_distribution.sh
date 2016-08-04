@@ -32,6 +32,7 @@ PBXPROJ_PATH=$ROOT_PATH/AirshipLib/AirshipLib.xcodeproj/
 AIRSHIP_PATH="${ROOT_PATH}/Airship"
 AIRSHIP_LIB_PATH="${ROOT_PATH}/AirshipLib"
 AIRSHIP_KIT_PATH="${ROOT_PATH}/AirshipKit"
+AIRSHIP_APP_EXTENSIONS_PATH="${ROOT_PATH}/AirshipAppExtensions"
 
 # Set the appropriate xcode version
 
@@ -56,6 +57,11 @@ function package_airship {
     #################
     echo "cp -R \"${AIRSHIP_KIT_PATH}\" \"${OUTPUT_PATH}\""
     cp -R "${AIRSHIP_KIT_PATH}" "${OUTPUT_PATH}"
+
+    # Copy AirshipAppExtensions
+    ###########################
+    echo "cp -R \"${AIRSHIP_APP_EXTENSIONS_PATH}\" \"${OUTPUT_PATH}\""
+    cp -R "${AIRSHIP_APP_EXTENSIONS_PATH}" "${OUTPUT_PATH}"
 
     # Remove all non .h files from /Library and /Common
     # Remove all non UA_ items & dirs from Airship/External
@@ -156,7 +162,7 @@ if test -f $ROOT_PATH/BUILD_INFO;
 fi
 
 cd $OUTPUT_PATH
-for PACKAGE in SwiftSample Sample Airship AirshipKit reference-docs LICENSE CHANGELOG README.md BUILD_INFO; do
+for PACKAGE in SwiftSample Sample Airship AirshipKit AirshipAppExtensions reference-docs LICENSE CHANGELOG README.md BUILD_INFO; do
     zip -r libUAirship-latest.zip $PACKAGE --exclude=*.DS_Store*
 done
 cd -
