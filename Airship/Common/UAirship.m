@@ -343,8 +343,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     BOOL skipNotifyPush = [[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)];
 
     if (remoteNotification && !skipNotifyPush) {
-        [sharedAirship_.sharedPush appReceivedRemoteNotification:remoteNotification
-                                                applicationState:[UIApplication sharedApplication].applicationState];
+        [sharedAirship_.sharedPush appReceivedRemoteNotification:remoteNotification];
     }
 
     // Register now

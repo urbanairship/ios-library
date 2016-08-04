@@ -47,6 +47,7 @@
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UAHTTPRequest+Internal.h"
 #import "UANotificationCategory+Internal.h"
+#import "UAPushReceivedEvent+Internal.h"
 
 @interface UAPushTest : XCTestCase
 @property (nonatomic, strong) id mockedApplication;
@@ -1530,14 +1531,24 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     for(NSInteger stateIndex = 0; stateIndex < 3; stateIndex++) {
         expectedSituation = situations[stateIndex];
         UIApplicationState applicationState = applicationStates[stateIndex];
+        id mockedApplication;
 
         [[self.mockActionRunner expect]runActionsWithActionValues:expectedActionPayload
                                                         situation:expectedSituation
                                                          metadata: @{ UAActionMetadataPushPayloadKey: self.notification }
                                                 completionHandler:[OCMArg checkWithBlock:handlerCheck]];
 
-        [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:applicationState];
-        [self.push appReceivedRemoteNotification:self.notification applicationState:applicationState];
+        if (applicationState == UIApplicationStateActive) {
+            [[self.mockedAnalytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+                return [obj isKindOfClass:[UAPushReceivedEvent class]];
+            }]];
+        }
+
+        mockedApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+        [[[mockedApplication stub] andReturn:mockedApplication] sharedApplication];
+        [[[mockedApplication stub] andReturnValue:OCMOCK_VALUE(applicationState)] applicationState];
+
+        [self.push appReceivedRemoteNotification:self.notification];
 
         XCTAssertNoThrow([self.mockActionRunner verify], @"handleNotification should run push actions with situation %ld", (long)expectedSituation);
         XCTAssertNoThrow([self.mockedAnalytics verify], @"analytics should be notified of the incoming notification");
@@ -1552,8 +1563,16 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                                              metadata: @{ UAActionMetadataPushPayloadKey: self.notification }
                                                     completionHandler:[OCMArg checkWithBlock:handlerCheck]];
 
-            [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:applicationState];
-            [self.push appReceivedRemoteNotification:self.notification applicationState:applicationState fetchCompletionHandler:^(UIBackgroundFetchResult result) {
+            mockedApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+            [[[mockedApplication stub] andReturn:mockedApplication] sharedApplication];
+            [[[mockedApplication stub] andReturnValue:OCMOCK_VALUE(applicationState)] applicationState];
+            if (applicationState == UIApplicationStateActive) {
+                [[self.mockedAnalytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+                    return [obj isKindOfClass:[UAPushReceivedEvent class]];
+                }]];
+            }
+
+            [self.push appReceivedRemoteNotification:self.notification fetchCompletionHandler:^(UIBackgroundFetchResult result) {
                 completionHandlerCalled = YES;
 
                 // Relies on the fact that UAActionFetchResults cast correctly to UIBackgroundFetchResults
@@ -1580,7 +1599,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  * action if the notification contains a message ID (_uamid).
  */
 - (void)testPushActionsRunsInboxAction {
-
     NSDictionary *richPushNotification = @{@"_uamid": @"message_id", @"add_tags_action": @"tag"};
 
     // Expected actions payload
@@ -1597,7 +1615,9 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                                      metadata:OCMOCK_ANY
                                             completionHandler:OCMOCK_ANY];
 
-    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateInactive];
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
+    [self.push appReceivedRemoteNotification:self.notification];
+
 }
 
 /**
@@ -1620,7 +1640,8 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                                      metadata:OCMOCK_ANY
                                             completionHandler:OCMOCK_ANY];
 
-    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateInactive];
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
+    [self.push appReceivedRemoteNotification:self.notification];
 }
 
 
@@ -1631,9 +1652,26 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 - (void)testHandleNotificationAutoBadgeDisabled {
     self.push.autobadgeEnabled = NO;
     [[self.mockedApplication reject] setApplicationIconBadgeNumber:2];
-    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateActive];
-    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateBackground];
-    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateInactive];
+
+    __block NSInteger returnState;
+
+    returnState = UIApplicationStateActive;
+    [[[self.mockedApplication stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&returnState];
+    }] applicationState];
+    [self.push appReceivedRemoteNotification:self.notification];
+
+    returnState = UIApplicationStateBackground;
+    [[[self.mockedApplication stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&returnState];
+    }] applicationState];
+    [self.push appReceivedRemoteNotification:self.notification];
+
+    returnState = UIApplicationStateInactive;
+    [[[self.mockedApplication stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&returnState];
+    }] applicationState];
+    [self.push appReceivedRemoteNotification:self.notification];
 
     XCTAssertNoThrow([self.mockedApplication verify], @"Badge should only be updated if autobadge is enabled");
 }
@@ -1645,29 +1683,46 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 - (void)testHandleNotificationAutoBadgeEnabled {
     self.push.autobadgeEnabled = YES;
 
+    __block NSInteger returnState;
+
     [[self.mockedApplication expect] setApplicationIconBadgeNumber:2];
-    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateActive];
+    returnState = UIApplicationStateActive;
+    [[[self.mockedApplication stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&returnState];
+    }] applicationState];
+    [self.push appReceivedRemoteNotification:self.notification];
 
     XCTAssertNoThrow([self.mockedApplication verify], @"Badge should be updated if app is in the foreground");
 
     [[self.mockedApplication reject] setApplicationIconBadgeNumber:2];
-    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateBackground];
-    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateInactive];
+
+    returnState = UIApplicationStateBackground;
+    [[[self.mockedApplication stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&returnState];
+    }] applicationState];
+    [self.push appReceivedRemoteNotification:self.notification];
+
+    returnState = UIApplicationStateInactive;
+    [[[self.mockedApplication stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&returnState];
+    }] applicationState];
+    [self.push appReceivedRemoteNotification:self.notification];
 
     XCTAssertNoThrow([self.mockedApplication verify], @"Badge should only be updated if app is in the foreground");
 }
 
 /**
- * Test handleNotification in an inactive state sets the launchNotification
+ * Test handleNotification resulting in a launched from push situation sets the launchNotification
  */
 - (void)testHandleNotificationLaunchNotification {
     self.push.launchNotification = nil;
-    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateActive];
-    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateBackground];
+
+    [self.push appReceivedRemoteNotification:self.notification];
 
     XCTAssertNil(self.push.launchNotification, @"Launch notification should only be set in an inactive state");
 
-    [self.push appReceivedRemoteNotification:self.notification applicationState:UIApplicationStateInactive];
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
+    [self.push appReceivedRemoteNotification:self.notification];
     XCTAssertNotNil(self.push.launchNotification, @"Launch notification should be set in an inactive state");
 }
 
@@ -1677,7 +1732,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  */
 - (void)testBackgroundPushInactiveSkipConversionSendId {
     self.push.launchNotification = nil;
-    [self.push appReceivedRemoteNotification:self.emptyNotification applicationState:UIApplicationStateInactive];
+    [self.push appReceivedRemoteNotification:self.emptyNotification];
 
     XCTAssertNil(self.push.launchNotification, @"Launch notification should not be set with a background push.");
 }
@@ -1930,6 +1985,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  * Test handling receiving notification actions triggered with an identifier for
  * background activation mode.
  */
+
 - (void)testOnReceiveActionWithIdentifierBackground {
     UANotificationAction *foregroundAction = [UANotificationAction actionWithIdentifier:@"foregroundIdentifier" title:@"title" options:UNNotificationActionOptionForeground];
     UANotificationAction *backgroundAction = [UANotificationAction actionWithIdentifier:@"backgroundIdentifier" title:@"title" options:0];
@@ -1964,14 +2020,12 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                             completionHandler:[OCMArg checkWithBlock:handlerCheck]];
 
 
-    [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateBackground];
     [[self.mockedAnalytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isKindOfClass:[UAInteractiveNotificationEvent class]];
     }]];
 
     [self.push appReceivedActionWithIdentifier:@"backgroundIdentifier"
                                   notification:self.notification
-                              applicationState:UIApplicationStateBackground
                              completionHandler:^{
                                  completionHandlerCalled = YES;
                              }];
@@ -2029,16 +2083,14 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                                      metadata:expectedMetadata
                                             completionHandler:[OCMArg checkWithBlock:handlerCheck]];
 
-
-    [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateBackground];
     [[self.mockedAnalytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isKindOfClass:[UAInteractiveNotificationEvent class]];
     }]];
 
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
     [self.push appReceivedActionWithIdentifier:@"backgroundIdentifier"
                                   notification:self.notification
                                   responseInfo:expectedResponseInfo
-                              applicationState:UIApplicationStateBackground
                              completionHandler:^{
                                  completionHandlerCalled = YES;
                              }];
@@ -2047,8 +2099,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     XCTAssertNoThrow([self.mockActionRunner verify],
                      @"Actions should run for notification action button");
 
-    XCTAssertNoThrow([self.mockedAnalytics verify],
-                     @"Analytics should be notified of the incoming notification");
 
     XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
 }
@@ -2092,14 +2142,13 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                             completionHandler:[OCMArg checkWithBlock:handlerCheck]];
 
 
-    [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateActive];
     [[self.mockedAnalytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isKindOfClass:[UAInteractiveNotificationEvent class]];
     }]];
 
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
     [self.push appReceivedActionWithIdentifier:@"foregroundIdentifier"
                                   notification:self.notification
-                              applicationState:UIApplicationStateActive
                              completionHandler:^{
                                  completionHandlerCalled = YES;
                              }];
@@ -2108,12 +2157,11 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     XCTAssertNoThrow([self.mockActionRunner verify],
                      @"Actions should run for notification action button");
 
-    XCTAssertNoThrow([self.mockedAnalytics verify],
-                     @"Analytics should be notified of the incoming notification");
 
     XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
 
 }
+
 
 /**
  * Test receiving a notification action with an unknown category does not run
@@ -2132,14 +2180,13 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                                       metadata:OCMOCK_ANY
                                              completionHandler:OCMOCK_ANY];
 
-    [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateActive];
     [[self.mockedAnalytics reject] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isKindOfClass:[UAInteractiveNotificationEvent class]];
     }]];
 
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
     [self.push appReceivedActionWithIdentifier:@"foregroundIdentifier"
                                   notification:self.notification
-                              applicationState:UIApplicationStateActive
                              completionHandler:^{
                                  completionHandlerCalled = YES;
                              }];
@@ -2153,6 +2200,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
 }
+
 
 /**
  * Test receiving a notification action with an unknown action does not run
@@ -2186,14 +2234,13 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                                       metadata:OCMOCK_ANY
                                              completionHandler:OCMOCK_ANY];
 
-    [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:UIApplicationStateActive];
     [[self.mockedAnalytics reject] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isKindOfClass:[UAInteractiveNotificationEvent class]];
     }]];
 
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
     [self.push appReceivedActionWithIdentifier:@"unknown!"
                                   notification:self.notification
-                              applicationState:UIApplicationStateActive
                              completionHandler:^{
                                  completionHandlerCalled = YES;
                              }];
@@ -2207,6 +2254,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
 }
+
 
 /**
  * Test when allowUnregisteringUserNotificationTypes is NO it prevents UAPush from
