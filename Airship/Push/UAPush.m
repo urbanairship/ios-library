@@ -839,8 +839,13 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
         case UIApplicationStateActive:
             return UASituationForegroundPush;
 
+        /*
+         * iOS 10+ will only ever call through to this helper via application:receivedRemoteNotification:fetchCompletion
+         * as a result of a background push.
+         */
         case UIApplicationStateInactive:
-            if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}] || [UAUtils isBackgroundPush:notification]) {
+            // If iOS 10+, assume background push situation
+            if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
                 return UASituationBackgroundPush;
             }
 
