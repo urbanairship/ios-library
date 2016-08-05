@@ -696,12 +696,11 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     foregroundPresentation:(BOOL)foregroundPresentation
          completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
-    if (self.autobadgeEnabled && [[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
-        [self updateBadgeFromNotification:notification];
-    }
-
     switch (situation) {
         case UASituationForegroundPush:
+            if (self.autobadgeEnabled) {
+                [self updateBadgeFromNotification:notification];
+            }
             [[UAirship shared].analytics addEvent:[UAPushReceivedEvent eventWithNotification:notification]];
             break;
         case UASituationLaunchedFromPush:
@@ -798,7 +797,6 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 }
 
 - (void)notificationCenterWillPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
-
     UA_LDEBUG(@"Notification center will present notification: %@", notification);
 
     UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
@@ -814,15 +812,6 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     if (![UAirship shared].config.automaticSetupEnabled) {
         [self handleForegroundNotification:notification mergedOptions:options];
     }
-
-        NSDictionary *notificationPayload = notification.request.content.userInfo;
-    [self handleNotification:notificationPayload
-                   situation:UASituationForegroundPush
-      foregroundPresentation:NO
-           completionHandler:^(UIBackgroundFetchResult fetchResult){
-               // TODO: support for other presentation options
-               completionHandler(UNNotificationPresentationOptionNone);
-    }];
 }
 
 #pragma mark App delegate event handling
