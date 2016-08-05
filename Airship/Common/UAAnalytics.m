@@ -223,21 +223,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 #pragma mark -
 #pragma mark Analytics
 
-- (void)handleNotification:(NSDictionary*)userInfo inApplicationState:(UIApplicationState)applicationState {
-    switch (applicationState) {
-        case UIApplicationStateActive:
-            [self addEvent:[UAPushReceivedEvent eventWithNotification:userInfo]];
-            break;
-        case UIApplicationStateInactive:
-            if (![UAUtils isBackgroundPush:userInfo]) {
-                self.notificationUserInfo = userInfo;
-            }
-            break;
-        case UIApplicationStateBackground:
-            break;
-    }
-}
-
 - (void)addEvent:(UAEvent *)event {
     if (!event.isValid) {
         UA_LWARN(@"Dropping invalid event %@.", event);

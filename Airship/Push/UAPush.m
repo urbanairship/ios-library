@@ -27,7 +27,7 @@
 
 #import "UAPush+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAAnalytics.h"
+#import "UAAnalytics+Internal.h"
 #import "UADeviceRegistrationEvent+Internal.h"
 
 #import "UAUtils.h"
@@ -45,6 +45,7 @@
 #import "UAInboxUtils.h"
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UATagUtils.h"
+#import "UAPushReceivedEvent+Internal.h"
 #import "UAHTTPConnection+Internal.h"
 
 #define kUANotificationActionKey @"com.urbanairship.interactive_actions"
@@ -616,10 +617,8 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 - (void)handleNotificationActionWithIdentifier:(NSString *)identifier
                                   notification:(NSDictionary *)notification
                                   responseText:(NSString *)responseText
-                              applicationState:(UIApplicationState)state
                              completionHandler:(void (^)())completionHandler {
 
-    [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
 
     NSString *categoryID = notification[@"aps"][@"category"];
     NSSet *categories = self.combinedCategories;
@@ -666,8 +665,14 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     actionsPayload[kUAIncomingPushActionRegistryName] = notification;
 
     // Situation for the actions
-    UASituation situation = notificationAction.options & UNNotificationActionOptionForeground ?
-    UASituationForegroundInteractiveButton : UASituationBackgroundInteractiveButton;
+    UASituation actionSituation;
+
+    if (notificationAction.options & UNNotificationActionOptionForeground) {
+        [UAirship shared].analytics.notificationUserInfo = notification;
+        actionSituation = UASituationForegroundInteractiveButton;
+    } else {
+        actionSituation = UASituationBackgroundInteractiveButton;
+    }
 
     // Action metadata
     NSMutableDictionary *metadata = [@{ UAActionMetadataUserNotificationActionIDKey: identifier,
@@ -677,7 +682,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
     // Run the actions
     [UAActionRunner runActionsWithActionValues:actionsPayload
-                                     situation:situation
+                                     situation:actionSituation
                                       metadata:metadata
                              completionHandler:^(UAActionResult *result) {
                                  if (completionHandler) {
@@ -687,40 +692,23 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 }
 
 - (void)handleNotification:(NSDictionary *)notification
-          applicationState:(UIApplicationState)state
+                 situation:(UASituation)situation
     foregroundPresentation:(BOOL)foregroundPresentation
          completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
-    [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
-
-    UASituation situation;
-    switch(state) {
-        case UIApplicationStateActive:
-            UA_LTRACE(@"Received a notification when application state is UIApplicationStateActive");
-            situation = UASituationForegroundPush;
-
+    switch (situation) {
+        case UASituationForegroundPush:
             if (self.autobadgeEnabled) {
                 [self updateBadgeFromNotification:notification];
             }
+            [[UAirship shared].analytics addEvent:[UAPushReceivedEvent eventWithNotification:notification]];
             break;
-
-        case UIApplicationStateInactive:
-            UA_LTRACE(@"Received a notification when application state is UIApplicationStateInactive");
-
-            if ([UAUtils isBackgroundPush:notification]) {
-                situation = UASituationBackgroundPush;
-            } else {
-                situation = UASituationLaunchedFromPush;
-                self.launchNotification = notification;
-            }
+        case UASituationLaunchedFromPush:
+            [[UAirship shared].analytics launchedFromNotification:notification];
             break;
-
-        case UIApplicationStateBackground:
-            UA_LTRACE(@"Received a notification when application state is UIApplicationStateBackground");
-            situation = UASituationBackgroundPush;
+        default:
             break;
     }
-
 
     // Create the action payload
     NSMutableDictionary *actionsPayload = [NSMutableDictionary dictionaryWithDictionary:notification];
@@ -764,23 +752,15 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
 }
 
-- (void)handleNotification:(NSDictionary *)notification
-          applicationState:(UIApplicationState)state
-         completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-
-    [self handleNotification:notification applicationState:state foregroundPresentation:NO completionHandler:completionHandler];
-}
-
 // To be called externally after presentation options are merged, or internally with manual integration
 - (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options {
     BOOL foregroundPresentation = (options & UNNotificationPresentationOptionAlert) > 0;
     NSDictionary *notificationPayload = notification.request.content.userInfo;
     [self handleNotification:notificationPayload
-            applicationState:[UIApplication sharedApplication].applicationState
+                   situation:UASituationForegroundPush
       foregroundPresentation:foregroundPresentation
            completionHandler:nil];
 }
-
 
 #pragma mark -
 
@@ -799,24 +779,24 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
         responseText = ((UNTextInputNotificationResponse *)self).userText;
     }
 
-    UIApplicationState state = [UIApplication sharedApplication].applicationState;
-
+    // If app opened from notification
     if ([identifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
-        [self handleNotification:notification applicationState:state completionHandler:^(UIBackgroundFetchResult fetchResult){
-            completionHandler();
-        }];
+        [self handleNotification:notification
+                       situation:UASituationLaunchedFromPush
+          foregroundPresentation:NO
+               completionHandler:^(UIBackgroundFetchResult fetchResult){
+                   completionHandler();
+               }];
 
     } else {
         [self handleNotificationActionWithIdentifier:identifier
                                         notification:notification
                                         responseText:responseText
-                                    applicationState:state
                                    completionHandler:completionHandler];
     }
 }
 
 - (void)notificationCenterWillPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
-
     UA_LDEBUG(@"Notification center will present notification: %@", notification);
 
     UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
@@ -836,28 +816,58 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
 #pragma mark App delegate event handling
 
-- (void)appReceivedRemoteNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state {
-    [self appReceivedRemoteNotification:notification applicationState:state fetchCompletionHandler:nil];
+- (void)appReceivedRemoteNotification:(NSDictionary *)notification {
+    [self appReceivedRemoteNotification:notification fetchCompletionHandler:nil];
 }
 
 - (void)appReceivedRemoteNotification:(NSDictionary *)notification
-                     applicationState:(UIApplicationState)state
                fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
     UA_LINFO(@"Application received remote notification: %@", notification);
 
-    [self handleNotification:notification applicationState:state completionHandler:completionHandler];
+    UASituation situation = [self situationFromRemoteNotification:notification];
+
+    if (situation == UASituationLaunchedFromPush) {
+        self.launchNotification = notification;
+    }
+
+    [self handleNotification:notification situation:situation foregroundPresentation:NO completionHandler:completionHandler];
+}
+
+- (UASituation)situationFromRemoteNotification:(NSDictionary *)notification {
+    switch([UIApplication sharedApplication].applicationState) {
+        case UIApplicationStateActive:
+            return UASituationForegroundPush;
+
+        /*
+         * iOS 10+ will only ever call through to this helper via application:receivedRemoteNotification:fetchCompletion
+         * as a result of a background push.
+         */
+        case UIApplicationStateInactive:
+            // If iOS 10+, assume background push situation
+            if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+                return UASituationBackgroundPush;
+            }
+
+            if ([UAUtils isBackgroundPush:notification]) {
+                return UASituationBackgroundPush;
+            } else {
+                return UASituationLaunchedFromPush;
+            }
+
+        case UIApplicationStateBackground:
+        default:
+            return UASituationBackgroundPush;
+    }
 }
 
 - (void)appReceivedActionWithIdentifier:(NSString *)identifier
                            notification:(NSDictionary *)notification
-                       applicationState:(UIApplicationState)state
                       completionHandler:(void (^)())completionHandler {
 
     [self appReceivedActionWithIdentifier:identifier
                              notification:notification
                              responseInfo:nil
-                         applicationState:state
                         completionHandler:completionHandler];
 
 }
@@ -865,7 +875,6 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 - (void)appReceivedActionWithIdentifier:(NSString *)identifier
                            notification:(NSDictionary *)notification
                            responseInfo:(NSDictionary *)responseInfo
-                       applicationState:(UIApplicationState)state
                       completionHandler:(void (^)())completionHandler {
 
     NSString *responseText = responseInfo ? responseInfo[UIUserNotificationActionResponseTypedTextKey] : nil;
@@ -879,7 +888,6 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     [self handleNotificationActionWithIdentifier:identifier
                                     notification:notification
                                     responseText:responseText
-                                applicationState:state
                                completionHandler:completionHandler];
 }
 
@@ -1194,7 +1202,7 @@ BOOL deferChannelCreationOnForeground = false;
         NSUInteger options = self.notificationOptions & (UANotificationOptionAlert | UANotificationOptionBadge | UANotificationOptionSound);
 
         [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:options
-                                                                                        categories:categories]];
+                                                                                                              categories:categories]];
         UA_LDEBUG(@"Registering for user notification types %ld.", options);
 
         [self updateAuthorizedNotificationTypes];
@@ -1373,10 +1381,8 @@ BOOL deferChannelCreationOnForeground = false;
                 if ( [[UIApplication sharedApplication] currentUserNotificationSettings].types != UIUserNotificationTypeNone) {
                     UA_LDEBUG(@"Migrating userPushNotificationEnabled to YES because application was already registered for notification types");
                     [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
-
                 }
             }
-
         }
     }
 

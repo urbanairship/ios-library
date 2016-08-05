@@ -355,7 +355,7 @@ void UserNotificationCenterSetDelegate(id self, SEL _cmd, id<UNUserNotificationC
 #pragma mark App delegate (UIApplicationDelegate) swizzled methods
 
 void ApplicationDidReceiveRemoteNotification(id self, SEL _cmd, UIApplication *application, NSDictionary *userInfo) {
-    [[UAirship push] appReceivedRemoteNotification:userInfo applicationState:application.applicationState];
+    [[UAirship push] appReceivedRemoteNotification:userInfo];
 
     IMP original = [instance_ originalImplementation:_cmd class:[self class]];
     if (original) {
@@ -436,7 +436,6 @@ void ApplicationDidReceiveRemoteNotificationFetchCompletionHandler(id self,
 
     // Our completion handler is called by the action framework on the main queue
     [[UAirship push] appReceivedRemoteNotification:userInfo
-                                  applicationState:application.applicationState
                             fetchCompletionHandler:^(UIBackgroundFetchResult result) {
                                 resultCount++;
 
@@ -494,7 +493,6 @@ void ApplicationHandleActionWithIdentifierForRemoteNotificationCompletionHandler
     // Our completion handler is called by the action framework on the main queue
     [[UAirship push] appReceivedActionWithIdentifier:identifier
                                         notification:userInfo
-                                    applicationState:application.applicationState
                                    completionHandler:^{
                                        resultCount++;
 
@@ -546,7 +544,6 @@ void ApplicationHandleActionWithIdentifierForRemoteNotificationWithResponseInfoC
     [[UAirship push] appReceivedActionWithIdentifier:identifier
                                         notification:userInfo
                                         responseInfo:responseInfo
-                                    applicationState:application.applicationState
                                    completionHandler:^{
                                        resultCount++;
                                        

@@ -628,21 +628,17 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
  * and call the appropriate methods on your delegate.
  *
  * @param notification The notification payload, as passed to your application delegate.
- * @param state The application state at the time the notification was received.
  */
-- (void)appReceivedRemoteNotification:(NSDictionary *)notification
-                     applicationState:(UIApplicationState)state;
+- (void)appReceivedRemoteNotification:(NSDictionary *)notification;
 
 /**
  * Handle incoming push notifications. This method will record push conversions, parse the notification
  * and call the appropriate methods on your delegate.
  *
  * @param notification The notification payload, as passed to your application delegate.
- * @param state The application state at the time the notification was received.
  * @param completionHandler Should be called with a UIBackgroundFetchResult as soon as possible, so the system can accurately estimate its power and data cost.
  */
 - (void)appReceivedRemoteNotification:(NSDictionary *)notification
-                     applicationState:(UIApplicationState)state
                fetchCompletionHandler:(nullable void (^)(UIBackgroundFetchResult result))completionHandler;
 
 /**
@@ -665,12 +661,10 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
  *
  * @param identifier The identifier of the button that was triggered.
  * @param notification The notification payload, as passed to your application delegate.
- * @param state The application state at the time the notification was received.
  * @param completionHandler The completion handler.
  */
 - (void)appReceivedActionWithIdentifier:(NSString *)identifier
                            notification:(NSDictionary *)notification
-                       applicationState:(UIApplicationState)state
                       completionHandler:(void (^)())completionHandler;
 
 /**
@@ -679,13 +673,11 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
  * @param identifier The identifier of the button that was triggered.
  * @param notification The notification payload, as passed to your application delegate.
  * @param responseInfo The response info, as passed to your application delegate.
- * @param state The application state at the time the notification was received.
  * @param completionHandler The completion handler.
  */
 - (void)appReceivedActionWithIdentifier:(NSString *)identifier
                            notification:(NSDictionary *)notification
                            responseInfo:(nullable NSDictionary *)responseInfo
-                       applicationState:(UIApplicationState)state
                       completionHandler:(void (^)())completionHandler;
 
 @end
