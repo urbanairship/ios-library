@@ -116,18 +116,18 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
  *
  * @param notificationContent UANotificationContent object representing the notification info.
  *
- * @param handler the completion handler to execute when notification processing is complete.
+ * @param completionHandler the completion handler to execute when notification processing is complete.
  */
--(void)receivedForegroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)())handler;
+-(void)receivedForegroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)())completionHandler;
 
 /**
  * Called when a notification is received in the background.
  *
  * @param notificationContent UANotificationContent object representing the notification info.
  *
- * @param handler the completion handler to execute when notification processing is complete.
+ * @param completionHandler the completion handler to execute when notification processing is complete.
  */
--(void)receivedBackgroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)(UIBackgroundFetchResult))handler;
+-(void)receivedBackgroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
 
 /**
  * Called when a notification is received in the background or foreground and results in a user interaction.
@@ -137,9 +137,9 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
  * @param notificationResponse UANotificationResponse object representing the users response
  * to the notification and the associated notification contents.
  *
- * @param handler the completion handler to execute when processing the user's response has completed.
+ * @param completionHandler the completion handler to execute when processing the user's response has completed.
  */
--(void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void (^)())handler;
+-(void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void (^)())completionHandler;
 
 /**
  * Called when a notification has arrived in the foreground and is available for display.
