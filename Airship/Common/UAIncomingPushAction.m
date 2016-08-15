@@ -77,7 +77,7 @@
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
     id<UAPushNotificationDelegate> pushDelegate = [UAirship push].pushNotificationDelegate;
-    if ([pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:completionHandler:)]) {
+    if ([pushDelegate respondsToSelector:@selector(receivedForegroundNotification:completionHandler:)]) {
         UANotificationContent *notificationContent = [UANotificationContent notificationWithNotificationInfo:notification];
 
         [pushDelegate receivedForegroundNotification:notificationContent completionHandler:^(UIBackgroundFetchResult result) {

@@ -1,10 +1,27 @@
-//
-//  UANotificationTest.m
-//  AirshipLib
-//
-//  Created by David Crow on 8/9/16.
-//
-//
+/*
+ Copyright 2009-2016 Urban Airship Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided with the distribution.
+
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 #import <XCTest/XCTest.h>
 #import "UANotificationContent.h"
@@ -22,7 +39,6 @@
 
 - (void)setUp {
     [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
 
     self.testKey = nil;
     self.testValue = nil;
@@ -57,7 +73,6 @@
 }
 
 - (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
 }
 
@@ -69,7 +84,7 @@
     XCTAssertTrue([notification.alertBody isEqualToString:self.notification[@"aps"][@"alert"]]);
 
     // Badge
-    XCTAssertTrue([notification.badgeNumber isEqualToNumber:self.notificationWithBody[@"aps"][@"badge"]]);
+    XCTAssertTrue([notification.badge isEqualToNumber:self.notificationWithBody[@"aps"][@"badge"]]);
 
     // Sound
     XCTAssertTrue([notification.sound isEqualToString:self.notificationWithBody[@"aps"][@"sound"]]);
@@ -78,13 +93,13 @@
     XCTAssertTrue([notification.contentAvailable isEqualToNumber:self.notificationWithBody[@"aps"][@"content-available"]]);
 
     // Category
-    XCTAssertTrue([notification.category isEqualToString:self.notificationWithBody[@"aps"][@"category"]]);
+    XCTAssertTrue([notification.categoryIdentifier isEqualToString:self.notificationWithBody[@"aps"][@"category"]]);
 
     // Raw Notification
     XCTAssertTrue([notification.notificationInfo isEqualToDictionary:self.notification]);
 }
 
-// Tests notification content creation when the input notification dictionary includes a alert body
+// Tests notification content creation when the input notification dictionary includes an alert body
 -(void)testNotificationContentFromNotificationDictionaryWithAlertBody {
     UANotificationContent *notification = [UANotificationContent notificationWithNotificationInfo:self.notificationWithBody];
 
@@ -95,7 +110,7 @@
     XCTAssertTrue([notification.alertBody isEqualToString:self.notificationWithBody[@"aps"][@"alert"][@"body"]]);
 
     // Badge
-    XCTAssertTrue(notification.badgeNumber == self.notificationWithBody[@"aps"][@"badge"]);
+    XCTAssertTrue(notification.badge == self.notificationWithBody[@"aps"][@"badge"]);
 
     // Sound
     XCTAssertTrue([notification.sound isEqualToString:self.notificationWithBody[@"aps"][@"sound"]]);
@@ -104,7 +119,7 @@
     XCTAssertTrue([notification.contentAvailable isEqualToNumber:self.notificationWithBody[@"aps"][@"content-available"]]);
 
     // Category
-    XCTAssertTrue([notification.category isEqualToString:self.notificationWithBody[@"aps"][@"category"]]);
+    XCTAssertTrue([notification.categoryIdentifier isEqualToString:self.notificationWithBody[@"aps"][@"category"]]);
 
     // Localization Keys
     XCTAssertTrue([notification.localizationKeys[@"loc-key"] isEqualToString:self.notificationWithBody[@"aps"][@"alert"][@"loc-key"]]);

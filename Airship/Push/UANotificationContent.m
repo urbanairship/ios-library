@@ -23,7 +23,6 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #import "UANotificationContent.h"
 #import "NSString+UALocalizationAdditions.h"
 
@@ -84,13 +83,13 @@
             }
 
             // Badge
-            self.badgeNumber = apsDict[@"badge"];
+            self.badge = apsDict[@"badge"];
 
             // Sound
             self.sound = apsDict[@"sound"];
 
             // Category
-            self.category = apsDict[@"category"];
+            self.categoryIdentifier = apsDict[@"category"];
 
             // ContentAvailable
             self.contentAvailable = apsDict[@"content-available"];
@@ -103,20 +102,9 @@
     return self;
 }
 
--(instancetype)initWithUNNotification:(UNNotification *)notification {
-    self = [super init];
-
-    if (self) {
-
-
-    }
-
-    return self;
-}
-
 + (instancetype)notificationWithNotificationInfo:(NSDictionary *)notificationInfo {
     UANotificationContent *notificationContent = [[UANotificationContent alloc] initWithNotificationInfo:notificationInfo];
-    
+
     return notificationContent;
 }
 

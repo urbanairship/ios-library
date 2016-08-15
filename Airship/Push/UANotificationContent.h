@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, nullable) NSString *alertTitle;
 
 /**
- * Alert contents
+ * Alert body
  */
 @property (nonatomic, strong, nullable) NSString *alertBody;
 
@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Badge number
  */
-@property (nonatomic, assign, nullable) NSNumber *badgeNumber;
+@property (nonatomic, assign, nullable) NSNumber *badge;
 
 /**
  * Content available
@@ -58,14 +58,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Category
  */
-@property (nonatomic, strong, nullable) NSString *category;
-
+@property (nonatomic, strong, nullable) NSString *categoryIdentifier;
 
 /**
  * Launch image file name
  */
 @property (nonatomic, strong, nullable) NSString *launchImage;
-
 
 /**
  * Localization keys

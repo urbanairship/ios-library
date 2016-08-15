@@ -75,9 +75,9 @@
     BOOL userTappedOrDismissedNotification = ([notificationResponse.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier] ||
                                             [notificationResponse.actionIdentifier isEqualToString:UANotificationDismissActionIdentifier]);
 
-    // User interacted with notification that foregrounded the app.
+    // User interacted with a notification that foregrounded the app.
     if ([notificationResponse.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
-        UA_LDEBUG(@"The user launched the app a the notification");
+        UA_LDEBUG(@"The user launched the app from a notification");
 
         // Call the completion handler
         completionHandler();
@@ -87,8 +87,6 @@
     if (!userTappedOrDismissedNotification && !notificationResponse.isBackground) {
         UA_LDEBUG(@"The user interacted with a foreground user notification button or interface");
 
-        // Do something when a user interacted with a notification button or interface that foregrounded the app.
-
         // Call the completion handler
         completionHandler();
     }
@@ -96,8 +94,6 @@
     // User interacted with a user notification button or interface that did not foreground the app.
     if (!userTappedOrDismissedNotification && notificationResponse.isBackground) {
         UA_LDEBUG(@"The user interacted with a background user notification button or interface");
-
-        // Do something when a user interacted with a user notification button or interface that did not foreground the app.
 
         // Call the completion handler
         completionHandler();

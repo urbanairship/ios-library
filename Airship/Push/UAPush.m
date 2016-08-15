@@ -620,7 +620,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
                              completionHandler:(void (^)())completionHandler {
 
 
-    NSString *categoryID = notificationContent.category;
+    NSString *categoryID = notificationContent.categoryIdentifier;
     NSSet *categories = self.combinedCategories;
 
     UANotificationCategory *notificationCategory;
@@ -700,7 +700,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     switch (situation) {
         case UASituationForegroundPush:
             if (self.autobadgeEnabled) {
-                 [[UIApplication sharedApplication] setApplicationIconBadgeNumber:notificationContent.badgeNumber.integerValue];
+                 [[UIApplication sharedApplication] setApplicationIconBadgeNumber:notificationContent.badge.integerValue];
             }
             [[UAirship shared].analytics addEvent:[UAPushReceivedEvent eventWithNotification:notificationContent.notificationInfo]];
             break;
