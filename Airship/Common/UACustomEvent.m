@@ -132,6 +132,11 @@ NSString *const UACustomEventConversionSendIDKey = @"conversion_send_id";
         isValid = NO;
     }
 
+    if (self.templateType.length > UACustomEventCharacterLimit) {
+        UA_LERR(@"Event template type is larger than %lu characters.", (unsigned long)UACustomEventCharacterLimit);
+        isValid = NO;
+    }
+
     if (self.eventValue) {
         if ([self.eventValue isEqualToNumber:[NSDecimalNumber notANumber]]) {\
             UA_LERR(@"Event value is not a number.");
@@ -225,6 +230,9 @@ NSString *const UACustomEventConversionSendIDKey = @"conversion_send_id";
 
     // Transaction ID
     [dictionary setValue:self.transactionID forKey:UACustomEventTransactionIDKey];
+
+    // Template type
+    [dictionary setValue:self.templateType forKey:@"template_type"];
 
     // Event value
     if (self.eventValue) {

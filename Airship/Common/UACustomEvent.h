@@ -122,6 +122,12 @@ extern NSString *const UACustomEventInteractionTypeKey;
 @property (nonatomic, copy, readonly) NSDictionary *properties;
 
 /**
+ * The event's template type. The template type's length must not exceed 255 characters or it will
+ * invalidate the event.
+ */
+@property (nonatomic, copy, nullable) NSString *templateType;
+
+/**
  * Sets the custom event's interaction type and ID from a UAInboxMessage.
  * @param message The UAInboxMessage to set the custom event's interaction type
  * and ID from.

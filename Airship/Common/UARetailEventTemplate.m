@@ -27,6 +27,7 @@
 #import "UAirship.h"
 #import "UAAnalytics.h"
 
+#define kUARetailEventTemplate @"retail"
 #define kUABrowsedProductEvent @"browsed"
 #define kUAAddedToCartEvent @"added_to_cart"
 #define kUAStarredProductEvent @"starred_product"
@@ -229,6 +230,8 @@
     if (self.medium) {
         [event setStringProperty:self.medium forKey:kUARetailEventTemplateMedium];
     }
+
+    event.templateType = kUARetailEventTemplate;
 
     return event;
 }
