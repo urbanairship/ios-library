@@ -366,6 +366,9 @@
 		CCA8ECFF1D63CF060042030E /* UAJSONValueMatcherTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA8ECFE1D63CF060042030E /* UAJSONValueMatcherTests.m */; };
 		CCA8ED011D63DF840042030E /* UAJSONMatcherTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA8ED001D63DF840042030E /* UAJSONMatcherTests.m */; };
 		CCA8ED031D63E3BC0042030E /* UAJSONPredicateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA8ED021D63E3BC0042030E /* UAJSONPredicateTests.m */; };
+		CCA8ED0B1D64FD200042030E /* UACancelSchedulesAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CCA8ED091D64FD200042030E /* UACancelSchedulesAction.h */; };
+		CCA8ED0C1D64FD200042030E /* UACancelSchedulesAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA8ED0A1D64FD200042030E /* UACancelSchedulesAction.m */; };
+		CCA8ED0F1D6503780042030E /* UACancelSchedulesActionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA8ED0E1D6503780042030E /* UACancelSchedulesActionTests.m */; };
 		CCAF06D31B0E4DAC007392A7 /* UAAppDelegateProxyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCAF06D21B0E4DAC007392A7 /* UAAppDelegateProxyTest.m */; };
 		CCAFA2191CFDF9D9003FC4B8 /* UALocation.m in Sources */ = {isa = PBXBuildFile; fileRef = CCAFA2181CFDF9D9003FC4B8 /* UALocation.m */; };
 		CCAFA21B1CFDF9E6003FC4B8 /* UALocation.h in Headers */ = {isa = PBXBuildFile; fileRef = CCAFA21A1CFDF9E6003FC4B8 /* UALocation.h */; };
@@ -812,6 +815,9 @@
 		CCA8ECFE1D63CF060042030E /* UAJSONValueMatcherTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAJSONValueMatcherTests.m; sourceTree = "<group>"; };
 		CCA8ED001D63DF840042030E /* UAJSONMatcherTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAJSONMatcherTests.m; sourceTree = "<group>"; };
 		CCA8ED021D63E3BC0042030E /* UAJSONPredicateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAJSONPredicateTests.m; sourceTree = "<group>"; };
+		CCA8ED091D64FD200042030E /* UACancelSchedulesAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACancelSchedulesAction.h; sourceTree = "<group>"; };
+		CCA8ED0A1D64FD200042030E /* UACancelSchedulesAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACancelSchedulesAction.m; sourceTree = "<group>"; };
+		CCA8ED0E1D6503780042030E /* UACancelSchedulesActionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACancelSchedulesActionTests.m; sourceTree = "<group>"; };
 		CCAF06D21B0E4DAC007392A7 /* UAAppDelegateProxyTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAppDelegateProxyTest.m; sourceTree = "<group>"; };
 		CCAFA2181CFDF9D9003FC4B8 /* UALocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocation.m; sourceTree = "<group>"; };
 		CCAFA21A1CFDF9E6003FC4B8 /* UALocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocation.h; sourceTree = "<group>"; };
@@ -1557,6 +1563,7 @@
 		CC82DF641D1E57D600267824 /* Automation */ = {
 			isa = PBXGroup;
 			children = (
+				CCA8ED081D64FD040042030E /* Actions */,
 				CCA8ECF01D63A52C0042030E /* Predicate */,
 				CCD9B8951D4841A500870D97 /* Data */,
 				CC82DF651D1E57ED00267824 /* UAActionScheduleInfo.h */,
@@ -1666,6 +1673,7 @@
 		CCA8ECEB1D626C670042030E /* Automation */ = {
 			isa = PBXGroup;
 			children = (
+				CCA8ED0D1D6503680042030E /* Actions */,
 				CCA8ECFD1D63CEE60042030E /* Predicate */,
 				CCA8ECEC1D626C830042030E /* UAAutomationTests.m */,
 			);
@@ -1693,6 +1701,23 @@
 				CCA8ED021D63E3BC0042030E /* UAJSONPredicateTests.m */,
 			);
 			name = Predicate;
+			sourceTree = "<group>";
+		};
+		CCA8ED081D64FD040042030E /* Actions */ = {
+			isa = PBXGroup;
+			children = (
+				CCA8ED091D64FD200042030E /* UACancelSchedulesAction.h */,
+				CCA8ED0A1D64FD200042030E /* UACancelSchedulesAction.m */,
+			);
+			name = Actions;
+			sourceTree = "<group>";
+		};
+		CCA8ED0D1D6503680042030E /* Actions */ = {
+			isa = PBXGroup;
+			children = (
+				CCA8ED0E1D6503780042030E /* UACancelSchedulesActionTests.m */,
+			);
+			name = Actions;
 			sourceTree = "<group>";
 		};
 		CCAF06CE1B0E4D09007392A7 /* AppDelegates */ = {
@@ -1902,6 +1927,7 @@
 				CC82DF671D1E57ED00267824 /* UAActionScheduleInfo.h in Headers */,
 				1F610DEB17835C3A00BCD96E /* UAInboxMessageData+Internal.h in Headers */,
 				CC4AAE0518C93ECF001F23B3 /* UAApplicationMetrics+Internal.h in Headers */,
+				CCA8ED0B1D64FD200042030E /* UACancelSchedulesAction.h in Headers */,
 				BB8860B1159A7E9600584445 /* UAGlobal.h in Headers */,
 				BB8860D2159A7E9600584445 /* UAUser.h in Headers */,
 				BB8860D6159A7E9600584445 /* UAAnalytics.h in Headers */,
@@ -2285,6 +2311,7 @@
 				4925AAAD1B2B9D00002F045D /* UAirshipTest.m in Sources */,
 				CC4AAE0C18C93EF2001F23B3 /* UAApplicationMetricsTest.m in Sources */,
 				76F9B4AE18D3CE2A00C438D4 /* JRSwizzle.m in Sources */,
+				CCA8ED0F1D6503780042030E /* UACancelSchedulesActionTests.m in Sources */,
 				769FD9921B2B7316005BE77F /* UATagUtilsTest.m in Sources */,
 				4928D8FD1AB758C10046E5BE /* UAUserNotificationCategoryTest.m in Sources */,
 				CC5D25671B040D8700711629 /* UAOverlayInboxMessageActionTest.m in Sources */,
@@ -2362,6 +2389,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7676AA0C18C4EF5B00B4E5B4 /* UAAppDelegateProxy.m in Sources */,
+				CCA8ED0C1D64FD200042030E /* UACancelSchedulesAction.m in Sources */,
 				49EB68E51C1FAD5D00D05BCE /* UAMessageCenterDateUtils.m in Sources */,
 				CC8542B917F4B81600D2DE10 /* UAActionArguments.m in Sources */,
 				4995C642180DBBDD004F8724 /* UARemoveTagsAction.m in Sources */,

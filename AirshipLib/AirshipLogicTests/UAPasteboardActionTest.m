@@ -86,7 +86,7 @@
  * Test perform with a string sets the pasteboard's string
  */
 - (void)testPerformWithString {
-    __block BOOL actionPerfomed = NO;
+    __block BOOL actionPerformed = NO;
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
     arguments.situation = UASituationManualInvocation;
@@ -95,11 +95,11 @@
     [[self.mockPasteboard expect] setString:@"pasteboard string"];
 
     [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
-        actionPerfomed = YES;
+        actionPerformed = YES;
         XCTAssertEqual(arguments.value, result.value);
     }];
 
-    XCTAssertTrue(actionPerfomed);
+    XCTAssertTrue(actionPerformed);
     [self.mockPasteboard verify];
 }
 
@@ -107,7 +107,7 @@
  * Test perform with a dictionary sets the pasteboard's string
  */
 - (void)testPerformWithDictionary {
-    __block BOOL actionPerfomed = NO;
+    __block BOOL actionPerformed = NO;
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
     arguments.situation = UASituationManualInvocation;
@@ -116,11 +116,11 @@
     [[self.mockPasteboard expect] setString:@"pasteboard string"];
 
     [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
-        actionPerfomed = YES;
+        actionPerformed = YES;
         XCTAssertEqual(arguments.value, result.value);
     }];
 
-    XCTAssertTrue(actionPerfomed);
+    XCTAssertTrue(actionPerformed);
     [self.mockPasteboard verify];
 }
 

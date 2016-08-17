@@ -39,6 +39,7 @@
 #import "UADisplayInboxAction.h"
 #import "UAPasteboardAction.h"
 #import "UAOverlayInboxMessageAction.h"
+#import "UACancelSchedulesAction.h"
 
 @implementation UAActionRegistry
 @dynamic registeredEntries;
@@ -342,9 +343,14 @@
                    return (BOOL)(args.situation != UASituationForegroundPush);
                }];
 
-    // Wallet Action
+    // Wallet action
     [self registerAction:[[UAOpenExternalURLAction alloc] init]
                    names:@[kUAWalletActionDefaultRegistryAlias, kUAWalletActionDefaultRegistryName]];
+
+    // Cancel schedules action
+    [self registerAction:[[UACancelSchedulesAction alloc] init]
+                   names:@[kUACancelSchedulesActionDefaultRegistryName, kUACancelSchedulesActionDefaultRegistryAlias]];
+
 }
 
 @end
