@@ -31,11 +31,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic, assign) UAScheduleTriggerType type;
 @property(nonatomic, strong) NSNumber *goal;
-@property(nonatomic, copy, nullable) NSString *predicateFormat;
+@property(nonatomic, strong, nullable) UAJSONPredicate *predicate;
 
 +(instancetype)triggerWithType:(UAScheduleTriggerType)type
                           goal:(NSNumber *)goal
-               predicateFormat:(nullable NSString *)predicateFormat;
+                     predicate:(nullable UAJSONPredicate *)predicate;
 
 @end
 

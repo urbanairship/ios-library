@@ -38,6 +38,7 @@
 #import "UACustomEvent.h"
 #import "UAActionRunner+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "UAJSONPredicate.h"
 
 NSUInteger const UAScheduleLimit = 100;
 
@@ -80,7 +81,7 @@ NSUInteger const UAScheduleLimit = 100;
         for (UAScheduleTriggerData *triggerData in data.triggers) {
             UAScheduleTrigger *trigger = [UAScheduleTrigger triggerWithType:(UAScheduleTriggerType)[triggerData.type integerValue]
                                                                        goal:triggerData.goal
-                                                            predicateFormat:triggerData.predicateFormat];
+                                                                  predicate:[self predicateFromData:triggerData.predicateData]];
 
             [triggers addObject:trigger];
         }
@@ -94,6 +95,13 @@ NSUInteger const UAScheduleLimit = 100;
     return [UAActionSchedule actionScheduleWithIdentifier:data.identifier info:scheduleInfo];
 }
 
+- (UAJSONPredicate *)predicateFromData:(NSData *)data {
+    if (!data) {
+        return nil;
+    }
+    id json = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+    return [UAJSONPredicate predicateWithJSON:json];
+}
 
 #pragma mark -
 #pragma mark Public API
@@ -205,10 +213,23 @@ NSUInteger const UAScheduleLimit = 100;
 }
 
 -(void)customEventAdded:(UACustomEvent *)event {
-    [self updateTriggersWithType:UAScheduleTriggerCustomEventCount argument:event incrementAmount:1.0];
+    /*
+     * We are unable to use the event.data because we modify the eventValue and
+     * properties before we store the event to be sent to warp9. Instead we are
+     * going to recreate the event data with the unmodified values.
+     */
+    NSDictionary *eventData = [NSMutableDictionary dictionary];
+    [eventData setValue:event.eventName forKey:UACustomEventNameKey];
+    [eventData setValue:event.interactionID forKey:UACustomEventInteractionIDKey];
+    [eventData setValue:event.interactionType forKey:UACustomEventInteractionTypeKey];
+    [eventData setValue:event.transactionID forKey:UACustomEventTransactionIDKey];
+    [eventData setValue:event.eventValue forKey:UACustomEventValueKey];
+    [eventData setValue:event.properties forKey:UACustomEventPropertiesKey];
+
+    [self updateTriggersWithType:UAScheduleTriggerCustomEventCount argument:eventData incrementAmount:1.0];
 
     if (event.eventValue) {
-        [self updateTriggersWithType:UAScheduleTriggerCustomEventValue argument:event incrementAmount:[event.eventValue doubleValue]];
+        [self updateTriggersWithType:UAScheduleTriggerCustomEventValue argument:eventData incrementAmount:[event.eventValue doubleValue]];
     }
 }
 
@@ -221,7 +242,8 @@ NSUInteger const UAScheduleLimit = 100;
         triggerType = UAScheduleTriggerRegionExit;
     }
 
-    [self updateTriggersWithType:triggerType argument:event incrementAmount:1.0];
+
+    [self updateTriggersWithType:triggerType argument:event.data incrementAmount:1.0];
 }
 
 -(void)screenTracked:(NSString *)screenName {
@@ -240,9 +262,9 @@ NSUInteger const UAScheduleLimit = 100;
 
         for (UAScheduleTriggerData *trigger in triggers) {
 
-            if (trigger.predicateFormat && argument) {
-                NSPredicate *triggerPredicate = [NSPredicate predicateWithFormat:trigger.predicateFormat];
-                if (![triggerPredicate evaluateWithObject:argument]) {
+            UAJSONPredicate *predicate = [self predicateFromData:trigger.predicateData];
+            if (predicate && argument) {
+                if (![predicate evaluateObject:argument]) {
                     continue;
                 }
             }
@@ -284,7 +306,6 @@ NSUInteger const UAScheduleLimit = 100;
         UA_LTRACE(@"Automation execution time: %f seconds, triggers: %ld, actions: %ld", executionTime, triggers.count, triggeredSchedules.count);
     }];
 }
-
 
 @end
 

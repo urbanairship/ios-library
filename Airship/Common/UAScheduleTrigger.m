@@ -24,63 +24,74 @@
  */
 
 #import "UAScheduleTrigger+Internal.h"
+#import "UAJSONPredicate.h"
+#import "UARegionEvent+Internal.h"
 
 @implementation UAScheduleTrigger
 
-- (instancetype)initWithType:(UAScheduleTriggerType)type goal:(NSNumber *)goal predicateFormat:(NSString *)predicateFormat {
+- (instancetype)initWithType:(UAScheduleTriggerType)type goal:(NSNumber *)goal predicate:(UAJSONPredicate *)predicate {
     self = [super self];
     if (self) {
         self.goal = goal;
-        self.predicateFormat = predicateFormat;
+        self.predicate = predicate;
         self.type = type;
     }
 
     return self;
 }
 
-+ (instancetype)triggerWithType:(UAScheduleTriggerType)type goal:(NSNumber *)goal predicateFormat:(NSString *)predicateFormat {
-    return [[UAScheduleTrigger alloc] initWithType:type goal:goal predicateFormat:predicateFormat];
++ (instancetype)triggerWithType:(UAScheduleTriggerType)type goal:(NSNumber *)goal predicate:(UAJSONPredicate *)predicate {
+    return [[UAScheduleTrigger alloc] initWithType:type goal:goal predicate:predicate];
 }
 
 + (instancetype)foregroundTriggerWithCount:(NSUInteger)count {
-    return [UAScheduleTrigger triggerWithType:UAScheduleTriggerAppForeground goal:@(count) predicateFormat:nil];
+    return [UAScheduleTrigger triggerWithType:UAScheduleTriggerAppForeground goal:@(count) predicate:nil];
 }
 
 + (instancetype)backgroundTriggerWithCount:(NSUInteger)count {
-    return [UAScheduleTrigger triggerWithType:UAScheduleTriggerAppBackground goal:@(count) predicateFormat:nil];
+    return [UAScheduleTrigger triggerWithType:UAScheduleTriggerAppBackground goal:@(count) predicate:nil];
 }
 
 + (instancetype)regionEnterTriggerForRegionID:(NSString *)regionID count:(NSUInteger)count {
-    NSString *predicateString = [NSString stringWithFormat:@"regionID == \"%@\"", regionID];
+    UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:regionID];
+    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher key:kUARegionIDKey];
+    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+
     return [UAScheduleTrigger triggerWithType:UAScheduleTriggerRegionEnter
                                          goal:@(count)
-                              predicateFormat:predicateString];
+                                    predicate:predicate];
 }
 
 + (instancetype)regionExitTriggerForRegionID:(NSString *)regionID count:(NSUInteger)count {
-    NSString *predicateString = [NSString stringWithFormat:@"regionID == \"%@\"", regionID];
+    UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:regionID];
+    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher key:kUARegionIDKey];
+    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+
     return [UAScheduleTrigger triggerWithType:UAScheduleTriggerRegionExit
                                          goal:@(count)
-                              predicateFormat:predicateString];
+                                    predicate:predicate];
 }
 
 + (instancetype)screenTriggerForScreenName:(NSString *)screenName count:(NSUInteger)count {
-    NSString *predicateString = [NSString stringWithFormat:@"SELF == \"%@\"", screenName];
+    UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:screenName];
+    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher];
+    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+
     return [UAScheduleTrigger triggerWithType:UAScheduleTriggerScreen
                                          goal:@(count)
-                              predicateFormat:predicateString];
+                                    predicate:predicate];
 }
 
-+ (instancetype)customEventTriggerWithPredicateFormat:(NSString *)predicateFormat count:(NSUInteger)count {
++ (instancetype)customEventTriggerWithPredicate:(UAJSONPredicate *)predicate count:(NSUInteger)count {
     return [UAScheduleTrigger triggerWithType:UAScheduleTriggerCustomEventCount
                                          goal:@(count)
-                              predicateFormat:predicateFormat];
+                                    predicate:predicate];
 }
 
-+ (instancetype)customEventTriggerWithPredicateFormat:(NSString *)predicateFormat value:(NSNumber *)value {
++ (instancetype)customEventTriggerWithPredicate:(UAJSONPredicate *)predicate value:(NSNumber *)value {
     return [UAScheduleTrigger triggerWithType:UAScheduleTriggerCustomEventValue
                                          goal:value
-                              predicateFormat:predicateFormat];
+                                    predicate:predicate];
 }
 
 - (BOOL)isEqualToTrigger:(UAScheduleTrigger *)trigger {
@@ -96,7 +107,7 @@
         return NO;
     }
 
-    if (self.predicateFormat != trigger.predicateFormat && ![self.predicateFormat isEqualToString:trigger.predicateFormat]) {
+    if (self.predicate != trigger.predicate && ![self.predicate.payload isEqualToDictionary:trigger.predicate.payload]) {
         return NO;
     }
 
@@ -121,7 +132,7 @@
     NSUInteger result = 1;
     result = 31 * result + self.type;
     result = 31 * result + [self.goal hash];
-    result = 31 * result + [self.predicateFormat hash];
+    result = 31 * result + [self.predicate hash];
     return result;
 }
 

@@ -26,6 +26,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+@class UAJSONPredicate;
 @class UAActionScheduleData;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -34,10 +35,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nullable, nonatomic, retain) NSNumber *goal;
 @property (nullable, nonatomic, retain) NSNumber *goalProgress;
-@property (nullable, nonatomic, retain) NSString *predicateFormat;
+@property (nullable, nonatomic, retain) NSData *predicateData;
 @property (nullable, nonatomic, retain) NSNumber *type;
 @property (nullable, nonatomic, retain) UAActionScheduleData *schedule;
 @property (nullable, nonatomic, retain) NSDate *start;
+
 @end
 
 NS_ASSUME_NONNULL_END

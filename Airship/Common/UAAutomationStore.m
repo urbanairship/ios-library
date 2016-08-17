@@ -30,6 +30,7 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAScheduleTrigger+Internal.h"
 #import "UAirship.h"
+#import "UAJSONPredicate.h"
 
 @interface UAAutomationStore ()
 @property (nonatomic, strong) NSManagedObjectContext *managedContext;
@@ -105,11 +106,13 @@
         for (UAScheduleTrigger *trigger in schedule.info.triggers) {
             UAScheduleTriggerData *triggerData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleTriggerData"
                                                                                inManagedObjectContext:self.managedContext];
-
             triggerData.type = @(trigger.type);
             triggerData.goal = trigger.goal;
-            triggerData.predicateFormat = trigger.predicateFormat;
             triggerData.start = schedule.info.start;
+
+            if (trigger.predicate) {
+                triggerData.predicateData = [NSJSONSerialization dataWithJSONObject:trigger.predicate.payload options:0 error:nil];
+            }
 
             [triggers addObject:triggerData];
         }

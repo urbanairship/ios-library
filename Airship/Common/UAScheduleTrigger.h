@@ -68,6 +68,8 @@ typedef NS_ENUM(NSInteger, UAScheduleTriggerType) {
 };
 
 
+@class UAJSONPredicate;
+
 @interface UAScheduleTrigger: NSObject
 
 /**
@@ -131,24 +133,24 @@ typedef NS_ENUM(NSInteger, UAScheduleTriggerType) {
 /**
  * Factory method to create a custom event count trigger.
  *
- * @param predicateFormat Custom event predicate to filter out events that are applied
+ * @param predicate Custom event predicate to filter out events that are applied
  * to the trigger's count.
  * @param count Number of custom event counts before firing the trigger.
  * @return A custom event count trigger.
  */
-+ (instancetype)customEventTriggerWithPredicateFormat:(NSString *)predicateFormat
-                                                count:(NSUInteger)count;
++ (instancetype)customEventTriggerWithPredicate:(UAJSONPredicate *)predicate
+                                          count:(NSUInteger)count;
 
 /**
  * Factory method to create a custom event value trigger.
  *
- * @param predicateFormat Custom event predicate to filter out events that are applied
+ * @param predicate Custom event predicate to filter out events that are applied
  * to the trigger's value.
  * @param value Aggregate custom event value before firing the trigger.
  * @return A custom event value trigger.
  */
-+ (instancetype)customEventTriggerWithPredicateFormat:(NSString *)predicateFormat
-                                                value:(NSNumber *)value;
++ (instancetype)customEventTriggerWithPredicate:(UAJSONPredicate *)predicate
+                                          value:(NSNumber *)value;
 
 
 /**

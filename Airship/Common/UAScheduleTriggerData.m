@@ -30,9 +30,8 @@
 
 @dynamic goal;
 @dynamic goalProgress;
-@dynamic predicateFormat;
+@dynamic predicateData;
 @dynamic type;
 @dynamic schedule;
 @dynamic start;
-
 @end

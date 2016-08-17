@@ -30,14 +30,27 @@
 #import "NSJSONSerialization+UAAdditions.h"
 
 @interface UACustomEvent()
-@property(nonatomic, strong) NSMutableDictionary *properties;
+@property(nonatomic, strong) NSMutableDictionary *mutableProperties;
 @end
+
 
 @implementation UACustomEvent
 
 const NSUInteger UACustomEventCharacterLimit = 255;
 const NSUInteger UACustomEventMaxPropertiesCount = 100;
 const NSUInteger UACustomEventMaxPropertyCollectionSize = 20;
+
+// Public data keys
+NSString *const UACustomEventNameKey = @"event_name";
+NSString *const UACustomEventValueKey = @"event_value";
+NSString *const UACustomEventPropertiesKey = @"properties";
+NSString *const UACustomEventTransactionIDKey = @"transaction_id";
+NSString *const UACustomEventInteractionIDKey = @"interaction_id";
+NSString *const UACustomEventInteractionTypeKey = @"interaction_type";
+
+// Private data keys
+NSString *const UACustomEventConversionMetadataKey = @"conversion_metadata";
+NSString *const UACustomEventConversionSendIDKey = @"conversion_send_id";
 
 - (NSString *)eventType {
     return @"custom_event";
@@ -48,7 +61,7 @@ const NSUInteger UACustomEventMaxPropertyCollectionSize = 20;
     if (self) {
         self.eventName = eventName;
         self.eventValue = eventValue;
-        self.properties = [NSMutableDictionary dictionary];
+        self.mutableProperties = [NSMutableDictionary dictionary];
     }
 
     return self;
@@ -68,19 +81,19 @@ const NSUInteger UACustomEventMaxPropertyCollectionSize = 20;
 }
 
 - (void)setBoolProperty:(BOOL)value forKey:(NSString *)key {
-    [self.properties setValue:@(value) forKey:key];
+    [self.mutableProperties setValue:@(value) forKey:key];
 }
 
 - (void)setStringProperty:(NSString *)value forKey:(NSString *)key {
-    [self.properties setValue:[value copy] forKey:key];
+    [self.mutableProperties setValue:[value copy] forKey:key];
 }
 
 - (void)setNumberProperty:(NSNumber *)value forKey:(NSString *)key {
-    [self.properties setValue:[value copy] forKey:key];
+    [self.mutableProperties setValue:[value copy] forKey:key];
 }
 
 - (void)setStringArrayProperty:(NSArray *)value forKey:(NSString *)key {
-    [self.properties setValue:[value copy] forKey:key];
+    [self.mutableProperties setValue:[value copy] forKey:key];
 }
 
 - (void)setEventValue:(NSDecimalNumber *)eventValue {
@@ -132,13 +145,13 @@ const NSUInteger UACustomEventMaxPropertyCollectionSize = 20;
         }
     }
 
-    if (self.properties.count > UACustomEventMaxPropertiesCount) {
+    if (self.mutableProperties.count > UACustomEventMaxPropertiesCount) {
         UA_LERR(@"Event contains more than %lu properties.", (unsigned long)UACustomEventMaxPropertiesCount);
         isValid = NO;
     }
 
-    for (id key in self.properties) {
-        id value = [self.properties valueForKey:key];
+    for (id key in self.mutableProperties) {
+        id value = [self.mutableProperties valueForKey:key];
         if ([value isKindOfClass:[NSArray class]]) {
             NSArray *array = (NSArray *)value;
             if (array.count > UACustomEventMaxPropertyCollectionSize) {
@@ -188,26 +201,30 @@ const NSUInteger UACustomEventMaxPropertyCollectionSize = 20;
     }
 }
 
+-(NSDictionary *)properties {
+    return [self.mutableProperties copy];
+}
+
 - (NSDictionary *)data {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
 
     // Event name
-    [dictionary setValue:self.eventName forKey:@"event_name"];
+    [dictionary setValue:self.eventName forKey:UACustomEventNameKey];
 
     // Conversion Send ID
     NSString *sendID = self.conversionSendID ?:[UAirship shared].analytics.conversionSendID;
-    [dictionary setValue:sendID forKey:@"conversion_send_id"];
+    [dictionary setValue:sendID forKey:UACustomEventConversionSendIDKey];
 
     // Conversion Send Metadata
     NSString *sendMetadata = self.conversionPushMetadata ?:[UAirship shared].analytics.conversionPushMetadata;
-    [dictionary setValue:sendMetadata forKey:@"conversion_metadata"];
+    [dictionary setValue:sendMetadata forKey:UACustomEventConversionMetadataKey];
 
     // Interaction
-    [dictionary setValue:self.interactionID forKey:@"interaction_id"];
-    [dictionary setValue:self.interactionType forKey:@"interaction_type"];
+    [dictionary setValue:self.interactionID forKey:UACustomEventInteractionIDKey];
+    [dictionary setValue:self.interactionType forKey:UACustomEventInteractionTypeKey];
 
     // Transaction ID
-    [dictionary setValue:self.transactionID forKey:@"transaction_id"];
+    [dictionary setValue:self.transactionID forKey:UACustomEventTransactionIDKey];
 
     // Event value
     if (self.eventValue) {
@@ -222,13 +239,13 @@ const NSUInteger UACustomEventMaxPropertyCollectionSize = 20;
          range of [-2^51, 2^51-1] so it will always fit into the range warp9
          is expecting [-2^63, 2^63-1].
          */
-        [dictionary setValue:@([number longLongValue]) forKey:@"event_value"];
+        [dictionary setValue:@([number longLongValue]) forKey:UACustomEventValueKey];
     }
 
     NSMutableDictionary *stringifiedProperties = [NSMutableDictionary dictionary];
 
-    for (id key in self.properties) {
-        id value = [self.properties valueForKey:key];
+    for (id key in self.mutableProperties) {
+        id value = [self.mutableProperties valueForKey:key];
 
         if ([value isKindOfClass:[NSArray class]]) {
             [stringifiedProperties setValue:value forKey:key];
@@ -239,7 +256,7 @@ const NSUInteger UACustomEventMaxPropertyCollectionSize = 20;
     }
 
     if (stringifiedProperties.count) {
-        [dictionary setValue:stringifiedProperties forKey:@"properties"];
+        [dictionary setValue:stringifiedProperties forKey:UACustomEventPropertiesKey];
     }
     
     return [dictionary mutableCopy];

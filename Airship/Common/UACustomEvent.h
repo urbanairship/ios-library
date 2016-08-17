@@ -29,6 +29,9 @@
 #define kUAInteractionMCRAP @"ua_mcrap"
 #define kUACustomEventCharacterLimit 255
 
+NS_ASSUME_NONNULL_BEGIN
+
+
 /**
  * The max character limit for Strings.
  */
@@ -39,10 +42,15 @@ extern const NSUInteger UACustomEventCharacterLimit;
  */
 extern const NSUInteger UACustomEventMaxPropertiesCount;
 
+extern NSString *const UACustomEventNameKey;
+extern NSString *const UACustomEventValueKey;
+extern NSString *const UACustomEventPropertiesKey;
+extern NSString *const UACustomEventTransactionIDKey;
+extern NSString *const UACustomEventInteractionIDKey;
+extern NSString *const UACustomEventInteractionTypeKey;
 
 @class UAInboxMessage;
 
-NS_ASSUME_NONNULL_BEGIN
 
 /**
  * A UACustomEvent captures information regarding a custom event for
@@ -107,6 +115,11 @@ NS_ASSUME_NONNULL_BEGIN
  * invalidate the event.
  */
 @property (nonatomic, copy, nullable) NSString *transactionID;
+
+/**
+ * The event's properties.
+ */
+@property (nonatomic, copy, readonly) NSDictionary *properties;
 
 /**
  * Sets the custom event's interaction type and ID from a UAInboxMessage.

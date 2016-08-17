@@ -24,10 +24,10 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "UAJSONMatcher.h"
+#import "UAJSONValueMatcher.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-@class UAJSONMatcher;
 
 /**
  * Predicate for JSON payloads.

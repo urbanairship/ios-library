@@ -31,13 +31,12 @@
 #import "UARegionEvent.h"
 #import "UACustomEvent.h"
 #import "UAAutomationStore+Internal.h"
+#import "UAJSONPredicate.h"
 
 @interface UAAutomationTests : XCTestCase
-
 @property (nonatomic, strong) UAAutomation *automation;
 @property (nonatomic, strong) UAActionRegistry *actionRegistry;
 @property (nonatomic, strong) id mockedAirship;
-
 @end
 
 @implementation UAAutomationTests
@@ -543,7 +542,11 @@
     UACustomEvent *purchase = [UACustomEvent eventWithName:@"purchase" value:@(100)];
     UACustomEvent *view = [UACustomEvent eventWithName:@"view" value:@(100)];
 
-    UAScheduleTrigger *trigger = [UAScheduleTrigger customEventTriggerWithPredicateFormat:@"eventName == \"purchase\"" count:1];
+    UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
+    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher key:UACustomEventNameKey];
+    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+
+    UAScheduleTrigger *trigger = [UAScheduleTrigger customEventTriggerWithPredicate:predicate count:1];
 
     [self verifyTrigger:trigger triggerFireBlock:^{
         // Make sure view does not trigger the action
@@ -558,8 +561,12 @@
     UACustomEvent *purchase = [UACustomEvent eventWithName:@"purchase" value:@(55.55)];
     UACustomEvent *view = [UACustomEvent eventWithName:@"view" value:@(200)];
 
-    UAScheduleTrigger *trigger = [UAScheduleTrigger customEventTriggerWithPredicateFormat:@"eventName == \"purchase\""
-                                                                                    value:@(111.1)];
+
+    UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
+    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher key:UACustomEventNameKey];
+    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+
+    UAScheduleTrigger *trigger = [UAScheduleTrigger customEventTriggerWithPredicate:predicate value:@(111.1)];
 
     [self verifyTrigger:trigger triggerFireBlock:^{
         // Make sure view does not trigger the action
