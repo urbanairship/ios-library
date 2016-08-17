@@ -84,6 +84,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
+ * Shared automation manager.
+ */
+@property (nonatomic, strong) UAAutomation *sharedAutomation;
+
+
+/**
  * Creates the user agent string for a given appkey.
  * User agent string should be:
  * App 1.0 (iPad; iPhone OS <version>; UALib <version>; <app key>; en_US)

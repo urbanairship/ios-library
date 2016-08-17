@@ -140,7 +140,7 @@
  * the action being performed on the UI thread.
  */
 - (void)testRunOnBackgroundThread {
-    XCTestExpectation *testExpecation = [self expectationWithDescription:@"action finished"];
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"action finished"];
 
     BOOL (^isMainThread)(void) = ^{
         return [[NSThread currentThread] isEqual:[NSThread mainThread]];
@@ -156,7 +156,7 @@
         [action runWithArguments:[UAActionArguments argumentsWithValue:nil withSituation:UASituationManualInvocation]
                completionHandler:^(UAActionResult *result) {
             XCTAssertTrue(isMainThread(), @"we should be on the main thread");
-            [testExpecation fulfill];
+            [testExpectation fulfill];
         }];
     });
 
@@ -168,7 +168,7 @@
  * the work being marshalled back onto the main thread.
  */
 - (void)testFinishOnBackgroundThread {
-    XCTestExpectation *testExpecation = [self expectationWithDescription:@"action finished"];
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"action finished"];
 
     BOOL (^isMainThread)(void) = ^{
         return [[NSThread currentThread] isEqual:[NSThread mainThread]];
@@ -184,7 +184,7 @@
     [action runWithArguments:[UAActionArguments argumentsWithValue:nil withSituation:UASituationManualInvocation]
            completionHandler:^(UAActionResult *result) {
         XCTAssertTrue(isMainThread(), @"we should be back on the main thread");
-        [testExpecation fulfill];
+        [testExpectation fulfill];
     }];
 
     [self waitForExpectationsWithTimeout:1 handler:nil];
