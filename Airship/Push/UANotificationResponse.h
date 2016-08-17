@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UANotificationResponse : NSObject
 
 /**
- * Action identifier representing a application launch via notification.
+ * Action identifier representing an application launch via notification.
  */
 extern NSString *const UANotificationDefaultActionIdentifier;
 
@@ -51,36 +51,29 @@ extern NSString *const UANotificationDismissActionIdentifier;
 @property (nonatomic, strong, nullable) NSString *responseText;
 
 /**
- * Flag representing the background state of the device during push receipt.
- */
-@property (nonatomic, assign) BOOL isBackground;
-
-/**
  * The UANotificationContent instance associated with the response.
  */
-@property (nonatomic, strong) UANotificationContent *notifcationContent;
+@property (nonatomic, strong) UANotificationContent *notificationContent;
 
 /**
- * Generates a UANotificationResponse with a UANotificationContent instance, action identifier and background state.
+ * Generates a UANotificationResponse with a UANotificationContent instance, action identifier.
  *
  * @param notificationContent UANotificationContent instance.
  * @param actionIdentifier NSString action identifier associated with the notification.
- * @param isBackground BOOL representing the background state of the notification.
  *
  * @return UANotificationResponse instance
  */
-+ (instancetype)notificationResponseWithNotificationContent:(UANotificationContent *)notificationContent actionIdentifier:(nullable NSString *)actionIdentifier backgroundState:(BOOL)isBackground;
++ (instancetype)notificationResponseWithNotificationContent:(UANotificationContent *)notificationContent actionIdentifier:(nullable NSString *)actionIdentifier;
 
 /**
- * Generates a UANotificationResponse with a notification payload, action identifier and background state.
+ * Generates a UANotificationResponse with a notification payload, action identifier.
  *
  * @param notificationInfo NSDictionary containing the notification payload.
  * @param actionIdentifier NSString action identifier associated with the notification.
- * @param isBackground BOOL representing the background state of the notification.
  *
  * @return UANotificationResponse instance
  */
-+ (instancetype)notificationResponseWithNotificationInfo:(NSDictionary *)notificationInfo actionIdentifier:(nullable NSString *)actionIdentifier backgroundState:(BOOL)isBackground;
++ (instancetype)notificationResponseWithNotificationInfo:(NSDictionary *)notificationInfo actionIdentifier:(nullable NSString *)actionIdentifier;
 
 @end
 

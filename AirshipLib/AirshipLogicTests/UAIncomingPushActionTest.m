@@ -118,19 +118,15 @@
     self.arguments.situation = UASituationLaunchedFromPush;
 
     __block UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:self.arguments.value
-                                                                                               actionIdentifier:UANotificationDefaultActionIdentifier
-                                                                                                backgroundState:YES];
+                                                                                               actionIdentifier:UANotificationDefaultActionIdentifier];
 
     [[self.mockedPushDelegate expect] receivedNotificationResponse:[OCMArg checkWithBlock:^BOOL(UANotificationResponse *obj) {
 
         if (obj.actionIdentifier != response.actionIdentifier) {
             return NO;
         }
-        if (![obj.notifcationContent.notificationInfo
-              isEqualToDictionary:response.notifcationContent.notificationInfo]) {
-            return NO;
-        }
-        if (obj.isBackground != response.isBackground) {
+        if (![obj.notificationContent.notificationInfo
+              isEqualToDictionary:response.notificationContent.notificationInfo]) {
             return NO;
         }
 
@@ -238,19 +234,15 @@
     self.arguments.metadata = @{UAActionMetadataUserNotificationActionIDKey: @"action ID"};
 
     __block UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:self.arguments.value
-                                                                                               actionIdentifier:@"action ID"
-                                                                                                backgroundState:NO];
+                                                                                               actionIdentifier:@"action ID"];
     // Expect the delegate to be called. Use a checkWithBlock to call the completion handler.
     [[self.mockedPushDelegate expect] receivedNotificationResponse:[OCMArg checkWithBlock:^BOOL(UANotificationResponse *obj) {
 
         if (obj.actionIdentifier != response.actionIdentifier) {
             return NO;
         }
-        if (![obj.notifcationContent.notificationInfo
-              isEqualToDictionary:response.notifcationContent.notificationInfo]) {
-            return NO;
-        }
-        if (obj.isBackground != response.isBackground) {
+        if (![obj.notificationContent.notificationInfo
+              isEqualToDictionary:response.notificationContent.notificationInfo]) {
             return NO;
         }
 
@@ -282,8 +274,7 @@
     self.arguments.metadata = @{UAActionMetadataUserNotificationActionIDKey: @"action ID"};
 
     __block UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:self.arguments.value
-                                                                                               actionIdentifier:@"action ID"
-                                                                                                backgroundState:YES];
+                                                                                               actionIdentifier:@"action ID"];
 
     // Expect the delegate to be called. Use a checkWithBlock to call the completion handler.
     [[self.mockedPushDelegate expect] receivedNotificationResponse:[OCMArg checkWithBlock:^BOOL(UANotificationResponse *obj) {
@@ -291,11 +282,8 @@
         if (obj.actionIdentifier != response.actionIdentifier) {
             return NO;
         }
-        if (![obj.notifcationContent.notificationInfo
-              isEqualToDictionary:response.notifcationContent.notificationInfo]) {
-            return NO;
-        }
-        if (obj.isBackground != response.isBackground) {
+        if (![obj.notificationContent.notificationInfo
+              isEqualToDictionary:response.notificationContent.notificationInfo]) {
             return NO;
         }
 

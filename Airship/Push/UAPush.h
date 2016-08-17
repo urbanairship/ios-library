@@ -134,7 +134,7 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
  * User interactions can include launching the application from the push, or using an interactive control on the notification interface
  * such as a button or text field.
  *
- * @param notificationResponse UANotificationResponse object representing the users response
+ * @param notificationResponse UANotificationResponse object representing the user's response
  * to the notification and the associated notification contents.
  *
  * @param completionHandler the completion handler to execute when processing the user's response has completed.

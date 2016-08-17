@@ -32,24 +32,23 @@ NSString *const UANotificationDefaultActionIdentifier = @"com.apple.UNNotificati
 // If the user dismissed the notification.
 NSString *const UANotificationDismissActionIdentifier = @"com.apple.UNNotificationDismissActionIdentifier";
 
-- (instancetype)initWithNotificationContent:(UANotificationContent *)notificationContent actionIdentifier:(NSString *)actionIdentifier backgroundState:(BOOL)isBackground {
+- (instancetype)initWithNotificationContent:(UANotificationContent *)notificationContent actionIdentifier:(NSString *)actionIdentifier {
     self = [super init];
 
     if (self) {
-        self.notifcationContent = notificationContent;
+        self.notificationContent = notificationContent;
         self.actionIdentifier = actionIdentifier;
-        self.isBackground = isBackground;
     }
 
     return self;
 }
 
-+ (instancetype)notificationResponseWithNotificationInfo:(NSDictionary *)notificationInfo actionIdentifier:(NSString *)actionIdentifier backgroundState:(BOOL)isBackground {
-    return [[UANotificationResponse alloc] initWithNotificationContent:[UANotificationContent notificationWithNotificationInfo:notificationInfo] actionIdentifier:actionIdentifier backgroundState:isBackground];
++ (instancetype)notificationResponseWithNotificationInfo:(NSDictionary *)notificationInfo actionIdentifier:(NSString *)actionIdentifier {
+    return [[UANotificationResponse alloc] initWithNotificationContent:[UANotificationContent notificationWithNotificationInfo:notificationInfo] actionIdentifier:actionIdentifier];
 }
 
-+ (instancetype)notificationResponseWithNotificationContent:(UANotificationContent *)notificationContent actionIdentifier:(NSString *)actionIdentifier backgroundState:(BOOL)isBackground {
-    return [[UANotificationResponse alloc] initWithNotificationContent:notificationContent actionIdentifier:actionIdentifier backgroundState:isBackground];
++ (instancetype)notificationResponseWithNotificationContent:(UANotificationContent *)notificationContent actionIdentifier:(NSString *)actionIdentifier {
+    return [[UANotificationResponse alloc] initWithNotificationContent:notificationContent actionIdentifier:actionIdentifier];
 }
 
 @end

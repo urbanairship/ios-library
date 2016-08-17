@@ -43,8 +43,6 @@
 
 -(void)receivedForegroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)())completionHandler {
     // Application received a foreground notification
-    UA_LDEBUG(@"receivedForegroundNotification:");
-
     UA_LDEBUG(@"The application received a foreground notification");
 
     // Only display an alert dialog if the push does not contain a rich push message id.
@@ -72,28 +70,13 @@
 
 -(void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void (^)())completionHandler {
 
-    BOOL userTappedOrDismissedNotification = ([notificationResponse.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier] ||
-                                            [notificationResponse.actionIdentifier isEqualToString:UANotificationDismissActionIdentifier]);
-
-    // User interacted with a notification that foregrounded the app.
     if ([notificationResponse.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
-        UA_LDEBUG(@"The user launched the app from a notification");
+        UA_LDEBUG(@"The user tapped the notification to launch the app");
 
         // Call the completion handler
         completionHandler();
-    }
-
-    // User interacted with a notification button or interface that foregrounded the app.
-    if (!userTappedOrDismissedNotification && !notificationResponse.isBackground) {
-        UA_LDEBUG(@"The user interacted with a foreground user notification button or interface");
-
-        // Call the completion handler
-        completionHandler();
-    }
-
-    // User interacted with a user notification button or interface that did not foreground the app.
-    if (!userTappedOrDismissedNotification && notificationResponse.isBackground) {
-        UA_LDEBUG(@"The user interacted with a background user notification button or interface");
+    } else if (notificationResponse.actionIdentifier) {
+        UA_LDEBUG(@"The user selected the following action identifier:%@", notificationResponse.actionIdentifier);
 
         // Call the completion handler
         completionHandler();

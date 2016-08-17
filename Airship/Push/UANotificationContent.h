@@ -86,7 +86,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param notificationInfo The raw notification dictionary.
  *
- * @return UANotificaiton instance
+ * @return UANotification instance
  */
 + (instancetype)notificationWithNotificationInfo:(NSDictionary *)notificationInfo;
 
@@ -95,7 +95,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param notification the UNNotification instance to be converted.
  *
- * @return UANotificaiton instance
+ * @return UANotification instance
  */
 + (instancetype)notificationWithUNNotification:(UNNotification *)notification;
 

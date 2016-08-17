@@ -94,8 +94,7 @@
     id<UAPushNotificationDelegate> pushDelegate = [UAirship push].pushNotificationDelegate;
     if ([pushDelegate respondsToSelector:@selector(receivedNotificationResponse:completionHandler:)]) {
         UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
-                                                                                           actionIdentifier:UANotificationDefaultActionIdentifier
-                                                                                            backgroundState:YES];
+                                                                                           actionIdentifier:UANotificationDefaultActionIdentifier];
 
         [pushDelegate receivedNotificationResponse:response completionHandler:^{
             completionHandler([UAActionResult emptyResult]);
@@ -129,8 +128,7 @@
     id<UAPushNotificationDelegate> pushDelegate = [UAirship push].pushNotificationDelegate;
     if ([pushDelegate respondsToSelector:@selector(receivedNotificationResponse:completionHandler:)]) {
         UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
-                                                                                           actionIdentifier:identifier
-                                                                                            backgroundState:YES];
+                                                                                           actionIdentifier:identifier];
 
         [pushDelegate receivedNotificationResponse:response completionHandler:^(){
             completionHandler([UAActionResult emptyResult]);
@@ -148,8 +146,7 @@
     id<UAPushNotificationDelegate> pushDelegate = [UAirship push].pushNotificationDelegate;
     if ([pushDelegate respondsToSelector:@selector(receivedNotificationResponse:completionHandler:)]) {
         UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
-                                                                                           actionIdentifier:identifier
-                                                                                            backgroundState:NO];
+                                                                                           actionIdentifier:identifier];
 
         [pushDelegate receivedNotificationResponse:response completionHandler:^(){
             completionHandler([UAActionResult emptyResult]);
@@ -157,12 +154,6 @@
     } else {
         completionHandler([UAActionResult emptyResult]);
     }
-}
-
-- (BOOL)useFetchCompletionHandlerDelegates {
-    id appDelegate = [UIApplication sharedApplication].delegate;
-    return [UAirship shared].remoteNotificationBackgroundModeEnabled ||
-    [appDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)];
 }
 
 @end

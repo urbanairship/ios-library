@@ -98,7 +98,7 @@
         // Original notification
         self.notificationInfo = notificationInfo;
     }
-    
+
     return self;
 }
 
