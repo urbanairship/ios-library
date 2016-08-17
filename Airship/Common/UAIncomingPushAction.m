@@ -27,6 +27,8 @@
 #import "UAPush.h"
 #import "UAirship.h"
 #import "UAConfig.h"
+#import "UANotificationContent.h"
+#import "UANotificationResponse.h"
 
 @implementation UAIncomingPushAction
 
@@ -72,157 +74,49 @@
 }
 
 - (void)handleForegroundPush:(NSDictionary *)notification
-          completionHandler:(UAActionCompletionHandler)completionHandler {
+           completionHandler:(UAActionCompletionHandler)completionHandler {
 
     id<UAPushNotificationDelegate> pushDelegate = [UAirship push].pushNotificationDelegate;
-    if (!pushDelegate) {
-        if (![UAirship shared].config.inProduction) {
-            UA_LWARN(@"Recieved a foreground push notification when the [UAirship push].pushNotificationDelegate is not set. Unable to show any UI.");
-        }
-        completionHandler([UAActionResult emptyResult]);
-        return;
-    }
+    if ([pushDelegate respondsToSelector:@selector(receivedForegroundNotification:completionHandler:)]) {
+        UANotificationContent *notificationContent = [UANotificationContent notificationWithNotificationInfo:notification];
 
-    // Please refer to the following Apple documentation for full details on handling the userInfo payloads
-    // http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ApplePushService/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1
-    NSDictionary *apsDict = [notification objectForKey:@"aps"];
-    if (apsDict) {
-        // Alert
-        id alert = [apsDict valueForKey:@"alert"];
-        if (alert) {
-            if ([alert isKindOfClass:[NSString class]] &&
-                [pushDelegate respondsToSelector:@selector(displayNotificationAlert:)]) {
-
-                // The alert is a single string message so we can display it
-                [pushDelegate displayNotificationAlert:alert];
-
-            } else if ([alert isKindOfClass:[NSDictionary class]]) {
-
-                // If it contains localization details
-                if (alert[@"action-loc-key"] || alert[@"loc-key"]) {
-
-                    if ([pushDelegate respondsToSelector:@selector(displayLocalizedNotificationAlert:)]) {
-
-                        // The alert is a dictionary with more localization details
-                        // This should be customized to fit your message details or usage scenario
-                        [pushDelegate displayLocalizedNotificationAlert:alert];
-
-                    } else if ([pushDelegate respondsToSelector:@selector(displayNotificationAlert:)]) {
-
-                        // Fall back to just display the notificaiton
-                        if (alert[@"body"]) {
-                            [pushDelegate displayNotificationAlert:alert[@"body"]];
-                        }
-                    }
-
-                } else  if ([pushDelegate respondsToSelector:@selector(displayNotificationAlert:)]) {
-
-                    if (alert[@"body"]) {
-                        [pushDelegate displayNotificationAlert:alert[@"body"]];
-                    }
-                }
-            }
-        }
-
-        // Badge
-        NSString *badgeNumber = [apsDict valueForKey:@"badge"];
-        if (badgeNumber && ![UAirship push].autobadgeEnabled && [pushDelegate respondsToSelector:@selector(handleBadgeUpdate:)]) {
-            [pushDelegate handleBadgeUpdate:[badgeNumber intValue]];
-        }
-
-        // Sound
-        NSString *soundName = [apsDict valueForKey:@"sound"];
-        if (soundName && [pushDelegate respondsToSelector:@selector(playNotificationSound:)]) {
-            [pushDelegate playNotificationSound:[apsDict objectForKey:@"sound"]];
-        }
-    }
-
-
-    if (self.useFetchCompletionHandlerDelegates) {
-        if ([pushDelegate respondsToSelector:@selector(receivedForegroundNotification:fetchCompletionHandler:)]) {
-            [pushDelegate receivedForegroundNotification:notification fetchCompletionHandler:^(UIBackgroundFetchResult result) {
-                completionHandler([UAActionResult resultWithValue:nil withFetchResult:(UAActionFetchResult)result]);
-            }];
-        } else {
-            if ([pushDelegate respondsToSelector:@selector(receivedForegroundNotification:)]) {
-
-                UA_LWARN(@"Application is configured with background remote notifications."
-                         "PushNotificationDelegate should implement receivedForegroundNotification:fetchCompletionHandler: instead of receivedForegroundNotification:."
-                         "receivedForegroundNotification: will still be called.");
-
-                [pushDelegate receivedForegroundNotification:notification];
-            }
-
-            completionHandler([UAActionResult emptyResult]);
-        }
+        [pushDelegate receivedForegroundNotification:notificationContent completionHandler:^(UIBackgroundFetchResult result) {
+            completionHandler([UAActionResult resultWithValue:nil withFetchResult:(UAActionFetchResult)result]);
+        }];
     } else {
-        if ([pushDelegate respondsToSelector:@selector(receivedForegroundNotification:)]) {
-            [pushDelegate receivedForegroundNotification:notification];
-        }
-
         completionHandler([UAActionResult emptyResult]);
     }
-
 }
 
 - (void)handleLaunchedFromPush:(NSDictionary *)notification
-          completionHandler:(UAActionCompletionHandler)completionHandler {
+             completionHandler:(UAActionCompletionHandler)completionHandler {
 
     id<UAPushNotificationDelegate> pushDelegate = [UAirship push].pushNotificationDelegate;
+    if ([pushDelegate respondsToSelector:@selector(receivedNotificationResponse:completionHandler:)]) {
+        UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
+                                                                                           actionIdentifier:UANotificationDefaultActionIdentifier];
 
-    if (self.useFetchCompletionHandlerDelegates) {
-        if ([pushDelegate respondsToSelector:@selector(launchedFromNotification:fetchCompletionHandler:)]) {
-            [pushDelegate launchedFromNotification:notification fetchCompletionHandler:^(UIBackgroundFetchResult result) {
-                completionHandler([UAActionResult resultWithValue:nil withFetchResult:(UAActionFetchResult)result]);
-            }];
-        } else {
-            if ([pushDelegate respondsToSelector:@selector(launchedFromNotification:)]) {
-
-                UA_LWARN(@"Application is configured with background remote notifications."
-                         "PushNotificationDelegate should implement launchedFromNotification:fetchCompletionHandler: instead of launchedFromNotification:."
-                         "launchedFromNotification: will still be called.");
-
-                [pushDelegate launchedFromNotification:notification];
-            }
-
+        [pushDelegate receivedNotificationResponse:response completionHandler:^{
             completionHandler([UAActionResult emptyResult]);
-        }
+        }];
     } else {
-        if ([pushDelegate respondsToSelector:@selector(launchedFromNotification:)]) {
-            [pushDelegate launchedFromNotification:notification];
-        }
-
         completionHandler([UAActionResult emptyResult]);
     }
 }
 
 - (void)handleBackgroundPush:(NSDictionary *)notification
-          completionHandler:(UAActionCompletionHandler)completionHandler {
+           completionHandler:(UAActionCompletionHandler)completionHandler {
 
     id<UAPushNotificationDelegate> pushDelegate = [UAirship push].pushNotificationDelegate;
+    if ([pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:completionHandler:)]) {
+        completionHandler([UAActionResult emptyResult]);
 
-    if (self.useFetchCompletionHandlerDelegates) {
-        if ([pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:fetchCompletionHandler:)]) {
-            [pushDelegate receivedBackgroundNotification:notification fetchCompletionHandler:^(UIBackgroundFetchResult result) {
-                completionHandler([UAActionResult resultWithValue:nil withFetchResult:(UAActionFetchResult)result]);
-            }];
-        } else {
-            if ([pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:)]) {
+        UANotificationContent *notificationContent = [UANotificationContent notificationWithNotificationInfo:notification];
 
-                UA_LWARN(@"Application is configured with background remote notifications."
-                         "PushNotificationDelegate should implement receivedBackgroundNotification:fetchCompletionHandler: instead of receivedBackgroundNotification:."
-                         "receivedBackgroundNotification: will still be called.");
-
-                [pushDelegate receivedBackgroundNotification:notification];
-            }
-
-            completionHandler([UAActionResult emptyResult]);
-        }
+        [pushDelegate receivedBackgroundNotification:notificationContent completionHandler:^(UIBackgroundFetchResult result) {
+            completionHandler([UAActionResult resultWithValue:nil withFetchResult:(UAActionFetchResult)result]);
+        }];
     } else {
-        if ([pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:)]) {
-            [pushDelegate receivedBackgroundNotification:notification];
-        }
-
         completionHandler([UAActionResult emptyResult]);
     }
 }
@@ -232,8 +126,11 @@
                              completionHandler:(UAActionCompletionHandler)completionHandler {
 
     id<UAPushNotificationDelegate> pushDelegate = [UAirship push].pushNotificationDelegate;
-    if ([pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:actionIdentifier:completionHandler:)]) {
-        [pushDelegate receivedBackgroundNotification:notification actionIdentifier:identifier completionHandler:^{
+    if ([pushDelegate respondsToSelector:@selector(receivedNotificationResponse:completionHandler:)]) {
+        UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
+                                                                                           actionIdentifier:identifier];
+
+        [pushDelegate receivedNotificationResponse:response completionHandler:^(){
             completionHandler([UAActionResult emptyResult]);
         }];
     } else {
@@ -247,20 +144,16 @@
                              completionHandler:(UAActionCompletionHandler)completionHandler {
 
     id<UAPushNotificationDelegate> pushDelegate = [UAirship push].pushNotificationDelegate;
-    if ([pushDelegate respondsToSelector:@selector(launchedFromNotification:actionIdentifier:completionHandler:)]) {
-        [pushDelegate launchedFromNotification:notification actionIdentifier:identifier completionHandler:^{
+    if ([pushDelegate respondsToSelector:@selector(receivedNotificationResponse:completionHandler:)]) {
+        UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
+                                                                                           actionIdentifier:identifier];
+
+        [pushDelegate receivedNotificationResponse:response completionHandler:^(){
             completionHandler([UAActionResult emptyResult]);
         }];
     } else {
         completionHandler([UAActionResult emptyResult]);
     }
-}
-
-- (BOOL)useFetchCompletionHandlerDelegates {
-    id appDelegate = [UIApplication sharedApplication].delegate;
-    return [UAirship shared].remoteNotificationBackgroundModeEnabled
-        || [appDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)];
-
 }
 
 @end

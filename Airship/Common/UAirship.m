@@ -485,31 +485,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                  @"Please enable remote notifications in the application's background modes.");
     }
 
-    // Push notification delegate validation
-    id appDelegate = [UIApplication sharedApplication].delegate;
-    if ([appDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
-        id pushDelegate = self.sharedPush.pushNotificationDelegate;
-
-        if ([pushDelegate respondsToSelector:@selector(receivedForegroundNotification:)]
-            && ! [pushDelegate respondsToSelector:@selector(receivedForegroundNotification:fetchCompletionHandler:)]) {
-
-             UA_LIMPERR(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedForegroundNotification:fetchCompletionHandler: instead of receivedForegroundNotification:. receivedForegroundNotification: will still be called.");
-
-        }
-
-        if ([pushDelegate respondsToSelector:@selector(launchedFromNotification:)]
-            && ! [pushDelegate respondsToSelector:@selector(launchedFromNotification:fetchCompletionHandler:)]) {
-
-            UA_LIMPERR(@"Application is configured with background remote notifications. PushNotificationDelegate should implement launchedFromNotification:fetchCompletionHandler: instead of launchedFromNotification:. launchedFromNotification: will still be called.");
-        }
-
-        if ([pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:)]
-            && ! [pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:fetchCompletionHandler:)]) {
-
-            UA_LIMPERR(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedBackgroundNotification:fetchCompletionHandler: instead of receivedBackgroundNotification:. receivedBackgroundNotification: will still be called.");
-        }
-    }
-
     // -ObjC linker flag is set
     if (![[NSJSONSerialization class] respondsToSelector:@selector(stringWithObject:)]) {
         UA_LIMPERR(@"UAirship library requires the '-ObjC' linker flag set in 'Other linker flags'.");

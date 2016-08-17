@@ -615,12 +615,12 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 }
 
 - (void)handleNotificationActionWithIdentifier:(NSString *)identifier
-                                  notification:(NSDictionary *)notification
+                                  notification:(UANotificationContent *)notificationContent
                                   responseText:(NSString *)responseText
                              completionHandler:(void (^)())completionHandler {
 
 
-    NSString *categoryID = notification[@"aps"][@"category"];
+    NSString *categoryID = notificationContent.categoryIdentifier;
     NSSet *categories = self.combinedCategories;
 
     UANotificationCategory *notificationCategory;
@@ -656,19 +656,20 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
     [[UAirship shared].analytics addEvent:[UAInteractiveNotificationEvent eventWithNotificationAction:notificationAction
                                                                                            categoryID:categoryID
-                                                                                         notification:notification
+                                                                                         notification:notificationContent.notificationInfo
                                                                                          responseText:responseText]];
 
-    NSMutableDictionary *actionsPayload = [NSMutableDictionary dictionaryWithDictionary:notification[kUANotificationActionKey][identifier]];
+    NSMutableDictionary *actionsPayload = [NSMutableDictionary dictionaryWithDictionary:
+                                           notificationContent.notificationInfo[kUANotificationActionKey][identifier]];
 
     // Add incoming push action
-    actionsPayload[kUAIncomingPushActionRegistryName] = notification;
+    actionsPayload[kUAIncomingPushActionRegistryName] = notificationContent.notificationInfo;
 
     // Situation for the actions
     UASituation actionSituation;
 
     if (notificationAction.options & UNNotificationActionOptionForeground) {
-        [UAirship shared].analytics.notificationUserInfo = notification;
+        [UAirship shared].analytics.notificationUserInfo = notificationContent.notificationInfo;
         actionSituation = UASituationForegroundInteractiveButton;
     } else {
         actionSituation = UASituationBackgroundInteractiveButton;
@@ -676,7 +677,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
     // Action metadata
     NSMutableDictionary *metadata = [@{ UAActionMetadataUserNotificationActionIDKey: identifier,
-                                        UAActionMetadataPushPayloadKey: notification } mutableCopy];
+                                        UAActionMetadataPushPayloadKey: notificationContent.notificationInfo } mutableCopy];
     // Add the text response to the metadata if it's available
     [metadata setValue:responseText forKey:UAActionMetadataResponseInfoKey];
 
@@ -691,7 +692,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
                              }];
 }
 
-- (void)handleNotification:(NSDictionary *)notification
+- (void)handleNotification:(UANotificationContent *)notificationContent
                  situation:(UASituation)situation
     foregroundPresentation:(BOOL)foregroundPresentation
          completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
@@ -699,25 +700,25 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     switch (situation) {
         case UASituationForegroundPush:
             if (self.autobadgeEnabled) {
-                [self updateBadgeFromNotification:notification];
+                 [[UIApplication sharedApplication] setApplicationIconBadgeNumber:notificationContent.badge.integerValue];
             }
-            [[UAirship shared].analytics addEvent:[UAPushReceivedEvent eventWithNotification:notification]];
+            [[UAirship shared].analytics addEvent:[UAPushReceivedEvent eventWithNotification:notificationContent.notificationInfo]];
             break;
         case UASituationLaunchedFromPush:
-            [[UAirship shared].analytics launchedFromNotification:notification];
+            [[UAirship shared].analytics launchedFromNotification:notificationContent.notificationInfo];
             break;
         default:
             break;
     }
 
     // Create the action payload
-    NSMutableDictionary *actionsPayload = [NSMutableDictionary dictionaryWithDictionary:notification];
+    NSMutableDictionary *actionsPayload = [NSMutableDictionary dictionaryWithDictionary:notificationContent.notificationInfo];
 
     // Add incoming push action
-    actionsPayload[kUAIncomingPushActionRegistryName] = notification;
+    actionsPayload[kUAIncomingPushActionRegistryName] = notificationContent.notificationInfo;
 
     // If we have a messageID make sure we run an inbox action
-    NSString *messageID = [UAInboxUtils inboxMessageIDFromNotification:notification];
+    NSString *messageID = [UAInboxUtils inboxMessageIDFromNotification:notificationContent.notificationInfo];
     if (messageID) {
         NSSet *inboxActionNames = [NSSet setWithArray:@[kUADisplayInboxActionDefaultRegistryAlias,
                                                         kUADisplayInboxActionDefaultRegistryName,
@@ -733,7 +734,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
     // Action metadata
     NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
-    [metadata setValue:notification forKey:UAActionMetadataPushPayloadKey];
+    [metadata setValue:notificationContent.notificationInfo forKey:UAActionMetadataPushPayloadKey];
 
     // Avoid setting an NSNumber NO value in case of nonzero conditionals
     if (foregroundPresentation) {
@@ -755,8 +756,10 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 // To be called externally after presentation options are merged, or internally with manual integration
 - (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options {
     BOOL foregroundPresentation = (options & UNNotificationPresentationOptionAlert) > 0;
-    NSDictionary *notificationPayload = notification.request.content.userInfo;
-    [self handleNotification:notificationPayload
+
+    UANotificationContent *notificationContent = [UANotificationContent notificationWithUNNotification:notification];
+
+    [self handleNotification:notificationContent
                    situation:UASituationForegroundPush
       foregroundPresentation:foregroundPresentation
            completionHandler:nil];
@@ -772,7 +775,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     UA_LINFO(@"Notification center delegate received response: %@", response);
 
     NSString *identifier = response.actionIdentifier;
-    NSDictionary *notification = response.notification.request.content.userInfo;
+    UANotificationContent *notificationContent = [UANotificationContent notificationWithUNNotification:response.notification];
     NSString *responseText;
 
     if ([response isKindOfClass:[UNTextInputNotificationResponse class]]) {
@@ -781,7 +784,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
     // If app opened from notification
     if ([identifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
-        [self handleNotification:notification
+        [self handleNotification:notificationContent
                        situation:UASituationLaunchedFromPush
           foregroundPresentation:NO
                completionHandler:^(UIBackgroundFetchResult fetchResult){
@@ -790,7 +793,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
     } else {
         [self handleNotificationActionWithIdentifier:identifier
-                                        notification:notification
+                                        notification:notificationContent
                                         responseText:responseText
                                    completionHandler:completionHandler];
     }
@@ -825,13 +828,15 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
     UA_LINFO(@"Application received remote notification: %@", notification);
 
+    UANotificationContent *notificationContent = [UANotificationContent notificationWithNotificationInfo:notification];
+
     UASituation situation = [self situationFromRemoteNotification:notification];
 
     if (situation == UASituationLaunchedFromPush) {
         self.launchNotification = notification;
     }
 
-    [self handleNotification:notification situation:situation foregroundPresentation:NO completionHandler:completionHandler];
+    [self handleNotification:notificationContent situation:situation foregroundPresentation:NO completionHandler:completionHandler];
 }
 
 - (UASituation)situationFromRemoteNotification:(NSDictionary *)notification {
@@ -886,17 +891,9 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     }
 
     [self handleNotificationActionWithIdentifier:identifier
-                                    notification:notification
+                                    notification:[UANotificationContent notificationWithNotificationInfo:notification]
                                     responseText:responseText
                                completionHandler:completionHandler];
-}
-
-- (void)updateBadgeFromNotification:(NSDictionary *)notification {
-    NSDictionary *apsDict = [notification objectForKey:@"aps"];
-    NSString *badgeNumber = [apsDict valueForKey:@"badge"];
-    if (badgeNumber) {
-        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[badgeNumber intValue]];
-    }
 }
 
 BOOL deferChannelCreationOnForeground = false;

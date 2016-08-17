@@ -27,6 +27,8 @@
 #import "UAirship.h"
 #import "UANamedUser.h"
 #import "UAChannelRegistrar.h"
+#import "UANotificationContent.h"
+#import "UANotificationResponse.h"
 
 @class UANotificationCategory;
 
@@ -110,107 +112,34 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
 @optional
 
 /**
- * Called when an alert notification is received in the foreground.
- * @param alertMessage a simple string to be displayed as an alert
- */
-- (void)displayNotificationAlert:(NSString *)alertMessage;
-
-/**
- * Called when an alert notification is received in the foreground with additional localization info.
- * @param alertDict a dictionary containing the alert and localization info
- */
-- (void)displayLocalizedNotificationAlert:(NSDictionary *)alertDict;
-
-/**
- * Called when a push notification is received in the foreground with a sound associated
- * @param soundFilename The sound file to play or `default` for the standard notification sound.
- *        This file must be included in the application bundle.
- */
-- (void)playNotificationSound:(NSString *)soundFilename;
-
-/**
- * Called when a push notification is received in the foreground with a badge number.
- * @param badgeNumber The badge number to display
- */
-- (void)handleBadgeUpdate:(NSInteger)badgeNumber;
-
-/**
- * Called when a push notification is received while the app is running in the foreground.
- * Overridden by receivedForegroundNotification:fetchCompletionHandler.
+ * Called when a notification is received in the foreground.
  *
- * @param notification The notification dictionary.
+ * @param notificationContent UANotificationContent object representing the notification info.
+ *
+ * @param completionHandler the completion handler to execute when notification processing is complete.
  */
-- (void)receivedForegroundNotification:(NSDictionary *)notification;
+-(void)receivedForegroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)())completionHandler;
 
 /**
- * Called when a push notification is received while the app is running in the foreground 
- * for applications with the "remote-notification" background mode.
+ * Called when a notification is received in the background.
  *
- * @param notification The notification dictionary.
- * @param completionHandler Should be called with a UIBackgroundFetchResult as soon as possible, so the system can accurately estimate its power and data cost.
+ * @param notificationContent UANotificationContent object representing the notification info.
+ *
+ * @param completionHandler the completion handler to execute when notification processing is complete.
  */
-- (void)receivedForegroundNotification:(NSDictionary *)notification
-                fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
+-(void)receivedBackgroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
 
 /**
- * Called when a push notification is received while the app is running in the background
- * for applications with the "remote-notification" background mode.  
- * Overridden by receivedBackgroundNotification:fetchCompletionHandler.
+ * Called when a notification is received in the background or foreground and results in a user interaction.
+ * User interactions can include launching the application from the push, or using an interactive control on the notification interface
+ * such as a button or text field.
  *
- * @param notification The notification dictionary.
- */
-- (void)receivedBackgroundNotification:(NSDictionary *)notification;
-
-/**
- * Called when a push notification is received while the app is running in the background
- * for applications with the "remote-notification" background mode.
+ * @param notificationResponse UANotificationResponse object representing the user's response
+ * to the notification and the associated notification contents.
  *
- * @param notification The notification dictionary.
- * @param completionHandler Should be called with a UIBackgroundFetchResult as soon as possible, so the system can accurately estimate its power and data cost.
+ * @param completionHandler the completion handler to execute when processing the user's response has completed.
  */
-- (void)receivedBackgroundNotification:(NSDictionary *)notification
-                fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
-
-/**
- * Called when the app is started or resumed because a user opened a notification.
- * Overridden by launchedFromNotification:fetchCompletionHandler.
- *
- * @param notification The notification dictionary.
- */
-- (void)launchedFromNotification:(NSDictionary *)notification;
-
-/**
- * Called when the app is started or resumed because a user opened a notification
- * for applications with the "remote-notification" background mode.
- *
- * @param notification The notification dictionary.
- * @param completionHandler Should be called with a UIBackgroundFetchResult as soon as possible, so the system can accurately estimate its power and data cost.
- */
-- (void)launchedFromNotification:(NSDictionary *)notification
-          fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
-
-/**
- * Called when the app is started from a user notification action button with foreground activation mode.
- *
- * @param notification The notification dictionary.
- * @param identifier The user notification action identifier.
- * @param completionHandler Should be called as soon as possible.
- */
-- (void)launchedFromNotification:(NSDictionary *)notification
-                actionIdentifier:(NSString *)identifier
-               completionHandler:(void (^)())completionHandler;
-
-
-/**
- * Called when the app is started from a user notification action button with background activation mode.
- *
- * @param notification The notification dictionary.
- * @param identifier The user notification action identifier.
- * @param completionHandler Should be called as soon as possible.
- */
-- (void)receivedBackgroundNotification:(NSDictionary *)notification
-                      actionIdentifier:(NSString *)identifier
-                     completionHandler:(void (^)())completionHandler;
+-(void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void (^)())completionHandler;
 
 /**
  * Called when a notification has arrived in the foreground and is available for display.
