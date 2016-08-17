@@ -77,7 +77,7 @@
         [testExpectation fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 }
 
 - (void)testScheduleInvalidActionInfo {
@@ -94,7 +94,7 @@
         [testExpectation fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 }
 
 - (void)testScheduleOverLimit {
@@ -125,7 +125,7 @@
         [testExpectation fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:15 handler:nil];
+    [self waitForExpectationsWithTimeout:55 handler:nil];
 }
 
 - (void)testGetGroups {
@@ -191,7 +191,7 @@
         [barGroupExpectation fulfill];
     }];
     
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 }
 
 - (void)testGetSchedule {
@@ -213,7 +213,7 @@
         [scheduleExpectation fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 
     XCTestExpectation *fetchExpectation = [self expectationWithDescription:@"schedules fetched properly"];
 
@@ -223,7 +223,7 @@
         [fetchExpectation fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 }
 
 - (void)testGetAll {
@@ -256,7 +256,7 @@
         [testExpectation fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 }
 
 - (void)testCancelSchedule {
@@ -278,7 +278,7 @@
         [scheduleExpectation fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 
     [self.automation cancelScheduleWithIdentifier:scheduleIdentifier];
 
@@ -290,7 +290,7 @@
         [testExpectation fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 }
 
 - (void)testCancelGroup {
@@ -332,7 +332,7 @@
         [testExpectation fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 }
 
 - (void)testCancelAll {
@@ -355,7 +355,7 @@
         [testExpectation fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 }
 
 - (void)testGetExpiredSchedules {
@@ -382,7 +382,7 @@
     }];
 
     // Make sure the actions are scheduled to grab the ID
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 
     XCTestExpectation *availableExpectation = [self expectationWithDescription:@"fetched schedule"];
 
@@ -393,7 +393,7 @@
     }];
 
     // Make sure we verified the schedule being availble before mocking the date
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 
     // Mock the date to return the futureDate + 1 second for date
     id mockedDate = [OCMockObject niceMockForClass:[NSDate class]];
@@ -419,7 +419,7 @@
         [allExpectation fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 }
 
 - (void)testScheduleDeletesExpiredSchedules {
@@ -441,7 +441,7 @@
     }];
 
     // Make sure we verified the schedule being availble before mocking the date
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 
     // Mock the date to return the futureDate + 1 second for date
     id mockedDate = [OCMockObject niceMockForClass:[NSDate class]];
@@ -470,7 +470,7 @@
         [fetchScheduleDataExpectation fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 
 }
 
@@ -615,6 +615,6 @@
     // Trigger the actions now that its past the start
     triggerFireBlock();
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 }
 @end
