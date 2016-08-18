@@ -317,7 +317,7 @@
     [self registerAction:addCustomEventAction
                     name:kUAAddCustomEventActionDefaultRegistryName
                predicate:^BOOL(UAActionArguments *args) {
-                   return args.situation == UASituationManualInvocation || args.situation == UASituationWebViewInvocation;
+                   return args.situation == UASituationManualInvocation || args.situation == UASituationWebViewInvocation || args.situation == UASituationAutomation;
                }];
 
     // Share action

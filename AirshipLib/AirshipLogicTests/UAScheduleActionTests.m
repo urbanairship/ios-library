@@ -63,11 +63,12 @@
  * Test accepts arguments.
  */
 - (void)testAcceptsArguments {
-    UASituation validSituations[4] = {
+    UASituation validSituations[5] = {
         UASituationForegroundPush,
         UASituationBackgroundPush,
         UASituationManualInvocation,
-        UASituationWebViewInvocation
+        UASituationWebViewInvocation,
+        UASituationAutomation
     };
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
@@ -75,7 +76,7 @@
     arguments.value = @{ UAActionScheduleInfoActionsKey: @{ @"action_name": @"action_value" },
                          UAActionScheduleInfoTriggersKey: @[ @{ UAScheduleTriggerTypeKey: UAScheduleTriggerAppForegroundName, UAScheduleTriggerGoalKey: @(1) }] };
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
         arguments.situation = validSituations[i];
         XCTAssertTrue([self.action acceptsArguments:arguments], @"action should accept situation %zd", validSituations[i]);
     }

@@ -39,6 +39,7 @@ NSString *const UACancelSchedulesActionGroups = @"groups";
         case UASituationWebViewInvocation:
         case UASituationBackgroundPush:
         case UASituationForegroundPush:
+        case UASituationAutomation:
             if ([arguments.value isKindOfClass:[NSDictionary class]]) {
                 return arguments.value[UACancelSchedulesActionIDs] != nil || arguments.value[UACancelSchedulesActionGroups] != nil;
             }

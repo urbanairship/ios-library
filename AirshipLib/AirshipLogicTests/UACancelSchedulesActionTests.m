@@ -60,11 +60,12 @@
  * Test accepts arguments.
  */
 - (void)testAcceptsArguments {
-    UASituation validSituations[4] = {
+    UASituation validSituations[5] = {
         UASituationForegroundPush,
         UASituationBackgroundPush,
         UASituationManualInvocation,
-        UASituationWebViewInvocation
+        UASituationWebViewInvocation,
+        UASituationAutomation
     };
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
@@ -73,28 +74,28 @@
 
     // Should accept all
     arguments.value = UACancelSchedulesActionAll;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
         arguments.situation = validSituations[i];
         XCTAssertTrue([self.action acceptsArguments:arguments], @"action should accept situation %zd", validSituations[i]);
     }
 
     // Should accept an NSDictionary with "groups"
     arguments.value = @{ @"groups": @"my group"};
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
         arguments.situation = validSituations[i];
         XCTAssertTrue([self.action acceptsArguments:arguments], @"action should accept situation %zd", validSituations[i]);
     }
 
     // Should accept an NSDictionary with "ids"
     arguments.value = @{ @"ids": @"my id"};
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
         arguments.situation = validSituations[i];
         XCTAssertTrue([self.action acceptsArguments:arguments], @"action should accept situation %zd", validSituations[i]);
     }
 
     // Should accept an NSDictionary with "ids" and "groups"
     arguments.value = @{ @"ids": @"my id", @"groups": @[@"group"]};
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
         arguments.situation = validSituations[i];
         XCTAssertTrue([self.action acceptsArguments:arguments], @"action should accept situation %zd", validSituations[i]);
     }

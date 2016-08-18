@@ -37,6 +37,7 @@
         case UASituationWebViewInvocation:
         case UASituationBackgroundPush:
         case UASituationForegroundPush:
+        case UASituationAutomation:
             return [arguments.value isKindOfClass:[NSDictionary class]];
         case UASituationLaunchedFromPush:
         case UASituationBackgroundInteractiveButton:

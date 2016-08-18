@@ -65,7 +65,13 @@ typedef NS_ENUM(NSInteger, UASituation) {
      * Represents a situation in which the action was triggered from a
      * background interactive notification button.
      */
-    UASituationBackgroundInteractiveButton
+    UASituationBackgroundInteractiveButton,
+
+    /**
+     * Represents a situation in which the action was triggered from an
+     * automation trigger.
+     */
+    UASituationAutomation,
 };
 
 

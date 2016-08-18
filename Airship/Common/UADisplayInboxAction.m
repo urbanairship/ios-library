@@ -44,6 +44,7 @@
         case UASituationForegroundPush:
         case UASituationLaunchedFromPush:
         case UASituationForegroundInteractiveButton:
+        case UASituationAutomation:
             return YES;
         case UASituationBackgroundPush:
         case UASituationBackgroundInteractiveButton:
@@ -98,6 +99,7 @@
             break;
         case UASituationBackgroundPush:
         case UASituationBackgroundInteractiveButton:
+        case UASituationAutomation:
             // noop
             return;
     }

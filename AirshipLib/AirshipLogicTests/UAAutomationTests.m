@@ -589,6 +589,7 @@
     XCTestExpectation *actionRunExpectation = [self expectationWithDescription:@"action ran"];
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *arguments, UAActionCompletionHandler completionHandler) {
         XCTAssertEqualObjects(arguments.value, @"test value");
+        XCTAssertEqual(arguments.situation, UASituationAutomation);
 
         // Verify the action only runs once
         XCTAssertFalse(actionRan);

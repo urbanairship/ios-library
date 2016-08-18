@@ -286,7 +286,7 @@ NSUInteger const UAScheduleLimit = 100;
             }
 
             [UAActionRunner runActionsWithActionValues:[NSJSONSerialization objectWithString:schedule.actions]
-                                             situation:UASituationManualInvocation
+                                             situation:UASituationAutomation
                                               metadata:nil
                                      completionHandler:^(UAActionResult *result) {
                                          UA_LINFO(@"Actions triggered for schedule: %@", schedule.identifier);

@@ -55,12 +55,13 @@
  * Test accepts valid string arguments in foreground situations.
  */
 - (void)testAcceptsArguments {
-    UASituation validSituations[5] = {
+    UASituation validSituations[6] = {
         UASituationForegroundInteractiveButton,
         UASituationBackgroundInteractiveButton,
         UASituationLaunchedFromPush,
         UASituationManualInvocation,
-        UASituationWebViewInvocation
+        UASituationWebViewInvocation,
+        UASituationAutomation
     };
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
@@ -69,14 +70,14 @@
 
     // Should accept an NSString
     arguments.value = @"pasteboard string";
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         arguments.situation = validSituations[i];
         XCTAssertTrue([self.action acceptsArguments:arguments], @"action should accept situation %zd", validSituations[i]);
     }
 
     // Should accept an NSDictionary with "text" 
     arguments.value = @{ @"text": @"pasteboard string"};
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         arguments.situation = validSituations[i];
         XCTAssertTrue([self.action acceptsArguments:arguments], @"action should accept situation %zd", validSituations[i]);
     }

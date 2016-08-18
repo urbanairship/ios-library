@@ -33,7 +33,8 @@
  *
  * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush
  * UASituationWebViewInvocation, UASituationForegroundInteractiveButton,
- * UASituationBackgroundInteractiveButton and UASituationManualInvocation
+ * UASituationBackgroundInteractiveButton, UASituationManualInvocation, and
+ * UASituationAutomation
  *
  * Result value: nil
  *

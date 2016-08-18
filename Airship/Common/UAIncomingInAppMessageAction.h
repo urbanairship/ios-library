@@ -33,8 +33,8 @@
  * Expected argument value is an in-app message payload in NSDictionary format.
  *
  * Valid situations: UASituationBackgroundPush, UASituationForegroundPush,
- * UASituationLaunchedFromPush, UASituationBackgroundInteractiveButton and
- * UASituationForegroundInteractiveButton.
+ * UASituationLaunchedFromPush, UASituationBackgroundInteractiveButton,
+ * UASituationForegroundInteractiveButton, and UASituationAutomation.
  *
  * Default predicate: Rejects all arguments on iOS6.
  *

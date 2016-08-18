@@ -35,7 +35,7 @@
  *  - "ids": A schedule ID or an array of schedule IDs.
  *
  * Valid situations: UASituationBackgroundPush, UASituationForegroundPush
- * UASituationWebViewInvocation, UASituationManualInvocation
+ * UASituationWebViewInvocation, UASituationManualInvocation, and UASituationAutomation
  *
  * Result value: nil.
  */

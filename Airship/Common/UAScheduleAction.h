@@ -33,7 +33,7 @@
  * Expected argument values: NSDictionary representing a schedule info JSON.
  *
  * Valid situations: UASituationBackgroundPush, UASituationForegroundPush
- * UASituationWebViewInvocation, UASituationManualInvocation
+ * UASituationWebViewInvocation, UASituationManualInvocation, and UASituationAutomation
  *
  * Result value: Schedule ID or nil if the schedule failed.
  */
