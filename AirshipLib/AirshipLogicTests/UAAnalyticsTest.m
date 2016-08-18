@@ -37,6 +37,8 @@
 #import "UAEvent+Internal.h"
 #import "UAAssociateIdentifiersEvent+Internal.h"
 #import "UAScreenTrackingEvent+Internal.h"
+#import "UARegionEvent.h"
+#import "UACustomEvent.h"
 
 @interface UAAnalyticsTest()
 @property (nonatomic, strong) UAAnalytics *analytics;
@@ -59,7 +61,7 @@
 
 - (void)setUp {
     [super setUp];
-    
+
     self.mockedKeychainClass = [OCMockObject mockForClass:[UAKeychainUtils class]];
     [[[self.mockedKeychainClass stub] andReturn:@"some-device-ID"] getDeviceID];
 
@@ -762,6 +764,48 @@
 
     [self.mockDBManager verify];
 }
+
+// Tests forwarding screens to the analytics delegate.
+- (void)testForwardScreenTracks {
+    id mockDelegate = [OCMockObject niceMockForProtocol:@protocol(UAAnalyticsDelegate)];
+    self.analytics.delegate = mockDelegate;
+
+    [[mockDelegate expect] screenTracked:@"screen"];
+    [self.analytics trackScreen:@"screen"];
+
+    [mockDelegate verify];
+    [mockDelegate stopMocking];
+}
+
+// Tests forwarding region events to the analytics delegate.
+- (void)testForwardRegionEvents {
+    id mockDelegate = [OCMockObject niceMockForProtocol:@protocol(UAAnalyticsDelegate)];
+    self.analytics.delegate = mockDelegate;
+
+    UARegionEvent *regionEnter = [UARegionEvent regionEventWithRegionID:@"region" source:@"test" boundaryEvent:UABoundaryEventEnter];
+
+    [[mockDelegate expect] regionEventAdded:regionEnter];
+    [self.analytics addEvent:regionEnter];
+
+    [mockDelegate verify];
+    [mockDelegate stopMocking];
+}
+
+// Tests forwarding cusotm events to the analytics delegate.
+- (void)testForwardCustomEvents {
+    id mockDelegate = [OCMockObject niceMockForProtocol:@protocol(UAAnalyticsDelegate)];
+    self.analytics.delegate = mockDelegate;
+
+    UACustomEvent *purchase = [UACustomEvent eventWithName:@"purchase" value:@(100)];
+
+    [[mockDelegate expect] customEventAdded:purchase];
+    [self.analytics addEvent:purchase];
+
+    [mockDelegate verify];
+    [mockDelegate stopMocking];
+}
+
+
 
 #pragma Helpers
 
