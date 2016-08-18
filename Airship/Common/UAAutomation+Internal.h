@@ -31,5 +31,8 @@
 @interface UAAutomation () <UAAnalyticsDelegate>
 
 @property (nonatomic, strong) UAAutomationStore *automationStore;
+@property (nonatomic, strong) UAPreferenceDataStore *preferenceDataStore;
+
++ (instancetype)automationWithPreferenceDataStore:(UAPreferenceDataStore *)preferenceDataStore;
 
 @end

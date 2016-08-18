@@ -32,11 +32,15 @@
 #import "UACustomEvent.h"
 #import "UAAutomationStore+Internal.h"
 #import "UAJSONPredicate.h"
+#import "UAPreferenceDataStore+Internal.h"
 
 @interface UAAutomationTests : XCTestCase
 @property (nonatomic, strong) UAAutomation *automation;
 @property (nonatomic, strong) UAActionRegistry *actionRegistry;
 @property (nonatomic, strong) id mockedAirship;
+@property (nonatomic, strong) UAPreferenceDataStore *preferenceDataStore;
+
+
 @end
 
 @implementation UAAutomationTests
@@ -44,7 +48,8 @@
 - (void)setUp {
     [super setUp];
 
-    self.automation = [[UAAutomation alloc] init];
+    self.preferenceDataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"UAAutomationTests"];
+    self.automation = [UAAutomation automationWithPreferenceDataStore:self.preferenceDataStore];
 
     [self.automation cancelAll];
 
@@ -58,6 +63,7 @@
 
 - (void)tearDown {
     [self.mockedAirship stopMocking];
+    [self.preferenceDataStore removeAll];
     [super tearDown];
 }
 

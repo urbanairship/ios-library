@@ -39,8 +39,10 @@
 #import "UAActionRunner+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAJSONPredicate.h"
+#import "UAPreferenceDataStore+Internal.h"
 
 NSUInteger const UAScheduleLimit = 100;
+NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
 
 @implementation UAAutomation
 
@@ -48,11 +50,12 @@ NSUInteger const UAScheduleLimit = 100;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (instancetype)init {
+- (instancetype)initWithPreferenceDataStore:(UAPreferenceDataStore *)preferenceDataStore {
     self = [super init];
 
     if (self) {
         self.automationStore = [[UAAutomationStore alloc] init];
+        self.preferenceDataStore = preferenceDataStore;
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(enterBackground)
@@ -71,6 +74,10 @@ NSUInteger const UAScheduleLimit = 100;
     }
 
     return self;
+}
+
++ (instancetype)automationWithPreferenceDataStore:(UAPreferenceDataStore *)preferenceDataStore {
+    return [[UAAutomation alloc] initWithPreferenceDataStore:preferenceDataStore];
 }
 
 - (UAActionSchedule *)scheduleFromData:(UAActionScheduleData *)data {
@@ -117,6 +124,8 @@ NSUInteger const UAScheduleLimit = 100;
 
         return;
     }
+
+    [self.preferenceDataStore setBool:YES forKey:UAAutomationEnabled];
 
     // Delete any expired schedules before trying to save a schedule to free up the limit
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"end <= %@", [NSDate date]];
@@ -251,6 +260,9 @@ NSUInteger const UAScheduleLimit = 100;
 }
 
 - (void)updateTriggersWithType:(UAScheduleTriggerType)triggerType argument:(id)argument incrementAmount:(double)amount {
+    if (![self.preferenceDataStore boolForKey:UAAutomationEnabled]) {
+        return;
+    }
 
     UA_LDEBUG(@"Updating triggers with type: %ld", triggerType);
     NSDate *methodStart = [NSDate date];
