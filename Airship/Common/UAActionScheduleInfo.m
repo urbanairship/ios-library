@@ -26,7 +26,7 @@
 #import "UAActionScheduleInfo.h"
 #import "UAUtils.h"
 
-NSUInteger const UAMaxTriggers = 10;
+NSUInteger const UAActionScheduleInfoMaxTriggers = 10;
 
 NSString *const UAActionScheduleInfoActionsKey = @"actions";
 NSString *const UAActionScheduleInfoLimitKey = @"limit";
@@ -52,7 +52,7 @@ NSString *const UAActionScheduleInfoTriggersKey = @"triggers";
 @implementation UAActionScheduleInfo
 
 - (BOOL)isValid {
-    if (!self.triggers.count || self.triggers.count > UAMaxTriggers) {
+    if (!self.triggers.count || self.triggers.count > UAActionScheduleInfoMaxTriggers) {
         return NO;
     }
 

@@ -48,7 +48,7 @@
 #import "UARegionEvent+Internal.h"
 #import "UAAssociateIdentifiersEvent+Internal.h"
 #import "UAAssociatedIdentifiers.h"
-
+#import "UACustomEvent.h"
 
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
@@ -251,6 +251,19 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
     UA_LDEBUG(@"Adding %@ event %@.", event.eventType, event.eventID);
     [self.analyticsDBManager addEvent:event withSessionID:self.sessionID];
+
+    id strongDelegate = self.delegate;
+    if ([event isKindOfClass:[UACustomEvent class]]) {
+        if ([strongDelegate respondsToSelector:@selector(customEventAdded:)]) {
+            [strongDelegate customEventAdded:(UACustomEvent *)event];
+        }
+    }
+
+    if ([event isKindOfClass:[UARegionEvent class]]) {
+        if ([strongDelegate respondsToSelector:@selector(regionEventAdded:)]) {
+            [strongDelegate regionEventAdded:(UARegionEvent *)event];
+        }
+    }
 
     UA_LTRACE(@"Added: %@.", event);
 
@@ -746,6 +759,11 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     // Prevent duplicate calls to track same screen
     if ([screen isEqualToString:self.currentScreen]) {
         return;
+    }
+
+    id strongDelegate = self.delegate;
+    if (screen && [strongDelegate respondsToSelector:@selector(screenTracked:)]) {
+        [strongDelegate screenTracked:screen];
     }
 
     // If there's a screen currently being tracked set it's stop time and add it to analytics

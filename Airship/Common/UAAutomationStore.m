@@ -31,25 +31,36 @@
 #import "UAScheduleTrigger+Internal.h"
 #import "UAirship.h"
 #import "UAJSONPredicate.h"
+#import "UAConfig.h"
+#import "UAUtils.h"
 
 @interface UAAutomationStore ()
 @property (nonatomic, strong) NSManagedObjectContext *managedContext;
 @end
 
+NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
+NSString *const UAAutomationStoreDirectory = @"com.urbanairship.no-backup";
+
 @implementation UAAutomationStore
 
 
-- (instancetype)init {
+- (instancetype)initWithConfig:(UAConfig *)config {
     self = [super init];
 
     if (self) {
-        self.managedContext = [self createManagedObjectContext];
+        self.managedContext = [self createManagedObjectContextWithConfig:config];
     }
 
     return self;
 }
 
-- (NSManagedObjectContext *)createManagedObjectContext {
++ (instancetype)automationStoreWithConfig:(UAConfig *)config {
+    return [[UAAutomationStore alloc] initWithConfig:config];
+}
+
+- (NSManagedObjectContext *)createManagedObjectContextWithConfig:(UAConfig *)config {
+    NSString *storeName = [NSString stringWithFormat:UAAutomationStoreFileFormat, config.appKey];
+
     NSURL *modelURL = [[UAirship resources] URLForResource:@"UAAutomation" withExtension:@"momd"];
     NSManagedObjectModel *mom = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
 
@@ -58,8 +69,20 @@
     [moc setPersistentStoreCoordinator:psc];
 
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSURL *documentsURL = [[fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
-    NSURL *storeURL = [documentsURL URLByAppendingPathComponent:@"DataModel.sqlite"];
+    NSURL *libraryDirectoryURL = [[fileManager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
+    NSURL *directoryURL = [libraryDirectoryURL URLByAppendingPathComponent:UAAutomationStoreDirectory];
+
+    // Create the store directory if it doesnt exist
+    if (![fileManager fileExistsAtPath:[directoryURL path]]) {
+        NSError *error = nil;
+        if (![fileManager createDirectoryAtURL:directoryURL withIntermediateDirectories:YES attributes:nil error:&error]) {
+            UA_LERR(@"Error creating automation directory %@: %@", [directoryURL lastPathComponent], error);
+        } else {
+            [UAUtils addSkipBackupAttributeToItemAtURL:directoryURL];
+        }
+    }
+
+    NSURL *storeURL = [directoryURL URLByAppendingPathComponent:storeName];
 
     [moc performBlock:^{
         NSError *error = nil;

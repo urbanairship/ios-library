@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Max number of triggers a schedule can support.
  */
-extern NSUInteger const UAMaxTriggers;
+extern NSUInteger const UAActionScheduleInfoMaxTriggers;
 
 /**
  * JSON key for the schedule's actions.

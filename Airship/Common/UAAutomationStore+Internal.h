@@ -28,12 +28,20 @@
 @class UAActionSchedule;
 @class UAActionScheduleData;
 @class UAScheduleTriggerData;
+@class UAConfig;
 
 /**
  * Manager class for the Automation CoreData store.
  */
 @interface UAAutomationStore : NSObject
 
+/**
+ * Factory method for automation store.
+ *
+ * @param config The Urban Airship config.
+ * @return Automation store.
+ */
++ (instancetype)automationStoreWithConfig:(UAConfig *)config;
 
 /**
  * Saves the UAActionSchedule to the data store.

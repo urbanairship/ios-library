@@ -146,7 +146,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.sharedInAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.analytics dataStore:dataStore];
         self.sharedLocation = [UALocation locationWithAnalytics:self.analytics dataStore:dataStore];
 
-        self.sharedAutomation = [[UAAutomation alloc] init];
+        self.sharedAutomation = [UAAutomation automationWithConfig:config dataStore:dataStore];
         self.analytics.delegate = self.sharedAutomation;
 
         // Only create the default message center if running iOS 8 and above

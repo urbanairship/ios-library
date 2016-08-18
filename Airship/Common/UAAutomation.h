@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Automation schedules limit.
  */
-extern NSUInteger const UAScheduleLimit;
+extern NSUInteger const UAAutomationScheduleLimit;
 
 /**
  * Manager class for scheduling actions.

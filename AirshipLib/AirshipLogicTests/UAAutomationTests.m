@@ -32,11 +32,14 @@
 #import "UACustomEvent.h"
 #import "UAAutomationStore+Internal.h"
 #import "UAJSONPredicate.h"
+#import "UAPreferenceDataStore+Internal.h"
+#import "UAConfig.h"
 
 @interface UAAutomationTests : XCTestCase
 @property (nonatomic, strong) UAAutomation *automation;
 @property (nonatomic, strong) UAActionRegistry *actionRegistry;
 @property (nonatomic, strong) id mockedAirship;
+@property (nonatomic, strong) UAPreferenceDataStore *preferenceDataStore;
 @end
 
 @implementation UAAutomationTests
@@ -44,7 +47,12 @@
 - (void)setUp {
     [super setUp];
 
-    self.automation = [[UAAutomation alloc] init];
+    UAConfig *config = [UAConfig config];
+    config.productionAppKey = @"testAppKey";
+    config.inProduction = YES;
+
+    self.preferenceDataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"UAAutomationTests"];
+    self.automation = [UAAutomation automationWithConfig:config dataStore:self.preferenceDataStore];
 
     [self.automation cancelAll];
 
@@ -58,6 +66,7 @@
 
 - (void)tearDown {
     [self.mockedAirship stopMocking];
+    [self.preferenceDataStore removeAll];
     [super tearDown];
 }
 
@@ -104,7 +113,7 @@
     }];
 
     // Schedule to the limit
-    for (int i = 0; i < UAScheduleLimit; i++) {
+    for (int i = 0; i < UAAutomationScheduleLimit; i++) {
         XCTestExpectation *testExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"scheduled action: %d", i]];
 
         [self.automation scheduleActions:scheduleInfo completionHandler:^(UAActionSchedule *schedule) {
