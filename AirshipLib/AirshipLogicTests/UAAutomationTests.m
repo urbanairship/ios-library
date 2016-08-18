@@ -39,8 +39,6 @@
 @property (nonatomic, strong) UAActionRegistry *actionRegistry;
 @property (nonatomic, strong) id mockedAirship;
 @property (nonatomic, strong) UAPreferenceDataStore *preferenceDataStore;
-
-
 @end
 
 @implementation UAAutomationTests
@@ -110,7 +108,7 @@
     }];
 
     // Schedule to the limit
-    for (int i = 0; i < UAScheduleLimit; i++) {
+    for (int i = 0; i < UAAutomationScheduleLimit; i++) {
         XCTestExpectation *testExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"scheduled action: %d", i]];
 
         [self.automation scheduleActions:scheduleInfo completionHandler:^(UAActionSchedule *schedule) {

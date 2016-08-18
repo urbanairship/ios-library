@@ -41,7 +41,7 @@
 #import "UAJSONPredicate.h"
 #import "UAPreferenceDataStore+Internal.h"
 
-NSUInteger const UAScheduleLimit = 100;
+NSUInteger const UAAutomationScheduleLimit = 100;
 NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
 
 @implementation UAAutomation
@@ -135,7 +135,7 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
     UAActionSchedule *schedule = [UAActionSchedule actionScheduleWithIdentifier:[NSUUID UUID].UUIDString info:scheduleInfo];
 
     // Try to save the schedule
-    [self.automationStore saveSchedule:schedule limit:UAScheduleLimit completionHandler:^(BOOL success) {
+    [self.automationStore saveSchedule:schedule limit:UAAutomationScheduleLimit completionHandler:^(BOOL success) {
         if (completionHandler) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 completionHandler(success ? schedule : nil);
@@ -160,7 +160,7 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
 
 - (void)getScheduleWithIdentifier:(NSString *)identifier completionHandler:(void (^)(UAActionSchedule *))completionHandler {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@ && end >= %@", identifier, [NSDate date]];
-    [self.automationStore fetchSchedulesWithPredicate:predicate limit:UAScheduleLimit completionHandler:^(NSArray<UAActionScheduleData *> *schedulesData) {
+    [self.automationStore fetchSchedulesWithPredicate:predicate limit:UAAutomationScheduleLimit completionHandler:^(NSArray<UAActionScheduleData *> *schedulesData) {
         UAActionSchedule *schedule;
         if (schedulesData.count) {
             schedule = [self scheduleFromData:[schedulesData firstObject]];
@@ -174,7 +174,7 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
 
 - (void)getSchedules:(void (^)(NSArray<UAActionSchedule *> *))completionHandler {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"end >= %@", [NSDate date]];
-    [self.automationStore fetchSchedulesWithPredicate:predicate limit:UAScheduleLimit completionHandler:^(NSArray<UAActionScheduleData *> *schedulesData) {
+    [self.automationStore fetchSchedulesWithPredicate:predicate limit:UAAutomationScheduleLimit completionHandler:^(NSArray<UAActionScheduleData *> *schedulesData) {
         NSMutableArray *schedules = [NSMutableArray array];
         for (UAActionScheduleData *scheduleData in schedulesData) {
             [schedules addObject:[self scheduleFromData:scheduleData]];
@@ -188,7 +188,7 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
 
 - (void)getSchedulesWithGroup:(NSString *)group completionHandler:(void (^)(NSArray<UAActionSchedule *> *))completionHandler {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"group == %@ && end >= %@", group, [NSDate date]];
-    [self.automationStore fetchSchedulesWithPredicate:predicate limit:UAScheduleLimit completionHandler:^(NSArray<UAActionScheduleData *> *schedulesData) {
+    [self.automationStore fetchSchedulesWithPredicate:predicate limit:UAAutomationScheduleLimit completionHandler:^(NSArray<UAActionScheduleData *> *schedulesData) {
         NSMutableArray *schedules = [NSMutableArray array];
         for (UAActionScheduleData *scheduleData in schedulesData) {
             [schedules addObject:[self scheduleFromData:scheduleData]];
