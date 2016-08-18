@@ -103,7 +103,7 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
     }
 
     if ([event isValid]) {
-        [[UAirship shared].analytics addEvent:event];
+        [event track];
         completionHandler([UAActionResult emptyResult]);
     } else {
         NSError *error = [NSError errorWithDomain:UAAddCustomEventActionErrorDomain

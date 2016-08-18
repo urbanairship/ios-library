@@ -286,6 +286,16 @@
 }
 
 /**
+ * Test track adds an event to analytics.
+ */
+- (void)testTrack {
+    UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
+    [[self.analytics expect] addEvent:event];
+    [event track];
+    [self.analytics verify];
+}
+
+/**
  * Test setting the string array properties leaves it untouched in the event's data.
  */
 - (void)testSetStringArrayProperty {

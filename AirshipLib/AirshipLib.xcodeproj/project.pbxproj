@@ -195,6 +195,15 @@
 		767D0D571A731937008CEC8A /* UANamedUser+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 767D0D561A731937008CEC8A /* UANamedUser+Internal.h */; };
 		767D0D5A1A76BFF8008CEC8A /* UANamedUserTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 767D0D591A76BFF8008CEC8A /* UANamedUserTest.m */; };
 		767D0D5C1A76E702008CEC8A /* UANamedUserAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 767D0D5B1A76E702008CEC8A /* UANamedUserAPIClientTest.m */; };
+		7689E6FB1D4ACAED0034B85B /* UAMediaEventTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = 768F5D1C1D4AB09B0073502E /* UAMediaEventTemplate.h */; };
+		7689E6FC1D4ACAF70034B85B /* UARetailEventTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = 768F5D211D4AB09B0073502E /* UARetailEventTemplate.h */; };
+		7689E6FD1D4ACB010034B85B /* UAAccountEventTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = 768F5D1F1D4AB09B0073502E /* UAAccountEventTemplate.h */; };
+		7689E7001D4ACCE40034B85B /* UAAccountEventTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = 768F5D201D4AB09B0073502E /* UAAccountEventTemplate.m */; };
+		7689E7011D4ACCF10034B85B /* UAMediaEventTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = 768F5D1D1D4AB09B0073502E /* UAMediaEventTemplate.m */; };
+		7689E7021D4ACCF70034B85B /* UARetailEventTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = 768F5D1E1D4AB09B0073502E /* UARetailEventTemplate.m */; };
+		768F5D191D4AB07B0073502E /* UAMediaEventTemplateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 768F5D161D4AB07B0073502E /* UAMediaEventTemplateTest.m */; };
+		768F5D1A1D4AB07B0073502E /* UAAccountEventTemplateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 768F5D171D4AB07B0073502E /* UAAccountEventTemplateTest.m */; };
+		768F5D1B1D4AB07B0073502E /* UARetailEventTemplateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 768F5D181D4AB07B0073502E /* UARetailEventTemplateTest.m */; };
 		769FD9921B2B7316005BE77F /* UATagUtilsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 769FD9911B2B7316005BE77F /* UATagUtilsTest.m */; };
 		76AA8EDB19B0F0A2005FD1C3 /* NSJSONSerialization+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBFA2D817B5436500F97E1D /* NSJSONSerialization+UAAdditions.h */; };
 		76AA8EDC19B0F0A2005FD1C3 /* UAAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CC85429F17F4B81600D2DE10 /* UAAction.h */; };
@@ -658,6 +667,15 @@
 		767D0D561A731937008CEC8A /* UANamedUser+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UANamedUser+Internal.h"; sourceTree = "<group>"; };
 		767D0D591A76BFF8008CEC8A /* UANamedUserTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UANamedUserTest.m; sourceTree = "<group>"; };
 		767D0D5B1A76E702008CEC8A /* UANamedUserAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UANamedUserAPIClientTest.m; sourceTree = "<group>"; };
+		768F5D161D4AB07B0073502E /* UAMediaEventTemplateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMediaEventTemplateTest.m; sourceTree = "<group>"; };
+		768F5D171D4AB07B0073502E /* UAAccountEventTemplateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAccountEventTemplateTest.m; sourceTree = "<group>"; };
+		768F5D181D4AB07B0073502E /* UARetailEventTemplateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARetailEventTemplateTest.m; sourceTree = "<group>"; };
+		768F5D1C1D4AB09B0073502E /* UAMediaEventTemplate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMediaEventTemplate.h; sourceTree = "<group>"; };
+		768F5D1D1D4AB09B0073502E /* UAMediaEventTemplate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMediaEventTemplate.m; sourceTree = "<group>"; };
+		768F5D1E1D4AB09B0073502E /* UARetailEventTemplate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARetailEventTemplate.m; sourceTree = "<group>"; };
+		768F5D1F1D4AB09B0073502E /* UAAccountEventTemplate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAccountEventTemplate.h; sourceTree = "<group>"; };
+		768F5D201D4AB09B0073502E /* UAAccountEventTemplate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAccountEventTemplate.m; sourceTree = "<group>"; };
+		768F5D211D4AB09B0073502E /* UARetailEventTemplate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARetailEventTemplate.h; sourceTree = "<group>"; };
 		769FD9911B2B7316005BE77F /* UATagUtilsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATagUtilsTest.m; sourceTree = "<group>"; };
 		76B4E01419A4038000603F8A /* UAInteractiveNotificationEvent+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInteractiveNotificationEvent+Internal.h"; sourceTree = "<group>"; };
 		76B4E01519A4038000603F8A /* UAInteractiveNotificationEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInteractiveNotificationEvent.m; sourceTree = "<group>"; };
@@ -1465,6 +1483,9 @@
 		CC20BE1C19589D310098CF35 /* Events */ = {
 			isa = PBXGroup;
 			children = (
+				768F5D161D4AB07B0073502E /* UAMediaEventTemplateTest.m */,
+				768F5D171D4AB07B0073502E /* UAAccountEventTemplateTest.m */,
+				768F5D181D4AB07B0073502E /* UARetailEventTemplateTest.m */,
 				CC7DC95A183E97E000E95BB8 /* UAEventTest.m */,
 				CCF4462E1947D265003E04E7 /* UACustomEventTest.m */,
 				612ED4D31A3785E500DD7762 /* UARegionEventTest.m */,
@@ -1482,6 +1503,12 @@
 		CC2950F01948DB5D00E905E3 /* Events */ = {
 			isa = PBXGroup;
 			children = (
+				768F5D1F1D4AB09B0073502E /* UAAccountEventTemplate.h */,
+				768F5D201D4AB09B0073502E /* UAAccountEventTemplate.m */,
+				768F5D1C1D4AB09B0073502E /* UAMediaEventTemplate.h */,
+				768F5D1D1D4AB09B0073502E /* UAMediaEventTemplate.m */,
+				768F5D211D4AB09B0073502E /* UARetailEventTemplate.h */,
+				768F5D1E1D4AB09B0073502E /* UARetailEventTemplate.m */,
 				D5BED7B812FC787900057449 /* UAEvent.h */,
 				D5BED7B712FC787900057449 /* UAEvent.m */,
 				CC2950F71949040300E905E3 /* UAEvent+Internal.h */,
@@ -1919,6 +1946,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7689E6FD1D4ACB010034B85B /* UAAccountEventTemplate.h in Headers */,
+				7689E6FC1D4ACAF70034B85B /* UARetailEventTemplate.h in Headers */,
+				7689E6FB1D4ACAED0034B85B /* UAMediaEventTemplate.h in Headers */,
 				76B4E01619A4038000603F8A /* UAInteractiveNotificationEvent+Internal.h in Headers */,
 				CC313A9919A66DBE00134A9F /* UAUserNotificationCategories.h in Headers */,
 				4928D8F51AB24D010046E5BE /* UAUserNotificationCategory+Internal.h in Headers */,
@@ -2307,6 +2337,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				768F5D1B1D4AB07B0073502E /* UARetailEventTemplateTest.m in Sources */,
+				768F5D191D4AB07B0073502E /* UAMediaEventTemplateTest.m in Sources */,
 				49226C8318A3045900D4A57A /* UAURLProtocolTest.m in Sources */,
 				76E53565194760540020335C /* UAAddCustomEventActionTest.m in Sources */,
 				CCE1E63E1ABA3E120023D254 /* UAInAppDisplayEventTest.m in Sources */,
@@ -2400,6 +2432,7 @@
 				49942CDB17B19A3B007E5FB1 /* UADelayOperationTest.m in Sources */,
 				490710BC184D3EAB00E494AF /* UAWebViewCallDataTest.m in Sources */,
 				49B704741A7C53E5000F67A6 /* UAColorUtilsTest.m in Sources */,
+				768F5D1A1D4AB07B0073502E /* UAAccountEventTemplateTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2407,6 +2440,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7689E7021D4ACCF70034B85B /* UARetailEventTemplate.m in Sources */,
+				7689E7011D4ACCF10034B85B /* UAMediaEventTemplate.m in Sources */,
+				7689E7001D4ACCE40034B85B /* UAAccountEventTemplate.m in Sources */,
 				7676AA0C18C4EF5B00B4E5B4 /* UAAppDelegateProxy.m in Sources */,
 				CCA8ED0C1D64FD200042030E /* UACancelSchedulesAction.m in Sources */,
 				49EB68E51C1FAD5D00D05BCE /* UAMessageCenterDateUtils.m in Sources */,

@@ -262,4 +262,8 @@ NSString *const UACustomEventConversionSendIDKey = @"conversion_send_id";
     return [dictionary mutableCopy];
 }
 
+- (void)track {
+    [[UAirship shared].analytics addEvent:self];
+}
+
 @end

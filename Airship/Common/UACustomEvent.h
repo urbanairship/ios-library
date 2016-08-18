@@ -154,6 +154,11 @@ extern NSString *const UACustomEventInteractionTypeKey;
 - (void)setNumberProperty:(NSNumber *)value forKey:(NSString *)key;
 
 /**
+ * Adds the event to analytics.
+ */
+- (void)track;
+
+/**
  * Sets a custom String array property. The array must not exceed 20 entries and
  * each entry's length must not exceed 255 characters or it will invalidate the event.
  *
