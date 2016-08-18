@@ -26,6 +26,7 @@
 #import "UARetailEventTemplate.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
+#import "UACustomEvent+Internal.h"
 
 #define kUARetailEventTemplate @"retail"
 #define kUABrowsedProductEvent @"browsed"

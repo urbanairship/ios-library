@@ -51,6 +51,7 @@ NSString *const UACustomEventInteractionTypeKey = @"interaction_type";
 // Private data keys
 NSString *const UACustomEventConversionMetadataKey = @"conversion_metadata";
 NSString *const UACustomEventConversionSendIDKey = @"conversion_send_id";
+NSString *const UACustomEventTemplateTypeKey = @"template_type";
 
 - (NSString *)eventType {
     return @"custom_event";
@@ -232,7 +233,7 @@ NSString *const UACustomEventConversionSendIDKey = @"conversion_send_id";
     [dictionary setValue:self.transactionID forKey:UACustomEventTransactionIDKey];
 
     // Template type
-    [dictionary setValue:self.templateType forKey:@"template_type"];
+    [dictionary setValue:self.templateType forKey:UACustomEventTemplateTypeKey];
 
     // Event value
     if (self.eventValue) {

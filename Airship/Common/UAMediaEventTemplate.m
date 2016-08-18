@@ -26,6 +26,7 @@
 #import "UAMediaEventTemplate.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
+#import "UACustomEvent+Internal.h"
 
 #define kUAMediaEventTemplate @"media"
 #define kUABrowsedContentEvent @"browsed_content"

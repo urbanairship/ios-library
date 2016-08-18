@@ -26,6 +26,7 @@
 #import "UAAccountEventTemplate.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
+#import "UACustomEvent+Internal.h"
 
 #define kUAAccountEventTemplate @"account"
 #define kUARegisteredAccountEvent @"registered_account"
