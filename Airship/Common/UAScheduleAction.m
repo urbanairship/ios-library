@@ -23,15 +23,13 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UACancelSchedulesAction.h"
+#import "UAScheduleAction.h"
 #import "UAirship.h"
 #import "UAAutomation.h"
+#import "UAActionScheduleInfo.h"
+#import "UAActionSchedule.h"
 
-NSString *const UACancelSchedulesActionAll = @"all";
-NSString *const UACancelSchedulesActionIDs = @"ids";
-NSString *const UACancelSchedulesActionGroups = @"groups";
-
-@implementation UACancelSchedulesAction
+@implementation UAScheduleAction
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     switch (arguments.situation) {
@@ -39,16 +37,7 @@ NSString *const UACancelSchedulesActionGroups = @"groups";
         case UASituationWebViewInvocation:
         case UASituationBackgroundPush:
         case UASituationForegroundPush:
-            if ([arguments.value isKindOfClass:[NSDictionary class]]) {
-                return arguments.value[UACancelSchedulesActionIDs] != nil || arguments.value[UACancelSchedulesActionGroups] != nil;
-            }
-
-            if ([arguments.value isKindOfClass:[NSString class]]) {
-                return [arguments.value isEqualToString:UACancelSchedulesActionAll];
-            }
-
-            return NO;
-
+            return [arguments.value isKindOfClass:[NSDictionary class]];
         case UASituationLaunchedFromPush:
         case UASituationBackgroundInteractiveButton:
         case UASituationForegroundInteractiveButton:
@@ -56,55 +45,21 @@ NSString *const UACancelSchedulesActionGroups = @"groups";
     }
 }
 
+
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
-
-    // All
-    if ([UACancelSchedulesActionAll isEqualToString:arguments.value]) {
-        [[UAirship automation] cancelAll];
-
+    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithJSON:arguments.value];
+    if (!scheduleInfo) {
+        UA_LWARN(@"Unable to schedule actions. Invalid schedule payload: %@", scheduleInfo);
         completionHandler([UAActionResult emptyResult]);
         return;
     }
 
-    // Groups
-    id groups = arguments.value[UACancelSchedulesActionGroups];
-    if (groups) {
-
-        // Single group
-        if ([groups isKindOfClass:[NSString class]]) {
-            [[UAirship automation] cancelSchedulesWithGroup:groups];
-        } else if ([groups isKindOfClass:[NSArray class]]) {
-
-            // Array of groups
-            for (id value in groups) {
-                if ([value isKindOfClass:[NSString class]]) {
-                    [[UAirship automation] cancelSchedulesWithGroup:value];
-                }
-            }
-        }
-    }
-
-    // IDs
-    id ids = arguments.value[UACancelSchedulesActionIDs];
-    if (ids) {
-
-        // Single ID
-        if ([ids isKindOfClass:[NSString class]]) {
-            [[UAirship automation] cancelScheduleWithIdentifier:ids];
-        } else if ([ids isKindOfClass:[NSArray class]]) {
-
-            // Array of IDs
-            for (id value in ids) {
-                if ([value isKindOfClass:[NSString class]]) {
-                    [[UAirship automation] cancelScheduleWithIdentifier:value];
-                }
-            }
-        }
-    }
-
-    completionHandler([UAActionResult emptyResult]);
+    [[UAirship automation] scheduleActions:scheduleInfo completionHandler:^(UAActionSchedule *schedule) {
+        completionHandler([UAActionResult resultWithValue:schedule.identifier]);
+    }];
 }
+
 
 @end

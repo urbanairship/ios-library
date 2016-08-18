@@ -68,6 +68,56 @@ typedef NS_ENUM(NSInteger, UAScheduleTriggerType) {
 };
 
 
+/**
+ * JSON key for the trigger's type. The type should be one of the type names.
+ */
+extern NSString *const UAScheduleTriggerTypeKey;
+
+/**
+ * JSON key for the trigger's predicate.
+ */
+extern NSString *const UAScheduleTriggerPredicateKey;
+
+/**
+ * JSON key for the trigger's goal.
+ */
+extern NSString *const UAScheduleTriggerGoalKey;
+
+/**
+ * Foreground trigger name when defining a trigger in JSON.
+ */
+extern NSString *const UAScheduleTriggerAppForegroundName;
+
+/**
+ * Background trigger name when defining a trigger in JSON.
+ */
+extern NSString *const UAScheduleTriggerAppBackgroundName;
+
+/**
+ * Region enter trigger name when defining a trigger in JSON.
+ */
+extern NSString *const UAScheduleTriggerRegionEnterName;
+
+/**
+ * Region exit trigger name when defining a trigger in JSON.
+ */
+extern NSString *const UAScheduleTriggerRegionExitName;
+
+/**
+ * Custom event count trigger name when defining a trigger in JSON.
+ */
+extern NSString *const UAScheduleTriggerCustomEventCountName;
+
+/**
+ * Custom event value trigger name when defining a trigger in JSON.
+ */
+extern NSString *const UAScheduleTriggerCustomEventValueName;
+
+/**
+ * Screen trigger name when defining a trigger in JSON.
+ */
+extern NSString *const UAScheduleTriggerScreenName;
+
 @class UAJSONPredicate;
 
 @interface UAScheduleTrigger: NSObject
@@ -160,6 +210,14 @@ typedef NS_ENUM(NSInteger, UAScheduleTriggerType) {
  * @return `YES` if the triggers are equal, otherwise `NO`.
  */
 - (BOOL)isEqualToTrigger:(nullable UAScheduleTrigger *)trigger;
+
+/**
+ * Factory method to create a trigger from a JSON payload.
+ *
+ * @param json The JSON payload.
+ * @return A trigger or `nil` if the JSON is invalid.
+ */
++ (instancetype)triggerWithJSON:(id)json;
 
 @end
 

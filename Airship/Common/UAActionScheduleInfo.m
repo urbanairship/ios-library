@@ -24,8 +24,16 @@
  */
 
 #import "UAActionScheduleInfo.h"
+#import "UAUtils.h"
 
 NSUInteger const UAMaxTriggers = 10;
+
+NSString *const UAActionScheduleInfoActionsKey = @"actions";
+NSString *const UAActionScheduleInfoLimitKey = @"limit";
+NSString *const UAActionScheduleInfoGroupKey = @"group";
+NSString *const UAActionScheduleInfoEndKey = @"end";
+NSString *const UAActionScheduleInfoStartKey = @"start";
+NSString *const UAActionScheduleInfoTriggersKey = @"triggers";
 
 @implementation UAActionScheduleInfoBuilder
 
@@ -84,6 +92,89 @@ NSUInteger const UAMaxTriggers = 10;
     return [[UAActionScheduleInfo alloc] initWithBuilder:builder];
 }
 
+
++ (instancetype)actionScheduleInfoWithJSON:(id)json {
+    if (![json isKindOfClass:[NSDictionary class]]) {
+        return nil;
+    }
+
+    NSSet *keySet = [NSSet setWithArray:[json allKeys]];
+    NSSet *possibleKeys = [NSSet setWithArray:@[UAActionScheduleInfoActionsKey, UAActionScheduleInfoLimitKey,
+                                                UAActionScheduleInfoGroupKey, UAActionScheduleInfoEndKey,
+                                                UAActionScheduleInfoStartKey, UAActionScheduleInfoTriggersKey]];
+
+    if (![keySet isSubsetOfSet:possibleKeys]) {
+        return nil;
+    }
+
+    // Actions
+    id actions = json[UAActionScheduleInfoActionsKey];
+    if (![actions isKindOfClass:[NSDictionary class]]) {
+        return nil;
+    }
+
+    // Limit
+    id limit = json[UAActionScheduleInfoLimitKey];
+    if (limit && ![limit isKindOfClass:[NSNumber class]]) {
+        return nil;
+    }
+
+    // Start
+    NSDate *start;
+    if (json[UAActionScheduleInfoStartKey]) {
+        if (![json[UAActionScheduleInfoStartKey] isKindOfClass:[NSString class]]) {
+            return nil;
+        }
+
+        start = [[UAUtils ISODateFormatterUTC] dateFromString:json[UAActionScheduleInfoStartKey]];
+    }
+
+    // End
+    NSDate *end;
+    if (json[UAActionScheduleInfoEndKey]) {
+        if (![json[UAActionScheduleInfoEndKey] isKindOfClass:[NSString class]]) {
+            return nil;
+        }
+
+        end = [[UAUtils ISODateFormatterUTC] dateFromString:json[UAActionScheduleInfoEndKey]];
+    }
+
+    // Group
+    id group = json[UAActionScheduleInfoGroupKey];
+    if (group && ![group isKindOfClass:[NSString class]]) {
+        return nil;
+    }
+
+    // Triggers
+    NSMutableArray *triggers = [NSMutableArray array];
+    id triggersJSONArray = json[UAActionScheduleInfoTriggersKey];
+    if (!triggersJSONArray || ![triggersJSONArray isKindOfClass:[NSArray class]]) {
+        return nil;
+    }
+
+    for (id triggerJSON in triggersJSONArray) {
+        UAScheduleTrigger *trigger = [UAScheduleTrigger triggerWithJSON:triggerJSON];
+        if (!trigger) {
+            return nil;
+        }
+
+        [triggers addObject:trigger];
+    }
+
+    if (!triggers.count) {
+        return nil;
+    }
+
+    return [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        builder.actions = actions;
+        builder.triggers = triggers;
+        builder.limit = [limit unsignedIntegerValue];
+        builder.group = group;
+        builder.start = start;
+        builder.end = end;
+    }];
+}
+
 - (BOOL)isEqualToScheduleInfo:(UAActionScheduleInfo *)scheduleInfo {
     if (!scheduleInfo) {
         return NO;
@@ -115,6 +206,7 @@ NSUInteger const UAMaxTriggers = 10;
 
     return YES;
 }
+
 
 #pragma mark - NSObject
 

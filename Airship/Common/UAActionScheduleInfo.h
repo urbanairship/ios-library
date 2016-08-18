@@ -36,6 +36,36 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSUInteger const UAMaxTriggers;
 
 /**
+ * JSON key for the schedule's actions.
+ */
+extern NSString *const UAActionScheduleInfoActionsKey;
+
+/**
+ * JSON key for the schedule's limit.
+ */
+extern NSString *const UAActionScheduleInfoLimitKey;
+
+/**
+ * JSON key for the schedule's group.
+ */
+extern NSString *const UAActionScheduleInfoGroupKey;
+
+/**
+ * JSON key for the schedule's end.
+ */
+extern NSString *const UAActionScheduleInfoEndKey;
+
+/**
+ * JSON key for the schedule's start.
+ */
+extern NSString *const UAActionScheduleInfoStartKey;
+
+/**
+ * JSON key for the schedule's triggers.
+ */
+extern NSString *const UAActionScheduleInfoTriggersKey;
+
+/**
  * Builder class for a UAActionScheduleInfo.
  */
 @interface UAActionScheduleInfoBuilder : NSObject
@@ -135,6 +165,13 @@ extern NSUInteger const UAMaxTriggers;
  */
 - (BOOL)isEqualToScheduleInfo:(nullable UAActionScheduleInfo *)scheduleInfo;
 
+/**
+ * Factory method to create an action schedule info from a JSON payload.
+ *
+ * @param json The JSON payload.
+ * @return An action schedule info or `nil` if the JSON is invalid.
+ */
++ (instancetype)actionScheduleInfoWithJSON:(id)json;
 
 @end
 

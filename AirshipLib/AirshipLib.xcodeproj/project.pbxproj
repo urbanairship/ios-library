@@ -369,6 +369,11 @@
 		CCA8ED0B1D64FD200042030E /* UACancelSchedulesAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CCA8ED091D64FD200042030E /* UACancelSchedulesAction.h */; };
 		CCA8ED0C1D64FD200042030E /* UACancelSchedulesAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA8ED0A1D64FD200042030E /* UACancelSchedulesAction.m */; };
 		CCA8ED0F1D6503780042030E /* UACancelSchedulesActionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA8ED0E1D6503780042030E /* UACancelSchedulesActionTests.m */; };
+		CCA8ED121D651B430042030E /* UAScheduleAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CCA8ED101D651B430042030E /* UAScheduleAction.h */; };
+		CCA8ED131D651B430042030E /* UAScheduleAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA8ED111D651B430042030E /* UAScheduleAction.m */; };
+		CCA8ED151D6528FF0042030E /* UAScheduleTriggerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA8ED141D6528FF0042030E /* UAScheduleTriggerTests.m */; };
+		CCA8ED171D65290B0042030E /* UAActionInfoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA8ED161D65290B0042030E /* UAActionInfoTests.m */; };
+		CCA8ED191D6529160042030E /* UAScheduleActionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA8ED181D6529160042030E /* UAScheduleActionTests.m */; };
 		CCAF06D31B0E4DAC007392A7 /* UAAppDelegateProxyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCAF06D21B0E4DAC007392A7 /* UAAppDelegateProxyTest.m */; };
 		CCAFA2191CFDF9D9003FC4B8 /* UALocation.m in Sources */ = {isa = PBXBuildFile; fileRef = CCAFA2181CFDF9D9003FC4B8 /* UALocation.m */; };
 		CCAFA21B1CFDF9E6003FC4B8 /* UALocation.h in Headers */ = {isa = PBXBuildFile; fileRef = CCAFA21A1CFDF9E6003FC4B8 /* UALocation.h */; };
@@ -818,6 +823,11 @@
 		CCA8ED091D64FD200042030E /* UACancelSchedulesAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACancelSchedulesAction.h; sourceTree = "<group>"; };
 		CCA8ED0A1D64FD200042030E /* UACancelSchedulesAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACancelSchedulesAction.m; sourceTree = "<group>"; };
 		CCA8ED0E1D6503780042030E /* UACancelSchedulesActionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACancelSchedulesActionTests.m; sourceTree = "<group>"; };
+		CCA8ED101D651B430042030E /* UAScheduleAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAScheduleAction.h; sourceTree = "<group>"; };
+		CCA8ED111D651B430042030E /* UAScheduleAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleAction.m; sourceTree = "<group>"; };
+		CCA8ED141D6528FF0042030E /* UAScheduleTriggerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleTriggerTests.m; sourceTree = "<group>"; };
+		CCA8ED161D65290B0042030E /* UAActionInfoTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionInfoTests.m; sourceTree = "<group>"; };
+		CCA8ED181D6529160042030E /* UAScheduleActionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleActionTests.m; sourceTree = "<group>"; };
 		CCAF06D21B0E4DAC007392A7 /* UAAppDelegateProxyTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAppDelegateProxyTest.m; sourceTree = "<group>"; };
 		CCAFA2181CFDF9D9003FC4B8 /* UALocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocation.m; sourceTree = "<group>"; };
 		CCAFA21A1CFDF9E6003FC4B8 /* UALocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocation.h; sourceTree = "<group>"; };
@@ -1676,6 +1686,8 @@
 				CCA8ED0D1D6503680042030E /* Actions */,
 				CCA8ECFD1D63CEE60042030E /* Predicate */,
 				CCA8ECEC1D626C830042030E /* UAAutomationTests.m */,
+				CCA8ED141D6528FF0042030E /* UAScheduleTriggerTests.m */,
+				CCA8ED161D65290B0042030E /* UAActionInfoTests.m */,
 			);
 			name = Automation;
 			sourceTree = "<group>";
@@ -1708,6 +1720,8 @@
 			children = (
 				CCA8ED091D64FD200042030E /* UACancelSchedulesAction.h */,
 				CCA8ED0A1D64FD200042030E /* UACancelSchedulesAction.m */,
+				CCA8ED101D651B430042030E /* UAScheduleAction.h */,
+				CCA8ED111D651B430042030E /* UAScheduleAction.m */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -1716,6 +1730,7 @@
 			isa = PBXGroup;
 			children = (
 				CCA8ED0E1D6503780042030E /* UACancelSchedulesActionTests.m */,
+				CCA8ED181D6529160042030E /* UAScheduleActionTests.m */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -2038,6 +2053,7 @@
 				49416D6818C513F500A18B72 /* UALandingPageOverlayController.h in Headers */,
 				49BB73C61BA0DC9C00F96033 /* UAInAppMessageView+Internal.h in Headers */,
 				612ED4D81A378BCA00DD7762 /* UARegionEvent+Internal.h in Headers */,
+				CCA8ED121D651B430042030E /* UAScheduleAction.h in Headers */,
 				619194401BED590B00320855 /* UAChannelRegistrar+Internal.h in Headers */,
 				CC8279481ABB2D3400C416E7 /* UAInAppResolutionEvent+Internal.h in Headers */,
 				495048B7173B11A500F8B5BE /* UAHTTPConnection+Internal.h in Headers */,
@@ -2300,6 +2316,7 @@
 				CCBA4F8E1AC10BBD00857572 /* UADisplayInboxActionTest.m in Sources */,
 				CCD3158417CFBD5A002E93A1 /* UAPushTest.m in Sources */,
 				49973CF41A9BB723009B5EB1 /* UAIncomingInAppMessageActionTest.m in Sources */,
+				CCA8ED171D65290B0042030E /* UAActionInfoTests.m in Sources */,
 				BBB87D5F150574DE00971CEC /* CLLocationManager+Test.m in Sources */,
 				CCB9990B18E23E68007F911D /* UACloseWindowActionTest.m in Sources */,
 				495526B117D95552009BC301 /* UAInboxMessageListTest.m in Sources */,
@@ -2325,6 +2342,7 @@
 				CCA8ED011D63DF840042030E /* UAJSONMatcherTests.m in Sources */,
 				CCA3A4F517FF14F8009C7371 /* UAActionArgumentsTest.m in Sources */,
 				49E9C9C6183C28E900B7BCFF /* UAActionJSDelegateTest.m in Sources */,
+				CCA8ED191D6529160042030E /* UAScheduleActionTests.m in Sources */,
 				CCCDAEA019954A1300E93CF7 /* NSObject+HideClass.m in Sources */,
 				BB13C4251575706100541EF3 /* UABase64Test.m in Sources */,
 				49F2123018AD5A2800136622 /* NSObject+AnonymousKVO.m in Sources */,
@@ -2348,6 +2366,7 @@
 				495048A41738778300F8B5BE /* UAHTTPConnection+Test.m in Sources */,
 				495048AE173996BF00F8B5BE /* UAHTTPRequestEngineTest.m in Sources */,
 				CCAF06D31B0E4DAC007392A7 /* UAAppDelegateProxyTest.m in Sources */,
+				CCA8ED151D6528FF0042030E /* UAScheduleTriggerTests.m in Sources */,
 				614F0DAC1A3B773E00F00AAB /* UACircularRegionTest.m in Sources */,
 				497B0EAA1836AB8700DA65BB /* NSString_UAURLEncodingTest.m in Sources */,
 				CCA3A4F917FF1515009C7371 /* UAActionResultTest.m in Sources */,
@@ -2466,6 +2485,7 @@
 				CC82794A1ABB2D3400C416E7 /* UAInAppResolutionEvent.m in Sources */,
 				611652261A2D26BD007C96D0 /* UAProximityRegion.m in Sources */,
 				BB886117159A7E9600584445 /* UALocationService.m in Sources */,
+				CCA8ED131D651B430042030E /* UAScheduleAction.m in Sources */,
 				CC313A9B19A66DBE00134A9F /* UAUserNotificationCategories.m in Sources */,
 				CC82DF6C1D1E611C00267824 /* UAScheduleTrigger.m in Sources */,
 				1F610DF917835C3A00BCD96E /* UAInboxUtils.m in Sources */,

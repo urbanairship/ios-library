@@ -27,6 +27,21 @@
 #import "UAJSONPredicate.h"
 #import "UARegionEvent+Internal.h"
 
+// JSON Keys
+NSString *const UAScheduleTriggerTypeKey = @"type";
+NSString *const UAScheduleTriggerPredicateKey = @"predicate";
+NSString *const UAScheduleTriggerGoalKey = @"goal";
+
+// Trigger Names
+NSString *const UAScheduleTriggerAppForegroundName = @"foreground";
+NSString *const UAScheduleTriggerAppBackgroundName = @"background";
+NSString *const UAScheduleTriggerRegionEnterName = @"region_enter";
+NSString *const UAScheduleTriggerRegionExitName = @"region_exit";
+NSString *const UAScheduleTriggerCustomEventCountName = @"custom_event_count";
+NSString *const UAScheduleTriggerCustomEventValueName = @"custom_event_value";
+NSString *const UAScheduleTriggerScreenName = @"screen";
+
+
 @implementation UAScheduleTrigger
 
 - (instancetype)initWithType:(UAScheduleTriggerType)type goal:(NSNumber *)goal predicate:(UAJSONPredicate *)predicate {
@@ -94,6 +109,63 @@
                                     predicate:predicate];
 }
 
+
++ (instancetype)triggerWithJSON:(id)json {
+    if (![json isKindOfClass:[NSDictionary class]]) {
+        return nil;
+    }
+
+    NSSet *keySet = [NSSet setWithArray:[json allKeys]];
+    NSSet *possibleKeys = [NSSet setWithArray:@[UAScheduleTriggerGoalKey, UAScheduleTriggerTypeKey, UAScheduleTriggerPredicateKey]];
+    if (![keySet isSubsetOfSet:possibleKeys]) {
+        return nil;
+    }
+
+    UAScheduleTriggerType triggerType;
+
+    NSString *triggerTypeString = json[UAScheduleTriggerTypeKey];
+    if ([UAScheduleTriggerAppForegroundName isEqualToString:triggerTypeString]) {
+        triggerType = UAScheduleTriggerAppForeground;
+    } else if ([UAScheduleTriggerAppBackgroundName isEqualToString:triggerTypeString]) {
+        triggerType = UAScheduleTriggerAppBackground;
+    } else if ([UAScheduleTriggerRegionEnterName isEqualToString:triggerTypeString]) {
+        triggerType = UAScheduleTriggerRegionEnter;
+    } else if ([UAScheduleTriggerRegionExitName isEqualToString:triggerTypeString]) {
+        triggerType = UAScheduleTriggerRegionExit;
+    } else if ([UAScheduleTriggerCustomEventCountName isEqualToString:triggerTypeString]) {
+        triggerType = UAScheduleTriggerCustomEventCount;
+    } else if ([UAScheduleTriggerCustomEventValueName isEqualToString:triggerTypeString]) {
+        triggerType = UAScheduleTriggerCustomEventValue;
+    } else if ([UAScheduleTriggerScreenName isEqualToString:triggerTypeString]) {
+        triggerType = UAScheduleTriggerScreen;
+    } else {
+        // No valid trigger type
+        return nil;
+    }
+
+    NSNumber *goal;
+    if ([json[UAScheduleTriggerGoalKey] isKindOfClass:[NSNumber class]]) {
+        goal = json[UAScheduleTriggerGoalKey];
+    }
+
+    if ([goal doubleValue] <= 0) {
+        return nil;
+    }
+
+
+    UAJSONPredicate *predicate;
+    if (json[UAScheduleTriggerPredicateKey]) {
+        predicate = [UAJSONPredicate predicateWithJSON:json[UAScheduleTriggerPredicateKey]];
+        if (!predicate) {
+            return nil;
+        }
+    }
+
+    return [UAScheduleTrigger triggerWithType:triggerType goal:goal predicate:predicate];
+}
+
+
+
 - (BOOL)isEqualToTrigger:(UAScheduleTrigger *)trigger {
     if (!trigger) {
         return NO;
@@ -113,6 +185,8 @@
 
     return YES;
 }
+
+
 
 #pragma mark - NSObject
 
