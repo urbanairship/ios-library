@@ -33,6 +33,6 @@
 @property (nonatomic, strong) UAAutomationStore *automationStore;
 @property (nonatomic, strong) UAPreferenceDataStore *preferenceDataStore;
 
-+ (instancetype)automationWithPreferenceDataStore:(UAPreferenceDataStore *)preferenceDataStore;
++ (instancetype)automationWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 @end

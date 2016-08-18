@@ -50,12 +50,12 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (instancetype)initWithPreferenceDataStore:(UAPreferenceDataStore *)preferenceDataStore {
+- (instancetype)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore{
     self = [super init];
 
     if (self) {
-        self.automationStore = [[UAAutomationStore alloc] init];
-        self.preferenceDataStore = preferenceDataStore;
+        self.automationStore = [UAAutomationStore automationStoreWithConfig:config];
+        self.preferenceDataStore = dataStore;
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(enterBackground)
@@ -76,9 +76,10 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
     return self;
 }
 
-+ (instancetype)automationWithPreferenceDataStore:(UAPreferenceDataStore *)preferenceDataStore {
-    return [[UAAutomation alloc] initWithPreferenceDataStore:preferenceDataStore];
++ (instancetype)automationWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+    return [[UAAutomation alloc] initWithConfig:config dataStore:dataStore];
 }
+
 
 - (UAActionSchedule *)scheduleFromData:(UAActionScheduleData *)data {
 

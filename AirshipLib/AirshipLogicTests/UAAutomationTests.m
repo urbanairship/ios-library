@@ -33,6 +33,7 @@
 #import "UAAutomationStore+Internal.h"
 #import "UAJSONPredicate.h"
 #import "UAPreferenceDataStore+Internal.h"
+#import "UAConfig.h"
 
 @interface UAAutomationTests : XCTestCase
 @property (nonatomic, strong) UAAutomation *automation;
@@ -46,8 +47,12 @@
 - (void)setUp {
     [super setUp];
 
+    UAConfig *config = [UAConfig config];
+    config.productionAppKey = @"testAppKey";
+    config.inProduction = YES;
+
     self.preferenceDataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"UAAutomationTests"];
-    self.automation = [UAAutomation automationWithPreferenceDataStore:self.preferenceDataStore];
+    self.automation = [UAAutomation automationWithConfig:config dataStore:self.preferenceDataStore];
 
     [self.automation cancelAll];
 
