@@ -26,7 +26,9 @@
 #import "UAMediaEventTemplate.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
+#import "UACustomEvent+Internal.h"
 
+#define kUAMediaEventTemplate @"media"
 #define kUABrowsedContentEvent @"browsed_content"
 #define kUAConsumedContentEvent @"consumed_content"
 #define kUAStarredContentEvent @"starred_content"
@@ -160,6 +162,7 @@
         [event setStringProperty:self.medium forKey:kUAMediaEventTemplateMedium];
     }
 
+    event.templateType = kUAMediaEventTemplate;
     return event;
 }
 

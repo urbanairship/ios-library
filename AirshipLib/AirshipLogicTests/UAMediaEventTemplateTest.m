@@ -63,6 +63,7 @@
 
     XCTAssertEqualObjects(@"browsed_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
+    XCTAssertEqualObjects(@"media", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
 /**
@@ -90,6 +91,7 @@
     XCTAssertEqualObjects(@"\"The Cool UA\"", customEvent.data[@"properties"][@"author"], @"Unexpected author.");
     XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"feature"], @"Unexpected feature.");
     XCTAssertEqualObjects(@"\"November 13, 2015\"", customEvent.data[@"properties"][@"published_date"], @"Unexpected published date.");
+    XCTAssertEqualObjects(@"media", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
 /**
@@ -102,6 +104,7 @@
 
     XCTAssertEqualObjects(@"starred_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
+    XCTAssertEqualObjects(@"media", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
 /**
@@ -129,6 +132,7 @@
     XCTAssertEqualObjects(@"\"The Cool UA\"", customEvent.data[@"properties"][@"author"], @"Unexpected author.");
     XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"feature"], @"Unexpected feature.");
     XCTAssertEqualObjects(@"\"November 13, 2015\"", customEvent.data[@"properties"][@"published_date"], @"Unexpected published date.");
+    XCTAssertEqualObjects(@"media", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
 /**
@@ -141,6 +145,7 @@
 
     XCTAssertEqualObjects(@"shared_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
+    XCTAssertEqualObjects(@"media", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
 /**
@@ -169,6 +174,7 @@
     XCTAssertEqualObjects(@"\"The Fun UA\"", customEvent.data[@"properties"][@"author"], @"Unexpected author.");
     XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"feature"], @"Unexpected feature.");
     XCTAssertEqualObjects(@"\"November 13, 2015\"", customEvent.data[@"properties"][@"published_date"], @"Unexpected published date.");
+    XCTAssertEqualObjects(@"media", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
 /**
@@ -181,6 +187,7 @@
 
     XCTAssertEqualObjects(@"consumed_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
+    XCTAssertEqualObjects(@"media", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
 /**
@@ -194,6 +201,7 @@
     XCTAssertEqualObjects(@"consumed_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(100.00), customEvent.eventValue, @"Event value should be set from a valid numeric string.");
     XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@"media", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
 /**
@@ -221,6 +229,7 @@
     XCTAssertEqualObjects(@"\"The Smart UA\"", customEvent.data[@"properties"][@"author"], @"Unexpected author.");
     XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"feature"], @"Unexpected feature.");
     XCTAssertEqualObjects(@"\"November 13, 2015\"", customEvent.data[@"properties"][@"published_date"], @"Unexpected properties.");
+    XCTAssertEqualObjects(@"media", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
 @end

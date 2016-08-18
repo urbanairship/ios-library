@@ -51,6 +51,7 @@ NSString *const UACustomEventInteractionTypeKey = @"interaction_type";
 // Private data keys
 NSString *const UACustomEventConversionMetadataKey = @"conversion_metadata";
 NSString *const UACustomEventConversionSendIDKey = @"conversion_send_id";
+NSString *const UACustomEventTemplateTypeKey = @"template_type";
 
 - (NSString *)eventType {
     return @"custom_event";
@@ -129,6 +130,11 @@ NSString *const UACustomEventConversionSendIDKey = @"conversion_send_id";
 
     if (self.transactionID.length > UACustomEventCharacterLimit) {
         UA_LERR(@"Event transaction ID is larger than %lu characters.", (unsigned long)UACustomEventCharacterLimit);
+        isValid = NO;
+    }
+
+    if (self.templateType.length > UACustomEventCharacterLimit) {
+        UA_LERR(@"Event template type is larger than %lu characters.", (unsigned long)UACustomEventCharacterLimit);
         isValid = NO;
     }
 
@@ -225,6 +231,9 @@ NSString *const UACustomEventConversionSendIDKey = @"conversion_send_id";
 
     // Transaction ID
     [dictionary setValue:self.transactionID forKey:UACustomEventTransactionIDKey];
+
+    // Template type
+    [dictionary setValue:self.templateType forKey:UACustomEventTemplateTypeKey];
 
     // Event value
     if (self.eventValue) {

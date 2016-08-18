@@ -26,7 +26,9 @@
 #import "UAAccountEventTemplate.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
+#import "UACustomEvent+Internal.h"
 
+#define kUAAccountEventTemplate @"account"
 #define kUARegisteredAccountEvent @"registered_account"
 #define kUAAccountEventTemplateLifetimeValue @"ltv"
 #define kUAAccountEventTemplateCategory @"category"
@@ -89,6 +91,8 @@
     if (self.category) {
         [event setStringProperty:self.category forKey:kUAAccountEventTemplateCategory];
     }
+
+    event.templateType = kUAAccountEventTemplate;
 
     return event;
 }

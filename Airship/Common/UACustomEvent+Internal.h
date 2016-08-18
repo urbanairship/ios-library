@@ -39,6 +39,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy, nullable) NSString *conversionPushMetadata;
 
+/**
+ * The event's template type. The template type's length must not exceed 255 characters or it will
+ * invalidate the event.
+ */
+@property (nonatomic, copy, nullable) NSString *templateType;
+
 @end
 
 NS_ASSUME_NONNULL_END
