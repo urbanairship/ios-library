@@ -40,6 +40,7 @@
 #import "UAPasteboardAction.h"
 #import "UAOverlayInboxMessageAction.h"
 #import "UACancelSchedulesAction.h"
+#import "UAScheduleAction.h"
 
 @implementation UAActionRegistry
 @dynamic registeredEntries;
@@ -350,6 +351,10 @@
     // Cancel schedules action
     [self registerAction:[[UACancelSchedulesAction alloc] init]
                    names:@[kUACancelSchedulesActionDefaultRegistryName, kUACancelSchedulesActionDefaultRegistryAlias]];
+
+    // Schedule action
+    [self registerAction:[[UAScheduleAction alloc] init]
+                   names:@[kUAScheduleActionDefaultRegistryName, kUAScheduleActionDefaultRegistryAlias]];
 
 }
 
