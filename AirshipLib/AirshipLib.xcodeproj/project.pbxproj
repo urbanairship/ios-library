@@ -169,6 +169,7 @@
 		613F65881D5CD89A00508E78 /* UANotificationResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 613F65861D5CD89A00508E78 /* UANotificationResponse.m */; };
 		614F0DAC1A3B773E00F00AAB /* UACircularRegionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 614F0DAB1A3B773E00F00AAB /* UACircularRegionTest.m */; };
 		6152719E1CFF41D1002F22BB /* UAInAppMessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6152719D1CFF41D1002F22BB /* UAInAppMessageView.xib */; };
+		6157B7261D53F74F007256D0 /* UAAutoIntegrationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6157B7251D53F74F007256D0 /* UAAutoIntegrationTest.m */; };
 		619194401BED590B00320855 /* UAChannelRegistrar+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6191943F1BED590B00320855 /* UAChannelRegistrar+Internal.h */; };
 		619C29861B8545370025AA65 /* UAInAppMessageController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 619C29851B8545370025AA65 /* UAInAppMessageController+Internal.h */; };
 		61A070991B7A5B9E00819091 /* UAInboxAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 61A070981B7A5B9E00819091 /* UAInboxAPIClientTest.m */; };
@@ -596,6 +597,7 @@
 		613F65861D5CD89A00508E78 /* UANotificationResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UANotificationResponse.m; sourceTree = "<group>"; };
 		614F0DAB1A3B773E00F00AAB /* UACircularRegionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACircularRegionTest.m; sourceTree = "<group>"; };
 		6152719D1CFF41D1002F22BB /* UAInAppMessageView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInAppMessageView.xib; sourceTree = "<group>"; };
+		6157B7251D53F74F007256D0 /* UAAutoIntegrationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAutoIntegrationTest.m; sourceTree = "<group>"; };
 		6191943F1BED590B00320855 /* UAChannelRegistrar+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAChannelRegistrar+Internal.h"; sourceTree = "<group>"; };
 		619C29851B8545370025AA65 /* UAInAppMessageController+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageController+Internal.h"; sourceTree = "<group>"; };
 		61A070981B7A5B9E00819091 /* UAInboxAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxAPIClientTest.m; sourceTree = "<group>"; };
@@ -1463,6 +1465,7 @@
 				CC319CEC1A0C43110079226E /* UAPreferenceDataStoreTest.m */,
 				CC8925B21AF7F068004565EE /* UAChannelCaptureTest.m */,
 				CC9E61451B9F856E00ADF144 /* UAAssociatedIdentifiersTest.m */,
+				6157B7251D53F74F007256D0 /* UAAutoIntegrationTest.m */,
 			);
 			name = Common;
 			sourceTree = "<group>";
@@ -2129,6 +2132,7 @@
 				BBB87D63150574DE00971CEC /* UALocationProviderTests.m in Sources */,
 				CCAFA2241CFE599A003FC4B8 /* UALocationTest.m in Sources */,
 				4925AAAD1B2B9D00002F045D /* UAirshipTest.m in Sources */,
+				6157B7261D53F74F007256D0 /* UAAutoIntegrationTest.m in Sources */,
 				CC4AAE0C18C93EF2001F23B3 /* UAApplicationMetricsTest.m in Sources */,
 				76F9B4AE18D3CE2A00C438D4 /* JRSwizzle.m in Sources */,
 				769FD9921B2B7316005BE77F /* UATagUtilsTest.m in Sources */,
@@ -2419,6 +2423,7 @@
 					"$(inherited)",
 				);
 				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipLib;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2465,6 +2470,7 @@
 					"$(RELEASE_OTHER_CFLAGS)",
 				);
 				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipLib;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2600,6 +2606,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../TestCommon/OCMockLibrary\"",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipLogicTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				VALID_ARCHS = "$(inherited)";
@@ -2637,6 +2644,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../TestCommon/OCMockLibrary\"",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipLogicTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				VALIDATE_PRODUCT = YES;
@@ -2679,6 +2687,7 @@
 					"$(inherited)",
 				);
 				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipLib;
 				PRODUCT_NAME = "UAirship-$(CURRENT_PROJECT_VERSION)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SKIP_INSTALL = YES;
@@ -2715,6 +2724,7 @@
 				INSTALL_PATH = /Airship;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipLib;
 				PRODUCT_NAME = "UAirship-$(CURRENT_PROJECT_VERSION)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SKIP_INSTALL = YES;
@@ -2763,6 +2773,7 @@
 					"$(inherited)",
 				);
 				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipLib;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2805,6 +2816,7 @@
 					"$(inherited)",
 				);
 				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipLib;
 				PRODUCT_NAME = "UAirship-$(CURRENT_PROJECT_VERSION)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SKIP_INSTALL = YES;
@@ -2850,6 +2862,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../TestCommon/OCMockLibrary\"",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipLogicTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				VALID_ARCHS = "$(inherited)";

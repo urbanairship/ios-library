@@ -24,7 +24,6 @@
  */
 
 #import "UAAutoIntegration+Internal.h"
-#import <UserNotifications/UserNotifications.h>
 #import <objc/runtime.h>
 
 #import "UAirship+Internal.h"
@@ -32,12 +31,8 @@
 
 static UAAutoIntegration *instance_;
 
-@interface UAAutoIntegrationDummyDelegate : NSObject<UNUserNotificationCenterDelegate>
-
-@end
-
 @implementation UAAutoIntegrationDummyDelegate
-
+static dispatch_once_t onceToken;
 @end
 
 @interface UAAutoIntegration()
@@ -48,7 +43,6 @@ static UAAutoIntegration *instance_;
 @implementation UAAutoIntegration
 
 + (void)integrate {
-    static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         instance_ = [[UAAutoIntegration alloc] init];
 
@@ -58,6 +52,15 @@ static UAAutoIntegration *instance_;
             [instance_ swizzleNotificationCenter];
         }
     });
+}
+
++ (void)reset {
+    if (instance_) {
+        onceToken = 0;
+        instance_ = nil;
+        instance_.originalMethods = nil;
+        instance_.dummyNotificationDelegate = nil;
+    }
 }
 
 - (instancetype)init {
@@ -329,7 +332,6 @@ void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(i
 
 #pragma mark -
 #pragma mark UNUserNotificationCenter swizzled methods
-
 
 void UserNotificationCenterSetDelegate(id self, SEL _cmd, id<UNUserNotificationCenterDelegate>delegate) {
     id previousDelegate = [UNUserNotificationCenter currentNotificationCenter].delegate;
