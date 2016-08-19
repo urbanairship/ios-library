@@ -37,8 +37,8 @@ class AddNamedUserTableViewController: UITableViewController, UITextFieldDelegat
     }
 
     override func viewWillAppear(animated: Bool) {
-        if ((UAirship.push().namedUser.identifier) != nil) {
-            addNamedUserTextField.text = UAirship.push().namedUser.identifier
+        if ((UAirship.namedUser().identifier) != nil) {
+            addNamedUserTextField.text = UAirship.namedUser().identifier
         }
     }
 
@@ -50,9 +50,9 @@ class AddNamedUserTableViewController: UITableViewController, UITextFieldDelegat
         self.view.endEditing(true)
 
         if (textField.text?.characters.count > 0){
-            UAirship.push().namedUser.identifier = textField.text
+            UAirship.namedUser().identifier = textField.text
         } else {
-            UAirship.push().namedUser.identifier = nil
+            UAirship.namedUser().identifier = nil
         }
 
         UAirship.push().updateRegistration()

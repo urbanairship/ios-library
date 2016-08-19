@@ -14,7 +14,6 @@
 		61449C941BE13A6E00240C63 /* urban-airship-logo-pacific.png in Resources */ = {isa = PBXBuildFile; fileRef = 61449C931BE13A6E00240C63 /* urban-airship-logo-pacific.png */; };
 		614953E71BF106EE001E03AF /* AddNamedUserTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 614953E61BF106EE001E03AF /* AddNamedUserTableViewController.swift */; };
 		614A39431BDFD611009CA7FB /* AddTagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 614A39421BDFD611009CA7FB /* AddTagsTableViewController.swift */; };
-		614DA6031BE941DF0083B0AA /* LocationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 614DA6021BE941DF0083B0AA /* LocationTableViewController.swift */; };
 		619A0D411BE81D7B00D9E863 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D401BE81D7B00D9E863 /* Images.xcassets */; };
 		619A0D421BE81EDC00D9E863 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D331BE7F29700D9E863 /* Roboto-Black.ttf */; };
 		619A0D431BE81EDC00D9E863 /* Roboto-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D341BE7F29700D9E863 /* Roboto-BlackItalic.ttf */; };
@@ -90,7 +89,6 @@
 		61449C931BE13A6E00240C63 /* urban-airship-logo-pacific.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "urban-airship-logo-pacific.png"; sourceTree = "<group>"; };
 		614953E61BF106EE001E03AF /* AddNamedUserTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddNamedUserTableViewController.swift; sourceTree = "<group>"; };
 		614A39421BDFD611009CA7FB /* AddTagsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddTagsTableViewController.swift; sourceTree = "<group>"; };
-		614DA6021BE941DF0083B0AA /* LocationTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationTableViewController.swift; sourceTree = "<group>"; };
 		619A0D331BE7F29700D9E863 /* Roboto-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Black.ttf"; path = "Resources/Roboto/Roboto-Black.ttf"; sourceTree = "<group>"; };
 		619A0D341BE7F29700D9E863 /* Roboto-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-BlackItalic.ttf"; path = "Resources/Roboto/Roboto-BlackItalic.ttf"; sourceTree = "<group>"; };
 		619A0D351BE7F29700D9E863 /* Roboto-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Bold.ttf"; path = "Resources/Roboto/Roboto-Bold.ttf"; sourceTree = "<group>"; };
@@ -201,7 +199,6 @@
 				619A0D4F1BE8266100D9E863 /* AddAliasTableViewController.swift */,
 				614953E61BF106EE001E03AF /* AddNamedUserTableViewController.swift */,
 				61AD10D41BE7D88B0004C886 /* TagsTableViewController.swift */,
-				614DA6021BE941DF0083B0AA /* LocationTableViewController.swift */,
 				493F51121C5B2C9E00B050A1 /* MessageCenterViewController.swift */,
 				493F51281C5B423700B050A1 /* InboxDelegate.swift */,
 				613420361BD6C09B00236A18 /* Resources */,
@@ -350,7 +347,6 @@
 				614953E71BF106EE001E03AF /* AddNamedUserTableViewController.swift in Sources */,
 				CCDA35A71B8D233A00950AD5 /* AppDelegate.swift in Sources */,
 				614A39431BDFD611009CA7FB /* AddTagsTableViewController.swift in Sources */,
-				614DA6031BE941DF0083B0AA /* LocationTableViewController.swift in Sources */,
 				493F51291C5B423700B050A1 /* InboxDelegate.swift in Sources */,
 				CCDA35A91B8D233A00950AD5 /* HomeViewController.swift in Sources */,
 				61A672E81CA9F4B000BAF58A /* PushHandler.swift in Sources */,

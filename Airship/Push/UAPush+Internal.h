@@ -150,7 +150,7 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 /**
  * Notification that launched the application
  */
-@property (nonatomic, strong) NSDictionary *launchNotification;
+@property (nonatomic, strong, nullable) NSDictionary *launchNotification;
 
 /**
  * Background task identifier used to do any registration in the background.

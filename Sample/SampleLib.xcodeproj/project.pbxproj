@@ -24,7 +24,6 @@
 		764693F11C2389D50090FE40 /* AddAliasTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693F01C2389D50090FE40 /* AddAliasTableViewController.m */; };
 		764693F41C2389E90090FE40 /* AddNamedUserTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693F31C2389E90090FE40 /* AddNamedUserTableViewController.m */; };
 		764693F71C238A5E0090FE40 /* TagsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693F61C238A5E0090FE40 /* TagsTableViewController.m */; };
-		764693FA1C238A770090FE40 /* LocationTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693F91C238A770090FE40 /* LocationTableViewController.m */; };
 		7646940D1C238E7C0090FE40 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 764693FC1C238E7C0090FE40 /* Images.xcassets */; };
 		7646940E1C238E7C0090FE40 /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 764693FE1C238E7C0090FE40 /* LICENSE.txt */; };
 		7646940F1C238E7C0090FE40 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 764693FF1C238E7C0090FE40 /* Roboto-Black.ttf */; };
@@ -120,8 +119,6 @@
 		764693F31C2389E90090FE40 /* AddNamedUserTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddNamedUserTableViewController.m; sourceTree = "<group>"; };
 		764693F51C238A5E0090FE40 /* TagsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagsTableViewController.h; sourceTree = "<group>"; };
 		764693F61C238A5E0090FE40 /* TagsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TagsTableViewController.m; sourceTree = "<group>"; };
-		764693F81C238A770090FE40 /* LocationTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationTableViewController.h; sourceTree = "<group>"; };
-		764693F91C238A770090FE40 /* LocationTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationTableViewController.m; sourceTree = "<group>"; };
 		764693FC1C238E7C0090FE40 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		764693FE1C238E7C0090FE40 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		764693FF1C238E7C0090FE40 /* Roboto-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Black.ttf"; sourceTree = "<group>"; };
@@ -209,8 +206,6 @@
 				764693F31C2389E90090FE40 /* AddNamedUserTableViewController.m */,
 				764693F51C238A5E0090FE40 /* TagsTableViewController.h */,
 				764693F61C238A5E0090FE40 /* TagsTableViewController.m */,
-				764693F81C238A770090FE40 /* LocationTableViewController.h */,
-				764693F91C238A770090FE40 /* LocationTableViewController.m */,
 				CC36D3A81C57FC5900BDCA34 /* MessageCenterViewController.h */,
 				CC36D3A91C57FC5900BDCA34 /* MessageCenterViewController.m */,
 				493F511B1C5B306C00B050A1 /* InboxDelegate.h */,
@@ -400,7 +395,6 @@
 				764693A71C237B630090FE40 /* main.m in Sources */,
 				764693F41C2389E90090FE40 /* AddNamedUserTableViewController.m in Sources */,
 				764693EE1C2389B40090FE40 /* AddTagsTableViewController.m in Sources */,
-				764693FA1C238A770090FE40 /* LocationTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

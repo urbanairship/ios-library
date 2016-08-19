@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (atomic, assign) NSUInteger batchOperationCount;
 @property (atomic, assign) NSUInteger retrieveOperationCount;
-@property (nonatomic, strong) NSArray *messages;
+@property (atomic, strong) NSArray *messages;
 @property (nonatomic, strong) NSDictionary *messageIDMap;
 @property (nonatomic, strong) NSDictionary *messageURLMap;
 
