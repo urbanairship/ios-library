@@ -33,7 +33,6 @@
 @property (weak, nonatomic) IBOutlet UITableViewCell *aliasCell;
 @property (weak, nonatomic) IBOutlet UITableViewCell *tagsCell;
 @property (weak, nonatomic) IBOutlet UITableViewCell *locationEnabledCell;
-@property (weak, nonatomic) IBOutlet UITableViewCell *getLocationCell;
 
 @property (weak, nonatomic) IBOutlet UISwitch *pushEnabledSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *locationEnabledSwitch;

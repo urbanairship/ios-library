@@ -40,7 +40,7 @@
 
     // Initialize switches
     self.pushEnabledSwitch.on = [UAirship push].userPushNotificationsEnabled;
-    self.locationEnabledSwitch.on = [UALocationService airshipLocationServiceEnabled];
+    self.locationEnabledSwitch.on = [UAirship location].locationUpdatesEnabled;
     self.analyticsSwitch.on = [UAirship shared].analytics.enabled;
 
     // Add observer to didBecomeActive to update upon retrun from system settings screen
@@ -48,7 +48,6 @@
 
     self.locationEnabledLabel.text = NSLocalizedStringFromTable(@"UA_Location_Enabled", @"UAPushUI", @"Location Enabled label");
     self.locationEnabledSubtitleLabel.text = NSLocalizedStringFromTable(@"UA_Location_Enabled_Detail", @"UAPushUI", @"Enable GPS and WIFI Based Location detail label");
-    self.getLocationCell.textLabel.text = NSLocalizedStringFromTable(@"UA_Get_Location", @"UAPushUI", @"Get location label");
 }
 
 - (void)didBecomeActive {
@@ -65,8 +64,7 @@
         [UAirship push].userPushNotificationsEnabled = YES;
     }
 
-    [UALocationService setAirshipLocationServiceEnabled:self.locationEnabledSwitch.on];
-
+    [UAirship location].locationUpdatesEnabled = self.locationEnabledSwitch.on;
     [UAirship shared].analytics.enabled = self.analyticsSwitch.on;
 }
 
@@ -76,7 +74,7 @@
 
     self.aliasSubtitleLabel.text = [UAirship push].alias == nil ? NSLocalizedStringFromTable(@"None", @"UAPushUI", @"None") : [UAirship push].alias;
 
-    self.namedUserSubtitleLabel.text = [UAirship push].namedUser.identifier == nil ? NSLocalizedStringFromTable(@"None", @"UAPushUI", @"None") : [UAirship push].namedUser.identifier;
+    self.namedUserSubtitleLabel.text = [UAirship namedUser].identifier == nil ? NSLocalizedStringFromTable(@"None", @"UAPushUI", @"None") : [UAirship namedUser].identifier;
 
     if ([UAirship push].tags.count) {
         self.tagsSubtitleLabel.text = [[UAirship push].tags componentsJoinedByString:@", "];

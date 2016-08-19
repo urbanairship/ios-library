@@ -34,7 +34,6 @@ class PushSettingsViewController: UITableViewController {
     @IBOutlet var aliasCell: UITableViewCell!
     @IBOutlet var tagsCell: UITableViewCell!
     @IBOutlet var locationEnabledCell: UITableViewCell!
-    @IBOutlet var getLocationCell: UITableViewCell!
 
     @IBOutlet var pushEnabledSwitch: UISwitch!
     @IBOutlet var locationEnabledSwitch: UISwitch!
@@ -55,7 +54,7 @@ class PushSettingsViewController: UITableViewController {
             UAirship.push().userPushNotificationsEnabled = true
         }
 
-        UALocationService.setAirshipLocationServiceEnabled(locationEnabledSwitch.on)
+        UAirship.location().locationUpdatesEnabled = locationEnabledSwitch.on
         UAirship.shared().analytics.enabled = analyticsSwitch.on
     }
 
@@ -70,7 +69,7 @@ class PushSettingsViewController: UITableViewController {
 
         // Initialize switches
         pushEnabledSwitch.on = UAirship.push().userPushNotificationsEnabled
-        locationEnabledSwitch.on = UALocationService.airshipLocationServiceEnabled()
+        locationEnabledSwitch.on = UAirship.location().locationUpdatesEnabled
         analyticsSwitch.on = UAirship.shared().analytics.enabled
 
         // add observer to didBecomeActive to update upon retrun from system settings screen
@@ -82,8 +81,6 @@ class PushSettingsViewController: UITableViewController {
 
         locationEnabledLabel.text = NSLocalizedString("UA_Location_Enabled", tableName: "UAPushUI", comment: "Location Enabled label")
         locationEnabledSubtitleLabel.text = NSLocalizedString("UA_Location_Enabled_Detail", tableName: "UAPushUI", comment: "Enable GPS and WIFI Based Location detail label")
-
-        getLocationCell.textLabel!.text = NSLocalizedString("UA_Get_Location", tableName: "UAPushUI", comment: "Get location label")
     }
 
     // this is necessary to update the view when returning from the system settings screen
@@ -101,7 +98,7 @@ class PushSettingsViewController: UITableViewController {
         
         aliasSubtitleLabel?.text = UAirship.push().alias == nil ? NSLocalizedString("None", tableName: "UAPushUI", comment: "None") : UAirship.push().alias
 
-        namedUserSubtitleLabel?.text = UAirship.push().namedUser.identifier == nil ? NSLocalizedString("None", tableName: "UAPushUI", comment: "None") : UAirship.push().namedUser.identifier
+        namedUserSubtitleLabel?.text = UAirship.namedUser().identifier == nil ? NSLocalizedString("None", tableName: "UAPushUI", comment: "None") : UAirship.namedUser().identifier
 
         if (UAirship.push().tags.count > 0) {
             self.tagsSubtitleLabel?.text = UAirship.push().tags.joinWithSeparator(", ")
