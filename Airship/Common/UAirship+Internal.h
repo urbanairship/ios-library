@@ -88,10 +88,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong) UAAutomation *sharedAutomation;
 
-/**
- * The named user.
- */
-@property (nonatomic, strong) UANamedUser *sharedNamedUser;
 
 /**
  * Creates the user agent string for a given appkey.
