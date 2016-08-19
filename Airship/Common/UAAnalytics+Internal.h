@@ -59,14 +59,55 @@
 #define kUAMissingSendID @"MISSING_SEND_ID"
 #define kUAPushMetadata @"com.urbanairship.metadata"
 
-@class UAEvent;
+@class UACustomEvent;
+@class UARegionEvent;
+
 @class UAHTTPRequest;
 @class UAAnalyticsDBManager;
 @class UAScreenTrackingEvent;
 
 NS_ASSUME_NONNULL_BEGIN
 
+
+/**
+ * Analytics delegate.
+ */
+@protocol UAAnalyticsDelegate <NSObject>
+@optional
+
+/**
+ * Called when a custom event was added.
+ *
+ * @param event The added custom event.
+ */
+-(void)customEventAdded:(UACustomEvent *)event;
+
+
+/**
+ * Called when a region event was added.
+ *
+ * @param event The added region event.
+ */
+-(void)regionEventAdded:(UARegionEvent *)event;
+
+/**
+ * Called when a screen was tracked. Called when a `trackScreen:` is first called.
+ * An event will be added for the screen will be added after the next time
+ * `trackScreen:` is called or if the application backgrounds.
+ *
+ * @param screenName Name of the screen.
+ */
+-(void)screenTracked:(NSString *)screenName;
+
+@end
+
+
 @interface UAAnalytics ()
+
+/**
+ * Set a delegate that implements the UAAnalyticsDelegate protocol.
+ */
+@property (nonatomic, weak, nullable) id<UAAnalyticsDelegate> delegate;
 
 /**
  * The conversion send ID.

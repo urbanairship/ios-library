@@ -46,6 +46,7 @@ NSString * const UAOverlayInboxMessageActionErrorDomain = @"UAOverlayInboxMessag
         case UASituationLaunchedFromPush:
         case UASituationForegroundInteractiveButton:
         case UASituationForegroundPush:
+        case UASituationAutomation:
             if (![arguments.value isKindOfClass:[NSString class]]) {
                 return NO;
             }

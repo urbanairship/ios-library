@@ -87,12 +87,13 @@
  * Test the action accepts any foreground situation.
  */
 - (void)testAcceptsArguments {
-    UASituation validSituations[5] = {
+    UASituation validSituations[6] = {
         UASituationForegroundInteractiveButton,
         UASituationLaunchedFromPush,
         UASituationManualInvocation,
         UASituationWebViewInvocation,
-        UASituationForegroundPush
+        UASituationForegroundPush,
+        UASituationAutomation
     };
 
     UASituation rejectedSituations[2] = {
@@ -102,7 +103,7 @@
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         arguments.situation = validSituations[i];
         XCTAssertTrue([self.action acceptsArguments:arguments], @"action should accept situation %zd", validSituations[i]);
     }

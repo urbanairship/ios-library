@@ -93,7 +93,7 @@
     self.arguments.value = nil;
 
     // Should not accept any of the valid situations because the value is nil
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 5; i++) {
         self.arguments.situation = validSituations[i];
         XCTAssertFalse([self.action acceptsArguments:self.arguments], @"Should not accept nil value arguments");
     }
@@ -103,7 +103,7 @@
     XCTAssertFalse([self.action acceptsArguments:self.arguments], @"Should not accept invalid situations");
 
     // Arguments should be valid
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 5; i++) {
         self.arguments.situation = validSituations[i];
         XCTAssertTrue([self.action acceptsArguments:self.arguments], @"Should accept valid situation");
     }

@@ -70,10 +70,13 @@
  * Makes sure that the passed action rejects the background situation
  */
 - (void)validateSituationForTagAction:(UAAction *)action {
-    UASituation situations[4] = {
+    UASituation situations[6] = {
         UASituationLaunchedFromPush,
         UASituationForegroundPush,
-        UASituationWebViewInvocation
+        UASituationWebViewInvocation,
+        UASituationForegroundInteractiveButton,
+        UASituationBackgroundInteractiveButton,
+        UASituationAutomation
     };
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@[@"hey!"] withSituation:UASituationLaunchedFromPush];
@@ -81,7 +84,7 @@
     XCTAssertTrue([action acceptsArguments:args], @"nil situation should be acceptable");
 
 
-    for (NSInteger i = 0; i < 4; i++) {
+    for (NSInteger i = 0; i < 6; i++) {
         args.situation = situations[i];
         NSLog(@"situation!: %ld", (long)args.situation);
         XCTAssertTrue([action acceptsArguments:args], @"any non-background situation should be valid");

@@ -45,6 +45,7 @@
         case UASituationLaunchedFromPush:
         case UASituationBackgroundInteractiveButton:
         case UASituationForegroundInteractiveButton:
+        case UASituationAutomation:
             return [arguments.value isKindOfClass:[NSDictionary class]];
         case UASituationManualInvocation:
         case UASituationWebViewInvocation:
@@ -58,6 +59,7 @@
     switch (arguments.situation) {
         case UASituationBackgroundPush:
         case UASituationForegroundPush:
+        case UASituationAutomation:
             // If the in-app message was received in the foreground or background
             // store it as pending
             [self savePendingMessageWithArguments:arguments];

@@ -112,15 +112,16 @@
  */
 - (void)testAcceptsArguments {
 
-    UASituation validSituations[5] = {
+    UASituation validSituations[6] = {
         UASituationForegroundPush,
         UASituationBackgroundPush,
         UASituationForegroundInteractiveButton,
         UASituationBackgroundInteractiveButton,
-        UASituationLaunchedFromPush
+        UASituationLaunchedFromPush,
+        UASituationAutomation
     };
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         self.arguments.situation = validSituations[i];
         XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accept NSDictionary values and non-launch from push situations");
     }

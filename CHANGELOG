@@ -33,6 +33,11 @@ Changes:
 Developer preview APIs may not be final. Please see the README.md for migration guide
 and known issues.
 
+Version 7.2.2 - Aug 1, 2016
+===========================
+- The Named User is now accessible from UAirship.
+- Added the Named User ID and Channel ID to the JavaScript bridge.
+- The NSNotification UAChannelCreatedEvent is posted when the channel is created.
 
 Version 7.2.1 - July 27, 2016
 =============================

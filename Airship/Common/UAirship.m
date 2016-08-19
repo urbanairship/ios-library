@@ -40,7 +40,6 @@
 #import "UAActionRegistry.h"
 #import "UALocation+Internal.h"
 
-
 #import "UAAutoIntegration+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAURLProtocol.h"
@@ -53,6 +52,7 @@
 #import "UAActionJSDelegate.h"
 #import "UADefaultMessageCenter.h"
 #import "UANamedUser+Internal.h"
+#import "UAAutomation+Internal.h"
 
 UA_VERSION_IMPLEMENTATION(UAirshipVersion, UA_VERSION)
 
@@ -143,6 +143,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         self.sharedInAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.analytics dataStore:dataStore];
         self.sharedLocation = [UALocation locationWithAnalytics:self.analytics dataStore:dataStore];
+
+        self.sharedAutomation = [UAAutomation automationWithConfig:config dataStore:dataStore];
+        self.analytics.delegate = self.sharedAutomation;
 
         // Only create the default message center if running iOS 8 and above
         if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){8, 0, 0}]) {
@@ -412,6 +415,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return sharedAirship_.sharedNamedUser;
 }
 
++ (UAAutomation *)automation {
+    return sharedAirship_.sharedAutomation;
+}
 
 + (NSBundle *)resources {
     static dispatch_once_t onceToken;

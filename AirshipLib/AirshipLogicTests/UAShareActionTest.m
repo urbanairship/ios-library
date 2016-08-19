@@ -51,15 +51,16 @@
     self.arguments.value = @"some valid text";
 
 
-    UASituation validSituations[5] = {
+    UASituation validSituations[6] = {
         UASituationForegroundPush,
         UASituationForegroundInteractiveButton,
         UASituationLaunchedFromPush,
         UASituationManualInvocation,
-        UASituationWebViewInvocation
+        UASituationWebViewInvocation,
+        UASituationAutomation
     };
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         self.arguments.situation = validSituations[i];
         XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accept valid string URLs");
     }

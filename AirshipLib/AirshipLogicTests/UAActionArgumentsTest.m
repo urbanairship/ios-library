@@ -68,6 +68,8 @@
     XCTAssertEqualObjects(args.situationString, @"Foreground Interactive Button", @"situation string should read 'Foreground Interactive Button'");
     args.situation = UASituationBackgroundInteractiveButton;
     XCTAssertEqualObjects(args.situationString, @"Background Interactive Button", @"situation string should read 'Background Interactive Button'");
+    args.situation = UASituationAutomation;
+    XCTAssertEqualObjects(args.situationString, @"Automation", @"situation string should read 'Automation'");
     args.situation = 567;
     XCTAssertEqualObjects(args.situationString, @"Manual Invocation", @"situation string should read 'Manual Invocation'");
 }

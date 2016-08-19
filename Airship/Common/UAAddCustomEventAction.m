@@ -35,7 +35,7 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     if ([arguments.value isKindOfClass:[NSDictionary class]]) {
-        NSString *eventName = [arguments.value valueForKey:@"event_name"];
+        NSString *eventName = [arguments.value valueForKey:UACustomEventNameKey];
         if (eventName) {
             return YES;
         } else {
@@ -53,12 +53,12 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
 
     NSDictionary *dict = [NSDictionary dictionaryWithDictionary:arguments.value];
 
-    NSString *eventName = [self parseStringFromDictionary:dict key:@"event_name"];
-    NSString *eventValue = [self parseStringFromDictionary:dict key:@"event_value"];
-    NSString *interactionID = [self parseStringFromDictionary:dict key:@"interaction_id"];
-    NSString *interactionType = [self parseStringFromDictionary:dict key:@"interaction_type"];
-    NSString *transactionID = [self parseStringFromDictionary:dict key:@"transaction_id"];
-    id properties = dict[@"properties"];
+    NSString *eventName = [self parseStringFromDictionary:dict key:UACustomEventNameKey];
+    NSString *eventValue = [self parseStringFromDictionary:dict key:UACustomEventValueKey];
+    NSString *interactionID = [self parseStringFromDictionary:dict key:UACustomEventInteractionIDKey];
+    NSString *interactionType = [self parseStringFromDictionary:dict key:UACustomEventInteractionTypeKey];
+    NSString *transactionID = [self parseStringFromDictionary:dict key:UACustomEventTransactionIDKey];
+    id properties = dict[UACustomEventPropertiesKey];
 
     UACustomEvent *event = [UACustomEvent eventWithName:eventName valueFromString:eventValue];
     event.transactionID = transactionID;
@@ -103,7 +103,7 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
     }
 
     if ([event isValid]) {
-        [[UAirship shared].analytics addEvent:event];
+        [event track];
         completionHandler([UAActionResult emptyResult]);
     } else {
         NSError *error = [NSError errorWithDomain:UAAddCustomEventActionErrorDomain

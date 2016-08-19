@@ -33,7 +33,8 @@
  *
  * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush
  * UASituationWebViewInvocation, UASituationForegroundInteractiveButton,
- * UASituationBackgroundInteractiveButton and UASituationManualInvocation
+ * UASituationBackgroundInteractiveButton, UASituationManualInvocation, and
+ * UASituationAutomation
  *
  * Default predicate: Rejects foreground pushes with visible display options on iOS 10 and above
  *

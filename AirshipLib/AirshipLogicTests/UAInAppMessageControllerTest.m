@@ -256,14 +256,14 @@
     [[self.mockParentView expect] removeGestureRecognizer:OCMOCK_ANY];
 
     // Set up animate out expectation
-    XCTestExpectation *testExpecation = [self expectationWithDescription:@"User delegate dismiss finished."];
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"User delegate dismiss finished."];
 
     // Properly return parent view when superview is called on mockMessageView
     [[[self.mockMessageView stub] andReturn:self.mockParentView] superview];
 
     // Ensure that the mockUserDelegate gets called to animate out
     [[[self.mockUserDelegate stub] andDo:^(NSInvocation *invocation) {
-        [testExpecation fulfill];
+        [testExpectation fulfill];
     }] messageView:self.mockMessageView animateOutWithParentView:self.mockParentView completionHandler:OCMOCK_ANY];
 
     [self.testController dismiss];
@@ -286,7 +286,7 @@
     self.testController.userDelegate = nil;
 
     // Set up animate out expectation
-    XCTestExpectation *testExpecation = [self expectationWithDescription:@"Default delegate dismiss finished."];
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"Default delegate dismiss finished."];
 
     // Display the in-app message
     [self.testController show];
@@ -297,7 +297,7 @@
 
     // Ensure that the mockUserDelegate gets called to animate out
     [[[self.mockDefaultDelegate stub] andDo:^(NSInvocation *invocation) {
-        [testExpecation fulfill];
+        [testExpectation fulfill];
     }] messageView:OCMOCK_ANY animateOutWithParentView:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Dismiss the in-app message

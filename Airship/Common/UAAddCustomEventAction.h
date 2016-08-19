@@ -55,7 +55,8 @@ extern NSString * const UAAddCustomEventActionErrorDomain;
  *
  * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush,
  * UASituationWebViewInvocation, UASituationManualInvocation, UASituationBackgroundPush,
- * UASituationForegroundInteractiveButton, and UASituationBackgroundInteractiveButton
+ * UASituationForegroundInteractiveButton, UASituationBackgroundInteractiveButton,
+ * and UASituationAutomation
  *
  * 
  * Result value: nil

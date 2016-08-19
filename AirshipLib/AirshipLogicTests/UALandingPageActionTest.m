@@ -173,7 +173,8 @@
     NSArray *situations = @[[NSNumber numberWithInteger:UASituationWebViewInvocation],
                                      [NSNumber numberWithInteger:UASituationForegroundPush],
                                      [NSNumber numberWithInteger:UASituationLaunchedFromPush],
-                                     [NSNumber numberWithInteger:UASituationManualInvocation]];
+                                     [NSNumber numberWithInteger:UASituationManualInvocation],
+                                     [NSNumber numberWithInteger:UASituationAutomation]];
 
     for (NSNumber *situationNumber in situations) {
         [[self.mockLandingPageOverlayController expect] showURL:[OCMArg checkWithBlock:^(id obj) {

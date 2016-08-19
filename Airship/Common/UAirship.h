@@ -50,6 +50,7 @@
 @class UAInAppMessaging;
 @class UADefaultMessageCenter;
 @class UALocation;
+@class UAAutomation;
 
 
 UA_VERSION_INTERFACE(UAirshipVersion)
@@ -236,6 +237,12 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * Returns the `UALocation` instance.
  */
 + (null_unspecified UALocation *)location;
+
+
+/**
+ * Returns the `UAAutomation` instance.
+ */
++ (null_unspecified UAAutomation *)automation;
 
 NS_ASSUME_NONNULL_END
 

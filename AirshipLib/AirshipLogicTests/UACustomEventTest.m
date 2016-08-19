@@ -62,16 +62,19 @@
     NSString *transactionID =  [@"" stringByPaddingToLength:255 withString:@"TRANSACTION_ID" startingAtIndex:0];
     NSString *interactionID =  [@"" stringByPaddingToLength:255 withString:@"INTERACTION_ID" startingAtIndex:0];
     NSString *interactionType =  [@"" stringByPaddingToLength:255 withString:@"INTERACTION_TYPE" startingAtIndex:0];
+    NSString *templateType =  [@"" stringByPaddingToLength:255 withString:@"TEMPLATE_TYPE" startingAtIndex:0];
 
     UACustomEvent *event = [UACustomEvent eventWithName:eventName value:@(INT32_MIN)];
     event.transactionID = transactionID;
     event.interactionID = interactionID;
     event.interactionType = interactionType;
+    event.templateType = templateType;
 
     XCTAssertEqualObjects(eventName, [event.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(transactionID, [event.data objectForKey:@"transaction_id"], @"Unexpected transaction ID.");
     XCTAssertEqualObjects(interactionID, [event.data objectForKey:@"interaction_id"], @"Unexpected interaction ID.");
     XCTAssertEqualObjects(interactionType, [event.data objectForKey:@"interaction_type"], @"Unexpected interaction type.");
+    XCTAssertEqualObjects(templateType, [event.data objectForKey:@"template_type"], @"Unexpected template type.");
     XCTAssertEqualObjects(@(INT32_MIN * 1000000.0), [event.data objectForKey:@"event_value"], @"Unexpected event value.");
 }
 
@@ -144,6 +147,25 @@
     XCTAssertTrue(event.isValid);
 
     event.transactionID = [@"" stringByPaddingToLength:256 withString:@"TRANSACTION_ID" startingAtIndex:0];
+    XCTAssertFalse(event.isValid);
+}
+
+/**
+ * Test set template type
+ */
+- (void)testSetTemplateType {
+    UACustomEvent *event = [UACustomEvent eventWithName:@"some event"];
+    XCTAssertNil(event.templateType, @"Template type should default to nil");
+
+    NSString *templateType = [@"" stringByPaddingToLength:255 withString:@"TEMPLATE_TYPE" startingAtIndex:0];
+
+    event.templateType = templateType;
+    XCTAssertTrue(event.isValid);
+
+    event.templateType = nil;
+    XCTAssertTrue(event.isValid);
+
+    event.templateType = [@"" stringByPaddingToLength:256 withString:@"TEMPLATE_TYPE" startingAtIndex:0];
     XCTAssertFalse(event.isValid);
 }
 
@@ -283,6 +305,16 @@
     event.conversionPushMetadata = @"base64metadataString";
 
     XCTAssertEqualObjects(@"base64metadataString", [event.data objectForKey:@"conversion_metadata"], @"Push metadata should be set.");
+}
+
+/**
+ * Test track adds an event to analytics.
+ */
+- (void)testTrack {
+    UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
+    [[self.analytics expect] addEvent:event];
+    [event track];
+    [self.analytics verify];
 }
 
 /**

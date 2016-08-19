@@ -99,6 +99,9 @@ NSString * const UAActionMetadataResponseInfoKey = @"com.urbanairship.response_i
         case UASituationBackgroundInteractiveButton:
             return @"Background Interactive Button";
             break;
+        case UASituationAutomation:
+            return @"Automation";
+            break;
     }
 
     return @"Manual Invocation";

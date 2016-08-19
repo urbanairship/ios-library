@@ -49,7 +49,10 @@
 #define kUAPasteboardActionDefaultRegistryAlias @"^c"
 #define kUAWalletActionDefaultRegistryName @"wallet_action"
 #define kUAWalletActionDefaultRegistryAlias @"^w"
-
+#define kUACancelSchedulesActionDefaultRegistryName @"cancel_scheduled_actions"
+#define kUACancelSchedulesActionDefaultRegistryAlias @"^csa"
+#define kUAScheduleActionDefaultRegistryName @"schedule_actions"
+#define kUAScheduleActionDefaultRegistryAlias @"^sa"
 
 #define kUALandingPageActionLastOpenTimeLimitInSeconds @(7 * 86400) // 1 week
 

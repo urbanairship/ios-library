@@ -39,6 +39,8 @@
 #import "UADisplayInboxAction.h"
 #import "UAPasteboardAction.h"
 #import "UAOverlayInboxMessageAction.h"
+#import "UACancelSchedulesAction.h"
+#import "UAScheduleAction.h"
 
 @implementation UAActionRegistry
 @dynamic registeredEntries;
@@ -321,7 +323,7 @@
     [self registerAction:addCustomEventAction
                     name:kUAAddCustomEventActionDefaultRegistryName
                predicate:^BOOL(UAActionArguments *args) {
-                   return args.situation == UASituationManualInvocation || args.situation == UASituationWebViewInvocation;
+                   return args.situation == UASituationManualInvocation || args.situation == UASituationWebViewInvocation || args.situation == UASituationAutomation;
                }];
 
     // Share action
@@ -347,9 +349,18 @@
                    return (BOOL)(args.situation != UASituationForegroundPush);
                }];
 
-    // Wallet Action
+    // Wallet action
     [self registerAction:[[UAOpenExternalURLAction alloc] init]
                    names:@[kUAWalletActionDefaultRegistryAlias, kUAWalletActionDefaultRegistryName]];
+
+    // Cancel schedules action
+    [self registerAction:[[UACancelSchedulesAction alloc] init]
+                   names:@[kUACancelSchedulesActionDefaultRegistryName, kUACancelSchedulesActionDefaultRegistryAlias]];
+
+    // Schedule action
+    [self registerAction:[[UAScheduleAction alloc] init]
+                   names:@[kUAScheduleActionDefaultRegistryName, kUAScheduleActionDefaultRegistryAlias]];
+
 }
 
 @end

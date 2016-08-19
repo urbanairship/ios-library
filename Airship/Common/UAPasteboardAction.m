@@ -35,6 +35,7 @@
         case UASituationLaunchedFromPush:
         case UASituationBackgroundInteractiveButton:
         case UASituationForegroundInteractiveButton:
+        case UASituationAutomation:
             return [self pasteboardStringWithArguments:arguments] != nil;
         case UASituationBackgroundPush:
         case UASituationForegroundPush:

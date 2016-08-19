@@ -77,12 +77,13 @@
  * Test the action accepts message ID in foreground situations.
  */
 - (void)testAcceptsArgumentsMessageID {
-    UASituation validSituations[5] = {
+    UASituation validSituations[6] = {
         UASituationForegroundInteractiveButton,
         UASituationLaunchedFromPush,
         UASituationManualInvocation,
         UASituationWebViewInvocation,
-        UASituationForegroundPush
+        UASituationForegroundPush,
+        UASituationAutomation
     };
 
     UASituation rejectedSituations[2] = {
@@ -93,7 +94,7 @@
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
     arguments.value = @"the_message_id";
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         arguments.situation = validSituations[i];
         XCTAssertTrue([self.action acceptsArguments:arguments], @"action should accept situation %zd", validSituations[i]);
     }
@@ -109,19 +110,20 @@
  * message metadata or push notification metadata.
  */
 - (void)testAcceptsArgumentMessageIDPlaceHolder {
-    UASituation validSituations[5] = {
+    UASituation validSituations[6] = {
         UASituationForegroundInteractiveButton,
         UASituationLaunchedFromPush,
         UASituationManualInvocation,
         UASituationWebViewInvocation,
-        UASituationForegroundPush
+        UASituationForegroundPush,
+        UASituationAutomation
     };
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
     arguments.value = @"auto";
 
     // Verify it rejects the valid situations if no metadata is present
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         arguments.situation = validSituations[i];
         XCTAssertFalse([self.action acceptsArguments:arguments], @"action should reject situation %zd", validSituations[i]);
     }
