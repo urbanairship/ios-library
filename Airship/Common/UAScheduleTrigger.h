@@ -217,7 +217,7 @@ extern NSString *const UAScheduleTriggerScreenName;
  * @param json The JSON payload.
  * @return A trigger or `nil` if the JSON is invalid.
  */
-+ (instancetype)triggerWithJSON:(id)json;
++ (nullable instancetype)triggerWithJSON:(id)json;
 
 @end
 
