@@ -86,7 +86,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param json The JSON payload.
  * @return A predicate or `nil` if the JSON is invalid.
  */
-+ (instancetype)predicateWithJSON:(id)json;
++ (nullable instancetype)predicateWithJSON:(id)json;
 
 @end
 

@@ -171,7 +171,7 @@ extern NSString *const UAActionScheduleInfoTriggersKey;
  * @param json The JSON payload.
  * @return An action schedule info or `nil` if the JSON is invalid.
  */
-+ (instancetype)actionScheduleInfoWithJSON:(id)json;
++ (nullable instancetype)actionScheduleInfoWithJSON:(id)json;
 
 @end
 

@@ -148,7 +148,7 @@ NSString *const UAScheduleTriggerScreenName = @"screen";
         goal = json[UAScheduleTriggerGoalKey];
     }
 
-    if ([goal doubleValue] <= 0) {
+    if (!goal || [goal doubleValue] <= 0) {
         return nil;
     }
 
