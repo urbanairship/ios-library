@@ -560,7 +560,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 // Adds event upload operation to the sendQueue.
 - (NSOperation *)queryOperationWithCompletionBlock:(UAAnalyticsUploadCompletionBlock)completionBlock {
 
-    __block NSOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
+    __weak __block NSOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
 
         NSArray *events = [self prepareEventsForUpload];
 
