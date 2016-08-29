@@ -67,7 +67,7 @@ class PushSettingsViewController: UITableViewController {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(PushSettingsViewController.refreshView),
-            name: "channelIDUpdated" as NSNotification.Name,
+            name: NSNotification.Name("channelIDUpdated"),
             object: nil);
 
         // Initialize switches

@@ -49,7 +49,7 @@ class AddAliasTableViewController: UITableViewController, UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
 
-        if (textField.text?.characters.count > 0){
+        if ((textField.text?.characters.count)! > 0){
             UAirship.push().alias = textField.text
         } else {
             UAirship.push().alias = nil
