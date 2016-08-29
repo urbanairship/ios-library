@@ -37,7 +37,7 @@ class HomeViewController: UIViewController {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(HomeViewController.refreshView),
-            name: "channelIDUpdated" as NSNotification.Name,
+            name: NSNotification.Name("channelIDUpdated"),
             object: nil);
     }
 

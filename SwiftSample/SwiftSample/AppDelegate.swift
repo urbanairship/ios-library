@@ -35,8 +35,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
     var window: UIWindow?
     var inboxDelegate: InboxDelegate?
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
         self.failIfSimulator()
 
         // Set log level for debugging config loading (optional)
