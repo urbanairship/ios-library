@@ -59,7 +59,7 @@
     if (application.applicationState == UIApplicationStateBackground && [UAirship push].channelID) {
          UA_LDEBUG(@"Skipping device registration. The app is currently backgrounded.");
     } else {
-        [[UAirship push] updateRegistration];
+        [[UAirship push] updateChannelRegistrationForcefully:NO];
     }
 }
 

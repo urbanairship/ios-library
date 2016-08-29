@@ -162,7 +162,7 @@
     [[self.mockedPush expect] setDeviceToken:@"736f6d652d746f6b656e"];
 
     // Expect UAPush to update its registration
-    [[self.mockedPush expect] updateRegistration];
+    [[self.mockedPush expect] updateChannelRegistrationForcefully:NO];
 
     // Call the app integration
     [UAAppIntegration application:self.mockedApplication didRegisterForRemoteNotificationsWithDeviceToken:token];
