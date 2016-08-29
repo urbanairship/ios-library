@@ -53,12 +53,6 @@ extern NSString *const UAChannelCreatedEventChannelKey;
 extern NSString *const UAChannelCreatedEventExistingKey;
 
 /**
- * Notification option for notification type `none`.
- * Not included in UANotificationOptions enum to maintain parity with UNAuthorizationOptions.
- */
-extern NSUInteger const UANotificationOptionNone;
-
-/**
  * Notification options
  */
 typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
@@ -67,6 +61,12 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
     UANotificationOptionAlert   = (1 << 2),
     UANotificationOptionCarPlay = (1 << 3)
 };
+
+/**
+ * Notification option for notification type `none`.
+ * Not included in UANotificationOptions enum to maintain parity with UNAuthorizationOptions.
+ */
+static const UANotificationOptions UANotificationOptionNone =  0;
 
 //---------------------------------------------------------------------------------------
 // UARegistrationDelegate

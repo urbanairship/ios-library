@@ -86,8 +86,6 @@ NSString *const UAChannelCreatedEvent = @"com.urbanairship.push.channel_created"
 NSString *const UAChannelCreatedEventChannelKey = @"com.urbanairship.push.channel_id";
 NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.existing";
 
-NSUInteger const UANotificationOptionNone = 0;
-
 @implementation UAPush
 
 // Both getter and setter are custom here, so give the compiler a hand with the synthesizing
