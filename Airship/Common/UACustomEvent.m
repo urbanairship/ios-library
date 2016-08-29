@@ -271,6 +271,24 @@ NSString *const UACustomEventTemplateTypeKey = @"template_type";
     return [dictionary mutableCopy];
 }
 
+- (NSDictionary *)payload {
+    /*
+     * We are unable to use the event.data for automation because we modify some
+     * values to be stringified versions before we store the event to be sent to
+     * warp9. Instead we are going to recreate the event data with the unmodified
+     * values.
+     */
+    NSDictionary *eventData = [NSMutableDictionary dictionary];
+    [eventData setValue:self.eventName forKey:UACustomEventNameKey];
+    [eventData setValue:self.interactionID forKey:UACustomEventInteractionIDKey];
+    [eventData setValue:self.interactionType forKey:UACustomEventInteractionTypeKey];
+    [eventData setValue:self.transactionID forKey:UACustomEventTransactionIDKey];
+    [eventData setValue:self.eventValue forKey:UACustomEventValueKey];
+    [eventData setValue:self.properties forKey:UACustomEventPropertiesKey];
+
+    return eventData;
+}
+
 - (void)track {
     [[UAirship shared].analytics addEvent:self];
 }

@@ -35,7 +35,7 @@
 #import "UAirship.h"
 #import "UAEvent.h"
 #import "UARegionEvent+Internal.h"
-#import "UACustomEvent.h"
+#import "UACustomEvent+Internal.h"
 #import "UAActionRunner+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAJSONPredicate.h"
@@ -223,23 +223,10 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
 }
 
 -(void)customEventAdded:(UACustomEvent *)event {
-    /*
-     * We are unable to use the event.data because we modify the eventValue and
-     * properties before we store the event to be sent to warp9. Instead we are
-     * going to recreate the event data with the unmodified values.
-     */
-    NSDictionary *eventData = [NSMutableDictionary dictionary];
-    [eventData setValue:event.eventName forKey:UACustomEventNameKey];
-    [eventData setValue:event.interactionID forKey:UACustomEventInteractionIDKey];
-    [eventData setValue:event.interactionType forKey:UACustomEventInteractionTypeKey];
-    [eventData setValue:event.transactionID forKey:UACustomEventTransactionIDKey];
-    [eventData setValue:event.eventValue forKey:UACustomEventValueKey];
-    [eventData setValue:event.properties forKey:UACustomEventPropertiesKey];
-
-    [self updateTriggersWithType:UAScheduleTriggerCustomEventCount argument:eventData incrementAmount:1.0];
+    [self updateTriggersWithType:UAScheduleTriggerCustomEventCount argument:event.payload incrementAmount:1.0];
 
     if (event.eventValue) {
-        [self updateTriggersWithType:UAScheduleTriggerCustomEventValue argument:eventData incrementAmount:[event.eventValue doubleValue]];
+        [self updateTriggersWithType:UAScheduleTriggerCustomEventValue argument:event.payload incrementAmount:[event.eventValue doubleValue]];
     }
 }
 
@@ -252,8 +239,7 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
         triggerType = UAScheduleTriggerRegionExit;
     }
 
-
-    [self updateTriggersWithType:triggerType argument:event.data incrementAmount:1.0];
+    [self updateTriggersWithType:triggerType argument:event.payload incrementAmount:1.0];
 }
 
 -(void)screenTracked:(NSString *)screenName {
