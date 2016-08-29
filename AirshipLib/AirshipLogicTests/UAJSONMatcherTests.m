@@ -61,7 +61,9 @@
     XCTAssertEqualObjects(json, matcher.payload);
 
     // Verify the JSONValue recreates the expected payload
-    XCTAssertEqualObjects(json, [UAJSONMatcher matcherWithJSON:json].payload);
+    NSError *error = nil;
+    XCTAssertEqualObjects(json, [UAJSONMatcher matcherWithJSON:json error:&error].payload);
+    XCTAssertNil(error);
 }
 
 - (void)testMatcherWithKey {
@@ -84,7 +86,9 @@
     XCTAssertEqualObjects(json, matcher.payload);
 
     // Verify the JSONValue recreates the expected payload
-    XCTAssertEqualObjects(json, [UAJSONMatcher matcherWithJSON:json].payload);
+    NSError *error = nil;
+    XCTAssertEqualObjects(json, [UAJSONMatcher matcherWithJSON:json error:&error].payload);
+    XCTAssertNil(error);
 }
 
 - (void)testMatcherWithKeyAndScope {
@@ -113,7 +117,9 @@
     XCTAssertEqualObjects(json, matcher.payload);
 
     // Verify the JSONValue recreates the expected payload
-    XCTAssertEqualObjects(json, [UAJSONMatcher matcherWithJSON:json].payload);
+    NSError *error = nil;
+    XCTAssertEqualObjects(json, [UAJSONMatcher matcherWithJSON:json error:&error].payload);
+    XCTAssertNil(error);
 }
 
 - (void)testScopeAsString {
@@ -121,24 +127,35 @@
     NSDictionary *expectedPayload = @{ @"value": @{ @"equals": @"cool" }, @"key": @"subproperty", @"scope": @[@"property"] };
     NSDictionary *json = @{ @"value": @{ @"equals": @"cool" }, @"key": @"subproperty", @"scope": @"property" };
 
-    XCTAssertEqualObjects(expectedPayload, [UAJSONMatcher matcherWithJSON:json].payload);
+    NSError *error = nil;
+    XCTAssertEqualObjects(expectedPayload, [UAJSONMatcher matcherWithJSON:json error:&error].payload);
+    XCTAssertNil(error);
 }
 
 - (void)testInvalidPayload {
+    NSError *error;
+
     // Unknown key
     NSDictionary *json = @{ @"value": @{ @"equals": @"cool" }, @"what": @(100) };
-    XCTAssertNil([UAJSONMatcher matcherWithJSON:json]);
+    XCTAssertNil([UAJSONMatcher matcherWithJSON:json error:&error]);
+    XCTAssertNotNil(error);
 
     // Invalid key value
+    error = nil;
     json = @{ @"value": @{ @"equals": @"cool" }, @"key": @(123), @"scope": @[@"property"] };
-    XCTAssertNil([UAJSONMatcher matcherWithJSON:json]);
+    XCTAssertNil([UAJSONMatcher matcherWithJSON:json error:&error]);
+    XCTAssertNotNil(error);
 
     // Invalid scope value
+    error = nil;
     json = @{ @"value": @{ @"equals": @"cool" }, @"key": @"cool", @"scope": @{} };
-    XCTAssertNil([UAJSONMatcher matcherWithJSON:json]);
+    XCTAssertNil([UAJSONMatcher matcherWithJSON:json error:&error]);
+    XCTAssertNotNil(error);
 
     // Invalid object
-    XCTAssertNil([UAJSONMatcher matcherWithJSON:@"not cool"]);
+    error = nil;
+    XCTAssertNil([UAJSONMatcher matcherWithJSON:@"not cool" error:&error]);
+    XCTAssertNotNil(error);
 }
 
 

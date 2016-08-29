@@ -107,8 +107,9 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
     if (!data) {
         return nil;
     }
+
     id json = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-    return [UAJSONPredicate predicateWithJSON:json];
+    return [UAJSONPredicate predicateWithJSON:json error:nil];
 }
 
 #pragma mark -

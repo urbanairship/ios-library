@@ -36,6 +36,9 @@ NSString *const UAJSONPredicateAndType = @"and";
 NSString *const UAJSONPredicateOrType = @"or";
 NSString *const UAJSONPredicateNotType = @"not";
 
+NSString * const UAJSONPredicateErrorDomain = @"com.urbanairship.json_predicate";
+
+
 @implementation UAJSONPredicate
 
 - (instancetype)initWithType:(NSString *)type
@@ -113,8 +116,16 @@ NSString *const UAJSONPredicateNotType = @"not";
     return [[UAJSONPredicate alloc] initWithType:UAJSONPredicateNotType jsonMatcher:nil subpredicates:@[subpredicate]];
 }
 
-+ (instancetype)predicateWithJSON:(id)json {
++ (instancetype)predicateWithJSON:(id)json error:(NSError **)error {
+
     if (![json isKindOfClass:[NSDictionary class]]) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize invalid object: %@", json];
+            *error =  [NSError errorWithDomain:UAJSONPredicateErrorDomain
+                                          code:UAJSONPredicateErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
         return nil;
     }
 
@@ -128,6 +139,13 @@ NSString *const UAJSONPredicateNotType = @"not";
     }
 
     if (type && [json count] != 1) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Invalid JSON: %@", json];
+            *error =  [NSError errorWithDomain:UAJSONPredicateErrorDomain
+                                          code:UAJSONPredicateErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
         return nil;
     }
 
@@ -136,15 +154,28 @@ NSString *const UAJSONPredicateNotType = @"not";
         id typeInfo = json[type];
 
         if (![typeInfo isKindOfClass:[NSArray class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize invalid object: %@", typeInfo];
+                *error =  [NSError errorWithDomain:UAJSONPredicateErrorDomain
+                                              code:UAJSONPredicateErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+
             return nil;
         }
 
         if (([type isEqualToString:UAJSONPredicateNotType] && [typeInfo count] != 1) || [typeInfo count] == 0) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"A `not` predicate must contain a single sub predicate or matcher."];
+                *error =  [NSError errorWithDomain:UAJSONPredicateErrorDomain
+                                              code:UAJSONPredicateErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
             return nil;
         }
 
         for (id subpredicateInfo in typeInfo) {
-            UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSON:subpredicateInfo];
+            UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSON:subpredicateInfo error:error];
             if (!predicate) {
                 return nil;
             }
@@ -155,7 +186,7 @@ NSString *const UAJSONPredicateNotType = @"not";
         return [[UAJSONPredicate alloc] initWithType:type jsonMatcher:nil subpredicates:subpredicates];
     }
 
-    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithJSON:json];
+    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithJSON:json error:error];
     if (jsonMatcher) {
         return [[UAJSONPredicate alloc] initWithType:nil jsonMatcher:jsonMatcher subpredicates:nil];
     }

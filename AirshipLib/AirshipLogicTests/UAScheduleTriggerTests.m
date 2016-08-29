@@ -60,32 +60,41 @@
                                        UAScheduleTriggerPredicateKey: predicateJSON,
                                        UAScheduleTriggerTypeKey: typeName };
 
-        UAScheduleTrigger *trigger = [UAScheduleTrigger triggerWithJSON:triggerJSON];
+        NSError *error = nil;
+        UAScheduleTrigger *trigger = [UAScheduleTrigger triggerWithJSON:triggerJSON error:&error];
         XCTAssertEqual(trigger.type, [triggerTypeMap[typeName] unsignedIntegerValue]);
         XCTAssertEqualObjects(trigger.goal, @(1));
         XCTAssertEqualObjects(trigger.predicate.payload, predicateJSON);
+        XCTAssertNil(error);
     }
 }
 
 - (void)testInvalidJSON {
-    // Missing type
-    XCTAssertNil([UAScheduleTrigger triggerWithJSON:@{UAScheduleTriggerGoalKey: @(1)}]);
 
-    // Missing goal
-    NSDictionary *payload = @{UAScheduleTriggerTypeKey: UAScheduleTriggerAppBackgroundName};
-    XCTAssertNil([UAScheduleTrigger triggerWithJSON:payload]);
+    NSArray *invalidValues = @[ // Missing type
+                                @{UAScheduleTriggerGoalKey: @(1)},
 
-    // Invalid goal
-    payload = @{UAScheduleTriggerTypeKey: UAScheduleTriggerAppBackgroundName, UAScheduleTriggerGoalKey: @"what"};
-    XCTAssertNil([UAScheduleTrigger triggerWithJSON:payload]);
+                                // Missing goal
+                                @{UAScheduleTriggerTypeKey: UAScheduleTriggerAppBackgroundName},
 
-    // Invalid type
-    payload = @{UAScheduleTriggerTypeKey: @"what", UAScheduleTriggerGoalKey: @(1)};
-    XCTAssertNil([UAScheduleTrigger triggerWithJSON:payload]);
+                                // Invalid goal
+                                @{UAScheduleTriggerTypeKey: UAScheduleTriggerAppBackgroundName, UAScheduleTriggerGoalKey: @"what"},
 
-    // Invalid predicate
-    payload = @{UAScheduleTriggerTypeKey: UAScheduleTriggerAppBackgroundName, UAScheduleTriggerGoalKey: @(1), UAScheduleTriggerPredicateKey: @"what"};
-    XCTAssertNil([UAScheduleTrigger triggerWithJSON:payload]);
+                                // Invalid type
+                                @{UAScheduleTriggerTypeKey: @"what", UAScheduleTriggerGoalKey: @(1)},
+
+                                //Invalid predicate
+                                @{UAScheduleTriggerTypeKey: UAScheduleTriggerAppBackgroundName, UAScheduleTriggerGoalKey: @(1), UAScheduleTriggerPredicateKey: @"what"},
+
+                                // Invalid object
+                                @"what" ];
+
+
+    for (id value in invalidValues) {
+        NSError *error;
+        XCTAssertNil([UAScheduleTrigger triggerWithJSON:value error:&error]);
+        XCTAssertNotNil(error);
+    }
 }
 
 @end
