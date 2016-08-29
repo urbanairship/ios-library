@@ -800,6 +800,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
 
     self.push.userPushNotificationsEnabled = NO;
+    //[self.push updateAPNSRegistration];
 
     // Make sure we do not register for none, if we are
     // already registered for none or it will prompt the user.

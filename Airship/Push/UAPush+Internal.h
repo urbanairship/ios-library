@@ -26,6 +26,9 @@
 #import "UAPush.h"
 #import "UAirship.h"
 #import "UAChannelRegistrar+Internal.h"
+#import "UAAPNSRegistrationProtocol+Internal.h"
+#import "UAAPNSRegistration+Internal.h"
+#import "UALegacyAPNSRegistration+Internal.h"
 
 @class UAPreferenceDataStore;
 @class UAConfig;
@@ -118,6 +121,7 @@ extern NSString *const UAPushAddTagGroupsSettingsKey;
  */
 extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 
+
 @interface UAPush () <UAChannelRegistrarDelegate>
 
 /**
@@ -189,6 +193,10 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
  */
 @property (nonatomic, assign) UANotificationOptions authorizedNotificationOptions;
 
+/**
+ * The push registration instance.
+ */
+@property (nonatomic, strong) id<UAAPNSRegistrationProtocol> pushRegistration;
 
 /**
  * Factory method to create a push instance.
