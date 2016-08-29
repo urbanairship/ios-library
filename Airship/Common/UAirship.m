@@ -53,6 +53,7 @@
 #import "UADefaultMessageCenter.h"
 #import "UANamedUser+Internal.h"
 #import "UAAutomation+Internal.h"
+#import "UAAppIntegration.h"
 
 UA_VERSION_IMPLEMENTATION(UAirshipVersion, UA_VERSION)
 
@@ -331,23 +332,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         return;
     }
 
-    NSDictionary *remoteNotification = [notification.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
-
-    [sharedAirship_.analytics launchedFromNotification:remoteNotification];
-
-    //Send Startup Analytics Info
-    //init first event
     [sharedAirship_.analytics addEvent:[UAAppInitEvent event]];
-
-
-    // If the app delegate responds to application:didReceiveRemoteNotification:fetchCompletionHandler:,
-    // it will call the app delegate right after launch.
-    
-    BOOL skipNotifyPush = [[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)];
-
-    if (remoteNotification && !skipNotifyPush) {
-        [sharedAirship_.sharedPush appReceivedRemoteNotification:remoteNotification];
-    }
 
     // Register now
     if (sharedAirship_.config.automaticSetupEnabled) {

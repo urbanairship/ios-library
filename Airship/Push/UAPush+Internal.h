@@ -153,9 +153,9 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 @property (nonatomic, strong) UAChannelRegistrar *channelRegistrar;
 
 /**
- * Notification that launched the application
+ * Notification that launched the application.
  */
-@property (nullable, nonatomic, strong) NSDictionary *launchNotification;
+@property (nullable, nonatomic, strong) UANotificationResponse *launchNotificationResponse;
 
 /**
  * Background task identifier used to do any registration in the background.
@@ -294,12 +294,35 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 - (void)updateAPNSRegistration;
 
 /**
- * Handles an incoming foreground UNNotification after all presentation options have been merged.
- *
- * @param notification The foreground notification
- * @param options The merged notification presentation options.
+ * Updates the authorized notification types.
  */
-- (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options;
+- (void)updateAuthorizedNotificationTypes;
+
+/**
+ * Called to return the presentation options for an iOS 10 notification.
+ *
+ * @param notification The notification.
+ * @return Foreground presentation options.
+ */
+- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification;
+
+/**
+ * Called when a notification response is received.
+ * 
+ * @param response The notification response.
+ * @param handler The completion handler.
+ */
+- (void)handleNotificationResponse:(UANotificationResponse *)response completionHandler:(void (^)())handler;
+
+/**
+ * Called when a remote notification is received.
+ *
+ * @param notification The notification content.
+ * @param foreground If the notification was recieved in the foreground or not.
+ * @param handler The completion handler.
+ */
+- (void)handleRemoteNotification:(UANotificationContent *)notification foreground:(BOOL)foreground completionHandler:(void (^)(UIBackgroundFetchResult))handler;
+
 
 @end
 

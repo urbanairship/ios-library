@@ -297,9 +297,9 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
 @property (nonatomic, weak, nullable) id<UARegistrationDelegate> registrationDelegate;
 
 /**
- * Notification that launched the application
+ * Notification response that launched the application.
  */
-@property (nonatomic, readonly, strong, nullable) NSDictionary *launchNotification;
+@property (nonatomic, readonly, strong, nullable) UANotificationResponse *launchNotificationResponse;
 
 /**
  * The current authorized notification options.
@@ -517,97 +517,6 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
  * Add a `UARegistrationDelegate` to `UAPush` to receive success and failure callbacks.
  */
 - (void)updateRegistration;
-
-
-///---------------------------------------------------------------------------------------
-/// @name UserNotificationCenterDelegate hooks
-///---------------------------------------------------------------------------------------
-
-/**
- * Handle incoming push notifications. This method will record push conversions, parse the notification
- * and call the appropriate methods on your delegate.
- *
- * Note: this method is relevant only for iOS 10 and above.
- *
- * @param response The notification response object.
- * @param completionHandler A completion handler. In manual integrations this should be the handler passed
- * in the original delegate callback.
- */
-- (void)notificationCenterDidReceiveNotificationResponse:(UNNotificationResponse *)response
-                                   withCompletionHandler:(void (^)())completionHandler;
-
-/**
- * Handle notification presentation.
- *
- * Note: this method is relevant only for iOS 10 and above.
- *
- * @param notification The notification about to be presented.
- * @param completionHandler A completion handler to be called with the desired notification presentation options. In manual
- * integrations this should be the handler passed in the original delegate callback.
- */
-- (void)notificationCenterWillPresentNotification:(UNNotification *)notification
-                            withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler;
-
-///---------------------------------------------------------------------------------------
-/// @name AppDelegate hooks
-///---------------------------------------------------------------------------------------
-
-/**
- * Handle incoming push notifications. This method will record push conversions, parse the notification
- * and call the appropriate methods on your delegate.
- *
- * @param notification The notification payload, as passed to your application delegate.
- */
-- (void)appReceivedRemoteNotification:(NSDictionary *)notification;
-
-/**
- * Handle incoming push notifications. This method will record push conversions, parse the notification
- * and call the appropriate methods on your delegate.
- *
- * @param notification The notification payload, as passed to your application delegate.
- * @param completionHandler Should be called with a UIBackgroundFetchResult as soon as possible, so the system can accurately estimate its power and data cost.
- */
-- (void)appReceivedRemoteNotification:(NSDictionary *)notification
-               fetchCompletionHandler:(nullable void (^)(UIBackgroundFetchResult result))completionHandler;
-
-/**
- * Handle device token registration. Associates the
- * token with the channel and update the channel registration.
- *
- * Add a `UARegistrationDelegate` to `UAPush` to received success and failure callbacks.
- *
- * @param token The device token to register.
- */
-- (void)appRegisteredForRemoteNotificationsWithDeviceToken:(NSData *)token;
-
-/**
- * Handles user notification settings registration.
- */
-- (void)appRegisteredUserNotificationSettings;
-
-/**
- * Handle interactive notification actions.
- *
- * @param identifier The identifier of the button that was triggered.
- * @param notification The notification payload, as passed to your application delegate.
- * @param completionHandler The completion handler.
- */
-- (void)appReceivedActionWithIdentifier:(NSString *)identifier
-                           notification:(NSDictionary *)notification
-                      completionHandler:(void (^)())completionHandler;
-
-/**
- * Handle interactive notification actions with response info.
- *
- * @param identifier The identifier of the button that was triggered.
- * @param notification The notification payload, as passed to your application delegate.
- * @param responseInfo The response info, as passed to your application delegate.
- * @param completionHandler The completion handler.
- */
-- (void)appReceivedActionWithIdentifier:(NSString *)identifier
-                           notification:(NSDictionary *)notification
-                           responseInfo:(nullable NSDictionary *)responseInfo
-                      completionHandler:(void (^)())completionHandler;
 
 @end
 

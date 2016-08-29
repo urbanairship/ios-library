@@ -23,27 +23,21 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAAction.h"
+#import <UAAppIntegration.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+
+@interface UAAppIntegration()
 
 /**
- * Action class used for handing incoming push data, performing delegate callbacks and
- * running push actions. This action is used by the library and should not normally be
- * used directly.
+ * Handles an incoming foreground UNNotification after all presentation options have been merged.
  *
- * Expected argument values: An APNS NSDictionary.
- *
- * Valid situations: UASituationForegroundPush, UASituationBackgroundPush, 
- * UASituationLaunchedFromPush, UASituationForegroundInteractiveButton, and
- * UASituationBackgroundInteractiveButton
- *
- * Result value: nil
- *
- * Error: nil
- *
- * Fetch result: Aggregate UAActionFetchResult from delegates when handling background pushes, otherwise
- * UAActionFetchResultNoData
+ * @param notification The foreground notification.
+ * @param options The merged notification presentation options.
  */
-
-@interface UAIncomingPushAction : UAAction
++ (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options;
 
 @end
+
+NS_ASSUME_NONNULL_END

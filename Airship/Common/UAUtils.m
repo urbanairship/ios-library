@@ -279,8 +279,8 @@
     return topController;
 }
 
-+ (BOOL)isBackgroundPush:(NSDictionary *)notification {
-    BOOL isBackground = NO;
++ (BOOL)isSilentPush:(NSDictionary *)notification {
+    BOOL isSilentPush = NO;
     NSDictionary *apsDict = [notification objectForKey:@"aps"];
     if (apsDict) {
         id alert = [apsDict objectForKey:@"alert"];
@@ -288,10 +288,10 @@
         NSString *soundName = [apsDict objectForKey:@"sound"];
 
         if (!alert && !badgeNumber && !soundName) {
-            isBackground = YES;
+            isSilentPush = YES;
         }
     }
-    return isBackground;
+    return isSilentPush;
 }
 
 @end

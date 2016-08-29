@@ -24,6 +24,13 @@
  */
 
 #import "UANotificationResponse.h"
+#import <UserNotifications/UserNotifications.h>
+
+@interface UANotificationResponse()
+@property (nonatomic, copy) NSString *actionIdentifier;
+@property (nonatomic, copy) NSString *responseText;
+@property (nonatomic, strong) UANotificationContent *notificationContent;
+@end
 
 @implementation UANotificationResponse
 
@@ -32,23 +39,42 @@ NSString *const UANotificationDefaultActionIdentifier = @"com.apple.UNNotificati
 // If the user dismissed the notification.
 NSString *const UANotificationDismissActionIdentifier = @"com.apple.UNNotificationDismissActionIdentifier";
 
-- (instancetype)initWithNotificationContent:(UANotificationContent *)notificationContent actionIdentifier:(NSString *)actionIdentifier {
+- (instancetype)initWithNotificationContent:(UANotificationContent *)notificationContent actionIdentifier:(NSString *)actionIdentifier responseText:(NSString *)responseText {
     self = [super init];
 
     if (self) {
         self.notificationContent = notificationContent;
         self.actionIdentifier = actionIdentifier;
+        self.responseText = responseText;
     }
 
     return self;
 }
 
-+ (instancetype)notificationResponseWithNotificationInfo:(NSDictionary *)notificationInfo actionIdentifier:(NSString *)actionIdentifier {
-    return [[UANotificationResponse alloc] initWithNotificationContent:[UANotificationContent notificationWithNotificationInfo:notificationInfo] actionIdentifier:actionIdentifier];
++ (instancetype)notificationResponseWithNotificationInfo:(NSDictionary *)notificationInfo actionIdentifier:(NSString *)actionIdentifier responseText:(NSString *)responseText {
+    return [[UANotificationResponse alloc] initWithNotificationContent:[UANotificationContent notificationWithNotificationInfo:notificationInfo]
+                                                      actionIdentifier:actionIdentifier
+                                                          responseText:responseText];
 }
 
-+ (instancetype)notificationResponseWithNotificationContent:(UANotificationContent *)notificationContent actionIdentifier:(NSString *)actionIdentifier {
-    return [[UANotificationResponse alloc] initWithNotificationContent:notificationContent actionIdentifier:actionIdentifier];
++ (instancetype)notificationResponseWithUNNotificationResponse:(UNNotificationResponse *)response {
+
+    NSString *responseText;
+    if ([response isKindOfClass:[UNTextInputNotificationResponse class]]) {
+        responseText = ((UNTextInputNotificationResponse *)self).userText;
+    }
+
+    return [[UANotificationResponse alloc] initWithNotificationContent:[UANotificationContent notificationWithUNNotification:response.notification]
+                                                      actionIdentifier:response.actionIdentifier
+                                                          responseText:responseText];
+}
+
+- (NSString *)description {
+    NSMutableDictionary *payload = [NSMutableDictionary dictionary];
+    [payload setValue:self.responseText forKey:@"responseText"];
+    [payload setValue:self.actionIdentifier forKey:@"actionIdentifier"];
+    [payload setValue:self.notificationContent forKey:@"notificationContent"];
+    return [payload description];
 }
 
 @end

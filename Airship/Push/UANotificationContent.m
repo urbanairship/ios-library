@@ -25,6 +25,19 @@
 
 #import "UANotificationContent.h"
 #import "NSString+UALocalizationAdditions.h"
+#import <UserNotifications/UserNotifications.h>
+
+@interface UANotificationContent()
+@property (nonatomic, copy, nullable) NSString *alertTitle;
+@property (nonatomic, copy, nullable) NSString *alertBody;
+@property (nonatomic, copy, nullable) NSString *sound;
+@property (nonatomic, assign, nullable) NSNumber *badge;
+@property (nonatomic, strong, nullable) NSNumber *contentAvailable;
+@property (nonatomic, copy, nullable) NSString *categoryIdentifier;
+@property (nonatomic, copy, nullable) NSString *launchImage;
+@property (nonatomic, copy, nullable) NSDictionary *notificationInfo;
+@property (nonatomic, copy, nullable) UNNotification *notification;
+@end
 
 @implementation UANotificationContent
 
@@ -32,9 +45,7 @@
     self = [super init];
     if (self) {
         NSDictionary *apsDict = [notificationInfo objectForKey:@"aps"];
-
         if (apsDict) {
-
             // Alert
             id alert = [apsDict objectForKey:@"alert"];
             if (alert) {
@@ -45,8 +56,6 @@
 
                 } else if ([alert isKindOfClass:[NSDictionary class]]) {
 
-                    NSMutableDictionary *localizationKeys = [NSMutableDictionary dictionary];
-
                     // Alert Title
                     self.alertTitle = alert[@"title"];
 
@@ -55,30 +64,6 @@
 
                     // Launch Image
                     self.launchImage = alert[@"launch-image"];
-
-                    // Localization Keys
-                    if (alert[@"title-loc-key"]) {
-                        localizationKeys[@"title-loc-key"] = alert[@"title-loc-key"];
-                    }
-
-                    if (alert[@"title-loc-args"]) {
-                        localizationKeys[@"title-loc-args"] = alert[@"title-loc-args"];
-                    }
-
-                    if (alert[@"action-loc-key"]) {
-                        localizationKeys[@"action-loc-key"] = alert[@"action-loc-key"];
-                    }
-
-                    if (alert[@"loc-key"]) {
-                        localizationKeys[@"loc-key"] = alert[@"loc-key"];
-                    }
-
-                    if (alert[@"loc-args"]) {
-                        localizationKeys[@"loc-args"] = alert[@"loc-args"];
-                    }
-
-                    // Localization Keys
-                    self.localizationKeys = [NSDictionary dictionaryWithDictionary:localizationKeys];
                 }
             }
 
@@ -90,9 +75,6 @@
 
             // Category
             self.categoryIdentifier = apsDict[@"category"];
-
-            // ContentAvailable
-            self.contentAvailable = apsDict[@"content-available"];
         }
 
         // Original notification
@@ -102,18 +84,85 @@
     return self;
 }
 
-+ (instancetype)notificationWithNotificationInfo:(NSDictionary *)notificationInfo {
-    UANotificationContent *notificationContent = [[UANotificationContent alloc] initWithNotificationInfo:notificationInfo];
 
-    return notificationContent;
+- (instancetype)initWithUNNotification:(UNNotification *)notification {
+    self = [super init];
+    if (self) {
+        self.alertBody = notification.request.content.body;
+        self.alertTitle = notification.request.content.title;
+        self.badge = notification.request.content.badge;
+        self.categoryIdentifier = notification.request.content.categoryIdentifier;
+        self.notificationInfo = notification.request.content.userInfo;
+        self.notification = notification;
+
+
+        NSDictionary *apsDict = [self.notificationInfo objectForKey:@"aps"];
+        if (apsDict) {
+            // Sound
+            self.sound = apsDict[@"sound"];
+        }
+    }
+    
+    return self;
+}
+
++ (instancetype)notificationWithNotificationInfo:(NSDictionary *)notificationInfo {
+    return [[UANotificationContent alloc] initWithNotificationInfo:notificationInfo];
 }
 
 + (instancetype)notificationWithUNNotification:(UNNotification *)notification {
-
     UANotificationContent *notificationContent = [[UANotificationContent alloc] initWithNotificationInfo:notification.request.content.userInfo];
-    notificationContent.notification = notification;
-
     return notificationContent;
+}
+
+-(NSDictionary *)localizationKeys {
+    if (self.notificationInfo[@"aps"] && self.notificationInfo[@"aps"][@"alert"]) {
+
+        // Alert
+        id alert = self.notificationInfo[@"aps"][@"alert"];
+        if ([alert isKindOfClass:[NSDictionary class]]) {
+            NSMutableDictionary *localizationKeys = [NSMutableDictionary dictionary];
+
+            // Alert Title
+            self.alertTitle = alert[@"title"];
+
+            // Alert Body
+            self.alertBody = alert[@"body"];
+
+            // Launch Image
+            self.launchImage = alert[@"launch-image"];
+
+            // Localization Keys
+            if (alert[@"title-loc-key"]) {
+                localizationKeys[@"title-loc-key"] = alert[@"title-loc-key"];
+            }
+
+            if (alert[@"title-loc-args"]) {
+                localizationKeys[@"title-loc-args"] = alert[@"title-loc-args"];
+            }
+
+            if (alert[@"action-loc-key"]) {
+                localizationKeys[@"action-loc-key"] = alert[@"action-loc-key"];
+            }
+
+            if (alert[@"loc-key"]) {
+                localizationKeys[@"loc-key"] = alert[@"loc-key"];
+            }
+
+            if (alert[@"loc-args"]) {
+                localizationKeys[@"loc-args"] = alert[@"loc-args"];
+            }
+
+            // Localization Keys
+            return [localizationKeys copy];
+        }
+    }
+
+    return nil;
+}
+
+- (NSString *)description {
+    return [self.notificationInfo description];
 }
 
 @end

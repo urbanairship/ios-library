@@ -24,61 +24,62 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <UserNotifications/UserNotifications.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class UNNotification;
 
 @interface UANotificationContent : NSObject
 
 /**
  * Alert title
  */
-@property (nonatomic, strong, nullable) NSString *alertTitle;
+@property (nonatomic, copy, nullable, readonly) NSString *alertTitle;
 
 /**
  * Alert body
  */
-@property (nonatomic, strong, nullable) NSString *alertBody;
+@property (nonatomic, copy, nullable, readonly) NSString *alertBody;
 
 /**
  * Sound file name
  */
-@property (nonatomic, strong, nullable) NSString *sound;
+@property (nonatomic, copy, nullable, readonly) NSString *sound;
 
 /**
  * Badge number
  */
-@property (nonatomic, assign, nullable) NSNumber *badge;
+@property (nonatomic, assign, nullable, readonly) NSNumber *badge;
 
 /**
  * Content available
  */
-@property (nonatomic, strong, nullable) NSNumber *contentAvailable;
+@property (nonatomic, strong, nullable, readonly) NSNumber *contentAvailable;
 
 /**
  * Category
  */
-@property (nonatomic, strong, nullable) NSString *categoryIdentifier;
+@property (nonatomic, copy, nullable, readonly) NSString *categoryIdentifier;
 
 /**
  * Launch image file name
  */
-@property (nonatomic, strong, nullable) NSString *launchImage;
+@property (nonatomic, copy, nullable, readonly) NSString *launchImage;
 
 /**
  * Localization keys
  */
-@property (nonatomic, strong, nullable) NSDictionary *localizationKeys;
+@property (nonatomic, copy, nullable, readonly) NSDictionary *localizationKeys;
 
 /**
  * Notification info dictionary used to generate the UANotification.
  */
-@property (nonatomic, strong, nullable) NSDictionary *notificationInfo;
+@property (nonatomic, copy, nullable, readonly) NSDictionary *notificationInfo;
 
 /**
  * UNNotification used to generate the UANotification.
  */
-@property (nonatomic, strong, nullable) UNNotification *notification;
+@property (nonatomic, copy, nullable, readonly) UNNotification *notification;
 
 
 /**

@@ -27,7 +27,7 @@
 #import <objc/runtime.h>
 
 #import "UAirship+Internal.h"
-#import "UAPush+Internal.h"
+#import "UAAppIntegration+Internal.h"
 
 static UAAutoIntegration *instance_;
 
@@ -92,45 +92,26 @@ static dispatch_once_t onceToken;
    implementation:(IMP)ApplicationDidFailToRegisterForRemoteNotificationsWithError
             class:class];
 
-    // iOS 10+
-    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
-
-        // Silent notifications
-        [self swizzle:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)
-       implementation:(IMP)ApplicationDidReceiveRemoteNotificationFetchCompletionHandler
-                class:class];
+    // Silent notifications
+    [self swizzle:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)
+   implementation:(IMP)ApplicationDidReceiveRemoteNotificationFetchCompletionHandler
+            class:class];
 
 
-    } else { // iOS 8 & 9
+    // iOS 8 & 9 Only
+    if (![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
 
-        // application:handleActionWithIdentifier:forRemoteNotification:completionHandler:
+        // Notification action buttons
         [self swizzle:@selector(application:handleActionWithIdentifier:forRemoteNotification:completionHandler:)
        implementation:(IMP)ApplicationHandleActionWithIdentifierForRemoteNotificationCompletionHandler
                 class:class];
 
-        SEL responseInfoSelector = NSSelectorFromString(@"application:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:");
+        // Notification action buttons with response info
+        [self swizzle:@selector(application:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:)
+       implementation:(IMP)ApplicationHandleActionWithIdentifierForRemoteNotificationWithResponseInfoCompletionHandler
+                class:class];
 
-        [self swizzle:responseInfoSelector implementation:(IMP)ApplicationHandleActionWithIdentifierForRemoteNotificationWithResponseInfoCompletionHandler class:class];
-
-        // If we implement application:didReceiveRemoteNotification:fetchCompletionHandler: it prevents
-        // application:didReceiveRemoteNotification: from being called. Only implement it if the app does not implement,
-        // the app already implements application:didReceiveRemoteNotification:fetchCompletionHandler:, or if
-        // background push is enabled.
-        if ([delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)] ||
-            ![delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)] ||
-            [UAirship shared].remoteNotificationBackgroundModeEnabled) {
-
-            [self swizzle:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)
-           implementation:(IMP)ApplicationDidReceiveRemoteNotificationFetchCompletionHandler
-                    class:class];
-        }
-
-        // application:didReceiveRemoteNotification:
-        [self swizzle:@selector(application:didReceiveRemoteNotification:)
-       implementation:(IMP)ApplicationDidReceiveRemoteNotification class:class];
-
-
-        // application:didRegisterUserNotificationSettings:
+        // Registered with user notification settings
         [self swizzle:@selector(application:didRegisterUserNotificationSettings:)
        implementation:(IMP)ApplicationDidRegisterUserNotificationSettings
                 class:class];
@@ -257,7 +238,7 @@ void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self,
 
                 if (expectedCount == resultCount) {
                     handler(mergedPresentationOptions);
-                    [[UAirship push] handleForegroundNotification:notification mergedOptions:mergedPresentationOptions];
+                    [UAAppIntegration handleForegroundNotification:notification mergedOptions:mergedPresentationOptions];
                 }
             });
         };
@@ -267,20 +248,19 @@ void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self,
 
 
     // Call UAPush
-    [[UAirship push] notificationCenterWillPresentNotification:notification
-                                         withCompletionHandler:^(UNNotificationPresentationOptions options) {
-                          // Make sure the app's completion handler is called on the main queue
-                          dispatch_async(dispatch_get_main_queue(), ^{
-                              mergedPresentationOptions |= options;
+    [UAAppIntegration userNotificationCenter:notificationCenter willPresentNotification:notification withCompletionHandler:^(UNNotificationPresentationOptions options) {
+        // Make sure the app's completion handler is called on the main queue
+        dispatch_async(dispatch_get_main_queue(), ^{
+            mergedPresentationOptions |= options;
 
-                              resultCount++;
-                              
-                              if (expectedCount == resultCount) {
-                                  handler(mergedPresentationOptions);
-                                  [[UAirship push] handleForegroundNotification:notification mergedOptions:mergedPresentationOptions];
-                              }
-                          });
-                      }];
+            resultCount++;
+
+            if (expectedCount == resultCount) {
+                handler(mergedPresentationOptions);
+                [UAAppIntegration handleForegroundNotification:notification mergedOptions:mergedPresentationOptions];
+            }
+        });
+    }];
 }
 
 void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(id self, SEL _cmd, UNUserNotificationCenter *notificationCenter, UNNotificationResponse *response, void (^handler)()) {
@@ -316,17 +296,18 @@ void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(i
     }
 
     // Call UAPush
-    [[UAirship push] notificationCenterDidReceiveNotificationResponse:response
-                                                withCompletionHandler:^() {
-                          // Make sure we call it on the main queue
-                          dispatch_async(dispatch_get_main_queue(), ^{
-                              resultCount++;
+    [UAAppIntegration userNotificationCenter:notificationCenter
+              didReceiveNotificationResponse:response
+                       withCompletionHandler:^() {
+                           // Make sure we call it on the main queue
+                           dispatch_async(dispatch_get_main_queue(), ^{
+                               resultCount++;
 
-                              if (expectedCount == resultCount) {
-                                  handler();
-                              }
-                          });
-                      }];
+                               if (expectedCount == resultCount) {
+                                   handler();
+                               }
+                           });
+                       }];
 
 }
 
@@ -356,17 +337,8 @@ void UserNotificationCenterSetDelegate(id self, SEL _cmd, id<UNUserNotificationC
 #pragma mark -
 #pragma mark App delegate (UIApplicationDelegate) swizzled methods
 
-void ApplicationDidReceiveRemoteNotification(id self, SEL _cmd, UIApplication *application, NSDictionary *userInfo) {
-    [[UAirship push] appReceivedRemoteNotification:userInfo];
-
-    IMP original = [instance_ originalImplementation:_cmd class:[self class]];
-    if (original) {
-        ((void(*)(id, SEL, UIApplication *, NSDictionary*))original)(self, _cmd, application, userInfo);
-    }
-}
-
 void ApplicationDidRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _cmd, UIApplication *application, NSData *deviceToken) {
-    [[UAirship push] appRegisteredForRemoteNotificationsWithDeviceToken:deviceToken];
+    [UAAppIntegration application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
 
     IMP original = [instance_ originalImplementation:_cmd class:[self class]];
     if (original) {
@@ -375,7 +347,7 @@ void ApplicationDidRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _c
 }
 
 void ApplicationDidRegisterUserNotificationSettings(id self, SEL _cmd, UIApplication *application, UIUserNotificationSettings *settings) {
-    [[UAirship push] appRegisteredUserNotificationSettings];
+    [UAAppIntegration application:application didRegisterUserNotificationSettings:settings];
 
     IMP original = [instance_ originalImplementation:_cmd class:[self class]];
     if (original) {
@@ -436,22 +408,23 @@ void ApplicationDidReceiveRemoteNotificationFetchCompletionHandler(id self,
         ((void(*)(id, SEL, UIApplication *, NSDictionary *, void (^)(UIBackgroundFetchResult)))original)(self, _cmd, application, userInfo, completionHandler);
     }
 
+
     // Our completion handler is called by the action framework on the main queue
-    [[UAirship push] appReceivedRemoteNotification:userInfo
-                            fetchCompletionHandler:^(UIBackgroundFetchResult result) {
-                                resultCount++;
+    [UAAppIntegration application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:^(UIBackgroundFetchResult result) {
+        resultCount++;
 
-                                // Merge the UIBackgroundFetchResults. If final fetchResult is not already UIBackgroundFetchResultNewData
-                                // and the current result is not UIBackgroundFetchResultNoData, then set the fetchResult to result
-                                // (should be either UIBackgroundFetchFailed or UIBackgroundFetchResultNewData)
-                                if (fetchResult != UIBackgroundFetchResultNewData && result != UIBackgroundFetchResultNoData) {
-                                    fetchResult = result;
-                                }
+        // Merge the UIBackgroundFetchResults. If final fetchResult is not already UIBackgroundFetchResultNewData
+        // and the current result is not UIBackgroundFetchResultNoData, then set the fetchResult to result
+        // (should be either UIBackgroundFetchFailed or UIBackgroundFetchResultNewData)
+        if (fetchResult != UIBackgroundFetchResultNewData && result != UIBackgroundFetchResultNoData) {
+            fetchResult = result;
+        }
 
-                                if (expectedCount == resultCount) {
-                                    handler(fetchResult);
-                                }
-                            }];
+        if (expectedCount == resultCount) {
+            handler(fetchResult);
+        }
+    }];
+
 }
 
 
@@ -493,15 +466,13 @@ void ApplicationHandleActionWithIdentifierForRemoteNotificationCompletionHandler
     }
 
     // Our completion handler is called by the action framework on the main queue
-    [[UAirship push] appReceivedActionWithIdentifier:identifier
-                                        notification:userInfo
-                                   completionHandler:^{
-                                       resultCount++;
+    [UAAppIntegration application:application handleActionWithIdentifier:identifier forRemoteNotification:userInfo completionHandler:^{
+        resultCount++;
 
-                                       if (expectedCount == resultCount) {
-                                           handler();
-                                       }
-                                   }];
+        if (expectedCount == resultCount) {
+            handler();
+        }
+    }];
 }
 
 void ApplicationHandleActionWithIdentifierForRemoteNotificationWithResponseInfoCompletionHandler(id self,
@@ -530,29 +501,26 @@ void ApplicationHandleActionWithIdentifierForRemoteNotificationWithResponseInfoC
 
                 completionHandlerCalled = YES;
                 resultCount++;
-
+                
                 if (expectedCount == resultCount) {
                     handler();
                 }
             });
-
+            
         };
-
+        
         // Call the original implementation
         ((void(*)(id, SEL, UIApplication *, NSString *, NSDictionary *, NSDictionary *, void (^)()))original)(self, _cmd, application, identifier, userInfo, responseInfo, completionHandler);
     }
-
+    
     // Our completion handler is called by the action framework on the main queue
-    [[UAirship push] appReceivedActionWithIdentifier:identifier
-                                        notification:userInfo
-                                        responseInfo:responseInfo
-                                   completionHandler:^{
-                                       resultCount++;
-                                       
-                                       if (expectedCount == resultCount) {
-                                           handler();
-                                       }
-                                   }];
+    [UAAppIntegration application:application handleActionWithIdentifier:identifier forRemoteNotification:userInfo withResponseInfo:responseInfo completionHandler:^{
+        resultCount++;
+        
+        if (expectedCount == resultCount) {
+            handler();
+        }
+    }];
 }
 
 @end

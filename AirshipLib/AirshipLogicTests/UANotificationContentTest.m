@@ -89,9 +89,6 @@
     // Sound
     XCTAssertTrue([notification.sound isEqualToString:self.notificationWithBody[@"aps"][@"sound"]]);
 
-    // Content Available
-    XCTAssertTrue([notification.contentAvailable isEqualToNumber:self.notificationWithBody[@"aps"][@"content-available"]]);
-
     // Category
     XCTAssertTrue([notification.categoryIdentifier isEqualToString:self.notificationWithBody[@"aps"][@"category"]]);
 
@@ -114,9 +111,6 @@
 
     // Sound
     XCTAssertTrue([notification.sound isEqualToString:self.notificationWithBody[@"aps"][@"sound"]]);
-
-    // Content Available
-    XCTAssertTrue([notification.contentAvailable isEqualToNumber:self.notificationWithBody[@"aps"][@"content-available"]]);
 
     // Category
     XCTAssertTrue([notification.categoryIdentifier isEqualToString:self.notificationWithBody[@"aps"][@"category"]]);

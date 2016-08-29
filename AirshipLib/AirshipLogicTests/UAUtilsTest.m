@@ -73,9 +73,9 @@
 }
 
 /**
- * Test backgroundPush is YES when no notification alerts exist in the payload.
+ * Test isSilentPush is YES when no notification alerts exist in the payload.
  */
-- (void)testIsBackgroundPushYes {
+- (void)testIsSilentPush {
 
     NSDictionary *emptyNotification = @{
                                         @"aps": @{
@@ -83,13 +83,13 @@
                                                 }
                                         };
 
-    XCTAssertTrue([UAUtils isBackgroundPush:emptyNotification], @"Should be a background push");
+    XCTAssertTrue([UAUtils isSilentPush:emptyNotification], @"Should be a silent push");
 }
 
 /**
- * Test backgroundPush is NO when at least one notification alert exist in the payload.
+ * Test testIsSilentPush is NO when at least one notification alert exist in the payload.
  */
-- (void)testIsBackgroundPushNo {
+- (void)testIsSilentPushNo {
 
     NSDictionary *alertNotification = @{
                                         @"aps": @{
@@ -117,10 +117,10 @@
                                            }
                                    };
 
-    XCTAssertFalse([UAUtils isBackgroundPush:alertNotification], @"Should not be a background push");
-    XCTAssertFalse([UAUtils isBackgroundPush:badgeNotification],@"Should not be a background push");
-    XCTAssertFalse([UAUtils isBackgroundPush:soundNotification],@"Should not be a background push");
-    XCTAssertFalse([UAUtils isBackgroundPush:notification],@"Should not be a background push");
+    XCTAssertFalse([UAUtils isSilentPush:alertNotification], @"Should not be a silent push");
+    XCTAssertFalse([UAUtils isSilentPush:badgeNotification],@"Should not be a silent push");
+    XCTAssertFalse([UAUtils isSilentPush:soundNotification],@"Should not be a silent push");
+    XCTAssertFalse([UAUtils isSilentPush:notification],@"Should not be a silent push");
 }
 
 @end

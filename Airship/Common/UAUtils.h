@@ -160,11 +160,11 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- * Determine if the notification payload is a background push (no notification elements).
+ * Determine if the notification payload is a silent push (no notification elements).
  * @param notification The notification payload
- * @return `YES` if it is a background push, `NO` otherwise
+ * @return `YES` if it is a silent push, `NO` otherwise
  */
-+ (BOOL)isBackgroundPush:(NSDictionary *)notification;
++ (BOOL)isSilentPush:(NSDictionary *)notification;
 
 @end
 

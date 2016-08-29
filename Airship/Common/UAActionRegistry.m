@@ -25,7 +25,6 @@
 
 #import "UAActionRegistry+Internal.h"
 #import "UAActionRegistryEntry+Internal.h"
-#import "UAIncomingPushAction+Internal.h"
 #import "UAOpenExternalURLAction.h"
 #import "UAAddTagsAction.h"
 #import "UARemoveTagsAction.h"
@@ -260,10 +259,6 @@
 }
 
 - (void)registerDefaultActions {
-    // Incoming push action
-    UAIncomingPushAction *incomingPushAction = [[UAIncomingPushAction alloc] init];
-    [self registerReservedAction:incomingPushAction name:kUAIncomingPushActionRegistryName predicate:nil];
-
     // Incoming in-app message action
     UAIncomingInAppMessageAction *iamAction = [[UAIncomingInAppMessageAction alloc] init];
     [self registerReservedAction:iamAction name:kUAIncomingInAppMessageActionDefaultRegistryName predicate:nil];

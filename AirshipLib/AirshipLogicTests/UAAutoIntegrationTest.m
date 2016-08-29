@@ -24,18 +24,14 @@
  */
 
 #import <XCTest/XCTest.h>
-#import "UAAutoIntegration+Internal.h"
-#import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import <objc/runtime.h>
-#import "UAirship.h"
-#import "UAPush.h"
 #import <UserNotifications/UserNotifications.h>
-
+#import "UAAutoIntegration+Internal.h"
+#import "UAAppIntegration.h"
 
 @interface UAAutoIntegrationTest : XCTestCase
-@property (nonatomic, strong) id mockPush;
-@property (nonatomic, strong) id mockAirship;
+@property (nonatomic, strong) id mockAppIntegration;
 @property (nonatomic, strong) id delegate;
 @property (nonatomic, strong) id mockApplication;
 @property (nonatomic, strong) id mockUserNotificationCenter;
@@ -64,10 +60,7 @@
     }] ignoringNonObjectArgs] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){0, 0, 0}];
 
 
-    self.mockPush = [OCMockObject niceMockForClass:[UAPush class]];
-    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
-    [[[self.mockAirship stub] andReturn:self.mockPush] push];
+    self.mockAppIntegration = [OCMockObject niceMockForClass:[UAAppIntegration class]];
 
     // Generate a new class for each test run to avoid test pollution
     self.generatedClass = objc_allocateClassPair([NSObject class], [[NSUUID UUID].UUIDString UTF8String], 0);
@@ -85,8 +78,7 @@
 }
 
 - (void)tearDown {
-    [self.mockAirship stopMocking];
-    [self.mockPush stopMocking];
+    [self.mockAppIntegration stopMocking];
     [self.mockApplication stopMocking];
     [self.mockUserNotificationCenter stopMocking];
     [self.mockProcessInfo stopMocking];
@@ -150,7 +142,7 @@
 
 /**
  * Test proxying application:didRegisterForRemoteNotificationsWithDeviceToken: when the delegate implementts
- * the selector calls the original and UAPush.
+ * the selector calls the original and UAAppHooks.
  */
 - (void)testProxyAppRegisteredForRemoteNotificationsWithDeviceToken {
     __block BOOL appDelegateCalled;
@@ -167,8 +159,8 @@
                                      XCTAssertEqualObjects(expectedDeviceToken, deviceToken);
                                  }];
 
-    // Expect the UAPush integration
-    [[self.mockPush expect] appRegisteredForRemoteNotificationsWithDeviceToken:expectedDeviceToken];
+    // Expect the UAAppHook call
+    [[self.mockAppIntegration expect] application:self.mockApplication didRegisterForRemoteNotificationsWithDeviceToken:expectedDeviceToken];
 
     // Proxy the delegate
     [UAAutoIntegration integrate];
@@ -178,17 +170,17 @@
 
     // Verify everything was called
     XCTAssertTrue(appDelegateCalled);
-    [self.mockPush verify];
+    [self.mockAppIntegration verify];
 }
 
 /**
- * Test adding application:didRegisterForRemoteNotificationsWithDeviceToken: calls UAPush.
+ * Test adding application:didRegisterForRemoteNotificationsWithDeviceToken: calls UAAppHooks.
  */
 - (void)testAddAppRegisteredForRemoteNotificationsWithDeviceToken {
     NSData *expectedDeviceToken = [@"device_token" dataUsingEncoding:NSUTF8StringEncoding];
 
-    // Expect the UAPush integration
-    [[self.mockPush expect] appRegisteredForRemoteNotificationsWithDeviceToken:expectedDeviceToken];
+    // Expect the UAAppHook call
+    [[self.mockAppIntegration expect] application:self.mockApplication   didRegisterForRemoteNotificationsWithDeviceToken:expectedDeviceToken];
 
     // Proxy the delegate
     [UAAutoIntegration integrate];
@@ -197,12 +189,12 @@
     [self.delegate application:[UIApplication sharedApplication] didRegisterForRemoteNotificationsWithDeviceToken:expectedDeviceToken];
 
     // Verify everything was called
-    [self.mockPush verify];
+    [self.mockAppIntegration verify];
 }
 
 /*
  * Tests proxying application:didReceiveRemoteNotification:fetchCompletionHandler
- * responds with the combined value of the app delegate and UAPush.
+ * responds with the combined value of the app delegate and UAAppHooks.
  */
 - (void)testProxAppReceivedRemoteNotificationWithCompletionHandler {
     NSDictionary *expectedNotification = @{@"oh": @"hi"};
@@ -230,13 +222,14 @@
     void (^pushBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
         pushCalled = YES;
         void *arg;
-        [invocation getArgument:&arg atIndex:3];
+        [invocation getArgument:&arg atIndex:4];
         void (^handler)(UIBackgroundFetchResult result) = (__bridge void (^)(UIBackgroundFetchResult))arg;
         handler(pushResult);
     };
 
-    [[[self.mockPush stub] andDo:pushBlock] appReceivedRemoteNotification:expectedNotification
-                                                   fetchCompletionHandler:OCMOCK_ANY];
+    [[[self.mockAppIntegration stub] andDo:pushBlock] application:self.mockApplication
+                               didReceiveRemoteNotification:expectedNotification
+                                     fetchCompletionHandler:OCMOCK_ANY];
 
 
     // Proxy the delegate
@@ -289,7 +282,7 @@
 
 /*
  * Tests adding application:didReceiveRemoteNotification:fetchCompletionHandler calls
- * through to UAPush.
+ * through to UAAppHooks.
  */
 - (void)testAddAppReceivedRemoteNotificationWithCompletionHandler {
     NSDictionary *expectedNotification = @{@"oh": @"hi"};
@@ -300,13 +293,15 @@
     void (^pushBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
         pushCalled = YES;
         void *arg;
-        [invocation getArgument:&arg atIndex:3];
+        [invocation getArgument:&arg atIndex:4];
         void (^handler)(UIBackgroundFetchResult result) = (__bridge void (^)(UIBackgroundFetchResult))arg;
         handler(UIBackgroundFetchResultNewData);
     };
 
-    [[[self.mockPush stub] andDo:pushBlock] appReceivedRemoteNotification:expectedNotification
-                                                   fetchCompletionHandler:OCMOCK_ANY];
+    [[[self.mockAppIntegration stub] andDo:pushBlock] application:self.mockApplication
+                               didReceiveRemoteNotification:expectedNotification
+                                     fetchCompletionHandler:OCMOCK_ANY];
+
 
     // Proxy the delegate
     [UAAutoIntegration integrate];
@@ -319,61 +314,6 @@
         }];
     
     XCTAssertTrue(pushCalled);
-}
-
-/**
- * iOS 8/9 only - Test proxying application:didReceiveRemoteNotification: when the delegate implements
- * the selector calls the original and UAPush.
- */
-- (void)testProxyAppReceivedRemoteNotificationiOS8 {
-    self.testOSMajorVersion = 8;
-    __block BOOL appDelegateCalled;
-
-    NSDictionary *expectedNotification = @{@"oh": @"hi"};
-
-    // Add an implementation for application:didReceiveRemoteNotification:
-    [self addImplementationForProtocol:@protocol(UIApplicationDelegate) selector:@selector(application:didReceiveRemoteNotification:)
-                                 block:^(id self, UIApplication *application, NSDictionary *notification) {
-                                     appDelegateCalled = YES;
-
-                                     // Verify the parameters
-                                     XCTAssertEqualObjects([UIApplication sharedApplication], application);
-                                     XCTAssertEqualObjects(expectedNotification, notification);
-                                 }];
-
-    // Expect the UAPush integration
-    [[self.mockPush expect] appReceivedRemoteNotification:expectedNotification];
-
-    // Proxy the delegate
-    [UAAutoIntegration integrate];
-
-    // Call application:didFailToRegisterForRemoteNotificationsWithError:
-    [self.delegate application:[UIApplication sharedApplication] didReceiveRemoteNotification:expectedNotification];
-
-    // Verify everything was called
-    XCTAssertTrue(appDelegateCalled);
-    [self.mockPush verify];
-}
-
-/**
- * iOS 8/9 only - Test adding application:didReceiveRemoteNotification: calls UAPush.
- */
-- (void)testAddAppReceivedRemoteNotification {
-    self.testOSMajorVersion = 8;
-
-    NSDictionary *expectedNotification = @{@"oh": @"hi"};
-
-    // Expect the UAPush integration
-    [[self.mockPush expect] appReceivedRemoteNotification:expectedNotification];
-
-    // Proxy the delegate
-    [UAAutoIntegration integrate];
-
-    // Call application:didFailToRegisterForRemoteNotificationsWithError:
-    [self.delegate application:[UIApplication sharedApplication] didReceiveRemoteNotification:expectedNotification];
-
-    // Verify everything was called
-    [self.mockPush verify];
 }
 
 /**
@@ -396,8 +336,8 @@
                                      XCTAssertEqualObjects(expectedSettings, settings);
                                  }];
 
-    // Expect the UAPush integration
-    [[self.mockPush expect] appRegisteredUserNotificationSettings];
+    // Expect the UAAppIntegration call
+    [[self.mockAppIntegration expect] application:self.mockApplication didRegisterUserNotificationSettings:expectedSettings];
 
     // Proxy the delegate
     [UAAutoIntegration integrate];
@@ -407,7 +347,7 @@
 
     // Verify everything was called
     XCTAssertTrue(appDelegateCalled);
-    [self.mockPush verify];
+    [self.mockApplication verify];
 }
 
 /**
@@ -418,7 +358,7 @@
     UIUserNotificationSettings *expectedSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert categories:nil];
 
     // Expect the UAPush integration
-    [[self.mockPush expect] appRegisteredUserNotificationSettings];
+    [[self.mockAppIntegration expect] application:self.mockApplication didRegisterUserNotificationSettings:expectedSettings];
 
     // Proxy the delegate
     [UAAutoIntegration integrate];
@@ -427,7 +367,7 @@
     [self.delegate application:[UIApplication sharedApplication] didRegisterUserNotificationSettings:expectedSettings];
 
     // Verify everything was called
-    [self.mockPush verify];
+    [self.mockAppIntegration verify];
 }
 
 /*
@@ -438,18 +378,19 @@
     self.testOSMajorVersion = 8;
     NSDictionary *expectedNotification = @{@"oh": @"hi"};
 
-    // Add an implementation for UAPush that calls an expected fetch result
-    __block BOOL pushCalled;
-    void (^pushBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
-        pushCalled = YES;
+    // Add an implementation for UAAppIntegration that calls an expected fetch result
+    __block BOOL appIntegrationCalled;
+    void (^appIntegrationBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
+        appIntegrationCalled = YES;
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
+        [invocation getArgument:&arg atIndex:5];
         void (^handler)() = (__bridge void (^)())arg;
         handler();
     };
 
-    [[[self.mockPush stub] andDo:pushBlock] appReceivedActionWithIdentifier:@"action!"
-                                                               notification:expectedNotification
+    [[[self.mockAppIntegration stub] andDo:appIntegrationBlock] application:self.mockApplication
+                                                 handleActionWithIdentifier:@"action!"
+                                                      forRemoteNotification:expectedNotification
                                                           completionHandler:OCMOCK_ANY];
 
     // Proxy the delegate
@@ -464,7 +405,7 @@
                  completionHandlerCalled = YES;
              }];
 
-    XCTAssertTrue(pushCalled);
+    XCTAssertTrue(appIntegrationCalled);
     XCTAssertTrue(completionHandlerCalled);
 }
 
@@ -497,17 +438,18 @@
 
 
     // Stub the implementation for UAPush that calls an expected fetch result
-    __block BOOL pushCalled;
-    void (^pushBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
-        pushCalled = YES;
+    __block BOOL appIntegrationCalled;
+    void (^appIntegrationBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
+        appIntegrationCalled = YES;
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
+        [invocation getArgument:&arg atIndex:5];
         void (^handler)() = (__bridge void (^)())arg;
         handler();
     };
 
-    [[[self.mockPush stub] andDo:pushBlock] appReceivedActionWithIdentifier:@"action!"
-                                                               notification:expectedNotification
+    [[[self.mockAppIntegration stub] andDo:appIntegrationBlock] application:self.mockApplication
+                                                 handleActionWithIdentifier:@"action!"
+                                                      forRemoteNotification:expectedNotification
                                                           completionHandler:OCMOCK_ANY];
 
     // Proxy the delegate
@@ -524,7 +466,7 @@
              }];
 
     [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-        XCTAssertTrue(pushCalled);
+        XCTAssertTrue(appIntegrationCalled);
         XCTAssertTrue(completionHandlerCalled);
         XCTAssertTrue(appDelegateCalled);
     }];
@@ -562,20 +504,20 @@
 
 
     // Stub the implementation for UAPush that calls an expected fetch result
-    __block BOOL pushCalled;
-    void (^pushBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
-        pushCalled = YES;
+    __block BOOL appIntegrationCalled;
+    void (^appIntegrationBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
+        appIntegrationCalled = YES;
         void *arg;
-        [invocation getArgument:&arg atIndex:5];
+        [invocation getArgument:&arg atIndex:6];
         void (^handler)() = (__bridge void (^)())arg;
         handler();
     };
 
-    [[[self.mockPush stub] andDo:pushBlock] appReceivedActionWithIdentifier:@"action!"
-                                                               notification:expectedNotification
-                                                               responseInfo:expectedResponseInfo
+    [[[self.mockAppIntegration stub] andDo:appIntegrationBlock] application:self.mockApplication
+                                                 handleActionWithIdentifier:@"action!"
+                                                      forRemoteNotification:expectedNotification
+                                                           withResponseInfo:expectedResponseInfo
                                                           completionHandler:OCMOCK_ANY];
-
 
     // Proxy the delegate
     [UAAutoIntegration integrate];
@@ -593,7 +535,7 @@
              }];
 
     [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-        XCTAssertTrue(pushCalled);
+        XCTAssertTrue(appIntegrationCalled);
         XCTAssertTrue(completionHandlerCalled);
         XCTAssertTrue(appDelegateCalled);
     }];

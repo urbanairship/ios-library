@@ -28,6 +28,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class UNNotificationResponse;
+
 @interface UANotificationResponse : NSObject
 
 /**
@@ -43,37 +45,26 @@ extern NSString *const UANotificationDismissActionIdentifier;
 /**
  * Action identifier for the response.
  */
-@property (nonatomic, strong, nullable) NSString *actionIdentifier;
+@property (nonatomic, copy, readonly) NSString *actionIdentifier;
 
 /**
  * String populated with any response text provided by the user.
  */
-@property (nonatomic, strong, nullable) NSString *responseText;
+@property (nonatomic, copy, readonly) NSString *responseText;
 
 /**
  * The UANotificationContent instance associated with the response.
  */
-@property (nonatomic, strong) UANotificationContent *notificationContent;
+@property (nonatomic, strong, readonly) UANotificationContent *notificationContent;
 
-/**
- * Generates a UANotificationResponse with a UANotificationContent instance, action identifier.
- *
- * @param notificationContent UANotificationContent instance.
- * @param actionIdentifier NSString action identifier associated with the notification.
- *
- * @return UANotificationResponse instance
- */
-+ (instancetype)notificationResponseWithNotificationContent:(UANotificationContent *)notificationContent actionIdentifier:(nullable NSString *)actionIdentifier;
 
-/**
- * Generates a UANotificationResponse with a notification payload, action identifier.
- *
- * @param notificationInfo NSDictionary containing the notification payload.
- * @param actionIdentifier NSString action identifier associated with the notification.
- *
- * @return UANotificationResponse instance
- */
-+ (instancetype)notificationResponseWithNotificationInfo:(NSDictionary *)notificationInfo actionIdentifier:(nullable NSString *)actionIdentifier;
++ (instancetype)notificationResponseWithNotificationInfo:(NSDictionary *)notificationInfo
+                                        actionIdentifier:(NSString *)actionIdentifier
+                                            responseText:(nullable NSString *)responseText;
+
+
++ (instancetype)notificationResponseWithUNNotificationResponse:(UNNotificationResponse *)response;
+
 
 @end
 

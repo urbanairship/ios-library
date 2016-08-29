@@ -48,8 +48,6 @@
 #import "UAPushReceivedEvent+Internal.h"
 #import "UAHTTPConnection+Internal.h"
 
-#define kUANotificationActionKey @"com.urbanairship.interactive_actions"
-
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
 NSString *const UAPushTokenRegistrationEnabledKey = @"UAPushTokenRegistrationEnabled";
@@ -87,7 +85,6 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
 NSString *const UAChannelCreatedEvent = @"com.urbanairship.push.channel_created";
 NSString *const UAChannelCreatedEventChannelKey = @"com.urbanairship.push.channel_id";
 NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.existing";
-
 
 @implementation UAPush
 
@@ -594,289 +591,6 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     [self setBadgeNumber:0];
 }
 
-- (void)handleNotificationActionWithIdentifier:(NSString *)identifier
-                                  notification:(UANotificationContent *)notificationContent
-                                  responseText:(NSString *)responseText
-                             completionHandler:(void (^)())completionHandler {
-
-
-    NSString *categoryID = notificationContent.categoryIdentifier;
-    NSSet *categories = self.combinedCategories;
-
-    UANotificationCategory *notificationCategory;
-    UANotificationAction *notificationAction;
-
-    for (UANotificationCategory *possibleCategory in categories) {
-        if ([possibleCategory.identifier isEqualToString:categoryID]) {
-            notificationCategory = possibleCategory;
-            break;
-        }
-    }
-
-    if (!notificationCategory) {
-        UA_LERR(@"Unknown notification category identifier %@", categoryID);
-        completionHandler();
-        return;
-    }
-
-    NSMutableArray *possibleActions = [NSMutableArray arrayWithArray:notificationCategory.actions];
-
-    for (UANotificationAction *possibleAction in possibleActions) {
-        if ([possibleAction.identifier isEqualToString:identifier]) {
-            notificationAction = possibleAction;
-            break;
-        }
-    }
-
-    if (!notificationAction) {
-        UA_LERR(@"Unknown notification action identifier %@", identifier);
-        completionHandler();
-        return;
-    }
-
-    [[UAirship shared].analytics addEvent:[UAInteractiveNotificationEvent eventWithNotificationAction:notificationAction
-                                                                                           categoryID:categoryID
-                                                                                         notification:notificationContent.notificationInfo
-                                                                                         responseText:responseText]];
-
-    NSMutableDictionary *actionsPayload = [NSMutableDictionary dictionaryWithDictionary:
-                                           notificationContent.notificationInfo[kUANotificationActionKey][identifier]];
-
-    // Add incoming push action
-    actionsPayload[kUAIncomingPushActionRegistryName] = notificationContent.notificationInfo;
-
-    // Situation for the actions
-    UASituation actionSituation;
-
-    if (notificationAction.options & UNNotificationActionOptionForeground) {
-        [UAirship shared].analytics.notificationUserInfo = notificationContent.notificationInfo;
-        actionSituation = UASituationForegroundInteractiveButton;
-    } else {
-        actionSituation = UASituationBackgroundInteractiveButton;
-    }
-
-    // Action metadata
-    NSMutableDictionary *metadata = [@{ UAActionMetadataUserNotificationActionIDKey: identifier,
-                                        UAActionMetadataPushPayloadKey: notificationContent.notificationInfo } mutableCopy];
-    // Add the text response to the metadata if it's available
-    [metadata setValue:responseText forKey:UAActionMetadataResponseInfoKey];
-
-    // Run the actions
-    [UAActionRunner runActionsWithActionValues:actionsPayload
-                                     situation:actionSituation
-                                      metadata:metadata
-                             completionHandler:^(UAActionResult *result) {
-                                 if (completionHandler) {
-                                     completionHandler();
-                                 }
-                             }];
-}
-
-- (void)handleNotification:(UANotificationContent *)notificationContent
-                 situation:(UASituation)situation
-    foregroundPresentation:(BOOL)foregroundPresentation
-         completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-
-    switch (situation) {
-        case UASituationForegroundPush:
-            if (self.autobadgeEnabled) {
-                [[UIApplication sharedApplication] setApplicationIconBadgeNumber:notificationContent.badge.integerValue];
-            }
-            [[UAirship shared].analytics addEvent:[UAPushReceivedEvent eventWithNotification:notificationContent.notificationInfo]];
-            break;
-        case UASituationLaunchedFromPush:
-            [[UAirship shared].analytics launchedFromNotification:notificationContent.notificationInfo];
-            break;
-        default:
-            break;
-    }
-
-    // Create the action payload
-    NSMutableDictionary *actionsPayload = [NSMutableDictionary dictionaryWithDictionary:notificationContent.notificationInfo];
-
-    // Add incoming push action
-    actionsPayload[kUAIncomingPushActionRegistryName] = notificationContent.notificationInfo;
-
-    // If we have a messageID make sure we run an inbox action
-    NSString *messageID = [UAInboxUtils inboxMessageIDFromNotification:notificationContent.notificationInfo];
-    if (messageID) {
-        NSSet *inboxActionNames = [NSSet setWithArray:@[kUADisplayInboxActionDefaultRegistryAlias,
-                                                        kUADisplayInboxActionDefaultRegistryName,
-                                                        kUAOverlayInboxMessageActionDefaultRegistryAlias,
-                                                        kUAOverlayInboxMessageActionDefaultRegistryName]];
-
-        NSSet *actionNames = [NSSet setWithArray:[actionsPayload allKeys]];
-
-        if (![actionNames intersectsSet:inboxActionNames]) {
-            actionsPayload[kUADisplayInboxActionDefaultRegistryAlias] = messageID;
-        }
-    }
-
-    // Action metadata
-    NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
-    [metadata setValue:notificationContent.notificationInfo forKey:UAActionMetadataPushPayloadKey];
-
-    // Avoid setting an NSNumber NO value in case of nonzero conditionals
-    if (foregroundPresentation) {
-        [metadata setValue:@(foregroundPresentation) forKey:UAActionMetadataForegroundPresentationKey];
-    }
-
-    // Run the actions
-    [UAActionRunner runActionsWithActionValues:actionsPayload
-                                     situation:situation
-                                      metadata:metadata
-                             completionHandler:^(UAActionResult *result) {
-                                 if (completionHandler) {
-                                     completionHandler((UIBackgroundFetchResult)[result fetchResult]);
-                                 }
-                             }];
-
-}
-
-// To be called externally after presentation options are merged, or internally with manual integration
-- (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options {
-    BOOL foregroundPresentation = (options & UNNotificationPresentationOptionAlert) > 0;
-
-    UANotificationContent *notificationContent = [UANotificationContent notificationWithUNNotification:notification];
-
-    [self handleNotification:notificationContent
-                   situation:UASituationForegroundPush
-      foregroundPresentation:foregroundPresentation
-           completionHandler:nil];
-}
-
-#pragma mark -
-
-#pragma mark UNUserNotificationDelegate event handling
-
-- (void)notificationCenterDidReceiveNotificationResponse:(UNNotificationResponse *)response
-                                   withCompletionHandler:(void (^)())completionHandler {
-
-    UA_LINFO(@"Notification center delegate received response: %@", response);
-
-    NSString *identifier = response.actionIdentifier;
-    UANotificationContent *notificationContent = [UANotificationContent notificationWithUNNotification:response.notification];
-    NSString *responseText;
-
-    if ([response isKindOfClass:[UNTextInputNotificationResponse class]]) {
-        responseText = ((UNTextInputNotificationResponse *)self).userText;
-    }
-
-    // If app opened from notification
-    if ([identifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
-        [self handleNotification:notificationContent
-                       situation:UASituationLaunchedFromPush
-          foregroundPresentation:NO
-               completionHandler:^(UIBackgroundFetchResult fetchResult){
-                   completionHandler();
-               }];
-
-    } else {
-        [self handleNotificationActionWithIdentifier:identifier
-                                        notification:notificationContent
-                                        responseText:responseText
-                                   completionHandler:completionHandler];
-    }
-}
-
-- (void)notificationCenterWillPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
-    UA_LDEBUG(@"Notification center will present notification: %@", notification);
-
-    UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
-
-    if ([self.pushNotificationDelegate respondsToSelector:@selector(presentationOptionsForNotification:)]) {
-        options = [self.pushNotificationDelegate presentationOptionsForNotification:notification];
-    } else {
-        options = self.defaultPresentationOptions;
-    }
-
-    completionHandler(options);
-
-    if (![UAirship shared].config.automaticSetupEnabled) {
-        [self handleForegroundNotification:notification mergedOptions:options];
-    }
-}
-
-#pragma mark App delegate event handling
-
-- (void)appReceivedRemoteNotification:(NSDictionary *)notification {
-    [self appReceivedRemoteNotification:notification fetchCompletionHandler:nil];
-}
-
-- (void)appReceivedRemoteNotification:(NSDictionary *)notification
-               fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-
-    UA_LINFO(@"Application received remote notification: %@", notification);
-
-    UANotificationContent *notificationContent = [UANotificationContent notificationWithNotificationInfo:notification];
-
-    UASituation situation = [self situationFromRemoteNotification:notification];
-
-    if (situation == UASituationLaunchedFromPush) {
-        self.launchNotification = notification;
-    }
-
-    [self handleNotification:notificationContent situation:situation foregroundPresentation:NO completionHandler:completionHandler];
-}
-
-- (UASituation)situationFromRemoteNotification:(NSDictionary *)notification {
-    switch([UIApplication sharedApplication].applicationState) {
-        case UIApplicationStateActive:
-            return UASituationForegroundPush;
-
-        /*
-         * iOS 10+ will only ever call through to this helper via application:receivedRemoteNotification:fetchCompletion
-         * as a result of a background push.
-         */
-        case UIApplicationStateInactive:
-            // If iOS 10+, assume background push situation
-            if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
-                return UASituationBackgroundPush;
-            }
-
-            if ([UAUtils isBackgroundPush:notification]) {
-                return UASituationBackgroundPush;
-            } else {
-                return UASituationLaunchedFromPush;
-            }
-
-        case UIApplicationStateBackground:
-        default:
-            return UASituationBackgroundPush;
-    }
-}
-
-- (void)appReceivedActionWithIdentifier:(NSString *)identifier
-                           notification:(NSDictionary *)notification
-                      completionHandler:(void (^)())completionHandler {
-
-    [self appReceivedActionWithIdentifier:identifier
-                             notification:notification
-                             responseInfo:nil
-                        completionHandler:completionHandler];
-
-}
-
-- (void)appReceivedActionWithIdentifier:(NSString *)identifier
-                           notification:(NSDictionary *)notification
-                           responseInfo:(NSDictionary *)responseInfo
-                      completionHandler:(void (^)())completionHandler {
-
-    NSString *responseText = responseInfo ? responseInfo[UIUserNotificationActionResponseTypedTextKey] : nil;
-
-    if (responseText) {
-        UA_LINFO(@"App received notification action: %@ notification: %@, response text: %@", identifier, notification, responseText);
-    } else {
-        UA_LINFO(@"App received notification action: %@ notification: %@", identifier, notification);
-    }
-
-    [self handleNotificationActionWithIdentifier:identifier
-                                    notification:[UANotificationContent notificationWithNotificationInfo:notification]
-                                    responseText:responseText
-                               completionHandler:completionHandler];
-}
-
-BOOL deferChannelCreationOnForeground = false;
 
 #pragma mark -
 #pragma mark UIApplication State Observation
@@ -891,7 +605,7 @@ BOOL deferChannelCreationOnForeground = false;
 }
 
 - (void)applicationDidEnterBackground {
-    self.launchNotification = nil;
+    self.launchNotificationResponse = nil;
 
     // Set the UAPushChannelCreationOnForeground after first run
     [self.dataStore setBool:YES forKey:UAPushChannelCreationOnForeground];
@@ -1119,9 +833,11 @@ BOOL deferChannelCreationOnForeground = false;
     NSSet *categories = nil;
 
     if (self.userPushNotificationsEnabled) {
+
         options = self.notificationOptions;
         categories = self.combinedCategories;
     }
+
 
     if (options == 0 && !self.allowUnregisteringUserNotificationTypes) {
         UA_LDEBUG(@"Skipping unregistered for user notification types.");
@@ -1133,37 +849,6 @@ BOOL deferChannelCreationOnForeground = false;
     [self.pushRegistration updateRegistrationWithOptions:options categories:categories completionHandler:^{
         [self updateAuthorizedNotificationTypes];
     }];
-}
-
-// The new token to register, or nil if updating the existing token
-- (void)appRegisteredForRemoteNotificationsWithDeviceToken:(NSData *)token {
-    // Convert device deviceToken to a hex string
-    NSMutableString *deviceToken = [NSMutableString stringWithCapacity:([token length] * 2)];
-    const unsigned char *bytes = (const unsigned char *)[token bytes];
-
-    for (NSUInteger i = 0; i < [token length]; i++) {
-        [deviceToken appendFormat:@"%02X", bytes[i]];
-    }
-
-    self.deviceToken = [deviceToken lowercaseString];
-    UA_LINFO(@"Application registered device token: %@", self.deviceToken);
-
-    [[UAirship shared].analytics addEvent:[UADeviceRegistrationEvent event]];
-
-    BOOL inBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
-
-    // Only allow new registrations to happen in the background if we are creating a channel ID
-    if (inBackground && self.channelID) {
-        UA_LDEBUG(@"Skipping device registration. The app is currently backgrounded.");
-    } else {
-        [self updateChannelRegistrationForcefully:NO];
-    }
-}
-
-// For iOS 8 & 9 user notification types registration completion via app delegate
-- (void)appRegisteredUserNotificationSettings {
-    [self updateAuthorizedNotificationTypes];
-    [[UIApplication sharedApplication] registerForRemoteNotifications];
 }
 
 - (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload {
@@ -1219,6 +904,62 @@ BOOL deferChannelCreationOnForeground = false;
     }
 }
 
+#pragma mark -
+#pragma mark Push handling
+
+- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification {
+    UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
+
+    id pushDelegate = [UAirship push].pushNotificationDelegate;
+    if ([pushDelegate respondsToSelector:@selector(presentationOptionsForNotification:)]) {
+        options = [pushDelegate presentationOptionsForNotification:notification];
+    } else {
+        options = [UAirship push].defaultPresentationOptions;
+    }
+
+    return options;
+}
+
+- (void)handleNotificationResponse:(UANotificationResponse *)response completionHandler:(void (^)())handler {
+    if ([response.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
+        self.launchNotificationResponse = response;
+    }
+
+    id delegate = self.pushNotificationDelegate;
+    if ([delegate respondsToSelector:@selector(receivedNotificationResponse:completionHandler:)]) {
+        [delegate receivedNotificationResponse:response completionHandler:handler];
+    } else {
+        handler();
+    }
+}
+
+- (void)handleRemoteNotification:(UANotificationContent *)notification foreground:(BOOL)foreground completionHandler:(void (^)(UIBackgroundFetchResult))handler {
+    BOOL delegateCalled = NO;
+    id delegate = self.pushNotificationDelegate;
+
+    if (foreground) {
+
+        if (self.autobadgeEnabled) {
+            [[UIApplication sharedApplication] setApplicationIconBadgeNumber:notification.badge.integerValue];
+        }
+
+        if ([delegate respondsToSelector:@selector(receivedForegroundNotification:completionHandler:)]) {
+            delegateCalled = YES;
+            [delegate receivedForegroundNotification:notification completionHandler:handler];
+        }
+    } else {
+        if ([delegate respondsToSelector:@selector(receivedBackgroundNotification:completionHandler:)]) {
+            delegateCalled = YES;
+            [delegate receivedBackgroundNotification:notification completionHandler:^(UIBackgroundFetchResult fetchResult) {
+                handler(fetchResult);
+            }];
+        }
+    }
+
+    if (!delegateCalled) {
+        handler(UIBackgroundFetchResultNoData);
+    }
+}
 
 #pragma mark -
 #pragma mark Default Values
