@@ -53,6 +53,12 @@ extern NSString *const UAChannelCreatedEventChannelKey;
 extern NSString *const UAChannelCreatedEventExistingKey;
 
 /**
+ * Notification option for notification type `none`.
+ * Not included in UANotificationOptions enum to maintain parity with UNAuthorizationOptions.
+ */
+extern NSUInteger const UANotificationOptionNone;
+
+/**
  * Notification options
  */
 typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {

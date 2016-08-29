@@ -721,7 +721,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     for (UANotificationCategory *category in self.push.combinedCategories) {
         for (UANotificationAction *action in category.actions) {
             // Only check background actions
-            if ((action.options & UNNotificationActionOptionForeground) == 0) {
+            if ((action.options & UNNotificationActionOptionForeground) == UANotificationOptionNone) {
                 XCTAssertTrue((action.options & UNNotificationActionOptionAuthenticationRequired) > 0, @"Invalid options for action: %@", action.identifier);
 
             }
@@ -732,7 +732,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     for (UANotificationCategory *category in self.push.combinedCategories) {
         for (UANotificationAction *action in category.actions) {
             // Only check background actions
-            if ((action.options & UNNotificationActionOptionForeground) == 0) {
+            if ((action.options & UNNotificationActionOptionForeground) == UANotificationOptionNone) {
                 XCTAssertFalse((action.options & UNNotificationActionOptionAuthenticationRequired) > 0, @"Invalid options for action: %@", action.identifier);
 
             }

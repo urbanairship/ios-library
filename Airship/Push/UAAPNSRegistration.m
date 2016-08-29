@@ -31,7 +31,7 @@
 -(void)getCurrentAuthorizationOptionsWithCompletionHandler:(void (^)(UANotificationOptions))completionHandler {
     [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
 
-        UANotificationOptions mask = 0;
+        UANotificationOptions mask = UANotificationOptionNone;
 
         if (settings.authorizationStatus == UNAuthorizationStatusAuthorized) {
             if (settings.alertSetting == UNNotificationSettingEnabled) {

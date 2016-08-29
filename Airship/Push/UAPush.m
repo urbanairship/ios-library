@@ -86,6 +86,8 @@ NSString *const UAChannelCreatedEvent = @"com.urbanairship.push.channel_created"
 NSString *const UAChannelCreatedEventChannelKey = @"com.urbanairship.push.channel_id";
 NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.existing";
 
+NSUInteger const UANotificationOptionNone = 0;
+
 @implementation UAPush
 
 // Both getter and setter are custom here, so give the compiler a hand with the synthesizing
@@ -829,7 +831,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
     self.shouldUpdateAPNSRegistration = NO;
 
-    UANotificationOptions options = 0;
+    UANotificationOptions options = UANotificationOptionNone;
     NSSet *categories = nil;
 
     if (self.userPushNotificationsEnabled) {
@@ -838,8 +840,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
         categories = self.combinedCategories;
     }
 
-
-    if (options == 0 && !self.allowUnregisteringUserNotificationTypes) {
+    if (options == UANotificationOptionNone && !self.allowUnregisteringUserNotificationTypes) {
         UA_LDEBUG(@"Skipping unregistered for user notification types.");
         [self updateChannelRegistrationForcefully:NO];
         return;
