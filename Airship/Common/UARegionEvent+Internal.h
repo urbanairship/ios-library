@@ -95,6 +95,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (BOOL)regionEventCharacterCountIsValid:(nullable NSString *)string;
 
+/**
+ * The event's JSON payload. Used for automation.
+ */
+@property (nonatomic, readonly) NSDictionary *payload;
+
 @end
 
 NS_ASSUME_NONNULL_END

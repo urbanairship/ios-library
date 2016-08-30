@@ -36,6 +36,8 @@ NSString *const UAJSONMatcherKey = @"key";
 NSString *const UAJSONMatcherScope = @"scope";
 NSString *const UAJSONMatcherValue = @"value";
 
+NSString * const UAJSONMatcherErrorDomain = @"com.urbanairship.json_matcher";
+
 @implementation UAJSONMatcher
 
 - (instancetype)initWithValueMatcher:(UAJSONValueMatcher *)valueMatcher key:(NSString *)key scope:(NSArray<NSString *>*)scope {
@@ -93,8 +95,15 @@ NSString *const UAJSONMatcherValue = @"value";
     return [[UAJSONMatcher alloc] initWithValueMatcher:valueMatcher key:key scope:scope];
 }
 
-+ (instancetype)matcherWithJSON:(id)json {
++ (instancetype)matcherWithJSON:(id)json error:(NSError **)error {
     if (![json isKindOfClass:[NSDictionary class]]) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize invalid object: %@", json];
+            *error =  [NSError errorWithDomain:UAJSONMatcherErrorDomain
+                                          code:UAJSONMatcherErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
         return nil;
     }
 
@@ -103,6 +112,16 @@ NSString *const UAJSONMatcherValue = @"value";
     NSSet *allowedKeys = [NSSet setWithArray:@[UAJSONMatcherValue, UAJSONMatcherKey, UAJSONMatcherScope]];
 
     if (![keySet isSubsetOfSet:allowedKeys]) {
+        if (error) {
+            NSMutableSet *invalid = [NSMutableSet setWithSet:keySet];
+            [invalid minusSet:allowedKeys];
+
+            NSString *msg = [NSString stringWithFormat:@"Invalid keys: %@", invalid];
+            *error =  [NSError errorWithDomain:UAJSONMatcherErrorDomain
+                                          code:UAJSONMatcherErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
         return nil;
     }
 
@@ -115,13 +134,28 @@ NSString *const UAJSONMatcherValue = @"value";
             NSMutableArray *mutableScope = [NSMutableArray array];
             for (id value in info[UAJSONMatcherScope]) {
                 if (![value isKindOfClass:[NSString class]]) {
+                    if (error) {
+                        NSString *msg = [NSString stringWithFormat:@"Scope must be either an array of strings or a string. Invalid value: %@", value];
+                        *error =  [NSError errorWithDomain:UAJSONMatcherErrorDomain
+                                                      code:UAJSONMatcherErrorCodeInvalidJSON
+                                                  userInfo:@{NSLocalizedDescriptionKey:msg}];
+                    }
+
                     return nil;
                 }
+
                 [mutableScope addObject:value];
             }
 
             scope = [mutableScope copy];
         } else {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Scope must be either an array of strings or a string. Invalid value: %@", scope];
+                *error =  [NSError errorWithDomain:UAJSONMatcherErrorDomain
+                                              code:UAJSONMatcherErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+
             return nil;
         }
     }
@@ -130,6 +164,13 @@ NSString *const UAJSONMatcherValue = @"value";
     NSString *key;
     if (info[UAJSONMatcherKey]) {
         if (![info[UAJSONMatcherKey] isKindOfClass:[NSString class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Key must be a string. Invalid value: %@", key];
+                *error =  [NSError errorWithDomain:UAJSONMatcherErrorDomain
+                                              code:UAJSONMatcherErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+
             return nil;
         }
 
@@ -137,7 +178,7 @@ NSString *const UAJSONMatcherValue = @"value";
     }
 
     // Required value
-    UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWithJSON:info[UAJSONMatcherValue]];
+    UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWithJSON:info[UAJSONMatcherValue] error:error];
     if (!valueMatcher) {
         return nil;
     }

@@ -35,6 +35,8 @@ NSString *const UAActionScheduleInfoEndKey = @"end";
 NSString *const UAActionScheduleInfoStartKey = @"start";
 NSString *const UAActionScheduleInfoTriggersKey = @"triggers";
 
+NSString * const UAActionScheduleInfoErrorDomain = @"com.urbanairship.schedule_info";
+
 @implementation UAActionScheduleInfoBuilder
 
 @end
@@ -93,8 +95,15 @@ NSString *const UAActionScheduleInfoTriggersKey = @"triggers";
 }
 
 
-+ (instancetype)actionScheduleInfoWithJSON:(id)json {
++ (instancetype)actionScheduleInfoWithJSON:(id)json error:(NSError **)error {
     if (![json isKindOfClass:[NSDictionary class]]) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize invalid object: %@", json];
+            *error =  [NSError errorWithDomain:UAActionScheduleInfoErrorDomain
+                                          code:UAActionScheduleInfoErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
         return nil;
     }
 
@@ -104,18 +113,42 @@ NSString *const UAActionScheduleInfoTriggersKey = @"triggers";
                                                 UAActionScheduleInfoStartKey, UAActionScheduleInfoTriggersKey]];
 
     if (![keySet isSubsetOfSet:possibleKeys]) {
+        if (error) {
+            NSMutableSet *invalid = [NSMutableSet setWithSet:keySet];
+            [invalid minusSet:possibleKeys];
+
+            NSString *msg = [NSString stringWithFormat:@"Invalid keys: %@", invalid];
+            *error =  [NSError errorWithDomain:UAActionScheduleInfoErrorDomain
+                                          code:UAActionScheduleInfoErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
         return nil;
     }
 
     // Actions
     id actions = json[UAActionScheduleInfoActionsKey];
     if (![actions isKindOfClass:[NSDictionary class]]) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Actions payload must be a dictionary. Invalid value: %@", actions];
+            *error =  [NSError errorWithDomain:UAActionScheduleInfoErrorDomain
+                                          code:UAActionScheduleInfoErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
         return nil;
     }
 
     // Limit
     id limit = json[UAActionScheduleInfoLimitKey];
     if (limit && ![limit isKindOfClass:[NSNumber class]]) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Limit must be defined and be a number. Invalid value: %@", actions];
+            *error =  [NSError errorWithDomain:UAActionScheduleInfoErrorDomain
+                                          code:UAActionScheduleInfoErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
         return nil;
     }
 
@@ -123,6 +156,13 @@ NSString *const UAActionScheduleInfoTriggersKey = @"triggers";
     NSDate *start;
     if (json[UAActionScheduleInfoStartKey]) {
         if (![json[UAActionScheduleInfoStartKey] isKindOfClass:[NSString class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Start must be ISO 8601 timestamp. Invalid value: %@", start];
+                *error =  [NSError errorWithDomain:UAActionScheduleInfoErrorDomain
+                                              code:UAActionScheduleInfoErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+
             return nil;
         }
 
@@ -133,6 +173,13 @@ NSString *const UAActionScheduleInfoTriggersKey = @"triggers";
     NSDate *end;
     if (json[UAActionScheduleInfoEndKey]) {
         if (![json[UAActionScheduleInfoEndKey] isKindOfClass:[NSString class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"End must be ISO 8601 timestamp. Invalid value: %@", end];
+                *error =  [NSError errorWithDomain:UAActionScheduleInfoErrorDomain
+                                              code:UAActionScheduleInfoErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+
             return nil;
         }
 
@@ -142,6 +189,13 @@ NSString *const UAActionScheduleInfoTriggersKey = @"triggers";
     // Group
     id group = json[UAActionScheduleInfoGroupKey];
     if (group && ![group isKindOfClass:[NSString class]]) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Group must be a string. Invalid value: %@", group];
+            *error =  [NSError errorWithDomain:UAActionScheduleInfoErrorDomain
+                                          code:UAActionScheduleInfoErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
         return nil;
     }
 
@@ -149,11 +203,18 @@ NSString *const UAActionScheduleInfoTriggersKey = @"triggers";
     NSMutableArray *triggers = [NSMutableArray array];
     id triggersJSONArray = json[UAActionScheduleInfoTriggersKey];
     if (!triggersJSONArray || ![triggersJSONArray isKindOfClass:[NSArray class]]) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Schedule must contain an array of triggers. Invalid value %@", triggersJSONArray];
+            *error =  [NSError errorWithDomain:UAActionScheduleInfoErrorDomain
+                                          code:UAActionScheduleInfoErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
         return nil;
     }
 
     for (id triggerJSON in triggersJSONArray) {
-        UAScheduleTrigger *trigger = [UAScheduleTrigger triggerWithJSON:triggerJSON];
+        UAScheduleTrigger *trigger = [UAScheduleTrigger triggerWithJSON:triggerJSON error:error];
         if (!trigger) {
             return nil;
         }
@@ -162,6 +223,12 @@ NSString *const UAActionScheduleInfoTriggersKey = @"triggers";
     }
 
     if (!triggers.count) {
+        if (error) {
+            NSString *msg = @"Schedule must contain at least 1 trigger.";
+            *error =  [NSError errorWithDomain:UAActionScheduleInfoErrorDomain
+                                          code:UAActionScheduleInfoErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
         return nil;
     }
 
@@ -232,7 +299,5 @@ NSString *const UAActionScheduleInfoTriggersKey = @"triggers";
     result = 31 * result + [self.actions hash];
     return result;
 }
-
-
 
 @end

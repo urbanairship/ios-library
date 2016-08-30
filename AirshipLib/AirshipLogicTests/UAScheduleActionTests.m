@@ -93,7 +93,9 @@
                                     UAActionScheduleInfoStartKey:[[UAUtils ISODateFormatterUTC] stringFromDate: [NSDate date]],
                                     UAActionScheduleInfoTriggersKey: @[ @{ UAScheduleTriggerTypeKey: UAScheduleTriggerAppForegroundName, UAScheduleTriggerGoalKey: @(1) }] };
 
-    UAActionScheduleInfo *expectedInfo = [UAActionScheduleInfo actionScheduleInfoWithJSON:scheduleJSON];
+    NSError *error;
+    UAActionScheduleInfo *expectedInfo = [UAActionScheduleInfo actionScheduleInfoWithJSON:scheduleJSON error:&error];
+    XCTAssertNil(error);
 
 
     __block BOOL actionPerformed = NO;

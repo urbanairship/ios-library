@@ -50,10 +50,12 @@
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithJSON:arguments.value];
+    NSError *error = nil;
+
+    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithJSON:arguments.value error:&error];
     if (!scheduleInfo) {
         UA_LWARN(@"Unable to schedule actions. Invalid schedule payload: %@", scheduleInfo);
-        completionHandler([UAActionResult emptyResult]);
+        completionHandler([UAActionResult resultWithError:error]);
         return;
     }
 

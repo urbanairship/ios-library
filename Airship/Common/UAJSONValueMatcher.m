@@ -40,6 +40,9 @@ NSString *const UAJSONValueMatcherAtLeast = @"at_least";
 NSString *const UAJSONValueMatcherEquals = @"equals";
 NSString *const UAJSONValueMatcherIsPresent = @"is_present";
 
+NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_matcher";
+
+
 @implementation UAJSONValueMatcher
 
 - (NSDictionary *)payload {
@@ -117,7 +120,19 @@ NSString *const UAJSONValueMatcherIsPresent = @"is_present";
     return matcher;
 }
 
-+ (instancetype)matcherWithJSON:(id)json {
++ (instancetype)matcherWithJSON:(id)json error:(NSError **)error {
+    if (![json isKindOfClass:[NSDictionary class]]) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize invalid object: %@", json];
+            *error =  [NSError errorWithDomain:UAJSONValueMatcherErrorDomain
+                                          code:UAJSONValueMatcherErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
+        return nil;
+    }
+
+
     if ([self isNumericMatcherExpression:json]) {
         UAJSONValueMatcher *matcher = [[UAJSONValueMatcher alloc] init];
         matcher.atMost = json[UAJSONValueMatcherAtMost];
@@ -138,14 +153,22 @@ NSString *const UAJSONValueMatcherIsPresent = @"is_present";
         return matcher;
     }
 
+    if (error) {
+        NSString *msg = [NSString stringWithFormat:@"Invalid value matcher: %@", json];
+        *error =  [NSError errorWithDomain:UAJSONValueMatcherErrorDomain
+                                      code:UAJSONValueMatcherErrorCodeInvalidJSON
+                                  userInfo:@{NSLocalizedDescriptionKey:msg}];
+    }
+
+
     // Invalid
     return nil;
 }
 
 
-+ (BOOL)isNumericMatcherExpression:(id)expression {
++ (BOOL)isNumericMatcherExpression:(NSDictionary *)expression {
     // "equals": number | "at_least": number | "at_most": number | "at_least": number, "at_most": number
-    if (![expression isKindOfClass:[NSDictionary class]] || [expression count] == 0 || [expression count] > 2) {
+    if ([expression count] == 0 || [expression count] > 2) {
         return NO;
     }
 
@@ -163,8 +186,8 @@ NSString *const UAJSONValueMatcherIsPresent = @"is_present";
     return [expression[UAJSONValueMatcherEquals] isKindOfClass:[NSNumber class]];
 }
 
-+ (BOOL)isStringMatcherExpression:(id)expression {
-    if (![expression isKindOfClass:[NSDictionary class]] || [expression count] != 1) {
++ (BOOL)isStringMatcherExpression:(NSDictionary *)expression {
+    if ([expression count] != 1) {
         return NO;
     }
 
@@ -172,8 +195,8 @@ NSString *const UAJSONValueMatcherIsPresent = @"is_present";
     return [subexp isKindOfClass:[NSString class]];
 }
 
-+ (BOOL)isPresentMatcherExpression:(id)expression {
-    if (![expression isKindOfClass:[NSDictionary class]] || [expression count] != 1) {
++ (BOOL)isPresentMatcherExpression:(NSDictionary *)expression {
+    if ([expression count] != 1) {
         return NO;
     }
 

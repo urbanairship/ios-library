@@ -69,7 +69,9 @@
     XCTAssertEqualObjects(json, predicate.payload);
 
     // Verify the JSONValue recreates the expected payload
-    XCTAssertEqualObjects(json, [UAJSONPredicate predicateWithJSON:json].payload);
+    NSError *error = nil;
+    XCTAssertEqualObjects(json, [UAJSONPredicate predicateWithJSON:json error:&error].payload);
+    XCTAssertNil(error);
 }
 
 - (void)testNotPredicate {
@@ -89,7 +91,9 @@
     XCTAssertEqualObjects(json, predicate.payload);
 
     // Verify the JSONValue recreates the expected payload
-    XCTAssertEqualObjects(json, [UAJSONPredicate predicateWithJSON:json].payload);
+    NSError *error = nil;
+    XCTAssertEqualObjects(json, [UAJSONPredicate predicateWithJSON:json error:&error].payload);
+    XCTAssertNil(error);
 }
 
 - (void)testAndPredicate {
@@ -132,7 +136,9 @@
     XCTAssertEqualObjects(json, predicate.payload);
 
     // Verify the JSONValue recreates the expected payload
-    XCTAssertEqualObjects(json, [UAJSONPredicate predicateWithJSON:json].payload);
+    NSError *error = nil;
+    XCTAssertEqualObjects(json, [UAJSONPredicate predicateWithJSON:json error:&error].payload);
+    XCTAssertNil(error);
 }
 
 - (void)testOrPredicate {
@@ -174,22 +180,32 @@
     XCTAssertEqualObjects(json, predicate.payload);
 
     // Verify the JSONValue recreates the expected payload
-    XCTAssertEqualObjects(json, [UAJSONPredicate predicateWithJSON:json].payload);
+    NSError *error = nil;
+    XCTAssertEqualObjects(json, [UAJSONPredicate predicateWithJSON:json error:&error].payload);
+    XCTAssertNil(error);
 }
 
 - (void)testInvalidPayload {
+    NSError *error = nil;
+
     // Invalid type
     NSDictionary *json = @{ @"what": @[ @{ @"value": @{ @"equals": @"bar" }, @"key": @"foo" },
                                       @{ @"value": @{ @"equals": @"story" }, @"key": @"cool" } ]};
-    XCTAssertNil([UAJSONMatcher matcherWithJSON:json]);
+    XCTAssertNil([UAJSONMatcher matcherWithJSON:json error:&error]);
+    XCTAssertNotNil(error);
 
     // Invalid key value
+    error = nil;
     json = @{ @"or": @[ @"not cool",
                         @{ @"value": @{ @"equals": @"story" }, @"key": @"cool" } ]};
-    XCTAssertNil([UAJSONMatcher matcherWithJSON:json]);
+    XCTAssertNil([UAJSONMatcher matcherWithJSON:json error:&error]);
+    XCTAssertNotNil(error);
 
     // Invalid object
-    XCTAssertNil([UAJSONMatcher matcherWithJSON:@"not cool"]);
+    error = nil;
+    XCTAssertNil([UAJSONMatcher matcherWithJSON:@"not cool" error:&error]);
+    XCTAssertNotNil(error);
+
 }
 
 @end

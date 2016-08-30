@@ -120,6 +120,60 @@
     return dictionary;
 }
 
+
+- (NSDictionary *)payload {
+    /*
+     * We are unable to use the event.data for automation because we modify some
+     * values to be stringified versions before we store the event to be sent to
+     * warp9. Instead we are going to recreate the event data with the unmodified
+     * values.
+     */
+
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    NSMutableDictionary *proximityDictionary;
+    NSMutableDictionary *circularRegionDictionary;;
+
+    [dictionary setValue:self.source forKey:kUARegionSourceKey];
+    [dictionary setValue:self.regionID forKey:kUARegionIDKey];
+
+    if (self.boundaryEvent == UABoundaryEventEnter) {
+        [dictionary setValue:kUARegionBoundaryEventEnterValue forKey:kUARegionBoundaryEventKey];
+    }
+
+    if (self.boundaryEvent == UABoundaryEventExit) {
+        [dictionary setValue:kUARegionBoundaryEventExitValue forKey:kUARegionBoundaryEventKey];
+    }
+
+    if (self.proximityRegion) {
+        proximityDictionary = [NSMutableDictionary dictionary];
+
+        [proximityDictionary setValue:self.proximityRegion.proximityID forKey:kUAProximityRegionIDKey];
+        [proximityDictionary setValue:self.proximityRegion.major forKey:kUAProximityRegionMajorKey];
+        [proximityDictionary setValue:self.proximityRegion.minor forKey:kUAProximityRegionMinorKey];
+
+        if (self.proximityRegion.RSSI) {
+            [proximityDictionary setValue:self.proximityRegion.RSSI forKey:kUAProximityRegionRSSIKey];
+        }
+
+        if (self.proximityRegion.latitude && self.proximityRegion.longitude) {
+            [proximityDictionary setValue:self.proximityRegion.latitude forKey:kUARegionLatitudeKey];
+            [proximityDictionary setValue:self.proximityRegion.longitude forKey:kUARegionLongitudeKey];
+        }
+
+        [dictionary setValue:proximityDictionary forKey:kUAProximityRegionKey];
+    }
+
+    if (self.circularRegion) {
+        circularRegionDictionary = [NSMutableDictionary dictionary];
+        [circularRegionDictionary setValue:self.circularRegion.radius forKey:kUACircularRegionRadiusKey];
+        [circularRegionDictionary setValue:self.circularRegion.latitude forKey:kUARegionLatitudeKey];
+        [circularRegionDictionary setValue:self.circularRegion.longitude forKey:kUARegionLongitudeKey];
+        [dictionary setValue:circularRegionDictionary forKey:kUACircularRegionKey];
+    }
+    
+    return dictionary;
+}
+
 + (BOOL)regionEventRSSIIsValid:(NSNumber *)RSSI {
     if (!RSSI || RSSI.doubleValue > kUAProximityRegionMaxRSSI || RSSI.doubleValue < kUAProximityRegionMinRSSI) {
         return NO;

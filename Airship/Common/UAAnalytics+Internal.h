@@ -33,7 +33,7 @@
 
 // total size in bytes that a given event post is allowed to send.
 #define kMaxBatchSizeBytes (NSUInteger)500*1024      // local max of 500KB
-#define kMinBatchSizeBytes (NSUInteger)1024          // local min of 1KB
+#define kMinBatchSizeBytes (NSUInteger)10*1024          // local min of 10KB
 
 // maximum amount of time in seconds that events should queue for
 #define kMaxWaitSeconds (NSTimeInterval)14*24*3600      // local max of 14 days

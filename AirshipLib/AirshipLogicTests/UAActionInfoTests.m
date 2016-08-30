@@ -54,32 +54,38 @@
                                     UAActionScheduleInfoStartKey:[[UAUtils ISODateFormatterUTC] stringFromDate:start],
                                     UAActionScheduleInfoTriggersKey: @[ @{ UAScheduleTriggerTypeKey: UAScheduleTriggerAppForegroundName, UAScheduleTriggerGoalKey: @(1) }] };
 
-    UAActionScheduleInfo *info = [UAActionScheduleInfo actionScheduleInfoWithJSON:scheduleJSON];
+    NSError *error = nil;
+    UAActionScheduleInfo *info = [UAActionScheduleInfo actionScheduleInfoWithJSON:scheduleJSON error:&error];
+
     XCTAssertEqualObjects(info.group, @"test group");
     XCTAssertEqual(info.limit, 1);
     XCTAssertEqualObjects(info.actions, @{ @"action_name": @"action_value" });
     XCTAssertEqualWithAccuracy([info.start timeIntervalSinceNow], [start timeIntervalSinceNow], 1);
     XCTAssertEqualWithAccuracy([info.end timeIntervalSinceNow], [end timeIntervalSinceNow], 1);
     XCTAssertEqual(info.triggers.count, 1);
+    XCTAssertNil(error);
 }
 
 - (void)testRequiredJSONFields {
     // Minimum required fields
     NSDictionary *validJSON = @{ UAActionScheduleInfoActionsKey: @{ @"action_name": @"action_value" },
                                  UAActionScheduleInfoTriggersKey: @[ @{ UAScheduleTriggerTypeKey: UAScheduleTriggerAppForegroundName, UAScheduleTriggerGoalKey: @(1) }] };
-
-    XCTAssertNotNil([UAActionScheduleInfo actionScheduleInfoWithJSON:validJSON]);
+    XCTAssertNotNil([UAActionScheduleInfo actionScheduleInfoWithJSON:validJSON error:nil]);
 
     for (NSString *key in validJSON.allKeys) {
+        NSError *error = nil;
         NSMutableDictionary *invalidJSON = [validJSON mutableCopy];
 
         // Missing required value
         [invalidJSON removeObjectForKey:key];
-        XCTAssertNil([UAActionScheduleInfo actionScheduleInfoWithJSON:invalidJSON]);
+        XCTAssertNil([UAActionScheduleInfo actionScheduleInfoWithJSON:invalidJSON error:&error]);
+        XCTAssertNotNil(error);
 
         // Invalid valid
+        error = nil;
         invalidJSON[key] = @"what";
-        XCTAssertNil([UAActionScheduleInfo actionScheduleInfoWithJSON:invalidJSON]);
+        XCTAssertNil([UAActionScheduleInfo actionScheduleInfoWithJSON:invalidJSON error:&error]);
+        XCTAssertNotNil(error);
     }
 }
 

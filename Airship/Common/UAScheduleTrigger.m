@@ -41,6 +41,7 @@ NSString *const UAScheduleTriggerCustomEventCountName = @"custom_event_count";
 NSString *const UAScheduleTriggerCustomEventValueName = @"custom_event_value";
 NSString *const UAScheduleTriggerScreenName = @"screen";
 
+NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trigger";
 
 @implementation UAScheduleTrigger
 
@@ -110,14 +111,31 @@ NSString *const UAScheduleTriggerScreenName = @"screen";
 }
 
 
-+ (instancetype)triggerWithJSON:(id)json {
++ (instancetype)triggerWithJSON:(id)json error:(NSError **)error {
     if (![json isKindOfClass:[NSDictionary class]]) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize invalid object: %@", json];
+            *error =  [NSError errorWithDomain:UAScheduleTriggerErrorDomain
+                                          code:UAScheduleTriggerErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
         return nil;
     }
 
     NSSet *keySet = [NSSet setWithArray:[json allKeys]];
     NSSet *possibleKeys = [NSSet setWithArray:@[UAScheduleTriggerGoalKey, UAScheduleTriggerTypeKey, UAScheduleTriggerPredicateKey]];
     if (![keySet isSubsetOfSet:possibleKeys]) {
+        if (error) {
+            NSMutableSet *invalid = [NSMutableSet setWithSet:keySet];
+            [invalid minusSet:possibleKeys];
+
+            NSString *msg = [NSString stringWithFormat:@"Invalid keys: %@", invalid];
+            *error =  [NSError errorWithDomain:UAScheduleTriggerErrorDomain
+                                          code:UAScheduleTriggerErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
         return nil;
     }
 
@@ -139,6 +157,14 @@ NSString *const UAScheduleTriggerScreenName = @"screen";
     } else if ([UAScheduleTriggerScreenName isEqualToString:triggerTypeString]) {
         triggerType = UAScheduleTriggerScreen;
     } else {
+
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Invalid trigger type: %@", triggerTypeString];
+            *error =  [NSError errorWithDomain:UAScheduleTriggerErrorDomain
+                                          code:UAScheduleTriggerErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
         // No valid trigger type
         return nil;
     }
@@ -149,13 +175,20 @@ NSString *const UAScheduleTriggerScreenName = @"screen";
     }
 
     if (!goal || [goal doubleValue] <= 0) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Goal must be defined and greater than 0. Invalid value: %@", goal];
+            *error =  [NSError errorWithDomain:UAScheduleTriggerErrorDomain
+                                          code:UAScheduleTriggerErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
         return nil;
     }
 
 
     UAJSONPredicate *predicate;
     if (json[UAScheduleTriggerPredicateKey]) {
-        predicate = [UAJSONPredicate predicateWithJSON:json[UAScheduleTriggerPredicateKey]];
+        predicate = [UAJSONPredicate predicateWithJSON:json[UAScheduleTriggerPredicateKey] error:error];
         if (!predicate) {
             return nil;
         }
@@ -163,7 +196,6 @@ NSString *const UAScheduleTriggerScreenName = @"screen";
 
     return [UAScheduleTrigger triggerWithType:triggerType goal:goal predicate:predicate];
 }
-
 
 
 - (BOOL)isEqualToTrigger:(UAScheduleTrigger *)trigger {
