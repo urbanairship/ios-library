@@ -67,7 +67,7 @@ do
     prj_setting_file="$prj_root/$prj_name.xcodeproj/project.pbxproj"
     echo "update library reference in $prj_setting_file"
 	if [[ -f "$prj_setting_file" ]]; then
-        sed "s/\($lib_base_name[^ ]*-\)[0-9]*\.[0-9]*\.[0-9]*\(\.$EXECUTABLE_EXTENSION\)/\1$version\2/g" "$prj_setting_file" > "$TEMP_DIR/$prj_name.tmp"
+        sed -E "s/($lib_base_name[^ ]*-)[0-9]*\.[0-9]*\.[0-9]*(\.[a-zA-Z0-9_]*)?(\.$EXECUTABLE_EXTENSION)/\1$version\3/g" "$prj_setting_file" > "$TEMP_DIR/$prj_name.tmp"
         chgrp staff "$TEMP_DIR/$prj_name.tmp"
 	    mv "$TEMP_DIR/$prj_name.tmp" "$prj_setting_file"
 	fi

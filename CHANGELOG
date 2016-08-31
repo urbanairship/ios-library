@@ -3,10 +3,10 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
-Version 7.3.0.dp1 - August 19, 2016
-===================================
+Version 7.3.0 - August 31, 2016
+===============================
 - Added a new simplified location module.
-- Added custom event templates for common event types.
+- Added Custom Event templates.
 - Added action automation to schedule actions to run when predefined conditions are met.
 - Added action situation `UASituationAutomation` for actions that are triggered from automation.
 - Added action "schedule_actions" to support scheduling actions from the Actions framework.
