@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		49251DEE1D6F9C1500EED4BD /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49251DED1D6F9C1500EED4BD /* NotificationService.swift */; };
+		49251DF21D6F9C1500EED4BD /* SampleServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 49251DEB1D6F9C1500EED4BD /* SampleServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		49251DF91D6F9C8500EED4BD /* AirshipAppExtensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49251DE41D6F987600EED4BD /* AirshipAppExtensions.framework */; };
+		49251DFB1D6F9C8D00EED4BD /* AirshipAppExtensions.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 49251DE41D6F987600EED4BD /* AirshipAppExtensions.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		493F51111C5B2C8D00B050A1 /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 493F510F1C5B2C8D00B050A1 /* UAPushUI.strings */; };
 		493F51131C5B2C9E00B050A1 /* MessageCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493F51121C5B2C9E00B050A1 /* MessageCenterViewController.swift */; };
 		493F51291C5B423700B050A1 /* InboxDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493F51281C5B423700B050A1 /* InboxDelegate.swift */; };
@@ -42,6 +46,34 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		49251DE31D6F987600EED4BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 49251DDE1D6F987600EED4BD /* AirshipAppExtensions.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 49AA00FC1D65158C0081989A;
+			remoteInfo = AirshipAppExtensions;
+		};
+		49251DE51D6F987600EED4BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 49251DDE1D6F987600EED4BD /* AirshipAppExtensions.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 49AA01051D65158C0081989A;
+			remoteInfo = AirshipAppExtensionsTests;
+		};
+		49251DF01D6F9C1500EED4BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CCDA359B1B8D233A00950AD5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 49251DEA1D6F9C1500EED4BD;
+			remoteInfo = SampleServiceExtension;
+		};
+		49251DF71D6F9C7E00EED4BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 49251DDE1D6F987600EED4BD /* AirshipAppExtensions.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 49AA00FB1D65158C0081989A;
+			remoteInfo = AirshipAppExtensions;
+		};
 		CCDA35C91B8D265B00950AD5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */;
@@ -59,6 +91,27 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		49251DF61D6F9C1500EED4BD /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				49251DF21D6F9C1500EED4BD /* SampleServiceExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		49251DFA1D6F9C8800EED4BD /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				49251DFB1D6F9C8D00EED4BD /* AirshipAppExtensions.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CCDA35CF1B8D269700950AD5 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -82,6 +135,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		49251DDE1D6F987600EED4BD /* AirshipAppExtensions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipAppExtensions.xcodeproj; path = ../AirshipAppExtensions/AirshipAppExtensions.xcodeproj; sourceTree = "<group>"; };
+		49251DEB1D6F9C1500EED4BD /* SampleServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SampleServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		49251DED1D6F9C1500EED4BD /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		49251DEF1D6F9C1500EED4BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		493F51101C5B2C8D00B050A1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UAPushUI.strings; sourceTree = "<group>"; };
 		493F51121C5B2C9E00B050A1 /* MessageCenterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterViewController.swift; sourceTree = "<group>"; };
 		493F51281C5B423700B050A1 /* InboxDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxDelegate.swift; sourceTree = "<group>"; };
@@ -106,6 +163,7 @@
 		61A672E71CA9F4B000BAF58A /* PushHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushHandler.swift; sourceTree = "<group>"; };
 		61AD10D41BE7D88B0004C886 /* TagsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagsTableViewController.swift; sourceTree = "<group>"; };
 		61E392371CC81EEA00D994E3 /* UAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UAMessageCenterDefaultStyle.plist; sourceTree = "<group>"; };
+		CC0E3A061D2DAA4900DAF1E5 /* SwiftSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = SwiftSample.entitlements; sourceTree = "<group>"; };
 		CCDA35A31B8D233A00950AD5 /* SwiftSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCDA35A61B8D233A00950AD5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CCDA35A81B8D233A00950AD5 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
@@ -118,6 +176,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		49251DE81D6F9C1500EED4BD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				49251DF91D6F9C8500EED4BD /* AirshipAppExtensions.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CCDA35A01B8D233A00950AD5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -129,6 +195,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		49251DDF1D6F987600EED4BD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				49251DE41D6F987600EED4BD /* AirshipAppExtensions.framework */,
+				49251DE61D6F987600EED4BD /* AirshipAppExtensionsTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		49251DEC1D6F9C1500EED4BD /* SampleServiceExtension */ = {
+			isa = PBXGroup;
+			children = (
+				49251DED1D6F9C1500EED4BD /* NotificationService.swift */,
+				49251DEF1D6F9C1500EED4BD /* Info.plist */,
+			);
+			path = SampleServiceExtension;
+			sourceTree = "<group>";
+		};
 		493F510E1C5B2C8D00B050A1 /* Localization */ = {
 			isa = PBXGroup;
 			children = (
@@ -172,10 +256,12 @@
 		CCDA359A1B8D233A00950AD5 = {
 			isa = PBXGroup;
 			children = (
+				49251DDE1D6F987600EED4BD /* AirshipAppExtensions.xcodeproj */,
 				CCDA35A51B8D233A00950AD5 /* SwiftSample */,
 				CCDA35C31B8D237300950AD5 /* AirshipConfig.plist */,
 				61E392371CC81EEA00D994E3 /* UAMessageCenterDefaultStyle.plist */,
 				CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */,
+				49251DEC1D6F9C1500EED4BD /* SampleServiceExtension */,
 				CCDA35A41B8D233A00950AD5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -184,6 +270,7 @@
 			isa = PBXGroup;
 			children = (
 				CCDA35A31B8D233A00950AD5 /* SwiftSample.app */,
+				49251DEB1D6F9C1500EED4BD /* SampleServiceExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -191,6 +278,7 @@
 		CCDA35A51B8D233A00950AD5 /* SwiftSample */ = {
 			isa = PBXGroup;
 			children = (
+				CC0E3A061D2DAA4900DAF1E5 /* SwiftSample.entitlements */,
 				CCDA35A61B8D233A00950AD5 /* AppDelegate.swift */,
 				CCDA35A81B8D233A00950AD5 /* HomeViewController.swift */,
 				61A672E71CA9F4B000BAF58A /* PushHandler.swift */,
@@ -220,6 +308,25 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		49251DEA1D6F9C1500EED4BD /* SampleServiceExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 49251DF31D6F9C1500EED4BD /* Build configuration list for PBXNativeTarget "SampleServiceExtension" */;
+			buildPhases = (
+				49251DE71D6F9C1500EED4BD /* Sources */,
+				49251DE81D6F9C1500EED4BD /* Frameworks */,
+				49251DE91D6F9C1500EED4BD /* Resources */,
+				49251DFA1D6F9C8800EED4BD /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				49251DF81D6F9C7E00EED4BD /* PBXTargetDependency */,
+			);
+			name = SampleServiceExtension;
+			productName = SampleServiceExtension;
+			productReference = 49251DEB1D6F9C1500EED4BD /* SampleServiceExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		CCDA35A21B8D233A00950AD5 /* SwiftSample */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CCDA35B71B8D233A00950AD5 /* Build configuration list for PBXNativeTarget "SwiftSample" */;
@@ -229,11 +336,13 @@
 				CCDA35A11B8D233A00950AD5 /* Resources */,
 				CCDA35CF1B8D269700950AD5 /* Embed Frameworks */,
 				CCDA35D21B8D276C00950AD5 /* CopyFiles */,
+				49251DF61D6F9C1500EED4BD /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				CCDA35CE1B8D269700950AD5 /* PBXTargetDependency */,
+				49251DF11D6F9C1500EED4BD /* PBXTargetDependency */,
 			);
 			name = SwiftSample;
 			productName = SwiftSample;
@@ -246,13 +355,19 @@
 		CCDA359B1B8D233A00950AD5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0700;
+				LastSwiftUpdateCheck = 0800;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
+					49251DEA1D6F9C1500EED4BD = {
+						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = PGJV57GD94;
+						ProvisioningStyle = Automatic;
+					};
 					CCDA35A21B8D233A00950AD5 = {
 						CreatedOnToolsVersion = 7.0;
 						DevelopmentTeam = PGJV57GD94;
+						LastSwiftMigration = 0800;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -285,6 +400,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = 49251DDF1D6F987600EED4BD /* Products */;
+					ProjectRef = 49251DDE1D6F987600EED4BD /* AirshipAppExtensions.xcodeproj */;
+				},
+				{
 					ProductGroup = CCDA35C61B8D265B00950AD5 /* Products */;
 					ProjectRef = CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */;
 				},
@@ -292,11 +411,26 @@
 			projectRoot = "";
 			targets = (
 				CCDA35A21B8D233A00950AD5 /* SwiftSample */,
+				49251DEA1D6F9C1500EED4BD /* SampleServiceExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		49251DE41D6F987600EED4BD /* AirshipAppExtensions.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipAppExtensions.framework;
+			remoteRef = 49251DE31D6F987600EED4BD /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		49251DE61D6F987600EED4BD /* AirshipAppExtensionsTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipAppExtensionsTests.xctest;
+			remoteRef = 49251DE51D6F987600EED4BD /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		CCDA35CA1B8D265B00950AD5 /* AirshipKit.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -307,6 +441,13 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		49251DE91D6F9C1500EED4BD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CCDA35A11B8D233A00950AD5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -337,6 +478,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		49251DE71D6F9C1500EED4BD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				49251DEE1D6F9C1500EED4BD /* NotificationService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CCDA359F1B8D233A00950AD5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -357,6 +506,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		49251DF11D6F9C1500EED4BD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 49251DEA1D6F9C1500EED4BD /* SampleServiceExtension */;
+			targetProxy = 49251DF01D6F9C1500EED4BD /* PBXContainerItemProxy */;
+		};
+		49251DF81D6F9C7E00EED4BD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipAppExtensions;
+			targetProxy = 49251DF71D6F9C7E00EED4BD /* PBXContainerItemProxy */;
+		};
 		CCDA35CE1B8D269700950AD5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipKit;
@@ -392,6 +551,44 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		49251DF41D6F9C1500EED4BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				DEVELOPMENT_TEAM = PGJV57GD94;
+				INFOPLIST_FILE = SampleServiceExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.SampleServiceExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		49251DF51D6F9C1500EED4BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				DEVELOPMENT_TEAM = PGJV57GD94;
+				INFOPLIST_FILE = SampleServiceExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.SampleServiceExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
 		CCDA35B51B8D233A00950AD5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -480,12 +677,15 @@
 		CCDA35B81B8D233A00950AD5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = SwiftSample/SwiftSample.entitlements;
 				INFOPLIST_FILE = SwiftSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 3.0;
 				VALID_ARCHS = "$(inherited)";
 			};
 			name = Debug;
@@ -493,12 +693,15 @@
 		CCDA35B91B8D233A00950AD5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = SwiftSample/SwiftSample.entitlements;
 				INFOPLIST_FILE = SwiftSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 3.0;
 				VALID_ARCHS = "$(inherited)";
 			};
 			name = Release;
@@ -506,6 +709,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		49251DF31D6F9C1500EED4BD /* Build configuration list for PBXNativeTarget "SampleServiceExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				49251DF41D6F9C1500EED4BD /* Debug */,
+				49251DF51D6F9C1500EED4BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		CCDA359E1B8D233A00950AD5 /* Build configuration list for PBXProject "SwiftSample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

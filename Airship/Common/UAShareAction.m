@@ -45,11 +45,7 @@
         return NO;
     }
 
-    UA_IF_IOS7_OR_GREATER(return YES;)
-
-    // Reject if on iOS 6.x (unsupported).
-    return NO;
-
+    return YES;
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments
@@ -63,7 +59,6 @@
     activityViewController.excludedActivityTypes = @[UIActivityTypeAssignToContact, UIActivityTypePrint, UIActivityTypeSaveToCameraRoll, UIActivityTypeAirDrop, UIActivityTypePostToFacebook];
 
     UIUserInterfaceIdiom userInterfaceIdiom = [UIDevice currentDevice].userInterfaceIdiom;
-    float deviceVersion = [[UIDevice currentDevice].systemVersion floatValue];
 
     void (^displayShareBlock)(void) = ^(void) {
 
@@ -83,13 +78,7 @@
 
             [[UAUtils topController] presentViewController:activityViewController animated:YES completion:nil];
 
-        } else if (userInterfaceIdiom == UIUserInterfaceIdiomPad && deviceVersion >= 7.0 && deviceVersion < 8.0) {
-            // iOS 7.x iPad only
-            self.popoverController = [[UIPopoverController alloc] initWithContentViewController:activityViewController];
-            self.popoverController.delegate = activityViewController;
-            [self.popoverController presentPopoverFromRect:activityViewController.sourceRect inView:[UAUtils topController].view permittedArrowDirections:0 animated:YES];
-
-        } else {
+        } else if (userInterfaceIdiom == UIUserInterfaceIdiomPad) {
             [[UAUtils topController] presentViewController:activityViewController animated:YES completion:nil];
         }
     };
@@ -113,9 +102,7 @@
             displayShareBlock();
         };
 
-        if (userInterfaceIdiom == UIUserInterfaceIdiomPad && deviceVersion >= 7.0 && deviceVersion < 8.0) {
-            [self.popoverController dismissPopoverAnimated:YES];
-        } else {
+        if (userInterfaceIdiom == UIUserInterfaceIdiomPad) {
             [self.lastActivityViewController dismissViewControllerAnimated:YES completion:nil];
         }
     } else {

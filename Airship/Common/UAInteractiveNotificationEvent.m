@@ -25,6 +25,7 @@
 
 #import "UAInteractiveNotificationEvent+Internal.h"
 #import "UAEvent+Internal.h"
+#import "UANotificationAction.h"
 #import "UAGlobal.h"
 
 #define kUAInteractiveNotificationEventSize 350
@@ -32,21 +33,21 @@
 
 const NSUInteger UAInteractiveNotificationEventCharacterLimit = 255;
 
-+ (instancetype)eventWithNotificationAction:(UIUserNotificationAction *)action
++ (instancetype)eventWithNotificationAction:(UANotificationAction *)action
                                  categoryID:(NSString *)category
                                notification:(NSDictionary *)notification {
 
-    return [self eventWithNotificationAction:action categoryID:category notification:notification responseInfo:nil];
+    return [self eventWithNotificationAction:action categoryID:category notification:notification responseText:nil];
 }
 
-+ (instancetype)eventWithNotificationAction:(UIUserNotificationAction *)action
++ (instancetype)eventWithNotificationAction:(UANotificationAction *)action
                                  categoryID:(NSString *)category
                                notification:(NSDictionary *)notification
-                               responseInfo:(nullable NSDictionary *)responseInfo {
+                               responseText:(nullable NSString *)responseText {
 
     UAInteractiveNotificationEvent *event = [[self alloc] init];
 
-    BOOL foreground = action.activationMode == UIUserNotificationActivationModeForeground;
+    BOOL foreground = (action.options & UNNotificationActionOptionForeground) > 0;
 
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
     [data setValue:category forKey:@"button_group"];
@@ -55,9 +56,8 @@ const NSUInteger UAInteractiveNotificationEventCharacterLimit = 255;
     [data setValue:foreground ? @"true" : @"false" forKey:@"foreground"];
     [data setValue:notification[@"_"] forKey:@"send_id"];
 
-    if (responseInfo) {
-        NSDictionary *responseInfoDictionary = [NSDictionary dictionaryWithDictionary:responseInfo];
-        NSString *userInputString = [responseInfoDictionary valueForKey:@"UIUserNotificationActionResponseTypedTextKey"];
+    if (responseText) {
+        NSString *userInputString = [responseText copy];
         if (userInputString.length > UAInteractiveNotificationEventCharacterLimit) {
             UA_LDEBUG(@"Interactive Notification %@ value exceeds %lu characters. Truncating to max chars", @"user_input", (unsigned long)
                     UAInteractiveNotificationEventCharacterLimit);

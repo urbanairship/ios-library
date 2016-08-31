@@ -25,7 +25,6 @@
 
 #import "UAActionRegistry.h"
 
-#define kUAIncomingPushActionRegistryName @"__incoming_push_action"
 #define kUAIncomingInAppMessageActionDefaultRegistryName @"com.urbanairship.in_app"
 #define kUACloseWindowActionRegistryName @"__close_window_action"
 

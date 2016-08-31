@@ -3,6 +3,43 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+Version 8.0.0 Developer Previews
+=================================
+THIS URBAN AIRSHIP SDK IS RELEASED AS A DEVELOPER PREVIEW VERSION AND MAY CONTAIN BUGS,
+ERRORS, DEFECTS, HARMFUL COMPONENTS AND MAY NOT BE COMPATIBLE WITH THE FINAL VERSION OF
+THE APPLICABLE THIRD PARTY OPERATING SYSTEM. ACCORDINGLY, URBAN AIRSHIP IS PROVIDING
+THE LICENSE ON AN “AS IS” BASIS AND NOT FOR USE IN PRODUCTION.
+
+Preview 3 - August 26, 2016
+---------------------------
+Changes:
+ - Added support for media attachments. Requires applications to provide a notification extension.
+ - UAPushNotificationDelegate has been rewritten to be more aligned with iOS 10.
+ - Manual application integration methods have been moved to UAAppIntegration.
+
+Preview 2 - August 2, 2016
+--------------------------
+Changes:
+- Added support for foreground presentation options. Default options can be set on UAPush, or
+  per notification with presentationOptionsForNotification: method on the UAPushNotificationDelegate.
+- Added foreground presentation flag (UAActionMetadataForegroundPresentationKey) to action arguments
+  when running actions in situation UASituationForegroundPush.
+- UAAutoAppDelegate no longer replaces the UNNotificationDelegate, instead it will either set
+  a delegate if one is not already set or swizzle the existing delegate.
+- Updated to build with Xcode 8 beta 4.
+
+Preview 1 - July 6, 2016
+------------------------
+Changes:
+- First iOS 10 compatibility release.
+- Added support for new UNNotification classes.
+- New simplified location module. Previous location module has been deprecated and will be removed in a future developer preview.
+- Fixed Channel Capture for iOS 10 devices.
+- Updated SwiftSample to Swift 3.0.
+
+Developer preview APIs may not be final. Please see the README.md for migration guide
+and known issues.
+
 Version 7.3.0 - August 31, 2016
 ===============================
 - Added a new simplified location module.
@@ -176,7 +213,7 @@ Version 7.0.0 - January 28, 2016
 - Added new region events for proximity triggers.
 - Added a flag to enable/disable analytics at runtime. Useful for providing a privacy opt-out switch.
 - Disabling 'userPushNotificationsEnabled' in UAPush is now prevented by the flag 'requireSettingsAppToDisableUserNotifications' in
-  iOS8. It is strongly recommended to link the Settings app instead of providing an in-app toggle to turn on and off push. This is 
+  iOS8. It is strongly recommended to link the Settings app instead of providing an in-app toggle to turn on and off push. This is
   to work around ongoing bugs in iOS8 (Radar #17878212).
 - Modernized public BOOL properties to include the prefix "is" on the getter.
 - Reduced the number of internal singletons. UAPush, UAInbox, UAUser, UAActionRegistry shared methods have been deprecated
@@ -275,8 +312,8 @@ Documentation Updates
  - Fixed iOS 8 push prompt on first-run and immediate opt-out.
  - Fixed quiet time setting not persisting between application restarts.
  - Added work around for iOS 8 registration bug where disabling push registering prevents registering for notification types
-   without a device restart. Instead of registering for 0 notification types, the device will just be marked as opted-out. This only 
-   affects newer iOS 8 devices. For more information, see the documentation for allowUnregisteringUserNotificationTypes on UAPush. 
+   without a device restart. Instead of registering for 0 notification types, the device will just be marked as opted-out. This only
+   affects newer iOS 8 devices. For more information, see the documentation for allowUnregisteringUserNotificationTypes on UAPush.
  - UA location is now compatible with iOS 8 authorization modes. If building against Xcode 6, make sure to add the new authorization
    keys (NSLocationAlwaysUsageDescription and NSLocationWhenInUseUsageDescription) to the application's info.plist. You must also manually
    request the correct authorization before starting location on Urban Airship by calling either requestWhenInUseAuthorization or requestAlwaysAuthorization on CLLocationManager.
@@ -391,7 +428,7 @@ as a direct open.
 ======================
 - Fixed a bug in UAHTTPConnectionOperation causing intermittent crashes
   during push registration.
-  
+
 2.0.0 - July 23, 2013
 =====================
 - Replaced the NSDictionary passed to takeOff with a UAConfig model object. More configuration
@@ -455,7 +492,7 @@ in a background task
 - changed device token handling in UAUser to fix issue with device tokens not
   being updated properly
 - updated splash screens and GUI to support iPhone 5
-- started caching UA-ID to speed up analytics 
+- started caching UA-ID to speed up analytics
 
 1.3.5 Nov 14, 2012
 ==================
@@ -474,12 +511,12 @@ in a background task
 - fixed analyzer issues in UAInboxURLCache, UAInboxOverlayController
 - library now disables analytics if no server is specified
 - moved deviceTokenHasChanged observation to UAUser
-- added queuing for analytics read/write access 
+- added queuing for analytics read/write access
 
 1.3.3 Sep 17, 2012
 ==================
 - Updated projects for iOS 6 and Xcode 4.5
-- Added exception when [UAirship takeOff:<options>] is called 
+- Added exception when [UAirship takeOff:<options>] is called
   on a thread other than the main thread
 - Fixed registration error that occurred when a device unregistered,
   then re registered
@@ -540,7 +577,7 @@ in a background task
 1.1.4 - January 26, 2012
 ==========================
 - Added nil product check to pending download and decompression logic
-- Cleared sessions have an empty string session_id value after app backgrounding 
+- Cleared sessions have an empty string session_id value after app backgrounding
 
 1.1.3 - December 30, 2011
 ==========================
@@ -614,19 +651,19 @@ Inbox Protocols
 ---------------
 - UAInboxMessageListObserver breaks out batch update events in explicit success/failure methods
 - Cleaner separation from UAUser observer patterns
-- New UAInboxPushHandlerDelegate protocol allows for a user-specified delegate to respond to 
+- New UAInboxPushHandlerDelegate protocol allows for a user-specified delegate to respond to
   incoming in-app messages
 
 Inbox UI Classes
 ----------------
 - iPad specific classes and xib files have been removed
 - iPhone interfaces have been generalized to be adaptable to the iPad UI idiom
-- New UAInboxOverlayController allows for displaying incoming Rich Push messages 
+- New UAInboxOverlayController allows for displaying incoming Rich Push messages
   in an overlay window superimposed over your content
-- UAInboxMessageListController and UAInboxMessageViewController have been redesigned to be 
+- UAInboxMessageListController and UAInboxMessageViewController have been redesigned to be
   embeddable in non-modal contexts, like navigation controller stacks and tab bar controllers
 - New UAInboxNavUI embeds the inbox in a navigation controller or popover controller
-- The InboxSample project allows you to select between multiple UI classes on the fly 
+- The InboxSample project allows you to select between multiple UI classes on the fly
   as a quick overview of the different inbox interface styles
 
 1.0.7 - August 29, 2011
@@ -641,7 +678,7 @@ Autorenewable Subscriptions
 - Added a restore process that will work on multiple devices without email entry. To trigger
   a restore, call UASubscriptionManager's restoreAutorenewables method. The subscription list will
   be automatically reloaded when the restore is complete.
-- Added new events in UASubscriptionManagerObserver (see UASubscriptionManager.h for 
+- Added new events in UASubscriptionManagerObserver (see UASubscriptionManager.h for
   details on their use).
 - Added UASubscriptionAlertType value that indicates restore failure: UASubscriptionAlertFailedRestore
 
@@ -713,7 +750,7 @@ of handlers for making push, alias, tags, and auto-badge much simpler to use.
 1.0.3 - January 31, 2011
 ========================
 - Updated copyrights
-- Fixed storeFrontWillHide delegate call. Removed storeFrontDidHide. 
+- Fixed storeFrontWillHide delegate call. Removed storeFrontDidHide.
 - Updated all projects to use Clang/LLVM 1.6 as default (fully compatible now)
 - Fixed numerous LLVM/Analyzer warnings
 
@@ -729,7 +766,7 @@ of handlers for making push, alias, tags, and auto-badge much simpler to use.
 - Fixed bug that would erroneously cause subscription transactions to finish early with rare network issues.
 - Moved keys to AirshipConfig.plist
 - Added missing -all_load linker flags
-- Added UATagUtils helper class for setting typical device tags 
+- Added UATagUtils helper class for setting typical device tags
 - Removed unused class UAInboxDelegate
 - Updated README
 

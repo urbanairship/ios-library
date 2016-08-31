@@ -279,24 +279,8 @@
     return topController;
 }
 
-+ (CGRect )orientationDependentWindowBounds {
-    CGRect windowBounds = [self mainWindow].bounds;
-
-    float deviceVersion = [[UIDevice currentDevice].systemVersion floatValue];
-
-    if (deviceVersion < 8.0) {
-        UIInterfaceOrientation interfaceOrientation = [UIApplication sharedApplication].statusBarOrientation;
-
-        if (UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
-            windowBounds.size = CGSizeMake(CGRectGetHeight(windowBounds), CGRectGetWidth(windowBounds));
-        }
-    }
-
-    return windowBounds;
-}
-
-+ (BOOL)isBackgroundPush:(NSDictionary *)notification {
-    BOOL isBackground = NO;
++ (BOOL)isSilentPush:(NSDictionary *)notification {
+    BOOL isSilentPush = NO;
     NSDictionary *apsDict = [notification objectForKey:@"aps"];
     if (apsDict) {
         id alert = [apsDict objectForKey:@"alert"];
@@ -304,10 +288,10 @@
         NSString *soundName = [apsDict objectForKey:@"sound"];
 
         if (!alert && !badgeNumber && !soundName) {
-            isBackground = YES;
+            isSilentPush = YES;
         }
     }
-    return isBackground;
+    return isSilentPush;
 }
 
 @end

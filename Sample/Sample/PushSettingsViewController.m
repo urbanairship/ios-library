@@ -60,11 +60,15 @@
 
 - (IBAction)switchValueChanged:(id)sender {
 
-    if (self.pushEnabledSwitch.on) {
+    // Only allow disabling user notifications on iOS 10+
+    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+        [UAirship push].userPushNotificationsEnabled = self.pushEnabledSwitch.on;
+    } else if (self.pushEnabledSwitch.on) {
         [UAirship push].userPushNotificationsEnabled = YES;
     }
 
     [UAirship location].locationUpdatesEnabled = self.locationEnabledSwitch.on;
+
     [UAirship shared].analytics.enabled = self.analyticsSwitch.on;
 }
 
@@ -82,10 +86,9 @@
         self.tagsSubtitleLabel.text = NSLocalizedStringFromTable(@"None", @"UAPushUI", @"None");
     }
 
-    // push cannot be deactivated, so remove switch and link to system settings.
-    if ([UAirship push].userPushNotificationsEnabled) {
+    // iOS 8 & 9 - user notifications cannot be disabled, so remove switch and link to system settings
+    if (![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}] && [UAirship push].userPushNotificationsEnabled) {
         self.pushSettingsLabel.text = NSLocalizedStringFromTable(@"UA_Push_Settings_Title", @"UAPushUI", @"System Push Settings Label");
-
         self.pushSettingsSubtitleLabel.text = [self pushTypeString];
         self.pushEnabledSwitch.hidden = YES;
         self.pushEnabledCell.selectionStyle = UITableViewCellSelectionStyleDefault;
@@ -93,23 +96,23 @@
 }
 
 - (NSString *)pushTypeString {
-    UIUserNotificationType types = [UIApplication sharedApplication].currentUserNotificationSettings.types;
+    UANotificationOptions options = [UAirship push].authorizedNotificationOptions;
 
     NSMutableArray *typeArray = [NSMutableArray arrayWithCapacity:3];
 
-    if (types & UIUserNotificationTypeAlert) {
+    if (options & UANotificationOptionAlert) {
         [typeArray addObject:NSLocalizedStringFromTable(@"UA_Notification_Type_Alerts", @"UAPushUI", @"Alerts")];
     }
 
-    if (types & UIUserNotificationTypeBadge) {
+    if (options & UANotificationOptionBadge) {
         [typeArray addObject:NSLocalizedStringFromTable(@"UA_Notification_Type_Badges", @"UAPushUI", @"Badges")];
     }
 
-    if (types & UIUserNotificationTypeSound) {
+    if (options & UANotificationOptionSound) {
         [typeArray addObject:NSLocalizedStringFromTable(@"UA_Notification_Type_Sounds", @"UAPushUI", @"Sounds")];
     }
 
-    if (types & UIUserNotificationTypeNone) {
+    if (![typeArray count]) {
         return NSLocalizedStringFromTable(@"UA_Push_Settings_Link_Disabled_Title", @"UAPushUI", @"Pushes Currently Disabled");
     }
 
@@ -119,9 +122,11 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
-    if (indexPath.section == [tableView indexPathForCell:self.pushEnabledCell].section) {
-        if (indexPath.row == [tableView indexPathForCell:self.pushEnabledCell].row) {
-            if ([UAirship push].userPushNotificationsEnabled) {
+
+    // iOS 8 & 9 - redirect push enabled cell to system settings
+    if (![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}] && [UAirship push].userPushNotificationsEnabled) {
+        if (indexPath.section == [tableView indexPathForCell:self.pushEnabledCell].section) {
+            if (indexPath.row == [tableView indexPathForCell:self.pushEnabledCell].row) {
                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
             }
         }

@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (atomic, assign) NSUInteger batchOperationCount;
 @property (atomic, assign) NSUInteger retrieveOperationCount;
-@property (atomic, strong) NSArray *messages;
+@property (nonatomic, strong) NSArray<UAInboxMessage *> *messages;
 @property (nonatomic, strong) NSDictionary *messageIDMap;
 @property (nonatomic, strong) NSDictionary *messageURLMap;
 

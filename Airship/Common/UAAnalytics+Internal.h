@@ -265,9 +265,9 @@ NS_ASSUME_NONNULL_BEGIN
  * Prepare the event data for sending. Enforce max batch limits.
  * Loop through events and discard DB-only items, format the
  * JSON data field as a dictionary.
- * @return Event data as an NSArray.
+ * @return Event data as an NSArray or nil if there are no events to upload.
  */
-- (NSArray *)prepareEventsForUpload;
+- (nullable NSArray *)prepareEventsForUpload;
 
 /**
  * Checks a event dictionary for expected fields and values.

@@ -40,9 +40,7 @@
 #import "UAActionRegistry.h"
 #import "UALocation+Internal.h"
 
-
-
-#import "UAAppDelegateProxy+Internal.h"
+#import "UAAutoIntegration+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAURLProtocol.h"
 #import "UAAppInitEvent+Internal.h"
@@ -55,6 +53,7 @@
 #import "UADefaultMessageCenter.h"
 #import "UANamedUser+Internal.h"
 #import "UAAutomation+Internal.h"
+#import "UAAppIntegration.h"
 
 UA_VERSION_IMPLEMENTATION(UAirshipVersion, UA_VERSION)
 
@@ -123,11 +122,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 #pragma mark -
 #pragma mark Object Lifecycle
 
-- (instancetype)initWithConifg:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
-        self.remoteNotificationBackgroundModeEnabled = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIBackgroundModes"] containsObject:@"remote-notification"]
-        && kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0;
+        self.remoteNotificationBackgroundModeEnabled = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIBackgroundModes"] containsObject:@"remote-notification"];
 
 
         self.dataStore = dataStore;
@@ -151,7 +149,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.analytics.delegate = self.sharedAutomation;
 
         // Only create the default message center if running iOS 8 and above
-        if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
+        if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){8, 0, 0}]) {
             if ([UAirship resources]) {
                 self.sharedDefaultMessageCenter = [UADefaultMessageCenter messageCenterWithConfig:self.config];
             } else {
@@ -269,7 +267,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     [dataStore setObject:currentDeviceId forKey:@"deviceId"];
 
     // Create Airship
-    sharedAirship_ = [[UAirship alloc] initWithConifg:config dataStore:dataStore];
+    sharedAirship_ = [[UAirship alloc] initWithConfig:config dataStore:dataStore];
 
     // Save the version
     if ([UA_VERSION isEqualToString:@"0.0.0"]) {
@@ -295,7 +293,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         UA_LINFO(@"Automatic setup enabled.");
         dispatch_once(&proxyDelegateOnceToken_, ^{
             @synchronized ([UIApplication sharedApplication]) {
-                [UAAppDelegateProxy proxyAppDelegate];
+                [UAAutoIntegration integrate];
             }
         });
     }
@@ -334,26 +332,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         return;
     }
 
-    NSDictionary *remoteNotification = [notification.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
-
-    [sharedAirship_.analytics launchedFromNotification:remoteNotification];
-
-    //Send Startup Analytics Info
-    //init first event
     [sharedAirship_.analytics addEvent:[UAAppInitEvent event]];
-
-
-    // If the device is running iOS7 or greater, and the app delegate responds to
-    // application:didReceiveRemoteNotification:fetchCompletionHandler:, it will
-    // call the app delegate right after launch.
-    
-    BOOL skipNotifyPush = [[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]
-    && kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0;
-
-    if (remoteNotification && !skipNotifyPush) {
-        [sharedAirship_.sharedPush appReceivedRemoteNotification:remoteNotification
-                                                applicationState:[UIApplication sharedApplication].applicationState];
-    }
 
     // Register now
     if (sharedAirship_.config.automaticSetupEnabled) {
@@ -492,34 +471,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                 UA_LIMPERR(@"Application is set up to receive background notifications, but the app delegate does not implements application:didReceiveRemoteNotification:fetchCompletionHandler:. Use either UAirship automaticSetupEnabled or implement a proper application:didReceiveRemoteNotification:fetchCompletionHandler: in the app delegate.");
             }
         }
-    } else if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
+    } else {
         UA_LIMPERR(@"Application is not configured for background notifications. "
                  @"Please enable remote notifications in the application's background modes.");
-    }
-
-    // Push notification delegate validation
-    id appDelegate = [UIApplication sharedApplication].delegate;
-    if ([appDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
-        id pushDelegate = self.sharedPush.pushNotificationDelegate;
-
-        if ([pushDelegate respondsToSelector:@selector(receivedForegroundNotification:)]
-            && ! [pushDelegate respondsToSelector:@selector(receivedForegroundNotification:fetchCompletionHandler:)]) {
-
-             UA_LIMPERR(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedForegroundNotification:fetchCompletionHandler: instead of receivedForegroundNotification:. receivedForegroundNotification: will still be called.");
-
-        }
-
-        if ([pushDelegate respondsToSelector:@selector(launchedFromNotification:)]
-            && ! [pushDelegate respondsToSelector:@selector(launchedFromNotification:fetchCompletionHandler:)]) {
-
-            UA_LIMPERR(@"Application is configured with background remote notifications. PushNotificationDelegate should implement launchedFromNotification:fetchCompletionHandler: instead of launchedFromNotification:. launchedFromNotification: will still be called.");
-        }
-
-        if ([pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:)]
-            && ! [pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:fetchCompletionHandler:)]) {
-
-            UA_LIMPERR(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedBackgroundNotification:fetchCompletionHandler: instead of receivedBackgroundNotification:. receivedBackgroundNotification: will still be called.");
-        }
     }
 
     // -ObjC linker flag is set

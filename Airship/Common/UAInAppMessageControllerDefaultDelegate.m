@@ -29,7 +29,7 @@
 #import "UAirship.h"
 #import "UAInAppMessaging.h"
 #import "UAInAppMessageButtonActionBinding.h"
-#import "UAUserNotificationCategory.h"
+#import "UANotificationCategory.h"
 #import "UAUtils.h"
 #import "NSString+UALocalizationAdditions.h"
 
@@ -257,13 +257,12 @@
 - (UIControl *)messageView:(UIView *)messageView buttonAtIndex:(NSUInteger)index {
     UAInAppMessageView *uaMessageView = (UAInAppMessageView *)messageView;
 
-    // Index 0 corresponds to buton1, index 1 corresponds to button 2.
+    // Index 0 corresponds to button 1, index 1 corresponds to button 2.
     if (index == 0) {
         return uaMessageView.button1;
-    } else if (index == 1) {
+    } else {
         return uaMessageView.button2;
     }
-    return nil;
 }
 
 - (void)messageView:(UIView *)messageView didChangeTouchState:(BOOL)touchDown {

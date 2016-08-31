@@ -45,7 +45,7 @@ class InboxDelegate : NSObject, UAInboxDelegate {
         tabBarController.selectedIndex = 2
     }
 
-    func showInboxMessage(message: UAInboxMessage) {
+    func show(_ message: UAInboxMessage) {
         self.showInbox()
         self.messageViewController().displayMessage(message)
     }

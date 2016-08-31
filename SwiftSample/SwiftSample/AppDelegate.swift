@@ -35,17 +35,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
     var window: UIWindow?
     var inboxDelegate: InboxDelegate?
 
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
         self.failIfSimulator()
 
         // Set log level for debugging config loading (optional)
         // It will be set to the value in the loaded config upon takeOff
-        UAirship.setLogLevel(UALogLevel.Trace)
+        UAirship.setLogLevel(UALogLevel.trace)
 
         // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
         // or set runtime properties here.
-        let config = UAConfig.defaultConfig()
+        let config = UAConfig.default()
         config.messageCenterStyleConfig = "UAMessageCenterDefaultStyle"
 
         // You can then programmatically override the plist values:
@@ -74,7 +74,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
         UAirship.push().pushNotificationDelegate = pushHandler
         UAirship.push().registrationDelegate = self
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(AppDelegate.refreshMessageCenterBadge), name: UAInboxMessageListUpdatedNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector:#selector(AppDelegate.refreshMessageCenterBadge), name: NSNotification.Name.UAInboxMessageListUpdated, object: nil)
 
         return true
     }
@@ -85,27 +85,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
             return
         }
 
-        if (NSUserDefaults.standardUserDefaults().boolForKey(self.simulatorWarningDisabledKey)) {
+        if (UserDefaults.standard.bool(forKey: self.simulatorWarningDisabledKey)) {
             return
         }
 
-        let alertController = UIAlertController(title: "Notice", message: "You will not be able to receive push notifications in the simulator.", preferredStyle: .Alert)
-        let disableAction = UIAlertAction(title: "Disable Warning", style: UIAlertActionStyle.Default){ (UIAlertAction) -> Void in
-            NSUserDefaults.standardUserDefaults().setBool(true, forKey:self.simulatorWarningDisabledKey)
+        let alertController = UIAlertController(title: "Notice", message: "You will not be able to receive push notifications in the simulator.", preferredStyle: .alert)
+        let disableAction = UIAlertAction(title: "Disable Warning", style: UIAlertActionStyle.default){ (UIAlertAction) -> Void in
+            UserDefaults.standard.set(true, forKey:self.simulatorWarningDisabledKey)
         }
         alertController.addAction(disableAction)
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil)
         alertController.addAction(cancelAction)
 
         // Let the UI finish launching first so it doesn't complain about the lack of a root view controller
         // Delay execution of the block for 1/2 second.
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(0.5 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
-            self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(0.5 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)) {
+            self.window?.rootViewController?.present(alertController, animated: true, completion: nil)
         }
     }
 
-    func applicationWillEnterForeground(application: UIApplication) {
+    func applicationWillEnterForeground(_ application: UIApplication) {
         refreshMessageCenterBadge()
     }
 
@@ -122,9 +122,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
         }
     }
 
-    func registrationSucceededForChannelID(channelID: String, deviceToken: String) {
-        NSNotificationCenter.defaultCenter().postNotificationName(
-            "channelIDUpdated",
+    func registrationSucceeded(forChannelID channelID: String, deviceToken: String) {
+        NotificationCenter.default.post(
+            name: Notification.Name(rawValue: "channelIDUpdated"),
             object: self,
             userInfo:nil)
     }

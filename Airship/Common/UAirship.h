@@ -36,6 +36,7 @@
 #import <Security/Security.h>
 #import <QuartzCore/QuartzCore.h>
 #import <Availability.h>
+#import <UserNotifications/UserNotifications.h>
 
 @class UAConfig;
 @class UAAnalytics;
@@ -94,8 +95,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 
 /**
  * This flag is set to `YES` if the application is set up 
- * with the "remote-notification" background mode and is running
- * iOS7 or greater.
+ * with the "remote-notification" background mode
  */
 @property (nonatomic, assign, readonly) BOOL remoteNotificationBackgroundModeEnabled;
 

@@ -76,17 +76,17 @@ static dispatch_once_t netInfoDispatchToken_;
 - (NSArray *)notificationTypes {
     NSMutableArray *notificationTypes = [NSMutableArray array];
 
-    UIUserNotificationType enabledTypes = [[UAirship push] currentEnabledNotificationTypes];
+    UANotificationOptions authorizedOptions = [UAirship push].authorizedNotificationOptions;
 
-    if ((UIUserNotificationTypeBadge & enabledTypes) > 0) {
+    if ((UANotificationOptionBadge & authorizedOptions) > 0) {
         [notificationTypes addObject:@"badge"];
     }
 
-    if ((UIUserNotificationTypeSound & enabledTypes) > 0) {
+    if ((UANotificationOptionSound & authorizedOptions) > 0) {
         [notificationTypes addObject:@"sound"];
     }
 
-    if ((UIUserNotificationTypeAlert & enabledTypes) > 0) {
+    if ((UANotificationOptionAlert & authorizedOptions) > 0) {
         [notificationTypes addObject:@"alert"];
     }
 

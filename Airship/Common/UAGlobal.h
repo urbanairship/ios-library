@@ -136,16 +136,6 @@ return VERSION_STR;                                         \
 }                                                           \
 @end
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000
-#define UA_IF_IOS7_OR_GREATER(...) \
-    if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) \
-    { \
-        __VA_ARGS__ \
-    }
-#else
-#define UA_IF_IOS7_OR_GREATER(...)
-#endif
-
 #define UA_SUPPRESS_PERFORM_SELECTOR_LEAK_WARNING(THE_CODE) \
 do { \
 _Pragma("clang diagnostic push") \
@@ -155,23 +145,21 @@ _Pragma("clang diagnostic pop") \
 } while (0)
 
 #define UA_PREVIEW_WARNING \
-NSLog(@"\n\n\n" \
-      "\t *********************************************************\n" \
-      "\t *             URBAN AIRSHIP PREVIEW RELEASE             *\n" \
-      "\t *                                                       *\n" \
-      "\t * This is a preview Urban Airship release.  It is       *\n" \
-      "\t * not intended to be part of a production application.  *\n" \
-      "\t *                                                       *\n" \
-      "\t *                                                       *\n" \
-      "\t *                 _..--=--..._                          *\n" \
-      "\t *              .-'            '-.  .-.                  *\n" \
-      "\t *             /.'              '.\\/  /                  *\n" \
-      "\t *            |=-                -=| (                   *\n" \
-      "\t *             \'.              .'/\\  \\                   *\n" \
-      "\t *              '-.,_____ _____.-'  '-'                  *\n" \
-      "\t *                   [_____]=8                           *\n" \
-      "\t *                                                       *\n" \
-      "\t *********************************************************\n\n\n"); \
+NSLog(@"\n\n" \
+      "\t                    URBAN AIRSHIP PREVIEW RELEASE                    \n"\
+      "\t                                                                     \n"\
+      "\t  THIS URBAN AIRSHIP SDK IS RELEASED AS A DEVELOPER PREVIEW VERSION  \n"\
+      "\t  AND MAY CONTAIN BUGS, ERRORS, DEFECTS, HARMFUL COMPONENTS AND MAY  \n"\
+      "\t  NOT BE COMPATIBLE WITH THE FINAL VERSION OF THE APPLICABLE THIRD   \n"\
+      "\t  PARTY OPERATING SYSTEM. ACCORDINGLY, URBAN AIRSHIP IS PROVIDING    \n"\
+      "\t  THE LICENSE ON AN “AS IS” BASIS  AND NOT FOR USE IN PRODUCTION.    \n"\
+      "\t                            _..--=--..._                             \n"\
+      "\t                         .-'            '-.  .-.                     \n"\
+      "\t                        /.'              '.\\/  /                    \n"\
+      "\t                       |=-                -=| (                      \n"\
+      "\t                        \'.              .'/\\  \\                   \n"\
+      "\t                         '-.,_____ _____.-'  '-'                     \n"\
+      "\t                              [_____]=8                              \n\n\n");
 
 #ifdef UA_PREVIEW
 #define UA_BUILD_WARNINGS UA_PREVIEW_WARNING

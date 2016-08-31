@@ -55,7 +55,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
 };
 
 @class UAInAppMessageButtonActionBinding;
-@class UAUserNotificationCategory;
+@class UANotificationCategory;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -181,17 +181,17 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) UIUserNotificationActionContext notificationActionContext;
 
 /**
- * An array of UAUserNotificationAction instances corresponding to the left-to-right order
+ * An array of UNNotificationAction instances corresponding to the left-to-right order
  * of interactive message buttons.
  */
 @property(nonatomic, readonly, nullable) NSArray *notificationActions;
 
 /**
- * A UAUserNotificationCategory instance,
- * corresponding to to the button group of the message.
+ * A UANotificationCategory instance,
+ * corresponding to the button group of the message.
  * If no matching category is found, this property will be nil.
  */
-@property(nonatomic, readonly, nullable) UAUserNotificationCategory *buttonCategory;
+@property(nonatomic, readonly, nullable) UANotificationCategory *buttonCategory;
 
 /**
  * An array of UAInAppMessageButtonActionBinding instances,

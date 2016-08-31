@@ -479,10 +479,13 @@
     }
 
     // Run all the bound actions
-    [UAActionRunner runActionsWithActionValues:binding.actions
-                                     situation:binding.situation
-                                      metadata:nil
-                             completionHandler:nil];
+    if (binding.actions) {
+        [UAActionRunner runActionsWithActionValues:binding.actions
+                                         situation:binding.situation
+                                          metadata:nil
+                                 completionHandler:nil];
+    }
+
 
     UAInAppResolutionEvent *event = [UAInAppResolutionEvent buttonClickedResolutionWithMessage:self.message
                                                                               buttonIdentifier:binding.identifier

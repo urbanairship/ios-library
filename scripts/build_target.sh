@@ -30,7 +30,9 @@ XCODE_SETTINGS=$(mktemp -t $TARGET_NAME.settings)
 
 # Query the Xcode Project for the current settings, based on the current target
 # Dump the settings output as an awkdb into /tmp
-xcrun xcodebuild -showBuildSettings -project $PROJECT_PATH -target $TARGET_NAME > $XCODE_SETTINGS
+
+xcrun xcodebuild clean -showBuildSettings -project $PROJECT_PATH -target $TARGET_NAME > $XCODE_SETTINGS
+
 xcode_setting() {
     echo $(cat ${XCODE_SETTINGS} | awk "\$1 == \"${1}\" { print \$3 }")
 }

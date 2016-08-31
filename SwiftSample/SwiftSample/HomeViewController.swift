@@ -34,29 +34,29 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        NSNotificationCenter.defaultCenter().addObserver(
+        NotificationCenter.default.addObserver(
             self,
             selector: #selector(HomeViewController.refreshView),
-            name: "channelIDUpdated",
+            name: NSNotification.Name("channelIDUpdated"),
             object: nil);
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         refreshView()
     }
 
     func refreshView () {
         if (UAirship.push().userPushNotificationsEnabled) {
-            channelIDButton.setTitle(UAirship.push().channelID, forState: UIControlState.Normal)
-            channelIDButton.hidden = false
-            enablePushButton.hidden = true
+            channelIDButton.setTitle(UAirship.push().channelID, for: [])
+            channelIDButton.isHidden = false
+            enablePushButton.isHidden = true
             return
         }
-        channelIDButton.hidden = true
-        enablePushButton.hidden = false
+        channelIDButton.isHidden = true
+        enablePushButton.isHidden = false
     }
 
-    @IBAction func buttonTapped(sender: UIButton) {
+    @IBAction func buttonTapped(_ sender: UIButton) {
 
         if (sender == enablePushButton) {
             UAirship.push().userPushNotificationsEnabled = true
@@ -65,15 +65,15 @@ class HomeViewController: UIViewController {
         //The channel ID will need to wait for push registration to return the channel ID
         if (sender == channelIDButton) {
             if ((UAirship.push().channelID) != nil) {
-                UIPasteboard.generalPasteboard().string = UAirship.push().channelID
+                UIPasteboard.general.string = UAirship.push().channelID
                 let message = UAInAppMessage()
                 message.alert = NSLocalizedString("UA_Copied_To_Clipboard", tableName: "UAPushUI", comment: "Copied to clipboard string")
-                message.position = UAInAppMessagePosition.Top
+                message.position = UAInAppMessagePosition.top
                 message.duration = 1.5
                 message.primaryColor = UIColor(red: 255/255, green: 200/255, blue: 40/255, alpha: 1)
                 message.secondaryColor = UIColor(red: 0/255, green: 105/255, blue: 143/255, alpha: 1)
 
-                UAirship.inAppMessaging().displayMessage(message)
+                UAirship.inAppMessaging().display(message)
             }
         }
     }

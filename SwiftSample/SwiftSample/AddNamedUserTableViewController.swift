@@ -36,20 +36,20 @@ class AddNamedUserTableViewController: UITableViewController, UITextFieldDelegat
         self.addNamedUserTextField.delegate = self
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         if ((UAirship.namedUser().identifier) != nil) {
             addNamedUserTextField.text = UAirship.namedUser().identifier
         }
     }
 
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return false
     }
 
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
 
-        if (textField.text?.characters.count > 0){
+        if ((textField.text?.characters.count)! > 0){
             UAirship.namedUser().identifier = textField.text
         } else {
             UAirship.namedUser().identifier = nil
@@ -57,7 +57,7 @@ class AddNamedUserTableViewController: UITableViewController, UITextFieldDelegat
 
         UAirship.push().updateRegistration()
 
-        navigationController?.popViewControllerAnimated(true)
+        _ = navigationController?.popViewController(animated: true)
 
         return true
     }

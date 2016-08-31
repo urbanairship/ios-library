@@ -12,7 +12,7 @@
 		494DD95D1B0EB677009C134E /* AirshipKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 494DD95C1B0EB677009C134E /* AirshipKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		494DDC261B0FD6A1009C134E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DDC251B0FD6A1009C134E /* libsqlite3.dylib */; };
 		494DDC281B0FD6A6009C134E /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DDC271B0FD6A6009C134E /* libz.dylib */; };
-		4997B4031C4040E500C80C14 /* libUAirship-7.1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4997B3FE1C4040DD00C80C14 /* libUAirship-7.1.2.a */; };
+		4997B4031C4040E500C80C14 /* libUAirship-7.2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4997B3FE1C4040DD00C80C14 /* libUAirship-7.2.0.a */; };
 		49C5C6E11C50209900C2D085 /* AirshipResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4997B4021C4040DD00C80C14 /* AirshipResources.bundle */; };
 /* End PBXBuildFile section */
 
@@ -58,7 +58,7 @@
 			files = (
 				494DDC281B0FD6A6009C134E /* libz.dylib in Frameworks */,
 				494DDC261B0FD6A1009C134E /* libsqlite3.dylib in Frameworks */,
-				4997B4031C4040E500C80C14 /* libUAirship-7.1.2.a in Frameworks */,
+				4997B4031C4040E500C80C14 /* libUAirship-7.2.0.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -106,7 +106,7 @@
 		4997B3F81C4040DC00C80C14 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4997B3FE1C4040DD00C80C14 /* libUAirship-7.1.2.a */,
+				4997B3FE1C4040DD00C80C14 /* libUAirship-7.2.0.a */,
 				4997B4001C4040DD00C80C14 /* AirshipLogicTests.xctest */,
 				4997B4021C4040DD00C80C14 /* AirshipResources.bundle */,
 			);
@@ -158,6 +158,9 @@
 				TargetAttributes = {
 					494DD9561B0EB677009C134E = {
 						CreatedOnToolsVersion = 6.3.1;
+						DevelopmentTeam = PGJV57GD94;
+						DevelopmentTeamName = "Urban Airship Inc.";
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -185,10 +188,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		4997B3FE1C4040DD00C80C14 /* libUAirship-7.1.2.a */ = {
+		4997B3FE1C4040DD00C80C14 /* libUAirship-7.2.0.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-7.1.2.a";
+			path = "libUAirship-7.2.0.a";
 			remoteRef = 4997B3FD1C4040DD00C80C14 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -353,6 +356,8 @@
 					"$(ARCHS_STANDARD)",
 					armv7s,
 				);
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -379,6 +384,8 @@
 					"$(ARCHS_STANDARD)",
 					armv7s,
 				);
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;

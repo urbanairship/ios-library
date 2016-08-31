@@ -31,9 +31,9 @@
 #import "UAirship+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAPush+Internal.h"
-#import "UAUserNotificationCategories+Internal.h"
-#import "UAMutableUserNotificationCategory.h"
-#import "UAUserNotificationAction.h"
+#import "UANotificationCategories+Internal.h"
+#import "UANotificationCategory.h"
+#import "UANotificationAction.h"
 
 // 30 days in seconds
 #define kUADefaultInAppMessageExpiryInterval 60 * 60 * 24 * 30
@@ -168,24 +168,19 @@
     [payload setValue:expiry forKey:@"expiry"];
     [payload setValue:(extra.count ? extra : nil) forKey:@"extra"];
     [payload setValue:(display.count ? display : nil) forKey:@"display"];
-    [payload setValue:(actions.count ?actions : nil) forKey:@"actions"];
+    [payload setValue:(actions.count ? actions : nil) forKey:@"actions"];
 
     return payload;
 }
 
-- (UAUserNotificationCategory *)buttonCategory {
+- (UANotificationCategory *)buttonCategory {
     if (self.buttonGroup) {
-        NSSet *categories = [UAirship push].allUserNotificationCategories;
+        NSSet *categories = [UAirship push].combinedCategories;
 
-        // id -> UAUserNotificationCategory/UIUserNotificationCategory
-        for (id category in categories) {
+        for (UANotificationCategory *category in categories) {
             // Find the category that matches our buttonGroup
-            if ([[category identifier] isEqualToString:self.buttonGroup]) {
-                if ([category isKindOfClass:[UIUserNotificationCategory class]]) {
-                    return [UAMutableUserNotificationCategory categoryWithUIUserNotificationCategory:category];
-                } else {
-                    return category;
-                }
+            if ([category.identifier isEqualToString:self.buttonGroup]) {
+                return category;
             }
         }
     }
@@ -193,39 +188,33 @@
     return nil;
 }
 
-- (UIUserNotificationActionContext)notificationActionContext {
-    if ([self.buttonCategory actionsForContext:UIUserNotificationActionContextMinimal].count) {
-        return UIUserNotificationActionContextMinimal;
-    }
-    return UIUserNotificationActionContextDefault;
-}
-
 - (NSArray *)notificationActions {
-    return [self.buttonCategory actionsForContext:self.notificationActionContext];
+    return self.buttonCategory.actions;
 }
 
 - (NSArray *)buttonActionBindings {
     NSMutableArray *bindings = [NSMutableArray array];
 
     // Create a button action binding for each corresponding action identifier
-    // id -> UAUserNotificationAction/UIUserNotificationAction
-    for (id notificationAction in self.notificationActions) {
+    for (UANotificationAction *notificationAction in self.notificationActions) {
         NSDictionary *payload = self.buttonActions[[notificationAction identifier]] ?: [NSDictionary dictionary];
 
         UAInAppMessageButtonActionBinding *binding = [[UAInAppMessageButtonActionBinding alloc] init];
 
-        binding.title = [notificationAction title];
+        binding.title = notificationAction.title;
 
-        binding.identifier = [notificationAction identifier];
+        binding.identifier = notificationAction.identifier;
 
         // choose the situation that matches the corresponding notificationAction's activation mode
-        binding.situation = [notificationAction activationMode] == UIUserNotificationActivationModeForeground ?
-        UASituationForegroundInteractiveButton : UASituationBackgroundInteractiveButton;
+        if ((notificationAction.options & UNNotificationActionOptionForeground) > 0) {
+            binding.situation = UASituationForegroundInteractiveButton;
+        } else {
+            binding.situation = UASituationBackgroundInteractiveButton;
+        }
 
         binding.actions = payload;
 
         [bindings addObject:binding];
-
     }
 
     return bindings;

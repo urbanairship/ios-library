@@ -29,7 +29,7 @@
 
 @implementation UACircularRegion
 
-+ (instancetype)circularRegionWithRadius:(NSNumber *)radius latitude:(NSNumber *)latitude longitude:(NSNumber *)longitude {
++ (nullable instancetype)circularRegionWithRadius:(NSNumber *)radius latitude:(NSNumber *)latitude longitude:(NSNumber *)longitude {
 
     UACircularRegion *circularRegion = [[self alloc] init];
 

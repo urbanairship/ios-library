@@ -1,5 +1,108 @@
-# iOS Urban Airship Library
+# iOS 10 Urban Airship Developer Preview Release
 
+THIS URBAN AIRSHIP SDK IS RELEASED AS A DEVELOPER PREVIEW VERSION AND MAY CONTAIN BUGS,
+ERRORS, DEFECTS, HARMFUL COMPONENTS AND MAY NOT BE COMPATIBLE WITH THE FINAL VERSION OF
+THE APPLICABLE THIRD PARTY OPERATING SYSTEM. ACCORDINGLY, URBAN AIRSHIP IS PROVIDING
+THE LICENSE ON AN “AS IS” BASIS AND NOT FOR USE IN PRODUCTION.
+
+## Developer Preview Migration Guide
+
+### SDK 8.0.0 DP 1 to 8.0.0 DP 3
+
+#### Package changes
+
+In order to take advantage of iOS 10 notification attachments, you will need to create a notification service extension
+alongside your main application. Most of the work is already done for you, but since this involves creating a new target there
+are a few additional steps:
+
+* Create a new iOS target in Xcode and select the "Notification Service Extension" type
+* Drag the new AirshipAppExtensions.framework into your app project
+* Link against AirshipAppExtensions.framework in your extension's Build Phases
+* Add a Copy Files phase for AirshipAppExtensions.framework and select "Frameworks" as the destination
+* Delete all dummy source code for your new extension
+* Import `<AirshipAppExtensions/AirshipAppExtensions.h>` if using Objective-C, or `AirshipAppExtensions` if using Swift, in `NotificationService`
+* Inherit from `UAMediaAttachmentExtension` in `NotificationService`
+
+For a concrete example see the SampleServiceExtension bundled with the Sample and SwiftSample applications provided in this distribution.
+
+
+#### Application Integration Changes
+
+All application integration points have been moved to `UAAppIntegration`. If your application disabled
+automatic integration, it will need to be updated to call the new methods:
+
+UIApplicationDelegate methods:
+```obj-c
++ (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken;
++ (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
++ (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings;
++ (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)())handler;
+```
+
+UNUserNotificationDelegate methods:
+```obj-c
++ (void)userNotificationCenter:(UNUserNotificationCenter *)center
+   didReceiveNotificationResponse:(UNNotificationResponse *)response
+            withCompletionHandler:(void(^)())completionHandler;
++ (void)userNotificationCenter:(UNUserNotificationCenter *)center
+       willPresentNotification:(UNNotification *)notification
+         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler;
+```
+
+#### UAPush Changes
+
+The property `launchNotification` has been replaced with `launchNotificationResponse` and will contain a `UANotificationResponse`.
+
+#### UAPushNotificationDelegate Changes
+
+The UAPushNotificationDelegate has been rewritten to be more inline with iOS 10. The following methods are provided:
+
+```obj-c
+-(void)receivedForegroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)())completionHandler;
+-(void)receivedBackgroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
+-(void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void (^)())completionHandler;
+- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification;
+```
+
+All methods are backwards compatible with iOS 8 & 9, with the exception of `presentationOptionsForNotification`.
+
+
+
+
+### SDK 7.2.0 to 8.0.0 DP 1
+
+#### Integration Changes
+
+Auto integration now automatically swizzles and sets the UNNotificationCenter delegate. Applications can
+still set a delegate on UNNotificationCenter without conflicting with Urban Airship. If automatic
+integration is disabled, UAPush needs to be either set as the UNNotificationCenter delegate or
+the application must forward calls to UAPush.
+
+#### Push Changes
+
+Notification categories and types have been removed. Instead you can set UANotificationOptions
+and UANotificationCategory and the SDK will automatically convert the properties to the
+appropriate types depending on the OS version.
+
+```obj-c
+   // Old
+   - (UIUserNotificationType)currentEnabledNotificationTypes;
+   @property (nonatomic, assign) UIUserNotificationType userNotificationTypes;
+   @property (nonatomic, strong) NSSet *userNotificationCategories;
+```
+
+```obj-c
+   // New
+   @property (nonatomic, assign) UANotificationOptions notificationOptions;
+   @property (nonatomic, assign, readonly) UANotificationOptions authorizedNotificationOptions;
+   @property (nonatomic, strong) NSSet <UANotificationCategory *>customCategories;
+````
+
+#### Location Changes
+
+The old location module has been deprecated and will be removed in the next preview. A new simplified location module has been added
+and can be accessed directly from UAirship - [UAirship location]. The new location module only supports significant location change and
+contains a simplified interface to disable/enable location updates and allow location to update in the background.
 
 ## Overview
 
@@ -13,7 +116,7 @@ as well as the subproject necessary for building AirshipKit.
 ## iOS 8 Notes (Updated Aug 12, 2015)
 
 Known issues with iOS 8.0.0 that may impact your application:
-- Applications do not enter the 'active' state when started from an interactive notification 
+- Applications do not enter the 'active' state when started from an interactive notification
 and subsequent app sessions do not receive the application:didBecomeActive delegate call or
 UIApplicationDidBecomeActiveNotification notification. The application state never
 transitions out of 'inactive' (Radar #18179525). This will impact the accuracy of
@@ -40,26 +143,26 @@ or authorization required status (Radar #18385104).
 
 Xcode 6.4+ is required for all projects and the static library. Projects must target >= iOS6.
 
-[Download](https://bintray.com/urbanairship/iOS/urbanairship-sdk/_latestVersion) and unzip the latest 
-version of libUAirship. If you are using one of our sample projects, copy the ``Airship`` directory 
+[Download](https://bintray.com/urbanairship/iOS/urbanairship-sdk/_latestVersion) and unzip the latest
+version of libUAirship. If you are using one of our sample projects, copy the ``Airship`` directory
 into the same directory as your project::
 
 ```sh
     cp -r Airship /SomeDirectory/ (where /SomeDirectory/YourProject/ is your project)
 ```
 
-If you are not using a sample project, you'll need to import the source files for the User 
-Interface into your project. These are located under Airship/UI/Default. Ensure *UAirship.h* and 
+If you are not using a sample project, you'll need to import the source files for the User
+Interface into your project. These are located under Airship/UI/Default. Ensure *UAirship.h* and
 *UAPush.h* are included in your source files.
 
 Modules are enabled by default in new projects starting with Xcode 5. We recommend enabling
 modules and the automatic linking of frameworks. In the project's Build Settings, search for
 ``Enable Modules`` and set it to ``YES`` then set ``Link Frameworks Automatically`` to ``YES``.
 
-New applications with iOS 8 or above as a deployment target may opt to link against AirshipKit.framework 
-instead of libUAirship. Because AirshipKit is an embedded framework as opposed to a static library, 
-applications using this framework can take advantage of features such as module-style import and automatic 
-bridging to the Swift language. Be aware, however, that embedded frameworks are not supported on iOS 7 and 
+New applications with iOS 8 or above as a deployment target may opt to link against AirshipKit.framework
+instead of libUAirship. Because AirshipKit is an embedded framework as opposed to a static library,
+applications using this framework can take advantage of features such as module-style import and automatic
+bridging to the Swift language. Be aware, however, that embedded frameworks are not supported on iOS 7 and
 below. Further instructions on how to set up AirshipKit can be found below under the header "AirshipKit Setup"
 
 
@@ -68,7 +171,7 @@ below. Further instructions on how to set up AirshipKit can be found below under
 - Add the Airship directory to your build target's header search path.
 
 - Add `-ObjC -lz -lsqlite3` linker flag to *Other Linker Flags* to prevent "Selector Not Recognized"
-runtime exceptions and to include linkage to libz and libsqlite3. The linker flag `-force_load <path to 
+runtime exceptions and to include linkage to libz and libsqlite3. The linker flag `-force_load <path to
 library>/libUAirship-<version>.a` may be used in instances where using the -ObjC linker flag is undesirable.
 
 - Link against the static library, add the libUAirship.a file to the Link Binary With Libraries section in the Build Phases tab for your target.
@@ -86,7 +189,7 @@ library>/libUAirship-<version>.a` may be used in instances where using the -ObjC
 
 The library uses a .plist configuration file named `AirshipConfig.plist` to manage your production and development
 application profiles. Example copies of this file are available in all of the sample projects. Place this file
-in your project and set the following values to the ones in your application at http://go.urbanairship.com.  To 
+in your project and set the following values to the ones in your application at http://go.urbanairship.com.  To
 view all the possible keys and values, see the [UAConfig class reference](http://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAConfig.html)
 
 You can also edit the file as plain-text:
@@ -118,13 +221,13 @@ development to production keys based on the build type.
 #### App Delegate additions
 
 To enable push notifications, you will need to make several additions to your application delegate.
-    
+
 ```obj-c
-    - (BOOL)application:(UIApplication *)application 
+    - (BOOL)application:(UIApplication *)application
             didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
+
         // Your other application code.....
-    
+
         // Set log level for debugging config loading (optional)
         // It will be set to the value in the loaded config upon takeOff
         [UAirship setLogLevel:UALogLevelTrace];
@@ -156,7 +259,7 @@ To enable push notifications, you will need to make several additions to your ap
         return YES;
     }
 ```
-    
+
 To enable push later on in your application:
 
 ```obj-c
@@ -200,7 +303,7 @@ The available log levels are:
 ```
 
 Logs for implementation errors will be prefixed with ':rotating_light:Urban Airship Implementation Error:rotating_light:' in
-debug mode. The emoji can be removed by disabling loud implementation errors before takeOff by calling: 
+debug mode. The emoji can be removed by disabling loud implementation errors before takeOff by calling:
 
 ```obj-c
     [UAirship setLoudImpErrorLogging:NO];
@@ -226,13 +329,13 @@ with the use of our install script, scripts/mock_setup.sh.
 
 ### Core Library
 
-Third party Package | License   | Copyright / Creator 
+Third party Package | License   | Copyright / Creator
 ------------------- | --------- | -----------------------------------
 Base64              | BSD       | Copyright 2009-2010 Matt Gallagher.
 
 ### Test Code
 
-Third party Package | License   | Copyright / Creator 
+Third party Package | License   | Copyright / Creator
 ------------------- | --------- | -----------------------------------
 JRSwizzle           | MIT       | Copyright 2012 Jonathan Rentzsch
 
@@ -241,5 +344,3 @@ JRSwizzle           | MIT       | Copyright 2012 Jonathan Rentzsch
 
 We accept pull requests! If you would like to submit a pull request, please fill out and submit a
 Code Contribution Agreement (http://docs.urbanairship.com/contribution-agreement.html).
-
-

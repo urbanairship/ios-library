@@ -77,8 +77,10 @@
                     if (!result) {
                         UA_LWARN("Action %@ called the completion handler with a nil result", [self description]);
                     }
-                    [self didPerformWithArguments:arguments withResult:result];
-                    completionHandler(result);
+
+                    UAActionResult *normalizedResult = result ?: [UAActionResult emptyResult];
+                    [self didPerformWithArguments:arguments withResult:normalizedResult];
+                    completionHandler(normalizedResult);
                 });
             }];
         }

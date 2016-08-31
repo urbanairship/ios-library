@@ -24,12 +24,13 @@
  */
 
 #import <XCTest/XCTest.h>
-#import "UAInteractiveNotificationEvent+Internal.h"
+#import "UANotificationAction.h"
 #import "UAEvent+Internal.h"
+#import "UAInteractiveNotificationEvent+Internal.h"
 
 @interface UAInteractiveNotificationEventTest : XCTestCase
 @property (nonatomic, strong) NSDictionary *notification;
-@property (nonatomic, strong) UIMutableUserNotificationAction *action;
+@property (nonatomic, strong) UANotificationAction *action;
 @end
 
 @implementation UAInteractiveNotificationEventTest
@@ -45,9 +46,9 @@
                            @"_": @"send ID"
                         };
 
-    self.action = [[UIMutableUserNotificationAction alloc] init];
-    self.action.identifier = @"action_identifier";
-    self.action.title = @"action_title";
+    self.action = [UANotificationAction actionWithIdentifier:@"action_identifier"
+                                                       title:@"action_title"
+                                                     options:UNNotificationActionOptionForeground];
 }
 
 /**
@@ -82,8 +83,11 @@
  * Test the event payload when its created with a background action.
  */
 - (void)testEventDataBackgroundAction {
-    self.action.activationMode = UIUserNotificationActivationModeBackground;
-    UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
+    self.action = [UANotificationAction actionWithIdentifier:@"action_identifier"
+                                                       title:@"action_title"
+                                                     options:0];
+
+      UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
                                                                                              categoryID:@"category_id"
                                                                                            notification:self.notification];
 
@@ -111,12 +115,10 @@
  * Test the event payload when its created with a responseInfo.
  */
 - (void)testEventResponseInfo {
-    NSDictionary *dictionary = @{@"UIUserNotificationActionResponseTypedTextKey": @"hello"};
-
     UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
                                                                                              categoryID:@"category_id"
                                                                                            notification:self.notification
-                                                                                           responseInfo:dictionary];
+                                                                                           responseText:@"hello"];
 
     NSDictionary *expectedData = @{@"foreground": @"true",
                                    @"button_id": @"action_identifier",
@@ -135,12 +137,11 @@
 - (void)testEventOverMaxUserInput {
 
     NSString *overMaxUserInput = [@"" stringByPaddingToLength:256 withString:@"User_INPUT" startingAtIndex:0];
-    NSDictionary *overMaxDictionary = @{@"UIUserNotificationActionResponseTypedTextKey": overMaxUserInput};
 
     UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
                                                                                              categoryID:@"category_id"
                                                                                            notification:self.notification
-                                                                                           responseInfo:overMaxDictionary];
+                                                                                           responseText:overMaxUserInput];
 
     NSString *maxUserInput = [@"" stringByPaddingToLength:255 withString:@"User_INPUT" startingAtIndex:0];
 
@@ -160,12 +161,11 @@
 - (void)testEventMaxUserInput {
 
     NSString *maxUserInput = [@"" stringByPaddingToLength:255 withString:@"User_INPUT" startingAtIndex:0];
-    NSDictionary *maxDictionary = @{@"UIUserNotificationActionResponseTypedTextKey": maxUserInput};
 
     UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
                                                                                              categoryID:@"category_id"
                                                                                            notification:self.notification
-                                                                                           responseInfo:maxDictionary];
+                                                                                           responseText:maxUserInput];
 
     NSDictionary *expectedData = @{@"foreground": @"true",
                                    @"button_id": @"action_identifier",
@@ -181,21 +181,17 @@
  * Test when the user_input is an empty string.
  */
 - (void)testEventEmptyUserInput {
-
-    NSString *emptyString = @"";
-    NSDictionary *emptyDictionary = @{@"UIUserNotificationActionResponseTypedTextKey": emptyString};
-
     UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
                                                                                              categoryID:@"category_id"
                                                                                            notification:self.notification
-                                                                                           responseInfo:emptyDictionary];
+                                                                                           responseText:@""];
 
     NSDictionary *expectedData = @{@"foreground": @"true",
                                    @"button_id": @"action_identifier",
                                    @"button_description": @"action_title",
                                    @"button_group": @"category_id",
                                    @"send_id": @"send ID",
-                                   @"user_input": emptyString};
+                                   @"user_input": @""};
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
 }

@@ -33,75 +33,55 @@
 
 @implementation PushHandler
 
-- (void)receivedForegroundNotification:(NSDictionary *)notification fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    UA_LDEBUG(@"Received a notification while the app was already in the foreground");
+-(void)receivedBackgroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+    // Application received a background notification
+    UA_LDEBUG(@"The application received a background notification");
+
+    // Call the completion handler
+    completionHandler(UIBackgroundFetchResultNoData);
+}
+
+-(void)receivedForegroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)())completionHandler {
+    // Application received a foreground notification
+    UA_LDEBUG(@"The application received a foreground notification");
 
     // Only display an alert dialog if the push does not contain a rich push message id.
     // If it does, allow the InboxDelegate's richPushMessageAvailable: to handle it.
-    if (![UAInboxUtils inboxMessageIDFromNotification:notification]) {
+    if (![UAInboxUtils inboxMessageIDFromNotification:notificationContent.notificationInfo]) {
 
-        id alertMessage = notification[@"aps"][@"alert"];
-        if ([alertMessage isKindOfClass:[NSDictionary class]]) {
-            alertMessage = alertMessage[@"body"];
-        }
+        NSString *alertTitle = notificationContent.alertTitle ? notificationContent.alertTitle : NSLocalizedStringFromTable(@"UA_Notification_Title", @"UAPushUI", @"System Push Settings Label");
 
-        if (alertMessage) {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:alertTitle message:notificationContent.alertBody preferredStyle:UIAlertControllerStyleAlert];
 
-            NSString *alertTitle = NSLocalizedStringFromTable(@"UA_Notification_Title", @"UAPushUI", @"System Push Settings Label");
+        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
 
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:alertTitle message:alertMessage preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:cancelAction];
 
-            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
 
-            [alertController addAction:cancelAction];
+        alertController.popoverPresentationController.sourceView = topController.view;
 
-            UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
-
-            alertController.popoverPresentationController.sourceView = topController.view;
-
-            [topController presentViewController:alertController animated:YES completion:nil];
-        } else {
-            UALOG(@"Unable to parse message body");
-        }
+        [topController presentViewController:alertController animated:YES completion:nil];
     }
 
-    // Call the completion handler with the fetch results
-    completionHandler(UIBackgroundFetchResultNoData);
-}
-
-- (void)launchedFromNotification:(NSDictionary *)notification fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    UA_LDEBUG(@"The application was launched or resumed from a notification");
-
-    // Do something when launched via a notification
-
-    // Call the completion handler with the fetch results
-    completionHandler(UIBackgroundFetchResultNoData);
-}
-
-- (void)launchedFromNotification:(NSDictionary *)notification actionIdentifier:(NSString *)identifier completionHandler:(void (^)())completionHandler {
-    UA_LDEBUG(@"The application was launched or resumed from a foreground user notification button");
-
-    // Do something when launched via a user notification button
-
     // Call the completion handler
     completionHandler();
 }
 
-- (void) receivedBackgroundNotification:(NSDictionary *)notification fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    UA_LDEBUG(@"The application was started in the background from a user notification");
+-(void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void (^)())completionHandler {
 
-    // Call the completion handler
-    completionHandler(UIBackgroundFetchResultNoData);
+    if ([notificationResponse.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
+        UA_LDEBUG(@"The user tapped the notification to launch the app");
+
+        // Call the completion handler
+        completionHandler();
+    } else if (notificationResponse.actionIdentifier) {
+        UA_LDEBUG(@"The user selected the following action identifier:%@", notificationResponse.actionIdentifier);
+
+        // Call the completion handler
+        completionHandler();
+    }
 }
-
-- (void)receivedBackgroundNotification:(NSDictionary *)notification actionIdentifier:(NSString *)identifier completionHandler:(void (^)())completionHandler {
-    UA_LDEBUG(@"The application was started in the background from a user notification button");
-    // Do any background tasks via a user notificaiton button
-
-    // Call the completion handler
-    completionHandler();
-}
-
 
 
 @end

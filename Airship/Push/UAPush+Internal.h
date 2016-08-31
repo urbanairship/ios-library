@@ -24,7 +24,11 @@
  */
 
 #import "UAPush.h"
+#import "UAirship.h"
 #import "UAChannelRegistrar+Internal.h"
+#import "UAAPNSRegistrationProtocol+Internal.h"
+#import "UAAPNSRegistration+Internal.h"
+#import "UALegacyAPNSRegistration+Internal.h"
 
 @class UAPreferenceDataStore;
 @class UAConfig;
@@ -117,6 +121,7 @@ extern NSString *const UAPushAddTagGroupsSettingsKey;
  */
 extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 
+
 @interface UAPush () <UAChannelRegistrarDelegate>
 
 /**
@@ -148,9 +153,9 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 @property (nonatomic, strong) UAChannelRegistrar *channelRegistrar;
 
 /**
- * Notification that launched the application
+ * Notification that launched the application.
  */
-@property (nonatomic, strong, nullable) NSDictionary *launchNotification;
+@property (nullable, nonatomic, strong) UANotificationResponse *launchNotificationResponse;
 
 /**
  * Background task identifier used to do any registration in the background.
@@ -167,7 +172,6 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
  */
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
-@property (nonatomic, strong) NSSet *allUserNotificationCategories;
 
 /**
  * Tag groups to add to channel.
@@ -183,6 +187,16 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
  * The tag groups API client.
  */
 @property (nonatomic, strong) UATagGroupsAPIClient *tagGroupsAPIClient;
+
+/**
+ * The current authorized notification options.
+ */
+@property (nonatomic, assign) UANotificationOptions authorizedNotificationOptions;
+
+/**
+ * The push registration instance.
+ */
+@property (nonatomic, strong) id<UAAPNSRegistrationProtocol> pushRegistration;
 
 /**
  * Factory method to create a push instance.
@@ -280,20 +294,35 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 - (void)updateAPNSRegistration;
 
 /**
- * Determines whether UIUserNotificationCategory is available for use.
+ * Updates the authorized notification types.
  */
-- (BOOL)shouldUseUIUserNotificationCategories;
+- (void)updateAuthorizedNotificationTypes;
 
 /**
- * Converts UAUserNotificationCategory to UIUserNotificationCategory on iOS 8.
+ * Called to return the presentation options for an iOS 10 notification.
+ *
+ * @param notification The notification.
+ * @return Foreground presentation options.
  */
-- (NSSet *)normalizeCategories:(NSSet *)categories;
+- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification;
 
 /**
- * Updates the set of all known user notification categories by combining
- * the default and user supplied categories.
+ * Called when a notification response is received.
+ * 
+ * @param response The notification response.
+ * @param handler The completion handler.
  */
-- (void)updateAllUserNotificationCategories;
+- (void)handleNotificationResponse:(UANotificationResponse *)response completionHandler:(void (^)())handler;
+
+/**
+ * Called when a remote notification is received.
+ *
+ * @param notification The notification content.
+ * @param foreground If the notification was recieved in the foreground or not.
+ * @param handler The completion handler.
+ */
+- (void)handleRemoteNotification:(UANotificationContent *)notification foreground:(BOOL)foreground completionHandler:(void (^)(UIBackgroundFetchResult))handler;
+
 
 @end
 

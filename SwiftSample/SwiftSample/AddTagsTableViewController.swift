@@ -35,14 +35,14 @@ class AddTagsTableViewController: UITableViewController, UITextFieldDelegate {
         self.addCustomTagTextField.delegate = self
     }
 
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return false
     }
 
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
 
-        if (textField.text?.characters.count > 0){
+        if ((textField.text?.characters.count)! > 0){
             UAirship.push().addTag(textField.text!)
         } else {
             return false
@@ -50,7 +50,7 @@ class AddTagsTableViewController: UITableViewController, UITextFieldDelegate {
 
         UAirship.push().updateRegistration()
 
-        navigationController?.popViewControllerAnimated(true)
+        _ = navigationController?.popViewController(animated: true)
 
         return true
     }

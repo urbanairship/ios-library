@@ -684,11 +684,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
  * @returns YES if authorization was requested or is not required, otherwise NO.
  */
 - (BOOL)requestAuthorizationWithLocationManager:(CLLocationManager *)locationManager {
-    // iOS7 and older we do not need to request authorization prior to starting location.
-    if (![locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
-        return YES;
-    }
-
     if (self.requestAlwaysAuthorization) {
         if (![[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSLocationAlwaysUsageDescription"]) {
             UA_LERR(@"NSLocationAlwaysUsageDescription not set, unable to request authorization.");

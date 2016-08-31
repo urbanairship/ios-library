@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return Circular region object or `nil` if error occurs
  */
-+ (instancetype)circularRegionWithRadius:(NSNumber *)radius latitude:(NSNumber *)latitude longitude:(NSNumber *)longitude;
++ (nullable instancetype)circularRegionWithRadius:(NSNumber *)radius latitude:(NSNumber *)latitude longitude:(NSNumber *)longitude;
 
 @end
 

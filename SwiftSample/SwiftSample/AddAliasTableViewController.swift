@@ -36,20 +36,20 @@ class AddAliasTableViewController: UITableViewController, UITextFieldDelegate {
         addAliasTextField.delegate = self
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         if ((UAirship.push().alias) != nil) {
             addAliasTextField.text = UAirship.push().alias
         }
     }
 
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return false
     }
 
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
 
-        if (textField.text?.characters.count > 0){
+        if ((textField.text?.characters.count)! > 0){
             UAirship.push().alias = textField.text
         } else {
             UAirship.push().alias = nil
@@ -57,7 +57,7 @@ class AddAliasTableViewController: UITableViewController, UITextFieldDelegate {
 
         UAirship.push().updateRegistration()
 
-        navigationController?.popViewControllerAnimated(true)
+        _ = navigationController?.popViewController(animated: true)
 
         return true
     }

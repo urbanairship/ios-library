@@ -31,10 +31,10 @@ class PushHandler: NSObject, UAPushNotificationDelegate {
 
     var audioPlayer = AVAudioPlayer()
 
-    func playNotificationSound(soundFilename: String) {
+    func playNotificationSound(_ soundFilename: String) {
 
         let sound: NSString = NSString(string: soundFilename)
-        let path = NSBundle.mainBundle().pathForResource(sound.stringByDeletingPathExtension, ofType: sound.pathExtension)
+        let path = Bundle.main.path(forResource: sound.deletingPathExtension, ofType: sound.pathExtension)
 
         guard (path != nil) else {
             print("Received an alert with a sound that cannot be found the application bundle: \(soundFilename)")
@@ -42,8 +42,8 @@ class PushHandler: NSObject, UAPushNotificationDelegate {
         }
 
         do {
-            let url = NSURL(fileURLWithPath: path!)
-            try audioPlayer = AVAudioPlayer(contentsOfURL: url)
+            let url = URL(fileURLWithPath: path!)
+            try audioPlayer = AVAudioPlayer(contentsOf: url)
             audioPlayer.prepareToPlay()
             audioPlayer.play()
         } catch {
@@ -53,51 +53,32 @@ class PushHandler: NSObject, UAPushNotificationDelegate {
         print("Received a foreground alert with a sound: \(sound)");
     }
 
-    func receivedForegroundNotification(notification: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
+    func receivedForegroundNotification(_ notification: UANotificationContent, completionHandler: @escaping () -> Void) {
         print("Received a notification while the app was already in the foreground")
 
         let alertController: UIAlertController = UIAlertController()
 
-        if let alertMessage = notification["aps"]?["alert"] {
-            if alertMessage is NSDictionary {
-                alertController.message = alertMessage?["body"] as? String
-            } else {
-                alertController.message = alertMessage as? String
-            }
-
-            alertController.title = NSLocalizedString("UA_Notification_Title", tableName: "UAPushUI", comment: "System Push Settings Label")
-
-            let cancelAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil)
-            alertController.addAction(cancelAction)
-
-            let topController = UIApplication.sharedApplication().keyWindow!.rootViewController! as UIViewController
-            alertController.popoverPresentationController?.sourceView = topController.view
-
-            topController.presentViewController(alertController, animated:true, completion:nil)
+        alertController.message = notification.alertBody
+        if let alertTitle = notification.alertTitle {
+            alertController.title = alertTitle
         } else {
-            print("Unable to parse message body")
+            alertController.title = NSLocalizedString("UA_Notification_Title", tableName: "UAPushUI", comment: "System Push Settings Label")
         }
 
-        completionHandler(UIBackgroundFetchResult.NoData)
-    }
+        let cancelAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+        alertController.addAction(cancelAction)
 
-    func launchedFromNotification(notification: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
-        print("The application was launched or resumed from a notification")
-    }
+        let topController = UIApplication.shared.keyWindow!.rootViewController! as UIViewController
+        alertController.popoverPresentationController?.sourceView = topController.view
 
-    func launchedFromNotification(notification: [NSObject : AnyObject], actionIdentifier identifier: String, completionHandler: () -> Void) {
-        print("The application was launched or resumed from a foreground user notification button")
+        topController.present(alertController, animated:true, completion:nil)
+
         completionHandler()
-
     }
 
-    func receivedBackgroundNotification(notification: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
+    func receivedBackgroundNotification(_ notification: UANotificationContent, completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         print("The application was started in the background from a user notification")
-        completionHandler(UIBackgroundFetchResult.NoData)
+        completionHandler(UIBackgroundFetchResult.noData)
     }
 
-    func receivedBackgroundNotification(notification: [NSObject : AnyObject], actionIdentifier identifier: String, completionHandler: () -> Void) {
-        print("The application was started in the background from a user notification button")
-        completionHandler()
-    }
 }

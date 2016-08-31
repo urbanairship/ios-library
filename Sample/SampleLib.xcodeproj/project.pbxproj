@@ -7,10 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4907A1181D52A702005375C5 /* NotificationService.m in Sources */ = {isa = PBXBuildFile; fileRef = 4907A1171D52A702005375C5 /* NotificationService.m */; };
+		4907A11C1D52A702005375C5 /* SampleServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 4907A1141D52A702005375C5 /* SampleServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		493F50E51C5B12F300B050A1 /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 493F50E31C5B12F300B050A1 /* UAPushUI.strings */; };
 		493F511D1C5B306C00B050A1 /* InboxDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 493F511C1C5B306C00B050A1 /* InboxDelegate.m */; };
 		4997B4041C40415E00C80C14 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4997B3F41C40402B00C80C14 /* AirshipKit.framework */; };
 		4997B4051C40415E00C80C14 /* AirshipKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4997B3F41C40402B00C80C14 /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		49AA01291D651BED0081989A /* AirshipAppExtensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49AA01261D651BDA0081989A /* AirshipAppExtensions.framework */; };
+		49AA012E1D6537660081989A /* AirshipAppExtensions.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 49AA01261D651BDA0081989A /* AirshipAppExtensions.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		61A672F61CAB319C00BAF58A /* PushHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 61A672F51CAB319C00BAF58A /* PushHandler.m */; };
 		61D703131CBEAF1E00DD6C57 /* UAMessageCenterDefaultStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 61D703121CBEAF1E00DD6C57 /* UAMessageCenterDefaultStyle.plist */; };
 		61F645A91C486FEE00B2C48B /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4997B3F41C40402B00C80C14 /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -45,6 +49,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		4907A11A1D52A702005375C5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7646939A1C237B630090FE40 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4907A1131D52A702005375C5;
+			remoteInfo = SampleServiceExtension;
+		};
 		4997B3F31C40402B00C80C14 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4997B3EF1C40402B00C80C14 /* AirshipKitSource.xcodeproj */;
@@ -66,9 +77,51 @@
 			remoteGlobalIDString = 494DD9561B0EB677009C134E;
 			remoteInfo = AirshipKit;
 		};
+		49AA01251D651BDA0081989A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 49AA01201D651BDA0081989A /* AirshipAppExtensions.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 49AA00FC1D65158C0081989A;
+			remoteInfo = AirshipAppExtensions;
+		};
+		49AA01271D651BDA0081989A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 49AA01201D651BDA0081989A /* AirshipAppExtensions.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 49AA01051D65158C0081989A;
+			remoteInfo = AirshipAppExtensionsTests;
+		};
+		49AA012A1D651C490081989A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 49AA01201D651BDA0081989A /* AirshipAppExtensions.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 49AA00FB1D65158C0081989A;
+			remoteInfo = AirshipAppExtensions;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		4907A1201D52A702005375C5 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				4907A11C1D52A702005375C5 /* SampleServiceExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		49AA012D1D65375F0081989A /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				49AA012E1D6537660081989A /* AirshipAppExtensions.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		764694261C23933D0090FE40 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -93,10 +146,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4907A1141D52A702005375C5 /* SampleServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SampleServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		4907A1161D52A702005375C5 /* NotificationService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationService.h; sourceTree = "<group>"; };
+		4907A1171D52A702005375C5 /* NotificationService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationService.m; sourceTree = "<group>"; };
+		4907A1191D52A702005375C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		492B2DFC1D1A080F00A9C0F0 /* Sample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Sample.entitlements; sourceTree = "<group>"; };
 		493F50E41C5B12F300B050A1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UAPushUI.strings; sourceTree = "<group>"; };
 		493F511B1C5B306C00B050A1 /* InboxDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxDelegate.h; sourceTree = "<group>"; };
 		493F511C1C5B306C00B050A1 /* InboxDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxDelegate.m; sourceTree = "<group>"; };
 		4997B3EF1C40402B00C80C14 /* AirshipKitSource.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipKitSource.xcodeproj; path = ../AirshipKit/AirshipKitSource.xcodeproj; sourceTree = "<group>"; };
+		49AA01201D651BDA0081989A /* AirshipAppExtensions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipAppExtensions.xcodeproj; path = ../AirshipAppExtensions/AirshipAppExtensions.xcodeproj; sourceTree = "<group>"; };
 		61A672F41CAB319C00BAF58A /* PushHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushHandler.h; sourceTree = "<group>"; };
 		61A672F51CAB319C00BAF58A /* PushHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushHandler.m; sourceTree = "<group>"; };
 		61D703121CBEAF1E00DD6C57 /* UAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UAMessageCenterDefaultStyle.plist; sourceTree = "<group>"; };
@@ -141,6 +200,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4907A1111D52A702005375C5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				49AA01291D651BED0081989A /* AirshipAppExtensions.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7646939F1C237B630090FE40 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -152,6 +219,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4907A1151D52A702005375C5 /* SampleServiceExtension */ = {
+			isa = PBXGroup;
+			children = (
+				4907A1191D52A702005375C5 /* Info.plist */,
+				4907A1161D52A702005375C5 /* NotificationService.h */,
+				4907A1171D52A702005375C5 /* NotificationService.m */,
+			);
+			path = SampleServiceExtension;
+			sourceTree = "<group>";
+		};
 		493F50E21C5B12F300B050A1 /* Localization */ = {
 			isa = PBXGroup;
 			children = (
@@ -168,13 +245,24 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		49AA01211D651BDA0081989A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				49AA01261D651BDA0081989A /* AirshipAppExtensions.framework */,
+				49AA01281D651BDA0081989A /* AirshipAppExtensionsTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		764693991C237B630090FE40 = {
 			isa = PBXGroup;
 			children = (
 				4997B3EF1C40402B00C80C14 /* AirshipKitSource.xcodeproj */,
+				49AA01201D651BDA0081989A /* AirshipAppExtensions.xcodeproj */,
 				764693A41C237B630090FE40 /* Sample */,
 				61D703121CBEAF1E00DD6C57 /* UAMessageCenterDefaultStyle.plist */,
 				76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */,
+				4907A1151D52A702005375C5 /* SampleServiceExtension */,
 				764693A31C237B630090FE40 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -183,6 +271,7 @@
 			isa = PBXGroup;
 			children = (
 				764693A21C237B630090FE40 /* Sample.app */,
+				4907A1141D52A702005375C5 /* SampleServiceExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -190,6 +279,7 @@
 		764693A41C237B630090FE40 /* Sample */ = {
 			isa = PBXGroup;
 			children = (
+				492B2DFC1D1A080F00A9C0F0 /* Sample.entitlements */,
 				764693A81C237B630090FE40 /* AppDelegate.h */,
 				764693A91C237B630090FE40 /* AppDelegate.m */,
 				61A672F41CAB319C00BAF58A /* PushHandler.h */,
@@ -262,6 +352,25 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4907A1131D52A702005375C5 /* SampleServiceExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4907A11F1D52A702005375C5 /* Build configuration list for PBXNativeTarget "SampleServiceExtension" */;
+			buildPhases = (
+				4907A1101D52A702005375C5 /* Sources */,
+				4907A1111D52A702005375C5 /* Frameworks */,
+				4907A1121D52A702005375C5 /* Resources */,
+				49AA012D1D65375F0081989A /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				49AA012B1D651C490081989A /* PBXTargetDependency */,
+			);
+			name = SampleServiceExtension;
+			productName = SampleServiceExtension;
+			productReference = 4907A1141D52A702005375C5 /* SampleServiceExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		764693A11C237B630090FE40 /* Sample */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 764693BC1C237B630090FE40 /* Build configuration list for PBXNativeTarget "Sample" */;
@@ -271,12 +380,14 @@
 				764693A01C237B630090FE40 /* Resources */,
 				764694261C23933D0090FE40 /* Embed Frameworks */,
 				76AE34E91C2B6BF700D7F3B9 /* CopyFiles */,
+				4907A1201D52A702005375C5 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				4997B3F61C40409A00C80C14 /* PBXTargetDependency */,
 				4997B4071C40415E00C80C14 /* PBXTargetDependency */,
+				4907A11B1D52A702005375C5 /* PBXTargetDependency */,
 			);
 			name = Sample;
 			productName = Sample;
@@ -292,9 +403,16 @@
 				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = UA;
 				TargetAttributes = {
+					4907A1131D52A702005375C5 = {
+						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = PGJV57GD94;
+						ProvisioningStyle = Automatic;
+					};
 					764693A11C237B630090FE40 = {
 						CreatedOnToolsVersion = 7.2;
 						DevelopmentTeam = PGJV57GD94;
+						DevelopmentTeamName = "Urban Airship Inc.";
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -327,6 +445,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = 49AA01211D651BDA0081989A /* Products */;
+					ProjectRef = 49AA01201D651BDA0081989A /* AirshipAppExtensions.xcodeproj */;
+				},
+				{
 					ProductGroup = 4997B3F01C40402B00C80C14 /* Products */;
 					ProjectRef = 4997B3EF1C40402B00C80C14 /* AirshipKitSource.xcodeproj */;
 				},
@@ -334,6 +456,7 @@
 			projectRoot = "";
 			targets = (
 				764693A11C237B630090FE40 /* Sample */,
+				4907A1131D52A702005375C5 /* SampleServiceExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -346,9 +469,30 @@
 			remoteRef = 4997B3F31C40402B00C80C14 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		49AA01261D651BDA0081989A /* AirshipAppExtensions.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipAppExtensions.framework;
+			remoteRef = 49AA01251D651BDA0081989A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		49AA01281D651BDA0081989A /* AirshipAppExtensionsTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipAppExtensionsTests.xctest;
+			remoteRef = 49AA01271D651BDA0081989A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4907A1121D52A702005375C5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		764693A01C237B630090FE40 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -380,6 +524,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4907A1101D52A702005375C5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4907A1181D52A702005375C5 /* NotificationService.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7646939E1C237B630090FE40 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -401,6 +553,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		4907A11B1D52A702005375C5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4907A1131D52A702005375C5 /* SampleServiceExtension */;
+			targetProxy = 4907A11A1D52A702005375C5 /* PBXContainerItemProxy */;
+		};
 		4997B3F61C40409A00C80C14 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipKit;
@@ -410,6 +567,11 @@
 			isa = PBXTargetDependency;
 			name = AirshipKit;
 			targetProxy = 4997B4061C40415E00C80C14 /* PBXContainerItemProxy */;
+		};
+		49AA012B1D651C490081989A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipAppExtensions;
+			targetProxy = 49AA012A1D651C490081989A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -433,6 +595,40 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		4907A11D1D52A702005375C5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				DEVELOPMENT_TEAM = PGJV57GD94;
+				INFOPLIST_FILE = SampleServiceExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.SampleServiceExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		4907A11E1D52A702005375C5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				DEVELOPMENT_TEAM = PGJV57GD94;
+				INFOPLIST_FILE = SampleServiceExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.SampleServiceExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 		764693BA1C237B630090FE40 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -520,13 +716,18 @@
 		764693BD1C237B630090FE40 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_ENTITLEMENTS = Sample/Sample.entitlements;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Sample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VALID_ARCHS = "$(inherited)";
 			};
 			name = Debug;
@@ -534,13 +735,17 @@
 		764693BE1C237B630090FE40 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_ENTITLEMENTS = Sample/Sample.entitlements;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Sample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				VALID_ARCHS = "$(inherited)";
 			};
 			name = Release;
@@ -548,6 +753,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4907A11F1D52A702005375C5 /* Build configuration list for PBXNativeTarget "SampleServiceExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4907A11D1D52A702005375C5 /* Debug */,
+				4907A11E1D52A702005375C5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		7646939D1C237B630090FE40 /* Build configuration list for PBXProject "SampleLib" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

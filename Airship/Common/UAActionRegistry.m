@@ -25,7 +25,6 @@
 
 #import "UAActionRegistry+Internal.h"
 #import "UAActionRegistryEntry+Internal.h"
-#import "UAIncomingPushAction+Internal.h"
 #import "UAOpenExternalURLAction.h"
 #import "UAAddTagsAction.h"
 #import "UARemoveTagsAction.h"
@@ -73,8 +72,11 @@
                   name:(NSString *)name
              predicate:(UAActionPredicate)predicate {
 
-    NSArray *names = name ? @[name] : nil;
-    return [self registerAction:action names:names predicate:predicate];
+    if (!name) {
+        return NO;
+    }
+
+    return [self registerAction:action names:@[name] predicate:predicate];
 }
 
 -(BOOL)registerAction:(UAAction *)action
@@ -257,18 +259,9 @@
 }
 
 - (void)registerDefaultActions {
-    // Incoming push action
-    UAIncomingPushAction *incomingPushAction = [[UAIncomingPushAction alloc] init];
-    [self registerReservedAction:incomingPushAction name:kUAIncomingPushActionRegistryName predicate:nil];
-
     // Incoming in-app message action
     UAIncomingInAppMessageAction *iamAction = [[UAIncomingInAppMessageAction alloc] init];
-    [self registerReservedAction:iamAction name:kUAIncomingInAppMessageActionDefaultRegistryName predicate:^(UAActionArguments *args){
-        UA_IF_IOS7_OR_GREATER(return YES;)
-
-        // In-App Messages will not work on iOS 6 or below
-        return NO;
-    }];
+    [self registerReservedAction:iamAction name:kUAIncomingInAppMessageActionDefaultRegistryName predicate:nil];
 
     // Close window action
     UACloseWindowAction *closeWindowAction = [[UACloseWindowAction alloc] init];
@@ -277,6 +270,11 @@
     // Open external URL predicate
     UAActionPredicate urlPredicate = ^(UAActionArguments *args) {
         return (BOOL)(args.situation != UASituationForegroundPush);
+    };
+
+    UAActionPredicate tagsPredicate = ^(UAActionArguments *args) {
+        BOOL foregroundPresentation = args.metadata[UAActionMetadataForegroundPresentationKey] != nil;
+        return (BOOL)!foregroundPresentation;
     };
 
     // Open external URL action
@@ -288,12 +286,14 @@
 
     UAAddTagsAction *addTagsAction = [[UAAddTagsAction alloc] init];
     [self registerAction:addTagsAction
-                   names:@[kUAAddTagsActionDefaultRegistryName, kUAAddTagsActionDefaultRegistryAlias]];
+                   names:@[kUAAddTagsActionDefaultRegistryName, kUAAddTagsActionDefaultRegistryAlias]
+               predicate:tagsPredicate];
 
 
     UARemoveTagsAction *removeTagsAction = [[UARemoveTagsAction alloc] init];
     [self registerAction:removeTagsAction
-                   names:@[kUARemoveTagsActionDefaultRegistryName, kUARemoveTagsActionDefaultRegistryAlias]];
+                   names:@[kUARemoveTagsActionDefaultRegistryName, kUARemoveTagsActionDefaultRegistryAlias]
+               predicate:tagsPredicate];
 
     UALandingPageAction *landingPageAction = [[UALandingPageAction alloc] init];
     [self registerAction:landingPageAction

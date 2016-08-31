@@ -180,17 +180,6 @@ static NSMutableSet *overlayControllers_ = nil;
 
         self.webView.dataDetectorTypes = UIDataDetectorTypeNone;
 
-        // Hack to hide the ugly webview gradient (iOS6 and earlier)
-        for (UIView *subView in [self.webView subviews]) {
-            if ([subView isKindOfClass:[UIScrollView class]]) {
-                for (UIView *shadowView in [subView subviews]) {
-                    if ([shadowView isKindOfClass:[UIImageView class]]) {
-                        [shadowView setHidden:YES];
-                    }
-                }
-            }
-        }
-
         self.loadingIndicator = [UABeveledLoadingIndicator indicator];
 
         // Required to receive orientation updates from NSNotificationCenter
@@ -294,7 +283,7 @@ static NSMutableSet *overlayControllers_ = nil;
     self.overlayView.onLayoutSubviews = ^{
         UALandingPageOverlayController *strongSelf = weakSelf;
         // If we're running on iOS 8 or above
-        if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
+        if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){8, 0, 0}]) {
             // Get the current horizontal size class
             UIUserInterfaceSizeClass horizontalSizeClass = [UAUtils mainWindow].traitCollection.horizontalSizeClass;
             // If the there has been a change, update layout constraints
@@ -305,7 +294,7 @@ static NSMutableSet *overlayControllers_ = nil;
         }
     };
 
-    if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
+    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){8, 0, 0}]) {
         self.lastHorizontalSizeClass = [UAUtils mainWindow].traitCollection.horizontalSizeClass;
     }
     // Padding for the the webview

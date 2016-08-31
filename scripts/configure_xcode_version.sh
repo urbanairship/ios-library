@@ -15,6 +15,8 @@
 # XCODE_6_4_APP
 # XCODE_7_1_1_APP
 # XCODE_7_2_APP
+# XCODE_8_BETA_APP
+
 
 
 # Additional versions should be set up on the build machine, and your own for testing
@@ -23,10 +25,10 @@
 # export XCODE_5_1_1_APP=/Applications/Xcode-5.1.1.app
 # export XCODE_6_BETA_5_APP=/Applications/Xcode6-Beta5.app
 
-XCODE_APP=$XCODE_7_2_APP
+XCODE_APP=$XCODE_8_BETA_APP
 
 # Destination for tests
-TEST_DESTINATION='platform=iOS Simulator,OS=latest,name=iPhone 6s'
+TEST_DESTINATION='platform=iOS Simulator,OS=latest,name=iPhone SE'
 
 if [ -z "$XCODE_APP" ]; then
   echo "Looks like you're missing Xcode!"
