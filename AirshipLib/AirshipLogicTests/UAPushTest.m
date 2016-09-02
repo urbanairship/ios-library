@@ -514,7 +514,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     // Should still be YES
     XCTAssertTrue(self.push.userPushNotificationsEnabled);
 
-    // Verify we did not update user notificaiton settings
+    // Verify we did not update user notification settings
     [self.mockedApplication verify];
 }
 
@@ -1400,7 +1400,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 }
 
 /**
- * Test existing channel created posts an NSNotificaiton
+ * Test existing channel created posts an NSNotification
  */
 - (void)testExistingChannelCreatedNSNotification {
     id observerMock = [OCMockObject observerMock];
@@ -1420,7 +1420,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 }
 
 /**
- * Test new channel created posts an NSNotificaiton
+ * Test new channel created posts an NSNotification
  */
 - (void)testNewChannelCreatedNSNotification {
     id observerMock = [OCMockObject observerMock];

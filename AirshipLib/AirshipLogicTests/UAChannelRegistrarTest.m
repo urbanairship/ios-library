@@ -42,7 +42,6 @@
 @property (nonatomic, strong) id mockedUAPush;
 @property (nonatomic, strong) id mockedUAirship;
 @property (nonatomic, strong) id mockedUAConfig;
-@property (nonatomic, strong) id mockedUANamedUser;
 
 @property (nonatomic, strong) UAHTTPRequest *deviceFailureRequest;
 @property (nonatomic, strong) UAHTTPRequest *channelFailureRequest;
@@ -78,10 +77,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
     self.mockedRegistrarDelegate = [OCMockObject niceMockForProtocol:@protocol(UAChannelRegistrarDelegate)];
 
-    self.mockedUANamedUser = [OCMockObject niceMockForClass:[UANamedUser class]];
-
     self.mockedUAPush = [OCMockObject niceMockForClass:[UAPush class]];
-    [[[self.mockedUAPush stub] andReturn:self.mockedUANamedUser] namedUser];
 
     self.mockedUAConfig = [OCMockObject niceMockForClass:[UAConfig class]];
     [[[self.mockedUAConfig stub] andDo:^(NSInvocation *invocation) {
@@ -92,6 +88,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
     [[[self.mockedUAirship stub] andReturn:self.mockedUAirship] shared];
     [[[self.mockedUAirship stub] andReturn:self.mockedUAConfig] config];
     [[[self.mockedUAirship stub] andReturn:self.mockedUAPush] push];
+
 
     self.registrar = [[UAChannelRegistrar alloc] init];
     self.registrar.channelAPIClient = self.mockedChannelClient;
@@ -136,7 +133,6 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 - (void)tearDown {
     [self.mockedChannelClient stopMocking];
     [self.mockedRegistrarDelegate stopMocking];
-    [self.mockedUANamedUser stopMocking];
     [self.mockedUAConfig stopMocking];
     [self.mockedUAPush stopMocking];
     [self.mockedUAirship stopMocking];

@@ -26,7 +26,6 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
-#import "UALocationCommonValues.h"
 
 #import "UAEvent.h"
 
@@ -36,8 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** Keys and values for location analytics */
 typedef NSString UALocationEventAnalyticsKey;
-extern UALocationEventAnalyticsKey * const UALocationEventForegroundKey; 
-extern UALocationEventAnalyticsKey * const UALocationEventForegroundKey; 
+extern UALocationEventAnalyticsKey * const UALocationEventForegroundKey;
 extern UALocationEventAnalyticsKey * const UALocationEventLatitudeKey;
 extern UALocationEventAnalyticsKey * const UALocationEventLongitudeKey;
 extern UALocationEventAnalyticsKey * const UALocationEventDesiredAccuracyKey;

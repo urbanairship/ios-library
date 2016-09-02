@@ -239,7 +239,6 @@
 		7BB679491429307B00B877DB /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB679481429307B00B877DB /* SystemConfiguration.framework */; };
 		7BB6794B142930CC00B877DB /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB6794A142930CC00B877DB /* MobileCoreServices.framework */; };
 		BB13C4251575706100541EF3 /* UABase64Test.m in Sources */ = {isa = PBXBuildFile; fileRef = BB13C4241575706100541EF3 /* UABase64Test.m */; };
-		BB484B2B15910C370097B38C /* UALocationTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BB484B2A15910C370097B38C /* UALocationTestUtils.m */; };
 		BB8860B1159A7E9600584445 /* UAGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = D9FD1C43122DBCEA00522B4E /* UAGlobal.h */; };
 		BB8860CF159A7E9600584445 /* UA_Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = B69DB4C812533B280037AF7F /* UA_Base64.h */; };
 		BB8860D2159A7E9600584445 /* UAUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FC71652129597F9003BDD2B /* UAUser.h */; };
@@ -249,14 +248,6 @@
 		BB8860DA159A7E9600584445 /* UAEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7B812FC787900057449 /* UAEvent.h */; };
 		BB8860DB159A7E9600584445 /* UAAnalyticsDBManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7BA12FC787900057449 /* UAAnalyticsDBManager+Internal.h */; };
 		BB8860E0159A7E9600584445 /* UALocationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E0B15057C7F00971CEC /* UALocationEvent.h */; };
-		BB8860E1159A7E9600584445 /* UALocationService+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E0D15057C7F00971CEC /* UALocationService+Internal.h */; };
-		BB8860E2159A7E9600584445 /* UALocationService.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E0E15057C7F00971CEC /* UALocationService.h */; };
-		BB8860E3159A7E9600584445 /* UASignificantChangeProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E1515057C7F00971CEC /* UASignificantChangeProvider.h */; };
-		BB8860E4159A7E9600584445 /* UAStandardLocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E1715057C7F00971CEC /* UAStandardLocationProvider.h */; };
-		BB8860E5159A7E9600584445 /* UABaseLocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E3515057CF200971CEC /* UABaseLocationProvider.h */; };
-		BB8860E6159A7E9600584445 /* UALocationCommonValues.h in Headers */ = {isa = PBXBuildFile; fileRef = BB42FB741509553F00FC4B1B /* UALocationCommonValues.h */; };
-		BB8860E7159A7E9600584445 /* UALocationProviderProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = BB42FB77150961F800FC4B1B /* UALocationProviderProtocol.h */; };
-		BB8860E8159A7E9600584445 /* UALocationProviderDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BB42FB7A1509622700FC4B1B /* UALocationProviderDelegate.h */; };
 		BB8860EA159A7E9600584445 /* UAAnalytics+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BB926B3C1540D1D000003975 /* UAAnalytics+Internal.h */; };
 		BB8860EE159A7E9600584445 /* UAUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E8B1238462100B7E69F /* UAUtils.m */; };
 		BB886104159A7E9600584445 /* UA_Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = B69DB4C912533B280037AF7F /* UA_Base64.m */; };
@@ -269,14 +260,6 @@
 		BB886110159A7E9600584445 /* UAEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B712FC787900057449 /* UAEvent.m */; };
 		BB886111159A7E9600584445 /* UAAnalyticsDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B912FC787900057449 /* UAAnalyticsDBManager.m */; };
 		BB886116159A7E9600584445 /* UALocationEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E0C15057C7F00971CEC /* UALocationEvent.m */; };
-		BB886117159A7E9600584445 /* UALocationService.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E0F15057C7F00971CEC /* UALocationService.m */; };
-		BB886118159A7E9600584445 /* UASignificantChangeProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E1615057C7F00971CEC /* UASignificantChangeProvider.m */; };
-		BB886119159A7E9600584445 /* UAStandardLocationProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E1815057C7F00971CEC /* UAStandardLocationProvider.m */; };
-		BB88611A159A7E9600584445 /* UABaseLocationProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E3615057CF200971CEC /* UABaseLocationProvider.m */; };
-		BB88611B159A7E9600584445 /* UALocationCommonValues.m in Sources */ = {isa = PBXBuildFile; fileRef = BB42FB7D150969F200FC4B1B /* UALocationCommonValues.m */; };
-		BBB87D5F150574DE00971CEC /* CLLocationManager+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */; };
-		BBB87D63150574DE00971CEC /* UALocationProviderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D5C150574DE00971CEC /* UALocationProviderTests.m */; };
-		BBB87D64150574DE00971CEC /* UALocationServiceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D5D150574DE00971CEC /* UALocationServiceTest.m */; };
 		BBB87E4F15057EC400971CEC /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB87D661505758100971CEC /* CoreLocation.framework */; };
 		BBB87E5115057EEA00971CEC /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB87E5015057EEA00971CEC /* libOCMock.a */; };
 		CC070C8219ABCD7000E91553 /* UANotificationCategories+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC070C8119ABCD7000E91553 /* UANotificationCategories+Internal.h */; };
@@ -309,7 +292,6 @@
 		CC4AAE0718C93ECF001F23B3 /* UAApplicationMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = CC4AAE0318C93ECF001F23B3 /* UAApplicationMetrics.h */; };
 		CC4AAE0918C93ECF001F23B3 /* UAApplicationMetrics.m in Sources */ = {isa = PBXBuildFile; fileRef = CC4AAE0418C93ECF001F23B3 /* UAApplicationMetrics.m */; };
 		CC4AAE0C18C93EF2001F23B3 /* UAApplicationMetricsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC4AAE0B18C93EF2001F23B3 /* UAApplicationMetricsTest.m */; };
-		CC4F18591B62B8D300C9FAE1 /* UABaseLocationProvider+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC4F18581B62B8D300C9FAE1 /* UABaseLocationProvider+Internal.h */; };
 		CC523FB017B985F800233005 /* UAJSONValueTransformer+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC523FAE17B985F700233005 /* UAJSONValueTransformer+Internal.h */; };
 		CC523FB117B985F800233005 /* UAJSONValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = CC523FAF17B985F700233005 /* UAJSONValueTransformer.m */; };
 		CC523FC317BA8AC200233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FC217BA8AC200233005 /* CoreData.framework */; };
@@ -722,30 +704,11 @@
 		B69DB4C812533B280037AF7F /* UA_Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_Base64.h; sourceTree = "<group>"; };
 		B69DB4C912533B280037AF7F /* UA_Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_Base64.m; sourceTree = "<group>"; };
 		BB13C4241575706100541EF3 /* UABase64Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABase64Test.m; sourceTree = "<group>"; };
-		BB42FB741509553F00FC4B1B /* UALocationCommonValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationCommonValues.h; sourceTree = "<group>"; };
-		BB42FB77150961F800FC4B1B /* UALocationProviderProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationProviderProtocol.h; sourceTree = "<group>"; };
-		BB42FB7A1509622700FC4B1B /* UALocationProviderDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationProviderDelegate.h; sourceTree = "<group>"; };
-		BB42FB7D150969F200FC4B1B /* UALocationCommonValues.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationCommonValues.m; sourceTree = "<group>"; };
-		BB484B2915910C370097B38C /* UALocationTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationTestUtils.h; path = ../../TestCommon/LocationTest/UALocationTestUtils.h; sourceTree = "<group>"; };
-		BB484B2A15910C370097B38C /* UALocationTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALocationTestUtils.m; path = ../../TestCommon/LocationTest/UALocationTestUtils.m; sourceTree = "<group>"; };
 		BB88612C159A7E9600584445 /* libUAirship-8.0.0.dp3.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-8.0.0.dp3.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB926B3C1540D1D000003975 /* UAAnalytics+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAAnalytics+Internal.h"; sourceTree = "<group>"; };
-		BBB87D56150574DE00971CEC /* CLLocationManager+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CLLocationManager+Test.h"; sourceTree = "<group>"; };
-		BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CLLocationManager+Test.m"; sourceTree = "<group>"; };
-		BBB87D5C150574DE00971CEC /* UALocationProviderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationProviderTests.m; sourceTree = "<group>"; };
-		BBB87D5D150574DE00971CEC /* UALocationServiceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationServiceTest.m; sourceTree = "<group>"; };
 		BBB87D661505758100971CEC /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		BBB87E0B15057C7F00971CEC /* UALocationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = UALocationEvent.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		BBB87E0C15057C7F00971CEC /* UALocationEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = UALocationEvent.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		BBB87E0D15057C7F00971CEC /* UALocationService+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UALocationService+Internal.h"; sourceTree = "<group>"; };
-		BBB87E0E15057C7F00971CEC /* UALocationService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationService.h; sourceTree = "<group>"; };
-		BBB87E0F15057C7F00971CEC /* UALocationService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = UALocationService.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		BBB87E1515057C7F00971CEC /* UASignificantChangeProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UASignificantChangeProvider.h; sourceTree = "<group>"; };
-		BBB87E1615057C7F00971CEC /* UASignificantChangeProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UASignificantChangeProvider.m; sourceTree = "<group>"; };
-		BBB87E1715057C7F00971CEC /* UAStandardLocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAStandardLocationProvider.h; sourceTree = "<group>"; };
-		BBB87E1815057C7F00971CEC /* UAStandardLocationProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAStandardLocationProvider.m; sourceTree = "<group>"; };
-		BBB87E3515057CF200971CEC /* UABaseLocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABaseLocationProvider.h; sourceTree = "<group>"; };
-		BBB87E3615057CF200971CEC /* UABaseLocationProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABaseLocationProvider.m; sourceTree = "<group>"; };
 		BBB87E5015057EEA00971CEC /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = ../TestCommon/OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
 		CC070C8119ABCD7000E91553 /* UANotificationCategories+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UANotificationCategories+Internal.h"; sourceTree = "<group>"; };
 		CC0D68BF1D6F5DC300A5281B /* UAAppIntegration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAppIntegration.h; sourceTree = "<group>"; };
@@ -778,7 +741,6 @@
 		CC4AAE0318C93ECF001F23B3 /* UAApplicationMetrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAApplicationMetrics.h; sourceTree = "<group>"; };
 		CC4AAE0418C93ECF001F23B3 /* UAApplicationMetrics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAApplicationMetrics.m; sourceTree = "<group>"; };
 		CC4AAE0B18C93EF2001F23B3 /* UAApplicationMetricsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAApplicationMetricsTest.m; sourceTree = "<group>"; };
-		CC4F18581B62B8D300C9FAE1 /* UABaseLocationProvider+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UABaseLocationProvider+Internal.h"; sourceTree = "<group>"; };
 		CC523FAE17B985F700233005 /* UAJSONValueTransformer+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAJSONValueTransformer+Internal.h"; sourceTree = "<group>"; };
 		CC523FAF17B985F700233005 /* UAJSONValueTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAJSONValueTransformer.m; sourceTree = "<group>"; };
 		CC523FC217BA8AC200233005 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -1065,27 +1027,6 @@
 				B69DB4C912533B280037AF7F /* UA_Base64.m */,
 			);
 			name = UA_Base64;
-			sourceTree = "<group>";
-		};
-		1F4230C116C16ED3004B52C1 /* OldLocation */ = {
-			isa = PBXGroup;
-			children = (
-				BBB87E3515057CF200971CEC /* UABaseLocationProvider.h */,
-				CC4F18581B62B8D300C9FAE1 /* UABaseLocationProvider+Internal.h */,
-				BBB87E3615057CF200971CEC /* UABaseLocationProvider.m */,
-				BB42FB741509553F00FC4B1B /* UALocationCommonValues.h */,
-				BB42FB7D150969F200FC4B1B /* UALocationCommonValues.m */,
-				BB42FB7A1509622700FC4B1B /* UALocationProviderDelegate.h */,
-				BB42FB77150961F800FC4B1B /* UALocationProviderProtocol.h */,
-				BBB87E0D15057C7F00971CEC /* UALocationService+Internal.h */,
-				BBB87E0E15057C7F00971CEC /* UALocationService.h */,
-				BBB87E0F15057C7F00971CEC /* UALocationService.m */,
-				BBB87E1515057C7F00971CEC /* UASignificantChangeProvider.h */,
-				BBB87E1615057C7F00971CEC /* UASignificantChangeProvider.m */,
-				BBB87E1715057C7F00971CEC /* UAStandardLocationProvider.h */,
-				BBB87E1815057C7F00971CEC /* UAStandardLocationProvider.m */,
-			);
-			name = OldLocation;
 			sourceTree = "<group>";
 		};
 		1F4230C216C16F1B004B52C1 /* Analytics */ = {
@@ -1569,7 +1510,6 @@
 				CC85FD141773A0CB0074674F /* Analytics */,
 				4950489E1738590D00F8B5BE /* HTTP */,
 				49B7046A1A7AF968000F67A6 /* InAppMessage */,
-				CCF0A53B17D139B200098A2B /* Location */,
 				CCF0A53C17D139D500098A2B /* User */,
 				CCF0A53D17D139DF00098A2B /* Util */,
 				4925AAAC1B2B9D00002F045D /* UAirshipTest.m */,
@@ -1840,19 +1780,6 @@
 			name = Data;
 			sourceTree = "<group>";
 		};
-		CCF0A53B17D139B200098A2B /* Location */ = {
-			isa = PBXGroup;
-			children = (
-				BBB87D5C150574DE00971CEC /* UALocationProviderTests.m */,
-				BBB87D5D150574DE00971CEC /* UALocationServiceTest.m */,
-				BB484B2915910C370097B38C /* UALocationTestUtils.h */,
-				BB484B2A15910C370097B38C /* UALocationTestUtils.m */,
-				BBB87D56150574DE00971CEC /* CLLocationManager+Test.h */,
-				BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */,
-			);
-			name = Location;
-			sourceTree = "<group>";
-		};
 		CCF0A53C17D139D500098A2B /* User */ = {
 			isa = PBXGroup;
 			children = (
@@ -1903,7 +1830,6 @@
 				CC85429E17F4B7F900D2DE10 /* Actions */,
 				1F4230C216C16F1B004B52C1 /* Analytics */,
 				49995CED172AF52100103932 /* HTTP */,
-				1F4230C116C16ED3004B52C1 /* OldLocation */,
 				1F610E0D17835CB100BCD96E /* User */,
 				1F610E0E17835CCB00BCD96E /* Util */,
 				1F610DB217835C2200BCD96E /* UAirship.h */,
@@ -1992,20 +1918,14 @@
 				BB8860D8159A7E9600584445 /* UASQLite+Internal.h in Headers */,
 				767D0D571A731937008CEC8A /* UANamedUser+Internal.h in Headers */,
 				CCE34AF819C2647A00A8EFC0 /* UADeviceRegistrationEvent+Internal.h in Headers */,
-				BB8860E3159A7E9600584445 /* UASignificantChangeProvider.h in Headers */,
 				49B7045C1A76FF3C000F67A6 /* UAInAppMessage.h in Headers */,
-				BB8860E4159A7E9600584445 /* UAStandardLocationProvider.h in Headers */,
-				BB8860E5159A7E9600584445 /* UABaseLocationProvider.h in Headers */,
-				BB8860E6159A7E9600584445 /* UALocationCommonValues.h in Headers */,
 				BB8860DB159A7E9600584445 /* UAAnalyticsDBManager+Internal.h in Headers */,
 				49416D6218C513D500A18B72 /* UABespokeCloseView.h in Headers */,
 				76AA8EDC19B0F0A2005FD1C3 /* UAAction.h in Headers */,
-				BB8860E7159A7E9600584445 /* UALocationProviderProtocol.h in Headers */,
 				CCBA4F891AC108C100857572 /* UADisplayInboxAction.h in Headers */,
 				49EB68E01C1FABFE00D05BCE /* UADefaultMessageCenterMessageViewController.h in Headers */,
 				CC7DC94C183E978A00E95BB8 /* UAChannelRegistrar.h in Headers */,
 				CCDF66AE19A544590043657E /* UAShareAction.h in Headers */,
-				BB8860E8159A7E9600584445 /* UALocationProviderDelegate.h in Headers */,
 				49E9C9C1183AD42300B7BCFF /* UAWebViewCallData.h in Headers */,
 				BB8860DA159A7E9600584445 /* UAEvent.h in Headers */,
 				767D0D3D1A71CC16008CEC8A /* UANamedUserAPIClient+Internal.h in Headers */,
@@ -2016,7 +1936,6 @@
 				49FCCB191912C6640057D1C4 /* UAActionArguments+Internal.h in Headers */,
 				BB8860E0159A7E9600584445 /* UALocationEvent.h in Headers */,
 				612ED4DD1A38DE3900DD7762 /* UACircularRegion+Internal.h in Headers */,
-				BB8860E2159A7E9600584445 /* UALocationService.h in Headers */,
 				4996D0101C11139300BD8F15 /* NSString+UALocalizationAdditions.h in Headers */,
 				CC319CE81A0C43000079226E /* UAPreferenceDataStore+Internal.h in Headers */,
 				CCDF66A219A5166B0043657E /* UACustomEvent+Internal.h in Headers */,
@@ -2067,8 +1986,6 @@
 				4928D8F81AB364500046E5BE /* UANotificationAction+Internal.h in Headers */,
 				6116522A1A2D26D5007C96D0 /* UACircularRegion.h in Headers */,
 				492ADA1018C959CB0032C491 /* UACloseWindowAction+Internal.h in Headers */,
-				BB8860E1159A7E9600584445 /* UALocationService+Internal.h in Headers */,
-				CC4F18591B62B8D300C9FAE1 /* UABaseLocationProvider+Internal.h in Headers */,
 				CCA3A4EB17FCB3A8009C7371 /* UAActionRegistryEntry.h in Headers */,
 				CC3870391B308BA600746D07 /* UATagGroupsAPIClient+Internal.h in Headers */,
 				49EB68E71C1FADC600D05BCE /* UAMessageCenterLocalization.h in Headers */,
@@ -2360,13 +2277,11 @@
 				CCD3158417CFBD5A002E93A1 /* UAPushTest.m in Sources */,
 				49973CF41A9BB723009B5EB1 /* UAIncomingInAppMessageActionTest.m in Sources */,
 				CCA8ED171D65290B0042030E /* UAActionInfoTests.m in Sources */,
-				BBB87D5F150574DE00971CEC /* CLLocationManager+Test.m in Sources */,
 				CCB9990B18E23E68007F911D /* UACloseWindowActionTest.m in Sources */,
 				495526B117D95552009BC301 /* UAInboxMessageListTest.m in Sources */,
 				49B7046C1A7AF9A6000F67A6 /* UAInAppMessageTest.m in Sources */,
 				CCD13DE219A4FCFD0007078C /* UAInteractiveNotificationEventTest.m in Sources */,
 				61CD88131B82667E00B2CEA5 /* UAInAppMessageControllerTest.m in Sources */,
-				BBB87D63150574DE00971CEC /* UALocationProviderTests.m in Sources */,
 				CCAFA2241CFE599A003FC4B8 /* UALocationTest.m in Sources */,
 				4925AAAD1B2B9D00002F045D /* UAirshipTest.m in Sources */,
 				6157B7261D53F74F007256D0 /* UAAutoIntegrationTest.m in Sources */,
@@ -2379,7 +2294,6 @@
 				CC1D22A218037DD9005C8393 /* UAAggregateActionResultTest.m in Sources */,
 				61BA01CD1BC57D5400078402 /* UAScreenTrackingEventTest.m in Sources */,
 				CC38703C1B308C3100746D07 /* UATagGroupsAPIClientTest.m in Sources */,
-				BBB87D64150574DE00971CEC /* UALocationServiceTest.m in Sources */,
 				CCA3A4F317FF14DF009C7371 /* UAActionTest.m in Sources */,
 				CCA8ECFF1D63CF060042030E /* UAJSONValueMatcherTests.m in Sources */,
 				CC9B84321D70A98900C5379C /* UAAppIntegrationTest.m in Sources */,
@@ -2401,7 +2315,6 @@
 				CCA3A4F717FF1506009C7371 /* UAActionRegistryTest.m in Sources */,
 				CC7DC959183E97D000E95BB8 /* UAChannelRegistrarTest.m in Sources */,
 				4995C6B3180DC5D3004F8724 /* UATagActionsTest.m in Sources */,
-				BB484B2B15910C370097B38C /* UALocationTestUtils.m in Sources */,
 				49C6721C1857CB040088F210 /* UANativeBridgeTest.m in Sources */,
 				61DBD4251CC559D400EAAB8B /* UADefaultMessageCenterStyleTest.m in Sources */,
 				495526B217D95552009BC301 /* UAInboxMessageTest.m in Sources */,
@@ -2531,7 +2444,6 @@
 				CC8542C517F4B81600D2DE10 /* UAActionRunner.m in Sources */,
 				CC82794A1ABB2D3400C416E7 /* UAInAppResolutionEvent.m in Sources */,
 				611652261A2D26BD007C96D0 /* UAProximityRegion.m in Sources */,
-				BB886117159A7E9600584445 /* UALocationService.m in Sources */,
 				CC313A9B19A66DBE00134A9F /* UANotificationCategories.m in Sources */,
 				CCA8ED131D651B430042030E /* UAScheduleAction.m in Sources */,
 				CC82DF6C1D1E611C00267824 /* UAScheduleTrigger.m in Sources */,
@@ -2540,15 +2452,11 @@
 				1F610DEC17835C3A00BCD96E /* UAInboxMessageData.m in Sources */,
 				61FC98081D66379800D7D7CD /* UALegacyAPNSRegistration.m in Sources */,
 				1F610DE617835C3A00BCD96E /* UAInboxDBManager.m in Sources */,
-				BB886118159A7E9600584445 /* UASignificantChangeProvider.m in Sources */,
 				CC8542BD17F4B81600D2DE10 /* UAActionRegistry.m in Sources */,
-				BB886119159A7E9600584445 /* UAStandardLocationProvider.m in Sources */,
 				CC85427A17F2130700D2DE10 /* UAURLProtocol.m in Sources */,
-				BB88611A159A7E9600584445 /* UABaseLocationProvider.m in Sources */,
 				61CF1B991D5A491E009CBCCA /* UANotificationContent.m in Sources */,
 				49B704711A7C4DCC000F67A6 /* UAColorUtils.m in Sources */,
 				4996D0111C11139300BD8F15 /* NSString+UALocalizationAdditions.m in Sources */,
-				BB88611B159A7E9600584445 /* UALocationCommonValues.m in Sources */,
 				CC8925C21AF81CC3004565EE /* UAPasteboardAction.m in Sources */,
 				CC38703A1B308BA600746D07 /* UATagGroupsAPIClient.m in Sources */,
 				4905C4E718246339001D48E3 /* NSString+UAURLEncoding.m in Sources */,

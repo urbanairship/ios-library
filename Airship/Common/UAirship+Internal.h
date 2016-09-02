@@ -35,7 +35,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 // Setters for public readonly-getters
-@property (nonatomic, strong) UALocationService *locationService;
 @property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UAAnalytics *analytics;
 @property (nonatomic, strong) UAActionRegistry *actionRegistry;

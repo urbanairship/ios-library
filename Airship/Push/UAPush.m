@@ -393,11 +393,6 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     }
 }
 
-// Deprecated
-- (UANamedUser *)namedUser {
-    return [UAirship namedUser];
-}
-
 - (void)setCustomCategories:(NSSet<UANotificationCategory *> *)categories {
     _customCategories = [categories filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
         UANotificationCategory *category = evaluatedObject;

@@ -34,14 +34,8 @@
 #import "UAConfig.h"
 
 @interface UAInboxMessageTest : XCTestCase
-
-
 @property (nonatomic, strong) UAInboxDBManager *dbManager;
 @property (nonatomic, strong) UAInboxMessage *message;
-
-//a mock (old-school) message list observer that will receive deprecated callbacks
-@property (nonatomic, strong) id mockMessageListObserver;
-
 @property (nonatomic, strong) UAInboxMessageList *messageList;
 @end
 
@@ -69,15 +63,10 @@
     //this is normally set when a message is associated with the message list, needed for
     //sending (deprecated) UAInboxMessageListObserver callbacks
     self.message.inbox = self.messageList = [[UAInboxMessageList alloc] init];
-
-    //order is important with these events, so we should be explicit about it
-    [self.mockMessageListObserver setExpectationOrderMatters:YES];
 }
 
 - (void)tearDown {
     // Put teardown code here; it will be run once, after the last test case.
-    //undo observer sign-ups
-    [self.mockMessageListObserver stopMocking];
     [self.dbManager fetchMessagesWithPredicate:[NSPredicate predicateWithValue:true] context:self.dbManager.mainContext completionHandler:^(NSArray *messages){
         [self.dbManager deleteMessages:messages context:self.dbManager.mainContext];
     }];

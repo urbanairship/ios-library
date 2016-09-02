@@ -110,7 +110,7 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSString * const UAActionMetadataWebViewKey;
 
 /**
- * Metadata key for the push notificaiton. Available when an action is triggered
+ * Metadata key for the push notification. Available when an action is triggered
  * from a push notification or user notification action.
  */
 extern NSString * const UAActionMetadataPushPayloadKey;

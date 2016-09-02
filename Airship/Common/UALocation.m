@@ -219,7 +219,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 
 
 #pragma mark -
-#pragma mark CLLocationManger Delegate
+#pragma mark CLLocationManager Delegate
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UA_LTRACE(@"Location authorization changed: %d", status);

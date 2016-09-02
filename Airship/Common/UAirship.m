@@ -31,7 +31,6 @@
 #import "UAAnalytics+Internal.h"
 #import "UAUtils.h"
 #import "UAKeychainUtils+Internal.h"
-#import "UALocationService.h"
 #import "UAGlobal.h"
 #import "UAPush+Internal.h"
 #import "UAConfig.h"
@@ -104,20 +103,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     [center addObserver:[UAirship class] selector:@selector(handleAppTerminationNotification:) name:UIApplicationWillTerminateNotification object:nil];
 }
 
-
-#pragma mark -
-#pragma mark Location Get/Set Methods
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-- (UALocationService *)locationService {
-    if (!_locationService) {
-        _locationService = [[UALocationService alloc] init];
-    }
-
-    return _locationService;
-}
-#pragma GCC diagnostic pop
 
 #pragma mark -
 #pragma mark Object Lifecycle

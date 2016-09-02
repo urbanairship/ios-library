@@ -72,12 +72,6 @@ extern NSUInteger const UAAssociatedIdentifiersMaxCharacterCount;
 @property (nonatomic, copy, nullable) NSString *vendorID;
 
 /**
- * Indicates whether limited advertising tracking is enabled.
- * @deprecated As of version 7.1.0. Replaced with advertisingTrackingEnabled.
- */
-@property (nonatomic, assign) BOOL limitedAdTrackingEnabled __attribute__((deprecated("As of version 7.1.0. Use advertisingTrackingEnabled instead.")));
-
-/**
  * Indicates whether the user has limited ad tracking.
  */
 @property (nonatomic, assign) BOOL advertisingTrackingEnabled;

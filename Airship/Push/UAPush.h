@@ -351,15 +351,6 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 /** Alias for this device */
 @property (nonatomic, copy, nullable) NSString *alias;
 
-///---------------------------------------------------------------------------------------
-/// @name Named User
-///---------------------------------------------------------------------------------------
-
-/**
- * Named user for this device.
- * @deprecated Access through UAirship instead.
- */
-@property (readonly) UANamedUser *namedUser __attribute__ ((deprecated("Access through UAirship instead.")));
 
 ///---------------------------------------------------------------------------------------
 /// @name Tags

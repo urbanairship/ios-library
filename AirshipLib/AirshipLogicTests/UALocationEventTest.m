@@ -25,7 +25,6 @@
 
 #import <XCTest/XCTest.h>
 #import "UALocationEvent.h"
-#import "UALocationTestUtils.h"
 
 @interface UALocationEventTest : XCTestCase
 @property (nonatomic, strong) CLLocation *location;
@@ -35,7 +34,13 @@
 
 - (void)setUp {
     [super setUp];
-    self.location = [UALocationTestUtils testLocationPDX];
+
+    CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(45.525352839897, -122.682115697712);
+    self.location = [[CLLocation alloc] initWithCoordinate:coord
+                                                  altitude:100.0
+                                        horizontalAccuracy:5.0
+                                          verticalAccuracy:5.0
+                                                 timestamp:[NSDate date]];
 }
 
 // Test creating a significant location update event

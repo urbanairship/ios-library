@@ -83,14 +83,6 @@ NSUInteger const UAAssociatedIdentifiersMaxCharacterCount = 255;
     return [self.mutableIDs valueForKey:kUAAssociatedIdentifierVendorKey];
 }
 
-- (void)setLimitedAdTrackingEnabled:(BOOL)limitedAdTrackingEnabled {
-    [self setAdvertisingTrackingEnabled:!limitedAdTrackingEnabled];
-}
-
-- (BOOL)limitedAdTrackingEnabled {
-    return ![self advertisingTrackingEnabled];
-}
-
 - (void)setAdvertisingTrackingEnabled:(BOOL)advertisingTrackingEnabled {
     // If advertisingTrackingEnabled is `YES`, store the limitedAdTrackingEnabled value as `false`
     [self setIdentifier:(advertisingTrackingEnabled ? @"false" : @"true") forKey:kUAAssociatedIdentifierLimitedAdTrackingEnabledKey];
