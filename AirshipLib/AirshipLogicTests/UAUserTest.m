@@ -46,6 +46,7 @@
 @property (nonatomic, strong) id mockUserClient;
 @property (nonatomic, strong) id mockKeychainUtils;
 @property (nonatomic, strong) id mockApplication;
+@property (nonatomic, strong) id mockedUserNotificationCenter;
 
 @end
 
@@ -53,6 +54,10 @@
 
 - (void)setUp {
     [super setUp];
+
+    // Set up mocked User Notification Center to avoid bug in XCode Beta
+    self.mockedUserNotificationCenter = [OCMockObject niceMockForClass:[UNUserNotificationCenter class]];
+    [[[self.mockedUserNotificationCenter stub] andReturn:self.mockedUserNotificationCenter] currentNotificationCenter];
 
     self.config = [[UAConfig alloc] init];
     self.config.inProduction = NO;
@@ -75,6 +80,7 @@
     [self.mockUserClient stopMocking];
     [self.mockKeychainUtils stopMocking];
     [self.mockApplication stopMocking];
+    [self.mockedUserNotificationCenter stopMocking];
     [self.dataStore removeAll];
 
     [super tearDown];
