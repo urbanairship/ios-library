@@ -211,8 +211,7 @@ static dispatch_once_t onceToken;
 
 void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self, SEL _cmd, UNUserNotificationCenter *notificationCenter, UNNotification *notification, void (^handler)(UNNotificationPresentationOptions)) {
 
-    __block UNNotificationPresentationOptions mergedPresentationOptions;
-
+    __block UNNotificationPresentationOptions mergedPresentationOptions = UNNotificationPresentationOptionNone;
     __block NSUInteger resultCount = 0;
     __block NSUInteger expectedCount = 1;
 
