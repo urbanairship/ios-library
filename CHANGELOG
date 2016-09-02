@@ -10,16 +10,21 @@ ERRORS, DEFECTS, HARMFUL COMPONENTS AND MAY NOT BE COMPATIBLE WITH THE FINAL VER
 THE APPLICABLE THIRD PARTY OPERATING SYSTEM. ACCORDINGLY, URBAN AIRSHIP IS PROVIDING
 THE LICENSE ON AN “AS IS” BASIS AND NOT FOR USE IN PRODUCTION.
 
+Preview 4 - September 2, 2016
+-----------------------------
+- Fixed default foreground presentation options sometimes defaulting to displaying an alert.
+- Fixed compiler warnings.
+- Fixed SwiftSample's UAPushNotificationDelegate implementation.
+- Removed deprecated APIs from 7.x.
+
 Preview 3 - August 26, 2016
 ---------------------------
-Changes:
- - Added support for media attachments. Requires applications to provide a notification extension.
- - UAPushNotificationDelegate has been rewritten to be more aligned with iOS 10.
- - Manual application integration methods have been moved to UAAppIntegration.
+- Added support for media attachments. Requires applications to provide a notification extension.
+- UAPushNotificationDelegate has been rewritten to be more aligned with iOS 10.
+- Manual application integration methods have been moved to UAAppIntegration.
 
 Preview 2 - August 2, 2016
 --------------------------
-Changes:
 - Added support for foreground presentation options. Default options can be set on UAPush, or
   per notification with presentationOptionsForNotification: method on the UAPushNotificationDelegate.
 - Added foreground presentation flag (UAActionMetadataForegroundPresentationKey) to action arguments
@@ -30,7 +35,6 @@ Changes:
 
 Preview 1 - July 6, 2016
 ------------------------
-Changes:
 - First iOS 10 compatibility release.
 - Added support for new UNNotification classes.
 - New simplified location module. Previous location module has been deprecated and will be removed in a future developer preview.
