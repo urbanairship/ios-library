@@ -39,3 +39,4 @@
 "ua_connection_error" = "Connection Error";
 "ua_mark_read" = "Mark Read";
 "ua_delete" = "Delete";
+"ua_channel_id"= "Channel ID";

@@ -105,11 +105,11 @@
     NSMutableDictionary *titleAttributes = [NSMutableDictionary dictionary];
 
     if (self.style.titleColor) {
-        titleAttributes[UITextAttributeTextColor] = self.style.titleColor;
+        titleAttributes[NSForegroundColorAttributeName] = self.style.titleColor;
     }
 
     if (self.style.titleFont) {
-        titleAttributes[UITextAttributeFont] = self.style.titleFont;
+        titleAttributes[NSFontAttributeName] = self.style.titleFont;
     }
 
     if (titleAttributes.count) {

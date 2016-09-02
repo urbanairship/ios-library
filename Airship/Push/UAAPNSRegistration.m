@@ -79,7 +79,7 @@
     if (normalizedOptions != UNAuthorizationOptionNone) {
         [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:normalizedOptions
                                                                             completionHandler:^(BOOL granted, NSError * _Nullable error) {
-                                                                                UA_LDEBUG(@"Registering for user notification options %ld.", [UAirship push].notificationOptions);
+                                                                                UA_LDEBUG(@"Registering for user notification options %ld.", (unsigned long)[UAirship push].notificationOptions);
 
                                                                                 [[UIApplication sharedApplication] registerForRemoteNotifications];
                                                                                 completionHandler();

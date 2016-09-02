@@ -24,7 +24,7 @@
  */
 
 #import "UAChannelCapture.h"
-
+#import "NSString+UALocalizationAdditions.h"
 #import "UAirship.h"
 #import "UAPush.h"
 #import "UAConfig.h"
@@ -132,11 +132,11 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
             }
 
             self.channelURL = url;
-            self.alertView = [[UIAlertView alloc] initWithTitle:@"Channel ID"
+            self.alertView = [[UIAlertView alloc] initWithTitle:[@"ua_channel_id" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Channel ID"]
                                                         message:self.push.channelID
                                                        delegate:self
-                                              cancelButtonTitle:@"Cancel"
-                                              otherButtonTitles:@"Copy", url == nil ? nil : @"Save", nil];
+                                              cancelButtonTitle:[@"ua_cancel" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Cancel"]
+                                              otherButtonTitles:[@"ua_notification_button_copy" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Copy"], url == nil ? nil : [@"ua_notification_button_save" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Save"], nil];
             [self.alertView show];
         });
     });

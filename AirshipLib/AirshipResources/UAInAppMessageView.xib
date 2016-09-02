@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11198.2" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="UAInAppMessageView">
@@ -16,54 +17,33 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="jhQ-p0-Eqc" userLabel="Container View">
-                    <rect key="frame" x="0.0" y="0.0" width="600" height="88"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qxk-qX-kzh">
-                            <rect key="frame" x="283" y="81" width="35" height="3"/>
-                            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="35" id="KeJ-w4-Vnq"/>
                                 <constraint firstAttribute="height" constant="3" id="M58-NU-XqP"/>
                             </constraints>
-                            <variation key="heightClass=regular" misplaced="YES">
-                                <rect key="frame" x="148" y="81" width="35" height="3"/>
-                            </variation>
                         </view>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KIJ-XS-bbg">
-                            <rect key="frame" x="305" y="41" width="285" height="30"/>
                             <color key="backgroundColor" cocoaTouchSystemColor="lightTextColor"/>
-                            <variation key="heightClass=regular" misplaced="YES">
-                                <rect key="frame" x="170" y="41" width="275" height="30"/>
-                            </variation>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xhJ-xR-msm">
-                            <rect key="frame" x="10" y="41" width="285" height="30"/>
                             <color key="backgroundColor" cocoaTouchSystemColor="lightTextColor"/>
-                            <variation key="heightClass=regular" misplaced="YES">
-                                <rect key="frame" x="-115" y="41" width="275" height="30"/>
-                            </variation>
                         </button>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="251" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" preservesSuperviewLayoutMargins="YES" layoutMarginsFollowReadableWidth="YES" text="" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="378-hI-tws">
-                            <rect key="frame" x="10" y="10" width="580" height="21"/>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <nil key="highlightedColor"/>
-                            <variation key="heightClass=regular" misplaced="YES">
-                                <rect key="frame" x="-115" y="10" width="560" height="21"/>
-                            </variation>
                         </label>
                         <view contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ENT-5F-kKo" userLabel="Mask View">
-                            <rect key="frame" x="0.0" y="0.0" width="600" height="5"/>
-                            <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                            <color key="backgroundColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="5" id="jVL-yt-32e"/>
                             </constraints>
-                            <variation key="heightClass=regular" misplaced="YES">
-                                <rect key="frame" x="135" y="0.0" width="455" height="88"/>
-                            </variation>
                         </view>
                     </subviews>
-                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                    <color key="backgroundColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
                         <constraint firstItem="qxk-qX-kzh" firstAttribute="top" secondItem="378-hI-tws" secondAttribute="bottom" priority="750" constant="10" id="Apd-YW-HJl"/>
                         <constraint firstItem="KIJ-XS-bbg" firstAttribute="height" secondItem="xhJ-xR-msm" secondAttribute="height" priority="750" id="IQv-yO-ejw"/>
@@ -85,9 +65,6 @@
                         <constraint firstItem="ENT-5F-kKo" firstAttribute="centerX" secondItem="jhQ-p0-Eqc" secondAttribute="centerX" id="wis-Zt-FKU"/>
                         <constraint firstItem="KIJ-XS-bbg" firstAttribute="leading" secondItem="xhJ-xR-msm" secondAttribute="trailing" priority="750" constant="10" id="xCa-g6-CTe"/>
                     </constraints>
-                    <variation key="heightClass=regular" misplaced="YES">
-                        <rect key="frame" x="135" y="0.0" width="455" height="88"/>
-                    </variation>
                 </view>
             </subviews>
             <constraints>
@@ -115,54 +92,33 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="klE-Oj-pI1" userLabel="Container View">
-                    <rect key="frame" x="0.0" y="0.0" width="600" height="88"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="v6T-oX-Y7t">
-                            <rect key="frame" x="305" y="48" width="285" height="30"/>
                             <color key="backgroundColor" cocoaTouchSystemColor="lightTextColor"/>
-                            <variation key="heightClass=regular" misplaced="YES">
-                                <rect key="frame" x="170" y="41" width="275" height="30"/>
-                            </variation>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A7P-hO-FEE">
-                            <rect key="frame" x="10" y="48" width="285" height="30"/>
                             <color key="backgroundColor" cocoaTouchSystemColor="lightTextColor"/>
-                            <variation key="heightClass=regular" misplaced="YES">
-                                <rect key="frame" x="-115" y="41" width="275" height="30"/>
-                            </variation>
                         </button>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="251" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" preservesSuperviewLayoutMargins="YES" layoutMarginsFollowReadableWidth="YES" text="" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6aR-gG-fYa">
-                            <rect key="frame" x="10" y="17" width="580" height="21"/>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <nil key="highlightedColor"/>
-                            <variation key="heightClass=regular" misplaced="YES">
-                                <rect key="frame" x="-115" y="10" width="560" height="21"/>
-                            </variation>
                         </label>
                         <view contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="WAl-1Z-Gug" userLabel="Mask View">
-                            <rect key="frame" x="0.0" y="83" width="600" height="5"/>
-                            <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                            <color key="backgroundColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="5" id="a3R-IW-onx"/>
                             </constraints>
-                            <variation key="heightClass=regular" misplaced="YES">
-                                <rect key="frame" x="135" y="0.0" width="455" height="88"/>
-                            </variation>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VpY-42-Fgc">
-                            <rect key="frame" x="283" y="4" width="35" height="3"/>
-                            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="35" id="hrw-2p-1NK"/>
                                 <constraint firstAttribute="height" constant="3" id="rES-vu-axb"/>
                             </constraints>
-                            <variation key="heightClass=regular" misplaced="YES">
-                                <rect key="frame" x="148" y="81" width="35" height="3"/>
-                            </variation>
                         </view>
                     </subviews>
-                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                    <color key="backgroundColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
                         <constraint firstItem="VpY-42-Fgc" firstAttribute="top" secondItem="klE-Oj-pI1" secondAttribute="top" constant="4" id="43B-rb-jdh"/>
                         <constraint firstItem="A7P-hO-FEE" firstAttribute="leading" secondItem="klE-Oj-pI1" secondAttribute="leading" constant="10" id="7FQ-ck-EkW"/>
@@ -184,9 +140,6 @@
                         <constraint firstItem="v6T-oX-Y7t" firstAttribute="top" secondItem="6aR-gG-fYa" secondAttribute="bottom" priority="750" constant="10" id="wdq-LY-lc8"/>
                         <constraint firstAttribute="trailing" secondItem="v6T-oX-Y7t" secondAttribute="trailing" priority="750" constant="10" id="xum-aP-0NF"/>
                     </constraints>
-                    <variation key="heightClass=regular" misplaced="YES">
-                        <rect key="frame" x="135" y="0.0" width="455" height="88"/>
-                    </variation>
                 </view>
             </subviews>
             <constraints>

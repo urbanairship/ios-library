@@ -252,7 +252,7 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
         return;
     }
 
-    UA_LDEBUG(@"Updating triggers with type: %ld", triggerType);
+    UA_LDEBUG(@"Updating triggers with type: %ld", (long)triggerType);
     NSDate *methodStart = [NSDate date];
 
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"type = %ld AND start <= %@", triggerType, [NSDate date]];
@@ -303,7 +303,7 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
 
         NSDate *methodFinish = [NSDate date];
         NSTimeInterval executionTime = [methodFinish timeIntervalSinceDate:methodStart];
-        UA_LTRACE(@"Automation execution time: %f seconds, triggers: %ld, actions: %ld", executionTime, triggers.count, triggeredSchedules.count);
+        UA_LTRACE(@"Automation execution time: %f seconds, triggers: %ld, actions: %ld", executionTime, (unsigned long)triggers.count, triggeredSchedules.count);
     }];
 }
 

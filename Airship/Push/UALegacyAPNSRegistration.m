@@ -61,7 +61,7 @@
 
     [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:filteredOptions
                                                                                                               categories:normalizedCategories]];
-    UA_LDEBUG(@"Registering for user notification types %ld.", filteredOptions);
+    UA_LDEBUG(@"Registering for user notification types %ld.", (unsigned long)filteredOptions);
     completionHandler(filteredOptions);
 }
 

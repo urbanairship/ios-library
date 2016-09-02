@@ -76,12 +76,13 @@
 
 - (void)addEvent:(UAEvent *)event withSessionID:(NSString *)sessionID {
     // Serialize the event data dictionary
-    NSString *errString = nil;
-    NSData *serializedData = [NSPropertyListSerialization dataFromPropertyList:event.data
+    NSError *error = nil;
+    NSData *serializedData = [NSPropertyListSerialization dataWithPropertyList:event.data
                                                                         format:NSPropertyListBinaryFormat_v1_0
-                                                              errorDescription:&errString];
-    if (errString) {
-        UALOG(@"Dictionary Serialization Error: %@", errString);
+                                                                       options:0
+                                                                         error:&error];
+    if (error) {
+        UALOG(@"Dictionary Serialization Error: %@", error);
     }
     
     //insert an empty string if there isn't any event data
