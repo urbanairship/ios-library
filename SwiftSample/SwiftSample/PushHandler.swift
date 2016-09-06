@@ -41,41 +41,45 @@ class PushHandler: NSObject, UAPushNotificationDelegate {
         // Application received a foreground notification
         print("The application received a foreground notification");
 
-        // Use alert presentation options if iOS version < iOS 10
-        if (ProcessInfo.processInfo.isOperatingSystemAtLeast(OperatingSystemVersion(majorVersion: 10, minorVersion: 0, patchVersion: 0)) == false) {
-
-            // Only display an alert dialog if the push does not contain a rich push message id.
-            // If it does, allow the InboxDelegate's richPushMessageAvailable: to handle it.
-            if (UAInboxUtils.inboxMessageID(fromNotification: notificationContent.notificationInfo) == nil) {
-                let alertController: UIAlertController = UIAlertController()
-
-                alertController.title = notificationContent.alertTitle ?? NSLocalizedString("UA_Notification_Title", tableName: "UAPushUI", comment: "System Push Settings Label")
-                alertController.message = notificationContent.alertBody
-
-                let cancelAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.cancel, handler: nil)
-                alertController.addAction(cancelAction)
-
-                let topController = UIApplication.shared.keyWindow!.rootViewController! as UIViewController
-                alertController.popoverPresentationController?.sourceView = topController.view
-
-                topController.present(alertController, animated:true, completion:nil)
-            }
-
-            // Call the completion handler
+        // iOS 10 - let foreground presentations options handle it
+        if (ProcessInfo().isOperatingSystemAtLeast(OperatingSystemVersion(majorVersion: 10, minorVersion: 0, patchVersion: 0))) {
             completionHandler()
+            return
         }
+
+        // iOS 8 & 9 - show an alert dialog
+        let alertController: UIAlertController = UIAlertController()
+        alertController.title = notificationContent.alertTitle ?? NSLocalizedString("UA_Notification_Title", tableName: "UAPushUI", comment: "System Push Settings Label")
+        alertController.message = notificationContent.alertBody
+
+        let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default){ (UIAlertAction) -> Void in
+
+            // If we have a message ID run the display inbox action to fetch and display the message.
+            let messageID = UAInboxUtils.inboxMessageID(fromNotification: notificationContent.notificationInfo)
+            if (messageID != nil) {
+                UAActionRunner.runAction(withName: kUADisplayInboxActionDefaultRegistryName, value: messageID, situation: UASituation.manualInvocation)
+            }
+        }
+
+        alertController.addAction(okAction)
+
+
+        let topController = UIApplication.shared.keyWindow!.rootViewController! as UIViewController
+        alertController.popoverPresentationController?.sourceView = topController.view
+        topController.present(alertController, animated:true, completion:nil)
+
+        completionHandler()
     }
 
     func receivedNotificationResponse(_ notificationResponse: UANotificationResponse, completionHandler: @escaping () -> Swift.Void) {
         print("The user selected the following action identifier:%@", notificationResponse.actionIdentifier);
 
-        // Call the completion handler
         completionHandler()
     }
 
     @available(iOS 10.0, *)
     func presentationOptions(for notification: UNNotification) -> UNNotificationPresentationOptions {
-        return .alert
+        return [.alert, .sound]
     }
 
 }

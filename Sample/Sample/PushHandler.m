@@ -45,43 +45,46 @@
     // Application received a foreground notification
     UA_LDEBUG(@"The application received a foreground notification");
 
-    // Only display an alert dialog if the push does not contain a rich push message id.
-    // If it does, allow the InboxDelegate's richPushMessageAvailable: to handle it.
-    if (![UAInboxUtils inboxMessageIDFromNotification:notificationContent.notificationInfo]) {
-
-        NSString *alertTitle = notificationContent.alertTitle ? notificationContent.alertTitle : NSLocalizedStringFromTable(@"UA_Notification_Title", @"UAPushUI", @"System Push Settings Label");
-
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:alertTitle message:notificationContent.alertBody preferredStyle:UIAlertControllerStyleAlert];
-
-        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-
-        [alertController addAction:cancelAction];
-
-        UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
-
-        alertController.popoverPresentationController.sourceView = topController.view;
-
-        [topController presentViewController:alertController animated:YES completion:nil];
+    // iOS 10 - let foreground presentations options handle it
+    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+        completionHandler();
+        return;
     }
 
-    // Call the completion handler
+    // iOS 8 & 9 - show an alert dialog
+    NSString *alertTitle = notificationContent.alertTitle ? notificationContent.alertTitle : NSLocalizedStringFromTable(@"UA_Notification_Title", @"UAPushUI", @"System Push Settings Label");
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:alertTitle
+                                                                             message:notificationContent.alertBody
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+
+        // If we have a message ID run the display inbox action to fetch and display the message.
+        NSString *messageId = [UAInboxUtils inboxMessageIDFromNotification:notificationContent.notificationInfo];
+        if (messageId) {
+            [UAActionRunner runActionWithName:kUADisplayInboxActionDefaultRegistryName
+                                        value:messageId
+                                    situation:UASituationManualInvocation];
+        }
+    }];
+
+    [alertController addAction:okAction];
+
+    UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    alertController.popoverPresentationController.sourceView = topController.view;
+    [topController presentViewController:alertController animated:YES completion:nil];
+
     completionHandler();
 }
 
 -(void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void (^)())completionHandler {
+    UA_LDEBUG(@"The user selected the following action identifier:%@", notificationResponse.actionIdentifier);
 
-    if ([notificationResponse.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
-        UA_LDEBUG(@"The user tapped the notification to launch the app");
-
-        // Call the completion handler
-        completionHandler();
-    } else if (notificationResponse.actionIdentifier) {
-        UA_LDEBUG(@"The user selected the following action identifier:%@", notificationResponse.actionIdentifier);
-
-        // Call the completion handler
-        completionHandler();
-    }
+    completionHandler();
 }
 
+- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification {
+    return UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound;
+}
 
 @end
