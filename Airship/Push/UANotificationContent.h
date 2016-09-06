@@ -74,12 +74,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Notification info dictionary used to generate the UANotification.
  */
-@property (nonatomic, copy, nullable, readonly) NSDictionary *notificationInfo;
+@property (nonatomic, copy, readonly) NSDictionary *notificationInfo;
 
 /**
  * UNNotification used to generate the UANotification.
  */
-@property (nonatomic, copy, nullable, readonly) UNNotification *notification;
+@property (nonatomic, strong, nullable, readonly) UNNotification *notification;
 
 
 /**

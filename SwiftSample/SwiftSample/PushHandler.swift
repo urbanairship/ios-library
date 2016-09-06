@@ -46,7 +46,7 @@ class PushHandler: NSObject, UAPushNotificationDelegate {
 
             // Only display an alert dialog if the push does not contain a rich push message id.
             // If it does, allow the InboxDelegate's richPushMessageAvailable: to handle it.
-            if (UAInboxUtils.inboxMessageID(fromNotification: notificationContent.notificationInfo!) == nil) {
+            if (UAInboxUtils.inboxMessageID(fromNotification: notificationContent.notificationInfo) == nil) {
                 let alertController: UIAlertController = UIAlertController()
 
                 alertController.title = notificationContent.alertTitle ?? NSLocalizedString("UA_Notification_Title", tableName: "UAPushUI", comment: "System Push Settings Label")

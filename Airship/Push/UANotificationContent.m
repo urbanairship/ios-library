@@ -35,13 +35,13 @@
 @property (nonatomic, strong, nullable) NSNumber *contentAvailable;
 @property (nonatomic, copy, nullable) NSString *categoryIdentifier;
 @property (nonatomic, copy, nullable) NSString *launchImage;
-@property (nonatomic, copy, nullable) NSDictionary *notificationInfo;
-@property (nonatomic, copy, nullable) UNNotification *notification;
+@property (nonatomic, copy, nonnull) NSDictionary *notificationInfo;
+@property (nonatomic, strong, nullable) UNNotification *notification;
 @end
 
 @implementation UANotificationContent
 
-- (instancetype)initWithNotificationInfo:(NSDictionary *)notificationInfo {
+- (instancetype)initWithNotificationInfo:(nonnull NSDictionary *)notificationInfo {
     self = [super init];
     if (self) {
         NSDictionary *apsDict = [notificationInfo objectForKey:@"aps"];
@@ -106,7 +106,7 @@
     return self;
 }
 
-+ (instancetype)notificationWithNotificationInfo:(NSDictionary *)notificationInfo {
++ (instancetype)notificationWithNotificationInfo:(nonnull NSDictionary *)notificationInfo {
     return [[UANotificationContent alloc] initWithNotificationInfo:notificationInfo];
 }
 
