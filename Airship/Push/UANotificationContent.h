@@ -29,6 +29,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class UNNotification;
 
+/**
+ * Clone of UNNotificationContent for iOS 8-9 support. Contains convenient accessors
+ * to the notification's content.
+ */
 @interface UANotificationContent : NSObject
 
 /**

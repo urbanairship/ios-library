@@ -30,6 +30,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class UNNotificationResponse;
 
+/**
+ * Clone of UNNotificationResponse for iOS 8-9 support. Contains the
+ * user's reponse to a notification.
+ */
 @interface UANotificationResponse : NSObject
 
 /**
@@ -57,12 +61,32 @@ extern NSString *const UANotificationDismissActionIdentifier;
  */
 @property (nonatomic, strong, readonly) UANotificationContent *notificationContent;
 
+/**
+ * The UNNotificationResponse that generated the UANotificationResponse.
+ * Note: Only available on iOS 10+. Will be nil otherwise.
+ */
+@property (nonatomic, readonly, nullable, strong) UNNotificationResponse *response;
 
+
+/**
+ * UANotificationResponse factory method.
+ *
+ * @param notificationInfo The notification user info.
+ * @param actionIdentifier The notification action ID.
+ * @param responseText Optional response text.
+ * @return A UANotificationResponse instance.
+ */
 + (instancetype)notificationResponseWithNotificationInfo:(NSDictionary *)notificationInfo
                                         actionIdentifier:(NSString *)actionIdentifier
                                             responseText:(nullable NSString *)responseText;
 
 
+/**
+ * UANotificationResponse factory method.
+ *
+ * @param response The UNNotificationResponse.
+ * @return A UANotificationResponse instance.
+ */
 + (instancetype)notificationResponseWithUNNotificationResponse:(UNNotificationResponse *)response;
 
 
