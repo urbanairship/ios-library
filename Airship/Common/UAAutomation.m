@@ -303,7 +303,7 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
 
         NSDate *methodFinish = [NSDate date];
         NSTimeInterval executionTime = [methodFinish timeIntervalSinceDate:methodStart];
-        UA_LTRACE(@"Automation execution time: %f seconds, triggers: %ld, actions: %ld", executionTime, (unsigned long)triggers.count, triggeredSchedules.count);
+        UA_LTRACE(@"Automation execution time: %f seconds, triggers: %ld, actions: %ld", executionTime, (unsigned long)triggers.count, (unsigned long)triggeredSchedules.count);
     }];
 }
 
