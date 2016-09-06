@@ -64,6 +64,8 @@
 @property (nonatomic, strong) id mockTagGroupsAPIClient;
 @property (nonatomic, strong) id mockProcessInfo;
 
+@property (nonatomic, strong) id mockedUNNotification;
+
 @property (nonatomic, strong) UAPush *push;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
@@ -100,7 +102,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
         [invocation setReturnValue:&result];
     }] ignoringNonObjectArgs] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){0, 0, 0}];
 
-
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"uapush.test."];
     self.push =  [UAPush pushWithConfig:[UAConfig defaultConfig] dataStore:self.dataStore];
 
@@ -129,6 +130,9 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                        @"content-available": @1
                                        }
                                };
+
+    // Mock the nested apple types with unavailable init methods
+    self.mockedUNNotification = [OCMockObject niceMockForClass:[UNNotification class]];
 
     self.addTagGroups = [[NSMutableDictionary alloc] init];
     NSMutableDictionary *tagsToAdd = [NSMutableDictionary dictionary];
@@ -218,6 +222,8 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [self.mockDefaultNotificationCategories stopMocking];
     [self.mockTagGroupsAPIClient stopMocking];
     [self.mockProcessInfo stopMocking];
+
+    [self.mockedUNNotification stopMocking];
 
     // We hide this class in a few tests. Its only available on iOS8.
     [UIUserNotificationSettings revealClass];
@@ -2118,6 +2124,217 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [self.push handleNotificationResponse:response completionHandler:^{}];
 
     XCTAssertEqual(self.push.launchNotificationResponse, response);
+}
+
+/**
+ * Test handleRemoteNotification when foreground and autobadge is enabled.
+ */
+- (void)testHandleRemoteNotificationForegroundAutobadgeEnabled {
+    __block BOOL completionHandlerCalled = NO;
+
+    UANotificationContent *expectedNotificationContent = [UANotificationContent notificationWithNotificationInfo:self.notification];
+
+    self.push.autobadgeEnabled = YES;
+
+    // Application should set icon badge number when autobadge is enabled
+    [[self.mockedApplication expect] setApplicationIconBadgeNumber:expectedNotificationContent.badge.integerValue];
+
+    [[self.mockedPushDelegate expect] receivedForegroundNotification:expectedNotificationContent completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void (^handler)() = obj;
+        handler();
+        return YES;
+    }]];
+
+    [[self.mockedPushDelegate reject] receivedBackgroundNotification:expectedNotificationContent completionHandler:OCMOCK_ANY];
+
+
+    // Call handleRemoteNotification
+    [self.push handleRemoteNotification:expectedNotificationContent foreground:YES completionHandler:^(UIBackgroundFetchResult result) {
+        completionHandlerCalled = YES;
+    }];
+
+    [self.mockedApplication verify];
+    [self.mockedPushDelegate verify];
+    XCTAssertTrue(completionHandlerCalled);
+}
+
+/**
+ * Test handleRemoteNotification when foreground and autobadge is disabled.
+ */
+- (void)testHandleRemoteNotificationForegroundAutobadgeDisabled {
+    __block BOOL completionHandlerCalled = NO;
+
+    UANotificationContent *expectedNotificationContent = [UANotificationContent notificationWithNotificationInfo:self.notification];
+
+    self.push.autobadgeEnabled = NO;
+
+    // Application should set icon badge number when autobadge is enabled
+    [[self.mockedApplication reject] setApplicationIconBadgeNumber:expectedNotificationContent.badge.integerValue];
+
+    [[self.mockedPushDelegate expect] receivedForegroundNotification:expectedNotificationContent completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void (^handler)() = obj;
+        handler();
+        return YES;
+    }]];
+
+    [[self.mockedPushDelegate reject] receivedBackgroundNotification:expectedNotificationContent completionHandler:OCMOCK_ANY];
+
+    // Call handleRemoteNotification
+    [self.push handleRemoteNotification:expectedNotificationContent foreground:YES completionHandler:^(UIBackgroundFetchResult result) {
+        completionHandlerCalled = YES;
+    }];
+
+    [self.mockedApplication verify];
+    [self.mockedPushDelegate verify];
+    XCTAssertTrue(completionHandlerCalled);
+}
+
+/**
+ * Test handleRemoteNotification when background push.
+ */
+- (void)testHandleRemoteNotificationBackground {
+    __block BOOL completionHandlerCalled = NO;
+
+    UANotificationContent *expectedNotificationContent = [UANotificationContent notificationWithNotificationInfo:self.notification];
+
+    [[self.mockedPushDelegate reject] receivedForegroundNotification:expectedNotificationContent completionHandler:OCMOCK_ANY];
+
+    [[self.mockedPushDelegate expect] receivedBackgroundNotification:expectedNotificationContent completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void (^handler)() = obj;
+        handler();
+        return YES;
+    }]];
+
+    // Call handleRemoteNotification
+    [self.push handleRemoteNotification:expectedNotificationContent foreground:NO completionHandler:^(UIBackgroundFetchResult result) {
+        completionHandlerCalled = YES;
+    }];
+
+    [self.mockedPushDelegate verify];
+    XCTAssertTrue(completionHandlerCalled);
+}
+
+/**
+ * Test handleRemoteNotification when no delegate is set.
+ */
+- (void)testHandleRemoteNotificationNoDelegate {
+    __block BOOL completionHandlerCalled = NO;
+    UANotificationContent *expectedNotificationContent = [UANotificationContent notificationWithNotificationInfo:self.notification];
+
+    self.push.pushNotificationDelegate = nil;
+
+    // Call handleRemoteNotification
+    [self.push handleRemoteNotification:expectedNotificationContent foreground:YES completionHandler:^(UIBackgroundFetchResult result) {
+        completionHandlerCalled = YES;
+        XCTAssertEqual(result, UIBackgroundFetchResultNoData);
+    }];
+
+    XCTAssertTrue(completionHandlerCalled);
+}
+
+/**
+ * Test handleNotificationResponse when launched from push.
+ */
+- (void)testHandleNotificationResponseLaunchedFromPush {
+    UANotificationResponse *expectedNotificationLaunchFromPush = [UANotificationResponse notificationResponseWithNotificationInfo:self.notification
+                                                                                                                 actionIdentifier:UANotificationDefaultActionIdentifier
+                                                                                                                     responseText:@"test_response_text"];
+    // delegate needs to be unresponsive to receivedNotificationResponse callback
+    self.push.pushNotificationDelegate = nil;
+
+    // Call handleNotificationResponse
+    [self.push handleNotificationResponse:expectedNotificationLaunchFromPush completionHandler:^{
+    }];
+
+    // Check that the launchNotificationReponse is set to expected response
+    XCTAssertEqualObjects(self.push.launchNotificationResponse, expectedNotificationLaunchFromPush);
+
+    [self.mockedPushDelegate verify];
+}
+
+/**
+ * Test handleNotificationResponse when not launched from push.
+ */
+- (void)testHandleNotificationResponseNotLaunchedFromPush {
+    __block BOOL completionHandlerCalled = NO;
+
+    UANotificationResponse *expectedNotificationNotLaunchedFromPush = [UANotificationResponse notificationResponseWithNotificationInfo:self.notification
+                                                                                                                      actionIdentifier:@"test_action_identifier"
+                                                                                                                          responseText:@"test_response_text"];
+
+    [[self.mockedPushDelegate expect] receivedNotificationResponse:OCMOCK_ANY completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void (^handler)() = obj;
+        handler();
+        return YES;
+    }]];
+
+    // Call handleNotificationResponse
+    [self.push handleNotificationResponse:expectedNotificationNotLaunchedFromPush completionHandler:^{
+        completionHandlerCalled = YES;
+    }];
+
+    // Check that the launchNotificationReponse is not set
+    XCTAssertNil(self.push.launchNotificationResponse);
+
+    [self.mockedApplication verify];
+    [self.mockedPushDelegate verify];
+    XCTAssertTrue(completionHandlerCalled);
+}
+
+/**
+ * Test handleNotificationResponse no delegate set.
+ */
+- (void)testHandleNotificationResponse {
+    __block BOOL completionHandlerCalled = NO;
+
+    self.push.pushNotificationDelegate = nil;
+
+    UANotificationResponse *expectedNotification = [UANotificationResponse notificationResponseWithNotificationInfo:self.notification
+                                                                                                   actionIdentifier:@"test_action_identifier"
+                                                                                                       responseText:@"test_response_text"];
+
+    // Call handleNotificationResponse
+    [self.push handleNotificationResponse:expectedNotification completionHandler:^{
+        completionHandlerCalled = YES;
+    }];
+
+    // Check that the launchNotificationReponse is not set
+    XCTAssertNil(self.push.launchNotificationResponse);
+
+    [self.mockedApplication verify];
+    XCTAssertTrue(completionHandlerCalled);
+}
+
+/**
+ * Test presentationOptionsForNotification when delegate method is unimplemented.
+ */
+- (void)testPresentationOptionsForNotificationNoDelegate {
+
+    self.push.defaultPresentationOptions = UNNotificationPresentationOptionAlert;
+    self.push.pushNotificationDelegate = nil;
+
+
+    [[[self.mockedAirship stub] andReturn:self.push] push];
+
+    UNNotificationPresentationOptions presentationOptions = [self.push presentationOptionsForNotification:self.mockedUNNotification];
+
+    XCTAssertEqual(presentationOptions, self.push.defaultPresentationOptions);
+}
+
+/**
+ * Test presentationOptionsForNotification when delegate method is implemented.
+ */
+- (void)testPresentationOptionsForNotification {
+
+    [[[self.mockedAirship stub] andReturn:self.push] push];
+
+    [[[self.mockedPushDelegate stub] andReturnValue:OCMOCK_VALUE(UNNotificationPresentationOptionAlert)] presentationOptionsForNotification:self.mockedUNNotification];
+
+    UNNotificationPresentationOptions result = [self.push presentationOptionsForNotification:self.mockedUNNotification];
+
+    XCTAssertEqual(result, UNNotificationPresentationOptionAlert);
+
+    [self.mockedPushDelegate verify];
 }
 
 @end
