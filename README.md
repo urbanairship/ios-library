@@ -1,108 +1,4 @@
-# iOS 10 Urban Airship Developer Preview Release
-
-THIS URBAN AIRSHIP SDK IS RELEASED AS A DEVELOPER PREVIEW VERSION AND MAY CONTAIN BUGS,
-ERRORS, DEFECTS, HARMFUL COMPONENTS AND MAY NOT BE COMPATIBLE WITH THE FINAL VERSION OF
-THE APPLICABLE THIRD PARTY OPERATING SYSTEM. ACCORDINGLY, URBAN AIRSHIP IS PROVIDING
-THE LICENSE ON AN “AS IS” BASIS AND NOT FOR USE IN PRODUCTION.
-
-## Developer Preview Migration Guide
-
-### SDK 8.0.0 DP 1 to 8.0.0 DP 3
-
-#### Package changes
-
-In order to take advantage of iOS 10 notification attachments, you will need to create a notification service extension
-alongside your main application. Most of the work is already done for you, but since this involves creating a new target there
-are a few additional steps:
-
-* Create a new iOS target in Xcode and select the "Notification Service Extension" type
-* Drag the new AirshipAppExtensions.framework into your app project
-* Link against AirshipAppExtensions.framework in your extension's Build Phases
-* Add a Copy Files phase for AirshipAppExtensions.framework and select "Frameworks" as the destination
-* Delete all dummy source code for your new extension
-* Import `<AirshipAppExtensions/AirshipAppExtensions.h>` if using Objective-C, or `AirshipAppExtensions` if using Swift, in `NotificationService`
-* Inherit from `UAMediaAttachmentExtension` in `NotificationService`
-
-For a concrete example see the SampleServiceExtension bundled with the Sample and SwiftSample applications provided in this distribution.
-
-
-#### Application Integration Changes
-
-All application integration points have been moved to `UAAppIntegration`. If your application disabled
-automatic integration, it will need to be updated to call the new methods:
-
-UIApplicationDelegate methods:
-```obj-c
-+ (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken;
-+ (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
-+ (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings;
-+ (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)())handler;
-```
-
-UNUserNotificationDelegate methods:
-```obj-c
-+ (void)userNotificationCenter:(UNUserNotificationCenter *)center
-   didReceiveNotificationResponse:(UNNotificationResponse *)response
-            withCompletionHandler:(void(^)())completionHandler;
-+ (void)userNotificationCenter:(UNUserNotificationCenter *)center
-       willPresentNotification:(UNNotification *)notification
-         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler;
-```
-
-#### UAPush Changes
-
-The property `launchNotification` has been replaced with `launchNotificationResponse` and will contain a `UANotificationResponse`.
-
-#### UAPushNotificationDelegate Changes
-
-The UAPushNotificationDelegate has been rewritten to be more inline with iOS 10. The following methods are provided:
-
-```obj-c
--(void)receivedForegroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)())completionHandler;
--(void)receivedBackgroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
--(void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void (^)())completionHandler;
-- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification;
-```
-
-All methods are backwards compatible with iOS 8 & 9, with the exception of `presentationOptionsForNotification`.
-
-
-
-
-### SDK 7.2.0 to 8.0.0 DP 1
-
-#### Integration Changes
-
-Auto integration now automatically swizzles and sets the UNNotificationCenter delegate. Applications can
-still set a delegate on UNNotificationCenter without conflicting with Urban Airship. If automatic
-integration is disabled, UAPush needs to be either set as the UNNotificationCenter delegate or
-the application must forward calls to UAPush.
-
-#### Push Changes
-
-Notification categories and types have been removed. Instead you can set UANotificationOptions
-and UANotificationCategory and the SDK will automatically convert the properties to the
-appropriate types depending on the OS version.
-
-```obj-c
-   // Old
-   - (UIUserNotificationType)currentEnabledNotificationTypes;
-   @property (nonatomic, assign) UIUserNotificationType userNotificationTypes;
-   @property (nonatomic, strong) NSSet *userNotificationCategories;
-```
-
-```obj-c
-   // New
-   @property (nonatomic, assign) UANotificationOptions notificationOptions;
-   @property (nonatomic, assign, readonly) UANotificationOptions authorizedNotificationOptions;
-   @property (nonatomic, strong) NSSet <UANotificationCategory *>customCategories;
-````
-
-#### Location Changes
-
-The old location module has been deprecated and will be removed in the next preview. A new simplified location module has been added
-and can be accessed directly from UAirship - [UAirship location]. The new location module only supports significant location change and
-contains a simplified interface to disable/enable location updates and allow location to update in the background.
+# iOS Urban Airship Library
 
 ## Overview
 
@@ -124,9 +20,9 @@ reporting for applications using interactive notifications.
 - Background refresh always appears to be enabled in an application even when disabled in
 settings and background push will not be delivered. Push registration will consider a
 device in this situation able to receive a background notification when it cannot. (Radar #18298439)
-- Registering for UIUserNotificationTypeNone will prevent a re-registration until the device
+- **Resolved in iOS 10** Registering for UIUserNotificationTypeNone will prevent a re-registration until the device
 has been restarted and the settings are manually updated in Settings.app. There is a
-workaround for this issue in UA SDK 5.0.0. (Radar #17878212)
+workaround for this issue in UA SDK 5.0.0. (Radar #17878212).
 - **Resolved in iOS 9** The boolean properties on UIUserNotificationAction are mutated in the
 UIUserNotificationCategory isEqual: method, so the authorizationRequired and destructive
 properties on an action may receive values from actions in other categories
@@ -141,7 +37,7 @@ or authorization required status (Radar #18385104).
 
 ## Quickstart
 
-Xcode 6.4+ is required for all projects and the static library. Projects must target >= iOS6.
+Xcode 8.0+ is required for all projects and the static library. Projects must target >= iOS8.
 
 [Download](https://bintray.com/urbanairship/iOS/urbanairship-sdk/_latestVersion) and unzip the latest
 version of libUAirship. If you are using one of our sample projects, copy the ``Airship`` directory
@@ -184,6 +80,19 @@ library>/libUAirship-<version>.a` may be used in instances where using the -ObjC
 
 - Add the bridging header located in Airship/UI, named "UA-UI-Bridging-Header.h" to use the sample UI.
 
+
+### Notification Service Extension
+In order to take advantage of iOS 10 notification attachments, you will need to create a notification service extension
+alongside your main application. Most of the work is already done for you, but since this involves creating a new target there
+are a few additional steps:
+
+* Create a new iOS target in Xcode and select the "Notification Service Extension" type
+* Drag the new AirshipAppExtensions.framework into your app project
+* Link against AirshipAppExtensions.framework in your extension's Build Phases
+* Add a Copy Files phase for AirshipAppExtensions.framework and select "Frameworks" as the destination
+* Delete all dummy source code for your new extension
+* Import `<AirshipAppExtensions/AirshipAppExtensions.h>` if using Objective-C, or `AirshipAppExtensions` if using Swift, in `NotificationService`
+* Inherit from `UAMediaAttachmentExtension` in `NotificationService`
 
 #### Adding an Airship Config File
 

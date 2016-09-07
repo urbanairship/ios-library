@@ -3,46 +3,19 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
-Version 8.0.0 Developer Previews
+Version 8.0.0 - September 7, 2016
 =================================
-THIS URBAN AIRSHIP SDK IS RELEASED AS A DEVELOPER PREVIEW VERSION AND MAY CONTAIN BUGS,
-ERRORS, DEFECTS, HARMFUL COMPONENTS AND MAY NOT BE COMPATIBLE WITH THE FINAL VERSION OF
-THE APPLICABLE THIRD PARTY OPERATING SYSTEM. ACCORDINGLY, URBAN AIRSHIP IS PROVIDING
-THE LICENSE ON AN “AS IS” BASIS AND NOT FOR USE IN PRODUCTION.
-
-Preview 4 - September 2, 2016
------------------------------
-- Fixed default foreground presentation options sometimes defaulting to displaying an alert.
-- Fixed compiler warnings.
-- Fixed SwiftSample's UAPushNotificationDelegate implementation.
+- iOS 10 compatible release.
+- Dropped support for iOS 7.
 - Removed deprecated APIs from 7.x.
-
-Preview 3 - August 26, 2016
----------------------------
-- Added support for media attachments. Requires applications to provide a notification extension.
+- Added support for media attachments. Requires applications to provide a notification extension that
+  extends the class `UAMediaAttachmentExtension` that is provided in the AirshipAppExtensions.framework.
 - UAPushNotificationDelegate has been rewritten to be more aligned with iOS 10.
 - Manual application integration methods have been moved to UAAppIntegration.
-
-Preview 2 - August 2, 2016
---------------------------
+- Added foreground presentation flag (UAActionMetadataForegroundPresentationKey) to action arguments
+  when running actions in situation UASituationForegroundPush
 - Added support for foreground presentation options. Default options can be set on UAPush, or
   per notification with presentationOptionsForNotification: method on the UAPushNotificationDelegate.
-- Added foreground presentation flag (UAActionMetadataForegroundPresentationKey) to action arguments
-  when running actions in situation UASituationForegroundPush.
-- UAAutoAppDelegate no longer replaces the UNNotificationDelegate, instead it will either set
-  a delegate if one is not already set or swizzle the existing delegate.
-- Updated to build with Xcode 8 beta 4.
-
-Preview 1 - July 6, 2016
-------------------------
-- First iOS 10 compatibility release.
-- Added support for new UNNotification classes.
-- New simplified location module. Previous location module has been deprecated and will be removed in a future developer preview.
-- Fixed Channel Capture for iOS 10 devices.
-- Updated SwiftSample to Swift 3.0.
-
-Developer preview APIs may not be final. Please see the README.md for migration guide
-and known issues.
 
 Version 7.3.0 - August 31, 2016
 ===============================
