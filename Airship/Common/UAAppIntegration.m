@@ -71,8 +71,21 @@
 + (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     switch(application.applicationState) {
         case UIApplicationStateActive:
+            if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}] && ![UAUtils isSilentPush:userInfo]) {
+                // Handled by the new userNotificationCenter:willPresentNotification:withCompletionHandler:
+                completionHandler(UIBackgroundFetchResultNoData);
+                break;
+            }
+
+            // Foreground push
+            [self handleIncomingNotification:[UANotificationContent notificationWithNotificationInfo:userInfo]
+                      foregroundPresentation:NO
+                           completionHandler:completionHandler];
+
+            break;
+
         case UIApplicationStateBackground:
-            // Foreground or background push
+            // Background push
             [self handleIncomingNotification:[UANotificationContent notificationWithNotificationInfo:userInfo]
                       foregroundPresentation:NO
                            completionHandler:completionHandler];
@@ -125,10 +138,13 @@
     UNNotificationPresentationOptions options = [[UAirship push] presentationOptionsForNotification:notification];
     completionHandler(options);
 
-    // If automatic setup is enabled, call handleForegroundNotification:mergedOptions:
-    // with all the options for the final options for the notification
     if (![UAirship shared].config.automaticSetupEnabled) {
-        [self handleForegroundNotification:notification mergedOptions:options];
+        [self handleForegroundNotification:notification mergedOptions:options withCompletionHandler:^{
+            completionHandler(options);
+        }];
+    } else {
+        // UAAutoIntegration will call handleForegroundNotification:mergedOptions:withCompletionHandler:
+        completionHandler(options);
     }
 }
 
@@ -143,14 +159,16 @@
 #pragma mark -
 #pragma mark Notification handling
 
-+ (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options {
++ (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options withCompletionHandler:(void(^)())completionHandler {
     BOOL foregroundPresentation = (options & UNNotificationPresentationOptionAlert) > 0;
 
     UANotificationContent *notificationContent = [UANotificationContent notificationWithUNNotification:notification];
 
     [self handleIncomingNotification:notificationContent
               foregroundPresentation:foregroundPresentation
-                   completionHandler:^(UIBackgroundFetchResult result) {}];
+                   completionHandler:^(UIBackgroundFetchResult result) {
+                       completionHandler();
+                   }];
 }
 
 + (void)handleNotificationResponse:(UANotificationResponse *)response

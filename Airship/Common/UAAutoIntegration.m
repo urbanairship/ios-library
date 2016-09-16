@@ -236,8 +236,9 @@ void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self,
                 resultCount++;
 
                 if (expectedCount == resultCount) {
-                    handler(mergedPresentationOptions);
-                    [UAAppIntegration handleForegroundNotification:notification mergedOptions:mergedPresentationOptions];
+                    [UAAppIntegration handleForegroundNotification:notification mergedOptions:mergedPresentationOptions withCompletionHandler:^{
+                        handler(mergedPresentationOptions);
+                    }];
                 }
             });
         };
@@ -255,8 +256,9 @@ void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self,
             resultCount++;
 
             if (expectedCount == resultCount) {
-                handler(mergedPresentationOptions);
-                [UAAppIntegration handleForegroundNotification:notification mergedOptions:mergedPresentationOptions];
+                [UAAppIntegration handleForegroundNotification:notification mergedOptions:mergedPresentationOptions withCompletionHandler:^{
+                    handler(mergedPresentationOptions);
+                }];
             }
         });
     }];
