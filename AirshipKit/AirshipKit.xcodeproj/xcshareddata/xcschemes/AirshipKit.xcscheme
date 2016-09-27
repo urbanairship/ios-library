@@ -28,7 +28,26 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "CC64F0531D8B77E3009CEF27"
+               BuildableName = "AirshipKitTests.xctest"
+               BlueprintName = "AirshipKitTests"
+               ReferencedContainer = "container:AirshipKit.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "494DD9561B0EB677009C134E"
+            BuildableName = "AirshipKit.framework"
+            BlueprintName = "AirshipKit"
+            ReferencedContainer = "container:AirshipKit.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>

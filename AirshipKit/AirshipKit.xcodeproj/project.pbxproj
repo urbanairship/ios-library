@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		494DDC261B0FD6A1009C134E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DDC251B0FD6A1009C134E /* libsqlite3.dylib */; };
 		494DDC281B0FD6A6009C134E /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DDC271B0FD6A6009C134E /* libz.dylib */; };
-		CC40D87C1D8C703E00BABD4F /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC40D87B1D8C703E00BABD4F /* libOCMock.a */; };
 		CC40D87F1D8C719F00BABD4F /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40D87E1D8C719F00BABD4F /* JRSwizzle.m */; };
 		CC40DC051D8C996A00BABD4F /* AirshipKit.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DAD91D8C996900BABD4F /* AirshipKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC40DC061D8C996A00BABD4F /* AirshipLib.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DADA1D8C996900BABD4F /* AirshipLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -551,6 +550,7 @@
 		CC8999AF1D8B642D00A0CECC /* UAInAppMessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = CC8999A61D8B642D00A0CECC /* UAInAppMessageView.xib */; };
 		CC8999B01D8B642D00A0CECC /* UANotificationCategories.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC8999A71D8B642D00A0CECC /* UANotificationCategories.plist */; };
 		CC899CC51D8B6F6500A0CECC /* AirshipResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CC8999771D8B625500A0CECC /* AirshipResources.bundle */; };
+		FADDDD913027F98E43D963D8 /* libPods-AirshipKitTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF471EEEF4B1EEA3289E08C9 /* libPods-AirshipKitTests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -583,6 +583,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		07A9F5B3D35A6078949E4EAA /* Pods-AirshipKitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipKitTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests.release.xcconfig"; sourceTree = "<group>"; };
+		3DE226EC24B13B38BA51B7B4 /* Pods-AirshipKitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipKitTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		494DD9571B0EB677009C134E /* AirshipKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		494DD95B1B0EB677009C134E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		494DDC251B0FD6A1009C134E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
@@ -1048,6 +1050,7 @@
 		CC8999A61D8B642D00A0CECC /* UAInAppMessageView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInAppMessageView.xib; sourceTree = "<group>"; };
 		CC8999A71D8B642D00A0CECC /* UANotificationCategories.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UANotificationCategories.plist; sourceTree = "<group>"; };
 		CC899CD01D8B712D00A0CECC /* libUAirship.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libUAirship.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF471EEEF4B1EEA3289E08C9 /* libPods-AirshipKitTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AirshipKitTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1064,8 +1067,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC40D87C1D8C703E00BABD4F /* libOCMock.a in Frameworks */,
 				CC64F0591D8B77E3009CEF27 /* AirshipKit.framework in Frameworks */,
+				FADDDD913027F98E43D963D8 /* libPods-AirshipKitTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1086,6 +1089,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0A550D587E2599A4BD33CDF4 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				3DE226EC24B13B38BA51B7B4 /* Pods-AirshipKitTests.debug.xcconfig */,
+				07A9F5B3D35A6078949E4EAA /* Pods-AirshipKitTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		494DD94D1B0EB677009C134E = {
 			isa = PBXGroup;
 			children = (
@@ -1097,6 +1109,7 @@
 				494DDC271B0FD6A6009C134E /* libz.dylib */,
 				494DDC251B0FD6A1009C134E /* libsqlite3.dylib */,
 				CC40D87A1D8C703E00BABD4F /* Frameworks */,
+				0A550D587E2599A4BD33CDF4 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1159,6 +1172,7 @@
 			isa = PBXGroup;
 			children = (
 				CC40D87B1D8C703E00BABD4F /* libOCMock.a */,
+				CF471EEEF4B1EEA3289E08C9 /* libPods-AirshipKitTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -2046,9 +2060,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CC64F05E1D8B77E3009CEF27 /* Build configuration list for PBXNativeTarget "AirshipKitTests" */;
 			buildPhases = (
+				F177E7D1D04156E5342D8FCC /* [CP] Check Pods Manifest.lock */,
 				CC64F0501D8B77E3009CEF27 /* Sources */,
 				CC64F0511D8B77E3009CEF27 /* Frameworks */,
 				CC64F0521D8B77E3009CEF27 /* Resources */,
+				D3775F1A08A9BD2223C1AC9E /* [CP] Embed Pods Frameworks */,
+				F5CEFEC0515FB1B49241A7D4 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -2292,6 +2309,51 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cd $SRCROOT/AirshipKit/\nxxd -i UANativeBridge.js UANativeBridge.c";
+		};
+		D3775F1A08A9BD2223C1AC9E /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F177E7D1D04156E5342D8FCC /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		F5CEFEC0515FB1B49241A7D4 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2845,6 +2907,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_TESTABILITY = YES;
 				INFOPLIST_FILE = AirshipKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -2905,7 +2968,7 @@
 		};
 		CC64F05C1D8B77E3009CEF27 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
+			baseConfigurationReference = 3DE226EC24B13B38BA51B7B4 /* Pods-AirshipKitTests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -2914,12 +2977,13 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				ENABLE_TESTABILITY = YES;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../TestCommon/OCMockLibrary/Headers/\"";
 				INFOPLIST_FILE = AirshipKitTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/../TestCommon/OCMockLibrary\"";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -2927,19 +2991,20 @@
 		};
 		CC64F05D1D8B77E3009CEF27 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
+			baseConfigurationReference = 07A9F5B3D35A6078949E4EAA /* Pods-AirshipKitTests.release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				DEVELOPMENT_TEAM = PGJV57GD94;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../TestCommon/OCMockLibrary/Headers/\"";
 				INFOPLIST_FILE = AirshipKitTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/../TestCommon/OCMockLibrary\"";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

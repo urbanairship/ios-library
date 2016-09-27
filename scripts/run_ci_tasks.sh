@@ -25,13 +25,13 @@ xcrun xcodebuild -project "${ROOT_PATH}/SwiftSample/SwiftSample.xcodeproj" -deri
 # Run the Tests!
 ##################################################################################################
 
-source "${SCRIPT_DIRECTORY}/mock_setup.sh"
+pod install --project-directory=$ROOT_PATH
 
 rm -rf "${ROOT_PATH}/test-output"
 mkdir -p "${ROOT_PATH}/test-output"
 
 # Run our Logic Tests
-xcrun xcodebuild -destination "${TEST_DESTINATION}" -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme AirshipKitTests test | tee "${ROOT_PATH}/test-output/XCTEST-LOGIC.out"
+xcrun xcodebuild -destination "${TEST_DESTINATION}" -workspace "${ROOT_PATH}/Airship.xcworkspace" -derivedDataPath "${DERIVED_DATA}" -scheme AirshipKitTests test | tee "${ROOT_PATH}/test-output/XCTEST-LOGIC.out"
 
 # delete derived data
 rm -rf "${DERIVED_DATA}"

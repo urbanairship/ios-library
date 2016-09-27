@@ -15,7 +15,6 @@ build/
 AirshipLib.h
 UANativeBridge.c
 xcuserdata/
-*.xcworkspace/
 AirshipConfig.plist
 AirshipDevelopment.plist
 fabfile.py*
@@ -28,3 +27,4 @@ OCMockLibrary
 *.swp
 Deploy/output
 test-output/
+Pods/

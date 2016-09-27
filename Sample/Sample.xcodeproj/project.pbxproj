@@ -76,6 +76,20 @@
 			remoteGlobalIDString = 49D2C73A1D6F952D0049B0A0;
 			remoteInfo = SampleServiceExtension;
 		};
+		CC53F7781D9B12D5004D366C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CC899CD01D8B712D00A0CECC;
+			remoteInfo = AirshipLib;
+		};
+		CC53F77A1D9B12D5004D366C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CC64F0541D8B77E3009CEF27;
+			remoteInfo = AirshipKitTests;
+		};
 		CC899CB21D8B6AB400A0CECC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */;
@@ -276,9 +290,9 @@
 				CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */,
 				49251DCF1D6F95FC00EED4BD /* AirshipAppExtensions.xcodeproj */,
 				764693A41C237B630090FE40 /* Sample */,
+				49D2C73C1D6F952D0049B0A0 /* SampleServiceExtension */,
 				76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */,
 				61E392301CC81EA800D994E3 /* UAMessageCenterDefaultStyle.plist */,
-				49D2C73C1D6F952D0049B0A0 /* SampleServiceExtension */,
 				764693A31C237B630090FE40 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -371,6 +385,8 @@
 			children = (
 				CC899CB31D8B6AB400A0CECC /* AirshipKit.framework */,
 				CC899CB51D8B6AB400A0CECC /* AirshipResources.bundle */,
+				CC53F7791D9B12D5004D366C /* libUAirship.a */,
+				CC53F77B1D9B12D5004D366C /* AirshipKitTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -496,6 +512,20 @@
 			fileType = wrapper.cfbundle;
 			path = AirshipAppExtensionsTests.xctest;
 			remoteRef = 49251DD61D6F95FC00EED4BD /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CC53F7791D9B12D5004D366C /* libUAirship.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libUAirship.a;
+			remoteRef = CC53F7781D9B12D5004D366C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CC53F77B1D9B12D5004D366C /* AirshipKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipKitTests.xctest;
+			remoteRef = CC53F77A1D9B12D5004D366C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CC899CB31D8B6AB400A0CECC /* AirshipKit.framework */ = {
