@@ -7,8 +7,6 @@
 SCRIPT_DIRECTORY=`dirname "$0"`
 ROOT_PATH=`dirname "${0}"`/../
 
-source ${SCRIPT_DIRECTORY}/configure_xcode_version.sh
-
 url="https://github.com/erikdoe/ocmock.git"
 tag="v2.2.3"
 temp_dir="/tmp/objectClone"

@@ -1,8 +1,0 @@
-//
-// Prefix header for all source files of the 'AirshipLogicTests' target in the 'AirshipLogicTests' project
-//
-
-#ifdef __OBJC__
-    #import <UIKit/UIKit.h>
-    #import <Foundation/Foundation.h>
-#endif

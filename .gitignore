@@ -12,11 +12,8 @@ Debug/
 Release/
 Distribution/
 build/
-Airship/*.a
-Airship/*.framework
-Airship/*.bundle
-Airship/Common/JS/UANativeBridge.c
-Airship/AirshipLib.h
+AirshipLib.h
+UANativeBridge.c
 xcuserdata/
 *.xcworkspace/
 AirshipConfig.plist

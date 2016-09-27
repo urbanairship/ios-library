@@ -222,8 +222,7 @@ debug mode. The emoji can be removed by disabling loud implementation errors bef
 
 [Source can be found here.](https://github.com/urbanairship/ios-library)
 
-- Update `scripts/configure_xcode_version.sh` with the path to the app bundle for the version of Xcode (e.g. /Applications/Xcode7-beta4.app) that you want to build with.
- Run the distribution script `./scripts/build_distribution.sh`
+Run the distribution script `./scripts/build.sh`
 
 This will produce a static library (.a file) in the Airship folder as well as the sample projects and Airship library distribution zip file in
 Deploy/output

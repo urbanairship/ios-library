@@ -74,6 +74,13 @@
 			remoteGlobalIDString = 49AA00FB1D65158C0081989A;
 			remoteInfo = AirshipAppExtensions;
 		};
+		CC899CCA1D8B6FD600A0CECC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CC8999771D8B625500A0CECC;
+			remoteInfo = AirshipResources;
+		};
 		CCDA35C91B8D265B00950AD5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */;
@@ -301,6 +308,7 @@
 			isa = PBXGroup;
 			children = (
 				CCDA35CA1B8D265B00950AD5 /* AirshipKit.framework */,
+				CC899CCB1D8B6FD600A0CECC /* AirshipResources.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -429,6 +437,13 @@
 			fileType = wrapper.cfbundle;
 			path = AirshipAppExtensionsTests.xctest;
 			remoteRef = 49251DE51D6F987600EED4BD /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CC899CCB1D8B6FD600A0CECC /* AirshipResources.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipResources.bundle;
+			remoteRef = CC899CCA1D8B6FD600A0CECC /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CCDA35CA1B8D265B00950AD5 /* AirshipKit.framework */ = {
@@ -716,6 +731,7 @@
 				49251DF51D6F9C1500EED4BD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		CCDA359E1B8D233A00950AD5 /* Build configuration list for PBXProject "SwiftSample" */ = {
 			isa = XCConfigurationList;
