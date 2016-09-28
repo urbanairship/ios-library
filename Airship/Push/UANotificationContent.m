@@ -111,7 +111,7 @@
 }
 
 + (instancetype)notificationWithUNNotification:(UNNotification *)notification {
-    UANotificationContent *notificationContent = [[UANotificationContent alloc] initWithNotificationInfo:notification.request.content.userInfo];
+    UANotificationContent *notificationContent = [[UANotificationContent alloc] initWithUNNotification:notification];
     return notificationContent;
 }
 

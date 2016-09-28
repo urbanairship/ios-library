@@ -24,10 +24,13 @@
  */
 
 #import <XCTest/XCTest.h>
+#import <OCMock/OCMock.h>
 #import "UANotificationContent.h"
+#import <UserNotifications/UserNotifications.h>
 
 @interface UANotificationContentTest : XCTestCase
 
+@property (nonatomic, strong) id mockedUNNotification;
 @property (nonatomic, strong) NSDictionary *notification;
 @property (nonatomic, strong) NSDictionary *notificationWithBody;
 @property (nonatomic, strong) NSString *testKey;
@@ -39,6 +42,8 @@
 
 - (void)setUp {
     [super setUp];
+
+    self.mockedUNNotification = [OCMockObject niceMockForClass:[UNNotification class]];
 
     self.testKey = nil;
     self.testValue = nil;
@@ -73,7 +78,18 @@
 }
 
 - (void)tearDown {
+
+    [self.mockedUNNotification stopMocking];
+
     [super tearDown];
+}
+
+// Tests UNNotification is properly initialized when a UANotificationContent instance is created from a UNNotification
+-(void)testNotificationContentFromUNNotification {
+
+    UANotificationContent *notificationContent = [UANotificationContent notificationWithUNNotification:self.mockedUNNotification];
+
+    XCTAssertEqualObjects(notificationContent.notification, self.mockedUNNotification);
 }
 
 // Tests notification content creation when the input notification dictionary does not include an alert body
