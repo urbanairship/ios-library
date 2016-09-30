@@ -75,10 +75,51 @@ otool -l "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" | grep __LLVM
 # Build docs
 ############
 
-appledoc --project-name "Urban Airship iOS Library $VERSION" \
---templates "${ROOT_PATH}/docs/doc_templates" \
---output "${STAGING}/docs" \
---exit-threshold 2 ${ROOT_PATH}/AirshipKit ${ROOT_PATH}/AirshipAppExtensions
+# Make sure Jazzy is installed
+if ! [ -x "$(command -v jazzy)" ]; then
+    echo "Installing jazzy"
+    gem install jazzy
+fi
+
+# AirshipKit
+jazzy \
+--objc \
+--clean \
+--author "Urban Airship" \
+--author_url https://urbanairship.com \
+--github_url https://github.com/urbanairship/ios-library \
+--module-version $VERSION \
+--umbrella-header AirshipKit/AirshipKit/AirshipLib.h \
+--framework-root AirshipKit \
+--module AirshipKit  \
+--output $STAGING/Documentation/AirshipKit \
+--sdk iphoneos \
+--skip-undocumented \
+--hide-documentation-coverage \
+--readme $ROOT_PATH/Documentation/README.md \
+--theme $ROOT_PATH/Documentation/theme
+
+# AirshipAppExtensions
+jazzy \
+--objc \
+--clean \
+--author "Urban Airship" \
+--author_url https://urbanairship.com \
+--github_url https://github.com/urbanairship/ios-library \
+--module-version $VERSION \
+--umbrella-header AirshipAppExtensions/AirshipAppExtensions/AirshipAppExtensions.h \
+--framework-root AirshipAppExtensions \
+--module AirshipAppExtensions  \
+--output $STAGING/Documentation/AirshipAppExtensions \
+--sdk iphoneos \
+--skip-undocumented \
+--hide-documentation-coverage \
+--readme $ROOT_PATH/Documentation/README.md \
+--theme $ROOT_PATH/Documentation/theme
+
+# Workaround the missing module version
+find $STAGING/Documentation -name '*.html' -print0 | xargs -0 sed -i "" "s/\$AIRSHIP_VERSION/${VERSION}/g"
+
 
 ######################
 # Package distribution
@@ -132,7 +173,6 @@ rm -rf `find ${STAGING} -name "*.pbxuser" `
 rm -rf `find ${STAGING} -name "*.perspective*" `
 rm -rf `find ${STAGING} -name "xcuserdata" `
 rm -rf `find ${STAGING} -name "AirshipConfig.plist" `
-rm "${STAGING}/AirshipKit/AppledocSettings.plist"
 
 # Rename sample plists
 mv -f ${STAGING}/Sample/AirshipConfig.plist.sample ${ROOT_PATH}/Sample/AirshipConfig.plist
