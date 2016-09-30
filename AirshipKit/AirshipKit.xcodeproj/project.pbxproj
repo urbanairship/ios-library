@@ -231,8 +231,6 @@
 		CC40DCE11D8C996A00BABD4F /* UANamedUser.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBB61D8C996A00BABD4F /* UANamedUser.m */; };
 		CC40DCE21D8C996A00BABD4F /* UANamedUserAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBB71D8C996A00BABD4F /* UANamedUserAPIClient+Internal.h */; };
 		CC40DCE31D8C996A00BABD4F /* UANamedUserAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBB81D8C996A00BABD4F /* UANamedUserAPIClient.m */; };
-		CC40DCE41D8C996A00BABD4F /* UANativeBridge.c in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBB91D8C996A00BABD4F /* UANativeBridge.c */; };
-		CC40DCE51D8C996A00BABD4F /* UANativeBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBBA1D8C996A00BABD4F /* UANativeBridge.h */; };
 		CC40DCE71D8C996A00BABD4F /* UANotificationAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBBC1D8C996A00BABD4F /* UANotificationAction+Internal.h */; };
 		CC40DCE81D8C996A00BABD4F /* UANotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBBD1D8C996A00BABD4F /* UANotificationAction.h */; };
 		CC40DCE91D8C996A00BABD4F /* UANotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBBE1D8C996A00BABD4F /* UANotificationAction.m */; };
@@ -550,6 +548,7 @@
 		CC8999AF1D8B642D00A0CECC /* UAInAppMessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = CC8999A61D8B642D00A0CECC /* UAInAppMessageView.xib */; };
 		CC8999B01D8B642D00A0CECC /* UANotificationCategories.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC8999A71D8B642D00A0CECC /* UANotificationCategories.plist */; };
 		CC899CC51D8B6F6500A0CECC /* AirshipResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CC8999771D8B625500A0CECC /* AirshipResources.bundle */; };
+		CCA11D351D9C41C7008C4A57 /* UANativeBridge.js in Resources */ = {isa = PBXBuildFile; fileRef = CCA11D341D9C41C7008C4A57 /* UANativeBridge.js */; };
 		FADDDD913027F98E43D963D8 /* libPods-AirshipKitTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF471EEEF4B1EEA3289E08C9 /* libPods-AirshipKitTests.a */; };
 /* End PBXBuildFile section */
 
@@ -813,9 +812,6 @@
 		CC40DBB61D8C996A00BABD4F /* UANamedUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UANamedUser.m; sourceTree = "<group>"; };
 		CC40DBB71D8C996A00BABD4F /* UANamedUserAPIClient+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UANamedUserAPIClient+Internal.h"; sourceTree = "<group>"; };
 		CC40DBB81D8C996A00BABD4F /* UANamedUserAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UANamedUserAPIClient.m; sourceTree = "<group>"; };
-		CC40DBB91D8C996A00BABD4F /* UANativeBridge.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = UANativeBridge.c; sourceTree = "<group>"; };
-		CC40DBBA1D8C996A00BABD4F /* UANativeBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UANativeBridge.h; sourceTree = "<group>"; };
-		CC40DBBB1D8C996A00BABD4F /* UANativeBridge.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = UANativeBridge.js; sourceTree = "<group>"; };
 		CC40DBBC1D8C996A00BABD4F /* UANotificationAction+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UANotificationAction+Internal.h"; sourceTree = "<group>"; };
 		CC40DBBD1D8C996A00BABD4F /* UANotificationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UANotificationAction.h; sourceTree = "<group>"; };
 		CC40DBBE1D8C996A00BABD4F /* UANotificationAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UANotificationAction.m; sourceTree = "<group>"; };
@@ -1009,7 +1005,6 @@
 		CC64F1491D8B7954009CEF27 /* development-embedded.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; path = "development-embedded.mobileprovision"; sourceTree = "<group>"; };
 		CC64F14A1D8B7954009CEF27 /* production-embedded.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; path = "production-embedded.mobileprovision"; sourceTree = "<group>"; };
 		CC8999771D8B625500A0CECC /* AirshipResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipResources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
-		CC8999791D8B625500A0CECC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CC89997E1D8B642D00A0CECC /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CC8999811D8B642D00A0CECC /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		CC8999821D8B642D00A0CECC /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
@@ -1050,6 +1045,7 @@
 		CC8999A61D8B642D00A0CECC /* UAInAppMessageView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInAppMessageView.xib; sourceTree = "<group>"; };
 		CC8999A71D8B642D00A0CECC /* UANotificationCategories.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UANotificationCategories.plist; sourceTree = "<group>"; };
 		CC899CD01D8B712D00A0CECC /* libUAirship.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libUAirship.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCA11D341D9C41C7008C4A57 /* UANativeBridge.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = UANativeBridge.js; sourceTree = "<group>"; };
 		CF471EEEF4B1EEA3289E08C9 /* libPods-AirshipKitTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AirshipKitTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -1103,7 +1099,7 @@
 			children = (
 				CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */,
 				494DD9591B0EB677009C134E /* AirshipKit */,
-				CC8999781D8B625500A0CECC /* AirshipResources */,
+				CC89997D1D8B642D00A0CECC /* AirshipResources */,
 				CC64F0551D8B77E3009CEF27 /* AirshipKitTests */,
 				494DD9581B0EB677009C134E /* Products */,
 				494DDC271B0FD6A6009C134E /* libz.dylib */,
@@ -1607,9 +1603,6 @@
 		CC40DDED1D91DD0200BABD4F /* Native Bridge */ = {
 			isa = PBXGroup;
 			children = (
-				CC40DBB91D8C996A00BABD4F /* UANativeBridge.c */,
-				CC40DBBA1D8C996A00BABD4F /* UANativeBridge.h */,
-				CC40DBBB1D8C996A00BABD4F /* UANativeBridge.js */,
 				CC40DAF01D8C996900BABD4F /* UAActionJSDelegate.h */,
 				CC40DAF11D8C996900BABD4F /* UAActionJSDelegate.m */,
 				CC40DB971D8C996900BABD4F /* UAJavaScriptDelegate.h */,
@@ -1820,18 +1813,10 @@
 			path = Support;
 			sourceTree = "<group>";
 		};
-		CC8999781D8B625500A0CECC /* AirshipResources */ = {
-			isa = PBXGroup;
-			children = (
-				CC89997D1D8B642D00A0CECC /* AirshipResources */,
-				CC8999791D8B625500A0CECC /* Info.plist */,
-			);
-			path = AirshipResources;
-			sourceTree = "<group>";
-		};
 		CC89997D1D8B642D00A0CECC /* AirshipResources */ = {
 			isa = PBXGroup;
 			children = (
+				CCA11D341D9C41C7008C4A57 /* UANativeBridge.js */,
 				CC89997E1D8B642D00A0CECC /* Info.plist */,
 				CC89997F1D8B642D00A0CECC /* Localization */,
 				CC8999A01D8B642D00A0CECC /* UAAutomation.xcdatamodeld */,
@@ -1842,7 +1827,7 @@
 				CC8999A61D8B642D00A0CECC /* UAInAppMessageView.xib */,
 				CC8999A71D8B642D00A0CECC /* UANotificationCategories.plist */,
 			);
-			name = AirshipResources;
+			path = AirshipResources;
 			sourceTree = "<group>";
 		};
 		CC89997F1D8B642D00A0CECC /* Localization */ = {
@@ -2002,7 +1987,6 @@
 				CC40DD0B1D8C996A00BABD4F /* UARichContentWindow.h in Headers */,
 				CC40DC291D8C996A00BABD4F /* UAActionSchedule+Internal.h in Headers */,
 				CC40DD1B1D8C996A00BABD4F /* UATagUtils.h in Headers */,
-				CC40DCE51D8C996A00BABD4F /* UANativeBridge.h in Headers */,
 				CC40DC321D8C996A00BABD4F /* UAAddCustomEventAction.h in Headers */,
 				CC40DCFD1D8C996A00BABD4F /* UAProximityRegion.h in Headers */,
 				CC40DC971D8C996A00BABD4F /* UAInAppMessage.h in Headers */,
@@ -2038,7 +2022,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 494DD96D1B0EB677009C134E /* Build configuration list for PBXNativeTarget "AirshipKit" */;
 			buildPhases = (
-				CC8999701D8B52FC00A0CECC /* Generate UANativeBridge */,
 				4997FA371B55D96D002D4E05 /* Generate AirshipLib.h */,
 				CC899CBB1D8B6C5600A0CECC /* Copy Headers */,
 				494DD9521B0EB677009C134E /* Sources */,
@@ -2098,7 +2081,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CC899CD81D8B712D00A0CECC /* Build configuration list for PBXNativeTarget "AirshipLib" */;
 			buildPhases = (
-				CC899D5B1D8B717D00A0CECC /* Generate UANativeBridge */,
 				CC899CCC1D8B712D00A0CECC /* Sources */,
 				CC899CCD1D8B712D00A0CECC /* Frameworks */,
 				CC899CCE1D8B712D00A0CECC /* CopyFiles */,
@@ -2233,6 +2215,7 @@
 				CC8999B01D8B642D00A0CECC /* UANotificationCategories.plist in Resources */,
 				CC8999AC1D8B642D00A0CECC /* UADefaultMessageCenterListViewController.xib in Resources */,
 				CC8999AB1D8B642D00A0CECC /* UADefaultMessageCenterListCell.xib in Resources */,
+				CCA11D351D9C41C7008C4A57 /* UANativeBridge.js in Resources */,
 				CC8999AD1D8B642D00A0CECC /* UADefaultMessageCenterMessageViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2253,20 +2236,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "$SRCROOT/Scripts/generate_header_imports.sh\n";
-		};
-		CC8999701D8B52FC00A0CECC /* Generate UANativeBridge */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Generate UANativeBridge";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cd $SRCROOT/AirshipKit/\nxxd -i UANativeBridge.js UANativeBridge.c";
 		};
 		CC899CBB1D8B6C5600A0CECC /* Copy Headers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2295,20 +2264,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "$SRCROOT/Scripts/generate_header_imports.sh\n";
-		};
-		CC899D5B1D8B717D00A0CECC /* Generate UANativeBridge */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Generate UANativeBridge";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cd $SRCROOT/AirshipKit/\nxxd -i UANativeBridge.js UANativeBridge.c";
 		};
 		D3775F1A08A9BD2223C1AC9E /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2362,7 +2317,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC40DCE41D8C996A00BABD4F /* UANativeBridge.c in Sources */,
 				CC40DCB81D8C996A00BABD4F /* UAInboxUtils.m in Sources */,
 				CC40DC781D8C996A00BABD4F /* UADefaultMessageCenterListCell.m in Sources */,
 				CC40DC8E1D8C996A00BABD4F /* UAHTTPConnection.m in Sources */,

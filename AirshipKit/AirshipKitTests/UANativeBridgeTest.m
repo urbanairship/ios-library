@@ -27,8 +27,8 @@
 #import <OCMock/OCMock.h>
 
 #import <JavaScriptCore/JavaScriptCore.h>
-#import "UANativeBridge.h"
 #import "UAWebViewCallData.h"
+#import "UAirship.h"
 
 @interface UANativeBridgeTest : XCTestCase
 @property (nonatomic, strong) JSContext *jsc;
@@ -44,8 +44,9 @@
 
     self.mockWebView = [OCMockObject niceMockForClass:[UIWebView class]];
 
-    NSData *data = [NSData dataWithBytes:(const char *)UANativeBridge_js length:UANativeBridge_js_len];
-    self.nativeBridge = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSString *path = [[UAirship resources] pathForResource:@"UANativeBridge" ofType:@"js"];
+    self.nativeBridge = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+
 
     self.jsc = [[JSContext alloc] initWithVirtualMachine:[[JSVirtualMachine alloc] init]];
 

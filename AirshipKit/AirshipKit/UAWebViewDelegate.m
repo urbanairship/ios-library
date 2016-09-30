@@ -29,7 +29,6 @@
 #import "UAInboxMessage.h"
 #import "UAGlobal.h"
 #import "UAUtils.h"
-#import "UANativeBridge.h"
 #import "UAirship+Internal.h"
 #import "UAInbox.h"
 #import "UAInboxMessage.h"
@@ -217,9 +216,8 @@
      *
      * See Airship/Common/JS/UANativeBridge.js for human-readable source
      */
-
-    NSData *data = [NSData dataWithBytes:(const char *)UANativeBridge_js length:UANativeBridge_js_len];
-    NSString *bridge = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSString *path = [[UAirship resources] pathForResource:@"UANativeBridge" ofType:@"js"];
+    NSString *bridge = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
     js = [js stringByAppendingString:bridge];
 
     /*
