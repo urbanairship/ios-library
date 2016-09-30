@@ -76,6 +76,13 @@
 			remoteGlobalIDString = 49D2C73A1D6F952D0049B0A0;
 			remoteInfo = SampleServiceExtension;
 		};
+		767A3A261D9EEEA700422A96 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 494DD9561B0EB677009C134E;
+			remoteInfo = AirshipKit;
+		};
 		CC53F7781D9B12D5004D366C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */;
@@ -427,6 +434,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				767A3A271D9EEEA700422A96 /* PBXTargetDependency */,
 				49D2C7421D6F952D0049B0A0 /* PBXTargetDependency */,
 			);
 			name = Sample;
@@ -621,6 +629,11 @@
 			isa = PBXTargetDependency;
 			target = 49D2C73A1D6F952D0049B0A0 /* SampleServiceExtension */;
 			targetProxy = 49D2C7411D6F952D0049B0A0 /* PBXContainerItemProxy */;
+		};
+		767A3A271D9EEEA700422A96 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipKit;
+			targetProxy = 767A3A261D9EEEA700422A96 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
