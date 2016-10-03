@@ -23,8 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Import the Urban Airship umbrella header using the framework
-#import <AirshipKit/AirshipKit.h>
+@import AirshipKit;
+
 #import "AddAliasTableViewController.h"
 
 @interface AddAliasTableViewController ()

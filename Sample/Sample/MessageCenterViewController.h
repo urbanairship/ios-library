@@ -23,8 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
-#import <AirshipKit/AirshipKit.h>
+@import UIKit;
+@import AirshipKit;
 
 @interface MessageCenterViewController : UADefaultMessageCenterSplitViewController
 

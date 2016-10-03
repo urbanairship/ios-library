@@ -28,7 +28,6 @@ import AirshipKit
 
 class TagsTableViewController: UITableViewController {
 
-
     let addTagsSegue:String = "addTagsSegue"
 
     override func viewDidLoad() {

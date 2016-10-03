@@ -23,13 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-
-#if __has_include("AirshipKit/AirshipKit.h")
-#import <AirshipKit/AirshipKit.h>
-#else
-#import "AirshipLib.h"
-#endif
+@import AirshipKit;
 
 @interface PushHandler : NSObject <UAPushNotificationDelegate>
 
