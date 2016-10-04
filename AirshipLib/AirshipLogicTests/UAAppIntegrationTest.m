@@ -30,7 +30,7 @@
 #import "UANotificationAction.h"
 #import "UANotificationCategory.h"
 #import "UAPush+Internal.h"
-#import "UAAnalytics.h"
+#import "UAAnalytics+Internal.h"
 #import "UAInteractiveNotificationEvent+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"
 #import "UAActionRunner+Internal.h"
@@ -373,6 +373,9 @@
         return YES;
     }]];
 
+    // Expect a call to UAAnalytics
+    [[self.mockedAnalytics expect] launchedFromNotification:self.notification];
+
     // Call the integration
     [UAAppIntegration userNotificationCenter:self.mockedUserNotificationCenter
               didReceiveNotificationResponse:self.mockedUNNotificationResponse
@@ -430,7 +433,10 @@
                                                         metadata:expectedMetadata
                                                completionHandler:[OCMArg checkWithBlock:handlerCheck]];
 
+
+
     // Expect a call to UAAnalytics
+    [[self.mockedAnalytics expect] launchedFromNotification:self.notification];
     [[self.mockedAnalytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isKindOfClass:[UAInteractiveNotificationEvent class]];
     }]];
