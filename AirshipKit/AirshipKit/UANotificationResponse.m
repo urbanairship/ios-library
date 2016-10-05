@@ -69,7 +69,8 @@ NSString *const UANotificationDismissActionIdentifier = @"com.apple.UNNotificati
     return self;
 }
 
-+ (instancetype)notificationResponseWithNotificationInfo:(NSDictionary *)notificationInfo actionIdentifier:(NSString *)actionIdentifier responseText:(NSString *)responseText {
++ (instancetype)notificationResponseWithNotificationInfo:(NSDictionary *)notificationInfo
+                                        actionIdentifier:(NSString *)actionIdentifier responseText:(NSString *)responseText {
     return [[UANotificationResponse alloc] initWithNotificationContent:[UANotificationContent notificationWithNotificationInfo:notificationInfo]
                                                       actionIdentifier:actionIdentifier
                                                           responseText:responseText];

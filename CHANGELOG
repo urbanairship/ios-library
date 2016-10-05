@@ -3,6 +3,10 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+Version 8.0.2 - October 4, 2016
+===============================
+- Fixed a regression affecting direct opens.
+
 Version 8.0.1 - September 16, 2016
 ==================================
 - Fixed bug that caused duplicate handling of content-available pushes.

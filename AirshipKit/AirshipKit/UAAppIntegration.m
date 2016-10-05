@@ -180,6 +180,7 @@
     NSDictionary *actionsPayload = [self actionsPayloadForNotificationContent:response.notificationContent actionIdentifier:response.actionIdentifier];
 
     if ([response.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
+        [[UAirship shared].analytics launchedFromNotification:response.notificationContent.notificationInfo];
         situation = UASituationLaunchedFromPush;
     } else {
         UANotificationAction *notificationAction = [self notificationActionForCategory:response.notificationContent.categoryIdentifier
