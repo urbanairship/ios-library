@@ -66,11 +66,6 @@ static UAirship *sharedAirship_;
 
 static NSBundle *resourcesBundle_;
 
-// Its possible that plugins that use load to call takeoff will trigger after
-// handleAppDidFinishLaunchingNotification.  We need to store that notification
-// and call handleAppDidFinishLaunchingNotification in takeoff.
-static NSNotification *_appDidFinishLaunchingNotification;
-
 static dispatch_once_t takeOffPred_;
 
 static dispatch_once_t proxyDelegateOnceToken_;
@@ -111,7 +106,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     self = [super init];
     if (self) {
         self.remoteNotificationBackgroundModeEnabled = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIBackgroundModes"] containsObject:@"remote-notification"];
-
 
         self.dataStore = dataStore;
         self.config = config;
@@ -288,23 +282,19 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         [sharedAirship_ validate];
     }
 
-    if (_appDidFinishLaunchingNotification) {
-        // Set up can occur after takeoff, so handle the launch notification on the
-        // next run loop to allow app setup to finish
-        dispatch_async(dispatch_get_main_queue(), ^() {
-            [UAirship handleAppDidFinishLaunchingNotification:_appDidFinishLaunchingNotification];
-            _appDidFinishLaunchingNotification = nil;
-        });
-    }
+    [sharedAirship_.analytics addEvent:[UAAppInitEvent event]];
+
+    // Update registration on the next run loop to allow apps to customize
+    // finish custom setup
+    dispatch_async(dispatch_get_main_queue(), ^() {
+        [sharedAirship_.sharedPush updateRegistration];
+    });
 }
 
 + (void)handleAppDidFinishLaunchingNotification:(NSNotification *)notification {
-
     [[NSNotificationCenter defaultCenter] removeObserver:[UAirship class] name:UIApplicationDidFinishLaunchingNotification object:nil];
 
     if (!sharedAirship_) {
-        _appDidFinishLaunchingNotification = notification;
-
         // Log takeoff errors on the next run loop to give time for apps that
         // use class loader to call takeoff.
         dispatch_async(dispatch_get_main_queue(), ^() {
@@ -315,13 +305,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         });
 
         return;
-    }
-
-    [sharedAirship_.analytics addEvent:[UAAppInitEvent event]];
-
-    // Register now
-    if (sharedAirship_.config.automaticSetupEnabled) {
-        [sharedAirship_.sharedPush updateRegistration];
     }
 }
 
