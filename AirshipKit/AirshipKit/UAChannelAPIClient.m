@@ -33,103 +33,70 @@
 #import "UAAnalytics+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 
-
-#define kUAChannelRetryTimeInitialDelay 60
-#define kUAChannelRetryTimeMultiplier 2
-#define kUAChannelRetryTimeMaxDelay 300
 #define kUAChannelCreateLocation @"/api/channels/"
-
-@interface UAChannelAPIClient()
-@property (nonatomic, strong) UAConfig *config;
-@end
 
 @implementation UAChannelAPIClient
 
-- (instancetype)initWithConfig:(UAConfig *)config {
-    self = [super init];
-    if (self) {
-        self.config = config;
-        self.requestEngine = [[UAHTTPRequestEngine alloc] init];
-        self.requestEngine.initialDelayIntervalInSeconds = kUAChannelRetryTimeInitialDelay;
-        self.requestEngine.maxDelayIntervalInSeconds = kUAChannelRetryTimeMaxDelay;
-        self.requestEngine.backoffFactor = kUAChannelRetryTimeMultiplier;
-        self.shouldRetryOnConnectionError = YES;
-    }
-    return self;
-}
-
-- (instancetype)initWithRequestEngine:(UAHTTPRequestEngine *)requestEngine {
-    self = [super init];
-    if (self) {
-        self.requestEngine = requestEngine;
-        self.shouldRetryOnConnectionError = YES;
-    }
-    return self;
-}
-
 + (instancetype)clientWithConfig:(UAConfig *)config {
-    return [[self alloc] initWithConfig:config];
+    return [UAChannelAPIClient clientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
 }
 
-
-- (void)cancelAllRequests {
-    [self.requestEngine cancelAllRequests];
++ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session {
+    return [[UAChannelAPIClient alloc] initWithConfig:config session:session];
 }
 
 - (void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload
                       onSuccess:(UAChannelAPIClientCreateSuccessBlock)successBlock
                       onFailure:(UAChannelAPIClientFailureBlock)failureBlock {
 
-    UA_LTRACE(@"Creating channel with JSON payload %@.", [[NSString alloc] initWithData:[payload asJSONData] encoding:NSUTF8StringEncoding]);
+    UA_LTRACE(@"Creating channel with: %@.", payload);
 
+    UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {
+        NSString *urlString = [NSString stringWithFormat:@"%@%@", self.config.deviceAPIURL, kUAChannelCreateLocation];
+        builder.URL = [NSURL URLWithString:urlString];
+        builder.method = @"POST";
+        builder.username = self.config.appKey;
+        builder.password = self.config.appSecret;
+        builder.body = [payload asJSONData];
+        [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
+        [builder setValue:@"application/json" forHeader:@"Content-Type"];
+    }];
 
-
-    UAHTTPRequest *request = [self requestToCreateChannelWithPayload:payload];
-
-    [self.requestEngine runRequest:request succeedWhere:^BOOL(UAHTTPRequest *request) {
-        NSInteger status = request.response.statusCode;
-        return (BOOL)(status == 200 || status == 201);
-    } retryWhere:^BOOL(UAHTTPRequest *request) {
-        if (self.shouldRetryOnConnectionError) {
-            NSInteger status = request.response.statusCode;
-            return (BOOL)(((status >= 500 && status <= 599 && status != 501) || request.error));
+    [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData *data, NSURLResponse *response) {
+        NSHTTPURLResponse *httpResponse = nil;
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            httpResponse = (NSHTTPURLResponse *) response;
         }
+
+        if (httpResponse.statusCode >= 500 && httpResponse.statusCode <= 599) {
+            return YES;
+        }
+
         return NO;
-    } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-
-        NSString *responseString = request.responseString;
-        NSDictionary *jsonResponse = [NSJSONSerialization objectWithString:responseString];
-        UA_LTRACE(@"Retrieved channel response: %@", responseString);
-        NSInteger status = request.response.statusCode;
-
-        BOOL existing = NO;
-        // 200 means channel previously existed, while 201 means newly created channel
-        if (status == 200) {
-            existing = YES;
+    } completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        NSHTTPURLResponse *httpResponse = nil;
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            httpResponse = (NSHTTPURLResponse *) response;
         }
 
-        // Get the channel ID from the request
+        // Failure
+        if (httpResponse.statusCode != 200 && httpResponse.statusCode != 201) {
+            UA_LTRACE(@"Channel creation failed with status: %ld error: %@", (unsigned long)httpResponse.statusCode, error);
+            failureBlock(httpResponse.statusCode);
+            return;
+        }
+
+        // Success
+        NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
+
+        UA_LTRACE(@"Channel creation succeeded with status: %ld jsonResponse: %@", (unsigned long)httpResponse.statusCode, jsonResponse);
+
+        // Parse the response
         NSString *channelID = [jsonResponse valueForKey:@"channel_id"];
+        NSString *channelLocation = [httpResponse.allHeaderFields valueForKey:@"Location"];
+        BOOL existing = httpResponse.statusCode == 200;
 
-        // Channel location from the request
-        NSString *channelLocation = [request.response.allHeaderFields valueForKey:@"Location"];
-        if (successBlock) {
-            successBlock(channelID, channelLocation, existing);
-        } else {
-            UA_LERR(@"missing successBlock");
-        }
-
-        // Send analytics events
-        [[UAirship shared].analytics sendWithDelay:0];
-
-    } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        [UAUtils logFailedRequest:request withMessage:@"Creating channel"];
-
-        if (failureBlock) {
-            failureBlock(request);
-        } else {
-            UA_LERR(@"missing failureBlock");
-        }
+        successBlock(channelID, channelLocation, existing);
     }];
 }
 
@@ -138,83 +105,47 @@
                         onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
                         onFailure:(UAChannelAPIClientFailureBlock)failureBlock {
 
-    if (!channelLocation) {
-        UA_LERR(@"Unable to update a channel with a nil channel location.");
-        return;
-    }
+    UA_LTRACE(@"Updating channel with: %@.", payload);
 
-    UA_LTRACE(@"Updating channel at location %@ with JSON payload %@.", channelLocation, [[NSString alloc] initWithData:[payload asJSONData] encoding:NSUTF8StringEncoding]);
+    UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {
+        builder.URL = [NSURL URLWithString:channelLocation];
+        builder.method = @"PUT";
+        builder.username = self.config.appKey;
+        builder.password = self.config.appSecret;
+        builder.body = [payload asJSONData];
+        [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
+        [builder setValue:@"application/json" forHeader:@"Content-Type"];
+    }];
 
-    UAHTTPRequest *request = [self requestToUpdateWithChannelLocation:channelLocation payload:payload];
-
-    [self.requestEngine runRequest:request succeedWhere:^BOOL(UAHTTPRequest *request) {
-        NSInteger status = request.response.statusCode;
-        return (BOOL)(status == 200 || status == 201);
-    } retryWhere:^BOOL(UAHTTPRequest *request) {
-        if (self.shouldRetryOnConnectionError) {
-            NSInteger status = request.response.statusCode;
-            return (BOOL)((status >= 500 && status <= 599) || request.error);
+    [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData *data, NSURLResponse *response) {
+        NSHTTPURLResponse *httpResponse = nil;
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            httpResponse = (NSHTTPURLResponse *) response;
         }
+
+        if (httpResponse.statusCode >= 500 && httpResponse.statusCode <= 599) {
+            return YES;
+        }
+
         return NO;
-    } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        UA_LTRACE(@"Retrieved channel response: %@", request.responseString);
-
-        if (successBlock) {
-            successBlock();
-        } else {
-            UA_LERR(@"missing successBlock");
+    } completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        NSHTTPURLResponse *httpResponse = nil;
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            httpResponse = (NSHTTPURLResponse *) response;
         }
-    } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        [UAUtils logFailedRequest:request withMessage:@"Updating channel"];
 
-        if (failureBlock) {
-            failureBlock(request);
-        } else {
-            UA_LERR(@"missing failureBlock");
+        // Failure
+        if (httpResponse.statusCode != 200 && httpResponse.statusCode != 201) {
+            UA_LTRACE(@"Channel creation failed with status: %ld error: %@", (unsigned long)httpResponse.statusCode, error);
+            failureBlock(httpResponse.statusCode);
+            return;
         }
+
+        // Success
+        UA_LTRACE(@"Channel creation succeeded with status: %ld", (unsigned long)httpResponse.statusCode);
+        successBlock();
     }];
 }
 
-/**
- * Creates an UAHTTPRequest for updating a channel.
- *
- * @param location The channel location
- * @param payload The payload to update the channel.
- * @return A UAHTTPRequest request.
- */
-- (UAHTTPRequest *)requestToUpdateWithChannelLocation:(NSString *)location payload:(UAChannelRegistrationPayload *)payload {
-
-    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:[NSURL URLWithString:location]];
-    request.HTTPMethod = @"PUT";
-    request.username = self.config.appKey;
-    request.password = self.config.appSecret;
-
-    [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
-    [request addRequestHeader: @"Content-Type" value: @"application/json"];
-    [request appendBodyData:[payload asJSONData]];
-
-    return request;
-}
-
-/**
- * Creates an UAHTTPRequest to create a channel.
- *
- * @param payload The payload to update the channel.
- * @return A UAHTTPRequest request.
- */
-- (UAHTTPRequest *)requestToCreateChannelWithPayload:(UAChannelRegistrationPayload *)payload {
-    NSString *urlString = [NSString stringWithFormat:@"%@%@", self.config.deviceAPIURL, kUAChannelCreateLocation];
-
-    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:[NSURL URLWithString:urlString]];
-    request.HTTPMethod = @"POST";
-    request.username = self.config.appKey;
-    request.password = self.config.appSecret;
-
-    [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
-    [request addRequestHeader: @"Content-Type" value: @"application/json"];
-    [request appendBodyData:[payload asJSONData]];
-
-    return request;
-}
 
 @end

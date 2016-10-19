@@ -24,10 +24,9 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "UAAPIClient+Internal.h"
 
-@class UAHTTPRequestEngine;
 @class UAChannelRegistrationPayload;
-@class UAHTTPRequest;
 @class UAConfig;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -49,14 +48,14 @@ typedef void (^UAChannelAPIClientUpdateSuccessBlock)();
 /**
  * A block called when the channel creation or update failed.
  *
- * @param request The request that failed.
+ * @param statusCode The request status code.
  */
-typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
+typedef void (^UAChannelAPIClientFailureBlock)(NSUInteger statusCode);
 
 /**
  * A high level abstraction for performing Channel API creation and updates.
  */
-@interface UAChannelAPIClient : NSObject
+@interface UAChannelAPIClient : UAAPIClient
 
 /**
  * Factory method to create a UAChannelAPIClient.
@@ -64,6 +63,10 @@ typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
  * @return UAChannelAPIClient instance.
  */
 + (instancetype)clientWithConfig:(UAConfig *)config;
+
+
++ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session;
+
 
 /**
  * Create the channel ID.
@@ -94,27 +97,6 @@ typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
                       withPayload:(UAChannelRegistrationPayload *)payload
                         onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
                         onFailure:(UAChannelAPIClientFailureBlock)failureBlock;
-
-/**
- * Cancel all current and pending requests.
- *
- * Note: This could prevent the onSuccess and onFailure callbacks from being triggered
- * in any current requests.
- */
-- (void)cancelAllRequests;
-
-
-/**
- * Indicates whether the client should attempt to automatically retry HTTP connections under recoverable conditions
- * (most 5xx status codes, reachability errors, etc). In this case, the client will perform exponential backoff and schedule
- * reconnections accordingly before calling back with a success or failure.  Defaults to `YES`.
- */
-@property (nonatomic, assign) BOOL shouldRetryOnConnectionError;
-
-/**
- * The client's request engine.
- */
-@property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
 
 @end
 
