@@ -60,12 +60,6 @@
     return self;
 }
 
-- (void)dealloc {
-    dispatch_sync(dbQueue, ^{
-        [self.db close];
-    });
-}
-
 // Used for development
 - (void)resetDB {
     dispatch_sync(dbQueue, ^{
