@@ -23,7 +23,7 @@
 //    ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-CURRENT_PROJECT_VERSION = 8.0.2
+CURRENT_PROJECT_VERSION = 8.0.3
 RELEASE_OTHER_CFLAGS = $(inherited) -fembed-bitcode
 
 // Uncomment to include the preview build warning
