@@ -59,12 +59,17 @@ typedef void (^UAChannelAPIClientFailureBlock)(NSUInteger statusCode);
 
 /**
  * Factory method to create a UAChannelAPIClient.
- * @param config the Urban Airship config.
+ * @param config The Urban Airship config.
  * @return UAChannelAPIClient instance.
  */
 + (instancetype)clientWithConfig:(UAConfig *)config;
 
-
+/**
+ * Factory method to create a UAChannelAPIClient.
+ * @param config The Urban Airship config.
+ * @param session The UARequestSession instance.
+ * @return UAChannelAPIClient instance.
+ */
 + (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session;
 
 

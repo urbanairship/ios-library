@@ -136,13 +136,13 @@
 
         // Failure
         if (httpResponse.statusCode != 200 && httpResponse.statusCode != 201) {
-            UA_LTRACE(@"Channel creation failed with status: %ld error: %@", (unsigned long)httpResponse.statusCode, error);
+            UA_LTRACE(@"Channel update failed with status: %ld error: %@", (unsigned long)httpResponse.statusCode, error);
             failureBlock(httpResponse.statusCode);
             return;
         }
 
         // Success
-        UA_LTRACE(@"Channel creation succeeded with status: %ld", (unsigned long)httpResponse.statusCode);
+        UA_LTRACE(@"Channel update succeeded with status: %ld", (unsigned long)httpResponse.statusCode);
         successBlock();
     }];
 }
