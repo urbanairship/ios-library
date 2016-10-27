@@ -22,40 +22,25 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#import <Foundation/Foundation.h>
 
-#import "UADelayOperation+Internal.h"
+NS_ASSUME_NONNULL_BEGIN
 
-@interface UADelayOperation()
-@property (nonatomic, assign) NSTimeInterval seconds;
-@property (nonatomic, strong) dispatch_semaphore_t semaphore;    // GCD objects use ARC
+/**
+ * Performs a NSURLSession dataTask in an NSOperation.
+ */
+@interface UAURLRequestOperation : NSOperation
+
+/**
+ * UAURLRequestOperation factory method.
+ * @param request The request to perform.
+ * @param session The url session to peform the request in.
+ * @param completionHandler A completion handler to call once the request is finished.
+ */
++ (instancetype)operationWithRequest:(NSURLRequest *)request
+                             session:(NSURLSession *)session
+                   completionHandler:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error))completionHandler;
 @end
 
-@implementation UADelayOperation
+NS_ASSUME_NONNULL_END
 
-- (instancetype)initWithDelayInSeconds:(NSTimeInterval)seconds {
-    self = [super init];
-    if (self) {
-        self.semaphore = dispatch_semaphore_create(0);
-        __weak UADelayOperation *_self = self;
-
-        [self addExecutionBlock:^{
-            //dispatch time is calculated as nanoseconds delta offset
-            dispatch_semaphore_wait(_self.semaphore, dispatch_time(DISPATCH_TIME_NOW, (seconds * NSEC_PER_SEC)));
-        }];
-
-        self.seconds = seconds;
-    }
-
-    return self;
-}
-
-- (void)cancel {
-    [super cancel];
-    dispatch_semaphore_signal(self.semaphore);
-}
-
-+ (instancetype)operationWithDelayInSeconds:(NSTimeInterval)seconds {
-    return [[self alloc] initWithDelayInSeconds:seconds];
-}
-
-@end

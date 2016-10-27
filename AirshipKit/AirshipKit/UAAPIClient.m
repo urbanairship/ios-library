@@ -23,39 +23,36 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UADelayOperation+Internal.h"
+#import "UAAPIClient+Internal.h"
+#import "UARequestSession+Internal.h"
 
-@interface UADelayOperation()
-@property (nonatomic, assign) NSTimeInterval seconds;
-@property (nonatomic, strong) dispatch_semaphore_t semaphore;    // GCD objects use ARC
+#import "UAConfig.h"
+#import "UAirship.h"
+
+@interface UAAPIClient()
+@property (nonatomic, strong) UAConfig *config;
+@property (nonatomic, strong) UARequestSession *session;
 @end
 
-@implementation UADelayOperation
+@implementation UAAPIClient
 
-- (instancetype)initWithDelayInSeconds:(NSTimeInterval)seconds {
+- (instancetype)initWithConfig:(UAConfig *)config session:(UARequestSession *)session {
     self = [super init];
+
     if (self) {
-        self.semaphore = dispatch_semaphore_create(0);
-        __weak UADelayOperation *_self = self;
-
-        [self addExecutionBlock:^{
-            //dispatch time is calculated as nanoseconds delta offset
-            dispatch_semaphore_wait(_self.semaphore, dispatch_time(DISPATCH_TIME_NOW, (seconds * NSEC_PER_SEC)));
-        }];
-
-        self.seconds = seconds;
+        self.config = config;
+        self.session = session;
     }
 
     return self;
 }
 
-- (void)cancel {
-    [super cancel];
-    dispatch_semaphore_signal(self.semaphore);
+- (void)cancelAllRequests {
+    [self.session cancelAllRequests];
 }
 
-+ (instancetype)operationWithDelayInSeconds:(NSTimeInterval)seconds {
-    return [[self alloc] initWithDelayInSeconds:seconds];
+- (void)dealloc {
+    [self.session cancelAllRequests];
 }
 
 @end

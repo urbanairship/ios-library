@@ -36,9 +36,7 @@
 
 @interface UAChannelAPIClientTest : XCTestCase
 
-@property (nonatomic, strong) id mockRequestEngine;
-@property (nonatomic, strong) id mockAirship;
-@property (nonatomic, strong) id mockAnalytics;
+@property (nonatomic, strong) id mockSession;
 @property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UAChannelAPIClient *client;
 
@@ -49,187 +47,127 @@
 
 - (void)setUp {
     [super setUp];
-
     self.config = [UAConfig config];
-
-    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
-    [[[self.mockAirship stub] andReturn:self.config] config];
-
-    self.mockRequestEngine = [OCMockObject niceMockForClass:[UAHTTPRequestEngine class]];
-    self.client = [UAChannelAPIClient clientWithConfig:self.config];
-    self.client.requestEngine = self.mockRequestEngine;
-
-    self.mockAnalytics = [OCMockObject niceMockForClass:[UAAnalytics class]];
-    [[[self.mockAirship stub] andReturn:self.mockAnalytics] analytics];
+    self.mockSession = [OCMockObject niceMockForClass:[UARequestSession class]];
+    self.client = [UAChannelAPIClient clientWithConfig:self.config session:self.mockSession];
 }
 
 - (void)tearDown {
-    [self.mockRequestEngine stopMocking];
-    [self.mockAirship stopMocking];
-    [self.mockAnalytics stopMocking];
-
+    [self.mockSession stopMocking];
     [super tearDown];
 }
 
 /**
- * Test create channel retries on 500 status codes other than 501
+ * Test channel creation retries all 5xx failures except for 501.
  */
-- (void)testCreateChannelRetriesFailedRequests {
+- (void)testChannelCreationRetry {
 
-    // Check that the retry block returns YES for any 5xx request other than 501
     BOOL (^retryBlockCheck)(id obj) = ^(id obj) {
-        UAHTTPRequestEngineWhereBlock retryBlock = obj;
+        UARequestRetryBlock retryBlock = obj;
 
         for (NSInteger i = 500; i < 600; i++) {
-            UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-            request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
+            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
 
-            // If shouldRetryOnConnection is NO, never retry
-            self.client.shouldRetryOnConnectionError = NO;
-            if (retryBlock(request)) {
+            if(!retryBlock(nil, response)) {
                 return NO;
             }
-
-            // Allow it to retry on 5xx and error results
-            self.client.shouldRetryOnConnectionError = YES;
-            BOOL retryResult = retryBlock(request);
-
-            // Only retry if its not 501
-            if ((retryResult && i != 501) || (!retryResult && i == 501)) {
-                continue;
-            }
-
-            return NO;
         }
 
         // Check that it returns NO for 400 status codes
-        UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
-        if (retryBlock(request)) {
+        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
+        if (retryBlock(nil, response)) {
+            return NO;
+        }
+
+        // Check that it returns NO for 200 status codes
+        response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
+        if (retryBlock(nil, response)) {
+            return NO;
+        }
+
+        // Check that it returns NO for 201 status codes
+        response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:201 HTTPVersion:nil headerFields:nil];
+        if (retryBlock(nil, response)) {
             return NO;
         }
 
         return YES;
     };
 
-    [[self.mockRequestEngine expect] runRequest:OCMOCK_ANY
-                              succeedWhere:OCMOCK_ANY
-                                retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
-                                 onSuccess:OCMOCK_ANY
-                                 onFailure:OCMOCK_ANY];
+    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
+                                        retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
+                                 completionHandler:OCMOCK_ANY];
 
     [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
                                 onSuccess:^(NSString *channelID, NSString *channelLocation, BOOL existing){}
-                                onFailure:^(UAHTTPRequest *request) {}];
+                                onFailure:^(NSUInteger statusCode) {}];
 
-    XCTAssertNoThrow([self.mockRequestEngine verify], @"Create channel should call retry on 500 status codes other than 501.");
+    [self.mockSession verify];
 }
 
 /**
- * Test create channel succeeds requests if the status is 200 or 201
- */
-- (void)testCreateChannelSucceedsRequest {
-    // Check that the retry block returns YES for any 5xx request other than 501
-    BOOL (^whereBlockCheck)(id obj) = ^(id obj) {
-        UAHTTPRequestEngineWhereBlock whereBlock = obj;
-        UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
-        if (!whereBlock(request)) {
-            return NO;
-        }
-
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:201 HTTPVersion:nil headerFields:nil];
-        if (!whereBlock(request)) {
-            return NO;
-        }
-
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
-        if (whereBlock(request)) {
-            return NO;
-        }
-
-        return YES;
-    };
-
-    [[self.mockRequestEngine expect] runRequest:OCMOCK_ANY
-                              succeedWhere:[OCMArg checkWithBlock:whereBlockCheck]
-                                retryWhere:OCMOCK_ANY
-                                 onSuccess:OCMOCK_ANY
-                                 onFailure:OCMOCK_ANY];
-
-    [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
-                                onSuccess:^(NSString *channelID, NSString *channelLocation, BOOL existing){}
-                                onFailure:^(UAHTTPRequest *request) {}];
-
-    XCTAssertNoThrow([self.mockRequestEngine verify], @"Create channel should succeed on 201 status code.");
-}
-
-/**
- * Test create channel calls the onSuccessBlock with the response channel ID 
+ * Test create channel calls the onSuccessBlock with the response channel ID
  * and makes an analytics request when the request is successful.
  */
 - (void)testCreateChannelOnSuccess {
+
+    // Create a success response
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{@"Location":@"someChannelLocation"}];
+    NSData *responseData = [@"{ \"ok\":true, \"channel_id\": \"someChannelID\"}" dataUsingEncoding:NSUTF8StringEncoding];
+
+    // Stub the session to return the response
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        completionHandler(responseData, response, nil);
+    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
     __block NSString *channelID;
     __block NSString *channelLocation;
-
-    // Set up a request with a valid response body
-    UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-    NSString *response = @"{ \"ok\":true, \"channel_id\": \"someChannelID\"}";
-    request.responseData = [response dataUsingEncoding:NSUTF8StringEncoding];
-
-    request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{@"Location":@"someChannelLocation"}];
-
-    // Expect that analytics gets sent with no delay
-    [[self.mockAnalytics expect] sendWithDelay:0];
-
-    // Expect the run request and call the success block
-    [[[self.mockRequestEngine stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:5];
-        UAHTTPRequestEngineSuccessBlock successBlock = (__bridge UAHTTPRequestEngineSuccessBlock)arg;
-
-        successBlock(request, 0);
-    }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
     [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
                                 onSuccess:^(NSString *cID, NSString *location, BOOL existing){
                                     channelID = cID;
                                     channelLocation = location;
                                 }
-                                onFailure:^(UAHTTPRequest *request) {}];
+                                onFailure:^(NSUInteger status) {
+                                    XCTFail(@"Should not be called");
+                                }];
 
     XCTAssertEqualObjects(@"someChannelID", channelID, @"Channel ID should match someChannelID from the response");
     XCTAssertEqualObjects(@"someChannelLocation", channelLocation, @"Channel location should match location header from the response");
-
-    [self.mockAnalytics verify];
 }
 
+
+
 /**
- * Test create channel calls the onFailureBlock with the failed request when
+ * Test create channel calls the onFailureBlock with the status code when
  * the request fails.
  */
 - (void)testCreateChannelOnFailure {
-    __block UAHTTPRequest *failedRequest;
 
-    UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
+    // Create a failure response
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
 
-    // Expect the run request and call the success block
-    [[[self.mockRequestEngine stub] andDo:^(NSInvocation *invocation) {
+    // Stub the session to return a the response
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:6];
-        UAHTTPRequestEngineFailureBlock failureBlock = (__bridge UAHTTPRequestEngineFailureBlock)arg;
-        failureBlock(request, 0);
-    }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
+        [invocation getArgument:&arg atIndex:4];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        completionHandler(nil, response, nil);
+    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
+    __block NSUInteger failureCode = 0;
     [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
-                                onSuccess:^(NSString *channelID, NSString *channelLocation, BOOL existing){}
-                                onFailure:^(UAHTTPRequest *request) {
-                                    failedRequest = request;
+                                onSuccess:^(NSString *channelID, NSString *channelLocation, BOOL existing){
+                                    XCTFail(@"Should not be called");
+                                }
+                                onFailure:^(NSUInteger statusCode) {
+                                    failureCode = statusCode;
                                 }];
 
-    XCTAssertEqualObjects(request, failedRequest, @"Failure block should return the failed request");
+    XCTAssertEqual(failureCode, 400);
 }
 
 /**
@@ -240,15 +178,15 @@
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
 
     BOOL (^checkRequestBlock)(id obj) = ^(id obj) {
-        UAHTTPRequest *request = obj;
+        UARequest *request = obj;
 
         // check the url
-        if (![[request.url absoluteString] isEqualToString:@"https://device-api.urbanairship.com/api/channels/"]) {
+        if (![[request.URL absoluteString] isEqualToString:@"https://device-api.urbanairship.com/api/channels/"]) {
             return NO;
         }
 
         // check that its a POST
-        if (![request.HTTPMethod isEqualToString:@"POST"]) {
+        if (![request.method isEqualToString:@"POST"]) {
             return NO;
         }
 
@@ -270,142 +208,93 @@
         return YES;
     };
 
-    [[self.mockRequestEngine expect] runRequest:[OCMArg checkWithBlock:checkRequestBlock]
-                              succeedWhere:OCMOCK_ANY
-                                retryWhere:OCMOCK_ANY
-                                 onSuccess:OCMOCK_ANY
-                                 onFailure:OCMOCK_ANY];
-
+    [[self.mockSession expect] dataTaskWithRequest:[OCMArg checkWithBlock:checkRequestBlock]
+                                        retryWhere:OCMOCK_ANY
+                                 completionHandler:OCMOCK_ANY];
 
     [self.client createChannelWithPayload:payload
                                 onSuccess:^(NSString *channelID, NSString *channelLocation, BOOL existing){}
-                                onFailure:^(UAHTTPRequest *request) {}];
+                                onFailure:^(NSUInteger statusCode) {}];
 
-    XCTAssertNoThrow([self.mockRequestEngine verify], @"Create channel should run with the a valid POST request.");
+    [self.mockSession verify];
 }
-
 
 /**
  * Test update channel retries on any 500 status code
  */
 - (void)testUpdateChannelRetriesFailedRequests {
 
-    // Check that the retry block returns YES for any 5xx request
     BOOL (^retryBlockCheck)(id obj) = ^(id obj) {
-        UAHTTPRequestEngineWhereBlock retryBlock = obj;
+        UARequestRetryBlock retryBlock = obj;
 
         for (NSInteger i = 500; i < 600; i++) {
-            UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-            request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
-
-            // If shouldRetryOnConnection is NO, never retry
-            self.client.shouldRetryOnConnectionError = NO;
-            if (retryBlock(request)) {
-                return NO;
-            }
+            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
 
             // Allow it to retry on 5xx and error results
-            self.client.shouldRetryOnConnectionError = YES;
-            if (!retryBlock(request)) {
+            if(!retryBlock(nil, response)) {
                 return NO;
             }
         }
 
         // Check that it returns NO for 400 status codes
-        UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
-        if (retryBlock(request)) {
+        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
+        if (retryBlock(nil, response)) {
+            return NO;
+        }
+
+        // Check that it returns NO for 200 status codes
+        response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
+        if (retryBlock(nil, response)) {
+            return NO;
+        }
+
+        // Check that it returns NO for 201 status codes
+        response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:201 HTTPVersion:nil headerFields:nil];
+        if (retryBlock(nil, response)) {
             return NO;
         }
 
         return YES;
     };
 
-    [[self.mockRequestEngine expect] runRequest:OCMOCK_ANY
-                              succeedWhere:OCMOCK_ANY
-                                retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
-                                 onSuccess:OCMOCK_ANY
-                                 onFailure:OCMOCK_ANY];
-
+    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
+                                        retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
+                                 completionHandler:OCMOCK_ANY];
 
     [self.client updateChannelWithLocation:@"someLocation"
                                withPayload:[[UAChannelRegistrationPayload alloc] init]
                                  onSuccess:^{}
-                                 onFailure:^(UAHTTPRequest *request){}];
-
-    XCTAssertNoThrow([self.mockRequestEngine verify], @"Update channel should call retry on 500 status codes other than 501.");
-}
-
-/**
- * Test update channel succeeds requests if the status is 200 or 201
- */
-- (void)testUpdateChannelSucceedsRequest {
-    // Check that the retry block returns YES for any 5xx request other than 501
-    BOOL (^whereBlockCheck)(id obj) = ^(id obj) {
-        UAHTTPRequestEngineWhereBlock whereBlock = obj;
-        UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
-        if (!whereBlock(request)) {
-            return NO;
-        }
-
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:201 HTTPVersion:nil headerFields:nil];
-        if (!whereBlock(request)) {
-            return NO;
-        }
-
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
-        if (whereBlock(request)) {
-            return NO;
-        }
-
-        return YES;
-    };
-
-    [[self.mockRequestEngine expect] runRequest:OCMOCK_ANY
-                              succeedWhere:[OCMArg checkWithBlock:whereBlockCheck]
-                                retryWhere:OCMOCK_ANY
-                                 onSuccess:OCMOCK_ANY
-                                 onFailure:OCMOCK_ANY];
-
-    [self.client updateChannelWithLocation:@"someLocation"
-                               withPayload:[[UAChannelRegistrationPayload alloc] init]
-                                 onSuccess:^{}
-                                 onFailure:^(UAHTTPRequest *request){}];
-
-    XCTAssertNoThrow([self.mockRequestEngine verify], @"Update channel should succeed on 200 status code.");
+                                 onFailure:^(NSUInteger statusCode) {}];
+    [self.mockSession verify];
 }
 
 /**
  * Test update channel calls the onSuccessBlock when the request is successful.
  */
 - (void)testUpdateChannelOnSuccess {
-    __block BOOL  onSuccessCalled = NO;
+    // Create a success response
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{@"Location":@"someChannelLocation"}];
+    NSData *responseData = [@"{ \"ok\":true, \"channel_id\": \"someChannelID\"}" dataUsingEncoding:NSUTF8StringEncoding];
 
-    // Set up a request with a valid response body
-    UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-    NSString *response = @"{ \"ok\":true, \"channel_id\": \"someChannelID\"}";
-    request.responseData = [response dataUsingEncoding:NSUTF8StringEncoding];
-
-    // Expect the run request and call the success block
-    [[[self.mockRequestEngine stub] andDo:^(NSInvocation *invocation) {
+    // Stub the session to return the response
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:5];
-        UAHTTPRequestEngineSuccessBlock successBlock = (__bridge UAHTTPRequestEngineSuccessBlock)arg;
+        [invocation getArgument:&arg atIndex:4];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        completionHandler(responseData, response, nil);
+    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-        successBlock(request, 0);
-    }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
-
-
+    __block BOOL  onSuccessCalled = NO;
     [self.client updateChannelWithLocation:@"someLocation"
                                withPayload:[[UAChannelRegistrationPayload alloc] init]
                                  onSuccess:^{
                                      onSuccessCalled = YES;
                                  }
-                                 onFailure:^(UAHTTPRequest *request){}];
+                                 onFailure:^(NSUInteger status) {
+                                     XCTFail(@"Should not be called");
+                                 }];
 
-    XCTAssertTrue(onSuccessCalled, @"Update should call the onSuccess block when its successful");
+    XCTAssertTrue(onSuccessCalled);
 }
 
 /**
@@ -413,27 +302,29 @@
  * the request fails.
  */
 - (void)testUpdateChannelOnFailure {
-    __block UAHTTPRequest *failedRequest;
 
-    UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
+    // Create a failure response
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
 
-    // Expect the run request and call the failure block
-    [[[self.mockRequestEngine stub] andDo:^(NSInvocation *invocation) {
+    // Stub the session to return a the response
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:6];
-        UAHTTPRequestEngineFailureBlock failureBlock = (__bridge UAHTTPRequestEngineFailureBlock)arg;
-        failureBlock(request, 0);
-    }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
+        [invocation getArgument:&arg atIndex:4];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        completionHandler(nil, response, nil);
+    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-
+    __block NSUInteger failureCode = 0;
     [self.client updateChannelWithLocation:@"someLocation"
                                withPayload:[[UAChannelRegistrationPayload alloc] init]
-                                 onSuccess:^{}
-                                 onFailure:^(UAHTTPRequest *request){
-                                     failedRequest = request;
+                                 onSuccess:^{
+                                     XCTFail(@"Should not be called");
+                                 }
+                                 onFailure:^(NSUInteger statusCode) {
+                                     failureCode = statusCode;
                                  }];
 
-    XCTAssertEqualObjects(request, failedRequest, @"Failure block should return the failed request");
+    XCTAssertEqual(failureCode, 400);
 }
 
 /**
@@ -444,15 +335,15 @@
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
 
     BOOL (^checkRequestBlock)(id obj) = ^(id obj) {
-        UAHTTPRequest *request = obj;
+        UARequest *request = obj;
 
         // check the url
-        if (![[request.url absoluteString] isEqualToString:@"https://device-api.urbanairship.com/someLocation"]) {
+        if (![[request.URL absoluteString] isEqualToString:@"https://device-api.urbanairship.com/someLocation"]) {
             return NO;
         }
 
         // check that its a POST
-        if (![request.HTTPMethod isEqualToString:@"PUT"]) {
+        if (![request.method isEqualToString:@"PUT"]) {
             return NO;
         }
 
@@ -474,18 +365,15 @@
         return YES;
     };
 
-    [[self.mockRequestEngine expect] runRequest:[OCMArg checkWithBlock:checkRequestBlock]
-                              succeedWhere:OCMOCK_ANY
-                                retryWhere:OCMOCK_ANY
-                                 onSuccess:OCMOCK_ANY
-                                 onFailure:OCMOCK_ANY];
+    [[self.mockSession expect] dataTaskWithRequest:[OCMArg checkWithBlock:checkRequestBlock]
+                                        retryWhere:OCMOCK_ANY
+                                 completionHandler:OCMOCK_ANY];
 
     [self.client updateChannelWithLocation:@"https://device-api.urbanairship.com/someLocation"
                                withPayload:payload
                                  onSuccess:^{}
-                                 onFailure:^(UAHTTPRequest *request){}];
-
-    XCTAssertNoThrow([self.mockRequestEngine verify], @"Update channel should run with the a valid PUT request.");
+                                 onFailure:^(NSUInteger statusCode){}];
+    [self.mockSession verify];
 }
 
 @end

@@ -23,39 +23,36 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UADelayOperation+Internal.h"
+#import <XCTest/XCTest.h>
+#import <OCMock/OCMock.h>
 
-@interface UADelayOperation()
-@property (nonatomic, assign) NSTimeInterval seconds;
-@property (nonatomic, strong) dispatch_semaphore_t semaphore;    // GCD objects use ARC
+#import "UAAPIClient+Internal.h"
+#import "UAConfig.h"
+
+@interface UAAPIClientTest : XCTestCase
+@property(nonatomic, strong) UAAPIClient *client;
+@property(nonatomic, strong) id mockSession;
+
 @end
 
-@implementation UADelayOperation
+@implementation UAAPIClientTest
 
-- (instancetype)initWithDelayInSeconds:(NSTimeInterval)seconds {
-    self = [super init];
-    if (self) {
-        self.semaphore = dispatch_semaphore_create(0);
-        __weak UADelayOperation *_self = self;
-
-        [self addExecutionBlock:^{
-            //dispatch time is calculated as nanoseconds delta offset
-            dispatch_semaphore_wait(_self.semaphore, dispatch_time(DISPATCH_TIME_NOW, (seconds * NSEC_PER_SEC)));
-        }];
-
-        self.seconds = seconds;
-    }
-
-    return self;
+- (void)setUp {
+    [super setUp];
+    self.mockSession = [OCMockObject niceMockForClass:[UARequestSession class]];
+    self.client = [[UAAPIClient alloc] initWithConfig:[UAConfig config] session:self.mockSession];
 }
 
-- (void)cancel {
-    [super cancel];
-    dispatch_semaphore_signal(self.semaphore);
+- (void)tearDown {
+    [self.mockSession stopMocking];
+    [super tearDown];
 }
 
-+ (instancetype)operationWithDelayInSeconds:(NSTimeInterval)seconds {
-    return [[self alloc] initWithDelayInSeconds:seconds];
+- (void)testCancel {
+    [[self.mockSession expect] cancelAllRequests];
+    [self.client cancelAllRequests];
+
+    [self.mockSession verify];
 }
 
 @end

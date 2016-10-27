@@ -23,39 +23,37 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UADelayOperation+Internal.h"
+#import <Foundation/Foundation.h>
+#import "UAConfig.h"
+#import "UARequest+Internal.h"
+#import "UARequestSession+Internal.h"
 
-@interface UADelayOperation()
-@property (nonatomic, assign) NSTimeInterval seconds;
-@property (nonatomic, strong) dispatch_semaphore_t semaphore;    // GCD objects use ARC
-@end
+NS_ASSUME_NONNULL_BEGIN
 
-@implementation UADelayOperation
+@interface UAAPIClient : NSObject
 
-- (instancetype)initWithDelayInSeconds:(NSTimeInterval)seconds {
-    self = [super init];
-    if (self) {
-        self.semaphore = dispatch_semaphore_create(0);
-        __weak UADelayOperation *_self = self;
+/**
+ * The UAConfig instance.
+ */
+@property (nonatomic, readonly) UAConfig *config;
 
-        [self addExecutionBlock:^{
-            //dispatch time is calculated as nanoseconds delta offset
-            dispatch_semaphore_wait(_self.semaphore, dispatch_time(DISPATCH_TIME_NOW, (seconds * NSEC_PER_SEC)));
-        }];
+/**
+ * The UARequestSession instance. Should be used to perform requests.
+ */
+@property (nonatomic, readonly) UARequestSession *session;
 
-        self.seconds = seconds;
-    }
+/**
+ * Init method.
+ * @param config The UAConfig instance.
+ * @param session The UARequestSession instance.
+ */
+- (instancetype)initWithConfig:(UAConfig *)config session:(UARequestSession *)session;
 
-    return self;
-}
-
-- (void)cancel {
-    [super cancel];
-    dispatch_semaphore_signal(self.semaphore);
-}
-
-+ (instancetype)operationWithDelayInSeconds:(NSTimeInterval)seconds {
-    return [[self alloc] initWithDelayInSeconds:seconds];
-}
+/**
+ * Cancels all in-flight API requests.
+ */
+- (void)cancelAllRequests;
 
 @end
+
+NS_ASSUME_NONNULL_END
