@@ -44,7 +44,7 @@
 @property (nonatomic, strong) id mockedUAConfig;
 
 @property (nonatomic, strong) UAHTTPRequest *deviceFailureRequest;
-@property (nonatomic, strong) UAHTTPRequest *channelFailureRequest;
+@property (nonatomic, assign) NSUInteger failureCode;
 @property (nonatomic, copy) NSString *channelCreateSuccessChannelID;
 @property (nonatomic, copy) NSString *channelCreateSuccessChannelLocation;
 
@@ -97,7 +97,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
     self.payload = [[UAChannelRegistrationPayload alloc] init];
     self.payload.pushAddress = @"someDeviceToken";
 
-    self.channelFailureRequest = [[UAHTTPRequest alloc] init];
+    self.failureCode = 400;
     self.deviceFailureRequest = [[UAHTTPRequest alloc] init];
 
     channelUpdateSuccessDoBlock = ^(NSInvocation *invocation) {
@@ -111,7 +111,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
         void *arg;
         [invocation getArgument:&arg atIndex:5];
         UAChannelAPIClientFailureBlock failureBlock = (__bridge UAChannelAPIClientFailureBlock)arg;
-        failureBlock(self.channelFailureRequest);
+        failureBlock(self.failureCode);
     };
 
     channelCreateSuccessDoBlock = ^(NSInvocation *invocation) {
@@ -125,7 +125,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
         void *arg;
         [invocation getArgument:&arg atIndex:4];
         UAChannelAPIClientFailureBlock failureBlock = (__bridge UAChannelAPIClientFailureBlock)arg;
-        failureBlock(self.channelFailureRequest);
+        failureBlock(self.failureCode);
     };
 }
 
@@ -307,7 +307,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
  * create a new channel ID.
  */
 - (void)testChannelConflictNewChannel {
-    self.channelFailureRequest.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:409 HTTPVersion:nil headerFields:nil];
+    self.failureCode = 409;
 
     //Expect the channel client to update channel and call the update block
     [[[self.mockedChannelClient expect] andDo:channelUpdateFailureDoBlock] updateChannelWithLocation:@"someLocation"
@@ -337,7 +337,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
  * channel.
  */
 - (void)testChannelConflictFailed {
-    self.channelFailureRequest.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:409 HTTPVersion:nil headerFields:nil];
+    self.failureCode = 409;
 
     //Expect the channel client to update channel and call the update block
     [[[self.mockedChannelClient expect] andDo:channelUpdateFailureDoBlock] updateChannelWithLocation:@"someLocation"

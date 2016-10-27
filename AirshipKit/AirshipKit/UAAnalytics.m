@@ -115,6 +115,12 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
                                                      name:UIApplicationWillTerminateNotification
                                                    object:nil];
 
+        // Register for channel created notification
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(channelCreated)
+                                                     name:UAChannelCreatedEvent
+                                                   object:nil];
+
         [self startSession];
 
         // Set the intial delay
@@ -126,6 +132,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
         // Schedule a send
         [self sendWithDelay:self.timeToWaitBeforeSendingNextBatch];
+
+
     }
 
     return self;
@@ -190,6 +198,14 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         [self addEvent:[UAAppForegroundEvent event]];
     }
 
+}
+
+#pragma mark -
+#pragma mark Channel Created
+
+- (void)channelCreated {
+    // Trigger a send
+    [self sendWithDelay:self.timeToWaitBeforeSendingNextBatch];
 }
 
 #pragma mark -
