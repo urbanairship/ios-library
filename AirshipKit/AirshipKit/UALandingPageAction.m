@@ -58,11 +58,25 @@
 
     if ([value isKindOfClass:[NSURL class]]) {
         url = value;
-    } else if ([value isKindOfClass:[NSString class]]) {
+    }
+
+    if ([value isKindOfClass:[NSString class]]) {
         if ([value hasPrefix:@"u:"]) {
             url = [self parseShortURL:value];
         } else {
             url = [NSURL URLWithString:value];
+        }
+    }
+
+    if ([value isKindOfClass:[NSDictionary class]]) {
+        id urlValue = [value valueForKey:@"url"];
+
+        if (urlValue && [urlValue isKindOfClass:[NSString class]]) {
+            if ([urlValue hasPrefix:@"u:"]) {
+                url = [self parseShortURL:urlValue];
+            } else {
+                url = [NSURL URLWithString:urlValue];
+            }
         }
     }
 
@@ -73,10 +87,44 @@
     return url;
 }
 
+- (CGSize)parseSizeFromValue:(id)value {
+
+    if ([value isKindOfClass:[NSDictionary class]]) {
+        CGFloat widthValue = 0;
+        CGFloat heightValue = 0;
+
+        if ([[value valueForKey:@"width"] isKindOfClass:[NSNumber class]]) {
+            widthValue = [[value valueForKey:@"width"] floatValue];
+        }
+
+        if ([[value valueForKey:@"height"] isKindOfClass:[NSNumber class]]) {
+            heightValue = [[value valueForKey:@"height"] floatValue];
+        }
+
+        return CGSizeMake(widthValue, heightValue);
+    }
+
+    return CGSizeZero;
+}
+
+- (BOOL)parseAspectLockOptionFromValue:(id)value {
+    if ([value isKindOfClass:[NSDictionary class]]) {
+        if ([[value valueForKey:@"aspectLock"] isKindOfClass:[NSNumber class]]) {
+            NSNumber *aspectLock = (NSNumber *)[value valueForKey:@"aspectLock"];
+
+            return aspectLock.boolValue;
+        }
+    }
+
+    return NO;
+}
+
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
     NSURL *landingPageURL = [self parseURLFromValue:arguments.value];
+    CGSize landingPageSize = [self parseSizeFromValue:arguments.value];
+    BOOL aspectLock = [self parseAspectLockOptionFromValue:arguments.value];
 
     // Include app auth for any content ID requests
     BOOL isContentUrl = [landingPageURL.absoluteString hasPrefix:UAirship.shared.config.landingPageContentURL];
@@ -103,7 +151,7 @@
         }
 
         //load the landing page
-        [UALandingPageOverlayController showURL:landingPageURL withHeaders:headers];
+        [UALandingPageOverlayController showURL:landingPageURL withHeaders:headers size:landingPageSize aspectLock:aspectLock];
         completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
     }
 }

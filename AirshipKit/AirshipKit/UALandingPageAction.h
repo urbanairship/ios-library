@@ -30,8 +30,15 @@
  *
  * This action is registered under the names landing_page_action and ^p.
  *
- * Expected argument values: NSString or NSURL. Short url formats are in the form
+ * Expected argument values:
+ * URL: NSString or NSURL. Short url formats are in the form
  * of "u:<content-id>" and will be used to construct a new URL using the content-id.
+ * Width: Optional Int or String. Width should be specified in points or
+ * as "fill" to fill current screen. Defaults to fill.
+ * Height: Optional Int or String. Height should be specified in points or
+ * "fill" to fill current screen. Defaults to fill.
+ * Aspect Lock: Optional Boolean. Determines if aspect ratio is maintained during resizing
+ * to fit screen size. Defaults to false.
  *
  * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush,
  * UASituationWebViewInvocation, UASituationManualInvocation, UASituationBackgroundPush,

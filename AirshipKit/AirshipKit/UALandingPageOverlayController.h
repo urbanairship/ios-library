@@ -40,11 +40,20 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UALandingPageOverlayController : NSObject<UIWebViewDelegate, UARichContentWindow>
 
 /**
- * Creates and dsiplays a landing page overlay from a URL.
- * @param url The URL of the landing page to display
- * @param headers The headers to include with the request
+ * Creates and displays a landing page overlay from a URL.
+ * @param url The URL of the landing page to display.
+ * @param headers The headers to include with the request.
  */
 + (void)showURL:(NSURL *)url withHeaders:(nullable NSDictionary *)headers;
+
+/**
+ * Creates and displays a landing page overlay from a URL.
+ * @param url The URL of the landing page to display.
+ * @param headers The headers to include with the request.
+ * @param size The size of the landing page in points, full screen by default.
+ * @param aspectLock Locks messages to provided size's aspect ratio.
+ */
++ (void)showURL:(NSURL *)url withHeaders:(nullable NSDictionary *)headers size:(CGSize)size aspectLock:(BOOL)aspectLock;
 
 /**
  * Creates and displays a landing page overlay from a Rich Push message.
@@ -52,6 +61,15 @@ NS_ASSUME_NONNULL_BEGIN
  * @param headers The headers to include with the request.
  */
 + (void)showMessage:(UAInboxMessage *)message withHeaders:(nullable NSDictionary *)headers;
+
+/**
+ * Creates and displays a landing page overlay from a Rich Push message.
+ * @param message The Rich Push message to display.
+ * @param headers The headers to include with the request.
+ * @param size The size of the message in points, full screen by default.
+ * @param aspectLock Locks messages to provided size's aspect ratio.
+ */
++ (void)showMessage:(UAInboxMessage *)message withHeaders:(nullable NSDictionary *)headers size:(CGSize)size aspectLock:(BOOL)aspectLock;
 
 /**
  * Creates and displays a landing page overlay from a Rich Push message.

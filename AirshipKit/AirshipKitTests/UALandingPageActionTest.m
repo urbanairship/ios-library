@@ -177,11 +177,11 @@
                                      [NSNumber numberWithInteger:UASituationAutomation]];
 
     for (NSNumber *situationNumber in situations) {
-        [[self.mockLandingPageOverlayController expect] showURL:[OCMArg checkWithBlock:^(id obj) {
+        [[[self.mockLandingPageOverlayController expect] ignoringNonObjectArgs] showURL:[OCMArg checkWithBlock:^(id obj) {
             return (BOOL)([obj isKindOfClass:[NSURL class]] && [((NSURL *)obj).absoluteString isEqualToString:expectedUrl]);
         }] withHeaders:[OCMArg checkWithBlock:^(id obj) {
             return (BOOL) ([headers count] ? [headers isEqualToDictionary:obj] : [obj count] == 0);
-        }]];
+        }] size:CGSizeZero aspectLock:false];
 
         UAActionArguments *args = [UAActionArguments argumentsWithValue:value withSituation:[situationNumber integerValue]];
         [self verifyPerformWithArgs:args withExpectedUrl:expectedUrl withExpectedFetchResult:UAActionFetchResultNewData];

@@ -35,13 +35,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UABeveledLoadingIndicator : UIView
 
 /**
- * Construct an autoreleased UABeveledLoadingIndicator with
- * a container rect size of 100 x 100.
- * @return A new UABeveledLoadingIndicator.
- */
-+ (instancetype)indicator;
-
-/**
  * Show and animate the indicator
  */
 - (void)show;
