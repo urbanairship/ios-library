@@ -435,7 +435,6 @@
 		CC64F0CE1D8B781C009CEF27 /* CustomNotificationCategories.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F0611D8B781C009CEF27 /* CustomNotificationCategories.plist */; };
 		CC64F0CF1D8B781C009CEF27 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F0621D8B781C009CEF27 /* Info.plist */; };
 		CC64F0D01D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F0631D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist */; };
-		CC64F0D11D8B781C009CEF27 /* IOS8BugsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0641D8B781C009CEF27 /* IOS8BugsTests.m */; };
 		CC64F0D21D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0651D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m */; };
 		CC64F0D31D8B781C009CEF27 /* NSObject+AnonymousKVO.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0671D8B781C009CEF27 /* NSObject+AnonymousKVO.m */; };
 		CC64F0D41D8B781C009CEF27 /* NSObject+HideClass.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0691D8B781C009CEF27 /* NSObject+HideClass.m */; };
@@ -905,10 +904,9 @@
 		CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = AirshipConfig.xcconfig; sourceTree = "<group>"; };
 		CC64F0541D8B77E3009CEF27 /* AirshipKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC64F0581D8B77E3009CEF27 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CC64F0611D8B781C009CEF27 /* CustomNotificationCategories.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = CustomNotificationCategories.plist; sourceTree = "<group>"; };
-		CC64F0621D8B781C009CEF27 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CC64F0631D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Invalid-UAMessageCenterDefaultStyle.plist"; sourceTree = "<group>"; };
-		CC64F0641D8B781C009CEF27 /* IOS8BugsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IOS8BugsTests.m; sourceTree = "<group>"; };
+		CC64F0611D8B781C009CEF27 /* CustomNotificationCategories.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = CustomNotificationCategories.plist; path = ../CustomNotificationCategories.plist; sourceTree = "<group>"; };
+		CC64F0621D8B781C009CEF27 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Info.plist; sourceTree = "<group>"; };
+		CC64F0631D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Invalid-UAMessageCenterDefaultStyle.plist"; path = "../Invalid-UAMessageCenterDefaultStyle.plist"; sourceTree = "<group>"; };
 		CC64F0651D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSJSONSerialization_UAAdditionsTests.m; sourceTree = "<group>"; };
 		CC64F0661D8B781C009CEF27 /* NSObject+AnonymousKVO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+AnonymousKVO.h"; sourceTree = "<group>"; };
 		CC64F0671D8B781C009CEF27 /* NSObject+AnonymousKVO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+AnonymousKVO.m"; sourceTree = "<group>"; };
@@ -1011,8 +1009,8 @@
 		CC64F0C81D8B781C009CEF27 /* UAWebViewDelegateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWebViewDelegateTest.m; sourceTree = "<group>"; };
 		CC64F0C91D8B781C009CEF27 /* UAWhitelistTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWhitelistTest.m; sourceTree = "<group>"; };
 		CC64F0CA1D8B781C009CEF27 /* UIWebView_UAAdditionsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIWebView_UAAdditionsTest.m; sourceTree = "<group>"; };
-		CC64F0CB1D8B781C009CEF27 /* Valid-UAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Valid-UAMessageCenterDefaultStyle.plist"; sourceTree = "<group>"; };
-		CC64F0CC1D8B781C009CEF27 /* ValidUAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ValidUAMessageCenterDefaultStyle.plist; sourceTree = "<group>"; };
+		CC64F0CB1D8B781C009CEF27 /* Valid-UAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Valid-UAMessageCenterDefaultStyle.plist"; path = "../Valid-UAMessageCenterDefaultStyle.plist"; sourceTree = "<group>"; };
+		CC64F0CC1D8B781C009CEF27 /* ValidUAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = ValidUAMessageCenterDefaultStyle.plist; path = ../ValidUAMessageCenterDefaultStyle.plist; sourceTree = "<group>"; };
 		CC64F1431D8B7954009CEF27 /* AirshipConfig-DetectProvisioningMode.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "AirshipConfig-DetectProvisioningMode.plist"; sourceTree = "<group>"; };
 		CC64F1441D8B7954009CEF27 /* AirshipConfig-InProduction.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "AirshipConfig-InProduction.plist"; sourceTree = "<group>"; };
 		CC64F1451D8B7954009CEF27 /* AirshipConfig-Valid-Legacy-NeXTStep.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "AirshipConfig-Valid-Legacy-NeXTStep.plist"; sourceTree = "<group>"; };
@@ -1194,6 +1192,324 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		CC04F1FF1DCAB22E00B4842D /* Automation */ = {
+			isa = PBXGroup;
+			children = (
+				CC04F2011DCAB2CA00B4842D /* Actions */,
+				CC04F2021DCAB34100B4842D /* Predicate */,
+				CC64F06F1D8B781C009CEF27 /* UAActionInfoTests.m */,
+				CC64F0BC1D8B781C009CEF27 /* UAScheduleTriggerTests.m */,
+				CC64F0801D8B781C009CEF27 /* UAAutomationTests.m */,
+			);
+			name = Automation;
+			sourceTree = "<group>";
+		};
+		CC04F2001DCAB28300B4842D /* TestUtils */ = {
+			isa = PBXGroup;
+			children = (
+				CC64F0681D8B781C009CEF27 /* NSObject+HideClass.h */,
+				CC64F0691D8B781C009CEF27 /* NSObject+HideClass.m */,
+				CC64F0661D8B781C009CEF27 /* NSObject+AnonymousKVO.h */,
+				CC64F0671D8B781C009CEF27 /* NSObject+AnonymousKVO.m */,
+				CC40D87D1D8C719F00BABD4F /* JRSwizzle.h */,
+				CC40D87E1D8C719F00BABD4F /* JRSwizzle.m */,
+			);
+			name = TestUtils;
+			sourceTree = "<group>";
+		};
+		CC04F2011DCAB2CA00B4842D /* Actions */ = {
+			isa = PBXGroup;
+			children = (
+				CC64F0821D8B781C009CEF27 /* UACancelSchedulesActionTests.m */,
+				CC64F0BB1D8B781C009CEF27 /* UAScheduleActionTests.m */,
+			);
+			name = Actions;
+			sourceTree = "<group>";
+		};
+		CC04F2021DCAB34100B4842D /* Predicate */ = {
+			isa = PBXGroup;
+			children = (
+				CC64F0A41D8B781C009CEF27 /* UAJSONMatcherTests.m */,
+				CC64F0A51D8B781C009CEF27 /* UAJSONPredicateTests.m */,
+				CC64F0A61D8B781C009CEF27 /* UAJSONValueMatcherTests.m */,
+			);
+			name = Predicate;
+			sourceTree = "<group>";
+		};
+		CC04F2031DCAB3DD00B4842D /* Inbox */ = {
+			isa = PBXGroup;
+			children = (
+				CC04F2041DCAB46500B4842D /* Actions */,
+				CC04F2051DCAB48000B4842D /* User */,
+				CC64F09D1D8B781C009CEF27 /* UAInboxAPIClientTest.m */,
+				CC64F09E1D8B781C009CEF27 /* UAInboxMessageListTest.m */,
+				CC64F09F1D8B781C009CEF27 /* UAInboxMessageTest.m */,
+			);
+			name = Inbox;
+			sourceTree = "<group>";
+		};
+		CC04F2041DCAB46500B4842D /* Actions */ = {
+			isa = PBXGroup;
+			children = (
+				CC64F0901D8B781C009CEF27 /* UADisplayInboxActionTest.m */,
+				CC64F0B41D8B781C009CEF27 /* UAOverlayInboxMessageActionTest.m */,
+			);
+			name = Actions;
+			sourceTree = "<group>";
+		};
+		CC04F2051DCAB48000B4842D /* User */ = {
+			isa = PBXGroup;
+			children = (
+				CC64F0C31D8B781C009CEF27 /* UAUserAPIClientTest.m */,
+				CC64F0C41D8B781C009CEF27 /* UAUserTest.m */,
+			);
+			name = User;
+			sourceTree = "<group>";
+		};
+		CC04F2061DCAB4C000B4842D /* Push */ = {
+			isa = PBXGroup;
+			children = (
+				CC04F2071DCAB4DE00B4842D /* Actions */,
+				CC04F2081DCAB4EB00B4842D /* Named User */,
+				CC04F2091DCAB4FD00B4842D /* Channel */,
+				CC04F20A1DCAB50C00B4842D /* APNS */,
+				CC04F20B1DCAB52900B4842D /* Interactive */,
+				CC64F0B81D8B781C009CEF27 /* UAPushTest.m */,
+				CC64F0C01D8B781C009CEF27 /* UATagGroupsAPIClientTest.m */,
+				CC64F0C11D8B781C009CEF27 /* UATagUtilsTest.m */,
+				CC64F0B21D8B781C009CEF27 /* UANotificationContentTest.m */,
+			);
+			name = Push;
+			sourceTree = "<group>";
+		};
+		CC04F2071DCAB4DE00B4842D /* Actions */ = {
+			isa = PBXGroup;
+			children = (
+				CC64F0BF1D8B781C009CEF27 /* UATagActionsTest.m */,
+			);
+			name = Actions;
+			sourceTree = "<group>";
+		};
+		CC04F2081DCAB4EB00B4842D /* Named User */ = {
+			isa = PBXGroup;
+			children = (
+				CC64F0AD1D8B781C009CEF27 /* UANamedUserAPIClientTest.m */,
+				CC64F0AE1D8B781C009CEF27 /* UANamedUserTest.m */,
+			);
+			name = "Named User";
+			sourceTree = "<group>";
+		};
+		CC04F2091DCAB4FD00B4842D /* Channel */ = {
+			isa = PBXGroup;
+			children = (
+				CC64F0831D8B781C009CEF27 /* UAChannelAPIClientTest.m */,
+				CC64F0841D8B781C009CEF27 /* UAChannelCaptureTest.m */,
+				CC64F0851D8B781C009CEF27 /* UAChannelRegistrarTest.m */,
+				CC64F0861D8B781C009CEF27 /* UAChannelRegistrationPayloadTest.m */,
+			);
+			name = Channel;
+			sourceTree = "<group>";
+		};
+		CC04F20A1DCAB50C00B4842D /* APNS */ = {
+			isa = PBXGroup;
+			children = (
+				CC64F07A1D8B781C009CEF27 /* UAAPNSRegistrationTest.m */,
+				CC64F0A91D8B781C009CEF27 /* UALegacyAPNSRegistrationTest.m */,
+			);
+			name = APNS;
+			sourceTree = "<group>";
+		};
+		CC04F20B1DCAB52900B4842D /* Interactive */ = {
+			isa = PBXGroup;
+			children = (
+				CC64F0B01D8B781C009CEF27 /* UANotificationCategoriesTest.m */,
+				CC64F0B11D8B781C009CEF27 /* UANotificationCategoryTest.m */,
+			);
+			name = Interactive;
+			sourceTree = "<group>";
+		};
+		CC04F20C1DCAB57200B4842D /* Location */ = {
+			isa = PBXGroup;
+			children = (
+				CC04F20D1DCAB58B00B4842D /* Events */,
+				CC64F0AB1D8B781C009CEF27 /* UALocationTest.m */,
+			);
+			name = Location;
+			sourceTree = "<group>";
+		};
+		CC04F20D1DCAB58B00B4842D /* Events */ = {
+			isa = PBXGroup;
+			children = (
+				CC64F0B71D8B781C009CEF27 /* UAProximityRegionTest.m */,
+				CC64F0871D8B781C009CEF27 /* UACircularRegionTest.m */,
+				CC64F0AA1D8B781C009CEF27 /* UALocationEventTest.m */,
+				CC64F0B91D8B781C009CEF27 /* UARegionEventTest.m */,
+			);
+			name = Events;
+			sourceTree = "<group>";
+		};
+		CC04F20E1DCAB5C600B4842D /* Actions Framework */ = {
+			isa = PBXGroup;
+			children = (
+				CC04F20F1DCAB5D800B4842D /* Actions */,
+				CC64F06D1D8B781C009CEF27 /* UAAction_OperatorTest.m */,
+				CC64F06E1D8B781C009CEF27 /* UAActionArgumentsTest.m */,
+				CC64F0701D8B781C009CEF27 /* UAActionJSDelegateTest.m */,
+				CC64F0711D8B781C009CEF27 /* UAActionRegistryEntryTest.m */,
+				CC64F0721D8B781C009CEF27 /* UAActionRegistryTest.m */,
+				CC64F0731D8B781C009CEF27 /* UAActionResultTest.m */,
+				CC64F0741D8B781C009CEF27 /* UAActionRunnerTest.m */,
+				CC64F0751D8B781C009CEF27 /* UAActionTest.m */,
+				CC64F0771D8B781C009CEF27 /* UAAggregateActionResultTest.m */,
+			);
+			name = "Actions Framework";
+			sourceTree = "<group>";
+		};
+		CC04F20F1DCAB5D800B4842D /* Actions */ = {
+			isa = PBXGroup;
+			children = (
+				CC04F2101DCAB60D00B4842D /* Landing Page */,
+				CC04F2111DCAB61700B4842D /* Share */,
+				CC64F0B31D8B781C009CEF27 /* UAOpenExternalURLActionTest.m */,
+				CC64F0B51D8B781C009CEF27 /* UAPasteboardActionTest.m */,
+			);
+			name = Actions;
+			sourceTree = "<group>";
+		};
+		CC04F2101DCAB60D00B4842D /* Landing Page */ = {
+			isa = PBXGroup;
+			children = (
+				CC64F0A81D8B781C009CEF27 /* UALandingPageActionTest.m */,
+			);
+			name = "Landing Page";
+			sourceTree = "<group>";
+		};
+		CC04F2111DCAB61700B4842D /* Share */ = {
+			isa = PBXGroup;
+			children = (
+				CC64F0BE1D8B781C009CEF27 /* UAShareActionTest.m */,
+			);
+			name = Share;
+			sourceTree = "<group>";
+		};
+		CC04F2121DCAB65800B4842D /* Message Center */ = {
+			isa = PBXGroup;
+			children = (
+				CC64F08D1D8B781C009CEF27 /* UADefaultMessageCenterStyleTest.m */,
+			);
+			name = "Message Center";
+			sourceTree = "<group>";
+		};
+		CC04F2131DCAB66900B4842D /* In-app Messaging */ = {
+			isa = PBXGroup;
+			children = (
+				CC04F2141DCAB68300B4842D /* Events */,
+				CC64F0991D8B781C009CEF27 /* UAInAppMessageControllerTest.m */,
+				CC64F09A1D8B781C009CEF27 /* UAInAppMessageTest.m */,
+				CC64F09B1D8B781C009CEF27 /* UAInAppMessagingTest.m */,
+				CC64F0A01D8B781C009CEF27 /* UAIncomingInAppMessageActionTest.m */,
+			);
+			name = "In-app Messaging";
+			sourceTree = "<group>";
+		};
+		CC04F2141DCAB68300B4842D /* Events */ = {
+			isa = PBXGroup;
+			children = (
+				CC64F0981D8B781C009CEF27 /* UAInAppDisplayEventTest.m */,
+				CC64F09C1D8B781C009CEF27 /* UAInAppResolutionEventTest.m */,
+			);
+			name = Events;
+			sourceTree = "<group>";
+		};
+		CC04F2151DCAB73000B4842D /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				CC04F2161DCAB74900B4842D /* Actions */,
+				CC04F2171DCAB75E00B4842D /* Events */,
+				CC64F0781D8B781C009CEF27 /* UAAnalyticsTest.h */,
+				CC64F0791D8B781C009CEF27 /* UAAnalyticsTest.m */,
+				CC64F07B1D8B781C009CEF27 /* UAAppIntegrationTest.m */,
+				CC64F07C1D8B781C009CEF27 /* UAApplicationMetricsTest.m */,
+				CC64F07D1D8B781C009CEF27 /* UAAssociatedIdentifiersTest.m */,
+			);
+			name = Analytics;
+			sourceTree = "<group>";
+		};
+		CC04F2161DCAB74900B4842D /* Actions */ = {
+			isa = PBXGroup;
+			children = (
+				CC64F0761D8B781C009CEF27 /* UAAddCustomEventActionTest.m */,
+			);
+			name = Actions;
+			sourceTree = "<group>";
+		};
+		CC04F2171DCAB75E00B4842D /* Events */ = {
+			isa = PBXGroup;
+			children = (
+				CC04F2181DCAB78500B4842D /* Custom Events */,
+				CC64F0A21D8B781C009CEF27 /* UAInteractiveNotificationEventTest.m */,
+				CC64F07E1D8B781C009CEF27 /* UAAssociateIdentifiersEventTest.m */,
+				CC64F0911D8B781C009CEF27 /* UAEventTest.m */,
+				CC64F0BD1D8B781C009CEF27 /* UAScreenTrackingEventTest.m */,
+				CC64F0A11D8B781C009CEF27 /* UAInstallAttributionEventTest.m */,
+			);
+			name = Events;
+			sourceTree = "<group>";
+		};
+		CC04F2181DCAB78500B4842D /* Custom Events */ = {
+			isa = PBXGroup;
+			children = (
+				CC64F08C1D8B781C009CEF27 /* UACustomEventTest.m */,
+				CC64F06C1D8B781C009CEF27 /* UAAccountEventTemplateTest.m */,
+				CC64F0AC1D8B781C009CEF27 /* UAMediaEventTemplateTest.m */,
+				CC64F0BA1D8B781C009CEF27 /* UARetailEventTemplateTest.m */,
+			);
+			name = "Custom Events";
+			sourceTree = "<group>";
+		};
+		CC04F2191DCAB7BE00B4842D /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				CC64F0CA1D8B781C009CEF27 /* UIWebView_UAAdditionsTest.m */,
+				CC64F0651D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m */,
+				CC64F06A1D8B781C009CEF27 /* NSString_UALocalizationAdditionsTest.m */,
+				CC64F06B1D8B781C009CEF27 /* NSString_UAURLEncodingTest.m */,
+				CC64F0811D8B781C009CEF27 /* UABase64Test.m */,
+				CC64F0891D8B781C009CEF27 /* UAColorUtilsTest.m */,
+				CC64F0A71D8B781C009CEF27 /* UAKeyChainUtilTest.m */,
+				CC64F0C21D8B781C009CEF27 /* UAURLProtocolTest.m */,
+				CC64F0C51D8B781C009CEF27 /* UAUtilsTest.h */,
+				CC64F0C61D8B781C009CEF27 /* UAUtilsTest.m */,
+			);
+			name = Utils;
+			sourceTree = "<group>";
+		};
+		CC04F21A1DCAB80800B4842D /* HTTP */ = {
+			isa = PBXGroup;
+			children = (
+				CC64F0921D8B781C009CEF27 /* UAHTTPConnection+Test.h */,
+				CC64F0931D8B781C009CEF27 /* UAHTTPConnection+Test.m */,
+				CC64F0941D8B781C009CEF27 /* UAHTTPConnectionOperationTest.h */,
+				CC64F0951D8B781C009CEF27 /* UAHTTPConnectionOperationTest.m */,
+				CC64F0961D8B781C009CEF27 /* UAHTTPRequestEngineTest.h */,
+				CC64F0971D8B781C009CEF27 /* UAHTTPRequestEngineTest.m */,
+			);
+			name = HTTP;
+			sourceTree = "<group>";
+		};
+		CC04F21B1DCAB82200B4842D /* Native Bridge */ = {
+			isa = PBXGroup;
+			children = (
+				CC64F0881D8B781C009CEF27 /* UACloseWindowActionTest.m */,
+				CC64F0C71D8B781C009CEF27 /* UAWebViewCallDataTest.m */,
+				CC64F0C81D8B781C009CEF27 /* UAWebViewDelegateTest.m */,
+				CC64F0A31D8B781C009CEF27 /* UAirshipTest.m */,
+				CC64F0AF1D8B781C009CEF27 /* UANativeBridgeTest.m */,
+				CC64F0C91D8B781C009CEF27 /* UAWhitelistTest.m */,
+			);
+			name = "Native Bridge";
+			sourceTree = "<group>";
+		};
 		CC40D87A1D8C703E00BABD4F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1265,8 +1581,6 @@
 				CC40DB021D8C996900BABD4F /* UAActionScheduleData.m */,
 				CC40DB2C1D8C996900BABD4F /* UAAutomationStore+Internal.h */,
 				CC40DB2D1D8C996900BABD4F /* UAAutomationStore.m */,
-				CC40DB9E1D8C996900BABD4F /* UAJSONValueTransformer+Internal.h */,
-				CC40DB9F1D8C996900BABD4F /* UAJSONValueTransformer.m */,
 				CC40DBE61D8C996A00BABD4F /* UAScheduleTriggerData+Internal.h */,
 				CC40DBE71D8C996A00BABD4F /* UAScheduleTriggerData.m */,
 			);
@@ -1295,6 +1609,8 @@
 				CC40DB8B1D8C996900BABD4F /* UAInboxMessageList.m */,
 				CC40DB8C1D8C996900BABD4F /* UAInboxUtils.h */,
 				CC40DB8D1D8C996900BABD4F /* UAInboxUtils.m */,
+				CC40DB9E1D8C996900BABD4F /* UAJSONValueTransformer+Internal.h */,
+				CC40DB9F1D8C996900BABD4F /* UAJSONValueTransformer.m */,
 			);
 			name = Inbox;
 			sourceTree = "<group>";
@@ -1711,118 +2027,26 @@
 		CC64F0551D8B77E3009CEF27 /* AirshipKitTests */ = {
 			isa = PBXGroup;
 			children = (
-				CC944EDA1DB6AEAF00C42269 /* HTTP */,
-				CC40D87D1D8C719F00BABD4F /* JRSwizzle.h */,
-				CC40D87E1D8C719F00BABD4F /* JRSwizzle.m */,
 				CC64F1421D8B7954009CEF27 /* Support */,
-				CC64F0611D8B781C009CEF27 /* CustomNotificationCategories.plist */,
-				CC64F0621D8B781C009CEF27 /* Info.plist */,
-				CC64F0631D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist */,
-				CC64F0641D8B781C009CEF27 /* IOS8BugsTests.m */,
-				CC64F0651D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m */,
-				CC64F0661D8B781C009CEF27 /* NSObject+AnonymousKVO.h */,
-				CC64F0671D8B781C009CEF27 /* NSObject+AnonymousKVO.m */,
-				CC64F0681D8B781C009CEF27 /* NSObject+HideClass.h */,
-				CC64F0691D8B781C009CEF27 /* NSObject+HideClass.m */,
-				CC64F06A1D8B781C009CEF27 /* NSString_UALocalizationAdditionsTest.m */,
-				CC64F06B1D8B781C009CEF27 /* NSString_UAURLEncodingTest.m */,
-				CC64F06C1D8B781C009CEF27 /* UAAccountEventTemplateTest.m */,
-				CC64F06D1D8B781C009CEF27 /* UAAction_OperatorTest.m */,
-				CC64F06E1D8B781C009CEF27 /* UAActionArgumentsTest.m */,
-				CC64F06F1D8B781C009CEF27 /* UAActionInfoTests.m */,
-				CC64F0701D8B781C009CEF27 /* UAActionJSDelegateTest.m */,
-				CC64F0711D8B781C009CEF27 /* UAActionRegistryEntryTest.m */,
-				CC64F0721D8B781C009CEF27 /* UAActionRegistryTest.m */,
-				CC64F0731D8B781C009CEF27 /* UAActionResultTest.m */,
-				CC64F0741D8B781C009CEF27 /* UAActionRunnerTest.m */,
-				CC64F0751D8B781C009CEF27 /* UAActionTest.m */,
-				CC64F0761D8B781C009CEF27 /* UAAddCustomEventActionTest.m */,
-				CC64F0771D8B781C009CEF27 /* UAAggregateActionResultTest.m */,
-				CC64F0781D8B781C009CEF27 /* UAAnalyticsTest.h */,
-				CC64F0791D8B781C009CEF27 /* UAAnalyticsTest.m */,
-				CC64F07A1D8B781C009CEF27 /* UAAPNSRegistrationTest.m */,
-				CC64F07B1D8B781C009CEF27 /* UAAppIntegrationTest.m */,
-				CC64F07C1D8B781C009CEF27 /* UAApplicationMetricsTest.m */,
-				CC64F07D1D8B781C009CEF27 /* UAAssociatedIdentifiersTest.m */,
-				CC64F07E1D8B781C009CEF27 /* UAAssociateIdentifiersEventTest.m */,
+				CC04F2001DCAB28300B4842D /* TestUtils */,
+				CC944EDA1DB6AEAF00C42269 /* HTTP */,
+				CC04F1FF1DCAB22E00B4842D /* Automation */,
+				CC04F2031DCAB3DD00B4842D /* Inbox */,
+				CC04F2061DCAB4C000B4842D /* Push */,
+				CC04F20C1DCAB57200B4842D /* Location */,
+				CC04F20E1DCAB5C600B4842D /* Actions Framework */,
+				CC04F2121DCAB65800B4842D /* Message Center */,
+				CC04F2131DCAB66900B4842D /* In-app Messaging */,
+				CC04F2151DCAB73000B4842D /* Analytics */,
+				CC04F2191DCAB7BE00B4842D /* Utils */,
+				CC04F21A1DCAB80800B4842D /* HTTP */,
+				CC04F21B1DCAB82200B4842D /* Native Bridge */,
 				CC64F07F1D8B781C009CEF27 /* UAAutoIntegrationTest.m */,
-				CC64F0801D8B781C009CEF27 /* UAAutomationTests.m */,
-				CC64F0811D8B781C009CEF27 /* UABase64Test.m */,
-				CC64F0821D8B781C009CEF27 /* UACancelSchedulesActionTests.m */,
-				CC64F0831D8B781C009CEF27 /* UAChannelAPIClientTest.m */,
-				CC64F0841D8B781C009CEF27 /* UAChannelCaptureTest.m */,
-				CC64F0851D8B781C009CEF27 /* UAChannelRegistrarTest.m */,
-				CC64F0861D8B781C009CEF27 /* UAChannelRegistrationPayloadTest.m */,
-				CC64F0871D8B781C009CEF27 /* UACircularRegionTest.m */,
-				CC64F0881D8B781C009CEF27 /* UACloseWindowActionTest.m */,
-				CC64F0891D8B781C009CEF27 /* UAColorUtilsTest.m */,
 				CC64F08A1D8B781C009CEF27 /* UAConfigTest.h */,
 				CC64F08B1D8B781C009CEF27 /* UAConfigTest.m */,
-				CC64F08C1D8B781C009CEF27 /* UACustomEventTest.m */,
-				CC64F08D1D8B781C009CEF27 /* UADefaultMessageCenterStyleTest.m */,
 				CC64F08E1D8B781C009CEF27 /* UADelayOperationTest.h */,
 				CC64F08F1D8B781C009CEF27 /* UADelayOperationTest.m */,
-				CC64F0901D8B781C009CEF27 /* UADisplayInboxActionTest.m */,
-				CC64F0911D8B781C009CEF27 /* UAEventTest.m */,
-				CC64F0921D8B781C009CEF27 /* UAHTTPConnection+Test.h */,
-				CC64F0931D8B781C009CEF27 /* UAHTTPConnection+Test.m */,
-				CC64F0941D8B781C009CEF27 /* UAHTTPConnectionOperationTest.h */,
-				CC64F0951D8B781C009CEF27 /* UAHTTPConnectionOperationTest.m */,
-				CC64F0961D8B781C009CEF27 /* UAHTTPRequestEngineTest.h */,
-				CC64F0971D8B781C009CEF27 /* UAHTTPRequestEngineTest.m */,
-				CC64F0981D8B781C009CEF27 /* UAInAppDisplayEventTest.m */,
-				CC64F0991D8B781C009CEF27 /* UAInAppMessageControllerTest.m */,
-				CC64F09A1D8B781C009CEF27 /* UAInAppMessageTest.m */,
-				CC64F09B1D8B781C009CEF27 /* UAInAppMessagingTest.m */,
-				CC64F09C1D8B781C009CEF27 /* UAInAppResolutionEventTest.m */,
-				CC64F09D1D8B781C009CEF27 /* UAInboxAPIClientTest.m */,
-				CC64F09E1D8B781C009CEF27 /* UAInboxMessageListTest.m */,
-				CC64F09F1D8B781C009CEF27 /* UAInboxMessageTest.m */,
-				CC64F0A01D8B781C009CEF27 /* UAIncomingInAppMessageActionTest.m */,
-				CC64F0A11D8B781C009CEF27 /* UAInstallAttributionEventTest.m */,
-				CC64F0A21D8B781C009CEF27 /* UAInteractiveNotificationEventTest.m */,
-				CC64F0A31D8B781C009CEF27 /* UAirshipTest.m */,
-				CC64F0A41D8B781C009CEF27 /* UAJSONMatcherTests.m */,
-				CC64F0A51D8B781C009CEF27 /* UAJSONPredicateTests.m */,
-				CC64F0A61D8B781C009CEF27 /* UAJSONValueMatcherTests.m */,
-				CC64F0A71D8B781C009CEF27 /* UAKeyChainUtilTest.m */,
-				CC64F0A81D8B781C009CEF27 /* UALandingPageActionTest.m */,
-				CC64F0A91D8B781C009CEF27 /* UALegacyAPNSRegistrationTest.m */,
-				CC64F0AA1D8B781C009CEF27 /* UALocationEventTest.m */,
-				CC64F0AB1D8B781C009CEF27 /* UALocationTest.m */,
-				CC64F0AC1D8B781C009CEF27 /* UAMediaEventTemplateTest.m */,
-				CC64F0AD1D8B781C009CEF27 /* UANamedUserAPIClientTest.m */,
-				CC64F0AE1D8B781C009CEF27 /* UANamedUserTest.m */,
-				CC64F0AF1D8B781C009CEF27 /* UANativeBridgeTest.m */,
-				CC64F0B01D8B781C009CEF27 /* UANotificationCategoriesTest.m */,
-				CC64F0B11D8B781C009CEF27 /* UANotificationCategoryTest.m */,
-				CC64F0B21D8B781C009CEF27 /* UANotificationContentTest.m */,
-				CC64F0B31D8B781C009CEF27 /* UAOpenExternalURLActionTest.m */,
-				CC64F0B41D8B781C009CEF27 /* UAOverlayInboxMessageActionTest.m */,
-				CC64F0B51D8B781C009CEF27 /* UAPasteboardActionTest.m */,
 				CC64F0B61D8B781C009CEF27 /* UAPreferenceDataStoreTest.m */,
-				CC64F0B71D8B781C009CEF27 /* UAProximityRegionTest.m */,
-				CC64F0B81D8B781C009CEF27 /* UAPushTest.m */,
-				CC64F0B91D8B781C009CEF27 /* UARegionEventTest.m */,
-				CC64F0BA1D8B781C009CEF27 /* UARetailEventTemplateTest.m */,
-				CC64F0BB1D8B781C009CEF27 /* UAScheduleActionTests.m */,
-				CC64F0BC1D8B781C009CEF27 /* UAScheduleTriggerTests.m */,
-				CC64F0BD1D8B781C009CEF27 /* UAScreenTrackingEventTest.m */,
-				CC64F0BE1D8B781C009CEF27 /* UAShareActionTest.m */,
-				CC64F0BF1D8B781C009CEF27 /* UATagActionsTest.m */,
-				CC64F0C01D8B781C009CEF27 /* UATagGroupsAPIClientTest.m */,
-				CC64F0C11D8B781C009CEF27 /* UATagUtilsTest.m */,
-				CC64F0C21D8B781C009CEF27 /* UAURLProtocolTest.m */,
-				CC64F0C31D8B781C009CEF27 /* UAUserAPIClientTest.m */,
-				CC64F0C41D8B781C009CEF27 /* UAUserTest.m */,
-				CC64F0C51D8B781C009CEF27 /* UAUtilsTest.h */,
-				CC64F0C61D8B781C009CEF27 /* UAUtilsTest.m */,
-				CC64F0C71D8B781C009CEF27 /* UAWebViewCallDataTest.m */,
-				CC64F0C81D8B781C009CEF27 /* UAWebViewDelegateTest.m */,
-				CC64F0C91D8B781C009CEF27 /* UAWhitelistTest.m */,
-				CC64F0CA1D8B781C009CEF27 /* UIWebView_UAAdditionsTest.m */,
-				CC64F0CB1D8B781C009CEF27 /* Valid-UAMessageCenterDefaultStyle.plist */,
-				CC64F0CC1D8B781C009CEF27 /* ValidUAMessageCenterDefaultStyle.plist */,
 				CC64F0581D8B77E3009CEF27 /* Info.plist */,
 			);
 			path = AirshipKitTests;
@@ -1831,6 +2055,11 @@
 		CC64F1421D8B7954009CEF27 /* Support */ = {
 			isa = PBXGroup;
 			children = (
+				CC64F0CB1D8B781C009CEF27 /* Valid-UAMessageCenterDefaultStyle.plist */,
+				CC64F0CC1D8B781C009CEF27 /* ValidUAMessageCenterDefaultStyle.plist */,
+				CC64F0611D8B781C009CEF27 /* CustomNotificationCategories.plist */,
+				CC64F0621D8B781C009CEF27 /* Info.plist */,
+				CC64F0631D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist */,
 				CC64F1431D8B7954009CEF27 /* AirshipConfig-DetectProvisioningMode.plist */,
 				CC64F1441D8B7954009CEF27 /* AirshipConfig-InProduction.plist */,
 				CC64F1451D8B7954009CEF27 /* AirshipConfig-Valid-Legacy-NeXTStep.plist */,
@@ -2609,7 +2838,6 @@
 				CC64F0EB1D8B781C009CEF27 /* UABase64Test.m in Sources */,
 				CC64F0F11D8B781C009CEF27 /* UACircularRegionTest.m in Sources */,
 				CC64F10E1D8B781C009CEF27 /* UALegacyAPNSRegistrationTest.m in Sources */,
-				CC64F0D11D8B781C009CEF27 /* IOS8BugsTests.m in Sources */,
 				CC64F0E41D8B781C009CEF27 /* UAAPNSRegistrationTest.m in Sources */,
 				CC64F1171D8B781C009CEF27 /* UANotificationContentTest.m in Sources */,
 				CC64F0F61D8B781C009CEF27 /* UADefaultMessageCenterStyleTest.m in Sources */,
