@@ -7,8 +7,30 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		494DDC261B0FD6A1009C134E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DDC251B0FD6A1009C134E /* libsqlite3.dylib */; };
 		6114091E1DB19C1F001F82A5 /* UALandingPageOverlayView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6114091D1DB19C1F001F82A5 /* UALandingPageOverlayView.xib */; };
+		76A5F5F01DCBDD5E00858BA4 /* UAAsyncOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1BB1DC16BB300B4842D /* UAAsyncOperation.m */; };
+		CC04F1861DBED84600B4842D /* UAEvents.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1841DBED84600B4842D /* UAEvents.xcdatamodeld */; };
+		CC04F18A1DBED9FA00B4842D /* UAEventData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F1881DBED9FA00B4842D /* UAEventData+Internal.h */; };
+		CC04F18B1DBED9FA00B4842D /* UAEventData.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1891DBED9FA00B4842D /* UAEventData.m */; };
+		CC04F18C1DBED9FA00B4842D /* UAEventData.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1891DBED9FA00B4842D /* UAEventData.m */; };
+		CC04F18F1DBEDA1900B4842D /* UAEventStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F18D1DBEDA1900B4842D /* UAEventStore+Internal.h */; };
+		CC04F1901DBEDA1900B4842D /* UAEventStore.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F18E1DBEDA1900B4842D /* UAEventStore.m */; };
+		CC04F1911DBEDA1900B4842D /* UAEventStore.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F18E1DBEDA1900B4842D /* UAEventStore.m */; };
+		CC04F1991DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F1971DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions.h */; };
+		CC04F19A1DBFF0CB00B4842D /* NSManagedContext+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1981DBFF0CB00B4842D /* NSManagedContext+UAAdditions.m */; };
+		CC04F19B1DBFF0CB00B4842D /* NSManagedContext+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1981DBFF0CB00B4842D /* NSManagedContext+UAAdditions.m */; };
+		CC04F1AA1DC018F600B4842D /* UAEventManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F1A81DC018F600B4842D /* UAEventManager+Internal.h */; };
+		CC04F1AB1DC018F600B4842D /* UAEventManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1A91DC018F600B4842D /* UAEventManager.m */; };
+		CC04F1AC1DC018F600B4842D /* UAEventManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1A91DC018F600B4842D /* UAEventManager.m */; };
+		CC04F1BC1DC16BB300B4842D /* UAAsyncOperation+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F1BA1DC16BB300B4842D /* UAAsyncOperation+Internal.h */; };
+		CC04F1BE1DC16BB300B4842D /* UAAsyncOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1BB1DC16BB300B4842D /* UAAsyncOperation.m */; };
+		CC04F1C11DC17D1500B4842D /* UAEventAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F1BF1DC17D1500B4842D /* UAEventAPIClient+Internal.h */; };
+		CC04F1C21DC17D1500B4842D /* UAEventAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1C01DC17D1500B4842D /* UAEventAPIClient.m */; };
+		CC04F1C31DC17D1500B4842D /* UAEventAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1C01DC17D1500B4842D /* UAEventAPIClient.m */; };
+		CC04F1C51DC27E6C00B4842D /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC04F1C41DC27E6C00B4842D /* libsqlite3.tbd */; };
+		CC04F1F01DC949D500B4842D /* NSOperationQueue+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F1EE1DC949D500B4842D /* NSOperationQueue+UAAdditions.h */; };
+		CC04F1F11DC949D500B4842D /* NSOperationQueue+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1EF1DC949D500B4842D /* NSOperationQueue+UAAdditions.m */; };
+		CC04F1F21DC949D500B4842D /* NSOperationQueue+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1EF1DC949D500B4842D /* NSOperationQueue+UAAdditions.m */; };
 		CC40D87F1D8C719F00BABD4F /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40D87E1D8C719F00BABD4F /* JRSwizzle.m */; };
 		CC40DC051D8C996A00BABD4F /* AirshipKit.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DAD91D8C996900BABD4F /* AirshipKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC40DC061D8C996A00BABD4F /* AirshipLib.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DADA1D8C996900BABD4F /* AirshipLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -62,8 +84,6 @@
 		CC40DC381D8C996A00BABD4F /* UAAnalytics+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB0D1D8C996900BABD4F /* UAAnalytics+Internal.h */; };
 		CC40DC391D8C996A00BABD4F /* UAAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB0E1D8C996900BABD4F /* UAAnalytics.h */; };
 		CC40DC3A1D8C996A00BABD4F /* UAAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB0F1D8C996900BABD4F /* UAAnalytics.m */; };
-		CC40DC3B1D8C996A00BABD4F /* UAAnalyticsDBManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB101D8C996900BABD4F /* UAAnalyticsDBManager+Internal.h */; };
-		CC40DC3C1D8C996A00BABD4F /* UAAnalyticsDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB111D8C996900BABD4F /* UAAnalyticsDBManager.m */; };
 		CC40DC3D1D8C996A00BABD4F /* UAAPNSRegistration+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB121D8C996900BABD4F /* UAAPNSRegistration+Internal.h */; };
 		CC40DC3E1D8C996A00BABD4F /* UAAPNSRegistration.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB131D8C996900BABD4F /* UAAPNSRegistration.m */; };
 		CC40DC3F1D8C996A00BABD4F /* UAAPNSRegistrationProtocol+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB141D8C996900BABD4F /* UAAPNSRegistrationProtocol+Internal.h */; };
@@ -325,7 +345,6 @@
 		CC40DD441D8C9A1C00BABD4F /* UAAddTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB0A1D8C996900BABD4F /* UAAddTagsAction.m */; };
 		CC40DD451D8C9A1C00BABD4F /* UAAggregateActionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB0C1D8C996900BABD4F /* UAAggregateActionResult.m */; };
 		CC40DD461D8C9A1C00BABD4F /* UAAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB0F1D8C996900BABD4F /* UAAnalytics.m */; };
-		CC40DD471D8C9A1C00BABD4F /* UAAnalyticsDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB111D8C996900BABD4F /* UAAnalyticsDBManager.m */; };
 		CC40DD481D8C9A1C00BABD4F /* UAAPNSRegistration.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB131D8C996900BABD4F /* UAAPNSRegistration.m */; };
 		CC40DD491D8C9A1C00BABD4F /* UAAppBackgroundEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB161D8C996900BABD4F /* UAAppBackgroundEvent.m */; };
 		CC40DD4A1D8C9A1C00BABD4F /* UAAppExitEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB181D8C996900BABD4F /* UAAppExitEvent.m */; };
@@ -565,6 +584,10 @@
 		CC944EEF1DB6EE3900C42269 /* UARequestSession.m in Sources */ = {isa = PBXBuildFile; fileRef = CC944EEC1DB6EE3900C42269 /* UARequestSession.m */; };
 		CC944EF91DB80E0C00C42269 /* UARequestSessionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC944EF81DB80E0C00C42269 /* UARequestSessionTest.m */; };
 		CCA11D351D9C41C7008C4A57 /* UANativeBridge.js in Resources */ = {isa = PBXBuildFile; fileRef = CCA11D341D9C41C7008C4A57 /* UANativeBridge.js */; };
+		CCB9021D1DCBBB2F009A66D7 /* UAAsyncOperation+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCB9021C1DCBBB2F009A66D7 /* UAAsyncOperation+Internal.h */; };
+		CCB902251DCBBCDA009A66D7 /* UAAsyncOperationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB902221DCBBCDA009A66D7 /* UAAsyncOperationTest.m */; };
+		CCB902261DCBBCDA009A66D7 /* UAEventAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB902231DCBBCDA009A66D7 /* UAEventAPIClientTest.m */; };
+		CCB902271DCBBCDA009A66D7 /* UAEventManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB902241DCBBCDA009A66D7 /* UAEventManagerTest.m */; };
 		FADDDD913027F98E43D963D8 /* libPods-AirshipKitTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF471EEEF4B1EEA3289E08C9 /* libPods-AirshipKitTests.a */; };
 /* End PBXBuildFile section */
 
@@ -602,8 +625,23 @@
 		3DE226EC24B13B38BA51B7B4 /* Pods-AirshipKitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipKitTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		494DD9571B0EB677009C134E /* AirshipKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		494DD95B1B0EB677009C134E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		494DDC251B0FD6A1009C134E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		6114091D1DB19C1F001F82A5 /* UALandingPageOverlayView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UALandingPageOverlayView.xib; sourceTree = "<group>"; };
+		CC04F1851DBED84600B4842D /* UAEvents.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAEvents.xcdatamodel; sourceTree = "<group>"; };
+		CC04F1881DBED9FA00B4842D /* UAEventData+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAEventData+Internal.h"; sourceTree = "<group>"; };
+		CC04F1891DBED9FA00B4842D /* UAEventData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventData.m; sourceTree = "<group>"; };
+		CC04F18D1DBEDA1900B4842D /* UAEventStore+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAEventStore+Internal.h"; sourceTree = "<group>"; };
+		CC04F18E1DBEDA1900B4842D /* UAEventStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventStore.m; sourceTree = "<group>"; };
+		CC04F1971DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObjectContext+UAAdditions.h"; sourceTree = "<group>"; };
+		CC04F1981DBFF0CB00B4842D /* NSManagedContext+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedContext+UAAdditions.m"; sourceTree = "<group>"; };
+		CC04F1A81DC018F600B4842D /* UAEventManager+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAEventManager+Internal.h"; sourceTree = "<group>"; };
+		CC04F1A91DC018F600B4842D /* UAEventManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventManager.m; sourceTree = "<group>"; };
+		CC04F1BA1DC16BB300B4842D /* UAAsyncOperation+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAAsyncOperation+Internal.h"; sourceTree = "<group>"; };
+		CC04F1BB1DC16BB300B4842D /* UAAsyncOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAsyncOperation.m; sourceTree = "<group>"; };
+		CC04F1BF1DC17D1500B4842D /* UAEventAPIClient+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAEventAPIClient+Internal.h"; sourceTree = "<group>"; };
+		CC04F1C01DC17D1500B4842D /* UAEventAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventAPIClient.m; sourceTree = "<group>"; };
+		CC04F1C41DC27E6C00B4842D /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		CC04F1EE1DC949D500B4842D /* NSOperationQueue+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSOperationQueue+UAAdditions.h"; sourceTree = "<group>"; };
+		CC04F1EF1DC949D500B4842D /* NSOperationQueue+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSOperationQueue+UAAdditions.m"; sourceTree = "<group>"; };
 		CC40D87B1D8C703E00BABD4F /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = ../TestCommon/OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
 		CC40D87D1D8C719F00BABD4F /* JRSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRSwizzle.h; sourceTree = "<group>"; };
 		CC40D87E1D8C719F00BABD4F /* JRSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JRSwizzle.m; sourceTree = "<group>"; };
@@ -659,8 +697,6 @@
 		CC40DB0D1D8C996900BABD4F /* UAAnalytics+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAAnalytics+Internal.h"; sourceTree = "<group>"; };
 		CC40DB0E1D8C996900BABD4F /* UAAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAnalytics.h; sourceTree = "<group>"; };
 		CC40DB0F1D8C996900BABD4F /* UAAnalytics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAnalytics.m; sourceTree = "<group>"; };
-		CC40DB101D8C996900BABD4F /* UAAnalyticsDBManager+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAAnalyticsDBManager+Internal.h"; sourceTree = "<group>"; };
-		CC40DB111D8C996900BABD4F /* UAAnalyticsDBManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAnalyticsDBManager.m; sourceTree = "<group>"; };
 		CC40DB121D8C996900BABD4F /* UAAPNSRegistration+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAAPNSRegistration+Internal.h"; sourceTree = "<group>"; };
 		CC40DB131D8C996900BABD4F /* UAAPNSRegistration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAPNSRegistration.m; sourceTree = "<group>"; };
 		CC40DB141D8C996900BABD4F /* UAAPNSRegistrationProtocol+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAAPNSRegistrationProtocol+Internal.h"; sourceTree = "<group>"; };
@@ -926,7 +962,6 @@
 		CC64F0751D8B781C009CEF27 /* UAActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionTest.m; sourceTree = "<group>"; };
 		CC64F0761D8B781C009CEF27 /* UAAddCustomEventActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAddCustomEventActionTest.m; sourceTree = "<group>"; };
 		CC64F0771D8B781C009CEF27 /* UAAggregateActionResultTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAggregateActionResultTest.m; sourceTree = "<group>"; };
-		CC64F0781D8B781C009CEF27 /* UAAnalyticsTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAnalyticsTest.h; sourceTree = "<group>"; };
 		CC64F0791D8B781C009CEF27 /* UAAnalyticsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAnalyticsTest.m; sourceTree = "<group>"; };
 		CC64F07A1D8B781C009CEF27 /* UAAPNSRegistrationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAPNSRegistrationTest.m; sourceTree = "<group>"; };
 		CC64F07B1D8B781C009CEF27 /* UAAppIntegrationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAppIntegrationTest.m; sourceTree = "<group>"; };
@@ -1074,6 +1109,10 @@
 		CC944EEC1DB6EE3900C42269 /* UARequestSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARequestSession.m; sourceTree = "<group>"; };
 		CC944EF81DB80E0C00C42269 /* UARequestSessionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARequestSessionTest.m; sourceTree = "<group>"; };
 		CCA11D341D9C41C7008C4A57 /* UANativeBridge.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = UANativeBridge.js; sourceTree = "<group>"; };
+		CCB9021C1DCBBB2F009A66D7 /* UAAsyncOperation+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAAsyncOperation+Internal.h"; sourceTree = "<group>"; };
+		CCB902221DCBBCDA009A66D7 /* UAAsyncOperationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAsyncOperationTest.m; sourceTree = "<group>"; };
+		CCB902231DCBBCDA009A66D7 /* UAEventAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventAPIClientTest.m; sourceTree = "<group>"; };
+		CCB902241DCBBCDA009A66D7 /* UAEventManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventManagerTest.m; sourceTree = "<group>"; };
 		CF471EEEF4B1EEA3289E08C9 /* libPods-AirshipKitTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AirshipKitTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -1082,8 +1121,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC04F1C51DC27E6C00B4842D /* libsqlite3.tbd in Frameworks */,
 				CC944EC81DB161AE00C42269 /* libz.tbd in Frameworks */,
-				494DDC261B0FD6A1009C134E /* libsqlite3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1130,7 +1169,6 @@
 				CC89997D1D8B642D00A0CECC /* AirshipResources */,
 				CC64F0551D8B77E3009CEF27 /* AirshipKitTests */,
 				494DD9581B0EB677009C134E /* Products */,
-				494DDC251B0FD6A1009C134E /* libsqlite3.dylib */,
 				CC40D87A1D8C703E00BABD4F /* Frameworks */,
 				0A550D587E2599A4BD33CDF4 /* Pods */,
 			);
@@ -1190,6 +1228,19 @@
 				494DD95B1B0EB677009C134E /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		CC04F1871DBED9E200B4842D /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				CC04F1881DBED9FA00B4842D /* UAEventData+Internal.h */,
+				CC04F1891DBED9FA00B4842D /* UAEventData.m */,
+				CC04F18D1DBEDA1900B4842D /* UAEventStore+Internal.h */,
+				CC04F18E1DBEDA1900B4842D /* UAEventStore.m */,
+				CC40DBEC1D8C996A00BABD4F /* UASQLite+Internal.h */,
+				CC40DBED1D8C996A00BABD4F /* UASQLite.m */,
+			);
+			name = Data;
 			sourceTree = "<group>";
 		};
 		CC04F1FF1DCAB22E00B4842D /* Automation */ = {
@@ -1426,11 +1477,12 @@
 			children = (
 				CC04F2161DCAB74900B4842D /* Actions */,
 				CC04F2171DCAB75E00B4842D /* Events */,
-				CC64F0781D8B781C009CEF27 /* UAAnalyticsTest.h */,
 				CC64F0791D8B781C009CEF27 /* UAAnalyticsTest.m */,
 				CC64F07B1D8B781C009CEF27 /* UAAppIntegrationTest.m */,
 				CC64F07C1D8B781C009CEF27 /* UAApplicationMetricsTest.m */,
 				CC64F07D1D8B781C009CEF27 /* UAAssociatedIdentifiersTest.m */,
+				CCB902231DCBBCDA009A66D7 /* UAEventAPIClientTest.m */,
+				CCB902241DCBBCDA009A66D7 /* UAEventManagerTest.m */,
 			);
 			name = Analytics;
 			sourceTree = "<group>";
@@ -1470,6 +1522,7 @@
 		CC04F2191DCAB7BE00B4842D /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				CCB902221DCBBCDA009A66D7 /* UAAsyncOperationTest.m */,
 				CC64F0CA1D8B781C009CEF27 /* UIWebView_UAAdditionsTest.m */,
 				CC64F0651D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m */,
 				CC64F06A1D8B781C009CEF27 /* NSString_UALocalizationAdditionsTest.m */,
@@ -1513,6 +1566,7 @@
 		CC40D87A1D8C703E00BABD4F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CC04F1C41DC27E6C00B4842D /* libsqlite3.tbd */,
 				CC944EC71DB161AE00C42269 /* libz.tbd */,
 				CC40D87B1D8C703E00BABD4F /* libOCMock.a */,
 				CF471EEEF4B1EEA3289E08C9 /* libPods-AirshipKitTests.a */,
@@ -1844,6 +1898,13 @@
 				CC40DB5C1D8C996900BABD4F /* UADisposable.h */,
 				CC40DB5D1D8C996900BABD4F /* UADisposable.m */,
 				CC40DBE01D8C996A00BABD4F /* UARichContentWindow.h */,
+				CCB9021C1DCBBB2F009A66D7 /* UAAsyncOperation+Internal.h */,
+				CC04F1971DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions.h */,
+				CC04F1981DBFF0CB00B4842D /* NSManagedContext+UAAdditions.m */,
+				CC04F1BA1DC16BB300B4842D /* UAAsyncOperation+Internal.h */,
+				CC04F1BB1DC16BB300B4842D /* UAAsyncOperation.m */,
+				CC04F1EE1DC949D500B4842D /* NSOperationQueue+UAAdditions.h */,
+				CC04F1EF1DC949D500B4842D /* NSOperationQueue+UAAdditions.m */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -1869,20 +1930,21 @@
 		CC40DDE91D91DAA900BABD4F /* Analytics */ = {
 			isa = PBXGroup;
 			children = (
+				CC04F1871DBED9E200B4842D /* Data */,
 				CC40DDF21D91DE9300BABD4F /* Actions */,
 				CC40DDEB1D91DB9200BABD4F /* Events */,
 				CC40DB0D1D8C996900BABD4F /* UAAnalytics+Internal.h */,
 				CC40DB0E1D8C996900BABD4F /* UAAnalytics.h */,
 				CC40DB0F1D8C996900BABD4F /* UAAnalytics.m */,
-				CC40DB101D8C996900BABD4F /* UAAnalyticsDBManager+Internal.h */,
-				CC40DB111D8C996900BABD4F /* UAAnalyticsDBManager.m */,
 				CC40DB201D8C996900BABD4F /* UAApplicationMetrics+Internal.h */,
 				CC40DB211D8C996900BABD4F /* UAApplicationMetrics.h */,
 				CC40DB221D8C996900BABD4F /* UAApplicationMetrics.m */,
 				CC40DB231D8C996900BABD4F /* UAAssociatedIdentifiers.h */,
 				CC40DB241D8C996900BABD4F /* UAAssociatedIdentifiers.m */,
-				CC40DBEC1D8C996A00BABD4F /* UASQLite+Internal.h */,
-				CC40DBED1D8C996A00BABD4F /* UASQLite.m */,
+				CC04F1A81DC018F600B4842D /* UAEventManager+Internal.h */,
+				CC04F1A91DC018F600B4842D /* UAEventManager.m */,
+				CC04F1BF1DC17D1500B4842D /* UAEventAPIClient+Internal.h */,
+				CC04F1C01DC17D1500B4842D /* UAEventAPIClient.m */,
 			);
 			name = Analytics;
 			sourceTree = "<group>";
@@ -2086,6 +2148,7 @@
 				CC8999A61D8B642D00A0CECC /* UAInAppMessageView.xib */,
 				CC8999A71D8B642D00A0CECC /* UANotificationCategories.plist */,
 				6114091D1DB19C1F001F82A5 /* UALandingPageOverlayView.xib */,
+				CC04F1841DBED84600B4842D /* UAEvents.xcdatamodeld */,
 			);
 			path = AirshipResources;
 			sourceTree = "<group>";
@@ -2156,6 +2219,7 @@
 				CC40DC201D8C996A00BABD4F /* UAActionRegistryEntry+Internal.h in Headers */,
 				CC944EED1DB6EE3900C42269 /* UARequestSession+Internal.h in Headers */,
 				CC40DC951D8C996A00BABD4F /* UAInAppDisplayEvent+Internal.h in Headers */,
+				CC04F1F01DC949D500B4842D /* NSOperationQueue+UAAdditions.h in Headers */,
 				CC40DC5B1D8C996A00BABD4F /* UABeveledLoadingIndicator.h in Headers */,
 				CC40DC611D8C996A00BABD4F /* UAChannelCapture.h in Headers */,
 				CC40DC491D8C996A00BABD4F /* UAAppIntegration.h in Headers */,
@@ -2185,6 +2249,8 @@
 				CC40DCAD1D8C996A00BABD4F /* UAInboxDBManager+Internal.h in Headers */,
 				CC40DC0F1D8C996A00BABD4F /* NSString+UAURLEncoding.h in Headers */,
 				CC40DCC51D8C996A00BABD4F /* UAJSONPredicate.h in Headers */,
+				CC04F1AA1DC018F600B4842D /* UAEventManager+Internal.h in Headers */,
+				CC04F1991DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions.h in Headers */,
 				CC40DCE01D8C996A00BABD4F /* UANamedUser.h in Headers */,
 				CC40DC7B1D8C996A00BABD4F /* UADefaultMessageCenterMessageViewController.h in Headers */,
 				CC40DCDD1D8C996A00BABD4F /* UAModifyTagsAction.h in Headers */,
@@ -2198,6 +2264,8 @@
 				CC40DC641D8C996A00BABD4F /* UAChannelRegistrar.h in Headers */,
 				CC40DCA41D8C996A00BABD4F /* UAInAppMessaging.h in Headers */,
 				CC40DC9B1D8C996A00BABD4F /* UAInAppMessageController+Internal.h in Headers */,
+				CC04F18F1DBEDA1900B4842D /* UAEventStore+Internal.h in Headers */,
+				CC04F1C11DC17D1500B4842D /* UAEventAPIClient+Internal.h in Headers */,
 				CC40DD051D8C996A00BABD4F /* UARegionEvent.h in Headers */,
 				CC40DD2E1D8C996A00BABD4F /* UIWebView+UAAdditions.h in Headers */,
 				CC40DC2E1D8C996A00BABD4F /* UAActionScheduleInfo.h in Headers */,
@@ -2231,7 +2299,6 @@
 				CC40DC241D8C996A00BABD4F /* UAActionResult.h in Headers */,
 				CC40DCFC1D8C996A00BABD4F /* UAProximityRegion+Internal.h in Headers */,
 				CC40DD0E1D8C996A00BABD4F /* UAScheduleTrigger+Internal.h in Headers */,
-				CC40DC3B1D8C996A00BABD4F /* UAAnalyticsDBManager+Internal.h in Headers */,
 				CC40DC2C1D8C996A00BABD4F /* UAActionScheduleData+Internal.h in Headers */,
 				CC40DCC71D8C996A00BABD4F /* UAJSONValueMatcher.h in Headers */,
 				CC40DD0C1D8C996A00BABD4F /* UAScheduleAction.h in Headers */,
@@ -2239,9 +2306,11 @@
 				CC40DCA61D8C996A00BABD4F /* UAInAppResolutionEvent+Internal.h in Headers */,
 				CC40DC361D8C996A00BABD4F /* UAAggregateActionResult.h in Headers */,
 				CC40DD281D8C996A00BABD4F /* UAWebViewCallData.h in Headers */,
+				CC04F1BC1DC16BB300B4842D /* UAAsyncOperation+Internal.h in Headers */,
 				CC40DC3D1D8C996A00BABD4F /* UAAPNSRegistration+Internal.h in Headers */,
 				CC40DD1F1D8C996A00BABD4F /* UAUser+Internal.h in Headers */,
 				CC40DC791D8C996A00BABD4F /* UADefaultMessageCenterListViewController.h in Headers */,
+				CCB9021D1DCBBB2F009A66D7 /* UAAsyncOperation+Internal.h in Headers */,
 				CC40DC7F1D8C996A00BABD4F /* UADefaultMessageCenterStyle.h in Headers */,
 				CC40DCB91D8C996A00BABD4F /* UAIncomingInAppMessageAction.h in Headers */,
 				CC40DCDC1D8C996A00BABD4F /* UAMessageCenterLocalization.h in Headers */,
@@ -2270,6 +2339,7 @@
 				CC40DCF01D8C996A00BABD4F /* UANotificationContent.h in Headers */,
 				CC40DCC01D8C996A00BABD4F /* UAirship.h in Headers */,
 				CC40DC681D8C996A00BABD4F /* UACircularRegion+Internal.h in Headers */,
+				CC04F18A1DBED9FA00B4842D /* UAEventData+Internal.h in Headers */,
 				CC40DC6B1D8C996A00BABD4F /* UACloseWindowAction+Internal.h in Headers */,
 				CC40DC6F1D8C996A00BABD4F /* UAConfig+Internal.h in Headers */,
 				CC40DC991D8C996A00BABD4F /* UAInAppMessageButtonActionBinding.h in Headers */,
@@ -2626,6 +2696,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76A5F5F01DCBDD5E00858BA4 /* UAAsyncOperation.m in Sources */,
 				CC40DCB81D8C996A00BABD4F /* UAInboxUtils.m in Sources */,
 				CC40DC781D8C996A00BABD4F /* UADefaultMessageCenterListCell.m in Sources */,
 				CC40DC8E1D8C996A00BABD4F /* UAHTTPConnection.m in Sources */,
@@ -2657,6 +2728,7 @@
 				CC40DC251D8C996A00BABD4F /* UAActionResult.m in Sources */,
 				CC40DC5E1D8C996A00BABD4F /* UACancelSchedulesAction.m in Sources */,
 				CC40DC4A1D8C996A00BABD4F /* UAAppIntegration.m in Sources */,
+				CC04F19A1DBFF0CB00B4842D /* NSManagedContext+UAAdditions.m in Sources */,
 				CC40DC921D8C996A00BABD4F /* UAHTTPRequest.m in Sources */,
 				CC40DD271D8C996A00BABD4F /* UAUtils.m in Sources */,
 				CC40DC171D8C996A00BABD4F /* UAAction.m in Sources */,
@@ -2687,7 +2759,9 @@
 				CC40DD1E1D8C996A00BABD4F /* UAURLProtocol.m in Sources */,
 				CC40DC371D8C996A00BABD4F /* UAAggregateActionResult.m in Sources */,
 				CC944EC01DB0225000C42269 /* UARequest.m in Sources */,
+				CC04F18B1DBED9FA00B4842D /* UAEventData.m in Sources */,
 				CC40DD1A1D8C996A00BABD4F /* UATagGroupsAPIClient.m in Sources */,
+				CC04F1F11DC949D500B4842D /* NSOperationQueue+UAAdditions.m in Sources */,
 				CC40DD031D8C996A00BABD4F /* UAPushReceivedEvent.m in Sources */,
 				CC40DC471D8C996A00BABD4F /* UAAppInitEvent.m in Sources */,
 				CC944ED31DB54CB400C42269 /* UAURLRequestOperation.m in Sources */,
@@ -2697,6 +2771,7 @@
 				CC40DCF11D8C996A00BABD4F /* UANotificationContent.m in Sources */,
 				CC40DC601D8C996A00BABD4F /* UAChannelAPIClient.m in Sources */,
 				CC40DD181D8C996A00BABD4F /* UASQLite.m in Sources */,
+				CC04F1901DBEDA1900B4842D /* UAEventStore.m in Sources */,
 				CC40DC6A1D8C996A00BABD4F /* UACircularRegion.m in Sources */,
 				CC40DCE11D8C996A00BABD4F /* UANamedUser.m in Sources */,
 				CC40DCCE1D8C996A00BABD4F /* UALandingPageAction.m in Sources */,
@@ -2715,7 +2790,6 @@
 				CC40DCB11D8C996A00BABD4F /* UAInboxMessage.m in Sources */,
 				CC40DC511D8C996A00BABD4F /* UAAssociateIdentifiersEvent.m in Sources */,
 				CC40DC5A1D8C996A00BABD4F /* UABespokeCloseView.m in Sources */,
-				CC40DC3C1D8C996A00BABD4F /* UAAnalyticsDBManager.m in Sources */,
 				CC40DC4D1D8C996A00BABD4F /* UAApplicationMetrics.m in Sources */,
 				CC40DD2D1D8C996A00BABD4F /* UAWhitelist.m in Sources */,
 				CC40DC5C1D8C996A00BABD4F /* UABeveledLoadingIndicator.m in Sources */,
@@ -2725,6 +2799,7 @@
 				CC40DC8B1D8C996A00BABD4F /* UAEvent.m in Sources */,
 				CC40DCB31D8C996A00BABD4F /* UAInboxMessageData.m in Sources */,
 				CC40DC1F1D8C996A00BABD4F /* UAActionRegistry.m in Sources */,
+				CC04F1AB1DC018F600B4842D /* UAEventManager.m in Sources */,
 				CC40DCA71D8C996A00BABD4F /* UAInAppResolutionEvent.m in Sources */,
 				CC40DCD21D8C996A00BABD4F /* UALegacyAPNSRegistration.m in Sources */,
 				CC40DC101D8C996A00BABD4F /* NSString+UAURLEncoding.m in Sources */,
@@ -2738,6 +2813,7 @@
 				CC40DD0D1D8C996A00BABD4F /* UAScheduleAction.m in Sources */,
 				CC40DC821D8C996A00BABD4F /* UADelayOperation.m in Sources */,
 				CC40DC7A1D8C996A00BABD4F /* UADefaultMessageCenterListViewController.m in Sources */,
+				CC04F1C21DC17D1500B4842D /* UAEventAPIClient.m in Sources */,
 				CC40DCA51D8C996A00BABD4F /* UAInAppMessaging.m in Sources */,
 				CC40DCF71D8C996A00BABD4F /* UAOverlayInboxMessageAction.m in Sources */,
 				CC40DC431D8C996A00BABD4F /* UAAppExitEvent.m in Sources */,
@@ -2795,6 +2871,7 @@
 				CC64F0D21D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m in Sources */,
 				CC64F0EA1D8B781C009CEF27 /* UAAutomationTests.m in Sources */,
 				CC64F0F71D8B781C009CEF27 /* UADelayOperationTest.m in Sources */,
+				CCB902271DCBBCDA009A66D7 /* UAEventManagerTest.m in Sources */,
 				CC64F0E51D8B781C009CEF27 /* UAAppIntegrationTest.m in Sources */,
 				CC64F12A1D8B781C009CEF27 /* UAUtilsTest.m in Sources */,
 				CC64F0D91D8B781C009CEF27 /* UAActionArgumentsTest.m in Sources */,
@@ -2818,6 +2895,7 @@
 				CC64F0FA1D8B781C009CEF27 /* UAHTTPConnection+Test.m in Sources */,
 				CC64F11C1D8B781C009CEF27 /* UAProximityRegionTest.m in Sources */,
 				CC64F12C1D8B781C009CEF27 /* UAWebViewDelegateTest.m in Sources */,
+				CCB902261DCBBCDA009A66D7 /* UAEventAPIClientTest.m in Sources */,
 				CC64F0EF1D8B781C009CEF27 /* UAChannelRegistrarTest.m in Sources */,
 				CC64F0EE1D8B781C009CEF27 /* UAChannelCaptureTest.m in Sources */,
 				CC64F11B1D8B781C009CEF27 /* UAPreferenceDataStoreTest.m in Sources */,
@@ -2853,6 +2931,7 @@
 				CC64F12B1D8B781C009CEF27 /* UAWebViewCallDataTest.m in Sources */,
 				CC944EE01DB6AF0C00C42269 /* UAURLRequestOperationTest.m in Sources */,
 				CC64F1281D8B781C009CEF27 /* UAUserAPIClientTest.m in Sources */,
+				CCB902251DCBBCDA009A66D7 /* UAAsyncOperationTest.m in Sources */,
 				CC64F0E21D8B781C009CEF27 /* UAAggregateActionResultTest.m in Sources */,
 				CC64F1231D8B781C009CEF27 /* UAShareActionTest.m in Sources */,
 				CC64F11F1D8B781C009CEF27 /* UARetailEventTemplateTest.m in Sources */,
@@ -2869,6 +2948,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC04F1861DBED84600B4842D /* UAEvents.xcdatamodeld in Sources */,
 				CC8999AA1D8B642D00A0CECC /* UAAutomation.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2898,16 +2978,17 @@
 				CC40DD441D8C9A1C00BABD4F /* UAAddTagsAction.m in Sources */,
 				CC40DD451D8C9A1C00BABD4F /* UAAggregateActionResult.m in Sources */,
 				CC40DD461D8C9A1C00BABD4F /* UAAnalytics.m in Sources */,
-				CC40DD471D8C9A1C00BABD4F /* UAAnalyticsDBManager.m in Sources */,
 				CC40DD481D8C9A1C00BABD4F /* UAAPNSRegistration.m in Sources */,
 				CC944ED91DB5804400C42269 /* UAAPIClient.m in Sources */,
 				CC40DD491D8C9A1C00BABD4F /* UAAppBackgroundEvent.m in Sources */,
 				CC40DD4A1D8C9A1C00BABD4F /* UAAppExitEvent.m in Sources */,
+				CC04F1BE1DC16BB300B4842D /* UAAsyncOperation.m in Sources */,
 				CC40DD4B1D8C9A1C00BABD4F /* UAAppForegroundEvent.m in Sources */,
 				CC40DD4C1D8C9A1C00BABD4F /* UAAppInitEvent.m in Sources */,
 				CC40DD4D1D8C9A1C00BABD4F /* UAAppIntegration.m in Sources */,
 				CC40DD4E1D8C9A1C00BABD4F /* UAApplicationMetrics.m in Sources */,
 				CC40DD4F1D8C9A1C00BABD4F /* UAAssociatedIdentifiers.m in Sources */,
+				CC04F19B1DBFF0CB00B4842D /* NSManagedContext+UAAdditions.m in Sources */,
 				CC40DD501D8C9A1C00BABD4F /* UAAssociateIdentifiersEvent.m in Sources */,
 				CC40DD511D8C9A1C00BABD4F /* UAAutoIntegration.m in Sources */,
 				CC40DD521D8C9A1C00BABD4F /* UAAutomation.m in Sources */,
@@ -2938,8 +3019,10 @@
 				CC40DD6A1D8C9A1C00BABD4F /* UAEvent.m in Sources */,
 				CC40DD6B1D8C9A1C00BABD4F /* UAHTTPConnection.m in Sources */,
 				CC944EC11DB0225000C42269 /* UARequest.m in Sources */,
+				CC04F18C1DBED9FA00B4842D /* UAEventData.m in Sources */,
 				CC40DD6C1D8C9A1C00BABD4F /* UAHTTPConnectionOperation.m in Sources */,
 				CC40DD6D1D8C9A1C00BABD4F /* UAHTTPRequest.m in Sources */,
+				CC04F1F21DC949D500B4842D /* NSOperationQueue+UAAdditions.m in Sources */,
 				CC40DD6E1D8C9A1C00BABD4F /* UAHTTPRequestEngine.m in Sources */,
 				CC944ED41DB54CB400C42269 /* UAURLRequestOperation.m in Sources */,
 				CC40DD6F1D8C9A1C00BABD4F /* UAInAppDisplayEvent.m in Sources */,
@@ -2948,6 +3031,7 @@
 				CC40DD721D8C9A1C00BABD4F /* UAInAppMessageController.m in Sources */,
 				CC40DD731D8C9A1C00BABD4F /* UAInAppMessageControllerDefaultDelegate.m in Sources */,
 				CC40DD741D8C9A1C00BABD4F /* UAInAppMessageView.m in Sources */,
+				CC04F1911DBEDA1900B4842D /* UAEventStore.m in Sources */,
 				CC40DD751D8C9A1C00BABD4F /* UAInAppMessaging.m in Sources */,
 				CC40DD761D8C9A1C00BABD4F /* UAInAppResolutionEvent.m in Sources */,
 				CC40DD771D8C9A1C00BABD4F /* UAInbox.m in Sources */,
@@ -2976,6 +3060,7 @@
 				CC40DD8E1D8C9A1C00BABD4F /* UAModifyTagsAction.m in Sources */,
 				CC40DD8F1D8C9A1C00BABD4F /* UANamedUser.m in Sources */,
 				CC40DD901D8C9A1C00BABD4F /* UANamedUserAPIClient.m in Sources */,
+				CC04F1AC1DC018F600B4842D /* UAEventManager.m in Sources */,
 				CC40DD911D8C9A1C00BABD4F /* UANotificationAction.m in Sources */,
 				CC40DD921D8C9A1C00BABD4F /* UANotificationCategories.m in Sources */,
 				CC40DD931D8C9A1C00BABD4F /* UANotificationCategory.m in Sources */,
@@ -2989,6 +3074,7 @@
 				CC40DD9B1D8C9A1C00BABD4F /* UAPush.m in Sources */,
 				CC40DD9C1D8C9A1C00BABD4F /* UAPushReceivedEvent.m in Sources */,
 				CC40DD9D1D8C9A1C00BABD4F /* UARegionEvent.m in Sources */,
+				CC04F1C31DC17D1500B4842D /* UAEventAPIClient.m in Sources */,
 				CC40DD9E1D8C9A1C00BABD4F /* UARemoveTagsAction.m in Sources */,
 				CC40DD9F1D8C9A1C00BABD4F /* UARetailEventTemplate.m in Sources */,
 				CC40DDA01D8C9A1C00BABD4F /* UAScheduleAction.m in Sources */,
@@ -3471,6 +3557,16 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
+		CC04F1841DBED84600B4842D /* UAEvents.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				CC04F1851DBED84600B4842D /* UAEvents.xcdatamodel */,
+			);
+			currentVersion = CC04F1851DBED84600B4842D /* UAEvents.xcdatamodel */;
+			path = UAEvents.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
 		CC8999A01D8B642D00A0CECC /* UAAutomation.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (

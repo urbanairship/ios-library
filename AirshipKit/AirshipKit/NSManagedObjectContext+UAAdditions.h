@@ -22,26 +22,15 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#import <Foundation/Foundation.h>
-#import "UAAsyncOperation+Internal.h"
 
-NS_ASSUME_NONNULL_BEGIN
+#import <CoreData/CoreData.h>
 
-/**
- * Performs a NSURLSession dataTask in an NSOperation.
- */
-@interface UAURLRequestOperation : UAAsyncOperation
+@interface NSManagedObjectContext (UAAdditions)
 
 /**
- * UAURLRequestOperation factory method.
- * @param request The request to perform.
- * @param session The url session to peform the request in.
- * @param completionHandler A completion handler to call once the request is finished.
+ * Creates a managed object context in the UA no backup directory.
  */
-+ (instancetype)operationWithRequest:(NSURLRequest *)request
-                             session:(NSURLSession *)session
-                   completionHandler:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error))completionHandler;
++ (instancetype)managedObjectContextForModelURL:(NSURL *)modelURL
+                               concurrencyType:(NSManagedObjectContextConcurrencyType)concurrencyType
+                                      storeName:(NSString *)storeName;
 @end
-
-NS_ASSUME_NONNULL_END
-

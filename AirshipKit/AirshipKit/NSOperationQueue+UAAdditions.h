@@ -22,26 +22,19 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import <Foundation/Foundation.h>
-#import "UAAsyncOperation+Internal.h"
 
-NS_ASSUME_NONNULL_BEGIN
 
-/**
- * Performs a NSURLSession dataTask in an NSOperation.
- */
-@interface UAURLRequestOperation : UAAsyncOperation
+@interface NSOperationQueue(UAAdditions)
 
 /**
- * UAURLRequestOperation factory method.
- * @param request The request to perform.
- * @param session The url session to peform the request in.
- * @param completionHandler A completion handler to call once the request is finished.
+ * Adds an operation to the queue with a background task and a delay
+ * operation dependency.
+ * @param operation The operation to add.
+ * @param delay The delay in seconds.
  */
-+ (instancetype)operationWithRequest:(NSURLRequest *)request
-                             session:(NSURLSession *)session
-                   completionHandler:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error))completionHandler;
+- (BOOL)addBackgroundOperation:(NSOperation *)operation
+                         delay:(NSTimeInterval)delay;
+
 @end
-
-NS_ASSUME_NONNULL_END
-

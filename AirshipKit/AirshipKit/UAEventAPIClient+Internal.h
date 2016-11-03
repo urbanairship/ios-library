@@ -22,26 +22,43 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import <Foundation/Foundation.h>
-#import "UAAsyncOperation+Internal.h"
+#import "UAAPIClient+Internal.h"
+
+@class UAConfig;
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Performs a NSURLSession dataTask in an NSOperation.
+ * API client to upload events to Urban Airship.
  */
-@interface UAURLRequestOperation : UAAsyncOperation
+@interface UAEventAPIClient : UAAPIClient
 
 /**
- * UAURLRequestOperation factory method.
- * @param request The request to perform.
- * @param session The url session to peform the request in.
- * @param completionHandler A completion handler to call once the request is finished.
+ * Default factory method.
+ *
+ * @param config The Urban Airship config.
+ * @return A UAEventAPIClient instance.
  */
-+ (instancetype)operationWithRequest:(NSURLRequest *)request
-                             session:(NSURLSession *)session
-                   completionHandler:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error))completionHandler;
++ (instancetype)clientWithConfig:(UAConfig *)config;
+
+/**
+ * Factory method to create a UAEventAPIClient.
+ *
+ * @param config The Urban Airship config.
+ * @param session The UARequestSession instance.
+ * @return UAEventAPIClient instance.
+ */
++ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session;
+
+/**
+ * Uploads analytic events.
+ * @param events The events to upload.
+ * @param completionHandler A completion handler.
+ */
+-(void)uploadEvents:(NSArray *)events completionHandler:(void (^)(NSHTTPURLResponse * nullable))completionHandler;
+
 @end
 
 NS_ASSUME_NONNULL_END
-

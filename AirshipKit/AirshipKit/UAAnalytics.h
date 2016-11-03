@@ -24,11 +24,8 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
 
 @class UAEvent;
-@class UAConfig;
-@class UAPreferenceDataStore;
 @class UAAssociatedIdentifiers;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -56,12 +53,13 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The current session ID.
  */
-@property (nonatomic, copy, readonly, nullable) NSString *sessionID;
+@property (nonatomic, copy, readonly) NSString *sessionID;
 
 /**
- * The oldest event time as an NSTimeInterval.
+ * Date representing the last attempt to send analytics.
+ * @return NSDate representing the last attempt to send analytics
  */
-@property (nonatomic, assign, readonly) NSTimeInterval oldestEventTime;
+@property (nonatomic, strong, readonly) NSDate *lastSendTime;
 
 /**
  * Analytics enable flag. Disabling analytics will delete any locally stored events
@@ -96,16 +94,15 @@ NS_ASSUME_NONNULL_BEGIN
 - (UAAssociatedIdentifiers *)currentAssociatedDeviceIdentifiers;
 
 /**
- * Date representing the last attempt to send analytics.
- * @return NSDate representing the last attempt to send analytics
- */
-- (NSDate *)lastSendTime;
-
-/**
  * Initiates screen tracking for a specific app screen, must be called once per tracked screen.
  * @param screen The screen's identifier as an NSString.
  */
 - (void)trackScreen:(nullable NSString *)screen;
+
+/**
+ * Schedules an event upload if one is not already scheduled.
+ */
+- (void)scheduleUpload;
 
 @end
 

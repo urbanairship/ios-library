@@ -23,6 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "NSManagedObjectContext+UAAdditions.h"
 #import "UAAutomationStore+Internal.h"
 #import "UAActionScheduleData+Internal.h"
 #import "UAScheduleTriggerData+Internal.h"
@@ -39,7 +40,6 @@
 @end
 
 NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
-NSString *const UAAutomationStoreDirectory = @"com.urbanairship.no-backup";
 
 @implementation UAAutomationStore
 
@@ -48,7 +48,11 @@ NSString *const UAAutomationStoreDirectory = @"com.urbanairship.no-backup";
     self = [super init];
 
     if (self) {
-        self.managedContext = [self createManagedObjectContextWithConfig:config];
+        NSString *storeName = [NSString stringWithFormat:UAAutomationStoreFileFormat, config.appKey];
+        NSURL *modelURL = [[UAirship resources] URLForResource:@"UAAutomation" withExtension:@"momd"];
+        self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
+                                                                     concurrencyType:NSPrivateQueueConcurrencyType
+                                                                            storeName:storeName];
     }
 
     return self;
@@ -56,49 +60,6 @@ NSString *const UAAutomationStoreDirectory = @"com.urbanairship.no-backup";
 
 + (instancetype)automationStoreWithConfig:(UAConfig *)config {
     return [[UAAutomationStore alloc] initWithConfig:config];
-}
-
-- (NSManagedObjectContext *)createManagedObjectContextWithConfig:(UAConfig *)config {
-    NSString *storeName = [NSString stringWithFormat:UAAutomationStoreFileFormat, config.appKey];
-
-    NSURL *modelURL = [[UAirship resources] URLForResource:@"UAAutomation" withExtension:@"momd"];
-    NSManagedObjectModel *mom = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
-
-    NSPersistentStoreCoordinator *psc = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:mom];
-    NSManagedObjectContext *moc = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-    [moc setPersistentStoreCoordinator:psc];
-
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSURL *libraryDirectoryURL = [[fileManager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
-    NSURL *directoryURL = [libraryDirectoryURL URLByAppendingPathComponent:UAAutomationStoreDirectory];
-
-    // Create the store directory if it doesnt exist
-    if (![fileManager fileExistsAtPath:[directoryURL path]]) {
-        NSError *error = nil;
-        if (![fileManager createDirectoryAtURL:directoryURL withIntermediateDirectories:YES attributes:nil error:&error]) {
-            UA_LERR(@"Error creating automation directory %@: %@", [directoryURL lastPathComponent], error);
-        } else {
-            [UAUtils addSkipBackupAttributeToItemAtURL:directoryURL];
-        }
-    }
-
-    NSURL *storeURL = [directoryURL URLByAppendingPathComponent:storeName];
-
-    [moc performBlock:^{
-        NSError *error = nil;
-        NSPersistentStore *store = [psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error];
-
-        if (!store) {
-            [[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil];
-            store = [psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error];
-        }
-
-        if (!store) {
-            UA_LERR(@"Error initializing PSC: %@.", error);
-        }
-    }];
-
-    return moc;
 }
 
 - (BOOL)saveContext {
@@ -121,7 +82,6 @@ NSString *const UAAutomationStoreDirectory = @"com.urbanairship.no-backup";
         if (count >= limit) {
             UA_LERR(@"Max schedule limit reached. Unable to save new schedule.");
             completionHandler(NO);
-
             return;
         }
 

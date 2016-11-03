@@ -28,19 +28,7 @@
 
 @interface UAURLRequestOperation()
 
-
-/**
- * Indicates whether the operation is currently executing.
- */
-@property (nonatomic, assign) BOOL isExecuting;
-
-/**
- * Indicates whether the operation has finished.
- */
-@property (nonatomic, assign) BOOL isFinished;
-
 @property (nonatomic, copy) NSURLSessionTask *task;
-
 @property (nonatomic, strong) NSURLSession *session;
 @property (nonatomic, strong) NSURLRequest *request;
 @property (nonatomic, copy) void (^completionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
@@ -58,8 +46,6 @@
         self.session = session;
         self.request = request;
         self.completionHandler = completionHandler;
-        self.isExecuting = NO;
-        self.isFinished = NO;
     }
     return self;
 }
@@ -71,76 +57,25 @@
     return [[UAURLRequestOperation alloc] initWithRequest:request sesssion:session completionHandler:completionHandler];
 }
 
-- (BOOL)isAsynchronous {
-    return YES;
-}
-
-- (void)setIsExecuting:(BOOL)isExecuting {
-    [self willChangeValueForKey:@"isExecuting"];
-    _isExecuting = isExecuting;
-    [self didChangeValueForKey:@"isExecuting"];
-}
-
-- (void)setIsFinished:(BOOL)isFinished {
-    [self willChangeValueForKey:@"isFinished"];
-    _isFinished = isFinished;
-    [self didChangeValueForKey:@"isFinished"];
-}
-
-- (void)cancel {
-    //the super call affects the isCancelled KVO value, synchronize to avoid a race
-    @synchronized(self) {
-        [super cancel];
-
-        [self.task cancel];
-
-        if (self.isExecuting) {
-            [self finish];
-        }
-    }
-}
-
-- (void)start {
-    // Create the task
+- (void)startAsyncOperation {
     self.task = [self.session dataTaskWithRequest:self.request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        @synchronized (self) {
-            if (!self.isCancelled && self.completionHandler) {
-                self.completionHandler(data, response, error);
-            }
-
-            if (!self.isFinished) {
-                [self finish];
-            }
+        if (!self.isCancelled && self.completionHandler) {
+            self.completionHandler(data, response, error);
         }
+
+        [self finish];
     }];
 
-    // Synchronize change to the isExecuting KVO value
-    @synchronized(self) {
-
-        // We may have already been cancelled at this point, in which case finish and retrun
-        if (self.isCancelled) {
-            [self finish];
-            return;
-        }
-
-        self.isExecuting = YES;
-
-        [self.task resume];
-    }
+    [self.task resume];
 }
 
-
-- (void)cleanup {
+- (void)finish {
     self.task = nil;
     self.completionHandler = nil;
     self.request = nil;
     self.session = nil;
-}
 
-- (void)finish {
-    [self cleanup];
-    self.isExecuting = NO;
-    self.isFinished = YES;
+    [super finish];
 }
 
 - (void)dealloc {

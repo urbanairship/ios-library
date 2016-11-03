@@ -324,7 +324,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     }
 
     // Invalidate UAAnalytics timer and cancel all queued operations
-    [sharedAirship_.analytics stopSends];
+    [sharedAirship_.analytics cancelUpload];
 
     // Invalidate UAInAppMessaging autodisplay timer
     [sharedAirship_.sharedInAppMessaging invalidateAutoDisplayTimer];

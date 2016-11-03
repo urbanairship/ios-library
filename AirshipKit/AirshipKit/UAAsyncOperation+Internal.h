@@ -22,26 +22,32 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import <Foundation/Foundation.h>
-#import "UAAsyncOperation+Internal.h"
-
-NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Performs a NSURLSession dataTask in an NSOperation.
+ * NSOperation that executes an asynchronous block.
  */
-@interface UAURLRequestOperation : UAAsyncOperation
+@interface UAAsyncOperation : NSOperation
 
 /**
- * UAURLRequestOperation factory method.
- * @param request The request to perform.
- * @param session The url session to peform the request in.
- * @param completionHandler A completion handler to call once the request is finished.
+ * Factory method to create a UAAsyncOperation operation. Once the
+ * operation is finished, the block must call ``finish`` on the passed
+ * in operation.
+ *
+ * @param block The async block to execute.
+ * @return A UAAsyncOperation instance.
  */
-+ (instancetype)operationWithRequest:(NSURLRequest *)request
-                             session:(NSURLSession *)session
-                   completionHandler:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error))completionHandler;
++ (instancetype)operationWithBlock:(void (^)(UAAsyncOperation *))block;
+
+/**
+ * Called to start the async operation.
+ */
+- (void)startAsyncOperation;
+
+/**
+ * Call to finish the operation.
+ */
+- (void)finish;
+
 @end
-
-NS_ASSUME_NONNULL_END
-

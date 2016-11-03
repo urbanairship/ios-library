@@ -22,26 +22,45 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#import <Foundation/Foundation.h>
+
+#import <XCTest/XCTest.h>
 #import "UAAsyncOperation+Internal.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
-/**
- * Performs a NSURLSession dataTask in an NSOperation.
- */
-@interface UAURLRequestOperation : UAAsyncOperation
-
-/**
- * UAURLRequestOperation factory method.
- * @param request The request to perform.
- * @param session The url session to peform the request in.
- * @param completionHandler A completion handler to call once the request is finished.
- */
-+ (instancetype)operationWithRequest:(NSURLRequest *)request
-                             session:(NSURLSession *)session
-                   completionHandler:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error))completionHandler;
+@interface UAAsyncOperationTest : XCTestCase
+@property (nonatomic, strong) NSOperationQueue *queue;
 @end
 
-NS_ASSUME_NONNULL_END
+@implementation UAAsyncOperationTest
 
+- (void)setUp {
+    [super setUp];
+    self.queue = [[NSOperationQueue alloc] init];
+}
+
+- (void)tearDown {
+    [super tearDown];
+}
+
+/**
+ * Test async block is called for the operation.
+ */
+- (void)testPerform {
+    XCTestExpectation *blockCalled = [self expectationWithDescription:@"Block called"];
+
+    UAAsyncOperation *operation = [UAAsyncOperation operationWithBlock:^(UAAsyncOperation *operation) {
+        XCTAssertTrue(operation.isExecuting);
+        XCTAssertFalse(operation.isFinished);
+
+        [operation finish];
+
+        XCTAssertTrue(operation.isFinished);
+        XCTAssertFalse(operation.isExecuting);
+
+        [blockCalled fulfill];
+    }];
+
+    [self.queue addOperation:operation];
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+}
+
+@end

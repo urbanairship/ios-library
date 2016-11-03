@@ -22,26 +22,60 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import <Foundation/Foundation.h>
-#import "UAAsyncOperation+Internal.h"
+#import "UAEventData+Internal.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
-/**
- * Performs a NSURLSession dataTask in an NSOperation.
- */
-@interface UAURLRequestOperation : UAAsyncOperation
+@class UAEvent;
+@class UAConfig;
 
 /**
- * UAURLRequestOperation factory method.
- * @param request The request to perform.
- * @param session The url session to peform the request in.
- * @param completionHandler A completion handler to call once the request is finished.
+ * Storage access for analytic events.
  */
-+ (instancetype)operationWithRequest:(NSURLRequest *)request
-                             session:(NSURLSession *)session
-                   completionHandler:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error))completionHandler;
+@interface UAEventStore : NSObject
+
+
+/**
+ * Default factory method.
+ *
+ * @param config The airship config.
+ * @return UAEventStore instance.
+ */
++ (instancetype)eventStoreWithConfig:(UAConfig *)config;
+
+/**
+ * Saves an event.
+ *
+ * @param event The event to store.
+ * @param sessionID The event's session ID.
+ */
+- (void)saveEvent:(UAEvent *)event sessionID:(NSString *)sessionID;
+
+/**
+ * Fetches a batch of events.
+ *
+ * @param maxBatchSize The max event batch size.
+ * @param completionHandler A completion handler with the event data.
+ */
+- (void)fetchEventsWithMaxBatchSize:(NSUInteger)maxBatchSize
+                  completionHandler:(void (^)(NSArray<UAEventData *> *))completionHandler;
+
+/**
+ * Deletes a set of events.
+ *
+ * @param event The event IDs to delete.
+ */
+- (void)deleteEventsWithIDs:(NSArray<NSString *> *)eventIds;
+
+/**
+ * Deletes event session until the underlying store is below a given size.
+ * @param bytes The desired size in bytes for the store size.
+ */
+- (void)trimEventsToStoreSize:(NSUInteger)bytes;
+
+/**
+ * Deletes all events in the event store.
+ */
+- (void)deleteAllEvents;
+
 @end
-
-NS_ASSUME_NONNULL_END
-
