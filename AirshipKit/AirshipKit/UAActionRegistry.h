@@ -53,6 +53,9 @@
 #define kUACancelSchedulesActionDefaultRegistryAlias @"^csa"
 #define kUAScheduleActionDefaultRegistryName @"schedule_actions"
 #define kUAScheduleActionDefaultRegistryAlias @"^sa"
+#define kUAFetchDeviceInfoActionDefaultRegistryName @"fetch_device_info"
+#define kUAFetchDeviceInfoActionDefaultRegistryAlias @"^fdi"
+
 
 #define kUALandingPageActionLastOpenTimeLimitInSeconds @(7 * 86400) // 1 week
 

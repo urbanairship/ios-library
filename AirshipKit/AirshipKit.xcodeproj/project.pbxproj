@@ -588,6 +588,10 @@
 		CCB902251DCBBCDA009A66D7 /* UAAsyncOperationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB902221DCBBCDA009A66D7 /* UAAsyncOperationTest.m */; };
 		CCB902261DCBBCDA009A66D7 /* UAEventAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB902231DCBBCDA009A66D7 /* UAEventAPIClientTest.m */; };
 		CCB902271DCBBCDA009A66D7 /* UAEventManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB902241DCBBCDA009A66D7 /* UAEventManagerTest.m */; };
+		E29D35E91DB93A59003C292F /* UAFetchDeviceInfoAction.h in Headers */ = {isa = PBXBuildFile; fileRef = E29D35E71DB93A59003C292F /* UAFetchDeviceInfoAction.h */; };
+		E29D35EA1DB93A59003C292F /* UAFetchDeviceInfoAction.m in Sources */ = {isa = PBXBuildFile; fileRef = E29D35E81DB93A59003C292F /* UAFetchDeviceInfoAction.m */; };
+		E29D35EB1DB93A59003C292F /* UAFetchDeviceInfoAction.m in Sources */ = {isa = PBXBuildFile; fileRef = E29D35E81DB93A59003C292F /* UAFetchDeviceInfoAction.m */; };
+		E29D35EF1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = E29D35EE1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m */; };
 		FADDDD913027F98E43D963D8 /* libPods-AirshipKitTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF471EEEF4B1EEA3289E08C9 /* libPods-AirshipKitTests.a */; };
 /* End PBXBuildFile section */
 
@@ -1114,6 +1118,9 @@
 		CCB902231DCBBCDA009A66D7 /* UAEventAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventAPIClientTest.m; sourceTree = "<group>"; };
 		CCB902241DCBBCDA009A66D7 /* UAEventManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventManagerTest.m; sourceTree = "<group>"; };
 		CF471EEEF4B1EEA3289E08C9 /* libPods-AirshipKitTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AirshipKitTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E29D35E71DB93A59003C292F /* UAFetchDeviceInfoAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAFetchDeviceInfoAction.h; sourceTree = "<group>"; };
+		E29D35E81DB93A59003C292F /* UAFetchDeviceInfoAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAFetchDeviceInfoAction.m; sourceTree = "<group>"; };
+		E29D35EE1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAFetchDeviceInfoActionTest.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1423,6 +1430,7 @@
 				CC04F2111DCAB61700B4842D /* Share */,
 				CC64F0B31D8B781C009CEF27 /* UAOpenExternalURLActionTest.m */,
 				CC64F0B51D8B781C009CEF27 /* UAPasteboardActionTest.m */,
+            E29D35EE1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m */
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -2049,6 +2057,8 @@
 				CC40DBCA1D8C996A00BABD4F /* UAOpenExternalURLAction.m */,
 				CC40DBCD1D8C996A00BABD4F /* UAPasteboardAction.h */,
 				CC40DBCE1D8C996A00BABD4F /* UAPasteboardAction.m */,
+				E29D35E71DB93A59003C292F /* UAFetchDeviceInfoAction.h */,
+				E29D35E81DB93A59003C292F /* UAFetchDeviceInfoAction.m */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -2247,6 +2257,7 @@
 				CC40DCAB1D8C996A00BABD4F /* UAInboxAPIClient+Internal.h in Headers */,
 				CC40DCB71D8C996A00BABD4F /* UAInboxUtils.h in Headers */,
 				CC40DCAD1D8C996A00BABD4F /* UAInboxDBManager+Internal.h in Headers */,
+				E29D35E91DB93A59003C292F /* UAFetchDeviceInfoAction.h in Headers */,
 				CC40DC0F1D8C996A00BABD4F /* NSString+UAURLEncoding.h in Headers */,
 				CC40DCC51D8C996A00BABD4F /* UAJSONPredicate.h in Headers */,
 				CC04F1AA1DC018F600B4842D /* UAEventManager+Internal.h in Headers */,
@@ -2816,6 +2827,7 @@
 				CC04F1C21DC17D1500B4842D /* UAEventAPIClient.m in Sources */,
 				CC40DCA51D8C996A00BABD4F /* UAInAppMessaging.m in Sources */,
 				CC40DCF71D8C996A00BABD4F /* UAOverlayInboxMessageAction.m in Sources */,
+				E29D35EA1DB93A59003C292F /* UAFetchDeviceInfoAction.m in Sources */,
 				CC40DC431D8C996A00BABD4F /* UAAppExitEvent.m in Sources */,
 				CC40DCD51D8C996A00BABD4F /* UALocation.m in Sources */,
 				CC40DC2F1D8C996A00BABD4F /* UAActionScheduleInfo.m in Sources */,
@@ -2859,6 +2871,7 @@
 				CC64F1091D8B781C009CEF27 /* UAJSONMatcherTests.m in Sources */,
 				CC64F0FD1D8B781C009CEF27 /* UAInAppDisplayEventTest.m in Sources */,
 				CC64F0D81D8B781C009CEF27 /* UAAction_OperatorTest.m in Sources */,
+				E29D35EF1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m in Sources */,
 				CC64F0ED1D8B781C009CEF27 /* UAChannelAPIClientTest.m in Sources */,
 				CC64F1111D8B781C009CEF27 /* UAMediaEventTemplateTest.m in Sources */,
 				CC64F0F31D8B781C009CEF27 /* UAColorUtilsTest.m in Sources */,
@@ -3077,6 +3090,7 @@
 				CC04F1C31DC17D1500B4842D /* UAEventAPIClient.m in Sources */,
 				CC40DD9E1D8C9A1C00BABD4F /* UARemoveTagsAction.m in Sources */,
 				CC40DD9F1D8C9A1C00BABD4F /* UARetailEventTemplate.m in Sources */,
+				E29D35EB1DB93A59003C292F /* UAFetchDeviceInfoAction.m in Sources */,
 				CC40DDA01D8C9A1C00BABD4F /* UAScheduleAction.m in Sources */,
 				CC40DDA11D8C9A1C00BABD4F /* UAScheduleTrigger.m in Sources */,
 				CC40DDA21D8C9A1C00BABD4F /* UAScheduleTriggerData.m in Sources */,

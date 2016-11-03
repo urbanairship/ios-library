@@ -40,6 +40,7 @@
 #import "UAOverlayInboxMessageAction.h"
 #import "UACancelSchedulesAction.h"
 #import "UAScheduleAction.h"
+#import "UAFetchDeviceInfoAction.h"
 
 @implementation UAActionRegistry
 @dynamic registeredEntries;
@@ -355,6 +356,14 @@
     // Schedule action
     [self registerAction:[[UAScheduleAction alloc] init]
                    names:@[kUAScheduleActionDefaultRegistryName, kUAScheduleActionDefaultRegistryAlias]];
+    
+    // Fetch device info action
+    UAFetchDeviceInfoAction *fetchDeviceInfoAction = [[UAFetchDeviceInfoAction alloc] init];
+    [self registerAction:fetchDeviceInfoAction
+                   names:@[kUAFetchDeviceInfoActionDefaultRegistryName, kUAFetchDeviceInfoActionDefaultRegistryAlias]
+               predicate:^BOOL(UAActionArguments *args) {
+                   return args.situation == UASituationManualInvocation || args.situation == UASituationWebViewInvocation;
+               }];
 
 }
 
