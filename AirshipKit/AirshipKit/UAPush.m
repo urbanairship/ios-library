@@ -846,13 +846,14 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 }
 
 - (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload {
-
     UA_LINFO(@"Channel registration updated successfully.");
 
-    id strongDelegate = self.registrationDelegate;
-    if ([strongDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
-        [strongDelegate registrationSucceededForChannelID:self.channelID deviceToken:self.deviceToken];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        id strongDelegate = self.registrationDelegate;
+        if ([strongDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
+            [strongDelegate registrationSucceededForChannelID:self.channelID deviceToken:self.deviceToken];
+        }
+    });
 
     if (![payload isEqualToPayload:[self createChannelPayload]]) {
         [self updateChannelRegistrationForcefully:NO];
@@ -862,13 +863,15 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 }
 
 - (void)registrationFailedWithPayload:(UAChannelRegistrationPayload *)payload {
-
     UA_LINFO(@"Channel registration failed.");
 
-    id strongDelegate = self.registrationDelegate;
-    if ([strongDelegate respondsToSelector:@selector(registrationFailed)]) {
-        [strongDelegate registrationFailed];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        id strongDelegate = self.registrationDelegate;
+        if ([strongDelegate respondsToSelector:@selector(registrationFailed)]) {
+            [strongDelegate registrationFailed];
+        }
+    });
+
 
     [self endRegistrationBackgroundTask];
 }
@@ -887,11 +890,12 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
             NSLog(@"Created channel with ID: %@", self.channelID);
         }
 
-        [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelCreatedEvent
-                                                            object:self
-                                                          userInfo:@{UAChannelCreatedEventChannelKey: channelID,
-                                                                     UAChannelCreatedEventExistingKey: @(existing)}];
-
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelCreatedEvent
+                                                                object:self
+                                                              userInfo:@{UAChannelCreatedEventChannelKey: channelID,
+                                                                         UAChannelCreatedEventExistingKey: @(existing)}];
+        });
     } else {
         UA_LERR(@"Channel creation failed. Missing channelID: %@ or channelLocation: %@",
                 channelID, channelLocation);
