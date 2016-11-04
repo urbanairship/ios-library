@@ -158,7 +158,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
     };
 
     // Fetch new messages
-    [self.client retrieveMessageListOnSuccess:^(NSInteger status, NSArray *messages, NSInteger unread) {
+    [self.client retrieveMessageListOnSuccess:^(NSUInteger status, NSArray *messages) {
         // Sync client state
         [self syncLocalMessageState];
 
@@ -177,8 +177,8 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
             completionBlock(YES);
         }
 
-    } onFailure:^(UAHTTPRequest *request){
-        UA_LDEBUG(@"Retrieve message list failed with status: %ld", (long)request.response.statusCode);
+    } onFailure:^(NSUInteger status){
+        UA_LDEBUG(@"Retrieve message list failed with status %lu", (unsigned long)status);
         completionBlock(NO);
     }];
 
@@ -430,8 +430,8 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
                 [context save:nil];
             }];
 
-        } onFailure:^(UAHTTPRequest *request) {
-            UA_LDEBUG(@"Failed to synchronize locally read messages on server.");
+        } onFailure:^(NSUInteger status) {
+            UA_LDEBUG(@"Failed to synchronize locally read messages on server with status %ld.", status);
         }];
 
     }];
@@ -453,8 +453,8 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 
         [self.client performBatchDeleteForMessages:locallyDeletedMessages onSuccess:^{
             UA_LDEBUG(@"Successfully synchronized locally deleted messages on server.");
-        } onFailure:^(UAHTTPRequest *request) {
-            UA_LDEBUG(@"Failed to synchronize locally deleted messages on server.");
+        } onFailure:^(NSUInteger status) {
+            UA_LDEBUG(@"Failed to synchronize locally deleted messages on server with status %lu.", (unsigned long)status);
         }];
     }];
 }

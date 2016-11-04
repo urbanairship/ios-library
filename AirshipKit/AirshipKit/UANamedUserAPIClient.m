@@ -108,7 +108,7 @@
             UA_LERR(@"Missing successBlock");
         }
     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        [UAUtils logFailedRequest:request withMessage:@"Associating named user"];
+       // [UAUtils logFailedRequest:request withMessage:@"Associating named user"];
 
         if (failureBlock) {
             failureBlock(request);
@@ -155,7 +155,7 @@
             UA_LERR(@"Missing successBlock");
         }
     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        [UAUtils logFailedRequest:request withMessage:@"Disassociating named user"];
+        //[UAUtils logFailedRequest:request withMessage:@"Disassociating named user"];
 
         if (failureBlock) {
             failureBlock(request);

@@ -53,6 +53,8 @@
 #import "UANamedUser+Internal.h"
 #import "UAAutomation+Internal.h"
 #import "UAAppIntegration.h"
+#import "UAHTTPRequest+Internal.h"
+
 
 UA_VERSION_IMPLEMENTATION(UAirshipVersion, UA_VERSION)
 

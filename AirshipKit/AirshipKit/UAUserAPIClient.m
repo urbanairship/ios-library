@@ -100,7 +100,7 @@
              UA_LERR(@"missing successBlock");
          }
      } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-         [UAUtils logFailedRequest:request withMessage:@"creating user"];
+         //[UAUtils logFailedRequest:request withMessage:@"creating user"];
          if (failureBlock) {
              failureBlock(request);
          } else {
@@ -137,7 +137,7 @@
             UA_LERR(@"missing successBlock");
         }
     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        [UAUtils logFailedRequest:request withMessage:@"updating user"];
+        //[UAUtils logFailedRequest:request withMessage:@"updating user"];
         if (failureBlock) {
             failureBlock(request);
         } else {

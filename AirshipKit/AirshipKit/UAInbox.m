@@ -33,7 +33,7 @@
 @implementation UAInbox
 
 - (void)dealloc {
-    [self.client cancelAllRequests];
+    [self.client.session cancelAllRequests];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -41,7 +41,7 @@
     self = [super init];
     if (self) {
         self.user = user;
-        self.client = [UAInboxAPIClient clientWithUser:user config:config dataStore:dataStore];
+        self.client = [UAInboxAPIClient clientWithConfig:config session:[UARequestSession sessionWithConfig:config] user:user dataStore:dataStore];
         self.messageList = [UAInboxMessageList messageListWithUser:self.user client:self.client config:config];
 
         [[NSNotificationCenter defaultCenter] addObserver:self

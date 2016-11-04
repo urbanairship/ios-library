@@ -37,6 +37,7 @@
 #import "UAirship.h"
 #import "UAConfig.h"
 #import "UAKeychainUtils+Internal.h"
+#import "UARequest+Internal.h"
 
 // C includes
 #include <sys/types.h>
@@ -149,30 +150,30 @@
     return([NSString stringWithFormat:@"%1.2f TB",bytes]);
 }
 
-+ (void)logFailedRequest:(UAHTTPRequest *)request withMessage:(NSString *)message {
++ (void)logFailedRequest:(UARequest *)request
+             withMessage:(NSString *)message
+               withError:(NSError *)error
+            withResponse:(NSHTTPURLResponse *)response {
     UA_LTRACE(@"***** Request ERROR: %@ *****"
-          @"\n\tError: %@"
-          @"\nRequest:"
-          @"\n\tURL: %@"
-          @"\n\tHeaders: %@"
-          @"\n\tMethod: %@"
-          @"\n\tBody: %@"
-          @"\nResponse:"
-          @"\n\tStatus code: %ld"
-          @"\n\tHeaders: %@"
-          @"\n\tBody: %@"
-          @"\nUsing U/P: [ %@ / %@ ]",
-          message,
-          request.error,
-          request.url,
-          [request.headers description],
-          request.HTTPMethod,
-          [request.body description],
-          (long)[request.response statusCode],
-          [[request.response allHeaderFields] description],
-          [request.responseData description],
-          request.username,
-          request.password);
+              @"\n\tError: %@"
+              @"\nRequest:"
+              @"\n\tURL: %@"
+              @"\n\tHeaders: %@"
+              @"\n\tMethod: %@"
+              @"\n\tBody: %@"
+              @"\nResponse:"
+              @"\n\tStatus code: %ld"
+              @"\n\tHeaders: %@"
+              @"\n\tBody: %@",
+              message,
+              error,
+              [request.URL absoluteString],
+              [request.headers description],
+              request.method,
+              [request.body description],
+              (long)[response statusCode],
+              [[response allHeaderFields] description],
+              [response description]);
 }
 
 + (NSString *)userAuthHeaderString {

@@ -156,7 +156,7 @@
             UA_LERR(@"Missing successBlock");
         }
     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        [UAUtils logFailedRequest:request withMessage:@"Updating channel tag groups"];
+        //[UAUtils logFailedRequest:request withMessage:@"Updating channel tag groups"];
         [self logFailedTagGroupRequest:request prefix:@"Channel"];
 
         if (failureBlock) {
@@ -221,7 +221,7 @@
             UA_LERR(@"Missing successBlock");
         }
     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        [UAUtils logFailedRequest:request withMessage:@"Updating named user tags"];
+        //[UAUtils logFailedRequest:request withMessage:@"Updating named user tags"];
         [self logFailedTagGroupRequest:request prefix:@"Named user"];
 
         if (failureBlock) {

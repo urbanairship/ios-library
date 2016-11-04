@@ -72,7 +72,6 @@ typedef void (^UAChannelAPIClientFailureBlock)(NSUInteger statusCode);
  */
 + (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session;
 
-
 /**
  * Create the channel ID.
  *

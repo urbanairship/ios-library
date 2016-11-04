@@ -32,6 +32,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class UAHTTPRequest;
+@class UARequest;
 
 #define kUAConnectionTypeNone @"none"
 #define kUAConnectionTypeCell @"cell"
@@ -63,8 +64,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// @name UAHTTP Authenticated Request Helpers
 ///---------------------------------------------------------------------------------------
 
++ (void)logFailedRequest:(UARequest *)request
+             withMessage:(NSString *)message
+               withError:(NSError *)error
+            withResponse:(NSHTTPURLResponse *)response;
 
-+ (void)logFailedRequest:(UAHTTPRequest *)request withMessage:(NSString *)message;
 
 /**
  * Returns a basic auth header string.

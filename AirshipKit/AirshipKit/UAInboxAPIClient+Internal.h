@@ -49,7 +49,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAHTTPConnection+Internal.h"
+#import "UAAPIClient+Internal.h"
 
 @class UAUser;
 @class UAConfig;
@@ -59,25 +59,44 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define kUAChannelIDHeader @"X-UA-Channel-ID"
 
-typedef void (^UAInboxClientFailureBlock)(UAHTTPRequest *request);
+/**
+ * A block called when the inbox message retrieval succeeded.
+ *
+ * @param status The request status.
+ * @param messages The retrieved messages.
+ */
+typedef void (^UAInboxClientMessageRetrievalSuccessBlock)(NSUInteger status,  NSArray * __nullable messages);
+
+/**
+ * A block called when the channel update succeeded.
+ */
 typedef void (^UAInboxClientSuccessBlock)(void);
-typedef void (^UAInboxClientMessageRetrievalSuccessBlock)(NSInteger status,  NSArray * __nullable messages, NSInteger unread);
+
+/**
+ * A block called when the channel creation or update failed.
+ *
+ * @param statusCode The request status code.
+ */
+typedef void (^UAInboxClientFailureBlock)(NSUInteger statusCode);
 
 /**
  * A high level abstraction for performing Rich Push API requests.
  */
-@interface UAInboxAPIClient : NSObject
+@interface UAInboxAPIClient : UAAPIClient
 
 /**
  * Factory method for client.
+ * @param config The Urban Airship config.
+ * @param session The request session.
  * @param user The inbox user.
  * @param dataStore The preference data store.
- * @param config The Urban Airship config.
  * @return UAInboxAPIClient instance.
  */
-+ (instancetype)clientWithUser:(UAUser *)user
-                        config:(UAConfig *)config
-                     dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)clientWithConfig:(UAConfig *)config
+                         session:(UARequestSession *)session
+                            user:(UAUser *)user
+                       dataStore:(UAPreferenceDataStore *)dataStore;
+
 
 /**
  * Retrieves the full message list from the server.
@@ -113,11 +132,6 @@ typedef void (^UAInboxClientMessageRetrievalSuccessBlock)(NSInteger status,  NSA
                                 onFailure:(UAInboxClientFailureBlock)failureBlock;
 
 /**
- * Cancels all in-flight API requests.
- */
-- (void)cancelAllRequests;
-
-/**
  * Clears the last modified time for message list requests.
  */
 - (void)clearLastModifiedTime;
@@ -125,25 +139,25 @@ typedef void (^UAInboxClientMessageRetrievalSuccessBlock)(NSInteger status,  NSA
 /**
  * Builds request to retrieve message list.
  *
- * @return a UAHTTPRequest instance for a message list request.
+ * @return a UARequest instance for a message list request.
  */
-- (UAHTTPRequest *)requestToRetrieveMessageList;
+- (UARequest *)requestToRetrieveMessageList;
 
 /**
  * Builds request to delete array of messages.
  *
  * @param messages Array of messages to mark read.
- * @return a UAHTTPRequest instance for a batch delete request.
+ * @return a UARequest instance for a batch delete request.
  */
-- (UAHTTPRequest *)requestToPerformBatchDeleteForMessages:(NSArray *)messages;
+- (UARequest *)requestToPerformBatchDeleteForMessages:(NSArray *)messages;
 
 /**
  * Builds request to mark array of messages read.
  *
  * @param messages Array of messages to mark read.
- * @return a UAHTTPRequest instance for a batch mark read request.
+ * @return a UARequest instance for a batch mark read request.
  */
-- (UAHTTPRequest *)requestToPerformBatchMarkReadForMessages:(NSArray *)messages;
+- (UARequest *)requestToPerformBatchMarkReadForMessages:(NSArray *)messages;
 
 @end
 
