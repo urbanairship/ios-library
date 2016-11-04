@@ -452,7 +452,6 @@
 		CC40DDB01D8C9A1C00BABD4F /* UIWebView+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DC041D8C996A00BABD4F /* UIWebView+UAAdditions.m */; };
 		CC64F0591D8B77E3009CEF27 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipKit.framework */; };
 		CC64F0CE1D8B781C009CEF27 /* CustomNotificationCategories.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F0611D8B781C009CEF27 /* CustomNotificationCategories.plist */; };
-		CC64F0CF1D8B781C009CEF27 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F0621D8B781C009CEF27 /* Info.plist */; };
 		CC64F0D01D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F0631D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist */; };
 		CC64F0D21D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0651D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m */; };
 		CC64F0D31D8B781C009CEF27 /* NSObject+AnonymousKVO.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0671D8B781C009CEF27 /* NSObject+AnonymousKVO.m */; };
@@ -584,7 +583,6 @@
 		CC944EEF1DB6EE3900C42269 /* UARequestSession.m in Sources */ = {isa = PBXBuildFile; fileRef = CC944EEC1DB6EE3900C42269 /* UARequestSession.m */; };
 		CC944EF91DB80E0C00C42269 /* UARequestSessionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC944EF81DB80E0C00C42269 /* UARequestSessionTest.m */; };
 		CCA11D351D9C41C7008C4A57 /* UANativeBridge.js in Resources */ = {isa = PBXBuildFile; fileRef = CCA11D341D9C41C7008C4A57 /* UANativeBridge.js */; };
-		CCB9021D1DCBBB2F009A66D7 /* UAAsyncOperation+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCB9021C1DCBBB2F009A66D7 /* UAAsyncOperation+Internal.h */; };
 		CCB902251DCBBCDA009A66D7 /* UAAsyncOperationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB902221DCBBCDA009A66D7 /* UAAsyncOperationTest.m */; };
 		CCB902261DCBBCDA009A66D7 /* UAEventAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB902231DCBBCDA009A66D7 /* UAEventAPIClientTest.m */; };
 		CCB902271DCBBCDA009A66D7 /* UAEventManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB902241DCBBCDA009A66D7 /* UAEventManagerTest.m */; };
@@ -1430,7 +1428,7 @@
 				CC04F2111DCAB61700B4842D /* Share */,
 				CC64F0B31D8B781C009CEF27 /* UAOpenExternalURLActionTest.m */,
 				CC64F0B51D8B781C009CEF27 /* UAPasteboardActionTest.m */,
-            E29D35EE1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m */
+				E29D35EE1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -2321,7 +2319,6 @@
 				CC40DC3D1D8C996A00BABD4F /* UAAPNSRegistration+Internal.h in Headers */,
 				CC40DD1F1D8C996A00BABD4F /* UAUser+Internal.h in Headers */,
 				CC40DC791D8C996A00BABD4F /* UADefaultMessageCenterListViewController.h in Headers */,
-				CCB9021D1DCBBB2F009A66D7 /* UAAsyncOperation+Internal.h in Headers */,
 				CC40DC7F1D8C996A00BABD4F /* UADefaultMessageCenterStyle.h in Headers */,
 				CC40DCB91D8C996A00BABD4F /* UAIncomingInAppMessageAction.h in Headers */,
 				CC40DCDC1D8C996A00BABD4F /* UAMessageCenterLocalization.h in Headers */,
@@ -2490,7 +2487,7 @@
 		494DD94E1B0EB677009C134E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0630;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
 					494DD9561B0EB677009C134E = {
@@ -2584,7 +2581,6 @@
 				CC64F14B1D8B7954009CEF27 /* AirshipConfig-DetectProvisioningMode.plist in Resources */,
 				CC64F1521D8B7954009CEF27 /* production-embedded.mobileprovision in Resources */,
 				CC64F12F1D8B781C009CEF27 /* Valid-UAMessageCenterDefaultStyle.plist in Resources */,
-				CC64F0CF1D8B781C009CEF27 /* Info.plist in Resources */,
 				CC64F0CE1D8B781C009CEF27 /* CustomNotificationCategories.plist in Resources */,
 				CC64F14C1D8B7954009CEF27 /* AirshipConfig-InProduction.plist in Resources */,
 				CC64F1501D8B7954009CEF27 /* AirshipConfig-Without-InProduction-And-DetectProvisioningMode.plist in Resources */,
@@ -3173,10 +3169,7 @@
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					armv7s,
-				);
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -3186,8 +3179,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -3195,6 +3190,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -3226,10 +3222,7 @@
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					armv7s,
-				);
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -3239,8 +3232,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -3277,6 +3272,7 @@
 					"$(ARCHS_STANDARD)",
 					armv7s,
 				);
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -3295,6 +3291,7 @@
 					"-weak_framework",
 					PassKit,
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				VALID_ARCHS = "$(inherited)";
@@ -3309,6 +3306,7 @@
 					"$(ARCHS_STANDARD)",
 					armv7s,
 				);
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -3326,6 +3324,7 @@
 					"-weak_framework",
 					PassKit,
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				VALID_ARCHS = "$(inherited)";
@@ -3448,6 +3447,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					armv7s,
+				);
 				CLANG_ANALYZER_NONNULL = YES_NONAGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "compiler-default";
@@ -3485,6 +3488,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					armv7s,
+				);
 				CLANG_ANALYZER_NONNULL = YES_NONAGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "compiler-default";
