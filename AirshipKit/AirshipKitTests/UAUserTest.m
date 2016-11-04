@@ -316,15 +316,17 @@
     // Mock background task so background task check passes
     [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
+    XCTestExpectation *channelCreated = [self expectationWithDescription:@"Channel created"];
+
     // Expect an update call
-    [[self.mockUserClient expect] updateUser:OCMOCK_ANY
-                                   channelID:OCMOCK_ANY
-                                   onSuccess:OCMOCK_ANY
-                                   onFailure:OCMOCK_ANY];
+    [[[self.mockUserClient expect] andDo:^(NSInvocation *invocation) {
+        [channelCreated fulfill];
+    }] updateUser:OCMOCK_ANY channelID:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
     // Create the channel
     [self.push channelCreated:@"some-channel" channelLocation:@"some-location" existing:NO];
 
+    [self waitForExpectationsWithTimeout:10 handler:nil];
 
     XCTAssertNoThrow([self.mockUserClient verify]);
 }

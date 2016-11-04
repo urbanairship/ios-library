@@ -49,6 +49,27 @@
 #import "UANotificationCategory+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"
 
+@interface UATestNotificationObserver : NSObject
+@property(nonatomic, copy) void (^block)(NSNotification *);
+@end
+
+@implementation UATestNotificationObserver
+
+- (instancetype)initWithBlock:(void (^)(NSNotification *))block {
+    self = [super init];
+    if (self) {
+        self.block = block;
+    }
+
+    return self;
+}
+
+- (void)handleNotification:(NSNotification *)notification {
+    self.block(notification);
+}
+
+@end
+
 @interface UAPushTest : XCTestCase
 @property (nonatomic, strong) id mockedApplication;
 @property (nonatomic, strong) id mockedChannelRegistrar;
@@ -1409,40 +1430,48 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  * Test existing channel created posts an NSNotification
  */
 - (void)testExistingChannelCreatedNSNotification {
-    id observerMock = [OCMockObject observerMock];
 
     id expectedUserInfo = @{ UAChannelCreatedEventExistingKey: @(YES),
                              UAChannelCreatedEventChannelKey:@"someChannelID" };
 
-    [[NSNotificationCenter defaultCenter] addMockObserver:observerMock name:UAChannelCreatedEvent object:self.push];
 
-    // Expect the notification
-    [[observerMock expect] notificationWithName:UAChannelCreatedEvent object:self.push userInfo:expectedUserInfo];
+    XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
+
+    id testObserver = [[UATestNotificationObserver alloc] initWithBlock:^(NSNotification *notification) {
+        XCTAssertEqualObjects(expectedUserInfo, notification.userInfo);
+        [notificationFired fulfill];
+    }];
+
+    [[NSNotificationCenter defaultCenter] addObserver:testObserver selector:@selector(handleNotification:) name:UAChannelCreatedEvent object:self.push];
 
     [self.push channelCreated:@"someChannelID" channelLocation:@"someLocation" existing:YES];
 
-    [observerMock verify];
-    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
+    [self waitForExpectationsWithTimeout:10 handler:nil];
+
+    [[NSNotificationCenter defaultCenter] removeObserver:testObserver];
 }
 
 /**
  * Test new channel created posts an NSNotification
  */
 - (void)testNewChannelCreatedNSNotification {
-    id observerMock = [OCMockObject observerMock];
 
     id expectedUserInfo = @{ UAChannelCreatedEventExistingKey: @(NO),
                              UAChannelCreatedEventChannelKey:@"someChannelID" };
 
-    [[NSNotificationCenter defaultCenter] addMockObserver:observerMock name:UAChannelCreatedEvent object:self.push];
+    XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
 
-    // Expect the notification
-    [[observerMock expect] notificationWithName:UAChannelCreatedEvent object:self.push userInfo:expectedUserInfo];
+    id testObserver = [[UATestNotificationObserver alloc] initWithBlock:^(NSNotification *notification) {
+        XCTAssertEqualObjects(expectedUserInfo, notification.userInfo);
+        [notificationFired fulfill];
+    }];
+
+    [[NSNotificationCenter defaultCenter] addObserver:testObserver selector:@selector(handleNotification:) name:UAChannelCreatedEvent object:self.push];
 
     [self.push channelCreated:@"someChannelID" channelLocation:@"someLocation" existing:NO];
 
-    [observerMock verify];
-    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
+    [self waitForExpectationsWithTimeout:10 handler:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:testObserver];
 }
 
 /**
@@ -1454,11 +1483,17 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     self.push.channelLocation = @"someChannelLocation";
     self.push.registrationBackgroundTask = 30;
 
-    [[self.mockRegistrationDelegate expect] registrationSucceededForChannelID:@"someChannelID" deviceToken:validDeviceToken];
+    XCTestExpectation *delegateCalled = [self expectationWithDescription:@"Delegate called"];
+
+    [[[self.mockRegistrationDelegate expect] andDo:^(NSInvocation *invocation) {
+        [delegateCalled fulfill];
+    }] registrationSucceededForChannelID:@"someChannelID" deviceToken:validDeviceToken];
 
     [[self.mockedApplication expect] endBackgroundTask:30];
 
     [self.push registrationSucceededWithPayload:[self.push createChannelPayload]];
+
+    [self waitForExpectationsWithTimeout:10 handler:nil];
     XCTAssertNoThrow([self.mockRegistrationDelegate verify], @"Delegate should be called");
     XCTAssertNoThrow([self.mockedApplication verify], @"Should end the background task");
 }
@@ -1472,7 +1507,11 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     self.push.channelLocation = @"someChannelLocation";
     self.push.registrationBackgroundTask = 30;
 
-    [[self.mockRegistrationDelegate expect] registrationSucceededForChannelID:@"someChannelID" deviceToken:validDeviceToken];
+    XCTestExpectation *delegateCalled = [self expectationWithDescription:@"Delegate called"];
+
+    [[[self.mockRegistrationDelegate expect] andDo:^(NSInvocation *invocation) {
+        [delegateCalled fulfill];
+    }]  registrationSucceededForChannelID:@"someChannelID" deviceToken:validDeviceToken];
 
     [[self.mockedChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
                                                 channelLocation:OCMOCK_ANY
@@ -1485,6 +1524,8 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     // Call with an empty payload.  Should be different then the UAPush generated payload
     [self.push registrationSucceededWithPayload:[[UAChannelRegistrationPayload alloc] init]];
 
+    [self waitForExpectationsWithTimeout:10 handler:nil];
+
     XCTAssertNoThrow([self.mockRegistrationDelegate verify], @"Delegate should be called");
     XCTAssertNoThrow([self.mockedApplication verify], @"Should not end the background task");
 }
@@ -1496,10 +1537,17 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 - (void)testRegistrationFailed {
     self.push.registrationBackgroundTask = 30;
 
-    [[self.mockRegistrationDelegate expect] registrationFailed];
+    XCTestExpectation *delegateCalled = [self expectationWithDescription:@"Delegate called"];
+
+    [[[self.mockRegistrationDelegate expect] andDo:^(NSInvocation *invocation) {
+        [delegateCalled fulfill];
+    }] registrationFailed];
+
     [[self.mockedApplication expect] endBackgroundTask:30];
 
     [self.push registrationFailedWithPayload:[[UAChannelRegistrationPayload alloc] init]];
+    [self waitForExpectationsWithTimeout:10 handler:nil];
+
     XCTAssertNoThrow([self.mockRegistrationDelegate verify], @"Delegate should be called");
     XCTAssertNoThrow([self.mockedApplication verify], @"Should end the background task");
 }
