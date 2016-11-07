@@ -53,11 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param tags Array of tags to add.
  * @param tagGroupID Tag group ID string.
  */
-#if __has_feature(objc_generics)
 - (void)addTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID;
-#else
-- (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID;
-#endif
 
 /**
  * Removes tags from named user tags. To update the server,
@@ -66,11 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param tags Array of tags to remove.
  * @param tagGroupID Tag group ID string.
  */
-#if __has_feature(objc_generics)
 - (void)removeTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID;
-#else
-- (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID;
-#endif
 
 /**
  * Update named user tags.

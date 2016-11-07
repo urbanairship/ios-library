@@ -70,11 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * A set of the current registered entries
  */
-#if __has_feature(objc_generics)
 @property (nonatomic, readonly) NSSet<NSMutableDictionary *> *registeredEntries;
-#else
-@property (nonatomic, readonly) NSSet *registeredEntries;
-#endif
 
 /**
  * Factory method to create an action registry with the default action entries.

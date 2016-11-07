@@ -38,11 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @note This method is for internal use only. It is called when tags are set.
  * @param tags Tags as an NSArray.
  */
-#if __has_feature(objc_generics)
 + (NSArray<NSString *> *)normalizeTags:(NSArray *)tags;
-#else
-+ (NSArray *)normalizeTags:(NSArray *)tags;
-#endif
 
 /**
  * Check if tags and tagGroupID are not empty.

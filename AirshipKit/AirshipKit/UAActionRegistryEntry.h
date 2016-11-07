@@ -46,12 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Registered names
  */
-#if __has_feature(objc_generics)
 @property (nonatomic, readonly) NSArray<NSString *> *names;
-#else
-@property (nonatomic, readonly) NSArray *names;
-#endif
-
 
 /**
  * Returns the action for the situation, or the default action if

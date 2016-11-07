@@ -165,11 +165,7 @@ extern NSString *const UACustomEventInteractionTypeKey;
  * @param value The property value.
  * @param key The property key.
  */
-#if __has_feature(objc_generics)
 - (void)setStringArrayProperty:(NSArray<NSString *> *)value forKey:(NSString *)key;
-#else
-- (void)setStringArrayProperty:(NSArray *)value forKey:(NSString *)key;
-#endif
 
 
 

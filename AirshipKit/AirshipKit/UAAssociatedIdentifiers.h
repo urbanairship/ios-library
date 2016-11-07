@@ -55,11 +55,7 @@ extern NSUInteger const UAAssociatedIdentifiersMaxCharacterCount;
  * of custom identifiers (containing strings only).
  * @return The created associated identifiers.
  */
-#if __has_feature(objc_generics)
 + (instancetype)identifiersWithDictionary:(NSDictionary<NSString *, NSString *> *)identifiers;
-#else
-+ (instancetype)identifiersWithDictionary:(NSDictionary *)identifiers;
-#endif
 
 /**
  * The advertising ID.

@@ -63,11 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The argument strings passed in the call.
  */
-#if __has_feature(objc_generics)
 @property (nonatomic, strong, nullable) NSArray<NSString *> *arguments;
-#else
-@property (nonatomic, strong, nullable) NSArray *arguments;
-#endif
 
 /**
  * The query options passed in the call.

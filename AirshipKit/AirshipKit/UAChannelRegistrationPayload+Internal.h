@@ -80,11 +80,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The tags for this device.
  */
-#if __has_feature(objc_generics)
 @property (nonatomic, strong, nullable) NSArray<NSString *> *tags;
-#else
-@property (nonatomic, strong, nullable) NSArray *tags;
-#endif
 
 /**
  * The alias for this device.

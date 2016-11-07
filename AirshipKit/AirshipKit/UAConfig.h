@@ -139,11 +139,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @note See UAWhitelist for pattern entry syntax.
  */
-#if __has_feature(objc_generics)
 @property (nonatomic, strong) NSArray<NSString *> *whitelist;
-#else
-@property (nonatomic, strong) NSArray *whitelist;
-#endif
 
 ///---------------------------------------------------------------------------------------
 /// @name Advanced Configuration Options
