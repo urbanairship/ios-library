@@ -24,6 +24,8 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <MobileCoreServices/MobileCoreServices.h>
+
 #import "UAMediaAttachmentExtension.h"
 #import "UAMediaAttachmentPayload.h"
 
@@ -34,6 +36,7 @@
 @property (nonatomic, strong) void (^contentHandler)(UNNotificationContent *contentToDeliver);
 @property (nonatomic, strong) UNMutableNotificationContent *bestAttemptContent;
 @property (nonatomic, strong) UNMutableNotificationContent *modifiedContent;
+@property (nonatomic, strong) NSURLSessionDownloadTask *downloadTask;
 
 @end
 
@@ -84,6 +87,8 @@
     // Offset 4
     uint8_t mp4v1[] = {0x66, 0x74, 0x79, 0x70, 0x6D, 0x70, 0x34, 0x31};
     uint8_t mp4v2[] = {0x66, 0x74, 0x79, 0x70, 0x6D, 0x70, 0x34, 0x32};
+    uint8_t mp4mmp4[] = {0x66, 0x74, 0x79, 0x70, 0x6D, 0x6D, 0x70, 0x34};
+    uint8_t mp4isom[] = {0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6f, 0x6d};
     uint8_t m4a[] = {0x66, 0x74, 0x79, 0x70, 0x4D, 0x34, 0x41, 0x20};
 
     // Offset 8
@@ -104,7 +109,7 @@
                             @"com.microsoft.waveform-audio" : @[sig(8, wav, sizeof(wav))],
                             @"public.avi" : @[sig(8, avi, sizeof(avi))],
                             @"public.mp3" : @[sig(0, mp3, sizeof(mp3))],
-                            @"public.mpeg-4" : @[sig(4, mp4v1, sizeof(mp4v1)), sig(4, mp4v2, sizeof(mp4v2))],
+                            @"public.mpeg-4" : @[sig(4, mp4v1, sizeof(mp4v1)), sig(4, mp4v2, sizeof(mp4v2)), sig(4, mp4mmp4, sizeof(mp4mmp4)), sig(4, mp4isom, sizeof(mp4isom))],
                             @"public.mpeg-4-audio" : @[sig(4, m4a, sizeof(m4a))],
                             @"public.mpeg" : @[sig(0, mpeg, sizeof(mpeg)), sig(0, mpegAlt, sizeof(mpegAlt))]};
 
@@ -146,6 +151,7 @@
 
 - (UNNotificationAttachment *)attachmentWithTemporaryFileLocation:(NSURL *)location
                                                       originalURL:originalURL
+                                                         mimeType:(NSString *)mimeType
                                                           options:(NSDictionary *)options
                                                        identifier:(NSString *)identifier {
 
@@ -164,13 +170,35 @@
         }
     }
 
+    // No extension, try to determine the type
     if (!hasExtension) {
-        // Note: NSMappedRead will page in the data as it's read, so we don't load the whole file into memory
-        NSData *fileData = [NSData dataWithContentsOfFile:fileURL.path
-                                                  options:NSMappedRead
-                                                    error:nil];
+        NSString *inferredTypeIdentifier = nil;
 
-        NSString *inferredTypeIdentifier = [self uniformTypeIdentifierForData:fileData];
+        // First try the mimetype if its available
+        if (mimeType) {
+            CFStringRef uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (__bridge CFStringRef)mimeType, NULL);
+
+            CFStringRef acceptedTypes[] = { kUTTypeAudioInterchangeFileFormat, kUTTypeWaveformAudio,
+                kUTTypeMP3, kUTTypeMPEG4Audio, kUTTypeJPEG, kUTTypeGIF, kUTTypePNG, kUTTypeMPEG,
+                kUTTypeMPEG2Video, kUTTypeMPEG4, kUTTypeAVIMovie };
+
+
+            for (int i = 0; i < 11; i++) {
+                if (UTTypeConformsTo(uti, acceptedTypes[i])) {
+                    inferredTypeIdentifier = (__bridge_transfer NSString *)uti;
+                    break;
+                }
+            }
+        }
+
+        // Fallback to file header inspection
+        if (!inferredTypeIdentifier.length) {
+            // Note: NSMappedRead will page in the data as it's read, so we don't load the whole file into memory
+            NSData *fileData = [NSData dataWithContentsOfFile:fileURL.path
+                                                      options:NSMappedRead
+                                                        error:nil];
+            inferredTypeIdentifier = [self uniformTypeIdentifierForData:fileData];
+        }
 
         if (inferredTypeIdentifier) {
             NSLog(@"Inferred type identifier: %@", inferredTypeIdentifier);
@@ -207,8 +235,15 @@
                     return;
                 }
 
+                NSString *mimeType = nil;
+                if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+                    mimeType = httpResponse.allHeaderFields[@"Content-Type"];
+                }
+
                 UNNotificationAttachment *attachment = [self attachmentWithTemporaryFileLocation:temporaryFileLocation
                                                                                      originalURL:url
+                                                                                        mimeType:mimeType
                                                                                          options:payload.options
                                                                                       identifier:identifier];
 
@@ -248,8 +283,8 @@
     if (jsonPayload) {
         UAMediaAttachmentPayload *payload = [UAMediaAttachmentPayload payloadWithJSONObject:jsonPayload];
         if (payload) {
-            NSURLSessionDownloadTask *downloadTask = [self downloadTaskWithPayload:payload];
-            [downloadTask resume];
+            self.downloadTask = [self downloadTaskWithPayload:payload];
+            [self.downloadTask resume];
         } else {
             NSLog(@"Unable to parse attachment: %@", payload);
             self.contentHandler(self.bestAttemptContent);
@@ -260,6 +295,7 @@
 }
 
 - (void)serviceExtensionTimeWillExpire {
+    [self.downloadTask cancel];
     self.contentHandler(self.bestAttemptContent);
 }
 
