@@ -24,6 +24,8 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <MobileCoreServices/MobileCoreServices.h>
+
 #import "UAMediaAttachmentExtension.h"
 #import "UAMediaAttachmentPayload.h"
 
@@ -166,13 +168,35 @@
         }
     }
 
+    // No extension, try to determine the type
     if (!hasExtension) {
-        // Note: NSMappedRead will page in the data as it's read, so we don't load the whole file into memory
-        NSData *fileData = [NSData dataWithContentsOfFile:fileURL.path
-                                                  options:NSMappedRead
-                                                    error:nil];
+        NSString *inferredTypeIdentifier = nil;
 
-        NSString *inferredTypeIdentifier = [self uniformTypeIdentifierForData:fileData];
+        // First try the mimetype if its available
+        if (mimeType) {
+            CFStringRef uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (__bridge CFStringRef)mimeType, NULL);
+
+            CFStringRef acceptedTypes[] = { kUTTypeAudioInterchangeFileFormat, kUTTypeWaveformAudio,
+                kUTTypeMP3, kUTTypeMPEG4Audio, kUTTypeJPEG, kUTTypeGIF, kUTTypePNG, kUTTypeMPEG,
+                kUTTypeMPEG2Video, kUTTypeMPEG4, kUTTypeAVIMovie };
+
+
+            for (int i = 0; i < 11; i++) {
+                if (UTTypeConformsTo(uti, acceptedTypes[i])) {
+                    inferredTypeIdentifier = (__bridge_transfer NSString *)uti;
+                    break;
+                }
+            }
+        }
+
+        // Fallback to file header inspection
+        if (!inferredTypeIdentifier.length) {
+            // Note: NSMappedRead will page in the data as it's read, so we don't load the whole file into memory
+            NSData *fileData = [NSData dataWithContentsOfFile:fileURL.path
+                                                      options:NSMappedRead
+                                                        error:nil];
+            inferredTypeIdentifier = [self uniformTypeIdentifierForData:fileData];
+        }
 
         if (inferredTypeIdentifier) {
             NSLog(@"Inferred type identifier: %@", inferredTypeIdentifier);
@@ -209,8 +233,15 @@
                     return;
                 }
 
+                NSString *mimeType = nil;
+                if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+                    mimeType = httpResponse.allHeaderFields[@"Content-Type"];
+                }
+
                 UNNotificationAttachment *attachment = [self attachmentWithTemporaryFileLocation:temporaryFileLocation
                                                                                      originalURL:url
+                                                                                        mimeType:mimeType
                                                                                          options:payload.options
                                                                                       identifier:identifier];
 
