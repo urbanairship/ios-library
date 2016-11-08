@@ -29,16 +29,16 @@
 
 @implementation UARemoveTagsAction
 
-- (void)performWithArguments:(UAActionArguments *)arguments
-           completionHandler:(UAActionCompletionHandler)completionHandler {
-    
-    if ([arguments.value isKindOfClass:[NSString class]]) {
-        [[UAirship push] removeTag:arguments.value];
-    } else {
-        [[UAirship push] removeTags:arguments.value];
-    }
-    [[UAirship push] updateRegistration];
-    completionHandler([UAActionResult emptyResult]);
+- (void)applyChannelTags:(NSArray *)tags {
+    [[UAirship push] removeTags:tags];
+}
+
+- (void)applyChannelTags:(NSArray *)tags group:(NSString *)group {
+    [[UAirship push] removeTags:tags group:group];
+}
+
+- (void)applyNamedUserTags:(NSArray *)tags group:(NSString *)group {
+    [[UAirship namedUser] removeTags:tags group:group];
 }
 
 @end

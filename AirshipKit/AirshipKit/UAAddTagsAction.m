@@ -29,17 +29,16 @@
 
 @implementation UAAddTagsAction
 
-- (void)performWithArguments:(UAActionArguments *)arguments
-           completionHandler:(UAActionCompletionHandler)completionHandler {
-    
-    if ([arguments.value isKindOfClass:[NSString class]]) {
-        [[UAirship push] addTag:arguments.value];
-    } else {
-        [[UAirship push] addTags:arguments.value];
-    }
-    [[UAirship push] updateRegistration];
-    completionHandler([UAActionResult emptyResult]);
+- (void)applyChannelTags:(NSArray *)tags {
+    [[UAirship push] addTags:tags];
+}
 
+- (void)applyChannelTags:(NSArray *)tags group:(NSString *)group {
+    [[UAirship push] addTags:tags group:group];
+}
+
+- (void)applyNamedUserTags:(NSArray *)tags group:(NSString *)group {
+    [[UAirship namedUser] addTags:tags group:group];
 }
 
 @end
