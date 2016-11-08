@@ -84,6 +84,8 @@
     // Offset 4
     uint8_t mp4v1[] = {0x66, 0x74, 0x79, 0x70, 0x6D, 0x70, 0x34, 0x31};
     uint8_t mp4v2[] = {0x66, 0x74, 0x79, 0x70, 0x6D, 0x70, 0x34, 0x32};
+    uint8_t mp4mmp4[] = {0x66, 0x74, 0x79, 0x70, 0x6D, 0x6D, 0x70, 0x34};
+    uint8_t mp4isom[] = {0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6f, 0x6d};
     uint8_t m4a[] = {0x66, 0x74, 0x79, 0x70, 0x4D, 0x34, 0x41, 0x20};
 
     // Offset 8
@@ -104,7 +106,7 @@
                             @"com.microsoft.waveform-audio" : @[sig(8, wav, sizeof(wav))],
                             @"public.avi" : @[sig(8, avi, sizeof(avi))],
                             @"public.mp3" : @[sig(0, mp3, sizeof(mp3))],
-                            @"public.mpeg-4" : @[sig(4, mp4v1, sizeof(mp4v1)), sig(4, mp4v2, sizeof(mp4v2))],
+                            @"public.mpeg-4" : @[sig(4, mp4v1, sizeof(mp4v1)), sig(4, mp4v2, sizeof(mp4v2)), sig(4, mp4mmp4, sizeof(mp4mmp4)), sig(4, mp4isom, sizeof(mp4isom))],
                             @"public.mpeg-4-audio" : @[sig(4, m4a, sizeof(m4a))],
                             @"public.mpeg" : @[sig(0, mpeg, sizeof(mpeg)), sig(0, mpegAlt, sizeof(mpegAlt))]};
 
