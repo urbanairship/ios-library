@@ -66,7 +66,13 @@
 
         // Normalize our abstract categories to iOS-appropriate type
         for (UANotificationCategory *category in categories) {
-            [normalizedCategories addObject:[category asUNNotificationCategory]];
+
+            id normalizedCategory = [category asUNNotificationCategory];
+
+            // iOS 10 beta this could return nil
+            if (normalizedCategory) {
+                [normalizedCategories addObject:normalizedCategory];
+            }
         }
     }
 
