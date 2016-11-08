@@ -36,6 +36,7 @@
 @property (nonatomic, strong) void (^contentHandler)(UNNotificationContent *contentToDeliver);
 @property (nonatomic, strong) UNMutableNotificationContent *bestAttemptContent;
 @property (nonatomic, strong) UNMutableNotificationContent *modifiedContent;
+@property (nonatomic, strong) NSURLSessionDownloadTask *downloadTask;
 
 @end
 
@@ -150,6 +151,7 @@
 
 - (UNNotificationAttachment *)attachmentWithTemporaryFileLocation:(NSURL *)location
                                                       originalURL:originalURL
+                                                         mimeType:(NSString *)mimeType
                                                           options:(NSDictionary *)options
                                                        identifier:(NSString *)identifier {
 
@@ -281,8 +283,8 @@
     if (jsonPayload) {
         UAMediaAttachmentPayload *payload = [UAMediaAttachmentPayload payloadWithJSONObject:jsonPayload];
         if (payload) {
-            NSURLSessionDownloadTask *downloadTask = [self downloadTaskWithPayload:payload];
-            [downloadTask resume];
+            self.downloadTask = [self downloadTaskWithPayload:payload];
+            [self.downloadTask resume];
         } else {
             NSLog(@"Unable to parse attachment: %@", payload);
             self.contentHandler(self.bestAttemptContent);
@@ -293,6 +295,7 @@
 }
 
 - (void)serviceExtensionTimeWillExpire {
+    [self.downloadTask cancel];
     self.contentHandler(self.bestAttemptContent);
 }
 
