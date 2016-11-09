@@ -25,9 +25,8 @@
 
 
 #import <Foundation/Foundation.h>
+#import "UAAPIClient+Internal.h"
 
-@class UAHTTPRequestEngine;
-@class UAHTTPRequest;
 @class UAConfig;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -40,14 +39,14 @@ typedef void (^UATagGroupsAPIClientSuccessBlock)();
 /**
  * A block called when tag groups update failed.
  *
- * @param request The request that failed.
+ * @param status The status of the request that failed.
  */
-typedef void (^UATagGroupsAPIClientFailureBlock)(UAHTTPRequest *request);
+typedef void (^UATagGroupsAPIClientFailureBlock)(NSUInteger status);
 
 /**
  * A high level abstraction for performing tag group operations.
  */
-@interface UATagGroupsAPIClient : NSObject
+@interface UATagGroupsAPIClient : UAAPIClient
 
 /**
  * Factory method to create a UATagGroupsAPIClient.
@@ -56,6 +55,15 @@ typedef void (^UATagGroupsAPIClientFailureBlock)(UAHTTPRequest *request);
  * @return UATagGroupsAPIClient instance.
  */
 + (instancetype)clientWithConfig:(UAConfig *)config;
+
+/**
+ * Factory method to create a UATagGroupsAPIClient.
+ *
+ * @param config The Urban Airship config.
+ * @param session The request session.
+ * @return UATagGroupsAPIClient instance.
+ */
++ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session;
 
 /**
  * Update the channel tag group.
@@ -90,27 +98,6 @@ typedef void (^UATagGroupsAPIClientFailureBlock)(UAHTTPRequest *request);
                      remove:(nullable NSDictionary *)removeTags
                   onSuccess:(UATagGroupsAPIClientSuccessBlock)successBlock
                   onFailure:(UATagGroupsAPIClientFailureBlock)failureBlock;
-
-/**
- * Cancel all current and pending requests.
- *
- * Note: This could prevent the onSuccess and onFailure callbacks from being triggered
- * in any current requests.
- */
-- (void)cancelAllRequests;
-
-/**
- * Indicates whether the client should attempt to automatically retry HTTP connections
- * under recoverable conditions (most 5xx status codes, reachability errors, etc).
- * In this case, the client will perform exponential backoff and schedule reconnections
- * accordingly before calling back with a success or failure.  Defaults to `YES`.
- */
-@property (nonatomic, assign) BOOL shouldRetryOnConnectionError;
-
-/**
- * The client's request engine.
- */
-@property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
 
 @end
 

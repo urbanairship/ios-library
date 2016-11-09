@@ -27,12 +27,8 @@
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UAConfig.h"
 #import "UAUtils.h"
-#import "UAHTTPRequestEngine+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 
-#define kUATagGroupsRetryTimeInitialDelay 60    // 60 seconds
-#define kUATagGroupsRetryTimeMultiplier 2
-#define kUATagGroupsRetryTimeMaxDelay 300
 #define kUAChannelTagGroupsPath @"/api/channels/tags/"
 #define kUANamedUserTagsPath @"/api/named_users/tags/"
 #define kUATagGroupsAudienceKey @"audience"
@@ -46,60 +42,25 @@
 @interface UATagGroupsAPIClient()
 
 @property (nonatomic, copy) NSString *urlString;
-@property (nonatomic, strong) UAConfig *config;
 
 @end
 
 @implementation UATagGroupsAPIClient
 
-- (instancetype)initWithConfig:(UAConfig *)config {
-    self = [super init];
+- (instancetype)initWithConfig:(UAConfig *)config session:(UARequestSession *)session {
+    self = [super initWithConfig:config session:session];
     if (self) {
-        self.config = config;
-        self.requestEngine = [[UAHTTPRequestEngine alloc] init];
-        self.requestEngine.initialDelayIntervalInSeconds = kUATagGroupsRetryTimeInitialDelay;
-        self.requestEngine.maxDelayIntervalInSeconds = kUATagGroupsRetryTimeMaxDelay;
-        self.requestEngine.backoffFactor = kUATagGroupsRetryTimeMultiplier;
-        self.shouldRetryOnConnectionError = YES;
         self.urlString = [NSString stringWithFormat:@"%@", config.deviceAPIURL];
     }
     return self;
 }
 
 + (instancetype)clientWithConfig:(UAConfig *)config {
-    return [[self alloc] initWithConfig:config];
+    return [[self alloc] initWithConfig:config session:[UARequestSession sessionWithConfig:config]];
 }
 
-- (void)cancelAllRequests {
-    [self.requestEngine cancelAllRequests];
-}
-
-- (void)logSuccessfulTagGroupRequest:(UAHTTPRequest *)request prefix:(NSString *)prefix {
-    id warnings;
-    id responseObject = [NSJSONSerialization objectWithString:request.responseString];
-    if ([responseObject isKindOfClass:[NSDictionary class]]) {
-        warnings = responseObject[kUATagGroupsResponseObjectWarningsKey];
-    }
-
-    if (warnings) {
-        UA_LINFO(@"%@ tag groups update completed successfully with warnings: %@", prefix, warnings);
-    } else {
-        UA_LINFO(@"%@ tag groups update completed successfully.", prefix);
-    }
-}
-
-- (void)logFailedTagGroupRequest:(UAHTTPRequest *)request prefix:(NSString *)prefix {
-    id error;
-    id responseObject = [NSJSONSerialization objectWithString:request.responseString];
-    if ([responseObject isKindOfClass:[NSDictionary class]]) {
-        error = responseObject[kUATagGroupsResponseObjectErrorKey];
-    }
-
-    if (error) {
-        UA_LINFO(@"%@ tag groups update failed with error: %@", prefix, error);
-    } else {
-        UA_LINFO(@"%@ tag groups update failed.", prefix);
-    }
++ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session {
+    return [[self alloc] initWithConfig:config session:session];
 }
 
 - (void)updateChannelTags:(NSString *)channelId
@@ -134,36 +95,36 @@
 
     UA_LTRACE(@"Updating channel tag groups with payload: %@", payload);
 
-    UAHTTPRequest *request = [self requestWithPayload:payload
+    UARequest *request = [self requestWithPayload:payload
                                             urlString:[NSString stringWithFormat:@"%@%@", self.urlString, kUAChannelTagGroupsPath]];
 
-    [self.requestEngine runRequest:request succeedWhere:^BOOL(UAHTTPRequest *request) {
-        NSInteger status = request.response.statusCode;
-        return (BOOL)(status >= 200 && status <= 299);
-    } retryWhere:^BOOL(UAHTTPRequest *request) {
-        if (self.shouldRetryOnConnectionError) {
-            NSInteger status = request.response.statusCode;
-            return (BOOL)((status >= 500 && status <= 599) || request.error);
+    [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
+        NSHTTPURLResponse *httpResponse = nil;
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            httpResponse = (NSHTTPURLResponse *) response;
         }
-        return NO;
-    } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        UA_LTRACE(@"Retrieved channel tag groups response: %@", request.responseString);
-        [self logSuccessfulTagGroupRequest:request prefix:@"Channel"];
 
-        if (successBlock) {
-            successBlock();
-        } else {
-            UA_LERR(@"Missing successBlock");
+        NSInteger status = httpResponse.statusCode;
+        return (BOOL)((status >= 500 && status <= 599));
+    } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        NSHTTPURLResponse *httpResponse = nil;
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            httpResponse = (NSHTTPURLResponse *) response;
         }
-    } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        //[UAUtils logFailedRequest:request withMessage:@"Updating channel tag groups"];
-        [self logFailedTagGroupRequest:request prefix:@"Channel"];
 
-        if (failureBlock) {
-            failureBlock(request);
-        } else {
-            UA_LERR(@"Missing failureBlock");
+        NSInteger status = httpResponse.statusCode;
+
+        // Failure
+        if (status < 200 || status > 299) {
+            UA_LTRACE(@"Failed to update channel tags with status: %ld", (long)status);
+            failureBlock(status);
+            return;
         }
+
+        // Success
+        UA_LTRACE(@"Updated channel tags with status: %ld", (long)status);
+        successBlock();
+
     }];
 }
 
@@ -199,50 +160,48 @@
 
     UA_LTRACE(@"Updating named user tags with payload: %@", payload);
 
-    UAHTTPRequest *request = [self requestWithPayload:payload
+    UARequest *request = [self requestWithPayload:payload
                                             urlString:[NSString stringWithFormat:@"%@%@", self.urlString, kUANamedUserTagsPath]];
 
-    [self.requestEngine runRequest:request succeedWhere:^BOOL(UAHTTPRequest *request) {
-        NSInteger status = request.response.statusCode;
-        return (BOOL)(status >= 200 && status <= 299);
-    } retryWhere:^BOOL(UAHTTPRequest *request) {
-        if (self.shouldRetryOnConnectionError) {
-            NSInteger status = request.response.statusCode;
-            return (BOOL)((status >= 500 && status <= 599) || request.error);
+    [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
+        NSHTTPURLResponse *httpResponse = nil;
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            httpResponse = (NSHTTPURLResponse *) response;
         }
-        return NO;
-    } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        UA_LTRACE(@"Retrieved named user tags response: %@", request.responseString);
-        [self logSuccessfulTagGroupRequest:request prefix:@"Named user"];
 
-        if (successBlock) {
-            successBlock();
-        } else {
-            UA_LERR(@"Missing successBlock");
+        NSInteger status = httpResponse.statusCode;
+        return (BOOL)(status >= 500 && status <= 599);
+    } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        NSHTTPURLResponse *httpResponse = nil;
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            httpResponse = (NSHTTPURLResponse *) response;
         }
-    } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        //[UAUtils logFailedRequest:request withMessage:@"Updating named user tags"];
-        [self logFailedTagGroupRequest:request prefix:@"Named user"];
 
-        if (failureBlock) {
-            failureBlock(request);
-        } else {
-            UA_LERR(@"Missing failureBlock");
+        NSInteger status = httpResponse.statusCode;
+
+        // Failure
+        if (status < 200 || status > 299) {
+            UA_LTRACE(@"Failed to update named user tags with status: %ld", (long)status);
+            failureBlock(status);
+            return;
         }
+
+        // Success
+        UA_LTRACE(@"Updated named user tags with status: %ld", (long)status);
+        successBlock();
     }];
 }
 
-- (UAHTTPRequest *)requestWithPayload:(NSDictionary *)payload urlString:(NSString *)urlString {
-
-    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:[NSURL URLWithString:urlString]];
-    request.HTTPMethod = @"POST";
-    request.username = self.config.appKey;
-    request.password = self.config.appSecret;
-    [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
-    [request addRequestHeader: @"Content-Type" value: @"application/json"];
-
-    NSString *body = [NSJSONSerialization stringWithObject:payload];
-    [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
+- (UARequest *)requestWithPayload:(NSDictionary *)payload urlString:(NSString *)urlString {
+    UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {
+        builder.URL = [NSURL URLWithString:urlString];
+        builder.method = @"POST";
+        builder.username = self.config.appKey;
+        builder.password = self.config.appSecret;
+        builder.body = [NSJSONSerialization dataWithJSONObject:payload options:NSJSONWritingPrettyPrinted error:nil];
+        [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
+        [builder setValue:@"application/json" forHeader:@"Content-Type"];
+    }];
 
     return request;
 }
