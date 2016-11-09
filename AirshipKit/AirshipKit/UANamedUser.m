@@ -321,8 +321,7 @@ NSString *const UANamedUserRemoveTagGroupsSettingsKey = @"UANamedUserRemoveTagGr
         backgroundTask = UIBackgroundTaskInvalid;
     };
 
-    UATagGroupsAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
-        NSInteger status = request.response.statusCode;
+    UATagGroupsAPIClientFailureBlock failureBlock = ^(NSUInteger status) {
         if (status != 400 && status != 403) {
             resetPendingTags();
         }
