@@ -25,21 +25,20 @@
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
-#import "UAHTTPRequestEngine+Internal.h"
-#import "UAUserAPIClient.h"
-#import "UAHTTPRequest+Internal.h"
+#import "UAUserAPIClient+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAUtils.h"
 #import "UAConfig+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAUserAPIClient.h"
+#import "UAUserAPIClient+Internal.h"
 #import "UAUser+Internal.h"
 #import "UAUserData+Internal.h"
 
 
 @interface UAUserAPIClientTest : XCTestCase
 @property (nonatomic, strong) UAUserAPIClient *client;
-@property (nonatomic, strong) id mockRequestEngine;
+@property (nonatomic, strong) id mockRequest;
+@property (nonatomic, strong) id mockSession;
 @property (nonatomic, strong) id mockUAUtils;
 @property (nonatomic, strong) id mockUser;
 
@@ -54,9 +53,10 @@
 
     self.config = [UAConfig config];
 
-    self.mockRequestEngine = [OCMockObject niceMockForClass:[UAHTTPRequestEngine class]];
-    self.client = [UAUserAPIClient clientWithConfig:self.config];
-    self.client.requestEngine = self.mockRequestEngine;
+    self.mockSession = [OCMockObject niceMockForClass:[UARequestSession class]];
+
+    self.mockRequest = [OCMockObject niceMockForClass:[UARequest class]];
+    self.client = [UAUserAPIClient clientWithConfig:self.config session:self.mockSession];
 
     self.mockUAUtils = [OCMockObject niceMockForClass:[UAUtils class]];
     [[[self.mockUAUtils stub] andReturn:@"deviceID"] deviceID];
@@ -67,9 +67,10 @@
 }
 
 - (void)tearDown {
-    [self.mockRequestEngine stopMocking];
+    [self.mockRequest stopMocking];
     [self.mockUAUtils stopMocking];
     [self.mockUser stopMocking];
+    [self.mockSession stopMocking];
 
     [super tearDown];
 }
@@ -78,128 +79,117 @@
  * Test create user retry
  */
 -(void)testCreateUserRetry {
-
     // Check that the retry block returns YES for any 5xx request other than 501
     BOOL (^retryBlockCheck)(id obj) = ^(id obj) {
-        UAHTTPRequestEngineWhereBlock retryBlock = obj;
+        UARequestRetryBlock retryBlock = obj;
 
         for (NSInteger i = 500; i < 600; i++) {
-            UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-            request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
+            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
 
-            if (!retryBlock(request)) {
+            if (!retryBlock(OCMOCK_ANY, response)) {
                 return NO;
             }
         }
 
         // Check that it returns NO for 400 status codes
-        UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
-        if (retryBlock(request)) {
+        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
+        if (retryBlock(OCMOCK_ANY, response)) {
             return NO;
         }
 
         return YES;
     };
 
-    // Check that the retry block returns YES for any 5xx request other than 501
-    BOOL (^succeedsWhereBlockCheck)(id obj) = ^(id obj) {
-        UAHTTPRequestEngineWhereBlock succeedsBlock = obj;
-
-        // Check that it returns YES for 201
-        UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:201 HTTPVersion:nil headerFields:nil];
-        if (succeedsBlock(request)) {
-            return YES;
-        }
-        
-        return NO;
-    };
-
-    [[self.mockRequestEngine expect] runRequest:OCMOCK_ANY
-                                   succeedWhere:[OCMArg checkWithBlock:succeedsWhereBlockCheck]
-                                     retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
-                                      onSuccess:OCMOCK_ANY
-                                      onFailure:OCMOCK_ANY];
-
+    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
+                                        retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
+                                 completionHandler:OCMOCK_ANY];
 
     [self.client createUserWithChannelID:@"channelID"
-                               onSuccess:^(UAUserData *data, NSDictionary *payload){}
-                               onFailure:^(UAHTTPRequest *request){}];
+                               onSuccess:^(UAUserData *data, NSDictionary *payload){
+                                   XCTFail(@"Should not be called");
+                               }
+                               onFailure:^(NSUInteger statusCode){
+                                   XCTFail(@"Should not be called");
+                               }];
 
-    XCTAssertNoThrow([self.mockRequestEngine verify], @"Create user should call retry on 500 status codes and succeed on 201.");
+
+    XCTAssertNoThrow([self.mockSession verify], @"Create user should call retry on 5xx status codes");
 }
 
 /**
  * Test create user success
  */
 -(void)testCreateUserSuccess {
-    __block UAUserData *successData;
-    __block NSDictionary *successPayload;
-
     // Create a valid response
-    UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-    NSDictionary *response = @{@"user_id": @"someUserName", @"password": @"somePassword", @"user_url": @"http://url.com"};
-    request.responseData = [NSJSONSerialization dataWithJSONObject:response options:0 error:NULL];
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:201 HTTPVersion:nil headerFields:nil];
 
-    void (^andDoBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
+    NSDictionary *responseDict = @{@"user_id": @"someUserName", @"password": @"somePassword", @"user_url": @"http://url.com"};
+
+    NSData *responseData =  [NSJSONSerialization dataWithJSONObject:responseDict
+                                                            options:0
+                                                              error:nil];
+
+    // Stub the session to return the response
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:5];
-        UAHTTPRequestEngineSuccessBlock successBlock = (__bridge UAHTTPRequestEngineSuccessBlock)arg;
+        [invocation getArgument:&arg atIndex:4];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        completionHandler(responseData, response, nil);
+    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-        successBlock(request, 0);
-    };
 
-    [[[self.mockRequestEngine expect] andDo:andDoBlock] runRequest:OCMOCK_ANY
-                                                      succeedWhere:OCMOCK_ANY
-                                                        retryWhere:OCMOCK_ANY
-                                                         onSuccess:OCMOCK_ANY
-                                                         onFailure:OCMOCK_ANY];
-
+    __block UAUserData *successData;
 
     [self.client createUserWithChannelID:@"channelID"
                                onSuccess:^(UAUserData *data, NSDictionary *payload){
                                    successData = data;
-                                   successPayload = payload;
                                }
-                               onFailure:^(UAHTTPRequest *request){}];
+                               onFailure:^(NSUInteger statusCode){
+                                   XCTFail(@"Should not be called");
+                               }];
 
-    XCTAssertNoThrow([self.mockRequestEngine verify], @"Create user should make a create user request.");
-    XCTAssertEqualObjects(@"someUserName", successData.username, @"User name is not being parsed from the response.");
-    XCTAssertEqualObjects(@"somePassword", successData.password, @"User password is not being parsed from the response.");
-    XCTAssertEqualObjects(@"http://url.com", successData.url, @"User url is not being parsed from the response.");
+    XCTAssertNoThrow([self.mockSession verify], @"Create user should succeed on 201.");
+
+    XCTAssertEqualObjects(successData.username, [responseDict valueForKey:@"user_id"]);
+    XCTAssertEqualObjects(successData.password, [responseDict valueForKey:@"password"]);
+    XCTAssertEqualObjects(successData.url, [responseDict valueForKey:@"user_url"]);
 }
 
 /**
  * Test create user failure
  */
 -(void)testCreateUserFailure {
+    // Create a valid response
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
 
-    __block UAHTTPRequest *failureRequest;
+    NSDictionary *responseDict = @{@"user_id": @"someUserName", @"password": @"somePassword", @"user_url": @"http://url.com"};
 
-    UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-    void (^andDoBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
+    NSData *responseData =  [NSJSONSerialization dataWithJSONObject:responseDict
+                                                            options:0
+                                                              error:nil];
+
+    // Stub the session to return the response
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:6];
-        UAHTTPConnectionFailureBlock failureBlock = (__bridge UAHTTPConnectionFailureBlock)arg;
-        failureBlock(request);
-    };
+        [invocation getArgument:&arg atIndex:4];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        completionHandler(responseData, response, nil);
+    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    [[[self.mockRequestEngine expect] andDo:andDoBlock] runRequest:OCMOCK_ANY
-                                                      succeedWhere:OCMOCK_ANY
-                                                        retryWhere:OCMOCK_ANY
-                                                         onSuccess:OCMOCK_ANY
-                                                         onFailure:OCMOCK_ANY];
 
+    __block NSUInteger failureStatusCode = 0;
 
     [self.client createUserWithChannelID:@"channelID"
-                               onSuccess:^(UAUserData *data, NSDictionary *payload){}
-                               onFailure:^(UAHTTPRequest *request){
-                                   failureRequest = request;
+                               onSuccess:^(UAUserData *data, NSDictionary *payload){
+                                   XCTFail(@"Should not be called");
+                               }
+                               onFailure:^(NSUInteger statusCode){
+                                   failureStatusCode = statusCode;
                                }];
 
-    XCTAssertNoThrow([self.mockRequestEngine verify], @"Create user should make a create user request.");
-    XCTAssertEqualObjects(failureRequest, request, @"Failure should pass the failed request back");
+    XCTAssertNoThrow([self.mockSession verify], @"Create user should fail on 400.");
+
+    XCTAssertEqual(failureStatusCode, 400);
 }
 
 /**
@@ -208,205 +198,212 @@
 -(void)testCreateUserRequestChannelID {
     NSDictionary *expectedRequestBody = @{@"ua_device_id": @"deviceID", @"ios_channels": @[@"channelID"]};
 
-    BOOL (^checkRequestBlock)(id)= ^(id obj){
-        UAHTTPRequest *request = obj;
-        NSString *requestString = [[NSString alloc] initWithData:request.body encoding:NSUTF8StringEncoding];
-        id data = [NSJSONSerialization objectWithString:requestString];
-        return [expectedRequestBody isEqualToDictionary:data];
-    };
+    BOOL (^checkRequestBlock)(id obj) = ^(id obj) {
+        UARequest *request = obj;
 
-    [[self.mockRequestEngine expect] runRequest:[OCMArg checkWithBlock:checkRequestBlock]
-                                    succeedWhere:OCMOCK_ANY
-                                      retryWhere:OCMOCK_ANY
-                                       onSuccess:OCMOCK_ANY
-                                       onFailure:OCMOCK_ANY];
-
-    [self.client createUserWithChannelID:@"channelID"
-                               onSuccess:^(UAUserData *data, NSDictionary *payload){}
-                               onFailure:^(UAHTTPRequest *request){}];
-
-    XCTAssertNoThrow([self.mockRequestEngine verify], @"Create user should make a create user request.");
-}
-
-/**
- * Test update user retry
- */
--(void)testUpdateUserRetry {
-
-    // Check that the retry block returns YES for any 5xx request other than 501
-    BOOL (^retryBlockCheck)(id obj) = ^(id obj) {
-        UAHTTPRequestEngineWhereBlock retryBlock = obj;
-
-        for (NSInteger i = 500; i < 600; i++) {
-            UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-            request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
-
-            if (!retryBlock(request)) {
-                return NO;
-            }
+        // Check the url
+        if (![[request.URL absoluteString] isEqualToString:@"https://device-api.urbanairship.com/api/user/"]) {
+            return NO;
         }
 
-        // Check that it returns NO for 400 status codes
-        UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
-        if (retryBlock(request)) {
+        // Check that it's a POST
+        if (![request.method isEqualToString:@"POST"]) {
+            return NO;
+        }
+
+        // Check that it contains an accept header
+        if (![[request.headers valueForKey:@"Accept"] isEqualToString:@"application/vnd.urbanairship+json; version=3;"]) {
+            return NO;
+        }
+
+        // Check that it contains an content type header
+        if (![[request.headers valueForKey:@"Content-Type"] isEqualToString:@"application/json"]) {
+            return NO;
+        }
+
+        if (![request.body isEqualToData:[NSJSONSerialization dataWithJSONObject:expectedRequestBody options:0 error:nil]]) {
             return NO;
         }
 
         return YES;
     };
 
-    // Check that the retry block returns YES for any 5xx request other than 501
-    BOOL (^succeedsWhereBlockCheck)(id obj) = ^(id obj) {
-        UAHTTPRequestEngineWhereBlock succeedsBlock = obj;
+    [[self.mockSession expect] dataTaskWithRequest:[OCMArg checkWithBlock:checkRequestBlock]
+                                        retryWhere:OCMOCK_ANY
+                                 completionHandler:OCMOCK_ANY];
 
-        // Check that it returns YES for 201
-        UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:201 HTTPVersion:nil headerFields:nil];
-        if (succeedsBlock(request)) {
-            return YES;
+
+    [self.client createUserWithChannelID:@"channelID" onSuccess:^(UAUserData * _Nonnull data, NSDictionary * _Nonnull payload) {
+    } onFailure:^(NSUInteger statusCode) {
+    }];
+    
+    [self.mockSession verify];
+}
+
+/**
+ * Test update user retry
+ */
+-(void)testUpdateUserRetry {
+    // Check that the retry block returns YES for any 5xx request other than 501
+    BOOL (^retryBlockCheck)(id obj) = ^(id obj) {
+        UARequestRetryBlock retryBlock = obj;
+
+        for (NSInteger i = 500; i < 600; i++) {
+            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
+
+            if (!retryBlock(OCMOCK_ANY, response)) {
+                return NO;
+            }
         }
 
-        return NO;
+        // Check that it returns NO for 400 status codes
+        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
+        if (retryBlock(OCMOCK_ANY, response)) {
+            return NO;
+        }
+
+        return YES;
     };
 
-    [[self.mockRequestEngine expect] runRequest:OCMOCK_ANY
-                                   succeedWhere:[OCMArg checkWithBlock:succeedsWhereBlockCheck]
-                                     retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
-                                      onSuccess:OCMOCK_ANY
-                                      onFailure:OCMOCK_ANY];
+    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
+                                        retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
+                                 completionHandler:OCMOCK_ANY];
 
     [self.client updateUser:self.mockUser
                   channelID:@"channelID"
-                  onSuccess:^{}
-                  onFailure:^(UAHTTPRequest *request){}];
+                  onSuccess:^(){
+                      XCTFail(@"Should not be called");
+                  }
+                  onFailure:^(NSUInteger statusCode){
+                      XCTFail(@"Should not be called");
+                  }];
 
-    XCTAssertNoThrow([self.mockRequestEngine verify], @"Update user should call retry on 500 status codes and succeed on 201.");
+
+    XCTAssertNoThrow([self.mockSession verify], @"Update user should call retry on 5xx status codes");
 }
 
 /**
  * Test update user success
  */
 -(void)testUpdateUserSuccess {
-    __block BOOL successBlockCalled = NO;
-
     // Create a valid response
-    UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
 
-    void (^andDoBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
+    NSDictionary *responseDict = @{@"user_id": @"someUserName", @"password": @"somePassword", @"user_url": @"http://url.com"};
+
+    NSData *responseData =  [NSJSONSerialization dataWithJSONObject:responseDict
+                                                            options:0
+                                                              error:nil];
+
+    // Stub the session to return the response
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:5];
-        UAHTTPRequestEngineSuccessBlock successBlock = (__bridge UAHTTPRequestEngineSuccessBlock)arg;
+        [invocation getArgument:&arg atIndex:4];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        completionHandler(responseData, response, nil);
+    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-        successBlock(request, 0);
-    };
 
-    [[[self.mockRequestEngine expect] andDo:andDoBlock] runRequest:OCMOCK_ANY
-                                                      succeedWhere:OCMOCK_ANY
-                                                        retryWhere:OCMOCK_ANY
-                                                         onSuccess:OCMOCK_ANY
-                                                         onFailure:OCMOCK_ANY];
-
+    __block BOOL successBlockCalled = false;
 
     [self.client updateUser:self.mockUser
                   channelID:@"channelID"
-                  onSuccess:^{
+                  onSuccess:^(){
                       successBlockCalled = YES;
                   }
-                  onFailure:^(UAHTTPRequest *request){}];
+                  onFailure:^(NSUInteger statusCode){
+                      XCTFail(@"Should not be called");
+                  }];
 
-    XCTAssertNoThrow([self.mockRequestEngine verify], @"Update user should make an update user request.");
-    XCTAssertTrue(successBlockCalled, @"Success block should be called on success");
+    XCTAssertNoThrow([self.mockSession verify], @"Update user should succeed on 200.");
+
+    XCTAssertTrue(successBlockCalled);
 }
 
 /**
  * Test update user failure
  */
 -(void)testUpdateUserFailure {
+    // Create a valid response
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
 
-    __block UAHTTPRequest *failureRequest;
+    NSDictionary *responseDict = @{@"user_id": @"someUserName", @"password": @"somePassword", @"user_url": @"http://url.com"};
 
-    UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-    void (^andDoBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
+    NSData *responseData =  [NSJSONSerialization dataWithJSONObject:responseDict
+                                                            options:0
+                                                              error:nil];
+
+    // Stub the session to return the response
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:6];
-        UAHTTPConnectionFailureBlock failureBlock = (__bridge UAHTTPConnectionFailureBlock)arg;
-        failureBlock(request);
-    };
+        [invocation getArgument:&arg atIndex:4];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        completionHandler(responseData, response, nil);
+    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    [[[self.mockRequestEngine expect] andDo:andDoBlock] runRequest:OCMOCK_ANY
-                                                      succeedWhere:OCMOCK_ANY
-                                                        retryWhere:OCMOCK_ANY
-                                                         onSuccess:OCMOCK_ANY
-                                                         onFailure:OCMOCK_ANY];
+
+    __block NSUInteger failureStatusCode = 0;
 
     [self.client updateUser:self.mockUser
-                  channelID:@"channel"
-                  onSuccess:^{}
-                  onFailure:^(UAHTTPRequest *request) {
-                      failureRequest = request;
+                  channelID:@"channelID"
+                  onSuccess:^(){
+                      XCTFail(@"Should not be called");
+                  }
+                  onFailure:^(NSUInteger statusCode){
+                      failureStatusCode = statusCode;
                   }];
-    
 
-    XCTAssertNoThrow([self.mockRequestEngine verify], @"Update user should make an update user request.");
-    XCTAssertEqualObjects(failureRequest, request, @"Failure should pass the failed request back");
+    XCTAssertNoThrow([self.mockSession verify], @"Update user should fail on 400.");
+
+    XCTAssertEqual(failureStatusCode, 400);
 }
 
-
 /**
- * Test update user request payload adds and removes the right things.
+ * Test update user request payload adds the right things.
  */
 -(void)testUpdateUserRequest {
-    __block NSDictionary *expectedRequestBody;
+    NSDictionary *expectedRequestBody = @{@"ios_channels": @{@"add" : @[@"channelID"]}};
 
-    BOOL (^checkRequestBlock)(id)= ^(id obj){
-        UAHTTPRequest *request = obj;
 
-        if (![request.url.absoluteString isEqualToString:@"https://device-api.urbanairship.com/api/user/userName/"]) {
+    BOOL (^checkRequestBlock)(id obj) = ^(id obj) {
+        UARequest *request = obj;
+
+        // Check the url
+        if (![[request.URL absoluteString] isEqualToString:@"https://device-api.urbanairship.com/api/user/userName/"]) {
             return NO;
         }
 
-        NSString *requestString = [[NSString alloc] initWithData:request.body encoding:NSUTF8StringEncoding];
-        id data = [NSJSONSerialization objectWithString:requestString];
-        return [expectedRequestBody isEqualToDictionary:data];
+        // Check that it's a POST
+        if (![request.method isEqualToString:@"POST"]) {
+            return NO;
+        }
+
+        // Check that it contains an accept header
+        if (![[request.headers valueForKey:@"Accept"] isEqualToString:@"application/vnd.urbanairship+json; version=3;"]) {
+            return NO;
+        }
+
+        // Check that it contains an content type header
+        if (![[request.headers valueForKey:@"Content-Type"] isEqualToString:@"application/json"]) {
+            return NO;
+        }
+
+        if (![request.body isEqualToData:[NSJSONSerialization dataWithJSONObject:expectedRequestBody options:0 error:nil]]) {
+            return NO;
+        }
+
+        return YES;
     };
 
+    [[self.mockSession expect] dataTaskWithRequest:[OCMArg checkWithBlock:checkRequestBlock]
+                                        retryWhere:OCMOCK_ANY
+                                 completionHandler:OCMOCK_ANY];
 
-    // Verify we add a channel ID and remove the device token if they are both present
-    expectedRequestBody = @{@"ios_channels": @{@"add" : @[@"channel"]}};
-    [[self.mockRequestEngine expect] runRequest:[OCMArg checkWithBlock:checkRequestBlock]
-                                   succeedWhere:OCMOCK_ANY
-                                     retryWhere:OCMOCK_ANY
-                                      onSuccess:OCMOCK_ANY
-                                      onFailure:OCMOCK_ANY];
-
-
-
-    [self.client updateUser:self.mockUser
-                  channelID:@"channel"
-                  onSuccess:^{}
-                  onFailure:^(UAHTTPRequest *request) {}];
-
-    XCTAssertNoThrow([self.mockRequestEngine verify], @"Create user should make a create user request.");
-
+    [self.client updateUser:self.mockUser channelID:@"channelID" onSuccess:^(UAUserData * _Nonnull data, NSDictionary * _Nonnull payload) {
+    } onFailure:^(NSUInteger statusCode) {
+    }];
     
-    // Verify we only add a channel ID if there is no device token
-    expectedRequestBody = @{@"ios_channels": @{@"add" : @[@"channel"]}};
-    [[self.mockRequestEngine expect] runRequest:[OCMArg checkWithBlock:checkRequestBlock]
-                                   succeedWhere:OCMOCK_ANY
-                                     retryWhere:OCMOCK_ANY
-                                      onSuccess:OCMOCK_ANY
-                                      onFailure:OCMOCK_ANY];
-
-
-    [self.client updateUser:self.mockUser
-                  channelID:@"channel"
-                  onSuccess:^{}
-                  onFailure:^(UAHTTPRequest *request) {}];
-
-    XCTAssertNoThrow([self.mockRequestEngine verify], @"Create user should make a create user request.");
+    [self.mockSession verify];
 }
-
-
 
 @end

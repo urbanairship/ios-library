@@ -310,7 +310,7 @@
 		CC40DD1F1D8C996A00BABD4F /* UAUser+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBF41D8C996A00BABD4F /* UAUser+Internal.h */; };
 		CC40DD201D8C996A00BABD4F /* UAUser.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBF51D8C996A00BABD4F /* UAUser.h */; };
 		CC40DD211D8C996A00BABD4F /* UAUser.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBF61D8C996A00BABD4F /* UAUser.m */; };
-		CC40DD221D8C996A00BABD4F /* UAUserAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBF71D8C996A00BABD4F /* UAUserAPIClient.h */; };
+		CC40DD221D8C996A00BABD4F /* UAUserAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBF71D8C996A00BABD4F /* UAUserAPIClient+Internal.h */; };
 		CC40DD231D8C996A00BABD4F /* UAUserAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBF81D8C996A00BABD4F /* UAUserAPIClient.m */; };
 		CC40DD241D8C996A00BABD4F /* UAUserData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBF91D8C996A00BABD4F /* UAUserData+Internal.h */; };
 		CC40DD251D8C996A00BABD4F /* UAUserData.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBFA1D8C996A00BABD4F /* UAUserData.m */; };
@@ -925,7 +925,7 @@
 		CC40DBF41D8C996A00BABD4F /* UAUser+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUser+Internal.h"; sourceTree = "<group>"; };
 		CC40DBF51D8C996A00BABD4F /* UAUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAUser.h; sourceTree = "<group>"; };
 		CC40DBF61D8C996A00BABD4F /* UAUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUser.m; sourceTree = "<group>"; };
-		CC40DBF71D8C996A00BABD4F /* UAUserAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAUserAPIClient.h; sourceTree = "<group>"; };
+		CC40DBF71D8C996A00BABD4F /* UAUserAPIClient+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUserAPIClient+Internal.h"; sourceTree = "<group>"; };
 		CC40DBF81D8C996A00BABD4F /* UAUserAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUserAPIClient.m; sourceTree = "<group>"; };
 		CC40DBF91D8C996A00BABD4F /* UAUserData+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUserData+Internal.h"; sourceTree = "<group>"; };
 		CC40DBFA1D8C996A00BABD4F /* UAUserData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUserData.m; sourceTree = "<group>"; };
@@ -1681,7 +1681,7 @@
 				CC40DBF41D8C996A00BABD4F /* UAUser+Internal.h */,
 				CC40DBF51D8C996A00BABD4F /* UAUser.h */,
 				CC40DBF61D8C996A00BABD4F /* UAUser.m */,
-				CC40DBF71D8C996A00BABD4F /* UAUserAPIClient.h */,
+				CC40DBF71D8C996A00BABD4F /* UAUserAPIClient+Internal.h */,
 				CC40DBF81D8C996A00BABD4F /* UAUserAPIClient.m */,
 				CC40DBF91D8C996A00BABD4F /* UAUserData+Internal.h */,
 				CC40DBFA1D8C996A00BABD4F /* UAUserData.m */,
@@ -2363,7 +2363,7 @@
 				CC40DCC31D8C996A00BABD4F /* UAJSONMatcher.h in Headers */,
 				CC40DCD81D8C996A00BABD4F /* UAMediaEventTemplate.h in Headers */,
 				CC40DC691D8C996A00BABD4F /* UACircularRegion.h in Headers */,
-				CC40DD221D8C996A00BABD4F /* UAUserAPIClient.h in Headers */,
+				CC40DD221D8C996A00BABD4F /* UAUserAPIClient+Internal.h in Headers */,
 				CC40DCA11D8C996A00BABD4F /* UAInAppMessageView.h in Headers */,
 				CC40DCCD1D8C996A00BABD4F /* UALandingPageAction.h in Headers */,
 				CC40DCFF1D8C996A00BABD4F /* UAPush+Internal.h in Headers */,

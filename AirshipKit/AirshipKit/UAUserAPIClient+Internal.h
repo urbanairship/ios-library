@@ -24,31 +24,53 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "UAAPIClient+Internal.h"
 
-@class UAHTTPRequestEngine;
 @class UAUser;
 @class UAConfig;
-@class UAHTTPRequest;
 @class UAUserData;
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * A block called when user creation succeeded.
+ *
+ * @param data The user data.
+ * @param payload The request payload.
+ */
 typedef void (^UAUserAPIClientCreateSuccessBlock)(UAUserData *data, NSDictionary *payload);
+
+/**
+ * A block called when the user update succeeded.
+ */
 typedef void (^UAUserAPIClientUpdateSuccessBlock)();
-typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
+
+/**
+ * A block called when the user update failed.
+ *
+ * @param statusCode The request status code.
+ */
+typedef void (^UAUserAPIClientFailureBlock)(NSUInteger statusCode);
 
 /**
  * High level abstraction for the User API.
  */
-@interface UAUserAPIClient : NSObject
-
+@interface UAUserAPIClient : UAAPIClient
 
 /**
  * Factory method to create a UAUserAPIClient.
- * @param config the Urban Airship config.
+ * @param config The Urban Airship config.
  * @return UAUserAPIClient instance.
  */
 + (instancetype)clientWithConfig:(UAConfig *)config;
+
+/**
+ * Factory method to create a UAUserAPIClient.
+ * @param config The Urban Airship config.
+ * @param session The request session.
+ * @return UAUserAPIClient instance.
+ */
++ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session;
 
 /**
  * Create a user.
@@ -73,16 +95,6 @@ typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
          channelID:(NSString *)channelID
          onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock
          onFailure:(UAUserAPIClientFailureBlock)failureBlock;
-
-/**
- * Cancels all requests.
- */
-- (void)cancelAllRequests;
-
-/**
- * The client's request engine.
- */
-@property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
 
 @end
 

@@ -23,45 +23,21 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAUserAPIClient.h"
+#import "UAUserAPIClient+Internal.h"
 #import "UAConfig.h"
-#import "UAHTTPRequestEngine+Internal.h"
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAUser.h"
 #import "UAUserData+Internal.h"
 
-
-@interface UAUserAPIClient()
-@property (nonatomic, strong) UAConfig *config;
-@end
-
 @implementation UAUserAPIClient
 
-- (instancetype)initWithConfig:(UAConfig *)config {
-    self = [super init];
-    if (self) {
-        self.config = config;
-        self.requestEngine= [[UAHTTPRequestEngine alloc] init];
-    }
-
-    return self;
-}
-
-- (instancetype)initWithRequestEngine:(UAHTTPRequestEngine *)requestEngine {
-    self = [super init];
-    if (self) {
-        self.requestEngine = requestEngine;
-    }
-    return self;
++ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session {
+    return [[self alloc] initWithConfig:config session:session];
 }
 
 + (instancetype)clientWithConfig:(UAConfig *)config {
-    return [[self alloc] initWithConfig:config];
-}
-
-+ (instancetype)clientWithRequestEngine:(UAHTTPRequestEngine *)requestEngine {
-    return [[self alloc] initWithRequestEngine:requestEngine];
+    return [UAUserAPIClient clientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
 }
 
 - (void)createUserWithChannelID:(NSString *)channelID
@@ -74,39 +50,48 @@
         [payload setObject:@[channelID] forKey:@"ios_channels"];
     }
 
-    UAHTTPRequest *request = [self requestToCreateUserWithPayload:payload];
+    UARequest *request = [self requestToCreateUserWithPayload:payload];
 
-    [self.requestEngine
-     runRequest:request succeedWhere:^(UAHTTPRequest *request) {
-         NSInteger status = request.response.statusCode;
-         return (BOOL)(status == 201);
-     } retryWhere:^(UAHTTPRequest *request) {
-         NSInteger status = request.response.statusCode;
-         return (BOOL)((status >= 500 && status <= 599) || request.error);
-     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
 
-         NSDictionary *result = [NSJSONSerialization objectWithString:request.responseString];
+    [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
+        NSHTTPURLResponse *httpResponse = nil;
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            httpResponse = (NSHTTPURLResponse *) response;
+        }
 
-         NSString *username = [result objectForKey:@"user_id"];
-         NSString *password = [result objectForKey:@"password"];
-         NSString *url = [result objectForKey:@"user_url"];
+        if (httpResponse.statusCode >= 500 && httpResponse.statusCode <= 599) {
+            return YES;
+        }
 
-         UAUserData *data = [UAUserData dataWithUsername:username password:password url:url];
+        return NO;
+    } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        NSHTTPURLResponse *httpResponse = nil;
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            httpResponse = (NSHTTPURLResponse *) response;
+        }
 
-         UA_LTRACE(@"Created user: %@", username);
-         if (successBlock) {
-             successBlock(data, payload);
-         } else {
-             UA_LERR(@"missing successBlock");
-         }
-     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-         //[UAUtils logFailedRequest:request withMessage:@"creating user"];
-         if (failureBlock) {
-             failureBlock(request);
-         } else {
-             UA_LERR(@"missing failureBlock");
-         }
-     }];
+        NSUInteger status = httpResponse.statusCode;
+
+        // Failure
+        if (status != 201) {
+            UA_LTRACE(@"User creation failed with status: %ld error: %@", (unsigned long)status, error);
+            failureBlock(status);
+            return;
+        }
+
+        // Success
+        NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
+
+        NSString *username = [jsonResponse objectForKey:@"user_id"];
+        NSString *password = [jsonResponse objectForKey:@"password"];
+        NSString *url = [jsonResponse objectForKey:@"user_url"];
+
+        UAUserData *userData = [UAUserData dataWithUsername:username password:password url:url];
+
+        UA_LTRACE(@"Created user: %@", username);
+        successBlock(userData, payload);
+
+    }];
 }
 
 - (void)updateUser:(UAUser *)user
@@ -114,88 +99,94 @@
          onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock
          onFailure:(UAUserAPIClientFailureBlock)failureBlock {
 
-
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];
 
     if (channelID.length) {
         [payload setValue:@{@"add": @[channelID]} forKey:@"ios_channels"];
     }
 
-    UAHTTPRequest *request = [self requestToUpdateUser:user payload:payload];
+    UARequest *request = [self requestToUpdateUser:user payload:payload];
 
-    [self.requestEngine runRequest:request succeedWhere:^(UAHTTPRequest *request) {
-        NSInteger status = request.response.statusCode;
-        return (BOOL)(status == 200 || status == 201);
-    } retryWhere:^(UAHTTPRequest *request) {
-        NSInteger status = request.response.statusCode;
-        return (BOOL)((status >= 500 && status <= 599) || request.error);
-    } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        UA_LTRACE(@"User successfully updated.");
-        if (successBlock) {
-            successBlock();
-        } else {
-            UA_LERR(@"missing successBlock");
+    [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
+        NSHTTPURLResponse *httpResponse = nil;
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            httpResponse = (NSHTTPURLResponse *) response;
         }
-    } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        //[UAUtils logFailedRequest:request withMessage:@"updating user"];
-        if (failureBlock) {
-            failureBlock(request);
-        } else {
-            UA_LERR(@"missing failureBlock");
+
+        if (httpResponse.statusCode >= 500 && httpResponse.statusCode <= 599) {
+            return YES;
         }
+
+        return NO;
+    } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        NSHTTPURLResponse *httpResponse = nil;
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            httpResponse = (NSHTTPURLResponse *) response;
+        }
+
+        NSUInteger status = httpResponse.statusCode;
+
+        // Failure
+        if (status != 200 && status != 201) {
+            UA_LTRACE(@"User update failed with status: %ld error: %@", (unsigned long)status, error);
+            failureBlock(status);
+
+            return;
+        }
+
+        // Success
+        UA_LTRACE(@"Successfully updated user: %@", user);
+        successBlock();
     }];
 }
 
-- (UAHTTPRequest *)requestToCreateUserWithPayload:(NSDictionary *)payload {
-    NSString *urlString = [NSString stringWithFormat:@"%@%@",
-                           self.config.deviceAPIURL,
-                           @"/api/user/"];
+- (UARequest *)requestToCreateUserWithPayload:(NSDictionary *)payload {
+    UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
+        NSString *createURLString = [NSString stringWithFormat:@"%@%@",
+                               self.config.deviceAPIURL,
+                               @"/api/user/"];
 
-    NSURL *createUrl = [NSURL URLWithString:urlString];
+        builder.URL = [NSURL URLWithString:createURLString];
+        builder.method = @"POST";
+        builder.username = self.config.appKey;
+        builder.password = self.config.appSecret;
 
-    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:createUrl];
-    request.HTTPMethod = @"POST";
-    request.username = self.config.appKey;
-    request.password = self.config.appSecret;
+        [builder setValue:@"application/json" forHeader:@"Content-Type"];
+        [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
 
-    [request addRequestHeader:@"Content-Type" value:@"application/json"];
-    [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
+        builder.body = [NSJSONSerialization dataWithJSONObject:payload
+                                                       options:0
+                                                         error:nil];
 
-    NSString *body = [NSJSONSerialization stringWithObject:payload];
-    [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
-
-    UA_LDEBUG(@"Request to create user with body: %@", body);
+        UA_LDEBUG(@"Request to create user with body: %@", builder.body);
+    }];
 
     return request;
 }
 
-- (UAHTTPRequest *)requestToUpdateUser:(UAUser *)user payload:(NSDictionary *)payload {
+- (UARequest *)requestToUpdateUser:(UAUser *)user payload:(NSDictionary *)payload {
+    UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
+        NSString *updateURLString = [NSString stringWithFormat:@"%@%@%@/",
+                                     self.config.deviceAPIURL,
+                                     @"/api/user/",
+                                     user.username];
 
-    NSString *updateUrlString = [NSString stringWithFormat:@"%@%@%@/",
-                                 self.config.deviceAPIURL,
-                                 @"/api/user/",
-                                 user.username];
+        builder.URL = [NSURL URLWithString:updateURLString];
+        builder.method = @"POST";
+        builder.username = user.username;
+        builder.password = user.password;
 
-    NSURL *updateUrl = [NSURL URLWithString: updateUrlString];
+        [builder setValue:@"application/json" forHeader:@"Content-Type"];
+        [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
 
-    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:updateUrl];
-    request.HTTPMethod = @"POST";
-    request.username = user.username;
-    request.password = user.password;
+        builder.body = [NSJSONSerialization dataWithJSONObject:payload
+                                                       options:0
+                                                         error:nil];
 
-    [request addRequestHeader:@"Content-Type" value:@"application/json"];
-    [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
+        UA_LDEBUG(@"Request to update user with body: %@", builder.body);
+    }];
 
-    NSString *body = [NSJSONSerialization stringWithObject:payload];
-    [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
-
-    UA_LTRACE(@"Request to update user with body: %@", body);
-    
     return request;
-}
-
-- (void)cancelAllRequests {
-    [self.requestEngine cancelAllRequests];
 }
 
 @end

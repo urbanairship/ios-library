@@ -25,7 +25,7 @@
 
 #import "UAUser+Internal.h"
 #import "UAUserData+Internal.h"
-#import "UAUserAPIClient.h"
+#import "UAUserAPIClient+Internal.h"
 #import "UAPush.h"
 #import "UAUtils.h"
 #import "UAConfig.h"
@@ -190,7 +190,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         backgroundTask = UIBackgroundTaskInvalid;
     };
 
-    UAUserAPIClientFailureBlock failure = ^(UAHTTPRequest *request) {
+    UAUserAPIClientFailureBlock failure = ^(NSUInteger statusCode) {
         UA_LINFO(@"Failed to create user");
         self.creatingUser = NO;
         [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
@@ -235,7 +235,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                          [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
                          backgroundTask = UIBackgroundTaskInvalid;
                      }
-                     onFailure:^(UAHTTPRequest *request) {
+                     onFailure:^(NSUInteger statusCode) {
                          UA_LDEBUG(@"Failed to update user.");
                          [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
                          backgroundTask = UIBackgroundTaskInvalid;

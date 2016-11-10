@@ -25,7 +25,7 @@
 
 #import <XCTest/XCTest.h>
 #import "UAUser+Internal.h"
-#import "UAUserAPIClient.h"
+#import "UAUserAPIClient+Internal.h"
 #import "UAUserData+Internal.h"
 #import "UAKeychainUtils+Internal.h"
 #import "UAPush+Internal.h"
