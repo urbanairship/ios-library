@@ -273,7 +273,14 @@
         return (BOOL)(args.situation != UASituationForegroundPush);
     };
 
+    // Tags predicate
     UAActionPredicate tagsPredicate = ^(UAActionArguments *args) {
+        BOOL foregroundPresentation = args.metadata[UAActionMetadataForegroundPresentationKey] != nil;
+        return (BOOL)!foregroundPresentation;
+    };
+
+    // Custom event predicate
+    UAActionPredicate customEventsPredicate = ^(UAActionArguments *args) {
         BOOL foregroundPresentation = args.metadata[UAActionMetadataForegroundPresentationKey] != nil;
         return (BOOL)!foregroundPresentation;
     };
@@ -318,9 +325,7 @@
     UAAddCustomEventAction *addCustomEventAction = [[UAAddCustomEventAction alloc] init];
     [self registerAction:addCustomEventAction
                     name:kUAAddCustomEventActionDefaultRegistryName
-               predicate:^BOOL(UAActionArguments *args) {
-                   return args.situation == UASituationManualInvocation || args.situation == UASituationWebViewInvocation || args.situation == UASituationAutomation;
-               }];
+               predicate:customEventsPredicate];
 
     // Share action
     UAShareAction *shareAction = [[UAShareAction alloc] init];
