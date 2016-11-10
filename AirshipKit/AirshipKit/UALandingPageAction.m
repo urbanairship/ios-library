@@ -24,20 +24,16 @@
  */
 
 #import "UALandingPageAction.h"
-
-#import "UAGlobal.h"
-#import "UAURLProtocol.h"
-#import "UAHTTPConnection+Internal.h"
 #import "UALandingPageOverlayController.h"
+#import "UAURLProtocol.h"
 #import "UAirship.h"
 #import "UAConfig.h"
 #import "NSString+UAURLEncoding.h"
 #import "UAUtils.h"
 
 @interface UALandingPageAction()
-@property (nonatomic, strong) UAHTTPConnection *connection;
+@property (nonatomic, strong) NSURLSessionDataTask *dataTask;
 @end
-
 
 @implementation UALandingPageAction
 
@@ -171,36 +167,45 @@
 - (void)prefetchURL:(NSURL *)landingPageURL withUsername:(NSString *)username
        withPassword:(NSString *)password withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    if (self.connection) {
-        [self.connection cancel];
+    if (self.dataTask) {
+        [self.dataTask cancel];
     }
 
-    UAHTTPConnectionSuccessBlock successBlock = ^(UAHTTPRequest *request) {
-        UA_LTRACE(@"Retrieved landing page with status code %ld at url: %@.",
-                  (long)[request.response statusCode], request.url);
 
-        if ([request.response statusCode] == 200) {
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:landingPageURL];
+
+    if (username && password) {
+        NSString *credentials = [NSString stringWithFormat:@"%@:%@", username, password];
+        NSData *encodedCredentials = [credentials dataUsingEncoding:NSUTF8StringEncoding];
+        NSString *authoriazationValue = [NSString stringWithFormat: @"Basic %@",[encodedCredentials base64EncodedStringWithOptions:0]];
+        [request setValue:authoriazationValue forHTTPHeaderField:@"Authorization"];
+    }
+
+    self.dataTask = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        if (error) {
+            UA_LTRACE(@"Error %@ for landing page pre-fetch request at url: %@", error, landingPageURL);
+            completionHandler([UAActionResult resultWithError:error withFetchResult:UAActionFetchResultFailed]);
+            return;
+        }
+
+
+        NSHTTPURLResponse *httpResponse = nil;
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            httpResponse = (NSHTTPURLResponse *) response;
+        }
+
+        UA_LTRACE(@"Retrieved landing page with status code %ld at url: %@.",
+                  (long)httpResponse.statusCode, landingPageURL);
+
+        if (httpResponse.statusCode == 200) {
             UA_LTRACE(@"Cached landing page.");
             completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
         } else {
             completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultFailed]);
         }
-    };
+    }];
 
-    UAHTTPConnectionFailureBlock failureBlock = ^(UAHTTPRequest *request) {
-        UA_LTRACE(@"Error %@ for landing page pre-fetch request at url: %@", request.error, request.url);
-        completionHandler([UAActionResult resultWithError:request.error withFetchResult:UAActionFetchResultFailed]);
-    };
-
-    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:landingPageURL];
-    request.username = username;
-    request.password = password;
-
-    self.connection = [UAHTTPConnection connectionWithRequest:request
-                                                 successBlock:successBlock
-                                                 failureBlock:failureBlock];
-
-    [self.connection start];
+    [self.dataTask resume];
 }
 
 @end

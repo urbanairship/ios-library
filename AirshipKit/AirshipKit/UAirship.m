@@ -113,7 +113,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.config = config;
 
         self.actionJSDelegate = [[UAActionJSDelegate alloc] init];
-        self.applicationMetrics = [[UAApplicationMetrics alloc] init];
+        self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:dataStore];
         self.actionRegistry = [UAActionRegistry defaultRegistry];
 
         self.sharedPush = [UAPush pushWithConfig:config dataStore:dataStore];

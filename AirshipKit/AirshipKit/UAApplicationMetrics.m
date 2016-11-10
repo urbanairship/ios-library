@@ -37,6 +37,7 @@ NSString *const UAApplicationMetricLastOpenDate = @"UAApplicationMetricLastOpenD
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
+        self.dataStore = dataStore;
         // App inactive/active for incoming calls, notification center, and taskbar
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(didBecomeActive)
@@ -48,12 +49,7 @@ NSString *const UAApplicationMetricLastOpenDate = @"UAApplicationMetricLastOpenD
 }
 
 + (instancetype)applicationMetricsWithDataStore:(UAPreferenceDataStore *)dataStore {
-    UAApplicationMetrics *metrics = [[UAApplicationMetrics alloc] init];
-    metrics.dataStore = dataStore;
-
-    [metrics.dataStore migrateUnprefixedKeys:@[UAApplicationMetricLastOpenDate]];
-
-    return metrics;
+    return [[UAApplicationMetrics alloc] initWithDataStore:dataStore];
 }
 
 - (void)didBecomeActive {
