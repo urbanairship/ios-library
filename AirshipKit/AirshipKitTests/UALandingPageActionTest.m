@@ -27,7 +27,6 @@
 #import <OCMock/OCMock.h>
 #import "UALandingPageAction.h"
 #import "UAURLProtocol.h"
-#import "UAHTTPConnection+Internal.h"
 #import "UALandingPageOverlayController.h"
 #import "UAAction+Internal.h"
 #import "UAirship.h"
@@ -38,7 +37,6 @@
 
 @property (nonatomic, strong) id mockURLProtocol;
 @property (nonatomic, strong) id mockLandingPageOverlayController;
-@property (nonatomic, strong) id mockHTTPConnection;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockConfig;
 @property (nonatomic, strong) UALandingPageAction *action;
@@ -52,7 +50,6 @@
     self.action = [[UALandingPageAction alloc] init];
     self.mockURLProtocol = [OCMockObject niceMockForClass:[UAURLProtocol class]];
     self.mockLandingPageOverlayController = [OCMockObject niceMockForClass:[UALandingPageOverlayController class]];
-    self.mockHTTPConnection = [OCMockObject niceMockForClass:[UAHTTPConnection class]];
 
     self.mockConfig = [OCMockObject niceMockForClass:[UAConfig class]];
     self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
@@ -64,13 +61,11 @@
     [[[self.mockConfig stub] andReturn:kUAProductionLandingPageContentURL] landingPageContentURL];
     [[[self.mockConfig stub] andReturn:@"app-secret"] appSecret];
     [[[self.mockConfig stub] andReturnValue:OCMOCK_VALUE((NSUInteger)100)] cacheDiskSizeInMB];
-
 }
 
 - (void)tearDown {
     [self.mockLandingPageOverlayController stopMocking];
     [self.mockURLProtocol stopMocking];
-    [self.mockHTTPConnection stopMocking];
     [self.mockAirship stopMocking];
     [self.mockConfig stopMocking];
     [super tearDown];
@@ -122,49 +117,6 @@
                              expectedHeaders:@{@"Authorization": [UAUtils appAuthHeaderString]}];
 }
 
-/**
- * Test perform in foreground situations
- */
-- (void)testPerformInBackground {
-    // Verify https is added to schemeless urls
-    [self verifyPerformInBackgroundWithValue:@"foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com" successful:YES];
-
-    // Verify common scheme types
-    [self verifyPerformInBackgroundWithValue:@"http://foo.urbanairship.com" expectedUrl:@"http://foo.urbanairship.com" successful:YES];
-    [self verifyPerformInBackgroundWithValue:@"https://foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com" successful:YES];
-    [self verifyPerformInBackgroundWithValue:[NSURL URLWithString:@"https://foo.urbanairship.com"] expectedUrl:@"https://foo.urbanairship.com" successful:YES];
-    [self verifyPerformInBackgroundWithValue:@"file://foo.urbanairship.com" expectedUrl:@"file://foo.urbanairship.com" successful:YES];
-
-    // Verify content urls - https://dl.urbanairship.com/<app>/<id>
-    // u:<id> where id is ascii85 encoded... so it needs to be url encoded
-    [self verifyPerformInBackgroundWithValue:@"u:<~@rH7,ASuTABk.~>"
-                                 expectedUrl:@"https://dl.urbanairship.com/aaa/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E"
-                            expectedUsername:@"app-key"
-                            expectedPassword:@"app-secret"
-                                  successful:YES];
-}
-
-/**
- * Test perform in background situation when caching fails
- */
-- (void)testPerformInBackgroundFail {
-    // Verify https is added to schemeless urls
-    [self verifyPerformInBackgroundWithValue:@"foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com" successful:NO];
-
-    // Verify common scheme types
-    [self verifyPerformInBackgroundWithValue:@"http://foo.urbanairship.com" expectedUrl:@"http://foo.urbanairship.com" successful:NO];
-    [self verifyPerformInBackgroundWithValue:@"https://foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com" successful:NO];
-    [self verifyPerformInBackgroundWithValue:@"file://foo.urbanairship.com" expectedUrl:@"file://foo.urbanairship.com" successful:NO];
-
-    // Verify content urls - https://dl.urbanairship.com/<app>/<id>
-    // u:<id> where id is ascii85 encoded... so it needs to be url encoded
-    [self verifyPerformInBackgroundWithValue:@"u:<~@rH7,ASuTABk.~>"
-                                 expectedUrl:@"https://dl.urbanairship.com/aaa/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E"
-                            expectedUsername:@"app-key"
-                            expectedPassword:@"app-secret"
-                                  successful:NO];
-}
-
 
 /**
  * Helper method to verify perform in foreground situations
@@ -196,60 +148,6 @@
 }
 
 /**
- * Helper method to verify perform in background situations
- */
-- (void)verifyPerformInBackgroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl
-                          expectedUsername:(NSString *)username
-                          expectedPassword:(NSString *)password
-                                successful:(BOOL)successful  {
-
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:value withSituation:UASituationBackgroundPush];
-
-    __block UAHTTPConnectionSuccessBlock success;
-    __block UAHTTPConnectionFailureBlock failure;
-    __block UAHTTPRequest *request;
-
-    [[[self.mockHTTPConnection expect] andReturn:self.mockHTTPConnection]
-     connectionWithRequest:[OCMArg checkWithBlock:^(id obj) {
-        request = obj;
-        return YES;
-    }] successBlock:[OCMArg checkWithBlock:^(id obj) {
-        success = obj;
-        return YES;
-    }] failureBlock:[OCMArg checkWithBlock:^(id obj) {
-        failure = obj;
-        return YES;
-    }]];
-
-    [(UAHTTPConnection *)[[self.mockHTTPConnection expect] andDo:^(NSInvocation *inv) {
-        if (successful) {
-            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:request.url
-                                                                      statusCode:200
-                                                                     HTTPVersion:nil
-                                                                    headerFields:nil];
-            [request setValue:response forKey:@"response"];
-            success(request);
-        } else {
-            failure(request);
-        }
-    }] start];
-
-    UAActionFetchResult expectedResult = successful? UAActionFetchResultNewData : UAActionFetchResultFailed;
-
-    [self verifyPerformWithArgs:args withExpectedUrl:expectedUrl withExpectedFetchResult:expectedResult];
-
-    XCTAssertEqualObjects(username, request.username, @"Invalid user name");
-    XCTAssertEqualObjects(password, request.password, @"Invalid user name");
-}
-
-/**
- * Helper method to verify perform in background situations with no auth expected
- */
-- (void)verifyPerformInBackgroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl successful:(BOOL)successful  {
-    [self verifyPerformInBackgroundWithValue:value expectedUrl:expectedUrl expectedUsername:nil expectedPassword:nil successful:successful];
-}
-
-/**
  * Helper method to verify perform
  */
 - (void)verifyPerformWithArgs:(UAActionArguments *)args withExpectedUrl:(NSString *)expectedUrl withExpectedFetchResult:(UAActionFetchResult)fetchResult {
@@ -268,7 +166,6 @@
 
     [self.mockURLProtocol verify];
     [self.mockLandingPageOverlayController verify];
-    [self.mockHTTPConnection verify];
 
     XCTAssertTrue(finished, @"action should have completed");
 }
