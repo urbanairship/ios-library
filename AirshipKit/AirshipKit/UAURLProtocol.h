@@ -25,8 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
-#define kUASkipProtocolHeader @"UA-Client-Protocol"
-#define kUACacheMemorySizeInMB  5 * 1024 * 1024 // 5 MB
+#define kUACacheMemorySizeInBytes  5 * 1024 * 1024 // 5 MB
 
 NS_ASSUME_NONNULL_BEGIN
 
