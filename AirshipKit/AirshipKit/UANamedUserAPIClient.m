@@ -26,43 +26,22 @@
 #import "UANamedUserAPIClient+Internal.h"
 #import "UAConfig.h"
 #import "UAUtils.h"
-#import "UAHTTPRequestEngine+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 
-#define kUANamedUserRetryTimeInitialDelay 60    // 60 seconds
-#define kUANamedUserRetryTimeMultiplier 2
-#define kUANamedUserRetryTimeMaxDelay 300       // 300 seconds
 #define kUANamedUserPath @"/api/named_users"
 #define kUANamedUserChannelIDKey @"channel_id"
 #define kUANamedUserDeviceTypeKey @"device_type"
 #define kUANamedUserIdentifierKey @"named_user_id"
 
-@interface UANamedUserAPIClient()
-@property (nonatomic, copy) NSString *urlString;
-@property (nonatomic, strong) UAConfig *config;
-
-@end
-
 @implementation UANamedUserAPIClient
 
-- (instancetype)initWithConfig:(UAConfig *)config {
-    self = [super init];
-    if (self) {
-        self.config = config;
-        self.requestEngine = [[UAHTTPRequestEngine alloc] init];
-        self.requestEngine.initialDelayIntervalInSeconds = kUANamedUserRetryTimeInitialDelay;
-        self.requestEngine.maxDelayIntervalInSeconds = kUANamedUserRetryTimeMaxDelay;
-        self.requestEngine.backoffFactor = kUANamedUserRetryTimeMultiplier;
-        self.shouldRetryOnConnectionError = YES;
-        self.urlString = [NSString stringWithFormat:@"%@%@", config.deviceAPIURL, kUANamedUserPath];
-    }
-    return self;
-}
-
 + (instancetype)clientWithConfig:(UAConfig *)config {
-    return [[self alloc] initWithConfig:config];
+    return [[self alloc] initWithConfig:config session:[UARequestSession sessionWithConfig:config]];
 }
 
++ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session {
+    return [[self alloc] initWithConfig:config session:session];
+}
 
 - (void)associate:(NSString *)identifier
         channelID:(NSString *)channelID
@@ -81,40 +60,41 @@
 
     UA_LTRACE(@"Associating channel %@ with named user ID: %@", channelID, identifier);
 
+
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];
     [payload setValue:channelID forKey:kUANamedUserChannelIDKey];
     [payload setObject:@"ios" forKey:kUANamedUserDeviceTypeKey];
     [payload setValue:identifier forKey:kUANamedUserIdentifierKey];
 
-    UAHTTPRequest *request = [self requestWithPayload:payload
-                              urlString:[NSString stringWithFormat:@"%@%@", self.urlString, @"/associate"]];
+    NSString *urlString = [NSString stringWithFormat:@"%@%@", self.config.deviceAPIURL, kUANamedUserPath];
+    UARequest *request = [self requestWithPayload:payload
+                                        urlString:[NSString stringWithFormat:@"%@%@", urlString, @"/associate"]];
 
-    [self.requestEngine runRequest:request succeedWhere:^BOOL(UAHTTPRequest *request) {
-        NSInteger status = request.response.statusCode;
-        return (BOOL)(status >= 200 && status <= 299);
-    } retryWhere:^BOOL(UAHTTPRequest *request) {
-        if (self.shouldRetryOnConnectionError) {
-            NSInteger status = request.response.statusCode;
-            return (BOOL)(((status >= 500 && status <= 599) || request.error));
+    [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
+        NSHTTPURLResponse *httpResponse = nil;
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            httpResponse = (NSHTTPURLResponse *) response;
         }
-        return NO;
-    } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        NSString *responseString = request.responseString;
-        UA_LTRACE(@"Retrieved named user response: %@", responseString);
 
-        if (successBlock) {
-            successBlock();
-        } else {
-            UA_LERR(@"Missing successBlock");
+        NSInteger status = httpResponse.statusCode;
+        return (BOOL)(status >= 500 && status <= 599);
+    } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        NSHTTPURLResponse *httpResponse = nil;
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            httpResponse = (NSHTTPURLResponse *) response;
         }
-    } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-       // [UAUtils logFailedRequest:request withMessage:@"Associating named user"];
+        NSInteger status = httpResponse.statusCode;
 
-        if (failureBlock) {
-            failureBlock(request);
-        } else {
-            UA_LERR(@"Missing failureBlock");
+        // Failure
+        if (!(status >= 200 && status <= 299)) {
+            UA_LTRACE(@"Failed to associate named user with status: %ld", status);
+            failureBlock(status);
+            return;
         }
+
+        // Success
+        UA_LTRACE(@"Associated named user with status: %ld", status);
+        successBlock();
     }];
 }
 
@@ -133,49 +113,52 @@
     [payload setValue:channelID forKey:kUANamedUserChannelIDKey];
     [payload setObject:@"ios" forKey:kUANamedUserDeviceTypeKey];
 
-    UAHTTPRequest *request = [self requestWithPayload:payload
-                              urlString:[NSString stringWithFormat:@"%@%@", self.urlString, @"/disassociate"]];
+    NSString *urlString = [NSString stringWithFormat:@"%@%@", self.config.deviceAPIURL, kUANamedUserPath];
+    UARequest *request = [self requestWithPayload:payload
+                                        urlString:[NSString stringWithFormat:@"%@%@", urlString, @"/disassociate"]];
 
-    [self.requestEngine runRequest:request succeedWhere:^BOOL(UAHTTPRequest *request) {
-        NSInteger status = request.response.statusCode;
-        return (BOOL)(status >= 200 && status <= 299);
-    } retryWhere:^BOOL(UAHTTPRequest *request) {
-        if (self.shouldRetryOnConnectionError) {
-            NSInteger status = request.response.statusCode;
-            return (BOOL)(((status >= 500 && status <= 599) || request.error));
+    [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
+        NSHTTPURLResponse *httpResponse = nil;
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            httpResponse = (NSHTTPURLResponse *) response;
         }
-        return NO;
-    } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        NSString *responseString = request.responseString;
-        UA_LTRACE(@"Retrieved named user response: %@", responseString);
+        NSInteger status = httpResponse.statusCode;
+        return (BOOL)(status >= 500 && status <= 599);
 
-        if (successBlock) {
-            successBlock();
-        } else {
-            UA_LERR(@"Missing successBlock");
-        }
-    } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        //[UAUtils logFailedRequest:request withMessage:@"Disassociating named user"];
 
-        if (failureBlock) {
-            failureBlock(request);
-        } else {
-            UA_LERR(@"Missing failureBlock");
+    } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        NSHTTPURLResponse *httpResponse = nil;
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            httpResponse = (NSHTTPURLResponse *) response;
         }
+        NSInteger status = httpResponse.statusCode;
+
+        // Failure
+        if (!(status >= 200 && status <= 299)) {
+            UA_LTRACE(@"Failed to dissociate named user with status: %ld", status);
+            failureBlock(status);
+            return;
+        }
+
+        // Success
+        UA_LTRACE(@"Dissociated named user with status: %ld", status);
+        successBlock();
     }];
 }
 
-- (UAHTTPRequest *)requestWithPayload:(NSDictionary *)payload urlString:(NSString *)urlString {
+- (UARequest *)requestWithPayload:(NSDictionary *)payload urlString:(NSString *)urlString {
 
-    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:[NSURL URLWithString:urlString]];
-    request.HTTPMethod = @"POST";
-    request.username = self.config.appKey;
-    request.password = self.config.appSecret;
-    [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
-    [request addRequestHeader: @"Content-Type" value: @"application/json"];
-
-    NSString *body = [NSJSONSerialization stringWithObject:payload];
-    [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
+    UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
+        builder.method = @"POST";
+        builder.URL = [NSURL URLWithString:urlString];
+        builder.username = self.config.appKey;
+        builder.password = self.config.appSecret;
+        [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
+        [builder setValue:@"application/json" forHeader:@"Content-Type"];
+        builder.body = [NSJSONSerialization dataWithJSONObject:payload
+                                                       options:0
+                                                         error:nil];
+    }];
 
     return request;
 }

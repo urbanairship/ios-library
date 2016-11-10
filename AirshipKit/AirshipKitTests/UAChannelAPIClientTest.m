@@ -26,11 +26,9 @@
 #import <XCTest/XCTest.h>
 #import <OCMOCK/OCMock.h>
 #import <Foundation/Foundation.h>
-#import "UAHTTPRequestEngine+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAChannelAPIClient+Internal.h"
 #import "UAirship.h"
-#import "UAHTTPRequest+Internal.h"
 #import "UAConfig.h"
 #import "UAAnalytics+Internal.h"
 

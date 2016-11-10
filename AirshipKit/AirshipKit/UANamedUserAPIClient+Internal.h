@@ -24,9 +24,8 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "UAAPIClient+Internal.h"
 
-@class UAHTTPRequestEngine;
-@class UAHTTPRequest;
 @class UAConfig;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -39,15 +38,14 @@ typedef void (^UANamedUserAPIClientSuccessBlock)();
 /**
  * A block called when named user association or disassociation failed.
  *
- * @param request The request that failed.
+ * @param status The failed request status.
  */
-typedef void (^UANamedUserAPIClientFailureBlock)(UAHTTPRequest *request);
+typedef void (^UANamedUserAPIClientFailureBlock)(NSUInteger status);
 
 /**
  * A high level abstraction for performing Named User API association and disassociation.
  */
-@interface UANamedUserAPIClient : NSObject
-
+@interface UANamedUserAPIClient : UAAPIClient
 
 /**
  * Factory method to create a UANamedUserAPIClient.
@@ -55,6 +53,14 @@ typedef void (^UANamedUserAPIClientFailureBlock)(UAHTTPRequest *request);
  * @return UANamedUserAPIClient instance.
  */
 + (instancetype)clientWithConfig:(UAConfig *)config;
+
+/**
+ * Factory method to create a UANamedUserAPIClient.
+ * @param config the Urban Airship config.
+ * @param session the request session.
+ * @return UANamedUserAPIClient instance.
+ */
++ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session;
 
 /**
  * Associates the channel to the named user ID.
@@ -83,19 +89,6 @@ typedef void (^UANamedUserAPIClientFailureBlock)(UAHTTPRequest *request);
 - (void)disassociate:(NSString *)channelID
            onSuccess:(UANamedUserAPIClientSuccessBlock)successBlock
            onFailure:(UANamedUserAPIClientFailureBlock)failureBlock;
-
-/**
- * Indicates whether the client should attempt to automatically retry HTTP connections
- * under recoverable conditions (most 5xx status codes, reachability errors, etc).
- * In this case, the client will perform exponential backoff and schedule reconnections
- * accordingly before calling back with a success or failure.  Defaults to `YES`.
- */
-@property (nonatomic, assign) BOOL shouldRetryOnConnectionError;
-
-/**
- * The client's request engine.
- */
-@property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
 
 @end
 

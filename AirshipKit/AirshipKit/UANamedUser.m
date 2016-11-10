@@ -177,7 +177,7 @@ NSString *const UANamedUserRemoveTagGroupsSettingsKey = @"UANamedUserRemoveTagGr
          self.lastUpdatedToken = token;
          UA_LDEBUG(@"Named user associated to channel successfully.");
      }
-     onFailure:^(UAHTTPRequest *request) {
+     onFailure:^(NSUInteger status) {
          UA_LDEBUG(@"Failed to associate channel to named user.");
      }];
 }
@@ -189,7 +189,7 @@ NSString *const UANamedUserRemoveTagGroupsSettingsKey = @"UANamedUserRemoveTagGr
          self.lastUpdatedToken = token;
          UA_LDEBUG(@"Named user disassociated from channel successfully.");
      }
-     onFailure:^(UAHTTPRequest *request) {
+     onFailure:^(NSUInteger status) {
          UA_LDEBUG(@"Failed to disassociate channel from named user.");
      }];
 }

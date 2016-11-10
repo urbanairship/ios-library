@@ -28,13 +28,11 @@
 #import "UAConfig.h"
 #import "UANamedUserAPIClient+Internal.h"
 #import "UAirship.h"
-#import "UAHTTPRequestEngine+Internal.h"
-#import "UAHTTPRequest+Internal.h"
 
 @interface UANamedUserAPIClientTest : XCTestCase
 
-@property (nonatomic, strong) id mockRequestEngine;
 @property (nonatomic, strong) id mockAirship;
+@property (nonatomic, strong) id mockSession;
 @property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UANamedUserAPIClient *client;
 
@@ -47,17 +45,17 @@
 
     self.config = [UAConfig config];
 
+    self.mockSession = [OCMockObject niceMockForClass:[UARequestSession class]];
+
     self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.config] config];
 
-    self.mockRequestEngine = [OCMockObject niceMockForClass:[UAHTTPRequestEngine class]];
-    self.client = [UANamedUserAPIClient clientWithConfig:self.config];
-    self.client.requestEngine = self.mockRequestEngine;
+    self.client = [UANamedUserAPIClient clientWithConfig:self.config session:self.mockSession];
 }
 
 - (void)tearDown {
-    [self.mockRequestEngine stopMocking];
+    [self.mockSession stopMocking];
     [self.mockAirship stopMocking];
 
     [super tearDown];
@@ -67,24 +65,17 @@
  * Test associate named user retries on 5xx status codes.
  */
 - (void)testAssociateRetriesFailedRequests {
-
     // Check that the retry block returns YES for any 5xx request
     BOOL (^retryBlockCheck)(id obj) = ^(id obj) {
-        UAHTTPRequestEngineWhereBlock retryBlock = obj;
+        UARequestRetryBlock retryBlock = obj;
 
         for (NSInteger i = 500; i < 600; i++) {
-            UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-            request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
+            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+                                                                      statusCode:i
+                                                                     HTTPVersion:nil
+                                                                    headerFields:nil];
 
-            // If shouldRetryOnConnection is NO, never retry
-            self.client.shouldRetryOnConnectionError = NO;
-            if (retryBlock(request)) {
-                return NO;
-            }
-
-            // Allow it to retry on 5xx and error results
-            self.client.shouldRetryOnConnectionError = YES;
-            BOOL retryResult = retryBlock(request);
+            BOOL retryResult = retryBlock(nil, response);
 
             if (retryResult) {
                 continue;
@@ -94,114 +85,110 @@
         }
 
         // Check that it returns NO for 400 status codes
-        UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
-        if (retryBlock(request)) {
+        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+                                                                  statusCode:400
+                                                                 HTTPVersion:nil
+                                                                headerFields:nil];
+        if (retryBlock(nil, response)) {
             return NO;
         }
 
         return YES;
     };
 
-    [[self.mockRequestEngine expect] runRequest:OCMOCK_ANY
-                                   succeedWhere:OCMOCK_ANY
-                                     retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
-                                      onSuccess:OCMOCK_ANY
-                                      onFailure:OCMOCK_ANY];
+    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
+                                        retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
+                                 completionHandler:OCMOCK_ANY];
 
     [self.client associate:@"fakeNamedUserID"
                  channelID:@"fakeChannel"
-                 onSuccess:^{}
-                 onFailure:^(UAHTTPRequest *request){}];
-    XCTAssertNoThrow([self.mockRequestEngine verify],
-                     @"Associate named user should call retry on 5xx status codes.");
+                 onSuccess:^{
+                     XCTFail(@"Should not be called");
+                 }
+                 onFailure:^(NSUInteger status){
+                     XCTFail(@"Should not be called");
+                 }];
+
+    [self.mockSession verify];
 }
 
 /**
  * Test associate named user succeeds request when status is 2xx.
  */
 -(void)testAssociateSucceedsRequest {
-    BOOL (^whereBlockCheck)(id obj) = ^(id obj) {
-        UAHTTPRequestEngineWhereBlock whereBlock = obj;
+    __block int successBlockCalls = 0;
+
+    BOOL (^completionBlockCheck)(id obj) = ^(id obj) {
+        UARequestCompletionHandler completion = obj;
 
         for (NSInteger i = 200; i < 300; i++) {
-            UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-            request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
-            if (!whereBlock(request)) {
-                return NO;
-            }
+            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+                                                                      statusCode:i
+                                                                     HTTPVersion:nil
+                                                                    headerFields:nil];
+            completion(OCMOCK_ANY, response, nil);
         }
 
         return YES;
     };
 
-    [[self.mockRequestEngine expect] runRequest:OCMOCK_ANY
-                                   succeedWhere:[OCMArg checkWithBlock:whereBlockCheck]
-                                     retryWhere:OCMOCK_ANY
-                                      onSuccess:OCMOCK_ANY
-                                      onFailure:OCMOCK_ANY];
+    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
+                                        retryWhere:OCMOCK_ANY
+                                 completionHandler:[OCMArg checkWithBlock:completionBlockCheck]];
 
     [self.client associate:@"fakeNamedUserID"
                  channelID:@"fakeChannel"
-                 onSuccess:^{}
-                 onFailure:^(UAHTTPRequest *request){}];
+                 onSuccess:^{
+                     successBlockCalls++;
+                 }
+                 onFailure:^(NSUInteger status){
+                     XCTFail(@"Should not be called");
+                 }];
 
-    XCTAssertNoThrow([self.mockRequestEngine verify],
-                     @"Associate named user should succeed on 2xx status codes.");
+    // Success block should be called once for every HTTP status from 200 to 299
+    XCTAssert(successBlockCalls == 100);
+
+    [self.mockSession verify];
 }
 
 /**
- * Test associate named user calls the onSuccessBlock when the request is successful.
- */
-- (void)testAssociateOnSuccess {
-    __block BOOL onSuccessCalled = NO;
-
-    // Set up a request with a valid response body
-    UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-    NSString *response = @"{ \"ok\":true }";
-    request.responseData = [response dataUsingEncoding:NSUTF8StringEncoding];
-
-    // Expect the run request and call the success block
-    [[[self.mockRequestEngine stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:5];
-        UAHTTPRequestEngineSuccessBlock successBlock = (__bridge UAHTTPRequestEngineSuccessBlock)arg;
-
-        successBlock(request, 0);
-    }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
-
-    [self.client associate:@"fakeNamedUserID" channelID:@"fakeChannel" onSuccess:^{
-        onSuccessCalled = YES;
-    } onFailure:^(UAHTTPRequest *request){}];
-
-    XCTAssertTrue(onSuccessCalled, @"Associate named user should call onSuccess block when its successful.");
-}
-
-/**
- * Test associate named user calls the on FailureBlock with the failed request
+ * Test associate named user calls the FailureBlock with the failed request
  * when the request fails.
  */
 - (void)testAssociateOnFailure {
-    __block UAHTTPRequest *failedRequest;
+    __block int failureBlockCalls = 0;
 
-    UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
+    BOOL (^completionBlockCheck)(id obj) = ^(id obj) {
+        UARequestCompletionHandler completion = obj;
 
-    // Expect the run request and call the failure block
-    [[[self.mockRequestEngine stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:6];
-        UAHTTPRequestEngineFailureBlock failureBlock = (__bridge UAHTTPRequestEngineFailureBlock)arg;
-        failureBlock(request, 0);
-    }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
+        for (NSInteger i = 400; i < 500; i++) {
+            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+                                                                      statusCode:i
+                                                                     HTTPVersion:nil
+                                                                    headerFields:nil];
+            completion(OCMOCK_ANY, response, nil);
+        }
+
+        return YES;
+    };
+
+    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
+                                        retryWhere:OCMOCK_ANY
+                                 completionHandler:[OCMArg checkWithBlock:completionBlockCheck]];
 
     [self.client associate:@"fakeNamedUserID"
                  channelID:@"fakeChannel"
-                 onSuccess:^{}
-                 onFailure:^(UAHTTPRequest *request) {
-                     failedRequest = request;
+                 onSuccess:^{
+                     XCTFail(@"Should not be called");
+                 }
+                 onFailure:^(NSUInteger status){
+                     failureBlockCalls++;
                  }];
 
-    XCTAssertEqualObjects(request, failedRequest, @"Failure block should return the failed request.");
+    // Failure block should be called once for every HTTP status from 400 to 499
+    XCTAssert(failureBlockCalls == 100);
+    
+    [self.mockSession verify];
 }
 
 /**
@@ -211,21 +198,14 @@
 
     // Check that the retry block returns YES for any 5xx request
     BOOL (^retryBlockCheck)(id obj) = ^(id obj) {
-        UAHTTPRequestEngineWhereBlock retryBlock = obj;
+        UARequestRetryBlock retryBlock = obj;
 
         for (NSInteger i = 500; i < 600; i++) {
-            UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-            request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
-
-            // If shouldRetryOnConnection is NO, never retry
-            self.client.shouldRetryOnConnectionError = NO;
-            if (retryBlock(request)) {
-                return NO;
-            }
-
-            // Allow it to retry on 5xx and error results
-            self.client.shouldRetryOnConnectionError = YES;
-            BOOL retryResult = retryBlock(request);
+            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+                                                                      statusCode:i
+                                                                     HTTPVersion:nil
+                                                                    headerFields:nil];
+            BOOL retryResult = retryBlock(nil, response);
 
             if (retryResult) {
                 continue;
@@ -235,112 +215,107 @@
         }
 
         // Check that it returns NO for 400 status codes
-        UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
-        if (retryBlock(request)) {
+        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+                                                                  statusCode:400
+                                                                 HTTPVersion:nil
+                                                                headerFields:nil];
+        if (retryBlock(nil, response)) {
             return NO;
         }
 
         return YES;
     };
 
-    [[self.mockRequestEngine expect] runRequest:OCMOCK_ANY
-                                   succeedWhere:OCMOCK_ANY
-                                     retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
-                                      onSuccess:OCMOCK_ANY
-                                      onFailure:OCMOCK_ANY];
+    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
+                                        retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
+                                 completionHandler:OCMOCK_ANY];
 
-    [self.client disassociate:@"fakeChannel"
-                    onSuccess:^{}
-                    onFailure:^(UAHTTPRequest *request){}];
-    XCTAssertNoThrow([self.mockRequestEngine verify],
-                     @"Disassociate named user should call retry on 5xx status codes.");
+    [self.client disassociate:@"fakeNamedUserID" onSuccess:^{
+        XCTFail(@"Should not be called");
+    } onFailure:^(NSUInteger status) {
+        XCTFail(@"Should not be called");
+
+    }];
+
+    [self.mockSession verify];
 }
 
 /**
  * Test disassociate named user succeeds request when status is 2xx.
  */
 -(void)testDisassociateSucceedsRequest {
-    BOOL (^whereBlockCheck)(id obj) = ^(id obj) {
-        UAHTTPRequestEngineWhereBlock whereBlock = obj;
+    BOOL (^completionBlockCheck)(id obj) = ^(id obj) {
+        UARequestCompletionHandler completion = obj;
 
         for (NSInteger i = 200; i < 300; i++) {
-            UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-            request.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
-            if (!whereBlock(request)) {
-                return NO;
-            }
+            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+                                                                      statusCode:i
+                                                                     HTTPVersion:nil
+                                                                    headerFields:nil];
+            completion(OCMOCK_ANY, response, nil);
         }
 
         return YES;
     };
 
-    [[self.mockRequestEngine expect] runRequest:OCMOCK_ANY
-                                   succeedWhere:[OCMArg checkWithBlock:whereBlockCheck]
-                                     retryWhere:OCMOCK_ANY
-                                      onSuccess:OCMOCK_ANY
-                                      onFailure:OCMOCK_ANY];
+    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
+                                        retryWhere:OCMOCK_ANY
+                                 completionHandler:[OCMArg checkWithBlock:completionBlockCheck]];
 
-    [self.client disassociate:@"fakeChannel"
-                    onSuccess:^{}
-                    onFailure:^(UAHTTPRequest *request){}];
+    __block int successBlockCalls = 0;
 
-    XCTAssertNoThrow([self.mockRequestEngine verify],
-                     @"Disassociate named user should succeed on 2xx status codes.");
+    [self.client disassociate:@"fakeNamedUserID"
+                 onSuccess:^{
+                     successBlockCalls++;
+                 }
+                 onFailure:^(NSUInteger status){
+                     XCTFail(@"Should not be called");
+                 }];
+
+    // Success block should be called once for every HTTP status from 200 to 299
+    XCTAssert(successBlockCalls == 100);
+    
+    [self.mockSession verify];
 }
 
 /**
- * Test disassociate named user calls the onSuccessBlock when the request is successful.
- */
-- (void)testDisassociateOnSuccess {
-    __block BOOL onSuccessCalled = NO;
-
-    // Set up a request with a valid response body
-    UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-    NSString *response = @"{ \"ok\":true }";
-    request.responseData = [response dataUsingEncoding:NSUTF8StringEncoding];
-
-    // Expect the run request and call the success block
-    [[[self.mockRequestEngine stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:5];
-        UAHTTPRequestEngineSuccessBlock successBlock = (__bridge UAHTTPRequestEngineSuccessBlock)arg;
-
-        successBlock(request, 0);
-    }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
-
-    [self.client disassociate:@"fakeChannel"
-                    onSuccess:^{
-                        onSuccessCalled = YES;
-                    } onFailure:^(UAHTTPRequest *request){}];
-
-    XCTAssertTrue(onSuccessCalled, @"Disassociate named user should call onSuccess block when its successful.");
-}
-
-/**
- * Test disassociate named user calls the on FailureBlock with the failed request
+ * Test disassociate named user calls the FailureBlock with the failed request
  * when the request fails.
  */
 - (void)testDisassociateOnFailure {
-    __block UAHTTPRequest *failedRequest;
+    __block int failureBlockCalls = 0;
 
-    UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
+    BOOL (^completionBlockCheck)(id obj) = ^(id obj) {
+        UARequestCompletionHandler completion = obj;
 
-    // Expect the run request and call the failure block
-    [[[self.mockRequestEngine stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:6];
-        UAHTTPRequestEngineFailureBlock failureBlock = (__bridge UAHTTPRequestEngineFailureBlock)arg;
-        failureBlock(request, 0);
-    }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
+        for (NSInteger i = 400; i < 500; i++) {
+            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+                                                                      statusCode:i
+                                                                     HTTPVersion:nil
+                                                                    headerFields:nil];
 
-    [self.client disassociate:@"fakeChannel"
-                    onSuccess:^{}
-                    onFailure:^(UAHTTPRequest *request) {
-                        failedRequest = request;
-                    }];
+            completion(OCMOCK_ANY, response, nil);
+        }
 
-    XCTAssertEqualObjects(request, failedRequest, @"Failure block should return the failed request.");
+        return YES;
+    };
+
+    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
+                                        retryWhere:OCMOCK_ANY
+                                 completionHandler:[OCMArg checkWithBlock:completionBlockCheck]];
+
+    [self.client disassociate:@"fakeNamedUserID"
+                 onSuccess:^{
+                     XCTFail(@"Should not be called");
+                 }
+                 onFailure:^(NSUInteger status){
+                     failureBlockCalls++;
+                 }];
+
+    // Failure block should be called once for every HTTP status from 400 to 499
+    XCTAssert(failureBlockCalls == 100);
+    
+    [self.mockSession verify];
 }
 
 @end
