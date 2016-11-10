@@ -24,73 +24,48 @@
  */
 
 #import "UAURLProtocol.h"
-#import "UAInbox.h"
-#import "UAInboxMessage.h"
-#import "UAInboxMessageList.h"
-#import "UAHTTPRequest+Internal.h"
-#import "UAHTTPConnection+Internal.h"
 #import "UAirship.h"
 #import "UAConfig.h"
 
-
 @interface UAURLProtocol()
-
-@property (nonatomic, strong) UAHTTPConnection *connection;
-
+@property (nonatomic, strong) NSURLSessionDataTask *dataTask;
 @end
 
 @implementation UAURLProtocol
 
-static NSMutableOrderedSet *cachableURLs_ = nil;
+static NSMutableSet *cachableURLs_ = nil;
 static NSURLCache *cache_ = nil;
 
++ (void) load {
+    cachableURLs_ = [NSMutableSet set];
+}
 
 + (BOOL)canInitWithRequest:(NSURLRequest *)request {
-    // The following conditions will return NO:
-    // If the request header field contains kUASkipProtocolHeader
-    // If the request HTTPMethod is not 'GET'
-    // If the request URL scheme is not 'http' or 'https'
-    if ([request valueForHTTPHeaderField:kUASkipProtocolHeader] || ![request.HTTPMethod isEqual:@"GET"]
-        || !([[[request.URL scheme] lowercaseString] isEqualToString:@"http"] ||
-             [[[request.URL scheme] lowercaseString] isEqualToString:@"https"])) {
+    // Reject non GET requests
+    if (![request.HTTPMethod isEqualToString:@"GET"]) {
         return NO;
     }
 
-    return [[self cachableURLs] containsObject:request.URL]
-            || [[self cachableURLs] containsObject:request.mainDocumentURL];
-
-}
-
-+ (NSMutableOrderedSet *)cachableURLs {
-    @synchronized(self) {
-        if (!cachableURLs_) {
-            cachableURLs_ = [NSMutableOrderedSet orderedSet];
-        }
+    // Reject any non HTTP or HTTPS requests
+    if (![request.URL.scheme isEqualToString:@"http"] && ![request.URL.scheme isEqualToString:@"https"]) {
+        return NO;
     }
 
+    // Make sure its cachabable URL
+    return [[self cachableURLs] containsObject:request.URL] || [[self cachableURLs] containsObject:request.mainDocumentURL];
+}
+
++ (NSMutableSet *)cachableURLs {
     return cachableURLs_;
 }
 
 + (NSURLCache *)cache {
-    @synchronized(self) {
-        if (!cache_) {
-
-            NSString *diskCachePath = nil;
-            NSArray *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-            if ([cachePaths count]) {
-                NSString *cacheDirectory = [cachePaths objectAtIndex:0];
-                diskCachePath = [NSString stringWithFormat:@"%@/%@", cacheDirectory, @"UAURLCache"];
-
-                [[NSFileManager defaultManager] createDirectoryAtPath:diskCachePath
-                                          withIntermediateDirectories:YES
-                                                           attributes:nil error:NULL];
-            }
-
-            cache_ = [[NSURLCache alloc] initWithMemoryCapacity:kUACacheMemorySizeInMB
-                                                  diskCapacity:[UAirship shared].config.cacheDiskSizeInMB
-                                                      diskPath:diskCachePath];
-        }
-    }
+    static dispatch_once_t onceToken_;
+    dispatch_once(&onceToken_, ^{
+        cache_ = [[NSURLCache alloc] initWithMemoryCapacity:kUACacheMemorySizeInBytes
+                                               diskCapacity:[UAirship shared].config.cacheDiskSizeInMB * 1024 * 1024
+                                                   diskPath:@"UAURLCache"];
+    });
 
     return cache_;
 }
@@ -114,85 +89,51 @@ static NSURLCache *cache_ = nil;
 - (void)startLoading {
     __weak UAURLProtocol *weakSelf = self;
 
-    UAHTTPConnectionSuccessBlock successBlock = ^(UAHTTPRequest *request){
-        UAURLProtocol *strongSelf = weakSelf;
-        UA_LTRACE(@"Received %ld for request %@.", (long)[request.response statusCode], request.url);
+    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    config.URLCache = [UAURLProtocol cache];
+    config.requestCachePolicy = NSURLRequestUseProtocolCachePolicy;
 
-        // 200, cache response
-        if ([request.response statusCode] == 200) {
-            UA_LTRACE(@"Caching response.");
-            NSCachedURLResponse *cachedResponse = [[NSCachedURLResponse alloc]initWithResponse:request.response
-                                                                                          data:request.responseData];
-            [[UAURLProtocol cache] storeCachedResponse:cachedResponse forRequest:strongSelf.request];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:config];
+    self.dataTask = [session dataTaskWithRequest:self.request
+                           completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
 
-            [strongSelf finishRequest:request.response responseData:request.responseData];
-        } else if (![strongSelf loadFromCache]) {
-            [strongSelf finishRequest:request.response responseData:request.responseData];
-        }
-    };
+                               UAURLProtocol *strongSelf = weakSelf;
 
-    UAHTTPConnectionFailureBlock failureBlock = ^(UAHTTPRequest *request){
-        UAURLProtocol *strongSelf = weakSelf;
-        UA_LTRACE(@"Error %@ for request %@, attempting to fall back to cache.", request.error, request.url);
-        if (![strongSelf loadFromCache]) {
-            [strongSelf finishRequest];
-        }
-    };
+                               if (error) {
+                                   // Try to force it to load from cache
+                                   if (![self loadFromCache]) {
+                                       [strongSelf.client URLProtocol:strongSelf didFailWithError:error];
+                                   }
 
-    self.connection = [UAHTTPConnection connectionWithRequest:[self createUAHTTPRequest]
-                                                 successBlock:successBlock
-                                                 failureBlock:failureBlock];
+                                   return;
+                               }
 
-    [self.connection start];
+                               [self finishRequestWithResponse:response responseData:data];
+                           }];
+
+    [self.dataTask resume];
 }
 
 - (void)stopLoading {
-    [self.connection cancel];
+    [self.dataTask cancel];
 }
 
 - (BOOL)loadFromCache {
     NSCachedURLResponse *cachedResponse = [[UAURLProtocol cache] cachedResponseForRequest:self.request];
     if (cachedResponse) {
-         UA_LTRACE(@"Loading response from cache.");
-        [self finishRequest:cachedResponse.response responseData:cachedResponse.data];
+        UA_LTRACE(@"Loading response from cache.");
+        [self finishRequestWithResponse:cachedResponse.response responseData:cachedResponse.data];
         return YES;
     }
 
-    UA_LTRACE(@"No cache for response %@", self.request.URL);
     return NO;
 }
 
-- (void)finishRequest {
-    [self.client URLProtocol:self didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCannotConnectToHost userInfo:nil]];
-}
-
-- (void)finishRequest:(NSURLResponse *)response responseData:(NSData *)data {
-    // NSURLCacheStorageNotAllowed - we handle the caching ourselves.
+- (void)finishRequestWithResponse:(NSURLResponse *)response responseData:(NSData *)data {
+    // NSURLCacheStorageNotAllowed - we handle the caching
     [self.client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
     [self.client URLProtocol:self didLoadData:data];
     [self.client URLProtocolDidFinishLoading:self];
-}
-
-- (UAHTTPRequest *)createUAHTTPRequest {
-    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:self.request.URL];
-
-    for (NSString *header in [self.request allHTTPHeaderFields]) {
-        [request addRequestHeader:header value:[self.request valueForHTTPHeaderField:header]];
-    }
-
-    NSHTTPURLResponse *cachedResponse = (NSHTTPURLResponse *)[[UAURLProtocol cache] cachedResponseForRequest:self.request].response;
-    if (cachedResponse) {
-        NSString *cachedDate = [[cachedResponse allHeaderFields] valueForKey:@"Date"];
-        [request addRequestHeader:@"If-Modified-Since" value:cachedDate];
-
-        UA_LTRACE(@"Request %@ previously cached %@", request.url, cachedDate);
-    }
-
-    // Add a special header to tell our protocol to ignore it so a different
-    // protocol will handle the request.
-    [request addRequestHeader:kUASkipProtocolHeader value:@""];
-
-    return request;
 }
 
 @end
