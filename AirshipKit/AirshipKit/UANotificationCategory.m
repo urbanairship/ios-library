@@ -97,10 +97,15 @@
         [actions addObject:[action asUNNotificationAction]];
     }
 
-    return [UNNotificationCategory categoryWithIdentifier:self.identifier
-                                                  actions:actions
-                                        intentIdentifiers:self.intentIdentifiers
-                                                  options:self.options];
+    // Prevents iOS 10 beta crash
+    if ([UNNotificationCategory respondsToSelector:@selector(categoryWithIdentifier:actions:intentIdentifiers:options:)]) {
+        return [UNNotificationCategory categoryWithIdentifier:self.identifier
+                                                      actions:actions
+                                            intentIdentifiers:self.intentIdentifiers
+                                                      options:self.options];
+    } else {
+        return nil;
+    }
 }
 
 - (BOOL)isEqualToUIUserNotificationCategory:(UIUserNotificationCategory *)category {
