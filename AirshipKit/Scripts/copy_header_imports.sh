@@ -15,6 +15,6 @@ fi
 rm -rf $FRAMEWORK_HEADERS_DIR/*.h
 
 # Find all public headers
-find ${SRCROOT}/AirshipKit -type f -name '*.h' ! -name '*+Internal.h' ! -path './UI/*'\
+find ${SRCROOT}/AirshipKit -type f -name '*.h' ! -name '*+Internal*.h' ! -path './UI/*'\
   -exec cp {} "$FRAMEWORK_HEADERS_DIR/" \; \
 

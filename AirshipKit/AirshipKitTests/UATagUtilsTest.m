@@ -25,7 +25,7 @@
 
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
-#import "UATagUtils.h"
+#import "UATagUtils+Internal.h"
 
 @interface UATagUtilsTest : XCTestCase
 @end
@@ -67,69 +67,4 @@
 
     XCTAssertNotEqualObjects(tags, [UATagUtils normalizeTags:tags], @"tag with 128 characters should not set");
 }
-
-/**
- * Tests if tags and tag group ID are valid
- */
-- (void)testIsValid {
-    NSArray *tags = @[];
-    NSString *tagGroupID = @"tagGroupID";
-    XCTAssertFalse([UATagUtils isValid:tags group:tagGroupID], @"empty tags should return NO");
-
-    tags = nil;
-    XCTAssertFalse([UATagUtils isValid:tags group:tagGroupID], @"nil tags should return NO");
-
-    tags = @[@"hi", @"there"];
-    tagGroupID = @"";
-    XCTAssertFalse([UATagUtils isValid:tags group:tagGroupID], @"empty tagGroupID should return NO");
-
-    tagGroupID = nil;
-    XCTAssertFalse([UATagUtils isValid:tags group:tagGroupID], @"nil tagGroupID should return NO");
-
-    tagGroupID = @"tagGroupID";
-    XCTAssertTrue([UATagUtils isValid:tags group:tagGroupID], @"non empty tags and tagGroupID should return YES");
-}
-
-/**
- * Test addTags
- */
-- (void)testAddTags {
-    NSArray *tags = @[@"tag1", @"tag2"];
-    NSString *tagGroup = @"tagGroup";
-
-    NSArray *pendingTags = @[@"tag3", @"tag4"];
-    NSMutableDictionary *pendingDictionary = [NSMutableDictionary dictionary];
-    [pendingDictionary setValue:pendingTags forKey:tagGroup];
-
-    NSDictionary *combinedDictionary = [UATagUtils addPendingTags:tags group:tagGroup pendingTagsDictionary:pendingDictionary];
-    XCTAssertEqual(combinedDictionary.count, 1, "there should be 1 tag group");
-    NSMutableArray *tagGroupArray = [combinedDictionary valueForKey:tagGroup];
-    XCTAssertTrue(tagGroupArray.count == 4, @"tags should have been added");
-
-    NSMutableArray *expected = [NSMutableArray arrayWithArray:@[@"tag1", @"tag2", @"tag3", @"tag4"]];
-    [expected removeObjectsInArray:[combinedDictionary valueForKey:tagGroup]];
-    XCTAssertTrue(expected.count == 0, @"tags should have been removed");
-}
-
-/**
- * Test removeTags
- */
-- (void)testRemoveTags {
-    NSArray *tags = @[@"tag1", @"tag2"];
-    NSString *tagGroup = @"tagGroup";
-
-    NSArray *pendingTags = @[@"tag1", @"tag2", @"tag3", @"tag4"];
-    NSMutableDictionary *pendingDictionary = [NSMutableDictionary dictionary];
-    [pendingDictionary setValue:pendingTags forKey:tagGroup];
-
-    NSDictionary *combinedDictionary = [UATagUtils removePendingTags:tags group:tagGroup pendingTagsDictionary:pendingDictionary];
-    XCTAssertEqual(combinedDictionary.count, 1, "there should be 1 tag group");
-    NSMutableArray *tagGroupArray = [combinedDictionary valueForKey:tagGroup];
-    XCTAssertTrue(tagGroupArray.count == 2, @"tags should have been removed");
-
-    NSMutableArray *expected = [NSMutableArray arrayWithArray:@[@"tag3", @"tag4"]];
-    [expected removeObjectsInArray:[combinedDictionary valueForKey:tagGroup]];
-    XCTAssertTrue(expected.count == 0, @"tags should have been removed");
-}
-
 @end

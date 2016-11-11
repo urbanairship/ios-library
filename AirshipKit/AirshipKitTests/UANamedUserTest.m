@@ -35,6 +35,7 @@
 #import "UAConfig.h"
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UAHTTPRequest+Internal.h"
+#import "UATagGroupsMutation+Internal.h"
 
 @interface UANamedUserTest : XCTestCase
 
@@ -61,8 +62,6 @@
 void (^namedUserSuccessDoBlock)(NSInvocation *);
 void (^namedUserFailureDoBlock)(NSInvocation *);
 
-void (^updateTagsSuccessDoBlock)(NSInvocation *);
-void (^updateTagsFailureDoBlock)(NSInvocation *);
 
 - (void)setUp {
     [super setUp];
@@ -127,20 +126,6 @@ void (^updateTagsFailureDoBlock)(NSInvocation *);
     self.namedUser.tagGroupsAPIClient = self.mockTagGroupsAPIClient;
 
     self.tagsFailureRequest = [[UAHTTPRequest alloc] init];
-
-    updateTagsSuccessDoBlock = ^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:5];
-        UATagGroupsAPIClientSuccessBlock successBlock = (__bridge UATagGroupsAPIClientSuccessBlock)arg;
-        successBlock();
-    };
-
-    updateTagsFailureDoBlock = ^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:6];
-        UATagGroupsAPIClientFailureBlock failureBlock = (__bridge UATagGroupsAPIClientFailureBlock)arg;
-        failureBlock(self.tagsFailureRequest);
-    };
 }
 
 - (void)tearDown {
@@ -424,344 +409,51 @@ void (^updateTagsFailureDoBlock)(NSInvocation *);
 }
 
 /**
- * Tests tag group addition when tag group contains white space
+ * Test updating tag groups calls the tag client for every pending mutation.
  */
-- (void)testAddTagGroupWhitespaceRemoval {
-    NSArray *tags = @[@"   tag-one   ", @"tag-two   "];
-    NSArray *tagsNoSpaces = @[@"tag-one", @"tag-two"];
-    NSString *groupID = @"test_group_id";
+- (void)testUpdateTagGroups {
+    // Background task
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
-    [self.namedUser addTags:tags group:groupID];
+    // Channel
+    self.namedUser.identifier = @"named_user";
 
-    XCTAssertEqualObjects(tagsNoSpaces, [self.namedUser.pendingAddTags valueForKey:groupID], @"whitespace was not trimmed from tags");
+    // Expect a set mutation, return 200
+    [[[self.mockTagGroupsAPIClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
 
-    NSArray *moreTags = @[@"   tag-two   ", @"tag-three   "];
+        void (^completionHandler)(NSUInteger) = (__bridge void (^)(NSUInteger))arg;
+        completionHandler(200);
+    }] updateNamedUser:@"named_user"
+     tagGroupsMutation:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UATagGroupsMutation *mutation = (UATagGroupsMutation *)obj;
+        NSDictionary *expectedPayload = @{@"set": @{ @"group2": @[@"tag1"] } };
+        return [expectedPayload isEqualToDictionary:[mutation payload]];
+    }] completionHandler:OCMOCK_ANY];
 
-    [self.namedUser addTags:moreTags group:groupID];
 
-    NSMutableArray *combinedTags = [NSMutableArray arrayWithArray:@[@"tag-one", @"tag-two", @"tag-three"]];
+    // Expect Add & Remove mutations, return 200
+    [[[self.mockTagGroupsAPIClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
 
-    [combinedTags removeObjectsInArray:[self.namedUser.pendingAddTags valueForKey:groupID]];
+        void (^completionHandler)(NSUInteger) = (__bridge void (^)(NSUInteger))arg;
+        completionHandler(200);
+    }] updateNamedUser:@"named_user"
+     tagGroupsMutation:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UATagGroupsMutation *mutation = (UATagGroupsMutation *)obj;
+        NSDictionary *expectedPayload = @{@"add": @{ @"group1": @[@"tag1"] }, @"remove": @{ @"group1": @[@"tag2"] } };
+        return [expectedPayload isEqualToDictionary:[mutation payload]];
+    }] completionHandler:OCMOCK_ANY];
 
-    XCTAssertTrue(combinedTags.count == 0, @"whitespace was not trimmed from tags");
-}
-
-/**
- * Tests tag group removal when tag group contains white space
- */
-- (void)testRemoveTagGroupWhitespaceRemoval {
-    NSArray *tags = @[@"   tag-one   ", @"tag-two   "];
-    NSArray *tagsNoSpaces = @[@"tag-one", @"tag-two"];
-    NSString *groupID = @"test_group_id";
-
-    [self.namedUser removeTags:tags group:groupID];
-
-    XCTAssertEqualObjects(tagsNoSpaces, [self.namedUser.pendingRemoveTags valueForKey:groupID], @"whitespace was not trimmed from tags");
-
-    NSArray *moreTags = @[@"   tag-two   ", @"tag-three   "];
-
-    [self.namedUser removeTags:moreTags group:groupID];
-
-    NSMutableArray *combinedTags = [NSMutableArray arrayWithArray:@[@"tag-one", @"tag-two", @"tag-three"]];
-
-    [combinedTags removeObjectsInArray:[self.namedUser.pendingRemoveTags valueForKey:groupID]];
-
-    XCTAssertTrue(combinedTags.count == 0, @"whitespace was not trimmed from tags");
-}
-
-/**
- * Test pendingAddTags.
- */
-- (void)testPendingAddTags {
-    self.namedUser.pendingAddTags = self.addTagGroups;
-
-    XCTAssertEqual((NSUInteger)1, self.namedUser.pendingAddTags.count, @"should contain 1 tag group");
-    XCTAssertEqualObjects(self.addTagGroups, self.namedUser.pendingAddTags, @"pendingAddTags are not stored correctly");
-    XCTAssertEqualObjects([self.dataStore valueForKey:UANamedUserAddTagGroupsSettingsKey], self.namedUser.pendingAddTags,
-                          @"pendingAddTags are not stored correctly in standardUserDefaults");
-
-    // Test addTags
-    NSArray *tags = @[@"tag1", @"tag2", @"tag3"];
-    [self.namedUser addTags:tags group:@"another-tag-group"];
-
-    XCTAssertEqual((NSUInteger)2, self.namedUser.pendingAddTags.count, @"should contain 2 tag groups");
-
-    // Test addTags with overlapping tags in same group
-    NSArray *tags2 = @[@"tag3", @"tag4", @"tag5"];
-    [self.namedUser addTags:tags2 group:@"another-tag-group"];
-    XCTAssertEqual((NSUInteger)2, self.namedUser.pendingAddTags.count, @"should contain 2 tag groups");
-    NSArray *anotherTagArray = [self.namedUser.pendingAddTags objectForKey:@"another-tag-group"];
-    XCTAssertEqual((NSUInteger)5, anotherTagArray.count, @"should contain 5 tags in array");
-
-    // Test addTags with empty tags
-    NSArray *emptyTagsArray = @[];
-    [self.namedUser addTags:emptyTagsArray group:@"some-tag-group"];
-    XCTAssertEqual((NSUInteger)2, self.namedUser.pendingAddTags.count, @"should still contain 2 tag groups");
-
-    // Test addTags with tags with whitespace
-    NSArray *whitespaceTags = @[@" tag1 ", @" tag2 ", @" tag3 "];
-    [self.namedUser addTags:whitespaceTags group:@"another-tag-group"];
-    XCTAssertEqual((NSUInteger)2, self.namedUser.pendingAddTags.count, @"should contain 2 tag groups");
-
-    self.namedUser.pendingAddTags = nil;
-    XCTAssertEqual((NSUInteger)0, self.namedUser.pendingAddTags.count, @"pendingAddTags should return an empty dictionary when set to nil");
-    XCTAssertEqual((NSUInteger)0, [[self.dataStore valueForKey:UANamedUserAddTagGroupsSettingsKey] count],
-                   @"pendingAddTags not being cleared in standardUserDefaults");
-}
-
-/**
- * Test pendingAddTags when pendingRemoveTags overlap.
- */
-- (void)testAddTagGroupsOverlap {
-    self.namedUser.pendingAddTags = nil;
-    self.namedUser.pendingRemoveTags = self.removeTagGroups;
-    NSArray *removeTagsArray = [self.namedUser.pendingRemoveTags objectForKey:@"tag_group"];
-    XCTAssertEqual((NSUInteger)3, removeTagsArray.count, @"should contain 3 tags in array");
-
-    NSArray *tags = @[@"tag1", @"tag2", @"tag3"];
-    [self.namedUser addTags:tags group:@"tag_group"];
-    NSArray *updatedRemoveTagsArray = [self.namedUser.pendingRemoveTags objectForKey:@"tag_group"];
-    XCTAssertEqual((NSUInteger)2, updatedRemoveTagsArray.count, @"should contain 2 tags in array");
-
-    NSArray *addTagsArray = [self.namedUser.pendingAddTags objectForKey:@"tag_group"];
-    XCTAssertEqual((NSUInteger)3, addTagsArray.count, @"should contain 3 tags in array");
-}
-
-/**
- * Test pendingRemoveTags.
- */
-- (void)testRemoveTagGroups {
-    self.namedUser.pendingRemoveTags = self.removeTagGroups;
-
-    XCTAssertEqual((NSUInteger)1, self.namedUser.pendingRemoveTags.count, @"should contain 1 tag group");
-    XCTAssertEqualObjects(self.removeTagGroups, self.namedUser.pendingRemoveTags, @"pendingRemoveTags are not stored correctly");
-    XCTAssertEqualObjects([self.dataStore valueForKey:UANamedUserRemoveTagGroupsSettingsKey], self.namedUser.pendingRemoveTags,
-                          @"pendingRemoveTags are not stored correctly in standardUserDefaults");
-
-    // test removeTags
-    NSArray *tags = @[@"tag1", @"tag2", @"tag3"];
-    [self.namedUser removeTags:tags group:@"another-tag-group"];
-
-    XCTAssertEqual((NSUInteger)2, self.namedUser.pendingRemoveTags.count, @"should contain 2 tag groups");
-
-    // test removeTags with overlapping tags in same group
-    NSArray *tags2 = @[@"tag3", @"tag4", @"tag5"];
-    [self.namedUser removeTags:tags2 group:@"another-tag-group"];
-    XCTAssertEqual((NSUInteger)2, self.namedUser.pendingRemoveTags.count, @"should contain 2 tag groups");
-    NSArray *anotherTagArray = [self.namedUser.pendingRemoveTags objectForKey:@"another-tag-group"];
-    XCTAssertEqual((NSUInteger)5, anotherTagArray.count, @"should contain 5 tags");
-
-    // test removeTags with empty tags
-    NSArray *emptyTagsArray = @[];
-    [self.namedUser removeTags:emptyTagsArray group:@"some-tag-group"];
-    XCTAssertEqual((NSUInteger)2, self.namedUser.pendingRemoveTags.count, @"should still contain 2 tag groups");
-
-    // test removeTags with empty group ID
-    [self.namedUser addTags:tags2 group:@""];
-    XCTAssertEqual((NSUInteger)2, self.namedUser.pendingRemoveTags.count, @"should still contain 2 tag groups");
-
-    self.namedUser.pendingRemoveTags = nil;
-    XCTAssertEqual((NSUInteger)0, self.namedUser.pendingRemoveTags.count, @"pendingRemoveTags should return an empty dictionary when set to nil");
-    XCTAssertEqual((NSUInteger)0, [[self.dataStore valueForKey:UANamedUserRemoveTagGroupsSettingsKey] count],
-                   @"pendingRemoveTags not being cleared in standardUserDefaults");
-}
-
-/**
- * Test pendingRemoveTags when pendingAddTags overlap.
- */
-- (void)testRemoveTagGroupsOverlap {
-    self.namedUser.pendingRemoveTags = nil;
-    self.namedUser.pendingAddTags = self.addTagGroups;
-    NSArray *addTagsArray = [self.namedUser.pendingAddTags objectForKey:@"tag_group"];
-    XCTAssertEqual((NSUInteger)3, addTagsArray.count, @"should contain 3 tags in array");
-
-    NSArray *tags = @[@"tag3", @"tag4", @"tag5"];
-    [self.namedUser removeTags:tags group:@"tag_group"];
-    NSArray *updatedAddTagsArray = [self.namedUser.pendingAddTags objectForKey:@"tag_group"];
-    XCTAssertEqual((NSUInteger)2, updatedAddTagsArray.count, @"should contain 2 tags in array");
-
-    NSArray *removeTagsArray = [self.namedUser.pendingRemoveTags objectForKey:@"tag_group"];
-    XCTAssertEqual((NSUInteger)3, removeTagsArray.count, @"should contain 3 tags in array");
-}
-
-/**
- * Test pending tags intersect.
- */
-- (void)testRemoveTagGroupsIntersect {
-    self.namedUser.pendingRemoveTags = nil;
-    self.namedUser.pendingAddTags = nil;
-
-    NSArray *tags = @[@"tag1", @"tag2", @"tag3"];
-
-    [self.namedUser addTags:tags group:@"tagGroup"];
-
-    NSArray *addTags = [self.namedUser.pendingAddTags objectForKey:@"tagGroup"];
-    XCTAssertEqual((NSUInteger)3, addTags.count, @"should contain 3 tags in array");
-
-    [self.namedUser removeTags:tags group:@"tagGroup"];
-    XCTAssertNil([self.namedUser.pendingAddTags objectForKey:@"tagGroup"], @"tags should be nil");
-    NSArray *removeTags = [self.namedUser.pendingRemoveTags objectForKey:@"tagGroup"];
-    XCTAssertEqual((NSUInteger)3, removeTags.count, @"should contain 3 tags in array");
-
-    [self.namedUser addTags:tags group:@"tagGroup"];
-    XCTAssertNil([self.namedUser.pendingRemoveTags objectForKey:@"tagGroup"], @"tags should be nil");
-    addTags = [self.namedUser.pendingAddTags objectForKey:@"tagGroup"];
-    XCTAssertEqual((NSUInteger)3, addTags.count, @"should contain 3 tags in array");
-}
-
-/**
- * Test successful update named user tags.
- */
-- (void)testUpdateTags {
-    self.namedUser.identifier = @"fakeNamedUser";
-    self.namedUser.pendingAddTags = self.addTagGroups;
-    self.namedUser.pendingRemoveTags = self.removeTagGroups;
-
-    // Expect the tagGroupsAPIClient to update named user tags and call the success block
-    [[[self.mockTagGroupsAPIClient expect] andDo:updateTagsSuccessDoBlock] updateNamedUserTags:OCMOCK_ANY
-                                                                                           add:OCMOCK_ANY
-                                                                                        remove:OCMOCK_ANY
-                                                                                     onSuccess:OCMOCK_ANY
-                                                                                     onFailure:OCMOCK_ANY];
-
-    // Mock background task so background task check passes
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+    [self.namedUser addTags:@[@"tag1"] group:@"group1"];
+    [self.namedUser removeTags:@[@"tag2"] group:@"group1"];
+    [self.namedUser setTags:@[@"tag1"] group:@"group2"];
 
     [self.namedUser updateTags];
-
-    XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Update named user tag groups should succeed.");
-    XCTAssertEqual((NSUInteger)0, self.namedUser.pendingAddTags.count, @"pendingAddTags should return an empty dictionary");
-    XCTAssertEqual((NSUInteger)0, self.namedUser.pendingRemoveTags.count, @"pendingRemoveTags should return an empty dictionary");
-}
-
-/**
- * Test update named user tags fails and restores original pending tags.
- */
-- (void)testUpdateTagGroupsFails {
-    self.namedUser.identifier = nil;
-    self.namedUser.pendingAddTags = self.addTagGroups;
-    self.namedUser.pendingRemoveTags = self.removeTagGroups;
-
-    // Expect the tagGroupsAPIClient to fail to update named user tags and call the failure block
-    [[[self.mockTagGroupsAPIClient expect] andDo:updateTagsFailureDoBlock] updateNamedUserTags:OCMOCK_ANY
-                                                                                           add:OCMOCK_ANY
-                                                                                        remove:OCMOCK_ANY
-                                                                                     onSuccess:OCMOCK_ANY
-                                                                                     onFailure:OCMOCK_ANY];
-
-    // Mock background task so background task check passes
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    [self.namedUser updateTags];
-
-    XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Update named user tag groups should fail.");
-    XCTAssertEqual((NSUInteger)1, self.namedUser.pendingAddTags.count, @"should contain 1 tag group");
-    XCTAssertEqual((NSUInteger)1, self.namedUser.pendingRemoveTags.count, @"should contain 1 tag group");
-}
-
-/**
- * Test failed update named user tags restores original pending tags and current pending tags.
- */
-- (void)testUpdateTagGroupsFailsPendingTags {
-    self.namedUser.identifier = @"fakeNamedUser";
-    self.namedUser.pendingAddTags = self.addTagGroups;
-    self.namedUser.pendingRemoveTags = self.removeTagGroups;
-
-    // Expect the tagGroupsAPIClient to fail to update named user tags and call the failure block
-    [[[self.mockTagGroupsAPIClient expect] andDo:updateTagsFailureDoBlock] updateNamedUserTags:OCMOCK_ANY
-                                                                                           add:OCMOCK_ANY
-                                                                                        remove:OCMOCK_ANY
-                                                                                     onSuccess:OCMOCK_ANY
-                                                                                     onFailure:OCMOCK_ANY];
-
-    // Mock background task so background task check passes
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    [self.namedUser updateTags];
-
-    XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Update named user tag groups should fail.");
-    XCTAssertEqual((NSUInteger)1, self.namedUser.pendingAddTags.count, @"should contain 1 tag group");
-    XCTAssertEqual((NSUInteger)1, self.namedUser.pendingRemoveTags.count, @"should contain 1 tag group");
-}
-
-/**
- * Test update named user tags with both empty add and remove tags skips request.
- */
-- (void)testUpdateTagGroupsEmptyTags {
-    self.namedUser.identifier = @"fakeNamedUser";
-
-    // Should not call updateNamedUserTags
-    [[self.mockTagGroupsAPIClient reject] updateNamedUserTags:OCMOCK_ANY
-                                                          add:OCMOCK_ANY
-                                                       remove:OCMOCK_ANY
-                                                    onSuccess:OCMOCK_ANY
-                                                    onFailure:OCMOCK_ANY];
-
-    [self.namedUser updateTags];
-
-    XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Should skip updateNamedUserTags request.");
-}
-
-/**
- * Test update named user tags with empty add tags still makes request.
- */
-- (void)testUpdateTagGroupsEmptyAddTags {
-    self.namedUser.identifier = @"fakeNamedUser";
-    self.namedUser.pendingAddTags = self.addTagGroups;
-
-    // Call updateNamedUserTags
-    [[self.mockTagGroupsAPIClient expect] updateNamedUserTags:OCMOCK_ANY
-                                                          add:OCMOCK_ANY
-                                                       remove:OCMOCK_ANY
-                                                    onSuccess:OCMOCK_ANY
-                                                    onFailure:OCMOCK_ANY];
-
-    // Mock background task so background task check passes
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    [self.namedUser updateTags];
-
-    XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Should call updateNamedUserTags request.");
-}
-
-/**
- * Test update named user tags with empty remove tags still makes request.
- */
-- (void)testUpdateTagGroupsEmptyRemoveTags {
-    self.namedUser.identifier = @"fakeNamedUser";
-    self.namedUser.pendingRemoveTags = self.removeTagGroups;
-
-    // Call updateNamedUserTags
-    [[self.mockTagGroupsAPIClient expect] updateNamedUserTags:OCMOCK_ANY
-                                                          add:OCMOCK_ANY
-                                                       remove:OCMOCK_ANY
-                                                    onSuccess:OCMOCK_ANY
-                                                    onFailure:OCMOCK_ANY];
-
-    // Mock background task so background task check passes
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    [self.namedUser updateTags];
-
-    XCTAssertNoThrow([self.mockTagGroupsAPIClient verify], @"Should call updateNamedUserTags request.");
-}
-
-/**
- * Test clear pending named user tags when named user ID changes.
- */
-- (void)testNamedUserIDChangeClearPendingTags {
-    self.namedUser.identifier = @"fakeNamedUser";
-    self.namedUser.pendingAddTags = self.addTagGroups;
-    self.namedUser.pendingRemoveTags = self.removeTagGroups;
-
-    XCTAssertEqual((NSUInteger)1, self.namedUser.pendingAddTags.count, @"Should contain 1 tag group");
-    XCTAssertEqual((NSUInteger)1, self.namedUser.pendingRemoveTags.count, @"Should contain 1 tag group");
-
-    // Change named user ID should clear the pending tags
-    self.namedUser.identifier = @"anotherNamedUser";
-
-    XCTAssertNil(self.namedUser.pendingAddTags, @"Pending add tags should be nil");
-    XCTAssertNil(self.namedUser.pendingRemoveTags, @"Pending remove tags should be nil");
+    
+    [self.mockTagGroupsAPIClient verify];
 }
 
 @end

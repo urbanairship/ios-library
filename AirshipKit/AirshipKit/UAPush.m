@@ -44,9 +44,11 @@
 #import "UANotificationCategory+Internal.h"
 #import "UAInboxUtils.h"
 #import "UATagGroupsAPIClient+Internal.h"
-#import "UATagUtils.h"
+#import "UATagUtils+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"
 #import "UAHTTPConnection+Internal.h"
+#import "UATagGroupsMutation+Internal.h"
+#import "UAPreferenceDataStore+InternalTagGroupsMutation.h"
 
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
@@ -78,6 +80,7 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 // Channel tag group keys
 NSString *const UAPushAddTagGroupsSettingsKey = @"UAPushAddTagGroups";
 NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
+NSString *const UAPushTagGroupsMutationsKey = @"UAPushTagGroupsMutations";
 
 // The default device tag group.
 NSString *const UAPushDefaultDeviceTagGroup = @"device";
@@ -153,6 +156,10 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
         // Do not remove migratePushSettings call from init. It needs to be run
         // prior to allowing the application to set defaults.
         [self migratePushSettings];
+
+        [self.dataStore migrateTagGroupSettingsForAddTagsKey:UAPushAddTagGroupsSettingsKey
+                                               removeTagsKey:UAPushRemoveTagGroupsSettingsKey
+                                                      newKey:UAPushTagGroupsMutationsKey];
 
         // Log the channel ID at error level, but without logging
         // it as an error.
@@ -308,22 +315,6 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
 - (void)setTags:(NSArray *)tags {
     [self.dataStore setObject:[UATagUtils normalizeTags:tags] forKey:UAPushTagsSettingsKey];
-}
-
-- (NSDictionary *)pendingAddTags {
-    return [self.dataStore objectForKey:UAPushAddTagGroupsSettingsKey];
-}
-
-- (void)setPendingAddTags:(NSDictionary *)addTagGroups {
-    [self.dataStore setObject:addTagGroups forKey:UAPushAddTagGroupsSettingsKey];
-}
-
-- (NSDictionary *)pendingRemoveTags {
-    return [self.dataStore objectForKey:UAPushRemoveTagGroupsSettingsKey];
-}
-
-- (void)setPendingRemoveTags:(NSDictionary *)removeTagGroups {
-    [self.dataStore setObject:removeTagGroups forKey:UAPushRemoveTagGroupsSettingsKey];
 }
 
 - (void)enableChannelCreation {
@@ -524,43 +515,59 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 #pragma mark Open APIs - UA Tag Groups APIs
 
 - (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
-
     if (self.channelTagRegistrationEnabled && [UAPushDefaultDeviceTagGroup isEqualToString:tagGroupID]) {
         UA_LERR(@"Unable to add tags %@ to device tag group when channelTagRegistrationEnabled is true.", [tags description]);
         return;
     }
 
     NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
-
-    if (![UATagUtils isValid:normalizedTags group:tagGroupID]) {
+    NSString *normalizedTagGroupID = [UATagUtils normalizeTagGroupID:tagGroupID];
+    if (!normalizedTags.count || !normalizedTagGroupID.length) {
         return;
     }
 
-    // Check if remove tags contain any tags to add.
-    [self setPendingRemoveTags:[UATagUtils removePendingTags:normalizedTags group:tagGroupID pendingTagsDictionary:self.pendingRemoveTags]];
+    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:normalizedTags
+                                                                     group:normalizedTagGroupID];
 
-    // Combine the tags to be added with pendingAddTags.
-    [self setPendingAddTags:[UATagUtils addPendingTags:normalizedTags group:tagGroupID pendingTagsDictionary:self.pendingAddTags]];
+    [self.dataStore addTagGroupsMutation:mutation atBeginning:NO forKey:UAPushTagGroupsMutationsKey];
 }
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
-
     if (self.channelTagRegistrationEnabled && [UAPushDefaultDeviceTagGroup isEqualToString:tagGroupID]) {
-        UA_LERR(@"Unable to remove tags %@ from device tag group when channelTagRegistrationEnabled is true.", [tags description]);
+        UA_LERR(@"Unable to remove tags %@ to device tag group when channelTagRegistrationEnabled is true.", [tags description]);
         return;
     }
 
     NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
+    NSString *normalizedTagGroupID = [UATagUtils normalizeTagGroupID:tagGroupID];
 
-    if (![UATagUtils isValid:normalizedTags group:tagGroupID]) {
+    if (!normalizedTags.count || !normalizedTagGroupID.length) {
         return;
     }
 
-    // Check if add tags contain any tags to be removed.
-    [self setPendingAddTags:[UATagUtils removePendingTags:normalizedTags group:tagGroupID pendingTagsDictionary:self.pendingAddTags]];
+    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToRemoveTags:normalizedTags
+                                                                        group:normalizedTagGroupID];
 
-    // Combine the tags to be removed with pendingRemoveTags.
-    [self setPendingRemoveTags:[UATagUtils addPendingTags:normalizedTags group:tagGroupID pendingTagsDictionary:self.pendingRemoveTags]];
+    [self.dataStore addTagGroupsMutation:mutation atBeginning:NO forKey:UAPushTagGroupsMutationsKey];
+}
+
+- (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID {
+    if (self.channelTagRegistrationEnabled && [UAPushDefaultDeviceTagGroup isEqualToString:tagGroupID]) {
+        UA_LERR(@"Unable to set tags %@ from device tag group when channelTagRegistrationEnabled is true.", [tags description]);
+        return;
+    }
+
+    NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
+    NSString *normalizedTagGroupID = [UATagUtils normalizeTagGroupID:tagGroupID];
+
+    if (!normalizedTagGroupID.length) {
+        return;
+    }
+
+    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToSetTags:normalizedTags
+                                                                     group:normalizedTagGroupID];
+
+    [self.dataStore addTagGroupsMutation:mutation atBeginning:NO forKey:UAPushTagGroupsMutationsKey];
 }
 
 - (void)setBadgeNumber:(NSInteger)badgeNumber {
@@ -713,70 +720,18 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
                                       forcefully:forcefully];
 }
 
-- (void)resetPendingTagsWithAddTags:(NSMutableDictionary *)addTags removeTags:(NSMutableDictionary *)removeTags {
-    // If there are new pendingRemoveTags since last request,
-    // check if addTags contain any tags to be removed.
-    if (self.pendingRemoveTags.count) {
-        for (NSString *group in self.pendingRemoveTags) {
-            if (group && addTags[group]) {
-                NSArray *pendingRemoveTagsArray = [NSArray arrayWithArray:self.pendingRemoveTags[group]];
-                [addTags removeObjectsForKeys:pendingRemoveTagsArray];
-            }
-        }
-    }
-
-    // If there are new pendingAddTags since last request,
-    // check if removeTags contain any tags to add.
-    if (self.pendingAddTags.count) {
-        for (NSString *group in self.pendingAddTags) {
-            if (group && removeTags[group]) {
-                NSArray *pendingAddTagsArray = [NSArray arrayWithArray:self.pendingAddTags[group]];
-                [removeTags removeObjectsForKeys:pendingAddTagsArray];
-            }
-        }
-    }
-
-    // If there are new pendingRemoveTags since last request,
-    // combine the new pendingRemoveTags with removeTags.
-    if (self.pendingRemoveTags.count) {
-        [removeTags addEntriesFromDictionary:self.pendingRemoveTags];
-    }
-
-    // If there are new pendingAddTags since last request,
-    // combine the new pendingAddTags with addTags.
-    if (self.pendingAddTags.count) {
-        [addTags addEntriesFromDictionary:self.pendingAddTags];
-    }
-
-    // Set self.pendingAddTags as addTags
-    self.pendingAddTags = addTags;
-
-    // Set self.pendingRemoveTags as removeTags
-    self.pendingRemoveTags = removeTags;
-}
-
 - (void)updateChannelTagGroups {
-    if (!self.pendingAddTags.count && !self.pendingRemoveTags.count) {
+    UATagGroupsMutation *mutation = [self.dataStore pollTagGroupsMutationForKey:UAPushTagGroupsMutationsKey];
+
+    if (!mutation) {
         return;
     }
 
-    // Get a copy of the current add and remove pending tags
-    NSMutableDictionary *addTags = [self.pendingAddTags mutableCopy];
-    NSMutableDictionary *removeTags = [self.pendingRemoveTags mutableCopy];
-
-    // On failure or background task expiration we need to reset the pending tags
-    void (^resetPendingTags)() = ^{
-        [self resetPendingTagsWithAddTags:addTags removeTags:removeTags];
-    };
-
     __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
         UA_LTRACE(@"Tag groups background task expired.");
-        if (resetPendingTags) {
-            resetPendingTags();
-        }
-        @synchronized(self) {
-            [self.tagGroupsAPIClient cancelAllRequests];
-        }
+        [self.tagGroupsAPIClient cancelAllRequests];
+        [self.dataStore addTagGroupsMutation:mutation atBeginning:YES forKey:UAPushTagGroupsMutationsKey];
+
         if (backgroundTask != UIBackgroundTaskInvalid) {
             [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
             backgroundTask = UIBackgroundTaskInvalid;
@@ -785,34 +740,23 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
     if (backgroundTask == UIBackgroundTaskInvalid) {
         UA_LTRACE("Background task unavailable, skipping tag groups update.");
+        [self.dataStore addTagGroupsMutation:mutation atBeginning:YES forKey:UAPushTagGroupsMutationsKey];
         return;
     }
 
-    // Clear the add and remove pending tags
-    self.pendingAddTags = nil;
-    self.pendingRemoveTags = nil;
+    [self.tagGroupsAPIClient updateChannel:self.channelID
+                         tagGroupsMutation:mutation
+                         completionHandler:^(NSUInteger status) {
 
-    UATagGroupsAPIClientSuccessBlock successBlock = ^{
-        // End background task
-        [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
-        backgroundTask = UIBackgroundTaskInvalid;
-    };
+                             if (status >= 200 && status <= 299) {
+                                 [self updateChannelTagGroups];
+                             } else if (status != 400 && status != 403) {
+                                 [self.dataStore addTagGroupsMutation:mutation atBeginning:YES forKey:UAPushTagGroupsMutationsKey];
+                             }
 
-    UATagGroupsAPIClientFailureBlock failureBlock = ^(NSUInteger status) {
-        if (status != 400 && status != 403) {
-            resetPendingTags();
-        }
-
-        // End background task
-        [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
-        backgroundTask = UIBackgroundTaskInvalid;
-    };
-
-    [self.tagGroupsAPIClient updateChannelTags:self.channelID
-                                           add:addTags
-                                        remove:removeTags
-                                     onSuccess:successBlock
-                                     onFailure:failureBlock];
+                             [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+                             backgroundTask = UIBackgroundTaskInvalid;
+                         }];
 }
 
 - (void)updateAPNSRegistration {
@@ -1028,7 +972,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
             }
         }
     }
-
+    
     [self.dataStore setBool:YES forKey:UAPushEnabledSettingsMigratedKey];
 }
 

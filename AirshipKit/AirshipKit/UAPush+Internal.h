@@ -174,16 +174,6 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 
 
 /**
- * Tag groups to add to channel.
- */
-@property (nonatomic, copy, nullable) NSDictionary *pendingAddTags;
-
-/**
- * Tag groups to remove from channel.
- */
-@property (nonatomic, copy, nullable) NSDictionary *pendingRemoveTags;
-
-/**
  * The tag groups API client.
  */
 @property (nonatomic, strong) UATagGroupsAPIClient *tagGroupsAPIClient;
