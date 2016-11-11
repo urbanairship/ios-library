@@ -24,60 +24,43 @@
  */
 
 #import <Foundation/Foundation.h>
-
-@class UAPreferenceDataStore;
+#import "UAPreferenceDataStore+Internal.h"
+#import "UATagGroupsMutation+Internal.h"
+#import "UATagGroupsMutation+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * The named user is an alternate method of identifying the device. Once a named
- * user is associated to the device, it can be used to send push notifications
- * to the device.
+ * Category methods to save and return tag mutations.
  */
-@interface UANamedUser : NSObject
+@interface UAPreferenceDataStore(TagGroupsMutation)
 
 /**
- * The named user ID for this device.
+ * Adds a tag mutation to the array of saved mutations.
+ * @param mutation The mutation to add.
+ * @param atBeginning If the mutation should be inserted at the front of the array or not.
+ * @param key The datstore key.
  */
-@property (nonatomic, copy, nullable) NSString *identifier;
-
-/**
- * Force updating the association or disassociation of the current named user ID.
- */
-- (void)forceUpdate;
-
-/**
- * Add tags to named user tags. To update the server,
- * make all of your changes, then call `updateTags`.
- *
- * @param tags Array of tags to add.
- * @param tagGroupID Tag group ID string.
- */
-- (void)addTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID;
-
-/**
- * Removes tags from named user tags. To update the server,
- * make all of your changes, then call `updateTags`.
- *
- * @param tags Array of tags to remove.
- * @param tagGroupID Tag group ID string.
- */
-- (void)removeTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID;
+- (void)addTagGroupsMutation:(UATagGroupsMutation *)mutation atBeginning:(BOOL)atBeginning forKey:(NSString *)key;
 
 
 /**
- * Sets tags from named user tags. To update the server,
- * make all of your changes, then call `updateTags`.
- *
- * @param tags Array of tags to set.
- * @param tagGroupID Tag group ID string.
+ * Polls and removes the first mutation from the array of pending mutations.
+ * @param key The datstore key.
+ * @return The first mutation, or null if no mutations are available.
  */
-- (void)setTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID;
+- (nullable UATagGroupsMutation *)pollTagGroupsMutationForKey:(NSString *)key;
 
 /**
- * Update named user tags.
+ * Migrates pending add and remove tag group changes to an array of mutations.
+ * @param addTagsKey The data store key for pending add tag changes.
+ * @param removeTagsKey The data store key for pending add remove changes.
+ * @param key The data store key to store the migrated mutations.
  */
-- (void)updateTags;
+- (void)migrateTagGroupSettingsForAddTagsKey:(NSString *)addTagsKey
+                               removeTagsKey:(NSString *)removeTagsKey
+                                      newKey:(NSString *)key;
+
 
 @end
 

@@ -28,20 +28,9 @@
 #import "UAAPIClient+Internal.h"
 
 @class UAConfig;
+@class UATagGroupsMutation;
 
 NS_ASSUME_NONNULL_BEGIN
-
-/**
- * A block called when tag groups update succeeded.
- */
-typedef void (^UATagGroupsAPIClientSuccessBlock)();
-
-/**
- * A block called when tag groups update failed.
- *
- * @param status The status of the request that failed.
- */
-typedef void (^UATagGroupsAPIClientFailureBlock)(NSUInteger status);
 
 /**
  * A high level abstraction for performing tag group operations.
@@ -69,35 +58,23 @@ typedef void (^UATagGroupsAPIClientFailureBlock)(NSUInteger status);
  * Update the channel tag group.
  *
  * @param channelId The channel ID string.
- * @param addTags The dictionary of tag group ID to an array of tags.
- * @param removeTags The dictionary of tag group ID to an array of tags.
- * @param successBlock A UATagGroupsAPIClientSuccessBlock that will be called if
- *        the named user tags updated successfully.
- * @param failureBlock A UATagGroupsAPIClientFailureBlock that will be called if
- *        the named user tags update was unsuccessful.
+ * @param tagGroupsMutation The tags changes.
+ * @param completionHandler The completion handler with the status code.
  */
-- (void)updateChannelTags:(NSString *)channelId
-                      add:(nullable NSDictionary *)addTags
-                   remove:(nullable NSDictionary *)removeTags
-                onSuccess:(UATagGroupsAPIClientSuccessBlock)successBlock
-                onFailure:(UATagGroupsAPIClientFailureBlock)failureBlock;
+- (void)updateChannel:(NSString *)channelId
+    tagGroupsMutation:(UATagGroupsMutation *)mutation
+    completionHandler:(void (^)(NSUInteger status))completionHandler;
 
 /**
  * Update the named user tags.
  *
  * @param identifier The named user ID string.
- * @param addTags The dictionary of tag group ID to an array of tags.
- * @param removeTags The dictionary of tag group ID to an array of tags.
- * @param successBlock A UATagGroupsAPIClientSuccessBlock that will be called if
- *        the named user tags updated successfully.
- * @param failureBlock A UATagGroupsAPIClientFailureBlock that will be called if
- *        the named user tags update was unsuccessful.
+ * @param tagGroupsMutation The tags changes.
+ * @param completionHandler The completion handler with the status code.
  */
-- (void)updateNamedUserTags:(NSString *)identifier
-                        add:(nullable NSDictionary *)addTags
-                     remove:(nullable NSDictionary *)removeTags
-                  onSuccess:(UATagGroupsAPIClientSuccessBlock)successBlock
-                  onFailure:(UATagGroupsAPIClientFailureBlock)failureBlock;
+- (void)updateNamedUser:(NSString *)identifier
+      tagGroupsMutation:(UATagGroupsMutation *)mutation
+      completionHandler:(void (^)(NSUInteger status))completionHandler;
 
 @end
 

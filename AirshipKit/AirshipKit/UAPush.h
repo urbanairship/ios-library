@@ -438,6 +438,15 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  */
 - (void)removeTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID;
 
+/**
+ * Sets tags from channel tag groups. To update the server,
+ * make all of your changes, then call `updateRegistration`.
+ *
+ * @param tags Array of tags to set.
+ * @param tagGroupID Tag group ID string.
+ */
+- (void)setTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID;
+
 ///---------------------------------------------------------------------------------------
 /// @name Quiet Time
 ///---------------------------------------------------------------------------------------
