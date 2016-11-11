@@ -24,9 +24,7 @@
  */
 
 #import "UAChannelAPIClient+Internal.h"
-#import "UAHTTPRequestEngine+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
-#import "UAHTTPConnectionOperation+Internal.h"
 #import "UAConfig.h"
 #import "UAUtils.h"
 #import "UAirship.h"

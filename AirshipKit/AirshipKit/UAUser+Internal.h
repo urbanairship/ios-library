@@ -28,7 +28,6 @@
 // Current dictionary keys
 #define kUserUrlKey @"UAUserUrlKey"
 
-@class UAHTTPRequest;
 @class UAUserAPIClient;
 @class UAConfig;
 @class UAPreferenceDataStore;
