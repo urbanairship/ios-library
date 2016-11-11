@@ -45,7 +45,6 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAConfig.h"
 #import "UATagGroupsAPIClient+Internal.h"
-#import "UAHTTPRequest+Internal.h"
 #import "UANotificationCategory+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"
 #import "UATagGroupsMutation+Internal.h"

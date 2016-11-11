@@ -30,7 +30,6 @@
 
 // UA external libraries
 #import "UA_Base64.h"
-#import "UAHTTPConnection+Internal.h"
 
 // UALib
 #import "UAUser.h"

@@ -29,7 +29,6 @@
 #import "UAPush+Internal.h"
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UATagUtils+Internal.h"
-#import "UAHTTPConnection+Internal.h"
 #import "UAConfig+Internal.h"
 #import "UATagGroupsMutation+Internal.h"
 

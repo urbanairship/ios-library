@@ -29,7 +29,6 @@
 #import "UAChannelAPIClient+Internal.h"
 #import "UAChannelRegistrar+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
-#import "UAHTTPRequest+Internal.h"
 #import "UAPush.h"
 #import "UAConfig.h"
 #import "UANamedUser+Internal.h"
@@ -43,7 +42,6 @@
 @property (nonatomic, strong) id mockedUAirship;
 @property (nonatomic, strong) id mockedUAConfig;
 
-@property (nonatomic, strong) UAHTTPRequest *deviceFailureRequest;
 @property (nonatomic, assign) NSUInteger failureCode;
 @property (nonatomic, copy) NSString *channelCreateSuccessChannelID;
 @property (nonatomic, copy) NSString *channelCreateSuccessChannelLocation;
@@ -98,7 +96,6 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
     self.payload.pushAddress = @"someDeviceToken";
 
     self.failureCode = 400;
-    self.deviceFailureRequest = [[UAHTTPRequest alloc] init];
 
     channelUpdateSuccessDoBlock = ^(NSInvocation *invocation) {
         void *arg;

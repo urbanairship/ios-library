@@ -53,8 +53,6 @@
 #import "UANamedUser+Internal.h"
 #import "UAAutomation+Internal.h"
 #import "UAAppIntegration.h"
-#import "UAHTTPRequest+Internal.h"
-
 
 UA_VERSION_IMPLEMENTATION(UAirshipVersion, UA_VERSION)
 
@@ -199,11 +197,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     // Data store
     UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", config.appKey]];
     [dataStore migrateUnprefixedKeys:@[UALibraryVersion]];
-
-    // User Agent
-    NSString *userAgent = [UAirship createUserAgentForAppKey:config.appKey];
-    UA_LDEBUG(@"Setting User-Agent for UA requests to %@", userAgent);
-    [UAHTTPRequest setDefaultUserAgentString:userAgent];
 
     // Cache
     if (config.cacheDiskSizeInMB > 0) {

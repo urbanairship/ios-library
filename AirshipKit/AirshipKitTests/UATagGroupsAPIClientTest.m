@@ -90,7 +90,6 @@
                                         retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
                                  completionHandler:OCMOCK_ANY];
 
-
     [self.client updateChannel:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
              tagGroupsMutation:mutation
              completionHandler:^(NSUInteger statusCode){}];

@@ -34,8 +34,8 @@
 #import "UAPush+Internal.h"
 #import "UAConfig.h"
 #import "UATagGroupsAPIClient+Internal.h"
-#import "UAHTTPRequest+Internal.h"
 #import "UATagGroupsMutation+Internal.h"
+
 
 @interface UANamedUserTest : XCTestCase
 
@@ -44,16 +44,12 @@
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) id mockedNamedUserClient;
 @property (nonatomic, strong) id mockedUAPush;
-@property (nonatomic, strong) UAHTTPRequest *namedUserFailureRequest;
 @property (nonatomic, copy) NSString *pushChannelID;
-
 @property (nonatomic, strong) id mockTagGroupsAPIClient;
 @property (nonatomic, strong) NSMutableDictionary *addTagGroups;
 @property (nonatomic, strong) NSMutableDictionary *removeTagGroups;
-@property (nonatomic, strong) UAHTTPRequest *tagsFailureRequest;
 @property (nonatomic, strong) id mockApplication;
 @property (nonatomic, strong) id mockConfig;
-
 
 @end
 
@@ -94,8 +90,6 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     self.namedUser.changeToken = @"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE";
     self.namedUser.lastUpdatedToken = @"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE";
 
-    self.namedUserFailureRequest = [[UAHTTPRequest alloc] init];
-
     namedUserSuccessDoBlock = ^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
@@ -107,7 +101,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
         void *arg;
         [invocation getArgument:&arg atIndex:5];
         UANamedUserAPIClientFailureBlock failureBlock = (__bridge UANamedUserAPIClientFailureBlock)arg;
-        failureBlock(self.namedUserFailureRequest);
+        failureBlock(400);
     };
 
     self.addTagGroups = [[NSMutableDictionary alloc] init];
@@ -124,8 +118,6 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 
     self.mockTagGroupsAPIClient = [OCMockObject niceMockForClass:[UATagGroupsAPIClient class]];
     self.namedUser.tagGroupsAPIClient = self.mockTagGroupsAPIClient;
-
-    self.tagsFailureRequest = [[UAHTTPRequest alloc] init];
 }
 
 - (void)tearDown {

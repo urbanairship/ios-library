@@ -46,9 +46,9 @@
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UATagUtils+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"
-#import "UAHTTPConnection+Internal.h"
 #import "UATagGroupsMutation+Internal.h"
 #import "UAPreferenceDataStore+InternalTagGroupsMutation.h"
+
 
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";

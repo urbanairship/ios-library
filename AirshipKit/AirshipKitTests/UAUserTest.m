@@ -32,7 +32,6 @@
 #import "UAirship+Internal.h"
 #import "UAConfig+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UAHTTPRequest+Internal.h"
 
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
@@ -152,7 +151,6 @@
  * Test createUser when the request fails
  */
 -(void)testCreateUserFailed {
-    UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
     self.push.channelID = @"some-channel";
     self.push.channelLocation = @"some-channel-location";
 
@@ -174,7 +172,7 @@
     [self.user createUser];
 
     XCTAssertTrue(self.user.creatingUser, @"Should be creating user before the success block is called.");
-    failureBlock(request);
+    failureBlock(400);
     XCTAssertFalse(self.user.creatingUser, @"Should be finished creating user after the success block is called.");
     XCTAssertNoThrow([self.mockUserClient verify], @"User should call the client to be created.");
 }

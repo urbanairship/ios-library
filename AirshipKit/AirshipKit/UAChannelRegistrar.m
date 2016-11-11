@@ -28,7 +28,6 @@
 #import "UAGlobal.h"
 #import "UAUtils.h"
 #import "UAChannelRegistrationPayload+Internal.h"
-#import "UAHTTPRequest+Internal.h"
 #import "UAConfig.h"
 
 @implementation UAChannelRegistrar
