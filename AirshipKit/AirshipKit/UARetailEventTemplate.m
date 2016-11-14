@@ -196,6 +196,9 @@
 
     if (self.eventValue) {
         [event setEventValue:self.eventValue];
+    }
+
+    if (self.eventValue && [self.eventName isEqualToString:kUAPurchasedEvent]) {
         [event setBoolProperty:YES forKey:kUARetailEventTemplateLifetimeValue];
     } else {
         [event setBoolProperty:NO forKey:kUARetailEventTemplateLifetimeValue];
