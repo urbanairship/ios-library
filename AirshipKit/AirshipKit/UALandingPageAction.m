@@ -37,6 +37,12 @@
 
 @implementation UALandingPageAction
 
+NSString *const UALandingPageURLKey = @"url";
+NSString *const UALandingPageHeightKey = @"height";
+NSString *const UALandingPageWidthKey = @"width";
+NSString *const UALandingPageAspectLockKey = @"aspect_lock";
+NSString *const UALandingPageFill = @"fill";
+
 - (NSURL *)parseShortURL:(NSString *)urlString {
     if ([urlString length] <= 2) {
         return nil;
@@ -65,7 +71,7 @@
     }
 
     if ([value isKindOfClass:[NSDictionary class]]) {
-        id urlValue = [value valueForKey:@"url"];
+        id urlValue = [value valueForKey:UALandingPageURLKey];
 
         if (urlValue && [urlValue isKindOfClass:[NSString class]]) {
             if ([urlValue hasPrefix:@"u:"]) {
@@ -89,12 +95,12 @@
         CGFloat widthValue = 0;
         CGFloat heightValue = 0;
 
-        if ([[value valueForKey:@"width"] isKindOfClass:[NSNumber class]]) {
-            widthValue = [[value valueForKey:@"width"] floatValue];
+        if ([[value valueForKey:UALandingPageWidthKey] isKindOfClass:[NSNumber class]]) {
+            widthValue = [[value valueForKey:UALandingPageWidthKey] floatValue];
         }
 
-        if ([[value valueForKey:@"height"] isKindOfClass:[NSNumber class]]) {
-            heightValue = [[value valueForKey:@"height"] floatValue];
+        if ([[value valueForKey:UALandingPageHeightKey] isKindOfClass:[NSNumber class]]) {
+            heightValue = [[value valueForKey:UALandingPageHeightKey] floatValue];
         }
 
         return CGSizeMake(widthValue, heightValue);
@@ -105,8 +111,8 @@
 
 - (BOOL)parseAspectLockOptionFromValue:(id)value {
     if ([value isKindOfClass:[NSDictionary class]]) {
-        if ([[value valueForKey:@"aspectLock"] isKindOfClass:[NSNumber class]]) {
-            NSNumber *aspectLock = (NSNumber *)[value valueForKey:@"aspectLock"];
+        if ([[value valueForKey:UALandingPageAspectLockKey] isKindOfClass:[NSNumber class]]) {
+            NSNumber *aspectLock = (NSNumber *)[value valueForKey:UALandingPageAspectLockKey];
 
             return aspectLock.boolValue;
         }

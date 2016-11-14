@@ -31,13 +31,13 @@
  * This action is registered under the names landing_page_action and ^p.
  *
  * Expected argument values:
- * URL: NSString or NSURL. Short url formats are in the form
+ * ``url``: NSString or NSURL. Short url formats are in the form
  * of "u:<content-id>" and will be used to construct a new URL using the content-id.
- * Width: Optional Int or String. Width should be specified in points or
+ * ``width``: Optional Int or String. Width should be specified in points or
  * as "fill" to fill current screen. Defaults to fill.
- * Height: Optional Int or String. Height should be specified in points or
- * "fill" to fill current screen. Defaults to fill.
- * Aspect Lock: Optional Boolean. Determines if aspect ratio is maintained during resizing
+ * ``height``: Optional Int or String. Height should be specified in points or
+ * ``fill`` to fill current screen. Defaults to fill.
+ * ``aspect_lock``: Optional Boolean. Determines if aspect ratio is maintained during resizing
  * to fit screen size. Defaults to false.
  *
  * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush,
@@ -53,4 +53,31 @@
  *
  */
 @interface UALandingPageAction : UAAction
+
+/**
+ * The URL key.
+ */
+extern NSString *const UALandingPageURLKey;
+
+/**
+ * The height key.
+ */
+extern NSString *const UALandingPageHeightKey;
+
+/**
+ * The width key.
+ */
+extern NSString *const UALandingPageWidthKey;
+
+/**
+ * The aspect lock key.
+ */
+extern NSString *const UALandingPageAspectLockKey;
+
+/**
+ * The fill constant.
+ */
+extern NSString *const UALandingPageFill;
+
+
 @end
