@@ -103,8 +103,22 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  */
 - (void)registrationFailed;
 
-@end
+/**
+ * Called when APNS registration completes.
+ *
+ * @param options UANotificationOptions that were most recently registered.
+ * @param categories NSSet of the categories that were most recently registered.
+ */
+- (void)notificationRegistrationFinishedWithOptions:(UANotificationOptions)options categories:(NSSet *)categories;
 
+/**
+ * Called when APNS authentication changes with the new authorized options.
+ *
+ * @param options UANotificationOptions that were most recently registered.
+ */
+- (void)notificationAuthorizedOptionsDidChange:(UANotificationOptions)options;
+
+@end
 
 //---------------------------------------------------------------------------------------
 // UAPushNotificationDelegate Protocol

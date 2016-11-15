@@ -174,7 +174,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     self.mockedPushDelegate = [OCMockObject niceMockForProtocol:@protocol(UAPushNotificationDelegate)];
     self.push.pushNotificationDelegate = self.mockedPushDelegate;
 
-    self.mockRegistrationDelegate = [OCMockObject mockForProtocol:@protocol(UARegistrationDelegate)];
+    self.mockRegistrationDelegate = [OCMockObject niceMockForProtocol:@protocol(UARegistrationDelegate)];
 
     self.mockActionRunner = [OCMockObject mockForClass:[UAActionRunner class]];
 
@@ -468,7 +468,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
         return expectedTypes == settings.types && expectedCategories.count == settings.categories.count;
     }]];
 
-
     self.push.userPushNotificationsEnabled = YES;
 
     XCTAssertTrue(self.push.userPushNotificationsEnabled,
@@ -678,11 +677,12 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 /**
  * Test update apns registration when user notifications are enabled on >= iOS8.
  */
-- (void)testUpdateAPNSRegistrationUserNotificationsEnabledIOS8 {
+- (void)testUpdateAPNSRegistrationUserNotificationsEnabled {
     self.testOSMajorVersion = 8;
     self.push.userPushNotificationsEnabled = YES;
     self.push.shouldUpdateAPNSRegistration = YES;
     self.push.customCategories = [NSSet set];
+    self.push.registrationDelegate = self.mockRegistrationDelegate;
 
     NSMutableSet *expectedCategories = [NSMutableSet set];
     for (UANotificationCategory *category in self.push.combinedCategories) {
@@ -691,16 +691,55 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     NSUInteger expectedTypes = self.push.notificationOptions;
 
+    XCTestExpectation *delegateCalled = [self expectationWithDescription:@"Delegate called"];
+
+    __block UANotificationOptions expectedOptions;
+
+    [[[self.mockRegistrationDelegate stub] andReturnValue:OCMOCK_VALUE(YES)] respondsToSelector:@selector(registrationFinishedForAPNS:categories:)];
+
     [[self.mockedApplication expect] registerUserNotificationSettings:[OCMArg checkWithBlock:^BOOL(id obj) {
         UIUserNotificationSettings *settings = (UIUserNotificationSettings *)obj;
+        expectedOptions = (UANotificationOptions)settings;
         return expectedTypes == settings.types && expectedCategories.count == settings.categories.count;
+    }]];
+
+    [[[self.mockRegistrationDelegate expect] andDo:^(NSInvocation *invocation) {
+        [delegateCalled fulfill];
+    }]  notificationRegistrationFinishedWithOptions:7 categories:[OCMArg checkWithBlock:^BOOL(id obj) {
+        NSSet *categories = (NSSet *)obj;
+
+        return (categories.count == expectedCategories.count);
     }]];
 
     [self.push updateAPNSRegistration];
 
+    [self waitForExpectationsWithTimeout:10 handler:nil];
+
     XCTAssertNoThrow([self.mockedApplication verify]);
+    XCTAssertNoThrow([self.mockRegistrationDelegate verify]);
 
     XCTAssertFalse(self.push.shouldUpdateAPNSRegistration, @"Updating APNS registration should set shouldUpdateAPNSRegistration to NO");
+}
+
+/**
+ * Test setting authorized types to a new type results in a call to the registration delegate
+ */
+-(void)testSetAuthorizedTypesCallsRegistrationDelegate {
+
+    UANotificationOptions expectedOptions = 2;
+
+    XCTestExpectation *delegateCalled = [self expectationWithDescription:@"Delegate called"];
+
+    [[[self.mockRegistrationDelegate expect] andDo:^(NSInvocation *invocation) {
+        [delegateCalled fulfill];
+    }]  notificationAuthorizedOptionsDidChange:expectedOptions];
+
+    // set authorized types
+    self.push.authorizedNotificationOptions = expectedOptions;
+
+    [self waitForExpectationsWithTimeout:10 handler:nil];
+
+    [self.mockRegistrationDelegate verify];
 }
 
 /**
@@ -1390,7 +1429,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 - (void)testChannelCreated {
     [self.push channelCreated:@"someChannelID" channelLocation:@"someLocation" existing:YES];
 
-
     XCTAssertEqualObjects(self.push.channelID, @"someChannelID", @"The channel ID should be set on channel creation.");
     XCTAssertEqualObjects(self.push.channelLocation, @"someLocation", @"The channel location should be set on channel creation.");
 }
@@ -1402,7 +1440,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     id expectedUserInfo = @{ UAChannelCreatedEventExistingKey: @(YES),
                              UAChannelCreatedEventChannelKey:@"someChannelID" };
-
 
     XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
 
