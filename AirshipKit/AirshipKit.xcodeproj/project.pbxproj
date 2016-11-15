@@ -36,8 +36,6 @@
 		CC40D87F1D8C719F00BABD4F /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40D87E1D8C719F00BABD4F /* JRSwizzle.m */; };
 		CC40DC051D8C996A00BABD4F /* AirshipKit.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DAD91D8C996900BABD4F /* AirshipKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC40DC061D8C996A00BABD4F /* AirshipLib.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DADA1D8C996900BABD4F /* AirshipLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CC40DC081D8C996A00BABD4F /* UA_Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DADD1D8C996900BABD4F /* UA_Base64.h */; };
-		CC40DC091D8C996A00BABD4F /* UA_Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DADE1D8C996900BABD4F /* UA_Base64.m */; };
 		CC40DC0B1D8C996A00BABD4F /* NSJSONSerialization+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DAE01D8C996900BABD4F /* NSJSONSerialization+UAAdditions.h */; };
 		CC40DC0C1D8C996A00BABD4F /* NSJSONSerialization+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DAE11D8C996900BABD4F /* NSJSONSerialization+UAAdditions.m */; };
 		CC40DC0D1D8C996A00BABD4F /* NSString+UALocalizationAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DAE21D8C996900BABD4F /* NSString+UALocalizationAdditions.h */; };
@@ -318,7 +316,6 @@
 		CC40DD2D1D8C996A00BABD4F /* UAWhitelist.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DC021D8C996A00BABD4F /* UAWhitelist.m */; };
 		CC40DD2E1D8C996A00BABD4F /* UIWebView+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DC031D8C996A00BABD4F /* UIWebView+UAAdditions.h */; };
 		CC40DD2F1D8C996A00BABD4F /* UIWebView+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DC041D8C996A00BABD4F /* UIWebView+UAAdditions.m */; };
-		CC40DD321D8C9A1C00BABD4F /* UA_Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DADE1D8C996900BABD4F /* UA_Base64.m */; };
 		CC40DD331D8C9A1C00BABD4F /* NSJSONSerialization+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DAE11D8C996900BABD4F /* NSJSONSerialization+UAAdditions.m */; };
 		CC40DD341D8C9A1C00BABD4F /* NSString+UALocalizationAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DAE31D8C996900BABD4F /* NSString+UALocalizationAdditions.m */; };
 		CC40DD351D8C9A1C00BABD4F /* NSString+UAURLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DAE51D8C996900BABD4F /* NSString+UAURLEncoding.m */; };
@@ -545,7 +542,10 @@
 		CC64F1521D8B7954009CEF27 /* production-embedded.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = CC64F14A1D8B7954009CEF27 /* production-embedded.mobileprovision */; };
 		CC70E8CE1DD3E81D000E2528 /* UATagGroupsMutationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC70E8CD1DD3E81D000E2528 /* UATagGroupsMutationTest.m */; };
 		CC70E8D01DD3E863000E2528 /* UAPreferenceDataStore_TagGroupsMutationInternalTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC70E8CF1DD3E863000E2528 /* UAPreferenceDataStore_TagGroupsMutationInternalTest.m */; };
-		CC8999A91D8B642D00A0CECC /* UrbanAirship.strings in Resources */ = {isa = PBXBuildFile; fileRef = CC8999801D8B642D00A0CECC /* UrbanAirship.strings */; };
+		CC70E8EB1DDA985D000E2528 /* UA_Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = CC70E8E91DDA985D000E2528 /* UA_Base64.h */; };
+		CC70E8EC1DDA985D000E2528 /* UA_Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = CC70E8EA1DDA985D000E2528 /* UA_Base64.m */; };
+		CC70E8ED1DDA9862000E2528 /* UA_Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = CC70E8EA1DDA985D000E2528 /* UA_Base64.m */; };
+		CC70E9901DDB8AF8000E2528 /* UrbanAirship.strings in Resources */ = {isa = PBXBuildFile; fileRef = CC70E98E1DDB8AF8000E2528 /* UrbanAirship.strings */; };
 		CC8999AA1D8B642D00A0CECC /* UAAutomation.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CC8999A01D8B642D00A0CECC /* UAAutomation.xcdatamodeld */; };
 		CC8999AB1D8B642D00A0CECC /* UADefaultMessageCenterListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CC8999A21D8B642D00A0CECC /* UADefaultMessageCenterListCell.xib */; };
 		CC8999AC1D8B642D00A0CECC /* UADefaultMessageCenterListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CC8999A31D8B642D00A0CECC /* UADefaultMessageCenterListViewController.xib */; };
@@ -644,8 +644,6 @@
 		CC40D87E1D8C719F00BABD4F /* JRSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JRSwizzle.m; sourceTree = "<group>"; };
 		CC40DAD91D8C996900BABD4F /* AirshipKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipKit.h; sourceTree = "<group>"; };
 		CC40DADA1D8C996900BABD4F /* AirshipLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipLib.h; sourceTree = "<group>"; };
-		CC40DADD1D8C996900BABD4F /* UA_Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_Base64.h; sourceTree = "<group>"; };
-		CC40DADE1D8C996900BABD4F /* UA_Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_Base64.m; sourceTree = "<group>"; };
 		CC40DAE01D8C996900BABD4F /* NSJSONSerialization+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSJSONSerialization+UAAdditions.h"; sourceTree = "<group>"; };
 		CC40DAE11D8C996900BABD4F /* NSJSONSerialization+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSJSONSerialization+UAAdditions.m"; sourceTree = "<group>"; };
 		CC40DAE21D8C996900BABD4F /* NSString+UALocalizationAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UALocalizationAdditions.h"; sourceTree = "<group>"; };
@@ -1039,39 +1037,20 @@
 		CC64F14A1D8B7954009CEF27 /* production-embedded.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; path = "production-embedded.mobileprovision"; sourceTree = "<group>"; };
 		CC70E8CD1DD3E81D000E2528 /* UATagGroupsMutationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATagGroupsMutationTest.m; sourceTree = "<group>"; };
 		CC70E8CF1DD3E863000E2528 /* UAPreferenceDataStore_TagGroupsMutationInternalTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPreferenceDataStore_TagGroupsMutationInternalTest.m; sourceTree = "<group>"; };
+		CC70E8E91DDA985D000E2528 /* UA_Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UA_Base64.h; path = AirshipKit/UA_Base64.h; sourceTree = SOURCE_ROOT; };
+		CC70E8EA1DDA985D000E2528 /* UA_Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UA_Base64.m; path = AirshipKit/UA_Base64.m; sourceTree = SOURCE_ROOT; };
+		CC70E98F1DDB8AF8000E2528 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CC70E9911DDB8B02000E2528 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CC70E9921DDB8B04000E2528 /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CC70E9931DDB8B06000E2528 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CC70E9941DDB8B08000E2528 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CC70E9951DDB8B0A000E2528 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/UrbanAirship.strings"; sourceTree = "<group>"; };
+		CC70E9961DDB8B0C000E2528 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CC70E9971DDB8B0D000E2528 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CC70E9981DDB8B10000E2528 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CC70E9991DDB8B13000E2528 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		CC8999771D8B625500A0CECC /* AirshipResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipResources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC89997E1D8B642D00A0CECC /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CC8999811D8B642D00A0CECC /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC8999821D8B642D00A0CECC /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC8999831D8B642D00A0CECC /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC8999841D8B642D00A0CECC /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC8999851D8B642D00A0CECC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC8999861D8B642D00A0CECC /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/UrbanAirship.strings"; sourceTree = "<group>"; };
-		CC8999871D8B642D00A0CECC /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC8999881D8B642D00A0CECC /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC8999891D8B642D00A0CECC /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC89998A1D8B642D00A0CECC /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC89998B1D8B642D00A0CECC /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC89998C1D8B642D00A0CECC /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC89998D1D8B642D00A0CECC /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC89998E1D8B642D00A0CECC /* iw */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = iw; path = iw.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC89998F1D8B642D00A0CECC /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC8999901D8B642D00A0CECC /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC8999911D8B642D00A0CECC /* ms */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ms; path = ms.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC8999921D8B642D00A0CECC /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC8999931D8B642D00A0CECC /* no */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = no; path = no.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC8999941D8B642D00A0CECC /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC8999951D8B642D00A0CECC /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/UrbanAirship.strings"; sourceTree = "<group>"; };
-		CC8999961D8B642D00A0CECC /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt; path = pt.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC8999971D8B642D00A0CECC /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC8999981D8B642D00A0CECC /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC8999991D8B642D00A0CECC /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC89999A1D8B642D00A0CECC /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC89999B1D8B642D00A0CECC /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC89999C1D8B642D00A0CECC /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC89999D1D8B642D00A0CECC /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC89999E1D8B642D00A0CECC /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/UrbanAirship.strings"; sourceTree = "<group>"; };
-		CC89999F1D8B642D00A0CECC /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/UrbanAirship.strings"; sourceTree = "<group>"; };
 		CC8999A11D8B642D00A0CECC /* UAAutomation.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAAutomation.xcdatamodel; sourceTree = "<group>"; };
 		CC8999A21D8B642D00A0CECC /* UADefaultMessageCenterListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UADefaultMessageCenterListCell.xib; sourceTree = "<group>"; };
 		CC8999A31D8B642D00A0CECC /* UADefaultMessageCenterListViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UADefaultMessageCenterListViewController.xib; sourceTree = "<group>"; };
@@ -1100,6 +1079,27 @@
 		CCB902241DCBBCDA009A66D7 /* UAEventManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventManagerTest.m; sourceTree = "<group>"; };
 		CCD28FE21DD14DD1008D663F /* UATagGroupsMutation+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UATagGroupsMutation+Internal.h"; sourceTree = "<group>"; };
 		CCD28FE31DD14DD1008D663F /* UATagGroupsMutation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATagGroupsMutation.m; sourceTree = "<group>"; };
+		CCE2361B1DDB8B5A00577747 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/UrbanAirship.strings"; sourceTree = "<group>"; };
+		CCE2361C1DDB8B5C00577747 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/UrbanAirship.strings"; sourceTree = "<group>"; };
+		CCE2361D1DDB8B5E00577747 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCE2361E1DDB8B5F00577747 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCE2361F1DDB8B6100577747 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCE236201DDB8B6300577747 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCE236211DDB8B6900577747 /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCE236221DDB8B6B00577747 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCE236231DDB8B6F00577747 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCE236251DDB8B7A00577747 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCE236261DDB8B7C00577747 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCE236271DDB8B7E00577747 /* ms */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ms; path = ms.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCE236281DDB8B8000577747 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCE2362A1DDB8B8900577747 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCE2362B1DDB8B8B00577747 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/UrbanAirship.strings"; sourceTree = "<group>"; };
+		CCE2362E1DDB8B9B00577747 /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt; path = pt.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCE2362F1DDB8B9D00577747 /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCE236301DDB8B9F00577747 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCE236311DDB8BA100577747 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCE236321DDB8BB400577747 /* iw */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = iw; path = iw.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		CCE236331DDB8BCE00577747 /* no */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = no; path = no.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		CF471EEEF4B1EEA3289E08C9 /* libPods-AirshipKitTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AirshipKitTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E29D35E71DB93A59003C292F /* UAFetchDeviceInfoAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAFetchDeviceInfoAction.h; sourceTree = "<group>"; };
 		E29D35E81DB93A59003C292F /* UAFetchDeviceInfoAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAFetchDeviceInfoAction.m; sourceTree = "<group>"; };
@@ -1567,8 +1567,8 @@
 		CC40DADC1D8C996900BABD4F /* External */ = {
 			isa = PBXGroup;
 			children = (
-				CC40DADD1D8C996900BABD4F /* UA_Base64.h */,
-				CC40DADE1D8C996900BABD4F /* UA_Base64.m */,
+				CC70E8E91DDA985D000E2528 /* UA_Base64.h */,
+				CC70E8EA1DDA985D000E2528 /* UA_Base64.m */,
 			);
 			path = External;
 			sourceTree = "<group>";
@@ -2122,9 +2122,9 @@
 		CC89997D1D8B642D00A0CECC /* AirshipResources */ = {
 			isa = PBXGroup;
 			children = (
+				CC70E98E1DDB8AF8000E2528 /* UrbanAirship.strings */,
 				CCA11D341D9C41C7008C4A57 /* UANativeBridge.js */,
 				CC89997E1D8B642D00A0CECC /* Info.plist */,
-				CC89997F1D8B642D00A0CECC /* Localization */,
 				CC8999A01D8B642D00A0CECC /* UAAutomation.xcdatamodeld */,
 				CC8999A21D8B642D00A0CECC /* UADefaultMessageCenterListCell.xib */,
 				CC8999A31D8B642D00A0CECC /* UADefaultMessageCenterListViewController.xib */,
@@ -2136,14 +2136,6 @@
 				CC04F1841DBED84600B4842D /* UAEvents.xcdatamodeld */,
 			);
 			path = AirshipResources;
-			sourceTree = "<group>";
-		};
-		CC89997F1D8B642D00A0CECC /* Localization */ = {
-			isa = PBXGroup;
-			children = (
-				CC8999801D8B642D00A0CECC /* UrbanAirship.strings */,
-			);
-			path = Localization;
 			sourceTree = "<group>";
 		};
 		CC944EBC1DB011D000C42269 /* HTTP */ = {
@@ -2225,7 +2217,6 @@
 				CC40DCF41D8C996A00BABD4F /* UAOpenExternalURLAction.h in Headers */,
 				CC40DCC21D8C996A00BABD4F /* UAJavaScriptDelegate.h in Headers */,
 				CC40DC9F1D8C996A00BABD4F /* UAInAppMessageControllerDelegate.h in Headers */,
-				CC40DC081D8C996A00BABD4F /* UA_Base64.h in Headers */,
 				CC40DD261D8C996A00BABD4F /* UAUtils.h in Headers */,
 				CC40DCEA1D8C996A00BABD4F /* UANotificationCategories+Internal.h in Headers */,
 				CC40DCAB1D8C996A00BABD4F /* UAInboxAPIClient+Internal.h in Headers */,
@@ -2353,6 +2344,7 @@
 				CC40DC971D8C996A00BABD4F /* UAInAppMessage.h in Headers */,
 				CC40DCD31D8C996A00BABD4F /* UALocation+Internal.h in Headers */,
 				CC40DCE21D8C996A00BABD4F /* UANamedUserAPIClient+Internal.h in Headers */,
+				CC70E8EB1DDA985D000E2528 /* UA_Base64.h in Headers */,
 				CC40DD2A1D8C996A00BABD4F /* UAWebViewDelegate.h in Headers */,
 				CC40DC391D8C996A00BABD4F /* UAAnalytics.h in Headers */,
 				CC40DD001D8C996A00BABD4F /* UAPush.h in Headers */,
@@ -2523,6 +2515,8 @@
 				vi,
 				"zh-Hans",
 				"zh-Hant",
+				he,
+				nb,
 			);
 			mainGroup = 494DD94D1B0EB677009C134E;
 			productRefGroup = 494DD9581B0EB677009C134E /* Products */;
@@ -2570,9 +2564,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC8999AF1D8B642D00A0CECC /* UAInAppMessageView.xib in Resources */,
-				CC8999A91D8B642D00A0CECC /* UrbanAirship.strings in Resources */,
 				CC8999AE1D8B642D00A0CECC /* UADefaultMessageCenterPlaceholderIcon.png in Resources */,
 				CC8999B01D8B642D00A0CECC /* UANotificationCategories.plist in Resources */,
+				CC70E9901DDB8AF8000E2528 /* UrbanAirship.strings in Resources */,
 				CC8999AC1D8B642D00A0CECC /* UADefaultMessageCenterListViewController.xib in Resources */,
 				CC8999AB1D8B642D00A0CECC /* UADefaultMessageCenterListCell.xib in Resources */,
 				CCA11D351D9C41C7008C4A57 /* UANativeBridge.js in Resources */,
@@ -2689,7 +2683,6 @@
 				CC40DC531D8C996A00BABD4F /* UAAutoIntegration.m in Sources */,
 				CC40DCDB1D8C996A00BABD4F /* UAMessageCenterDateUtils.m in Sources */,
 				CC40DD231D8C996A00BABD4F /* UAUserAPIClient.m in Sources */,
-				CC40DC091D8C996A00BABD4F /* UA_Base64.m in Sources */,
 				CC40DC761D8C996A00BABD4F /* UADefaultMessageCenter.m in Sources */,
 				CC40DCCC1D8C996A00BABD4F /* UAKeychainUtils.m in Sources */,
 				CC40DCAA1D8C996A00BABD4F /* UAInbox.m in Sources */,
@@ -2807,6 +2800,7 @@
 				CC40DD121D8C996A00BABD4F /* UAScheduleTriggerData.m in Sources */,
 				CC40DC881D8C996A00BABD4F /* UADisposable.m in Sources */,
 				CC40DCAC1D8C996A00BABD4F /* UAInboxAPIClient.m in Sources */,
+				CC70E8EC1DDA985D000E2528 /* UA_Base64.m in Sources */,
 				CC40DD141D8C996A00BABD4F /* UAScreenTrackingEvent.m in Sources */,
 				CC40DCCA1D8C996A00BABD4F /* UAJSONValueTransformer.m in Sources */,
 				CC40DC861D8C996A00BABD4F /* UADisplayInboxAction.m in Sources */,
@@ -2938,7 +2932,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC40DD321D8C9A1C00BABD4F /* UA_Base64.m in Sources */,
 				CC40DD331D8C9A1C00BABD4F /* NSJSONSerialization+UAAdditions.m in Sources */,
 				CC40DD341D8C9A1C00BABD4F /* NSString+UALocalizationAdditions.m in Sources */,
 				CC40DD351D8C9A1C00BABD4F /* NSString+UAURLEncoding.m in Sources */,
@@ -3067,6 +3060,7 @@
 				CC40DDA71D8C9A1C00BABD4F /* UATagUtils.m in Sources */,
 				CC40DDA81D8C9A1C00BABD4F /* UAURLProtocol.m in Sources */,
 				CC40DDA91D8C9A1C00BABD4F /* UAUser.m in Sources */,
+				CC70E8ED1DDA9862000E2528 /* UA_Base64.m in Sources */,
 				CC40DDAA1D8C9A1C00BABD4F /* UAUserAPIClient.m in Sources */,
 				CC40DDAB1D8C9A1C00BABD4F /* UAUserData.m in Sources */,
 				CC40DDAC1D8C9A1C00BABD4F /* UAUtils.m in Sources */,
@@ -3093,40 +3087,40 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		CC8999801D8B642D00A0CECC /* UrbanAirship.strings */ = {
+		CC70E98E1DDB8AF8000E2528 /* UrbanAirship.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				CC8999811D8B642D00A0CECC /* ar */,
-				CC8999821D8B642D00A0CECC /* cs */,
-				CC8999831D8B642D00A0CECC /* da */,
-				CC8999841D8B642D00A0CECC /* de */,
-				CC8999851D8B642D00A0CECC /* en */,
-				CC8999861D8B642D00A0CECC /* es-419 */,
-				CC8999871D8B642D00A0CECC /* es */,
-				CC8999881D8B642D00A0CECC /* fi */,
-				CC8999891D8B642D00A0CECC /* fr */,
-				CC89998A1D8B642D00A0CECC /* hi */,
-				CC89998B1D8B642D00A0CECC /* hu */,
-				CC89998C1D8B642D00A0CECC /* id */,
-				CC89998D1D8B642D00A0CECC /* it */,
-				CC89998E1D8B642D00A0CECC /* iw */,
-				CC89998F1D8B642D00A0CECC /* ja */,
-				CC8999901D8B642D00A0CECC /* ko */,
-				CC8999911D8B642D00A0CECC /* ms */,
-				CC8999921D8B642D00A0CECC /* nl */,
-				CC8999931D8B642D00A0CECC /* no */,
-				CC8999941D8B642D00A0CECC /* pl */,
-				CC8999951D8B642D00A0CECC /* pt-PT */,
-				CC8999961D8B642D00A0CECC /* pt */,
-				CC8999971D8B642D00A0CECC /* ro */,
-				CC8999981D8B642D00A0CECC /* ru */,
-				CC8999991D8B642D00A0CECC /* sk */,
-				CC89999A1D8B642D00A0CECC /* sv */,
-				CC89999B1D8B642D00A0CECC /* th */,
-				CC89999C1D8B642D00A0CECC /* tr */,
-				CC89999D1D8B642D00A0CECC /* vi */,
-				CC89999E1D8B642D00A0CECC /* zh-Hans */,
-				CC89999F1D8B642D00A0CECC /* zh-Hant */,
+				CC70E98F1DDB8AF8000E2528 /* ar */,
+				CC70E9911DDB8B02000E2528 /* en */,
+				CC70E9921DDB8B04000E2528 /* cs */,
+				CC70E9931DDB8B06000E2528 /* da */,
+				CC70E9941DDB8B08000E2528 /* de */,
+				CC70E9951DDB8B0A000E2528 /* es-419 */,
+				CC70E9961DDB8B0C000E2528 /* es */,
+				CC70E9971DDB8B0D000E2528 /* fi */,
+				CC70E9981DDB8B10000E2528 /* fr */,
+				CC70E9991DDB8B13000E2528 /* hi */,
+				CCE2361B1DDB8B5A00577747 /* zh-Hant */,
+				CCE2361C1DDB8B5C00577747 /* zh-Hans */,
+				CCE2361D1DDB8B5E00577747 /* vi */,
+				CCE2361E1DDB8B5F00577747 /* tr */,
+				CCE2361F1DDB8B6100577747 /* th */,
+				CCE236201DDB8B6300577747 /* sv */,
+				CCE236211DDB8B6900577747 /* hu */,
+				CCE236221DDB8B6B00577747 /* id */,
+				CCE236231DDB8B6F00577747 /* it */,
+				CCE236251DDB8B7A00577747 /* ja */,
+				CCE236261DDB8B7C00577747 /* ko */,
+				CCE236271DDB8B7E00577747 /* ms */,
+				CCE236281DDB8B8000577747 /* nl */,
+				CCE2362A1DDB8B8900577747 /* pl */,
+				CCE2362B1DDB8B8B00577747 /* pt-PT */,
+				CCE2362E1DDB8B9B00577747 /* pt */,
+				CCE2362F1DDB8B9D00577747 /* ro */,
+				CCE236301DDB8B9F00577747 /* ru */,
+				CCE236311DDB8BA100577747 /* sk */,
+				CCE236321DDB8BB400577747 /* iw */,
+				CCE236331DDB8BCE00577747 /* no */,
 			);
 			name = UrbanAirship.strings;
 			sourceTree = "<group>";
