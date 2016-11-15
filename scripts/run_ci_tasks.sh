@@ -33,6 +33,11 @@ mkdir -p "${ROOT_PATH}/test-output"
 # Run our Logic Tests
 xcrun xcodebuild -destination "${TEST_DESTINATION}" -workspace "${ROOT_PATH}/Airship.xcworkspace" -derivedDataPath "${DERIVED_DATA}" -scheme AirshipKitTests test | tee "${ROOT_PATH}/test-output/XCTEST-LOGIC.out"
 
+# Run pod lib lint
+cd $ROOT_PATH
+pod lib lint
+cd -
+
 # delete derived data
 rm -rf "${DERIVED_DATA}"
 

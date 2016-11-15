@@ -87,13 +87,13 @@
 
         // Failure
         if (!(status >= 200 && status <= 299)) {
-            UA_LTRACE(@"Failed to associate named user with status: %ld", status);
+            UA_LTRACE(@"Failed to associate named user with status: %lu", (unsigned long)status);
             failureBlock(status);
             return;
         }
 
         // Success
-        UA_LTRACE(@"Associated named user with status: %ld", status);
+        UA_LTRACE(@"Associated named user with status: %lu", (unsigned long)status);
         successBlock();
     }];
 }
@@ -135,13 +135,13 @@
 
         // Failure
         if (!(status >= 200 && status <= 299)) {
-            UA_LTRACE(@"Failed to dissociate named user with status: %ld", status);
+            UA_LTRACE(@"Failed to dissociate named user with status: %lu", (unsigned long)status);
             failureBlock(status);
             return;
         }
 
         // Success
-        UA_LTRACE(@"Dissociated named user with status: %ld", status);
+        UA_LTRACE(@"Dissociated named user with status: %lu", (unsigned long)status);
         successBlock();
     }];
 }
