@@ -208,6 +208,13 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     if ([self.dataStore integerForKey:UAPushTypesAuthorizedKey] != types) {
         [self.dataStore setInteger:(NSInteger)types forKey:UAPushTypesAuthorizedKey];
         [self updateRegistration];
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            id strongDelegate = self.registrationDelegate;
+            if ([strongDelegate respondsToSelector:@selector(notificationAuthorizedOptionsDidChange:)]) {
+                [strongDelegate notificationAuthorizedOptionsDidChange:types];
+            }
+        });
     }
 }
 
@@ -790,6 +797,13 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     // When unregistering push set categories to nil
     [self.pushRegistration updateRegistrationWithOptions:options categories:categories completionHandler:^{
         [self updateAuthorizedNotificationTypes];
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            id strongDelegate = self.registrationDelegate;
+            if ([strongDelegate respondsToSelector:@selector(notificationRegistrationFinishedWithOptions:categories:)]) {
+                [strongDelegate notificationRegistrationFinishedWithOptions:options categories:categories];
+            }
+        });
     }];
 }
 
