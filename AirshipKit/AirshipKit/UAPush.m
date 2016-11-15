@@ -721,6 +721,11 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 }
 
 - (void)updateChannelTagGroups {
+
+    if (!self.channelID) {
+        return;
+    }
+
     UATagGroupsMutation *mutation = [self.dataStore pollTagGroupsMutationForKey:UAPushTagGroupsMutationsKey];
 
     if (!mutation) {
