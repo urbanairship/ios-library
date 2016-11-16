@@ -168,7 +168,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
                 }];
             }];
         } else {
-            UA_LDEBUG(@"Retrieve message list succeeded with status: %ld", (long)status);
+            UA_LDEBUG(@"Retrieve message list succeeded with status: %lu", (unsigned long)status);
             completionBlock(YES);
         }
 
@@ -426,7 +426,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
             }];
 
         } onFailure:^(NSUInteger status) {
-            UA_LDEBUG(@"Failed to synchronize locally read messages on server with status %ld.", status);
+            UA_LDEBUG(@"Failed to synchronize locally read messages on server with status %lu.", (unsigned long)status);
         }];
 
     }];

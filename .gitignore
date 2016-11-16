@@ -12,7 +12,6 @@ Debug/
 Release/
 Distribution/
 build/
-AirshipLib.h
 UANativeBridge.c
 xcuserdata/
 AirshipConfig.plist
