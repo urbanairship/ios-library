@@ -4,7 +4,6 @@ Pod::Spec.new do |s|
     s.name                    = "UrbanAirship-iOS-AppExtensions"
     s.summary                 = "Urban Airship iOS App Extensions"
     s.documentation_url       = "http://docs.urbanairship.com/platform/ios.html"
-    s.documentation_url       = "http://docs.urbanairship.com/platform/ios.html"
     s.homepage                = "https://www.urbanairship.com"
     s.license                 = { :type => 'BSD', :file => 'LICENSE' }
     s.author                  = { "Urban Airship" => "support@urbanairship.com" }
