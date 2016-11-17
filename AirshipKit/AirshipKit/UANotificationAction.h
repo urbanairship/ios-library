@@ -30,6 +30,29 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
+ * Clone of UNNotificationActionOptions for iOS 8-10 support.
+ */
+typedef NS_OPTIONS(NSUInteger, UANotificationActionOptions) {
+
+    /**
+     * Requires the device to be unlocked.
+     */
+    UANotificationActionOptionAuthenticationRequired = (1 << 0),
+
+    /**
+     * Marks the action as destructive.
+     */
+    UANotificationActionOptionDestructive = (1 << 1),
+
+    /**
+     * Causes the action to launch the application.
+     */
+    UANotificationActionOptionForeground = (1 << 2),
+};
+
+static const UANotificationActionOptions UANotificationActionOptionNone NS_SWIFT_UNAVAILABLE("Use [] instead.");
+
+/**
  * Clone of UNNotificationAction for iOS 8-10 support.
  */
 @interface UANotificationAction : NSObject
@@ -47,7 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The options with which to perform the action.
  */
-@property(assign, readonly, nonatomic) UNNotificationActionOptions options;
+@property(assign, readonly, nonatomic) UANotificationActionOptions options;
 
 /**
  * Creates an action with the specified title and options.
@@ -60,11 +83,11 @@ NS_ASSUME_NONNULL_BEGIN
  *        used to represent actions. This parameter must not be nil.
  * @param options Additional options for how the action should be performed. Add options
  *        sparingly and only when you require the related behavior. For a list of
- *        possible values, see UNNotificationActionOptions.
+ *        possible values, see UANotificationActionOptions.
  */
 + (instancetype)actionWithIdentifier:(NSString *)identifier
                                title:(NSString *)title
-                             options:(UNNotificationActionOptions)options;
+                             options:(UANotificationActionOptions)options;
 
 @end
 

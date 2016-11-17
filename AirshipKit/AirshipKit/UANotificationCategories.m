@@ -111,18 +111,18 @@
             return nil;
         }
 
-        UNNotificationActionOptions options = UNNotificationActionOptionNone;
+        UANotificationActionOptions options = UANotificationActionOptionNone;
 
         if ([actionDefinition[@"destructive"] boolValue]) {
-            options |= UNNotificationActionOptionDestructive;
+            options |= UANotificationActionOptionDestructive;
         }
 
         if ([actionDefinition[@"foreground"] boolValue]) {
-            options |= UNNotificationActionOptionForeground;
+            options |= UANotificationActionOptionForeground;
         }
 
         if ([actionDefinition[@"authenticationRequired"] boolValue]) {
-            options |= UNNotificationActionOptionAuthenticationRequired;
+            options |= UANotificationActionOptionAuthenticationRequired;
         }
 
         UANotificationAction *action = [UANotificationAction actionWithIdentifier:actionId
@@ -134,7 +134,7 @@
     UANotificationCategory *category = [UANotificationCategory categoryWithIdentifier:categoryId
                                                                               actions:actions
                                                                     intentIdentifiers:@[]
-                                                                              options:UNNotificationCategoryOptionNone];
+                                                                              options:UANotificationCategoryOptionNone];
 
     return category;
 }

@@ -30,7 +30,7 @@
 
 @property(nonatomic, copy) NSString *identifier;
 @property(nonatomic, copy) NSString *title;
-@property(nonatomic, assign) UNNotificationActionOptions options;
+@property(nonatomic, assign) UANotificationActionOptions options;
 
 @end
 
@@ -38,7 +38,7 @@
 
 - (instancetype)initWithIdentifier:(NSString *)identifier
                              title:(NSString *)title
-                           options:(UNNotificationActionOptions)options {
+                           options:(UANotificationActionOptions)options {
     self = [super init];
 
     if (self) {
@@ -51,7 +51,7 @@
 
 + (instancetype)actionWithIdentifier:(NSString *)identifier
                                title:(NSString *)title
-                             options:(UNNotificationActionOptions)options {
+                             options:(UANotificationActionOptions)options {
     return [[self alloc] initWithIdentifier:identifier title:title options:options];
 }
 
@@ -71,7 +71,9 @@
 }
 
 - (UNNotificationAction *)asUNNotificationAction {
-    return [UNNotificationAction actionWithIdentifier:self.identifier title:self.title options:self.options];
+    return [UNNotificationAction actionWithIdentifier:self.identifier
+                                                title:self.title
+                                              options:(UNNotificationActionOptions)self.options];
 }
 
 - (BOOL)isEqualToUIUserNotificationAction:(UIUserNotificationAction *)notificationAction {
@@ -87,7 +89,7 @@
 - (BOOL)isEqualToUNNotificationAction:(UNNotificationAction *)notificationAction {
     BOOL equalIdentifier = [self.identifier isEqualToString:notificationAction.identifier];
     BOOL equalTitle = [self.title isEqualToString:notificationAction.title];
-    BOOL equalOptions = self.options == notificationAction.options;
+    BOOL equalOptions = (NSUInteger)self.options == (NSUInteger)notificationAction.options;
 
     return equalIdentifier && equalTitle && equalOptions;
 }

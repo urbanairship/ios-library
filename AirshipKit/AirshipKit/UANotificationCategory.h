@@ -32,6 +32,27 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
+ * Category options for UANotificationCategory. All options only affects iOS 10+.
+ */
+typedef NS_OPTIONS(NSUInteger, UANotificationCategoryOptions) {
+    /**
+     * No options.
+     */
+    UANotificationCategoryOptionNone = (0),
+
+    /**
+     * Category will notify the app on dismissal.
+     */
+    UANotificationCategoryOptionCustomDismissAction = (1 << 0),
+
+    /**
+     * Category is allowed in Car Play.
+     */
+    UANotificationCategoryOptionAllowInCarPlay = (2 << 0),
+};
+
+
+/**
  * Clone of UNNotificationCategory for iOS 8-9 support.
  */
 @interface UANotificationCategory : NSObject
@@ -56,12 +77,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Options for how to handle notifications of this type.
  */
-@property(readonly, assign, nonatomic) UNNotificationCategoryOptions options;
+@property(readonly, assign, nonatomic) UANotificationCategoryOptions options;
 
 + (instancetype)categoryWithIdentifier:(NSString *)identifier
                                actions:(NSArray<UANotificationAction *> *)actions
                      intentIdentifiers:(NSArray<NSString *> *)intentIdentifiers
-                               options:(UNNotificationCategoryOptions)options;
+                               options:(UANotificationCategoryOptions)options;
 
 @end
 
