@@ -3,6 +3,23 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+Version 8.1.0 - November 17, 2016
+=================================
+- Added support for resizable landing pages.
+- Added support for being able to perform `set` operation on tag groups.
+- Added support for tag groups in the add and remove tag actions.
+- Added two new push registration delegate methods `notificationRegistrationFinishedWithOptions:categories`
+  and `notificationAuthorizedOptionsDidChange:` to be notified when notification registration changes occur.
+- Replaced usage of NSURLConnection with NSURLSession.
+- Fixed iOS 8-9 compatibility with UANotificationActions by providing a UA version of UNNotificationActionOptions
+  and UNNotificationCategoryOptions.
+
+Packaging Changes
+-----------------
+ - AirshipKit is now distributed with full source code.
+ - Pod specs have been moved into main repo.
+ - Updated docs build to use Jazzy instead of Appledocs to provide swift and obj-c docs.
+
 Version 8.0.4 - November 8, 2016
 ================================
 - Added better file type detection for extensionless media attachment URLs.
