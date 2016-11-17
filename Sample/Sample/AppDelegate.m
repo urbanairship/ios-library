@@ -92,13 +92,9 @@
     // notifications.
     // [UAirship push].userPushNotificationsEnabled = YES;
 
-
-    [[UAirship push] setTags:@[@"tag1", @"tag2"] group:@"whatever"];
-    [[UAirship push] addTags:@[@"tag3", @"tag4"] group:@"whatever"];
-    [[UAirship push] removeTags:@[@"tag1"] group:@"whatever"];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshMessageCenterBadge) name:UAInboxMessageListUpdatedNotification object:nil];
-
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(refreshMessageCenterBadge)
+                                                 name:UAInboxMessageListUpdatedNotification object:nil];
     return YES;
 }
 
