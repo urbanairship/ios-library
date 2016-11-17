@@ -134,7 +134,7 @@
             // Add to the set tag groups if we can
             if (setTagGroups[group]) {
                 [setTagGroups[group] unionSet:tags];
-                break;
+                continue;
             }
 
 
@@ -163,7 +163,7 @@
                     [setTagGroups removeObjectForKey:group];
                 }
 
-                break;
+                continue;
             }
 
             // Remove from add tag groups
