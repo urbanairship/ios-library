@@ -175,8 +175,8 @@ rm -rf `find ${STAGING} -name "xcuserdata" `
 rm -rf `find ${STAGING} -name "AirshipConfig.plist" `
 
 # Rename sample plists
-mv -f ${STAGING}/Sample/AirshipConfig.plist.sample ${ROOT_PATH}/Sample/AirshipConfig.plist
-mv -f ${STAGING}/SwiftSample/AirshipConfig.plist.sample ${ROOT_PATH}/SwiftSample/AirshipConfig.plist
+mv -f ${STAGING}/Sample/AirshipConfig.plist.sample ${STAGING}/Sample/AirshipConfig.plist
+mv -f ${STAGING}/SwiftSample/AirshipConfig.plist.sample ${STAGING}/SwiftSample/AirshipConfig.plist
 
 # Generate the ZIP
 cd $STAGING
