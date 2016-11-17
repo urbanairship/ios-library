@@ -39,9 +39,9 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Converts a UANotificationCategory into a UNNotificationCategory.
  *
- * @return An instance of UNNotificationCategory.
+ * @return An instance of UNNotificationCategory. Will be null on iOS 10 beta 2 and older.
  */
-- (UNNotificationCategory *)asUNNotificationCategory;
+- (null_unspecified UNNotificationCategory *)asUNNotificationCategory;
 
 /**
  * Tests for equivalence with a UIUserNotificationCategory. As UANotificationCategory is a

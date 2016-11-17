@@ -40,6 +40,7 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     if ([UAirship push].alias) {
         self.addAliasTextField.text = [UAirship push].alias;
     }

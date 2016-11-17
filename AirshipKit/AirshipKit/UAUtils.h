@@ -66,8 +66,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)logFailedRequest:(UARequest *)request
              withMessage:(NSString *)message
-               withError:(NSError *)error
-            withResponse:(NSHTTPURLResponse *)response;
+               withError:(nullable NSError *)error
+            withResponse:(nullable NSHTTPURLResponse *)response;
 
 
 /**

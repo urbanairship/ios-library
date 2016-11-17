@@ -40,6 +40,8 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+
     if ([UAirship namedUser].identifier) {
         self.addNamedUserTextField.text = [UAirship namedUser].identifier;
     }
