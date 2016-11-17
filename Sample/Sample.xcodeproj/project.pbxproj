@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		49251DDA1D6F961800EED4BD /* AirshipAppExtensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49251DD51D6F95FC00EED4BD /* AirshipAppExtensions.framework */; };
-		49251DDC1D6F962800EED4BD /* AirshipAppExtensions.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 49251DD51D6F95FC00EED4BD /* AirshipAppExtensions.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		493F50EA1C5B261100B050A1 /* MessageCenterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 493F50E91C5B261100B050A1 /* MessageCenterViewController.m */; };
 		493F50FB1C5B262100B050A1 /* Roboto-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 493F50EE1C5B262100B050A1 /* Roboto-BlackItalic.ttf */; };
 		493F50FD1C5B262100B050A1 /* Roboto-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 493F50F01C5B262100B050A1 /* Roboto-BoldItalic.ttf */; };
@@ -23,6 +21,8 @@
 		49D2C73F1D6F952D0049B0A0 /* NotificationService.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D2C73E1D6F952D0049B0A0 /* NotificationService.m */; };
 		49D2C7431D6F952D0049B0A0 /* SampleServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 49D2C73B1D6F952D0049B0A0 /* SampleServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		61A672FC1CAB3E5A00BAF58A /* PushHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 61A672FB1CAB3E5A00BAF58A /* PushHandler.m */; };
+		61E30D821DDE324C00B7EE28 /* AirshipAppExtensions.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 49251DD51D6F95FC00EED4BD /* AirshipAppExtensions.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		61E30D931DDE3C4500B7EE28 /* AirshipAppExtensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49251DD51D6F95FC00EED4BD /* AirshipAppExtensions.framework */; };
 		61E392311CC81EA800D994E3 /* UAMessageCenterDefaultStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 61E392301CC81EA800D994E3 /* UAMessageCenterDefaultStyle.plist */; };
 		764693A71C237B630090FE40 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A61C237B630090FE40 /* main.m */; };
 		764693AA1C237B630090FE40 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A91C237B630090FE40 /* AppDelegate.m */; };
@@ -62,19 +62,19 @@
 			remoteGlobalIDString = 49AA01051D65158C0081989A;
 			remoteInfo = AirshipAppExtensionsTests;
 		};
-		49251DD81D6F960A00EED4BD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 49251DCF1D6F95FC00EED4BD /* AirshipAppExtensions.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 49AA00FB1D65158C0081989A;
-			remoteInfo = AirshipAppExtensions;
-		};
 		49D2C7411D6F952D0049B0A0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7646939A1C237B630090FE40 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 49D2C73A1D6F952D0049B0A0;
 			remoteInfo = SampleServiceExtension;
+		};
+		61E30D731DDE2F9E00B7EE28 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 49251DCF1D6F95FC00EED4BD /* AirshipAppExtensions.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 49AA00FB1D65158C0081989A;
+			remoteInfo = AirshipAppExtensions;
 		};
 		767A3A261D9EEEA700422A96 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -120,7 +120,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				49251DDC1D6F962800EED4BD /* AirshipAppExtensions.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -151,6 +150,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				61E30D821DDE324C00B7EE28 /* AirshipAppExtensions.framework in CopyFiles */,
 				CC899CC41D8B6F3900A0CECC /* AirshipKit.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -229,7 +229,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				49251DDA1D6F961800EED4BD /* AirshipAppExtensions.framework in Frameworks */,
+				61E30D931DDE3C4500B7EE28 /* AirshipAppExtensions.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -413,7 +413,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				49251DD91D6F960A00EED4BD /* PBXTargetDependency */,
 			);
 			name = SampleServiceExtension;
 			productName = SampleServiceExtension;
@@ -434,6 +433,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				61E30D741DDE2F9E00B7EE28 /* PBXTargetDependency */,
 				767A3A271D9EEEA700422A96 /* PBXTargetDependency */,
 				49D2C7421D6F952D0049B0A0 /* PBXTargetDependency */,
 			);
@@ -620,15 +620,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		49251DD91D6F960A00EED4BD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = AirshipAppExtensions;
-			targetProxy = 49251DD81D6F960A00EED4BD /* PBXContainerItemProxy */;
-		};
 		49D2C7421D6F952D0049B0A0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 49D2C73A1D6F952D0049B0A0 /* SampleServiceExtension */;
 			targetProxy = 49D2C7411D6F952D0049B0A0 /* PBXContainerItemProxy */;
+		};
+		61E30D741DDE2F9E00B7EE28 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipAppExtensions;
+			targetProxy = 61E30D731DDE2F9E00B7EE28 /* PBXContainerItemProxy */;
 		};
 		767A3A271D9EEEA700422A96 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
