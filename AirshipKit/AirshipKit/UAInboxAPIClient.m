@@ -175,7 +175,6 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
 
         // Success
         NSArray *messages;
-        NSInteger unread = 0;
         NSDictionary *headers = httpResponse.allHeaderFields;
         NSString *lastModified = [headers objectForKey:@"Last-Modified"];
 
@@ -187,10 +186,6 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
         // Parse the response
         NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
         messages = [jsonResponse objectForKey:@"messages"];
-        unread = [[jsonResponse objectForKey: @"badge"] integerValue];
-        if (unread < 0) {
-            unread = 0;
-        }
 
         UA_LTRACE(@"Retrieved message list with status: %ld jsonResponse: %@", (unsigned long)httpResponse.statusCode, jsonResponse);
 

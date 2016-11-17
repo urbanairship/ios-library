@@ -63,8 +63,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param removeTags A dictionary of tag groups to tags to remove.
  * @return The mutation.
  */
-+ (instancetype)mutationWithAddTags:(NSDictionary *)addTags
-                          removeTags:(NSDictionary *)removeTags;
++ (instancetype)mutationWithAddTags:(nullable NSDictionary *)addTags
+                         removeTags:(nullable NSDictionary *)removeTags;
 
 /**
  * Collapses an array of tag group mutations to either 1 or 2 mutations.
