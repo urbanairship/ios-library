@@ -40,7 +40,7 @@
 /**
  * Options for how to handle notifications of this type.
  */
-@property(nonatomic, assign) UNNotificationCategoryOptions options;
+@property(nonatomic, assign) UANotificationCategoryOptions options;
 
 @end
 
@@ -49,7 +49,7 @@
 - (instancetype)initWithIdentifier:(NSString *)identifier
                            actions:(NSArray<UANotificationAction *> *)actions
                  intentIdentifiers:(NSArray<NSString *> *)intentIdentifiers
-                           options:(UNNotificationCategoryOptions)options {
+                           options:(UANotificationCategoryOptions)options {
     self = [super init];
 
     if (self) {
@@ -65,7 +65,7 @@
 + (instancetype)categoryWithIdentifier:(NSString *)identifier
                                actions:(NSArray<UANotificationAction *> *)actions
                      intentIdentifiers:(NSArray<NSString *> *)intentIdentifiers
-                               options:(UNNotificationCategoryOptions)options {
+                               options:(UANotificationCategoryOptions)options {
 
     return [[self alloc] initWithIdentifier:identifier
                                     actions:actions
@@ -102,7 +102,7 @@
         return [UNNotificationCategory categoryWithIdentifier:self.identifier
                                                       actions:actions
                                             intentIdentifiers:self.intentIdentifiers
-                                                      options:self.options];
+                                                      options:(UNNotificationCategoryOptions)self.options];
     } else {
         return nil;
     }
@@ -146,7 +146,7 @@
         return NO;
     }
 
-    if (!(self.options == category.options)) {
+    if (!((NSUInteger)self.options == (NSUInteger)category.options)) {
         return NO;
     }
 
