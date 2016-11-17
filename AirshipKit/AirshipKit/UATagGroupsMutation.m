@@ -220,7 +220,7 @@
 
 /**
  * Normalizes a dictionary of tag groups. Converts any arrays to sets.
- * @param tagGroup A tag group.
+ * @param tagGroups A tag group.
  * @returns A tag group with sets instead of arrays.
  */
 + (NSDictionary *)normalizeTagGroup:(NSDictionary *)tagGroups {
@@ -247,7 +247,7 @@
 
 /**
  * Converts a dictionary of string to set to a dictionary of string to array.
- * @param tagGroup A tag group.
+ * @param tagGroups A tag group.
  * @returns A tag group with arrays instead of sets.
  */
 + (NSDictionary *)prepareTagGroup:(NSDictionary *)tagGroups {

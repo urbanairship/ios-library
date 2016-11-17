@@ -232,7 +232,7 @@
  * Test the action looks up the message in the inbox message metadata if the placeholder
  * is set for the arguments value.
  */
-- (void)testPerfromWithPlaceHolderInboxMessageMetadata {
+- (void)testPerformWithPlaceHolderInboxMessageMetadata {
     __block BOOL actionPerformed;
 
     UAInboxMessage *message = [OCMockObject niceMockForClass:[UAInboxMessage class]];
@@ -257,7 +257,7 @@
  * Test the action looks up the message ID in the push notification metadata if the placeholder
  * is set for the arguments value.
  */
-- (void)testPerfromWithPlaceHolderPushMessageMetadata {
+- (void)testPerformWithPlaceHolderPushMessageMetadata {
     __block BOOL actionPerformed;
 
     UAInboxMessage *message = [OCMockObject niceMockForClass:[UAInboxMessage class]];

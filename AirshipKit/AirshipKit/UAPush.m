@@ -541,7 +541,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
     if (self.channelTagRegistrationEnabled && [UAPushDefaultDeviceTagGroup isEqualToString:tagGroupID]) {
-        UA_LERR(@"Unable to remove tags %@ to device tag group when channelTagRegistrationEnabled is true.", [tags description]);
+        UA_LERR(@"Unable to remove tags %@ from device tag group when channelTagRegistrationEnabled is true.", [tags description]);
         return;
     }
 
@@ -560,7 +560,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
 - (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID {
     if (self.channelTagRegistrationEnabled && [UAPushDefaultDeviceTagGroup isEqualToString:tagGroupID]) {
-        UA_LERR(@"Unable to set tags %@ from device tag group when channelTagRegistrationEnabled is true.", [tags description]);
+        UA_LERR(@"Unable to set tags %@ for device tag group when channelTagRegistrationEnabled is true.", [tags description]);
         return;
     }
 

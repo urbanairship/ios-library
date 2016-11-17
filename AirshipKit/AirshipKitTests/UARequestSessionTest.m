@@ -109,7 +109,7 @@
     NSError *returnError = [NSError errorWithDomain:@"domain" code:100 userInfo:nil];
     __block BOOL completionHandlerCalled = NO;
 
-    // Actually perfrom the request
+    // Actually perform the request
     [self.session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         XCTAssertEqual(returnData, data);
         XCTAssertEqual(returnResponse, response);
@@ -155,7 +155,7 @@
 
     __block BOOL retryBlockCalled = NO;
 
-    // Actually perfrom the request
+    // Actually perform the request
     [self.session dataTaskWithRequest:request
      retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
          retryBlockCalled = YES;

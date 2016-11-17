@@ -63,7 +63,7 @@
 /**
  * Deletes a set of events.
  *
- * @param event The event IDs to delete.
+ * @param eventIds The event IDs to delete.
  */
 - (void)deleteEventsWithIDs:(NSArray<NSString *> *)eventIds;
 

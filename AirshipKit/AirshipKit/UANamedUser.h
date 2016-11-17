@@ -66,7 +66,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- * Sets tags from named user tags. To update the server,
+ * Set tags for named user tags. To update the server,
  * make all of your changes, then call `updateTags`.
  *
  * @param tags Array of tags to set.

@@ -216,7 +216,7 @@
  * Test the action looks up the message in the inbox message metadata if the placeholder
  * is set for the arguments value.
  */
-- (void)testPerfromWithPlaceHolderInboxMessageMetadata {
+- (void)testPerformWithPlaceHolderInboxMessageMetadata {
     [UAirship inbox].delegate = self.mockInboxDelegate;
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"auto"
@@ -237,7 +237,7 @@
  * Test the action looks up the message ID in the push notification metadata if the placeholder
  * is set for the arguments value.
  */
-- (void)testPerfromWithPlaceHolderPushMessageMetadata {
+- (void)testPerformWithPlaceHolderPushMessageMetadata {
     [UAirship inbox].delegate = self.mockInboxDelegate;
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"auto"
