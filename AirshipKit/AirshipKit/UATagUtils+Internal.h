@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Used to trim whitespace and validate a tag group.
  *
  * @note This method is for internal use only. It is called when tags are set.
- * @param tags Tags as an NSArray.
+ * @param tagGroupID Tags as an NSArray.
  */
 + (nullable NSString *)normalizeTagGroupID:(NSString *)tagGroupID;
 

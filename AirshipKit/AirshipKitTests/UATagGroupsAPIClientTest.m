@@ -56,7 +56,7 @@
 }
 
 /**
- * Test tag groups retry for 5xx response bcodes.
+ * Test tag groups retry for 5xx response codes.
  */
 - (void)testRetryBlock {
     UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"tag1"]

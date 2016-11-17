@@ -28,12 +28,12 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Defines changes to perfrom on tag groups.
+ * Defines changes to perform on tag groups.
  */
 @interface UATagGroupsMutation : NSObject
 
 /**
- * Factory method to create to define tags to be added to a tag group.
+ * Factory method to define tags to be added to a tag group.
  * @param tags The tags to be added.
  * @param group The tag group.
  * @return The mutation.
@@ -41,23 +41,23 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)mutationToAddTags:(NSArray<NSString *> *)tags group:(NSString *)group;
 
 /**
- * Factory method to create to define tags to be added to a tag group.
- * @param tags The tags to be added.
+ * Factory method to define tags to be removed from a tag group.
+ * @param tags The tags to be removed.
  * @param group The tag group.
  * @return The mutation.
  */
 + (instancetype)mutationToRemoveTags:(NSArray<NSString *> *)tags group:(NSString *)group;
 
 /**
- * Factory method to create to define tags to be added to a tag group.
- * @param tags The tags to be added.
+ * Factory method to define tags to be set to a tag group.
+ * @param tags The tags to be set.
  * @param group The tag group.
  * @return The mutation.
  */
 + (instancetype)mutationToSetTags:(NSArray<NSString *> *)tags group:(NSString *)group;
 
 /**
- * Factory method to define a tag mutation with a dictionaries of tag group
+ * Factory method to define a tag mutation with dictionaries of tag group
  * changes to add and remove.
  * @param addTags A dictionary of tag groups to tags to add.
  * @param removeTags A dictionary of tag groups to tags to remove.
@@ -70,7 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Collapses an array of tag group mutations to either 1 or 2 mutations.
  *
  * Set tags will always be in its own mutation.
- * Add and remove will try to collapse into a set if available
+ * Add and remove will try to collapse into a set if available.
  * Adds will be removed from any remove changes, and vice versa.
  *
  * @param mutations The mutations to collapse.
@@ -80,7 +80,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- * The mutation payload for `UATagGroupAPIClient`.
+ * The mutation payload for `UATagGroupsAPIClient`.
  * @return A JSON safe dictionary to be used in a request body.
  */
 - (NSDictionary *)payload;

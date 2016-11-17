@@ -39,22 +39,22 @@ NS_ASSUME_NONNULL_BEGIN
  * Adds a tag mutation to the array of saved mutations.
  * @param mutation The mutation to add.
  * @param atBeginning If the mutation should be inserted at the front of the array or not.
- * @param key The datstore key.
+ * @param key The datastore key.
  */
 - (void)addTagGroupsMutation:(UATagGroupsMutation *)mutation atBeginning:(BOOL)atBeginning forKey:(NSString *)key;
 
 
 /**
  * Polls and removes the first mutation from the array of pending mutations.
- * @param key The datstore key.
- * @return The first mutation, or null if no mutations are available.
+ * @param key The datastore key.
+ * @return The first mutation, or nil if no mutations are available.
  */
 - (nullable UATagGroupsMutation *)pollTagGroupsMutationForKey:(NSString *)key;
 
 /**
  * Migrates pending add and remove tag group changes to an array of mutations.
  * @param addTagsKey The data store key for pending add tag changes.
- * @param removeTagsKey The data store key for pending add remove changes.
+ * @param removeTagsKey The data store key for pending remove tag changes.
  * @param key The data store key to store the migrated mutations.
  */
 - (void)migrateTagGroupSettingsForAddTagsKey:(NSString *)addTagsKey

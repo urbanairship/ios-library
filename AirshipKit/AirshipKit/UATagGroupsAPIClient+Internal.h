@@ -58,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Update the channel tag group.
  *
  * @param channelId The channel ID string.
- * @param tagGroupsMutation The tags changes.
+ * @param mutation The tag groups changes.
  * @param completionHandler The completion handler with the status code.
  */
 - (void)updateChannel:(NSString *)channelId
@@ -69,7 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Update the named user tags.
  *
  * @param identifier The named user ID string.
- * @param tagGroupsMutation The tags changes.
+ * @param mutation The tag groups changes.
  * @param completionHandler The completion handler with the status code.
  */
 - (void)updateNamedUser:(NSString *)identifier

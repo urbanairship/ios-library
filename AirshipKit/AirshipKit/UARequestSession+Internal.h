@@ -56,7 +56,7 @@ typedef BOOL (^UARequestRetryBlock)(NSData * _Nullable data, NSURLResponse * _Nu
  * UARequestSession factory method.
  * @param config The UAConfig instance.
  * @param session A NSURLSession instance.
- * @param queue A NSOperation to perfrom retries on.
+ * @param queue A NSOperation to perform retries on.
  * @return A UARequestSession instance.
  */
 + (instancetype)sessionWithConfig:(UAConfig *)config NSURLSession:(NSURLSession *)session queue:(NSOperationQueue *)queue;

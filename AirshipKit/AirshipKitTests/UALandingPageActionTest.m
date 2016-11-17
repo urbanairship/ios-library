@@ -141,7 +141,7 @@
 }
 
 /**
- * Helper method to verify perfrom in foreground situations with no expected headers
+ * Helper method to verify perform in foreground situations with no expected headers
  */
 - (void)verifyPerformInForegroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl {
     [self verifyPerformInForegroundWithValue:value expectedUrl:expectedUrl expectedHeaders:nil];

@@ -50,7 +50,7 @@
     tagGroupsMutation:(UATagGroupsMutation *)mutation
     completionHandler:(void (^)(NSUInteger status))completionHandler {
 
-    [self perfromTagGroupsMutation:mutation
+    [self performTagGroupsMutation:mutation
                               path:kUAChannelTagGroupsPath
                           audience:@{kUATagGroupsIosChannelKey : channelId}
                  completionHandler:completionHandler];
@@ -60,13 +60,13 @@
       tagGroupsMutation:(UATagGroupsMutation *)mutation
       completionHandler:(void (^)(NSUInteger status))completionHandler {
 
-    [self perfromTagGroupsMutation:mutation
+    [self performTagGroupsMutation:mutation
                               path:kUANamedUserTagsPath
                           audience:@{kUATagGroupsNamedUserIdKey : identifier}
                  completionHandler:completionHandler];
 }
 
-- (void)perfromTagGroupsMutation:(UATagGroupsMutation *)mutation
+- (void)performTagGroupsMutation:(UATagGroupsMutation *)mutation
                             path:(NSString *)path
                         audience:(NSDictionary *)audience
                completionHandler:(void (^)(NSUInteger status))completionHandler {
