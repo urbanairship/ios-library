@@ -3,6 +3,11 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+Version 8.1.1 - November 18, 2016
+=================================
+ - Added conversion methods for UNNotificationAction and UIUserNotificationAction in the public header for UANotificationAction.
+ - Fixed set tag group operation issues.
+
 Version 8.1.0 - November 17, 2016
 =================================
 - Added support for resizable landing pages.
