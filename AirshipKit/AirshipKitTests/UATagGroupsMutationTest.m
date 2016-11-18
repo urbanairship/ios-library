@@ -156,4 +156,16 @@
     XCTAssertEqual(0, collapsed.count);
 }
 
+- (void)testCollapseSetTags {
+    UATagGroupsMutation *set1 = [UATagGroupsMutation mutationToSetTags:@[@"tag1"] group:@"group"];
+    UATagGroupsMutation *set2 = [UATagGroupsMutation mutationToSetTags:@[@"tag2"] group:@"group"];
+
+    // Collapse [set1, set2] should result in only set1
+    NSArray *collapsed = [UATagGroupsMutation collapseMutations:@[set1, set2]];
+    XCTAssertEqual(1, collapsed.count);
+
+    NSDictionary *expected = @{ @"set": @{ @"group": @[@"tag2"] } };
+    XCTAssertEqualObjects(expected, [collapsed[0] payload]);
+}
+
 @end

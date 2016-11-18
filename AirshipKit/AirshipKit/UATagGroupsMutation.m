@@ -137,7 +137,6 @@
                 continue;
             }
 
-
             // Remove from remove tag groups
             [removeTagGroups[group] minusSet:tags];
             if (![removeTagGroups[group] count]) {
@@ -186,11 +185,7 @@
             NSMutableSet *tags = [mutation.setTagGroups[group] mutableCopy];
 
             // Add to the set tags group
-            if (!setTagGroups[group]) {
-                setTagGroups[group] = tags;
-            } else {
-                [setTagGroups[group] unionSet:tags];
-            }
+            setTagGroups[group] = tags;
 
             // Remove from the other groups
             [removeTagGroups removeObjectForKey:group];
