@@ -15,6 +15,9 @@ Version 8.1.0 - November 17, 2016
 - Added support for tag groups in the add and remove tag actions.
 - Added two new push registration delegate methods `notificationRegistrationFinishedWithOptions:categories`
   and `notificationAuthorizedOptionsDidChange:` to be notified when notification registration changes occur.
+- Added UAFetchDeviceInfoAction to get an updated snapshot of the devices information from the JS bridge.
+- Changed default predicate on the UAAddCustomEventAction to accept more situations.
+- Changed RetailEventTemplate to only set `ltv` on purchase events.
 - Replaced usage of NSURLConnection with NSURLSession.
 - Fixed iOS 8-9 compatibility with UANotificationActions by providing a UA version of UNNotificationActionOptions
   and UNNotificationCategoryOptions.
