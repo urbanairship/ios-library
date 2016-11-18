@@ -88,6 +88,19 @@ static const UANotificationActionOptions UANotificationActionOptionNone NS_SWIFT
 + (instancetype)actionWithIdentifier:(NSString *)identifier
                                title:(NSString *)title
                              options:(UANotificationActionOptions)options;
+/**
+ * Converts a UANotificationAction into a UIUserNotificationAction.
+ *
+ * @return An instance of UIUserNotificationAction or nil if conversion fails.
+ */
+- (nullable UIUserNotificationAction *)asUIUserNotificationAction;
+
+/**
+ * Converts a UANotificationAction into a UNNotificationAction.
+ *
+ * @return An instance of UNUNotificationAction or nil if conversion fails.
+ */
+- (nullable UNNotificationAction *)asUNNotificationAction;
 
 @end
 

@@ -81,7 +81,10 @@
     NSArray *uaActions = self.actions;
     NSMutableArray *uiActions = [NSMutableArray array];
     for (UANotificationAction *uaAction in uaActions) {
-        [uiActions addObject:[uaAction asUIUserNotificationAction]];
+        UIUserNotificationAction *converted = [uaAction asUIUserNotificationAction];
+        if (converted) {
+            [uiActions addObject:converted];
+        }
     }
 
     [category setActions:uiActions forContext:UIUserNotificationActionContextDefault];
@@ -94,7 +97,10 @@
     NSMutableArray *actions = [NSMutableArray array];
 
     for (UANotificationAction *action in self.actions) {
-        [actions addObject:[action asUNNotificationAction]];
+        UNNotificationAction *converted = [action asUNNotificationAction];
+        if (converted) {
+            [actions addObject:converted];
+        }
     }
 
     // Prevents iOS 10 beta crash

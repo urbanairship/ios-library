@@ -30,20 +30,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UANotificationAction ()
 
 /**
- * Converts a UANotificationAction into a UIUserNotificationAction.
- *
- * @return An instance of UIUserNotificationAction.
- */
-- (UIUserNotificationAction *)asUIUserNotificationAction;
-
-/**
- * Converts a UANotificationAction into a UNNotificationAction.
- *
- * @return An instance of UNUNotificationAction.
- */
-- (UNNotificationAction *)asUNNotificationAction;
-
-/**
  * Tests for equivalence with a UIUserNotificationAction. As UANotificationAction is a
  * drop-in replacement for UNNotificationAction, any features not applicable
  * in UIUserNotificationAction will be ignored.
