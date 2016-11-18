@@ -59,6 +59,7 @@
     UIMutableUserNotificationAction *uiAction = [[UIMutableUserNotificationAction alloc] init];
     uiAction.identifier = self.identifier;
     uiAction.title = self.title;
+
     if (self.options & UNNotificationActionOptionAuthenticationRequired) {
         uiAction.authenticationRequired = YES;
     }
