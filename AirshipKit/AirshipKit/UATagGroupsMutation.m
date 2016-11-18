@@ -158,11 +158,7 @@
             // Remove to the set tag groups if we can
             if (setTagGroups[group]) {
                 [setTagGroups[group] minusSet:tags];
-                if (![setTagGroups[group] count]) {
-                    [setTagGroups removeObjectForKey:group];
-                }
-
-                continue;
+                break;
             }
 
             // Remove from add tag groups
