@@ -153,7 +153,22 @@
 
     // Collapse [set, remove] should result in no mutations
     NSArray *collapsed = [UATagGroupsMutation collapseMutations:@[set, remove]];
-    XCTAssertEqual(0, collapsed.count);
+    XCTAssertEqual(1, collapsed.count);
+
+    NSDictionary *expected = @{ @"set": @{ @"group": @[] } };
+    XCTAssertEqualObjects(expected, [collapsed[0] payload]);
+}
+
+- (void)testCollapseSetTags {
+    UATagGroupsMutation *set1 = [UATagGroupsMutation mutationToSetTags:@[@"tag1"] group:@"group"];
+    UATagGroupsMutation *set2 = [UATagGroupsMutation mutationToSetTags:@[@"tag2"] group:@"group"];
+
+    // Collapse [set1, set2] should result in only set2
+    NSArray *collapsed = [UATagGroupsMutation collapseMutations:@[set1, set2]];
+    XCTAssertEqual(1, collapsed.count);
+
+    NSDictionary *expected = @{ @"set": @{ @"group": @[@"tag2"] } };
+    XCTAssertEqualObjects(expected, [collapsed[0] payload]);
 }
 
 @end
