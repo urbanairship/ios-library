@@ -55,7 +55,6 @@
 }
 
 - (instancetype)initWithBlock:(void (^)(UAAsyncOperation *))block {
-
     self = [self init];
     if (self) {
         self.block = block;
@@ -88,20 +87,25 @@
 }
 
 - (void)cancel {
-    [super cancel];
-    if (self.isExecuting) {
-        [self finish];
+    @synchronized (self) {
+        [super cancel];
+
+        if (self.isExecuting) {
+            [self finish];
+        }
     }
 }
 
 - (void)start {
-    if (self.isCancelled) {
-        [self finish];
-        return;
-    }
+    @synchronized (self) {
+        if (self.isCancelled) {
+            [self finish];
+            return;
+        }
 
-    self.isExecuting = YES;
-    [self startAsyncOperation];
+        self.isExecuting = YES;
+        [self startAsyncOperation];
+    }
 }
 
 - (void)startAsyncOperation {
@@ -113,11 +117,13 @@
 }
 
 - (void)finish {
-    self.block = nil;
+    @synchronized (self) {
+        self.block = nil;
 
-    if (!self.isFinished) {
-        self.isExecuting = NO;
-        self.isFinished = YES;
+        if (!self.isFinished) {
+            self.isExecuting = NO;
+            self.isFinished = YES;
+        }
     }
 }
 
