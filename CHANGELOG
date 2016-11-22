@@ -3,6 +3,10 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+Version 8.1.2 - November 22, 2016
+=================================
+ - Fixed a potential crash due to UAAsyncOperation not being thread safe.
+
 Version 8.1.1 - November 18, 2016
 =================================
  - Added conversion methods for UNNotificationAction and UIUserNotificationAction in the public header for UANotificationAction.
