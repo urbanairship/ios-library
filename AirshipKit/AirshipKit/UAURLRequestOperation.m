@@ -59,8 +59,10 @@
 
 - (void)startAsyncOperation {
     self.task = [self.session dataTaskWithRequest:self.request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        if (!self.isCancelled && self.completionHandler) {
-            self.completionHandler(data, response, error);
+        @synchronized (self) {
+            if (!self.isCancelled && self.completionHandler) {
+                self.completionHandler(data, response, error);
+            }
         }
 
         [self finish];
@@ -70,10 +72,12 @@
 }
 
 - (void)finish {
-    self.task = nil;
-    self.completionHandler = nil;
-    self.request = nil;
-    self.session = nil;
+    @synchronized (self) {
+        self.task = nil;
+        self.completionHandler = nil;
+        self.request = nil;
+        self.session = nil;
+    }
 
     [super finish];
 }
