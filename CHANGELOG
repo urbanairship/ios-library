@@ -3,6 +3,10 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+Version 7.3.1 - November 28, 2016
+=================================
+- Fix analytics events failing to upload.
+
 Version 7.3.0 - August 31, 2016
 ===============================
 - Added a new simplified location module.

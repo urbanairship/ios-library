@@ -573,9 +573,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 // Adds event upload operation to the sendQueue.
 - (NSOperation *)queryOperationWithCompletionBlock:(UAAnalyticsUploadCompletionBlock)completionBlock {
-
-    __weak __block NSOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
-
+    __weak __block NSOperation *weakOperation;
+    void (^operationCompletionHandler)() = ^ {
         NSArray *events = [self prepareEventsForUpload];
 
         // Check for empty events
@@ -594,13 +593,16 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
         // Transfer to the completion block to the network operation
         networkOperation.completionBlock = completionBlock;
-        operation.completionBlock = nil;
+        weakOperation.completionBlock = nil;
 
         [self.sendQueue addOperation:networkOperation];
-    }];
+    };
 
-    operation.completionBlock = completionBlock;
-    return operation;
+
+    NSOperation *strongOperation = [NSBlockOperation blockOperationWithBlock:operationCompletionHandler];
+    weakOperation = strongOperation;
+
+    return strongOperation;
 }
 
 - (void)sendWithDelay:(NSTimeInterval)delay {
