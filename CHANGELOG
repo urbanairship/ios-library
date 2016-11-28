@@ -64,10 +64,13 @@ Version 8.0.0 - September 7, 2016
   per notification with presentationOptionsForNotification: method on the UAPushNotificationDelegate.
 - Fixed analytics upload issue.
 
+Version 7.3.1 - November 28, 2016
+=================================
+- Fix analytics events failing to upload.
+
 Version 7.3.0 - August 31, 2016
 ===============================
 Warning: This version has an issue with analytics not uploading and should be avoided.
-Please use a newer version (8.x) or 7.2.2.
 
 - Added a new simplified location module.
 - Added Custom Event templates.
