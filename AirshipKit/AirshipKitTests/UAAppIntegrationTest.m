@@ -1060,7 +1060,7 @@
     expectedActionPayload[kUADisplayInboxActionDefaultRegistryAlias] = @"message_id";
 
     [[self.mockedActionRunner expect] runActionsWithActionValues:expectedActionPayload
-                                                       situation:UASituationLaunchedFromPush
+                                                       situation:UASituationBackgroundPush
                                                         metadata:OCMOCK_ANY
                                                completionHandler:OCMOCK_ANY];
 
@@ -1084,13 +1084,13 @@
 - (void)testPushActionsInboxActionAlreadyDefined {
 
     // Notification with a message ID and a Overlay Inbox Message Action
-    NSDictionary *richPushNotification = @{@"_uamid": @"message_id", @"^mco": @"MESSAGE_ID"};
+    NSDictionary *richPushNotification = @{@"_uamid": @"message_id", @"^mco": @"MESSAGE_ID",};
 
     // Expected actions payload
     NSMutableDictionary *expectedActionPayload = [NSMutableDictionary dictionaryWithDictionary:richPushNotification];
     
     [[self.mockedActionRunner expect] runActionsWithActionValues:expectedActionPayload
-                                                       situation:UASituationLaunchedFromPush
+                                                       situation:UASituationBackgroundPush
                                                         metadata:OCMOCK_ANY
                                                completionHandler:OCMOCK_ANY];
     
