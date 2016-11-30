@@ -280,18 +280,30 @@
 }
 
 + (BOOL)isSilentPush:(NSDictionary *)notification {
-    BOOL isSilentPush = NO;
     NSDictionary *apsDict = [notification objectForKey:@"aps"];
     if (apsDict) {
-        id alert = [apsDict objectForKey:@"alert"];
-        NSString *badgeNumber = [apsDict objectForKey:@"badge"];
+        id badgeNumber = [apsDict objectForKey:@"badge"];
         NSString *soundName = [apsDict objectForKey:@"sound"];
 
-        if (!alert && !badgeNumber && !soundName) {
-            isSilentPush = YES;
+        if (badgeNumber || soundName.length) {
+            return NO;
+        }
+
+        id alert = [apsDict objectForKey:@"alert"];
+        if ([alert isKindOfClass:[NSDictionary class]]) {
+            if ([alert[@"body"] length]) {
+                return NO;
+            }
+
+            if ([alert[@"loc-key"] length]) {
+                return NO;
+            }
+        } else if ([alert isKindOfClass:[NSString class]] && [alert length]) {
+            return NO;
         }
     }
-    return isSilentPush;
+
+    return YES;
 }
 
 @end

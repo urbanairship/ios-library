@@ -83,7 +83,33 @@
                                                 }
                                         };
 
-    XCTAssertTrue([UAUtils isSilentPush:emptyNotification], @"Should be a silent push");
+    NSDictionary *emptyAlert = @{
+                                 @"aps": @{
+                                         @"alert": @""
+                                         }
+                                 };
+
+    NSDictionary *emptyLocKey = @{
+                                         @"aps": @{
+                                                 @"alert": @{
+                                                         @"loc-key": @""
+                                                         }
+                                                 }
+                                         };
+
+    NSDictionary *emptyBody = @{
+                                       @"aps": @{
+                                               @"alert": @{
+                                                       @"body": @""
+                                                       }
+                                               }
+                                       };
+    XCTAssertTrue([UAUtils isSilentPush:emptyNotification]);
+    XCTAssertTrue([UAUtils isSilentPush:emptyAlert]);
+    XCTAssertTrue([UAUtils isSilentPush:emptyLocKey]);
+    XCTAssertTrue([UAUtils isSilentPush:emptyBody]);
+
+
 }
 
 /**
@@ -117,10 +143,32 @@
                                            }
                                    };
 
-    XCTAssertFalse([UAUtils isSilentPush:alertNotification], @"Should not be a silent push");
-    XCTAssertFalse([UAUtils isSilentPush:badgeNotification],@"Should not be a silent push");
-    XCTAssertFalse([UAUtils isSilentPush:soundNotification],@"Should not be a silent push");
-    XCTAssertFalse([UAUtils isSilentPush:notification],@"Should not be a silent push");
+    NSDictionary *locKeyNotification = @{
+                                         @"aps": @{
+                                                 @"alert": @{
+                                                         @"loc-key": @"cool"
+                                                         }
+                                                 }
+                                         };
+
+    NSDictionary *bodyNotification = @{
+                                         @"aps": @{
+                                                 @"alert": @{
+                                                         @"body": @"cool"
+                                                         }
+                                                 }
+                                         };
+
+
+    XCTAssertFalse([UAUtils isSilentPush:alertNotification]);
+    XCTAssertFalse([UAUtils isSilentPush:badgeNotification]);
+    XCTAssertFalse([UAUtils isSilentPush:soundNotification]);
+    XCTAssertFalse([UAUtils isSilentPush:notification]);
+    XCTAssertFalse([UAUtils isSilentPush:locKeyNotification]);
+    XCTAssertFalse([UAUtils isSilentPush:bodyNotification]);
 }
+
+
+
 
 @end
