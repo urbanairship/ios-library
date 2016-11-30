@@ -167,11 +167,9 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
             NSLog(@"Channel ID: %@", self.channelID);
         }
 
-        // Register for remote notifications right away if the background mode is enabled. This does not prompt for
-        // permissions to show notifications, but starts the device token registration.
-        if ([UAirship shared].remoteNotificationBackgroundModeEnabled) {
-            [[UIApplication sharedApplication] registerForRemoteNotifications];
-        }
+        // Register for remote notifications right away. This does not prompt for permissions to show notifications,
+        // but starts the device token registration.
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
 
         [self updateAuthorizedNotificationTypes];
 
@@ -984,7 +982,9 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
                     }
                 }];
             } else { // iOS 8 & 9
-                if ( [[UIApplication sharedApplication] currentUserNotificationSettings].types != UIUserNotificationTypeNone) {
+                if ([[UIApplication sharedApplication] currentUserNotificationSettings].types != UIUserNotificationTypeNone) {
+
+                    NSLog(@"%lu", (unsigned long)[[UIApplication sharedApplication] currentUserNotificationSettings].types);
                     UA_LDEBUG(@"Migrating userPushNotificationEnabled to YES because application was already registered for notification types");
                     [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
                 }
