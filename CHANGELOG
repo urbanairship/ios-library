@@ -57,7 +57,7 @@ Version 8.0.1 - September 16, 2016
 Version 8.0.0 - September 7, 2016
 =================================
 - iOS 10 compatible release.
-- Dropped support for iOS 7.
+- Dropped support for iOS 6 and iOS 7.
 - Removed deprecated APIs from 7.x.
 - Added support for media attachments. Requires applications to provide a notification extension that
   extends the class `UAMediaAttachmentExtension` that is provided in the AirshipAppExtensions.framework.
