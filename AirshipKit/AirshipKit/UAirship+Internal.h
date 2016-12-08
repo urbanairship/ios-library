@@ -89,14 +89,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- * Creates the user agent string for a given appkey.
- * User agent string should be:
- * App 1.0 (iPad; iPhone OS <version>; UALib <version>; <app key>; en_US)
- * @return The user agent string.
- */
-+ (nonnull NSString *)createUserAgentForAppKey:(NSString *)appKey;
-
-/**
  * Handle app init. This should be called from NSNotification center
  * and will record a launch from notification and record the app init even
  * for analytics.
