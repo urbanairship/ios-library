@@ -14,7 +14,6 @@ Pod::Spec.new do |s|
    s.ios.deployment_target   = "8.0"
    s.requires_arc            = true
 
-   s.compiler_flags          = "-D_UA_VERSION=\\\"#{s.version}\\\""
    s.ios.resource_bundle     = { 'AirshipResources' =>  ['AirshipKit/AirshipResources/*'] }
    s.ios.source_files        = 'AirshipKit/AirshipKit/*.{h,m,mm}'
 

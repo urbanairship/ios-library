@@ -117,24 +117,6 @@ extern BOOL uaLoudImpErrorLoggingEnabled; // Default is YES
 #define kUAAnalyticsProductionServer @"https://combine.urbanairship.com"
 #define kUAProductionLandingPageContentURL @"https://dl.urbanairship.com/aaa"
 
-#ifdef _UA_VERSION
-#define UA_VERSION @ _UA_VERSION
-#else
-#define UA_VERSION @ "0.0.0"
-#endif
-
-#define UA_VERSION_INTERFACE(CLASSNAME) \
-@interface CLASSNAME : NSObject         \
-+ (nonnull NSString *)get;                      \
-@end
-
-
-#define UA_VERSION_IMPLEMENTATION(CLASSNAME, VERSION_STR)   \
-@implementation CLASSNAME                                   \
-+ (NSString *)get {                                         \
-return VERSION_STR;                                         \
-}                                                           \
-@end
 
 #define UA_SUPPRESS_PERFORM_SELECTOR_LEAK_WARNING(THE_CODE) \
 do { \
