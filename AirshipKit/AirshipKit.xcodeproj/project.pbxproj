@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		6114091E1DB19C1F001F82A5 /* UALandingPageOverlayView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6114091D1DB19C1F001F82A5 /* UALandingPageOverlayView.xib */; };
 		76A5F5F01DCBDD5E00858BA4 /* UAAsyncOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1BB1DC16BB300B4842D /* UAAsyncOperation.m */; };
+		76A960FC1DF5EB29003F83A0 /* UANativeBridge in Resources */ = {isa = PBXBuildFile; fileRef = 76A960FB1DF5EB29003F83A0 /* UANativeBridge */; };
 		CC04F1861DBED84600B4842D /* UAEvents.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1841DBED84600B4842D /* UAEvents.xcdatamodeld */; };
 		CC04F18A1DBED9FA00B4842D /* UAEventData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F1881DBED9FA00B4842D /* UAEventData+Internal.h */; };
 		CC04F18B1DBED9FA00B4842D /* UAEventData.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1891DBED9FA00B4842D /* UAEventData.m */; };
@@ -571,7 +572,6 @@
 		CC944EEE1DB6EE3900C42269 /* UARequestSession.m in Sources */ = {isa = PBXBuildFile; fileRef = CC944EEC1DB6EE3900C42269 /* UARequestSession.m */; };
 		CC944EEF1DB6EE3900C42269 /* UARequestSession.m in Sources */ = {isa = PBXBuildFile; fileRef = CC944EEC1DB6EE3900C42269 /* UARequestSession.m */; };
 		CC944EF91DB80E0C00C42269 /* UARequestSessionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC944EF81DB80E0C00C42269 /* UARequestSessionTest.m */; };
-		CCA11D351D9C41C7008C4A57 /* UANativeBridge.js in Resources */ = {isa = PBXBuildFile; fileRef = CCA11D341D9C41C7008C4A57 /* UANativeBridge.js */; };
 		CCB902251DCBBCDA009A66D7 /* UAAsyncOperationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB902221DCBBCDA009A66D7 /* UAAsyncOperationTest.m */; };
 		CCB902261DCBBCDA009A66D7 /* UAEventAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB902231DCBBCDA009A66D7 /* UAEventAPIClientTest.m */; };
 		CCB902271DCBBCDA009A66D7 /* UAEventManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB902241DCBBCDA009A66D7 /* UAEventManagerTest.m */; };
@@ -621,6 +621,7 @@
 		494DD9571B0EB677009C134E /* AirshipKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		494DD95B1B0EB677009C134E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6114091D1DB19C1F001F82A5 /* UALandingPageOverlayView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UALandingPageOverlayView.xib; sourceTree = "<group>"; };
+		76A960FB1DF5EB29003F83A0 /* UANativeBridge */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UANativeBridge; sourceTree = "<group>"; };
 		CC04F1851DBED84600B4842D /* UAEvents.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAEvents.xcdatamodel; sourceTree = "<group>"; };
 		CC04F1881DBED9FA00B4842D /* UAEventData+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAEventData+Internal.h"; sourceTree = "<group>"; };
 		CC04F1891DBED9FA00B4842D /* UAEventData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventData.m; sourceTree = "<group>"; };
@@ -2122,6 +2123,7 @@
 		CC89997D1D8B642D00A0CECC /* AirshipResources */ = {
 			isa = PBXGroup;
 			children = (
+				76A960FB1DF5EB29003F83A0 /* UANativeBridge */,
 				CC70E98E1DDB8AF8000E2528 /* UrbanAirship.strings */,
 				CCA11D341D9C41C7008C4A57 /* UANativeBridge.js */,
 				CC89997E1D8B642D00A0CECC /* Info.plist */,
@@ -2569,9 +2571,9 @@
 				CC70E9901DDB8AF8000E2528 /* UrbanAirship.strings in Resources */,
 				CC8999AC1D8B642D00A0CECC /* UADefaultMessageCenterListViewController.xib in Resources */,
 				CC8999AB1D8B642D00A0CECC /* UADefaultMessageCenterListCell.xib in Resources */,
-				CCA11D351D9C41C7008C4A57 /* UANativeBridge.js in Resources */,
 				CC8999AD1D8B642D00A0CECC /* UADefaultMessageCenterMessageViewController.xib in Resources */,
 				6114091E1DB19C1F001F82A5 /* UALandingPageOverlayView.xib in Resources */,
+				76A960FC1DF5EB29003F83A0 /* UANativeBridge in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

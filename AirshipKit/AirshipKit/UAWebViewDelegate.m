@@ -214,9 +214,9 @@
      * UAirship.runAction,
      * UAirship.finishAction
      *
-     * See Airship/Common/JS/UANativeBridge.js for human-readable source
+     * See AirshipKit/AirshipResources/UANativeBridge for human-readable source
      */
-    NSString *path = [[UAirship resources] pathForResource:@"UANativeBridge" ofType:@"js"];
+    NSString *path = [[UAirship resources] pathForResource:@"UANativeBridge" ofType:@""];
     NSString *bridge = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
     js = [js stringByAppendingString:bridge];
 
