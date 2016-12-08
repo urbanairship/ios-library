@@ -90,11 +90,6 @@
 @property (nonatomic, strong) NSIndexPath *selectedIndexPath;
 
 /**
- * The message view controller currently displayed.
- */
-@property (nonatomic, strong) UADefaultMessageCenterMessageViewController *messageViewController;
-
-/**
  * Whether the interface is currently collapsed
  */
 @property (nonatomic, assign) BOOL collapsed;
@@ -356,10 +351,17 @@
 
         mvc.filter = self.filter;
 
+        __weak id weakSelf = self;
         mvc.closeBlock = ^(BOOL animated){
+
+            UADefaultMessageCenterListViewController *strongSelf = weakSelf;
+
+            if (!strongSelf) {
+                return;
+            }
             // Call the close block if present
-            if (self.closeBlock) {
-                self.closeBlock(animated);
+            if (strongSelf.closeBlock) {
+                strongSelf.closeBlock(animated);
             } else {
                 // Fallback to displaying the inbox
                 [self.navigationController popViewControllerAnimated:animated];
@@ -367,8 +369,6 @@
         };
 
         mvc.message = message;
-
-        self.messageViewController = mvc;
 
         UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:mvc];
 
