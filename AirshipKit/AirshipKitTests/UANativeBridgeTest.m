@@ -44,7 +44,7 @@
 
     self.mockWebView = [OCMockObject niceMockForClass:[UIWebView class]];
 
-    NSString *path = [[UAirship resources] pathForResource:@"UANativeBridge" ofType:@"js"];
+    NSString *path = [[UAirship resources] pathForResource:@"UANativeBridge" ofType:@""];
     self.nativeBridge = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
 
 
@@ -63,7 +63,7 @@
     [super tearDown];
 }
 
-// Make sure that the functions defined in UANativeBridge.js are at least parsing
+// Make sure that the functions defined in UANativeBridge are at least parsing
 - (void)testNativeBridgeParsed {
     JSValue *value = [self.jsc evaluateScript:@"UAirship.delegateCallURL"];
     XCTAssertFalse([value.toString isEqualToString:@"undefined"], @"UAirship.runAction should not be undefined");

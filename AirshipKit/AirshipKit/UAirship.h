@@ -26,6 +26,7 @@
 #import "UAGlobal.h"
 #import "UAJavaScriptDelegate.h"
 #import "UAWhitelist.h"
+#import "UAirshipVersion.h"
 
 // Frameworks
 #import <SystemConfiguration/SystemConfiguration.h>
@@ -51,8 +52,6 @@
 @class UALocation;
 @class UAAutomation;
 
-
-UA_VERSION_INTERFACE(UAirshipVersion)
 
 NS_ASSUME_NONNULL_BEGIN
 

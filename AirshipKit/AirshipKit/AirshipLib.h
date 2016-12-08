@@ -1,4 +1,3 @@
-#import "AirshipKit.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "NSManagedObjectContext+UAAdditions.h"
 #import "NSOperationQueue+UAAdditions.h"
@@ -57,6 +56,7 @@
 #import "UAIncomingInAppMessageAction.h"
 #import "UAInstallAttributionEvent.h"
 #import "UAirship.h"
+#import "UAirshipVersion.h"
 #import "UAJavaScriptDelegate.h"
 #import "UAJSONMatcher.h"
 #import "UAJSONPredicate.h"

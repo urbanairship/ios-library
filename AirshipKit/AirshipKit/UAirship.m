@@ -54,8 +54,6 @@
 #import "UAAutomation+Internal.h"
 #import "UAAppIntegration.h"
 
-UA_VERSION_IMPLEMENTATION(UAirshipVersion, UA_VERSION)
-
 // Exceptions
 NSString * const UAirshipTakeOffBackgroundThreadException = @"UAirshipTakeOffBackgroundThreadException";
 NSString * const UAResetKeychainKey = @"com.urbanairship.reset_keychain";
@@ -192,7 +190,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     }
 
     UA_LINFO(@"UAirship Take Off! Lib Version: %@ App Key: %@ Production: %@.",
-             UA_VERSION, config.appKey, config.inProduction ?  @"YES" : @"NO");
+             [UAirshipVersion get], config.appKey, config.inProduction ?  @"YES" : @"NO");
 
     // Data store
     UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", config.appKey]];
@@ -244,12 +242,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     sharedAirship_ = [[UAirship alloc] initWithConfig:config dataStore:dataStore];
 
     // Save the version
-    if ([UA_VERSION isEqualToString:@"0.0.0"]) {
+    if ([[UAirshipVersion get] isEqualToString:@"0.0.0"]) {
         UA_LIMPERR(@"_UA_VERSION is undefined - this commonly indicates an issue with the build configuration, UA_VERSION will be set to \"0.0.0\".");
     } else {
         NSString *previousVersion = [sharedAirship_.dataStore stringForKey:UALibraryVersion];
-        if (![UA_VERSION isEqualToString:previousVersion]) {
-            [dataStore setObject:UA_VERSION forKey:UALibraryVersion];
+        if (![[UAirshipVersion get] isEqualToString:previousVersion]) {
+            [dataStore setObject:[UAirshipVersion get] forKey:UALibraryVersion];
 
             // Temp workaround for MB-1047 where model changes to the inbox
             // will drop the inbox and the last-modified-time will prevent
@@ -257,7 +255,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
             [sharedAirship_.sharedInbox.client clearLastModifiedTime];
 
             if (previousVersion) {
-                UA_LINFO(@"Urban Airship library version changed from %@ to %@.", previousVersion, UA_VERSION);
+                UA_LINFO(@"Urban Airship library version changed from %@ to %@.", previousVersion, [UAirshipVersion get]);
             }
         }
     }
@@ -382,31 +380,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         }
     });
     return resourcesBundle_;
-}
-
-+ (NSString *)createUserAgentForAppKey:(NSString *)appKey {
-    /*
-     * [LIB-101] User agent string should be:
-     * App 1.0 (iPad; iPhone OS 5.0.1; UALib 1.1.2; <app key>; en_US)
-     */
-    
-    UIDevice *device = [UIDevice currentDevice];
-    
-    NSBundle *bundle = [NSBundle mainBundle];
-    NSDictionary *info = [bundle infoDictionary];
-    
-    NSString *appName = [info objectForKey:(NSString*)kCFBundleNameKey];
-    NSString *appVersion = [info objectForKey:@"CFBundleShortVersionString"];
-    
-    NSString *deviceModel = [device model];
-    NSString *osName = [device systemName];
-    NSString *osVersion = [device systemVersion];
-    
-    NSString *libVersion = [UAirshipVersion get];
-    NSString *locale = [[NSLocale autoupdatingCurrentLocale] localeIdentifier];
-    
-    return [NSString stringWithFormat:@"%@ %@ (%@; %@ %@; UALib %@; %@; %@)",
-                           appName, appVersion, deviceModel, osName, osVersion, libVersion, appKey, locale];
 }
 
 - (void)validate {
