@@ -63,6 +63,8 @@
     }];
 
     XCTAssertEqualObjects([request.body base64EncodedStringWithOptions:0], @"H4sIAAAAAAAAA0vKT6kEALILqNsEAAAA");
+    XCTAssertEqualObjects(request.headers[@"Content-Encoding"], @"gzip");
+
 }
 
 @end
