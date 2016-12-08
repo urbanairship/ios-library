@@ -69,14 +69,6 @@
         self.URL = builder.URL;
 
 
-        if (builder.body) {
-            if (builder.compressBody) {
-                self.body = [UARequest gzipCompress:builder.body];
-            } else {
-                self.body = builder.body;
-            }
-        }
-
         NSMutableDictionary *headers = [NSMutableDictionary dictionary];
 
         // Basic auth
@@ -91,6 +83,16 @@
         if (builder.headers) {
             [headers addEntriesFromDictionary:builder.headers];
         }
+
+        if (builder.body) {
+            if (builder.compressBody) {
+                self.body = [UARequest gzipCompress:builder.body];
+                headers[@"Content-Encoding"] = @"gzip";
+            } else {
+                self.body = builder.body;
+            }
+        }
+
 
         self.headers = headers;
     }
