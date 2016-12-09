@@ -6,7 +6,7 @@ Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 Version 8.1.4 - December 8, 2016
 ================================
 - Fixed the SDK pod failing to install on some machines.
-- Fixed memory leak with the default message center.
+- Fixed memory leaks with the default message center.
 - Removed `.js` extension on the UANativeBridge resource.
 - Removed `AirshipKit.h` from `AirshipLib.h` header file.
 - Added missing Content-Encoding header when gzipping analytics requests.
@@ -76,6 +76,10 @@ Version 8.0.0 - September 7, 2016
 - Added support for foreground presentation options. Default options can be set on UAPush, or
   per notification with presentationOptionsForNotification: method on the UAPushNotificationDelegate.
 - Fixed analytics upload issue.
+
+Version 7.3.2 - December 8, 2016
+================================
+- Fixed memory leaks with the default message center.
 
 Version 7.3.1 - November 28, 2016
 =================================
