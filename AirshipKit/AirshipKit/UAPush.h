@@ -181,7 +181,6 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 /**
  * This singleton provides an interface to the functionality provided by the Urban Airship iOS Push API.
  */
-#pragma clang diagnostic push
 @interface UAPush : NSObject
 
 
