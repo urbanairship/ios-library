@@ -11,7 +11,8 @@ if (navigator.userAgent.match(/xcode/i)) {
 // On doc load, toggle the URL hash discussion if present
 $(document).ready(function() {
   if (!window.jazzy.docset) {
-    var linkToHash = $('a[href="' + window.location.hash +'"]');
+    var decodedHash = decodeURIComponent(window.location.hash);
+    var linkToHash = $('a[href="' + decodedHash +'"]');
     linkToHash.trigger("click");
   }
 });
