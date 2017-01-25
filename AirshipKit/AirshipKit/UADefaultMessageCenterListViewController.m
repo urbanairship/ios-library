@@ -90,6 +90,11 @@
 @property (nonatomic, strong) NSIndexPath *selectedIndexPath;
 
 /**
+ * The an array of currently selected message IDs during editing.
+ */
+@property (nonatomic, strong) NSMutableArray<NSString *> *selectedMessageIDs;
+
+/**
  * Whether the interface is currently collapsed
  */
 @property (nonatomic, assign) BOOL collapsed;
@@ -172,6 +177,7 @@
     UITableViewController *tableController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
     tableController.view = self.messageTable;
     tableController.refreshControl = self.refreshControl;
+    tableController.clearsSelectionOnViewWillAppear = false;
 
     if (self.style.listColor) {
         self.refreshControl.backgroundColor = self.style.listColor;
@@ -236,11 +242,18 @@
     self.markAsReadButtonItem.tintColor = self.defaultTintColor;
 
     self.toolbarItems = @[self.selectAllButtonItem, flexibleSpace, self.deleteItem, flexibleSpace, self.markAsReadButtonItem];
-
 }
 
 - (void)reload {
     [self.messageTable reloadData];
+
+    for (UAInboxMessage *message in self.messages) {
+        if ([self.selectedMessageIDs containsObject:message.messageID]) {
+            NSIndexPath *messageIndexPath = [NSIndexPath indexPathForRow:[self.messages indexOfObject:message] inSection:0];
+
+            [self.messageTable selectRowAtIndexPath:messageIndexPath animated:NO scrollPosition:UITableViewScrollPositionTop];
+        }
+    }
 
     // Cover up if necessary
     self.coverView.hidden = self.messages.count > 0;
@@ -259,11 +272,9 @@
         if (!self.splitViewController.collapsed) {
             [self.messageTable selectRowAtIndexPath:self.selectedIndexPath animated:YES scrollPosition:UITableViewScrollPositionTop];
         }
-
     } else {
         self.selectedIndexPath = nil;
     }
-
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -296,9 +307,15 @@
     [self.iconCache removeAllObjects];
 }
 
-// For batch update/delete
+// Called when batch editing begins/ends
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated {
     [super setEditing:editing animated:animated];
+
+    if (editing) {
+        self.selectedMessageIDs = [NSMutableArray array];
+    } else {
+        self.selectedMessageIDs = nil;
+    }
 
     // Set allowsMultipleSelectionDuringEditing to YES only while
     // editing. This allows multi-select AND swipe to delete.
@@ -449,7 +466,6 @@
 }
 
 - (void)cancelButtonPressed:(id)sender {
-
     self.navigationItem.leftBarButtonItem.enabled = YES;
 
     self.navigationItem.rightBarButtonItem = self.editItem;
@@ -478,7 +494,6 @@
         }];
     }
 }
-
 
 - (void)refreshBatchUpdateButtons {
     if (self.editing) {
@@ -594,7 +609,6 @@
     [self deleteMessageAtIndexPath:indexPath];
 }
 
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return (NSInteger)self.messages.count;
 }
@@ -627,6 +641,7 @@
     UAInboxMessage *message = [self messageForIndexPath:indexPath];
 
     if (self.editing) {
+        [self.selectedMessageIDs addObject:message.messageID];
         [self refreshBatchUpdateButtons];
     } else {
         self.selectedIndexPath = indexPath;
@@ -636,6 +651,8 @@
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (self.editing) {
+        UAInboxMessage *message = [self messageForIndexPath:indexPath];
+        [self.selectedMessageIDs removeObject:message.messageID];
         [self refreshBatchUpdateButtons];
     }
 }
@@ -644,9 +661,12 @@
 #pragma mark NSNotificationCenter callbacks
 
 - (void)messageListUpdated {
-    UA_LDEBUG(@"UADefaultMessageCenterListViewController messageListUpdated");
-    [self reload];
-    [self refreshBatchUpdateButtons];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UA_LDEBUG(@"UADefaultMessageCenterListViewController messageListUpdated");
+        [self reload];
+        [self refreshBatchUpdateButtons];
+    });
 }
 
 #pragma mark -

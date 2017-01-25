@@ -52,7 +52,6 @@
                                                                                   views:NSDictionaryOfVariableBindings(iconView)];
 
         [self.listIconView addConstraints:zeroWidthConstraints];
-
     }
 
     self.listIconView.hidden = !style.iconsEnabled;
