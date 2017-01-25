@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		53911BDD1E23EBA500EE7007 /* UAChannelCaptureActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53911BDC1E23EBA500EE7007 /* UAChannelCaptureActionTest.m */; };
+		53BC50201E202FAA00E24306 /* UAChannelCaptureAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BC501F1E202FAA00E24306 /* UAChannelCaptureAction.m */; };
 		6114091E1DB19C1F001F82A5 /* UALandingPageOverlayView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6114091D1DB19C1F001F82A5 /* UALandingPageOverlayView.xib */; };
 		76A5F5F01DCBDD5E00858BA4 /* UAAsyncOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1BB1DC16BB300B4842D /* UAAsyncOperation.m */; };
 		76A960FC1DF5EB29003F83A0 /* UANativeBridge in Resources */ = {isa = PBXBuildFile; fileRef = 76A960FB1DF5EB29003F83A0 /* UANativeBridge */; };
@@ -623,6 +625,10 @@
 		3DE226EC24B13B38BA51B7B4 /* Pods-AirshipKitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipKitTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		494DD9571B0EB677009C134E /* AirshipKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		494DD95B1B0EB677009C134E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		537F66421E256A2B001BC8F3 /* UAChannelCapture+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAChannelCapture+Internal.h"; sourceTree = "<group>"; };
+		53911BDC1E23EBA500EE7007 /* UAChannelCaptureActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelCaptureActionTest.m; sourceTree = "<group>"; };
+		53BC501E1E202DED00E24306 /* UAChannelCaptureAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAChannelCaptureAction.h; sourceTree = "<group>"; };
+		53BC501F1E202FAA00E24306 /* UAChannelCaptureAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelCaptureAction.m; sourceTree = "<group>"; };
 		6114091D1DB19C1F001F82A5 /* UALandingPageOverlayView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UALandingPageOverlayView.xib; sourceTree = "<group>"; };
 		76A960FB1DF5EB29003F83A0 /* UANativeBridge */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UANativeBridge; sourceTree = "<group>"; };
 		CC04F1851DBED84600B4842D /* UAEvents.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAEvents.xcdatamodel; sourceTree = "<group>"; };
@@ -1421,6 +1427,7 @@
 				CC64F0B31D8B781C009CEF27 /* UAOpenExternalURLActionTest.m */,
 				CC64F0B51D8B781C009CEF27 /* UAPasteboardActionTest.m */,
 				E29D35EE1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m */,
+				53911BDC1E23EBA500EE7007 /* UAChannelCaptureActionTest.m */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -1722,6 +1729,7 @@
 		CC40DDDE1D91D58700BABD4F /* Channel */ = {
 			isa = PBXGroup;
 			children = (
+				537F66421E256A2B001BC8F3 /* UAChannelCapture+Internal.h */,
 				CC40DB361D8C996900BABD4F /* UAChannelCapture.h */,
 				CC40DB371D8C996900BABD4F /* UAChannelCapture.m */,
 				CC40DB341D8C996900BABD4F /* UAChannelAPIClient+Internal.h */,
@@ -2033,6 +2041,8 @@
 				CC40DBCE1D8C996A00BABD4F /* UAPasteboardAction.m */,
 				E29D35E71DB93A59003C292F /* UAFetchDeviceInfoAction.h */,
 				E29D35E81DB93A59003C292F /* UAFetchDeviceInfoAction.m */,
+				53BC501E1E202DED00E24306 /* UAChannelCaptureAction.h */,
+				53BC501F1E202FAA00E24306 /* UAChannelCaptureAction.m */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -2736,6 +2746,7 @@
 				CC40DC281D8C996A00BABD4F /* UAActionRunner.m in Sources */,
 				CC40DD291D8C996A00BABD4F /* UAWebViewCallData.m in Sources */,
 				CC40DC841D8C996A00BABD4F /* UADeviceRegistrationEvent.m in Sources */,
+				53BC50201E202FAA00E24306 /* UAChannelCaptureAction.m in Sources */,
 				CC40DC0C1D8C996A00BABD4F /* NSJSONSerialization+UAAdditions.m in Sources */,
 				CC40DCFB1D8C996A00BABD4F /* UAPreferenceDataStore.m in Sources */,
 				CC40DC351D8C996A00BABD4F /* UAAddTagsAction.m in Sources */,
@@ -2864,6 +2875,7 @@
 				CC64F0F21D8B781C009CEF27 /* UACloseWindowActionTest.m in Sources */,
 				CC64F11A1D8B781C009CEF27 /* UAPasteboardActionTest.m in Sources */,
 				CC64F0FF1D8B781C009CEF27 /* UAInAppMessageTest.m in Sources */,
+				53911BDD1E23EBA500EE7007 /* UAChannelCaptureActionTest.m in Sources */,
 				CC64F1081D8B781C009CEF27 /* UAirshipTest.m in Sources */,
 				CC64F1031D8B781C009CEF27 /* UAInboxMessageListTest.m in Sources */,
 				CC64F1201D8B781C009CEF27 /* UAScheduleActionTests.m in Sources */,

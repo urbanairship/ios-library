@@ -28,6 +28,7 @@
 #import "UABeveledLoadingIndicator.h"
 #import "UACancelSchedulesAction.h"
 #import "UAChannelCapture.h"
+#import "UAChannelCaptureAction.h"
 #import "UAChannelRegistrar.h"
 #import "UACircularRegion.h"
 #import "UAConfig.h"

@@ -41,6 +41,7 @@
 #import "UACancelSchedulesAction.h"
 #import "UAScheduleAction.h"
 #import "UAFetchDeviceInfoAction.h"
+#import "UAChannelCaptureAction.h"
 
 @implementation UAActionRegistry
 @dynamic registeredEntries;
@@ -369,6 +370,11 @@
                predicate:^BOOL(UAActionArguments *args) {
                    return args.situation == UASituationManualInvocation || args.situation == UASituationWebViewInvocation;
                }];
+    
+    // Channel capture action
+    UAChannelCaptureAction *channelCaptureAction = [[UAChannelCaptureAction alloc] init];
+    [self registerAction:channelCaptureAction
+                    names:@[kUAChannelCaptureActionDefaultRegistryName, kUAChannelCaptureActionDefaultRegistryAlias]];
 
 }
 

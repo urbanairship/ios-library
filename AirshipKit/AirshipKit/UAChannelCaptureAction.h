@@ -1,16 +1,16 @@
 /*
  Copyright 2009-2016 Urban Airship Inc. All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
-
+ 
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
-
+ 
  2. Redistributions in binary form must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided with the distribution.
-
+ 
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
@@ -23,46 +23,21 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
+#import "UAAction.h"
 
-@class UAConfig;
-@class UAPreferenceDataStore;
-@class UAPush;
-
-NS_ASSUME_NONNULL_BEGIN
 
 /**
- * ChannelCapture checks the device clipboard for an expected token on app
- * foreground and displays an alert view that allows the user to copy the Channel
- * or optionally open a url with the channel as an argument.
- */
-@interface UAChannelCapture : NSObject <UIAlertViewDelegate>
-
-/**
- * Factory method to create the UAChannelCapture.
+ * Enables channel capture for a set period of time.
  *
- * @param config The Urban Airship config.
- * @param push The UAPush instance.
- * @param dataStore The UAPreferenceDataStore instance.
+ * This action is registered under the names channel_capture_action and ^cc.
  *
- * @return A channel capture instance.
- */
-+ (instancetype)channelCaptureWithConfig:(UAConfig *)config
-                                    push:(UAPush *)push
-                               dataStore:(UAPreferenceDataStore *)dataStore;
-
-/**
- * Enable channel capture for a specified duration.
+ * Expected argument values: NSNumber specifying the number of seconds to enable 
+ * channel capture for.
  *
- * @param duration The length of time to enable channel capture for, in seconds.
+ * Valid situations: UASituationBackgroundPush and UASituationManualInvocation
+ *
+ * Result value: nil
  */
-- (void)enable:(NSTimeInterval)duration;
-
-/**
- * Disable channel capture.
- */
-- (void)disable;
+@interface UAChannelCaptureAction : UAAction
 
 @end
-
-NS_ASSUME_NONNULL_END

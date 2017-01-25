@@ -29,6 +29,9 @@
 #import "UAPush.h"
 #import "UAConfig.h"
 #import "UA_Base64.h"
+#import "UAPreferenceDataStore+Internal.h"
+
+NSString *const UAChannelCaptureEnabledKey = @"UAChannelCaptureEnabled";
 
 @interface UAChannelCapture()
 
@@ -36,20 +39,25 @@
 @property (nonatomic, strong) UIAlertView *alertView;
 @property (nonatomic, strong) UAPush *push;
 @property (nonatomic, strong) UAConfig *config;
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 @end
+
 
 @implementation UAChannelCapture
 
 NSString *const UAChannelBaseURL = @"https://go.urbanairship.com/";
 NSString *const UAChannelPlaceHolder = @"CHANNEL";
 
-- (instancetype)initWithConfig:(UAConfig *)config push:(UAPush *)push {
+- (instancetype)initWithConfig:(UAConfig *)config
+                          push:(UAPush *)push
+                     dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
         self.config = config;
         self.push = push;
-
+        self.dataStore = dataStore;
+        
         if (config.channelCaptureEnabled) {
             // App inactive/active for incoming calls, notification center, and taskbar
             [[NSNotificationCenter defaultCenter] addObserver:self
@@ -62,8 +70,19 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
     return self;
 }
 
-+ (instancetype)channelCaptureWithConfig:(UAConfig *)config push:(UAPush *)push {
-    return [[UAChannelCapture alloc] initWithConfig:config push:push];
++ (instancetype)channelCaptureWithConfig:(UAConfig *)config
+                                    push:(UAPush *)push
+                               dataStore:(UAPreferenceDataStore *)dataStore {
+    return [[UAChannelCapture alloc] initWithConfig:config push:push dataStore:dataStore];
+}
+
+- (void)enable:(NSTimeInterval)duration {
+    NSDate *date = [NSDate dateWithTimeIntervalSinceNow:duration];
+    [self.dataStore setObject:date forKey:UAChannelCaptureEnabledKey];
+}
+
+- (void)disable {
+    [self.dataStore removeObjectForKey:UAChannelCaptureEnabledKey];
 }
 
 - (void)didBecomeActive {
@@ -75,7 +94,7 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
  * the token is available.
  */
 - (void)checkClipboard {
-
+    
     if ([self.alertView isVisible]) {
         return;
     }
@@ -83,12 +102,18 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
     if (!self.push.channelID) {
         return;
     }
-
+    
+    NSDate *date = [self.dataStore objectForKey:UAChannelCaptureEnabledKey];
+    
+    if ([self.push backgroundPushNotificationsEnabled] && [date compare:[NSDate date]] == NSOrderedAscending) {
+        return;
+    }
+    
     NSString *pasteBoardString = [UIPasteboard generalPasteboard].string;
     if (!pasteBoardString.length) {
         return;
     }
-
+    
     // Do the heavy lifting off the main queue
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         NSData *base64Data = UA_dataFromBase64String(pasteBoardString);

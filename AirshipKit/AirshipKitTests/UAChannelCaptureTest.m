@@ -26,7 +26,8 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "UAConfig.h"
-#import "UAChannelCapture.h"
+#import "UAChannelCapture+Internal.h"
+#import "UAPreferenceDataStore+Internal.h"
 #import "UAPush.h"
 #import "UA_Base64.h"
 
@@ -34,6 +35,7 @@
 @interface UAChannelCaptureTest : XCTestCase
 @property(nonatomic, strong) UAConfig *config;
 @property(nonatomic, strong) UAChannelCapture *channelCapture;
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 @property(nonatomic, strong) id mockAlertView;
 @property(nonatomic, strong) id mockPush;
@@ -64,8 +66,13 @@
     self.config.developmentAppKey = @"App key";
     self.config.developmentAppSecret = @"App secret";
     self.config.inProduction = NO;
+    
+    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test.channelCapture"];
 
-    self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config push:self.mockPush];
+    self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config
+                                                                push:self.mockPush
+                                                           dataStore:self.dataStore];
+    
 }
 
 - (void)tearDown {
@@ -73,6 +80,7 @@
     [self.mockAlertView stopMocking];
     [self.mockPasteboard stopMocking];
     [self.mockApplication stopMocking];
+    [self.channelCapture disable];
 
     [super tearDown];
 }
@@ -159,6 +167,25 @@
     [[self.mockPasteboard expect] setString:@"pushChannelID"];
     [self.channelCapture alertView:self.mockAlertView didDismissWithButtonIndex:1];
     [self.mockPasteboard verify];
+}
+
+/**
+ * Test disabling channel capture.
+ */
+- (void)testDisable {
+    [self.channelCapture enable:1000];
+    [self.channelCapture disable];
+    XCTAssertEqual([self.dataStore objectForKey:UAChannelCaptureEnabledKey], nil);
+}
+
+/**
+ * Test enabling channel capture for set amount of time.
+ */
+- (void)testEnable {
+    [self.channelCapture enable:1000];
+    // Stored date should be in future.
+    XCTAssertTrue([[self.dataStore objectForKey:UAChannelCaptureEnabledKey] compare:[NSDate date]] != NSOrderedAscending);
+    [self.channelCapture disable];
 }
 
 
