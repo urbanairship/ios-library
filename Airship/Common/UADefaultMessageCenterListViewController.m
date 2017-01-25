@@ -251,7 +251,7 @@
         if ([self.selectedMessageIDs containsObject:message.messageID]) {
             NSIndexPath *messageIndexPath = [NSIndexPath indexPathForRow:[self.messages indexOfObject:message] inSection:0];
 
-            [self.messageTable selectRowAtIndexPath:messageIndexPath animated:NO scrollPosition:UITableViewScrollPositionTop];
+            [self.messageTable selectRowAtIndexPath:messageIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
         }
     }
 
