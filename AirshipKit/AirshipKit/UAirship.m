@@ -68,6 +68,12 @@ static dispatch_once_t takeOffPred_;
 
 static dispatch_once_t proxyDelegateOnceToken_;
 
+// Its possible that plugins that use load to call takeoff will trigger after
+// handleAppDidFinishLaunchingNotification.  We need to store that notification
+// and call handleAppDidFinishLaunchingNotification in takeoff.
+static NSNotification *appDidFinishLaunchingNotification_;
+
+
 // Logging info
 // Default to ON and ERROR - options/plist will override
 BOOL uaLoggingEnabled = YES;
@@ -275,19 +281,23 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         [sharedAirship_ validate];
     }
 
-    [sharedAirship_.analytics addEvent:[UAAppInitEvent event]];
-
-    // Update registration on the next run loop to allow apps to customize
-    // finish custom setup
-    dispatch_async(dispatch_get_main_queue(), ^() {
-        [sharedAirship_.sharedPush updateRegistration];
-    });
+    if (appDidFinishLaunchingNotification_) {
+        // Set up can occur after takeoff, so handle the launch notification on the
+        // next run loop to allow app setup to finish
+        dispatch_async(dispatch_get_main_queue(), ^() {
+            [UAirship handleAppDidFinishLaunchingNotification:appDidFinishLaunchingNotification_];
+            appDidFinishLaunchingNotification_ = nil;
+        });
+    }
 }
 
 + (void)handleAppDidFinishLaunchingNotification:(NSNotification *)notification {
+
     [[NSNotificationCenter defaultCenter] removeObserver:[UAirship class] name:UIApplicationDidFinishLaunchingNotification object:nil];
 
     if (!sharedAirship_) {
+        appDidFinishLaunchingNotification_ = notification;
+
         // Log takeoff errors on the next run loop to give time for apps that
         // use class loader to call takeoff.
         dispatch_async(dispatch_get_main_queue(), ^() {
@@ -299,6 +309,21 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         return;
     }
+
+    NSDictionary *remoteNotification = [notification.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+
+    // Required before the app init event to track conversion push ID
+    [sharedAirship_.analytics launchedFromNotification:remoteNotification];
+
+    // Init event
+    [sharedAirship_.analytics addEvent:[UAAppInitEvent event]];
+
+    // Update registration on the next run loop to allow apps to customize
+    // finish custom setup
+    dispatch_async(dispatch_get_main_queue(), ^() {
+        [sharedAirship_.sharedPush updateRegistration];
+    });
+
 }
 
 + (void)handleAppTerminationNotification:(NSNotification *)notification {
