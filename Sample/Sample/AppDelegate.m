@@ -53,6 +53,11 @@
     // or set runtime properties here.
     UAConfig *config = [UAConfig defaultConfig];
 
+    if (![config validate]) {
+        [self showInvalidConfigAlert];
+        return YES;
+    }
+
     config.messageCenterStyleConfig = @"UAMessageCenterDefaultStyle";
 
     // You can then programmatically override the plist values:
@@ -75,7 +80,6 @@
                                            UANotificationOptionBadge |
                                            UANotificationOptionSound);
 
-
     // Set a custom delegate for handling message center events
     self.inboxDelegate = [[InboxDelegate alloc] initWithRootViewController:self.window.rootViewController];
     [UAirship inbox].delegate = self.inboxDelegate;
@@ -96,6 +100,18 @@
                                              selector:@selector(refreshMessageCenterBadge)
                                                  name:UAInboxMessageListUpdatedNotification object:nil];
     return YES;
+}
+
+- (void)showInvalidConfigAlert {
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Invalid AirshipConfig.plist" message:@"The AirshipConfig.plist must be a part of the app bundle and include a valid appkey and secret for the selected production level." preferredStyle:UIAlertControllerStyleActionSheet];
+
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Exit Application" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        exit(1);
+    }]];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.window.rootViewController presentViewController:alertController animated:YES completion:nil];
+    });
 }
 
 - (void)refreshMessageCenterBadge {
