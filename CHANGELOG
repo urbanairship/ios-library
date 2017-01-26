@@ -3,6 +3,10 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+Version 8.1.6 - January 26, 2017
+================================
+- Fixed an analytics bug for cold start direct opens.
+
 Version 8.1.5 - January 25, 2017
 ================================
 - Fixed a message selection bug in edit mode for the Message Center.

@@ -1,5 +1,5 @@
 //
-//    Copyright 2009-2016 Urban Airship Inc. All rights reserved.
+//    Copyright 2009-2017 Urban Airship Inc. All rights reserved.
 //
 //    Redistribution and use in source and binary forms, with or without
 //    modification, are permitted provided that the following conditions are met:
@@ -22,7 +22,7 @@
 //    OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 //    ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-CURRENT_PROJECT_VERSION = 8.1.5
+CURRENT_PROJECT_VERSION = 8.1.6
 
 // Uncomment to include the preview build warning
 // OTHER_CFLAGS = $(inherited) -DUA_PREVIEW=1
