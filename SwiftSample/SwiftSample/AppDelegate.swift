@@ -35,17 +35,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
     var window: UIWindow?
     var inboxDelegate: InboxDelegate?
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
         self.failIfSimulator()
+
+        // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
+        // or set runtime properties here.
+        let config = UAConfig.default()
+
+        if (config.validate() != true) {
+            showInvalidConfigAlert()
+            return true
+        }
 
         // Set log level for debugging config loading (optional)
         // It will be set to the value in the loaded config upon takeOff
         UAirship.setLogLevel(UALogLevel.trace)
 
-        // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
-        // or set runtime properties here.
-        let config = UAConfig.default()
         config.messageCenterStyleConfig = "UAMessageCenterDefaultStyle"
 
         // You can then programmatically override the plist values:
@@ -75,8 +80,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
         UAirship.push().registrationDelegate = self
 
         NotificationCenter.default.addObserver(self, selector:#selector(AppDelegate.refreshMessageCenterBadge), name: NSNotification.Name.UAInboxMessageListUpdated, object: nil)
-
+        
         return true
+    }
+
+    func showInvalidConfigAlert() {
+        let alertController = UIAlertController.init(title: "Invalid AirshipConfig.plist", message: "The AirshipConfig.plist must be a part of the app bundle and include a valid appkey and secret for the selected production level.", preferredStyle:.actionSheet)
+        alertController.addAction(UIAlertAction.init(title: "Exit Application", style: UIAlertActionStyle.default, handler: { (UIAlertAction) in
+            exit(1)
+        }))
+
+        DispatchQueue.main.async {
+            self.window?.rootViewController?.present(alertController, animated:true, completion: nil)
+        }
     }
 
     func failIfSimulator() {

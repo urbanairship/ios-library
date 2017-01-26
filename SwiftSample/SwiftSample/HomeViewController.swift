@@ -46,7 +46,7 @@ class HomeViewController: UIViewController {
     }
 
     func refreshView () {
-        if (UAirship.push().userPushNotificationsEnabled) {
+        if (UAirship.shared() != nil && UAirship.push().userPushNotificationsEnabled) {
             channelIDButton.setTitle(UAirship.push().channelID, for: [])
             channelIDButton.isHidden = false
             enablePushButton.isHidden = true
