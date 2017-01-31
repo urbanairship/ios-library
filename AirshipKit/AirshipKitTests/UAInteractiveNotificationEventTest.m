@@ -48,7 +48,7 @@
 
     self.action = [UANotificationAction actionWithIdentifier:@"action_identifier"
                                                        title:@"action_title"
-                                                     options:UNNotificationActionOptionForeground];
+                                                     options:(UANotificationActionOptions)UNNotificationActionOptionForeground];
 }
 
 /**

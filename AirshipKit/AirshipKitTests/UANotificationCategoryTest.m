@@ -15,14 +15,14 @@
 
     UNNotificationActionOptions watOptions = UNNotificationActionOptionForeground | UNNotificationActionOptionDestructive;
 
-    UANotificationAction *watAction = [UANotificationAction actionWithIdentifier:@"wat" title:@"Wat" options:watOptions];
+    UANotificationAction *watAction = [UANotificationAction actionWithIdentifier:@"wat" title:@"Wat" options:(UANotificationActionOptions)watOptions];
 
     UNNotificationActionOptions yayOptions = UNNotificationActionOptionForeground | UNNotificationActionOptionDestructive;
-    UANotificationAction *yayAction = [UANotificationAction actionWithIdentifier:@"yay" title:@"Yay" options:yayOptions];
+    UANotificationAction *yayAction = [UANotificationAction actionWithIdentifier:@"yay" title:@"Yay" options:(UANotificationActionOptions)yayOptions];
 
     NSArray *actions = @[watAction, yayAction];
 
-    self.uaCategory = [UANotificationCategory categoryWithIdentifier:@"abilities" actions:actions intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+    self.uaCategory = [UANotificationCategory categoryWithIdentifier:@"abilities" actions:actions intentIdentifiers:@[] options:UANotificationCategoryOptionNone];
 }
 
 /**

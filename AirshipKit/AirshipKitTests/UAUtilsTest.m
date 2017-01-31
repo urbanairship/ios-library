@@ -35,7 +35,7 @@
 - (void)setUp {
     [super setUp];
     self.gregorianUTC = [[NSCalendar alloc]
-                             initWithCalendarIdentifier:NSGregorianCalendar];
+                             initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
 
     self.gregorianUTC.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
 }
@@ -45,7 +45,7 @@
 }
 
 - (NSDateComponents *)componentsForDate:(NSDate *)date {
-    return [self.gregorianUTC components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit) fromDate:date];
+    return [self.gregorianUTC components:(NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond) fromDate:date];
 }
 
 - (void)validateDateFormatter:(NSDateFormatter *)dateFormatter withFormatString:(NSString *)formatString {

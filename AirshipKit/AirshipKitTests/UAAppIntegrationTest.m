@@ -412,7 +412,7 @@
 
     UANotificationAction *foregroundAction = [UANotificationAction actionWithIdentifier:@"foregroundIdentifier"
                                                                                   title:@"title"
-                                                                                options:UNNotificationActionOptionForeground];
+                                                                                options:(UANotificationActionOptions)UNNotificationActionOptionForeground];
 
     UANotificationCategory *category = [UANotificationCategory categoryWithIdentifier:@"notificationCategory"
                                                                               actions:@[foregroundAction]
@@ -490,7 +490,7 @@
 
     UANotificationAction *foregroundAction = [UANotificationAction actionWithIdentifier:@"backgroundIdentifier"
                                                                                   title:@"title"
-                                                                                options:UNNotificationActionOptionForeground];
+                                                                                options:(UANotificationActionOptions)UNNotificationActionOptionForeground];
 
     UANotificationCategory *category = [UANotificationCategory categoryWithIdentifier:@"notificationCategory"
                                                                               actions:@[foregroundAction]

@@ -782,9 +782,9 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 - (void)testNotificationCategories {
     self.push.userPushNotificationsEnabled = YES;
 
-    UANotificationCategory *defaultCategory = [UANotificationCategory categoryWithIdentifier:@"defaultCategory" actions:@[]  intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
-    UANotificationCategory *customCategory = [UANotificationCategory categoryWithIdentifier:@"customCategory" actions:@[]  intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
-    UANotificationCategory *anotherCustomCategory = [UANotificationCategory categoryWithIdentifier:@"anotherCustomCategory" actions:@[] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+    UANotificationCategory *defaultCategory = [UANotificationCategory categoryWithIdentifier:@"defaultCategory" actions:@[]  intentIdentifiers:@[] options:UANotificationCategoryOptionNone];
+    UANotificationCategory *customCategory = [UANotificationCategory categoryWithIdentifier:@"customCategory" actions:@[]  intentIdentifiers:@[] options:UANotificationCategoryOptionNone];
+    UANotificationCategory *anotherCustomCategory = [UANotificationCategory categoryWithIdentifier:@"anotherCustomCategory" actions:@[] intentIdentifiers:@[] options:UANotificationCategoryOptionNone];
 
     NSSet *defaultSet = [NSSet setWithArray:@[defaultCategory]];
     [[[self.mockDefaultNotificationCategories stub] andReturn:defaultSet] defaultCategoriesWithRequireAuth:self.push.requireAuthorizationForDefaultCategories];
@@ -1114,9 +1114,8 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     self.push.timeZone = [NSTimeZone timeZoneWithName:@"Pacific/Auckland"];
     [self.push setQuietTimeStartHour:12 startMinute:0 endHour:12 endMinute:0];
 
-    // Opt in requirements
+    // Opt in requirement
     self.push.userPushNotificationsEnabled = YES;
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIRemoteNotificationTypeAlert)] enabledRemoteNotificationTypes];
 
     BOOL (^checkPayloadBlock)(id obj) = ^BOOL(id obj) {
         UAChannelRegistrationPayload *payload = (UAChannelRegistrationPayload *)obj;
@@ -1294,9 +1293,8 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     self.push.autobadgeEnabled = NO;
     self.push.quietTimeEnabled = NO;
 
-    // Opt in requirements
+    // Opt in requirement
     self.push.userPushNotificationsEnabled = YES;
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIRemoteNotificationTypeAlert)] enabledRemoteNotificationTypes];
 
     // Verify opt in is false when device token is nil
     UAChannelRegistrationPayload *expectedPayload = [[UAChannelRegistrationPayload alloc] init];

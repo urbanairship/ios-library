@@ -68,11 +68,11 @@
 - (void)verifyPayloadConsistency:(UAInAppMessage *)message {
 
     NSCalendar *gregorian = [[NSCalendar alloc]
-                             initWithCalendarIdentifier:NSGregorianCalendar];
+                             initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     gregorian.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
 
     NSDateComponents *expiryComponents =
-    [gregorian components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit) fromDate:message.expiry];
+    [gregorian components:(NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond) fromDate:message.expiry];
 
     XCTAssertEqualObjects(message.identifier, @"some identifier");
 
