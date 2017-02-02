@@ -53,6 +53,13 @@ Packaging Changes
  - Pod specs have been moved into main repo.
  - Updated docs build to use Jazzy instead of Appledocs to provide swift and obj-c docs.
 
+Version 8.0.5 - February 2, 2017
+================================
+- Backported fixes from newer SDK versions:
+   - Fixed an analytics bug for cold start direct opens from 8.1.6.
+   - Message Center display fix from 8.1.5.
+   - Message Center memory leak from 8.1.4.
+
 Version 8.0.4 - November 8, 2016
 ================================
 - Added better file type detection for extensionless media attachment URLs.
