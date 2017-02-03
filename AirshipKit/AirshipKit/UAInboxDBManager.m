@@ -186,7 +186,7 @@
     if (!_storeURL) {
         NSFileManager *fm = [NSFileManager defaultManager];
         NSURL *libraryDirectoryURL = [[fm URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
-        NSURL *directoryURL = [libraryDirectoryURL URLByAppendingPathComponent:kUACoreDataStoreName];
+        NSURL *directoryURL = [libraryDirectoryURL URLByAppendingPathComponent:self.storeName];
 
         // Create the store directory if it doesnt exist
         if (![fm fileExistsAtPath:[directoryURL path]]) {
