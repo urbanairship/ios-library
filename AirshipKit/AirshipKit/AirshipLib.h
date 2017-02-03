@@ -88,6 +88,7 @@
 #import "UAScheduleAction.h"
 #import "UAScheduleTrigger.h"
 #import "UAShareAction.h"
+#import "UATextInputNotificationAction.h"
 #import "UAURLProtocol.h"
 #import "UAUser.h"
 #import "UAUtils.h"

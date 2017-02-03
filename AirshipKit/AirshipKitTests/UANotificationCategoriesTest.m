@@ -28,6 +28,7 @@
 #import "UANotificationCategories+Internal.h"
 #import "UANotificationCategory.h"
 #import "UANotificationAction.h"
+#import "UATextInputNotificationAction.h"
 
 @interface UANotificationCategoriesTest : XCTestCase
 
@@ -67,7 +68,7 @@
     NSString *plistPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"CustomNotificationCategories" ofType:@"plist"];
     NSSet *categories = [UANotificationCategories createCategoriesFromFile:plistPath];
 
-    XCTAssertEqual(3, categories.count);
+    XCTAssertEqual(4, categories.count);
 
     // Share category
     UANotificationCategory *share = [self findCategoryById:@"share_category" set:categories];
@@ -104,6 +105,23 @@
     XCTAssertTrue(noAction.options & UNNotificationActionOptionAuthenticationRequired);
     XCTAssertTrue(noAction.options & UNNotificationActionOptionDestructive);
 
+    // text_input category
+    UANotificationCategory *textInput = [self findCategoryById:@"text_input_category" set:categories];
+    XCTAssertNotNil(textInput);
+    XCTAssertEqual(1, textInput.actions.count);
+    
+    // Follow action in follow category
+    UATextInputNotificationAction *textInputAction = (UATextInputNotificationAction *)[self findActionById:@"text_input" category:textInput];
+    XCTAssertNotNil(textInputAction);
+    
+    // Test when 'title_resource' value does not exist will fall back to 'title' value
+    XCTAssertEqualObjects(@"TextInput", textInputAction.title);
+    XCTAssertEqualObjects(@"text_input_button", textInputAction.textInputButtonTitle);
+    XCTAssertEqualObjects(@"placeholder_text", textInputAction.textInputPlaceholder);
+    XCTAssertTrue(textInputAction.options & UNNotificationActionOptionForeground);
+    XCTAssertFalse(textInputAction.options & UNNotificationActionOptionAuthenticationRequired);
+    XCTAssertFalse(textInputAction.options & UNNotificationActionOptionDestructive);
+    
     // Follow category
     UANotificationCategory *follow = [self findCategoryById:@"follow_category" set:categories];
     XCTAssertNotNil(follow);

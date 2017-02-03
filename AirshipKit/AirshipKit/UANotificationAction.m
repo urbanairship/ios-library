@@ -60,13 +60,13 @@
     uiAction.identifier = self.identifier;
     uiAction.title = self.title;
 
-    if (self.options & UNNotificationActionOptionAuthenticationRequired) {
+    if (self.options & UANotificationActionOptionAuthenticationRequired) {
         uiAction.authenticationRequired = YES;
     }
 
-    uiAction.authenticationRequired = self.options & UNNotificationActionOptionAuthenticationRequired ? YES : NO;
-    uiAction.activationMode = self.options & UNNotificationActionOptionForeground ? UIUserNotificationActivationModeForeground : UIUserNotificationActivationModeBackground;
-    uiAction.destructive = self.options & UNNotificationActionOptionDestructive ? YES : NO;
+    uiAction.authenticationRequired = self.options & UANotificationActionOptionAuthenticationRequired ? YES : NO;
+    uiAction.activationMode = self.options & UANotificationActionOptionForeground ? UIUserNotificationActivationModeForeground : UIUserNotificationActivationModeBackground;
+    uiAction.destructive = self.options & UANotificationActionOptionDestructive ? YES : NO;
 
     return uiAction;
 }
@@ -80,9 +80,9 @@
 - (BOOL)isEqualToUIUserNotificationAction:(UIUserNotificationAction *)notificationAction {
     BOOL equalIdentifier = [self.identifier isEqualToString:notificationAction.identifier];
     BOOL equalTitle = [self.title isEqualToString:notificationAction.title];
-    BOOL equalAuth = (self.options & UNNotificationActionOptionAuthenticationRequired) > 0 == notificationAction.authenticationRequired;
-    BOOL equalActivationMode = (self.options & UNNotificationActionOptionForeground) > 0 == (notificationAction.activationMode == UIUserNotificationActivationModeForeground);
-    BOOL equalDestructive = (self.options & UNNotificationActionOptionDestructive) > 0 == notificationAction.destructive;
+    BOOL equalAuth = (self.options & UANotificationActionOptionAuthenticationRequired) > 0 == notificationAction.authenticationRequired;
+    BOOL equalActivationMode = (self.options & UANotificationActionOptionForeground) > 0 == (notificationAction.activationMode == UIUserNotificationActivationModeForeground);
+    BOOL equalDestructive = (self.options & UANotificationActionOptionDestructive) > 0 == notificationAction.destructive;
 
     return equalIdentifier && equalTitle && equalAuth && equalActivationMode && equalDestructive;
 }

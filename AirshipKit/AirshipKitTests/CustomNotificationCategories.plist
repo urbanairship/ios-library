@@ -61,5 +61,28 @@
 			<string>no_button</string>
 		</dict>
 	</array>
+	<key>text_input_category</key>
+	<array>
+		<dict>
+			<key>text_input_button_title</key>
+			<string>text_input_button</string>
+			<key>text_input_placeholder</key>
+			<string>placeholder_text</string>
+			<key>action_type</key>
+			<string>text_input</string>
+			<key>authorizationRequired</key>
+			<false/>
+			<key>destructive</key>
+			<false/>
+			<key>title_resource</key>
+			<string>ua_text_input_title_resource</string>
+			<key>title</key>
+			<string>TextInput</string>
+			<key>foreground</key>
+			<true/>
+			<key>identifier</key>
+			<string>text_input</string>
+		</dict>
+	</array>
 </dict>
 </plist>

@@ -584,6 +584,9 @@
 		CCD28FE51DD14DD1008D663F /* UATagGroupsMutation.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD28FE31DD14DD1008D663F /* UATagGroupsMutation.m */; };
 		CCD28FE61DD14DD1008D663F /* UATagGroupsMutation.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD28FE31DD14DD1008D663F /* UATagGroupsMutation.m */; };
 		CCEAF3F11DD3D8C1005C080F /* UAPreferenceDataStore+InternalTagGroupsMutation.h in Headers */ = {isa = PBXBuildFile; fileRef = CC4006121DD2426900C6ACB9 /* UAPreferenceDataStore+InternalTagGroupsMutation.h */; };
+		DF544B911E428DC800F4F008 /* UATextInputNotificationActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF544B901E428DC800F4F008 /* UATextInputNotificationActionTest.m */; };
+		DFBBC7B11E36D80B00BA7315 /* UATextInputNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = DFBBC7AE1E36D80B00BA7315 /* UATextInputNotificationAction.m */; };
+		DFBBC7B21E36D80B00BA7315 /* UATextInputNotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = DFBBC7AF1E36D80B00BA7315 /* UATextInputNotificationAction.h */; };
 		E29D35E91DB93A59003C292F /* UAFetchDeviceInfoAction.h in Headers */ = {isa = PBXBuildFile; fileRef = E29D35E71DB93A59003C292F /* UAFetchDeviceInfoAction.h */; };
 		E29D35EA1DB93A59003C292F /* UAFetchDeviceInfoAction.m in Sources */ = {isa = PBXBuildFile; fileRef = E29D35E81DB93A59003C292F /* UAFetchDeviceInfoAction.m */; };
 		E29D35EB1DB93A59003C292F /* UAFetchDeviceInfoAction.m in Sources */ = {isa = PBXBuildFile; fileRef = E29D35E81DB93A59003C292F /* UAFetchDeviceInfoAction.m */; };
@@ -1113,6 +1116,9 @@
 		CCE236321DDB8BB400577747 /* iw */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = iw; path = iw.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		CCE236331DDB8BCE00577747 /* no */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = no; path = no.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		CF471EEEF4B1EEA3289E08C9 /* libPods-AirshipKitTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AirshipKitTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF544B901E428DC800F4F008 /* UATextInputNotificationActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATextInputNotificationActionTest.m; sourceTree = "<group>"; };
+		DFBBC7AE1E36D80B00BA7315 /* UATextInputNotificationAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATextInputNotificationAction.m; sourceTree = "<group>"; };
+		DFBBC7AF1E36D80B00BA7315 /* UATextInputNotificationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UATextInputNotificationAction.h; sourceTree = "<group>"; };
 		E29D35E71DB93A59003C292F /* UAFetchDeviceInfoAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAFetchDeviceInfoAction.h; sourceTree = "<group>"; };
 		E29D35E81DB93A59003C292F /* UAFetchDeviceInfoAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAFetchDeviceInfoAction.m; sourceTree = "<group>"; };
 		E29D35EE1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAFetchDeviceInfoActionTest.m; sourceTree = "<group>"; };
@@ -1378,6 +1384,7 @@
 			children = (
 				CC64F0B01D8B781C009CEF27 /* UANotificationCategoriesTest.m */,
 				CC64F0B11D8B781C009CEF27 /* UANotificationCategoryTest.m */,
+				DF544B901E428DC800F4F008 /* UATextInputNotificationActionTest.m */,
 			);
 			name = Interactive;
 			sourceTree = "<group>";
@@ -1722,6 +1729,8 @@
 				CC40DBC21D8C996A00BABD4F /* UANotificationCategory+Internal.h */,
 				CC40DBC31D8C996A00BABD4F /* UANotificationCategory.h */,
 				CC40DBC41D8C996A00BABD4F /* UANotificationCategory.m */,
+				DFBBC7AF1E36D80B00BA7315 /* UATextInputNotificationAction.h */,
+				DFBBC7AE1E36D80B00BA7315 /* UATextInputNotificationAction.m */,
 			);
 			name = Interactive;
 			sourceTree = "<group>";
@@ -2265,6 +2274,7 @@
 				CC40DC2E1D8C996A00BABD4F /* UAActionScheduleInfo.h in Headers */,
 				CC40DCD41D8C996A00BABD4F /* UALocation.h in Headers */,
 				CC40DCA31D8C996A00BABD4F /* UAInAppMessaging+Internal.h in Headers */,
+				DFBBC7B21E36D80B00BA7315 /* UATextInputNotificationAction.h in Headers */,
 				CC40DC551D8C996A00BABD4F /* UAAutomation.h in Headers */,
 				CC944EBF1DB0225000C42269 /* UARequest+Internal.h in Headers */,
 				CC40DD191D8C996A00BABD4F /* UATagGroupsAPIClient+Internal.h in Headers */,
@@ -2706,6 +2716,7 @@
 				CC40DC761D8C996A00BABD4F /* UADefaultMessageCenter.m in Sources */,
 				CC40DCCC1D8C996A00BABD4F /* UAKeychainUtils.m in Sources */,
 				CC40DCAA1D8C996A00BABD4F /* UAInbox.m in Sources */,
+				DFBBC7B11E36D80B00BA7315 /* UATextInputNotificationAction.m in Sources */,
 				CC40DCBA1D8C996A00BABD4F /* UAIncomingInAppMessageAction.m in Sources */,
 				CC40DD081D8C996A00BABD4F /* UARemoveTagsAction.m in Sources */,
 				CC40DC981D8C996A00BABD4F /* UAInAppMessage.m in Sources */,
@@ -2933,6 +2944,7 @@
 				CC64F0E21D8B781C009CEF27 /* UAAggregateActionResultTest.m in Sources */,
 				CC64F1231D8B781C009CEF27 /* UAShareActionTest.m in Sources */,
 				CC64F11F1D8B781C009CEF27 /* UARetailEventTemplateTest.m in Sources */,
+				DF544B911E428DC800F4F008 /* UATextInputNotificationActionTest.m in Sources */,
 				CC64F11E1D8B781C009CEF27 /* UARegionEventTest.m in Sources */,
 				CC64F0DC1D8B781C009CEF27 /* UAActionRegistryEntryTest.m in Sources */,
 				CC64F10A1D8B781C009CEF27 /* UAJSONPredicateTests.m in Sources */,

@@ -72,8 +72,37 @@ class PushHandler: NSObject, UAPushNotificationDelegate {
     }
 
     func receivedNotificationResponse(_ notificationResponse: UANotificationResponse, completionHandler: @escaping () -> Swift.Void) {
-        print("The user selected the following action identifier:%@", notificationResponse.actionIdentifier);
+        print("The user selected the following action identifier: \(notificationResponse.actionIdentifier)")
 
+        // display an alert with the notification content and any response text
+        let notificationContent = notificationResponse.notificationContent
+        let alertTitle = notificationContent.alertTitle ?? NSLocalizedString("UA_Notification_Title", tableName: "UAPushUI", comment: "Notification Alert")
+        
+        var message = "Action Identifier:\n\(notificationResponse.actionIdentifier)"
+        if let alertBody = notificationContent.alertBody {
+            if !alertBody.isEmpty {
+                message = "\(message)\nAlert Body:\n\(alertBody)"
+            }
+        }
+        if let categoryIdentifier = notificationContent.categoryIdentifier {
+            if !categoryIdentifier.isEmpty {
+                message = "\(message)\nCategory Identifier:\n\(categoryIdentifier)"
+            }
+        }
+        let responseText = notificationResponse.responseText
+        if !responseText.isEmpty {
+            message = "\(message)\nResponse:\n\(responseText)"
+        }
+        
+        let alertController = UIAlertController(title: alertTitle, message: message, preferredStyle: .alert)
+        
+        let defaultAction = UIAlertAction(title:"OK", style: UIAlertActionStyle.default)
+        alertController.addAction(defaultAction)
+        
+        let topController = UIApplication.shared.keyWindow!.rootViewController! as UIViewController
+        alertController.popoverPresentationController?.sourceView = topController.view
+        topController.present(alertController, animated:true, completion:nil)
+        
         completionHandler()
     }
 

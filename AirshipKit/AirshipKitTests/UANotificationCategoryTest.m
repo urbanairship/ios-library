@@ -3,6 +3,7 @@
 #import "UANotificationCategory+Internal.h"
 #import "UANotificationCategory.h"
 #import "UANotificationAction.h"
+#import "UATextInputNotificationAction.h"
 
 @interface UANotificationCategoryTest : XCTestCase
 @property(nonatomic, strong) UANotificationCategory *uaCategory;
@@ -20,7 +21,10 @@
     UNNotificationActionOptions yayOptions = UNNotificationActionOptionForeground | UNNotificationActionOptionDestructive;
     UANotificationAction *yayAction = [UANotificationAction actionWithIdentifier:@"yay" title:@"Yay" options:(UANotificationActionOptions)yayOptions];
 
-    NSArray *actions = @[watAction, yayAction];
+    UNNotificationActionOptions zizOptions = UNNotificationActionOptionDestructive;
+    UATextInputNotificationAction *zizAction = [UATextInputNotificationAction actionWithIdentifier:@"ziz" title:@"Ziz" textInputButtonTitle:@"ziz button" textInputPlaceholder:@"ziz placeholder" options:zizOptions];
+    
+    NSArray *actions = @[watAction, yayAction, zizAction];
 
     self.uaCategory = [UANotificationCategory categoryWithIdentifier:@"abilities" actions:actions intentIdentifiers:@[] options:UANotificationCategoryOptionNone];
 }
