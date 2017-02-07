@@ -56,6 +56,7 @@
 @property (nonatomic, strong) id mockInbox;
 @property (nonatomic, strong) id mockPush;
 @property (nonatomic, strong) id mockNamedUser;
+@property (nonatomic, strong) id mockConfig;
 
 @property (nonatomic, strong) JSContext *jsc;
 
@@ -85,6 +86,9 @@
     // Mock UAUser
     self.mockUAUser = [OCMockObject niceMockForClass:[UAUser class]];
 
+    // Mock UAConfig
+    self.mockConfig = [OCMockObject niceMockForClass:[UAConfig class]];
+    
     // Mock UIDevice
     self.mockUIDevice = [OCMockObject niceMockForClass:[UIDevice class]];
     [[[self.mockUIDevice stub] andReturn:self.mockUIDevice] currentDevice];
@@ -101,6 +105,7 @@
     [[[self.mockAirship stub] andReturn:self.mockInbox] inbox];
     [[[self.mockAirship stub] andReturn:self.mockPush] push];
     [[[self.mockAirship stub] andReturn:self.mockNamedUser] namedUser];
+    [[[self.mockAirship stub] andReturn:self.mockConfig] config];
 
     // Mock JS Action delegate
     self.mockJSActionDelegate = [OCMockObject niceMockForClass:[UAActionJSDelegate class]];
@@ -120,6 +125,7 @@
     [self.mockWebView stopMocking];
     [self.mockUIDevice stopMocking];
     [self.mockUAUser stopMocking];
+    [self.mockConfig stopMocking];
     [self.mockForwardDelegate stopMocking];
     [self.mockContentWindow stopMocking];
 
@@ -247,7 +253,8 @@
     [[[self.mockUIDevice stub] andReturn:@"device model"] model];
     [[[self.mockPush stub] andReturn:@"channel ID"] channelID];
     [[[self.mockNamedUser stub] andReturn:@"named user"] identifier];
-
+    [[[self.mockConfig stub] andReturn:@"application key"] appKey];
+    
     __block NSString *js;
 
     // Capture the js environment string
@@ -281,6 +288,9 @@
     // Verify named user
     XCTAssertEqualObjects(@"named user", [self.jsc evaluateScript:@"UAirship.getNamedUser()"].toString);
 
+    // Verify app key
+    XCTAssertEqualObjects(@"application key", [self.jsc evaluateScript:@"UAirship.getAppKey()"].toString);
+    
     // Verify message ID is null
     XCTAssertTrue([self.jsc evaluateScript:@"UAirship.getMessageId()"].isNull);
 
@@ -292,7 +302,6 @@
 
     // Verify message send date ms is -1
     XCTAssertEqualObjects(@-1, [self.jsc evaluateScript:@"UAirship.getMessageSentDateMS()"].toNumber);
-
 
     // Verify native bridge methods are not undefined
     XCTAssertFalse([self.jsc evaluateScript:@"UAirship.delegateCallURL"].isUndefined);
