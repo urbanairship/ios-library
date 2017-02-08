@@ -22,10 +22,13 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import "UAAppIntegration.h"
 #import "UAirship.h"
 #import "UAAnalytics+Internal.h"
 #import "UAPush+Internal.h"
+#import "UAInbox+Internal.h"
+#import "UAInboxMessageList+Internal.h"
 
 #import "UADeviceRegistrationEvent+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"
@@ -233,20 +236,56 @@
     NSDictionary *metadata = @{ UAActionMetadataForegroundPresentationKey: @(foregroundPresentation),
                                 UAActionMetadataPushPayloadKey: notificationContent.notificationInfo };
 
+    __block NSUInteger resultCount = 0;
+    __block NSUInteger expectedCount = 1;
+    __block NSMutableArray *fetchResults = [NSMutableArray array];
+
+    // Refresh the message center, call completion block when finished
+    if ([UAInboxUtils inboxMessageIDFromNotification:notificationContent.notificationInfo]) {
+        expectedCount = 2;
+
+        [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
+            [fetchResults addObject:[NSNumber numberWithInt:UIBackgroundFetchResultNewData]];
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                resultCount++;
+
+                if (expectedCount == resultCount) {
+                    completionHandler([UAUtils mergeFetchResults:fetchResults]);
+                }
+            });
+        } withFailureBlock:^{
+            [fetchResults addObject:[NSNumber numberWithInt:UIBackgroundFetchResultFailed]];
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                resultCount++;
+
+                if (expectedCount == resultCount) {
+                    completionHandler([UAUtils mergeFetchResults:fetchResults]);
+                }
+            });
+        }];
+    }
+
     // Run the actions
     [UAActionRunner runActionsWithActionValues:actionsPayload
                                      situation:situation
                                       metadata:metadata
                              completionHandler:^(UAActionResult *result) {
+                                 [fetchResults addObject:[NSNumber numberWithInt:(UIBackgroundFetchResult)[result fetchResult]]];
 
                                  [[UAirship push] handleRemoteNotification:notificationContent
                                                                 foreground:(situation == UASituationForegroundPush)
                                                          completionHandler:^(UIBackgroundFetchResult fetchResult) {
-                                                             UIBackgroundFetchResult mergedResult = (UIBackgroundFetchResult)[result fetchResult];
-                                                             if (fetchResult == UIBackgroundFetchResultNewData || mergedResult == UIBackgroundFetchResultNoData) {
-                                                                 mergedResult = fetchResult;
-                                                             }
-                                                             completionHandler(mergedResult);
+                                                             [fetchResults addObject:[NSNumber numberWithInt:fetchResult]];
+
+                                                             dispatch_async(dispatch_get_main_queue(), ^{
+                                                                 resultCount++;
+
+                                                                 if (expectedCount == resultCount) {
+                                                                     completionHandler([UAUtils mergeFetchResults:fetchResults]);
+                                                                 }
+                                                             });
                                                          }];
 
                              }];

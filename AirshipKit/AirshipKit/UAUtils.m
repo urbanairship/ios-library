@@ -24,6 +24,7 @@
  */
 
 #import "UAUtils.h"
+#import "UAActionResult.h"
 
 // Frameworks
 #import <CommonCrypto/CommonDigest.h>
@@ -277,6 +278,23 @@
     }
     
     return topController;
+}
+
+/**
+ * A utility method that takes an array of fetch results and returns the merged result
+ */
++ (UIBackgroundFetchResult)mergeFetchResults:(NSArray<NSNumber *> *)fetchResults {
+    UIBackgroundFetchResult mergedResult = UIBackgroundFetchResultNoData;
+
+    for (NSNumber *fetchResult in fetchResults) {
+        if (fetchResult.intValue == UIBackgroundFetchResultNewData) {
+            return UIBackgroundFetchResultNewData;
+        } else if (fetchResult.intValue == UIBackgroundFetchResultFailed) {
+            mergedResult = fetchResult.intValue;
+        }
+    }
+
+    return mergedResult;
 }
 
 + (BOOL)isSilentPush:(NSDictionary *)notification {
