@@ -24,6 +24,7 @@
  */
 
 #import "UAAppIntegration.h"
+#import "UANotificationContent.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -38,6 +39,16 @@ NS_ASSUME_NONNULL_BEGIN
  * @param completionHandler The completion handler.
  */
 + (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options withCompletionHandler:(void(^)())completionHandler;
+
+/**
+ * Creates an actions payload
+ *
+ * @param notificationContent The notification content.
+ * @param actionIdentifier The associated action identifier.
+ *
+ * @return NSDictionary of the action payload.
+ */
++ (NSDictionary *)actionsPayloadForNotificationContent:(UANotificationContent *)notificationContent actionIdentifier:(NSString * _Nullable)actionIdentifier;
 
 @end
 

@@ -170,6 +170,15 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (BOOL)isSilentPush:(NSDictionary *)notification;
 
+///---------------------------------------------------------------------------------------
+/// @name Fetch Results
+///---------------------------------------------------------------------------------------
+
+/**
+ * A utility method that takes an array of fetch results as NSNumbers and returns the merged result
+ */
++ (UIBackgroundFetchResult)mergeFetchResults:(NSArray *)fetchResults;
+
 @end
 
 NS_ASSUME_NONNULL_END
