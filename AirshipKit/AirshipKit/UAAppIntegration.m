@@ -29,6 +29,7 @@
 #import "UAPush+Internal.h"
 #import "UAInbox+Internal.h"
 #import "UAInboxMessageList+Internal.h"
+#import "UAInAppMessaging+Internal.h"
 
 #import "UADeviceRegistrationEvent+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"
@@ -179,6 +180,9 @@
 
     UA_LINFO(@"Received notification response: %@", response);
 
+    // Clear any in-app messages
+    [[UAirship inAppMessaging] handleNotificationResponse:response];
+
     UASituation situation;
     NSDictionary *actionsPayload = [self actionsPayloadForNotificationContent:response.notificationContent actionIdentifier:response.actionIdentifier];
 
@@ -229,6 +233,9 @@
                  completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
     UA_LINFO(@"Received notification: %@", notificationContent);
+
+    // Process any in-app messages
+    [[UAirship inAppMessaging] handleRemoteNotification:notificationContent];
 
     UASituation situation = [UIApplication sharedApplication].applicationState == UIApplicationStateActive ? UASituationForegroundPush : UASituationBackgroundPush;
     NSDictionary *actionsPayload = [self actionsPayloadForNotificationContent:notificationContent actionIdentifier:nil];

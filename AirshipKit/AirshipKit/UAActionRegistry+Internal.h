@@ -25,7 +25,6 @@
 
 #import "UAActionRegistry.h"
 
-#define kUAIncomingInAppMessageActionDefaultRegistryName @"com.urbanairship.in_app"
 #define kUACloseWindowActionRegistryName @"__close_window_action"
 
 NS_ASSUME_NONNULL_BEGIN

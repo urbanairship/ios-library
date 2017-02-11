@@ -141,5 +141,57 @@
     [self. mockAnalytics verify];
 }
 
+/**
+ * Test notification response that contains an in-app message clears the pending message.
+ */
+- (void)testHandleNotificationResponse {
+
+}
+
+/**
+ * Test notification response no-ops when it does not contain an in-app message.
+ */
+- (void)testHandleNotificationResponseNoInApp {
+
+}
+
+/**
+ * Test notification response no-ops when the response's in-app message does
+ * not match the pending in-app message.
+ */
+- (void)testHandleNotificationResponseDifferentPendingMessage {
+
+}
+
+/**
+ * Test remote notifications that contains an in-app message saves it as a pending
+ * message.
+ */
+- (void)testHandleRemoteNotification {
+
+}
+
+/**
+ * Test handling a remote notification no-ops when it does not contain an in-app message.
+ */
+- (void)testHandleRemoteNotificationNoInApp {
+
+}
+
+/**
+ * Test remote notifications that contains an in-app message and a message center
+ * message appends an inbox action to the in-app message.
+ */
+- (void)testHandleRemoteNotificationWithMCRAP {
+
+}
+
+/**
+ * Test remote notifications that contains an in-app message and a message center
+ * does not append an inbox action if one already exists.
+ */
+- (void)testHandleRemoteNotificationWithMCRAPExistingInboxAction {
+
+}
 
 @end

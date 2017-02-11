@@ -35,6 +35,8 @@
 @class UAPreferenceDataStore;
 @class UAAnalytics;
 @class UAPush;
+@class UANotificationResponse;
+@class UANotificationContent;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -58,6 +60,20 @@ NS_ASSUME_NONNULL_BEGIN
  * Invalidates the autodisplay timer.
  */
 - (void)invalidateAutoDisplayTimer;
+
+/**
+ * Called when a notification response is received.
+ *
+ * @param response The notification response.
+ */
+- (void)handleNotificationResponse:(UANotificationResponse *)response;
+
+/**
+ * Called when a remote notification is received.
+ *
+ * @param notification The notification content.
+ */
+- (void)handleRemoteNotification:(UANotificationContent *)notification;
 
 @end
 
