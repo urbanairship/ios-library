@@ -1,3 +1,27 @@
+/*
+ Copyright 2009-2017 Urban Airship Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided with the distribution.
+
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
@@ -9,6 +33,7 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAPush.h"
 #import "UAAnalytics.h"
+#import "UAActionRegistry.h"
 
 @interface UAInAppMessagingTest : XCTestCase
 @property(nonatomic, strong) id mockAnalytics;
@@ -18,6 +43,8 @@
 @property(nonatomic, strong) UAInAppMessage *bannerMessage;
 @property(nonatomic, strong) UAInAppMessage *nonBannerMessage;
 @property(nonatomic, strong) UAInAppMessaging *inAppMessaging;
+@property(nonatomic, strong) NSDictionary *payload;
+@property(nonatomic, strong) NSDictionary *aps;
 
 @end
 
@@ -43,6 +70,27 @@
 
     self.nonBannerMessage.alert = @"blah";
     self.nonBannerMessage.displayType = UAInAppMessageDisplayTypeUnknown;
+
+    self.payload = @{
+                     @"display": @{
+                             @"alert": @"pending message alert",
+                             @"duration": @40,
+                             @"position": @"bottom",
+                             @"primary_color": @"#ffff0000",
+                             @"secondary_color": @"#ff000055",
+                             @"type": @"banner"
+                             },
+                     @"expiry": @"2020-12-15T11:45:22",
+                     @"identifier":@"send ID"
+                     };
+
+    self.aps = @{
+                 @"aps": @{
+                         @"alert": @"sample alert",
+                         @"badge": @2,
+                         @"sound": @"cat",
+                         }
+                 };
 }
 
 - (void)tearDown {
@@ -138,21 +186,58 @@
 
     [(UAInAppMessageController *)[[self.mockMessageController stub] andReturnValue:OCMOCK_VALUE(NO)] show];
     [[self.mockAnalytics reject] addEvent:[OCMArg any]];
-    [self. mockAnalytics verify];
+    [self.mockAnalytics verify];
 }
 
 /**
  * Test notification response that contains an in-app message clears the pending message.
  */
 - (void)testHandleNotificationResponse {
+    XCTAssertNil([self.inAppMessaging pendingMessage]);
 
+    [self.inAppMessaging setPendingMessage:[UAInAppMessage messageWithPayload:self.payload]];
+    XCTAssertNotNil([self.inAppMessaging pendingMessage]);
+
+    NSDictionary *notification = @{
+                                   @"_": @"send ID",
+                                   @"aps": self.aps,
+                                   @"com.urbanairship.in_app": self.payload
+                                   };
+
+    UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
+                                                                                       actionIdentifier:UANotificationDefaultActionIdentifier
+                                                                                           responseText:nil];
+
+    [[self.mockAnalytics expect] addEvent:[OCMArg any]];
+    [self.inAppMessaging handleNotificationResponse:response];
+
+    [self. mockAnalytics verify];
+    XCTAssertNil([self.inAppMessaging pendingMessage]);
 }
 
 /**
  * Test notification response no-ops when it does not contain an in-app message.
  */
 - (void)testHandleNotificationResponseNoInApp {
+    XCTAssertNil([self.inAppMessaging pendingMessage]);
 
+    [self.inAppMessaging setPendingMessage:[UAInAppMessage messageWithPayload:self.payload]];
+    XCTAssertNotNil([self.inAppMessaging pendingMessage]);
+
+    NSDictionary *notification = @{
+                                   @"_": @"send ID",
+                                   @"aps": self.aps
+                                   };
+
+    UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
+                                                                                       actionIdentifier:UANotificationDefaultActionIdentifier
+                                                                                           responseText:nil];
+
+    [[self.mockAnalytics reject] addEvent:[OCMArg any]];
+    [self.inAppMessaging handleNotificationResponse:response];
+
+    [self.mockAnalytics verify];
+    XCTAssertNotNil([self.inAppMessaging pendingMessage]);
 }
 
 /**
@@ -160,7 +245,36 @@
  * not match the pending in-app message.
  */
 - (void)testHandleNotificationResponseDifferentPendingMessage {
+    XCTAssertNil([self.inAppMessaging pendingMessage]);
 
+    [self.inAppMessaging setPendingMessage:[UAInAppMessage messageWithPayload:self.payload]];
+    XCTAssertNotNil([self.inAppMessaging pendingMessage]);
+
+    NSDictionary *notification = @{
+                                   @"_": @"some identifier",
+                                   @"aps": self.aps,
+                                   @"com.urbanairship.in_app": @{
+                                           @"display": @{
+                                                   @"alert": @"new message alert",
+                                                   @"duration": @40,
+                                                   @"position": @"bottom",
+                                                   @"primary_color": @"#ffff0000",
+                                                   @"secondary_color": @"#ff000055",
+                                                   @"type": @"banner"
+                                                   },
+                                           @"expiry": @"2020-12-15T11:45:22",
+                                           }
+                                   };
+
+    UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
+                                                                                       actionIdentifier:UANotificationDefaultActionIdentifier
+                                                                                           responseText:nil];
+
+    [[self.mockAnalytics reject] addEvent:[OCMArg any]];
+    [self.inAppMessaging handleNotificationResponse:response];
+
+    [self.mockAnalytics verify];
+    XCTAssertNotNil([self.inAppMessaging pendingMessage]);
 }
 
 /**
@@ -168,14 +282,39 @@
  * message.
  */
 - (void)testHandleRemoteNotification {
+    XCTAssertNil([self.inAppMessaging pendingMessage]);
 
+    NSDictionary *notification = @{
+                                   @"_": @"send ID",
+                                   @"aps": self.aps,
+                                   @"com.urbanairship.in_app": self.payload
+                                   };
+
+    UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
+                                                                                       actionIdentifier:UANotificationDefaultActionIdentifier
+                                                                                           responseText:nil];
+
+    [self.inAppMessaging handleRemoteNotification:response.notificationContent];
+    XCTAssertNotNil([self.inAppMessaging pendingMessage]);
 }
 
 /**
  * Test handling a remote notification no-ops when it does not contain an in-app message.
  */
 - (void)testHandleRemoteNotificationNoInApp {
+    XCTAssertNil([self.inAppMessaging pendingMessage]);
 
+    NSDictionary *notification = @{
+                                   @"_": @"send ID",
+                                   @"aps": self.aps
+                                   };
+
+    UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
+                                                                                       actionIdentifier:UANotificationDefaultActionIdentifier
+                                                                                           responseText:nil];
+
+    [self.inAppMessaging handleRemoteNotification:response.notificationContent];
+    XCTAssertNil([self.inAppMessaging pendingMessage]);
 }
 
 /**
@@ -183,7 +322,24 @@
  * message appends an inbox action to the in-app message.
  */
 - (void)testHandleRemoteNotificationWithMCRAP {
+    XCTAssertNil([self.inAppMessaging pendingMessage]);
 
+    NSDictionary *notification = @{
+                                   @"_": @"send ID",
+                                   @"_uamid": @"some message ID",
+                                   @"aps": self.aps,
+                                   @"com.urbanairship.in_app": self.payload
+                                   };
+
+    UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
+                                                                                       actionIdentifier:UANotificationDefaultActionIdentifier
+                                                                                           responseText:nil];
+
+    [self.inAppMessaging handleRemoteNotification:response.notificationContent];
+    XCTAssertNotNil([self.inAppMessaging pendingMessage]);
+    BOOL containsOpenInboxAction = [self.inAppMessaging pendingMessage].onClick[kUADisplayInboxActionDefaultRegistryName] ||
+    [self.inAppMessaging pendingMessage].onClick[kUADisplayInboxActionDefaultRegistryAlias];
+    XCTAssertTrue(containsOpenInboxAction);
 }
 
 /**
@@ -191,7 +347,26 @@
  * does not append an inbox action if one already exists.
  */
 - (void)testHandleRemoteNotificationWithMCRAPExistingInboxAction {
+    XCTAssertNil([self.inAppMessaging pendingMessage]);
 
+    id existingOpenInboxAction = @{ @"on_click": @{ @"^mc": @"AUTO" }};
+
+    NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:self.payload];
+    payload[@"actions"] = existingOpenInboxAction;
+
+    NSDictionary *notification = @{
+                                   @"_": @"send ID",
+                                   @"_uamid": @"some message ID",
+                                   @"aps": self.aps,
+                                   @"com.urbanairship.in_app": payload
+                                   };
+
+    UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
+                                                                                       actionIdentifier:UANotificationDefaultActionIdentifier
+                                                                                           responseText:nil];
+
+    [self.inAppMessaging handleRemoteNotification:response.notificationContent];
+    XCTAssertEqualObjects([self.inAppMessaging pendingMessage].onClick[@"^mc"], @"AUTO");
 }
 
 @end
