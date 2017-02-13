@@ -196,7 +196,8 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     };
 
     // If auto display and displayASAP are enabled, display the message as soon as possible
-    if (self.isAutoDisplayEnabled && self.isDisplayASAPEnabled) {
+    bool isActive = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
+    if (isActive && self.isAutoDisplayEnabled && self.isDisplayASAPEnabled) {
         [self displayMessage:message forcefully:NO];
     }
 }
