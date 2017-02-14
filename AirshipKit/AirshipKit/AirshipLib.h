@@ -54,7 +54,6 @@
 #import "UAInboxMessage.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxUtils.h"
-#import "UAIncomingInAppMessageAction.h"
 #import "UAInstallAttributionEvent.h"
 #import "UAirship.h"
 #import "UAirshipVersion.h"

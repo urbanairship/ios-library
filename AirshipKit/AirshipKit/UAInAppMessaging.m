@@ -31,6 +31,9 @@
 #import "UAInAppDisplayEvent+Internal.h"
 #import "UAAnalytics.h"
 #import "UAInAppResolutionEvent+Internal.h"
+#import "UANotificationContent.h"
+#import "UANotificationResponse.h"
+#import "UAInboxUtils.h"
 
 NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID";
 
@@ -45,6 +48,10 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
 // The default secondary color for IAMs: gray-ish
 #define kUAInAppMessageDefaultSecondaryColor [UIColor colorWithRed:40.0/255 green:40.0/255 blue:40.0/255 alpha:1]
+
+// APNS payload key
+#define kUAIncomingInAppMessageKey @"com.urbanairship.in_app"
+
 
 @interface UAInAppMessaging ()
 @property(nonatomic, strong) UAInAppMessageController *messageController;
@@ -189,7 +196,8 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     };
 
     // If auto display and displayASAP are enabled, display the message as soon as possible
-    if (self.isAutoDisplayEnabled && self.isDisplayASAPEnabled) {
+    bool isActive = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
+    if (isActive && self.isAutoDisplayEnabled && self.isDisplayASAPEnabled) {
         [self displayMessage:message forcefully:NO];
     }
 }
@@ -316,6 +324,63 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
+
+
+- (void)handleNotificationResponse:(UANotificationResponse *)response {
+    NSDictionary *apnsPayload = response.notificationContent.notificationInfo;
+    if (!apnsPayload[kUAIncomingInAppMessageKey]) {
+        return;
+    }
+
+    NSString *sendId = apnsPayload[@"_"];
+
+    UAInAppMessage *pending = self.pendingMessage;
+
+    // Compare only the ID in case we amended the in-app message payload
+    if (sendId.length && [sendId isEqualToString:pending.identifier]) {
+        UA_LINFO(@"The in-app message delivery push was directly launched for message: %@", pending);
+        [self deletePendingMessage:pending];
+
+        UAInAppResolutionEvent *event = [UAInAppResolutionEvent directOpenResolutionWithMessage:pending];
+        [self.analytics addEvent:event];
+    }
+}
+
+- (void)handleRemoteNotification:(UANotificationContent *)notification {
+    // Set the send ID as the IAM unique identifier
+    NSDictionary *apnsPayload = notification.notificationInfo;
+
+    if (!apnsPayload[kUAIncomingInAppMessageKey]) {
+        return;
+    }
+
+    NSMutableDictionary *messagePayload = [NSMutableDictionary dictionaryWithDictionary:apnsPayload[kUAIncomingInAppMessageKey]];
+    UAInAppMessage *message = [UAInAppMessage messageWithPayload:messagePayload];
+
+    if (apnsPayload[@"_"]) {
+        message.identifier = apnsPayload[@"_"];
+    }
+
+    NSString *inboxMessageID = [UAInboxUtils inboxMessageIDFromNotification:apnsPayload];
+    if (inboxMessageID) {
+        NSSet *inboxActionNames = [NSSet setWithArray:@[kUADisplayInboxActionDefaultRegistryAlias,
+                                                        kUADisplayInboxActionDefaultRegistryName,
+                                                        kUAOverlayInboxMessageActionDefaultRegistryAlias,
+                                                        kUAOverlayInboxMessageActionDefaultRegistryName]];
+
+        NSSet *actionNames = [NSSet setWithArray:message.onClick.allKeys];
+
+        if (![actionNames intersectsSet:inboxActionNames]) {
+            NSMutableDictionary *actions = [NSMutableDictionary dictionaryWithDictionary:message.onClick];
+            actions[kUADisplayInboxActionDefaultRegistryAlias] = inboxMessageID;
+            message.onClick = actions;
+        }
+    }
+
+    self.pendingMessage = message;
+}
+
+
 
 
 @end

@@ -34,7 +34,6 @@
 #import "UACloseWindowAction+Internal.h"
 #import "UAAddCustomEventAction.h"
 #import "UAShareAction.h"
-#import "UAIncomingInAppMessageAction.h"
 #import "UADisplayInboxAction.h"
 #import "UAPasteboardAction.h"
 #import "UAOverlayInboxMessageAction.h"
@@ -261,10 +260,6 @@
 }
 
 - (void)registerDefaultActions {
-    // Incoming in-app message action
-    UAIncomingInAppMessageAction *iamAction = [[UAIncomingInAppMessageAction alloc] init];
-    [self registerReservedAction:iamAction name:kUAIncomingInAppMessageActionDefaultRegistryName predicate:nil];
-
     // Close window action
     UACloseWindowAction *closeWindowAction = [[UACloseWindowAction alloc] init];
     [self registerReservedAction:closeWindowAction name:kUACloseWindowActionRegistryName predicate:nil];
