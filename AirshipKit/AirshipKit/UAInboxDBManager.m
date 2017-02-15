@@ -186,7 +186,17 @@
     if (!_storeURL) {
         NSFileManager *fm = [NSFileManager defaultManager];
         NSURL *libraryDirectoryURL = [[fm URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
-        NSURL *directoryURL = [libraryDirectoryURL URLByAppendingPathComponent:kUACoreDataStoreName];
+        NSURL *directoryURL = [libraryDirectoryURL URLByAppendingPathComponent:self.storeName];
+
+        NSURL *legacyURL = [libraryDirectoryURL URLByAppendingPathComponent:kUACoreDataStoreName];
+
+        // Move the legacy directory to current directory if it exists
+        if ([fm fileExistsAtPath:[legacyURL path]]) {
+            NSError *error = nil;
+            if (![fm moveItemAtURL:legacyURL toURL:directoryURL error:&error]) {
+                UA_LERR(@"Error moving legacy inbox directory %@ to current directory %@: %@", [legacyURL lastPathComponent], [directoryURL lastPathComponent], error);
+            }
+        }
 
         // Create the store directory if it doesnt exist
         if (![fm fileExistsAtPath:[directoryURL path]]) {
