@@ -594,7 +594,7 @@
  */
 - (void)verifyTrigger:(UAScheduleTrigger *)trigger triggerFireBlock:(void (^)())triggerFireBlock {
     // Create the action
-    __block BOOL actionRan;
+    __block BOOL actionRan = NO;
     XCTestExpectation *actionRunExpectation = [self expectationWithDescription:@"action ran"];
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *arguments, UAActionCompletionHandler completionHandler) {
         XCTAssertEqualObjects(arguments.value, @"test value");

@@ -42,13 +42,19 @@
     __block BOOL finished = NO;
     [self.queue addOperation:[UADelayOperation operationWithDelayInSeconds:1]];
     [self.queue addOperation:[NSBlockOperation blockOperationWithBlock:^{
-        finished = YES;
+        @synchronized(self) {
+            finished = YES;
+        }
     }]];
 
-    XCTAssertFalse(finished, @"flag should not be set until after delay completes");
+    @synchronized(self) {
+        XCTAssertFalse(finished, @"flag should not be set until after delay completes");
+    }
     //give it enough time to complete
     sleep(2);
-    XCTAssertTrue(finished, @"flag should be set once delay completes");
+    @synchronized(self) {
+        XCTAssertTrue(finished, @"flag should be set once delay completes");
+    }
 }
 
 - (void)testCancel {
