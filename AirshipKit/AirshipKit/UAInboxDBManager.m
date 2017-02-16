@@ -254,12 +254,12 @@
         data.messageBodyURL = [NSURL URLWithString:dict[@"message_body_url"]];
         data.messageURL = [NSURL URLWithString:dict[@"message_url"]];
         data.unread = [dict[@"unread"] boolValue];
-        data.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:dict[@"message_sent"]];
+        data.messageSent = [UAUtils parseISO8601DateFromString:dict[@"message_sent"]];
         data.rawMessageObject = dict;
 
         NSString *messageExpiration = dict[@"message_expiry"];
         if (messageExpiration) {
-            data.messageExpiration = [[UAUtils ISODateFormatterUTC] dateFromString:messageExpiration];
+            data.messageExpiration = [UAUtils parseISO8601DateFromString:messageExpiration];
         } else {
             data.messageExpiration = nil;
         }

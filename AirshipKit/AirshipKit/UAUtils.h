@@ -123,6 +123,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (NSDateFormatter *)ISODateFormatterUTCWithDelimiter;
 
+/**
+ * Parses ISO 8601 date strings. Supports timestamps with just year all
+ * the way up to seconds with and without the optional `T` delimeter.
+ * @param timestamp The ISO 8601 timestamp.
+ * @return A parsed NSDate object, or nil if the timestamp is not a valid format.
+ */
++ (nullable NSDate *)parseISO8601DateFromString:(NSString *)timestamp;
+
 
 ///---------------------------------------------------------------------------------------
 /// @name File management

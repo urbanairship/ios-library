@@ -64,8 +64,7 @@
     message.identifier = identifier;
 
     if (expiry) {
-        NSDateFormatter *formatter = [UAUtils ISODateFormatterUTCWithDelimiter];
-        message.expiry = [formatter dateFromString:expiry];
+        message.expiry = [UAUtils parseISO8601DateFromString:expiry];
     }
 
     message.extra = extra;

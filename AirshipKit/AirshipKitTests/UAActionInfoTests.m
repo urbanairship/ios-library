@@ -50,8 +50,8 @@
     NSDictionary *scheduleJSON = @{ UAActionScheduleInfoGroupKey: @"test group",
                                     UAActionScheduleInfoLimitKey: @(1),
                                     UAActionScheduleInfoActionsKey: @{ @"action_name": @"action_value" },
-                                    UAActionScheduleInfoEndKey:[[UAUtils ISODateFormatterUTC] stringFromDate:end],
-                                    UAActionScheduleInfoStartKey:[[UAUtils ISODateFormatterUTC] stringFromDate:start],
+                                    UAActionScheduleInfoEndKey:[[UAUtils ISODateFormatterUTCWithDelimiter] stringFromDate:end],
+                                    UAActionScheduleInfoStartKey:[[UAUtils ISODateFormatterUTCWithDelimiter] stringFromDate:start],
                                     UAActionScheduleInfoTriggersKey: @[ @{ UAScheduleTriggerTypeKey: UAScheduleTriggerAppForegroundName, UAScheduleTriggerGoalKey: @(1) }] };
 
     NSError *error = nil;

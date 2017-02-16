@@ -52,7 +52,6 @@
     NSDate *date = [dateFormatter dateFromString:formatString];
 
     NSDateComponents *components = [self componentsForDate:date];
-
     XCTAssertEqual(components.year, 2020);
     XCTAssertEqual(components.month, 12);
     XCTAssertEqual(components.day, 15);
@@ -61,15 +60,106 @@
     XCTAssertEqual(components.second, 22);
 
     XCTAssertEqualObjects(formatString, [dateFormatter stringFromDate:date]);
-
 }
 
 - (void)testISODateFormatterUTC {
-    [self validateDateFormatter:[UAUtils ISODateFormatterUTC] withFormatString: @"2020-12-15 11:45:22"];
+    [self validateDateFormatter:[UAUtils ISODateFormatterUTC] withFormatString:@"2020-12-15 11:45:22"];
 }
 
 - (void)testISODateFormatterUTCWithDelimiter {
-    [self validateDateFormatter:[UAUtils ISODateFormatterUTCWithDelimiter] withFormatString: @"2020-12-15T11:45:22"];
+    [self validateDateFormatter:[UAUtils ISODateFormatterUTCWithDelimiter] withFormatString:@"2020-12-15T11:45:22"];
+}
+
+- (void)testParseISO8601FromTimeStamp {
+    // yyyy
+    NSDate *date = [UAUtils parseISO8601DateFromString:@"2020"];
+    NSDateComponents *components = [self componentsForDate:date];
+    XCTAssertEqual(components.year, 2020);
+    XCTAssertEqual(components.month, 1);
+    XCTAssertEqual(components.day, 1);
+    XCTAssertEqual(components.hour, 0);
+    XCTAssertEqual(components.minute, 0);
+    XCTAssertEqual(components.second, 0);
+
+    // yyyy-MM
+    date = [UAUtils parseISO8601DateFromString:@"2020-12"];
+    components = [self componentsForDate:date];
+    XCTAssertEqual(components.year, 2020);
+    XCTAssertEqual(components.month, 12);
+    XCTAssertEqual(components.day, 1);
+    XCTAssertEqual(components.hour, 0);
+    XCTAssertEqual(components.minute, 0);
+    XCTAssertEqual(components.second, 0);
+
+    // yyyy-MM-dd
+    date = [UAUtils parseISO8601DateFromString:@"2020-12-15"];
+    components = [self componentsForDate:date];
+    XCTAssertEqual(components.year, 2020);
+    XCTAssertEqual(components.month, 12);
+    XCTAssertEqual(components.day, 15);
+    XCTAssertEqual(components.hour, 0);
+    XCTAssertEqual(components.minute, 0);
+    XCTAssertEqual(components.second, 0);
+
+    // yyyy-MM-dd'T'hh
+    date = [UAUtils parseISO8601DateFromString:@"2020-12-15T11"];
+    components = [self componentsForDate:date];
+    XCTAssertEqual(components.year, 2020);
+    XCTAssertEqual(components.month, 12);
+    XCTAssertEqual(components.day, 15);
+    XCTAssertEqual(components.hour, 11);
+    XCTAssertEqual(components.minute, 0);
+    XCTAssertEqual(components.second, 0);
+
+    // yyyy-MM-dd hh
+    date = [UAUtils parseISO8601DateFromString:@"2020-12-15 11"];
+    components = [self componentsForDate:date];
+    XCTAssertEqual(components.year, 2020);
+    XCTAssertEqual(components.month, 12);
+    XCTAssertEqual(components.day, 15);
+    XCTAssertEqual(components.hour, 11);
+    XCTAssertEqual(components.minute, 0);
+    XCTAssertEqual(components.second, 0);
+
+    // yyyy-MM-dd'T'hh:mm
+    date = [UAUtils parseISO8601DateFromString:@"2020-12-15T11:45"];
+    components = [self componentsForDate:date];
+    XCTAssertEqual(components.year, 2020);
+    XCTAssertEqual(components.month, 12);
+    XCTAssertEqual(components.day, 15);
+    XCTAssertEqual(components.hour, 11);
+    XCTAssertEqual(components.minute, 45);
+    XCTAssertEqual(components.second, 0);
+
+    // yyyy-MM-dd hh:mm
+    date = [UAUtils parseISO8601DateFromString:@"2020-12-15 11:45"];
+    components = [self componentsForDate:date];
+    XCTAssertEqual(components.year, 2020);
+    XCTAssertEqual(components.month, 12);
+    XCTAssertEqual(components.day, 15);
+    XCTAssertEqual(components.hour, 11);
+    XCTAssertEqual(components.minute, 45);
+    XCTAssertEqual(components.second, 0);
+
+    // yyyy-MM-dd'T'hh:mm:ss
+    date = [UAUtils parseISO8601DateFromString:@"2020-12-15T11:45:22"];
+    components = [self componentsForDate:date];
+    XCTAssertEqual(components.year, 2020);
+    XCTAssertEqual(components.month, 12);
+    XCTAssertEqual(components.day, 15);
+    XCTAssertEqual(components.hour, 11);
+    XCTAssertEqual(components.minute, 45);
+    XCTAssertEqual(components.second, 22);
+
+    // yyyy-MM-dd hh:mm:ss
+    date = [UAUtils parseISO8601DateFromString:@"2020-12-15T11:45:22"];
+    components = [self componentsForDate:date];
+    XCTAssertEqual(components.year, 2020);
+    XCTAssertEqual(components.month, 12);
+    XCTAssertEqual(components.day, 15);
+    XCTAssertEqual(components.hour, 11);
+    XCTAssertEqual(components.minute, 45);
+    XCTAssertEqual(components.second, 22);
 }
 
 /**
