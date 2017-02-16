@@ -3,6 +3,29 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+Version 8.2.0 - February 16, 2017
+=================================
+New Features
+------------
+- Added UATextInputNotificationAction to support text input notification actions.
+- Added accessor to get the app key in the Javascript native bridge.
+- Message center will automatically refresh the message listing in the background
+  when receiving a content-available push.
+
+Bug Fixes
+---------
+- Fixed in-app messaging not being cleared from a notification action button.
+- Fixed in-app messaging not being cleared at all if displayASAP is enabled.
+- Fixed inbox database file name to be stored under the app key.
+- Fixed schedule action not being able to parse variations of an ISO 8601 timestamp.
+- Improved Message Center cell text animations when entering "Edit" mode.
+
+Behavior Changes
+----------------
+- Channel Capture tool is now disabled by default if the app is able
+  to receive background push. A new action has been added to enable the
+  tool for a limited duration.
+
 Version 8.1.6 - January 26, 2017
 ================================
 - Fixed an analytics bug for cold start direct opens.
