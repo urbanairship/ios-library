@@ -110,6 +110,8 @@
     }]];
 
     dispatch_async(dispatch_get_main_queue(), ^{
+        alertController.popoverPresentationController.sourceView = self.window.rootViewController.view;
+
         [self.window.rootViewController presentViewController:alertController animated:YES completion:nil];
     });
 }
@@ -155,6 +157,8 @@
     // Let the UI finish launching first so it doesn't complain about the lack of a root view controller
     // Delay execution of the block for 1/2 second.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        alertController.popoverPresentationController.sourceView = self.window.rootViewController.view;
+
         [self.window.rootViewController presentViewController:alertController animated:YES completion:nil];
     });
 }
