@@ -31,7 +31,6 @@
 #import "UALandingPageAction.h"
 #import "UAirship.h"
 #import "UAApplicationMetrics.h"
-#import "UACloseWindowAction+Internal.h"
 #import "UAAddCustomEventAction.h"
 #import "UAShareAction.h"
 #import "UADisplayInboxAction.h"
@@ -260,10 +259,6 @@
 }
 
 - (void)registerDefaultActions {
-    // Close window action
-    UACloseWindowAction *closeWindowAction = [[UACloseWindowAction alloc] init];
-    [self registerReservedAction:closeWindowAction name:kUACloseWindowActionRegistryName predicate:nil];
-
     // Open external URL predicate
     UAActionPredicate urlPredicate = ^(UAActionArguments *args) {
         return (BOOL)(args.situation != UASituationForegroundPush);

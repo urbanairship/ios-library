@@ -151,7 +151,6 @@
     UAAction *situationOverrideAction = [[UAAction alloc] init];
 
     XCTAssertFalse([self.registry addSituationOverride:UASituationForegroundPush forEntryWithName:@"name" action:situationOverrideAction], @"Situation return NO if the registry for the name does not exist.");
-    XCTAssertFalse([self.registry addSituationOverride:UASituationForegroundPush forEntryWithName:kUACloseWindowActionRegistryName action:situationOverrideAction], @"Situation return NO if the action is reserved.");
 }
 
 /**

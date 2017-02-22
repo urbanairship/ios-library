@@ -25,8 +25,6 @@
 
 #import "UAActionRegistry.h"
 
-#define kUACloseWindowActionRegistryName @"__close_window_action"
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface UAActionRegistry ()

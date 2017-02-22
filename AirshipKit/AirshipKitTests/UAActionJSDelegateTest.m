@@ -31,6 +31,7 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAWebViewCallData.h"
 #import "UAirship.h"
+#import "UARichContentWindow.h"
 
 @interface UAActionJSDelegateTest : XCTestCase
 @property (nonatomic, strong) UAActionJSDelegate *jsDelegate;
@@ -369,5 +370,24 @@
 
     XCTAssertNil(result, @"run-basic-actions should not produce a script result");
 }
+
+/**
+ * Test close method
+ */
+
+- (void)testCloseMethod {
+    id mockedUARichContentWindowDelegate = [OCMockObject niceMockForProtocol:@protocol(UARichContentWindow)];
+    [[[self.mockWebView stub] andReturn:mockedUARichContentWindowDelegate] delegate];
+
+    [[mockedUARichContentWindowDelegate expect] closeWebView:self.mockWebView animated:YES];
+    
+    NSURL *url = [NSURL URLWithString:@"uairship://close"];
+    [self performWebViewCallWithURL:url completionHandler:nil];
+    
+    [mockedUARichContentWindowDelegate verify];
+    
+    [mockedUARichContentWindowDelegate stopMocking];
+}
+
 
 @end

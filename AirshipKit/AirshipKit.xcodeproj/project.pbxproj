@@ -133,8 +133,6 @@
 		CC40DC681D8C996A00BABD4F /* UACircularRegion+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB3D1D8C996900BABD4F /* UACircularRegion+Internal.h */; };
 		CC40DC691D8C996A00BABD4F /* UACircularRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB3E1D8C996900BABD4F /* UACircularRegion.h */; };
 		CC40DC6A1D8C996A00BABD4F /* UACircularRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB3F1D8C996900BABD4F /* UACircularRegion.m */; };
-		CC40DC6B1D8C996A00BABD4F /* UACloseWindowAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB401D8C996900BABD4F /* UACloseWindowAction+Internal.h */; };
-		CC40DC6C1D8C996A00BABD4F /* UACloseWindowAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB411D8C996900BABD4F /* UACloseWindowAction.m */; };
 		CC40DC6D1D8C996A00BABD4F /* UAColorUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB421D8C996900BABD4F /* UAColorUtils+Internal.h */; };
 		CC40DC6E1D8C996A00BABD4F /* UAColorUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB431D8C996900BABD4F /* UAColorUtils.m */; };
 		CC40DC6F1D8C996A00BABD4F /* UAConfig+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB441D8C996900BABD4F /* UAConfig+Internal.h */; };
@@ -357,7 +355,6 @@
 		CC40DD591D8C9A1C00BABD4F /* UAChannelRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB3A1D8C996900BABD4F /* UAChannelRegistrar.m */; };
 		CC40DD5A1D8C9A1C00BABD4F /* UAChannelRegistrationPayload.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB3C1D8C996900BABD4F /* UAChannelRegistrationPayload.m */; };
 		CC40DD5B1D8C9A1C00BABD4F /* UACircularRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB3F1D8C996900BABD4F /* UACircularRegion.m */; };
-		CC40DD5C1D8C9A1C00BABD4F /* UACloseWindowAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB411D8C996900BABD4F /* UACloseWindowAction.m */; };
 		CC40DD5D1D8C9A1C00BABD4F /* UAColorUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB431D8C996900BABD4F /* UAColorUtils.m */; };
 		CC40DD5E1D8C9A1C00BABD4F /* UAConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB461D8C996900BABD4F /* UAConfig.m */; };
 		CC40DD5F1D8C9A1C00BABD4F /* UACustomEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB491D8C996900BABD4F /* UACustomEvent.m */; };
@@ -472,7 +469,6 @@
 		CC64F0EF1D8B781C009CEF27 /* UAChannelRegistrarTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0851D8B781C009CEF27 /* UAChannelRegistrarTest.m */; };
 		CC64F0F01D8B781C009CEF27 /* UAChannelRegistrationPayloadTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0861D8B781C009CEF27 /* UAChannelRegistrationPayloadTest.m */; };
 		CC64F0F11D8B781C009CEF27 /* UACircularRegionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0871D8B781C009CEF27 /* UACircularRegionTest.m */; };
-		CC64F0F21D8B781C009CEF27 /* UACloseWindowActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0881D8B781C009CEF27 /* UACloseWindowActionTest.m */; };
 		CC64F0F31D8B781C009CEF27 /* UAColorUtilsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0891D8B781C009CEF27 /* UAColorUtilsTest.m */; };
 		CC64F0F41D8B781C009CEF27 /* UAConfigTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F08B1D8B781C009CEF27 /* UAConfigTest.m */; };
 		CC64F0F51D8B781C009CEF27 /* UACustomEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F08C1D8B781C009CEF27 /* UACustomEventTest.m */; };
@@ -747,8 +743,6 @@
 		CC40DB3D1D8C996900BABD4F /* UACircularRegion+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UACircularRegion+Internal.h"; sourceTree = "<group>"; };
 		CC40DB3E1D8C996900BABD4F /* UACircularRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACircularRegion.h; sourceTree = "<group>"; };
 		CC40DB3F1D8C996900BABD4F /* UACircularRegion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACircularRegion.m; sourceTree = "<group>"; };
-		CC40DB401D8C996900BABD4F /* UACloseWindowAction+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UACloseWindowAction+Internal.h"; sourceTree = "<group>"; };
-		CC40DB411D8C996900BABD4F /* UACloseWindowAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACloseWindowAction.m; sourceTree = "<group>"; };
 		CC40DB421D8C996900BABD4F /* UAColorUtils+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAColorUtils+Internal.h"; sourceTree = "<group>"; };
 		CC40DB431D8C996900BABD4F /* UAColorUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAColorUtils.m; sourceTree = "<group>"; };
 		CC40DB441D8C996900BABD4F /* UAConfig+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAConfig+Internal.h"; sourceTree = "<group>"; };
@@ -971,7 +965,6 @@
 		CC64F0851D8B781C009CEF27 /* UAChannelRegistrarTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelRegistrarTest.m; sourceTree = "<group>"; };
 		CC64F0861D8B781C009CEF27 /* UAChannelRegistrationPayloadTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelRegistrationPayloadTest.m; sourceTree = "<group>"; };
 		CC64F0871D8B781C009CEF27 /* UACircularRegionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACircularRegionTest.m; sourceTree = "<group>"; };
-		CC64F0881D8B781C009CEF27 /* UACloseWindowActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACloseWindowActionTest.m; sourceTree = "<group>"; };
 		CC64F0891D8B781C009CEF27 /* UAColorUtilsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAColorUtilsTest.m; sourceTree = "<group>"; };
 		CC64F08A1D8B781C009CEF27 /* UAConfigTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAConfigTest.h; sourceTree = "<group>"; };
 		CC64F08B1D8B781C009CEF27 /* UAConfigTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAConfigTest.m; sourceTree = "<group>"; };
@@ -1544,7 +1537,6 @@
 		CC04F21B1DCAB82200B4842D /* Native Bridge */ = {
 			isa = PBXGroup;
 			children = (
-				CC64F0881D8B781C009CEF27 /* UACloseWindowActionTest.m */,
 				CC64F0C71D8B781C009CEF27 /* UAWebViewCallDataTest.m */,
 				CC64F0C81D8B781C009CEF27 /* UAWebViewDelegateTest.m */,
 				CC64F0A31D8B781C009CEF27 /* UAirshipTest.m */,
@@ -2008,8 +2000,6 @@
 				CC40DC001D8C996A00BABD4F /* UAWebViewDelegate.m */,
 				CC40DC011D8C996A00BABD4F /* UAWhitelist.h */,
 				CC40DC021D8C996A00BABD4F /* UAWhitelist.m */,
-				CC40DB401D8C996900BABD4F /* UACloseWindowAction+Internal.h */,
-				CC40DB411D8C996900BABD4F /* UACloseWindowAction.m */,
 			);
 			name = "Native Bridge";
 			sourceTree = "<group>";
@@ -2331,7 +2321,6 @@
 				CC40DCC01D8C996A00BABD4F /* UAirship.h in Headers */,
 				CC40DC681D8C996A00BABD4F /* UACircularRegion+Internal.h in Headers */,
 				CC04F18A1DBED9FA00B4842D /* UAEventData+Internal.h in Headers */,
-				CC40DC6B1D8C996A00BABD4F /* UACloseWindowAction+Internal.h in Headers */,
 				CC40DC6F1D8C996A00BABD4F /* UAConfig+Internal.h in Headers */,
 				CC40DC991D8C996A00BABD4F /* UAInAppMessageButtonActionBinding.h in Headers */,
 				CC40DC461D8C996A00BABD4F /* UAAppInitEvent+Internal.h in Headers */,
@@ -2695,7 +2684,6 @@
 				CC40DCB81D8C996A00BABD4F /* UAInboxUtils.m in Sources */,
 				CC40DC781D8C996A00BABD4F /* UADefaultMessageCenterListCell.m in Sources */,
 				CC40DD011D8C996A00BABD4F /* UAPush.m in Sources */,
-				CC40DC6C1D8C996A00BABD4F /* UACloseWindowAction.m in Sources */,
 				CC40DC9C1D8C996A00BABD4F /* UAInAppMessageController.m in Sources */,
 				CC40DC1A1D8C996A00BABD4F /* UAActionArguments.m in Sources */,
 				CC40DC651D8C996A00BABD4F /* UAChannelRegistrar.m in Sources */,
@@ -2871,7 +2859,6 @@
 				CC64F0E51D8B781C009CEF27 /* UAAppIntegrationTest.m in Sources */,
 				CC64F12A1D8B781C009CEF27 /* UAUtilsTest.m in Sources */,
 				CC64F0D91D8B781C009CEF27 /* UAActionArgumentsTest.m in Sources */,
-				CC64F0F21D8B781C009CEF27 /* UACloseWindowActionTest.m in Sources */,
 				CC64F11A1D8B781C009CEF27 /* UAPasteboardActionTest.m in Sources */,
 				CC64F0FF1D8B781C009CEF27 /* UAInAppMessageTest.m in Sources */,
 				53911BDD1E23EBA500EE7007 /* UAChannelCaptureActionTest.m in Sources */,
@@ -2999,7 +2986,6 @@
 				CC40DD591D8C9A1C00BABD4F /* UAChannelRegistrar.m in Sources */,
 				CC40DD5A1D8C9A1C00BABD4F /* UAChannelRegistrationPayload.m in Sources */,
 				CC40DD5B1D8C9A1C00BABD4F /* UACircularRegion.m in Sources */,
-				CC40DD5C1D8C9A1C00BABD4F /* UACloseWindowAction.m in Sources */,
 				CC40DD5D1D8C9A1C00BABD4F /* UAColorUtils.m in Sources */,
 				CC40DD5E1D8C9A1C00BABD4F /* UAConfig.m in Sources */,
 				CC40DD5F1D8C9A1C00BABD4F /* UACustomEvent.m in Sources */,

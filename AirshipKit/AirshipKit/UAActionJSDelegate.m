@@ -32,6 +32,8 @@
 #import "UAActionRunner.h"
 #import "UAWebViewCallData.h"
 
+#import "UARichContentWindow.h"
+
 @implementation UAActionJSDelegate
 
 - (id)objectForEncodedArguments:(NSString *)arguments {
@@ -296,6 +298,17 @@ completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
         [self runActionsWithValues:[self decodeActionValuesWithCallData:data basicEncoding:YES]
                           metadata:[self metadataWithCallData:data]];
 
+        if (completionHandler) {
+            completionHandler(nil);
+        }
+    } else if ([data.name isEqualToString:@"close"]) {
+        UIWebView *webView = data.webView;
+        
+        id webViewDelegate = webView.delegate;
+        
+        if ([webViewDelegate respondsToSelector:@selector(closeWebView:animated:)]) {
+            [webViewDelegate closeWebView:webView animated:YES];
+        }
         if (completionHandler) {
             completionHandler(nil);
         }

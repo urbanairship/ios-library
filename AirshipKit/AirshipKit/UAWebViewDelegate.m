@@ -239,7 +239,8 @@
     if ([data.url.scheme isEqualToString:@"uairship"]) {
         if ([data.name isEqualToString:@"run-actions"] ||
             [data.name isEqualToString:@"run-basic-actions"] ||
-            [data.name isEqualToString:@"run-action-cb"]) {
+            [data.name isEqualToString:@"run-action-cb"] ||
+            [data.name isEqualToString:@"close"]) {
 
             [self performAsyncJSCallWithDelegate:actionJSDelegate data:data];
 
