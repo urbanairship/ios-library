@@ -2070,5 +2070,31 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [self.mockTagGroupsAPIClient verify];
 }
 
+/**
+ * Test on first launch when user has not been prompted for notification.
+ */
+- (void)testNotificationNotPrompted {
+    self.push.authorizedNotificationOptions = UANotificationOptionNone;
+    XCTAssertFalse(self.push.userPromptedForNotifications);
+}
+
+/**
+ * Test notification prompted and authorized.
+ */
+- (void)testNotificationPromptedAuthorized {
+    self.push.notificationOptions = UANotificationOptionAlert;
+    self.push.userPushNotificationsEnabled = YES;
+    self.push.authorizedNotificationOptions = UANotificationOptionAlert;
+    XCTAssertTrue(self.push.userPromptedForNotifications);
+}
+
+/**
+ * Test notification prompted and denied.
+ */
+- (void)testNotificationPromptedDenied {
+    self.push.userPushNotificationsEnabled = YES;
+    self.push.authorizedNotificationOptions = UANotificationOptionNone;
+    XCTAssertTrue(self.push.userPromptedForNotifications);
+}
 
 @end

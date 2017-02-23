@@ -68,6 +68,7 @@
 }
 
 + (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
+    [UAirship push].userPromptedForNotifications = YES;
     [[UAirship push] updateAuthorizedNotificationTypes];
     [application registerForRemoteNotifications];
 }

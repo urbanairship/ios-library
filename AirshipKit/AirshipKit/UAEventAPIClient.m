@@ -109,6 +109,7 @@
 
         // Push settings
         [builder setValue:[[UAirship push] userPushNotificationsAllowed] ? @"true" : @"false" forHeader:@"X-UA-Channel-Opted-In"];
+        [builder setValue:[UAirship push].userPromptedForNotifications ? @"true" : @"false" forHeader:@"X-UA-Notification-Prompted"];
         [builder setValue:[[UAirship push] backgroundPushNotificationsAllowed] ? @"true" : @"false" forHeader:@"X-UA-Channel-Background-Enabled"];
 
         // Location settings

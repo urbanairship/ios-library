@@ -184,6 +184,11 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 @property (nonatomic, assign) UANotificationOptions authorizedNotificationOptions;
 
 /**
+ * Indicates whether the user has been prompted for notifications or not.
+ */
+@property (nonatomic, assign) BOOL userPromptedForNotifications;
+
+/**
  * The push registration instance.
  */
 @property (nonatomic, strong) id<UAAPNSRegistrationProtocol> pushRegistration;
