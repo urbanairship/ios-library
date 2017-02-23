@@ -91,6 +91,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
         }))
 
         DispatchQueue.main.async {
+            alertController.popoverPresentationController?.sourceView = self.window?.rootViewController?.view
+
             self.window?.rootViewController?.present(alertController, animated:true, completion: nil)
         }
     }
@@ -106,6 +108,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
         }
 
         let alertController = UIAlertController(title: "Notice", message: "You will not be able to receive push notifications in the simulator.", preferredStyle: .alert)
+
         let disableAction = UIAlertAction(title: "Disable Warning", style: UIAlertActionStyle.default){ (UIAlertAction) -> Void in
             UserDefaults.standard.set(true, forKey:self.simulatorWarningDisabledKey)
         }
@@ -117,6 +120,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
         // Let the UI finish launching first so it doesn't complain about the lack of a root view controller
         // Delay execution of the block for 1/2 second.
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(0.5 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)) {
+            alertController.popoverPresentationController?.sourceView = self.window?.rootViewController?.view
+
             self.window?.rootViewController?.present(alertController, animated: true, completion: nil)
         }
     }
