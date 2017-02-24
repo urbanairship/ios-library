@@ -326,6 +326,11 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 @property (nonatomic, assign, readonly) UANotificationOptions authorizedNotificationOptions;
 
 /**
+ * Indicates whether the user has been prompted for notifications or not.
+ */
+@property (nonatomic, assign, readonly) BOOL userPromptedForNotifications;
+
+/**
  * The default presentation options to use for foreground notifications.
  *
  * Note: this property is relevant only for iOS 10 and above.

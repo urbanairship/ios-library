@@ -68,6 +68,7 @@ NSString *const UAPushChannelCreationOnForeground = @"UAPushChannelCreationOnFor
 NSString *const UAPushEnabledSettingsMigratedKey = @"UAPushEnabledSettingsMigrated";
 
 NSString *const UAPushTypesAuthorizedKey = @"UAPushTypesAuthorized";
+NSString *const UAPushUserPromptedForNotificationsKey = @"UAPushUserPromptedForNotifications";
 
 // Old push enabled key
 NSString *const UAPushEnabledKey = @"UAPushEnabled";
@@ -203,6 +204,9 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
 - (void)setAuthorizedNotificationOptions:(UANotificationOptions)types {
     if ([self.dataStore integerForKey:UAPushTypesAuthorizedKey] != types) {
+        if (types != UANotificationOptionNone) {
+            self.userPromptedForNotifications = YES;
+        }
         [self.dataStore setInteger:(NSInteger)types forKey:UAPushTypesAuthorizedKey];
         [self updateRegistration];
 
@@ -351,6 +355,18 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     if (enabled != previousValue) {
         self.shouldUpdateAPNSRegistration = YES;
         [self updateRegistration];
+    }
+}
+
+- (BOOL)userPromptedForNotifications {
+    return [self.dataStore boolForKey:UAPushUserPromptedForNotificationsKey];
+}
+
+- (void)setUserPromptedForNotifications:(BOOL)userPrompted {
+    BOOL previousValue = self.userPromptedForNotifications;
+
+    if (userPrompted != previousValue) {
+        [self.dataStore setBool:userPrompted forKey:UAPushUserPromptedForNotificationsKey];
     }
 }
 
@@ -781,6 +797,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
     if (self.userPushNotificationsEnabled) {
 
+        self.userPromptedForNotifications = YES;
         options = self.notificationOptions;
         categories = self.combinedCategories;
     }
