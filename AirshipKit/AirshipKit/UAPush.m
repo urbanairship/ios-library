@@ -353,7 +353,6 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
     [self.dataStore setBool:enabled forKey:UAUserPushNotificationsEnabledKey];
 
     if (enabled != previousValue) {
-        self.userPromptedForNotifications = YES;
         self.shouldUpdateAPNSRegistration = YES;
         [self updateRegistration];
     }
@@ -798,6 +797,7 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
     if (self.userPushNotificationsEnabled) {
 
+        self.userPromptedForNotifications = YES;
         options = self.notificationOptions;
         categories = self.combinedCategories;
     }
