@@ -134,11 +134,7 @@
 
 - (void)testInvalidPayload {
     NSError *error;
-
-    // Unknown key
-    NSDictionary *json = @{ @"value": @{ @"equals": @"cool" }, @"what": @(100) };
-    XCTAssertNil([UAJSONMatcher matcherWithJSON:json error:&error]);
-    XCTAssertNotNil(error);
+    NSDictionary *json;
 
     // Invalid key value
     error = nil;

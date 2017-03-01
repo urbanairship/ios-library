@@ -123,25 +123,9 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
         return nil;
     }
 
-    NSSet *keySet = [NSSet setWithArray:[json allKeys]];
-    NSSet *possibleKeys = [NSSet setWithArray:@[UAScheduleTriggerGoalKey, UAScheduleTriggerTypeKey, UAScheduleTriggerPredicateKey]];
-    if (![keySet isSubsetOfSet:possibleKeys]) {
-        if (error) {
-            NSMutableSet *invalid = [NSMutableSet setWithSet:keySet];
-            [invalid minusSet:possibleKeys];
-
-            NSString *msg = [NSString stringWithFormat:@"Invalid keys: %@", invalid];
-            *error =  [NSError errorWithDomain:UAScheduleTriggerErrorDomain
-                                          code:UAScheduleTriggerErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
-        }
-
-        return nil;
-    }
-
     UAScheduleTriggerType triggerType;
 
-    NSString *triggerTypeString = json[UAScheduleTriggerTypeKey];
+    NSString *triggerTypeString = [json[UAScheduleTriggerTypeKey] lowercaseString];
     if ([UAScheduleTriggerAppForegroundName isEqualToString:triggerTypeString]) {
         triggerType = UAScheduleTriggerAppForeground;
     } else if ([UAScheduleTriggerAppBackgroundName isEqualToString:triggerTypeString]) {
@@ -185,7 +169,6 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
         return nil;
     }
 
-
     UAJSONPredicate *predicate;
     if (json[UAScheduleTriggerPredicateKey]) {
         predicate = [UAJSONPredicate predicateWithJSON:json[UAScheduleTriggerPredicateKey] error:error];
@@ -217,8 +200,6 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
 
     return YES;
 }
-
-
 
 #pragma mark - NSObject
 

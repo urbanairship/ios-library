@@ -132,7 +132,6 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
         return nil;
     }
 
-
     if ([self isNumericMatcherExpression:json]) {
         UAJSONValueMatcher *matcher = [[UAJSONValueMatcher alloc] init];
         matcher.atMost = json[UAJSONValueMatcherAtMost];

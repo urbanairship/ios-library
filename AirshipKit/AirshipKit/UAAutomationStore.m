@@ -27,6 +27,8 @@
 #import "UAAutomationStore+Internal.h"
 #import "UAActionScheduleData+Internal.h"
 #import "UAScheduleTriggerData+Internal.h"
+#import "UAScheduleDelayData+Internal.h"
+
 #import "UAActionSchedule.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAScheduleTrigger+Internal.h"
@@ -72,6 +74,8 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
     return YES;
 }
 
+
+
 #pragma mark -
 #pragma mark Data Access
 
@@ -85,31 +89,7 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
             return;
         }
 
-        NSMutableSet *triggers = [NSMutableSet set];
-        for (UAScheduleTrigger *trigger in schedule.info.triggers) {
-            UAScheduleTriggerData *triggerData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleTriggerData"
-                                                                               inManagedObjectContext:self.managedContext];
-            triggerData.type = @(trigger.type);
-            triggerData.goal = trigger.goal;
-            triggerData.start = schedule.info.start;
-
-            if (trigger.predicate) {
-                triggerData.predicateData = [NSJSONSerialization dataWithJSONObject:trigger.predicate.payload options:0 error:nil];
-            }
-
-            [triggers addObject:triggerData];
-        }
-
-        UAActionScheduleData *scheduleData = [NSEntityDescription insertNewObjectForEntityForName:@"UAActionScheduleData"
-                                                                           inManagedObjectContext:self.managedContext];
-
-        scheduleData.identifier = schedule.identifier;
-        scheduleData.limit = @(schedule.info.limit);
-        scheduleData.actions = [NSJSONSerialization stringWithObject:schedule.info.actions];
-        scheduleData.group = schedule.info.group;
-        scheduleData.triggers = triggers;
-        scheduleData.start = schedule.info.start;
-        scheduleData.end = schedule.info.end;
+        [self createScheduleDataFromSchedule:schedule];
 
         completionHandler([self saveContext]);
     }];
@@ -169,6 +149,61 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
             [self saveContext];
         }
     }];
+}
+
+#pragma mark -
+#pragma mark Converters
+
+- (UAActionScheduleData *)createScheduleDataFromSchedule:(UAActionSchedule *)schedule {
+    UAActionScheduleData *scheduleData = [NSEntityDescription insertNewObjectForEntityForName:@"UAActionScheduleData"
+                                                                       inManagedObjectContext:self.managedContext];
+
+    scheduleData.identifier = schedule.identifier;
+    scheduleData.limit = @(schedule.info.limit);
+    scheduleData.actions = [NSJSONSerialization stringWithObject:schedule.info.actions];
+    scheduleData.group = schedule.info.group;
+    scheduleData.triggers = [self createTriggerDataFromTriggers:schedule.info.triggers scheduleStart:schedule.info.start];
+    scheduleData.start = schedule.info.start;
+    scheduleData.end = schedule.info.end;
+
+    if (schedule.info.delay) {
+        scheduleData.delay = [self createDelayDataFromDelay:schedule.info.delay scheduleStart:schedule.info.start];
+    }
+
+    return scheduleData;
+}
+
+- (UAScheduleDelayData *)createDelayDataFromDelay:(UAScheduleDelay *)delay scheduleStart:(NSDate *)scheduleStart {
+    UAScheduleDelayData *delayData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleDelayData"
+                                                                   inManagedObjectContext:self.managedContext];
+
+    delayData.seconds = @(delay.seconds);
+    delayData.appState = @(delay.appState);
+    delayData.regionID = delay.regionID;
+    delayData.screen = delay.screen;
+    delayData.cancellationTriggers = [self createTriggerDataFromTriggers:delay.cancellationTriggers scheduleStart:scheduleStart];
+
+    return delayData;
+}
+
+- (NSSet<UAScheduleTriggerData *> *)createTriggerDataFromTriggers:(NSArray <UAScheduleTrigger *> *)triggers scheduleStart:(NSDate *)scheduleStart {
+    NSMutableSet *data = [NSMutableSet set];
+
+    for (UAScheduleTrigger *trigger in triggers) {
+        UAScheduleTriggerData *triggerData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleTriggerData"
+                                                                           inManagedObjectContext:self.managedContext];
+        triggerData.type = @(trigger.type);
+        triggerData.goal = trigger.goal;
+        triggerData.start = scheduleStart;
+
+        if (trigger.predicate) {
+            triggerData.predicateData = [NSJSONSerialization dataWithJSONObject:trigger.predicate.payload options:0 error:nil];
+        }
+
+        [data addObject:triggerData];
+    }
+
+    return data;
 }
 
 

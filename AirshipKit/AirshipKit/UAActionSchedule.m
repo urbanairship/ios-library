@@ -25,7 +25,6 @@
 
 #import "UAActionSchedule+Internal.h"
 
-
 @implementation UAActionSchedule
 
 - (instancetype)initWithIdentifier:(NSString *)identifier info:(UAActionScheduleInfo *)info {
@@ -41,7 +40,6 @@
 +(instancetype)actionScheduleWithIdentifier:(NSString *)identifier info:(UAActionScheduleInfo *)info {
     return [[UAActionSchedule alloc] initWithIdentifier:identifier info:info];
 }
-
 
 - (BOOL)isEqualToSchedule:(UAActionSchedule *)schedule {
     if (!schedule) {
@@ -79,6 +77,5 @@
     result = 31 * result + [self.identifier hash];
     return result;
 }
-
 
 @end

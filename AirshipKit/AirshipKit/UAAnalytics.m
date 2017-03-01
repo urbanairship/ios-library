@@ -258,7 +258,7 @@
     }
 
     id strongDelegate = self.delegate;
-    if (screen && [strongDelegate respondsToSelector:@selector(screenTracked:)]) {
+    if ([strongDelegate respondsToSelector:@selector(screenTracked:)]) {
         [strongDelegate screenTracked:screen];
     }
 

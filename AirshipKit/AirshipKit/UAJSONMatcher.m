@@ -108,23 +108,7 @@ NSString * const UAJSONMatcherErrorDomain = @"com.urbanairship.json_matcher";
     }
 
     NSDictionary *info = json;
-    NSSet *keySet = [NSSet setWithArray:info.allKeys];
-    NSSet *allowedKeys = [NSSet setWithArray:@[UAJSONMatcherValue, UAJSONMatcherKey, UAJSONMatcherScope]];
-
-    if (![keySet isSubsetOfSet:allowedKeys]) {
-        if (error) {
-            NSMutableSet *invalid = [NSMutableSet setWithSet:keySet];
-            [invalid minusSet:allowedKeys];
-
-            NSString *msg = [NSString stringWithFormat:@"Invalid keys: %@", invalid];
-            *error =  [NSError errorWithDomain:UAJSONMatcherErrorDomain
-                                          code:UAJSONMatcherErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
-        }
-
-        return nil;
-    }
-
+  
     // Optional scope
     NSArray *scope;
     if (info[UAJSONMatcherScope]) {

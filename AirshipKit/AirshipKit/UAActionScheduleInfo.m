@@ -34,6 +34,7 @@ NSString *const UAActionScheduleInfoGroupKey = @"group";
 NSString *const UAActionScheduleInfoEndKey = @"end";
 NSString *const UAActionScheduleInfoStartKey = @"start";
 NSString *const UAActionScheduleInfoTriggersKey = @"triggers";
+NSString *const UAActionScheduleInfoDelayKey = @"delay";
 
 NSString * const UAActionScheduleInfoErrorDomain = @"com.urbanairship.schedule_info";
 
@@ -49,6 +50,8 @@ NSString * const UAActionScheduleInfoErrorDomain = @"com.urbanairship.schedule_i
 @property(nonatomic, assign) NSUInteger limit;
 @property(nonatomic, strong) NSDate *start;
 @property(nonatomic, strong) NSDate *end;
+@property(nonatomic, strong) UAScheduleDelay *delay;
+
 @end
 
 @implementation UAActionScheduleInfo
@@ -66,6 +69,10 @@ NSString * const UAActionScheduleInfoErrorDomain = @"com.urbanairship.schedule_i
         return NO;
     }
 
+    if (self.delay && !self.delay.isValid) {
+        return NO;
+    }
+
     return YES;
 }
 
@@ -76,6 +83,7 @@ NSString * const UAActionScheduleInfoErrorDomain = @"com.urbanairship.schedule_i
         self.triggers = [builder.triggers copy] ?: @[];
         self.limit = builder.limit;
         self.group = builder.group;
+        self.delay = builder.delay;
         self.start = builder.start ?: [NSDate distantPast];
         self.end = builder.end ?: [NSDate distantFuture];
     }
@@ -107,25 +115,6 @@ NSString * const UAActionScheduleInfoErrorDomain = @"com.urbanairship.schedule_i
         return nil;
     }
 
-    NSSet *keySet = [NSSet setWithArray:[json allKeys]];
-    NSSet *possibleKeys = [NSSet setWithArray:@[UAActionScheduleInfoActionsKey, UAActionScheduleInfoLimitKey,
-                                                UAActionScheduleInfoGroupKey, UAActionScheduleInfoEndKey,
-                                                UAActionScheduleInfoStartKey, UAActionScheduleInfoTriggersKey]];
-
-    if (![keySet isSubsetOfSet:possibleKeys]) {
-        if (error) {
-            NSMutableSet *invalid = [NSMutableSet setWithSet:keySet];
-            [invalid minusSet:possibleKeys];
-
-            NSString *msg = [NSString stringWithFormat:@"Invalid keys: %@", invalid];
-            *error =  [NSError errorWithDomain:UAActionScheduleInfoErrorDomain
-                                          code:UAActionScheduleInfoErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
-        }
-
-        return nil;
-    }
-
     // Actions
     id actions = json[UAActionScheduleInfoActionsKey];
     if (![actions isKindOfClass:[NSDictionary class]]) {
@@ -143,7 +132,7 @@ NSString * const UAActionScheduleInfoErrorDomain = @"com.urbanairship.schedule_i
     id limit = json[UAActionScheduleInfoLimitKey];
     if (limit && ![limit isKindOfClass:[NSNumber class]]) {
         if (error) {
-            NSString *msg = [NSString stringWithFormat:@"Limit must be defined and be a number. Invalid value: %@", actions];
+            NSString *msg = [NSString stringWithFormat:@"Limit must be defined and be a number. Invalid value: %@", limit];
             *error =  [NSError errorWithDomain:UAActionScheduleInfoErrorDomain
                                           code:UAActionScheduleInfoErrorCodeInvalidJSON
                                       userInfo:@{NSLocalizedDescriptionKey:msg}];
@@ -231,6 +220,25 @@ NSString * const UAActionScheduleInfoErrorDomain = @"com.urbanairship.schedule_i
         }
         return nil;
     }
+    
+    // Delay
+    UAScheduleDelay *delay = nil;
+    if (json[UAActionScheduleInfoDelayKey]) {
+        if (![json[UAActionScheduleInfoDelayKey] isKindOfClass:[NSDictionary class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Delay payload must be a dictionary. Invalid value: %@", json[UAActionScheduleInfoDelayKey]];
+                *error =  [NSError errorWithDomain:UAActionScheduleInfoErrorDomain
+                                              code:UAActionScheduleInfoErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+        }
+        
+        delay = [UAScheduleDelay delayWithJSON:json[UAActionScheduleInfoDelayKey] error:error];
+        
+        if (!delay) {
+            return nil;
+        }
+    }
 
     return [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
         builder.actions = actions;
@@ -239,6 +247,7 @@ NSString * const UAActionScheduleInfoErrorDomain = @"com.urbanairship.schedule_i
         builder.group = group;
         builder.start = start;
         builder.end = end;
+        builder.delay = delay;
     }];
 }
 
@@ -270,6 +279,10 @@ NSString * const UAActionScheduleInfoErrorDomain = @"com.urbanairship.schedule_i
     if (self.group != scheduleInfo.group && ![self.group isEqualToString:scheduleInfo.group]) {
         return NO;
     }
+    
+    if (self.delay != scheduleInfo.delay && ![self.delay isEqualToDelay:scheduleInfo.delay]) {
+        return NO;
+    }
 
     return YES;
 }
@@ -297,6 +310,8 @@ NSString * const UAActionScheduleInfoErrorDomain = @"com.urbanairship.schedule_i
     result = 31 * result + [self.group hash];
     result = 31 * result + [self.triggers hash];
     result = 31 * result + [self.actions hash];
+    result = 31 * result + [self.delay hash];
+
     return result;
 }
 

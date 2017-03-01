@@ -35,5 +35,8 @@
 @dynamic triggers;
 @dynamic start;
 @dynamic end;
+@dynamic delay;
+@dynamic isPendingExecution;
+@dynamic delayedExecutionDate;
 
 @end

@@ -57,8 +57,12 @@ NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-backup";
     NSURL *storeURL = [directoryURL URLByAppendingPathComponent:storeName];
 
     [moc performBlock:^{
+
+        NSDictionary *options = @{ NSMigratePersistentStoresAutomaticallyOption : @YES,
+                                   NSInferMappingModelAutomaticallyOption : @YES };
+
         NSError *error = nil;
-        NSPersistentStore *store = [psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error];
+        NSPersistentStore *store = [psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error];
 
         if (!store) {
             [[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil];

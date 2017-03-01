@@ -85,6 +85,7 @@
 #import "UARetailEventTemplate.h"
 #import "UARichContentWindow.h"
 #import "UAScheduleAction.h"
+#import "UAScheduleDelay.h"
 #import "UAScheduleTrigger.h"
 #import "UAShareAction.h"
 #import "UATextInputNotificationAction.h"

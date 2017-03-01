@@ -33,5 +33,7 @@
 @dynamic predicateData;
 @dynamic type;
 @dynamic schedule;
+@dynamic delay;
 @dynamic start;
+
 @end

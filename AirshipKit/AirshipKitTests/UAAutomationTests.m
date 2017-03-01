@@ -34,11 +34,14 @@
 #import "UAJSONPredicate.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAConfig.h"
+#import "UAScheduleDelay.h"
+#import "UAActionScheduleData+Internal.h"
 
 @interface UAAutomationTests : XCTestCase
 @property (nonatomic, strong) UAAutomation *automation;
 @property (nonatomic, strong) UAActionRegistry *actionRegistry;
 @property (nonatomic, strong) id mockedAirship;
+@property (nonatomic, strong) id mockedApplication;
 @property (nonatomic, strong) UAPreferenceDataStore *preferenceDataStore;
 @end
 
@@ -62,11 +65,17 @@
     self.mockedAirship = [OCMockObject niceMockForClass:[UAirship class]];
     [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
     [[[self.mockedAirship stub] andReturn:self.actionRegistry] actionRegistry];
+
+    // Set up a mocked application
+    self.mockedApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
 }
 
 - (void)tearDown {
     [self.mockedAirship stopMocking];
+    [self.mockedApplication stopMocking];
     [self.preferenceDataStore removeAll];
+    self.automation = nil;
     [super tearDown];
 }
 
@@ -585,6 +594,189 @@
         [self.automation customEventAdded:purchase];
         [self.automation customEventAdded:purchase];
     }];
+}
+
+- (void)testScreenDelay {
+    UAScheduleDelay *delay = [UAScheduleDelay delayWithBuilderBlock:^(UAScheduleDelayBuilder * builder) {
+        builder.screen = @"test screen";
+    }];
+
+    [self verifyDelay:delay fulfillmentBlock:^{
+        [self.automation screenTracked:@"test screen"];
+
+    }];
+}
+
+- (void)testRegionDelay {
+    UAScheduleDelay *delay = [UAScheduleDelay delayWithBuilderBlock:^(UAScheduleDelayBuilder * builder) {
+        builder.regionID = @"region test";
+    }];
+
+    [self verifyDelay:delay fulfillmentBlock:^{
+        UARegionEvent *regionEnter = [UARegionEvent regionEventWithRegionID:@"region test" source:@"test" boundaryEvent:UABoundaryEventEnter];
+        [self.automation regionEventAdded:regionEnter];
+    }];
+}
+
+- (void)testForegroundDelay {
+    UAScheduleDelay *delay = [UAScheduleDelay delayWithBuilderBlock:^(UAScheduleDelayBuilder * builder) {
+        builder.appState = UAScheduleDelayAppStateForeground;
+    }];
+
+    [self verifyDelay:delay fulfillmentBlock:^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification
+                                                            object:nil];
+    }];
+}
+
+- (void)testBackgroundDelay {
+    // Start with a foreground state
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification
+                                                        object:nil];
+
+
+    UAScheduleDelay *delay = [UAScheduleDelay delayWithBuilderBlock:^(UAScheduleDelayBuilder * builder) {
+        builder.appState = UAScheduleDelayAppStateBackground;
+    }];
+
+    [self verifyDelay:delay fulfillmentBlock:^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification
+                                                            object:nil];
+    }];
+}
+
+- (void)testSecondsDelay {
+
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    UAScheduleDelay *delay = [UAScheduleDelay delayWithBuilderBlock:^(UAScheduleDelayBuilder * builder) {
+        builder.seconds = 1;
+    }];
+
+    [self verifyDelay:delay fulfillmentBlock:^{
+        [NSThread sleepForTimeInterval:1.0f];
+    }];
+}
+
+- (void)testCancellationTriggers {
+    // Create the action
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *arguments, UAActionCompletionHandler completionHandler) {
+        XCTFail(@"Action should not run");
+    }];
+
+    // Register the action
+    [self.actionRegistry registerAction:action name:@"test action"];
+
+    // Schedule the action
+    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        builder.actions = @{@"test action": @"test value"};
+
+        UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
+        UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher key:UACustomEventNameKey];
+        UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+        builder.triggers = @[[UAScheduleTrigger customEventTriggerWithPredicate:predicate count:1]];
+
+        // Add a delay for "test screen" that cancels on foreground
+        builder.delay = [UAScheduleDelay delayWithBuilderBlock:^(UAScheduleDelayBuilder * builder) {
+            builder.screen = @"test screen";
+            builder.cancellationTriggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        }];
+    }];
+
+
+    XCTestExpectation *actionsScheduled = [self expectationWithDescription:@"actions scheduled"];
+
+    __block NSString *identifier;
+    [self.automation scheduleActions:scheduleInfo completionHandler:^(UAActionSchedule *schedule) {
+        identifier = schedule.identifier;
+        [actionsScheduled fulfill];
+    }];
+
+    [self waitForExpectationsWithTimeout:5 handler:nil];
+
+    // Trigger the scheduled actions
+    UACustomEvent *purchase = [UACustomEvent eventWithName:@"purchase"];
+    [self.automation customEventAdded:purchase];
+
+    // Verify the schedule data is pending execution
+    XCTestExpectation *schedulePendingExecution = [self expectationWithDescription:@"pending execution"];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", identifier];
+    [self.automation.automationStore fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAActionScheduleData *> *schedulesData) {
+        XCTAssertEqual(1, schedulesData.count);
+        XCTAssertTrue([schedulesData[0].isPendingExecution boolValue]);
+        [schedulePendingExecution fulfill];
+    }];
+
+
+    [self waitForExpectationsWithTimeout:5 handler:nil];
+
+    // Cancel the pending execution by foregrounding the app
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification
+                                                        object:nil];
+
+    // Verify the schedule is no longer pending execution
+    XCTestExpectation *scheduleNotPendingExecution = [self expectationWithDescription:@"not pending execution"];
+    [self.automation.automationStore fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAActionScheduleData *> *schedulesData) {
+        XCTAssertEqual(1, schedulesData.count);
+        XCTAssertFalse([schedulesData[0].isPendingExecution boolValue]);
+        [scheduleNotPendingExecution fulfill];
+    }];
+
+    [self waitForExpectationsWithTimeout:5 handler:nil];
+}
+
+/**
+ * Helper method to verify schedule delays
+ *
+ * @param delay The delay to test
+ * @param fulfillmentBlock Block that fulfills the conditions
+ */
+- (void)verifyDelay:(UAScheduleDelay *)delay fulfillmentBlock:(void (^)())fulfillmentBlock {
+    // Create the action
+    __block BOOL actionRan = NO;
+    XCTestExpectation *actionRunExpectation = [self expectationWithDescription:@"action ran"];
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *arguments, UAActionCompletionHandler completionHandler) {
+        XCTAssertEqualObjects(arguments.value, @"test value");
+        XCTAssertEqual(arguments.situation, UASituationAutomation);
+
+        // Verify the action only runs once
+        XCTAssertFalse(actionRan);
+        actionRan = YES;
+
+        [actionRunExpectation fulfill];
+        completionHandler([UAActionResult emptyResult]);
+    }];
+
+    // Register the action
+    [self.actionRegistry registerAction:action name:@"test action"];
+
+    // Schedule the action
+    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        builder.actions = @{@"test action": @"test value"};
+
+        UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
+        UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher key:UACustomEventNameKey];
+        UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+        builder.triggers = @[[UAScheduleTrigger customEventTriggerWithPredicate:predicate count:1]];
+
+        builder.delay = delay;
+    }];
+
+
+    [self.automation scheduleActions:scheduleInfo completionHandler:nil];
+
+    // Trigger the scheduled actions
+    UACustomEvent *purchase = [UACustomEvent eventWithName:@"purchase"];
+    [self.automation customEventAdded:purchase];
+
+    // Verify the action did not fire
+    XCTAssertFalse(actionRan);
+
+    // Fullfill the conditions
+    fulfillmentBlock();
+
+    // Wait for the action to fire
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 }
 
 /**

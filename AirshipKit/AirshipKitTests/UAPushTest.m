@@ -215,9 +215,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     [self.mockedUNNotification stopMocking];
 
-    // We hide this class in a few tests. Its only available on iOS8.
-    [UIUserNotificationSettings revealClass];
-
     [super tearDown];
 }
 
@@ -1101,8 +1098,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
  * Test registration payload when pushTokenRegistrationEnabled is NO does not include device token
  */
 - (void)testRegistrationPayloadPushTokenRegistrationEnabledNo {
-    [UIUserNotificationSettings hideClass];
-
     // Set up UAPush to give a full, opted in payload
     self.push.pushTokenRegistrationEnabled = NO;
     self.push.deviceToken = validDeviceToken;
