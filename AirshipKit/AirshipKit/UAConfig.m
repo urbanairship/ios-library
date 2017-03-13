@@ -60,6 +60,7 @@
         self.customConfig = @{};
         self.channelCreationDelayEnabled = NO;
         self.defaultDetectProvisioningMode = YES;
+        self.useWKWebView = NO;
     }
 
     return self;
@@ -99,6 +100,7 @@
         _channelCreationDelayEnabled = config.channelCreationDelayEnabled;
         _defaultDetectProvisioningMode = config.defaultDetectProvisioningMode;
         _messageCenterStyleConfig = config.messageCenterStyleConfig;
+        _useWKWebView = config.useWKWebView;
     }
     
     return config;
@@ -129,7 +131,8 @@
             "Channel Capture Enabled: %d\n"
             "Custom Config: %@\n"
             "Delay Channel Creation: %d\n"
-            "Default Message Center Style Config File: %@\n",
+            "Default Message Center Style Config File: %@\n"
+            "Use WKWebView: %d\n",
             self.appKey,
             self.appSecret,
             self.inProduction,
@@ -154,7 +157,8 @@
             self.channelCaptureEnabled,
             self.customConfig,
             self.channelCreationDelayEnabled,
-            self.messageCenterStyleConfig];
+            self.messageCenterStyleConfig,
+            self.useWKWebView];
 }
 
 #pragma mark -

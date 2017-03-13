@@ -343,8 +343,31 @@
     XCTAssertTrue(copy.channelCreationDelayEnabled == config.channelCreationDelayEnabled);
     XCTAssertTrue(copy.defaultDetectProvisioningMode == config.defaultDetectProvisioningMode);
     XCTAssertTrue(copy.messageCenterStyleConfig == config.messageCenterStyleConfig);
+    XCTAssertTrue(copy.useWKWebView == config.useWKWebView);
 
 }
 
+- (void) testInitialConfig {
+    UAConfig *config = [UAConfig config];
+    
+    XCTAssertEqualObjects(config.deviceAPIURL, kUAAirshipProductionServer);
+    XCTAssertEqualObjects(config.analyticsURL, kUAAnalyticsProductionServer);
+    XCTAssertEqualObjects(config.landingPageContentURL, kUAProductionLandingPageContentURL);
+    XCTAssertEqual(config.developmentLogLevel, UALogLevelDebug);
+    XCTAssertEqual(config.productionLogLevel, UALogLevelError);
+    XCTAssertFalse(config.inProduction);
+    XCTAssertTrue(config.detectProvisioningMode);   // True because defaultDetectProvisioningMode is set true after this is set false
+    XCTAssertTrue(config.automaticSetupEnabled);
+    XCTAssertTrue(config.analyticsEnabled);
+    XCTAssertEqual(config.cacheDiskSizeInMB, 100);
+    XCTAssertFalse(config.clearUserOnAppRestore);
+    XCTAssertEqual(config.whitelist.count, 0);
+    XCTAssertFalse(config.clearNamedUserOnAppRestore);
+    XCTAssertTrue(config.channelCaptureEnabled);
+    XCTAssertEqual(config.customConfig.count, 0);
+    XCTAssertFalse(config.channelCreationDelayEnabled);
+    XCTAssertTrue(config.defaultDetectProvisioningMode);
+    XCTAssertFalse(config.useWKWebView);
+}
 
 @end

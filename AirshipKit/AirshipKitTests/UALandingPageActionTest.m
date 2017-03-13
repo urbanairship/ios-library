@@ -28,6 +28,7 @@
 #import "UALandingPageAction.h"
 #import "UAURLProtocol.h"
 #import "UALandingPageOverlayController.h"
+#import "UAOverlayViewController.h"
 #import "UAAction+Internal.h"
 #import "UAirship.h"
 #import "UAConfig.h"
@@ -37,9 +38,12 @@
 
 @property (nonatomic, strong) id mockURLProtocol;
 @property (nonatomic, strong) id mockLandingPageOverlayController;
+@property (nonatomic, strong) id mockOverlayViewController;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockConfig;
 @property (nonatomic, strong) UALandingPageAction *action;
+@property (nonatomic, assign) BOOL useWKWebView;
+
 
 @end
 
@@ -49,13 +53,21 @@
     [super setUp];
     self.action = [[UALandingPageAction alloc] init];
     self.mockURLProtocol = [OCMockObject niceMockForClass:[UAURLProtocol class]];
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     self.mockLandingPageOverlayController = [OCMockObject niceMockForClass:[UALandingPageOverlayController class]];
+#pragma GCC diagnostic pop
+    self.mockOverlayViewController = [OCMockObject niceMockForClass:[UAOverlayViewController class]];
 
     self.mockConfig = [OCMockObject niceMockForClass:[UAConfig class]];
     self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
 
+    [[[self.mockConfig stub] andDo:^(NSInvocation *invocation) {
+        BOOL useWKWebView = self.useWKWebView;
+        [invocation setReturnValue:&useWKWebView];
+    }] useWKWebView];
 
     [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
     [[[self.mockConfig stub] andReturn:kUAProductionLandingPageContentURL] landingPageContentURL];
@@ -65,6 +77,7 @@
 
 - (void)tearDown {
     [self.mockLandingPageOverlayController stopMocking];
+    [self.mockOverlayViewController stopMocking];
     [self.mockURLProtocol stopMocking];
     [self.mockAirship stopMocking];
     [self.mockConfig stopMocking];
@@ -121,23 +134,33 @@
 /**
  * Helper method to verify perform in foreground situations
  */
-- (void)verifyPerformInForegroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl expectedHeaders:(NSDictionary *)headers {
+- (void)commonVerifyPerformInForegroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl expectedHeaders:(NSDictionary *)headers mockedViewController:(id)mockedViewController {
     NSArray *situations = @[[NSNumber numberWithInteger:UASituationWebViewInvocation],
-                                     [NSNumber numberWithInteger:UASituationForegroundPush],
-                                     [NSNumber numberWithInteger:UASituationLaunchedFromPush],
-                                     [NSNumber numberWithInteger:UASituationManualInvocation],
-                                     [NSNumber numberWithInteger:UASituationAutomation]];
-
+                            [NSNumber numberWithInteger:UASituationForegroundPush],
+                            [NSNumber numberWithInteger:UASituationLaunchedFromPush],
+                            [NSNumber numberWithInteger:UASituationManualInvocation],
+                            [NSNumber numberWithInteger:UASituationAutomation]];
+    
     for (NSNumber *situationNumber in situations) {
-        [[[self.mockLandingPageOverlayController expect] ignoringNonObjectArgs] showURL:[OCMArg checkWithBlock:^(id obj) {
+        [[[mockedViewController expect] ignoringNonObjectArgs] showURL:[OCMArg checkWithBlock:^(id obj) {
             return (BOOL)([obj isKindOfClass:[NSURL class]] && [((NSURL *)obj).absoluteString isEqualToString:expectedUrl]);
         }] withHeaders:[OCMArg checkWithBlock:^(id obj) {
             return (BOOL) ([headers count] ? [headers isEqualToDictionary:obj] : [obj count] == 0);
         }] size:CGSizeZero aspectLock:false];
 
         UAActionArguments *args = [UAActionArguments argumentsWithValue:value withSituation:[situationNumber integerValue]];
-        [self verifyPerformWithArgs:args withExpectedUrl:expectedUrl withExpectedFetchResult:UAActionFetchResultNewData];
+        [self verifyPerformWithArgs:args withExpectedUrl:expectedUrl withExpectedFetchResult:UAActionFetchResultNewData mockedViewController:mockedViewController];
     }
+}
+
+- (void)verifyPerformInForegroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl expectedHeaders:(NSDictionary *)headers {
+    // UALandingPageOverlayController is used when SDK is not configured to use WKWebViews
+    self.useWKWebView = NO;
+    [self commonVerifyPerformInForegroundWithValue:value expectedUrl:expectedUrl expectedHeaders:headers mockedViewController:self.mockLandingPageOverlayController];
+    
+    // UAOverlayViewController is used when SDK is configured to use WKWebViews
+    self.useWKWebView = YES;
+    [self commonVerifyPerformInForegroundWithValue:value expectedUrl:expectedUrl expectedHeaders:headers mockedViewController:self.mockOverlayViewController];
 }
 
 /**
@@ -150,7 +173,7 @@
 /**
  * Helper method to verify perform
  */
-- (void)verifyPerformWithArgs:(UAActionArguments *)args withExpectedUrl:(NSString *)expectedUrl withExpectedFetchResult:(UAActionFetchResult)fetchResult {
+- (void)verifyPerformWithArgs:(UAActionArguments *)args withExpectedUrl:(NSString *)expectedUrl withExpectedFetchResult:(UAActionFetchResult)fetchResult mockedViewController:(id)mockedViewController {
 
     __block BOOL finished = NO;
 
@@ -165,7 +188,7 @@
     }];
 
     [self.mockURLProtocol verify];
-    [self.mockLandingPageOverlayController verify];
+    [mockedViewController verify];
 
     XCTAssertTrue(finished, @"action should have completed");
 }

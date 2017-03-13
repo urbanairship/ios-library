@@ -26,6 +26,7 @@
 #import "UADefaultMessageCenterListViewController.h"
 #import "UADefaultMessageCenterListCell.h"
 #import "UADefaultMessageCenterMessageViewController.h"
+#import "UAMessageCenterMessageViewController.h"
 #import "UAInboxMessage.h"
 #import "UAirship.h"
 #import "UAInbox.h"
@@ -33,6 +34,7 @@
 #import "UAURLProtocol.h"
 #import "UAMessageCenterLocalization.h"
 #import "UADefaultMessageCenterStyle.h"
+#import "UAConfig.h"
 
 /*
  * List-view image controls: default image path and cache values
@@ -354,23 +356,24 @@
 }
 
 - (void)displayMessage:(UAInboxMessage *)message {
-    UADefaultMessageCenterMessageViewController *mvc;
+    UIViewController *mvc;
 
-    //if a message view is displaying, just load the new message
+    //if a message view is already displaying, just load the new message
     UIViewController *top = self.navigationController.topViewController;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     if ([top class] == [UADefaultMessageCenterMessageViewController class]) {
         mvc = (UADefaultMessageCenterMessageViewController *) top;
-        [mvc loadMessageForID:message.messageID];
-    }
-    //otherwise, push over a new message view
-    else {
-        mvc = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController" bundle:[UAirship resources]];
-
-        mvc.filter = self.filter;
-
+        [(UADefaultMessageCenterMessageViewController *)mvc loadMessageForID:message.messageID];
+#pragma GCC diagnostic pop
+    } else if ([top class] == [UAMessageCenterMessageViewController class]) {
+        mvc = (UAMessageCenterMessageViewController *) top;
+        [(UAMessageCenterMessageViewController *)mvc loadMessageForID:message.messageID];
+    } else {
+        //otherwise, push over a new message view
         __weak id weakSelf = self;
-        mvc.closeBlock = ^(BOOL animated){
-
+        void (^closeBlock)(BOOL) = ^(BOOL animated){
+            
             UADefaultMessageCenterListViewController *strongSelf = weakSelf;
 
             if (!strongSelf) {
@@ -384,9 +387,22 @@
                 [self.navigationController popViewControllerAnimated:animated];
             }
         };
-
-        mvc.message = message;
-
+        
+        if (UAirship.shared.config.useWKWebView) {
+            mvc = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController" bundle:[UAirship resources]];
+            ((UAMessageCenterMessageViewController *)mvc).filter = self.filter;
+            ((UAMessageCenterMessageViewController *)mvc).message = message;
+            ((UAMessageCenterMessageViewController *)mvc).closeBlock = closeBlock;
+        } else {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+            mvc = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController" bundle:[UAirship resources]];
+            ((UADefaultMessageCenterMessageViewController *)mvc).filter = self.filter;
+            ((UADefaultMessageCenterMessageViewController *)mvc).message = message;
+            ((UADefaultMessageCenterMessageViewController *)mvc).closeBlock = closeBlock;
+#pragma GCC diagnostic pop
+        }
+        
         UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:mvc];
 
         if (self.style.navigationBarColor) {

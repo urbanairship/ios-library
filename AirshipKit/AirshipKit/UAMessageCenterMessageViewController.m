@@ -23,27 +23,26 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UADefaultMessageCenterMessageViewController.h"
-#import "UAWebViewDelegate.h"
+#import "UAMessageCenterMessageViewController.h"
+#import "UAWKWebViewNativeBridge.h"
 #import "UAInbox.h"
 #import "UAirship.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxMessage.h"
 #import "UAUtils.h"
-#import "UIWebView+UAAdditions.h"
 #import "UAMessageCenterLocalization.h"
 
 #define kMessageUp 0
 #define kMessageDown 1
 
-@interface UADefaultMessageCenterMessageViewController () <UAUIWebViewDelegate, UARichContentWindow>
+@interface UAMessageCenterMessageViewController () <UAWKWebViewDelegate>
 
-@property (nonatomic, strong) UAWebViewDelegate *webViewDelegate;
+@property (nonatomic, strong) UAWKWebViewNativeBridge *nativeBridge;
 
 /**
- * The UIWebView used to display the message content.
+ * The WebView used to display the message content.
  */
-@property (nonatomic, strong) UIWebView *webView;
+@property (nonatomic, strong) WKWebView *webView;
 
 /**
  * The index of the currently displayed message.
@@ -67,25 +66,21 @@
 
 @end
 
-@implementation UADefaultMessageCenterMessageViewController
+@implementation UAMessageCenterMessageViewController
 
 - (void)dealloc {
-    self.webView.delegate = nil;
+    self.webView.navigationDelegate = nil;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.webViewDelegate = [[UAWebViewDelegate alloc] init];
-    self.webViewDelegate.forwardDelegate = self;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    self.webViewDelegate.richContentWindow = self;
-#pragma GCC diagnostic pop
-    self.webView.delegate = self.webViewDelegate;
+    self.nativeBridge = [[UAWKWebViewNativeBridge alloc] init];
+    self.nativeBridge.forwardDelegate = self;
+    self.webView.navigationDelegate = self.nativeBridge;
 
     // Allow the webView to detect data types (e.g. phone numbers, addresses) at will
-    [self.webView setDataDetectorTypes:UIDataDetectorTypeAll];
+    [self.webView.configuration setDataDetectorTypes:WKDataDetectorTypeAll];
 
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_delete")
                                                                                style:UIBarButtonItemStylePlain
@@ -201,10 +196,7 @@
         UIAlertAction *retryAction = [UIAlertAction actionWithTitle:UAMessageCenterLocalizedString(@"ua_retry_button")
                                                               style:UIAlertActionStyleDefault
                                                             handler:^(UIAlertAction * _Nonnull action) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
                                                                 [self loadMessageAtIndex:self.messageIndex];
-#pragma GCC diagnostic pop
         }];
 
         [alert addAction:retryAction];
@@ -213,39 +205,44 @@
     [self presentViewController:alert animated:YES completion:nil];
 }
 
-#pragma mark UAUIWebViewDelegate
+#pragma mark UAWKWebViewDelegate
 
-- (void)webViewDidFinishLoad:(UIWebView *)wv {
-
-    NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:wv.request];
-    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)cachedResponse.response;
-    NSInteger status = httpResponse.statusCode;
-    NSString *blank = @"about:blank";
-
-    // If the server returns something in the error range, load a blank page
-    if (status >= 400 && status <= 599) {
-        [wv loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:blank]]];
-        if (status >= 500) {
-            // Display a retry alert
-            [self displayAlert:YES];
-        } else {
-            // Display a generic alert
-            [self displayAlert:NO];
+- (void)webView:(WKWebView *)wv decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler {
+    if ([navigationResponse.response isKindOfClass:[NSHTTPURLResponse class]]) {
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)navigationResponse.response;
+        NSInteger status = httpResponse.statusCode;
+        NSString *blank = @"about:blank";
+        if (status >= 400 && status <= 599) {
+            decisionHandler(WKNavigationResponsePolicyCancel);
+            [wv loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:blank]]];
+            if (status >= 500) {
+                // Display a retry alert
+                [self displayAlert:YES];
+            } else {
+                // Display a generic alert
+                [self displayAlert:NO];
+            }
+            return;
         }
-        return;
-    } else if ([wv.request.URL.absoluteString isEqualToString:blank]) {
+    }
+    
+    decisionHandler(WKNavigationResponsePolicyAllow);
+
+}
+
+- (void)webView:(WKWebView *)wv didFinishNavigation:(WKNavigation *)navigation {
+    NSString *blank = @"about:blank";
+    if ([wv.URL.absoluteString isEqualToString:blank]) {
         return;
     }
-
+    
     // Mark message as read after it has finished loading
     if (self.message.unread) {
         [self.message markMessageReadWithCompletionHandler:nil];
     }
-
-    [self.webView injectInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
 
-- (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
+- (void)webView:(WKWebView *)wv didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error {
     if (error.code == NSURLErrorCancelled)
         return;
     UALOG(@"Failed to load message: %@", error);
@@ -256,12 +253,6 @@
     if (self.closeBlock) {
         self.closeBlock(animated);
     }
-}
-
-#pragma mark UARichContentWindow
-
-- (void)closeWebView:(UIWebView *)webView animated:(BOOL)animated {
-    [self closeWindowAnimated:animated];
 }
 
 #pragma mark NSNotificationCenter callbacks

@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UALandingPageOverlayController.h"
+#import "UAOverlayViewController.h"
 
 #import "UABespokeCloseView.h"
 #import "UABeveledLoadingIndicator.h"
@@ -31,26 +31,23 @@
 #import "UAirship.h"
 #import "UAGlobal.h"
 #import "UAInboxMessage.h"
-#import "UIWebView+UAAdditions.h"
 
-#import "UARichContentWindow.h"
-#import "UAUIWebViewDelegate.h"
-#import "UAWebViewDelegate.h"
+#import "UAWKWebViewNativeBridge.h"
 
 #import <QuartzCore/QuartzCore.h>
 
-#define kUALandingPageOverlayControllerWebViewPadding 15
+#define kUAOverlayViewControllerWebViewPadding 15
 
-#define kUALandingPageOverlayViewNibName @"UALandingPageOverlayView"
+#define kUAOverlayViewNibName @"UAOverlayView"
 
 static NSMutableSet *overlayControllers_ = nil;
 
-@interface UALandingPageOverlayView : UIView
+@interface UAOverlayView : UIView
 
 /**
- * The UIWebView used to display the message content.
+ * The WKWebView used to display the message content.
  */
-@property (strong, nonatomic) IBOutlet UIWebView *webView;
+@property (strong, nonatomic) IBOutlet WKWebView *webView;
 
 @property (strong, nonatomic) IBOutlet UIView *containerView;
 @property (strong, nonatomic) IBOutlet UIView *shadeView;
@@ -74,11 +71,11 @@ static NSMutableSet *overlayControllers_ = nil;
 
 @end
 
-@implementation UALandingPageOverlayView
+@implementation UAOverlayView
 
 - (id)initWithSize:(CGSize)size aspectLock:(BOOL)aspectLock {
     NSBundle *bundle = [UAirship resources];
-    self = [[bundle loadNibNamed:kUALandingPageOverlayViewNibName owner:self options:nil] firstObject];
+    self = [[bundle loadNibNamed:kUAOverlayViewNibName owner:self options:nil] firstObject];
 
     if (self) {
         self.size = size;
@@ -135,18 +132,18 @@ static NSMutableSet *overlayControllers_ = nil;
 
 - (BOOL)validateWidth:(CGFloat)width {
     CGSize screenSize = [UIScreen mainScreen].bounds.size;
-    CGFloat maximumLandingPageWidth = screenSize.width;
-    CGFloat minimumLandingPageWidth = (kUALandingPageOverlayControllerWebViewPadding * 2) * 2;
+    CGFloat maximumOverlayViewWidth = screenSize.width;
+    CGFloat minimumOverlayViewWidth = (kUAOverlayViewControllerWebViewPadding * 2) * 2;
 
-    if (width < minimumLandingPageWidth) {
+    if (width < minimumOverlayViewWidth) {
         if (width != 0) {
-            UA_LDEBUG(@"Landing page width is less than the minimum allowed width. Resizing to fit screen.");
+            UA_LDEBUG(@"Overlay view width is less than the minimum allowed width. Resizing to fit screen.");
         }
         return NO;
     }
 
-    if (width > maximumLandingPageWidth) {
-        UA_LDEBUG(@"Landing page width is greater than the maximum allowed width. Resizing to fit screen.");
+    if (width > maximumOverlayViewWidth) {
+        UA_LDEBUG(@"Overlay view width is greater than the maximum allowed width. Resizing to fit screen.");
         return NO;
     }
 
@@ -155,18 +152,18 @@ static NSMutableSet *overlayControllers_ = nil;
 
 - (BOOL)validateHeight:(CGFloat)height {
     CGSize screenSize = [UIScreen mainScreen].bounds.size;
-    CGFloat maximumLandingPageHeight = screenSize.height;
-    CGFloat minimumLandingPageHeight = (kUALandingPageOverlayControllerWebViewPadding * 4) * 2;
+    CGFloat maximumOverlayViewHeight = screenSize.height;
+    CGFloat minimumOverlayViewHeight = (kUAOverlayViewControllerWebViewPadding * 4) * 2;
 
-    if (height < minimumLandingPageHeight) {
+    if (height < minimumOverlayViewHeight) {
         if (height != 0) {
-            UA_LDEBUG(@"Landing page height is less than the minimum allowed height. Resizing to fit screen.");
+            UA_LDEBUG(@"Overlay view height is less than the minimum allowed height. Resizing to fit screen.");
         }
         return NO;
     }
 
-    if (height > maximumLandingPageHeight) {
-        UA_LDEBUG(@"Landing page height is greater than the maximum allowed height. Resizing to fit screen.");
+    if (height > maximumOverlayViewHeight) {
+        UA_LDEBUG(@"Overlay view height is greater than the maximum allowed height. Resizing to fit screen.");
         return NO;
     }
 
@@ -195,7 +192,7 @@ static NSMutableSet *overlayControllers_ = nil;
 
 @end
 
-@interface UALandingPageOverlayController() <UAUIWebViewDelegate, UARichContentWindow>
+@interface UAOverlayViewController() <UAWKWebViewDelegate>
 
 
 /**
@@ -213,31 +210,31 @@ static NSMutableSet *overlayControllers_ = nil;
  */
 @property (nonatomic, strong) UAInboxMessage *message;
 @property (nonatomic, strong) UIViewController *parentViewController;
-@property (nonatomic, strong) UALandingPageOverlayView *overlayView;
+@property (nonatomic, strong) UAOverlayView *overlayView;
 @property (nonatomic, strong) UIView *background;
 @property (nonatomic, strong) UIView *backgroundInset;
 @property (nonatomic, strong) UIButton *closeButton;
 @property (nonatomic, strong) UABespokeCloseView *closeButtonView;
 @property (nonatomic, strong) UABeveledLoadingIndicator *loadingIndicator;
-@property (nonatomic, strong) UAWebViewDelegate *webViewDelegate;
+@property (nonatomic, strong) UAWKWebViewNativeBridge *nativeBridge;
 @property (nonatomic, assign) UIUserInterfaceSizeClass lastHorizontalSizeClass;
 
 @end
 
-@implementation UALandingPageOverlayController
+@implementation UAOverlayViewController
 
 /**
  * Setup a container for the newly allocated controllers, will be released by OS.
  */
 + (void)initialize {
-    if (self == [UALandingPageOverlayController class]) {
+    if (self == [UAOverlayViewController class]) {
         overlayControllers_ = [[NSMutableSet alloc] initWithCapacity:1];
     }
 }
 
-+ (void)showLandingPageController:(UALandingPageOverlayController *)overlayController {
++ (void)showOverlayViewController:(UAOverlayViewController *)overlayController {
     // Close existing windows
-    [UALandingPageOverlayController closeAll:NO];
+    [UAOverlayViewController closeAll:NO];
     // Add the overlay controller to our static collection
     [overlayControllers_ addObject:overlayController];
     //load it
@@ -246,54 +243,54 @@ static NSMutableSet *overlayControllers_ = nil;
 
 + (void)showURL:(NSURL *)url withHeaders:(NSDictionary *)headers {
     CGSize defaultsToFullSize = CGSizeZero;
-    UALandingPageOverlayController *overlayController = [[UALandingPageOverlayController alloc] initWithParentViewController:[UAUtils topController]
+    UAOverlayViewController *overlayController = [[UAOverlayViewController alloc] initWithParentViewController:[UAUtils topController]
                                                                                                                       andURL:url
                                                                                                                   andMessage:nil
                                                                                                                   andHeaders:headers
                                                                                                                      size:defaultsToFullSize
                                                                                                                aspectLock:false];
-    [self showLandingPageController:overlayController];
+    [self showOverlayViewController:overlayController];
 }
 
 + (void)showURL:(NSURL *)url withHeaders:(NSDictionary *)headers size:(CGSize)size aspectLock:(BOOL)aspectLock {
-    UALandingPageOverlayController *overlayController = [[UALandingPageOverlayController alloc] initWithParentViewController:[UAUtils topController]
+    UAOverlayViewController *overlayController = [[UAOverlayViewController alloc] initWithParentViewController:[UAUtils topController]
                                                                                                                       andURL:url
                                                                                                                   andMessage:nil
                                                                                                                   andHeaders:headers
                                                                                                                      size:size
                                                                                                                aspectLock:aspectLock];
-    [self showLandingPageController:overlayController];
+    [self showOverlayViewController:overlayController];
 }
 
 + (void)showMessage:(UAInboxMessage *)message {
     NSDictionary *headers = @{@"Authorization":[UAUtils userAuthHeaderString]};
-    [UALandingPageOverlayController showMessage:message withHeaders:headers];
+    [UAOverlayViewController showMessage:message withHeaders:headers];
 }
 
 + (void)showMessage:(UAInboxMessage *)message withHeaders:(NSDictionary *)headers {
     CGSize defaultsToFullSize = CGSizeZero;
-    UALandingPageOverlayController *overlayController = [[UALandingPageOverlayController alloc] initWithParentViewController:[UAUtils topController]
+    UAOverlayViewController *overlayController = [[UAOverlayViewController alloc] initWithParentViewController:[UAUtils topController]
                                                                                                                       andURL:message.messageBodyURL
                                                                                                                   andMessage:message
                                                                                                                   andHeaders:headers
                                                                                                                      size:defaultsToFullSize
                                                                                                                aspectLock:false];
-    [self showLandingPageController:overlayController];
+    [self showOverlayViewController:overlayController];
 }
 
 + (void)showMessage:(UAInboxMessage *)message withHeaders:(NSDictionary *)headers size:(CGSize)size aspectLock:(BOOL)aspectLock {
-    UALandingPageOverlayController *overlayController = [[UALandingPageOverlayController alloc] initWithParentViewController:[UAUtils topController]
+    UAOverlayViewController *overlayController = [[UAOverlayViewController alloc] initWithParentViewController:[UAUtils topController]
                                                                                                                       andURL:message.messageBodyURL
                                                                                                                   andMessage:message
                                                                                                                   andHeaders:headers
                                                                                                                      size:size
                                                                                                                aspectLock:aspectLock];
-    [self showLandingPageController:overlayController];
+    [self showOverlayViewController:overlayController];
 }
 
 + (void)closeAll:(BOOL)animated {
-    for (UALandingPageOverlayController *oc in overlayControllers_) {
-        [oc closeWebView:oc.overlayView.webView animated:animated];
+    for (UAOverlayViewController *oc in overlayControllers_) {
+        [oc closeWindowAnimated:animated];
     }
 }
 
@@ -301,7 +298,7 @@ static NSMutableSet *overlayControllers_ = nil;
     self = [super init];
     if (self) {
 
-        self.overlayView = [[UALandingPageOverlayView alloc] initWithSize:size aspectLock:aspectLock];
+        self.overlayView = [[UAOverlayView alloc] initWithSize:size aspectLock:aspectLock];
         self.overlayView.alpha = 0.0;
 
         self.parentViewController = parent;
@@ -312,19 +309,18 @@ static NSMutableSet *overlayControllers_ = nil;
         // Set the frame later
         self.overlayView.webView.backgroundColor = [UIColor clearColor];
         self.overlayView.webView.opaque = NO;
-        self.webViewDelegate = [[UAWebViewDelegate alloc] init];
-        self.webViewDelegate.forwardDelegate = self;
-        self.webViewDelegate.richContentWindow = self;
-        self.overlayView.webView.delegate = self.webViewDelegate;
+        self.nativeBridge = [[UAWKWebViewNativeBridge alloc] init];
+        self.nativeBridge.forwardDelegate = self;
+        self.overlayView.webView.navigationDelegate = self.nativeBridge;
 
-        self.overlayView.webView.dataDetectorTypes = UIDataDetectorTypeNone;
+        self.overlayView.webView.configuration.dataDetectorTypes = WKDataDetectorTypeNone;
     }
 
     return self;
 }
 
 - (void)dealloc {
-    self.overlayView.webView.delegate = nil;
+    self.overlayView.webView.navigationDelegate = nil;
 
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIDeviceOrientationDidChangeNotification
@@ -420,9 +416,9 @@ static NSMutableSet *overlayControllers_ = nil;
 }
 
 
-#pragma mark UAWebViewDelegate
+#pragma mark UAWKWebViewDelegate
 
-- (void)webViewDidFinishLoad:(UIWebView *)wv {
+- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation {
     [self.overlayView.loadingIndicatorView hide];
 
     if (self.message) {
@@ -430,7 +426,7 @@ static NSMutableSet *overlayControllers_ = nil;
     }
 }
 
-- (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
+- (void)webView:(WKWebView *)webView didFailNavigation:(null_unspecified WKNavigation *)navigation withError:(nonnull NSError *)error {
 
     __typeof(self) __weak weakSelf = self;
 
@@ -438,21 +434,15 @@ static NSMutableSet *overlayControllers_ = nil;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 20.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void){
         __typeof(self) __strong strongSelf = weakSelf;
         if (strongSelf) {
-            UA_LINFO(@"Retrying landing page url: %@", strongSelf.url);
+            UA_LINFO(@"Retrying url: %@", strongSelf.url);
             [strongSelf load];
         }
     });
 }
 
 - (void)closeWindowAnimated:(BOOL)animated {
-    UA_LDEBUG(@"Closing landing page overlay controller: %@", [self.url absoluteString]);
+    UA_LDEBUG(@"Closing overlay controller: %@", [self.url absoluteString]);
     [self finish:animated];
-}
-
-#pragma mark UARichContentWindow
-
-- (void)closeWebView:(UIWebView *)webView animated:(BOOL)animated {
-    [self closeWindowAnimated:animated];
 }
 
 @end

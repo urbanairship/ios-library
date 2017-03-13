@@ -23,12 +23,12 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 
-#import "UAWebViewDelegate.h"
+#import "UAWKWebViewNativeBridge.h"
+#import "UAWebView+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAConfig.h"
 #import "UAUser.h"
@@ -41,11 +41,14 @@
 #import "UAPush.h"
 #import "UANamedUser.h"
 
-@interface UAWebViewDelegateTest : XCTestCase
+@interface UAWKWebViewNativeBridgeTest : XCTestCase
 
-@property(nonatomic, strong) UAWebViewDelegate *delegate;
-@property(nonatomic, strong) id mockWebView;
+@property(nonatomic, strong) UAWKWebViewNativeBridge *nativeBridge;
+@property(nonatomic, strong) id mockWKWebView;
+@property(nonatomic, strong) id mockUAWebView;
+@property(nonatomic, strong) id mockWKNavigation;
 @property(nonatomic, strong) id mockForwardDelegate;
+@property(nonatomic, strong) id mockWKNavigationAction;
 @property(nonatomic, strong) id mockContentWindow;
 
 @property (strong, nonatomic) id mockUIDevice;
@@ -63,16 +66,14 @@
 @end
 
 
-@implementation UAWebViewDelegateTest
+@implementation UAWKWebViewNativeBridgeTest
 
 - (void)setUp {
     [super setUp];
-    self.delegate = [[UAWebViewDelegate alloc] init];
-    self.mockForwardDelegate = [OCMockObject niceMockForProtocol:@protocol(UAUIWebViewDelegate)];
-    self.delegate.forwardDelegate = self.mockForwardDelegate;
+    self.nativeBridge = [[UAWKWebViewNativeBridge alloc] init];
+    self.mockForwardDelegate = [OCMockObject niceMockForProtocol:@protocol(UAWKWebViewDelegate)];
+    self.nativeBridge.forwardDelegate = self.mockForwardDelegate;
 
-    self.mockContentWindow = [OCMockObject niceMockForProtocol:@protocol(UARichContentWindow)];
-    self.delegate.richContentWindow = self.mockContentWindow;
 
     // Mock UAPush
     self.mockPush = [OCMockObject niceMockForClass:[UAPush class]];
@@ -80,8 +81,17 @@
     // Mock UANamedUser
     self.mockNamedUser = [OCMockObject niceMockForClass:[UANamedUser class]];
 
-    // Mock web view
-    self.mockWebView = [OCMockObject niceMockForClass:[UIWebView class]];
+    // Mock WKWebView
+    self.mockWKWebView = [OCMockObject niceMockForClass:[WKWebView class]];
+    
+    // Mock UAWebView
+    self.mockUAWebView = [OCMockObject niceMockForClass:[UAWebView class]];
+    
+    // Mock WKNavigation
+    self.mockWKNavigation = [OCMockObject niceMockForClass:[WKNavigation class]];
+    
+    // Mock WKNavigationAction
+    self.mockWKNavigationAction = [OCMockObject niceMockForClass:[WKNavigationAction class]];
 
     // Mock UAUser
     self.mockUAUser = [OCMockObject niceMockForClass:[UAUser class]];
@@ -122,7 +132,8 @@
 
 - (void)tearDown {
     [self.mockAirship stopMocking];
-    [self.mockWebView stopMocking];
+    [self.mockWKWebView stopMocking];
+    [self.mockUAWebView stopMocking];
     [self.mockUIDevice stopMocking];
     [self.mockUAUser stopMocking];
     [self.mockConfig stopMocking];
@@ -138,44 +149,63 @@
 }
 
 /**
- * Test webViewDidStartLoad: forwards its message to the forwardDelegate.
+ * Test webView:didCommitNavigation: forwards its message to the forwardDelegate.
  */
-- (void)testDidStartLoadForwardDelegate {
-    [[self.mockForwardDelegate expect] webViewDidStartLoad:self.mockWebView];
-    [self.delegate webViewDidStartLoad:self.mockWebView];
+- (void)testDidCommitNavigationForwardDelegate {
+    [[self.mockForwardDelegate expect] webView:self.mockWKWebView didCommitNavigation:self.mockWKNavigation];
+    [self.nativeBridge webView:self.mockWKWebView didCommitNavigation:self.mockWKNavigation];
     [self.mockForwardDelegate verify];
 }
 
 /**
- * Test webView:didFailLoadWithError: forwards its message to the forwardDelegate.
+ * Test webView:didFailNavigation:withError: forwards its message to the forwardDelegate.
  */
-- (void)testDidFailLoadForwardDelegate {
+- (void)testDidFailNavigationWithErrorForwardDelegate {
     NSError *err = [NSError errorWithDomain:@"wat" code:0 userInfo:nil];
-    [[self.mockForwardDelegate expect] webView:self.mockWebView didFailLoadWithError:err];
-    [self.delegate webView:self.mockWebView didFailLoadWithError:err];
+    [[self.mockForwardDelegate expect] webView:self.mockWKWebView didFailNavigation:self.mockWKNavigation withError:err];
+    [self.nativeBridge webView:self.mockWKWebView didFailNavigation:self.mockWKNavigation withError:err];
     [self.mockForwardDelegate verify];
 }
 
 /**
- * Test webView:shouldStartLoadWithRequest:navigationType: forwards its message to the forwardDelegate.
+ * Test webView:decidePolicyForNavigationAction:decisionHandler: forwards its message to the forwardDelegate.
  */
-- (void)testShouldStartLoadForwardDelegate {
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://urbanairship.com"]];
-    [[self.mockForwardDelegate expect] webView:self.mockWebView shouldStartLoadWithRequest:request navigationType:UIWebViewNavigationTypeOther];
-    [self.delegate webView:self.mockWebView shouldStartLoadWithRequest:request navigationType:UIWebViewNavigationTypeOther];
+- (void)testDecidePolicyForNavigationActionDecisionHandlerForwardDelegate {
+    // Stub the forward delegate to return the response
+    [[[self.mockForwardDelegate expect] andDo:^(NSInvocation *invocation) {
+        void (^decisionHandler)(WKNavigationActionPolicy policy) = nil;
+        [invocation getArgument:&decisionHandler atIndex:4];
+        decisionHandler(WKNavigationActionPolicyCancel);
+    }] webView:OCMOCK_ANY decidePolicyForNavigationAction:OCMOCK_ANY decisionHandler:OCMOCK_ANY];
+
+    [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:self.mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
+        XCTAssertEqual(delegatePolicy,WKNavigationActionPolicyCancel);
+    }];
+
+    [self.mockForwardDelegate verify];
+
+    [[[self.mockForwardDelegate expect] andDo:^(NSInvocation *invocation) {
+        void (^decisionHandler)(WKNavigationActionPolicy policy) = nil;
+        [invocation getArgument:&decisionHandler atIndex:4];
+        decisionHandler(WKNavigationActionPolicyAllow);
+    }] webView:OCMOCK_ANY decidePolicyForNavigationAction:OCMOCK_ANY decisionHandler:OCMOCK_ANY];
+    
+    [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:self.mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
+        XCTAssertEqual(delegatePolicy,WKNavigationActionPolicyAllow);
+    }];
+    
     [self.mockForwardDelegate verify];
 }
 
-
 /**
- * Test webView:shouldStartLoadWithRequest:navigationType: forwards uairship:// schemes
+ * Test webView:decidePolicyForNavigationAction:decisionHandler: forwards uairship:// schemes
  * to the Urban Airship Action JS delegate with the associated inbox message.
  */
 - (void)testShouldStartLoadRunsActions {
     // Action request
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"uairship://run-basic-actions?test_action=hi"]];
     request.mainDocumentURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];;
-    [[[self.mockWebView stub] andReturn:request] request];
+    [[[self.mockWKNavigationAction stub] andReturn:request] request];
 
     // Create an inbox message
     NSDate *messageSent = [NSDate date];
@@ -204,7 +234,8 @@
 
     }] withCompletionHandler:OCMOCK_ANY];
 
-    [self.delegate webView:self.mockWebView shouldStartLoadWithRequest:request navigationType:UIWebViewNavigationTypeOther];
+    [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:self.mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
+    }];
 
     [self.mockJSActionDelegate verify];
 }
@@ -217,48 +248,50 @@
     // Action request
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"uairship://run-basic-actions?test_action=hi"]];
     request.mainDocumentURL = [NSURL URLWithString:@"https://foo.notwhitelisted.com/whatever.html"];;
-    [[[self.mockWebView stub] andReturn:request] request];
+    [[[self.mockWKNavigationAction stub] andReturn:request] request];
 
     // Reject any calls to the JS Delegate
     [[self.mockJSActionDelegate reject] callWithData:OCMOCK_ANY withCompletionHandler:OCMOCK_ANY];
 
-    [self.delegate webView:self.mockWebView shouldStartLoadWithRequest:request navigationType:UIWebViewNavigationTypeOther];
+    [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:self.mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
+    }];
 
     [self.mockJSActionDelegate verify];
 }
 
 /**
- * Test webViewDidFinishLoad: forwards its message to the forwardDelegate.
+ * Test webView:didFinishNavigation: forwards its message to the forwardDelegate.
  */
 - (void)testDidFinishLoadForwardDelegate {
-    [[self.mockForwardDelegate expect] webViewDidFinishLoad:self.mockWebView];
-    [self.delegate webViewDidFinishLoad:self.mockWebView];
+    [[self.mockForwardDelegate expect] webView:self.mockWKWebView didFinishNavigation:self.mockWKNavigation];
+    [self.nativeBridge webView:self.mockWKWebView didFinishNavigation:self.mockWKNavigation];
     [self.mockForwardDelegate verify];
-}
-
-/**
- * Test closeWebView:animated: forwards its message to the richContentWindow.
- */
-- (void)testCloseWebView {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    [[self.mockContentWindow expect] closeWebView:self.mockWebView animated:YES];
-    [self.delegate closeWebView:self.mockWebView animated:YES];
-#pragma GCC diagnostic pop
 }
 
 /**
  * Test closeWindowAnimated: forwards its message to the richContentWindow.
  */
-- (void)testCloseWindowAnimated {
-    [[self.mockForwardDelegate expect] closeWindowAnimated:YES];
-    [self.delegate closeWindowAnimated:YES];
+- (void)testcloseWindowAnimated {
+    [[self.mockContentWindow expect] closeWindowAnimated:YES];
+    [self.nativeBridge closeWindowAnimated:YES];
+    [self.mockForwardDelegate verify];
 }
 
 /**
- * Test webViewDidFinishLoad: injects the UA Javascript interface.
+ * Test webView:didFinishNavigation: injects the UA Javascript interface.
  */
-- (void)testDidFinishPopulateJavascriptEnvironment {
+- (void)testDidFinishPopulateJavascriptEnvironmentWithWKWebView {
+    [self commonTestDidFinishPopulateJavascriptEnvironmentWithUAWebView:NO];
+}
+
+/**
+ * Test webView:didFinishNavigation: injects the UA Javascript interface.
+ */
+- (void)testDidFinishPopulateJavascriptEnvironmentWithUAWebView {
+    [self commonTestDidFinishPopulateJavascriptEnvironmentWithUAWebView:YES];
+}
+
+- (void)commonTestDidFinishPopulateJavascriptEnvironmentWithUAWebView:(BOOL)testUAWebView {
     [[[self.mockUAUser stub] andReturn:@"user name"] username];
     [[[self.mockUIDevice stub] andReturn:@"device model"] model];
     [[[self.mockPush stub] andReturn:@"channel ID"] channelID];
@@ -266,53 +299,58 @@
     [[[self.mockConfig stub] andReturn:@"application key"] appKey];
     
     __block NSString *js;
+    __block NSError *error = nil;
+    
+    id mockWebView = (testUAWebView)? self.mockUAWebView : self.mockWKWebView;
 
     // Capture the js environment string
-    [[[self.mockWebView stub] andDo:^(NSInvocation *invocation) {
+    [[[mockWebView stub] andDo:^(NSInvocation *invocation) {
         [invocation getArgument:&js atIndex:2];
-        [invocation setReturnValue:&js];
-    }] stringByEvaluatingJavaScriptFromString:[OCMArg any]];
-
+        void (^completionHandler)(id, NSError *error) = nil;
+        [invocation getArgument:&completionHandler atIndex:3];
+        if (completionHandler) {
+            completionHandler(js,error);
+        }
+    }] evaluateJavaScript:[OCMArg any] completionHandler:[OCMArg any]];
+    
     // Any https://*.urbanairship.com/* urls are white listed
     NSURL *url = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    request.mainDocumentURL = url;
-    [[[self.mockWebView stub] andReturn:request] request];
-
-    // Notifiy the web view is finished loading the main frame
-    [self.delegate webViewDidFinishLoad:self.mockWebView];
-
+    [[[mockWebView stub] andReturn:url] URL];
+    
+    // Notify the web view is finished loading the main frame
+    [self.nativeBridge webView:mockWebView didFinishNavigation:self.mockWKNavigation];
+    
     XCTAssertNotNil(js, "Javascript environment was not populated");
-
+    
     [self.jsc evaluateScript:js];
-
+    
     // Verify device model
     XCTAssertEqualObjects(@"device model", [self.jsc evaluateScript:@"UAirship.getDeviceModel()"].toString);
-
+    
     // Verify user ID
     XCTAssertEqualObjects(@"user name", [self.jsc evaluateScript:@"UAirship.getUserId()"].toString);
-
+    
     // Verify channel ID
     XCTAssertEqualObjects(@"channel ID", [self.jsc evaluateScript:@"UAirship.getChannelId()"].toString);
-
+    
     // Verify named user
     XCTAssertEqualObjects(@"named user", [self.jsc evaluateScript:@"UAirship.getNamedUser()"].toString);
-
+    
     // Verify app key
     XCTAssertEqualObjects(@"application key", [self.jsc evaluateScript:@"UAirship.getAppKey()"].toString);
     
     // Verify message ID is null
     XCTAssertTrue([self.jsc evaluateScript:@"UAirship.getMessageId()"].isNull);
-
+    
     // Verify message title is null
     XCTAssertTrue([self.jsc evaluateScript:@"UAirship.getMessageTitle()"].isNull);
-
+    
     // Verify message send date is null
     XCTAssertTrue([self.jsc evaluateScript:@"UAirship.getMessageSentDate()"].isNull);
-
+    
     // Verify message send date ms is -1
     XCTAssertEqualObjects(@-1, [self.jsc evaluateScript:@"UAirship.getMessageSentDateMS()"].toNumber);
-
+    
     // Verify native bridge methods are not undefined
     XCTAssertFalse([self.jsc evaluateScript:@"UAirship.delegateCallURL"].isUndefined);
     XCTAssertFalse([self.jsc evaluateScript:@"UAirship.invoke"].isUndefined);
@@ -321,7 +359,7 @@
 }
 
 /**
- * Test webViewDidFinishLoad: injects the UA Javascript interface with the
+ * Test webView:didFinishNavigation: injects the UA Javascript interface with the
  * inbox message information if the web view's main document url points to
  * a message's body URL.
  */
@@ -335,24 +373,28 @@
     [[[message stub] andReturnValue:@(YES)] unread];
 
     __block NSString *js;
+    __block NSError *error = nil;
 
     // Capture the js environment string
-    [[[self.mockWebView stub] andDo:^(NSInvocation *invocation) {
+    [[[self.mockWKWebView stub] andDo:^(NSInvocation *invocation) {
+        NSLog(@"js = %@",js);
         [invocation getArgument:&js atIndex:2];
-        [invocation setReturnValue:&js];
-    }] stringByEvaluatingJavaScriptFromString:[OCMArg any]];
+        NSLog(@"js = %@",js);
+        void (^completionHandler)(id, NSError *error) = nil;
+        [invocation getArgument:&completionHandler atIndex:3];
+        if (completionHandler) {
+            completionHandler(js,error);
+        }
+    }] evaluateJavaScript:[OCMArg any] completionHandler:[OCMArg any]];
 
     NSURL *url = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    request.mainDocumentURL = url;
-
 
     // Associate the URL with the mock message
     [[[self.mockMessageList stub] andReturn:message] messageForBodyURL:url];
 
-    [[[self.mockWebView stub] andReturn:request] request];
+    [[[self.mockWKWebView stub] andReturn:url] URL];
 
-    [self.delegate webViewDidFinishLoad:self.mockWebView];
+    [self.nativeBridge webView:self.mockWKWebView didFinishNavigation:self.mockWKNavigation];
 
     XCTAssertNotNil(js, "Javascript environment was not populated");
 
@@ -374,14 +416,11 @@
     [message stopMocking];
 }
 
-
 /**
  * Test loading the JS environemnt when a message contains a title with invalid JSON
  * characters is properly escaped.
  */
 - (void)testLoadJSEnvironmentWithInvalidJSONCharactersMessageTitle {
-
-
     id message = [OCMockObject niceMockForClass:[UAInboxMessage class]];
 
     /*
@@ -393,24 +432,28 @@
     [[[message stub] andReturn:@"\"\t\b\r\n\f/title"] title];
 
     __block NSString *js;
+    __block NSError *error = nil;
 
     // Capture the js environment string
-    [[[self.mockWebView stub] andDo:^(NSInvocation *invocation) {
+    [[[self.mockWKWebView stub] andDo:^(NSInvocation *invocation) {
+        NSLog(@"js = %@",js);
         [invocation getArgument:&js atIndex:2];
-        [invocation setReturnValue:&js];
-    }] stringByEvaluatingJavaScriptFromString:[OCMArg any]];
+        NSLog(@"js = %@",js);
+        void (^completionHandler)(id, NSError *error) = nil;
+        [invocation getArgument:&completionHandler atIndex:3];
+        if (completionHandler) {
+            completionHandler(js,error);
+        }
+    }] evaluateJavaScript:[OCMArg any] completionHandler:[OCMArg any]];
 
     NSURL *url = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    request.mainDocumentURL = url;
-
 
     // Associate the URL with the mock message
     [[[self.mockMessageList stub] andReturn:message] messageForBodyURL:url];
 
-    [[[self.mockWebView stub] andReturn:request] request];
+    [[[self.mockWKWebView stub] andReturn:url] URL];
 
-    [self.delegate webViewDidFinishLoad:self.mockWebView];
+    [self.nativeBridge webView:self.mockWKWebView didFinishNavigation:self.mockWKNavigation];
 
     XCTAssertNotNil(js, "Javascript environment was not populated");
 
@@ -424,42 +467,18 @@
 
 
 /**
- * Test that webViewDidFinishLoad: does not load the JS environment when the URL is not whitelisted.
+ * Test that webView:didFinishNavigation: does not load the JS environment when the URL is not whitelisted.
  */
-- (void)testDidFinishNotWhitelitsed {
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://foo.notwhitelisted.com/whatever.html"]];
-    request.mainDocumentURL = request.URL;
-
-    [[[self.mockWebView stub] andReturn:request] request];
+- (void)testDidFinishNotWhitelisted {
+    NSURL *url = [NSURL URLWithString:@"https://foo.notwhitelisted.com/whatever.html"];
+    [[[self.mockWKWebView stub] andReturn:url] URL];
 
     // Capture the js environment string
-    [[[self.mockWebView stub] andDo:^(NSInvocation *invocation) {
+    [[[self.mockWKWebView stub] andDo:^(NSInvocation *invocation) {
         XCTFail(@"No JS should have been injected");
-    }] stringByEvaluatingJavaScriptFromString:[OCMArg any]];
+    }] evaluateJavaScript:[OCMArg any] completionHandler:[OCMArg any]];
 
-    [self.delegate webViewDidFinishLoad:self.mockWebView];
-}
-
-/**
- * Test that webViewDidFinishLoad: only popluates the JS interface once even if called
- * multiple time.
- */
-- (void)testDidFinishCalledMultipleTimes {
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"]];
-    request.mainDocumentURL = request.URL;
-
-    [[[self.mockWebView stub] andReturn:request] request];
-
-    // Expect the interface to be injected.
-    [[self.mockWebView expect] stringByEvaluatingJavaScriptFromString:[OCMArg any]];
-
-    [self.delegate webViewDidFinishLoad:self.mockWebView];
-    [self.mockWebView verify];
-
-    // Verify it does not inject any JS interface a second time
-    [[self.mockWebView reject] stringByEvaluatingJavaScriptFromString:[OCMArg any]];
-    [self.delegate webViewDidFinishLoad:self.mockWebView];
-    [self.mockWebView verify];
+    [self.nativeBridge webView:self.mockWKWebView didFinishNavigation:self.mockWKNavigation];
 }
 
 @end

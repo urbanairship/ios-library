@@ -23,38 +23,41 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import <WebKit/WebKit.h>
 
-#import "UAUIWebViewDelegate.h"
-#import "UARichContentWindow.h"
-#import "UABaseNativeBridge.h"
-
-NS_ASSUME_NONNULL_BEGIN
+@class UAInboxMessage;
+@class UADefaultMessageCenterStyle;
 
 /**
- * A UIWebView native bridge that automatically injects the Urban Airship
- * Javascript interface on whitelisted URLs.
+ * Default implementation of a view controller for reading Message Center messages.
  */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-@interface UAWebViewDelegate : UABaseNativeBridge <UAUIWebViewDelegate, UARichContentWindow>
-#pragma GCC diagnostic pop
+@interface UAMessageCenterMessageViewController : UIViewController 
 
 /**
- * Optional delegate to forward any UAUIWebViewDelegate calls.
+ * The UAInboxMessage being displayed.
  */
-@property (nonatomic, weak, nullable) id <UAUIWebViewDelegate> forwardDelegate;
+@property (nonatomic, strong) UAInboxMessage *message;
+
+/** 
+ * An optional predicate for filtering messages.
+ */
+@property (nonatomic, strong) NSPredicate *filter;
 
 /**
- * The rich content window. Optional, needed to support closing the webview from
- * the Urban Airship Javascript interface.
+ * Block that will be invoked when this class receives a closeWindow message from the webView.
  */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-@property (nonatomic, weak, nullable) id <UARichContentWindow> richContentWindow;
-#pragma GCC diagnostic pop
+@property (nonatomic, copy) void (^closeBlock)(BOOL animated);
+
+/**
+ * Load a UAInboxMessage at a particular index in the message list.
+ * @param index The corresponding index in the message list as an integer.
+ */
+- (void)loadMessageAtIndex:(NSUInteger)index;
+
+/**
+ * Load a UAInboxMessage by message ID.
+ * @param mid The message ID as an NSString.
+ */
+- (void)loadMessageForID:(NSString *)mid;
 
 @end
-
-NS_ASSUME_NONNULL_END

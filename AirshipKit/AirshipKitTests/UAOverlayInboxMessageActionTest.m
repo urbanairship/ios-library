@@ -33,6 +33,8 @@
 #import "UAInboxMessage.h"
 #import "UAInboxMessageList.h"
 #import "UALandingPageOverlayController.h"
+#import "UAOverlayViewController.h"
+#import "UAConfig.h"
 
 @interface UAOverlayInboxMessageActionTest : XCTestCase
 
@@ -42,6 +44,8 @@
 @property (nonatomic, strong) id mockMessageList;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockLandingPageOverlayController;
+@property (nonatomic, strong) id mockOverlayViewController;
+@property (nonatomic, strong) id mockConfig;
 
 @end
 
@@ -61,7 +65,14 @@
     self.mockMessageList = [OCMockObject niceMockForClass:[UAInboxMessageList class]];
     [[[self.mockInbox stub] andReturn:self.mockMessageList] messageList];
 
+    self.mockConfig = [OCMockObject niceMockForClass:[UAConfig class]];
+    [[[self.mockAirship stub] andReturn:self.mockConfig] config];
+    
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     self.mockLandingPageOverlayController = [OCMockObject niceMockForClass:[UALandingPageOverlayController class]];
+#pragma GCC diagnostic pop
+    self.mockOverlayViewController = [OCMockObject niceMockForClass:[UAOverlayViewController class]];
 }
 
 - (void)tearDown {
@@ -69,6 +80,8 @@
     [self.mockInbox stopMocking];
     [self.mockMessageList stopMocking];
     [self.mockLandingPageOverlayController stopMocking];
+    [self.mockOverlayViewController stopMocking];
+    [self.mockConfig stopMocking];
     
     [super tearDown];
 }
@@ -147,7 +160,7 @@
  * Test perform with a message ID thats available in the message list is displayed
  * in a landing page controller.
  */
-- (void)testPerform {
+- (void)commonPerform:(id)mockedViewController {
     __block BOOL actionPerformed;
 
     UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"MCRAP" withSituation:UASituationManualInvocation];
@@ -155,7 +168,7 @@
     UAInboxMessage *message = [OCMockObject niceMockForClass:[UAInboxMessage class]];
     [[[self.mockMessageList stub] andReturn:message] messageForID:@"MCRAP"];
 
-    [[self.mockLandingPageOverlayController expect] showMessage:message];
+    [[mockedViewController expect] showMessage:message];
 
     [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
         actionPerformed = YES;
@@ -164,15 +177,25 @@
     }];
 
     XCTAssertTrue(actionPerformed);
-    [self.mockLandingPageOverlayController verify];
+    [mockedViewController verify];
 }
 
+- (void)testPerform {
+    [self commonPerform:self.mockLandingPageOverlayController];
+}
+
+- (void)testPerformWithOverlayViewController {
+    // UAOverlayViewController is used when SDK configured to use WKWebViews
+    [[[self.mockConfig stub] andReturnValue:OCMOCK_VALUE(YES)] useWKWebView];
+    
+    [self commonPerform:self.mockOverlayViewController];
+}
 
 /**
  * Test perform with a message ID that is available after a message refresh is displayed
  * in a landing page controller.
  */
-- (void)testPerformMessageListUpdate {
+- (void)commonPerformMessageListUpdate:(id)mockedViewController {
     __block BOOL actionPerformed;
 
     UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"MCRAP" withSituation:UASituationManualInvocation];
@@ -188,7 +211,7 @@
     }] withFailureBlock:OCMOCK_ANY];
 
 
-    [[self.mockLandingPageOverlayController expect] showMessage:message];
+    [[mockedViewController expect] showMessage:message];
 
     [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
         actionPerformed = YES;
@@ -198,9 +221,19 @@
     }];
 
     XCTAssertTrue(actionPerformed);
-    [self.mockLandingPageOverlayController verify];
+    [mockedViewController verify];
 }
 
+- (void)testPerformMessageListUpdate {
+    [self commonPerformMessageListUpdate:self.mockLandingPageOverlayController];
+}
+
+- (void)testPerformMessageListUpdateWithOverlayViewController {
+    // UAOverlayViewController is used when SDK configured to use WKWebViews
+    [[[self.mockConfig stub] andReturnValue:OCMOCK_VALUE(YES)] useWKWebView];
+    
+    [self commonPerformMessageListUpdate:self.mockOverlayViewController];
+}
 
 /**
  * Test perform with a message ID when the message list fails to refresh should return
@@ -232,7 +265,7 @@
  * Test the action looks up the message in the inbox message metadata if the placeholder
  * is set for the arguments value.
  */
-- (void)testPerformWithPlaceHolderInboxMessageMetadata {
+- (void)commonPerformWithPlaceHolderInboxMessageMetadata:(id)mockedViewController {
     __block BOOL actionPerformed;
 
     UAInboxMessage *message = [OCMockObject niceMockForClass:[UAInboxMessage class]];
@@ -241,7 +274,7 @@
                                                            withSituation:UASituationManualInvocation
                                                                 metadata:@{UAActionMetadataInboxMessageKey: message}];
 
-    [[self.mockLandingPageOverlayController expect] showMessage:message];
+    [[mockedViewController expect] showMessage:message];
 
     [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
         actionPerformed = YES;
@@ -250,14 +283,25 @@
     }];
 
     XCTAssertTrue(actionPerformed);
-    [self.mockLandingPageOverlayController verify];
+    [mockedViewController verify];
+}
+
+- (void)testPerformWithPlaceHolderInboxMessageMetadata {
+    [self commonPerformWithPlaceHolderInboxMessageMetadata:self.mockLandingPageOverlayController];
+}
+
+- (void)testPerformWithPlaceHolderInboxMessageMetadataWithOverlayViewController {
+    // UAOverlayViewController is used when SDK configured to use WKWebViews
+    [[[self.mockConfig stub] andReturnValue:OCMOCK_VALUE(YES)] useWKWebView];
+    
+    [self commonPerformWithPlaceHolderInboxMessageMetadata:self.mockOverlayViewController];
 }
 
 /**
  * Test the action looks up the message ID in the push notification metadata if the placeholder
  * is set for the arguments value.
  */
-- (void)testPerformWithPlaceHolderPushMessageMetadata {
+- (void)commonPerformWithPlaceHolderPushMessageMetadata:(id)mockedViewController {
     __block BOOL actionPerformed;
 
     UAInboxMessage *message = [OCMockObject niceMockForClass:[UAInboxMessage class]];
@@ -270,7 +314,7 @@
                                                            withSituation:UASituationManualInvocation
                                                                 metadata:@{UAActionMetadataPushPayloadKey: notification}];
 
-    [[self.mockLandingPageOverlayController expect] showMessage:message];
+    [[mockedViewController expect] showMessage:message];
 
     [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
         actionPerformed = YES;
@@ -280,7 +324,18 @@
 
 
     XCTAssertTrue(actionPerformed);
-    [self.mockLandingPageOverlayController verify];
+    [mockedViewController verify];
+}
+
+- (void)testPerformWithPlaceHolderPushMessageMetadata {
+    [self commonPerformWithPlaceHolderPushMessageMetadata:self.mockLandingPageOverlayController];
+}
+
+- (void)testPerformWithPlaceHolderPushMessageMetadataWithOverlayViewController {
+    // UAOverlayViewController is used when SDK configured to use WKWebViews
+    [[[self.mockConfig stub] andReturnValue:OCMOCK_VALUE(YES)] useWKWebView];
+    
+    [self commonPerformWithPlaceHolderPushMessageMetadata:self.mockOverlayViewController];
 }
 
 @end

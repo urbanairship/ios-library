@@ -108,8 +108,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign) UALogLevel productionLogLevel;
 
-
-
 /**
  * The size in MB for the UA Disk Cache.  Defaults to 100.
  *
@@ -145,7 +143,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// @name Advanced Configuration Options
 ///---------------------------------------------------------------------------------------
 
-
 /**
  * Apps may be set to self-configure based on the APS-environment set in the
  * embedded.mobileprovision file by using detectProvisioningMode. If
@@ -164,12 +161,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign) BOOL detectProvisioningMode;
 
-
 /**
  * The Urban Airship device API url. This option is reserved for internal debugging.
  */
 @property (nonatomic, copy) NSString *deviceAPIURL;
-
 
 /**
  * The Urban Airship analytics API url. This option is reserved for internal debugging.
@@ -220,6 +215,15 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy) NSDictionary *customConfig;
 
+/**
+ * If set to `YES`, SDK will use WKWebView for UA message views and overlays.
+ * If set to `NO`,  SDK will use UIWebView for UA message views and overlays.
+ *
+ * Defaults to `NO`. 
+ * @note Will default to `YES` in SDK 9.0.
+ */
+@property (nonatomic, assign) BOOL useWKWebView;
+
 ///---------------------------------------------------------------------------------------
 /// @name Factory Methods
 ///---------------------------------------------------------------------------------------
@@ -246,7 +250,6 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 /// @name Utilities, Helpers
 ///---------------------------------------------------------------------------------------
-
 
 /**
  * Validates the current configuration. In addition to performing a strict validation, this method

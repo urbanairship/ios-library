@@ -22,7 +22,7 @@
     UANotificationAction *yayAction = [UANotificationAction actionWithIdentifier:@"yay" title:@"Yay" options:(UANotificationActionOptions)yayOptions];
 
     UNNotificationActionOptions zizOptions = UNNotificationActionOptionDestructive;
-    UATextInputNotificationAction *zizAction = [UATextInputNotificationAction actionWithIdentifier:@"ziz" title:@"Ziz" textInputButtonTitle:@"ziz button" textInputPlaceholder:@"ziz placeholder" options:zizOptions];
+    UATextInputNotificationAction *zizAction = [UATextInputNotificationAction actionWithIdentifier:@"ziz" title:@"Ziz" textInputButtonTitle:@"ziz button" textInputPlaceholder:@"ziz placeholder" options:(UANotificationActionOptions)zizOptions];
     
     NSArray *actions = @[watAction, yayAction, zizAction];
 

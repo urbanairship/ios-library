@@ -106,8 +106,10 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Metadata key for the web view. Available when an action is triggered from
  * a web view.
+ *
+ * @deprecated Deprecated - to be removed in SDK version 9.0
  */
-extern NSString * const UAActionMetadataWebViewKey;
+extern NSString * const UAActionMetadataWebViewKey DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 9.0");
 
 /**
  * Metadata key for the push notification. Available when an action is triggered

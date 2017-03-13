@@ -25,6 +25,7 @@
 
 #import "UALandingPageAction.h"
 #import "UALandingPageOverlayController.h"
+#import "UAOverlayViewController.h"
 #import "UAURLProtocol.h"
 #import "UAirship.h"
 #import "UAConfig.h"
@@ -153,7 +154,14 @@ NSString *const UALandingPageFill = @"fill";
         }
 
         //load the landing page
-        [UALandingPageOverlayController showURL:landingPageURL withHeaders:headers size:landingPageSize aspectLock:aspectLock];
+        if (UAirship.shared.config.useWKWebView) {
+            [UAOverlayViewController showURL:landingPageURL withHeaders:headers size:landingPageSize aspectLock:aspectLock];
+        } else {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+            [UALandingPageOverlayController showURL:landingPageURL withHeaders:headers size:landingPageSize aspectLock:aspectLock];
+#pragma GCC diagnostic pop
+        }
         completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
     }
 }

@@ -28,10 +28,25 @@
 @implementation UAWebViewCallData
 
 + (UAWebViewCallData *)callDataForURL:(NSURL *)url webView:(UIWebView *)webView {
-    return [UAWebViewCallData callDataForURL:url webView:webView message:nil];
+    return [UAWebViewCallData callDataForURL:url nullableWebView:webView nullableDelegate:nil message:nil];
 }
 
 + (UAWebViewCallData *)callDataForURL:(NSURL *)url webView:(UIWebView *)webView message:(UAInboxMessage *)message {
+    return [UAWebViewCallData callDataForURL:url nullableWebView:webView nullableDelegate:nil message:message];
+}
+
++ (UAWebViewCallData *)callDataForURL:(NSURL *)url delegate:(id <UAWKWebViewDelegate>)delegate {
+    return [UAWebViewCallData callDataForURL:url nullableWebView:nil nullableDelegate:delegate message:nil];
+}
+
++ (UAWebViewCallData *)callDataForURL:(NSURL *)url delegate:(id <UAWKWebViewDelegate>)delegate message:(UAInboxMessage *)message {
+    return [UAWebViewCallData callDataForURL:url nullableWebView:nil nullableDelegate:delegate message:message];
+}
+
++ (UAWebViewCallData *)callDataForURL:(NSURL *)url nullableWebView:(UIWebView *)webView nullableDelegate:(id <UAWKWebViewDelegate>)delegate message:(UAInboxMessage *)message {
+    
+    NSAssert((webView != nil) || (delegate != nil),@"webView (%@) or delegate (%@) must be non-null",webView,delegate);
+    
     NSString *urlPath = [url path];
     if ([urlPath hasPrefix:@"/"]) {
         urlPath = [urlPath substringFromIndex:1]; //trim the leading slash
@@ -73,7 +88,11 @@
     data.name = url.host;
     data.arguments = arguments;
     data.options = options;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     data.webView = webView;
+#pragma GCC diagnostic pop
+    data.delegate = delegate;
     data.url = url;
     data.message = message;
 

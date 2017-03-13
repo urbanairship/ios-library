@@ -598,7 +598,7 @@
 - (void)testHandleBackgroundActionIdentifier {
     UANotificationAction *foregroundAction = [UANotificationAction actionWithIdentifier:@"foregroundIdentifier"
                                                                                   title:@"title"
-                                                                                options:UNNotificationActionOptionForeground];
+                                                                                options:UANotificationActionOptionForeground];
     UANotificationAction *backgroundAction = [UANotificationAction actionWithIdentifier:@"backgroundIdentifier"
                                                                                   title:@"title"
                                                                                 options:0];
@@ -665,7 +665,7 @@
  * with a foreground action.
  */
 - (void)testHandleForgroundActionIdentifier {
-    UANotificationAction *foregroundAction = [UANotificationAction actionWithIdentifier:@"foregroundIdentifier" title:@"title" options:UNNotificationActionOptionForeground];
+    UANotificationAction *foregroundAction = [UANotificationAction actionWithIdentifier:@"foregroundIdentifier" title:@"title" options:UANotificationActionOptionForeground];
     UANotificationAction *backgroundAction = [UANotificationAction actionWithIdentifier:@"backgroundIdentifier" title:@"title" options:0];
 
     UANotificationCategory *category = [UANotificationCategory categoryWithIdentifier:@"notificationCategory"
@@ -729,7 +729,7 @@
  * Test application:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler.
  */
 - (void)testHandleActionIdentifierWithResponseInfo {
-    UANotificationAction *foregroundAction = [UANotificationAction actionWithIdentifier:@"foregroundIdentifier" title:@"title" options:UNNotificationActionOptionForeground];
+    UANotificationAction *foregroundAction = [UANotificationAction actionWithIdentifier:@"foregroundIdentifier" title:@"title" options:UANotificationActionOptionForeground];
     UANotificationAction *backgroundAction = [UANotificationAction actionWithIdentifier:@"backgroundIdentifier" title:@"title" options:0];
 
     UANotificationCategory *category = [UANotificationCategory categoryWithIdentifier:@"notificationCategory"

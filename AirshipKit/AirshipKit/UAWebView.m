@@ -1,16 +1,16 @@
 /*
  Copyright 2009-2017 Urban Airship Inc. All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
-
+ 
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
-
+ 
  2. Redistributions in binary form must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided with the distribution.
-
+ 
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
@@ -23,38 +23,28 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import "UAWebView+Internal.h"
+#import "UAirship.h"
+#import "UAConfig.h"
 
-#import "UAUIWebViewDelegate.h"
-#import "UARichContentWindow.h"
-#import "UABaseNativeBridge.h"
+// Had to create this class because Interface Builder doesn't directly support WKWebView
+@implementation UAWebView
 
-NS_ASSUME_NONNULL_BEGIN
-
-/**
- * A UIWebView native bridge that automatically injects the Urban Airship
- * Javascript interface on whitelisted URLs.
- */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-@interface UAWebViewDelegate : UABaseNativeBridge <UAUIWebViewDelegate, UARichContentWindow>
-#pragma GCC diagnostic pop
-
-/**
- * Optional delegate to forward any UAUIWebViewDelegate calls.
- */
-@property (nonatomic, weak, nullable) id <UAUIWebViewDelegate> forwardDelegate;
-
-/**
- * The rich content window. Optional, needed to support closing the webview from
- * the Urban Airship Javascript interface.
- */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-@property (nonatomic, weak, nullable) id <UARichContentWindow> richContentWindow;
-#pragma GCC diagnostic pop
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    // An initial frame for initialization must be set, but it will be overridden
+    // below by the autolayout constraints set in interface builder.
+    CGRect frame = [[UIScreen mainScreen] bounds];
+    WKWebViewConfiguration *myConfiguration = [WKWebViewConfiguration new];
+    
+    // Set any configuration parameters here, e.g.
+    //myConfiguration.dataDetectorTypes = WKDataDetectorTypeAll;
+    
+    self = [super initWithFrame:frame configuration:myConfiguration];
+    
+    // Apply constraints from interface builder.
+    self.translatesAutoresizingMaskIntoConstraints = NO;
+ 
+    return self;
+}
 
 @end
-
-NS_ASSUME_NONNULL_END

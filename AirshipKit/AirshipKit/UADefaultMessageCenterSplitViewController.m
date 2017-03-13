@@ -26,15 +26,17 @@
 #import "UADefaultMessageCenterSplitViewController.h"
 #import "UADefaultMessageCenterListViewController.h"
 #import "UADefaultMessageCenterMessageViewController.h"
+#import "UAMessageCenterMessageViewController.h"
 #import "UADefaultMessageCenter.h"
 #import "UADefaultMessageCenterStyle.h"
 #import "UAirship.h"
 #import "UAMessageCenterLocalization.h"
+#import "UAConfig.h"
 
 @interface UADefaultMessageCenterSplitViewController ()
 
 @property(nonatomic, strong) UADefaultMessageCenterListViewController *listViewController;
-@property(nonatomic, strong) UADefaultMessageCenterMessageViewController *messageViewController;
+@property(nonatomic, strong) UIViewController *messageViewController;
 @property (nonatomic, strong) UINavigationController *listNav;
 @property (nonatomic, strong) UINavigationController *messageNav;
 
@@ -47,9 +49,17 @@
     UADefaultMessageCenterListViewController *lvc;
     lvc = [[UADefaultMessageCenterListViewController alloc] initWithNibName:@"UADefaultMessageCenterListViewController"
                                                                      bundle:[UAirship resources]];
-    UADefaultMessageCenterMessageViewController *mvc;
-    mvc = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController"
-                                                                        bundle:[UAirship resources]];
+    UIViewController *mvc;
+    if (UAirship.shared.config.useWKWebView) {
+        mvc = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController"
+                                                                     bundle:[UAirship resources]];
+    } else {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+        mvc = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController"
+                                                                            bundle:[UAirship resources]];
+#pragma GCC diagnostic pop
+    }
 
 
     self.listViewController = lvc;
@@ -125,7 +135,14 @@
 - (void)setFilter:(NSPredicate *)filter {
     _filter = filter;
     self.listViewController.filter = filter;
-    self.messageViewController.filter = filter;
+    if (UAirship.shared.config.useWKWebView) {
+        ((UAMessageCenterMessageViewController *)self.messageViewController).filter = filter;
+    } else {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+        ((UADefaultMessageCenterMessageViewController *)self.messageViewController).filter = filter;
+#pragma GCC diagnostic pop
+    }
 }
 
 - (void)setTitle:(NSString *)title {

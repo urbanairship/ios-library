@@ -23,37 +23,49 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <WebKit/WebKit.h>
 
-#import "UAUIWebViewDelegate.h"
-#import "UARichContentWindow.h"
-#import "UABaseNativeBridge.h"
+#import "UAWebViewCallData.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * A UIWebView native bridge that automatically injects the Urban Airship
- * Javascript interface on whitelisted URLs.
+ * Base class for UIWebView & WKWebView native bridges that automatically inject the 
+ * Urban Airship Javascript interface on whitelisted URLs.
  */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-@interface UAWebViewDelegate : UABaseNativeBridge <UAUIWebViewDelegate, UARichContentWindow>
-#pragma GCC diagnostic pop
+@interface UABaseNativeBridge()
 
 /**
- * Optional delegate to forward any UAUIWebViewDelegate calls.
+ * Populate Javascript environment if the webView is showing a whitelisted URL.
+ *
+ * @param webView The UIWebView or WKWebView.
  */
-@property (nonatomic, weak, nullable) id <UAUIWebViewDelegate> forwardDelegate;
+- (void)populateJavascriptEnvironmentIfWhitelisted:(UIView *)webView requestURL:(NSURL *)url;
 
 /**
- * The rich content window. Optional, needed to support closing the webview from
- * the Urban Airship Javascript interface.
+ * Call the appropriate Javascript delegate with the call data and evaluate the returned Javascript.
+ *
+ * @param data The object holding the data associated with JS delegate calls .
+ * @param webView The UIWebView or WKWebView.
  */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-@property (nonatomic, weak, nullable) id <UARichContentWindow> richContentWindow;
-#pragma GCC diagnostic pop
+- (void)performJSDelegateWithData:(UAWebViewCallData *)data webView:(UIView *)webView;
+
+/**
+ * Handles a link click.
+ *
+ * @param url The link's URL.
+ * @returns YES if the link was handled, otherwise NO.
+ */
+- (BOOL)handleLinkClick:(NSURL *)url;
+
+/**
+ * Test if request's URL is an Airship URL and is whitelisted.
+ *
+ * @param request The request.
+ * @returns YES if the request is both an Airship URL and is whitelisted, otherwise NO.
+ */
+- (BOOL)isWhiteListedAirshipRequest:(NSURLRequest *)request;
 
 @end
 
