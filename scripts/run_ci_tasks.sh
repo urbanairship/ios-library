@@ -3,6 +3,7 @@ set -o pipefail
 
 SCRIPT_DIRECTORY=`dirname "$0"`
 ROOT_PATH=`dirname "${0}"`/../
+MAX_TEST_RETRIES=2
 
 # Target iOS SDK when building the projects
 TARGET_SDK='iphonesimulator'
@@ -17,6 +18,10 @@ source "${SCRIPT_DIRECTORY}/build.sh"
 DERIVED_DATA=$(mktemp -d /tmp/ci-derived-data-XXXXX)
 
 # Build All Sample Projects
+# Make sure AirshipConfig.plist exists
+cp -np ${ROOT_PATH}/Sample/AirshipConfig.plist.sample ${ROOT_PATH}/Sample/AirshipConfig.plist || true
+cp -np ${ROOT_PATH}/SwiftSample/AirshipConfig.plist.sample ${ROOT_PATH}/SwiftSample/AirshipConfig.plist || true
+
 # Use Debug configurations and a simulator SDK so the build process doesn't attempt to sign the output
 xcrun xcodebuild -project "${ROOT_PATH}/Sample/Sample.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme Sample -configuration Debug -sdk $TARGET_SDK -destination "${TEST_DESTINATION}"
 xcrun xcodebuild -project "${ROOT_PATH}/SwiftSample/SwiftSample.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme SwiftSample -configuration Debug -sdk $TARGET_SDK  -destination "${TEST_DESTINATION}"
@@ -31,7 +36,27 @@ rm -rf "${ROOT_PATH}/test-output"
 mkdir -p "${ROOT_PATH}/test-output"
 
 # Run our Logic Tests
-xcrun xcodebuild -destination "${TEST_DESTINATION}" -workspace "${ROOT_PATH}/Airship.xcworkspace" -derivedDataPath "${DERIVED_DATA}" -scheme AirshipKitTests test | tee "${ROOT_PATH}/test-output/XCTEST-LOGIC.out"
+retryNumber=0
+testResult=999999
+
+while [ $retryNumber -le $MAX_TEST_RETRIES -a $testResult -ne 0 ]
+do
+    if [ $retryNumber -lt $MAX_TEST_RETRIES ]
+    then
+        # except for the last retry, don't fail the job if the test fails
+        set +e
+    fi
+    xcrun xcodebuild -destination "${TEST_DESTINATION}" -workspace "${ROOT_PATH}/Airship.xcworkspace" -derivedDataPath "${DERIVED_DATA}" -scheme AirshipKitTests test | tee "${ROOT_PATH}/test-output/XCTEST-LOGIC.out"
+    testResult=$?
+    set -e
+    if [ $retryNumber -le $MAX_TEST_RETRIES -a $testResult -ne 0 ]
+    then
+        echo "Logic Test result = $testResult"
+        # wait before trying again
+        sleep 60
+    fi
+    retryNumber=$((retryNumber+1))
+done
 
 # Run pod lib lint
 cd $ROOT_PATH
@@ -43,3 +68,4 @@ rm -rf "${DERIVED_DATA}"
 
 end_time=`date +%s`
 echo execution time was `expr $end_time - $start_time` s.
+
