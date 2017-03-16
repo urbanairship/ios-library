@@ -68,6 +68,7 @@
     [self.mockedBundle stopMocking];
 
     [self.dataStore removeAll];
+    self.location = nil;
 
     [super tearDown];
 }
