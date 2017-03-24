@@ -346,7 +346,7 @@
     [mockDelegate stopMocking];
 }
 
-// Tests forwarding cusotm events to the analytics delegate.
+// Tests forwarding custom events to the analytics delegate.
 - (void)testForwardCustomEvents {
     id mockDelegate = [OCMockObject niceMockForProtocol:@protocol(UAAnalyticsDelegate)];
     self.analytics.delegate = mockDelegate;

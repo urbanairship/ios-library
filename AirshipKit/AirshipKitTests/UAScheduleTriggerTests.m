@@ -52,7 +52,8 @@
                                       UAScheduleTriggerRegionExitName: @(UAScheduleTriggerRegionExit),
                                       UAScheduleTriggerCustomEventCountName: @(UAScheduleTriggerCustomEventCount),
                                       UAScheduleTriggerCustomEventValueName: @(UAScheduleTriggerCustomEventValue),
-                                      UAScheduleTriggerScreenName: @(UAScheduleTriggerScreen) };
+                                      UAScheduleTriggerScreenName: @(UAScheduleTriggerScreen),
+                                      UAScheduleTriggerAppInitName: @(UAScheduleTriggerAppInit) };
 
 
     for (NSString *typeName in triggerTypeMap) {

@@ -33,6 +33,7 @@ NSString *const UAScheduleTriggerPredicateKey = @"predicate";
 NSString *const UAScheduleTriggerGoalKey = @"goal";
 
 // Trigger Names
+NSString *const UAScheduleTriggerAppInitName = @"app_init";
 NSString *const UAScheduleTriggerAppForegroundName = @"foreground";
 NSString *const UAScheduleTriggerAppBackgroundName = @"background";
 NSString *const UAScheduleTriggerRegionEnterName = @"region_enter";
@@ -58,6 +59,10 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
 
 + (instancetype)triggerWithType:(UAScheduleTriggerType)type goal:(NSNumber *)goal predicate:(UAJSONPredicate *)predicate {
     return [[UAScheduleTrigger alloc] initWithType:type goal:goal predicate:predicate];
+}
+
++ (instancetype)appInitTriggerWithCount:(NSUInteger)count {
+    return [UAScheduleTrigger triggerWithType:UAScheduleTriggerAppInit goal:@(count) predicate:nil];
 }
 
 + (instancetype)foregroundTriggerWithCount:(NSUInteger)count {
@@ -140,6 +145,8 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
         triggerType = UAScheduleTriggerCustomEventValue;
     } else if ([UAScheduleTriggerScreenName isEqualToString:triggerTypeString]) {
         triggerType = UAScheduleTriggerScreen;
+    } else if ([UAScheduleTriggerAppInitName isEqualToString:triggerTypeString]) {
+        triggerType = UAScheduleTriggerAppInit;
     } else {
 
         if (error) {

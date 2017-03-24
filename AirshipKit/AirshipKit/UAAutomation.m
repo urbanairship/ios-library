@@ -76,6 +76,8 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
         [self rescheduleTimers];
     }
 
+    [self updateTriggersWithType:UAScheduleTriggerAppInit argument:nil incrementAmount:1.0];
+
     return self;
 }
 
