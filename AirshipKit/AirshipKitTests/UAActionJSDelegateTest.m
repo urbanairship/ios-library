@@ -161,30 +161,24 @@
 
     [self.registry registerAction:unserializable name:@"unserializable"];
 
-    NSURL *url = [NSURL URLWithString:@"uairship://run-action-cb/callback-ID-1?test_action=%22hi%22"];
+    NSURL *url = [NSURL URLWithString:@"uairship://run-action-cb/test_action/%22hi%22/callback-ID-1"];
 
     [self verifyWebViewCallWithURL:url expectingError:NO expectedResult:@"hi" callbackID:@"callback-ID-1"];
 
     //this produces an unserializable result, which should be converted into a string description
-    url = [NSURL URLWithString:@"uairship://run-action-cb/callback-ID-2?unserializable=%22hi%22"];
+    url = [NSURL URLWithString:@"uairship://run-action-cb/unserializable/%22hi%22/callback-ID-2"];
 
     [self verifyWebViewCallWithURL:url expectingError:NO expectedResult:self.description callbackID:@"callback-ID-2"];
 }
 
 /**
- * Test running an action with a callback, when passing improperly encoded arguments
+ * Test running an action with a callback with invalid number of arguments.
  */
 - (void)testRunActionCBInvalidArgs {
-    // Invalid action argument value because it is not properly JSON encoded
-    NSURL *url = [NSURL URLWithString:@"uairship://run-action-cb/callback-ID-1?test_action=blah"];
+    // Invalid action argument value because it is missing arguments
+    NSURL *url = [NSURL URLWithString:@"uairship://run-action-cb/junk"];
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
-        handler([UAActionResult resultWithValue:@"howdy"]);
-    }];
-
-    [self.registry registerAction:test name:@"test_action"];
-
-    [self verifyWebViewCallWithURL:url expectingError:YES expectedResult:nil callbackID:@"callback-ID-1"];
+    [self verifyWebViewCallWithURL:url expectingError:NO expectedResult:nil callbackID:nil];
 }
 
 /**
@@ -192,7 +186,7 @@
  */
 - (void)testRunActionCBInvalidAction {
     // This action doesn't exist, so should result in an error
-    NSURL *url = [NSURL URLWithString:@"uairship://run-action-cb/callback-ID-1?bogus_action=%22hi%22"];
+    NSURL *url = [NSURL URLWithString:@"uairship://run-action-cb/bogus_action/%22hi%22/callback-ID-1"];
 
     [self verifyWebViewCallWithURL:url expectingError:YES expectedResult:nil callbackID:@"callback-ID-1"];
 }
@@ -202,34 +196,17 @@
  */
 - (void)testRunActionCBEmptyArgs {
     UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
+        XCTAssertNil(args.value);
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
     [self.registry registerAction:test name:@"test_action"];
 
-    NSURL *url = [NSURL URLWithString:@"uairship://run-action-cb/callback-ID-1?test_action"];
+    NSURL *url = [NSURL URLWithString:@"uairship://run-action-cb/test_action/null/callback-ID-1"];
 
     [self verifyWebViewCallWithURL:url expectingError:NO expectedResult:@"howdy" callbackID:@"callback-ID-1"];
 }
 
-/**
- * Test running an action with no provided callback ID
- */
-- (void)testRunActionCBNoCallback {
-    __block BOOL ran = NO;
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
-        ran = YES;
-        handler([UAActionResult resultWithValue:@"howdy"]);
-    }];
-
-    [self.registry registerAction:test name:@"test_action"];
-
-    NSURL *url = [NSURL URLWithString:@"uairship://run-action-cb?test_action"];
-
-    [self performWebViewCallWithURL:url completionHandler:^(NSString *script) {
-        XCTAssertTrue(ran, @"the action should have run");
-    }];
-}
 
 /**
  * Test the run-actions variant

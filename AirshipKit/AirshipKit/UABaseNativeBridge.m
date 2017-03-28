@@ -60,20 +60,20 @@
     /*
      * Define and initialize our one global
      */
-    __block NSString *js = @"var UAirship = {};";
+    __block NSString *js = @"var _UAirship = {};";
     
     void (^appendStringGetter)(NSString *, NSString *) = ^(NSString *methodName, NSString *value){
         if (!value) {
-            js = [js stringByAppendingFormat:@"UAirship.%@ = function() {return null;};", methodName];
+            js = [js stringByAppendingFormat:@"_UAirship.%@ = function() {return null;};", methodName];
         } else {
             NSString *encodedValue = [value urlEncodedStringWithEncoding:NSUTF8StringEncoding];
-            js = [js stringByAppendingFormat:@"UAirship.%@ = function() {return decodeURIComponent(\"%@\");};", methodName, encodedValue];
+            js = [js stringByAppendingFormat:@"_UAirship.%@ = function() {return decodeURIComponent(\"%@\");};", methodName, encodedValue];
         }
     };
     
     void (^appendNumberGetter)(NSString *, NSNumber *) = ^(NSString *methodName, NSNumber *value){
         NSNumber *returnValue = value ?: @(-1);
-        js = [js stringByAppendingFormat:@"UAirship.%@ = function() {return %@;};", methodName, returnValue];
+        js = [js stringByAppendingFormat:@"_UAirship.%@ = function() {return %@;};", methodName, returnValue];
     };
     
     
@@ -131,8 +131,6 @@
     /*
      * Define action/native bridge functionality:
      *
-     * UAirship.callbackURL,
-     * UAirship.invoke,
      * UAirship.runAction,
      * UAirship.finishAction
      *
@@ -248,7 +246,7 @@
 }
 
 - (BOOL)isWhiteListedAirshipRequest:(NSURLRequest *)request {
-    // uairship://command/[<arguments>][?<dictionary>]
+    // uairship://command/[<arguments>][?<options>]
     NSURL *requestURL = (request.mainDocumentURL) ? request.mainDocumentURL : request.URL;
     return ([[request.URL scheme] isEqualToString:@"uairship"] && ([[UAirship shared].whitelist isWhitelisted:requestURL]));
 }
