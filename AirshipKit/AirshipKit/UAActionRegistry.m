@@ -40,6 +40,7 @@
 #import "UAScheduleAction.h"
 #import "UAFetchDeviceInfoAction.h"
 #import "UAChannelCaptureAction.h"
+#import "UAEnableFeatureAction.h"
 
 @implementation UAActionRegistry
 @dynamic registeredEntries;
@@ -366,6 +367,14 @@
     [self registerAction:channelCaptureAction
                     names:@[kUAChannelCaptureActionDefaultRegistryName, kUAChannelCaptureActionDefaultRegistryAlias]];
 
+    // Enable feature action
+    UAEnableFeatureAction *enableFeatureAction = [[UAEnableFeatureAction alloc] init];
+    [self registerAction:enableFeatureAction
+                   names:@[kUAEnableFeatureActionDefaultRegistryName, kUAEnableFeatureActionDefaultRegistryAlias]
+               predicate:^BOOL(UAActionArguments *args) {
+                   BOOL foregroundPresentation = args.metadata[UAActionMetadataForegroundPresentationKey] != nil;
+                   return (BOOL)!foregroundPresentation;
+               }];
 }
 
 @end

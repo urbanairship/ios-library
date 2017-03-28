@@ -42,6 +42,7 @@
 #import "UADefaultMessageCenterStyle.h"
 #import "UADisplayInboxAction.h"
 #import "UADisposable.h"
+#import "UAEnableFeatureAction.h"
 #import "UAEvent.h"
 #import "UAFetchDeviceInfoAction.h"
 #import "UAGlobal.h"

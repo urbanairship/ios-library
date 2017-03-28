@@ -60,6 +60,7 @@ NSString * const UAResetKeychainKey = @"com.urbanairship.reset_keychain";
 
 NSString * const UALibraryVersion = @"com.urbanairship.library_version";
 
+
 static UAirship *sharedAirship_;
 
 static NSBundle *resourcesBundle_;
@@ -244,7 +245,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     [dataStore setObject:currentDeviceId forKey:@"deviceId"];
 
     // Create Airship
-    sharedAirship_ = [[UAirship alloc] initWithConfig:config dataStore:dataStore];
+    [UAirship setSharedAirship:[[UAirship alloc] initWithConfig:config dataStore:dataStore]];
 
     // Save the version
     if ([[UAirshipVersion get] isEqualToString:@"0.0.0"]) {
@@ -347,10 +348,14 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     [sharedAirship_.sharedInAppMessaging invalidateAutoDisplayTimer];
 
     // Finally, release the airship!
-    sharedAirship_ = nil;
+    [UAirship setSharedAirship:nil];
 
     // Reset the dispatch_once_t flag for testing
     takeOffPred_ = 0;
+}
+
++ (void)setSharedAirship:(UAirship *)airship {
+    sharedAirship_ = airship;
 }
 
 + (UAirship *)shared {

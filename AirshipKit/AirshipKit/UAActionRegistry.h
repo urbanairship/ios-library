@@ -57,6 +57,8 @@
 #define kUAFetchDeviceInfoActionDefaultRegistryAlias @"^fdi"
 #define kUAChannelCaptureActionDefaultRegistryName @"channel_capture_action"
 #define kUAChannelCaptureActionDefaultRegistryAlias @"^cc"
+#define kUAEnableFeatureActionDefaultRegistryName @"enable_feature"
+#define kUAEnableFeatureActionDefaultRegistryAlias @"^ef"
 
 
 #define kUALandingPageActionLastOpenTimeLimitInSeconds @(7 * 86400) // 1 week
