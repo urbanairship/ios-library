@@ -47,6 +47,7 @@ extern NSString * const UAScheduleTriggerErrorDomain;
  * Possible trigger types.
  */
 typedef NS_ENUM(NSInteger, UAScheduleTriggerType) {
+
     /**
      * Foreground trigger.
      */
@@ -80,7 +81,13 @@ typedef NS_ENUM(NSInteger, UAScheduleTriggerType) {
     /**
      * Screen trigger.
      */
-    UAScheduleTriggerScreen
+    UAScheduleTriggerScreen,
+
+    /**
+     * App init trigger.
+     */
+    UAScheduleTriggerAppInit
+
 };
 
 
@@ -98,6 +105,11 @@ extern NSString *const UAScheduleTriggerPredicateKey;
  * JSON key for the trigger's goal.
  */
 extern NSString *const UAScheduleTriggerGoalKey;
+
+/**
+ * App init trigger name when defining a trigger in JSON.
+ */
+extern NSString *const UAScheduleTriggerAppInitName;
 
 /**
  * Foreground trigger name when defining a trigger in JSON.
@@ -151,6 +163,14 @@ extern NSString *const UAScheduleTriggerScreenName;
  * to execute its actions.
  */
 @property(nonatomic, readonly) NSNumber *goal;
+
+/**
+ * Factory method to create a app init trigger.
+ *
+ * @param count Number of foregrounds before firing the trigger.
+ * @return An app init trigger.
+ */
++ (instancetype)appInitTriggerWithCount:(NSUInteger)count;
 
 /**
  * Factory method to create a foreground trigger.
