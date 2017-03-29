@@ -167,27 +167,44 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
         // Failure
         if (httpResponse.statusCode != 200  && httpResponse.statusCode != 304) {
             [UAUtils logFailedRequest:retrieveRequest withMessage:@"Retrieve messages failed" withError:error withResponse:httpResponse];
+            failureBlock();
+            return;
+        }
 
-            failureBlock(httpResponse.statusCode);
+        // 304, no changes
+        if (httpResponse.statusCode == 304) {
+            successBlock(httpResponse.statusCode, nil);
+            return;
+        }
 
+        // Missing response body
+        if (!data) {
+            UA_LTRACE(@"Retrieve messages list missing response body.");
+            failureBlock();
             return;
         }
 
         // Success
-        NSArray *messages;
+        NSArray *messages = nil;
         NSDictionary *headers = httpResponse.allHeaderFields;
         NSString *lastModified = [headers objectForKey:@"Last-Modified"];
+
+        // Parse the response
+        NSError *parseError;
+        NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
+        messages = [jsonResponse objectForKey:@"messages"];
+
+        if (!messages) {
+            UA_LDEBUG(@"Unable to parse inbox message body: %@ Error: %@", data, parseError);
+            failureBlock();
+            return;
+        }
+
+        UA_LTRACE(@"Retrieved message list with status: %ld jsonResponse: %@", (unsigned long)httpResponse.statusCode, jsonResponse);
 
         UA_LDEBUG(@"Setting Last-Modified time to '%@' for user %@'s message list.", lastModified, self.user.username);
         [self.dataStore setValue:lastModified
                           forKey:[NSString stringWithFormat:UALastMessageListModifiedTime, self.user.username]];
-
-
-        // Parse the response
-        NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
-        messages = [jsonResponse objectForKey:@"messages"];
-
-        UA_LTRACE(@"Retrieved message list with status: %ld jsonResponse: %@", (unsigned long)httpResponse.statusCode, jsonResponse);
 
         successBlock(httpResponse.statusCode, messages);
     }];
@@ -212,7 +229,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
 
             [UAUtils logFailedRequest:batchDeleteRequest withMessage:@"Batch delete failed" withError:error withResponse:httpResponse];
 
-            failureBlock(httpResponse.statusCode);
+            failureBlock();
 
             return;
         }
@@ -241,7 +258,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
         if (httpResponse.statusCode != 200) {
             [UAUtils logFailedRequest:batchMarkAsReadRequest withMessage:@"Batch delete failed" withError:error withResponse:httpResponse];
 
-            failureBlock(httpResponse.statusCode);
+            failureBlock();
 
             return;
         }

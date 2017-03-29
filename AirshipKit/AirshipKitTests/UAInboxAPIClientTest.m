@@ -171,7 +171,7 @@
     // Make call
     [self.inboxAPIClient retrieveMessageListOnSuccess:^(NSUInteger status, NSArray * _Nullable messages) {
         XCTAssertEqualObjects(messages[0], @"someMessage", @"Messages should match messages from the response");
-    } onFailure:^(NSUInteger status) {
+    } onFailure:^() {
         XCTFail(@"Should not be called");
     }];
 
@@ -183,6 +183,7 @@
  * Tests retrieving the message list on failure.
  */
 - (void)testRetrieveMessageListOnFailure {
+
 
     // Create a failure response
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:500 HTTPVersion:nil headerFields:@{}];
@@ -199,14 +200,47 @@
 
     }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    __block NSUInteger failureCode = 0;
+    __block BOOL failed = NO;
     [self.inboxAPIClient retrieveMessageListOnSuccess:^(NSUInteger status, NSArray * _Nullable messages) {
         XCTFail(@"Should not be called");
-    } onFailure:^(NSUInteger status) {
-        failureCode = status;
+    } onFailure:^() {
+        failed = YES;
     }];
 
-    XCTAssertTrue(failureCode == 500);
+    XCTAssertTrue(failed);
+
+    [self.mockSession verify];
+    [self.mockSession stopMocking];
+}
+
+/**
+* Tests retrieving the message list on failure.
+*/
+- (void)testRetrieveMessageListInvalidResponse {
+
+    // Create a success response
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
+
+    // Stub the session to return the response with no message body
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+
+        completionHandler(nil, (NSURLResponse *)response, nil);
+
+        typedef void (^UARequestCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
+
+    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    __block BOOL failed = NO;
+    [self.inboxAPIClient retrieveMessageListOnSuccess:^(NSUInteger status, NSArray * _Nullable messages) {
+        XCTFail(@"Should not be called");
+    } onFailure:^() {
+        failed = YES;
+    }];
+
+    XCTAssertTrue(failed);
 
     [self.mockSession verify];
     [self.mockSession stopMocking];
@@ -238,7 +272,7 @@
     // Make call
     [self.inboxAPIClient performBatchMarkAsReadForMessages:@[@{@"messageURL":testURL}] onSuccess:^{
         successBlockCalled = true;
-    } onFailure:^(NSUInteger status) {
+    } onFailure:^() {
         XCTFail(@"Should not be called");
     }];
 
@@ -273,7 +307,7 @@
     // Make call
     [self.inboxAPIClient performBatchMarkAsReadForMessages:@[@{@"messageURL":testURL}] onSuccess:^{
         XCTFail(@"Should not be called");
-    } onFailure:^(NSUInteger status) {
+    } onFailure:^() {
         failureBlockCalled = true;
     }];
 
@@ -309,7 +343,7 @@
     // Make call
     [self.inboxAPIClient performBatchDeleteForMessages:@[@{@"messageURL":testURL}] onSuccess:^{
         successBlockCalled = true;
-    } onFailure:^(NSUInteger status) {
+    } onFailure:^() {
         XCTFail(@"Should not be called");
     }];
 
@@ -344,7 +378,7 @@
     // Make call
     [self.inboxAPIClient performBatchDeleteForMessages:@[@{@"messageURL":testURL}] onSuccess:^{
         XCTFail(@"Should not be called");
-    } onFailure:^(NSUInteger status) {
+    } onFailure:^() {
         failureBlockCalled = true;
     }];
 
