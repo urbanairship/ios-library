@@ -35,13 +35,13 @@
 @interface UAChannelCaptureTest : XCTestCase
 @property(nonatomic, strong) UAConfig *config;
 @property(nonatomic, strong) UAChannelCapture *channelCapture;
-@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+@property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 
-@property(nonatomic, strong) id mockAlertView;
 @property(nonatomic, strong) id mockPush;
 @property(nonatomic, strong) id mockPasteboard;
 @property(nonatomic, strong) id mockApplication;
-
+@property(nonatomic, strong) id mockWindow;
+@property(nonatomic, strong) id mockRootViewController;
 @end
 
 @implementation UAChannelCaptureTest
@@ -52,15 +52,17 @@
     self.mockPush = [OCMockObject niceMockForClass:[UAPush class]];
     [[[self.mockPush stub] andReturn:@"pushChannelID"] channelID];
 
-    self.mockAlertView = [OCMockObject niceMockForClass:[UIAlertView class]];
-    [[[self.mockAlertView stub] andReturn:self.mockAlertView] alloc];
-
     self.mockPasteboard = [OCMockObject niceMockForClass:[UIPasteboard class]];
     [[[self.mockPasteboard stub] andReturn:self.mockPasteboard] generalPasteboard];
 
+
+    self.mockRootViewController = [OCMockObject niceMockForClass:[UIViewController class]];
+    self.mockWindow = [OCMockObject niceMockForClass:[UIWindow class]];
+    [[[self.mockWindow stub] andReturn:self.mockRootViewController] rootViewController];
+
     self.mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
-
+    [[[self.mockApplication stub] andReturn:@[self.mockWindow]] windows];
 
     self.config = [UAConfig config];
     self.config.developmentAppKey = @"App key";
@@ -72,12 +74,12 @@
     self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config
                                                                 push:self.mockPush
                                                            dataStore:self.dataStore];
-    
 }
 
 - (void)tearDown {
     [self.mockPush stopMocking];
-    [self.mockAlertView stopMocking];
+    [self.mockRootViewController stopMocking];
+    [self.mockWindow stopMocking];
     [self.mockPasteboard stopMocking];
     [self.mockApplication stopMocking];
     [self.channelCapture disable];
@@ -89,26 +91,37 @@
  * Test app foregrounding with the expected token in the pasteboard.
  */
 - (void)testAppForeground {
-    XCTestExpectation *alertViewDisplayed = [self expectationWithDescription:@"Alert view displayed"];
+    __block XCTestExpectation *alertDisplayed = [self expectationWithDescription:@"Alert displayed"];
+    __block UIAlertController *alertController;
 
     // Generate a token with a URL
     [[[self.mockPasteboard stub] andReturn:[self generateTokenWithURLString:@"oh/hi?channel=CHANNEL"]] string];
 
     // We get a warning when we mock the init method
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-value"
-    [[[self.mockAlertView expect] andReturn:self.mockAlertView] initWithTitle:@"Channel ID"
-                                                                      message:@"pushChannelID"
-                                                                     delegate:self.channelCapture
-                                                            cancelButtonTitle:@"Cancel"
-                                                            otherButtonTitles:@"Copy", @"Save", nil];
-#pragma clang diagnostic pop
+    [[self.mockRootViewController expect] presentViewController:[OCMArg checkWithBlock:^BOOL(id obj) {
 
-    // When we show the alert view fulfill the test expectation
-    [[[self.mockAlertView stub] andDo:^(NSInvocation *args) {
-        [alertViewDisplayed fulfill];
-    }] show];
+        if (![obj isKindOfClass:[UIAlertController class]]) {
+            return NO;
+        }
 
+        alertController = (UIAlertController *)obj;
+        if (![alertController.title isEqualToString:@"Channel ID"]) {
+            return NO;
+        }
+
+        if (![alertController.message isEqualToString:@"pushChannelID"]) {
+            return NO;
+        }
+
+        if (alertController.actions.count != 3) {
+            return NO;
+        }
+
+        [alertDisplayed fulfill];
+
+        return YES;
+
+    }] animated:YES completion:nil];
 
     // Post the foreground notification
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification
@@ -116,43 +129,45 @@
 
     // Wait for the test expectations
     [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-        [self.mockAlertView verify];
+        [self.mockRootViewController verify];
     }];
-
-    // Verify button 1 sets the pasteboard's String
-    [[self.mockPasteboard expect] setString:@"pushChannelID"];
-    [self.channelCapture alertView:self.mockAlertView didDismissWithButtonIndex:1];
-    [self.mockPasteboard verify];
-
-    // Verify button 2 tries to open the channel URL
-    [[self.mockApplication expect] openURL:[NSURL URLWithString:@"https://go.urbanairship.com/oh/hi?channel=pushChannelID"]];
-    [self.channelCapture alertView:self.mockAlertView didDismissWithButtonIndex:2];
-    [self.mockApplication verify];
 }
 
 /**
  * Test app foregrounding with the expected token in the pasteboard without a URL.
  */
 - (void)testAppForegroundNoURL {
-    XCTestExpectation *alertViewDisplayed = [self expectationWithDescription:@"Alert view displayed"];
+    __block XCTestExpectation *alertDisplayed = [self expectationWithDescription:@"Alert displayed"];
+    __block UIAlertController *alertController;
 
-    // Generate a token without a URL
+    // Generate a token with a URL
     [[[self.mockPasteboard stub] andReturn:[self generateTokenWithURLString:nil]] string];
 
     // We get a warning when we mock the init method
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-value"
-    [[[self.mockAlertView expect] andReturn:self.mockAlertView] initWithTitle:@"Channel ID"
-                                                                      message:@"pushChannelID"
-                                                                     delegate:self.channelCapture
-                                                            cancelButtonTitle:@"Cancel"
-                                                            otherButtonTitles:@"Copy", nil, nil];
-#pragma clang diagnostic pop
+    [[self.mockRootViewController expect] presentViewController:[OCMArg checkWithBlock:^BOOL(id obj) {
 
-    // When we show the alert view fulfill the test expectation
-    [[[self.mockAlertView stub] andDo:^(NSInvocation *args) {
-        [alertViewDisplayed fulfill];
-    }] show];
+        if (![obj isKindOfClass:[UIAlertController class]]) {
+            return NO;
+        }
+
+        alertController = (UIAlertController *)obj;
+        if (![alertController.title isEqualToString:@"Channel ID"]) {
+            return NO;
+        }
+
+        if (![alertController.message isEqualToString:@"pushChannelID"]) {
+            return NO;
+        }
+
+        if (alertController.actions.count != 2) {
+            return NO;
+        }
+
+        [alertDisplayed fulfill];
+
+        return YES;
+
+    }] animated:YES completion:nil];
 
     // Post the foreground notification
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification
@@ -160,13 +175,8 @@
 
     // Wait for the test expectations
     [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-        [self.mockAlertView verify];
+        [self.mockRootViewController verify];
     }];
-
-    // Verify button 1 sets the pasteboard's String
-    [[self.mockPasteboard expect] setString:@"pushChannelID"];
-    [self.channelCapture alertView:self.mockAlertView didDismissWithButtonIndex:1];
-    [self.mockPasteboard verify];
 }
 
 /**

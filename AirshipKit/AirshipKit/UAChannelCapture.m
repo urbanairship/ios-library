@@ -30,13 +30,12 @@
 #import "UAConfig.h"
 #import "UA_Base64.h"
 #import "UAPreferenceDataStore+Internal.h"
+#import "UAUtils.h"
 
 NSString *const UAChannelCaptureEnabledKey = @"UAChannelCaptureEnabled";
 
 @interface UAChannelCapture()
 
-@property (nonatomic, strong) NSURL *channelURL;
-@property (nonatomic, strong) UIAlertView *alertView;
 @property (nonatomic, strong) UAPush *push;
 @property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
@@ -90,15 +89,9 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
 }
 
 /**
- * Checks the clipboard for the token and displays an alert view if
- * the token is available.
+ * Checks the clipboard for the token and displays an alert if the token is available.
  */
 - (void)checkClipboard {
-    
-    if ([self.alertView isVisible]) {
-        return;
-    }
-
     if (!self.push.channelID) {
         return;
     }
@@ -147,41 +140,50 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
             url = [NSURL URLWithString:urlString];
         }
 
-        // Move back to the main queue to clear the clipboard and display the alert view
+        // Move back to the main queue to clear the clipboard and display the alert
         dispatch_async(dispatch_get_main_queue(), ^{
-
             [UIPasteboard generalPasteboard].string = @"";
-
-            if ([self.alertView isVisible]) {
-                return;
-            }
-
-            self.channelURL = url;
-            self.alertView = [[UIAlertView alloc] initWithTitle:[@"ua_channel_id" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Channel ID"]
-                                                        message:self.push.channelID
-                                                       delegate:self
-                                              cancelButtonTitle:[@"ua_cancel" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Cancel"]
-                                              otherButtonTitles:[@"ua_notification_button_copy" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Copy"], url == nil ? nil : [@"ua_notification_button_save" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Save"], nil];
-            [self.alertView show];
+            [self showAlertWithUrl:url];
         });
     });
 
 }
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    UA_LTRACE(@"Button index %ld", (long)buttonIndex);
+- (void)showAlertWithUrl:(NSURL *)url {
 
-    if (buttonIndex == 1) {
-        // Copy the channel
-        [UIPasteboard generalPasteboard].string = self.push.channelID ?: @"";
-        UA_LINFO(@"Copied channel %@ to the pasteboard", self.push.channelID);
-    } else if (buttonIndex == 2 && self.channelURL) {
-        // Open the channel URL
-        [[UIApplication sharedApplication] openURL:self.channelURL];
-        UA_LINFO(@"Opened url: %@", self.channelURL.absoluteString);
+
+    UIAlertController *controller = [UIAlertController alertControllerWithTitle:[@"ua_channel_id" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Channel ID"]
+                                                                        message:self.push.channelID
+                                                                 preferredStyle:UIAlertControllerStyleAlert];
+
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:[@"ua_cancel" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Cancel"]
+                                                           style:UIAlertActionStyleCancel
+                                                         handler:nil];
+
+    [controller addAction:cancelAction];
+
+    UIAlertAction *copyAction  = [UIAlertAction actionWithTitle:[@"ua_notification_button_copy" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Copy"]
+                                                          style:UIAlertActionStyleDefault
+                                                        handler:^(UIAlertAction *action) {
+                                                            [UIPasteboard generalPasteboard].string = self.push.channelID ?: @"";
+                                                            UA_LINFO(@"Copied channel %@ to the pasteboard", self.push.channelID);
+                                                        }];
+    [controller addAction:copyAction];
+
+
+    if (url) {
+
+        UIAlertAction *urlAction  = [UIAlertAction actionWithTitle:[@"ua_notification_button_copy" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Copy"]
+                                                             style:UIAlertActionStyleDefault
+                                                           handler:^(UIAlertAction *action) {
+                                                               [[UIApplication sharedApplication] openURL:url];
+                                                               UA_LINFO(@"Opened url: %@", url.absoluteString);
+                                                           }];
+        [controller addAction:urlAction];
     }
 
-    self.alertView = nil;
+    controller.popoverPresentationController.sourceView = [UAUtils mainWindow].rootViewController.view;
+    [[UAUtils mainWindow].rootViewController presentViewController:controller animated:YES completion:nil];
 }
 
 /**

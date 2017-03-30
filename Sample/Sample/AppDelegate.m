@@ -41,7 +41,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
-    // Display a UIAlertView warning developers that push notifications do not work in the simulator
+    // Display a warning to developers that push notifications do not work in the simulator
     // You should remove this in your app.
     [self failIfSimulator];
 

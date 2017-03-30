@@ -33,10 +33,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * ChannelCapture checks the device clipboard for an expected token on app
- * foreground and displays an alert view that allows the user to copy the Channel
+ * foreground and displays an alert that allows the user to copy the Channel
  * or optionally open a url with the channel as an argument.
  */
-@interface UAChannelCapture : NSObject <UIAlertViewDelegate>
+@interface UAChannelCapture : NSObject
 
 /**
  * Factory method to create the UAChannelCapture.
