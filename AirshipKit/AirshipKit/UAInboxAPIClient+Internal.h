@@ -49,10 +49,8 @@ typedef void (^UAInboxClientSuccessBlock)(void);
 
 /**
  * A block called when the channel creation or update failed.
- *
- * @param statusCode The request status code.
  */
-typedef void (^UAInboxClientFailureBlock)(NSUInteger statusCode);
+typedef void (^UAInboxClientFailureBlock)(void);
 
 /**
  * A high level abstraction for performing Rich Push API requests.
