@@ -3,6 +3,13 @@ iOS Changelog
 
 Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 
+Version 8.2.1 - March 30, 2017
+==============================
+Bug Fixes
+----------
+- Added missing file references to static library.
+- Added extra validation to message list response body.
+
 Version 8.2.0 - February 16, 2017
 =================================
 New Features
