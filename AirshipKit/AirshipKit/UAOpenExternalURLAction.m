@@ -37,7 +37,7 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
     if ([arguments.value isKindOfClass:[NSString class]]) {
         return [NSURL URLWithString:arguments.value] != nil;
     }
-    
+
     return [arguments.value isKindOfClass:[NSURL class]];
 }
 
@@ -48,7 +48,41 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
 
     // do this in the background in case we're opening our own app!
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        if (![[UIApplication sharedApplication] openURL:url]) {
+        [self openURL:url completionHandler:completionHandler];
+    });
+}
+
+#if !TARGET_OS_TV
+- (void)openURL:(NSURL *)url completionHandler:(UAActionCompletionHandler)completionHandler {
+    if (([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}])) {
+        [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
+            if (!success) {
+                // Unable to open url
+                NSError *error =  [NSError errorWithDomain:UAOpenExternalURLActionErrorDomain
+                                                      code:UAOpenExternalURLActionErrorCodeURLFailedToOpen
+                                                  userInfo:@{NSLocalizedDescriptionKey : @"Unable to open URL"}];
+
+                completionHandler([UAActionResult resultWithError:error]);
+            } else {
+                completionHandler([UAActionResult resultWithValue:url.absoluteString]);
+            }
+        }];
+    }  else if (![[UIApplication sharedApplication] openURL:url]) {
+        // Unable to open url
+        NSError *error =  [NSError errorWithDomain:UAOpenExternalURLActionErrorDomain
+                                              code:UAOpenExternalURLActionErrorCodeURLFailedToOpen
+                                          userInfo:@{NSLocalizedDescriptionKey : @"Unable to open URL"}];
+
+        completionHandler([UAActionResult resultWithError:error]);
+    } else {
+        completionHandler([UAActionResult resultWithValue:url.absoluteString]);
+    }
+}
+
+#else
+- (void)openURL:(NSURL *)url completionHandler:(UAActionCompletionHandler)completionHandler {
+    [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
+        if (!success) {
             // Unable to open url
             NSError *error =  [NSError errorWithDomain:UAOpenExternalURLActionErrorDomain
                                                   code:UAOpenExternalURLActionErrorCodeURLFailedToOpen
@@ -58,9 +92,9 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
         } else {
             completionHandler([UAActionResult resultWithValue:url.absoluteString]);
         }
-
-    });
+    }];
 }
+#endif
 
 - (NSURL *)createURLFromValue:(id)value {
     NSURL *url = [value isKindOfClass:[NSURL class]] ? value : [NSURL URLWithString:value];
@@ -69,7 +103,7 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
         // Set the url scheme to http, as it could be itms which will cause the store to launch twice (undesireable)
         url = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@%@", url.host, url.path]];
     } else if ([[url scheme] isEqualToString:@"tel"] || [[url scheme] isEqualToString:@"sms"]) {
-        
+
         NSString *decodedUrlString = [url.absoluteString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         NSCharacterSet *characterSet = [[NSCharacterSet characterSetWithCharactersInString:@"+-.0123456789"] invertedSet];
         NSString *strippedNumber = [[decodedUrlString componentsSeparatedByCharactersInSet:characterSet] componentsJoinedByString:@""];
