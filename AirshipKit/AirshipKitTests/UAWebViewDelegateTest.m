@@ -314,8 +314,6 @@
     XCTAssertEqualObjects(@-1, [self.jsc evaluateScript:@"UAirship.getMessageSentDateMS()"].toNumber);
 
     // Verify native bridge methods are not undefined
-    XCTAssertFalse([self.jsc evaluateScript:@"UAirship.delegateCallURL"].isUndefined);
-    XCTAssertFalse([self.jsc evaluateScript:@"UAirship.invoke"].isUndefined);
     XCTAssertFalse([self.jsc evaluateScript:@"UAirship.runAction"].isUndefined);
     XCTAssertFalse([self.jsc evaluateScript:@"UAirship.finishAction"].isUndefined);
 }

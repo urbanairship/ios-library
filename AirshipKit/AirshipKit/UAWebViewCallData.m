@@ -66,7 +66,7 @@
     // Dictionary of options - primitive parsing, so external docs should mention the limitations
     NSString *urlQuery = [url query];
     NSMutableDictionary* options = [NSMutableDictionary dictionary];
-    NSArray * queries = [urlQuery componentsSeparatedByString:@"&"];
+    NSArray *queries = [urlQuery componentsSeparatedByString:@"&"];
 
     for (int i = 0; i < [queries count]; i++) {
         NSArray *optionPair = [[queries objectAtIndex:(NSUInteger)i] componentsSeparatedByString:@"="];
