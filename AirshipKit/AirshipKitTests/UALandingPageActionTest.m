@@ -10,6 +10,7 @@
 #import "UAirship.h"
 #import "UAConfig.h"
 #import "UAUtils.h"
+#import "NSString+UAURLEncoding.h"
 
 @interface UALandingPageActionTest : XCTestCase
 
@@ -99,11 +100,10 @@
     [self verifyPerformInForegroundWithValue:[NSURL URLWithString:@"https://foo.urbanairship.com"] expectedUrl:@"https://foo.urbanairship.com"];
     [self verifyPerformInForegroundWithValue:@"file://foo.urbanairship.com" expectedUrl:@"file://foo.urbanairship.com"];
 
-
     // Verify content urls - https://dl.urbanairship.com/<app>/<id>
     // u:<id> where id is ascii85 encoded... so it needs to be url encoded
     [self verifyPerformInForegroundWithValue:@"u:<~@rH7,ASuTABk.~>"
-                                 expectedUrl:@"https://dl.urbanairship.com/aaa/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E"
+                                 expectedUrl:@"https://dl.urbanairship.com/aaa/app-key/%3C~@rH7,ASuTABk.~%3E"
                              expectedHeaders:@{@"Authorization": [UAUtils appAuthHeaderString]}];
 }
 
