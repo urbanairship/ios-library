@@ -2611,7 +2611,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "$SRCROOT/Scripts/generate_header_imports.sh\n";
+			shellScript = "\"$SRCROOT\"/Scripts/generate_header_imports.sh\n";
 		};
 		CC899CBB1D8B6C5600A0CECC /* Copy Headers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2625,7 +2625,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "$SRCROOT/Scripts/copy_header_imports.sh\n";
+			shellScript = "\"$SRCROOT\"/Scripts/copy_header_imports.sh\n";
 		};
 		CC899D5A1D8B716500A0CECC /* Generate AirshipLib.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2639,7 +2639,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "$SRCROOT/Scripts/generate_header_imports.sh\n";
+			shellScript = "\"$SRCROOT\"/Scripts/generate_header_imports.sh\n";
 		};
 		D3775F1A08A9BD2223C1AC9E /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
