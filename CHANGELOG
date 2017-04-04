@@ -7,7 +7,7 @@ Version 8.2.2 - April 4, 2017
 ==============================
 Bug Fixes
 ----------
-- Correctly handle local repo paths that contain spaces.
+- Correctly handle local project paths that contain spaces.
 
 Version 8.2.1 - March 30, 2017
 ==============================
