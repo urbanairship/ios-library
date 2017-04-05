@@ -89,8 +89,8 @@ jazzy \
 --author_url https://urbanairship.com \
 --github_url https://github.com/urbanairship/ios-library \
 --module-version $VERSION \
---umbrella-header AirshipKit/AirshipKit/AirshipLib.h \
---framework-root AirshipKit \
+--umbrella-header $ROOT_PATH/AirshipKit/AirshipKit/AirshipLib.h \
+--framework-root $ROOT_PATH/AirshipKit \
 --module AirshipKit  \
 --output $STAGING/Documentation/AirshipKit \
 --sdk iphoneos \
@@ -107,8 +107,8 @@ jazzy \
 --author_url https://urbanairship.com \
 --github_url https://github.com/urbanairship/ios-library \
 --module-version $VERSION \
---umbrella-header AirshipAppExtensions/AirshipAppExtensions/AirshipAppExtensions.h \
---framework-root AirshipAppExtensions \
+--umbrella-header $ROOT_PATH/AirshipAppExtensions/AirshipAppExtensions/AirshipAppExtensions.h \
+--framework-root $ROOT_PATH/AirshipAppExtensions \
 --module AirshipAppExtensions  \
 --output $STAGING/Documentation/AirshipAppExtensions \
 --sdk iphoneos \
