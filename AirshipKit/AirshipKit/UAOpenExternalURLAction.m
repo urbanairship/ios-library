@@ -52,7 +52,6 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
     });
 }
 
-#if !TARGET_OS_TV
 - (void)openURL:(NSURL *)url completionHandler:(UAActionCompletionHandler)completionHandler {
     if (([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}])) {
         [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
@@ -78,23 +77,6 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
         completionHandler([UAActionResult resultWithValue:url.absoluteString]);
     }
 }
-
-#else
-- (void)openURL:(NSURL *)url completionHandler:(UAActionCompletionHandler)completionHandler {
-    [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
-        if (!success) {
-            // Unable to open url
-            NSError *error =  [NSError errorWithDomain:UAOpenExternalURLActionErrorDomain
-                                                  code:UAOpenExternalURLActionErrorCodeURLFailedToOpen
-                                              userInfo:@{NSLocalizedDescriptionKey : @"Unable to open URL"}];
-
-            completionHandler([UAActionResult resultWithError:error]);
-        } else {
-            completionHandler([UAActionResult resultWithValue:url.absoluteString]);
-        }
-    }];
-}
-#endif
 
 - (NSURL *)createURLFromValue:(id)value {
     NSURL *url = [value isKindOfClass:[NSURL class]] ? value : [NSURL URLWithString:value];
