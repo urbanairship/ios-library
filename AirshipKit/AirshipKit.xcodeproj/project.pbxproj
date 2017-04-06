@@ -13,6 +13,10 @@
 		6E12138E1E5D1B95006738FD /* UAScheduleDelay.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E12138C1E5D1B95006738FD /* UAScheduleDelay.h */; };
 		6E12138F1E5D1B95006738FD /* UAScheduleDelay.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E12138D1E5D1B95006738FD /* UAScheduleDelay.m */; };
 		6E1213901E5D1B95006738FD /* UAScheduleDelay.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E12138D1E5D1B95006738FD /* UAScheduleDelay.m */; };
+		6E3673DC1E8AE9F7005B5DFF /* UAEnableFeatureAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E3673DA1E8AE9F7005B5DFF /* UAEnableFeatureAction.h */; };
+		6E3673DD1E8AE9F7005B5DFF /* UAEnableFeatureAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3673DB1E8AE9F7005B5DFF /* UAEnableFeatureAction.m */; };
+		6E3673DE1E8AE9F7005B5DFF /* UAEnableFeatureAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3673DB1E8AE9F7005B5DFF /* UAEnableFeatureAction.m */; };
+		6E3673E01E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3673DF1E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m */; };
 		6E4627CC1E64E0C300A5BF3B /* UAScheduleDelayTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4627CB1E64E0C300A5BF3B /* UAScheduleDelayTests.m */; };
 		6EF2DF0F1E5CBAE30062099A /* UAScheduleDelayData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EF2DF0D1E5CBAE30062099A /* UAScheduleDelayData+Internal.h */; };
 		6EF2DF101E5CBAE30062099A /* UAScheduleDelayData.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF2DF0E1E5CBAE30062099A /* UAScheduleDelayData.m */; };
@@ -651,6 +655,9 @@
 		6114091D1DB19C1F001F82A5 /* UALandingPageOverlayView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UALandingPageOverlayView.xib; sourceTree = "<group>"; };
 		6E12138C1E5D1B95006738FD /* UAScheduleDelay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAScheduleDelay.h; sourceTree = "<group>"; };
 		6E12138D1E5D1B95006738FD /* UAScheduleDelay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDelay.m; sourceTree = "<group>"; };
+		6E3673DA1E8AE9F7005B5DFF /* UAEnableFeatureAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAEnableFeatureAction.h; sourceTree = "<group>"; };
+		6E3673DB1E8AE9F7005B5DFF /* UAEnableFeatureAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEnableFeatureAction.m; sourceTree = "<group>"; };
+		6E3673DF1E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEnableFeatureActionTest.m; sourceTree = "<group>"; };
 		6E4627CB1E64E0C300A5BF3B /* UAScheduleDelayTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDelayTests.m; sourceTree = "<group>"; };
 		6EF2DF0C1E5CB6F50062099A /* UAAutomation 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 2.xcdatamodel"; sourceTree = "<group>"; };
 		6EF2DF0D1E5CBAE30062099A /* UAScheduleDelayData+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAScheduleDelayData+Internal.h"; sourceTree = "<group>"; };
@@ -1467,6 +1474,7 @@
 				CC64F0B51D8B781C009CEF27 /* UAPasteboardActionTest.m */,
 				E29D35EE1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m */,
 				53911BDC1E23EBA500EE7007 /* UAChannelCaptureActionTest.m */,
+				6E3673DF1E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -2096,6 +2104,8 @@
 				E29D35E81DB93A59003C292F /* UAFetchDeviceInfoAction.m */,
 				53BC501E1E202DED00E24306 /* UAChannelCaptureAction.h */,
 				53BC501F1E202FAA00E24306 /* UAChannelCaptureAction.m */,
+				6E3673DA1E8AE9F7005B5DFF /* UAEnableFeatureAction.h */,
+				6E3673DB1E8AE9F7005B5DFF /* UAEnableFeatureAction.m */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -2376,6 +2386,7 @@
 				CC40DC211D8C996A00BABD4F /* UAActionRegistryEntry.h in Headers */,
 				CC40DC111D8C996A00BABD4F /* UAAccountEventTemplate.h in Headers */,
 				CC40DC631D8C996A00BABD4F /* UAChannelRegistrar+Internal.h in Headers */,
+				6E3673DC1E8AE9F7005B5DFF /* UAEnableFeatureAction.h in Headers */,
 				CC40DCCB1D8C996A00BABD4F /* UAKeychainUtils+Internal.h in Headers */,
 				CC40DC6D1D8C996A00BABD4F /* UAColorUtils+Internal.h in Headers */,
 				CC944ED21DB54CB400C42269 /* UAURLRequestOperation+Internal.h in Headers */,
@@ -2888,6 +2899,7 @@
 				CC40DCF31D8C996A00BABD4F /* UANotificationResponse.m in Sources */,
 				CC40DD101D8C996A00BABD4F /* UAScheduleTrigger.m in Sources */,
 				CC40DD211D8C996A00BABD4F /* UAUser.m in Sources */,
+				6E3673DD1E8AE9F7005B5DFF /* UAEnableFeatureAction.m in Sources */,
 				CC40DD121D8C996A00BABD4F /* UAScheduleTriggerData.m in Sources */,
 				CC40DC881D8C996A00BABD4F /* UADisposable.m in Sources */,
 				CC40DCAC1D8C996A00BABD4F /* UAInboxAPIClient.m in Sources */,
@@ -2936,6 +2948,7 @@
 				CC64F0E01D8B781C009CEF27 /* UAActionTest.m in Sources */,
 				CC64F0D41D8B781C009CEF27 /* NSObject+HideClass.m in Sources */,
 				CC64F0D21D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m in Sources */,
+				6E3673E01E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m in Sources */,
 				CC64F0EA1D8B781C009CEF27 /* UAAutomationTests.m in Sources */,
 				CC64F0F71D8B781C009CEF27 /* UADelayOperationTest.m in Sources */,
 				CCB902271DCBBCDA009A66D7 /* UAEventManagerTest.m in Sources */,
@@ -3157,6 +3170,7 @@
 				CC40DDA71D8C9A1C00BABD4F /* UATagUtils.m in Sources */,
 				CC40DDA81D8C9A1C00BABD4F /* UAURLProtocol.m in Sources */,
 				CC40DDA91D8C9A1C00BABD4F /* UAUser.m in Sources */,
+				6E3673DE1E8AE9F7005B5DFF /* UAEnableFeatureAction.m in Sources */,
 				CC70E8ED1DDA9862000E2528 /* UA_Base64.m in Sources */,
 				CC40DDAA1D8C9A1C00BABD4F /* UAUserAPIClient.m in Sources */,
 				CC40DDAB1D8C9A1C00BABD4F /* UAUserData.m in Sources */,

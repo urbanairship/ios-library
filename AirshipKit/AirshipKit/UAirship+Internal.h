@@ -30,6 +30,7 @@
 @class UAPreferenceDataStore;
 @class UAChannelCapture;
 
+
 @interface UAirship()
 
 NS_ASSUME_NONNULL_BEGIN
@@ -107,6 +108,12 @@ NS_ASSUME_NONNULL_BEGIN
  * terminates.
  */
 + (void)land;
+
+/**
+ * Sets the shared airship.
+ * @param airship The shared airship instance.
+ */
++ (void)setSharedAirship:(UAirship * __nullable)airship;
 
 NS_ASSUME_NONNULL_END
 
