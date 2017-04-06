@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
    s.homepage                = "https://www.urbanairship.com"
    s.author                  = { "Urban Airship" => "support@urbanairship.com" }
 
-   s.license                 = { :type => 'BSD', :file => 'LICENSE' }
+   s.license                 = { :type => 'Apache License, Version 2.0', :file => 'LICENSE' }
    s.source                  = { :git => "https://github.com/urbanairship/ios-library.git", :tag => s.version.to_s }
 
    s.module_name             = "AirshipKit"
