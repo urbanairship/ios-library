@@ -15,7 +15,7 @@
 @implementation UAActionJSDelegate
 
 + (id)objectForEncodedArguments:(NSString *)arguments {
-    NSString *urlDecodedArgs = [arguments urlDecodedQueryString];
+    NSString *urlDecodedArgs = [arguments urlDecodedString];
 
     if (!urlDecodedArgs) {
         UA_LDEBUG(@"unable to url decode action args: %@", arguments);
@@ -168,7 +168,7 @@ completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
     for (NSString *encodedActionName in callData.options) {
 
-        NSString *actionName = [encodedActionName urlDecodedQueryString];
+        NSString *actionName = [encodedActionName urlDecodedString];
         if (!actionName.length) {
             UA_LDEBUG(@"Error decoding action name: %@", encodedActionName);
             return nil;
@@ -185,7 +185,7 @@ completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
             id value;
             if (basicEncoding) {
-                value = [encodedValue urlDecodedQueryString];
+                value = [encodedValue urlDecodedString];
             } else {
                 value = [UAActionJSDelegate objectForEncodedArguments:encodedValue];
             }
@@ -224,9 +224,9 @@ completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
             return;
         }
 
-        NSString *actionName = [data.arguments[0] urlDecodedQueryString];
+        NSString *actionName = [data.arguments[0] urlDecodedString];
         id actionValue = [UAActionJSDelegate objectForEncodedArguments:data.arguments[1]];
-        NSString *callbackID = [data.arguments[2] urlDecodedQueryString];
+        NSString *callbackID = [data.arguments[2] urlDecodedString];
 
 
         // Run the action

@@ -103,7 +103,7 @@
     // Verify content urls - https://dl.urbanairship.com/<app>/<id>
     // u:<id> where id is ascii85 encoded... so it needs to be url encoded
     [self verifyPerformInForegroundWithValue:@"u:<~@rH7,ASuTABk.~>"
-                                 expectedUrl:@"https://dl.urbanairship.com/aaa/app-key/%3C~@rH7,ASuTABk.~%3E"
+                                 expectedUrl:@"https://dl.urbanairship.com/aaa/app-key/%3C~%40rH7,ASuTABk.~%3E"
                              expectedHeaders:@{@"Authorization": [UAUtils appAuthHeaderString]}];
 }
 

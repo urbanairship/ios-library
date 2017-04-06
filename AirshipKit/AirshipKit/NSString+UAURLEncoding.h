@@ -30,20 +30,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- * URL decodes the receiver with the query allowed character set.
+ * URL decodes the receiver.
  *
  * @return A URL dencoded NSString, or `nil` if decoding failed.
  *
  */
-- (nullable NSString *)urlDecodedQueryString;
+- (nullable NSString *)urlDecodedString;
 
 /**
- * URL encodes the receiver with the query allowed character set.
+ * URL encodes the receiver.
  *
  * @return A URL encoded NSString, or `nil` if encoding failed.
  *
  */
-- (nullable NSString *)urlEncodedQueryString;
+- (nullable NSString *)urlEncodedString;
 
 
 @end

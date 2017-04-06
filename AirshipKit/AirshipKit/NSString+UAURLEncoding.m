@@ -31,12 +31,12 @@
     return value;
 }
 
-- (nullable NSString *)urlDecodedQueryString {
+- (nullable NSString *)urlDecodedString {
     return [self stringByRemovingPercentEncoding];
 }
 
-- (nullable NSString *)urlEncodedQueryString {
-    return [self stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+- (nullable NSString *)urlEncodedString {
+    return [self stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
 }
 
 @end
