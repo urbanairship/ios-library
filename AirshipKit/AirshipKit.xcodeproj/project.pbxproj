@@ -17,12 +17,12 @@
 		6E3673DD1E8AE9F7005B5DFF /* UAEnableFeatureAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3673DB1E8AE9F7005B5DFF /* UAEnableFeatureAction.m */; };
 		6E3673DE1E8AE9F7005B5DFF /* UAEnableFeatureAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3673DB1E8AE9F7005B5DFF /* UAEnableFeatureAction.m */; };
 		6E3673E01E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3673DF1E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m */; };
+		6E3673E11E8C8178005B5DFF /* UATextInputNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = DFBBC7AE1E36D80B00BA7315 /* UATextInputNotificationAction.m */; };
+		6E3673E21E8C8187005B5DFF /* UAChannelCaptureAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BC501F1E202FAA00E24306 /* UAChannelCaptureAction.m */; };
 		6E4627CC1E64E0C300A5BF3B /* UAScheduleDelayTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4627CB1E64E0C300A5BF3B /* UAScheduleDelayTests.m */; };
 		6EF2DF0F1E5CBAE30062099A /* UAScheduleDelayData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EF2DF0D1E5CBAE30062099A /* UAScheduleDelayData+Internal.h */; };
 		6EF2DF101E5CBAE30062099A /* UAScheduleDelayData.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF2DF0E1E5CBAE30062099A /* UAScheduleDelayData.m */; };
 		6EF2DF111E5CBAED0062099A /* UAScheduleDelayData.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF2DF0E1E5CBAE30062099A /* UAScheduleDelayData.m */; };
-		6E3673E11E8C8178005B5DFF /* UATextInputNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = DFBBC7AE1E36D80B00BA7315 /* UATextInputNotificationAction.m */; };
-		6E3673E21E8C8187005B5DFF /* UAChannelCaptureAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BC501F1E202FAA00E24306 /* UAChannelCaptureAction.m */; };
 		76A5F5F01DCBDD5E00858BA4 /* UAAsyncOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1BB1DC16BB300B4842D /* UAAsyncOperation.m */; };
 		76A960FC1DF5EB29003F83A0 /* UANativeBridge in Resources */ = {isa = PBXBuildFile; fileRef = 76A960FB1DF5EB29003F83A0 /* UANativeBridge */; };
 		CC04F1861DBED84600B4842D /* UAEvents.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1841DBED84600B4842D /* UAEvents.xcdatamodeld */; };
@@ -454,7 +454,6 @@
 		CC64F0D31D8B781C009CEF27 /* NSObject+AnonymousKVO.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0671D8B781C009CEF27 /* NSObject+AnonymousKVO.m */; };
 		CC64F0D41D8B781C009CEF27 /* NSObject+HideClass.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0691D8B781C009CEF27 /* NSObject+HideClass.m */; };
 		CC64F0D51D8B781C009CEF27 /* NSString_UALocalizationAdditionsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F06A1D8B781C009CEF27 /* NSString_UALocalizationAdditionsTest.m */; };
-		CC64F0D61D8B781C009CEF27 /* NSString_UAURLEncodingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F06B1D8B781C009CEF27 /* NSString_UAURLEncodingTest.m */; };
 		CC64F0D71D8B781C009CEF27 /* UAAccountEventTemplateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F06C1D8B781C009CEF27 /* UAAccountEventTemplateTest.m */; };
 		CC64F0D81D8B781C009CEF27 /* UAAction_OperatorTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F06D1D8B781C009CEF27 /* UAAction_OperatorTest.m */; };
 		CC64F0D91D8B781C009CEF27 /* UAActionArgumentsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F06E1D8B781C009CEF27 /* UAActionArgumentsTest.m */; };
@@ -974,7 +973,6 @@
 		CC64F0681D8B781C009CEF27 /* NSObject+HideClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+HideClass.h"; sourceTree = "<group>"; };
 		CC64F0691D8B781C009CEF27 /* NSObject+HideClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+HideClass.m"; sourceTree = "<group>"; };
 		CC64F06A1D8B781C009CEF27 /* NSString_UALocalizationAdditionsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSString_UALocalizationAdditionsTest.m; sourceTree = "<group>"; };
-		CC64F06B1D8B781C009CEF27 /* NSString_UAURLEncodingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSString_UAURLEncodingTest.m; sourceTree = "<group>"; };
 		CC64F06C1D8B781C009CEF27 /* UAAccountEventTemplateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAccountEventTemplateTest.m; sourceTree = "<group>"; };
 		CC64F06D1D8B781C009CEF27 /* UAAction_OperatorTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAction_OperatorTest.m; sourceTree = "<group>"; };
 		CC64F06E1D8B781C009CEF27 /* UAActionArgumentsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionArgumentsTest.m; sourceTree = "<group>"; };
@@ -1577,7 +1575,6 @@
 				CC64F0CA1D8B781C009CEF27 /* UIWebView_UAAdditionsTest.m */,
 				CC64F0651D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m */,
 				CC64F06A1D8B781C009CEF27 /* NSString_UALocalizationAdditionsTest.m */,
-				CC64F06B1D8B781C009CEF27 /* NSString_UAURLEncodingTest.m */,
 				CC64F0811D8B781C009CEF27 /* UABase64Test.m */,
 				CC64F0891D8B781C009CEF27 /* UAColorUtilsTest.m */,
 				CC64F0A71D8B781C009CEF27 /* UAKeyChainUtilTest.m */,
@@ -2982,7 +2979,6 @@
 				CC40D87F1D8C719F00BABD4F /* JRSwizzle.m in Sources */,
 				6E4627CC1E64E0C300A5BF3B /* UAScheduleDelayTests.m in Sources */,
 				CC64F0E31D8B781C009CEF27 /* UAAnalyticsTest.m in Sources */,
-				CC64F0D61D8B781C009CEF27 /* NSString_UAURLEncodingTest.m in Sources */,
 				CC944EDE1DB6AED200C42269 /* UAAPIClientTest.m in Sources */,
 				CC64F12D1D8B781C009CEF27 /* UAWhitelistTest.m in Sources */,
 				CC64F10D1D8B781C009CEF27 /* UALandingPageActionTest.m in Sources */,

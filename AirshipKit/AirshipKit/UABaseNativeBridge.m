@@ -43,7 +43,7 @@
         if (!value) {
             js = [js stringByAppendingFormat:@"_UAirship.%@ = function() {return null;};", methodName];
         } else {
-            NSString *encodedValue = [value urlEncodedStringWithEncoding:NSUTF8StringEncoding];
+            NSString *encodedValue = [value urlEncodedString];
             js = [js stringByAppendingFormat:@"_UAirship.%@ = function() {return decodeURIComponent(\"%@\");};", methodName, encodedValue];
         }
     };

@@ -29,7 +29,7 @@ NSString *const UALandingPageFill = @"fill";
     NSString *contentID = [urlString substringFromIndex:2];
     return [NSURL URLWithString:[UAirship.shared.config.landingPageContentURL stringByAppendingFormat:@"/%@/%@",
                                  UAirship.shared.config.appKey,
-                                 [contentID urlEncodedStringWithEncoding:NSUTF8StringEncoding]]];
+                                 [contentID urlEncodedString]]];
 }
 
 - (NSURL *)parseURLFromValue:(id)value {

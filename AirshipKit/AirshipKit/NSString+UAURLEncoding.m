@@ -8,7 +8,6 @@
     /*
      * Taken from http://madebymany.com/blog/url-encoding-an-nsstring-on-ios
      */
-
     CFStringRef result = CFURLCreateStringByReplacingPercentEscapesUsingEncoding(NULL,
                                                                                  (CFStringRef)self,
                                                                                  CFSTR(""),
@@ -22,14 +21,22 @@
 
 - (NSString *)urlEncodedStringWithEncoding:(NSStringEncoding)encoding {
     CFStringRef result = CFURLCreateStringByAddingPercentEscapes(
-                                                                NULL,
-                                                                (CFStringRef)self,
-                                                                NULL,
-                                                                (CFStringRef)@"~!*\"'();:@&=+$,/?%#[]",
-                                                                CFStringConvertNSStringEncodingToEncoding(encoding));
+                                                                 NULL,
+                                                                 (CFStringRef)self,
+                                                                 NULL,
+                                                                 (CFStringRef)@"~!*\"'();:@&=+$,/?%#[]",
+                                                                 CFStringConvertNSStringEncodingToEncoding(encoding));
 
     NSString *value = [NSString stringWithString:(NSString *)CFBridgingRelease(result)];
     return value;
+}
+
+- (nullable NSString *)urlDecodedString {
+    return [self stringByRemovingPercentEncoding];
+}
+
+- (nullable NSString *)urlEncodedString {
+    return [self stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
 }
 
 @end

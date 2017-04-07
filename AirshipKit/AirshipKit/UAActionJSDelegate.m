@@ -15,11 +15,13 @@
 @implementation UAActionJSDelegate
 
 + (id)objectForEncodedArguments:(NSString *)arguments {
-    NSString *urlDecodedArgs = [arguments urlDecodedStringWithEncoding:NSUTF8StringEncoding];
+    NSString *urlDecodedArgs = [arguments urlDecodedString];
+
     if (!urlDecodedArgs) {
         UA_LDEBUG(@"unable to url decode action args: %@", arguments);
         return nil;
     }
+
     //allow the reading of fragments so we can parse lower level JSON values
     id jsonDecodedArgs = [NSJSONSerialization objectWithString:urlDecodedArgs
                                                        options: NSJSONReadingMutableContainers | NSJSONReadingAllowFragments];
@@ -106,8 +108,8 @@ completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
             // JSONify the error message
             errorMessage = [NSJSONSerialization stringWithObject:errorMessage acceptingFragments:YES];
             script = [NSString stringWithFormat:@"var error = new Error();\
-                                                  error.message = %@; \
-                                                  UAirship.finishAction(error, null, %@)", errorMessage, callbackID];
+                      error.message = %@; \
+                      UAirship.finishAction(error, null, %@)", errorMessage, callbackID];
         } else if (resultString) {
             script = [NSString stringWithFormat:@"UAirship.finishAction(null, %@, %@);", resultString, callbackID];
         }
@@ -126,7 +128,7 @@ completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
 /**
  * Runs a dictionary of action names to an array of action values.
- * 
+ *
  * @param actionValues A map of action name to an array of action values.
  * @param metadata Optional metadata to pass to the action arguments.
  */
@@ -166,7 +168,7 @@ completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
     for (NSString *encodedActionName in callData.options) {
 
-        NSString *actionName = [encodedActionName urlDecodedStringWithEncoding:NSUTF8StringEncoding];
+        NSString *actionName = [encodedActionName urlDecodedString];
         if (!actionName.length) {
             UA_LDEBUG(@"Error decoding action name: %@", encodedActionName);
             return nil;
@@ -177,13 +179,13 @@ completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
         for (id encodedValue in callData.options[encodedActionName]) {
 
             if (!encodedValue || encodedValue == [NSNull null]) {
-                 [values addObject:[NSNull null]];
+                [values addObject:[NSNull null]];
                 continue;
             }
 
             id value;
             if (basicEncoding) {
-                value = [encodedValue urlDecodedStringWithEncoding:NSUTF8StringEncoding];
+                value = [encodedValue urlDecodedString];
             } else {
                 value = [UAActionJSDelegate objectForEncodedArguments:encodedValue];
             }
@@ -222,9 +224,9 @@ completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
             return;
         }
 
-        NSString *actionName = [data.arguments[0] urlDecodedStringWithEncoding:NSUTF8StringEncoding];
+        NSString *actionName = [data.arguments[0] urlDecodedString];
         id actionValue = [UAActionJSDelegate objectForEncodedArguments:data.arguments[1]];
-        NSString *callbackID = [data.arguments[2] urlDecodedStringWithEncoding:NSUTF8StringEncoding];
+        NSString *callbackID = [data.arguments[2] urlDecodedString];
 
 
         // Run the action
@@ -247,7 +249,7 @@ completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
 
         [self runActionsWithValues:[self decodeActionValuesWithCallData:data basicEncoding:NO]
-                         metadata:[self metadataWithCallData:data]];
+                          metadata:[self metadataWithCallData:data]];
 
         if (completionHandler) {
             completionHandler(nil);
