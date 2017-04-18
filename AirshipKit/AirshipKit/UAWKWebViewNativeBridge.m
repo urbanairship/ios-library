@@ -155,7 +155,7 @@
     if ([strongDelegate respondsToSelector:@selector(webView:didReceiveAuthenticationChallenge:completionHandler:)]) {
         [strongDelegate webView:webView didReceiveAuthenticationChallenge:challenge completionHandler:completionHandler];
     } else {
-        completionHandler(NSURLSessionAuthChallengeRejectProtectionSpace, nil);
+        completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
     }
 }
 

@@ -56,8 +56,10 @@
     self.nativeBridge.forwardDelegate = self;
     self.webView.navigationDelegate = self.nativeBridge;
 
-    // Allow the webView to detect data types (e.g. phone numbers, addresses) at will
-    [self.webView.configuration setDataDetectorTypes:WKDataDetectorTypeAll];
+    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+        // Allow the webView to detect data types (e.g. phone numbers, addresses) at will
+        [self.webView.configuration setDataDetectorTypes:WKDataDetectorTypeAll];
+    }
 
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_delete")
                                                                                style:UIBarButtonItemStylePlain

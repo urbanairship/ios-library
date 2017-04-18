@@ -36,9 +36,6 @@
     CGRect frame = [[UIScreen mainScreen] bounds];
     WKWebViewConfiguration *myConfiguration = [WKWebViewConfiguration new];
     
-    // Set any configuration parameters here, e.g.
-    //myConfiguration.dataDetectorTypes = WKDataDetectorTypeAll;
-    
     self = [super initWithFrame:frame configuration:myConfiguration];
     
     // Apply constraints from interface builder.
