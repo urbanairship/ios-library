@@ -500,7 +500,7 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
 }
 
 /**
- * Processes a triggered schedule.
+ * Processes triggered schedules.
  *
  * @param schedules An array of triggered schedule data.
  */
@@ -583,7 +583,7 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
         [postExecutionBlocks addObject:postExecutionBlock];
     }
 
-    // Conditions and action executions must be ran on the main queue.
+    // Conditions and action executions must be run on the main queue.
     dispatch_sync(dispatch_get_main_queue(), ^{
         for (void (^executionBlock)() in executionBlocks) {
             executionBlock();
