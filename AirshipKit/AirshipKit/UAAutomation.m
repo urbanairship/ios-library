@@ -265,9 +265,7 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
         }
 
         // Process all the schedules to execute
-        for (UAActionScheduleData *scheduleData in schedulesToExecute) {
-            [self processTriggeredSchedule:scheduleData];
-        }
+        [self processTriggeredSchedules:[schedulesToExecute allObjects]];
 
         // Process all the schedules to cancel
         for (UAActionScheduleData *scheduleData in schedulesToCancel) {
@@ -286,7 +284,7 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
             });
         }
 
-        NSTimeInterval executionTime = [start timeIntervalSinceNow];
+        NSTimeInterval executionTime = -[start timeIntervalSinceNow];
         UA_LTRACE(@"Automation execution time: %f seconds, triggers: %ld, triggered schedules: %ld", executionTime, (unsigned long)triggers.count, (unsigned long)schedulesToExecute.count);
     }];
 }
@@ -368,7 +366,7 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
             scheduleData.delayedExecutionDate = [NSDate date];
         }
 
-        [self processTriggeredSchedule:schedules[0]];
+        [self processTriggeredSchedules:schedules];
 
         // Check if we need to end the background task on the main queue
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -459,9 +457,8 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
 - (void)scheduleConditionsChanged {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isPendingExecution = 1 AND (delayedExecutionDate == nil OR delayedExecutionDate =< %@)", [NSDate date]];
     [self.automationStore fetchSchedulesWithPredicate:predicate limit:UAAutomationScheduleLimit completionHandler:^(NSArray<UAActionScheduleData *> *schedules) {
-        for (UAActionScheduleData *schedule in schedules) {
-            [self processTriggeredSchedule:schedule];
-        }
+
+        [self processTriggeredSchedules:schedules];
     }];
 }
 
@@ -505,77 +502,97 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
 /**
  * Processes a triggered schedule.
  *
- * @param scheduleData The triggered schedule data.
+ * @param schedules An array of triggered schedule data.
  */
-- (void)processTriggeredSchedule:(UAActionScheduleData *)scheduleData {
+- (void)processTriggeredSchedules:(NSArray<UAActionScheduleData *> *)schedules {
+    NSMutableArray *executionBlocks = [NSMutableArray array];
+    NSMutableArray *postExecutionBlocks = [NSMutableArray array];
 
-    // If the schedule has expired, delete it
-    if ([scheduleData.end compare:[NSDate date]] == NSOrderedAscending) {
-        [scheduleData.managedObjectContext deleteObject:scheduleData];
-        UA_LTRACE(@"Schedule expired, deleting schedule: %@", scheduleData.identifier);
-        return;
-    }
-
-    // Seconds delay
-    if (![scheduleData.isPendingExecution boolValue] && [scheduleData.delay.seconds doubleValue] > 0) {
-        scheduleData.isPendingExecution = @(YES);
-        scheduleData.delayedExecutionDate = [NSDate dateWithTimeIntervalSinceNow:[scheduleData.delay.seconds doubleValue]];
-
-        // Reset the cancellation triggers
-        for (UAScheduleTriggerData *cancellationTrigger in scheduleData.delay.cancellationTriggers) {
-            cancellationTrigger.goalProgress = 0;
+    for (UAActionScheduleData *scheduleData in schedules) {
+        // If the schedule has expired, delete it
+        if ([scheduleData.end compare:[NSDate date]] == NSOrderedAscending) {
+            [scheduleData.managedObjectContext deleteObject:scheduleData];
+            UA_LTRACE(@"Schedule expired, deleting schedule: %@", scheduleData.identifier);
+            continue;
         }
 
-        // Start a timer
-        [self startTimerForSchedule:scheduleData];
-        return;
+        // Seconds delay
+        if (![scheduleData.isPendingExecution boolValue] && [scheduleData.delay.seconds doubleValue] > 0) {
+            scheduleData.isPendingExecution = @(YES);
+            scheduleData.delayedExecutionDate = [NSDate dateWithTimeIntervalSinceNow:[scheduleData.delay.seconds doubleValue]];
+
+            // Reset the cancellation triggers
+            for (UAScheduleTriggerData *cancellationTrigger in scheduleData.delay.cancellationTriggers) {
+                cancellationTrigger.goalProgress = 0;
+            }
+
+            // Start a timer
+            [self startTimerForSchedule:scheduleData];
+            continue;
+        }
+
+
+        // Pull out any info required to check for conditions and run actions for the schedule on the main queue
+        NSDictionary *actions = [NSJSONSerialization objectWithString:scheduleData.actions];
+        NSString *scheduleIdentifier = scheduleData.identifier;
+        UAScheduleDelay *scheduleDelay = [UAAutomation delayFromData:scheduleData.delay];
+        NSDate *delayedExecutionDate = scheduleData.delayedExecutionDate;
+
+        __block BOOL scheduleExecuted = NO;
+
+
+        void (^executionBlock)() = ^{
+            if ([self isScheduleDelaySatisfied:scheduleDelay delayedExecutionDate:delayedExecutionDate]) {
+                // Run the actions
+                [UAActionRunner runActionsWithActionValues:actions
+                                                 situation:UASituationAutomation
+                                                  metadata:nil
+                                         completionHandler:^(UAActionResult *result) {
+                                             UA_LINFO(@"Actions triggered for schedule: %@", scheduleIdentifier);
+                                         }];
+                scheduleExecuted = YES;
+            }
+        };
+
+        void (^postExecutionBlock)() = ^{
+            if (scheduleExecuted) {
+                // Reset pending execution state
+                scheduleData.isPendingExecution = @(NO);
+                scheduleData.delayedExecutionDate = nil;
+
+                if (scheduleData.limit > 0) {
+                    scheduleData.triggeredCount = @([scheduleData.triggeredCount integerValue] + 1);
+                    if (scheduleData.triggeredCount >= scheduleData.limit) {
+                        UA_LINFO(@"Limit reached for schedule %@", scheduleIdentifier);
+                        [scheduleData.managedObjectContext deleteObject:scheduleData];
+                    }
+                }
+            } else if (![scheduleData.isPendingExecution boolValue]) {
+                UA_LTRACE(@"Automation schedule %@ waiting on conditions.", scheduleData.identifier);
+
+                // Reset the cancellation triggers
+                for (UAScheduleTriggerData *cancellationTrigger in scheduleData.delay.cancellationTriggers) {
+                    cancellationTrigger.goalProgress = 0;
+                }
+
+                scheduleData.isPendingExecution = @(YES);
+            }
+        };
+
+        [executionBlocks addObject:executionBlock];
+        [postExecutionBlocks addObject:postExecutionBlock];
     }
 
-    // Pull out any info required to check for conditions and run actions for the schedule on the main queue
-    NSDictionary *actions = [NSJSONSerialization objectWithString:scheduleData.actions];
-    NSString *scheduleIdentifier = scheduleData.identifier;
-    UAScheduleDelay *scheduleDelay = [UAAutomation delayFromData:scheduleData.delay];
-    NSDate *delayedExecutionDate = scheduleData.delayedExecutionDate;
-
-    __block BOOL scheduleExecuted = NO;
-
-    // Conditions check must be performed on the main queue
+    // Conditions and action executions must be ran on the main queue.
     dispatch_sync(dispatch_get_main_queue(), ^{
-        if ([self isScheduleDelaySatisfied:scheduleDelay delayedExecutionDate:delayedExecutionDate]) {
-            // Run the actions
-            [UAActionRunner runActionsWithActionValues:actions
-                                             situation:UASituationAutomation
-                                              metadata:nil
-                                     completionHandler:^(UAActionResult *result) {
-                                         UA_LINFO(@"Actions triggered for schedule: %@", scheduleIdentifier);
-                                     }];
-
-            scheduleExecuted = YES;
+        for (void (^executionBlock)() in executionBlocks) {
+            executionBlock();
         }
     });
 
-    if (scheduleExecuted) {
-        // Reset pending execution state
-        scheduleData.isPendingExecution = @(NO);
-        scheduleData.delayedExecutionDate = nil;
-
-        if (scheduleData.limit > 0) {
-            scheduleData.triggeredCount = @([scheduleData.triggeredCount integerValue] + 1);
-            if (scheduleData.triggeredCount >= scheduleData.limit) {
-                UA_LINFO(@"Limit reached for schedule %@", scheduleIdentifier);
-                [scheduleData.managedObjectContext deleteObject:scheduleData];
-            }
-        }
-    } else if (![scheduleData.isPendingExecution boolValue]) {
-        UA_LTRACE(@"Automation schedule %@ waiting on conditions.", scheduleData.identifier);
-
-        // Reset the cancellation triggers
-        for (UAScheduleTriggerData *cancellationTrigger in scheduleData.delay.cancellationTriggers) {
-            cancellationTrigger.goalProgress = 0;
-        }
-
-        scheduleData.isPendingExecution = @(YES);
-
+    // Run all the post executions on the background queue
+    for (void (^postExecutionBlock)() in postExecutionBlocks) {
+        postExecutionBlock();
     }
 }
 
