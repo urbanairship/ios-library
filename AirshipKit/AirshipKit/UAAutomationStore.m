@@ -48,6 +48,8 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
         UA_LERR(@"Error saving context %@", error);
         return NO;
     }
+
+    [self.managedContext reset];
     return YES;
 }
 
