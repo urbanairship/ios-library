@@ -14,6 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @protocol UAAPNSRegistrationProtocol<NSObject>
 
+///---------------------------------------------------------------------------------------
+/// @name APNS Registration Protocol Internal Methods
+///---------------------------------------------------------------------------------------
+
 @optional
 
 /**

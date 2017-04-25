@@ -10,6 +10,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UAChannelRegistrar ()
 
+///---------------------------------------------------------------------------------------
+/// @name Channel Registrar Delegate Internal Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * The channel API client.
@@ -27,6 +30,10 @@ NS_ASSUME_NONNULL_BEGIN
  * A flag indicating if registration is in progress.
  */
 @property (atomic, assign) BOOL isRegistrationInProgress;
+
+///---------------------------------------------------------------------------------------
+/// @name Channel Registrar Delegate Internal Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Factory method to create a channel registrar.

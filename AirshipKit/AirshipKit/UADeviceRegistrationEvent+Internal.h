@@ -9,6 +9,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UADeviceRegistrationEvent : UAEvent
 
+///---------------------------------------------------------------------------------------
+/// @name Device Registration Event Internal Factory
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method to create a UADeviceRegistrationEvent.
  */

@@ -25,6 +25,10 @@ extern NSString * const UAJSONSerializationErrorDomain;
  */
 @interface NSJSONSerialization (UAAdditions)
 
+///---------------------------------------------------------------------------------------
+/// @name JSON Serialization Additions Core Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Converts a Foundation object to a JSON formatted NSString
  * @param jsonObject Foundation object to convert 

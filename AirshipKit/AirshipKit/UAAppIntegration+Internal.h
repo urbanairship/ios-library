@@ -8,6 +8,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UAAppIntegration()
 
+///---------------------------------------------------------------------------------------
+/// @name App Integration Internal Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Handles an incoming foreground UNNotification after all presentation options have been merged.
  *

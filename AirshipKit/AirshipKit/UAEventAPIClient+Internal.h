@@ -12,6 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAEventAPIClient : UAAPIClient
 
+///---------------------------------------------------------------------------------------
+/// @name Event API Client Internal Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Default factory method.
  *

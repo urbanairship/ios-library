@@ -12,6 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAPreferenceDataStore(TagGroupsMutation)
 
+///---------------------------------------------------------------------------------------
+/// @name Tag Groups Mutation Category Internal Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Adds a tag mutation to the array of saved mutations.
  * @param mutation The mutation to add.

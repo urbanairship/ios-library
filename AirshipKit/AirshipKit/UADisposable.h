@@ -17,12 +17,20 @@ typedef void (^UADisposalBlock)(void);
  */
 @interface UADisposable : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Disposable Creation
+///---------------------------------------------------------------------------------------
+
 /**
  * Create a new disposable.
  *
  * @param disposalBlock A `UADisposalBlock` to be executed upon disposal.
  */
 + (instancetype)disposableWithBlock:(UADisposalBlock)disposalBlock;
+
+///---------------------------------------------------------------------------------------
+/// @name Disposable Remove
+///---------------------------------------------------------------------------------------
 
 /**
  * Dispose of associated resources.

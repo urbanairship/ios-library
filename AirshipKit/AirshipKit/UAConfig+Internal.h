@@ -5,7 +5,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /*
- * Testing extensions to UAConfig
+ * SDK-private extensions to UAConfig
  */
 @interface UAConfig () {
   @private
@@ -14,6 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
     dispatch_once_t usesProductionPred_;
     BOOL usesProductionPushServer_;
 }
+
+///---------------------------------------------------------------------------------------
+/// @name Config Internal Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * The provisioning profile path to use for this configuration. It defaults to the `embedded.mobileprovision` file
@@ -35,6 +39,10 @@ NS_ASSUME_NONNULL_BEGIN
  * Defaults the defaultDetectProvisioningMode flag to `YES`.
  */
 @property (nonatomic, assign) BOOL defaultDetectProvisioningMode;
+
+///---------------------------------------------------------------------------------------
+/// @name Config Internal Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Determines whether or not the app is currently configured to use the APNS production servers.

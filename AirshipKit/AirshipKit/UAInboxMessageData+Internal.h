@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAInboxMessageData : NSManagedObject
 
 ///---------------------------------------------------------------------------------------
-/// @name Message Properties
+/// @name Message Internal Properties
 ///---------------------------------------------------------------------------------------
 
 /**
@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The date and time the message will expire. 
  *
- * A nil value indicates it will never expire
+ * A nil value indicates it will never expire.
  */
 @property (nonatomic, strong, nullable) NSDate *messageExpiration;
 

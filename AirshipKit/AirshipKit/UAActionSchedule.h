@@ -10,6 +10,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAActionSchedule : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Action Schedule Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The schedule's identifier.
  */
@@ -20,6 +24,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property(nonatomic, readonly) UAActionScheduleInfo *info;
 
+///---------------------------------------------------------------------------------------
+/// @name Action Schedule Management
+///---------------------------------------------------------------------------------------
 
 /**
  * Checks if the schedule is equal to another schedule.

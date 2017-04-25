@@ -12,6 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol UAChannelRegistrarDelegate <NSObject>
 @optional
 
+///---------------------------------------------------------------------------------------
+/// @name Channel Registrar Delegate Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Called when the channel registrar failed to register.
  * @param payload The registration payload.
@@ -41,10 +45,19 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAChannelRegistrar : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Channel Registrar Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * A UAChannelRegistrarDelegate delegate.
  */
 @property (nonatomic, weak, nullable) id<UAChannelRegistrarDelegate> delegate;
+
+
+///---------------------------------------------------------------------------------------
+/// @name Channel Registrar Registration Management
+///---------------------------------------------------------------------------------------
 
 /**
  * Register the device with Urban Airship.

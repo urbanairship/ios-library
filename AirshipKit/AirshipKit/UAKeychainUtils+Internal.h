@@ -34,6 +34,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAKeychainUtils : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Keychain Utils Internal Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Creates a key chain.
  * @param username The username for the key chain.

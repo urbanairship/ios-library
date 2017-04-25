@@ -65,6 +65,10 @@ extern NSString * const UAAnalyticsValueNone;
  */
 @interface UALocationEvent : UAEvent
 
+///---------------------------------------------------------------------------------------
+/// @name Location Event Factories
+///---------------------------------------------------------------------------------------
+
 /**
  * Creates a UALocationEvent.
  *

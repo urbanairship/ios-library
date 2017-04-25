@@ -13,6 +13,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UATextInputNotificationAction : UANotificationAction
 
+///---------------------------------------------------------------------------------------
+/// @name Text Input Notification Action Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The localized string to use as the title of the text input button.
  */
@@ -36,6 +40,10 @@ NS_ASSUME_NONNULL_BEGIN
  * UIUserNotificationActivationModeForeground.
  */
 @property(nonatomic, assign) BOOL forceBackgroundActivationModeInIOS9;
+
+///---------------------------------------------------------------------------------------
+/// @name Text Input Notification Action Initialization
+///---------------------------------------------------------------------------------------
 
 /**
  * Init method.

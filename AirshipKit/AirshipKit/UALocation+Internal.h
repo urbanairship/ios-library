@@ -5,9 +5,16 @@
 @class UAPreferenceDataStore;
 @class UAAnalytics;
 
+/*
+ * SDK-private extensions to UALocation
+ */
 @interface UALocation() <CLLocationManagerDelegate>
 
 NS_ASSUME_NONNULL_BEGIN
+
+///---------------------------------------------------------------------------------------
+/// @name Location Internal Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * The location manager.
@@ -28,6 +35,10 @@ NS_ASSUME_NONNULL_BEGIN
  * Flag indicating if location updates have been started or not.
  */
 @property (nonatomic, assign, getter=isLocationUpdatesStarted) BOOL locationUpdatesStarted;
+
+///---------------------------------------------------------------------------------------
+/// @name Location Internal Factory
+///---------------------------------------------------------------------------------------
 
 /**
  * Factory method to create a UALocation instance.

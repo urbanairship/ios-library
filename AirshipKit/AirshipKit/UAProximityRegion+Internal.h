@@ -7,7 +7,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*
+ * SDK-private extensions to UAProximityRegion
+ */
 @interface UAProximityRegion ()
+
+///---------------------------------------------------------------------------------------
+/// @name Proximity Region Internal Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * The identifier of the proximity region
@@ -23,6 +30,10 @@ NS_ASSUME_NONNULL_BEGIN
  * The minor of the proximity region
  */
 @property (nonatomic, strong) NSNumber *minor;
+
+///---------------------------------------------------------------------------------------
+/// @name Proximity Region Internal Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Validates proximity region

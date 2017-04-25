@@ -41,31 +41,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAInAppMessage : NSObject
 
-/**
- * Class factory method for constructing an unconfigured
- * in-app message model.
- *
- * @return An unconfigured instance of UAInAppMessage.
- */
-+ (instancetype)message;
-
-/**
- * Class factory method for constructing an in-app message
- * model from the in-app message section of a push payload.
- *
- * @param payload The in-app message section of a push payload,
- * in NSDictionary representation.
- * @return A fully configured instance of UAInAppMessage.
- */
-+ (instancetype)messageWithPayload:(NSDictionary *)payload;
-
-/**
- * Tests whether the message is equal by value to another message.
- *
- * @param message The message the receiver is being compared to.
- * @return `YES` if the two messages are equal by value, `NO` otherwise.
- */
-- (BOOL)isEqualToMessage:(nullable UAInAppMessage *)message;
+///---------------------------------------------------------------------------------------
+/// @name In App Message Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * The in-app message payload in NSDictionary format
@@ -77,7 +55,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property(nonatomic, copy, nullable) NSString *identifier;
 
-// Top level
+///---------------------------------------------------------------------------------------
+/// @name In App Message Top Level Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * The expiration date for the message.
@@ -90,7 +70,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property(nonatomic, copy, nullable) NSDictionary *extra;
 
-// Display
+///---------------------------------------------------------------------------------------
+/// @name In App Message Display Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * The display type. Defaults to `UAInAppMessageDisplayTypeBanner`
@@ -126,7 +108,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong, nullable) UIColor *secondaryColor;
 
 
-// Actions
+///---------------------------------------------------------------------------------------
+/// @name In App Message Actions Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * The button group (category) associated with the message.
@@ -176,6 +160,41 @@ NS_ASSUME_NONNULL_BEGIN
  * buttons.
  */
 @property(nonatomic, readonly, nullable) NSArray *buttonActionBindings;
+
+
+///---------------------------------------------------------------------------------------
+/// @name In App Message Factories
+///---------------------------------------------------------------------------------------
+
+/**
+ * Class factory method for constructing an unconfigured
+ * in-app message model.
+ *
+ * @return An unconfigured instance of UAInAppMessage.
+ */
++ (instancetype)message;
+
+/**
+ * Class factory method for constructing an in-app message
+ * model from the in-app message section of a push payload.
+ *
+ * @param payload The in-app message section of a push payload,
+ * in NSDictionary representation.
+ * @return A fully configured instance of UAInAppMessage.
+ */
++ (instancetype)messageWithPayload:(NSDictionary *)payload;
+
+///---------------------------------------------------------------------------------------
+/// @name In App Message Utilities
+///---------------------------------------------------------------------------------------
+
+/**
+ * Tests whether the message is equal by value to another message.
+ *
+ * @param message The message the receiver is being compared to.
+ * @return `YES` if the two messages are equal by value, `NO` otherwise.
+ */
+- (BOOL)isEqualToMessage:(nullable UAInAppMessage *)message;
 
 @end
 

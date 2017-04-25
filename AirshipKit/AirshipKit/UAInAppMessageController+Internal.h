@@ -15,6 +15,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAInAppMessageController : NSObject<UIGestureRecognizerDelegate>
 
+///---------------------------------------------------------------------------------------
+/// @name In App Message Controller Internal Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The in app message
  */
@@ -34,6 +38,10 @@ NS_ASSUME_NONNULL_BEGIN
  * The optional controller delegate that can be implemented by the user
  */
 @property (nonatomic, strong, nullable) id <UAInAppMessageControllerDelegate> userDelegate;
+
+///---------------------------------------------------------------------------------------
+/// @name In App Message Controller Internal Display Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * UAInAppMessageController initializer.

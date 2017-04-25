@@ -10,6 +10,10 @@
  */
 @interface UADefaultMessageCenterListCell : UITableViewCell
 
+///---------------------------------------------------------------------------------------
+/// @name Default Message Center List Cell Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The style to apply to the cell.
  */
@@ -34,6 +38,10 @@
  * The message icon view.
  */
 @property (nonatomic, weak) IBOutlet UIImageView *listIconView;
+
+///---------------------------------------------------------------------------------------
+/// @name Default Message Center List Cell Config
+///---------------------------------------------------------------------------------------
 
 /**
  * Configures the cell according to the associated message object.

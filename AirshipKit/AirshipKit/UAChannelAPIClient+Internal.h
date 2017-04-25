@@ -34,6 +34,10 @@ typedef void (^UAChannelAPIClientFailureBlock)(NSUInteger statusCode);
  */
 @interface UAChannelAPIClient : UAAPIClient
 
+///---------------------------------------------------------------------------------------
+/// @name Channel API Client Internal Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method to create a UAChannelAPIClient.
  * @param config The Urban Airship config.

@@ -15,6 +15,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAChannelCapture : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Channel Capture Factory
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method to create the UAChannelCapture.
  *
@@ -27,6 +31,10 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)channelCaptureWithConfig:(UAConfig *)config
                                     push:(UAPush *)push
                                dataStore:(UAPreferenceDataStore *)dataStore;
+
+///---------------------------------------------------------------------------------------
+/// @name Channel Capture Management
+///---------------------------------------------------------------------------------------
 
 /**
  * Enable channel capture for a specified duration.

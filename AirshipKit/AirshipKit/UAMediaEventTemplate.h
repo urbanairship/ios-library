@@ -11,6 +11,55 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAMediaEventTemplate : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Media Event Template Properties
+///---------------------------------------------------------------------------------------
+
+/**
+ * The event's ID. The ID's length must not exceed 255 characters or it will
+ * invalidate the event.
+ */
+@property (nonatomic, copy, nullable) NSString *identifier;
+
+/**
+ * The event's category. The category's length must not exceed 255 characters or
+ * it will invalidate the event.
+ */
+@property (nonatomic, copy, nullable) NSString *category;
+
+/**
+ * The event's type. The type's length must not exceed 255 characters or it will
+ * invalidate the event.
+ */
+@property (nonatomic, copy, nullable) NSString *type;
+
+/**
+ * The event's description. The description's length must not exceed 255 characters
+ * or it will invalidate the event.
+ */
+@property (nonatomic, copy, nullable) NSString *eventDescription;
+
+/**
+ * `YES` if the event is a feature, else `NO`.
+ */
+@property (nonatomic, assign) BOOL isFeature;
+
+/**
+ * The event's author. The author's length must not exceed 255 characters
+ * or it will invalidate the event.
+ */
+@property (nonatomic, copy, nullable) NSString *author;
+
+/**
+ * The event's publishedDate. The publishedDate's length must not exceed 255 characters
+ * or it will invalidate the event.
+ */
+@property (nonatomic, copy, nullable) NSString *publishedDate;
+
+///---------------------------------------------------------------------------------------
+/// @name Media Event Template Factories
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method for creating a browsed content event template.
  */
@@ -55,47 +104,6 @@ NS_ASSUME_NONNULL_BEGIN
  * 2^31 - 1 or it will invalidate the event.
  */
 + (instancetype)consumedTemplateWithValue:(nullable NSNumber *)eventValue;
-
-/**
- * The event's ID. The ID's length must not exceed 255 characters or it will
- * invalidate the event.
- */
-@property (nonatomic, copy, nullable) NSString *identifier;
-
-/**
- * The event's category. The category's length must not exceed 255 characters or
- * it will invalidate the event.
- */
-@property (nonatomic, copy, nullable) NSString *category;
-
-/**
- * The event's type. The type's length must not exceed 255 characters or it will
- * invalidate the event.
- */
-@property (nonatomic, copy, nullable) NSString *type;
-
-/**
- * The event's description. The description's length must not exceed 255 characters
- * or it will invalidate the event.
- */
-@property (nonatomic, copy, nullable) NSString *eventDescription;
-
-/**
- * `YES` if the event is a feature, else `NO`.
- */
-@property (nonatomic, assign) BOOL isFeature;
-
-/**
- * The event's author. The author's length must not exceed 255 characters
- * or it will invalidate the event.
- */
-@property (nonatomic, copy, nullable) NSString *author;
-
-/**
- * The event's publishedDate. The publishedDate's length must not exceed 255 characters
- * or it will invalidate the event.
- */
-@property (nonatomic, copy, nullable) NSString *publishedDate;
 
 /**
  * Creates the custom media event.

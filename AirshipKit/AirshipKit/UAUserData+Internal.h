@@ -9,6 +9,29 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAUserData : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name User Data Internal Properties
+///---------------------------------------------------------------------------------------
+
+/**
+ * The user name.
+ */
+@property (nonatomic, readonly, copy) NSString *username;
+
+/**
+ * The password.
+ */
+@property (nonatomic, readonly, copy) NSString *password;
+
+/**
+ * The url as a string.
+ */
+@property (nonatomic, readonly, copy) NSString *url;
+
+///---------------------------------------------------------------------------------------
+/// @name User Data Internal Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Autoreleased UAUserData class factory method.
  *
@@ -27,20 +50,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (instancetype)initWithUsername:(NSString *)username password:(NSString *)password url:(NSString *)url;
 
-/**
- * The user name.
- */
-@property (nonatomic, readonly, copy) NSString *username;
-
-/**
- * The password.
- */
-@property (nonatomic, readonly, copy) NSString *password;
-
-/**
- * The url as a string.
- */
-@property (nonatomic, readonly, copy) NSString *url;
 
 @end
 

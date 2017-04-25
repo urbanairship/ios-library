@@ -12,6 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UANotificationContent : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Notification Content Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * Alert title
  */
@@ -62,6 +66,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong, nullable, readonly) UNNotification *notification;
 
+///---------------------------------------------------------------------------------------
+/// @name Notification Content Utilities
+///---------------------------------------------------------------------------------------
 
 /**
  * Parses the raw notification dictionary into a UANotification.

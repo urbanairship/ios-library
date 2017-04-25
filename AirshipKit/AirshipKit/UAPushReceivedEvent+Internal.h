@@ -12,6 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAPushReceivedEvent : UAEvent
 
+///---------------------------------------------------------------------------------------
+/// @name Push Received Event Internal Factory
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method to create a UAPushReceivedEvent.
  * @param notification The received push notification.

@@ -9,6 +9,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UATagGroupsMutation : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Tag Groups Mutation Internal Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method to define tags to be added to a tag group.
  * @param tags The tags to be added.

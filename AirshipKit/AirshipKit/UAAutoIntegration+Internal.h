@@ -9,6 +9,10 @@
 
 @interface UAAutoIntegration : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Auto Integration Internal Methods
+///---------------------------------------------------------------------------------------
+
 + (void)integrate;
 
 // Used to reset any state for testing only.

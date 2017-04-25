@@ -4,18 +4,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*
+ * SDK-private extensions to UAActionResult
+ */
 @interface UAActionResult ()
 
-/**
- * Creates an action result that indicates the arguments were rejected.
- */
-+ (instancetype)rejectedArgumentsResult;
-
-/**
- * Creates an action result that indicates the action was not found.
- */
-+ (instancetype)actionNotFoundResult;
-
+///---------------------------------------------------------------------------------------
+/// @name Action Result Internal Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * The result value produced when running an action (can be nil).
@@ -37,6 +33,19 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign) UAActionStatus status;
 
+///---------------------------------------------------------------------------------------
+/// @name Action Result Internal Methods
+///---------------------------------------------------------------------------------------
+
+/**
+ * Creates an action result that indicates the arguments were rejected.
+ */
++ (instancetype)rejectedArgumentsResult;
+
+/**
+ * Creates an action result that indicates the action was not found.
+ */
++ (instancetype)actionNotFoundResult;
 
 @end
 

@@ -9,6 +9,10 @@
  */
 @interface UAInAppMessageButtonActionBinding : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name In App Message Button Action Binding Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The title of the button.
  */

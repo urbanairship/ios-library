@@ -101,6 +101,10 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 
 @interface UAPush () <UAChannelRegistrarDelegate>
 
+///---------------------------------------------------------------------------------------
+/// @name Push Internal Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * Device token as a string.
  */
@@ -170,6 +174,10 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
  */
 @property (nonatomic, strong) id<UAAPNSRegistrationProtocol> pushRegistration;
 
+///---------------------------------------------------------------------------------------
+/// @name Push Internal Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method to create a push instance.
  * @param config The Urban Airship config
@@ -222,7 +230,6 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 - (void)channelCreated:(NSString *)channelID
        channelLocation:(NSString *)channelLocation
               existing:(BOOL)existing;
-
 
 /**
  * Creates a UAChannelRegistrationPayload.

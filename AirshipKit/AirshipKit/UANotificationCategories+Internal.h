@@ -4,6 +4,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*
+ * SDK-private extensions to UANotificationCategories
+ */
 @interface UANotificationCategories ()
 
 /**
@@ -21,7 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @return A set of user notification categories.
  */
 + (NSSet *)defaultCategoriesWithRequireAuth:(BOOL)requireAuth;
-
 
 @end
 

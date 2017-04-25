@@ -7,6 +7,10 @@
  */
 @interface UAAsyncOperation : NSOperation
 
+///---------------------------------------------------------------------------------------
+/// @name Async Operation Factory
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method to create a UAAsyncOperation operation. Once the
  * operation is finished, the block must call ``finish`` on the passed
@@ -16,6 +20,10 @@
  * @return A UAAsyncOperation instance.
  */
 + (instancetype)operationWithBlock:(void (^)(UAAsyncOperation *))block;
+
+///---------------------------------------------------------------------------------------
+/// @name Async Operation Management
+///---------------------------------------------------------------------------------------
 
 /**
  * Called to start the async operation.

@@ -53,11 +53,19 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly) NSSet<NSMutableDictionary *> *registeredEntries;
 
+///---------------------------------------------------------------------------------------
+/// @name Action Registry Factory
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method to create an action registry with the default action entries.
  * @return An action registry with the default action entries.
  */
 + (instancetype)defaultRegistry;
+
+///---------------------------------------------------------------------------------------
+/// @name Action Registry Core Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Registers an action with a predicate.
@@ -109,7 +117,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 -(BOOL)registerAction:(UAAction *)action name:(NSString *)name;
 
-
 /**
  * Registers an action.
  *
@@ -124,7 +131,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 -(BOOL)registerAction:(UAAction *)action names:(NSArray *)names;
 
-
 /**
  * Returns a registered action for a given name.
  * 
@@ -134,6 +140,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 -(nullable UAActionRegistryEntry *)registryEntryWithName:(NSString *)name;
 
+///---------------------------------------------------------------------------------------
+/// @name Action Registry Management
+///---------------------------------------------------------------------------------------
 
 /**
  * Adds a situation override action to be used instead of the default
@@ -150,7 +159,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)addSituationOverride:(UASituation)situation
             forEntryWithName:(NSString *)name
                       action:(nullable UAAction *)action;
-
 
 /**
  * Updates the predicate for a registered entry.
@@ -183,7 +191,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)removeName:(NSString *)name;
 
-
 /**
  * Removes an entry and all of its registered names.
  *
@@ -192,7 +199,6 @@ NS_ASSUME_NONNULL_BEGIN
  * entry is a reserved action and is unable to be removed.
  */
 - (BOOL)removeEntryWithName:(NSString *)name;
-
 
 /**
  * Adds a name to a registered entry.

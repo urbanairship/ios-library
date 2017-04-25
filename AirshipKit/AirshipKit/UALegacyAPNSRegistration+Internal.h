@@ -5,7 +5,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * Adapter that implements APNS registration using the legacy (<iOS10) registration flow.
+ */
 @interface UALegacyAPNSRegistration : NSObject <UAAPNSRegistrationProtocol>
+
+///---------------------------------------------------------------------------------------
+/// @name Legacy APNS Registration Internal Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Updates APNS registration.

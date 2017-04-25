@@ -4,6 +4,9 @@
 
 @interface NSString (UALocalizationAdditions)
 
+///---------------------------------------------------------------------------------------
+/// @name NSString Localization Additions Core Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Returns a localized string associated to the receiver by the given table, returning the receiver if the

@@ -13,13 +13,24 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAApplicationMetrics : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Application Metrics Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * The date of the last time the application was active.
  */
 @property (nonatomic, readonly, strong, nullable) NSDate *lastApplicationOpenDate;
 
+///---------------------------------------------------------------------------------------
+/// @name Application Metrics Core Methods
+///---------------------------------------------------------------------------------------
 
+/**
+ * Triggers an analytics event.
+ * @param dataStore The dataStore.
+ * @return An application metrics instance.
+ */
 + (instancetype)applicationMetricsWithDataStore:(UAPreferenceDataStore *)dataStore;
 
 @end

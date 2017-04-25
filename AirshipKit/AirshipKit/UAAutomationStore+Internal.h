@@ -12,6 +12,10 @@
  */
 @interface UAAutomationStore : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Automation Store Internal Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method for automation store.
  *

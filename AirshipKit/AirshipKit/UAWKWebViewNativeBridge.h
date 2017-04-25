@@ -14,6 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAWKWebViewNativeBridge : UABaseNativeBridge <UAWKWebViewDelegate>
 
+///---------------------------------------------------------------------------------------
+/// @name UA WKWebView Bridge Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * Optional delegate to forward any UAWKWebViewDelegate calls.
  */

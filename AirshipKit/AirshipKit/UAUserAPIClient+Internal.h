@@ -34,6 +34,10 @@ typedef void (^UAUserAPIClientFailureBlock)(NSUInteger statusCode);
  */
 @interface UAUserAPIClient : UAAPIClient
 
+///---------------------------------------------------------------------------------------
+/// @name User API Client Internal Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method to create a UAUserAPIClient.
  * @param config The Urban Airship config.

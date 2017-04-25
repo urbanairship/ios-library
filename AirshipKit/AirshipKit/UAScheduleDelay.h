@@ -86,6 +86,10 @@ typedef NS_ENUM(NSInteger, UAScheduleDelayAppState) {
  */
 @interface UAScheduleDelayBuilder : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Schedule Delay Builder Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * Minimum amount of time to wait in seconds before the schedule actions are able to execute.
  */
@@ -127,6 +131,16 @@ typedef NS_ENUM(NSInteger, UAScheduleDelayAppState) {
  */
 @interface UAScheduleDelay: NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Schedule Delay Properties
+///---------------------------------------------------------------------------------------
+
+/**
+ * Checks if the delay is valid. A valid delay must contain at
+ * most 10 cancellation triggers.
+ */
+@property(nonatomic, readonly) BOOL isValid;
+
 /**
  * Minimum amount of time to wait in seconds before the schedule actions are able to execute.
  */
@@ -159,13 +173,9 @@ typedef NS_ENUM(NSInteger, UAScheduleDelayAppState) {
  */
 @property(nonatomic, readonly) NSArray<UAScheduleTrigger *> *cancellationTriggers;
 
-/**
- * Checks if the delay is equal to another delay.
- *
- * @param delay The other delay to compare against.
- * @return `YES` if the delays are equal, otherwise `NO`.
- */
-- (BOOL)isEqualToDelay:(nullable UAScheduleDelay *)delay;
+///---------------------------------------------------------------------------------------
+/// @name Schedule Delay Factories
+///---------------------------------------------------------------------------------------
 
 /**
  * Creates a schedule delay with a builder block.
@@ -183,11 +193,18 @@ typedef NS_ENUM(NSInteger, UAScheduleDelayAppState) {
  */
 + (nullable instancetype)delayWithJSON:(id)json error:(NSError * _Nullable *)error;
 
+///---------------------------------------------------------------------------------------
+/// @name Schedule Delay Evaluation
+///---------------------------------------------------------------------------------------
+
 /**
- * Checks if the delay is valid. A valid delay must contain at
- * most 10 cancellation triggers.
+ * Checks if the delay is equal to another delay.
+ *
+ * @param delay The other delay to compare against.
+ * @return `YES` if the delays are equal, otherwise `NO`.
  */
-@property(nonatomic, readonly) BOOL isValid;
+- (BOOL)isEqualToDelay:(nullable UAScheduleDelay *)delay;
+
 
 @end
 

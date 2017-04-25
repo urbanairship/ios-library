@@ -22,6 +22,10 @@ typedef void (^UAJavaScriptDelegateCompletionHandler)(NSString * __nullable scri
 
 @required
 
+///---------------------------------------------------------------------------------------
+/// @name JavaScript Delegate Required Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Delegates must implement this method. Implementations take a model object representing
  * call data, which includes the command name, an array of string arguments,

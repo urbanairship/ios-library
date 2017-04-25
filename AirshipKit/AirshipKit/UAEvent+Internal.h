@@ -28,6 +28,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UAEvent ()
 
+///---------------------------------------------------------------------------------------
+/// @name Event Internal Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The time the event was created.
  */
@@ -52,6 +56,10 @@ NS_ASSUME_NONNULL_BEGIN
  * The JSON event size in bytes.
  */
 @property (nonatomic, readonly) NSUInteger jsonEventSize;
+
+///---------------------------------------------------------------------------------------
+/// @name Event Internal Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Gets the carrier's name.

@@ -8,11 +8,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*
+ * SDK-private extensions to UAInbox
+ */
 @interface UAInbox ()
 
+///---------------------------------------------------------------------------------------
+/// @name Inbox Internal Properties
+///---------------------------------------------------------------------------------------
 
 /**
- * The inbox api client.
+ * The inbox API client.
  */
 @property (nonatomic, strong) UAInboxAPIClient *client;
 
@@ -20,6 +26,10 @@ NS_ASSUME_NONNULL_BEGIN
  * The inbox user.
  */
 @property (nonatomic, strong) UAUser *user;
+
+///---------------------------------------------------------------------------------------
+/// @name Inbox Internal Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Factory method to create an inbox.

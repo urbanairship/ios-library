@@ -14,6 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UATagGroupsAPIClient : UAAPIClient
 
+///---------------------------------------------------------------------------------------
+/// @name Tag Groups API Client Internal Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method to create a UATagGroupsAPIClient.
  *

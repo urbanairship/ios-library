@@ -15,6 +15,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @required
 
+///---------------------------------------------------------------------------------------
+/// @name In App Message Controller Delegate Required Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Returns a view configured with data from the provided message.
  * Use this method to configure your custom view with colors, alert
@@ -38,6 +42,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (UIControl *)messageView:(UIView *)messageView buttonAtIndex:(NSUInteger)index;
 
 @optional
+
+///---------------------------------------------------------------------------------------
+/// @name In App Message Controller Delegate Optional Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Indicates that the message view has changed touch state, meaning that the message view

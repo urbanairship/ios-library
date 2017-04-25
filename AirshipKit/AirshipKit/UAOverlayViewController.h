@@ -15,6 +15,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAOverlayViewController : NSObject <UAWKWebViewDelegate>
 
+///---------------------------------------------------------------------------------------
+/// @name Overlay View Controller Display
+///---------------------------------------------------------------------------------------
+
 /**
  * Creates and displays a landing page overlay from a URL.
  * @param url The URL of the landing page to display.
@@ -52,6 +56,10 @@ NS_ASSUME_NONNULL_BEGIN
  * @param message The Rich Push message to display.
  */
 + (void)showMessage:(UAInboxMessage *)message;
+
+///---------------------------------------------------------------------------------------
+/// @name Overlay View Controller Management
+///---------------------------------------------------------------------------------------
 
 /**
  * Closes all currently displayed overlays.

@@ -37,6 +37,53 @@ extern NSString * const UAInboxMessageListUpdatedNotification;
  */
 @interface UAInboxMessageList : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Message List Properties
+///---------------------------------------------------------------------------------------
+
+/**
+ * The list of messages stored locally as an NSArray.
+ */
+@property (nonatomic, readonly, strong) NSArray<UAInboxMessage *> *messages;
+
+/**
+ * The number of messages that are currently unread or -1
+ * if the message list is not loaded.
+ */
+@property (assign) NSInteger unreadCount;
+
+/**
+ * YES if retrieving message list is currently in progress.
+ * NO otherwise.
+ */
+@property (readonly) BOOL isRetrieving;
+
+/**
+ * YES if message batching is currently in progress.
+ * NO otherwise.
+ */
+@property (readonly) BOOL isBatchUpdating;
+
+
+///---------------------------------------------------------------------------------------
+/// @name Message List Retrieval
+///---------------------------------------------------------------------------------------
+
+/**
+ * Fetch new messages from the server. If the associated user has not yet
+ * been created, this will be a no-op.
+ *
+ * @param successBlock A block to be executed if message retrieval succeeds.
+ * @param failureBlock A block to be executed if message retrieval fails.
+ * @return A UADisposable token which can be used to cancel callback execution.
+ * This value will be nil if the associated user has not yet been created.
+ */
+- (nullable UADisposable *)retrieveMessageListWithSuccessBlock:(nullable UAInboxMessageListCallbackBlock)successBlock
+                                              withFailureBlock:(nullable UAInboxMessageListCallbackBlock)failureBlock;
+
+///---------------------------------------------------------------------------------------
+/// @name Message Management
+///---------------------------------------------------------------------------------------
 
 /**
  * Marks messages read. They will be marked locally as read and synced with
@@ -63,25 +110,15 @@ extern NSString * const UAInboxMessageListUpdatedNotification;
                              completionHandler:(nullable UAInboxMessageListCallbackBlock)completionHandler;
 
 /**
- * Fetch new messages from the server. If the associated user has not yet
- * been created, this will be a no-op.
+ * Returns the list of messages stored locally as an NSArray, filtered by the supplied predicate.
  *
- * @param successBlock A block to be executed if message retrieval succeeds.
- * @param failureBlock A block to be executed if message retrieval fails.
- * @return A UADisposable token which can be used to cancel callback execution.
- * This value will be nil if the associated user has not yet been created.
- */
-- (nullable UADisposable *)retrieveMessageListWithSuccessBlock:(nullable UAInboxMessageListCallbackBlock)successBlock
-                                              withFailureBlock:(nullable UAInboxMessageListCallbackBlock)failureBlock;
-
-/**
- * Returns the list of messages on disk as an NSArray, filtered by the supplied predicate.
  * @param predicate The predicate to use as a filter over messages.
  */
 - (NSArray<UAInboxMessage *> *)messagesFilteredUsingPredicate:(NSPredicate *)predicate;
 
 /**
  * Returns the number of messages currently in the inbox.
+ *
  * @return The message count as an integer.
  */
 - (NSUInteger)messageCount;
@@ -102,28 +139,6 @@ extern NSString * const UAInboxMessageListUpdatedNotification;
  */
 - (nullable UAInboxMessage *)messageForID:(NSString *)messageID;
 
-/**
- * The list of messages on disk as an NSArray.
- */
-@property (nonatomic, readonly, strong) NSArray<UAInboxMessage *> *messages;
-
-/**
- * The number of messages that are currently unread or -1
- * if the message list is not loaded.
- */
-@property (assign) NSInteger unreadCount;
-
-/**
- * YES if retrieving message list is currently in progress.
- * NO otherwise.
- */
-@property (readonly) BOOL isRetrieving;
-
-/**
- * YES if message batching is currently in progress.
- * NO otherwise.
- */
-@property (readonly) BOOL isBatchUpdating;
 
 @end
 

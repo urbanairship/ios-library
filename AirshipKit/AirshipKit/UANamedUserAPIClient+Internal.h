@@ -24,6 +24,10 @@ typedef void (^UANamedUserAPIClientFailureBlock)(NSUInteger status);
  */
 @interface UANamedUserAPIClient : UAAPIClient
 
+///---------------------------------------------------------------------------------------
+/// @name Named User Internal Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method to create a UANamedUserAPIClient.
  * @param config the Urban Airship config.

@@ -10,6 +10,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UIWebView (UAAdditions)
 
+///---------------------------------------------------------------------------------------
+/// @name Web View Additions Internal Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Injects the current orientation into the webview. Should be called when the webview's
  * orientation changes.

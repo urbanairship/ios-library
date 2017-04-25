@@ -9,6 +9,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAAppExitEvent : UAEvent
 
+///---------------------------------------------------------------------------------------
+/// @name App Exit Event Internal Factory
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method to create a UAAppExitEvent.
  */

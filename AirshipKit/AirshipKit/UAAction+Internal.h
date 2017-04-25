@@ -6,6 +6,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UAAction ()
 
+///---------------------------------------------------------------------------------------
+/// @name Action Internal Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * A block defining the primary work performed by an action.
  * In the base class, this block is executed by the default implementation of
@@ -19,6 +23,10 @@ NS_ASSUME_NONNULL_BEGIN
  * [UAAction acceptsArguments:]
  */
 @property (nonatomic, copy, nullable) UAActionPredicate acceptsArgumentsBlock;
+
+///---------------------------------------------------------------------------------------
+/// @name Action Internal Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Performs the action, with pre/post execution calls, if it accepts the provided arguments.

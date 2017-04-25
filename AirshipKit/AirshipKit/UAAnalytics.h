@@ -12,6 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAAnalytics : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Analytics Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The conversion send ID.
  */
@@ -48,6 +52,10 @@ NS_ASSUME_NONNULL_BEGIN
  * UAConfig.
  */
 @property (nonatomic, assign, getter=isEnabled) BOOL enabled;
+
+///---------------------------------------------------------------------------------------
+/// @name Analytics Core Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Triggers an analytics event.

@@ -23,6 +23,10 @@ extern NSString *const UANotificationDefaultActionIdentifier;
  */
 extern NSString *const UANotificationDismissActionIdentifier;
 
+///---------------------------------------------------------------------------------------
+/// @name Notification Response Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * Action identifier for the response.
  */
@@ -44,6 +48,9 @@ extern NSString *const UANotificationDismissActionIdentifier;
  */
 @property (nonatomic, readonly, nullable, strong) UNNotificationResponse *response;
 
+///---------------------------------------------------------------------------------------
+/// @name Notification Response Factories
+///---------------------------------------------------------------------------------------
 
 /**
  * UANotificationResponse factory method.
@@ -56,7 +63,6 @@ extern NSString *const UANotificationDismissActionIdentifier;
 + (instancetype)notificationResponseWithNotificationInfo:(NSDictionary *)notificationInfo
                                         actionIdentifier:(NSString *)actionIdentifier
                                             responseText:(nullable NSString *)responseText;
-
 
 /**
  * UANotificationResponse factory method.

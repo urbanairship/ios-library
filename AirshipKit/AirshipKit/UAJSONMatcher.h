@@ -26,18 +26,18 @@ extern NSString * const UAJSONMatcherErrorDomain;
  */
 @interface UAJSONMatcher : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name JSON Matcher Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The matcher's JSON payload.
  */
 @property(nonatomic, readonly) NSDictionary *payload;
 
-/**
- * Evaluates the object with the matcher.
- *
- * @param object The object to evaluate.
- * @return `YES` if the matcher matches the object, otherwise `NO`.
- */
-- (BOOL)evaluateObject:(nullable id)object;
+///---------------------------------------------------------------------------------------
+/// @name JSON Matcher Factories
+///---------------------------------------------------------------------------------------
 
 /**
  * Factory method to create a JSON matcher.
@@ -75,6 +75,20 @@ extern NSString * const UAJSONMatcherErrorDomain;
  * @return A value matcher, or `nil` if the JSON is invalid.
  */
 + (nullable instancetype)matcherWithJSON:(id)json error:( NSError * _Nullable *)error;
+
+///---------------------------------------------------------------------------------------
+/// @name JSON Matcher Evaluation
+///---------------------------------------------------------------------------------------
+
+/**
+ * Evaluates the object with the matcher.
+ *
+ * @param object The object to evaluate.
+ * @return `YES` if the matcher matches the object, otherwise `NO`.
+ */
+- (BOOL)evaluateObject:(nullable id)object;
+
+
 
 @end
 

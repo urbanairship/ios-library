@@ -4,7 +4,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*
+ * SDK-private extensions to UANotificationCategory
+ */
 @interface UANotificationCategory ()
+
+///---------------------------------------------------------------------------------------
+/// @name Notification Catagories Internal Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Converts a UANotificationCategory into a UIUserNotificationCategory.

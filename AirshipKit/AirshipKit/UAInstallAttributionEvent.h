@@ -9,6 +9,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAInstallAttributionEvent : UAEvent
 
+///---------------------------------------------------------------------------------------
+/// @name Install Attribution Event Factories
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method to create a UAInstallAttributionEvent.
  * @return UAInstallAttributionEvent instance.
@@ -21,7 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param iAdImpressionDate The iAD impression date.
  * @return UAInstallAttributionEvent instance.
  */
-+ (instancetype)eventWithAppPurchaseDate:(NSDate *)appPurchaseDate iAdImpressionDate:(NSDate *)iAdImpressionDate;
++ (instancetype)eventWithAppPurchaseDate:(NSDate *)appPurchaseDate
+                       iAdImpressionDate:(NSDate *)iAdImpressionDate;
 
 @end
 

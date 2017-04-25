@@ -16,13 +16,23 @@
 @class UANotificationContent;
 
 NS_ASSUME_NONNULL_BEGIN
-
+/*
+ * SDK-private extensions to UAInAppMessaging
+ */
 @interface UAInAppMessaging ()
+
+///---------------------------------------------------------------------------------------
+/// @name In App Messaging Internal Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * A Boolean value indicating whether or not the keyboard is displayed.
  */
 @property(nonatomic, assign, getter=isKeyboardDisplayed) BOOL keyboardDisplayed;
+
+///---------------------------------------------------------------------------------------
+/// @name In App Messaging Internal Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Factory method to create an UAInAppMessaging instance.

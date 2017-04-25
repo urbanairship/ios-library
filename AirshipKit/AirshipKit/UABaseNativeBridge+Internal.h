@@ -13,6 +13,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UABaseNativeBridge()
 
+///---------------------------------------------------------------------------------------
+/// @name Base Native Bridge Internal Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Populate Javascript environment if the webView is showing a whitelisted URL.
  *

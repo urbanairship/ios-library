@@ -14,6 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAURLProtocol : NSURLProtocol
 
+///---------------------------------------------------------------------------------------
+/// @name URL Protocol Core Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Adds a URL to be handled and cached by the Protocol.

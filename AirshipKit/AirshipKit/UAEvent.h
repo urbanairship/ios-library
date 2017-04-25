@@ -36,6 +36,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAEvent : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Event Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The time the event was created.
  */
@@ -56,6 +60,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly) NSString *eventType;
 
+///---------------------------------------------------------------------------------------
+/// @name Event Validation
+///---------------------------------------------------------------------------------------
 
 /**
  * Checks if the event is valid. Invalid events will be dropped.

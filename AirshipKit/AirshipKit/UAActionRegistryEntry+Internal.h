@@ -4,9 +4,23 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*
+ * Testing extensions to Action Registry Entry
+ */
 @interface UAActionRegistryEntry()
 
+///---------------------------------------------------------------------------------------
+/// @name Action Registry Entry Internal Properties
+///---------------------------------------------------------------------------------------
+
+/**
+ * A mutable internal instance of the Entry's names.
+ */
 @property (nonatomic, strong) NSMutableArray *mutableNames;
+
+///---------------------------------------------------------------------------------------
+/// @name Action Registry Entry Internal Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Add a situation override to the UAActionRegistryEntry.
