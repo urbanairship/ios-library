@@ -29,10 +29,16 @@ $(".token").click(function(event) {
 
   // Keeps the document from jumping to the hash.
   var href = $(this).attr('href');
-  if (history.pushState) {
-    history.pushState({}, '', href);
+  if (history.replaceState) {
+    history.replaceState({}, '', href);
   } else {
     location.hash = href;
   }
   event.preventDefault();
+});
+
+// Dumb down quotes within code blocks that delimit strings instead of quotations
+// https://github.com/realm/jazzy/issues/714
+$("code q").replaceWith(function () {
+  return ["\"", $(this).contents(), "\""];
 });

@@ -3,9 +3,16 @@
     <a class="header-link" href="{{path_to_root}}index.html">
       {{module_name}} v$AIRSHIP_VERSION
     </a>
-
     {{#doc_coverage}} ({{doc_coverage}}% documented){{/doc_coverage}}
   </p>
+
+  {{^disable_search}}
+  <p class="header-col--secondary">
+    <form role="search" action="{{path_to_root}}search.json">
+      <input type="text" placeholder="Search documentation" data-typeahead>
+    </form>
+  </p>
+  {{/disable_search}}
 
   {{#github_url}}
     <p class="header-col header-col--secondary">

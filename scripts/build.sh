@@ -1,5 +1,6 @@
 #!/bin/bash -ex
 
+JAZZY_VERSION=0.7.5
 SCRIPT_DIRECTORY=`dirname "$0"`
 ROOT_PATH=`dirname "${0}"`/../
 TEMP_DIR=$(mktemp -d /tmp/build-XXXXX)
@@ -76,50 +77,47 @@ otool -l "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" | grep __LLVM
 ############
 
 # Make sure Jazzy is installed
-if ! [ -x "$(command -v jazzy)" ]; then
-    echo "Installing jazzy"
-    gem install jazzy
+if [ `gem list -i jazzy --version ${JAZZY_VERSION}` == 'false' ]; then
+  echo "Installing jazzy"
+  gem install jazzy -v $JAZZY_VERSION
 fi
 
+ruby -S jazzy _${JAZZY_VERSION}_ -v
+
 # AirshipKit
-jazzy \
+ruby -S jazzy _${JAZZY_VERSION}_ \
 --objc \
 --clean \
---author "Urban Airship" \
---author_url https://urbanairship.com \
---github_url https://github.com/urbanairship/ios-library \
---module-version $VERSION \
---umbrella-header $ROOT_PATH/AirshipKit/AirshipKit/AirshipLib.h \
---framework-root $ROOT_PATH/AirshipKit \
 --module AirshipKit  \
+--module-version $VERSION \
+--framework-root $ROOT_PATH/AirshipKit \
+--umbrella-header $ROOT_PATH/AirshipKit/AirshipKit/AirshipLib.h \
 --output $STAGING/Documentation/AirshipKit \
---sdk iphoneos \
+--sdk iphonesimulator \
 --skip-undocumented \
 --hide-documentation-coverage \
---readme $ROOT_PATH/Documentation/README.md \
---theme $ROOT_PATH/Documentation/theme
+--config Documentation/.jazzy.json
 
 # AirshipAppExtensions
-jazzy \
+ruby -S jazzy _${JAZZY_VERSION}_ \
 --objc \
 --clean \
---author "Urban Airship" \
---author_url https://urbanairship.com \
---github_url https://github.com/urbanairship/ios-library \
 --module-version $VERSION \
 --umbrella-header $ROOT_PATH/AirshipAppExtensions/AirshipAppExtensions/AirshipAppExtensions.h \
 --framework-root $ROOT_PATH/AirshipAppExtensions \
 --module AirshipAppExtensions  \
 --output $STAGING/Documentation/AirshipAppExtensions \
---sdk iphoneos \
+--sdk iphonesimulator \
 --skip-undocumented \
 --hide-documentation-coverage \
---readme $ROOT_PATH/Documentation/README.md \
---theme $ROOT_PATH/Documentation/theme
+--config Documentation/.jazzy.json
 
 # Workaround the missing module version
 find $STAGING/Documentation -name '*.html' -print0 | xargs -0 sed -i "" "s/\$AIRSHIP_VERSION/${VERSION}/g"
 
+# Copy images for documents
+cp -r Documentation/Migration/images $STAGING/Documentation/AirshipKit
+cp -r Documentation/Migration/images $STAGING/Documentation/AirshipAppExtensions
 
 ######################
 # Package distribution

@@ -8,4 +8,4 @@ services into your iOS applications.
 - [AirshipKit Docs](https://docs.urbanairship.com/reference/libraries/ios/latest/)
 - [AirshipAppExtensions Docs](https://docs.urbanairship.com/reference/libraries/ios-extensions/latest/)
 - [Getting started guide](https://docs.urbanairship.com/build/ios.html)
-- [Migration Guides](Migration)
+- [Migration Guides](Guides.html)

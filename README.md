@@ -13,7 +13,7 @@ Code Contribution Agreement (http://docs.urbanairship.com/contribution-agreement
 - [AirshipKit Docs](http://docs.urbanairship.com/reference/libraries/ios/latest/)
 - [AirshipAppExtensions Docs](http://docs.urbanairship.com/reference/libraries/ios-extensions/latest/)
 - [Getting started guide](http://docs.urbanairship.com/platform/ios/)
-- [Migration guide](http://docs.urbanairship.com/guides/ios-migration/)
+- [Migration Guides](Documentation/Migration)
 - [Sample Quickstart Guide](Sample/README.md)
 - [Swift Sample Quickstart Guide](SwiftSample/README.md)
 

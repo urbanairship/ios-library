@@ -9,44 +9,14 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The UAConfig object provides an interface for passing common configurable values to [UAirship takeOff].
  * The simplest way to use this class is to add an AirshipConfig.plist file in your app's bundle and set
- * the desired options. The plist keys use the same names as the properties on this class. Older, all-caps
- * keys are still supported, but you should migrate your properties file to make use of a number of new options.
+ * the desired options. The plist keys use the same names as this class's configuration options. Older,
+ * all-caps keys are still supported, but you should migrate your properties file to make use of a number 
+ * of new options.
  */
 @interface UAConfig : NSObject <NSCopying>
 
 ///---------------------------------------------------------------------------------------
-/// @name Resolved Values
-///---------------------------------------------------------------------------------------
-
-/**
- * The current app key (resolved using the inProduction flag).
- */
-@property (nonatomic, readonly, nullable) NSString *appKey;
-
-/**
- * The current app secret (resolved using the inProduction flag).
- */
-@property (nonatomic, readonly, nullable) NSString *appSecret;
-
-/**
- * The current log level for the library's UA_L<level> macros (resolved using the inProduction flag).
- */
-@property (nonatomic, readonly) UALogLevel logLevel;
-
-/**
- * The production status of this application. This may be set directly, or it may be determined
- * automatically if the detectProvisioningMode flag is set to `YES`.
- */
-@property (nonatomic, assign, getter=isInProduction) BOOL inProduction;
-
-/**
- * Toggles Urban Airship analytics. Defaults to `YES`. If set to `NO`, many UA features will not be
- * available to this application.
- */
-@property (nonatomic, assign, getter=isAnalyticsEnabled) BOOL analyticsEnabled;
-
-///---------------------------------------------------------------------------------------
-/// @name Configuration Values
+/// @name Configuration Options
 ///---------------------------------------------------------------------------------------
 
 /**
@@ -121,6 +91,12 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
+ * Toggles Urban Airship analytics. Defaults to `YES`. If set to `NO`, many UA features will not be
+ * available to this application.
+ */
+@property (nonatomic, assign, getter=isAnalyticsEnabled) BOOL analyticsEnabled;
+
+/**
  * Apps may be set to self-configure based on the APS-environment set in the
  * embedded.mobileprovision file by using detectProvisioningMode. If
  * detectProvisioningMode is set to `YES`, the inProduction value will
@@ -193,13 +169,38 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSDictionary *customConfig;
 
 /**
- * If set to `YES`, SDK will use WKWebView for UA message views and overlays.
- * If set to `NO`,  SDK will use UIWebView for UA message views and overlays.
+ * If set to `YES`, SDK will use WKWebView for UA default inbox message and overlay views.
+ * If set to `NO`,  SDK will use UIWebView for UA default inbox message and overlay views.
  *
  * Defaults to `NO`. 
  * @note Will default to `YES` in SDK 9.0.
  */
 @property (nonatomic, assign) BOOL useWKWebView;
+
+///---------------------------------------------------------------------------------------
+/// @name Resolved Options
+///---------------------------------------------------------------------------------------
+
+/**
+ * The current app key (resolved using the inProduction flag).
+ */
+@property (nonatomic, readonly, nullable) NSString *appKey;
+
+/**
+ * The current app secret (resolved using the inProduction flag).
+ */
+@property (nonatomic, readonly, nullable) NSString *appSecret;
+
+/**
+ * The current log level for the library's UA_L<level> macros (resolved using the inProduction flag).
+ */
+@property (nonatomic, readonly) UALogLevel logLevel;
+
+/**
+ * The production status of this application. This may be set directly, or it may be determined
+ * automatically if the detectProvisioningMode flag is set to `YES`.
+ */
+@property (nonatomic, assign, getter=isInProduction) BOOL inProduction;
 
 ///---------------------------------------------------------------------------------------
 /// @name Factory Methods

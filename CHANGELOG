@@ -1,7 +1,17 @@
 iOS Changelog
 =============
 
-Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
+Migration Guides: Documentation/Migration
+
+Version 8.3.0 - ????? ??, 2017
+==============================
+New Features
+------------
+- Added support for WKWebView
+
+Other
+-----
+- Migration guides moved to this repository
 
 Version 8.2.2 - April 4, 2017
 ==============================
