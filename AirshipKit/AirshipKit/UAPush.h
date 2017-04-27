@@ -20,9 +20,20 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSString *const UAChannelCreatedEvent;
 
 /**
+ * NSNotification event when the channel is updated. The event
+ * will contain the channel ID under `UAChannelUpdatedEventChannelKey`
+ */
+extern NSString *const UAChannelUpdatedEvent;
+
+/**
  * Channel ID key for the channel created event.
  */
 extern NSString *const UAChannelCreatedEventChannelKey;
+
+/**
+ * Channel ID key for the channel updated event.
+ */
+extern NSString *const UAChannelUpdatedEventChannelKey;
 
 /**
  * Channel existing key for the channel created event.
