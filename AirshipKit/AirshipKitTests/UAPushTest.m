@@ -1428,7 +1428,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 }
 
 /**
- * Test new channel created posts an NSNotification
+ * Test new channel created posts an NSNotification of type UAChannelCreatedEvent
  */
 - (void)testNewChannelCreatedNSNotification {
 
@@ -1445,6 +1445,30 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [[NSNotificationCenter defaultCenter] addObserver:testObserver selector:@selector(handleNotification:) name:UAChannelCreatedEvent object:self.push];
 
     [self.push channelCreated:@"someChannelID" channelLocation:@"someLocation" existing:NO];
+
+    [self waitForExpectationsWithTimeout:10 handler:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:testObserver];
+}
+
+/**
+ * Test channel updated posts an NSNotification of type UAChannelUpdatedEvent
+ */
+- (void)testChannelUpdatedNSNotification {
+    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
+
+    self.push.deviceToken = validDeviceToken;
+    self.push.channelID = @"someChannelID";
+    self.push.channelLocation = @"someChannelLocation";
+
+    XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
+
+    id testObserver = [[UATestNotificationObserver alloc] initWithBlock:^(NSNotification *notification) {
+        [notificationFired fulfill];
+    }];
+
+    [[NSNotificationCenter defaultCenter] addObserver:testObserver selector:@selector(handleNotification:) name:UAChannelUpdatedEvent object:self.push];
+
+    [self.push registrationSucceededWithPayload:payload];
 
     [self waitForExpectationsWithTimeout:10 handler:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:testObserver];

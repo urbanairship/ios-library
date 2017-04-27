@@ -63,8 +63,12 @@ NSString *const UAPushTagGroupsMutationsKey = @"UAPushTagGroupsMutations";
 NSString *const UAPushDefaultDeviceTagGroup = @"device";
 
 NSString *const UAChannelCreatedEvent = @"com.urbanairship.push.channel_created";
+NSString *const UAChannelUpdatedEvent = @"com.urbanairship.push.channel_updated";
+
 NSString *const UAChannelCreatedEventChannelKey = @"com.urbanairship.push.channel_id";
 NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.existing";
+
+NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channel_id";
 
 @implementation UAPush
 
@@ -806,6 +810,10 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
         if ([strongDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
             [strongDelegate registrationSucceededForChannelID:self.channelID deviceToken:self.deviceToken];
         }
+
+        [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelUpdatedEvent
+                                                            object:self
+                                                          userInfo:@{UAChannelUpdatedEventChannelKey: self.channelID}];
     });
 
     if (![payload isEqualToPayload:[self createChannelPayload]]) {
