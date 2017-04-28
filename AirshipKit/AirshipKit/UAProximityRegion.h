@@ -10,6 +10,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAProximityRegion : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Proximity Region Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The proximity region's latitude in degress.
  */
@@ -24,6 +28,10 @@ NS_ASSUME_NONNULL_BEGIN
  * The proximity region's received signal strength indication in dBm.
  */
 @property (nonatomic, strong, nullable) NSNumber *RSSI;
+
+///---------------------------------------------------------------------------------------
+/// @name Proximity Region Factory
+///---------------------------------------------------------------------------------------
 
 /**
  * Factory method for creating a proximity region.

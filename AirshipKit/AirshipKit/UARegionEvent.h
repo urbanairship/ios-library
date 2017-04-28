@@ -30,6 +30,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UARegionEvent : UAEvent
 
+///---------------------------------------------------------------------------------------
+/// @name Region Event Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * A proximity region with an identifier, major and minor.
  */
@@ -39,6 +43,10 @@ NS_ASSUME_NONNULL_BEGIN
  * A circular region with a radius, and latitude/longitude from its center.
  */
 @property (nonatomic, strong, nullable) UACircularRegion *circularRegion;
+
+///---------------------------------------------------------------------------------------
+/// @name Region Event Factory
+///---------------------------------------------------------------------------------------
 
 /**
  * Factory method for creating a region event.

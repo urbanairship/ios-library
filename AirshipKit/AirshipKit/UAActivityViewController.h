@@ -10,10 +10,18 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAActivityViewController : UIActivityViewController <UIPopoverPresentationControllerDelegate, UIPopoverControllerDelegate>
 
+///---------------------------------------------------------------------------------------
+/// @name Activity View Controller Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * Block called after the view has disappeared.
  */
 @property (nonatomic, copy, nullable) void (^dismissalBlock)(void);
+
+///---------------------------------------------------------------------------------------
+/// @name Activity View Controller Management
+///---------------------------------------------------------------------------------------
 
 /**
  * Returns the desired source rect dimensions for the popover.

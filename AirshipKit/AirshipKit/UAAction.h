@@ -28,7 +28,9 @@ typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler com
  */
 @interface UAAction : NSObject
 
-#pragma mark core methods
+///---------------------------------------------------------------------------------------
+/// @name Action Core Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Called before an action is performed to determine if the
@@ -76,7 +78,9 @@ typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler com
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler;
 
-#pragma mark factory methods
+///---------------------------------------------------------------------------------------
+/// @name Action Factories
+///---------------------------------------------------------------------------------------
 
 /**
  * Factory method for creating anonymous actions

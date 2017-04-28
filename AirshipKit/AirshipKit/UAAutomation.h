@@ -15,6 +15,10 @@ extern NSUInteger const UAAutomationScheduleLimit;
  */
 @interface UAAutomation : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Automation Schedule Management Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Schedules actions.
  *

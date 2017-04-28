@@ -11,6 +11,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UABeveledLoadingIndicator : UIView
 
+///---------------------------------------------------------------------------------------
+/// @name Beveled Loading Indicator Display
+///---------------------------------------------------------------------------------------
+
 /**
  * Show and animate the indicator
  */

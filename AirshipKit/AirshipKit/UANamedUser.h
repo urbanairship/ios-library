@@ -13,10 +13,18 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UANamedUser : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Named User Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The named user ID for this device.
  */
 @property (nonatomic, copy, nullable) NSString *identifier;
+
+///---------------------------------------------------------------------------------------
+/// @name Named User Management
+///---------------------------------------------------------------------------------------
 
 /**
  * Force updating the association or disassociation of the current named user ID.

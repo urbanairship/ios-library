@@ -20,19 +20,9 @@ extern NSUInteger const UAAssociatedIdentifiersMaxCount;
  */
 extern NSUInteger const UAAssociatedIdentifiersMaxCharacterCount;
 
-/**
- * Factory method to create an empty identifiers object.
- * @return The created associated identifiers.
- */
-+ (instancetype)identifiers;
-
-
-/**
- * Factory method to create an associated identifiers instance with a dictionary
- * of custom identifiers (containing strings only).
- * @return The created associated identifiers.
- */
-+ (instancetype)identifiersWithDictionary:(NSDictionary<NSString *, NSString *> *)identifiers;
+///---------------------------------------------------------------------------------------
+/// @name Associated Identifiers Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * The advertising ID.
@@ -53,6 +43,28 @@ extern NSUInteger const UAAssociatedIdentifiersMaxCharacterCount;
  * A map of all the associated identifiers.
  */
 @property (nonatomic, readonly) NSDictionary *allIDs;
+
+///---------------------------------------------------------------------------------------
+/// @name Associated Identifiers Factories
+///---------------------------------------------------------------------------------------
+
+/**
+ * Factory method to create an empty identifiers object.
+ * @return The created associated identifiers.
+ */
++ (instancetype)identifiers;
+
+
+/**
+ * Factory method to create an associated identifiers instance with a dictionary
+ * of custom identifiers (containing strings only).
+ * @return The created associated identifiers.
+ */
++ (instancetype)identifiersWithDictionary:(NSDictionary<NSString *, NSString *> *)identifiers;
+
+///---------------------------------------------------------------------------------------
+/// @name Associated Identifiers Mapping
+///---------------------------------------------------------------------------------------
 
 /**
  * Sets an identifier mapping.

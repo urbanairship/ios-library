@@ -57,6 +57,10 @@ typedef __nonnull UAActionPredicate (^UAActionPredicateLiftBlock)(UAActionPredic
 
 @interface UAAction (Operators)
 
+///---------------------------------------------------------------------------------------
+/// @name Action Operators Extension Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Operator for creating a monadic binding.
  *

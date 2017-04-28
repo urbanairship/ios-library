@@ -27,18 +27,18 @@ extern NSString * const UAJSONPredicateErrorDomain;
  */
 @interface UAJSONPredicate : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name JSON Predicate Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The predicate's JSON payload.
  */
 @property(nonatomic, readonly) NSDictionary *payload;
 
-/**
- * Evaluates the object with the predicate.
- *
- * @param object The object to evaluate.
- * @return `YES` if the predicate matches the object, otherwise `NO`.
- */
-- (BOOL)evaluateObject:(nullable id)object;
+///---------------------------------------------------------------------------------------
+/// @name JSON Predicate Factories
+///---------------------------------------------------------------------------------------
 
 /**
  * Factory method to create a JSON predicate from a UAJSONMatcher.
@@ -81,6 +81,20 @@ extern NSString * const UAJSONPredicateErrorDomain;
  * @return A predicate or `nil` if the JSON is invalid.
  */
 + (nullable instancetype)predicateWithJSON:(id)json error:(NSError * _Nullable *)error;
+
+///---------------------------------------------------------------------------------------
+/// @name JSON Predicate Evaluation
+///---------------------------------------------------------------------------------------
+
+/**
+ * Evaluates the object with the predicate.
+ *
+ * @param object The object to evaluate.
+ * @return `YES` if the predicate matches the object, otherwise `NO`.
+ */
+- (BOOL)evaluateObject:(nullable id)object;
+
+
 
 @end
 

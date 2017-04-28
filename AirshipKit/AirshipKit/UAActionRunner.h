@@ -12,6 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAActionRunner : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Action Runner Core Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Runs a registered action with the given name.
  *

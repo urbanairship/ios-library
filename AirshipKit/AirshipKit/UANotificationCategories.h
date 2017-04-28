@@ -12,6 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UANotificationCategories : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Notification Catagories Factories
+///---------------------------------------------------------------------------------------
 
 /**
  * Creates a set of categories from the specified `.plist` file.

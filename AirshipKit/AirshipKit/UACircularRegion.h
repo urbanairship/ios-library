@@ -10,6 +10,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UACircularRegion : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Circular Region Factory
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method for creating a circular region.
  *

@@ -9,6 +9,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UACircularRegion ()
 
+///---------------------------------------------------------------------------------------
+/// @name Circular Region Internal Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The latitude of the circular region's center
  */
@@ -21,6 +25,10 @@ NS_ASSUME_NONNULL_BEGIN
  * The circular region's radius in meters
  */
 @property (nonatomic, strong) NSNumber *radius;
+
+///---------------------------------------------------------------------------------------
+/// @name Circular Region Internal Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Validates circular region

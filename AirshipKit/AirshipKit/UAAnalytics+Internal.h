@@ -43,8 +43,12 @@ NS_ASSUME_NONNULL_BEGIN
  * Analytics delegate.
  */
 @protocol UAAnalyticsDelegate <NSObject>
-@optional
 
+///---------------------------------------------------------------------------------------
+/// @name Analytics Delegate Internal Methods
+///---------------------------------------------------------------------------------------
+
+@optional
 /**
  * Called when a custom event was added.
  *
@@ -71,8 +75,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-
+/*
+ * SDK-private extensions to Analytics
+ */
 @interface UAAnalytics ()
+
+///---------------------------------------------------------------------------------------
+/// @name Analytics Internal Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * Set a delegate that implements the UAAnalyticsDelegate protocol.
@@ -98,6 +108,10 @@ NS_ASSUME_NONNULL_BEGIN
  * The current session ID.
  */
 @property (nonatomic, copy, nullable) NSString *sessionID;
+
+///---------------------------------------------------------------------------------------
+/// @name Analytics Internal Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Factory method to create an analytics instance.

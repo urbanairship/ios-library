@@ -66,6 +66,10 @@ extern NSString *const UAActionScheduleInfoDelayKey;
  */
 @interface UAActionScheduleInfoBuilder : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Action Schedule Info Builder Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * Actions payload to run when the schedule is triggered.
  */
@@ -109,6 +113,10 @@ extern NSString *const UAActionScheduleInfoDelayKey;
  * Defines the scheduled action.
  */
 @interface UAActionScheduleInfo : NSObject
+
+///---------------------------------------------------------------------------------------
+/// @name Action Schedule Info Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * Actions payload to run when the schedule is triggered.
@@ -155,20 +163,9 @@ extern NSString *const UAActionScheduleInfoDelayKey;
  */
 @property(nonatomic, readonly) BOOL isValid;
 
-/**
- * Creates an action schedule info with a builder block.
- *
- * @return The action schedule info.
- */
-+ (instancetype)actionScheduleInfoWithBuilderBlock:(void(^)(UAActionScheduleInfoBuilder *builder))builderBlock;
-
-/**
- * Checks if the schedule info is equal to another schedule info
- *
- * @param scheduleInfo The other schedule info to compare against.
- * @return `YES` if the schedule infos are equal, otherwise `NO`.
- */
-- (BOOL)isEqualToScheduleInfo:(nullable UAActionScheduleInfo *)scheduleInfo;
+///---------------------------------------------------------------------------------------
+/// @name Action Schedule Info Factories
+///---------------------------------------------------------------------------------------
 
 /**
  * Factory method to create an action schedule info from a JSON payload.
@@ -178,6 +175,26 @@ extern NSString *const UAActionScheduleInfoDelayKey;
  * @return An action schedule info or `nil` if the JSON is invalid.
  */
 + (nullable instancetype)actionScheduleInfoWithJSON:(id)json error:(NSError * _Nullable *)error;
+
+/**
+ * Creates an action schedule info with a builder block.
+ *
+ * @return The action schedule info.
+ */
++ (instancetype)actionScheduleInfoWithBuilderBlock:(void(^)(UAActionScheduleInfoBuilder *builder))builderBlock;
+
+///---------------------------------------------------------------------------------------
+/// @name Action Schedule Info Management
+///---------------------------------------------------------------------------------------
+
+/**
+ * Checks if the schedule info is equal to another schedule info
+ *
+ * @param scheduleInfo The other schedule info to compare against.
+ * @return `YES` if the schedule infos are equal, otherwise `NO`.
+ */
+- (BOOL)isEqualToScheduleInfo:(nullable UAActionScheduleInfo *)scheduleInfo;
+
 
 @end
 

@@ -10,6 +10,10 @@
  */
 @interface UAMessageCenterMessageViewController : UIViewController 
 
+///---------------------------------------------------------------------------------------
+/// @name Message Center Message View Controller Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The UAInboxMessage being displayed.
  */
@@ -24,6 +28,10 @@
  * Block that will be invoked when this class receives a closeWindow message from the webView.
  */
 @property (nonatomic, copy) void (^closeBlock)(BOOL animated);
+
+///---------------------------------------------------------------------------------------
+/// @name Message Center Message View Controller Core Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Load a UAInboxMessage at a particular index in the message list.

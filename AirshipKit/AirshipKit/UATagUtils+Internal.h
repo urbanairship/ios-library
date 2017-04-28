@@ -32,6 +32,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UATagUtils : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Tag Utils Internal Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Used to trim whitespace and filter out tags with unacceptable tag length.
  *

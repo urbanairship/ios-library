@@ -20,6 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAInboxDBManager : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Inbox Database Manager Internal Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * The URL for the core data store.
@@ -51,6 +54,10 @@ NS_ASSUME_NONNULL_BEGIN
  * The core data persistent store coordinator.
  */
 @property (readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+
+///---------------------------------------------------------------------------------------
+/// @name Inbox Database Manager Internal Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Initializes the inbox db manager with the given config.

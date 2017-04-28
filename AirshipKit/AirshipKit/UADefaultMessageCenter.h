@@ -13,6 +13,9 @@
  */
 @interface UADefaultMessageCenter : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Default Message Center Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * The title of the message center.
@@ -29,6 +32,9 @@
  */
 @property (nonatomic, strong) NSPredicate *filter;
 
+///---------------------------------------------------------------------------------------
+/// @name Default Message Center Factory
+///---------------------------------------------------------------------------------------
 
 /**
  * Factory method for creating message center with style specified in a config.
@@ -36,6 +42,10 @@
  * @return A Message Center instance initialized with the style specified in the provided config.
  */
 + (instancetype)messageCenterWithConfig:(UAConfig *)config;
+
+///---------------------------------------------------------------------------------------
+/// @name Default Message Center Display
+///---------------------------------------------------------------------------------------
 
 /**
  * Display the message center.

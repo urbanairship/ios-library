@@ -11,6 +11,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAInAppResolutionEvent : UAEvent
 
+///---------------------------------------------------------------------------------------
+/// @name In App Resolution Event Internal Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method to create an expired in-app resolution event.
  *

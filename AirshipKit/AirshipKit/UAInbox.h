@@ -18,6 +18,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @optional
 
+///---------------------------------------------------------------------------------------
+/// @name Inbox Delegate Optional Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Called when the UADisplayInboxAction was triggered from a foreground notification.
  *
@@ -34,6 +38,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @required
 
+///---------------------------------------------------------------------------------------
+/// @name Inbox Delegate Required Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Called when the inbox is requested to be displayed by the UADisplayInboxAction.
  */
@@ -49,6 +57,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAInbox : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Inbox Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The list of Rich Push Inbox messages.
  */
@@ -58,7 +70,6 @@ NS_ASSUME_NONNULL_BEGIN
  * The Inbox API Client
  */
 @property (nonatomic, readonly, strong) UAInboxAPIClient *client;
-
 
 /**
  * The delegate that should be notified when an incoming push is handled,

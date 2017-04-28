@@ -9,6 +9,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface NSString(UAURLEncoding)
 
+///---------------------------------------------------------------------------------------
+/// @name NSString URL Encoding Additions Core Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * URL decodes the receiver.
  * @param encoding The desired NSStringEncoding for the result.

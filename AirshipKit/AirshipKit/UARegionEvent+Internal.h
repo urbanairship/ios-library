@@ -30,6 +30,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*
+ * SDK-private extensions to UARegionEvent
+ */
 @interface UARegionEvent ()
 
 /**

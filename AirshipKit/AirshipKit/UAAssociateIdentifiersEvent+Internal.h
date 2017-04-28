@@ -5,6 +5,10 @@
 
 @interface UAAssociateIdentifiersEvent : UAEvent
 
+///---------------------------------------------------------------------------------------
+/// @name Associated Identifiers Event Internal Factory
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method to create a UAAssociateIdentifiersEvent.
  * @return A UAAssociatedIdentifiersEvent instance.

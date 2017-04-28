@@ -34,6 +34,9 @@ static const UANotificationActionOptions UANotificationActionOptionNone NS_SWIFT
  */
 @interface UANotificationAction : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Notification Action Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * The string that you use internally to identify the action.
@@ -49,6 +52,10 @@ static const UANotificationActionOptions UANotificationActionOptionNone NS_SWIFT
  * The options with which to perform the action.
  */
 @property(assign, readonly, nonatomic) UANotificationActionOptions options;
+
+///---------------------------------------------------------------------------------------
+/// @name Notification Action Initialization
+///---------------------------------------------------------------------------------------
 
 /**
  * Init method.
@@ -77,6 +84,11 @@ static const UANotificationActionOptions UANotificationActionOptionNone NS_SWIFT
 + (instancetype)actionWithIdentifier:(NSString *)identifier
                                title:(NSString *)title
                              options:(UANotificationActionOptions)options;
+
+///---------------------------------------------------------------------------------------
+/// @name Notification Action Utilities
+///---------------------------------------------------------------------------------------
+
 /**
  * Converts a UANotificationAction into a UIUserNotificationAction.
  *

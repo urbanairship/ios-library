@@ -30,6 +30,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UADisplayInboxAction : UAAction
 
+///---------------------------------------------------------------------------------------
+/// @name Display Inbox Action Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Called when the action attempts to display the inbox message.

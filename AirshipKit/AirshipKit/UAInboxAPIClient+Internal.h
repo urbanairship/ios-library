@@ -34,6 +34,10 @@ typedef void (^UAInboxClientFailureBlock)(void);
  */
 @interface UAInboxAPIClient : UAAPIClient
 
+///---------------------------------------------------------------------------------------
+/// @name Inbox API Client Internal Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method for client.
  * @param config The Urban Airship config.

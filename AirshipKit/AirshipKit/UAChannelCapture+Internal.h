@@ -32,5 +32,4 @@ NS_ASSUME_NONNULL_BEGIN
  */
 extern NSString *const UAChannelCaptureEnabledKey;
 
-
 NS_ASSUME_NONNULL_END

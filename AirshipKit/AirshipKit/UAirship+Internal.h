@@ -35,6 +35,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+///---------------------------------------------------------------------------------------
+/// @name Airship Internal Properties
+///---------------------------------------------------------------------------------------
+
 // Setters for public readonly-getters
 @property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UAAnalytics *analytics;
@@ -88,6 +92,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong) UAAutomation *sharedAutomation;
 
+///---------------------------------------------------------------------------------------
+/// @name Airship Internal Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Handle app init. This should be called from NSNotification center

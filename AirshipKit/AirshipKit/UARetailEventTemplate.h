@@ -12,6 +12,55 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UARetailEventTemplate : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Retail Event Template Properties
+///---------------------------------------------------------------------------------------
+
+/**
+ * The event's value. The value must be between -2^31 and
+ * 2^31 - 1 or it will invalidate the event.
+ */
+@property (nonatomic, strong, nullable) NSDecimalNumber *eventValue;
+
+/**
+ * The event's transaction ID. The transaction ID's length must not exceed 255
+ * characters or it will invalidate the event.
+ */
+@property (nonatomic, copy, nullable) NSString *transactionID;
+
+/**
+ * The event's ID. The ID's length must not exceed 255 characters or it will
+ * invalidate the event.
+ */
+@property (nonatomic, copy, nullable) NSString *identifier;
+
+/**
+ * The event's category. The category's length must not exceed 255 characters or
+ * it will invalidate the event.
+ */
+@property (nonatomic, copy, nullable) NSString *category;
+
+/**
+ * The event's description. The description's length must not exceed 255 characters
+ * or it will invalidate the event.
+ */
+@property (nonatomic, copy, nullable) NSString *eventDescription;
+
+/**
+ * The event's brand. The brand's length must not exceed 255 characters
+ * or it will invalidate the event.
+ */
+@property (nonatomic, copy, nullable) NSString *brand;
+
+/**
+ * `YES` if the product is a new item, else `NO`.
+ */
+@property (nonatomic, assign) BOOL isNewItem;
+
+///---------------------------------------------------------------------------------------
+/// @name Retail Event Template Factories
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method for creating a browsed event template.
  */
@@ -148,48 +197,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)sharedProductTemplateWithValue:(nullable NSNumber *)eventValue
                                  withSource:(nullable NSString *)source
                                  withMedium:(nullable NSString *)medium;
-
-/**
- * The event's value. The value must be between -2^31 and
- * 2^31 - 1 or it will invalidate the event.
- */
-@property (nonatomic, strong, nullable) NSDecimalNumber *eventValue;
-
-/**
- * The event's transaction ID. The transaction ID's length must not exceed 255
- * characters or it will invalidate the event.
- */
-@property (nonatomic, copy, nullable) NSString *transactionID;
-
-/**
- * The event's ID. The ID's length must not exceed 255 characters or it will
- * invalidate the event.
- */
-@property (nonatomic, copy, nullable) NSString *identifier;
-
-/**
- * The event's category. The category's length must not exceed 255 characters or
- * it will invalidate the event.
- */
-@property (nonatomic, copy, nullable) NSString *category;
-
-/**
- * The event's description. The description's length must not exceed 255 characters
- * or it will invalidate the event.
- */
-@property (nonatomic, copy, nullable) NSString *eventDescription;
-
-/**
- * The event's brand. The brand's length must not exceed 255 characters
- * or it will invalidate the event.
- */
-@property (nonatomic, copy, nullable) NSString *brand;
-
-/**
- * `YES` if the product is a new item, else `NO`.
- */
-@property (nonatomic, assign) BOOL isNewItem;
-
 /**
  * Creates the custom retail event.
  */

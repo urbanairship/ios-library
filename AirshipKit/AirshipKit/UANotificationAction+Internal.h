@@ -4,7 +4,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*
+ * SDK-private extensions to UANotificationAction
+ */
 @interface UANotificationAction ()
+
+///---------------------------------------------------------------------------------------
+/// @name Notification Action Internal Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Tests for equivalence with a UIUserNotificationAction. As UANotificationAction is a

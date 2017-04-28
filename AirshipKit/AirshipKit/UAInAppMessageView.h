@@ -10,12 +10,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAInAppMessageView : UIView
 
-/**
- * UAInAppMessageView initializer.
- * @param position A `UAInAppMessagePosition` value, indicating screen position.
- * @param numberOfButtons The number of buttons to display (0-2).
- */
-- (instancetype)initWithPosition:(UAInAppMessagePosition)position numberOfButtons:(NSUInteger)numberOfButtons;
+///---------------------------------------------------------------------------------------
+/// @name In App Message View Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * The "tab" widget indicating swipability.
@@ -36,6 +33,17 @@ NS_ASSUME_NONNULL_BEGIN
  * Button two.
  */
 @property(nonatomic, readonly, nullable) IBOutlet UIButton *button2;
+
+///---------------------------------------------------------------------------------------
+/// @name In App Message View Initialization
+///---------------------------------------------------------------------------------------
+
+/**
+ * UAInAppMessageView initializer.
+ * @param position A `UAInAppMessagePosition` value, indicating screen position.
+ * @param numberOfButtons The number of buttons to display (0-2).
+ */
+- (instancetype)initWithPosition:(UAInAppMessagePosition)position numberOfButtons:(NSUInteger)numberOfButtons;
 
 @end
 

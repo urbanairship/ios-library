@@ -11,6 +11,10 @@
 @interface UADefaultMessageCenterListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
     UIScrollViewDelegate, UISplitViewControllerDelegate>
 
+///---------------------------------------------------------------------------------------
+/// @name Default Message Center List View Controller Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The style to apply to the list.
  */
@@ -26,6 +30,10 @@
  * from the webView.
  */
 @property (nonatomic, copy) void (^closeBlock)(BOOL animated);
+
+///---------------------------------------------------------------------------------------
+/// @name Default Message Center List View Controller Message Display
+///---------------------------------------------------------------------------------------
 
 /**
  * Displays a new message, either by updating the currently displayed message or

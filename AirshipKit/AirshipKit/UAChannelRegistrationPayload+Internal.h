@@ -29,6 +29,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAChannelRegistrationPayload : NSObject<NSCopying>
 
+///---------------------------------------------------------------------------------------
+/// @name Channel Registration Payload Internal Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The user ID.
  */
@@ -84,6 +88,11 @@ NS_ASSUME_NONNULL_BEGIN
  * This flag indicates that the user is able to receive background notifications.
  */
 @property (nonatomic, assign, getter=isBackgroundEnabled) BOOL backgroundEnabled;
+
+
+///---------------------------------------------------------------------------------------
+/// @name Channel Registration Payload Internal Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * The UAChannelRegistrationPayload as JSON data.

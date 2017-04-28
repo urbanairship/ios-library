@@ -35,28 +35,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*
+ * SDK-private extensions to UAUser
+ */
 @interface UAUser()
 
-/**
- * Factory method to create a user instance.
- * @param push The push manager.
- * @param config The Urban Airship config.
- * @param dataStore The preference data store.
- * @return UAUser instance.
- */
-+ (instancetype)userWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
-
-
-/**
- * Updates the user's device token and or channel ID
- */
-- (void)updateUser;
-
-/**
- * Creates a user
- */
-- (void)createUser;
-
+///---------------------------------------------------------------------------------------
+/// @name User Internal Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * The user api client
@@ -93,6 +79,29 @@ NS_ASSUME_NONNULL_BEGIN
  * The Urban Airship config
  */
 @property (nonatomic, strong) UAConfig *config;
+
+///---------------------------------------------------------------------------------------
+/// @name User Internal Methods
+///---------------------------------------------------------------------------------------
+
+/**
+ * Factory method to create a user instance.
+ * @param push The push manager.
+ * @param config The Urban Airship config.
+ * @param dataStore The preference data store.
+ * @return User instance.
+ */
++ (instancetype)userWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
+
+/**
+ * Updates the user's device token and or channel ID
+ */
+- (void)updateUser;
+
+/**
+ * Creates a user
+ */
+- (void)createUser;
 
 @end
 

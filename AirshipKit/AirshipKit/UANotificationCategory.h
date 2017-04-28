@@ -34,6 +34,10 @@ typedef NS_OPTIONS(NSUInteger, UANotificationCategoryOptions) {
  */
 @interface UANotificationCategory : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Notification Category Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The name of the action group.
  */
@@ -56,11 +60,14 @@ typedef NS_OPTIONS(NSUInteger, UANotificationCategoryOptions) {
  */
 @property(readonly, assign, nonatomic) UANotificationCategoryOptions options;
 
+///---------------------------------------------------------------------------------------
+/// @name Notification Category Factories
+///---------------------------------------------------------------------------------------
+
 + (instancetype)categoryWithIdentifier:(NSString *)identifier
                                actions:(NSArray<UANotificationAction *> *)actions
                      intentIdentifiers:(NSArray<NSString *> *)intentIdentifiers
                                options:(UANotificationCategoryOptions)options;
-
 @end
 
 NS_ASSUME_NONNULL_END

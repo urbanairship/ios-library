@@ -16,6 +16,10 @@
 
 @interface UAScreenTrackingEvent : UAEvent
 
+///---------------------------------------------------------------------------------------
+/// @name Screen Tracking Event Internal Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The tracking event start time
  */
@@ -40,6 +44,10 @@
  * The name of the previous tracked screen
  */
 @property (nonatomic, copy, nullable) NSString *previousScreen;
+
+///---------------------------------------------------------------------------------------
+/// @name Screen Tracking Event Internal Factory
+///---------------------------------------------------------------------------------------
 
 /**
  * Factory method to create a UAScreenTrackingEvent with screen name and startTime

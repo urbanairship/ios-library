@@ -24,18 +24,18 @@ extern NSString * const UAJSONValueMatcherErrorDomain;
  */
 @interface UAJSONValueMatcher : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name JSON Value Matcher Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The matcher's JSON payload.
  */
 @property(nonatomic, readonly) NSDictionary *payload;
 
-/**
- * Evaluates the object with the matcher.
- *
- * @param object The object to evaluate.
- * @return `YES` if the matcher matches the object, otherwise `NO`.
- */
-- (BOOL)evaluateObject:(nullable id)object;
+///---------------------------------------------------------------------------------------
+/// @name JSON Value Matcher Factories
+///---------------------------------------------------------------------------------------
 
 /**
  * Factory method to create a matcher for a number that is
@@ -97,6 +97,18 @@ extern NSString * const UAJSONValueMatcherErrorDomain;
  * @return A value matcher, or `nil` if the JSON is invalid.
  */
 + (nullable instancetype)matcherWithJSON:(id)json error:(NSError * _Nullable *)error;
+
+///---------------------------------------------------------------------------------------
+/// @name JSON Value Matcher Evaluation
+///---------------------------------------------------------------------------------------
+
+/**
+ * Evaluates the object with the matcher.
+ *
+ * @param object The object to evaluate.
+ * @return `YES` if the matcher matches the object, otherwise `NO`.
+ */
+- (BOOL)evaluateObject:(nullable id)object;
 
 @end
 

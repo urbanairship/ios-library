@@ -58,6 +58,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAActionResult : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Action Result Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The result value produced when running an action (can be nil).
  */
@@ -77,6 +81,10 @@ NS_ASSUME_NONNULL_BEGIN
  * The action's run status.
  */
 @property (nonatomic, assign, readonly) UAActionStatus status;
+
+///---------------------------------------------------------------------------------------
+/// @name Action Result Creation
+///---------------------------------------------------------------------------------------
 
 /**
  * Creates a UAActionResult with the supplied value. The `fetchResult` and `error` properties

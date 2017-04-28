@@ -10,6 +10,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAColorUtils : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Color Utils Internal Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Converts a hex color string of type #aarrggbb or
  * #rrggbb into a UIColor.

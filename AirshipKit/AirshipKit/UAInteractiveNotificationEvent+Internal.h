@@ -13,6 +13,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAInteractiveNotificationEvent : UAEvent
 
+///---------------------------------------------------------------------------------------
+/// @name Interactive Notificaiton Event Internal Factories
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method for creating an interactive notification event.
  *

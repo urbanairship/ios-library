@@ -31,11 +31,19 @@
 #define kMaxWaitUserDefaultsKey @"X-UA-Max-Wait"
 #define kMinBatchIntervalUserDefaultsKey @"X-UA-Min-Batch-Interval"
 
+///---------------------------------------------------------------------------------------
+/// @name Event Manager Internal Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * Date representing the last attempt to send analytics.
  * @return NSDate representing the last attempt to send analytics
  */
 @property (nonatomic, strong, readonly) NSDate *lastSendTime;
+
+///---------------------------------------------------------------------------------------
+/// @name Event Manager Internal Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Default factory method.
@@ -61,7 +69,6 @@
                             eventStore:(UAEventStore *)eventStore
                                 client:(UAEventAPIClient *)client
                                  queue:(NSOperationQueue *)queue;
-
 
 /**
  * Adds an analytic event to be batched and uploaded to Urban Airship.

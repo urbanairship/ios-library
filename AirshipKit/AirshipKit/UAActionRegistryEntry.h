@@ -10,6 +10,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAActionRegistryEntry : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Action Registry Entry Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The entry's action.
  */
@@ -25,6 +29,21 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly) NSArray<NSString *> *names;
 
+///---------------------------------------------------------------------------------------
+/// @name Action Registry Entry Factory
+///---------------------------------------------------------------------------------------
+
+/**
+ * UAActionRegistryEntry class factory method.
+ * @param action The entry's action.
+ * @param predicate The entry's predicate.
+ */
++ (instancetype)entryForAction:(UAAction *)action predicate:(UAActionPredicate)predicate;
+
+///---------------------------------------------------------------------------------------
+/// @name Action Registry Entry Utility
+///---------------------------------------------------------------------------------------
+
 /**
  * Returns the action for the situation, or the default action if
  * there are no situation overrides.
@@ -33,12 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (UAAction *)actionForSituation:(UASituation)situation;
 
-/**
- * UAActionRegistryEntry class factory method.
- * @param action The entry's action.
- * @param predicate The entry's predicate.
- */
-+ (instancetype)entryForAction:(UAAction *)action predicate:(UAActionPredicate)predicate;
+
 
 @end
 

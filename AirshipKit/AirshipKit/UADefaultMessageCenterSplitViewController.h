@@ -34,6 +34,10 @@
  */
 @interface UADefaultMessageCenterSplitViewController : UISplitViewController
 
+///---------------------------------------------------------------------------------------
+/// @name Default Message Center Split View Controller Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * An optional predicate for filtering messages.
  */

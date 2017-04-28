@@ -12,6 +12,10 @@ extern NSString * const UAUserCreatedNotification;
  */
 @interface UAUser : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name User Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * Indicates whether the default user has been created.
  * @return `YES` if the user has been created, `NO` otherwise.

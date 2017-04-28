@@ -10,6 +10,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAPreferenceDataStore : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Preference Data Store Internal Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method for creating a preference data store with a key prefix.
  * @param keyPrefix The prefix to automatically apply to all keys.

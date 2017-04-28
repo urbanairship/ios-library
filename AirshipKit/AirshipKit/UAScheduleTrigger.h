@@ -130,6 +130,10 @@ extern NSString *const UAScheduleTriggerScreenName;
  */
 @interface UAScheduleTrigger: NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Schedule Trigger Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The trigger type.
  */
@@ -141,8 +145,12 @@ extern NSString *const UAScheduleTriggerScreenName;
  */
 @property(nonatomic, readonly) NSNumber *goal;
 
+///---------------------------------------------------------------------------------------
+/// @name Schedule Trigger Factories
+///---------------------------------------------------------------------------------------
+
 /**
- * Factory method to create a app init trigger.
+ * Factory method to create an app init trigger.
  *
  * @param count Number of foregrounds before firing the trigger.
  * @return An app init trigger.
@@ -156,7 +164,6 @@ extern NSString *const UAScheduleTriggerScreenName;
  * @return A foreground trigger.
  */
 + (instancetype)foregroundTriggerWithCount:(NSUInteger)count;
-
 
 /**
  * Factory method to create a background trigger.
@@ -218,15 +225,6 @@ extern NSString *const UAScheduleTriggerScreenName;
 + (instancetype)customEventTriggerWithPredicate:(UAJSONPredicate *)predicate
                                           value:(NSNumber *)value;
 
-
-/**
- * Checks if the trigger is equal to another trigger.
- *
- * @param trigger The other trigger info to compare against.
- * @return `YES` if the triggers are equal, otherwise `NO`.
- */
-- (BOOL)isEqualToTrigger:(nullable UAScheduleTrigger *)trigger;
-
 /**
  * Factory method to create a trigger from a JSON payload.
  *
@@ -235,6 +233,18 @@ extern NSString *const UAScheduleTriggerScreenName;
  * @return A trigger or `nil` if the JSON is invalid.
  */
 + (nullable instancetype)triggerWithJSON:(id)json error:(NSError * _Nullable *)error;
+
+///---------------------------------------------------------------------------------------
+/// @name Schedule Trigger Evaluation
+///---------------------------------------------------------------------------------------
+
+/**
+ * Checks if the trigger is equal to another trigger.
+ *
+ * @param trigger The other trigger info to compare against.
+ * @return `YES` if the triggers are equal, otherwise `NO`.
+ */
+- (BOOL)isEqualToTrigger:(nullable UAScheduleTrigger *)trigger;
 
 @end
 

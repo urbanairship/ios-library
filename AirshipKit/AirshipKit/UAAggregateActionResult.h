@@ -11,6 +11,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAAggregateActionResult : UAActionResult
 
+///---------------------------------------------------------------------------------------
+/// @name Aggregate Action Result Core Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Adds a new result, merging with the existing result.
  *

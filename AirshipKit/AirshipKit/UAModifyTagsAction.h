@@ -7,6 +7,10 @@
  */
 @interface UAModifyTagsAction : UAAction
 
+///---------------------------------------------------------------------------------------
+/// @name Modify Tags Action Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Called when updating channel tags.
  * @param tags The array of tags.

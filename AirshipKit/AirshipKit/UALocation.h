@@ -12,6 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @optional
 
+///---------------------------------------------------------------------------------------
+/// @name Location Delegate Optional Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Called when location updates started.
  */
@@ -39,6 +43,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UALocation : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Location Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * Flag to enable/disable requesting location authorization when the location service

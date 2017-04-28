@@ -9,7 +9,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*
+ * SDK-private extensions to UANamedUser
+ */
 @interface UANamedUser ()
+
+///---------------------------------------------------------------------------------------
+/// @name Named User Internal Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * Named user identifier data store key.
@@ -70,6 +77,10 @@ extern NSString *const UANamedUserRemoveTagGroupsSettingsKey;
  * The tag groups API client.
  */
 @property (nonatomic, strong) UATagGroupsAPIClient *tagGroupsAPIClient;
+
+///---------------------------------------------------------------------------------------
+/// @name Named User Internal Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Factory method to create a named user.

@@ -60,27 +60,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAActionArguments : NSObject
 
 /**
- * UAActionArguments factory method.
- *
- * @param value The value associated with the arguments.
- * @param situation The situation of the action.
- */
-+ (instancetype)argumentsWithValue:(nullable id)value
-                     withSituation:(UASituation)situation;
-
-
-/**
- * UAActionArguments factory method.
- *
- * @param value The value associated with the arguments.
- * @param situation The situation of the action.
- * @param metadata for the action - e.g. webview, payload, etc.
- */
-+ (instancetype)argumentsWithValue:(nullable id)value
-                     withSituation:(UASituation)situation
-                          metadata:(nullable NSDictionary *)metadata;
-
-/**
  * Metadata key for the web view. Available when an action is triggered from
  * a web view.
  *
@@ -114,7 +93,7 @@ extern NSString * const UAActionMetadataUserNotificationActionIDKey;
 
 /**
  * Metadata key for the user notification action response info. Available when an
- * action is triggered from a user notification action with the behavior 
+ * action is triggered from a user notification action with the behavior
  * `UIUserNotificationActionBehaviorTextInput` (iOS 9 and above).
  */
 extern NSString * const UAActionMetadataResponseInfoKey;
@@ -125,6 +104,9 @@ extern NSString * const UAActionMetadataResponseInfoKey;
  */
 extern NSString * const UAActionMetadataRegisteredName;
 
+///---------------------------------------------------------------------------------------
+/// @name Action Arguments Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * Situation of the action
@@ -138,9 +120,34 @@ extern NSString * const UAActionMetadataRegisteredName;
 
 /**
  * The argument's metadata. Metadata provides more information
- * about the environment that the action was triggered from. 
+ * about the environment that the action was triggered from.
  */
 @property (nonatomic, copy, readonly, nullable) NSDictionary *metadata;
+
+///---------------------------------------------------------------------------------------
+/// @name Action Arguments Factories
+///---------------------------------------------------------------------------------------
+
+/**
+ * UAActionArguments factory method.
+ *
+ * @param value The value associated with the arguments.
+ * @param situation The situation of the action.
+ */
++ (instancetype)argumentsWithValue:(nullable id)value
+                     withSituation:(UASituation)situation;
+
+
+/**
+ * UAActionArguments factory method.
+ *
+ * @param value The value associated with the arguments.
+ * @param situation The situation of the action.
+ * @param metadata for the action - e.g. webview, payload, etc.
+ */
++ (instancetype)argumentsWithValue:(nullable id)value
+                     withSituation:(UASituation)situation
+                          metadata:(nullable NSDictionary *)metadata;
 
 @end
 

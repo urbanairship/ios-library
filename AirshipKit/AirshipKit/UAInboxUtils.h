@@ -9,6 +9,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAInboxUtils : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Inbox Utility Methods
+///---------------------------------------------------------------------------------------
+
 /**
  *  Retrieves an inbox message ID from a notification dictionary
  *

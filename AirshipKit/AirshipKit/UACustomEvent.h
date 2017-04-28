@@ -35,33 +35,9 @@ extern NSString *const UACustomEventInteractionTypeKey;
  */
 @interface UACustomEvent : UAEvent
 
-/**
- * Factory method for creating a custom event.
- *
- * @param eventName The name of the event. The event's name must not exceed
- * 255 characters or it will invalidate the event.
- */
-+ (instancetype)eventWithName:(NSString *)eventName;
-
-/**
- * Factory method for creating a custom event with a value from a string.
- *
- * @param eventName The name of the event. The event's name must not exceed
- * 255 characters or it will invalidate the event.
- * @param eventValue The value of the event as a string. The value must be a valid
- * number between -2^31 and 2^31 - 1 or it will invalidate the event.
- */
-+ (instancetype)eventWithName:(NSString *)eventName valueFromString:(nullable NSString *)eventValue;
-
-/**
- * Factory method for creating a custom event with a value.
- *
- * @param eventName The name of the event. The event's name must not exceed
- * 255 characters or it will invalidate the event.
- * @param eventValue The value of the event. The value must be between -2^31 and
- * 2^31 - 1 or it will invalidate the event.
- */
-+ (instancetype)eventWithName:(NSString *)eventName value:(nullable NSNumber *)eventValue;
+///---------------------------------------------------------------------------------------
+/// @name Custom Event Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * The event's value. The value must be between -2^31 and
@@ -97,6 +73,42 @@ extern NSString *const UACustomEventInteractionTypeKey;
  * The event's properties.
  */
 @property (nonatomic, copy, readonly) NSDictionary *properties;
+
+///---------------------------------------------------------------------------------------
+/// @name Custom Event Factories
+///---------------------------------------------------------------------------------------
+
+/**
+ * Factory method for creating a custom event.
+ *
+ * @param eventName The name of the event. The event's name must not exceed
+ * 255 characters or it will invalidate the event.
+ */
++ (instancetype)eventWithName:(NSString *)eventName;
+
+/**
+ * Factory method for creating a custom event with a value from a string.
+ *
+ * @param eventName The name of the event. The event's name must not exceed
+ * 255 characters or it will invalidate the event.
+ * @param eventValue The value of the event as a string. The value must be a valid
+ * number between -2^31 and 2^31 - 1 or it will invalidate the event.
+ */
++ (instancetype)eventWithName:(NSString *)eventName valueFromString:(nullable NSString *)eventValue;
+
+/**
+ * Factory method for creating a custom event with a value.
+ *
+ * @param eventName The name of the event. The event's name must not exceed
+ * 255 characters or it will invalidate the event.
+ * @param eventValue The value of the event. The value must be between -2^31 and
+ * 2^31 - 1 or it will invalidate the event.
+ */
++ (instancetype)eventWithName:(NSString *)eventName value:(nullable NSNumber *)eventValue;
+
+///---------------------------------------------------------------------------------------
+/// @name Custom Event Management
+///---------------------------------------------------------------------------------------
 
 /**
  * Sets the custom event's interaction type and ID from a UAInboxMessage.
@@ -143,8 +155,6 @@ extern NSString *const UACustomEventInteractionTypeKey;
  * @param key The property key.
  */
 - (void)setStringArrayProperty:(NSArray<NSString *> *)value forKey:(NSString *)key;
-
-
 
 @end
 

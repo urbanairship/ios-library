@@ -13,6 +13,10 @@
  */
 @interface UADefaultMessageCenterStyle : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Default Message Center Style Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * The font to use for the message center title.
  */
@@ -112,6 +116,10 @@
  * The background color for the unread indicator.
  */
 @property(nonatomic, strong) UIColor *unreadIndicatorColor;
+
+///---------------------------------------------------------------------------------------
+/// @name Default Message Center Style Factories
+///---------------------------------------------------------------------------------------
 
 /**
  * Factory method to create a UADefaultMessageCenterStyle.

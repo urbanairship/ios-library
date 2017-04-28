@@ -5,7 +5,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*
+ * SDK-private extensions to UAActionSchedule
+ */
 @interface UAActionSchedule()
+
+///---------------------------------------------------------------------------------------
+/// @name Action Schedule Internal Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * The schedule's identifier.
@@ -17,13 +24,16 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property(nonatomic, strong) UAActionScheduleInfo *info;
 
+///---------------------------------------------------------------------------------------
+/// @name Action Schedule Internal Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Factory method to create an action schedule.
  * @param identifier The schedule's identifier.
  * @param info The schedule's info.
  */
 +(instancetype)actionScheduleWithIdentifier:(NSString *)identifier info:(UAActionScheduleInfo *)info;
-
 
 @end
 

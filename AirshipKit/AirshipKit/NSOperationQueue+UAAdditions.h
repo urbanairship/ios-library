@@ -5,6 +5,10 @@
 
 @interface NSOperationQueue(UAAdditions)
 
+///---------------------------------------------------------------------------------------
+/// @name Operation Queue Additions Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Adds an operation to the queue with a background task and a delay
  * operation dependency.

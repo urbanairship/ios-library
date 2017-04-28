@@ -29,6 +29,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAWhitelist : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name Whitelist Creation
+///---------------------------------------------------------------------------------------
+
 /**
  * Create a default whitelist with entries specified in a config object.
  * @note The entry "*.urbanairship.com" is added by default.
@@ -36,6 +40,10 @@ NS_ASSUME_NONNULL_BEGIN
  * @return An instance of UAWhitelist
  */
 + (instancetype)whitelistWithConfig:(UAConfig *)config;
+
+///---------------------------------------------------------------------------------------
+/// @name Whitelist Core Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Add an entry to the whitelist.

@@ -9,6 +9,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UASQLite : NSObject
 
+///---------------------------------------------------------------------------------------
+/// @name SQLite Internal Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * Number of retries before timeout, defaults to 1
  */
@@ -18,6 +22,10 @@ NS_ASSUME_NONNULL_BEGIN
  * Path string to the sqlite DB
  */
 @property (nonatomic, copy, nullable) NSString *dbPath;
+
+///---------------------------------------------------------------------------------------
+/// @name SQLite Internal Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Initializes sqlite DB with provided path string

@@ -4,7 +4,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*
+ * SDK-private extensions to UAActionRegistry
+ */
 @interface UAActionRegistry ()
+
+///---------------------------------------------------------------------------------------
+/// @name Action Registry Internal Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * Map of names to action entries
@@ -16,6 +23,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong) NSMutableArray *reservedEntryNames;
 
+///---------------------------------------------------------------------------------------
+/// @name Action Registry Internal Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Registers a reserved action. Reserved actions can not be removed or modified.

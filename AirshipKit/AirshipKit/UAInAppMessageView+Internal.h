@@ -6,6 +6,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UAInAppMessageView ()
 
+///---------------------------------------------------------------------------------------
+/// @name In App Message View Internal Properties
+///---------------------------------------------------------------------------------------
+
 /**
  * Block invoked whenever the [UIView layoutSubviews] method is called.
  */

@@ -15,43 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAWebViewCallData : NSObject
 
-/**
- * Processes a custom delegate call URL into associated call data.
- *
- * @param url The URL to be processed.
- * @param webView The UIWebView originating the call
- * @return An instance of UAWebViewCallData.
- */
-+ (UAWebViewCallData *)callDataForURL:(NSURL *)url webView:(UIWebView *)webView;
-
-/**
- * Processes a custom delegate call URL into associated call data.
- *
- * @param url The URL to be processed.
- * @param webView The UIWebView originating the call.
- * @param message The UAInboxMessage associated with the webview.
- * @return An instance of UAWebViewCallData.
- */
-+ (UAWebViewCallData *)callDataForURL:(NSURL *)url webView:(UIWebView *)webView message:(nullable UAInboxMessage *)message;
-
-/**
- * Processes a custom delegate call URL into associated call data.
- *
- * @param url The URL to be processed.
- * @param delegate The UAWKWebViewDelegate delegate for the webview originating the call
- * @return An instance of UAWebViewCallData.
- */
-+ (UAWebViewCallData *)callDataForURL:(NSURL *)url delegate:(id <UAWKWebViewDelegate>)delegate ;
-
-/**
- * Processes a custom delegate call URL into associated call data.
- *
- * @param url The URL to be processed.
- * @param delegate The UAWKWebViewDelegate delegate for the webview originating the call
- * @param message The UAInboxMessage associated with the webview.
- * @return An instance of UAWebViewCallData.
- */
-+ (UAWebViewCallData *)callDataForURL:(NSURL *)url delegate:(id <UAWKWebViewDelegate>)delegate message:(nullable UAInboxMessage *)message;
+///---------------------------------------------------------------------------------------
+/// @name Web View Call Data Properties
+///---------------------------------------------------------------------------------------
 
 /**
  * A name, derived from the host passed in the delegate call URL.
@@ -97,6 +63,48 @@ NS_ASSUME_NONNULL_BEGIN
  * The UAInboxMessage associated with the webview.
  */
 @property (nonatomic, strong, nullable) UAInboxMessage *message;
+
+///---------------------------------------------------------------------------------------
+/// @name Web View Call Data Core Methods
+///---------------------------------------------------------------------------------------
+
+/**
+ * Processes a custom delegate call URL into associated call data.
+ *
+ * @param url The URL to be processed.
+ * @param webView The UIWebView originating the call
+ * @return An instance of UAWebViewCallData.
+ */
++ (UAWebViewCallData *)callDataForURL:(NSURL *)url webView:(UIWebView *)webView;
+
+/**
+ * Processes a custom delegate call URL into associated call data.
+ *
+ * @param url The URL to be processed.
+ * @param webView The UIWebView originating the call.
+ * @param message The UAInboxMessage associated with the webview.
+ * @return An instance of UAWebViewCallData.
+ */
++ (UAWebViewCallData *)callDataForURL:(NSURL *)url webView:(UIWebView *)webView message:(nullable UAInboxMessage *)message;
+
+/**
+ * Processes a custom delegate call URL into associated call data.
+ *
+ * @param url The URL to be processed.
+ * @param delegate The UAWKWebViewDelegate delegate for the webview originating the call
+ * @return An instance of UAWebViewCallData.
+ */
++ (UAWebViewCallData *)callDataForURL:(NSURL *)url delegate:(id <UAWKWebViewDelegate>)delegate ;
+
+/**
+ * Processes a custom delegate call URL into associated call data.
+ *
+ * @param url The URL to be processed.
+ * @param delegate The UAWKWebViewDelegate delegate for the webview originating the call
+ * @param message The UAInboxMessage associated with the webview.
+ * @return An instance of UAWebViewCallData.
+ */
++ (UAWebViewCallData *)callDataForURL:(NSURL *)url delegate:(id <UAWKWebViewDelegate>)delegate message:(nullable UAInboxMessage *)message;
 
 @end
 

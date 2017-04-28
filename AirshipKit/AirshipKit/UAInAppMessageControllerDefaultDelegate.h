@@ -11,6 +11,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAInAppMessageControllerDefaultDelegate : NSObject<UAInAppMessageControllerDelegate>
 
+///---------------------------------------------------------------------------------------
+/// @name In App Message Controller Default Delegate Core Methods
+///---------------------------------------------------------------------------------------
+
 /**
  * Initializer for UAInAppMessageControllerDefaultDelegate.
  *
