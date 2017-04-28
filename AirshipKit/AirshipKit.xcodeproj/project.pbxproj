@@ -13,6 +13,9 @@
 		6E12138E1E5D1B95006738FD /* UAScheduleDelay.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E12138C1E5D1B95006738FD /* UAScheduleDelay.h */; };
 		6E12138F1E5D1B95006738FD /* UAScheduleDelay.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E12138D1E5D1B95006738FD /* UAScheduleDelay.m */; };
 		6E1213901E5D1B95006738FD /* UAScheduleDelay.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E12138D1E5D1B95006738FD /* UAScheduleDelay.m */; };
+		6E2E6D741EB3A34B006056BF /* UASwizzler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E2E6D721EB3A34B006056BF /* UASwizzler+Internal.h */; };
+		6E2E6D751EB3A34B006056BF /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E2E6D731EB3A34B006056BF /* UASwizzler.m */; };
+		6E2E6D761EB3A34B006056BF /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E2E6D731EB3A34B006056BF /* UASwizzler.m */; };
 		6E3673DC1E8AE9F7005B5DFF /* UAEnableFeatureAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E3673DA1E8AE9F7005B5DFF /* UAEnableFeatureAction.h */; };
 		6E3673DD1E8AE9F7005B5DFF /* UAEnableFeatureAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3673DB1E8AE9F7005B5DFF /* UAEnableFeatureAction.m */; };
 		6E3673DE1E8AE9F7005B5DFF /* UAEnableFeatureAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3673DB1E8AE9F7005B5DFF /* UAEnableFeatureAction.m */; };
@@ -654,6 +657,8 @@
 		6114091D1DB19C1F001F82A5 /* UALandingPageOverlayView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UALandingPageOverlayView.xib; sourceTree = "<group>"; };
 		6E12138C1E5D1B95006738FD /* UAScheduleDelay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAScheduleDelay.h; sourceTree = "<group>"; };
 		6E12138D1E5D1B95006738FD /* UAScheduleDelay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDelay.m; sourceTree = "<group>"; };
+		6E2E6D721EB3A34B006056BF /* UASwizzler+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UASwizzler+Internal.h"; sourceTree = "<group>"; };
+		6E2E6D731EB3A34B006056BF /* UASwizzler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UASwizzler.m; sourceTree = "<group>"; };
 		6E3673DA1E8AE9F7005B5DFF /* UAEnableFeatureAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAEnableFeatureAction.h; sourceTree = "<group>"; };
 		6E3673DB1E8AE9F7005B5DFF /* UAEnableFeatureAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEnableFeatureAction.m; sourceTree = "<group>"; };
 		6E3673DF1E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEnableFeatureActionTest.m; sourceTree = "<group>"; };
@@ -1946,6 +1951,8 @@
 				CC04F1EF1DC949D500B4842D /* NSOperationQueue+UAAdditions.m */,
 				DFECEA881E662ED8006AA8EA /* UAWebView+Internal.h */,
 				DFECEA791E64DD15006AA8EA /* UAWebView.m */,
+				6E2E6D721EB3A34B006056BF /* UASwizzler+Internal.h */,
+				6E2E6D731EB3A34B006056BF /* UASwizzler.m */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -2278,6 +2285,7 @@
 				CC40DC951D8C996A00BABD4F /* UAInAppDisplayEvent+Internal.h in Headers */,
 				CC04F1F01DC949D500B4842D /* NSOperationQueue+UAAdditions.h in Headers */,
 				CC40DC5B1D8C996A00BABD4F /* UABeveledLoadingIndicator.h in Headers */,
+				6E2E6D741EB3A34B006056BF /* UASwizzler+Internal.h in Headers */,
 				CC40DC611D8C996A00BABD4F /* UAChannelCapture.h in Headers */,
 				DFECEA831E65E7A6006AA8EA /* UAOverlayViewController.h in Headers */,
 				CC40DC491D8C996A00BABD4F /* UAAppIntegration.h in Headers */,
@@ -2788,6 +2796,7 @@
 				CC40DC741D8C996A00BABD4F /* UACustomEvent.m in Sources */,
 				CC944ED81DB5804400C42269 /* UAAPIClient.m in Sources */,
 				CC40DC961D8C996A00BABD4F /* UAInAppDisplayEvent.m in Sources */,
+				6E2E6D751EB3A34B006056BF /* UASwizzler.m in Sources */,
 				CCD28FE51DD14DD1008D663F /* UATagGroupsMutation.m in Sources */,
 				CC40DD0A1D8C996A00BABD4F /* UARetailEventTemplate.m in Sources */,
 				DFECEA8C1E6759DA006AA8EA /* UABaseNativeBridge.m in Sources */,
@@ -3139,6 +3148,7 @@
 				CC40DD8F1D8C9A1C00BABD4F /* UANamedUser.m in Sources */,
 				CC40DD901D8C9A1C00BABD4F /* UANamedUserAPIClient.m in Sources */,
 				CC04F1AC1DC018F600B4842D /* UAEventManager.m in Sources */,
+				6E2E6D761EB3A34B006056BF /* UASwizzler.m in Sources */,
 				CC40DD911D8C9A1C00BABD4F /* UANotificationAction.m in Sources */,
 				CC40DD921D8C9A1C00BABD4F /* UANotificationCategories.m in Sources */,
 				CC40DD931D8C9A1C00BABD4F /* UANotificationCategory.m in Sources */,
