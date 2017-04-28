@@ -243,6 +243,11 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         }
     }
 
+    // Validate any setup issues
+    if (!config.inProduction) {
+        [sharedAirship_ validate];
+    }
+    
     // Automatic setup
     if (sharedAirship_.config.automaticSetupEnabled) {
         UA_LINFO(@"Automatic setup enabled.");
@@ -251,11 +256,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                 [UAAutoIntegration integrate];
             }
         });
-    }
-
-    // Validate any setup issues
-    if (!config.inProduction) {
-        [sharedAirship_ validate];
     }
 
     if (appDidFinishLaunchingNotification_) {
