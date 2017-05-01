@@ -34,9 +34,9 @@
 @property (nonatomic, weak) IBOutlet UITableView *messageTable;
 
 /**
- * Convenience accessor for the messages to be displayed in the message table.
+ * The messages displayed in the message table.
  */
-@property (nonatomic, readonly) NSArray *messages;
+@property (nonatomic, copy) NSArray *messages;
 
 /**
  * The view displayed when there are no messages
@@ -69,6 +69,11 @@
 @property (nonatomic, strong) NSIndexPath *selectedIndexPath;
 
 /**
+ * The currently selected message.
+ */
+@property (nonatomic, strong) UAInboxMessage *selectedMessage;
+
+/**
  * The an array of currently selected message IDs during editing.
  */
 @property (nonatomic, strong) NSMutableArray<NSString *> *selectedMessageIDs;
@@ -97,6 +102,11 @@
  * A refresh control used for "pull to refresh" behavior.
  */
 @property (nonatomic, strong) UIRefreshControl *refreshControl;
+
+/**
+ * The refresh control is still animating.
+ */
+@property (nonatomic, assign) BOOL refreshControlAnimating;
 
 /**
  * A concurrent dispatch queue to use for fetching icon images.
@@ -169,26 +179,63 @@
     // This allows us to use the UITableViewController for managing the refresh control, while keeping the
     // outer chrome of the list view controller intact
     [self addChildViewController:tableController];
+    
+    // get initial list of messages in the inbox
+    [self copyMessages];
+
+    // watch for changes to the message list
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(messageListUpdated)
+                                                 name:UAInboxMessageListUpdatedNotification object:nil];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    self.navigationItem.backBarButtonItem = nil;
+    
+    [self reload];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    if (self.editing) {
+        return;
+    }
+    if (self.collapsed) {
+        self.selectedMessage = nil;
+        self.selectedIndexPath = nil;
+    }
+    [self handlePreviouslySelectedIndexPathsAnimated:YES];
+}
+
+-(void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UAInboxMessageListUpdatedNotification object:nil];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    [self.iconCache removeAllObjects];
 }
 
 - (void)refreshStateChanged:(UIRefreshControl *)sender {
     if (sender.refreshing) {
-        [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
+        self.refreshControlAnimating = YES;
+        void (^retrieveMessageCompletionBlock)() = ^(void){
+            [CATransaction begin];
+            [CATransaction setCompletionBlock: ^{
+                // refresh animation has finished
+                self.refreshControlAnimating = NO;
+                [self chooseMessageDisplayAndReload];
+            }];
             [sender endRefreshing];
-        } withFailureBlock:^ {
-            [sender endRefreshing];
-        }];
-    }
-}
+            [CATransaction commit];
+        };
 
-// Note: since the message list is refreshed with new model objects when reloaded,
-// we can't reliably hold onto any single instance. This method is mostly for convenience.
-- (NSArray *)messages {
-    NSArray *allMessages = [UAirship inbox].messageList.messages;
-    if (self.filter) {
-        return [allMessages filteredArrayUsingPredicate:self.filter];
+        [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:retrieveMessageCompletionBlock withFailureBlock:retrieveMessageCompletionBlock];
     } else {
-        return allMessages;
+        self.refreshControlAnimating = NO;
     }
 }
 
@@ -225,65 +272,111 @@
 
 - (void)reload {
     [self.messageTable reloadData];
-
-    for (UAInboxMessage *message in self.messages) {
-        if ([self.selectedMessageIDs containsObject:message.messageID]) {
-            NSIndexPath *messageIndexPath = [NSIndexPath indexPathForRow:[self.messages indexOfObject:message] inSection:0];
-
-            [self.messageTable selectRowAtIndexPath:messageIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+    
+    if (self.editing) {
+        if (self.selectedMessageIDs.count > 0) {
+            // re-select previously selected cells
+            NSMutableArray *reSelectedMessageIDs = [[NSMutableArray alloc] init];
+            for (UAInboxMessage *message in self.messages) {
+                if ([self.selectedMessageIDs containsObject:message.messageID]) {
+                    NSIndexPath *selectedIndexPath = [self indexPathForMessage:message];
+                    if (selectedIndexPath) {
+                        [self.messageTable selectRowAtIndexPath:selectedIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+                    }
+                    [reSelectedMessageIDs addObject:message.messageID];
+                }
+            }
+            [self.messageTable scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionNone animated:YES];
+            self.selectedMessageIDs = reSelectedMessageIDs;
         }
+    } else {
+        [self handlePreviouslySelectedIndexPathsAnimated:NO];
     }
 
     // Cover up if necessary
     self.coverView.hidden = self.messages.count > 0;
+    
+    // Hide message view if necessary
+    if (self.collapsed && (self.messages.count == 0) && (self.messageViewController == self.navigationController.visibleViewController)) {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+}
 
+- (void)handlePreviouslySelectedIndexPathsAnimated:(BOOL)animated {
     // If a cell was previously selected and there are messages to display
-    if (self.selectedIndexPath && self.messages.count) {
-        // Find the corresponding row or its nearest accessible neighbor
-        NSInteger row = MIN((NSInteger)self.messages.count - 1, self.selectedIndexPath.row);
-
-        // If the message previously at that index is no longer present
-        if (self.selectedIndexPath.row != row) {
-            self.selectedIndexPath = [NSIndexPath indexPathForRow:row inSection:0];
+    if ((self.selectedMessage || self.selectedIndexPath) && (self.messages.count > 0)) {
+        // find the index path for the message that is currently displayed
+        NSIndexPath *indexPathOfCurrentlyDisplayedMessage = [self indexPathForMessage:self.messageViewController.message];
+        if (indexPathOfCurrentlyDisplayedMessage) {
+            // if the currently displayed message is still in the inbox list, select it
+            self.selectedIndexPath = indexPathOfCurrentlyDisplayedMessage;
+            self.selectedMessage = self.messageViewController.message;
+        } else {
+            // find the index path for the message that was selected
+            NSIndexPath *indexPathofSelectedMessage = [self indexPathForMessage:self.selectedMessage];
+            if (indexPathofSelectedMessage) {
+                // if the selected message is still in the inbox list, select it
+                self.selectedIndexPath = indexPathofSelectedMessage;
+            } else {
+                self.selectedIndexPath = [self validateIndexPath:self.selectedIndexPath];
+                if (self.selectedIndexPath) {
+                    self.selectedMessage = [self messageAtIndex:self.selectedIndexPath.row];
+                } else {
+                    self.selectedMessage = nil;
+                }
+            }
         }
-
-        // If the UI is not collapsed, make sure the row is selected
-        if (!self.splitViewController.collapsed) {
-            [self.messageTable selectRowAtIndexPath:self.selectedIndexPath animated:YES scrollPosition:UITableViewScrollPositionTop];
+        if (self.selectedIndexPath) {
+            // make sure the row we want selected is selected
+            self.selectedIndexPath = [self validateIndexPath:self.selectedIndexPath];
+            if (!self.editing) {
+                [self.messageTable selectRowAtIndexPath:self.selectedIndexPath animated:animated scrollPosition:UITableViewScrollPositionNone];
+                [self.messageTable scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionNone animated:YES];
+            }
+        } else {
+            // if we want no row selected, de-select row if there is one already selected
+            [self deselectCurrentlySelectedIndexPathAnimated:animated];
         }
     } else {
+        [self deselectCurrentlySelectedIndexPathAnimated:animated];
+        self.selectedMessage = nil;
         self.selectedIndexPath = nil;
     }
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-
-    [super viewWillAppear:animated];
-
-    self.navigationItem.backBarButtonItem = nil;
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(messageListUpdated)
-                                                 name:UAInboxMessageListUpdatedNotification object:nil];
-    [self reload];
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-    if (!self.splitViewController.collapsed && self.selectedIndexPath) {
-        [self.messageTable selectRowAtIndexPath:self.selectedIndexPath animated:NO scrollPosition:UITableViewScrollPositionTop];
+- (void)deselectCurrentlySelectedIndexPathAnimated:(BOOL)animated {
+    NSIndexPath *selectedIndexPath = [self.messageTable indexPathForSelectedRow];
+    if (selectedIndexPath) {
+        [self.messageTable deselectRowAtIndexPath:selectedIndexPath animated:animated];
     }
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UAInboxMessageListUpdatedNotification object:nil];
+- (NSIndexPath *)validateIndexPath:(NSIndexPath *)indexPath {
+    if (!indexPath) {
+        return nil;
+    }
+    if (self.messages.count == 0) {
+        return nil;
+    }
+    if (indexPath.row >= self.messages.count) {
+        return [NSIndexPath indexPathForRow:self.messages.count - 1 inSection:indexPath.section];
+    }
+    if (indexPath.row < 0) {
+        return [NSIndexPath indexPathForRow:0 inSection:indexPath.section];
+    }
+    return indexPath;
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    [self.iconCache removeAllObjects];
+- (NSIndexPath *)indexPathForMessage:(UAInboxMessage *)message {
+    if (!message) {
+        return nil;
+    }
+    NSUInteger row = [self indexOfMessage:message];
+    NSIndexPath *indexPath;
+    if (row != NSNotFound) {
+        indexPath = [NSIndexPath indexPathForRow:row inSection:0];
+    }
+    return indexPath;
 }
 
 // Called when batch editing begins/ends
@@ -302,7 +395,26 @@
     strongMessageTable.allowsMultipleSelectionDuringEditing = editing;
 
     [self.navigationController setToolbarHidden:!editing animated:animated];
+
+    // wait until after animation has completed before selecting previously selected row
+    if (!editing) {
+        if (animated) {
+            [CATransaction begin];
+            [CATransaction setCompletionBlock: ^{
+                // cancel animation has finished
+                [self handlePreviouslySelectedIndexPathsAnimated:NO];
+            }];
+        }
+    }
     [strongMessageTable setEditing:editing animated:animated];
+    
+    if (!editing) {
+        if (animated) {
+            [CATransaction commit];
+        } else {
+            [self handlePreviouslySelectedIndexPathsAnimated:NO];
+        }
+    }
 }
 
 - (void)refreshAfterBatchUpdate {
@@ -314,18 +426,13 @@
     [self refreshBatchUpdateButtons];
 }
 
-// indexPath.row is for use with grouped table views, see NSIndexPath UIKit Additions
-- (UAInboxMessage *)messageForIndexPath:(NSIndexPath *)indexPath {
-    return [self.messages objectAtIndex:(NSUInteger)indexPath.row];
-}
-
 /**
  * Returns the number of unread messages in the specified set of index paths for the current table view.
  */
 - (NSUInteger)countOfUnreadMessagesInIndexPaths:(NSArray *)indexPaths {
     NSUInteger count = 0;
     for (NSIndexPath *path in indexPaths) {
-        if ([self messageForIndexPath:path].unread) {
+        if ([self messageAtIndex:path.row].unread) {
             ++count;
         }
     }
@@ -333,54 +440,68 @@
 }
 
 - (void)displayMessage:(UAInboxMessage *)message {
-    UIViewController *mvc;
+    [self displayMessage:message onError:nil];
+}
 
-    //if a message view is already displaying, just load the new message
-    UIViewController *top = self.navigationController.topViewController;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    if ([top class] == [UADefaultMessageCenterMessageViewController class]) {
-        mvc = (UADefaultMessageCenterMessageViewController *) top;
-        [(UADefaultMessageCenterMessageViewController *)mvc loadMessageForID:message.messageID];
-#pragma GCC diagnostic pop
-    } else if ([top class] == [UAMessageCenterMessageViewController class]) {
-        mvc = (UAMessageCenterMessageViewController *) top;
-        [(UAMessageCenterMessageViewController *)mvc loadMessageForID:message.messageID];
-    } else {
-        //otherwise, push over a new message view
-        __weak id weakSelf = self;
-        void (^closeBlock)(BOOL) = ^(BOOL animated){
-            
-            UADefaultMessageCenterListViewController *strongSelf = weakSelf;
-
-            if (!strongSelf) {
-                return;
-            }
-            // Call the close block if present
-            if (strongSelf.closeBlock) {
-                strongSelf.closeBlock(animated);
-            } else {
-                // Fallback to displaying the inbox
-                [self.navigationController popViewControllerAnimated:animated];
-            }
-        };
+- (void)displayMessage:(UAInboxMessage *)message onError:(void (^)(void))errorCompletion {
+    if (message.isExpired) {
+        UA_LDEBUG(@"Message expired");
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:UAMessageCenterLocalizedString(@"ua_connection_error")
+                                                                       message:UAMessageCenterLocalizedString(@"ua_mc_failed_to_load")
+                                                                preferredStyle:UIAlertControllerStyleAlert];
         
-        if (UAirship.shared.config.useWKWebView) {
-            mvc = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController" bundle:[UAirship resources]];
-            ((UAMessageCenterMessageViewController *)mvc).filter = self.filter;
-            ((UAMessageCenterMessageViewController *)mvc).message = message;
-            ((UAMessageCenterMessageViewController *)mvc).closeBlock = closeBlock;
-        } else {
+        UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:UAMessageCenterLocalizedString(@"ua_ok")
+                                                                style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * action) {
+                                                                  errorCompletion();
+                                                              }];
+        
+        [alert addAction:defaultAction];
+        
+        [self presentViewController:alert animated:YES completion:nil];
+        
+        message = nil;
+    }
+    // if a message view is not already displaying, get it displayed
+    if (!self.messageViewController || (self.collapsed && (self.messageViewController != self.navigationController.topViewController))) {
+        if (!self.messageViewController) {
+            //otherwise, push over a new message view
+            __weak id weakSelf = self;
+            void (^closeBlock)(BOOL) = ^(BOOL animated){
+                
+                UADefaultMessageCenterListViewController *strongSelf = weakSelf;
+                
+                if (!strongSelf) {
+                    return;
+                }
+                // Call the close block if present
+                if (strongSelf.closeBlock) {
+                    strongSelf.closeBlock(animated);
+                } else {
+                    // Fallback to displaying the inbox
+                    [self.navigationController popViewControllerAnimated:animated];
+                }
+            };
+        
+            if (UAirship.shared.config.useWKWebView) {
+                self.messageViewController = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController" bundle:[UAirship resources]];
+            } else {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-            mvc = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController" bundle:[UAirship resources]];
-            ((UADefaultMessageCenterMessageViewController *)mvc).filter = self.filter;
-            ((UADefaultMessageCenterMessageViewController *)mvc).message = message;
-            ((UADefaultMessageCenterMessageViewController *)mvc).closeBlock = closeBlock;
+                self.messageViewController = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController" bundle:[UAirship resources]];
 #pragma GCC diagnostic pop
+            }
+            self.messageViewController.closeBlock = closeBlock;
         }
         
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:mvc];
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+        if ([self.messageViewController isKindOfClass:[UADefaultMessageCenterMessageViewController class]]) {
+            ((UADefaultMessageCenterMessageViewController *)self.messageViewController).filter = self.filter;
+        }
+#pragma GCC diagnostic pop
+
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:self.messageViewController];
 
         if (self.style.navigationBarColor) {
             nav.navigationBar.barTintColor = self.style.navigationBarColor;
@@ -409,6 +530,7 @@
         [nav.view layoutSubviews];
         [self showDetailViewController:nav sender:self];
     }
+    [self.messageViewController loadMessage:message onlyIfChanged:YES];
 }
 
 
@@ -421,7 +543,7 @@
     NSInteger rows = [strongMessageTable numberOfRowsInSection:0];
 
     NSIndexPath *currentPath;
-    if ([strongMessageTable.indexPathsForSelectedRows count] == rows) {
+    if (strongMessageTable.indexPathsForSelectedRows.count == rows) {
         //everything is selected, so we deselect all
         for (NSInteger i = 0; i < rows; ++i) {
             currentPath = [NSIndexPath indexPathForRow:i inSection:0];
@@ -467,22 +589,24 @@
 }
 
 - (void)batchUpdateButtonPressed:(id)sender {
-
-    UITableView *strongMessageTable = self.messageTable;
-
-    NSMutableArray *messages = [NSMutableArray array];
-    for (NSIndexPath *indexPath in strongMessageTable.indexPathsForSelectedRows) {
-        [messages addObject:[self.messages objectAtIndex:(NSUInteger)indexPath.row]];
+    NSMutableArray *selectedMessages = [NSMutableArray array];
+    
+    for (NSString *messageID in self.selectedMessageIDs) {
+        // Add message by ID
+        UAInboxMessage *selectedMessage = [[UAirship inbox].messageList messageForID:messageID];
+        if (selectedMessage) {
+            [selectedMessages addObject:selectedMessage];
+        }
     }
 
     self.cancelItem.enabled = NO;
 
     if (sender == self.markAsReadButtonItem) {
-        [[UAirship inbox].messageList markMessagesRead:messages completionHandler:^{
+        [[UAirship inbox].messageList markMessagesRead:selectedMessages completionHandler:^{
             [self refreshAfterBatchUpdate];
         }];
     } else {
-        [[UAirship inbox].messageList markMessagesDeleted:messages completionHandler:^{
+        [[UAirship inbox].messageList markMessagesDeleted:selectedMessages completionHandler:^{
             [self refreshAfterBatchUpdate];
         }];
     }
@@ -494,7 +618,7 @@
         NSString *markReadStr = UAMessageCenterLocalizedString(@"ua_mark_read");
 
         UITableView *strongMessageTable = self.messageTable;
-        NSUInteger count = [strongMessageTable.indexPathsForSelectedRows count];
+        NSUInteger count = strongMessageTable.indexPathsForSelectedRows.count;
         if (!count) {
             self.deleteItem.title = deleteStr;
             self.markAsReadButtonItem.title = markReadStr;
@@ -520,7 +644,7 @@
             }
         }
 
-        if ([strongMessageTable.indexPathsForSelectedRows count] < [strongMessageTable numberOfRowsInSection:0]) {
+        if (strongMessageTable.indexPathsForSelectedRows.count < [strongMessageTable numberOfRowsInSection:0]) {
             self.selectAllButtonItem.title = UAMessageCenterLocalizedString(@"ua_select_all");
         } else {
             self.selectAllButtonItem.title = UAMessageCenterLocalizedString(@"ua_select_none");
@@ -528,15 +652,61 @@
     }
 }
 
-- (void)deleteMessageAtIndexPath:(NSIndexPath *)indexPath {
+#pragma mark -
+#pragma mark Methods to manage copy of inbox message list
 
+- (void)copyMessages {
+    if (self.filter) {
+        self.messages = [NSArray arrayWithArray:[[UAirship inbox].messageList.messages filteredArrayUsingPredicate:self.filter]];
+    } else {
+        self.messages = [NSArray arrayWithArray:[UAirship inbox].messageList.messages];
+    }
+}
+
+- (UAInboxMessage *)messageAtIndex:(NSUInteger)index {
+    if (index < self.messages.count) {
+        return [self.messages objectAtIndex:index];
+    } else {
+        return nil;
+    }
+}
+
+- (NSUInteger)indexOfMessage:(UAInboxMessage *)messageToFind {
+    if (!messageToFind) {
+        return NSNotFound;
+    }
+    
+    for (NSUInteger index = 0;index<self.messages.count;index++) {
+        UAInboxMessage *message = [self messageAtIndex:index];
+        if ([messageToFind.messageID isEqualToString:message.messageID]) {
+            return index;
+        }
+    }
+    
+    return NSNotFound;
+}
+
+- (UAInboxMessage *)messageForID:(NSString *)messageIDToFind {
+    if (!messageIDToFind) {
+        return nil;
+    } else {
+        for (UAInboxMessage *message in self.messages) {
+            if ([messageIDToFind isEqualToString:message.messageID]) {
+                return message;
+            }
+        }
+        return nil;
+    }
+}
+
+- (void)deleteMessageAtIndexPath:(NSIndexPath *)indexPath {
     if (!indexPath) {
         //require an index path (for safety with literal below)
         return;
     }
 
-    UAInboxMessage *message = [self.messages objectAtIndex:(NSUInteger)indexPath.row];
-
+    UAInboxMessage *message = [self messageAtIndex:indexPath.row];
+    
     if (message) {
         [[UAirship inbox].messageList markMessagesDeleted:@[message] completionHandler:^{
             [self refreshAfterBatchUpdate];
@@ -570,7 +740,7 @@
     }
 
     cell.style = self.style;
-    UAInboxMessage *message = [self.messages objectAtIndex:(NSUInteger)indexPath.row];
+    UAInboxMessage *message = [self messageAtIndex:indexPath.row];
     [cell setData:message];
 
     UIImageView *localImageView = cell.listIconView;
@@ -599,7 +769,9 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
                                             forRowAtIndexPath:(NSIndexPath *)indexPath {
-    [self deleteMessageAtIndexPath:indexPath];
+    if (UITableViewCellEditingStyleDelete == editingStyle) {
+        [self deleteMessageAtIndexPath:indexPath];
+    }
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -614,15 +786,24 @@
     if (self.editing) {
         return UITableViewCellEditingStyleNone;
     } else {
-        return UITableViewCellEditingStyleDelete;
+        if (self.selectedIndexPath) {
+            [self.messageTable selectRowAtIndexPath:self.selectedIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+        }
+       return UITableViewCellEditingStyleDelete;
     }
 }
 
 - (void)tableView:(UITableView *)tableView willBeginEditingRowAtIndexPath:(NSIndexPath *)indexPath {
     self.navigationItem.rightBarButtonItem.enabled = NO;
+    if (self.selectedIndexPath) {
+        [self.messageTable selectRowAtIndexPath:self.selectedIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+    }
 }
 
 - (void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.selectedIndexPath) {
+        [self.messageTable selectRowAtIndexPath:self.selectedIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+    }
     self.navigationItem.rightBarButtonItem.enabled = YES;
 }
 
@@ -631,20 +812,26 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    UAInboxMessage *message = [self messageForIndexPath:indexPath];
+    UAInboxMessage *message = [self messageAtIndex:indexPath.row];
 
     if (self.editing) {
         [self.selectedMessageIDs addObject:message.messageID];
         [self refreshBatchUpdateButtons];
     } else {
+        self.selectedMessage = message;
         self.selectedIndexPath = indexPath;
-        [self displayMessage:message];
+        [self displayMessage:message onError:^{
+            self.selectedMessage = nil;
+            self.selectedIndexPath = nil;
+            [self.messageTable deselectRowAtIndexPath:indexPath animated:NO];
+            [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
+        }];
     }
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (self.editing) {
-        UAInboxMessage *message = [self messageForIndexPath:indexPath];
+        UAInboxMessage *message = [self messageAtIndex:indexPath.row];
         [self.selectedMessageIDs removeObject:message.messageID];
         [self refreshBatchUpdateButtons];
     }
@@ -654,12 +841,35 @@
 #pragma mark NSNotificationCenter callbacks
 
 - (void)messageListUpdated {
-
     dispatch_async(dispatch_get_main_queue(), ^{
-        UA_LDEBUG(@"UADefaultMessageCenterListViewController messageListUpdated");
-        [self reload];
-        [self refreshBatchUpdateButtons];
+        // copy the back-end list of messages as it can change from under the UI
+        [self copyMessages];
+        
+        if (!self.refreshControlAnimating) {
+            [self chooseMessageDisplayAndReload];
+        }
     });
+}
+
+- (void)chooseMessageDisplayAndReload {
+    if (self.messageViewController.message) {
+        // Default is to show the message that was already displayed
+        UAInboxMessage *messageToDisplay = [self messageForID:self.messageViewController.message.messageID];
+        
+        // if the previously displayed message no longer exists, try to show the message that was previously selected
+        if (!messageToDisplay && self.selectedMessage) {
+            messageToDisplay = [self messageForID:self.selectedMessage.messageID];
+        }
+        
+        // if that message no longer exists, try to show the message now at the previously selected index
+        if (!messageToDisplay && self.selectedIndexPath) {
+            messageToDisplay = [self messageForID:[self messageAtIndex:[self validateIndexPath:self.selectedIndexPath].row].messageID];
+        }
+        [self.messageViewController loadMessage:messageToDisplay onlyIfChanged:YES];
+    }
+    
+    [self reload];
+    [self refreshBatchUpdateButtons];
 }
 
 #pragma mark -
@@ -684,7 +894,7 @@
     NSArray *indexPaths = [self.messageTable indexPathsForRowsInRect:r];
     for (NSIndexPath *indexPath in indexPaths) {
         UITableViewCell *cell = [self.messageTable cellForRowAtIndexPath:indexPath];
-        UA_LTRACE(@"Loading row %ld. Title: %@", (long)indexPath.row, [self messageForIndexPath:indexPath].title);
+        UA_LTRACE(@"Loading row %ld. Title: %@", (long)indexPath.row, [self messageAtIndex:indexPath.row].title);
         [self retrieveIconForIndexPath:indexPath iconSize:cell.imageView.frame.size];
     }
 }
@@ -707,17 +917,15 @@
 
 - (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(UIViewController *)primaryViewController {
     // Only collapse onto the primary (list) controller if there's no currently selected message or we're in batch editing mode
-    return self.selectedIndexPath == nil || self.editing;
+    return !(self.selectedIndexPath || self.selectedMessage) || self.editing;
 }
 
 - (UIViewController *)primaryViewControllerForExpandingSplitViewController:(UISplitViewController *)splitViewController {
     self.collapsed = NO;
-    if (self.selectedIndexPath) {
-        // Delay selection by a beat, to allow rotation to finish
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.messageTable selectRowAtIndexPath:self.selectedIndexPath animated:NO scrollPosition:UITableViewScrollPositionTop];
-        });
-    }
+    // Delay selection by a beat, to allow rotation to finish
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self handlePreviouslySelectedIndexPathsAnimated:YES];
+    });
     // Returning nil causes the split view controller to default to the the existing primary view controller
     return nil;
 }
@@ -780,7 +988,7 @@
  */
 - (void)retrieveIconForIndexPath:(NSIndexPath *)indexPath iconSize:(CGSize)iconSize {
 
-    UAInboxMessage *message = [self.messages objectAtIndex:(NSUInteger)indexPath.row];
+    UAInboxMessage *message = [self messageAtIndex:indexPath.row];
 
     NSString *iconListURLString = [self iconURLStringForMessage:message];
 
@@ -803,7 +1011,7 @@
         // Next, check to see if we're currently requesting the icon
         // Add the index path to the set of paths to update when a request is completed and then proceed if necessary
         NSMutableSet *currentRequestedIndexPaths = [self.currentIconURLRequests objectForKey:iconListURLString];
-        if ([currentRequestedIndexPaths count]) {
+        if (currentRequestedIndexPaths.count) {
             [currentRequestedIndexPaths addObject:indexPath];
             // Wait for the in-flight request to finish
             return;

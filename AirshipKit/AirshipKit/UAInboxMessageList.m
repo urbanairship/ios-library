@@ -46,30 +46,26 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 #pragma mark Accessors
 
 - (void)setMessages:(NSArray *)messages {
-    @synchronized(self) {
-        _messages = messages;
-
-        NSMutableDictionary *messageIDMap = [NSMutableDictionary dictionary];
-        NSMutableDictionary *messageURLMap = [NSMutableDictionary dictionary];
-
-        for (UAInboxMessage *message in messages) {
-            if (message.messageBodyURL.absoluteString) {
-                [messageURLMap setObject:message forKey:message.messageBodyURL.absoluteString];
-            }
-            if (message.messageID) {
-                [messageIDMap setObject:message forKey:message.messageID];
-            }
+    _messages = messages;
+    
+    NSMutableDictionary *messageIDMap = [NSMutableDictionary dictionary];
+    NSMutableDictionary *messageURLMap = [NSMutableDictionary dictionary];
+    
+    for (UAInboxMessage *message in messages) {
+        if (message.messageBodyURL.absoluteString) {
+            [messageURLMap setObject:message forKey:message.messageBodyURL.absoluteString];
         }
-
-        self.messageIDMap = [messageIDMap copy];
-        self.messageURLMap = [messageURLMap copy];
+        if (message.messageID) {
+            [messageIDMap setObject:message forKey:message.messageID];
+        }
     }
+    
+    self.messageIDMap = [messageIDMap copy];
+    self.messageURLMap = [messageURLMap copy];
 }
 
 - (NSArray *)messages {
-    @synchronized(self) {
-        return _messages;
-    }
+    return _messages;
 }
 
 - (NSArray<UAInboxMessage *> *)messagesFilteredUsingPredicate:(NSPredicate *)predicate {

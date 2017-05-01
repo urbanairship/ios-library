@@ -71,6 +71,7 @@
 #import "UAMessageCenterDateUtils.h"
 #import "UAMessageCenterLocalization.h"
 #import "UAMessageCenterMessageViewController.h"
+#import "UAMessageCenterMessageViewProtocol.h"
 #import "UAModifyTagsAction.h"
 #import "UANamedUser.h"
 #import "UANotificationAction.h"

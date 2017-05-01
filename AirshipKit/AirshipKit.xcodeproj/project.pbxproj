@@ -1137,6 +1137,7 @@
 		CCE236331DDB8BCE00577747 /* no */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = no; path = no.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		CF471EEEF4B1EEA3289E08C9 /* libPods-AirshipKitTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AirshipKitTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF544B901E428DC800F4F008 /* UATextInputNotificationActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATextInputNotificationActionTest.m; sourceTree = "<group>"; };
+		DF5C88AF1EA916300041E088 /* UAMessageCenterMessageViewProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterMessageViewProtocol.h; sourceTree = "<group>"; };
 		DFA1815D1E688EBB00446942 /* UABaseNativeBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABaseNativeBridge.h; sourceTree = "<group>"; };
 		DFBBC7AE1E36D80B00BA7315 /* UATextInputNotificationAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATextInputNotificationAction.m; sourceTree = "<group>"; };
 		DFBBC7AF1E36D80B00BA7315 /* UATextInputNotificationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UATextInputNotificationAction.h; sourceTree = "<group>"; };
@@ -1869,6 +1870,7 @@
 				CC40DB4D1D8C996900BABD4F /* UADefaultMessageCenterListCell.m */,
 				CC40DB4E1D8C996900BABD4F /* UADefaultMessageCenterListViewController.h */,
 				CC40DB4F1D8C996900BABD4F /* UADefaultMessageCenterListViewController.m */,
+				DF5C88AF1EA916300041E088 /* UAMessageCenterMessageViewProtocol.h */,
 				DFECEA731E64DC4E006AA8EA /* UAMessageCenterMessageViewController.h */,
 				DFECEA721E64DC4E006AA8EA /* UAMessageCenterMessageViewController.m */,
 				CC40DB501D8C996900BABD4F /* UADefaultMessageCenterMessageViewController.h */,

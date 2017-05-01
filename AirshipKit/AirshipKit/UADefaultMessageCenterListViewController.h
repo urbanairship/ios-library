@@ -1,6 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <UIKit/UIKit.h>
+#import "UAMessageCenterMessageViewProtocol.h"
 
 @class UAInboxMessage;
 @class UADefaultMessageCenterStyle;
@@ -26,6 +27,11 @@
 @property (nonatomic, strong) NSPredicate *filter;
 
 /**
+ * The view controller displaying the currently displayed message
+ */
+@property (nonatomic, strong) UIViewController<UAMessageCenterMessageViewProtocol> *messageViewController;
+
+/**
  * Block that will be invoked when a message view controller receives a closeWindow message
  * from the webView.
  */
@@ -42,5 +48,14 @@
  * @param message The message to load.
  */
 - (void)displayMessage:(UAInboxMessage *)message;
+
+/**
+ * Displays a new message, either by updating the currently displayed message or
+ * by navigating to a new one.
+ *
+ * @param message The message to load.
+ * @param completion Completion block called when there is an error displaying the message
+ */
+- (void)displayMessage:(UAInboxMessage *)message onError:(void (^)(void))completion;
 
 @end

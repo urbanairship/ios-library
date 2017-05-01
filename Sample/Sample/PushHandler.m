@@ -23,28 +23,29 @@
     }
 
     // iOS 8 & 9 - show an alert dialog
-    NSString *alertTitle = notificationContent.alertTitle ? notificationContent.alertTitle : NSLocalizedStringFromTable(@"UA_Notification_Title", @"UAPushUI", @"System Push Settings Label");
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:alertTitle
-                                                                             message:notificationContent.alertBody
-                                                                      preferredStyle:UIAlertControllerStyleAlert];
-
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-
-        // If we have a message ID run the display inbox action to fetch and display the message.
-        NSString *messageId = [UAInboxUtils inboxMessageIDFromNotification:notificationContent.notificationInfo];
-        if (messageId) {
-            [UAActionRunner runActionWithName:kUADisplayInboxActionDefaultRegistryName
-                                        value:messageId
-                                    situation:UASituationManualInvocation];
-        }
-    }];
-
-    [alertController addAction:okAction];
-
-    UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
-    alertController.popoverPresentationController.sourceView = topController.view;
-    [topController presentViewController:alertController animated:YES completion:nil];
-
+    if (notificationContent.alertTitle || notificationContent.alertBody) {
+        NSString *alertTitle = notificationContent.alertTitle ? notificationContent.alertTitle : NSLocalizedStringFromTable(@"UA_Notification_Title", @"UAPushUI", @"System Push Settings Label");
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:alertTitle
+                                                                                 message:notificationContent.alertBody
+                                                                          preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            // If we have a message ID run the display inbox action to fetch and display the message.
+            NSString *messageId = [UAInboxUtils inboxMessageIDFromNotification:notificationContent.notificationInfo];
+            if (messageId) {
+                [UAActionRunner runActionWithName:kUADisplayInboxActionDefaultRegistryName
+                                            value:messageId
+                                        situation:UASituationManualInvocation];
+            }
+        }];
+        
+        [alertController addAction:okAction];
+        
+        UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
+        alertController.popoverPresentationController.sourceView = topController.view;
+        [topController presentViewController:alertController animated:YES completion:nil];
+    }
     completionHandler();
 }
 

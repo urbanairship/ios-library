@@ -36,7 +36,7 @@
 @interface UADefaultMessageCenterSplitViewController ()
 
 @property(nonatomic, strong) UADefaultMessageCenterListViewController *listViewController;
-@property(nonatomic, strong) UIViewController *messageViewController;
+@property(nonatomic, strong) UIViewController<UAMessageCenterMessageViewProtocol> *messageViewController;
 @property (nonatomic, strong) UINavigationController *listNav;
 @property (nonatomic, strong) UINavigationController *messageNav;
 
@@ -46,32 +46,13 @@
 
 - (void)configure {
 
-    UADefaultMessageCenterListViewController *lvc;
-    lvc = [[UADefaultMessageCenterListViewController alloc] initWithNibName:@"UADefaultMessageCenterListViewController"
+    self.listViewController = [[UADefaultMessageCenterListViewController alloc] initWithNibName:@"UADefaultMessageCenterListViewController"
                                                                      bundle:[UAirship resources]];
-    UIViewController *mvc;
-    if (UAirship.shared.config.useWKWebView) {
-        mvc = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController"
-                                                                     bundle:[UAirship resources]];
-    } else {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        mvc = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController"
-                                                                            bundle:[UAirship resources]];
-#pragma GCC diagnostic pop
-    }
-
-
-    self.listViewController = lvc;
-    self.messageViewController = mvc;
-
-    self.listNav = [[UINavigationController alloc] initWithRootViewController:lvc];
-    self.messageNav = [[UINavigationController alloc] initWithRootViewController:mvc];
+    self.listNav = [[UINavigationController alloc] initWithRootViewController:self.listViewController];
 
     self.title = UAMessageCenterLocalizedString(@"ua_message_center_title");
 
-    self.delegate = lvc;
-    self.viewControllers = @[self.listNav, self.messageNav];
+    self.delegate = self.listViewController;
 
     // display both view controllers in horizontally regular contexts
     self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
@@ -95,6 +76,28 @@
     }
 
     return self;
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    if (!self.messageViewController) {
+        if (UAirship.shared.config.useWKWebView) {
+            self.messageViewController = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController"
+                                                                         bundle:[UAirship resources]];
+        } else {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+            self.messageViewController = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController"
+                                                                                bundle:[UAirship resources]];
+            ((UADefaultMessageCenterMessageViewController *)self.messageViewController).filter = self.filter;
+#pragma GCC diagnostic pop
+        }
+        
+        self.listViewController.messageViewController = self.messageViewController;
+        self.messageNav = [[UINavigationController alloc] initWithRootViewController:self.messageViewController];
+        self.viewControllers = @[self.listNav, self.messageNav];
+    }
 }
 
 - (void)setStyle:(UADefaultMessageCenterStyle *)style {
@@ -135,14 +138,12 @@
 - (void)setFilter:(NSPredicate *)filter {
     _filter = filter;
     self.listViewController.filter = filter;
-    if (UAirship.shared.config.useWKWebView) {
-        ((UAMessageCenterMessageViewController *)self.messageViewController).filter = filter;
-    } else {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        ((UADefaultMessageCenterMessageViewController *)self.messageViewController).filter = filter;
-#pragma GCC diagnostic pop
+    if ([self.messageViewController isKindOfClass:[UADefaultMessageCenterMessageViewController class]]) {
+        ((UADefaultMessageCenterMessageViewController *)self.messageViewController).filter = self.filter;
     }
+#pragma GCC diagnostic pop
 }
 
 - (void)setTitle:(NSString *)title {

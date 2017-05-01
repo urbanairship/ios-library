@@ -13,7 +13,7 @@
 #define kMessageUp 0
 #define kMessageDown 1
 
-@interface UADefaultMessageCenterMessageViewController () <UAUIWebViewDelegate, UARichContentWindow>
+@interface UADefaultMessageCenterMessageViewController () <UAUIWebViewDelegate, UARichContentWindow, UAMessageCenterMessageViewProtocol>
 
 @property (nonatomic, strong) UAWebViewDelegate *webViewDelegate;
 
@@ -38,16 +38,20 @@
 @property (nonatomic, weak) IBOutlet UILabel *coverLabel;
 
 /**
- * Convenience accessor for the messages currently available for display.
+ * The messages displayed in the message table.
  */
-@property (nonatomic, readonly) NSArray *messages;
+@property (nonatomic, copy) NSArray *messages;
 
 @end
 
 @implementation UADefaultMessageCenterMessageViewController
 
+@synthesize message = _message;
+@synthesize closeBlock = _closeBlock;
+
 - (void)dealloc {
     self.webView.delegate = nil;
+    self.message = nil;
 }
 
 - (void)viewDidLoad {
@@ -69,36 +73,40 @@
                                                                              target:self
                                                                              action:@selector(delete:)];
 
-    self.coverLabel.text = UAMessageCenterLocalizedString(@"ua_message_not_selected");
-
+    
+    // get initial list of messages in the inbox
+    [self copyMessages];
+    
     if (self.message) {
-        [self loadMessageForID:self.message.messageID];
+        [self loadMessage:self.message onlyIfChanged:NO];
     } else {
-        [self cover];
+        [self coverWithMessage:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
     }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(messageListUpdated)
                                                  name:UAInboxMessageListUpdatedNotification object:nil];
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    if (self.message) {
+        if (!self.webView.loading) {
+            [self uncover];
+        }
+    } else {
+        [self coverWithMessage:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
+    }
+}
+
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UAInboxMessageListUpdatedNotification object:nil];
-}
-
-// Note: since the message list is refreshed with new model objects when reloaded,
-// we can't reliably hold onto any single instance. This method is mostly for convenience.
-- (NSArray *)messages {
-    NSArray *allMessages = [UAirship inbox].messageList.messages;
-    if (self.filter) {
-        return [allMessages filteredArrayUsingPredicate:self.filter];
-    } else {
-        return allMessages;
-    }
 }
 
 #pragma mark -
@@ -110,8 +118,9 @@
     }
 }
 
-- (void)cover {
+- (void)coverWithMessage:(NSString *)message {
     self.title = nil;
+    self.coverLabel.text = message;
     self.coverView.hidden = NO;
     self.navigationItem.rightBarButtonItem.enabled = NO;
 }
@@ -122,45 +131,40 @@
 }
 
 - (void)loadMessageForID:(NSString *)mid {
-    NSUInteger index = NSNotFound;
-
-    for (NSUInteger i = 0; i < [self.messages count]; i++) {
-        UAInboxMessage *message = [self.messages objectAtIndex:i];
-        if ([message.messageID isEqualToString:mid]) {
-            index = i;
-            break;
-        }
-    }
-
-    if (index == NSNotFound) {
-        UALOG(@"Can not find message with ID: %@", mid);
-        return;
-    }
-
-    [self loadMessageAtIndex:index];
+    [self loadMessage:[self messageForID:mid] onlyIfChanged:NO];
 }
 
 - (void)loadMessageAtIndex:(NSUInteger)index {
-    self.messageIndex = index;
+    [self loadMessage:[self messageAtIndex:index] onlyIfChanged:NO];
+}
 
-    [self.webView stopLoading];
-
-    self.message = [self.messages objectAtIndex:index];
-    if (self.message == nil) {
-        UALOG(@"Unable to find message with index: %lu", (unsigned long)index);
+- (void)loadMessage:(UAInboxMessage *)message onlyIfChanged:(BOOL)onlyIfChanged {
+    if (!message) {
+        self.message = message;
+        self.messageIndex=NSNotFound;
+        [self coverWithMessage:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
         return;
     }
-
-    [self uncover];
-    self.title = self.message.title;
-
-    NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:self.message.messageBodyURL];
-    requestObj.timeoutInterval = 60;
-
-    NSString *auth = [UAUtils userAuthHeaderString];
-    [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
-
-    [self.webView loadRequest:requestObj];
+    
+    self.messageIndex = [self indexOfMessage:message];
+    
+    if (!onlyIfChanged || !self.message || ![message.messageID isEqualToString:self.message.messageID] || ![message.title isEqualToString:self.message.title] || ![message.messageBodyURL isEqual:self.message.messageBodyURL]) {
+        [self coverWithMessage:nil];
+        [self.webView stopLoading];
+        
+        self.message = message;
+        self.title = self.message.title;
+        
+        NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:self.message.messageBodyURL];
+        requestObj.timeoutInterval = 60;
+        
+        NSString *auth = [UAUtils userAuthHeaderString];
+        [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
+        
+        [self.webView loadRequest:requestObj];
+    } else {
+        [self uncover];
+    }
 }
 
 - (void)displayAlert:(BOOL)retry {
@@ -180,7 +184,7 @@
                                                             handler:^(UIAlertAction * _Nonnull action) {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-                                                                [self loadMessageAtIndex:self.messageIndex];
+                                                                [self loadMessage:self.message onlyIfChanged:NO];
 #pragma GCC diagnostic pop
         }];
 
@@ -190,9 +194,60 @@
     [self presentViewController:alert animated:YES completion:nil];
 }
 
+#pragma mark -
+#pragma mark Methods to manage copy of inbox message list
+
+- (void)copyMessages {
+    if (self.filter) {
+        self.messages = [NSArray arrayWithArray:[[UAirship inbox].messageList.messages filteredArrayUsingPredicate:self.filter]];
+    } else {
+        self.messages = [NSArray arrayWithArray:[UAirship inbox].messageList.messages];
+    }
+}
+
+
+- (UAInboxMessage *)messageAtIndex:(NSUInteger)index {
+    if (index < self.messages.count) {
+        return [self.messages objectAtIndex:index];
+    } else {
+        return nil;
+    }
+}
+
+- (NSUInteger)indexOfMessage:(UAInboxMessage *)messageToFind {
+    if (!messageToFind) {
+        return NSNotFound;
+    }
+    
+    for (NSUInteger index = 0;index<self.messages.count;index++) {
+        UAInboxMessage *message = [self messageAtIndex:index];
+        if ([messageToFind.messageID isEqualToString:message.messageID]) {
+            return index;
+        }
+    }
+    
+    return NSNotFound;
+}
+
+- (UAInboxMessage *)messageForID:(NSString *)messageIDToFind {
+    if (!messageIDToFind) {
+        return nil;
+    } else {
+        for (UAInboxMessage *message in self.messages) {
+            if ([messageIDToFind isEqualToString:message.messageID]) {
+                return message;
+            }
+        }
+    }
+    
+    return nil;
+}
+
+
 #pragma mark UAUIWebViewDelegate
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
+    [self uncover];
 
     NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:wv.request];
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)cachedResponse.response;
@@ -225,7 +280,7 @@
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
     if (error.code == NSURLErrorCancelled)
         return;
-    UALOG(@"Failed to load message: %@", error);
+    UA_LDEBUG(@"Failed to load message: %@", error);
     [self displayAlert:YES];
 }
 
@@ -244,30 +299,22 @@
 #pragma mark NSNotificationCenter callbacks
 
 - (void)messageListUpdated {
-
-    if (self.messages.count) {
-        // If the index path is still accessible,
-        // find the nearest accessible neighbor
-        NSUInteger index = MIN(self.messages.count - 1, self.messageIndex);
-
-        UAInboxMessage *currentMessageAtIndex = [self.messages objectAtIndex:index];
-
-        if (self.message) {
-            // if the index has changed
-            if (![self.message.messageID isEqual:currentMessageAtIndex.messageID]) {
-                // reload the message at that index
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // copy the back-end list of messages as it can change from under the UI
+        [self copyMessages];
+        if ((self.messages.count == 0) || !self.message) {
+            [self coverWithMessage:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
+        } else {
+            if ([self indexOfMessage:self.message] == NSNotFound) {
+                // If the index path is still accessible,
+                // find the nearest accessible neighbor
+                NSUInteger index = MIN(self.messages.count - 1, self.messageIndex);
+                
                 [self loadMessageAtIndex:index];
-            } else {
-                // refresh the stored instance
-                self.message = currentMessageAtIndex;
             }
         }
-
-    } else {
-        // There are no more messages to display, so cover up the UI.
-        self.message = nil;
-        [self cover];
-    }
+    });
 }
 
 @end

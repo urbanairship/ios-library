@@ -2,6 +2,8 @@
 
 #import <UIKit/UIKit.h>
 #import "UARichContentWindow.h"
+#import "UAUIWebViewDelegate.h"
+#import "UAMessageCenterMessageViewProtocol.h"
 
 @class UAInboxMessage;
 @class UADefaultMessageCenterStyle;
@@ -13,43 +15,33 @@
  */
 
 DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 9.0 - please use UAMessageCenterMessageViewController")
-@interface UADefaultMessageCenterMessageViewController : UIViewController
+@interface UADefaultMessageCenterMessageViewController : UIViewController <UAUIWebViewDelegate, UARichContentWindow, UAMessageCenterMessageViewProtocol>
 
 /**
  * The UAInboxMessage being displayed.
- *
- * @deprecated Deprecated - to be removed in SDK version 9.0 - please use UAMessageCenterMessageViewController
  */
-@property (nonatomic, strong) UAInboxMessage *message DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 9.0 - please use UAMessageCenterMessageViewController");
+@property (nonatomic, strong) UAInboxMessage *message;
 
 /**
  * An optional predicate for filtering messages.
- *
- * @deprecated Deprecated - to be removed in SDK version 9.0 - please use UAMessageCenterMessageViewController
  */
-@property (nonatomic, strong) NSPredicate *filter DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 9.0 - please use UAMessageCenterMessageViewController");
+@property (nonatomic, strong) NSPredicate *filter;
 
 /**
  * Block that will be invoked when this class receives a closeWindow message from the webView.
- *
- * @deprecated Deprecated - to be removed in SDK version 9.0 - please use UAMessageCenterMessageViewController
  */
-@property (nonatomic, copy) void (^closeBlock)(BOOL animated) DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 9.0 - please use UAMessageCenterMessageViewController");
+@property (nonatomic, copy) void (^closeBlock)(BOOL animated);
 
 /**
  * Load a UAInboxMessage at a particular index in the message list.
  * @param index The corresponding index in the message list as an integer.
- *
- * @deprecated Deprecated - to be removed in SDK version 9.0 - please use UAMessageCenterMessageViewController
  */
-- (void)loadMessageAtIndex:(NSUInteger)index DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 9.0 - please use UAMessageCenterMessageViewController");
+- (void)loadMessageAtIndex:(NSUInteger)index;
 
 /**
  * Load a UAInboxMessage by message ID.
  * @param mid The message ID as an NSString.
- *
- * @deprecated Deprecated - to be removed in SDK version 9.0 - please use UAMessageCenterMessageViewController
  */
-- (void)loadMessageForID:(NSString *)mid DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 9.0 - please use UAMessageCenterMessageViewController");
+- (void)loadMessageForID:(NSString *)mid;
 
 @end
