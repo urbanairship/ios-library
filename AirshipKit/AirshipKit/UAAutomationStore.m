@@ -80,10 +80,19 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UAActionScheduleData"];
         request.predicate = predicate;
 
-        NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
-
         NSError *error;
-        [self.managedContext executeRequest:deleteRequest error:&error];
+
+        if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){9, 0, 0}]) {
+            NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
+            [self.managedContext executeRequest:deleteRequest error:&error];
+        } else {
+            request.includesPropertyValues = NO;
+            NSArray *schedules = [self.managedContext executeFetchRequest:request error:&error];
+            for (NSManagedObject *schedule in schedules) {
+                [self.managedContext deleteObject:schedule];
+            }
+        }
+
         if (error) {
             UA_LERR(@"Error deleting entities %@", error);
             return;

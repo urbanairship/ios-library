@@ -42,6 +42,7 @@ NSString *const UAEventDataEntityName = @"UAEventData";
 - (BOOL)saveContext {
     NSError *error;
     [self.managedContext save:&error];
+    [self.managedContext reset];
     if (error) {
         UA_LERR(@"Error saving context %@", error);
         return NO;
@@ -86,13 +87,21 @@ NSString *const UAEventDataEntityName = @"UAEventData";
 - (void)deleteEventsWithIDs:(NSArray<NSString *> *)eventIDs {
     [self.managedContext performBlock:^{
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:UAEventDataEntityName];
-        request.sortDescriptors = @[ [NSSortDescriptor sortDescriptorWithKey:@"storeDate" ascending:NO] ];
         request.predicate = [NSPredicate predicateWithFormat:@"identifier IN %@", eventIDs];
 
-        NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
-
         NSError *error;
-        [self.managedContext executeRequest:deleteRequest error:&error];
+
+        if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){9, 0, 0}]) {
+            NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
+            [self.managedContext executeRequest:deleteRequest error:&error];
+        } else {
+            request.includesPropertyValues = NO;
+            NSArray *events = [self.managedContext executeFetchRequest:request error:&error];
+            for (NSManagedObject *event in events) {
+                [self.managedContext deleteObject:event];
+            }
+        }
+
         if (error) {
             UA_LERR(@"Error deleting analytics events %@", error);
             return;
@@ -105,10 +114,20 @@ NSString *const UAEventDataEntityName = @"UAEventData";
 - (void)deleteAllEvents {
     [self.managedContext performBlock:^{
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:UAEventDataEntityName];
-        NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
 
         NSError *error;
-        [self.managedContext executeRequest:deleteRequest error:&error];
+
+        if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){9, 0, 0}]) {
+            NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
+            [self.managedContext executeRequest:deleteRequest error:&error];
+        } else {
+            request.includesPropertyValues = NO;
+            NSArray *events = [self.managedContext executeFetchRequest:request error:&error];
+            for (NSManagedObject *event in events) {
+                [self.managedContext deleteObject:event];
+            }
+        }
+
         if (error) {
             UA_LERR(@"Error deleting analytics events %@", error);
             return;

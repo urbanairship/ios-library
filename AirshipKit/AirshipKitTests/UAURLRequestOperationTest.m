@@ -99,17 +99,5 @@
     XCTAssertEqual(operation.isFinished, YES);
 }
 
-- (void)testInFlightCancel {
-    UAURLRequestOperation *operation = [UAURLRequestOperation operationWithRequest:self.mockRequest
-                                                                           session:self.mockSession
-                                                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {}];
-
-    [operation start];
-    [operation cancel];
-
-    XCTAssertEqual(operation.isCancelled, YES);
-    XCTAssertEqual(operation.isExecuting, NO);
-    XCTAssertEqual(operation.isFinished, YES);
-}
 
 @end
