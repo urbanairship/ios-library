@@ -290,7 +290,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     NSDictionary *remoteNotification = [notification.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
 
     // Required before the app init event to track conversion push ID
-    [sharedAirship_.analytics launchedFromNotification:remoteNotification];
+    if (remoteNotification) {
+        [sharedAirship_.analytics launchedFromNotification:remoteNotification];
+    }
 
     // Init event
     [sharedAirship_.analytics addEvent:[UAAppInitEvent event]];
