@@ -186,6 +186,10 @@
 
 
 - (void)launchedFromNotification:(NSDictionary *)notification {
+    if (!notification) {
+        return;
+    }
+
     // If the server did not send a push ID (likely because the payload did not have room)
     // then send "MISSING_SEND_ID"
     self.conversionSendID = [notification objectForKey:@"_"] ?: kUAMissingSendID;
