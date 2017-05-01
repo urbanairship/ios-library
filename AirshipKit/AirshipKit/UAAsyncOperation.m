@@ -66,10 +66,6 @@
 - (void)cancel {
     @synchronized (self) {
         [super cancel];
-
-        if (self.isExecuting) {
-            [self finish];
-        }
     }
 }
 
@@ -97,8 +93,11 @@
     @synchronized (self) {
         self.block = nil;
 
-        if (!self.isFinished) {
+        if (self.isExecuting) {
             self.isExecuting = NO;
+        }
+
+        if (!self.isFinished) {
             self.isFinished = YES;
         }
     }
