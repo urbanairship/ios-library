@@ -1,8 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAAutoIntegration+Internal.h"
-#import <objc/runtime.h>
-
+#import "UASwizzler+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAAppIntegration+Internal.h"
 
@@ -13,7 +12,9 @@ static dispatch_once_t onceToken;
 @end
 
 @interface UAAutoIntegration()
-@property (nonatomic, strong) NSMutableDictionary *originalMethods;
+@property (nonatomic, strong) UASwizzler *appDelegateSwizzler;
+@property (nonatomic, strong) UASwizzler *notificationDelegateSwizzler;
+@property (nonatomic, strong) UASwizzler *notificationCenterSwizzler;
 @property (nonatomic, strong) UAAutoIntegrationDummyDelegate *dummyNotificationDelegate;
 @end
 
@@ -34,16 +35,17 @@ static dispatch_once_t onceToken;
 + (void)reset {
     if (instance_) {
         onceToken = 0;
-        instance_ = nil;
-        instance_.originalMethods = nil;
+        instance_.appDelegateSwizzler = nil;
+        instance_.notificationDelegateSwizzler = nil;
+        instance_.notificationCenterSwizzler = nil;
         instance_.dummyNotificationDelegate = nil;
+        instance_ = nil;
     }
 }
 
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.originalMethods = [NSMutableDictionary dictionary];
         self.dummyNotificationDelegate = [[UAAutoIntegrationDummyDelegate alloc] init];
     }
 
@@ -59,39 +61,41 @@ static dispatch_once_t onceToken;
 
     Class class = [delegate class];
 
+    self.appDelegateSwizzler = [UASwizzler swizzlerForClass:class];
 
     // Device token
-    [self swizzle:@selector(application:didRegisterForRemoteNotificationsWithDeviceToken:)
-   implementation:(IMP)ApplicationDidRegisterForRemoteNotificationsWithDeviceToken class:class];
+    [self.appDelegateSwizzler swizzle:@selector(application:didRegisterForRemoteNotificationsWithDeviceToken:)
+                             protocol:@protocol(UIApplicationDelegate)
+                       implementation:(IMP)ApplicationDidRegisterForRemoteNotificationsWithDeviceToken];
 
     // Device token errors
-    [self swizzle:@selector(application:didFailToRegisterForRemoteNotificationsWithError:)
-   implementation:(IMP)ApplicationDidFailToRegisterForRemoteNotificationsWithError
-            class:class];
+    [self.appDelegateSwizzler swizzle:@selector(application:didFailToRegisterForRemoteNotificationsWithError:)
+                             protocol:@protocol(UIApplicationDelegate)
+                       implementation:(IMP)ApplicationDidFailToRegisterForRemoteNotificationsWithError];
 
     // Silent notifications
-    [self swizzle:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)
-   implementation:(IMP)ApplicationDidReceiveRemoteNotificationFetchCompletionHandler
-            class:class];
+    [self.appDelegateSwizzler swizzle:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)
+                             protocol:@protocol(UIApplicationDelegate)
+                       implementation:(IMP)ApplicationDidReceiveRemoteNotificationFetchCompletionHandler];
 
 
     // iOS 8 & 9 Only
     if (![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
 
         // Notification action buttons
-        [self swizzle:@selector(application:handleActionWithIdentifier:forRemoteNotification:completionHandler:)
-       implementation:(IMP)ApplicationHandleActionWithIdentifierForRemoteNotificationCompletionHandler
-                class:class];
+        [self.appDelegateSwizzler swizzle:@selector(application:handleActionWithIdentifier:forRemoteNotification:completionHandler:)
+                                 protocol:@protocol(UIApplicationDelegate)
+                           implementation:(IMP)ApplicationHandleActionWithIdentifierForRemoteNotificationCompletionHandler];
 
         // Notification action buttons with response info
-        [self swizzle:@selector(application:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:)
-       implementation:(IMP)ApplicationHandleActionWithIdentifierForRemoteNotificationWithResponseInfoCompletionHandler
-                class:class];
+        [self.appDelegateSwizzler swizzle:@selector(application:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:)
+                                 protocol:@protocol(UIApplicationDelegate)
+                           implementation:(IMP)ApplicationHandleActionWithIdentifierForRemoteNotificationWithResponseInfoCompletionHandler];
 
         // Registered with user notification settings
-        [self swizzle:@selector(application:didRegisterUserNotificationSettings:)
-       implementation:(IMP)ApplicationDidRegisterUserNotificationSettings
-                class:class];
+        [self.appDelegateSwizzler swizzle:@selector(application:didRegisterUserNotificationSettings:)
+                                 protocol:@protocol(UIApplicationDelegate)
+                           implementation:(IMP)ApplicationDidRegisterUserNotificationSettings];
     }
 }
 
@@ -102,8 +106,10 @@ static dispatch_once_t onceToken;
         return;
     }
 
+    self.notificationCenterSwizzler = [UASwizzler swizzlerForClass:class];
+
     // setDelegate:
-    [self swizzle:@selector(setDelegate:) implementation:(IMP)UserNotificationCenterSetDelegate class:class];
+    [self.notificationCenterSwizzler swizzle:@selector(setDelegate:) implementation:(IMP)UserNotificationCenterSetDelegate];
 
     id notificationCenterDelegate = [UNUserNotificationCenter currentNotificationCenter].delegate;
     if (notificationCenterDelegate) {
@@ -115,72 +121,41 @@ static dispatch_once_t onceToken;
 
 - (void)swizzleNotificationCenterDelegate:(id<UNUserNotificationCenterDelegate>)delegate {
     Class class = [delegate class];
-    [self swizzle:@selector(userNotificationCenter:willPresentNotification:withCompletionHandler:) implementation:(IMP)UserNotificationCenterWillPresentNotificationWithCompletionHandler class:class];
-    [self swizzle:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:) implementation:(IMP)UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler class:class];
+
+    self.notificationDelegateSwizzler = [UASwizzler swizzlerForClass:class];
+
+
+    [self.notificationDelegateSwizzler swizzle:@selector(userNotificationCenter:willPresentNotification:withCompletionHandler:)
+                                      protocol:@protocol(UNUserNotificationCenterDelegate)
+                                implementation:(IMP)UserNotificationCenterWillPresentNotificationWithCompletionHandler];
+
+    [self.notificationDelegateSwizzler swizzle:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)
+                                      protocol:@protocol(UNUserNotificationCenterDelegate)
+                                implementation:(IMP)UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler];
 }
 
--(void)unswizzleNotificationCenterDelegate:(id<UNUserNotificationCenterDelegate>)delegate {
-    Class class = [delegate class];
-    [self unswizzle:@selector(userNotificationCenter:willPresentNotification:withCompletionHandler:) class:class];
-    [self unswizzle:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:) class:class];
-}
 
-- (void)swizzle:(SEL)selector implementation:(IMP)implementation class:(Class)class {
-    Method method = class_getInstanceMethod(class, selector);
-    if (method) {
-        UA_LDEBUG(@"Swizzling implementation for %@ class %@", NSStringFromSelector(selector), class);
-        IMP existing = method_setImplementation(method, implementation);
-        if (implementation != existing) {
-            [self storeOriginalImplementation:existing selector:selector class:class];
-        }
-    } else {
-        struct objc_method_description description = protocol_getMethodDescription(@protocol(UIApplicationDelegate), selector, NO, YES);
-        UA_LDEBUG(@"Adding implementation for %@ class %@", NSStringFromSelector(selector), class);
-        class_addMethod(class, selector, implementation, description.types);
+- (void)setNotificationCenterSwizzler:(UASwizzler *)notificationCenterSwizzler {
+    if (_notificationCenterSwizzler) {
+        [_notificationCenterSwizzler unswizzle];
     }
+    _notificationCenterSwizzler = notificationCenterSwizzler;
 }
 
-- (void)unswizzle:(SEL)selector class:(Class)class {
-
-    Method method = class_getInstanceMethod(class, selector);
-    IMP originalImplementation = [self originalImplementation:selector class:class];
-    if (originalImplementation) {
-        UA_LDEBUG(@"Unswizzling implementation for %@ class %@", NSStringFromSelector(selector), class);
-        method_setImplementation(method, originalImplementation);
-        [self.originalMethods[NSStringFromClass(class)] removeObjectForKey:NSStringFromSelector(selector)];
-    } else {
-        UA_LDEBUG(@"No original implementation to unswizzle for %@ class %@", NSStringFromSelector(selector), class);
+- (void)setNotificationDelegateSwizzler:(UASwizzler *)notificationDelegateSwizzler {
+    if (_notificationDelegateSwizzler) {
+        [_notificationDelegateSwizzler unswizzle];
     }
+    _notificationDelegateSwizzler = notificationDelegateSwizzler;
 }
 
-- (void)storeOriginalImplementation:(IMP)implementation selector:(SEL)selector class:(Class)class {
-    NSString *selectorString = NSStringFromSelector(selector);
-    NSString *classString = NSStringFromClass(class);
-
-    if (!self.originalMethods[classString]) {
-        self.originalMethods[classString] = [NSMutableDictionary dictionary];
+- (void)setAppDelegateSwizzler:(UASwizzler *)appDelegateSwizzler {
+    if (_appDelegateSwizzler) {
+        [_appDelegateSwizzler unswizzle];
     }
-
-    self.originalMethods[classString][selectorString] = [NSValue valueWithPointer:implementation];
+    _appDelegateSwizzler = appDelegateSwizzler;
 }
 
-- (IMP)originalImplementation:(SEL)selector class:(Class)class {
-    NSString *selectorString = NSStringFromSelector(selector);
-    NSString *classString = NSStringFromClass(class);
-
-    if (!self.originalMethods[classString]) {
-        return nil;
-    }
-
-    NSValue *value = self.originalMethods[classString][selectorString];
-    if (!value) {
-        return nil;
-    }
-
-    IMP implementation;
-    [value getValue:&implementation];
-    return implementation;
-}
 
 
 #pragma mark -
@@ -193,7 +168,7 @@ void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self,
     __block NSUInteger expectedCount = 1;
 
 
-    IMP original = [instance_ originalImplementation:_cmd class:[self class]];
+    IMP original = [instance_.notificationDelegateSwizzler originalImplementation:_cmd];
     if (original) {
         expectedCount = 2;
 
@@ -246,7 +221,7 @@ void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(i
     __block NSUInteger resultCount = 0;
     __block NSUInteger expectedCount = 1;
 
-    IMP original = [instance_ originalImplementation:_cmd class:[self class]];
+    IMP original = [instance_.notificationDelegateSwizzler originalImplementation:_cmd];
     if (original) {
         expectedCount = 2;
 
@@ -293,13 +268,9 @@ void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(i
 #pragma mark UNUserNotificationCenter swizzled methods
 
 void UserNotificationCenterSetDelegate(id self, SEL _cmd, id<UNUserNotificationCenterDelegate>delegate) {
-    id previousDelegate = [UNUserNotificationCenter currentNotificationCenter].delegate;
-    if (previousDelegate) {
-        [instance_ unswizzleNotificationCenterDelegate:previousDelegate];
-    }
 
     // Call through to original setter
-    IMP original = [instance_ originalImplementation:_cmd class:[UNUserNotificationCenter class]];
+    IMP original = [instance_.notificationCenterSwizzler originalImplementation:_cmd];
     if (original) {
         ((void(*)(id, SEL, id))original)(self, _cmd, delegate);
     }
@@ -318,7 +289,7 @@ void UserNotificationCenterSetDelegate(id self, SEL _cmd, id<UNUserNotificationC
 void ApplicationDidRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _cmd, UIApplication *application, NSData *deviceToken) {
     [UAAppIntegration application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
 
-    IMP original = [instance_ originalImplementation:_cmd class:[self class]];
+    IMP original = [instance_.appDelegateSwizzler originalImplementation:_cmd];
     if (original) {
         ((void(*)(id, SEL, UIApplication *, NSData*))original)(self, _cmd, application, deviceToken);
     }
@@ -327,7 +298,7 @@ void ApplicationDidRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _c
 void ApplicationDidRegisterUserNotificationSettings(id self, SEL _cmd, UIApplication *application, UIUserNotificationSettings *settings) {
     [UAAppIntegration application:application didRegisterUserNotificationSettings:settings];
 
-    IMP original = [instance_ originalImplementation:_cmd class:[self class]];
+    IMP original = [instance_.appDelegateSwizzler originalImplementation:_cmd];
     if (original) {
         ((void(*)(id, SEL, UIApplication *, UIUserNotificationSettings*))original)(self, _cmd, application, settings);
     }
@@ -336,7 +307,7 @@ void ApplicationDidRegisterUserNotificationSettings(id self, SEL _cmd, UIApplica
 void ApplicationDidFailToRegisterForRemoteNotificationsWithError(id self, SEL _cmd, UIApplication *application, NSError *error) {
     UA_LERR(@"Application failed to register for remote notifications with error: %@", error);
 
-    IMP original = [instance_ originalImplementation:_cmd class:[self class]];
+    IMP original = [instance_.appDelegateSwizzler originalImplementation:_cmd];
     if (original) {
         ((void(*)(id, SEL, UIApplication *, NSError*))original)(self, _cmd, application, error);
     }
@@ -352,7 +323,7 @@ void ApplicationDidReceiveRemoteNotificationFetchCompletionHandler(id self,
     __block NSUInteger expectedCount = 1;
     __block UIBackgroundFetchResult fetchResult = UIBackgroundFetchResultNoData;
 
-    IMP original = [instance_ originalImplementation:_cmd class:[self class]];
+    IMP original = [instance_.appDelegateSwizzler originalImplementation:_cmd];
     if (original) {
         expectedCount = 2;
         __block BOOL completionHandlerCalled = NO;
@@ -415,7 +386,7 @@ void ApplicationHandleActionWithIdentifierForRemoteNotificationCompletionHandler
     __block NSUInteger resultCount = 0;
     __block NSUInteger expectedCount = 1;
 
-    IMP original = [instance_ originalImplementation:_cmd class:[self class]];
+    IMP original = [instance_.appDelegateSwizzler originalImplementation:_cmd];
     if (original) {
         expectedCount = 2;
 
@@ -463,7 +434,7 @@ void ApplicationHandleActionWithIdentifierForRemoteNotificationWithResponseInfoC
     __block NSUInteger resultCount = 0;
     __block NSUInteger expectedCount = 1;
 
-    IMP original = [instance_ originalImplementation:_cmd class:[self class]];
+    IMP original = [instance_.appDelegateSwizzler originalImplementation:_cmd];
     if (original) {
         expectedCount = 2;
 

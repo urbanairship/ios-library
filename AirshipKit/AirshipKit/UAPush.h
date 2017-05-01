@@ -6,6 +6,7 @@
 #import "UAChannelRegistrar.h"
 #import "UANotificationContent.h"
 #import "UANotificationResponse.h"
+#import "UANotificationAction.h"
 
 @class UANotificationCategory;
 
