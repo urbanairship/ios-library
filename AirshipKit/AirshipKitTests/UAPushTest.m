@@ -72,18 +72,21 @@
 
 @property (nonatomic, assign) NSUInteger testOSMajorVersion;
 
-
+@property (nonatomic, strong) NSData *validAPNSDeviceToken;
 @end
 
 @implementation UAPushTest
 
-NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
 void (^updateChannelTagsSuccessDoBlock)(NSInvocation *);
 void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
 - (void)setUp {
     [super setUp];
+
+    self.validAPNSDeviceToken = [validDeviceToken dataUsingEncoding:NSASCIIStringEncoding];
+    assert([self.validAPNSDeviceToken length] <= 32);
 
     self.testOSMajorVersion = 8;
     self.mockProcessInfo = [OCMockObject niceMockForClass:[NSProcessInfo class]];
@@ -713,6 +716,89 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     [self waitForExpectationsWithTimeout:10 handler:nil];
 
+    [self.mockRegistrationDelegate verify];
+}
+
+/**
+ * Test receiving a call to application:didRegisterForRemoteNotificationsWithDeviceToken: results in that call being forwarded to the registration delegate
+ */
+-(void)testPushForwardsDidRegisterForRemoteNotificationsWithDeviceTokenToRegistrationDelegateForeground {
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+    
+    XCTestExpectation *delegateCalled = [self expectationWithDescription:@"Registration delegate called"];
+    
+    [[[self.mockRegistrationDelegate expect] andDo:^(NSInvocation *invocation) {
+        [delegateCalled fulfill];
+    }]  application:self.mockedApplication didRegisterForRemoteNotificationsWithDeviceToken:self.validAPNSDeviceToken];
+    
+    // Expect UAPush to update its registration
+    [[[self.mockedChannelRegistrar expect] ignoringNonObjectArgs] registerWithChannelID:OCMOCK_ANY
+                                                                        channelLocation:OCMOCK_ANY
+                                                                            withPayload:OCMOCK_ANY
+                                                                             forcefully:OCMOCK_ANY];
+    
+    [self.push application:self.mockedApplication didRegisterForRemoteNotificationsWithDeviceToken:self.validAPNSDeviceToken];
+    
+    // device token also should be set
+    XCTAssertTrue([self.push.deviceToken isEqualToString:[UAUtils deviceTokenStringFromDeviceToken:self.validAPNSDeviceToken]]);
+    
+    [self waitForExpectationsWithTimeout:2 handler:nil];
+    
+    [self.mockRegistrationDelegate verify];
+    [self.mockedChannelRegistrar verify];
+}
+
+/**
+ * Test receiving a call to application:didRegisterForRemoteNotificationsWithDeviceToken: results in that call being forwarded to the registration delegate
+ */
+-(void)testPushForwardsDidRegisterForRemoteNotificationsWithDeviceTokenToRegistrationDelegateBackground {
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+        
+    XCTestExpectation *delegateCalled = [self expectationWithDescription:@"Registration delegate called"];
+    
+    [[[self.mockRegistrationDelegate expect] andDo:^(NSInvocation *invocation) {
+        [delegateCalled fulfill];
+    }]  application:self.mockedApplication didRegisterForRemoteNotificationsWithDeviceToken:self.validAPNSDeviceToken];
+    
+    // Expect UAPush to not update its registration
+    [[[self.mockedChannelRegistrar expect] ignoringNonObjectArgs] registerWithChannelID:OCMOCK_ANY
+                                                                        channelLocation:OCMOCK_ANY
+                                                                            withPayload:OCMOCK_ANY
+                                                                             forcefully:OCMOCK_ANY];
+    
+    [self.push application:self.mockedApplication didRegisterForRemoteNotificationsWithDeviceToken:self.validAPNSDeviceToken];
+    
+    // device token also should be set
+
+    [self.push application:self.mockedApplication didRegisterForRemoteNotificationsWithDeviceToken:self.validAPNSDeviceToken];
+    
+    // device token also should be set
+    XCTAssertTrue([self.push.deviceToken isEqualToString:[UAUtils deviceTokenStringFromDeviceToken:self.validAPNSDeviceToken]]);
+    
+    [self waitForExpectationsWithTimeout:2 handler:nil];
+    
+    [self.mockRegistrationDelegate verify];
+}
+
+/**
+ * Test receiving a call to application:didFailToRegisterForRemoteNotificationsWithError: results in that call being forwarded to the registration delegate
+ */
+-(void)testPushForwardsDidFailToRegisterForRemoteNotificationsWithDeviceTokenToRegistrationDelegate {
+    
+    NSError *error = [NSError errorWithDomain:@"domain" code:100 userInfo:nil];
+    
+    XCTestExpectation *delegateCalled = [self expectationWithDescription:@"Registration delegate called"];
+    
+    [[[self.mockRegistrationDelegate expect] andDo:^(NSInvocation *invocation) {
+        [delegateCalled fulfill];
+    }]  application:self.mockedApplication didFailToRegisterForRemoteNotificationsWithError:error];
+    
+    [self.push application:self.mockedApplication didFailToRegisterForRemoteNotificationsWithError:error];
+    
+    [self waitForExpectationsWithTimeout:2 handler:nil];
+    
     [self.mockRegistrationDelegate verify];
 }
 
@@ -2091,6 +2177,24 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     self.push.userPushNotificationsEnabled = YES;
     self.push.authorizedNotificationOptions = UANotificationOptionNone;
     XCTAssertTrue(self.push.userPromptedForNotifications);
+}
+
+/**
+ * Test registering a device token.
+ */
+- (void)testRegisteredDeviceToken {
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+    
+    NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
+    
+    [self.push application:self.mockedApplication didRegisterForRemoteNotificationsWithDeviceToken:token];
+    
+    // Verify everything
+    [self.mockedApplication verify];
+    
+    // Expect UAPush to receive the device token string
+    // 736f6d652d746f6b656e = "some-token" in hex
+    XCTAssertTrue([@"736f6d652d746f6b656e" isEqualToString:self.push.deviceToken]);
 }
 
 @end

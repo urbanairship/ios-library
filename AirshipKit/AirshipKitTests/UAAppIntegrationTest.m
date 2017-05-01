@@ -142,11 +142,9 @@
 
 
 /**
- * Test registering a device token in the background.
+ * Test registering a device token.
  */
-- (void)testRegisteredDeviceTokenBackground {
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
-
+- (void)testRegisteredDeviceToken {
     NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
 
     // Expect analytics to receive a UADeviceRegistrationEvent event
@@ -154,9 +152,8 @@
         return [obj isKindOfClass:[UADeviceRegistrationEvent class]];
     }]];
 
-    // Expect UAPush to receive the device token string
-    // 736f6d652d746f6b656e = "some-token" in hex
-    [[self.mockedPush expect] setDeviceToken:@"736f6d652d746f6b656e"];
+    // Expect UAPush to receive the device token
+    [[self.mockedPush expect] application:self.mockedApplication didRegisterForRemoteNotificationsWithDeviceToken:token];
 
     // Call the app integration
     [UAAppIntegration application:self.mockedApplication didRegisterForRemoteNotificationsWithDeviceToken:token];
@@ -166,32 +163,19 @@
     [self.mockedPush verify];
 }
 
-
 /**
- * Test application:didRegisterForRemoteNotificationsWithDeviceToken in the foreground.
+ * Test application:didFailToRegisterForRemoteNotificationsWithError .
  */
-- (void)testRegisteredDeviceTokenForeground {
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
-
-    NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
-
-    // Expect analytics to receive a UADeviceRegistrationEvent event
-    [[self.mockedAnalytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
-        return [obj isKindOfClass:[UADeviceRegistrationEvent class]];
-    }]];
-
-    // Expect UAPush to receive the device token string
-    // 736f6d652d746f6b656e = "some-token" in hex
-    [[self.mockedPush expect] setDeviceToken:@"736f6d652d746f6b656e"];
-
-    // Expect UAPush to update its registration
-    [[self.mockedPush expect] updateChannelRegistrationForcefully:NO];
-
+- (void)testFailedToRegisteredDeviceToken {
+    NSError *error = [NSError errorWithDomain:@"domain" code:100 userInfo:nil];
+    
+    // Expect UAPush method to be called
+    [[self.mockedPush expect] application:self.mockedApplication didFailToRegisterForRemoteNotificationsWithError:error];
+    
     // Call the app integration
-    [UAAppIntegration application:self.mockedApplication didRegisterForRemoteNotificationsWithDeviceToken:token];
-
+    [UAAppIntegration application:self.mockedApplication didFailToRegisterForRemoteNotificationsWithError:error];
+    
     // Verify everything
-    [self.mockedAnalytics verify];
     [self.mockedPush verify];
 }
 

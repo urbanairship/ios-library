@@ -629,6 +629,40 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     }
 }
 
+/**
+ * Called by the UIApplicationDelegate's application:didRegisterForRemoteNotificationsWithDeviceToken:
+ * so UAPush can forward the delegate call to its registration delegate.
+ */
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    self.deviceToken = [UAUtils deviceTokenStringFromDeviceToken:deviceToken];
+    
+    if (application.applicationState == UIApplicationStateBackground && self.channelID) {
+        UA_LDEBUG(@"Skipping channel registration. The app is currently backgrounded.");
+    } else {
+        [self updateChannelRegistrationForcefully:NO];
+    }
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        id strongDelegate = self.registrationDelegate;
+        if ([strongDelegate respondsToSelector:@selector(application:didRegisterForRemoteNotificationsWithDeviceToken:)]) {
+            [strongDelegate application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+        }
+    });
+}
+
+/**
+ * Called by the UIApplicationDelegate's application:didFailToRegisterForRemoteNotificationsWithError:
+ * so sh can forward the delegate call to its registration delegate.
+ */
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        id strongDelegate = self.registrationDelegate;
+        if ([strongDelegate respondsToSelector:@selector(application:didRegisterForRemoteNotificationsWithDeviceToken:)]) {
+            [strongDelegate application:application didFailToRegisterForRemoteNotificationsWithError:error];
+        }
+    });
+}
+
 #pragma mark -
 #pragma mark UA Registration Methods
 
@@ -869,11 +903,11 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 - (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification {
     UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
 
-    id pushDelegate = [UAirship push].pushNotificationDelegate;
+    id pushDelegate = self.pushNotificationDelegate;
     if ([pushDelegate respondsToSelector:@selector(presentationOptionsForNotification:)]) {
         options = [pushDelegate presentationOptionsForNotification:notification];
     } else {
-        options = [UAirship push].defaultPresentationOptions;
+        options = self.defaultPresentationOptions;
     }
 
     return options;

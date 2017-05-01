@@ -107,6 +107,24 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  */
 - (void)notificationAuthorizedOptionsDidChange:(UANotificationOptions)options;
 
+/**
+ * Called when the UIApplicationDelegate's application:didRegisterForRemoteNotificationsWithDeviceToken:
+ * delegate method is called.
+ *
+ * @param application The application instance.
+ * @param deviceToken The APNS device token.
+ */
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken;
+
+/**
+ * Called when the UIApplicationDelegate's application:didFailToRegisterForRemoteNotificationsWithError:
+ * delegate method is called.
+ *
+ * @param application The application instance.
+ * @param error An NSError object that encapsulates information why registration did not succeed.
+ */
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error;
+
 @end
 
 //---------------------------------------------------------------------------------------

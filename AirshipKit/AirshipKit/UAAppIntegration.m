@@ -29,19 +29,17 @@
 #pragma mark AppDelegate methods
 
 + (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    // Convert device deviceToken to a hex string
-    NSString *deviceTokenString = [self deviceTokenStringFromDeviceToken:deviceToken];
-    UA_LINFO(@"Application registered device token: %@", deviceTokenString);
+    UA_LINFO(@"Application registered device token: %@", [UAUtils deviceTokenStringFromDeviceToken:deviceToken]);
 
     [[UAirship shared].analytics addEvent:[UADeviceRegistrationEvent event]];
 
-    [UAirship push].deviceToken = deviceTokenString;
+    [[UAirship push] application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+}
 
-    if (application.applicationState == UIApplicationStateBackground && [UAirship push].channelID) {
-         UA_LDEBUG(@"Skipping device registration. The app is currently backgrounded.");
-    } else {
-        [[UAirship push] updateChannelRegistrationForcefully:NO];
-    }
++ (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+    UA_LERR(@"Application failed to register for remote notifications with error %@", error);
+    
+    [[UAirship push] application:application didFailToRegisterForRemoteNotificationsWithError:error];
 }
 
 + (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
@@ -335,17 +333,6 @@
     }
 
     return notificationAction;
-}
-
-+ (NSString *)deviceTokenStringFromDeviceToken:(NSData *)deviceToken {
-    NSMutableString *deviceTokenString = [NSMutableString stringWithCapacity:([deviceToken length] * 2)];
-    const unsigned char *bytes = (const unsigned char *)[deviceToken bytes];
-
-    for (NSUInteger i = 0; i < [deviceToken length]; i++) {
-        [deviceTokenString appendFormat:@"%02X", bytes[i]];
-    }
-
-    return [deviceTokenString lowercaseString];
 }
 
 @end

@@ -164,6 +164,15 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (UIBackgroundFetchResult)mergeFetchResults:(NSArray *)fetchResults;
 
+///---------------------------------------------------------------------------------------
+/// @name Device Tokens
+///---------------------------------------------------------------------------------------
+
+/**
+ * A utility method that takes an APNS-provided device token and returns the decoded UA device token
+ */
++ (NSString *)deviceTokenStringFromDeviceToken:(NSData *)deviceToken;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -302,6 +302,24 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
  */
 - (void)handleRemoteNotification:(UANotificationContent *)notification foreground:(BOOL)foreground completionHandler:(void (^)(UIBackgroundFetchResult))handler;
 
+/**
+ * Called by the UIApplicationDelegate's application:didRegisterForRemoteNotificationsWithDeviceToken:
+ * so UAPush can forward the delegate call to its registration delegate.
+ *
+ * @param application The application instance.
+ * @param deviceToken The APNS device token.
+ */
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken;
+
+/**
+ * Called by the UIApplicationDelegate's application:didFailToRegisterForRemoteNotificationsWithError:
+ * so UAPush can forward the delegate call to its registration delegate.
+ *
+ * @param application The application instance.
+ * @param error An NSError object that encapsulates information why registration did not succeed.
+ */
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error;
+
 
 @end
 

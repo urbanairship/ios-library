@@ -62,6 +62,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Must be called by the UIApplicationDelegate's
+ * application:didFailToRegisterForRemoteNotificationsWithError:.
+ *
+ * @param application The application instance.
+ * @param error An NSError object that encapsulates information why registration did not succeed.
+ */
++ (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error;
+
+/**
+ * Must be called by the UIApplicationDelegate's
  * application:didReceiveRemoteNotification:fetchCompletionHandler:.
  *
  * @param application The application instance.

@@ -329,4 +329,18 @@
     return YES;
 }
 
+/**
+ * A utility method that takes an APNS-provided device token and returns the decoded UA device token
+ */
++ (NSString *)deviceTokenStringFromDeviceToken:(NSData *)deviceToken {
+    NSMutableString *deviceTokenString = [NSMutableString stringWithCapacity:([deviceToken length] * 2)];
+    const unsigned char *bytes = (const unsigned char *)[deviceToken bytes];
+    
+    for (NSUInteger i = 0; i < [deviceToken length]; i++) {
+        [deviceTokenString appendFormat:@"%02X", bytes[i]];
+    }
+    
+    return [deviceTokenString lowercaseString];
+}
+
 @end

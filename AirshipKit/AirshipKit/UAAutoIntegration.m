@@ -306,6 +306,7 @@ void ApplicationDidRegisterUserNotificationSettings(id self, SEL _cmd, UIApplica
 
 void ApplicationDidFailToRegisterForRemoteNotificationsWithError(id self, SEL _cmd, UIApplication *application, NSError *error) {
     UA_LERR(@"Application failed to register for remote notifications with error: %@", error);
+    [UAAppIntegration application:application didFailToRegisterForRemoteNotificationsWithError:error];
 
     IMP original = [instance_.appDelegateSwizzler originalImplementation:_cmd];
     if (original) {
