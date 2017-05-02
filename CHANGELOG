@@ -3,15 +3,29 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
-Version 8.3.0 - ????? ??, 2017
-==============================
+Version 8.3.0 - May 2, 2017
+===========================
 New Features
 ------------
-- Added support for WKWebView
+- Added support for WKWebView. Enable in AirshipConfig.plist using useWKWebView
+  flag. Disabled by default.
+- Deprecated support for UIWebView.
+- Added support for delayed automation action schedules. The execution of an
+  automated schedule can now be delayed by up to 30 seconds or made contingent
+- Added EnableFeatureAction that can enable background location, location, or user
+  notifications.
+- Added an automation trigger for app init events.
+- Added new UARegistrationDelegate methods apnsRegistrationSucceededWithDeviceToken: 
+  and apnsRegistrationFailedWithError:.
+
+Bug Fixes
+---------
+- Fixed compatibility issue with Firebase.
+- Fixed duplicate analytic uploads on iOS 8.
 
 Other
 -----
-- Migration guides moved to this repository
+- iOS migration guides moved to this repository.
 
 Version 8.2.2 - April 4, 2017
 ==============================

@@ -15,6 +15,24 @@ WKWebView | UIWebView
 
 Fully styled content, such as that contained in messages created in the [Rich Content Editor](https://docs.urbanairship.com/engage/rich-content-editor/) of the Message Composer, will render identically using either type of web view.
 
+## Application Integration
+
+A new application integration point has been added to [UAAppIntegration](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes.html#/c:objc(cs)UAAppIntegration).
+If your application disables automatic integration, it will need to be updated to call
+the new method:
+
+### UIApplicationDelegate method:
+
+#### Swift
+```swift
+func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error)
+``` 
+
+#### Objective-C
+```objective-c
++ (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error;
+``` 
+
 # Urban Airship Library 7.3.0 to 8.0.0
 
 This version supports iOS 8, 9 and 10. Xcode 8 is required.
@@ -22,11 +40,12 @@ This version supports iOS 8, 9 and 10. Xcode 8 is required.
 ## Application Integration
 
 All application integration points have been moved to [UAAppIntegration](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes.html#/c:objc(cs)UAAppIntegration).
-If your application disabled automatic integration, it will need to be updated to call
+If your application disables automatic integration, it will need to be updated to call
 the new methods:
 
-UIApplicationDelegate methods:
+### UIApplicationDelegate methods:
 
+#### Swift
 ```swift
 func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData)
 
@@ -39,6 +58,7 @@ func application(application: UIApplication, handleActionWithIdentifier identifi
 func application(application: UIApplication, handleActionWithIdentifier identifier: String?, forRemoteNotification userInfo: [NSObject : AnyObject], withResponseInfo responseInfo: [NSObject : AnyObject], completionHandler: () -> Void)
 ``` 
 
+#### Objective-C
 ```objective-c
 + (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken;
 
@@ -51,14 +71,16 @@ func application(application: UIApplication, handleActionWithIdentifier identifi
 + (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo withResponseInfo:(nullable NSDictionary *)responseInfo completionHandler:(void (^)())handler;
 ``` 
 
-UNUserNotificationDelegate methods:
+### UNUserNotificationDelegate methods:
 
+#### Swift
 ```swift
 func userNotificationCenter(center: UNUserNotificationCenter, didReceiveNotificationResponse response: UNNotificationResponse, withCompletionHandler completionHandler: () -> Void)
 
 func userNotificationCenter(center: UNUserNotificationCenter, willPresentNotification notification: UNNotification, withCompletionHandler completionHandler: (_ options: UNNotificationPresentationOptions) -> Void)
 ``` 
 
+#### Objective-C
 ```objective-c
 + (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
