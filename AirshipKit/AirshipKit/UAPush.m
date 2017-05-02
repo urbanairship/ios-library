@@ -644,8 +644,8 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
     dispatch_async(dispatch_get_main_queue(), ^{
         id strongDelegate = self.registrationDelegate;
-        if ([strongDelegate respondsToSelector:@selector(application:didRegisterForRemoteNotificationsWithDeviceToken:)]) {
-            [strongDelegate application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+        if ([strongDelegate respondsToSelector:@selector(apnsRegistrationSucceededWithDeviceToken:)]) {
+            [strongDelegate apnsRegistrationSucceededWithDeviceToken:deviceToken];
         }
     });
 }
@@ -657,8 +657,8 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     dispatch_async(dispatch_get_main_queue(), ^{
         id strongDelegate = self.registrationDelegate;
-        if ([strongDelegate respondsToSelector:@selector(application:didRegisterForRemoteNotificationsWithDeviceToken:)]) {
-            [strongDelegate application:application didFailToRegisterForRemoteNotificationsWithError:error];
+        if ([strongDelegate respondsToSelector:@selector(apnsRegistrationFailedWithError:)]) {
+            [strongDelegate apnsRegistrationFailedWithError:error];
         }
     });
 }

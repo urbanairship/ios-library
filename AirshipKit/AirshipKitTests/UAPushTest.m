@@ -730,7 +730,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     
     [[[self.mockRegistrationDelegate expect] andDo:^(NSInvocation *invocation) {
         [delegateCalled fulfill];
-    }]  application:self.mockedApplication didRegisterForRemoteNotificationsWithDeviceToken:self.validAPNSDeviceToken];
+    }]  apnsRegistrationSucceededWithDeviceToken:self.validAPNSDeviceToken];
     
     // Expect UAPush to update its registration
     [[[self.mockedChannelRegistrar expect] ignoringNonObjectArgs] registerWithChannelID:OCMOCK_ANY
@@ -760,7 +760,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     
     [[[self.mockRegistrationDelegate expect] andDo:^(NSInvocation *invocation) {
         [delegateCalled fulfill];
-    }]  application:self.mockedApplication didRegisterForRemoteNotificationsWithDeviceToken:self.validAPNSDeviceToken];
+    }]  apnsRegistrationSucceededWithDeviceToken:self.validAPNSDeviceToken];
     
     // Expect UAPush to not update its registration
     [[[self.mockedChannelRegistrar expect] ignoringNonObjectArgs] registerWithChannelID:OCMOCK_ANY
@@ -793,7 +793,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     
     [[[self.mockRegistrationDelegate expect] andDo:^(NSInvocation *invocation) {
         [delegateCalled fulfill];
-    }]  application:self.mockedApplication didFailToRegisterForRemoteNotificationsWithError:error];
+    }]  apnsRegistrationFailedWithError:error];
     
     [self.push application:self.mockedApplication didFailToRegisterForRemoteNotificationsWithError:error];
     

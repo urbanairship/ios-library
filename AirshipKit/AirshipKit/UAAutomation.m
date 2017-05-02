@@ -18,7 +18,7 @@
 #import "UAJSONPredicate.h"
 #import "UAPreferenceDataStore+Internal.h"
 
-NSUInteger const UAAutomationScheduleLimit = 1000;
+NSUInteger const UAAutomationScheduleLimit = 100;
 NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
 
 @implementation UAAutomation
