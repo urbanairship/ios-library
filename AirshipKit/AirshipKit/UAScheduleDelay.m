@@ -70,7 +70,7 @@ NSString * const UAScheduleDelayErrorDomain = @"com.urbanairship.schedule_delay"
     id seconds = json[UAScheduleDelaySecondsKey];
     if (seconds && ![seconds isKindOfClass:[NSNumber class]]) {
         if (error) {
-            NSString *msg = [NSString stringWithFormat:@"Seconds must be defined and be a number. Invalid value: %@", seconds];
+            NSString *msg = [NSString stringWithFormat:@"Seconds must be a number. Invalid value: %@", seconds];
             *error =  [NSError errorWithDomain:UAScheduleDelayErrorDomain
                                           code:UAScheduleDelayErrorCodeInvalidJSON
                                       userInfo:@{NSLocalizedDescriptionKey:msg}];

@@ -51,9 +51,9 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
                                                      name:UIApplicationDidBecomeActiveNotification
                                                    object:nil];
         [self rescheduleTimers];
+        
+        [self updateTriggersWithType:UAScheduleTriggerAppInit argument:nil incrementAmount:1.0];
     }
-
-    [self updateTriggersWithType:UAScheduleTriggerAppInit argument:nil incrementAmount:1.0];
 
     return self;
 }
