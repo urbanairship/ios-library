@@ -12,6 +12,7 @@ New Features
 - Deprecated support for UIWebView.
 - Added support for delayed automation action schedules. The execution of an
   automated schedule can now be delayed by up to 30 seconds or made contingent
+  on some condition.
 - Added EnableFeatureAction that can enable background location, location, or user
   notifications.
 - Added an automation trigger for app init events.
