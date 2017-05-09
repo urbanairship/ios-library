@@ -1,6 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAWebViewCallData.h"
+#import "NSString+UAURLEncoding.h"
 
 @implementation UAWebViewCallData
 
@@ -23,10 +24,11 @@
 + (UAWebViewCallData *)callDataForURL:(NSURL *)url nullableWebView:(UIWebView *)webView nullableDelegate:(id <UAWKWebViewDelegate>)delegate message:(UAInboxMessage *)message {
     
     NSAssert((webView != nil) || (delegate != nil),@"webView (%@) or delegate (%@) must be non-null",webView,delegate);
-    
-    NSString *urlPath = [url path];
-    if ([urlPath hasPrefix:@"/"]) {
-        urlPath = [urlPath substringFromIndex:1]; //trim the leading slash
+
+    NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
+    NSString *encodedUrlPath = components.percentEncodedPath;
+    if ([encodedUrlPath hasPrefix:@"/"]) {
+        encodedUrlPath = [encodedUrlPath substringFromIndex:1]; //trim the leading slash
     }
 
     // Put the arguments into an array
@@ -34,11 +36,20 @@
     // returns an array with a copy of the input in the first position when passed
     // a string without any delimiters
     NSArray* arguments;
-    if ([urlPath length] > 0) {
-        arguments = [urlPath componentsSeparatedByString:@"/"];
+    if (encodedUrlPath.length) {
+        NSArray *encodedArguments = [encodedUrlPath componentsSeparatedByString:@"/"];
+        NSMutableArray *decodedArguments = [NSMutableArray arrayWithCapacity:encodedArguments.count];
+
+        for (NSString *encodedArgument in encodedArguments) {
+            [decodedArguments addObject:[encodedArgument urlDecodedString]];
+        }
+
+        arguments = [decodedArguments copy];
     } else {
         arguments = [NSArray array];//empty
     }
+
+
 
     // Dictionary of options - primitive parsing, so external docs should mention the limitations
     NSString *urlQuery = [url query];
