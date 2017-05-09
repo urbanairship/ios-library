@@ -3,6 +3,12 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 8.3.1 - May 9, 2017
+===========================
+Bug Fixes
+---------
+- Fixed bug with decoding action values from the Urban Airship JS bridge.
+
 Version 8.3.0 - May 2, 2017
 ===========================
 New Features
@@ -15,7 +21,7 @@ New Features
 - Added EnableFeatureAction that can enable background location, location, or user
   notifications.
 - Added an automation trigger for app init events.
-- Added new UARegistrationDelegate methods apnsRegistrationSucceededWithDeviceToken: 
+- Added new UARegistrationDelegate methods apnsRegistrationSucceededWithDeviceToken:
   and apnsRegistrationFailedWithError:.
 
 Bug Fixes
