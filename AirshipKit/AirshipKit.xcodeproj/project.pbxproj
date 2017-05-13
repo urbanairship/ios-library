@@ -595,6 +595,11 @@
 		DFA1815E1E688EBB00446942 /* UABaseNativeBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = DFA1815D1E688EBB00446942 /* UABaseNativeBridge.h */; };
 		DFBBC7B11E36D80B00BA7315 /* UATextInputNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = DFBBC7AE1E36D80B00BA7315 /* UATextInputNotificationAction.m */; };
 		DFBBC7B21E36D80B00BA7315 /* UATextInputNotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = DFBBC7AF1E36D80B00BA7315 /* UATextInputNotificationAction.h */; };
+		DFEB500D1EC6841E0006B20F /* UABaseNativeBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = DFECEA8A1E6759DA006AA8EA /* UABaseNativeBridge.m */; };
+		DFEB500E1EC684560006B20F /* UAWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = DFECEA791E64DD15006AA8EA /* UAWebView.m */; };
+		DFEB500F1EC6846C0006B20F /* UAMessageCenterMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DFECEA721E64DC4E006AA8EA /* UAMessageCenterMessageViewController.m */; };
+		DFEB50101EC684790006B20F /* UAOverlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DFECEA801E65E7A6006AA8EA /* UAOverlayViewController.m */; };
+		DFEB50111EC685CE0006B20F /* UAWKWebViewNativeBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = DFECEA7C1E64DE66006AA8EA /* UAWKWebViewNativeBridge.m */; };
 		DFECEA741E64DC4E006AA8EA /* UAMessageCenterMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DFECEA721E64DC4E006AA8EA /* UAMessageCenterMessageViewController.m */; };
 		DFECEA751E64DC4E006AA8EA /* UAMessageCenterMessageViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = DFECEA731E64DC4E006AA8EA /* UAMessageCenterMessageViewController.h */; };
 		DFECEA771E64DC83006AA8EA /* UAMessageCenterMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DFECEA761E64DC83006AA8EA /* UAMessageCenterMessageViewController.xib */; };
@@ -2749,7 +2754,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		F5CEFEC0515FB1B49241A7D4 /* [CP] Copy Pods Resources */ = {
@@ -3046,7 +3051,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DFEB500F1EC6846C0006B20F /* UAMessageCenterMessageViewController.m in Sources */,
+				DFEB500D1EC6841E0006B20F /* UABaseNativeBridge.m in Sources */,
 				CC40DD331D8C9A1C00BABD4F /* NSJSONSerialization+UAAdditions.m in Sources */,
+				DFEB50111EC685CE0006B20F /* UAWKWebViewNativeBridge.m in Sources */,
+				DFEB500E1EC684560006B20F /* UAWebView.m in Sources */,
+				DFEB50101EC684790006B20F /* UAOverlayViewController.m in Sources */,
 				CC40DD341D8C9A1C00BABD4F /* NSString+UALocalizationAdditions.m in Sources */,
 				CC40DD351D8C9A1C00BABD4F /* NSString+UAURLEncoding.m in Sources */,
 				CC40DD361D8C9A1C00BABD4F /* UAAccountEventTemplate.m in Sources */,
