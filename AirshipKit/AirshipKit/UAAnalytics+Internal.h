@@ -71,7 +71,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param screenName Name of the screen.
  */
--(void)screenTracked:(NSString *)screenName;
+-(void)screenTracked:(nullable NSString *)screenName;
 
 @end
 

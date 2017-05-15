@@ -7,13 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*
  * SDK-private extensions to UAConfig
  */
-@interface UAConfig () {
-  @private
-    // the following ivars are for instance-scoped dispatch_once control when parsing
-    // provisioning xml files
-    dispatch_once_t usesProductionPred_;
-    BOOL usesProductionPushServer_;
-}
+@interface UAConfig ()
 
 ///---------------------------------------------------------------------------------------
 /// @name Config Internal Properties
