@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @deprecated Deprecated - to be removed in SDK version 9.0
  */
-@property (nonatomic, strong) UIWebView *webView DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 9.0");
+@property (nonatomic, strong, nullable) UIWebView *webView DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 9.0");
 
 /**
  * The rich content window delegate for the webview initiating the call.

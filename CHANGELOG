@@ -3,6 +3,13 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 8.3.2 - May 15, 2017
+===========================
+Bug Fixes
+---------
+- Added files missing from static library libUAirship.a
+- Fix compiler warnings
+
 Version 8.3.1 - May 9, 2017
 ===========================
 Bug Fixes

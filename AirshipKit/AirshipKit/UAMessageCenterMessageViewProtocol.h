@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param onlyIfChanged Only load the message if it is different from the currently displayed message
  */
 
-- (void)loadMessage:(UAInboxMessage *)message onlyIfChanged:(BOOL)onlyIfChanged;
+- (void)loadMessage:(nullable UAInboxMessage *)message onlyIfChanged:(BOOL)onlyIfChanged;
 
 @end
 

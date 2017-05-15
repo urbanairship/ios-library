@@ -56,13 +56,13 @@
     configInProduction.profilePath = nil;
     configInProduction.inProduction = YES;
     configInProduction.detectProvisioningMode = YES;
-    XCTAssertTrue(configInProduction.inProduction, @"Simulators with provisioning detection enabled should return the production value as set.");
+    XCTAssertTrue(configInProduction.inProduction);
 
     UAConfig *configInDevelopment = [[UAConfig alloc] init];
     configInDevelopment.profilePath = nil;
     configInDevelopment.inProduction = NO;
     configInDevelopment.detectProvisioningMode = YES;
-    XCTAssertFalse(configInDevelopment.inProduction, @"Simulators with provisioning detection enabled should return the production value as set.");
+    XCTAssertFalse(configInDevelopment.inProduction);
 }
 
 - (void)testMissingProvisioningOnDeviceFallback {

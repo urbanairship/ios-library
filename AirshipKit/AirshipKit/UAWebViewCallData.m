@@ -6,24 +6,22 @@
 @implementation UAWebViewCallData
 
 + (UAWebViewCallData *)callDataForURL:(NSURL *)url webView:(UIWebView *)webView {
-    return [UAWebViewCallData callDataForURL:url nullableWebView:webView nullableDelegate:nil message:nil];
+    return [UAWebViewCallData callDataForURL:url webView:webView delegate:nil message:nil];
 }
 
 + (UAWebViewCallData *)callDataForURL:(NSURL *)url webView:(UIWebView *)webView message:(UAInboxMessage *)message {
-    return [UAWebViewCallData callDataForURL:url nullableWebView:webView nullableDelegate:nil message:message];
+    return [UAWebViewCallData callDataForURL:url webView:webView delegate:nil message:message];
 }
 
 + (UAWebViewCallData *)callDataForURL:(NSURL *)url delegate:(id <UAWKWebViewDelegate>)delegate {
-    return [UAWebViewCallData callDataForURL:url nullableWebView:nil nullableDelegate:delegate message:nil];
+    return [UAWebViewCallData callDataForURL:url webView:nil delegate:delegate message:nil];
 }
 
 + (UAWebViewCallData *)callDataForURL:(NSURL *)url delegate:(id <UAWKWebViewDelegate>)delegate message:(UAInboxMessage *)message {
-    return [UAWebViewCallData callDataForURL:url nullableWebView:nil nullableDelegate:delegate message:message];
+    return [UAWebViewCallData callDataForURL:url webView:nil delegate:delegate message:message];
 }
 
-+ (UAWebViewCallData *)callDataForURL:(NSURL *)url nullableWebView:(UIWebView *)webView nullableDelegate:(id <UAWKWebViewDelegate>)delegate message:(UAInboxMessage *)message {
-    
-    NSAssert((webView != nil) || (delegate != nil),@"webView (%@) or delegate (%@) must be non-null",webView,delegate);
++ (UAWebViewCallData *)callDataForURL:(NSURL *)url webView:(UIWebView *)webView delegate:(id <UAWKWebViewDelegate>)delegate message:(UAInboxMessage *)message {
 
     NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
     NSString *encodedUrlPath = components.percentEncodedPath;
