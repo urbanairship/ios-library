@@ -34,16 +34,17 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign) BOOL defaultDetectProvisioningMode;
 
-///---------------------------------------------------------------------------------------
-/// @name Config Internal Methods
-///---------------------------------------------------------------------------------------
-
 /**
  * Determines whether or not the app is currently configured to use the APNS production servers.
  * @return `YES` if using production servers, `NO` if development servers or if the app is not properly
  * configured for push.
  */
-- (BOOL)usesProductionPushServer;
+@property (nonatomic, strong) NSNumber *usesProductionPushServer;
+
+///---------------------------------------------------------------------------------------
+/// @name Config Internal Methods
+///---------------------------------------------------------------------------------------
+
 
 /**
  * Tests if the profile at a given path is set up for the production push environment.
