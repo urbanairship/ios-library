@@ -560,7 +560,7 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
                 scheduleData.isPendingExecution = @(NO);
                 scheduleData.delayedExecutionDate = nil;
 
-                if (scheduleData.limit > 0) {
+                if ([scheduleData.limit integerValue] > 0) {
                     scheduleData.triggeredCount = @([scheduleData.triggeredCount integerValue] + 1);
                     if (scheduleData.triggeredCount >= scheduleData.limit) {
                         UA_LINFO(@"Limit reached for schedule %@", scheduleIdentifier);

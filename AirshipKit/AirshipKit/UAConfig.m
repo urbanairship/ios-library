@@ -6,14 +6,14 @@
 
 @implementation UAConfig
 
+static dispatch_once_t usesProductionPred_;
+static BOOL usesProductionPushServer_;
+
 @synthesize inProduction = _inProduction;
 @synthesize detectProvisioningMode = _detectProvisioningMode;
 
 #pragma mark -
 #pragma mark Object Lifecycle
-- (void)dealloc {
-
-}
 
 - (instancetype)init {
     self = [super init];
@@ -299,15 +299,15 @@
 
     dispatch_once(&usesProductionPred_, ^{
         if (self.profilePath) {
-            self->usesProductionPushServer_ = [UAConfig isProductionProvisioningProfile:self.profilePath];
+            usesProductionPushServer_ = [UAConfig isProductionProvisioningProfile:self.profilePath];
         } else if (!self.isSimulator) {
             // This appears to be the case for production apps distributed by the app store.
             // The embedded.mobileprovision is stripped during Apple's re-signing/deployment process.
             UA_LDEBUG(@"No profile found, but not a simulator: inProduction = YES");
-            self->usesProductionPushServer_ = YES;
+            usesProductionPushServer_ = YES;
         } else {
             UA_LERR(@"No profile found. Unable to automatically detect provisioning mode in the simulator. Falling back to inProduction as set: %d", self->_inProduction);
-            self->usesProductionPushServer_ = self->_inProduction;
+            usesProductionPushServer_ = self->_inProduction;
         }
     });
 
