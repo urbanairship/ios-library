@@ -99,7 +99,7 @@ extern NSString *const UAPushAddTagGroupsSettingsKey;
 extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 
 
-@interface UAPush () <UAChannelRegistrarDelegate>
+@interface UAPush () <UAChannelRegistrarDelegate, UAAPNSRegistrationDelegate>
 
 ///---------------------------------------------------------------------------------------
 /// @name Push Internal Properties
@@ -319,6 +319,15 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
  * @param error An NSError object that encapsulates information why registration did not succeed.
  */
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error;
+
+/**
+ * Called by the UIApplicationDelegate's application:didRegisterUserNotificationSettings:
+ * so UAPush can forward the delegate call to its registration delegate.
+ *
+ * @param application The application instance.
+ * @param notificationSettings The resulting notification settings.
+ */
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings;
 
 
 @end

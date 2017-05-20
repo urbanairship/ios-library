@@ -63,8 +63,7 @@
 
     [[self.mockedUserNotificationCenter expect] setNotificationCategories:normalizedCategories];
 
-    [self.pushRegistration updateRegistrationWithOptions:expectedOptions categories:self.testCategories completionHandler:^(UANotificationOptions options) {
-    }];
+    [self.pushRegistration updateRegistrationWithOptions:expectedOptions categories:self.testCategories];
 
     [self.mockedUserNotificationCenter verify];
 }
@@ -89,8 +88,7 @@
         return YES;
     }]];
 
-    [self.pushRegistration updateRegistrationWithOptions:expectedOptions categories:self.testCategories completionHandler:^(UANotificationOptions options) {
-    }];
+    [self.pushRegistration updateRegistrationWithOptions:expectedOptions categories:self.testCategories];
 
     [self.mockedUserNotificationCenter verify];
 }

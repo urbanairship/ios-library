@@ -279,7 +279,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 
 /**
  * User Notification options this app will request from APNS. Changes to this value
- * will not take effect the next time the app registers with
+ * will not take effect until the next time the app registers with
  * updateRegistration.
  *
  * Defaults to alert, sound and badge.

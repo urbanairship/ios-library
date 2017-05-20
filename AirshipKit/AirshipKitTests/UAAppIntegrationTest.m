@@ -185,18 +185,13 @@
 - (void)testRegisterNotificationSettings {
 
     // Expect push to update its authorized notification types
-    [[self.mockedPush expect] updateAuthorizedNotificationTypes];
-
-    // Expect the application to register for remote notifications
-    [[self.mockedApplication expect] registerForRemoteNotifications];
+    [[self.mockedPush expect] application:OCMOCK_ANY didRegisterUserNotificationSettings:OCMOCK_ANY];
 
     // Call the app integration
-    UIUserNotificationSettings *settings = [[UIUserNotificationSettings alloc] init];
-    [UAAppIntegration application:self.mockedApplication didRegisterUserNotificationSettings:settings];
+    [UAAppIntegration application:self.mockedApplication didRegisterUserNotificationSettings:[[UIUserNotificationSettings alloc] init]];
 
     // Verify everything
     [self.mockedPush verify];
-    [self.mockedApplication verify];
 }
 
 /**

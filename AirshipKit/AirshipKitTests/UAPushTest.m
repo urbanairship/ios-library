@@ -672,11 +672,10 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     __block UANotificationOptions expectedOptions;
 
-    [[[self.mockRegistrationDelegate stub] andReturnValue:OCMOCK_VALUE(YES)] respondsToSelector:@selector(registrationFinishedForAPNS:categories:)];
-
     [[self.mockedApplication expect] registerUserNotificationSettings:[OCMArg checkWithBlock:^BOOL(id obj) {
         UIUserNotificationSettings *settings = (UIUserNotificationSettings *)obj;
         expectedOptions = (UANotificationOptions)settings;
+        [self.push application:self.mockedApplication didRegisterUserNotificationSettings:settings];
         return expectedTypes == settings.types && expectedCategories.count == settings.categories.count;
     }]];
 
@@ -1319,7 +1318,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeBadge categories:nil];
     [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
 
-    [self.push updateAPNSRegistration];
+    [self.push application:self.mockedApplication didRegisterUserNotificationSettings:settings];
 
     XCTAssertTrue(self.push.userPushNotificationsAllowed,
                   @"UserPushNotificationsAllowed should be YES");
@@ -2158,25 +2157,6 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 - (void)testNotificationNotPrompted {
     self.push.authorizedNotificationOptions = UANotificationOptionNone;
     XCTAssertFalse(self.push.userPromptedForNotifications);
-}
-
-/**
- * Test notification prompted and authorized.
- */
-- (void)testNotificationPromptedAuthorized {
-    self.push.notificationOptions = UANotificationOptionAlert;
-    self.push.userPushNotificationsEnabled = YES;
-    self.push.authorizedNotificationOptions = UANotificationOptionAlert;
-    XCTAssertTrue(self.push.userPromptedForNotifications);
-}
-
-/**
- * Test notification prompted and denied.
- */
-- (void)testNotificationPromptedDenied {
-    self.push.userPushNotificationsEnabled = YES;
-    self.push.authorizedNotificationOptions = UANotificationOptionNone;
-    XCTAssertTrue(self.push.userPromptedForNotifications);
 }
 
 /**

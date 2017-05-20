@@ -84,12 +84,13 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     if (self) {
         self.dataStore = dataStore;
 
-
         if (![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
             self.pushRegistration = [[UALegacyAPNSRegistration alloc] init];
         } else {
             self.pushRegistration = [[UAAPNSRegistration alloc] init];
         }
+
+        self.pushRegistration.registrationDelegate = self;
 
         self.channelTagRegistrationEnabled = YES;
         self.requireAuthorizationForDefaultCategories = YES;
@@ -166,7 +167,10 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
 - (void)updateAuthorizedNotificationTypes {
     [self.pushRegistration getCurrentAuthorizationOptionsWithCompletionHandler:^(UANotificationOptions options) {
-        self.authorizedNotificationOptions = options;
+        if (self.userPromptedForNotifications || options != UANotificationOptionNone) {
+            self.userPromptedForNotifications = YES;
+            self.authorizedNotificationOptions = options;
+        }
     }];
 }
 
@@ -184,10 +188,8 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 }
 
 - (void)setAuthorizedNotificationOptions:(UANotificationOptions)types {
-    if ([self.dataStore integerForKey:UAPushTypesAuthorizedKey] != types) {
-        if (types != UANotificationOptionNone) {
-            self.userPromptedForNotifications = YES;
-        }
+    if (![self.dataStore objectForKey:UAPushTypesAuthorizedKey] || [self.dataStore integerForKey:UAPushTypesAuthorizedKey] != types) {
+
         [self.dataStore setInteger:(NSInteger)types forKey:UAPushTypesAuthorizedKey];
         [self updateRegistration];
 
@@ -617,6 +619,8 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     if (!self.channelID) {
         [self updateChannelRegistrationForcefully:NO];
     }
+
+    [self updateAuthorizedNotificationTypes];
 }
 
 - (void)applicationBackgroundRefreshStatusChanged {
@@ -629,10 +633,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     }
 }
 
-/**
- * Called by the UIApplicationDelegate's application:didRegisterForRemoteNotificationsWithDeviceToken:
- * so UAPush can forward the delegate call to its registration delegate.
- */
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     self.deviceToken = [UAUtils deviceTokenStringFromDeviceToken:deviceToken];
     
@@ -650,10 +650,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     });
 }
 
-/**
- * Called by the UIApplicationDelegate's application:didFailToRegisterForRemoteNotificationsWithError:
- * so sh can forward the delegate call to its registration delegate.
- */
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     dispatch_async(dispatch_get_main_queue(), ^{
         id strongDelegate = self.registrationDelegate;
@@ -661,6 +657,12 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
             [strongDelegate apnsRegistrationFailedWithError:error];
         }
     });
+}
+
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
+    if ([self.pushRegistration respondsToSelector:@selector(application:didRegisterUserNotificationSettings:)]) {
+        [self.pushRegistration application:application didRegisterUserNotificationSettings:notificationSettings];
+    }
 }
 
 #pragma mark -
@@ -811,8 +813,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     NSSet *categories = nil;
 
     if (self.userPushNotificationsEnabled) {
-
-        self.userPromptedForNotifications = YES;
         options = self.notificationOptions;
         categories = self.combinedCategories;
     }
@@ -823,18 +823,32 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         return;
     }
 
-    // When unregistering push set categories to nil
-    [self.pushRegistration updateRegistrationWithOptions:options categories:categories completionHandler:^{
-        [self updateAuthorizedNotificationTypes];
+    [self.pushRegistration getCurrentAuthorizationOptionsWithCompletionHandler:^(UANotificationOptions authorizedOptions) {
+        if (authorizedOptions == UANotificationOptionNone && options == UANotificationOptionNone) {
+            // Skip updating registration to avoid prompting the user
+            return;
+        }
 
-        dispatch_async(dispatch_get_main_queue(), ^{
-            id strongDelegate = self.registrationDelegate;
-            if ([strongDelegate respondsToSelector:@selector(notificationRegistrationFinishedWithOptions:categories:)]) {
-                [strongDelegate notificationRegistrationFinishedWithOptions:options categories:categories];
-            }
-        });
+        [self.pushRegistration updateRegistrationWithOptions:options categories:categories];
     }];
 }
+
+- (void)notificationRegistrationFinishedWithOptions:(UANotificationOptions)options {
+    if (!self.deviceToken) {
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    }
+
+    self.userPromptedForNotifications = YES;
+    self.authorizedNotificationOptions = options;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        id strongDelegate = self.registrationDelegate;
+        if ([strongDelegate respondsToSelector:@selector(notificationRegistrationFinishedWithOptions:categories:)]) {
+            [strongDelegate notificationRegistrationFinishedWithOptions:options categories:self.combinedCategories];
+        }
+    });
+}
+
 
 - (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload {
     UA_LINFO(@"Channel registration updated successfully.");

@@ -53,9 +53,7 @@
 
     [[self.mockedApplication expect] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:normalizedOptions
                                                                                                         categories:normalizedCategories]];
-
-    [self.pushRegistration updateRegistrationWithOptions:options categories:self.testCategories completionHandler:^(UANotificationOptions options) {
-    }];
+    [self.pushRegistration updateRegistrationWithOptions:options categories:self.testCategories];
 
     [self.mockedApplication verify];
 }
