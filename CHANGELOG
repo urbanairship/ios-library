@@ -3,6 +3,22 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 8.3.3 - May 22, 2017
+============================
+Bug Fixes
+---------
+- UARegistrationDelegate's notificationRegistrationFinishedWithOptions:categories:
+  is now called with the user opted in options instead of the requested types. Fixed
+  this method being called before the user has a chance to accept permissions on iOS 8 & 9.
+- Fixed UARegistrationDelegate's notificationAuthorizedOptionsDidChange: being
+  initially called with the wrong value and not being called when types go from undetermined
+  to none.
+
+Behavior Changes
+----------------
+- Authorized notification option will be checked when the application wakes up in
+  the background.
+
 Version 8.3.2 - May 15, 2017
 ===========================
 Bug Fixes
