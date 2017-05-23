@@ -2,6 +2,8 @@
 
 #import "UAAction.h"
 
+#define kUAAddCustomEventActionDefaultRegistryName @"add_custom_event_action"
+
 /**
  * Represents the possible error conditions
  * when running a `UAAddCustomEventAction`.

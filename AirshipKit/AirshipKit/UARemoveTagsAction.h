@@ -2,6 +2,9 @@
 
 #import "UAModifyTagsAction.h"
 
+#define kUARemoveTagsActionDefaultRegistryName @"remove_tags_action"
+#define kUARemoveTagsActionDefaultRegistryAlias @"^-t"
+
 /**
  * Removes tags. This Action is registered under the
  * names ^-t and "remove_tags_action".

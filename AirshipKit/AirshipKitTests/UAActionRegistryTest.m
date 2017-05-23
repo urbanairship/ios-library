@@ -5,6 +5,11 @@
 #import "UAActionRegistry+Internal.h"
 #import "UAApplicationMetrics+Internal.h"
 #import "UAirship+Internal.h"
+#import "UALandingPageAction.h"
+#import "UALandingPageActionPredicate.h"
+#import "UATagsActionPredicate.h"
+#import "UAActionRegistryEntry+Internal.h"
+
 
 @interface UAActionRegistryTest : XCTestCase
 @property (nonatomic, strong) UAActionRegistry *registry;
@@ -60,6 +65,34 @@
 
     // First entry should still be registered under 'alias' and 'another-name'
     [self validateActionIsRegistered:action names:@[@"alias", @"another-name"] predicate:nil];
+}
+
+/**
+ * Test registering an action class
+ */
+- (void)testRegisterActionClass {
+
+    Class actionClass = [UAAction class];
+    Class anotherActionClass = [UALandingPageAction class];
+
+    __block id<UAActionPredicateProtocol> predicate = [[[UALandingPageActionPredicate class] alloc] init];
+
+    BOOL (^predicateBlock)(UAActionArguments *) = ^BOOL(UAActionArguments *args) {
+        return [predicate applyActionArguments:args];
+    };
+
+    // Register an action
+    BOOL result = [self.registry registerActionClass:actionClass names:@[@"name", @"alias", @"another-name"]];
+    XCTAssertTrue(result, @"Action should register");
+    [self validateActionClassIsRegistered:actionClass names:@[@"name", @"alias", @"another-name"] predicate:nil];
+
+    // Register an action under a conflicting name
+    result = [self.registry registerActionClass:anotherActionClass names:@[@"name", @"what"] predicate:predicateBlock];
+    XCTAssertTrue(result, @"Action should register");
+    [self validateActionClassIsRegistered:anotherActionClass names:@[@"name", @"what"] predicate:predicateBlock];
+
+    // First entry should still be registered under 'alias' and 'another-name'
+    [self validateActionClassIsRegistered:actionClass names:@[@"alias", @"another-name"] predicate:nil];
 }
 
 /**
@@ -147,7 +180,7 @@
     [self validateActionIsRegistered:action names:@[@"name"] predicate:noPredicate];
 
     // Clear the predicate
-     XCTAssertTrue([self.registry updatePredicate:nil forEntryWithName:@"name"], "Predicate should update on this unreserved action");
+    XCTAssertTrue([self.registry updatePredicate:nil forEntryWithName:@"name"], "Predicate should update on this unreserved action");
     [self validateActionIsRegistered:action names:@[@"name"] predicate:nil];
 }
 
@@ -178,6 +211,19 @@
 }
 
 /**
+ * Test updateActionClass
+ */
+- (void)testUpdateActionClass {
+    Class actionClass = [UAAction class];
+    Class anotherActionClass = [UALandingPageAction class];
+
+    [self.registry registerActionClass:actionClass name:@"name"];
+
+    XCTAssertTrue([self.registry updateActionClass:anotherActionClass forEntryWithName:@"name"], @"Should allow updating action if its not reserved.");
+    [self validateActionClassIsRegistered:anotherActionClass names:@[@"name"] predicate:nil];
+}
+
+/**
  * Test updateAction with invalid values
  */
 - (void)testUpdateActionInvalid {
@@ -190,6 +236,26 @@
 
     XCTAssertFalse([self.registry updateAction:action forEntryWithName:@"reserved"], @"Update action should return NO if the entry is reserved");
     [self validateActionIsRegistered:action names:@[@"reserved"] predicate:predicate];
+}
+
+/**
+ * Test updateActionClass with invalid values
+ */
+- (void)testUpdateActionClassInvalid {
+    Class actionClass = [UAAction class];
+    __block id<UAActionPredicateProtocol> predicate = [[[UALandingPageActionPredicate class] alloc] init];
+
+    BOOL (^predicateBlock)(UAActionArguments *) = ^BOOL(UAActionArguments *args) {
+        return [predicate applyActionArguments:args];
+    };
+
+    [self.registry registerReservedActionClass:actionClass name:@"reserved" predicate:predicateBlock];
+    [self.registry registerActionClass:actionClass name:@"name"];
+
+    XCTAssertFalse([self.registry updateActionClass:actionClass forEntryWithName:@"not-found"], @"Update action should return NO if the registry for the name does not exist.");
+
+    XCTAssertFalse([self.registry updateActionClass:actionClass forEntryWithName:@"reserved"], @"Update action should return NO if the entry is reserved");
+    [self validateActionClassIsRegistered:actionClass names:@[@"reserved"] predicate:predicateBlock];
 }
 
 /**
@@ -216,6 +282,30 @@
 }
 
 /**
+ * Test addName with valid values
+ */
+- (void)testAddNameLazyLoad {
+    Class actionClass = [UAAction class];
+
+    [self.registry registerActionClass:actionClass name:@"name"];
+    [self.registry registerReservedActionClass:actionClass name:@"reserved" predicate:nil];
+
+    XCTAssertTrue([self.registry addName:@"anotherName" forEntryWithName:@"name"], @"Should be able to add names to any entry.");
+    XCTAssertTrue([self.registry addName:@"yetAnotherName" forEntryWithName:@"anotherName"], @"Should be able to add names to any entry.");
+    [self validateActionClassIsRegistered:actionClass names:@[@"name", @"anotherName", @"yetAnotherName"] predicate:nil];
+
+    // Check conflict
+    XCTAssertTrue([self.registry addName:@"reservedAlias" forEntryWithName:@"name"], @"Should be able to add a non original resereved name to another entry.");
+    [self validateActionClassIsRegistered:actionClass names:@[@"name", @"anotherName", @"yetAnotherName", @"reservedAlias"] predicate:nil];
+    [self validateActionClassIsRegistered:actionClass names:@[@"reserved"] predicate:nil];
+
+    // Adding a name to an entry with a name already
+    XCTAssertTrue([self.registry addName:@"reservedAlias" forEntryWithName:@"reservedAlias"], @"Should be able to add a name to the entry who's name is the name you are adding.  Yeah.");
+    [self validateActionClassIsRegistered:actionClass names:@[@"name", @"anotherName", @"yetAnotherName", @"reservedAlias"] predicate:nil];
+}
+
+
+/**
  * Test addName invalid values
  */
 - (void)testAddNameInvalid {
@@ -230,20 +320,34 @@
 }
 
 /**
+ * Test addName invalid values for a lazy loaded action
+ */
+- (void)testAddNameInvalidLazyLoad {
+    Class actionClass = [UAAction class];
+
+    [self.registry registerReservedActionClass:actionClass name:@"reserved" predicate:nil];
+    [self.registry registerReservedActionClass:actionClass name:@"anotherReserved" predicate:nil];
+
+    XCTAssertFalse([self.registry addName:@"anotherReserved" forEntryWithName:@"reserved"], @"Should not be able to add a reserved name to another entry.");
+    XCTAssertFalse([self.registry addName:@"someName" forEntryWithName:@"not found"], @"Should not be able to add a name to a not found entry.");
+    XCTAssertFalse([self.registry addName:@"randomName" forEntryWithName:@"reserved"], @"Should not be able to add a name to a reserved entry.");
+}
+
+/**
  * Test removeName with valid values
  */
 - (void)testRemoveName {
-    UAAction *action = [[UAAction alloc] init];
+    Class actionClass = [UAAction class];
 
-    [self.registry registerAction:action names:@[@"name", @"anotherName"]];
+    [self.registry registerActionClass:actionClass names:@[@"name", @"anotherName"]];
 
     XCTAssertTrue([self.registry removeName:@"name"], @"Should be able to remove a non reserved name.");
-    [self validateActionIsRegistered:action names:@[@"anotherName"] predicate:nil];
+    [self validateActionClassIsRegistered:actionClass names:@[@"anotherName"] predicate:nil];
 
     XCTAssertTrue([self.registry removeName:@"anotherName"], @"Should be able to remove a non reserved name.");
     XCTAssertEqual((NSUInteger) 0, [self.registry.reservedEntryNames count], @"If no names reference an entry, it should be dropped.");
 
-    [self.registry registerReservedAction:action name:@"reserved" predicate:nil];
+    [self.registry registerReservedActionClass:actionClass name:@"reserved" predicate:nil];
     [self.registry addName:@"reservedAlias" forEntryWithName:@"reserved"];
 
     XCTAssertTrue([self.registry removeName:@"reservedAlias"], @"Should be able to remove the name that was added to a reserved action.");
@@ -262,6 +366,18 @@
 }
 
 /**
+ * Test removeName invalid values for a lazy loading action
+ */
+- (void)testRemoveNameInvalidLazyLoad {
+    Class actionClass = [UAAction class];
+
+    [self.registry registerReservedActionClass:actionClass name:@"reserved" predicate:nil];
+
+    XCTAssertFalse([self.registry removeName:@"reserved"], @"Should not be able to remove a reserved name.");
+    [self validateActionClassIsRegistered:actionClass names:@[@"reserved"] predicate:nil];
+}
+
+/**
  * Test removeEntry with valid values
  */
 - (void)testRemoveEntry {
@@ -276,40 +392,17 @@
 }
 
 /**
- * Test removeEntry invalid values
+ * Test removeEntry with valid values on a lazy loading action
  */
-- (void)testRemoveEntryInvalid {
-    UAAction *action = [[UAAction alloc] init];
-    [self.registry registerReservedAction:action name:@"reserved" predicate:nil];
+- (void)testRemoveEntryLazyLoad {
+    [self.registry registerActionClass:[UAAction class] names:@[@"name", @"anotherName"]];
 
-    XCTAssertFalse([self.registry removeEntryWithName:@"reserved"], @"Should not be able to remove a reserved entry.");
-    [self validateActionIsRegistered:action names:@[@"reserved"] predicate:nil];
+    XCTAssertTrue([self.registry removeEntryWithName:@"name"], @"Should be able to remove a non reserved entry.");
+    XCTAssertEqual((NSUInteger) 0, [self.registry.registeredEntries count], @"The entry should be dropped.");
+
+    XCTAssertTrue([self.registry removeName:@"notFound"], @"Removing a name that does not exist should return YES.");
 }
 
-
-/**
- * Test registeredEntries
- */
-- (void)testRegisteredEntries {
-    UAAction *action = [[UAAction alloc] init];
-    [self.registry registerAction:action names:@[@"name", @"anotherName"]];
-    XCTAssertEqual((NSUInteger)1, [self.registry.registeredEntries count], @"Duplicate names should be ignored.");
-
-    [self.registry registerReservedAction:action name:@"reserved" predicate:nil];
-    XCTAssertEqual((NSUInteger)1, [self.registry.registeredEntries count], @"Reserved entries should be ignored");
-}
-
-- (void)validateActionIsRegistered:(UAAction *)action
-                              names:(NSArray *)names
-                         predicate:(UAActionPredicate)predicate {
-
-    UAActionRegistryEntry *entry = [self.registry registryEntryWithName:[names firstObject]];
-
-    XCTAssertNotNil(entry, @"Action is not registered");
-    XCTAssertEqualObjects(entry.action, action, @"Registered entry's action is incorrect");
-    XCTAssertEqualObjects(entry.predicate, predicate, @"Registered entry's predicate is incorrect");
-    XCTAssertTrue([entry.names isEqualToArray:names], @"Registered entry's names are incorrect");
-}
 
 /**
  * Test landing page default predicate
@@ -326,20 +419,204 @@
     UAActionRegistryEntry *entry = [self.registry registryEntryWithName:kUALandingPageActionDefaultRegistryName];
 
     XCTAssertNotNil(entry, "Landing page should be registered by default");
-    XCTAssertNotNil(entry.predicate, "Landing page should have a default predicate");
+
+    XCTAssertNotNil(entry.predicate, "Landing page should have a default predicate class");
 
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"some-value"
                                                       withSituation:UASituationBackgroundPush];
 
-    XCTAssertFalse(entry.predicate(args), "Should not accept background push if the app has never been opened before");
+    UAActionPredicate predicate = entry.predicate;
 
+    XCTAssertFalse(predicate(args), "Should not accept background push if the app has never been opened before");
 
     date = [NSDate dateWithTimeIntervalSince1970:0];
-    XCTAssertFalse(entry.predicate(args), "Should not accept background push if the app has not been opened since 1970");
+    XCTAssertFalse(predicate(args), "Should not accept background push if the app has not been opened since 1970");
 
     date = [NSDate date];
-    XCTAssertTrue(entry.predicate(args), "Should accept background push if the app has been opened recently");
+    XCTAssertTrue(predicate(args), "Should accept background push if the app has been opened recently");
+}
+
+/**
+ * Test removeEntry invalid values
+ */
+- (void)testRemoveEntryInvalid {
+    UAAction *action = [[UAAction alloc] init];
+    [self.registry registerReservedAction:action name:@"reserved" predicate:nil];
+
+    XCTAssertFalse([self.registry removeEntryWithName:@"reserved"], @"Should not be able to remove a reserved entry.");
+    [self validateActionIsRegistered:action names:@[@"reserved"] predicate:nil];
+}
+
+/**
+ * Test removeEntry invalid values lazy loading actions
+ */
+- (void)testRemoveEntryInvalidLazyLoad {
+    Class actionClass = [UAAction class];
+
+    [self.registry registerReservedActionClass:actionClass name:@"reserved" predicate:nil];
+
+    XCTAssertFalse([self.registry removeEntryWithName:@"reserved"], @"Should not be able to remove a reserved entry.");
+    [self validateActionClassIsRegistered:actionClass names:@[@"reserved"] predicate:nil];
+}
+
+/**
+ * Test registeredEntries
+ */
+- (void)testRegisteredEntries {
+    UAAction *action = [[UAAction alloc] init];
+    [self.registry registerAction:action names:@[@"name", @"anotherName"]];
+    XCTAssertEqual((NSUInteger)1, [self.registry.registeredEntries count], @"Duplicate names should be ignored.");
+
+    [self.registry registerReservedAction:action name:@"reserved" predicate:nil];
+    XCTAssertEqual((NSUInteger)1, [self.registry.registeredEntries count], @"Reserved entries should be ignored");
+}
+
+/**
+ * Test registeredEntries lazy loading actions
+ */
+- (void)testRegisteredEntriesLazyLoad {
+    [self.registry registerActionClass:[UAAction class] names:@[@"name", @"anotherName"]];
+    XCTAssertEqual((NSUInteger)1, [self.registry.registeredEntries count], @"Duplicate names should be ignored.");
+
+    [self.registry registerReservedActionClass:[UAAction class] name:@"reserved" predicate:nil];
+    XCTAssertEqual((NSUInteger)1, [self.registry.registeredEntries count], @"Reserved entries should be ignored");
+}
+
+
+- (void)validateActionIsRegistered:(UAAction *)action
+                             names:(NSArray *)names
+                         predicate:(UAActionPredicate)predicate {
+
+    UAActionRegistryEntry *entry = [self.registry registryEntryWithName:[names firstObject]];
+
+    XCTAssertNotNil(entry, @"Action is not registered");
+    XCTAssertEqual(entry.action, action, @"Registered entry's action is incorrect");
+    XCTAssertEqual(entry.predicate, predicate, @"Registered entry's predicate is incorrect");
+    XCTAssertTrue([entry.names isEqualToArray:names], @"Registered entry's names are incorrect");
+}
+
+- (void)validateActionClassIsRegistered:(Class)actionClass
+                                  names:(NSArray *)names
+                              predicate:(UAActionPredicate)predicate {
+
+    UAActionRegistryEntry *entry = [self.registry registryEntryWithName:[names firstObject]];
+
+    XCTAssertNotNil(entry, @"Action is not registered");
+    XCTAssertNotNil(entry.action, @"Action should lazy load");
+    XCTAssertEqual(entry.actionClass, actionClass, @"Registered entry's action class is incorrect");
+    XCTAssertEqual(entry.predicate, predicate, @"Registered entry's predicate is incorrect");
+    XCTAssertTrue([entry.names isEqualToArray:names], @"Registered entry's names are incorrect");
+}
+
+- (void)testRegisterInvalidActionClass {
+    XCTAssertFalse([self.registry registerActionClass:[NSObject class] name:@"myInvalidActionClass"]);
+}
+
+- (void)testValidateDefaultActionsPlist {
+    NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"UADefaultActions" ofType:@"plist"];
+
+    NSArray *plistContents = [NSArray arrayWithContentsOfFile:path];
+
+    NSArray *expected = @[
+                          @{
+                              @"altName" : @"^u",
+                              @"class" : @"UAOpenExternalURLAction",
+                              @"name" : @"open_external_url_action",
+                              @"predicate" : @"UAOpenExternalURLActionPredicate"
+                              },
+                          @{
+                              @"altName" : @"^+t",
+                              @"class" : @"UAAddTagsAction",
+                              @"name" : @"add_tags_action",
+                              @"predicate" : @"UAAddTagsActionPredicate"
+                              },
+                          @{
+                              @"altName" : @"^-t",
+                              @"class" : @"UARemoveTagsAction",
+                              @"name" : @"remove_tags_action",
+                              @"predicate" : @"UARemoveTagsActionPredicate"
+                              },
+                          @{
+                              @"altName" : @"^p",
+                              @"class" : @"UALandingPageAction",
+                              @"name" : @"landing_page_action",
+                              @"predicate" : @"UALandingPageActionPredicate"
+                              },
+                          @{
+                              @"altName" : @"^d",
+                              @"class" : @"UADeepLinkAction",
+                              @"name" : @"deep_link_action",
+                              @"predicate" : @"UADeepLinkActionPredicate"
+                              },
+                          @{
+                              @"class" : @"UAAddCustomEventAction",
+                              @"name" : @"add_custom_event_action",
+                              @"predicate" : @"UAAddCustomEventActionPredicate"
+                              },
+                          @{
+                              @"altName" : @"^s",
+                              @"class" : @"UAShareAction",
+                              @"name" : @"share_action",
+                              @"predicate" : @"UAShareActionPredicate"
+                              },
+                          @{
+                              @"altName" : @"^mc",
+                              @"class" : @"UADisplayInboxAction",
+                              @"name" : @"open_mc_action",
+                              @"predicate" : @"UADisplayInboxActionPredicate"
+                              },
+                          @{
+                              @"altName" : @"^c",
+                              @"class" : @"UAPasteboardAction",
+                              @"name" : @"clipboard_action",
+                              @"predicate" : @"UAPasteboardActionPredicate"
+                              },
+                          @{
+                              @"altName" : @"^mco",
+                              @"class" : @"UAOverlayInboxMessageAction",
+                              @"name" : @"open_mc_overlay_action",
+                              @"predicate" : @"UAOverlayInboxMessageActionPredicate"
+                              },
+                          @{
+                              @"altName" : @"^w",
+                              @"class" : @"UAWalletAction",
+                              @"name" : @"wallet_action",
+                              @"predicate" : @"UAWalletActionPredicate"
+                              },
+                          @{
+                              @"altName" : @"^csa",
+                              @"class" : @"UACancelSchedulesAction",
+                              @"name" : @"cancel_scheduled_actions",
+                              @"predicate" : @"UACancelSchedulesActionPredicate"
+                              },
+                          @{
+                              @"altName" : @"^sa",
+                              @"class" : @"UAScheduleAction",
+                              @"name" : @"schedule_actions",
+                              @"predicate" : @"UAScheduleActionPredicate"
+                              },
+                          @{
+                              @"altName" : @"^fdi",
+                              @"class" : @"UAFetchDeviceInfoAction",
+                              @"name" : @"fetch_device_info",
+                              @"predicate" : @"UAFetchDeviceInfoActionPredicate"
+                              },
+                          @{
+                              @"altName" : @"^cc",
+                              @"class" : @"UAChannelCaptureAction",
+                              @"name" : @"channel_capture_action",
+                              @"predicate" : @"UAChannelCaptureActionPredicate"
+                              },
+                          @{
+                              @"altName" : @"^ef",
+                              @"class" : @"UAEnableFeatureAction",
+                              @"name" : @"enable_feature",
+                              @"predicate" : @"UAEnableFeatureActionPredicate"
+                              }
+                          ];
+
+    XCTAssertEqualObjects(plistContents, expected, @"UADefaultActions plist and expected contents do not match.");
 }
 
 @end

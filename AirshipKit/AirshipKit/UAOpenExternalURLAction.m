@@ -4,6 +4,9 @@
 
 NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions.externalurlaction";
 
+#define kUAOpenExternalURLActionDefaultRegistryName @"open_external_url_action"
+#define kUAOpenExternalURLActionDefaultRegistryAlias @"^u"
+
 @implementation UAOpenExternalURLAction
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {

@@ -24,7 +24,7 @@ typedef void (^UAActionCompletionHandler)(UAActionResult *);
 typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler completionHandler);
 
 /**
- * Base class for actions, which define a modular unit of work.
+ * Base class for actions, which defines a modular unit of work.
  */
 @interface UAAction : NSObject
 
@@ -64,7 +64,6 @@ typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler com
  */
 - (void)didPerformWithArguments:(UAActionArguments *)arguments
                      withResult:(UAActionResult *)result;
-
 
 /**
  * Performs the action.

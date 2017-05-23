@@ -2,6 +2,7 @@
 
 #import <XCTest/XCTest.h>
 #import "UAActionRegistryEntry.h"
+#import "UALandingPageAction.h"
 
 @interface UAActionRegistryEntryTest : XCTestCase
 
@@ -16,6 +17,15 @@
     UAActionRegistryEntry *entry = [UAActionRegistryEntry entryForAction:action predicate:predicate];
 
     XCTAssertEqualObjects(entry.action, action, @"UAActionEntry is not setting the action correctly");
+    XCTAssertEqualObjects(entry.predicate, predicate, @"UAActionEntry is not setting the predicate correctly");
+}
+
+- (void)testEntryForActionClass {
+    UAActionPredicate predicate = ^(UAActionArguments *args) { return NO; };
+
+    UAActionRegistryEntry *entry = [UAActionRegistryEntry entryForActionClass:[UALandingPageAction class] predicate:predicate];
+
+    XCTAssertNotNil(entry.action, @"UAActionEntry is not lazy loading the action correctly when set via action class");
     XCTAssertEqualObjects(entry.predicate, predicate, @"UAActionEntry is not setting the predicate correctly");
 }
 

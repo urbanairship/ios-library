@@ -2,6 +2,9 @@
 
 #import "UAAction.h"
 
+#define kUAOpenExternalURLActionDefaultRegistryName @"open_external_url_action"
+#define kUAOpenExternalURLActionDefaultRegistryAlias @"^u"
+
 /**
  * Represents the possible error conditions
  * when running a `UAOpenExternalURLAction`.

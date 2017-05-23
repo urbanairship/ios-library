@@ -4,6 +4,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define kUAOverlayInboxMessageActionDefaultRegistryAlias @"open_mc_overlay_action"
+#define kUAOverlayInboxMessageActionDefaultRegistryName @"^mco"
+
 /**
  * Requests an inbox message to be displayed in an overlay.
  *

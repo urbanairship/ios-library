@@ -3,6 +3,7 @@
 #import "UARemoveTagsAction.h"
 #import "UAPush.h"
 #import "UAirship.h"
+#import "UATagsActionPredicate.h"
 
 @implementation UARemoveTagsAction
 

@@ -25,6 +25,9 @@
 
 #import "UAAction.h"
 
+#define kUAFetchDeviceInfoActionDefaultRegistryName @"fetch_device_info"
+#define kUAFetchDeviceInfoActionDefaultRegistryAlias @"^fdi"
+
 /**
  * Fetches device info.
  *

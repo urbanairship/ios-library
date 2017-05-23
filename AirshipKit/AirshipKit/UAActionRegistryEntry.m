@@ -5,7 +5,6 @@
 @interface UAActionRegistryEntry()
 @property (nonatomic, strong) NSMutableDictionary *situationOverrides;
 @end
-
 @implementation UAActionRegistryEntry
 @dynamic names;
 
@@ -13,12 +12,34 @@
     self = [super init];
     if (self) {
         self.action = action;
+        self.actionClass = [action class];
         self.predicate = predicate;
         self.mutableNames = [NSMutableArray array];
         self.situationOverrides = [NSMutableDictionary dictionary];
     }
 
     return self;
+}
+
+- (instancetype)initWithActionClass:(Class)actionClass predicate:(UAActionPredicate)predicate {
+    self = [super init];
+    if (self) {
+        self.actionClass = actionClass;
+        self.predicate = predicate;
+        self.mutableNames = [NSMutableArray array];
+        self.situationOverrides = [NSMutableDictionary dictionary];
+    }
+
+    return self;
+}
+
+- (UAAction *)action
+{
+    if (_action == nil)
+    {
+        _action = [[self.actionClass alloc] init];
+    }
+    return _action;
 }
 
 - (UAAction *)actionForSituation:(UASituation)situation {
@@ -37,9 +58,13 @@
     return [[self alloc] initWithAction:action predicate:predicate];
 }
 
++ (instancetype)entryForActionClass:(Class)actionClass predicate:(UAActionPredicate)predicate {
+    return [[self alloc] initWithActionClass:actionClass predicate:predicate];
+}
+
 - (NSString *)description {
-    return [NSString stringWithFormat:@"UAActionRegistryEntry names: %@, predicate: %@, action: %@",
-            self.names, self.predicate, self.action];
+    return [NSString stringWithFormat:@"UAActionRegistryEntry names: %@, predicate: %@, action: %@, actionClass:%@",
+            self.names, self.predicate, self.action, self.actionClass];
 }
 
 - (NSArray *)names {

@@ -11,6 +11,8 @@
 #import "UANotificationContent.h"
 #import "UANotificationResponse.h"
 #import "UAInboxUtils.h"
+#import "UADisplayInboxAction.h"
+#import "UAOverlayInboxMessageAction.h"
 
 NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID";
 

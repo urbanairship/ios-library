@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Factory method to create an app init trigger.
  */
-+(instancetype)triggerWithType:(UAScheduleTriggerType)type
++ (instancetype)triggerWithType:(UAScheduleTriggerType)type
                           goal:(NSNumber *)goal
                      predicate:(nullable UAJSONPredicate *)predicate;
 

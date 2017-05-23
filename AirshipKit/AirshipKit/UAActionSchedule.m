@@ -14,7 +14,7 @@
     return self;
 }
 
-+(instancetype)actionScheduleWithIdentifier:(NSString *)identifier info:(UAActionScheduleInfo *)info {
++ (instancetype)actionScheduleWithIdentifier:(NSString *)identifier info:(UAActionScheduleInfo *)info {
     return [[UAActionSchedule alloc] initWithIdentifier:identifier info:info];
 }
 

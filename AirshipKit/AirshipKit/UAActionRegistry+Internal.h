@@ -39,6 +39,17 @@ NS_ASSUME_NONNULL_BEGIN
                      predicate:(nullable UAActionPredicate)predicate;
 
 /**
+ * Registers a reserved action via the action's class. Reserved actions can not be removed or modified.
+ * @param actionClass The action class to be registered.
+ * @param name The NSString name.
+ * @param predicate The predicate.
+ * @return `YES` if the action was registered, otherwise `NO`
+ */
+- (BOOL)registerReservedActionClass:(Class)actionClass
+                               name:(NSString *)name
+                          predicate:(nullable UAActionPredicate)predicate;
+
+/**
  * Registers default actions.
  */
 - (void)registerDefaultActions;
