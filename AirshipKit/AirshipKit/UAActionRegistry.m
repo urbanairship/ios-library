@@ -21,12 +21,12 @@
 #import "UAWalletAction.h"
 #import "UADeepLinkAction.h"
 
-#import "UALandingPageActionPredicate.h"
-#import "UAFetchDeviceInfoActionPredicate.h"
-#import "UAOverlayInboxMessageActionPredicate.h"
-#import "UAShareActionPredicate.h"
-#import "UAAddCustomEventActionPredicate.h"
-#import "UATagsActionPredicate.h"
+#import "UALandingPageActionPredicate+Internal.h"
+#import "UAFetchDeviceInfoActionPredicate+Internal.h"
+#import "UAOverlayInboxMessageActionPredicate+Internal.h"
+#import "UAShareActionPredicate+Internal.h"
+#import "UAAddCustomEventActionPredicate+Internal.h"
+#import "UATagsActionPredicate+Internal.h"
 
 NSString *const defaultsClassKey = @"class";
 NSString *const defaultsNameKey = @"name";
@@ -376,12 +376,16 @@ NSString *const defaultsPredicateClassKey = @"predicate";
             predicateClass = NSClassFromString(defaultsEntry[defaultsPredicateClassKey]);
         }
 
-        __block id<UAActionPredicateProtocol> predicate = [[predicateClass alloc] init];
+        id<UAActionPredicateProtocol> predicate = [[predicateClass alloc] init];
         BOOL (^predicateBlock)(UAActionArguments *) = nil;
 
         if (predicate) {
             predicateBlock = ^BOOL(UAActionArguments *args) {
-                return [predicate applyActionArguments:args];
+                if ([predicate respondsToSelector:@selector(applyActionArguments:)]) {
+                    return [predicate applyActionArguments:args];
+                }
+
+                return YES;
             };
         }
 

@@ -6,8 +6,8 @@
 #import "UAApplicationMetrics+Internal.h"
 #import "UAirship+Internal.h"
 #import "UALandingPageAction.h"
-#import "UALandingPageActionPredicate.h"
-#import "UATagsActionPredicate.h"
+#import "UALandingPageActionPredicate+Internal.h"
+#import "UATagsActionPredicate+Internal.h"
 #import "UAActionRegistryEntry+Internal.h"
 
 
@@ -75,7 +75,7 @@
     Class actionClass = [UAAction class];
     Class anotherActionClass = [UALandingPageAction class];
 
-    __block id<UAActionPredicateProtocol> predicate = [[[UALandingPageActionPredicate class] alloc] init];
+    id<UAActionPredicateProtocol> predicate = [[[UALandingPageActionPredicate class] alloc] init];
 
     BOOL (^predicateBlock)(UAActionArguments *) = ^BOOL(UAActionArguments *args) {
         return [predicate applyActionArguments:args];
@@ -243,7 +243,7 @@
  */
 - (void)testUpdateActionClassInvalid {
     Class actionClass = [UAAction class];
-    __block id<UAActionPredicateProtocol> predicate = [[[UALandingPageActionPredicate class] alloc] init];
+    id<UAActionPredicateProtocol> predicate = [[[UALandingPageActionPredicate class] alloc] init];
 
     BOOL (^predicateBlock)(UAActionArguments *) = ^BOOL(UAActionArguments *args) {
         return [predicate applyActionArguments:args];

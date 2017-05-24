@@ -2,7 +2,6 @@
 
 #import <Foundation/Foundation.h>
 #import "UAAction.h"
-#import "UAActionPredicateProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UALandingPageActionPredicate.h"
+#import "UALandingPageActionPredicate+Internal.h"
 #import "UALandingPageAction.h"
 #import "UAirship.h"
 #import "UAApplicationMetrics.h"

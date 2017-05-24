@@ -1,7 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAAddTagsAction.h"
-#import "UATagsActionPredicate.h"
+#import "UATagsActionPredicate+Internal.h"
 #import "UAPush.h"
 #import "UAirship.h"
 

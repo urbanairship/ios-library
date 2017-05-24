@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UAFetchDeviceInfoActionPredicate.h"
+#import "UAFetchDeviceInfoActionPredicate+Internal.h"
 
 @implementation UAFetchDeviceInfoActionPredicate
 

@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UAOverlayInboxMessageActionPredicate.h"
+#import "UAOverlayInboxMessageActionPredicate+Internal.h"
 
 @implementation UAOverlayInboxMessageActionPredicate
 

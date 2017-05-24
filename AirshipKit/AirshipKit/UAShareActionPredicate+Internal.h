@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAAction.h"
-#import "UAActionPredicateProtocol.h"
+#import "UAActionPredicateProtocol+Internal.h"
 
 /**
  * Default predicate for the share action.

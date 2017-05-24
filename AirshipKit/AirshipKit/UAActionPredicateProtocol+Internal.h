@@ -3,7 +3,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- * A protocol that defines the minimal functionality of a valid action predicate.
+ * An internal protocol that defines the minimal functionality of a valid action predicate.
  */
 @protocol UAActionPredicateProtocol <NSObject>
 
