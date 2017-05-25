@@ -20,6 +20,8 @@
 #import "UAInboxUtils.h"
 #import "UANotificationAction.h"
 #import "UANotificationCategory.h"
+#import "UAOverlayInboxMessageAction.h"
+#import "UADisplayInboxAction.h"
 
 #define kUANotificationActionKey @"com.urbanairship.interactive_actions"
 

@@ -6,6 +6,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class UAInboxMessage;
 
+#define kUADisplayInboxActionDefaultRegistryName @"open_mc_action"
+#define kUADisplayInboxActionDefaultRegistryAlias @"^mc"
+
 /**
  * Requests the inbox be displayed.
  *

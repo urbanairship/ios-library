@@ -25,6 +25,8 @@
 
 #import "UAAction.h"
 
+#define kUAEnableFeatureActionDefaultRegistryName @"enable_feature"
+#define kUAEnableFeatureActionDefaultRegistryAlias @"^ef"
 
 /**
  * Argument value to enable user notifications.

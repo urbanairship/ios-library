@@ -11,6 +11,7 @@
 #import "UAPush.h"
 #import "UAAnalytics.h"
 #import "UAActionRegistry.h"
+#import "UADisplayInboxAction.h"
 
 @interface UAInAppMessagingTest : XCTestCase
 @property(nonatomic, strong) id mockAnalytics;

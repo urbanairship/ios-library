@@ -18,6 +18,7 @@
 #import "UAInboxUtils.h"
 #import "UAConfig.h"
 #import "UANotificationContent.h"
+#import "UADisplayInboxAction.h"
 
 
 @interface UAAppIntegrationTest : XCTestCase

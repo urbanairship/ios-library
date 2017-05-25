@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param identifier The schedule's identifier.
  * @param info The schedule's info.
  */
-+(instancetype)actionScheduleWithIdentifier:(NSString *)identifier info:(UAActionScheduleInfo *)info;
++ (instancetype)actionScheduleWithIdentifier:(NSString *)identifier info:(UAActionScheduleInfo *)info;
 
 @end
 

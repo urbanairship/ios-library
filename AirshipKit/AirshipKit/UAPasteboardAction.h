@@ -2,6 +2,9 @@
 
 #import "UAAction.h"
 
+#define kUAPasteboardActionDefaultRegistryName @"clipboard_action"
+#define kUAPasteboardActionDefaultRegistryAlias @"^c"
+
 /**
  * Sets the pasteboard's string.
  *

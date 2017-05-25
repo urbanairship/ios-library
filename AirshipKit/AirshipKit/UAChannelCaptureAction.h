@@ -25,6 +25,8 @@
 
 #import "UAAction.h"
 
+#define kUAChannelCaptureActionDefaultRegistryName @"channel_capture_action"
+#define kUAChannelCaptureActionDefaultRegistryAlias @"^cc"
 
 /**
  * Enables channel capture for a set period of time.

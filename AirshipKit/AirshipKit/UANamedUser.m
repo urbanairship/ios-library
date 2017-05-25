@@ -55,7 +55,7 @@ NSString *const UANamedUserTagGroupsMutationsKey = @"UANamedUserTagGroupsMutatio
 }
 
 
-+(instancetype) namedUserWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
++ (instancetype) namedUserWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     return [[UANamedUser alloc] initWithPush:push config:config dataStore:dataStore];
 }
 

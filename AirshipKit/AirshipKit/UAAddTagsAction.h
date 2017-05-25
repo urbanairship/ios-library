@@ -2,6 +2,9 @@
 
 #import "UAModifyTagsAction.h"
 
+#define kUAAddTagsActionDefaultRegistryName @"add_tags_action"
+#define kUAAddTagsActionDefaultRegistryAlias @"^+t"
+
 /**
  * Adds tags. This Action is registered under the
  * names ^+t and "add_tags_action".

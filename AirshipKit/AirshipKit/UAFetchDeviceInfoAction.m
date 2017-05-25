@@ -59,5 +59,4 @@ NSString *const UALocationEnabledKey = @"location_enabled";
     completionHandler([UAActionResult resultWithValue:dict]);
 }
 
-
 @end

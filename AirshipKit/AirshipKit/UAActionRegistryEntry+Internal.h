@@ -1,11 +1,12 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAActionRegistryEntry.h"
+#import "UAAction.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /*
- * Testing extensions to Action Registry Entry
+ * Testing extensions and internal properties to Action Registry Entry
  */
 @interface UAActionRegistryEntry()
 
@@ -17,6 +18,11 @@ NS_ASSUME_NONNULL_BEGIN
  * A mutable internal instance of the Entry's names.
  */
 @property (nonatomic, strong) NSMutableArray *mutableNames;
+
+/**
+ * The entry's action class.
+ */
+@property (nonatomic, assign) Class actionClass;
 
 ///---------------------------------------------------------------------------------------
 /// @name Action Registry Entry Internal Methods

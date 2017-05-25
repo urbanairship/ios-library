@@ -2,6 +2,9 @@
 
 #import "UAAction.h"
 
+#define kUACancelSchedulesActionDefaultRegistryName @"cancel_scheduled_actions"
+#define kUACancelSchedulesActionDefaultRegistryAlias @"^csa"
+
 /**
  * Action to cancel automation schedules.
  *

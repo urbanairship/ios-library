@@ -4,6 +4,9 @@
 #import "UAAction.h"
 #import <UIKit/UIKit.h>
 
+#define kUAShareActionDefaultRegistryName @"share_action"
+#define kUAShareActionDefaultRegistryAlias @"^s"
+
 /**
  * Shares text using UAActivityViewController.
  *

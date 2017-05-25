@@ -18,6 +18,20 @@
 #import "UAFetchDeviceInfoAction.h"
 #import "UAChannelCaptureAction.h"
 #import "UAEnableFeatureAction.h"
+#import "UAWalletAction.h"
+#import "UADeepLinkAction.h"
+
+#import "UALandingPageActionPredicate+Internal.h"
+#import "UAFetchDeviceInfoActionPredicate+Internal.h"
+#import "UAOverlayInboxMessageActionPredicate+Internal.h"
+#import "UAShareActionPredicate+Internal.h"
+#import "UAAddCustomEventActionPredicate+Internal.h"
+#import "UATagsActionPredicate+Internal.h"
+
+NSString *const defaultsClassKey = @"class";
+NSString *const defaultsNameKey = @"name";
+NSString *const defaultsAltNameKey = @"altName";
+NSString *const defaultsPredicateClassKey = @"predicate";
 
 @implementation UAActionRegistry
 @dynamic registeredEntries;
@@ -31,19 +45,26 @@
     return self;
 }
 
-
 + (instancetype)defaultRegistry {
     UAActionRegistry *registry = [[UAActionRegistry alloc] init];
     [registry registerDefaultActions];
     return registry;
 }
 
--(BOOL)registerAction:(UAAction *)action names:(NSArray *)names {
+- (BOOL)registerAction:(UAAction *)action names:(NSArray *)names {
     return [self registerAction:action names:names predicate:nil];
 }
 
 - (BOOL)registerAction:(UAAction *)action name:(NSString *)name {
     return [self registerAction:action name:name predicate:nil];
+}
+
+- (BOOL)registerActionClass:(Class)actionClass names:(NSArray *)names {
+    return [self registerActionClass:actionClass names:names predicate:nil];
+}
+
+- (BOOL)registerActionClass:(Class)actionClass name:(NSString *)name {
+    return [self registerActionClass:actionClass name:name predicate:nil];
 }
 
 - (BOOL)registerAction:(UAAction *)action
@@ -57,17 +78,65 @@
     return [self registerAction:action names:@[name] predicate:predicate];
 }
 
--(BOOL)registerAction:(UAAction *)action
-                names:(NSArray *)names
-            predicate:(UAActionPredicate)predicate {
+- (BOOL)checkParentClass:(Class)actionClass {
+
+    if ([actionClass isSubclassOfClass:[UAAction class]]) {
+        return YES;
+    }
+
+    return NO;
+}
+
+- (BOOL)registerActionClass:(Class)actionClass
+                       name:(NSString *)name
+                  predicate:(UAActionPredicate)predicate {
+    if (!name) {
+        return NO;
+    }
+
+    return [self registerActionClass:actionClass names:@[name] predicate:predicate];
+}
+
+- (BOOL)registerActionClass:(Class)actionClass
+                      names:(NSArray *)names
+                  predicate:(UAActionPredicate)predicate {
+
+    if (![self checkParentClass:actionClass]) {
+        UA_LWARN(@"Unable to register an action class that isn't a subclass of UAAction.");
+        return NO;
+    }
+
+    if (!actionClass) {
+        UA_LWARN(@"Unable to register a nil action class.");
+        return NO;
+    }
+
+    UAActionRegistryEntry *entry = [UAActionRegistryEntry entryForActionClass:actionClass
+                                                                    predicate:predicate];
+
+    return [self registerEntry:entry names:names];
+}
+
+- (BOOL)registerAction:(UAAction *)action
+                 names:(NSArray *)names
+             predicate:(UAActionPredicate)predicate {
 
     if (!action) {
         UA_LWARN(@"Unable to register a nil action.");
         return NO;
     }
 
+    UAActionRegistryEntry *entry = [UAActionRegistryEntry entryForAction:action
+                                                               predicate:predicate];
+
+    return [self registerEntry:entry names:names];
+}
+
+- (BOOL)registerEntry:(UAActionRegistryEntry *)entry
+                names:(NSArray *)names {
+
     if (!names.count) {
-        UA_LWARN(@"Unable to register action.  A name must be specified.");
+        UA_LWARN(@"Unable to register action class. A name must be specified.");
         return NO;
     }
 
@@ -78,9 +147,6 @@
         }
     }
 
-    UAActionRegistryEntry *entry = [UAActionRegistryEntry entryForAction:action
-                                                               predicate:predicate];
-
     for (NSString *name in names) {
         [self removeName:name];
         [entry.mutableNames addObject:name];
@@ -90,11 +156,20 @@
     return YES;
 }
 
-
 - (BOOL)registerReservedAction:(UAAction *)action
                           name:(NSString *)name
                      predicate:(UAActionPredicate)predicate {
     if ([self registerAction:action name:name predicate:predicate]) {
+        [self.reservedEntryNames addObject:name];
+        return YES;
+    }
+    return NO;
+}
+
+- (BOOL)registerReservedActionClass:(Class)class
+                               name:(NSString *)name
+                          predicate:(UAActionPredicate)predicate {
+    if ([self registerActionClass:class name:name predicate:predicate]) {
         [self.reservedEntryNames addObject:name];
         return YES;
     }
@@ -163,6 +238,7 @@
     }
 
     UAActionRegistryEntry *entry = [self registryEntryWithName:entryName];
+
     if (entry && name) {
         [self removeName:name];
         [entry.mutableNames addObject:name];
@@ -236,122 +312,87 @@
     return (entry != nil);
 }
 
+- (BOOL)updateActionClass:(Class)actionClass forEntryWithName:(NSString *)name {
+    if (!name || !actionClass) {
+        return NO;
+    }
+
+    if ([self.reservedEntryNames containsObject:name]) {
+        UA_LWARN(@"Unable to update action. %@ is a reserved action name.", name);
+        return NO;
+    }
+
+    UAActionRegistryEntry *entry = [self registryEntryWithName:name];
+    entry.actionClass = actionClass;
+    return (entry != nil);
+}
+
 - (void)registerDefaultActions {
-    // Open external URL predicate
-    UAActionPredicate urlPredicate = ^(UAActionArguments *args) {
-        return (BOOL)(args.situation != UASituationForegroundPush);
-    };
+    NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"UADefaultActions" ofType:@"plist"];
 
-    // Tags predicate
-    UAActionPredicate tagsPredicate = ^(UAActionArguments *args) {
-        BOOL foregroundPresentation = args.metadata[UAActionMetadataForegroundPresentationKey] != nil;
-        return (BOOL)!foregroundPresentation;
-    };
+    if (!path) {
+        return;
+    }
 
-    // Custom event predicate
-    UAActionPredicate customEventsPredicate = ^(UAActionArguments *args) {
-        BOOL foregroundPresentation = args.metadata[UAActionMetadataForegroundPresentationKey] != nil;
-        return (BOOL)!foregroundPresentation;
-    };
+    NSArray *defaults = [NSArray arrayWithContentsOfFile:path];
 
-    // Open external URL action
-    UAOpenExternalURLAction *urlAction = [[UAOpenExternalURLAction alloc] init];
-    [self registerAction:urlAction
-                   names:@[kUAOpenExternalURLActionDefaultRegistryName, kUAOpenExternalURLActionDefaultRegistryAlias]
-               predicate:urlPredicate];
+    if (!defaults) {
+        return;
+    }
 
+    for (NSDictionary *defaultsEntry in defaults) {
+        NSMutableArray *names = [NSMutableArray array];
+        Class predicateClass;
 
-    UAAddTagsAction *addTagsAction = [[UAAddTagsAction alloc] init];
-    [self registerAction:addTagsAction
-                   names:@[kUAAddTagsActionDefaultRegistryName, kUAAddTagsActionDefaultRegistryAlias]
-               predicate:tagsPredicate];
+        if (defaultsEntry[defaultsClassKey] == nil) {
+            UALOG(@"UADefaultActions.plist must provide a default class string under the key %@", defaultsClassKey);
+            break;
+        }
 
+        if (defaultsEntry[defaultsNameKey] == nil) {
+            UALOG(@"UADefaultActions.plist must provide a default name string under the key %@", defaultsNameKey);
+            break;
+        }
 
-    UARemoveTagsAction *removeTagsAction = [[UARemoveTagsAction alloc] init];
-    [self registerAction:removeTagsAction
-                   names:@[kUARemoveTagsActionDefaultRegistryName, kUARemoveTagsActionDefaultRegistryAlias]
-               predicate:tagsPredicate];
+        [names addObject:defaultsEntry[defaultsNameKey]];
 
-    UALandingPageAction *landingPageAction = [[UALandingPageAction alloc] init];
-    [self registerAction:landingPageAction
-                   names:@[kUALandingPageActionDefaultRegistryName, kUALandingPageActionDefaultRegistryAlias]
-               predicate:^(UAActionArguments *args) {
-                   if (UASituationBackgroundPush == args.situation) {
-                       UAApplicationMetrics *metrics = [UAirship shared].applicationMetrics;
-                       NSTimeInterval timeSinceLastOpen = [[NSDate date] timeIntervalSinceDate:metrics.lastApplicationOpenDate];
-                       return (BOOL)(timeSinceLastOpen <= [kUALandingPageActionLastOpenTimeLimitInSeconds doubleValue]);
-                   }
-                   return (BOOL)(args.situation != UASituationForegroundPush);
-               }];
+        if (defaultsEntry[defaultsAltNameKey]) {
+            [names addObject:defaultsEntry[defaultsAltNameKey]];
+        }
 
-    // Register external URL action under the deep link action name/alias
-    UAOpenExternalURLAction *deepLinkAction = [[UAOpenExternalURLAction alloc] init];
-    [self registerAction:deepLinkAction
-                   names:@[kUADeepLinkActionDefaultRegistryName, kUADeepLinkActionDefaultRegistryAlias]
-               predicate:urlPredicate];
+        Class actionClass = NSClassFromString(defaultsEntry[defaultsClassKey]);
 
-    // Custom event action
-    UAAddCustomEventAction *addCustomEventAction = [[UAAddCustomEventAction alloc] init];
-    [self registerAction:addCustomEventAction
-                    name:kUAAddCustomEventActionDefaultRegistryName
-               predicate:customEventsPredicate];
+        if (![actionClass class]) {
+            break;
+        }
 
-    // Share action
-    UAShareAction *shareAction = [[UAShareAction alloc] init];
-    [self registerAction:shareAction names:@[kUAShareActionDefaultRegistryName, kUAShareActionDefaultRegistryAlias] predicate:^(UAActionArguments *args) {
-        return (BOOL)(args.situation != UASituationForegroundPush);
-    }];
+        id actionObj = [[actionClass alloc] init];
 
-    // Display inbox action
-    UADisplayInboxAction *displayInboxAction = [[UADisplayInboxAction alloc] init];
-    [self registerAction:displayInboxAction
-                   names:@[kUADisplayInboxActionDefaultRegistryAlias, kUADisplayInboxActionDefaultRegistryName]];
+        if (![actionObj isKindOfClass:[UAAction class]]) {
+            break;
+        }
 
-    // Pasteboard action
-    [self registerAction:[[UAPasteboardAction alloc] init]
-                   names:@[kUAPasteboardActionDefaultRegistryAlias, kUAPasteboardActionDefaultRegistryName]];
+        if (defaultsEntry[defaultsPredicateClassKey]) {
+            predicateClass = NSClassFromString(defaultsEntry[defaultsPredicateClassKey]);
+        }
 
+        id<UAActionPredicateProtocol> predicate = [[predicateClass alloc] init];
+        BOOL (^predicateBlock)(UAActionArguments *) = nil;
 
-    // Overlay inbox message action
-    [self registerAction:[[UAOverlayInboxMessageAction alloc] init]
-                   names:@[kUAOverlayInboxMessageActionDefaultRegistryAlias, kUAOverlayInboxMessageActionDefaultRegistryName]
-               predicate:^(UAActionArguments *args) {
-                   return (BOOL)(args.situation != UASituationForegroundPush);
-               }];
+        if (predicate) {
+            predicateBlock = ^BOOL(UAActionArguments *args) {
+                if ([predicate respondsToSelector:@selector(applyActionArguments:)]) {
+                    return [predicate applyActionArguments:args];
+                }
 
-    // Wallet action
-    [self registerAction:[[UAOpenExternalURLAction alloc] init]
-                   names:@[kUAWalletActionDefaultRegistryAlias, kUAWalletActionDefaultRegistryName]];
+                return YES;
+            };
+        }
 
-    // Cancel schedules action
-    [self registerAction:[[UACancelSchedulesAction alloc] init]
-                   names:@[kUACancelSchedulesActionDefaultRegistryName, kUACancelSchedulesActionDefaultRegistryAlias]];
-
-    // Schedule action
-    [self registerAction:[[UAScheduleAction alloc] init]
-                   names:@[kUAScheduleActionDefaultRegistryName, kUAScheduleActionDefaultRegistryAlias]];
-    
-    // Fetch device info action
-    UAFetchDeviceInfoAction *fetchDeviceInfoAction = [[UAFetchDeviceInfoAction alloc] init];
-    [self registerAction:fetchDeviceInfoAction
-                   names:@[kUAFetchDeviceInfoActionDefaultRegistryName, kUAFetchDeviceInfoActionDefaultRegistryAlias]
-               predicate:^BOOL(UAActionArguments *args) {
-                   return args.situation == UASituationManualInvocation || args.situation == UASituationWebViewInvocation;
-               }];
-    
-    // Channel capture action
-    UAChannelCaptureAction *channelCaptureAction = [[UAChannelCaptureAction alloc] init];
-    [self registerAction:channelCaptureAction
-                    names:@[kUAChannelCaptureActionDefaultRegistryName, kUAChannelCaptureActionDefaultRegistryAlias]];
-
-    // Enable feature action
-    UAEnableFeatureAction *enableFeatureAction = [[UAEnableFeatureAction alloc] init];
-    [self registerAction:enableFeatureAction
-                   names:@[kUAEnableFeatureActionDefaultRegistryName, kUAEnableFeatureActionDefaultRegistryAlias]
-               predicate:^BOOL(UAActionArguments *args) {
-                   BOOL foregroundPresentation = args.metadata[UAActionMetadataForegroundPresentationKey] != nil;
-                   return (BOOL)!foregroundPresentation;
-               }];
+        [self registerActionClass:[actionClass class]
+                            names:[NSArray arrayWithArray:names]
+                        predicate:predicateBlock];
+    }
 }
 
 @end

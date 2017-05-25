@@ -2,6 +2,9 @@
 
 #import "UAAction.h"
 
+#define kUAScheduleActionDefaultRegistryName @"schedule_actions"
+#define kUAScheduleActionDefaultRegistryAlias @"^sa"
+
 /**
  * Action to schedule other actions.
  *

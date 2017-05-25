@@ -41,7 +41,6 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
 
     UAActionRegistryEntry *entry = [[UAirship shared].actionRegistry registryEntryWithName:actionName];
 
-
     if (entry) {
         // Add the action name to the metadata
         NSMutableDictionary *fullMetadata = metadata ? [NSMutableDictionary dictionaryWithDictionary:metadata] : [NSMutableDictionary dictionary];
@@ -71,7 +70,6 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
         }
     }
 }
-
 
 + (void)runAction:(UAAction *)action
             value:(id)value

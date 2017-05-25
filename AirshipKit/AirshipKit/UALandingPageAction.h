@@ -2,6 +2,11 @@
 
 #import "UAAction.h"
 
+#define kUALandingPageActionDefaultRegistryName @"landing_page_action"
+#define kUALandingPageActionDefaultRegistryAlias @"^p"
+
+#define kUALandingPageActionLastOpenTimeLimitInSeconds @(7 * 86400) // 1 week
+
 /**
  * Opens a landing page URL in a rich content window.
  *

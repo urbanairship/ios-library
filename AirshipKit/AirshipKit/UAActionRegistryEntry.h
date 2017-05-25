@@ -40,6 +40,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)entryForAction:(UAAction *)action predicate:(UAActionPredicate)predicate;
 
+/**
+ * UAActionRegistryEntry class factory method.
+ * @param actionClass The entry's action class.
+ * @param predicate The entry's predicate.
+ */
++ (instancetype)entryForActionClass:(Class)actionClass predicate:(UAActionPredicate)predicate;
+
 ///---------------------------------------------------------------------------------------
 /// @name Action Registry Entry Utility
 ///---------------------------------------------------------------------------------------
@@ -51,8 +58,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @return UAAction for the situation.
  */
 - (UAAction *)actionForSituation:(UASituation)situation;
-
-
 
 @end
 
