@@ -14,9 +14,11 @@ Pod::Spec.new do |s|
    s.ios.deployment_target   = "8.0"
    s.requires_arc            = true
 
-   s.ios.resource_bundle     = { 'AirshipResources' =>  ['AirshipKit/AirshipResources/*'] }
-   s.ios.source_files        = 'AirshipKit/AirshipKit/*.{h,m,mm}'
+   s.resource_bundle         = { 'AirshipResources' =>  ['AirshipKit/AirshipResources/*'] }
+   s.source_files            = 'AirshipKit/AirshipKit/common/*.{h,m,mm}'
+   s.ios.source_files        = 'AirshipKit/AirshipKit/ios/*.{h,m,mm}'
+   s.private_header_files    = 'AirshipKit/AirshipKit/*/*+Internal*.h', 'AirshipKit/AirshipKit/common/AirshipKit.h', 'AirshipKit/AirshipKit/common/AirshipLib.h'
 
    s.libraries               = 'z', 'sqlite3'
-   s.ios.frameworks          = 'UserNotifications', 'CFNetwork', 'CoreGraphics', 'Foundation', 'MobileCoreServices', 'Security', 'SystemConfiguration', 'UIKit', 'CoreTelephony', 'CoreLocation', 'CoreData'
+   s.frameworks              = 'UserNotifications', 'CFNetwork', 'CoreGraphics', 'Foundation', 'MobileCoreServices', 'Security', 'SystemConfiguration', 'UIKit', 'CoreTelephony', 'CoreLocation', 'CoreData'
 end

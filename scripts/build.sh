@@ -91,7 +91,7 @@ ruby -S jazzy _${JAZZY_VERSION}_ \
 --module AirshipKit  \
 --module-version $VERSION \
 --framework-root $ROOT_PATH/AirshipKit \
---umbrella-header $ROOT_PATH/AirshipKit/AirshipKit/AirshipLib.h \
+--umbrella-header $ROOT_PATH/AirshipKit/AirshipKit/common/AirshipLib.h \
 --output $STAGING/Documentation/AirshipKit \
 --sdk iphonesimulator \
 --skip-undocumented \
@@ -142,7 +142,7 @@ cp -R "${ROOT_PATH}/SwiftSample" "${STAGING}"
 # Stage Static Library
 echo "Staging Airship"
 mkdir -p ${STAGING}/Airship/Headers
-find ${ROOT_PATH}/AirshipKit/AirshipKit -type f -name '*.h' ! -name 'AirshipKit.h' ! -name '*+Internal.h'  -exec cp {} ${STAGING}/Airship/Headers \;
+find ${ROOT_PATH}/AirshipKit/AirshipKit -type f -name '*.h' ! -name 'AirshipKit.h' ! -name '*+Internal*.h'  -exec cp {} ${STAGING}/Airship/Headers \;
 cp "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" "${STAGING}/Airship"
 cp -R "${TEMP_DIR}/AirshipResources/Release-iphoneos/AirshipResources.bundle" "${STAGING}/Airship"
 
