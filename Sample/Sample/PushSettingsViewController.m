@@ -53,8 +53,6 @@
 
     self.channelIDSubtitleLabel.text = [UAirship push].channelID;
 
-    self.aliasSubtitleLabel.text = [UAirship push].alias == nil ? NSLocalizedStringFromTable(@"None", @"UAPushUI", @"None") : [UAirship push].alias;
-
     self.namedUserSubtitleLabel.text = [UAirship namedUser].identifier == nil ? NSLocalizedStringFromTable(@"None", @"UAPushUI", @"None") : [UAirship namedUser].identifier;
 
     if ([UAirship push].tags.count) {

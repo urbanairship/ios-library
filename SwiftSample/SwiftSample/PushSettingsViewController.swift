@@ -31,7 +31,6 @@ class PushSettingsViewController: UITableViewController {
     @IBOutlet var pushEnabledCell: UITableViewCell!
     @IBOutlet var channelIDCell: UITableViewCell!
     @IBOutlet var namedUserCell: UITableViewCell!
-    @IBOutlet var aliasCell: UITableViewCell!
     @IBOutlet var tagsCell: UITableViewCell!
     @IBOutlet var locationEnabledCell: UITableViewCell!
 
@@ -45,7 +44,6 @@ class PushSettingsViewController: UITableViewController {
     @IBOutlet var locationEnabledSubtitleLabel: UILabel!
     @IBOutlet var channelIDSubtitleLabel: UILabel!
     @IBOutlet var namedUserSubtitleLabel: UILabel!
-    @IBOutlet var aliasSubtitleLabel: UILabel!
     @IBOutlet var tagsSubtitleLabel: UILabel!
 
     @IBAction func switchValueChanged(_ sender: UISwitch) {
@@ -99,8 +97,6 @@ class PushSettingsViewController: UITableViewController {
 
         channelIDSubtitleLabel?.text = UAirship.push().channelID
         
-        aliasSubtitleLabel?.text = UAirship.push().alias == nil ? NSLocalizedString("None", tableName: "UAPushUI", comment: "None") : UAirship.push().alias
-
         namedUserSubtitleLabel?.text = UAirship.namedUser().identifier == nil ? NSLocalizedString("None", tableName: "UAPushUI", comment: "None") : UAirship.namedUser().identifier
 
         if (UAirship.push().tags.count > 0) {

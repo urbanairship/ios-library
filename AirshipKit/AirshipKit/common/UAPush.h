@@ -369,10 +369,12 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 
 ///---------------------------------------------------------------------------------------
 /// @name Alias
+///
+/// @deprecated Deprecated - to be removed in SDK version 10.0
 ///---------------------------------------------------------------------------------------
  
 /** Alias for this device */
-@property (nonatomic, copy, nullable) NSString *alias;
+@property (nonatomic, copy, nullable) NSString *alias DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 10.0");
 
 
 ///---------------------------------------------------------------------------------------

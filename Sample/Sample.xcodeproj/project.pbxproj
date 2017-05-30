@@ -31,7 +31,6 @@
 		764693B81C237B630090FE40 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 764693B61C237B630090FE40 /* LaunchScreen.storyboard */; };
 		764693C01C237CAB0090FE40 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 764693BF1C237CAB0090FE40 /* Main.storyboard */; };
 		764693EE1C2389B40090FE40 /* AddTagsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693ED1C2389B40090FE40 /* AddTagsTableViewController.m */; };
-		764693F11C2389D50090FE40 /* AddAliasTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693F01C2389D50090FE40 /* AddAliasTableViewController.m */; };
 		764693F41C2389E90090FE40 /* AddNamedUserTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693F31C2389E90090FE40 /* AddNamedUserTableViewController.m */; };
 		764693F71C238A5E0090FE40 /* TagsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693F61C238A5E0090FE40 /* TagsTableViewController.m */; };
 		7646940D1C238E7C0090FE40 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 764693FC1C238E7C0090FE40 /* Images.xcassets */; };
@@ -198,8 +197,6 @@
 		764693BF1C237CAB0090FE40 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		764693EC1C2389B40090FE40 /* AddTagsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddTagsTableViewController.h; sourceTree = "<group>"; };
 		764693ED1C2389B40090FE40 /* AddTagsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddTagsTableViewController.m; sourceTree = "<group>"; };
-		764693EF1C2389D50090FE40 /* AddAliasTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddAliasTableViewController.h; sourceTree = "<group>"; };
-		764693F01C2389D50090FE40 /* AddAliasTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddAliasTableViewController.m; sourceTree = "<group>"; };
 		764693F21C2389E90090FE40 /* AddNamedUserTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddNamedUserTableViewController.h; sourceTree = "<group>"; };
 		764693F31C2389E90090FE40 /* AddNamedUserTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddNamedUserTableViewController.m; sourceTree = "<group>"; };
 		764693F51C238A5E0090FE40 /* TagsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagsTableViewController.h; sourceTree = "<group>"; };
@@ -327,8 +324,6 @@
 				764693AF1C237B630090FE40 /* PushSettingsViewController.m */,
 				764693EC1C2389B40090FE40 /* AddTagsTableViewController.h */,
 				764693ED1C2389B40090FE40 /* AddTagsTableViewController.m */,
-				764693EF1C2389D50090FE40 /* AddAliasTableViewController.h */,
-				764693F01C2389D50090FE40 /* AddAliasTableViewController.m */,
 				764693F21C2389E90090FE40 /* AddNamedUserTableViewController.h */,
 				764693F31C2389E90090FE40 /* AddNamedUserTableViewController.m */,
 				764693F51C238A5E0090FE40 /* TagsTableViewController.h */,
@@ -607,7 +602,6 @@
 				764693AA1C237B630090FE40 /* AppDelegate.m in Sources */,
 				61A672FC1CAB3E5A00BAF58A /* PushHandler.m in Sources */,
 				764693F71C238A5E0090FE40 /* TagsTableViewController.m in Sources */,
-				764693F11C2389D50090FE40 /* AddAliasTableViewController.m in Sources */,
 				764693AD1C237B630090FE40 /* HomeViewController.m in Sources */,
 				493F51211C5B3A5100B050A1 /* InboxDelegate.m in Sources */,
 				764693A71C237B630090FE40 /* main.m in Sources */,

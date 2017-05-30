@@ -29,7 +29,6 @@
 		619A0D4B1BE81EDC00D9E863 /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D3C1BE7F29700D9E863 /* Roboto-Regular.ttf */; };
 		619A0D4C1BE81EDC00D9E863 /* Roboto-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D3D1BE7F29700D9E863 /* Roboto-Thin.ttf */; };
 		619A0D4D1BE81EDC00D9E863 /* Roboto-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D3E1BE7F29700D9E863 /* Roboto-ThinItalic.ttf */; };
-		619A0D501BE8266100D9E863 /* AddAliasTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619A0D4F1BE8266100D9E863 /* AddAliasTableViewController.swift */; };
 		61A672E81CA9F4B000BAF58A /* PushHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61A672E71CA9F4B000BAF58A /* PushHandler.swift */; };
 		61AD10D51BE7D88B0004C886 /* TagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61AD10D41BE7D88B0004C886 /* TagsTableViewController.swift */; };
 		61E30D8A1DDE33CB00B7EE28 /* AirshipAppExtensions.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 49251DE41D6F987600EED4BD /* AirshipAppExtensions.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -180,7 +179,6 @@
 		619A0D3D1BE7F29700D9E863 /* Roboto-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Thin.ttf"; path = "Resources/Roboto/Roboto-Thin.ttf"; sourceTree = "<group>"; };
 		619A0D3E1BE7F29700D9E863 /* Roboto-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-ThinItalic.ttf"; path = "Resources/Roboto/Roboto-ThinItalic.ttf"; sourceTree = "<group>"; };
 		619A0D401BE81D7B00D9E863 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		619A0D4F1BE8266100D9E863 /* AddAliasTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddAliasTableViewController.swift; sourceTree = "<group>"; };
 		61A672E71CA9F4B000BAF58A /* PushHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushHandler.swift; sourceTree = "<group>"; };
 		61AD10D41BE7D88B0004C886 /* TagsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagsTableViewController.swift; sourceTree = "<group>"; };
 		61E392371CC81EEA00D994E3 /* UAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UAMessageCenterDefaultStyle.plist; sourceTree = "<group>"; };
@@ -305,7 +303,6 @@
 				61A672E71CA9F4B000BAF58A /* PushHandler.swift */,
 				CCDA35AA1B8D233A00950AD5 /* PushSettingsViewController.swift */,
 				614A39421BDFD611009CA7FB /* AddTagsTableViewController.swift */,
-				619A0D4F1BE8266100D9E863 /* AddAliasTableViewController.swift */,
 				614953E61BF106EE001E03AF /* AddNamedUserTableViewController.swift */,
 				61AD10D41BE7D88B0004C886 /* TagsTableViewController.swift */,
 				493F51121C5B2C9E00B050A1 /* MessageCenterViewController.swift */,
@@ -544,7 +541,6 @@
 				493F51291C5B423700B050A1 /* InboxDelegate.swift in Sources */,
 				CCDA35A91B8D233A00950AD5 /* HomeViewController.swift in Sources */,
 				61A672E81CA9F4B000BAF58A /* PushHandler.swift in Sources */,
-				619A0D501BE8266100D9E863 /* AddAliasTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
