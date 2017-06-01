@@ -98,7 +98,14 @@ class UAProjectValidationTest: XCTestCase {
             XCTFail("Project and project directory do not match")
         }
     }
-    
+
+    func testAirshipKitTvOS() {
+        // This is an example of a functional test case.
+        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        validateProjectForTarget(buildTarget: "AirshipKit tvOS", buildOS: "tvos")
+    }
+
+
     func testAirshipKit() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.

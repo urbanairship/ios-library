@@ -28,6 +28,8 @@
 		6EF2DF111E5CBAED0062099A /* UAScheduleDelayData.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF2DF0E1E5CBAE30062099A /* UAScheduleDelayData.m */; };
 		76A5F5F01DCBDD5E00858BA4 /* UAAsyncOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1BB1DC16BB300B4842D /* UAAsyncOperation.m */; };
 		76A960FC1DF5EB29003F83A0 /* UANativeBridge in Resources */ = {isa = PBXBuildFile; fileRef = 76A960FB1DF5EB29003F83A0 /* UANativeBridge */; };
+		991E21B21EE0B5FF0056E266 /* UAJSONValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB9F1D8C996900BABD4F /* UAJSONValueTransformer.m */; };
+		991E21B31EE0B6070056E266 /* UAJSONValueTransformer+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB9E1D8C996900BABD4F /* UAJSONValueTransformer+Internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9960B9011EDE4D86007D6D97 /* UASwizzler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E2E6D721EB3A34B006056BF /* UASwizzler+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9960B9021EDE4D86007D6D97 /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E2E6D731EB3A34B006056BF /* UASwizzler.m */; };
 		99666D741EDF266400BAE46B /* UAActionPredicateProtocol+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 99666D731EDF266400BAE46B /* UAActionPredicateProtocol+Internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -3133,6 +3135,7 @@
 				99666E241EDF2C3400BAE46B /* UAInAppMessaging.h in Headers */,
 				99666E541EDF2C8D00BAE46B /* UAAssociatedIdentifiers.h in Headers */,
 				99666DA41EDF2BB400BAE46B /* UAScheduleDelay.h in Headers */,
+				991E21B31EE0B6070056E266 /* UAJSONValueTransformer+Internal.h in Headers */,
 				99666DD51EDF2BED00BAE46B /* UANotificationResponse.h in Headers */,
 				99666E6A1EDF2C9A00BAE46B /* NSManagedObjectContext+UAAdditions.h in Headers */,
 				99666E351EDF2C8D00BAE46B /* UAAccountEventTemplate.h in Headers */,
@@ -4325,6 +4328,7 @@
 				99666DDB1EDF2BED00BAE46B /* UATagUtils.m in Sources */,
 				99666D961EDF2BAE00BAE46B /* UAScheduleTriggerData.m in Sources */,
 				99666E3E1EDF2C8D00BAE46B /* UAAppForegroundEvent.m in Sources */,
+				991E21B21EE0B5FF0056E266 /* UAJSONValueTransformer.m in Sources */,
 				99666DAC1EDF2BC100BAE46B /* UAUserData.m in Sources */,
 				99666E7D1EDF2CD400BAE46B /* UAirship.m in Sources */,
 				99666E6B1EDF2C9A00BAE46B /* NSManagedContext+UAAdditions.m in Sources */,
