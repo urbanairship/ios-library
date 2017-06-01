@@ -30,6 +30,13 @@
 #pragma mark -
 #pragma mark AppDelegate methods
 
++ (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+    UA_LINFO(@"Application received backgound app refresh");
+
+    [[UAirship push] updateAuthorizedNotificationTypes];
+    completionHandler(UIBackgroundFetchResultNoData);
+}
+
 + (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     UA_LINFO(@"Application registered device token: %@", [UAUtils deviceTokenStringFromDeviceToken:deviceToken]);
 
