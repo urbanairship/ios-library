@@ -17,6 +17,6 @@ for headerSubfolder in "$@"
 do
     if [[ -d "${SRCROOT}"/AirshipKit/${headerSubfolder} ]]; then
         find "${SRCROOT}"/AirshipKit/${headerSubfolder} -type f -name '*.h' ! -name 'AirshipLib.h' ! -name 'AirshipKit.h' ! -name '*+Internal*.h' ! -path './UI/*' \
-    -exec basename {} \; | awk '{print "#import \"" $0"\""}' > "$SOURCE_LIB_HEADER"
+    -exec basename {} \; | awk '{print "#import \"" $0"\""}' >> "$SOURCE_LIB_HEADER"
     fi
 done

@@ -13,6 +13,8 @@ NSString *const UAChannelCaptureEnabledKey = @"UAChannelCaptureEnabled";
 
 @interface UAChannelCapture()
 
+// REVISIT: convert to UIAlertController
+@property (nonatomic, strong) UIAlertView *alertView;
 @property (nonatomic, strong) UAPush *push;
 @property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;

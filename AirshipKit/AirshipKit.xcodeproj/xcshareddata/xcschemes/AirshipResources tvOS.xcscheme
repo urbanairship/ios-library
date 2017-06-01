@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CCDA35A21B8D233A00950AD5"
-               BuildableName = "SwiftSample.app"
-               BlueprintName = "SwiftSample"
-               ReferencedContainer = "container:SwiftSample.xcodeproj">
+               BlueprintIdentifier = "DF7E738A1E7B3F0A0039F65D"
+               BuildableName = "AirshipResources tvOS.bundle"
+               BlueprintName = "AirshipResources tvOS"
+               ReferencedContainer = "container:AirshipKit.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -29,15 +29,6 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CCDA35A21B8D233A00950AD5"
-            BuildableName = "SwiftSample.app"
-            BlueprintName = "SwiftSample"
-            ReferencedContainer = "container:SwiftSample.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -51,16 +42,15 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CCDA35A21B8D233A00950AD5"
-            BuildableName = "SwiftSample.app"
-            BlueprintName = "SwiftSample"
-            ReferencedContainer = "container:SwiftSample.xcodeproj">
+            BlueprintIdentifier = "DF7E738A1E7B3F0A0039F65D"
+            BuildableName = "AirshipResources tvOS.bundle"
+            BlueprintName = "AirshipResources tvOS"
+            ReferencedContainer = "container:AirshipKit.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -70,16 +60,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CCDA35A21B8D233A00950AD5"
-            BuildableName = "SwiftSample.app"
-            BlueprintName = "SwiftSample"
-            ReferencedContainer = "container:SwiftSample.xcodeproj">
+            BlueprintIdentifier = "DF7E738A1E7B3F0A0039F65D"
+            BuildableName = "AirshipResources tvOS.bundle"
+            BlueprintName = "AirshipResources tvOS"
+            ReferencedContainer = "container:AirshipKit.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

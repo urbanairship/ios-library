@@ -62,13 +62,19 @@ class UAProjectValidationTest: XCTestCase {
         // get all of the URLs files from the directories for this target
         var filesFromDirectory : Array<URL> = []
         let fileManager = FileManager.default
-        let subDirectoriesToInclude = ["common",buildOS]
+        let subDirectoriesToInclude = ["common", buildOS]
         fileManager.enumerator(atPath:sourceRootURL!.path)?.forEach({ (e) in
             if let e = e as? String, let url = URL(string: e) {
+                // ignore .DS_Store
+                if (e.contains(".DS_Store")) {
+                    return
+                }
+
                 let thisSubDirectory = url.deletingLastPathComponent().lastPathComponent
                 if (subDirectoriesToInclude.contains(thisSubDirectory)) {
                     filesFromDirectory.append(sourceRootURL!.appendingPathComponent(e))
                 }
+
             }
         })
         

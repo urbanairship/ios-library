@@ -1,6 +1,5 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-
 #import "UAAction.h"
 #import <UIKit/UIKit.h>
 
