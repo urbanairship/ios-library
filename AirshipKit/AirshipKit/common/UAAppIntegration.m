@@ -44,9 +44,11 @@
     [[UAirship push] application:application didFailToRegisterForRemoteNotificationsWithError:error];
 }
 
+#if !TARGET_OS_TV   // UIUserNotificationSettings is not available on tvOS
 + (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
     [[UAirship push] application:application didRegisterUserNotificationSettings:notificationSettings];
 }
+#endif
 
 + (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     switch(application.applicationState) {
@@ -94,6 +96,7 @@
 
 }
 
+#if !TARGET_OS_TV   // Delegate methods unavailable in tvOS
 + (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)())handler {
     [self application:application handleActionWithIdentifier:identifier forRemoteNotification:userInfo withResponseInfo:nil completionHandler:handler];
 }
@@ -107,6 +110,7 @@
        handler();
    }];
 }
+#endif
 
 
 #pragma mark -
@@ -128,6 +132,7 @@
     }
 }
 
+#if !TARGET_OS_TV   // UNNotificationResponse not available on tvOS
 + (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)())completionHandler {
     UANotificationResponse *airshipResponse = [UANotificationResponse notificationResponseWithUNNotificationResponse:response];
 
@@ -135,6 +140,7 @@
         completionHandler();
     }];
 }
+#endif
 
 #pragma mark -
 #pragma mark Notification handling
@@ -175,7 +181,7 @@
             return;
         }
 
-        if (notificationAction.options & UNNotificationActionOptionForeground) {
+        if (notificationAction.options & UANotificationActionOptionForeground) {
             [[UAirship shared].analytics launchedFromNotification:response.notificationContent.notificationInfo];
             situation = UASituationForegroundInteractiveButton;
         } else {
@@ -223,6 +229,7 @@
     __block NSUInteger expectedCount = 1;
     __block NSMutableArray *fetchResults = [NSMutableArray array];
 
+#if !TARGET_OS_TV   // Message Center not supported on tvOS
     // Refresh the message center, call completion block when finished
     if ([UAInboxUtils inboxMessageIDFromNotification:notificationContent.notificationInfo]) {
         expectedCount = 2;
@@ -249,6 +256,7 @@
             });
         }];
     }
+#endif
 
     // Run the actions
     [UAActionRunner runActionsWithActionValues:actionsPayload
@@ -281,6 +289,7 @@
     if (!actionIdentifier || [actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
         NSMutableDictionary *mutableActionsPayload = [NSMutableDictionary dictionaryWithDictionary:notificationContent.notificationInfo];
 
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
         NSString *messageID = [UAInboxUtils inboxMessageIDFromNotification:notificationContent.notificationInfo];
         if (messageID) {
             NSSet *inboxActionNames = [NSSet setWithArray:@[kUADisplayInboxActionDefaultRegistryAlias,
@@ -294,6 +303,7 @@
                 mutableActionsPayload[kUADisplayInboxActionDefaultRegistryAlias] = messageID;
             }
         }
+#endif
 
         return [mutableActionsPayload copy];
     }

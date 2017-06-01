@@ -4,6 +4,7 @@
 #import "UAPush.h"
 #import "UAirship.h"
 
+#if !TARGET_OS_TV   // CoreTelephony not supported in tvOS
 /*
  * Fix for CTTelephonyNetworkInfo bug where instances might receive
  * notifications after being deallocated causes EXC_BAD_ACCESS exceptions. We
@@ -11,8 +12,12 @@
  *
  * http://stackoverflow.com/questions/14238586/coretelephony-crash/15510580#15510580
  */
+#import <CoreTelephony/CTTelephonyNetworkInfo.h>
+#import <CoreTelephony/CTCarrier.h>
+
 static CTTelephonyNetworkInfo *netInfo_;
 static dispatch_once_t netInfoDispatchToken_;
+#endif
 
 @implementation UAEvent
 
@@ -44,10 +49,14 @@ static dispatch_once_t netInfoDispatchToken_;
 }
 
 - (NSString *)carrierName {
+#if TARGET_OS_TV    // Core Telephony not supported on tvOS
+    return nil;
+#else
     dispatch_once(&netInfoDispatchToken_, ^{
         netInfo_ = [[CTTelephonyNetworkInfo alloc] init];
     });
     return netInfo_.subscriberCellularProvider.carrierName;
+#endif
 }
 
 - (NSArray *)notificationTypes {
@@ -59,6 +68,7 @@ static dispatch_once_t netInfoDispatchToken_;
         [notificationTypes addObject:@"badge"];
     }
 
+#if !TARGET_OS_TV   // sound and alert notifications are not supported in tvOS
     if ((UANotificationOptionSound & authorizedOptions) > 0) {
         [notificationTypes addObject:@"sound"];
     }
@@ -66,6 +76,7 @@ static dispatch_once_t netInfoDispatchToken_;
     if ((UANotificationOptionAlert & authorizedOptions) > 0) {
         [notificationTypes addObject:@"alert"];
     }
+#endif
 
     return notificationTypes;
 }

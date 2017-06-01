@@ -58,6 +58,7 @@
     return [[self alloc] initWithIdentifier:identifier title:title textInputButtonTitle:textInputButtonTitle textInputPlaceholder:textInputPlaceholder options:options];
 }
 
+#if !TARGET_OS_TV    // UIUserNotificationAction and UNTextInputNotificationAction not available on tvOS
 - (UIUserNotificationAction *)asUIUserNotificationAction {
     UIMutableUserNotificationAction *uiAction = [[super asUIUserNotificationAction] mutableCopy];
     
@@ -104,5 +105,6 @@
     
     return [super isEqualToUNNotificationAction:notificationAction];
 }
+#endif
 
 @end

@@ -18,7 +18,9 @@
     }
 
     [data setValue:[UAirship push].channelID forKey:@"channel_id"];
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
     [data setValue:[UAirship inboxUser].username forKey:@"user_id"];
+#endif
 
     event.data = [data mutableCopy];
     return event;

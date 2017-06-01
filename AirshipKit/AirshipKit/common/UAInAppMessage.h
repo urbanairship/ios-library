@@ -134,12 +134,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property(nonatomic, copy, nullable) NSDictionary *onClick;
 
+#if !TARGET_OS_TV    // UIUserNotificationActinoContext is not available on tvOS
 /**
  * The chosen notification action context. If there are notification actions defined for
  * UIUserNotificationActionContextMinimal, this context will be preferred. Othwerise, the
  * context defaults to UIUserNotificationActionContextDefault.
  */
 @property(nonatomic, readonly) UIUserNotificationActionContext notificationActionContext;
+#endif
 
 /**
  * An array of UNNotificationAction instances corresponding to the left-to-right order

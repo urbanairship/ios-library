@@ -68,6 +68,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
                                                      name:UIApplicationDidEnterBackgroundNotification
                                                    object:[UIApplication sharedApplication]];
 
+#if !TARGET_OS_TV // Keyboard notifications not available on tvOS
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(keyboardDidShow)
                                                      name:UIKeyboardDidShowNotification
@@ -77,6 +78,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
                                                  selector:@selector(keyboardDidHide)
                                                      name:UIKeyboardDidHideNotification
                                                    object:nil];
+#endif
     }
 
     return self;
@@ -340,6 +342,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         message.identifier = apnsPayload[@"_"];
     }
 
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
     NSString *inboxMessageID = [UAInboxUtils inboxMessageIDFromNotification:apnsPayload];
     if (inboxMessageID) {
         NSSet *inboxActionNames = [NSSet setWithArray:@[kUADisplayInboxActionDefaultRegistryAlias,
@@ -355,6 +358,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
             message.onClick = actions;
         }
     }
+#endif
 
     self.pendingMessage = message;
 }

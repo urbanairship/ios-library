@@ -197,10 +197,12 @@
     // If the server did not send the metadata, then set it to nil
     self.conversionPushMetadata = [notification objectForKey:kUAPushMetadata] ?: nil;
 
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
     NSString *richPushID = [UAInboxUtils inboxMessageIDFromNotification:notification];
     if (richPushID) {
         self.conversionRichPushID = richPushID;
     }
+#endif
 }
 
 - (void)startSession {

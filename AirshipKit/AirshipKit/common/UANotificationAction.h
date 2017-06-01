@@ -89,6 +89,8 @@ static const UANotificationActionOptions UANotificationActionOptionNone NS_SWIFT
 /// @name Notification Action Utilities
 ///---------------------------------------------------------------------------------------
 
+#if TARGET_OS_IOS // UIUserNotificationAction and UNNotificationAction not available on tvOS
+
 /**
  * Converts a UANotificationAction into a UIUserNotificationAction.
  *
@@ -102,6 +104,7 @@ static const UANotificationActionOptions UANotificationActionOptionNone NS_SWIFT
  * @return An instance of UNUNotificationAction or nil if conversion fails.
  */
 - (nullable UNNotificationAction *)asUNNotificationAction __IOS_AVAILABLE(10.0);
+#endif
 
 @end
 

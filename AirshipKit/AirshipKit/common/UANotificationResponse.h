@@ -42,11 +42,14 @@ extern NSString *const UANotificationDismissActionIdentifier;
  */
 @property (nonatomic, strong, readonly) UANotificationContent *notificationContent;
 
+#if !TARGET_OS_TV    // UNNotificationResponse not available on tvOS
 /**
  * The UNNotificationResponse that generated the UANotificationResponse.
  * Note: Only available on iOS 10+. Will be nil otherwise.
  */
 @property (nonatomic, readonly, nullable, strong) UNNotificationResponse *response;
+
+#endif
 
 ///---------------------------------------------------------------------------------------
 /// @name Notification Response Factories
@@ -64,6 +67,7 @@ extern NSString *const UANotificationDismissActionIdentifier;
                                         actionIdentifier:(NSString *)actionIdentifier
                                             responseText:(nullable NSString *)responseText;
 
+#if !TARGET_OS_TV    // UNNotificationResponse not available on tvOS
 /**
  * UANotificationResponse factory method.
  *
@@ -71,6 +75,7 @@ extern NSString *const UANotificationDismissActionIdentifier;
  * @return A UANotificationResponse instance.
  */
 + (instancetype)notificationResponseWithUNNotificationResponse:(UNNotificationResponse *)response;
+#endif
 
 
 @end

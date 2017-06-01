@@ -14,6 +14,8 @@
 @property(nonatomic, strong) UAChannelCapture *channelCapture;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 
+// REVISIT: convert to UIAlertController
+@property(nonatomic, strong) id mockAlertView;
 @property(nonatomic, strong) id mockPush;
 @property(nonatomic, strong) id mockPasteboard;
 @property(nonatomic, strong) id mockApplication;

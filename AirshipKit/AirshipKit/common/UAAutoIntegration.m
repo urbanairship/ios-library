@@ -1,9 +1,9 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAAutoIntegration+Internal.h"
-#import "UASwizzler+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAAppIntegration+Internal.h"
+#import "UASwizzler+Internal.h"
 
 static UAAutoIntegration *instance_;
 
@@ -79,6 +79,7 @@ static dispatch_once_t onceToken;
                        implementation:(IMP)ApplicationDidReceiveRemoteNotificationFetchCompletionHandler];
 
 
+#if !TARGET_OS_TV  // Delegate methods not supported on tvOS
     // iOS 8 & 9 Only
     if (![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
 
@@ -97,6 +98,7 @@ static dispatch_once_t onceToken;
                                  protocol:@protocol(UIApplicationDelegate)
                            implementation:(IMP)ApplicationDidRegisterUserNotificationSettings];
     }
+#endif
 }
 
 - (void)swizzleNotificationCenter {
@@ -121,17 +123,21 @@ static dispatch_once_t onceToken;
 
 - (void)swizzleNotificationCenterDelegate:(id<UNUserNotificationCenterDelegate>)delegate {
     Class class = [delegate class];
+    [self.notificationDelegateSwizzler swizzle:@selector(userNotificationCenter:willPresentNotification:withCompletionHandler:)
+                                      protocol:@protocol(UNUserNotificationCenterDelegate)
+                                implementation:(IMP)UserNotificationCenterWillPresentNotificationWithCompletionHandler];
 
+#if !TARGET_OS_TV  // Delegate method not supported on tvOS
+    [self.notificationDelegateSwizzler swizzle:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)
+                                      protocol:@protocol(UNUserNotificationCenterDelegate)
+                                implementation:(IMP)UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler];
+#endif
     self.notificationDelegateSwizzler = [UASwizzler swizzlerForClass:class];
 
 
     [self.notificationDelegateSwizzler swizzle:@selector(userNotificationCenter:willPresentNotification:withCompletionHandler:)
                                       protocol:@protocol(UNUserNotificationCenterDelegate)
                                 implementation:(IMP)UserNotificationCenterWillPresentNotificationWithCompletionHandler];
-
-    [self.notificationDelegateSwizzler swizzle:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)
-                                      protocol:@protocol(UNUserNotificationCenterDelegate)
-                                implementation:(IMP)UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler];
 }
 
 
@@ -216,6 +222,7 @@ void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self,
     }];
 }
 
+#if !TARGET_OS_TV  // Delegate method not supported on tvOS
 void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(id self, SEL _cmd, UNUserNotificationCenter *notificationCenter, UNNotificationResponse *response, void (^handler)()) {
 
     __block NSUInteger resultCount = 0;
@@ -263,6 +270,7 @@ void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(i
                        }];
 
 }
+#endif
 
 #pragma mark -
 #pragma mark UNUserNotificationCenter swizzled methods
@@ -295,6 +303,7 @@ void ApplicationDidRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _c
     }
 }
 
+#if !TARGET_OS_TV  // Delegate method not supported on tvOS
 void ApplicationDidRegisterUserNotificationSettings(id self, SEL _cmd, UIApplication *application, UIUserNotificationSettings *settings) {
     [UAAppIntegration application:application didRegisterUserNotificationSettings:settings];
 
@@ -303,6 +312,7 @@ void ApplicationDidRegisterUserNotificationSettings(id self, SEL _cmd, UIApplica
         ((void(*)(id, SEL, UIApplication *, UIUserNotificationSettings*))original)(self, _cmd, application, settings);
     }
 }
+#endif
 
 void ApplicationDidFailToRegisterForRemoteNotificationsWithError(id self, SEL _cmd, UIApplication *application, NSError *error) {
     UA_LERR(@"Application failed to register for remote notifications with error: %@", error);
@@ -378,6 +388,7 @@ void ApplicationDidReceiveRemoteNotificationFetchCompletionHandler(id self,
 }
 
 
+#if !TARGET_OS_TV  // Delegate methods not supported on tvOS
 void ApplicationHandleActionWithIdentifierForRemoteNotificationCompletionHandler(id self,
                                                                                  SEL _cmd,
                                                                                  UIApplication *application,
@@ -472,5 +483,6 @@ void ApplicationHandleActionWithIdentifierForRemoteNotificationWithResponseInfoC
         }
     }];
 }
+#endif
 
 @end

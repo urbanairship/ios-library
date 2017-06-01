@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @name Notification Action Internal Methods
 ///---------------------------------------------------------------------------------------
 
+#if TARGET_OS_IOS
 /**
  * Tests for equivalence with a UIUserNotificationAction. As UANotificationAction is a
  * drop-in replacement for UNNotificationAction, any features not applicable
@@ -30,6 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return `YES` if the two actions are equivalent, `NO` otherwise.
  */
 - (BOOL)isEqualToUNNotificationAction:(UNNotificationAction *)notificationAction;
+#endif
 
 @end
 

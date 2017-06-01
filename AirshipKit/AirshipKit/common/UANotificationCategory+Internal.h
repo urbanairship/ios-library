@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// @name Notification Catagories Internal Methods
 ///---------------------------------------------------------------------------------------
 
+#if TARGET_OS_IOS // UIUserNotificationCategory and UNNotificationCategory not available on tvOS
+
 /**
  * Converts a UANotificationCategory into a UIUserNotificationCategory.
  *
@@ -44,6 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return `YES` if the two categories are equivalent, `NO` otherwise.
  */
 - (BOOL)isEqualToUNNotificationCategory:(UNNotificationCategory *)category;
+#endif
 
 @end
 

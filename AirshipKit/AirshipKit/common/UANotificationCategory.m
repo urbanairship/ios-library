@@ -74,6 +74,7 @@
 
 }
 
+#if !TARGET_OS_TV    // UIUserNotificationCategory, UIUserNotificationAction and UNNotificationCategory not available on tvOS
 - (UIUserNotificationCategory *)asUIUserNotificationCategory {
     UIMutableUserNotificationCategory *category = [[UIMutableUserNotificationCategory alloc] init];
     category.identifier = self.identifier;
@@ -158,5 +159,6 @@
 
     return [self.identifier isEqualToString:category.identifier];
 }
+#endif
 
 @end

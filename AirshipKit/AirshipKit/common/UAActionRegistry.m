@@ -328,7 +328,7 @@ NSString *const defaultsPredicateClassKey = @"predicate";
 }
 
 - (void)registerDefaultActions {
-    NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"UADefaultActions" ofType:@"plist"];
+    NSString *path = [[UAirship resources] pathForResource:@"UADefaultActions" ofType:@"plist"];
 
     if (!path) {
         return;

@@ -17,30 +17,33 @@
 
         UANotificationOptions options = UANotificationOptionNone;
 
-        if (settings.alertSetting == UNNotificationSettingEnabled) {
-            options |= UANotificationOptionAlert;
-        }
+        if (settings.authorizationStatus == UNAuthorizationStatusAuthorized) {
 
-        if (settings.soundSetting == UNNotificationSettingEnabled) {
-            options |= UANotificationOptionSound;
-        }
+#if !TARGET_OS_TV
+            if (settings.alertSetting == UNNotificationSettingEnabled) {
+                options |= UANotificationOptionAlert;
+            }
 
-        if (settings.badgeSetting == UNNotificationSettingEnabled) {
-            options |= UANotificationOptionBadge;
-        }
+            if (settings.soundSetting == UNNotificationSettingEnabled) {
+                options |= UANotificationOptionSound;
+            }
 
-        if (settings.carPlaySetting == UNNotificationSettingEnabled) {
-            options |= UANotificationOptionCarPlay;
-        }
+            if (settings.carPlaySetting == UNNotificationSettingEnabled) {
+                options |= UANotificationOptionCarPlay;
+            }
+#endif
+            if (settings.badgeSetting == UNNotificationSettingEnabled) {
+                options |= UANotificationOptionBadge;
+            }
 
-        completionHandler(options);
-
-    }];
+            completionHandler(options);
+        }}];
 }
 
 -(void)updateRegistrationWithOptions:(UANotificationOptions)options
                           categories:(NSSet<UANotificationCategory *> *)categories {
 
+#if !TARGET_OS_TV   // UNNotificationCategory not supported on tvOS
     NSMutableSet *normalizedCategories;
 
     if (categories) {
@@ -59,6 +62,7 @@
     }
 
     [[UNUserNotificationCenter currentNotificationCenter] setNotificationCategories:[NSSet setWithSet:normalizedCategories]];
+#endif
 
     UNAuthorizationOptions normalizedOptions = (UNAuthorizationOptionAlert | UNAuthorizationOptionBadge | UNAuthorizationOptionSound | UNAuthorizationOptionCarPlay);
     normalizedOptions &= options;
