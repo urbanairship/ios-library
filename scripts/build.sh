@@ -106,8 +106,8 @@ otool -l "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" | grep __LLVM
 
 # Make sure Jazzy is installed
 if [ `gem list -i jazzy --version ${JAZZY_VERSION}` == 'false' ]; then
-  echo "Installing jazzy"
-  gem install jazzy -v $JAZZY_VERSION
+echo "Installing jazzy"
+gem install jazzy -v $JAZZY_VERSION
 fi
 
 ruby -S jazzy _${JAZZY_VERSION}_ -v
@@ -188,7 +188,7 @@ echo "Xcode version: `xcrun xcodebuild -version | tr '\r\n' ' '`" >> $BUILD_INFO
 
 # Additional build info
 if test -f $ROOT_PATH/BUILD_INFO;
-    then cat $ROOT_PATH/BUILD_INFO >> $BUILD_INFO;
+then cat $ROOT_PATH/BUILD_INFO >> $BUILD_INFO;
 fi
 
 # Clean up any unwanted files
