@@ -6,7 +6,7 @@ if [[ $# -lt 2 ]]; then
     exit 1
 fi
 
-SOURCE_LIB_HEADER="${SRCROOT}/AirshipKit/common/AirshipLib.h"
+SOURCE_LIB_HEADER="${SRCROOT}/AirshipKit/$1/AirshipLib.h"
 
 # Find all public headers, excluding AirshipLib and UI
 # Collect all headers as obj-c import statments into an umbrella header

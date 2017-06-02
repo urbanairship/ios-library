@@ -27,4 +27,4 @@ OCMockLibrary
 Deploy/output
 test-output/
 Pods/
-AirshipKit/AirshipKit/common/AirshipLib.h
+**/AirshipLib.h

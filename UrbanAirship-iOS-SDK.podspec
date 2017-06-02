@@ -12,12 +12,15 @@ Pod::Spec.new do |s|
 
    s.module_name             = "AirshipKit"
    s.ios.deployment_target   = "8.0"
+   s.tvos.deployment_target  = "10.0"
    s.requires_arc            = true
 
-   s.resource_bundle         = { 'AirshipResources' =>  ['AirshipKit/AirshipResources/*'] }
+   s.ios.resource_bundle     = { 'AirshipResources' =>  ['AirshipKit/AirshipResources/common/*', 'AirshipKit/AirshipResources/ios/*'] }
+   s.tvos.resource_bundle    = { 'AirshipResources tvOS' =>  ['AirshipKit/AirshipResources/common/*', 'AirshipKit/AirshipResources/tvos/*'] }
    s.source_files            = 'AirshipKit/AirshipKit/common/*.{h,m,mm}'
    s.ios.source_files        = 'AirshipKit/AirshipKit/ios/*.{h,m,mm}'
-   s.private_header_files    = 'AirshipKit/AirshipKit/*/*+Internal*.h', 'AirshipKit/AirshipKit/common/AirshipKit.h', 'AirshipKit/AirshipKit/common/AirshipLib.h'
+   s.tvos.source_files       = 'AirshipKit/AirshipKit/tvos/*.{h,m,mm}'
+   s.private_header_files    = 'AirshipKit/AirshipKit/*/*+Internal*.h'
 
    s.libraries               = 'z', 'sqlite3'
    s.frameworks              = 'UserNotifications', 'CFNetwork', 'CoreGraphics', 'Foundation', 'MobileCoreServices', 'Security', 'SystemConfiguration', 'UIKit', 'CoreTelephony', 'CoreLocation', 'CoreData'
