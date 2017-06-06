@@ -97,7 +97,6 @@
 #pragma mark -
 #pragma mark Quick Look methods
 
-#if !TARGET_OS_TV   // UIWebView is not available in tvOS
 - (BOOL)waitWithTimeoutInterval:(NSTimeInterval)interval pollingWebView:(UIWebView *)webView {
     NSDate *timeoutDate = [NSDate dateWithTimeIntervalSinceNow:interval];
     // The webView may not have begun loading at this point
@@ -135,6 +134,5 @@
     UIGraphicsEndImageContext();
     return img;
 }
-#endif
 
 @end

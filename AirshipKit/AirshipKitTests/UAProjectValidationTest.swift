@@ -36,86 +36,103 @@ class UAProjectValidationTest: XCTestCase {
         }
         return sourceRootURL!
     }
-    
-    func validateProjectForTarget(buildTarget : String, buildOS : String) {
+
+    func validateProjectForTarget(buildTarget : String, buildOS : String, targetSubFolder : String? = nil) {
         print("Validating files included in " + buildTarget + " for " + buildOS + " build.")
-        
+
         // get all of the files from the xcode project file for this target
         var filesFromProjectWithOptionals : Array<URL?> = []
-        
+
         for target in xcodeProject!.project.targets {
+            print(target.name)
             if (target.name != buildTarget) {
                 continue
             }
             for buildPhase in target.buildPhases {
                 if ((type(of:buildPhase) == XcodeEdit.PBXSourcesBuildPhase)
                     || (type(of:buildPhase) == XcodeEdit.PBXHeadersBuildPhase)) {
+
                     filesFromProjectWithOptionals += buildPhase.files.map {
                         return ($0.fileRef as? PBXFileReference)?.fullPath.url(with:convertSourceTreeFolderToURL)
                     }
+                    print("filesFromProjectWithOptionals.count = \(filesFromProjectWithOptionals.count)")
                 }
             }
         }
-        
+
         let filesFromProject : Array<URL> = filesFromProjectWithOptionals.flatMap{ $0 }
         
         // get all of the URLs files from the directories for this target
-        var filesFromDirectory : Array<URL> = []
+        var filesFromDirectories : Array<URL> = []
         let fileManager = FileManager.default
+        let targetSubFolder : String = (targetSubFolder == nil) ? buildTarget : targetSubFolder!
+        let targetRootURL = sourceRootURL?.appendingPathComponent(targetSubFolder)
         let subDirectoriesToInclude = ["common", buildOS]
-        fileManager.enumerator(atPath:sourceRootURL!.path)?.forEach({ (e) in
+        fileManager.enumerator(atPath:targetRootURL!.path)?.forEach({ (e) in
             if let e = e as? String, let url = URL(string: e) {
                 // ignore .DS_Store
                 if (e.contains(".DS_Store")) {
                     return
                 }
 
+                // ignore .keepme
+                if (e.contains(".keepme")) {
+                    return
+                }
+
                 let thisSubDirectory = url.deletingLastPathComponent().lastPathComponent
                 if (subDirectoriesToInclude.contains(thisSubDirectory)) {
-                    filesFromDirectory.append(sourceRootURL!.appendingPathComponent(e))
+                    filesFromDirectories.append(targetRootURL!.appendingPathComponent(e))
                 }
 
             }
         })
-        
+
         let filesFromProjectAsSet = Set(filesFromProject.map { $0.absoluteURL } )
-        let filesFromDirectoryAsSet = Set(filesFromDirectory.map { $0.absoluteURL } )
-        
-        if (filesFromProjectAsSet == filesFromDirectoryAsSet) {
-            print("Project and project directory match")
+        let filesFromFoldersesAsSet = Set(filesFromDirectories.map { $0.absoluteURL } )
+
+        if (filesFromProjectAsSet == filesFromFoldersesAsSet) {
+            print("Project and project folders match")
         } else {
-            print("Project and project directory do not match")
-            let filesMissingFromDirectory = filesFromProjectAsSet.subtracting(filesFromDirectoryAsSet)
-            print(filesMissingFromDirectory.count, " files missing from the directories")
-            for file in filesMissingFromDirectory {
-                print(file.path + " is not in directory")
+            print("Project and project folders do not match")
+            print("\(filesFromProjectAsSet.count) files in the project")
+            for file in filesFromProjectAsSet {
+                print(file.path + " is in the project")
             }
-            let filesMissingFromProject = filesFromDirectoryAsSet.subtracting(filesFromProjectAsSet)
+            let filesMissingFromFolders = filesFromProjectAsSet.subtracting(filesFromFoldersesAsSet)
+            print(filesMissingFromFolders.count, " files missing from the folders")
+            for file in filesMissingFromFolders {
+                print(file.path + " is not in the folders")
+            }
+            print("\(filesFromFoldersesAsSet.count) files in the folders")
+            for file in filesFromFoldersesAsSet {
+                print(file.path + " is in the folders")
+            }
+            let filesMissingFromProject = filesFromFoldersesAsSet.subtracting(filesFromProjectAsSet)
             print(filesMissingFromProject.count, " files missing from the project")
             for file in filesMissingFromProject {
                 print(file.path + " is not in project")
             }
-            XCTFail("Project and project directory do not match")
+            XCTFail("Project and project folders do not match")
         }
     }
-
-    func testAirshipKitTvOS() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        validateProjectForTarget(buildTarget: "AirshipKit tvOS", buildOS: "tvos")
-    }
-
 
     func testAirshipKit() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
         validateProjectForTarget(buildTarget: "AirshipKit", buildOS: "ios")
     }
-    
+
+    func testAirshipKitTvOS() {
+        // This is an example of a functional test case.
+        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        validateProjectForTarget(buildTarget: "AirshipKit tvOS", buildOS: "tvos", targetSubFolder: "AirshipKit")
+    }
+
     func testAirshipLib() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
-        validateProjectForTarget(buildTarget: "AirshipLib", buildOS: "ios")
+        validateProjectForTarget(buildTarget: "AirshipLib", buildOS: "ios", targetSubFolder: "AirshipKit")
     }
     
 }
