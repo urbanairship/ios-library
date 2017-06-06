@@ -609,6 +609,12 @@
                               @"predicate" : @"UAChannelCaptureActionPredicate"
                               },
                           @{
+                              @"altName" : @"^ra",
+                              @"class" : @"UARateAppAction",
+                              @"name" : @"rate_app_action",
+                              @"predicate" : @"UARateAppActionPredicate"
+                              },
+                          @{
                               @"altName" : @"^ef",
                               @"class" : @"UAEnableFeatureAction",
                               @"name" : @"enable_feature",
