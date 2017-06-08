@@ -46,14 +46,19 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
                 completionHandler([UAActionResult resultWithValue:url.absoluteString]);
             }
         }];
-    }  else if (![[UIApplication sharedApplication] openURL:url]) {
+
+    }
+#if !TARGET_OS_TV
+    else if (![[UIApplication sharedApplication] openURL:url]) {
         // Unable to open url
         NSError *error =  [NSError errorWithDomain:UAOpenExternalURLActionErrorDomain
                                               code:UAOpenExternalURLActionErrorCodeURLFailedToOpen
                                           userInfo:@{NSLocalizedDescriptionKey : @"Unable to open URL"}];
 
         completionHandler([UAActionResult resultWithError:error]);
-    } else {
+    }
+#endif
+    else {
         completionHandler([UAActionResult resultWithValue:url.absoluteString]);
     }
 }
@@ -66,7 +71,7 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
         url = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@%@", url.host, url.path]];
     } else if ([[url scheme] isEqualToString:@"tel"] || [[url scheme] isEqualToString:@"sms"]) {
 
-        NSString *decodedUrlString = [url.absoluteString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        NSString *decodedUrlString = [url.absoluteString stringByRemovingPercentEncoding];
         NSCharacterSet *characterSet = [[NSCharacterSet characterSetWithCharactersInString:@"+-.0123456789"] invertedSet];
         NSString *strippedNumber = [[decodedUrlString componentsSeparatedByCharactersInSet:characterSet] componentsJoinedByString:@""];
 

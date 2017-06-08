@@ -1,9 +1,13 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAPushReceivedEvent+Internal.h"
-#import "UAInboxUtils.h"
+
 #import "UAEvent+Internal.h"
 #import "UAAnalytics+Internal.h"
+
+#if !TARGET_OS_TV
+#import "UAInboxUtils.h"
+#endif
 
 @implementation UAPushReceivedEvent
 

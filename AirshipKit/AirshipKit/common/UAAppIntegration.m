@@ -4,24 +4,26 @@
 #import "UAirship.h"
 #import "UAAnalytics+Internal.h"
 #import "UAPush+Internal.h"
-#import "UAInbox+Internal.h"
-#import "UAInboxMessageList+Internal.h"
-#import "UAInAppMessaging+Internal.h"
 
 #import "UADeviceRegistrationEvent+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"
 #import "UAInteractiveNotificationEvent+Internal.h"
-
+#import "UANotificationAction.h"
+#import "UANotificationCategory.h"
 #import "UAActionArguments.h"
 #import "UAUtils.h"
 #import "UAConfig.h"
 #import "UAActionRunner+Internal.h"
 #import "UAActionRegistry+Internal.h"
+#import "UAInAppMessaging+Internal.h"
+
+#if !TARGET_OS_TV
 #import "UAInboxUtils.h"
-#import "UANotificationAction.h"
-#import "UANotificationCategory.h"
 #import "UAOverlayInboxMessageAction.h"
 #import "UADisplayInboxAction.h"
+#import "UAInbox+Internal.h"
+#import "UAInboxMessageList+Internal.h"
+#endif
 
 #define kUANotificationActionKey @"com.urbanairship.interactive_actions"
 

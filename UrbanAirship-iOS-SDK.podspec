@@ -20,7 +20,8 @@ Pod::Spec.new do |s|
    s.source_files            = 'AirshipKit/AirshipKit/common/*.{h,m,mm}'
    s.ios.source_files        = 'AirshipKit/AirshipKit/ios/*.{h,m,mm}'
    s.tvos.source_files       = 'AirshipKit/AirshipKit/tvos/*.{h,m,mm}'
-   s.private_header_files    = 'AirshipKit/AirshipKit/*/*+Internal*.h'
+   s.ios.private_header_files    = 'AirshipKit/AirshipKit/common/*+Internal*.h','AirshipKit/AirshipKit/ios/*+Internal*.h'
+   s.tvos.private_header_files   = 'AirshipKit/AirshipKit/common/*+Internal*.h','AirshipKit/AirshipKit/tvos/*+Internal*.h'
 
    s.libraries               = 'z', 'sqlite3'
    s.frameworks              = 'UserNotifications', 'CFNetwork', 'CoreGraphics', 'Foundation', 'MobileCoreServices', 'Security', 'SystemConfiguration', 'UIKit', 'CoreTelephony', 'CoreLocation', 'CoreData'

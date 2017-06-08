@@ -5,7 +5,10 @@
 #import "UAChannelRegistrar+Internal.h"
 #import "UAAPNSRegistrationProtocol+Internal.h"
 #import "UAAPNSRegistration+Internal.h"
+
+#if !TARGET_OS_TV
 #import "UALegacyAPNSRegistration+Internal.h"
+#endif
 
 @class UAPreferenceDataStore;
 @class UAConfig;

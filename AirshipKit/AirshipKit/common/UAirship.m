@@ -12,24 +12,27 @@
 #import "UAPush+Internal.h"
 #import "UAConfig.h"
 #import "UAApplicationMetrics.h"
-#import "UAInbox+Internal.h"
 #import "UAActionRegistry.h"
 #import "UALocation+Internal.h"
-
 #import "UAAutoIntegration+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAURLProtocol.h"
 #import "UAAppInitEvent+Internal.h"
 #import "UAAppExitEvent+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UAInboxAPIClient+Internal.h"
 #import "UAInAppMessaging+Internal.h"
-#import "UAChannelCapture.h"
-#import "UAActionJSDelegate.h"
-#import "UADefaultMessageCenter.h"
 #import "UANamedUser+Internal.h"
 #import "UAAutomation+Internal.h"
 #import "UAAppIntegration.h"
+
+#if !TARGET_OS_TV
+#import "UAInbox+Internal.h"
+#import "UAActionJSDelegate.h"
+#import "UAChannelCapture.h"
+#import "UADefaultMessageCenter.h"
+#import "UAInboxAPIClient+Internal.h"
+#endif
+
 
 // Exceptions
 NSString * const UAirshipTakeOffBackgroundThreadException = @"UAirshipTakeOffBackgroundThreadException";

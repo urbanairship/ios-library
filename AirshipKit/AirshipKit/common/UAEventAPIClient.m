@@ -7,9 +7,12 @@
 #import "UAirship.h"
 #import "UAPush+Internal.h"
 #import "UAUser.h"
-#import "UAInbox.h"
 #import "UALocation.h"
 #import "NSJSONSerialization+UAAdditions.h"
+
+#if !TARGET_OS_TV
+#import "UAInbox.h"
+#endif
 
 @implementation UAEventAPIClient
 

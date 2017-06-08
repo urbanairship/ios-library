@@ -10,9 +10,12 @@
 #import "UAInAppResolutionEvent+Internal.h"
 #import "UANotificationContent.h"
 #import "UANotificationResponse.h"
+
+#if !TARGET_OS_TV
 #import "UAInboxUtils.h"
 #import "UADisplayInboxAction.h"
 #import "UAOverlayInboxMessageAction.h"
+#endif
 
 NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID";
 

@@ -46,7 +46,9 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
     } else {
         id message = [arguments.metadata objectForKey:UAActionMetadataInboxMessageKey];
         if (message) {
+#if !TARGET_OS_TV
             [event setInteractionFromMessage:message];
+#endif
         }
     }
 

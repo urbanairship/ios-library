@@ -18,13 +18,15 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAConfig.h"
 #import "UANotificationCategory+Internal.h"
-#import "UAInboxUtils.h"
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UATagUtils+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"
 #import "UATagGroupsMutation+Internal.h"
 #import "UAPreferenceDataStore+InternalTagGroupsMutation.h"
 
+#if !TARGET_OS_TV
+#import "UAInboxUtils.h"
+#endif
 
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
