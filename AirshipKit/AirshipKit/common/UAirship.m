@@ -96,7 +96,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 #else
         self.remoteNotificationBackgroundModeEnabled = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIBackgroundModes"] containsObject:@"remote-notification"];
 #endif
-        
         self.dataStore = dataStore;
         self.config = config;
         self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:dataStore];
@@ -106,13 +105,15 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.sharedNamedUser = [UANamedUser namedUserWithPush:self.sharedPush config:config dataStore:dataStore];
         self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore];
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
-        self.sharedInAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.analytics dataStore:dataStore];
         self.sharedLocation = [UALocation locationWithAnalytics:self.analytics dataStore:dataStore];
         self.sharedAutomation = [UAAutomation automationWithConfig:config dataStore:dataStore];
         self.analytics.delegate = self.sharedAutomation;
 
-#if !TARGET_OS_TV   // Message center not supported on tvOS
-        // Inbox not supported on tvOS
+#if !TARGET_OS_TV
+        // IAP Nib not supported on tvOS
+        self.sharedInAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.analytics dataStore:dataStore];
+
+        // Message center not supported on tvOS
         self.sharedInbox = [UAInbox inboxWithUser:self.sharedInboxUser config:config dataStore:dataStore];
         // Not supporting Javascript in tvOS
         self.actionJSDelegate = [[UAActionJSDelegate alloc] init];

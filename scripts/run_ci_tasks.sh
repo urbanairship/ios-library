@@ -44,26 +44,26 @@ retryNumber=0
 xcrun xcodebuild -destination "${TEST_DESTINATION}" -workspace "${ROOT_PATH}/Airship.xcworkspace" -derivedDataPath "${DERIVED_DATA}" -scheme AirshipKitTests build-for-testing 2>&1 | tee "${ROOT_PATH}/test-output/XCTEST-LOGIC.out"
 while [ 1 ]
 do
-    if [ $retryNumber -lt $MAX_TEST_RETRIES ]
-    then
-        # except for the last retry, don't fail the job if the test fails
-        set +e
-    fi
-    xcrun xctool -destination "${TEST_DESTINATION}" -workspace "${ROOT_PATH}/Airship.xcworkspace" -derivedDataPath "${DERIVED_DATA}" -scheme AirshipKitTests run-tests -test-sdk ${TARGET_SDK} -reporter junit:${ROOT_PATH}/test-output/XCTOOL-LOGIC.xml
-    testResult=$?
-    echo "Logic test result = $testResult"
-    set -e
+if [ $retryNumber -lt $MAX_TEST_RETRIES ]
+then
+# except for the last retry, don't fail the job if the test fails
+set +e
+fi
+xcrun xctool -destination "${TEST_DESTINATION}" -workspace "${ROOT_PATH}/Airship.xcworkspace" -derivedDataPath "${DERIVED_DATA}" -scheme AirshipKitTests run-tests -test-sdk ${TARGET_SDK} -reporter junit:${ROOT_PATH}/test-output/XCTOOL-LOGIC.xml
+testResult=$?
+echo "Logic test result = $testResult"
+set -e
 
-    # if the tests passed or we've retried enough times, exit retry loop
-    if [ $testResult -eq 0 -o $retryNumber -gt $MAX_TEST_RETRIES ]
-    then
-        break
-    fi
-    
-    # wait before trying again
-    sleep $SECONDS_TO_WAIT_BEFORE_RETRY
+# if the tests passed or we've retried enough times, exit retry loop
+if [ $testResult -eq 0 -o $retryNumber -gt $MAX_TEST_RETRIES ]
+then
+break
+fi
 
-    retryNumber=$((retryNumber+1))
+# wait before trying again
+sleep $SECONDS_TO_WAIT_BEFORE_RETRY
+
+retryNumber=$((retryNumber+1))
 done
 
 # Run pod lib lint

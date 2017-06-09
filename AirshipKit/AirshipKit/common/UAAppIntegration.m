@@ -164,9 +164,10 @@
 
     UA_LINFO(@"Received notification response: %@", response);
 
-    // Clear any in-app messages
+    // Clear any in-app messages (nibs unavailable in tvOS)
+#if !TARGET_OS_TV
     [[UAirship inAppMessaging] handleNotificationResponse:response];
-
+#endif
     UASituation situation;
     NSDictionary *actionsPayload = [self actionsPayloadForNotificationContent:response.notificationContent actionIdentifier:response.actionIdentifier];
 
@@ -218,8 +219,10 @@
 
     UA_LINFO(@"Received notification: %@", notificationContent);
 
-    // Process any in-app messages
+    // Process any in-app messages (nibs unavailable in tvOS)
+#if !TARGET_OS_TV
     [[UAirship inAppMessaging] handleRemoteNotification:notificationContent];
+#endif
 
     UASituation situation = [UIApplication sharedApplication].applicationState == UIApplicationStateActive ? UASituationForegroundPush : UASituationBackgroundPush;
     NSDictionary *actionsPayload = [self actionsPayloadForNotificationContent:notificationContent actionIdentifier:nil];

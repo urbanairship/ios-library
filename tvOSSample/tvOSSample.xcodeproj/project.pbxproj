@@ -1,0 +1,579 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		99B3F4FF1ED641A1008F7C16 /* PushSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA35AA1B8D233A00950AD5 /* PushSettingsViewController.swift */; };
+		99B3F50A1ED7465B008F7C16 /* AddTagsDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99B3F5091ED7465B008F7C16 /* AddTagsDetailViewController.swift */; };
+		99B3F50C1ED760D2008F7C16 /* NamedUserDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99B3F50B1ED760D2008F7C16 /* NamedUserDetailViewController.swift */; };
+		99B68B911EE08E350038DAE3 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 99B68B901EE08E350038DAE3 /* AirshipConfig.plist */; };
+		99E302561EEA1C40008D5D68 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 99E302541EEA1C40008D5D68 /* Main.storyboard */; };
+		DF240A461E7DDDF000DD7DAE /* urban-airship-logo-pacific.png in Resources */ = {isa = PBXBuildFile; fileRef = 61449C931BE13A6E00240C63 /* urban-airship-logo-pacific.png */; };
+		DF240A471E7DDDF000DD7DAE /* urban-airship-pacific.png in Resources */ = {isa = PBXBuildFile; fileRef = 613420371BD6C3D800236A18 /* urban-airship-pacific.png */; };
+		DF3072301E7B4C2500C8BE50 /* AirshipKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DF1D0BFB1E7B4765001DBA9F /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		DF3072341E7B4CBC00C8BE50 /* PushHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61A672E71CA9F4B000BAF58A /* PushHandler.swift */; };
+		DF3072361E7B4EA200C8BE50 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D331BE7F29700D9E863 /* Roboto-Black.ttf */; };
+		DF3072371E7B4EA200C8BE50 /* Roboto-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D341BE7F29700D9E863 /* Roboto-BlackItalic.ttf */; };
+		DF3072381E7B4EA200C8BE50 /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D351BE7F29700D9E863 /* Roboto-Bold.ttf */; };
+		DF3072391E7B4EA200C8BE50 /* Roboto-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D361BE7F29700D9E863 /* Roboto-BoldItalic.ttf */; };
+		DF30723A1E7B4EA200C8BE50 /* Roboto-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D371BE7F29700D9E863 /* Roboto-Italic.ttf */; };
+		DF30723B1E7B4EA200C8BE50 /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D381BE7F29700D9E863 /* Roboto-Light.ttf */; };
+		DF30723C1E7B4EA200C8BE50 /* Roboto-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D391BE7F29700D9E863 /* Roboto-LightItalic.ttf */; };
+		DF30723D1E7B4EA200C8BE50 /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D3A1BE7F29700D9E863 /* Roboto-Medium.ttf */; };
+		DF30723E1E7B4EA200C8BE50 /* Roboto-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D3B1BE7F29700D9E863 /* Roboto-MediumItalic.ttf */; };
+		DF30723F1E7B4EA200C8BE50 /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D3C1BE7F29700D9E863 /* Roboto-Regular.ttf */; };
+		DF3072401E7B4EA200C8BE50 /* Roboto-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D3D1BE7F29700D9E863 /* Roboto-Thin.ttf */; };
+		DF3072411E7B4EA200C8BE50 /* Roboto-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D3E1BE7F29700D9E863 /* Roboto-ThinItalic.ttf */; };
+		DFEB1BD21E7A142100437516 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEB1BD11E7A142100437516 /* AppDelegate.swift */; };
+		DFEB1BDB1E7A142100437516 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DFEB1BDA1E7A142100437516 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CC53F76F1D9B12C9004D366C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CC899CD01D8B712D00A0CECC;
+			remoteInfo = AirshipLib;
+		};
+		CC53F7711D9B12C9004D366C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CC64F0541D8B77E3009CEF27;
+			remoteInfo = AirshipKitTests;
+		};
+		CC899CCA1D8B6FD600A0CECC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CC8999771D8B625500A0CECC;
+			remoteInfo = AirshipResources;
+		};
+		CCDA35C91B8D265B00950AD5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 494DD9571B0EB677009C134E;
+			remoteInfo = AirshipKit;
+		};
+		DF1D0BFA1E7B4765001DBA9F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DF6DD6561E7A1EB8000C281A;
+			remoteInfo = "AirshipKit tvOS";
+		};
+		DF1D0BFC1E7B4765001DBA9F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DF7E739E1E7B3F0A0039F65D;
+			remoteInfo = "AirshipResources tvOS";
+		};
+		DF3072531E7B54E500C8BE50 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = DF6DD4FE1E7A1EB8000C281A;
+			remoteInfo = "AirshipKit tvOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		DF3072331E7B4C2500C8BE50 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				DF3072301E7B4C2500C8BE50 /* AirshipKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		613420371BD6C3D800236A18 /* urban-airship-pacific.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "urban-airship-pacific.png"; path = "tvOSSample/urban-airship-pacific.png"; sourceTree = "<group>"; };
+		61449C931BE13A6E00240C63 /* urban-airship-logo-pacific.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "urban-airship-logo-pacific.png"; path = "tvOSSample/urban-airship-logo-pacific.png"; sourceTree = "<group>"; };
+		619A0D331BE7F29700D9E863 /* Roboto-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Black.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-Black.ttf"; sourceTree = "<group>"; };
+		619A0D341BE7F29700D9E863 /* Roboto-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-BlackItalic.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-BlackItalic.ttf"; sourceTree = "<group>"; };
+		619A0D351BE7F29700D9E863 /* Roboto-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Bold.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-Bold.ttf"; sourceTree = "<group>"; };
+		619A0D361BE7F29700D9E863 /* Roboto-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-BoldItalic.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-BoldItalic.ttf"; sourceTree = "<group>"; };
+		619A0D371BE7F29700D9E863 /* Roboto-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Italic.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-Italic.ttf"; sourceTree = "<group>"; };
+		619A0D381BE7F29700D9E863 /* Roboto-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Light.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-Light.ttf"; sourceTree = "<group>"; };
+		619A0D391BE7F29700D9E863 /* Roboto-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-LightItalic.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-LightItalic.ttf"; sourceTree = "<group>"; };
+		619A0D3A1BE7F29700D9E863 /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Medium.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-Medium.ttf"; sourceTree = "<group>"; };
+		619A0D3B1BE7F29700D9E863 /* Roboto-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-MediumItalic.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-MediumItalic.ttf"; sourceTree = "<group>"; };
+		619A0D3C1BE7F29700D9E863 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Regular.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-Regular.ttf"; sourceTree = "<group>"; };
+		619A0D3D1BE7F29700D9E863 /* Roboto-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Thin.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-Thin.ttf"; sourceTree = "<group>"; };
+		619A0D3E1BE7F29700D9E863 /* Roboto-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-ThinItalic.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-ThinItalic.ttf"; sourceTree = "<group>"; };
+		619A0D401BE81D7B00D9E863 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ./Images.xcassets; sourceTree = "<group>"; };
+		61A672E71CA9F4B000BAF58A /* PushHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PushHandler.swift; path = tvOSSample/PushHandler.swift; sourceTree = "<group>"; };
+		99B3F5091ED7465B008F7C16 /* AddTagsDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AddTagsDetailViewController.swift; path = tvOSSample/AddTagsDetailViewController.swift; sourceTree = "<group>"; };
+		99B3F50B1ED760D2008F7C16 /* NamedUserDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NamedUserDetailViewController.swift; path = tvOSSample/NamedUserDetailViewController.swift; sourceTree = "<group>"; };
+		99B68B901EE08E350038DAE3 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
+		99E3024E1EEA1C26008D5D68 /* tvOSSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = tvOSSample.entitlements; path = tvOSSample/tvOSSample.entitlements; sourceTree = SOURCE_ROOT; };
+		99E302551EEA1C40008D5D68 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = tvOSSample/Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		CCDA35AA1B8D233A00950AD5 /* PushSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PushSettingsViewController.swift; path = tvOSSample/PushSettingsViewController.swift; sourceTree = "<group>"; };
+		CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipKit.xcodeproj; path = ../AirshipKit/AirshipKit.xcodeproj; sourceTree = "<group>"; };
+		DFEB1BCF1E7A142100437516 /* tvOSSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tvOSSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DFEB1BD11E7A142100437516 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = tvOSSample/AppDelegate.swift; sourceTree = "<group>"; };
+		DFEB1BD81E7A142100437516 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		DFEB1BDA1E7A142100437516 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = tvOSSample/Assets.xcassets; sourceTree = "<group>"; };
+		DFEB1BDC1E7A142100437516 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = tvOSSample/Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DFEB1BCC1E7A142100437516 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		613420361BD6C09B00236A18 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				619A0D401BE81D7B00D9E863 /* Images.xcassets */,
+				619A0D3F1BE7F2A000D9E863 /* Roboto */,
+				61449C931BE13A6E00240C63 /* urban-airship-logo-pacific.png */,
+				613420371BD6C3D800236A18 /* urban-airship-pacific.png */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		619A0D3F1BE7F2A000D9E863 /* Roboto */ = {
+			isa = PBXGroup;
+			children = (
+				619A0D331BE7F29700D9E863 /* Roboto-Black.ttf */,
+				619A0D341BE7F29700D9E863 /* Roboto-BlackItalic.ttf */,
+				619A0D351BE7F29700D9E863 /* Roboto-Bold.ttf */,
+				619A0D361BE7F29700D9E863 /* Roboto-BoldItalic.ttf */,
+				619A0D371BE7F29700D9E863 /* Roboto-Italic.ttf */,
+				619A0D381BE7F29700D9E863 /* Roboto-Light.ttf */,
+				619A0D391BE7F29700D9E863 /* Roboto-LightItalic.ttf */,
+				619A0D3A1BE7F29700D9E863 /* Roboto-Medium.ttf */,
+				619A0D3B1BE7F29700D9E863 /* Roboto-MediumItalic.ttf */,
+				619A0D3C1BE7F29700D9E863 /* Roboto-Regular.ttf */,
+				619A0D3D1BE7F29700D9E863 /* Roboto-Thin.ttf */,
+				619A0D3E1BE7F29700D9E863 /* Roboto-ThinItalic.ttf */,
+			);
+			name = Roboto;
+			sourceTree = "<group>";
+		};
+		CCDA359A1B8D233A00950AD5 = {
+			isa = PBXGroup;
+			children = (
+				99E302541EEA1C40008D5D68 /* Main.storyboard */,
+				CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */,
+				DFEB1BD01E7A142100437516 /* tvOSSample */,
+				99B68B901EE08E350038DAE3 /* AirshipConfig.plist */,
+				CCDA35A41B8D233A00950AD5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CCDA35A41B8D233A00950AD5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DFEB1BCF1E7A142100437516 /* tvOSSample.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CCDA35C61B8D265B00950AD5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CCDA35CA1B8D265B00950AD5 /* AirshipKit.framework */,
+				CC899CCB1D8B6FD600A0CECC /* AirshipResources.bundle */,
+				DF1D0BFB1E7B4765001DBA9F /* AirshipKit.framework */,
+				DF1D0BFD1E7B4765001DBA9F /* AirshipResources tvOS.bundle */,
+				CC53F7701D9B12C9004D366C /* libUAirship.a */,
+				CC53F7721D9B12C9004D366C /* AirshipKitTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DFEB1BD01E7A142100437516 /* tvOSSample */ = {
+			isa = PBXGroup;
+			children = (
+				99E3024E1EEA1C26008D5D68 /* tvOSSample.entitlements */,
+				DFEB1BD11E7A142100437516 /* AppDelegate.swift */,
+				61A672E71CA9F4B000BAF58A /* PushHandler.swift */,
+				CCDA35AA1B8D233A00950AD5 /* PushSettingsViewController.swift */,
+				99B3F5091ED7465B008F7C16 /* AddTagsDetailViewController.swift */,
+				99B3F50B1ED760D2008F7C16 /* NamedUserDetailViewController.swift */,
+				613420361BD6C09B00236A18 /* Resources */,
+				DFEB1BD71E7A142100437516 /* Main.storyboard */,
+				DFEB1BDA1E7A142100437516 /* Assets.xcassets */,
+				DFEB1BDC1E7A142100437516 /* Info.plist */,
+			);
+			name = tvOSSample;
+			path = .;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DFEB1BCE1E7A142100437516 /* tvOSSample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DFEB1BDD1E7A142100437516 /* Build configuration list for PBXNativeTarget "tvOSSample" */;
+			buildPhases = (
+				DFEB1BCB1E7A142100437516 /* Sources */,
+				DFEB1BCC1E7A142100437516 /* Frameworks */,
+				DFEB1BCD1E7A142100437516 /* Resources */,
+				DF3072331E7B4C2500C8BE50 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DF3072541E7B54E500C8BE50 /* PBXTargetDependency */,
+			);
+			name = tvOSSample;
+			productName = tvOSSample;
+			productReference = DFEB1BCF1E7A142100437516 /* tvOSSample.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CCDA359B1B8D233A00950AD5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0820;
+				LastUpgradeCheck = 0830;
+				ORGANIZATIONNAME = "Urban Airship";
+				TargetAttributes = {
+					DFEB1BCE1E7A142100437516 = {
+						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = PGJV57GD94;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes.appletvos = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
+					};
+				};
+			};
+			buildConfigurationList = CCDA359E1B8D233A00950AD5 /* Build configuration list for PBXProject "tvOSSample" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				de,
+				es,
+				fr,
+				it,
+				ja,
+				pt,
+				"zh-Hans",
+				"zh-Hant",
+			);
+			mainGroup = CCDA359A1B8D233A00950AD5;
+			productRefGroup = CCDA35A41B8D233A00950AD5 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = CCDA35C61B8D265B00950AD5 /* Products */;
+					ProjectRef = CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				DFEB1BCE1E7A142100437516 /* tvOSSample */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		CC53F7701D9B12C9004D366C /* libUAirship.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libUAirship.a;
+			remoteRef = CC53F76F1D9B12C9004D366C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CC53F7721D9B12C9004D366C /* AirshipKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipKitTests.xctest;
+			remoteRef = CC53F7711D9B12C9004D366C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CC899CCB1D8B6FD600A0CECC /* AirshipResources.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipResources.bundle;
+			remoteRef = CC899CCA1D8B6FD600A0CECC /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CCDA35CA1B8D265B00950AD5 /* AirshipKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipKit.framework;
+			remoteRef = CCDA35C91B8D265B00950AD5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DF1D0BFB1E7B4765001DBA9F /* AirshipKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipKit.framework;
+			remoteRef = DF1D0BFA1E7B4765001DBA9F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DF1D0BFD1E7B4765001DBA9F /* AirshipResources tvOS.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "AirshipResources tvOS.bundle";
+			remoteRef = DF1D0BFC1E7B4765001DBA9F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DFEB1BCD1E7A142100437516 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				99E302561EEA1C40008D5D68 /* Main.storyboard in Resources */,
+				DFEB1BDB1E7A142100437516 /* Assets.xcassets in Resources */,
+				99B68B911EE08E350038DAE3 /* AirshipConfig.plist in Resources */,
+				DF240A461E7DDDF000DD7DAE /* urban-airship-logo-pacific.png in Resources */,
+				DF240A471E7DDDF000DD7DAE /* urban-airship-pacific.png in Resources */,
+				DF3072361E7B4EA200C8BE50 /* Roboto-Black.ttf in Resources */,
+				DF3072371E7B4EA200C8BE50 /* Roboto-BlackItalic.ttf in Resources */,
+				DF3072381E7B4EA200C8BE50 /* Roboto-Bold.ttf in Resources */,
+				DF3072391E7B4EA200C8BE50 /* Roboto-BoldItalic.ttf in Resources */,
+				DF30723A1E7B4EA200C8BE50 /* Roboto-Italic.ttf in Resources */,
+				DF30723B1E7B4EA200C8BE50 /* Roboto-Light.ttf in Resources */,
+				DF30723C1E7B4EA200C8BE50 /* Roboto-LightItalic.ttf in Resources */,
+				DF30723D1E7B4EA200C8BE50 /* Roboto-Medium.ttf in Resources */,
+				DF30723E1E7B4EA200C8BE50 /* Roboto-MediumItalic.ttf in Resources */,
+				DF30723F1E7B4EA200C8BE50 /* Roboto-Regular.ttf in Resources */,
+				DF3072401E7B4EA200C8BE50 /* Roboto-Thin.ttf in Resources */,
+				DF3072411E7B4EA200C8BE50 /* Roboto-ThinItalic.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DFEB1BCB1E7A142100437516 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DFEB1BD21E7A142100437516 /* AppDelegate.swift in Sources */,
+				DF3072341E7B4CBC00C8BE50 /* PushHandler.swift in Sources */,
+				99B3F50A1ED7465B008F7C16 /* AddTagsDetailViewController.swift in Sources */,
+				99B3F4FF1ED641A1008F7C16 /* PushSettingsViewController.swift in Sources */,
+				99B3F50C1ED760D2008F7C16 /* NamedUserDetailViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DF3072541E7B54E500C8BE50 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "AirshipKit tvOS";
+			targetProxy = DF3072531E7B54E500C8BE50 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		99E302541EEA1C40008D5D68 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				99E302551EEA1C40008D5D68 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		DFEB1BD71E7A142100437516 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DFEB1BD81E7A142100437516 /* Base */,
+			);
+			name = Main.storyboard;
+			path = tvOSSample;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		CCDA35B51B8D233A00950AD5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "$(inherited) x86_64 i386";
+			};
+			name = Debug;
+		};
+		CCDA35B61B8D233A00950AD5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "$(inherited) x86_64 i386";
+			};
+			name = Release;
+		};
+		DFEB1BDE1E7A142100437516 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CODE_SIGN_ENTITLEMENTS = tvOSSample/tvOSSample.entitlements;
+				DEVELOPMENT_TEAM = PGJV57GD94;
+				INFOPLIST_FILE = "$(SRCROOT)/tvOSSample/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		DFEB1BDF1E7A142100437516 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CODE_SIGN_ENTITLEMENTS = tvOSSample/tvOSSample.entitlements;
+				DEVELOPMENT_TEAM = PGJV57GD94;
+				INFOPLIST_FILE = "$(SRCROOT)/tvOSSample/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CCDA359E1B8D233A00950AD5 /* Build configuration list for PBXProject "tvOSSample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CCDA35B51B8D233A00950AD5 /* Debug */,
+				CCDA35B61B8D233A00950AD5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DFEB1BDD1E7A142100437516 /* Build configuration list for PBXNativeTarget "tvOSSample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DFEB1BDE1E7A142100437516 /* Debug */,
+				DFEB1BDF1E7A142100437516 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CCDA359B1B8D233A00950AD5 /* Project object */;
+}
