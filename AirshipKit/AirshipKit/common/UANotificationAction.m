@@ -55,6 +55,7 @@
     return [[self alloc] initWithIdentifier:identifier title:title options:options];
 }
 
+#if !TARGET_OS_TV    // UIUserNotificationAction and UNNotificationAction not available on tvOS
 - (UIUserNotificationAction *)asUIUserNotificationAction {
     UIMutableUserNotificationAction *uiAction = [[UIMutableUserNotificationAction alloc] init];
     uiAction.identifier = self.identifier;
@@ -94,5 +95,6 @@
 
     return equalIdentifier && equalTitle && equalOptions;
 }
+#endif
 
 @end

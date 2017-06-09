@@ -19,19 +19,30 @@ NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-backup";
 
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSURL *libraryDirectoryURL = [[fileManager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
-    NSURL *directoryURL = [libraryDirectoryURL URLByAppendingPathComponent:UAManagedContextStoreDirectory];
+    NSURL *cachesDirectoryURL = [[fileManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
+    NSURL *libraryStoreDirectoryURL = [libraryDirectoryURL URLByAppendingPathComponent:UAManagedContextStoreDirectory];
+    NSURL *cachesStoreDirectoryURL = [cachesDirectoryURL URLByAppendingPathComponent:UAManagedContextStoreDirectory];
 
+    NSURL *storeURL;
+    
     // Create the store directory if it doesn't exist
-    if (![fileManager fileExistsAtPath:[directoryURL path]]) {
+    if ([fileManager fileExistsAtPath:[libraryStoreDirectoryURL path]]) {
+        storeURL = [libraryStoreDirectoryURL URLByAppendingPathComponent:storeName];
+    } else if ([fileManager fileExistsAtPath:[cachesStoreDirectoryURL path]]) {
+        storeURL = [cachesStoreDirectoryURL URLByAppendingPathComponent:storeName];
+    } else {
         NSError *error = nil;
-        if (![fileManager createDirectoryAtURL:directoryURL withIntermediateDirectories:YES attributes:nil error:&error]) {
-            UA_LERR(@"Error creating store directory %@: %@", [directoryURL lastPathComponent], error);
+        if ([fileManager createDirectoryAtURL:libraryStoreDirectoryURL withIntermediateDirectories:YES attributes:nil error:&error]) {
+            storeURL = [libraryStoreDirectoryURL URLByAppendingPathComponent:storeName];
+            [UAUtils addSkipBackupAttributeToItemAtURL:libraryStoreDirectoryURL];
+       } else if ([fileManager createDirectoryAtURL:cachesStoreDirectoryURL withIntermediateDirectories:YES attributes:nil error:&error]) {
+            storeURL = [cachesStoreDirectoryURL URLByAppendingPathComponent:storeName];
+           [UAUtils addSkipBackupAttributeToItemAtURL:cachesStoreDirectoryURL];
         } else {
-            [UAUtils addSkipBackupAttributeToItemAtURL:directoryURL];
+            UA_LERR(@"Error creating store directory %@: %@", [cachesStoreDirectoryURL lastPathComponent], error);
+            return nil;
         }
     }
-
-    NSURL *storeURL = [directoryURL URLByAppendingPathComponent:storeName];
 
     [moc performBlock:^{
 

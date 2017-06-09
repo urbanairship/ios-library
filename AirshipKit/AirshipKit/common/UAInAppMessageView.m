@@ -120,6 +120,7 @@
                 break;
         }
 
+#if !TARGET_OS_TV   // No status bar in tvOS
         // If the message is at the top, listen for changes to the status bar frame
         if (position == UAInAppMessagePositionTop) {
 
@@ -127,6 +128,7 @@
 
             [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarFrameDidChange:) name:UIApplicationDidChangeStatusBarFrameNotification object:nil];
         }
+#endif
     }
 
     return self;
@@ -139,6 +141,7 @@
     self.maskView.backgroundColor = backgroundColor;
 }
 
+#if !TARGET_OS_TV   // No status bar in tvOS
 - (void)updateStatusBarConstraints {
 
     CGRect statusBarFrame = [UIApplication sharedApplication].statusBarFrame;
@@ -157,6 +160,7 @@
         [self updateStatusBarConstraints];
     });
 }
+#endif
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];

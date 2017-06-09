@@ -182,7 +182,7 @@
         binding.identifier = notificationAction.identifier;
 
         // choose the situation that matches the corresponding notificationAction's activation mode
-        if ((notificationAction.options & UNNotificationActionOptionForeground) > 0) {
+        if ((notificationAction.options & UANotificationActionOptionForeground) > 0) {
             binding.situation = UASituationForegroundInteractiveButton;
         } else {
             binding.situation = UASituationBackgroundInteractiveButton;

@@ -1,6 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import <WebKit/WebKit.h>
 
 #import "UAWKWebViewDelegate.h"

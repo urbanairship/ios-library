@@ -3,8 +3,11 @@
 #import "UACustomEvent+Internal.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
-#import "UAInboxMessage.h"
 #import "NSJSONSerialization+UAAdditions.h"
+
+#if !TARGET_OS_TV
+#import "UAInboxMessage.h"
+#endif
 
 @interface UACustomEvent()
 @property(nonatomic, strong) NSMutableDictionary *mutableProperties;
@@ -176,13 +179,14 @@ NSString *const UACustomEventTemplateTypeKey = @"template_type";
     return isValid;
 }
 
-
+#if !TARGET_OS_TV
 - (void)setInteractionFromMessage:(UAInboxMessage *)message {
     if (message) {
         self.interactionID = message.messageID;
         self.interactionType = kUAInteractionMCRAP;
     }
 }
+#endif
 
 -(NSDictionary *)properties {
     return [self.mutableProperties copy];

@@ -1,9 +1,13 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAPushReceivedEvent+Internal.h"
-#import "UAInboxUtils.h"
+
 #import "UAEvent+Internal.h"
 #import "UAAnalytics+Internal.h"
+
+#if !TARGET_OS_TV
+#import "UAInboxUtils.h"
+#endif
 
 @implementation UAPushReceivedEvent
 
@@ -12,10 +16,12 @@
 
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
 
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
     NSString *richPushID = [UAInboxUtils inboxMessageIDFromNotification:notification];
     if (richPushID) {
         [data setValue:richPushID forKey:@"rich_push_id"];
     }
+#endif
 
     // Add the std push ID, if present, else send "MISSING_SEND_ID"
     NSString *pushID = [notification objectForKey:@"_"];

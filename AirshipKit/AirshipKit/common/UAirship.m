@@ -12,24 +12,27 @@
 #import "UAPush+Internal.h"
 #import "UAConfig.h"
 #import "UAApplicationMetrics.h"
-#import "UAInbox+Internal.h"
 #import "UAActionRegistry.h"
 #import "UALocation+Internal.h"
-
 #import "UAAutoIntegration+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAURLProtocol.h"
 #import "UAAppInitEvent+Internal.h"
 #import "UAAppExitEvent+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UAInboxAPIClient+Internal.h"
 #import "UAInAppMessaging+Internal.h"
-#import "UAChannelCapture.h"
-#import "UAActionJSDelegate.h"
-#import "UADefaultMessageCenter.h"
 #import "UANamedUser+Internal.h"
 #import "UAAutomation+Internal.h"
 #import "UAAppIntegration.h"
+
+#if !TARGET_OS_TV
+#import "UAInbox+Internal.h"
+#import "UAActionJSDelegate.h"
+#import "UAChannelCapture.h"
+#import "UADefaultMessageCenter.h"
+#import "UAInboxAPIClient+Internal.h"
+#endif
+
 
 // Exceptions
 NSString * const UAirshipTakeOffBackgroundThreadException = @"UAirshipTakeOffBackgroundThreadException";
@@ -87,30 +90,37 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 - (instancetype)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
+#if TARGET_OS_TV   // remote-notification background mode not supported in tvOS
+        // REVISIT - Replace this with a try-except block on objectForInfoDictionaryKey:@"UIBackgroundModes" - assume yes if no UIBackgroundModes but tvOS?
+        self.remoteNotificationBackgroundModeEnabled = YES;
+#else
         self.remoteNotificationBackgroundModeEnabled = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIBackgroundModes"] containsObject:@"remote-notification"];
-
+#endif
         self.dataStore = dataStore;
         self.config = config;
-
-        self.actionJSDelegate = [[UAActionJSDelegate alloc] init];
         self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:dataStore];
         self.actionRegistry = [UAActionRegistry defaultRegistry];
-
         self.sharedPush = [UAPush pushWithConfig:config dataStore:dataStore];
         self.sharedInboxUser = [UAUser userWithPush:self.sharedPush config:config dataStore:dataStore];
-        self.sharedInbox = [UAInbox inboxWithUser:self.sharedInboxUser config:config dataStore:dataStore];
         self.sharedNamedUser = [UANamedUser namedUserWithPush:self.sharedPush config:config dataStore:dataStore];
         self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore];
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
-
-        self.sharedInAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.analytics dataStore:dataStore];
         self.sharedLocation = [UALocation locationWithAnalytics:self.analytics dataStore:dataStore];
-
         self.sharedAutomation = [UAAutomation automationWithConfig:config dataStore:dataStore];
         self.analytics.delegate = self.sharedAutomation;
+
+#if !TARGET_OS_TV
+        // IAP Nib not supported on tvOS
+        self.sharedInAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.analytics dataStore:dataStore];
+
+        // Message center not supported on tvOS
+        self.sharedInbox = [UAInbox inboxWithUser:self.sharedInboxUser config:config dataStore:dataStore];
+        // Not supporting Javascript in tvOS
+        self.actionJSDelegate = [[UAActionJSDelegate alloc] init];
+        // UIPasteboard is not available in tvOS
         self.channelCapture = [UAChannelCapture channelCaptureWithConfig:config push:self.sharedPush dataStore:self.dataStore];
 
-        // Only create the default message center if running iOS 8 and above
+       // Only create the default message center if running iOS 8 and above
         if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){8, 0, 0}]) {
             if ([UAirship resources]) {
                 self.sharedDefaultMessageCenter = [UADefaultMessageCenter messageCenterWithConfig:self.config];
@@ -118,6 +128,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                 UA_LINFO(@"Unable to initialize default message center: AirshipResources is missing");
             }
         }
+#endif
     }
 
     return self;
@@ -175,6 +186,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     UA_LINFO(@"UAirship Take Off! Lib Version: %@ App Key: %@ Production: %@.",
              [UAirshipVersion get], config.appKey, config.inProduction ?  @"YES" : @"NO");
 
+    
     // Data store
     UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", config.appKey]];
     [dataStore migrateUnprefixedKeys:@[UALibraryVersion]];
@@ -232,10 +244,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         if (![[UAirshipVersion get] isEqualToString:previousVersion]) {
             [dataStore setObject:[UAirshipVersion get] forKey:UALibraryVersion];
 
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
             // Temp workaround for MB-1047 where model changes to the inbox
             // will drop the inbox and the last-modified-time will prevent
             // repopulating the messages.
             [sharedAirship_.sharedInbox.client clearLastModifiedTime];
+#endif
 
             if (previousVersion) {
                 UA_LINFO(@"Urban Airship library version changed from %@ to %@.", previousVersion, [UAirshipVersion get]);
@@ -287,6 +301,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         return;
     }
 
+#if !TARGET_OS_TV    // UIApplicationLaunchOptionsRemoteNotificationKey not available on tvOS
     NSDictionary *remoteNotification = [notification.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
 
     // Required before the app init event to track conversion push ID
@@ -294,6 +309,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         [sharedAirship_.analytics launchedFromNotification:remoteNotification];
     }
 
+#endif
     // Init event
     [sharedAirship_.analytics addEvent:[UAAppInitEvent event]];
 
@@ -345,6 +361,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return sharedAirship_.sharedPush;
 }
 
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
 + (UAInbox *)inbox {
     return sharedAirship_.sharedInbox;
 }
@@ -352,6 +369,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 + (UAUser *)inboxUser {
     return sharedAirship_.sharedInboxUser;
 }
+#endif
 
 + (UAInAppMessaging *)inAppMessaging {
     return sharedAirship_.sharedInAppMessaging;
@@ -378,8 +396,11 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     dispatch_once(&onceToken, ^{
         // Don't assume that we are within the main bundle
         NSBundle *containingBundle = [NSBundle bundleForClass:self];
-        // If AirshipResources is not present, the corresponding URL will be nil
+#if !TARGET_OS_TV
         NSURL *resourcesBundleURL = [containingBundle URLForResource:@"AirshipResources" withExtension:@"bundle"];
+#else
+        NSURL *resourcesBundleURL = [containingBundle URLForResource:@"AirshipResources tvOS" withExtension:@"bundle"];
+#endif
         if (resourcesBundleURL) {
             resourcesBundle_ = [NSBundle bundleWithURL:resourcesBundleURL];
         }
@@ -416,8 +437,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
             }
         }
     } else {
+#if !TARGET_OS_TV   // remote-notification background mode not supported in tvOS
         UA_LIMPERR(@"Application is not configured for background notifications. "
                  @"Please enable remote notifications in the application's background modes.");
+#endif
     }
 
     // -ObjC linker flag is set

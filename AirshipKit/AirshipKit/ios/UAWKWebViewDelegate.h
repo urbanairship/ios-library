@@ -23,6 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <UIKit/UIKit.h>
 #import <WebKit/WebKit.h>
 
 @protocol UAWKWebViewDelegate <WKNavigationDelegate>

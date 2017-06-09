@@ -48,6 +48,8 @@ NS_ASSUME_NONNULL_BEGIN
                           categories:(NSSet<UANotificationCategory *> *)categories;
 @optional
 
+
+#if !TARGET_OS_TV
 /**
  * Required for iOS 8 & 9.
  *
@@ -58,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param notificationSettings The resulting notificaiton settings.
  */
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings;
-
+#endif
 @end
 
 NS_ASSUME_NONNULL_END

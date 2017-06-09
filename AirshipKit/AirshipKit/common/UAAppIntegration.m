@@ -4,24 +4,26 @@
 #import "UAirship.h"
 #import "UAAnalytics+Internal.h"
 #import "UAPush+Internal.h"
-#import "UAInbox+Internal.h"
-#import "UAInboxMessageList+Internal.h"
-#import "UAInAppMessaging+Internal.h"
 
 #import "UADeviceRegistrationEvent+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"
 #import "UAInteractiveNotificationEvent+Internal.h"
-
+#import "UANotificationAction.h"
+#import "UANotificationCategory.h"
 #import "UAActionArguments.h"
 #import "UAUtils.h"
 #import "UAConfig.h"
 #import "UAActionRunner+Internal.h"
 #import "UAActionRegistry+Internal.h"
+#import "UAInAppMessaging+Internal.h"
+
+#if !TARGET_OS_TV
 #import "UAInboxUtils.h"
-#import "UANotificationAction.h"
-#import "UANotificationCategory.h"
 #import "UAOverlayInboxMessageAction.h"
 #import "UADisplayInboxAction.h"
+#import "UAInbox+Internal.h"
+#import "UAInboxMessageList+Internal.h"
+#endif
 
 #define kUANotificationActionKey @"com.urbanairship.interactive_actions"
 
@@ -44,9 +46,11 @@
     [[UAirship push] application:application didFailToRegisterForRemoteNotificationsWithError:error];
 }
 
+#if !TARGET_OS_TV   // UIUserNotificationSettings is not available on tvOS
 + (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
     [[UAirship push] application:application didRegisterUserNotificationSettings:notificationSettings];
 }
+#endif
 
 + (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     switch(application.applicationState) {
@@ -94,6 +98,7 @@
 
 }
 
+#if !TARGET_OS_TV   // Delegate methods unavailable in tvOS
 + (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)())handler {
     [self application:application handleActionWithIdentifier:identifier forRemoteNotification:userInfo withResponseInfo:nil completionHandler:handler];
 }
@@ -107,6 +112,7 @@
        handler();
    }];
 }
+#endif
 
 
 #pragma mark -
@@ -128,6 +134,7 @@
     }
 }
 
+#if !TARGET_OS_TV   // UNNotificationResponse not available on tvOS
 + (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)())completionHandler {
     UANotificationResponse *airshipResponse = [UANotificationResponse notificationResponseWithUNNotificationResponse:response];
 
@@ -135,6 +142,7 @@
         completionHandler();
     }];
 }
+#endif
 
 #pragma mark -
 #pragma mark Notification handling
@@ -156,9 +164,10 @@
 
     UA_LINFO(@"Received notification response: %@", response);
 
-    // Clear any in-app messages
+    // Clear any in-app messages (nibs unavailable in tvOS)
+#if !TARGET_OS_TV
     [[UAirship inAppMessaging] handleNotificationResponse:response];
-
+#endif
     UASituation situation;
     NSDictionary *actionsPayload = [self actionsPayloadForNotificationContent:response.notificationContent actionIdentifier:response.actionIdentifier];
 
@@ -175,7 +184,7 @@
             return;
         }
 
-        if (notificationAction.options & UNNotificationActionOptionForeground) {
+        if (notificationAction.options & UANotificationActionOptionForeground) {
             [[UAirship shared].analytics launchedFromNotification:response.notificationContent.notificationInfo];
             situation = UASituationForegroundInteractiveButton;
         } else {
@@ -210,8 +219,10 @@
 
     UA_LINFO(@"Received notification: %@", notificationContent);
 
-    // Process any in-app messages
+    // Process any in-app messages (nibs unavailable in tvOS)
+#if !TARGET_OS_TV
     [[UAirship inAppMessaging] handleRemoteNotification:notificationContent];
+#endif
 
     UASituation situation = [UIApplication sharedApplication].applicationState == UIApplicationStateActive ? UASituationForegroundPush : UASituationBackgroundPush;
     NSDictionary *actionsPayload = [self actionsPayloadForNotificationContent:notificationContent actionIdentifier:nil];
@@ -223,6 +234,7 @@
     __block NSUInteger expectedCount = 1;
     __block NSMutableArray *fetchResults = [NSMutableArray array];
 
+#if !TARGET_OS_TV   // Message Center not supported on tvOS
     // Refresh the message center, call completion block when finished
     if ([UAInboxUtils inboxMessageIDFromNotification:notificationContent.notificationInfo]) {
         expectedCount = 2;
@@ -249,6 +261,7 @@
             });
         }];
     }
+#endif
 
     // Run the actions
     [UAActionRunner runActionsWithActionValues:actionsPayload
@@ -281,6 +294,7 @@
     if (!actionIdentifier || [actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
         NSMutableDictionary *mutableActionsPayload = [NSMutableDictionary dictionaryWithDictionary:notificationContent.notificationInfo];
 
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
         NSString *messageID = [UAInboxUtils inboxMessageIDFromNotification:notificationContent.notificationInfo];
         if (messageID) {
             NSSet *inboxActionNames = [NSSet setWithArray:@[kUADisplayInboxActionDefaultRegistryAlias,
@@ -294,6 +308,7 @@
                 mutableActionsPayload[kUADisplayInboxActionDefaultRegistryAlias] = messageID;
             }
         }
+#endif
 
         return [mutableActionsPayload copy];
     }

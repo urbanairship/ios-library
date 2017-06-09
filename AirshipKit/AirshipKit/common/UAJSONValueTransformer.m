@@ -1,8 +1,11 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UAInboxMessageData+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAJSONValueTransformer+Internal.h"
+
+#if !TARGET_OS_TV
+#import "UAInboxMessageData+Internal.h"
+#endif
 
 @implementation UAJSONValueTransformer
 

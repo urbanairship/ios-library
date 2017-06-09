@@ -24,7 +24,11 @@
     NSMutableDictionary *channel = [NSMutableDictionary dictionary];
     [channel setValue:@"ios" forKey:kUAChannelDeviceTypeKey];
     [channel setValue:[NSNumber numberWithBool:self.optedIn] forKey:kUAChannelOptInKey];
+#if TARGET_OS_TV    // REVISIT - do we need to force self.backgroundEnabled to YES?? - may be a hacking artifact
+    [channel setValue:[NSNumber numberWithBool:YES] forKey:kUABackgroundEnabledJSONKey];
+#else
     [channel setValue:[NSNumber numberWithBool:self.backgroundEnabled] forKey:kUABackgroundEnabledJSONKey];
+#endif
     [channel setValue:self.pushAddress forKey:kUAChannelPushAddressKey];
 
     self.alias = [self.alias stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];

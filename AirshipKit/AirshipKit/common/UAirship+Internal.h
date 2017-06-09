@@ -61,10 +61,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong) UAUser *sharedInboxUser;
 
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
 /**
  * The inbox.
  */
 @property (nonatomic, strong) UAInbox *sharedInbox;
+#endif
 
 /**
  * The in-app messaging manager.

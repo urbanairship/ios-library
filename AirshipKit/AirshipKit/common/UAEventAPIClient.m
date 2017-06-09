@@ -7,9 +7,12 @@
 #import "UAirship.h"
 #import "UAPush+Internal.h"
 #import "UAUser.h"
-#import "UAInbox.h"
 #import "UALocation.h"
 #import "NSJSONSerialization+UAAdditions.h"
+
+#if !TARGET_OS_TV
+#import "UAInbox.h"
+#endif
 
 @implementation UAEventAPIClient
 
@@ -72,7 +75,9 @@
 
         // Urban Airship identifiers
         [builder setValue:[UAUtils deviceID] forHeader:@"X-UA-ID"];
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
         [builder setValue:[UAirship inboxUser].username forHeader:@"X-UA-User-ID"];
+#endif
         [builder setValue:[UAirship push].channelID forHeader:@"X-UA-Channel-ID"];
         [builder setValue:self.config.appKey forHeader:@"X-UA-App-Key"];
 

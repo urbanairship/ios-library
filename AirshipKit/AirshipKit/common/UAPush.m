@@ -18,13 +18,15 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAConfig.h"
 #import "UANotificationCategory+Internal.h"
-#import "UAInboxUtils.h"
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UATagUtils+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"
 #import "UATagGroupsMutation+Internal.h"
 #import "UAPreferenceDataStore+InternalTagGroupsMutation.h"
 
+#if !TARGET_OS_TV
+#import "UAInboxUtils.h"
+#endif
 
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
@@ -84,12 +86,15 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     if (self) {
         self.dataStore = dataStore;
 
+#if TARGET_OS_TV    // legacy APNS registration not available on tvOS
+        self.pushRegistration = [[UAAPNSRegistration alloc] init];
+#else
         if (![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
             self.pushRegistration = [[UALegacyAPNSRegistration alloc] init];
         } else {
             self.pushRegistration = [[UAAPNSRegistration alloc] init];
         }
-
+#endif
         self.pushRegistration.registrationDelegate = self;
 
         self.channelTagRegistrationEnabled = YES;
@@ -101,7 +106,11 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         self.requireSettingsAppToDisableUserNotifications = YES;
         self.allowUnregisteringUserNotificationTypes = YES;
 
-        self.notificationOptions = UANotificationOptionSound|UANotificationOptionBadge|UANotificationOptionAlert;
+        self.notificationOptions = UANotificationOptionBadge;
+#if !TARGET_OS_TV
+        self.notificationOptions = self.notificationOptions|UANotificationOptionSound|UANotificationOptionAlert;
+#endif
+
         self.registrationBackgroundTask = UIBackgroundTaskInvalid;
 
         self.channelRegistrar = [UAChannelRegistrar channelRegistrarWithConfig:config];
@@ -129,11 +138,12 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
                                                      name:UIApplicationDidEnterBackgroundNotification
                                                    object:[UIApplication sharedApplication]];
 
+#if !TARGET_OS_TV    // UIApplicationBackgroundRefreshStatusDidChangeNotification not available on tvOS
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(applicationBackgroundRefreshStatusChanged)
                                                      name:UIApplicationBackgroundRefreshStatusDidChangeNotification
                                                    object:[UIApplication sharedApplication]];
-
+#endif
 
         // Do not remove migratePushSettings call from init. It needs to be run
         // prior to allowing the application to set defaults.
@@ -623,6 +633,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     [self updateAuthorizedNotificationTypes];
 }
 
+#if !TARGET_OS_TV    // UIBackgroundRefreshStatusAvailable not available on tvOS
 - (void)applicationBackgroundRefreshStatusChanged {
     UA_LTRACE(@"Background refresh status changed.");
 
@@ -632,6 +643,13 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         [self updateRegistration];
     }
 }
+
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
+    if ([self.pushRegistration respondsToSelector:@selector(application:didRegisterUserNotificationSettings:)]) {
+        [self.pushRegistration application:application didRegisterUserNotificationSettings:notificationSettings];
+    }
+}
+#endif
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     self.deviceToken = [UAUtils deviceTokenStringFromDeviceToken:deviceToken];
@@ -659,19 +677,15 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     });
 }
 
-- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
-    if ([self.pushRegistration respondsToSelector:@selector(application:didRegisterUserNotificationSettings:)]) {
-        [self.pushRegistration application:application didRegisterUserNotificationSettings:notificationSettings];
-    }
-}
-
 #pragma mark -
 #pragma mark UA Registration Methods
 
 - (UAChannelRegistrationPayload *)createChannelPayload {
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     payload.deviceID = [UAUtils deviceID];
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
     payload.userID = [UAirship inboxUser].username;
+#endif
 
     if (self.pushTokenRegistrationEnabled) {
         payload.pushAddress = self.deviceToken;
@@ -717,9 +731,11 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     }
 
     UIApplication *app = [UIApplication sharedApplication];
+#if !TARGET_OS_TV    // UIBackgroundRefreshStatusAvailable not available on tvOS
     if (app.backgroundRefreshStatus != UIBackgroundRefreshStatusAvailable) {
         return NO;
     }
+#endif
 
     return app.isRegisteredForRemoteNotifications;
 }
@@ -1034,12 +1050,14 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
                     }
                 }];
             } else { // iOS 8 & 9
+#if !TARGET_OS_TV    // UIUserNotificationTypeNone, currentUserNotificationSettings not available on tvOS
                 if ([[UIApplication sharedApplication] currentUserNotificationSettings].types != UIUserNotificationTypeNone) {
 
                     NSLog(@"%lu", (unsigned long)[[UIApplication sharedApplication] currentUserNotificationSettings].types);
                     UA_LDEBUG(@"Migrating userPushNotificationEnabled to YES because application was already registered for notification types");
                     [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
                 }
+#endif
             }
         }
     }

@@ -153,10 +153,12 @@
               [response description]);
 }
 
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
 + (NSString *)userAuthHeaderString {
     return [UAUtils authHeaderStringWithName:[UAirship inboxUser].username
                                     password:[UAirship inboxUser].password];
 }
+#endif
 
 + (NSString *)appAuthHeaderString {
     return [UAUtils authHeaderStringWithName:[UAirship shared].config.appKey

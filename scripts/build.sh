@@ -2,7 +2,7 @@
 
 JAZZY_VERSION=0.7.5
 SCRIPT_DIRECTORY=`dirname "$0"`
-ROOT_PATH=`dirname "${0}"`/../
+ROOT_PATH=`dirname "${0}"`/..
 TEMP_DIR=$(mktemp -d /tmp/build-XXXXX)
 DESTINATION=$ROOT_PATH/build
 STAGING=$DESTINATION/staging
@@ -14,9 +14,9 @@ rm -rf $DESTINATION
 mkdir -p $DESTINATION
 mkdir -p $STAGING
 
-#######################
-# Build resource bundle
-#######################
+########################
+# Build resource bundles
+########################
 
 xcrun xcodebuild -configuration "Release" \
 -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
@@ -29,6 +29,34 @@ SYMROOT="${TEMP_DIR}/AirshipResources" \
 OBJROOT="${TEMP_DIR}/AirshipResources/obj" \
 BUILD_ROOT="${TEMP_DIR}/AirshipResources" \
 TARGET_BUILD_DIR="${TEMP_DIR}/AirshipResources/Release-iphoneos"
+
+xcrun xcodebuild -configuration "Release" \
+-project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
+-target "AirshipResources tvOS" \
+-sdk "appletvos" \
+clean build \
+ONLY_ACTIVE_ARCH=NO \
+BUILD_DIR="${TEMP_DIR}/AirshipResources tvOS" \
+SYMROOT="${TEMP_DIR}/AirshipResources tvOS" \
+OBJROOT="${TEMP_DIR}/AirshipResources tvOS/obj" \
+BUILD_ROOT="${TEMP_DIR}/AirshipResources tvOS" \
+TARGET_BUILD_DIR="${TEMP_DIR}/AirshipResources tvOS/Release-appletvos"
+
+##################
+# Build frameworks
+##################
+
+# iphoneOS
+xcrun xcodebuild -configuration "Release" \
+-project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
+-target "AirshipKit" \
+-sdk "iphoneos" \
+
+## tvOS
+xcrun xcodebuild -configuration "Release" \
+-project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
+-target "AirshipKit tvOS" \
+-sdk "appletvos" \
 
 ######################
 # Build static library
@@ -70,7 +98,7 @@ xcrun -sdk iphoneos lipo -create -output "${TEMP_DIR}/AirshipLib/libUAirship-${V
 xcrun -sdk iphoneos lipo "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" -verify_arch armv7 armv7s i386 x86_64 arm64
 
 # Verify bitcode is enabled in the fat binary
-otool -l "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" | grep __LLVM 
+otool -l "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" | grep __LLVM
 
 ############
 # Build docs
@@ -78,8 +106,8 @@ otool -l "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" | grep __LLVM
 
 # Make sure Jazzy is installed
 if [ `gem list -i jazzy --version ${JAZZY_VERSION}` == 'false' ]; then
-  echo "Installing jazzy"
-  gem install jazzy -v $JAZZY_VERSION
+echo "Installing jazzy"
+gem install jazzy -v $JAZZY_VERSION
 fi
 
 ruby -S jazzy _${JAZZY_VERSION}_ -v
@@ -91,7 +119,7 @@ ruby -S jazzy _${JAZZY_VERSION}_ \
 --module AirshipKit  \
 --module-version $VERSION \
 --framework-root $ROOT_PATH/AirshipKit \
---umbrella-header $ROOT_PATH/AirshipKit/AirshipKit/common/AirshipLib.h \
+--umbrella-header $ROOT_PATH/AirshipKit/AirshipKit/ios/AirshipLib.h \
 --output $STAGING/Documentation/AirshipKit \
 --sdk iphonesimulator \
 --skip-undocumented \
@@ -160,7 +188,7 @@ echo "Xcode version: `xcrun xcodebuild -version | tr '\r\n' ' '`" >> $BUILD_INFO
 
 # Additional build info
 if test -f $ROOT_PATH/BUILD_INFO;
-    then cat $ROOT_PATH/BUILD_INFO >> $BUILD_INFO;
+then cat $ROOT_PATH/BUILD_INFO >> $BUILD_INFO;
 fi
 
 # Clean up any unwanted files
@@ -183,7 +211,3 @@ cd -
 
 # Move zip
 mv $STAGING/libUAirship-$VERSION.zip $DESTINATION
-
-
-
-

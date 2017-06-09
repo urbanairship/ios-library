@@ -110,12 +110,14 @@ extern NSString *const UACustomEventInteractionTypeKey;
 /// @name Custom Event Management
 ///---------------------------------------------------------------------------------------
 
+#if !TARGET_OS_TV
 /**
  * Sets the custom event's interaction type and ID from a UAInboxMessage.
  * @param message The UAInboxMessage to set the custom event's interaction type
  * and ID from.
  */
 - (void)setInteractionFromMessage:(UAInboxMessage *)message;
+#endif
 
 /**
  * Sets a custom BOOL property.

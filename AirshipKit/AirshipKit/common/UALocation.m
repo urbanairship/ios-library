@@ -101,12 +101,14 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
         return;
     }
 
+#if !TARGET_OS_TV   // significantLocationChangeMonitoringAvailable not available on tvOS
     // Check if significant location updates are available
     if (![CLLocationManager significantLocationChangeMonitoringAvailable]) {
         UA_LTRACE("Significant location updates unavailable.");
         [self stopLocationUpdates];
         return;
     }
+#endif
 
     // Check if location updates are allowed in the background if we are in the background
     if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateActive && !self.isBackgroundLocationUpdatesAllowed) {
@@ -118,7 +120,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
     switch ([CLLocationManager authorizationStatus]) {
         case kCLAuthorizationStatusDenied:
         case kCLAuthorizationStatusRestricted:
-            UA_LTRACE("Authorizatoin denied. Unable to start location updates.");
+            UA_LTRACE("Authorization denied. Unable to start location updates.");
             [self stopLocationUpdates];
             break;
 
@@ -142,7 +144,9 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 
     UA_LINFO("Stopping location updates.");
 
+#if !TARGET_OS_TV   // REVISIT - significant location updates not available on tvOS - should we use regular location updates?
     [self.locationManager stopMonitoringSignificantLocationChanges];
+#endif
     self.locationUpdatesStarted = NO;
 
     id strongDelegate = self.delegate;
@@ -159,7 +163,9 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 
     UA_LINFO("Starting location updates.");
 
+#if !TARGET_OS_TV   // REVISIT - significant location updates not available on tvOS - should we use regular location updates?
     [self.locationManager startMonitoringSignificantLocationChanges];
+#endif
     self.locationUpdatesStarted = YES;
 
     id strongDelegate = self.delegate;
@@ -191,7 +197,11 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
     }
 
     UA_LINFO("Requesting location authorization.");
+#if TARGET_OS_TV    // requestAlwaysAuthorization is not available on tvOS
+    [self.locationManager requestWhenInUseAuthorization];
+#else
     [self.locationManager requestAlwaysAuthorization];
+#endif
 }
 
 

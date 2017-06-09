@@ -5,26 +5,30 @@
 #import "UAOpenExternalURLAction.h"
 #import "UAAddTagsAction.h"
 #import "UARemoveTagsAction.h"
-#import "UALandingPageAction.h"
 #import "UAirship.h"
 #import "UAApplicationMetrics.h"
 #import "UAAddCustomEventAction.h"
-#import "UAShareAction.h"
-#import "UADisplayInboxAction.h"
-#import "UAPasteboardAction.h"
-#import "UAOverlayInboxMessageAction.h"
 #import "UACancelSchedulesAction.h"
 #import "UAScheduleAction.h"
 #import "UAFetchDeviceInfoAction.h"
-#import "UAChannelCaptureAction.h"
 #import "UAEnableFeatureAction.h"
+
+#if !TARGET_OS_TV
+#import "UADisplayInboxAction.h"
+#import "UAPasteboardAction.h"
+#import "UAOverlayInboxMessageAction.h"
+#import "UAShareAction.h"
+#import "UALandingPageAction.h"
+#import "UAChannelCaptureAction.h"
 #import "UAWalletAction.h"
 #import "UADeepLinkAction.h"
 
-#import "UALandingPageActionPredicate+Internal.h"
-#import "UAFetchDeviceInfoActionPredicate+Internal.h"
-#import "UAOverlayInboxMessageActionPredicate+Internal.h"
 #import "UAShareActionPredicate+Internal.h"
+#import "UAOverlayInboxMessageActionPredicate+Internal.h"
+#import "UALandingPageActionPredicate+Internal.h"
+#endif
+
+#import "UAFetchDeviceInfoActionPredicate+Internal.h"
 #import "UAAddCustomEventActionPredicate+Internal.h"
 #import "UATagsActionPredicate+Internal.h"
 
@@ -328,7 +332,7 @@ NSString *const defaultsPredicateClassKey = @"predicate";
 }
 
 - (void)registerDefaultActions {
-    NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"UADefaultActions" ofType:@"plist"];
+    NSString *path = [[UAirship resources] pathForResource:@"UADefaultActions" ofType:@"plist"];
 
     if (!path) {
         return;

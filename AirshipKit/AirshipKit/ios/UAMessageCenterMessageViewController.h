@@ -1,5 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
+#import <UIKit/UIKit.h>
 #import <WebKit/WebKit.h>
 #import "UAWKWebViewDelegate.h"
 #import "UAMessageCenterMessageViewProtocol.h"

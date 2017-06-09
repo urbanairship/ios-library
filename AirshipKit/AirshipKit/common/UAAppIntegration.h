@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @name User Notification Delegate hooks
 ///---------------------------------------------------------------------------------------
 
+#if !TARGET_OS_TV   // UNNotificationResponse not available in tvOS
 /**
  * Must be called by the UNUserNotificationDelegate's
  * userNotificationCenter:willPresentNotification:withCompletionHandler.
@@ -31,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)userNotificationCenter:(UNUserNotificationCenter *)center
    didReceiveNotificationResponse:(UNNotificationResponse *)response
             withCompletionHandler:(void(^)())completionHandler;
+#endif
 
 /**
  * Must be called by the UNUserNotificationDelegate's
@@ -79,6 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
 
+#if !TARGET_OS_TV   // UIUserNotificationSettings not available on tvOS
 /**
  * Must be called by the UIApplicationDelegate's
  * application:didRegisterUserNotificationSettings:.
@@ -89,7 +92,9 @@ NS_ASSUME_NONNULL_BEGIN
  * @param notificationSettings The user notification settings.
  */
 + (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings;
+#endif
 
+#if !TARGET_OS_TV   // Delegate methods unavailable in tvOS
 /**
  * Must be called by the UIApplicationDelegate's
  * application:handleActionWithIdentifier:forRemoteNotification:completionHandler
@@ -116,6 +121,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param handler The completion handler
  */
 + (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo withResponseInfo:(nullable NSDictionary *)responseInfo completionHandler:(void (^)())handler;
+#endif
 
 @end
 

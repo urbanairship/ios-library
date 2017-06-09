@@ -5,7 +5,10 @@
 #import "UAChannelRegistrar+Internal.h"
 #import "UAAPNSRegistrationProtocol+Internal.h"
 #import "UAAPNSRegistration+Internal.h"
+
+#if !TARGET_OS_TV
 #import "UALegacyAPNSRegistration+Internal.h"
+#endif
 
 @class UAPreferenceDataStore;
 @class UAConfig;
@@ -204,10 +207,12 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
  */
 - (void)applicationDidEnterBackground;
 
+#if !TARGET_OS_TV    // UIBackgroundRefreshStatusAvailable not available on tvOS
 /**
  * Used to update channel registration when the background refresh status changes.
  */
 - (void)applicationBackgroundRefreshStatusChanged;
+#endif
 
 /**
  * Called when the channel registrar failed to register.
@@ -319,7 +324,7 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
  * @param error An NSError object that encapsulates information why registration did not succeed.
  */
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error;
-
+#if !TARGET_OS_TV
 /**
  * Called by the UIApplicationDelegate's application:didRegisterUserNotificationSettings:
  * so UAPush can forward the delegate call to its registration delegate.
@@ -328,7 +333,7 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
  * @param notificationSettings The resulting notification settings.
  */
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings;
-
+#endif
 
 @end
 

@@ -6,7 +6,6 @@
 #import "UAEventManager+Internal.h"
 #import "UAConfig.h"
 #import "UAEvent.h"
-#import "UAInboxUtils.h"
 #import "UAUtils.h"
 
 #import "UAAppBackgroundEvent+Internal.h"
@@ -16,6 +15,10 @@
 #import "UAAssociateIdentifiersEvent+Internal.h"
 #import "UAAssociatedIdentifiers.h"
 #import "UACustomEvent.h"
+
+#if !TARGET_OS_TV
+#import "UAInboxUtils.h"
+#endif
 
 #define kUAAssociatedIdentifiers @"UAAssociatedIdentifiers"
 
@@ -197,10 +200,12 @@
     // If the server did not send the metadata, then set it to nil
     self.conversionPushMetadata = [notification objectForKey:kUAPushMetadata] ?: nil;
 
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
     NSString *richPushID = [UAInboxUtils inboxMessageIDFromNotification:notification];
     if (richPushID) {
         self.conversionRichPushID = richPushID;
     }
+#endif
 }
 
 - (void)startSession {

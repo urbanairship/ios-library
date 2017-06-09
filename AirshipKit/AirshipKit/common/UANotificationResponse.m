@@ -7,7 +7,9 @@
 @property (nonatomic, copy) NSString *actionIdentifier;
 @property (nonatomic, copy) NSString *responseText;
 @property (nonatomic, strong) UANotificationContent *notificationContent;
+#if !TARGET_OS_TV   // UNNotificationResponse unavailable in tvOS
 @property (nonatomic, strong) UNNotificationResponse *response;
+#endif
 @end
 
 @implementation UANotificationResponse
@@ -29,6 +31,7 @@ NSString *const UANotificationDismissActionIdentifier = @"com.apple.UNNotificati
     return self;
 }
 
+#if !TARGET_OS_TV   // UNNotificationResponse unavailable in tvOS
 - (instancetype)initWithNotificationResponse:(UNNotificationResponse *)response {
     self = [super init];
 
@@ -45,6 +48,7 @@ NSString *const UANotificationDismissActionIdentifier = @"com.apple.UNNotificati
 
     return self;
 }
+#endif
 
 + (instancetype)notificationResponseWithNotificationInfo:(NSDictionary *)notificationInfo
                                         actionIdentifier:(NSString *)actionIdentifier responseText:(NSString *)responseText {
@@ -53,10 +57,11 @@ NSString *const UANotificationDismissActionIdentifier = @"com.apple.UNNotificati
                                                           responseText:responseText];
 }
 
+#if !TARGET_OS_TV   // UNNotificationResponse unavailable in tvOS
 + (instancetype)notificationResponseWithUNNotificationResponse:(UNNotificationResponse *)response {
     return [[UANotificationResponse alloc] initWithNotificationResponse:response];
 }
-
+#endif
 
 - (NSString *)description {
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];

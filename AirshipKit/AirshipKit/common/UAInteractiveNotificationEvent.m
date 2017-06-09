@@ -24,7 +24,11 @@ const NSUInteger UAInteractiveNotificationEventCharacterLimit = 255;
 
     UAInteractiveNotificationEvent *event = [[self alloc] init];
 
+#if TARGET_OS_TV   // application launch to the foreground (UNNotificationActionOptionForeground) not supported in tvOS
+    BOOL foreground = NO;
+#else
     BOOL foreground = (action.options & UNNotificationActionOptionForeground) > 0;
+#endif
 
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
     [data setValue:category forKey:@"button_group"];

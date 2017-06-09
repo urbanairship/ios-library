@@ -13,13 +13,15 @@
 #import "UAActionRunner+Internal.h"
 #import "UAActionRegistry+Internal.h"
 #import "UADeviceRegistrationEvent+Internal.h"
+#import "UAConfig.h"
+#import "UANotificationContent.h"
+
+#if !TARGET_OS_TV
 #import "UAInbox+Internal.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxUtils.h"
-#import "UAConfig.h"
-#import "UANotificationContent.h"
 #import "UADisplayInboxAction.h"
-
+#endif
 
 @interface UAAppIntegrationTest : XCTestCase
 @property (nonatomic, strong) id mockedApplication;

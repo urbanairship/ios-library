@@ -65,11 +65,13 @@
 - (instancetype)initWithUNNotification:(UNNotification *)notification {
     self = [super init];
     if (self) {
+#if !TARGET_OS_TV   // body, title, category and userInfo not available on tvOS
         self.alertBody = notification.request.content.body;
         self.alertTitle = notification.request.content.title;
-        self.badge = notification.request.content.badge;
         self.categoryIdentifier = notification.request.content.categoryIdentifier;
         self.notificationInfo = notification.request.content.userInfo;
+#endif
+        self.badge = notification.request.content.badge;
         self.notification = notification;
 
 
