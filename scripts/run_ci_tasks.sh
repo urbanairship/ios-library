@@ -49,7 +49,7 @@ do
         # except for the last retry, don't fail the job if the test fails
         set +e
     fi
-    xcrun xctool -destination "${TEST_DESTINATION}" -workspace "${ROOT_PATH}/Airship.xcworkspace" -derivedDataPath "${DERIVED_DATA}" -scheme AirshipKitTests run-tests -test-sdk ${TARGET_SDK} -reporter junit:${ROOT_PATH}/test-output/XCTOOL-LOGIC.xml
+    xcrun xcodebuild -destination "${TEST_DESTINATION}" -workspace "${ROOT_PATH}/Airship.xcworkspace" -derivedDataPath "${DERIVED_DATA}" -scheme AirshipKitTests test | tee -a "${ROOT_PATH}/test-output/XCTEST-LOGIC.out"
     testResult=$?
     echo "Logic test result = $testResult"
     set -e
