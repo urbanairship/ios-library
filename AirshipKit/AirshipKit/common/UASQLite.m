@@ -3,7 +3,7 @@
 #import "UASQLite+Internal.h"
 #import "UAGlobal.h"
 
-#import "sqlite3.h"
+#import <sqlite3.h>
 
 @interface UASQLite ()
 @property(nonatomic, assign) sqlite3 *db;
