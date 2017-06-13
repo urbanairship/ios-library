@@ -170,6 +170,87 @@
 }
 
 /*
+ * Tests proxying application:performFetchWithCompletionHandler
+ */
+- (void)testProxyBackgroundAppRefresh {
+    // Add an implementation for application:didReceiveRemoteNotification:fetchCompletionHandler: that
+    // calls an expected fetch result
+    __block UIBackgroundFetchResult appDelegateResult;
+    __block BOOL appDelegateCalled;
+
+    [self addImplementationForProtocol:@protocol(UIApplicationDelegate) selector:@selector(application:performFetchWithCompletionHandler:)
+                                 block:^(id self, UIApplication *application, void (^completion)(UIBackgroundFetchResult) ) {
+
+                                     appDelegateCalled = YES;
+
+                                     // Verify the parameters
+                                     XCTAssertEqualObjects([UIApplication sharedApplication], application);
+                                     XCTAssertNotNil(completion);
+                                     completion(appDelegateResult);
+                                 }];
+
+    // Add an implementation for UAPush that calls an expected fetch result
+    __block UIBackgroundFetchResult fetchResult;
+    __block BOOL fetchCalled;
+
+    void (^fetchBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
+        fetchCalled = YES;
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^handler)(UIBackgroundFetchResult result) = (__bridge void (^)(UIBackgroundFetchResult))arg;
+        handler(fetchResult);
+    };
+
+    [[[self.mockAppIntegration stub] andDo:fetchBlock] application:self.mockApplication
+                                 performFetchWithCompletionHandler:OCMOCK_ANY];
+
+    // Proxy the delegate
+    [UAAutoIntegration integrate];
+
+    // Iterate through the results to verify we combine them properly
+    UIBackgroundFetchResult allBackgroundFetchResults[] = { UIBackgroundFetchResultNoData,
+        UIBackgroundFetchResultFailed, UIBackgroundFetchResultNewData };
+
+    // The expected matrix from the different combined values of allBackgroundFetchResults indicies
+    UIBackgroundFetchResult expectedResults[3][3] = {
+        {UIBackgroundFetchResultNoData, UIBackgroundFetchResultFailed, UIBackgroundFetchResultNewData},
+        {UIBackgroundFetchResultFailed, UIBackgroundFetchResultFailed, UIBackgroundFetchResultNewData},
+        {UIBackgroundFetchResultNewData, UIBackgroundFetchResultNewData, UIBackgroundFetchResultNewData}
+    };
+
+    for (int i = 0; i < 3; i++) {
+        // Set the push result
+        fetchResult = allBackgroundFetchResults[i];
+
+        for (int j = 0; j < 3; j++) {
+
+            appDelegateCalled = NO;
+            fetchCalled = NO;
+
+            XCTestExpectation *callBackFinished = [self expectationWithDescription:@"Callback called"];
+            UIBackgroundFetchResult expectedResult = expectedResults[i][j];
+
+            // Set the app delegate result
+            appDelegateResult = allBackgroundFetchResults[j];
+
+            // Verify that the expected value is returned from combining the two results
+            [self.delegate application:[UIApplication sharedApplication]
+     performFetchWithCompletionHandler:^(UIBackgroundFetchResult result){
+                    XCTAssertEqual(expectedResult, result);
+                    [callBackFinished fulfill];
+                }];
+
+            // Wait for the test expectations
+            [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+                XCTAssertTrue(fetchCalled);
+                XCTAssertTrue(appDelegateCalled);
+            }];
+        }
+    }
+
+}
+
+/*
  * Tests proxying application:didReceiveRemoteNotification:fetchCompletionHandler
  * responds with the combined value of the app delegate and UAAppHooks.
  */

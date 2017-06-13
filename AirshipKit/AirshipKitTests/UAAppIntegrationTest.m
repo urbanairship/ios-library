@@ -1195,4 +1195,27 @@
     
 }
 
+/**
+ * Test background app refresh results in a call to update authorized notification types
+ */
+- (void)testDidReceiveBackgroundAppRefresh {
+    self.testOSMajorVersion = 10;
+
+    __block BOOL handlerCalled = false;
+
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+
+
+    [[self.mockedPush expect] updateAuthorizedNotificationTypes];
+
+
+    [UAAppIntegration application:self.mockedApplication performFetchWithCompletionHandler:^(UIBackgroundFetchResult result) {
+
+        handlerCalled = true;
+    }];
+
+
+    [self.mockedPush verify];
+    XCTAssertTrue(handlerCalled);
+}
 @end

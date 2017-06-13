@@ -55,6 +55,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Must be called by the UIApplicationDelegate's
+ * application:performFetchWithCompletionHandler:.
+ *
+ * @param application The application instance.
+ * @param completionHandler completionHandler The completion handler.
+ */
++ (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
+
+/**
+ * Must be called by the UIApplicationDelegate's
  * application:didRegisterForRemoteNotificationsWithDeviceToken:.
  *
  * @param application The application instance.

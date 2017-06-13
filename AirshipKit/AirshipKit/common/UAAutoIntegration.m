@@ -78,6 +78,10 @@ static dispatch_once_t onceToken;
                              protocol:@protocol(UIApplicationDelegate)
                        implementation:(IMP)ApplicationDidReceiveRemoteNotificationFetchCompletionHandler];
 
+    // Background app refresh
+    [self.appDelegateSwizzler swizzle:@selector(application:performFetchWithCompletionHandler:)
+                             protocol:@protocol(UIApplicationDelegate)
+                       implementation:(IMP)ApplicationPerformFetchWithCompletionHandler];
 
 #if !TARGET_OS_TV  // Delegate methods not supported on tvOS
     // iOS 8 & 9 Only
@@ -293,6 +297,65 @@ void UserNotificationCenterSetDelegate(id self, SEL _cmd, id<UNUserNotificationC
 
 #pragma mark -
 #pragma mark App delegate (UIApplicationDelegate) swizzled methods
+
+void ApplicationPerformFetchWithCompletionHandler(id self,
+                                                  SEL _cmd,
+                                                  UIApplication *application,
+                                                  void (^handler)(UIBackgroundFetchResult)) {
+    __block UIBackgroundFetchResult fetchResult = UIBackgroundFetchResultNoData;
+
+    __block NSUInteger resultCount = 0;
+    __block NSUInteger expectedCount = 1;
+
+    IMP original = [instance_.appDelegateSwizzler originalImplementation:_cmd];
+    if (original) {
+        expectedCount = 2;
+        __block BOOL completionHandlerCalled = NO;
+
+        void (^completionHandler)(UIBackgroundFetchResult) = ^(UIBackgroundFetchResult result) {
+
+            // Make sure the app's completion handler is called on the main queue
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (completionHandlerCalled) {
+                    UA_LERR(@"Completion handler called multiple times.");
+                    return;
+                }
+
+                completionHandlerCalled = YES;
+                resultCount++;
+
+                // Merge the UIBackgroundFetchResults. If final fetchResult is not already UIBackgroundFetchResultNewData
+                // and the current result is not UIBackgroundFetchResultNoData, then set the fetchResult to result
+                // (should be either UIBackgroundFetchFailed or UIBackgroundFetchResultNewData)
+                if (fetchResult != UIBackgroundFetchResultNewData && result != UIBackgroundFetchResultNoData) {
+                    fetchResult = result;
+                }
+
+                if (expectedCount == resultCount) {
+                    handler(fetchResult);
+                }
+            });
+        };
+
+        // Call the original implementation
+        ((void(*)(id, SEL, UIApplication *, void (^)(UIBackgroundFetchResult)))original)(self, _cmd, application, completionHandler);
+    }
+
+    [UAAppIntegration application:application performFetchWithCompletionHandler:^(UIBackgroundFetchResult result){
+        resultCount++;
+
+        // Merge the UIBackgroundFetchResults. If final fetchResult is not already UIBackgroundFetchResultNewData
+        // and the current result is not UIBackgroundFetchResultNoData, then set the fetchResult to result
+        // (should be either UIBackgroundFetchFailed or UIBackgroundFetchResultNewData)
+        if (fetchResult != UIBackgroundFetchResultNewData && result != UIBackgroundFetchResultNoData) {
+            fetchResult = result;
+        }
+
+        if (expectedCount == resultCount) {
+            handler(result);
+        }
+    }];
+}
 
 void ApplicationDidRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _cmd, UIApplication *application, NSData *deviceToken) {
     [UAAppIntegration application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
