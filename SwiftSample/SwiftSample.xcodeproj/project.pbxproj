@@ -87,13 +87,6 @@
 			remoteGlobalIDString = DF7E739E1E7B3F0A0039F65D;
 			remoteInfo = "AirshipResources tvOS";
 		};
-		99B68B891EE08D730038DAE3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 99B68B7A1EE08D730038DAE3 /* tvOSSample.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DFEB1BCF1E7A142100437516;
-			remoteInfo = tvOSSample;
-		};
 		CC53F76F1D9B12C9004D366C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */;
@@ -203,7 +196,6 @@
 		61A672E71CA9F4B000BAF58A /* PushHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushHandler.swift; sourceTree = "<group>"; };
 		61AD10D41BE7D88B0004C886 /* TagsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagsTableViewController.swift; sourceTree = "<group>"; };
 		61E392371CC81EEA00D994E3 /* UAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UAMessageCenterDefaultStyle.plist; sourceTree = "<group>"; };
-		99B68B7A1EE08D730038DAE3 /* tvOSSample.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = tvOSSample.xcodeproj; path = ../tvOSSample/tvOSSample.xcodeproj; sourceTree = "<group>"; };
 		CC0E3A061D2DAA4900DAF1E5 /* SwiftSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = SwiftSample.entitlements; sourceTree = "<group>"; };
 		CCDA35A31B8D233A00950AD5 /* SwiftSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCDA35A61B8D233A00950AD5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -294,18 +286,9 @@
 			name = Roboto;
 			sourceTree = "<group>";
 		};
-		99B68B7B1EE08D730038DAE3 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				99B68B8A1EE08D730038DAE3 /* tvOSSample.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		CCDA359A1B8D233A00950AD5 = {
 			isa = PBXGroup;
 			children = (
-				99B68B7A1EE08D730038DAE3 /* tvOSSample.xcodeproj */,
 				49251DDE1D6F987600EED4BD /* AirshipAppExtensions.xcodeproj */,
 				CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */,
 				CCDA35A51B8D233A00950AD5 /* SwiftSample */,
@@ -461,10 +444,6 @@
 					ProductGroup = CCDA35C61B8D265B00950AD5 /* Products */;
 					ProjectRef = CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */;
 				},
-				{
-					ProductGroup = 99B68B7B1EE08D730038DAE3 /* Products */;
-					ProjectRef = 99B68B7A1EE08D730038DAE3 /* tvOSSample.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -501,13 +480,6 @@
 			fileType = wrapper.cfbundle;
 			path = "AirshipResources tvOS.bundle";
 			remoteRef = 99B68B861EE08D730038DAE3 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		99B68B8A1EE08D730038DAE3 /* tvOSSample.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = tvOSSample.app;
-			remoteRef = 99B68B891EE08D730038DAE3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CC53F7701D9B12C9004D366C /* libUAirship.a */ = {
