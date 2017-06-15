@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		996A03D31EF1BA6A003424E0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DFEB1BD71E7A142100437516 /* Main.storyboard */; };
 		99B3F4FF1ED641A1008F7C16 /* PushSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA35AA1B8D233A00950AD5 /* PushSettingsViewController.swift */; };
 		99B3F50A1ED7465B008F7C16 /* AddTagsDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99B3F5091ED7465B008F7C16 /* AddTagsDetailViewController.swift */; };
 		99B3F50C1ED760D2008F7C16 /* NamedUserDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99B3F50B1ED760D2008F7C16 /* NamedUserDetailViewController.swift */; };
 		99B68B911EE08E350038DAE3 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 99B68B901EE08E350038DAE3 /* AirshipConfig.plist */; };
-		99E302561EEA1C40008D5D68 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 99E302541EEA1C40008D5D68 /* Main.storyboard */; };
 		DF240A461E7DDDF000DD7DAE /* urban-airship-logo-pacific.png in Resources */ = {isa = PBXBuildFile; fileRef = 61449C931BE13A6E00240C63 /* urban-airship-logo-pacific.png */; };
 		DF240A471E7DDDF000DD7DAE /* urban-airship-pacific.png in Resources */ = {isa = PBXBuildFile; fileRef = 613420371BD6C3D800236A18 /* urban-airship-pacific.png */; };
 		DF3072301E7B4C2500C8BE50 /* AirshipKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DF1D0BFB1E7B4765001DBA9F /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -113,13 +113,12 @@
 		619A0D3C1BE7F29700D9E863 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Regular.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-Regular.ttf"; sourceTree = "<group>"; };
 		619A0D3D1BE7F29700D9E863 /* Roboto-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Thin.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-Thin.ttf"; sourceTree = "<group>"; };
 		619A0D3E1BE7F29700D9E863 /* Roboto-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-ThinItalic.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-ThinItalic.ttf"; sourceTree = "<group>"; };
-		619A0D401BE81D7B00D9E863 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ./Images.xcassets; sourceTree = "<group>"; };
+		619A0D401BE81D7B00D9E863 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = tvOSSample/Images.xcassets; sourceTree = "<group>"; };
 		61A672E71CA9F4B000BAF58A /* PushHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PushHandler.swift; path = tvOSSample/PushHandler.swift; sourceTree = "<group>"; };
 		99B3F5091ED7465B008F7C16 /* AddTagsDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AddTagsDetailViewController.swift; path = tvOSSample/AddTagsDetailViewController.swift; sourceTree = "<group>"; };
 		99B3F50B1ED760D2008F7C16 /* NamedUserDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NamedUserDetailViewController.swift; path = tvOSSample/NamedUserDetailViewController.swift; sourceTree = "<group>"; };
 		99B68B901EE08E350038DAE3 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		99E3024E1EEA1C26008D5D68 /* tvOSSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = tvOSSample.entitlements; path = tvOSSample/tvOSSample.entitlements; sourceTree = SOURCE_ROOT; };
-		99E302551EEA1C40008D5D68 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = tvOSSample/Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		CCDA35AA1B8D233A00950AD5 /* PushSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PushSettingsViewController.swift; path = tvOSSample/PushSettingsViewController.swift; sourceTree = "<group>"; };
 		CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipKit.xcodeproj; path = ../AirshipKit/AirshipKit.xcodeproj; sourceTree = "<group>"; };
 		DFEB1BCF1E7A142100437516 /* tvOSSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tvOSSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -173,7 +172,6 @@
 		CCDA359A1B8D233A00950AD5 = {
 			isa = PBXGroup;
 			children = (
-				99E302541EEA1C40008D5D68 /* Main.storyboard */,
 				CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */,
 				DFEB1BD01E7A142100437516 /* tvOSSample */,
 				99B68B901EE08E350038DAE3 /* AirshipConfig.plist */,
@@ -349,7 +347,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				99E302561EEA1C40008D5D68 /* Main.storyboard in Resources */,
+				996A03D31EF1BA6A003424E0 /* Main.storyboard in Resources */,
 				DFEB1BDB1E7A142100437516 /* Assets.xcassets in Resources */,
 				99B68B911EE08E350038DAE3 /* AirshipConfig.plist in Resources */,
 				DF240A461E7DDDF000DD7DAE /* urban-airship-logo-pacific.png in Resources */,
@@ -395,14 +393,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		99E302541EEA1C40008D5D68 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				99E302551EEA1C40008D5D68 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		DFEB1BD71E7A142100437516 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

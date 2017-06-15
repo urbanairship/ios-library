@@ -34,16 +34,6 @@
 	</dict>
 	<dict>
 		<key>class</key>
-		<string>UALandingPageAction</string>
-		<key>predicate</key>
-		<string>UALandingPageActionPredicate</string>
-		<key>name</key>
-		<string>landing_page_action</string>
-		<key>altName</key>
-		<string>^p</string>
-	</dict>
-	<dict>
-		<key>class</key>
 		<string>UADeepLinkAction</string>
 		<key>predicate</key>
 		<string>UADeepLinkActionPredicate</string>
@@ -59,56 +49,6 @@
 		<string>UAAddCustomEventActionPredicate</string>
 		<key>name</key>
 		<string>add_custom_event_action</string>
-	</dict>
-	<dict>
-		<key>class</key>
-		<string>UAShareAction</string>
-		<key>predicate</key>
-		<string>UAShareActionPredicate</string>
-		<key>name</key>
-		<string>share_action</string>
-		<key>altName</key>
-		<string>^s</string>
-	</dict>
-	<dict>
-		<key>class</key>
-		<string>UADisplayInboxAction</string>
-		<key>predicate</key>
-		<string>UADisplayInboxActionPredicate</string>
-		<key>name</key>
-		<string>open_mc_action</string>
-		<key>altName</key>
-		<string>^mc</string>
-	</dict>
-	<dict>
-		<key>class</key>
-		<string>UAPasteboardAction</string>
-		<key>predicate</key>
-		<string>UAPasteboardActionPredicate</string>
-		<key>name</key>
-		<string>clipboard_action</string>
-		<key>altName</key>
-		<string>^c</string>
-	</dict>
-	<dict>
-		<key>class</key>
-		<string>UAOverlayInboxMessageAction</string>
-		<key>predicate</key>
-		<string>UAOverlayInboxMessageActionPredicate</string>
-		<key>name</key>
-		<string>open_mc_overlay_action</string>
-		<key>altName</key>
-		<string>^mco</string>
-	</dict>
-	<dict>
-		<key>class</key>
-		<string>UAWalletAction</string>
-		<key>predicate</key>
-		<string>UAWalletActionPredicate</string>
-		<key>name</key>
-		<string>wallet_action</string>
-		<key>altName</key>
-		<string>^w</string>
 	</dict>
 	<dict>
 		<key>class</key>
