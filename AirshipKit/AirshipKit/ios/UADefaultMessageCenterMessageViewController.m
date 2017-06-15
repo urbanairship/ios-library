@@ -9,6 +9,7 @@
 #import "UAUtils.h"
 #import "UIWebView+UAAdditions.h"
 #import "UAMessageCenterLocalization.h"
+#import "UABeveledLoadingIndicator.h"
 
 #define kMessageUp 0
 #define kMessageDown 1
@@ -21,6 +22,11 @@
  * The UIWebView used to display the message content.
  */
 @property (nonatomic, strong) UIWebView *webView;
+
+/**
+ * The loading indicator.
+ */
+@property (weak, nonatomic) IBOutlet UABeveledLoadingIndicator *loadingIndicatorView;
 
 /**
  * The index of the currently displayed message.
@@ -36,6 +42,11 @@
  * The label displayed in the coverView.
  */
 @property (nonatomic, weak) IBOutlet UILabel *coverLabel;
+
+/**
+ * Boolean indicating whether or not the view is visible
+ */
+@property (nonatomic, assign) BOOL isVisible;
 
 /**
  * The messages displayed in the message table.
@@ -72,7 +83,6 @@
                                                                                style:UIBarButtonItemStylePlain
                                                                              target:self
                                                                              action:@selector(delete:)];
-
     
     // get initial list of messages in the inbox
     [self copyMessages];
@@ -82,6 +92,8 @@
     } else {
         [self coverWithMessage:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
     }
+    
+    self.isVisible = NO;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -93,11 +105,14 @@
 }
 
 - (void)viewDidAppear:(BOOL)animated {
+    self.isVisible = YES;
+    
     [super viewDidAppear:animated];
     
     if (self.message) {
+        // if webview has already finished loading, we need to hide the loading indicator and uncover the view.
         if (!self.webView.loading) {
-            [self uncover];
+            [self uncoverAndHideLoadingIndicator];
         }
     } else {
         [self coverWithMessage:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
@@ -107,6 +122,11 @@
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UAInboxMessageListUpdatedNotification object:nil];
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    self.isVisible = NO;
 }
 
 #pragma mark -
@@ -125,9 +145,17 @@
     self.navigationItem.rightBarButtonItem.enabled = NO;
 }
 
-- (void)uncover {
+- (void)coverWithBlankViewAndShowLoadingIndicator {
+    self.coverLabel.text = nil;
+    self.coverView.hidden = NO;
+    self.navigationItem.rightBarButtonItem.enabled = NO;
+    [self.loadingIndicatorView show];
+}
+
+- (void)uncoverAndHideLoadingIndicator {
     self.coverView.hidden = YES;
     self.navigationItem.rightBarButtonItem.enabled = YES;
+    [self.loadingIndicatorView hide];
 }
 
 - (void)loadMessageForID:(NSString *)mid {
@@ -137,6 +165,8 @@
 - (void)loadMessageAtIndex:(NSUInteger)index {
     [self loadMessage:[self messageAtIndex:index] onlyIfChanged:NO];
 }
+
+static NSString *urlForBlankPage = @"about:blank";
 
 - (void)loadMessage:(UAInboxMessage *)message onlyIfChanged:(BOOL)onlyIfChanged {
     if (!message) {
@@ -149,22 +179,34 @@
     self.messageIndex = [self indexOfMessage:message];
     
     if (!onlyIfChanged || !self.message || ![message.messageID isEqualToString:self.message.messageID] || ![message.title isEqualToString:self.message.title] || ![message.messageBodyURL isEqual:self.message.messageBodyURL]) {
-        [self coverWithMessage:nil];
         [self.webView stopLoading];
         
+        // start by covering the view and showing the loading indicator
+        [self coverWithBlankViewAndShowLoadingIndicator];
+        
+        // now load a blank page, so when the view is uncovered, it isn't still showing the previous web page
+        // note: when the blank page has finished loading, it will load the message
+        [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlForBlankPage]]];
+
         self.message = message;
-        self.title = self.message.title;
-        
-        NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:self.message.messageBodyURL];
-        requestObj.timeoutInterval = 60;
-        
-        NSString *auth = [UAUtils userAuthHeaderString];
-        [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
-        
-        [self.webView loadRequest:requestObj];
     } else {
-        [self uncover];
+        if (!self.webView.loading) {
+            [self uncoverAndHideLoadingIndicator];
+        }
     }
+}
+
+// load the message into the web view
+- (void)loadMessageIntoWebView {
+    self.title = self.message.title;
+    
+    NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:self.message.messageBodyURL];
+    requestObj.timeoutInterval = 60;
+    
+    NSString *auth = [UAUtils userAuthHeaderString];
+    [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
+    
+    [self.webView loadRequest:requestObj];
 }
 
 - (void)displayAlert:(BOOL)retry {
@@ -247,16 +289,13 @@
 #pragma mark UAUIWebViewDelegate
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
-    [self uncover];
-
     NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:wv.request];
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)cachedResponse.response;
     NSInteger status = httpResponse.statusCode;
-    NSString *blank = @"about:blank";
 
     // If the server returns something in the error range, load a blank page
     if (status >= 400 && status <= 599) {
-        [wv loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:blank]]];
+        [self coverWithBlankViewAndShowLoadingIndicator];
         if (status >= 500) {
             // Display a retry alert
             [self displayAlert:YES];
@@ -265,7 +304,8 @@
             [self displayAlert:NO];
         }
         return;
-    } else if ([wv.request.URL.absoluteString isEqualToString:blank]) {
+    } else if ([wv.request.URL.absoluteString isEqualToString:urlForBlankPage]) {
+        [self loadMessageIntoWebView];
         return;
     }
 
@@ -275,13 +315,20 @@
     }
 
     [self.webView injectInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
+    
+    // if view has already appeared, we need to hide the loading indicator and uncover the view.
+    if (self.isVisible) {
+        [self uncoverAndHideLoadingIndicator];
+    }
 }
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
     if (error.code == NSURLErrorCancelled)
         return;
     UA_LDEBUG(@"Failed to load message: %@", error);
+    [self uncoverAndHideLoadingIndicator];
     [self displayAlert:YES];
+    
 }
 
 - (void)closeWindowAnimated:(BOOL)animated {

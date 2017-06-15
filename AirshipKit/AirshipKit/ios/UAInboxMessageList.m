@@ -356,7 +356,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 
               UA_LINFO(@"Inbox messages updated.");
 
-              UA_LDEBUG(@"Loaded saved messages: %@.", messages);
+              UA_LTRACE(@"Loaded saved messages: %@.", messages);
               self.unreadCount = unreadCount;
               self.messages = [NSArray arrayWithArray:messages];
               

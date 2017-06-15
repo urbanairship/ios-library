@@ -462,45 +462,54 @@
         
         message = nil;
     }
-    // if a message view is not already displaying, get it displayed
-    if (!self.messageViewController || (self.collapsed && (self.messageViewController != self.navigationController.topViewController))) {
-        if (!self.messageViewController) {
-            //otherwise, push over a new message view
-            __weak id weakSelf = self;
-            void (^closeBlock)(BOOL) = ^(BOOL animated){
-                
-                UADefaultMessageCenterListViewController *strongSelf = weakSelf;
-                
-                if (!strongSelf) {
-                    return;
-                }
-                // Call the close block if present
-                if (strongSelf.closeBlock) {
-                    strongSelf.closeBlock(animated);
-                } else {
-                    // Fallback to displaying the inbox
-                    [self.navigationController popViewControllerAnimated:animated];
-                }
-            };
-        
-            if (UAirship.shared.config.useWKWebView) {
-                self.messageViewController = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController" bundle:[UAirship resources]];
-            } else {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-                self.messageViewController = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController" bundle:[UAirship resources]];
-#pragma GCC diagnostic pop
-            }
-            self.messageViewController.closeBlock = closeBlock;
-        }
-        
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        if ([self.messageViewController isKindOfClass:[UADefaultMessageCenterMessageViewController class]]) {
-            ((UADefaultMessageCenterMessageViewController *)self.messageViewController).filter = self.filter;
-        }
-#pragma GCC diagnostic pop
+    
+    // if message is selected some other way than actually selecting the cell, go ahead and select the message's cell for the user
+    if (!self.selectedIndexPath) {
+        self.selectedIndexPath = [self indexPathForMessage:message];
+    }
 
+    // create a messageViewController if we don't already have one
+    if (!self.messageViewController) {
+        //otherwise, push over a new message view
+        __weak id weakSelf = self;
+        void (^closeBlock)(BOOL) = ^(BOOL animated){
+            
+            UADefaultMessageCenterListViewController *strongSelf = weakSelf;
+            
+            if (!strongSelf) {
+                return;
+            }
+            // Call the close block if present
+            if (strongSelf.closeBlock) {
+                strongSelf.closeBlock(animated);
+            } else {
+                // Fallback to displaying the inbox
+                [self.navigationController popViewControllerAnimated:animated];
+            }
+        };
+        
+        if (UAirship.shared.config.useWKWebView) {
+            self.messageViewController = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController" bundle:[UAirship resources]];
+        } else {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+            self.messageViewController = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController" bundle:[UAirship resources]];
+#pragma GCC diagnostic pop
+        }
+        self.messageViewController.closeBlock = closeBlock;
+    }
+    
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    if ([self.messageViewController isKindOfClass:[UADefaultMessageCenterMessageViewController class]]) {
+        ((UADefaultMessageCenterMessageViewController *)self.messageViewController).filter = self.filter;
+    }
+#pragma GCC diagnostic pop
+    
+    [self.messageViewController loadMessage:message onlyIfChanged:YES];
+    
+    // if message view is not already displaying, get it displayed
+    if (self.collapsed && (self.messageViewController != self.navigationController.topViewController)) {
         UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:self.messageViewController];
 
         if (self.style.navigationBarColor) {
@@ -530,7 +539,6 @@
         [nav.view layoutSubviews];
         [self showDetailViewController:nav sender:self];
     }
-    [self.messageViewController loadMessage:message onlyIfChanged:YES];
 }
 
 

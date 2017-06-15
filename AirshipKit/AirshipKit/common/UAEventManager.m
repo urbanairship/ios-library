@@ -347,7 +347,8 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
                self.lastSendTime = [NSDate date];
 
                if (response.statusCode == 200) {
-                   UA_LDEBUG(@"Analytic upload success: %@", response);
+                   UA_LDEBUG(@"Analytic upload success");
+                   UA_LTRACE(@"Response: %@", response);
                    [self.eventStore deleteEventsWithIDs:[preparedEvents valueForKey:@"event_id"]];
                    [self updateAnalyticsParametersWithResponse:response];
                } else {

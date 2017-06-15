@@ -50,35 +50,14 @@
 }
 
 -(void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void (^)())completionHandler {
-    UA_LDEBUG(@"The user selected the following action identifier:%@", notificationResponse.actionIdentifier);
-
-    // display an alert with the notification content and any response text
     UANotificationContent *notificationContent = notificationResponse.notificationContent;
-    NSString *alertTitle = notificationContent.alertTitle ? notificationContent.alertTitle : NSLocalizedStringFromTable(@"UA_Notification_Title", @"UAPushUI", @"Notification Alert");
-    NSMutableString *message = [NSMutableString stringWithFormat:@"Action Identifier:\n%@",notificationResponse.actionIdentifier];
-    NSString *alertBody = notificationContent.alertBody;
-    if (alertBody.length) {
-        [message appendString:[NSString stringWithFormat:@"\nAlert Body:\n%@",alertBody]];
-    }
-    NSString *categoryIdentifier = notificationContent.categoryIdentifier;
-    if (categoryIdentifier.length) {
-        [message appendString:[NSString stringWithFormat:@"\nCategory Identifier:\n%@",categoryIdentifier]];
-    }
-    NSString *responseText = notificationResponse.responseText;
-    if (responseText != nil) {
-        [message appendString:[NSString stringWithFormat:@"\nResponse:\n%@",responseText]];
-    }
-    
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:alertTitle
-                                                                             message:message
-                                                                      preferredStyle:UIAlertControllerStyleAlert];
-    
-    UIAlertAction *defaultAction = [UIAlertAction actionWithTitle:@"OK" style: UIAlertActionStyleDefault handler:nil];
-    [alertController addAction:defaultAction];
-    
-    UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
-    alertController.popoverPresentationController.sourceView = topController.view;
-    [topController presentViewController:alertController animated:YES completion:nil];
+
+    NSLog(@"Received a notification response");
+    NSLog(@"Alert Title:         %@",notificationContent.alertTitle);
+    NSLog(@"Alert Body:          %@",notificationContent.alertBody);
+    NSLog(@"Action Identifier:   %@",notificationResponse.actionIdentifier);
+    NSLog(@"Category Identifier: %@",notificationContent.categoryIdentifier);
+    NSLog(@"Response Text:       %@",notificationResponse.responseText);
     
     completionHandler();
 }
