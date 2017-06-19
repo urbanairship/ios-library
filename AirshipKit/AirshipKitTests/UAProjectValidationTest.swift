@@ -23,7 +23,23 @@ class UAProjectValidationTest: XCTestCase {
         // path to the source root
         sourceRootURL = xcodeprojPath.deletingLastPathComponent()
         XCTAssert(sourceRootURL != nil)
-    }
+        
+        // AirshipLib.h is created by the ios and tvos builds. In case one wasn't built, create AirshipLib.h here
+        let fileManager = FileManager.default
+        let airshipKitURL = sourceRootURL?.appendingPathComponent("AirshipKit")
+
+        let iosAirshipLibURL = airshipKitURL?.appendingPathComponent("ios/AirshipLib.h")
+        XCTAssert(iosAirshipLibURL != nil)
+        if (!fileManager.fileExists(atPath:(iosAirshipLibURL?.path)!)) {
+            try? "".write(to: iosAirshipLibURL!, atomically: false, encoding: String.Encoding.utf8)
+        }
+
+        let tvosAirshipLibURL = airshipKitURL?.appendingPathComponent("tvos/AirshipLib.h")
+        XCTAssert(tvosAirshipLibURL != nil)
+        if (!fileManager.fileExists(atPath:(tvosAirshipLibURL?.path)!)) {
+            try? "".write(to: tvosAirshipLibURL!, atomically: false, encoding: String.Encoding.utf8)
+        }
+   }
     
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.

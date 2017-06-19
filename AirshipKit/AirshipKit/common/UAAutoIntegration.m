@@ -127,6 +127,9 @@ static dispatch_once_t onceToken;
 
 - (void)swizzleNotificationCenterDelegate:(id<UNUserNotificationCenterDelegate>)delegate {
     Class class = [delegate class];
+
+    self.notificationDelegateSwizzler = [UASwizzler swizzlerForClass:class];
+    
     [self.notificationDelegateSwizzler swizzle:@selector(userNotificationCenter:willPresentNotification:withCompletionHandler:)
                                       protocol:@protocol(UNUserNotificationCenterDelegate)
                                 implementation:(IMP)UserNotificationCenterWillPresentNotificationWithCompletionHandler];
@@ -136,12 +139,6 @@ static dispatch_once_t onceToken;
                                       protocol:@protocol(UNUserNotificationCenterDelegate)
                                 implementation:(IMP)UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler];
 #endif
-    self.notificationDelegateSwizzler = [UASwizzler swizzlerForClass:class];
-
-
-    [self.notificationDelegateSwizzler swizzle:@selector(userNotificationCenter:willPresentNotification:withCompletionHandler:)
-                                      protocol:@protocol(UNUserNotificationCenterDelegate)
-                                implementation:(IMP)UserNotificationCenterWillPresentNotificationWithCompletionHandler];
 }
 
 

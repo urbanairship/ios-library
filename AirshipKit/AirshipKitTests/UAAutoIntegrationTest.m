@@ -6,16 +6,19 @@
 #import <UserNotifications/UserNotifications.h>
 #import "UAAutoIntegration+Internal.h"
 #import "UAAppIntegration.h"
+#import "UAAppIntegration+Internal.h"
 
 @interface UAAutoIntegrationTest : XCTestCase
 @property (nonatomic, strong) id mockAppIntegration;
 @property (nonatomic, strong) id delegate;
 @property (nonatomic, strong) id mockApplication;
 @property (nonatomic, strong) id mockUserNotificationCenter;
+@property (nonatomic, strong) id notificationCenterDelegate;
 @property (nonatomic, strong) id mockProcessInfo;
 @property (nonatomic, assign) int testOSMajorVersion;
 
-@property (nonatomic, assign) Class generatedClass;
+@property (nonatomic, assign) Class GeneratedClassForAppDelegate;
+@property (nonatomic, assign) Class GeneratedClassForNotificationCenterDelegate;
 @end
 
 @implementation UAAutoIntegrationTest
@@ -36,14 +39,13 @@
         [invocation setReturnValue:&result];
     }] ignoringNonObjectArgs] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){0, 0, 0}];
 
-
     self.mockAppIntegration = [OCMockObject niceMockForClass:[UAAppIntegration class]];
 
     // Generate a new class for each test run to avoid test pollution
-    self.generatedClass = objc_allocateClassPair([NSObject class], [[NSUUID UUID].UUIDString UTF8String], 0);
-    objc_registerClassPair(self.generatedClass);
+    self.GeneratedClassForAppDelegate = objc_allocateClassPair([NSObject class], [[NSUUID UUID].UUIDString UTF8String], 0);
+    objc_registerClassPair(self.GeneratedClassForAppDelegate);
 
-    self.delegate = [[self.generatedClass alloc] init];
+    self.delegate = [[self.GeneratedClassForAppDelegate alloc] init];
 
     self.mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
@@ -64,10 +66,14 @@
 
     self.delegate = nil;
 
-    if (self.generatedClass) {
-        objc_disposeClassPair(self.generatedClass);
+    if (self.GeneratedClassForAppDelegate) {
+        objc_disposeClassPair(self.GeneratedClassForAppDelegate);
     }
 
+    if (self.GeneratedClassForNotificationCenterDelegate) {
+        objc_disposeClassPair(self.GeneratedClassForNotificationCenterDelegate);
+    }
+    
     [super tearDown];
 }
 
@@ -83,7 +89,7 @@
     NSError *expectedError = [NSError errorWithDomain:@"test" code:1 userInfo:nil];
 
     // Add an implementation for application:didFailToRegisterForRemoteNotificationsWithError:
-    [self addImplementationForProtocol:@protocol(UIApplicationDelegate) selector:@selector(application:didFailToRegisterForRemoteNotificationsWithError:)
+    [self addImplementationForAppDelegateProtocol:@protocol(UIApplicationDelegate) selector:@selector(application:didFailToRegisterForRemoteNotificationsWithError:)
                                  block:^(id self, UIApplication *application, NSError *error) {
                                      appDelegateCalled = YES;
 
@@ -127,7 +133,7 @@
     NSData *expectedDeviceToken = [@"device_token" dataUsingEncoding:NSUTF8StringEncoding];
 
     // Add an implementation for application:didRegisterForRemoteNotificationsWithDeviceToken:
-    [self addImplementationForProtocol:@protocol(UIApplicationDelegate) selector:@selector(application:didRegisterForRemoteNotificationsWithDeviceToken:)
+    [self addImplementationForAppDelegateProtocol:@protocol(UIApplicationDelegate) selector:@selector(application:didRegisterForRemoteNotificationsWithDeviceToken:)
                                  block:^(id self, UIApplication *application, NSData *deviceToken) {
                                      appDelegateCalled = YES;
 
@@ -178,7 +184,7 @@
     __block UIBackgroundFetchResult appDelegateResult;
     __block BOOL appDelegateCalled;
 
-    [self addImplementationForProtocol:@protocol(UIApplicationDelegate) selector:@selector(application:performFetchWithCompletionHandler:)
+    [self addImplementationForAppDelegateProtocol:@protocol(UIApplicationDelegate) selector:@selector(application:performFetchWithCompletionHandler:)
                                  block:^(id self, UIApplication *application, void (^completion)(UIBackgroundFetchResult) ) {
 
                                      appDelegateCalled = YES;
@@ -254,14 +260,14 @@
  * Tests proxying application:didReceiveRemoteNotification:fetchCompletionHandler
  * responds with the combined value of the app delegate and UAAppHooks.
  */
-- (void)testProxAppReceivedRemoteNotificationWithCompletionHandler {
+- (void)testProxyAppReceivedRemoteNotificationWithCompletionHandler {
     NSDictionary *expectedNotification = @{@"oh": @"hi"};
 
     // Add an implementation for application:didReceiveRemoteNotification:fetchCompletionHandler: that
     // calls an expected fetch result
     __block UIBackgroundFetchResult appDelegateResult;
     __block BOOL appDelegateCalled;
-    [self addImplementationForProtocol:@protocol(UIApplicationDelegate) selector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)
+    [self addImplementationForAppDelegateProtocol:@protocol(UIApplicationDelegate) selector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)
                                  block:^(id self, UIApplication *application, NSDictionary *notification, void (^completion)(UIBackgroundFetchResult) ) {
 
                                      appDelegateCalled = YES;
@@ -374,6 +380,10 @@
     XCTAssertTrue(pushCalled);
 }
 
+#pragma iOS 8/9 testing - remove section when iOS 9 is removed from SDK
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 /**
  * iOS 8/9 only - Test proxying application:didRegisterForRemoteNotificationsWithDeviceToken: when the delegate implements
  * the selector calls the original and UAPush.
@@ -385,7 +395,7 @@
     UIUserNotificationSettings *expectedSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert categories:nil];
 
     // Add an implementation for application:didRegisterUserNotificationSettings:
-    [self addImplementationForProtocol:@protocol(UIApplicationDelegate) selector:@selector(application:didRegisterUserNotificationSettings:)
+    [self addImplementationForAppDelegateProtocol:@protocol(UIApplicationDelegate) selector:@selector(application:didRegisterUserNotificationSettings:)
                                  block:^(id self, UIApplication *application, UIUserNotificationSettings *settings) {
                                      appDelegateCalled = YES;
 
@@ -480,7 +490,7 @@
 
     // Add implementation to the app delegate
     __block BOOL appDelegateCalled;
-    [self addImplementationForProtocol:@protocol(UIApplicationDelegate) selector:@selector(application:handleActionWithIdentifier:forRemoteNotification:completionHandler:)
+    [self addImplementationForAppDelegateProtocol:@protocol(UIApplicationDelegate) selector:@selector(application:handleActionWithIdentifier:forRemoteNotification:completionHandler:)
                                  block:^(id self, UIApplication *application, NSString *identifier, NSDictionary *notification, void (^completion)() ) {
 
                                      appDelegateCalled = YES;
@@ -545,7 +555,7 @@
 
     // Add implementation to the app delegate
     __block BOOL appDelegateCalled;
-    [self addImplementationForProtocol:@protocol(UIApplicationDelegate) selector:@selector(application:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:)
+    [self addImplementationForAppDelegateProtocol:@protocol(UIApplicationDelegate) selector:@selector(application:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:)
                                  block:^(id self, UIApplication *application, NSString *identifier, NSDictionary *notification, NSDictionary *responseInfo, void (^completion)() ) {
 
                                      appDelegateCalled = YES;
@@ -599,7 +609,150 @@
     }];
 }
 
+#pragma end iOS 8/9 testing - remove section when iOS 9 is removed from SDK
+#pragma GCC diagnostic pop
+
 #pragma UNUserNotificationCenterDelegate callbacks
+
+- (void)testProxyWillPresentNotification {
+    self.testOSMajorVersion = 10;
+    
+    [self createnotificationCenterDelegate];
+    
+    XCTestExpectation *callBackFinished = [self expectationWithDescription:@"Notification Center delegate callback called"];
+    
+    id mockUNNotification = [OCMockObject partialMockForObject:[UNNotification new]];
+    [mockUNNotification setValue:[NSDate date] forKey:@"date"];
+    
+    UNNotificationPresentationOptions expectedOptions = UNNotificationPresentationOptionBadge;
+    
+    // Add implementation to the app delegate
+    __block BOOL notificationCenterDelegateCalled = NO;
+    [self addImplementationForNotificationCenterDelegateProtocol:@protocol(UNUserNotificationCenterDelegate) selector:@selector(userNotificationCenter:willPresentNotification:withCompletionHandler:)
+                                                           block:^(id self, UNUserNotificationCenter *notificationCenter, UNNotification *notification, void (^completion)(UNNotificationPresentationOptions) ) {
+                                                               notificationCenterDelegateCalled = YES;
+                                                               
+                                                               // Verify the parameters
+                                                               XCTAssertEqualObjects([UNUserNotificationCenter currentNotificationCenter], notificationCenter);
+                                                               XCTAssertEqualObjects(mockUNNotification, notification);
+                                                               
+                                                               XCTAssertNotNil(completion);
+                                                               completion(expectedOptions);
+                                                           }];
+    
+    // Stub the implementation for UAAppIntegration that handles userNotificationCenter:willPresentNotification:withCompletionHandler:
+    // + (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler;
+    __block BOOL appIntegrationForWillPresentNotificationCalled = NO;
+    void (^appIntegrationForWillPresentNotificationBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
+        appIntegrationForWillPresentNotificationCalled = YES;
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^handler)(UNNotificationPresentationOptions) = (__bridge void (^)(UNNotificationPresentationOptions))arg;
+        handler(expectedOptions);
+    };
+    
+    [[[self.mockAppIntegration stub] andDo:appIntegrationForWillPresentNotificationBlock] userNotificationCenter:self.mockUserNotificationCenter
+                                                                                         willPresentNotification:mockUNNotification
+                                                                                           withCompletionHandler:OCMOCK_ANY];
+    
+    // Stub the implementation for UAAppIntegration that handles handleForegroundNotification:mergedOptions:withCompletionHandler:
+    // + (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options withCompletionHandler:(void(^)())completionHandler {
+    __block BOOL appIntegrationForHandleForegroundNotificationCalled = NO;
+    void (^appIntegrationForHandleForegroundNotificationBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
+        appIntegrationForHandleForegroundNotificationCalled = YES;
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^handler)(UNNotificationPresentationOptions) = (__bridge void (^)(UNNotificationPresentationOptions))arg;
+        [invocation getArgument:&arg atIndex:3];
+        UNNotificationPresentationOptions options = (UNNotificationPresentationOptions)arg;
+        handler(options);
+    };
+    
+    [[[self.mockAppIntegration stub] andDo:appIntegrationForHandleForegroundNotificationBlock] handleForegroundNotification:mockUNNotification
+                                                                                  mergedOptions:expectedOptions
+                                                                          withCompletionHandler:OCMOCK_ANY];
+    
+    // Proxy the delegate
+    [UAAutoIntegration integrate];
+    
+    // Verify that the expected value is returned from combining the two results
+    __block BOOL completionHandlerCalled = NO;
+    [self.notificationCenterDelegate userNotificationCenter:[UNUserNotificationCenter currentNotificationCenter]
+                                    willPresentNotification:mockUNNotification
+                                      withCompletionHandler:^(UNNotificationPresentationOptions options) {
+                                          [callBackFinished fulfill];
+                                          XCTAssertEqual(expectedOptions,options);
+                                          completionHandlerCalled = YES;
+                                      }];
+    
+    [self waitForExpectationsWithTimeout:100 handler:^(NSError *error) {
+        XCTAssertTrue(completionHandlerCalled);
+        XCTAssertTrue(notificationCenterDelegateCalled);
+        XCTAssertTrue(appIntegrationForWillPresentNotificationCalled);
+        XCTAssertTrue(appIntegrationForHandleForegroundNotificationCalled);
+    }];
+}
+
+
+- (void)testProxyDidReceiveNotificationResponse {
+    self.testOSMajorVersion = 10;
+    
+    [self createnotificationCenterDelegate];
+    
+    XCTestExpectation *callBackFinished = [self expectationWithDescription:@"Notification Centert delegate callback called"];
+    
+    NSString *actionIdentifier = @"test-action";
+    id mockUNNotificationResponse = [OCMockObject partialMockForObject:[UNNotificationResponse new]];
+    [mockUNNotificationResponse setValue:actionIdentifier forKey:@"actionIdentifier"];
+    
+    // Add implementation to the app delegate
+    __block BOOL notificationCenterDelegateCalled;
+    [self addImplementationForNotificationCenterDelegateProtocol:@protocol(UNUserNotificationCenterDelegate) selector:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)
+                                 block:^(id self, UNUserNotificationCenter *notificationCenter, UNNotificationResponse *response, void (^completion)() ) {
+                                     notificationCenterDelegateCalled = YES;
+                                     
+                                     // Verify the parameters
+                                     XCTAssertEqualObjects([UNUserNotificationCenter currentNotificationCenter], notificationCenter);
+                                     XCTAssertEqualObjects(mockUNNotificationResponse, response);
+                                     
+                                     XCTAssertNotNil(completion);
+                                     completion();
+                                 }];
+    
+    
+    // Stub the implementation for UAPush that calls an expected fetch result
+    __block BOOL appIntegrationCalled;
+    void (^appIntegrationBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
+        appIntegrationCalled = YES;
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^handler)() = (__bridge void (^)())arg;
+        handler();
+    };
+    
+    [[[self.mockAppIntegration stub] andDo:appIntegrationBlock] userNotificationCenter:self.mockUserNotificationCenter
+                                                        didReceiveNotificationResponse:mockUNNotificationResponse
+                                                                 withCompletionHandler:OCMOCK_ANY];
+
+    // Proxy the delegate
+    [UAAutoIntegration integrate];
+    
+    // Verify that the expected value is returned from combining the two results
+    __block BOOL completionHandlerCalled;
+    [self.notificationCenterDelegate userNotificationCenter:[UNUserNotificationCenter currentNotificationCenter]
+                             didReceiveNotificationResponse:mockUNNotificationResponse
+                                      withCompletionHandler:^(){
+                                          [callBackFinished fulfill];
+                                          completionHandlerCalled = YES;
+                                      }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+        XCTAssertTrue(completionHandlerCalled);
+        XCTAssertTrue(notificationCenterDelegateCalled);
+        XCTAssertTrue(appIntegrationCalled);
+    }];
+    
+}
 
 
 #pragma Helpers
@@ -612,10 +765,33 @@
  * @param block A block that matches the encoding of the selector. The first argument
  * must be self.
  */
-- (void)addImplementationForProtocol:(id)protocol selector:(SEL)selector block:(id)block {
+- (void)addImplementationForAppDelegateProtocol:(id)protocol selector:(SEL)selector block:(id)block {
     struct objc_method_description description = protocol_getMethodDescription(protocol, selector, NO, YES);
     IMP implementation = imp_implementationWithBlock(block);
-    class_addMethod(self.generatedClass, selector, implementation, description.types);
+    class_addMethod(self.GeneratedClassForAppDelegate, selector, implementation, description.types);
 }
 
+/**
+ * Adds a block based implementation to the notification center delegate with the given selector.
+ *
+ * @param protocol The protocol to which the implementation will be added.
+ * @param selector A selector for the given protocol
+ * @param block A block that matches the encoding of the selector. The first argument
+ * must be self.
+ */
+- (void)addImplementationForNotificationCenterDelegateProtocol:(id)protocol selector:(SEL)selector block:(id)block {
+    struct objc_method_description description = protocol_getMethodDescription(protocol, selector, NO, YES);
+    IMP implementation = imp_implementationWithBlock(block);
+    class_addMethod(self.GeneratedClassForNotificationCenterDelegate, selector, implementation, description.types);
+}
+
+- (void) createnotificationCenterDelegate {
+    // Generate a new class for each test run to avoid test pollution
+    self.GeneratedClassForNotificationCenterDelegate = objc_allocateClassPair([NSObject class], [[NSUUID UUID].UUIDString UTF8String], 0);
+    objc_registerClassPair(self.GeneratedClassForNotificationCenterDelegate);
+    
+    self.notificationCenterDelegate = [[self.GeneratedClassForNotificationCenterDelegate alloc] init];
+    
+    [[[self.mockUserNotificationCenter stub] andReturn:self.notificationCenterDelegate] delegate];
+}
 @end
