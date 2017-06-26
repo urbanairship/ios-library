@@ -541,7 +541,7 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
         __block BOOL scheduleExecuted = NO;
 
 
-        void (^executionBlock)() = ^{
+        void (^executionBlock)(void) = ^{
             if ([self isScheduleDelaySatisfied:scheduleDelay delayedExecutionDate:delayedExecutionDate]) {
                 // Run the actions
                 [UAActionRunner runActionsWithActionValues:actions
@@ -554,7 +554,7 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
             }
         };
 
-        void (^postExecutionBlock)() = ^{
+        void (^postExecutionBlock)(void) = ^{
             if (scheduleExecuted) {
                 // Reset pending execution state
                 scheduleData.isPendingExecution = @(NO);
@@ -585,13 +585,13 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
 
     // Conditions and action executions must be run on the main queue.
     dispatch_sync(dispatch_get_main_queue(), ^{
-        for (void (^executionBlock)() in executionBlocks) {
+        for (void (^executionBlock)(void) in executionBlocks) {
             executionBlock();
         }
     });
 
     // Run all the post executions on the background queue
-    for (void (^postExecutionBlock)() in postExecutionBlocks) {
+    for (void (^postExecutionBlock)(void) in postExecutionBlocks) {
         postExecutionBlock();
     }
 }

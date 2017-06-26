@@ -20,7 +20,7 @@ typedef void (^UAUserAPIClientCreateSuccessBlock)(UAUserData *data, NSDictionary
 /**
  * A block called when the user update succeeded.
  */
-typedef void (^UAUserAPIClientUpdateSuccessBlock)();
+typedef void (^UAUserAPIClientUpdateSuccessBlock)(void);
 
 /**
  * A block called when the user update failed.

@@ -222,7 +222,7 @@
 - (void)refreshStateChanged:(UIRefreshControl *)sender {
     if (sender.refreshing) {
         self.refreshControlAnimating = YES;
-        void (^retrieveMessageCompletionBlock)() = ^(void){
+        void (^retrieveMessageCompletionBlock)(void) = ^(void){
             [CATransaction begin];
             [CATransaction setCompletionBlock: ^{
                 // refresh animation has finished

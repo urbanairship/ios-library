@@ -20,7 +20,7 @@ typedef void (^UAChannelAPIClientCreateSuccessBlock)(NSString *channelID, NSStri
 /**
  * A block called when the channel update succeeded.
  */
-typedef void (^UAChannelAPIClientUpdateSuccessBlock)();
+typedef void (^UAChannelAPIClientUpdateSuccessBlock)(void);
 
 /**
  * A block called when the channel creation or update failed.

@@ -272,7 +272,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
  * @param messages The messages returned from a remote message retrieval.
  * @param completionHandler An optional completion handler run when the sync is complete.
  */
-- (void)syncMessagesWithResponse:(NSArray *)messages completionHandler:(void(^)())completionHandler {
+- (void)syncMessagesWithResponse:(NSArray *)messages completionHandler:(void(^)(void))completionHandler {
 
     NSManagedObjectContext *context = self.inboxDBManager.privateContext;
 
@@ -331,7 +331,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
  *
  * @param completionHandler Optional completion handler.
  */
-- (void)refreshInboxWithCompletionHandler:(void (^)())completionHandler {
+- (void)refreshInboxWithCompletionHandler:(void (^)(void))completionHandler {
     [self prefetchMessagesWithCompletionHandler:^(NSArray *messages){
         NSArray *objectIDs = [messages valueForKeyPath:@"data.objectID"];
 

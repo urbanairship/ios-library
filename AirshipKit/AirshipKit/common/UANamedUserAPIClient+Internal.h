@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * A block called when named user association or disassociation succeeded.
  */
-typedef void (^UANamedUserAPIClientSuccessBlock)();
+typedef void (^UANamedUserAPIClientSuccessBlock)(void);
 
 /**
  * A block called when named user association or disassociation failed.

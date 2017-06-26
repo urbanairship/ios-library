@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param options The merged notification presentation options.
  * @param completionHandler The completion handler.
  */
-+ (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options withCompletionHandler:(void(^)())completionHandler;
++ (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options withCompletionHandler:(void(^)(void))completionHandler;
 
 /**
  * Creates an actions payload

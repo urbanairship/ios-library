@@ -296,7 +296,7 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
  * @param response The notification response.
  * @param handler The completion handler.
  */
-- (void)handleNotificationResponse:(UANotificationResponse *)response completionHandler:(void (^)())handler;
+- (void)handleNotificationResponse:(UANotificationResponse *)response completionHandler:(void (^)(void))handler;
 
 /**
  * Called when a remote notification is received.

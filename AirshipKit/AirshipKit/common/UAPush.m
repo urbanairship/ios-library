@@ -946,7 +946,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     return options;
 }
 
-- (void)handleNotificationResponse:(UANotificationResponse *)response completionHandler:(void (^)())handler {
+- (void)handleNotificationResponse:(UANotificationResponse *)response completionHandler:(void (^)(void))handler {
     if ([response.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
         self.launchNotificationResponse = response;
     }
@@ -971,7 +971,9 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
         if ([delegate respondsToSelector:@selector(receivedForegroundNotification:completionHandler:)]) {
             delegateCalled = YES;
-            [delegate receivedForegroundNotification:notification completionHandler:handler];
+            [delegate receivedForegroundNotification:notification completionHandler:^{
+                handler(UIBackgroundFetchResultNoData);
+            }];
         }
     } else {
         if ([delegate respondsToSelector:@selector(receivedBackgroundNotification:completionHandler:)]) {

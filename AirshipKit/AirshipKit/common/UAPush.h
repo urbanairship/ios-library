@@ -145,7 +145,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  *
  * @param completionHandler the completion handler to execute when notification processing is complete.
  */
--(void)receivedForegroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)())completionHandler;
+-(void)receivedForegroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)(void))completionHandler;
 
 /**
  * Called when a notification is received in the background.
@@ -166,7 +166,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  *
  * @param completionHandler the completion handler to execute when processing the user's response has completed.
  */
--(void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void (^)())completionHandler;
+-(void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void (^)(void))completionHandler;
 
 /**
  * Called when a notification has arrived in the foreground and is available for display.

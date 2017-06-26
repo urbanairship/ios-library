@@ -224,7 +224,7 @@ void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self,
 }
 
 #if !TARGET_OS_TV  // Delegate method not supported on tvOS
-void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(id self, SEL _cmd, UNUserNotificationCenter *notificationCenter, UNNotificationResponse *response, void (^handler)()) {
+void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(id self, SEL _cmd, UNUserNotificationCenter *notificationCenter, UNNotificationResponse *response, void (^handler)(void)) {
 
     __block NSUInteger resultCount = 0;
     __block NSUInteger expectedCount = 1;
@@ -234,7 +234,7 @@ void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(i
         expectedCount = 2;
 
         __block BOOL completionHandlerCalled = NO;
-        void (^completionHandler)() = ^() {
+        void (^completionHandler)(void) = ^() {
 
             // Make sure the app's completion handler is called on the main queue
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -253,7 +253,7 @@ void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(i
             });
         };
 
-        ((void(*)(id, SEL, UNUserNotificationCenter *, UNNotificationResponse *, void (^)()))original)(self, _cmd, notificationCenter, response, completionHandler);
+        ((void(*)(id, SEL, UNUserNotificationCenter *, UNNotificationResponse *, void (^)(void)))original)(self, _cmd, notificationCenter, response, completionHandler);
     }
 
     // Call UAPush
@@ -454,7 +454,7 @@ void ApplicationHandleActionWithIdentifierForRemoteNotificationCompletionHandler
                                                                                  UIApplication *application,
                                                                                  NSString *identifier,
                                                                                  NSDictionary *userInfo,
-                                                                                 void (^handler)()) {
+                                                                                 void (^handler)(void)) {
     __block NSUInteger resultCount = 0;
     __block NSUInteger expectedCount = 1;
 
@@ -463,7 +463,7 @@ void ApplicationHandleActionWithIdentifierForRemoteNotificationCompletionHandler
         expectedCount = 2;
 
         __block BOOL completionHandlerCalled = NO;
-        void (^completionHandler)() = ^() {
+        void (^completionHandler)(void) = ^() {
 
             // Make sure the app's completion handler is called on the main queue
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -483,7 +483,7 @@ void ApplicationHandleActionWithIdentifierForRemoteNotificationCompletionHandler
         };
 
         // Call the original implementation
-        ((void(*)(id, SEL, UIApplication *, NSString *, NSDictionary *, void (^)()))original)(self, _cmd, application, identifier, userInfo, completionHandler);
+        ((void(*)(id, SEL, UIApplication *, NSString *, NSDictionary *, void (^)(void)))original)(self, _cmd, application, identifier, userInfo, completionHandler);
     }
 
     // Our completion handler is called by the action framework on the main queue
@@ -502,7 +502,7 @@ void ApplicationHandleActionWithIdentifierForRemoteNotificationWithResponseInfoC
                                                                                                  NSString *identifier,
                                                                                                  NSDictionary *userInfo,
                                                                                                  NSDictionary *responseInfo,
-                                                                                                 void (^handler)()) {
+                                                                                                 void (^handler)(void)) {
     __block NSUInteger resultCount = 0;
     __block NSUInteger expectedCount = 1;
 
@@ -511,7 +511,7 @@ void ApplicationHandleActionWithIdentifierForRemoteNotificationWithResponseInfoC
         expectedCount = 2;
 
         __block BOOL completionHandlerCalled = NO;
-        void (^completionHandler)() = ^() {
+        void (^completionHandler)(void) = ^() {
 
             // Make sure the app's completion handler is called on the main queue
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -531,7 +531,7 @@ void ApplicationHandleActionWithIdentifierForRemoteNotificationWithResponseInfoC
         };
         
         // Call the original implementation
-        ((void(*)(id, SEL, UIApplication *, NSString *, NSDictionary *, NSDictionary *, void (^)()))original)(self, _cmd, application, identifier, userInfo, responseInfo, completionHandler);
+        ((void(*)(id, SEL, UIApplication *, NSString *, NSDictionary *, NSDictionary *, void (^)(void)))original)(self, _cmd, application, identifier, userInfo, responseInfo, completionHandler);
     }
     
     // Our completion handler is called by the action framework on the main queue

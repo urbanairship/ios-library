@@ -106,16 +106,16 @@
 }
 
 #if !TARGET_OS_TV   // Delegate methods unavailable in tvOS
-+ (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)())handler {
++ (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)(void))handler {
     [self application:application handleActionWithIdentifier:identifier forRemoteNotification:userInfo withResponseInfo:nil completionHandler:handler];
 }
 
-+ (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo withResponseInfo:(NSDictionary *)responseInfo completionHandler:(void (^)())handler {
++ (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo withResponseInfo:(NSDictionary *)responseInfo completionHandler:(void (^)(void))handler {
     NSString *responseText = responseInfo ? responseInfo[UIUserNotificationActionResponseTypedTextKey] : nil;
     UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:userInfo
                                                                                        actionIdentifier:identifier
                                                                                         responseText:responseText];
-   [self handleNotificationResponse:response completionHandler:^(UIBackgroundFetchResult result) {
+   [self handleNotificationResponse:response completionHandler:^(void) {
        handler();
    }];
 }
@@ -142,10 +142,10 @@
 }
 
 #if !TARGET_OS_TV   // UNNotificationResponse not available on tvOS
-+ (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)())completionHandler {
++ (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)(void))completionHandler {
     UANotificationResponse *airshipResponse = [UANotificationResponse notificationResponseWithUNNotificationResponse:response];
 
-    [self handleNotificationResponse:airshipResponse completionHandler:^(UIBackgroundFetchResult result) {
+    [self handleNotificationResponse:airshipResponse completionHandler:^(void) {
         completionHandler();
     }];
 }
@@ -154,7 +154,7 @@
 #pragma mark -
 #pragma mark Notification handling
 
-+ (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options withCompletionHandler:(void(^)())completionHandler {
++ (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options withCompletionHandler:(void(^)(void))completionHandler {
     BOOL foregroundPresentation = (options & UNNotificationPresentationOptionAlert) > 0;
 
     UANotificationContent *notificationContent = [UANotificationContent notificationWithUNNotification:notification];
@@ -167,7 +167,7 @@
 }
 
 + (void)handleNotificationResponse:(UANotificationResponse *)response
-                 completionHandler:(void (^)())completionHandler {
+                 completionHandler:(void (^)(void))completionHandler {
 
     UA_LINFO(@"Received notification response: %@", response);
 

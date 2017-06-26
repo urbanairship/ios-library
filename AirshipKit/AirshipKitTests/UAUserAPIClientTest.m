@@ -376,7 +376,7 @@
                                         retryWhere:OCMOCK_ANY
                                  completionHandler:OCMOCK_ANY];
 
-    [self.client updateUser:self.mockUser channelID:@"channelID" onSuccess:^(UAUserData * _Nonnull data, NSDictionary * _Nonnull payload) {
+    [self.client updateUser:self.mockUser channelID:@"channelID" onSuccess:^() {
     } onFailure:^(NSUInteger statusCode) {
     }];
     
