@@ -161,8 +161,10 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
         // Register for remote notifications right away. This does not prompt for permissions to show notifications,
         // but starts the device token registration.
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
-
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[UIApplication sharedApplication] registerForRemoteNotifications];
+        });
+        
         [self updateAuthorizedNotificationTypes];
 
         self.defaultPresentationOptions = UNNotificationPresentationOptionNone;
@@ -638,7 +640,9 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     UA_LTRACE(@"Background refresh status changed.");
 
     if ([UIApplication sharedApplication].backgroundRefreshStatus == UIBackgroundRefreshStatusAvailable) {
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[UIApplication sharedApplication] registerForRemoteNotifications];
+        });
     } else {
         [self updateRegistration];
     }
@@ -714,11 +718,21 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
 - (BOOL)userPushNotificationsAllowed {
     UIApplication *app = [UIApplication sharedApplication];
+    
+    __block BOOL isRegisteredForRemoteNotifications;
 
+    if ([NSThread isMainThread]) {
+        isRegisteredForRemoteNotifications = app.isRegisteredForRemoteNotifications;
+    } else {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            isRegisteredForRemoteNotifications = app.isRegisteredForRemoteNotifications;
+        });
+    }
+    
     return self.deviceToken
     && self.userPushNotificationsEnabled
     && self.authorizedNotificationOptions
-    && app.isRegisteredForRemoteNotifications
+    && isRegisteredForRemoteNotifications
     && self.pushTokenRegistrationEnabled;
 }
 
@@ -736,8 +750,17 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         return NO;
     }
 #endif
-
-    return app.isRegisteredForRemoteNotifications;
+    __block BOOL isRegisteredForRemoteNotifications;
+    
+    if ([NSThread isMainThread]) {
+        isRegisteredForRemoteNotifications = app.isRegisteredForRemoteNotifications;
+    } else {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            isRegisteredForRemoteNotifications = app.isRegisteredForRemoteNotifications;
+        });
+    }
+    
+    return isRegisteredForRemoteNotifications;
 }
 
 - (void)updateRegistration {
@@ -854,9 +877,11 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
 - (void)notificationRegistrationFinishedWithOptions:(UANotificationOptions)options {
     if (!self.deviceToken) {
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
-    }
-
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[UIApplication sharedApplication] registerForRemoteNotifications];
+        });
+    };
+    
     self.userPromptedForNotifications = YES;
     self.authorizedNotificationOptions = options;
 
