@@ -64,15 +64,34 @@
  *
  * @param message The message.
  * @param animated Whether the transition should be animated.
+ *
+ * @deprecated Deprecated - to be removed in SDK version 9.0
  */
-- (void)displayMessage:(UAInboxMessage *)message animated:(BOOL)animated;
+- (void)displayMessage:(UAInboxMessage *)message animated:(BOOL)animated DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 9.0");
+
+/**
+ * Display the given message.
+ *
+ * @pararm messageID The messageID of the message.
+ * @param animated Whether the transition should be animated.
+ */
+- (void)displayMessageForID:(NSString *)messageID animated:(BOOL)animated;
 
 /**
  * Display the given message without animation.
  *
  * @pararm message The message.
+ *
+ * @deprecated Deprecated - to be removed in SDK version 9.0
  */
-- (void)displayMessage:(UAInboxMessage *)message;
+- (void)displayMessage:(UAInboxMessage *)message DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 10.0");
+
+/**
+ * Display the given message without animation.
+ *
+ * @pararm messageID The messageID of the message.
+ */
+- (void)displayMessageForID:(NSString *)messageID;
 
 /**
  * Dismiss the message center.

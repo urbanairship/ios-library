@@ -22,14 +22,14 @@
     return [tabBarController.viewControllers objectAtIndex:2];
 }
 
-- (void)showInboxMessage:(UAInboxMessage *)message {
-    [self showInbox];
-    [[self messageCenterViewController] displayMessage:message];
-}
-
 - (void)showInbox {
     UITabBarController *tabBarController = (UITabBarController *)self.rootViewController;
     tabBarController.selectedIndex = 2;
+}
+
+- (void)showMessageForID:(NSString *)messageID {
+    [self showInbox];
+    [[self messageCenterViewController] displayMessageForID:messageID];
 }
 
 @end

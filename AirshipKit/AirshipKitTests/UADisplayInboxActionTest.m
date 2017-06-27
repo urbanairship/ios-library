@@ -37,6 +37,7 @@
     self.notification = @{@"_uamid": @"UAMID"};
 
     self.mockMessage = [OCMockObject niceMockForClass:[UAInboxMessage class]];
+    OCMStub([self.mockMessage messageID]).andReturn(@"MCRAP");
     self.mockMessageList = [OCMockObject niceMockForClass:[UAInboxMessageList class]];
     self.mockDefaultMessageCenter = [OCMockObject niceMockForClass:[UADefaultMessageCenter class]];
 
@@ -55,6 +56,7 @@
     [self.mockMessageList stopMocking];
     [self.mockInboxDelegate stopMocking];
     [self.mockDefaultMessageCenter stopMocking];
+    [self.mockMessage stopMocking];
 
     [super tearDown];
 }
@@ -92,51 +94,49 @@
 }
 
 /**
- * Test perform calls showInboxMessage: on the inbox delegate
+ * Test perform calls showInboxMessageForID: on the inbox delegate
  * when the message is already available in the message list.
  */
-- (void)testPerformShowInboxMessageMessageAvailable {
+- (void)testPerformShowInboxMessageForIDMessageAvailable {
     [UAirship inbox].delegate = self.mockInboxDelegate;
-
+    
     // Set up the action arguments
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
                                                       withSituation:UASituationManualInvocation];
-
+    
     // Return the message for the message ID
     [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
-
+    
     // Should notify the delegate of the message
-    [[self.mockInboxDelegate expect] showInboxMessage:self.mockMessage];
-
+    [[self.mockInboxDelegate expect] showMessageForID:@"MCRAP"];
+    
     // Perform the action
     [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
-
+    
     // Verify delegate calls
     [self.mockInboxDelegate verify];
 }
 
 /**
- * Test perform calls showInboxMessage: on the inbox delegate
+ * Test perform calls showInboxMessageForID: on the inbox delegate
  * after the message list is refreshed.
  */
-- (void)testPerformShowInboxMessageAfterMessageListRefresh {
+- (void)testPerformShowInboxMessageForIDAfterMessageListRefresh {
     [UAirship inbox].delegate = self.mockInboxDelegate;
-
+    
     // Set up the action arguments
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
                                                       withSituation:UASituationForegroundInteractiveButton];
-
+    
     // Should notify the delegate of the notification
-    [[self.mockInboxDelegate expect] showInboxMessage:self.mockMessage];
-
+    [[self.mockInboxDelegate expect] showMessageForID:@"MCRAP"];
+    
     // Need to stub a message list result so the action is able to finish
-    [self stubMessageListRefreshWithSuccessBlock:^{
-        [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
-    }];
-
+    [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
+    
     // Perform the action
-    [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNewData];
-
+    [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
+    
     // Verify delegate calls
     [self.mockInboxDelegate verify];
 }
@@ -153,10 +153,12 @@
                                                       withSituation:UASituationForegroundInteractiveButton];
 
     // Should notify the delegate of the notification
-    [[self.mockInboxDelegate expect] showInbox];
+    [[self.mockInboxDelegate expect] showMessageForID:@"MCRAP"];
 
     // Need to stub a message list result so the action is able to finish
-    [self stubMessageListRefreshWithSuccessBlock:nil];
+    [self stubMessageListRefreshWithSuccessBlock:^{
+        [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
+    }];
 
     // Perform the action
     [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNewData];
@@ -201,7 +203,7 @@
                                                            metadata:@{UAActionMetadataInboxMessageKey: self.mockMessage}];
 
     // Should notify the delegate of the message
-    [[self.mockInboxDelegate expect] showInboxMessage:self.mockMessage];
+    [[self.mockInboxDelegate expect] showMessageForID:((UAInboxMessage *)self.mockMessage).messageID];
 
     // Perform the action
     [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
@@ -225,7 +227,7 @@
     [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:self.notification[@"_uamid"]];
 
     // Should notify the delegate of the message
-    [[self.mockInboxDelegate expect] showInboxMessage:self.mockMessage];
+    [[self.mockInboxDelegate expect] showMessageForID:((UAInboxMessage *)self.mockMessage).messageID];
 
     // Perform the action
     [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
@@ -248,7 +250,7 @@
     [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
 
     // Should display in the default message center
-    [[self.mockDefaultMessageCenter expect] displayMessage:self.mockMessage];
+    [[self.mockDefaultMessageCenter expect] displayMessageForID:((UAInboxMessage *)self.mockMessage).messageID];
 
     // Perform the action
     [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
@@ -268,6 +270,9 @@
     // Should display in the default message center
     [[self.mockDefaultMessageCenter expect] display];
 
+    // Need to stub a message list result so the action is able to finish
+    [self stubMessageListRefreshWithSuccessBlock:nil];
+    
     // Perform the action
     [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
 
@@ -284,11 +289,11 @@
 
     [self.action performWithArguments:args completionHandler:^(UAActionResult *result) {
         actionResult = result;
+        
+        XCTAssertNotNil(actionResult, @"perform did not call the completion handler");
+        XCTAssertNil(actionResult.value, @"action result value should be empty");
+        XCTAssertEqual(fetchResult, actionResult.fetchResult, @"unexpected action fetch result");
     }];
-
-    XCTAssertNotNil(actionResult, @"perform did not call the completion handler");
-    XCTAssertNil(actionResult.value, @"action result value should be empty");
-    XCTAssertEqual(fetchResult, actionResult.fetchResult, @"unexpected action fetch result");
 }
 
 - (void)stubMessageListRefreshWithSuccessBlock:(void (^)())block {

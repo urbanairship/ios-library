@@ -32,16 +32,56 @@
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
+    UAInboxMessage *message = nil;
+    
+    // parse the message id (or possibly the entire message) from the arguments
     NSString *messageID = [UAInboxUtils inboxMessageIDFromValue:arguments.value];
-    [self fetchMessage:messageID arguments:arguments completionHandler:^(UAInboxMessage *message, UAActionFetchResult fetchResult) {
-        if (message) {
-            [self displayInboxMessage:message situation:arguments.situation];
-        } else {
-            [self displayInboxWithSituation:arguments.situation];
+    if (messageID) {
+        if ([[messageID lowercaseString] isEqualToString:kUADisplayInboxActionMessageIDPlaceHolder]) {
+            // If we have InboxMessage metadata show the message
+            if (arguments.metadata[UAActionMetadataInboxMessageKey]) {
+                message = arguments.metadata[UAActionMetadataInboxMessageKey];
+            } else {
+                // Try getting the message ID from the push notification
+                NSDictionary *notification = arguments.metadata[UAActionMetadataPushPayloadKey];
+                messageID = [UAInboxUtils inboxMessageIDFromNotification:notification];
+            }
         }
-
-        completionHandler([UAActionResult resultWithValue:nil withFetchResult:fetchResult]);
-    }];
+        if (!message) {
+            message = [[UAirship inbox].messageList messageForID:messageID];
+        }
+    }
+    
+    if (message) {
+        // message is available on the device
+        [self displayInboxMessage:message situation:arguments.situation];
+        completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNoData]);
+    } else {
+        // message wasn't available on the device
+        if (arguments.situation == UASituationLaunchedFromPush) {
+            id<UAInboxDelegate> inboxDelegate = [UAirship inbox].delegate;
+            if ([inboxDelegate respondsToSelector:@selector(showMessageForID:)]) {
+                [inboxDelegate showMessageForID:messageID];
+                completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNoData]);
+                return;
+            }
+        }
+        
+        // Refresh the list to see if the message is available in the cloud
+        [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
+            UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
+            if (message) {
+                [self displayInboxMessage:message situation:arguments.situation];
+                completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
+            } else {
+                [self displayInboxWithSituation:arguments.situation];
+                completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNoData]);
+            }
+        } withFailureBlock:^{
+            [self displayInboxWithSituation:arguments.situation];
+            completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultFailed]);
+        }];
+    }
 }
 
 /**
@@ -59,19 +99,39 @@
             }
             break;
         case UASituationLaunchedFromPush:
-            if ([inboxDelegate respondsToSelector:@selector(showInboxMessage:)]) {
+            if ([inboxDelegate respondsToSelector:@selector(showMessageForID:)]) {
+                [inboxDelegate showMessageForID:message.messageID];
+            } else if ([inboxDelegate respondsToSelector:@selector(showInboxMessage:)]) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
                 [inboxDelegate showInboxMessage:message];
+#pragma GCC diagnostic pop
+            } else if ([[UAirship defaultMessageCenter] respondsToSelector:@selector(displayMessageForID:)]) {
+                [[UAirship defaultMessageCenter] displayMessageForID:message.messageID];
             } else {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
                 [[UAirship defaultMessageCenter] displayMessage:message];
+#pragma GCC diagnostic pop
             }
             break;
         case UASituationManualInvocation:
         case UASituationWebViewInvocation:
         case UASituationForegroundInteractiveButton:
-            if ([inboxDelegate respondsToSelector:@selector(showInboxMessage:)]) {
+            if ([inboxDelegate respondsToSelector:@selector(showMessageForID:)]) {
+                [inboxDelegate showMessageForID:message.messageID];
+            } else if ([inboxDelegate respondsToSelector:@selector(showInboxMessage:)]) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
                 [inboxDelegate showInboxMessage:message];
+#pragma GCC diagnostic pop
+            } else if ([[UAirship defaultMessageCenter] respondsToSelector:@selector(displayMessageForID:)]) {
+                [[UAirship defaultMessageCenter] displayMessageForID:message.messageID];
             } else {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
                 [[UAirship defaultMessageCenter] displayMessage:message];
+#pragma GCC diagnostic pop
             }
             break;
         case UASituationBackgroundPush:
@@ -100,52 +160,5 @@
     }
 }
 
-/**
- * Fetches the specified message. If the messageID is "auto", either
- * the UAActionMetadataInboxMessageKey will be returned or the ID of the message
- * will be taken from the UAActionMetadataPushPayloadKey. If the message is not
- * available in the message list, the list will be refreshed.
- *
- * Note: A copy of this method exists in UAOverlayInboxMessageAction
- *
- * @param messageID The messages ID.
- * @param arguments The action arguments.
- * @param completionHandler Completion handler to call when the operation is complete.
- */
-- (void)fetchMessage:(NSString *)messageID
-           arguments:(UAActionArguments *)arguments
-   completionHandler:(void (^)(UAInboxMessage *, UAActionFetchResult))completionHandler {
-
-    if (messageID == nil) {
-        completionHandler(nil, UAActionFetchResultNoData);
-        return;
-    }
-
-    if ([[messageID lowercaseString] isEqualToString:kUADisplayInboxActionMessageIDPlaceHolder]) {
-        // If we have InboxMessage metadata show the message
-        if (arguments.metadata[UAActionMetadataInboxMessageKey]) {
-            UAInboxMessage *message = arguments.metadata[UAActionMetadataInboxMessageKey];
-            completionHandler(message, UAActionFetchResultNoData);
-            return;
-        }
-
-        // Try getting the message ID from the push notification
-        NSDictionary *notification = arguments.metadata[UAActionMetadataPushPayloadKey];
-        messageID = [UAInboxUtils inboxMessageIDFromNotification:notification];
-    }
-
-    UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
-    if (message) {
-        completionHandler(message, UAActionFetchResultNoData);
-        return;
-    }
-
-    // Refresh the list to see if the message is available
-    [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
-        completionHandler([[UAirship inbox].messageList messageForID:messageID], UAActionFetchResultNewData);
-    } withFailureBlock:^{
-        completionHandler(nil, UAActionFetchResultFailed);
-    }];
-}
 
 @end

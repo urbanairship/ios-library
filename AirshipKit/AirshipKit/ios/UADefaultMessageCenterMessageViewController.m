@@ -53,12 +53,32 @@
  */
 @property (nonatomic, copy) NSArray *messages;
 
+/**
+ * State of message waiting to load, loading, loaded or currently displayed.
+ */
+typedef enum MessageState {
+    NONE,
+    FETCHING,
+    TO_LOAD,
+    LOADING,
+    LOADED
+} MessageState;
+
+@property (nonatomic, assign) MessageState messageState;
+
 @end
 
 @implementation UADefaultMessageCenterMessageViewController
 
 @synthesize message = _message;
 @synthesize closeBlock = _closeBlock;
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
+        self.messageState = NONE;
+    }
+    return self;
+}
 
 - (void)dealloc {
     self.webView.delegate = nil;
@@ -87,10 +107,20 @@
     // get initial list of messages in the inbox
     [self copyMessages];
     
-    if (self.message) {
-        [self loadMessage:self.message onlyIfChanged:NO];
-    } else {
-        [self coverWithMessage:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
+    // load message or cover view if no message waiting to load
+    switch (self.messageState) {
+        case NONE:
+            [self coverWithMessageAndHideLoadingIndicator:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
+            break;
+        case FETCHING:
+            [self coverWithBlankViewAndShowLoadingIndicator];
+            break;
+        case TO_LOAD:
+            [self loadMessage:self.message onlyIfChanged:NO];
+            break;
+        default:
+            UA_LWARN(@"WARNING: messageState = %u. Should be \"NONE\", \"FETCHING\", or \"TO_LOAD\"",self.messageState);
+            break;
     }
     
     self.isVisible = NO;
@@ -99,6 +129,10 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+    if (self.messageState == NONE) {
+        [self coverWithMessageAndHideLoadingIndicator:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
+    }
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(messageListUpdated)
                                                  name:UAInboxMessageListUpdatedNotification object:nil];
@@ -106,17 +140,13 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     self.isVisible = YES;
+
+    if (self.messageState == LOADED) {
+        [self uncoverAndHideLoadingIndicator];
+    }
     
     [super viewDidAppear:animated];
     
-    if (self.message) {
-        // if webview has already finished loading, we need to hide the loading indicator and uncover the view.
-        if (!self.webView.loading) {
-            [self uncoverAndHideLoadingIndicator];
-        }
-    } else {
-        [self coverWithMessage:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
-    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -138,28 +168,68 @@
     }
 }
 
-- (void)coverWithMessage:(NSString *)message {
+- (void)coverWithMessageAndHideLoadingIndicator:(NSString *)message {
     self.title = nil;
     self.coverLabel.text = message;
     self.coverView.hidden = NO;
     self.navigationItem.rightBarButtonItem.enabled = NO;
+    [self hideLoadingIndicator];
 }
 
 - (void)coverWithBlankViewAndShowLoadingIndicator {
+    self.title = nil;
     self.coverLabel.text = nil;
     self.coverView.hidden = NO;
     self.navigationItem.rightBarButtonItem.enabled = NO;
-    [self.loadingIndicatorView show];
+    [self showLoadingIndicator];
 }
 
 - (void)uncoverAndHideLoadingIndicator {
     self.coverView.hidden = YES;
     self.navigationItem.rightBarButtonItem.enabled = YES;
+    [self hideLoadingIndicator];
+}
+
+- (void)showLoadingIndicator {
+    [self.loadingIndicatorView show];
+}
+
+- (void)hideLoadingIndicator {
     [self.loadingIndicatorView hide];
 }
 
-- (void)loadMessageForID:(NSString *)mid {
-    [self loadMessage:[self messageForID:mid] onlyIfChanged:NO];
+- (void)loadMessageForID:(NSString *)messageID {
+    [self loadMessage:[self messageForID:messageID] onlyIfChanged:NO];
+}
+
+- (void)loadMessageForID:(NSString *)messageID onlyIfChanged:(BOOL)onlyIfChanged onError:(void (^)(void))errorCompletion {
+    // start by covering the view and showing the loading indicator
+    [self coverWithBlankViewAndShowLoadingIndicator];
+    
+    // Refresh the list to see if the message is available in the cloud
+    self.messageState = FETCHING;
+    [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
+        UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
+        if (message) {
+            // display the message
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+           [self loadMessage:message onlyIfChanged:onlyIfChanged];
+#pragma GCC diagnostic pop
+        } else {
+            // if the message no longer exists, clean up and show an error dialog
+            [self hideLoadingIndicator];
+            
+            [self displayAlertOnOK:errorCompletion onRetry:^{
+                [self loadMessageForID:messageID onlyIfChanged:onlyIfChanged onError:errorCompletion];
+            }];
+        }
+        return;
+    } withFailureBlock:^{
+        [self hideLoadingIndicator];
+        errorCompletion();
+        return;
+    }];
 }
 
 - (void)loadMessageAtIndex:(NSUInteger)index {
@@ -170,28 +240,35 @@ static NSString *urlForBlankPage = @"about:blank";
 
 - (void)loadMessage:(UAInboxMessage *)message onlyIfChanged:(BOOL)onlyIfChanged {
     if (!message) {
-        self.message = message;
+        if (self.messageState == LOADING) {
+            [self.webView stopLoading];
+        }
+        self.messageState = NONE;
+        self.message = nil;
         self.messageIndex=NSNotFound;
-        [self coverWithMessage:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
+        [self coverWithMessageAndHideLoadingIndicator:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
         return;
     }
     
     self.messageIndex = [self indexOfMessage:message];
     
-    if (!onlyIfChanged || !self.message || ![message.messageID isEqualToString:self.message.messageID] || ![message.title isEqualToString:self.message.title] || ![message.messageBodyURL isEqual:self.message.messageBodyURL]) {
-        [self.webView stopLoading];
-        
-        // start by covering the view and showing the loading indicator
-        [self coverWithBlankViewAndShowLoadingIndicator];
-        
-        // now load a blank page, so when the view is uncovered, it isn't still showing the previous web page
-        // note: when the blank page has finished loading, it will load the message
-        [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlForBlankPage]]];
-
+    if (!onlyIfChanged || (self.messageState == NONE) || !(self.message && [message.messageID isEqualToString:self.message.messageID])) {
         self.message = message;
-    } else {
-        if (!self.webView.loading) {
-            [self uncoverAndHideLoadingIndicator];
+        
+        if (!self.webView) {
+            self.messageState = TO_LOAD;
+        } else {
+            if (self.messageState == LOADING) {
+                [self.webView stopLoading];
+            }
+            self.messageState = LOADING;
+            
+            // start by covering the view and showing the loading indicator
+            [self coverWithBlankViewAndShowLoadingIndicator];
+            
+            // now load a blank page, so when the view is uncovered, it isn't still showing the previous web page
+            // note: when the blank page has finished loading, it will load the message
+            [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlForBlankPage]]];
         }
     }
 }
@@ -209,25 +286,28 @@ static NSString *urlForBlankPage = @"about:blank";
     [self.webView loadRequest:requestObj];
 }
 
-- (void)displayAlert:(BOOL)retry {
+- (void)displayAlertOnOK:(void (^)(void))okCompletion onRetry:(void (^)(void))retryCompletion {
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:UAMessageCenterLocalizedString(@"ua_connection_error")
                                                                    message:UAMessageCenterLocalizedString(@"ua_mc_failed_to_load")
                                                             preferredStyle:UIAlertControllerStyleAlert];
 
     UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:UAMessageCenterLocalizedString(@"ua_ok")
                                                             style:UIAlertActionStyleDefault
-                                                          handler:^(UIAlertAction * action) {}];
+                                                          handler:^(UIAlertAction * action) {
+                                                              if (okCompletion) {
+                                                                  okCompletion();
+                                                              }
+                                                          }];
     
     [alert addAction:defaultAction];
 
-    if (retry) {
+    if (retryCompletion) {
         UIAlertAction *retryAction = [UIAlertAction actionWithTitle:UAMessageCenterLocalizedString(@"ua_retry_button")
                                                               style:UIAlertActionStyleDefault
                                                             handler:^(UIAlertAction * _Nonnull action) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-                                                                [self loadMessage:self.message onlyIfChanged:NO];
-#pragma GCC diagnostic pop
+                                                                if (retryCompletion) {
+                                                                    retryCompletion();
+                                                                }
         }];
 
         [alert addAction:retryAction];
@@ -289,6 +369,10 @@ static NSString *urlForBlankPage = @"about:blank";
 #pragma mark UAUIWebViewDelegate
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
+    if (self.messageState != LOADING) {
+        UA_LWARN(@"WARNING: messageState = %u. Should be \"LOADING\"",self.messageState);
+    }
+    
     NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:wv.request];
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)cachedResponse.response;
     NSInteger status = httpResponse.statusCode;
@@ -298,16 +382,23 @@ static NSString *urlForBlankPage = @"about:blank";
         [self coverWithBlankViewAndShowLoadingIndicator];
         if (status >= 500) {
             // Display a retry alert
-            [self displayAlert:YES];
+            [self displayAlertOnOK:nil onRetry:^{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+                [self loadMessage:self.message onlyIfChanged:NO];
+#pragma GCC diagnostic pop
+            }];
         } else {
             // Display a generic alert
-            [self displayAlert:NO];
+            [self displayAlertOnOK:nil onRetry:nil];
         }
         return;
     } else if ([wv.request.URL.absoluteString isEqualToString:urlForBlankPage]) {
         [self loadMessageIntoWebView];
         return;
     }
+
+    self.messageState = LOADED;
 
     // Mark message as read after it has finished loading
     if (self.message.unread) {
@@ -316,19 +407,29 @@ static NSString *urlForBlankPage = @"about:blank";
 
     [self.webView injectInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
     
-    // if view has already appeared, we need to hide the loading indicator and uncover the view.
-    if (self.isVisible) {
-        [self uncoverAndHideLoadingIndicator];
-    }
+    [self uncoverAndHideLoadingIndicator];
 }
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
-    if (error.code == NSURLErrorCancelled)
+    if (self.messageState != LOADING) {
+        UA_LWARN(@"WARNING: messageState = %u. Should be \"LOADING\"",self.messageState);
+    }
+    if (error.code == NSURLErrorCancelled) {
         return;
+    }
     UA_LDEBUG(@"Failed to load message: %@", error);
-    [self uncoverAndHideLoadingIndicator];
-    [self displayAlert:YES];
     
+    self.messageState = NONE;
+    
+    [self hideLoadingIndicator];
+    
+    // Display a retry alert
+    [self displayAlertOnOK:nil onRetry:^{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+        [self loadMessage:self.message onlyIfChanged:NO];
+#pragma GCC diagnostic pop
+    }];
 }
 
 - (void)closeWindowAnimated:(BOOL)animated {
@@ -346,14 +447,13 @@ static NSString *urlForBlankPage = @"about:blank";
 #pragma mark NSNotificationCenter callbacks
 
 - (void)messageListUpdated {
-    
     dispatch_async(dispatch_get_main_queue(), ^{
         // copy the back-end list of messages as it can change from under the UI
         [self copyMessages];
-        if ((self.messages.count == 0) || !self.message) {
-            [self coverWithMessage:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
+        if ((self.messages.count == 0) || (!self.message && self.messageState != FETCHING && self.messageState != TO_LOAD)) {
+            [self coverWithMessageAndHideLoadingIndicator:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
         } else {
-            if ([self indexOfMessage:self.message] == NSNotFound) {
+            if ((self.messageState == LOADED) && ([self indexOfMessage:self.message] == NSNotFound)) {
                 // If the index path is still accessible,
                 // find the nearest accessible neighbor
                 NSUInteger index = MIN(self.messages.count - 1, self.messageIndex);

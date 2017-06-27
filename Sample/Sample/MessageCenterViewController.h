@@ -28,6 +28,6 @@
 
 @interface MessageCenterViewController : UADefaultMessageCenterSplitViewController
 
-- (void)displayMessage:(UAInboxMessage *)message;
+- (void)displayMessageForID:(NSString *)messageID;
 
 @end

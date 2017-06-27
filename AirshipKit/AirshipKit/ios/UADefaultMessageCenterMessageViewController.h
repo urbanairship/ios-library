@@ -34,14 +34,16 @@ DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 9.0 - please
 
 /**
  * Load a UAInboxMessage at a particular index in the message list.
+ *
  * @param index The corresponding index in the message list as an integer.
  */
 - (void)loadMessageAtIndex:(NSUInteger)index;
 
 /**
  * Load a UAInboxMessage by message ID.
- * @param mid The message ID as an NSString.
+ *
+ * @param messageID The message ID of the message.
  */
-- (void)loadMessageForID:(NSString *)mid;
+- (void)loadMessageForID:(NSString *)messageID;
 
 @end

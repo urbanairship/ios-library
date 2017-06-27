@@ -66,6 +66,15 @@
     [self displayMessage:message animated:NO];
 }
 
+- (void)displayMessageForID:(NSString *)messageID animated:(BOOL)animated {
+    [self display:animated];
+    [self.splitViewController.listViewController displayMessageForID:messageID];
+}
+
+- (void)displayMessageForID:(NSString *)messageID {
+    [self displayMessageForID:messageID animated:NO];
+}
+
 - (void)dismiss:(BOOL)animated {
     [self.splitViewController.presentingViewController dismissViewControllerAnimated:animated completion:nil];
     self.splitViewController = nil;
