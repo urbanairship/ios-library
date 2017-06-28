@@ -102,7 +102,10 @@
     if (![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}] && [UAirship push].userPushNotificationsEnabled) {
         if (indexPath.section == [tableView indexPathForCell:self.pushEnabledCell].section) {
             if (indexPath.row == [tableView indexPathForCell:self.pushEnabledCell].row) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+#pragma GCC diagnostic pop
             }
         }
     }

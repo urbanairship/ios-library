@@ -139,8 +139,10 @@ NS_ASSUME_NONNULL_BEGIN
  * The chosen notification action context. If there are notification actions defined for
  * UIUserNotificationActionContextMinimal, this context will be preferred. Othwerise, the
  * context defaults to UIUserNotificationActionContextDefault.
+ *
+ * @deprecated Deprecated - to be removed in SDK version 9.0
  */
-@property(nonatomic, readonly) UIUserNotificationActionContext notificationActionContext;
+@property(nonatomic, readonly) UIUserNotificationActionContext notificationActionContext DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 9.0");
 #endif
 
 /**

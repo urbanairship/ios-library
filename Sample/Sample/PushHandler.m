@@ -12,7 +12,7 @@
     completionHandler(UIBackgroundFetchResultNoData);
 }
 
--(void)receivedForegroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)())completionHandler {
+-(void)receivedForegroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)(void))completionHandler {
     // Application received a foreground notification
     UA_LDEBUG(@"The application received a foreground notification");
 
@@ -49,7 +49,7 @@
     completionHandler();
 }
 
--(void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void (^)())completionHandler {
+-(void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void (^)(void))completionHandler {
     UANotificationContent *notificationContent = notificationResponse.notificationContent;
 
     NSLog(@"Received a notification response");

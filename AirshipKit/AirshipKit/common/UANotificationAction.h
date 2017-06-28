@@ -27,7 +27,7 @@ typedef NS_OPTIONS(NSUInteger, UANotificationActionOptions) {
     UANotificationActionOptionForeground = (1 << 2),
 };
 
-static const UANotificationActionOptions UANotificationActionOptionNone NS_SWIFT_UNAVAILABLE("Use [] instead.");
+static const UANotificationActionOptions UANotificationActionOptionNone NS_SWIFT_UNAVAILABLE("Use [] instead.") = 0;
 
 /**
  * Clone of UNNotificationAction for iOS 8-10 support.
@@ -96,7 +96,7 @@ static const UANotificationActionOptions UANotificationActionOptionNone NS_SWIFT
  *
  * @return An instance of UIUserNotificationAction or nil if conversion fails.
  */
-- (nullable UIUserNotificationAction *)asUIUserNotificationAction;
+- (nullable UIUserNotificationAction *)asUIUserNotificationAction NS_DEPRECATED_IOS(8_0, 10_0, "Deprecated by Apple in iOS 10");
 
 /**
  * Converts a UANotificationAction into a UNNotificationAction.

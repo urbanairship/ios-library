@@ -147,9 +147,13 @@ class PushSettingsViewController: UITableViewController {
         switch ((indexPath as NSIndexPath).section, (indexPath as NSIndexPath).row) {
             case ((tableView.indexPath(for: pushEnabledCell)! as NSIndexPath).section, (tableView.indexPath(for: pushEnabledCell)! as NSIndexPath).row) :
 
-                // iOS 8 & 9 - redirect push enabled cell to system settings
-                if (!ProcessInfo().isOperatingSystemAtLeast(OperatingSystemVersion(majorVersion: 10, minorVersion: 0, patchVersion: 0)) && UAirship.push().userPushNotificationsEnabled) {
-                    UIApplication.shared.openURL(URL(string: UIApplicationOpenSettingsURLString)!)
+                if #available(iOS 10,*) {
+                    // iOS 10 or later - do nothing
+                } else {
+                    // iOS 8 & 9 - redirect push enabled cell to system settings
+                    if (UAirship.push().userPushNotificationsEnabled) {
+                        UIApplication.shared.openURL(URL(string: UIApplicationOpenSettingsURLString)!)
+                    }
                 }
 
                 break
