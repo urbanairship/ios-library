@@ -3,8 +3,38 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 8.4.0 - July 3, 2017
+============================
+
+Bug Fixes
+---------
+- Fixed "invalid prototype declaration" warnings.
+- Fixed calling UIKit on background threads.
+- Fixed deprecation warnings when targeting iOS 10+.
+
+Features
+--------
+- Added support for tvOS.
+- Added loading indicator to Message Center message view controllers.
+- Added new UAInboxDelegate protocol method `showMessageForID:` that will be called
+  immediately after a notification is tapped that is associated with a Message Center message.
+- Added support to update authorized notification options during a background app refresh.
+- Added support to style the select all, delete, and mark read buttons in the message center.
+
+Deprecations
+------------
+- Alias is now deprecated. It will be removed in SDK 10.0.0.
+- UAInboxDelegate's `showInboxMessage:`, replaced with `showMessageForID:`.
+- UADefaultMessageCenter's `displayMessage:` and `displayMessage:animated:`,
+  replaced with `displayMessageForID:` and `displayMessageForID:animated:` methods.
+- UADefaultMessageCenterListViewController's `displayMessage:` and `displayMessage:onError:`,
+  replaced with `displayMessageForID:` and `displayMessageForID:onError:`.
+- UAInAppMessage's unused property `notificationActionContext`.
+
+
 Version 8.3.3 - May 22, 2017
 ============================
+
 Bug Fixes
 ---------
 - UARegistrationDelegate's notificationRegistrationFinishedWithOptions:categories:
@@ -21,6 +51,7 @@ Behavior Changes
 
 Version 8.3.2 - May 15, 2017
 ===========================
+
 Bug Fixes
 ---------
 - Added files missing from static library libUAirship.a
@@ -28,12 +59,14 @@ Bug Fixes
 
 Version 8.3.1 - May 9, 2017
 ===========================
+
 Bug Fixes
 ---------
 - Fixed bug with decoding action values from the Urban Airship JS bridge.
 
 Version 8.3.0 - May 2, 2017
 ===========================
+
 New Features
 ------------
 - Added support for WKWebView. Enable in AirshipConfig.plist using useWKWebView
@@ -59,12 +92,14 @@ Other
 
 Version 8.2.2 - April 4, 2017
 ==============================
+
 Bug Fixes
 ----------
 - Correctly handle local project paths that contain spaces.
 
 Version 8.2.1 - March 30, 2017
 ==============================
+
 Bug Fixes
 ----------
 - Added missing file references to static library.
@@ -72,6 +107,7 @@ Bug Fixes
 
 Version 8.2.0 - February 16, 2017
 =================================
+
 New Features
 ------------
 - Added UATextInputNotificationAction to support text input notification actions.
