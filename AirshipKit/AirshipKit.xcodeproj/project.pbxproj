@@ -104,13 +104,11 @@
 		99666DBF1EDF2BE000BAE46B /* UAAPNSRegistration+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB121D8C996900BABD4F /* UAAPNSRegistration+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99666DC01EDF2BE000BAE46B /* UAAPNSRegistration.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB131D8C996900BABD4F /* UAAPNSRegistration.m */; };
 		99666DC11EDF2BE000BAE46B /* UAAPNSRegistrationProtocol+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB141D8C996900BABD4F /* UAAPNSRegistrationProtocol+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		99666DC21EDF2BE600BAE46B /* UANotificationAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBBC1D8C996A00BABD4F /* UANotificationAction+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99666DC31EDF2BE600BAE46B /* UANotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBBD1D8C996A00BABD4F /* UANotificationAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99666DC41EDF2BE600BAE46B /* UANotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBBE1D8C996A00BABD4F /* UANotificationAction.m */; };
 		99666DC51EDF2BE600BAE46B /* UANotificationCategories+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBBF1D8C996A00BABD4F /* UANotificationCategories+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99666DC61EDF2BE600BAE46B /* UANotificationCategories.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBC01D8C996A00BABD4F /* UANotificationCategories.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99666DC71EDF2BE600BAE46B /* UANotificationCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBC11D8C996A00BABD4F /* UANotificationCategories.m */; };
-		99666DC81EDF2BE600BAE46B /* UANotificationCategory+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBC21D8C996A00BABD4F /* UANotificationCategory+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99666DC91EDF2BE600BAE46B /* UANotificationCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBC31D8C996A00BABD4F /* UANotificationCategory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99666DCA1EDF2BE600BAE46B /* UANotificationCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBC41D8C996A00BABD4F /* UANotificationCategory.m */; };
 		99666DCB1EDF2BE600BAE46B /* UATextInputNotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = DFBBC7AF1E36D80B00BA7315 /* UATextInputNotificationAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -549,7 +547,6 @@
 		CC40DCE11D8C996A00BABD4F /* UANamedUser.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBB61D8C996A00BABD4F /* UANamedUser.m */; };
 		CC40DCE21D8C996A00BABD4F /* UANamedUserAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBB71D8C996A00BABD4F /* UANamedUserAPIClient+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CC40DCE31D8C996A00BABD4F /* UANamedUserAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBB81D8C996A00BABD4F /* UANamedUserAPIClient.m */; };
-		CC40DCE71D8C996A00BABD4F /* UANotificationAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBBC1D8C996A00BABD4F /* UANotificationAction+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CC40DCE81D8C996A00BABD4F /* UANotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBBD1D8C996A00BABD4F /* UANotificationAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC40DCE91D8C996A00BABD4F /* UANotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBBE1D8C996A00BABD4F /* UANotificationAction.m */; };
 		CC40DCEB1D8C996A00BABD4F /* UANotificationCategories.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBC01D8C996A00BABD4F /* UANotificationCategories.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -885,7 +882,6 @@
 		DF6AD3CB1ED8AA78006EB1DA /* UAScheduleTrigger+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBE31D8C996A00BABD4F /* UAScheduleTrigger+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF6AD3CC1ED8AA78006EB1DA /* UAInboxAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB801D8C996900BABD4F /* UAInboxAPIClient+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF6AD3CD1ED8AA78006EB1DA /* UANotificationCategories+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBBF1D8C996A00BABD4F /* UANotificationCategories+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DF6AD3CE1ED8AA78006EB1DA /* UANotificationCategory+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBC21D8C996A00BABD4F /* UANotificationCategory+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF6AD3CF1ED8AA78006EB1DA /* UACircularRegion+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB3D1D8C996900BABD4F /* UACircularRegion+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF6AD3D01ED8AA78006EB1DA /* UAProximityRegion+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBD11D8C996A00BABD4F /* UAProximityRegion+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF6AD3D11ED8AA78006EB1DA /* UAEventData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F1881DBED9FA00B4842D /* UAEventData+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -941,9 +937,7 @@
 		DF7E220D1ED62D9B00C79C46 /* UALegacyAPNSRegistration+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBA61D8C996900BABD4F /* UALegacyAPNSRegistration+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7E220E1ED62D9B00C79C46 /* UAAPNSRegistration+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB121D8C996900BABD4F /* UAAPNSRegistration+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7E220F1ED62D9B00C79C46 /* UAAPNSRegistrationProtocol+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB141D8C996900BABD4F /* UAAPNSRegistrationProtocol+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DF7E22101ED62D9B00C79C46 /* UANotificationAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBBC1D8C996A00BABD4F /* UANotificationAction+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7E22111ED62D9B00C79C46 /* UANotificationCategories+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBBF1D8C996A00BABD4F /* UANotificationCategories+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DF7E22121ED62D9B00C79C46 /* UANotificationCategory+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBC21D8C996A00BABD4F /* UANotificationCategory+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7E22131ED62D9B00C79C46 /* UATagGroupsAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBEE1D8C996A00BABD4F /* UATagGroupsAPIClient+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7E22141ED62D9B00C79C46 /* UATagGroupsMutation+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCD28FE21DD14DD1008D663F /* UATagGroupsMutation+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7E22151ED62D9B00C79C46 /* UAPush+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBD41D8C996A00BABD4F /* UAPush+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1445,13 +1439,11 @@
 		CC40DBB61D8C996A00BABD4F /* UANamedUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UANamedUser.m; path = common/UANamedUser.m; sourceTree = "<group>"; };
 		CC40DBB71D8C996A00BABD4F /* UANamedUserAPIClient+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UANamedUserAPIClient+Internal.h"; path = "common/UANamedUserAPIClient+Internal.h"; sourceTree = "<group>"; };
 		CC40DBB81D8C996A00BABD4F /* UANamedUserAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UANamedUserAPIClient.m; path = common/UANamedUserAPIClient.m; sourceTree = "<group>"; };
-		CC40DBBC1D8C996A00BABD4F /* UANotificationAction+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UANotificationAction+Internal.h"; path = "common/UANotificationAction+Internal.h"; sourceTree = "<group>"; };
 		CC40DBBD1D8C996A00BABD4F /* UANotificationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANotificationAction.h; path = common/UANotificationAction.h; sourceTree = "<group>"; };
 		CC40DBBE1D8C996A00BABD4F /* UANotificationAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UANotificationAction.m; path = common/UANotificationAction.m; sourceTree = "<group>"; };
 		CC40DBBF1D8C996A00BABD4F /* UANotificationCategories+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UANotificationCategories+Internal.h"; path = "common/UANotificationCategories+Internal.h"; sourceTree = "<group>"; };
 		CC40DBC01D8C996A00BABD4F /* UANotificationCategories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANotificationCategories.h; path = common/UANotificationCategories.h; sourceTree = "<group>"; };
 		CC40DBC11D8C996A00BABD4F /* UANotificationCategories.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UANotificationCategories.m; path = common/UANotificationCategories.m; sourceTree = "<group>"; };
-		CC40DBC21D8C996A00BABD4F /* UANotificationCategory+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UANotificationCategory+Internal.h"; path = "common/UANotificationCategory+Internal.h"; sourceTree = "<group>"; };
 		CC40DBC31D8C996A00BABD4F /* UANotificationCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANotificationCategory.h; path = common/UANotificationCategory.h; sourceTree = "<group>"; };
 		CC40DBC41D8C996A00BABD4F /* UANotificationCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UANotificationCategory.m; path = common/UANotificationCategory.m; sourceTree = "<group>"; };
 		CC40DBC51D8C996A00BABD4F /* UANotificationContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANotificationContent.h; path = common/UANotificationContent.h; sourceTree = "<group>"; };
@@ -2361,13 +2353,11 @@
 		CC40DDDD1D91D52F00BABD4F /* Interactive */ = {
 			isa = PBXGroup;
 			children = (
-				CC40DBBC1D8C996A00BABD4F /* UANotificationAction+Internal.h */,
 				CC40DBBD1D8C996A00BABD4F /* UANotificationAction.h */,
 				CC40DBBE1D8C996A00BABD4F /* UANotificationAction.m */,
 				CC40DBBF1D8C996A00BABD4F /* UANotificationCategories+Internal.h */,
 				CC40DBC01D8C996A00BABD4F /* UANotificationCategories.h */,
 				CC40DBC11D8C996A00BABD4F /* UANotificationCategories.m */,
-				CC40DBC21D8C996A00BABD4F /* UANotificationCategory+Internal.h */,
 				CC40DBC31D8C996A00BABD4F /* UANotificationCategory.h */,
 				CC40DBC41D8C996A00BABD4F /* UANotificationCategory.m */,
 				DFBBC7AF1E36D80B00BA7315 /* UATextInputNotificationAction.h */,
@@ -3081,7 +3071,6 @@
 				CC40DCD11D8C996A00BABD4F /* UALegacyAPNSRegistration+Internal.h in Headers */,
 				CC40DC3D1D8C996A00BABD4F /* UAAPNSRegistration+Internal.h in Headers */,
 				CC40DC3F1D8C996A00BABD4F /* UAAPNSRegistrationProtocol+Internal.h in Headers */,
-				CC40DCE71D8C996A00BABD4F /* UANotificationAction+Internal.h in Headers */,
 				CC40DD191D8C996A00BABD4F /* UATagGroupsAPIClient+Internal.h in Headers */,
 				CCD28FE41DD14DD1008D663F /* UATagGroupsMutation+Internal.h in Headers */,
 				CC40DCFF1D8C996A00BABD4F /* UAPush+Internal.h in Headers */,
@@ -3133,7 +3122,6 @@
 				DF6AD3CB1ED8AA78006EB1DA /* UAScheduleTrigger+Internal.h in Headers */,
 				DF6AD3CC1ED8AA78006EB1DA /* UAInboxAPIClient+Internal.h in Headers */,
 				DF6AD3CD1ED8AA78006EB1DA /* UANotificationCategories+Internal.h in Headers */,
-				DF6AD3CE1ED8AA78006EB1DA /* UANotificationCategory+Internal.h in Headers */,
 				DF6AD3CF1ED8AA78006EB1DA /* UACircularRegion+Internal.h in Headers */,
 				DF6AD3D01ED8AA78006EB1DA /* UAProximityRegion+Internal.h in Headers */,
 				DF6AD3D11ED8AA78006EB1DA /* UAEventData+Internal.h in Headers */,
@@ -3259,11 +3247,9 @@
 				99666DB31EDF2BD200BAE46B /* UANamedUser+Internal.h in Headers */,
 				99666DB41EDF2BD200BAE46B /* UANamedUser.h in Headers */,
 				99666DB61EDF2BD200BAE46B /* UANamedUserAPIClient+Internal.h in Headers */,
-				99666DC21EDF2BE600BAE46B /* UANotificationAction+Internal.h in Headers */,
 				99666DC31EDF2BE600BAE46B /* UANotificationAction.h in Headers */,
 				99666DC51EDF2BE600BAE46B /* UANotificationCategories+Internal.h in Headers */,
 				99666DC61EDF2BE600BAE46B /* UANotificationCategories.h in Headers */,
-				99666DC81EDF2BE600BAE46B /* UANotificationCategory+Internal.h in Headers */,
 				99666DC91EDF2BE600BAE46B /* UANotificationCategory.h in Headers */,
 				99666DD31EDF2BED00BAE46B /* UANotificationContent.h in Headers */,
 				99666DD51EDF2BED00BAE46B /* UANotificationResponse.h in Headers */,
@@ -3458,9 +3444,7 @@
 				DF7E220D1ED62D9B00C79C46 /* UALegacyAPNSRegistration+Internal.h in Headers */,
 				DF7E220E1ED62D9B00C79C46 /* UAAPNSRegistration+Internal.h in Headers */,
 				DF7E220F1ED62D9B00C79C46 /* UAAPNSRegistrationProtocol+Internal.h in Headers */,
-				DF7E22101ED62D9B00C79C46 /* UANotificationAction+Internal.h in Headers */,
 				DF7E22111ED62D9B00C79C46 /* UANotificationCategories+Internal.h in Headers */,
-				DF7E22121ED62D9B00C79C46 /* UANotificationCategory+Internal.h in Headers */,
 				DF7E22131ED62D9B00C79C46 /* UATagGroupsAPIClient+Internal.h in Headers */,
 				DF7E22141ED62D9B00C79C46 /* UATagGroupsMutation+Internal.h in Headers */,
 				DF7E22151ED62D9B00C79C46 /* UAPush+Internal.h in Headers */,

@@ -95,8 +95,9 @@ static const UANotificationActionOptions UANotificationActionOptionNone NS_SWIFT
  * Converts a UANotificationAction into a UIUserNotificationAction.
  *
  * @return An instance of UIUserNotificationAction or nil if conversion fails.
+ * @deprecated Deprecated in iOS 10.
  */
-- (nullable UIUserNotificationAction *)asUIUserNotificationAction NS_DEPRECATED_IOS(8_0, 10_0, "Deprecated by Apple in iOS 10");
+- (nullable UIUserNotificationAction *)asUIUserNotificationAction NS_DEPRECATED_IOS(8_0, 10_0, "Deprecated in iOS 10");
 
 /**
  * Converts a UANotificationAction into a UNNotificationAction.
@@ -104,6 +105,27 @@ static const UANotificationActionOptions UANotificationActionOptionNone NS_SWIFT
  * @return An instance of UNUNotificationAction or nil if conversion fails.
  */
 - (nullable UNNotificationAction *)asUNNotificationAction __IOS_AVAILABLE(10.0);
+
+
+/**
+ * Tests for equivalence with a UIUserNotificationAction. As UANotificationAction is a
+ * drop-in replacement for UNNotificationAction, any features not applicable
+ * in UIUserNotificationAction will be ignored.
+ *
+ * @param notificationAction The UIUserNotificationAction to compare with.
+ * @return `YES` if the two actions are equivalent, `NO` otherwise.
+ * @deprecated Deprecated in iOS 10.
+ */
+- (BOOL)isEqualToUIUserNotificationAction:(UIUserNotificationAction *)notificationAction NS_DEPRECATED_IOS(8_0, 10_0, "Deprecated in iOS 10");
+
+/**
+ * Tests for equivalence with a UNNotificationAction.
+ *
+ * @param notificationAction The UNNNotificationAction to compare with.
+ * @return `YES` if the two actions are equivalent, `NO` otherwise.
+ */
+- (BOOL)isEqualToUNNotificationAction:(UNNotificationAction *)notificationAction;
+
 #endif
 
 @end

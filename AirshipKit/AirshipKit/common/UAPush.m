@@ -17,7 +17,7 @@
 #import "UANotificationCategory.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAConfig.h"
-#import "UANotificationCategory+Internal.h"
+#import "UANotificationCategory.h"
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UATagUtils+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"

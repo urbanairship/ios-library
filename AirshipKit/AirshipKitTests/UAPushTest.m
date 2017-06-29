@@ -22,7 +22,7 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAConfig.h"
 #import "UATagGroupsAPIClient+Internal.h"
-#import "UANotificationCategory+Internal.h"
+#import "UANotificationCategory.h"
 #import "UAPushReceivedEvent+Internal.h"
 #import "UATagGroupsMutation+Internal.h"
 

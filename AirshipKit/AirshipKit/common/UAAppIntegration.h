@@ -99,8 +99,9 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param application The application instance.
  * @param notificationSettings The user notification settings.
+ * @deprecated Deprecated in iOS 10.
  */
-+ (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings NS_DEPRECATED_IOS(8_0, 10_0, "Deprecated by Apple in iOS 10");
++ (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings NS_DEPRECATED_IOS(8_0, 10_0, "Deprecated in iOS 10");
 #endif
 
 #if !TARGET_OS_TV   // Delegate methods unavailable in tvOS

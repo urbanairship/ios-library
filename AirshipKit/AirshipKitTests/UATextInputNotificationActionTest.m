@@ -25,7 +25,6 @@
 
 #import <XCTest/XCTest.h>
 #import "UATextInputNotificationAction.h"
-#import "UANotificationAction+Internal.h"
 
 static const NSString *kTestIdentifier = @"TESTID";
 static const NSString *kTestTitle = @"kTestTitle";

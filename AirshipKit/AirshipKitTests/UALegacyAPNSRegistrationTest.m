@@ -4,7 +4,7 @@
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
 #import "UALegacyAPNSRegistration+Internal.h"
-#import "UANotificationCategory+Internal.h"
+#import "UANotificationCategory.h"
 
 @interface UALegacyAPNSRegistrationTest : XCTestCase
 

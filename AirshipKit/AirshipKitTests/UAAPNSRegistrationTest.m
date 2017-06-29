@@ -6,7 +6,7 @@
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
 #import "UAAPNSRegistration+Internal.h"
-#import "UANotificationCategory+Internal.h"
+#import "UANotificationCategory.h"
 
 @interface UAAPNSRegistrationTest : XCTestCase
 

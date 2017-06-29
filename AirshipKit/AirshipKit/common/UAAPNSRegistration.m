@@ -1,7 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAAPNSRegistration+Internal.h"
-#import "UANotificationCategory+Internal.h"
+#import "UANotificationCategory.h"
 
 @implementation UAAPNSRegistration
 

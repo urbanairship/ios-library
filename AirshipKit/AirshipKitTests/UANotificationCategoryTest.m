@@ -1,6 +1,5 @@
 
 #import <XCTest/XCTest.h>
-#import "UANotificationCategory+Internal.h"
 #import "UANotificationCategory.h"
 #import "UANotificationAction.h"
 #import "UATextInputNotificationAction.h"
