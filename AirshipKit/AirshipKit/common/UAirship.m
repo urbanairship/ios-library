@@ -20,7 +20,6 @@
 #import "UAAppInitEvent+Internal.h"
 #import "UAAppExitEvent+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UAInAppMessaging+Internal.h"
 #import "UANamedUser+Internal.h"
 #import "UAAutomation+Internal.h"
 #import "UAAppIntegration.h"
@@ -31,6 +30,7 @@
 #import "UAChannelCapture.h"
 #import "UADefaultMessageCenter.h"
 #import "UAInboxAPIClient+Internal.h"
+#import "UAInAppMessaging+Internal.h"
 #endif
 
 
@@ -339,8 +339,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     // Invalidate UAAnalytics timer and cancel all queued operations
     [sharedAirship_.analytics cancelUpload];
 
+#if !TARGET_OS_TV
     // Invalidate UAInAppMessaging autodisplay timer
     [sharedAirship_.sharedInAppMessaging invalidateAutoDisplayTimer];
+#endif
 
     // Finally, release the airship!
     [UAirship setSharedAirship:nil];
@@ -369,7 +371,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 + (UAUser *)inboxUser {
     return sharedAirship_.sharedInboxUser;
 }
-#endif
+
 
 + (UAInAppMessaging *)inAppMessaging {
     return sharedAirship_.sharedInAppMessaging;
@@ -378,6 +380,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 + (UADefaultMessageCenter *)defaultMessageCenter {
     return sharedAirship_.sharedDefaultMessageCenter;
 }
+
+#endif
 
 + (UALocation *)location {
     return sharedAirship_.sharedLocation;

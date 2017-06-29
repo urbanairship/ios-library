@@ -15,7 +15,6 @@
 #import "UAConfig.h"
 #import "UAActionRunner+Internal.h"
 #import "UAActionRegistry+Internal.h"
-#import "UAInAppMessaging+Internal.h"
 
 #if !TARGET_OS_TV
 #import "UAInboxUtils.h"
@@ -23,6 +22,7 @@
 #import "UADisplayInboxAction.h"
 #import "UAInbox+Internal.h"
 #import "UAInboxMessageList+Internal.h"
+#import "UAInAppMessaging+Internal.h"
 #endif
 
 #define kUANotificationActionKey @"com.urbanairship.interactive_actions"

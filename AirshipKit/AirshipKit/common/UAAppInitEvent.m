@@ -27,10 +27,10 @@
 
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
     [data setValue:[UAirship inboxUser].username forKey:@"user_id"];
+    [data setValue:[self carrierName] forKey:@"carrier"];
 #endif
 
     [data setValue:[UAUtils connectionType] forKey:@"connection_type"];
-    [data setValue:[self carrierName] forKey:@"carrier"];
 
     [data setValue:[self notificationTypes] forKey:@"notification_types"];
 

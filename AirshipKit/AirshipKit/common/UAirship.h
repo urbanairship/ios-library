@@ -188,7 +188,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * @return The `UAUser` instance.
  */
 + (null_unspecified UAUser *)inboxUser;
-#endif
+
 
 /**
  * Returns the `UAInAppMessaging` instance. Used for customizing
@@ -201,6 +201,8 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * and displaying the default message center.
  */
 + (null_unspecified UADefaultMessageCenter *)defaultMessageCenter;
+
+#endif
 
 /**
  * Returns the `UANamedUser` instance.

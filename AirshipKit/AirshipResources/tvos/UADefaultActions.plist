@@ -82,16 +82,6 @@
 	</dict>
 	<dict>
 		<key>class</key>
-		<string>UAChannelCaptureAction</string>
-		<key>predicate</key>
-		<string>UAChannelCaptureActionPredicate</string>
-		<key>name</key>
-		<string>channel_capture_action</string>
-		<key>altName</key>
-		<string>^cc</string>
-	</dict>
-	<dict>
-		<key>class</key>
 		<string>UAEnableFeatureAction</string>
 		<key>predicate</key>
 		<string>UAEnableFeatureActionPredicate</string>
