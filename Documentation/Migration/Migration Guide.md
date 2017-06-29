@@ -37,6 +37,8 @@ func application(application: UIApplication, didFailToRegisterForRemoteNotificat
 
 This version supports iOS 8, 9 and 10. Xcode 8 is required.
 
+With iOS 10 and SDK 8 you have the ability to send Rich Notifications. To configure rich notification support, please visit [iOS Notification Service Extensions](https://docs.urbanairship.com/platform/ios/#notification-service-extension).
+
 ## Application Integration
 
 All application integration points have been moved to [UAAppIntegration](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes.html#/c:objc(cs)UAAppIntegration).

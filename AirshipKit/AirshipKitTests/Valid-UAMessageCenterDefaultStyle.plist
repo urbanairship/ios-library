@@ -10,15 +10,15 @@
 		<string>11</string>
 	</dict>
 	<key>titleColor</key>
-	<string>#00FF00</string>
+	<string>#FF0000</string>
 	<key>tintColor</key>
 	<string>#00FF00</string>
 	<key>navigationBarColor</key>
-	<string>#00FF00</string>
+	<string>#0000FF</string>
 	<key>navigationBarOpaque</key>
 	<true/>
 	<key>listColor</key>
-	<string>#00FF00</string>
+	<string>#FF0000</string>
 	<key>refreshTintColor</key>
 	<string>#00FF00</string>
 	<key>iconsEnabled</key>
@@ -40,22 +40,28 @@
 		<string>11</string>
 	</dict>
 	<key>cellColor</key>
-	<string>#00FF00</string>
+	<string>#0000FF</string>
 	<key>cellHighlightedColor</key>
-	<string>#00FF00</string>
+	<string>#FF0000</string>
 	<key>cellTitleColor</key>
 	<string>#00FF00</string>
 	<key>cellTitleHighlightedColor</key>
-	<string>#00FF00</string>
+	<string>#0000FF</string>
 	<key>cellDateColor</key>
-	<string>#00FF00</string>
+	<string>#FF0000</string>
 	<key>cellDateHighlightedColor</key>
 	<string>#00FF00</string>
 	<key>cellSeparatorColor</key>
-	<string>#00FF00</string>
+	<string>#0000FF</string>
 	<key>cellTintColor</key>
-	<string>#00FF00</string>
+	<string>#FF0000</string>
 	<key>unreadIndicatorColor</key>
 	<string>#00FF00</string>
+	<key>selectAllButtonTitleColor</key>
+	<string>#FF0000</string>
+	<key>deleteButtonTitleColor</key>
+	<string>#00FF00</string>
+	<key>markAsReadButtonTitleColor</key>
+	<string>#0000FF</string>
 </dict>
 </plist>

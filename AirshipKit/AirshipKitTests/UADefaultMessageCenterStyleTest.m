@@ -82,29 +82,34 @@
 
     // Valid-UAMessageCenterDefaultStyle has these values set:
     UIFont *helveticaTestFont = [UIFont fontWithName:@"Helvetica" size:11];
-    UIColor *redTestColor = [UAColorUtils colorWithHexString:@"#00FF00"];
+    UIColor *redTestColor = [UAColorUtils colorWithHexString:@"#FF0000"];
+    UIColor *greenTestColor = [UAColorUtils colorWithHexString:@"#00FF00"];
+    UIColor *blueTestColor = [UAColorUtils colorWithHexString:@"#0000FF"];
 
     // properties in the valid style plist should match what's set in the style
     XCTAssertEqualObjects(helveticaTestFont, validStyle.titleFont);
     XCTAssertEqualObjects(redTestColor, validStyle.titleColor);
-    XCTAssertEqualObjects(redTestColor, validStyle.tintColor);
-    XCTAssertEqualObjects(redTestColor, validStyle.navigationBarColor);
+    XCTAssertEqualObjects(greenTestColor, validStyle.tintColor);
+    XCTAssertEqualObjects(blueTestColor, validStyle.navigationBarColor);
     XCTAssertTrue(validStyle.navigationBarOpaque);
     XCTAssertEqualObjects(redTestColor, validStyle.listColor);
-    XCTAssertEqualObjects(redTestColor, validStyle.refreshTintColor);
+    XCTAssertEqualObjects(greenTestColor, validStyle.refreshTintColor);
     XCTAssertTrue(validStyle.iconsEnabled);
     XCTAssertEqualObjects(mockImage, validStyle.placeholderIcon);
     XCTAssertEqualObjects(helveticaTestFont, validStyle.cellTitleFont);
     XCTAssertEqualObjects(helveticaTestFont, validStyle.cellDateFont);
-    XCTAssertEqualObjects(redTestColor, validStyle.cellColor);
+    XCTAssertEqualObjects(blueTestColor, validStyle.cellColor);
     XCTAssertEqualObjects(redTestColor, validStyle.cellHighlightedColor);
-    XCTAssertEqualObjects(redTestColor, validStyle.cellTitleColor);
-    XCTAssertEqualObjects(redTestColor, validStyle.cellTitleHighlightedColor);
+    XCTAssertEqualObjects(greenTestColor, validStyle.cellTitleColor);
+    XCTAssertEqualObjects(blueTestColor, validStyle.cellTitleHighlightedColor);
     XCTAssertEqualObjects(redTestColor, validStyle.cellDateColor);
-    XCTAssertEqualObjects(redTestColor, validStyle.cellDateHighlightedColor);
-    XCTAssertEqualObjects(redTestColor, validStyle.cellSeparatorColor);
+    XCTAssertEqualObjects(greenTestColor, validStyle.cellDateHighlightedColor);
+    XCTAssertEqualObjects(blueTestColor, validStyle.cellSeparatorColor);
     XCTAssertEqualObjects(redTestColor, validStyle.cellTintColor);
-    XCTAssertEqualObjects(redTestColor, validStyle.unreadIndicatorColor);
+    XCTAssertEqualObjects(greenTestColor, validStyle.unreadIndicatorColor);
+    XCTAssertEqualObjects(redTestColor, validStyle.selectAllButtonTitleColor);
+    XCTAssertEqualObjects(greenTestColor, validStyle.deleteButtonTitleColor);
+    XCTAssertEqualObjects(blueTestColor, validStyle.markAsReadButtonTitleColor);
 
     [mockImage stopMocking];
 }

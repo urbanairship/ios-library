@@ -117,6 +117,22 @@
  */
 @property(nonatomic, strong) UIColor *unreadIndicatorColor;
 
+/**
+ * The title color for the "Select All" button.
+ */
+@property(nonatomic, strong) UIColor *selectAllButtonTitleColor;
+
+/**
+ * The title color for the "Delete" button.
+ */
+@property(nonatomic, strong) UIColor *deleteButtonTitleColor;
+
+/**
+ * The title color for the "Mark Read" button.
+ */
+@property(nonatomic, strong) UIColor *markAsReadButtonTitleColor;
+
+
 ///---------------------------------------------------------------------------------------
 /// @name Default Message Center Style Factories
 ///---------------------------------------------------------------------------------------

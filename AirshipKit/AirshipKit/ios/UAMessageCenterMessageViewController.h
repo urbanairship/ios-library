@@ -5,9 +5,6 @@
 #import "UAWKWebViewDelegate.h"
 #import "UAMessageCenterMessageViewProtocol.h"
 
-@class UAInboxMessage;
-@class UADefaultMessageCenterStyle;
-
 /**
  * Default implementation of a view controller for reading Message Center messages.
  */

@@ -251,21 +251,21 @@
                                                                action:@selector(selectAllButtonPressed:)];
 
     // Override any inherited tint color, to avoid potential clashes
-    self.selectAllButtonItem.tintColor = self.defaultTintColor;
+    self.selectAllButtonItem.tintColor = (self.style.selectAllButtonTitleColor) ? self.style.selectAllButtonTitleColor : self.defaultTintColor;
 
 
     self.deleteItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_delete")
                                                        style:UIBarButtonItemStylePlain
                                                       target:self
                                                       action:@selector(batchUpdateButtonPressed:)];
-    self.deleteItem.tintColor = [UIColor redColor];
+    self.deleteItem.tintColor = (self.style.deleteButtonTitleColor) ? self.style.deleteButtonTitleColor : [UIColor redColor];
 
     self.markAsReadButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_mark_read")
                                                                  style:UIBarButtonItemStylePlain
                                                                 target:self action:@selector(batchUpdateButtonPressed:)];
 
     // Override any inherited tint color, to avoid potential clashes
-    self.markAsReadButtonItem.tintColor = self.defaultTintColor;
+    self.markAsReadButtonItem.tintColor = (self.style.markAsReadButtonTitleColor) ? self.style.markAsReadButtonTitleColor : self.defaultTintColor;
 
     self.toolbarItems = @[self.selectAllButtonItem, flexibleSpace, self.deleteItem, flexibleSpace, self.markAsReadButtonItem];
 }
