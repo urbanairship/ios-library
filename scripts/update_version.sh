@@ -18,7 +18,4 @@ sed -i '' "s/\(s.version *= *\)\".*\"/\1\"$VERSION\"/g" $ROOT_PATH/UrbanAirship-
 sed -i '' "s/\CURRENT_PROJECT_VERSION.*/CURRENT_PROJECT_VERSION = $VERSION/g" $ROOT_PATH/AirshipKit/AirshipConfig.xcconfig
 
 # UAirshipVersion.m
-sed -i '' "s/\(versionString *= *@\)\".*\"/\1\"$VERSION\"/g" $ROOT_PATH/AirshipKit/AirshipKit/UAirshipVersion.m
-
-
-
+sed -i '' "s/\(versionString *= *@\)\".*\"/\1\"$VERSION\"/g" $ROOT_PATH/AirshipKit/AirshipKit/common/UAirshipVersion.m

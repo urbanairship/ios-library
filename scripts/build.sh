@@ -175,7 +175,7 @@ cp "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" "${STAGING}/Airship"
 cp -R "${TEMP_DIR}/AirshipResources/Release-iphoneos/AirshipResources.bundle" "${STAGING}/Airship"
 
 # Copy LICENSE, README and CHANGELOG
-cp "${ROOT_PATH}/CHANGELOG" "${STAGING}"
+cp "${ROOT_PATH}/CHANGELOG.md" "${STAGING}"
 cp "${ROOT_PATH}/README.md" "${STAGING}"
 cp "${ROOT_PATH}/LICENSE" "${STAGING}"
 
