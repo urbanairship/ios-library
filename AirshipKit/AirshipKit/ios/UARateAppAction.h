@@ -33,11 +33,6 @@
 extern NSString *const UARateAppShowDialogKey;
 
 /**
- * The iTunes ID key.
- */
-extern NSString *const UARateAppItunesIDKey;
-
-/**
  * The link prompt's header key.
  */
 extern NSString *const UARateAppLinkPromptHeaderKey;

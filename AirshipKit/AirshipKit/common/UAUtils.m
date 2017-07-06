@@ -277,12 +277,6 @@
         }
         topController = topController.presentedViewController;
     }
-
-    // Custom modal presentation could leave us in an unpredictable display state
-    if (presented && presentationStyle == UIModalPresentationCustom) {
-        UA_LDEBUG(@"top view controller is using a custom presentation style, returning nil");
-        return nil;
-    }
     
     return topController;
 }

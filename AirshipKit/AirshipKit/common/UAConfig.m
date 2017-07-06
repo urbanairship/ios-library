@@ -74,8 +74,9 @@
         _defaultDetectProvisioningMode = config.defaultDetectProvisioningMode;
         _messageCenterStyleConfig = config.messageCenterStyleConfig;
         _useWKWebView = config.useWKWebView;
+        _itunesID = config.itunesID;
     }
-    
+
     return config;
 }
 
@@ -105,7 +106,8 @@
             "Custom Config: %@\n"
             "Delay Channel Creation: %d\n"
             "Default Message Center Style Config File: %@\n"
-            "Use WKWebView: %d\n",
+            "Use WKWebView: %d\n"
+            "Use iTunes ID: %@\n",
             self.appKey,
             self.appSecret,
             self.inProduction,
@@ -131,7 +133,8 @@
             self.customConfig,
             self.channelCreationDelayEnabled,
             self.messageCenterStyleConfig,
-            self.useWKWebView];
+            self.useWKWebView,
+            self.itunesID];
 }
 
 #pragma mark -

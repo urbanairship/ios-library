@@ -6,6 +6,7 @@
 #import "UAirship.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARateAppPromptViewController+Internal.h"
+#import "UAConfig.h"
 
 #define kMaxHeaderChars 24
 #define kMaxDescriptionChars 50
@@ -21,7 +22,6 @@
 
 @interface UARateAppAction ()
 
-@property (nonatomic, strong) NSString *itunesID;
 @property (assign) BOOL showDialog;
 
 @property (strong, nonatomic) NSString *linkPromptHeader;
@@ -31,13 +31,11 @@
 
 @implementation UARateAppAction
 
+BOOL legacy;
+
 NSString *const UARateAppShowDialogKey = @"showDialog";
-NSString *const UARateAppItunesIDKey = @"itunesID";
 NSString *const UARateAppLinkPromptHeaderKey = @"linkPromptHeaderKey";
 NSString *const UARateAppLinkPromptDescriptionKey = @"linkPromptDescriptionKey";
-
-BOOL requiresItunesID;
-BOOL legacy;
 
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler {
@@ -48,27 +46,22 @@ BOOL legacy;
 
     // Display SKStoreReviewController
     if (!legacy && self.showDialog) {
-        [self displayDialog];
-        completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNoData]);
+        [self displaySystemDialog];
+        completionHandler([UAActionResult emptyResult]);
         return;
     }
 
-    NSString *linkString = [NSString stringWithFormat:kUARateAppItunesURLFormat, self.itunesID];
+    NSString *linkString = [NSString stringWithFormat:kUARateAppItunesURLFormat, [[UAirship shared].config itunesID]];
 
     // If the user doesn't want to show a dialog just open link to store
     if (!self.showDialog) {
         [self linkToStore:linkString];
-        completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNoData]);
+        completionHandler([UAActionResult emptyResult]);
         return;
     }
 
     [self displayLinkDialog:linkString completionHandler:^(BOOL dismissed) {
-        if (dismissed) {
-            completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNoData]);
-            return;
-        }
-
-        completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNoData]);
+        completionHandler([UAActionResult emptyResult]);
     }];
 }
 
@@ -76,61 +69,63 @@ BOOL legacy;
 
     legacy = ![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 3, 0}];
 
-    id itunesID;
     id showDialog;
     id linkPromptHeader;
     id linkPromptDescription;
 
-    if (![arguments.value isKindOfClass:[NSDictionary class]]) {
-        UA_LDEBUG(@"Unable to parse arguments: %@", arguments);
+    if (arguments.value != nil && ![arguments.value isKindOfClass:[NSDictionary class]]) {
+        UA_LWARN(@"Unable to parse arguments: %@", arguments);
         return NO;
     }
 
     showDialog = [arguments.value objectForKey:UARateAppShowDialogKey];
-    itunesID = [arguments.value objectForKey:UARateAppItunesIDKey];
     linkPromptHeader = [arguments.value objectForKey:UARateAppLinkPromptHeaderKey];
     linkPromptDescription = [arguments.value objectForKey:UARateAppLinkPromptDescriptionKey];
 
     if (showDialog && ![showDialog isKindOfClass:[NSNumber class]]) {
-        UA_LDEBUG(@"Parsed an invalid Show Dialog flag from arguments: %@. Show Dialog flag must be an NSNumber or BOOL.", arguments);
+        UA_LWARN(@"Parsed an invalid Show Dialog flag from arguments: %@. Show Dialog flag must be an NSNumber or BOOL.", arguments);
         return NO;
     }
 
-    if (itunesID && ![itunesID isKindOfClass:[NSString class]]) {
-        UA_LDEBUG(@"Parsed an invalid iTunes ID from arguments: %@. iTunes ID must be an NSString.", arguments);
-        return NO;
-    }
-
-    if (!itunesID) {
-        UA_LDEBUG(@"Itunes ID is required.");
+    if (![[UAirship shared].config itunesID]) {
+        UA_LWARN(@"iTunes ID is required.");
         return NO;
     }
 
     if (linkPromptHeader) {
+        if (!showDialog) {
+            UA_LWARN(@"Link prompt header should only be set when showDialog is set to true.");
+            return NO;
+        }
+
         if (![linkPromptHeader isKindOfClass:[NSString class]]) {
-            UA_LDEBUG(@"Parsed an invalid link prompt header from arguments: %@. Link prompt header must be an NSString.", arguments);
+            UA_LWARN(@"Parsed an invalid link prompt header from arguments: %@. Link prompt header must be an NSString.", arguments);
             return NO;
         }
 
         if ([linkPromptHeader length] > 24) {
-            UA_LDEBUG(@"Parsed an invalid link prompt header from arguments: %@. Link prompt header must be shorter than 24 characters in length.", arguments);
+            UA_LWARN(@"Parsed an invalid link prompt header from arguments: %@. Link prompt header must be shorter than 24 characters in length.", arguments);
             return NO;
         }
     }
 
     if (linkPromptDescription) {
+        if (!showDialog) {
+            UA_LWARN(@"Link prompt description should only be set when showDialog is set to true.");
+            return NO;
+        }
+
         if (![linkPromptDescription isKindOfClass:[NSString class]]) {
-            UA_LDEBUG(@"Parsed an invalid link prompt description from arguments: %@. Link prompt description must be an NSString.", arguments);
+            UA_LWARN(@"Parsed an invalid link prompt description from arguments: %@. Link prompt description must be an NSString.", arguments);
             return NO;
         }
 
         if ([linkPromptDescription length] > 50) {
-            UA_LDEBUG(@"Parsed an invalid link prompt description from arguments: %@. Link prompt description must be shorter than 50 characters in length.", arguments);
+            UA_LWARN(@"Parsed an invalid link prompt description from arguments: %@. Link prompt description must be shorter than 50 characters in length.", arguments);
             return NO;
         }
     }
 
-    self.itunesID = (NSString *)itunesID;
     self.showDialog = [showDialog boolValue];
     self.linkPromptHeader = linkPromptHeader;
     self.linkPromptDescription = linkPromptDescription;
@@ -138,17 +133,16 @@ BOOL legacy;
     return YES;
 }
 
--(void)displayDialog {
+-(void)displaySystemDialog {
     [SKStoreReviewController requestReview];
 
 #if RELEASE
     [self storeTimestamp:kUARateAppPromptTimestampsKey];
 
     if ([self getTimestampsForKey:kUARateAppPromptTimestampsKey].count >= 3) {
-        UA_LWARN(@"System rating prompt has attempted to display 3 or more times this year.");
+        UA_LWARN(@"System rating prompt has attempted to display %@ times this year.", [self getTimestampsForKey:kUARateAppPromptTimestampsKey].count);
     }
 #endif
-
 }
 
 -(NSArray *)getTimestampsForKey:(NSString *)key {
@@ -183,7 +177,7 @@ BOOL legacy;
 - (BOOL)canLinkToStore:(NSString *)linkString {
     // If the URL can't be opened, bail before displaying
     if (![[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:linkString]]) {
-        UA_LDEBUG(@"Unable to open iTunes URL: %@", linkString);
+        UA_LWARN(@"Unable to open iTunes URL: %@", linkString);
         return NO;
     }
     return YES;
@@ -216,8 +210,8 @@ BOOL legacy;
     if (NSBundle.mainBundle.infoDictionary[@"CFBundleDisplayName"]) {
         displayName = NSBundle.mainBundle.infoDictionary[@"CFBundleDisplayName"];
     } else {
-        displayName = @"This App";
-        UA_LDEBUG(@"CFBundleDisplayName unavailable, falling back to generic display name: %@", kUARateAppGenericDisplayName);
+        displayName = kUARateAppGenericDisplayName;
+        UA_LWARN(@"CFBundleDisplayName unavailable, falling back to generic display name: %@", kUARateAppGenericDisplayName);
     }
 
     UARateAppPromptViewController *linkPrompt = [[UARateAppPromptViewController alloc] initWithNibName:kUARateAppNibName bundle:[UAirship resources]];
