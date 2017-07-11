@@ -80,6 +80,10 @@
     } else if (style.tintColor) {
         self.unreadIndicator.backgroundColor = self.style.tintColor;
     }
+    
+    // needed for retina displays because the unreadIndicator is configured to rasterize in
+    // UADefaultMessageCenterListCell.xib via user-defined runtime attributes (layer.shouldRasterize)
+    self.unreadIndicator.layer.rasterizationScale = [[UIScreen mainScreen] scale];
 }
 
 // Override to prevent the default implementation from covering up the unread indicator
