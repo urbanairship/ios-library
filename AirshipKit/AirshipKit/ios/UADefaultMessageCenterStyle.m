@@ -27,6 +27,9 @@
 
 + (instancetype)styleWithContentsOfFile:(NSString *)file {
     UADefaultMessageCenterStyle *style = [UADefaultMessageCenterStyle style];
+    if (!file) {
+        return style;
+    }
     NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"plist"];
 
     if (path) {
@@ -132,6 +135,75 @@
 
     return [UIImage imageNamed:iconString];
 }
+
+- (BOOL)isEqualToUADefaultMessageCenterStyle:(UADefaultMessageCenterStyle *)style {
+    if (!style) {
+        return NO;
+    }
+    
+    // properties in the valid style plist should match what's set in the style
+    BOOL haveEqualTitleFont = (!self.titleFont && !style.titleFont) || [self.titleFont isEqual:style.titleFont];
+    BOOL haveEqualtitleColor = (!self.titleColor && !style.titleColor) || [self.titleColor isEqual:style.titleColor];
+    BOOL haveEqualtintColor = (!self.tintColor && !style.tintColor) || [self.tintColor isEqual:style.tintColor];
+    BOOL haveEqualnavigationBarColor = (!self.navigationBarColor && !style.navigationBarColor) || [self.navigationBarColor isEqual:style.navigationBarColor];
+    BOOL haveEqualnavigationBarOpaque = (self.navigationBarOpaque == style.navigationBarOpaque);
+    BOOL haveEquallistColor = (!self.listColor && !style.listColor) || [self.listColor isEqual:style.listColor];
+    BOOL haveEqualrefreshTintColor = (!self.refreshTintColor && !style.refreshTintColor) || [self.refreshTintColor isEqual:style.refreshTintColor];
+    BOOL haveEqualiconsEnabled = (self.iconsEnabled == style.iconsEnabled);
+    BOOL haveEqualplaceholderIcon = (!self.placeholderIcon && !style.placeholderIcon) || [self.placeholderIcon isEqual:style.placeholderIcon];
+    BOOL haveEqualcellTitleFont = (!self.cellTitleFont && !style.cellTitleFont) || [self.cellTitleFont isEqual:style.cellTitleFont];
+    BOOL haveEqualcellDateFont = (!self.cellDateFont && !style.cellDateFont) || [self.cellDateFont isEqual:style.cellDateFont];
+    BOOL haveEqualcellColor = (!self.cellColor && !style.cellColor) || [self.cellColor isEqual:style.cellColor];
+    BOOL haveEqualcellHighlightedColor = (!self.cellHighlightedColor && !style.cellHighlightedColor) || [self.cellHighlightedColor isEqual:style.cellHighlightedColor];
+    BOOL haveEqualcellTitleColor = (!self.cellTitleColor && !style.cellTitleColor) || [self.cellTitleColor isEqual:style.cellTitleColor];
+    BOOL haveEqualcellTitleHighlightedColor = (!self.cellTitleHighlightedColor && !style.cellTitleHighlightedColor) || [self.cellTitleHighlightedColor isEqual:style.cellTitleHighlightedColor];
+    BOOL haveEqualcellDateColor = (!self.cellDateColor && !style.cellDateColor) || [self.cellDateColor isEqual:style.cellDateColor];
+    BOOL haveEqualcellDateHighlightedColor = (!self.cellDateHighlightedColor && !style.cellDateHighlightedColor) || [self.cellDateHighlightedColor isEqual:style.cellDateHighlightedColor];
+    BOOL haveEqualcellSeparatorColor = (!self.cellSeparatorColor && !style.cellSeparatorColor) || [self.cellSeparatorColor isEqual:style.cellSeparatorColor];
+    BOOL haveEqualcellTintColor = (!self.cellTintColor && !style.cellTintColor) || [self.cellTintColor isEqual:style.cellTintColor];
+    BOOL haveEqualunreadIndicatorColor = (!self.unreadIndicatorColor && !style.unreadIndicatorColor) || [self.unreadIndicatorColor isEqual:style.unreadIndicatorColor];
+    BOOL haveEqualselectAllButtonTitleColor = (!self.selectAllButtonTitleColor && !style.selectAllButtonTitleColor) || [self.selectAllButtonTitleColor isEqual:style.selectAllButtonTitleColor];
+    BOOL haveEqualdeleteButtonTitleColor = (!self.deleteButtonTitleColor && !style.deleteButtonTitleColor) || [self.deleteButtonTitleColor isEqual:style.deleteButtonTitleColor];
+    BOOL haveEqualmarkAsReadButtonTitleColor = (!self.markAsReadButtonTitleColor && !style.markAsReadButtonTitleColor) || [self.markAsReadButtonTitleColor isEqual:style.markAsReadButtonTitleColor];
+
+    
+    return haveEqualTitleFont &&
+        haveEqualtitleColor &&
+        haveEqualtintColor &&
+        haveEqualnavigationBarColor &&
+        haveEqualnavigationBarOpaque &&
+        haveEquallistColor &&
+        haveEqualrefreshTintColor &&
+        haveEqualiconsEnabled &&
+        haveEqualplaceholderIcon &&
+        haveEqualcellTitleFont &&
+        haveEqualcellDateFont &&
+        haveEqualcellColor &&
+        haveEqualcellHighlightedColor &&
+        haveEqualcellTitleColor &&
+        haveEqualcellTitleHighlightedColor &&
+        haveEqualcellDateColor &&
+        haveEqualcellDateHighlightedColor &&
+        haveEqualcellSeparatorColor &&
+        haveEqualcellTintColor &&
+        haveEqualunreadIndicatorColor &&
+        haveEqualselectAllButtonTitleColor &&
+        haveEqualdeleteButtonTitleColor &&
+        haveEqualmarkAsReadButtonTitleColor;
+}
+
+- (BOOL)isEqual:(id)object {
+    if (self == object) {
+        return YES;
+    }
+    
+    if (![object isKindOfClass:[UADefaultMessageCenterStyle class]]) {
+        return NO;
+    }
+    
+    return [self isEqualToUADefaultMessageCenterStyle:(UADefaultMessageCenterStyle *)object];
+}
+
 
 #pragma mark -
 #pragma KVC Overrides

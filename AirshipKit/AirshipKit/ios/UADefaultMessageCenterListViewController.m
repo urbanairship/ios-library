@@ -223,14 +223,16 @@
     if (sender.refreshing) {
         self.refreshControlAnimating = YES;
         void (^retrieveMessageCompletionBlock)(void) = ^(void){
-            [CATransaction begin];
-            [CATransaction setCompletionBlock: ^{
-                // refresh animation has finished
-                self.refreshControlAnimating = NO;
-                [self chooseMessageDisplayAndReload];
-            }];
-            [sender endRefreshing];
-            [CATransaction commit];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [CATransaction begin];
+                [CATransaction setCompletionBlock: ^{
+                    // refresh animation has finished
+                    self.refreshControlAnimating = NO;
+                    [self chooseMessageDisplayAndReload];
+                }];
+                [sender endRefreshing];
+                [CATransaction commit];
+            });
         };
 
         [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:retrieveMessageCompletionBlock withFailureBlock:retrieveMessageCompletionBlock];

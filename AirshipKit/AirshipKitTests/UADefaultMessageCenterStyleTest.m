@@ -67,7 +67,8 @@
     XCTAssertEqualObjects(defaultStyle.cellTintColor, invalidStyle.cellTintColor);
     XCTAssertEqualObjects(defaultStyle.unreadIndicatorColor, invalidStyle.unreadIndicatorColor);
     XCTAssertNotEqual(defaultStyle.cellSeparatorColor, invalidStyle.cellSeparatorColor);
-
+    
+    XCTAssertNotEqualObjects(defaultStyle, invalidStyle);
 }
 
 - (void)testValidStyle {
@@ -112,6 +113,14 @@
     XCTAssertEqualObjects(blueTestColor, validStyle.markAsReadButtonTitleColor);
 
     [mockImage stopMocking];
+}
+
+// passing in a nil file path should just return the default style
+- (void)testNilStyleFile {
+    UADefaultMessageCenterStyle *nilStyle = [UADefaultMessageCenterStyle styleWithContentsOfFile:nil];
+    UADefaultMessageCenterStyle *defaultStyle = [UADefaultMessageCenterStyle style];
+    
+    XCTAssertEqualObjects(nilStyle,defaultStyle);
 }
 
 @end
