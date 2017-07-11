@@ -32,8 +32,11 @@
  * Test the conversion of UAUserNotificationCategory to UIUserNotificationCategory
  */
 - (void)testAsUIUserNotificationCategory {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     UIUserNotificationCategory *uiCategory = [self.uaCategory asUIUserNotificationCategory];
     XCTAssertTrue([self.uaCategory isEqualToUIUserNotificationCategory:(UIUserNotificationCategory *)uiCategory]);
+#pragma GCC diagnostic pop
 }
 
 - (void)testAsUNNotificationCategory {

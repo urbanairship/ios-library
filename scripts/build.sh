@@ -95,6 +95,7 @@ TARGET_BUILD_DIR="${TEMP_DIR}/AirshipLib/iphonesimulator"
 xcrun -sdk iphoneos lipo -create -output "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" "${TEMP_DIR}/AirshipLib/iphoneos/libUAirship.a" "${TEMP_DIR}/AirshipLib/iphonesimulator/libUAirship.a"
 
 # Verify architectures in the fat binary
+echo "☠️ ⛑ If the build fails at this step, it means one of the architectures is missing. 👉 Run 'xcrun -sdk iphoneos lipo \"${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a\" -detailed_info' for more info. 👈 ⛑ ☠️"
 xcrun -sdk iphoneos lipo "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" -verify_arch armv7 armv7s i386 x86_64 arm64
 
 # Verify bitcode is enabled in the fat binary
@@ -103,6 +104,7 @@ otool -l "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" | grep __LLVM
 ############
 # Build docs
 ############
+echo "BUILD DOCS"
 
 # Make sure Jazzy is installed
 if [ `gem list -i jazzy --version ${JAZZY_VERSION}` == 'false' ]; then

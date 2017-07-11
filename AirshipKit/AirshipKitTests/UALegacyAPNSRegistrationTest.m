@@ -47,12 +47,15 @@
     NSUInteger normalizedOptions = options & (UANotificationOptionAlert | UANotificationOptionBadge | UANotificationOptionSound);
 
     NSMutableSet *normalizedCategories = [NSMutableSet set];
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     for (UANotificationCategory *category in self.testCategories) {
         [normalizedCategories addObject:[category asUIUserNotificationCategory]];
     }
 
     [[self.mockedApplication expect] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:normalizedOptions
                                                                                                         categories:normalizedCategories]];
+#pragma GCC diagnostic pop
     [self.pushRegistration updateRegistrationWithOptions:options categories:self.testCategories];
 
     [self.mockedApplication verify];

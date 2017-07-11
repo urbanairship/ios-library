@@ -191,7 +191,10 @@
     [[self.mockedPush expect] application:OCMOCK_ANY didRegisterUserNotificationSettings:OCMOCK_ANY];
 
     // Call the app integration
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     [UAAppIntegration application:self.mockedApplication didRegisterUserNotificationSettings:[[UIUserNotificationSettings alloc] init]];
+#pragma GCC diagnostic pop
 
     // Verify everything
     [self.mockedPush verify];

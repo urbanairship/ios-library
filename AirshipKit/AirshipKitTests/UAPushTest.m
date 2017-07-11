@@ -137,7 +137,10 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
 
     // Set up mocked UIUserNotificationSettings
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     self.mockUIUserNotificationSettings = [OCMockObject niceMockForClass:[UIUserNotificationSettings class]];
+#pragma GCC diagnostic pop
 
     // Set up a mocked device api client
     self.mockedChannelRegistrar = [OCMockObject niceMockForClass:[UAChannelRegistrar class]];
@@ -230,6 +233,8 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                    @"autobadgeEnabled should be stored in standardUserDefaults");
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 - (void)testAlias {
     self.push.alias = @"some-alias";
     XCTAssertEqualObjects(@"some-alias", self.push.alias, @"alias is not being set correctly");
@@ -256,6 +261,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     XCTAssertEqualObjects(@"a", [self.dataStore stringForKey:UAPushAliasSettingsKey],
                           @"alias should be stored in standardUserDefaults");
 }
+#pragma GCC diagnostic pop
 
 - (void)testTags {
     NSArray *tags = @[@"tag-one", @"tag-two"];
@@ -434,6 +440,8 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     self.push.userPushNotificationsEnabled = NO;
 
     NSMutableSet *expectedCategories = [NSMutableSet set];
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     for (UANotificationCategory *category in self.push.combinedCategories) {
         [expectedCategories addObject:[category asUIUserNotificationCategory]];
     }
@@ -444,6 +452,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
         UIUserNotificationSettings *settings = (UIUserNotificationSettings *)obj;
         return expectedTypes == settings.types && expectedCategories.count == settings.categories.count;
     }]];
+#pragma GCC diagnostic pop
 
     self.push.userPushNotificationsEnabled = YES;
 
@@ -501,6 +510,8 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     self.push.shouldUpdateAPNSRegistration = NO;
 
     // Make sure we have previously registered types
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeBadge categories:nil];
     [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
 
@@ -517,6 +528,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 
     UIUserNotificationSettings *expected = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone
                                                                              categories:nil];
+#pragma GCC diagnostic pop
 
     [[self.mockedApplication expect] registerUserNotificationSettings:expected];
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
@@ -662,6 +674,8 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     self.push.registrationDelegate = self.mockRegistrationDelegate;
 
     NSMutableSet *expectedCategories = [NSMutableSet set];
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     for (UANotificationCategory *category in self.push.combinedCategories) {
         [expectedCategories addObject:[category asUIUserNotificationCategory]];
     }
@@ -678,6 +692,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
         [self.push application:self.mockedApplication didRegisterUserNotificationSettings:settings];
         return expectedTypes == settings.types && expectedCategories.count == settings.categories.count;
     }]];
+#pragma GCC diagnostic pop
 
     [[[self.mockRegistrationDelegate expect] andDo:^(NSInvocation *invocation) {
         [delegateCalled fulfill];
@@ -863,12 +878,15 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     self.testOSMajorVersion = 8;
 
     // Make sure we have previously registered types
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeBadge categories:nil];
     [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
 
     self.push.userPushNotificationsEnabled = NO;
     UIUserNotificationSettings *expected = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone
                                                                              categories:nil];
+#pragma GCC diagnostic pop
 
     [[self.mockedApplication expect] registerUserNotificationSettings:expected];
     [self.push updateAPNSRegistration];
@@ -885,7 +903,10 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     self.testOSMajorVersion = 8;
 
     // Make sure we have previously registered types
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone categories:nil];
+#pragma GCC diagnostic pop
     [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
 
     self.push.userPushNotificationsEnabled = NO;
@@ -1163,7 +1184,10 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     // Set up UAPush to give a full, opted in payload
     self.push.pushTokenRegistrationEnabled = NO;
     self.push.deviceToken = validDeviceToken;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     self.push.alias = @"ALIAS";
+#pragma GCC diagnostic pop
     self.push.channelTagRegistrationEnabled = YES;
     self.push.tags = @[@"tag-one"];
     self.push.autobadgeEnabled = NO;
@@ -1315,10 +1339,13 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     self.push.deviceToken = validDeviceToken;
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(YES)] isRegisteredForRemoteNotifications];
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeBadge categories:nil];
     [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
 
     [self.push application:self.mockedApplication didRegisterUserNotificationSettings:settings];
+#pragma GCC diagnostic pop
 
     XCTAssertTrue(self.push.userPushNotificationsAllowed,
                   @"UserPushNotificationsAllowed should be YES");
@@ -1345,7 +1372,10 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
 - (void)testRegistrationPayloadNoDeviceToken {
     // Set up UAPush to give minimum payload
     self.push.deviceToken = nil;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     self.push.alias = nil;
+#pragma GCC diagnostic pop
     self.push.channelTagRegistrationEnabled = NO;
     self.push.autobadgeEnabled = NO;
     self.push.quietTimeEnabled = NO;
@@ -1667,7 +1697,10 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [self.dataStore setBool:NO forKey:UAUserPushNotificationsEnabledKey];
 
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert categories:nil];
+#pragma GCC diagnostic pop
     [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
 
     // Force a migration
@@ -1686,7 +1719,10 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [self.dataStore removeObjectForKey:UAUserPushNotificationsEnabledKey];
     [self.dataStore removeObjectForKey:UAPushEnabledSettingsMigratedKey];
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeNone categories:nil];
+#pragma GCC diagnostic pop
     [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
 
     [self.push migratePushSettings];
@@ -1704,7 +1740,10 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [self.dataStore removeObjectForKey:UAUserPushNotificationsEnabledKey];
     [self.dataStore removeObjectForKey:UAPushEnabledSettingsMigratedKey];
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert categories:nil];
+#pragma GCC diagnostic pop
     [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
 
     [self.push migratePushSettings];
@@ -1721,7 +1760,10 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     [self.dataStore removeObjectForKey:UAUserPushNotificationsEnabledKey];
     [self.dataStore removeObjectForKey:UAPushEnabledSettingsMigratedKey];
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert categories:nil];
+#pragma GCC diagnostic pop
     [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
 
     [self.push migratePushSettings];
@@ -1754,7 +1796,10 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     self.push.allowUnregisteringUserNotificationTypes = NO;
 
     // Make sure we have previously registered types
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeBadge categories:nil];
+#pragma GCC diagnostic pop
     [[[self.mockedApplication stub] andReturn:settings] currentUserNotificationSettings];
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];

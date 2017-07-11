@@ -26,11 +26,11 @@
 #import <XCTest/XCTest.h>
 #import "UATextInputNotificationAction.h"
 
-static const NSString *kTestIdentifier = @"TESTID";
-static const NSString *kTestTitle = @"kTestTitle";
-static const NSString *kTestTextInputButtonTitle = @"kTestTextInputButtonTitle";
-static const NSString *kTestTextInputPlaceholder = @"kTestTextInputPlaceholder";
-static const NSString *kTestIdentifier2  = @"TESTID2";
+static NSString *kTestIdentifier = @"TESTID";
+static NSString *kTestTitle = @"kTestTitle";
+static NSString *kTestTextInputButtonTitle = @"kTestTextInputButtonTitle";
+static NSString *kTestTextInputPlaceholder = @"kTestTextInputPlaceholder";
+static NSString *kTestIdentifier2  = @"TESTID2";
 
 @interface UATextInputNotificationActionTest : XCTestCase
 
@@ -49,6 +49,8 @@ static const NSString *kTestIdentifier2  = @"TESTID2";
 }
 
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 - (void)testAsUIUserNotificationActionBackground {
 
     UATextInputNotificationAction *uaTextInputNotificationAction = [UATextInputNotificationAction actionWithIdentifier:kTestIdentifier title:kTestTitle textInputButtonTitle:kTestTextInputButtonTitle textInputPlaceholder:kTestTextInputPlaceholder options:UANotificationActionOptionNone];
@@ -212,5 +214,6 @@ static const NSString *kTestIdentifier2  = @"TESTID2";
     XCTAssertTrue([convertedToUNTextInputNotificationAction.textInputButtonTitle isEqual:unTextInputNotificationAction.textInputButtonTitle]);
     XCTAssertTrue([convertedToUNTextInputNotificationAction.textInputPlaceholder isEqual:unTextInputNotificationAction.textInputPlaceholder]);
 }
+#pragma GCC diagnostic pop
 
 @end
