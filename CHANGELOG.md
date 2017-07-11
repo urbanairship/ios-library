@@ -3,6 +3,16 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 8.4.1 - July 11, 2017
+============================
+
+Bug Fixes
+---------
+- When a nil file path is passed to `UADefaultMessageCenterStyle styleWithContentsOfFile:`, return the default style without attempting to find and parse the style file. 
+- Fix blurry message center unread indicator on retina devices. 
+- Fix iOS warning by delaying the setting of preferredDisplayMode on message center's split view until after the split view has view controllers added to it. 
+- Stop updating the message center refresh control UI from a background thread. 
+
 Version 8.4.0 - July 3, 2017
 ============================
 
