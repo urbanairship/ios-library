@@ -24,10 +24,10 @@
 @property (nonatomic, assign) NSUInteger maxBatchSize;
 @property (nonatomic, assign) NSUInteger minBatchInterval;
 
-@property (nonatomic, strong) NSDate *earliestForegroundSendTime;
-@property (nonatomic, strong, nonnull) NSDate *lastSendTime;
+@property (atomic, strong) NSDate *earliestForegroundSendTime;
+@property (atomic, strong, nonnull) NSDate *lastSendTime;
 @property (nonatomic, strong, nonnull) NSOperationQueue *queue;
-@property (nonatomic, strong, nullable) NSDate *nextUploadDate;
+@property (atomic, strong, nullable) NSDate *nextUploadDate;
 
 @end
 
@@ -137,7 +137,10 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 }
 
 - (void)enterBackground {
-    [self scheduleUploadWithDelay:BackgroundUploadDelay];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self scheduleUploadWithDelay:BackgroundUploadDelay];
+    });
 }
 
 #pragma mark -

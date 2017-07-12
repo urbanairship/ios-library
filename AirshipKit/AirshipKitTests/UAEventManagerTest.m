@@ -184,10 +184,14 @@
  * Test entering background schedules an upload with a 5 second delay.
  */
 - (void)testBackground {
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to happen on main thread."];
+
     __block NSTimeInterval delay = -1;
     [[[[self.mockQueue expect] andDo:^(NSInvocation *invocation) {
         [invocation getArgument:&delay atIndex:3];
 
+        [expectation fulfill];
         BOOL result = YES;
         [invocation setReturnValue:&result];
 
@@ -195,6 +199,8 @@
 
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification
                                                         object:nil];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 
     // Verify the delay is around 5 seconds
     XCTAssertEqualWithAccuracy(delay, 5, .1);
