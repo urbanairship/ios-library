@@ -102,10 +102,12 @@
 - (void)testAddEvent {
     UACustomEvent *event = [UACustomEvent eventWithName:@"cool"];
 
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async."];
+
     __block NSTimeInterval delay = -1;
     [[[[self.mockQueue expect] andDo:^(NSInvocation *invocation) {
         [invocation getArgument:&delay atIndex:3];
-
+        [expectation fulfill];
         BOOL result = YES;
         [invocation setReturnValue:&result];
 
@@ -116,10 +118,12 @@
 
     [self.eventManager addEvent:event sessionID:@"story"];
 
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+
     [self.mockStore verify];
     [self.mockQueue verify];
 
-    // Verify the delay is somewhere between 10-15 seconds (initial delay 15 - time to run test)
+    // Verify the delay is somewhere between 10-20 seconds (initial delay 15 - time to run test)
     XCTAssertEqualWithAccuracy(delay, 15, 5);
 }
 
@@ -130,11 +134,16 @@
     // Background application state
     [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
 
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async."];
+
+
     UACustomEvent *event = [UACustomEvent eventWithName:@"cool"];
 
     __block NSTimeInterval delay = -1;
     [[[[self.mockQueue expect] andDo:^(NSInvocation *invocation) {
         [invocation getArgument:&delay atIndex:3];
+
+        [expectation fulfill];
 
         BOOL result = YES;
         [invocation setReturnValue:&result];
@@ -145,6 +154,8 @@
     [[self.mockStore expect] saveEvent:event sessionID:@"story"];
 
     [self.eventManager addEvent:event sessionID:@"story"];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 
     [self.mockStore verify];
     [self.mockQueue verify];
@@ -159,9 +170,13 @@
 - (void)testAddHighPriorityEvent {
     UARegionEvent *event = [[UARegionEvent alloc] init];
 
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async."];
+
     __block NSTimeInterval delay = -1;
     [[[[self.mockQueue expect] andDo:^(NSInvocation *invocation) {
         [invocation getArgument:&delay atIndex:3];
+
+        [expectation fulfill];
 
         BOOL result = YES;
         [invocation setReturnValue:&result];
@@ -172,6 +187,8 @@
     [[self.mockStore expect] saveEvent:event sessionID:@"story"];
 
     [self.eventManager addEvent:event sessionID:@"story"];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 
     [self.mockStore verify];
     [self.mockQueue verify];
@@ -211,8 +228,13 @@
  */
 - (void)testChannelCreated {
     __block NSTimeInterval delay = -1;
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async."];
+
     [[[[self.mockQueue expect] andDo:^(NSInvocation *invocation) {
         [invocation getArgument:&delay atIndex:3];
+
+        [expectation fulfill];
 
         BOOL result = YES;
         [invocation setReturnValue:&result];
@@ -221,6 +243,8 @@
 
     [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelCreatedEvent
                                                         object:nil];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 
     // Verify the delay is around 15 seconds
     XCTAssertEqualWithAccuracy(delay, 15, 5);
@@ -233,11 +257,20 @@
     // Add a normal priority event (delay 15ish seconds)
     [self testAddEvent];
 
+
     // Make sure it cancels the previous attempt
     [[self.mockQueue expect] cancelAllOperations];
 
     // Add a high priority event (delay 5ish seconds)
     [self testAddHighPriorityEvent];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async."];
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [expectation fulfill];
+    });
+
+    [self waitForExpectationsWithTimeout:2 handler:nil];
 
     [self.mockQueue verify];
 }
@@ -249,12 +282,16 @@
     // Set a channel ID
     [[[self.mockPush stub] andReturn:@"channel ID"] channelID];
 
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async"];
+
     // Run the operation as when added
     [[[[self.mockQueue expect] andDo:^(NSInvocation *invocation) {
         // Start the operation
         __weak NSOperation *operation = nil;
         [invocation getArgument:&operation atIndex:2];
         [operation start];
+
+        [expectation fulfill];
 
         BOOL result = YES;
         [invocation setReturnValue:&result];
@@ -319,6 +356,8 @@
     // Start the upload
     [self.eventManager scheduleUpload];
 
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+
     [self.mockQueue verify];
     [self.mockClient verify];
     [self.mockStore verify];
@@ -330,6 +369,8 @@
 - (void)testRetryFailedUpload {
     // Set a channel ID
     [[[self.mockPush stub] andReturn:@"channel ID"] channelID];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async."];
 
     // Initial request
     [[[[self.mockQueue expect] andDo:^(NSInvocation *invocation) {
@@ -347,6 +388,8 @@
     __block NSTimeInterval retryDelay = -1;
     [[[[self.mockQueue expect] andDo:^(NSInvocation *invocation) {
         [invocation getArgument:&retryDelay atIndex:3];
+
+        [expectation fulfill];
 
         BOOL result = YES;
         [invocation setReturnValue:&result];
@@ -387,6 +430,8 @@
     // Start the upload
     [self.eventManager scheduleUpload];
 
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+
     // Verify the delay is around 60 seconds
     XCTAssertEqualWithAccuracy(retryDelay, 60, .1);
 
@@ -402,12 +447,17 @@
     // Set a channel ID
     [[[self.mockPush stub] andReturn:nil] channelID];
 
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async"];
+
+
     // Run the operation as when added
     [[[[self.mockQueue expect] andDo:^(NSInvocation *invocation) {
         // Start the operation
         __weak NSOperation *operation = nil;
         [invocation getArgument:&operation atIndex:2];
         [operation start];
+
+        [expectation fulfill];
 
         BOOL result = YES;
         [invocation setReturnValue:&result];
@@ -420,7 +470,9 @@
 
     // Start the upload
     [self.eventManager scheduleUpload];
-    
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+
     [self.mockQueue verify];
     [self.mockClient verify];
     [self.mockStore verify];
