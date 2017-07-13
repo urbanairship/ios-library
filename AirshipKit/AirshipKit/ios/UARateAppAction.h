@@ -6,18 +6,17 @@
 #define kUARateAppActionDefaultRegistryAlias @"^ra"
 
 /**
- * Opens an app rating dialog.
+ * Links directly to app store review page or opens an app rating dialog.
  *
  * This action is registered under the names rate_app_action and ^ra.
  *
  * Expected argument values:
- * ``showDialog``:Required Boolean. If NO action will link directly to the iTunes app
- * review page, if YES action will display a rating prompt.
- * ``itunesID``: Required String. iTunes ID for application.
- * ``linkPromptHeaderKey``: Optional String. String to override the link prompt's header.
- *   Header over 24 characters will be rejected. Header defaults to "Enjoying <CFBundleDisplayName>?" if nil.
- * ``linkPromptDescriptionKey``: Optional String. String to override the link prompt's description.
- *  Decriptions over 50 characters will be rejected. Decription defaults to "Tap Rate App to rate it on the
+ * ``show_dialog``:Required Boolean. If NO action will link directly to the iTunes app
+ * review page, if YES action will display a rating prompt. Defaults to NO if nil.
+ * ``link_prompt_title_key``: Optional String. String to override the link prompt's title.
+ *   Title over 24 characters will be rejected. Header defaults to "Enjoying <CFBundleDisplayName>?" if nil.
+ * ``link_prompt_body_key``: Optional String. String to override the link prompt's body.
+ *  Bodies over 50 characters will be rejected. Body defaults to "Tap Rate App to rate it on the
  *  App Store." if nil.
  *
  * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush, UASituationWebViewInvocation
@@ -28,19 +27,19 @@
 @interface UARateAppAction : UAAction
 
 /**
- * The show dialog key.
+ * The show dialog key for the show dialog option.
  */
 extern NSString *const UARateAppShowDialogKey;
 
 /**
- * The link prompt's header key.
+ * The link prompt's title key.
  */
-extern NSString *const UARateAppLinkPromptHeaderKey;
+extern NSString *const UARateAppLinkPromptTitleKey;
 
 /**
- * The link prompt's decription key.
+ * The link prompt's body key.
  */
-extern NSString *const UARateAppLinkPromptDescriptionKey;
+extern NSString *const UARateAppLinkPromptBodyKey;
 
 /**
  * Returns an NSArray of NSNumbers representing the time intervals for each call to display the link prompt since epoch.
@@ -50,7 +49,7 @@ extern NSString *const UARateAppLinkPromptDescriptionKey;
 
 /**
  * Returns an NSArray of NSNumbers representing the time intervals for each call to display the system prompt since epoch.
- * Timestamps older than 1 year are automatically removed. Timestamps will only be collected for release builds.
+ * Timestamps older than 1 year are automatically removed. Timestamps for debug and release builds will be collected in separate stores.
  */
 -(NSArray *)rateAppPromptTimestamps;
 

@@ -4,28 +4,16 @@
 
 #import "UARateAppAction.h"
 #import "UAirship.h"
+#import "UAConfig.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARateAppPromptViewController+Internal.h"
-#import "UAConfig.h"
-
-#define kMaxHeaderChars 24
-#define kMaxDescriptionChars 50
-
-#define kSecondsInYear 31536000
-
-#define kUARateAppNibName @"UARateAppPromptView"
-
-#define kUARateAppItunesURLFormat @"itms-apps://itunes.apple.com/app/id%@?action=write-review"
-#define kUARateAppPromptTimestampsKey @"RateAppActionPromptCount"
-#define kUARateAppLinkPromptTimestampsKey @"RateAppActionLinkPromptCount"
-#define kUARateAppGenericDisplayName @"This App"
 
 @interface UARateAppAction ()
 
 @property (assign) BOOL showDialog;
 
-@property (strong, nonatomic) NSString *linkPromptHeader;
-@property (strong, nonatomic) NSString *linkPromptDescription;
+@property (strong, nonatomic) NSString *linkPromptTitle;
+@property (strong, nonatomic) NSString *linkPromptBody;
 
 @end
 
@@ -33,9 +21,22 @@
 
 BOOL legacy;
 
-NSString *const UARateAppShowDialogKey = @"showDialog";
-NSString *const UARateAppLinkPromptHeaderKey = @"linkPromptHeaderKey";
-NSString *const UARateAppLinkPromptDescriptionKey = @"linkPromptDescriptionKey";
+int const kMaxHeaderChars = 24;
+int const kMaxDescriptionChars = 50;
+
+NSTimeInterval const kSecondsInYear = 31536000;
+
+// External
+NSString *const UARateAppShowDialogKey = @"show_dialog";
+NSString *const UARateAppLinkPromptTitleKey = @"link_prompt_header";
+NSString *const UARateAppLinkPromptBodyKey = @"link_prompt_description";
+
+// Internal
+NSString *const UARateAppNibName = @"UARateAppPromptView";
+NSString *const UARateAppItunesURLFormat = @"itms-apps://itunes.apple.com/app/id%@?action=write-review";
+NSString *const UARateAppPromptTimestampsKey = @"RateAppActionPromptCount";
+NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCount";
+NSString *const UARateAppGenericDisplayName = @"This App";
 
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler {
@@ -51,7 +52,7 @@ NSString *const UARateAppLinkPromptDescriptionKey = @"linkPromptDescriptionKey";
         return;
     }
 
-    NSString *linkString = [NSString stringWithFormat:kUARateAppItunesURLFormat, [[UAirship shared].config itunesID]];
+    NSString *linkString = [NSString stringWithFormat:UARateAppItunesURLFormat, [[UAirship shared].config itunesID]];
 
     // If the user doesn't want to show a dialog just open link to store
     if (!self.showDialog) {
@@ -70,8 +71,8 @@ NSString *const UARateAppLinkPromptDescriptionKey = @"linkPromptDescriptionKey";
     legacy = ![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 3, 0}];
 
     id showDialog;
-    id linkPromptHeader;
-    id linkPromptDescription;
+    id linkPromptTitle;
+    id linkPromptBody;
 
     if (arguments.value != nil && ![arguments.value isKindOfClass:[NSDictionary class]]) {
         UA_LWARN(@"Unable to parse arguments: %@", arguments);
@@ -79,8 +80,8 @@ NSString *const UARateAppLinkPromptDescriptionKey = @"linkPromptDescriptionKey";
     }
 
     showDialog = [arguments.value objectForKey:UARateAppShowDialogKey];
-    linkPromptHeader = [arguments.value objectForKey:UARateAppLinkPromptHeaderKey];
-    linkPromptDescription = [arguments.value objectForKey:UARateAppLinkPromptDescriptionKey];
+    linkPromptTitle = [arguments.value objectForKey:UARateAppLinkPromptTitleKey];
+    linkPromptBody = [arguments.value objectForKey:UARateAppLinkPromptBodyKey];
 
     if (showDialog && ![showDialog isKindOfClass:[NSNumber class]]) {
         UA_LWARN(@"Parsed an invalid Show Dialog flag from arguments: %@. Show Dialog flag must be an NSNumber or BOOL.", arguments);
@@ -92,43 +93,43 @@ NSString *const UARateAppLinkPromptDescriptionKey = @"linkPromptDescriptionKey";
         return NO;
     }
 
-    if (linkPromptHeader) {
+    if (linkPromptTitle) {
         if (!showDialog) {
             UA_LWARN(@"Link prompt header should only be set when showDialog is set to true.");
             return NO;
         }
 
-        if (![linkPromptHeader isKindOfClass:[NSString class]]) {
+        if (![linkPromptTitle isKindOfClass:[NSString class]]) {
             UA_LWARN(@"Parsed an invalid link prompt header from arguments: %@. Link prompt header must be an NSString.", arguments);
             return NO;
         }
 
-        if ([linkPromptHeader length] > 24) {
+        if ([linkPromptTitle length] > 24) {
             UA_LWARN(@"Parsed an invalid link prompt header from arguments: %@. Link prompt header must be shorter than 24 characters in length.", arguments);
             return NO;
         }
     }
 
-    if (linkPromptDescription) {
+    if (linkPromptBody) {
         if (!showDialog) {
             UA_LWARN(@"Link prompt description should only be set when showDialog is set to true.");
             return NO;
         }
 
-        if (![linkPromptDescription isKindOfClass:[NSString class]]) {
+        if (![linkPromptBody isKindOfClass:[NSString class]]) {
             UA_LWARN(@"Parsed an invalid link prompt description from arguments: %@. Link prompt description must be an NSString.", arguments);
             return NO;
         }
 
-        if ([linkPromptDescription length] > 50) {
+        if ([linkPromptBody length] > 50) {
             UA_LWARN(@"Parsed an invalid link prompt description from arguments: %@. Link prompt description must be shorter than 50 characters in length.", arguments);
             return NO;
         }
     }
 
     self.showDialog = [showDialog boolValue];
-    self.linkPromptHeader = linkPromptHeader;
-    self.linkPromptDescription = linkPromptDescription;
+    self.linkPromptTitle = linkPromptTitle;
+    self.linkPromptBody = linkPromptBody;
 
     return YES;
 }
@@ -136,20 +137,22 @@ NSString *const UARateAppLinkPromptDescriptionKey = @"linkPromptDescriptionKey";
 -(void)displaySystemDialog {
     [SKStoreReviewController requestReview];
 
-#if RELEASE
-    [self storeTimestamp:kUARateAppPromptTimestampsKey];
+    [self storeTimestamp:UARateAppPromptTimestampsKey];
 
-    if ([self getTimestampsForKey:kUARateAppPromptTimestampsKey].count >= 3) {
-        UA_LWARN(@"System rating prompt has attempted to display %@ times this year.", [self getTimestampsForKey:kUARateAppPromptTimestampsKey].count);
+    if ([self getTimestampsForKey:UARateAppPromptTimestampsKey].count >= 3) {
+        UA_LWARN(@"System rating prompt has attempted to display %lu times this year.", (unsigned long)[self getTimestampsForKey:UARateAppPromptTimestampsKey].count);
     }
-#endif
 }
 
 -(NSArray *)getTimestampsForKey:(NSString *)key {
-    return [[NSUserDefaults standardUserDefaults] objectForKey:key] ?: @[];
+    UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[UAirship shared].config.appKey];
+
+    return [dataStore objectForKey:key] ?: @[];
 }
 
 -(void)storeTimestamp:(NSString *)key {
+
+    UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[UAirship shared].config.appKey];
     NSNumber *todayTimestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
 
     NSMutableArray *timestamps = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults]  arrayForKey:key]];
@@ -161,17 +164,19 @@ NSString *const UARateAppLinkPromptDescriptionKey = @"linkPromptDescriptionKey";
         }
     }
 
+
+
     // Store timestamp for this call
     [timestamps addObject:todayTimestamp];
-    [[NSUserDefaults standardUserDefaults] setObject:timestamps forKey:key];
+    [dataStore setObject:timestamps forKey:key];
 }
 
 -(NSArray *)rateAppLinkPromptTimestamps {
-    return [self getTimestampsForKey:kUARateAppLinkPromptTimestampsKey];
+    return [self getTimestampsForKey:UARateAppLinkPromptTimestampsKey];
 }
 
 -(NSArray *)rateAppPromptTimestamps {
-    return [self getTimestampsForKey:kUARateAppPromptTimestampsKey];
+    return [self getTimestampsForKey:UARateAppPromptTimestampsKey];
 }
 
 - (BOOL)canLinkToStore:(NSString *)linkString {
@@ -210,20 +215,20 @@ NSString *const UARateAppLinkPromptDescriptionKey = @"linkPromptDescriptionKey";
     if (NSBundle.mainBundle.infoDictionary[@"CFBundleDisplayName"]) {
         displayName = NSBundle.mainBundle.infoDictionary[@"CFBundleDisplayName"];
     } else {
-        displayName = kUARateAppGenericDisplayName;
-        UA_LWARN(@"CFBundleDisplayName unavailable, falling back to generic display name: %@", kUARateAppGenericDisplayName);
+        displayName = UARateAppGenericDisplayName;
+        UA_LWARN(@"CFBundleDisplayName unavailable, falling back to generic display name: %@", UARateAppGenericDisplayName);
     }
 
-    UARateAppPromptViewController *linkPrompt = [[UARateAppPromptViewController alloc] initWithNibName:kUARateAppNibName bundle:[UAirship resources]];
+    UARateAppPromptViewController *linkPrompt = [[UARateAppPromptViewController alloc] initWithNibName:UARateAppNibName bundle:[UAirship resources]];
 
-    [linkPrompt displayWithHeader:self.linkPromptHeader description:self.linkPromptDescription completionHandler:^(BOOL dismissed) {
+    [linkPrompt displayWithHeader:self.linkPromptTitle description:self.linkPromptBody completionHandler:^(BOOL dismissed) {
         if (!dismissed) {
             [self linkToStore:linkString];
         }
 #if RELEASE
-        [self storeTimestamp:kUARateAppLinkPromptTimestampsKey];
+        [self storeTimestamp:UARateAppLinkPromptTimestampsKey];
 
-        if ([self getTimestampsForKey:kUARateAppLinkPromptTimestampsKey].count >= 3) {
+        if ([self getTimestampsForKey:UARateAppLinkPromptTimestampsKey].count >= 3) {
             UA_LWARN(@"System rating link prompt has attempted to display 3 or more times this year.");
         }
 #endif
