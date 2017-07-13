@@ -195,15 +195,15 @@
                            context:(NSManagedObjectContext *)context
                  completionHandler:(void(^)(NSArray *messages))completionHandler {
 
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    request.entity = [NSEntityDescription entityForName:kUAInboxDBEntityName
-                                 inManagedObjectContext:context];
-
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"messageSent" ascending:NO];
-    request.sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
-    request.predicate = predicate;
-
     [context performBlock:^{
+        NSFetchRequest *request = [[NSFetchRequest alloc] init];
+        request.entity = [NSEntityDescription entityForName:kUAInboxDBEntityName
+                                     inManagedObjectContext:context];
+
+        NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"messageSent" ascending:NO];
+        request.sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
+        request.predicate = predicate;
+
         NSArray *resultData = [context executeFetchRequest:request error:nil];
 
         NSMutableArray *resultMessages = [NSMutableArray array];

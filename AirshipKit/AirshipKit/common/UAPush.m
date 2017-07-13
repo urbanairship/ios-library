@@ -897,6 +897,13 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 - (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload {
     UA_LINFO(@"Channel registration updated successfully.");
 
+    NSString *channelID = self.channelID;
+
+    if (!self.channelID) {
+        UA_LWARN(@"Channel ID is nil after successful registration.");
+        return;
+    }
+
     dispatch_async(dispatch_get_main_queue(), ^{
         id strongDelegate = self.registrationDelegate;
         if ([strongDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
@@ -905,7 +912,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
         [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelUpdatedEvent
                                                             object:self
-                                                          userInfo:@{UAChannelUpdatedEventChannelKey: self.channelID}];
+                                                          userInfo:@{UAChannelUpdatedEventChannelKey: channelID}];
     });
 
     if (![payload isEqualToPayload:[self createChannelPayload]]) {

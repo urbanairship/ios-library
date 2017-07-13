@@ -24,10 +24,10 @@
 @property (nonatomic, assign) NSUInteger maxBatchSize;
 @property (nonatomic, assign) NSUInteger minBatchInterval;
 
-@property (nonatomic, strong) NSDate *earliestForegroundSendTime;
-@property (nonatomic, strong, nonnull) NSDate *lastSendTime;
+@property (atomic, strong) NSDate *earliestForegroundSendTime;
+@property (atomic, strong, nonnull) NSDate *lastSendTime;
 @property (nonatomic, strong, nonnull) NSOperationQueue *queue;
-@property (nonatomic, strong, nullable) NSDate *nextUploadDate;
+@property (atomic, strong, nullable) NSDate *nextUploadDate;
 
 @end
 
@@ -266,24 +266,28 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 }
 
 - (void)scheduleUploadWithDelay:(NSTimeInterval)delay {
-    UA_LDEBUG(@"Attempting to schedule event upload with delay: %f seconds.", delay);
+    UA_LDEBUG(@"Enqueuing attempt to schedule event upload with delay on main queue.");
 
-    NSDate *uploadDate = [NSDate dateWithTimeIntervalSinceNow:delay];
-    NSTimeInterval timeDifference = [self.nextUploadDate timeIntervalSinceDate:uploadDate];
-    if (self.nextUploadDate && timeDifference >= 0 && timeDifference <= 1) {
-        UA_LDEBUG("Upload already scheduled for an earlier time.");
-        return;
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UA_LDEBUG(@"Attempting to schedule event upload with delay: %f seconds.", delay);
 
-    if (self.nextUploadDate) {
-        [self.queue cancelAllOperations];
-        self.nextUploadDate = nil;
-    }
+        NSDate *uploadDate = [NSDate dateWithTimeIntervalSinceNow:delay];
+        NSTimeInterval timeDifference = [self.nextUploadDate timeIntervalSinceDate:uploadDate];
+        if (self.nextUploadDate && timeDifference >= 0 && timeDifference <= 1) {
+            UA_LDEBUG("Upload already scheduled for an earlier time.");
+            return;
+        }
 
-    UA_LDEBUG(@"Scheduling upload.");
-    if ([self enqueueUploadOperationWithDelay:delay]) {
-        self.nextUploadDate = uploadDate;
-    }
+        if (self.nextUploadDate) {
+            [self.queue cancelAllOperations];
+            self.nextUploadDate = nil;
+        }
+
+        UA_LDEBUG(@"Scheduling upload.");
+        if ([self enqueueUploadOperationWithDelay:delay]) {
+            self.nextUploadDate = uploadDate;
+        }
+    });
 }
 
 - (BOOL)enqueueUploadOperationWithDelay:(NSTimeInterval)delay {

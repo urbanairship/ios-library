@@ -39,7 +39,7 @@
  * Date representing the last attempt to send analytics.
  * @return NSDate representing the last attempt to send analytics
  */
-@property (nonatomic, strong, readonly) NSDate *lastSendTime;
+@property (atomic, strong, readonly) NSDate *lastSendTime;
 
 ///---------------------------------------------------------------------------------------
 /// @name Event Manager Internal Methods
