@@ -29,7 +29,7 @@
 
     UAChannelRegistrationPayload *payloadCopy = [payload copy];
 
-    @synchronized(self) {
+    dispatch_async(dispatch_get_main_queue(), ^{
         if (self.isRegistrationInProgress) {
             UA_LDEBUG(@"Ignoring registration request, one already in progress.");
             return;
@@ -49,13 +49,13 @@
             UA_LDEBUG(@"Ignoring registration request, registration is up to date.");
             [self succeededWithPayload:payload];
         }
-    }
+    });
 }
 
 
 
 - (void)cancelAllRequests {
-    @synchronized(self) {
+    dispatch_async(dispatch_get_main_queue(), ^{
         [self.channelAPIClient cancelAllRequests];
 
         // If a registration was in progress, its undeterministic if it succeeded
@@ -65,7 +65,7 @@
         }
 
         self.isRegistrationInProgress = NO;
-    }
+    });
 }
 
 - (void)updateChannel:(NSString *)channelID
@@ -136,7 +136,7 @@
 }
 
 - (void)failedWithPayload:(UAChannelRegistrationPayload *)payload {
-    @synchronized(self) {
+    dispatch_async(dispatch_get_main_queue(), ^{
         if (!self.isRegistrationInProgress) {
             return;
         }
@@ -147,11 +147,11 @@
         if ([strongDelegate respondsToSelector:@selector(registrationFailedWithPayload:)]) {
             [strongDelegate registrationFailedWithPayload:payload];
         }
-    }
+    });
 }
 
 - (void)succeededWithPayload:(UAChannelRegistrationPayload *)payload {
-    @synchronized(self) {
+    dispatch_async(dispatch_get_main_queue(), ^{
         if (!self.isRegistrationInProgress) {
             return;
         }
@@ -163,7 +163,7 @@
         if ([strongDelegate respondsToSelector:@selector(registrationSucceededWithPayload:)]) {
             [strongDelegate registrationSucceededWithPayload:payload];
         }
-    }
+    });
 }
 
 - (void)channelCreated:(NSString *)channelID

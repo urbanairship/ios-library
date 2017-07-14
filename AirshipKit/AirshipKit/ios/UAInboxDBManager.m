@@ -13,7 +13,11 @@
 @property (nonatomic, copy) NSString *storeName;
 @end
 
-@implementation UAInboxDBManager
+@implementation UAInboxDBManager {
+    dispatch_once_t _mainContextOnce;
+    dispatch_once_t _privateContextOnce;
+    dispatch_once_t _managedObjectModelOnce;
+}
 
 @synthesize mainContext = _mainContext;
 @synthesize privateContext = _privateContext;
@@ -30,40 +34,39 @@
     return self;
 }
 
-- (NSManagedObjectContext *)mainContext {
-    @synchronized(self) {
-        if (!_mainContext) {
-            NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-            if (coordinator) {
-                _mainContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
-                [_mainContext setPersistentStoreCoordinator:coordinator];
 
-                [[NSNotificationCenter defaultCenter] addObserver:self
-                                                         selector:@selector(mainContextDidSave:)
-                                                             name:NSManagedObjectContextDidSaveNotification
-                                                           object:_mainContext];
-            }
+
+- (NSManagedObjectContext *)mainContext {
+    dispatch_once(&_mainContextOnce, ^{
+        NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
+        if (coordinator) {
+            _mainContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
+            [_mainContext setPersistentStoreCoordinator:coordinator];
+
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(mainContextDidSave:)
+                                                         name:NSManagedObjectContextDidSaveNotification
+                                                       object:_mainContext];
         }
-        return _mainContext;
-    }
+
+    });
+    return _mainContext;
 }
 
 - (NSManagedObjectContext *)privateContext {
-    @synchronized(self) {
-        if (!_privateContext) {
-            NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-            if (coordinator) {
-                _privateContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-                [_privateContext setPersistentStoreCoordinator:coordinator];
+    dispatch_once(&_privateContextOnce, ^{
+        NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
+        if (coordinator) {
+            _privateContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+            [_privateContext setPersistentStoreCoordinator:coordinator];
 
-                [[NSNotificationCenter defaultCenter] addObserver:self
-                                                         selector:@selector(privateContextDidSave:)
-                                                             name:NSManagedObjectContextDidSaveNotification
-                                                           object:_privateContext];
-            }
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(privateContextDidSave:)
+                                                         name:NSManagedObjectContextDidSaveNotification
+                                                       object:_privateContext];
         }
-        return _privateContext;
-    }
+    });
+    return _privateContext;
 }
 
 - (void)mainContextDidSave:(NSNotification *)notification {
@@ -82,11 +85,7 @@
  If the model doesn't already exist, it is created from the application's model.
  */
 - (NSManagedObjectModel *)managedObjectModel {
-    @synchronized(self)  {
-        if (_managedObjectModel) {
-            return _managedObjectModel;
-        }
-
+    dispatch_once(&_managedObjectModelOnce, ^{
         _managedObjectModel = [[NSManagedObjectModel alloc] init];
         NSEntityDescription *inboxEntity = [[NSEntityDescription alloc] init];
         [inboxEntity setName:kUAInboxDBEntityName];
@@ -118,8 +117,9 @@
 
         [inboxEntity setProperties:inboxProperties];
 
-        return _managedObjectModel;
-    }
+    });
+
+    return _managedObjectModel;
 }
 
 - (NSAttributeDescription *)createAttributeDescription:(NSString *)name

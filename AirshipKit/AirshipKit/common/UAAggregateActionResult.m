@@ -25,8 +25,10 @@
 }
 
 - (UAActionResult *)resultForAction:(NSString*)actionName {
-    NSMutableDictionary *resultDictionary = (NSMutableDictionary *)self.value;
-    return [resultDictionary valueForKey:actionName];
+    @synchronized(self) {
+        NSMutableDictionary *resultDictionary = (NSMutableDictionary *)self.value;
+        return [resultDictionary valueForKey:actionName];
+    }
 }
 
 - (void)mergeFetchResult:(UAActionFetchResult)result {

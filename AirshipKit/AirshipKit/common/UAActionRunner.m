@@ -125,7 +125,7 @@ completionHandler:(UAActionCompletionHandler)completionHandler {
         __block BOOL completionHandlerCalled = NO;
 
         UAActionCompletionHandler handler = ^(UAActionResult *result) {
-            @synchronized(self) {
+            dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionHandlerCalled) {
                     UA_LERR(@"Action %@ completion handler called multiple times.", actionName);
                     return;
@@ -138,7 +138,7 @@ completionHandler:(UAActionCompletionHandler)completionHandler {
                 if (expectedCount == resultCount && completionHandler) {
                     completionHandler(aggregateResult);
                 }
-            }
+            });
         };
 
         [self runActionWithName:actionName
