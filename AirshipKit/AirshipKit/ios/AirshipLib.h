@@ -97,6 +97,7 @@
 #import "UAOverlayInboxMessageAction.h"
 #import "UAOverlayViewController.h"
 #import "UAPasteboardAction.h"
+#import "UARateAppAction.h"
 #import "UARichContentWindow.h"
 #import "UAShareAction.h"
 #import "UAUIWebViewDelegate.h"

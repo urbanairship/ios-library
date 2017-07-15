@@ -321,7 +321,7 @@
     XCTAssertTrue(copy.defaultDetectProvisioningMode == config.defaultDetectProvisioningMode);
     XCTAssertTrue(copy.messageCenterStyleConfig == config.messageCenterStyleConfig);
     XCTAssertTrue(copy.useWKWebView == config.useWKWebView);
-
+    XCTAssertTrue(copy.itunesID == config.itunesID);
 }
 
 - (void) testInitialConfig {

@@ -135,6 +135,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *messageCenterStyleConfig;
 
 /**
+ * The iTunes ID used for Rate App Actions.
+ */
+@property (nonatomic, copy) NSString *itunesID;
+
+/**
  * If set to `YES`, the Urban Airship user will be cleared if the application is
  * restored on a different device from an encrypted backup.
  *

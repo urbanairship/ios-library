@@ -152,6 +152,16 @@
 	</dict>
 	<dict>
 		<key>class</key>
+		<string>UARateAppAction</string>
+		<key>predicate</key>
+		<string>UARateAppActionPredicate</string>
+		<key>name</key>
+		<string>rate_app_action</string>
+		<key>altName</key>
+		<string>^ra</string>
+	</dict>
+	<dict>
+		<key>class</key>
 		<string>UAEnableFeatureAction</string>
 		<key>predicate</key>
 		<string>UAEnableFeatureActionPredicate</string>

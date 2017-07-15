@@ -13,6 +13,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <Availability.h>
 #import <UserNotifications/UserNotifications.h>
+#import "UAConfig.h"
 
 #if !TARGET_OS_TV    // CoreTelephony not supported in tvOS
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
