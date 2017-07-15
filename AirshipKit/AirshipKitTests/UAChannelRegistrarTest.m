@@ -249,7 +249,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"allow async handling"];
 
     [self.registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:self.payload forcefully:NO];
-    [testExpectation fulfillAsync];
+    [testExpectation fulfillAfter:0.05];
     
     [self waitForExpectationsWithTimeout:5 handler:^(NSError *error) {
         XCTAssertNoThrow([self.mockedRegistrarDelegate verify], @"Delegate should be called on success");
@@ -324,7 +324,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
     [[self.mockedChannelClient reject] updateChannelWithLocation:OCMOCK_ANY withPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
     [[self.mockedChannelClient reject] createChannelWithPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
-    [testExpectation fulfillAsync];
+    [testExpectation fulfillAfter:0.05];
     
     [self waitForExpectationsWithTimeout:5 handler:^(NSError *error) {
         XCTAssertNoThrow([self.registrar registerWithChannelID:nil channelLocation:nil withPayload:self.payload forcefully:NO], @"A pending request should ignore any further requests.");
@@ -343,7 +343,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"channelCreateFailureExpectation"];
     [self.registrar cancelAllRequests];
 
-    [testExpectation fulfillAsync];
+    [testExpectation fulfillAfter:0.05];
     [self waitForExpectationsWithTimeout:5 handler:^(NSError *error) {
         XCTAssertNoThrow([self.mockedChannelClient verify], @"Channel client should cancel all of its requests.");
         XCTAssertNotNil(self.registrar.lastSuccessPayload, @"Last success payload should not be cleared if a request is not in progress.");
@@ -355,7 +355,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
     XCTestExpectation *testExpectation2 = [self expectationWithDescription:@"channelCreateFailureExpectation"];
     [self.registrar cancelAllRequests];
 
-    [testExpectation2 fulfillAsync];
+    [testExpectation2 fulfillAfter:0.05];
     
     [self waitForExpectationsWithTimeout:5 handler:^(NSError *error) {
         XCTAssertNil(self.registrar.lastSuccessPayload, @"Last success payload should be cleared if a request is in progress.");
