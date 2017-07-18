@@ -36,28 +36,29 @@
         }
 
         self.isRegistrationInProgress = YES;
+    }
 
-        if (forcefully || ![payload isEqualToPayload:self.lastSuccessPayload]) {
 
-            if (!channelID || !channelLocation) {
-                [self createChannelWithPayload:payloadCopy];
-            } else {
-                [self updateChannel:channelID channelLocation:channelLocation withPayload:payloadCopy];
-            }
+    if (forcefully || ![payload isEqualToPayload:self.lastSuccessPayload]) {
 
+        if (!channelID || !channelLocation) {
+            [self createChannelWithPayload:payloadCopy];
         } else {
-            UA_LDEBUG(@"Ignoring registration request, registration is up to date.");
-            [self succeededWithPayload:payload];
+            [self updateChannel:channelID channelLocation:channelLocation withPayload:payloadCopy];
         }
+
+    } else {
+        UA_LDEBUG(@"Ignoring registration request, registration is up to date.");
+        [self succeededWithPayload:payload];
     }
 }
 
 
 
 - (void)cancelAllRequests {
-    @synchronized(self) {
-        [self.channelAPIClient cancelAllRequests];
+    [self.channelAPIClient cancelAllRequests];
 
+    @synchronized(self) {
         // If a registration was in progress, its undeterministic if it succeeded
         // or not, so just clear the last success payload.
         if (self.isRegistrationInProgress) {
@@ -142,11 +143,11 @@
         }
 
         self.isRegistrationInProgress = NO;
+    }
 
-        id strongDelegate = self.delegate;
-        if ([strongDelegate respondsToSelector:@selector(registrationFailedWithPayload:)]) {
-            [strongDelegate registrationFailedWithPayload:payload];
-        }
+    id strongDelegate = self.delegate;
+    if ([strongDelegate respondsToSelector:@selector(registrationFailedWithPayload:)]) {
+        [strongDelegate registrationFailedWithPayload:payload];
     }
 }
 
@@ -158,11 +159,11 @@
 
         self.lastSuccessPayload = payload;
         self.isRegistrationInProgress = NO;
+    }
 
-        id strongDelegate = self.delegate;
-        if ([strongDelegate respondsToSelector:@selector(registrationSucceededWithPayload:)]) {
-            [strongDelegate registrationSucceededWithPayload:payload];
-        }
+    id strongDelegate = self.delegate;
+    if ([strongDelegate respondsToSelector:@selector(registrationSucceededWithPayload:)]) {
+        [strongDelegate registrationSucceededWithPayload:payload];
     }
 }
 
