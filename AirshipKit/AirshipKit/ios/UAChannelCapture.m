@@ -74,10 +74,15 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
     if (!self.push.channelID) {
         return;
     }
-    
-    NSDate *date = [self.dataStore objectForKey:UAChannelCaptureEnabledKey];
-    
-    if ([self.push backgroundPushNotificationsEnabled] && [date compare:[NSDate date]] == NSOrderedAscending) {
+
+    if ([self.push backgroundPushNotificationsEnabled]) {
+        NSDate *enabledUntilDate = [self.dataStore objectForKey:UAChannelCaptureEnabledKey];
+        if (!enabledUntilDate || [enabledUntilDate compare:[NSDate date]] == NSOrderedAscending) {
+            return;
+        }
+    }
+
+    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}] && ![UIPasteboard generalPasteboard].hasStrings) {
         return;
     }
     
