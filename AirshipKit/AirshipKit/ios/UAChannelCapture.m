@@ -54,6 +54,10 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
     return [[UAChannelCapture alloc] initWithConfig:config push:push dataStore:dataStore];
 }
 
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 - (void)enable:(NSTimeInterval)duration {
     NSDate *date = [NSDate dateWithTimeIntervalSinceNow:duration];
     [self.dataStore setObject:date forKey:UAChannelCaptureEnabledKey];

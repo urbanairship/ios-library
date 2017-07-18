@@ -157,6 +157,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (BOOL)isSilentPush:(NSDictionary *)notification;
 
+/**
+ * Determine if the notification payload is an alerting push.
+ * @param notification The notification payload
+ * @return `YES` if it is an alerting push, `NO` otherwise
+ */
++ (BOOL)isAlertingPush:(NSDictionary *)notification;
+
 ///---------------------------------------------------------------------------------------
 /// @name Fetch Results
 ///---------------------------------------------------------------------------------------
