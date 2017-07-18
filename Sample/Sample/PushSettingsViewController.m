@@ -15,7 +15,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshView) name:@"channelIDUpdated" object:nil];
 
     // Initialize switches
-    self.pushEnabledSwitch.on = [UAirship push].userPushNotificationsEnabled;
     self.locationEnabledSwitch.on = [UAirship location].locationUpdatesEnabled;
     self.analyticsSwitch.on = [UAirship shared].analytics.enabled;
 
@@ -50,6 +49,7 @@
 }
 
 - (void)refreshView {
+    self.pushEnabledSwitch.on = [UAirship push].userPushNotificationsEnabled;
 
     self.channelIDSubtitleLabel.text = [UAirship push].channelID;
 
