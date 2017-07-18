@@ -14,7 +14,6 @@
 @property(nonatomic, strong) UAChannelCapture *channelCapture;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 
-@property(nonatomic, strong) id mockAlertView;
 @property(nonatomic, strong) id mockPush;
 @property(nonatomic, strong) id mockPasteboard;
 @property(nonatomic, strong) id mockApplication;
@@ -61,7 +60,8 @@
     [self.mockPasteboard stopMocking];
     [self.mockApplication stopMocking];
     
-    [self.channelCapture disable];
+    self.config = nil;
+    self.dataStore = nil;
     self.channelCapture = nil;
 
     [super tearDown];
@@ -82,7 +82,6 @@
     NSLog(@"self.mockRootViewController = %@",self.mockRootViewController);
     [[[self.mockRootViewController expect] andDo:^(NSInvocation *invocation) {
         [alertDisplayed fulfill];
-        alertDisplayed = nil;
     }] presentViewController:[OCMArg checkWithBlock:^BOOL(id obj) {
         if (![obj isKindOfClass:[UIAlertController class]]) {
             return NO;
@@ -103,14 +102,14 @@
 
         return YES;
 
-    }] animated:[OCMArg any] completion:[OCMArg any]];
+    }] animated:YES completion:nil];
 
     // Post the foreground notification
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification
                                                         object:nil];
 
     // Wait for the test expectations
-    [self waitForExpectationsWithTimeout:2 handler:nil];
+    [self waitForExpectationsWithTimeout:1 handler:nil];
     [self.mockRootViewController verify];
 }
 
@@ -128,7 +127,6 @@
     // We get a warning when we mock the init method
     [[[self.mockRootViewController stub] andDo:^(NSInvocation *invocation) {
         [alertDisplayed fulfill];
-        alertDisplayed = nil;
     }] presentViewController:[OCMArg checkWithBlock:^BOOL(id obj) {
         if (![obj isKindOfClass:[UIAlertController class]]) {
             return NO;
@@ -156,7 +154,7 @@
                                                         object:nil];
     
     // Wait for the test expectations
-    [self waitForExpectationsWithTimeout:5 handler:nil];
+    [self waitForExpectationsWithTimeout:1 handler:nil];
     [self.mockRootViewController verify];
 }
 
