@@ -3,15 +3,28 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 8.4.2 - July 18, 2017
+=============================
+
+Bug Fixes
+---------
+- Fixed deadlock with UAChannelRegistrar.
+- Fixed channel capture being enabled when it has never explicitly been enabled.
+- Fixed setting conversion send ID on non-alerting push notifications.
+- Fixed potential crash in UAEventManager.
+- Fixed potential crash in UAPush when sending an NSNotification when channel is created.
+- Added better error handling in UAInboxDBManager.
+
+
 Version 8.4.1 - July 11, 2017
 ============================
 
 Bug Fixes
 ---------
-- When a nil file path is passed to `UADefaultMessageCenterStyle styleWithContentsOfFile:`, return the default style without attempting to find and parse the style file. 
-- Fix blurry message center unread indicator on retina devices. 
-- Fix iOS warning by delaying the setting of preferredDisplayMode on message center's split view until after the split view has view controllers added to it. 
-- Stop updating the message center refresh control UI from a background thread. 
+- When a nil file path is passed to `UADefaultMessageCenterStyle styleWithContentsOfFile:`, return the default style without attempting to find and parse the style file.
+- Fix blurry message center unread indicator on retina devices.
+- Fix iOS warning by delaying the setting of preferredDisplayMode on message center's split view until after the split view has view controllers added to it.
+- Stop updating the message center refresh control UI from a background thread.
 
 Version 8.4.0 - July 3, 2017
 ============================
