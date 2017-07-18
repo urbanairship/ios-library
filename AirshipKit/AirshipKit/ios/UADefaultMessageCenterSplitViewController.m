@@ -53,6 +53,9 @@
     self.title = UAMessageCenterLocalizedString(@"ua_message_center_title");
 
     self.delegate = self.listViewController;
+
+    // display both view controllers in horizontally regular contexts
+    self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
 }
 
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -94,9 +97,7 @@
         self.listViewController.messageViewController = self.messageViewController;
         self.messageNav = [[UINavigationController alloc] initWithRootViewController:self.messageViewController];
         self.viewControllers = @[self.listNav, self.messageNav];
-        
-        // display both view controllers in horizontally regular contexts
-        self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
+
     }
 }
 

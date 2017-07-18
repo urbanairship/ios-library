@@ -54,6 +54,10 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
     return [[UAChannelCapture alloc] initWithConfig:config push:push dataStore:dataStore];
 }
 
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 - (void)enable:(NSTimeInterval)duration {
     NSDate *date = [NSDate dateWithTimeIntervalSinceNow:duration];
     [self.dataStore setObject:date forKey:UAChannelCaptureEnabledKey];
@@ -146,11 +150,12 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
 
     [controller addAction:cancelAction];
 
+    NSString *channelID = self.push.channelID;
     UIAlertAction *copyAction  = [UIAlertAction actionWithTitle:[@"ua_notification_button_copy" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Copy"]
                                                           style:UIAlertActionStyleDefault
                                                         handler:^(UIAlertAction *action) {
-                                                            [UIPasteboard generalPasteboard].string = self.push.channelID ?: @"";
-                                                            UA_LINFO(@"Copied channel %@ to the pasteboard", self.push.channelID);
+                                                            [UIPasteboard generalPasteboard].string = channelID ?: @"";
+                                                            UA_LINFO(@"Copied channel %@ to the pasteboard", channelID);
                                                         }];
     [controller addAction:copyAction];
 

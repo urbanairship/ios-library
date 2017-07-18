@@ -7,7 +7,7 @@
 #import "UAUtils.h"
 #import "UAInboxMessage+Internal.h"
 #import "UAInboxMessageData+Internal.h"
-
+#import "UAirship+Internal.h"
 
 @interface UAInboxDBManager()
 @property (nonatomic, copy) NSString *storeName;
@@ -15,55 +15,36 @@
 
 @implementation UAInboxDBManager
 
-@synthesize mainContext = _mainContext;
-@synthesize privateContext = _privateContext;
-@synthesize managedObjectModel = _managedObjectModel;
-@synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
-@synthesize storeURL = _storeURL;
 
 - (instancetype)initWithConfig:(UAConfig *)config {
     self = [super init];
     if (self) {
         self.storeName = [NSString stringWithFormat:kUACoreDataStoreName, config.appKey];
+
+        NSPersistentStoreCoordinator *psc = [UAInboxDBManager createPersistantStoreWithStoreName:self.storeName];
+
+        self.mainContext = [UAInboxDBManager createContextWithPersistantStoreCoordinator:psc
+                                                                         concurrencyType:NSMainQueueConcurrencyType];
+
+        self.privateContext = [UAInboxDBManager createContextWithPersistantStoreCoordinator:psc
+                                                                            concurrencyType:NSPrivateQueueConcurrencyType];
+
+        if (self.mainContext) {
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(mainContextDidSave:)
+                                                         name:NSManagedObjectContextDidSaveNotification
+                                                       object:self.mainContext];
+        }
+
+        if (self.privateContext) {
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(privateContextDidSave:)
+                                                         name:NSManagedObjectContextDidSaveNotification
+                                                       object:self.privateContext];
+        }
     }
 
     return self;
-}
-
-- (NSManagedObjectContext *)mainContext {
-    @synchronized(self) {
-        if (!_mainContext) {
-            NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-            if (coordinator) {
-                _mainContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
-                [_mainContext setPersistentStoreCoordinator:coordinator];
-
-                [[NSNotificationCenter defaultCenter] addObserver:self
-                                                         selector:@selector(mainContextDidSave:)
-                                                             name:NSManagedObjectContextDidSaveNotification
-                                                           object:_mainContext];
-            }
-        }
-        return _mainContext;
-    }
-}
-
-- (NSManagedObjectContext *)privateContext {
-    @synchronized(self) {
-        if (!_privateContext) {
-            NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-            if (coordinator) {
-                _privateContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-                [_privateContext setPersistentStoreCoordinator:coordinator];
-
-                [[NSNotificationCenter defaultCenter] addObserver:self
-                                                         selector:@selector(privateContextDidSave:)
-                                                             name:NSManagedObjectContextDidSaveNotification
-                                                           object:_privateContext];
-            }
-        }
-        return _privateContext;
-    }
 }
 
 - (void)mainContextDidSave:(NSNotification *)notification {
@@ -77,125 +58,85 @@
         [self.mainContext mergeChangesFromContextDidSaveNotification:notification];
     }];
 }
-/**
- Returns the managed object model for the application.
- If the model doesn't already exist, it is created from the application's model.
- */
-- (NSManagedObjectModel *)managedObjectModel {
-    @synchronized(self)  {
-        if (_managedObjectModel) {
-            return _managedObjectModel;
-        }
-
-        _managedObjectModel = [[NSManagedObjectModel alloc] init];
-        NSEntityDescription *inboxEntity = [[NSEntityDescription alloc] init];
-        [inboxEntity setName:kUAInboxDBEntityName];
-
-        // Note: the class name does not need to be the same as the entity name, but maintaining a consistent
-        // entity name is necessary in order to smoothly migrate if the class name changes
-        [inboxEntity setManagedObjectClassName:@"UAInboxMessageData"];
-        [_managedObjectModel setEntities:@[inboxEntity]];
-
-        NSMutableArray *inboxProperties = [NSMutableArray array];
-        [inboxProperties addObject:[self createAttributeDescription:@"messageBodyURL" withType:NSTransformableAttributeType setOptional:true]];
-        [inboxProperties addObject:[self createAttributeDescription:@"messageID" withType:NSStringAttributeType setOptional:true]];
-        [inboxProperties addObject:[self createAttributeDescription:@"messageSent" withType:NSDateAttributeType setOptional:true]];
-        [inboxProperties addObject:[self createAttributeDescription:@"title" withType:NSStringAttributeType setOptional:true]];
-        [inboxProperties addObject:[self createAttributeDescription:@"unread" withType:NSBooleanAttributeType setOptional:true]];
-        [inboxProperties addObject:[self createAttributeDescription:@"unreadClient" withType:NSBooleanAttributeType setOptional:true defaultValue:@YES]];
-        [inboxProperties addObject:[self createAttributeDescription:@"deletedClient" withType:NSBooleanAttributeType setOptional:true]];
-        [inboxProperties addObject:[self createAttributeDescription:@"messageURL" withType:NSTransformableAttributeType setOptional:true]];
-        [inboxProperties addObject:[self createAttributeDescription:@"messageExpiration" withType:NSDateAttributeType setOptional:true]];
 
 
-        NSAttributeDescription *extraDescription = [self createAttributeDescription:@"extra" withType:NSTransformableAttributeType setOptional:true];
-        [extraDescription setValueTransformerName:@"UAJSONValueTransformer"];
-        [inboxProperties addObject:extraDescription];
++ (NSManagedObjectContext *)createContextWithPersistantStoreCoordinator:(NSPersistentStoreCoordinator *)psc
+                                                        concurrencyType:(NSManagedObjectContextConcurrencyType)concurrencyType {
 
-        NSAttributeDescription *rawMessageObjectDescription = [self createAttributeDescription:@"rawMessageObject" withType:NSTransformableAttributeType setOptional:true];
-        [extraDescription setValueTransformerName:@"UAJSONValueTransformer"];
-        [inboxProperties addObject:rawMessageObjectDescription];
-
-        [inboxEntity setProperties:inboxProperties];
-
-        return _managedObjectModel;
+    if (!psc) {
+        return nil;
     }
+    NSManagedObjectContext *context = [[NSManagedObjectContext alloc] initWithConcurrencyType:concurrencyType];
+    [context setPersistentStoreCoordinator:psc];
+    return context;
 }
 
-- (NSAttributeDescription *)createAttributeDescription:(NSString *)name
-                                              withType:(NSAttributeType)attributeType
-                                           setOptional:(BOOL)isOptional {
++ (NSPersistentStoreCoordinator *)createPersistantStoreWithStoreName:(NSString *)storeName {
 
-    return [self createAttributeDescription:name withType:attributeType setOptional:isOptional defaultValue:nil];
-}
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSURL *libraryDirectoryURL = [[fm URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
+    NSURL *directoryURL = [libraryDirectoryURL URLByAppendingPathComponent:storeName];
+    NSURL *storeURL = [directoryURL URLByAppendingPathComponent:storeName];
 
-- (NSAttributeDescription *)createAttributeDescription:(NSString *)name
-                                              withType:(NSAttributeType)attributeType
-                                           setOptional:(BOOL)isOptional
-                                          defaultValue:(id)defaultValue {
-
-    NSAttributeDescription *attribute= [[NSAttributeDescription alloc] init];
-    [attribute setName:name];
-    [attribute setAttributeType:attributeType];
-    [attribute setOptional:isOptional];
-    [attribute setDefaultValue:defaultValue];
-
-    return attribute;
-}
-
-- (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
-    if (!_persistentStoreCoordinator) {
+    // Create the store directory if it doesnt exist
+    if (![fm fileExistsAtPath:[directoryURL path]]) {
         NSError *error = nil;
-        _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:self.managedObjectModel];
-        if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:self.storeURL options:nil error:&error]) {
-
-            UA_LERR(@"Error adding persistent store: %@, %@", error, [error userInfo]);
-
-            [[NSFileManager defaultManager] removeItemAtURL:self.storeURL error:nil];
-            [_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:self.storeURL options:nil error:nil];
+        if (![fm createDirectoryAtURL:directoryURL withIntermediateDirectories:YES attributes:nil error:&error]) {
+            UA_LERR(@"Error creating inbox directory %@: %@", [directoryURL lastPathComponent], error);
+        } else {
+            [UAUtils addSkipBackupAttributeToItemAtURL:directoryURL];
         }
     }
 
-    return _persistentStoreCoordinator;
-}
-
-- (NSURL *)storeURL {
-    if (!_storeURL) {
-        NSFileManager *fm = [NSFileManager defaultManager];
-        NSURL *libraryDirectoryURL = [[fm URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
-        NSURL *directoryURL = [libraryDirectoryURL URLByAppendingPathComponent:self.storeName];
-
-        NSURL *legacyURL = [libraryDirectoryURL URLByAppendingPathComponent:kUACoreDataStoreName];
-
-        // Move the legacy directory to current directory if it exists
-        if ([fm fileExistsAtPath:[legacyURL path]]) {
-            NSError *error = nil;
-            if (![fm moveItemAtURL:legacyURL toURL:directoryURL error:&error]) {
-                UA_LERR(@"Error moving legacy inbox directory %@ to current directory %@: %@", [legacyURL lastPathComponent], [directoryURL lastPathComponent], error);
-            }
+    // Move the legacy store name if it exists
+    NSURL *legacyURL = [libraryDirectoryURL URLByAppendingPathComponent:kUACoreDataStoreName];
+    if ([fm fileExistsAtPath:[legacyURL path]]) {
+        NSError *error = nil;
+        if (![fm moveItemAtURL:legacyURL toURL:directoryURL error:&error]) {
+            UA_LERR(@"Error moving legacy inbox directory %@ to current directory %@: %@", [legacyURL lastPathComponent], [directoryURL lastPathComponent], error);
         }
-
-        // Create the store directory if it doesnt exist
-        if (![fm fileExistsAtPath:[directoryURL path]]) {
-            NSError *error = nil;
-            if (![fm createDirectoryAtURL:directoryURL withIntermediateDirectories:YES attributes:nil error:&error]) {
-                UA_LERR(@"Error creating inbox directory %@: %@", [directoryURL lastPathComponent], error);
-            } else {
-                [UAUtils addSkipBackupAttributeToItemAtURL:directoryURL];
-            }
-        }
-
-        _storeURL = [directoryURL URLByAppendingPathComponent:self.storeName];
     }
 
-    return _storeURL;
+    NSError *error = nil;
+
+    NSURL *modelURL = [[UAirship resources] URLForResource:@"UAInbox" withExtension:@"momd"];
+    NSManagedObjectModel *mom = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
+    NSPersistentStoreCoordinator *psc = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:mom];
+
+    NSDictionary *options = @{ NSMigratePersistentStoresAutomaticallyOption : @YES,
+                               NSInferMappingModelAutomaticallyOption : @YES };
+
+    if (![psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
+        UA_LERR(@"Error adding persistent store: %@, %@", error, [error userInfo]);
+
+        if ([[NSFileManager defaultManager] removeItemAtURL:storeURL error:&error]) {
+            UA_LERR(@"Error removing persistent store at URL: %@ with error: %@, %@", storeURL, error, [error userInfo]);
+            return nil;
+        }
+
+        if (![psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
+            UA_LERR(@"Failed to create persistant store: %@, %@", error, [error userInfo]);
+            return nil;
+        }
+    }
+
+    return psc;
 }
+
 
 - (void)fetchMessagesWithPredicate:(NSPredicate *)predicate
                            context:(NSManagedObjectContext *)context
                  completionHandler:(void(^)(NSArray *messages))completionHandler {
 
+    if (!context) {
+        if (completionHandler) {
+            completionHandler(nil);
+        }
+    }
+
     [context performBlock:^{
+        NSError *error = nil;
+
         NSFetchRequest *request = [[NSFetchRequest alloc] init];
         request.entity = [NSEntityDescription entityForName:kUAInboxDBEntityName
                                      inManagedObjectContext:context];
@@ -204,7 +145,11 @@
         request.sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
         request.predicate = predicate;
 
-        NSArray *resultData = [context executeFetchRequest:request error:nil];
+        NSArray *resultData = [context executeFetchRequest:request error:&error];
+
+        if (error) {
+            UA_LERR(@"Error executing fetch request: %@ with error: %@", request, error);
+        }
 
         NSMutableArray *resultMessages = [NSMutableArray array];
         for (UAInboxMessageData *data in resultData) {
@@ -245,8 +190,9 @@
 
 - (BOOL)updateMessageWithDictionary:(NSDictionary *)dictionary context:(NSManagedObjectContext *)context {
     NSString *messageID = dictionary[@"message_id"];
+    NSError *error = nil;
 
-    if (!messageID) {
+    if (!context || !messageID) {
         UA_LDEBUG(@"Missing message ID: %@", dictionary);
         return NO;
     }
@@ -257,7 +203,11 @@
     request.predicate = [NSPredicate predicateWithFormat:@"messageID == %@", messageID];
     request.fetchLimit = 1;
 
-    NSArray *resultData = [context executeFetchRequest:request error:nil];
+    NSArray *resultData = [context executeFetchRequest:request error:&error];
+
+    if (error) {
+        UA_LERR(@"Fetch request %@ failed with with error: %@", request, error);
+    }
 
     UAInboxMessageData *data;
     if (resultData.count) {
@@ -270,6 +220,10 @@
 }
 
 - (UAInboxMessage *)addMessageFromDictionary:(NSDictionary *)dictionary context:(NSManagedObjectContext *)context {
+    if (!context) {
+        return nil;
+    }
+
     UAInboxMessageData *data = (UAInboxMessageData *)[NSEntityDescription insertNewObjectForEntityForName:kUAInboxDBEntityName
                                                                                    inManagedObjectContext:context];
 
@@ -287,6 +241,10 @@
 }
 
 - (void)deleteMessages:(NSArray *)messages context:(NSManagedObjectContext *)context {
+    if (!context) {
+        return;
+    }
+
     for (UAInboxMessage *message in messages) {
         if ([message isKindOfClass:[UAInboxMessage class]]) {
             UALOG(@"Deleting: %@", message.messageID);

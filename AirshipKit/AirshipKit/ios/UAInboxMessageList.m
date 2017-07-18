@@ -34,6 +34,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
         self.batchOperationCount = 0;
         self.retrieveOperationCount = 0;
         self.unreadCount = -1;
+        self.messages = @[];
     }
 
     return self;

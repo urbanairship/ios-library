@@ -25,17 +25,12 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- * The URL for the core data store.
- */
-@property (readonly) NSURL *storeURL;
-
-/**
  * Manged object context on the main queue. Any publically visible inbox messages must be fetched
  * from this context, and any user-initiated mutations to the messages must be performed on this context to
  * to avoid concurrency violations. Messages fetched from this context can only be safely read or modified
  * from the main queue.
  */
-@property (readonly) NSManagedObjectContext *mainContext;
+@property (strong, nonatomic) NSManagedObjectContext *mainContext;
 
 /**
  * Managed object context on a private queue. Should only be used
@@ -43,17 +38,12 @@ NS_ASSUME_NONNULL_BEGIN
  * private context so that they can be cached and quickly read on the main context. Messages
  * fetched from this context can only be safely read or modified from its associated worker queue.
  */
-@property (readonly) NSManagedObjectContext *privateContext;
+@property (strong, nonatomic) NSManagedObjectContext *privateContext;
 
 /**
  * The managed object model for inbox messages.
  */
-@property (readonly) NSManagedObjectModel *managedObjectModel;
-
-/**
- * The core data persistent store coordinator.
- */
-@property (readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+@property (strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 
 ///---------------------------------------------------------------------------------------
 /// @name Inbox Database Manager Internal Methods

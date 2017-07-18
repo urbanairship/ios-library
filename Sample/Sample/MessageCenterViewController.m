@@ -35,8 +35,8 @@
     self.style.cellTitleHighlightedColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:1];
 }
 
-- (void)displayMessageForID:(UAInboxMessage *)message {
-    [self.listViewController displayMessageForID:message.messageID];
+- (void)displayMessageForID:(NSString *)messageID {
+    [self.listViewController displayMessageForID:messageID];
 }
 
 @end

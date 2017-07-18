@@ -308,21 +308,30 @@
             return NO;
         }
 
-        id alert = [apsDict objectForKey:@"alert"];
-        if ([alert isKindOfClass:[NSDictionary class]]) {
-            if ([alert[@"body"] length]) {
-                return NO;
-            }
-
-            if ([alert[@"loc-key"] length]) {
-                return NO;
-            }
-        } else if ([alert isKindOfClass:[NSString class]] && [alert length]) {
+        if ([UAUtils isAlertingPush:notification]) {
             return NO;
         }
     }
 
     return YES;
+}
+
++ (BOOL)isAlertingPush:(NSDictionary *)notification {
+    NSDictionary *apsDict = [notification objectForKey:@"aps"];
+    id alert = [apsDict objectForKey:@"alert"];
+    if ([alert isKindOfClass:[NSDictionary class]]) {
+        if ([alert[@"body"] length]) {
+            return YES;
+        }
+        
+        if ([alert[@"loc-key"] length]) {
+            return YES;
+        }
+    } else if ([alert isKindOfClass:[NSString class]] && [alert length]) {
+        return YES;
+    }
+    
+    return NO;
 }
 
 /**

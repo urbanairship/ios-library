@@ -258,7 +258,91 @@
     XCTAssertFalse([UAUtils isSilentPush:bodyNotification]);
 }
 
+- (void)testIsAlertingPush {
+    NSDictionary *alertNotification = @{
+                                        @"aps": @{
+                                                @"alert": @"hello world"
+                                                }
+                                        };
+    
+    NSDictionary *notification = @{
+                                   @"aps": @{
+                                           @"alert": @"hello world",
+                                           @"badge": @2,
+                                           @"sound": @"cat"
+                                           }
+                                   };
+    
+    NSDictionary *locKeyNotification = @{
+                                         @"aps": @{
+                                                 @"alert": @{
+                                                         @"loc-key": @"cool"
+                                                         }
+                                                 }
+                                         };
+    
+    NSDictionary *bodyNotification = @{
+                                       @"aps": @{
+                                               @"alert": @{
+                                                       @"body": @"cool"
+                                                       }
+                                               }
+                                       };
+    
+    
+    XCTAssertTrue([UAUtils isAlertingPush:alertNotification]);
+    XCTAssertTrue([UAUtils isAlertingPush:notification]);
+    XCTAssertTrue([UAUtils isAlertingPush:locKeyNotification]);
+    XCTAssertTrue([UAUtils isAlertingPush:bodyNotification]);
+}
 
+- (void)testIsAlertingPushNo {
+    NSDictionary *emptyNotification = @{
+                                        @"aps": @{
+                                                @"content-available": @1
+                                                }
+                                        };
+    
+    NSDictionary *emptyAlert = @{
+                                 @"aps": @{
+                                         @"alert": @""
+                                         }
+                                 };
+    
+    NSDictionary *emptyLocKey = @{
+                                  @"aps": @{
+                                          @"alert": @{
+                                                  @"loc-key": @""
+                                                  }
+                                          }
+                                  };
+    
+    NSDictionary *emptyBody = @{
+                                @"aps": @{
+                                        @"alert": @{
+                                                @"body": @""
+                                                }
+                                        }
+                                };
 
+    NSDictionary *badgeNotification = @{
+                                        @"aps": @{
+                                                @"badge": @2
+                                                }
+                                        };
+    
+    NSDictionary *soundNotification = @{
+                                        @"aps": @{
+                                                @"sound": @"cat"
+                                                }
+                                        };
+    
+    XCTAssertFalse([UAUtils isAlertingPush:emptyNotification]);
+    XCTAssertFalse([UAUtils isAlertingPush:emptyAlert]);
+    XCTAssertFalse([UAUtils isAlertingPush:emptyLocKey]);
+    XCTAssertFalse([UAUtils isAlertingPush:emptyBody]);
+    XCTAssertFalse([UAUtils isAlertingPush:badgeNotification]);
+    XCTAssertFalse([UAUtils isAlertingPush:soundNotification]);
+}
 
 @end

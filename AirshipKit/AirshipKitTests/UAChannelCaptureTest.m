@@ -14,8 +14,6 @@
 @property(nonatomic, strong) UAChannelCapture *channelCapture;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 
-// REVISIT: convert to UIAlertController
-@property(nonatomic, strong) id mockAlertView;
 @property(nonatomic, strong) id mockPush;
 @property(nonatomic, strong) id mockPasteboard;
 @property(nonatomic, strong) id mockApplication;
@@ -61,7 +59,10 @@
     [self.mockWindow stopMocking];
     [self.mockPasteboard stopMocking];
     [self.mockApplication stopMocking];
-    [self.channelCapture disable];
+    
+    self.config = nil;
+    self.dataStore = nil;
+    self.channelCapture = nil;
 
     [super tearDown];
 }
@@ -75,10 +76,13 @@
 
     // Generate a token with a URL
     [[[self.mockPasteboard stub] andReturn:[self generateTokenWithURLString:@"oh/hi?channel=CHANNEL"]] string];
+    [[[self.mockPasteboard stub] andReturnValue:@(YES)] hasStrings];
 
     // We get a warning when we mock the init method
-    [[self.mockRootViewController expect] presentViewController:[OCMArg checkWithBlock:^BOOL(id obj) {
-
+    NSLog(@"self.mockRootViewController = %@",self.mockRootViewController);
+    [[[self.mockRootViewController expect] andDo:^(NSInvocation *invocation) {
+        [alertDisplayed fulfill];
+    }] presentViewController:[OCMArg checkWithBlock:^BOOL(id obj) {
         if (![obj isKindOfClass:[UIAlertController class]]) {
             return NO;
         }
@@ -96,8 +100,6 @@
             return NO;
         }
 
-        [alertDisplayed fulfill];
-
         return YES;
 
     }] animated:YES completion:nil];
@@ -107,9 +109,8 @@
                                                         object:nil];
 
     // Wait for the test expectations
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-        [self.mockRootViewController verify];
-    }];
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self.mockRootViewController verify];
 }
 
 /**
@@ -121,10 +122,12 @@
 
     // Generate a token with a URL
     [[[self.mockPasteboard stub] andReturn:[self generateTokenWithURLString:nil]] string];
+    [[[self.mockPasteboard stub] andReturnValue:@(YES)] hasStrings];
 
     // We get a warning when we mock the init method
-    [[self.mockRootViewController expect] presentViewController:[OCMArg checkWithBlock:^BOOL(id obj) {
-
+    [[[self.mockRootViewController stub] andDo:^(NSInvocation *invocation) {
+        [alertDisplayed fulfill];
+    }] presentViewController:[OCMArg checkWithBlock:^BOOL(id obj) {
         if (![obj isKindOfClass:[UIAlertController class]]) {
             return NO;
         }
@@ -142,8 +145,6 @@
             return NO;
         }
 
-        [alertDisplayed fulfill];
-
         return YES;
 
     }] animated:YES completion:nil];
@@ -151,11 +152,10 @@
     // Post the foreground notification
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification
                                                         object:nil];
-
+    
     // Wait for the test expectations
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-        [self.mockRootViewController verify];
-    }];
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self.mockRootViewController verify];
 }
 
 /**
