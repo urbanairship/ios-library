@@ -3,9 +3,6 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAJSONValueTransformer+Internal.h"
 
-#if !TARGET_OS_TV
-#import "UAInboxMessageData+Internal.h"
-#endif
 
 @implementation UAJSONValueTransformer
 
