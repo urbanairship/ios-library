@@ -108,6 +108,7 @@
             [testExpectation fulfill];
         }];
     }
+    [self waitForExpectationsWithTimeout:55 handler:nil];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"scheduled what"];
 
@@ -119,7 +120,7 @@
         [testExpectation fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:55 handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 }
 
 - (void)testGetGroups {

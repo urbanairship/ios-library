@@ -6,7 +6,9 @@
 @property (nonatomic, copy) UADisposalBlock disposalBlock;
 @end
 
-@implementation UADisposable
+@implementation UADisposable {
+    dispatch_once_t _disposeOnce;
+}
 
 - (instancetype)initWithDisposalBlock:(UADisposalBlock)disposalBlock {
     self = [super init];
@@ -19,12 +21,12 @@
 }
 
 - (void)dispose {
-    @synchronized(self) {
+    dispatch_once(&_disposeOnce, ^{
         if (self.disposalBlock) {
             self.disposalBlock();
             self.disposalBlock = nil;
         }
-    }
+    });
 }
 
 + (instancetype)disposableWithBlock:(UADisposalBlock)disposalBlock {

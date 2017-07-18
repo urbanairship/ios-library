@@ -309,7 +309,9 @@ NSString *anotherActionName = @"AnotherActionName";
 
         return YES;
     }];
-
+    
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"Completion handlers run."];
+    
     NSDictionary *actionPayload = @{actionName : @"value", anotherActionName: @"another value"};
     [UAActionRunner runActionsWithActionValues:actionPayload situation:UASituationManualInvocation metadata:@{@"meta key": @"meta value"}
                              completionHandler:^(UAActionResult *finalResult) {
@@ -321,10 +323,20 @@ NSString *anotherActionName = @"AnotherActionName";
                                  NSDictionary *resultDictionary = (NSDictionary  *)finalResult.value;
 
                                  XCTAssertEqual((NSUInteger) 2, resultDictionary.count, @"Action should have 2 results");
+                                 
+                                 [testExpectation fulfill];
                              }];
-
-    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
-    XCTAssertEqual(2, actionRunCount, @"Both actions should of ran");
+    
+    // Wait for the async handling to finish
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError *error){
+        if (error) {
+            XCTFail(@"Failed to animate out message view with error: %@.", error);
+            return;
+        }
+        
+        XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
+        XCTAssertEqual(2, actionRunCount, @"Both actions should of ran");
+    }];
 }
 
 

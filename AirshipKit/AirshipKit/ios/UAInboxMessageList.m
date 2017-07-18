@@ -46,7 +46,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 #pragma mark Accessors
 
 - (void)setMessages:(NSArray *)messages {
-    _messages = messages;
+    _messages = [messages copy];
     
     NSMutableDictionary *messageIDMap = [NSMutableDictionary dictionary];
     NSMutableDictionary *messageURLMap = [NSMutableDictionary dictionary];
@@ -69,9 +69,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 }
 
 - (NSArray<UAInboxMessage *> *)messagesFilteredUsingPredicate:(NSPredicate *)predicate {
-    @synchronized(self) {
-        return [_messages filteredArrayUsingPredicate:predicate];
-    }
+    return [_messages filteredArrayUsingPredicate:predicate];
 }
 
 #pragma mark NSNotificationCenter helper methods

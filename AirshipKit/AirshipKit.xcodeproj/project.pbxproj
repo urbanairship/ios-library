@@ -305,6 +305,7 @@
 		99CA7BE21EDF33A80051E2CA /* UAAutomation.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CC8999A01D8B642D00A0CECC /* UAAutomation.xcdatamodeld */; };
 		99CA7BEE1EDF41750051E2CA /* AirshipResources tvOS.bundle in Resources */ = {isa = PBXBuildFile; fileRef = DF7E739E1E7B3F0A0039F65D /* AirshipResources tvOS.bundle */; };
 		99CA7C011EDF7DCE0051E2CA /* UARichContentWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 99666D761EDF28C300BAE46B /* UARichContentWindow.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A0942177BD000E188D8D8693 /* XCTestExpectation+AsyncFulfill.m in Sources */ = {isa = PBXBuildFile; fileRef = A09420C99FE6134B6A0AB184 /* XCTestExpectation+AsyncFulfill.m */; };
 		C7288C982C82D1A883F6764C /* Pods_AirshipKitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F98742CB99EDEDE99A230C2 /* Pods_AirshipKitTests.framework */; };
 		CC04F1861DBED84600B4842D /* UAEvents.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1841DBED84600B4842D /* UAEvents.xcdatamodeld */; };
 		CC04F18B1DBED9FA00B4842D /* UAEventData.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1891DBED9FA00B4842D /* UAEventData.m */; };
@@ -1194,6 +1195,8 @@
 		99978EE61EBA7BE7000F4AF7 /* UADeepLinkAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UADeepLinkAction.h; path = common/UADeepLinkAction.h; sourceTree = "<group>"; };
 		99978EE71EBA7BE7000F4AF7 /* UADeepLinkAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UADeepLinkAction.m; path = common/UADeepLinkAction.m; sourceTree = "<group>"; };
 		99978EEA1EBAB7E7000F4AF7 /* UADefaultActions.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UADefaultActions.plist; sourceTree = "<group>"; };
+		A09420C99FE6134B6A0AB184 /* XCTestExpectation+AsyncFulfill.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XCTestExpectation+AsyncFulfill.m"; sourceTree = "<group>"; };
+		A09429B265F34A223B921691 /* XCTestExpectation+AsyncFulfill.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XCTestExpectation+AsyncFulfill.h"; sourceTree = "<group>"; };
 		CC04F1851DBED84600B4842D /* UAEvents.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAEvents.xcdatamodel; sourceTree = "<group>"; };
 		CC04F1881DBED9FA00B4842D /* UAEventData+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAEventData+Internal.h"; path = "common/UAEventData+Internal.h"; sourceTree = "<group>"; };
 		CC04F1891DBED9FA00B4842D /* UAEventData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAEventData.m; path = common/UAEventData.m; sourceTree = "<group>"; };
@@ -2148,6 +2151,8 @@
 				CC64F0C21D8B781C009CEF27 /* UAURLProtocolTest.m */,
 				CC64F0C51D8B781C009CEF27 /* UAUtilsTest.h */,
 				CC64F0C61D8B781C009CEF27 /* UAUtilsTest.m */,
+				A09420C99FE6134B6A0AB184 /* XCTestExpectation+AsyncFulfill.m */,
+				A09429B265F34A223B921691 /* XCTestExpectation+AsyncFulfill.h */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -4098,6 +4103,7 @@
 				CC64F1131D8B781C009CEF27 /* UANamedUserTest.m in Sources */,
 				CC64F1061D8B781C009CEF27 /* UAInstallAttributionEventTest.m in Sources */,
 				CC64F1011D8B781C009CEF27 /* UAInAppResolutionEventTest.m in Sources */,
+				A0942177BD000E188D8D8693 /* XCTestExpectation+AsyncFulfill.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
