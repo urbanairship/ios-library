@@ -10,7 +10,7 @@
 
 @interface UARateAppAction ()
 
-@property (assign) BOOL showDialog;
+@property (assign) BOOL showLinkPrompt;
 
 @property (strong, nonatomic) NSString *linkPromptTitle;
 @property (strong, nonatomic) NSString *linkPromptBody;
@@ -21,13 +21,13 @@
 
 BOOL legacy;
 
-int const kMaxHeaderChars = 24;
-int const kMaxDescriptionChars = 50;
+int const kMaxTitleChars = 24;
+int const kMaxBodyChars = 50;
 
 NSTimeInterval const kSecondsInYear = 31536000;
 
 // External
-NSString *const UARateAppShowDialogKey = @"show_dialog";
+NSString *const UARateAppShowLinkPromptKey = @"show_link_prompt";
 NSString *const UARateAppLinkPromptTitleKey = @"link_prompt_header";
 NSString *const UARateAppLinkPromptBodyKey = @"link_prompt_description";
 
@@ -46,7 +46,7 @@ NSString *const UARateAppGenericDisplayName = @"This App";
     }
 
     // Display SKStoreReviewController
-    if (!legacy && self.showDialog) {
+    if (!legacy && self.showLinkPrompt) {
         [self displaySystemDialog];
         completionHandler([UAActionResult emptyResult]);
         return;
@@ -55,7 +55,7 @@ NSString *const UARateAppGenericDisplayName = @"This App";
     NSString *linkString = [NSString stringWithFormat:UARateAppItunesURLFormat, [[UAirship shared].config itunesID]];
 
     // If the user doesn't want to show a dialog just open link to store
-    if (!self.showDialog) {
+    if (!self.showLinkPrompt) {
         [self linkToStore:linkString];
         completionHandler([UAActionResult emptyResult]);
         return;
@@ -70,7 +70,7 @@ NSString *const UARateAppGenericDisplayName = @"This App";
 
     legacy = ![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 3, 0}];
 
-    id showDialog;
+    id showLinkPrompt;
     id linkPromptTitle;
     id linkPromptBody;
 
@@ -79,11 +79,11 @@ NSString *const UARateAppGenericDisplayName = @"This App";
         return NO;
     }
 
-    showDialog = [arguments.value objectForKey:UARateAppShowDialogKey];
+    showLinkPrompt = [arguments.value objectForKey:UARateAppShowLinkPromptKey];
     linkPromptTitle = [arguments.value objectForKey:UARateAppLinkPromptTitleKey];
     linkPromptBody = [arguments.value objectForKey:UARateAppLinkPromptBodyKey];
 
-    if (showDialog && ![showDialog isKindOfClass:[NSNumber class]]) {
+    if (showLinkPrompt && ![showLinkPrompt isKindOfClass:[NSNumber class]]) {
         UA_LWARN(@"Parsed an invalid Show Dialog flag from arguments: %@. Show Dialog flag must be an NSNumber or BOOL.", arguments);
         return NO;
     }
@@ -94,8 +94,8 @@ NSString *const UARateAppGenericDisplayName = @"This App";
     }
 
     if (linkPromptTitle) {
-        if (!showDialog) {
-            UA_LWARN(@"Link prompt header should only be set when showDialog is set to true.");
+        if (!showLinkPrompt) {
+            UA_LWARN(@"Link prompt header should only be set when showLinkPrompt is set to true.");
             return NO;
         }
 
@@ -104,15 +104,15 @@ NSString *const UARateAppGenericDisplayName = @"This App";
             return NO;
         }
 
-        if ([linkPromptTitle length] > 24) {
+        if ([linkPromptTitle length] > kMaxTitleChars) {
             UA_LWARN(@"Parsed an invalid link prompt header from arguments: %@. Link prompt header must be shorter than 24 characters in length.", arguments);
             return NO;
         }
     }
 
     if (linkPromptBody) {
-        if (!showDialog) {
-            UA_LWARN(@"Link prompt description should only be set when showDialog is set to true.");
+        if (!showLinkPrompt) {
+            UA_LWARN(@"Link prompt description should only be set when showLinkPrompt is set to true.");
             return NO;
         }
 
@@ -121,13 +121,13 @@ NSString *const UARateAppGenericDisplayName = @"This App";
             return NO;
         }
 
-        if ([linkPromptBody length] > 50) {
+        if ([linkPromptBody length] > kMaxBodyChars) {
             UA_LWARN(@"Parsed an invalid link prompt description from arguments: %@. Link prompt description must be shorter than 50 characters in length.", arguments);
             return NO;
         }
     }
 
-    self.showDialog = [showDialog boolValue];
+    self.showLinkPrompt = [showLinkPrompt boolValue];
     self.linkPromptTitle = linkPromptTitle;
     self.linkPromptBody = linkPromptBody;
 

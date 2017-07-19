@@ -84,7 +84,7 @@
 
     [[self.mockStoreReviewController expect] requestReview];
 
-    [self.action performWithArguments:[UAActionArguments argumentsWithValue:@{ UARateAppShowDialogKey:@YES, UARateAppLinkPromptTitleKey :@"Acceptable Header", UARateAppLinkPromptBodyKey :@"Acceptable decsription."} withSituation:UASituationManualInvocation] completionHandler:^(UAActionResult * result) {
+    [self.action performWithArguments:[UAActionArguments argumentsWithValue:@{ UARateAppShowLinkPromptKey:@YES, UARateAppLinkPromptTitleKey :@"Acceptable Header", UARateAppLinkPromptBodyKey :@"Acceptable decsription."} withSituation:UASituationManualInvocation] completionHandler:^(UAActionResult * result) {
     }];
 
     [self.mockStoreReviewController verify];
@@ -98,7 +98,7 @@
 
     [[self.mockStoreReviewController reject] requestReview];
 
-    [self.action performWithArguments:[UAActionArguments argumentsWithValue:@{ UARateAppShowDialogKey:@YES, UARateAppLinkPromptTitleKey :@"Acceptable Header", UARateAppLinkPromptBodyKey :@"Acceptable decsription."} withSituation:UASituationManualInvocation] completionHandler:^(UAActionResult * result) {
+    [self.action performWithArguments:[UAActionArguments argumentsWithValue:@{ UARateAppShowLinkPromptKey:@YES, UARateAppLinkPromptTitleKey :@"Acceptable Header", UARateAppLinkPromptBodyKey :@"Acceptable decsription."} withSituation:UASituationManualInvocation] completionHandler:^(UAActionResult * result) {
     }];
 
     [self.mockStoreReviewController verify];
@@ -110,7 +110,7 @@
     [[self.mockApplication expect] openURL:[NSURL URLWithString:@"itms-apps://itunes.apple.com/app/id1195168544?action=write-review"] options:@{} completionHandler:nil];
     [[[self.mockApplication stub] andReturnValue:@YES] canOpenURL:OCMOCK_ANY];
 
-    [self.action performWithArguments:[UAActionArguments argumentsWithValue:@{ UARateAppShowDialogKey:@NO, UARateAppLinkPromptTitleKey :@"Acceptable Header", UARateAppLinkPromptBodyKey :@"Acceptable decsription."} withSituation:UASituationManualInvocation] completionHandler:^(UAActionResult * result) {
+    [self.action performWithArguments:[UAActionArguments argumentsWithValue:@{ UARateAppShowLinkPromptKey:@NO, UARateAppLinkPromptTitleKey :@"Acceptable Header", UARateAppLinkPromptBodyKey :@"Acceptable decsription."} withSituation:UASituationManualInvocation] completionHandler:^(UAActionResult * result) {
     }];
 
     [self.mockApplication verify];
@@ -125,7 +125,7 @@
     [[self.mockApplication expect] openURL:[NSURL URLWithString:@"itms-apps://itunes.apple.com/app/id1195168544?action=write-review"]];
     [[[self.mockApplication stub] andReturnValue:@YES] canOpenURL:OCMOCK_ANY];
 
-    [self.action performWithArguments:[UAActionArguments argumentsWithValue:@{ UARateAppShowDialogKey:@YES, UARateAppLinkPromptTitleKey :@"Acceptable Header", UARateAppLinkPromptBodyKey :@"Acceptable decsription."} withSituation:UASituationManualInvocation] completionHandler:^(UAActionResult * result) {
+    [self.action performWithArguments:[UAActionArguments argumentsWithValue:@{ UARateAppShowLinkPromptKey:@YES, UARateAppLinkPromptTitleKey :@"Acceptable Header", UARateAppLinkPromptBodyKey :@"Acceptable decsription."} withSituation:UASituationManualInvocation] completionHandler:^(UAActionResult * result) {
     }];
 
     [self.mockStoreReviewController verify];
@@ -143,7 +143,7 @@
 
     [[[self.mockApplication stub] andReturnValue:@YES] canOpenURL:OCMOCK_ANY];
 
-    [self.action performWithArguments:[UAActionArguments argumentsWithValue:@{ UARateAppShowDialogKey:@YES, UARateAppLinkPromptTitleKey :acceptableHeader, UARateAppLinkPromptBodyKey :acceptableDescription} withSituation:UASituationManualInvocation] completionHandler:^(UAActionResult * result) {
+    [self.action performWithArguments:[UAActionArguments argumentsWithValue:@{ UARateAppShowLinkPromptKey:@YES, UARateAppLinkPromptTitleKey :acceptableHeader, UARateAppLinkPromptBodyKey :acceptableDescription} withSituation:UASituationManualInvocation] completionHandler:^(UAActionResult * result) {
     }];
 
     [self.mockRateAppPromptViewControler verify];
@@ -164,7 +164,7 @@
 
     [[[self.mockApplication stub] andReturnValue:@YES] canOpenURL:OCMOCK_ANY];
 
-    [self.action performWithArguments:[UAActionArguments argumentsWithValue:@{ UARateAppShowDialogKey:@YES, UARateAppLinkPromptTitleKey :acceptableHeader, UARateAppLinkPromptBodyKey :acceptableDescription} withSituation:UASituationManualInvocation] completionHandler:^(UAActionResult * result) {
+    [self.action performWithArguments:[UAActionArguments argumentsWithValue:@{ UARateAppShowLinkPromptKey:@YES, UARateAppLinkPromptTitleKey :acceptableHeader, UARateAppLinkPromptBodyKey :acceptableDescription} withSituation:UASituationManualInvocation] completionHandler:^(UAActionResult * result) {
     }];
 
     [self.mockRateAppPromptViewControler verify];
@@ -184,7 +184,7 @@
 
     [[[self.mockApplication stub] andReturnValue:@NO] canOpenURL:OCMOCK_ANY];
 
-    [self.action performWithArguments:[UAActionArguments argumentsWithValue:@{ UARateAppShowDialogKey:@YES, UARateAppLinkPromptTitleKey :acceptableHeader, UARateAppLinkPromptBodyKey :acceptableDescription} withSituation:UASituationManualInvocation] completionHandler:^(UAActionResult * result) {
+    [self.action performWithArguments:[UAActionArguments argumentsWithValue:@{ UARateAppShowLinkPromptKey:@YES, UARateAppLinkPromptTitleKey :acceptableHeader, UARateAppLinkPromptBodyKey :acceptableDescription} withSituation:UASituationManualInvocation] completionHandler:^(UAActionResult * result) {
     }];
 
     [self.mockRateAppPromptViewControler verify];
@@ -194,26 +194,26 @@
 - (void)testAcceptedArguments {
     [[[self.mockConfig stub] andReturn:@"1195168544"] itunesID];
 
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@YES} shouldAccept:YES];
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@NO} shouldAccept:YES];
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@1} shouldAccept:YES];
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@0} shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES} shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO} shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@1} shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@0} shouldAccept:YES];
 
     // Accept header and description of proper length
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@YES, UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@NO, UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES, UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO, UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
     [self verifyAcceptsArgumentsWithValue:@{} shouldAccept:YES];
 
     NSString *maxHeader = [@"" stringByPaddingToLength:24 withString:@"maxHeader" startingAtIndex:0];
     NSString *maxDescription = [@"" stringByPaddingToLength:50 withString:@"maxDecription" startingAtIndex:0];
 
     // Accept header and description of proper length if there's an itunes ID
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@YES, UARateAppLinkPromptTitleKey :maxHeader
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES, UARateAppLinkPromptTitleKey :maxHeader
 , UARateAppLinkPromptBodyKey :maxDescription} shouldAccept:YES];
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@NO, UARateAppLinkPromptTitleKey :maxHeader, UARateAppLinkPromptBodyKey :maxDescription} shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO, UARateAppLinkPromptTitleKey :maxHeader, UARateAppLinkPromptBodyKey :maxDescription} shouldAccept:YES];
 
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@YES, UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@1, UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES, UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@1, UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
 }
 
 // Tests acceptable arguments are accepted for the legacy implementation < 10.3
@@ -222,34 +222,34 @@
 
     self.testOSMajorVersion = 9;
     self.testOSMinorVersion = 0;
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@YES} shouldAccept:YES];
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@NO} shouldAccept:YES];
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@1} shouldAccept:YES];
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@0} shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES} shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO} shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@1} shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@0} shouldAccept:YES];
 
     // Accept header and description of proper length
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@YES,  UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@NO,  UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES,  UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO,  UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
     [self verifyAcceptsArgumentsWithValue:@{} shouldAccept:YES];
 
     NSString *maxHeader = [@"" stringByPaddingToLength:24 withString:@"maxHeader" startingAtIndex:0];
     NSString *maxDescription = [@"" stringByPaddingToLength:50 withString:@"maxDecription" startingAtIndex:0];
 
     // Accept header and description of proper length if there's an itunes ID
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@YES,  UARateAppLinkPromptTitleKey :maxHeader
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES,  UARateAppLinkPromptTitleKey :maxHeader
                                             , UARateAppLinkPromptBodyKey :maxDescription} shouldAccept:YES];
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@NO,  UARateAppLinkPromptTitleKey :maxHeader, UARateAppLinkPromptBodyKey :maxDescription} shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO,  UARateAppLinkPromptTitleKey :maxHeader, UARateAppLinkPromptBodyKey :maxDescription} shouldAccept:YES];
 
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@YES,  UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@1,  UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES,  UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@1,  UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
 }
 
 // Tests that unacceptable arguments are rejected in iOS 10.3+
 - (void)testRejectedArguments {
 
     // Don't accept a UARateAppAction without an iTunes ID key if show dialog is set to NO
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@NO} shouldAccept:NO];
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@0} shouldAccept:NO];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO} shouldAccept:NO];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@0} shouldAccept:NO];
 
     [[[self.mockConfig stub] andReturn:@"1195168544"] itunesID];
 
@@ -257,11 +257,11 @@
     NSString *tooLongDescription = [@"" stringByPaddingToLength:100 withString:@"maxDecription" startingAtIndex:0];
 
     //Reject header and decriptions of improper length
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@YES,  UARateAppLinkPromptTitleKey:tooLongHeader
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES,  UARateAppLinkPromptTitleKey:tooLongHeader
                                             , UARateAppLinkPromptBodyKey : @"Acceptable description."} shouldAccept:NO];
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@YES,  UARateAppLinkPromptTitleKey:@"Acceptable header."
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES,  UARateAppLinkPromptTitleKey:@"Acceptable header."
                                             , UARateAppLinkPromptBodyKey : tooLongDescription} shouldAccept:NO];
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@NO,  UARateAppLinkPromptTitleKey:tooLongHeader, UARateAppLinkPromptBodyKey : tooLongDescription} shouldAccept:NO];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO,  UARateAppLinkPromptTitleKey:tooLongHeader, UARateAppLinkPromptBodyKey : tooLongDescription} shouldAccept:NO];
     [self verifyAcceptsArgumentsWithValue:@{UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:NO];
 }
 
@@ -271,8 +271,8 @@
     self.testOSMinorVersion = 0;
 
     // Don't accept a UARateAppAction without an iTunes ID key if show dialog is set to NO
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@NO} shouldAccept:NO];
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@0} shouldAccept:NO];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO} shouldAccept:NO];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@0} shouldAccept:NO];
 
     [[[self.mockConfig stub] andReturn:@"1195168544"] itunesID];
 
@@ -280,12 +280,12 @@
     NSString *tooLongDescription = [@"" stringByPaddingToLength:100 withString:@"maxDecription" startingAtIndex:0];
 
     //Reject header and decriptions of improper length
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@YES,  UARateAppLinkPromptTitleKey:tooLongHeader
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES,  UARateAppLinkPromptTitleKey:tooLongHeader
                                             , UARateAppLinkPromptBodyKey : @"Acceptable description."} shouldAccept:NO];
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@YES,  UARateAppLinkPromptTitleKey:@"Acceptable header."
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES,  UARateAppLinkPromptTitleKey:@"Acceptable header."
                                             , UARateAppLinkPromptBodyKey : tooLongDescription} shouldAccept:NO];
 
-    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowDialogKey:@NO,  UARateAppLinkPromptTitleKey:tooLongHeader, UARateAppLinkPromptBodyKey : tooLongDescription} shouldAccept:NO];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO,  UARateAppLinkPromptTitleKey:tooLongHeader, UARateAppLinkPromptBodyKey : tooLongDescription} shouldAccept:NO];
     [self verifyAcceptsArgumentsWithValue:@{UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:NO];
 }
 
