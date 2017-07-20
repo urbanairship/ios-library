@@ -32,6 +32,21 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)messageWillBeDisplayed:(UAInAppMessage *)message;
 
+/**
+ * Indicates that an in-app message body has been tapped.
+ */
+- (void)messageTapped:(UAInAppMessage *)message;
+
+/**
+ * Indicates that an in-app message button has been tapped.
+ */
+- (void)messageButtonTapped:(UAInAppMessage *)message buttonIndex:(NSUInteger)index;
+
+/**
+ * Indicates that an in-app message has been dismissed.
+ */
+- (void)messageDismissed:(UAInAppMessage *)message;
+
 @end
 
 

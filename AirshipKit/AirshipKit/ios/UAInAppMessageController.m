@@ -336,6 +336,13 @@
                     (translation.y < 0 && self.message.position == UAInAppMessagePositionTop)) {
                     if (!self.tapDetected && !self.longPressDetected) {
                         self.swipeDetected = YES;
+
+                        //UAInAppMessagingDelegate messageDismissed
+                        id<UAInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
+                        if ([strongDelegate respondsToSelector:@selector(messageDismissed:)]) {
+                            [strongDelegate messageDismissed:self.message];
+                        };
+
                         // dismiss and add the appropriate analytics event
                         [self dismiss];
                         UAInAppResolutionEvent *event = [UAInAppResolutionEvent dismissedResolutionWithMessage:self.message
@@ -353,6 +360,12 @@
  * Called when a message is clicked.
  */
 - (void)messageClicked {
+    //UAInAppMessagingDelegate messageTapped
+    id<UAInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
+    if ([strongDelegate respondsToSelector:@selector(messageTapped:)]) {
+        [strongDelegate messageTapped:self.message];
+    };
+
     UAInAppResolutionEvent *event = [UAInAppResolutionEvent messageClickedResolutionWithMessage:self.message
                                                                                 displayDuration:[self displayDuration]];
     [[UAirship shared].analytics addEvent:event];
@@ -451,8 +464,20 @@
     // Retrieve the binding associated with the tapped button
     if ([sender isEqual:button1]) {
         binding = self.buttonActionBindings[0];
+        //UAInAppMessagingDelegate button 1 tapped
+        id<UAInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
+        if ([strongDelegate respondsToSelector:@selector(messageButtonTapped:buttonIndex:)]) {
+            [strongDelegate messageButtonTapped:self.message buttonIndex:0];
+        };
+
     } else if ([sender isEqual:button2])  {
         binding = self.buttonActionBindings[1];
+
+        //UAInAppMessagingDelegate button 2 tapped
+        id<UAInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
+        if ([strongDelegate respondsToSelector:@selector(messageButtonTapped:buttonIndex:)]) {
+            [strongDelegate messageButtonTapped:self.message buttonIndex:1];
+        };
     }
 
     // Run all the bound actions
@@ -462,7 +487,6 @@
                                           metadata:nil
                                  completionHandler:nil];
     }
-
 
     UAInAppResolutionEvent *event = [UAInAppResolutionEvent buttonClickedResolutionWithMessage:self.message
                                                                               buttonIdentifier:binding.identifier
