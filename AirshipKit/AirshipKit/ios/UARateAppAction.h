@@ -11,7 +11,7 @@
  * This action is registered under the names rate_app_action and ^ra.
  *
  * Expected argument values:
- * ``show_dialog``:Required Boolean. If NO action will link directly to the iTunes app
+ * ``show_link_prompt``:Required Boolean. If NO action will link directly to the iTunes app
  * review page, if YES action will display a rating prompt. Defaults to NO if nil.
  * ``link_prompt_title_key``: Optional String. String to override the link prompt's title.
  *   Title over 24 characters will be rejected. Header defaults to "Enjoying <CFBundleDisplayName>?" if nil.
@@ -29,7 +29,7 @@
 /**
  * The show dialog key for the show dialog option.
  */
-extern NSString *const UARateAppShowDialogKey;
+extern NSString *const UARateAppShowLinkPromptKey;
 
 /**
  * The link prompt's title key.
