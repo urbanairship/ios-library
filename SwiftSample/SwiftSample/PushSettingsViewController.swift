@@ -69,7 +69,6 @@ class PushSettingsViewController: UITableViewController {
             object: nil);
 
         // Initialize switches
-        pushEnabledSwitch.isOn = UAirship.push().userPushNotificationsEnabled
         locationEnabledSwitch.isOn = UAirship.location().isLocationUpdatesEnabled
         analyticsSwitch.isOn = UAirship.shared().analytics.isEnabled
 
@@ -94,6 +93,7 @@ class PushSettingsViewController: UITableViewController {
     }
 
     func refreshView() {
+        pushEnabledSwitch.isOn = UAirship.push().userPushNotificationsEnabled
 
         channelIDSubtitleLabel?.text = UAirship.push().channelID
         
