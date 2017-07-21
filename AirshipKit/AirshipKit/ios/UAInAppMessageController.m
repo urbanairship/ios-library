@@ -336,6 +336,13 @@
                     (translation.y < 0 && self.message.position == UAInAppMessagePositionTop)) {
                     if (!self.tapDetected && !self.longPressDetected) {
                         self.swipeDetected = YES;
+
+                        //UAInAppMessagingDelegate messageDismissed
+                        id<UAInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
+                        if ([strongDelegate respondsToSelector:@selector(messageDismissed:timeout:)]) {
+                            [strongDelegate messageDismissed:self.message timeout:NO];
+                        };
+
                         // dismiss and add the appropriate analytics event
                         [self dismiss];
                         UAInAppResolutionEvent *event = [UAInAppResolutionEvent dismissedResolutionWithMessage:self.message
@@ -353,6 +360,12 @@
  * Called when a message is clicked.
  */
 - (void)messageClicked {
+    //UAInAppMessagingDelegate messageTapped
+    id<UAInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
+    if ([strongDelegate respondsToSelector:@selector(messageTapped:)]) {
+        [strongDelegate messageTapped:self.message];
+    };
+
     UAInAppResolutionEvent *event = [UAInAppResolutionEvent messageClickedResolutionWithMessage:self.message
                                                                                 displayDuration:[self displayDuration]];
     [[UAirship shared].analytics addEvent:event];
@@ -369,6 +382,12 @@
  */
 - (void)timedOut {
     [self dismiss];
+
+    //UAInAppMessagingDelegate messageDismissed by timeout
+    id<UAInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
+    if ([strongDelegate respondsToSelector:@selector(messageDismissed:timeout:)]) {
+        [strongDelegate messageDismissed:self.message timeout:YES];
+    };
 
     UAInAppResolutionEvent *event = [UAInAppResolutionEvent timedOutResolutionWithMessage:self.message
                                                                           displayDuration:[self displayDuration]];
@@ -447,12 +466,18 @@
     UIControl *button1 = [self buttonAtIndex:0];
     UIControl *button2 = [self buttonAtIndex:1];
 
-
     // Retrieve the binding associated with the tapped button
     if ([sender isEqual:button1]) {
         binding = self.buttonActionBindings[0];
     } else if ([sender isEqual:button2])  {
         binding = self.buttonActionBindings[1];
+    }
+
+    if (binding) {
+        id<UAInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
+        if ([strongDelegate respondsToSelector:@selector(messageButtonTapped:buttonIdentifier:)]) {
+            [strongDelegate messageButtonTapped:self.message buttonIdentifier:binding.identifier];
+        };
     }
 
     // Run all the bound actions
@@ -462,7 +487,6 @@
                                           metadata:nil
                                  completionHandler:nil];
     }
-
 
     UAInAppResolutionEvent *event = [UAInAppResolutionEvent buttonClickedResolutionWithMessage:self.message
                                                                               buttonIdentifier:binding.identifier
