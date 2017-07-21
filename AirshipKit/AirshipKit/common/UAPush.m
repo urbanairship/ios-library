@@ -706,7 +706,14 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     payload.alias = self.alias;
 #pragma GCC diagnostic pop
 
-    payload.badge = self.autobadgeEnabled ? [NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]] : nil;
+
+    if (self.autobadgeEnabled) {
+        payload.badge = [UAPush evaluateOnMainThread:^id{
+            return [NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]];
+        }];
+    } else {
+        payload.badge = nil;
+    }
 
     if (self.timeZone.name && self.quietTimeEnabled) {
         payload.timeZone = self.timeZone.name;
@@ -717,18 +724,11 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 }
 
 - (BOOL)userPushNotificationsAllowed {
-    UIApplication *app = [UIApplication sharedApplication];
-    
-    __block BOOL isRegisteredForRemoteNotifications;
 
-    if ([NSThread isMainThread]) {
-        isRegisteredForRemoteNotifications = app.isRegisteredForRemoteNotifications;
-    } else {
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            isRegisteredForRemoteNotifications = app.isRegisteredForRemoteNotifications;
-        });
-    }
-    
+    BOOL isRegisteredForRemoteNotifications = [[UAPush evaluateOnMainThread:^id{
+        return @([UIApplication sharedApplication].isRegisteredForRemoteNotifications);
+    }] boolValue];
+
     return self.deviceToken
     && self.userPushNotificationsEnabled
     && self.authorizedNotificationOptions
@@ -744,23 +744,17 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         return NO;
     }
 
-    UIApplication *app = [UIApplication sharedApplication];
+    BOOL backgroundPushAllowed = [[UAPush evaluateOnMainThread:^id{
 #if !TARGET_OS_TV    // UIBackgroundRefreshStatusAvailable not available on tvOS
-    if (app.backgroundRefreshStatus != UIBackgroundRefreshStatusAvailable) {
-        return NO;
-    }
+        if ([UIApplication sharedApplication].backgroundRefreshStatus != UIBackgroundRefreshStatusAvailable) {
+            return @(NO);
+        }
 #endif
-    __block BOOL isRegisteredForRemoteNotifications;
-    
-    if ([NSThread isMainThread]) {
-        isRegisteredForRemoteNotifications = app.isRegisteredForRemoteNotifications;
-    } else {
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            isRegisteredForRemoteNotifications = app.isRegisteredForRemoteNotifications;
-        });
-    }
-    
-    return isRegisteredForRemoteNotifications;
+
+        return @([UIApplication sharedApplication].isRegisteredForRemoteNotifications);
+    }] boolValue];
+
+    return backgroundPushAllowed;
 }
 
 - (void)updateRegistration {
@@ -1098,5 +1092,23 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     
     [self.dataStore setBool:YES forKey:UAPushEnabledSettingsMigratedKey];
 }
+
+#pragma mark -
+#pragma mark Helpers
+
++ (id)evaluateOnMainThread:(id (^__nonnull)(void))block {
+    __block id result;
+
+    if ([NSThread isMainThread]) {
+        result = block();
+    } else {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            result = block();
+        });
+    }
+
+    return result;
+}
+
 
 @end
