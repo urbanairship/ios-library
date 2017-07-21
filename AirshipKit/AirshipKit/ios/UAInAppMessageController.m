@@ -339,8 +339,8 @@
 
                         //UAInAppMessagingDelegate messageDismissed
                         id<UAInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
-                        if ([strongDelegate respondsToSelector:@selector(messageDismissed:)]) {
-                            [strongDelegate messageDismissed:self.message];
+                        if ([strongDelegate respondsToSelector:@selector(messageDismissed:timeout:)]) {
+                            [strongDelegate messageDismissed:self.message timeout:NO];
                         };
 
                         // dismiss and add the appropriate analytics event
@@ -382,6 +382,12 @@
  */
 - (void)timedOut {
     [self dismiss];
+
+    //UAInAppMessagingDelegate messageDismissed by timeout
+    id<UAInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
+    if ([strongDelegate respondsToSelector:@selector(messageDismissed:timeout:)]) {
+        [strongDelegate messageDismissed:self.message timeout:YES];
+    };
 
     UAInAppResolutionEvent *event = [UAInAppResolutionEvent timedOutResolutionWithMessage:self.message
                                                                           displayDuration:[self displayDuration]];
@@ -460,14 +466,13 @@
     UIControl *button1 = [self buttonAtIndex:0];
     UIControl *button2 = [self buttonAtIndex:1];
 
-
     // Retrieve the binding associated with the tapped button
     if ([sender isEqual:button1]) {
         binding = self.buttonActionBindings[0];
         //UAInAppMessagingDelegate button 1 tapped
         id<UAInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
-        if ([strongDelegate respondsToSelector:@selector(messageButtonTapped:buttonIndex:)]) {
-            [strongDelegate messageButtonTapped:self.message buttonIndex:0];
+        if ([strongDelegate respondsToSelector:@selector(messageButtonTapped:buttonIdentifier:)]) {
+            [strongDelegate messageButtonTapped:self.message buttonIdentifier:binding.identifier];
         };
 
     } else if ([sender isEqual:button2])  {
@@ -475,8 +480,8 @@
 
         //UAInAppMessagingDelegate button 2 tapped
         id<UAInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
-        if ([strongDelegate respondsToSelector:@selector(messageButtonTapped:buttonIndex:)]) {
-            [strongDelegate messageButtonTapped:self.message buttonIndex:1];
+        if ([strongDelegate respondsToSelector:@selector(messageButtonTapped:buttonIdentifier:)]) {
+            [strongDelegate messageButtonTapped:self.message buttonIdentifier:binding.identifier];
         };
     }
 

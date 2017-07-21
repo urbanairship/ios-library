@@ -40,12 +40,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Indicates that an in-app message button has been tapped.
  */
-- (void)messageButtonTapped:(UAInAppMessage *)message buttonIndex:(NSUInteger)index;
+- (void)messageButtonTapped:(UAInAppMessage *)message buttonIdentifier:(NSString *)identifier;
 
 /**
- * Indicates that an in-app message has been dismissed.
+ * Indicates that an in-app message has been dismissed by the user or a timeout.
  */
-- (void)messageDismissed:(UAInAppMessage *)message;
+- (void)messageDismissed:(UAInAppMessage *)message timeout:(BOOL)timedOut;
 
 @end
 
