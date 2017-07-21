@@ -469,16 +469,11 @@
     // Retrieve the binding associated with the tapped button
     if ([sender isEqual:button1]) {
         binding = self.buttonActionBindings[0];
-        //UAInAppMessagingDelegate button 1 tapped
-        id<UAInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
-        if ([strongDelegate respondsToSelector:@selector(messageButtonTapped:buttonIdentifier:)]) {
-            [strongDelegate messageButtonTapped:self.message buttonIdentifier:binding.identifier];
-        };
-
     } else if ([sender isEqual:button2])  {
         binding = self.buttonActionBindings[1];
+    }
 
-        //UAInAppMessagingDelegate button 2 tapped
+    if (binding) {
         id<UAInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
         if ([strongDelegate respondsToSelector:@selector(messageButtonTapped:buttonIdentifier:)]) {
             [strongDelegate messageButtonTapped:self.message buttonIdentifier:binding.identifier];
