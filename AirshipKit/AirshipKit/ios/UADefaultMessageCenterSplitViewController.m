@@ -45,17 +45,32 @@
 @implementation UADefaultMessageCenterSplitViewController
 
 - (void)configure {
+    if (UAirship.shared.config.useWKWebView) {
+        self.messageViewController = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController"
+                                                                                            bundle:[UAirship resources]];
+    } else {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+        self.messageViewController = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController"
+                                                                                                   bundle:[UAirship resources]];
+        ((UADefaultMessageCenterMessageViewController *)self.messageViewController).filter = self.filter;
+#pragma GCC diagnostic pop
+    }
+    self.messageNav = [[UINavigationController alloc] initWithRootViewController:self.messageViewController];
 
     self.listViewController = [[UADefaultMessageCenterListViewController alloc] initWithNibName:@"UADefaultMessageCenterListViewController"
-                                                                     bundle:[UAirship resources]];
+                                                                                         bundle:[UAirship resources]];
+    self.listViewController.messageViewController = self.messageViewController;
     self.listNav = [[UINavigationController alloc] initWithRootViewController:self.listViewController];
+
+    self.viewControllers = @[self.listNav, self.messageNav];
+
+    // display both view controllers in horizontally regular contexts
+    self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
 
     self.title = UAMessageCenterLocalizedString(@"ua_message_center_title");
 
     self.delegate = self.listViewController;
-
-    // display both view controllers in horizontally regular contexts
-    self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
 }
 
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -76,29 +91,6 @@
     }
 
     return self;
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    
-    if (!self.messageViewController) {
-        if (UAirship.shared.config.useWKWebView) {
-            self.messageViewController = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController"
-                                                                         bundle:[UAirship resources]];
-        } else {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-            self.messageViewController = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController"
-                                                                                bundle:[UAirship resources]];
-            ((UADefaultMessageCenterMessageViewController *)self.messageViewController).filter = self.filter;
-#pragma GCC diagnostic pop
-        }
-        
-        self.listViewController.messageViewController = self.messageViewController;
-        self.messageNav = [[UINavigationController alloc] initWithRootViewController:self.messageViewController];
-        self.viewControllers = @[self.listNav, self.messageNav];
-
-    }
 }
 
 - (void)setStyle:(UADefaultMessageCenterStyle *)style {
