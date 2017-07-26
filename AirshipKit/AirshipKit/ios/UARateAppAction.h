@@ -6,9 +6,12 @@
 #define kUARateAppActionDefaultRegistryAlias @"^ra"
 
 /**
- * Links directly to app store review page or opens an app rating dialog.
+ * Links directly to app store review page or opens an app rating prompt.
  *
  * This action is registered under the names rate_app_action and ^ra.
+ *
+ * The rate app action requires your application's itunes ID to be set directly on the UAConfig
+ * instance used for takeoff or in the AirshipConfig.plist under the key ``itunesID``.
  *
  * Expected argument values:
  * ``show_link_prompt``:Required Boolean. If NO action will link directly to the iTunes app
@@ -27,7 +30,7 @@
 @interface UARateAppAction : UAAction
 
 /**
- * The show dialog key for the show dialog option.
+ * The show link prompt key.
  */
 extern NSString *const UARateAppShowLinkPromptKey;
 

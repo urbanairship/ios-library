@@ -47,21 +47,21 @@ NSString *const UARateAppGenericDisplayName = @"This App";
 
     // Display SKStoreReviewController
     if (!legacy && self.showLinkPrompt) {
-        [self displaySystemDialog];
+        [self displaySystemLinkPrompt];
         completionHandler([UAActionResult emptyResult]);
         return;
     }
 
     NSString *linkString = [NSString stringWithFormat:UARateAppItunesURLFormat, [[UAirship shared].config itunesID]];
 
-    // If the user doesn't want to show a dialog just open link to store
+    // If the user doesn't want to show a link prompt just open link to store
     if (!self.showLinkPrompt) {
         [self linkToStore:linkString];
         completionHandler([UAActionResult emptyResult]);
         return;
     }
 
-    [self displayLinkDialog:linkString completionHandler:^(BOOL dismissed) {
+    [self displayLinkPrompt:linkString completionHandler:^(BOOL dismissed) {
         completionHandler([UAActionResult emptyResult]);
     }];
 }
@@ -83,10 +83,16 @@ NSString *const UARateAppGenericDisplayName = @"This App";
     linkPromptTitle = [arguments.value objectForKey:UARateAppLinkPromptTitleKey];
     linkPromptBody = [arguments.value objectForKey:UARateAppLinkPromptBodyKey];
 
-    if (showLinkPrompt && ![showLinkPrompt isKindOfClass:[NSNumber class]]) {
-        UA_LWARN(@"Parsed an invalid Show Dialog flag from arguments: %@. Show Dialog flag must be an NSNumber or BOOL.", arguments);
+    if (!showLinkPrompt) {
+        UA_LWARN(@"show_link_prompt not provided in arguments: %@, show_link_prompt is required.", arguments);
         return NO;
     }
+
+    if (![showLinkPrompt isKindOfClass:[NSNumber class]]) {
+        UA_LWARN(@"Parsed an invalid show_link_prompt from arguments: %@. show_link_prompt must be an NSNumber or BOOL.", arguments);
+        return NO;
+    }
+
 
     if (![[UAirship shared].config itunesID]) {
         UA_LWARN(@"iTunes ID is required.");
@@ -94,35 +100,25 @@ NSString *const UARateAppGenericDisplayName = @"This App";
     }
 
     if (linkPromptTitle) {
-        if (!showLinkPrompt) {
-            UA_LWARN(@"Link prompt header should only be set when showLinkPrompt is set to true.");
-            return NO;
-        }
-
         if (![linkPromptTitle isKindOfClass:[NSString class]]) {
-            UA_LWARN(@"Parsed an invalid link prompt header from arguments: %@. Link prompt header must be an NSString.", arguments);
+            UA_LWARN(@"Parsed an invalid link prompt title from arguments: %@. Link prompt title must be an NSString.", arguments);
             return NO;
         }
 
         if ([linkPromptTitle length] > kMaxTitleChars) {
-            UA_LWARN(@"Parsed an invalid link prompt header from arguments: %@. Link prompt header must be shorter than 24 characters in length.", arguments);
+            UA_LWARN(@"Parsed an invalid link prompt title from arguments: %@. Link prompt title must be shorter than 24 characters in length.", arguments);
             return NO;
         }
     }
 
     if (linkPromptBody) {
-        if (!showLinkPrompt) {
-            UA_LWARN(@"Link prompt description should only be set when showLinkPrompt is set to true.");
-            return NO;
-        }
-
         if (![linkPromptBody isKindOfClass:[NSString class]]) {
-            UA_LWARN(@"Parsed an invalid link prompt description from arguments: %@. Link prompt description must be an NSString.", arguments);
+            UA_LWARN(@"Parsed an invalid link prompt body from arguments: %@. Link prompt body must be an NSString.", arguments);
             return NO;
         }
 
         if ([linkPromptBody length] > kMaxBodyChars) {
-            UA_LWARN(@"Parsed an invalid link prompt description from arguments: %@. Link prompt description must be shorter than 50 characters in length.", arguments);
+            UA_LWARN(@"Parsed an invalid link prompt body from arguments: %@. Link prompt body must be shorter than 50 characters in length.", arguments);
             return NO;
         }
     }
@@ -134,7 +130,7 @@ NSString *const UARateAppGenericDisplayName = @"This App";
     return YES;
 }
 
--(void)displaySystemDialog {
+-(void)displaySystemLinkPrompt {
     [SKStoreReviewController requestReview];
 
     [self storeTimestamp:UARateAppPromptTimestampsKey];
@@ -147,15 +143,14 @@ NSString *const UARateAppGenericDisplayName = @"This App";
 -(NSArray *)getTimestampsForKey:(NSString *)key {
     UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[UAirship shared].config.appKey];
 
-    return [dataStore objectForKey:key] ?: @[];
+    return [dataStore arrayForKey:key] ?: @[];
 }
 
 -(void)storeTimestamp:(NSString *)key {
-
     UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[UAirship shared].config.appKey];
     NSNumber *todayTimestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
 
-    NSMutableArray *timestamps = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults]  arrayForKey:key]];
+    NSMutableArray *timestamps = [NSMutableArray arrayWithArray:[self getTimestampsForKey:key]];
 
     // Remove timestamps more than a year old
     for (NSNumber *timestamp in timestamps) {
@@ -163,8 +158,6 @@ NSString *const UARateAppGenericDisplayName = @"This App";
             [timestamps removeObject:timestamp];
         }
     }
-
-
 
     // Store timestamp for this call
     [timestamps addObject:todayTimestamp];
@@ -204,7 +197,7 @@ NSString *const UARateAppGenericDisplayName = @"This App";
 }
 
 // Rate app action for iOS 8+ with applications track ID using a store URL link
--(void)displayLinkDialog:(NSString *)linkString completionHandler:(void (^)(BOOL dismissed))completionHandler {
+-(void)displayLinkPrompt:(NSString *)linkString completionHandler:(void (^)(BOOL dismissed))completionHandler {
     NSString *displayName;
 
     if (![self canLinkToStore:linkString]) {
@@ -225,13 +218,13 @@ NSString *const UARateAppGenericDisplayName = @"This App";
         if (!dismissed) {
             [self linkToStore:linkString];
         }
-#if RELEASE
+
         [self storeTimestamp:UARateAppLinkPromptTimestampsKey];
 
         if ([self getTimestampsForKey:UARateAppLinkPromptTimestampsKey].count >= 3) {
             UA_LWARN(@"System rating link prompt has attempted to display 3 or more times this year.");
         }
-#endif
+
         completionHandler(dismissed);
     }];
 }

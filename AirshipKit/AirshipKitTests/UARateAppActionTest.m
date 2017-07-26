@@ -202,7 +202,6 @@
     // Accept header and description of proper length
     [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES, UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
     [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO, UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
-    [self verifyAcceptsArgumentsWithValue:@{} shouldAccept:YES];
 
     NSString *maxHeader = [@"" stringByPaddingToLength:24 withString:@"maxHeader" startingAtIndex:0];
     NSString *maxDescription = [@"" stringByPaddingToLength:50 withString:@"maxDecription" startingAtIndex:0];
@@ -230,7 +229,6 @@
     // Accept header and description of proper length
     [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES,  UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
     [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO,  UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
-    [self verifyAcceptsArgumentsWithValue:@{} shouldAccept:YES];
 
     NSString *maxHeader = [@"" stringByPaddingToLength:24 withString:@"maxHeader" startingAtIndex:0];
     NSString *maxDescription = [@"" stringByPaddingToLength:50 withString:@"maxDecription" startingAtIndex:0];
@@ -247,8 +245,10 @@
 // Tests that unacceptable arguments are rejected in iOS 10.3+
 - (void)testRejectedArguments {
 
-    // Don't accept a UARateAppAction without an iTunes ID key if show dialog is set to NO
+    // Don't accept a UARateAppAction without an iTunes ID
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES} shouldAccept:NO];
     [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO} shouldAccept:NO];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@1} shouldAccept:NO];
     [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@0} shouldAccept:NO];
 
     [[[self.mockConfig stub] andReturn:@"1195168544"] itunesID];
@@ -263,6 +263,9 @@
                                             , UARateAppLinkPromptBodyKey : tooLongDescription} shouldAccept:NO];
     [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO,  UARateAppLinkPromptTitleKey:tooLongHeader, UARateAppLinkPromptBodyKey : tooLongDescription} shouldAccept:NO];
     [self verifyAcceptsArgumentsWithValue:@{UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:NO];
+
+    [self verifyAcceptsArgumentsWithValue:@{} shouldAccept:NO];
+
 }
 
 // Tests that unacceptable arguments are rejected for the legacy implementation < 10.3
@@ -270,8 +273,10 @@
     self.testOSMajorVersion = 9;
     self.testOSMinorVersion = 0;
 
-    // Don't accept a UARateAppAction without an iTunes ID key if show dialog is set to NO
+    // Don't accept a UARateAppAction without an iTunes ID key
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES} shouldAccept:NO];
     [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO} shouldAccept:NO];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@1} shouldAccept:NO];
     [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@0} shouldAccept:NO];
 
     [[[self.mockConfig stub] andReturn:@"1195168544"] itunesID];
@@ -287,6 +292,8 @@
 
     [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO,  UARateAppLinkPromptTitleKey:tooLongHeader, UARateAppLinkPromptBodyKey : tooLongDescription} shouldAccept:NO];
     [self verifyAcceptsArgumentsWithValue:@{UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:NO];
+
+    [self verifyAcceptsArgumentsWithValue:@{} shouldAccept:NO];
 }
 
 /**
