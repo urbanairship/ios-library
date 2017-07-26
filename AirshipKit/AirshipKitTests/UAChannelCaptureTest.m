@@ -5,7 +5,7 @@
 #import "UAConfig.h"
 #import "UAChannelCapture+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UAPush.h"
+#import "UAPush+Internal.h"
 #import "UA_Base64.h"
 
 
@@ -68,94 +68,31 @@
 }
 
 /**
- * Test app foregrounding with the expected token in the pasteboard.
+ * Test channel capture tool with a token and URL.
  */
-- (void)testAppForeground {
-    __block XCTestExpectation *alertDisplayed = [self expectationWithDescription:@"Alert displayed"];
-    __block UIAlertController *alertController;
+- (void)testChannelCapture {
+    [self.channelCapture enable:1000];
+    [[[self.mockPush stub] andReturnValue:@(YES)] backgroundPushNotificationsAllowed];
+    [self verifyChannelCaptureDisplayedWithUrl:@"oh/hi?channel=CHANNEL"];
+}
 
-    // Generate a token with a URL
-    [[[self.mockPasteboard stub] andReturn:[self generateTokenWithURLString:@"oh/hi?channel=CHANNEL"]] string];
-    [[[self.mockPasteboard stub] andReturnValue:@(YES)] hasStrings];
 
-    // We get a warning when we mock the init method
-    NSLog(@"self.mockRootViewController = %@",self.mockRootViewController);
-    [[[self.mockRootViewController expect] andDo:^(NSInvocation *invocation) {
-        [alertDisplayed fulfill];
-    }] presentViewController:[OCMArg checkWithBlock:^BOOL(id obj) {
-        if (![obj isKindOfClass:[UIAlertController class]]) {
-            return NO;
-        }
-
-        alertController = (UIAlertController *)obj;
-        if (![alertController.title isEqualToString:@"Channel ID"]) {
-            return NO;
-        }
-
-        if (![alertController.message isEqualToString:@"pushChannelID"]) {
-            return NO;
-        }
-
-        if (alertController.actions.count != 3) {
-            return NO;
-        }
-
-        return YES;
-
-    }] animated:YES completion:nil];
-
-    // Post the foreground notification
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification
-                                                        object:nil];
-
-    // Wait for the test expectations
-    [self waitForExpectationsWithTimeout:1 handler:nil];
-    [self.mockRootViewController verify];
+/**
+ * Test channel capture tool always works when backgorundPushNotificationsAllowed is NO.
+ */
+- (void)testChannelCaptureToolBackgroundRefreshDisabled {
+    [self.channelCapture disable];
+    [[[self.mockPush stub] andReturnValue:@(NO)] backgroundPushNotificationsAllowed];
+    [self verifyChannelCaptureDisplayedWithUrl:@"oh/hi?channel=CHANNEL"];
 }
 
 /**
- * Test app foregrounding with the expected token in the pasteboard without a URL.
+ * Test channel capture tool without a URL.
  */
-- (void)testAppForegroundNoURL {
-    __block XCTestExpectation *alertDisplayed = [self expectationWithDescription:@"Alert displayed"];
-    __block UIAlertController *alertController;
-
-    // Generate a token with a URL
-    [[[self.mockPasteboard stub] andReturn:[self generateTokenWithURLString:nil]] string];
-    [[[self.mockPasteboard stub] andReturnValue:@(YES)] hasStrings];
-
-    // We get a warning when we mock the init method
-    [[[self.mockRootViewController stub] andDo:^(NSInvocation *invocation) {
-        [alertDisplayed fulfill];
-    }] presentViewController:[OCMArg checkWithBlock:^BOOL(id obj) {
-        if (![obj isKindOfClass:[UIAlertController class]]) {
-            return NO;
-        }
-
-        alertController = (UIAlertController *)obj;
-        if (![alertController.title isEqualToString:@"Channel ID"]) {
-            return NO;
-        }
-
-        if (![alertController.message isEqualToString:@"pushChannelID"]) {
-            return NO;
-        }
-
-        if (alertController.actions.count != 2) {
-            return NO;
-        }
-
-        return YES;
-
-    }] animated:YES completion:nil];
-
-    // Post the foreground notification
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification
-                                                        object:nil];
-    
-    // Wait for the test expectations
-    [self waitForExpectationsWithTimeout:1 handler:nil];
-    [self.mockRootViewController verify];
+- (void)testChannelCaptureNoTokenURL {
+    [self.channelCapture enable:1000];
+    [[[self.mockPush stub] andReturnValue:@(NO)] backgroundPushNotificationsAllowed];
+    [self verifyChannelCaptureDisplayedWithUrl:nil];
 }
 
 /**
@@ -176,7 +113,6 @@
     XCTAssertTrue([[self.dataStore objectForKey:UAChannelCaptureEnabledKey] compare:[NSDate date]] != NSOrderedAscending);
     [self.channelCapture disable];
 }
-
 
 /**
  * Helper method to generate the expected channel capture token.
@@ -203,6 +139,56 @@
     return UA_base64EncodedStringFromData([token dataUsingEncoding:NSUTF8StringEncoding]);
 }
 
+/**
+ * Helper method to verify channel capture dialog
+ */
+- (void)verifyChannelCaptureDisplayedWithUrl:(NSString *)url {
+    __block XCTestExpectation *alertDisplayed = [self expectationWithDescription:@"Alert displayed"];
+    __block UIAlertController *alertController;
+
+    // Generate a token with a URL
+    [[[self.mockPasteboard stub] andReturn:[self generateTokenWithURLString:url]] string];
+    [[[self.mockPasteboard stub] andReturnValue:@(YES)] hasStrings];
+
+
+    // We get a warning when we mock the init method
+    [[[self.mockRootViewController expect] andDo:^(NSInvocation *invocation) {
+        [alertDisplayed fulfill];
+    }] presentViewController:[OCMArg checkWithBlock:^BOOL(id obj) {
+        if (![obj isKindOfClass:[UIAlertController class]]) {
+            return NO;
+        }
+
+        alertController = (UIAlertController *)obj;
+        if (![alertController.title isEqualToString:@"Channel ID"]) {
+            return NO;
+        }
+
+        if (![alertController.message isEqualToString:@"pushChannelID"]) {
+            return NO;
+        }
+
+        if (url) {
+            if (alertController.actions.count != 3) {
+                return NO;
+            }
+        } else if (alertController.actions.count != 2) {
+            return NO;
+        }
+
+        return YES;
+
+    }] animated:YES completion:nil];
+
+    // Post the foreground notification
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification
+                                                        object:nil];
+
+
+    // Wait for the test expectations
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self.mockRootViewController verify];
+}
 
 
 @end

@@ -3,7 +3,7 @@
 #import "UAChannelCapture.h"
 #import "NSString+UALocalizationAdditions.h"
 #import "UAirship.h"
-#import "UAPush.h"
+#import "UAPush+Internal.h"
 #import "UAConfig.h"
 #import "UA_Base64.h"
 #import "UAPreferenceDataStore+Internal.h"
@@ -79,7 +79,7 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
         return;
     }
 
-    if ([self.push backgroundPushNotificationsEnabled]) {
+    if ([self.push backgroundPushNotificationsAllowed]) {
         NSDate *enabledUntilDate = [self.dataStore objectForKey:UAChannelCaptureEnabledKey];
         if (!enabledUntilDate || [enabledUntilDate compare:[NSDate date]] == NSOrderedAscending) {
             return;
