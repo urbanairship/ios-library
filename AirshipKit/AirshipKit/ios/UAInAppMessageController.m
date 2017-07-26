@@ -108,6 +108,9 @@
 - (void)animateInWithParentView:(UIView *)parentView completionHandler:(void (^)(void))completionHandler {
     if ([self.userDelegate respondsToSelector:@selector(messageView:animateInWithParentView:completionHandler:)]) {
         [self.userDelegate messageView:self.messageView animateInWithParentView:parentView completionHandler:completionHandler];
+    } else if ([self.userDelegate respondsToSelector:@selector(viewForMessage:parentView:)]) {
+        // Skip animation if user delegate is partially implemented because of constraints
+        completionHandler();
     } else {
         [self.defaultDelegate messageView:self.messageView animateInWithParentView:parentView completionHandler:completionHandler];
     }
@@ -116,6 +119,9 @@
 - (void)animateOutWithParentView:(UIView *)parentView completionHandler:(void (^)(void))completionHandler {
     if ([self.userDelegate respondsToSelector:@selector(messageView:animateOutWithParentView:completionHandler:)]) {
         [self.userDelegate messageView:self.messageView animateOutWithParentView:parentView completionHandler:completionHandler];
+    } else if ([self.userDelegate respondsToSelector:@selector(viewForMessage:parentView:)]) {
+        // Skip animation if user delegate is partially implemented because of constraints
+        completionHandler();
     } else {
         [self.defaultDelegate messageView:self.messageView animateOutWithParentView:parentView completionHandler:completionHandler];
     }
@@ -219,7 +225,7 @@
     [messageView layoutIfNeeded];
 
     self.messageView = messageView;
-    
+
     [self signUpForControlEventsWithMessageView:messageView parentView:parentView];
 
     self.isShown = YES;
