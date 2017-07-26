@@ -49,13 +49,11 @@
     self.listViewController = [[UADefaultMessageCenterListViewController alloc] initWithNibName:@"UADefaultMessageCenterListViewController"
                                                                      bundle:[UAirship resources]];
     self.listNav = [[UINavigationController alloc] initWithRootViewController:self.listViewController];
-
+    self.viewControllers = @[self.listNav];
+    
     self.title = UAMessageCenterLocalizedString(@"ua_message_center_title");
 
     self.delegate = self.listViewController;
-
-    // display both view controllers in horizontally regular contexts
-    self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
 }
 
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -78,26 +76,31 @@
     return self;
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
+- (void)viewDidLoad {
+    [super viewDidLoad];
     
-    if (!self.messageViewController) {
-        if (UAirship.shared.config.useWKWebView) {
-            self.messageViewController = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController"
-                                                                         bundle:[UAirship resources]];
-        } else {
+    if (UAirship.shared.config.useWKWebView) {
+        self.messageViewController = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController"
+                                                                                            bundle:[UAirship resources]];
+    } else {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-            self.messageViewController = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController"
-                                                                                bundle:[UAirship resources]];
-            ((UADefaultMessageCenterMessageViewController *)self.messageViewController).filter = self.filter;
+        self.messageViewController = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController"
+                                                                                                   bundle:[UAirship resources]];
+        ((UADefaultMessageCenterMessageViewController *)self.messageViewController).filter = self.filter;
 #pragma GCC diagnostic pop
-        }
-        
-        self.listViewController.messageViewController = self.messageViewController;
-        self.messageNav = [[UINavigationController alloc] initWithRootViewController:self.messageViewController];
-        self.viewControllers = @[self.listNav, self.messageNav];
+    }
+    
+    self.listViewController.messageViewController = self.messageViewController;
 
+    self.messageNav = [[UINavigationController alloc] initWithRootViewController:self.messageViewController];
+    self.viewControllers = @[self.listNav,self.messageNav];
+    
+    // display both view controllers in horizontally regular contexts
+    self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
+    
+    if (self.style) {
+        [self applyStyle];
     }
 }
 
@@ -105,15 +108,21 @@
     _style = style;
     self.listViewController.style = style;
 
-    if (style.navigationBarColor) {
+    if (self.listNav && self.messageNav) {
+        [self applyStyle];
+    }
+}
+
+- (void)applyStyle {
+    if (self.style.navigationBarColor) {
         self.listNav.navigationBar.barTintColor = self.style.navigationBarColor;
         self.messageNav.navigationBar.barTintColor = self.style.navigationBarColor;
     }
 
     // Only apply opaque property if a style is set
-    if (style) {
-        self.listNav.navigationBar.translucent = !style.navigationBarOpaque;
-        self.messageNav.navigationBar.translucent = !style.navigationBarOpaque;
+    if (self.style) {
+        self.listNav.navigationBar.translucent = !self.style.navigationBarOpaque;
+        self.messageNav.navigationBar.translucent = !self.style.navigationBarOpaque;
     }
 
     NSMutableDictionary *titleAttributes = [NSMutableDictionary dictionary];
