@@ -3,6 +3,26 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 8.5.0 - July 26, 2017
+============================
+
+Feature release relevant for users that require the UARateAppAction or meet the following conditions:
+- Implement the UAInAppMessageControllerDelegate and provide their own custom in-app message views.
+- Use custom message center styling in a split view.
+
+Bug Fixes
+---------
+- Fixed header generation for the static library.
+- Fixed background permissions check when enabling channel capture.
+- Fixed default in-app message animation for custom in-app messages.
+- Fixed message center styling issue that prevented specified style
+from being properly applied in a split view.
+
+Features
+--------
+- Added UARateAppAction that can prompt a user with a rating dialog or link directly
+to the App Store rating page.
+
 Version 8.4.3 - July 21, 2017
 =============================
 
