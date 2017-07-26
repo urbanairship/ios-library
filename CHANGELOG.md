@@ -3,6 +3,15 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 8.4.3 - July 21, 2017
+=============================
+
+Bug Fixes
+---------
+- Fixed marking message centers messages as read.
+- Fixed inbox coredata warning.
+- Fixed calling UI calls on background threads (Xcode 9 warnings).
+
 Version 8.4.2 - July 18, 2017
 =============================
 
