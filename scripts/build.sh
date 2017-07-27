@@ -52,11 +52,25 @@ xcrun xcodebuild -configuration "Release" \
 -target "AirshipKit" \
 -sdk "iphoneos" \
 
-## tvOS
+# tvOS
 xcrun xcodebuild -configuration "Release" \
 -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
 -target "AirshipKit tvOS" \
 -sdk "appletvos" \
+
+# Verify the iOS resource bundle does not contain an executable
+IOS_BUNDLE_EXECTUABLE="${TEMP_DIR}/AirshipResources/Release-iphoneos/AirshipResources.bundle/AirshipResources"
+if [ -f $IOS_BUNDLE_EXECTUABLE ]; then
+  echo "Error: iOS AirshipResources.bundle executable exists."
+  exit 1
+fi
+
+# Verify the tvOS resource bundle does not contain an executable
+TV_BUNDLE_EXECTUABLE="${TEMP_DIR}/AirshipResources/Release-appletvos/AirshipResources tvOS.bundle/AirshipResources"
+if [ -f $TV_BUNDLE_EXECTUABLE ]; then
+  echo "Error: tvOS AirshipResources.bundle executable exists."
+  exit 1
+fi
 
 ######################
 # Build static library

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16G29" minimumToolsVersion="Automatic" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
-    <entity name="UAInboxMessage" representedClassName="UAInboxMessageData" syncable="YES" codeGenerationType="class">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16E195" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="UAInboxMessage" representedClassName="UAInboxMessageData" syncable="YES">
         <attribute name="deletedClient" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="extra" optional="YES" attributeType="Transformable" valueTransformerName="UAJSONValueTransformer" syncable="YES"/>
         <attribute name="messageBodyURL" optional="YES" attributeType="Transformable" syncable="YES"/>
