@@ -47,7 +47,9 @@
     // Always handle uairship urls
     if ([self isWhiteListedAirshipRequest:request]) {
         if ((navigationType == WKNavigationTypeLinkActivated) || (navigationType == WKNavigationTypeOther)) {
-            UAWebViewCallData *data = [UAWebViewCallData callDataForURL:request.URL delegate:self.forwardDelegate message:message];
+            UAWebViewCallData *data = [UAWebViewCallData callDataForURL:request.URL
+                                                               delegate:strongDelegate
+                                                                message:message];
             [self performJSDelegateWithData:data webView:webView];
         }
         policyForThisURL = WKNavigationActionPolicyCancel;
