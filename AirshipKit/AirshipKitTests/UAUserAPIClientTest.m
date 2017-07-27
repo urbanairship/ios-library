@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 #import "UAUserAPIClient+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
@@ -12,7 +12,7 @@
 #import "UAUserData+Internal.h"
 
 
-@interface UAUserAPIClientTest : XCTestCase
+@interface UAUserAPIClientTest : UABaseTest
 @property (nonatomic, strong) UAUserAPIClient *client;
 @property (nonatomic, strong) id mockRequest;
 @property (nonatomic, strong) id mockSession;
@@ -30,15 +30,15 @@
 
     self.config = [UAConfig config];
 
-    self.mockSession = [OCMockObject niceMockForClass:[UARequestSession class]];
+    self.mockSession = [self mockForClass:[UARequestSession class]];
 
-    self.mockRequest = [OCMockObject niceMockForClass:[UARequest class]];
+    self.mockRequest = [self mockForClass:[UARequest class]];
     self.client = [UAUserAPIClient clientWithConfig:self.config session:self.mockSession];
 
-    self.mockUAUtils = [OCMockObject niceMockForClass:[UAUtils class]];
+    self.mockUAUtils = [self mockForClass:[UAUtils class]];
     [[[self.mockUAUtils stub] andReturn:@"deviceID"] deviceID];
 
-    self.mockUser = [OCMockObject niceMockForClass:[UAUser class]];
+    self.mockUser = [self mockForClass:[UAUser class]];
     [[[self.mockUser stub] andReturn:@"userName"] username];
     [[[self.mockUser stub] andReturn:@"userPassword"] password];
 }

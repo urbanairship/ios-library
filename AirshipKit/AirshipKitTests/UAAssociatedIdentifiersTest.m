@@ -1,9 +1,9 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAAssociatedIdentifiers.h"
 
-@interface UAAssociatedIdentifiersTest : XCTestCase
+@interface UAAssociatedIdentifiersTest : UABaseTest
 @end
 
 @implementation UAAssociatedIdentifiersTest

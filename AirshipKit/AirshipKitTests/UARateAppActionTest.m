@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <StoreKit/StoreKit.h>
 #import <OCMock/OCMock.h>
 #import "UAAction+Internal.h"
@@ -9,7 +9,7 @@
 #import "UARateAppAction.h"
 #import "UARateAppPromptViewController+Internal.h"
 
-@interface UARateAppActionTest : XCTestCase
+@interface UARateAppActionTest : UABaseTest
 
 @property (nonatomic, strong) id mockProcessInfo;
 @property (nonatomic, strong) id mockApplication;
@@ -34,22 +34,22 @@
     self.testOSMajorVersion = 10;
     self.testOSMinorVersion = 3;
 
-    self.mockProcessInfo = [OCMockObject niceMockForClass:[NSProcessInfo class]];
+    self.mockProcessInfo = [self mockForClass:[NSProcessInfo class]];
     [[[self.mockProcessInfo stub] andReturn:self.mockProcessInfo] processInfo];
 
-    self.mockRateAppPromptViewControler = [OCMockObject niceMockForClass:[UARateAppPromptViewController class]];
+    self.mockRateAppPromptViewControler = [self mockForClass:[UARateAppPromptViewController class]];
     [[[self.mockRateAppPromptViewControler stub] andReturn:self.mockRateAppPromptViewControler] alloc];
     id shutUp = [[[self.mockRateAppPromptViewControler stub] andReturn:self.mockRateAppPromptViewControler] initWithNibName:OCMOCK_ANY bundle:OCMOCK_ANY];
     [shutUp self];
 
-    self.mockConfig = [OCMockObject niceMockForClass:[UAConfig class]];
+    self.mockConfig = [self mockForClass:[UAConfig class]];
     [[[self.mockConfig stub] andReturn:@"mockAppKey"] appKey];
 
-    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.mockAirship = [self mockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
 
-    self.mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    self.mockApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
 
     [[[[self.mockProcessInfo stub] andDo:^(NSInvocation *invocation) {
@@ -63,7 +63,7 @@
 
     [SKStoreReviewController requestReview];
 
-    self.mockStoreReviewController = [OCMockObject niceMockForClass:[SKStoreReviewController class]];
+    self.mockStoreReviewController = [self mockForClass:[SKStoreReviewController class]];
 
     self.action = [[UARateAppAction alloc] init];
 }

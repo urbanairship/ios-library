@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import "UAActionRegistry.h"
@@ -11,7 +11,7 @@
 #import "UARichContentWindow.h"
 #import "UAConfig.h"
 
-@interface UAActionJSDelegateTest : XCTestCase
+@interface UAActionJSDelegateTest : UABaseTest
 @property (nonatomic, strong) UAActionJSDelegate *jsDelegate;
 @property (nonatomic, strong) UAActionRegistry *registry;
 @property (nonatomic, strong) id mockAirship;
@@ -32,7 +32,7 @@
     self.registry = [UAActionRegistry defaultRegistry];
 
     // Mock Airship
-    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.mockAirship = [self mockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.registry] actionRegistry];
 
@@ -41,15 +41,15 @@
     // UAirship is only used for storage here, since it's normally injected when setting up a UIWebView
     [self.jsContext evaluateScript:@"UAirship = {}"];
 
-    self.mockUIWebView = [OCMockObject niceMockForClass:[UIWebView class]];
-    self.mockRichContentWindow = [OCMockObject niceMockForProtocol:@protocol(UARichContentWindow)];
+    self.mockUIWebView = [self mockForClass:[UIWebView class]];
+    self.mockRichContentWindow = [self mockForProtocol:@protocol(UARichContentWindow)];
     [[[self.mockUIWebView stub] andReturn:self.mockRichContentWindow] delegate];
     
-    self.mockWKWebViewDelegate = [OCMockObject niceMockForProtocol:@protocol(UAWKWebViewDelegate)];
+    self.mockWKWebViewDelegate = [self mockForProtocol:@protocol(UAWKWebViewDelegate)];
     
     // Mock Config & useWKWebView
     self.useWKWebView = NO;
-    self.mockConfig = [OCMockObject niceMockForClass:[UAConfig class]];
+    self.mockConfig = [self mockForClass:[UAConfig class]];
     [[[self.mockConfig stub] andDo:^(NSInvocation *invocation) {
         BOOL useWKWebView = self.useWKWebView;
         [invocation setReturnValue:&useWKWebView];

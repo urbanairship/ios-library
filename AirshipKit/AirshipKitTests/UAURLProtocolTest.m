@@ -1,11 +1,11 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 
 #import "UAURLProtocol.h"
 
-@interface UAURLProtocolTest : XCTestCase
+@interface UAURLProtocolTest : UABaseTest
 @property (nonatomic, strong) NSURL *cachableURL;
 @property (nonatomic, strong) NSURL *uncachableURL;
 
@@ -22,7 +22,7 @@
     self.cachableURL = [NSURL URLWithString:@"http://some-site.what"];
     self.uncachableURL = [NSURL URLWithString:@"http://some-other-site.what"];
     
-    self.client = [OCMockObject niceMockForProtocol:@protocol(NSURLProtocolClient)];
+    self.client = [self mockForProtocol:@protocol(NSURLProtocolClient)];
     self.urlProtocol = [[UAURLProtocol alloc] initWithRequest:[NSMutableURLRequest requestWithURL:self.cachableURL]
                                                cachedResponse:nil
                                                        client:self.client];

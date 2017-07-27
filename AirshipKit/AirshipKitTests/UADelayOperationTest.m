@@ -1,9 +1,10 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UADelayOperationTest.h"
 #import "UADelayOperation+Internal.h"
+#import "UABaseTest.h"
 
-@interface UADelayOperationTest()
+@interface UADelayOperationTest : UABaseTest
+
 @property (nonatomic, strong) NSOperationQueue *queue;
 @end
 

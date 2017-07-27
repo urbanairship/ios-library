@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 
 #import "UAConfig+Internal.h"
@@ -10,7 +10,7 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAInboxAPIClient+Internal.h"
 
-@interface UAInboxAPIClientTest : XCTestCase
+@interface UAInboxAPIClientTest : UABaseTest
 
 @property (nonatomic, strong) UAInboxAPIClient *inboxAPIClient;
 @property (nonatomic, strong) id mockUser;
@@ -31,17 +31,17 @@
 
     self.config = [UAConfig config];
 
-    self.mockDataStore = [OCMockObject niceMockForClass:[UAPreferenceDataStore class]];
+    self.mockDataStore = [self mockForClass:[UAPreferenceDataStore class]];
 
-    self.mockPush = [OCMockObject niceMockForClass:[UAPush class]];
+    self.mockPush = [self mockForClass:[UAPush class]];
 
-    self.mockSession = [OCMockObject niceMockForClass:[UARequestSession class]];
+    self.mockSession = [self mockForClass:[UARequestSession class]];
 
-    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.mockAirship = [self mockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.mockPush] push];
 
-    self.mockUser = [OCMockObject niceMockForClass:[UAUser class]];
+    self.mockUser = [self mockForClass:[UAUser class]];
     [[[self.mockUser stub] andReturn:@"userName"] username];
     [[[self.mockUser stub] andReturn:@"userPassword"] password];
 

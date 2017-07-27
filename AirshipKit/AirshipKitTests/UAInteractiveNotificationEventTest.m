@@ -1,11 +1,11 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UANotificationAction.h"
 #import "UAEvent+Internal.h"
 #import "UAInteractiveNotificationEvent+Internal.h"
 
-@interface UAInteractiveNotificationEventTest : XCTestCase
+@interface UAInteractiveNotificationEventTest : UABaseTest
 @property (nonatomic, strong) NSDictionary *notification;
 @property (nonatomic, strong) UANotificationAction *action;
 @end

@@ -1,9 +1,9 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAPreferenceDataStore+InternalTagGroupsMutation.h"
 
-@interface UAPreferenceDataStore_TagGroupsMutationInternalTest : XCTestCase
+@interface UAPreferenceDataStore_TagGroupsMutationInternalTest : UABaseTest
 
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 

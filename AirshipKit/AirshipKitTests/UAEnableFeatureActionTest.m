@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 
 #import "UAActionArguments+Internal.h"
@@ -32,7 +32,7 @@
 #import "UAPush.h"
 #import "UALocation.h"
 
-@interface UAEnableFeatureActionTest : XCTestCase
+@interface UAEnableFeatureActionTest : UABaseTest
 
 @property (nonatomic, strong) UAEnableFeatureAction *action;
 @property (nonatomic, strong) UAActionArguments *arguments;
@@ -50,9 +50,9 @@
 
     self.action = [[UAEnableFeatureAction alloc] init];
 
-    self.mockPush = [OCMockObject mockForClass:[UAPush class]];
-    self.mockLocation = [OCMockObject mockForClass:[UALocation class]];
-    self.mockAirship = [OCMockObject mockForClass:[UAirship class]];
+    self.mockPush = [self strictMockForClass:[UAPush class]];
+    self.mockLocation = [self strictMockForClass:[UALocation class]];
+    self.mockAirship = [self strictMockForClass:[UAirship class]];
 
     [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.mockPush] sharedPush];

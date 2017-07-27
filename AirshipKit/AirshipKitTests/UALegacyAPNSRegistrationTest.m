@@ -1,12 +1,12 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
 #import "UALegacyAPNSRegistration+Internal.h"
 #import "UANotificationCategory.h"
 
-@interface UALegacyAPNSRegistrationTest : XCTestCase
+@interface UALegacyAPNSRegistrationTest : UABaseTest
 
 @property (nonatomic, strong) id mockedApplication;
 
@@ -21,7 +21,7 @@
     [super setUp];
 
     // Set up a mocked application
-    self.mockedApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    self.mockedApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
 
     self.pushRegistration = [[UALegacyAPNSRegistration alloc] init];

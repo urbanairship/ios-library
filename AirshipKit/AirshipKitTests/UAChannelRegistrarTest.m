@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
 #import "UAChannelAPIClient+Internal.h"
@@ -11,7 +11,7 @@
 #import "UANamedUser+Internal.h"
 #import "UAirship.h"
 
-@interface UAChannelRegistrarTest : XCTestCase
+@interface UAChannelRegistrarTest : UABaseTest
 
 @property (nonatomic, strong) id mockedChannelClient;
 @property (nonatomic, strong) id mockedRegistrarDelegate;
@@ -48,18 +48,18 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
     self.channelCreateSuccessChannelID = @"newChannelID";
     self.channelCreateSuccessChannelLocation = @"newChannelLocation";
 
-    self.mockedChannelClient = [OCMockObject niceMockForClass:[UAChannelAPIClient class]];
+    self.mockedChannelClient = [self mockForClass:[UAChannelAPIClient class]];
 
-    self.mockedRegistrarDelegate = [OCMockObject niceMockForProtocol:@protocol(UAChannelRegistrarDelegate)];
+    self.mockedRegistrarDelegate = [self mockForProtocol:@protocol(UAChannelRegistrarDelegate)];
 
-    self.mockedUAPush = [OCMockObject niceMockForClass:[UAPush class]];
+    self.mockedUAPush = [self mockForClass:[UAPush class]];
 
-    self.mockedUAConfig = [OCMockObject niceMockForClass:[UAConfig class]];
+    self.mockedUAConfig = [self mockForClass:[UAConfig class]];
     [[[self.mockedUAConfig stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:&_clearNamedUser];
     }] clearNamedUserOnAppRestore];
 
-    self.mockedUAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.mockedUAirship = [self mockForClass:[UAirship class]];
     [[[self.mockedUAirship stub] andReturn:self.mockedUAirship] shared];
     [[[self.mockedUAirship stub] andReturn:self.mockedUAConfig] config];
     [[[self.mockedUAirship stub] andReturn:self.mockedUAPush] push];

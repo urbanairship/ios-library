@@ -1,10 +1,10 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <UIKit/UIKit.h>
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UATagUtils+Internal.h"
 
-@interface UATagUtilsTest : XCTestCase
+@interface UATagUtilsTest : UABaseTest
 @end
 
 @implementation UATagUtilsTest

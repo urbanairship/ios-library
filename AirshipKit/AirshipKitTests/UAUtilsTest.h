@@ -23,8 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 
-@interface UAUtilsTest : XCTestCase
+@interface UAUtilsTest : UABaseTest
 
 @end

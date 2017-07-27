@@ -1,10 +1,10 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <UIKit/UIKit.h>
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAColorUtils+Internal.h"
 
-@interface UAColorUtilsTest : XCTestCase
+@interface UAColorUtilsTest : UABaseTest
 @end
 
 @implementation UAColorUtilsTest

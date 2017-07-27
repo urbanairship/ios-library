@@ -1,13 +1,13 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAAction.h"
 #import "UAActionRunner+Internal.h"
 #import "UAActionRegistry.h"
 #import <OCMock/OCMock.h>
 #import "UAirship.h"
 
-@interface UAActionRunnerTest : XCTestCase
+@interface UAActionRunnerTest : UABaseTest
 @property (nonatomic, strong) UAActionRegistry *registry;
 @property (nonatomic, strong) id mockAirship;
 @end
@@ -23,7 +23,7 @@ NSString *anotherActionName = @"AnotherActionName";
 
 
     // Mock Airship
-    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.mockAirship = [self mockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.registry] actionRegistry];
 }

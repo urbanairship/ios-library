@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 #import "UAActionRegistry+Internal.h"
 #import "UAApplicationMetrics+Internal.h"
@@ -11,7 +11,7 @@
 #import "UAActionRegistryEntry+Internal.h"
 
 
-@interface UAActionRegistryTest : XCTestCase
+@interface UAActionRegistryTest : UABaseTest
 @property (nonatomic, strong) UAActionRegistry *registry;
 @property (nonatomic, strong) id mockMetrics;
 @property (nonatomic, strong) id mockAirship;
@@ -30,10 +30,10 @@
     [self.registry.reservedEntryNames removeAllObjects];
     [self.registry.registeredActionEntries removeAllObjects];
 
-    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.mockAirship = [self mockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
 
-    self.mockMetrics = [OCMockObject niceMockForClass:[UAApplicationMetrics class]];
+    self.mockMetrics = [self mockForClass:[UAApplicationMetrics class]];
     [[[self.mockAirship stub] andReturn:self.mockMetrics] applicationMetrics];
 }
 

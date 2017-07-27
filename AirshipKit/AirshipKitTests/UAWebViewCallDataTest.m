@@ -1,10 +1,10 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 #import "UAWebViewCallData.h"
 
-@interface UAWebViewCallDataTest : XCTestCase
+@interface UAWebViewCallDataTest : UABaseTest
 @property (nonatomic, strong) id mockWebView;
 @end
 
@@ -12,7 +12,7 @@
 
 - (void)setUp {
     [super setUp];
-    self.mockWebView = [OCMockObject niceMockForClass:[UIWebView class]];
+    self.mockWebView = [self mockForClass:[UIWebView class]];
 }
 
 - (void)tearDown {

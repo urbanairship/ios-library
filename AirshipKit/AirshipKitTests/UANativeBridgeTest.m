@@ -1,13 +1,13 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 
 #import <JavaScriptCore/JavaScriptCore.h>
 #import "UAWebViewCallData.h"
 #import "UAirship.h"
 
-@interface UANativeBridgeTest : XCTestCase
+@interface UANativeBridgeTest : UABaseTest
 @property (nonatomic, strong) JSContext *jsc;
 @property (nonatomic, copy) NSString *nativeBridge;
 @property (nonatomic, strong) id mockWebView;
@@ -19,7 +19,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockWebView = [OCMockObject niceMockForClass:[UIWebView class]];
+    self.mockWebView = [self mockForClass:[UIWebView class]];
 
     NSString *path = [[UAirship resources] pathForResource:@"UANativeBridge" ofType:@""];
     self.nativeBridge = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];

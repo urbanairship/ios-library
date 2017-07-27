@@ -1,10 +1,10 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAKeychainUtils+Internal.h"
 #import <OCMock/OCMock.h>
 
-@interface UAKeyChainUtilTest : XCTestCase
+@interface UAKeyChainUtilTest : UABaseTest
 @property id mockBundle;
 @end
 
@@ -13,7 +13,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockBundle = [OCMockObject niceMockForClass:[NSBundle class]];
+    self.mockBundle = [self mockForClass:[NSBundle class]];
     [[[self.mockBundle stub] andReturn:self.mockBundle] mainBundle];
     [[[self.mockBundle stub] andReturn:@{@"CFBundleIdentifier": @"com.urbanairship.test"}] infoDictionary];
   }

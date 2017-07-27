@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 
 #import "UAirship.h"
@@ -8,7 +8,7 @@
 #import "UADefaultMessageCenterStyle.h"
 #import "UAColorUtils+Internal.h"
 
-@interface UADefaultMessageCenterStyleTest : XCTestCase
+@interface UADefaultMessageCenterStyleTest : UABaseTest
 
 @property (nonatomic, strong) id mockBundle;
 
@@ -17,7 +17,7 @@
 @implementation UADefaultMessageCenterStyleTest
 
 - (void)setUp {
-    self.mockBundle = [OCMockObject niceMockForClass:[NSBundle class]];
+    self.mockBundle = [self mockForClass:[NSBundle class]];
     //[[[self.mockBundle stub] andReturn:self.mockBundle] mainBundle];
     // Return class bundle instead of main bundle for tests
     [[[self.mockBundle stub] andReturn:[NSBundle bundleForClass:[self class]]] mainBundle];
@@ -73,7 +73,7 @@
 
 - (void)testValidStyle {
 
-    id mockImage = [OCMockObject niceMockForClass:[UIImage class]];
+    id mockImage = [self mockForClass:[UIImage class]];
     [[[mockImage stub] andReturn:mockImage] imageNamed:OCMOCK_ANY];
 
     XCTAssertNoThrow([UADefaultMessageCenterStyle styleWithContentsOfFile:@"Valid-UAMessageCenterDefaultStyle"],

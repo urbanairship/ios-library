@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UATextInputNotificationAction.h"
 
 static NSString *kTestIdentifier = @"TESTID";
@@ -32,7 +32,7 @@ static NSString *kTestTextInputButtonTitle = @"kTestTextInputButtonTitle";
 static NSString *kTestTextInputPlaceholder = @"kTestTextInputPlaceholder";
 static NSString *kTestIdentifier2  = @"TESTID2";
 
-@interface UATextInputNotificationActionTest : XCTestCase
+@interface UATextInputNotificationActionTest : UABaseTest
 
 @end
 

@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 #import "UAConfig.h"
 #import "UAChannelCapture+Internal.h"
@@ -9,7 +9,7 @@
 #import "UA_Base64.h"
 
 
-@interface UAChannelCaptureTest : XCTestCase
+@interface UAChannelCaptureTest : UABaseTest
 @property(nonatomic, strong) UAConfig *config;
 @property(nonatomic, strong) UAChannelCapture *channelCapture;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
@@ -26,18 +26,18 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockPush = [OCMockObject niceMockForClass:[UAPush class]];
+    self.mockPush = [self mockForClass:[UAPush class]];
     [[[self.mockPush stub] andReturn:@"pushChannelID"] channelID];
 
-    self.mockPasteboard = [OCMockObject niceMockForClass:[UIPasteboard class]];
+    self.mockPasteboard = [self mockForClass:[UIPasteboard class]];
     [[[self.mockPasteboard stub] andReturn:self.mockPasteboard] generalPasteboard];
 
 
-    self.mockRootViewController = [OCMockObject niceMockForClass:[UIViewController class]];
-    self.mockWindow = [OCMockObject niceMockForClass:[UIWindow class]];
+    self.mockRootViewController = [self mockForClass:[UIViewController class]];
+    self.mockWindow = [self mockForClass:[UIWindow class]];
     [[[self.mockWindow stub] andReturn:self.mockRootViewController] rootViewController];
 
-    self.mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    self.mockApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
     [[[self.mockApplication stub] andReturn:@[self.mockWindow]] windows];
 

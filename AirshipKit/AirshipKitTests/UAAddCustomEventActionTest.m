@@ -1,5 +1,5 @@
 /* Copyright 2017 Urban Airship and Contributors */
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 #import "UAanalytics.h"
 #import "UAirship.h"
@@ -8,7 +8,7 @@
 #import "UACustomEvent.h"
 #import "UAInboxMessage.h"
 
-@interface UAAddCustomEventActionTest : XCTestCase
+@interface UAAddCustomEventActionTest : UABaseTest
 
 @property (nonatomic, strong) id analytics;
 @property (nonatomic, strong) id airship;
@@ -18,8 +18,8 @@
 @implementation UAAddCustomEventActionTest
 
 - (void)setUp {
-    self.analytics = [OCMockObject niceMockForClass:[UAAnalytics class]];
-    self.airship = [OCMockObject mockForClass:[UAirship class]];
+    self.analytics = [self mockForClass:[UAAnalytics class]];
+    self.airship = [self strictMockForClass:[UAirship class]];
     [[[self.airship stub] andReturn:self.airship] shared];
     [[[self.airship stub] andReturn:self.analytics] analytics];
 
@@ -147,7 +147,7 @@
  * empty.
  */
 - (void)testInteractionEmptyMCRAP {
-    id message = [OCMockObject mockForClass:[UAInboxMessage class]];
+    id message = [self strictMockForClass:[UAInboxMessage class]];
     [[[message stub] andReturn:@"message ID"] messageID];
     [[[message stub] andReturn:@"messageTitle"] title];
     [[[message stub] andReturn:@"someContentType"] contentType];
@@ -187,7 +187,7 @@
  * from an mcrap.
  */
 - (void)testInteractionSetMCRAP {
-    id message = [OCMockObject mockForClass:[UAInboxMessage class]];
+    id message = [self strictMockForClass:[UAInboxMessage class]];
     [[[message stub] andReturn:@"message ID"] messageID];
     [[[message stub] andReturn:@"messageTitle"] title];
     [[[message stub] andReturn:@"someContentType"] contentType];

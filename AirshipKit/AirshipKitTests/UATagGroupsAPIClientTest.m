@@ -1,7 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <UIKit/UIKit.h>
 #import <OCMOCK/OCMock.h>
 
@@ -9,7 +9,7 @@
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UATagGroupsMutation+Internal.h"
 
-@interface UATagGroupsAPIClientTest : XCTestCase
+@interface UATagGroupsAPIClientTest : UABaseTest
 @property (nonatomic, strong) id mockSession;
 @property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UATagGroupsAPIClient *client;
@@ -23,7 +23,7 @@
 
     self.config = [UAConfig config];
 
-    self.mockSession = [OCMockObject niceMockForClass:[UARequestSession class]];
+    self.mockSession = [self mockForClass:[UARequestSession class]];
     self.client = [UATagGroupsAPIClient clientWithConfig:self.config session:self.mockSession];
 }
 

@@ -1,20 +1,13 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UARequest+Internal.h"
 
-@interface UARequestTest : XCTestCase
+@interface UARequestTest : UABaseTest
 @end
 
 @implementation UARequestTest
 
-- (void)setUp {
-    [super setUp];
-}
-
-- (void)tearDown {
-    [super tearDown];
-}
 
 - (void)testBuild {
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {

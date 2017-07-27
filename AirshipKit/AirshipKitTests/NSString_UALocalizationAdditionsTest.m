@@ -1,9 +1,9 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "NSString+UALocalizationAdditions.h"
 
-@interface NSString_UALocalizationAdditionsTest : XCTestCase
+@interface NSString_UALocalizationAdditionsTest : UABaseTest
 @end
 
 @implementation NSString_UALocalizationAdditionsTest

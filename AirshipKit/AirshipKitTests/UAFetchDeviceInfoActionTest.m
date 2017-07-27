@@ -24,7 +24,7 @@
  */
 
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 
 #import "UAFetchDeviceInfoAction.h"
@@ -33,7 +33,7 @@
 #import "UANamedUser.h"
 #import "UAActionArguments+Internal.h"
 
-@interface UAFetchDeviceInfoActionTest : XCTestCase
+@interface UAFetchDeviceInfoActionTest : UABaseTest
 
 @property(nonatomic, strong) UAFetchDeviceInfoAction *action;
 @property(nonatomic, strong) id mockAirship;
@@ -47,9 +47,9 @@
 - (void)setUp {
     [super setUp];
     
-    self.mockPush = [OCMockObject niceMockForClass:[UAPush class]];
-    self.mockNamedUser = [OCMockObject niceMockForClass:[UANamedUser class]];
-    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.mockPush = [self mockForClass:[UAPush class]];
+    self.mockNamedUser = [self mockForClass:[UANamedUser class]];
+    self.mockAirship = [self mockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.mockPush] push];
     [[[self.mockAirship stub] andReturn:self.mockNamedUser] namedUser];

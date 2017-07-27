@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 #import "UAInboxMessage.h"
 #import "UAInboxMessage+Internal.h"
@@ -10,7 +10,7 @@
 #import "UAInboxAPIClient+Internal.h"
 #import "UAConfig.h"
 
-@interface UAInboxMessageTest : XCTestCase
+@interface UAInboxMessageTest : UABaseTest
 @property (nonatomic, strong) UAInboxDBManager *dbManager;
 @property (nonatomic, strong) UAInboxMessage *message;
 @property (nonatomic, strong) UAInboxMessageList *messageList;
@@ -58,7 +58,7 @@
     NSDate *currentDate = [NSDate date];
 
     // Mock the date to always return currentDate
-    id mockDate = [OCMockObject mockForClass:[NSDate class]];
+    id mockDate = [self mockForClass:[NSDate class]];
     [[[mockDate stub] andReturn:currentDate] date];
 
     self.message.data.messageExpiration = nil;

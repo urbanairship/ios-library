@@ -1,13 +1,13 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <UIKit/UIKit.h>
 #import <OCMOCK/OCMock.h>
 
 #import "UATagGroupsMutation+Internal.h"
 
-@interface UATagGroupsMutationTest : XCTestCase
+@interface UATagGroupsMutationTest : UABaseTest
 
 @end
 

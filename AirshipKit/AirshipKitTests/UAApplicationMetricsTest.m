@@ -1,11 +1,11 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAApplicationMetrics+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import <OCMock/OCMock.h>
 
-@interface UAApplicationMetricsTest : XCTestCase
+@interface UAApplicationMetricsTest : UABaseTest
 @property (nonatomic, strong) UAApplicationMetrics *metrics;
 @property (nonatomic, strong) id mockDataStore;
 @end
@@ -15,7 +15,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockDataStore = [OCMockObject niceMockForClass:[UAPreferenceDataStore class]];
+    self.mockDataStore = [self mockForClass:[UAPreferenceDataStore class]];
     self.metrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.mockDataStore];
 }
 
@@ -28,7 +28,7 @@
 - (void)testApplicationActive {
     // Make date always return our expected date
     NSDate *expectedDate = [NSDate date];
-    id mockDate = [OCMockObject mockForClass:[NSDate class]];
+    id mockDate = [self strictMockForClass:[NSDate class]];
     [[[mockDate stub] andReturn:expectedDate] date];
 
     [[self.mockDataStore expect] setObject:expectedDate forKey:@"UAApplicationMetricLastOpenDate"];

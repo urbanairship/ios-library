@@ -1,13 +1,13 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <UserNotifications/UserNotifications.h>
 #import "UANotificationCategories+Internal.h"
 #import "UANotificationCategory.h"
 #import "UANotificationAction.h"
 #import "UATextInputNotificationAction.h"
 
-@interface UANotificationCategoriesTest : XCTestCase
+@interface UANotificationCategoriesTest : UABaseTest
 
 @end
 

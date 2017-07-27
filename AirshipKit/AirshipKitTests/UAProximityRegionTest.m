@@ -1,9 +1,9 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAProximityRegion+Internal.h"
 
-@interface UAProximityRegionTest : XCTestCase
+@interface UAProximityRegionTest : UABaseTest
 
 @end
 

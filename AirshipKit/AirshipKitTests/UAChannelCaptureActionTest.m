@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 
 #import "UAActionArguments+Internal.h"
@@ -32,7 +32,7 @@
 #import "UAirship+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 
-@interface UAChannelCaptureActionTest : XCTestCase
+@interface UAChannelCaptureActionTest : UABaseTest
 
 @property (nonatomic, strong) UAChannelCaptureAction *action;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
@@ -51,8 +51,8 @@
     self.action = [[UAChannelCaptureAction alloc] init];
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test.channelCapture."];
     
-    self.mockChannelCapture = [OCMockObject niceMockForClass:[UAChannelCapture class]];
-    self.airship = [OCMockObject mockForClass:[UAirship class]];
+    self.mockChannelCapture = [self mockForClass:[UAChannelCapture class]];
+    self.airship = [self strictMockForClass:[UAirship class]];
     [[[self.airship stub] andReturn:self.airship] shared];
     [[[self.airship stub] andReturn:self.mockChannelCapture] channelCapture];
     [[[self.airship stub] andReturn:self.dataStore] dataStore];

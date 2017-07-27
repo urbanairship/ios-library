@@ -1,12 +1,12 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMOCK/OCMock.h>
 #import "UAConfig.h"
 #import "UANamedUserAPIClient+Internal.h"
 #import "UAirship.h"
 
-@interface UANamedUserAPIClientTest : XCTestCase
+@interface UANamedUserAPIClientTest : UABaseTest
 
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockSession;
@@ -22,9 +22,9 @@
 
     self.config = [UAConfig config];
 
-    self.mockSession = [OCMockObject niceMockForClass:[UARequestSession class]];
+    self.mockSession = [self mockForClass:[UARequestSession class]];
 
-    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.mockAirship = [self mockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.config] config];
 

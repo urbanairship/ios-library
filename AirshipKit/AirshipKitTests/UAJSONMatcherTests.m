@@ -1,10 +1,10 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAJSONMatcher.h"
 #import "UAJSONValueMatcher.h"
 
-@interface UAJSONMatcherTests : XCTestCase
+@interface UAJSONMatcherTests : UABaseTest
 @property (nonatomic, strong) UAJSONValueMatcher *valueMatcher;
 @end
 
@@ -14,10 +14,6 @@
     [super setUp];
 
     self.valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"cool"];
-}
-
-- (void)tearDown {
-    [super tearDown];
 }
 
 - (void)testMatcherOnly {

@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
 #import "UAirship+Internal.h"
@@ -14,7 +14,7 @@
 #import "UATagGroupsMutation+Internal.h"
 
 
-@interface UANamedUserTest : XCTestCase
+@interface UANamedUserTest : UABaseTest
 
 @property (nonatomic, strong) id mockedAirship;
 @property (nonatomic, strong) UANamedUser *namedUser;
@@ -41,15 +41,15 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"uapush.test."];
 
-    self.mockedUAPush = [OCMockObject niceMockForClass:[UAPush class]];
+    self.mockedUAPush = [self mockForClass:[UAPush class]];
     [[[self.mockedUAPush stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:&_pushChannelID];
     }] channelID];
 
-    self.mockConfig = [OCMockObject niceMockForClass:[UAConfig class]];
+    self.mockConfig = [self mockForClass:[UAConfig class]];
 
 
-    self.mockedAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.mockedAirship = [self mockForClass:[UAirship class]];
     [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
     [[[self.mockedAirship stub] andReturn:self.mockedUAPush] push];
 
@@ -57,9 +57,9 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 
     self.namedUser = [UANamedUser namedUserWithPush:self.mockedUAPush config:self.mockConfig dataStore:self.dataStore];
 
-    self.mockedNamedUserClient = [OCMockObject niceMockForClass:[UANamedUserAPIClient class]];
+    self.mockedNamedUserClient = [self mockForClass:[UANamedUserAPIClient class]];
     self.namedUser.namedUserAPIClient = self.mockedNamedUserClient;
-    self.mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    self.mockApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
 
     // set up the named user
@@ -93,7 +93,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     [tagsToRemove setValue:removeTagsArray forKey:@"tag_group"];
     self.removeTagGroups = tagsToRemove;
 
-    self.mockTagGroupsAPIClient = [OCMockObject niceMockForClass:[UATagGroupsAPIClient class]];
+    self.mockTagGroupsAPIClient = [self mockForClass:[UATagGroupsAPIClient class]];
     self.namedUser.tagGroupsAPIClient = self.mockTagGroupsAPIClient;
 }
 

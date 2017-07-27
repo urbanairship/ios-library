@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UARegionEvent+Internal.h"
 #import "UAEvent+Internal.h"
 #import "UAAnalytics.h"
@@ -10,7 +10,7 @@
 #import "UAProximityRegion+Internal.h"
 #import "UACircularRegion+Internal.h"
 
-@interface UARegionEventTest : XCTestCase
+@interface UARegionEventTest : UABaseTest
 @property (nonatomic, strong) id analytics;
 @property (nonatomic, strong) id airship;
 @end

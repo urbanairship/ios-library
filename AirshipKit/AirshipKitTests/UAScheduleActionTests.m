@@ -1,8 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 
-#import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
+#import "UABaseTest.h"
 
 #import "UAScheduleAction.h"
 #import "UAActionArguments+Internal.h"
@@ -11,7 +10,7 @@
 #import "UAUtils.h"
 #import "UAActionSchedule+Internal.h"
 
-@interface UAScheduleActionTests : XCTestCase
+@interface UAScheduleActionTests : UABaseTest
 @property(nonatomic, strong) UAScheduleAction *action;
 @property(nonatomic, strong) id mockAirship;
 @property(nonatomic, strong) id mockAutomation;
@@ -22,8 +21,8 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockAutomation = [OCMockObject niceMockForClass:[UAAutomation class]];
-    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.mockAutomation = [self mockForClass:[UAAutomation class]];
+    self.mockAirship = [self mockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.mockAutomation] automation];
 

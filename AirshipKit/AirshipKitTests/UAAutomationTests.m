@@ -1,9 +1,8 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <OCMock/OCMock.h>
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAAutomation+Internal.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UAActionRegistry.h"
 #import "UARegionEvent.h"
 #import "UACustomEvent.h"
@@ -14,7 +13,7 @@
 #import "UAScheduleDelay.h"
 #import "UAActionScheduleData+Internal.h"
 
-@interface UAAutomationTests : XCTestCase
+@interface UAAutomationTests : UABaseTest
 @property (nonatomic, strong) UAAutomation *automation;
 @property (nonatomic, strong) UAActionRegistry *actionRegistry;
 @property (nonatomic, strong) id mockedAirship;
@@ -39,17 +38,17 @@
     self.actionRegistry = [UAActionRegistry defaultRegistry];
 
     // Mock Airship
-    self.mockedAirship = [OCMockObject niceMockForClass:[UAirship class]];
-    [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
+    self.mockedAirship = [self mockForClass:[UAirship class]];
     [[[self.mockedAirship stub] andReturn:self.actionRegistry] actionRegistry];
+    [UAirship setSharedAirship:self.mockedAirship];
 
     // Set up a mocked application
-    self.mockedApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    self.mockedApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
+
 }
 
 - (void)tearDown {
-    [self.mockedAirship stopMocking];
     [self.mockedApplication stopMocking];
     [self.preferenceDataStore removeAll];
     self.automation = nil;
@@ -391,7 +390,7 @@
     [self waitForExpectationsWithTimeout:5 handler:nil];
 
     // Mock the date to return the futureDate + 1 second for date
-    id mockedDate = [OCMockObject niceMockForClass:[NSDate class]];
+    id mockedDate = [self mockForClass:[NSDate class]];
     [[[mockedDate stub] andReturn:[futureDate dateByAddingTimeInterval:1]] date];
 
     // Verify getScheduleWithIdentifier:completionHandler: does not return the expired schedule
@@ -415,7 +414,6 @@
     }];
 
     [self waitForExpectationsWithTimeout:5 handler:nil];
-    [mockedDate stopMocking];
 }
 
 - (void)testScheduleDeletesExpiredSchedules {
@@ -440,7 +438,7 @@
     [self waitForExpectationsWithTimeout:5 handler:nil];
 
     // Mock the date to return the futureDate + 1 second for date
-    id mockedDate = [OCMockObject niceMockForClass:[NSDate class]];
+    id mockedDate = [self mockForClass:[NSDate class]];
     [[[mockedDate stub] andReturn:[futureDate dateByAddingTimeInterval:1]] date];
 
     // Schedule more actions
@@ -811,7 +809,7 @@
     triggerFireBlock();
 
     // Mock the date to return the futureDate + 1 second for date
-    id mockedDate = [OCMockObject niceMockForClass:[NSDate class]];
+    id mockedDate = [self mockForClass:[NSDate class]];
     [[[mockedDate stub] andReturn:[startDate dateByAddingTimeInterval:1]] date];
 
     // Trigger the actions now that its past the start
@@ -826,7 +824,5 @@
         [fetchExpectation fulfill];
     }];
     [self waitForExpectationsWithTimeout:5 handler:nil];
-
-    [mockedDate stopMocking];
 }
 @end

@@ -1,12 +1,12 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAPush+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 
-@interface UAChannelRegistrationPayloadTest : XCTestCase
+@interface UAChannelRegistrationPayloadTest : UABaseTest
 @property (nonatomic, strong) UAChannelRegistrationPayload *payload;
 @end
 

@@ -1,21 +1,14 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAJSONValueMatcher.h"
 
-@interface UAJSONValueMatcherTests : XCTestCase
+@interface UAJSONValueMatcherTests : UABaseTest
 
 @end
 
 @implementation UAJSONValueMatcherTests
 
-- (void)setUp {
-    [super setUp];
-}
-
-- (void)tearDown {
-    [super tearDown];
-}
 
 - (void)testEqualsString {
     UAJSONValueMatcher *matcher = [UAJSONValueMatcher matcherWhereStringEquals:@"cool"];

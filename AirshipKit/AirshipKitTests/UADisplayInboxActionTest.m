@@ -1,7 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <UIKit/UIKit.h>
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 
 #import "UADisplayInboxAction.h"
@@ -12,7 +12,7 @@
 #import "UAInboxMessage.h"
 #import "UADefaultMessageCenter.h"
 
-@interface UADisplayInboxActionTest : XCTestCase
+@interface UADisplayInboxActionTest : UABaseTest
 
 @property (nonatomic, strong) UADisplayInboxAction *action;
 @property (nonatomic, strong) NSDictionary *notification;
@@ -32,16 +32,16 @@
     [super setUp];
 
     self.action = [[UADisplayInboxAction alloc] init];
-    self.mockInboxDelegate = [OCMockObject niceMockForProtocol:@protocol(UAInboxDelegate)];
+    self.mockInboxDelegate = [self mockForProtocol:@protocol(UAInboxDelegate)];
 
     self.notification = @{@"_uamid": @"UAMID"};
 
-    self.mockMessage = [OCMockObject niceMockForClass:[UAInboxMessage class]];
+    self.mockMessage = [self mockForClass:[UAInboxMessage class]];
     OCMStub([self.mockMessage messageID]).andReturn(@"MCRAP");
-    self.mockMessageList = [OCMockObject niceMockForClass:[UAInboxMessageList class]];
-    self.mockDefaultMessageCenter = [OCMockObject niceMockForClass:[UADefaultMessageCenter class]];
+    self.mockMessageList = [self mockForClass:[UAInboxMessageList class]];
+    self.mockDefaultMessageCenter = [self mockForClass:[UADefaultMessageCenter class]];
 
-    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.mockAirship = [self mockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.mockDefaultMessageCenter] defaultMessageCenter];
 

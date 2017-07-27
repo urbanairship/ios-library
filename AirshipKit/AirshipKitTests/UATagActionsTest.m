@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 
 #import "UAAction+Internal.h"
@@ -11,7 +11,7 @@
 #import "UAirship.h"
 #import "UANamedUser.h"
 
-@interface UATagActionsTest : XCTestCase
+@interface UATagActionsTest : UABaseTest
 @property (nonatomic, strong) id mockPush;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockNamedUser;
@@ -30,8 +30,8 @@
 
 - (void)setUp {
     [super setUp];
-    self.mockPush = [OCMockObject niceMockForClass:[UAPush class]];
-    self.mockNamedUser = [OCMockObject niceMockForClass:[UANamedUser class]];
+    self.mockPush = [self mockForClass:[UAPush class]];
+    self.mockNamedUser = [self mockForClass:[UANamedUser class]];
 
     self.stringArgs = [UAActionArguments argumentsWithValue:@"hi" withSituation:UASituationWebViewInvocation];
     self.arrayArgs = [UAActionArguments argumentsWithValue:@[@"hi", @"there"] withSituation:UASituationManualInvocation];
@@ -50,7 +50,7 @@
     NSDictionary *dictIntValues = @{@"channel" : @1, @"named_user" : @2};
     self.dictIntValuesArgs = [UAActionArguments argumentsWithValue:dictIntValues withSituation:UASituationWebViewInvocation];
 
-    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.mockAirship = [self mockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.mockPush] push];
     [[[self.mockAirship stub] andReturn:self.mockNamedUser] namedUser];

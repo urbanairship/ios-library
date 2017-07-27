@@ -1,8 +1,8 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 
-@interface AirshipAppExtensionsTests : XCTestCase
+@interface AirshipAppExtensionsTests : UABaseTest
 @end
 
 @implementation AirshipAppExtensionsTests

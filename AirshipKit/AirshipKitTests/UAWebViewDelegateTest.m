@@ -1,7 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <UIKit/UIKit.h>
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 
@@ -18,7 +18,7 @@
 #import "UAPush.h"
 #import "UANamedUser.h"
 
-@interface UAWebViewDelegateTest : XCTestCase
+@interface UAWebViewDelegateTest : UABaseTest
 
 @property(nonatomic, strong) UAWebViewDelegate *delegate;
 @property(nonatomic, strong) id mockWebView;
@@ -45,38 +45,38 @@
 - (void)setUp {
     [super setUp];
     self.delegate = [[UAWebViewDelegate alloc] init];
-    self.mockForwardDelegate = [OCMockObject niceMockForProtocol:@protocol(UAUIWebViewDelegate)];
+    self.mockForwardDelegate = [self mockForProtocol:@protocol(UAUIWebViewDelegate)];
     self.delegate.forwardDelegate = self.mockForwardDelegate;
 
-    self.mockContentWindow = [OCMockObject niceMockForProtocol:@protocol(UARichContentWindow)];
+    self.mockContentWindow = [self mockForProtocol:@protocol(UARichContentWindow)];
     self.delegate.richContentWindow = self.mockContentWindow;
 
     // Mock UAPush
-    self.mockPush = [OCMockObject niceMockForClass:[UAPush class]];
+    self.mockPush = [self mockForClass:[UAPush class]];
 
     // Mock UANamedUser
-    self.mockNamedUser = [OCMockObject niceMockForClass:[UANamedUser class]];
+    self.mockNamedUser = [self mockForClass:[UANamedUser class]];
 
     // Mock web view
-    self.mockWebView = [OCMockObject niceMockForClass:[UIWebView class]];
+    self.mockWebView = [self mockForClass:[UIWebView class]];
 
     // Mock UAUser
-    self.mockUAUser = [OCMockObject niceMockForClass:[UAUser class]];
+    self.mockUAUser = [self mockForClass:[UAUser class]];
 
     // Mock UAConfig
-    self.mockConfig = [OCMockObject niceMockForClass:[UAConfig class]];
+    self.mockConfig = [self mockForClass:[UAConfig class]];
     
     // Mock UIDevice
-    self.mockUIDevice = [OCMockObject niceMockForClass:[UIDevice class]];
+    self.mockUIDevice = [self mockForClass:[UIDevice class]];
     [[[self.mockUIDevice stub] andReturn:self.mockUIDevice] currentDevice];
 
     // Mock the inbox and message list
-    self.mockInbox = [OCMockObject niceMockForClass:[UAInbox class]];
-    self.mockMessageList = [OCMockObject niceMockForClass:[UAInboxMessageList class]];
+    self.mockInbox = [self mockForClass:[UAInbox class]];
+    self.mockMessageList = [self mockForClass:[UAInboxMessageList class]];
     [[[self.mockInbox stub] andReturn:self.mockMessageList] messageList];
 
     // Mock Airship
-    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.mockAirship = [self mockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.mockUAUser] inboxUser];
     [[[self.mockAirship stub] andReturn:self.mockInbox] inbox];
@@ -85,7 +85,7 @@
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
 
     // Mock JS Action delegate
-    self.mockJSActionDelegate = [OCMockObject niceMockForClass:[UAActionJSDelegate class]];
+    self.mockJSActionDelegate = [self mockForClass:[UAActionJSDelegate class]];
     [[[self.mockAirship stub] andReturn:self.mockJSActionDelegate] actionJSDelegate];
 
     // Set an actual whitelist
@@ -156,7 +156,7 @@
 
     // Create an inbox message
     NSDate *messageSent = [NSDate date];
-    id message = [OCMockObject niceMockForClass:[UAInboxMessage class]];
+    id message = [self mockForClass:[UAInboxMessage class]];
     [[[message stub] andReturn:@"messageID"] messageID];
     [[[message stub] andReturn:@"messageTitle"] title];
     [[[message stub] andReturn:messageSent] messageSent];
@@ -303,7 +303,7 @@
 - (void)testDidFinishPopulateJavascriptEnvironmentWithInboxMessage {
 
     NSDate *messageSent = [NSDate date];
-    id message = [OCMockObject niceMockForClass:[UAInboxMessage class]];
+    id message = [self mockForClass:[UAInboxMessage class]];
     [[[message stub] andReturn:@"messageID"] messageID];
     [[[message stub] andReturn:@"messageTitle"] title];
     [[[message stub] andReturn:messageSent] messageSent];
@@ -357,7 +357,7 @@
 - (void)testLoadJSEnvironmentWithInvalidJSONCharactersMessageTitle {
 
 
-    id message = [OCMockObject niceMockForClass:[UAInboxMessage class]];
+    id message = [self mockForClass:[UAInboxMessage class]];
 
     /*
      * From RFC 4627, "All Unicode characters may be placed within the

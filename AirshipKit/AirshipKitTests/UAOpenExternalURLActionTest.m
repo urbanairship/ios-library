@@ -1,12 +1,12 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAOpenExternalURLAction.h"
 #import <OCMock/OCMock.h>
 #import "UAAction+Operators.h"
 #import "UAActionArguments+Internal.h"
 
-@interface UAOpenExternalURLActionTest : XCTestCase
+@interface UAOpenExternalURLActionTest : UABaseTest
 
 @property (nonatomic, strong) UAActionArguments *emptyArgs;
 @property (nonatomic, strong) UAActionArguments *arguments;
@@ -24,7 +24,7 @@
 
     // Set default OS major version to 10 by default
     self.testOSMajorVersion = 10;
-    self.mockProcessInfo = [OCMockObject niceMockForClass:[NSProcessInfo class]];
+    self.mockProcessInfo = [self mockForClass:[NSProcessInfo class]];
     [[[self.mockProcessInfo stub] andReturn:self.mockProcessInfo] processInfo];
     [[[[self.mockProcessInfo stub] andDo:^(NSInvocation *invocation) {
         NSOperatingSystemVersion arg;
@@ -35,7 +35,7 @@
     }] ignoringNonObjectArgs] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){0, 0, 0}];
 
     self.arguments = [[UAActionArguments alloc] init];
-    self.mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    self.mockApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
 }
 

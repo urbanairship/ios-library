@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 #import "UALandingPageAction.h"
 #import "UAURLProtocol.h"
@@ -12,7 +12,7 @@
 #import "UAUtils.h"
 #import "NSString+UAURLEncoding.h"
 
-@interface UALandingPageActionTest : XCTestCase
+@interface UALandingPageActionTest : UABaseTest
 
 @property (nonatomic, strong) id mockURLProtocol;
 @property (nonatomic, strong) id mockLandingPageOverlayController;
@@ -30,15 +30,15 @@
 - (void)setUp {
     [super setUp];
     self.action = [[UALandingPageAction alloc] init];
-    self.mockURLProtocol = [OCMockObject niceMockForClass:[UAURLProtocol class]];
+    self.mockURLProtocol = [self mockForClass:[UAURLProtocol class]];
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    self.mockLandingPageOverlayController = [OCMockObject niceMockForClass:[UALandingPageOverlayController class]];
+    self.mockLandingPageOverlayController = [self mockForClass:[UALandingPageOverlayController class]];
 #pragma GCC diagnostic pop
-    self.mockOverlayViewController = [OCMockObject niceMockForClass:[UAOverlayViewController class]];
+    self.mockOverlayViewController = [self mockForClass:[UAOverlayViewController class]];
 
-    self.mockConfig = [OCMockObject niceMockForClass:[UAConfig class]];
-    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.mockConfig = [self mockForClass:[UAConfig class]];
+    self.mockAirship = [self mockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
 

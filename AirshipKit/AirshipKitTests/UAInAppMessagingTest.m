@@ -1,7 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <UIKit/UIKit.h>
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 #import "UAInAppMessaging+Internal.h"
 #import "UAInAppmessage.h"
@@ -13,7 +13,7 @@
 #import "UAActionRegistry.h"
 #import "UADisplayInboxAction.h"
 
-@interface UAInAppMessagingTest : XCTestCase
+@interface UAInAppMessagingTest : UABaseTest
 @property(nonatomic, strong) id mockAnalytics;
 @property(nonatomic, strong) id mockMessageController;
 
@@ -33,11 +33,11 @@
 
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"UAInAppMessagingTest"];
 
-    self.mockAnalytics = [OCMockObject niceMockForClass:[UAAnalytics class]];
+    self.mockAnalytics = [self mockForClass:[UAAnalytics class]];
 
     self.inAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.mockAnalytics dataStore:self.dataStore];
 
-    self.mockMessageController = [OCMockObject mockForClass:[UAInAppMessageController class]];
+    self.mockMessageController = [self strictMockForClass:[UAInAppMessageController class]];
     [[[self.mockMessageController stub] andReturn:self.mockMessageController] controllerWithMessage:[OCMArg any] delegate:[OCMArg any] dismissalBlock:[OCMArg any]];
 
     self.bannerMessage = [UAInAppMessage message];

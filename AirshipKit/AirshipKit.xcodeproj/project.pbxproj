@@ -23,6 +23,7 @@
 		6E3673E11E8C8178005B5DFF /* UATextInputNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = DFBBC7AE1E36D80B00BA7315 /* UATextInputNotificationAction.m */; };
 		6E3673E21E8C8187005B5DFF /* UAChannelCaptureAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BC501F1E202FAA00E24306 /* UAChannelCaptureAction.m */; };
 		6E4627CC1E64E0C300A5BF3B /* UAScheduleDelayTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4627CB1E64E0C300A5BF3B /* UAScheduleDelayTests.m */; };
+		6E4A00791F2A4A4A0069D8A0 /* UABaseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A00781F2A4A4A0069D8A0 /* UABaseTest.m */; };
 		6E7700AA1F04790C00B5E465 /* UANativeBridge in Resources */ = {isa = PBXBuildFile; fileRef = 6E7700A81F04790C00B5E465 /* UANativeBridge */; };
 		6E7700AB1F04790C00B5E465 /* UANotificationCategories.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E7700A91F04790C00B5E465 /* UANotificationCategories.plist */; };
 		6ECF2BF21F1E92A10061247E /* UAInbox.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6ECF2BF01F1E92A10061247E /* UAInbox.xcdatamodeld */; };
@@ -1184,6 +1185,7 @@
 		6E3673DB1E8AE9F7005B5DFF /* UAEnableFeatureAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAEnableFeatureAction.m; path = common/UAEnableFeatureAction.m; sourceTree = "<group>"; };
 		6E3673DF1E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEnableFeatureActionTest.m; sourceTree = "<group>"; };
 		6E4627CB1E64E0C300A5BF3B /* UAScheduleDelayTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDelayTests.m; sourceTree = "<group>"; };
+		6E4A00781F2A4A4A0069D8A0 /* UABaseTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABaseTest.m; sourceTree = "<group>"; };
 		6E7700A81F04790C00B5E465 /* UANativeBridge */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UANativeBridge; sourceTree = "<group>"; };
 		6E7700A91F04790C00B5E465 /* UANotificationCategories.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UANotificationCategories.plist; sourceTree = "<group>"; };
 		6ECF2BF11F1E92A10061247E /* UAInbox.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAInbox.xcdatamodel; sourceTree = "<group>"; };
@@ -1556,11 +1558,10 @@
 		CC64F0861D8B781C009CEF27 /* UAChannelRegistrationPayloadTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelRegistrationPayloadTest.m; sourceTree = "<group>"; };
 		CC64F0871D8B781C009CEF27 /* UACircularRegionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACircularRegionTest.m; sourceTree = "<group>"; };
 		CC64F0891D8B781C009CEF27 /* UAColorUtilsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAColorUtilsTest.m; sourceTree = "<group>"; };
-		CC64F08A1D8B781C009CEF27 /* UAConfigTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAConfigTest.h; sourceTree = "<group>"; };
+		CC64F08A1D8B781C009CEF27 /* UABaseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABaseTest.h; sourceTree = "<group>"; };
 		CC64F08B1D8B781C009CEF27 /* UAConfigTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAConfigTest.m; sourceTree = "<group>"; };
 		CC64F08C1D8B781C009CEF27 /* UACustomEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACustomEventTest.m; sourceTree = "<group>"; };
 		CC64F08D1D8B781C009CEF27 /* UADefaultMessageCenterStyleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterStyleTest.m; sourceTree = "<group>"; };
-		CC64F08E1D8B781C009CEF27 /* UADelayOperationTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADelayOperationTest.h; sourceTree = "<group>"; };
 		CC64F08F1D8B781C009CEF27 /* UADelayOperationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADelayOperationTest.m; sourceTree = "<group>"; };
 		CC64F0901D8B781C009CEF27 /* UADisplayInboxActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADisplayInboxActionTest.m; sourceTree = "<group>"; };
 		CC64F0911D8B781C009CEF27 /* UAEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventTest.m; sourceTree = "<group>"; };
@@ -1899,6 +1900,8 @@
 		CC04F2001DCAB28300B4842D /* TestUtils */ = {
 			isa = PBXGroup;
 			children = (
+				CC64F08A1D8B781C009CEF27 /* UABaseTest.h */,
+				6E4A00781F2A4A4A0069D8A0 /* UABaseTest.m */,
 				CC64F0681D8B781C009CEF27 /* NSObject+HideClass.h */,
 				CC64F0691D8B781C009CEF27 /* NSObject+HideClass.m */,
 				CC64F0661D8B781C009CEF27 /* NSObject+AnonymousKVO.h */,
@@ -2782,9 +2785,7 @@
 				CC04F2191DCAB7BE00B4842D /* Utils */,
 				CC04F21B1DCAB82200B4842D /* Native Bridge */,
 				CC64F07F1D8B781C009CEF27 /* UAAutoIntegrationTest.m */,
-				CC64F08A1D8B781C009CEF27 /* UAConfigTest.h */,
 				CC64F08B1D8B781C009CEF27 /* UAConfigTest.m */,
-				CC64F08E1D8B781C009CEF27 /* UADelayOperationTest.h */,
 				CC64F08F1D8B781C009CEF27 /* UADelayOperationTest.m */,
 				CC64F0B61D8B781C009CEF27 /* UAPreferenceDataStoreTest.m */,
 				DF7E22BB1ED63E9200C79C46 /* UAProjectValidationTest.swift */,
@@ -4125,6 +4126,7 @@
 				CC64F0F61D8B781C009CEF27 /* UADefaultMessageCenterStyleTest.m in Sources */,
 				CC64F1161D8B781C009CEF27 /* UANotificationCategoryTest.m in Sources */,
 				CC64F1211D8B781C009CEF27 /* UAScheduleTriggerTests.m in Sources */,
+				6E4A00791F2A4A4A0069D8A0 /* UABaseTest.m in Sources */,
 				CC70E8CE1DD3E81D000E2528 /* UATagGroupsMutationTest.m in Sources */,
 				CC64F1041D8B781C009CEF27 /* UAInboxMessageTest.m in Sources */,
 				CC64F0EC1D8B781C009CEF27 /* UACancelSchedulesActionTests.m in Sources */,

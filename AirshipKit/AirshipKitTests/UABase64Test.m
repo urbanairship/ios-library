@@ -24,7 +24,7 @@
  */
 
 #import "UA_Base64.h"
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 
 // Examples from Wikipedia page on base64 encoding
 // http://en.wikipedia.org/wiki/Base64
@@ -54,7 +54,7 @@ NSString *leasure64 = @"bGVhc3VyZS4=";
 NSString *easure = @"easure.";
 NSString *easure64 = @"ZWFzdXJlLg==";
 
-@interface UABase64Test : XCTestCase
+@interface UABase64Test : UABaseTest
 @end
 
 

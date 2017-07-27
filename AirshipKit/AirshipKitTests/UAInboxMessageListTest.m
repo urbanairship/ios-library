@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <OCMock/OCMock.h>
 #import "UAInbox.h"
 #import "UAInboxMessageList+Internal.h"
@@ -18,7 +18,7 @@ static UAUser *mockUser_ = nil;
 - (void)messageListUpdated;
 @end
 
-@interface UAInboxMessageListTest : XCTestCase
+@interface UAInboxMessageListTest : UABaseTest
 @property (nonatomic, strong) id mockUser;
 @property (nonatomic, assign) BOOL userCreated;
 
@@ -37,12 +37,12 @@ static UAUser *mockUser_ = nil;
     [super setUp];
 
     self.userCreated = YES;
-    self.mockUser = [OCMockObject niceMockForClass:[UAUser class]];
+    self.mockUser = [self mockForClass:[UAUser class]];
     [[[self.mockUser stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:&_userCreated];
     }] isCreated];
 
-    self.mockInboxAPIClient = [OCMockObject niceMockForClass:[UAInboxAPIClient class]];
+    self.mockInboxAPIClient = [self mockForClass:[UAInboxAPIClient class]];
 
     self.mockMessageListNotificationObserver = [OCMockObject mockForProtocol:@protocol(UAInboxMessageListMockNotificationObserver)];
 
