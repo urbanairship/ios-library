@@ -4,7 +4,8 @@
 #import "MessageCenterViewController.h"
 
 @interface InboxDelegate ()
-@property(nonatomic, strong) UIViewController *rootViewController;
+@property(nonatomic, strong) UITabBarController *tabBarController;
+@property(nonatomic, strong) MessageCenterViewController *messageCenterViewController;
 @end
 
 @implementation InboxDelegate
@@ -12,24 +13,21 @@
 - (instancetype)initWithRootViewController:(UIViewController *)rootViewController {
     self = [super init];
     if (self) {
-        self.rootViewController = rootViewController;
+        self.tabBarController = (UITabBarController *)rootViewController;
+        self.messageCenterViewController = [self.tabBarController.viewControllers objectAtIndex:2];
     }
     return self;
 }
 
-- (MessageCenterViewController *)messageCenterViewController {
-    UITabBarController *tabBarController = (UITabBarController *)self.rootViewController;
-    return [tabBarController.viewControllers objectAtIndex:2];
-}
-
 - (void)showInbox {
-    UITabBarController *tabBarController = (UITabBarController *)self.rootViewController;
-    tabBarController.selectedIndex = 2;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.tabBarController.selectedIndex = 2;
+    });
 }
 
 - (void)showMessageForID:(NSString *)messageID {
     [self showInbox];
-    [[self messageCenterViewController] displayMessageForID:messageID];
+    [self.messageCenterViewController displayMessageForID:messageID];
 }
 
 @end

@@ -95,14 +95,15 @@
 }
 
 - (void)refreshMessageCenterBadge {
-
-    UITabBarItem *messageCenterTab = [[[(UITabBarController *)self.window.rootViewController tabBar] items] objectAtIndex:2];
-
-    if ([UAirship inbox].messageList.unreadCount > 0) {
-        [messageCenterTab setBadgeValue:[NSString stringWithFormat:@"%ld", (long)[UAirship inbox].messageList.unreadCount]];
-    } else {
-        [messageCenterTab setBadgeValue:nil];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UITabBarItem *messageCenterTab = [[[(UITabBarController *)self.window.rootViewController tabBar] items] objectAtIndex:2];
+        
+        if ([UAirship inbox].messageList.unreadCount > 0) {
+            [messageCenterTab setBadgeValue:[NSString stringWithFormat:@"%ld", (long)[UAirship inbox].messageList.unreadCount]];
+        } else {
+            [messageCenterTab setBadgeValue:nil];
+        }
+    });
 }
 
 - (void)failIfSimulator {

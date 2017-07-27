@@ -131,14 +131,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
     }
 
     func refreshMessageCenterBadge() {
-
-        if self.window?.rootViewController is UITabBarController {
-            let messageCenterTab: UITabBarItem = (self.window!.rootViewController! as! UITabBarController).tabBar.items![2]
-
-            if (UAirship.inbox().messageList.unreadCount > 0) {
-                messageCenterTab.badgeValue = String(stringInterpolationSegment:UAirship.inbox().messageList.unreadCount)
-            } else {
-                messageCenterTab.badgeValue = nil
+        DispatchQueue.main.async {
+            if self.window?.rootViewController is UITabBarController {
+                let messageCenterTab: UITabBarItem = (self.window!.rootViewController! as! UITabBarController).tabBar.items![2]
+                
+                if (UAirship.inbox().messageList.unreadCount > 0) {
+                    messageCenterTab.badgeValue = String(stringInterpolationSegment:UAirship.inbox().messageList.unreadCount)
+                } else {
+                    messageCenterTab.badgeValue = nil
+                }
             }
         }
     }

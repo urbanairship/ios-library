@@ -88,7 +88,7 @@
     }];
 }
 
-- (void)animateOut:(void (^)())completion {
+- (void)animateOut:(void (^)(void))completion {
     [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
         self.shadowView.alpha = 0;
         self.promptContainerView.alpha = 0;
