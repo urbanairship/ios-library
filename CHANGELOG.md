@@ -3,6 +3,17 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 8.5.1 - July 27, 2017
+=============================
+
+Patch release that fixes app submission problems when using Carthage or manual installation
+methods. CocoaPods users are unaffected by this issue.
+
+Bug fixes
+---------
+- Fixed submission problems due to the AirshipResources.bundle containing an executable.
+- Fixed minor Xcode 9 beta warnings in the samples and the new rate app action.
+
 Version 8.5.0 - July 26, 2017
 ============================
 
