@@ -1,10 +1,10 @@
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UANotificationCategory.h"
 #import "UANotificationAction.h"
 #import "UATextInputNotificationAction.h"
 
-@interface UANotificationCategoryTest : XCTestCase
+@interface UANotificationCategoryTest : UABaseTest
 @property(nonatomic, strong) UANotificationCategory *uaCategory;
 @end
 

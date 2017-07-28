@@ -1,7 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
+#import "UABaseTest.h"
 
 #import "UAAppIntegration+Internal.h"
 #import "UANotificationAction.h"
@@ -23,7 +22,7 @@
 #import "UADisplayInboxAction.h"
 #endif
 
-@interface UAAppIntegrationTest : XCTestCase
+@interface UAAppIntegrationTest : UABaseTest
 @property (nonatomic, strong) id mockedApplication;
 @property (nonatomic, strong) id mockedUserNotificationCenter;
 @property (nonatomic, strong) id mockedAirship;
@@ -52,7 +51,7 @@
     [super setUp];
 
     self.testOSMajorVersion = 8;
-    self.mockedProcessInfo = [OCMockObject niceMockForClass:[NSProcessInfo class]];
+    self.mockedProcessInfo = [self mockForClass:[NSProcessInfo class]];
     [[[self.mockedProcessInfo stub] andReturn:self.mockedProcessInfo] processInfo];
 
     [[[[self.mockedProcessInfo stub] andDo:^(NSInvocation *invocation) {
@@ -64,23 +63,23 @@
     }] ignoringNonObjectArgs] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){0, 0, 0}];
 
     // Set up a mocked application
-    self.mockedApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    self.mockedApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
 
     // Set up mocked User Notification Center
-    self.mockedUserNotificationCenter = [OCMockObject niceMockForClass:[UNUserNotificationCenter class]];
+    self.mockedUserNotificationCenter = [self mockForClass:[UNUserNotificationCenter class]];
     [[[self.mockedUserNotificationCenter stub] andReturn:self.mockedUserNotificationCenter] currentNotificationCenter];
 
-    self.mockedActionRunner = [OCMockObject niceMockForClass:[UAActionRunner class]];
+    self.mockedActionRunner = [self mockForClass:[UAActionRunner class]];
 
-    self.mockedAnalytics = [OCMockObject niceMockForClass:[UAAnalytics class]];
-    self.mockedPush = [OCMockObject niceMockForClass:[UAPush class]];
+    self.mockedAnalytics = [self mockForClass:[UAAnalytics class]];
+    self.mockedPush = [self mockForClass:[UAPush class]];
 
-    self.mockedInbox = [OCMockObject niceMockForClass:[UAInbox class]];
-    self.mockedMessageList = [OCMockObject niceMockForClass:[UAInboxMessageList class]];
+    self.mockedInbox = [self mockForClass:[UAInbox class]];
+    self.mockedMessageList = [self mockForClass:[UAInboxMessageList class]];
     [[[self.mockedInbox stub] andReturn:self.mockedMessageList] messageList];
 
-    self.mockedAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.mockedAirship = [self mockForClass:[UAirship class]];
     [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
     [[[self.mockedAirship stub] andReturn:self.mockedAnalytics] analytics];
     [[[self.mockedAirship stub] andReturn:self.mockedPush] push];
@@ -107,19 +106,19 @@
                           };
 
     // Mock the nested apple types with unavailable init methods
-    self.mockedUANotificationContent = [OCMockObject niceMockForClass:[UANotificationContent class]];
+    self.mockedUANotificationContent = [self mockForClass:[UANotificationContent class]];
     [[[self.mockedUANotificationContent stub] andReturn:self.mockedUANotificationContent] notificationWithUNNotification:OCMOCK_ANY];
     [[[self.mockedUANotificationContent stub] andReturn:self.notification] notificationInfo];
 
-    self.mockedUNNotification = [OCMockObject niceMockForClass:[UNNotification class]];
-    self.mockedUNNotificationRequest = [OCMockObject niceMockForClass:[UNNotificationRequest class]];
-    self.mockedUNNotificationContent = [OCMockObject niceMockForClass:[UNNotificationContent class]];
+    self.mockedUNNotification = [self mockForClass:[UNNotification class]];
+    self.mockedUNNotificationRequest = [self mockForClass:[UNNotificationRequest class]];
+    self.mockedUNNotificationContent = [self mockForClass:[UNNotificationContent class]];
 
     [[[self.mockedUNNotification stub] andReturn:self.mockedUNNotificationRequest] request];
     [[[self.mockedUNNotificationRequest stub] andReturn:self.mockedUNNotificationContent] content];
     [[[self.mockedUNNotificationContent stub] andReturn:self.notification] userInfo];
 
-    self.mockedUNNotificationResponse = [OCMockObject niceMockForClass:[UNNotificationResponse class]];
+    self.mockedUNNotificationResponse = [self mockForClass:[UNNotificationResponse class]];
     [[[self.mockedUNNotificationResponse stub] andReturn:self.mockedUNNotification] notification];
 }
 
@@ -208,7 +207,7 @@
     __block BOOL completionHandlerCalled = NO;
 
     // Mock UAConfig instance to so we can return a mocked automatic setup
-    id mockConfig = [OCMockObject mockForClass:[UAConfig class]];
+    id mockConfig = [self strictMockForClass:[UAConfig class]];
     [[[self.mockedAirship stub] andReturn:mockConfig] config];
 
     //Mock automatic setup to be enabled
@@ -260,7 +259,7 @@
     };
 
     // Mock UAConfig instance to so we can return a mocked automatic setup
-    id mockConfig = [OCMockObject mockForClass:[UAConfig class]];
+    id mockConfig = [self strictMockForClass:[UAConfig class]];
     [[[self.mockedAirship stub] andReturn:mockConfig] config];
     UNNotificationPresentationOptions expectedOptions = UNNotificationPresentationOptionAlert;
 

@@ -1,10 +1,10 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAActionArguments.h"
 #import "UAActionArguments+Internal.h"
 
-@interface UAActionArgumentsTest : XCTestCase
+@interface UAActionArgumentsTest : UABaseTest
 
 @end
 

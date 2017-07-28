@@ -1,10 +1,9 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
+#import "UABaseTest.h"
 #import "UAURLRequestOperation+Internal.h"
 
-@interface UAURLRequestOperationTest : XCTestCase
+@interface UAURLRequestOperationTest : UABaseTest
 @property (nonatomic, strong) id mockRequest;
 @property (nonatomic, strong) id mockSession;
 @end
@@ -13,16 +12,8 @@
 
 - (void)setUp {
     [super setUp];
-    self.mockRequest = [OCMockObject niceMockForClass:[NSURLRequest class]];
-    self.mockSession = [OCMockObject niceMockForClass:[NSURLSession class]];
-
-}
-
-- (void)tearDown {
-    [self.mockRequest stopMocking];
-    [self.mockSession stopMocking];
-
-    [super tearDown];
+    self.mockRequest = [self mockForClass:[NSURLRequest class]];
+    self.mockSession = [self mockForClass:[NSURLSession class]];
 }
 
 

@@ -1,13 +1,12 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <UIKit/UIKit.h>
-#import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
+#import "UABaseTest.h"
 
 #import "UAPasteboardAction.h"
 #import "UAActionArguments+Internal.h"
 
-@interface UAPasteboardActionTest : XCTestCase
+@interface UAPasteboardActionTest : UABaseTest
 @property(nonatomic, strong) UAPasteboardAction *action;
 @property(nonatomic, strong) id mockPasteboard;
 @end
@@ -17,7 +16,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockPasteboard = [OCMockObject niceMockForClass:[UIPasteboard class]];
+    self.mockPasteboard = [self mockForClass:[UIPasteboard class]];
     [[[self.mockPasteboard stub] andReturn:self.mockPasteboard] generalPasteboard];
 
     self.action = [UAPasteboardAction new];

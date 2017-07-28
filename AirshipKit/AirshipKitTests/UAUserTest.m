@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAUser+Internal.h"
 #import "UAUserAPIClient+Internal.h"
 #import "UAUserData+Internal.h"
@@ -10,10 +10,7 @@
 #import "UAConfig+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 
-#import <OCMock/OCMock.h>
-#import <OCMock/OCMConstraint.h>
-
-@interface UAUserTest : XCTestCase
+@interface UAUserTest : UABaseTest
 @property (nonatomic, strong) UAUser *user;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UAConfig *config;
@@ -32,7 +29,7 @@
     [super setUp];
 
     // Set up mocked User Notification Center to avoid bug in XCode Beta
-    self.mockedUserNotificationCenter = [OCMockObject niceMockForClass:[UNUserNotificationCenter class]];
+    self.mockedUserNotificationCenter = [self mockForClass:[UNUserNotificationCenter class]];
     [[[self.mockedUserNotificationCenter stub] andReturn:self.mockedUserNotificationCenter] currentNotificationCenter];
 
     self.config = [[UAConfig alloc] init];
@@ -43,12 +40,12 @@
 
 
     [[[NSBundle mainBundle] infoDictionary] setValue:@"someBundleID" forKey:@"CFBundleIdentifier"];
-    self.mockKeychainUtils = [OCMockObject niceMockForClass:[UAKeychainUtils class]];
+    self.mockKeychainUtils = [self mockForClass:[UAKeychainUtils class]];
 
     self.user = [UAUser userWithPush:self.push config:self.config dataStore:self.dataStore];
-    self.mockUserClient = [OCMockObject partialMockForObject:self.user.apiClient];
+    self.mockUserClient = [self partialMockForObject:self.user.apiClient];
 
-    self.mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    self.mockApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
  }
 

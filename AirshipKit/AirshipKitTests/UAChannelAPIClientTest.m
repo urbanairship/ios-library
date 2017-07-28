@@ -1,7 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
-#import <OCMOCK/OCMock.h>
+#import "UABaseTest.h"
 #import <Foundation/Foundation.h>
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAChannelAPIClient+Internal.h"
@@ -9,7 +8,7 @@
 #import "UAConfig.h"
 #import "UAAnalytics+Internal.h"
 
-@interface UAChannelAPIClientTest : XCTestCase
+@interface UAChannelAPIClientTest : UABaseTest
 
 @property (nonatomic, strong) id mockSession;
 @property (nonatomic, strong) UAConfig *config;
@@ -23,7 +22,7 @@
 - (void)setUp {
     [super setUp];
     self.config = [UAConfig config];
-    self.mockSession = [OCMockObject niceMockForClass:[UARequestSession class]];
+    self.mockSession = [self mockForClass:[UARequestSession class]];
     self.client = [UAChannelAPIClient clientWithConfig:self.config session:self.mockSession];
 }
 

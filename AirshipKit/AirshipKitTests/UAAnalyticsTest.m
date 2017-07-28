@@ -1,30 +1,6 @@
-/*
- Copyright 2009-2017 Urban Airship Inc. All rights reserved.
- 
- Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions are met:
- 
- 1. Redistributions of source code must retain the above copyright notice, this
- list of conditions and the following disclaimer.
+/* Copyright 2017 Urban Airship and Contributors */
 
- 2. Redistributions in binary form must reproduce the above copyright notice,
- this list of conditions and the following disclaimer in the documentation
- and/or other materials provided with the distribution.
- 
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
- IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
- OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-#import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
+#import "UABaseTest.h"
 
 #import "UAAnalytics+Internal.h"
 #import "UAConfig.h"
@@ -36,7 +12,7 @@
 #import "UACustomEvent.h"
 #import "UAEventManager+Internal.h"
 
-@interface UAAnalyticsTest: XCTestCase
+@interface UAAnalyticsTest: UABaseTest
 @property (nonatomic, strong) UAAnalytics *analytics;
 @property (nonatomic, strong) id mockEventManager;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
@@ -47,7 +23,7 @@
 - (void)setUp {
     [super setUp];
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test.analytics"];
-    self.mockEventManager = [OCMockObject niceMockForClass:[UAEventManager class]];
+    self.mockEventManager = [self mockForClass:[UAEventManager class]];
 
     UAConfig *config = [[UAConfig alloc] init];
     self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:self.dataStore eventManager:self.mockEventManager];
@@ -118,7 +94,7 @@
  */
 - (void)testAddInvalidEvent {
     // Mock invalid event
-    id mockEvent = [OCMockObject niceMockForClass:[UAEvent class]];
+    id mockEvent = [self mockForClass:[UAEvent class]];
     [[[mockEvent stub] andReturnValue:OCMOCK_VALUE(NO)] isValid];
 
     // Ensure event add is never attempted
@@ -137,7 +113,7 @@
  */
 - (void)testAddEvent {
     // Mock valid event
-    id mockEvent = [OCMockObject niceMockForClass:[UAEvent class]];
+    id mockEvent = [self mockForClass:[UAEvent class]];
     [[[mockEvent stub] andReturnValue:OCMOCK_VALUE(YES)] isValid];
 
     // Ensure event is added
@@ -158,7 +134,7 @@
     self.analytics.enabled = false;
 
     // Mock valid event
-    id mockEvent = [OCMockObject niceMockForClass:[UAEvent class]];
+    id mockEvent = [self mockForClass:[UAEvent class]];
     [[[mockEvent stub] andReturnValue:OCMOCK_VALUE(YES)] isValid];
 
     // Ensure event add is never attempted
@@ -322,7 +298,7 @@
 
 // Tests forwarding screens to the analytics delegate.
 - (void)testForwardScreenTracks {
-    id mockDelegate = [OCMockObject niceMockForProtocol:@protocol(UAAnalyticsDelegate)];
+    id mockDelegate = [self mockForProtocol:@protocol(UAAnalyticsDelegate)];
     self.analytics.delegate = mockDelegate;
 
     [[mockDelegate expect] screenTracked:@"screen"];
@@ -334,7 +310,7 @@
 
 // Tests forwarding region events to the analytics delegate.
 - (void)testForwardRegionEvents {
-    id mockDelegate = [OCMockObject niceMockForProtocol:@protocol(UAAnalyticsDelegate)];
+    id mockDelegate = [self mockForProtocol:@protocol(UAAnalyticsDelegate)];
     self.analytics.delegate = mockDelegate;
 
     UARegionEvent *regionEnter = [UARegionEvent regionEventWithRegionID:@"region" source:@"test" boundaryEvent:UABoundaryEventEnter];
@@ -348,7 +324,7 @@
 
 // Tests forwarding custom events to the analytics delegate.
 - (void)testForwardCustomEvents {
-    id mockDelegate = [OCMockObject niceMockForProtocol:@protocol(UAAnalyticsDelegate)];
+    id mockDelegate = [self mockForProtocol:@protocol(UAAnalyticsDelegate)];
     self.analytics.delegate = mockDelegate;
 
     UACustomEvent *purchase = [UACustomEvent eventWithName:@"purchase" value:@(100)];

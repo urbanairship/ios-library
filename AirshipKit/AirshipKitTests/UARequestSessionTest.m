@@ -1,12 +1,11 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
+#import "UABaseTest.h"
 #import "UARequestSession+Internal.h"
 #import "UAURLRequestOperation+Internal.h"
 #import "UADelayOperation+Internal.h"
 
-@interface UARequestSessionTest : XCTestCase
+@interface UARequestSessionTest : UABaseTest
 @property (nonatomic, strong) id mockNSURLSession;
 @property (nonatomic, strong) id mockQueue;
 @property (nonatomic, strong) UARequestSession *session;
@@ -17,7 +16,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockQueue = [OCMockObject niceMockForClass:[NSOperationQueue class]];
+    self.mockQueue = [self mockForClass:[NSOperationQueue class]];
 
     // Stub the queue to run UAURLRequestOperation immediately
     [[[self.mockQueue stub] andDo:^(NSInvocation *invocation) {
@@ -29,14 +28,8 @@
         return [obj isKindOfClass:[UAURLRequestOperation class]];
     }]];
 
-    self.mockNSURLSession = [OCMockObject niceMockForClass:[NSURLSession class]];
+    self.mockNSURLSession = [self mockForClass:[NSURLSession class]];
     self.session = [UARequestSession sessionWithConfig:[UAConfig config] NSURLSession:self.mockNSURLSession queue:self.mockQueue];
-}
-
-- (void)tearDown {
-    [self.mockNSURLSession stopMocking];
-    [self.mockQueue stopMocking];
-    [super tearDown];
 }
 
 - (void)testDataTask {

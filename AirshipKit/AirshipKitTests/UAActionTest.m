@@ -1,9 +1,9 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAAction+Internal.h"
 
-@interface UAActionTest : XCTestCase
+@interface UAActionTest : UABaseTest
 @property (nonatomic, strong) UAActionArguments *emptyArgs;
 @end
 

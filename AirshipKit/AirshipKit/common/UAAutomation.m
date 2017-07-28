@@ -24,6 +24,7 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
 @implementation UAAutomation
 
 - (void)dealloc {
+    [self cancelTimers];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -232,6 +233,7 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
     NSDate *start = [NSDate date];
     // Only update schedule triggers and active cancellation triggers
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(type = %ld AND start <= %@) AND (delay == nil || delay.schedule.isPendingExecution = 1)", triggerType, start];
+
     [self.automationStore fetchTriggersWithPredicate:predicate completionHandler:^(NSArray<UAScheduleTriggerData *> *triggers) {
 
         // Capture what schedules need to be cancelled and executed in sets so we do not double process any schedules

@@ -1,14 +1,12 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
-
+#import "UABaseTest.h"
 #import "UACancelSchedulesAction.h"
 #import "UAActionArguments+Internal.h"
 #import "UAAutomation.h"
 #import "UAirship.h"
 
-@interface UACancelSchedulesActionTests : XCTestCase
+@interface UACancelSchedulesActionTests : UABaseTest
 @property(nonatomic, strong) UACancelSchedulesAction *action;
 @property(nonatomic, strong) id mockAirship;
 @property(nonatomic, strong) id mockAutomation;
@@ -19,19 +17,14 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockAutomation = [OCMockObject niceMockForClass:[UAAutomation class]];
-    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.mockAutomation = [self mockForClass:[UAAutomation class]];
+    self.mockAirship = [self mockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.mockAutomation] automation];
 
     self.action = [[UACancelSchedulesAction alloc] init];
 }
 
-- (void)tearDown {
-    [self.mockAutomation stopMocking];
-    [self.mockAirship stopMocking];
-    [super tearDown];
-}
 
 /**
  * Test accepts arguments.

@@ -1,22 +1,14 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAScheduleTrigger+Internal.h"
 #import "UAJSONPredicate.h"
 
-@interface UAScheduleTriggerTests : XCTestCase
+@interface UAScheduleTriggerTests : UABaseTest
 
 @end
 
 @implementation UAScheduleTriggerTests
-
-- (void)setUp {
-    [super setUp];
-}
-
-- (void)tearDown {
-    [super tearDown];
-}
 
 - (void)testWithJSON {
 

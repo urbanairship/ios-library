@@ -1,10 +1,10 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 
 #import "NSJSONSerialization+UAAdditions.h"
 
-@interface NSJSONSerialization_UAAdditionsTests : XCTestCase
+@interface NSJSONSerialization_UAAdditionsTests : UABaseTest
 
 @end
 

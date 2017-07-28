@@ -1,4 +1,5 @@
 /* Copyright 2017 Urban Airship and Contributors */
+
 #import <objc/runtime.h>
 
 #import "UAConfig+Internal.h"

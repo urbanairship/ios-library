@@ -1,10 +1,9 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <UIKit/UIKit.h>
-#import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
+#import "UABaseTest.h"
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAInAppMessageController+Internal.h"
 #import "UAInAppMessage.h"
 #import "UAUtils.h"
@@ -15,7 +14,7 @@
 #import "UAInAppMessageButtonActionBinding.h"
 
 
-@interface UAInAppMessageControllerTest : XCTestCase
+@interface UAInAppMessageControllerTest : UABaseTest
 
 @property (nonatomic, strong) UAInAppMessage *message;
 @property (nonatomic, strong) id mockMessageView;
@@ -61,25 +60,25 @@
     self.message = [UAInAppMessage messageWithPayload:self.payload];
 
     // Mock a message view for expecting calls
-    self.mockMessageView = [OCMockObject niceMockForClass:[UIView class]];
+    self.mockMessageView = [self mockForClass:[UIView class]];
 
     // Mock a parent view for expecting calls
-    self.mockParentView = [OCMockObject niceMockForClass:[UIView class]];
+    self.mockParentView = [self mockForClass:[UIView class]];
     [[[self.mockMessageView stub] andReturn:self.mockParentView] superview];
 
     // Make the parent view returned by UAUtils configurable
     self.utilsParentView = self.mockParentView;
-    self.mockUtils = [OCMockObject niceMockForClass:[UAUtils class]];
+    self.mockUtils = [self mockForClass:[UAUtils class]];
     [[[self.mockUtils stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:&_utilsParentView];
     }] mainWindow];
 
     // Mock default delegate protocol
-    self.mockDefaultDelegate = [OCMockObject niceMockForClass:[UAInAppMessageControllerDefaultDelegate class]];
+    self.mockDefaultDelegate = [self mockForClass:[UAInAppMessageControllerDefaultDelegate class]];
     [[[self.mockDefaultDelegate stub] andReturn:self.mockMessageView] viewForMessage:OCMOCK_ANY parentView:OCMOCK_ANY];
 
     // Mock user delegate protocol
-    self.mockUserDelegate = [OCMockObject niceMockForProtocol:@protocol(UAInAppMessageControllerDelegate)];
+    self.mockUserDelegate = [self mockForProtocol:@protocol(UAInAppMessageControllerDelegate)];
     [[[self.mockUserDelegate stub] andReturn:self.mockMessageView] viewForMessage:OCMOCK_ANY parentView:OCMOCK_ANY];
 
     // Initialize a testController set mockedUserDelegate as default delegate

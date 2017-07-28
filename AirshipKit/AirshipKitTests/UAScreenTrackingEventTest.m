@@ -1,9 +1,9 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAScreenTrackingEvent+Internal.h"
 
-@interface UAScreenTrackingEventTest : XCTestCase
+@interface UAScreenTrackingEventTest : UABaseTest
 
 @end
 

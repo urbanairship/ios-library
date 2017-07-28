@@ -1,23 +1,14 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAActionScheduleInfo.h"
 #import "UAUtils.h"
 
-@interface UAActionInfoTests : XCTestCase
+@interface UAActionInfoTests : UABaseTest
 
 @end
 
 @implementation UAActionInfoTests
-
-- (void)setUp {
-    [super setUp];
-}
-
-- (void)tearDown {
-    [super tearDown];
-}
 
 - (void)testWithJSON {
 

@@ -1,9 +1,9 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAPreferenceDataStore+Internal.h"
 
-@interface UAPreferenceDataStoreTest : XCTestCase
+@interface UAPreferenceDataStoreTest : UABaseTest
 
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 

@@ -1,7 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
-#import <OCMOCK/OCMock.h>
+#import "UABaseTest.h"
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
 
@@ -20,7 +19,7 @@
 
 
 
-@interface UAEventTest : XCTestCase
+@interface UAEventTest : UABaseTest
 
 // stubs
 @property (nonatomic, strong) id analytics;
@@ -41,28 +40,28 @@
 - (void)setUp {
     [super setUp];
 
-    self.analytics = [OCMockObject niceMockForClass:[UAAnalytics class]];
-    self.push = [OCMockObject niceMockForClass:[UAPush class]];
-    self.user = [OCMockObject niceMockForClass:[UAUser class]];
+    self.analytics = [self mockForClass:[UAAnalytics class]];
+    self.push = [self mockForClass:[UAPush class]];
+    self.user = [self mockForClass:[UAUser class]];
 
-    self.airship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.airship = [self mockForClass:[UAirship class]];
 
     [[[self.airship stub] andReturn:self.airship] shared];
     [[[self.airship stub] andReturn:self.analytics] analytics];
     [[[self.airship stub] andReturn:self.push] push];
     [[[self.airship stub] andReturn:self.user] inboxUser];
 
-    self.utils = [OCMockObject niceMockForClass:[UAUtils class]];
+    self.utils = [self mockForClass:[UAUtils class]];
 
-    self.timeZone = [OCMockObject niceMockForClass:[NSTimeZone class]];
+    self.timeZone = [self mockForClass:[NSTimeZone class]];
     [[[self.timeZone stub] andReturn:self.timeZone] defaultTimeZone];
 
-    self.airshipVersion = [OCMockObject niceMockForClass:[UAirshipVersion class]];
+    self.airshipVersion = [self mockForClass:[UAirshipVersion class]];
 
-    self.application = [OCMockObject niceMockForClass:[UIApplication class]];
+    self.application = [self mockForClass:[UIApplication class]];
     [[[self.application stub] andReturn:self.application] sharedApplication];
 
-    self.currentDevice = [OCMockObject niceMockForClass:[UIDevice class]];
+    self.currentDevice = [self mockForClass:[UIDevice class]];
     [[[self.currentDevice stub] andReturn:self.currentDevice] currentDevice];
 }
 

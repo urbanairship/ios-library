@@ -1,8 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UIWebView+UAAdditions.h"
-#import <OCMock/OCMock.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import "UAirship.h"
 #import "UAConfig.h"
@@ -11,7 +10,7 @@
 #import "UAInboxDBManager+Internal.h"
 
 
-@interface UIWebView_UAAdditionsTest : XCTestCase
+@interface UIWebView_UAAdditionsTest : UABaseTest
 @property (strong, nonatomic) UIWebView *webView;
 @property (strong, nonatomic) id mockWebView;
 
@@ -26,13 +25,12 @@
     self.webView = [UIWebView alloc];
 
     // Create a partial mock so we can expect/verify the category methods
-    self.mockWebView = [OCMockObject partialMockForObject:self.webView];
+    self.mockWebView = [self partialMockForObject:self.webView];
 }
 
 - (void)tearDown {
-    [super tearDown];
-
     [self.mockWebView stopMocking];
+    [super tearDown];
 }
 
 /**

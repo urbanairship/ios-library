@@ -1,14 +1,13 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <UIKit/UIKit.h>
-#import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
+#import "UABaseTest.h"
 
 #import "UAInAppMessage.h"
 #import "UAirship+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 
-@interface UAInAppMessageTest : XCTestCase
+@interface UAInAppMessageTest : UABaseTest
 @property(nonatomic, strong) id mockAirship;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) NSDictionary *payload;
@@ -19,7 +18,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.mockAirship = [self mockForClass:[UAirship class]];
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test"];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.dataStore] dataStore];

@@ -1,8 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 
-#import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
+#import "UABaseTest.h"
 #import "UAOverlayInboxMessageAction.h"
 #import "UAActionArguments+Internal.h"
 #import "UAirship.h"
@@ -13,7 +12,7 @@
 #import "UAOverlayViewController.h"
 #import "UAConfig.h"
 
-@interface UAOverlayInboxMessageActionTest : XCTestCase
+@interface UAOverlayInboxMessageActionTest : UABaseTest
 
 @property (nonatomic, strong) UAOverlayInboxMessageAction *action;
 @property (nonatomic, strong) UAActionArguments *arguments;
@@ -33,23 +32,23 @@
 
     self.action = [[UAOverlayInboxMessageAction alloc] init];
 
-    self.mockAirship = [OCMockObject mockForClass:[UAirship class]];
+    self.mockAirship = [self strictMockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
 
-    self.mockInbox = [OCMockObject mockForClass:[UAInbox class]];
+    self.mockInbox = [self strictMockForClass:[UAInbox class]];
     [[[self.mockAirship stub] andReturn:self.mockInbox] inbox];
 
-    self.mockMessageList = [OCMockObject niceMockForClass:[UAInboxMessageList class]];
+    self.mockMessageList = [self mockForClass:[UAInboxMessageList class]];
     [[[self.mockInbox stub] andReturn:self.mockMessageList] messageList];
 
-    self.mockConfig = [OCMockObject niceMockForClass:[UAConfig class]];
+    self.mockConfig = [self mockForClass:[UAConfig class]];
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
     
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    self.mockLandingPageOverlayController = [OCMockObject niceMockForClass:[UALandingPageOverlayController class]];
+    self.mockLandingPageOverlayController = [self mockForClass:[UALandingPageOverlayController class]];
 #pragma GCC diagnostic pop
-    self.mockOverlayViewController = [OCMockObject niceMockForClass:[UAOverlayViewController class]];
+    self.mockOverlayViewController = [self mockForClass:[UAOverlayViewController class]];
 }
 
 - (void)tearDown {
@@ -119,7 +118,7 @@
     }
 
     // Verify it accepts the message place holder if we have a inbox message metadata
-    arguments.metadata = @{UAActionMetadataInboxMessageKey: [OCMockObject niceMockForClass:[UAInboxMessage class]]};
+    arguments.metadata = @{UAActionMetadataInboxMessageKey: [self mockForClass:[UAInboxMessage class]]};
     for (int i = 0; i < 2; i++) {
         arguments.situation = validSituations[i];
         XCTAssertTrue([self.action acceptsArguments:arguments], @"action should accept situation %zd", validSituations[i]);
@@ -142,7 +141,7 @@
 
     UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"MCRAP" withSituation:UASituationManualInvocation];
 
-    UAInboxMessage *message = [OCMockObject niceMockForClass:[UAInboxMessage class]];
+    UAInboxMessage *message = [self mockForClass:[UAInboxMessage class]];
     [[[self.mockMessageList stub] andReturn:message] messageForID:@"MCRAP"];
 
     [[mockedViewController expect] showMessage:message];
@@ -177,7 +176,7 @@
 
     UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"MCRAP" withSituation:UASituationManualInvocation];
 
-    __block UAInboxMessage *message = [OCMockObject niceMockForClass:[UAInboxMessage class]];
+    __block UAInboxMessage *message = [self mockForClass:[UAInboxMessage class]];
     [[self.mockMessageList expect] retrieveMessageListWithSuccessBlock:[OCMArg checkWithBlock:^BOOL(id obj) {
         // Return the message
         [[[self.mockMessageList stub] andReturn:message] messageForID:@"MCRAP"];
@@ -245,7 +244,7 @@
 - (void)commonPerformWithPlaceHolderInboxMessageMetadata:(id)mockedViewController {
     __block BOOL actionPerformed;
 
-    UAInboxMessage *message = [OCMockObject niceMockForClass:[UAInboxMessage class]];
+    UAInboxMessage *message = [self mockForClass:[UAInboxMessage class]];
 
     UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"auto"
                                                            withSituation:UASituationManualInvocation
@@ -281,7 +280,7 @@
 - (void)commonPerformWithPlaceHolderPushMessageMetadata:(id)mockedViewController {
     __block BOOL actionPerformed;
 
-    UAInboxMessage *message = [OCMockObject niceMockForClass:[UAInboxMessage class]];
+    UAInboxMessage *message = [self mockForClass:[UAInboxMessage class]];
 
     // Only need the relevent bits to reference the correct message ID
     NSDictionary *notification = @{@"_uamid": @"MCRAP"};

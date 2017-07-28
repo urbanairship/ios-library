@@ -1,11 +1,11 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <UIKit/UIKit.h>
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAWhitelist.h"
 #import "UAConfig.h"
 
-@interface UAWhitelistTest : XCTestCase
+@interface UAWhitelistTest : UABaseTest
 
 @property(nonatomic, strong) UAWhitelist *whitelist;
 

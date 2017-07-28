@@ -1,14 +1,14 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
+#import "UABaseTest.h"
 #import <objc/runtime.h>
 #import <UserNotifications/UserNotifications.h>
 #import "UAAutoIntegration+Internal.h"
 #import "UAAppIntegration.h"
 #import "UAAppIntegration+Internal.h"
 
-@interface UAAutoIntegrationTest : XCTestCase
+@interface UAAutoIntegrationTest : UABaseTest
+
 @property (nonatomic, strong) id mockAppIntegration;
 @property (nonatomic, strong) id delegate;
 @property (nonatomic, strong) id mockApplication;
@@ -28,7 +28,7 @@
 
     // Set default OS major version to 10 by default
     self.testOSMajorVersion = 10;
-    self.mockProcessInfo = [OCMockObject niceMockForClass:[NSProcessInfo class]];
+    self.mockProcessInfo = [self mockForClass:[NSProcessInfo class]];
     [[[self.mockProcessInfo stub] andReturn:self.mockProcessInfo] processInfo];
 
     [[[[self.mockProcessInfo stub] andDo:^(NSInvocation *invocation) {
@@ -39,7 +39,7 @@
         [invocation setReturnValue:&result];
     }] ignoringNonObjectArgs] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){0, 0, 0}];
 
-    self.mockAppIntegration = [OCMockObject niceMockForClass:[UAAppIntegration class]];
+    self.mockAppIntegration = [self mockForClass:[UAAppIntegration class]];
 
     // Generate a new class for each test run to avoid test pollution
     self.GeneratedClassForAppDelegate = objc_allocateClassPair([NSObject class], [[NSUUID UUID].UUIDString UTF8String], 0);
@@ -47,21 +47,16 @@
 
     self.delegate = [[self.GeneratedClassForAppDelegate alloc] init];
 
-    self.mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    self.mockApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
     [[[self.mockApplication stub] andReturn:self.delegate] delegate];
     [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
-    self.mockUserNotificationCenter = [OCMockObject niceMockForClass:[UNUserNotificationCenter class]];
+    self.mockUserNotificationCenter = [self mockForClass:[UNUserNotificationCenter class]];
     [[[self.mockUserNotificationCenter stub] andReturn:self.mockUserNotificationCenter] currentNotificationCenter];
 }
 
 - (void)tearDown {
-    [self.mockAppIntegration stopMocking];
-    [self.mockApplication stopMocking];
-    [self.mockUserNotificationCenter stopMocking];
-    [self.mockProcessInfo stopMocking];
-
     [UAAutoIntegration reset];
 
     self.delegate = nil;
@@ -621,7 +616,7 @@
     
     XCTestExpectation *callBackFinished = [self expectationWithDescription:@"Notification Center delegate callback called"];
     
-    id mockUNNotification = [OCMockObject partialMockForObject:[UNNotification new]];
+    id mockUNNotification = [self partialMockForObject:[UNNotification new]];
     [mockUNNotification setValue:[NSDate date] forKey:@"date"];
     
     UNNotificationPresentationOptions expectedOptions = UNNotificationPresentationOptionBadge;
@@ -702,7 +697,7 @@
     XCTestExpectation *callBackFinished = [self expectationWithDescription:@"Notification Centert delegate callback called"];
     
     NSString *actionIdentifier = @"test-action";
-    id mockUNNotificationResponse = [OCMockObject partialMockForObject:[UNNotificationResponse new]];
+    id mockUNNotificationResponse = [self partialMockForObject:[UNNotificationResponse new]];
     [mockUNNotificationResponse setValue:actionIdentifier forKey:@"actionIdentifier"];
     
     // Add implementation to the app delegate

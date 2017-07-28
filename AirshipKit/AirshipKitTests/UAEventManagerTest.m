@@ -1,7 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
+#import "UABaseTest.h"
 
 #import "UAEventManager+Internal.h"
 #import "UAEventStore+Internal.h"
@@ -29,7 +28,7 @@
 @implementation UAEventTestData
 @end
 
-@interface UAEventManagerTest : XCTestCase
+@interface UAEventManagerTest : UABaseTest
 @property (nonatomic, strong) UAEventManager *eventManager;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
@@ -47,13 +46,13 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockClient = [OCMockObject niceMockForClass:[UAEventAPIClient class]];
-    self.mockStore = [OCMockObject niceMockForClass:[UAEventStore class]];
-    self.mockQueue = [OCMockObject niceMockForClass:[NSOperationQueue class]];
+    self.mockClient = [self mockForClass:[UAEventAPIClient class]];
+    self.mockStore = [self mockForClass:[UAEventStore class]];
+    self.mockQueue = [self mockForClass:[NSOperationQueue class]];
 
-    self.mockPush = [OCMockObject niceMockForClass:[UAPush class]];
+    self.mockPush = [self mockForClass:[UAPush class]];
 
-    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    self.mockAirship = [self mockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.mockPush] push];
 
@@ -66,7 +65,7 @@
                                                          queue:self.mockQueue];
 
     // Set up a mocked application
-    self.mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    self.mockApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
 }
 

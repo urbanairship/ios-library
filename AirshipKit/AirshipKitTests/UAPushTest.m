@@ -1,8 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
-#import <OCMock/OCMConstraint.h>
+#import "UABaseTest.h"
 #import "UAPush+Internal.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
@@ -47,7 +45,7 @@
 
 @end
 
-@interface UAPushTest : XCTestCase
+@interface UAPushTest : UABaseTest
 @property (nonatomic, strong) id mockedApplication;
 @property (nonatomic, strong) id mockedChannelRegistrar;
 @property (nonatomic, strong) id mockedAirship;
@@ -89,7 +87,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     assert([self.validAPNSDeviceToken length] <= 32);
 
     self.testOSMajorVersion = 8;
-    self.mockProcessInfo = [OCMockObject niceMockForClass:[NSProcessInfo class]];
+    self.mockProcessInfo = [self mockForClass:[NSProcessInfo class]];
     [[[self.mockProcessInfo stub] andReturn:self.mockProcessInfo] processInfo];
 
     [[[[self.mockProcessInfo stub] andDo:^(NSInvocation *invocation) {
@@ -130,49 +128,49 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
                                };
 
     // Mock the nested apple types with unavailable init methods
-    self.mockedUNNotification = [OCMockObject niceMockForClass:[UNNotification class]];
+    self.mockedUNNotification = [self mockForClass:[UNNotification class]];
 
     // Set up a mocked application
-    self.mockedApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    self.mockedApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
 
     // Set up mocked UIUserNotificationSettings
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    self.mockUIUserNotificationSettings = [OCMockObject niceMockForClass:[UIUserNotificationSettings class]];
+    self.mockUIUserNotificationSettings = [self mockForClass:[UIUserNotificationSettings class]];
 #pragma GCC diagnostic pop
 
     // Set up a mocked device api client
-    self.mockedChannelRegistrar = [OCMockObject niceMockForClass:[UAChannelRegistrar class]];
+    self.mockedChannelRegistrar = [self mockForClass:[UAChannelRegistrar class]];
     self.push.channelRegistrar.delegate = nil;
     self.push.channelRegistrar = self.mockedChannelRegistrar;
 
-    self.mockedAnalytics = [OCMockObject niceMockForClass:[UAAnalytics class]];
+    self.mockedAnalytics = [self mockForClass:[UAAnalytics class]];
 
-    self.mockedAirship =[OCMockObject niceMockForClass:[UAirship class]];
+    self.mockedAirship =[self mockForClass:[UAirship class]];
     [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
     [[[self.mockedAirship stub] andReturn:self.mockedAnalytics] analytics];
     [[[self.mockedAirship stub] andReturn:self.dataStore] dataStore];
 
-    self.mockedPushDelegate = [OCMockObject niceMockForProtocol:@protocol(UAPushNotificationDelegate)];
+    self.mockedPushDelegate = [self mockForProtocol:@protocol(UAPushNotificationDelegate)];
     self.push.pushNotificationDelegate = self.mockedPushDelegate;
 
-    self.mockRegistrationDelegate = [OCMockObject niceMockForProtocol:@protocol(UARegistrationDelegate)];
+    self.mockRegistrationDelegate = [self mockForProtocol:@protocol(UARegistrationDelegate)];
 
-    self.mockActionRunner = [OCMockObject mockForClass:[UAActionRunner class]];
+    self.mockActionRunner = [self strictMockForClass:[UAActionRunner class]];
 
-    self.mockUAUtils = [OCMockObject niceMockForClass:[UAUtils class]];
+    self.mockUAUtils = [self mockForClass:[UAUtils class]];
     [[[self.mockUAUtils stub] andReturn:@"someDeviceID"] deviceID];
 
-    self.mockUAUser = [OCMockObject niceMockForClass:[UAUser class]];
+    self.mockUAUser = [self mockForClass:[UAUser class]];
     [[[self.mockedAirship stub] andReturn:self.mockUAUser] inboxUser];
     [[[self.mockUAUser stub] andReturn:@"someUser"] username];
 
-    self.mockDefaultNotificationCategories = [OCMockObject niceMockForClass:[UANotificationCategories class]];
+    self.mockDefaultNotificationCategories = [self mockForClass:[UANotificationCategories class]];
 
     self.push.registrationDelegate = self.mockRegistrationDelegate;
 
-    self.mockTagGroupsAPIClient = [OCMockObject niceMockForClass:[UATagGroupsAPIClient class]];
+    self.mockTagGroupsAPIClient = [self mockForClass:[UATagGroupsAPIClient class]];
     self.push.tagGroupsAPIClient = self.mockTagGroupsAPIClient;
 }
 
@@ -1092,7 +1090,7 @@ void (^updateChannelTagsFailureDoBlock)(NSInvocation *);
     XCTAssertFalse(self.push.channelCreationEnabled);
 
     // Mock the datastore to populate a mock channel location and channel id in UAPush init
-    id mockDataStore = [OCMockObject niceMockForClass:[UAPreferenceDataStore class]];
+    id mockDataStore = [self mockForClass:[UAPreferenceDataStore class]];
     [[[mockDataStore stub] andReturn:@"someChannelLocation"] stringForKey:UAPushChannelLocationKey];
     [[[mockDataStore stub] andReturn:@"someChannelID"] stringForKey:UAPushChannelIDKey];
 

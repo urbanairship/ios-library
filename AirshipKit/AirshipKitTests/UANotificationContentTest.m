@@ -1,11 +1,10 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
+#import "UABaseTest.h"
 #import "UANotificationContent.h"
 #import <UserNotifications/UserNotifications.h>
 
-@interface UANotificationContentTest : XCTestCase
+@interface UANotificationContentTest : UABaseTest
 
 @property (nonatomic, strong) id mockedUNNotification;
 @property (nonatomic, strong) NSDictionary *notification;
@@ -20,7 +19,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockedUNNotification = [OCMockObject niceMockForClass:[UNNotification class]];
+    self.mockedUNNotification = [self mockForClass:[UNNotification class]];
 
     self.testKey = nil;
     self.testValue = nil;
@@ -55,7 +54,6 @@
 }
 
 - (void)tearDown {
-
     [self.mockedUNNotification stopMocking];
 
     [super tearDown];

@@ -1,12 +1,11 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
-
+#import "UABaseTest.h"
 #import "UAJSONMatcher.h"
 #import "UAJSONValueMatcher.h"
 #import "UAJSONPredicate.h"
 
-@interface UAJSONPredicateTests : XCTestCase
+@interface UAJSONPredicateTests : UABaseTest
 @property (nonatomic, strong) UAJSONMatcher *fooMatcher;
 @property (nonatomic, strong) UAJSONMatcher *storyMatcher;
 @property (nonatomic, strong) UAJSONMatcher *stringMatcher;
@@ -22,10 +21,6 @@
     self.fooMatcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWhereStringEquals:@"bar"] key:@"foo"];
     self.storyMatcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWhereStringEquals:@"story"] key:@"cool"];
     self.stringMatcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWhereStringEquals:@"cool"]];
-}
-
-- (void)tearDown {
-    [super tearDown];
 }
 
 - (void)testJSONMatcherPredicate {

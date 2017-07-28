@@ -1,13 +1,12 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
+#import "UABaseTest.h"
 #import "UALocation+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAAnalytics.h"
 #import "UALocationEvent.h"
 
-@interface UALocationTest : XCTestCase
+@interface UALocationTest : UABaseTest
 
 @property (nonatomic, strong) UALocation *location;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
@@ -24,16 +23,16 @@
     [super setUp];
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"UALocationTest."];
 
-    self.mockedApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    self.mockedApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
 
-    self.mockAnalytics = [OCMockObject niceMockForClass:[UAAnalytics class]];
-    self.mockLocationManager = [OCMockObject niceMockForClass:[CLLocationManager class]];
+    self.mockAnalytics = [self mockForClass:[UAAnalytics class]];
+    self.mockLocationManager = [self mockForClass:[CLLocationManager class]];
 
     self.location = [UALocation locationWithAnalytics:self.mockAnalytics dataStore:self.dataStore];
     self.location.locationManager = self.mockLocationManager;
 
-    self.mockedBundle = [OCMockObject niceMockForClass:[NSBundle class]];
+    self.mockedBundle = [self mockForClass:[NSBundle class]];
     [[[self.mockedBundle stub] andReturn:self.mockedBundle] mainBundle];
     [[[self.mockedBundle stub] andReturn:@"Always"] objectForInfoDictionaryKey:@"NSLocationAlwaysUsageDescription"];
 }

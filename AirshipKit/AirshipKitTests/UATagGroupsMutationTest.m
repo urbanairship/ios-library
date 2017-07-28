@@ -1,25 +1,15 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import <UIKit/UIKit.h>
-#import <OCMOCK/OCMock.h>
-
 #import "UATagGroupsMutation+Internal.h"
 
-@interface UATagGroupsMutationTest : XCTestCase
+@interface UATagGroupsMutationTest : UABaseTest
 
 @end
 
 @implementation UATagGroupsMutationTest
-
-- (void)setUp {
-    [super setUp];
-}
-
-- (void)tearDown {
-    [super tearDown];
-}
 
 - (void)testAddTagsMutation {
     UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"tag2", @"tag2", @"tag1"] group:@"group"];

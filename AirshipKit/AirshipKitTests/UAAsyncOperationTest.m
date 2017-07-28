@@ -1,9 +1,9 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAAsyncOperation+Internal.h"
 
-@interface UAAsyncOperationTest : XCTestCase
+@interface UAAsyncOperationTest : UABaseTest
 @property (nonatomic, strong) NSOperationQueue *queue;
 @end
 

@@ -1,29 +1,21 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UARegionEvent+Internal.h"
 #import "UAEvent+Internal.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
-#import <OCMock/OCMock.h>
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAProximityRegion+Internal.h"
 #import "UACircularRegion+Internal.h"
 
-@interface UARegionEventTest : XCTestCase
+@interface UARegionEventTest : UABaseTest
 @property (nonatomic, strong) id analytics;
 @property (nonatomic, strong) id airship;
 @end
 
 @implementation UARegionEventTest
 
-- (void)setUp {
-    [super setUp];
-}
-
-- (void)tearDown {
-    [super tearDown];
-}
 
 /**
  * Test region event data directly.

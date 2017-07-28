@@ -1,14 +1,10 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
-#import <OCMock/OCMConstraint.h>
-#import <OCMock/OCMock.h>
-#import <OCMock/OCMConstraint.h>
+#import "UABaseTest.h"
 #import "UAAPNSRegistration+Internal.h"
 #import "UANotificationCategory.h"
 
-@interface UAAPNSRegistrationTest : XCTestCase
+@interface UAAPNSRegistrationTest : UABaseTest
 
 @property (nonatomic, strong) id mockedApplication;
 @property (nonatomic, strong) id mockedUserNotificationCenter;
@@ -23,11 +19,11 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockedUserNotificationCenter = [OCMockObject niceMockForClass:[UNUserNotificationCenter class]];
+    self.mockedUserNotificationCenter = [self mockForClass:[UNUserNotificationCenter class]];
     [[[self.mockedUserNotificationCenter stub] andReturn:self.mockedUserNotificationCenter] currentNotificationCenter];
 
     // Set up a mocked application
-    self.mockedApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    self.mockedApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
 
     // Create APNS registration object
@@ -42,12 +38,11 @@
 }
 
 - (void)tearDown {
-    [super tearDown];
-
     [self.mockedApplication stopMocking];
     [self.mockedUserNotificationCenter stopMocking];
 
     self.pushRegistration = nil;
+    [super tearDown];
 }
 
 -(void)testUpdateRegistrationSetsCategories {
@@ -99,7 +94,7 @@
     UANotificationOptions expectedOptions =  UANotificationOptionAlert | UANotificationOptionBadge | UANotificationOptionSound | UANotificationOptionCarPlay;
 
     // Mock UNNotificationSettings object to match expected options since we can't initialize one
-    id mockNotificationSettings = [OCMockObject niceMockForClass:[UNNotificationSettings class]];
+    id mockNotificationSettings = [self mockForClass:[UNNotificationSettings class]];
     [[[mockNotificationSettings stub] andReturnValue:OCMOCK_VALUE(UNAuthorizationStatusAuthorized)] authorizationStatus];
     [[[mockNotificationSettings stub] andReturnValue:OCMOCK_VALUE(UNNotificationSettingEnabled)] alertSetting];
     [[[mockNotificationSettings stub] andReturnValue:OCMOCK_VALUE(UNNotificationSettingEnabled)] soundSetting];

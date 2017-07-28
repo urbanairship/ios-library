@@ -1,9 +1,9 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UALocationEvent.h"
 
-@interface UALocationEventTest : XCTestCase
+@interface UALocationEventTest : UABaseTest
 @property (nonatomic, strong) CLLocation *location;
 @end
 

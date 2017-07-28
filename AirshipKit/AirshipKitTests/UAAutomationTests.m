@@ -1,9 +1,8 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <OCMock/OCMock.h>
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAAutomation+Internal.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UAActionRegistry.h"
 #import "UARegionEvent.h"
 #import "UACustomEvent.h"
@@ -14,7 +13,7 @@
 #import "UAScheduleDelay.h"
 #import "UAActionScheduleData+Internal.h"
 
-@interface UAAutomationTests : XCTestCase
+@interface UAAutomationTests : UABaseTest
 @property (nonatomic, strong) UAAutomation *automation;
 @property (nonatomic, strong) UAActionRegistry *actionRegistry;
 @property (nonatomic, strong) id mockedAirship;
@@ -39,20 +38,21 @@
     self.actionRegistry = [UAActionRegistry defaultRegistry];
 
     // Mock Airship
-    self.mockedAirship = [OCMockObject niceMockForClass:[UAirship class]];
-    [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
+    self.mockedAirship = [self mockForClass:[UAirship class]];
     [[[self.mockedAirship stub] andReturn:self.actionRegistry] actionRegistry];
+    [UAirship setSharedAirship:self.mockedAirship];
 
     // Set up a mocked application
-    self.mockedApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    self.mockedApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
+
 }
 
 - (void)tearDown {
-    [self.mockedAirship stopMocking];
     [self.mockedApplication stopMocking];
     [self.preferenceDataStore removeAll];
     self.automation = nil;
+
     [super tearDown];
 }
 
@@ -390,7 +390,7 @@
     [self waitForExpectationsWithTimeout:5 handler:nil];
 
     // Mock the date to return the futureDate + 1 second for date
-    id mockedDate = [OCMockObject niceMockForClass:[NSDate class]];
+    id mockedDate = [self mockForClass:[NSDate class]];
     [[[mockedDate stub] andReturn:[futureDate dateByAddingTimeInterval:1]] date];
 
     // Verify getScheduleWithIdentifier:completionHandler: does not return the expired schedule
@@ -438,7 +438,7 @@
     [self waitForExpectationsWithTimeout:5 handler:nil];
 
     // Mock the date to return the futureDate + 1 second for date
-    id mockedDate = [OCMockObject niceMockForClass:[NSDate class]];
+    id mockedDate = [self mockForClass:[NSDate class]];
     [[[mockedDate stub] andReturn:[futureDate dateByAddingTimeInterval:1]] date];
 
     // Schedule more actions
@@ -623,7 +623,6 @@
 }
 
 - (void)testSecondsDelay {
-
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
     UAScheduleDelay *delay = [UAScheduleDelay delayWithBuilderBlock:^(UAScheduleDelayBuilder * builder) {
@@ -740,7 +739,10 @@
     }];
 
 
-    [self.automation scheduleActions:scheduleInfo completionHandler:nil];
+    __block NSString *scheduleId;
+    [self.automation scheduleActions:scheduleInfo completionHandler:^(UAActionSchedule *schedule) {
+        scheduleId = schedule.identifier;
+    }];
 
     // Trigger the scheduled actions
     UACustomEvent *purchase = [UACustomEvent eventWithName:@"purchase"];
@@ -753,6 +755,14 @@
     fulfillmentBlock();
 
     // Wait for the action to fire
+    [self waitForExpectationsWithTimeout:5 handler:nil];
+
+    // Verify the schedule is deleted
+    XCTestExpectation *fetchExpectation = [self expectationWithDescription:@"schedule fetched"];
+    [self.automation getScheduleWithIdentifier:scheduleId completionHandler:^(UAActionSchedule *schedule) {
+        XCTAssertNil(schedule);
+        [fetchExpectation fulfill];
+    }];
     [self waitForExpectationsWithTimeout:5 handler:nil];
 }
 
@@ -789,18 +799,30 @@
         builder.triggers = @[trigger];
         builder.start = startDate;
     }];
-    [self.automation scheduleActions:scheduleInfo completionHandler:nil];
+
+    __block NSString *scheduleId;
+    [self.automation scheduleActions:scheduleInfo completionHandler:^(UAActionSchedule *schedule) {
+        scheduleId = schedule.identifier;
+    }];
 
     // Trigger the action, should not trigger any actions
     triggerFireBlock();
 
     // Mock the date to return the futureDate + 1 second for date
-    id mockedDate = [OCMockObject niceMockForClass:[NSDate class]];
+    id mockedDate = [self mockForClass:[NSDate class]];
     [[[mockedDate stub] andReturn:[startDate dateByAddingTimeInterval:1]] date];
 
     // Trigger the actions now that its past the start
     triggerFireBlock();
 
+    [self waitForExpectationsWithTimeout:5 handler:nil];
+
+    // Verify the schedule is deleted
+    XCTestExpectation *fetchExpectation = [self expectationWithDescription:@"schedule fetched"];
+    [self.automation getScheduleWithIdentifier:scheduleId completionHandler:^(UAActionSchedule *schedule) {
+        XCTAssertNil(schedule);
+        [fetchExpectation fulfill];
+    }];
     [self waitForExpectationsWithTimeout:5 handler:nil];
 }
 @end

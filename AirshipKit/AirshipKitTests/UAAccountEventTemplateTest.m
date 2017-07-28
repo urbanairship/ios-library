@@ -1,13 +1,12 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAAccountEventTemplate.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UACustomEvent.h"
-#import <OCMock/OCMock.h>
 
-@interface UAAccountEventTemplateTest : XCTestCase
+@interface UAAccountEventTemplateTest : UABaseTest
 @property (nonatomic, strong) id analytics;
 @property (nonatomic, strong) id airship;
 @end
@@ -15,12 +14,11 @@
 @implementation UAAccountEventTemplateTest
 
 - (void)setUp {
-    self.analytics = [OCMockObject niceMockForClass:[UAAnalytics class]];
-    self.airship = [OCMockObject mockForClass:[UAirship class]];
+    [super setUp];
+    self.analytics = [self mockForClass:[UAAnalytics class]];
+    self.airship = [self strictMockForClass:[UAirship class]];
     [[[self.airship stub] andReturn:self.airship] shared];
     [[[self.airship stub] andReturn:self.analytics] analytics];
-
-    [super setUp];
 }
 
 - (void)tearDown {

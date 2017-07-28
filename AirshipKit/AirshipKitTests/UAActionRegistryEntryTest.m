@@ -1,10 +1,10 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAActionRegistryEntry.h"
 #import "UALandingPageAction.h"
 
-@interface UAActionRegistryEntryTest : XCTestCase
+@interface UAActionRegistryEntryTest : UABaseTest
 
 @end
 
