@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 #import "UAKeychainUtils+Internal.h"
-#import <OCMock/OCMock.h>
 
 @interface UAKeyChainUtilTest : UABaseTest
 @property id mockBundle;

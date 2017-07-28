@@ -2,7 +2,6 @@
 
 
 #import "UABaseTest.h"
-#import <OCMock/OCMock.h>
 #import "UAOverlayInboxMessageAction.h"
 #import "UAActionArguments+Internal.h"
 #import "UAirship.h"

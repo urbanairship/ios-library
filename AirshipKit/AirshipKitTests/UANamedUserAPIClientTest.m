@@ -1,7 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UABaseTest.h"
-#import <OCMOCK/OCMock.h>
 #import "UAConfig.h"
 #import "UANamedUserAPIClient+Internal.h"
 #import "UAirship.h"

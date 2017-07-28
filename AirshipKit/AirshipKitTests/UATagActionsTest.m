@@ -1,8 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UABaseTest.h"
-#import <OCMock/OCMock.h>
-
 #import "UAAction+Internal.h"
 #import "UAAddTagsAction.h"
 #import "UARemoveTagsAction.h"

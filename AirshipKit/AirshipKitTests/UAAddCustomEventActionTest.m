@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
+
 #import "UABaseTest.h"
-#import <OCMock/OCMock.h>
 #import "UAanalytics.h"
 #import "UAirship.h"
 #import "UAAddCustomEventAction.h"
@@ -18,14 +18,14 @@
 @implementation UAAddCustomEventActionTest
 
 - (void)setUp {
+    [super setUp];
+
     self.analytics = [self mockForClass:[UAAnalytics class]];
     self.airship = [self strictMockForClass:[UAirship class]];
     [[[self.airship stub] andReturn:self.airship] shared];
     [[[self.airship stub] andReturn:self.analytics] analytics];
 
     self.action = [[UAAddCustomEventAction alloc] init];
-
-    [super setUp];
 }
 
 - (void)tearDown {

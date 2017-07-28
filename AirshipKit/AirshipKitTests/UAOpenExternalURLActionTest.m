@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 #import "UAOpenExternalURLAction.h"
-#import <OCMock/OCMock.h>
 #import "UAAction+Operators.h"
 #import "UAActionArguments+Internal.h"
 

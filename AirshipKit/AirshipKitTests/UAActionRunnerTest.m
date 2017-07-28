@@ -4,7 +4,6 @@
 #import "UAAction.h"
 #import "UAActionRunner+Internal.h"
 #import "UAActionRegistry.h"
-#import <OCMock/OCMock.h>
 #import "UAirship.h"
 
 @interface UAActionRunnerTest : UABaseTest

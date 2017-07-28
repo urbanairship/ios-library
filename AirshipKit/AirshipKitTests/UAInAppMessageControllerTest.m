@@ -2,7 +2,6 @@
 
 #import <UIKit/UIKit.h>
 #import "UABaseTest.h"
-#import <OCMock/OCMock.h>
 
 #import "UABaseTest.h"
 #import "UAInAppMessageController+Internal.h"

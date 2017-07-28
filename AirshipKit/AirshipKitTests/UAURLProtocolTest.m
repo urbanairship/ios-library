@@ -1,8 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UABaseTest.h"
-#import <OCMock/OCMock.h>
-
 #import "UAURLProtocol.h"
 
 @interface UAURLProtocolTest : UABaseTest

@@ -1,7 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UABaseTest.h"
-#import <OCMock/OCMock.h>
 #import "UALandingPageAction.h"
 #import "UAURLProtocol.h"
 #import "UALandingPageOverlayController.h"

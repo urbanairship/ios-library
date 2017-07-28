@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 #import <StoreKit/StoreKit.h>
-#import <OCMock/OCMock.h>
 #import "UAAction+Internal.h"
 #import "UAirship.h"
 #import "UAConfig.h"

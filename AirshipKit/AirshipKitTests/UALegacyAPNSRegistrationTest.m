@@ -1,8 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UABaseTest.h"
-#import <OCMock/OCMock.h>
-#import <OCMock/OCMConstraint.h>
 #import "UALegacyAPNSRegistration+Internal.h"
 #import "UANotificationCategory.h"
 
@@ -36,9 +34,8 @@
 
 
 - (void)tearDown {
-    [super tearDown];
-
     [self.mockedApplication stopMocking];
+    [super tearDown];
 }
 
 

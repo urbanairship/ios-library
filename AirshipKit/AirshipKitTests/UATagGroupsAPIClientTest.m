@@ -3,7 +3,6 @@
 
 #import "UABaseTest.h"
 #import <UIKit/UIKit.h>
-#import <OCMOCK/OCMock.h>
 
 #import "UAConfig.h"
 #import "UATagGroupsAPIClient+Internal.h"

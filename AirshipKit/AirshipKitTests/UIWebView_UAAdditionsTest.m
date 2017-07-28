@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 #import "UIWebView+UAAdditions.h"
-#import <OCMock/OCMock.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import "UAirship.h"
 #import "UAConfig.h"
@@ -30,9 +29,8 @@
 }
 
 - (void)tearDown {
-    [super tearDown];
-
     [self.mockWebView stopMocking];
+    [super tearDown];
 }
 
 /**

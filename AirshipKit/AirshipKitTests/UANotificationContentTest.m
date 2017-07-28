@@ -1,7 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UABaseTest.h"
-#import <OCMock/OCMock.h>
 #import "UANotificationContent.h"
 #import <UserNotifications/UserNotifications.h>
 
@@ -55,7 +54,6 @@
 }
 
 - (void)tearDown {
-
     [self.mockedUNNotification stopMocking];
 
     [super tearDown];

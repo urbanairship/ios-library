@@ -2,7 +2,6 @@
 
 #import <UIKit/UIKit.h>
 #import "UABaseTest.h"
-#import <OCMock/OCMock.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 
 #import "UAWebViewDelegate.h"

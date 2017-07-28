@@ -9,19 +9,12 @@
 
 @implementation UABaseTest
 
-- (void)setUp {
-    [super setUp];
-}
-
 - (void)tearDown {
     for (id mock in self.mocks) {
         [mock stopMocking];
     }
     self.mocks = nil;
-
     [UAirship land];
-    [UAirship setSharedAirship:nil];
-
     [super tearDown];
 }
 

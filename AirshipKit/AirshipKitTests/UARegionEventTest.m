@@ -5,7 +5,6 @@
 #import "UAEvent+Internal.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
-#import <OCMock/OCMock.h>
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAProximityRegion+Internal.h"
 #import "UACircularRegion+Internal.h"
@@ -17,13 +16,6 @@
 
 @implementation UARegionEventTest
 
-- (void)setUp {
-    [super setUp];
-}
-
-- (void)tearDown {
-    [super tearDown];
-}
 
 /**
  * Test region event data directly.

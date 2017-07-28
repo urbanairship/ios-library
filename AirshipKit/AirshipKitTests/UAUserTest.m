@@ -10,9 +10,6 @@
 #import "UAConfig+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 
-#import <OCMock/OCMock.h>
-#import <OCMock/OCMConstraint.h>
-
 @interface UAUserTest : UABaseTest
 @property (nonatomic, strong) UAUser *user;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;

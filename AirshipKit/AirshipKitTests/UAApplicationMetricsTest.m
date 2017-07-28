@@ -3,7 +3,6 @@
 #import "UABaseTest.h"
 #import "UAApplicationMetrics+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import <OCMock/OCMock.h>
 
 @interface UAApplicationMetricsTest : UABaseTest
 @property (nonatomic, strong) UAApplicationMetrics *metrics;
@@ -20,9 +19,8 @@
 }
 
 - (void)tearDown {
-    [super tearDown];
-
     [self.mockDataStore stopMocking];
+    [super tearDown];
 }
 
 - (void)testApplicationActive {

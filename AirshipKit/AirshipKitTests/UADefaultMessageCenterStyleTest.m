@@ -1,7 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UABaseTest.h"
-#import <OCMock/OCMock.h>
 
 #import "UAirship.h"
 #import "UADefaultMessageCenter.h"
@@ -17,6 +16,8 @@
 @implementation UADefaultMessageCenterStyleTest
 
 - (void)setUp {
+    [super setUp];
+    
     self.mockBundle = [self mockForClass:[NSBundle class]];
     //[[[self.mockBundle stub] andReturn:self.mockBundle] mainBundle];
     // Return class bundle instead of main bundle for tests
@@ -25,6 +26,7 @@
 
 - (void)tearDown {
     [self.mockBundle stopMocking];
+    [super tearDown];
 }
 
 // Just compare initial values to final value and return

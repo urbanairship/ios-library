@@ -1,8 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UABaseTest.h"
-#import <OCMock/OCMock.h>
-#import <OCMock/OCMConstraint.h>
 #import "UAChannelAPIClient+Internal.h"
 #import "UAChannelRegistrar+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"

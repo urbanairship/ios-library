@@ -1,7 +1,6 @@
 
 #import <UIKit/UIKit.h>
 #import "UABaseTest.h"
-#import <OCMock/OCMock.h>
 #import "UAirship.h"
 #import "UAConfig.h"
 
@@ -10,13 +9,6 @@
 
 @implementation UAirshipTest
 
-- (void)setUp {
-    [super setUp];
-}
-
-- (void)tearDown {
-    [super tearDown];
-}
 
 /**
  * Test that if takeOff is called on a background thread that an exception is thrown.
