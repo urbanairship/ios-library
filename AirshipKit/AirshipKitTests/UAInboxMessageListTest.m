@@ -43,7 +43,7 @@ static UAUser *mockUser_ = nil;
 
     self.mockInboxAPIClient = [self mockForClass:[UAInboxAPIClient class]];
 
-    self.mockMessageListNotificationObserver = [OCMockObject mockForProtocol:@protocol(UAInboxMessageListMockNotificationObserver)];
+    self.mockMessageListNotificationObserver = [self mockForProtocol:@protocol(UAInboxMessageListMockNotificationObserver)];
 
     //order is important with these events, so we should be explicit about it
     [self.mockMessageListNotificationObserver setExpectationOrderMatters:YES];
