@@ -10,6 +10,8 @@
 		999265421F30DEB90069B4A9 /* PushHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99FCD08D1F2FD4810071109C /* PushHandler.swift */; };
 		99A566F21F3128ED00E98822 /* PushClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99A566F11F3128ED00E98822 /* PushClient.swift */; };
 		99A566F31F3128ED00E98822 /* PushClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99A566F11F3128ED00E98822 /* PushClient.swift */; };
+		99A566F51F323EA100E98822 /* RegistrationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99A566F41F323EA100E98822 /* RegistrationDelegate.swift */; };
+		99A566F61F323EA100E98822 /* RegistrationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99A566F41F323EA100E98822 /* RegistrationDelegate.swift */; };
 		99C619701F2FF3F100C874D6 /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 99C619651F2FF3AA00C874D6 /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		99C619741F2FF5E000C874D6 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 99C619731F2FF59100C874D6 /* AirshipConfig.plist */; };
 		99C6197F1F2FFBD400C874D6 /* PushTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C6197E1F2FFBD400C874D6 /* PushTests.swift */; };
@@ -102,7 +104,8 @@
 		5323FB845AE718EDDB9A2DCD /* Pods-TestShipTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestShipTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-TestShipTests/Pods-TestShipTests.release.xcconfig"; sourceTree = "<group>"; };
 		6655D05269D2F26C2E46DB4B /* Pods_TestShip.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TestShip.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		99A566DE1F30F34D00E98822 /* TestShip.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TestShip.entitlements; sourceTree = "<group>"; };
-		99A566F11F3128ED00E98822 /* PushClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushClient.swift; sourceTree = "<group>"; };
+		99A566F11F3128ED00E98822 /* PushClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PushClient.swift; path = ../TestShip/PushClient.swift; sourceTree = "<group>"; };
+		99A566F41F323EA100E98822 /* RegistrationDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegistrationDelegate.swift; sourceTree = "<group>"; };
 		99C619081F2FE1BC00C874D6 /* AirshipKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AirshipKit.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Airship-cxkgdlxkqhubwoajtdtkykbwzdmu/Build/Products/Debug-iphoneos/AirshipKit.framework"; sourceTree = "<group>"; };
 		99C6195A1F2FF3AA00C874D6 /* AirshipKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipKit.xcodeproj; path = ../AirshipKit/AirshipKit.xcodeproj; sourceTree = "<group>"; };
 		99C619731F2FF59100C874D6 /* AirshipConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = AirshipConfig.plist; sourceTree = SOURCE_ROOT; };
@@ -116,7 +119,7 @@
 		99EAB9E41F2FB15F0068B841 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		99EAB9E71F2FB15F0068B841 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		99EAB9E91F2FB15F0068B841 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		99FCD08D1F2FD4810071109C /* PushHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushHandler.swift; sourceTree = "<group>"; };
+		99FCD08D1F2FD4810071109C /* PushHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PushHandler.swift; path = ../TestShip/PushHandler.swift; sourceTree = "<group>"; };
 		99FCD0951F2FD4DB0071109C /* InboxDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxDelegate.swift; sourceTree = "<group>"; };
 		99FCD0971F2FD56C0071109C /* MessageCenterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -167,6 +170,9 @@
 			isa = PBXGroup;
 			children = (
 				99C6197E1F2FFBD400C874D6 /* PushTests.swift */,
+				99FCD08D1F2FD4810071109C /* PushHandler.swift */,
+				99A566F11F3128ED00E98822 /* PushClient.swift */,
+				99A566F41F323EA100E98822 /* RegistrationDelegate.swift */,
 				99C619801F2FFBD400C874D6 /* Info.plist */,
 			);
 			path = TestShipTests;
@@ -200,8 +206,6 @@
 				99EAB9DD1F2FB15F0068B841 /* AppDelegate.swift */,
 				99EAB9DF1F2FB15F0068B841 /* ViewController.swift */,
 				99FCD0951F2FD4DB0071109C /* InboxDelegate.swift */,
-				99A566F11F3128ED00E98822 /* PushClient.swift */,
-				99FCD08D1F2FD4810071109C /* PushHandler.swift */,
 				99FCD0971F2FD56C0071109C /* MessageCenterViewController.swift */,
 				99EAB9E11F2FB15F0068B841 /* Main.storyboard */,
 				99EAB9E41F2FB15F0068B841 /* Assets.xcassets */,
@@ -277,7 +281,7 @@
 					99C6197B1F2FFBD400C874D6 = {
 						CreatedOnToolsVersion = 9.0;
 						DevelopmentTeam = PGJV57GD94;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						TestTargetID = 99EAB9D91F2FB15F0068B841;
 					};
 					99EAB9D91F2FB15F0068B841 = {
@@ -440,6 +444,7 @@
 				999265421F30DEB90069B4A9 /* PushHandler.swift in Sources */,
 				99C6197F1F2FFBD400C874D6 /* PushTests.swift in Sources */,
 				99A566F31F3128ED00E98822 /* PushClient.swift in Sources */,
+				99A566F61F323EA100E98822 /* RegistrationDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -448,6 +453,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				99EAB9E01F2FB15F0068B841 /* ViewController.swift in Sources */,
+				99A566F51F323EA100E98822 /* RegistrationDelegate.swift in Sources */,
 				99FCD0961F2FD4DB0071109C /* InboxDelegate.swift in Sources */,
 				99A566F21F3128ED00E98822 /* PushClient.swift in Sources */,
 				99FCD08E1F2FD4810071109C /* PushHandler.swift in Sources */,
@@ -503,11 +509,12 @@
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = TestShipTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.testship;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -535,7 +542,7 @@
 				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = TestShipTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.testship;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -650,6 +657,7 @@
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = TestShip/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.testship;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -668,6 +676,7 @@
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = TestShip/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.testship;
 				PRODUCT_NAME = "$(TARGET_NAME)";

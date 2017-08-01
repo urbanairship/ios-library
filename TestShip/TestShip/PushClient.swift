@@ -24,18 +24,17 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
 
 class PushClient: NSObject {
 
-
     let pushEndpoint: String = UAirship.shared().config.deviceAPIURL + "/api/push/"
 
-    func pushToSelf(_ alert: String, soundFile:String?) {
-
-        PushToSelfWithPayload(generatePayload(alert, soundFile: soundFile)!)
-    }
-
-    func PushToSelfWithPayload(_ payload: [String : Any]) {
+    func pushPayload(payload:()->([String : Any]?)) {
         let customConfig: NSDictionary = UAirship.shared().config.customConfig as NSDictionary
         let appKey: String = UAirship.shared().config.appKey!
         var masterSecret: String = "";
+
+        guard let payload = payload() else {
+            print("pushPayload failed because of improperly formed payload")
+            return
+        }
 
         let request = NSMutableURLRequest(url: URL(string: UAirship.shared().config.deviceAPIURL + "/api/push/")!)
 
@@ -54,7 +53,7 @@ class PushClient: NSObject {
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: payload, options:[])
         } catch let error {
-            print("Bleat failed with generate request body with error: \(error)")
+            print("Push failed with generate request body with error: \(error)")
         }
 
         request.httpBody = request.httpBody!
@@ -73,29 +72,7 @@ class PushClient: NSObject {
             }
         }
 
-        // Make the request
         task.resume()
-    }
-
-    func generatePayload (_ alert: String, soundFile: String?) -> [String : Any]? {
-        var payload: [String : Any] = Dictionary(minimumCapacity: 1)
-        var notification: [String : Any] = Dictionary(minimumCapacity: 1)
-
-        guard (UAirship.push().channelID != nil) else {
-            return nil
-        }
-
-        payload["audience"] = ["ios_channel" : UAirship.push().channelID!]
-        payload["device_types"] = ["ios"]
-        notification["alert"] = "\(alert)"
-
-        if (soundFile?.characters.count > 1) {
-            notification["ios"] = ["sound": "\(soundFile!)"]
-        }
-
-        payload["notification"] = notification
-
-        return payload
     }
 }
 

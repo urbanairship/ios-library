@@ -1,0 +1,107 @@
+/* Copyright 2017 Urban Airship and Contributors */
+
+import XCTest
+import KIF
+import AirshipKit
+
+extension XCTestCase {
+    func tester(file : String = #file, _ line : Int = #line) -> KIFUITestActor {
+        return KIFUITestActor(inFile: file, atLine: line, delegate: self)
+    }
+}
+
+extension KIFTestActor {
+    func tester(file : String = #file, _ line : Int = #line) -> KIFUITestActor {
+        return KIFUITestActor(inFile: file, atLine: line, delegate: self)
+    }
+}
+
+class PushTests: KIFTestCase {
+
+    static var pushClient:PushClient = PushClient()
+    static var registrationDelegate:RegistrationDelegate = RegistrationDelegate()
+    static var pushHandler:PushHandler = PushHandler()
+
+    static var testTag:String = UUID().uuidString
+
+    override func beforeAll() {
+        super.beforeAll()
+
+        UAirship.push().registrationDelegate = PushTests.registrationDelegate
+        UAirship.push().pushNotificationDelegate = PushTests.pushHandler
+
+        let expectation:XCTestExpectation = self.expectation(description: "Channel Registered")
+        expectation.assertForOverFulfill = false
+
+        // Set test tag
+        UAirship.push().addTag(PushTests.testTag)
+        UAirship.push().updateRegistration()
+
+        // Wait for channel registration to return successfully
+        PushTests.registrationDelegate.registrationSucceeded = { channelID, deviceToken in
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 30, handler: nil)
+
+        // Wait a little extra for tag to process in UA's backend, no great way of doing this
+        sleep(10)
+    }
+
+    override func afterAll() {
+        super.afterAll()
+
+        // Clean up test tag
+        UAirship.push().removeTag(PushTests.testTag)
+        UAirship.push().updateRegistration()
+    }
+
+    func testPushChannelID() {
+        let expectation:XCTestExpectation = self.expectation(description: "Push Received")
+
+        PushTests.pushHandler.onReceivedForegroundNotification = { notificationContent in
+            expectation.fulfill()
+        }
+
+        PushTests.pushClient.pushPayload(payload: { () -> ([String : Any]?) in
+            var payload:Dictionary<String, Any> = [:]
+            var platform:Dictionary<String, Any> = [:]
+            var notification:Dictionary<String, Any> = [:]
+
+            payload["audience"] = ["ios_channel" : UAirship.push().channelID!]
+            payload["device_types"] = ["ios"]
+            platform["content-available"] = true
+            notification["ios"] = platform
+            payload["notification"] = notification
+
+            return payload
+        })
+
+        waitForExpectations(timeout: 30, handler: nil)
+    }
+
+    func testTagPush() {
+        let expectation:XCTestExpectation = self.expectation(description: "Push Received")
+
+        PushTests.pushHandler.onReceivedForegroundNotification = { notificationContent in
+            expectation.fulfill()
+        }
+
+        PushTests.pushClient.pushPayload(payload: { () -> ([String : Any]?) in
+            var payload:Dictionary<String, Any> = [:]
+            var platform:Dictionary<String, Any> = [:]
+            var notification:Dictionary<String, Any> = [:]
+
+            payload["audience"] = ["tag": PushTests.testTag]
+            payload["device_types"] = ["ios"]
+            platform["content-available"] = true
+            notification["ios"] = platform
+            payload["notification"] = notification
+
+            return payload
+        })
+
+        waitForExpectations(timeout: 30, handler: nil)
+    }
+}
+
