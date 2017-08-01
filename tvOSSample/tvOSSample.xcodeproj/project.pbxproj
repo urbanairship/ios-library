@@ -492,7 +492,7 @@
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = "$(inherited) x86_64 i386";
+				VALID_ARCHS = "$(inherited)";
 			};
 			name = Release;
 		};
@@ -539,6 +539,7 @@
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 10.0;
+				VALID_ARCHS = "$(inherited)";
 			};
 			name = Release;
 		};
