@@ -8,12 +8,23 @@ target 'AirshipKitTests' do
    pod 'XcodeEdit', '~> 1.1'
 end
 
-# remove this when OCMock fixes documentation warning
+target 'TestShipTests' do
+   project 'TestShip/TestShip.xcodeproj'
+   pod 'KIF', :configurations => ['Debug']
+end
+
 post_install do |installer|
     installer.pods_project.targets.each do |target|
-        if target.name == 'OCMock'
+	# remove this when OCMock fixes documentation warning
+	if target.name == 'OCMock'
             target.build_configurations.each do |config|
                 config.build_settings['CLANG_WARN_DOCUMENTATION_COMMENTS'] = 'NO'
+            end
+        end
+	# disable bitcode in KIF by default
+        if target.name == 'KIF'
+            target.build_configurations.each do |config|
+      		config.build_settings['ENABLE_BITCODE'] = 'NO'
             end
         end
     end

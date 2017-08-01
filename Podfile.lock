@@ -1,15 +1,20 @@
 PODS:
+  - KIF (3.5.2):
+    - KIF/Core (= 3.5.2)
+  - KIF/Core (3.5.2)
   - OCMock (3.4)
   - XcodeEdit (1.1.0)
 
 DEPENDENCIES:
+  - KIF
   - OCMock (~> 3.4)
   - XcodeEdit (~> 1.1)
 
 SPEC CHECKSUMS:
+  KIF: f2a6025bb3f11692df675054a134d43a9ec2d7db
   OCMock: 35ae71d6a8fcc1b59434d561d1520b9dd4f15765
   XcodeEdit: dc693a7108bd9938a52d00ad335cc7de0000302f
 
-PODFILE CHECKSUM: b62c980857f0e8b2e8de02e8c40aa2c796575a60
+PODFILE CHECKSUM: 32504e52581ea30ee2ce07ac5b6caddfc002203c
 
 COCOAPODS: 1.2.1
