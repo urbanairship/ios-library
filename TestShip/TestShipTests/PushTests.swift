@@ -40,6 +40,9 @@ class PushTests: KIFTestCase {
     override func beforeAll() {
         super.beforeAll()
 
+        // Set the forward delegate to whatever was previously set
+        PushTests.registrationDelegate.forwardDelegate = UAirship.push().registrationDelegate
+
         UAirship.push().registrationDelegate = PushTests.registrationDelegate
         UAirship.push().pushNotificationDelegate = PushTests.pushHandler
 
