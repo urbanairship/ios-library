@@ -2,30 +2,16 @@
 
 import AirshipKit
 
-fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l < r
-  case (nil, _?):
-    return true
-  default:
-    return false
-  }
-}
-
-fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l > r
-  default:
-    return rhs < lhs
-  }
-}
-
+/*
+ * The Test Ship push client for making test push requests.
+ */
 class PushClient: NSObject {
 
-    let pushEndpoint: String = UAirship.shared().config.deviceAPIURL + "/api/push/"
+    let pushEndpoint: String = "https://go.urbanairship.com/api/push/"
 
+    /*
+     * Makes an HTTP request the push endpoint to send the specified payload.
+     */
     func pushPayload(payload:()->([String : Any]?)) {
         let customConfig: NSDictionary = UAirship.shared().config.customConfig as NSDictionary
         let appKey: String = UAirship.shared().config.appKey!
@@ -36,7 +22,7 @@ class PushClient: NSObject {
             return
         }
 
-        let request = NSMutableURLRequest(url: URL(string: UAirship.shared().config.deviceAPIURL + "/api/push/")!)
+        let request = NSMutableURLRequest(url: URL(string: pushEndpoint)!)
 
         if customConfig.value(forKey: "masterSecret") is String {
             masterSecret = customConfig.value(forKey: "masterSecret") as! String

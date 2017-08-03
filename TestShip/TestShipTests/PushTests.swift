@@ -4,18 +4,31 @@ import XCTest
 import KIF
 import AirshipKit
 
+// Tester is defined as a preprocessor macro in obj-c and requires these extensions in swift
 extension XCTestCase {
     func tester(file : String = #file, _ line : Int = #line) -> KIFUITestActor {
         return KIFUITestActor(inFile: file, atLine: line, delegate: self)
     }
 }
-
 extension KIFTestActor {
     func tester(file : String = #file, _ line : Int = #line) -> KIFUITestActor {
         return KIFUITestActor(inFile: file, atLine: line, delegate: self)
     }
 }
 
+/**
+ * Functional tests to test push notification receipt.
+ *
+ * Note: 
+ * - These tests must be run on a device.
+ * - These tests require a valid master secret to be included in the AirshipConfig.plist.
+ * - This class can only reliably test content-available pushes because responding to the
+ * push authorization prompt is currently not possible.
+ *
+ * Currently testing the following:
+ * - Content-available push to channel
+ * - Content-available push to tag
+ */
 class PushTests: KIFTestCase {
 
     static var pushClient:PushClient = PushClient()
@@ -56,6 +69,7 @@ class PushTests: KIFTestCase {
         UAirship.push().updateRegistration()
     }
 
+    // Tests content-available push to channel ID.
     func testPushChannelID() {
         let expectation:XCTestExpectation = self.expectation(description: "Push Received")
 
@@ -80,6 +94,7 @@ class PushTests: KIFTestCase {
         waitForExpectations(timeout: 30, handler: nil)
     }
 
+    // Tests content-available push to tag.
     func testTagPush() {
         let expectation:XCTestExpectation = self.expectation(description: "Push Received")
 

@@ -4,6 +4,9 @@ import UIKit
 import AVFoundation
 import AirshipKit
 
+/*
+ * The Test Ship push notification delegate.
+ */
 class PushHandler: NSObject, UAPushNotificationDelegate {
 
     var onReceivedForegroundNotification:(_ notificationContent: UANotificationContent)->Void = {_ in }

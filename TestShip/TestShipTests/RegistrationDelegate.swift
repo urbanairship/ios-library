@@ -3,6 +3,9 @@
 import UIKit
 import AirshipKit
 
+/*
+ * The Test Ship registration delegate.
+ */
 class RegistrationDelegate: NSObject, UARegistrationDelegate {
 
     var registrationSucceeded:(_ channelID: String, _ deviceToken: String)->Void = {_ in}
