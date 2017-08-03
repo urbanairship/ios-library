@@ -322,4 +322,34 @@
     XCTAssertFalse([UAUtils isAlertingPush:soundNotification]);
 }
 
+- (void)testEvaluateOnMainThreadWhenOnMainThread {
+    XCTAssertTrue([NSThread isMainThread],@"Tests are expected to run on the main thread");
+    NSNumber *returnValue = @NO;
+    returnValue = [UAUtils evaluateOnMainThread:^id{
+        XCTAssertTrue([NSThread isMainThread],@"should run on the main thread");
+        return @YES;
+    }];
+    
+    XCTAssertTrue([returnValue boolValue]);
+}
+
+- (void)testEvaluateOnMainThreadWhenNotOnMainThread {
+    XCTAssertTrue([NSThread isMainThread],@"Tests are expected to run on the main thread");
+    XCTestExpectation *blockRan = [self expectationWithDescription:@"Block ran"];
+    
+    __block NSNumber *returnValue = @NO;
+    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+        XCTAssertFalse([NSThread isMainThread],@"should not run on the main thread");
+        returnValue = [UAUtils evaluateOnMainThread:^id{
+            XCTAssertTrue([NSThread isMainThread],@"should run on the main thread");
+            [blockRan fulfill];
+            return @YES;
+        }];
+        XCTAssertTrue([returnValue boolValue]);
+    });
+    
+    [self waitForExpectationsWithTimeout:10 handler:nil];
+
+}
+
 @end

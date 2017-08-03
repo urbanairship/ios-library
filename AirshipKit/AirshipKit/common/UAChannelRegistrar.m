@@ -88,9 +88,15 @@
 
         // Conflict with channel ID, create a new one
         UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *newChannelID, NSString *channelLocation, BOOL existing) {
-            UA_LDEBUG(@"Channel %@ created successfully. Channel location: %@.", newChannelID, channelLocation);
-            [self channelCreated:newChannelID channelLocation:channelLocation existing:existing];
-            [self succeededWithPayload:payload];
+            if (!channelID || !channelLocation) {
+                UA_LDEBUG(@"Channel ID: %@ or channel location: %@ is missing. Channel creation failed",
+                          channelID, channelLocation);
+                [self failedWithPayload:payload];
+            } else {
+                UA_LDEBUG(@"Channel %@ created successfully. Channel location: %@.", newChannelID, channelLocation);
+                [self channelCreated:newChannelID channelLocation:channelLocation existing:existing];
+                [self succeededWithPayload:payload];
+            }
         };
 
         UAChannelAPIClientFailureBlock failureBlock = ^(NSUInteger statusCode) {

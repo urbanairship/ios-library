@@ -101,6 +101,15 @@ extern NSString *const UAPushAddTagGroupsSettingsKey;
  */
 extern NSString *const UAPushRemoveTagGroupsSettingsKey;
 
+/**
+ * Tag group mutations data store key.
+ */
+extern NSString *const UAPushTagGroupsMutationsKey;
+
+/**
+ * Old push enabled key.
+ */
+extern NSString *const UAPushEnabledKey;
 
 @interface UAPush () <UAChannelRegistrarDelegate, UAAPNSRegistrationDelegate>
 
@@ -336,6 +345,11 @@ extern NSString *const UAPushRemoveTagGroupsSettingsKey;
  */
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings NS_DEPRECATED_IOS(8_0, 10_0, "Deprecated in iOS 10");
 #endif
+
+/**
+ * Called to update the tag groups for the current channel.
+ */
+- (void)updateChannelTagGroups;
 
 @end
 

@@ -89,7 +89,7 @@
     [self.mockStoreReviewController verify];
 }
 
--(void)rejectSystemRatingDialogLegacy {
+-(void)testRejectSystemRatingDialogLegacy {
     [[[self.mockConfig stub] andReturn:@"1195168544"] itunesID];
 
     self.testOSMajorVersion = 9;
@@ -121,13 +121,17 @@
 
     [[[self.mockConfig stub] andReturn:@"1195168544"] itunesID];
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     [[self.mockApplication expect] openURL:[NSURL URLWithString:@"itms-apps://itunes.apple.com/app/id1195168544?action=write-review"]];
+#pragma GCC diagnostic pop
+    
     [[[self.mockApplication stub] andReturnValue:@YES] canOpenURL:OCMOCK_ANY];
 
-    [self.action performWithArguments:[UAActionArguments argumentsWithValue:@{ UARateAppShowLinkPromptKey:@YES, UARateAppLinkPromptTitleKey :@"Acceptable Header", UARateAppLinkPromptBodyKey :@"Acceptable decsription."} withSituation:UASituationManualInvocation] completionHandler:^(UAActionResult * result) {
+    [self.action performWithArguments:[UAActionArguments argumentsWithValue:@{ UARateAppShowLinkPromptKey:@NO, UARateAppLinkPromptTitleKey :@"Acceptable Header", UARateAppLinkPromptBodyKey :@"Acceptable decsription."} withSituation:UASituationManualInvocation] completionHandler:^(UAActionResult * result) {
     }];
 
-    [self.mockStoreReviewController verify];
+    [self.mockApplication verify];
 }
 
 -(void)testlinkPrompt {
