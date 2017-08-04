@@ -21,7 +21,8 @@ post_install do |installer|
                 config.build_settings['CLANG_WARN_DOCUMENTATION_COMMENTS'] = 'NO'
             end
         end
-	# disable bitcode in KIF by default
+	# Disable bitcode in KIF by default because of issue below:
+	# https://github.com/kif-framework/KIF/issues/796
         if target.name == 'KIF'
             target.build_configurations.each do |config|
       		config.build_settings['ENABLE_BITCODE'] = 'NO'
