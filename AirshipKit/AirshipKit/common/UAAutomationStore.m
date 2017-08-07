@@ -16,6 +16,8 @@
 
 @interface UAAutomationStore ()
 @property (nonatomic, strong) NSManagedObjectContext *managedContext;
+@property (nonatomic, copy) NSString *storeName;
+
 @end
 
 NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
@@ -27,11 +29,22 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
     self = [super init];
 
     if (self) {
-        NSString *storeName = [NSString stringWithFormat:UAAutomationStoreFileFormat, config.appKey];
+        self.storeName = [NSString stringWithFormat:UAAutomationStoreFileFormat, config.appKey];
         NSURL *modelURL = [[UAirship resources] URLForResource:@"UAAutomation" withExtension:@"momd"];
         self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
-                                                                     concurrencyType:NSPrivateQueueConcurrencyType
-                                                                            storeName:storeName];
+                                                                      concurrencyType:NSPrivateQueueConcurrencyType];
+
+        [self.managedContext addPersistentSqlStore:self.storeName completionHandler:^(BOOL success, NSError *error) {
+            if (!success) {
+                UA_LERR(@"Failed to create automation persistent store: %@", error);
+            }
+        }];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(protectedDataAvailable)
+                                                     name:UIApplicationProtectedDataDidBecomeAvailable
+                                                   object:nil];
+
     }
 
     return self;
@@ -41,25 +54,28 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
     return [[UAAutomationStore alloc] initWithConfig:config];
 }
 
-- (BOOL)saveContext {
-    NSError *error;
-    [self.managedContext save:&error];
-    if (error) {
-        UA_LERR(@"Error saving context %@", error);
-        return NO;
+
+- (void)protectedDataAvailable {
+    if (!self.managedContext.persistentStoreCoordinator.persistentStores.count) {
+        [self.managedContext addPersistentSqlStore:self.storeName completionHandler:^(BOOL success, NSError *error) {
+            if (!success) {
+                UA_LERR(@"Failed to create automation persistent store: %@", error);
+            }
+        }];
     }
-
-    [self.managedContext reset];
-    return YES;
 }
-
 
 
 #pragma mark -
 #pragma mark Data Access
 
 - (void)saveSchedule:(UAActionSchedule *)schedule limit:(NSUInteger)limit completionHandler:(void (^)(BOOL))completionHandler {
-    [self.managedContext performBlock:^{
+    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+        if (!isSafe) {
+            completionHandler(NO);
+            return;
+        }
+
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UAActionScheduleData"];
         NSUInteger count = [self.managedContext countForFetchRequest:request error:nil];
         if (count >= limit) {
@@ -70,12 +86,15 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
 
         [self createScheduleDataFromSchedule:schedule];
 
-        completionHandler([self saveContext]);
+        completionHandler([self.managedContext safeSave]);
     }];
 }
 
 - (void)deleteSchedulesWithPredicate:(NSPredicate *)predicate {
-    [self.managedContext performBlock:^{
+    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+        if (!isSafe) {
+            return;
+        }
 
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UAActionScheduleData"];
         request.predicate = predicate;
@@ -98,12 +117,19 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
             return;
         }
 
-        [self saveContext];
+        [self.managedContext safeSave];
     }];
 }
 
+
+
 - (void)fetchSchedulesWithPredicate:(NSPredicate *)predicate limit:(NSUInteger)limit completionHandler:(void (^)(NSArray<UAActionScheduleData *> *))completionHandler {
-    [self.managedContext performBlock:^{
+    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+        if (!isSafe) {
+            completionHandler(@[]);
+            return;
+        }
+
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UAActionScheduleData"];
         request.predicate = predicate;
         request.fetchLimit = limit;
@@ -116,14 +142,22 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
             completionHandler(@[]);
         } else {
             completionHandler(result);
-            [self saveContext];
+            [self.managedContext safeSave];
         }
 
     }];
 }
 
+
+
+
 - (void)fetchTriggersWithPredicate:(NSPredicate *)predicate completionHandler:(void (^)(NSArray<UAScheduleTriggerData *> *))completionHandler {
-    [self.managedContext performBlock:^{
+    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+        if (!isSafe) {
+            completionHandler(@[]);
+            return;
+        }
+
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UAScheduleTriggerData"];
         request.predicate = predicate;
 
@@ -134,7 +168,7 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
             completionHandler(@[]);
         } else {
             completionHandler(result);
-            [self saveContext];
+            [self.managedContext safeSave];
         }
     }];
 }

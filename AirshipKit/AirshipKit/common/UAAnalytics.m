@@ -81,6 +81,10 @@
                                                    object:nil];
 
         [self startSession];
+
+        if (!self.isEnabled) {
+            [self.eventManager deleteAllEvents];
+        }
     }
 
     return self;

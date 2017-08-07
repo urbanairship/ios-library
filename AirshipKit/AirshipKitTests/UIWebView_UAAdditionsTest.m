@@ -6,9 +6,6 @@
 #import "UAirship.h"
 #import "UAConfig.h"
 #import "UAUser.h"
-#import "UAInboxMessage.h"
-#import "UAInboxDBManager+Internal.h"
-
 
 @interface UIWebView_UAAdditionsTest : UABaseTest
 @property (strong, nonatomic) UIWebView *webView;

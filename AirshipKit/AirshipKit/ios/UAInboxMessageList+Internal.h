@@ -2,8 +2,7 @@
 
 #import "UAInboxMessageList.h"
 #import "UAInboxAPIClient+Internal.h"
-
-@class UAInboxDBManager;
+#import "UAInboxStore+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,9 +26,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UAUser *user;
 
 /**
- * The Inbox database manager.
+ * The inbox store.
  */
-@property (nonatomic, strong) UAInboxDBManager *inboxDBManager;
+@property (nonatomic, strong) UAInboxStore *inboxStore;
 
 /**
  * The current count of batch operations.
