@@ -22,6 +22,7 @@
 		6E3673E01E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3673DF1E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m */; };
 		6E3673E11E8C8178005B5DFF /* UATextInputNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = DFBBC7AE1E36D80B00BA7315 /* UATextInputNotificationAction.m */; };
 		6E3673E21E8C8187005B5DFF /* UAChannelCaptureAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BC501F1E202FAA00E24306 /* UAChannelCaptureAction.m */; };
+		6E3942281F33DA52003D1C50 /* UAInboxStoreTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3942271F33DA52003D1C50 /* UAInboxStoreTest.m */; };
 		6E4627CC1E64E0C300A5BF3B /* UAScheduleDelayTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4627CB1E64E0C300A5BF3B /* UAScheduleDelayTests.m */; };
 		6E4A00791F2A4A4A0069D8A0 /* UABaseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A00781F2A4A4A0069D8A0 /* UABaseTest.m */; };
 		6E7700AA1F04790C00B5E465 /* UANativeBridge in Resources */ = {isa = PBXBuildFile; fileRef = 6E7700A81F04790C00B5E465 /* UANativeBridge */; };
@@ -493,8 +494,8 @@
 		CC40DCA91D8C996A00BABD4F /* UAInbox.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB7E1D8C996900BABD4F /* UAInbox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC40DCAA1D8C996A00BABD4F /* UAInbox.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB7F1D8C996900BABD4F /* UAInbox.m */; };
 		CC40DCAC1D8C996A00BABD4F /* UAInboxAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB811D8C996900BABD4F /* UAInboxAPIClient.m */; };
-		CC40DCAD1D8C996A00BABD4F /* UAInboxDBManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB821D8C996900BABD4F /* UAInboxDBManager+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CC40DCAE1D8C996A00BABD4F /* UAInboxDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB831D8C996900BABD4F /* UAInboxDBManager.m */; };
+		CC40DCAD1D8C996A00BABD4F /* UAInboxStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB821D8C996900BABD4F /* UAInboxStore+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CC40DCAE1D8C996A00BABD4F /* UAInboxStore.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB831D8C996900BABD4F /* UAInboxStore.m */; };
 		CC40DCAF1D8C996A00BABD4F /* UAInboxMessage+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB841D8C996900BABD4F /* UAInboxMessage+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CC40DCB01D8C996A00BABD4F /* UAInboxMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB851D8C996900BABD4F /* UAInboxMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC40DCB11D8C996A00BABD4F /* UAInboxMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB861D8C996900BABD4F /* UAInboxMessage.m */; };
@@ -675,7 +676,7 @@
 		CC40DD761D8C9A1C00BABD4F /* UAInAppResolutionEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB7C1D8C996900BABD4F /* UAInAppResolutionEvent.m */; };
 		CC40DD771D8C9A1C00BABD4F /* UAInbox.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB7F1D8C996900BABD4F /* UAInbox.m */; };
 		CC40DD781D8C9A1C00BABD4F /* UAInboxAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB811D8C996900BABD4F /* UAInboxAPIClient.m */; };
-		CC40DD791D8C9A1C00BABD4F /* UAInboxDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB831D8C996900BABD4F /* UAInboxDBManager.m */; };
+		CC40DD791D8C9A1C00BABD4F /* UAInboxStore.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB831D8C996900BABD4F /* UAInboxStore.m */; };
 		CC40DD7A1D8C9A1C00BABD4F /* UAInboxMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB861D8C996900BABD4F /* UAInboxMessage.m */; };
 		CC40DD7B1D8C9A1C00BABD4F /* UAInboxMessageData.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB881D8C996900BABD4F /* UAInboxMessageData.m */; };
 		CC40DD7C1D8C9A1C00BABD4F /* UAInboxMessageList.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB8B1D8C996900BABD4F /* UAInboxMessageList.m */; };
@@ -920,7 +921,7 @@
 		DF7E21FF1ED62D7500C79C46 /* UAUserData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBF91D8C996A00BABD4F /* UAUserData+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7E22001ED62D7500C79C46 /* UAInbox+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB7D1D8C996900BABD4F /* UAInbox+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7E22011ED62D7500C79C46 /* UAInboxAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB801D8C996900BABD4F /* UAInboxAPIClient+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DF7E22021ED62D7500C79C46 /* UAInboxDBManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB821D8C996900BABD4F /* UAInboxDBManager+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DF7E22021ED62D7500C79C46 /* UAInboxStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB821D8C996900BABD4F /* UAInboxStore+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7E22031ED62D7500C79C46 /* UAInboxMessage+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB841D8C996900BABD4F /* UAInboxMessage+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7E22041ED62D7500C79C46 /* UAInboxMessageData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB871D8C996900BABD4F /* UAInboxMessageData+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7E22051ED62D7500C79C46 /* UAInboxMessageList+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB891D8C996900BABD4F /* UAInboxMessageList+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1185,6 +1186,7 @@
 		6E3673DA1E8AE9F7005B5DFF /* UAEnableFeatureAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAEnableFeatureAction.h; path = common/UAEnableFeatureAction.h; sourceTree = "<group>"; };
 		6E3673DB1E8AE9F7005B5DFF /* UAEnableFeatureAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAEnableFeatureAction.m; path = common/UAEnableFeatureAction.m; sourceTree = "<group>"; };
 		6E3673DF1E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEnableFeatureActionTest.m; sourceTree = "<group>"; };
+		6E3942271F33DA52003D1C50 /* UAInboxStoreTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxStoreTest.m; sourceTree = "<group>"; };
 		6E4627CB1E64E0C300A5BF3B /* UAScheduleDelayTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDelayTests.m; sourceTree = "<group>"; };
 		6E4A00781F2A4A4A0069D8A0 /* UABaseTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABaseTest.m; sourceTree = "<group>"; };
 		6E7700A81F04790C00B5E465 /* UANativeBridge */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UANativeBridge; sourceTree = "<group>"; };
@@ -1396,8 +1398,8 @@
 		CC40DB7F1D8C996900BABD4F /* UAInbox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAInbox.m; path = ios/UAInbox.m; sourceTree = "<group>"; };
 		CC40DB801D8C996900BABD4F /* UAInboxAPIClient+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAInboxAPIClient+Internal.h"; path = "ios/UAInboxAPIClient+Internal.h"; sourceTree = "<group>"; };
 		CC40DB811D8C996900BABD4F /* UAInboxAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAInboxAPIClient.m; path = ios/UAInboxAPIClient.m; sourceTree = "<group>"; };
-		CC40DB821D8C996900BABD4F /* UAInboxDBManager+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAInboxDBManager+Internal.h"; path = "ios/UAInboxDBManager+Internal.h"; sourceTree = "<group>"; };
-		CC40DB831D8C996900BABD4F /* UAInboxDBManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAInboxDBManager.m; path = ios/UAInboxDBManager.m; sourceTree = "<group>"; };
+		CC40DB821D8C996900BABD4F /* UAInboxStore+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAInboxStore+Internal.h"; path = "ios/UAInboxStore+Internal.h"; sourceTree = "<group>"; };
+		CC40DB831D8C996900BABD4F /* UAInboxStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAInboxStore.m; path = ios/UAInboxStore.m; sourceTree = "<group>"; };
 		CC40DB841D8C996900BABD4F /* UAInboxMessage+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAInboxMessage+Internal.h"; path = "ios/UAInboxMessage+Internal.h"; sourceTree = "<group>"; };
 		CC40DB851D8C996900BABD4F /* UAInboxMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAInboxMessage.h; path = ios/UAInboxMessage.h; sourceTree = "<group>"; };
 		CC40DB861D8C996900BABD4F /* UAInboxMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAInboxMessage.m; path = ios/UAInboxMessage.m; sourceTree = "<group>"; };
@@ -1873,6 +1875,27 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		6E3942261F33DA31003D1C50 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				6E3942271F33DA52003D1C50 /* UAInboxStoreTest.m */,
+			);
+			name = Data;
+			sourceTree = "<group>";
+		};
+		6EA1A2A11F3382DF0064CE9D /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				CC40DB821D8C996900BABD4F /* UAInboxStore+Internal.h */,
+				CC40DB831D8C996900BABD4F /* UAInboxStore.m */,
+				CC40DB871D8C996900BABD4F /* UAInboxMessageData+Internal.h */,
+				CC40DB881D8C996900BABD4F /* UAInboxMessageData.m */,
+				CC40DB9E1D8C996900BABD4F /* UAJSONValueTransformer+Internal.h */,
+				CC40DB9F1D8C996900BABD4F /* UAJSONValueTransformer.m */,
+			);
+			name = Data;
+			sourceTree = "<group>";
+		};
 		CC04F1871DBED9E200B4842D /* Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -1936,6 +1959,7 @@
 		CC04F2031DCAB3DD00B4842D /* Inbox */ = {
 			isa = PBXGroup;
 			children = (
+				6E3942261F33DA31003D1C50 /* Data */,
 				CC04F2041DCAB46500B4842D /* Actions */,
 				CC04F2051DCAB48000B4842D /* User */,
 				CC64F09D1D8B781C009CEF27 /* UAInboxAPIClientTest.m */,
@@ -2304,6 +2328,7 @@
 		CC40DDDA1D91D49600BABD4F /* Inbox */ = {
 			isa = PBXGroup;
 			children = (
+				6EA1A2A11F3382DF0064CE9D /* Data */,
 				CC40DDF41D91DEAE00BABD4F /* Actions */,
 				CC40DDDB1D91D4A100BABD4F /* User */,
 				CC40DB7D1D8C996900BABD4F /* UAInbox+Internal.h */,
@@ -2311,20 +2336,14 @@
 				CC40DB7F1D8C996900BABD4F /* UAInbox.m */,
 				CC40DB801D8C996900BABD4F /* UAInboxAPIClient+Internal.h */,
 				CC40DB811D8C996900BABD4F /* UAInboxAPIClient.m */,
-				CC40DB821D8C996900BABD4F /* UAInboxDBManager+Internal.h */,
-				CC40DB831D8C996900BABD4F /* UAInboxDBManager.m */,
 				CC40DB841D8C996900BABD4F /* UAInboxMessage+Internal.h */,
 				CC40DB851D8C996900BABD4F /* UAInboxMessage.h */,
 				CC40DB861D8C996900BABD4F /* UAInboxMessage.m */,
-				CC40DB871D8C996900BABD4F /* UAInboxMessageData+Internal.h */,
-				CC40DB881D8C996900BABD4F /* UAInboxMessageData.m */,
 				CC40DB891D8C996900BABD4F /* UAInboxMessageList+Internal.h */,
 				CC40DB8A1D8C996900BABD4F /* UAInboxMessageList.h */,
 				CC40DB8B1D8C996900BABD4F /* UAInboxMessageList.m */,
 				CC40DB8C1D8C996900BABD4F /* UAInboxUtils.h */,
 				CC40DB8D1D8C996900BABD4F /* UAInboxUtils.m */,
-				CC40DB9E1D8C996900BABD4F /* UAJSONValueTransformer+Internal.h */,
-				CC40DB9F1D8C996900BABD4F /* UAJSONValueTransformer.m */,
 			);
 			name = Inbox;
 			sourceTree = "<group>";
@@ -3081,7 +3100,7 @@
 				CC40DD221D8C996A00BABD4F /* UAUserAPIClient+Internal.h in Headers */,
 				CC40DD241D8C996A00BABD4F /* UAUserData+Internal.h in Headers */,
 				CC40DCA81D8C996A00BABD4F /* UAInbox+Internal.h in Headers */,
-				CC40DCAD1D8C996A00BABD4F /* UAInboxDBManager+Internal.h in Headers */,
+				CC40DCAD1D8C996A00BABD4F /* UAInboxStore+Internal.h in Headers */,
 				CC40DCAF1D8C996A00BABD4F /* UAInboxMessage+Internal.h in Headers */,
 				CC40DCB21D8C996A00BABD4F /* UAInboxMessageData+Internal.h in Headers */,
 				CC40DCB41D8C996A00BABD4F /* UAInboxMessageList+Internal.h in Headers */,
@@ -3446,7 +3465,7 @@
 				DF7E21FF1ED62D7500C79C46 /* UAUserData+Internal.h in Headers */,
 				DF7E22001ED62D7500C79C46 /* UAInbox+Internal.h in Headers */,
 				DF7E22011ED62D7500C79C46 /* UAInboxAPIClient+Internal.h in Headers */,
-				DF7E22021ED62D7500C79C46 /* UAInboxDBManager+Internal.h in Headers */,
+				DF7E22021ED62D7500C79C46 /* UAInboxStore+Internal.h in Headers */,
 				DF7E22031ED62D7500C79C46 /* UAInboxMessage+Internal.h in Headers */,
 				DF7E22041ED62D7500C79C46 /* UAInboxMessageData+Internal.h in Headers */,
 				DF7E22051ED62D7500C79C46 /* UAInboxMessageList+Internal.h in Headers */,
@@ -4006,7 +4025,7 @@
 				CC40DC9A1D8C996A00BABD4F /* UAInAppMessageButtonActionBinding.m in Sources */,
 				99978EE51EBA77AD000F4AF7 /* UAWalletAction.m in Sources */,
 				CC40DCE31D8C996A00BABD4F /* UANamedUserAPIClient.m in Sources */,
-				CC40DCAE1D8C996A00BABD4F /* UAInboxDBManager.m in Sources */,
+				CC40DCAE1D8C996A00BABD4F /* UAInboxStore.m in Sources */,
 				CC40DD1C1D8C996A00BABD4F /* UATagUtils.m in Sources */,
 				CC40DC4F1D8C996A00BABD4F /* UAAssociatedIdentifiers.m in Sources */,
 				CC40DD2F1D8C996A00BABD4F /* UIWebView+UAAdditions.m in Sources */,
@@ -4085,6 +4104,7 @@
 				CC64F0D91D8B781C009CEF27 /* UAActionArgumentsTest.m in Sources */,
 				CC64F11A1D8B781C009CEF27 /* UAPasteboardActionTest.m in Sources */,
 				CC64F0FF1D8B781C009CEF27 /* UAInAppMessageTest.m in Sources */,
+				6E3942281F33DA52003D1C50 /* UAInboxStoreTest.m in Sources */,
 				53911BDD1E23EBA500EE7007 /* UAChannelCaptureActionTest.m in Sources */,
 				CC64F1081D8B781C009CEF27 /* UAirshipTest.m in Sources */,
 				CC64F1031D8B781C009CEF27 /* UAInboxMessageListTest.m in Sources */,
@@ -4266,7 +4286,7 @@
 				CC40DD761D8C9A1C00BABD4F /* UAInAppResolutionEvent.m in Sources */,
 				CC40DD771D8C9A1C00BABD4F /* UAInbox.m in Sources */,
 				CC40DD781D8C9A1C00BABD4F /* UAInboxAPIClient.m in Sources */,
-				CC40DD791D8C9A1C00BABD4F /* UAInboxDBManager.m in Sources */,
+				CC40DD791D8C9A1C00BABD4F /* UAInboxStore.m in Sources */,
 				CC40DD7A1D8C9A1C00BABD4F /* UAInboxMessage.m in Sources */,
 				CC40DD7B1D8C9A1C00BABD4F /* UAInboxMessageData.m in Sources */,
 				CC40DD7C1D8C9A1C00BABD4F /* UAInboxMessageList.m in Sources */,

@@ -90,7 +90,9 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
  *
  * Note that this object is not retained by the message.
  */
-@property (nonatomic, readonly, weak) UAInboxMessageList *inbox;
+@property (nonatomic, readonly, weak) UAInboxMessageList *messageList;
+
+
 
 ///---------------------------------------------------------------------------------------
 /// @name Message Management

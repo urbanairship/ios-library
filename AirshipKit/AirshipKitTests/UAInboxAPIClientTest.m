@@ -33,6 +33,7 @@
     self.mockDataStore = [self mockForClass:[UAPreferenceDataStore class]];
 
     self.mockPush = [self mockForClass:[UAPush class]];
+    [[[self.mockPush stub] andReturn:@"mockChannelID"] channelID];
 
     self.mockSession = [self mockForClass:[UARequestSession class]];
 
@@ -60,68 +61,6 @@
     [super tearDown];
 }
 
-/**
- * Test retrieve message request contains channel header when channel ID is present.
- */
-- (void)testRequestToRetrieveMessageList {
-
-    // Test with nil channel ID
-    NSDictionary *requestHeaders = [self.inboxAPIClient requestToRetrieveMessageList].headers;
-
-    XCTAssertNil([requestHeaders objectForKey:kUAChannelIDHeader], @"Channel ID header should be not present.");
-
-    // Test with mocked channel ID
-    [[[self.mockPush stub] andReturn:@"mockChannelID"] channelID];
-
-    requestHeaders = [self.inboxAPIClient requestToRetrieveMessageList].headers;
-
-    XCTAssertNotNil([requestHeaders objectForKey:kUAChannelIDHeader], @"Channel ID header should be present.");
-
-    [[[self.mockPush stub] andReturn:nil] channelID];
-
-    requestHeaders = [self.inboxAPIClient requestToRetrieveMessageList].headers;
-
-}
-
-/**
- * Test batch delete request contains channel header when channel ID is present.
- */
-- (void)testRequestToPerformBatchDeleteForMessages {
-
-    NSArray *mockMessages = [NSArray array];
-
-    // Test with nil channel ID
-    NSDictionary *requestHeaders = [self.inboxAPIClient requestToPerformBatchDeleteForMessages:mockMessages].headers;
-
-    XCTAssertNil([requestHeaders objectForKey:kUAChannelIDHeader], @"Channel ID header should be not present.");
-
-    // Test with mocked channel ID
-    [[[self.mockPush stub] andReturn:@"mockChannelID"] channelID];
-
-    requestHeaders = [self.inboxAPIClient requestToPerformBatchDeleteForMessages:mockMessages].headers;
-
-    XCTAssertNotNil([requestHeaders objectForKey:kUAChannelIDHeader], @"Channel ID header should be present.");
-}
-
-/**
- * Test batch mark read request contains channel header when channel ID is present.
- */
-- (void)testRequestToPerformBatchMarkReadForMessages {
-
-    NSArray *mockMessages = [NSArray array];
-
-    // Test with nil channel ID
-    NSDictionary *requestHeaders = [self.inboxAPIClient requestToPerformBatchMarkReadForMessages:mockMessages].headers;
-
-    XCTAssertNil([requestHeaders objectForKey:kUAChannelIDHeader], @"Channel ID header should be not present.");
-
-    // Test with mocked channel ID
-    [[[self.mockPush stub] andReturn:@"mockChannelID"] channelID];
-
-    requestHeaders = [self.inboxAPIClient requestToPerformBatchMarkReadForMessages:mockMessages].headers;
-
-    XCTAssertNotNil([requestHeaders objectForKey:kUAChannelIDHeader], @"Channel ID header should be present.");
-}
 
 /**
  * Tests retrieving the message list on success.
@@ -142,7 +81,14 @@
 
         typedef void (^UARequestCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
 
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UARequest *request = obj;
+
+        if (![@"mockChannelID" isEqualToString:request.headers[kUAChannelIDHeader]]) {
+            return NO;
+        }
+        return YES;
+    }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Make call
     [self.inboxAPIClient retrieveMessageListOnSuccess:^(NSUInteger status, NSArray * _Nullable messages) {
@@ -174,7 +120,14 @@
 
         typedef void (^UARequestCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
 
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UARequest *request = obj;
+
+        if (![@"mockChannelID" isEqualToString:request.headers[kUAChannelIDHeader]]) {
+            return NO;
+        }
+        return YES;
+    }]  retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     __block BOOL failed = NO;
     [self.inboxAPIClient retrieveMessageListOnSuccess:^(NSUInteger status, NSArray * _Nullable messages) {
@@ -240,13 +193,20 @@
         completionHandler(responseData, (NSURLResponse *)response, nil);
 
         typedef void (^UARequestCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UARequest *request = obj;
+
+        if (![@"mockChannelID" isEqualToString:request.headers[kUAChannelIDHeader]]) {
+            return NO;
+        }
+        return YES;
+    }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     NSURL *testURL = [NSURL URLWithString:@"testURL"];
     __block BOOL successBlockCalled = false;
 
     // Make call
-    [self.inboxAPIClient performBatchMarkAsReadForMessages:@[@{@"messageURL":testURL}] onSuccess:^{
+    [self.inboxAPIClient performBatchMarkAsReadForMessageURLs:@[testURL] onSuccess:^{
         successBlockCalled = true;
     } onFailure:^() {
         XCTFail(@"Should not be called");
@@ -275,13 +235,20 @@
         completionHandler(nil, (NSURLResponse *)response, nil);
 
         typedef void (^UARequestCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UARequest *request = obj;
+
+        if (![@"mockChannelID" isEqualToString:request.headers[kUAChannelIDHeader]]) {
+            return NO;
+        }
+        return YES;
+    }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     NSURL *testURL = [NSURL URLWithString:@"testURL"];
     __block BOOL failureBlockCalled = false;
 
     // Make call
-    [self.inboxAPIClient performBatchMarkAsReadForMessages:@[@{@"messageURL":testURL}] onSuccess:^{
+    [self.inboxAPIClient performBatchMarkAsReadForMessageURLs:@[testURL] onSuccess:^{
         XCTFail(@"Should not be called");
     } onFailure:^() {
         failureBlockCalled = true;
@@ -317,7 +284,7 @@
     __block BOOL successBlockCalled = false;
 
     // Make call
-    [self.inboxAPIClient performBatchDeleteForMessages:@[@{@"messageURL":testURL}] onSuccess:^{
+    [self.inboxAPIClient performBatchDeleteForMessageURLs:@[testURL] onSuccess:^{
         successBlockCalled = true;
     } onFailure:^() {
         XCTFail(@"Should not be called");
@@ -352,7 +319,7 @@
     __block BOOL failureBlockCalled = false;
 
     // Make call
-    [self.inboxAPIClient performBatchDeleteForMessages:@[@{@"messageURL":testURL}] onSuccess:^{
+    [self.inboxAPIClient performBatchDeleteForMessageURLs:@[testURL] onSuccess:^{
         XCTFail(@"Should not be called");
     } onFailure:^() {
         failureBlockCalled = true;

@@ -7,7 +7,7 @@
 #import "UAActionArguments+Internal.h"
 #import "UAirship.h"
 #import "UAConfig.h"
-#import "UAInboxDBManager+Internal.h"
+#import "UAInboxStore+Internal.h"
 #import "UAUtils.h"
 
 static UAUser *mockUser_ = nil;
@@ -233,46 +233,6 @@ static UAUser *mockUser_ = nil;
     XCTAssertFalse(fail, @"callback blocks should not have been executed");
 
     [self.mockMessageListNotificationObserver verify];
-}
-
-
-/**
- * Tests the mark as read performance for marking 200 messages as read.
- */
-- (void)testMarkMessagesReadPerformance {
-    [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListWillUpdateNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListUpdatedNotification object:nil];
-
-    for (int i = 0; i < 200; i++) {
-        [self.messageList.inboxDBManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:[NSUUID UUID].UUIDString]
-                                                          context:self.messageList.inboxDBManager.mainContext];
-    }
-
-    [self.messageList loadSavedMessages];
-
-    [self measureBlock:^{
-        [self.messageList markMessagesRead:self.messageList.messages completionHandler:nil];
-    }];
-}
-
-
-/**
- * Tests the mark as read performance for marking 200 messages as deleted.
- */
-- (void)testMarkMessagesDeletedPerformance {
-    [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListWillUpdateNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListUpdatedNotification object:nil];
-
-    for (int i = 0; i < 200; i++) {
-        [self.messageList.inboxDBManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:[NSUUID UUID].UUIDString]
-                                                          context:self.messageList.inboxDBManager.mainContext];
-    }
-
-    [self.messageList loadSavedMessages];
-
-    [self measureBlock:^{
-        [self.messageList markMessagesDeleted:self.messageList.messages completionHandler:nil];
-    }];
 }
 
 //if unsuccessful, the observer should get messageListWillLoad and inboxLoadFailed callbacks.

@@ -36,7 +36,8 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
     return [[UAInboxAPIClient alloc] initWithConfig:config session:session user:user dataStore:dataStore];
 }
 
-- (UARequest *)requestToRetrieveMessageList{
+- (void)retrieveMessageListOnSuccess:(UAInboxClientMessageRetrievalSuccessBlock)successBlock
+                           onFailure:(UAInboxClientFailureBlock)failureBlock {
 
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
 
@@ -60,15 +61,67 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
         UA_LTRACE(@"Request to retrieve message list: %@", urlString);
     }];
 
-    return request;
+    [self.session dataTaskWithRequest:request
+                           retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
+                               return NO;
+                           } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                               NSHTTPURLResponse *httpResponse = nil;
+                               if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                                   httpResponse = (NSHTTPURLResponse *) response;
+                               }
+
+                               // 304, no changes
+                               if (httpResponse.statusCode == 304) {
+                                   successBlock(httpResponse.statusCode, nil);
+                                   return;
+                               }
+
+                               // Failure
+                               if (httpResponse.statusCode != 200) {
+                                   [UAUtils logFailedRequest:request withMessage:@"Retrieve messages failed" withError:error withResponse:httpResponse];
+                                   failureBlock();
+                                   return;
+                               }
+
+                               // Missing response body
+                               if (!data) {
+                                   UA_LTRACE(@"Retrieve messages list missing response body.");
+                                   failureBlock();
+                                   return;
+                               }
+
+                               // Success
+                               NSArray *messages = nil;
+                               NSDictionary *headers = httpResponse.allHeaderFields;
+                               NSString *lastModified = [headers objectForKey:@"Last-Modified"];
+
+                               // Parse the response
+                               NSError *parseError;
+                               NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
+                               messages = [jsonResponse objectForKey:@"messages"];
+                               
+                               if (!messages) {
+                                   UA_LDEBUG(@"Unable to parse inbox message body: %@ Error: %@", data, parseError);
+                                   failureBlock();
+                                   return;
+                               }
+                               
+                               UA_LTRACE(@"Retrieved message list with status: %ld jsonResponse: %@", (unsigned long)httpResponse.statusCode, jsonResponse);
+                               
+                               UA_LDEBUG(@"Setting Last-Modified time to '%@' for user %@'s message list.", lastModified, self.user.username);
+                               [self.dataStore setValue:lastModified
+                                                 forKey:[NSString stringWithFormat:UALastMessageListModifiedTime, self.user.username]];
+                               
+                               successBlock(httpResponse.statusCode, messages);
+                           }];
 }
 
-- (UARequest *)requestToPerformBatchDeleteForMessages:(NSArray *)messages {
-    UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
-        NSDictionary *data;
-        NSArray *updateMessageURLs = [messages valueForKeyPath:@"messageURL.absoluteString"];
+- (void)performBatchDeleteForMessageURLs:(NSArray<NSURL *> *)messageURLs
+                            onSuccess:(UAInboxClientSuccessBlock)successBlock
+                            onFailure:(UAInboxClientFailureBlock)failureBlock {
 
-        data = @{@"delete" : updateMessageURLs};
+    UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
+        NSDictionary *data = @{@"delete" : [messageURLs valueForKeyPath:@"absoluteString"] };
 
         NSData* body = [NSJSONSerialization dataWithJSONObject:data
                                                        options:0
@@ -90,18 +143,41 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
         [builder setValue:[UAirship push].channelID forHeader:kUAChannelIDHeader ];
 
         UA_LTRACE(@"Request to perform batch delete: %@  body: %@", urlString, body);
-
+        
     }];
 
-    return request;
+
+    [self.session dataTaskWithRequest:request
+                           retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
+                               return NO;
+                           }
+                    completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                        NSHTTPURLResponse *httpResponse = nil;
+                        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                            httpResponse = (NSHTTPURLResponse *) response;
+                        }
+
+                        // Failure
+                        if (httpResponse.statusCode != 200) {
+                            [UAUtils logFailedRequest:request withMessage:@"Batch delete failed" withError:error withResponse:httpResponse];
+                            
+                            failureBlock();
+                            
+                            return;
+                        }
+                        
+                        // Success
+                        successBlock();
+                    }];
 }
 
-- (UARequest *)requestToPerformBatchMarkReadForMessages:(NSArray *)messages {
-    UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
-        NSDictionary *data;
-        NSArray *updateMessageURLs = [messages valueForKeyPath:@"messageURL.absoluteString"];
+- (void)performBatchMarkAsReadForMessageURLs:(NSArray *)messageURLs
+                                   onSuccess:(UAInboxClientSuccessBlock)successBlock
+                                   onFailure:(UAInboxClientFailureBlock)failureBlock {
 
-        data = @{@"mark_as_read" : updateMessageURLs};
+
+    UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
+        NSDictionary *data = @{@"mark_as_read" : [messageURLs valueForKeyPath:@"absoluteString"] };
 
         NSData* body = [NSJSONSerialization dataWithJSONObject:data
                                                        options:0
@@ -125,124 +201,29 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
         UA_LTRACE(@"Request to perfom batch mark messages as read: %@ body: %@", urlString, body);
     }];
 
-    return request;
-}
 
-- (void)retrieveMessageListOnSuccess:(UAInboxClientMessageRetrievalSuccessBlock)successBlock
-                           onFailure:(UAInboxClientFailureBlock)failureBlock {
 
-    UARequest *retrieveRequest = [self requestToRetrieveMessageList];
+    [self.session dataTaskWithRequest:request
+                           retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
+                               return NO;
+                           } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                               NSHTTPURLResponse *httpResponse = nil;
+                               if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                                   httpResponse = (NSHTTPURLResponse *) response;
+                               }
 
-    [self.session dataTaskWithRequest:retrieveRequest retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
-        return NO;
-    } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        NSHTTPURLResponse *httpResponse = nil;
-        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-            httpResponse = (NSHTTPURLResponse *) response;
-        }
-
-        // Failure
-        if (httpResponse.statusCode != 200  && httpResponse.statusCode != 304) {
-            [UAUtils logFailedRequest:retrieveRequest withMessage:@"Retrieve messages failed" withError:error withResponse:httpResponse];
-            failureBlock();
-            return;
-        }
-
-        // 304, no changes
-        if (httpResponse.statusCode == 304) {
-            successBlock(httpResponse.statusCode, nil);
-            return;
-        }
-
-        // Missing response body
-        if (!data) {
-            UA_LTRACE(@"Retrieve messages list missing response body.");
-            failureBlock();
-            return;
-        }
-
-        // Success
-        NSArray *messages = nil;
-        NSDictionary *headers = httpResponse.allHeaderFields;
-        NSString *lastModified = [headers objectForKey:@"Last-Modified"];
-
-        // Parse the response
-        NSError *parseError;
-        NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
-        messages = [jsonResponse objectForKey:@"messages"];
-
-        if (!messages) {
-            UA_LDEBUG(@"Unable to parse inbox message body: %@ Error: %@", data, parseError);
-            failureBlock();
-            return;
-        }
-
-        UA_LTRACE(@"Retrieved message list with status: %ld jsonResponse: %@", (unsigned long)httpResponse.statusCode, jsonResponse);
-
-        UA_LDEBUG(@"Setting Last-Modified time to '%@' for user %@'s message list.", lastModified, self.user.username);
-        [self.dataStore setValue:lastModified
-                          forKey:[NSString stringWithFormat:UALastMessageListModifiedTime, self.user.username]];
-
-        successBlock(httpResponse.statusCode, messages);
-    }];
-}
-
-- (void)performBatchDeleteForMessages:(NSArray *)messages
-                            onSuccess:(UAInboxClientSuccessBlock)successBlock
-                            onFailure:(UAInboxClientFailureBlock)failureBlock {
-
-    UARequest *batchDeleteRequest = [self requestToPerformBatchDeleteForMessages:messages];
-
-    [self.session dataTaskWithRequest:batchDeleteRequest retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
-        return NO;
-    } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        NSHTTPURLResponse *httpResponse = nil;
-        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-            httpResponse = (NSHTTPURLResponse *) response;
-        }
-
-        // Failure
-        if (httpResponse.statusCode != 200) {
-
-            [UAUtils logFailedRequest:batchDeleteRequest withMessage:@"Batch delete failed" withError:error withResponse:httpResponse];
-
-            failureBlock();
-
-            return;
-        }
-
-        // Success
-        successBlock();
-
-    }];
-}
-
-- (void)performBatchMarkAsReadForMessages:(NSArray *)messages
-                                onSuccess:(UAInboxClientSuccessBlock)successBlock
-                                onFailure:(UAInboxClientFailureBlock)failureBlock {
-
-    UARequest *batchMarkAsReadRequest = [self requestToPerformBatchMarkReadForMessages:messages];
-
-    [self.session dataTaskWithRequest:batchMarkAsReadRequest retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
-        return NO;
-    } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        NSHTTPURLResponse *httpResponse = nil;
-        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-            httpResponse = (NSHTTPURLResponse *) response;
-        }
-
-        // Failure
-        if (httpResponse.statusCode != 200) {
-            [UAUtils logFailedRequest:batchMarkAsReadRequest withMessage:@"Batch delete failed" withError:error withResponse:httpResponse];
-
-            failureBlock();
-
-            return;
-        }
-
-        // Success
-        successBlock();
-    }];
+                               // Failure
+                               if (httpResponse.statusCode != 200) {
+                                   [UAUtils logFailedRequest:request withMessage:@"Batch delete failed" withError:error withResponse:httpResponse];
+                                   
+                                   failureBlock();
+                                   
+                                   return;
+                               }
+                               
+                               // Success
+                               successBlock();
+                           }];
 }
 
 - (void)clearLastModifiedTime {

@@ -7,18 +7,51 @@
 #import "UAInboxMessageList+Internal.h"
 #import "UAUtils.h"
 
+@interface UAInboxMessage()
+@property (nonatomic, copy) NSString *messageID;
+@property (nonatomic, strong) NSURL *messageBodyURL;
+@property (nonatomic, strong) NSURL *messageURL;
+@property (nonatomic, copy) NSString *contentType;
+@property (nonatomic, strong) NSDate *messageSent;
+@property (nonatomic, strong, nullable) NSDate *messageExpiration;
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic, copy) NSDictionary *extra;
+@property (nonatomic, copy) NSDictionary *rawMessageObject;
+@property (nonatomic, weak) UAInboxMessageList *messageList;
+@end
+
+@implementation UAInboxMessageBuilder
+
+@end
+
 @implementation UAInboxMessage
 
-- (instancetype)initWithMessageData:(UAInboxMessageData *)data {
+- (instancetype)initWithBuilder:(UAInboxMessageBuilder *)builder {
     self = [super init];
     if (self) {
-        self.data = data;
+        self.messageURL = builder.messageURL;
+        self.messageID = builder.messageID;
+        self.messageSent = builder.messageSent;
+        self.messageBodyURL = builder.messageBodyURL;
+        self.messageExpiration = builder.messageExpiration;
+        self.unread = builder.unread;
+        self.rawMessageObject = builder.rawMessageObject;
+        self.extra = builder.extra;
+        self.title = builder.title;
+        self.contentType = builder.contentType;
+        self.messageList = builder.messageList;
     }
     return self;
 }
 
-+ (instancetype)messageWithData:(UAInboxMessageData *)data {
-    return [[self alloc] initWithMessageData:data];
++ (instancetype)messageWithBuilderBlock:(void (^)(UAInboxMessageBuilder *))builderBlock {
+    UAInboxMessageBuilder *builder = [[UAInboxMessageBuilder alloc] init];
+
+    if (builderBlock) {
+        builderBlock(builder);
+    }
+
+    return [[UAInboxMessage alloc] initWithBuilder:builder];
 }
 
 #pragma mark -
@@ -38,7 +71,7 @@
         return nil;
     }
 
-    return [self.inbox markMessagesRead:@[self] completionHandler:^{
+    return [self.messageList markMessagesRead:@[self] completionHandler:^{
         if (completionHandler) {
             completionHandler(self);
         }
@@ -54,45 +87,6 @@
     return NO;
 }
 
-- (NSString *)messageID {
-    return self.data.messageID;
-}
-
-- (NSURL *)messageBodyURL {
-    return self.data.messageBodyURL;
-}
-
-- (NSURL *)messageURL {
-    return self.data.messageURL;
-}
-
-- (NSString *)contentType {
-    return self.data.contentType;
-}
-
-- (BOOL)unread {
-    return self.data.unreadClient && self.data.unread;
-}
-
-- (NSDate *)messageSent {
-    return self.data.messageSent;
-}
-
-- (NSDate *)messageExpiration {
-    return self.data.messageExpiration;
-}
-
-- (NSString *)title {
-    return self.data.title;
-}
-
-- (NSDictionary *)extra {
-    return self.data.extra;
-}
-
-- (NSDictionary *)rawMessageObject {
-    return self.data.rawMessageObject;
-}
 
 #pragma mark -
 #pragma mark Quick Look methods
