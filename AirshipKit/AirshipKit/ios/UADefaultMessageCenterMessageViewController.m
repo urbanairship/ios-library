@@ -81,8 +81,9 @@ typedef enum MessageState {
 }
 
 - (void)dealloc {
-    self.webView.delegate = nil;
     self.message = nil;
+    self.webView.delegate = nil;
+    [self.webView stopLoading];
 }
 
 - (void)viewDidLoad {
@@ -208,25 +209,30 @@ typedef enum MessageState {
     
     // Refresh the list to see if the message is available in the cloud
     self.messageState = FETCHING;
+
+    __weak id weakSelf = self;
+
     [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
+        id strongSelf = weakSelf;
+
         UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
         if (message) {
             // display the message
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-           [self loadMessage:message onlyIfChanged:onlyIfChanged];
+           [strongSelf loadMessage:message onlyIfChanged:onlyIfChanged];
 #pragma GCC diagnostic pop
         } else {
             // if the message no longer exists, clean up and show an error dialog
-            [self hideLoadingIndicator];
+            [strongSelf hideLoadingIndicator];
             
-            [self displayAlertOnOK:errorCompletion onRetry:^{
-                [self loadMessageForID:messageID onlyIfChanged:onlyIfChanged onError:errorCompletion];
+            [strongSelf displayAlertOnOK:errorCompletion onRetry:^{
+                [weakSelf loadMessageForID:messageID onlyIfChanged:onlyIfChanged onError:errorCompletion];
             }];
         }
         return;
     } withFailureBlock:^{
-        [self hideLoadingIndicator];
+        [weakSelf hideLoadingIndicator];
         errorCompletion();
         return;
     }];

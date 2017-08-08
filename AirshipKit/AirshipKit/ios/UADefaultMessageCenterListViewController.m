@@ -222,13 +222,19 @@
 - (void)refreshStateChanged:(UIRefreshControl *)sender {
     if (sender.refreshing) {
         self.refreshControlAnimating = YES;
+        __weak id weakSelf = self;
+
         void (^retrieveMessageCompletionBlock)(void) = ^(void){
             dispatch_async(dispatch_get_main_queue(), ^{
+
+
                 [CATransaction begin];
                 [CATransaction setCompletionBlock: ^{
+                    UADefaultMessageCenterListViewController *strongSelf = weakSelf;
+
                     // refresh animation has finished
-                    self.refreshControlAnimating = NO;
-                    [self chooseMessageDisplayAndReload];
+                    strongSelf.refreshControlAnimating = NO;
+                    [strongSelf chooseMessageDisplayAndReload];
                 }];
                 [sender endRefreshing];
                 [CATransaction commit];
@@ -398,13 +404,15 @@
 
     [self.navigationController setToolbarHidden:!editing animated:animated];
 
+    __weak id weakSelf = self;
+
     // wait until after animation has completed before selecting previously selected row
     if (!editing) {
         if (animated) {
             [CATransaction begin];
             [CATransaction setCompletionBlock: ^{
                 // cancel animation has finished
-                [self handlePreviouslySelectedIndexPathsAnimated:NO];
+                [weakSelf handlePreviouslySelectedIndexPathsAnimated:NO];
             }];
         }
     }
@@ -490,14 +498,19 @@
 }
 
 - (void)displayMessageForID:(NSString *)messageID {
+
+    __weak id weakSelf = self;
+
     [self displayMessageForID:messageID onError:^{
-        [self.messageTable deselectRowAtIndexPath:self.selectedIndexPath animated:NO];
-        self.selectedMessage = nil;
-        self.selectedIndexPath = nil;
+        UADefaultMessageCenterListViewController *strongSelf = weakSelf;
+
+        [strongSelf.messageTable deselectRowAtIndexPath:self.selectedIndexPath animated:NO];
+        strongSelf.selectedMessage = nil;
+        strongSelf.selectedIndexPath = nil;
         
         // Hide message view if necessary
-        if (self.collapsed && (self.messageViewController == self.navigationController.visibleViewController)) {
-            [self.navigationController popViewControllerAnimated:YES];
+        if (strongSelf.collapsed && (strongSelf.messageViewController == strongSelf.navigationController.visibleViewController)) {
+            [strongSelf.navigationController popViewControllerAnimated:YES];
         }
     }];
 }
@@ -549,7 +562,7 @@
             strongSelf.closeBlock(animated);
         } else {
             // Fallback to displaying the inbox
-            [self.navigationController popViewControllerAnimated:animated];
+            [strongSelf.navigationController popViewControllerAnimated:animated];
         }
     };
     
@@ -666,13 +679,14 @@
 
     self.cancelItem.enabled = NO;
 
+    __weak id weakSelf = self;
     if (sender == self.markAsReadButtonItem) {
         [[UAirship inbox].messageList markMessagesRead:selectedMessages completionHandler:^{
-            [self refreshAfterBatchUpdate];
+            [weakSelf refreshAfterBatchUpdate];
         }];
     } else {
         [[UAirship inbox].messageList markMessagesDeleted:selectedMessages completionHandler:^{
-            [self refreshAfterBatchUpdate];
+            [weakSelf refreshAfterBatchUpdate];
         }];
     }
 }
@@ -773,8 +787,9 @@
     UAInboxMessage *message = [self messageAtIndex:indexPath.row];
     
     if (message) {
-        [[UAirship inbox].messageList markMessagesDeleted:@[message] completionHandler:^{
-            [self refreshAfterBatchUpdate];
+        __weak id weakSelf = self;
+       [[UAirship inbox].messageList markMessagesDeleted:@[message] completionHandler:^{
+            [weakSelf refreshAfterBatchUpdate];
         }];
     }
 }
@@ -885,10 +900,15 @@
     } else {
         self.selectedMessage = message;
         self.selectedIndexPath = indexPath;
+
+        __weak id weakSelf = self;
+
         [self displayMessage:message onError:^{
-            self.selectedMessage = nil;
-            self.selectedIndexPath = nil;
-            [self.messageTable deselectRowAtIndexPath:indexPath animated:NO];
+            UADefaultMessageCenterListViewController *strongSelf = weakSelf;
+
+            strongSelf.selectedMessage = nil;
+            strongSelf.selectedIndexPath = nil;
+            [strongSelf.messageTable deselectRowAtIndexPath:indexPath animated:NO];
             [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
         }];
     }
@@ -906,12 +926,15 @@
 #pragma mark NSNotificationCenter callbacks
 
 - (void)messageListUpdated {
+    __weak id weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
+        UADefaultMessageCenterListViewController *strongSelf = weakSelf;
+
         // copy the back-end list of messages as it can change from under the UI
-        [self copyMessages];
+        [strongSelf copyMessages];
         
-        if (!self.refreshControlAnimating) {
-            [self chooseMessageDisplayAndReload];
+        if (!strongSelf.refreshControlAnimating) {
+            [strongSelf chooseMessageDisplayAndReload];
         }
     });
 }
@@ -993,8 +1016,11 @@
 - (UIViewController *)primaryViewControllerForExpandingSplitViewController:(UISplitViewController *)splitViewController {
     self.collapsed = NO;
     // Delay selection by a beat, to allow rotation to finish
+
+
+    __weak id weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self handlePreviouslySelectedIndexPathsAnimated:YES];
+        [weakSelf handlePreviouslySelectedIndexPathsAnimated:YES];
     });
     // Returning nil causes the split view controller to default to the the existing primary view controller
     return nil;
@@ -1098,7 +1124,7 @@
             // Note: this decodes the source image at full size
             NSData *iconImageData = [NSData dataWithContentsOfURL:iconListURL];
             UIImage *iconImage = [UIImage imageWithData:iconImageData];
-            iconImage = [self scaleImage:iconImage toSize:iconSize];
+            iconImage = [weakSelf scaleImage:iconImage toSize:iconSize];
 
             dispatch_async(dispatch_get_main_queue(), ^{
                 // Recapture self for the duration of this block
