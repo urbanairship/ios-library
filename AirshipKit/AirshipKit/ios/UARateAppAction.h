@@ -16,9 +16,9 @@
  * Expected argument values:
  * ``show_link_prompt``:Required Boolean. If NO action will link directly to the iTunes app
  * review page, if YES action will display a rating prompt. Defaults to NO if nil.
- * ``link_prompt_title_key``: Optional String. String to override the link prompt's title.
+ * ``link_prompt_title``: Optional String. String to override the link prompt's title.
  *   Title over 24 characters will be rejected. Header defaults to "Enjoying <CFBundleDisplayName>?" if nil.
- * ``link_prompt_body_key``: Optional String. String to override the link prompt's body.
+ * ``link_prompt_body``: Optional String. String to override the link prompt's body.
  *  Bodies over 50 characters will be rejected. Body defaults to "Tap Rate App to rate it on the
  *  App Store." if nil.
  *

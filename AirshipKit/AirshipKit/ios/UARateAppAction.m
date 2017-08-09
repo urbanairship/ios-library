@@ -28,8 +28,8 @@ NSTimeInterval const kSecondsInYear = 31536000;
 
 // External
 NSString *const UARateAppShowLinkPromptKey = @"show_link_prompt";
-NSString *const UARateAppLinkPromptTitleKey = @"link_prompt_header";
-NSString *const UARateAppLinkPromptBodyKey = @"link_prompt_description";
+NSString *const UARateAppLinkPromptTitleKey = @"link_prompt_title";
+NSString *const UARateAppLinkPromptBodyKey = @"link_prompt_body";
 
 // Internal
 NSString *const UARateAppNibName = @"UARateAppPromptView";
