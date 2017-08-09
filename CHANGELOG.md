@@ -3,6 +3,23 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 8.5.2 - August 9, 2017
+==============================
+Patch release that fixes issues with message center, applications that use
+protected data and background services, and issues with deep link and tag
+actions running when a push is received in the foreground. Applications that
+use any of those features should update to this release.
+
+Bug fixes
+---------
+- Fixed Core Data crash when the application uses protected data and wakes up in the
+  background before the device is unlocked.
+- Fixed deep link and tag actions running when a push is received in the foreground due
+  to the predicate not being applied (Regression from 8.4.0).
+- Fixed message center not deep linking into the message view from a push notification.
+- Fixed message center edit mode not exiting after performing an action.
+- Fixed keys for Rate App Action's optional title and body arguments.
+
 Version 8.5.1 - July 27, 2017
 =============================
 
