@@ -226,8 +226,6 @@
 
         void (^retrieveMessageCompletionBlock)(void) = ^(void){
             dispatch_async(dispatch_get_main_queue(), ^{
-
-
                 [CATransaction begin];
                 [CATransaction setCompletionBlock: ^{
                     UADefaultMessageCenterListViewController *strongSelf = weakSelf;
@@ -682,11 +680,15 @@
     __weak id weakSelf = self;
     if (sender == self.markAsReadButtonItem) {
         [[UAirship inbox].messageList markMessagesRead:selectedMessages completionHandler:^{
-            [weakSelf refreshAfterBatchUpdate];
+            dispatch_async(dispatch_get_main_queue(),^{
+                [weakSelf refreshAfterBatchUpdate];
+            });
         }];
     } else {
         [[UAirship inbox].messageList markMessagesDeleted:selectedMessages completionHandler:^{
-            [weakSelf refreshAfterBatchUpdate];
+            dispatch_async(dispatch_get_main_queue(),^{
+                [weakSelf refreshAfterBatchUpdate];
+            });
         }];
     }
 }
@@ -789,7 +791,9 @@
     if (message) {
         __weak id weakSelf = self;
        [[UAirship inbox].messageList markMessagesDeleted:@[message] completionHandler:^{
-            [weakSelf refreshAfterBatchUpdate];
+           dispatch_async(dispatch_get_main_queue(),^{
+               [weakSelf refreshAfterBatchUpdate];
+           });
         }];
     }
 }
