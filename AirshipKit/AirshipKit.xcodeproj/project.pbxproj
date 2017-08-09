@@ -1889,7 +1889,35 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		6E3942261F33DA31003D1C50 /* Data */ = {
+
+    99B6EE641F3B99AD00C4E3F1 /* Predicates */ = {
+			isa = PBXGroup;
+			children = (
+				99666D731EDF266400BAE46B /* UAActionPredicateProtocol+Internal.h */,
+				99912E8A1ECE57CE00295C67 /* UALandingPageActionPredicate+Internal.h */,
+				99912E8B1ECE57CE00295C67 /* UALandingPageActionPredicate.m */,
+				99912E921ECE57EF00295C67 /* UAOverlayInboxMessageActionPredicate+Internal.h */,
+				99912E931ECE57EF00295C67 /* UAOverlayInboxMessageActionPredicate.m */,
+				99912E8E1ECE57E100295C67 /* UAShareActionPredicate+Internal.h */,
+				99912E8F1ECE57E100295C67 /* UAShareActionPredicate.m */,
+				99912E861ECE57BD00295C67 /* UAAddCustomEventActionPredicate+Internal.h */,
+				99912E871ECE57BD00295C67 /* UAAddCustomEventActionPredicate.m */,
+				992F89881EFD99B000E4C8FE /* UARateAppActionPredicate+Internal.h */,
+				992F89891EFD99B000E4C8FE /* UARateAppActionPredicate.m */,
+				99912E7D1ECCFEA800295C67 /* UATagsActionPredicate+Internal.h */,
+				99912E7E1ECCFEA800295C67 /* UATagsActionPredicate.m */,
+				99912E821ECE575F00295C67 /* UAFetchDeviceInfoActionPredicate+Internal.h */,
+				99912E831ECE575F00295C67 /* UAFetchDeviceInfoActionPredicate.m */,
+				99B6EE651F3B9B5300C4E3F1 /* UAEnableFeatureActionPredicate+Internal.h */,
+				99B6EE661F3B9B5300C4E3F1 /* UAEnableFeatureActionPredicate.m */,
+				99B6EE6D1F3BA1DF00C4E3F1 /* UAURLActionPredicate.m */,
+				99B6EE6E1F3BA1DF00C4E3F1 /* UAURLActionPredicate+Internal.h */,
+			);
+			name = Predicates;
+			sourceTree = "<group>";
+		};
+
+    6E3942261F33DA31003D1C50 /* Data */ = {
 			isa = PBXGroup;
 			children = (
 				6E3942271F33DA52003D1C50 /* UAInboxStoreTest.m */,
@@ -1897,6 +1925,7 @@
 			name = Data;
 			sourceTree = "<group>";
 		};
+
 		6EA1A2A11F3382DF0064CE9D /* Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -1908,6 +1937,8 @@
 				CC40DB9F1D8C996900BABD4F /* UAJSONValueTransformer.m */,
 			);
 			name = Data;
+sourceTree = "<group>";
+};
 		99B6EE641F3B99AD00C4E3F1 /* Predicates */ = {
 			isa = PBXGroup;
 			children = (

@@ -513,7 +513,7 @@
 }
 
 - (void)testValidateDefaultActionsPlist {
-    NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"UADefaultActions" ofType:@"plist"];
+    NSString *path = [[UAirship resources] pathForResource:@"UADefaultActions" ofType:@"plist"];
 
     NSArray *plistContents = [NSArray arrayWithContentsOfFile:path];
 
@@ -522,19 +522,19 @@
                               @"altName" : @"^u",
                               @"class" : @"UAOpenExternalURLAction",
                               @"name" : @"open_external_url_action",
-                              @"predicate" : @"UAOpenExternalURLActionPredicate"
+                              @"predicate" : @"UAURLActionPredicate"
                               },
                           @{
                               @"altName" : @"^+t",
                               @"class" : @"UAAddTagsAction",
                               @"name" : @"add_tags_action",
-                              @"predicate" : @"UAAddTagsActionPredicate"
+                              @"predicate" : @"UATagsActionPredicate"
                               },
                           @{
                               @"altName" : @"^-t",
                               @"class" : @"UARemoveTagsAction",
                               @"name" : @"remove_tags_action",
-                              @"predicate" : @"UARemoveTagsActionPredicate"
+                              @"predicate" : @"UATagsActionPredicate"
                               },
                           @{
                               @"altName" : @"^p",
@@ -546,7 +546,7 @@
                               @"altName" : @"^d",
                               @"class" : @"UADeepLinkAction",
                               @"name" : @"deep_link_action",
-                              @"predicate" : @"UADeepLinkActionPredicate"
+                              @"predicate" : @"UAURLActionPredicate"
                               },
                           @{
                               @"class" : @"UAAddCustomEventAction",
@@ -563,13 +563,11 @@
                               @"altName" : @"^mc",
                               @"class" : @"UADisplayInboxAction",
                               @"name" : @"open_mc_action",
-                              @"predicate" : @"UADisplayInboxActionPredicate"
                               },
                           @{
                               @"altName" : @"^c",
                               @"class" : @"UAPasteboardAction",
-                              @"name" : @"clipboard_action",
-                              @"predicate" : @"UAPasteboardActionPredicate"
+                              @"name" : @"clipboard_action"
                               },
                           @{
                               @"altName" : @"^mco",
@@ -580,20 +578,17 @@
                           @{
                               @"altName" : @"^w",
                               @"class" : @"UAWalletAction",
-                              @"name" : @"wallet_action",
-                              @"predicate" : @"UAWalletActionPredicate"
+                              @"name" : @"wallet_action"
                               },
                           @{
                               @"altName" : @"^csa",
                               @"class" : @"UACancelSchedulesAction",
-                              @"name" : @"cancel_scheduled_actions",
-                              @"predicate" : @"UACancelSchedulesActionPredicate"
+                              @"name" : @"cancel_scheduled_actions"
                               },
                           @{
                               @"altName" : @"^sa",
                               @"class" : @"UAScheduleAction",
-                              @"name" : @"schedule_actions",
-                              @"predicate" : @"UAScheduleActionPredicate"
+                              @"name" : @"schedule_actions"
                               },
                           @{
                               @"altName" : @"^fdi",
@@ -605,7 +600,6 @@
                               @"altName" : @"^cc",
                               @"class" : @"UAChannelCaptureAction",
                               @"name" : @"channel_capture_action",
-                              @"predicate" : @"UAChannelCaptureActionPredicate"
                               },
                           @{
                               @"altName" : @"^ra",

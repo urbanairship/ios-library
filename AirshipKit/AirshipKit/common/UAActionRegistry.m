@@ -349,12 +349,12 @@ NSString *const defaultsPredicateClassKey = @"predicate";
         Class predicateClass;
 
         if (defaultsEntry[defaultsClassKey] == nil) {
-            UALOG(@"UADefaultActions.plist must provide a default class string under the key %@", defaultsClassKey);
+            UA_LERR(@"UADefaultActions.plist must provide a default class string under the key %@", defaultsClassKey);
             break;
         }
 
         if (defaultsEntry[defaultsNameKey] == nil) {
-            UALOG(@"UADefaultActions.plist must provide a default name string under the key %@", defaultsNameKey);
+            UA_LERR(@"UADefaultActions.plist must provide a default name string under the key %@", defaultsNameKey);
             break;
         }
 
@@ -367,17 +367,23 @@ NSString *const defaultsPredicateClassKey = @"predicate";
         Class actionClass = NSClassFromString(defaultsEntry[defaultsClassKey]);
 
         if (![actionClass class]) {
+            UA_LERR(@"Missing action class: %@", defaultsEntry[defaultsClassKey]);
             break;
         }
 
         id actionObj = [[actionClass alloc] init];
 
         if (![actionObj isKindOfClass:[UAAction class]]) {
+            UA_LERR(@"The action class: %@ must be a subclass of UAAction.", defaultsEntry[defaultsClassKey]);
             break;
         }
 
         if (defaultsEntry[defaultsPredicateClassKey]) {
             predicateClass = NSClassFromString(defaultsEntry[defaultsPredicateClassKey]);
+
+            if (!predicateClass) {
+                UA_LERR(@"Missing predicate class: %@", defaultsEntry[defaultsPredicateClassKey]);
+            }
         }
 
         id<UAActionPredicateProtocol> predicate = [[predicateClass alloc] init];
