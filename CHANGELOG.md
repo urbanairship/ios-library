@@ -18,7 +18,7 @@ Bug fixes
   to the predicate not being applied (Regression from 8.4.0).
 - Fixed message center not deep linking into the message view from a push notification.
 - Fixed message center edit mode not exiting after performing an action.
-- Fixed keys for Rate App Action's optional title and body arguments.
+- Fixed keys for rate app action's optional title and body arguments.
 
 Version 8.5.1 - July 27, 2017
 =============================
