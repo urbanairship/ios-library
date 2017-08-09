@@ -12,10 +12,11 @@
 
 @interface UADefaultMessageCenterSplitViewController ()
 
-@property(nonatomic, strong) UADefaultMessageCenterListViewController *listViewController;
-@property(nonatomic, strong) UIViewController<UAMessageCenterMessageViewProtocol> *messageViewController;
+@property (nonatomic, strong) UADefaultMessageCenterListViewController *listViewController;
+@property (nonatomic, strong) UIViewController<UAMessageCenterMessageViewProtocol> *messageViewController;
 @property (nonatomic, strong) UINavigationController *listNav;
 @property (nonatomic, strong) UINavigationController *messageNav;
+@property (nonatomic, assign) BOOL showMessageViewOnViewDidAppear;
 
 @end
 
@@ -56,19 +57,25 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    if (UAirship.shared.config.useWKWebView) {
-        self.messageViewController = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController"
-                                                                                            bundle:[UAirship resources]];
-    } else {
+    if (self.listViewController.messageViewController) {
+        self.messageViewController = self.listViewController.messageViewController;
+        self.showMessageViewOnViewDidAppear = YES;
+   } else {
+        if (UAirship.shared.config.useWKWebView) {
+            self.messageViewController = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController"
+                                                                                                bundle:[UAirship resources]];
+        } else {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        self.messageViewController = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController"
-                                                                                                   bundle:[UAirship resources]];
-        ((UADefaultMessageCenterMessageViewController *)self.messageViewController).filter = self.filter;
+            self.messageViewController = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController"
+                                                                                                       bundle:[UAirship resources]];
+            
+            ((UADefaultMessageCenterMessageViewController *)self.messageViewController).filter = self.filter;
 #pragma GCC diagnostic pop
+        }
+        self.listViewController.messageViewController = self.messageViewController;
+        self.showMessageViewOnViewDidAppear = NO;
     }
-    
-    self.listViewController.messageViewController = self.messageViewController;
 
     self.messageNav = [[UINavigationController alloc] initWithRootViewController:self.messageViewController];
     self.viewControllers = @[self.listNav,self.messageNav];
@@ -78,6 +85,19 @@
     
     if (self.style) {
         [self applyStyle];
+    }
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    if (self.showMessageViewOnViewDidAppear) {
+        self.showMessageViewOnViewDidAppear = NO;
+        if (self.collapsed) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+            [self.listViewController displayMessage:self.messageViewController.message];
+#pragma GCC diagnostic pop
+        }
     }
 }
 

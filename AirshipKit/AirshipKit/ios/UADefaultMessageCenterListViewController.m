@@ -219,6 +219,16 @@
     [self.iconCache removeAllObjects];
 }
 
+- (void)setFilter:(NSPredicate *)filter {
+    _filter = filter;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    if ([self.messageViewController isKindOfClass:[UADefaultMessageCenterMessageViewController class]]) {
+        ((UADefaultMessageCenterMessageViewController *)self.messageViewController).filter = self.filter;
+    }
+#pragma GCC diagnostic pop
+}
+
 - (void)refreshStateChanged:(UIRefreshControl *)sender {
     if (sender.refreshing) {
         self.refreshControlAnimating = YES;
@@ -473,11 +483,8 @@
         message = nil;
     }
     
-    // if message is selected some other way than actually selecting the cell, go ahead and select the message's cell for the user
-    if (!self.selectedIndexPath) {
-        self.selectedIndexPath = [self indexPathForMessage:message];
-    }
-
+    self.selectedMessage = message;
+    
     // create a messageViewController if we don't already have one
     if (!self.messageViewController) {
         [self createMessageViewController];
@@ -542,6 +549,8 @@
     
     [self.messageViewController loadMessageForID:messageID onlyIfChanged:NO onError:errorCompletion];
     
+    self.selectedMessage = self.messageViewController.message;
+
     [self displayMessageViewController];
 }
 
@@ -958,6 +967,9 @@
             messageToDisplay = [self messageForID:[self messageAtIndex:[self validateIndexPath:self.selectedIndexPath].row].messageID];
         }
         [self.messageViewController loadMessage:messageToDisplay onlyIfChanged:YES];
+        
+        self.selectedMessage = messageToDisplay;
+        
         if (!messageToDisplay) {
             if (self.collapsed && (self.messageViewController == self.navigationController.visibleViewController)) {
                 [self.navigationController popViewControllerAnimated:YES];
@@ -1020,7 +1032,6 @@
 - (UIViewController *)primaryViewControllerForExpandingSplitViewController:(UISplitViewController *)splitViewController {
     self.collapsed = NO;
     // Delay selection by a beat, to allow rotation to finish
-
 
     __weak id weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
