@@ -345,7 +345,7 @@
         if (self.selectedIndexPath) {
             // make sure the row we want selected is selected
             self.selectedIndexPath = [self validateIndexPath:self.selectedIndexPath];
-            if (!self.editing) {
+            if (!self.editing && !self.collapsed) {
                 [self.messageTable selectRowAtIndexPath:self.selectedIndexPath animated:animated scrollPosition:UITableViewScrollPositionNone];
                 [self.messageTable scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionNone animated:YES];
             }
