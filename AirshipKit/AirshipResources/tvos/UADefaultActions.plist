@@ -6,7 +6,7 @@
 		<key>class</key>
 		<string>UAOpenExternalURLAction</string>
 		<key>predicate</key>
-		<string>UAOpenExternalURLActionPredicate</string>
+		<string>UAURLActionPredicate</string>
 		<key>name</key>
 		<string>open_external_url_action</string>
 		<key>altName</key>
@@ -16,7 +16,7 @@
 		<key>class</key>
 		<string>UAAddTagsAction</string>
 		<key>predicate</key>
-		<string>UAAddTagsActionPredicate</string>
+		<string>UATagsActionPredicate</string>
 		<key>name</key>
 		<string>add_tags_action</string>
 		<key>altName</key>
@@ -26,7 +26,7 @@
 		<key>class</key>
 		<string>UARemoveTagsAction</string>
 		<key>predicate</key>
-		<string>UARemoveTagsActionPredicate</string>
+		<string>UATagsActionPredicate</string>
 		<key>name</key>
 		<string>remove_tags_action</string>
 		<key>altName</key>
@@ -36,7 +36,7 @@
 		<key>class</key>
 		<string>UADeepLinkAction</string>
 		<key>predicate</key>
-		<string>UADeepLinkActionPredicate</string>
+		<string>UAURLActionPredicate</string>
 		<key>name</key>
 		<string>deep_link_action</string>
 		<key>altName</key>
@@ -53,8 +53,6 @@
 	<dict>
 		<key>class</key>
 		<string>UACancelSchedulesAction</string>
-		<key>predicate</key>
-		<string>UACancelSchedulesActionPredicate</string>
 		<key>name</key>
 		<string>cancel_scheduled_actions</string>
 		<key>altName</key>
@@ -63,8 +61,6 @@
 	<dict>
 		<key>class</key>
 		<string>UAScheduleAction</string>
-		<key>predicate</key>
-		<string>UAScheduleActionPredicate</string>
 		<key>name</key>
 		<string>schedule_actions</string>
 		<key>altName</key>
