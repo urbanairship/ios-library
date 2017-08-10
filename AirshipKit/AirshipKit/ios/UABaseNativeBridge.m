@@ -27,7 +27,10 @@
     }
     
     if (![[UAirship shared].whitelist isWhitelisted:url]) {
-        UA_LINFO(@"URL %@ is not whitelisted, not populating JS interface", url);
+        // Don't log in the special case of about:blank URLs
+        if (![url.absoluteString isEqualToString:@"about:blank"]) {
+            UA_LINFO(@"URL %@ is not whitelisted, not populating JS interface", url);
+        }
         return;
     }
     
