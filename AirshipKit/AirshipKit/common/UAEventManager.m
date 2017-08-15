@@ -43,7 +43,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
                      dataStore:(UAPreferenceDataStore *)dataStore
                     eventStore:(UAEventStore *)eventStore
                         client:(UAEventAPIClient *)client
-                          queue:(NSOperationQueue *)queue;
+                         queue:(NSOperationQueue *)queue;
 {
 
     self = [super init];
@@ -99,7 +99,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 
     return [[UAEventManager alloc] initWithConfig:config
                                         dataStore:dataStore
-                                        eventStore:eventStore
+                                       eventStore:eventStore
                                            client:client
                                             queue:queue];
 }
@@ -291,78 +291,97 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 }
 
 - (BOOL)enqueueUploadOperationWithDelay:(NSTimeInterval)delay {
-   UAAsyncOperation *operation = [UAAsyncOperation operationWithBlock:^(UAAsyncOperation *operation) {
-       self.nextUploadDate = nil;
 
-       UA_LDEBUG("Preparing events for upload");
+    UA_WEAKIFY(self);
 
-       if (![UAirship push].channelID) {
-           UA_LDEBUG("No Channel ID. Skipping analytic upload.");
-           [operation finish];
-           return;
-       }
+    UAAsyncOperation *operation = [UAAsyncOperation operationWithBlock:^(UAAsyncOperation *operation) {
+        UA_STRONGIFY(self);
 
-       // Clean up store
-       [self.eventStore trimEventsToStoreSize:self.maxTotalDBSize];
+        self.nextUploadDate = nil;
 
-       // Fetch events
-       [self.eventStore fetchEventsWithMaxBatchSize:self.maxBatchSize completionHandler:^(NSArray<UAEventData *> *result) {
-           // Make sure we are not cancelled
-           if (operation.isCancelled) {
-               [operation finish];
-               return;
-           }
-           
-           if (!result.count) {
-               [operation finish];
-               return;
-           }
+        UA_LDEBUG("Preparing events for upload");
 
-           NSMutableArray *preparedEvents = [NSMutableArray arrayWithCapacity:result.count];
+        if (![UAirship push].channelID) {
+            UA_LDEBUG("No Channel ID. Skipping analytic upload.");
+            [operation finish];
+            return;
+        }
 
-           for (UAEventData *eventData in result) {
-               NSMutableDictionary *eventBody = [NSMutableDictionary dictionary];
-               [eventBody setValue:eventData.identifier forKey:@"event_id"];
-               [eventBody setValue:eventData.time forKey:@"time"];
-               [eventBody setValue:eventData.type forKey:@"type"];
+        // Clean up store
+        [self.eventStore trimEventsToStoreSize:self.maxTotalDBSize];
 
-               NSError *error = nil;
-               NSMutableDictionary *data = [[NSJSONSerialization JSONObjectWithData:eventData.data options:0 error:&error] mutableCopy];
-               if (error) {
-                   UA_LERR(@"Failed to deserialize event %@: %@", eventData, error);
-                   [[eventData managedObjectContext] deleteObject:eventData];
-               }
+        // Fetch events
+        [self.eventStore fetchEventsWithMaxBatchSize:self.maxBatchSize completionHandler:^(NSArray<UAEventData *> *result) {
 
-               [data setValue:eventData.sessionID forKey:@"session_id"];
-               [eventBody setValue:data forKey:@"data"];
+            // Make sure we are not cancelled
+            if (operation.isCancelled) {
+                [operation finish];
+                return;
+            }
 
-               [preparedEvents addObject:eventBody];
-           }
+            if (!result.count) {
+                [operation finish];
+                return;
+            }
 
-           // Make sure we are not cancelled
-           if (operation.isCancelled) {
-               [operation finish];
-               return;
-           }
+            NSMutableArray *preparedEvents = [NSMutableArray arrayWithCapacity:result.count];
 
-           UA_LTRACE("Uploading events.");
+            for (UAEventData *eventData in result) {
+                NSMutableDictionary *eventBody = [NSMutableDictionary dictionary];
+                [eventBody setValue:eventData.identifier forKey:@"event_id"];
+                [eventBody setValue:eventData.time forKey:@"time"];
+                [eventBody setValue:eventData.type forKey:@"type"];
 
-           [self.client uploadEvents:preparedEvents completionHandler:^(NSHTTPURLResponse *response) {
-               self.lastSendTime = [NSDate date];
+                NSError *error = nil;
+                NSMutableDictionary *data = [[NSJSONSerialization JSONObjectWithData:eventData.data options:0 error:&error] mutableCopy];
+                if (error) {
+                    UA_LERR(@"Failed to deserialize event %@: %@", eventData, error);
+                    [[eventData managedObjectContext] deleteObject:eventData];
+                }
 
-               if (response.statusCode == 200) {
-                   UA_LDEBUG(@"Analytic upload success");
-                   UA_LTRACE(@"Response: %@", response);
-                   [self.eventStore deleteEventsWithIDs:[preparedEvents valueForKey:@"event_id"]];
-                   [self updateAnalyticsParametersWithResponse:response];
-               } else {
-                   UA_LDEBUG(@"Analytics upload request failed: %ld", (unsigned long)response.statusCode);
-                   [self scheduleUploadWithDelay:FailedUploadRetryDelay];
-               }
-               
-               [operation finish];
-           }];
-       }];
+                [data setValue:eventData.sessionID forKey:@"session_id"];
+                [eventBody setValue:data forKey:@"data"];
+
+                [preparedEvents addObject:eventBody];
+            }
+
+            // Make sure we are not cancelled
+            if (operation.isCancelled) {
+                [operation finish];
+                return;
+            }
+
+            UA_LTRACE("Uploading events.");
+
+            // Make sure the event upload request is queueed and on the main thread as it needs to access application state
+            dispatch_async(dispatch_get_main_queue(), ^{
+
+                // Make sure we are still not cancelled
+                if (operation.isCancelled) {
+                    [operation finish];
+                    return;
+                }
+
+                UA_STRONGIFY(self);
+                [self.client uploadEvents:preparedEvents completionHandler:^(NSHTTPURLResponse *response) {
+
+                    UA_STRONGIFY(self);
+                    self.lastSendTime = [NSDate date];
+
+                    if (response.statusCode == 200) {
+                        UA_LDEBUG(@"Analytic upload success");
+                        UA_LTRACE(@"Response: %@", response);
+                        [self.eventStore deleteEventsWithIDs:[preparedEvents valueForKey:@"event_id"]];
+                        [self updateAnalyticsParametersWithResponse:response];
+                    } else {
+                        UA_LDEBUG(@"Analytics upload request failed: %ld", (unsigned long)response.statusCode);
+                        [self scheduleUploadWithDelay:FailedUploadRetryDelay];
+                    }
+
+                    [operation finish];
+                }];
+            });
+        }];
     }];
 
     return [self.queue addBackgroundOperation:operation delay:delay];
