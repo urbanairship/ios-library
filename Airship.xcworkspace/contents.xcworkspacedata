@@ -17,6 +17,9 @@
       location = "group:SwiftSample/../tvOSSample/tvOSSample.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:TestShip/TestShip.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Pods/Pods.xcodeproj">
    </FileRef>
 </Workspace>

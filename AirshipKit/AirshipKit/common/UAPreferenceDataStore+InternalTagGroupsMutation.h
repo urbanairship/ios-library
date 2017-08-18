@@ -24,6 +24,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)addTagGroupsMutation:(UATagGroupsMutation *)mutation atBeginning:(BOOL)atBeginning forKey:(NSString *)key;
 
+/**
+ * Return the array of saved mutations.
+ * @return The saved mutations as an array
+ */
+- (NSArray<UATagGroupsMutation *> *)tagGroupsMutationsForKey:(NSString *)key;
 
 /**
  * Polls and removes the first mutation from the array of pending mutations.

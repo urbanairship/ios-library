@@ -1111,6 +1111,7 @@
 		DFA1815E1E688EBB00446942 /* UABaseNativeBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = DFA1815D1E688EBB00446942 /* UABaseNativeBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DFBBC7B11E36D80B00BA7315 /* UATextInputNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = DFBBC7AE1E36D80B00BA7315 /* UATextInputNotificationAction.m */; };
 		DFBBC7B21E36D80B00BA7315 /* UATextInputNotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = DFBBC7AF1E36D80B00BA7315 /* UATextInputNotificationAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DFD852221F31558F004DB178 /* UALegacyPushTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DFD852211F31558F004DB178 /* UALegacyPushTest.m */; };
 		DFE92A151ED8A5F600ED3838 /* UAWalletAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 99978EE21EBA77AD000F4AF7 /* UAWalletAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DFE92A161ED8A5F600ED3838 /* UADeepLinkAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 99978EE61EBA7BE7000F4AF7 /* UADeepLinkAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DFE92A171ED8A61300ED3838 /* UATagsActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 99912E7D1ECCFEA800295C67 /* UATagsActionPredicate+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1727,6 +1728,7 @@
 		DFA1815D1E688EBB00446942 /* UABaseNativeBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UABaseNativeBridge.h; path = ios/UABaseNativeBridge.h; sourceTree = "<group>"; };
 		DFBBC7AE1E36D80B00BA7315 /* UATextInputNotificationAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UATextInputNotificationAction.m; path = common/UATextInputNotificationAction.m; sourceTree = "<group>"; };
 		DFBBC7AF1E36D80B00BA7315 /* UATextInputNotificationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UATextInputNotificationAction.h; path = common/UATextInputNotificationAction.h; sourceTree = "<group>"; };
+		DFD852211F31558F004DB178 /* UALegacyPushTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALegacyPushTest.m; sourceTree = "<group>"; };
 		DFECEA721E64DC4E006AA8EA /* UAMessageCenterMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAMessageCenterMessageViewController.m; path = ios/UAMessageCenterMessageViewController.m; sourceTree = "<group>"; };
 		DFECEA731E64DC4E006AA8EA /* UAMessageCenterMessageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAMessageCenterMessageViewController.h; path = ios/UAMessageCenterMessageViewController.h; sourceTree = "<group>"; };
 		DFECEA761E64DC83006AA8EA /* UAMessageCenterMessageViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAMessageCenterMessageViewController.xib; sourceTree = "<group>"; };
@@ -2066,6 +2068,7 @@ sourceTree = "<group>";
 				CC04F20A1DCAB50C00B4842D /* APNS */,
 				CC04F20B1DCAB52900B4842D /* Interactive */,
 				CC64F0B81D8B781C009CEF27 /* UAPushTest.m */,
+				DFD852211F31558F004DB178 /* UALegacyPushTest.m */,
 				CC64F0C11D8B781C009CEF27 /* UATagUtilsTest.m */,
 				CC64F0B21D8B781C009CEF27 /* UANotificationContentTest.m */,
 			);
@@ -4175,6 +4178,7 @@ sourceTree = "<group>";
 				CC64F0F81D8B781C009CEF27 /* UADisplayInboxActionTest.m in Sources */,
 				CC944EDC1DB6AEC600C42269 /* UARequestTest.m in Sources */,
 				CC64F0E61D8B781C009CEF27 /* UAApplicationMetricsTest.m in Sources */,
+				DFD852221F31558F004DB178 /* UALegacyPushTest.m in Sources */,
 				CC64F0DA1D8B781C009CEF27 /* UAActionInfoTests.m in Sources */,
 				CC64F1191D8B781C009CEF27 /* UAOverlayInboxMessageActionTest.m in Sources */,
 				CC64F0E91D8B781C009CEF27 /* UAAutoIntegrationTest.m in Sources */,

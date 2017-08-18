@@ -47,8 +47,6 @@ static NSBundle *resourcesBundle_;
 
 static dispatch_once_t takeOffPred_;
 
-static dispatch_once_t proxyDelegateOnceToken_;
-
 // Its possible that plugins that use load to call takeoff will trigger after
 // handleAppDidFinishLaunchingNotification.  We need to store that notification
 // and call handleAppDidFinishLaunchingNotification in takeoff.
@@ -265,11 +263,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     // Automatic setup
     if (sharedAirship_.config.automaticSetupEnabled) {
         UA_LINFO(@"Automatic setup enabled.");
-        dispatch_once(&proxyDelegateOnceToken_, ^{
-            @synchronized ([UIApplication sharedApplication]) {
-                [UAAutoIntegration integrate];
-            }
-        });
+        [UAAutoIntegration integrate];
     }
 
     if (appDidFinishLaunchingNotification_) {

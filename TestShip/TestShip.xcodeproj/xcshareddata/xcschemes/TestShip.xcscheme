@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "494DD9561B0EB677009C134E"
-               BuildableName = "AirshipKit.framework"
-               BlueprintName = "AirshipKit"
-               ReferencedContainer = "container:AirshipKit.xcodeproj">
+               BlueprintIdentifier = "99EAB9D91F2FB15F0068B841"
+               BuildableName = "TestShip.app"
+               BlueprintName = "TestShip"
+               ReferencedContainer = "container:TestShip.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -26,27 +26,46 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      codeCoverageEnabled = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
          <TestableReference
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CC64F0531D8B77E3009CEF27"
-               BuildableName = "AirshipKitTests.xctest"
-               BlueprintName = "AirshipKitTests"
-               ReferencedContainer = "container:AirshipKit.xcodeproj">
+               BlueprintIdentifier = "99EAB9ED1F2FB15F0068B841"
+               BuildableName = "TestShipUITests.xctest"
+               BlueprintName = "TestShipUITests"
+               ReferencedContainer = "container:TestShip.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "99C6197B1F2FFBD400C874D6"
+               BuildableName = "TestShipTests.xctest"
+               BlueprintName = "TestShipTests"
+               ReferencedContainer = "container:TestShip.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "99A566BB1F30EA5800E98822"
+               BuildableName = "TestShipFunctionalTests.xctest"
+               BlueprintName = "TestShipFunctionalTests"
+               ReferencedContainer = "container:TestShip.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "494DD9561B0EB677009C134E"
-            BuildableName = "AirshipKit.framework"
-            BlueprintName = "AirshipKit"
-            ReferencedContainer = "container:AirshipKit.xcodeproj">
+            BlueprintIdentifier = "99EAB9D91F2FB15F0068B841"
+            BuildableName = "TestShip.app"
+            BlueprintName = "TestShip"
+            ReferencedContainer = "container:TestShip.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -62,15 +81,16 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "494DD9561B0EB677009C134E"
-            BuildableName = "AirshipKit.framework"
-            BlueprintName = "AirshipKit"
-            ReferencedContainer = "container:AirshipKit.xcodeproj">
+            BlueprintIdentifier = "99EAB9D91F2FB15F0068B841"
+            BuildableName = "TestShip.app"
+            BlueprintName = "TestShip"
+            ReferencedContainer = "container:TestShip.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -80,15 +100,16 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "494DD9561B0EB677009C134E"
-            BuildableName = "AirshipKit.framework"
-            BlueprintName = "AirshipKit"
-            ReferencedContainer = "container:AirshipKit.xcodeproj">
+            BlueprintIdentifier = "99EAB9D91F2FB15F0068B841"
+            BuildableName = "TestShip.app"
+            BlueprintName = "TestShip"
+            ReferencedContainer = "container:TestShip.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

@@ -314,6 +314,7 @@
     }] ignoringNonObjectArgs] fetchEventsWithMaxBatchSize:0 completionHandler:OCMOCK_ANY];
 
 
+    XCTestExpectation *clientCalled = [self expectationWithDescription:@"client upload callled."];
     // Expect a call to the client, return a 200 response
     [[[self.mockClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -323,6 +324,7 @@
         // Return a success response
         NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
         returnBlock(response);
+        [clientCalled fulfill];
     }] uploadEvents:[OCMArg checkWithBlock:^BOOL(id obj) {
         NSArray *events = (NSArray *)obj;
         if (events.count != 1) {

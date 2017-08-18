@@ -182,6 +182,15 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (NSString *)deviceTokenStringFromDeviceToken:(NSData *)deviceToken;
 
+///---------------------------------------------------------------------------------------
+/// @name Thread management
+///---------------------------------------------------------------------------------------
+
+/**
+ * A utility method to evaluate a block synchronously on the main thread.
+ */
++ (id)evaluateOnMainThread:(id (^__nonnull)(void))block;
+
 @end
 
 NS_ASSUME_NONNULL_END
