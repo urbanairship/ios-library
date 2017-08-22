@@ -13,11 +13,15 @@
 #import <QuartzCore/QuartzCore.h>
 #import <Availability.h>
 #import <UserNotifications/UserNotifications.h>
+#import <StoreKit/StoreKit.h>
+
 #import "UAConfig.h"
 
-#if !TARGET_OS_TV    // CoreTelephony not supported in tvOS
+#if !TARGET_OS_TV    // CoreTelephony and WebKit not supported in tvOS
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
+#import <WebKit/WebKit.h>
+
 #endif
 
 @class UAConfig;
