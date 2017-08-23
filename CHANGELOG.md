@@ -3,6 +3,21 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 8.5.3 - August 22, 2017
+===============================
+Patch release that fixes missing symbol issues for the static library and removes
+the use of `dispatch_sync` when calling UIKit from a background thread. Applications
+that use the static library or have had concerns about the use of `dispatch_sync`
+should update.
+
+Bug fixes
+---------
+- Fixed missing symbols for StoreKit and WebKit when using the static library.
+
+Behavior Changes
+----------------
+- Removed use of `dispatch_sync` within the push module.
+
 Version 8.5.2 - August 9, 2017
 ==============================
 Patch release that fixes issues with message center, applications that use

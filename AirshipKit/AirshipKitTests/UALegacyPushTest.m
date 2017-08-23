@@ -2355,6 +2355,7 @@ NSString *validLegacyDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.channelID = @"someChannelID";
     self.push.channelLocation = @"someChannelLocation";
 
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Async update channel tag groups call"];
 
     // Expect a set mutation, return 200
     [[[self.mockTagGroupsAPIClient expect] andDo:^(NSInvocation *invocation) {
@@ -2376,6 +2377,8 @@ NSString *validLegacyDeviceToken = @"0123456789abcdef0123456789abcdef";
         void *arg;
         [invocation getArgument:&arg atIndex:4];
 
+        [expectation fulfill];
+
         void (^completionHandler)(NSUInteger) = (__bridge void (^)(NSUInteger))arg;
         completionHandler(200);
     }] updateChannel:@"someChannelID"
@@ -2390,6 +2393,8 @@ NSString *validLegacyDeviceToken = @"0123456789abcdef0123456789abcdef";
     [self.push setTags:@[@"tag1"] group:@"group2"];
 
     [self.push updateRegistration];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 
     [self.mockTagGroupsAPIClient verify];
 }

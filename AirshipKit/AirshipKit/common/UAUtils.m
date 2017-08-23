@@ -348,21 +348,4 @@
     return [deviceTokenString lowercaseString];
 }
 
-/** 
- * A utility method to evaluate a block synchronously on the main thread.
- */
-+ (id)evaluateOnMainThread:(id (^__nonnull)(void))block {
-    __block id result;
-    
-    if ([NSThread isMainThread]) {
-        result = block();
-    } else {
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            result = block();
-        });
-    }
-    
-    return result;
-}
-
 @end

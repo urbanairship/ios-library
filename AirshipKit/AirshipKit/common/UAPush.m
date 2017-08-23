@@ -757,6 +757,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
             UA_STRONGIFY(self);
             [self updateChannelRegistrationForcefully:forcefully];
         });
+        return;
     }
 
     // Only cancel in flight requests if the channel is already created
@@ -778,6 +779,14 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 }
 
 - (void)updateChannelTagGroups {
+    if (![NSThread isMainThread]) {
+        UA_WEAKIFY(self);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UA_STRONGIFY(self);
+            [self updateChannelTagGroups];
+        });
+        return;
+    }
 
     if (!self.channelID) {
         return;
@@ -789,7 +798,11 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         return;
     }
 
+    UA_WEAKIFY(self);
+
     __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+        UA_STRONGIFY(self);
+
         UA_LTRACE(@"Tag groups background task expired.");
         [self.tagGroupsAPIClient cancelAllRequests];
         [self.dataStore addTagGroupsMutation:mutation atBeginning:YES forKey:UAPushTagGroupsMutationsKey];
@@ -809,15 +822,18 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     [self.tagGroupsAPIClient updateChannel:self.channelID
                          tagGroupsMutation:mutation
                          completionHandler:^(NSUInteger status) {
+                             dispatch_async(dispatch_get_main_queue(), ^{
+                                 UA_STRONGIFY(self);
 
-                             if (status >= 200 && status <= 299) {
-                                 [self updateChannelTagGroups];
-                             } else if (status != 400 && status != 403) {
-                                 [self.dataStore addTagGroupsMutation:mutation atBeginning:YES forKey:UAPushTagGroupsMutationsKey];
-                             }
+                                 if (status >= 200 && status <= 299) {
+                                     [self updateChannelTagGroups];
+                                 } else if (status != 400 && status != 403) {
+                                     [self.dataStore addTagGroupsMutation:mutation atBeginning:YES forKey:UAPushTagGroupsMutationsKey];
+                                 }
 
-                             [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
-                             backgroundTask = UIBackgroundTaskInvalid;
+                                 [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+                                 backgroundTask = UIBackgroundTaskInvalid;
+                             });
                          }];
 }
 
