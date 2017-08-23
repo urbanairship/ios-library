@@ -2,6 +2,8 @@
 
 #import "UAUtils.h"
 #import "UAUtilsTest.h"
+#import "UAUser+Internal.h"
+#import "UAirship+Internal.h"
 
 @interface UAUtilsTest ()
 @property(nonatomic, strong) NSCalendar *gregorianUTC;
@@ -19,6 +21,72 @@
 
 - (void)tearDown {
     [super tearDown];
+}
+
+- (void)testConnectionType {
+    // SETUP
+    NSArray *possibleConnectionTypes = @[@"cell", @"wifi", @"none"];
+
+    // TEST
+    NSString *connectionType = [UAUtils connectionType];
+    
+    // VERIFY
+    XCTAssertTrue([possibleConnectionTypes containsObject:connectionType]);
+}
+
+- (void)testDeviceModelName {
+    // TEST
+    NSString *deviceModelName = [UAUtils deviceModelName];
+    
+    // VERIFY
+    XCTAssertNotNil(deviceModelName);
+}
+
+- (void)testPluralize {
+    XCTAssertEqualObjects([UAUtils pluralize:0 singularForm:@"singular" pluralForm:@"plural"],@"plural");
+    XCTAssertEqualObjects([UAUtils pluralize:1 singularForm:@"singular" pluralForm:@"plural"],@"singular");
+    XCTAssertEqualObjects([UAUtils pluralize:2 singularForm:@"singular" pluralForm:@"plural"],@"plural");
+}
+
+- (void)testGetReadableFileSizeFromBytes {
+    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:                            0],   @"0 bytes");
+    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:                         1023],@"1023 bytes");
+    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:                         1024],   @"1.00 KB");
+    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:                     1.5*1024],   @"1.50 KB");
+    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:                       2*1024],   @"2.00 KB");
+    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:              1024.0*1024.0-1],@"1024.00 KB");
+    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:                1024.0*1024.0],   @"1.00 MB");
+    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:       1024.0*1024.0*1024.0-1],@"1024.00 MB");
+    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:         1024.0*1024.0*1024.0],   @"1.00 GB");
+    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:1024.0*1024.0*1024.0*1024.0-1],@"1024.00 GB");
+    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:  1024.0*1024.0*1024.0*1024.0],   @"1.00 TB");
+}
+
+- (void)testUserAuthHeaderString {
+    XCTAssertEqualObjects([UAUtils userAuthHeaderString],@"Basic KG51bGwpOihudWxsKQ==");
+    
+    id mockUser = [self mockForClass:[UAUser class]];
+    [[[mockUser stub] andReturn:@"someUser"] username];
+    [[[mockUser stub] andReturn:@"somePassword"] password];
+    
+    id mockAirship = [self mockForClass:[UAirship class]];
+    [[[mockAirship stub] andReturn:mockUser] inboxUser];
+
+    XCTAssertEqualObjects([UAUtils userAuthHeaderString],@"Basic c29tZVVzZXI6c29tZVBhc3N3b3Jk");
+}
+
+- (void)testAppAuthHeaderString {
+    XCTAssertEqualObjects([UAUtils appAuthHeaderString],@"Basic KG51bGwpOihudWxsKQ==");
+    
+    id mockUAConfig = [self mockForClass:[UAConfig class]];
+    [[[mockUAConfig stub] andReturn:@"someAppKey"] appKey];
+    [[[mockUAConfig stub] andReturn:@"someAppSecret"] appSecret];
+
+    id mockAirship = [self mockForClass:[UAirship class]];
+    [[[mockAirship stub] andReturn:mockAirship] shared];
+    [[[mockAirship stub] andReturn:mockUAConfig] config];
+    
+    XCTAssertEqualObjects([UAUtils appAuthHeaderString],@"Basic c29tZUFwcEtleTpzb21lQXBwU2VjcmV0");
 }
 
 - (NSDateComponents *)componentsForDate:(NSDate *)date {

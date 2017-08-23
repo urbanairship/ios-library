@@ -109,7 +109,7 @@
 
 + (NSString *)getReadableFileSizeFromBytes:(double)bytes {
     if (bytes < 1024)
-        return([NSString stringWithFormat:@"%.0f bytes",bytes]);
+        return([NSString stringWithFormat:@"%.0f %@",bytes,[self pluralize:bytes singularForm:@"byte" pluralForm:@"bytes"]]);
 
     bytes /= 1024.0;
     if (bytes < 1024)
