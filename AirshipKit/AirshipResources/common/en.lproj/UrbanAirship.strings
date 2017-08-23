@@ -40,3 +40,8 @@
 "ua_mark_read" = "Mark Read";
 "ua_delete" = "Delete";
 "ua_channel_id"= "Channel ID";
+"ua_rate_app_action_default_title"= "Enjoying %@?";
+"ua_rate_app_action_default_body"= "Tap %@ to rate it on the app store.";
+"ua_rate_app_action_positive_button"= "Rate";
+"ua_rate_app_action_negative_button"= "No Thanks";
+"ua_rate_app_action_generic_display_name"= "This App";

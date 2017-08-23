@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12121" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -71,7 +71,7 @@
                                 <constraint firstAttribute="height" constant="54" id="d7U-sJ-sDd"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                            <state key="normal" title="Not Now">
+                            <state key="normal" title="No Thanks">
                                 <color key="titleColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </state>
                             <connections>
@@ -81,7 +81,7 @@
                         <button opaque="NO" alpha="0.75" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zd3-Dx-TSN">
                             <rect key="frame" x="150" y="204.99999999999997" width="150" height="54.000000000000028"/>
                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
-                            <state key="normal" title="Rate App"/>
+                            <state key="normal" title="Rate"/>
                             <connections>
                                 <action selector="rateButtonTapped:" destination="-1" eventType="touchUpInside" id="cc5-hT-i89"/>
                             </connections>
@@ -93,8 +93,8 @@
                             <color key="highlightedColor" cocoaTouchSystemColor="darkTextColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" alpha="0.80000000000000004" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="253" verticalCompressionResistancePriority="1000" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YZj-Kc-fUe">
-                            <rect key="frame" x="30" y="150.66666666666666" width="240" height="38.333333333333314"/>
-                            <string key="text">Tap Rate App to rate it on the 
+                            <rect key="frame" x="30" y="150.66666666666666" width="240" height="39"/>
+                            <string key="text">Tap Rate to rate it on the 
 App Store.</string>
                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                             <nil key="textColor"/>

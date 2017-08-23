@@ -36,7 +36,6 @@ NSString *const UARateAppNibName = @"UARateAppPromptView";
 NSString *const UARateAppItunesURLFormat = @"itms-apps://itunes.apple.com/app/id%@?action=write-review";
 NSString *const UARateAppPromptTimestampsKey = @"RateAppActionPromptCount";
 NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCount";
-NSString *const UARateAppGenericDisplayName = @"This App";
 
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler {
@@ -198,18 +197,9 @@ NSString *const UARateAppGenericDisplayName = @"This App";
 
 // Rate app action for iOS 8+ with applications track ID using a store URL link
 -(void)displayLinkPrompt:(NSString *)linkString completionHandler:(void (^)(BOOL dismissed))completionHandler {
-    NSString *displayName;
 
     if (![self canLinkToStore:linkString]) {
         return;
-    }
-
-    // Prioritize the optional display name and fall back to short name
-    if (NSBundle.mainBundle.infoDictionary[@"CFBundleDisplayName"]) {
-        displayName = NSBundle.mainBundle.infoDictionary[@"CFBundleDisplayName"];
-    } else {
-        displayName = UARateAppGenericDisplayName;
-        UA_LWARN(@"CFBundleDisplayName unavailable, falling back to generic display name: %@", UARateAppGenericDisplayName);
     }
 
     UARateAppPromptViewController *linkPrompt = [[UARateAppPromptViewController alloc] initWithNibName:UARateAppNibName bundle:[UAirship resources]];
