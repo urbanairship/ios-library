@@ -62,15 +62,15 @@
 
 
     void (^dismissalBlock)(void);
-    __weak UAShareAction *weakSelf = self;
+    UA_WEAKIFY(self);
 
     activityViewController.dismissalBlock = dismissalBlock = ^{
-        __strong UAShareAction *strongSelf = weakSelf;
+        UA_STRONGIFY(self)
 
         completionHandler([UAActionResult emptyResult]);
 
-        strongSelf.lastActivityViewController = nil;
-        strongSelf.popoverController = nil;
+        self.lastActivityViewController = nil;
+        self.popoverController = nil;
     };
 
     if (self.lastActivityViewController) {

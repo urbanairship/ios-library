@@ -59,12 +59,12 @@
 
     [obs observe:self atKeypath:keyPath withBlock:block];
 
-    __weak NSObject *weakSelf = self;
+    UA_WEAKIFY(self)
     return [UADisposable disposableWithBlock:^{
-        NSObject *strongSelf = weakSelf;
-        [strongSelf removeObserver:obs forKeyPath:keyPath];
+        UA_STRONGIFY(self)
+        [self removeObserver:obs forKeyPath:keyPath];
         @synchronized(self) {
-            [strongSelf.anonymousObservers removeObject:obs];
+            [self.anonymousObservers removeObject:obs];
         }
     }];
 }

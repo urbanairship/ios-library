@@ -183,12 +183,13 @@
      * Any internal method calls for dynamically adding or removing constraints
      * should be done from within this block.
      */
-    __weak UAInAppMessageControllerDefaultDelegate *weakSelf = self;
+    UA_WEAKIFY(self);
+
     self.updateLayoutConstraintsBlock = ^{
-        UAInAppMessageControllerDefaultDelegate *strongSelf = weakSelf;
+        UA_STRONGIFY(self)
 
         // Update size class constraints
-        [strongSelf updateSizeClassConstraints:parentView messageView:messageView];
+        [self updateSizeClassConstraints:parentView messageView:messageView];
     };
 
     self.updateLayoutConstraintsBlock();

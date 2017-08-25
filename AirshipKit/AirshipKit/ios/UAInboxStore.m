@@ -28,9 +28,10 @@
         self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
                                                                       concurrencyType:NSPrivateQueueConcurrencyType];
 
-        __weak id weakSelf = self;
+        UA_WEAKIFY(self);
         [self.managedContext performBlock:^{
-            [weakSelf moveDatabase];
+            UA_STRONGIFY(self)
+            [self moveDatabase];
         }];
 
         [self.managedContext addPersistentSqlStore:self.storeName completionHandler:^(BOOL success, NSError *error) {

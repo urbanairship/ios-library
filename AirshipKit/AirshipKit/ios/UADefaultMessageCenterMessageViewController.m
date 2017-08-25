@@ -210,31 +210,34 @@ typedef enum MessageState {
     // Refresh the list to see if the message is available in the cloud
     self.messageState = FETCHING;
 
-    __weak id weakSelf = self;
+    UA_WEAKIFY(self)
 
     [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
         dispatch_async(dispatch_get_main_queue(),^{
-            id strongSelf = weakSelf;
+            UA_STRONGIFY(self)
             UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
             if (message) {
                 // display the message
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-                [strongSelf loadMessage:message onlyIfChanged:onlyIfChanged];
+                [self loadMessage:message onlyIfChanged:onlyIfChanged];
 #pragma GCC diagnostic pop
             } else {
                 // if the message no longer exists, clean up and show an error dialog
-                [strongSelf hideLoadingIndicator];
-                
-                [strongSelf displayAlertOnOK:errorCompletion onRetry:^{
-                    [weakSelf loadMessageForID:messageID onlyIfChanged:onlyIfChanged onError:errorCompletion];
+                [self hideLoadingIndicator];
+
+                [self displayAlertOnOK:errorCompletion onRetry:^{
+                    UA_STRONGIFY(self)
+                    [self loadMessageForID:messageID onlyIfChanged:onlyIfChanged onError:errorCompletion];
                 }];
             }
         });
         return;
     } withFailureBlock:^{
         dispatch_async(dispatch_get_main_queue(),^{
-            [weakSelf hideLoadingIndicator];
+            UA_STRONGIFY(self)
+
+            [self hideLoadingIndicator];
             errorCompletion();
         });
         return;
@@ -456,20 +459,20 @@ static NSString *urlForBlankPage = @"about:blank";
 #pragma mark NSNotificationCenter callbacks
 
 - (void)messageListUpdated {
-    __weak id weakSelf = self;
+    UA_WEAKIFY(self);
     dispatch_async(dispatch_get_main_queue(), ^{
-        __strong __typeof(self) strongSelf = weakSelf;
+        UA_STRONGIFY(self)
         // copy the back-end list of messages as it can change from under the UI
-        [strongSelf copyMessages];
-        if ((strongSelf.messages.count == 0) || (!strongSelf.message && strongSelf.messageState != FETCHING && strongSelf.messageState != TO_LOAD)) {
-            [strongSelf coverWithMessageAndHideLoadingIndicator:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
+        [self copyMessages];
+        if ((self.messages.count == 0) || (!self.message && self.messageState != FETCHING && self.messageState != TO_LOAD)) {
+            [self coverWithMessageAndHideLoadingIndicator:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
         } else {
-            if ((strongSelf.messageState == LOADED) && ([strongSelf indexOfMessage:strongSelf.message] == NSNotFound)) {
+            if ((self.messageState == LOADED) && ([self indexOfMessage:self.message] == NSNotFound)) {
                 // If the index path is still accessible,
                 // find the nearest accessible neighbor
-                NSUInteger index = MIN(strongSelf.messages.count - 1, strongSelf.messageIndex);
+                NSUInteger index = MIN(self.messages.count - 1, self.messageIndex);
                 
-                [strongSelf loadMessageAtIndex:index];
+                [self loadMessageAtIndex:index];
             }
         }
     });

@@ -199,32 +199,34 @@ static NSString *urlForBlankPage = @"about:blank";
     // Refresh the list to see if the message is available in the cloud
     self.messageState = FETCHING;
 
-    __weak id weakSelf = self;
+    UA_WEAKIFY(self);
 
     [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
          dispatch_async(dispatch_get_main_queue(),^{
-            __strong id strongSelf = weakSelf;
-            
+             UA_STRONGIFY(self)
+
             UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
             if (message) {
                 // display the message
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-                [strongSelf loadMessage:message onlyIfChanged:onlyIfChanged];
+                [self loadMessage:message onlyIfChanged:onlyIfChanged];
 #pragma GCC diagnostic pop
             } else {
                 // if the message no longer exists, clean up and show an error dialog
-                [strongSelf hideLoadingIndicator];
+                [self hideLoadingIndicator];
                 
-                [strongSelf displayAlertOnOK:errorCompletion onRetry:^{
-                    [weakSelf loadMessageForID:messageID onlyIfChanged:onlyIfChanged onError:errorCompletion];
+                [self displayAlertOnOK:errorCompletion onRetry:^{
+                    UA_STRONGIFY(self)
+                    [self loadMessageForID:messageID onlyIfChanged:onlyIfChanged onError:errorCompletion];
                 }];
             }
             return;
         });
     } withFailureBlock:^{
         dispatch_async(dispatch_get_main_queue(),^{
-            [weakSelf hideLoadingIndicator];
+            UA_STRONGIFY(self)
+            [self hideLoadingIndicator];
             errorCompletion();
         });
         return;

@@ -64,7 +64,7 @@ static NSURLCache *cache_ = nil;
 }
 
 - (void)startLoading {
-    __weak UAURLProtocol *weakSelf = self;
+    UA_WEAKIFY(self);
 
     NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
     config.URLCache = [UAURLProtocol cache];
@@ -74,12 +74,12 @@ static NSURLCache *cache_ = nil;
     self.dataTask = [session dataTaskWithRequest:self.request
                            completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
 
-                               UAURLProtocol *strongSelf = weakSelf;
+                               UA_STRONGIFY(self)
 
                                if (error) {
                                    // Try to force it to load from cache
                                    if (![self loadFromCache]) {
-                                       [strongSelf.client URLProtocol:strongSelf didFailWithError:error];
+                                       [self.client URLProtocol:self didFailWithError:error];
                                    }
 
                                    return;

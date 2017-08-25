@@ -409,14 +409,14 @@ static NSMutableSet *overlayControllers_ = nil;
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
 
-    __typeof(self) __weak weakSelf = self;
+    UA_WEAKIFY(self);
 
     // Wait twenty seconds, try again if necessary
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 20.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void){
-        __typeof(self) __strong strongSelf = weakSelf;
-        if (strongSelf) {
-            UA_LINFO(@"Retrying landing page url: %@", strongSelf.url);
-            [strongSelf load];
+        UA_STRONGIFY(self)
+        if (self) {
+            UA_LINFO(@"Retrying landing page url: %@", self.url);
+            [self load];
         }
     });
 }
