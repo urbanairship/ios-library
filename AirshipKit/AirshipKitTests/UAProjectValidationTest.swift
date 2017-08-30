@@ -53,9 +53,7 @@ class UAProjectValidationTest: XCTestCase {
         return sourceRootURL!
     }
 
-    func validateProjectForTarget(buildTarget : String, buildOS : String, targetSubFolder : String? = nil) {
-        print("Validating files included in " + buildTarget + " for " + buildOS + " build.")
-
+    func getFilesSet(buildTarget : String) -> Array<URL> {
         // get all of the files from the xcode project file for this target
         var filesFromProjectWithOptionals : Array<URL?> = []
 
@@ -76,8 +74,14 @@ class UAProjectValidationTest: XCTestCase {
             }
         }
 
-        let filesFromProject : Array<URL> = filesFromProjectWithOptionals.flatMap{ $0 }
-        
+        return filesFromProjectWithOptionals.flatMap{ $0 } as Array<URL>
+    }
+
+    func validateProjectForTarget(buildTarget : String, buildOS : String, targetSubFolder : String? = nil) {
+        print("Validating files included in " + buildTarget + " for " + buildOS + " build.")
+
+        let filesFromProject : Array<URL> = getFilesSet(buildTarget: buildTarget)
+
         // get all of the URLs files from the directories for this target
         var filesFromDirectories : Array<URL> = []
         let fileManager = FileManager.default
@@ -133,6 +137,68 @@ class UAProjectValidationTest: XCTestCase {
         }
     }
 
+    // Validates that each framework import corresponds to an import in UAirship.h
+    func validateUAirshipHeader(buildTarget : String) {
+        let filesFromProject : Array<URL> = getFilesSet(buildTarget: buildTarget)
+
+        // Holds the string contents of UAirship.h
+        var airshipHeaderContents:String?
+
+        // Pattern matches framework imports only
+        guard let importRegex = try? NSRegularExpression(pattern: "#import <\\w+\\/\\w+\\.h>") else { return }
+
+        var importMatches : Array<String> = []
+
+        // Regex matching helper
+        let matches = {(text: String) -> [String] in
+                let regex = importRegex
+                let nsText = text as NSString
+                let results = regex.matches(in: text, range: NSRange(location: 0, length:nsText.length))
+                return results.map { nsText.substring(with: $0.range)}
+        }
+
+        for file in filesFromProject {
+            guard let fileContents = try? String(contentsOf: file) else {
+                print("Unable to parse file contents into string.")
+                continue
+            }
+
+            if (file.lastPathComponent == "UAirship.h") {
+                airshipHeaderContents = fileContents
+            }
+
+            importMatches = importMatches + matches(fileContents)
+        }
+
+        // Remove duplicates
+        let importSet = Set(importMatches)
+
+        if (airshipHeaderContents == nil) {
+            print("UAirship.h is missing from the project files set.")
+            XCTAssert(false)
+            return
+        }
+
+        for importString in importSet {
+            // Ignore these imports
+            switch importString {
+                case "#import <UIKit/UIKit.h>":
+                    continue
+                case "#import <CommonCrypto/CommonDigest.h>":
+                    continue
+                case "#import <objc/runtime.h>":
+                    continue
+                case "#import <Foundation/Foundation.h>":
+                    continue
+                case "#import <SystemConfiguration/SCNetworkReachability.h>":
+                    continue
+
+                default:
+                    XCTAssert(airshipHeaderContents!.contains(importString), "UAirship header does not contain \(importString).")
+            }
+        }
+    }
+
     func testAirshipKit() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
@@ -149,6 +215,9 @@ class UAProjectValidationTest: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
         validateProjectForTarget(buildTarget: "AirshipLib", buildOS: "ios", targetSubFolder: "AirshipKit")
+
+        // Validate that each framework import is represented in the UAirship header
+        validateUAirshipHeader(buildTarget: "AirshipLib")
     }
-    
+
 }
