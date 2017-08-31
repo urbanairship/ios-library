@@ -4,10 +4,10 @@ import XCTest
 import XcodeEdit
 
 class UAProjectValidationTest: XCTestCase {
-    
+
     var sourceRootURL : URL?
     var xcodeProject : XCProjectFile?
-    
+
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -15,15 +15,15 @@ class UAProjectValidationTest: XCTestCase {
         // The xcodeproj file to load
         let projectFilePath = infoPlistDict["PROJECT_FILE_PATH"] as! String
         let xcodeprojPath = URL(fileURLWithPath: projectFilePath)
-        
+
         // Load from the xcodeproj file
         xcodeProject = try! XCProjectFile(xcodeprojURL: xcodeprojPath)
         XCTAssert(xcodeProject != nil,"Unable to load xcodeproj file - something wrong with the plist?")
-        
+
         // path to the source root
         sourceRootURL = xcodeprojPath.deletingLastPathComponent()
         XCTAssert(sourceRootURL != nil)
-        
+
         // AirshipLib.h is created by the ios and tvos builds. In case one wasn't built, create AirshipLib.h here
         let fileManager = FileManager.default
         let airshipKitURL = sourceRootURL?.appendingPathComponent("AirshipKit")
@@ -39,13 +39,13 @@ class UAProjectValidationTest: XCTestCase {
         if (!fileManager.fileExists(atPath:(tvosAirshipLibURL?.path)!)) {
             try? "".write(to: tvosAirshipLibURL!, atomically: false, encoding: String.Encoding.utf8)
         }
-   }
-    
+    }
+
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
-    
+
     func convertSourceTreeFolderToURL(sourceTreeFolder: SourceTreeFolder) -> URL {
         if (sourceTreeFolder != .sourceRoot) {
             XCTFail("SourceTreeFolders other than .sourceRoot are not currently supported by this tool")
@@ -165,6 +165,7 @@ class UAProjectValidationTest: XCTestCase {
 
             if (file.lastPathComponent == "UAirship.h") {
                 airshipHeaderContents = fileContents
+                continue
             }
 
             importMatches = importMatches + matches(fileContents)
