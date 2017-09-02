@@ -235,7 +235,9 @@ typedef enum MessageState {
     } withFailureBlock:^{
         dispatch_async(dispatch_get_main_queue(),^{
             [weakSelf hideLoadingIndicator];
-            errorCompletion();
+            if (errorCompletion) {
+                errorCompletion();
+            }
         });
         return;
     }];
