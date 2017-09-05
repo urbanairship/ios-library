@@ -235,10 +235,13 @@ typedef enum MessageState {
         return;
     } withFailureBlock:^{
         dispatch_async(dispatch_get_main_queue(),^{
-            UA_STRONGIFY(self)
-
+            UA_STRONGIFY(self);
+            
             [self hideLoadingIndicator];
-            errorCompletion();
+
+            if (errorCompletion) {
+                errorCompletion();
+            }
         });
         return;
     }];
