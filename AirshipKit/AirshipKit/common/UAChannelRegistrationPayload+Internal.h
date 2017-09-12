@@ -11,6 +11,9 @@
 #define kUAChannelOptInKey @"opt_in"
 #define kUAChannelPushAddressKey @"push_address"
 
+#define kUAChannelTopLevelTimeZoneJSONKey @"timezone"
+#define kUAChannelTopLevelLanguageJSONKey @"locale_language"
+
 #define kUAChanneliOSKey @"ios"
 #define kUAChannelBadgeJSONKey @"badge"
 #define kUAChannelQuietTimeJSONKey @"quiettime"
@@ -72,6 +75,11 @@ NS_ASSUME_NONNULL_BEGIN
  * Quiet time settings for this device.
  */
 @property (nonatomic, strong, nullable) NSDictionary *quietTime;
+
+/**
+ * The language for this device.
+ */
+@property (nonatomic, copy, nullable) NSString *language;
 
 /**
  * The time zone for this device.

@@ -687,7 +687,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     payload.alias = self.alias;
 #pragma GCC diagnostic pop
 
-
     if (self.autobadgeEnabled) {
         payload.badge = [NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]];
     } else {
@@ -697,6 +696,14 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     if (self.timeZone.name && self.quietTimeEnabled) {
         payload.timeZone = self.timeZone.name;
         payload.quietTime = [self.quietTime copy];
+    }
+
+    NSString *localeLanguage = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
+
+    // Set top level timezone and language code
+    if (self.timeZone.name && localeLanguage) {
+        payload.timeZone = self.timeZone.name;
+        payload.language = localeLanguage;
     }
 
     return payload;

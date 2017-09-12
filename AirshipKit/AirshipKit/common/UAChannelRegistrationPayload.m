@@ -1,6 +1,9 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAChannelRegistrationPayload+Internal.h"
+#import "UAirship.h"
+#import "UAAnalytics.h"
+
 
 @implementation UAChannelRegistrationPayload
 
@@ -41,12 +44,18 @@
         [channel setValue:self.tags forKey:kUAChannelTagsJSONKey];
     }
 
-    if (self.badge || self.quietTime || self.timeZone) {
+    if (self.badge || self.quietTime) {
         NSMutableDictionary *ios = [NSMutableDictionary dictionary];
         [ios setValue:self.badge forKey:kUAChannelBadgeJSONKey];
         [ios setValue:self.quietTime forKey:kUAChannelQuietTimeJSONKey];
         [ios setValue:self.timeZone forKey:kUAChannelTimeZoneJSONKey];
         [channel setValue:ios forKey:kUAChanneliOSKey];
+    }
+
+    // Set top level timezone and language keys
+    if ([[UAirship shared].analytics isEnabled]) {
+        [channel setValue:self.timeZone forKey:kUAChannelTopLevelTimeZoneJSONKey];
+        [channel setValue:self.language forKey:kUAChannelTopLevelLanguageJSONKey];
     }
 
     [payloadDictionary setValue:channel forKey:kUAChannelKey];
