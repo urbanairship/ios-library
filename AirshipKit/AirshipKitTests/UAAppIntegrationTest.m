@@ -343,7 +343,7 @@
         return [response.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier] &&
         [response.notificationContent.notificationInfo isEqualToDictionary:self.notification];
     }] completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)() = obj;
+        void (^handler)(void) = obj;
         handler();
         return YES;
     }]];
@@ -422,7 +422,7 @@
         return [response.actionIdentifier isEqualToString:@"foregroundIdentifier"] &&
         [response.notificationContent.notificationInfo isEqualToDictionary:self.notification];
     }] completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)() = obj;
+        void (^handler)(void) = obj;
         handler();
         return YES;
     }]];
@@ -497,7 +497,7 @@
         return [response.actionIdentifier isEqualToString:@"backgroundIdentifier"] &&
         [response.notificationContent.notificationInfo isEqualToDictionary:self.notification];
     }] completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)() = obj;
+        void (^handler)(void) = obj;
         handler();
         return YES;
     }]];
@@ -533,7 +533,7 @@
         return [response.actionIdentifier isEqualToString:@"testActionIdentifier"] &&
         [response.notificationContent.notificationInfo isEqualToDictionary:self.notification];
     }] completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)() = obj;
+        void (^handler)(void) = obj;
         handler();
         return YES;
     }]];
@@ -601,7 +601,7 @@
         return [response.actionIdentifier isEqualToString:@"backgroundIdentifier"] &&
         [response.notificationContent.notificationInfo isEqualToDictionary:self.notification];
     }] completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)() = obj;
+        void (^handler)(void) = obj;
         handler();
         return YES;
     }]];
@@ -666,7 +666,7 @@
         return [response.actionIdentifier isEqualToString:@"foregroundIdentifier"] &&
         [response.notificationContent.notificationInfo isEqualToDictionary:self.notification];
     }] completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)() = obj;
+        void (^handler)(void) = obj;
         handler();
         return YES;
     }]];
@@ -737,7 +737,7 @@
         [response.responseText isEqualToString:@"howdy"];
 
     }] completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)() = obj;
+        void (^handler)(void) = obj;
         handler();
         return YES;
     }]];
@@ -791,7 +791,7 @@
         [response.notificationContent.notificationInfo isEqualToDictionary:self.notification];
 
     }] completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)() = obj;
+        void (^handler)(void) = obj;
         handler();
         return YES;
     }]];
@@ -905,7 +905,8 @@
     BOOL (^handlerCheck)(id obj) = ^(id obj) {
         void (^handler)(UAActionResult *) = obj;
         if (handler) {
-            handler(UIBackgroundFetchResultNewData);
+            UAActionResult *testResult = [UAActionResult resultWithValue:@"test" withFetchResult:UAActionFetchResultNewData];
+            handler(testResult);
         }
         return YES;
     };
@@ -971,7 +972,8 @@
     BOOL (^handlerCheck)(id obj) = ^(id obj) {
         void (^handler)(UAActionResult *) = obj;
         if (handler) {
-            handler(UIBackgroundFetchResultNewData);
+            UAActionResult *testResult = [UAActionResult resultWithValue:@"test" withFetchResult:UAActionFetchResultNewData];
+            handler(testResult);
         }
         return YES;
     };
@@ -1114,7 +1116,7 @@
         [response.notificationContent.notificationInfo isEqualToDictionary:self.notification];
 
     }] completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)() = obj;
+        void (^handler)(void) = obj;
         handler();
         return YES;
     }]];

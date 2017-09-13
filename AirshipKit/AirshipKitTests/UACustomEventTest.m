@@ -378,7 +378,7 @@
     XCTAssertEqualObjects(@"123.456789", eventValue);
 
     eventValue = event.data[@"properties"][@"float"];
-    XCTAssertEqualObjects(@"123.4", eventValue);
+    XCTAssertEqual(@"123.4".floatValue, [eventValue floatValue]);
 
     eventValue = event.data[@"properties"][@"int"];
     XCTAssertEqualObjects(@"123", eventValue);

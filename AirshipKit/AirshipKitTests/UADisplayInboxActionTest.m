@@ -295,7 +295,7 @@
     }];
 }
 
-- (void)stubMessageListRefreshWithSuccessBlock:(void (^)())block {
+- (void)stubMessageListRefreshWithSuccessBlock:(void (^)(void))block {
     [[self.mockMessageList stub] retrieveMessageListWithSuccessBlock:[OCMArg checkWithBlock:^BOOL(id obj) {
         if (block) {
             block();
@@ -306,7 +306,7 @@
     }] withFailureBlock:OCMOCK_ANY];
 }
 
-- (void)stubMessageListRefreshWithFailureBlock:(void (^)())block {
+- (void)stubMessageListRefreshWithFailureBlock:(void (^)(void))block {
     [[self.mockMessageList stub] retrieveMessageListWithSuccessBlock:OCMOCK_ANY
                                                       withFailureBlock:[OCMArg checkWithBlock:^BOOL(id obj) {
 

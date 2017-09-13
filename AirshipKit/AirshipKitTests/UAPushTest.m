@@ -2297,7 +2297,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [[self.mockApplication expect] setApplicationIconBadgeNumber:expectedNotificationContent.badge.integerValue];
 
     [[self.mockPushDelegate expect] receivedForegroundNotification:expectedNotificationContent completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)() = obj;
+        void (^handler)(void) = obj;
         handler();
         return YES;
     }]];
@@ -2329,7 +2329,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [[self.mockApplication reject] setApplicationIconBadgeNumber:expectedNotificationContent.badge.integerValue];
 
     [[self.mockPushDelegate expect] receivedForegroundNotification:expectedNotificationContent completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)() = obj;
+        void (^handler)(void) = obj;
         handler();
         return YES;
     }]];
@@ -2357,7 +2357,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [[self.mockPushDelegate reject] receivedForegroundNotification:expectedNotificationContent completionHandler:OCMOCK_ANY];
 
     [[self.mockPushDelegate expect] receivedBackgroundNotification:expectedNotificationContent completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)() = obj;
+        void (^handler)(void) = obj;
         handler();
         return YES;
     }]];
@@ -2420,7 +2420,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
                                                                                                                           responseText:@"test_response_text"];
 
     [[self.mockPushDelegate expect] receivedNotificationResponse:OCMOCK_ANY completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)() = obj;
+        void (^handler)(void) = obj;
         handler();
         return YES;
     }]];

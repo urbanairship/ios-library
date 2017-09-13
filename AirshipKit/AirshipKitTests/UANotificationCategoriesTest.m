@@ -20,7 +20,7 @@
     // Require auth defaults to true for background actions
     for (UANotificationCategory *category in categories) {
         for (UANotificationAction *action in category.actions) {
-            if (!action.options & UNNotificationActionOptionForeground) {
+            if (!(action.options & UNNotificationActionOptionForeground)) {
                 XCTAssertTrue(action.options & UNNotificationActionOptionAuthenticationRequired);
             }
         }
@@ -34,7 +34,7 @@
     // Verify require auth is false for background actions
     for (UANotificationCategory *category in categories) {
         for (UANotificationAction *action in category.actions) {
-            if (!action.options & UNNotificationActionOptionForeground) {
+            if (!(action.options & UNNotificationActionOptionForeground)) {
                 XCTAssertFalse(action.options & UNNotificationActionOptionAuthenticationRequired);
             }
         }
