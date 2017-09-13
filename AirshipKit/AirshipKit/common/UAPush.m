@@ -886,7 +886,9 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
 - (void)notificationRegistrationFinishedWithOptions:(UANotificationOptions)options {
     if (!self.deviceToken) {
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[UIApplication sharedApplication] registerForRemoteNotifications];
+        });
     };
 
     self.userPromptedForNotifications = YES;
