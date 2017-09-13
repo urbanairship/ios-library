@@ -25,7 +25,7 @@
     
     NSArray *actions = @[watAction, yayAction, zizAction];
 
-    self.uaCategory = [UANotificationCategory categoryWithIdentifier:@"abilities" actions:actions intentIdentifiers:@[] options:UANotificationCategoryOptionNone];
+    self.uaCategory = [UANotificationCategory categoryWithIdentifier:@"abilities" actions:actions intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:@"Push Notification" options:UANotificationCategoryOptionNone];
 }
 
 /**
