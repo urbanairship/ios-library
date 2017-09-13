@@ -13,6 +13,7 @@
 
 #define kUAChannelTopLevelTimeZoneJSONKey @"timezone"
 #define kUAChannelTopLevelLanguageJSONKey @"locale_language"
+#define kUAChannelTopLevelCountryJSONKey @"locale_country"
 
 #define kUAChanneliOSKey @"ios"
 #define kUAChannelBadgeJSONKey @"badge"
@@ -77,9 +78,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, nullable) NSDictionary *quietTime;
 
 /**
- * The language for this device.
+ * The locale language for this device.
  */
 @property (nonatomic, copy, nullable) NSString *language;
+
+/**
+ * The locale country for this device.
+ */
+@property (nonatomic, copy, nullable) NSString *country;
 
 /**
  * The time zone for this device.

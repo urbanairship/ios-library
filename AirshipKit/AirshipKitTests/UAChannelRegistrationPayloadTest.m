@@ -41,6 +41,7 @@
     self.payload.quietTime =  quietTime;
     self.payload.timeZone = @"timezone";
     self.payload.language = @"language";
+    self.payload.country = @"country";
     self.payload.alias = @"fakeAlias";
     self.payload.tags = @[@"tagOne", @"tagTwo"];
     self.payload.setTags = YES;
@@ -52,9 +53,9 @@
 }
 
 /**
- * Test that the json has the full expected payload when analytics is enabled
+ * Test that the json has the full expected payload
  */
-- (void)testAsJsonFullPayloadAnalyticsEnabled {
+- (void)testAsJsonFullPayload {
     [[[self.mockAnalytics stub] andReturnValue:OCMOCK_VALUE(YES)] isEnabled];
 
     NSString *jsonString = [[NSString alloc] initWithData:[self.payload asJSONData] encoding:NSUTF8StringEncoding];
@@ -76,46 +77,10 @@
     XCTAssertEqualObjects([NSNumber numberWithBool:self.payload.setTags], [channel valueForKey:kUAChannelSetTagsKey], @"set tags should be present");
     XCTAssertEqualObjects(self.payload.tags, [channel valueForKey:kUAChannelTagsJSONKey], @"tags should be present");
 
-    // channel specific items that toggle on analytics enabled
-    XCTAssertEqualObjects(@"timezone", [channel valueForKey:kUAChannelTopLevelTimeZoneJSONKey], @"timezone key should be available in the channel dictionary when analytics is enabled");
-    XCTAssertEqualObjects(@"language", [channel valueForKey:kUAChannelTopLevelLanguageJSONKey], @"local_language key should be available in the channel dictionary when analytics is enabled");
-
-    // iOS specific items
-    NSDictionary *ios = [channel valueForKey:kUAChanneliOSKey];
-    XCTAssertNotNil(ios, @"ios should be present");
-    XCTAssertEqualObjects(self.payload.badge, [ios valueForKey:kUAChannelBadgeJSONKey], @"badge should be present");
-    XCTAssertEqualObjects(self.payload.quietTime, [ios valueForKey:kUAChannelQuietTimeJSONKey], @"quiet time should be present");
-    XCTAssertEqualObjects(self.payload.timeZone, [ios valueForKey:kUAChannelTimeZoneJSONKey], @"timezone should be present");
-}
-
-/**
- * Test that the json has the full expected payload when analytics is disabled
- */
-- (void)testAsJsonFullPayloadAnalyticsDisabled {
-    [[[self.mockAnalytics stub] andReturnValue:OCMOCK_VALUE(NO)] isEnabled];
-
-    NSString *jsonString = [[NSString alloc] initWithData:[self.payload asJSONData] encoding:NSUTF8StringEncoding];
-    NSDictionary *dict = [NSJSONSerialization objectWithString:jsonString];
-
-    // identity hints
-    NSDictionary *identityHints = [dict valueForKey:kUAChannelIdentityHintsKey];
-    XCTAssertNotNil(identityHints, @"identity hints should be present");
-    XCTAssertEqualObjects(self.payload.userID, [identityHints valueForKey:kUAChannelUserIDKey], @"user ID should be present");
-    XCTAssertEqualObjects(self.payload.deviceID, [identityHints valueForKey:kUAChannelDeviceIDKey], @"device ID should be present");
-
     // channel specific items
-    NSDictionary *channel = [dict valueForKey:kUAChannelKey];
-    XCTAssertEqualObjects(@"ios", [channel valueForKey:kUAChannelDeviceTypeKey], @"device type should be present");
-    XCTAssertEqualObjects([NSNumber numberWithBool:self.payload.optedIn], [channel valueForKey:kUAChannelOptInKey], @"opt-in should be present");
-    XCTAssertEqualObjects([NSNumber numberWithBool:self.payload.backgroundEnabled], [channel valueForKey:kUABackgroundEnabledJSONKey], @"background should be present");
-    XCTAssertEqualObjects(self.payload.pushAddress, [channel valueForKey:kUAChannelPushAddressKey], @"push address should be present");
-    XCTAssertEqualObjects(self.payload.alias, [channel valueForKey:kUAChannelAliasJSONKey], @"alias should be present");
-    XCTAssertEqualObjects([NSNumber numberWithBool:self.payload.setTags], [channel valueForKey:kUAChannelSetTagsKey], @"set tags should be present");
-    XCTAssertEqualObjects(self.payload.tags, [channel valueForKey:kUAChannelTagsJSONKey], @"tags should be present");
-
-    // channel specific items that toggle on analytics enabled
-    XCTAssertNil([channel valueForKey:kUAChannelTopLevelTimeZoneJSONKey], @"timezone key should not be available in the channel dictionary when analytics is disabled");
-    XCTAssertNil([channel valueForKey:kUAChannelTopLevelLanguageJSONKey], @"local_language key should not be available in the channel dictionary when analytics is disabled");
+    XCTAssertEqualObjects(@"timezone", [channel valueForKey:kUAChannelTopLevelTimeZoneJSONKey], @"timezone key should be available in the channel dictionary");
+    XCTAssertEqualObjects(@"language", [channel valueForKey:kUAChannelTopLevelLanguageJSONKey], @"locale_language key should be available in the channel dictionary");
+    XCTAssertEqualObjects(@"country", [channel valueForKey:kUAChannelTopLevelCountryJSONKey], @"locale_country key should be available in the channel dictionary");
 
     // iOS specific items
     NSDictionary *ios = [channel valueForKey:kUAChanneliOSKey];

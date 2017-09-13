@@ -49,14 +49,14 @@
         [ios setValue:self.badge forKey:kUAChannelBadgeJSONKey];
         [ios setValue:self.quietTime forKey:kUAChannelQuietTimeJSONKey];
         [ios setValue:self.timeZone forKey:kUAChannelTimeZoneJSONKey];
+
         [channel setValue:ios forKey:kUAChanneliOSKey];
     }
 
     // Set top level timezone and language keys
-    if ([[UAirship shared].analytics isEnabled]) {
-        [channel setValue:self.timeZone forKey:kUAChannelTopLevelTimeZoneJSONKey];
-        [channel setValue:self.language forKey:kUAChannelTopLevelLanguageJSONKey];
-    }
+    [channel setValue:self.timeZone forKey:kUAChannelTopLevelTimeZoneJSONKey];
+    [channel setValue:self.language forKey:kUAChannelTopLevelLanguageJSONKey];
+    [channel setValue:self.country forKey:kUAChannelTopLevelCountryJSONKey];
 
     [payloadDictionary setValue:channel forKey:kUAChannelKey];
 
@@ -77,6 +77,8 @@
         copy.alias = self.alias;
         copy.quietTime = [self.quietTime copyWithZone:zone];
         copy.timeZone = self.timeZone;
+        copy.language = self.language;
+        copy.country = self.country;
         copy.badge = [self.badge copyWithZone:zone];
     }
 
