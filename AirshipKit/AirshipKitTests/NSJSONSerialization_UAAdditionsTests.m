@@ -27,7 +27,7 @@
 
 - (void)testStringWithNumberObject {
     NSString *jsonString = [NSJSONSerialization stringWithObject:[NSNumber numberWithFloat:3.3] acceptingFragments:YES];
-    XCTAssertEqualObjects(jsonString, @"3.3", @"method should accept NSNumbers as fragment objects");
+    XCTAssertEqual(jsonString.floatValue, @"3.3".floatValue, @"method should accept NSNumbers as fragment objects");
 }
 
 - (void)testStringWithNullObject {

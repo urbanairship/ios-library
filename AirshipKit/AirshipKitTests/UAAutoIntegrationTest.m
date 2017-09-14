@@ -447,7 +447,7 @@
         appIntegrationCalled = YES;
         void *arg;
         [invocation getArgument:&arg atIndex:5];
-        void (^handler)() = (__bridge void (^)())arg;
+        void (^handler)(void) = (__bridge void (^)(void))arg;
         handler();
     };
 
@@ -486,7 +486,7 @@
     // Add implementation to the app delegate
     __block BOOL appDelegateCalled;
     [self addImplementationForAppDelegateProtocol:@protocol(UIApplicationDelegate) selector:@selector(application:handleActionWithIdentifier:forRemoteNotification:completionHandler:)
-                                 block:^(id self, UIApplication *application, NSString *identifier, NSDictionary *notification, void (^completion)() ) {
+                                            block:^(id self, UIApplication *application, NSString *identifier, NSDictionary *notification, void (^completion)(void) ) {
 
                                      appDelegateCalled = YES;
 
@@ -506,7 +506,7 @@
         appIntegrationCalled = YES;
         void *arg;
         [invocation getArgument:&arg atIndex:5];
-        void (^handler)() = (__bridge void (^)())arg;
+        void (^handler)(void) = (__bridge void (^)(void))arg;
         handler();
     };
 
@@ -551,7 +551,7 @@
     // Add implementation to the app delegate
     __block BOOL appDelegateCalled;
     [self addImplementationForAppDelegateProtocol:@protocol(UIApplicationDelegate) selector:@selector(application:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:)
-                                 block:^(id self, UIApplication *application, NSString *identifier, NSDictionary *notification, NSDictionary *responseInfo, void (^completion)() ) {
+                                            block:^(id self, UIApplication *application, NSString *identifier, NSDictionary *notification, NSDictionary *responseInfo, void (^completion)(void) ) {
 
                                      appDelegateCalled = YES;
 
@@ -572,7 +572,7 @@
         appIntegrationCalled = YES;
         void *arg;
         [invocation getArgument:&arg atIndex:6];
-        void (^handler)() = (__bridge void (^)())arg;
+        void (^handler)(void) = (__bridge void (^)(void))arg;
         handler();
     };
 
@@ -703,7 +703,7 @@
     // Add implementation to the app delegate
     __block BOOL notificationCenterDelegateCalled;
     [self addImplementationForNotificationCenterDelegateProtocol:@protocol(UNUserNotificationCenterDelegate) selector:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)
-                                 block:^(id self, UNUserNotificationCenter *notificationCenter, UNNotificationResponse *response, void (^completion)() ) {
+                                                           block:^(id self, UNUserNotificationCenter *notificationCenter, UNNotificationResponse *response, void (^completion)(void) ) {
                                      notificationCenterDelegateCalled = YES;
                                      
                                      // Verify the parameters
@@ -721,7 +721,7 @@
         appIntegrationCalled = YES;
         void *arg;
         [invocation getArgument:&arg atIndex:4];
-        void (^handler)() = (__bridge void (^)())arg;
+        void (^handler)(void) = (__bridge void(^)(void))arg;
         handler();
     };
     

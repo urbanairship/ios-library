@@ -31,8 +31,8 @@
         builder.body = [@"body" dataUsingEncoding:NSUTF8StringEncoding];
         builder.compressBody = YES;
     }];
-
-    XCTAssertEqualObjects([request.body base64EncodedStringWithOptions:0], @"H4sIAAAAAAAAA0vKT6kEALILqNsEAAAA");
+    
+    XCTAssertTrue([[request.body base64EncodedStringWithOptions:0] isEqualToString:@"H4sIAAAAAAAAA0vKT6kEALILqNsEAAAA"] || [[request.body base64EncodedStringWithOptions:0] isEqualToString:@"H4sIAAAAAAAAE0vKT6kEALILqNsEAAAA"]);
     XCTAssertEqualObjects(request.headers[@"Content-Encoding"], @"gzip");
 
 }

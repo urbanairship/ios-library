@@ -707,7 +707,7 @@
  * @param delay The delay to test
  * @param fulfillmentBlock Block that fulfills the conditions
  */
-- (void)verifyDelay:(UAScheduleDelay *)delay fulfillmentBlock:(void (^)())fulfillmentBlock {
+- (void)verifyDelay:(UAScheduleDelay *)delay fulfillmentBlock:(void (^)(void))fulfillmentBlock {
     // Create the action
     __block BOOL actionRan = NO;
     XCTestExpectation *actionRunExpectation = [self expectationWithDescription:@"action ran"];
@@ -771,7 +771,7 @@
  * @param trigger The trigger to test
  * @param triggerFireBlock Block that generates enough events to fire the trigger.
  */
-- (void)verifyTrigger:(UAScheduleTrigger *)trigger triggerFireBlock:(void (^)())triggerFireBlock {
+- (void)verifyTrigger:(UAScheduleTrigger *)trigger triggerFireBlock:(void (^)(void))triggerFireBlock {
     // Create the action
     __block BOOL actionRan = NO;
     XCTestExpectation *actionRunExpectation = [self expectationWithDescription:@"action ran"];

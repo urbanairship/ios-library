@@ -82,20 +82,6 @@
 			remoteGlobalIDString = 494DD9561B0EB677009C134E;
 			remoteInfo = AirshipKit;
 		};
-		99666D6C1EDF1DF100BAE46B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DF6DD6561E7A1EB8000C281A;
-			remoteInfo = "AirshipKit tvOS";
-		};
-		99666D6E1EDF1DF100BAE46B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DF7E739E1E7B3F0A0039F65D;
-			remoteInfo = "AirshipResources tvOS";
-		};
 		CC53F7781D9B12D5004D366C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */;
@@ -123,6 +109,20 @@
 			proxyType = 2;
 			remoteGlobalIDString = CC8999771D8B625500A0CECC;
 			remoteInfo = AirshipResources;
+		};
+		DF0C33401F69B817002FEE40 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DF6DD6561E7A1EB8000C281A;
+			remoteInfo = "AirshipKit tvOS";
+		};
+		DF0C33421F69B817002FEE40 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DF7E739E1E7B3F0A0039F65D;
+			remoteInfo = "AirshipResources tvOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -401,6 +401,8 @@
 			children = (
 				CC899CB31D8B6AB400A0CECC /* AirshipKit.framework */,
 				CC899CB51D8B6AB400A0CECC /* AirshipResources.bundle */,
+				DF0C33411F69B817002FEE40 /* AirshipKit.framework */,
+				DF0C33431F69B817002FEE40 /* AirshipResources tvOS.bundle */,
 				CC53F7791D9B12D5004D366C /* libUAirship.a */,
 				CC53F77B1D9B12D5004D366C /* AirshipKitTests.xctest */,
 			);
@@ -531,13 +533,6 @@
 			remoteRef = 49251DD61D6F95FC00EED4BD /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		99666D6F1EDF1DF100BAE46B /* AirshipResources tvOS.bundle */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "AirshipResources tvOS.bundle";
-			remoteRef = 99666D6E1EDF1DF100BAE46B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		CC53F7791D9B12D5004D366C /* libUAirship.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -564,6 +559,20 @@
 			fileType = wrapper.cfbundle;
 			path = AirshipResources.bundle;
 			remoteRef = CC899CB41D8B6AB400A0CECC /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DF0C33411F69B817002FEE40 /* AirshipKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipKit.framework;
+			remoteRef = DF0C33401F69B817002FEE40 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DF0C33431F69B817002FEE40 /* AirshipResources tvOS.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "AirshipResources tvOS.bundle";
+			remoteRef = DF0C33421F69B817002FEE40 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

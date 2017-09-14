@@ -49,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSSet *)createCategoriesFromFile:(NSString *)filePath;
 
 /**
- * Creates a user notification category with the specified ID and action definition.
+ * Creates a user notification category with the specified ID and action definitions.
  *
  * @param categoryId The category identifier
  * @param actionDefinitions An array of user notification action dictionaries used
@@ -58,6 +58,21 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (nullable UANotificationCategory *)createCategory:(NSString *)categoryId
                                             actions:(NSArray *)actionDefinitions;
+
+/**
+ * Creates a user notification category with the specified ID, action definitions, and 
+ * hiddenPreviewsBodyPlaceholder.
+ *
+ * @param categoryId The category identifier
+ * @param actionDefinitions An array of user notification action dictionaries used
+ *        to construct UANotificationAction for the category.
+ * @param hiddenPreviewsBodyPlaceholder A placeholder string to display when the 
+ *        user has disabled notification previews for the app.
+ * @return The user notification category created or `nil` if an error occurred.
+ */
++ (UANotificationCategory *)createCategory:(NSString *)categoryId
+                                   actions:(NSArray *)actionDefinitions
+             hiddenPreviewsBodyPlaceholder:(NSString *)hiddenPreviewsBodyPlaceholder;
 
 @end
 

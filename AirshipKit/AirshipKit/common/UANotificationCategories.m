@@ -70,6 +70,32 @@
 }
 
 + (UANotificationCategory *)createCategory:(NSString *)categoryId actions:(NSArray *)actionDefinitions {
+    NSArray<UANotificationAction *> *actions = [self getActionsFromActionDefinitions:actionDefinitions];
+    if (actions) {
+        return [UANotificationCategory categoryWithIdentifier:categoryId
+                                                      actions:actions
+                                            intentIdentifiers:@[]
+                                                      options:UANotificationCategoryOptionNone];
+    } else {
+        return nil;
+    }
+}
+
++ (UANotificationCategory *)createCategory:(NSString *)categoryId actions:(NSArray *)actionDefinitions hiddenPreviewsBodyPlaceholder:(NSString *)hiddenPreviewsBodyPlaceholder {
+    
+    NSArray<UANotificationAction *> *actions = [self getActionsFromActionDefinitions:actionDefinitions];
+    if (actions) {
+        return [UANotificationCategory categoryWithIdentifier:categoryId
+                                                      actions:actions
+                                            intentIdentifiers:@[]
+                                hiddenPreviewsBodyPlaceholder:hiddenPreviewsBodyPlaceholder
+                                                      options:UANotificationCategoryOptionNone];
+    } else {
+        return nil;
+    }
+}
+
++(NSArray<UANotificationAction *> *)getActionsFromActionDefinitions:(NSArray *)actionDefinitions {
     NSMutableArray *actions = [NSMutableArray array];
 
     for (NSDictionary *actionDefinition in actionDefinitions) {
@@ -84,8 +110,8 @@
         NSString *actionId = actionDefinition[@"identifier"];
 
         if (!title) {
-            UA_LERR(@"Error creating category: %@ for action: %@ due to missing required title.",
-                    categoryId, actionId);
+            UA_LERR(@"Error creating action: %@ due to missing required title.",
+                    actionId);
             return nil;
         }
 
@@ -122,13 +148,8 @@
         
         [actions addObject:action];
     }
-
-    UANotificationCategory *category = [UANotificationCategory categoryWithIdentifier:categoryId
-                                                                              actions:actions
-                                                                    intentIdentifiers:@[]
-                                                                              options:UANotificationCategoryOptionNone];
-
-    return category;
+    
+    return actions;
 }
 
 @end

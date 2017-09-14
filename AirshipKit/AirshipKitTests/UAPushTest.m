@@ -1424,6 +1424,92 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 }
 
 /**
+ * Test registration payload when analytics is enabled does not include timezone, locale language or country
+ */
+- (void)testRegistrationPayloadAnalyticsEnabled {
+    // Set up UAPush to give a full, opted in payload
+    [[[self.mockAnalytics stub] andReturnValue:OCMOCK_VALUE(YES)] isEnabled];
+
+    self.push.deviceToken = validDeviceToken;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    self.push.alias = @"ALIAS";
+#pragma GCC diagnostic pop
+    self.push.channelTagRegistrationEnabled = YES;
+    self.push.tags = @[@"tag-one"];
+    self.push.autobadgeEnabled = NO;
+    self.push.quietTimeEnabled = YES;
+    self.push.timeZone = [NSTimeZone timeZoneWithName:@"Pacific/Auckland"];
+    NSString *localeLanguage = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
+    NSString *localeCountry = [[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleCountryCode];
+    [self.push setQuietTimeStartHour:12 startMinute:0 endHour:12 endMinute:0];
+
+    // Opt in requirement
+    self.push.userPushNotificationsEnabled = YES;
+
+    BOOL (^checkPayloadBlock)(id obj) = ^BOOL(id obj) {
+        UAChannelRegistrationPayload *payload = (UAChannelRegistrationPayload *)obj;
+
+        BOOL languageMatches = [payload.language isEqualToString:localeLanguage];
+        BOOL timezoneMatches = [payload.timeZone isEqualToString:self.push.timeZone.name];
+        BOOL countryMatches = [payload.country isEqualToString:localeCountry];
+
+        return languageMatches && timezoneMatches && countryMatches;
+    };
+
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+    [[self.mockChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                              channelLocation:OCMOCK_ANY
+                                                  withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
+                                                   forcefully:YES];
+
+    [self.push updateChannelRegistrationForcefully:YES];
+
+    XCTAssertNoThrow([self.mockChannelRegistrar verify],
+                     @"payload is not being created with expected values");
+}
+
+/**
+ * Test registration payload when analytics is disabled does not include locale language or country
+ */
+- (void)testRegistrationPayloadAnalyticsDisabled {
+    // Set up UAPush to give a full, opted in payload
+    [[[self.mockAnalytics stub] andReturnValue:OCMOCK_VALUE(NO)] isEnabled];
+
+    self.push.deviceToken = validDeviceToken;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    self.push.alias = @"ALIAS";
+#pragma GCC diagnostic pop
+    self.push.channelTagRegistrationEnabled = YES;
+    self.push.tags = @[@"tag-one"];
+    self.push.autobadgeEnabled = NO;
+    self.push.quietTimeEnabled = YES;
+    self.push.timeZone = [NSTimeZone timeZoneWithName:@"Pacific/Auckland"];
+
+    [self.push setQuietTimeStartHour:12 startMinute:0 endHour:12 endMinute:0];
+
+    // Opt in requirement
+    self.push.userPushNotificationsEnabled = YES;
+
+    BOOL (^checkPayloadBlock)(id obj) = ^BOOL(id obj) {
+        UAChannelRegistrationPayload *payload = (UAChannelRegistrationPayload *)obj;
+        return payload.language == nil && [payload.timeZone isEqualToString:self.push.timeZone.name] && payload.country == nil;
+    };
+
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+    [[self.mockChannelRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                              channelLocation:OCMOCK_ANY
+                                                  withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
+                                                   forcefully:YES];
+
+    [self.push updateChannelRegistrationForcefully:YES];
+
+    XCTAssertNoThrow([self.mockChannelRegistrar verify],
+                     @"payload is not being created with expected values");
+}
+
+/**
  * Test when backgroundPushNotificationsAllowed is YES when
  * device token is available, remote-notification background mode is enabled,
  * backgroundRefreshStatus is allowed, backgroundPushNotificationsEnabled is
@@ -2297,7 +2383,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [[self.mockApplication expect] setApplicationIconBadgeNumber:expectedNotificationContent.badge.integerValue];
 
     [[self.mockPushDelegate expect] receivedForegroundNotification:expectedNotificationContent completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)() = obj;
+        void (^handler)(void) = obj;
         handler();
         return YES;
     }]];
@@ -2329,7 +2415,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [[self.mockApplication reject] setApplicationIconBadgeNumber:expectedNotificationContent.badge.integerValue];
 
     [[self.mockPushDelegate expect] receivedForegroundNotification:expectedNotificationContent completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)() = obj;
+        void (^handler)(void) = obj;
         handler();
         return YES;
     }]];
@@ -2357,7 +2443,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [[self.mockPushDelegate reject] receivedForegroundNotification:expectedNotificationContent completionHandler:OCMOCK_ANY];
 
     [[self.mockPushDelegate expect] receivedBackgroundNotification:expectedNotificationContent completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)() = obj;
+        void (^handler)(void) = obj;
         handler();
         return YES;
     }]];
@@ -2420,7 +2506,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
                                                                                                                           responseText:@"test_response_text"];
 
     [[self.mockPushDelegate expect] receivedNotificationResponse:OCMOCK_ANY completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)() = obj;
+        void (^handler)(void) = obj;
         handler();
         return YES;
     }]];

@@ -5,9 +5,14 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAPush+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
+#import "UAAnalytics.h"
 
 @interface UAChannelRegistrationPayloadTest : UABaseTest
 @property (nonatomic, strong) UAChannelRegistrationPayload *payload;
+
+@property (nonatomic, strong) id mockAirship;
+@property (nonatomic, strong) id mockAnalytics;
+
 @end
 
 @implementation UAChannelRegistrationPayloadTest
@@ -17,6 +22,12 @@
 
     NSDictionary *quietTime = [self buildQuietTimeWithStartDate:[NSDate dateWithTimeIntervalSince1970:30]
                                                     withEndDate:[NSDate dateWithTimeIntervalSince1970:100]];
+
+    self.mockAnalytics = [self mockForClass:[UAAnalytics class]];
+
+    self.mockAirship =[self mockForClass:[UAirship class]];
+    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [[[self.mockAirship stub] andReturn:self.mockAnalytics] analytics];
 
     self.payload = [[UAChannelRegistrationPayload alloc] init];
 
@@ -29,15 +40,24 @@
     self.payload.badge = [NSNumber numberWithInteger:1];
     self.payload.quietTime =  quietTime;
     self.payload.timeZone = @"timezone";
+    self.payload.language = @"language";
+    self.payload.country = @"country";
     self.payload.alias = @"fakeAlias";
     self.payload.tags = @[@"tagOne", @"tagTwo"];
     self.payload.setTags = YES;
+}
+
+- (void)tearDown {
+    [self.mockAirship stopMocking];
+    [self.mockAnalytics stopMocking];
 }
 
 /**
  * Test that the json has the full expected payload
  */
 - (void)testAsJsonFullPayload {
+    [[[self.mockAnalytics stub] andReturnValue:OCMOCK_VALUE(YES)] isEnabled];
+
     NSString *jsonString = [[NSString alloc] initWithData:[self.payload asJSONData] encoding:NSUTF8StringEncoding];
     NSDictionary *dict = [NSJSONSerialization objectWithString:jsonString];
 
@@ -56,6 +76,11 @@
     XCTAssertEqualObjects(self.payload.alias, [channel valueForKey:kUAChannelAliasJSONKey], @"alias should be present");
     XCTAssertEqualObjects([NSNumber numberWithBool:self.payload.setTags], [channel valueForKey:kUAChannelSetTagsKey], @"set tags should be present");
     XCTAssertEqualObjects(self.payload.tags, [channel valueForKey:kUAChannelTagsJSONKey], @"tags should be present");
+
+    // channel specific items
+    XCTAssertEqualObjects(@"timezone", [channel valueForKey:kUAChannelTopLevelTimeZoneJSONKey], @"timezone key should be available in the channel dictionary");
+    XCTAssertEqualObjects(@"language", [channel valueForKey:kUAChannelTopLevelLanguageJSONKey], @"locale_language key should be available in the channel dictionary");
+    XCTAssertEqualObjects(@"country", [channel valueForKey:kUAChannelTopLevelCountryJSONKey], @"locale_country key should be available in the channel dictionary");
 
     // iOS specific items
     NSDictionary *ios = [channel valueForKey:kUAChanneliOSKey];

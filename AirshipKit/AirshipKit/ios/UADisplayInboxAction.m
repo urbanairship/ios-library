@@ -32,26 +32,32 @@
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
-    UAInboxMessage *message = nil;
-    
     // parse the message id (or possibly the entire message) from the arguments
     NSString *messageID = [UAInboxUtils inboxMessageIDFromValue:arguments.value];
-    if (messageID) {
-        if ([[messageID lowercaseString] isEqualToString:kUADisplayInboxActionMessageIDPlaceHolder]) {
-            // If we have InboxMessage metadata show the message
-            if (arguments.metadata[UAActionMetadataInboxMessageKey]) {
-                message = arguments.metadata[UAActionMetadataInboxMessageKey];
-            } else {
-                // Try getting the message ID from the push notification
-                NSDictionary *notification = arguments.metadata[UAActionMetadataPushPayloadKey];
-                messageID = [UAInboxUtils inboxMessageIDFromNotification:notification];
-            }
-        }
-        if (!message) {
-            message = [[UAirship inbox].messageList messageForID:messageID];
-        }
+    
+    // if there is no messageID, or it is an empty string, just show the inbox
+    if (!messageID || [messageID lengthOfBytesUsingEncoding:NSUTF8StringEncoding] == 0) {
+        [self displayInboxWithSituation:arguments.situation];
+        completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNoData]);
+        return;
     }
     
+    // look on the device for the message that matches this message ID
+    UAInboxMessage *message = nil;
+    if ([[messageID lowercaseString] isEqualToString:kUADisplayInboxActionMessageIDPlaceHolder]) {
+        // If we have InboxMessage metadata show the message
+        if (arguments.metadata[UAActionMetadataInboxMessageKey]) {
+            message = arguments.metadata[UAActionMetadataInboxMessageKey];
+        } else {
+            // Try getting the message ID from the push notification
+            NSDictionary *notification = arguments.metadata[UAActionMetadataPushPayloadKey];
+            messageID = [UAInboxUtils inboxMessageIDFromNotification:notification];
+        }
+    }
+    if (!message) {
+        message = [[UAirship inbox].messageList messageForID:messageID];
+    }
+
     if (message) {
         // message is available on the device
         [self displayInboxMessage:message situation:arguments.situation];

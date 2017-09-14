@@ -63,8 +63,8 @@ class UAProjectValidationTest: XCTestCase {
                 continue
             }
             for buildPhase in target.buildPhases {
-                if ((type(of:buildPhase) == XcodeEdit.PBXSourcesBuildPhase)
-                    || (type(of:buildPhase) == XcodeEdit.PBXHeadersBuildPhase)) {
+                if ((type(of:buildPhase) == XcodeEdit.PBXSourcesBuildPhase.self)
+                    || (type(of:buildPhase) == XcodeEdit.PBXHeadersBuildPhase.self)) {
 
                     filesFromProjectWithOptionals += buildPhase.files.map {
                         return ($0.fileRef as? PBXFileReference)?.fullPath.url(with:convertSourceTreeFolderToURL)

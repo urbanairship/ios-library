@@ -54,6 +54,13 @@ static const UANotificationCategoryOptions UANotificationCategoryOptionNone NS_S
 @property(readonly, copy, nonatomic) NSArray<NSString *> *intentIdentifiers;
 
 /**
+ * A placeholder string to display when the user has disabled notification previews for the app.
+ *
+ * Note: This property is only applicable on iOS 11 and above.
+ */
+@property(readonly, copy, nonatomic) NSString *hiddenPreviewsBodyPlaceholder;
+
+/**
  * Options for how to handle notifications of this type.
  */
 @property(readonly, assign, nonatomic) UANotificationCategoryOptions options;
@@ -62,12 +69,36 @@ static const UANotificationCategoryOptions UANotificationCategoryOptionNone NS_S
 /// @name Notification Category Factories
 ///---------------------------------------------------------------------------------------
 
+/**
+ * Creates a user notification category with the specified parameters.
+ *
+ * @param identifier The category identifier
+ * @param actions An array of user notification actions
+ * @param intentIdentifiers The intents supported support for notifications of this category.
+ * @param options Constants indicating how to handle notifications associated with this category.
+ * @return The user notification category created or `nil` if an error occurred.
+ */
 + (instancetype)categoryWithIdentifier:(NSString *)identifier
                                actions:(NSArray<UANotificationAction *> *)actions
                      intentIdentifiers:(NSArray<NSString *> *)intentIdentifiers
                                options:(UANotificationCategoryOptions)options;
 
-
+/**
+ * Creates a user notification category with the specified parameters.
+ *
+ * @param identifier The category identifier
+ * @param actions An array of user notification actions
+ * @param intentIdentifiers The intents supported support for notifications of this category.
+ * @param hiddenPreviewsBodyPlaceholder A placeholder string to display when the user has disabled
+          notification previews for the app.
+ * @param options Constants indicating how to handle notifications associated with this category.
+ * @return The user notification category created or `nil` if an error occurred.
+ */
++ (instancetype)categoryWithIdentifier:(NSString *)identifier
+                               actions:(NSArray<UANotificationAction *> *)actions
+                     intentIdentifiers:(NSArray<NSString *> *)intentIdentifiers
+         hiddenPreviewsBodyPlaceholder:(NSString *)hiddenPreviewsBodyPlaceholder
+                               options:(UANotificationCategoryOptions)options;
 
 ///---------------------------------------------------------------------------------------
 /// @name Notification Category Utilities
