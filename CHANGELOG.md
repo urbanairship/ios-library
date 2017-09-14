@@ -3,6 +3,20 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 8.6.0 - September 13, 2017
+==================================
+Official release for iOS 11 & Xcode 9. Applications should update to this release if they want to support iOS 11 or build under Xcode 9. Applications using SDK 8.5.3 with Carthage should update to this release.
+
+Bug fixes
+---------
+- Force execution of some UI code on the main queue.
+- When executing a Display Inbox action, if the message ID is the empty string, just show the inbox.
+- Turn off code coverage to work-around [this Carthage issue](https://github.com/Carthage/Carthage/issues/2056).
+
+Features
+--------
+- Add support iOS 11 Hidden Notification Content to UANotificationCategory.
+
 Version 8.5.3 - August 22, 2017
 ===============================
 Patch release that fixes missing symbol issues for the static library and removes
