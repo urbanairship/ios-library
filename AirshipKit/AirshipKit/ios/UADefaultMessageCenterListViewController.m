@@ -465,8 +465,8 @@
 - (void)displayMessage:(UAInboxMessage *)message onError:(void (^)(void))errorCompletion {
     if (message.isExpired) {
         UA_LDEBUG(@"Message expired");
-        UIAlertController* alert = [UIAlertController alertControllerWithTitle:UAMessageCenterLocalizedString(@"ua_connection_error")
-                                                                       message:UAMessageCenterLocalizedString(@"ua_mc_failed_to_load")
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:UAMessageCenterLocalizedString(@"ua_content_error")
+                                                                       message:UAMessageCenterLocalizedString(@"ua_mc_no_longer_available")
                                                                 preferredStyle:UIAlertControllerStyleAlert];
         
         UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:UAMessageCenterLocalizedString(@"ua_ok")
@@ -486,6 +486,12 @@
     
     self.selectedMessage = message;
     
+    if (!message && !self.messageViewController) {
+        // if we have no message, only continue on if we already have a messageViewController so it can
+        // be updated. No reason to create a new one for a nil message.
+        return;
+    }
+    
     // create a messageViewController if we don't already have one
     if (!self.messageViewController) {
         [self createMessageViewController];
@@ -500,7 +506,10 @@
     
     [self.messageViewController loadMessage:message onlyIfChanged:YES];
     
-    [self displayMessageViewController];
+    if (message) {
+        // only display the message if there is a message to display
+        [self displayMessageViewController];
+    }
 }
 
 - (void)displayMessageForID:(NSString *)messageID {
@@ -517,6 +526,9 @@
         if (self.collapsed && (self.messageViewController == self.navigationController.visibleViewController)) {
             [self.navigationController popViewControllerAnimated:YES];
         }
+        
+        // refresh message list
+        [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
     }];
 }
 

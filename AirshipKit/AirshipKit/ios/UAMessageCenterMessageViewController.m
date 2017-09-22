@@ -216,9 +216,13 @@ static NSString *urlForBlankPage = @"about:blank";
                 // if the message no longer exists, clean up and show an error dialog
                 [self hideLoadingIndicator];
                 
-                [self displayAlertOnOK:errorCompletion onRetry:^{
-                    UA_STRONGIFY(self)
-                    [self loadMessageForID:messageID onlyIfChanged:onlyIfChanged onError:errorCompletion];
+                [self displayNoLongerAvailableAlertOnOK:^{
+                    UA_STRONGIFY(self);
+                    self.messageState = NONE;
+                    self.message = nil;
+                    if (errorCompletion) {
+                        errorCompletion();
+                    };
                 }];
             }
             return;
@@ -285,7 +289,26 @@ static NSString *urlForBlankPage = @"about:blank";
     [self.webView loadRequest:requestObj];
 }
 
-- (void)displayAlertOnOK:(void (^)(void))okCompletion onRetry:(void (^)(void))retryCompletion {
+- (void)displayNoLongerAvailableAlertOnOK:(void (^)(void))okCompletion {
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:UAMessageCenterLocalizedString(@"ua_content_error")
+                                                                   message:UAMessageCenterLocalizedString(@"ua_mc_no_longer_available")
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:UAMessageCenterLocalizedString(@"ua_ok")
+                                                            style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {
+                                                              if (okCompletion) {
+                                                                  okCompletion();
+                                                              }
+                                                          }];
+    
+    [alert addAction:defaultAction];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+    
+}
+
+- (void)displayFailedToLoadAlertOnOK:(void (^)(void))okCompletion onRetry:(void (^)(void))retryCompletion {
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:UAMessageCenterLocalizedString(@"ua_connection_error")
                                                                    message:UAMessageCenterLocalizedString(@"ua_mc_failed_to_load")
                                                             preferredStyle:UIAlertControllerStyleAlert];
@@ -329,7 +352,9 @@ static NSString *urlForBlankPage = @"about:blank";
             [self coverWithBlankViewAndShowLoadingIndicator];
             if (status >= 500) {
                 // Display a retry alert
-                [self displayAlertOnOK:nil onRetry:^{
+                UA_WEAKIFY(self);
+                [self displayFailedToLoadAlertOnOK:nil onRetry:^{
+                    UA_STRONGIFY(self);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
                     [self loadMessage:self.message onlyIfChanged:NO];
@@ -337,7 +362,11 @@ static NSString *urlForBlankPage = @"about:blank";
                 }];
             } else {
                 // Display a generic alert
-                [self displayAlertOnOK:nil onRetry:nil];
+                UA_WEAKIFY(self);
+                [self displayFailedToLoadAlertOnOK:^{
+                    UA_STRONGIFY(self);
+                    [self uncoverAndHideLoadingIndicator];
+                } onRetry:nil];
             }
             return;
         }
@@ -380,7 +409,9 @@ static NSString *urlForBlankPage = @"about:blank";
     [self hideLoadingIndicator];
 
     // Display a retry alert
-    [self displayAlertOnOK:nil onRetry:^{
+    UA_WEAKIFY(self);
+    [self displayFailedToLoadAlertOnOK:nil onRetry:^{
+        UA_STRONGIFY(self);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         [self loadMessage:self.message onlyIfChanged:NO];
