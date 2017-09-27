@@ -1,7 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAInboxAPIClient+Internal.h"
-#import "UAInboxMessage.h"
 #import "UAConfig.h"
 #import "UAUser.h"
 #import "UAUtils.h"

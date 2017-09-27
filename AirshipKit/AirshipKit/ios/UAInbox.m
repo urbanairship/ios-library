@@ -3,9 +3,8 @@
 #import "UAInbox+Internal.h"
 #import "UAirship.h"
 #import "UAInboxMessageList.h"
-#import "UAInboxMessage.h"
-#import "UAUser.h"
 #import "UAInboxMessageList+Internal.h"
+#import "UAInboxAPIClient+Internal.h"
 
 @implementation UAInbox
 

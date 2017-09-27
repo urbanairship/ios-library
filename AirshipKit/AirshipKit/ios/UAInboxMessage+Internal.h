@@ -1,7 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAInboxMessage.h"
-#import "UAInboxAPIClient+Internal.h"
 #import "UAInboxMessageData+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN

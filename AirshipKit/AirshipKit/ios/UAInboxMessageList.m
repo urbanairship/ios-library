@@ -5,7 +5,6 @@
 #import "UAirship.h"
 #import "UAConfig.h"
 #import "UADisposable.h"
-#import "UAInbox.h"
 #import "UAInboxAPIClient+Internal.h"
 #import "UAInboxMessage+Internal.h"
 #import "UAInboxStore+Internal.h"

@@ -3,7 +3,6 @@
 #import <CoreData/CoreData.h>
 
 #import "UAInboxStore+Internal.h"
-#import "UAInboxMessageData+Internal.h"
 #import "UAirship+Internal.h"
 #import "NSManagedObjectContext+UAAdditions.h"
 #import "UAConfig.h"
@@ -170,11 +169,6 @@
 - (void)addMessageFromDictionary:(NSDictionary *)dictionary {
     UAInboxMessageData *data = (UAInboxMessageData *)[NSEntityDescription insertNewObjectForEntityForName:kUAInboxDBEntityName
                                                                                    inManagedObjectContext:self.managedContext];
-
-    dictionary = [dictionary dictionaryWithValuesForKeys:[[dictionary keysOfEntriesPassingTest:^BOOL(id key, id obj, BOOL *stop) {
-        return ![obj isEqual:[NSNull null]];
-    }] allObjects]];
-
 
     [self updateMessageData:data withDictionary:dictionary];
 }

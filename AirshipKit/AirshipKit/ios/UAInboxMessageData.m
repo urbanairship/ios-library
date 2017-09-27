@@ -1,13 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAInboxMessageData+Internal.h"
-#import "UAInboxMessage+Internal.h"
-
-#import "UAirship.h"
-#import "UAInbox.h"
-#import "UAInboxMessageList.h"
-#import "UAUtils.h"
-#import "UAGlobal.h"
 
 /*
  * Implementation
