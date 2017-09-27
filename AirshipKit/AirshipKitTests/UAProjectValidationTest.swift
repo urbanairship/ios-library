@@ -58,7 +58,6 @@ class UAProjectValidationTest: XCTestCase {
         var filesFromProjectWithOptionals : Array<URL?> = []
 
         for target in xcodeProject!.project.targets {
-            print(target.name)
             if (target.name != buildTarget) {
                 continue
             }
@@ -69,7 +68,6 @@ class UAProjectValidationTest: XCTestCase {
                     filesFromProjectWithOptionals += buildPhase.files.map {
                         return ($0.fileRef as? PBXFileReference)?.fullPath.url(with:convertSourceTreeFolderToURL)
                     }
-                    print("filesFromProjectWithOptionals.count = \(filesFromProjectWithOptionals.count)")
                 }
             }
         }
@@ -78,9 +76,7 @@ class UAProjectValidationTest: XCTestCase {
     }
 
     func validateProjectForTarget(buildTarget : String, buildOS : String, targetSubFolder : String? = nil) {
-        print("Validating files included in " + buildTarget + " for " + buildOS + " build.")
-
-        let filesFromProject : Array<URL> = getFilesSet(buildTarget: buildTarget)
+        let filesFromTarget : Array<URL> = getFilesSet(buildTarget: buildTarget)
 
         // get all of the URLs files from the directories for this target
         var filesFromDirectories : Array<URL> = []
@@ -108,30 +104,23 @@ class UAProjectValidationTest: XCTestCase {
             }
         })
 
-        let filesFromProjectAsSet = Set(filesFromProject.map { $0.absoluteURL } )
+        let filesFromTargetAsSet = Set(filesFromTarget.map { $0.absoluteURL } )
         let filesFromFoldersesAsSet = Set(filesFromDirectories.map { $0.absoluteURL } )
 
-        if (filesFromProjectAsSet == filesFromFoldersesAsSet) {
-            print("Project and project folders match")
-        } else {
-            print("Project and project folders do not match")
-            print("\(filesFromProjectAsSet.count) files in the project")
-            for file in filesFromProjectAsSet {
-                print(file.path + " is in the project")
+        if (filesFromTargetAsSet != filesFromFoldersesAsSet) {
+            let filesMissingFromFolders = filesFromTargetAsSet.subtracting(filesFromFoldersesAsSet)
+            if (filesMissingFromFolders.count > 0) {
+                print(filesMissingFromFolders.count, " files missing from the folders")
             }
-            let filesMissingFromFolders = filesFromProjectAsSet.subtracting(filesFromFoldersesAsSet)
-            print(filesMissingFromFolders.count, " files missing from the folders")
             for file in filesMissingFromFolders {
                 print(file.path + " is not in the folders")
             }
-            print("\(filesFromFoldersesAsSet.count) files in the folders")
-            for file in filesFromFoldersesAsSet {
-                print(file.path + " is in the folders")
+            let filesMissingFromTarget = filesFromFoldersesAsSet.subtracting(filesFromTargetAsSet)
+            if (filesMissingFromTarget.count > 0) {
+                print(filesMissingFromTarget.count, " files missing from the target:",buildTarget)
             }
-            let filesMissingFromProject = filesFromFoldersesAsSet.subtracting(filesFromProjectAsSet)
-            print(filesMissingFromProject.count, " files missing from the project")
-            for file in filesMissingFromProject {
-                print(file.path + " is not in project")
+            for file in filesMissingFromTarget {
+                print(file.path + " is not in target:", buildTarget)
             }
             XCTFail("Project and project folders do not match")
         }

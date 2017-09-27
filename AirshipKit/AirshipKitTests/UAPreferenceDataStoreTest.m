@@ -17,6 +17,8 @@
 }
 
 - (void)tearDown {
+    [self.dataStore removeAll];
+
     [super tearDown];
     [NSUserDefaults resetStandardUserDefaults];
 }
@@ -54,6 +56,20 @@
     for (NSString *key in keys) {
         XCTAssertNil([defaults objectForKey:key]);
     }
+}
+
+- (void)testKeyIsStoredAndRetrieved {
+    NSString *value = [[NSProcessInfo processInfo] globallyUniqueString];
+    [self.dataStore setObject:value forKey:@"key"];
+    XCTAssertEqualObjects([self.dataStore objectForKey:@"key"], value);
+}
+
+- (void)testKeyisRemoved {
+    NSString *value = [[NSProcessInfo processInfo] globallyUniqueString];
+    [self.dataStore setObject:value forKey:@"key"];
+    XCTAssertEqualObjects([self.dataStore objectForKey:@"key"], value);
+    [self.dataStore removeAll];
+    XCTAssertNil([self.dataStore objectForKey:@"key"]);
 }
 
 @end

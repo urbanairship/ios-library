@@ -27,6 +27,10 @@
     }
 }
 
+- (void)dealloc {
+    [self dispose];
+}
+
 + (instancetype)disposableWithBlock:(UADisposalBlock)disposalBlock {
     return [[self alloc] initWithDisposalBlock:disposalBlock];
 }
