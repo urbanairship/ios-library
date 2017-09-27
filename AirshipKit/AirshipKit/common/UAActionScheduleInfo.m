@@ -4,8 +4,11 @@
 #import "UAUtils.h"
 
 NSUInteger const UAActionScheduleInfoMaxTriggers = 10;
+NSInteger const UAActionScheduleInfoMaxPriority = -100;
+NSInteger const UAActionScheduleInfoMinPriority = 100;
 
 NSString *const UAActionScheduleInfoActionsKey = @"actions";
+NSString *const UAActionScheduleInfoPriorityKey = @"priority";
 NSString *const UAActionScheduleInfoLimitKey = @"limit";
 NSString *const UAActionScheduleInfoGroupKey = @"group";
 NSString *const UAActionScheduleInfoEndKey = @"end";
@@ -22,6 +25,7 @@ NSString * const UAActionScheduleInfoErrorDomain = @"com.urbanairship.schedule_i
 
 @interface UAActionScheduleInfo()
 @property(nonatomic, copy) NSDictionary *actions;
+@property(nonatomic, assign) NSInteger priority;
 @property(nonatomic, copy) NSArray *triggers;
 @property(nonatomic, copy) NSString *group;
 @property(nonatomic, assign) NSUInteger limit;
@@ -35,6 +39,10 @@ NSString * const UAActionScheduleInfoErrorDomain = @"com.urbanairship.schedule_i
 
 - (BOOL)isValid {
     if (!self.triggers.count || self.triggers.count > UAActionScheduleInfoMaxTriggers) {
+        return NO;
+    }
+
+    if (self.priority < UAActionScheduleInfoMaxPriority || self.priority > UAActionScheduleInfoMinPriority) {
         return NO;
     }
 
@@ -57,6 +65,7 @@ NSString * const UAActionScheduleInfoErrorDomain = @"com.urbanairship.schedule_i
     self = [super self];
     if (self) {
         self.actions = [builder.actions copy] ?: @{};
+        self.priority = builder.priority;
         self.triggers = [builder.triggers copy] ?: @[];
         self.limit = builder.limit;
         self.group = builder.group;
@@ -97,6 +106,19 @@ NSString * const UAActionScheduleInfoErrorDomain = @"com.urbanairship.schedule_i
     if (![actions isKindOfClass:[NSDictionary class]]) {
         if (error) {
             NSString *msg = [NSString stringWithFormat:@"Actions payload must be a dictionary. Invalid value: %@", actions];
+            *error =  [NSError errorWithDomain:UAActionScheduleInfoErrorDomain
+                                          code:UAActionScheduleInfoErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
+        return nil;
+    }
+
+    // Priority
+    id priority = json[UAActionScheduleInfoPriorityKey];
+    if (priority && ![priority isKindOfClass:[NSNumber class]]) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Priority must be defined and be a number. Invalid value: %@", priority];
             *error =  [NSError errorWithDomain:UAActionScheduleInfoErrorDomain
                                           code:UAActionScheduleInfoErrorCodeInvalidJSON
                                       userInfo:@{NSLocalizedDescriptionKey:msg}];
@@ -219,6 +241,7 @@ NSString * const UAActionScheduleInfoErrorDomain = @"com.urbanairship.schedule_i
 
     return [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
         builder.actions = actions;
+        builder.priority = [priority integerValue];
         builder.triggers = triggers;
         builder.limit = [limit unsignedIntegerValue];
         builder.group = group;
@@ -230,6 +253,10 @@ NSString * const UAActionScheduleInfoErrorDomain = @"com.urbanairship.schedule_i
 
 - (BOOL)isEqualToScheduleInfo:(UAActionScheduleInfo *)scheduleInfo {
     if (!scheduleInfo) {
+        return NO;
+    }
+
+    if (self.priority != scheduleInfo.priority) {
         return NO;
     }
 
@@ -282,6 +309,7 @@ NSString * const UAActionScheduleInfoErrorDomain = @"com.urbanairship.schedule_i
 - (NSUInteger)hash {
     NSUInteger result = 1;
     result = 31 * result + self.limit;
+    result = 31 * result + self.priority;
     result = 31 * result + [self.start hash];
     result = 31 * result + [self.end hash];
     result = 31 * result + [self.group hash];

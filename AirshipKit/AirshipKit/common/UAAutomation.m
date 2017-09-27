@@ -459,7 +459,6 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
 - (void)scheduleConditionsChanged {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isPendingExecution = 1 AND (delayedExecutionDate == nil OR delayedExecutionDate =< %@)", [NSDate date]];
     [self.automationStore fetchSchedulesWithPredicate:predicate limit:UAAutomationScheduleLimit completionHandler:^(NSArray<UAActionScheduleData *> *schedules) {
-
         [self processTriggeredSchedules:schedules];
     }];
 }
@@ -510,6 +509,10 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
     NSMutableArray *executionBlocks = [NSMutableArray array];
     NSMutableArray *postExecutionBlocks = [NSMutableArray array];
 
+    // Sort schedules by priority in ascending order
+    NSSortDescriptor *ascending = [[NSSortDescriptor alloc] initWithKey:@"priority" ascending:YES];
+    schedules = [schedules sortedArrayUsingDescriptors:@[ascending]];
+
     for (UAActionScheduleData *scheduleData in schedules) {
         // If the schedule has expired, delete it
         if ([scheduleData.end compare:[NSDate date]] == NSOrderedAscending) {
@@ -533,7 +536,6 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
             continue;
         }
 
-
         // Pull out any info required to check for conditions and run actions for the schedule on the main queue
         NSDictionary *actions = [NSJSONSerialization objectWithString:scheduleData.actions];
         NSString *scheduleIdentifier = scheduleData.identifier;
@@ -541,7 +543,6 @@ NSString *const UAAutomationEnabled = @"UAAutomationEnabled";
         NSDate *delayedExecutionDate = scheduleData.delayedExecutionDate;
 
         __block BOOL scheduleExecuted = NO;
-
 
         void (^executionBlock)(void) = ^{
             if ([self isScheduleDelaySatisfied:scheduleDelay delayedExecutionDate:delayedExecutionDate]) {

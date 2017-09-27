@@ -122,6 +122,67 @@
     [self waitForExpectationsWithTimeout:55 handler:nil];
 }
 
+- (void)testPriority {
+    NSArray *testPriorityLevels = @[@5, @-2, @0, @-10];
+
+    // Sort the test priority levels to give us the expected priority level
+    NSSortDescriptor *ascending = [[NSSortDescriptor alloc] initWithKey:nil ascending:YES];
+    NSArray *expectedPriorityLevel = [testPriorityLevels sortedArrayUsingDescriptors:@[ascending]];
+
+    // Executed priority level will hold the actual action execution order
+    NSMutableArray *executedPriorityLevel = [NSMutableArray array];
+    NSMutableArray *actionNames = [NSMutableArray array];
+
+    NSMutableArray *runExpectations = [NSMutableArray array];
+    for (int i = 0; i < testPriorityLevels.count; i++) {
+        XCTestExpectation *expectation = [self expectationWithDescription:[NSString stringWithFormat:@"Wait for test-action-%d to execute", i]];
+
+        [runExpectations addObject:expectation];
+
+        UAAction *testAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+            // Record the execution order
+            [executedPriorityLevel addObject:testPriorityLevels[i]];
+            [expectation fulfill];
+        }];
+
+        NSString *actionName = [NSString stringWithFormat:@"test-action-%d", i];
+        [self.actionRegistry registerAction:testAction name:[NSString stringWithFormat:@"test-action-%d", i]];
+        [actionNames addObject:actionName];
+    }
+
+    NSMutableArray *scheduleExpectations = [NSMutableArray array];
+    for (int i = 0; i < testPriorityLevels.count; i++) {
+        XCTestExpectation *expectation = [self expectationWithDescription:[NSString stringWithFormat:@"Wait for test-action-%d to schedule", i]];
+
+        [scheduleExpectations addObject:expectation];
+
+        // Give all the schedules the same trigger
+        UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
+
+        UAActionScheduleInfo *info = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder * _Nonnull builder) {
+            builder.actions = @{actionNames[i]:@"test value"};
+            builder.priority = [testPriorityLevels[i] integerValue];
+            builder.triggers = @[trigger];
+        }];
+
+        [self.automation scheduleActions:info completionHandler:^(UAActionSchedule *schedule) {
+            [expectation fulfill];
+        }];
+    }
+
+    [self waitForExpectations:scheduleExpectations timeout:5];
+
+    // Trigger the schedule with a double foreground notification
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification
+                                                        object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification
+                                                        object:nil];
+
+    [self waitForExpectations:runExpectations timeout:5];
+
+    XCTAssertEqualObjects(executedPriorityLevel, expectedPriorityLevel);
+}
+
 - (void)testGetGroups {
 
     NSMutableArray *expectedFooSchedules = [NSMutableArray arrayWithCapacity:10];
@@ -825,4 +886,5 @@
     }];
     [self waitForExpectationsWithTimeout:5 handler:nil];
 }
+
 @end

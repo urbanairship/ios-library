@@ -27,9 +27,24 @@ extern NSString * const UAActionScheduleInfoErrorDomain;
 extern NSUInteger const UAActionScheduleInfoMaxTriggers;
 
 /**
+ * Max priority that a schedule can be given. This is a negative integer.
+ */
+extern NSInteger const UAActionScheduleInfoMaxPriority;
+
+/**
+ * Min priority that a schedule can be given. This is a positive integer.
+ */
+extern NSInteger const UAActionScheduleInfoMinPriority;
+
+/**
  * JSON key for the schedule's actions.
  */
 extern NSString *const UAActionScheduleInfoActionsKey;
+
+/**
+ * JSON key for the actions's priority.
+ */
+extern NSString *const UAActionScheduleInfoPriorityKey;
 
 /**
  * JSON key for the schedule's limit.
@@ -74,6 +89,13 @@ extern NSString *const UAActionScheduleInfoDelayKey;
  * Actions payload to run when the schedule is triggered.
  */
 @property(nonatomic, strong, nullable) NSDictionary *actions;
+
+/**
+ * The schedule's priority. Priority is optional and defaults to 0 with a maximum priority
+ * of -100 and a minimum of 100. In case of conflict, schedules will be executed by
+ * priority in ascending order.
+ */
+@property(nonatomic, assign) NSInteger priority;
 
 /**
  * Number of times the actions will be triggered until the schedule is
@@ -122,6 +144,13 @@ extern NSString *const UAActionScheduleInfoDelayKey;
  * Actions payload to run when the schedule is triggered.
  */
 @property(nonatomic, readonly) NSDictionary *actions;
+
+/**
+ * The schedule's priority. Priority is optional and defaults to 0 with a maximum priority
+ * of -100 and a minimum of 100. In case of conflict, schedules will be executed by
+ * priority in ascending order.
+ */
+@property(nonatomic, readonly) NSInteger priority;
 
 /**
  * Array of triggers. Triggers define conditions on when to run

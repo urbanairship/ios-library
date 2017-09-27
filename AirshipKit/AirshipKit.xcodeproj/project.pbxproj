@@ -1242,6 +1242,7 @@
 		99B6EE661F3B9B5300C4E3F1 /* UAEnableFeatureActionPredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAEnableFeatureActionPredicate.m; path = common/UAEnableFeatureActionPredicate.m; sourceTree = "<group>"; };
 		99B6EE6D1F3BA1DF00C4E3F1 /* UAURLActionPredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAURLActionPredicate.m; path = common/UAURLActionPredicate.m; sourceTree = "<group>"; };
 		99B6EE6E1F3BA1DF00C4E3F1 /* UAURLActionPredicate+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAURLActionPredicate+Internal.h"; path = "common/UAURLActionPredicate+Internal.h"; sourceTree = "<group>"; };
+		99EB9F6A1F7AD4A800C42D6A /* UAAutomation 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 3.xcdatamodel"; sourceTree = "<group>"; };
 		CC04F1851DBED84600B4842D /* UAEvents.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAEvents.xcdatamodel; sourceTree = "<group>"; };
 		CC04F1881DBED9FA00B4842D /* UAEventData+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAEventData+Internal.h"; path = "common/UAEventData+Internal.h"; sourceTree = "<group>"; };
 		CC04F1891DBED9FA00B4842D /* UAEventData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAEventData.m; path = common/UAEventData.m; sourceTree = "<group>"; };
@@ -5213,10 +5214,11 @@ sourceTree = "<group>";
 		CC8999A01D8B642D00A0CECC /* UAAutomation.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				99EB9F6A1F7AD4A800C42D6A /* UAAutomation 3.xcdatamodel */,
 				6EF2DF0C1E5CB6F50062099A /* UAAutomation 2.xcdatamodel */,
 				CC8999A11D8B642D00A0CECC /* UAAutomation.xcdatamodel */,
 			);
-			currentVersion = 6EF2DF0C1E5CB6F50062099A /* UAAutomation 2.xcdatamodel */;
+			currentVersion = 99EB9F6A1F7AD4A800C42D6A /* UAAutomation 3.xcdatamodel */;
 			path = UAAutomation.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

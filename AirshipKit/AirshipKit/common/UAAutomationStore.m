@@ -183,6 +183,7 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
     scheduleData.identifier = schedule.identifier;
     scheduleData.limit = @(schedule.info.limit);
     scheduleData.actions = [NSJSONSerialization stringWithObject:schedule.info.actions];
+    scheduleData.priority = [NSNumber numberWithInteger:schedule.info.priority];
     scheduleData.group = schedule.info.group;
     scheduleData.triggers = [self createTriggerDataFromTriggers:schedule.info.triggers scheduleStart:schedule.info.start];
     scheduleData.start = schedule.info.start;

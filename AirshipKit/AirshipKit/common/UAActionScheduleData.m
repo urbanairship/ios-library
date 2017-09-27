@@ -9,6 +9,7 @@
 @dynamic limit;
 @dynamic triggeredCount;
 @dynamic actions;
+@dynamic priority;
 @dynamic triggers;
 @dynamic start;
 @dynamic end;

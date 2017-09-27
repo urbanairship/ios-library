@@ -8,6 +8,7 @@
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="isPendingExecution" attributeType="Boolean" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="limit" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="priority" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="start" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="triggeredCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="delay" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="UAScheduleDelayData" inverseName="schedule" inverseEntity="UAScheduleDelayData" syncable="YES"/>
@@ -31,7 +32,7 @@
         <relationship name="schedule" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UAActionScheduleData" inverseName="triggers" inverseEntity="UAActionScheduleData" syncable="YES"/>
     </entity>
     <elements>
-        <element name="UAActionScheduleData" positionX="-540" positionY="-63" width="128" height="210"/>
+        <element name="UAActionScheduleData" positionX="-540" positionY="-63" width="128" height="225"/>
         <element name="UAScheduleDelayData" positionX="-234" positionY="-27" width="128" height="135"/>
         <element name="UAScheduleTriggerData" positionX="-191" positionY="378" width="128" height="150"/>
     </elements>
