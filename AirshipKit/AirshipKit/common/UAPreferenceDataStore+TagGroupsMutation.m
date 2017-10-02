@@ -13,7 +13,7 @@
 - (NSArray<UATagGroupsMutation *> *)tagGroupsMutationsForKey:(NSString *)key {
     id encodedMutations = [self valueForKey:key];
     if (!encodedMutations) {
-        return nil;
+        return [NSArray<UATagGroupsMutation *> array];
     }
     return [NSKeyedUnarchiver unarchiveObjectWithData:encodedMutations];
 }

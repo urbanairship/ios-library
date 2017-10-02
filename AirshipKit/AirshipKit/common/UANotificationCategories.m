@@ -81,7 +81,7 @@
     }
 }
 
-+ (UANotificationCategory *)createCategory:(NSString *)categoryId actions:(NSArray *)actionDefinitions hiddenPreviewsBodyPlaceholder:(NSString *)hiddenPreviewsBodyPlaceholder {
++ (UANotificationCategory * _Nullable)createCategory:(NSString *)categoryId actions:(NSArray *)actionDefinitions hiddenPreviewsBodyPlaceholder:(NSString *)hiddenPreviewsBodyPlaceholder {
     
     NSArray<UANotificationAction *> *actions = [self getActionsFromActionDefinitions:actionDefinitions];
     if (actions) {

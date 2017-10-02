@@ -265,16 +265,8 @@
         return nil;
     }
 
-    BOOL presented = NO;
-    UIModalPresentationStyle presentationStyle = topController.modalPresentationStyle;
-
     // Iterate through any presented view controllers and find the top-most presentation context
     while (topController.presentedViewController) {
-        presented = YES;
-        // UIModalPresentationCurrentContext allows a view controller to use the presentation style of its modal parent.
-        if (topController.presentedViewController.modalPresentationStyle != UIModalPresentationCurrentContext) {
-            presentationStyle = topController.presentedViewController.modalPresentationStyle;
-        }
         topController = topController.presentedViewController;
     }
     

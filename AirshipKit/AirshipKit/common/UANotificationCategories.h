@@ -70,7 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
  *        user has disabled notification previews for the app.
  * @return The user notification category created or `nil` if an error occurred.
  */
-+ (UANotificationCategory *)createCategory:(NSString *)categoryId
++ (UANotificationCategory * _Nullable)createCategory:(NSString *)categoryId
                                    actions:(NSArray *)actionDefinitions
              hiddenPreviewsBodyPlaceholder:(NSString *)hiddenPreviewsBodyPlaceholder;
 
