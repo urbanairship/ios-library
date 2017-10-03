@@ -49,9 +49,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, retain) NSString *actions;
 
 /**
- * The schedule's priority. Priority is optional and defaults to 0 with a maximum priority
- * of -100 and a minimum of 100. In case of conflict, schedules will be executed by
- * priority in ascending order.
+ * The schedule's priority. Priority is optional and defaults to 0.
+ * In case of conflict, schedules will be executed by priority in ascending order.
  */
 @property(nullable, nonatomic, retain) NSNumber *priority;
 

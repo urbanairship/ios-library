@@ -4,8 +4,6 @@
 #import "UAUtils.h"
 
 NSUInteger const UAActionScheduleInfoMaxTriggers = 10;
-NSInteger const UAActionScheduleInfoMaxPriority = -100;
-NSInteger const UAActionScheduleInfoMinPriority = 100;
 
 NSString *const UAActionScheduleInfoActionsKey = @"actions";
 NSString *const UAActionScheduleInfoPriorityKey = @"priority";
@@ -39,10 +37,6 @@ NSString * const UAActionScheduleInfoErrorDomain = @"com.urbanairship.schedule_i
 
 - (BOOL)isValid {
     if (!self.triggers.count || self.triggers.count > UAActionScheduleInfoMaxTriggers) {
-        return NO;
-    }
-
-    if (self.priority < UAActionScheduleInfoMaxPriority || self.priority > UAActionScheduleInfoMinPriority) {
         return NO;
     }
 
