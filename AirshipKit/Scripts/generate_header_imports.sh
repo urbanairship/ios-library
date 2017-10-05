@@ -22,7 +22,7 @@ echo "Generated file: ${SOURCE_LIB_HEADER}"
 for headerSubfolder in "$@"
 do
     if [[ -d "$ROOT_PATH"/AirshipKit/${headerSubfolder} ]]; then
-        find "$ROOT_PATH"/AirshipKit/${headerSubfolder} -type f -name '*.h' ! -name 'AirshipLib.h' ! -name 'AirshipKit.h' ! -name '*+Internal*.h' ! -path './UI/*' \
+        find -s "$ROOT_PATH"/AirshipKit/${headerSubfolder} -type f -name '*.h' ! -name 'AirshipLib.h' ! -name 'AirshipKit.h' ! -name '*+Internal*.h' ! -path './UI/*' \
     -exec basename {} \; | awk '{print "#import \"" $1"\""}' >> "$SOURCE_LIB_HEADER"
     fi
 done
