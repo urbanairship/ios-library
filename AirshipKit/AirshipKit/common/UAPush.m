@@ -127,6 +127,17 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
             self.channelCreationEnabled = NO;
         }
 
+        // For observing each foreground entry
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(enterForeground)
+                                                     name:UIApplicationWillEnterForegroundNotification
+                                                   object:nil];
+
+        // Only for observing the first call to app foreground
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(applicationDidBecomeActive)
+                                                     name:UIApplicationDidBecomeActiveNotification
+                                                   object:[UIApplication sharedApplication]];
 
         // Only for observing the first call to app background
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -599,13 +610,18 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 #pragma mark -
 #pragma mark UIApplication State Observation
 
-- (void)applicationDidBecomeActive {
+- (void)enterForeground {
     [self updateAuthorizedNotificationTypes];
 
     if ([self.dataStore boolForKey:UAPushChannelCreationOnForeground]) {
         UA_LTRACE(@"Application did become active. Updating registration.");
         [self updateChannelRegistrationForcefully:NO];
     }
+}
+
+- (void)applicationDidBecomeActive {
+    [self enterForeground];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
 - (void)applicationDidEnterBackground {

@@ -3,6 +3,15 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 8.6.1 - October 23, 2017
+==================================
+Patch release that fixes a registration delegate issue that prevents the authorized types from
+being updated on foreground. Applications should update to this release if they require this behavior.
+
+Bug fixes
+---------
+- Update authorized notification types on foreground.
+
 Version 8.6.0 - September 13, 2017
 ==================================
 Official release for iOS 11 & Xcode 9. Applications should update to this release if they want to support iOS 11 or build under Xcode 9. Applications using SDK 8.5.3 with Carthage should update to this release.
