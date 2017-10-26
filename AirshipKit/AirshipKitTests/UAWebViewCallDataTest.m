@@ -40,12 +40,15 @@
 
 - (void)testCallDataForURLEncodedArguments {
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:
-                               [NSURL URLWithString:@"uairship://run-action-cb/%5Eu/%22https%3A%2F%2Fdocs.urbanairship.com%2Fengage%2Frich-content-editor%2F%23rich-content-image%22/ua-cb-2"] webView:self.mockWebView];
+                               [NSURL URLWithString:@"uairship://run-action-cb/%5Eu/%22https%3A%2F%2Fdocs.urbanairship.com%2Fengage%2Frich-content-editor%2F%23rich-content-image%22/ua-cb-2?query%20argument=%5E"] webView:self.mockWebView];
 
     XCTAssertEqual(data.arguments.count, 3);
     XCTAssertEqualObjects([data.arguments objectAtIndex:0], @"^u");
     XCTAssertEqualObjects([data.arguments objectAtIndex:1], @"\"https://docs.urbanairship.com/engage/rich-content-editor/#rich-content-image\"");
     XCTAssertEqualObjects([data.arguments objectAtIndex:2], @"ua-cb-2");
+
+    XCTAssertEqualObjects(data.options[@"query argument"][0], @"^");
+
 }
 
 @end

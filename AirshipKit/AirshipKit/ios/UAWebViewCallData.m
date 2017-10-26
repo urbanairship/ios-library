@@ -33,7 +33,7 @@
     // NOTE: we special case an empty array as componentsSeparatedByString
     // returns an array with a copy of the input in the first position when passed
     // a string without any delimiters
-    NSArray* arguments;
+    NSArray *arguments;
     if (encodedUrlPath.length) {
         NSArray *encodedArguments = [encodedUrlPath componentsSeparatedByString:@"/"];
         NSMutableArray *decodedArguments = [NSMutableArray arrayWithCapacity:encodedArguments.count];
@@ -50,23 +50,19 @@
 
 
     // Dictionary of options - primitive parsing, so external docs should mention the limitations
-    NSString *urlQuery = [url query];
     NSMutableDictionary* options = [NSMutableDictionary dictionary];
-    NSArray *queries = [urlQuery componentsSeparatedByString:@"&"];
 
-    for (int i = 0; i < [queries count]; i++) {
-        NSArray *optionPair = [[queries objectAtIndex:(NSUInteger)i] componentsSeparatedByString:@"="];
-        NSString *key = [optionPair objectAtIndex:0];
-        NSString *object = (optionPair.count >= 2) ? [optionPair objectAtIndex:1] : [NSNull null];
-
-
-        NSMutableArray *values = [options valueForKey:key];
-        if (!values) {
-            values = [NSMutableArray array];
-            [options setObject:values forKey:key];
+    for (NSURLQueryItem *queryItem in components.queryItems) {
+        NSString *key = queryItem.name;
+        id value = queryItem.value ?: [NSNull null];
+        if (key && value) {
+            NSMutableArray *values = [options valueForKey:key];
+            if (!values) {
+                values = [NSMutableArray array];
+                [options setObject:values forKey:key];
+            }
+            [values addObject:value];
         }
-
-        [values addObject:object];
     }
 
     UAWebViewCallData *data = [[UAWebViewCallData alloc] init];
