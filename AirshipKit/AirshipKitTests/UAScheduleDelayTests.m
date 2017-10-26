@@ -20,14 +20,25 @@
 }
 
 - (void)testWithJSON {
+
+    NSArray *testScreens = @[@"test screen", @"another test screen"];
     NSDictionary *delayJson = @{ UAScheduleDelayRegionKey: @"test region",
-                                 UAScheduleDelayScreenKey: @"test screen",
+                                 UAScheduleDelayScreensKey: testScreens,
                                  UAScheduleDelaySecondsKey: @(100) };
 
     NSError *error = nil;
     UAScheduleDelay *delay = [UAScheduleDelay delayWithJSON:delayJson error:&error];
 
-    XCTAssertEqualObjects(delay.screen, @"test screen");
+    BOOL match = YES;
+    NSEnumerator *enumerator = [testScreens objectEnumerator];
+    for (NSString *screen in delay.screens) {
+        if (![screen isEqualToString:[enumerator nextObject]]) {
+            match = NO;
+            break;
+        }
+    }
+
+    XCTAssertTrue(match);
     XCTAssertEqualObjects(delay.regionID, @"test region");
     XCTAssertEqual(delay.seconds, 100);
     XCTAssertEqual(delay.appState, UAScheduleDelayAppStateAny);
@@ -60,8 +71,8 @@
                                // Invalid seconds
                                @{UAScheduleDelaySecondsKey: @"one hundred" },
 
-                               // Invalid screen
-                               @{UAScheduleDelayScreenKey: @(1) },
+                               // Invalid screens
+                               @{UAScheduleDelayScreensKey: @(1) },
 
                                //Invalid region
                                @{UAScheduleDelayRegionKey: @{} },

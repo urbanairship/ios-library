@@ -31,9 +31,9 @@ extern NSString *const UAScheduleDelaySecondsKey;
 extern NSString *const UAScheduleDelayRegionKey;
 
 /**
- * JSON key delay's screen name condition.
+ * JSON key delay's screen names condition.
  */
-extern NSString *const UAScheduleDelayScreenKey;
+extern NSString *const UAScheduleDelayScreensKey;
 
 /**
  * JSON key for the cancellation triggers.
@@ -96,11 +96,10 @@ typedef NS_ENUM(NSInteger, UAScheduleDelayAppState) {
 @property(nonatomic, assign) NSTimeInterval seconds;
 
 /**
- * Specifies the name of an app screen that the user must currently be viewing before the
- * the schedule's actions are able to be executed. Specifying a screen requires the application
- * to make use of UAAnalytic's screen tracking method `trackScreen:`.
+ * Specifies the names of the app screens that will trigger the schedule's actions if viewed.
+ * Specifying screens requires the application to make use of UAAnalytic's screen tracking method `trackScreen:`.
  */
-@property(nonatomic, copy) NSString *screen;
+@property(nonatomic, copy) NSArray *screens;
 
 /**
  * Specifies the ID of a region that the device must currently be in before the schedule's
@@ -147,11 +146,10 @@ typedef NS_ENUM(NSInteger, UAScheduleDelayAppState) {
 @property(nonatomic, readonly) NSTimeInterval seconds;
 
 /**
- * Specifies the name of an app screen that the user must currently be viewing before the
- * the schedule's actions are able to be executed. Specifying a screen requires the application
- * to make use of UAAnalytic's screen tracking method `trackScreen:`.
+ * Specifies the names of the app screens that will trigger the schedule's actions if viewed.
+ * Specifying screens requires the application to make use of UAAnalytic's screen tracking method `trackScreen:`.
  */
-@property(nonatomic, readonly) NSString *screen;
+@property(nonatomic, readonly) NSArray *screens;
 
 /**
  * Specifies the ID of a region that the device must currently be in before the schedule's

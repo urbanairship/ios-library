@@ -98,4 +98,3 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
 }
 
 @end
-

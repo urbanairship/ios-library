@@ -199,7 +199,7 @@
     delayData.seconds = @(delay.seconds);
     delayData.appState = @(delay.appState);
     delayData.regionID = delay.regionID;
-    delayData.screen = delay.screen;
+    delayData.screens = [delay.screens componentsJoinedByString:@","];
     delayData.cancellationTriggers = [self createTriggerDataFromTriggers:delay.cancellationTriggers scheduleStart:scheduleStart];
 
     return delayData;

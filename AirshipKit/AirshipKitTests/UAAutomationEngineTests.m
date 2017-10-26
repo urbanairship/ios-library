@@ -228,7 +228,7 @@
         XCTAssertEqualObjects(expectedBarSchedules, result);
         [barGroupExpectation fulfill];
     }];
-    
+
     [self waitForExpectationsWithTimeout:5 handler:nil];
 }
 
@@ -617,9 +617,9 @@
     }];
 }
 
-- (void)testScreenDelay {
+- (void)testMultipleScreenDelay {
     UAScheduleDelay *delay = [UAScheduleDelay delayWithBuilderBlock:^(UAScheduleDelayBuilder * builder) {
-        builder.screen = @"test screen";
+        builder.screens = @[@"test screen", @"another test screen", @"and another test screen"];
     }];
 
     [self verifyDelay:delay fulfillmentBlock:^{
@@ -689,7 +689,7 @@
 
         // Add a delay for "test screen" that cancels on foreground
         builder.delay = [UAScheduleDelay delayWithBuilderBlock:^(UAScheduleDelayBuilder * builder) {
-            builder.screen = @"test screen";
+            builder.screens = @[@"test screen", @"another test screen"];
             builder.cancellationTriggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         }];
     }];

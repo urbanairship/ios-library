@@ -27,11 +27,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, retain) NSNumber *seconds;
 
 /**
- * Specifies the name of an app screen that the user must currently be viewing before the
- * the schedule's actions are able to be executed. Specifying a screen requires the application
- * to make use of UAAnalytic's screen tracking method `trackScreen:`.
+ * A comma-separated string of app screens that will trigger the schedule's actions if viewed.
+ * Specifying screens requires the application to make use of UAAnalytic's screen tracking method `trackScreen:`.
  */
-@property (nullable, nonatomic, retain) NSString *screen;
+@property (nullable, nonatomic, copy) NSString *screens;
 
 /**
  * Specifies the ID of a region that the device must currently be in before the schedule's

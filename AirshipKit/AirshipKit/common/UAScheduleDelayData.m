@@ -7,7 +7,7 @@
 @dynamic seconds;
 @dynamic regionID;
 @dynamic appState;
-@dynamic screen;
+@dynamic screens;
 @dynamic schedule;
 @dynamic cancellationTriggers;
 
