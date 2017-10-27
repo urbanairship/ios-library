@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, retain) NSNumber *seconds;
 
 /**
- * A comma-separated string of app screens that will trigger the schedule's actions if viewed.
+ * A JSON encoded string of app screens that will trigger the schedule's actions if viewed.
  * Specifying screens requires the application to make use of UAAnalytic's screen tracking method `trackScreen:`.
  */
 @property (nullable, nonatomic, copy) NSString *screens;

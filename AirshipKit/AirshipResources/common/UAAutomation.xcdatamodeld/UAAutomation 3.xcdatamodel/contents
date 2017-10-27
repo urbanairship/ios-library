@@ -17,7 +17,7 @@
     <entity name="UAScheduleDelayData" representedClassName="UAScheduleDelayData" syncable="YES">
         <attribute name="appState" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="regionID" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="screen" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="screens" optional="YES" attributeType="String" elementID="screen" syncable="YES"/>
         <attribute name="seconds" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="cancellationTriggers" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="UAScheduleTriggerData" inverseName="delay" inverseEntity="UAScheduleTriggerData" syncable="YES"/>
         <relationship name="schedule" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UAScheduleData" inverseName="delay" inverseEntity="UAScheduleData" syncable="YES"/>

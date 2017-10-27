@@ -1,3 +1,4 @@
+
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAScheduleDelay.h"
@@ -7,7 +8,7 @@ NSUInteger const UAScheduleDelayMaxCancellationTriggers = 10;
 // JSON Keys
 NSString *const UAScheduleDelaySecondsKey = @"seconds";
 NSString *const UAScheduleDelayRegionKey = @"region";
-NSString *const UAScheduleDelayScreensKey = @"screens";
+NSString *const UAScheduleDelayScreensKey = @"screen";
 NSString *const UAScheduleDelayCancellationTriggersKey = @"cancellation_triggers";
 NSString *const UAScheduleDelayAppStateKey = @"app_state";
 NSString *const UAScheduleDelayAppStateForegroundName = @"foreground";
@@ -96,30 +97,29 @@ NSString * const UAScheduleDelayErrorDomain = @"com.urbanairship.schedule_delay"
     // Screens
     id screens = json[UAScheduleDelayScreensKey];
 
-    if (screens && ![screens isKindOfClass:[NSArray class]]) {
+    if (screens && (![screens isKindOfClass:[NSString class]] && ![screens isKindOfClass:[NSArray class]])) {
         if (error) {
-            NSString *msg = [NSString stringWithFormat:@"Screens must be an array. Invalid value: %@", screens];
+            NSString *msg = [NSString stringWithFormat:@"Screens must be a string or an array of strings. Invalid value: %@", screens];
             *error =  [NSError errorWithDomain:UAScheduleDelayErrorDomain
                                           code:UAScheduleDelayErrorCodeInvalidJSON
                                       userInfo:@{NSLocalizedDescriptionKey:msg}];
         }
-
         return nil;
     }
 
-    // Screens string contents
-    if (screens && [screens isKindOfClass:[NSArray class]]) {
-        for (NSString *screen in screens) {
-            if (screen && ![screen isKindOfClass:[NSString class]]) {
-                if (error) {
-                    NSString *msg = [NSString stringWithFormat:@"Screens must be an array of strings. Invalid value: %@", screen];
-                    *error =  [NSError errorWithDomain:UAScheduleDelayErrorDomain
-                                                  code:UAScheduleDelayErrorCodeInvalidJSON
-                                              userInfo:@{NSLocalizedDescriptionKey:msg}];
-                }
+    if ([screens isKindOfClass:[NSString class]]) {
+        screens = @[screens];
+    }
 
-                return nil;
+    for (NSString *screen in screens) {
+        if (screen && ![screen isKindOfClass:[NSString class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Screens must be a string or an array of strings. Invalid value: %@", screen];
+                *error =  [NSError errorWithDomain:UAScheduleDelayErrorDomain
+                                              code:UAScheduleDelayErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
             }
+            return nil;
         }
     }
 
@@ -202,8 +202,10 @@ NSString * const UAScheduleDelayErrorDomain = @"com.urbanairship.schedule_delay"
     }
 
     if (self.screens != nil) {
-        if (![self.screens isEqualToArray:delay.screens]) {
-            return NO;
+        for (NSString *screen in delay.screens) {
+            if (![self.screens containsObject:screen]) {
+                return NO;
+            }
         }
     }
 

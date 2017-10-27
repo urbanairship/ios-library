@@ -542,7 +542,7 @@
         return YES;
     }
 
-    if (scheduleDelay.screen && ![scheduleDelay.screen isEqualToString:self.currentScreen]) {
+    if (scheduleDelay.screens && ![scheduleDelay.screens containsObject:self.currentScreen]) {
         return NO;
     }
 
@@ -718,7 +718,10 @@
 
     return [UAScheduleDelay delayWithBuilderBlock:^(UAScheduleDelayBuilder *builder) {
         builder.seconds = [data.seconds doubleValue];
-        builder.screen = data.screen;
+        NSData *screenData = [data.screens dataUsingEncoding:NSUTF8StringEncoding];
+        if (screenData != nil) {
+            builder.screens = [NSJSONSerialization JSONObjectWithData:screenData options:NSJSONReadingMutableContainers error:nil];
+        }
         builder.regionID = data.regionID;
         builder.cancellationTriggers = [UAAutomationEngine triggersFromData:data.cancellationTriggers];
         builder.appState = [data.appState integerValue];

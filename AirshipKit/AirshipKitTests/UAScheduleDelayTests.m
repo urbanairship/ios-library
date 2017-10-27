@@ -29,16 +29,22 @@
     NSError *error = nil;
     UAScheduleDelay *delay = [UAScheduleDelay delayWithJSON:delayJson error:&error];
 
-    BOOL match = YES;
-    NSEnumerator *enumerator = [testScreens objectEnumerator];
+    BOOL arrayMatch = YES;
     for (NSString *screen in delay.screens) {
-        if (![screen isEqualToString:[enumerator nextObject]]) {
-            match = NO;
-            break;
+        if (![testScreens containsObject:screen]) {
+            arrayMatch = NO;
         }
     }
 
-    XCTAssertTrue(match);
+    NSString *testScreenString = @"test screen";
+    NSDictionary *anotherDelayJson = @{ UAScheduleDelayRegionKey: @"test region",
+                                 UAScheduleDelayScreensKey: testScreenString,
+                                 UAScheduleDelaySecondsKey: @(100) };
+
+    UAScheduleDelay *anotherDelay = [UAScheduleDelay delayWithJSON:anotherDelayJson error:&error];
+
+    XCTAssertTrue(arrayMatch);
+    XCTAssertEqualObjects(testScreenString, anotherDelay.screens.firstObject);
     XCTAssertEqualObjects(delay.regionID, @"test region");
     XCTAssertEqual(delay.seconds, 100);
     XCTAssertEqual(delay.appState, UAScheduleDelayAppStateAny);

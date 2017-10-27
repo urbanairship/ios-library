@@ -199,7 +199,12 @@
     delayData.seconds = @(delay.seconds);
     delayData.appState = @(delay.appState);
     delayData.regionID = delay.regionID;
-    delayData.screens = [delay.screens componentsJoinedByString:@","];
+    if (delay.screens != nil) {
+        NSData *screensData = [NSJSONSerialization dataWithJSONObject:delay.screens options:0 error:nil];
+        if (screensData != nil) {
+            delayData.screens = [[NSString alloc] initWithData:screensData encoding:NSUTF8StringEncoding];
+        }
+    }
     delayData.cancellationTriggers = [self createTriggerDataFromTriggers:delay.cancellationTriggers scheduleStart:scheduleStart];
 
     return delayData;
