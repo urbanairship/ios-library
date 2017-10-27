@@ -135,12 +135,19 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    self.editItem = [[UIBarButtonItem alloc]
-                     initWithBarButtonSystemItem:UIBarButtonSystemItemEdit
-                     target:self
-                     action:@selector(editButtonPressed:)];
-
+    
+    // if "Edit" has been localized, use it, otherwise use iOS's UIBarButtonSystemItemEdit
+    if (UAMessageCenterLocalizedStringExists(@"ua_edit")) {
+        self.editItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_edit")
+                                                         style:UIBarButtonItemStylePlain
+                                                        target:self
+                                                        action:@selector(editButtonPressed:)];
+    } else {
+        self.editItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit
+                                                                      target:self
+                                                                      action:@selector(editButtonPressed:)];
+    }
+    
     self.cancelItem = [[UIBarButtonItem alloc]
                        initWithTitle:UAMessageCenterLocalizedString(@"ua_cancel")
                        style:UIBarButtonItemStyleDone

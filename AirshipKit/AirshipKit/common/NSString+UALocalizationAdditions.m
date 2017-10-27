@@ -65,6 +65,13 @@
     return [self localizedStringWithTable:table defaultValue:self fallbackLocale:fallbackLocale];
 }
 
+- (BOOL)localizedStringExistsInTable:(NSString *)table {
+    return ([self localizedStringExistsInTable:table fallbackLocale:nil]);
+}
+
+- (BOOL)localizedStringExistsInTable:(NSString *)table fallbackLocale:(NSString *)fallbackLocale {
+    return ([self localizedStringWithTable:table defaultValue:nil fallbackLocale:fallbackLocale] != nil);
+}
 
 @end
 

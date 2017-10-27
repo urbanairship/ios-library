@@ -40,9 +40,17 @@
 
         UADefaultMessageCenterListViewController *lvc = self.splitViewController.listViewController;
 
-        lvc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                                                             target:self
-                                                                                             action:@selector(dismiss)];
+        // if "Done" has been localized, use it, otherwise use iOS's UIBarButtonSystemItemDone
+        if (UAMessageCenterLocalizedStringExists(@"ua_done")) {
+            lvc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_done")
+                                                                                    style:UIBarButtonItemStyleDone
+                                                                                   target:self
+                                                                                   action:@selector(dismiss)];
+        } else {
+            lvc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                                                 target:self
+                                                                                                 action:@selector(dismiss)];
+        }
 
         self.splitViewController.style = self.style;
         self.splitViewController.title = self.title;
