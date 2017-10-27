@@ -1,12 +1,12 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UADefaultMessageCenterStyle.h"
+#import "UAMessageCenterStyle.h"
 #import "UAirship.h"
 #import "UAConfig.h"
 #import "UAColorUtils+Internal.h"
-#import "UADefaultMessageCenterStyle.h"
+#import "UAMessageCenterStyle.h"
 
-@implementation UADefaultMessageCenterStyle
+@implementation UAMessageCenterStyle
 
 - (instancetype)init {
     self = [super init];
@@ -26,7 +26,7 @@
 }
 
 + (instancetype)styleWithContentsOfFile:(NSString *)file {
-    UADefaultMessageCenterStyle *style = [UADefaultMessageCenterStyle style];
+    UAMessageCenterStyle *style = [UAMessageCenterStyle style];
     if (!file) {
         return style;
     }
@@ -34,7 +34,7 @@
 
     if (path) {
         NSDictionary *styleDict = [[NSDictionary alloc] initWithContentsOfFile:path];
-        NSDictionary *normalizedStyleDict = [UADefaultMessageCenterStyle normalizeDictionary:styleDict];
+        NSDictionary *normalizedStyleDict = [UAMessageCenterStyle normalizeDictionary:styleDict];
 
         [style setValuesForKeysWithDictionary:normalizedStyleDict];
 
@@ -59,19 +59,19 @@
 
         // Validate and normalize colors
         if ([key hasSuffix:@"Color"]) {
-            [normalizedValues setValue:[UADefaultMessageCenterStyle createColor:value] forKey:key];
+            [normalizedValues setValue:[UAMessageCenterStyle createColor:value] forKey:key];
             continue;
         }
 
         // Validate and normalize fonts
         if ([key hasSuffix:@"Font"]) {
-            [normalizedValues setValue:[UADefaultMessageCenterStyle createFont:value] forKey:key];
+            [normalizedValues setValue:[UAMessageCenterStyle createFont:value] forKey:key];
             continue;
         }
 
         // Validate and normalize icon images
         if ([key hasSuffix:@"Icon"]) {
-            [normalizedValues setValue:[UADefaultMessageCenterStyle createIcon:value] forKey:key];
+            [normalizedValues setValue:[UAMessageCenterStyle createIcon:value] forKey:key];
             continue;
         }
 
@@ -136,7 +136,7 @@
     return [UIImage imageNamed:iconString];
 }
 
-- (BOOL)isEqualToUADefaultMessageCenterStyle:(UADefaultMessageCenterStyle *)style {
+- (BOOL)isEqualToMessageCenterStyle:(UAMessageCenterStyle *)style {
     if (!style) {
         return NO;
     }
@@ -197,11 +197,11 @@
         return YES;
     }
     
-    if (![object isKindOfClass:[UADefaultMessageCenterStyle class]]) {
+    if (![object isKindOfClass:[UAMessageCenterStyle class]]) {
         return NO;
     }
     
-    return [self isEqualToUADefaultMessageCenterStyle:(UADefaultMessageCenterStyle *)object];
+    return [self isEqualToMessageCenterStyle:(UAMessageCenterStyle *)object];
 }
 
 

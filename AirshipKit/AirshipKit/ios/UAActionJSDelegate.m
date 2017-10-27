@@ -10,7 +10,6 @@
 #import "UAWebViewCallData.h"
 
 #import "UAWKWebViewDelegate.h"
-#import "UARichContentWindow.h"
 
 @implementation UAActionJSDelegate
 
@@ -35,10 +34,6 @@
 
 - (NSDictionary *)metadataWithCallData:(UAWebViewCallData *)data {
     NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    [metadata setValue:data.webView forKey:UAActionMetadataWebViewKey];
-#pragma GCC diagnostic pop
     [metadata setValue:data.message forKey:UAActionMetadataInboxMessageKey];
     return metadata;
 }
@@ -287,18 +282,6 @@ completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
         id delegate = data.delegate;
         if ([delegate respondsToSelector:@selector(closeWindowAnimated:)]) {
             [delegate closeWindowAnimated:YES];
-        } else {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-            UIWebView *webView = data.webView;
-            if (webView != nil) {
-                id webViewDelegate = webView.delegate;
-                if ([webViewDelegate respondsToSelector:@selector(closeWebView:animated:)]) {
-                    UA_LIMPERR(@"closeWebView:animated: will be removed in SDK version 9.0");
-                    [webViewDelegate closeWebView:webView animated:YES];
-                }
-#pragma GCC diagnostic pop
-            }
         }
 
         if (completionHandler) {

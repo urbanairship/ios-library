@@ -32,7 +32,7 @@
 @class UANamedUser;
 @class UAActionRegistry;
 @class UAInAppMessaging;
-@class UADefaultMessageCenter;
+@class UAMessageCenter;
 @class UALocation;
 @class UAAutomation;
 @class UAChannelCapture;
@@ -202,10 +202,10 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 + (null_unspecified UAInAppMessaging *)inAppMessaging;
 
 /**
- * Returns the `UADefaultMessageCenter` instance. Used for customizing
+ * Returns the default `UAMessageCenter` instance. Used for customizing
  * and displaying the default message center.
  */
-+ (null_unspecified UADefaultMessageCenter *)defaultMessageCenter;
++ (null_unspecified UAMessageCenter *)messageCenter;
 
 #endif
 

@@ -7,7 +7,6 @@
 #import "UAInboxMessage.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxUtils.h"
-#import "UALandingPageOverlayController.h"
 #import "UAOverlayViewController.h"
 #import "UAConfig.h"
 
@@ -48,14 +47,7 @@ NSString * const UAOverlayInboxMessageActionErrorDomain = @"UAOverlayInboxMessag
     [self fetchMessage:arguments.value arguments:arguments completionHandler:^(UAInboxMessage *message, UAActionFetchResult result) {
         if (message) {
             // Fall back to overlay controller
-            if (UAirship.shared.config.useWKWebView) {
-                [UAOverlayViewController showMessage:message];
-            } else {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-                [UALandingPageOverlayController showMessage:message];
-#pragma GCC diagnostic pop
-            }
+            [UAOverlayViewController showMessage:message];
             completionHandler([UAActionResult resultWithValue:nil withFetchResult:result]);
         } else {
             NSError *error = [NSError errorWithDomain:UAOverlayInboxMessageActionErrorDomain

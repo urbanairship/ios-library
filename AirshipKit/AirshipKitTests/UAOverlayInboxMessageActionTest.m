@@ -8,7 +8,6 @@
 #import "UAInbox.h"
 #import "UAInboxMessage.h"
 #import "UAInboxMessageList.h"
-#import "UALandingPageOverlayController.h"
 #import "UAOverlayViewController.h"
 #import "UAConfig.h"
 
@@ -19,7 +18,6 @@
 @property (nonatomic, strong) id mockInbox;
 @property (nonatomic, strong) id mockMessageList;
 @property (nonatomic, strong) id mockAirship;
-@property (nonatomic, strong) id mockLandingPageOverlayController;
 @property (nonatomic, strong) id mockOverlayViewController;
 @property (nonatomic, strong) id mockConfig;
 
@@ -44,10 +42,6 @@
     self.mockConfig = [self mockForClass:[UAConfig class]];
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
     
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    self.mockLandingPageOverlayController = [self mockForClass:[UALandingPageOverlayController class]];
-#pragma GCC diagnostic pop
     self.mockOverlayViewController = [self mockForClass:[UAOverlayViewController class]];
 }
 
@@ -55,7 +49,6 @@
     [self.mockAirship stopMocking];
     [self.mockInbox stopMocking];
     [self.mockMessageList stopMocking];
-    [self.mockLandingPageOverlayController stopMocking];
     [self.mockOverlayViewController stopMocking];
     [self.mockConfig stopMocking];
     
@@ -157,13 +150,6 @@
 }
 
 - (void)testPerform {
-    [self commonPerform:self.mockLandingPageOverlayController];
-}
-
-- (void)testPerformWithOverlayViewController {
-    // UAOverlayViewController is used when SDK configured to use WKWebViews
-    [[[self.mockConfig stub] andReturnValue:OCMOCK_VALUE(YES)] useWKWebView];
-    
     [self commonPerform:self.mockOverlayViewController];
 }
 
@@ -201,13 +187,6 @@
 }
 
 - (void)testPerformMessageListUpdate {
-    [self commonPerformMessageListUpdate:self.mockLandingPageOverlayController];
-}
-
-- (void)testPerformMessageListUpdateWithOverlayViewController {
-    // UAOverlayViewController is used when SDK configured to use WKWebViews
-    [[[self.mockConfig stub] andReturnValue:OCMOCK_VALUE(YES)] useWKWebView];
-    
     [self commonPerformMessageListUpdate:self.mockOverlayViewController];
 }
 
@@ -263,13 +242,6 @@
 }
 
 - (void)testPerformWithPlaceHolderInboxMessageMetadata {
-    [self commonPerformWithPlaceHolderInboxMessageMetadata:self.mockLandingPageOverlayController];
-}
-
-- (void)testPerformWithPlaceHolderInboxMessageMetadataWithOverlayViewController {
-    // UAOverlayViewController is used when SDK configured to use WKWebViews
-    [[[self.mockConfig stub] andReturnValue:OCMOCK_VALUE(YES)] useWKWebView];
-    
     [self commonPerformWithPlaceHolderInboxMessageMetadata:self.mockOverlayViewController];
 }
 
@@ -304,13 +276,6 @@
 }
 
 - (void)testPerformWithPlaceHolderPushMessageMetadata {
-    [self commonPerformWithPlaceHolderPushMessageMetadata:self.mockLandingPageOverlayController];
-}
-
-- (void)testPerformWithPlaceHolderPushMessageMetadataWithOverlayViewController {
-    // UAOverlayViewController is used when SDK configured to use WKWebViews
-    [[[self.mockConfig stub] andReturnValue:OCMOCK_VALUE(YES)] useWKWebView];
-    
     [self commonPerformWithPlaceHolderPushMessageMetadata:self.mockOverlayViewController];
 }
 

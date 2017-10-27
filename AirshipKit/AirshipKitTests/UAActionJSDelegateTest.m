@@ -7,7 +7,6 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAWebViewCallData.h"
 #import "UAirship.h"
-#import "UARichContentWindow.h"
 #import "UAConfig.h"
 
 @interface UAActionJSDelegateTest : UABaseTest
@@ -17,10 +16,7 @@
 @property (nonatomic, strong) id mockConfig;
 @property (nonatomic, strong) JSContext *jsContext;
 @property (nonatomic, copy) NSString *nativeBridge;
-@property (nonatomic, strong) id mockUIWebView;
-@property (nonatomic, strong) id mockRichContentWindow;
 @property (nonatomic, strong) id mockWKWebViewDelegate;
-@property (nonatomic, assign) BOOL useWKWebView;
 @end
 
 @implementation UAActionJSDelegateTest
@@ -40,38 +36,22 @@
     // UAirship is only used for storage here, since it's normally injected when setting up a UIWebView
     [self.jsContext evaluateScript:@"UAirship = {}"];
 
-    self.mockUIWebView = [self mockForClass:[UIWebView class]];
-    self.mockRichContentWindow = [self mockForProtocol:@protocol(UARichContentWindow)];
-    [[[self.mockUIWebView stub] andReturn:self.mockRichContentWindow] delegate];
-    
     self.mockWKWebViewDelegate = [self mockForProtocol:@protocol(UAWKWebViewDelegate)];
     
-    // Mock Config & useWKWebView
-    self.useWKWebView = NO;
     self.mockConfig = [self mockForClass:[UAConfig class]];
-    [[[self.mockConfig stub] andDo:^(NSInvocation *invocation) {
-        BOOL useWKWebView = self.useWKWebView;
-        [invocation setReturnValue:&useWKWebView];
-    }] useWKWebView];
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
 }
 
 - (void)tearDown {
     [self.mockAirship stopMocking];
     [self.mockWKWebViewDelegate stopMocking];
-    [self.mockUIWebView stopMocking];
     [self.mockConfig stopMocking];
-    [self.mockRichContentWindow stopMocking];
     [super tearDown];
 }
 
 - (void)performWebViewCallWithURL:(NSURL *)url completionHandler:(void (^)(NSString *))handler {
     UAWebViewCallData *callData = nil;
-    if (self.useWKWebView) {
-        callData = [UAWebViewCallData callDataForURL:url delegate:self.mockWKWebViewDelegate];
-    } else {
-        callData = [UAWebViewCallData callDataForURL:url webView:self.mockUIWebView];
-    }
+    callData = [UAWebViewCallData callDataForURL:url delegate:self.mockWKWebViewDelegate];
     [self.jsDelegate callWithData:callData withCompletionHandler:handler];
 }
 
@@ -353,22 +333,7 @@
 /**
  * Test close method
  */
-
-- (void)testCloseMethodWithUIWebView {
-    self.useWKWebView = NO;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    [[self.mockRichContentWindow expect] closeWebView:self.mockUIWebView animated:YES];
-#pragma GCC diagnostic pop
-    
-    NSURL *url = [NSURL URLWithString:@"uairship://close"];
-    [self performWebViewCallWithURL:url completionHandler:nil];
-    
-    [self.mockRichContentWindow verify];
-}
-
-- (void)testCloseMethodWithWKWebView {
-    self.useWKWebView = YES;
+- (void)testCloseMethod {
     [[self.mockWKWebViewDelegate expect] closeWindowAnimated:YES];
     
     NSURL *url = [NSURL URLWithString:@"uairship://close"];

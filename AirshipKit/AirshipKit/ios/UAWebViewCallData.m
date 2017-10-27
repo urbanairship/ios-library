@@ -5,23 +5,11 @@
 
 @implementation UAWebViewCallData
 
-+ (UAWebViewCallData *)callDataForURL:(NSURL *)url webView:(UIWebView *)webView {
-    return [UAWebViewCallData callDataForURL:url webView:webView delegate:nil message:nil];
-}
-
-+ (UAWebViewCallData *)callDataForURL:(NSURL *)url webView:(UIWebView *)webView message:(UAInboxMessage *)message {
-    return [UAWebViewCallData callDataForURL:url webView:webView delegate:nil message:message];
-}
-
 + (UAWebViewCallData *)callDataForURL:(NSURL *)url delegate:(id <UAWKWebViewDelegate>)delegate {
-    return [UAWebViewCallData callDataForURL:url webView:nil delegate:delegate message:nil];
+    return [UAWebViewCallData callDataForURL:url delegate:delegate message:nil];
 }
 
 + (UAWebViewCallData *)callDataForURL:(NSURL *)url delegate:(id <UAWKWebViewDelegate>)delegate message:(UAInboxMessage *)message {
-    return [UAWebViewCallData callDataForURL:url webView:nil delegate:delegate message:message];
-}
-
-+ (UAWebViewCallData *)callDataForURL:(NSURL *)url webView:(UIWebView *)webView delegate:(id <UAWKWebViewDelegate>)delegate message:(UAInboxMessage *)message {
 
     NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
     NSString *encodedUrlPath = components.percentEncodedPath;
@@ -74,10 +62,6 @@
     data.name = url.host;
     data.arguments = arguments;
     data.options = options;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    data.webView = webView;
-#pragma GCC diagnostic pop
     data.delegate = delegate;
     data.url = url;
     data.message = message;

@@ -9,7 +9,7 @@
 #import "UAInboxMessageList.h"
 #import "UAirship.h"
 #import "UAInboxMessage.h"
-#import "UADefaultMessageCenter.h"
+#import "UAMessageCenter.h"
 
 @interface UADisplayInboxActionTest : UABaseTest
 
@@ -21,7 +21,7 @@
 
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockMessageList;
-@property (nonatomic, strong) id mockDefaultMessageCenter;
+@property (nonatomic, strong) id mockMessageCenter;
 
 @end
 
@@ -38,11 +38,11 @@
     self.mockMessage = [self mockForClass:[UAInboxMessage class]];
     OCMStub([self.mockMessage messageID]).andReturn(@"MCRAP");
     self.mockMessageList = [self mockForClass:[UAInboxMessageList class]];
-    self.mockDefaultMessageCenter = [self mockForClass:[UADefaultMessageCenter class]];
+    self.mockMessageCenter = [self mockForClass:[UAMessageCenter class]];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
-    [[[self.mockAirship stub] andReturn:self.mockDefaultMessageCenter] defaultMessageCenter];
+    [[[self.mockAirship stub] andReturn:self.mockMessageCenter] messageCenter];
 
     UAInbox *inbox = [[UAInbox alloc] init];
     inbox.messageList = self.mockMessageList;
@@ -54,7 +54,7 @@
     [self.mockAirship stopMocking];
     [self.mockMessageList stopMocking];
     [self.mockInboxDelegate stopMocking];
-    [self.mockDefaultMessageCenter stopMocking];
+    [self.mockMessageCenter stopMocking];
     [self.mockMessage stopMocking];
 
     [super tearDown];
@@ -249,13 +249,13 @@
     [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
 
     // Should display in the default message center
-    [[self.mockDefaultMessageCenter expect] displayMessageForID:((UAInboxMessage *)self.mockMessage).messageID];
+    [[self.mockMessageCenter expect] displayMessageForID:((UAInboxMessage *)self.mockMessage).messageID];
 
     // Perform the action
     [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
 
     // Verify it was displayed
-    [self.mockDefaultMessageCenter verify];
+    [self.mockMessageCenter verify];
 }
 
 /**
@@ -267,7 +267,7 @@
     UAActionArguments *args = [UAActionArguments argumentsWithValue:nil withSituation:UASituationManualInvocation];
 
     // Should display in the default message center
-    [[self.mockDefaultMessageCenter expect] display];
+    [[self.mockMessageCenter expect] display];
 
     // Need to stub a message list result so the action is able to finish
     [self stubMessageListRefreshWithSuccessBlock:nil];
@@ -276,7 +276,7 @@
     [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
 
     // Verify it was displayed
-    [self.mockDefaultMessageCenter verify];
+    [self.mockMessageCenter verify];
 }
 
 

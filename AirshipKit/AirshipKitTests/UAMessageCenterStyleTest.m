@@ -3,17 +3,17 @@
 #import "UABaseTest.h"
 
 #import "UAirship.h"
-#import "UADefaultMessageCenter.h"
-#import "UADefaultMessageCenterStyle.h"
+#import "UAMessageCenter.h"
+#import "UAMessageCenterStyle.h"
 #import "UAColorUtils+Internal.h"
 
-@interface UADefaultMessageCenterStyleTest : UABaseTest
+@interface UAMessageCenterStyleTest : UABaseTest
 
 @property (nonatomic, strong) id mockBundle;
 
 @end
 
-@implementation UADefaultMessageCenterStyleTest
+@implementation UAMessageCenterStyleTest
 
 - (void)setUp {
     [super setUp];
@@ -32,14 +32,14 @@
 // Just compare initial values to final value and return
 - (void)testInvalidStyle {
     // Whatever is set in the xib (nil in this case)
-    UADefaultMessageCenterStyle *defaultStyle = [[UADefaultMessageCenterStyle alloc] init];
+    UAMessageCenterStyle *defaultStyle = [[UAMessageCenterStyle alloc] init];
 
     // ensure that unknown/improperly formatted values don't crash the app
-    XCTAssertNoThrow([UADefaultMessageCenterStyle styleWithContentsOfFile:@"Invalid-UAMessageCenterDefaultStyle"], @"Parsing an invalid UAMessageCenterDefaultStyle file should never result in an exception" );
+    XCTAssertNoThrow([UAMessageCenterStyle styleWithContentsOfFile:@"Invalid-UAMessageCenterDefaultStyle"], @"Parsing an invalid UAMessageCenterDefaultStyle file should never result in an exception" );
 
-    UADefaultMessageCenterStyle *invalidStyle = [UADefaultMessageCenterStyle styleWithContentsOfFile:@"Invalid-UAMessageCenterDefaultStyle"];
+    UAMessageCenterStyle *invalidStyle = [UAMessageCenterStyle styleWithContentsOfFile:@"Invalid-UAMessageCenterDefaultStyle"];
 
-    [UAirship defaultMessageCenter].style = invalidStyle;
+    [UAirship messageCenter].style = invalidStyle;
 
     // the invalid style plist has one valid property - cellSeparatorColor, ensure this sets despite invalids
     XCTAssertNotNil(invalidStyle.cellSeparatorColor, @"cellSeparatorColor should be valid");
@@ -78,10 +78,10 @@
     id mockImage = [self mockForClass:[UIImage class]];
     [[[mockImage stub] andReturn:mockImage] imageNamed:OCMOCK_ANY];
 
-    XCTAssertNoThrow([UADefaultMessageCenterStyle styleWithContentsOfFile:@"Valid-UAMessageCenterDefaultStyle"],
+    XCTAssertNoThrow([UAMessageCenterStyle styleWithContentsOfFile:@"Valid-UAMessageCenterDefaultStyle"],
                      @"Parsing a valid UAMessageCenterDefaultStyle file should never result in an exception");
 
-    UADefaultMessageCenterStyle *validStyle = [UADefaultMessageCenterStyle styleWithContentsOfFile:@"Valid-UAMessageCenterDefaultStyle"];
+    UAMessageCenterStyle *validStyle = [UAMessageCenterStyle styleWithContentsOfFile:@"Valid-UAMessageCenterDefaultStyle"];
 
     // Valid-UAMessageCenterDefaultStyle has these values set:
     UIFont *helveticaTestFont = [UIFont fontWithName:@"Helvetica" size:11];
@@ -119,8 +119,8 @@
 
 // passing in a nil file path should just return the default style
 - (void)testNilStyleFile {
-    UADefaultMessageCenterStyle *nilStyle = [UADefaultMessageCenterStyle styleWithContentsOfFile:nil];
-    UADefaultMessageCenterStyle *defaultStyle = [UADefaultMessageCenterStyle style];
+    UAMessageCenterStyle *nilStyle = [UAMessageCenterStyle styleWithContentsOfFile:nil];
+    UAMessageCenterStyle *defaultStyle = [UAMessageCenterStyle style];
     
     XCTAssertEqualObjects(nilStyle,defaultStyle);
 }

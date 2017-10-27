@@ -3,7 +3,7 @@
 @import UIKit;
 @import AirshipKit;
 
-@interface MessageCenterViewController : UADefaultMessageCenterSplitViewController
+@interface MessageCenterViewController : UAMessageCenterSplitViewController
 
 - (void)displayMessageForID:(NSString *)messageID;
 

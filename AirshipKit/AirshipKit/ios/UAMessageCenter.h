@@ -4,14 +4,14 @@
 #import <UIKit/UIKit.h>
 
 @class UAInboxMessage;
-@class UADefaultMessageCenterStyle;
+@class UAMessageCenterStyle;
 @class UAConfig;
 
 /**
- * The UADefaultMessageCenter class provides a default implementation of a
+ * The UAMessageCenter class provides a default implementation of a
  * message center, as well as a high-level interface for its configuration and display.
  */
-@interface UADefaultMessageCenter : NSObject
+@interface UAMessageCenter : NSObject
 
 ///---------------------------------------------------------------------------------------
 /// @name Default Message Center Properties
@@ -25,7 +25,7 @@
 /**
  * The style to apply to the default message center.
  */
-@property (nonatomic, strong) UADefaultMessageCenterStyle *style;
+@property (nonatomic, strong) UAMessageCenterStyle *style;
 
 /**
  * An optional predicate for filtering messages.
@@ -62,29 +62,10 @@
 /**
  * Display the given message.
  *
- * @param message The message.
- * @param animated Whether the transition should be animated.
- *
- * @deprecated Deprecated - to be removed in SDK version 9.0
- */
-- (void)displayMessage:(UAInboxMessage *)message animated:(BOOL)animated DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 9.0");
-
-/**
- * Display the given message.
- *
  * @pararm messageID The messageID of the message.
  * @param animated Whether the transition should be animated.
  */
 - (void)displayMessageForID:(NSString *)messageID animated:(BOOL)animated;
-
-/**
- * Display the given message without animation.
- *
- * @pararm message The message.
- *
- * @deprecated Deprecated - to be removed in SDK version 9.0
- */
-- (void)displayMessage:(UAInboxMessage *)message DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 10.0");
 
 /**
  * Display the given message without animation.

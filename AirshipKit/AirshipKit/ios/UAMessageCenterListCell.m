@@ -1,11 +1,11 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UADefaultMessageCenterListCell.h"
+#import "UAMessageCenterListCell.h"
 #import "UAInboxMessage.h"
 #import "UAMessageCenterDateUtils.h"
-#import "UADefaultMessageCenterStyle.h"
+#import "UAMessageCenterStyle.h"
 
-@implementation UADefaultMessageCenterListCell
+@implementation UAMessageCenterListCell
 
 - (void)setData:(UAInboxMessage *)message {
     self.date.text = [UAMessageCenterDateUtils formattedDateRelativeToNow:message.messageSent];
@@ -13,7 +13,7 @@
     self.unreadIndicator.hidden = !message.unread;
 }
 
-- (void)setStyle:(UADefaultMessageCenterStyle *)style {
+- (void)setStyle:(UAMessageCenterStyle *)style {
     _style = style;
 
     BOOL hidden = !style.iconsEnabled;
@@ -82,7 +82,7 @@
     }
     
     // needed for retina displays because the unreadIndicator is configured to rasterize in
-    // UADefaultMessageCenterListCell.xib via user-defined runtime attributes (layer.shouldRasterize)
+    // UAMessageCenterListCell.xib via user-defined runtime attributes (layer.shouldRasterize)
     self.unreadIndicator.layer.rasterizationScale = [[UIScreen mainScreen] scale];
 }
 

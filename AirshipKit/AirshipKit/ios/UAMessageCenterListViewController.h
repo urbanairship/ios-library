@@ -4,12 +4,12 @@
 #import "UAMessageCenterMessageViewProtocol.h"
 
 @class UAInboxMessage;
-@class UADefaultMessageCenterStyle;
+@class UAMessageCenterStyle;
 
 /**
  * Default implementation of a list-style Message Center UI.
  */
-@interface UADefaultMessageCenterListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
+@interface UAMessageCenterListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
     UIScrollViewDelegate, UISplitViewControllerDelegate>
 
 ///---------------------------------------------------------------------------------------
@@ -19,7 +19,7 @@
 /**
  * The style to apply to the list.
  */
-@property (nonatomic, strong) UADefaultMessageCenterStyle *style;
+@property (nonatomic, strong) UAMessageCenterStyle *style;
 
 /**
  * An optional predicate for filtering messages.
@@ -40,27 +40,6 @@
 ///---------------------------------------------------------------------------------------
 /// @name Default Message Center List View Controller Message Display
 ///---------------------------------------------------------------------------------------
-
-/**
- * Displays a new message, either by updating the currently displayed message or
- * by navigating to a new one.
- *
- * @param message The message to load.
- *
- * @deprecated Deprecated - to be removed in SDK version 9.0
- */
-- (void)displayMessage:(UAInboxMessage *)message DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 10.0");
-
-/**
- * Displays a new message, either by updating the currently displayed message or
- * by navigating to a new one.
- *
- * @param message The message to load.
- * @param completion Completion block called when there is an error displaying the message
- *
- * @deprecated Deprecated - to be removed in SDK version 9.0
- */
-- (void)displayMessage:(UAInboxMessage *)message onError:(void (^)(void))completion DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 10.0");
 
 /**
  * Displays a new message, either by updating the currently displayed message or

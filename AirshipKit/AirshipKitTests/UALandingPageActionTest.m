@@ -3,7 +3,6 @@
 #import "UABaseTest.h"
 #import "UALandingPageAction.h"
 #import "UAURLProtocol.h"
-#import "UALandingPageOverlayController.h"
 #import "UAOverlayViewController.h"
 #import "UAAction+Internal.h"
 #import "UAirship.h"
@@ -14,12 +13,10 @@
 @interface UALandingPageActionTest : UABaseTest
 
 @property (nonatomic, strong) id mockURLProtocol;
-@property (nonatomic, strong) id mockLandingPageOverlayController;
 @property (nonatomic, strong) id mockOverlayViewController;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockConfig;
 @property (nonatomic, strong) UALandingPageAction *action;
-@property (nonatomic, assign) BOOL useWKWebView;
 
 
 @end
@@ -30,21 +27,12 @@
     [super setUp];
     self.action = [[UALandingPageAction alloc] init];
     self.mockURLProtocol = [self mockForClass:[UAURLProtocol class]];
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    self.mockLandingPageOverlayController = [self mockForClass:[UALandingPageOverlayController class]];
-#pragma GCC diagnostic pop
     self.mockOverlayViewController = [self mockForClass:[UAOverlayViewController class]];
 
     self.mockConfig = [self mockForClass:[UAConfig class]];
     self.mockAirship = [self mockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
-
-    [[[self.mockConfig stub] andDo:^(NSInvocation *invocation) {
-        BOOL useWKWebView = self.useWKWebView;
-        [invocation setReturnValue:&useWKWebView];
-    }] useWKWebView];
 
     [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
     [[[self.mockConfig stub] andReturn:kUAProductionLandingPageContentURL] landingPageContentURL];
@@ -53,7 +41,6 @@
 }
 
 - (void)tearDown {
-    [self.mockLandingPageOverlayController stopMocking];
     [self.mockOverlayViewController stopMocking];
     [self.mockURLProtocol stopMocking];
     [self.mockAirship stopMocking];
@@ -130,12 +117,6 @@
 }
 
 - (void)verifyPerformInForegroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl expectedHeaders:(NSDictionary *)headers {
-    // UALandingPageOverlayController is used when SDK is not configured to use WKWebViews
-    self.useWKWebView = NO;
-    [self commonVerifyPerformInForegroundWithValue:value expectedUrl:expectedUrl expectedHeaders:headers mockedViewController:self.mockLandingPageOverlayController];
-    
-    // UAOverlayViewController is used when SDK is configured to use WKWebViews
-    self.useWKWebView = YES;
     [self commonVerifyPerformInForegroundWithValue:value expectedUrl:expectedUrl expectedHeaders:headers mockedViewController:self.mockOverlayViewController];
 }
 

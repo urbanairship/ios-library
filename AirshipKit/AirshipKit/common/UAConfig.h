@@ -173,15 +173,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy) NSDictionary *customConfig;
 
-/**
- * If set to `YES`, SDK will use WKWebView for UA default inbox message and overlay views.
- * If set to `NO`,  SDK will use UIWebView for UA default inbox message and overlay views.
- *
- * Defaults to `NO`. 
- * @note Will default to `YES` in SDK 9.0.
- */
-@property (nonatomic, assign) BOOL useWKWebView;
-
 ///---------------------------------------------------------------------------------------
 /// @name Resolved Options
 ///---------------------------------------------------------------------------------------

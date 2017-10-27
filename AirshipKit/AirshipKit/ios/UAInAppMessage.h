@@ -134,17 +134,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property(nonatomic, copy, nullable) NSDictionary *onClick;
 
-#if !TARGET_OS_TV    // UIUserNotificationActinoContext is not available on tvOS
-/**
- * The chosen notification action context. If there are notification actions defined for
- * UIUserNotificationActionContextMinimal, this context will be preferred. Othwerise, the
- * context defaults to UIUserNotificationActionContextDefault.
- *
- * @deprecated Deprecated - to be removed in SDK version 9.0
- */
-@property(nonatomic, readonly) UIUserNotificationActionContext notificationActionContext DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 9.0");
-#endif
-
 /**
  * An array of UNNotificationAction instances corresponding to the left-to-right order
  * of interactive message buttons.

@@ -1,8 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UADefaultMessageCenterListViewController.h"
-#import "UADefaultMessageCenterListCell.h"
-#import "UADefaultMessageCenterMessageViewController.h"
+#import "UAMessageCenterListViewController.h"
+#import "UAMessageCenterListCell.h"
 #import "UAMessageCenterMessageViewController.h"
 #import "UAInboxMessage.h"
 #import "UAirship.h"
@@ -10,7 +9,7 @@
 #import "UAInboxMessageList.h"
 #import "UAURLProtocol.h"
 #import "UAMessageCenterLocalization.h"
-#import "UADefaultMessageCenterStyle.h"
+#import "UAMessageCenterStyle.h"
 #import "UAConfig.h"
 
 /*
@@ -19,9 +18,9 @@
 #define kUAPlaceholderIconImage @"ua-inbox-icon-placeholder"
 #define kUAIconImageCacheMaxCount 100
 #define kUAIconImageCacheMaxByteCost (2 * 1024 * 1024) /* 2MB */
-#define kUADefaultMessageCenterListCellNibName @"UADefaultMessageCenterListCell"
+#define kUAMessageCenterListCellNibName @"UAMessageCenterListCell"
 
-@interface UADefaultMessageCenterListViewController()
+@interface UAMessageCenterListViewController()
 
 /**
  * The placeholder image to display in lieu of the icon
@@ -115,7 +114,7 @@
 
 @end
 
-@implementation UADefaultMessageCenterListViewController
+@implementation UAMessageCenterListViewController
 
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
@@ -221,12 +220,6 @@
 
 - (void)setFilter:(NSPredicate *)filter {
     _filter = filter;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    if ([self.messageViewController isKindOfClass:[UADefaultMessageCenterMessageViewController class]]) {
-        ((UADefaultMessageCenterMessageViewController *)self.messageViewController).filter = self.filter;
-    }
-#pragma GCC diagnostic pop
 }
 
 - (void)refreshStateChanged:(UIRefreshControl *)sender {
@@ -499,13 +492,9 @@
     
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    if ([self.messageViewController isKindOfClass:[UADefaultMessageCenterMessageViewController class]]) {
-        ((UADefaultMessageCenterMessageViewController *)self.messageViewController).filter = self.filter;
-    }
-#pragma GCC diagnostic pop
-    
     [self.messageViewController loadMessage:message onlyIfChanged:YES];
-    
+#pragma GCC diagnostic pop
+
     if (message) {
         // only display the message if there is a message to display
         [self displayMessageViewController];
@@ -536,11 +525,7 @@
     // See if the message is available on the device
     UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
     if (message) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         [self displayMessage:message onError:errorCompletion];
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         return;
     }
 
@@ -551,13 +536,6 @@
     if (!self.messageViewController) {
         [self createMessageViewController];
     }
-    
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    if ([self.messageViewController isKindOfClass:[UADefaultMessageCenterMessageViewController class]]) {
-        ((UADefaultMessageCenterMessageViewController *)self.messageViewController).filter = self.filter;
-    }
-#pragma GCC diagnostic pop
     
     [self.messageViewController loadMessageForID:messageID onlyIfChanged:NO onError:errorCompletion];
     
@@ -585,14 +563,7 @@
         }
     };
     
-    if (UAirship.shared.config.useWKWebView) {
-        self.messageViewController = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController" bundle:[UAirship resources]];
-    } else {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        self.messageViewController = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController" bundle:[UAirship resources]];
-#pragma GCC diagnostic pop
-    }
+    self.messageViewController = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController" bundle:[UAirship resources]];
     self.messageViewController.closeBlock = closeBlock;
 }
 
@@ -828,7 +799,7 @@
     }
 
     if (! _placeholderIcon) {
-        _placeholderIcon =[UIImage imageNamed:@"UADefaultMessageCenterPlaceholderIcon.png" inBundle:[UAirship resources] compatibleWithTraitCollection:nil];
+        _placeholderIcon =[UIImage imageNamed:@"UAMessageCenterPlaceholderIcon.png" inBundle:[UAirship resources] compatibleWithTraitCollection:nil];
     }
     return _placeholderIcon;
 }
@@ -838,10 +809,10 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    NSString *nibName = kUADefaultMessageCenterListCellNibName;
+    NSString *nibName = kUAMessageCenterListCellNibName;
     NSBundle *bundle = [UAirship resources];
 
-    UADefaultMessageCenterListCell *cell = (UADefaultMessageCenterListCell *)[tableView dequeueReusableCellWithIdentifier:nibName];
+    UAMessageCenterListCell *cell = (UAMessageCenterListCell *)[tableView dequeueReusableCellWithIdentifier:nibName];
 
     if (!cell) {
         cell = [[bundle loadNibNamed:nibName owner:nil options:nil] firstObject];
@@ -981,8 +952,11 @@
         if (!messageToDisplay && self.selectedIndexPath) {
             messageToDisplay = [self messageForID:[self messageAtIndex:[self validateIndexPath:self.selectedIndexPath].row].messageID];
         }
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         [self.messageViewController loadMessage:messageToDisplay onlyIfChanged:YES];
-        
+#pragma GCC diagnostic pop
+
         self.selectedMessage = messageToDisplay;
         
         if (!messageToDisplay) {
@@ -1172,9 +1146,9 @@
                     UA_LTRACE(@"Added image to cache (%@) with size in bytes: %lu", iconListURL, (unsigned long)sizeInBytes);
 
                     // Update cells directly rather than forcing a reload (which deselects)
-                    UADefaultMessageCenterListCell *cell;
+                    UAMessageCenterListCell *cell;
                     for (NSIndexPath *indexPath in (NSSet *)[self.currentIconURLRequests objectForKey:iconListURLString]) {
-                        cell = (UADefaultMessageCenterListCell *)[self.messageTable cellForRowAtIndexPath:indexPath];
+                        cell = (UAMessageCenterListCell *)[self.messageTable cellForRowAtIndexPath:indexPath];
                         cell.listIconView.image = iconImage;
                     }
                 }

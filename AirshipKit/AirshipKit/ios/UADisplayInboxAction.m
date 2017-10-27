@@ -7,7 +7,7 @@
 #import "UAInboxMessage.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxUtils.h"
-#import "UADefaultMessageCenter.h"
+#import "UAMessageCenter.h"
 
 #define kUADisplayInboxActionMessageIDPlaceHolder @"auto"
 
@@ -112,13 +112,8 @@
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
                 [inboxDelegate showInboxMessage:message];
 #pragma GCC diagnostic pop
-            } else if ([[UAirship defaultMessageCenter] respondsToSelector:@selector(displayMessageForID:)]) {
-                [[UAirship defaultMessageCenter] displayMessageForID:message.messageID];
             } else {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-                [[UAirship defaultMessageCenter] displayMessage:message];
-#pragma GCC diagnostic pop
+                [[UAirship messageCenter] displayMessageForID:message.messageID];
             }
             break;
         case UASituationManualInvocation:
@@ -131,13 +126,8 @@
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
                 [inboxDelegate showInboxMessage:message];
 #pragma GCC diagnostic pop
-            } else if ([[UAirship defaultMessageCenter] respondsToSelector:@selector(displayMessageForID:)]) {
-                [[UAirship defaultMessageCenter] displayMessageForID:message.messageID];
             } else {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-                [[UAirship defaultMessageCenter] displayMessage:message];
-#pragma GCC diagnostic pop
+                [[UAirship messageCenter] displayMessageForID:message.messageID];
             }
             break;
         case UASituationBackgroundPush:
@@ -162,7 +152,7 @@
     if ([inboxDelegate respondsToSelector:@selector(showInbox)]) {
         [inboxDelegate showInbox];
     } else {
-        [[UAirship defaultMessageCenter] display];
+        [[UAirship messageCenter] display];
     }
 }
 

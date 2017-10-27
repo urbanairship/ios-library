@@ -1,4 +1,66 @@
 # Urban Airship iOS SDK Migration Guide
+# Urban Airship Library 8.x to 9.0
+UIWebView support has been removed from the UA Message Center. Other Message Center code has been renamed or removed. The changes are as follows:
+
+## Renamed
+### Classes
+* UADefaultMessageCenter* -> UAMessageCenter*
+    * [UADefaultMessageCenter](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Classes/UADefaultMessageCenter.html) -> [UAMessageCenter](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAMessageCenter.html)
+    * [UADefaultMessageCenterListCell](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Classes/UADefaultMessageCenterListCell.html) -> [UAMessageCenterListCell](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAMessageCenterListCell.html)
+    * [UADefaultMessageCenterListViewController](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Classes/UADefaultMessageCenterListViewController.html) -> [UAMessageCenterListViewController](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAMessageCenterListViewController.html)
+    * [UADefaultMessageCenterSplitViewController](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Classes/UADefaultMessageCenterSplitViewController.html) -> [UAMessageCenterSplitViewController](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAMessageCenterSplitViewController.html)
+    * [UADefaultMessageCenterStyle](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Classes/UADefaultMessageCenterStyle.html) -> [UAMessageCenterStyle](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAMessageCenterStyle.html)
+
+### Properties
+* [UAirship](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAirship.html)
+    * defaultMessageCenter -> messageCenter
+
+## Removed
+### Classes
+* [UALandingPageOverlayController](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Classes/UALandingPageOverlayController.html)
+    * Use [UAOverlayViewController](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAOverlayViewController.html)
+* [UADefaultMessageCenterMessageViewController](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Classes/UADefaultMessageCenterMessageViewController.html)
+    * Use [UAMessageCenterMessageViewController](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAMessageCenterMessageViewController.html)
+* [UARichContentWindow](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Protocols/UARichContentWindow.html), UAUIWebViewDelegate
+    * Use [UAWKWebViewDelegate](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAWKWebViewDelegate.html)
+* UAWebViewDelegate
+    * Use [UAWKWebViewNativeBridge](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAWKWebViewNativeBridge.html)
+
+### Methods and Properties
+ * [UAConfig](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAConfig.html)
+    * [useWKWebView](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Classes/UAConfig.html#/c:objc(cs)UAConfig(py)useWKWebView)
+        * No replacement. WKWebViews are now always used in inbox message and overlay views.
+ * [UAMessageCenter](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAMessageCenter.html) (UADefaultMessageCenter)
+    * [displayMessage:](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Classes/UADefaultMessageCenter.html#/c:objc(cs)UADefaultMessageCenter(im)displayMessage:)
+        * Use [displayMessageForID:](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAMessageCenter.html#/c:objc(cs)UAMessageCenter(im)displayMessageForID:)
+    * [displayMessage:animated](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Classes/UADefaultMessageCenter.html#/c:objc(cs)UADefaultMessageCenter(im)displayMessage:animated:)
+        * Use [displayMessageForID:animated:](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAMessageCenter.html#/c:objc(cs)UAMessageCenter(im)displayMessageForID:animated:)
+* [UAMessageCenterListViewController](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAMessageCenterListViewController.html) (UADefaultMessageCenterListViewController)
+    * [displayMessage:](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Classes/UADefaultMessageCenterListViewController.html#/c:objc(cs)UAMessageCenterListViewController(im)displayMessage:)
+        * Use [displayMessageForID:](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAMessageCenterListViewController.html#/c:objc(cs)UAMessageCenterListViewController(im)displayMessageForID:)
+    * [displayMessage:onError:](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Classes/UADefaultMessageCenterListViewController.html#/c:objc(cs)UADefaultMessageCenterListViewController(im)displayMessage:onError:)
+        * Use [displayMessageForID:onError:](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAMessageCenterListViewController.html#/c:objc(cs)UAMessageCenterListViewController(im)displayMessageForID:onError:)
+* [NSString+UAURLEncoding](https://docs.urbanairship.com/reference/libraries/ios/latest/Categories/NSString(UAURLEncoding).html)
+    * [urlDecodedStringWithEncoding:](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Categories/NSString(UAURLEncoding).html#/c:objc(cs)NSString(im)urlDecodedStringWithEncoding:)
+        * Use [urlDecodedString](https://docs.urbanairship.com/reference/libraries/ios/latest/Categories/NSString(UAURLEncoding).html#/c:objc(cs)NSString(im)urlDecodedString)
+    * [urlEncodedStringWithEncoding:](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Categories/NSString(UAURLEncoding).html#/c:objc(cs)NSString(im)urlEncodedStringWithEncoding:)
+        * Use [urlEncodedString](https://docs.urbanairship.com/reference/libraries/ios/latest/Categories/NSString(UAURLEncoding).html#/c:objc(cs)NSString(im)urlEncodedString)
+* [UAWebViewCallData](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAWebViewCallData.html)
+    * [callDataForURL:webView:](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Classes/UAWebViewCallData.html#/c:objc(cs)UAWebViewCallData(cm)callDataForURL:webView:)
+        * Use [callDataForURL:delegate](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAWebViewCallData.html#/c:objc(cs)UAWebViewCallData(cm)callDataForURL:delegate:)
+    * [callDataForURL:webView:message](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Classes/UAWebViewCallData.html#/c:objc(cs)UAWebViewCallData(cm)callDataForURL:webView:message:)
+        * Use [callDataForURL:delegate:message](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAWebViewCallData.html#/c:objc(cs)UAWebViewCallData(cm)callDataForURL:delegate:message:)
+    * [webView](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Classes/UAWebViewCallData.html#/c:objc(cs)UAWebViewCallData(py)webView)
+        * No replacement
+    * [richContentWindow](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Classes/UAWebViewCallData.html#/c:objc(cs)UAWebViewCallData(py)richContentWindow)
+        * No replacement
+        
+### Other
+* [UAActionJSDelegate](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes.html#/c:objc(cs)UAActionJSDelegate)
+    * [UAActionMetadataWebViewKey](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Constants.html#/c:@UAActionMetadataWebViewKey)
+        * No replacement - no longer supported
+ 
+  
 # Urban Airship Library 8.x to 8.3.0
 ## WKWebView Support
 Version 8.3.0 adds support for iOS's [WKWebView](https://developer.apple.com/reference/webkit/wkwebview). UIWebView support for Urban Airship's default message center and overlay views will be removed in iOS SDK 9.0.

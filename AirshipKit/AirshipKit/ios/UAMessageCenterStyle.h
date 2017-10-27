@@ -11,7 +11,7 @@
  * properties will be overridden by the default message
  * center at display time.
  */
-@interface UADefaultMessageCenterStyle : NSObject
+@interface UAMessageCenterStyle : NSObject
 
 ///---------------------------------------------------------------------------------------
 /// @name Default Message Center Style Properties
@@ -138,12 +138,12 @@
 ///---------------------------------------------------------------------------------------
 
 /**
- * Factory method to create a UADefaultMessageCenterStyle.
+ * Factory method to create a UAMessageCenterStyle.
  */
 + (instancetype)style;
 
 /**
- * Factory method to create UADefaultMessageCenterStyle from a provided plist.
+ * Factory method to create UAMessageCenterStyle from a provided plist.
  */
 + (instancetype)styleWithContentsOfFile:(NSString *)path;
 

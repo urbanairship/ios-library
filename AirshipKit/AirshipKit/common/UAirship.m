@@ -28,7 +28,7 @@
 #import "UAInbox+Internal.h"
 #import "UAActionJSDelegate.h"
 #import "UAChannelCapture.h"
-#import "UADefaultMessageCenter.h"
+#import "UAMessageCenter.h"
 #import "UAInboxAPIClient+Internal.h"
 #import "UAInAppMessaging+Internal.h"
 #endif
@@ -121,7 +121,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
        // Only create the default message center if running iOS 8 and above
         if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){8, 0, 0}]) {
             if ([UAirship resources]) {
-                self.sharedDefaultMessageCenter = [UADefaultMessageCenter messageCenterWithConfig:self.config];
+                self.sharedMessageCenter = [UAMessageCenter messageCenterWithConfig:self.config];
             } else {
                 UA_LINFO(@"Unable to initialize default message center: AirshipResources is missing");
             }
@@ -371,8 +371,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return sharedAirship_.sharedInAppMessaging;
 }
 
-+ (UADefaultMessageCenter *)defaultMessageCenter {
-    return sharedAirship_.sharedDefaultMessageCenter;
++ (UAMessageCenter *)messageCenter {
+    return sharedAirship_.sharedMessageCenter;
 }
 
 #endif

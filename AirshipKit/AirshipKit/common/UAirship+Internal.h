@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The default message center.
  */
-@property (nonatomic, strong) UADefaultMessageCenter *sharedDefaultMessageCenter;
+@property (nonatomic, strong) UAMessageCenter *sharedMessageCenter;
 
 /**
  * The location manager.

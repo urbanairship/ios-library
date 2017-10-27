@@ -3,12 +3,12 @@
 #import <UIKit/UIKit.h>
 
 @class UAInboxMessage;
-@class UADefaultMessageCenterStyle;
+@class UAMessageCenterStyle;
 
 /**
  * The UITableViewCell subclass used by the default message center.
  */
-@interface UADefaultMessageCenterListCell : UITableViewCell
+@interface UAMessageCenterListCell : UITableViewCell
 
 ///---------------------------------------------------------------------------------------
 /// @name Default Message Center List Cell Properties
@@ -17,7 +17,7 @@
 /**
  * The style to apply to the cell.
  */
-@property (nonatomic, strong) UADefaultMessageCenterStyle *style;
+@property (nonatomic, strong) UAMessageCenterStyle *style;
 
 /**
  * Displays the message date.

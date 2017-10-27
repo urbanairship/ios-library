@@ -375,7 +375,7 @@
     XCTAssertTrue(pushCalled);
 }
 
-#pragma iOS 8/9 testing - remove section when iOS 9 is removed from SDK
+#pragma iOS 8/9 testing - remove section when iOS 9 support is removed from SDK
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"

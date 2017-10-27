@@ -1,22 +1,22 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UADefaultMessageCenter.h"
+#import "UAMessageCenter.h"
 #import "UAirship.h"
 #import "UAInbox.h"
 #import "UAInboxMessage.h"
 #import "UAUtils.h"
 #import "UAMessageCenterLocalization.h"
-#import "UADefaultMessageCenterListViewController.h"
-#import "UADefaultMessageCenterMessageViewController.h"
-#import "UADefaultMessageCenterSplitViewController.h"
-#import "UADefaultMessageCenterStyle.h"
+#import "UAMessageCenterListViewController.h"
+#import "UAMessageCenterMessageViewController.h"
+#import "UAMessageCenterSplitViewController.h"
+#import "UAMessageCenterStyle.h"
 #import "UAConfig.h"
 
-@interface UADefaultMessageCenter()
-@property(nonatomic, strong) UADefaultMessageCenterSplitViewController *splitViewController;
+@interface UAMessageCenter()
+@property(nonatomic, strong) UAMessageCenterSplitViewController *splitViewController;
 @end
 
-@implementation UADefaultMessageCenter
+@implementation UAMessageCenter
 
 - (instancetype)init {
     self = [super init];
@@ -27,18 +27,18 @@
 }
 
 + (instancetype)messageCenterWithConfig:(UAConfig *)config {
-    UADefaultMessageCenter *center = [[UADefaultMessageCenter alloc] init];
-    center.style = [UADefaultMessageCenterStyle styleWithContentsOfFile:config.messageCenterStyleConfig];
+    UAMessageCenter *center = [[UAMessageCenter alloc] init];
+    center.style = [UAMessageCenterStyle styleWithContentsOfFile:config.messageCenterStyleConfig];
     return center;
 }
 
 - (void)display:(BOOL)animated {
     if (!self.splitViewController) {
 
-        self.splitViewController = [[UADefaultMessageCenterSplitViewController alloc] initWithNibName:nil bundle:nil];
+        self.splitViewController = [[UAMessageCenterSplitViewController alloc] initWithNibName:nil bundle:nil];
         self.splitViewController.filter = self.filter;
 
-        UADefaultMessageCenterListViewController *lvc = self.splitViewController.listViewController;
+        UAMessageCenterListViewController *lvc = self.splitViewController.listViewController;
 
         lvc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                              target:self
@@ -55,15 +55,6 @@
 
 - (void)display {
     [self display:YES];
-}
-
-- (void)displayMessage:(UAInboxMessage *)message animated:(BOOL)animated {
-    [self display:animated];
-    [self.splitViewController.listViewController displayMessage:message];
-}
-
-- (void)displayMessage:(UAInboxMessage *)message {
-    [self displayMessage:message animated:NO];
 }
 
 - (void)displayMessageForID:(NSString *)messageID animated:(BOOL)animated {

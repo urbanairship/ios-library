@@ -2,14 +2,13 @@
 
 #import <UIKit/UIKit.h>
 
-@class UADefaultMessageCenterStyle;
-@class UADefaultMessageCenterListViewController;
-@class UADefaultMessageCenterMessageViewController;
+@class UAMessageCenterStyle;
+@class UAMessageCenterListViewController;
 
 /**
  * Default implementation of an adaptive message center controller.
  */
-@interface UADefaultMessageCenterSplitViewController : UISplitViewController
+@interface UAMessageCenterSplitViewController : UISplitViewController
 
 ///---------------------------------------------------------------------------------------
 /// @name Default Message Center Split View Controller Properties
@@ -23,11 +22,11 @@
 /**
  * The style to apply to the message center
  */
-@property(nonatomic, strong) UADefaultMessageCenterStyle *style;
+@property(nonatomic, strong) UAMessageCenterStyle *style;
 
 /**
  * The embedded list view controller.
  */
-@property(nonatomic, readonly) UADefaultMessageCenterListViewController *listViewController;
+@property(nonatomic, readonly) UAMessageCenterListViewController *listViewController;
 
 @end

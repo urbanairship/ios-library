@@ -3,6 +3,12 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 9.0 - ??? ??, ????
+==================================
+Changes
+-------
+- Removed a lot of deprecated code. Please see [Migration Guide](Documentation/Migration/Migration%20Guide.md#urban-airship-library-8x-to-90).
+
 Version 8.6.1 - October 23, 2017
 ==================================
 Patch release that fixes a registration delegate issue that prevents the authorized types from
