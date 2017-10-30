@@ -3,6 +3,14 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 8.6.2 - October 30, 2017
+==================================
+Patch release to correctly parse "mailto:" URLs in message center messages and enable optional localization of Message Center's "Done" and "Edit" buttons. Applications should update to this release if they require this behavior.
+
+Bug fixes
+---------
+- Correctly parse "mailto:" URLs in message center messages.
+
 Version 8.6.1 - October 23, 2017
 ==================================
 Patch release that fixes a registration delegate issue that prevents the authorized types from
