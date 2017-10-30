@@ -8,7 +8,7 @@
 #import "UAAutomation.h"
 #import "UAirship.h"
 #import "UAUtils.h"
-#import "UAActionSchedule+Internal.h"
+#import "UASchedule+Internal.h"
 
 @interface UAScheduleActionTests : UABaseTest
 @property(nonatomic, strong) UAScheduleAction *action;
@@ -50,7 +50,7 @@
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
     arguments.situation = UASituationBackgroundInteractiveButton;
     arguments.value = @{ UAActionScheduleInfoActionsKey: @{ @"action_name": @"action_value" },
-                         UAActionScheduleInfoTriggersKey: @[ @{ UAScheduleTriggerTypeKey: UAScheduleTriggerAppForegroundName, UAScheduleTriggerGoalKey: @(1) }] };
+                         UAScheduleInfoTriggersKey: @[ @{ UAScheduleTriggerTypeKey: UAScheduleTriggerAppForegroundName, UAScheduleTriggerGoalKey: @(1) }] };
 
     for (int i = 0; i < 5; i++) {
         arguments.situation = validSituations[i];
@@ -62,12 +62,12 @@
  * Test scheduling actions.
  */
 - (void)testSchedule {
-    NSDictionary *scheduleJSON = @{ UAActionScheduleInfoGroupKey: @"test group",
-                                    UAActionScheduleInfoLimitKey: @(1),
+    NSDictionary *scheduleJSON = @{ UAScheduleInfoGroupKey: @"test group",
+                                    UAScheduleInfoLimitKey: @(1),
                                     UAActionScheduleInfoActionsKey: @{ @"action_name": @"action_value" },
-                                    UAActionScheduleInfoEndKey:[[UAUtils ISODateFormatterUTC] stringFromDate:[NSDate dateWithTimeIntervalSinceNow:1000]],
-                                    UAActionScheduleInfoStartKey:[[UAUtils ISODateFormatterUTC] stringFromDate: [NSDate date]],
-                                    UAActionScheduleInfoTriggersKey: @[ @{ UAScheduleTriggerTypeKey: UAScheduleTriggerAppForegroundName, UAScheduleTriggerGoalKey: @(1) }] };
+                                    UAScheduleInfoEndKey:[[UAUtils ISODateFormatterUTC] stringFromDate:[NSDate dateWithTimeIntervalSinceNow:1000]],
+                                    UAScheduleInfoStartKey:[[UAUtils ISODateFormatterUTC] stringFromDate: [NSDate date]],
+                                    UAScheduleInfoTriggersKey: @[ @{ UAScheduleTriggerTypeKey: UAScheduleTriggerAppForegroundName, UAScheduleTriggerGoalKey: @(1) }] };
 
     NSError *error;
     UAActionScheduleInfo *expectedInfo = [UAActionScheduleInfo actionScheduleInfoWithJSON:scheduleJSON error:&error];
@@ -81,8 +81,8 @@
     arguments.value = scheduleJSON;
 
     [[self.mockAutomation expect] scheduleActions:expectedInfo completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void(^completionBlock)(UAActionSchedule *) = obj;
-        UAActionSchedule *schedule = [UAActionSchedule actionScheduleWithIdentifier:@"test" info:expectedInfo];
+        void(^completionBlock)(UASchedule *) = obj;
+        UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test" info:expectedInfo];
         completionBlock(schedule);
         return YES;
     }]];

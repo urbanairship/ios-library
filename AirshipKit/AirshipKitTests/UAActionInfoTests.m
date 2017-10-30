@@ -15,12 +15,12 @@
     NSDate *end = [NSDate dateWithTimeIntervalSinceNow:1000];
     NSDate *start = [NSDate date];
 
-    NSDictionary *scheduleJSON = @{ UAActionScheduleInfoGroupKey: @"test group",
-                                    UAActionScheduleInfoLimitKey: @(1),
+    NSDictionary *scheduleJSON = @{ UAScheduleInfoGroupKey: @"test group",
+                                    UAScheduleInfoLimitKey: @(1),
                                     UAActionScheduleInfoActionsKey: @{ @"action_name": @"action_value" },
-                                    UAActionScheduleInfoEndKey:[[UAUtils ISODateFormatterUTCWithDelimiter] stringFromDate:end],
-                                    UAActionScheduleInfoStartKey:[[UAUtils ISODateFormatterUTCWithDelimiter] stringFromDate:start],
-                                    UAActionScheduleInfoTriggersKey: @[ @{ UAScheduleTriggerTypeKey: UAScheduleTriggerAppForegroundName, UAScheduleTriggerGoalKey: @(1) }] };
+                                    UAScheduleInfoEndKey:[[UAUtils ISODateFormatterUTCWithDelimiter] stringFromDate:end],
+                                    UAScheduleInfoStartKey:[[UAUtils ISODateFormatterUTCWithDelimiter] stringFromDate:start],
+                                    UAScheduleInfoTriggersKey: @[ @{ UAScheduleTriggerTypeKey: UAScheduleTriggerAppForegroundName, UAScheduleTriggerGoalKey: @(1) }] };
 
     NSError *error = nil;
     UAActionScheduleInfo *info = [UAActionScheduleInfo actionScheduleInfoWithJSON:scheduleJSON error:&error];
@@ -37,7 +37,7 @@
 - (void)testRequiredJSONFields {
     // Minimum required fields
     NSDictionary *validJSON = @{ UAActionScheduleInfoActionsKey: @{ @"action_name": @"action_value" },
-                                 UAActionScheduleInfoTriggersKey: @[ @{ UAScheduleTriggerTypeKey: UAScheduleTriggerAppForegroundName, UAScheduleTriggerGoalKey: @(1) }] };
+                                 UAScheduleInfoTriggersKey: @[ @{ UAScheduleTriggerTypeKey: UAScheduleTriggerAppForegroundName, UAScheduleTriggerGoalKey: @(1) }] };
     XCTAssertNotNil([UAActionScheduleInfo actionScheduleInfoWithJSON:validJSON error:nil]);
 
     for (NSString *key in validJSON.allKeys) {

@@ -2,11 +2,12 @@
 
 #import "NSManagedObjectContext+UAAdditions.h"
 #import "UAAutomationStore+Internal.h"
-#import "UAActionScheduleData+Internal.h"
+#import "UAScheduleData+Internal.h"
 #import "UAScheduleTriggerData+Internal.h"
 #import "UAScheduleDelayData+Internal.h"
-
-#import "UAActionSchedule.h"
+#import "UAScheduleInfo+Internal.h"
+#import "UASchedule.h"
+#import "UASchedule+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAScheduleTrigger+Internal.h"
 #import "UAirship.h"
@@ -17,19 +18,15 @@
 @interface UAAutomationStore ()
 @property (nonatomic, strong) NSManagedObjectContext *managedContext;
 @property (nonatomic, copy) NSString *storeName;
-
 @end
-
-NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
 
 @implementation UAAutomationStore
 
-
-- (instancetype)initWithConfig:(UAConfig *)config {
+- (instancetype)initWithStoreName:(NSString *)storeName {
     self = [super init];
 
     if (self) {
-        self.storeName = [NSString stringWithFormat:UAAutomationStoreFileFormat, config.appKey];
+        self.storeName = storeName;
         NSURL *modelURL = [[UAirship resources] URLForResource:@"UAAutomation" withExtension:@"momd"];
         self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
                                                                       concurrencyType:NSPrivateQueueConcurrencyType];
@@ -50,10 +47,9 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
     return self;
 }
 
-+ (instancetype)automationStoreWithConfig:(UAConfig *)config {
-    return [[UAAutomationStore alloc] initWithConfig:config];
++ (instancetype)automationStoreWithStoreName:(NSString *)storeName {
+    return [[UAAutomationStore alloc] initWithStoreName:storeName];
 }
-
 
 - (void)protectedDataAvailable {
     if (!self.managedContext.persistentStoreCoordinator.persistentStores.count) {
@@ -69,14 +65,14 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
 #pragma mark -
 #pragma mark Data Access
 
-- (void)saveSchedule:(UAActionSchedule *)schedule limit:(NSUInteger)limit completionHandler:(void (^)(BOOL))completionHandler {
+- (void)saveSchedule:(UASchedule *)schedule limit:(NSUInteger)limit completionHandler:(void (^)(BOOL))completionHandler {
     [self.managedContext safePerformBlock:^(BOOL isSafe) {
         if (!isSafe) {
             completionHandler(NO);
             return;
         }
 
-        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UAActionScheduleData"];
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UAScheduleData"];
         NSUInteger count = [self.managedContext countForFetchRequest:request error:nil];
         if (count >= limit) {
             UA_LERR(@"Max schedule limit reached. Unable to save new schedule.");
@@ -96,7 +92,7 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
             return;
         }
 
-        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UAActionScheduleData"];
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UAScheduleData"];
         request.predicate = predicate;
 
         NSError *error;
@@ -123,14 +119,14 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
 
 
 
-- (void)fetchSchedulesWithPredicate:(NSPredicate *)predicate limit:(NSUInteger)limit completionHandler:(void (^)(NSArray<UAActionScheduleData *> *))completionHandler {
+- (void)fetchSchedulesWithPredicate:(NSPredicate *)predicate limit:(NSUInteger)limit completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
     [self.managedContext safePerformBlock:^(BOOL isSafe) {
         if (!isSafe) {
             completionHandler(@[]);
             return;
         }
 
-        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UAActionScheduleData"];
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UAScheduleData"];
         request.predicate = predicate;
         request.fetchLimit = limit;
 
@@ -176,13 +172,13 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
 #pragma mark -
 #pragma mark Converters
 
-- (UAActionScheduleData *)createScheduleDataFromSchedule:(UAActionSchedule *)schedule {
-    UAActionScheduleData *scheduleData = [NSEntityDescription insertNewObjectForEntityForName:@"UAActionScheduleData"
+- (UAScheduleData *)createScheduleDataFromSchedule:(UASchedule *)schedule {
+    UAScheduleData *scheduleData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleData"
                                                                        inManagedObjectContext:self.managedContext];
 
     scheduleData.identifier = schedule.identifier;
     scheduleData.limit = @(schedule.info.limit);
-    scheduleData.actions = [NSJSONSerialization stringWithObject:schedule.info.actions];
+    scheduleData.data = schedule.info.data;
     scheduleData.priority = [NSNumber numberWithInteger:schedule.info.priority];
     scheduleData.group = schedule.info.group;
     scheduleData.triggers = [self createTriggerDataFromTriggers:schedule.info.triggers scheduleStart:schedule.info.start];

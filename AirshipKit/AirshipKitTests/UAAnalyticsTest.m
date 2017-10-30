@@ -298,43 +298,46 @@
 
 // Tests forwarding screens to the analytics delegate.
 - (void)testForwardScreenTracks {
-    id mockDelegate = [self mockForProtocol:@protocol(UAAnalyticsDelegate)];
-    self.analytics.delegate = mockDelegate;
+    id expectedUserInfo = @{ @"screen": @"screen"};
 
-    [[mockDelegate expect] screenTracked:@"screen"];
+    XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
+
+    [self startNSNotificationCenterObservingWithBlock:^(NSNotification *notification) {
+        XCTAssertEqualObjects(expectedUserInfo, notification.userInfo);
+        [notificationFired fulfill];
+    } notificationName:UAScreenTracked sender:self.analytics];
+
     [self.analytics trackScreen:@"screen"];
 
-    [mockDelegate verify];
-    [mockDelegate stopMocking];
+    [self waitForExpectationsWithTimeout:10 handler:nil];
 }
 
 // Tests forwarding region events to the analytics delegate.
 - (void)testForwardRegionEvents {
-    id mockDelegate = [self mockForProtocol:@protocol(UAAnalyticsDelegate)];
-    self.analytics.delegate = mockDelegate;
+    XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
+
+    [self startNSNotificationCenterObservingWithBlock:^(NSNotification *notification) {
+        [notificationFired fulfill];
+    } notificationName:UARegionEventAdded sender:self.analytics];
 
     UARegionEvent *regionEnter = [UARegionEvent regionEventWithRegionID:@"region" source:@"test" boundaryEvent:UABoundaryEventEnter];
-
-    [[mockDelegate expect] regionEventAdded:regionEnter];
     [self.analytics addEvent:regionEnter];
 
-    [mockDelegate verify];
-    [mockDelegate stopMocking];
+    [self waitForExpectationsWithTimeout:10 handler:nil];
 }
 
 // Tests forwarding custom events to the analytics delegate.
 - (void)testForwardCustomEvents {
-    id mockDelegate = [self mockForProtocol:@protocol(UAAnalyticsDelegate)];
-    self.analytics.delegate = mockDelegate;
+    XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
+
+    [self startNSNotificationCenterObservingWithBlock:^(NSNotification *notification) {
+        [notificationFired fulfill];
+    } notificationName:UACustomEventAdded sender:self.analytics];
 
     UACustomEvent *purchase = [UACustomEvent eventWithName:@"purchase" value:@(100)];
-
-    [[mockDelegate expect] customEventAdded:purchase];
     [self.analytics addEvent:purchase];
 
-    [mockDelegate verify];
-    [mockDelegate stopMocking];
+    [self waitForExpectationsWithTimeout:10 handler:nil];
 }
-
 
 @end

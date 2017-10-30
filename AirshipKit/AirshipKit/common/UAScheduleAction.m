@@ -4,7 +4,7 @@
 #import "UAirship.h"
 #import "UAAutomation.h"
 #import "UAActionScheduleInfo.h"
-#import "UAActionSchedule.h"
+#import "UASchedule.h"
 
 @implementation UAScheduleAction
 
@@ -36,7 +36,7 @@
         return;
     }
 
-    [[UAirship automation] scheduleActions:scheduleInfo completionHandler:^(UAActionSchedule *schedule) {
+    [[UAirship automation] scheduleActions:scheduleInfo completionHandler:^(UASchedule *schedule) {
         completionHandler([UAActionResult resultWithValue:schedule.identifier]);
     }];
 }

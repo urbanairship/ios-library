@@ -1,20 +1,19 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UAActionScheduleData+Internal.h"
+#import "UAScheduleData+Internal.h"
 
-@implementation UAActionScheduleData
+@implementation UAScheduleData
 
 @dynamic identifier;
 @dynamic group;
 @dynamic limit;
 @dynamic triggeredCount;
-@dynamic actions;
+@dynamic data;
 @dynamic priority;
 @dynamic triggers;
 @dynamic start;
 @dynamic end;
 @dynamic delay;
-@dynamic isPendingExecution;
+@dynamic executionState;
 @dynamic delayedExecutionDate;
-
 @end

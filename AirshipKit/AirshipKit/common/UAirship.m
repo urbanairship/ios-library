@@ -186,7 +186,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     UA_LINFO(@"UAirship Take Off! Lib Version: %@ App Key: %@ Production: %@.",
              [UAirshipVersion get], config.appKey, config.inProduction ?  @"YES" : @"NO");
 
-    
+
     // Data store
     UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", config.appKey]];
     [dataStore migrateUnprefixedKeys:@[UALibraryVersion]];
@@ -261,7 +261,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     if (!config.inProduction) {
         [sharedAirship_ validate];
     }
-    
+
     // Automatic setup
     if (sharedAirship_.config.automaticSetupEnabled) {
         UA_LINFO(@"Automatic setup enabled.");
@@ -455,4 +455,3 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 }
 
 @end
-

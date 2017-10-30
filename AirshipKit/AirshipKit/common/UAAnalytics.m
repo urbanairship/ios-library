@@ -35,6 +35,13 @@
 @property (nonatomic, assign) NSTimeInterval startTime;
 @end
 
+
+NSString *const UACustomEventAdded = @"UACustomEventAdded";
+NSString *const UARegionEventAdded = @"UARegionEventAdded";
+NSString *const UAScreenTracked = @"UAScreenTracked";
+NSString *const UAScreenKey = @"screen";
+NSString *const UAEventKey = @"event";
+
 @implementation UAAnalytics
 
 
@@ -177,17 +184,17 @@
     [self.eventManager addEvent:event sessionID:self.sessionID];
     UA_LTRACE(@"Event added: %@.", event);
 
-    id strongDelegate = self.delegate;
+
     if ([event isKindOfClass:[UACustomEvent class]]) {
-        if ([strongDelegate respondsToSelector:@selector(customEventAdded:)]) {
-            [strongDelegate customEventAdded:(UACustomEvent *)event];
-        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:UACustomEventAdded
+                                                            object:self
+                                                          userInfo:@{UAEventKey: event}];
     }
 
     if ([event isKindOfClass:[UARegionEvent class]]) {
-        if ([strongDelegate respondsToSelector:@selector(regionEventAdded:)]) {
-            [strongDelegate regionEventAdded:(UARegionEvent *)event];
-        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:UARegionEventAdded
+                                                            object:self
+                                                          userInfo:@{UAEventKey: event}];
     }
 }
 
@@ -251,10 +258,9 @@
         return;
     }
 
-    id strongDelegate = self.delegate;
-    if ([strongDelegate respondsToSelector:@selector(screenTracked:)]) {
-        [strongDelegate screenTracked:screen];
-    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:UAScreenTracked
+                                                        object:self
+                                                      userInfo:screen == nil ? @{} : @{UAScreenKey: screen}];
 
     // If there's a screen currently being tracked set it's stop time and add it to analytics
     if (self.currentScreen) {

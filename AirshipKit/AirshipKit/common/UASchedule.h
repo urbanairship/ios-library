@@ -1,39 +1,40 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAActionSchedule.h"
+#import "UAScheduleInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-/*
- * SDK-private extensions to UAActionSchedule
+/**
+ * Contains the schedule info and identifier.
  */
-@interface UAActionSchedule()
+@interface UASchedule : NSObject
 
 ///---------------------------------------------------------------------------------------
-/// @name Action Schedule Internal Properties
+/// @name Action Schedule Properties
 ///---------------------------------------------------------------------------------------
 
 /**
  * The schedule's identifier.
  */
-@property(nonatomic, copy) NSString *identifier;
+@property(nonatomic, readonly) NSString *identifier;
 
 /**
  * The schedule's information.
  */
-@property(nonatomic, strong) UAActionScheduleInfo *info;
+@property(nonatomic, readonly) UAScheduleInfo *info;
 
 ///---------------------------------------------------------------------------------------
-/// @name Action Schedule Internal Methods
+/// @name Action Schedule Management
 ///---------------------------------------------------------------------------------------
 
 /**
- * Factory method to create an action schedule.
- * @param identifier The schedule's identifier.
- * @param info The schedule's info.
+ * Checks if the schedule is equal to another schedule.
+ *
+ * @param schedule The other schedule to compare against.
+ * @return `YES` if the schedules are equal, otherwise `NO`.
  */
-+ (instancetype)actionScheduleWithIdentifier:(NSString *)identifier info:(UAActionScheduleInfo *)info;
+- (BOOL)isEqualToSchedule:(nullable UASchedule *)schedule;
 
 @end
 

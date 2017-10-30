@@ -16,55 +16,20 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
-/**
- * Analytics delegate.
- */
-@protocol UAAnalyticsDelegate <NSObject>
-
-///---------------------------------------------------------------------------------------
-/// @name Analytics Delegate Internal Methods
-///---------------------------------------------------------------------------------------
-
-@optional
-/**
- * Called when a custom event was added.
- *
- * @param event The added custom event.
- */
--(void)customEventAdded:(UACustomEvent *)event;
-
-
-/**
- * Called when a region event was added.
- *
- * @param event The added region event.
- */
--(void)regionEventAdded:(UARegionEvent *)event;
-
-/**
- * Called when a screen was tracked. Called when a `trackScreen:` is first called.
- * An event will be added for the screen will be added after the next time
- * `trackScreen:` is called or if the application backgrounds.
- *
- * @param screenName Name of the screen.
- */
--(void)screenTracked:(nullable NSString *)screenName;
-
-@end
-
 /*
  * SDK-private extensions to Analytics
  */
 @interface UAAnalytics ()
 
+extern NSString *const UACustomEventAdded;
+extern NSString *const UARegionEventAdded;
+extern NSString *const UAScreenTracked;
+extern NSString *const UAEventKey;
+extern NSString *const UAScreenKey;
+
 ///---------------------------------------------------------------------------------------
 /// @name Analytics Internal Properties
 ///---------------------------------------------------------------------------------------
-
-/**
- * Set a delegate that implements the UAAnalyticsDelegate protocol.
- */
-@property (nonatomic, weak, nullable) id<UAAnalyticsDelegate> delegate;
 
 /**
  * The conversion send ID.

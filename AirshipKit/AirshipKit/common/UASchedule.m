@@ -1,10 +1,10 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UAActionSchedule+Internal.h"
+#import "UASchedule+Internal.h"
 
-@implementation UAActionSchedule
+@implementation UASchedule
 
-- (instancetype)initWithIdentifier:(NSString *)identifier info:(UAActionScheduleInfo *)info {
+- (instancetype)initWithIdentifier:(NSString *)identifier info:(UAScheduleInfo *)info {
     self = [super self];
     if (self) {
         self.identifier = identifier;
@@ -14,11 +14,11 @@
     return self;
 }
 
-+ (instancetype)actionScheduleWithIdentifier:(NSString *)identifier info:(UAActionScheduleInfo *)info {
-    return [[UAActionSchedule alloc] initWithIdentifier:identifier info:info];
++ (instancetype)scheduleWithIdentifier:(NSString *)identifier info:(UAScheduleInfo *)info {
+    return [[UASchedule alloc] initWithIdentifier:identifier info:info];
 }
 
-- (BOOL)isEqualToSchedule:(UAActionSchedule *)schedule {
+- (BOOL)isEqualToSchedule:(UASchedule *)schedule {
     if (!schedule) {
         return NO;
     }
@@ -41,11 +41,11 @@
         return YES;
     }
 
-    if (![object isKindOfClass:[UAActionSchedule class]]) {
+    if (![object isKindOfClass:[UASchedule class]]) {
         return NO;
     }
 
-    return [self isEqualToSchedule:(UAActionSchedule *)object];
+    return [self isEqualToSchedule:(UASchedule *)object];
 }
 
 - (NSUInteger)hash {
@@ -53,6 +53,10 @@
     result = 31 * result + [self.info hash];
     result = 31 * result + [self.identifier hash];
     return result;
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"UASchedule: %@", self.identifier];
 }
 
 @end

@@ -5,20 +5,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-
 @class UAScheduleDelayData;
 @class UAScheduleTriggerData;
 
 /**
  * CoreData class representing the backing data for
- * a UAActionSchedule.
+ * a UASchedule.
  *
  * This class should not ordinarily be used directly.
  */
-@interface UAActionScheduleData : NSManagedObject
+@interface UAScheduleData : NSManagedObject
 
 ///---------------------------------------------------------------------------------------
-/// @name Action Schedule Data Properties
+/// @name Schedule Data Properties
 ///---------------------------------------------------------------------------------------
 
 /**
@@ -43,10 +42,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, retain) NSNumber *triggeredCount;
 
 /**
- * Actions payload to run when the schedule is triggered represented
- * as a JSON string.
+ * The schedule data payload.
  */
-@property (nullable, nonatomic, retain) NSString *actions;
+@property (nullable, nonatomic, retain) NSString *data;
 
 /**
  * The schedule's priority. Priority is optional and defaults to 0.
@@ -76,9 +74,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, retain) UAScheduleDelayData *delay;
 
 /**
- * Checks if the schedule's actions are pending execution.
+ * The schedule's execution state.
  */
-@property (nullable, nonatomic, retain) NSNumber *isPendingExecution;
+@property (nullable, nonatomic, retain) NSNumber *executionState;
 
 /**
  * The delayed execution date. This delay date takes precedent over the delay in seconds.

@@ -3,7 +3,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class UAActionScheduleData;
+@class UAScheduleData;
 @class UAScheduleDelayData;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The action schedule data.
  */
-@property (nullable, nonatomic, retain) UAActionScheduleData *schedule;
+@property (nullable, nonatomic, retain) UAScheduleData *schedule;
 
 /**
  * The schedule delay data.

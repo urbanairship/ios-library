@@ -1,7 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAScheduleTriggerData+Internal.h"
-#import "UAActionScheduleData+Internal.h"
+#import "UAScheduleData+Internal.h"
 
 @implementation UAScheduleTriggerData
 
