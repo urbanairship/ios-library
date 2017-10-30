@@ -4,7 +4,6 @@
 #import "UAGlobal.h"
 
 #import "NSJSONSerialization+UAAdditions.h"
-#import "NSString+UAURLEncoding.h"
 
 #import "UAActionRunner.h"
 #import "UAWebViewCallData.h"
@@ -13,19 +12,12 @@
 
 @implementation UAActionJSDelegate
 
-+ (id)objectForEncodedArguments:(NSString *)arguments {
-    NSString *urlDecodedArgs = [arguments urlDecodedString];
-
-    if (!urlDecodedArgs) {
-        UA_LDEBUG(@"unable to url decode action args: %@", arguments);
-        return nil;
-    }
-
++ (id)parseArguments:(NSString *)arguments {
     //allow the reading of fragments so we can parse lower level JSON values
-    id jsonDecodedArgs = [NSJSONSerialization objectWithString:urlDecodedArgs
-                                                       options: NSJSONReadingMutableContainers | NSJSONReadingAllowFragments];
+    id jsonDecodedArgs = [NSJSONSerialization objectWithString:arguments
+                                                       options:NSJSONReadingMutableContainers | NSJSONReadingAllowFragments];
     if (!jsonDecodedArgs) {
-        UA_LDEBUG(@"unable to json decode action args: %@", urlDecodedArgs);
+        UA_LDEBUG(@"unable to json decode action args: %@", arguments);
     } else {
         UA_LDEBUG(@"action arguments value: %@", jsonDecodedArgs);
     }
@@ -161,32 +153,24 @@ completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
     NSMutableDictionary *actionValues = [[NSMutableDictionary alloc] init];
 
-    for (NSString *encodedActionName in callData.options) {
-
-        NSString *actionName = [encodedActionName urlDecodedString];
-        if (!actionName.length) {
-            UA_LDEBUG(@"Error decoding action name: %@", encodedActionName);
-            return nil;
-        }
-
+    for (NSString *actionName in callData.options) {
         NSMutableArray *values = [NSMutableArray array];
 
-        for (id encodedValue in callData.options[encodedActionName]) {
-
-            if (!encodedValue || encodedValue == [NSNull null]) {
+        for (id actionArg in callData.options[actionName]) {
+            if (!actionArg || actionArg == [NSNull null]) {
                 [values addObject:[NSNull null]];
                 continue;
             }
 
             id value;
             if (basicEncoding) {
-                value = [encodedValue urlDecodedString];
+                value = actionArg;
             } else {
-                value = [UAActionJSDelegate objectForEncodedArguments:encodedValue];
+                value = [UAActionJSDelegate parseArguments:actionArg];
             }
 
             if (!value) {
-                UA_LERR(@"Error decoding arguments: %@", encodedValue);
+                UA_LERR(@"Error decoding arguments: %@", actionArg);
                 return nil;
             }
 
@@ -219,9 +203,9 @@ completionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
             return;
         }
 
-        NSString *actionName = [data.arguments[0] urlDecodedString];
-        id actionValue = [UAActionJSDelegate objectForEncodedArguments:data.arguments[1]];
-        NSString *callbackID = [data.arguments[2] urlDecodedString];
+        NSString *actionName = data.arguments[0];
+        id actionValue = [UAActionJSDelegate parseArguments:data.arguments[1]];
+        NSString *callbackID = data.arguments[2];
 
 
         // Run the action

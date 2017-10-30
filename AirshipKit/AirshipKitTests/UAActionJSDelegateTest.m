@@ -182,10 +182,10 @@
         handler([UAActionResult resultWithValue:@"yeah!"]);
     }];
 
-    [self.registry registerAction:test name:@"test_action"];
+    [self.registry registerAction:test name:@"test%20action"];
     [self.registry registerAction:alsoTest name:@"also_test_action"];
 
-    NSURL *url = [NSURL URLWithString:@"uairship://run-actions?test_action=%22hi%22&also_test_action"];
+    NSURL *url = [NSURL URLWithString:@"uairship://run-actions?test%2520action=%22hi%22&also_test_action"];
 
     [self performWebViewCallWithURL:url completionHandler:^(NSString *script) {
         result = script;
