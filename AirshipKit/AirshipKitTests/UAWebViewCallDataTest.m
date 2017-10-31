@@ -40,7 +40,7 @@
 
 - (void)testCallDataForURLEncodedArguments {
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:
-                               [NSURL URLWithString:@"uairship://run-action-cb/%5Eu/%22https%3A%2F%2Fdocs.urbanairship.com%2Fengage%2Frich-content-editor%2F%23rich-content-image%22/ua-cb-2?query%20argument=%5E"] webView:self.mockWebView];
+                               [NSURL URLWithString:@"uairship://run-action-cb/%5Eu/%22https%3A%2F%2Fdocs.urbanairship.com%2Fengage%2Frich-content-editor%2F%23rich-content-image%22/ua-cb-2?query%20argument=%5E"] delegate:self.mockWKWebViewDelegate];
 
     XCTAssertEqual(data.arguments.count, 3);
     XCTAssertEqualObjects([data.arguments objectAtIndex:0], @"^u");
