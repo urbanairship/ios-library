@@ -71,6 +71,16 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong) UAAutomation *sharedAutomation;
 
+/**
+ * Shared remoteDataManager.
+ */
+@property (nonatomic, strong) UARemoteDataManager *sharedRemoteDataManager;
+
+/**
+ * Returns the `UARemoteDataManager` instance.
+ */
++ (null_unspecified UARemoteDataManager *)remoteDataManager;
+
 ///---------------------------------------------------------------------------------------
 /// @name Airship Internal Methods
 ///---------------------------------------------------------------------------------------

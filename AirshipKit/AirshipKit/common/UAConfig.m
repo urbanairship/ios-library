@@ -17,6 +17,7 @@
     self = [super init];
     if (self) {
         self.deviceAPIURL = kUAAirshipProductionServer;
+        self.remoteDataAPIURL = kUARemoteDataProductionServer;
         self.analyticsURL = kUAAnalyticsProductionServer;
         self.landingPageContentURL = kUAProductionLandingPageContentURL;
         self.developmentLogLevel = UALogLevelDebug;
@@ -53,6 +54,7 @@
         _productionAppKey = config.productionAppKey;
         _productionAppSecret = config.productionAppSecret;
         _deviceAPIURL = config.deviceAPIURL;
+        _remoteDataAPIURL = config.remoteDataAPIURL;
         _analyticsURL = config.analyticsURL;
         _landingPageContentURL = config.landingPageContentURL;
         _developmentLogLevel = config.developmentLogLevel;
@@ -95,6 +97,7 @@
             "Analytics Enabled: %d\n"
             "Analytics URL: %@\n"
             "Device API URL: %@\n"
+            "Remote Data API URL: %@\n"
             "Cache Size: %ld MB\n"
             "Landing Page Content URL: %@\n"
             "Automatic Setup Enabled: %d\n"
@@ -121,6 +124,7 @@
             self.analyticsEnabled,
             self.analyticsURL,
             self.deviceAPIURL,
+            self.remoteDataAPIURL,
             (unsigned long)self.cacheDiskSizeInMB,
             self.landingPageContentURL,
             self.automaticSetupEnabled,
@@ -379,6 +383,16 @@
         _deviceAPIURL = [deviceAPIURL substringWithRange:NSMakeRange(0, [deviceAPIURL length] - 1)];
     } else {
         _deviceAPIURL = [deviceAPIURL copy];
+    }
+}
+
+- (void)setRemoteDataAPIURL:(NSString *)remoteDataAPIURL {
+    //Any appending url starts with a beginning /, so make sure the base url does not
+    if ([remoteDataAPIURL hasSuffix:@"/"]) {
+        UA_LWARN(@"Remote Data API URL ends with a trailing slash, stripping ending slash.");
+        _remoteDataAPIURL = [remoteDataAPIURL substringWithRange:NSMakeRange(0, [remoteDataAPIURL length] - 1)];
+    } else {
+        _remoteDataAPIURL = [remoteDataAPIURL copy];
     }
 }
 

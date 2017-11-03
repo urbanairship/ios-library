@@ -200,7 +200,8 @@
     dateFormatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
 
     // All the various formats
-    NSArray *formats = @[@"yyyy-MM-dd'T'HH:mm:ss",
+    NSArray *formats = @[@"yyyy-MM-dd'T'HH:mm:ss.SSS",
+                         @"yyyy-MM-dd'T'HH:mm:ss",
                          @"yyyy-MM-dd HH:mm:ss",
                          @"yyyy-MM-dd'T'HH:mm",
                          @"yyyy-MM-dd HH:mm",

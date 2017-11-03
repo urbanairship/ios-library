@@ -41,6 +41,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong) NSNumber *usesProductionPushServer;
 
+/**
+ * The Urban Airship remote data API url. This option is reserved for internal debugging.
+ */
+@property (nonatomic, copy) NSString *remoteDataAPIURL;
+
 ///---------------------------------------------------------------------------------------
 /// @name Config Internal Methods
 ///---------------------------------------------------------------------------------------

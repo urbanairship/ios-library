@@ -1,7 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAAppIntegration.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UAAnalytics+Internal.h"
 #import "UAPush+Internal.h"
 
@@ -15,6 +15,7 @@
 #import "UAConfig.h"
 #import "UAActionRunner+Internal.h"
 #import "UAActionRegistry+Internal.h"
+#import "UARemoteDataManager+Internal.h"
 
 #if !TARGET_OS_TV
 #import "UAInboxUtils.h"
@@ -26,6 +27,7 @@
 #endif
 
 #define kUANotificationActionKey @"com.urbanairship.interactive_actions"
+#define kUANotificationRefreshRemoteDataKey @"com.urbanairship.remote-data.update"
 
 @implementation UAAppIntegration
 
@@ -175,6 +177,7 @@
 #if !TARGET_OS_TV
     [[UAirship inAppMessaging] handleNotificationResponse:response];
 #endif
+    
     UASituation situation;
     NSDictionary *actionsPayload = [self actionsPayloadForNotificationContent:response.notificationContent actionIdentifier:response.actionIdentifier];
 
@@ -230,6 +233,10 @@
 #if !TARGET_OS_TV
     [[UAirship inAppMessaging] handleRemoteNotification:notificationContent];
 #endif
+    
+    if (notificationContent.notificationInfo[kUANotificationRefreshRemoteDataKey]) {
+        [UAirship.remoteDataManager refresh];
+    }
 
     UASituation situation = [UIApplication sharedApplication].applicationState == UIApplicationStateActive ? UASituationForegroundPush : UASituationBackgroundPush;
     NSDictionary *actionsPayload = [self actionsPayloadForNotificationContent:notificationContent actionIdentifier:nil];

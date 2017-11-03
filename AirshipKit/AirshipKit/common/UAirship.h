@@ -36,6 +36,7 @@
 @class UALocation;
 @class UAAutomation;
 @class UAChannelCapture;
+@class UARemoteDataManager;
 
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
 @class UAInbox;

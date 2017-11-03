@@ -23,6 +23,7 @@
 #import "UANamedUser+Internal.h"
 #import "UAAutomation+Internal.h"
 #import "UAAppIntegration.h"
+#import "UARemoteDataManager+Internal.h"
 
 #if !TARGET_OS_TV
 #import "UAInbox+Internal.h"
@@ -105,6 +106,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
         self.sharedLocation = [UALocation locationWithAnalytics:self.analytics dataStore:dataStore];
         self.sharedAutomation = [UAAutomation automationWithConfig:config dataStore:dataStore];
+        self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:config dataStore:dataStore];
         self.analytics.delegate = self.sharedAutomation;
 
 #if !TARGET_OS_TV
@@ -387,6 +389,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 + (UAAutomation *)automation {
     return sharedAirship_.sharedAutomation;
+}
+
++ (UARemoteDataManager *)remoteDataManager {
+    return sharedAirship_.sharedRemoteDataManager;
 }
 
 + (NSBundle *)resources {

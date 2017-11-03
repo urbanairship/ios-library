@@ -293,6 +293,16 @@
     XCTAssertEqualObjects(@"http://some-url.com", config.deviceAPIURL, @"Device API URL still contains trailing slash");
 }
 
+- (void) testSetRemoteDataAPIURL {
+    UAConfig *config =[[UAConfig alloc] init];
+    
+    config.remoteDataAPIURL = @"http://some-other-url.com";
+    XCTAssertEqualObjects(@"http://some-other-url.com", config.remoteDataAPIURL, @"Remote Data API URL does not set correctly");
+    
+    config.remoteDataAPIURL = @"http://some-url.com/";
+    XCTAssertEqualObjects(@"http://some-url.com", config.remoteDataAPIURL, @"Remote Data API URL still contains trailing slash");
+}
+
 - (void) testCopyConfig {
     NSString *plistPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"AirshipConfig-Valid" ofType:@"plist"];
 
@@ -305,6 +315,7 @@
     XCTAssertTrue(copy.productionAppKey == config.productionAppKey);
     XCTAssertTrue(copy.productionAppSecret == config.productionAppSecret);
     XCTAssertTrue(copy.deviceAPIURL == config.deviceAPIURL);
+    XCTAssertTrue(copy.remoteDataAPIURL == config.remoteDataAPIURL);
     XCTAssertTrue(copy.analyticsURL == config.analyticsURL);
     XCTAssertTrue(copy.landingPageContentURL == config.landingPageContentURL);
     XCTAssertTrue(copy.developmentLogLevel == config.developmentLogLevel);
@@ -330,6 +341,7 @@
     UAConfig *config = [UAConfig config];
     
     XCTAssertEqualObjects(config.deviceAPIURL, kUAAirshipProductionServer);
+    XCTAssertEqualObjects(config.remoteDataAPIURL, kUARemoteDataProductionServer);
     XCTAssertEqualObjects(config.analyticsURL, kUAAnalyticsProductionServer);
     XCTAssertEqualObjects(config.landingPageContentURL, kUAProductionLandingPageContentURL);
     XCTAssertEqual(config.developmentLogLevel, UALogLevelDebug);
