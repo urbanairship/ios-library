@@ -105,10 +105,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore];
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
         self.sharedLocation = [UALocation locationWithAnalytics:self.analytics dataStore:dataStore];
-        self.sharedAutomation = [UAAutomation automationWithConfig:config dataStore:dataStore];
+        self.sharedAutomation = [UAAutomation automationWithConfig:config];
         self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:config dataStore:dataStore];
-        self.analytics.delegate = self.sharedAutomation;
-
 #if !TARGET_OS_TV
         // IAP Nib not supported on tvOS
         self.sharedInAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.analytics dataStore:dataStore];

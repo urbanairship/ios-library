@@ -12,12 +12,23 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Schedule execution states.
  */
-typedef NS_ENUM(NSUInteger,UAScheduleState) {
+typedef NS_ENUM(NSUInteger, UAScheduleState) {
+
+    /**
+     * Schedule is idle.
+     */
     UAScheduleStateIdle = 0,
+
+    /**
+     * Schedule is pending execution.
+     */
     UAScheduleStatePendingExecution = 1,
+
+    /**
+     * Schedule is executing.
+     */
     UAScheduleStateExecuting = 2
 };
-
 
 /**
  * Automation engine delegate

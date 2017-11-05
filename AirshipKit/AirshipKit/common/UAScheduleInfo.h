@@ -79,12 +79,12 @@ extern NSUInteger const UAScheduleInfoMaxTriggers;
 @interface UAScheduleInfoBuilder : NSObject
 
 ///---------------------------------------------------------------------------------------
-/// @name Action Schedule Info Builder Properties
+/// @name Schedule Info Builder Properties
 ///---------------------------------------------------------------------------------------
 
 /**
- * The schedule's priority. Priority is optional and defaults to 0. In case of conflict,
- * schedules will be executed by priority in ascending order.
+ * The schedule's priority. Priority is optional and defaults to 0. Schedules are
+ * executed by priority in ascending order.
  */
 @property(nonatomic, assign) NSInteger priority;
 
@@ -115,6 +115,11 @@ extern NSUInteger const UAScheduleInfoMaxTriggers;
  */
 @property(nonatomic, strong, nullable) UAScheduleDelay *delay;
 
+/**
+ * The schedule's group.
+ */
+@property(nonatomic, copy, nullable) NSString *group;
+
 @end
 
 /**
@@ -123,14 +128,13 @@ extern NSUInteger const UAScheduleInfoMaxTriggers;
 @interface UAScheduleInfo : NSObject
 
 ///---------------------------------------------------------------------------------------
-/// @name Action Schedule Info Properties
+/// @name Schedule Info Properties
 ///---------------------------------------------------------------------------------------
 
-
 /**
- * The schedule's priority. Priority is optional and defaults to 0.
- * In case of conflict, schedules will be executed by priority in ascending order.
- */
+* The schedule's priority. Priority is optional and defaults to 0. Schedules are
+* executed by priority in ascending order.
+*/
 @property(nonatomic, readonly) NSInteger priority;
 
 /**
@@ -161,6 +165,11 @@ extern NSUInteger const UAScheduleInfoMaxTriggers;
 @property(nonatomic, readonly) UAScheduleDelay *delay;
 
 /**
+ * The schedule's group.
+ */
+@property(nonatomic, copy, nullable) NSString *group;
+
+/**
  * Checks if the schedule info is valid. A valid schedule
  * contains between 1 to 10 triggers, if a delay is defined it must be valid,
  * and the end time must be after the start time. Invalid schedules will not be scheduled.
@@ -168,7 +177,7 @@ extern NSUInteger const UAScheduleInfoMaxTriggers;
 @property(nonatomic, readonly) BOOL isValid;
 
 ///---------------------------------------------------------------------------------------
-/// @name Action Schedule Info Management
+/// @name Schedule Info Management
 ///---------------------------------------------------------------------------------------
 
 /**

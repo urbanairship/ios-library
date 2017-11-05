@@ -1128,7 +1128,6 @@
 		DF7E22BC1ED63E9200C79C46 /* UAProjectValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7E22BB1ED63E9200C79C46 /* UAProjectValidationTest.swift */; };
 		DF7E7A091EE1DBBB00D4EF02 /* UADefaultActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = DF7E79FA1EE1D50100D4EF02 /* UADefaultActions.plist */; };
 		DF7E7A1F1EE2163A00D4EF02 /* AirshipLib.h in Headers */ = {isa = PBXBuildFile; fileRef = DF7E7A1D1EE215F600D4EF02 /* AirshipLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DF7E7A321EE2239500D4EF02 /* AirshipLib.h in Headers */ = {isa = PBXBuildFile; fileRef = DF7E7A1B1EE2156100D4EF02 /* AirshipLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF86DAB11F59F71100309F41 /* UARemoteDataManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF86DAB01F59F71100309F41 /* UARemoteDataManagerTest.m */; };
 		DF86DAB21F5A208E00309F41 /* UARemoteDataManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF17A0FC1F56327A00DC39E0 /* UARemoteDataManager+Internal.h */; };
 		DF86DAB31F5A208E00309F41 /* UARemoteDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DF17A0FD1F56327A00DC39E0 /* UARemoteDataManager.m */; };
@@ -1948,10 +1947,6 @@
 		6EADE6DC1FA7CEC00007F924 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
-				DF7E22DA1ED7964D00C79C46 /* CoreLocation.framework */,
-				DF7E22DE1ED796B500C79C46 /* JavaScriptCore.framework */,
-				DF7E22DC1ED7966400C79C46 /* UserNotifications.framework */,
-				DF7E22D81ED7962100C79C46 /* WebKit.framework */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";

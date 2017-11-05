@@ -25,11 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy) NSArray *triggers;
 
 /**
- * Schedule's group.
- */
-@property(nonatomic, copy, nullable) NSString *group;
-
-/**
  * Schedule's limit.
  */
 @property(nonatomic, assign) NSUInteger limit;
@@ -69,23 +64,18 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param json The json object.
  * @param error The optional error.
- * @returns `YES` if the json way able to be applied, otherwise `NO`.
+ * @returns `YES` if the json was able to be applied, otherwise `NO`.
  */
 - (BOOL)applyFromJson:(id)json error:(NSError * _Nullable *)error;
 
 ///---------------------------------------------------------------------------------------
-/// @name Action Schedule Info Builder Properties
+/// @name Schedule Info Builder Properties
 ///---------------------------------------------------------------------------------------
 
 /**
  * Schedule's data.
  */
 @property(nonatomic, copy, nullable) NSString *data;
-
-/**
- * Schedule's group.
- */
-@property(nonatomic, copy, nullable) NSString *group;
 
 @end
 

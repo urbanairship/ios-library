@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) UAScheduleInfo *info;
 
 ///---------------------------------------------------------------------------------------
-/// @name Action Schedule Internal Methods
+/// @name Schedule Internal Methods
 ///---------------------------------------------------------------------------------------
 
 /**

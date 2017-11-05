@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UASchedule : NSObject
 
 ///---------------------------------------------------------------------------------------
-/// @name Action Schedule Properties
+/// @name Schedule Properties
 ///---------------------------------------------------------------------------------------
 
 /**
@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) UAScheduleInfo *info;
 
 ///---------------------------------------------------------------------------------------
-/// @name Action Schedule Management
+/// @name Schedule Management
 ///---------------------------------------------------------------------------------------
 
 /**

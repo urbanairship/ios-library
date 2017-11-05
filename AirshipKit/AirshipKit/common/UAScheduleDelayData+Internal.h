@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, retain) NSNumber *appState;
 
 /**
- * The action schedule data.
+ * The schedule data.
  */
 @property (nullable, nonatomic, retain) UAScheduleData *schedule;
 
