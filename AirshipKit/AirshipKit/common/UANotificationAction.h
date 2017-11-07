@@ -124,7 +124,7 @@ static const UANotificationActionOptions UANotificationActionOptionNone NS_SWIFT
  * @param notificationAction The UNNNotificationAction to compare with.
  * @return `YES` if the two actions are equivalent, `NO` otherwise.
  */
-- (BOOL)isEqualToUNNotificationAction:(UNNotificationAction *)notificationAction;
+- (BOOL)isEqualToUNNotificationAction:(UNNotificationAction *)notificationAction NS_AVAILABLE_IOS(10.0);
 
 #endif
 

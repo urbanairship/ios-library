@@ -26,7 +26,7 @@ static dispatch_once_t onceToken;
 
         [instance_ swizzleAppDelegate];
 
-        if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+        if (@available(iOS 10.0, tvOS 10.0, *)) {
             [instance_ swizzleNotificationCenter];
         }
     });
@@ -105,7 +105,7 @@ static dispatch_once_t onceToken;
 #endif
 }
 
-- (void)swizzleNotificationCenter {
+- (void)swizzleNotificationCenter NS_AVAILABLE_IOS(10.0) {
     Class class = [UNUserNotificationCenter class];
     if (!class) {
         UA_LERR(@"UNUserNotificationCenter not available, unable to perform automatic setup.");
@@ -125,7 +125,7 @@ static dispatch_once_t onceToken;
     }
 }
 
-- (void)swizzleNotificationCenterDelegate:(id<UNUserNotificationCenterDelegate>)delegate {
+- (void)swizzleNotificationCenterDelegate:(id<UNUserNotificationCenterDelegate>)delegate NS_AVAILABLE_IOS(10.0) {
     Class class = [delegate class];
 
     self.notificationDelegateSwizzler = [UASwizzler swizzlerForClass:class];
@@ -168,7 +168,7 @@ static dispatch_once_t onceToken;
 #pragma mark -
 #pragma mark UNUserNotificationCenterDelegate swizzled methods
 
-void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self, SEL _cmd, UNUserNotificationCenter *notificationCenter, UNNotification *notification, void (^handler)(UNNotificationPresentationOptions)) {
+void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self, SEL _cmd, UNUserNotificationCenter *notificationCenter, UNNotification *notification, void (^handler)(UNNotificationPresentationOptions)) NS_AVAILABLE_IOS(10.0) {
 
     __block UNNotificationPresentationOptions mergedPresentationOptions = UNNotificationPresentationOptionNone;
     __block NSUInteger resultCount = 0;
@@ -180,7 +180,7 @@ void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self,
         expectedCount = 2;
 
         __block BOOL completionHandlerCalled = NO;
-        void (^completionHandler)(UNNotificationPresentationOptions) = ^(UNNotificationPresentationOptions options) {
+        void (^completionHandler)(UNNotificationPresentationOptions) NS_AVAILABLE_IOS(10.0) = ^(UNNotificationPresentationOptions options) {
 
             // Make sure the app's completion handler is called on the main queue
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -224,7 +224,7 @@ void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self,
 }
 
 #if !TARGET_OS_TV  // Delegate method not supported on tvOS
-void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(id self, SEL _cmd, UNUserNotificationCenter *notificationCenter, UNNotificationResponse *response, void (^handler)(void)) {
+void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(id self, SEL _cmd, UNUserNotificationCenter *notificationCenter, UNNotificationResponse *response, void (^handler)(void)) NS_AVAILABLE_IOS(10.0) {
 
     __block NSUInteger resultCount = 0;
     __block NSUInteger expectedCount = 1;
@@ -276,7 +276,7 @@ void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(i
 #pragma mark -
 #pragma mark UNUserNotificationCenter swizzled methods
 
-void UserNotificationCenterSetDelegate(id self, SEL _cmd, id<UNUserNotificationCenterDelegate>delegate) {
+void UserNotificationCenterSetDelegate(id self, SEL _cmd, id<UNUserNotificationCenterDelegate>delegate) NS_AVAILABLE_IOS(10.0) {
 
     // Call through to original setter
     IMP original = [instance_.notificationCenterSwizzler originalImplementation:_cmd];

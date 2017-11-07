@@ -290,7 +290,7 @@ static NSMutableSet *overlayControllers_ = nil;
         self.nativeBridge.forwardDelegate = self;
         self.overlayView.webView.navigationDelegate = self.nativeBridge;
 
-        if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+        if (@available(iOS 10.0, tvOS 10.0, *)) {
             [self.overlayView.webView.configuration setDataDetectorTypes:WKDataDetectorTypeNone];
         }
     }

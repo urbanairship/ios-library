@@ -13,8 +13,6 @@ NSString *const UAChannelCaptureEnabledKey = @"UAChannelCaptureEnabled";
 
 @interface UAChannelCapture()
 
-// REVISIT: convert to UIAlertController
-@property (nonatomic, strong) UIAlertView *alertView;
 @property (nonatomic, strong) UAPush *push;
 @property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
@@ -86,8 +84,10 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
         }
     }
 
-    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}] && ![UIPasteboard generalPasteboard].hasStrings) {
-        return;
+    if (@available(iOS 10.0, tvOS 10.0, *)) {
+        if (![UIPasteboard generalPasteboard].hasStrings) {
+            return;
+        }
     }
     
     NSString *pasteBoardString = [UIPasteboard generalPasteboard].string;

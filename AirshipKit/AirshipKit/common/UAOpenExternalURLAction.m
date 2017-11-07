@@ -34,20 +34,22 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
 
 - (void)openURL:(NSURL *)url completionHandler:(UAActionCompletionHandler)completionHandler {
     if (([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}])) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
-                if (!success) {
-                    // Unable to open url
-                    NSError *error =  [NSError errorWithDomain:UAOpenExternalURLActionErrorDomain
-                                                          code:UAOpenExternalURLActionErrorCodeURLFailedToOpen
-                                                      userInfo:@{NSLocalizedDescriptionKey : @"Unable to open URL"}];
-                    
-                    completionHandler([UAActionResult resultWithError:error]);
-                } else {
-                    completionHandler([UAActionResult resultWithValue:url.absoluteString]);
-                }
-            }];
-        });
+        if (@available(iOS 10.0, tvOS 10.0, *)) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
+                    if (!success) {
+                        // Unable to open url
+                        NSError *error =  [NSError errorWithDomain:UAOpenExternalURLActionErrorDomain
+                                                              code:UAOpenExternalURLActionErrorCodeURLFailedToOpen
+                                                          userInfo:@{NSLocalizedDescriptionKey : @"Unable to open URL"}];
+                        
+                        completionHandler([UAActionResult resultWithError:error]);
+                    } else {
+                        completionHandler([UAActionResult resultWithValue:url.absoluteString]);
+                    }
+                }];
+            });
+        }
     }
 #if !TARGET_OS_TV
     else if (![[UIApplication sharedApplication] openURL:url]) {

@@ -64,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * UNNotification used to generate the UANotification.
  */
-@property (nonatomic, strong, nullable, readonly) UNNotification *notification;
+@property (nonatomic, strong, nullable, readonly) UNNotification *notification NS_AVAILABLE_IOS(10.0);
 
 ///---------------------------------------------------------------------------------------
 /// @name Notification Content Utilities
@@ -86,7 +86,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return UANotification instance
  */
-+ (instancetype)notificationWithUNNotification:(UNNotification *)notification;
++ (instancetype)notificationWithUNNotification:(UNNotification *)notification NS_AVAILABLE_IOS(10.0);
 
 @end
 

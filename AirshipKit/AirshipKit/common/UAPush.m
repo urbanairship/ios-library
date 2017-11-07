@@ -172,7 +172,9 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
         [self updateAuthorizedNotificationTypes];
 
-        self.defaultPresentationOptions = UNNotificationPresentationOptionNone;
+        if (@available(iOS 10.0, tvOS 10.0, *)) {
+            self.defaultPresentationOptions = UNNotificationPresentationOptionNone;
+        }
     }
 
     return self;
@@ -992,7 +994,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 #pragma mark -
 #pragma mark Push handling
 
-- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification {
+- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification NS_AVAILABLE_IOS(10.0) {
     UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
 
     id pushDelegate = self.pushNotificationDelegate;
@@ -1103,12 +1105,14 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         } else {
             // If >= iOS 10
             if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
-                [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
-                    if (settings.authorizationStatus == UNAuthorizationStatusAuthorized) {
-                        UA_LDEBUG(@"Migrating userPushNotificationEnabled to YES because application was authorized for notifications");
-                        [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
-                    }
-                }];
+                if (@available(iOS 10.0, tvOS 10.0, *)) {
+                    [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
+                        if (settings.authorizationStatus == UNAuthorizationStatusAuthorized) {
+                            UA_LDEBUG(@"Migrating userPushNotificationEnabled to YES because application was authorized for notifications");
+                            [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
+                        }
+                    }];
+                }
             } else { // iOS 8 & 9
 #if !TARGET_OS_TV    // UIUserNotificationTypeNone, currentUserNotificationSettings not available on tvOS
                 if ([[UIApplication sharedApplication] currentUserNotificationSettings].types != UIUserNotificationTypeNone) {

@@ -156,7 +156,7 @@
 #pragma mark -
 #pragma mark Notification handling
 
-+ (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options withCompletionHandler:(void(^)(void))completionHandler {
++ (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options withCompletionHandler:(void(^)(void))completionHandler NS_AVAILABLE_IOS(10.0) {
     BOOL foregroundPresentation = (options & UNNotificationPresentationOptionAlert) > 0;
 
     UANotificationContent *notificationContent = [UANotificationContent notificationWithUNNotification:notification];

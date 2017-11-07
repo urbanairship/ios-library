@@ -61,7 +61,7 @@ class PushHandler: NSObject, UAPushNotificationDelegate {
         completionHandler()
     }
 
-    @available(iOS 10.0, *)
+    @available(iOS 10.0, tvOS 10.0, *)
     func presentationOptions(for notification: UNNotification) -> UNNotificationPresentationOptions {
         return [.alert, .sound]
     }

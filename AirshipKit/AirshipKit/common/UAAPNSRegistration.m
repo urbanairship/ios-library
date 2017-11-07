@@ -7,7 +7,7 @@
 
 @synthesize registrationDelegate;
 
--(void)getCurrentAuthorizationOptionsWithCompletionHandler:(void (^)(UANotificationOptions))completionHandler {
+-(void)getCurrentAuthorizationOptionsWithCompletionHandler:(void (^)(UANotificationOptions))completionHandler NS_AVAILABLE_IOS(10.0) {
     [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
 
         if (settings.authorizationStatus != UNAuthorizationStatusAuthorized) {
@@ -41,7 +41,7 @@
 }
 
 -(void)updateRegistrationWithOptions:(UANotificationOptions)options
-                          categories:(NSSet<UANotificationCategory *> *)categories {
+                          categories:(NSSet<UANotificationCategory *> *)categories NS_AVAILABLE_IOS(10.0) {
 
 #if !TARGET_OS_TV   // UNNotificationCategory not supported on tvOS
     NSMutableSet *normalizedCategories;

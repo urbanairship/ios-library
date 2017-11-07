@@ -176,7 +176,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  * @param notification The notification.
  * @return a UNNotificationPresentationOptions enum value indicating the presentation options for the notification.
  */
-- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification;
+- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification NS_AVAILABLE_IOS(10.0);
 
 @end
 
@@ -342,7 +342,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  *
  * Note: this property is relevant only for iOS 10 and above.
  */
-@property (nonatomic, assign) UNNotificationPresentationOptions defaultPresentationOptions;
+@property (nonatomic, assign) UNNotificationPresentationOptions defaultPresentationOptions NS_AVAILABLE_IOS(10.0);
 
 ///---------------------------------------------------------------------------------------
 /// @name Autobadge

@@ -171,7 +171,7 @@
 
 - (NSURL *)createValidPhoneNumberUrlFromUrl:(NSURL *)url {
 
-    NSString *decodedURLString = [url.absoluteString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *decodedURLString = [url.absoluteString stringByRemovingPercentEncoding];
     NSCharacterSet *characterSet = [[NSCharacterSet characterSetWithCharactersInString:@"+-.0123456789"] invertedSet];
     NSString *strippedNumber = [[decodedURLString componentsSeparatedByCharactersInSet:characterSet] componentsJoinedByString:@""];
 

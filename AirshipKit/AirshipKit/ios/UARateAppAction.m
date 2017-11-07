@@ -38,7 +38,7 @@ NSString *const UARateAppPromptTimestampsKey = @"RateAppActionPromptCount";
 NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCount";
 
 - (void)performWithArguments:(UAActionArguments *)arguments
-           completionHandler:(UAActionCompletionHandler)completionHandler {
+           completionHandler:(UAActionCompletionHandler)completionHandler NS_AVAILABLE_IOS(10.3) {
 
     if (![self parseArguments:arguments]) {
         return;
@@ -129,7 +129,7 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
     return YES;
 }
 
--(void)displaySystemLinkPrompt {
+-(void)displaySystemLinkPrompt NS_AVAILABLE_IOS(10.3) {
     [SKStoreReviewController requestReview];
 
     [self storeTimestamp:UARateAppPromptTimestampsKey];
@@ -186,13 +186,13 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
         return;
     }
 
-    if (![[NSProcessInfo processInfo]
-         isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+        if (@available(iOS 10.0, *)) {
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:linkString] options:@{} completionHandler:nil];
+        }
+    } else {
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:linkString]];
-        return;
     }
-
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:linkString] options:@{} completionHandler:nil];
 }
 
 // Rate app action for iOS 8+ with applications track ID using a store URL link

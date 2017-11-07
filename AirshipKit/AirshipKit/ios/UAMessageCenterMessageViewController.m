@@ -88,7 +88,7 @@ typedef enum MessageState {
     self.nativeBridge.forwardDelegate = self;
     self.webView.navigationDelegate = self.nativeBridge;
 
-    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
+    if (@available(iOS 10.0, tvOS 10.0, *)) {
         // Allow the webView to detect data types (e.g. phone numbers, addresses) at will
         [self.webView.configuration setDataDetectorTypes:WKDataDetectorTypeAll];
     }

@@ -7,7 +7,6 @@
 
 @interface UAShareAction()
 @property (nonatomic, strong) UAActivityViewController *lastActivityViewController;
-@property (nonatomic, strong) UIPopoverController *popoverController;
 @end
 
 @implementation UAShareAction
@@ -70,7 +69,6 @@
         completionHandler([UAActionResult emptyResult]);
 
         self.lastActivityViewController = nil;
-        self.popoverController = nil;
     };
 
     if (self.lastActivityViewController) {

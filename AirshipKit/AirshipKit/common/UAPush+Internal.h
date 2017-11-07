@@ -297,7 +297,7 @@ extern NSString *const UAPushEnabledKey;
  * @param notification The notification.
  * @return Foreground presentation options.
  */
-- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification;
+- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification NS_AVAILABLE_IOS(10.0);
 
 /**
  * Called when a notification response is received.
