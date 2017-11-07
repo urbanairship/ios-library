@@ -86,7 +86,7 @@
 
 - (void)testScheduleOverLimit {
     UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
-        UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
+        UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger screenTriggerForScreenName:@"NEVERTRIGGERTHISNAME" count:10];
         builder.actions = @{@"oh": @"hi"};
         builder.triggers = @[foregroundTrigger];
     }];
