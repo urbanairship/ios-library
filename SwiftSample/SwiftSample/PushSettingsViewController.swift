@@ -61,7 +61,7 @@ class PushSettingsViewController: UITableViewController {
     }
 
     // this is necessary to update the view when returning from the system settings screen
-    func didBecomeActive () {
+    @objc func didBecomeActive () {
         refreshView()
     }
 
@@ -69,7 +69,7 @@ class PushSettingsViewController: UITableViewController {
         refreshView()
     }
 
-    func refreshView() {
+    @objc func refreshView() {
         pushEnabledSwitch.isOn = UAirship.push().userPushNotificationsEnabled
 
         channelIDSubtitleLabel?.text = UAirship.push().channelID

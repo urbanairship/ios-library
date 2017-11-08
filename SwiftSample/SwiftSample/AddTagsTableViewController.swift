@@ -19,7 +19,7 @@ class AddTagsTableViewController: UITableViewController, UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
 
-        if ((textField.text?.characters.count)! > 0){
+        if (!(textField.text?.isEmpty)!){
             UAirship.push().addTag(textField.text!)
         } else {
             return false

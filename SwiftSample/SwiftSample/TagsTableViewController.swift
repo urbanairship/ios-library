@@ -18,7 +18,7 @@ class TagsTableViewController: UITableViewController {
         tableView.reloadData()
     }
 
-    func addTag () {
+    @objc func addTag () {
         performSegue(withIdentifier: addTagsSegue, sender: self)
     }
 

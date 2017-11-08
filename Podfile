@@ -4,13 +4,13 @@ use_frameworks!
 
 target 'AirshipKitTests' do
    project 'AirshipKit/AirshipKit.xcodeproj'
-   pod 'OCMock', '~> 3.4'
-   pod 'XcodeEdit', '~> 1.1'
+   pod 'OCMock', '~> 3.4.1'
+   pod 'XcodeEdit', '~> 1.1', :inhibit_warnings => true
 end
 
 target 'TestShipTests' do
    project 'TestShip/TestShip.xcodeproj'
-   pod 'KIF', :configurations => ['Debug']
+   pod 'KIF', :configurations => ['Debug'], :inhibit_warnings => true
 end
 
 post_install do |installer|
