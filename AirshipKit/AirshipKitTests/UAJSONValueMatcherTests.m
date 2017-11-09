@@ -170,8 +170,26 @@
 
     // Verify the JSONValue recreates the expected payload
     NSError *error = nil;
-    XCTAssertEqualObjects(json, [UAJSONValueMatcher matcherWithJSON:json error:&error].payload);
+    NSDictionary *test = [UAJSONValueMatcher matcherWithJSON:json error:&error].payload;
+    XCTAssertEqualObjects(json, test);
     XCTAssertNil(error);
+}
+
+- (void)testVersionRangeConstraints {
+    UAJSONValueMatcher *matcher = [UAJSONValueMatcher matcherWithVersionConstraint:@"1.0"];
+    XCTAssertNotNil(matcher);
+    XCTAssertTrue([matcher evaluateObject:@"1.0"]);
+    XCTAssertFalse([matcher evaluateObject:@" 2.0 "]);
+
+    matcher = [UAJSONValueMatcher matcherWithVersionConstraint:@"1.0+"];
+    XCTAssertNotNil(matcher);
+    XCTAssertTrue([matcher evaluateObject:@"1.0"]);
+    XCTAssertFalse([matcher evaluateObject:@"2"]);
+
+    matcher = [UAJSONValueMatcher matcherWithVersionConstraint:@"[1.0,2.0]"];
+    XCTAssertNotNil(matcher);
+    XCTAssertTrue([matcher evaluateObject:@"1.0"]);
+    XCTAssertFalse([matcher evaluateObject:@"2.0.1"]);
 }
 
 - (void)testInvalidPayload {
@@ -208,6 +226,12 @@
 
     // Invalid equals value
     json = @{ @"equals": @[] };
+    error = nil;
+    XCTAssertNil([UAJSONValueMatcher matcherWithJSON:json error:&error]);
+    XCTAssertNotNil(error);
+
+    // Invalid range value
+    json = @{ @"version": @"cool story" };
     error = nil;
     XCTAssertNil([UAJSONValueMatcher matcherWithJSON:json error:&error]);
     XCTAssertNotNil(error);

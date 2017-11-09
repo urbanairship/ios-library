@@ -2,6 +2,7 @@
 
 #import "UAJSONValueMatcher.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "UAVersionMatcher.h"
 
 @interface UAJSONValueMatcher ()
 @property(nonatomic, strong) NSNumber *atLeast;
@@ -9,6 +10,8 @@
 @property(nonatomic, strong) NSNumber *equalsNumber;
 @property(nonatomic, copy) NSString *equalsString;
 @property(nonatomic, assign) NSNumber *isPresent;
+@property(nonatomic, copy) NSString *versionConstraint;
+@property(nonatomic, strong) UAVersionMatcher *versionMatcher;
 @end
 
 
@@ -16,6 +19,7 @@ NSString *const UAJSONValueMatcherAtMost = @"at_most";
 NSString *const UAJSONValueMatcherAtLeast = @"at_least";
 NSString *const UAJSONValueMatcherEquals = @"equals";
 NSString *const UAJSONValueMatcherIsPresent = @"is_present";
+NSString *const UAJSONValueMatcherVersionConstraint = @"version";
 
 NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_matcher";
 
@@ -29,6 +33,7 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
     [payload setValue:self.atLeast forKey:UAJSONValueMatcherAtLeast];
     [payload setValue:self.atMost forKey:UAJSONValueMatcherAtMost];
     [payload setValue:self.isPresent forKey:UAJSONValueMatcherIsPresent];
+    [payload setValue:self.versionConstraint forKey:UAJSONValueMatcherVersionConstraint];
 
     return payload;
 }
@@ -55,6 +60,10 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
 
     if (self.atMost && !(numberValue && [self.atMost compare:numberValue] != NSOrderedAscending)) {
         return NO;
+    }
+    
+    if (self.versionMatcher) {
+        return [self.versionMatcher evaluateObject:value];
     }
     
     return YES;
@@ -97,6 +106,19 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
     return matcher;
 }
 
++ (instancetype)matcherWithVersionConstraint:(NSString *)versionConstraint {
+    UAVersionMatcher *versionMatcher = [UAVersionMatcher matcherWithVersionConstraint:versionConstraint];
+    
+    if (!versionMatcher) {
+        return nil;
+    }
+    
+    UAJSONValueMatcher *matcher = [[UAJSONValueMatcher alloc] init];
+    matcher.versionConstraint = versionConstraint;
+    matcher.versionMatcher = versionMatcher;
+    return matcher;
+}
+
 + (instancetype)matcherWithJSON:(id)json error:(NSError **)error {
     if (![json isKindOfClass:[NSDictionary class]]) {
         if (error) {
@@ -118,17 +140,18 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
     }
 
     if ([self isStringMatcherExpression:json]) {
-        UAJSONValueMatcher *matcher = [[UAJSONValueMatcher alloc] init];
-        matcher.equalsString = json[UAJSONValueMatcherEquals];
-        return matcher;
+        return [self matcherWhereStringEquals:json[UAJSONValueMatcherEquals]];
     }
 
     if ([self isPresentMatcherExpression:json]) {
-        UAJSONValueMatcher *matcher = [[UAJSONValueMatcher alloc] init];
-        matcher.isPresent = json[UAJSONValueMatcherIsPresent];
-        return matcher;
+        return [self matcherWhereValueIsPresent:[json[UAJSONValueMatcherIsPresent] boolValue]];
     }
 
+    UAJSONValueMatcher *matcher = [self matcherWithVersionConstraint:json[UAJSONValueMatcherVersionConstraint]];
+    if (matcher) {
+        return matcher;
+    }
+    
     if (error) {
         NSString *msg = [NSString stringWithFormat:@"Invalid value matcher: %@", json];
         *error =  [NSError errorWithDomain:UAJSONValueMatcherErrorDomain

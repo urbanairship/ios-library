@@ -63,6 +63,7 @@
 #import "UAURLProtocol.h"
 #import "UAUser.h"
 #import "UAUtils.h"
+#import "UAVersionMatcher.h"
 #import "UAWhitelist.h"
 #import "UA_Base64.h"
 #import "UAirship.h"
