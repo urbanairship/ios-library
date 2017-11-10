@@ -121,7 +121,7 @@
 }
 
 - (void)showCopyMessage {
-    UAInAppMessage *message = [[UAInAppMessage alloc] init];
+    UALegacyInAppMessage *message = [[UALegacyInAppMessage alloc] init];
     message.alert = NSLocalizedStringFromTable(@"UA_Copied_To_Clipboard", @"UAPushUI", @"Copied to clipboard string");
     message.position = UAInAppMessagePositionTop;
     message.duration = 1.5;

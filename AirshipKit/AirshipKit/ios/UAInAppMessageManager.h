@@ -1,10 +1,10 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAAutomationEngine+Internal.h"
 #import "UAInAppMessage.h"
 #import "UAInAppMessageScheduleInfo.h"
 #import "UAInAppMessageAdapter.h"
+#import "UAAutomationEngine.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

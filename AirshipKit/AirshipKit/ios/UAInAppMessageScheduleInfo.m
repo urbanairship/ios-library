@@ -3,6 +3,7 @@
 #import "UAInAppMessageScheduleInfo.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAScheduleInfo+Internal.h"
+#import "UAInAppMessage+Internal.h"
 
 NSString *const UAScheduleInfoInAppMessageKey = @"message";
 

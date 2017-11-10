@@ -43,7 +43,7 @@ class HomeViewController: UIViewController {
         if (sender == channelIDButton) {
             if ((UAirship.push().channelID) != nil) {
                 UIPasteboard.general.string = UAirship.push().channelID
-                let message = UAInAppMessage()
+                let message = UALegacyInAppMessage()
                 message.alert = NSLocalizedString("UA_Copied_To_Clipboard", tableName: "UAPushUI", comment: "Copied to clipboard string")
                 message.position = UAInAppMessagePosition.top
                 message.duration = 1.5

@@ -28,7 +28,7 @@
 
     if (sender == self.channelIDButton && [UAirship push].channelID) {
         [UIPasteboard generalPasteboard].string = [UAirship push].channelID;
-        UAInAppMessage *message = [[UAInAppMessage alloc] init];
+        UALegacyInAppMessage *message = [[UALegacyInAppMessage alloc] init];
         message.alert = NSLocalizedStringFromTable(@"UA_Copied_To_Clipboard", @"UAPushUI", @"Copied to clipboard string");
         message.position = UAInAppMessagePositionTop;
         message.duration = 1.5;

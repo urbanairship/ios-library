@@ -20,6 +20,7 @@
 #import "UAApplicationMetrics.h"
 #import "UAAssociatedIdentifiers.h"
 #import "UAAutomation.h"
+#import "UAAutomationEngine.h"
 #import "UABespokeCloseView.h"
 #import "UABeveledLoadingIndicator.h"
 #import "UACancelSchedulesAction.h"
