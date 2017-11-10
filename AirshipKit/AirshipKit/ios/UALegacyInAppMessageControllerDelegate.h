@@ -3,7 +3,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-@class UAInAppMessage;
+@class UALegacyInAppMessage;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Delegate protocol for providing custom UI to the
  * UAInAppMessageController.
  */
-@protocol UAInAppMessageControllerDelegate <NSObject>
+@protocol UALegacyInAppMessageControllerDelegate <NSObject>
 
 @required
 
@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param parentView The parent view the messageView will be embedded in
  * @return A configured instance of UIView.
  */
-- (UIView *)viewForMessage:(UAInAppMessage *)message parentView:(UIView *)parentView;
+- (UIView *)viewForMessage:(UALegacyInAppMessage *)message parentView:(UIView *)parentView;
 
 /**
  * Returns the button corresponding to the indexed action

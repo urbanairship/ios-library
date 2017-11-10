@@ -4,16 +4,16 @@
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAInAppResolutionEvent+Internal.h"
-#import "UAInAppMessage.h"
+#import "UALegacyInAppMessage.h"
 #import "UAUtils.h"
 
-@interface UAInAppResolutionEventTest : UABaseTest
+@interface UALegacyInAppResolutionEventTest : UABaseTest
 @property (nonatomic, strong) id analytics;
 @property (nonatomic, strong) id airship;
-@property (nonatomic, strong) UAInAppMessage *message;
+@property (nonatomic, strong) UALegacyInAppMessage *message;
 @end
 
-@implementation UAInAppResolutionEventTest
+@implementation UALegacyInAppResolutionEventTest
 
 - (void)setUp {
     [super setUp];
@@ -24,7 +24,7 @@
     [[[self.airship stub] andReturn:self.airship] shared];
     [[[self.airship stub] andReturn:self.analytics] analytics];
 
-    self.message = [[UAInAppMessage alloc] init];
+    self.message = [[UALegacyInAppMessage alloc] init];
     self.message.identifier = [NSUUID UUID].UUIDString;
 }
 
@@ -62,7 +62,7 @@
  * Test in-app replaced resolution event.
  */
 - (void)testReplacedResolutionEvent {
-    UAInAppMessage *replacement = [[UAInAppMessage alloc] init];
+    UALegacyInAppMessage *replacement = [[UALegacyInAppMessage alloc] init];
     replacement.identifier = [NSUUID UUID].UUIDString;
 
     [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendID];

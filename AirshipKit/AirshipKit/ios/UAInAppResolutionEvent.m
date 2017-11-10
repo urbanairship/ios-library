@@ -1,7 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAInAppResolutionEvent+Internal.h"
-#import "UAInAppMessage.h"
+#import "UALegacyInAppMessage.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAEvent+Internal.h"
@@ -9,7 +9,7 @@
 
 @implementation UAInAppResolutionEvent
 
-- (instancetype) initWithMessage:(UAInAppMessage *)message resolution:(NSDictionary *)resolution {
+- (instancetype) initWithMessage:(UALegacyInAppMessage *)message resolution:(NSDictionary *)resolution {
     self = [super init];
     if (self) {
         NSMutableDictionary *data = [NSMutableDictionary dictionary];
@@ -33,7 +33,7 @@
     return self.data[@"id"] != nil;
 }
 
-+ (instancetype)expiredMessageResolutionWithMessage:(UAInAppMessage *)message {
++ (instancetype)expiredMessageResolutionWithMessage:(UALegacyInAppMessage *)message {
     NSMutableDictionary *resolution = [NSMutableDictionary dictionary];
     [resolution setValue:@"expired" forKey:@"type"];
 
@@ -43,8 +43,8 @@
     return [[self alloc] initWithMessage:message resolution:resolution];
 }
 
-+ (instancetype)replacedResolutionWithMessage:(UAInAppMessage *)message
-                                  replacement:(UAInAppMessage *)replacement {
++ (instancetype)replacedResolutionWithMessage:(UALegacyInAppMessage *)message
+                                  replacement:(UALegacyInAppMessage *)replacement {
 
     NSMutableDictionary *resolution = [NSMutableDictionary dictionary];
     [resolution setValue:@"replaced" forKey:@"type"];
@@ -54,7 +54,7 @@
 }
 
 
-+ (instancetype)buttonClickedResolutionWithMessage:(UAInAppMessage *)message
++ (instancetype)buttonClickedResolutionWithMessage:(UALegacyInAppMessage *)message
                                   buttonIdentifier:(NSString *)buttonID
                                        buttonTitle:(NSString *)buttonTitle
                                    displayDuration:(NSTimeInterval)duration {
@@ -69,7 +69,7 @@
     return [[self alloc] initWithMessage:message resolution:resolution];
 }
 
-+ (instancetype)messageClickedResolutionWithMessage:(UAInAppMessage *)message
++ (instancetype)messageClickedResolutionWithMessage:(UALegacyInAppMessage *)message
                                     displayDuration:(NSTimeInterval)duration {
 
     NSMutableDictionary *resolution = [NSMutableDictionary dictionary];
@@ -80,7 +80,7 @@
 }
 
 
-+ (instancetype)dismissedResolutionWithMessage:(UAInAppMessage *)message
++ (instancetype)dismissedResolutionWithMessage:(UALegacyInAppMessage *)message
                                displayDuration:(NSTimeInterval)duration {
 
     NSMutableDictionary *resolution = [NSMutableDictionary dictionary];
@@ -91,7 +91,7 @@
 }
 
 
-+ (instancetype)timedOutResolutionWithMessage:(UAInAppMessage *)message
++ (instancetype)timedOutResolutionWithMessage:(UALegacyInAppMessage *)message
                               displayDuration:(NSTimeInterval)duration {
 
     NSMutableDictionary *resolution = [NSMutableDictionary dictionary];
@@ -101,7 +101,7 @@
     return [[self alloc] initWithMessage:message resolution:resolution];
 }
 
-+ (instancetype)directOpenResolutionWithMessage:(UAInAppMessage *)message {
++ (instancetype)directOpenResolutionWithMessage:(UALegacyInAppMessage *)message {
     NSMutableDictionary *resolution = [NSMutableDictionary dictionary];
     [resolution setValue:@"direct_open" forKey:@"type"];
 

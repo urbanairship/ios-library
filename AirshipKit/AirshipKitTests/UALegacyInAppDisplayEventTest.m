@@ -4,14 +4,14 @@
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAInAppDisplayEvent+Internal.h"
-#import "UAInAppMessage.h"
+#import "UALegacyInAppMessage.h"
 
-@interface UAInAppDisplayEventTest : UABaseTest
+@interface UALegacyInAppDisplayEventTest : UABaseTest
 @property (nonatomic, strong) id analytics;
 @property (nonatomic, strong) id airship;
 @end
 
-@implementation UAInAppDisplayEventTest
+@implementation UALegacyInAppDisplayEventTest
 
 - (void)setUp {
     [super setUp];
@@ -34,7 +34,7 @@
  */
 - (void)testValidEvent {
 
-    UAInAppMessage *message = [[UAInAppMessage alloc] init];
+    UALegacyInAppMessage *message = [[UALegacyInAppMessage alloc] init];
     message.identifier = [NSUUID UUID].UUIDString;
     [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendID];
     [[[self.analytics stub] andReturn:@"base64metadataString"] conversionPushMetadata];
@@ -57,7 +57,7 @@
  * Test event is invalid if it is missing the in-app message ID.
  */
 - (void)testInvalidData {
-    UAInAppMessage *message = [[UAInAppMessage alloc] init];
+    UALegacyInAppMessage *message = [[UALegacyInAppMessage alloc] init];
 
     [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendID];
 

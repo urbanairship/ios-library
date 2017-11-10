@@ -1,7 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UAInAppMessaging.h"
-#import "UAInAppMessageController+Internal.h"
+#import "UALegacyInAppMessaging.h"
+#import "UALegacyInAppMessageController+Internal.h"
 
 // User defaults key for storing and retrieving pending messages
 #define kUAPendingInAppMessageDataStoreKey @"UAPendingInAppMessage"
@@ -17,9 +17,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 /*
- * SDK-private extensions to UAInAppMessaging
+ * SDK-private extensions to UALegacyInAppMessaging
  */
-@interface UAInAppMessaging ()
+@interface UALegacyInAppMessaging ()
 
 ///---------------------------------------------------------------------------------------
 /// @name In App Messaging Internal Properties
@@ -35,10 +35,10 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- * Factory method to create an UAInAppMessaging instance.
+ * Factory method to create an UALegacyInAppMessaging instance.
  * @param analytics The UAAnalytics instance.
  * @param dataStore The preference data store.
- * @return An instance of UAInAppMessaging.
+ * @return An instance of UALegacyInAppMessaging.
  */
 + (instancetype)inAppMessagingWithAnalytics:(UAAnalytics *)analytics
                                   dataStore:(UAPreferenceDataStore *)dataStore;

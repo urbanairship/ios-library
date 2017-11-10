@@ -1,11 +1,11 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UAInAppMessageControllerDefaultDelegate.h"
-#import "UAInAppMessage.h"
-#import "UAInAppMessageView+Internal.h"
+#import "UALegacyInAppMessageControllerDefaultDelegate.h"
+#import "UALegacyInAppMessage.h"
+#import "UALegacyInAppMessageView+Internal.h"
 #import "UAirship.h"
-#import "UAInAppMessaging.h"
-#import "UAInAppMessageButtonActionBinding.h"
+#import "UALegacyInAppMessaging.h"
+#import "UALegacyInAppMessageButtonActionBinding.h"
 #import "UANotificationCategory.h"
 #import "UAUtils.h"
 #import "NSString+UALocalizationAdditions.h"
@@ -15,7 +15,7 @@
 #define kUAInAppMessageiPhoneScreenWidthPercentage 0.95
 #define kUAInAppMessagePadScreenWidthPercentage 0.45
 
-@interface UAInAppMessageControllerDefaultDelegate ()
+@interface UALegacyInAppMessageControllerDefaultDelegate ()
 
 @property(nonatomic, assign) UAInAppMessagePosition position;
 @property(nonatomic, strong) UIColor *primaryColor;
@@ -31,9 +31,9 @@
 
 @end
 
-@implementation UAInAppMessageControllerDefaultDelegate
+@implementation UALegacyInAppMessageControllerDefaultDelegate
 
-- (instancetype)initWithMessage:(UAInAppMessage *)message {
+- (instancetype)initWithMessage:(UALegacyInAppMessage *)message {
     self = [super init];
     if (self) {
         // The primary and secondary colors aren't set in the model, choose sensible defaults
@@ -48,7 +48,7 @@
  * Configures primary and secondary colors in the message view, inverting the color
  * scheme if necessary.
  */
-- (void)configureColorsWithMessageView:(UAInAppMessageView *)messageView inverted:(BOOL)inverted {
+- (void)configureColorsWithMessageView:(UALegacyInAppMessageView *)messageView inverted:(BOOL)inverted {
 
     UIColor *primaryColor;
     UIColor *secondaryColor;
@@ -73,14 +73,14 @@
     messageView.button2.backgroundColor = secondaryColor;
 }
 
-- (void)invertColorsWithMessageView:(UAInAppMessageView *)messageView {
+- (void)invertColorsWithMessageView:(UALegacyInAppMessageView *)messageView {
     if (!self.isInverted) {
         [self configureColorsWithMessageView:messageView inverted:YES];
         self.isInverted = YES;
     }
 }
 
-- (void)uninvertColorsWithMessageView:(UAInAppMessageView *)messageView {
+- (void)uninvertColorsWithMessageView:(UALegacyInAppMessageView *)messageView {
     if (self.isInverted) {
         [self configureColorsWithMessageView:messageView inverted:NO];
         self.isInverted = NO;
@@ -92,18 +92,18 @@
 }
 
 /**
- * Builds the UAInAppMessageView, configuring it with data from the message
+ * Builds the UALegacyInAppMessageView, configuring it with data from the message
  */
-- (UAInAppMessageView *)buildMessageViewForMessage:(UAInAppMessage *)message {
+- (UALegacyInAppMessageView *)buildMessageViewForMessage:(UALegacyInAppMessage *)message {
 
     UIFont *messageFont = [UAirship inAppMessaging].font;
 
-    // Button action bindings are an array of UAInAppMessageButtonActionBinding instances,
+    // Button action bindings are an array of UALegacyInAppMessageButtonActionBinding instances,
     // which represent a binding between an in-app message button, a localized title and action
     // name/argument pairs.
     NSArray *buttonActionBindings = message.buttonActionBindings;
 
-    UAInAppMessageView *messageView = [[UAInAppMessageView alloc] initWithPosition:message.position
+    UALegacyInAppMessageView *messageView = [[UALegacyInAppMessageView alloc] initWithPosition:message.position
                                                                    numberOfButtons:buttonActionBindings.count];
 
     // Configure all the subviews
@@ -116,11 +116,11 @@
 
     // Set button titles accordingly
     if (buttonActionBindings.count) {
-        UAInAppMessageButtonActionBinding *button1 = buttonActionBindings[0];
+        UALegacyInAppMessageButtonActionBinding *button1 = buttonActionBindings[0];
 
         [messageView.button1 setTitle:button1.title forState:UIControlStateNormal];
         if (buttonActionBindings.count > 1) {
-            UAInAppMessageButtonActionBinding *button2 = buttonActionBindings[1];
+            UALegacyInAppMessageButtonActionBinding *button2 = buttonActionBindings[1];
             [messageView.button2 setTitle:button2.title forState:UIControlStateNormal];
         }
     }
@@ -140,7 +140,7 @@
  * Adds the message view to the parent view with default constraints and generates the
  * updateLayoutConstraintsBlock for managing dynamic constraints.
  */
-- (UIView *)viewForMessage:(UAInAppMessage *)message parentView:(UIView *)parentView {
+- (UIView *)viewForMessage:(UALegacyInAppMessage *)message parentView:(UIView *)parentView {
 
     // Build the messageView, configuring it with data from the message
     UIView *messageView = [self buildMessageViewForMessage:message];
@@ -233,7 +233,7 @@
 }
 
 - (UIControl *)messageView:(UIView *)messageView buttonAtIndex:(NSUInteger)index {
-    UAInAppMessageView *uaMessageView = (UAInAppMessageView *)messageView;
+    UALegacyInAppMessageView *uaMessageView = (UALegacyInAppMessageView *)messageView;
 
     // Index 0 corresponds to button 1, index 1 corresponds to button 2.
     if (index == 0) {
@@ -244,7 +244,7 @@
 }
 
 - (void)messageView:(UIView *)messageView didChangeTouchState:(BOOL)touchDown {
-    UAInAppMessageView *uaMessageView = (UAInAppMessageView *)messageView;
+    UALegacyInAppMessageView *uaMessageView = (UALegacyInAppMessageView *)messageView;
 
     // If YES invert the primary and secondary colors, otherwise uninvert.
     if (touchDown) {

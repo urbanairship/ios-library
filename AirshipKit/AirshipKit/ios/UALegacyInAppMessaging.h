@@ -2,9 +2,9 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "UAInAppMessageControllerDelegate.h"
+#import "UALegacyInAppMessageControllerDelegate.h"
 
-@class UAInAppMessage;
+@class UALegacyInAppMessage;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Delegate protocol for receiving in-app messaging related
  * callbacks.
  */
-@protocol UAInAppMessagingDelegate <NSObject>
+@protocol UALegacyInAppMessagingDelegate <NSObject>
 
 @optional
 
@@ -24,28 +24,28 @@ NS_ASSUME_NONNULL_BEGIN
  * Indicates that an in-app message has been stored as pending.
  * @param message The associated in-app message.
  */
-- (void)pendingMessageAvailable:(UAInAppMessage *)message;
+- (void)pendingMessageAvailable:(UALegacyInAppMessage *)message;
 
 /**
  * Indicates that an in-app message will be automatically displayed.
  * @param message The associated in-app message.
  */
-- (void)messageWillBeDisplayed:(UAInAppMessage *)message;
+- (void)messageWillBeDisplayed:(UALegacyInAppMessage *)message;
 
 /**
  * Indicates that an in-app message body has been tapped.
  */
-- (void)messageTapped:(UAInAppMessage *)message;
+- (void)messageTapped:(UALegacyInAppMessage *)message;
 
 /**
  * Indicates that an in-app message button has been tapped.
  */
-- (void)messageButtonTapped:(UAInAppMessage *)message buttonIdentifier:(NSString *)identifier;
+- (void)messageButtonTapped:(UALegacyInAppMessage *)message buttonIdentifier:(NSString *)identifier;
 
 /**
  * Indicates that an in-app message has been dismissed by the user or a timeout.
  */
-- (void)messageDismissed:(UAInAppMessage *)message timeout:(BOOL)timedOut;
+- (void)messageDismissed:(UALegacyInAppMessage *)message timeout:(BOOL)timedOut;
 
 @end
 
@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Manager class for in-app messaging.
  */
-@interface UAInAppMessaging : NSObject
+@interface UALegacyInAppMessaging : NSObject
 
 ///---------------------------------------------------------------------------------------
 /// @name In App Messaging Properties
@@ -62,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
 * The pending in-app message.
 */
-@property(nonatomic, copy, nullable) UAInAppMessage *pendingMessage;
+@property(nonatomic, copy, nullable) UALegacyInAppMessage *pendingMessage;
 
 /**
 * Enables/disables auto-display of in-app messages.
@@ -104,12 +104,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * An optional delegate to receive in-app messaging related callbacks.
  */
-@property(nonatomic, weak, nullable) id<UAInAppMessagingDelegate> messagingDelegate;
+@property(nonatomic, weak, nullable) id<UALegacyInAppMessagingDelegate> messagingDelegate;
 
 /**
  * A optional delegate for configuring and providing custom UI during message display.
  */
-@property(nonatomic, weak, nullable) id<UAInAppMessageControllerDelegate> messageControllerDelegate;
+@property(nonatomic, weak, nullable) id<UALegacyInAppMessageControllerDelegate> messageControllerDelegate;
 
 ///---------------------------------------------------------------------------------------
 /// @name In App Messaging Display and Management
@@ -121,7 +121,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param message The message to display.
  */
-- (void)displayMessage:(UAInAppMessage *)message;
+- (void)displayMessage:(UALegacyInAppMessage *)message;
 
 /*
  * Displays the pending message if it is available.
@@ -134,7 +134,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param message The message to delete.
  */
-- (void)deletePendingMessage:(UAInAppMessage *)message;
+- (void)deletePendingMessage:(UALegacyInAppMessage *)message;
 
 @end
 

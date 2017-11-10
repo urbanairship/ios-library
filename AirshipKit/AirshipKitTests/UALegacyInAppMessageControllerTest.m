@@ -4,19 +4,19 @@
 #import "UABaseTest.h"
 
 #import "UABaseTest.h"
-#import "UAInAppMessageController+Internal.h"
-#import "UAInAppMessage.h"
+#import "UALegacyInAppMessageController+Internal.h"
+#import "UALegacyInAppMessage.h"
 #import "UAUtils.h"
 
-#import "UAInAppMessageControllerDelegate.h"
-#import "UAInAppMessageControllerDefaultDelegate.h"
+#import "UALegacyInAppMessageControllerDelegate.h"
+#import "UALegacyInAppMessageControllerDefaultDelegate.h"
 
-#import "UAInAppMessageButtonActionBinding.h"
+#import "UALegacyInAppMessageButtonActionBinding.h"
 
 
-@interface UAInAppMessageControllerTest : UABaseTest
+@interface UALegacyInAppMessageControllerTest : UABaseTest
 
-@property (nonatomic, strong) UAInAppMessage *message;
+@property (nonatomic, strong) UALegacyInAppMessage *message;
 @property (nonatomic, strong) id mockMessageView;
 @property (nonatomic, strong) id mockParentView;
 
@@ -26,12 +26,12 @@
 @property (nonatomic, strong) id utilsParentView;
 
 @property (nonatomic, strong) NSDictionary *payload;
-@property (copy) void (^dismissalBlock)(UAInAppMessageController *controller);
-@property (nonatomic, strong) UAInAppMessageController *testController;
+@property (copy) void (^dismissalBlock)(UALegacyInAppMessageController *controller);
+@property (nonatomic, strong) UALegacyInAppMessageController *testController;
 
 @end
 
-@implementation UAInAppMessageControllerTest
+@implementation UALegacyInAppMessageControllerTest
 
 - (void)setUp {
     [super setUp];
@@ -57,7 +57,7 @@
                      @"display": display,
                      @"actions": actions};
 
-    self.message = [UAInAppMessage messageWithPayload:self.payload];
+    self.message = [UALegacyInAppMessage messageWithPayload:self.payload];
 
     // Mock a message view for expecting calls
     self.mockMessageView = [self mockForClass:[UIView class]];
@@ -74,15 +74,15 @@
     }] mainWindow];
 
     // Mock default delegate protocol
-    self.mockDefaultDelegate = [self mockForClass:[UAInAppMessageControllerDefaultDelegate class]];
+    self.mockDefaultDelegate = [self mockForClass:[UALegacyInAppMessageControllerDefaultDelegate class]];
     [[[self.mockDefaultDelegate stub] andReturn:self.mockMessageView] viewForMessage:OCMOCK_ANY parentView:OCMOCK_ANY];
 
     // Mock user delegate protocol
-    self.mockUserDelegate = [self mockForProtocol:@protocol(UAInAppMessageControllerDelegate)];
+    self.mockUserDelegate = [self mockForProtocol:@protocol(UALegacyInAppMessageControllerDelegate)];
     [[[self.mockUserDelegate stub] andReturn:self.mockMessageView] viewForMessage:OCMOCK_ANY parentView:OCMOCK_ANY];
 
     // Initialize a testController set mockedUserDelegate as default delegate
-    self.testController = [UAInAppMessageController controllerWithMessage:self.message
+    self.testController = [UALegacyInAppMessageController controllerWithMessage:self.message
                                                                  delegate:self.mockUserDelegate
                                                            dismissalBlock:self.dismissalBlock];
 

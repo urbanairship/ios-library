@@ -1,14 +1,14 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <UIKit/UIKit.h>
-#import "UAInAppMessage.h"
+#import "UALegacyInAppMessage.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
  * View class for in-app messages.
  */
-@interface UAInAppMessageView : UIView
+@interface UALegacyInAppMessageView : UIView
 
 ///---------------------------------------------------------------------------------------
 /// @name In App Message View Properties
@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- * UAInAppMessageView initializer.
+ * UALegacyInAppMessageView initializer.
  * @param position A `UAInAppMessagePosition` value, indicating screen position.
  * @param numberOfButtons The number of buttons to display (0-2).
  */

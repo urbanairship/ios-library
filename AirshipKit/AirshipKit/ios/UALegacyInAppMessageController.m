@@ -1,27 +1,27 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UAInAppMessageController+Internal.h"
-#import "UAInAppMessage.h"
+#import "UALegacyInAppMessageController+Internal.h"
+#import "UALegacyInAppMessage.h"
 #import "UAUtils.h"
-#import "UAInAppMessageButtonActionBinding.h"
+#import "UALegacyInAppMessageButtonActionBinding.h"
 #import "UAActionRunner+Internal.h"
 #import "UAirship.h"
-#import "UAInAppMessaging.h"
+#import "UALegacyInAppMessaging.h"
 #import "UAInAppResolutionEvent+Internal.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
-#import "UAInAppMessageControllerDefaultDelegate.h"
+#import "UALegacyInAppMessageControllerDefaultDelegate.h"
 
 #define kUAInAppMessageMinimumLongPressDuration 0.2
 
 // Don't detect a swipe unless the velocity is at least 100 points per second
 #define kUAInAppMessageMinimumSwipeVelocity 100.0
 
-@interface UAInAppMessageController ()
+@interface UALegacyInAppMessageController ()
 
-@property (nonatomic, strong) UAInAppMessage *message;
+@property (nonatomic, strong) UALegacyInAppMessage *message;
 @property (nonatomic, strong) UIView *messageView;
-@property (nonatomic, copy) void (^dismissalBlock)(UAInAppMessageController *);
+@property (nonatomic, copy) void (^dismissalBlock)(UALegacyInAppMessageController *);
 @property (nonatomic, strong) NSDate *startDisplayDate;
 @property (nonatomic, strong) UIPanGestureRecognizer *panGestureRecognizer;
 @property (nonatomic, assign) BOOL swipeDetected;
@@ -45,30 +45,30 @@
  * A settable reference to self, so we can self-retain for the message
  * display duration.
  */
-@property(nonatomic, strong) UAInAppMessageController *referenceToSelf;
+@property(nonatomic, strong) UALegacyInAppMessageController *referenceToSelf;
 
 @end
 
-@implementation UAInAppMessageController
+@implementation UALegacyInAppMessageController
 
-- (instancetype)initWithMessage:(UAInAppMessage *)message
-                       delegate:(id<UAInAppMessageControllerDelegate>)delegate
-                 dismissalBlock:(void (^)(UAInAppMessageController *))dismissalBlock {
+- (instancetype)initWithMessage:(UALegacyInAppMessage *)message
+                       delegate:(id<UALegacyInAppMessageControllerDelegate>)delegate
+                 dismissalBlock:(void (^)(UALegacyInAppMessageController *))dismissalBlock {
 
     self = [super init];
     if (self) {
         self.message = message;
         self.buttonActionBindings = message.buttonActionBindings;
         self.userDelegate = delegate;
-        self.defaultDelegate = [[UAInAppMessageControllerDefaultDelegate alloc] initWithMessage:message];
+        self.defaultDelegate = [[UALegacyInAppMessageControllerDefaultDelegate alloc] initWithMessage:message];
         self.dismissalBlock = dismissalBlock;
     }
     return self;
 }
 
-+ (instancetype)controllerWithMessage:(UAInAppMessage *)message
-                             delegate:(id<UAInAppMessageControllerDelegate>)delegate
-                       dismissalBlock:(void(^)(UAInAppMessageController *))dismissalBlock {
++ (instancetype)controllerWithMessage:(UALegacyInAppMessage *)message
+                             delegate:(id<UALegacyInAppMessageControllerDelegate>)delegate
+                       dismissalBlock:(void(^)(UALegacyInAppMessageController *))dismissalBlock {
 
     return [[self alloc] initWithMessage:message delegate:delegate dismissalBlock:dismissalBlock];
 }
@@ -343,8 +343,8 @@
                     if (!self.tapDetected && !self.longPressDetected) {
                         self.swipeDetected = YES;
 
-                        //UAInAppMessagingDelegate messageDismissed
-                        id<UAInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
+                        //UALegacyInAppMessagingDelegate messageDismissed
+                        id<UALegacyInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
                         if ([strongDelegate respondsToSelector:@selector(messageDismissed:timeout:)]) {
                             [strongDelegate messageDismissed:self.message timeout:NO];
                         };
@@ -366,8 +366,8 @@
  * Called when a message is clicked.
  */
 - (void)messageClicked {
-    //UAInAppMessagingDelegate messageTapped
-    id<UAInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
+    //UALegacyInAppMessagingDelegate messageTapped
+    id<UALegacyInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
     if ([strongDelegate respondsToSelector:@selector(messageTapped:)]) {
         [strongDelegate messageTapped:self.message];
     };
@@ -389,8 +389,8 @@
 - (void)timedOut {
     [self dismiss];
 
-    //UAInAppMessagingDelegate messageDismissed by timeout
-    id<UAInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
+    //UALegacyInAppMessagingDelegate messageDismissed by timeout
+    id<UALegacyInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
     if ([strongDelegate respondsToSelector:@selector(messageDismissed:timeout:)]) {
         [strongDelegate messageDismissed:self.message timeout:YES];
     };
@@ -467,7 +467,7 @@
 }
 
 - (void)buttonTapped:(id)sender {
-    UAInAppMessageButtonActionBinding *binding;
+    UALegacyInAppMessageButtonActionBinding *binding;
 
     UIControl *button1 = [self buttonAtIndex:0];
     UIControl *button2 = [self buttonAtIndex:1];
@@ -480,7 +480,7 @@
     }
 
     if (binding) {
-        id<UAInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
+        id<UALegacyInAppMessagingDelegate> strongDelegate = [UAirship inAppMessaging].messagingDelegate;
         if ([strongDelegate respondsToSelector:@selector(messageButtonTapped:buttonIdentifier:)]) {
             [strongDelegate messageButtonTapped:self.message buttonIdentifier:binding.identifier];
         };

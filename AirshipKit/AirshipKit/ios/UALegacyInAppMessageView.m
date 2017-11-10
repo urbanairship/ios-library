@@ -1,26 +1,26 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <UIKit/UIKit.h>
-#import "UAInAppMessageView+Internal.h"
+#import "UALegacyInAppMessageView+Internal.h"
 #import "UAirship.h"
 
 // shadow offset on the y axis of 1 point
-#define kUAInAppMessageViewShadowOffsetY 1
+#define kUALegacyInAppMessageViewShadowOffsetY 1
 
 // shadow radius of 3 points
-#define kUAInAppMessageViewShadowRadius 3
+#define kUALegacyInAppMessageViewShadowRadius 3
 
 // 25% shadow opacity
-#define kUAInAppMessageViewShadowOpacity 0.25
+#define kUALegacyInAppMessageViewShadowOpacity 0.25
 
 // a corner radius of 4 points
-#define kUAInAppMessageViewCornerRadius 4
+#define kUALegacyInAppMessageViewCornerRadius 4
 
-// UAInAppMessageView nib name
-#define kUAInAppMessageViewNibName @"UAInAppMessageView"
+// UALegacyInAppMessageView nib name
+#define kUALegacyInAppMessageViewNibName @"UALegacyInAppMessageView"
 
 
-@interface UAInAppMessageView ()
+@interface UALegacyInAppMessageView ()
 
 @property(strong, nonatomic) IBOutlet UILabel *messageLabel;
 
@@ -39,10 +39,10 @@
 
 @end
 
-@implementation UAInAppMessageView
+@implementation UALegacyInAppMessageView
 
 - (instancetype)initWithPosition:(UAInAppMessagePosition)position numberOfButtons:(NSUInteger)numberOfButtons {
-    NSString *nibName = kUAInAppMessageViewNibName;
+    NSString *nibName = kUALegacyInAppMessageViewNibName;
     NSBundle *bundle = [UAirship resources];
 
     // Top and bottom IAP views are firstObject and lastObject, respectively.
@@ -72,16 +72,16 @@
 
         // If on the bottom, project the shadow on the top edge
         if (position == UAInAppMessagePositionBottom) {
-            shadowOffsetY = -kUAInAppMessageViewShadowOffsetY;
+            shadowOffsetY = -kUALegacyInAppMessageViewShadowOffsetY;
         } else {
             // Otherwise project it on the bottom edge
-            shadowOffsetY = kUAInAppMessageViewShadowOffsetY;
+            shadowOffsetY = kUALegacyInAppMessageViewShadowOffsetY;
         }
 
         // Configure container view
         self.containerView.layer.shadowOffset = CGSizeMake(0, shadowOffsetY);
-        self.containerView.layer.shadowRadius = kUAInAppMessageViewShadowRadius;
-        self.containerView.layer.shadowOpacity = kUAInAppMessageViewShadowOpacity;
+        self.containerView.layer.shadowRadius = kUALegacyInAppMessageViewShadowRadius;
+        self.containerView.layer.shadowOpacity = kUALegacyInAppMessageViewShadowOpacity;
         self.containerView.layer.cornerRadius = 4;
 
         // Configure label

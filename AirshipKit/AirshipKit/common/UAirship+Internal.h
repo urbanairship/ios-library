@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The in-app messaging manager.
  */
-@property (nonatomic, strong) UAInAppMessaging *sharedInAppMessaging;
+@property (nonatomic, strong) UALegacyInAppMessaging *sharedInAppMessaging;
 
 /**
  * The default message center.

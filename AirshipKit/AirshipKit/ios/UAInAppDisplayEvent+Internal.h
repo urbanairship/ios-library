@@ -2,7 +2,7 @@
 
 #import "UAEvent.h"
 
-@class UAInAppMessage;
+@class UALegacyInAppMessage;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param message The in-app message.
  * @return A in-app display event.
  */
-+ (instancetype)eventWithMessage:(UAInAppMessage *)message;
++ (instancetype)eventWithMessage:(UALegacyInAppMessage *)message;
 
 @end
 

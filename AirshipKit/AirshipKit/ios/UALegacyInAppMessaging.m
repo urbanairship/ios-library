@@ -1,10 +1,10 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UAInAppMessaging+Internal.h"
-#import "UAInAppMessage.h"
+#import "UALegacyInAppMessaging+Internal.h"
+#import "UALegacyInAppMessage.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAActionRunner.h"
-#import "UAInAppMessageController+Internal.h"
+#import "UALegacyInAppMessageController+Internal.h"
 #import "UAInAppDisplayEvent+Internal.h"
 #import "UAAnalytics.h"
 #import "UAInAppResolutionEvent+Internal.h"
@@ -20,7 +20,7 @@
 NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID";
 
 // Number of seconds to delay before displaying an in-app message
-#define kUAInAppMessagingDefaultDelayBeforeInAppMessageDisplay 3.0
+#define kUALegacyInAppMessagingDefaultDelayBeforeInAppMessageDisplay 3.0
 
 // The default display font
 #define kUAInAppMessageDefaultFont [UIFont boldSystemFontOfSize:12];
@@ -35,14 +35,14 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 #define kUAIncomingInAppMessageKey @"com.urbanairship.in_app"
 
 
-@interface UAInAppMessaging ()
-@property(nonatomic, strong) UAInAppMessageController *messageController;
+@interface UALegacyInAppMessaging ()
+@property(nonatomic, strong) UALegacyInAppMessageController *messageController;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) UAAnalytics *analytics;
 @property(nonatomic, strong) NSTimer *autoDisplayTimer;
 @end
 
-@implementation UAInAppMessaging
+@implementation UALegacyInAppMessaging
 
 - (instancetype)initWithAnalytics:(UAAnalytics *)analytics
                         dataStore:(UAPreferenceDataStore *)dataStore {
@@ -52,7 +52,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
         // Set up the most basic customization
         self.font = kUAInAppMessageDefaultFont;
-        self.displayDelay = kUAInAppMessagingDefaultDelayBeforeInAppMessageDisplay;
+        self.displayDelay = kUALegacyInAppMessagingDefaultDelayBeforeInAppMessageDisplay;
         self.defaultPrimaryColor = kUAInAppMessageDefaultPrimaryColor;
         self.defaultSecondaryColor = kUAInAppMessageDefaultSecondaryColor;
 
@@ -90,7 +90,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 + (instancetype)inAppMessagingWithAnalytics:(UAAnalytics *)analytics
                                   dataStore:(UAPreferenceDataStore *)dataStore {
 
-    return [[UAInAppMessaging alloc] initWithAnalytics:analytics
+    return [[UALegacyInAppMessaging alloc] initWithAnalytics:analytics
                                              dataStore:dataStore];
 }
 
@@ -142,15 +142,15 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     [self invalidateAutoDisplayTimer];
 }
 
-- (UAInAppMessage *)pendingMessage {
+- (UALegacyInAppMessage *)pendingMessage {
     NSDictionary *pendingMessagePayload = [self.dataStore objectForKey:kUAPendingInAppMessageDataStoreKey];
     if (pendingMessagePayload) {
-        return [UAInAppMessage messageWithPayload:pendingMessagePayload];;
+        return [UALegacyInAppMessage messageWithPayload:pendingMessagePayload];;
     }
     return nil;
 }
 
-- (void)setPendingMessage:(UAInAppMessage *)message {
+- (void)setPendingMessage:(UALegacyInAppMessage *)message {
     if (!message) {
         [self.dataStore setObject:message.payload forKey:kUAPendingInAppMessageDataStoreKey];
         return;
@@ -162,7 +162,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         return;
     }
 
-    UAInAppMessage *previousMessage = self.pendingMessage;
+    UALegacyInAppMessage *previousMessage = self.pendingMessage;
 
     if (previousMessage) {
         UAInAppResolutionEvent *event = [UAInAppResolutionEvent replacedResolutionWithMessage:previousMessage
@@ -174,7 +174,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     [self.dataStore setObject:message.payload forKey:kUAPendingInAppMessageDataStoreKey];
 
     // Call the delegate, if needed
-    id<UAInAppMessagingDelegate> strongDelegate = self.messagingDelegate;
+    id<UALegacyInAppMessagingDelegate> strongDelegate = self.messagingDelegate;
     if ([strongDelegate respondsToSelector:@selector(pendingMessageAvailable:)]) {
         [strongDelegate pendingMessageAvailable:message];
     };
@@ -198,7 +198,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     [self.dataStore setBool:autoDisplayEnabled forKey:kUAAutoDisplayInAppMessageDataStoreKey];
 }
 
-- (void)deletePendingMessage:(UAInAppMessage *)message {
+- (void)deletePendingMessage:(UALegacyInAppMessage *)message {
     if ([self.pendingMessage isEqualToMessage:message]) {
         self.pendingMessage = nil;
     }
@@ -212,7 +212,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     [self displayPendingMessage:YES];
 }
 
-- (void)displayMessage:(UAInAppMessage * __nonnull)message forcefully:(BOOL)forcefully {
+- (void)displayMessage:(UALegacyInAppMessage * __nonnull)message forcefully:(BOOL)forcefully {
     if (!message) {
         return;
     }
@@ -242,16 +242,16 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
     UA_LINFO(@"Displaying in-app message: %@", message);
 
-    __block UAInAppMessageController *controller;
+    __block UALegacyInAppMessageController *controller;
 
     if  (self.isKeyboardDisplayed) {
         UA_LDEBUG(@"Keyboard is currently displayed cancelling in-app message: %@", message);
         return;
     }
 
-    controller = [UAInAppMessageController controllerWithMessage:message
+    controller = [UALegacyInAppMessageController controllerWithMessage:message
                                                         delegate:self.messageControllerDelegate
-                                                  dismissalBlock:^(UAInAppMessageController *dismissedController) {
+                                                  dismissalBlock:^(UALegacyInAppMessageController *dismissedController) {
                                                       // Delete the pending payload once it's dismissed
                                                       [self deletePendingMessage:message];
                                                       // Release the message controller if it hasn't been replaced
@@ -265,7 +265,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
                                                   }];
 
     // Call the delegate, if needed
-    id<UAInAppMessagingDelegate> strongDelegate = self.messagingDelegate;
+    id<UALegacyInAppMessagingDelegate> strongDelegate = self.messagingDelegate;
     if ([strongDelegate respondsToSelector:@selector(messageWillBeDisplayed:)]) {
         [strongDelegate messageWillBeDisplayed:message];
     };
@@ -276,7 +276,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         // Dismiss any existing message and attempt to show the new one
         [self.messageController dismiss];
 
-        UAInAppMessageController *strongController = controller;
+        UALegacyInAppMessageController *strongController = controller;
         self.messageController = strongController;
         BOOL displayed = [strongController show];
 
@@ -301,7 +301,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     }
 }
 
-- (void)displayMessage:(UAInAppMessage *)message {
+- (void)displayMessage:(UALegacyInAppMessage *)message {
     [self displayMessage:message forcefully:YES];
 }
 
@@ -318,7 +318,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
     NSString *sendId = apnsPayload[@"_"];
 
-    UAInAppMessage *pending = self.pendingMessage;
+    UALegacyInAppMessage *pending = self.pendingMessage;
 
     // Compare only the ID in case we amended the in-app message payload
     if (sendId.length && [sendId isEqualToString:pending.identifier]) {
@@ -339,7 +339,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     }
 
     NSMutableDictionary *messagePayload = [NSMutableDictionary dictionaryWithDictionary:apnsPayload[kUAIncomingInAppMessageKey]];
-    UAInAppMessage *message = [UAInAppMessage messageWithPayload:messagePayload];
+    UALegacyInAppMessage *message = [UALegacyInAppMessage messageWithPayload:messagePayload];
 
     if (apnsPayload[@"_"]) {
         message.identifier = apnsPayload[@"_"];

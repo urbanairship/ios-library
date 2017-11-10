@@ -7,7 +7,7 @@
  * Model object representing a binding between an in-app
  * message button, a localized title and action name/argument pairs.
  */
-@interface UAInAppMessageButtonActionBinding : NSObject
+@interface UALegacyInAppMessageButtonActionBinding : NSObject
 
 ///---------------------------------------------------------------------------------------
 /// @name In App Message Button Action Binding Properties

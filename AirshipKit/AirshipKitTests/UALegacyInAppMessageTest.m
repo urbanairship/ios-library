@@ -3,17 +3,17 @@
 #import <UIKit/UIKit.h>
 #import "UABaseTest.h"
 
-#import "UAInAppMessage.h"
+#import "UALegacyInAppMessage.h"
 #import "UAirship+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 
-@interface UAInAppMessageTest : UABaseTest
+@interface UALegacyInAppMessageTest : UABaseTest
 @property(nonatomic, strong) id mockAirship;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) NSDictionary *payload;
 @end
 
-@implementation UAInAppMessageTest
+@implementation UALegacyInAppMessageTest
 
 - (void)setUp {
     [super setUp];
@@ -41,7 +41,7 @@
 /**
  * Helper method for verifying model/payload equivalence 
  */
-- (void)verifyPayloadConsistency:(UAInAppMessage *)message {
+- (void)verifyPayloadConsistency:(UALegacyInAppMessage *)message {
 
     NSCalendar *gregorian = [[NSCalendar alloc]
                              initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
@@ -78,7 +78,7 @@
 }
 
 - (void)testDefaults {
-    UAInAppMessage *message = [UAInAppMessage message];
+    UALegacyInAppMessage *message = [UALegacyInAppMessage message];
     XCTAssertEqual(message.displayType, UAInAppMessageDisplayTypeBanner);
     XCTAssertEqual(message.position, UAInAppMessagePositionBottom);
 
@@ -91,7 +91,7 @@
  * Test that payloads get turned into model objects properly
  */
 - (void)testMessageWithPayload {
-    UAInAppMessage *iam = [UAInAppMessage messageWithPayload:self.payload];
+    UALegacyInAppMessage *iam = [UALegacyInAppMessage messageWithPayload:self.payload];
     [self verifyPayloadConsistency:iam];
 }
 
@@ -100,8 +100,8 @@
  * Test that messages can be compared for equality by value
  */
 - (void)testIsEqualToMessage {
-    UAInAppMessage *iam = [UAInAppMessage messageWithPayload:self.payload];
-    UAInAppMessage *iam2 = [UAInAppMessage messageWithPayload:self.payload];
+    UALegacyInAppMessage *iam = [UALegacyInAppMessage messageWithPayload:self.payload];
+    UALegacyInAppMessage *iam2 = [UALegacyInAppMessage messageWithPayload:self.payload];
     XCTAssertTrue([iam isEqualToMessage:iam2]);
 
     iam.alert = @"sike!";
@@ -114,7 +114,7 @@
     NSDictionary *weirdDisplay = @{@"alert":@"yo!", @"type":@"not a type", @"position":@"sideways, starring paul giamatti"};
 
     weirdPayload[@"display"] = weirdDisplay;
-    UAInAppMessage *iam = [UAInAppMessage messageWithPayload:weirdPayload];
+    UALegacyInAppMessage *iam = [UALegacyInAppMessage messageWithPayload:weirdPayload];
 
     // default to unknown
     XCTAssertEqual(iam.displayType, UAInAppMessageDisplayTypeUnknown);
@@ -132,7 +132,7 @@
 
     weirdPayload[@"display"] = weirdDisplay;
 
-    UAInAppMessage *iam = [UAInAppMessage messageWithPayload:weirdPayload];
+    UALegacyInAppMessage *iam = [UALegacyInAppMessage messageWithPayload:weirdPayload];
 
     // alert has no default, so it should be nil in this case
     XCTAssertNil(iam.alert);

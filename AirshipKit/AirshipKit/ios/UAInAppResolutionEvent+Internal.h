@@ -2,7 +2,7 @@
 
 #import "UAEvent.h"
 
-@class UAInAppMessage;
+@class UALegacyInAppMessage;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param message The expired message.
  * @return The resolution event.
  */
-+ (instancetype)expiredMessageResolutionWithMessage:(UAInAppMessage *)message;
++ (instancetype)expiredMessageResolutionWithMessage:(UALegacyInAppMessage *)message;
 
 /**
  * Factory method to create a replaced in-app resolution event.
@@ -30,8 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param replacement The new message.
  * @return The resolution event.
  */
-+ (instancetype)replacedResolutionWithMessage:(UAInAppMessage *)message
-                                  replacement:(UAInAppMessage *)replacement;
++ (instancetype)replacedResolutionWithMessage:(UALegacyInAppMessage *)message
+                                  replacement:(UALegacyInAppMessage *)replacement;
 
 /**
  * Factory method to create a button click in-app resolution event.
@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param duration How long the in-app message was displayed.
  * @return The resolution event.
  */
-+ (instancetype)buttonClickedResolutionWithMessage:(UAInAppMessage *)message
++ (instancetype)buttonClickedResolutionWithMessage:(UALegacyInAppMessage *)message
                                   buttonIdentifier:(nullable NSString *)buttonID
                                        buttonTitle:(nullable NSString *)buttonTitle
                                    displayDuration:(NSTimeInterval)duration;
@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param duration How long the in-app message was displayed.
  * @return The resolution event.
  */
-+ (instancetype)messageClickedResolutionWithMessage:(UAInAppMessage *)message
++ (instancetype)messageClickedResolutionWithMessage:(UALegacyInAppMessage *)message
                                     displayDuration:(NSTimeInterval)duration;
 
 /**
@@ -65,7 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param duration How long the in-app message was displayed.
  * @return The resolution event.
  */
-+ (instancetype)dismissedResolutionWithMessage:(UAInAppMessage *)message
++ (instancetype)dismissedResolutionWithMessage:(UALegacyInAppMessage *)message
                                displayDuration:(NSTimeInterval)duration;
 
 /**
@@ -75,7 +75,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param duration How long the in-app message was displayed.
  * @return The resolution event.
  */
-+ (instancetype)timedOutResolutionWithMessage:(UAInAppMessage *)message
++ (instancetype)timedOutResolutionWithMessage:(UALegacyInAppMessage *)message
                               displayDuration:(NSTimeInterval)duration;
 
 /**
@@ -84,7 +84,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param message The message.
  * @return The resolution event.
  */
-+ (instancetype)directOpenResolutionWithMessage:(UAInAppMessage *)message;
++ (instancetype)directOpenResolutionWithMessage:(UALegacyInAppMessage *)message;
 
 @end
 

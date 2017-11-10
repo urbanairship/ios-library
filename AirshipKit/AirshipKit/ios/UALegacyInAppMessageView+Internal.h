@@ -1,10 +1,10 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UAInAppMessageView.h"
+#import "UALegacyInAppMessageView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface UAInAppMessageView ()
+@interface UALegacyInAppMessageView ()
 
 ///---------------------------------------------------------------------------------------
 /// @name In App Message View Internal Properties

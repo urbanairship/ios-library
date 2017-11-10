@@ -31,7 +31,7 @@
 #import "UAChannelCapture.h"
 #import "UAMessageCenter.h"
 #import "UAInboxAPIClient+Internal.h"
-#import "UAInAppMessaging+Internal.h"
+#import "UALegacyInAppMessaging+Internal.h"
 #endif
 
 
@@ -109,7 +109,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:config dataStore:dataStore];
 #if !TARGET_OS_TV
         // IAP Nib not supported on tvOS
-        self.sharedInAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.analytics dataStore:dataStore];
+        self.sharedInAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.analytics dataStore:dataStore];
 
         // Message center not supported on tvOS
         self.sharedInbox = [UAInbox inboxWithUser:self.sharedInboxUser config:config dataStore:dataStore];
@@ -334,7 +334,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     [sharedAirship_.analytics cancelUpload];
 
 #if !TARGET_OS_TV
-    // Invalidate UAInAppMessaging autodisplay timer
+    // Invalidate UALegacyInAppMessaging autodisplay timer
     [sharedAirship_.sharedInAppMessaging invalidateAutoDisplayTimer];
 #endif
 
@@ -367,7 +367,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 }
 
 
-+ (UAInAppMessaging *)inAppMessaging {
++ (UALegacyInAppMessaging *)inAppMessaging {
     return sharedAirship_.sharedInAppMessaging;
 }
 

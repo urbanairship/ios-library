@@ -20,7 +20,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessagePosition) {
 /**
  * Enumeration of in-app message display types.
  */
-typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
+typedef NS_ENUM(NSInteger, UALegacyInAppMessageDisplayType) {
     /**
      * Unknown or unsupported display type.
      */
@@ -31,7 +31,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
     UAInAppMessageDisplayTypeBanner
 };
 
-@class UAInAppMessageButtonActionBinding;
+@class UALegacyInAppMessageButtonActionBinding;
 @class UANotificationCategory;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -39,10 +39,10 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Model object representing in-app message data.
  */
-@interface UAInAppMessage : NSObject
+@interface UALegacyInAppMessage : NSObject
 
 ///---------------------------------------------------------------------------------------
-/// @name In App Message Properties
+/// @name Legacy In App Message Properties
 ///---------------------------------------------------------------------------------------
 
 /**
@@ -56,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy, nullable) NSString *identifier;
 
 ///---------------------------------------------------------------------------------------
-/// @name In App Message Top Level Properties
+/// @name Legacy In App Message Top Level Properties
 ///---------------------------------------------------------------------------------------
 
 /**
@@ -71,7 +71,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy, nullable) NSDictionary *extra;
 
 ///---------------------------------------------------------------------------------------
-/// @name In App Message Display Properties
+/// @name Legacy In App Message Display Properties
 ///---------------------------------------------------------------------------------------
 
 /**
@@ -79,7 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
  * when built with the default class constructor, or `UAInAppMessageDisplayTypeUnknown`
  * when built from a payload with a missing or unidentified display type.
  */
-@property(nonatomic, assign) UAInAppMessageDisplayType displayType;
+@property(nonatomic, assign) UALegacyInAppMessageDisplayType displayType;
 
 /**
  * The alert message.
@@ -109,7 +109,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 ///---------------------------------------------------------------------------------------
-/// @name In App Message Actions Properties
+/// @name Legacy In App Message Actions Properties
 ///---------------------------------------------------------------------------------------
 
 /**
@@ -148,7 +148,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly, nullable) UANotificationCategory *buttonCategory;
 
 /**
- * An array of UAInAppMessageButtonActionBinding instances,
+ * An array of UALegacyInAppMessageButtonActionBinding instances,
  * corresponding to the left-to-right order of interactive message
  * buttons.
  */
@@ -156,7 +156,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 ///---------------------------------------------------------------------------------------
-/// @name In App Message Factories
+/// @name Legacy In App Message Factories
 ///---------------------------------------------------------------------------------------
 
 /**
@@ -178,7 +178,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)messageWithPayload:(NSDictionary *)payload;
 
 ///---------------------------------------------------------------------------------------
-/// @name In App Message Utilities
+/// @name Legacy In App Message Utilities
 ///---------------------------------------------------------------------------------------
 
 /**
@@ -187,7 +187,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param message The message the receiver is being compared to.
  * @return `YES` if the two messages are equal by value, `NO` otherwise.
  */
-- (BOOL)isEqualToMessage:(nullable UAInAppMessage *)message;
+- (BOOL)isEqualToMessage:(nullable UALegacyInAppMessage *)message;
 
 @end
 

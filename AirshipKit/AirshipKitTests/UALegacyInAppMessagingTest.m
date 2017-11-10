@@ -2,9 +2,9 @@
 
 #import <UIKit/UIKit.h>
 #import "UABaseTest.h"
-#import "UAInAppMessaging+Internal.h"
-#import "UAInAppmessage.h"
-#import "UAInAppMessageController+Internal.h"
+#import "UALegacyInAppMessaging+Internal.h"
+#import "UALegacyInAppMessage.h"
+#import "UALegacyInAppMessageController+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAPush.h"
@@ -12,34 +12,34 @@
 #import "UAActionRegistry.h"
 #import "UADisplayInboxAction.h"
 
-@interface UAInAppMessagingTest : UABaseTest
+@interface UALegacyInAppMessagingTest : UABaseTest
 @property(nonatomic, strong) id mockAnalytics;
 @property(nonatomic, strong) id mockMessageController;
 
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
-@property(nonatomic, strong) UAInAppMessage *bannerMessage;
-@property(nonatomic, strong) UAInAppMessage *nonBannerMessage;
-@property(nonatomic, strong) UAInAppMessaging *inAppMessaging;
+@property(nonatomic, strong) UALegacyInAppMessage *bannerMessage;
+@property(nonatomic, strong) UALegacyInAppMessage *nonBannerMessage;
+@property(nonatomic, strong) UALegacyInAppMessaging *inAppMessaging;
 @property(nonatomic, strong) NSDictionary *payload;
 @property(nonatomic, strong) NSDictionary *aps;
 
 @end
 
-@implementation UAInAppMessagingTest
+@implementation UALegacyInAppMessagingTest
 
 - (void)setUp {
     [super setUp];
 
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"UAInAppMessagingTest"];
+    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"UALegacyInAppMessagingTest"];
 
     self.mockAnalytics = [self mockForClass:[UAAnalytics class]];
 
-    self.inAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.mockAnalytics dataStore:self.dataStore];
+    self.inAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.mockAnalytics dataStore:self.dataStore];
 
-    self.mockMessageController = [self strictMockForClass:[UAInAppMessageController class]];
+    self.mockMessageController = [self strictMockForClass:[UALegacyInAppMessageController class]];
     [[[self.mockMessageController stub] andReturn:self.mockMessageController] controllerWithMessage:[OCMArg any] delegate:[OCMArg any] dismissalBlock:[OCMArg any]];
 
-    self.bannerMessage = [UAInAppMessage message];
+    self.bannerMessage = [UALegacyInAppMessage message];
     self.bannerMessage.identifier = @"identifier";
     self.bannerMessage.alert = @"whatever";
     self.bannerMessage.displayType = UAInAppMessageDisplayTypeBanner;
@@ -83,7 +83,7 @@
  * Test that banner messages are displayed
  */
 - (void)testDisplayBannerMessage {
-    [(UAInAppMessageController *)[self.mockMessageController expect] show];
+    [(UALegacyInAppMessageController *)[self.mockMessageController expect] show];
 
     [self.inAppMessaging displayMessage:self.bannerMessage];
 
@@ -94,7 +94,7 @@
  * Test that non-banner messages are not displayed.
  */
 - (void)testDisplayNonBannerMessage {
-    [(UAInAppMessageController *)[self.mockMessageController reject] show];
+    [(UALegacyInAppMessageController *)[self.mockMessageController reject] show];
 
     [self.inAppMessaging displayMessage:self.nonBannerMessage];
 
@@ -126,7 +126,7 @@
     self.inAppMessaging.pendingMessage = self.bannerMessage;
 
     // Expect to show the message
-    [(UAInAppMessageController *)[self.mockMessageController expect] show];
+    [(UALegacyInAppMessageController *)[self.mockMessageController expect] show];
 
     // Trigger the message to be displayed
     [self.inAppMessaging displayPendingMessage];
@@ -146,7 +146,7 @@
 
 
     // Verify it persists
-    self.inAppMessaging = [UAInAppMessaging inAppMessagingWithAnalytics:self.mockAnalytics dataStore:self.dataStore];
+    self.inAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.mockAnalytics dataStore:self.dataStore];
     XCTAssertFalse(self.inAppMessaging.isAutoDisplayEnabled);
 }
 
@@ -154,14 +154,14 @@
  * Test that an event is added only if the messge is actually displayed
  */
 - (void)testSendDisplayEventIfDisplayed {
-    [(UAInAppMessageController *)[[self.mockMessageController stub] andReturnValue:OCMOCK_VALUE(YES)] show];
+    [(UALegacyInAppMessageController *)[[self.mockMessageController stub] andReturnValue:OCMOCK_VALUE(YES)] show];
 
     [[self.mockAnalytics expect] addEvent:[OCMArg any]];
     [self.inAppMessaging displayMessage:self.bannerMessage];
 
     [self. mockAnalytics verify];
 
-    [(UAInAppMessageController *)[[self.mockMessageController stub] andReturnValue:OCMOCK_VALUE(NO)] show];
+    [(UALegacyInAppMessageController *)[[self.mockMessageController stub] andReturnValue:OCMOCK_VALUE(NO)] show];
     [[self.mockAnalytics reject] addEvent:[OCMArg any]];
     [self.mockAnalytics verify];
 }
@@ -172,7 +172,7 @@
 - (void)testHandleNotificationResponse {
     XCTAssertNil([self.inAppMessaging pendingMessage]);
 
-    [self.inAppMessaging setPendingMessage:[UAInAppMessage messageWithPayload:self.payload]];
+    [self.inAppMessaging setPendingMessage:[UALegacyInAppMessage messageWithPayload:self.payload]];
     XCTAssertNotNil([self.inAppMessaging pendingMessage]);
 
     NSDictionary *notification = @{
@@ -198,7 +198,7 @@
 - (void)testHandleNotificationResponseNoInApp {
     XCTAssertNil([self.inAppMessaging pendingMessage]);
 
-    [self.inAppMessaging setPendingMessage:[UAInAppMessage messageWithPayload:self.payload]];
+    [self.inAppMessaging setPendingMessage:[UALegacyInAppMessage messageWithPayload:self.payload]];
     XCTAssertNotNil([self.inAppMessaging pendingMessage]);
 
     NSDictionary *notification = @{
@@ -224,7 +224,7 @@
 - (void)testHandleNotificationResponseDifferentPendingMessage {
     XCTAssertNil([self.inAppMessaging pendingMessage]);
 
-    [self.inAppMessaging setPendingMessage:[UAInAppMessage messageWithPayload:self.payload]];
+    [self.inAppMessaging setPendingMessage:[UALegacyInAppMessage messageWithPayload:self.payload]];
     XCTAssertNotNil([self.inAppMessaging pendingMessage]);
 
     NSDictionary *notification = @{

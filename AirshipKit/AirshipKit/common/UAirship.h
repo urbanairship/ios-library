@@ -31,7 +31,7 @@
 @class UAUser;
 @class UANamedUser;
 @class UAActionRegistry;
-@class UAInAppMessaging;
+@class UALegacyInAppMessaging;
 @class UAMessageCenter;
 @class UALocation;
 @class UAAutomation;
@@ -197,10 +197,10 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 
 
 /**
- * Returns the `UAInAppMessaging` instance. Used for customizing
+ * Returns the `UALegacyInAppMessaging` instance. Used for customizing
  * in-app notifications.
  */
-+ (null_unspecified UAInAppMessaging *)inAppMessaging;
++ (null_unspecified UALegacyInAppMessaging *)inAppMessaging;
 
 /**
  * Returns the default `UAMessageCenter` instance. Used for customizing

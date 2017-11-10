@@ -2,10 +2,10 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "UAInAppMessageControllerDelegate.h"
+#import "UALegacyInAppMessageControllerDelegate.h"
 
-@class UAInAppMessage;
-@class UAInAppMessageControllerDefaultDelegate;
+@class UALegacyInAppMessage;
+@class UALegacyInAppMessageControllerDefaultDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Controller interface for showing and dismissing in-app
  * messages.
  */
-@interface UAInAppMessageController : NSObject<UIGestureRecognizerDelegate>
+@interface UALegacyInAppMessageController : NSObject<UIGestureRecognizerDelegate>
 
 ///---------------------------------------------------------------------------------------
 /// @name In App Message Controller Internal Properties
@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The in app message
  */
-@property(nonatomic, readonly) UAInAppMessage *message;
+@property(nonatomic, readonly) UALegacyInAppMessage *message;
 
 /**
  * Whether the associated in-app message is currently showing
@@ -32,12 +32,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The default delegate
  */
-@property (nonatomic, strong) UAInAppMessageControllerDefaultDelegate *defaultDelegate;
+@property (nonatomic, strong) UALegacyInAppMessageControllerDefaultDelegate *defaultDelegate;
 
 /**
  * The optional controller delegate that can be implemented by the user
  */
-@property (nonatomic, strong, nullable) id <UAInAppMessageControllerDelegate> userDelegate;
+@property (nonatomic, strong, nullable) id <UALegacyInAppMessageControllerDelegate> userDelegate;
 
 ///---------------------------------------------------------------------------------------
 /// @name In App Message Controller Internal Display Methods
@@ -46,13 +46,13 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * UAInAppMessageController initializer.
  * @param message An instance of UAInAppMessage.
- * @param delegate An object implementing the UAInAppMessageControllerDelegate protocol.
+ * @param delegate An object implementing the UALegacyInAppMessageControllerDelegate protocol.
  * @param dismissalBlock A block that will be executed once the message is dismissed.
  * @return An instance of UAInAppMessageController.
  */
-+ (instancetype)controllerWithMessage:(UAInAppMessage *)message
-                             delegate:(id<UAInAppMessageControllerDelegate>)delegate
-                       dismissalBlock:(void(^)(UAInAppMessageController *))dismissalBlock;
++ (instancetype)controllerWithMessage:(UALegacyInAppMessage *)message
+                             delegate:(id<UALegacyInAppMessageControllerDelegate>)delegate
+                       dismissalBlock:(void(^)(UALegacyInAppMessageController *))dismissalBlock;
 /**
  * Show the associated message. If the message has already been shown,
  * this will be a no-op.

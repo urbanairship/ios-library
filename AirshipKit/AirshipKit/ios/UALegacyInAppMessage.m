@@ -1,9 +1,9 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UAInAppMessage.h"
+#import "UALegacyInAppMessage.h"
 #import "UAUtils.h"
 #import "UAColorUtils+Internal.h"
-#import "UAInAppMessageButtonActionBinding.h"
+#import "UALegacyInAppMessageButtonActionBinding.h"
 #import "UAActionArguments.h"
 #import "UAirship+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
@@ -18,14 +18,14 @@
 // 15 seconds
 #define kUADefaultInAppMessageDurationInterval 15
 
-@implementation UAInAppMessage
+@implementation UALegacyInAppMessage
 
 + (instancetype)message {
     return [[self alloc] init];
 }
 
 + (instancetype)messageWithPayload:(NSDictionary *)payload {
-    UAInAppMessage *message = [[self alloc] init];
+    UALegacyInAppMessage *message = [[self alloc] init];
 
     id (^typeCheck)(id, Class) = ^id(id value, Class class) {
         return [value isKindOfClass:class] ? value : nil;
@@ -94,7 +94,7 @@
     return self;
 }
 
-- (BOOL)isEqualToMessage:(UAInAppMessage *)message {
+- (BOOL)isEqualToMessage:(UALegacyInAppMessage *)message {
     return [self.payload isEqualToDictionary:message.payload];
 }
 
@@ -175,7 +175,7 @@
     for (UANotificationAction *notificationAction in self.notificationActions) {
         NSDictionary *payload = self.buttonActions[[notificationAction identifier]] ?: [NSDictionary dictionary];
 
-        UAInAppMessageButtonActionBinding *binding = [[UAInAppMessageButtonActionBinding alloc] init];
+        UALegacyInAppMessageButtonActionBinding *binding = [[UALegacyInAppMessageButtonActionBinding alloc] init];
 
         binding.title = notificationAction.title;
 

@@ -23,7 +23,7 @@
 #import "UADisplayInboxAction.h"
 #import "UAInbox+Internal.h"
 #import "UAInboxMessageList+Internal.h"
-#import "UAInAppMessaging+Internal.h"
+#import "UALegacyInAppMessaging+Internal.h"
 #endif
 
 #define kUANotificationActionKey @"com.urbanairship.interactive_actions"

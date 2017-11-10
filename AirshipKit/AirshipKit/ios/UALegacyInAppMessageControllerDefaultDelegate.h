@@ -1,42 +1,42 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAInAppMessageControllerDelegate.h"
+#import "UALegacyInAppMessageControllerDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Default instance of UAInAppMessageControllerDelegate, used internally by UAInAppMessageController
+ * Default instance of UALegacyInAppMessageControllerDelegate, used internally by UAInAppMessageController
  * to implement default UI and behavior.
  */
-@interface UAInAppMessageControllerDefaultDelegate : NSObject<UAInAppMessageControllerDelegate>
+@interface UALegacyInAppMessageControllerDefaultDelegate : NSObject<UALegacyInAppMessageControllerDelegate>
 
 ///---------------------------------------------------------------------------------------
 /// @name In App Message Controller Default Delegate Core Methods
 ///---------------------------------------------------------------------------------------
 
 /**
- * Initializer for UAInAppMessageControllerDefaultDelegate.
+ * Initializer for UALegacyInAppMessageControllerDefaultDelegate.
  *
  * @param message The associated in-app message.
- * @return An instance of UAInAppMessageControllerDefaultDelegate.
+ * @return An instance of UALegacyInAppMessageControllerDefaultDelegate.
  */
-- (instancetype)initWithMessage:(UAInAppMessage *)message;
+- (instancetype)initWithMessage:(UALegacyInAppMessage *)message;
 
 /**
- * Builds, lays out, and configures an instance of UAInAppMessageView.
+ * Builds, lays out, and configures an instance of UALegacyInAppMessageView.
  *
  * @param message The associated in-app message.
- * @param parentView The parent view the UAInAppMessageView will be embedded in.
- * @return The fully configured and laid out instance of UAInAppMessageView.
+ * @param parentView The parent view the UALegacyInAppMessageView will be embedded in.
+ * @return The fully configured and laid out instance of UALegacyInAppMessageView.
  */
-- (UIView *)viewForMessage:(UAInAppMessage *)message parentView:(UIView *)parentView;
+- (UIView *)viewForMessage:(UALegacyInAppMessage *)message parentView:(UIView *)parentView;
 
 /**
  * Returns the button matching an associated action's index.
  * e.g. for a two-button layout, the first would be index 0, and the second would be index 1.
  *
- * @param messageView The messageView, in this case a UAInAppMessageView.
+ * @param messageView The messageView, in this case a UALegacyInAppMessageView.
  * @param index The button's index.
  * @return The UIControl instance corresponding to the action index, in this case "button1" or "button2".
  */
@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Handles changes to highlight state by inverting the primary and secondary colors in the message view
  *
- * @param messageView The messageView, in this case a UAInAppMessageView.
+ * @param messageView The messageView, in this case a UALegacyInAppMessageView.
  * @param touchDown The touch state. A `YES` will result in inverted primary/secondary colors, whereas
  * a `NO` will result in non-inverted colors.
  */
@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Animates the message view onto the screen by temporarliy moving it offscreen, and easing in-out to fit within the top or bottom position
- * over 0.2 seconds. This method does not assume the passed message view is of the UAInAppMessageView class, and so can function as a
+ * over 0.2 seconds. This method does not assume the passed message view is of the UALegacyInAppMessageView class, and so can function as a
  * default for custom views as well.
  *
  * @param messageView The message view to be animated.

@@ -1,7 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAInAppDisplayEvent+Internal.h"
-#import "UAInAppMessage.h"
+#import "UALegacyInAppMessage.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAEvent+Internal.h"
@@ -9,7 +9,7 @@
 
 @implementation UAInAppDisplayEvent
 
-- (instancetype) initWithMessage:(UAInAppMessage *)message {
+- (instancetype) initWithMessage:(UALegacyInAppMessage *)message {
     self = [super init];
     if (self) {
         NSMutableDictionary *data = [NSMutableDictionary dictionary];
@@ -22,7 +22,7 @@
     return nil;
 }
 
-+ (instancetype)eventWithMessage:(UAInAppMessage *)message {
++ (instancetype)eventWithMessage:(UALegacyInAppMessage *)message {
     return [[self alloc] initWithMessage:message];
 }
 
