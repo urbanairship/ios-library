@@ -5,12 +5,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-
 /**
  * JSON key for the schedule's actions.
  */
 extern NSString *const UAActionScheduleInfoActionsKey;
-
 
 /**
  * Builder class for a UAActionScheduleInfo.

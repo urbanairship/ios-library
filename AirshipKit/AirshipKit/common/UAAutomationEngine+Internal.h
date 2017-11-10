@@ -58,7 +58,7 @@ typedef NS_ENUM(NSUInteger, UAScheduleState) {
  * @param schedule The schedule.
  * @param completionHandler Completion handler when the schedule is finished executing.
  */
-- (void)executeSchedule:(UASchedule *)schedule
+- (void)executeSchedule:(nonnull UASchedule *)schedule
       completionHandler:(void (^)(void))completionHandler;
 
 @end
@@ -103,6 +103,11 @@ typedef NS_ENUM(NSUInteger, UAScheduleState) {
  * If the schedule info is invalid, the schedule will be nil.
  */
 - (void)schedule:(UAScheduleInfo *)scheduleInfo completionHandler:(nullable void (^)(UASchedule * __nullable))completionHandler;
+
+/**
+ * Called when one of the schedule conditions changes.
+ */
+- (void)scheduleConditionsChanged;
 
 /**
  * Cancels a schedule with the given identifier.
