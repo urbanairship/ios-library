@@ -33,18 +33,18 @@ NS_ASSUME_NONNULL_BEGIN
                       completionHandler:(void (^)(UASchedule *))completionHandler;
 
 /**
- * Cancels an in-app message via it's schedule info.
+ * Cancels an in-app message via its schedule info.
  *
  * @param scheduleID The schedule ID for the message to be canceled.
  */
 - (void)cancelMessageWithScheduleID:(NSString *)scheduleID;
 
 /**
- * Cancels an in-app message.
+ * Cancels an in-app message via its identifier.
  *
- * @param message The in-app message to be canceled.
+ * @param identifier The identifier of the in-app message to be canceled.
  */
--(void)cancelMessage:(UAInAppMessage *)message;
+-(void)cancelMessageWithID:(NSString *)identifier;
 
 @end
 

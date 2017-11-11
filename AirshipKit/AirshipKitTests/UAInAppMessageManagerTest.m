@@ -87,6 +87,9 @@
         return self.mockAdapter;
     } forDisplayType:@"banner"];
 
+    //Check Schedule to set current schedule ID
+    [manager isScheduleReadyToExecute:testSchedule];
+
     XCTestExpectation *displayBlockCalled = [self expectationWithDescription:@"display block should be called"];
 
     // Expect delay on first executeSchedule call
@@ -98,11 +101,17 @@
         return YES;
     }]];
 
+    __block BOOL executeCompletionCalled = NO;
+
     // Call to executeSchedule should execute display block
-    [manager executeSchedule:testSchedule completionHandler:^{}];
+    [manager executeSchedule:testSchedule completionHandler:^{
+        executeCompletionCalled = YES;
+    }];
 
     [self waitForExpectationsWithTimeout:5 handler:nil];
 
+    // Ensure the delegate calls the execute completion block
+    XCTAssertTrue(executeCompletionCalled);
     [self.mockAdapter verify];
 }
 
@@ -116,6 +125,9 @@
         return self.mockAdapter;
     } forDisplayType:@"banner"];
 
+    //Check Schedule to set current schedule ID
+    [manager isScheduleReadyToExecute:testSchedule];
+
     // Shorted the display interval to 1 second
     manager.displayInterval = 1;
 
@@ -126,7 +138,7 @@
         void (^displayBlock)(void) = obj;
         displayBlock();
 
-        // Schedule should not be ready immediately after display (1st call to isScheduleReady)
+        // Schedule should not be ready immediately after display (2nd call to isScheduleReady)
         XCTAssertFalse([manager isScheduleReadyToExecute:testSchedule]);
 
         [displayBlockCalled fulfill];
@@ -157,13 +169,13 @@
         // Run prep block
         prepBlock();
 
-        // Schedule should be ready after prep block (3rd call to isScheduleReady)
+        // Schedule should be ready after prep block (4th call to isScheduleReady)
         XCTAssertTrue([manager isScheduleReadyToExecute:testSchedule]);
 
         return YES;
     }]];
     
-    // Schedule should be return false but prepare once screen unlocks (2nd call to isScheduleReady)
+    // Schedule should be return false but prepare once screen unlocks (3rd call to isScheduleReady)
     XCTAssertFalse([manager isScheduleReadyToExecute:testSchedule]);
 
     [self.mockAdapter verify];
@@ -175,7 +187,7 @@
 
     [[self.mockAutomationEngine expect] cancelSchedulesWithGroup:self.scheduleInfo.message.identifier];
 
-    [manager cancelMessage:self.scheduleInfo.message];
+    [manager cancelMessageWithID:self.scheduleInfo.message.identifier];
 
     [self.mockAutomationEngine verify];
 }

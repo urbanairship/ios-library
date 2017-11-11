@@ -5,6 +5,7 @@
 #import "UAInAppMessageScheduleInfo.h"
 #import "UAScheduleInfo+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "UAGlobal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,7 +21,7 @@ NSTimeInterval const MaxSchedules = 200;
 
 @property(nonatomic, strong, nullable) NSDictionary *adapterFactories;
 
-@property(nonatomic, strong, nullable) UAInAppMessage *currentMessage;
+@property(nonatomic, strong, nullable) NSString *currentScheduleID;
 
 @property(nonatomic, strong, nullable) id<UAInAppMessageAdapter> currentAdapter;
 
@@ -62,13 +63,11 @@ NSTimeInterval const MaxSchedules = 200;
 
 - (void)scheduleMessageWithScheduleInfo:(UAInAppMessageScheduleInfo *)scheduleInfo
                       completionHandler:(void (^)(UASchedule *))completionHandler {
-    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
-
-    }];
+    [self.automationEngine schedule:scheduleInfo completionHandler:completionHandler];;
 }
 
-- (void)cancelMessage:(UAInAppMessage *)message {
-    [self.automationEngine cancelSchedulesWithGroup:message.identifier];
+- (void)cancelMessageWithID:(NSString *)identifier {
+    [self.automationEngine cancelSchedulesWithGroup:identifier];
 }
 
 - (void)cancelMessageWithScheduleID:(NSString *)scheduleID {
@@ -128,22 +127,21 @@ NSTimeInterval const MaxSchedules = 200;
     }
 
     if (!self.currentAdapter) {
-        if (!self.adapterFactories) {
-            return NO;
-        }
-
-        UAInAppMessageScheduleInfo *info = [self inAppScheduleInfoWithSchedule:schedule];
-        self.currentMessage = info.message;
-
+        UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
         id<UAInAppMessageAdapter> adapter = [self adapterForDisplayType:info.message.displayType];
-        self.currentAdapter = adapter;
 
         // If no adapter factory available for specified displayType return NO
         if (!adapter) {
             return NO;
         }
 
-        [adapter prepare:^{
+        self.currentAdapter = adapter;
+        self.currentScheduleID = schedule.identifier;
+
+        UA_WEAKIFY(self);
+        [self.currentAdapter prepare:^{
+            UA_STRONGIFY(self);
+
             self.isCurrentMessagePrepared = YES;
             [self.automationEngine scheduleConditionsChanged];
         }];
@@ -151,45 +149,27 @@ NSTimeInterval const MaxSchedules = 200;
         return NO;
     }
 
-    if (!self.isCurrentMessagePrepared) {
+    if (![schedule.identifier isEqualToString:self.currentScheduleID]) {
         return NO;
     }
 
-    // If the adapter is created and prepare has completed then return YES
-    return YES;
-}
-
-- (UAInAppMessageScheduleInfo *)inAppScheduleInfoWithSchedule:(UASchedule *)schedule {
-    UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
-
-    NSDictionary *data = [NSJSONSerialization objectWithString:info.data];
-
-    UAInAppMessage *message = [UAInAppMessage messageWithJSON:data];
-    info.message = message;
-
-    return info;
+    return self.isCurrentMessagePrepared;
 }
 
 - (void)executeSchedule:(nonnull UASchedule *)schedule
       completionHandler:(void (^)(void))completionHandler {
-    UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
-    self.currentMessage = info.message;
+    // Lock Display
+    [self lockDisplay];
 
-    id<UAInAppMessageAdapter> adapter = [self adapterForDisplayType:info.message.displayType];
-    self.currentAdapter = adapter;
-
-    if (adapter) {
-        [adapter display:^{
-            self.currentAdapter = nil;
-            self.currentMessage = nil;
-            // Lock Display
-            [self lockDisplay];
-            // Start timer to unlock display after display interval
-            [self unlockDisplayAfter:self.displayInterval];
-        }];
-    } else {
-        [self unlockDisplayAfter:0];
-    }
+    UA_WEAKIFY(self);
+    [self.currentAdapter display:^{
+        UA_STRONGIFY(self);
+        self.currentAdapter = nil;
+        self.currentScheduleID = nil;
+        // Start timer to unlock display after display interval
+        [self unlockDisplayAfter:self.displayInterval];
+        completionHandler();
+    }];
 }
 
 @end
