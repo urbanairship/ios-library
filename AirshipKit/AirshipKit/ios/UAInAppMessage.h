@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The display type.
  */
-@property(nonatomic, assign) NSString *displayType;
+@property(nonatomic, copy) NSString *displayType;
 
 /**
  * The display content for the message.
@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The display type.
  */
-@property(nonatomic, assign) NSString *displayType;
+@property(nonatomic, copy) NSString *displayType;
 
 /**
  * The display content for the message.

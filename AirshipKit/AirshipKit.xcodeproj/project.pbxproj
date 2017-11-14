@@ -1907,7 +1907,6 @@
 				494DD9581B0EB677009C134E /* Products */,
 				CC40D87A1D8C703E00BABD4F /* Frameworks */,
 				0A550D587E2599A4BD33CDF4 /* Pods */,
-				99A4E4F51FAAAB300013FCAD /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2012,13 +2011,6 @@
 				CC40DB7A1D8C996900BABD4F /* UALegacyInAppMessaging.m */,
 			);
 			name = Legacy;
-			sourceTree = "<group>";
-		};
-		99A4E4F51FAAAB300013FCAD /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		99B6EE641F3B99AD00C4E3F1 /* Predicates */ = {
