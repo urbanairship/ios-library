@@ -76,7 +76,7 @@
 #import "UAChannelCaptureAction.h"
 #import "UADisplayInboxAction.h"
 #import "UAInAppMessage.h"
-#import "UAInAppMessageAdapter.h"
+#import "UAInAppMessageAdapterProtocol.h"
 #import "UAInAppMessageManager.h"
 #import "UAInAppMessageScheduleInfo.h"
 #import "UAInbox.h"

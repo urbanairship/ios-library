@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * In-app message adapter protocol. An adapter is responsible for displaying a particular type of in-app message.
  */
-@protocol UAInAppMessageAdapter
+@protocol UAInAppMessageAdapterProtocol
 
 /**
  * Factory method to create an in-app message adapter.

@@ -3,7 +3,7 @@
 #import "UABaseTest.h"
 
 #import "UAirship+Internal.h"
-#import "UAInAppMessageAdapter.h"
+#import "UAInAppMessageAdapterProtocol.h"
 #import "UAInAppMessageManager+Internal.h"
 #import "UASchedule+Internal.h"
 
@@ -20,7 +20,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockAdapter = [self mockForProtocol:@protocol(UAInAppMessageAdapter)];
+    self.mockAdapter = [self mockForProtocol:@protocol(UAInAppMessageAdapterProtocol)];
     self.mockAutomationEngine = [self mockForClass:[UAAutomationEngine class]];
     self.manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine];
 
@@ -43,7 +43,7 @@
 - (void)testIsScheduleReady {
     // Set factory for banner type
     UA_WEAKIFY(self)
-    [self.manager setFactoryBlock:^id<UAInAppMessageAdapter> _Nonnull(NSString *displayType) {
+    [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(NSString *displayType) {
         UA_STRONGIFY(self)
         return self.mockAdapter;
     } forDisplayType:@"banner"];
@@ -81,7 +81,7 @@
 
     //Set factory block with banner display type
     UA_WEAKIFY(self)
-    [self.manager setFactoryBlock:^id<UAInAppMessageAdapter> _Nonnull(NSString *displayType) {
+    [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(NSString *displayType) {
         UA_STRONGIFY(self)
         return self.mockAdapter;
     } forDisplayType:@"banner"];
@@ -119,7 +119,7 @@
 
     //Set factory block with banner display type
     UA_WEAKIFY(self)
-    [self.manager setFactoryBlock:^id<UAInAppMessageAdapter> _Nonnull(NSString *displayType) {
+    [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(NSString *displayType) {
         UA_STRONGIFY(self)
         return self.mockAdapter;
     } forDisplayType:@"banner"];

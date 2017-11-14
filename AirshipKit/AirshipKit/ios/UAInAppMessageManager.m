@@ -1,7 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAInAppMessageManager+Internal.h"
-#import "UAInAppMessageAdapter.h"
+#import "UAInAppMessageAdapterProtocol.h"
 #import "UAInAppMessageScheduleInfo.h"
 #import "UAScheduleInfo+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
@@ -23,7 +23,7 @@ NSTimeInterval const MaxSchedules = 200;
 
 @property(nonatomic, strong, nullable) NSString *currentScheduleID;
 
-@property(nonatomic, strong, nullable) id<UAInAppMessageAdapter> currentAdapter;
+@property(nonatomic, strong, nullable) id<UAInAppMessageAdapterProtocol> currentAdapter;
 
 @property(nonatomic, strong, nullable) UAAutomationEngine *automationEngine;
 
@@ -78,7 +78,7 @@ NSTimeInterval const MaxSchedules = 200;
     return [[UAInAppMessageScheduleInfo alloc] initWithBuilder:builder];
 }
 
-- (void)setFactoryBlock:(id<UAInAppMessageAdapter> (^)(NSString* displayType))factory
+- (void)setFactoryBlock:(id<UAInAppMessageAdapterProtocol> (^)(NSString* displayType))factory
          forDisplayType:(NSString *)displayType {
     NSMutableDictionary *adapterFactories;
 
@@ -92,11 +92,11 @@ NSTimeInterval const MaxSchedules = 200;
     self.adapterFactories = [NSDictionary dictionaryWithDictionary:adapterFactories];
 }
 
-- (nullable id<UAInAppMessageAdapter>)adapterForDisplayType:(NSString *)displayType {
+- (nullable id<UAInAppMessageAdapterProtocol>)adapterForDisplayType:(NSString *)displayType {
     if (!self.adapterFactories) {
         return nil;
     }
-    id<UAInAppMessageAdapter> (^factory)(NSString *) = [self.adapterFactories objectForKey:displayType];
+    id<UAInAppMessageAdapterProtocol> (^factory)(NSString *) = [self.adapterFactories objectForKey:displayType];
 
     if (!factory) {
         return nil;
@@ -128,7 +128,7 @@ NSTimeInterval const MaxSchedules = 200;
 
     if (!self.currentAdapter) {
         UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
-        id<UAInAppMessageAdapter> adapter = [self adapterForDisplayType:info.message.displayType];
+        id<UAInAppMessageAdapterProtocol> adapter = [self adapterForDisplayType:info.message.displayType];
 
         // If no adapter factory available for specified displayType return NO
         if (!adapter) {

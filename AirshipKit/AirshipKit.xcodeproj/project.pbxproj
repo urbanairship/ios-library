@@ -322,8 +322,8 @@
 		996B95541FAB932B009B49BC /* UAInAppMessageScheduleInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B95501FAB932B009B49BC /* UAInAppMessageScheduleInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		996B95551FAB932B009B49BC /* UAInAppMessageScheduleInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 996B95511FAB932B009B49BC /* UAInAppMessageScheduleInfo.m */; };
 		996B95571FAB932B009B49BC /* UAInAppMessageScheduleInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 996B95511FAB932B009B49BC /* UAInAppMessageScheduleInfo.m */; };
-		996B95601FAB95D5009B49BC /* UAInAppMessageAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B955E1FAB95D5009B49BC /* UAInAppMessageAdapter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		996B95621FAB95D5009B49BC /* UAInAppMessageAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B955E1FAB95D5009B49BC /* UAInAppMessageAdapter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		996B95601FAB95D5009B49BC /* UAInAppMessageAdapterProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B955E1FAB95D5009B49BC /* UAInAppMessageAdapterProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		996B95621FAB95D5009B49BC /* UAInAppMessageAdapterProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B955E1FAB95D5009B49BC /* UAInAppMessageAdapterProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		996B95681FAB95F8009B49BC /* UAInAppMessageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B95661FAB95F8009B49BC /* UAInAppMessageManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		996B956A1FAB95F8009B49BC /* UAInAppMessageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B95661FAB95F8009B49BC /* UAInAppMessageManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		996B956B1FAB95F8009B49BC /* UAInAppMessageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 996B95671FAB95F8009B49BC /* UAInAppMessageManager.m */; };
@@ -1290,7 +1290,7 @@
 		996B95311FAB8E1E009B49BC /* UAInAppMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAInAppMessage.m; path = ios/UAInAppMessage.m; sourceTree = "<group>"; };
 		996B95501FAB932B009B49BC /* UAInAppMessageScheduleInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAInAppMessageScheduleInfo.h; path = ios/UAInAppMessageScheduleInfo.h; sourceTree = "<group>"; };
 		996B95511FAB932B009B49BC /* UAInAppMessageScheduleInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAInAppMessageScheduleInfo.m; path = ios/UAInAppMessageScheduleInfo.m; sourceTree = "<group>"; };
-		996B955E1FAB95D5009B49BC /* UAInAppMessageAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAInAppMessageAdapter.h; path = ios/UAInAppMessageAdapter.h; sourceTree = "<group>"; };
+		996B955E1FAB95D5009B49BC /* UAInAppMessageAdapterProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAInAppMessageAdapterProtocol.h; path = ios/UAInAppMessageAdapterProtocol.h; sourceTree = "<group>"; };
 		996B95661FAB95F8009B49BC /* UAInAppMessageManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAInAppMessageManager.h; path = ios/UAInAppMessageManager.h; sourceTree = "<group>"; };
 		996B95671FAB95F8009B49BC /* UAInAppMessageManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAInAppMessageManager.m; path = ios/UAInAppMessageManager.m; sourceTree = "<group>"; };
 		997140EE1FB0F3E600EF5445 /* UAInAppMessageManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageManagerTest.m; sourceTree = "<group>"; };
@@ -2665,7 +2665,7 @@
 				996B95311FAB8E1E009B49BC /* UAInAppMessage.m */,
 				996B95501FAB932B009B49BC /* UAInAppMessageScheduleInfo.h */,
 				996B95511FAB932B009B49BC /* UAInAppMessageScheduleInfo.m */,
-				996B955E1FAB95D5009B49BC /* UAInAppMessageAdapter.h */,
+				996B955E1FAB95D5009B49BC /* UAInAppMessageAdapterProtocol.h */,
 				996B95661FAB95F8009B49BC /* UAInAppMessageManager.h */,
 				996B95671FAB95F8009B49BC /* UAInAppMessageManager.m */,
 				99E2DA2A1FB6271400C9F2CC /* UAInAppMessageManager+Internal.h */,
@@ -3268,7 +3268,7 @@
 				CC40DC541D8C996A00BABD4F /* UAAutomation+Internal.h in Headers */,
 				CC40DD1F1D8C996A00BABD4F /* UAUser+Internal.h in Headers */,
 				CC40DD221D8C996A00BABD4F /* UAUserAPIClient+Internal.h in Headers */,
-				996B95601FAB95D5009B49BC /* UAInAppMessageAdapter.h in Headers */,
+				996B95601FAB95D5009B49BC /* UAInAppMessageAdapterProtocol.h in Headers */,
 				CC40DD241D8C996A00BABD4F /* UAUserData+Internal.h in Headers */,
 				CC40DCA81D8C996A00BABD4F /* UAInbox+Internal.h in Headers */,
 				CC40DCAD1D8C996A00BABD4F /* UAInboxStore+Internal.h in Headers */,
@@ -3652,7 +3652,7 @@
 				DFE92A191ED8A61300ED3838 /* UALandingPageActionPredicate+Internal.h in Headers */,
 				DFE92A1A1ED8A61300ED3838 /* UAOverlayInboxMessageActionPredicate+Internal.h in Headers */,
 				DFE92A1B1ED8A61300ED3838 /* UAShareActionPredicate+Internal.h in Headers */,
-				996B95621FAB95D5009B49BC /* UAInAppMessageAdapter.h in Headers */,
+				996B95621FAB95D5009B49BC /* UAInAppMessageAdapterProtocol.h in Headers */,
 				DFE92A1C1ED8A61300ED3838 /* UAAddCustomEventActionPredicate+Internal.h in Headers */,
 				DF7E21F61ED62D5E00C79C46 /* UAScheduleData+Internal.h in Headers */,
 				DF7E21F71ED62D5E00C79C46 /* UAAutomationStore+Internal.h in Headers */,

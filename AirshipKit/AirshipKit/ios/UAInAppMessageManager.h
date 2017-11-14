@@ -3,7 +3,7 @@
 #import <Foundation/Foundation.h>
 #import "UAInAppMessage.h"
 #import "UAInAppMessageScheduleInfo.h"
-#import "UAInAppMessageAdapter.h"
+#import "UAInAppMessageAdapterProtocol.h"
 #import "UAAutomationEngine.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param displayType The display type.
  * @param factory The adapter factory.
  */
-- (void)setFactoryBlock:(id<UAInAppMessageAdapter> (^_Nonnull)(NSString* displayType))factory
+- (void)setFactoryBlock:(id<UAInAppMessageAdapterProtocol> (^_Nonnull)(NSString* displayType))factory
          forDisplayType:(NSString *)displayType;
 
 /**
