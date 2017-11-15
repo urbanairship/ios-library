@@ -1,13 +1,13 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UAInAppResolutionEvent+Internal.h"
+#import "UALegacyInAppResolutionEvent+Internal.h"
 #import "UALegacyInAppMessage.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAEvent+Internal.h"
 #import "UAUtils.h"
 
-@implementation UAInAppResolutionEvent
+@implementation UALegacyInAppResolutionEvent
 
 - (instancetype) initWithMessage:(UALegacyInAppMessage *)message resolution:(NSDictionary *)resolution {
     self = [super init];

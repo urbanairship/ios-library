@@ -3,7 +3,7 @@
 #import "UABaseTest.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
-#import "UAInAppResolutionEvent+Internal.h"
+#import "UALegacyInAppResolutionEvent+Internal.h"
 #import "UALegacyInAppMessage.h"
 #import "UAUtils.h"
 
@@ -54,7 +54,7 @@
                                     @"resolution": expectedResolution };
 
 
-    UAInAppResolutionEvent *event = [UAInAppResolutionEvent expiredMessageResolutionWithMessage:self.message];
+    UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent expiredMessageResolutionWithMessage:self.message];
     [self verifyEvent:event expectedData:expectedData];
 }
 
@@ -78,7 +78,7 @@
                                     @"resolution": expectedResolution };
 
 
-    UAInAppResolutionEvent *event = [UAInAppResolutionEvent replacedResolutionWithMessage:self.message
+    UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent replacedResolutionWithMessage:self.message
                                                                               replacement:replacement];
 
     [self verifyEvent:event expectedData:expectedData];
@@ -106,7 +106,7 @@
                                     @"resolution": expectedResolution };
 
 
-    UAInAppResolutionEvent *event = [UAInAppResolutionEvent buttonClickedResolutionWithMessage:self.message
+    UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent buttonClickedResolutionWithMessage:self.message
                                                                               buttonIdentifier:@"button ID"
                                                                                    buttonTitle:@"oh hi, marc"
                                                                                displayDuration:3.141];
@@ -132,7 +132,7 @@
                                     @"resolution": expectedResolution };
 
 
-    UAInAppResolutionEvent *event = [UAInAppResolutionEvent messageClickedResolutionWithMessage:self.message
+    UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent messageClickedResolutionWithMessage:self.message
                                                                                 displayDuration:3.141];
 
     [self verifyEvent:event expectedData:expectedData];
@@ -155,7 +155,7 @@
                                     @"resolution": expectedResolution };
 
 
-    UAInAppResolutionEvent *event = [UAInAppResolutionEvent dismissedResolutionWithMessage:self.message
+    UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent dismissedResolutionWithMessage:self.message
                                                                            displayDuration:3.141];
 
     [self verifyEvent:event expectedData:expectedData];
@@ -179,7 +179,7 @@
                                     @"resolution": expectedResolution };
 
 
-    UAInAppResolutionEvent *event = [UAInAppResolutionEvent timedOutResolutionWithMessage:self.message
+    UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent timedOutResolutionWithMessage:self.message
                                                                           displayDuration:3.141];
 
     [self verifyEvent:event expectedData:expectedData];
@@ -200,13 +200,13 @@
                                     @"resolution": expectedResolution };
 
 
-    UAInAppResolutionEvent *event = [UAInAppResolutionEvent directOpenResolutionWithMessage:self.message];
+    UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent directOpenResolutionWithMessage:self.message];
 
     [self verifyEvent:event expectedData:expectedData];
 }
 
 
-- (void)verifyEvent:(UAInAppResolutionEvent *)event expectedData:(NSDictionary *)expectedData {
+- (void)verifyEvent:(UALegacyInAppResolutionEvent *)event expectedData:(NSDictionary *)expectedData {
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"in_app_resolution", @"Event type is unexpected.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");

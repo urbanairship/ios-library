@@ -1,13 +1,13 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UAInAppDisplayEvent+Internal.h"
+#import "UALegacyInAppDisplayEvent+Internal.h"
 #import "UALegacyInAppMessage.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAEvent+Internal.h"
 
 
-@implementation UAInAppDisplayEvent
+@implementation UALegacyInAppDisplayEvent
 
 - (instancetype) initWithMessage:(UALegacyInAppMessage *)message {
     self = [super init];

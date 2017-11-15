@@ -5,9 +5,9 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAActionRunner.h"
 #import "UALegacyInAppMessageController+Internal.h"
-#import "UAInAppDisplayEvent+Internal.h"
+#import "UALegacyInAppDisplayEvent+Internal.h"
 #import "UAAnalytics.h"
-#import "UAInAppResolutionEvent+Internal.h"
+#import "UALegacyInAppResolutionEvent+Internal.h"
 #import "UANotificationContent.h"
 #import "UANotificationResponse.h"
 
@@ -165,7 +165,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     UALegacyInAppMessage *previousMessage = self.pendingMessage;
 
     if (previousMessage) {
-        UAInAppResolutionEvent *event = [UAInAppResolutionEvent replacedResolutionWithMessage:previousMessage
+        UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent replacedResolutionWithMessage:previousMessage
                                                                                   replacement:message];
         [self.analytics addEvent:event];
     }
@@ -228,7 +228,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         UA_LINFO(@"In-app message is expired: %@", message);
         [self deletePendingMessage:message];
 
-        UAInAppResolutionEvent *event = [UAInAppResolutionEvent expiredMessageResolutionWithMessage:message];
+        UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent expiredMessageResolutionWithMessage:message];
         [self.analytics addEvent:event];
 
         return;
@@ -285,7 +285,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
             // Send a display event if it's the first time we are displaying this IAM
             NSString *lastDisplayedIAM = [self.dataStore valueForKey:UALastDisplayedInAppMessageID];
             if (message.identifier && ![message.identifier isEqualToString:lastDisplayedIAM]) {
-                UAInAppDisplayEvent *event = [UAInAppDisplayEvent eventWithMessage:message];
+                UALegacyInAppDisplayEvent *event = [UALegacyInAppDisplayEvent eventWithMessage:message];
                 [self.analytics addEvent:event];
 
                 // Set the ID as the last displayed so we dont send duplicate display events
@@ -325,7 +325,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         UA_LINFO(@"The in-app message delivery push was directly launched for message: %@", pending);
         [self deletePendingMessage:pending];
 
-        UAInAppResolutionEvent *event = [UAInAppResolutionEvent directOpenResolutionWithMessage:pending];
+        UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent directOpenResolutionWithMessage:pending];
         [self.analytics addEvent:event];
     }
 }

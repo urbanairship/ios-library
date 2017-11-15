@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * In-app message resolution event.
  */
-@interface UAInAppResolutionEvent : UAEvent
+@interface UALegacyInAppResolutionEvent : UAEvent
 
 ///---------------------------------------------------------------------------------------
 /// @name In App Resolution Event Internal Methods

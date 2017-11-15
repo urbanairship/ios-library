@@ -7,7 +7,7 @@
 #import "UAActionRunner+Internal.h"
 #import "UAirship.h"
 #import "UALegacyInAppMessaging.h"
-#import "UAInAppResolutionEvent+Internal.h"
+#import "UALegacyInAppResolutionEvent+Internal.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
 #import "UALegacyInAppMessageControllerDefaultDelegate.h"
@@ -351,7 +351,7 @@
 
                         // dismiss and add the appropriate analytics event
                         [self dismiss];
-                        UAInAppResolutionEvent *event = [UAInAppResolutionEvent dismissedResolutionWithMessage:self.message
+                        UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent dismissedResolutionWithMessage:self.message
                                                                                                displayDuration:[self displayDuration]];
                         [[UAirship shared].analytics addEvent:event];
                     }
@@ -372,7 +372,7 @@
         [strongDelegate messageTapped:self.message];
     };
 
-    UAInAppResolutionEvent *event = [UAInAppResolutionEvent messageClickedResolutionWithMessage:self.message
+    UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent messageClickedResolutionWithMessage:self.message
                                                                                 displayDuration:[self displayDuration]];
     [[UAirship shared].analytics addEvent:event];
 
@@ -395,7 +395,7 @@
         [strongDelegate messageDismissed:self.message timeout:YES];
     };
 
-    UAInAppResolutionEvent *event = [UAInAppResolutionEvent timedOutResolutionWithMessage:self.message
+    UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent timedOutResolutionWithMessage:self.message
                                                                           displayDuration:[self displayDuration]];
     [[UAirship shared].analytics addEvent:event];
 }
@@ -494,7 +494,7 @@
                                  completionHandler:nil];
     }
 
-    UAInAppResolutionEvent *event = [UAInAppResolutionEvent buttonClickedResolutionWithMessage:self.message
+    UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent buttonClickedResolutionWithMessage:self.message
                                                                               buttonIdentifier:binding.identifier
                                                                                    buttonTitle:binding.title
                                                                                displayDuration:[self displayDuration]];

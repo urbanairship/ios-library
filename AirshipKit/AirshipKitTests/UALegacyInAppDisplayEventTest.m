@@ -3,7 +3,7 @@
 #import "UABaseTest.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
-#import "UAInAppDisplayEvent+Internal.h"
+#import "UALegacyInAppDisplayEvent+Internal.h"
 #import "UALegacyInAppMessage.h"
 
 @interface UALegacyInAppDisplayEventTest : UABaseTest
@@ -46,7 +46,7 @@
 
 
 
-    UAInAppDisplayEvent *event = [UAInAppDisplayEvent eventWithMessage:message];
+    UALegacyInAppDisplayEvent *event = [UALegacyInAppDisplayEvent eventWithMessage:message];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"in_app_display", @"Event type is unexpected.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
@@ -61,7 +61,7 @@
 
     [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendID];
 
-    UAInAppDisplayEvent *event = [UAInAppDisplayEvent eventWithMessage:message];
+    UALegacyInAppDisplayEvent *event = [UALegacyInAppDisplayEvent eventWithMessage:message];
     XCTAssertFalse([event isValid], @"Event should be valid if it has a in-app message ID.");
 }
 
