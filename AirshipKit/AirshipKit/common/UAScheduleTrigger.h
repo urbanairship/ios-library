@@ -63,8 +63,12 @@ typedef NS_ENUM(NSInteger, UAScheduleTriggerType) {
     /**
      * App init trigger.
      */
-    UAScheduleTriggerAppInit
+    UAScheduleTriggerAppInit,
 
+    /**
+     * Active session trigger.
+     */
+    UAScheduleTriggerActiveSession
 };
 
 
@@ -122,6 +126,11 @@ extern NSString *const UAScheduleTriggerCustomEventValueName;
  * Screen trigger name when defining a trigger in JSON.
  */
 extern NSString *const UAScheduleTriggerScreenName;
+
+/**
+ * Activer session trigger name when defining a trigger in JSON.
+ */
+extern NSString *const UAScheduleTriggerActiveSessionName;
 
 @class UAJSONPredicate;
 
