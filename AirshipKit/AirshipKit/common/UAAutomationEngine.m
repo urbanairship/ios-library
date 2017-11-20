@@ -274,6 +274,11 @@
 #pragma mark -
 #pragma mark Event processing
 
+- (NSArray<UAScheduleData *> *)sortedSchedulesByPriority:(NSArray<UAScheduleData *> *)schedules {
+    NSSortDescriptor *ascending = [[NSSortDescriptor alloc] initWithKey:@"priority" ascending:YES];
+    return [schedules sortedArrayUsingDescriptors:@[ascending]];
+}
+
 - (void)updateTriggersWithScheduleID:(NSString *)scheduleID type:(UAScheduleTriggerType)triggerType argument:(id)argument incrementAmount:(double)amount {
     UA_LDEBUG(@"Updating triggers with type: %ld", (long)triggerType);
 
@@ -573,8 +578,7 @@
  */
 - (void)processTriggeredSchedules:(NSArray<UAScheduleData *> *)schedules {
     // Sort schedules by priority in ascending order
-    NSSortDescriptor *ascending = [[NSSortDescriptor alloc] initWithKey:@"priority" ascending:YES];
-    schedules = [schedules sortedArrayUsingDescriptors:@[ascending]];
+    schedules = [self sortedSchedulesByPriority:schedules];
 
     for (UAScheduleData *scheduleData in schedules) {
         // If the schedule has expired, delete it
