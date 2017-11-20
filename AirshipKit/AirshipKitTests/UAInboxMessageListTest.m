@@ -200,9 +200,14 @@ static UAUser *mockUser_ = nil;
         };
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
-
-    [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
-    [[self.mockMessageListNotificationObserver expect] messageListUpdated];
+    XCTestExpectation *messageListWillUpdateExpectation = [self expectationWithDescription:@"messageListWillUpdate notification received"];
+    XCTestExpectation *messageListUpdatedExpectation = [self expectationWithDescription:@"messageListUpdated notification received"];
+    [[[self.mockMessageListNotificationObserver expect] andDo:^(NSInvocation *invocation) {
+        [messageListWillUpdateExpectation fulfill];
+    }] messageListWillUpdate];
+    [[[self.mockMessageListNotificationObserver expect] andDo:^(NSInvocation *invocation) {
+        [messageListUpdatedExpectation fulfill];
+    }] messageListUpdated];
 
     __block BOOL fail = NO;
 
@@ -231,7 +236,7 @@ static UAUser *mockUser_ = nil;
     }];
 
     XCTAssertFalse(fail, @"callback blocks should not have been executed");
-
+    
     [self.mockMessageListNotificationObserver verify];
 }
 
@@ -255,8 +260,14 @@ static UAUser *mockUser_ = nil;
         };
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
-    [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
-    [[self.mockMessageListNotificationObserver expect] messageListUpdated];
+    XCTestExpectation *messageListWillUpdateExpectation = [self expectationWithDescription:@"messageListWillUpdate notification received"];
+    XCTestExpectation *messageListUpdatedExpectation = [self expectationWithDescription:@"messageListUpdated notification received"];
+    [[[self.mockMessageListNotificationObserver expect] andDo:^(NSInvocation *invocation) {
+        [messageListWillUpdateExpectation fulfill];
+    }] messageListWillUpdate];
+    [[[self.mockMessageListNotificationObserver expect] andDo:^(NSInvocation *invocation) {
+        [messageListUpdatedExpectation fulfill];
+    }] messageListUpdated];
 
     __block BOOL fail = NO;
 
