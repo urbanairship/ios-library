@@ -274,13 +274,14 @@
 #pragma mark -
 #pragma mark Event processing
 
-- (void)updateTriggersWithType:(UAScheduleTriggerType)triggerType argument:(id)argument incrementAmount:(double)amount {
+- (void)updateTriggersWithScheduleID:(NSString *)scheduleID type:(UAScheduleTriggerType)triggerType argument:(id)argument incrementAmount:(double)amount {
     UA_LDEBUG(@"Updating triggers with type: %ld", (long)triggerType);
 
     NSDate *start = [NSDate date];
+
     // Only update schedule triggers and active cancellation triggers
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(type = %ld AND start <= %@) AND (delay == nil || delay.schedule.executionState == %d)",
-                              triggerType, start, UAScheduleStatePendingExecution];
+    NSString *format = @"(schedule.identifier LIKE %@ AND type = %ld AND start <= %@) AND (delay == nil || delay.schedule.executionState == %d)";
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:format, scheduleID, triggerType, start, UAScheduleStatePendingExecution];
 
     [self.automationStore fetchTriggersWithPredicate:predicate completionHandler:^(NSArray<UAScheduleTriggerData *> *triggers) {
 
@@ -337,6 +338,10 @@
         NSTimeInterval executionTime = -[start timeIntervalSinceNow];
         UA_LTRACE(@"Automation execution time: %f seconds, triggers: %ld, triggered schedules: %ld", executionTime, (unsigned long)triggers.count, (unsigned long)schedulesToExecute.count);
     }];
+}
+
+- (void)updateTriggersWithType:(UAScheduleTriggerType)triggerType argument:(id)argument incrementAmount:(double)amount {
+    [self updateTriggersWithScheduleID:@"*" type:triggerType argument:argument incrementAmount:amount];
 }
 
 /**
