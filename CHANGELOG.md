@@ -3,6 +3,14 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 8.6.3 - November 20, 2017
+==================================
+Patch release to address "UI API called on a background thread" warnings. Applications should update to this release if they are seeing these warnings.
+
+Bug fixes
+---------
+- Fix UI API access on background thread in Message Center.
+
 Version 8.6.2 - October 30, 2017
 ==================================
 Patch release to correctly parse "mailto:" URLs in message center messages and enable optional localization of Message Center's "Done" and "Edit" buttons. Applications should update to this release if they require this behavior.

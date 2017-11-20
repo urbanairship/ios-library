@@ -148,12 +148,16 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
             }];
         } else {
             UA_LDEBUG(@"Retrieve message list succeeded with status: %lu", (unsigned long)status);
-            completionBlock(YES);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionBlock(YES);
+            });
         }
 
     } onFailure:^(){
         UA_LDEBUG(@"Retrieve message list failed");
-        completionBlock(NO);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completionBlock(NO);
+        });
     }];
 
     return disposable;
@@ -263,8 +267,8 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 
 
 /**
- * Refreshes the publicly exposed inbox messages, by prefetching on the private
- * context and then updating on the main context.
+ * Refreshes the publicly exposed inbox messages on the private context. 
+ * The completion handler is executed on the main context.
  *
  * @param completionHandler Optional completion handler.
  */
@@ -295,7 +299,9 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
                                   self.messages = messages;
 
                                   if (completionHandler) {
-                                      completionHandler();
+                                      dispatch_async(dispatch_get_main_queue(), ^{
+                                          completionHandler();
+                                      });
                                   }
                               }];
 }

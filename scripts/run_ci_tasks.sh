@@ -43,7 +43,7 @@ xcrun xcodebuild -destination "${TEST_DESTINATION}" -workspace "${ROOT_PATH}/Air
 
 # Run pod lib lint
 cd $ROOT_PATH
-pod lib lint
+pod lib lint --allow-warnings
 cd -
 
 # delete derived data
