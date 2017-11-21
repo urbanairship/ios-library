@@ -51,6 +51,10 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
     return [UAScheduleTrigger triggerWithType:UAScheduleTriggerAppBackground goal:@(count) predicate:nil];
 }
 
++ (instancetype)activeSessionTriggerWithCount:(NSUInteger)count {
+    return [UAScheduleTrigger triggerWithType:UAScheduleTriggerActiveSession goal:@(count) predicate:nil];
+}
+
 + (instancetype)regionEnterTriggerForRegionID:(NSString *)regionID count:(NSUInteger)count {
     UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:regionID];
     UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher key:kUARegionIDKey];

@@ -221,7 +221,12 @@
         [self rescheduleTimers];
     }
 
+    // Update any dependent foreground triggers
     [self updateTriggersWithType:UAScheduleTriggerAppForeground argument:nil incrementAmount:1.0];
+
+    // Active session triggers may also be updated by foreground transitions
+    [self updateTriggersWithType:UAScheduleTriggerActiveSession argument:nil incrementAmount:1.0];
+
     [self scheduleConditionsChanged];
 }
 

@@ -128,7 +128,7 @@ extern NSString *const UAScheduleTriggerCustomEventValueName;
 extern NSString *const UAScheduleTriggerScreenName;
 
 /**
- * Activer session trigger name when defining a trigger in JSON.
+ * Active session trigger name when defining a trigger in JSON.
  */
 extern NSString *const UAScheduleTriggerActiveSessionName;
 
@@ -181,6 +181,14 @@ extern NSString *const UAScheduleTriggerActiveSessionName;
  * @return A background trigger.
  */
 + (instancetype)backgroundTriggerWithCount:(NSUInteger)count;
+
+/**
+ * Factory method to create a background trigger.
+ *
+ * @param count Number of active sessions before firing the trigger.
+ * @return An active session trigger.
+ */
++ (instancetype)activeSessionTriggerWithCount:(NSUInteger)count;
 
 /**
  * Factory method to create a region enter trigger.

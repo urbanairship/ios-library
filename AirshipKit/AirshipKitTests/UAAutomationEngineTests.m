@@ -523,6 +523,16 @@
     }];
 }
 
+- (void)testActiveSession {
+    UAScheduleTrigger *trigger = [UAScheduleTrigger activeSessionTriggerWithCount:1];
+
+    // TODO: test state component
+    [self verifyTrigger:trigger triggerFireBlock:^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification
+                                                            object:nil];
+    }];
+}
+
 - (void)testBackground {
     UAScheduleTrigger *trigger = [UAScheduleTrigger backgroundTriggerWithCount:1];
     [self verifyTrigger:trigger triggerFireBlock:^{
