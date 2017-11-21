@@ -183,7 +183,7 @@ extern NSString *const UAScheduleTriggerActiveSessionName;
 + (instancetype)backgroundTriggerWithCount:(NSUInteger)count;
 
 /**
- * Factory method to create a background trigger.
+ * Factory method to create an active session trigger.
  *
  * @param count Number of active sessions before firing the trigger.
  * @return An active session trigger.

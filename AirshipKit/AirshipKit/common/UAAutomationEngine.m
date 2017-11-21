@@ -33,6 +33,7 @@
 @property (nonatomic, strong) NSMutableArray *activeTimers;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier backgroundTaskIdentifier;
 @property (nonatomic, assign) BOOL isStarted;
+@property (nonnull, strong) NSMutableDictionary *stateConditions;
 @end
 
 @implementation UAAutomationEngine
@@ -49,6 +50,7 @@
         self.scheduleLimit = limit;
         self.activeTimers = [NSMutableArray array];
         self.isForegrounded = NO;
+        self.stateConditions = [NSMutableDictionary dictionary];
     }
 
     return self;
@@ -97,6 +99,8 @@
                                                object:nil];
 
     [self resetExecutingSchedules];
+    [self createStateConditions];
+    [self restoreCompoundTriggers];
     [self rescheduleTimers];
     [self updateTriggersWithType:UAScheduleTriggerAppInit argument:nil incrementAmount:1.0];
     [self scheduleConditionsChanged];
@@ -110,6 +114,7 @@
 
     [self cancelTimers];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self.stateConditions removeAllObjects];
     self.isStarted = NO;
 }
 
@@ -134,6 +139,12 @@
 
     // Try to save the schedule
     [self.automationStore saveSchedule:schedule limit:self.scheduleLimit completionHandler:^(BOOL success) {
+        // If saving the schedule was successful, process any compound triggers
+        if (success) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self checkCompoundTriggerState:@[schedule]];
+            });
+        }
         if (completionHandler) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 completionHandler(success ? schedule : nil);
@@ -279,8 +290,13 @@
 #pragma mark -
 #pragma mark Event processing
 
-- (NSArray<UAScheduleData *> *)sortedSchedulesByPriority:(NSArray<UAScheduleData *> *)schedules {
+- (NSArray<UAScheduleData *> *)sortedScheduleDataByPriority:(NSArray<UAScheduleData *> *)schedules {
     NSSortDescriptor *ascending = [[NSSortDescriptor alloc] initWithKey:@"priority" ascending:YES];
+    return [schedules sortedArrayUsingDescriptors:@[ascending]];
+}
+
+- (NSArray<UASchedule *> *)sortedSchedulesByPriority:(NSArray<UASchedule *> *)schedules {
+    NSSortDescriptor *ascending = [[NSSortDescriptor alloc] initWithKey:@"info.priority" ascending:YES];
     return [schedules sortedArrayUsingDescriptors:@[ascending]];
 }
 
@@ -530,6 +546,52 @@
 }
 
 /**
+ * Sets up state conditions for use with compound triggers.
+ */
+- (void)createStateConditions {
+    BOOL (^activeSessionCondition)(void) = ^BOOL{
+        return [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
+    };
+
+    [self.stateConditions setObject:activeSessionCondition forKey:@(UAScheduleTriggerActiveSession)];
+}
+
+/**
+ * Checks compound trigger state for currently active schedules, to be
+ * called at start.
+ */
+- (void)restoreCompoundTriggers {
+    UA_WEAKIFY(self)
+    [self getSchedules:^(NSArray<UASchedule *> *schedules) {
+        UA_STRONGIFY(self)
+        [self checkCompoundTriggerState:schedules];
+    }];
+}
+
+/**
+ * Sorts provided schedules in ascending prioirty order and checks whether any compound triggers
+ * assigned to those schedules have currently valid state conditions, updating them if necessary.
+ *
+ * @param schedules The schedules.
+ */
+- (void)checkCompoundTriggerState:(NSArray<UASchedule *> *)schedules {
+    // Sort schedules by priority in ascending order
+    schedules = [self sortedSchedulesByPriority:schedules];
+
+    for (UASchedule *schedule in schedules) {
+        for (UAScheduleTrigger *trigger in schedule.info.triggers) {
+            UAScheduleTriggerType type = trigger.type;
+            BOOL (^condition)(void) = self.stateConditions[@(type)];
+
+            // If there is a matching condition and the condition holds, update all of the schedule's triggers of that type
+            if (condition && condition()) {
+                [self updateTriggersWithScheduleID:schedule.identifier type:type argument:nil incrementAmount:1.0];
+            }
+        }
+    }
+}
+
+/**
  * Called when one of the schedule conditions changes.
  */
 - (void)scheduleConditionsChanged {
@@ -583,7 +645,7 @@
  */
 - (void)processTriggeredSchedules:(NSArray<UAScheduleData *> *)schedules {
     // Sort schedules by priority in ascending order
-    schedules = [self sortedSchedulesByPriority:schedules];
+    schedules = [self sortedScheduleDataByPriority:schedules];
 
     for (UAScheduleData *scheduleData in schedules) {
         // If the schedule has expired, delete it
@@ -672,7 +734,6 @@
             }
         }
     }];
-
 }
 
 /**
@@ -722,7 +783,6 @@
 
     return triggers;
 }
-
 
 
 + (UAScheduleDelay *)delayFromData:(UAScheduleDelayData *)data {
