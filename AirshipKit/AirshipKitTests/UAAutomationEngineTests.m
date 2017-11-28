@@ -526,11 +526,18 @@
 - (void)testActiveSession {
     UAScheduleTrigger *trigger = [UAScheduleTrigger activeSessionTriggerWithCount:1];
 
-    // TODO: test state component
     [self verifyTrigger:trigger triggerFireBlock:^{
         [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification
                                                             object:nil];
     }];
+}
+
+- (void)testActiveSessionLateSubscription {
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
+
+    UAScheduleTrigger *trigger = [UAScheduleTrigger activeSessionTriggerWithCount:1];
+
+    [self verifyTrigger:trigger triggerFireBlock:^{}];
 }
 
 - (void)testBackground {
