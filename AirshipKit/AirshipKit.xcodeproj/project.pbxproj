@@ -1100,10 +1100,6 @@
 		DF7E22AA1ED62E0900C79C46 /* UAirshipVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = CC7EEB271DF9F2270041DA8D /* UAirshipVersion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF7E22B51ED62FB100C79C46 /* UA_Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = CC70E8EA1DDA985D000E2528 /* UA_Base64.m */; };
 		DF7E22BC1ED63E9200C79C46 /* UAProjectValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7E22BB1ED63E9200C79C46 /* UAProjectValidationTest.swift */; };
-		DF7E22D91ED7962100C79C46 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF7E22D81ED7962100C79C46 /* WebKit.framework */; };
-		DF7E22DB1ED7964D00C79C46 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF7E22DA1ED7964D00C79C46 /* CoreLocation.framework */; };
-		DF7E22DD1ED7966400C79C46 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF7E22DC1ED7966400C79C46 /* UserNotifications.framework */; };
-		DF7E22DF1ED796B500C79C46 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF7E22DE1ED796B500C79C46 /* JavaScriptCore.framework */; };
 		DF7E7A091EE1DBBB00D4EF02 /* UADefaultActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = DF7E79FA1EE1D50100D4EF02 /* UADefaultActions.plist */; };
 		DF7E7A1C1EE2156100D4EF02 /* AirshipLib.h in Headers */ = {isa = PBXBuildFile; fileRef = DF7E7A1B1EE2156100D4EF02 /* AirshipLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF7E7A1F1EE2163A00D4EF02 /* AirshipLib.h in Headers */ = {isa = PBXBuildFile; fileRef = DF7E7A1D1EE215F600D4EF02 /* AirshipLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1769,10 +1765,6 @@
 				DF6AD3C41ED8A969006EB1DA /* UserNotifications.framework in Frameworks */,
 				DF6AD3C21ED8A961006EB1DA /* WebKit.framework in Frameworks */,
 				CC64F0591D8B77E3009CEF27 /* AirshipKit.framework in Frameworks */,
-				DF7E22DB1ED7964D00C79C46 /* CoreLocation.framework in Frameworks */,
-				DF7E22DF1ED796B500C79C46 /* JavaScriptCore.framework in Frameworks */,
-				DF7E22DD1ED7966400C79C46 /* UserNotifications.framework in Frameworks */,
-				DF7E22D91ED7962100C79C46 /* WebKit.framework in Frameworks */,
 				C7288C982C82D1A883F6764C /* Pods_AirshipKitTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1829,6 +1821,7 @@
 				494DD9581B0EB677009C134E /* Products */,
 				CC40D87A1D8C703E00BABD4F /* Frameworks */,
 				0A550D587E2599A4BD33CDF4 /* Pods */,
+				8B6CDB5D1FCEC31300A93FEE /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1891,35 +1884,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-
-    99B6EE641F3B99AD00C4E3F1 /* Predicates */ = {
-			isa = PBXGroup;
-			children = (
-				99666D731EDF266400BAE46B /* UAActionPredicateProtocol+Internal.h */,
-				99912E8A1ECE57CE00295C67 /* UALandingPageActionPredicate+Internal.h */,
-				99912E8B1ECE57CE00295C67 /* UALandingPageActionPredicate.m */,
-				99912E921ECE57EF00295C67 /* UAOverlayInboxMessageActionPredicate+Internal.h */,
-				99912E931ECE57EF00295C67 /* UAOverlayInboxMessageActionPredicate.m */,
-				99912E8E1ECE57E100295C67 /* UAShareActionPredicate+Internal.h */,
-				99912E8F1ECE57E100295C67 /* UAShareActionPredicate.m */,
-				99912E861ECE57BD00295C67 /* UAAddCustomEventActionPredicate+Internal.h */,
-				99912E871ECE57BD00295C67 /* UAAddCustomEventActionPredicate.m */,
-				992F89881EFD99B000E4C8FE /* UARateAppActionPredicate+Internal.h */,
-				992F89891EFD99B000E4C8FE /* UARateAppActionPredicate.m */,
-				99912E7D1ECCFEA800295C67 /* UATagsActionPredicate+Internal.h */,
-				99912E7E1ECCFEA800295C67 /* UATagsActionPredicate.m */,
-				99912E821ECE575F00295C67 /* UAFetchDeviceInfoActionPredicate+Internal.h */,
-				99912E831ECE575F00295C67 /* UAFetchDeviceInfoActionPredicate.m */,
-				99B6EE651F3B9B5300C4E3F1 /* UAEnableFeatureActionPredicate+Internal.h */,
-				99B6EE661F3B9B5300C4E3F1 /* UAEnableFeatureActionPredicate.m */,
-				99B6EE6D1F3BA1DF00C4E3F1 /* UAURLActionPredicate.m */,
-				99B6EE6E1F3BA1DF00C4E3F1 /* UAURLActionPredicate+Internal.h */,
-			);
-			name = Predicates;
-			sourceTree = "<group>";
-		};
-
-    6E3942261F33DA31003D1C50 /* Data */ = {
+		6E3942261F33DA31003D1C50 /* Data */ = {
 			isa = PBXGroup;
 			children = (
 				6E3942271F33DA52003D1C50 /* UAInboxStoreTest.m */,
@@ -1927,7 +1892,6 @@
 			name = Data;
 			sourceTree = "<group>";
 		};
-
 		6EA1A2A11F3382DF0064CE9D /* Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -1939,8 +1903,19 @@
 				CC40DB9F1D8C996900BABD4F /* UAJSONValueTransformer.m */,
 			);
 			name = Data;
-sourceTree = "<group>";
-};
+			sourceTree = "<group>";
+		};
+		8B6CDB5D1FCEC31300A93FEE /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				DF7E22DA1ED7964D00C79C46 /* CoreLocation.framework */,
+				DF7E22DE1ED796B500C79C46 /* JavaScriptCore.framework */,
+				DF7E22DC1ED7966400C79C46 /* UserNotifications.framework */,
+				DF7E22D81ED7962100C79C46 /* WebKit.framework */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		99B6EE641F3B99AD00C4E3F1 /* Predicates */ = {
 			isa = PBXGroup;
 			children = (
@@ -3718,7 +3693,7 @@ sourceTree = "<group>";
 		494DD94E1B0EB677009C134E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0830;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
 					494DD9561B0EB677009C134E = {
@@ -4724,10 +4699,6 @@ sourceTree = "<group>";
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					armv7s,
-				);
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -4758,10 +4729,6 @@ sourceTree = "<group>";
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					armv7s,
-				);
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -4789,7 +4756,7 @@ sourceTree = "<group>";
 		};
 		CC64F05C1D8B77E3009CEF27 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3DE226EC24B13B38BA51B7B4 /* Pods-AirshipKitTests.debug.xcconfig */;
+			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = NO;
@@ -4815,7 +4782,7 @@ sourceTree = "<group>";
 		};
 		CC64F05D1D8B77E3009CEF27 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 07A9F5B3D35A6078949E4EAA /* Pods-AirshipKitTests.release.xcconfig */;
+			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = NO;
@@ -4914,10 +4881,6 @@ sourceTree = "<group>";
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					armv7s,
-				);
 				CLANG_ANALYZER_NONNULL = YES_NONAGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "compiler-default";
@@ -4955,10 +4918,6 @@ sourceTree = "<group>";
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					armv7s,
-				);
 				CLANG_ANALYZER_NONNULL = YES_NONAGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "compiler-default";
