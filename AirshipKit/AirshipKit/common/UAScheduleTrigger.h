@@ -63,8 +63,12 @@ typedef NS_ENUM(NSInteger, UAScheduleTriggerType) {
     /**
      * App init trigger.
      */
-    UAScheduleTriggerAppInit
+    UAScheduleTriggerAppInit,
 
+    /**
+     * Active session trigger.
+     */
+    UAScheduleTriggerActiveSession
 };
 
 
@@ -123,6 +127,11 @@ extern NSString *const UAScheduleTriggerCustomEventValueName;
  */
 extern NSString *const UAScheduleTriggerScreenName;
 
+/**
+ * Active session trigger name when defining a trigger in JSON.
+ */
+extern NSString *const UAScheduleTriggerActiveSessionName;
+
 @class UAJSONPredicate;
 
 /**
@@ -172,6 +181,14 @@ extern NSString *const UAScheduleTriggerScreenName;
  * @return A background trigger.
  */
 + (instancetype)backgroundTriggerWithCount:(NSUInteger)count;
+
+/**
+ * Factory method to create an active session trigger.
+ *
+ * @param count Number of active sessions before firing the trigger.
+ * @return An active session trigger.
+ */
++ (instancetype)activeSessionTriggerWithCount:(NSUInteger)count;
 
 /**
  * Factory method to create a region enter trigger.

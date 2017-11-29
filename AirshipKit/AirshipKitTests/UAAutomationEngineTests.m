@@ -523,6 +523,23 @@
     }];
 }
 
+- (void)testActiveSession {
+    UAScheduleTrigger *trigger = [UAScheduleTrigger activeSessionTriggerWithCount:1];
+
+    [self verifyTrigger:trigger triggerFireBlock:^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification
+                                                            object:nil];
+    }];
+}
+
+- (void)testActiveSessionLateSubscription {
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
+
+    UAScheduleTrigger *trigger = [UAScheduleTrigger activeSessionTriggerWithCount:1];
+
+    [self verifyTrigger:trigger triggerFireBlock:^{}];
+}
+
 - (void)testBackground {
     UAScheduleTrigger *trigger = [UAScheduleTrigger backgroundTriggerWithCount:1];
     [self verifyTrigger:trigger triggerFireBlock:^{

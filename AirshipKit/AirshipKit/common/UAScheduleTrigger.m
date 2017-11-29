@@ -18,6 +18,7 @@ NSString *const UAScheduleTriggerRegionExitName = @"region_exit";
 NSString *const UAScheduleTriggerCustomEventCountName = @"custom_event_count";
 NSString *const UAScheduleTriggerCustomEventValueName = @"custom_event_value";
 NSString *const UAScheduleTriggerScreenName = @"screen";
+NSString *const UAScheduleTriggerActiveSessionName = @"active_session";
 
 NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trigger";
 
@@ -48,6 +49,10 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
 
 + (instancetype)backgroundTriggerWithCount:(NSUInteger)count {
     return [UAScheduleTrigger triggerWithType:UAScheduleTriggerAppBackground goal:@(count) predicate:nil];
+}
+
++ (instancetype)activeSessionTriggerWithCount:(NSUInteger)count {
+    return [UAScheduleTrigger triggerWithType:UAScheduleTriggerActiveSession goal:@(count) predicate:nil];
 }
 
 + (instancetype)regionEnterTriggerForRegionID:(NSString *)regionID count:(NSUInteger)count {
@@ -124,6 +129,8 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
         triggerType = UAScheduleTriggerScreen;
     } else if ([UAScheduleTriggerAppInitName isEqualToString:triggerTypeString]) {
         triggerType = UAScheduleTriggerAppInit;
+    } else if ([UAScheduleTriggerActiveSessionName isEqualToString:triggerTypeString]) {
+        triggerType = UAScheduleTriggerActiveSession;
     } else {
 
         if (error) {

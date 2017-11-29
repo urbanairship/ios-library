@@ -22,7 +22,9 @@
                                       UAScheduleTriggerCustomEventCountName: @(UAScheduleTriggerCustomEventCount),
                                       UAScheduleTriggerCustomEventValueName: @(UAScheduleTriggerCustomEventValue),
                                       UAScheduleTriggerScreenName: @(UAScheduleTriggerScreen),
-                                      UAScheduleTriggerAppInitName: @(UAScheduleTriggerAppInit) };
+                                      UAScheduleTriggerAppInitName: @(UAScheduleTriggerAppInit),
+                                      UAScheduleTriggerActiveSessionName : @(UAScheduleTriggerActiveSession)
+                                      };
 
 
     for (NSString *typeName in triggerTypeMap) {

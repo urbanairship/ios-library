@@ -181,18 +181,18 @@
     scheduleData.data = schedule.info.data;
     scheduleData.priority = [NSNumber numberWithInteger:schedule.info.priority];
     scheduleData.group = schedule.info.group;
-    scheduleData.triggers = [self createTriggerDataFromTriggers:schedule.info.triggers scheduleStart:schedule.info.start];
+    scheduleData.triggers = [self createTriggerDataFromTriggers:schedule.info.triggers scheduleStart:schedule.info.start schedule:scheduleData];
     scheduleData.start = schedule.info.start;
     scheduleData.end = schedule.info.end;
 
     if (schedule.info.delay) {
-        scheduleData.delay = [self createDelayDataFromDelay:schedule.info.delay scheduleStart:schedule.info.start];
+        scheduleData.delay = [self createDelayDataFromDelay:schedule.info.delay scheduleStart:schedule.info.start schedule:scheduleData];
     }
 
     return scheduleData;
 }
 
-- (UAScheduleDelayData *)createDelayDataFromDelay:(UAScheduleDelay *)delay scheduleStart:(NSDate *)scheduleStart {
+- (UAScheduleDelayData *)createDelayDataFromDelay:(UAScheduleDelay *)delay scheduleStart:(NSDate *)scheduleStart schedule:(UAScheduleData *)schedule {
     UAScheduleDelayData *delayData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleDelayData"
                                                                    inManagedObjectContext:self.managedContext];
 
@@ -205,12 +205,14 @@
             delayData.screens = [[NSString alloc] initWithData:screensData encoding:NSUTF8StringEncoding];
         }
     }
-    delayData.cancellationTriggers = [self createTriggerDataFromTriggers:delay.cancellationTriggers scheduleStart:scheduleStart];
+    delayData.cancellationTriggers = [self createTriggerDataFromTriggers:delay.cancellationTriggers scheduleStart:scheduleStart schedule:schedule];
 
     return delayData;
 }
 
-- (NSSet<UAScheduleTriggerData *> *)createTriggerDataFromTriggers:(NSArray <UAScheduleTrigger *> *)triggers scheduleStart:(NSDate *)scheduleStart {
+- (NSSet<UAScheduleTriggerData *> *)createTriggerDataFromTriggers:(NSArray <UAScheduleTrigger *> *)triggers
+                                                    scheduleStart:(NSDate *)scheduleStart
+                                                         schedule:(UAScheduleData *)schedule {
     NSMutableSet *data = [NSMutableSet set];
 
     for (UAScheduleTrigger *trigger in triggers) {
@@ -223,6 +225,9 @@
         if (trigger.predicate) {
             triggerData.predicateData = [NSJSONSerialization dataWithJSONObject:trigger.predicate.payload options:0 error:nil];
         }
+
+        triggerData.schedule = schedule;
+        triggerData.delay = schedule.delay;
 
         [data addObject:triggerData];
     }
