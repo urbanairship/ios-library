@@ -10,7 +10,7 @@ class RegistrationDelegate: NSObject, UARegistrationDelegate {
 
     var forwardDelegate:UARegistrationDelegate?
 
-    var registrationSucceeded:(_ channelID: String, _ deviceToken: String)->Void = {_ in}
+    var registrationSucceeded:(_ channelID: String, _ deviceToken: String)->Void = {_,_  in}
 
     func registrationSucceeded(forChannelID channelID: String, deviceToken: String) {
         registrationSucceeded(channelID, deviceToken)

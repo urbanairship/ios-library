@@ -57,7 +57,7 @@ class PushSettingsViewController: UITableViewController, UARegistrationDelegate 
         refreshView()
     }
 
-    func refreshView() {
+    @objc func refreshView() {
         channelIDCell?.detailTextLabel?.text = UAirship.push().channelID ?? "Not Set"
 
         analyticsEnabledCell.accessoryType = analytics ? .checkmark : .none

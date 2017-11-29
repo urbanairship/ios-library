@@ -107,7 +107,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
         refreshMessageCenterBadge()
     }
 
-    func refreshMessageCenterBadge() {
+    @objc func refreshMessageCenterBadge() {
         DispatchQueue.main.async {
             if self.window?.rootViewController is UITabBarController {
                 let messageCenterTab: UITabBarItem = (self.window!.rootViewController! as! UITabBarController).tabBar.items![2]
