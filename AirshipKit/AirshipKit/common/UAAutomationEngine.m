@@ -235,7 +235,7 @@
     // Update any dependent foreground triggers
     [self updateTriggersWithType:UAScheduleTriggerAppForeground argument:nil incrementAmount:1.0];
 
-    // Active session triggers may also be updated by foreground transitions
+    // Active session triggers are also updated by foreground transitions
     [self updateTriggersWithType:UAScheduleTriggerActiveSession argument:nil incrementAmount:1.0];
 
     [self scheduleConditionsChanged];
@@ -290,9 +290,9 @@
 #pragma mark -
 #pragma mark Event processing
 
-- (NSArray<UAScheduleData *> *)sortedScheduleDataByPriority:(NSArray<UAScheduleData *> *)schedules {
+- (NSArray<UAScheduleData *> *)sortedScheduleDataByPriority:(NSArray<UAScheduleData *> *)scheduleData {
     NSSortDescriptor *ascending = [[NSSortDescriptor alloc] initWithKey:@"priority" ascending:YES];
-    return [schedules sortedArrayUsingDescriptors:@[ascending]];
+    return [scheduleData sortedArrayUsingDescriptors:@[ascending]];
 }
 
 - (NSArray<UASchedule *> *)sortedSchedulesByPriority:(NSArray<UASchedule *> *)schedules {
