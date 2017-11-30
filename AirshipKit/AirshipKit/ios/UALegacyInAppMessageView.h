@@ -40,10 +40,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * UALegacyInAppMessageView initializer.
- * @param position A `UAInAppMessagePosition` value, indicating screen position.
+ * @param position A `UALegacyInAppMessagePosition` value, indicating screen position.
  * @param numberOfButtons The number of buttons to display (0-2).
  */
-- (instancetype)initWithPosition:(UAInAppMessagePosition)position numberOfButtons:(NSUInteger)numberOfButtons;
+- (instancetype)initWithPosition:(UALegacyInAppMessagePosition)position numberOfButtons:(NSUInteger)numberOfButtons;
 
 @end
 

@@ -17,7 +17,7 @@
 
 @interface UALegacyInAppMessageControllerDefaultDelegate ()
 
-@property(nonatomic, assign) UAInAppMessagePosition position;
+@property(nonatomic, assign) UALegacyInAppMessagePosition position;
 @property(nonatomic, strong) UIColor *primaryColor;
 @property(nonatomic, strong) UIColor *secondaryColor;
 @property(nonatomic, strong) NSArray *layoutConstraints;
@@ -156,7 +156,7 @@
                                 multiplier:1
                                   constant:0].active = YES;
 
-    if (self.position == UAInAppMessagePositionTop) {
+    if (self.position == UALegacyInAppMessagePositionTop) {
         // Top constraint is used for animating the message in the top position.
         self.topConstraint = [NSLayoutConstraint constraintWithItem:messageView
                                                           attribute:NSLayoutAttributeTop
@@ -166,7 +166,7 @@
                                                          multiplier:1
                                                            constant:-messageView.bounds.size.height];
         self.topConstraint.active = YES;
-    } else if (self.position == UAInAppMessagePositionBottom) {
+    } else if (self.position == UALegacyInAppMessagePositionBottom) {
         // Bottom constraint is used for animating the message in the bottom position.
         self.bottomConstraint = [NSLayoutConstraint constraintWithItem:messageView
                                                              attribute:NSLayoutAttributeBottom
@@ -255,9 +255,9 @@
 }
 
 - (void)messageView:(UIView *)messageView animateInWithParentView:(UIView *)parentView completionHandler:(void (^)(void))completionHandler {
-    if (self.position == UAInAppMessagePositionTop) {
+    if (self.position == UALegacyInAppMessagePositionTop) {
         self.topConstraint.constant = 0;
-    } else if (self.position == UAInAppMessagePositionBottom) {
+    } else if (self.position == UALegacyInAppMessagePositionBottom) {
         self.bottomConstraint.constant = 0;
     }
 
@@ -271,9 +271,9 @@
 
 - (void)messageView:(UIView *)messageView animateOutWithParentView:(UIView *)parentView completionHandler:(void (^)(void))completionHandler {
 
-    if (self.position == UAInAppMessagePositionTop) {
+    if (self.position == UALegacyInAppMessagePositionTop) {
         self.topConstraint.constant = -messageView.bounds.size.height;
-    } else if (self.position == UAInAppMessagePositionBottom) {
+    } else if (self.position == UALegacyInAppMessagePositionBottom) {
         self.bottomConstraint.constant = messageView.bounds.size.height;
     }
 

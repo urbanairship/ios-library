@@ -41,12 +41,12 @@
 
 @implementation UALegacyInAppMessageView
 
-- (instancetype)initWithPosition:(UAInAppMessagePosition)position numberOfButtons:(NSUInteger)numberOfButtons {
+- (instancetype)initWithPosition:(UALegacyInAppMessagePosition)position numberOfButtons:(NSUInteger)numberOfButtons {
     NSString *nibName = kUALegacyInAppMessageViewNibName;
     NSBundle *bundle = [UAirship resources];
 
     // Top and bottom IAP views are firstObject and lastObject, respectively.
-    if (position == UAInAppMessagePositionTop) {
+    if (position == UALegacyInAppMessagePositionTop) {
         self = [[bundle loadNibNamed:nibName owner:self options:nil] firstObject];
     } else {
         self = [[bundle loadNibNamed:nibName owner:self options:nil] lastObject];
@@ -71,7 +71,7 @@
         CGFloat shadowOffsetY;
 
         // If on the bottom, project the shadow on the top edge
-        if (position == UAInAppMessagePositionBottom) {
+        if (position == UALegacyInAppMessagePositionBottom) {
             shadowOffsetY = -kUALegacyInAppMessageViewShadowOffsetY;
         } else {
             // Otherwise project it on the bottom edge
@@ -122,7 +122,7 @@
 
 #if !TARGET_OS_TV   // No status bar in tvOS
         // If the message is at the top, listen for changes to the status bar frame
-        if (position == UAInAppMessagePositionTop) {
+        if (position == UALegacyInAppMessagePositionTop) {
 
             [self updateStatusBarConstraints];
 

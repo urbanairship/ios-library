@@ -338,8 +338,8 @@
             if (CGRectContainsPoint(self.messageView.bounds, touchPoint)) {
                 // if the y axis translation and message position line up
                 // (i.e. if the swipe is moving in the right direction)
-                if ((translation.y > 0 && self.message.position == UAInAppMessagePositionBottom) ||
-                    (translation.y < 0 && self.message.position == UAInAppMessagePositionTop)) {
+                if ((translation.y > 0 && self.message.position == UALegacyInAppMessagePositionBottom) ||
+                    (translation.y < 0 && self.message.position == UALegacyInAppMessagePositionTop)) {
                     if (!self.tapDetected && !self.longPressDetected) {
                         self.swipeDetected = YES;
 

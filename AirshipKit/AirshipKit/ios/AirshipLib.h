@@ -77,6 +77,10 @@
 #import "UADisplayInboxAction.h"
 #import "UAInAppMessage.h"
 #import "UAInAppMessageAdapterProtocol.h"
+<<<<<<< HEAD
+=======
+#import "UAInAppMessageBannerAdapter.h"
+>>>>>>> 4330083f... [MB-2401b] what's left when we take out the info objects
 #import "UAInAppMessageBannerDisplayContent.h"
 #import "UAInAppMessageButtonInfo.h"
 #import "UAInAppMessageDisplayContent.h"

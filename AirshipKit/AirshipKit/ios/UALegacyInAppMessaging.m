@@ -157,7 +157,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     }
 
     // Discard if it's not a banner
-    if (message.displayType != UAInAppMessageDisplayTypeBanner) {
+    if (message.displayType != UALegacyInAppMessageDisplayTypeBanner) {
         UA_LDEBUG(@"In-app message is not a banner, discarding: %@", message);
         return;
     }
@@ -218,7 +218,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     }
 
     // Discard if it's not a banner
-    if (message.displayType != UAInAppMessageDisplayTypeBanner) {
+    if (message.displayType != UALegacyInAppMessageDisplayTypeBanner) {
         UA_LDEBUG(@"In-app message is not a banner, discarding: %@", message);
         return;
     }

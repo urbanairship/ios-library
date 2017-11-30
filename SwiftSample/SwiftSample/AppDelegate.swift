@@ -57,7 +57,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
         UAirship.push().registrationDelegate = self
 
         NotificationCenter.default.addObserver(self, selector:#selector(AppDelegate.refreshMessageCenterBadge), name: NSNotification.Name.UAInboxMessageListUpdated, object: nil)
-        
+
         return true
     }
 

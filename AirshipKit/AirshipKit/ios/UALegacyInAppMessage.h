@@ -6,15 +6,15 @@
 /**
  * Enumeration of in-app message screen positions.
  */
-typedef NS_ENUM(NSInteger, UAInAppMessagePosition) {
+typedef NS_ENUM(NSInteger, UALegacyInAppMessagePosition) {
     /**
      * The top of the screen.
      */
-    UAInAppMessagePositionTop,
+    UALegacyInAppMessagePositionTop,
     /**
      * The bottom of the screen.
      */
-    UAInAppMessagePositionBottom
+    UALegacyInAppMessagePositionBottom
 };
 
 /**
@@ -24,11 +24,11 @@ typedef NS_ENUM(NSInteger, UALegacyInAppMessageDisplayType) {
     /**
      * Unknown or unsupported display type.
      */
-    UAInAppMessageDisplayTypeUnknown,
+    UALegacyInAppMessageDisplayTypeUnknown,
     /**
      * Banner display type.
      */
-    UAInAppMessageDisplayTypeBanner
+    UALegacyInAppMessageDisplayTypeBanner
 };
 
 @class UALegacyInAppMessageButtonActionBinding;
@@ -75,8 +75,8 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- * The display type. Defaults to `UAInAppMessageDisplayTypeBanner`
- * when built with the default class constructor, or `UAInAppMessageDisplayTypeUnknown`
+ * The display type. Defaults to `UALegacyInAppMessageDisplayTypeBanner`
+ * when built with the default class constructor, or `UALegacyInAppMessageDisplayTypeUnknown`
  * when built from a payload with a missing or unidentified display type.
  */
 @property(nonatomic, assign) UALegacyInAppMessageDisplayType displayType;
@@ -89,7 +89,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The screen position. Defaults to `UAInAppMessagePositionBottom`.
  */
-@property(nonatomic, assign) UAInAppMessagePosition position;
+@property(nonatomic, assign) UALegacyInAppMessagePosition position;
 
 /**
  * The amount of time to wait before automatically dismissing

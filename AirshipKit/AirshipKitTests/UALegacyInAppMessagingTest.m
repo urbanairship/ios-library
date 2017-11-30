@@ -42,11 +42,11 @@
     self.bannerMessage = [UALegacyInAppMessage message];
     self.bannerMessage.identifier = @"identifier";
     self.bannerMessage.alert = @"whatever";
-    self.bannerMessage.displayType = UAInAppMessageDisplayTypeBanner;
+    self.bannerMessage.displayType = UALegacyInAppMessageDisplayTypeBanner;
     self.bannerMessage.expiry = [NSDate dateWithTimeIntervalSinceNow:10000];
 
     self.nonBannerMessage.alert = @"blah";
-    self.nonBannerMessage.displayType = UAInAppMessageDisplayTypeUnknown;
+    self.nonBannerMessage.displayType = UALegacyInAppMessageDisplayTypeUnknown;
 
     self.payload = @{
                      @"display": @{

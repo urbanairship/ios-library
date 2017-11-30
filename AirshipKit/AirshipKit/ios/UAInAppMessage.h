@@ -1,8 +1,28 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
+#import "UAInAppMessageDisplayContent.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+/**
+ * Represents the possible error conditions when deserializing an in-app message from JSON.
+ */
+typedef NS_ENUM(NSInteger, UAInAppMessageErrorCode) {
+    /**
+     * Indicates an error with the in-app message JSON definition.
+     */
+    UAInAppMessageErrorCodeInvalidJSON,
+};
+
+/**
+ * Banner display types.
+ */
+extern NSString *const UAInAppMessageDisplayTypeBanner;
+extern NSString *const UAInAppMessageDisplayTypeFullScreen;
+extern NSString *const UAInAppMessageDisplayTypeModal;
+extern NSString *const UAInAppMessageDisplayTypeHTML;
+extern NSString *const UAInAppMessageDisplayTypeCustom;
 
 /**
  * Builder class for a UAInAppMessage.
@@ -26,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The display content for the message.
  */
-@property(nonatomic, copy, nullable) id displayContent;
+@property(nonatomic, strong, nullable) UAInAppMessageDisplayContent *displayContent;
 
 /**
  * The extras for the messages.
@@ -57,7 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The display content for the message.
  */
-@property(nonatomic, copy, nullable) id displayContent;
+@property(nonatomic, strong, nullable) UAInAppMessageDisplayContent *displayContent;
 
 /**
  * The extras for the messages.
@@ -76,9 +96,10 @@ NS_ASSUME_NONNULL_BEGIN
  * Class factory method for constructing an in-app message from JSON.
  *
  * @param json JSON object that defines the message.
- * @return A fully configured instance of UAInAppMessage.
+ * @param error An NSError pointer for storing errors, if applicable.
+ * @return A fully configured instance of UAInAppMessage or nil if JSON parsing fails.
  */
-+ (instancetype)messageWithJSON:(NSDictionary *)json;
++ (nullable instancetype)messageWithJSON:(NSDictionary *)json error:(NSError * _Nullable *)error;
 
 /**
  * Class factory method for constructing an in-app message

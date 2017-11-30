@@ -77,6 +77,38 @@
                                              selector:@selector(refreshMessageCenterBadge)
                                                  name:UAInboxMessageListUpdatedNotification object:nil];
 
+    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
+        builder.identifier = @"myMessage";
+        builder.displayType = UAInAppMessageDisplayTypeBanner;
+        builder.displayContent = [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
+            UAInAppMessageTextInfo *tex1 = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+                builder.text = @"text1";
+                builder.color = @"#ff0000"; // red
+                builder.size = 11;
+                builder.alignment = UAInAppMessageTextInfoAlignmentLeft;
+                builder.styles = @[UAInAppMessageTextInfoStyleBold, UAInAppMessageTextInfoStyleItalic, UAInAppMessageTextInfoStyleUnderline];
+            }];
+
+            UAInAppMessageTextInfo *tex2 = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+                builder.text = @"text2";
+                builder.color = @"#0000ff"; // blue
+                builder.size = 9;
+                builder.alignment = UAInAppMessageTextInfoAlignmentRight;
+                builder.styles = @[UAInAppMessageTextInfoStyleBold, UAInAppMessageTextInfoStyleItalic, UAInAppMessageTextInfoStyleUnderline];
+            }];
+
+            UAInAppMessageButtonInfo *butt1 = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
+                builder.label = tex1;
+            }];
+
+            UAInAppMessageButtonInfo *butt2 = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
+                builder.label = tex2;
+            }];
+
+            builder.buttons = @[butt1, butt2];
+        }];
+    }];
+
     return YES;
 }
 

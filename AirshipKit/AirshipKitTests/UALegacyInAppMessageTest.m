@@ -64,8 +64,8 @@
 
     XCTAssertEqualObjects(message.alert, self.payload[@"display"][@"alert"]);
     XCTAssertEqual(message.duration, [self.payload[@"display"][@"duration"] doubleValue]);
-    XCTAssertEqual(message.position, UAInAppMessagePositionTop);
-    XCTAssertEqual(message.displayType, UAInAppMessageDisplayTypeBanner);
+    XCTAssertEqual(message.position, UALegacyInAppMessagePositionTop);
+    XCTAssertEqual(message.displayType, UALegacyInAppMessageDisplayTypeBanner);
 
     XCTAssertEqualObjects(message.buttonGroup, self.payload[@"actions"][@"button_group"]);
     XCTAssertEqualObjects(message.onClick, self.payload[@"actions"][@"on_click"]);
@@ -79,8 +79,8 @@
 
 - (void)testDefaults {
     UALegacyInAppMessage *message = [UALegacyInAppMessage message];
-    XCTAssertEqual(message.displayType, UAInAppMessageDisplayTypeBanner);
-    XCTAssertEqual(message.position, UAInAppMessagePositionBottom);
+    XCTAssertEqual(message.displayType, UALegacyInAppMessageDisplayTypeBanner);
+    XCTAssertEqual(message.position, UALegacyInAppMessagePositionBottom);
 
     NSDate *expiry = message.expiry;
     NSDate *expectedExpiry = [NSDate dateWithTimeIntervalSinceNow:60 * 60 * 24 * 30];
@@ -117,10 +117,10 @@
     UALegacyInAppMessage *iam = [UALegacyInAppMessage messageWithPayload:weirdPayload];
 
     // default to unknown
-    XCTAssertEqual(iam.displayType, UAInAppMessageDisplayTypeUnknown);
+    XCTAssertEqual(iam.displayType, UALegacyInAppMessageDisplayTypeUnknown);
 
     // default to bottom
-    XCTAssertEqual(iam.position, UAInAppMessagePositionBottom);
+    XCTAssertEqual(iam.position, UALegacyInAppMessagePositionBottom);
 }
 
 /**
@@ -138,10 +138,10 @@
     XCTAssertNil(iam.alert);
 
     // default to unknown (as opposed to banner, which is the default when constructing a new object)
-    XCTAssertEqual(iam.displayType, UAInAppMessageDisplayTypeUnknown);
+    XCTAssertEqual(iam.displayType, UALegacyInAppMessageDisplayTypeUnknown);
 
     // default to bottom
-    XCTAssertEqual(iam.position, UAInAppMessagePositionBottom);
+    XCTAssertEqual(iam.position, UALegacyInAppMessagePositionBottom);
 
     // default to 15 seconds
     XCTAssertEqual(iam.duration, 15);

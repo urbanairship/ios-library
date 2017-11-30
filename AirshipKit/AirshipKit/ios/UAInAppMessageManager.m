@@ -47,6 +47,7 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
         self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:[UAAutomationStore automationStoreWithStoreName:storeName] scheduleLimit:MaxSchedules];
         self.displayInterval = DefaultMessageDisplayInterval;
         self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self remoteDataManager:remoteDataManager dataStore:dataStore];
+        [self setDefaultAdapterFactories];
     }
 
     return self;
@@ -59,9 +60,15 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
         self.automationEngine = automationEngine;
         self.displayInterval = DefaultMessageDisplayInterval;
         self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self remoteDataManager:remoteDataManager dataStore:dataStore];
+        [self setDefaultAdapterFactories];
     }
 
     return self;
+}
+
+// Sets the default adapter factories
+- (void)setDefaultAdapterFactories {
+
 }
 
 - (void)scheduleMessageWithScheduleInfo:(UAInAppMessageScheduleInfo *)scheduleInfo

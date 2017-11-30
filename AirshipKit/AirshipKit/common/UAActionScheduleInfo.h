@@ -38,7 +38,7 @@ extern NSString *const UAActionScheduleInfoActionsKey;
 /**
  * Actions payload to run when the schedule is triggered.
  */
-@property(nonatomic, readonly) NSDictionary *actions;
+@property(nonatomic, readonly, nullable) NSDictionary *actions;
 
 ///---------------------------------------------------------------------------------------
 /// @name Action Schedule Info Factories

@@ -118,6 +118,7 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
 
     UAScheduleTriggerType triggerType;
 
+    // Needs to ensure triggerTypeString is an NSString first
     NSString *triggerTypeString = [json[UAScheduleTriggerTypeKey] lowercaseString];
     if ([UAScheduleTriggerAppForegroundName isEqualToString:triggerTypeString]) {
         triggerType = UAScheduleTriggerAppForeground;

@@ -51,9 +51,9 @@
     NSString *displayType = typeCheck(display[@"type"], [NSString class]);
 
     if ([displayType isEqualToString:@"banner"]) {
-        message.displayType = UAInAppMessageDisplayTypeBanner;
+        message.displayType = UALegacyInAppMessageDisplayTypeBanner;
     } else {
-        message.displayType = UAInAppMessageDisplayTypeUnknown;
+        message.displayType = UALegacyInAppMessageDisplayTypeUnknown;
     }
 
     message.alert = typeCheck(display[@"alert"], [NSString class]);
@@ -65,9 +65,9 @@
 
     NSString *positionString = typeCheck(display[@"position"], [NSString class]);
     if ([positionString isEqualToString:@"top"]) {
-        message.position = UAInAppMessagePositionTop;
+        message.position = UALegacyInAppMessagePositionTop;
     } else if ([positionString isEqualToString:@"bottom"]) {
-        message.position = UAInAppMessagePositionBottom;
+        message.position = UALegacyInAppMessagePositionBottom;
     }
 
     message.primaryColor = [UAColorUtils colorWithHexString:typeCheck(display[@"primary_color"], [NSString class])];
@@ -86,9 +86,9 @@
     self = [super init];
     if (self) {
         // Default values unless otherwise specified
-        self.displayType = UAInAppMessageDisplayTypeBanner;
+        self.displayType = UALegacyInAppMessageDisplayTypeBanner;
         self.expiry = [NSDate dateWithTimeIntervalSinceNow:kUADefaultInAppMessageExpiryInterval];
-        self.position = UAInAppMessagePositionBottom;
+        self.position = UALegacyInAppMessagePositionBottom;
         self.duration = kUADefaultInAppMessageDurationInterval;
     }
     return self;
@@ -106,7 +106,7 @@
     NSDictionary *extra = self.extra;
 
     NSString *displayType;
-    if (self.displayType == UAInAppMessageDisplayTypeBanner) {
+    if (self.displayType == UALegacyInAppMessageDisplayTypeBanner) {
         displayType = @"banner";
     } else {
         displayType = @"unknown";
@@ -117,9 +117,9 @@
     NSNumber *duration = [NSNumber numberWithDouble:self.duration];
 
     NSString *position;
-    if (self.position == UAInAppMessagePositionTop) {
+    if (self.position == UALegacyInAppMessagePositionTop) {
         position = @"top";
-    } else if (self.position == UAInAppMessagePositionBottom) {
+    } else if (self.position == UALegacyInAppMessagePositionBottom) {
         position = @"bottom";
     }
 

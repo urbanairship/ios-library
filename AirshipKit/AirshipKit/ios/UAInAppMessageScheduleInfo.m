@@ -16,7 +16,7 @@ NSString *const UAScheduleInfoInAppMessageKey = @"message";
         NSDictionary *data = [NSJSONSerialization objectWithString:self.data];
 
         if (data) {
-            return [UAInAppMessage messageWithJSON:data];;
+            return [UAInAppMessage messageWithJSON:data error:nil];
         }
     }
     return nil;
@@ -51,7 +51,7 @@ NSString *const UAScheduleInfoInAppMessageKey = @"message";
 @implementation UAInAppMessageScheduleInfo
 
 - (UAInAppMessage *)message {
-    return [UAInAppMessage messageWithJSON:[NSJSONSerialization objectWithString:self.data]];
+    return [UAInAppMessage messageWithJSON:[NSJSONSerialization objectWithString:self.data] error:nil];
 }
 
 + (instancetype)inAppMessageScheduleInfoWithBuilderBlock:(void(^)(UAInAppMessageScheduleInfoBuilder *builder))builderBlock {
@@ -85,7 +85,7 @@ NSString *const UAScheduleInfoInAppMessageKey = @"message";
     }
 
     // message with JSON expects displayType to be NSString
-    UAInAppMessage *message = [UAInAppMessage messageWithJSON:messagePayload];
+    UAInAppMessage *message = [UAInAppMessage messageWithJSON:messagePayload error:nil];
     builder.message = message;
     builder.group = message.identifier;
 

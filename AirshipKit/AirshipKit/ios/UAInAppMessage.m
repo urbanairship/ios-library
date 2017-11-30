@@ -1,8 +1,10 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAInAppMessage+Internal.h"
+#import "UAInAppMessageBannerDisplayContent.h"
 
 @implementation UAInAppMessageBuilder
+
 
 NSString * const UAInAppMessageErrorDomain = @"com.urbanairship.in_app_message";
 
@@ -26,23 +28,96 @@ NSString *const UAInAppMessageDisplayTypeCustom = @"custom";
     return [[self alloc] init];
 }
 
-+ (instancetype)messageWithJSON:(NSDictionary *)json {
++ (instancetype)messageWithJSON:(NSDictionary *)json error:(NSError * _Nullable *)error {
     UAInAppMessageBuilder *builder = [[UAInAppMessageBuilder alloc] init];
 
-    id (^typeCheck)(id, Class) = ^id(id value, Class class) {
-        return [value isKindOfClass:class] ? value : nil;
-    };
+    if (![json isKindOfClass:[NSDictionary class]]) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize invalid object: %@", json];
+            *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                          code:UAInAppMessageErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
+        return nil;
+    }
+
+    id identifier = json[UAInAppMessageIDKey];
+    if (identifier && ![identifier isKindOfClass:[NSString class]]) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Message identifier must be a string. Invalid value: %@", identifier];
+            *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                          code:UAInAppMessageErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
+        return nil;
+    }
+
+    UAInAppMessageDisplayContent *displayContent;
+    id displayContentDict = json[UAInAppMessageMediaKey];
+    if (displayContentDict) {
+        if (![displayContentDict isKindOfClass:[NSDictionary class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Display content must be a dictionary. Invalid value: %@", json[UAInAppMessageMediaKey]];
+                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                              code:UAInAppMessageErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+        }
+    }
+
+    id displayType = json[UAInAppMessageDisplayTypeKey];
+    if (displayType && [displayType isKindOfClass:[NSString class]]) {
+        NSString *displayTypeStr = [displayType lowercaseString];
+
+        if ([UAInAppMessageDisplayTypeBanner isEqualToString:displayTypeStr]) {
+            displayTypeStr = UAInAppMessageDisplayTypeBanner;
+            displayContent = [UAInAppMessageBannerDisplayContent bannerDisplayContentWithJSON:displayContentDict error:error];
+        } else if ([UAInAppMessageDisplayTypeFullScreen isEqualToString:displayTypeStr]) {
+            displayTypeStr = UAInAppMessageDisplayTypeFullScreen;
+            // TODO uncomment this when modal is implemented see banner above for example
+            //displayContent = [UAInAppMessageFullScreenDisplayContent fullScreenDisplayContentWithJSON:displayContentDict error:error];
+        } else if ([UAInAppMessageDisplayTypeModal isEqualToString:displayTypeStr]) {
+            displayTypeStr = UAInAppMessageDisplayTypeModal;
+            // TODO uncomment this when modal is implemented see banner above for example
+            //displayContent = [UAInAppMessageModalDisplayContent modalDisplayContentWithJSON:displayContentDict error:error];
+        } else if ([UAInAppMessageDisplayTypeHTML isEqualToString:displayTypeStr]) {
+            displayTypeStr = UAInAppMessageDisplayTypeHTML;
+            // TODO uncomment this when modal is implemented see banner above for example
+            //displayContent = [UAInAppMessageHTMLDisplayContent htmlDisplayContentWithJSON:displayContentDict error:error];
+        } else if ([UAInAppMessageDisplayTypeCustom isEqualToString:displayTypeStr]) {
+            displayTypeStr = UAInAppMessageDisplayTypeCustom;
+            // TODO uncomment this when modal is implemented see banner above for example
+            //displayContent = [UAInAppMessageCustomDisplayContent customDisplayContentWithJSON:displayContentDict error:error];
+        } else {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Message display type must be a string represening a valid display type. Invalid value: %@", displayTypeStr];
+                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                              code:UAInAppMessageErrorCodeInvalidJSON                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        }
+
+        if (!displayContent) {
+            return nil;
+        }
+    }
+
+    id extras = json[UAInAppMessageExtrasKey];
+    if (![extras isKindOfClass:[NSDictionary class]]) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Message extras must be a dictionary. Invalid value: %@", extras];
+            *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                          code:UAInAppMessageErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
+        return nil;
+    }
 
     builder.json = json;
-
-    // top-level keys
-    NSString *messageID = typeCheck(json[UAInAppMessageIDKey], [NSString class]);
-    NSString *displayType =  typeCheck(json[UAInAppMessageDisplayTypeKey], [NSString class]);
-    NSDictionary *extras = typeCheck(json[UAInAppMessageExtrasKey], [NSDictionary class]);
-    // TODO Update this to actual object
-    id displayContent = typeCheck(json[UAInAppMessageDisplayContentKey], [NSObject class]);
-
-    builder.identifier = messageID;
+    builder.identifier = identifier;
     builder.displayType = displayType;
     builder.extras = extras;
     builder.displayContent = displayContent;

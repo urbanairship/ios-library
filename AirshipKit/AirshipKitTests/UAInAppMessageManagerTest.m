@@ -55,10 +55,15 @@
         return self.mockAdapter;
     } forDisplayType:@"banner"];
 
+    XCTestExpectation *prepareCalled = [self expectationWithDescription:@"prepare should be called"];
+
     [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
+        UA_STRONGIFY(self)
         void (^prepareBlock)(void);
         [invocation getArgument:&prepareBlock atIndex:2];
 
+        [prepareCalled fulfill];
+        
         // Expect schedule conditions changed when prepare completes/prep block runs
         [[self.mockAutomationEngine expect] scheduleConditionsChanged];
 
@@ -69,6 +74,8 @@
     UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo];
     XCTAssertFalse([self.manager isScheduleReadyToExecute:schedule]);
 
+    [self waitForExpectationsWithTimeout:5 handler:nil];
+    
     [self.mockAdapter verify];
     [self.mockAutomationEngine verify];
 }

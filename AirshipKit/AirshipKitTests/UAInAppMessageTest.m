@@ -18,7 +18,7 @@
     self.json = @{
                      @"message_id": @"",
                      @"display": @"something",
-                     @"display_type": @"banner",
+                     @"display_type": @{@"something":@"good"},
                      @"extras": @{@"foo":@"baz", @"baz":@"foo"}
                  };
 }
@@ -46,7 +46,7 @@
  * Test that payloads get turned into model objects properly
  */
 - (void)testMessageWithPayload {
-    UAInAppMessage *iam = [UAInAppMessage messageWithJSON:self.json];
+    UAInAppMessage *iam = [UAInAppMessage messageWithJSON:self.json error:nil];
     [self verifyConsistency:iam];
 }
 
