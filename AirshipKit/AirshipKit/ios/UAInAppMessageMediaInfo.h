@@ -18,6 +18,7 @@ typedef NS_ENUM(NSInteger, UAMediaInfoErrorCode) {
  */
 extern NSString *const UAInAppMessageMediaURLKey;
 extern NSString *const UAInAppMessageMediaTypeKey;
+extern NSString *const UAInAppMessageMediaDescriptionKey;
 
 /**
  * Image media type.
@@ -49,6 +50,11 @@ extern NSString *const UAInAppMessageMediaInfoTypeYouTube;
  */
 @property(nonatomic, copy) NSString *type;
 
+/**
+ * Media description.
+ */
+@property(nonatomic, copy) NSString *mediaDescription;
+
 @end
 
 
@@ -66,6 +72,11 @@ extern NSString *const UAInAppMessageMediaInfoTypeYouTube;
  * Media type - media, video or YouTube video.
  */
 @property(nonatomic, copy, readonly) NSString *type;
+
+/**
+ * Media description.
+ */
+@property(nonatomic, copy, readonly) NSString *mediaDescription;
 
 /**
  * Factory method to create an in-app message media info from a JSON payload.

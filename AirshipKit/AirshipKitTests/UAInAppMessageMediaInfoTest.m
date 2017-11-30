@@ -21,6 +21,7 @@
     UAInAppMessageMediaInfo *fromBuilderMediaInfo = [UAInAppMessageMediaInfo mediaInfoWithBuilderBlock:^(UAInAppMessageMediaInfoBuilder * _Nonnull builder) {
         builder.url = @"theurl";
         builder.type = UAInAppMessageMediaInfoTypeYouTube;
+        builder.mediaDescription = @"some description";
     }];
 
     NSDictionary *JSONFromBuilderMediaInfo = [UAInAppMessageMediaInfo JSONWithMediaInfo:fromBuilderMediaInfo];

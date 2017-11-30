@@ -49,15 +49,6 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
 
     UAInAppMessageTextInfo *heading = nil;
     if (json[UAInAppMessageHeadingKey]) {
-        if (![json[UAInAppMessageHeadingKey] isKindOfClass:[NSDictionary class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Heading must be a dictionary. Invalid value: %@", json[UAInAppMessageHeadingKey]];
-                *error =  [NSError errorWithDomain:UAInAppMessageBannerDisplayContentDomain
-                                              code:UAInAppMessageBannerDisplayContentErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-        }
-
         heading = [UAInAppMessageTextInfo textInfoWithJSON:json[UAInAppMessageHeadingKey] error:error];
 
         if (!heading) {
@@ -67,15 +58,6 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
 
     UAInAppMessageTextInfo *body = nil;
     if (json[UAInAppMessageBodyKey]) {
-        if (![json[UAInAppMessageBodyKey] isKindOfClass:[NSDictionary class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Body payload must be a dictionary. Invalid value: %@", json[UAInAppMessageBodyKey]];
-                *error =  [NSError errorWithDomain:UAInAppMessageBannerDisplayContentDomain
-                                              code:UAInAppMessageBannerDisplayContentErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-        }
-
         body = [UAInAppMessageTextInfo textInfoWithJSON:json[UAInAppMessageBodyKey] error:error];
 
         if (!body) {
@@ -85,15 +67,6 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
 
     UAInAppMessageMediaInfo *media = nil;
     if (json[UAInAppMessageMediaKey]) {
-        if (![json[UAInAppMessageMediaKey] isKindOfClass:[NSDictionary class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Media must be a dictionary. Invalid value: %@", json[UAInAppMessageMediaKey]];
-                *error =  [NSError errorWithDomain:UAInAppMessageBannerDisplayContentDomain
-                                              code:UAInAppMessageBannerDisplayContentErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-        }
-
         media = [UAInAppMessageMediaInfo mediaInfoWithJSON:json[UAInAppMessageMediaKey] error:error];
 
         if (!media) {

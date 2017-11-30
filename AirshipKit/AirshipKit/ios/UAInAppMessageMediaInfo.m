@@ -12,10 +12,13 @@ NSString *const UAInAppMessageMediaInfoDomain = @"com.urbanairship.in_app_messag
 
 NSString *const UAInAppMessageMediaInfoURLKey = @"url";
 NSString *const UAInAppMessageMediaInfoTypeKey = @"type";
+NSString *const UAInAppMessageMediaInfoDescriptionKey = @"description";
+
 
 @interface UAInAppMessageMediaInfo ()
 @property(nonatomic, copy) NSString *url;
 @property(nonatomic, copy) NSString *type;
+@property(nonatomic, copy) NSString *mediaDescription;
 @end
 
 @implementation UAInAppMessageMediaInfoBuilder
@@ -28,6 +31,7 @@ NSString *const UAInAppMessageMediaInfoTypeKey = @"type";
     if (self) {
         self.url = builder.url;
         self.type = builder.type;
+        self.mediaDescription = builder.mediaDescription;
     }
 
     return self;
@@ -81,9 +85,24 @@ NSString *const UAInAppMessageMediaInfoTypeKey = @"type";
         }
     }
 
+    NSString *description;
+    id descriptionText = json[UAInAppMessageMediaInfoDescriptionKey];
+    if (descriptionText && ![descriptionText isKindOfClass:[NSString class]]) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"In-app message media description must be a string. Invalid value: %@", descriptionText];
+            *error =  [NSError errorWithDomain:UAInAppMessageMediaInfoDomain
+                                          code:UAInAppMessageMediaInfoErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
+        return nil;
+    }
+    description = descriptionText;
+
     return [UAInAppMessageMediaInfo mediaInfoWithBuilderBlock:^(UAInAppMessageMediaInfoBuilder * _Nonnull builder) {
         builder.url = url;
         builder.type = mediaType;
+        builder.mediaDescription = description;
     }];
 }
 
@@ -92,6 +111,7 @@ NSString *const UAInAppMessageMediaInfoTypeKey = @"type";
 
     json[UAInAppMessageMediaInfoURLKey] = mediaInfo.url;
     json[UAInAppMessageMediaInfoTypeKey] = mediaInfo.type;
+    json[UAInAppMessageMediaInfoDescriptionKey] = mediaInfo.mediaDescription;
 
     return [NSDictionary dictionaryWithDictionary:json];
 }
@@ -127,6 +147,7 @@ NSString *const UAInAppMessageMediaInfoTypeKey = @"type";
     NSUInteger result = 1;
     result = 31 * result + [self.url hash];
     result = 31 * result + [self.type hash];
+    result = 31 * result + [self.mediaDescription hash];
 
     return result;
 }
