@@ -2,9 +2,10 @@
 
 #import "UAAPIClient+Internal.h"
 #import "UARequestSession+Internal.h"
-
 #import "UAConfig.h"
 #import "UAirship.h"
+
+NSUInteger const UAAPIClientStatusDisabled = 0;
 
 @interface UAAPIClient()
 @property (nonatomic, strong) UAConfig *config;
@@ -19,6 +20,7 @@
     if (self) {
         self.config = config;
         self.session = session;
+        self.enabled = YES;
     }
 
     return self;

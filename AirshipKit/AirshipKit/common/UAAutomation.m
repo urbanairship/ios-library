@@ -14,24 +14,28 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
 @implementation UAAutomation
 
 
-- (instancetype)initWithConfig:(UAConfig *)config {
-    self = [super init];
+- (instancetype)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+    self = [super initWithDataStore:dataStore];
 
     if (self) {
 
         NSString *storeName = [NSString stringWithFormat:UAAutomationStoreFileFormat, config.appKey];
 
         self.automationEngine = [UAAutomationEngine automationEngineWithStoreName:storeName
-                                                                    scheduleLimit:UAAutomationScheduleLimit];
+                                                                    scheduleLimit:UAAutomationScheduleLimit
+                                                                           paused:self.componentEnabled];
         self.automationEngine.delegate = self;
-        [self.automationEngine start];
+        
+        if (self.componentEnabled) {
+            [self.automationEngine start];
+        }
     }
 
     return self;
 }
 
-+ (instancetype)automationWithConfig:(UAConfig *)config {
-    return [[UAAutomation alloc] initWithConfig:config];
++ (instancetype)automationWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+    return [[UAAutomation alloc] initWithConfig:config dataStore:dataStore];
 }
 
 #pragma mark -
@@ -95,6 +99,16 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
 - (void)dealloc {
     [self.automationEngine stop];
     self.automationEngine.delegate = nil;
+}
+
+- (void)onComponentEnableChange {
+    if (self.componentEnabled) {
+        // if component was disabled and is now enabled, resume automation engine
+        [self.automationEngine resume];
+    } else {
+        // if component was enabled and is now disabled, pause automation engine
+        [self.automationEngine pause];
+    }
 }
 
 @end

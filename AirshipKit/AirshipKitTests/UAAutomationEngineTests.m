@@ -12,7 +12,7 @@
 #import "UAScheduleData+Internal.h"
 #import "UAScheduleInfo+Internal.h"
 #import "UAActionScheduleInfo.h"
-#import "UAAutomation.h"
+#import "UAAutomation+Internal.h"
 
 @interface UAAutomationEngineTests : UABaseTest
 @property (nonatomic, strong) UAAutomationEngine *automationEngine;
@@ -34,7 +34,7 @@
     [[[self.mockDelegate stub] andCall:@selector(createScheduleInfoWithBuilder:) onObject:self] createScheduleInfoWithBuilder:OCMOCK_ANY];
 
 
-    self.automationEngine = [UAAutomationEngine automationEngineWithStoreName:@"test" scheduleLimit:100];
+    self.automationEngine = [UAAutomationEngine automationEngineWithStoreName:@"test" scheduleLimit:100 paused:NO];
     self.automationEngine.delegate = self.mockDelegate;
     [self.automationEngine cancelAll];
 
@@ -828,7 +828,10 @@
  * @param triggerFireBlock Block that generates enough events to fire the trigger.
  */
 - (void)verifyTrigger:(UAScheduleTrigger *)trigger triggerFireBlock:(void (^)(void))triggerFireBlock {
-    // Create a start date in the future
+    // test pause and resume by pausing now and resuming as late as possible
+    [self.automationEngine pause];
+    
+   // Create a start date in the future
     NSDate *startDate = [NSDate dateWithTimeIntervalSinceNow:1000];
 
     UAActionScheduleInfo *info = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder * _Nonnull builder) {
@@ -864,11 +867,13 @@
 
     // Trigger the action, should not trigger any actions
     triggerFireBlock();
-
+    
     // Mock the date to return the futureDate + 1 second for date
     id mockedDate = [self mockForClass:[NSDate class]];
     [[[mockedDate stub] andReturn:[startDate dateByAddingTimeInterval:1]] date];
 
+    [self.automationEngine resume];
+    
     // Trigger the actions now that its past the start
     triggerFireBlock();
 

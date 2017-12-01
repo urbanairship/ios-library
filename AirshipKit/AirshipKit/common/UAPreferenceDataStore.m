@@ -33,6 +33,10 @@
     [self.defaults removeObjectForKey:[self prefixKey:key]];
 }
 
+- (BOOL)keyExists:(NSString *)key {
+    return ([self objectForKey:key] != nil);
+}
+
 - (id)objectForKey:(NSString *)key {
     return [self.defaults objectForKey:[self prefixKey:key]];
 }
@@ -71,6 +75,14 @@
 
 - (BOOL)boolForKey:(NSString *)key {
     return [self.defaults boolForKey:[self prefixKey:key]];
+}
+
+- (BOOL)boolForKey:(NSString *)key default:(BOOL)defaultValue {
+    if ([self keyExists:key]) {
+        return [self boolForKey:key];
+    } else {
+        return defaultValue;
+    }
 }
 
 - (NSURL *)URLForKey:(NSString *)key {

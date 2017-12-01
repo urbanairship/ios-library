@@ -24,6 +24,8 @@
 #import "UAAutomation+Internal.h"
 #import "UAAppIntegration.h"
 #import "UARemoteDataManager+Internal.h"
+#import "UARemoteConfigManager+Internal.h"
+#import "UAComponentDisabler+Internal.h"
 
 #if !TARGET_OS_TV
 #import "UAInbox+Internal.h"
@@ -32,6 +34,7 @@
 #import "UAMessageCenter.h"
 #import "UAInboxAPIClient+Internal.h"
 #import "UALegacyInAppMessaging+Internal.h"
+#import "UAInAppMessageManager+Internal.h"
 #endif
 
 
@@ -100,18 +103,20 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:dataStore];
         self.actionRegistry = [UAActionRegistry defaultRegistry];
         self.sharedPush = [UAPush pushWithConfig:config dataStore:dataStore];
-        self.sharedInboxUser = [UAUser userWithPush:self.sharedPush config:config dataStore:dataStore];
         self.sharedNamedUser = [UANamedUser namedUserWithPush:self.sharedPush config:config dataStore:dataStore];
-        self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore];
+        self.sharedAnalytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore];
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
-        self.sharedLocation = [UALocation locationWithAnalytics:self.analytics dataStore:dataStore];
-        self.sharedAutomation = [UAAutomation automationWithConfig:config];
+        self.sharedLocation = [UALocation locationWithAnalytics:self.sharedAnalytics dataStore:dataStore];
+        self.sharedAutomation = [UAAutomation automationWithConfig:config dataStore:dataStore];
         self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:config dataStore:dataStore];
+        self.sharedRemoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.sharedRemoteDataManager componentDisabler:[[UAComponentDisabler alloc] init]];
 #if !TARGET_OS_TV
         // IAP Nib not supported on tvOS
-        self.sharedInAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.analytics dataStore:dataStore];
+        self.sharedInAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.sharedAnalytics dataStore:dataStore];
+        self.sharedInAppMessageManager = [UAInAppMessageManager managerWithConfig:config dataStore:dataStore];
 
         // Message center not supported on tvOS
+        self.sharedInboxUser = [UAUser userWithPush:self.sharedPush config:config dataStore:dataStore];
         self.sharedInbox = [UAInbox inboxWithUser:self.sharedInboxUser config:config dataStore:dataStore];
         // Not supporting Javascript in tvOS
         self.actionJSDelegate = [[UAActionJSDelegate alloc] init];
@@ -300,12 +305,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
     // Required before the app init event to track conversion push ID
     if (remoteNotification) {
-        [sharedAirship_.analytics launchedFromNotification:remoteNotification];
+        [sharedAirship_.sharedAnalytics launchedFromNotification:remoteNotification];
     }
 
 #endif
     // Init event
-    [sharedAirship_.analytics addEvent:[UAAppInitEvent event]];
+    [sharedAirship_.sharedAnalytics addEvent:[UAAppInitEvent event]];
 
     // Update registration on the next run loop to allow apps to customize
     // finish custom setup
@@ -319,7 +324,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     [[NSNotificationCenter defaultCenter] removeObserver:[UAirship class]  name:UIApplicationWillTerminateNotification object:nil];
 
     // Add app_exit event
-    [[UAirship shared].analytics addEvent:[UAAppExitEvent event]];
+    [UAirship.analytics addEvent:[UAAppExitEvent event]];
 
     // Land it
     [UAirship land];
@@ -331,7 +336,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     }
 
     // Invalidate UAAnalytics timer and cancel all queued operations
-    [sharedAirship_.analytics cancelUpload];
+    [sharedAirship_.sharedAnalytics cancelUpload];
 
 #if !TARGET_OS_TV
     // Invalidate UALegacyInAppMessaging autodisplay timer
@@ -366,9 +371,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return sharedAirship_.sharedInboxUser;
 }
 
-
 + (UALegacyInAppMessaging *)inAppMessaging {
     return sharedAirship_.sharedInAppMessaging;
+}
+
++ (UAInAppMessageManager *)inAppMessageManager {
+    return sharedAirship_.sharedInAppMessageManager;
 }
 
 + (UAMessageCenter *)messageCenter {
@@ -387,6 +395,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 + (UAAutomation *)automation {
     return sharedAirship_.sharedAutomation;
+}
+
++ (UAAnalytics *)analytics {
+    return sharedAirship_.sharedAnalytics;
 }
 
 + (UARemoteDataManager *)remoteDataManager {

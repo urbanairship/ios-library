@@ -151,11 +151,21 @@
     XCTAssertNoThrow([self.mockUserClient verify], @"User should call the client to be created.");
 }
 
-
 /**
  * Test updateUser
  */
 -(void)testUpdateUser {
+    //setup
+    [self setupForUpdateUserTest];
+    
+    //test
+    [self.user updateUser];
+    
+    //verify
+    [self verifyUpdateUserTest];
+}
+
+-(void)setupForUpdateUserTest {
     self.push.channelID = @"some-channel";
     self.push.channelLocation = @"some-location";
     self.push.deviceToken = @"aaaaa";
@@ -171,9 +181,9 @@
 
     // Mock background task so background task check passes
     [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+}
 
-    [self.user updateUser];
-    
+-(void)verifyUpdateUserTest {
     XCTAssertNoThrow([self.mockUserClient verify], @"User should call the client to be updated.");
 }
 
@@ -303,4 +313,18 @@
     XCTAssertNoThrow([self.mockUserClient verify]);
 }
 
+- (void)testEnablingDisabledUserUpdatesOrCreatesUser {
+    // setup
+    self.user.componentEnabled = NO;
+    [self setupForUpdateUserTest];
+
+    // test
+    self.user.componentEnabled = YES;
+    
+    //verify
+    [self verifyUpdateUserTest];
+}
+
+
 @end
+

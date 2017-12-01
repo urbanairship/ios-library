@@ -5,6 +5,7 @@
 #import "UAInAppMessageScheduleInfo.h"
 #import "UAInAppMessageAdapterProtocol.h"
 #import "UAAutomationEngine.h"
+#import "UAComponent.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -12,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
  * In-app message manager provides a control interface for creating,
  * canceling and executing in-app message schedules.
  */
-@interface UAInAppMessageManager : NSObject <UAAutomationEngineDelegate>
+@interface UAInAppMessageManager : UAComponent <UAAutomationEngineDelegate>
 
 /**
  * Allows setting factory blocks that builds InAppMessageAdapters for each given display type.
@@ -44,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param identifier The identifier of the in-app message to be canceled.
  */
--(void)cancelMessageWithID:(NSString *)identifier;
+- (void)cancelMessageWithID:(NSString *)identifier;
 
 @end
 

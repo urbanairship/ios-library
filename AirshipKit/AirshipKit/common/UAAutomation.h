@@ -3,6 +3,7 @@
 #import <Foundation/Foundation.h>
 #import "UASchedule.h"
 #import "UAActionScheduleInfo.h"
+#import "UAComponent.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -14,7 +15,7 @@ extern NSUInteger const UAAutomationScheduleLimit;
 /**
  * Manager class for scheduling actions.
  */
-@interface UAAutomation : NSObject
+@interface UAAutomation : UAComponent
 
 ///---------------------------------------------------------------------------------------
 /// @name Automation Schedule Management Methods

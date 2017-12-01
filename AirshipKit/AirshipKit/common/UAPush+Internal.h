@@ -5,6 +5,7 @@
 #import "UAChannelRegistrar+Internal.h"
 #import "UAAPNSRegistrationProtocol+Internal.h"
 #import "UAAPNSRegistration+Internal.h"
+#import "UAComponent+Internal.h"
 
 #if !TARGET_OS_TV
 #import "UALegacyAPNSRegistration+Internal.h"

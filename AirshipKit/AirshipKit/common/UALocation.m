@@ -15,7 +15,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 @implementation UALocation
 
 - (instancetype)initWithAnalytics:(UAAnalytics *)analytics dataStore:(UAPreferenceDataStore *)dataStore {
-    self = [super init];
+    self = [super initWithDataStore:dataStore];
 
     if (self) {
         self.locationManager = [[CLLocationManager alloc] init];
@@ -34,8 +34,9 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
                                                  selector:@selector(updateLocationService)
                                                      name:UIApplicationDidBecomeActiveNotification
                                                    object:nil];
-
-        [self updateLocationService];
+        if (self.componentEnabled) {
+            [self updateLocationService];
+        }
     }
 
     return self;
@@ -95,6 +96,10 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 }
 
 - (void)updateLocationService {
+    if (!self.componentEnabled) {
+        return;
+    }
+    
     // Check if location updates are enabled
     if (!self.locationUpdatesEnabled) {
         [self stopLocationUpdates];
@@ -156,6 +161,10 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 }
 
 - (void)startLocationUpdates {
+    if (!self.componentEnabled) {
+        return;
+    }
+    
     if (self.locationUpdatesStarted) {
         // Already started
         return;
@@ -244,6 +253,16 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
     UA_LTRACE(@"Location updates failed with error: %@", error);
 
     [self updateLocationService];
+}
+
+- (void)onComponentEnableChange {
+    if (self.componentEnabled) {
+        // if component was disabled and is now enabled, start updating the location
+        [self updateLocationService];
+    } else {
+        // if component was enabled and is now disabled, stop updating the location
+        [self stopLocationUpdates];
+    }
 }
 
 @end

@@ -6,7 +6,8 @@
 @class UAJavaScriptDelegate;
 @class UAPreferenceDataStore;
 @class UAChannelCapture;
-
+@class UAInAppMessageManager;
+@class UARemoteConfigManager;
 
 @interface UAirship()
 
@@ -18,7 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Setters for public readonly-getters
 @property (nonatomic, strong) UAConfig *config;
-@property (nonatomic, strong) UAAnalytics *analytics;
 @property (nonatomic, strong) UAActionRegistry *actionRegistry;
 @property (nonatomic, assign) BOOL remoteNotificationBackgroundModeEnabled;
 @property (nonatomic, strong, nullable) id<UAJavaScriptDelegate> actionJSDelegate;
@@ -32,28 +32,32 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong) UAPush *sharedPush;
 
-
+#if !TARGET_OS_TV
 /**
  * The inbox user.
  */
 @property (nonatomic, strong) UAUser *sharedInboxUser;
 
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
 /**
  * The inbox.
  */
 @property (nonatomic, strong) UAInbox *sharedInbox;
-#endif
+
+/**
+ * The legacy in-app messaging manager.
+ */
+@property (nonatomic, strong) UALegacyInAppMessaging *sharedInAppMessaging;
 
 /**
  * The in-app messaging manager.
  */
-@property (nonatomic, strong) UALegacyInAppMessaging *sharedInAppMessaging;
+@property (nonatomic, strong) UAInAppMessageManager *sharedInAppMessageManager;
 
 /**
  * The default message center.
  */
 @property (nonatomic, strong) UAMessageCenter *sharedMessageCenter;
+#endif
 
 /**
  * The location manager.
@@ -72,9 +76,19 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UAAutomation *sharedAutomation;
 
 /**
+ * The shared analytics manager.
+ */
+@property (nonatomic, strong) UAAnalytics *sharedAnalytics;
+
+/**
  * Shared remoteDataManager.
  */
 @property (nonatomic, strong) UARemoteDataManager *sharedRemoteDataManager;
+
+/**
+ * Shared remoteConfigManager.
+ */
+@property (nonatomic, strong) UARemoteConfigManager *sharedRemoteConfigManager;
 
 /**
  * Returns the `UARemoteDataManager` instance.

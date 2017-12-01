@@ -1,6 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
+#import "UAComponent.h"
 
 @class UAEvent;
 @class UAAssociatedIdentifiers;
@@ -10,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The UAAnalytics object provides an interface to the Urban Airship Analytics API.
  */
-@interface UAAnalytics : NSObject
+@interface UAAnalytics : UAComponent
 
 ///---------------------------------------------------------------------------------------
 /// @name Analytics Properties

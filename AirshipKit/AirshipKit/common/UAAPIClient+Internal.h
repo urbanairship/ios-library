@@ -10,6 +10,11 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAAPIClient : NSObject
 
 /**
+ * Status code to indicate the API client is disabled
+ */
+extern NSUInteger const UAAPIClientStatusDisabled;
+
+/**
  * The UAConfig instance.
  */
 @property (nonatomic, readonly) UAConfig *config;
@@ -18,6 +23,11 @@ NS_ASSUME_NONNULL_BEGIN
  * The UARequestSession instance. Should be used to perform requests.
  */
 @property (nonatomic, readonly) UARequestSession *session;
+
+/**
+ * Flag indicating whether the client is enabled. Clear to disable. Set to enable.
+ */
+@property (nonatomic, assign) BOOL enabled;
 
 /**
  * Init method.

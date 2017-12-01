@@ -7,6 +7,11 @@
 #import "UARemoteDataPayload+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 
+NSString * const UARemoteDataRefreshIntervalKey = @"remotedata.REFRESH_INTERVAL";
+NSString * const UARemoteDataLastRefreshTimeKey = @"remotedata.LAST_REFRESH_TIME";
+NSString * const UARemoteDataLastRefreshAppVersionKey = @"remotedata.LAST_REFRESH_APP_VERSION";
+NSInteger const UARemoteDataRefreshIntervalDefault = 0;
+
 @interface UARemoteDataSubscription : NSObject
 
 ///---------------------------------------------------------------------------------------
@@ -76,7 +81,6 @@
         self.remoteDataStore = [[UARemoteDataStore alloc] initWithConfig:config];
         self.remoteDataAPIClient = [UARemoteDataAPIClient clientWithConfig:config dataStore:dataStore];
         
-        [self.remoteDataAPIClient clearLastModifiedTime];  // REVISIT - remove - just for testing
         // Register for foreground notifications
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(enterForeground)
@@ -86,8 +90,30 @@
                                                  selector:@selector(didBecomeActive)
                                                      name:UIApplicationDidBecomeActiveNotification
                                                    object:nil];
+        
+        // if app version has changed, force a refresh
+        NSString *appVersionAtTimeOfLastRefresh = ([self.dataStore objectForKey:UARemoteDataLastRefreshAppVersionKey]);
+        NSString *currentAppVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+        if (currentAppVersion && ![appVersionAtTimeOfLastRefresh isEqualToString:currentAppVersion]) {
+            [self refresh];
+        }
     }
     return self;
+}
+
+- (NSUInteger)remoteDataRefreshInterval {
+    // if key isn't in the data store, default it.
+    if (![self.dataStore keyExists:UARemoteDataRefreshIntervalKey]) {
+        [self.dataStore setInteger:UARemoteDataRefreshIntervalDefault forKey:UARemoteDataRefreshIntervalKey];
+    }
+    
+    // return the value in the datastore
+    return [self.dataStore integerForKey:UARemoteDataRefreshIntervalKey];
+}
+
+- (void)setRemoteDataRefreshInterval:(NSUInteger)remoteDataRefreshInterval {
+    // save in the data store
+   [self.dataStore setInteger:remoteDataRefreshInterval forKey:UARemoteDataRefreshIntervalKey];
 }
 
 #pragma mark -
@@ -97,7 +123,7 @@
     UA_LTRACE(@"Application will enter foreground.");
     
     // refresh the data from the cloud
-    [self refresh];
+    [self foregroundRefresh];
 }
 
 - (void)didBecomeActive {
@@ -109,7 +135,19 @@
                                                   object:nil];
     
     // refresh the data from the cloud
-    [self refresh];
+    [self foregroundRefresh];
+}
+
+// foregroundRefresh refreshes only if the time since the last refresh is greater than the minimum foreground refresh interval
+- (void)foregroundRefresh {
+    NSDate *lastRefreshTime = ([self.dataStore objectForKey:UARemoteDataLastRefreshTimeKey])?:[NSDate distantPast];
+    
+    NSTimeInterval timeSinceLastRefresh = - [lastRefreshTime timeIntervalSinceNow];
+    if (self.remoteDataRefreshInterval <= timeSinceLastRefresh) {
+        [self refresh];
+    } else {
+        [self notifyRefreshDelegate:YES];
+    }
 }
 
 - (nonnull UADisposable *)subscribeWithTypes:(nonnull NSArray<NSString *> *)payloadTypes block:(nonnull UARemoteDataPublishBlock)publishBlock {
@@ -145,6 +183,9 @@
     [self.remoteDataAPIClient fetchRemoteData:^(NSUInteger statusCode, NSArray<UARemoteDataPayload *> *allRemoteDataFromCloud) {
         UA_STRONGIFY(self);
         if (statusCode == 200) {
+            [self.dataStore setObject:[NSDate date] forKey:UARemoteDataLastRefreshTimeKey];
+            NSString *currentAppVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+            [self.dataStore setObject:currentAppVersion forKey:UARemoteDataLastRefreshAppVersionKey];
             NSArray<UARemoteDataPayload *> *remoteDataPayloads = [UARemoteDataPayload remoteDataPayloadsFromJSON:allRemoteDataFromCloud];
             [self.remoteDataStore overwriteCachedRemoteDataWithResponse:remoteDataPayloads completionHandler:^(BOOL success) {
                 UA_STRONGIFY(self);

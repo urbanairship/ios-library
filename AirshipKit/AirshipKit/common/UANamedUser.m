@@ -23,14 +23,15 @@ NSString *const UANamedUserTagGroupsMutationsKey = @"UANamedUserTagGroupsMutatio
 @implementation UANamedUser
 
 - (instancetype)initWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
-    self = [super init];
+    self = [super initWithDataStore:dataStore];
     if (self) {
         self.config = config;
         self.push = push;
         self.dataStore = dataStore;
         self.namedUserAPIClient = [UANamedUserAPIClient clientWithConfig:config];
+        self.namedUserAPIClient.enabled = self.componentEnabled;
         self.tagGroupsAPIClient = [UATagGroupsAPIClient clientWithConfig:config];
-
+        self.tagGroupsAPIClient.enabled = self.componentEnabled;
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(channelCreated:)
@@ -266,6 +267,12 @@ NSString *const UANamedUserTagGroupsMutationsKey = @"UANamedUserTagGroupsMutatio
         // Once we get a channel, update the named user if necessary.
         [self update];
     }
+}
+
+- (void)onComponentEnableChange {
+    // Disable/enable the API client and user to disable/enable the inbox
+    self.namedUserAPIClient.enabled = self.componentEnabled;
+    self.tagGroupsAPIClient.enabled = self.componentEnabled;
 }
 
 @end

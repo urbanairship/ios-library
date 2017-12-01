@@ -1,6 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
+#import "UAComponent.h"
 
 @class UAPreferenceDataStore;
 
@@ -11,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
  * user is associated to the device, it can be used to send push notifications
  * to the device.
  */
-@interface UANamedUser : NSObject
+@interface UANamedUser : UAComponent
 
 ///---------------------------------------------------------------------------------------
 /// @name Named User Properties

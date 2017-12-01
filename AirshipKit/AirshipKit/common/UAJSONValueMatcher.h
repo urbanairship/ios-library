@@ -95,7 +95,7 @@ extern NSString * const UAJSONValueMatcherErrorDomain;
  * @param versionConstraint The version constraint to be matched against.
  * @return A value matcher.
  */
-+ (instancetype)matcherWithVersionConstraint:(NSString *)versionConstraint;
++ (nullable instancetype)matcherWithVersionConstraint:(NSString *)versionConstraint;
 
 /**
  * Factory method to create a matcher from a JSON payload.

@@ -6,12 +6,14 @@
 #import "UAInAppMessageAdapterProtocol.h"
 #import "UAInAppMessageManager+Internal.h"
 #import "UASchedule+Internal.h"
+#import "UAPreferenceDataStore+Internal.h"
 
 @interface UAInAppMessageManagerTest : UABaseTest
 @property(nonatomic, strong) UAInAppMessageManager *manager;
 @property(nonatomic, strong) id mockAdapter;
 @property(nonatomic, strong) id mockAutomationEngine;
 @property(nonatomic, strong) UAInAppMessageScheduleInfo *scheduleInfo;
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 @end
 
@@ -22,7 +24,9 @@
 
     self.mockAdapter = [self mockForProtocol:@protocol(UAInAppMessageAdapterProtocol)];
     self.mockAutomationEngine = [self mockForClass:[UAAutomationEngine class]];
-    self.manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine];
+    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"uainappmessagemanager.test."];
+    [self.dataStore removeAll];
+    self.manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine dataStore:self.dataStore];
 
     self.scheduleInfo = [UAInAppMessageScheduleInfo inAppMessageScheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
         UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
@@ -180,7 +184,7 @@
 }
 
 - (void)testCancelMessage {
-    UAInAppMessageManager *manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine];
+    UAInAppMessageManager *manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine dataStore:self.dataStore];
 
     [[self.mockAutomationEngine expect] cancelSchedulesWithGroup:self.scheduleInfo.message.identifier];
 
@@ -190,7 +194,7 @@
 }
 
 - (void)testCancelSchedule {
-    UAInAppMessageManager *manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine];
+    UAInAppMessageManager *manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine dataStore:self.dataStore];
 
     UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo];
 
@@ -200,5 +204,52 @@
 
     [self.mockAutomationEngine verify];
 }
+
+// Tests that componentEnabled switch pauses / resumes automation
+- (void)testComponentEnabledSwitch {
+    XCTAssertTrue(self.manager.componentEnabled);
+    
+    // setup
+    __block XCTestExpectation *pauseCalledExpectation = nil;
+    __block XCTestExpectation *resumeCalledExpectation = nil;
+    
+    [[[self.mockAutomationEngine stub] andDo:^(NSInvocation *invocation) {
+        if (pauseCalledExpectation) {
+            [pauseCalledExpectation fulfill];
+        } else {
+            XCTFail(@"Not expecting pause to be called");
+        }
+    }] pause];
+    
+    [[[self.mockAutomationEngine stub] andDo:^(NSInvocation *invocation) {
+        if (resumeCalledExpectation) {
+            [resumeCalledExpectation fulfill];
+        } else {
+            XCTFail(@"Not expecting resume to be called");
+        }
+    }] resume];
+
+    pauseCalledExpectation = [self expectationWithDescription:@"automation engine pause called"];
+
+    // test
+    self.manager.componentEnabled = NO;
+    XCTAssertFalse(self.manager.componentEnabled);
+
+    // verify
+    [self waitForExpectationsWithTimeout:5 handler:nil];
+    XCTAssertFalse(self.manager.componentEnabled);
+
+    //setup
+    pauseCalledExpectation = nil;
+    resumeCalledExpectation = [self expectationWithDescription:@"automation engine resume called"];
+
+    // test
+    self.manager.componentEnabled = YES;
+    
+    // verify
+    [self waitForExpectationsWithTimeout:5 handler:nil];
+    XCTAssertTrue(self.manager.componentEnabled);
+}
+
 
 @end

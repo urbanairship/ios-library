@@ -31,7 +31,7 @@ typedef NS_ENUM(NSInteger,UAVersionMatcherConstraintType) {
     return self;
 }
 
-+ (instancetype)matcherWithVersionConstraint:(NSString *)versionConstraint {
++ (nullable instancetype)matcherWithVersionConstraint:(NSString *)versionConstraint {
     if (![versionConstraint isKindOfClass:[NSString class]]) {
         return nil;
     }

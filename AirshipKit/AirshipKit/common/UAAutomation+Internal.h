@@ -6,6 +6,7 @@
 #import <UIKit/UIKit.h>
 #import "UAAutomationEngine+Internal.h"
 @class UAAutomationStore;
+@class UAPreferenceDataStore;
 
 /*
  * SDK-private extensions to UAAutomation
@@ -33,6 +34,6 @@
 /**
  * Automation constructor.
  */
-+ (instancetype)automationWithConfig:(UAConfig *)config;
++ (instancetype)automationWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 @end

@@ -7,6 +7,7 @@
 #import "UANotificationContent.h"
 #import "UANotificationResponse.h"
 #import "UANotificationAction.h"
+#import "UAComponent.h"
 
 @class UANotificationCategory;
 
@@ -188,7 +189,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 /**
  * This singleton provides an interface to the functionality provided by the Urban Airship iOS Push API.
  */
-@interface UAPush : NSObject
+@interface UAPush : UAComponent
 
 
 ///---------------------------------------------------------------------------------------

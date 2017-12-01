@@ -10,18 +10,24 @@
 #import "UAirship.h"
 #import "UAInboxMessage.h"
 #import "UAMessageCenter.h"
+#import "UAPreferenceDataStore+Internal.h"
 
 @interface UADisplayInboxActionTest : UABaseTest
 
 @property (nonatomic, strong) UADisplayInboxAction *action;
 @property (nonatomic, strong) NSDictionary *notification;
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 @property (nonatomic, strong) id mockMessage;
+@property (nonatomic, strong) id mockInbox;
 @property (nonatomic, strong) id mockInboxDelegate;
 
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockMessageList;
 @property (nonatomic, strong) id mockMessageCenter;
+
+@property (nonatomic, strong) id mockUser;
+@property (nonatomic, strong) id mockConfig;
 
 @end
 
@@ -31,6 +37,11 @@
     [super setUp];
 
     self.action = [[UADisplayInboxAction alloc] init];
+    
+    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"uadisplayinbox.test.%@",self.name]];
+    XCTAssertNotNil(self.dataStore);
+    [self.dataStore removeAll]; // start with an empty datastore
+
     self.mockInboxDelegate = [self mockForProtocol:@protocol(UAInboxDelegate)];
 
     self.notification = @{@"_uamid": @"UAMID"};
@@ -44,18 +55,14 @@
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.mockMessageCenter] messageCenter];
 
-    UAInbox *inbox = [[UAInbox alloc] init];
-    inbox.messageList = self.mockMessageList;
-    [[[self.mockAirship stub] andReturn:inbox] inbox];
+    self.mockInbox = [self mockForClass:[UAInbox class]];
+    [[[self.mockInbox stub] andReturn:self.mockMessageList] messageList];
+    [[[self.mockAirship stub] andReturn:self.mockInbox] inbox];
 
 }
 
 - (void)tearDown {
-    [self.mockAirship stopMocking];
-    [self.mockMessageList stopMocking];
-    [self.mockInboxDelegate stopMocking];
-    [self.mockMessageCenter stopMocking];
-    [self.mockMessage stopMocking];
+    [self.dataStore removeAll];
 
     [super tearDown];
 }
@@ -97,7 +104,7 @@
  * when the message is already available in the message list.
  */
 - (void)testPerformShowInboxMessageForIDMessageAvailable {
-    [UAirship inbox].delegate = self.mockInboxDelegate;
+    [[[self.mockInbox stub] andReturn:self.mockInboxDelegate] delegate];
     
     // Set up the action arguments
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
@@ -121,7 +128,7 @@
  * after the message list is refreshed.
  */
 - (void)testPerformShowInboxMessageForIDAfterMessageListRefresh {
-    [UAirship inbox].delegate = self.mockInboxDelegate;
+    [[[self.mockInbox stub] andReturn:self.mockInboxDelegate] delegate];
     
     // Set up the action arguments
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
@@ -145,7 +152,7 @@
  * in the message list and the message list is able to be refreshed.
  */
 - (void)testPerformShowInboxAfterMessageListRefresh {
-    [UAirship inbox].delegate = self.mockInboxDelegate;
+    [[[self.mockInbox stub] andReturn:self.mockInboxDelegate] delegate];
 
     // Set up the action arguments
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
@@ -171,7 +178,7 @@
  * after the message list is refreshed.
  */
 - (void)testPerformShowInboxMessageListFailedToRefresh {
-    [UAirship inbox].delegate = self.mockInboxDelegate;
+    [[[self.mockInbox stub] andReturn:self.mockInboxDelegate] delegate];
 
     // Set up the action arguments
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
@@ -195,7 +202,7 @@
  * is set for the arguments value.
  */
 - (void)testPerformWithPlaceHolderInboxMessageMetadata {
-    [UAirship inbox].delegate = self.mockInboxDelegate;
+    [[[self.mockInbox stub] andReturn:self.mockInboxDelegate] delegate];
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"auto"
                                                       withSituation:UASituationManualInvocation
@@ -216,7 +223,7 @@
  * is set for the arguments value.
  */
 - (void)testPerformWithPlaceHolderPushMessageMetadata {
-    [UAirship inbox].delegate = self.mockInboxDelegate;
+    [[[self.mockInbox stub] andReturn:self.mockInboxDelegate] delegate];
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"auto"
                                                       withSituation:UASituationManualInvocation
@@ -301,7 +308,9 @@
             block();
         }
         UAInboxMessageListCallbackBlock callback = obj;
-        callback();
+        if (callback) {
+            callback();
+        }
         return YES;
     }] withFailureBlock:OCMOCK_ANY];
 }
@@ -314,7 +323,9 @@
             block();
         }
         UAInboxMessageListCallbackBlock callback = obj;
-        callback();
+        if (callback) {
+            callback();
+        }
         return YES;
     }]];
 }

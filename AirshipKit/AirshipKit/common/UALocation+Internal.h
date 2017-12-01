@@ -1,6 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UALocation.h"
+#import "UAComponent+Internal.h"
 
 @class UAPreferenceDataStore;
 @class UAAnalytics;

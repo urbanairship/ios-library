@@ -22,7 +22,10 @@
 
 - (void)setUp {
     [super setUp];
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test.analytics"];
+    
+    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"uaanalytics.test.%@",self.name]];
+    [self.dataStore removeAll];
+    
     self.mockEventManager = [self mockForClass:[UAEventManager class]];
 
     UAConfig *config = [[UAConfig alloc] init];
@@ -131,7 +134,7 @@
  * Expects adding a valid event when analytics is disabled drops event.
  */
 - (void)testAddEventAnalyticsDisabled {
-    self.analytics.enabled = false;
+    self.analytics.enabled = NO;
 
     // Mock valid event
     id mockEvent = [self mockForClass:[UAEvent class]];
@@ -339,5 +342,29 @@
 
     [self waitForExpectationsWithTimeout:10 handler:nil];
 }
+
+// Test disabling / enabling the analytics component disables / enables eventmanager uploads
+- (void)testComponentEnabledSwitch {
+    // expectations
+    [[self.mockEventManager expect] setUploadsEnabled:NO];
+    [[self.mockEventManager expect] cancelUpload];
+    
+    // test
+    self.analytics.componentEnabled = NO;
+    
+    // verify
+    [self.mockEventManager verify];
+    
+    // expectations
+    [[self.mockEventManager expect] setUploadsEnabled:YES];
+    [[self.mockEventManager expect] scheduleUpload];
+
+    // test
+    self.analytics.componentEnabled = YES;
+    
+    // verify
+    [self.mockEventManager verify];
+}
+
 
 @end

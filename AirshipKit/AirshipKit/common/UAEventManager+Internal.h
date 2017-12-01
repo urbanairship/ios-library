@@ -41,6 +41,11 @@
  */
 @property (atomic, strong, readonly) NSDate *lastSendTime;
 
+/**
+ * Flag indicating whether evant manager uploads are enabled. Clear to disable. Default is enabled.
+ */
+@property (nonatomic, assign) BOOL uploadsEnabled;
+
 ///---------------------------------------------------------------------------------------
 /// @name Event Manager Internal Methods
 ///---------------------------------------------------------------------------------------

@@ -82,7 +82,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 }
 
 - (instancetype)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
-    self = [super init];
+    self = [super initWithDataStore:dataStore];
     if (self) {
         self.dataStore = dataStore;
 
@@ -117,6 +117,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         self.channelRegistrar.delegate = self;
 
         self.tagGroupsAPIClient = [UATagGroupsAPIClient clientWithConfig:config];
+        self.tagGroupsAPIClient.enabled = self.componentEnabled;
 
         // Check config to see if user wants to delay channel creation
         // If channel ID exists or channel creation delay is disabled then channelCreationEnabled
@@ -771,7 +772,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 }
 
 - (void)updateRegistration {
-
     // Update channel tag groups
     [self updateChannelTagGroups];
 
@@ -789,6 +789,10 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 }
 
 - (void)updateChannelRegistrationForcefully:(BOOL)forcefully {
+    if (!self.componentEnabled) {
+        return;
+    }
+    
     if (![NSThread isMainThread]) {
         UA_WEAKIFY(self);
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -817,6 +821,10 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 }
 
 - (void)updateChannelTagGroups {
+    if (!self.componentEnabled) {
+        return;
+    }
+    
     if (![NSThread isMainThread]) {
         UA_WEAKIFY(self);
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -1131,5 +1139,14 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     // Normalize tags for older SDK versions
     self.tags = [UATagUtils normalizeTags:self.tags];
 }
+
+- (void)onComponentEnableChange {
+    self.tagGroupsAPIClient.enabled = self.componentEnabled;
+    if (self.componentEnabled) {
+        // if component was disabled and is now enabled, register the channel
+        [self updateRegistration];
+    }
+}
+
 
 @end

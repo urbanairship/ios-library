@@ -6,6 +6,7 @@
 #import "UAInAppMessage.h"
 #import "UAInAppMessageScheduleInfo.h"
 #import "UAInAppMessageAdapterProtocol.h"
+#import "UAComponent+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -24,16 +25,17 @@ NS_ASSUME_NONNULL_BEGIN
  * Init method.
  *
  * @param automationEngine Automation engine.
+ * @param dataStore The preference data store.
  */
-+ (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine;
++ (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
  * Init method.
  *
  * @param config The UAConfigInstance.
- * @param storeName The store name.
+ * @param dataStore The preference data store.
  */
-+ (instancetype)managerWithConfig:(UAConfig *)config storeName:(NSString *)storeName;
++ (instancetype)managerWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 
 // UAAutomationEngineDelegate methods for testing

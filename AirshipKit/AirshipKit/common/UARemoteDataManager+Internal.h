@@ -58,9 +58,21 @@ typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteD
 @property (nonatomic, weak, nullable) id <UARemoteDataRefreshDelegate> refreshDelegate;
 
 /**
+ * The minimum amount of time in seconds between remote data refreshes. Increase this
+ * value to reduce the frequency of refreshes.
+ */
+@property (nonatomic, assign) NSUInteger remoteDataRefreshInterval;
+
+/**
  * Refresh the remote data from the cloud
  */
 - (void)refresh;
+
+/**
+ * Refresh the remote data from the cloud only if the time since the last refresh
+ * is greater than the minimum foreground refresh interval.
+ */
+- (void)foregroundRefresh;
 
 /**
  * Create the remote data manager.

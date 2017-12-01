@@ -294,4 +294,84 @@
     [self.mockSession verify];
 }
 
+/**
+ * Test associate named user when disabled.
+ */
+-(void)testAssociateWhenDisabled {
+    // setup
+    self.client.enabled = NO;
+    
+    // expectations
+    BOOL (^completionBlockCheck)(id obj) = ^(id obj) {
+        UARequestCompletionHandler completion = obj;
+        
+        for (NSInteger i = 200; i < 300; i++) {
+            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+                                                                      statusCode:i
+                                                                     HTTPVersion:nil
+                                                                    headerFields:nil];
+            completion(OCMOCK_ANY, response, nil);
+        }
+        
+        return YES;
+    };
+    
+    [[self.mockSession stub] dataTaskWithRequest:OCMOCK_ANY
+                                        retryWhere:OCMOCK_ANY
+                                 completionHandler:[OCMArg checkWithBlock:completionBlockCheck]];
+    
+    // test
+    [self.client associate:@"fakeNamedUserID"
+                 channelID:@"fakeChannel"
+                 onSuccess:^{
+                     XCTFail(@"Should not be called");
+                 }
+                 onFailure:^(NSUInteger status){
+                     XCTFail(@"Should not be called");
+                 }];
+    
+    // verify
+    [self.mockSession verify];
+}
+
+/**
+ * Test disassociate named user when disabled.
+ */
+-(void)testDisassociateWhenDisabled {
+    // setup
+    self.client.enabled = NO;
+    
+    // expectations
+    BOOL (^completionBlockCheck)(id obj) = ^(id obj) {
+        UARequestCompletionHandler completion = obj;
+        
+        for (NSInteger i = 200; i < 300; i++) {
+            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+                                                                      statusCode:i
+                                                                     HTTPVersion:nil
+                                                                    headerFields:nil];
+            completion(OCMOCK_ANY, response, nil);
+        }
+        
+        return YES;
+    };
+    
+    [[self.mockSession stub] dataTaskWithRequest:OCMOCK_ANY
+                                        retryWhere:OCMOCK_ANY
+                                 completionHandler:[OCMArg checkWithBlock:completionBlockCheck]];
+    
+    // test
+    [self.client disassociate:@"fakeNamedUserID"
+                    onSuccess:^{
+                        XCTFail(@"Should not be called");
+                    }
+                    onFailure:^(NSUInteger status){
+                        XCTFail(@"Should not be called");
+                    }];
+    
+    // verify
+    [self.mockSession verify];
+}
+
+
 @end

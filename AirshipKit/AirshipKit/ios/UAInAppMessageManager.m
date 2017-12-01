@@ -6,12 +6,14 @@
 #import "UAScheduleInfo+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAGlobal.h"
+#import "UAConfig.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 NSTimeInterval const FetchRetryDelayMS = 30000;
 NSTimeInterval const DefaultMessageDisplayInterval = 5000;
 NSTimeInterval const MaxSchedules = 200;
+NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite";
 
 @interface UAInAppMessageManager ()
 
@@ -31,27 +33,28 @@ NSTimeInterval const MaxSchedules = 200;
 
 @implementation UAInAppMessageManager
 
-+ (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine {
-    return [[UAInAppMessageManager alloc] initWithAutomationEngine:automationEngine];
++ (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine dataStore:(UAPreferenceDataStore *)dataStore {
+    return [[UAInAppMessageManager alloc] initWithAutomationEngine:automationEngine dataStore:dataStore];
 }
 
-+ (instancetype)managerWithConfig:(UAConfig *)config storeName:(NSString *)storeName {
-    return [[UAInAppMessageManager alloc] initWithConfig:config storeName:storeName];
++ (instancetype)managerWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+    return [[UAInAppMessageManager alloc] initWithConfig:config dataStore:dataStore];
 }
 
-- (instancetype)initWithConfig:(UAConfig *)config storeName:(NSString *)storeName {
-    self = [super init];
+- (instancetype)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+    self = [super initWithDataStore:dataStore];
 
     if (self) {
-        self.automationEngine = [UAAutomationEngine automationEngineWithStoreName:storeName scheduleLimit:MaxSchedules];
+        NSString *storeName = [NSString stringWithFormat:UAInAppAutomationStoreFileFormat, config.appKey];
+        self.automationEngine = [UAAutomationEngine automationEngineWithStoreName:storeName scheduleLimit:MaxSchedules paused:self.componentEnabled];
         self.displayInterval = DefaultMessageDisplayInterval;
     }
 
     return self;
 }
 
-- (instancetype)initWithAutomationEngine:(UAAutomationEngine *)automationEngine {
-    self = [super init];
+- (instancetype)initWithAutomationEngine:(UAAutomationEngine *)automationEngine dataStore:(UAPreferenceDataStore *)dataStore {
+    self = [super initWithDataStore:dataStore];
 
     if (self) {
         self.automationEngine = automationEngine;
@@ -171,6 +174,17 @@ NSTimeInterval const MaxSchedules = 200;
         completionHandler();
     }];
 }
+
+- (void)onComponentEnableChange {
+    if (self.componentEnabled) {
+        // if component was disabled and is now enabled, resume automation engine
+        [self.automationEngine resume];
+    } else {
+        // if component was enabled and is now disabled, pause automation engine
+        [self.automationEngine pause];
+    }
+}
+
 
 @end
 

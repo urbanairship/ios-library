@@ -3,6 +3,7 @@
 #import <Foundation/Foundation.h>
 
 #import "UAGlobal.h"
+#import "UAComponent.h"
 
 @class UAInboxMessageList;
 @class UAInboxAPIClient;
@@ -64,7 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
  * This class bridges library functionality with the UI and is the main point of interaction.
  * Most implementations will only use functionality found in this class.
  */
-@interface UAInbox : NSObject
+@interface UAInbox : UAComponent
 
 ///---------------------------------------------------------------------------------------
 /// @name Inbox Properties

@@ -2,6 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAAnalytics.h"
+#import "UAComponent+Internal.h"
 
 #define kUAAnalyticsEnabled @"UAAnalyticsEnabled"
 #define kUAMissingSendID @"MISSING_SEND_ID"

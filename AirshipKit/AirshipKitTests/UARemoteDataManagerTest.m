@@ -11,13 +11,15 @@
 #import "UAConfig+Internal.h"
 #import "UAUtils.h"
 
+#import "UABaseTest.h"
+
 @interface UATestPayload : NSObject
 @property (nonatomic, retain) NSString *type;
 @property (nonatomic, retain) NSDate *timestamp;
 @property (nonatomic, retain) NSDictionary *data;
 @end
 
-@interface UARemoteDataManagerTest : XCTestCase <UARemoteDataRefreshDelegate>
+@interface UARemoteDataManagerTest : UABaseTest <UARemoteDataRefreshDelegate>
 
 @property (nonatomic, strong) id mockAPIClient;
 @property (nonatomic, strong) id mockAPIClientClass;
@@ -221,7 +223,6 @@
         switch(callbackCount) {
             case 0:
             case 1:
-                // first notification
                 [receivedDataExpectation fulfill];
                 
                 XCTAssert([remoteDataArray count] == 1);
@@ -641,6 +642,134 @@
     [subscription dispose];
 }
 
+- (void)testSettingRefreshInterval {
+    XCTAssertEqual(self.remoteDataManager.remoteDataRefreshInterval,0);
+    self.remoteDataManager.remoteDataRefreshInterval = 9999;
+    XCTAssertEqual(self.remoteDataManager.remoteDataRefreshInterval,9999);
+}
+
+- (void)testRefreshInterval {
+    // set up test data
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1] mutableCopy];
+    
+    __block XCTestExpectation *receivedDataExpectation;
+    
+    UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
+        NSLog(@"notification block called");
+        if (receivedDataExpectation) {
+            [receivedDataExpectation fulfill];
+        } else {
+            XCTFail(@"Didn't expect to receive any data");
+        }
+    }];
+    XCTAssertNotNil(subscription);
+
+    // expect to get data
+    receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data of type: %@",testPayloads[0].type]];
+    
+    // test
+    [self refresh];
+    
+    // verify
+    [self waitForExpectationsWithComment:@"First refresh"];
+    
+    // setup with changed payload but long refresh interval
+    testPayloads[0] = [self changePayload:testPayloads[0]];
+    [self setupTestWithPayloads:testPayloads];
+    self.remoteDataManager.remoteDataRefreshInterval = 9999;
+    
+    // expect not to get data
+    receivedDataExpectation = nil;
+    
+    // test
+    [self refresh];
+
+    // verify
+    [self waitForExpectationsWithComment:@"Second refresh"];
+
+    // setup
+    self.remoteDataManager.remoteDataRefreshInterval = 0;
+
+    // expect to get data from previous refresh
+    receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data of type: %@",testPayloads[0].type]];
+
+    // test
+    [self refresh];
+    
+    // verify
+    [self waitForExpectationsWithComment:@"Third refresh"];
+    
+    // cleanup
+    [subscription dispose];
+}
+
+- (void)testAppVersionChange {
+    __block XCTestExpectation *receivedDataExpectation;
+    
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1] mutableCopy];
+    
+    // change the app version
+    id mockedBundle = [self mockForClass:[NSBundle class]];
+    [[[mockedBundle stub] andReturn:mockedBundle] mainBundle];
+//    [[[mockedBundle stub] andReturn:@"1.1.1"] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+    [[[mockedBundle stub] andReturn:@{@"CFBundleShortVersionString": @"1.1.1"}] infoDictionary];
+
+    // create a new remote data manager, which should cause a refresh due to the changed app version
+    self.refreshSucceededExpectation = [self expectationWithDescription:@"Refresh succeeded"];
+    self.remoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.config dataStore:self.dataStore];
+    self.remoteDataManager.refreshDelegate = self;
+    XCTAssertNotNil(self.remoteDataManager);
+    
+    [self waitForExpectationsWithComment:@"First refresh"];
+
+    // expect to get data
+    receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data of type: %@",testPayloads[0].type]];
+    
+    UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
+        NSLog(@"notification block called");
+        if (receivedDataExpectation) {
+            [receivedDataExpectation fulfill];
+        } else {
+            XCTFail(@"Didn't expect to receive any data");
+        }
+    }];
+    XCTAssertNotNil(subscription);
+
+    // verify
+    [self waitForExpectationsWithComment:@"Received our data"];
+    
+    // set up new payloads
+    testPayloads = [[self createNPayloadsAndSetupTest:1] mutableCopy];
+
+    // create a new remote data manager, which should not cause a refresh due to the unchanged app version
+    [subscription dispose];
+    self.remoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.config dataStore:self.dataStore];
+    self.remoteDataManager.refreshDelegate = self;
+    XCTAssertNotNil(self.remoteDataManager);
+
+    // expect to get data
+    receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data of type: %@",testPayloads[0].type]];
+    
+    subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
+        NSLog(@"notification block called");
+        if (receivedDataExpectation) {
+            [receivedDataExpectation fulfill];
+        } else {
+            XCTFail(@"Didn't expect to receive any data");
+        }
+    }];
+    XCTAssertNotNil(subscription);
+
+    // test
+    [self refresh];
+    
+    // verify
+    [self waitForExpectationsWithComment:@"Second refresh"];
+}
+
+#pragma mark -
+#pragma mark Utility Methods
+
 - (UARemoteDataPayload *)changePayload:(UARemoteDataPayload *)testPayload {
     UARemoteDataPayload *newTestPayload = [testPayload copy];
 
@@ -752,7 +881,7 @@
 
 - (void)refresh {
     self.refreshSucceededExpectation = [self expectationWithDescription:@"Refresh succeeded"];
-    [self.remoteDataManager refresh];
+    [self.remoteDataManager foregroundRefresh];
 }
 
 - (void)refreshComplete:(BOOL)success {

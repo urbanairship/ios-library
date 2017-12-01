@@ -9,6 +9,7 @@
 #import "UAKeychainUtils+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAirship.h"
+#import "UAComponent+Internal.h"
 
 NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.user_created";
 
@@ -35,13 +36,12 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 }
 
 - (instancetype)initWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
-    self = [super init];
+    self = [super initWithDataStore:dataStore];
     if (self) {
         self.config = config;
         self.apiClient = [UAUserAPIClient clientWithConfig:config];
         self.dataStore = dataStore;
         self.push = push;
-
 
         NSString *storedUsername = [UAKeychainUtils getUsername:self.config.appKey];
         NSString *storedPassword = [UAKeychainUtils getPassword:self.config.appKey];
@@ -123,7 +123,11 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 }
 
 - (void)createUser {
-
+    if (!self.componentEnabled) {
+        UA_LDEBUG(@"Skipping user creation, component disabled");
+        return;
+    }
+    
     if (!self.push.channelID) {
         UA_LDEBUG(@"Skipping user creation, no channel");
         return;
@@ -168,7 +172,9 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     };
 
     UAUserAPIClientFailureBlock failure = ^(NSUInteger statusCode) {
-        UA_LINFO(@"Failed to create user");
+        if (statusCode != UAAPIClientStatusDisabled) {
+            UA_LINFO(@"Failed to create user");
+        }
         self.creatingUser = NO;
         [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
         backgroundTask = UIBackgroundTaskInvalid;
@@ -183,6 +189,11 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 #pragma mark Update
 
 -(void)updateUser {
+    if (!self.componentEnabled) {
+        UA_LDEBUG(@"Skipping user update, component disabled");
+        return;
+    }
+    
     if (!self.isCreated) {
         UA_LDEBUG(@"Skipping user update, user not created yet.");
         return;
@@ -228,6 +239,13 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         } else {
             [self createUser];
         }
+    }
+}
+
+- (void)onComponentEnableChange {
+    if (self.componentEnabled) {
+        // if component was disabled and is now enabled, update the user in case we missed channel creation
+        [self channelCreated];
     }
 }
 

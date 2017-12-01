@@ -25,6 +25,11 @@
         onSuccess:(UANamedUserAPIClientSuccessBlock)successBlock
         onFailure:(UANamedUserAPIClientFailureBlock)failureBlock {
 
+    if (!self.enabled) {
+        UA_LDEBUG(@"Disabled");
+        return;
+    }
+    
     if (!identifier) {
         UA_LERR(@"The named user ID cannot be nil.");
         return;
@@ -79,6 +84,11 @@
            onSuccess:(UANamedUserAPIClientSuccessBlock)successBlock
            onFailure:(UANamedUserAPIClientFailureBlock)failureBlock {
 
+    if (!self.enabled) {
+        UA_LDEBUG(@"Disabled");
+        return;
+    }
+    
     if (!channelID) {
         UA_LERR(@"The channel ID cannot be nil.");
         return;

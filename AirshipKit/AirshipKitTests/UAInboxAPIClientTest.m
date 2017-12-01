@@ -98,7 +98,6 @@
     }];
 
     [self.mockSession verify];
-    [self.mockSession stopMocking];
 }
 
 /**
@@ -139,7 +138,6 @@
     XCTAssertTrue(failed);
 
     [self.mockSession verify];
-    [self.mockSession stopMocking];
 }
 
 /**
@@ -172,7 +170,6 @@
     XCTAssertTrue(failed);
 
     [self.mockSession verify];
-    [self.mockSession stopMocking];
 }
 
 /**
@@ -215,7 +212,6 @@
     XCTAssertTrue(successBlockCalled);
 
     [self.mockSession verify];
-    [self.mockSession stopMocking];
 }
 
 /**
@@ -257,7 +253,6 @@
     XCTAssertTrue(failureBlockCalled);
 
     [self.mockSession verify];
-    [self.mockSession stopMocking];
 }
 
 /**
@@ -293,7 +288,6 @@
     XCTAssertTrue(successBlockCalled);
 
     [self.mockSession verify];
-    [self.mockSession stopMocking];
 }
 
 /**
@@ -328,7 +322,72 @@
     XCTAssertTrue(failureBlockCalled);
 
     [self.mockSession verify];
-    [self.mockSession stopMocking];
+}
+
+/**
+ * Tests retrieving the message list when disabled.
+ */
+- (void)testRetrieveMessageListWhenDisabled {
+    // setup
+    self.inboxAPIClient.enabled = NO;
+    XCTestExpectation *expectationForRefreshSucceeded = [self expectationWithDescription:@"UAInboxClientMessageRetrievalSuccessBlock executed"];
+    
+    // test
+    [self.inboxAPIClient retrieveMessageListOnSuccess:^(NSUInteger status, NSArray * _Nullable messages) {
+        XCTAssertEqual(status,0);
+        XCTAssertFalse(messages.count);
+        
+        [expectationForRefreshSucceeded fulfill];
+    } onFailure:^() {
+        XCTFail(@"Should not fail");
+    }];
+    
+    // verify
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self.mockSession verify];
+}
+
+/**
+ * Tests batch delete when disabled.
+ */
+- (void)testBatchDeleteWhenDisabled {
+    // setup
+    self.inboxAPIClient.enabled = NO;
+    XCTestExpectation *expectationForRefreshSucceeded = [self expectationWithDescription:@"UAInboxClientMessageRetrievalSuccessBlock executed"];
+    
+    // test
+    NSURL *testURL = [NSURL URLWithString:@"testURL"];
+    [self.inboxAPIClient performBatchDeleteForMessageURLs:@[testURL] onSuccess:^{
+        [expectationForRefreshSucceeded fulfill];
+    } onFailure:^() {
+        XCTFail(@"Should not fail");
+    }];
+    
+    // verify
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self.mockSession verify];
+}
+
+/**
+ * Tests batch mark as read when disabled.
+ */
+- (void)testBatchMarkAsReadWhenDisabled {
+    // setup
+    self.inboxAPIClient.enabled = NO;
+    XCTestExpectation *expectationForRefreshSucceeded = [self expectationWithDescription:@"UAInboxClientMessageRetrievalSuccessBlock executed"];
+    
+    NSURL *testURL = [NSURL URLWithString:@"testURL"];
+    
+    // Make call
+    [self.inboxAPIClient performBatchMarkAsReadForMessageURLs:@[testURL] onSuccess:^{
+        [expectationForRefreshSucceeded fulfill];
+    } onFailure:^() {
+        XCTFail(@"Should not fail");
+    }];
+    
+    // verify
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self.mockSession verify];
 }
 
 

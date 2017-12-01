@@ -54,6 +54,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
         self.dataStore = dataStore;
         self.client = client;
         self.queue = queue;
+        self.uploadsEnabled = YES;
 
         // Set the intial delay
         self.earliestForegroundSendTime = [NSDate dateWithTimeIntervalSinceNow:InitialForegroundUploadDelay];
@@ -207,6 +208,10 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 - (void)addEvent:(UAEvent *)event sessionID:(NSString *)sessionID {
     [self.eventStore saveEvent:event sessionID:sessionID];
 
+    if (!self.uploadsEnabled) {
+        return;
+    }
+    
     switch (event.priority) {
         case UAEventPriorityHigh:
             [self scheduleUploadWithDelay:HighPriorityUploadDelay];
@@ -266,6 +271,10 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 }
 
 - (void)scheduleUploadWithDelay:(NSTimeInterval)delay {
+    if (!self.uploadsEnabled) {
+        return;
+    }
+    
     UA_LDEBUG(@"Enqueuing attempt to schedule event upload with delay on main queue.");
 
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -401,6 +410,5 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 
     return value;
 }
-
 
 @end

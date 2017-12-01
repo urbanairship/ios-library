@@ -34,6 +34,7 @@
 @property (nonatomic, assign) UIBackgroundTaskIdentifier backgroundTaskIdentifier;
 @property (nonatomic, assign) BOOL isStarted;
 @property (nonnull, strong) NSMutableDictionary *stateConditions;
+@property (atomic, assign) BOOL paused;
 @end
 
 @implementation UAAutomationEngine
@@ -42,7 +43,7 @@
     [self stop];
 }
 
-- (instancetype)initWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)limit {
+- (instancetype)initWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)limit paused:(BOOL)paused {
     self = [super init];
 
     if (self) {
@@ -51,13 +52,14 @@
         self.activeTimers = [NSMutableArray array];
         self.isForegrounded = NO;
         self.stateConditions = [NSMutableDictionary dictionary];
+        self.paused = paused;
     }
 
     return self;
 }
 
-+ (instancetype)automationEngineWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)limit {
-    return [[UAAutomationEngine alloc] initWithStoreName:storeName scheduleLimit:limit];
++ (instancetype)automationEngineWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)limit paused:(BOOL)paused {
+    return [[UAAutomationEngine alloc] initWithStoreName:storeName scheduleLimit:limit paused:paused];
 }
 
 #pragma mark -
@@ -118,6 +120,22 @@
     self.isStarted = NO;
 }
 
+- (void)pause {
+    if (!self.paused) {
+        self.paused = YES;
+    }
+}
+
+- (void)resume {
+    if (self.paused) {
+        self.paused = NO;
+        if (!self.isStarted) {
+            [self start];
+        } else {
+            [self scheduleConditionsChanged];
+        }
+    }
+}
 - (void)schedule:(UAScheduleInfo *)scheduleInfo completionHandler:(void (^)(UASchedule *))completionHandler {
     // Only allow valid schedules to be saved
     if (!scheduleInfo.isValid) {
@@ -301,6 +319,10 @@
 }
 
 - (void)updateTriggersWithScheduleID:(NSString *)scheduleID type:(UAScheduleTriggerType)triggerType argument:(id)argument incrementAmount:(double)amount {
+    if (self.paused) {
+        return;
+    }
+    
     UA_LDEBUG(@"Updating triggers with type: %ld", (long)triggerType);
 
     NSDate *start = [NSDate date];
@@ -644,6 +666,10 @@
  * @param schedules An array of triggered schedule data.
  */
 - (void)processTriggeredSchedules:(NSArray<UAScheduleData *> *)schedules {
+    if (self.paused) {
+        return;
+    }
+
     // Sort schedules by priority in ascending order
     schedules = [self sortedScheduleDataByPriority:schedules];
 
@@ -688,6 +714,10 @@
         // Conditions and action executions must be run on the main queue.
         UA_WEAKIFY(self)
         dispatch_sync(dispatch_get_main_queue(), ^{
+            if (self.paused) {
+                return;
+            }
+
             UA_STRONGIFY(self)
             if (!schedule) {
                 return;

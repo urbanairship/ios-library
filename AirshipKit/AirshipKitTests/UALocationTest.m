@@ -21,7 +21,9 @@
 
 - (void)setUp {
     [super setUp];
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"UALocationTest."];
+    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"ualocation.test.%@",self.name]];
+    XCTAssertNotNil(self.dataStore);
+    [self.dataStore removeAll]; // start with an empty datastore
 
     self.mockedApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
@@ -31,6 +33,7 @@
 
     self.location = [UALocation locationWithAnalytics:self.mockAnalytics dataStore:self.dataStore];
     self.location.locationManager = self.mockLocationManager;
+    self.location.componentEnabled = YES;
 
     self.mockedBundle = [self mockForClass:[NSBundle class]];
     [[[self.mockedBundle stub] andReturn:self.mockedBundle] mainBundle];
@@ -69,6 +72,35 @@
     self.location.locationUpdatesEnabled = YES;
 
     // Verify we starting location updates
+    [self.mockLocationManager verify];
+}
+
+/**
+ * Test enabling location updates does not start location updates if location is disabled.
+ */
+- (void)testEnableLocationComponentDisabled {
+    // Disable location component
+    self.location.componentEnabled = NO;
+
+    // Make the app inactive
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
+    
+    // Authorize location
+    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
+    
+    // Make significant location available
+    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
+    
+    // Allow background location
+    self.location.backgroundLocationUpdatesAllowed = YES;
+    
+    // Reject calls to start monitoring significant location changes
+    [[self.mockLocationManager reject] startMonitoringSignificantLocationChanges];
+    
+    // Enable location
+    self.location.locationUpdatesEnabled = YES;
+    
+    // Verify we start location updates
     [self.mockLocationManager verify];
 }
 
@@ -176,6 +208,61 @@
 }
 
 /**
+ * Test disabling location component stops location updates.
+ */
+- (void)testDisableLocationComponentStopsUpdates {
+    // Make the app active
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
+    
+    // Authroize location
+    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
+    
+    // Make significant location available
+    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
+    
+    // Enable location updates
+    self.location.locationUpdatesEnabled = YES;
+    
+    // Expect to stop monitoring significant location changes
+    [[self.mockLocationManager expect] stopMonitoringSignificantLocationChanges];
+    
+    // Disable location component
+    self.location.componentEnabled = NO;
+    
+    // Verify we stopped location updates
+    [self.mockLocationManager verify];
+}
+
+/**
+ * Test enabling location component starts location updates.
+ */
+- (void)testEnableLocationComponentStartsUpdates {
+    // Disable location component
+    self.location.componentEnabled = NO;
+
+    // Make the app active
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
+    
+    // Authroize location
+    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
+    
+    // Make significant location available
+    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
+    
+    // Enable location updates
+    self.location.locationUpdatesEnabled = YES;
+    
+    // Expect to start monitoring significant location changes
+    [[self.mockLocationManager expect] startMonitoringSignificantLocationChanges];
+    
+    // Enable location component
+    self.location.componentEnabled = YES;
+    
+    // Verify we stopped location updates
+    [self.mockLocationManager verify];
+}
+
+/**
  * Test disabling location updates stops location.
  */
 - (void)testDisableLocationUpdates {
@@ -224,6 +311,36 @@
     // Allow background location
     self.location.backgroundLocationUpdatesAllowed = YES;
 
+    // Verify we starting location services
+    [self.mockLocationManager verify];
+}
+
+/**
+ * Test allowing background updates doesn't start location updates if location updates
+ * are enabled but the component is disabled.
+ */
+- (void)testAllowBackgroundUpdatesComponentDisabled {
+    // Disable location component
+    self.location.componentEnabled = NO;
+    
+    // Background the app
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+    
+    // Authroize location
+    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
+    
+    // Make significant location available
+    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
+    
+    // Enable location updates
+    self.location.locationUpdatesEnabled = YES;
+    
+    // Expect to start monitoring significant location changes
+    [[self.mockLocationManager reject] startMonitoringSignificantLocationChanges];
+    
+    // Allow background location
+    self.location.backgroundLocationUpdatesAllowed = YES;
+    
     // Verify we starting location services
     [self.mockLocationManager verify];
 }

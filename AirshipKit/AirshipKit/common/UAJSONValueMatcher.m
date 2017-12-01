@@ -2,7 +2,7 @@
 
 #import "UAJSONValueMatcher.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAVersionMatcher.h"
+#import "UAVersionMatcher+Internal.h"
 
 @interface UAJSONValueMatcher ()
 @property(nonatomic, strong) NSNumber *atLeast;
@@ -106,7 +106,7 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
     return matcher;
 }
 
-+ (instancetype)matcherWithVersionConstraint:(NSString *)versionConstraint {
++ (nullable instancetype)matcherWithVersionConstraint:(NSString *)versionConstraint {
     UAVersionMatcher *versionMatcher = [UAVersionMatcher matcherWithVersionConstraint:versionConstraint];
     
     if (!versionMatcher) {

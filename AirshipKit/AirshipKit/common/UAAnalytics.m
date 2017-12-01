@@ -50,13 +50,14 @@ NSString *const UAEventKey = @"event";
 }
 
 - (instancetype)initWithConfig:(UAConfig *)airshipConfig dataStore:(UAPreferenceDataStore *)dataStore eventManager:(UAEventManager *)eventManager {
-    self = [super init];
+    self = [super initWithDataStore:dataStore];
 
     if (self) {
         // Set server to default if not specified in options
         self.config = airshipConfig;
         self.dataStore = dataStore;
         self.eventManager = eventManager;
+        self.eventManager.uploadsEnabled = self.componentEnabled;
 
         // Default analytics value
         if (![self.dataStore objectForKey:kUAAnalyticsEnabled]) {
@@ -292,6 +293,17 @@ NSString *const UAEventKey = @"event";
 
 - (void)scheduleUpload {
     [self.eventManager scheduleUpload];
+}
+
+- (void)onComponentEnableChange {
+    self.eventManager.uploadsEnabled = self.componentEnabled;
+    if (self.componentEnabled) {
+        // if component was disabled and is now enabled, schedule an upload just in case
+        [self scheduleUpload];
+    } else {
+        // if component was enabled and is now disabled, cancel any pending uploads
+        [self cancelUpload];
+    }
 }
 
 @end

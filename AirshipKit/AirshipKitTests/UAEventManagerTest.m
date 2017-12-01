@@ -99,8 +99,10 @@
  * Test adding an event.
  */
 - (void)testAddEvent {
+    // setup
     UACustomEvent *event = [UACustomEvent eventWithName:@"cool"];
 
+    // expectations
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async."];
 
     __block NSTimeInterval delay = -1;
@@ -115,8 +117,10 @@
 
     [[self.mockStore expect] saveEvent:event sessionID:@"story"];
 
+    // test
     [self.eventManager addEvent:event sessionID:@"story"];
 
+    // verify
     [self waitForExpectationsWithTimeout:1 handler:nil];
 
     [self.mockStore verify];
@@ -127,12 +131,35 @@
 }
 
 /**
+* Test adding an event when uploads are disabled.
+*/
+- (void)testAddEventWhenUploadsAreDisabled {
+    // setup
+    self.eventManager.uploadsEnabled = NO;
+    
+    // expectations
+    [[[self.mockQueue reject] ignoringNonObjectArgs] addBackgroundOperation:OCMOCK_ANY delay:0];
+    
+    UACustomEvent *event = [UACustomEvent eventWithName:@"cool"];
+    
+    [[self.mockStore expect] saveEvent:event sessionID:@"story"];
+    
+    // test
+    [self.eventManager addEvent:event sessionID:@"story"];
+    
+    // verify
+    [self.mockStore verify];
+    [self.mockQueue verify];
+}
+
+/**
  * Test adding an event in the background defaults to 5 second delay.
  */
 - (void)testAddEventBackground {
     // Background application state
     [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
 
+    // expectations
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async."];
 
 
@@ -152,8 +179,10 @@
 
     [[self.mockStore expect] saveEvent:event sessionID:@"story"];
 
+    // test
     [self.eventManager addEvent:event sessionID:@"story"];
 
+    // verify
     [self waitForExpectationsWithTimeout:1 handler:nil];
 
     [self.mockStore verify];
@@ -161,6 +190,31 @@
 
     // Verify the delay is around 5 seconds
     XCTAssertEqualWithAccuracy(delay, 5, .1);
+}
+
+/**
+ * Test adding an event in the background defaults when uploads are disabled.
+ */
+- (void)testAddEventBackgroundWhenUploadsAreDisabled {
+    // setup
+    self.eventManager.uploadsEnabled = NO;
+    
+    // Background application state
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+    
+    // expectations
+    UACustomEvent *event = [UACustomEvent eventWithName:@"cool"];
+    
+    [[[self.mockQueue reject] ignoringNonObjectArgs] addBackgroundOperation:OCMOCK_ANY delay:0];
+    
+    [[self.mockStore expect] saveEvent:event sessionID:@"story"];
+    
+    // test
+    [self.eventManager addEvent:event sessionID:@"story"];
+    
+    // verify
+    [self.mockStore verify];
+    [self.mockQueue verify];
 }
 
 /**
@@ -223,6 +277,22 @@
 }
 
 /**
+ * Test entering background does not schedule an upload when uploads are disabled.
+ */
+- (void)testBackgroundWhenUploadsAreDisabled {
+    // setup
+    self.eventManager.uploadsEnabled = NO;
+
+    // expectations
+    [[[self.mockQueue reject] ignoringNonObjectArgs] addBackgroundOperation:OCMOCK_ANY delay:0];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification
+                                                        object:nil];
+    
+    [self.mockQueue verify];
+}
+
+/**
  * Test creating a channel schedules an upload.
  */
 - (void)testChannelCreated {
@@ -255,7 +325,6 @@
 - (void)testRescheduleUpload {
     // Add a normal priority event (delay 15ish seconds)
     [self testAddEvent];
-
 
     // Make sure it cancels the previous attempt
     [[self.mockQueue expect] cancelAllOperations];
@@ -359,6 +428,35 @@
 
     [self waitForExpectationsWithTimeout:1 handler:nil];
 
+    [self.mockQueue verify];
+    [self.mockClient verify];
+    [self.mockStore verify];
+}
+
+/**
+ * Test uploading events when uploads are disabled.
+ */
+- (void)testScheduleUploadWhenUploadsAreDisabled {
+    // setup
+    self.eventManager.uploadsEnabled = NO;
+    
+    // Set a channel ID
+    [[[self.mockPush stub] andReturn:@"channel ID"] channelID];
+    
+    // expectations
+    // Run the operation as when added
+    [[[self.mockQueue reject] ignoringNonObjectArgs] addBackgroundOperation:OCMOCK_ANY delay:0];
+    
+    // Reject any calls to the store
+    [[[self.mockStore reject] ignoringNonObjectArgs] fetchEventsWithMaxBatchSize:0 completionHandler:OCMOCK_ANY];
+    
+    // Reject any calls to the client
+    [[self.mockClient reject] uploadEvents:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    
+    // test
+    [self.eventManager scheduleUpload];
+    
+    // verify
     [self.mockQueue verify];
     [self.mockClient verify];
     [self.mockStore verify];

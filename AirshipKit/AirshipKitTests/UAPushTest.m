@@ -2584,6 +2584,17 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  * Test updating tag groups calls the tag client for every pending mutation.
  */
 - (void)testUpdateTagGroups {
+    // set up
+    [self setupForUpdateTagGroupsTest];
+    
+    // test
+    [self.push updateRegistration];
+    
+    // verify
+    [self verifyUpdateTagGroupsTest];
+}
+
+- (void)setupForUpdateTagGroupsTest {
     // Background task
     [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
@@ -2627,9 +2638,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [self.push addTags:@[@"tag1"] group:@"group1"];
     [self.push removeTags:@[@"tag2"] group:@"group1"];
     [self.push setTags:@[@"tag1"] group:@"group2"];
+}
 
-    [self.push updateRegistration];
-
+- (void)verifyUpdateTagGroupsTest {
     [self waitForExpectationsWithTimeout:1 handler:nil];
 
     [self.mockTagGroupsAPIClient verify];
@@ -2742,6 +2753,18 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     
     // TEST & VERIFY
     XCTAssert(self.push.authorizedNotificationOptions == UANotificationOptionNone);
+}
+
+- (void)testEnablingDisabledPushUpdatesRegistration {
+    // Setup
+    self.push.componentEnabled = NO;
+    [self setupForUpdateTagGroupsTest];
+
+    // Test
+    self.push.componentEnabled = YES;
+    
+    // verify
+    [self verifyUpdateTagGroupsTest];
 }
 
 @end

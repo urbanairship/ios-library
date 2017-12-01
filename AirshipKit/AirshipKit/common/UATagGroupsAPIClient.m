@@ -48,6 +48,10 @@
                         audience:(NSDictionary *)audience
                completionHandler:(void (^)(NSUInteger status))completionHandler {
 
+    if (!self.enabled) {
+        UA_LDEBUG(@"Disabled");
+        return;
+    }
 
     NSMutableDictionary *payload = [[mutation payload] mutableCopy];
     [payload setValue:audience forKey:kUATagGroupsAudienceKey];
