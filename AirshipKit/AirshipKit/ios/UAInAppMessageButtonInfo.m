@@ -94,7 +94,7 @@ NSString *const UAInAppMessageButtonInfoActionsKey = @"actions";
         if ([UAInAppMessageButtonInfoBehaviorCancel isEqualToString:behaviorType]) {
             behavior = UAInAppMessageButtonInfoBehaviorCancel;
         } else if ([UAInAppMessageButtonInfoBehaviorDismiss isEqualToString:behaviorType]) {
-            behavior = UAInAppMessageButtonInfoBehaviorCancel;
+            behavior = UAInAppMessageButtonInfoBehaviorDismiss;
         } else {
             if (error) {
                 NSString *msg = [NSString stringWithFormat:@"Invalid in-app message button behavior: %@", behaviorType];

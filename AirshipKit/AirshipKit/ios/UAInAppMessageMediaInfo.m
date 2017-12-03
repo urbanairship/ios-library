@@ -140,6 +140,10 @@ NSString *const UAInAppMessageMediaInfoDescriptionKey = @"description";
         return NO;
     }
 
+    if (![self.mediaDescription isEqualToString:info.mediaDescription]) {
+        return NO;
+    }
+
     return YES;
 }
 

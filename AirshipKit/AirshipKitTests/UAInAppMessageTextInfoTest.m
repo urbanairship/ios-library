@@ -27,14 +27,14 @@
     }];
     
     UAInAppMessageTextInfo *fromJSONTextInfo = [UAInAppMessageTextInfo textInfoWithJSON:@{@"alignment" : UAInAppMessageTextInfoAlignmentCenter,
-                                                                                      @"color" : @"hexcolor",
-                                                                                      @"size" : @11,
-                                                                                      @"style" :     @[@"bold",
-                                                                                                   @"italic",
-                                                                                                   @"underline"],
-                                                                                      @"text" : @"text",
-                                                                                      }
-                                                                              error:nil];
+                                                                                          @"color" : @"hexcolor",
+                                                                                          @"size" : @11,
+                                                                                          @"style" :     @[@"bold",
+                                                                                                           @"italic",
+                                                                                                           @"underline"],
+                                                                                          @"text" : @"text",
+                                                                                          }
+                                                                                  error:nil];
     
     NSDictionary *JSONFromBuilderTextInfo = [UAInAppMessageTextInfo JSONWithTextInfo:fromBuilderTextInfo];
     NSDictionary *JSONFromJSONTextInfo = [UAInAppMessageTextInfo JSONWithTextInfo:fromJSONTextInfo];
@@ -45,7 +45,6 @@
     
     // Test conversion to JSON
     XCTAssertEqualObjects(JSONFromBuilderTextInfo, JSONFromJSONTextInfo);
-    XCTAssertTrue([JSONFromBuilderTextInfo isEqual:JSONFromJSONTextInfo] == YES);
 }
 
 @end

@@ -74,7 +74,7 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
         }
     }
 
-    NSMutableArray *buttons = [NSMutableArray array];
+    NSMutableArray<UAInAppMessageButtonInfo *> *buttons = [NSMutableArray array];
     id buttonsJSONArray = json[UAInAppMessageButtonsKey];
     if (!buttonsJSONArray || ![buttonsJSONArray isKindOfClass:[NSArray class]]) {
         if (error) {
@@ -206,10 +206,10 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     self.buttonLayout = buttonLayout;
     self.placement = placement;
     self.contentLayout = contentLayout;
-    self.duration = [duration integerValue];
+    self.duration = [duration unsignedIntegerValue];
     self.backgroundColor = backgroundColor;
     self.dismissButtonColor = dismissButtonColor;
-    self.borderRadius = [borderRadius integerValue];
+    self.borderRadius = [borderRadius unsignedIntegerValue];
 
     return YES;
 }

@@ -146,7 +146,7 @@ extern NSString *const UAInAppMessageBannerActions;
 + (NSDictionary *)JSONWithBannerDisplayContent:(UAInAppMessageBannerDisplayContent *_Nonnull)displayContent;
 
 /**
- * Factory method for building banner display content with JSON.
+ * Factory method for building banner display content with builder block.
  *
  * @param builderBlock The builder block.
  */

@@ -34,7 +34,6 @@
 
     // Test conversion to JSON
     XCTAssertEqualObjects(JSONFromBuilderMediaInfo, JSONFromJSONMediaInfo);
-    XCTAssertTrue([JSONFromBuilderMediaInfo isEqual:JSONFromJSONMediaInfo] == YES);
 }
 
 @end

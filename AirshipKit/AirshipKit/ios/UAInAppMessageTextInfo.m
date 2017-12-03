@@ -113,7 +113,7 @@ NSString *const UAInAppMessageTextInfoStyleKey = @"style";
 
         return nil;
     }
-    size = [textSize integerValue];
+    size = [textSize unsignedIntegerValue];
 
     NSString *alignment;
     if (json[UAInAppMessageTextInfoAlignmentKey]) {
@@ -194,7 +194,7 @@ NSString *const UAInAppMessageTextInfoStyleKey = @"style";
     for (id fontFamily in fontFamilies) {
         if (![fontFamily isKindOfClass:[NSString class]]) {
             if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Font families must be strings. Invalid value %@", fontFamily];
+                NSString *msg = [NSString stringWithFormat:@"A font family must be a string. Invalid value %@", fontFamily];
                 *error =  [NSError errorWithDomain:UAInAppMessageTextInfoDomain
                                               code:UAInAppMessageTextInfoErrorCodeInvalidJSON
                                           userInfo:@{NSLocalizedDescriptionKey:msg}];

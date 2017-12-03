@@ -45,7 +45,6 @@
 
     // Test conversion to JSON
     XCTAssertEqualObjects(JSONFromBuilderButtonInfo, JSONFromJSONButtonInfo);
-    XCTAssertTrue([JSONFromBuilderButtonInfo isEqual:JSONFromJSONButtonInfo] == YES);
 }
 
 @end

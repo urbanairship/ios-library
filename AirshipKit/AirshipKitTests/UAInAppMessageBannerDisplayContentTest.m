@@ -89,7 +89,6 @@
 
     // Test conversion to JSON
     XCTAssertEqualObjects(JSONFromBuilderBannerDisplayContent, JSONFromJSONBannerDisplayContent);
-    XCTAssertTrue([JSONFromBuilderBannerDisplayContent isEqual:JSONFromJSONBannerDisplayContent] == YES);
 }
 
 @end
