@@ -43,7 +43,7 @@
     [self stop];
 }
 
-- (instancetype)initWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)limit paused:(BOOL)paused {
+- (instancetype)initWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)limit {
     self = [super init];
 
     if (self) {
@@ -52,14 +52,14 @@
         self.activeTimers = [NSMutableArray array];
         self.isForegrounded = NO;
         self.stateConditions = [NSMutableDictionary dictionary];
-        self.paused = paused;
+        self.paused = NO;
     }
 
     return self;
 }
 
-+ (instancetype)automationEngineWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)limit paused:(BOOL)paused {
-    return [[UAAutomationEngine alloc] initWithStoreName:storeName scheduleLimit:limit paused:paused];
++ (instancetype)automationEngineWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)limit {
+    return [[UAAutomationEngine alloc] initWithStoreName:storeName scheduleLimit:limit];
 }
 
 #pragma mark -

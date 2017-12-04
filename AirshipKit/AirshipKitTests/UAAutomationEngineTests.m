@@ -34,7 +34,7 @@
     [[[self.mockDelegate stub] andCall:@selector(createScheduleInfoWithBuilder:) onObject:self] createScheduleInfoWithBuilder:OCMOCK_ANY];
 
 
-    self.automationEngine = [UAAutomationEngine automationEngineWithStoreName:@"test" scheduleLimit:100 paused:NO];
+    self.automationEngine = [UAAutomationEngine automationEngineWithStoreName:@"test" scheduleLimit:100];
     self.automationEngine.delegate = self.mockDelegate;
     [self.automationEngine cancelAll];
 

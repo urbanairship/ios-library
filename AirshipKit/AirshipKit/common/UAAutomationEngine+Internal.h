@@ -46,7 +46,7 @@ typedef NS_ENUM(NSUInteger, UAScheduleState) {
 /**
  * Automation constructor.
  */
-+ (instancetype)automationEngineWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)limit paused:(BOOL)paused;
++ (instancetype)automationEngineWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)limit;
 
 
 /**
