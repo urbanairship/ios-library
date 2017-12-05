@@ -311,31 +311,31 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
 
 - (BOOL)isEqualToInAppMessageBannerDisplayContent:(UAInAppMessageBannerDisplayContent *)content {
 
-    if (![self.heading isEqual:content.heading]) {
+    if (content.heading != self.heading && ![self.heading isEqual:content.heading]) {
         return NO;
     }
 
-    if (![self.body isEqual:content.body]) {
+    if (content.body != self.body && ![self.body isEqual:content.body]) {
         return NO;
     }
 
-    if (![self.media isEqual:content.media]) {
+    if (content.media != self.media  && ![self.media isEqual:content.media]) {
         return NO;
     }
 
-    if (self.buttons != content.buttons && ![self.buttons isEqualToArray:content.buttons]) {
+    if (content.buttons != self.buttons  && ![self.buttons isEqualToArray:content.buttons]) {
         return NO;
     }
 
-    if (![self.buttonLayout isEqualToString:content.buttonLayout]) {
+    if (content.buttonLayout != self.buttonLayout && ![self.buttonLayout isEqualToString:content.buttonLayout]) {
         return NO;
     }
 
-    if (![self.placement isEqualToString:content.placement]) {
+    if (content.placement != self.placement && ![self.placement isEqualToString:content.placement]) {
         return NO;
     }
 
-    if (![self.contentLayout isEqualToString:content.contentLayout]) {
+    if (content.contentLayout != self.contentLayout  && ![self.contentLayout isEqualToString:content.contentLayout]) {
         return NO;
     }
 
@@ -343,11 +343,11 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
         return NO;
     }
 
-    if (![self.backgroundColor isEqualToString:content.backgroundColor]) {
+    if (content.backgroundColor != self.backgroundColor && ![self.backgroundColor isEqualToString:content.backgroundColor]) {
         return NO;
     }
 
-    if (![self.dismissButtonColor isEqualToString:content.dismissButtonColor]) {
+    if (content.dismissButtonColor != self.dismissButtonColor && ![self.dismissButtonColor isEqualToString:content.dismissButtonColor]) {
         return NO;
     }
 

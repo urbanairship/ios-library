@@ -132,15 +132,17 @@ NSString *const UAInAppMessageMediaInfoDescriptionKey = @"description";
 
 - (BOOL)isEqualToInAppMessageMediaInfo:(UAInAppMessageMediaInfo *)info {
 
-    if (![self.url isEqualToString:info.url]) {
+    if ((info.url && !self.url) || (!info.url && self.url) || (self.url && ![self.url isEqualToString:info.url])) {
         return NO;
     }
 
-    if (![self.type isEqualToString:info.type]) {
+    if ((info.type && !self.type) || (!info.type && self.type) || (self.type && ![self.type isEqualToString:info.type])) {
         return NO;
     }
 
-    if (![self.mediaDescription isEqualToString:info.mediaDescription]) {
+    if ((info.mediaDescription && !self.mediaDescription) ||
+        (!info.mediaDescription && self.mediaDescription) ||
+        (self.mediaDescription && ![self.mediaDescription isEqualToString:info.mediaDescription])) {
         return NO;
     }
 

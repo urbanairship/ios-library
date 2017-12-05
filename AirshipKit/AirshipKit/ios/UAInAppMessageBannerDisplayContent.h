@@ -68,7 +68,7 @@ extern NSString *const UAInAppMessageBannerActions;
 /**
  * The banner's body.
  */
-@property(nonatomic, strong) UAInAppMessageTextInfo *body;
+@property(nonatomic, strong, nullable) UAInAppMessageTextInfo *body;
 
 /**
  * The banner's media.
@@ -88,7 +88,7 @@ extern NSString *const UAInAppMessageBannerActions;
 /**
  * The banner's placement. Defaults to UAInAppMessageBannerPlacementBottom
  */
-@property(nonatomic, copy) NSString *placement;
+@property(nonatomic, copy, nullable) NSString *placement;
 
 /**
  * The banner's layout for the text and media. Defaults to

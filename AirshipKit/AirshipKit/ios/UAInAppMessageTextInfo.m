@@ -242,27 +242,27 @@ NSString *const UAInAppMessageTextInfoStyleKey = @"style";
 
 - (BOOL)isEqualToInAppMessageTextInfo:(UAInAppMessageTextInfo *)info {
 
-    if (self.text != info.text && ![self.text isEqualToString:info.text]) {
+    if (info.text != self.text && ![self.text isEqualToString:info.text]) {
         return NO;
     }
 
-    if (self.color != info.color && ![self.color isEqualToString:info.color]) {
+    if (info.color != self.color && ![self.color isEqualToString:info.color]) {
         return NO;
     }
 
-    if (self.size != info.size && self.size != info.size) {
+    if (info.size != self.size && self.size != info.size) {
         return NO;
     }
 
-    if (self.alignment != info.alignment && ![self.alignment isEqualToString:info.alignment]) {
+    if (info.alignment != self.alignment && ![self.alignment isEqualToString:info.alignment]) {
         return NO;
     }
 
-    if (self.styles != info.styles && ![self.styles isEqualToArray:info.styles]) {
+    if (info.styles != self.styles && ![self.styles isEqualToArray:info.styles]) {
         return NO;
     }
 
-    if (self.fontFamilies != info.fontFamilies && ![self.fontFamilies isEqualToArray:info.fontFamilies]) {
+    if (info.fontFamilies != self.fontFamilies && ![self.fontFamilies isEqualToArray:info.fontFamilies]) {
         return NO;
     }
 
