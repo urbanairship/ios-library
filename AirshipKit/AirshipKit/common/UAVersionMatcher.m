@@ -3,6 +3,7 @@
 
 #import "UAVersionMatcher+Internal.h"
 #import "UAGlobal.h"
+#import "UAUtils.h"
 
 typedef NS_ENUM(NSInteger,UAVersionMatcherConstraintType) {
     UAVersionMatcherConstraintTypeUnknown,
@@ -300,7 +301,7 @@ typedef NS_ENUM(NSInteger,UAVersionMatcherRangeBoundary) {
     UAVersionMatcherRangeBoundary startBoundary = [self.parsedConstraint[@"startBoundary"] integerValue];
     NSString *startOfRange = self.parsedConstraint[@"startOfRange"];
     if (startBoundary != UAVersionMatcherRangeBoundaryInfinite) {
-        NSComparisonResult result = [self compareVersion:startOfRange toVersion:checkVersion];
+        NSComparisonResult result = [UAUtils compareVersion:startOfRange toVersion:checkVersion];
         switch (startBoundary) {
             case UAVersionMatcherRangeBoundaryInclusive:
                 if (result != NSOrderedAscending && result != NSOrderedSame) {
@@ -320,7 +321,7 @@ typedef NS_ENUM(NSInteger,UAVersionMatcherRangeBoundary) {
     UAVersionMatcherRangeBoundary endBoundary = [self.parsedConstraint[@"endBoundary"] integerValue];
     NSString *endOfRange = self.parsedConstraint[@"endOfRange"];
     if (endBoundary != UAVersionMatcherRangeBoundaryInfinite) {
-        NSComparisonResult result = [self compareVersion:checkVersion toVersion:endOfRange];
+        NSComparisonResult result = [UAUtils compareVersion:checkVersion toVersion:endOfRange];
         switch (endBoundary) {
             case UAVersionMatcherRangeBoundaryInclusive:
                 if (result != NSOrderedAscending && result != NSOrderedSame) {
@@ -338,26 +339,6 @@ typedef NS_ENUM(NSInteger,UAVersionMatcherRangeBoundary) {
     }
     
     return YES;
-}
-
-                                                                                   
-- (NSComparisonResult)compareVersion:(NSString *)version1 toVersion:(NSString *)version2 {
-    NSArray *version1Components = [version1 componentsSeparatedByString:@"."];
-    NSArray *version2Components = [version2 componentsSeparatedByString:@"."];
-    
-    NSInteger index = 0;
-    while ([version1Components count] > index || [version2Components count] > index) {
-        NSInteger version1Component = [version1Components count] > index ? [[version1Components objectAtIndex:index] integerValue] : 0;
-        NSInteger version2Component = [version2Components count] > index ? [[version2Components objectAtIndex:index] integerValue] : 0;
-        if (version1Component < version2Component) {
-            return NSOrderedAscending;
-        } else if (version1Component > version2Component) {
-            return NSOrderedDescending;
-        }
-        index++;
-    }
-    
-    return NSOrderedSame;
 }
 
 #pragma mark -
