@@ -23,7 +23,8 @@
                                       UAScheduleTriggerCustomEventValueName: @(UAScheduleTriggerCustomEventValue),
                                       UAScheduleTriggerScreenName: @(UAScheduleTriggerScreen),
                                       UAScheduleTriggerAppInitName: @(UAScheduleTriggerAppInit),
-                                      UAScheduleTriggerActiveSessionName : @(UAScheduleTriggerActiveSession)
+                                      UAScheduleTriggerActiveSessionName : @(UAScheduleTriggerActiveSession),
+                                      UAScheduleTriggerVersionName : @(UAScheduleTriggerVersion)
                                       };
 
 
