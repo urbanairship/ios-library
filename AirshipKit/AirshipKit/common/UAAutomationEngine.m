@@ -15,6 +15,8 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAJSONPredicate.h"
 #import "UAGlobal.h"
+#import "UAirship.h"
+#import "UAApplicationMetrics.h"
 
 /*
  TODO:
@@ -604,7 +606,12 @@
         return [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
     };
 
+    BOOL (^versionCondition)(void) = ^BOOL{
+        return [UAirship shared].applicationMetrics.isAppVersionUpdated;
+    };
+
     [self.stateConditions setObject:activeSessionCondition forKey:@(UAScheduleTriggerActiveSession)];
+    [self.stateConditions setObject:versionCondition forKey:@(UAScheduleTriggerVersion)];
 }
 
 /**
@@ -636,7 +643,16 @@
 
             // If there is a matching condition and the condition holds, update all of the schedule's triggers of that type
             if (condition && condition()) {
-                [self updateTriggersWithScheduleID:schedule.identifier type:type argument:nil incrementAmount:1.0];
+                id argument;
+
+                if (type == UAScheduleTriggerVersion) {
+                    NSString *currentVersion = [UAirship shared].applicationMetrics.currentAppVersion;
+                    if (currentVersion) {
+                        argument = @{@"ios" : currentVersion};
+                    }
+                }
+
+                [self updateTriggersWithScheduleID:schedule.identifier type:type argument:argument incrementAmount:1.0];
             }
         }
     }
