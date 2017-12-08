@@ -98,7 +98,9 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
                                     predicate:predicate];
 }
 
-+ (instancetype)versionTriggerWithPredicate:(UAJSONPredicate *)predicate count:(NSUInteger)count {
++ (instancetype)versionTriggerWithConstraint:(NSString *)versionConstraint count:(NSUInteger)count {
+    UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:versionConstraint] key:@"ios"];
+    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:matcher];
     return [UAScheduleTrigger triggerWithType:UAScheduleTriggerVersion goal:@(count) predicate:predicate];
 }
 

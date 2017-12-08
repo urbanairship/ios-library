@@ -255,11 +255,11 @@ extern NSString *const UAScheduleTriggerVersionName;
 /**
  * Factory method to create a version trigger.
  *
- * @param predicate JSON predicate to match against the app version.
+ * @param versionConstraint A version constraint to match against the app version.
  * @param count The number of updates to match before firing the trigger.
  * @return A version trigger.
  */
-+ (instancetype)versionTriggerWithPredicate:(UAJSONPredicate *)predicate count:(NSUInteger)count;
++ (instancetype)versionTriggerWithConstraint:(NSString *)versionConstraint count:(NSUInteger)count;
 
 
 /**

@@ -48,7 +48,7 @@
     self.mockMetrics = [self mockForClass:[UAApplicationMetrics class]];
     [[[self.mockAirship stub] andReturn:self.mockMetrics] applicationMetrics];
 
-    self.automationEngine = [UAAutomationEngine automationEngineWithStoreName:@"test" scheduleLimit:100];
+    self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:self.mockAutomationStore scheduleLimit:UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT];
     self.automationEngine.delegate = self.mockDelegate;
     [self.automationEngine cancelAll];
 
@@ -600,9 +600,7 @@
     [[[self.mockMetrics stub] andReturn:@"2.0"] currentAppVersion];
     [[[self.mockMetrics stub] andReturnValue:@(YES)] isAppVersionUpdated];
 
-    UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"2.0+"] key:@"ios"];
-    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:matcher];
-    UAScheduleTrigger *trigger = [UAScheduleTrigger versionTriggerWithPredicate:predicate count:1];
+    UAScheduleTrigger *trigger = [UAScheduleTrigger versionTriggerWithConstraint:@"2.0+" count:1];
 
     [self verifyTrigger:trigger triggerFireBlock:^{}];
 }
