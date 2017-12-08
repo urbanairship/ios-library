@@ -57,6 +57,14 @@ extern NSString *const UAScheduleInfoInAppMessageKey;
  */
 + (instancetype)inAppMessageScheduleInfoWithBuilderBlock:(void(^)(UAInAppMessageScheduleInfoBuilder *builder))builderBlock;
 
+/**
+ * Return the message id from a JSON payload.
+ *
+ * @param json The JSON payload.
+ * @return The message id or `nil` if the JSON is invalid.
+ */
++ (NSString *)parseMessageID:(id)json;
+
 @end
 
 NS_ASSUME_NONNULL_END

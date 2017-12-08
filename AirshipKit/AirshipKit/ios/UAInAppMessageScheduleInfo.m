@@ -92,4 +92,12 @@ NSString *const UAScheduleInfoInAppMessageKey = @"message";
     return [[UAInAppMessageScheduleInfo alloc] initWithBuilder:builder];
 }
 
++ (NSString *)parseMessageID:(id)json {
+    id messagePayload = json[UAScheduleInfoInAppMessageKey];
+    if (!messagePayload) {
+        return nil;
+    }
+    
+    return messagePayload[UAInAppMessageIDKey];
+}
 @end

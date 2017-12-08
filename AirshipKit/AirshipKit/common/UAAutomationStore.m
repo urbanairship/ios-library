@@ -80,8 +80,32 @@
             return;
         }
 
-        [self createScheduleDataFromSchedule:schedule];
+        [self addScheduleDataFromSchedule:schedule];
 
+        completionHandler([self.managedContext safeSave]);
+    }];
+}
+
+- (void)saveSchedules:(NSArray<UASchedule *> *)schedules limit:(NSUInteger)limit completionHandler:(void (^)(BOOL))completionHandler {
+    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+        if (!isSafe) {
+            completionHandler(NO);
+            return;
+        }
+        
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UAScheduleData"];
+        NSUInteger count = [self.managedContext countForFetchRequest:request error:nil];
+        if (count + schedules.count > limit) {
+            UA_LERR(@"Max schedule limit reached. Unable to save new schedules.");
+            completionHandler(NO);
+            return;
+        }
+        
+        // create managed object for each schedule
+        for (UASchedule *schedule in schedules) {
+            [self addScheduleDataFromSchedule:schedule];
+        }
+        
         completionHandler([self.managedContext safeSave]);
     }];
 }
@@ -172,7 +196,7 @@
 #pragma mark -
 #pragma mark Converters
 
-- (UAScheduleData *)createScheduleDataFromSchedule:(UASchedule *)schedule {
+- (void)addScheduleDataFromSchedule:(UASchedule *)schedule {
     UAScheduleData *scheduleData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleData"
                                                                        inManagedObjectContext:self.managedContext];
 
@@ -189,7 +213,7 @@
         scheduleData.delay = [self createDelayDataFromDelay:schedule.info.delay scheduleStart:schedule.info.start schedule:scheduleData];
     }
 
-    return scheduleData;
+    return;
 }
 
 - (UAScheduleDelayData *)createDelayDataFromDelay:(UAScheduleDelay *)delay scheduleStart:(NSDate *)scheduleStart schedule:(UAScheduleData *)schedule {

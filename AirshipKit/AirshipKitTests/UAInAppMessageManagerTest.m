@@ -7,6 +7,7 @@
 #import "UAInAppMessageManager+Internal.h"
 #import "UASchedule+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
+#import "UARemoteDataManager+Internal.h"
 
 @interface UAInAppMessageManagerTest : UABaseTest
 @property(nonatomic, strong) UAInAppMessageManager *manager;
@@ -24,9 +25,11 @@
 
     self.mockAdapter = [self mockForProtocol:@protocol(UAInAppMessageAdapterProtocol)];
     self.mockAutomationEngine = [self mockForClass:[UAAutomationEngine class]];
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"uainappmessagemanager.test."];
+    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"UAInAppMessageManagerTest."];
     [self.dataStore removeAll];
-    self.manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine dataStore:self.dataStore];
+    self.manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine
+                                                    remoteDataManager:[self mockForClass:[UARemoteDataManager class]]
+                                                            dataStore:self.dataStore];
 
     self.scheduleInfo = [UAInAppMessageScheduleInfo inAppMessageScheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
         UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
@@ -184,7 +187,9 @@
 }
 
 - (void)testCancelMessage {
-    UAInAppMessageManager *manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine dataStore:self.dataStore];
+    UAInAppMessageManager *manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine
+                                                                      remoteDataManager:[self mockForClass:[UARemoteDataManager class]]
+                                                                              dataStore:self.dataStore];
 
     [[self.mockAutomationEngine expect] cancelSchedulesWithGroup:self.scheduleInfo.message.identifier];
 
@@ -194,7 +199,9 @@
 }
 
 - (void)testCancelSchedule {
-    UAInAppMessageManager *manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine dataStore:self.dataStore];
+    UAInAppMessageManager *manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine
+                                                                              remoteDataManager:[self mockForClass:[UARemoteDataManager class]]
+                                                                              dataStore:self.dataStore];
 
     UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo];
 
@@ -251,5 +258,59 @@
     XCTAssertTrue(self.manager.componentEnabled);
 }
 
+- (void)testScheduleMessagesWithScheduleInfo {
+    // setup
+    UAInAppMessageScheduleInfo *anotherScheduleInfo = [UAInAppMessageScheduleInfo inAppMessageScheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
+        UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
+            builder.identifier = @"another test identifier";
+            builder.displayType = @"banner";
+        }];
+        
+        builder.message = message;
+    }];
+    NSArray<UAInAppMessageScheduleInfo *> *submittedScheduleInfos = @[self.scheduleInfo,anotherScheduleInfo];
+    
+    // expectations
+    [[[self.mockAutomationEngine expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(void) = (__bridge void (^)(void))arg;
+        
+        if (completionHandler) {
+            completionHandler();
+        }
+    }] scheduleMultiple:[OCMArg checkWithBlock:^BOOL(NSArray<UAInAppMessageScheduleInfo *> *scheduleInfos) {
+        return [scheduleInfos isEqualToArray:submittedScheduleInfos];
+    }] completionHandler:OCMOCK_ANY];
+    
+    // test
+    __block BOOL completionHandlerCalled = NO;
+    [self.manager scheduleMessagesWithScheduleInfo:submittedScheduleInfos completionHandler:^(void) {
+        completionHandlerCalled = YES;
+    }];
+    
+    // verify
+    XCTAssertTrue(completionHandlerCalled);
+    [self.mockAutomationEngine verify];
+}
+
+- (void)testCancelMessagesWithIDs {
+    // setup
+    NSArray<NSString *> *messageIDsToCancel = @[[[NSUUID UUID] UUIDString], [[NSUUID UUID] UUIDString]];
+    
+    // expectations
+    __block NSUInteger callsToCancelSchedulesWithGroup = 0;
+    [[self.mockAutomationEngine stub] cancelSchedulesWithGroup:[OCMArg checkWithBlock:^BOOL(NSString *messageID) {
+        XCTAssertEqualObjects(messageID,messageIDsToCancel[callsToCancelSchedulesWithGroup]);
+        callsToCancelSchedulesWithGroup++;
+        return YES;
+    }]];
+     
+    // test
+    [self.manager cancelMessagesWithIDs:messageIDsToCancel];
+    
+    // verify
+    XCTAssertEqual(callsToCancelSchedulesWithGroup, messageIDsToCancel.count);
+}
 
 @end

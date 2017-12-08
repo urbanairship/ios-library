@@ -36,6 +36,17 @@
 - (void)saveSchedule:(UASchedule *)schedule limit:(NSUInteger)limit completionHandler:(void (^)(BOOL))completionHandler;
 
 /**
+ * Save multiple UAActionSchedules to the data store.
+ *
+ * @param schedules The schedules to save.
+ * @param limit The max number of schedules to allow.
+ * @param completionHandler Completion handler when the operation is finished. `YES` if the
+ * schedules were saved, `NO` if the schedules failed to save or the number of schedules in the
+ * data store would exceed the specified limit.
+ */
+- (void)saveSchedules:(NSArray<UASchedule *> *)schedules limit:(NSUInteger)limit completionHandler:(void (^)(BOOL))completionHandler;
+
+/**
  * Deletes schedules from the data store.
  *
  * @param predicate The predicate matcher.

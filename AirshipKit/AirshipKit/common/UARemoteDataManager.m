@@ -44,6 +44,9 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 
 @interface UARemoteDataManager()
 
+/**
+ * The SDK preferences data store.
+ */
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 /**

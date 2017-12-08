@@ -7,6 +7,8 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAGlobal.h"
 #import "UAConfig.h"
+#import "UAInAppRemoteDataClient+Internal.h"
+#import "UAPreferenceDataStore+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,47 +20,45 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
 @interface UAInAppMessageManager ()
 
 @property(nonatomic, assign) BOOL isCurrentMessagePrepared;
-
 @property(nonatomic, assign) BOOL isDisplayLocked;
-
 @property(nonatomic, strong, nullable) NSDictionary *adapterFactories;
-
 @property(nonatomic, strong, nullable) NSString *currentScheduleID;
-
 @property(nonatomic, strong, nullable) id<UAInAppMessageAdapterProtocol> currentAdapter;
-
 @property(nonatomic, strong, nullable) UAAutomationEngine *automationEngine;
+@property(nonatomic, strong) UAInAppRemoteDataClient *remoteDataClient;
 
 @end
 
 @implementation UAInAppMessageManager
 
-+ (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine dataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UAInAppMessageManager alloc] initWithAutomationEngine:automationEngine dataStore:dataStore];
++ (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine remoteDataManager:(UARemoteDataManager *)remoteDataManager dataStore:(UAPreferenceDataStore *)dataStore {
+    return [[UAInAppMessageManager alloc] initWithAutomationEngine:automationEngine remoteDataManager:remoteDataManager dataStore:dataStore];
 }
 
-+ (instancetype)managerWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UAInAppMessageManager alloc] initWithConfig:config dataStore:dataStore];
++ (instancetype)managerWithConfig:(UAConfig *)config remoteDataManager:(UARemoteDataManager *)remoteDataManager dataStore:(UAPreferenceDataStore *)dataStore {
+    return [[UAInAppMessageManager alloc] initWithConfig:config remoteDataManager:remoteDataManager dataStore:dataStore];
 }
 
-- (instancetype)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithConfig:(UAConfig *)config remoteDataManager:(UARemoteDataManager *)remoteDataManager dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super initWithDataStore:dataStore];
 
     if (self) {
         NSString *storeName = [NSString stringWithFormat:UAInAppAutomationStoreFileFormat, config.appKey];
-        self.automationEngine = [UAAutomationEngine automationEngineWithStoreName:storeName scheduleLimit:MaxSchedules];
+        self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:[UAAutomationStore automationStoreWithStoreName:storeName] scheduleLimit:MaxSchedules];
         self.displayInterval = DefaultMessageDisplayInterval;
+        self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self remoteDataManager:remoteDataManager dataStore:dataStore];
     }
 
     return self;
 }
 
-- (instancetype)initWithAutomationEngine:(UAAutomationEngine *)automationEngine dataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithAutomationEngine:(UAAutomationEngine *)automationEngine remoteDataManager:(UARemoteDataManager *)remoteDataManager dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super initWithDataStore:dataStore];
 
     if (self) {
         self.automationEngine = automationEngine;
         self.displayInterval = DefaultMessageDisplayInterval;
+        self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self remoteDataManager:remoteDataManager dataStore:dataStore];
     }
 
     return self;
@@ -69,8 +69,18 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
     [self.automationEngine schedule:scheduleInfo completionHandler:completionHandler];;
 }
 
+- (void)scheduleMessagesWithScheduleInfo:(NSArray<UAInAppMessageScheduleInfo *> *)scheduleInfos completionHandler:(void (^)(void))completionHandler {
+    [self.automationEngine scheduleMultiple:scheduleInfos completionHandler:completionHandler];
+}
+
 - (void)cancelMessageWithID:(NSString *)identifier {
     [self.automationEngine cancelSchedulesWithGroup:identifier];
+}
+
+- (void)cancelMessagesWithIDs:(NSArray<NSString *> *)identifiers {
+    for (NSString *messageID in identifiers) {
+        [self cancelMessageWithID:messageID];
+    }
 }
 
 - (void)cancelMessageWithScheduleID:(NSString *)scheduleID {

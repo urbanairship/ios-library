@@ -8,6 +8,8 @@
 #import "UAInAppMessageAdapterProtocol.h"
 #import "UAComponent+Internal.h"
 
+@class UARemoteDataManager;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -27,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param automationEngine Automation engine.
  * @param dataStore The preference data store.
  */
-+ (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine remoteDataManager:(UARemoteDataManager *)remoteDataManager dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
  * Init method.
@@ -35,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param config The UAConfigInstance.
  * @param dataStore The preference data store.
  */
-+ (instancetype)managerWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)managerWithConfig:(UAConfig *)config remoteDataManager:(UARemoteDataManager *)remoteDataManager dataStore:(UAPreferenceDataStore *)dataStore;
 
 
 // UAAutomationEngineDelegate methods for testing

@@ -34,6 +34,15 @@ NS_ASSUME_NONNULL_BEGIN
                       completionHandler:(void (^)(UASchedule *))completionHandler;
 
 /**
+ * Schedules multiple in-app messages.
+ *
+ * @param scheduleInfos The schedule info for the messages.
+ * @param completionHandler The completion handler to be called when scheduling completes.
+ */
+- (void)scheduleMessagesWithScheduleInfo:(NSArray<UAInAppMessageScheduleInfo *> *)scheduleInfos
+                       completionHandler:(void (^)(void))completionHandler;
+
+/**
  * Cancels an in-app message via its schedule info.
  *
  * @param scheduleID The schedule ID for the message to be canceled.
@@ -46,6 +55,13 @@ NS_ASSUME_NONNULL_BEGIN
  * @param identifier The identifier of the in-app message to be canceled.
  */
 - (void)cancelMessageWithID:(NSString *)identifier;
+
+/**
+ * Cancels multiple in-app messages via their identifiers.
+ *
+ * @param identifiers The identifiers of the in-app messages to be canceled.
+ */
+-(void)cancelMessagesWithIDs:(NSArray<NSString *> *)identifiers;
 
 @end
 

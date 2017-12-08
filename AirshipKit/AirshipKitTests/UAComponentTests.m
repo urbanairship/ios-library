@@ -1,10 +1,4 @@
-//
-//  UAComponentTests.m
-//  AirshipKitTests
-//
-//  Created by Brian Batchelder on 11/14/17.
-//  Copyright © 2017 Urban Airship. All rights reserved.
-//
+/* Copyright 2017 Urban Airship and Contributors */
 
 #import "UABaseTest.h"
 #import "UAComponent+Internal.h"

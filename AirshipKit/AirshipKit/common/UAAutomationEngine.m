@@ -43,11 +43,11 @@
     [self stop];
 }
 
-- (instancetype)initWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)limit {
+- (instancetype)initWithAutomationStore:(UAAutomationStore *)automationStore scheduleLimit:(NSUInteger)limit {
     self = [super init];
 
     if (self) {
-        self.automationStore = [UAAutomationStore automationStoreWithStoreName:storeName];
+        self.automationStore = automationStore;
         self.scheduleLimit = limit;
         self.activeTimers = [NSMutableArray array];
         self.isForegrounded = NO;
@@ -58,8 +58,8 @@
     return self;
 }
 
-+ (instancetype)automationEngineWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)limit {
-    return [[UAAutomationEngine alloc] initWithStoreName:storeName scheduleLimit:limit];
++ (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore scheduleLimit:(NSUInteger)limit {
+    return [[UAAutomationEngine alloc] initWithAutomationStore:automationStore scheduleLimit:limit];
 }
 
 #pragma mark -
@@ -169,6 +169,35 @@
             });
         }
     }];
+}
+
+- (void)scheduleMultiple:(NSArray<UAScheduleInfo *> *)scheduleInfos completionHandler:(void (^)(void))completionHandler {
+    // Delete any expired schedules before trying to save a schedule to free up the limit
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"end <= %@", [NSDate date]];
+    [self.automationStore deleteSchedulesWithPredicate:predicate];
+    
+    // Create schedules to save (only allow valid schedules)
+    NSMutableArray<UASchedule *> *schedules = [NSMutableArray arrayWithCapacity:scheduleInfos.count];
+    for (UAScheduleInfo *scheduleInfo in scheduleInfos) {
+        if (scheduleInfo.isValid) {
+            UASchedule *schedule = [UASchedule scheduleWithIdentifier:[NSUUID UUID].UUIDString info:scheduleInfo];
+            [schedules addObject:schedule];
+        }
+    }
+    
+    if (!schedules.count) {
+        // don't save if there are no schedules
+        completionHandler();
+    } else {
+        // Try to save the schedules
+        [self.automationStore saveSchedules:schedules limit:self.scheduleLimit completionHandler:^(BOOL success) {
+            if (completionHandler) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    completionHandler();
+                });
+            }
+        }];
+    }
 }
 
 - (void)cancelScheduleWithIdentifier:(NSString *)identifier {

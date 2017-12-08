@@ -23,9 +23,9 @@
 
 @property (nonatomic, strong) id mockAPIClient;
 @property (nonatomic, strong) id mockAPIClientClass;
+@property (nonatomic, strong) id mockConfig;
 
 @property (nonatomic, strong) UARemoteDataManager *remoteDataManager;
-@property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 @property (nonatomic, strong) NSArray<NSDictionary *> *remoteDataFromCloud;
@@ -43,16 +43,15 @@
     self.mockAPIClientClass = OCMClassMock([UARemoteDataAPIClient class]);
     OCMStub([self.mockAPIClientClass clientWithConfig:[OCMArg any] dataStore:[OCMArg any]]).andReturn(self.mockAPIClient);
     
-    self.config = [UAConfig defaultConfig];
+    self.mockConfig = [self mockForClass:[UAConfig class]];
     // set the AppKey so we get a new coredata store each time
-    self.config.developmentAppKey = [[NSProcessInfo processInfo] globallyUniqueString];
-    XCTAssertNotNil(self.config);
+    [[[self.mockConfig stub] andReturn:[[NSProcessInfo processInfo] globallyUniqueString]] developmentAppKey];
     
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"uaremotedata.test."];
     XCTAssertNotNil(self.dataStore);
     [self.dataStore removeAll]; // start with an empty datastore
     
-    self.remoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.config dataStore:self.dataStore];
+    self.remoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.mockConfig dataStore:self.dataStore];
     self.remoteDataManager.refreshDelegate = self;
     
     XCTAssertNotNil(self.remoteDataManager);
@@ -70,14 +69,18 @@
 }
 
 - (void)testNilConfig {
-    self.config = nil;
-    __block UARemoteDataManager *nilManager = [UARemoteDataManager remoteDataManagerWithConfig:self.config dataStore:self.dataStore];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+    __block UARemoteDataManager *nilManager = [UARemoteDataManager remoteDataManagerWithConfig:nil dataStore:self.dataStore];
+#pragma clang diagnostic pop
     XCTAssertNil(nilManager);
 }
 
 - (void)testNilPreferenceDatastore {
-    self.dataStore = nil;
-    __block UARemoteDataManager *nilManager = [UARemoteDataManager remoteDataManagerWithConfig:self.config dataStore:self.dataStore];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+    __block UARemoteDataManager *nilManager = [UARemoteDataManager remoteDataManagerWithConfig:self.mockConfig dataStore:nil];
+#pragma clang diagnostic pop
     XCTAssertNil(nilManager);
 }
 
@@ -716,7 +719,7 @@
 
     // create a new remote data manager, which should cause a refresh due to the changed app version
     self.refreshSucceededExpectation = [self expectationWithDescription:@"Refresh succeeded"];
-    self.remoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.config dataStore:self.dataStore];
+    self.remoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.mockConfig dataStore:self.dataStore];
     self.remoteDataManager.refreshDelegate = self;
     XCTAssertNotNil(self.remoteDataManager);
     
@@ -743,7 +746,7 @@
 
     // create a new remote data manager, which should not cause a refresh due to the unchanged app version
     [subscription dispose];
-    self.remoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.config dataStore:self.dataStore];
+    self.remoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.mockConfig dataStore:self.dataStore];
     self.remoteDataManager.refreshDelegate = self;
     XCTAssertNotNil(self.remoteDataManager);
 

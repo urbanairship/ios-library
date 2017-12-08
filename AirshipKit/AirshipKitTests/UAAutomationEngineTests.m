@@ -18,8 +18,10 @@
 @property (nonatomic, strong) UAAutomationEngine *automationEngine;
 @property (nonatomic, strong) id mockedApplication;
 @property (nonatomic, strong) id mockDelegate;
+@property (nonatomic, strong) id mockAutomationStore;
 @end
 
+#define UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT 100
 
 @implementation UAAutomationEngineTests
 
@@ -33,8 +35,9 @@
     self.mockDelegate = [self mockForProtocol:@protocol(UAAutomationEngineDelegate)];
     [[[self.mockDelegate stub] andCall:@selector(createScheduleInfoWithBuilder:) onObject:self] createScheduleInfoWithBuilder:OCMOCK_ANY];
 
-
-    self.automationEngine = [UAAutomationEngine automationEngineWithStoreName:@"test" scheduleLimit:100];
+    self.mockAutomationStore = [self partialMockForObject:[UAAutomationStore automationStoreWithStoreName:@"test"]];
+    
+    self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:self.mockAutomationStore scheduleLimit:UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT];
     self.automationEngine.delegate = self.mockDelegate;
     [self.automationEngine cancelAll];
 
@@ -65,6 +68,46 @@
     }];
 
     [self waitForExpectationsWithTimeout:5 handler:nil];
+}
+
+- (void)testScheduleMultiple {
+    // setup
+    UAActionScheduleInfo *scheduleInfo1 = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
+        builder.actions = @{@"oh": @"hi"};
+        builder.triggers = @[foregroundTrigger];
+    }];
+    UAActionScheduleInfo *scheduleInfo2 = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:3];
+        builder.actions = @{@"hey": @"there"};
+        builder.triggers = @[foregroundTrigger];
+    }];
+    
+    NSArray<UAActionScheduleInfo *> *submittedSchedules = @[scheduleInfo1,scheduleInfo2];
+    
+    // expectations
+    XCTestExpectation *completionHandlerCalledExpectation = [self expectationWithDescription:@"scheduled actions"];
+    [[[self.mockAutomationStore expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        completionHandler(YES);
+    }] saveSchedules:[OCMArg checkWithBlock:^BOOL(NSArray<UASchedule *> *schedules) {
+        XCTAssertEqual(schedules.count,2);
+        XCTAssertEqualObjects(submittedSchedules, [schedules valueForKey:@"info"]);
+        XCTAssertNotNil(schedules[0].identifier);
+        XCTAssertNotNil(schedules[1].identifier);
+        return YES;
+    }] limit:UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT completionHandler:OCMOCK_ANY];
+    
+    // test
+    [self.automationEngine scheduleMultiple:submittedSchedules completionHandler:^(void) {
+        [completionHandlerCalledExpectation fulfill];
+    }];
+    
+    // verify
+    [self waitForExpectationsWithTimeout:5 handler:nil];
+    [self.mockAutomationStore verify];
 }
 
 - (void)testScheduleInvalidActionInfo {
