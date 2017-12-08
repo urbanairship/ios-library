@@ -22,6 +22,16 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly, strong, nullable) NSDate *lastApplicationOpenDate;
 
+/**
+ * The application's current short version string.
+ */
+@property (nonatomic, readonly) NSString *currentAppVersion;
+
+/**
+ * Determines whether the application's short version string has been updated.
+ */
+@property (nonatomic, readonly) BOOL isAppVersionUpdated;
+
 ///---------------------------------------------------------------------------------------
 /// @name Application Metrics Core Methods
 ///---------------------------------------------------------------------------------------

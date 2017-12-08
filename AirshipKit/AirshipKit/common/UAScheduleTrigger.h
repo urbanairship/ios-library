@@ -68,7 +68,12 @@ typedef NS_ENUM(NSInteger, UAScheduleTriggerType) {
     /**
      * Active session trigger.
      */
-    UAScheduleTriggerActiveSession
+    UAScheduleTriggerActiveSession,
+
+    /**
+     * Version trigger.
+     */
+    UAScheduleTriggerVersion
 };
 
 
@@ -131,6 +136,11 @@ extern NSString *const UAScheduleTriggerScreenName;
  * Active session trigger name when defining a trigger in JSON.
  */
 extern NSString *const UAScheduleTriggerActiveSessionName;
+
+/**
+ * Version trigger name when defining a trigger in JSON.
+ */
+extern NSString *const UAScheduleTriggerVersionName;
 
 @class UAJSONPredicate;
 
@@ -241,6 +251,16 @@ extern NSString *const UAScheduleTriggerActiveSessionName;
  */
 + (instancetype)customEventTriggerWithPredicate:(UAJSONPredicate *)predicate
                                           value:(NSNumber *)value;
+
+/**
+ * Factory method to create a version trigger.
+ *
+ * @param versionConstraint A version constraint to match against the app version.
+ * @param count The number of updates to match before firing the trigger.
+ * @return A version trigger.
+ */
++ (instancetype)versionTriggerWithConstraint:(NSString *)versionConstraint count:(NSUInteger)count;
+
 
 /**
  * Factory method to create a trigger from a JSON payload.

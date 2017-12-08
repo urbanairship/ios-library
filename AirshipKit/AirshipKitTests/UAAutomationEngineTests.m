@@ -13,12 +13,15 @@
 #import "UAScheduleInfo+Internal.h"
 #import "UAActionScheduleInfo.h"
 #import "UAAutomation+Internal.h"
+#import "UAApplicationMetrics+Internal.h"
 
 @interface UAAutomationEngineTests : UABaseTest
 @property (nonatomic, strong) UAAutomationEngine *automationEngine;
 @property (nonatomic, strong) id mockedApplication;
 @property (nonatomic, strong) id mockDelegate;
 @property (nonatomic, strong) id mockAutomationStore;
+@property (nonatomic, strong) id mockMetrics;
+@property (nonatomic, strong) id mockAirship;
 @end
 
 #define UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT 100
@@ -38,6 +41,14 @@
     self.mockAutomationStore = [self partialMockForObject:[UAAutomationStore automationStoreWithStoreName:@"test"]];
     
     self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:self.mockAutomationStore scheduleLimit:UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT];
+
+    self.mockAirship = [self mockForClass:[UAirship class]];
+    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+
+    self.mockMetrics = [self mockForClass:[UAApplicationMetrics class]];
+    [[[self.mockAirship stub] andReturn:self.mockMetrics] applicationMetrics];
+
+    self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:self.mockAutomationStore scheduleLimit:UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT];
     self.automationEngine.delegate = self.mockDelegate;
     [self.automationEngine cancelAll];
 
@@ -47,6 +58,8 @@
 - (void)tearDown {
     [self.mockedApplication stopMocking];
     [self.mockDelegate stopMocking];
+    [self.mockAirship stopMocking];
+    [self.mockMetrics stopMocking];
     [self.automationEngine stop];
     self.automationEngine = nil;
     [super tearDown];
@@ -579,6 +592,15 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     UAScheduleTrigger *trigger = [UAScheduleTrigger activeSessionTriggerWithCount:1];
+
+    [self verifyTrigger:trigger triggerFireBlock:^{}];
+}
+
+- (void)testVersion {
+    [[[self.mockMetrics stub] andReturn:@"2.0"] currentAppVersion];
+    [[[self.mockMetrics stub] andReturnValue:@(YES)] isAppVersionUpdated];
+
+    UAScheduleTrigger *trigger = [UAScheduleTrigger versionTriggerWithConstraint:@"2.0+" count:1];
 
     [self verifyTrigger:trigger triggerFireBlock:^{}];
 }

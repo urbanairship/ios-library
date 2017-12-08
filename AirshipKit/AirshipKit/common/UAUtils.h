@@ -182,6 +182,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (NSString *)deviceTokenStringFromDeviceToken:(NSData *)deviceToken;
 
+/**
+ * A utility method that compares two version strings and determines their order.
+ */
++ (NSComparisonResult)compareVersion:(NSString *)version1 toVersion:(NSString *)version2;
+
+
 @end
 
 NS_ASSUME_NONNULL_END

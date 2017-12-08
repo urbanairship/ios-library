@@ -3,13 +3,16 @@
 
 #import "UAApplicationMetrics+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
+#import "UAUtils.h"
 
 @interface UAApplicationMetrics()
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+@property (nonatomic, assign) BOOL isAppVersionUpdated;
 @end
 
 @implementation UAApplicationMetrics
 NSString *const UAApplicationMetricLastOpenDate = @"UAApplicationMetricLastOpenDate";
+NSString *const UAApplicationMetricsLastAppVersion = @"UAApplicationMetricsLastAppVersion";
 
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
@@ -20,6 +23,7 @@ NSString *const UAApplicationMetricLastOpenDate = @"UAApplicationMetricLastOpenD
                                                  selector:@selector(didBecomeActive)
                                                      name:UIApplicationDidBecomeActiveNotification
                                                    object:nil];
+        [self checkAppVersion];
     }
 
     return self;
@@ -39,6 +43,24 @@ NSString *const UAApplicationMetricLastOpenDate = @"UAApplicationMetricLastOpenD
 
 - (void)setLastApplicationOpenDate:(NSDate *)date {
     [self.dataStore setObject:date forKey:UAApplicationMetricLastOpenDate];
+}
+
+- (NSString *)currentAppVersion {
+    return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+}
+
+- (NSString *)lastAppVersion {
+    return [self.dataStore objectForKey:UAApplicationMetricsLastAppVersion];
+}
+
+- (void)checkAppVersion {
+    NSString *lastVersion = [self lastAppVersion];
+    NSString *currentVersion = [self currentAppVersion];
+
+    if (!lastVersion || [UAUtils compareVersion:lastVersion toVersion:currentVersion] == NSOrderedAscending) {
+        [self.dataStore setObject:currentVersion forKey:UAApplicationMetricsLastAppVersion];
+        self.isAppVersionUpdated = YES;
+    }
 }
 
 @end

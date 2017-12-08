@@ -49,6 +49,7 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
     }
 
     NSNumber *numberValue = [value isKindOfClass:[NSNumber class]] ? value : nil;
+    NSString *stringValue = [value isKindOfClass:[NSString class]] ? value : nil;
 
     if (self.equalsNumber && !(numberValue && [self.equalsNumber isEqualToNumber:numberValue])) {
         return NO;
@@ -62,8 +63,8 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
         return NO;
     }
     
-    if (self.versionMatcher) {
-        return [self.versionMatcher evaluateObject:value];
+    if (self.versionMatcher && !(stringValue && [self.versionMatcher evaluateObject:value])) {
+        return NO;
     }
     
     return YES;

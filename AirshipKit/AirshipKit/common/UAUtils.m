@@ -341,4 +341,26 @@
     return [deviceTokenString lowercaseString];
 }
 
+/**
+ * A utility method that compares two version strings and determines their order.
+ */
++ (NSComparisonResult)compareVersion:(NSString *)version1 toVersion:(NSString *)version2 {
+    NSArray *version1Components = [version1 componentsSeparatedByString:@"."];
+    NSArray *version2Components = [version2 componentsSeparatedByString:@"."];
+
+    NSInteger index = 0;
+    while ([version1Components count] > index || [version2Components count] > index) {
+        NSInteger version1Component = [version1Components count] > index ? [[version1Components objectAtIndex:index] integerValue] : 0;
+        NSInteger version2Component = [version2Components count] > index ? [[version2Components objectAtIndex:index] integerValue] : 0;
+        if (version1Component < version2Component) {
+            return NSOrderedAscending;
+        } else if (version1Component > version2Component) {
+            return NSOrderedDescending;
+        }
+        index++;
+    }
+
+    return NSOrderedSame;
+}
+
 @end

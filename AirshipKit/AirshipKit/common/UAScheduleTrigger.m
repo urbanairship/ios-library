@@ -19,6 +19,7 @@ NSString *const UAScheduleTriggerCustomEventCountName = @"custom_event_count";
 NSString *const UAScheduleTriggerCustomEventValueName = @"custom_event_value";
 NSString *const UAScheduleTriggerScreenName = @"screen";
 NSString *const UAScheduleTriggerActiveSessionName = @"active_session";
+NSString *const UAScheduleTriggerVersionName = @"version";
 
 NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trigger";
 
@@ -97,6 +98,11 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
                                     predicate:predicate];
 }
 
++ (instancetype)versionTriggerWithConstraint:(NSString *)versionConstraint count:(NSUInteger)count {
+    UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:versionConstraint] key:@"ios"];
+    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:matcher];
+    return [UAScheduleTrigger triggerWithType:UAScheduleTriggerVersion goal:@(count) predicate:predicate];
+}
 
 + (instancetype)triggerWithJSON:(id)json error:(NSError **)error {
     if (![json isKindOfClass:[NSDictionary class]]) {
@@ -131,6 +137,8 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
         triggerType = UAScheduleTriggerAppInit;
     } else if ([UAScheduleTriggerActiveSessionName isEqualToString:triggerTypeString]) {
         triggerType = UAScheduleTriggerActiveSession;
+    } else if ([UAScheduleTriggerVersionName isEqualToString:triggerTypeString]) {
+        triggerType = UAScheduleTriggerVersion;
     } else {
 
         if (error) {

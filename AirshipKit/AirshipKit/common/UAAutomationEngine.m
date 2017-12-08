@@ -15,6 +15,8 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAJSONPredicate.h"
 #import "UAGlobal.h"
+#import "UAirship.h"
+#import "UAApplicationMetrics.h"
 
 /*
  TODO:
@@ -24,6 +26,28 @@
  Test TODO:
   - Migrate from v2 to v3
  */
+
+@interface UAAutomationStateCondition : NSObject
+
+@property (nonatomic, copy, nonnull) BOOL (^predicate)(void);
+@property (nonatomic, copy, nonnull) id (^argumentGenerator)(void);
+
+- (instancetype)initWithPredicate:(BOOL (^_Nonnull)(void))predicate argumentGenerator:(id (^)(void))argumentGenerator;
+
+@end
+
+@implementation UAAutomationStateCondition
+
+- (instancetype)initWithPredicate:(BOOL (^_Nonnull)(void))predicate argumentGenerator:(id (^)(void))argumentGenerator {
+    self = [super init];
+    if (self) {
+        self.predicate = predicate;
+        self.argumentGenerator = argumentGenerator;
+    }
+    return self;
+}
+
+@end
 
 @interface UAAutomationEngine()
 @property (nonatomic, assign) NSUInteger scheduleLimit;
@@ -600,11 +624,19 @@
  * Sets up state conditions for use with compound triggers.
  */
 - (void)createStateConditions {
-    BOOL (^activeSessionCondition)(void) = ^BOOL{
+    UAAutomationStateCondition *activeSessionCondition = [[UAAutomationStateCondition alloc] initWithPredicate:^BOOL {
         return [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
-    };
+    } argumentGenerator:nil];
+
+    UAAutomationStateCondition *versionCondition = [[UAAutomationStateCondition alloc] initWithPredicate:^BOOL {
+        return [UAirship shared].applicationMetrics.isAppVersionUpdated;
+    } argumentGenerator:^id {
+        NSString *currentVersion = [UAirship shared].applicationMetrics.currentAppVersion;
+        return currentVersion ? @{@"ios" : currentVersion} : nil;
+    }];
 
     [self.stateConditions setObject:activeSessionCondition forKey:@(UAScheduleTriggerActiveSession)];
+    [self.stateConditions setObject:versionCondition forKey:@(UAScheduleTriggerVersion)];
 }
 
 /**
@@ -630,14 +662,22 @@
     schedules = [self sortedSchedulesByPriority:schedules];
 
     for (UASchedule *schedule in schedules) {
+        NSMutableArray *checkedTriggerTypes = [NSMutableArray array];
         for (UAScheduleTrigger *trigger in schedule.info.triggers) {
             UAScheduleTriggerType type = trigger.type;
-            BOOL (^condition)(void) = self.stateConditions[@(type)];
+            UAAutomationStateCondition *condition = self.stateConditions[@(type)];
+
+            if ([checkedTriggerTypes containsObject:@(type)]) {
+                continue;
+            }
 
             // If there is a matching condition and the condition holds, update all of the schedule's triggers of that type
-            if (condition && condition()) {
-                [self updateTriggersWithScheduleID:schedule.identifier type:type argument:nil incrementAmount:1.0];
+            if (condition && condition.predicate()) {
+                id argument = condition.argumentGenerator ? condition.argumentGenerator() : nil;
+                [self updateTriggersWithScheduleID:schedule.identifier type:type argument:argument incrementAmount:1.0];
             }
+
+            [checkedTriggerTypes addObject:@(type)];
         }
     }
 }
