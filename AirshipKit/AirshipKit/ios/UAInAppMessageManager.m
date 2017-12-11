@@ -5,6 +5,7 @@
 #import "UAInAppMessageScheduleInfo.h"
 #import "UAScheduleInfo+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "UAInAppMessageBannerAdapter.h"
 #import "UAGlobal.h"
 #import "UAConfig.h"
 #import "UAInAppRemoteDataClient+Internal.h"
@@ -44,7 +45,13 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
 
     if (self) {
         NSString *storeName = [NSString stringWithFormat:UAInAppAutomationStoreFileFormat, config.appKey];
-        self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:[UAAutomationStore automationStoreWithStoreName:storeName] scheduleLimit:MaxSchedules];
+        self.automationEngine = [UAAutomationEngine automationEngineWithStoreName:storeName scheduleLimit:MaxSchedules];
+        self.automationEngine.delegate = self;
+
+        if (self.componentEnabled) {
+            [self.automationEngine start];
+        }
+
         self.displayInterval = DefaultMessageDisplayInterval;
         self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self remoteDataManager:remoteDataManager dataStore:dataStore];
         [self setDefaultAdapterFactories];
@@ -64,6 +71,21 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
     }
 
     return self;
+}
+
+// Sets the default adapter factories
+- (void)setDefaultAdapterFactories {
+
+    // Banner
+    [self setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
+        return [UAInAppMessageBannerAdapter adapterForMessage:message];
+    } forDisplayType:UAInAppMessageDisplayTypeBanner];
+
+    // TODO set factories for other display types here
+}
+
+- (void)getScheduleWithIdentifier:(NSString *)identifier completionHandler:(void (^)(UASchedule *))completionHandler {
+    [self.automationEngine getScheduleWithIdentifier:identifier completionHandler:completionHandler];
 }
 
 - (void)scheduleMessageWithScheduleInfo:(UAInAppMessageScheduleInfo *)scheduleInfo
@@ -93,7 +115,7 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
     return [[UAInAppMessageScheduleInfo alloc] initWithBuilder:builder];
 }
 
-- (void)setFactoryBlock:(id<UAInAppMessageAdapterProtocol> (^)(NSString* displayType))factory
+- (void)setFactoryBlock:(id<UAInAppMessageAdapterProtocol> (^)(UAInAppMessage* message))factory
          forDisplayType:(NSString *)displayType {
     NSMutableDictionary *adapterFactories;
 
@@ -105,19 +127,6 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
 
     [adapterFactories setObject:factory forKey:displayType];
     self.adapterFactories = [NSDictionary dictionaryWithDictionary:adapterFactories];
-}
-
-- (nullable id<UAInAppMessageAdapterProtocol>)adapterForDisplayType:(NSString *)displayType {
-    if (!self.adapterFactories) {
-        return nil;
-    }
-    id<UAInAppMessageAdapterProtocol> (^factory)(NSString *) = [self.adapterFactories objectForKey:displayType];
-
-    if (!factory) {
-        return nil;
-    }
-
-    return factory(displayType);
 }
 
 - (void)unlockDisplayAfter:(NSTimeInterval)interval {
@@ -132,6 +141,7 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
 }
 
 - (BOOL)isScheduleReadyToExecute:(UASchedule *)schedule {
+    // Only ready if active or very soon to be active
     if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateActive) {
         return NO;
     }
@@ -141,12 +151,24 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
         return NO;
     }
 
+    UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
+    NSDictionary *messageJSON = [NSJSONSerialization objectWithString:schedule.info.data];
+    info.message = [UAInAppMessage messageWithJSON:messageJSON error:nil];
+
     if (!self.currentAdapter) {
-        UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
-        id<UAInAppMessageAdapterProtocol> adapter = [self adapterForDisplayType:info.message.displayType];
+
+        id<UAInAppMessageAdapterProtocol> (^factory)(UAInAppMessage* message) = self.adapterFactories[info.message.displayType];
+
+        if (!factory) {
+            UA_LWARN(@"Factory not present for display type:%@", info.message.displayType);
+            return NO;
+        }
+
+        id<UAInAppMessageAdapterProtocol> adapter = factory(info.message);
 
         // If no adapter factory available for specified displayType return NO
         if (!adapter) {
+            UA_LWARN(@"Factory failed to build adapter with message:%@", info.message);
             return NO;
         }
 
@@ -195,6 +217,11 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
         // if component was enabled and is now disabled, pause automation engine
         [self.automationEngine pause];
     }
+}
+
+- (void)dealloc {
+    [self.automationEngine stop];
+    self.automationEngine.delegate = nil;
 }
 
 

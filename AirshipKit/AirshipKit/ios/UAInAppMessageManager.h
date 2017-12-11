@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param displayType The display type.
  * @param factory The adapter factory.
  */
-- (void)setFactoryBlock:(id<UAInAppMessageAdapterProtocol> (^_Nonnull)(NSString* displayType))factory
+- (void)setFactoryBlock:(id<UAInAppMessageAdapterProtocol> (^)(UAInAppMessage* message))factory
          forDisplayType:(NSString *)displayType;
 
 /**
@@ -55,6 +55,14 @@ NS_ASSUME_NONNULL_BEGIN
  * @param identifier The identifier of the in-app message to be canceled.
  */
 - (void)cancelMessageWithID:(NSString *)identifier;
+
+/**
+ * Gets scheduled message with identifier.
+ *
+ * @param identifier The identifier of the in-app message to be canceled.
+ * @param completionHandler The completion handler to be called when fetch operation completes.
+ */
+- (void)getScheduleWithIdentifier:(NSString *)identifier completionHandler:(void (^)(UASchedule *))completionHandler;
 
 /**
  * Cancels multiple in-app messages via their identifiers.

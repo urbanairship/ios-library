@@ -76,12 +76,12 @@ extern NSString *const UAInAppMessageBannerActions;
 @property(nonatomic, strong, nullable) UAInAppMessageMediaInfo *media;
 
 /**
- * The banner's buttons. Defaults to UAInAppMessageButtonLayoutSeparate
+ * The banner's buttons.
  */
 @property(nonatomic, copy, nullable) NSArray<UAInAppMessageButtonInfo *> *buttons;
 
 /**
- * The banner's button layout.
+ * The banner's button layout. Defaults to UAInAppMessageButtonLayoutSeparate
  */
 @property(nonatomic, copy, nullable) NSString *buttonLayout;
 
@@ -92,7 +92,7 @@ extern NSString *const UAInAppMessageBannerActions;
 
 /**
  * The banner's layout for the text and media. Defaults to
- * UAInAppMessageBannerImageLeft
+ * UAInAppMessageBannerContentLayoutMediaLeft
  */
 @property(nonatomic, copy, nullable) NSString *contentLayout;
 
@@ -129,6 +129,67 @@ extern NSString *const UAInAppMessageBannerActions;
 @interface UAInAppMessageBannerDisplayContent : UAInAppMessageDisplayContent
 
 /**
+ * The banner's heading.
+ */
+@property(nonatomic, strong, nullable, readonly) UAInAppMessageTextInfo *heading;
+
+/**
+ * The banner's body.
+ */
+@property(nonatomic, strong, nullable, readonly) UAInAppMessageTextInfo *body;
+
+/**
+ * The banner's media.
+ */
+@property(nonatomic, strong, nullable, readonly) UAInAppMessageMediaInfo *media;
+
+/**
+ * The banner's buttons. Defaults to UAInAppMessageButtonLayoutSeparate
+ */
+@property(nonatomic, copy, nullable, readonly) NSArray<UAInAppMessageButtonInfo *> *buttons;
+
+/**
+ * The banner's button layout.
+ */
+@property(nonatomic, copy, nullable, readonly) NSString *buttonLayout;
+
+/**
+ * The banner's placement. Defaults to UAInAppMessageBannerPlacementBottom
+ */
+@property(nonatomic, copy, nullable, readonly) NSString *placement;
+
+/**
+ * The banner's layout for the text and media. Defaults to
+ * UAInAppMessageBannerContentLayoutMediaLeft
+ */
+@property(nonatomic, copy, nullable, readonly) NSString *contentLayout;
+
+/**
+ * The banner's display duration. Defaults to UAInAppMessageBannerDefaultDuration.
+ */
+@property(nonatomic, assign, readonly) NSUInteger duration;
+
+/**
+ * The banner's background color. Defaults to white.
+ */
+@property(nonatomic, copy, nullable, readonly) NSString *backgroundColor;
+
+/**
+ * The banner's dismiss button color. Defaults to black.
+ */
+@property(nonatomic, copy, nullable, readonly) NSString *dismissButtonColor;
+
+/**
+ * The banner's border radius. Defaults to 0.
+ */
+@property(nonatomic, assign, readonly) NSUInteger borderRadius;
+
+/**
+ * The banner's actions.
+ */
+@property(nonatomic, copy, nullable, readonly) NSDictionary *actions;
+
+/**
  * Factory method for building banner display content with JSON.
  *
  * @param json The json object.
@@ -143,7 +204,7 @@ extern NSString *const UAInAppMessageBannerActions;
  * @param displayContent An in-app message banner display content.
  * @return The JSON dictionary.
  */
-+ (NSDictionary *)JSONWithBannerDisplayContent:(UAInAppMessageBannerDisplayContent *_Nonnull)displayContent;
++ (NSDictionary *)JSONWithBannerDisplayContent:(UAInAppMessageBannerDisplayContent * _Nullable)displayContent;
 
 /**
  * Factory method for building banner display content with builder block.

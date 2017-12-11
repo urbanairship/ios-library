@@ -1,5 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
+#import "UAirship.h"
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 #import "UAInAppMessageTextInfo.h"
 #import "UAInAppMessageButtonInfo.h"
@@ -13,25 +14,10 @@ NSString *const UAInAppMessageBannerPlacementTop = @"top";
 NSString *const UAInAppMessageBannerPlacementBottom = @"bottom";
 NSString *const UAInAppMessageBannerContentLayoutMediaLeft = @"media_text";
 NSString *const UAInAppMessageBannerContentLayoutMediaRight = @"text_media";
+
+// Constants
 NSUInteger const UAInAppMessageBannerDefaultDuration = 30000;
 NSUInteger const UAInAppMessageBannerMaxButtons = 2;
-
-@interface UAInAppMessageBannerDisplayContent ()
-
-@property(nonatomic, strong) UAInAppMessageTextInfo *heading;
-@property(nonatomic, strong) UAInAppMessageTextInfo *body;
-@property(nonatomic, strong) UAInAppMessageMediaInfo *media;
-@property(nonatomic, copy) NSArray<UAInAppMessageButtonInfo *> *buttons;
-@property(nonatomic, copy) NSString *buttonLayout;
-@property(nonatomic, copy) NSString *placement;
-@property(nonatomic, copy) NSString *contentLayout;
-@property(nonatomic, assign) NSUInteger duration;
-@property(nonatomic, copy) NSString *backgroundColor;
-@property(nonatomic, copy) NSString *dismissButtonColor;
-@property(nonatomic, assign) NSUInteger borderRadius;
-@property(nonatomic, copy, nullable) NSDictionary *actions;
-
-@end
 
 @implementation UAInAppMessageBannerDisplayContentBuilder
 
@@ -47,64 +33,87 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
         return NO;
     }
 
-    UAInAppMessageTextInfo *heading = nil;
+    UAInAppMessageTextInfo *heading;
     if (json[UAInAppMessageHeadingKey]) {
+        if (![json[UAInAppMessageHeadingKey] isKindOfClass:[NSDictionary class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize text info object: %@", json];
+                *error =  [NSError errorWithDomain:UAInAppMessageBannerDisplayContentDomain
+                                              code:UAInAppMessageBannerDisplayContentErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+
+            return NO;
+        }
         heading = [UAInAppMessageTextInfo textInfoWithJSON:json[UAInAppMessageHeadingKey] error:error];
-
-        if (!heading) {
-            return NO;
-        }
     }
 
-    UAInAppMessageTextInfo *body = nil;
+    UAInAppMessageTextInfo *body;
     if (json[UAInAppMessageBodyKey]) {
+        if (![json[UAInAppMessageBodyKey] isKindOfClass:[NSDictionary class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize text info object: %@", json];
+                *error =  [NSError errorWithDomain:UAInAppMessageBannerDisplayContentDomain
+                                              code:UAInAppMessageBannerDisplayContentErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+
+            return NO;
+        }
+
         body = [UAInAppMessageTextInfo textInfoWithJSON:json[UAInAppMessageBodyKey] error:error];
-
-        if (!body) {
-            return NO;
-        }
     }
 
-    UAInAppMessageMediaInfo *media = nil;
+    UAInAppMessageMediaInfo *media;
     if (json[UAInAppMessageMediaKey]) {
-        media = [UAInAppMessageMediaInfo mediaInfoWithJSON:json[UAInAppMessageMediaKey] error:error];
+        if (![json[UAInAppMessageMediaKey] isKindOfClass:[NSDictionary class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize media info object: %@", json];
+                *error =  [NSError errorWithDomain:UAInAppMessageBannerDisplayContentDomain
+                                              code:UAInAppMessageBannerDisplayContentErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
 
-        if (!media) {
             return NO;
         }
+
+        media = [UAInAppMessageMediaInfo mediaInfoWithJSON:json[UAInAppMessageMediaKey] error:error];
     }
+
 
     NSMutableArray<UAInAppMessageButtonInfo *> *buttons = [NSMutableArray array];
     id buttonsJSONArray = json[UAInAppMessageButtonsKey];
-    if (!buttonsJSONArray || ![buttonsJSONArray isKindOfClass:[NSArray class]]) {
-        if (error) {
-            NSString *msg = [NSString stringWithFormat:@"Buttons must contain an array of buttons. Invalid value %@", buttonsJSONArray];
-            *error =  [NSError errorWithDomain:UAInAppMessageBannerDisplayContentDomain
-                                          code:UAInAppMessageBannerDisplayContentErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
-        }
+    if (buttonsJSONArray) {
+        if (![buttonsJSONArray isKindOfClass:[NSArray class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Buttons must contain an array of buttons. Invalid value %@", buttonsJSONArray];
+                *error =  [NSError errorWithDomain:UAInAppMessageBannerDisplayContentDomain
+                                              code:UAInAppMessageBannerDisplayContentErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
 
-        return NO;
-    }
-
-    for (id buttonJSON in buttonsJSONArray) {
-        UAInAppMessageButtonInfo *buttonInfo = [UAInAppMessageButtonInfo buttonInfoWithJSON:buttonJSON error:error];
-
-        if (!buttonInfo) {
             return NO;
         }
 
-        [buttons addObject:buttonInfo];
-    }
+        for (id buttonJSON in buttonsJSONArray) {
+            UAInAppMessageButtonInfo *buttonInfo = [UAInAppMessageButtonInfo buttonInfoWithJSON:buttonJSON error:error];
 
-    if (!buttons.count) {
-        if (error) {
-            NSString *msg = @"Buttons contain at least 1 button.";
-            *error =  [NSError errorWithDomain:UAInAppMessageBannerDisplayContentDomain
-                                          code:UAInAppMessageBannerDisplayContentErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+            if (!buttonInfo) {
+                return NO;
+            }
+
+            [buttons addObject:buttonInfo];
         }
-        return NO;
+
+        if (!buttons.count) {
+            if (error) {
+                NSString *msg = @"Buttons must contain at least 1 button.";
+                *error =  [NSError errorWithDomain:UAInAppMessageBannerDisplayContentDomain
+                                              code:UAInAppMessageBannerDisplayContentErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return NO;
+        }
     }
 
     id buttonLayout = json[UAInAppMessageButtonLayoutKey];
@@ -132,8 +141,19 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     }
 
     NSString *contentLayout;
-    if (json[UAInAppMessageContentLayoutKey]) {
-        NSString *layout = [json[UAInAppMessageContentLayoutKey] lowercaseString];
+    id layoutContents = json[UAInAppMessageContentLayoutKey];
+    if (layoutContents) {
+        if (![layoutContents isKindOfClass:[NSString class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Content layout must be a string."];
+                *error =  [NSError errorWithDomain:UAInAppMessageBannerDisplayContentDomain
+                                              code:UAInAppMessageBannerDisplayContentErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return NO;
+        }
+
+        NSString *layout = [layoutContents lowercaseString];
 
         if ([UAInAppMessageBannerContentLayoutMediaLeft isEqualToString:layout]) {
             contentLayout = UAInAppMessageBannerContentLayoutMediaLeft;
@@ -188,7 +208,7 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     }
 
     id borderRadius = json[UAInAppMessageBorderRadiusKey];
-    if (borderRadius && ![duration isKindOfClass:[NSNumber class]]) {
+    if (borderRadius && ![borderRadius isKindOfClass:[NSNumber class]]) {
         if (error) {
             NSString *msg = [NSString stringWithFormat:@"Border radius must be a number. Invalid value: %@", borderRadius];
             *error =  [NSError errorWithDomain:UAInAppMessageBannerDisplayContentDomain
@@ -198,6 +218,8 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
 
         return NO;
     }
+
+    //TODO: Missing the actions here?
 
     self.heading = heading;
     self.body = body;
@@ -252,27 +274,36 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
 }
 
 - (instancetype)initWithBuilder:(UAInAppMessageBannerDisplayContentBuilder *)builder {
-    self = [super init];
+    self = [super self];
+
+    if (![UAInAppMessageBannerDisplayContent validateBuilder:builder]) {
+        UA_LDEBUG(@"UAInAppMessageBannerDisplayContent could not be initialized, builder has missing or invalid parameters.");
+        return nil;
+    }
+
     if (self) {
         self.heading = builder.heading;
         self.body = builder.body;
         self.media = builder.media;
         self.buttons = builder.buttons;
-        self.buttonLayout = builder.buttonLayout;
-        self.placement = builder.placement;
-        self.contentLayout = builder.contentLayout;
-        self.duration = builder.duration;
-        self.backgroundColor = builder.backgroundColor;
-        self.dismissButtonColor = builder.dismissButtonColor;
+        self.buttonLayout = builder.buttonLayout ?: UAInAppMessageButtonLayoutSeparate;
+        self.placement = builder.placement ?: UAInAppMessageBannerPlacementBottom;
+        self.contentLayout = builder.contentLayout ?: UAInAppMessageBannerContentLayoutMediaLeft;
+        self.duration = builder.duration ?: UAInAppMessageBannerDefaultDuration;
+        self.backgroundColor = builder.backgroundColor ?: @"#FFFFFF"; //White
+        self.dismissButtonColor = builder.dismissButtonColor ?: @"#000000"; //Black
         self.borderRadius = builder.borderRadius;
     }
 
     return self;
 }
 
-+ (NSDictionary *)JSONWithBannerDisplayContent:(UAInAppMessageBannerDisplayContent *_Nonnull)displayContent {
-
++ (NSDictionary *)JSONWithBannerDisplayContent:(UAInAppMessageBannerDisplayContent *)displayContent {
     NSMutableDictionary *json = [NSMutableDictionary dictionary];
+
+    if (!displayContent) {
+        return [NSDictionary dictionaryWithDictionary:json];
+    }
 
     json[UAInAppMessageHeadingKey] = [UAInAppMessageTextInfo JSONWithTextInfo:displayContent.heading];
     json[UAInAppMessageBodyKey] = [UAInAppMessageTextInfo JSONWithTextInfo:displayContent.body];
@@ -287,12 +318,39 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     json[UAInAppMessageButtonLayoutKey] = displayContent.buttonLayout;
     json[UAInAppMessagePlacementKey] = displayContent.placement;
     json[UAInAppMessageContentLayoutKey] = displayContent.contentLayout;
-    json[UAInAppMessageDurationKey] = [NSNumber numberWithInteger:displayContent.duration ];
+    json[UAInAppMessageDurationKey] = [NSNumber numberWithInteger:displayContent.duration];
     json[UAInAppMessageBackgroundColorKey] = displayContent.backgroundColor;
     json[UAInAppMessageDismissButtonColorKey] = displayContent.dismissButtonColor;
     json[UAInAppMessageBorderRadiusKey] = [NSNumber numberWithInteger:displayContent.borderRadius];
 
     return [NSDictionary dictionaryWithDictionary:json];
+}
+
+#pragma mark - Validation
+
+// Validates builder contents for the banner type
++ (BOOL)validateBuilder:(UAInAppMessageBannerDisplayContentBuilder *)builder {
+    if (builder.buttonLayout == UAInAppMessageButtonLayoutStacked) {
+        UA_LDEBUG(@"Banner style does not support stacked button layouts");
+        return NO;
+    }
+
+    if (builder.heading == nil && builder.body == nil) {
+        UA_LDEBUG(@"Banner must have either its body or heading defined.");
+        return NO;
+    }
+
+    if (builder.media.type && builder.media.type != UAInAppMessageMediaInfoTypeImage) {
+        UA_LDEBUG(@"Banner only supports image media.");
+        return NO;
+    }
+
+    if (builder.buttons.count > UAInAppMessageBannerMaxButtons) {
+        UA_LDEBUG(@"Banner allows a maximum of %lu buttons", (unsigned long)UAInAppMessageBannerMaxButtons);
+        return NO;
+    }
+
+    return YES;
 }
 
 #pragma mark - NSObject
