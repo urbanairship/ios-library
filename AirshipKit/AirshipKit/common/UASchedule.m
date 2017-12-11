@@ -5,7 +5,7 @@
 @implementation UASchedule
 
 - (instancetype)initWithIdentifier:(NSString *)identifier info:(UAScheduleInfo *)info {
-    self = [super self];
+    self = [super init];
     if (self) {
         self.identifier = identifier;
         self.info = info;

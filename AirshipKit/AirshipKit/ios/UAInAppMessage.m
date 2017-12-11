@@ -61,7 +61,7 @@ NSString *const UAInAppMessageDisplayTypeCustom = @"custom";
 }
 
 - (instancetype)initWithBuilder:(UAInAppMessageBuilder *)builder {
-    self = [super self];
+    self = [super init];
     if (self) {
         self.json = builder.json;
         self.identifier = builder.identifier;

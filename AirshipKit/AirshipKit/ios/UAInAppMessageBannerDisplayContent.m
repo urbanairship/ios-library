@@ -252,7 +252,7 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
 }
 
 - (instancetype)initWithBuilder:(UAInAppMessageBannerDisplayContentBuilder *)builder {
-    self = [super self];
+    self = [super init];
     if (self) {
         self.heading = builder.heading;
         self.body = builder.body;

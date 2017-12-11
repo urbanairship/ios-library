@@ -18,7 +18,7 @@ NSString * const UAJSONMatcherErrorDomain = @"com.urbanairship.json_matcher";
 @implementation UAJSONMatcher
 
 - (instancetype)initWithValueMatcher:(UAJSONValueMatcher *)valueMatcher key:(NSString *)key scope:(NSArray<NSString *>*)scope {
-    self = [super self];
+    self = [super init];
     if (self) {
         self.valueMatcher = valueMatcher;
         self.key = key;

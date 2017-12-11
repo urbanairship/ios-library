@@ -26,7 +26,7 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
 @implementation UAScheduleTrigger
 
 - (instancetype)initWithType:(UAScheduleTriggerType)type goal:(NSNumber *)goal predicate:(UAJSONPredicate *)predicate {
-    self = [super self];
+    self = [super init];
     if (self) {
         self.goal = goal;
         self.predicate = predicate;

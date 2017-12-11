@@ -37,7 +37,7 @@ NSString *const UAInAppMessageTextInfoStyleKey = @"style";
 @implementation UAInAppMessageTextInfo
 
 - (instancetype)initWithBuilder:(UAInAppMessageTextInfoBuilder *)builder {
-    self = [super self];
+    self = [super init];
     if (self) {
         self.text = builder.text;
         self.color = builder.color;

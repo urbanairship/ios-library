@@ -27,7 +27,7 @@ NSString *const UAInAppMessageMediaInfoDescriptionKey = @"description";
 @implementation UAInAppMessageMediaInfo
 
 - (instancetype)initWithBuilder:(UAInAppMessageMediaInfoBuilder *)builder {
-    self = [super self];
+    self = [super init];
     if (self) {
         self.url = builder.url;
         self.type = builder.type;

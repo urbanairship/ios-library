@@ -34,7 +34,7 @@ NSString * const UAScheduleDelayErrorDomain = @"com.urbanairship.schedule_delay"
 
 
 - (instancetype)initWithBuilder:(UAScheduleDelayBuilder *)builder {
-    self = [super self];
+    self = [super init];
     if (self) {
         self.seconds = builder.seconds;
         self.screens = builder.screens;

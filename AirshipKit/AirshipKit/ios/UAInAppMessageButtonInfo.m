@@ -32,7 +32,7 @@ NSString *const UAInAppMessageButtonInfoActionsKey = @"actions";
 @implementation UAInAppMessageButtonInfo
 
 - (instancetype)initWithBuilder:(UAInAppMessageButtonInfoBuilder *)builder {
-    self = [super self];
+    self = [super init];
     if (self) {
         self.label = builder.label;
         self.identifier = builder.identifier;

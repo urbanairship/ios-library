@@ -185,7 +185,7 @@ NSString * const UAScheduleInfoErrorDomain = @"com.urbanairship.schedule_info";
 }
 
 - (instancetype)initWithBuilder:(UAScheduleInfoBuilder *)builder {
-    self = [super self];
+    self = [super init];
     if (self) {
         self.data = builder.data;
         self.priority = builder.priority;

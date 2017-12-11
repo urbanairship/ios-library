@@ -22,7 +22,7 @@ NSString * const UAJSONPredicateErrorDomain = @"com.urbanairship.json_predicate"
                  jsonMatcher:(UAJSONMatcher *)jsonMatcher
                subpredicates:(NSArray *)subpredicates {
 
-    self = [super self];
+    self = [super init];
     if (self) {
         self.type = type;
         self.jsonMatcher = jsonMatcher;
