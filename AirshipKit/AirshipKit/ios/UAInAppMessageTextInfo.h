@@ -65,17 +65,17 @@ extern NSString *const UAInAppMessageTextInfoStyleUnderline;
 @property(nonatomic, copy) NSString *text;
 
 /**
- * Text color.
+ * Text color. Defaults to black.
  */
 @property(nonatomic, copy) NSString *color;
 
 /**
- * Text size.
+ * Text size. Defaults to 14sp.
  */
 @property(nonatomic, assign) NSUInteger size;
 
 /**
- * Text alignment.
+ * Text alignment. Defaults to UAInAppMessageTextInfoAlignmentLeft.
  */
 @property(nonatomic, copy) NSString *alignment;
 
@@ -103,17 +103,17 @@ extern NSString *const UAInAppMessageTextInfoStyleUnderline;
 @property(nonatomic, copy, readonly, nullable) NSString *text;
 
 /**
- * Text color.
+ * Text color. Defaults to black.
  */
 @property(nonatomic, copy, readonly, nullable) NSString *color;
 
 /**
- * Text size.
+ * Text size. Defaults to 14sp.
  */
 @property(nonatomic, assign, readonly) NSUInteger size;
 
 /**
- * Text alignment.
+ * Text alignment. Defaults to UAInAppMessageTextInfoAlignmentLeft.
  */
 @property(nonatomic, copy, readonly, nullable) NSString *alignment;
 

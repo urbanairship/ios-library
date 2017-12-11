@@ -125,7 +125,18 @@ NSString * const UAScheduleDelayErrorDomain = @"com.urbanairship.schedule_delay"
 
     // App state
     UAScheduleDelayAppState appState = UAScheduleDelayAppStateAny;
-    if (json[UAScheduleDelayAppStateKey]) {
+    id appStateContents = json[UAScheduleDelayAppStateKey];
+    if (appStateContents) {
+        if (![appStateContents isKindOfClass:[NSString class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"App state must be a string."];
+                *error =  [NSError errorWithDomain:UAScheduleDelayErrorDomain
+                                              code:UAScheduleDelayErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        }
+        
         NSString *stateName = [json[UAScheduleDelayAppStateKey] lowercaseString];
 
         if ([UAScheduleDelayAppStateForegroundName isEqualToString:stateName]) {

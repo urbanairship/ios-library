@@ -1,6 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAInAppMessageMediaInfo.h"
+#import "UAGlobal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,7 +28,13 @@ NSString *const UAInAppMessageMediaInfoDescriptionKey = @"description";
 @implementation UAInAppMessageMediaInfo
 
 - (instancetype)initWithBuilder:(UAInAppMessageMediaInfoBuilder *)builder {
-    self = [super init];
+    self = [super self];
+
+    if (![UAInAppMessageMediaInfo validateBuilder:builder]) {
+        UA_LDEBUG(@"UAInAppMessageMediaInfo could not be initialized, builder has missing or invalid parameters.");
+        return nil;
+    }
+
     if (self) {
         self.url = builder.url;
         self.type = builder.type;
@@ -64,18 +71,29 @@ NSString *const UAInAppMessageMediaInfoDescriptionKey = @"description";
     url = urlText;
 
     NSString *mediaType;
-    if (json[UAInAppMessageMediaInfoTypeKey]) {
-        NSString *type = [json[UAInAppMessageMediaInfoTypeKey] lowercaseString];
+    id mediaContents = json[UAInAppMessageMediaInfoTypeKey];
+    if (mediaContents) {
+        if (![mediaContents isKindOfClass:[NSString class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Media type must be a string."];
+                *error =  [NSError errorWithDomain:UAInAppMessageMediaInfoDomain
+                                              code:UAInAppMessageMediaInfoErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        }
 
-        if ([UAInAppMessageMediaInfoTypeImage isEqualToString:type]) {
+        mediaType = [mediaContents lowercaseString];
+
+        if ([UAInAppMessageMediaInfoTypeImage isEqualToString:mediaType]) {
             mediaType = UAInAppMessageMediaInfoTypeImage;
-        } else if ([UAInAppMessageMediaInfoTypeVideo isEqualToString:type]) {
+        } else if ([UAInAppMessageMediaInfoTypeVideo isEqualToString:mediaType]) {
             mediaType = UAInAppMessageMediaInfoTypeVideo;
-        } else if ([UAInAppMessageMediaInfoTypeYouTube isEqualToString:type]) {
+        } else if ([UAInAppMessageMediaInfoTypeYouTube isEqualToString:mediaType]) {
             mediaType = UAInAppMessageMediaInfoTypeYouTube;
         } else {
             if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Invalid in-app message media type: %@", type];
+                NSString *msg = [NSString stringWithFormat:@"Invalid in-app message media type: %@", mediaType];
                 *error =  [NSError errorWithDomain:UAInAppMessageMediaInfoDomain
                                               code:UAInAppMessageMediaInfoErrorCodeInvalidJSON
                                           userInfo:@{NSLocalizedDescriptionKey:msg}];
@@ -114,6 +132,23 @@ NSString *const UAInAppMessageMediaInfoDescriptionKey = @"description";
     json[UAInAppMessageMediaInfoDescriptionKey] = mediaInfo.mediaDescription;
 
     return [NSDictionary dictionaryWithDictionary:json];
+}
+
+#pragma mark - Validation
+
+// Validates builder contents for the media type
++ (BOOL)validateBuilder:(UAInAppMessageMediaInfoBuilder *)builder {
+    if (!builder.url) {
+        UA_LDEBUG(@"In-app media infos require a url");
+        return NO;
+    }
+
+    if (!builder.type) {
+        UA_LDEBUG(@"In-app media infos require a media type");
+        return NO;
+    }
+
+    return YES;
 }
 
 #pragma mark - NSObject

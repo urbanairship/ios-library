@@ -123,7 +123,7 @@
 - (void)showCopyMessage {
     UALegacyInAppMessage *message = [[UALegacyInAppMessage alloc] init];
     message.alert = NSLocalizedStringFromTable(@"UA_Copied_To_Clipboard", @"UAPushUI", @"Copied to clipboard string");
-    message.position = UAInAppMessageDurationKey;
+    message.position = UALegacyInAppMessagePositionTop;
     message.duration = 1.5;
     message.primaryColor = [UIColor colorWithRed:255/255.f green:200/255.f blue:40/255.f alpha:1];
     message.secondaryColor = [UIColor colorWithRed:0/255.f green:105/255.f blue:143/255.f alpha:1];

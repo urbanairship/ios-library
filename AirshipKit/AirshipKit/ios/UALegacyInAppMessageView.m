@@ -45,7 +45,7 @@
     NSString *nibName = kUALegacyInAppMessageViewNibName;
     NSBundle *bundle = [UAirship resources];
 
-    // Top and bottom IAP views are firstObject and lastObject, respectively.
+    // Top and bottom IAM views are firstObject and lastObject, respectively.
     if (position == UALegacyInAppMessagePositionTop) {
         self = [[bundle loadNibNamed:nibName owner:self options:nil] firstObject];
     } else {

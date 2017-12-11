@@ -797,6 +797,7 @@
             }
 
             if (![self.delegate isScheduleReadyToExecute:schedule]) {
+                UA_LINFO("Schedule:%@ is not ready to execute.", schedule);
                 return;
             }
 

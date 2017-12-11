@@ -1,6 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAInAppMessageButtonInfo.h"
+#import "UAGlobal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 NSString *const UAInAppMessageButtonInfoDomain = @"com.urbanairship.in_app_message_button_info";
@@ -23,6 +24,7 @@ NSString *const UAInAppMessageButtonInfoActionsKey = @"actions";
 @property(nonatomic, copy) NSString *behavior;
 @property(nonatomic, copy) NSString *backgroundColor;
 @property(nonatomic, copy) NSString *borderColor;
+@property(nonatomic, assign) NSUInteger borderRadius;
 @property(nonatomic, copy, nullable) NSDictionary *actions;
 @end
 
@@ -32,13 +34,20 @@ NSString *const UAInAppMessageButtonInfoActionsKey = @"actions";
 @implementation UAInAppMessageButtonInfo
 
 - (instancetype)initWithBuilder:(UAInAppMessageButtonInfoBuilder *)builder {
-    self = [super init];
+    self = [super self];
+
+    if (![UAInAppMessageButtonInfo validateBuilder:builder]) {
+        UA_LDEBUG(@"UAInAppMessageButtonInfo instance could not be initialized, builder has missing or invalid parameters.");
+        return nil;
+    }
+
     if (self) {
         self.label = builder.label;
         self.identifier = builder.identifier;
-        self.behavior = builder.behavior;
-        self.backgroundColor = builder.backgroundColor;
-        self.borderColor = builder.borderColor;
+        self.behavior = builder.behavior ?: UAInAppMessageButtonInfoBehaviorDismiss;
+        self.backgroundColor = builder.backgroundColor ?: @"#FF000000";
+        self.borderRadius = builder.borderRadius;
+        self.borderColor = builder.borderColor ?: @"#FF000000";
         self.actions = builder.actions;
     }
 
@@ -46,7 +55,6 @@ NSString *const UAInAppMessageButtonInfoActionsKey = @"actions";
 }
 
 + (nullable instancetype)buttonInfoWithBuilderBlock:(void(^)(UAInAppMessageButtonInfoBuilder *builder))builderBlock {
-
     UAInAppMessageButtonInfoBuilder *builder = [[UAInAppMessageButtonInfoBuilder alloc] init];
 
     if (builderBlock) {
@@ -88,16 +96,27 @@ NSString *const UAInAppMessageButtonInfoActionsKey = @"actions";
     identifier = identifierText;
 
     NSString *behavior;
-    if (json[UAInAppMessageButtonInfoBehaviorKey]) {
-        NSString *behaviorType = [json[UAInAppMessageButtonInfoBehaviorKey] lowercaseString];
+    id behaviorContents = json[UAInAppMessageButtonInfoBehaviorKey];
+    if (behaviorContents) {
+        if (![behaviorContents isKindOfClass:[NSString class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Behavior must be a string."];
+                *error =  [NSError errorWithDomain:UAInAppMessageButtonInfoDomain
+                                              code:UAInAppMessageButtonInfoErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        }
 
-        if ([UAInAppMessageButtonInfoBehaviorCancel isEqualToString:behaviorType]) {
+       behavior = [behaviorContents lowercaseString];
+
+        if ([UAInAppMessageButtonInfoBehaviorCancel isEqualToString:behavior]) {
             behavior = UAInAppMessageButtonInfoBehaviorCancel;
-        } else if ([UAInAppMessageButtonInfoBehaviorDismiss isEqualToString:behaviorType]) {
+        } else if ([UAInAppMessageButtonInfoBehaviorDismiss isEqualToString:behavior]) {
             behavior = UAInAppMessageButtonInfoBehaviorDismiss;
         } else {
             if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Invalid in-app message button behavior: %@", behaviorType];
+                NSString *msg = [NSString stringWithFormat:@"Invalid in-app message button behavior: %@", behavior];
                 *error =  [NSError errorWithDomain:UAInAppMessageButtonInfoDomain
                                               code:UAInAppMessageButtonInfoErrorCodeInvalidJSON
                                           userInfo:@{NSLocalizedDescriptionKey:msg}];
@@ -135,9 +154,21 @@ NSString *const UAInAppMessageButtonInfoActionsKey = @"actions";
     }
     borderColor = borderColorHex;
 
+    id borderRadius = json[UAInAppMessageButtonInfoBorderRadiusKey];
+    if (borderRadius && ![borderRadius isKindOfClass:[NSNumber class]]) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Button border radius must be a number. Invalid value: %@", borderRadius];
+            *error =  [NSError errorWithDomain:UAInAppMessageButtonInfoDomain
+                                          code:UAInAppMessageButtonInfoErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
+        return nil;
+    }
+
     // Actions
     id actions = json[UAInAppMessageButtonInfoActionsKey];
-    if (![actions isKindOfClass:[NSDictionary class]]) {
+    if (actions && ![actions isKindOfClass:[NSDictionary class]]) {
         if (error) {
             NSString *msg = [NSString stringWithFormat:@"Button actions payload must be a dictionary. Invalid value: %@", actions];
             *error =  [NSError errorWithDomain:UAInAppMessageButtonInfoDomain
@@ -154,6 +185,7 @@ NSString *const UAInAppMessageButtonInfoActionsKey = @"actions";
         builder.behavior = behavior;
         builder.backgroundColor = backgroundColor;
         builder.borderColor = borderColor;
+        builder.borderRadius = [borderRadius unsignedIntegerValue];
         builder.actions = actions;
     }];
 }
@@ -170,6 +202,18 @@ NSString *const UAInAppMessageButtonInfoActionsKey = @"actions";
     json[UAInAppMessageButtonInfoActionsKey] = buttonInfo.actions;
 
     return [NSDictionary dictionaryWithDictionary:json];
+}
+
+#pragma mark - Validation
+
+// Validates builder contents for the banner type
++ (BOOL)validateBuilder:(UAInAppMessageButtonInfoBuilder *)builder {
+    if (!builder.label) {
+        UA_LDEBUG(@"In-app button infos require a label");
+        return NO;
+    }
+
+    return YES;
 }
 
 #pragma mark - NSObject
@@ -228,7 +272,7 @@ NSString *const UAInAppMessageButtonInfoActionsKey = @"actions";
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"UAInAppMessageButtonInfo: %@", self.identifier];
+    return [NSString stringWithFormat:@"UAInAppMessageButtonInfo: %@", self.identifier ?: self.label];
 }
 
 @end

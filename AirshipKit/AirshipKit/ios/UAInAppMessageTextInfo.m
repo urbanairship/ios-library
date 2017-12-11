@@ -2,6 +2,7 @@
 
 #import "UAInAppMessageTextInfo.h"
 #import <UIKit/UIKit.h>
+#import "UAGlobal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 NSString *const UAInAppMessageTextInfoDomain = @"com.urbanairship.in_app_message_text_info";
@@ -37,18 +38,25 @@ NSString *const UAInAppMessageTextInfoStyleKey = @"style";
 @implementation UAInAppMessageTextInfo
 
 - (instancetype)initWithBuilder:(UAInAppMessageTextInfoBuilder *)builder {
-    self = [super init];
+    self = [super self];
+
+    if (![UAInAppMessageTextInfo validateBuilder:builder]) {
+        UA_LDEBUG(@"UAInAppMessageTextInfo could not be initialized, builder has missing or invalid parameters.");
+        return nil;
+    }
+
     if (self) {
         self.text = builder.text;
-        self.color = builder.color;
-        self.size = builder.size;
-        self.alignment = builder.alignment;
+        self.color = builder.color ?: @"#000000";
+        self.size = builder.size ?: 14;
+        self.alignment = builder.alignment ?: UAInAppMessageTextInfoAlignmentLeft;
         self.styles = builder.styles;
         self.fontFamilies = builder.fontFamilies;
     }
 
     return self;
 }
+
 
 + (nullable instancetype)textInfoWithBuilderBlock:(void(^)(UAInAppMessageTextInfoBuilder *builder))builderBlock {
     UAInAppMessageTextInfoBuilder *builder = [[UAInAppMessageTextInfoBuilder alloc] init];
@@ -116,18 +124,29 @@ NSString *const UAInAppMessageTextInfoStyleKey = @"style";
     size = [textSize unsignedIntegerValue];
 
     NSString *alignment;
-    if (json[UAInAppMessageTextInfoAlignmentKey]) {
-        NSString *alignmentType = [json[UAInAppMessageTextInfoAlignmentKey] lowercaseString];
+    id alignmentContents = json[UAInAppMessageTextInfoAlignmentKey];
+    if (alignmentContents) {
+        if (![alignmentContents isKindOfClass:[NSString class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Alignment must be a string."];
+                *error =  [NSError errorWithDomain:UAInAppMessageTextInfoDomain
+                                              code:UAInAppMessageTextInfoErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        }
 
-        if ([UAInAppMessageTextInfoAlignmentLeft isEqualToString:alignmentType]) {
+        alignment = [alignmentContents lowercaseString];
+
+        if ([UAInAppMessageTextInfoAlignmentLeft isEqualToString:alignment]) {
             alignment = UAInAppMessageTextInfoAlignmentLeft;
-        } else if ([UAInAppMessageTextInfoAlignmentCenter isEqualToString:alignmentType]) {
+        } else if ([UAInAppMessageTextInfoAlignmentCenter isEqualToString:alignment]) {
             alignment = UAInAppMessageTextInfoAlignmentCenter;
-        } else if ([UAInAppMessageTextInfoAlignmentRight isEqualToString:alignmentType]) {
+        } else if ([UAInAppMessageTextInfoAlignmentRight isEqualToString:alignment]) {
             alignment = UAInAppMessageTextInfoAlignmentRight;
         } else {
             if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Invalid in-app message text alignment: %@", alignmentType];
+                NSString *msg = [NSString stringWithFormat:@"Invalid in-app message text alignment: %@", alignment];
                 *error =  [NSError errorWithDomain:UAInAppMessageTextInfoDomain
                                               code:UAInAppMessageTextInfoErrorCodeInvalidJSON
                                           userInfo:@{NSLocalizedDescriptionKey:msg}];
@@ -224,6 +243,18 @@ NSString *const UAInAppMessageTextInfoStyleKey = @"style";
     json[UAInAppMessageTextInfoStyleKey] = textInfo.styles;
 
     return [NSDictionary dictionaryWithDictionary:json];
+}
+
+#pragma mark - Validation
+
+// Validates builder contents for the media type
++ (BOOL)validateBuilder:(UAInAppMessageTextInfoBuilder *)builder {
+    if (!builder.text) {
+        UA_LDEBUG(@"In-app text infos require text");
+        return NO;
+    }
+
+    return YES;
 }
 
 #pragma mark - NSObject

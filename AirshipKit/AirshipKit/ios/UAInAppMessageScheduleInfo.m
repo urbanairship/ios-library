@@ -4,6 +4,7 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAScheduleInfo+Internal.h"
 #import "UAInAppMessage+Internal.h"
+#import "UAInAppMessageBannerDisplayContent.h"
 
 NSString *const UAScheduleInfoInAppMessageKey = @"message";
 
@@ -33,9 +34,16 @@ NSString *const UAScheduleInfoInAppMessageKey = @"message";
         if (message.displayType) {
             data[UAInAppMessageDisplayTypeKey] = message.displayType;
         }
+
         if (message.displayContent) {
-            data[UAInAppMessageDisplayContentKey] = message.displayContent;
+            // Banner Type
+            if (message.displayType == UAInAppMessageDisplayTypeBanner) {
+                data[UAInAppMessageDisplayContentKey] = [UAInAppMessageBannerDisplayContent JSONWithBannerDisplayContent:(UAInAppMessageBannerDisplayContent *)message.displayContent];
+            }
+
+            // TODO add support for other types
         }
+
         if (message.extras) {
             data[UAInAppMessageExtrasKey] = message.extras;
         }

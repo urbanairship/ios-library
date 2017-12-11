@@ -8,7 +8,7 @@
  * Button Layout
  */
 NSString *const UAInAppMessageButtonLayoutStacked = @"stacked";
-NSString *const UAInAppMessageButtonLayoutSeparate = @"stacked";
+NSString *const UAInAppMessageButtonLayoutSeparate = @"separate";
 NSString *const UAInAppMessageButtonLayoutJoined = @"joined";
 
 /**

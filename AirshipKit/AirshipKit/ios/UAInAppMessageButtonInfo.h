@@ -53,22 +53,22 @@ extern NSString *const UAInAppMessageButtonInfoBehaviorDismiss;
 @property(nonatomic, copy) NSString *identifier;
 
 /**
- * Button tap behavior.
+ * Button tap behavior. Defaults to UAInAppMessageButtonInfoBehaviorDismiss.
  */
 @property(nonatomic, copy) NSString *behavior;
 
 /**
- * Button border radius.
+ * Button border radius. Defaults to 0.
  */
 @property(nonatomic, assign) NSUInteger borderRadius;
 
 /**
- * Button background color.
+ * Button background color. Defaults to transparent.
  */
 @property(nonatomic, copy) NSString *backgroundColor;
 
 /**
- * Button border color.
+ * Button border color. Defaults to transparent.
  */
 @property(nonatomic, copy) NSString *borderColor;
 
@@ -96,22 +96,22 @@ extern NSString *const UAInAppMessageButtonInfoBehaviorDismiss;
 @property(nonatomic, copy, readonly, nullable) NSString *identifier;
 
 /**
- * Button tap behavior.
+ * Button tap behavior. Defaults to UAInAppMessageButtonInfoBehaviorDismiss.
  */
 @property(nonatomic, copy, readonly, nullable) NSString *behavior;
 
 /**
- * Button border radius.
+ * Button border radius. Defaults to 0.
  */
 @property(nonatomic, assign, readonly) NSUInteger borderRadius;
 
 /**
- * Button background color.
+ * Button background color. Defaults to transparent.
  */
 @property(nonatomic, copy, readonly, nullable) NSString *backgroundColor;
 
 /**
- * Button border color.
+ * Button border color. Defaults to transparent.
  */
 @property(nonatomic, copy, readonly, nullable) NSString *borderColor;
 

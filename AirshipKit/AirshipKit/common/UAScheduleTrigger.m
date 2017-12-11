@@ -118,8 +118,19 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
 
     UAScheduleTriggerType triggerType;
 
-    // Needs to ensure triggerTypeString is an NSString first
-    NSString *triggerTypeString = [json[UAScheduleTriggerTypeKey] lowercaseString];
+    id triggerTypeContents = json[UAScheduleTriggerTypeKey];
+    if (![triggerTypeContents isKindOfClass:[NSString class]]) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Trigger type must be a string."];
+            *error =  [NSError errorWithDomain:UAScheduleTriggerErrorDomain
+                                          code:UAScheduleTriggerErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+        return nil;
+    }
+
+    NSString *triggerTypeString = [triggerTypeContents lowercaseString];
+    
     if ([UAScheduleTriggerAppForegroundName isEqualToString:triggerTypeString]) {
         triggerType = UAScheduleTriggerAppForeground;
     } else if ([UAScheduleTriggerAppBackgroundName isEqualToString:triggerTypeString]) {
@@ -149,7 +160,6 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
                                       userInfo:@{NSLocalizedDescriptionKey:msg}];
         }
 
-        // No valid trigger type
         return nil;
     }
 

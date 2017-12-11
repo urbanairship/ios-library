@@ -66,11 +66,6 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
     return self;
 }
 
-// Sets the default adapter factories
-- (void)setDefaultAdapterFactories {
-
-}
-
 - (void)scheduleMessageWithScheduleInfo:(UAInAppMessageScheduleInfo *)scheduleInfo
                       completionHandler:(void (^)(UASchedule *))completionHandler {
     [self.automationEngine schedule:scheduleInfo completionHandler:completionHandler];;

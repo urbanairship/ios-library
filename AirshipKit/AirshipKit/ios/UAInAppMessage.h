@@ -1,28 +1,8 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAInAppMessageDisplayContent.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-/**
- * Represents the possible error conditions when deserializing an in-app message from JSON.
- */
-typedef NS_ENUM(NSInteger, UAInAppMessageErrorCode) {
-    /**
-     * Indicates an error with the in-app message JSON definition.
-     */
-    UAInAppMessageErrorCodeInvalidJSON,
-};
-
-/**
- * Banner display types.
- */
-extern NSString *const UAInAppMessageDisplayTypeBanner;
-extern NSString *const UAInAppMessageDisplayTypeFullScreen;
-extern NSString *const UAInAppMessageDisplayTypeModal;
-extern NSString *const UAInAppMessageDisplayTypeHTML;
-extern NSString *const UAInAppMessageDisplayTypeCustom;
 
 /**
  * Builder class for a UAInAppMessage.
@@ -46,7 +26,7 @@ extern NSString *const UAInAppMessageDisplayTypeCustom;
 /**
  * The display content for the message.
  */
-@property(nonatomic, strong, nullable) UAInAppMessageDisplayContent *displayContent;
+@property(nonatomic, copy, nullable) id displayContent;
 
 /**
  * The extras for the messages.
@@ -77,7 +57,7 @@ extern NSString *const UAInAppMessageDisplayTypeCustom;
 /**
  * The display content for the message.
  */
-@property(nonatomic, strong, nullable) UAInAppMessageDisplayContent *displayContent;
+@property(nonatomic, copy, nullable) id displayContent;
 
 /**
  * The extras for the messages.
@@ -96,10 +76,9 @@ extern NSString *const UAInAppMessageDisplayTypeCustom;
  * Class factory method for constructing an in-app message from JSON.
  *
  * @param json JSON object that defines the message.
- * @param error An NSError pointer for storing errors, if applicable.
- * @return A fully configured instance of UAInAppMessage or nil if JSON parsing fails.
+ * @return A fully configured instance of UAInAppMessage.
  */
-+ (nullable instancetype)messageWithJSON:(NSDictionary *)json error:(NSError * _Nullable *)error;
++ (instancetype)messageWithJSON:(NSDictionary *)json;
 
 /**
  * Class factory method for constructing an in-app message

@@ -39,6 +39,5 @@ extern NSString *const UAInAppMessageDismissButtonColorKey;
 extern NSString *const UAInAppMessageFooterKey;
 extern NSString *const UAInAppMessageDurationKey;
 
-
 @end
 

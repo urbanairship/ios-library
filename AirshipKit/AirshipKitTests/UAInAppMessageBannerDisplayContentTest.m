@@ -35,7 +35,7 @@
         }];;
         builder.media = [UAInAppMessageMediaInfo mediaInfoWithBuilderBlock:^(UAInAppMessageMediaInfoBuilder * _Nonnull builder) {
             builder.url = @"testurl";
-            builder.type = UAInAppMessageMediaInfoTypeYouTube;
+            builder.type = UAInAppMessageMediaInfoTypeImage;
         }];
         builder.buttons = @[[UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
             builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
@@ -69,7 +69,7 @@
             builder.actions = @{@"+^t":@"test"};
         }]];
 
-        builder.buttonLayout = UAInAppMessageButtonLayoutStacked;
+        builder.buttonLayout = UAInAppMessageButtonLayoutSeparate;
         builder.placement = UAInAppMessageBannerPlacementTop;
         builder.contentLayout = UAInAppMessageBannerContentLayoutMediaLeft;
         builder.duration = 11;
