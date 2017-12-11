@@ -148,7 +148,7 @@ class PushSettingsViewController: UITableViewController {
     func showCopyMessage () {
         let message = UALegacyInAppMessage()
         message.alert = NSLocalizedString("UA_Copied_To_Clipboard", tableName: "UAPushUI", comment: "Copied to clipboard string")
-        message.position = UAInAppMessagePosition.top
+        message.position = UALegacyInAppMessagePosition.top
         message.duration = 1.5
         message.primaryColor = UIColor(red: 255/255, green: 200/255, blue: 40/255, alpha: 1)
         message.secondaryColor = UIColor(red: 0/255, green: 105/255, blue: 143/255, alpha: 1)

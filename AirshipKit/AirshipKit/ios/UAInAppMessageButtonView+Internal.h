@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param layout The button layout.
  * @param target The object that will handle the button events.
  * @param selector The selector to call on the target when a button event occurs.
- * @param dismissButtonColor The dismiss button's color
+ * @param dismissButtonColor The dismiss button's color.
  *
  * @return a configured UAInAppMessageButtonView instance.
  */
@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
                                layout:(NSString *)layout
                                target:(id)target
                              selector:(SEL)selector
-                   dismissButtonColor:(UIColor *)color;
+                   dismissButtonColor:(UIColor *)dismissButtonColor;
 
 @end
 

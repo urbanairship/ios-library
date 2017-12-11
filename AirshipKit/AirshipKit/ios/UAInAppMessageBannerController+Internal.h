@@ -12,9 +12,9 @@
 /**
  * The factory method for creating a banner controller.
  *
- * @param displayContent The banner display content.
- * @param contentView The subview that holds the text and optional image.
- * @param buttonView The subview that holds the buttons.
+ * @param identifer The message identifier.
+ * @param displayContent The display content.
+ * @param image The image.
  *
  * @return a configured UAInAppMessageBannerView instance.
  */

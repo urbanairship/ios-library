@@ -17,6 +17,8 @@
 @class UAInAppMessageMediaView;
 @class UAInAppMessageBannerDisplayContent;
 
+double const MaxWidth = 420;
+
 double const DefaultLeadingEdgeSpace = 10;
 double const DefaultTrailingEdgeSpace = 10;
 
@@ -137,7 +139,7 @@ double const MinimumSwipeVelocity = 100.0;
                                                                                     layout:buttonLayout
                                                                                     target:self
                                                                                   selector:@selector(buttonTapped:)
-                                                                              dismissButtonColor:dismissColor];
+                                                                        dismissButtonColor:dismissColor];
 
     self.bannerView = [UAInAppMessageBannerView bannerMessageViewWithDisplayContent:self.displayContent
                                                                   bannerContentView:bannerContentView
@@ -198,6 +200,7 @@ double const MinimumSwipeVelocity = 100.0;
 - (void)addInitialConstraintsToParentView:(UIView *)parentView
                                bannerView:(UAInAppMessageBannerView *)bannerView
                                 placement:(NSString *)placement {
+
     // Center on X axis
     [NSLayoutConstraint constraintWithItem:bannerView
                                  attribute:NSLayoutAttributeCenterX
@@ -208,21 +211,37 @@ double const MinimumSwipeVelocity = 100.0;
                                   constant:0].active = YES;
 
     // Constrain leading edge
-    [NSLayoutConstraint constraintWithItem:bannerView
-                                 attribute:NSLayoutAttributeLeading
-                                 relatedBy:NSLayoutRelationEqual
-                                    toItem:parentView
-                                 attribute:NSLayoutAttributeLeadingMargin
-                                multiplier:1
-                                  constant:DefaultLeadingEdgeSpace].active = YES;
+    NSLayoutConstraint *leading = [NSLayoutConstraint constraintWithItem:bannerView
+                                                               attribute:NSLayoutAttributeLeading
+                                                               relatedBy:NSLayoutRelationEqual
+                                                                  toItem:parentView
+                                                               attribute:NSLayoutAttributeLeadingMargin
+                                                              multiplier:1
+                                                                constant:DefaultLeadingEdgeSpace];
+    leading.priority = UILayoutPriorityDefaultHigh;
+    leading.active = YES;
+
     // Constrain Trailing edge
-    [NSLayoutConstraint constraintWithItem:bannerView
-                                 attribute:NSLayoutAttributeTrailing
-                                 relatedBy:NSLayoutRelationEqual
-                                    toItem:parentView
-                                 attribute:NSLayoutAttributeTrailingMargin
-                                multiplier:1
-                                  constant:-DefaultTrailingEdgeSpace].active = YES;
+    NSLayoutConstraint *trailing = [NSLayoutConstraint constraintWithItem:bannerView
+                                                                attribute:NSLayoutAttributeTrailing
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:parentView
+                                                                attribute:NSLayoutAttributeTrailingMargin
+                                                               multiplier:1
+                                                                 constant:-DefaultTrailingEdgeSpace];
+    trailing.priority = UILayoutPriorityDefaultHigh;
+    trailing.active = YES;
+
+    // Set max width
+    NSLayoutConstraint *maxWidth = [NSLayoutConstraint constraintWithItem:bannerView
+                                                                attribute:NSLayoutAttributeWidth
+                                                                relatedBy:NSLayoutRelationLessThanOrEqual
+                                                                   toItem:nil
+                                                                attribute:NSLayoutAttributeNotAnAttribute
+                                                               multiplier:1
+                                                                 constant:MaxWidth];
+    maxWidth.priority = UILayoutPriorityRequired;
+    maxWidth.active = YES;
 
     if ([placement isEqualToString:UAInAppMessageBannerPlacementTop]) {
         // Top constraint is used for animating the message in the top position.
@@ -418,15 +437,13 @@ double const MinimumSwipeVelocity = 100.0;
 #pragma mark Timer
 
 - (void)scheduleDismissalTimer {
-    NSTimeInterval timeInterval = (double)self.displayContent.duration;
+    NSTimeInterval timeInterval = ((double)self.displayContent.duration / 1000);
 
-    self.dismissalTimer = [NSTimer timerWithTimeInterval:timeInterval
-                                                  target:self
-                                                selector:@selector(dismiss)
-                                                userInfo:nil
-                                                 repeats:NO];
-
-    [[NSRunLoop currentRunLoop] addTimer:self.dismissalTimer forMode:NSDefaultRunLoopMode];
+    self.dismissalTimer = [NSTimer scheduledTimerWithTimeInterval:timeInterval
+                                                           target:self
+                                                         selector:@selector(dismiss)
+                                                         userInfo:nil
+                                                          repeats:NO];
 }
 
 #pragma mark -

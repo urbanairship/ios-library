@@ -22,7 +22,7 @@
  * Applies text info to a text label.
  *
  * @param textInfo The text info.
- * @param textView The text label.
+ * @param label The label.
  */
 + (void)applyTextInfo:(UAInAppMessageTextInfo *)textInfo label:(UILabel *)label;
 

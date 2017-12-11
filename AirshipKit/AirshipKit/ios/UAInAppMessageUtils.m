@@ -15,9 +15,7 @@
     [button setTitle:buttonInfo.label.text forState:UIControlStateNormal];
     [button setTitleColor:[UAColorUtils colorWithHexString:buttonInfo.label.color] forState:UIControlStateNormal];
 
-    NSAttributedString *attributedTitle = [[NSAttributedString alloc] init];
-
-
+    //NSAttributedString *attributedTitle = [[NSAttributedString alloc] init];
     //[button setAttributedTitle: forState:UIControlStateNormal];
 
     [UAInAppMessageUtils applyTextInfo:buttonInfo.label label:button.titleLabel];

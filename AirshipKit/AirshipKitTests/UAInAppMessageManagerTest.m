@@ -8,6 +8,7 @@
 #import "UASchedule+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARemoteDataManager+Internal.h"
+#import "UAInAppMessageBannerDisplayContent+Internal.h"
 
 @interface UAInAppMessageManagerTest : UABaseTest
 @property(nonatomic, strong) UAInAppMessageManager *manager;
@@ -32,9 +33,29 @@
                                                             dataStore:self.dataStore];
 
     self.scheduleInfo = [UAInAppMessageScheduleInfo inAppMessageScheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
+
         UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
             builder.identifier = @"test identifier";
-            builder.displayType = @"banner";
+            builder.displayType = UAInAppMessageDisplayTypeBanner;
+            builder.displayContent = [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
+                builder.placement = UAInAppMessageBannerPlacementTop;
+                builder.buttonLayout = UAInAppMessageButtonLayoutJoined;
+
+                UAInAppMessageTextInfo *heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+                    builder.text = @"Here is a headline!";
+                }];
+                builder.heading = heading;
+
+                UAInAppMessageTextInfo *buttonTex = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+                    builder.text = @"Dismiss";
+                }];
+
+                UAInAppMessageButtonInfo *button = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
+                    builder.label = buttonTex;
+                }];
+
+                builder.buttons = @[button];
+            }];
         }];
 
         builder.message = message;
@@ -50,7 +71,7 @@
 - (void)testIsScheduleReady {
     // Set factory for banner type
     UA_WEAKIFY(self)
-    [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(NSString *displayType) {
+    [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
         UA_STRONGIFY(self)
         return self.mockAdapter;
     } forDisplayType:@"banner"];
@@ -95,7 +116,7 @@
 
     //Set factory block with banner display type
     UA_WEAKIFY(self)
-    [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(NSString *displayType) {
+    [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
         UA_STRONGIFY(self)
         return self.mockAdapter;
     } forDisplayType:@"banner"];
@@ -133,7 +154,7 @@
 
     //Set factory block with banner display type
     UA_WEAKIFY(self)
-    [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(NSString *displayType) {
+    [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
         UA_STRONGIFY(self)
         return self.mockAdapter;
     } forDisplayType:@"banner"];

@@ -797,7 +797,7 @@
             }
 
             if (![self.delegate isScheduleReadyToExecute:schedule]) {
-                UA_LINFO("Schedule:%@ is not ready to execute.", schedule);
+                UA_LDEBUG("Schedule:%@ is not ready to execute.", schedule);
                 return;
             }
 
@@ -828,7 +828,7 @@
             if ([scheduleData.limit integerValue] > 0) {
                 scheduleData.triggeredCount = @([scheduleData.triggeredCount integerValue] + 1);
                 if (scheduleData.triggeredCount >= scheduleData.limit) {
-                    UA_LINFO(@"Limit reached for schedule %@", scheduleData.identifier);
+                    UA_LDEBUG(@"Limit reached for schedule %@", scheduleData.identifier);
                     [scheduleData.managedObjectContext deleteObject:scheduleData];
                 }
             }

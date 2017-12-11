@@ -45,7 +45,7 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
 
     if (self) {
         NSString *storeName = [NSString stringWithFormat:UAInAppAutomationStoreFileFormat, config.appKey];
-        self.automationEngine = [UAAutomationEngine automationEngineWithStoreName:storeName scheduleLimit:MaxSchedules];
+        self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:[UAAutomationStore automationStoreWithStoreName:storeName] scheduleLimit:MaxSchedules];
         self.automationEngine.delegate = self;
 
         if (self.componentEnabled) {

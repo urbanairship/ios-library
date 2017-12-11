@@ -11,12 +11,10 @@
 /**
  * Text view factory method.
 
- * @param buttons The button infos to add to the view.
- * @param layout The button layout.
- * @param target The object that will handle the button events.
- * @param selector The selector to call on the target when button event occurs.
+ * @param heading The heading text info.
+ * @param body The body text info.
  *
- * @return a configured UAInAppMessageButtonView instance.
+ * @return a configured UAInAppMessageTextView instance.
  */
 + (instancetype)textViewWithHeading:(UAInAppMessageTextInfo *)heading body:(UAInAppMessageTextInfo *)body;
 

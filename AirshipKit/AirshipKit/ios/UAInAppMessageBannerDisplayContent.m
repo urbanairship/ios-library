@@ -219,8 +219,6 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
         return NO;
     }
 
-    //TODO: Missing the actions here?
-
     self.heading = heading;
     self.body = body;
     self.media = media;

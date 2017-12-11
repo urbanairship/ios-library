@@ -20,32 +20,23 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
 
 @implementation UAInAppMessageButtonView
 
-// I need to add the buttons on init instead of adding them at some point
-// after initialization. Doing it the way I'm doing it now makes it so I can't
-// determine if there are any buttons which I need to be able to do to minimize
-// the button view if there are none. I can probably add a button builder block
-// where I define the code that loops through and adds the buttons
-
-//I actually think I can just do this by msaking addButton into addButtons and passing in all the buttons into init
-
-
 + (instancetype)buttonViewWithButtons:(NSArray<UAInAppMessageButtonInfo *> *)buttons
                                layout:(NSString *)layout
                                target:(id)target
                              selector:(SEL)selector
-                   dismissButtonColor:(UIColor *)dismissColor {
+                   dismissButtonColor:(UIColor *)dismissButtonColor {
     return [[UAInAppMessageButtonView alloc] initWithButtons:buttons
                                                       layout:layout
                                                       target:target
                                                     selector:selector
-                                          dismissButtonColor:dismissColor];
+                                          dismissButtonColor:dismissButtonColor];
 }
 
 - (instancetype)initWithButtons:(NSArray<UAInAppMessageButtonInfo *> *)buttons
                          layout:(NSString *)layout
                          target:(id)target
                        selector:(SEL)selector
-             dismissButtonColor:(UIColor *)dismissColor {
+             dismissButtonColor:(UIColor *)dismissButtonColor {
 
     self = [super init];
 
@@ -64,7 +55,7 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
     }
 
     if (self) {
-        self.dismissButtonColor = dismissColor;
+        self.dismissButtonColor = dismissButtonColor;
         self.translatesAutoresizingMaskIntoConstraints = NO;
         [self addButtons:buttons layout:layout target:target selector:selector];
     }
@@ -109,7 +100,6 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
         button = [UAInAppMessageButton buttonWithButtonInfo:buttonInfo
                                                    rounding:rounding];
 
-        // Probably will move this into UAInAppMessageButtonView
         [UAInAppMessageUtils applyButtonInfo:buttonInfo button:button];
         [button addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
 
