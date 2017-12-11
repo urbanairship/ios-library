@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" userLabel="In App Message Button View Joined" customClass="UAInAppMessageButtonView">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="100"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="Vhy-Ya-qMY">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="100"/>
+                </stackView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="Vhy-Ya-qMY" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="L8m-qT-0zu"/>
+                <constraint firstItem="Vhy-Ya-qMY" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="aTd-6Q-T0S"/>
+                <constraint firstItem="Vhy-Ya-qMY" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" id="b8W-Q0-R3T"/>
+                <constraint firstItem="Vhy-Ya-qMY" firstAttribute="centerY" secondItem="vUN-kp-3ea" secondAttribute="centerY" id="kiv-mm-7h9"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <connections>
+                <outlet property="buttonContainer" destination="Vhy-Ya-qMY" id="qFw-Hr-htr"/>
+            </connections>
+            <point key="canvasLocation" x="-25" y="-754"/>
+        </view>
+        <view contentMode="scaleToFill" id="YDU-2l-e1u" userLabel="In App Message Button View Separate" customClass="UAInAppMessageButtonView">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="100"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="dym-7B-qqF">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="100"/>
+                </stackView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="dym-7B-qqF" firstAttribute="height" secondItem="YDU-2l-e1u" secondAttribute="height" id="mzT-xT-LVx"/>
+                <constraint firstItem="dym-7B-qqF" firstAttribute="centerY" secondItem="NVm-Ul-31I" secondAttribute="centerY" id="q5w-Nh-IZ5"/>
+                <constraint firstItem="dym-7B-qqF" firstAttribute="width" secondItem="YDU-2l-e1u" secondAttribute="width" id="sjd-lu-Gqd"/>
+                <constraint firstItem="dym-7B-qqF" firstAttribute="centerX" secondItem="NVm-Ul-31I" secondAttribute="centerX" id="y6O-jb-t1V"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="NVm-Ul-31I"/>
+            <connections>
+                <outlet property="buttonContainer" destination="dym-7B-qqF" id="ubu-tR-FIi"/>
+            </connections>
+            <point key="canvasLocation" x="-26" y="-589"/>
+        </view>
+        <view contentMode="scaleToFill" id="9dC-tD-hUh" userLabel="In App Message Button View Stacked" customClass="UAInAppMessageButtonView">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="171"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="IVA-NN-i5v">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="171"/>
+                </stackView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="IVA-NN-i5v" firstAttribute="width" secondItem="9dC-tD-hUh" secondAttribute="width" id="JLq-eq-1wR"/>
+                <constraint firstItem="IVA-NN-i5v" firstAttribute="centerY" secondItem="ZSi-AB-jF1" secondAttribute="centerY" id="Rix-De-WSH"/>
+                <constraint firstItem="IVA-NN-i5v" firstAttribute="centerX" secondItem="ZSi-AB-jF1" secondAttribute="centerX" id="eIe-77-NDs"/>
+                <constraint firstItem="IVA-NN-i5v" firstAttribute="height" secondItem="9dC-tD-hUh" secondAttribute="height" id="uvY-7p-dyp"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="ZSi-AB-jF1"/>
+            <connections>
+                <outlet property="buttonContainer" destination="IVA-NN-i5v" id="3XY-7d-0DW"/>
+            </connections>
+            <point key="canvasLocation" x="-26" y="-392"/>
+        </view>
+    </objects>
+</document>

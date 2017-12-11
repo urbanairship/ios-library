@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="UAInAppMessageTextView"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleAspectFill" id="iN0-l3-epB" customClass="UAInAppMessageTextView">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="205"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleAspectFill" axis="vertical" alignment="top" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="oAg-Fq-dBy">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="205"/>
+                </stackView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="oAg-Fq-dBy" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="8Xg-HV-s2s"/>
+                <constraint firstItem="oAg-Fq-dBy" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="Apl-Tv-1QE"/>
+                <constraint firstItem="oAg-Fq-dBy" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" id="DpN-se-QlV"/>
+                <constraint firstItem="oAg-Fq-dBy" firstAttribute="centerY" secondItem="vUN-kp-3ea" secondAttribute="centerY" id="nKt-cx-SNi"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <connections>
+                <outlet property="textContainer" destination="oAg-Fq-dBy" id="fNS-Nl-Z6P"/>
+            </connections>
+            <point key="canvasLocation" x="-48.5" y="-503.5"/>
+        </view>
+    </objects>
+</document>
