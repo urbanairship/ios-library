@@ -75,6 +75,10 @@
 - (void)fetchTriggersWithPredicate:(NSPredicate *)predicate
                  completionHandler:(void (^)(NSArray<UAScheduleTriggerData *> *))completionHandler;
 
+/**
+ * Waits for the store to become idle and then returns. Used by Unit Tests.
+ */
+- (void)waitForIdle;
 
 
 @end

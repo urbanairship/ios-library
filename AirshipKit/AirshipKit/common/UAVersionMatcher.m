@@ -14,6 +14,7 @@ typedef NS_ENUM(NSInteger,UAVersionMatcherConstraintType) {
 
 @interface UAVersionMatcher ()
 
+@property(nonatomic, strong) NSString *versionConstraint;
 @property(nonatomic, assign) UAVersionMatcherConstraintType constraintType;
 @property(nonatomic, strong) NSDictionary *parsedConstraint;
 
@@ -37,25 +38,26 @@ typedef NS_ENUM(NSInteger,UAVersionMatcherConstraintType) {
         return nil;
     }
     
-    versionConstraint = [self removeWhitespace:versionConstraint];
+    NSString *strippedVersionConstraint = [self removeWhitespace:versionConstraint];
     
     UAVersionMatcher *matcher = [[UAVersionMatcher alloc] init];
+    matcher.versionConstraint = versionConstraint;
     
-    NSDictionary *parsedConstraint = [self parseExactVersionConstraint:versionConstraint];
+    NSDictionary *parsedConstraint = [self parseExactVersionConstraint:strippedVersionConstraint];
     if (parsedConstraint) {
         matcher.constraintType = UAVersionMatcherConstraintTypeExactVersion;
         matcher.parsedConstraint = parsedConstraint;
         return matcher;
     }
     
-    parsedConstraint = [self parseSubVersionConstraint:versionConstraint];
+    parsedConstraint = [self parseSubVersionConstraint:strippedVersionConstraint];
     if (parsedConstraint) {
         matcher.constraintType = UAVersionMatcherConstraintTypeSubVersion;
         matcher.parsedConstraint = parsedConstraint;
         return matcher;
     }
     
-    parsedConstraint = [self parseVersionRangeConstraint:versionConstraint];
+    parsedConstraint = [self parseVersionRangeConstraint:strippedVersionConstraint];
     if (parsedConstraint) {
         matcher.constraintType = UAVersionMatcherConstraintTypeVersionRange;
         matcher.parsedConstraint = parsedConstraint;
@@ -365,6 +367,35 @@ typedef NS_ENUM(NSInteger,UAVersionMatcherRangeBoundary) {
                                                                       options:NSRegularExpressionSearch
                                                                         range:NSMakeRange(0, [sourceString length])];
     return destString;
+}
+
+- (BOOL)isEqual:(id)other {
+    if (other == self) {
+        return YES;
+    }
+    
+    if (![other isKindOfClass:[self class]]) {
+        return NO;
+    }
+    
+    return [self isEqualToVersionMatcher:(UAVersionMatcher *)other];
+}
+
+- (BOOL)isEqualToVersionMatcher:(nullable UAVersionMatcher *)matcher {
+    if (self.constraintType != matcher.constraintType) {
+        return NO;
+    }
+    if ((self.parsedConstraint != matcher.parsedConstraint) && ![self.parsedConstraint isEqual:matcher.parsedConstraint]) {
+        return NO;
+    }
+    return YES;
+}
+
+- (NSUInteger)hash {
+    NSUInteger result = 1;
+    result = 31 * result + self.constraintType;
+    result = 31 * result + [self.parsedConstraint hash];
+    return result;
 }
 
 @end

@@ -78,6 +78,9 @@ NSString *const UAScheduleInfoInAppMessageKey = @"message";
     if (![builder applyFromJson:json error:error]) {
         return nil;
     }
+    if (*error) {
+        return nil;
+    }
 
     // message ID
     id messagePayload = json[UAScheduleInfoInAppMessageKey];
@@ -93,7 +96,10 @@ NSString *const UAScheduleInfoInAppMessageKey = @"message";
     }
 
     // message with JSON expects displayType to be NSString
-    UAInAppMessage *message = [UAInAppMessage messageWithJSON:messagePayload error:nil];
+    UAInAppMessage *message = [UAInAppMessage messageWithJSON:messagePayload error:error];
+    if (*error) {
+        return nil;
+    }
     builder.message = message;
     builder.group = message.identifier;
 

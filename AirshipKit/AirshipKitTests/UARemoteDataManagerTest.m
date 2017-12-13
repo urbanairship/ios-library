@@ -133,7 +133,6 @@
     UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
         switch(callbackCount) {
             case 0:
-                NSLog(@"notification block called");
                 [receivedDataExpectation fulfill];
         
                 XCTAssert([remoteDataArray count] == 1);
@@ -171,7 +170,6 @@
      // subscribe to remote data manager and observe notifications
     __block NSUInteger callbackCount = 0;
     UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
-        NSLog(@"notification block called: count = %lu",(unsigned long)callbackCount);
         switch(callbackCount) {
             case 0:
                 // first notification
@@ -222,7 +220,6 @@
     // subscribe to remote data manager and observe notifications
     __block NSUInteger callbackCount = 0;
     UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
-        NSLog(@"notification block called");
         switch(callbackCount) {
             case 0:
             case 1:
@@ -274,7 +271,6 @@
     // subscribe to remote data manager and observe notifications
     __block NSUInteger callbackCount = 0;
     UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
-        NSLog(@"notification block called");
         [receivedDataExpectation fulfill];
         switch(callbackCount) {
             case 0:
@@ -323,7 +319,6 @@
     // subscribe to remote data manager and observe notifications
     __block NSUInteger callbackCount = 0;
     UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
-        NSLog(@"notification block called");
         [receivedDataExpectation fulfill];
         switch(callbackCount) {
             case 0:
@@ -379,7 +374,6 @@
     // subscribe to remote data manager and observe notifications
     __block NSUInteger callbackCount = 0;
     UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
-        NSLog(@"notification block called");
         [receivedDataExpectation fulfill];
         switch(callbackCount) {
             case 0:
@@ -430,7 +424,6 @@
     // subscribe to remote data manager and observe notifications
     __block NSUInteger callbackCount = 0;
     UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
-        NSLog(@"notification block called");
         [receivedDataExpectation fulfill];
         switch(callbackCount) {
             case 0:
@@ -488,7 +481,6 @@
     // subscribe to remote data manager and observe notifications
     __block NSUInteger callbackCount = 0;
     UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
-        NSLog(@"notification block called");
         [receivedDataExpectation fulfill];
         switch(callbackCount) {
             case 0:
@@ -541,7 +533,6 @@
     // subscribe to remote data manager and observe notifications
     __block NSUInteger callbackCount = 0;
     UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
-        NSLog(@"notification block called");
         [receivedDataExpectation fulfill];
         switch(callbackCount) {
             case 0:
@@ -601,7 +592,6 @@
     // subscribe to remote data manager and observe notifications
     __block NSUInteger callbackCount = 0;
     UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
-        NSLog(@"notification block called");
         [receivedDataExpectation fulfill];
         switch(callbackCount) {
             case 0:
@@ -658,7 +648,6 @@
     __block XCTestExpectation *receivedDataExpectation;
     
     UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
-        NSLog(@"notification block called");
         if (receivedDataExpectation) {
             [receivedDataExpectation fulfill];
         } else {
@@ -729,7 +718,6 @@
     receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data of type: %@",testPayloads[0].type]];
     
     UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
-        NSLog(@"notification block called");
         if (receivedDataExpectation) {
             [receivedDataExpectation fulfill];
         } else {
@@ -754,7 +742,6 @@
     receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data of type: %@",testPayloads[0].type]];
     
     subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
-        NSLog(@"notification block called");
         if (receivedDataExpectation) {
             [receivedDataExpectation fulfill];
         } else {

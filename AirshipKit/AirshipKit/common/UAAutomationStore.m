@@ -259,5 +259,9 @@
     return data;
 }
 
+- (void)waitForIdle {
+    [self.managedContext performBlockAndWait:^{}];
+}
+
 
 @end

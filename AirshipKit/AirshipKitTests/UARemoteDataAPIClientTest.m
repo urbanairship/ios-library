@@ -345,9 +345,7 @@
     NSError *error;
     NSData *remoteData = [NSJSONSerialization dataWithJSONObject:responseDict options:NSJSONWritingPrettyPrinted error:&error];
     
-    if (error) {
-        XCTFail(@"Error creating remote data of type %@ from dictionary %@: %@", type, remoteDataDict, error.localizedDescription);
-    }
+    XCTAssertNil(error,@"Error creating remote data of type %@ from dictionary %@: %@", type, remoteDataDict, error.localizedDescription);
     
     return remoteData;
 }
@@ -370,9 +368,7 @@
     NSError *error;
     NSData *remoteData = [NSJSONSerialization dataWithJSONObject:responseDict options:NSJSONWritingPrettyPrinted error:&error];
     
-    if (error) {
-        XCTFail(@"Error creating remote data of from array %@: %@", remoteDataDicts, error.localizedDescription);
-    }
+    XCTAssertNil(error,@"Error creating remote data of from array %@: %@", remoteDataDicts, error.localizedDescription);
     
     return remoteData;
 }

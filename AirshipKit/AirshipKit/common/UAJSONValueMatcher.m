@@ -206,5 +206,45 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
     return [subexp isKindOfClass:[NSNumber class]];
 }
 
+- (BOOL)isEqual:(id)other {
+    if (other == self) {
+        return YES;
+    }
+    
+    if (![other isKindOfClass:[self class]]) {
+        return NO;
+    }
+    
+    return [self isEqualToJSONValueMatcher:(UAJSONValueMatcher *)other];
+}
+
+- (BOOL)isEqualToJSONValueMatcher:(nullable UAJSONValueMatcher *)matcher {
+    if (self.equalsNumber && (!matcher.equalsNumber || ![self.equalsString isEqualToString:matcher.equalsString])) {
+        return NO;
+    }
+    if (self.atLeast && (!matcher.atLeast || ![self.atLeast isEqualToNumber:matcher.atLeast])) {
+        return NO;
+    }
+    if (self.atMost && (!matcher.atMost || ![self.atMost isEqualToNumber:matcher.atMost])) {
+        return NO;
+    }
+    if (self.isPresent && (!matcher.isPresent || ![self.isPresent isEqualToNumber:matcher.isPresent])) {
+        return NO;
+    }
+    if (self.versionConstraint && (!matcher.versionConstraint || ![self.versionConstraint isEqualToString:matcher.versionConstraint])) {
+        return NO;
+    }
+    return YES;
+}
+
+- (NSUInteger)hash {
+    NSUInteger result = 1;
+    result = 31 * result + [self.equalsNumber hash];
+    result = 31 * result + [self.atLeast hash];
+    result = 31 * result + [self.atMost hash];
+    result = 31 * result + [self.isPresent hash];
+    result = 31 * result + [self.versionConstraint hash];
+    return result;
+}
 
 @end

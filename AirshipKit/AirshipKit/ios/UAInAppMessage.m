@@ -2,6 +2,7 @@
 
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppMessageBannerDisplayContent.h"
+#import "UAInAppMessageAudience+Internal.h"
 
 @implementation UAInAppMessageBuilder
 
@@ -17,6 +18,7 @@ NSString *const UAInAppMessageIDKey = @"message_id";
 NSString *const UAInAppMessageDisplayTypeKey = @"display_type";
 NSString *const UAInAppMessageDisplayContentKey = @"display";
 NSString *const UAInAppMessageExtrasKey = @"extras";
+NSString *const UAInAppMessageAudienceKey = @"audience";
 
 NSString *const UAInAppMessageDisplayTypeBanner = @"banner";
 NSString *const UAInAppMessageDisplayTypeFullScreen = @"full_screen";
@@ -69,6 +71,22 @@ NSString *const UAInAppMessageDisplayTypeCustom = @"custom";
         }
         
         displayContent = displayContentDict;
+    }
+
+    UAInAppMessageAudience *audience;
+    id audienceDict = json[UAInAppMessageAudienceKey];
+    if (audienceDict) {
+        if (![audienceDict isKindOfClass:[NSDictionary class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Display content must be a dictionary. Invalid value: %@", json[UAInAppMessageAudienceKey]];
+                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                              code:UAInAppMessageErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        }
+        
+        audience = [UAInAppMessageAudience audienceWithJSON:audienceDict error:error];
     }
 
     id displayType = json[UAInAppMessageDisplayTypeKey];
@@ -125,6 +143,7 @@ NSString *const UAInAppMessageDisplayTypeCustom = @"custom";
     builder.displayType = displayType;
     builder.extras = extras;
     builder.displayContent = displayContent;
+    builder.audience = audience;
 
     return [[UAInAppMessage alloc] initWithBuilder:builder];
 }
@@ -147,6 +166,7 @@ NSString *const UAInAppMessageDisplayTypeCustom = @"custom";
         self.displayType = builder.displayType;
         self.displayContent = builder.displayContent;
         self.extras = builder.extras;
+        self.audience = builder.audience;
     }
 
     return self;
@@ -170,6 +190,10 @@ NSString *const UAInAppMessageDisplayTypeCustom = @"custom";
         return NO;
     }
 
+    if (![self.audience isEqual:message.audience]) {
+        return NO;
+    }
+    
     return YES;
 }
 
@@ -191,6 +215,7 @@ NSString *const UAInAppMessageDisplayTypeCustom = @"custom";
     result = 31 * result + [self.displayType hash];
     result = 31 * result + [self.displayContent hash];
     result = 31 * result + [self.extras hash];
+    result = 31 * result + [self.audience hash];
 
     return result;
 }

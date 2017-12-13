@@ -7,6 +7,11 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAVersionMatcher : NSObject
 
 /**
+ * The original versionConstraint used to create this matcher
+ */
+@property (nonatomic, strong, readonly) NSString *versionConstraint;
+
+/**
  * Create a matcher for the supplied version contraint
  *
  * @param versionConstraint constraint that matches one of our supported patterns

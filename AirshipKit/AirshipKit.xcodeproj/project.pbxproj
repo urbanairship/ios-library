@@ -976,6 +976,12 @@
 		CCD28FE51DD14DD1008D663F /* UATagGroupsMutation.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD28FE31DD14DD1008D663F /* UATagGroupsMutation.m */; };
 		CCD28FE61DD14DD1008D663F /* UATagGroupsMutation.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD28FE31DD14DD1008D663F /* UATagGroupsMutation.m */; };
 		CCEAF3F11DD3D8C1005C080F /* UAPreferenceDataStore+InternalTagGroupsMutation.h in Headers */ = {isa = PBXBuildFile; fileRef = CC4006121DD2426900C6ACB9 /* UAPreferenceDataStore+InternalTagGroupsMutation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DF0221F21FD9F6EF00EF8C9D /* UAInAppMessageAudienceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0221F11FD9F6EF00EF8C9D /* UAInAppMessageAudienceTest.m */; };
+		DF0221F41FDB03B100EF8C9D /* UAInAppMessageAudienceChecksTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0221F31FDB03B100EF8C9D /* UAInAppMessageAudienceChecksTest.m */; };
+		DF0221F71FDB05B600EF8C9D /* UAInAppMessageAudienceChecks+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF0221F51FDB05B600EF8C9D /* UAInAppMessageAudienceChecks+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DF0221F81FDB05B600EF8C9D /* UAInAppMessageAudienceChecks+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF0221F51FDB05B600EF8C9D /* UAInAppMessageAudienceChecks+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DF0221F91FDB05B600EF8C9D /* UAInAppMessageAudienceChecks.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0221F61FDB05B600EF8C9D /* UAInAppMessageAudienceChecks.m */; };
+		DF0221FA1FDB05B600EF8C9D /* UAInAppMessageAudienceChecks.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0221F61FDB05B600EF8C9D /* UAInAppMessageAudienceChecks.m */; };
 		DF0A22E61FBCFFE00058F6D6 /* UAComponent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF0A22E51FBCFFE00058F6D6 /* UAComponent+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF0A22E71FBCFFE00058F6D6 /* UAComponent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF0A22E51FBCFFE00058F6D6 /* UAComponent+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF0A22E81FBCFFE00058F6D6 /* UAComponent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF0A22E51FBCFFE00058F6D6 /* UAComponent+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1239,6 +1245,8 @@
 		DF86DAB31F5A208E00309F41 /* UARemoteDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DF17A0FD1F56327A00DC39E0 /* UARemoteDataManager.m */; };
 		DF86DAB41F5A208E00309F41 /* UARemoteDataAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF17A1021F56330500DC39E0 /* UARemoteDataAPIClient+Internal.h */; };
 		DF86DAB51F5A208E00309F41 /* UARemoteDataAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = DF17A1031F56330500DC39E0 /* UARemoteDataAPIClient.m */; };
+		DF87DB0D1FDF26AE00DCAF9B /* UAInAppMessageAudience.h in Headers */ = {isa = PBXBuildFile; fileRef = DF87DB0C1FDF26AE00DCAF9B /* UAInAppMessageAudience.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DF87DB0E1FDF26AE00DCAF9B /* UAInAppMessageAudience.h in Headers */ = {isa = PBXBuildFile; fileRef = DF87DB0C1FDF26AE00DCAF9B /* UAInAppMessageAudience.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF9666741FB521B200CC243C /* UARemoteConfigManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF9666721FB521B200CC243C /* UARemoteConfigManager+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF9666751FB521B200CC243C /* UARemoteConfigManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF9666721FB521B200CC243C /* UARemoteConfigManager+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF9666761FB521B200CC243C /* UARemoteConfigManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF9666721FB521B200CC243C /* UARemoteConfigManager+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1258,6 +1266,15 @@
 		DFB5F1311FC4EE380085F784 /* UAComponentDisablerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DFB5F1301FC4EE380085F784 /* UAComponentDisablerTests.m */; };
 		DFBBC7B11E36D80B00BA7315 /* UATextInputNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = DFBBC7AE1E36D80B00BA7315 /* UATextInputNotificationAction.m */; };
 		DFBBC7B21E36D80B00BA7315 /* UATextInputNotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = DFBBC7AF1E36D80B00BA7315 /* UATextInputNotificationAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DFD442A31FD77248002E4FA1 /* UAInAppMessageAudience.m in Sources */ = {isa = PBXBuildFile; fileRef = DFD442A11FD77248002E4FA1 /* UAInAppMessageAudience.m */; };
+		DFD442A41FD77251002E4FA1 /* UAInAppMessageAudience.m in Sources */ = {isa = PBXBuildFile; fileRef = DFD442A11FD77248002E4FA1 /* UAInAppMessageAudience.m */; };
+		DFD442A71FD77308002E4FA1 /* UAInAppMessageAudience+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DFD442A61FD77308002E4FA1 /* UAInAppMessageAudience+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DFD442A81FD77308002E4FA1 /* UAInAppMessageAudience+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DFD442A61FD77308002E4FA1 /* UAInAppMessageAudience+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DFD442AB1FD77BA5002E4FA1 /* UAInAppMessageTagSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = DFD442A91FD77BA5002E4FA1 /* UAInAppMessageTagSelector.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DFD442AC1FD77BA5002E4FA1 /* UAInAppMessageTagSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = DFD442A91FD77BA5002E4FA1 /* UAInAppMessageTagSelector.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DFD442AD1FD77BA5002E4FA1 /* UAInAppMessageTagSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = DFD442AA1FD77BA5002E4FA1 /* UAInAppMessageTagSelector.m */; };
+		DFD442AE1FD77BA5002E4FA1 /* UAInAppMessageTagSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = DFD442AA1FD77BA5002E4FA1 /* UAInAppMessageTagSelector.m */; };
+		DFD442B61FD892AE002E4FA1 /* UAInAppMessageTagSelectorTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DFD442B51FD892AE002E4FA1 /* UAInAppMessageTagSelectorTest.m */; };
 		DFD852221F31558F004DB178 /* UALegacyPushTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DFD852211F31558F004DB178 /* UALegacyPushTest.m */; };
 		DFE92A151ED8A5F600ED3838 /* UAWalletAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 99978EE21EBA77AD000F4AF7 /* UAWalletAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DFE92A161ED8A5F600ED3838 /* UADeepLinkAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 99978EE61EBA7BE7000F4AF7 /* UADeepLinkAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1908,6 +1925,10 @@
 		CCE236311DDB8BA100577747 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		CCE236321DDB8BB400577747 /* iw */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = iw; path = iw.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		CCE236331DDB8BCE00577747 /* no */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = no; path = no.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		DF0221F11FD9F6EF00EF8C9D /* UAInAppMessageAudienceTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageAudienceTest.m; sourceTree = "<group>"; };
+		DF0221F31FDB03B100EF8C9D /* UAInAppMessageAudienceChecksTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageAudienceChecksTest.m; sourceTree = "<group>"; };
+		DF0221F51FDB05B600EF8C9D /* UAInAppMessageAudienceChecks+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAInAppMessageAudienceChecks+Internal.h"; path = "ios/UAInAppMessageAudienceChecks+Internal.h"; sourceTree = "<group>"; };
+		DF0221F61FDB05B600EF8C9D /* UAInAppMessageAudienceChecks.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAInAppMessageAudienceChecks.m; path = ios/UAInAppMessageAudienceChecks.m; sourceTree = "<group>"; };
 		DF0A22E51FBCFFE00058F6D6 /* UAComponent+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAComponent+Internal.h"; path = "common/UAComponent+Internal.h"; sourceTree = "<group>"; };
 		DF17A0FC1F56327A00DC39E0 /* UARemoteDataManager+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UARemoteDataManager+Internal.h"; path = "common/UARemoteDataManager+Internal.h"; sourceTree = "<group>"; };
 		DF17A0FD1F56327A00DC39E0 /* UARemoteDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARemoteDataManager.m; path = common/UARemoteDataManager.m; sourceTree = "<group>"; };
@@ -1940,6 +1961,7 @@
 		DF7E79FA1EE1D50100D4EF02 /* UADefaultActions.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UADefaultActions.plist; sourceTree = "<group>"; };
 		DF7E7A1D1EE215F600D4EF02 /* AirshipLib.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = AirshipLib.h; path = tvos/AirshipLib.h; sourceTree = "<group>"; };
 		DF86DAB01F59F71100309F41 /* UARemoteDataManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UARemoteDataManagerTest.m; sourceTree = "<group>"; };
+		DF87DB0C1FDF26AE00DCAF9B /* UAInAppMessageAudience.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAInAppMessageAudience.h; path = ios/UAInAppMessageAudience.h; sourceTree = "<group>"; };
 		DF9666721FB521B200CC243C /* UARemoteConfigManager+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UARemoteConfigManager+Internal.h"; path = "common/UARemoteConfigManager+Internal.h"; sourceTree = "<group>"; };
 		DF9666731FB521B200CC243C /* UARemoteConfigManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UARemoteConfigManager.m; path = common/UARemoteConfigManager.m; sourceTree = "<group>"; };
 		DF96667C1FB526A000CC243C /* UARemoteConfigManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UARemoteConfigManagerTests.m; sourceTree = "<group>"; };
@@ -1950,6 +1972,11 @@
 		DFB5F1301FC4EE380085F784 /* UAComponentDisablerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAComponentDisablerTests.m; sourceTree = "<group>"; };
 		DFBBC7AE1E36D80B00BA7315 /* UATextInputNotificationAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UATextInputNotificationAction.m; path = common/UATextInputNotificationAction.m; sourceTree = "<group>"; };
 		DFBBC7AF1E36D80B00BA7315 /* UATextInputNotificationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UATextInputNotificationAction.h; path = common/UATextInputNotificationAction.h; sourceTree = "<group>"; };
+		DFD442A11FD77248002E4FA1 /* UAInAppMessageAudience.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAInAppMessageAudience.m; path = ios/UAInAppMessageAudience.m; sourceTree = "<group>"; };
+		DFD442A61FD77308002E4FA1 /* UAInAppMessageAudience+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAInAppMessageAudience+Internal.h"; path = "ios/UAInAppMessageAudience+Internal.h"; sourceTree = "<group>"; };
+		DFD442A91FD77BA5002E4FA1 /* UAInAppMessageTagSelector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAInAppMessageTagSelector.h; path = ios/UAInAppMessageTagSelector.h; sourceTree = "<group>"; };
+		DFD442AA1FD77BA5002E4FA1 /* UAInAppMessageTagSelector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAInAppMessageTagSelector.m; path = ios/UAInAppMessageTagSelector.m; sourceTree = "<group>"; };
+		DFD442B51FD892AE002E4FA1 /* UAInAppMessageTagSelectorTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageTagSelectorTest.m; sourceTree = "<group>"; };
 		DFD852211F31558F004DB178 /* UALegacyPushTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALegacyPushTest.m; sourceTree = "<group>"; };
 		DFECEA721E64DC4E006AA8EA /* UAMessageCenterMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAMessageCenterMessageViewController.m; path = ios/UAMessageCenterMessageViewController.m; sourceTree = "<group>"; };
 		DFECEA731E64DC4E006AA8EA /* UAMessageCenterMessageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAMessageCenterMessageViewController.h; path = ios/UAMessageCenterMessageViewController.h; sourceTree = "<group>"; };
@@ -2442,10 +2469,13 @@
 				997140EE1FB0F3E600EF5445 /* UAInAppMessageManagerTest.m */,
 				997140F31FB0F45000EF5445 /* UAInAppMessageTest.m */,
 				DFFCF5AE1FCF53100014DE2E /* UAInAppRemoteDataClientTest.m */,
+				DF0221F11FD9F6EF00EF8C9D /* UAInAppMessageAudienceTest.m */,
+				DFD442B51FD892AE002E4FA1 /* UAInAppMessageTagSelectorTest.m */,
 				991A94641FCF2C6B00B57D24 /* UAInAppMessageTextInfoTest.m */,
 				991A94681FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m */,
 				991A94661FCF2C7F00B57D24 /* UAInAppMessageButtonInfoTest.m */,
 				998767291FBE6B4200197AF4 /* UAInAppMessageBannerDisplayContentTest.m */,
+				DF0221F31FDB03B100EF8C9D /* UAInAppMessageAudienceChecksTest.m */,
 			);
 			name = "In-app Messaging";
 			sourceTree = "<group>";
@@ -2859,6 +2889,13 @@
 				99E2DA2A1FB6271400C9F2CC /* UAInAppMessageManager+Internal.h */,
 				DFFCF5B91FD1E65F0014DE2E /* UAInAppRemoteDataClient+Internal.h */,
 				DFFCF5AB1FCF513D0014DE2E /* UAInAppRemoteDataClient.m */,
+				DFD442A61FD77308002E4FA1 /* UAInAppMessageAudience+Internal.h */,
+				DF87DB0C1FDF26AE00DCAF9B /* UAInAppMessageAudience.h */,
+				DFD442A11FD77248002E4FA1 /* UAInAppMessageAudience.m */,
+				DFD442A91FD77BA5002E4FA1 /* UAInAppMessageTagSelector.h */,
+				DFD442AA1FD77BA5002E4FA1 /* UAInAppMessageTagSelector.m */,
+				DF0221F51FDB05B600EF8C9D /* UAInAppMessageAudienceChecks+Internal.h */,
+				DF0221F61FDB05B600EF8C9D /* UAInAppMessageAudienceChecks.m */,
 				996B952F1FAB8DD6009B49BC /* Legacy */,
 			);
 			name = "In-app Messaging";
@@ -3403,6 +3440,7 @@
 				CC40DC1B1D8C996A00BABD4F /* UAActionJSDelegate.h in Headers */,
 				CC40DC701D8C996A00BABD4F /* UAConfig.h in Headers */,
 				CC40DC641D8C996A00BABD4F /* UAChannelRegistrar.h in Headers */,
+				DF0221F71FDB05B600EF8C9D /* UAInAppMessageAudienceChecks+Internal.h in Headers */,
 				CC40DCA41D8C996A00BABD4F /* UALegacyInAppMessaging.h in Headers */,
 				CC40DD051D8C996A00BABD4F /* UARegionEvent.h in Headers */,
 				CC40DD2E1D8C996A00BABD4F /* UIWebView+UAAdditions.h in Headers */,
@@ -3467,6 +3505,7 @@
 				99E2DA2F1FB62E2800C9F2CC /* UARemoteDataAPIClient+Internal.h in Headers */,
 				CC40DC321D8C996A00BABD4F /* UAAddCustomEventAction.h in Headers */,
 				CC40DCFD1D8C996A00BABD4F /* UAProximityRegion.h in Headers */,
+				DFD442A71FD77308002E4FA1 /* UAInAppMessageAudience+Internal.h in Headers */,
 				CC40DC971D8C996A00BABD4F /* UALegacyInAppMessage.h in Headers */,
 				DFA1815E1E688EBB00446942 /* UABaseNativeBridge.h in Headers */,
 				99978EE41EBA77AD000F4AF7 /* UAWalletAction.h in Headers */,
@@ -3477,6 +3516,7 @@
 				CC40DD001D8C996A00BABD4F /* UAPush.h in Headers */,
 				CC40DD091D8C996A00BABD4F /* UARetailEventTemplate.h in Headers */,
 				CC40DCD61D8C996A00BABD4F /* UALocationEvent.h in Headers */,
+				DF87DB0D1FDF26AE00DCAF9B /* UAInAppMessageAudience.h in Headers */,
 				CC40DC731D8C996A00BABD4F /* UACustomEvent.h in Headers */,
 				CC40DC301D8C996A00BABD4F /* UAActivityViewController.h in Headers */,
 				CC40DD151D8C996A00BABD4F /* UAShareAction.h in Headers */,
@@ -3524,6 +3564,7 @@
 				CC40DC3F1D8C996A00BABD4F /* UAAPNSRegistrationProtocol+Internal.h in Headers */,
 				CC40DD191D8C996A00BABD4F /* UATagGroupsAPIClient+Internal.h in Headers */,
 				CCD28FE41DD14DD1008D663F /* UATagGroupsMutation+Internal.h in Headers */,
+				DFD442AB1FD77BA5002E4FA1 /* UAInAppMessageTagSelector.h in Headers */,
 				CC40DCFF1D8C996A00BABD4F /* UAPush+Internal.h in Headers */,
 				998B22661FD89D4400C535AE /* UAInAppMessageBannerContentView+Internal.h in Headers */,
 				CC40DD1B1D8C996A00BABD4F /* UATagUtils+Internal.h in Headers */,
@@ -3806,6 +3847,7 @@
 				DF7E22571ED62E0900C79C46 /* UANotificationCategory.h in Headers */,
 				6EADE7111FA8FAF50007F924 /* AirshipLib.h in Headers */,
 				DF7E22581ED62E0900C79C46 /* UATextInputNotificationAction.h in Headers */,
+				DF0221F81FDB05B600EF8C9D /* UAInAppMessageAudienceChecks+Internal.h in Headers */,
 				DF7E225A1ED62E0900C79C46 /* UANotificationContent.h in Headers */,
 				DF7E225B1ED62E0900C79C46 /* UANotificationResponse.h in Headers */,
 				DF7E225C1ED62E0900C79C46 /* UAPush.h in Headers */,
@@ -3870,6 +3912,7 @@
 				DF7E228E1ED62E0900C79C46 /* UAApplicationMetrics.h in Headers */,
 				DF7E228F1ED62E0900C79C46 /* UAAssociatedIdentifiers.h in Headers */,
 				DF7E22901ED62E0900C79C46 /* UAURLProtocol.h in Headers */,
+				DFD442A81FD77308002E4FA1 /* UAInAppMessageAudience+Internal.h in Headers */,
 				DF7E22911ED62E0900C79C46 /* UAUtils.h in Headers */,
 				DF7E22921ED62E0900C79C46 /* NSJSONSerialization+UAAdditions.h in Headers */,
 				DF7E22931ED62E0900C79C46 /* NSString+UALocalizationAdditions.h in Headers */,
@@ -3880,6 +3923,7 @@
 				DF7E22981ED62E0900C79C46 /* NSManagedObjectContext+UAAdditions.h in Headers */,
 				DF7E22991ED62E0900C79C46 /* NSOperationQueue+UAAdditions.h in Headers */,
 				DF7E229A1ED62E0900C79C46 /* UAActionJSDelegate.h in Headers */,
+				DF87DB0E1FDF26AE00DCAF9B /* UAInAppMessageAudience.h in Headers */,
 				DF7E229B1ED62E0900C79C46 /* UAJavaScriptDelegate.h in Headers */,
 				DF7E229C1ED62E0900C79C46 /* UAWebViewCallData.h in Headers */,
 				DF7E229D1ED62E0900C79C46 /* UABaseNativeBridge.h in Headers */,
@@ -3931,6 +3975,7 @@
 				DF7E22021ED62D7500C79C46 /* UAInboxStore+Internal.h in Headers */,
 				DF7E22031ED62D7500C79C46 /* UAInboxMessage+Internal.h in Headers */,
 				DF7E22041ED62D7500C79C46 /* UAInboxMessageData+Internal.h in Headers */,
+				DFD442AC1FD77BA5002E4FA1 /* UAInAppMessageTagSelector.h in Headers */,
 				DF7E22051ED62D7500C79C46 /* UAInboxMessageList+Internal.h in Headers */,
 				DF7E22061ED62D7500C79C46 /* UAJSONValueTransformer+Internal.h in Headers */,
 				DF7E22071ED62D9B00C79C46 /* UANamedUser+Internal.h in Headers */,
@@ -4442,6 +4487,7 @@
 				CC40DCE91D8C996A00BABD4F /* UANotificationAction.m in Sources */,
 				CC40DCC11D8C996A00BABD4F /* UAirship.m in Sources */,
 				CC40DCF91D8C996A00BABD4F /* UAPasteboardAction.m in Sources */,
+				DFD442AD1FD77BA5002E4FA1 /* UAInAppMessageTagSelector.m in Sources */,
 				DFB5F12C1FC4EAC90085F784 /* UAComponentDisabler.m in Sources */,
 				99E2DA761FBB76E000C9F2CC /* UAInAppMessageTextInfo.m in Sources */,
 				CC40DCF51D8C996A00BABD4F /* UAOpenExternalURLAction.m in Sources */,
@@ -4506,8 +4552,10 @@
 				99E2DA3A1FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.m in Sources */,
 				DF17A1001F56327A00DC39E0 /* UARemoteDataManager.m in Sources */,
 				CC4006151DD2426900C6ACB9 /* UAPreferenceDataStore+TagGroupsMutation.m in Sources */,
+				DF0221F91FDB05B600EF8C9D /* UAInAppMessageAudienceChecks.m in Sources */,
 				CC40DCC61D8C996A00BABD4F /* UAJSONPredicate.m in Sources */,
 				CC40DCA21D8C996A00BABD4F /* UALegacyInAppMessageView.m in Sources */,
+				DFD442A31FD77248002E4FA1 /* UAInAppMessageAudience.m in Sources */,
 				CC40DCB11D8C996A00BABD4F /* UAInboxMessage.m in Sources */,
 				CC40DC511D8C996A00BABD4F /* UAAssociateIdentifiersEvent.m in Sources */,
 				CC40DC5A1D8C996A00BABD4F /* UABespokeCloseView.m in Sources */,
@@ -4594,6 +4642,7 @@
 				DFFCF5AF1FCF53100014DE2E /* UAInAppRemoteDataClientTest.m in Sources */,
 				CC64F0F01D8B781C009CEF27 /* UAChannelRegistrationPayloadTest.m in Sources */,
 				CC64F0DE1D8B781C009CEF27 /* UAActionResultTest.m in Sources */,
+				DF0221F21FD9F6EF00EF8C9D /* UAInAppMessageAudienceTest.m in Sources */,
 				CC64F1091D8B781C009CEF27 /* UAJSONMatcherTests.m in Sources */,
 				CC64F0FD1D8B781C009CEF27 /* UALegacyInAppDisplayEventTest.m in Sources */,
 				CC64F0D81D8B781C009CEF27 /* UAAction_OperatorTest.m in Sources */,
@@ -4685,8 +4734,10 @@
 				CC64F12B1D8B781C009CEF27 /* UAWebViewCallDataTest.m in Sources */,
 				CC944EE01DB6AF0C00C42269 /* UAURLRequestOperationTest.m in Sources */,
 				CC64F1281D8B781C009CEF27 /* UAUserAPIClientTest.m in Sources */,
+				DFD442B61FD892AE002E4FA1 /* UAInAppMessageTagSelectorTest.m in Sources */,
 				CCB902251DCBBCDA009A66D7 /* UAAsyncOperationTest.m in Sources */,
 				CC64F0E21D8B781C009CEF27 /* UAAggregateActionResultTest.m in Sources */,
+				DF0221F41FDB03B100EF8C9D /* UAInAppMessageAudienceChecksTest.m in Sources */,
 				CC64F1231D8B781C009CEF27 /* UAShareActionTest.m in Sources */,
 				CC64F11F1D8B781C009CEF27 /* UARetailEventTemplateTest.m in Sources */,
 				997140F61FB0F45000EF5445 /* UAInAppMessageTest.m in Sources */,
@@ -4774,6 +4825,7 @@
 				CC40DD4D1D8C9A1C00BABD4F /* UAAppIntegration.m in Sources */,
 				CC40DD4E1D8C9A1C00BABD4F /* UAApplicationMetrics.m in Sources */,
 				CC40DD4F1D8C9A1C00BABD4F /* UAAssociatedIdentifiers.m in Sources */,
+				DFD442AE1FD77BA5002E4FA1 /* UAInAppMessageTagSelector.m in Sources */,
 				DFB5F12E1FC4EAC90085F784 /* UAComponentDisabler.m in Sources */,
 				99E2DA771FBB76E000C9F2CC /* UAInAppMessageTextInfo.m in Sources */,
 				6E3673E11E8C8178005B5DFF /* UATextInputNotificationAction.m in Sources */,
@@ -4838,8 +4890,10 @@
 				99E2DA3B1FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.m in Sources */,
 				CC40DD7C1D8C9A1C00BABD4F /* UAInboxMessageList.m in Sources */,
 				CC40DD7D1D8C9A1C00BABD4F /* UAInboxUtils.m in Sources */,
+				DF0221FA1FDB05B600EF8C9D /* UAInAppMessageAudienceChecks.m in Sources */,
 				CC40DD7F1D8C9A1C00BABD4F /* UAInstallAttributionEvent.m in Sources */,
 				CC40DD801D8C9A1C00BABD4F /* UAInteractiveNotificationEvent.m in Sources */,
+				DFD442A41FD77251002E4FA1 /* UAInAppMessageAudience.m in Sources */,
 				CC40DD811D8C9A1C00BABD4F /* UAirship.m in Sources */,
 				CC4006161DD2426900C6ACB9 /* UAPreferenceDataStore+TagGroupsMutation.m in Sources */,
 				CC40DD821D8C9A1C00BABD4F /* UAJSONMatcher.m in Sources */,

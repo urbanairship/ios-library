@@ -3,6 +3,8 @@
 #import <Foundation/Foundation.h>
 #import "UAInAppMessageDisplayContent.h"
 
+@class UAInAppMessageAudience;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -53,6 +55,11 @@ extern NSString *const UAInAppMessageDisplayTypeCustom;
  */
 @property(nonatomic, copy, nullable) NSDictionary *extras;
 
+/**
+ * The audience conditions for the messages.
+ */
+@property(nonatomic, copy, nullable) UAInAppMessageAudience *audience;
+
 @end
 
 /**
@@ -83,6 +90,11 @@ extern NSString *const UAInAppMessageDisplayTypeCustom;
  * The extras for the messages.
  */
 @property(nonatomic, copy, nullable) NSDictionary *extras;
+
+/**
+ * The audience conditions for the messages.
+ */
+@property(nonatomic, copy, nullable) UAInAppMessageAudience *audience;
 
 /**
  * Class factory method for constructing an unconfigured

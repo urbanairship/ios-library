@@ -38,7 +38,7 @@
     self.mockDelegate = [self mockForProtocol:@protocol(UAAutomationEngineDelegate)];
     [[[self.mockDelegate stub] andCall:@selector(createScheduleInfoWithBuilder:) onObject:self] createScheduleInfoWithBuilder:OCMOCK_ANY];
 
-    self.mockAutomationStore = [self partialMockForObject:[UAAutomationStore automationStoreWithStoreName:@"test"]];
+    self.mockAutomationStore = [self partialMockForObject:[UAAutomationStore automationStoreWithStoreName:@"UAAutomationEngine.test"]];
     
     self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:self.mockAutomationStore scheduleLimit:UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT];
 
@@ -53,6 +53,9 @@
     [self.automationEngine cancelAll];
 
     [self.automationEngine start];
+    
+    // wait for automation store to complete operations started during start
+    [self.mockAutomationStore waitForIdle];
 }
 
 - (void)tearDown {

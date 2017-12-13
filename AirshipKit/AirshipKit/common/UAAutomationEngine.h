@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Automation engine delegate
  */
-@protocol UAAutomationEngineDelegate
+@protocol UAAutomationEngineDelegate <NSObject>
 
 /**
  * Creates a schedule info from a builder.
