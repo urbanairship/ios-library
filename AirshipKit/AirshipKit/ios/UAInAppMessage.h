@@ -58,7 +58,7 @@ extern NSString *const UAInAppMessageDisplayTypeCustom;
 /**
  * The audience conditions for the messages.
  */
-@property(nonatomic, copy, nullable) UAInAppMessageAudience *audience;
+@property(nonatomic, strong, nullable) UAInAppMessageAudience *audience;
 
 @end
 
@@ -94,7 +94,7 @@ extern NSString *const UAInAppMessageDisplayTypeCustom;
 /**
  * The audience conditions for the messages.
  */
-@property(nonatomic, copy, nullable) UAInAppMessageAudience *audience;
+@property(nonatomic, strong, nullable) UAInAppMessageAudience *audience;
 
 /**
  * Class factory method for constructing an unconfigured
@@ -122,6 +122,12 @@ extern NSString *const UAInAppMessageDisplayTypeCustom;
  */
 + (instancetype)messageWithBuilderBlock:(void(^)(UAInAppMessageBuilder *builder))builderBlock;
 
+/**
+ * Method to return the message as its JSON representation.
+ *
+ * @returns JSON representation of message (as NSDictionary)
+ */
+- (NSDictionary *)toJsonValue;
 
 @end
 

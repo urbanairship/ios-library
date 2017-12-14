@@ -9,6 +9,9 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARemoteDataManager+Internal.h"
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
+#import "UAPush+Internal.h"
+#import "UAInAppMessageAudience.h"
+#import "UALocation+Internal.h"
 
 @interface UAInAppMessageManagerTest : UABaseTest
 @property(nonatomic, strong) UAInAppMessageManager *manager;
@@ -16,6 +19,7 @@
 @property(nonatomic, strong) id mockAutomationEngine;
 @property(nonatomic, strong) UAInAppMessageScheduleInfo *scheduleInfo;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+@property (nonatomic, strong) id mockPush;
 
 @end
 
@@ -28,9 +32,12 @@
     self.mockAutomationEngine = [self mockForClass:[UAAutomationEngine class]];
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"UAInAppMessageManagerTest."];
     [self.dataStore removeAll];
+    self.mockPush = [self mockForClass:[UAPush class]];
+    
     self.manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine
                                                     remoteDataManager:[self mockForClass:[UARemoteDataManager class]]
-                                                            dataStore:self.dataStore];
+                                                            dataStore:self.dataStore
+                                                                 push:self.mockPush];
 
     self.scheduleInfo = [UAInAppMessageScheduleInfo inAppMessageScheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
 
@@ -55,6 +62,9 @@
                 }];
 
                 builder.buttons = @[button];
+            }];
+            builder.audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+                builder.locationOptIn = @NO;
             }];
         }];
 
@@ -109,6 +119,31 @@
 
     [self.mockAutomationEngine verify];
     [self.mockAdapter verify];
+}
+
+- (void)testIsScheduleReadyAudienceCheckFailure {
+    // Set factory for banner type
+    UA_WEAKIFY(self)
+    [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
+        UA_STRONGIFY(self)
+        return self.mockAdapter;
+    } forDisplayType:@"banner"];
+    
+    // mock UALocation so it looks like user has opted in
+    id mockAirship = [self mockForClass:[UAirship class]];
+    [UAirship setSharedAirship:mockAirship];
+    id mockLocation = [self strictMockForClass:[UALocation class]];
+    [[[mockLocation stub] andReturnValue:@YES] isLocationUpdatesEnabled];
+    [[[mockAirship stub] andReturn:mockLocation] sharedLocation];
+
+    // should never prepare for display, as audience will fail first
+    [[self.mockAdapter reject] prepare:OCMOCK_ANY];
+    
+    UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo];
+    XCTAssertFalse([self.manager isScheduleReadyToExecute:schedule]);
+    
+    [self.mockAdapter verify];
+    [self.mockAutomationEngine verify];
 }
 
 - (void)testExecuteSchedule {
@@ -217,7 +252,8 @@
 - (void)testCancelMessage {
     UAInAppMessageManager *manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine
                                                                       remoteDataManager:[self mockForClass:[UARemoteDataManager class]]
-                                                                              dataStore:self.dataStore];
+                                                                              dataStore:self.dataStore
+                                                                                   push:self.mockPush];
 
     [[self.mockAutomationEngine expect] cancelSchedulesWithGroup:self.scheduleInfo.message.identifier];
 
@@ -229,7 +265,8 @@
 - (void)testCancelSchedule {
     UAInAppMessageManager *manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine
                                                                               remoteDataManager:[self mockForClass:[UARemoteDataManager class]]
-                                                                              dataStore:self.dataStore];
+                                                                              dataStore:self.dataStore
+                                                                                   push:self.mockPush];
 
     UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo];
 

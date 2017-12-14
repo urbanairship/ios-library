@@ -25,11 +25,9 @@
     NSDictionary *json = @{ @"equals": @"cool" };
     UAJSONValueMatcher *matcher = [UAJSONValueMatcher matcherWhereStringEquals:@"cool"];
 
-    XCTAssertEqualObjects(json, matcher.payload);
-
-    // Verify the JSONValue recreates the expected payload
+    // Verify the JSONValue recreates the expected matcher
     NSError *error = nil;
-    XCTAssertEqualObjects(json, [UAJSONValueMatcher matcherWithJSON:json error:&error].payload);
+    XCTAssertEqualObjects(matcher, [UAJSONValueMatcher matcherWithJSON:json error:&error]);
     XCTAssertNil(error);
 }
 
@@ -50,11 +48,9 @@
     NSDictionary *json = @{ @"equals": @(123.456) };
     UAJSONValueMatcher *matcher = [UAJSONValueMatcher matcherWhereNumberEquals:@(123.456)];
 
-    XCTAssertEqualObjects(json, matcher.payload);
-
-    // Verify the JSONValue recreates the expected payload
+    // Verify the JSONValue recreates the expected matcher
     NSError *error = nil;
-    XCTAssertEqualObjects(json, [UAJSONValueMatcher matcherWithJSON:json error:&error].payload);
+    XCTAssertEqualObjects(matcher, [UAJSONValueMatcher matcherWithJSON:json error:&error]);
     XCTAssertNil(error);
 }
 
@@ -75,11 +71,9 @@
     NSDictionary *json = @{ @"at_least": @(100) };
     UAJSONValueMatcher *matcher = [UAJSONValueMatcher matcherWhereNumberAtLeast:@(100)];
 
-    XCTAssertEqualObjects(json, matcher.payload);
-
-    // Verify the JSONValue recreates the expected payload
+    // Verify the JSONValue recreates the expected matcher
     NSError *error = nil;
-    XCTAssertEqualObjects(json, [UAJSONValueMatcher matcherWithJSON:json error:&error].payload);
+    XCTAssertEqualObjects(matcher, [UAJSONValueMatcher matcherWithJSON:json error:&error]);
     XCTAssertNil(error);
 }
 
@@ -99,11 +93,9 @@
     NSDictionary *json = @{ @"at_most": @(100) };
     UAJSONValueMatcher *matcher = [UAJSONValueMatcher matcherWhereNumberAtMost:@(100)];
 
-    XCTAssertEqualObjects(json, matcher.payload);
-
-    // Verify the JSONValue recreates the expected payload
+    // Verify the JSONValue recreates the expected matcher
     NSError *error = nil;
-    XCTAssertEqualObjects(json, [UAJSONValueMatcher matcherWithJSON:json error:&error].payload);
+    XCTAssertEqualObjects(matcher, [UAJSONValueMatcher matcherWithJSON:json error:&error]);
     XCTAssertNil(error);
 }
 
@@ -124,11 +116,9 @@
     NSDictionary *json = @{ @"at_least": @(1), @"at_most": @(100) };
     UAJSONValueMatcher *matcher = [UAJSONValueMatcher matcherWhereNumberAtLeast:@(1) atMost:@(100)];
 
-    XCTAssertEqualObjects(json, matcher.payload);
-
-    // Verify the JSONValue recreates the expected payload
+    // Verify the JSONValue recreates the expected matcher
     NSError *error = nil;
-    XCTAssertEqualObjects(json, [UAJSONValueMatcher matcherWithJSON:json error:&error].payload);
+    XCTAssertEqualObjects(matcher, [UAJSONValueMatcher matcherWithJSON:json error:&error]);
     XCTAssertNil(error);
 }
 
@@ -145,11 +135,9 @@
     NSDictionary *json = @{ @"is_present": @(YES) };
     UAJSONValueMatcher *matcher = [UAJSONValueMatcher matcherWhereValueIsPresent:YES];
 
-    XCTAssertEqualObjects(json, matcher.payload);
-
-    // Verify the JSONValue recreates the expected payload
+    // Verify the JSONValue recreates the expected matcher
     NSError *error = nil;
-    XCTAssertEqualObjects(json, [UAJSONValueMatcher matcherWithJSON:json error:&error].payload);
+    XCTAssertEqualObjects(matcher, [UAJSONValueMatcher matcherWithJSON:json error:&error]);
     XCTAssertNil(error);
 }
 
@@ -166,12 +154,9 @@
     NSDictionary *json = @{ @"is_present": @(NO) };
     UAJSONValueMatcher *matcher = [UAJSONValueMatcher matcherWhereValueIsPresent:NO];
 
-    XCTAssertEqualObjects(json, matcher.payload);
-
-    // Verify the JSONValue recreates the expected payload
+    // Verify the JSONValue recreates the expected matcher
     NSError *error = nil;
-    NSDictionary *test = [UAJSONValueMatcher matcherWithJSON:json error:&error].payload;
-    XCTAssertEqualObjects(json, test);
+    XCTAssertEqualObjects(matcher, [UAJSONValueMatcher matcherWithJSON:json error:&error]);
     XCTAssertNil(error);
 }
 

@@ -66,10 +66,10 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
         }
     }
     
-    id versionMatcher = json[UAInAppMessageAudienceAppVersionKey];
-    if (versionMatcher) {
-        if (![versionMatcher isKindOfClass:[NSString class]]) {
-            *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"%@\" key must be a string. Invalid value: %@", UAInAppMessageAudienceAppVersionKey, languageTags]];
+    id versionConstraint = json[UAInAppMessageAudienceAppVersionKey];
+    if (versionConstraint) {
+        if (![versionConstraint isKindOfClass:[NSString class]]) {
+            *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"%@\" key must be a string. Invalid value: %@", UAInAppMessageAudienceAppVersionKey, versionConstraint]];
             return nil;
         }
     }
@@ -81,7 +81,7 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
         builder.locationOptIn = locationOptIn;
         builder.languageTags = languageTags;
         builder.tagSelector = [UAInAppMessageTagSelector parseJson:tagSelector error:&builderError];
-        builder.versionMatcher = [UAVersionMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"];
+        builder.versionMatcher = [UAVersionMatcher matcherWithVersionConstraint:versionConstraint];
     }];
     
     if (builderError) {

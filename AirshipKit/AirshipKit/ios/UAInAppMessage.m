@@ -56,21 +56,16 @@ NSString *const UAInAppMessageDisplayTypeCustom = @"custom";
         return nil;
     }
 
-    UAInAppMessageDisplayContent *displayContent;
     id displayContentDict = json[UAInAppMessageDisplayContentKey];
-    if (displayContentDict) {
-        if (![displayContentDict isKindOfClass:[NSDictionary class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Display content must be a dictionary. Invalid value: %@", json[UAInAppMessageMediaKey]];
-                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
-                                              code:UAInAppMessageErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-
-            return nil;
+    if (displayContentDict && ![displayContentDict isKindOfClass:[NSDictionary class]]) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Display content must be a dictionary. Invalid value: %@", json[UAInAppMessageMediaKey]];
+            *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                          code:UAInAppMessageErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
         }
         
-        displayContent = displayContentDict;
+        return nil;
     }
 
     UAInAppMessageAudience *audience;
@@ -89,6 +84,7 @@ NSString *const UAInAppMessageDisplayTypeCustom = @"custom";
         audience = [UAInAppMessageAudience audienceWithJSON:audienceDict error:error];
     }
 
+    UAInAppMessageDisplayContent *displayContent;
     id displayType = json[UAInAppMessageDisplayTypeKey];
     if (displayType && [displayType isKindOfClass:[NSString class]]) {
         NSString *displayTypeStr = [displayType lowercaseString];
@@ -172,6 +168,19 @@ NSString *const UAInAppMessageDisplayTypeCustom = @"custom";
     return self;
 }
 
+- (NSDictionary *)toJsonValue {
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+    
+    [data setValue:self.identifier forKey:UAInAppMessageIDKey];
+    [data setValue:self.displayType forKey:UAInAppMessageDisplayTypeKey];
+    [data setValue:[self.displayContent toJsonValue] forKey:UAInAppMessageDisplayContentKey];
+    [data setValue:[self.audience toJsonValue] forKey:UAInAppMessageAudienceKey];
+    [data setValue:self.extras forKey:UAInAppMessageExtrasKey];
+
+    return data;
+
+}
+
 - (BOOL)isEqualToInAppMessage:(UAInAppMessage *)message {
     if (![self.identifier isEqualToString:message.identifier]) {
         return NO;
@@ -182,7 +191,7 @@ NSString *const UAInAppMessageDisplayTypeCustom = @"custom";
     }
 
     // Do we need to check type here first? make sure
-    if ([self.displayContent isEqual:message.displayContent]) {
+    if (![self.displayContent isEqual:message.displayContent]) {
         return NO;
     }
 

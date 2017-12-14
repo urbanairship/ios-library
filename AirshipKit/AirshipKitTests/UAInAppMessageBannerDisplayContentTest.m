@@ -79,9 +79,9 @@
         builder.actions = @{@"^+t": @"sometag"};
     }];
 
-    NSDictionary *JSONFromBuilderBannerDisplayContent = [UAInAppMessageBannerDisplayContent JSONWithBannerDisplayContent:fromBuilderBannerDisplayContent];
+    NSDictionary *JSONFromBuilderBannerDisplayContent = [fromBuilderBannerDisplayContent toJsonValue];
     UAInAppMessageBannerDisplayContent *fromJSONBannerDisplayContent = [UAInAppMessageBannerDisplayContent bannerDisplayContentWithJSON:JSONFromBuilderBannerDisplayContent error:nil];
-    NSDictionary *JSONFromJSONBannerDisplayContent = [UAInAppMessageBannerDisplayContent JSONWithBannerDisplayContent:fromJSONBannerDisplayContent];
+    NSDictionary *JSONFromJSONBannerDisplayContent = [fromJSONBannerDisplayContent toJsonValue];
 
     // Test isEqual and hashing
     XCTAssertTrue([fromBuilderBannerDisplayContent isEqual:fromJSONBannerDisplayContent] == YES);

@@ -9,6 +9,7 @@
 #import "UAComponent+Internal.h"
 
 @class UARemoteDataManager;
+@class UAPush;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -28,16 +29,24 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param automationEngine Automation engine.
  * @param dataStore The preference data store.
+ * @param push The system UAPush instance
  */
-+ (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine remoteDataManager:(UARemoteDataManager *)remoteDataManager dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine
+                          remoteDataManager:(UARemoteDataManager *)remoteDataManager
+                                  dataStore:(UAPreferenceDataStore *)dataStore
+                                       push:(UAPush *)push;
 
 /**
  * Init method.
  *
  * @param config The UAConfigInstance.
  * @param dataStore The preference data store.
+ * @param push The system UAPush instance
  */
-+ (instancetype)managerWithConfig:(UAConfig *)config remoteDataManager:(UARemoteDataManager *)remoteDataManager dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)managerWithConfig:(UAConfig *)config
+                remoteDataManager:(UARemoteDataManager *)remoteDataManager
+                        dataStore:(UAPreferenceDataStore *)dataStore
+                             push:(UAPush *)push;
 
 
 // UAAutomationEngineDelegate methods for testing

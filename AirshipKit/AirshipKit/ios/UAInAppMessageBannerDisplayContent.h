@@ -199,14 +199,6 @@ extern NSString *const UAInAppMessageBannerActions;
 + (instancetype)bannerDisplayContentWithJSON:(id)json error:(NSError **)error;
 
 /**
- * Factory method to create a JSON dictionary from an in-app message banner display content.
- *
- * @param displayContent An in-app message banner display content.
- * @return The JSON dictionary.
- */
-+ (NSDictionary *)JSONWithBannerDisplayContent:(UAInAppMessageBannerDisplayContent * _Nullable)displayContent;
-
-/**
  * Factory method for building banner display content with builder block.
  *
  * @param builderBlock The builder block.

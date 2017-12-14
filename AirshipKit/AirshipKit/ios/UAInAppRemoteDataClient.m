@@ -10,6 +10,8 @@
 #import "UAGlobal.h"
 #import "UAInAppMessageScheduleInfo.h"
 #import "UAInAppMessageManager.h"
+#import "UAInAppMessageAudienceChecks+Internal.h"
+#import "UAPush+Internal.h"
 
 NSString * const UAInAppMessages = @"in_app_messages";
 NSString * const UAInAppMessagesCreatedJSONKey = @"created";
@@ -30,14 +32,20 @@ NSString * const UAInAppMessagesUpdatedJSONKey = @"last_updated";
  * The subscription for remote data.
  */
 @property (nonatomic, strong) UADisposable *remoteDataSubscription;
+
 @end
 
 @implementation UAInAppRemoteDataClient
 
 NSString * const UAInAppMessagesLastPayloadTimeStampKey = @"UAInAppRemoteDataClient.LastPayloadTimeStamp";
 NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient.ScheduledMessages";
+NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteDataClient.ScheduledNewUserCutoffTime";
 
-- (instancetype)initWithScheduler:(UAInAppMessageManager *)scheduler remoteDataManager:(UARemoteDataManager *)remoteDataManager dataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithScheduler:(UAInAppMessageManager *)scheduler
+                remoteDataManager:(UARemoteDataManager *)remoteDataManager
+                        dataStore:(UAPreferenceDataStore *)dataStore
+                             push:(UAPush *)push {
+    
     self = [self init];
     if (self) {
         self.inAppMessageScheduler = scheduler;
@@ -54,12 +62,21 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
                                                                               [self processInAppMessageData:messagePayload];
                                                                           }
                                                                       }];
+        if (!self.scheduleNewUserCutOffTime) {
+            self.scheduleNewUserCutOffTime = (push.channelID) ? [NSDate distantPast] : [NSDate date];
+        }
     }
     return self;
 }
 
-+ (instancetype)clientWithScheduler:(UAInAppMessageManager *)scheduler remoteDataManager:(UARemoteDataManager *)remoteDataManager dataStore:(UAPreferenceDataStore *)dataStore{
-    return [[UAInAppRemoteDataClient alloc] initWithScheduler:scheduler remoteDataManager:remoteDataManager dataStore:dataStore];
++ (instancetype)clientWithScheduler:(UAInAppMessageManager *)scheduler
+                  remoteDataManager:(UARemoteDataManager *)remoteDataManager
+                          dataStore:(UAPreferenceDataStore *)dataStore
+                               push:(UAPush *)push {
+    return [[UAInAppRemoteDataClient alloc] initWithScheduler:scheduler
+                                            remoteDataManager:remoteDataManager
+                                                    dataStore:dataStore
+                                                         push:push];
 }
 
 - (void)dealloc {
@@ -152,8 +169,9 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
 }
 
 - (BOOL)checkSchedule:(UAInAppMessageScheduleInfo *)scheduleInfo createdTimeStamp:(NSDate *)createdTimeStamp {
-    // TODO: Implement equivalent to Android SDK
-    return YES;
+    UAInAppMessageAudience *audience = scheduleInfo.message.audience;
+    BOOL isNewUser = ([createdTimeStamp compare:self.scheduleNewUserCutOffTime] == NSOrderedAscending);
+    return [UAInAppMessageAudienceChecks checkAudience:audience isNewUser:isNewUser];
 }
 
 /**
@@ -177,6 +195,25 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
  */
 - (void)setScheduledMessageIDs:(NSArray<NSString *> *)messageIDs {
     [self.dataStore setObject:messageIDs forKey:UAInAppMessagesScheduledMessagesKey];
+}
+
+/**
+ * Gets the stored schedule new user cut off time.
+ *
+ * @return The new user cut off time.
+ */
+- (NSDate *)scheduleNewUserCutOffTime {
+    return [self.dataStore objectForKey:UAInAppMessagesScheduledNewUserCutoffTimeKey];
+}
+
+/**
+ * Sets the schedule new user cut off time. Any schedules that have
+ * a new user condition will be dropped if the schedule create time is after the
+ * cut off time.
+ *
+ * @param time The schedule new user cut off time.
+ */- (void)setScheduleNewUserCutOffTime:(NSDate *)time {
+    [self.dataStore setObject:time forKey:UAInAppMessagesScheduledNewUserCutoffTimeKey];
 }
 
 @end

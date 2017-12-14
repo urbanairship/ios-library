@@ -219,7 +219,10 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
 }
 
 - (BOOL)isEqualToJSONValueMatcher:(nullable UAJSONValueMatcher *)matcher {
-    if (self.equalsNumber && (!matcher.equalsNumber || ![self.equalsString isEqualToString:matcher.equalsString])) {
+    if (self.equalsNumber && (!matcher.equalsNumber || ![self.equalsNumber isEqualToNumber:matcher.equalsNumber])) {
+        return NO;
+    }
+    if (self.equalsString && (!matcher.equalsString || ![self.equalsString isEqualToString:matcher.equalsString])) {
         return NO;
     }
     if (self.atLeast && (!matcher.atLeast || ![self.atLeast isEqualToNumber:matcher.atLeast])) {

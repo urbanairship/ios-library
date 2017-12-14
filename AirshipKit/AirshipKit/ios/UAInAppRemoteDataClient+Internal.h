@@ -5,6 +5,7 @@
 @class UAInAppMessageManager;
 @class UARemoteDataManager;
 @class UAPreferenceDataStore;
+@class UAPush;
 
 /**
  * Client class to connect the Remote Data and the In App Messaging services.
@@ -13,13 +14,19 @@
  */
 @interface UAInAppRemoteDataClient : NSObject
 
+@property (nonatomic, strong) NSDate *scheduleNewUserCutOffTime;
+
 /**
  * Create a remote data client for in-app messaging.
  *
  * @param delegate The delegate to be used to schedule in-app messages.
  * @param remoteDataManager The remote data manager.
  * @param dataStore A UAPreferenceDataStore to store persistent preferences
+ * @param push The system UAPush instance
  */
-+ (instancetype)clientWithScheduler:(UAInAppMessageManager *)delegate remoteDataManager:(UARemoteDataManager *)remoteDataManager dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)clientWithScheduler:(UAInAppMessageManager *)delegate
+                  remoteDataManager:(UARemoteDataManager *)remoteDataManager
+                          dataStore:(UAPreferenceDataStore *)dataStore
+                               push:(UAPush *)push;
 
 @end

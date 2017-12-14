@@ -59,7 +59,11 @@ NSString * const UAInAppMessageTagSelectorErrorDomain = @"com.urbanairship.in_ap
 }
 
 + (instancetype)parseJson:(NSDictionary *)json error:(NSError **)error {
-    if (!json || ![json isKindOfClass:[NSDictionary class]]) {
+    if (!json) {
+        return nil;
+    }
+    
+    if (![json isKindOfClass:[NSDictionary class]]) {
         *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Json must be a dictionary. Invalid value: %@", json]];
         return nil;
     }

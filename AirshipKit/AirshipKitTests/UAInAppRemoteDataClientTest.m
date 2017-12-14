@@ -8,6 +8,7 @@
 #import "UAUtils.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAInAppMessageManager.h"
+#import "UAPush+Internal.h"
 
 @interface UAInAppRemoteDataClientTest : UABaseTest
 @property (nonatomic,strong) UAInAppRemoteDataClient *remoteDataClient;
@@ -15,6 +16,7 @@
 @property (nonatomic, strong) UARemoteDataPublishBlock publishBlock;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) id mockScheduler;
+@property (nonatomic, strong) id mockPush;
 
 @end
 
@@ -44,13 +46,18 @@
     XCTAssertNotNil(self.dataStore);
     [self.dataStore removeAll]; // start with an empty datastore
     
+    self.mockPush = [self mockForClass:[UAPush class]];
+    [[[self.mockPush expect] andReturn:nil] channelID];
+
     self.mockScheduler = [self mockForClass:[UAInAppMessageManager class]];
     
-    self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self.mockScheduler remoteDataManager:self.mockRemoteDataManager dataStore:self.dataStore];
+    self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self.mockScheduler remoteDataManager:self.mockRemoteDataManager dataStore:self.dataStore push:self.mockPush];
+    XCTAssertNotNil(self.remoteDataClient);
     
     // verify setup
     XCTAssertNotNil(self.remoteDataClient);
     XCTAssertNotNil(self.publishBlock);
+    [self.mockPush verify];
     [self.mockRemoteDataManager verify];
 }
 
@@ -486,5 +493,36 @@
     XCTAssertEqual(callsToCancelMessages,1);
 }
 
+- (void)testNewUserCutoffTime {
+    // verify
+    NSDate *scheduleNewUserCutoffTime = [self.remoteDataClient.scheduleNewUserCutOffTime copy];
+    XCTAssertEqualWithAccuracy([scheduleNewUserCutoffTime timeIntervalSinceNow], 0, 1, @"after first init, schedule new user cut off time should be approximately now");
+
+    // setup
+    self.remoteDataClient = nil;
+    
+    // test
+    self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self.mockScheduler remoteDataManager:self.mockRemoteDataManager dataStore:self.dataStore push:self.mockPush];
+    XCTAssertNotNil(self.remoteDataClient);
+
+    // verify
+    XCTAssertEqualObjects(self.remoteDataClient.scheduleNewUserCutOffTime, scheduleNewUserCutoffTime, @"after second init, schedule new user cut off time should stay the same.");
+}
+
+- (void)testExistingUserCutoffTime {
+    // start with empty data store (new app install)
+    [self.dataStore removeAll];
+
+    // an existing user already has a channelID
+    self.mockPush = [self mockForClass:[UAPush class]];
+    [[[self.mockPush expect] andReturn:@"sample-channel-id"] channelID];
+    
+    // test
+    self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self.mockScheduler remoteDataManager:self.mockRemoteDataManager dataStore:self.dataStore push:self.mockPush];
+    XCTAssertNotNil(self.remoteDataClient);
+
+    // verify
+    XCTAssertEqualObjects(self.remoteDataClient.scheduleNewUserCutOffTime, [NSDate distantPast], @"existing users should get a cut-off time in the distant past");
+}
 
 @end

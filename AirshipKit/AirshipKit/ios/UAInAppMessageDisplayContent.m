@@ -26,5 +26,12 @@ NSString *const UAInAppMessageMediaKey = @"media";
 NSString *const UAInAppMessageDismissButtonColorKey = @"dismiss_button_color";
 NSString *const UAInAppMessageDurationKey = @"duration";
 
+/*
+ * Sub-classes must override this method
+ */
+- (NSDictionary *)toJsonValue {
+    return nil;
+}
+
 @end
 

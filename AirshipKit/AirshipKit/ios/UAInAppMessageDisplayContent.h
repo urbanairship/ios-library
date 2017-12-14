@@ -39,5 +39,13 @@ extern NSString *const UAInAppMessageDismissButtonColorKey;
 extern NSString *const UAInAppMessageFooterKey;
 extern NSString *const UAInAppMessageDurationKey;
 
+/**
+ * Method to return the display content as its JSON representation.
+ * Sub-classes must override this method
+ *
+ * @returns JSON representation of the display content (as NSDictionary)
+ */
+- (NSDictionary *)toJsonValue;
+
 @end
 

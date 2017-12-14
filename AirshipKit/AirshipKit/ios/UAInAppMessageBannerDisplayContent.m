@@ -296,34 +296,6 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     return self;
 }
 
-+ (NSDictionary *)JSONWithBannerDisplayContent:(UAInAppMessageBannerDisplayContent *)displayContent {
-    NSMutableDictionary *json = [NSMutableDictionary dictionary];
-
-    if (!displayContent) {
-        return [NSDictionary dictionaryWithDictionary:json];
-    }
-
-    json[UAInAppMessageHeadingKey] = [UAInAppMessageTextInfo JSONWithTextInfo:displayContent.heading];
-    json[UAInAppMessageBodyKey] = [UAInAppMessageTextInfo JSONWithTextInfo:displayContent.body];
-    json[UAInAppMessageMediaKey] = [UAInAppMessageMediaInfo JSONWithMediaInfo:displayContent.media];
-
-    NSMutableArray *buttonsJSONs = [NSMutableArray array];
-    for (UAInAppMessageButtonInfo *buttonInfo in displayContent.buttons) {
-        [buttonsJSONs addObject:[UAInAppMessageButtonInfo JSONWithButtonInfo:buttonInfo]];
-    }
-    json[UAInAppMessageButtonsKey] = buttonsJSONs;
-
-    json[UAInAppMessageButtonLayoutKey] = displayContent.buttonLayout;
-    json[UAInAppMessagePlacementKey] = displayContent.placement;
-    json[UAInAppMessageContentLayoutKey] = displayContent.contentLayout;
-    json[UAInAppMessageDurationKey] = [NSNumber numberWithInteger:displayContent.duration];
-    json[UAInAppMessageBackgroundColorKey] = displayContent.backgroundColor;
-    json[UAInAppMessageDismissButtonColorKey] = displayContent.dismissButtonColor;
-    json[UAInAppMessageBorderRadiusKey] = [NSNumber numberWithInteger:displayContent.borderRadius];
-
-    return [NSDictionary dictionaryWithDictionary:json];
-}
-
 #pragma mark - Validation
 
 // Validates builder contents for the banner type
@@ -349,6 +321,42 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     }
 
     return YES;
+}
+
+- (NSDictionary *)toJsonValue {
+    NSMutableDictionary *json = [NSMutableDictionary dictionary];
+    
+    if (!self) {
+        return [NSDictionary dictionaryWithDictionary:json];
+    }
+    
+    if (self.heading) {
+        json[UAInAppMessageHeadingKey] = [UAInAppMessageTextInfo JSONWithTextInfo:self.heading];
+    }
+    if (self.body) {
+        json[UAInAppMessageBodyKey] = [UAInAppMessageTextInfo JSONWithTextInfo:self.body];
+    }
+    if (self.media) {
+        json[UAInAppMessageMediaKey] = [UAInAppMessageMediaInfo JSONWithMediaInfo:self.media];
+    }
+    
+    NSMutableArray *buttonsJSONs = [NSMutableArray array];
+    for (UAInAppMessageButtonInfo *buttonInfo in self.buttons) {
+        [buttonsJSONs addObject:[UAInAppMessageButtonInfo JSONWithButtonInfo:buttonInfo]];
+    }
+    if (buttonsJSONs.count) {
+        json[UAInAppMessageButtonsKey] = buttonsJSONs;
+    }
+    
+    json[UAInAppMessageButtonLayoutKey] = self.buttonLayout;
+    json[UAInAppMessagePlacementKey] = self.placement;
+    json[UAInAppMessageContentLayoutKey] = self.contentLayout;
+    json[UAInAppMessageDurationKey] = [NSNumber numberWithInteger:self.duration];
+    json[UAInAppMessageBackgroundColorKey] = self.backgroundColor;
+    json[UAInAppMessageDismissButtonColorKey] = self.dismissButtonColor;
+    json[UAInAppMessageBorderRadiusKey] = [NSNumber numberWithInteger:self.borderRadius];
+    
+    return [NSDictionary dictionaryWithDictionary:json];
 }
 
 #pragma mark - NSObject

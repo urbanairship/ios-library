@@ -29,6 +29,7 @@ extern NSString *const UAInAppMessageIDKey;
 extern NSString *const UAInAppMessageDisplayTypeKey;
 extern NSString *const UAInAppMessageDisplayContentKey;
 extern NSString *const UAInAppMessageExtrasKey;
+extern NSString *const UAInAppMessageAudienceKey;
 
 /**
  * JSON object representing the entire in-app message.

@@ -10,6 +10,7 @@
 #import "UAConfig.h"
 #import "UAInAppRemoteDataClient+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
+#import "UAInAppMessageAudienceChecks+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -32,15 +33,24 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
 
 @implementation UAInAppMessageManager
 
-+ (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine remoteDataManager:(UARemoteDataManager *)remoteDataManager dataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UAInAppMessageManager alloc] initWithAutomationEngine:automationEngine remoteDataManager:remoteDataManager dataStore:dataStore];
++ (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine
+                          remoteDataManager:(UARemoteDataManager *)remoteDataManager
+                                  dataStore:(UAPreferenceDataStore *)dataStore
+                                       push:(UAPush *)push {
+    return [[UAInAppMessageManager alloc] initWithAutomationEngine:automationEngine remoteDataManager:remoteDataManager dataStore:dataStore push:push];
 }
 
-+ (instancetype)managerWithConfig:(UAConfig *)config remoteDataManager:(UARemoteDataManager *)remoteDataManager dataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UAInAppMessageManager alloc] initWithConfig:config remoteDataManager:remoteDataManager dataStore:dataStore];
++ (instancetype)managerWithConfig:(UAConfig *)config
+                remoteDataManager:(UARemoteDataManager *)remoteDataManager
+                        dataStore:(UAPreferenceDataStore *)dataStore
+                             push:(UAPush *)push {
+    return [[UAInAppMessageManager alloc] initWithConfig:config remoteDataManager:remoteDataManager dataStore:dataStore push:push];
 }
 
-- (instancetype)initWithConfig:(UAConfig *)config remoteDataManager:(UARemoteDataManager *)remoteDataManager dataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithConfig:(UAConfig *)config
+             remoteDataManager:(UARemoteDataManager *)remoteDataManager
+                     dataStore:(UAPreferenceDataStore *)dataStore
+                          push:(UAPush *)push {
     self = [super initWithDataStore:dataStore];
 
     if (self) {
@@ -53,20 +63,23 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
         }
 
         self.displayInterval = DefaultMessageDisplayInterval;
-        self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self remoteDataManager:remoteDataManager dataStore:dataStore];
+        self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self remoteDataManager:remoteDataManager dataStore:dataStore push:push];
         [self setDefaultAdapterFactories];
     }
 
     return self;
 }
 
-- (instancetype)initWithAutomationEngine:(UAAutomationEngine *)automationEngine remoteDataManager:(UARemoteDataManager *)remoteDataManager dataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithAutomationEngine:(UAAutomationEngine *)automationEngine
+                       remoteDataManager:(UARemoteDataManager *)remoteDataManager
+                               dataStore:(UAPreferenceDataStore *)dataStore
+                                    push:(UAPush *)push {
     self = [super initWithDataStore:dataStore];
 
     if (self) {
         self.automationEngine = automationEngine;
         self.displayInterval = DefaultMessageDisplayInterval;
-        self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self remoteDataManager:remoteDataManager dataStore:dataStore];
+        self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self remoteDataManager:remoteDataManager dataStore:dataStore push:push];
         [self setDefaultAdapterFactories];
     }
 
@@ -154,6 +167,13 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
     UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
     NSDictionary *messageJSON = [NSJSONSerialization objectWithString:schedule.info.data];
     info.message = [UAInAppMessage messageWithJSON:messageJSON error:nil];
+
+    if (![UAInAppMessageAudienceChecks checkAudience:info.message.audience]) {
+        UA_LDEBUG("InAppMessageManager - Message no longer meets audience conditions, cancelling schedule: %@",schedule.identifier);
+        [self cancelMessageWithScheduleID:schedule.identifier];
+        // adapterWrappers.remove(scheduleId); - REVISIT - this is a line from Android. Does iOS implementation need to do something like this?
+        return NO;
+    }
 
     if (!self.currentAdapter) {
 
