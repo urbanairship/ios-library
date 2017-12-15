@@ -3,7 +3,6 @@
 #import "UALegacyInAppMessaging+Internal.h"
 #import "UALegacyInAppMessage.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UALegacyInAppDisplayEvent+Internal.h"
 #import "UAAnalytics.h"
 #import "UALegacyInAppResolutionEvent+Internal.h"
 #import "UANotificationContent.h"

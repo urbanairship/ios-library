@@ -18,8 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Factory method to create a replaced in-app resolution event.
  *
- * @param message The replaced message ID.
- * @param replacement The new message ID.
+ * @param messageID The replaced message ID.
+ * @param replacementID The new message ID.
  * @return The resolution event.
  */
 + (instancetype)replacedResolutionWithMessageID:(NSString *)messageID
@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Factory method to create a direct open in-app resolution event.
  *
- * @param message The message ID.
+ * @param messageID The message ID.
  * @return The resolution event.
  */
 + (instancetype)directOpenResolutionWithMessageID:(NSString *)messageID;
