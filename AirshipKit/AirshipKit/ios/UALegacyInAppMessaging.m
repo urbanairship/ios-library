@@ -204,7 +204,9 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
                 builder.label = labelInfo;
             }];
 
-            [buttonInfos addObject:buttonInfo];
+            if (buttonInfo) {
+                [buttonInfos addObject:buttonInfo];
+            }
         }
 
         builder.buttons = buttonInfos;
@@ -218,6 +220,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
             builder.displayContent = displayContent;
             builder.extras = message.extra;
             builder.identifier = message.identifier;
+            // Todo: this should not have to be set manually
             builder.displayType = UAInAppMessageDisplayTypeBanner;
         }];
 
