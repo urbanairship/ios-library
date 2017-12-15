@@ -12,18 +12,11 @@ NSString *const UAActionScheduleInfoActionsKey = @"actions";
 
 @dynamic group;
 
-- (NSDictionary *)actions {
-    if (self.data) {
-        return [NSJSONSerialization objectWithString:self.data];
-    }
-    return nil;
-}
-
-- (void)setActions:(NSDictionary *)actions {
-    if (actions) {
-        self.data = [NSJSONSerialization stringWithObject:actions];
+- (NSString *)data {
+    if (self.actions) {
+        return [NSJSONSerialization stringWithObject:self.actions];
     } else {
-        self.data = nil;
+        return nil;
     }
 }
 

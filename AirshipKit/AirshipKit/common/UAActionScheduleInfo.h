@@ -20,6 +20,11 @@ extern NSString *const UAActionScheduleInfoActionsKey;
 ///---------------------------------------------------------------------------------------
 
 /**
+ * The schedule's group.
+ */
+@property(nonatomic, copy, nullable) NSString *group;
+
+/**
  * Actions payload to run when the schedule is triggered.
  */
 @property(nonatomic, strong, nullable) NSDictionary *actions;
@@ -34,6 +39,12 @@ extern NSString *const UAActionScheduleInfoActionsKey;
 ///---------------------------------------------------------------------------------------
 /// @name Action Schedule Info Properties
 ///---------------------------------------------------------------------------------------
+
+/**
+ * The schedule's group.
+ */
+@property(nonatomic, readonly, nullable) NSString *group;
+
 
 /**
  * Actions payload to run when the schedule is triggered.

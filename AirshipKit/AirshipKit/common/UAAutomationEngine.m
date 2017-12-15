@@ -18,15 +18,6 @@
 #import "UAirship.h"
 #import "UAApplicationMetrics.h"
 
-/*
- TODO:
- - Fix tests
- - JSON parsing back into UAScheduleInfo "data" vs "actions"
-
- Test TODO:
-  - Migrate from v2 to v3
- */
-
 @interface UAAutomationStateCondition : NSObject
 
 @property (nonatomic, copy, nonnull) BOOL (^predicate)(void);

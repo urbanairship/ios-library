@@ -13,21 +13,17 @@ NSString *const UAScheduleInfoInAppMessageKey = @"message";
 
 @dynamic group;
 
-- (UAInAppMessage *)message {
-    if (self.data) {
-        NSDictionary *data = [NSJSONSerialization objectWithString:self.data];
+- (NSString *)group {
+    return self.message.identifier;
+}
 
-        if (data) {
-            return [UAInAppMessage messageWithJSON:data error:nil];
-        }
+- (NSString *)data {
+    if (self.message) {
+        return [NSJSONSerialization stringWithObject:[self.message toJsonValue]];
+    } else {
+        return nil;
     }
-    return nil;
 }
-
-- (void)setMessage:(UAInAppMessage *)message {
-    self.data = [NSJSONSerialization stringWithObject:[message toJsonValue]];
-}
-
 @end
 
 @implementation UAInAppMessageScheduleInfo

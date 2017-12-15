@@ -45,6 +45,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong, nullable) UAScheduleDelay *delay;
 
 /**
+ * The schedule's group.
+ */
+@property(nonatomic, copy, nullable) NSString *group;
+
+/**
  * Default init method.
  *
  * @param builder The schedule info builder.
@@ -76,6 +81,11 @@ NS_ASSUME_NONNULL_BEGIN
  * Schedule's data.
  */
 @property(nonatomic, copy, nullable) NSString *data;
+
+/**
+ * The schedule's group.
+ */
+@property(nonatomic, copy, nullable) NSString *group;
 
 @end
 

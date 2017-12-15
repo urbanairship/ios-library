@@ -1,5 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
+#import "UAActionScheduleInfo.h"
 #import "UAScheduleInfo+Internal.h"
 #import "UAUtils.h"
 

@@ -115,11 +115,6 @@ extern NSUInteger const UAScheduleInfoMaxTriggers;
  */
 @property(nonatomic, strong, nullable) UAScheduleDelay *delay;
 
-/**
- * The schedule's group.
- */
-@property(nonatomic, copy, nullable) NSString *group;
-
 @end
 
 /**
@@ -164,10 +159,6 @@ extern NSUInteger const UAScheduleInfoMaxTriggers;
  */
 @property(nonatomic, readonly) UAScheduleDelay *delay;
 
-/**
- * The schedule's group.
- */
-@property(nonatomic, copy, nullable) NSString *group;
 
 /**
  * Checks if the schedule info is valid. A valid schedule
