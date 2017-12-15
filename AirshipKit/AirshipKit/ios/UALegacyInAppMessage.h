@@ -147,13 +147,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property(nonatomic, readonly, nullable) UANotificationCategory *buttonCategory;
 
-/**
- * An array of UALegacyInAppMessageButtonActionBinding instances,
- * corresponding to the left-to-right order of interactive message
- * buttons.
- */
-@property(nonatomic, readonly, nullable) NSArray *buttonActionBindings;
-
 
 ///---------------------------------------------------------------------------------------
 /// @name Legacy In App Message Factories

@@ -104,16 +104,6 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
 
             [buttons addObject:buttonInfo];
         }
-
-        if (!buttons.count) {
-            if (error) {
-                NSString *msg = @"Buttons must contain at least 1 button.";
-                *error =  [NSError errorWithDomain:UAInAppMessageBannerDisplayContentDomain
-                                              code:UAInAppMessageBannerDisplayContentErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-            return NO;
-        }
     }
 
     id buttonLayout = json[UAInAppMessageButtonLayoutKey];

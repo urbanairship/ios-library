@@ -14,8 +14,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSTimeInterval const FetchRetryDelayMS = 30000;
-NSTimeInterval const DefaultMessageDisplayInterval = 5000;
+NSTimeInterval const DefaultMessageDisplayInterval = 5;
 NSTimeInterval const MaxSchedules = 200;
 NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite";
 
