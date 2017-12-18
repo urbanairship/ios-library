@@ -39,11 +39,8 @@ NSString *const UAInAppMessageTextViewNibName = @"UAInAppMessageTextView";
             self.headingLabel = headingLabel;
 
             [UAInAppMessageUtils applyTextInfo:heading label:headingLabel];
-
-            // Mutli-line labels might break in earlier versions
-            //Nest label inside view because UIStack views are broken for labels
-
             [self.textContainer addArrangedSubview:headingLabel];
+            [UAInAppMessageUtils applyContainerConstraintsToContainer:headingLabel containedView:self.textContainer];
         }
         if (body) {
 
@@ -52,6 +49,7 @@ NSString *const UAInAppMessageTextViewNibName = @"UAInAppMessageTextView";
 
             [UAInAppMessageUtils applyTextInfo:body label:bodyLabel];
             [self.textContainer addArrangedSubview:bodyLabel];
+            [UAInAppMessageUtils applyContainerConstraintsToContainer:bodyLabel containedView:self.textContainer];
         }
 
         [UIView performWithoutAnimation:^{

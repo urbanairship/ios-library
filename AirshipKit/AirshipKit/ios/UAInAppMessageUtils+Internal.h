@@ -26,7 +26,6 @@
  */
 + (void)applyTextInfo:(UAInAppMessageTextInfo *)textInfo label:(UILabel *)label;
 
-
 /**
  * Constrains the contained view to the center of the container with equivalent size
  *

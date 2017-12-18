@@ -7,84 +7,25 @@
 @implementation UAInAppMessageUtils
 
 + (void)applyButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo button:(UAInAppMessageButton *)button {
-    // TODO add font support
-    //NSArray *syles = buttonInfo.label.styles;
-
     button.backgroundColor = [UAColorUtils colorWithHexString:buttonInfo.backgroundColor];
 
-    [button setTitle:buttonInfo.label.text forState:UIControlStateNormal];
-    [button setTitleColor:[UAColorUtils colorWithHexString:buttonInfo.label.color] forState:UIControlStateNormal];
+    // Title label should resize for text length
+    button.titleLabel.numberOfLines = 0;
 
-    //NSAttributedString *attributedTitle = [[NSAttributedString alloc] init];
-    //[button setAttributedTitle: forState:UIControlStateNormal];
+    NSDictionary *attributes = [UAInAppMessageUtils attributesWithTextInfo:buttonInfo.label];
+    NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:buttonInfo.label.text attributes:attributes];
 
-    [UAInAppMessageUtils applyTextInfo:buttonInfo.label label:button.titleLabel];
+    [button setAttributedTitle:attributedTitle forState:UIControlStateNormal];
 }
 
-// Need to convert this to apply the info to an attributed string so it can be used for both labels and button labels
 + (void)applyTextInfo:(UAInAppMessageTextInfo *)textInfo label:(UILabel *)label {
-    label.lineBreakMode = NSLineBreakByWordWrapping;
+    // Label should resize for text length
     label.numberOfLines = 0;
-    [label setText:textInfo.text];
-    [label setTextAlignment:[UAInAppMessageUtils alignmentWithAlignment:textInfo.alignment]];
-    [label setTextColor:[UAColorUtils colorWithHexString:textInfo.color]];
-    [label setFont:[UAInAppMessageUtils fontWithFontFamilies:textInfo.fontFamilies size:textInfo.size]];
 
-    label.adjustsFontSizeToFitWidth = YES;
-}
+    NSDictionary *attributes = [UAInAppMessageUtils attributesWithTextInfo:textInfo];
+    NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:textInfo.text attributes:attributes];
 
-+ (NSTextAlignment)alignmentWithAlignment:(NSString *)alignment {
-    if ([alignment isEqualToString:UAInAppMessageTextInfoAlignmentLeft]) {
-        return NSTextAlignmentLeft;
-    } else if ([alignment isEqualToString:UAInAppMessageTextInfoAlignmentCenter]) {
-        return NSTextAlignmentCenter;
-    } else if ([alignment isEqualToString:UAInAppMessageTextInfoAlignmentRight]) {
-        return NSTextAlignmentRight;
-    }
-
-    return NSTextAlignmentLeft;
-}
-
-+ (UIFont *)boldFontWithFont:(UIFont *)font {
-    UIFontDescriptor * fontD = [font.fontDescriptor
-                                fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold];
-    return [UIFont fontWithDescriptor:fontD size:0];
-}
-
-+ (UIFont *)italicFontWithFont:(UIFont *)font {
-    UIFontDescriptor * fontD = [font.fontDescriptor
-                                fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitItalic];
-    return [UIFont fontWithDescriptor:fontD size:0];
-}
-
-+ (UIFont *)underlineFontWithFont:(UIFont *)font
-{
-    UIFontDescriptor * fontD = [font.fontDescriptor
-                                fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitItalic];
-    return [UIFont fontWithDescriptor:fontD size:0];
-}
-
-+ (nullable UIFont *)fontWithFontFamilies:(NSArray<NSString *> *)fontFamilies size:(CGFloat)size {
-    for (id fontFamily in fontFamilies) {
-        if (![fontFamily isKindOfClass:[NSString class]]) {
-            continue;
-        }
-
-        NSArray<NSString *> *fontNames = [UIFont fontNamesForFamilyName:fontFamily];
-
-        UIFont *font;
-
-        for (NSString *fontName in fontNames) {
-            font = [UIFont fontWithName:fontName size:size];
-
-            // Return first valid font
-            if (font) {
-                return font;
-            }
-        }
-    }
-
-    return nil;
+    [label setAttributedText:attributedText];
 }
 
 + (void)applyContainerConstraintsToContainer:(UIView *)container containedView:(UIView *)contained {
@@ -155,6 +96,92 @@
             completionHandler(cacheKey);
         });
     });
+}
+
+#pragma mark -
+#pragma mark Helpers
+
++ (NSDictionary *)attributesWithTextInfo:(UAInAppMessageTextInfo *)textInfo {
+    NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+
+    // Font and style
+    UIFont *font = [UAInAppMessageUtils fontWithTextInfo:textInfo];
+    [attributes setObject:font forKey:NSFontAttributeName];
+
+    // Underline
+    if ([textInfo.styles containsObject:UAInAppMessageTextInfoStyleUnderline]) {
+        [attributes setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
+    }
+
+    // Color
+    [attributes setObject:[UAColorUtils colorWithHexString:textInfo.color] forKey:NSForegroundColorAttributeName];
+
+    // Alignment and word wrapping
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    [paragraphStyle setLineBreakMode:NSLineBreakByWordWrapping];
+    [paragraphStyle setAlignment:[UAInAppMessageUtils alignmentWithTextInfo:textInfo]];
+    [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
+
+    return attributes;
+}
+
++ (NSTextAlignment)alignmentWithTextInfo:(UAInAppMessageTextInfo *)textInfo {
+    if ([textInfo.alignment isEqualToString:UAInAppMessageTextInfoAlignmentLeft]) {
+        return NSTextAlignmentLeft;
+    } else if ([textInfo.alignment isEqualToString:UAInAppMessageTextInfoAlignmentCenter]) {
+        return NSTextAlignmentCenter;
+    } else if ([textInfo.alignment isEqualToString:UAInAppMessageTextInfoAlignmentRight]) {
+        return NSTextAlignmentRight;
+    }
+
+    return NSTextAlignmentLeft;
+}
+
++ (UIFont *)fontWithTextInfo:(UAInAppMessageTextInfo *)textInfo {
+    UIFont *font = [UAInAppMessageUtils fontWithFontFamilies:textInfo.fontFamilies size:textInfo.size];
+
+    UIFontDescriptorSymbolicTraits traits = 0;
+
+    if ([textInfo.styles containsObject:UAInAppMessageTextInfoStyleBold]) {
+        traits = traits | UIFontDescriptorTraitBold;
+    }
+
+    if ([textInfo.styles containsObject:UAInAppMessageTextInfoStyleItalic]) {
+        traits = traits | UIFontDescriptorTraitItalic;
+    }
+
+    UIFontDescriptor *styledFontDescriptor = [font.fontDescriptor
+                                              fontDescriptorWithSymbolicTraits:traits];
+
+    // Replace font with correct face, leave the size set
+    font = [UIFont fontWithDescriptor:styledFontDescriptor size:0];
+
+    return font;
+}
+
+
++ (UIFont *)fontWithFontFamilies:(NSArray<NSString *> *)fontFamilies size:(CGFloat)size {
+    for (id fontFamily in fontFamilies) {
+        if (![fontFamily isKindOfClass:[NSString class]]) {
+            continue;
+        }
+
+        NSArray<NSString *> *fontNames = [UIFont fontNamesForFamilyName:fontFamily];
+
+        UIFont *font;
+
+        for (NSString *fontName in fontNames) {
+            font = [UIFont fontWithName:fontName size:size];
+
+            // Return first valid font
+            if (font) {
+                return font;
+            }
+        }
+    }
+
+    UA_LDEBUG(@"No valid font available, returning system font");
+    return [UIFont systemFontOfSize:size];
 }
 
 @end
