@@ -100,6 +100,10 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
     [self.automationEngine getScheduleWithIdentifier:identifier completionHandler:completionHandler];
 }
 
+- (void)getSchedulesWithMessageID:(NSString *)messageID completionHandler:(void (^)(NSArray<UASchedule *> *))completionHandler {
+    [self.automationEngine getSchedulesWithGroup:messageID completionHandler:completionHandler];
+}
+
 - (void)scheduleMessageWithScheduleInfo:(UAInAppMessageScheduleInfo *)scheduleInfo
                       completionHandler:(void (^)(UASchedule *))completionHandler {
     [self.automationEngine schedule:scheduleInfo completionHandler:completionHandler];;

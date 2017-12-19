@@ -12,6 +12,8 @@
 #import "UAActionRegistry.h"
 #import "UADisplayInboxAction.h"
 #import "UAInAppMessageBannerDisplayContent.h"
+#import "UAScheduleInfo+Internal.h"
+#import "UASchedule+Internal.h"
 
 @interface UALegacyInAppMessagingTest : UABaseTest
 @property(nonatomic, strong) id mockAnalytics;
@@ -71,6 +73,7 @@
 
 - (void)tearDown {
     [self.mockAnalytics stopMocking];
+    [self.mockInAppMessageManager stopMocking];
 
     [self.dataStore removeAll];
 
@@ -115,6 +118,15 @@
                                                                                            responseText:nil];
 
     [[self.mockAnalytics expect] addEvent:[OCMArg any]];
+
+    [[[self.mockInAppMessageManager stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(NSArray<UASchedule *> *schedules) = (__bridge void(^)(NSArray<UASchedule *> *))arg;
+        UASchedule *dummySchedule = [UASchedule scheduleWithIdentifier:@"foo" info:[UAScheduleInfo new]];
+        completionHandler(@[dummySchedule]);
+    }] getSchedulesWithMessageID:[OCMArg any] completionHandler:[OCMArg any]];
+
     [[self.mockInAppMessageManager expect] cancelMessageWithID:messageID];
     [self.inAppMessaging handleNotificationResponse:response];
 
