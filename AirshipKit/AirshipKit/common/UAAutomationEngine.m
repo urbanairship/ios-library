@@ -91,11 +91,6 @@
                                                object:nil];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(enterForeground)
-                                                 name:UIApplicationWillEnterForegroundNotification
-                                               object:nil];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(didBecomeActive)
                                                  name:UIApplicationDidBecomeActiveNotification
                                                object:nil];
@@ -279,12 +274,9 @@
 #pragma mark Event listeners
 
 - (void)didBecomeActive {
-    [self enterForeground];
-
-    // This handles the first active. enterForeground will handle future background->foreground
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:UIApplicationDidBecomeActiveNotification
-                                                  object:nil];
+    if (!self.isForegrounded) {
+        [self enterForeground];
+    }
 }
 
 - (void)enterForeground {

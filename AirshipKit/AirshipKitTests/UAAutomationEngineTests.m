@@ -217,7 +217,7 @@
     }
 
     // Trigger the schedules with a foreground notification
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification
                                                         object:nil];
 
     [self waitForExpectations:runExpectations timeout:5];
@@ -575,10 +575,8 @@
     UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
     [self verifyTrigger:trigger triggerFireBlock:^{
         // simulate 2 foregrounds
-        [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification
-                                                            object:nil];
-        [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification
-                                                            object:nil];
+        [self simulateForegroundTransition];
+        [self simulateForegroundTransition];
     }];
 }
 
@@ -729,8 +727,7 @@
     }];
 
     [self verifyDelay:delay fulfillmentBlock:^{
-        [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification
-                                                            object:nil];
+        [self simulateForegroundTransition];
     }];
 }
 
@@ -807,8 +804,7 @@
     [self waitForExpectationsWithTimeout:5 handler:nil];
 
     // Cancel the pending execution by foregrounding the app
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification
-                                                        object:nil];
+    [self simulateForegroundTransition];
 
     // Verify the schedule is no longer pending execution
     XCTestExpectation *scheduleNotPendingExecution = [self expectationWithDescription:@"not pending execution"];
@@ -819,6 +815,17 @@
     }];
 
     [self waitForExpectationsWithTimeout:5 handler:nil];
+}
+
+/**
+ * Helper method for simulating a full transition from the background to the active state.
+ */
+- (void)simulateForegroundTransition {
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification
+                                                        object:nil];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification
+                                                        object:nil];
 }
 
 /**
