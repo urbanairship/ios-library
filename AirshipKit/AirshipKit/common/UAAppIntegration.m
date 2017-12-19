@@ -173,9 +173,9 @@
 
     UA_LINFO(@"Received notification response: %@", response);
 
-    // Clear any in-app messages (nibs unavailable in tvOS)
+    // Clear any legacy in-app messages (nibs unavailable in tvOS)
 #if !TARGET_OS_TV
-    [[UAirship inAppMessaging] handleNotificationResponse:response];
+    [[UAirship legacyInAppMessaging] handleNotificationResponse:response];
 #endif
     
     UASituation situation;
@@ -229,9 +229,9 @@
 
     UA_LINFO(@"Received notification: %@", notificationContent);
 
-    // Process any in-app messages (nibs unavailable in tvOS)
+    // Process any legacy in-app messages (nibs unavailable in tvOS)
 #if !TARGET_OS_TV
-    [[UAirship inAppMessaging] handleRemoteNotification:notificationContent];
+    [[UAirship legacyInAppMessaging] handleRemoteNotification:notificationContent];
 #endif
     
     if (notificationContent.notificationInfo[kUANotificationRefreshRemoteDataKey]) {

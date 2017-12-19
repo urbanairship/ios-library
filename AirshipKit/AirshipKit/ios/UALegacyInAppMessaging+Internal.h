@@ -1,7 +1,8 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UALegacyInAppMessaging.h"
-#import "UALegacyInAppMessageController+Internal.h"
+
+// OLD storage keys
 
 // User defaults key for storing and retrieving pending messages
 #define kUAPendingInAppMessageDataStoreKey @"UAPendingInAppMessage"
@@ -9,11 +10,17 @@
 // User defaults key for storing and retrieving auto display enabled
 #define kUAAutoDisplayInAppMessageDataStoreKey @"UAAutoDisplayInAppMessageDataStoreKey"
 
+// NEW storage keys
+
+// Data store key for storing and retrieving pending message IDs
+#define kUAPendingInAppMessageIDDataStoreKey @"UAPendingInAppMessageID"
+
 @class UAPreferenceDataStore;
 @class UAAnalytics;
 @class UAPush;
 @class UANotificationResponse;
 @class UANotificationContent;
+@class UAInAppMessageManager;
 
 NS_ASSUME_NONNULL_BEGIN
 /*
@@ -25,10 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @name In App Messaging Internal Properties
 ///---------------------------------------------------------------------------------------
 
-/**
- * A Boolean value indicating whether or not the keyboard is displayed.
- */
-@property(nonatomic, assign, getter=isKeyboardDisplayed) BOOL keyboardDisplayed;
+@property(nonatomic, copy, nullable) NSString *pendingMessageID;
 
 ///---------------------------------------------------------------------------------------
 /// @name In App Messaging Internal Methods
@@ -41,12 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @return An instance of UALegacyInAppMessaging.
  */
 + (instancetype)inAppMessagingWithAnalytics:(UAAnalytics *)analytics
-                                  dataStore:(UAPreferenceDataStore *)dataStore;
-
-/**
- * Invalidates the autodisplay timer.
- */
-- (void)invalidateAutoDisplayTimer;
+                                  dataStore:(UAPreferenceDataStore *)dataStore
+                        inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager;
 
 /**
  * Called when a notification response is received.

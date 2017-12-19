@@ -125,6 +125,10 @@ NSString *const UAInAppMessageMediaInfoDescriptionKey = @"description";
 }
 
 + (NSDictionary *)JSONWithMediaInfo:(UAInAppMessageMediaInfo *)mediaInfo {
+    if (!mediaInfo) {
+        return nil;
+    }
+
     NSMutableDictionary *json = [NSMutableDictionary dictionary];
 
     json[UAInAppMessageMediaInfoURLKey] = mediaInfo.url;

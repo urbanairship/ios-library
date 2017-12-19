@@ -14,8 +14,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSTimeInterval const FetchRetryDelayMS = 30000;
-NSTimeInterval const DefaultMessageDisplayInterval = 5000;
+NSTimeInterval const DefaultMessageDisplayInterval = 5;
 NSTimeInterval const MaxSchedules = 200;
 NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite";
 
@@ -99,6 +98,10 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
 
 - (void)getScheduleWithIdentifier:(NSString *)identifier completionHandler:(void (^)(UASchedule *))completionHandler {
     [self.automationEngine getScheduleWithIdentifier:identifier completionHandler:completionHandler];
+}
+
+- (void)getSchedulesWithMessageID:(NSString *)messageID completionHandler:(void (^)(NSArray<UASchedule *> *))completionHandler {
+    [self.automationEngine getSchedulesWithGroup:messageID completionHandler:completionHandler];
 }
 
 - (void)scheduleMessageWithScheduleInfo:(UAInAppMessageScheduleInfo *)scheduleInfo

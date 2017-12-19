@@ -191,6 +191,10 @@ NSString *const UAInAppMessageButtonInfoActionsKey = @"actions";
 }
 
 + (NSDictionary *)JSONWithButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo {
+    if (!buttonInfo) {
+        return nil;
+    }
+
     NSMutableDictionary *json = [NSMutableDictionary dictionary];
 
     json[UAInAppMessageButtonInfoLabelKey] = [UAInAppMessageTextInfo JSONWithTextInfo:buttonInfo.label];

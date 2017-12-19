@@ -57,12 +57,21 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)cancelMessageWithID:(NSString *)identifier;
 
 /**
- * Gets scheduled message with identifier.
+ * Gets schedules with the provided identifier.
  *
- * @param identifier The identifier of the in-app message to be canceled.
+ * @param identifier The scheduler identifier corresponding to the in-app message to be canceled.
  * @param completionHandler The completion handler to be called when fetch operation completes.
  */
 - (void)getScheduleWithIdentifier:(NSString *)identifier completionHandler:(void (^)(UASchedule *))completionHandler;
+
+/**
+ * Gets schedules whose group is the provided message ID.
+ *
+ * @param messageID The message ID.
+ * @param completionHandler The completion handler to be called when fetch operation completes.
+ */
+- (void)getSchedulesWithMessageID:(NSString *)messageID completionHandler:(void (^)(NSArray<UASchedule *> *))completionHandler;
+
 
 /**
  * Cancels multiple in-app messages via their identifiers.

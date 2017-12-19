@@ -112,9 +112,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.sharedRemoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.sharedRemoteDataManager componentDisabler:[[UAComponentDisabler alloc] init]];
 #if !TARGET_OS_TV
         // IAP Nib not supported on tvOS
-        self.sharedInAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.sharedAnalytics dataStore:dataStore];
         self.sharedInAppMessageManager = [UAInAppMessageManager managerWithConfig:config remoteDataManager:self.sharedRemoteDataManager dataStore:dataStore push:self.sharedPush];
-
+        self.sharedLegacyInAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.sharedAnalytics dataStore:dataStore inAppMessageManager:self.sharedInAppMessageManager];
         // Message center not supported on tvOS
         self.sharedInboxUser = [UAUser userWithPush:self.sharedPush config:config dataStore:dataStore];
         self.sharedInbox = [UAInbox inboxWithUser:self.sharedInboxUser config:config dataStore:dataStore];
@@ -338,11 +337,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     // Invalidate UAAnalytics timer and cancel all queued operations
     [sharedAirship_.sharedAnalytics cancelUpload];
 
-#if !TARGET_OS_TV
-    // Invalidate UALegacyInAppMessaging autodisplay timer
-    [sharedAirship_.sharedInAppMessaging invalidateAutoDisplayTimer];
-#endif
-
     // Finally, release the airship!
     [UAirship setSharedAirship:nil];
 
@@ -371,8 +365,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return sharedAirship_.sharedInboxUser;
 }
 
-+ (UALegacyInAppMessaging *)inAppMessaging {
-    return sharedAirship_.sharedInAppMessaging;
++ (UALegacyInAppMessaging *)legacyInAppMessaging {
+    return sharedAirship_.sharedLegacyInAppMessaging;
 }
 
 + (UAInAppMessageManager *)inAppMessageManager {

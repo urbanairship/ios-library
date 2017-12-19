@@ -35,30 +35,6 @@
 }
 
 /**
- * Test in-app expired resolution event.
- */
-- (void)testExpiredResolutionEvent {
-    self.message.expiry = [NSDate date];
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendID];
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionPushMetadata];
-
-    NSDateFormatter *formatter = [UAUtils ISODateFormatterUTCWithDelimiter];
-
-
-    NSDictionary *expectedResolution = @{ @"type": @"expired",
-                                          @"expiry": [formatter stringFromDate:self.message.expiry] };
-
-    NSDictionary *expectedData = @{ @"id": self.message.identifier,
-                                    @"conversion_send_id": [self.analytics conversionSendID],
-                                    @"conversion_metadata": [self.analytics conversionPushMetadata],
-                                    @"resolution": expectedResolution };
-
-
-    UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent expiredMessageResolutionWithMessage:self.message];
-    [self verifyEvent:event expectedData:expectedData];
-}
-
-/**
  * Test in-app replaced resolution event.
  */
 - (void)testReplacedResolutionEvent {
@@ -77,110 +53,7 @@
                                     @"conversion_metadata": [self.analytics conversionPushMetadata],
                                     @"resolution": expectedResolution };
 
-
-    UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent replacedResolutionWithMessage:self.message
-                                                                              replacement:replacement];
-
-    [self verifyEvent:event expectedData:expectedData];
-}
-
-/**
- * Test in-app button clicked resolution event.
- */
-- (void)testButtonClickedResolutionEvent {
-    self.message.buttonGroup = @"button group";
-
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendID];
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionPushMetadata];
-
-
-    NSDictionary *expectedResolution = @{ @"type": @"button_click",
-                                          @"button_id": @"button ID",
-                                          @"button_description": @"oh hi, marc",
-                                          @"button_group": @"button group",
-                                          @"display_time": @"3.141"};
-
-    NSDictionary *expectedData = @{ @"id": self.message.identifier,
-                                    @"conversion_send_id": [self.analytics conversionSendID],
-                                    @"conversion_metadata": [self.analytics conversionPushMetadata],
-                                    @"resolution": expectedResolution };
-
-
-    UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent buttonClickedResolutionWithMessage:self.message
-                                                                              buttonIdentifier:@"button ID"
-                                                                                   buttonTitle:@"oh hi, marc"
-                                                                               displayDuration:3.141];
-
-    [self verifyEvent:event expectedData:expectedData];
-}
-
-
-/**
- * Test in-app message clicked resolution event.
- */
-- (void)testMessageClickedResolutionEvent {
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendID];
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionPushMetadata];
-
-
-    NSDictionary *expectedResolution = @{ @"type": @"message_click",
-                                          @"display_time": @"3.141"};
-
-    NSDictionary *expectedData = @{ @"id": self.message.identifier,
-                                    @"conversion_send_id": [self.analytics conversionSendID],
-                                    @"conversion_metadata": [self.analytics conversionPushMetadata],
-                                    @"resolution": expectedResolution };
-
-
-    UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent messageClickedResolutionWithMessage:self.message
-                                                                                displayDuration:3.141];
-
-    [self verifyEvent:event expectedData:expectedData];
-}
-
-/**
- * Test in-app dismisssed resolution event.
- */
-- (void)testDismissedResolutionEvent {
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendID];
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionPushMetadata];
-
-
-    NSDictionary *expectedResolution = @{ @"type": @"user_dismissed",
-                                          @"display_time": @"3.141"};
-
-    NSDictionary *expectedData = @{ @"id": self.message.identifier,
-                                    @"conversion_send_id": [self.analytics conversionSendID],
-                                    @"conversion_metadata": [self.analytics conversionPushMetadata],
-                                    @"resolution": expectedResolution };
-
-
-    UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent dismissedResolutionWithMessage:self.message
-                                                                           displayDuration:3.141];
-
-    [self verifyEvent:event expectedData:expectedData];
-}
-
-/**
- * Test in-app timed out resolution event.
- */
-- (void)testTimedOutResolutionEvent {
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendID];
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionPushMetadata];
-
-
-
-    NSDictionary *expectedResolution = @{ @"type": @"timed_out",
-                                          @"display_time": @"3.141"};
-
-    NSDictionary *expectedData = @{ @"id": self.message.identifier,
-                                    @"conversion_send_id": [self.analytics conversionSendID],
-                                    @"conversion_metadata": [self.analytics conversionPushMetadata],
-                                    @"resolution": expectedResolution };
-
-
-    UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent timedOutResolutionWithMessage:self.message
-                                                                          displayDuration:3.141];
+    UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent replacedResolutionWithMessageID:self.message.identifier replacement:replacement.identifier];
 
     [self verifyEvent:event expectedData:expectedData];
 }
@@ -200,7 +73,7 @@
                                     @"resolution": expectedResolution };
 
 
-    UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent directOpenResolutionWithMessage:self.message];
+    UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent directOpenResolutionWithMessageID:self.message.identifier];
 
     [self verifyEvent:event expectedData:expectedData];
 }

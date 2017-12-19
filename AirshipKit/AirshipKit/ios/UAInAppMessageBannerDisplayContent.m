@@ -104,16 +104,6 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
 
             [buttons addObject:buttonInfo];
         }
-
-        if (!buttons.count) {
-            if (error) {
-                NSString *msg = @"Buttons must contain at least 1 button.";
-                *error =  [NSError errorWithDomain:UAInAppMessageBannerDisplayContentDomain
-                                              code:UAInAppMessageBannerDisplayContentErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-            return NO;
-        }
     }
 
     id buttonLayout = json[UAInAppMessageButtonLayoutKey];
@@ -291,6 +281,7 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
         self.backgroundColor = builder.backgroundColor ?: @"#FFFFFF"; //White
         self.dismissButtonColor = builder.dismissButtonColor ?: @"#000000"; //Black
         self.borderRadius = builder.borderRadius;
+        self.actions = builder.actions;
     }
 
     return self;
@@ -355,6 +346,7 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     json[UAInAppMessageBackgroundColorKey] = self.backgroundColor;
     json[UAInAppMessageDismissButtonColorKey] = self.dismissButtonColor;
     json[UAInAppMessageBorderRadiusKey] = [NSNumber numberWithInteger:self.borderRadius];
+    json[UAInAppMessageBannerActionsKey] = self.actions;
     
     return [NSDictionary dictionaryWithDictionary:json];
 }

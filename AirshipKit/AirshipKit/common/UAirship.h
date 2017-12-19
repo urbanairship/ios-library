@@ -206,7 +206,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * Returns the `UALegacyInAppMessaging` instance. Used for customizing
  * legacy in-app notifications.
  */
-+ (null_unspecified UALegacyInAppMessaging *)inAppMessaging;
++ (null_unspecified UALegacyInAppMessaging *)legacyInAppMessaging;
 
 /**
  * Returns the default `UAMessageCenter` instance. Used for customizing

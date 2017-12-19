@@ -43,6 +43,8 @@ class HomeViewController: UIViewController {
         if (sender == channelIDButton) {
             if ((UAirship.push().channelID) != nil) {
                 UIPasteboard.general.string = UAirship.push().channelID
+                // TODO: Replace this
+                /*
                 let message = UALegacyInAppMessage()
                 message.alert = NSLocalizedString("UA_Copied_To_Clipboard", tableName: "UAPushUI", comment: "Copied to clipboard string")
                 message.position = UALegacyInAppMessagePosition.top
@@ -51,6 +53,7 @@ class HomeViewController: UIViewController {
                 message.secondaryColor = UIColor(red: 0/255, green: 105/255, blue: 143/255, alpha: 1)
 
                 UAirship.inAppMessaging().display(message)
+                */
             }
         }
     }

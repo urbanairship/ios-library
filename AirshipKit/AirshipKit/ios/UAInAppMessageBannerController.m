@@ -64,6 +64,11 @@ double const MinimumSwipeVelocity = 100.0;
 @property(nonatomic, strong) NSTimer *dismissalTimer;
 
 /**
+ * The completion handler passed in when the message is shown.
+ */
+@property (nonatomic, copy, nullable) void (^showCompletionHandler)(void);
+
+/**
  * Flag representing the display state of the banner.
  */
 @property(nonatomic, assign) BOOL isShown;
@@ -109,7 +114,7 @@ double const MinimumSwipeVelocity = 100.0;
     if (self.isShown) {
         UA_LDEBUG(@"In-app message banner has already been displayed");
 
-        return completionHandler();
+        completionHandler();
     }
 
     UIView *parentView = [UAUtils mainWindow];
@@ -125,7 +130,7 @@ double const MinimumSwipeVelocity = 100.0;
 
     if (!parentView) {
         UA_LDEBUG(@"Unable to find parent view, canceling in-app message banner display");
-        return completionHandler();
+        completionHandler();
     }
 
     UAInAppMessageTextView *textView = [UAInAppMessageTextView textViewWithHeading:heading
@@ -151,6 +156,8 @@ double const MinimumSwipeVelocity = 100.0;
                                  bannerView:self.bannerView
                                   placement:placement];
 
+    self.showCompletionHandler = completionHandler;
+
     [self bannerView:self.bannerView animateInWithParentView:parentView completionHandler:^{
         [self scheduleDismissalTimer];
         [self observeAppState];
@@ -161,6 +168,12 @@ double const MinimumSwipeVelocity = 100.0;
 }
 
 - (void)dismiss  {
+
+    if (self.showCompletionHandler) {
+        self.showCompletionHandler();
+        self.showCompletionHandler = nil;
+    }
+
     [self beginTeardown];
 
     dispatch_async(dispatch_get_main_queue(), ^{

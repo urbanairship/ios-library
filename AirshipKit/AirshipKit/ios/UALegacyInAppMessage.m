@@ -3,7 +3,6 @@
 #import "UALegacyInAppMessage.h"
 #import "UAUtils.h"
 #import "UAColorUtils+Internal.h"
-#import "UALegacyInAppMessageButtonActionBinding.h"
 #import "UAActionArguments.h"
 #import "UAirship+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
@@ -166,34 +165,6 @@
 
 - (NSArray *)notificationActions {
     return self.buttonCategory.actions;
-}
-
-- (NSArray *)buttonActionBindings {
-    NSMutableArray *bindings = [NSMutableArray array];
-
-    // Create a button action binding for each corresponding action identifier
-    for (UANotificationAction *notificationAction in self.notificationActions) {
-        NSDictionary *payload = self.buttonActions[[notificationAction identifier]] ?: [NSDictionary dictionary];
-
-        UALegacyInAppMessageButtonActionBinding *binding = [[UALegacyInAppMessageButtonActionBinding alloc] init];
-
-        binding.title = notificationAction.title;
-
-        binding.identifier = notificationAction.identifier;
-
-        // choose the situation that matches the corresponding notificationAction's activation mode
-        if ((notificationAction.options & UANotificationActionOptionForeground) > 0) {
-            binding.situation = UASituationForegroundInteractiveButton;
-        } else {
-            binding.situation = UASituationBackgroundInteractiveButton;
-        }
-
-        binding.actions = payload;
-
-        [bindings addObject:binding];
-    }
-
-    return bindings;
 }
 
 - (NSString *)description {

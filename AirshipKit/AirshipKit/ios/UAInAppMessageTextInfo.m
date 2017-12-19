@@ -233,6 +233,10 @@ NSString *const UAInAppMessageTextInfoStyleKey = @"style";
 }
 
 + (NSDictionary *)JSONWithTextInfo:(UAInAppMessageTextInfo *)textInfo {
+    if (!textInfo) {
+        return nil;
+    }
+
     NSMutableDictionary *json = [NSMutableDictionary dictionary];
 
     json[UAInAppMessageTextInfoTextKey] = textInfo.text;
