@@ -217,8 +217,7 @@
     }
 
     // Trigger the schedules with a foreground notification
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification
-                                                        object:nil];
+    [self simulateForegroundTransition];
 
     [self waitForExpectations:runExpectations timeout:5];
 
@@ -608,9 +607,9 @@
 
 - (void)testBackground {
     UAScheduleTrigger *trigger = [UAScheduleTrigger backgroundTriggerWithCount:1];
+
     [self verifyTrigger:trigger triggerFireBlock:^{
-        [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification
-                                                            object:nil];
+        [self simulateBackgroundTransition];
     }];
 }
 
@@ -825,6 +824,14 @@
                                                         object:nil];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification
+                                                        object:nil];
+}
+
+- (void)simulateBackgroundTransition {
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification
+                                                        object:nil];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification
                                                         object:nil];
 }
 

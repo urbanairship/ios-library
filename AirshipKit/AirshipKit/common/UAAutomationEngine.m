@@ -45,6 +45,7 @@
 @property (nonatomic, copy) NSString *currentScreen;
 @property (nonatomic, copy, nullable) NSString * currentRegion;
 @property (nonatomic, assign) BOOL isForegrounded;
+@property (nonatomic, assign) BOOL isBackgrounded;
 @property (nonatomic, strong) NSMutableArray *activeTimers;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier backgroundTaskIdentifier;
 @property (nonatomic, assign) BOOL isStarted;
@@ -65,7 +66,8 @@
         self.automationStore = automationStore;
         self.scheduleLimit = limit;
         self.activeTimers = [NSMutableArray array];
-        self.isForegrounded = NO;
+        self.isForegrounded = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
+        self.isBackgrounded = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
         self.stateConditions = [NSMutableDictionary dictionary];
         self.paused = NO;
     }
@@ -281,6 +283,7 @@
 
 - (void)enterForeground {
     self.isForegrounded = YES;
+    self.isBackgrounded = NO;
 
     if (!self.activeTimers) {
         [self rescheduleTimers];
@@ -296,10 +299,13 @@
 }
 
 - (void)enterBackground {
-    self.isForegrounded = NO;
-
-    [self updateTriggersWithType:UAScheduleTriggerAppBackground argument:nil incrementAmount:1.0];
-    [self scheduleConditionsChanged];
+    if (!self.isBackgrounded) {
+        self.isForegrounded = NO;
+        self.isBackgrounded = YES;
+        
+        [self updateTriggersWithType:UAScheduleTriggerAppBackground argument:nil incrementAmount:1.0];
+        [self scheduleConditionsChanged];
+    }
 }
 
 -(void)customEventAdded:(NSNotification *)notification {
