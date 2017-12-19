@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="UAInAppMessageFullScreenView">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" bounces="NO" showsHorizontalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hEr-Uv-JrX">
+                    <rect key="frame" x="0.0" y="60" width="375" height="607"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nxZ-dF-if9" userLabel="Stack and Footer Container">
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="607"/>
+                            <subviews>
+                                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="Dgh-Mi-mKc" userLabel="Full Screen Stack View">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="577"/>
+                                </stackView>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rsN-La-UOG" userLabel="Footer Container View">
+                                    <rect key="frame" x="0.0" y="597" width="375" height="0.0"/>
+                                </view>
+                            </subviews>
+                            <constraints>
+                                <constraint firstItem="rsN-La-UOG" firstAttribute="centerX" secondItem="nxZ-dF-if9" secondAttribute="centerX" id="8TD-pD-hwM"/>
+                                <constraint firstItem="rsN-La-UOG" firstAttribute="width" secondItem="nxZ-dF-if9" secondAttribute="width" id="C1m-Hg-OHV"/>
+                                <constraint firstItem="rsN-La-UOG" firstAttribute="top" secondItem="Dgh-Mi-mKc" secondAttribute="bottom" constant="20" id="VkN-hT-5Zv"/>
+                                <constraint firstAttribute="trailing" secondItem="Dgh-Mi-mKc" secondAttribute="trailing" id="cQ5-2e-3of"/>
+                                <constraint firstAttribute="bottom" secondItem="Dgh-Mi-mKc" secondAttribute="bottom" priority="250" constant="20" id="csQ-F7-ntq"/>
+                                <constraint firstAttribute="bottom" secondItem="rsN-La-UOG" secondAttribute="bottom" constant="10" id="hV6-yg-KFh"/>
+                                <constraint firstItem="Dgh-Mi-mKc" firstAttribute="width" secondItem="nxZ-dF-if9" secondAttribute="width" id="kA3-Kz-c99"/>
+                                <constraint firstItem="Dgh-Mi-mKc" firstAttribute="top" secondItem="nxZ-dF-if9" secondAttribute="top" id="rRG-Rc-PEO"/>
+                                <constraint firstItem="Dgh-Mi-mKc" firstAttribute="leading" secondItem="nxZ-dF-if9" secondAttribute="leading" id="suM-7J-1wX"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                    <constraints>
+                        <constraint firstAttribute="bottom" secondItem="nxZ-dF-if9" secondAttribute="bottom" id="D03-0c-FzS"/>
+                        <constraint firstItem="nxZ-dF-if9" firstAttribute="width" secondItem="hEr-Uv-JrX" secondAttribute="width" id="K2K-ea-PXh"/>
+                        <constraint firstItem="nxZ-dF-if9" firstAttribute="height" secondItem="hEr-Uv-JrX" secondAttribute="height" priority="250" id="Sw4-Ry-119"/>
+                        <constraint firstAttribute="trailing" secondItem="nxZ-dF-if9" secondAttribute="trailing" constant="-67" id="Yum-9D-zGh"/>
+                        <constraint firstItem="nxZ-dF-if9" firstAttribute="leading" secondItem="hEr-Uv-JrX" secondAttribute="leading" id="pC5-hz-60J"/>
+                        <constraint firstItem="nxZ-dF-if9" firstAttribute="top" secondItem="hEr-Uv-JrX" secondAttribute="top" id="viB-Z9-oYu"/>
+                    </constraints>
+                </scrollView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Rls-sN-lHt" userLabel="Message Top">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="60"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dFs-4m-tfK" userLabel="Close Button Container" customClass="UAInAppMessageCloseButton">
+                            <rect key="frame" x="355" y="40" width="15" height="15"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="15" id="7Ch-eH-MrS"/>
+                                <constraint firstAttribute="width" constant="15" id="F0R-6D-9z8"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="60" id="4Tx-bg-igh"/>
+                        <constraint firstAttribute="bottom" secondItem="dFs-4m-tfK" secondAttribute="bottom" constant="5" id="aue-aq-MPt"/>
+                        <constraint firstAttribute="trailing" secondItem="dFs-4m-tfK" secondAttribute="trailing" constant="5" id="kzv-Kq-RCc"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="hEr-Uv-JrX" firstAttribute="width" secondItem="vUN-kp-3ea" secondAttribute="width" id="45a-MO-CLh"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="top" secondItem="Rls-sN-lHt" secondAttribute="top" constant="20" id="AQo-xW-N3w"/>
+                <constraint firstItem="Rls-sN-lHt" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" id="E1I-lg-5yw"/>
+                <constraint firstItem="Rls-sN-lHt" firstAttribute="width" secondItem="hEr-Uv-JrX" secondAttribute="width" id="GR4-Ug-tln"/>
+                <constraint firstItem="Rls-sN-lHt" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="OLf-M7-644"/>
+                <constraint firstItem="hEr-Uv-JrX" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="OnV-4n-C5z"/>
+                <constraint firstItem="hEr-Uv-JrX" firstAttribute="top" secondItem="Rls-sN-lHt" secondAttribute="bottom" id="PE7-az-ONh"/>
+                <constraint firstItem="hEr-Uv-JrX" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="jog-M2-U0o"/>
+                <constraint firstItem="hEr-Uv-JrX" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" id="m0c-ES-uAS"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <connections>
+                <outlet property="closeButtonView" destination="dFs-4m-tfK" id="tIp-t3-pas"/>
+                <outlet property="containerStackView" destination="Dgh-Mi-mKc" id="cm5-Vp-ewo"/>
+                <outlet property="footerView" destination="rsN-La-UOG" id="zxv-9d-96e"/>
+            </connections>
+            <point key="canvasLocation" x="220.5" y="8.5"/>
+        </view>
+    </objects>
+</document>

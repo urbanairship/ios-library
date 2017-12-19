@@ -23,6 +23,7 @@ NSString *const UAInAppMessageBorderRadiusKey = @"border_radius";
 NSString *const UAInAppMessageButtonLayoutKey = @"button_layout";
 NSString *const UAInAppMessageButtonsKey = @"buttons";
 NSString *const UAInAppMessageMediaKey = @"media";
+NSString *const UAInAppMessageFooterKey = @"footer";
 NSString *const UAInAppMessageDismissButtonColorKey = @"dismiss_button_color";
 NSString *const UAInAppMessageDurationKey = @"duration";
 

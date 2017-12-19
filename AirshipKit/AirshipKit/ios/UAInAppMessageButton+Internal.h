@@ -48,6 +48,14 @@ typedef NS_OPTIONS(NSUInteger, UAInAppMessageButtonRounding) {
 + (instancetype)buttonWithButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo
                             rounding:(UAInAppMessageButtonRounding)rounding;
 
+/**
+ * Factory method for creating a footer-style in-app message button.
+ *
+ * @param buttonInfo The button info.
+ */
++ (instancetype)footerButtonWithButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo;
+
+
 @end
 
 NS_ASSUME_NONNULL_END

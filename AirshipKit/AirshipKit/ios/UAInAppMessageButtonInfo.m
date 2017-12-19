@@ -210,7 +210,6 @@ NSString *const UAInAppMessageButtonInfoActionsKey = @"actions";
 
 #pragma mark - Validation
 
-// Validates builder contents for the banner type
 + (BOOL)validateBuilder:(UAInAppMessageButtonInfoBuilder *)builder {
     if (!builder.label) {
         UA_LDEBUG(@"In-app button infos require a label");

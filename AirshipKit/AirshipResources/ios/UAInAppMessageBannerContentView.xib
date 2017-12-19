@@ -21,7 +21,7 @@
                     <rect key="frame" x="-0.5" y="0.0" width="375" height="120"/>
                     <subviews>
                         <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="oky-8E-FXs">
-                            <rect key="frame" x="0.0" y="0.0" width="120" height="120"/>
+                            <rect key="frame" x="20" y="0.0" width="120" height="120"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="120" id="QlX-H5-8IV"/>
                                 <constraint firstAttribute="width" secondItem="oky-8E-FXs" secondAttribute="height" multiplier="1:1" id="odQ-im-6Xu"/>
@@ -34,11 +34,11 @@
                     <constraints>
                         <constraint firstItem="UGz-LO-0Cf" firstAttribute="width" secondItem="CwK-FL-VAk" secondAttribute="width" priority="750" id="34j-PM-tBj"/>
                         <constraint firstAttribute="trailing" secondItem="UGz-LO-0Cf" secondAttribute="trailing" id="RVv-Fs-msl"/>
-                        <constraint firstItem="oky-8E-FXs" firstAttribute="leading" secondItem="CwK-FL-VAk" secondAttribute="leading" id="XmO-FJ-7cZ"/>
+                        <constraint firstItem="oky-8E-FXs" firstAttribute="leading" secondItem="CwK-FL-VAk" secondAttribute="leading" constant="20" id="XmO-FJ-7cZ"/>
                         <constraint firstItem="UGz-LO-0Cf" firstAttribute="height" secondItem="CwK-FL-VAk" secondAttribute="height" id="fmt-My-SbU"/>
                         <constraint firstItem="UGz-LO-0Cf" firstAttribute="height" secondItem="oky-8E-FXs" secondAttribute="height" id="j0y-B9-Lc7"/>
                         <constraint firstItem="oky-8E-FXs" firstAttribute="top" secondItem="CwK-FL-VAk" secondAttribute="top" id="mSO-Ug-Prt"/>
-                        <constraint firstItem="UGz-LO-0Cf" firstAttribute="leading" secondItem="oky-8E-FXs" secondAttribute="trailing" constant="20" id="y1v-YS-FK8"/>
+                        <constraint firstItem="UGz-LO-0Cf" firstAttribute="leading" secondItem="oky-8E-FXs" secondAttribute="trailing" id="y1v-YS-FK8"/>
                     </constraints>
                 </view>
             </subviews>
@@ -66,21 +66,21 @@
                     <rect key="frame" x="-0.5" y="0.0" width="375" height="120"/>
                     <subviews>
                         <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="TJ0-ZI-VmX">
-                            <rect key="frame" x="255" y="0.0" width="120" height="120"/>
+                            <rect key="frame" x="235" y="0.0" width="120" height="120"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="120" id="Cr3-Ne-QtH"/>
                                 <constraint firstAttribute="width" secondItem="TJ0-ZI-VmX" secondAttribute="height" multiplier="1:1" id="gWA-Md-803"/>
                             </constraints>
                         </imageView>
                         <view contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="GTX-VX-8Bf" customClass="UAInAppMessageTextView">
-                            <rect key="frame" x="0.0" y="0.0" width="235.5" height="120"/>
+                            <rect key="frame" x="0.0" y="0.0" width="215.5" height="120"/>
                         </view>
                     </subviews>
                     <constraints>
                         <constraint firstItem="TJ0-ZI-VmX" firstAttribute="top" secondItem="AGo-BI-V0D" secondAttribute="top" id="0fP-nc-UJ5"/>
                         <constraint firstItem="TJ0-ZI-VmX" firstAttribute="leading" secondItem="GTX-VX-8Bf" secondAttribute="trailing" constant="20" id="4MO-mO-pf9"/>
                         <constraint firstItem="GTX-VX-8Bf" firstAttribute="width" secondItem="AGo-BI-V0D" secondAttribute="width" priority="750" id="Gyf-Kg-e6x"/>
-                        <constraint firstAttribute="trailing" secondItem="TJ0-ZI-VmX" secondAttribute="trailing" id="OpN-7L-Afy"/>
+                        <constraint firstAttribute="trailing" secondItem="TJ0-ZI-VmX" secondAttribute="trailing" constant="20" id="OpN-7L-Afy"/>
                         <constraint firstItem="GTX-VX-8Bf" firstAttribute="height" secondItem="AGo-BI-V0D" secondAttribute="height" id="RYc-8i-K3C"/>
                         <constraint firstItem="GTX-VX-8Bf" firstAttribute="leading" secondItem="AGo-BI-V0D" secondAttribute="leading" id="bAK-pn-ZUt"/>
                         <constraint firstItem="GTX-VX-8Bf" firstAttribute="height" secondItem="TJ0-ZI-VmX" secondAttribute="height" id="g4e-v7-udW"/>

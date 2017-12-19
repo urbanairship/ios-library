@@ -16,14 +16,14 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="205"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <stackView opaque="NO" contentMode="scaleAspectFill" axis="vertical" alignment="top" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="oAg-Fq-dBy">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="205"/>
+                <stackView opaque="NO" contentMode="scaleAspectFill" axis="vertical" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="oAg-Fq-dBy">
+                    <rect key="frame" x="20" y="0.0" width="335" height="205"/>
                 </stackView>
             </subviews>
             <constraints>
                 <constraint firstItem="oAg-Fq-dBy" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="8Xg-HV-s2s"/>
-                <constraint firstItem="oAg-Fq-dBy" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="Apl-Tv-1QE"/>
-                <constraint firstItem="oAg-Fq-dBy" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" id="DpN-se-QlV"/>
+                <constraint firstItem="oAg-Fq-dBy" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="20" id="Jiw-MX-ed7"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="oAg-Fq-dBy" secondAttribute="trailing" constant="20" id="WBU-mS-qKu"/>
                 <constraint firstItem="oAg-Fq-dBy" firstAttribute="centerY" secondItem="vUN-kp-3ea" secondAttribute="centerY" id="nKt-cx-SNi"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>

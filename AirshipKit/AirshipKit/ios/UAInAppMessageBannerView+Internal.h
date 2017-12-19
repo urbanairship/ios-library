@@ -7,6 +7,8 @@
 @class UAInAppMessageBannerContentView;
 @class UAInAppMessageBannerDisplayContent;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * The banner view.
  */
@@ -28,6 +30,8 @@
  */
 + (instancetype)bannerMessageViewWithDisplayContent:(UAInAppMessageBannerDisplayContent *)displayContent
                                   bannerContentView:(UAInAppMessageBannerContentView *)contentView
-                                         buttonView:(UAInAppMessageButtonView *)buttonView;
+                                         buttonView:(UAInAppMessageButtonView * _Nullable)buttonView;
 
 @end
+
+NS_ASSUME_NONNULL_END

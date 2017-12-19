@@ -4,6 +4,8 @@
 #import "UAInAppMessageMediaView+Internal.h"
 #import "UAInAppMessageTextView+Internal.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UAInAppMessageBannerContentView : UIView
 
 /**
@@ -18,6 +20,8 @@
  */
 + (instancetype)contentViewWithLayout:(NSString *)contentLayout
                              textView:(UAInAppMessageTextView *)textView
-                                image:(UIImage *)image;
+                                image:(UIImage * _Nullable)image;
 
 @end
+
+NS_ASSUME_NONNULL_END

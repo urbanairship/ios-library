@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" userLabel="Image View" customClass="UAInAppMessageMediaView">
+            <rect key="frame" x="0.0" y="0.0" width="230" height="230"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="sQ8-gv-GNE">
+                    <rect key="frame" x="0.0" y="0.5" width="230" height="230"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="sQ8-gv-GNE" secondAttribute="height" multiplier="1:1" id="eK9-A7-gdQ"/>
+                    </constraints>
+                </imageView>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="sQ8-gv-GNE" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" id="InR-zQ-y6q"/>
+                <constraint firstItem="sQ8-gv-GNE" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="avo-BO-aIY"/>
+                <constraint firstItem="sQ8-gv-GNE" firstAttribute="centerY" secondItem="vUN-kp-3ea" secondAttribute="centerY" id="ifr-DZ-lg7"/>
+                <constraint firstItem="sQ8-gv-GNE" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="wcG-qF-GYI"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <point key="canvasLocation" x="-38" y="131"/>
+        </view>
+        <view contentMode="scaleToFill" id="6Og-HG-EkK" userLabel="Video View">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <viewLayoutGuide key="safeArea" id="jBf-LQ-qHv"/>
+            <point key="canvasLocation" x="35" y="633"/>
+        </view>
+        <view contentMode="scaleToFill" id="OJm-X8-8G7" userLabel="YouTube View">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <viewLayoutGuide key="safeArea" id="I7d-gz-dGX"/>
+            <point key="canvasLocation" x="35" y="1495"/>
+        </view>
+    </objects>
+</document>

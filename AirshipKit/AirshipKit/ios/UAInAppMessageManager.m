@@ -6,6 +6,7 @@
 #import "UAScheduleInfo+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAInAppMessageBannerAdapter.h"
+#import "UAInAppMessageFullScreenAdapter.h"
 #import "UAGlobal.h"
 #import "UAConfig.h"
 #import "UAInAppRemoteDataClient+Internal.h"
@@ -93,7 +94,10 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
         return [UAInAppMessageBannerAdapter adapterForMessage:message];
     } forDisplayType:UAInAppMessageDisplayTypeBanner];
 
-    // TODO set factories for other display types here
+    // Full Screen
+    [self setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
+        return [UAInAppMessageFullScreenAdapter adapterForMessage:message];
+    } forDisplayType:UAInAppMessageDisplayTypeFullScreen];
 }
 
 - (void)getScheduleWithIdentifier:(NSString *)identifier completionHandler:(void (^)(UASchedule *))completionHandler {

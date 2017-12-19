@@ -209,5 +209,4 @@ class UAProjectValidationTest: XCTestCase {
         // Validate that each framework import is represented in the UAirship header
         validateUAirshipHeader(buildTarget: "AirshipLib")
     }
-
 }

@@ -12,6 +12,8 @@
 #import "UAInAppMessageManager+Internal.h"
 #import "UAColorUtils+Internal.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class UAInAppMessageTextView;
 @class UAInAppMessageButtonView;
 @class UAInAppMessageMediaView;
@@ -71,7 +73,7 @@ double const MinimumSwipeVelocity = 100.0;
 /**
  * Flag representing the display state of the banner.
  */
-@property(nonatomic, assign) BOOL isShown;
+@property(nonatomic, assign) BOOL isShowing;
 
 /**
  * Gesture recognizer flags.
@@ -95,7 +97,7 @@ double const MinimumSwipeVelocity = 100.0;
 
 - (instancetype)initWithBannerMessageID:(NSString *)messageID
                          displayContent:(UAInAppMessageBannerDisplayContent *)displayContent
-                                  image:(UIImage *)image {
+                                  image:(UIImage * _Nullable)image {
     self = [super init];
 
     if (self) {
@@ -111,7 +113,7 @@ double const MinimumSwipeVelocity = 100.0;
 #pragma mark Core Functionality
 
 - (void)show:(void (^)(void))completionHandler  {
-    if (self.isShown) {
+    if (self.isShowing) {
         UA_LDEBUG(@"In-app message banner has already been displayed");
 
         completionHandler();
@@ -161,7 +163,7 @@ double const MinimumSwipeVelocity = 100.0;
     [self bannerView:self.bannerView animateInWithParentView:parentView completionHandler:^{
         [self scheduleDismissalTimer];
         [self observeAppState];
-        self.isShown = YES;
+        self.isShowing = YES;
     }];
 
     [self initializeGestureRecognizersWithBannerView:self.bannerView parentView:parentView];
@@ -223,14 +225,15 @@ double const MinimumSwipeVelocity = 100.0;
                                 multiplier:1
                                   constant:0].active = YES;
 
-    // Constrain leading edge
+    // Constrain width
     NSLayoutConstraint *leading = [NSLayoutConstraint constraintWithItem:bannerView
-                                                               attribute:NSLayoutAttributeLeading
+                                                               attribute:NSLayoutAttributeWidth
                                                                relatedBy:NSLayoutRelationEqual
                                                                   toItem:parentView
-                                                               attribute:NSLayoutAttributeLeadingMargin
+                                                               attribute:NSLayoutAttributeWidth
                                                               multiplier:1
-                                                                constant:DefaultLeadingEdgeSpace];
+                                                                constant:0];
+
     leading.priority = UILayoutPriorityDefaultHigh;
     leading.active = YES;
 
@@ -359,7 +362,6 @@ double const MinimumSwipeVelocity = 100.0;
     BOOL bannerHasBottomPlacement = [placement isEqualToString:UAInAppMessageBannerPlacementBottom];
     BOOL swipeIsAwayFromBannerPlacement = (translation.y < 0 && bannerHasBottomPlacement) ||
     (translation.y > 0 && bannerHasTopPlacement);
-
 
     if (xVelocityExceedsYVelocity ||  yVelocityBelowThreshold) {
         return;
@@ -496,3 +498,5 @@ double const MinimumSwipeVelocity = 100.0;
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

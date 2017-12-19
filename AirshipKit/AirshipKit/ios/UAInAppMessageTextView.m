@@ -40,7 +40,7 @@ NSString *const UAInAppMessageTextViewNibName = @"UAInAppMessageTextView";
 
             [UAInAppMessageUtils applyTextInfo:heading label:headingLabel];
             [self.textContainer addArrangedSubview:headingLabel];
-            [UAInAppMessageUtils applyContainerConstraintsToContainer:headingLabel containedView:self.textContainer];
+            self.textContainer.alignment = [UAInAppMessageUtils stackAlignmentWithTextInfo:heading];
         }
         if (body) {
 
@@ -49,7 +49,7 @@ NSString *const UAInAppMessageTextViewNibName = @"UAInAppMessageTextView";
 
             [UAInAppMessageUtils applyTextInfo:body label:bodyLabel];
             [self.textContainer addArrangedSubview:bodyLabel];
-            [UAInAppMessageUtils applyContainerConstraintsToContainer:bodyLabel containedView:self.textContainer];
+            self.textContainer.alignment = [UAInAppMessageUtils stackAlignmentWithTextInfo:body];
         }
 
         [UIView performWithoutAnimation:^{

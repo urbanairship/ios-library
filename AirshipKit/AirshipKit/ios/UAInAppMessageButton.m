@@ -9,6 +9,8 @@ CGFloat const ButtonIsBeingTappedAlpha = 0.7;
 @interface UAInAppMessageButton ()
 @property(nonatomic, strong) UAInAppMessageButtonInfo *buttonInfo;
 @property(nonatomic, assign) UAInAppMessageButtonRounding rounding;
+@property(nonatomic, assign) BOOL isFooter;
+
 @end
 
 @implementation UAInAppMessageButton
@@ -17,6 +19,27 @@ CGFloat const ButtonIsBeingTappedAlpha = 0.7;
                             rounding:(UAInAppMessageButtonRounding)rounding {
 return [[self alloc] initWithButtonInfo:buttonInfo
                                rounding:rounding];
+}
+
++ (instancetype)footerButtonWithButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo {
+    return [[self alloc] initFooterWithButtonInfo:buttonInfo];
+}
+
+
+- (instancetype)initFooterWithButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo {
+    self = [super init];
+
+    if (self) {
+        self.buttonInfo = buttonInfo;
+        self.rounding = 0;
+        self.isFooter = true;
+        [UAInAppMessageUtils applyButtonInfo:buttonInfo button:self];
+
+        // Apply rounding on layout subviews
+        [self layoutSubviews];
+    }
+
+    return self;
 }
 
 - (instancetype)initWithButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo
@@ -38,6 +61,16 @@ return [[self alloc] initWithButtonInfo:buttonInfo
 - (void)setHighlighted:(BOOL)highlighted {
     [super setHighlighted:highlighted];
 
+    if (self.isFooter) {
+        if (highlighted) {
+            self.titleLabel.textColor = [self.titleLabel.textColor colorWithAlphaComponent:ButtonIsBeingTappedAlpha];
+        } else {
+            self.titleLabel.textColor = [self.titleLabel.textColor colorWithAlphaComponent:1];
+        }
+
+        return;
+    }
+
     if (highlighted) {
         self.backgroundColor = [self.backgroundColor colorWithAlphaComponent:ButtonIsBeingTappedAlpha];
     } else {
@@ -48,7 +81,10 @@ return [[self alloc] initWithButtonInfo:buttonInfo
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    [self applyLayerRounding];
+
+    if (!self.isFooter) {
+        [self applyLayerRounding];
+    }
 }
 
 -(void)applyLayerRounding {

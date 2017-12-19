@@ -28,6 +28,18 @@
     [label setAttributedText:attributedText];
 }
 
++ (UIStackViewAlignment)stackAlignmentWithTextInfo:(UAInAppMessageTextInfo *)textInfo {
+    if ([textInfo.alignment isEqualToString:UAInAppMessageTextInfoAlignmentLeft]) {
+        return UIStackViewAlignmentLeading;
+    } else if ([textInfo.alignment isEqualToString:UAInAppMessageTextInfoAlignmentCenter]) {
+        return UIStackViewAlignmentCenter;
+    } else if ([textInfo.alignment isEqualToString:UAInAppMessageTextInfoAlignmentRight]) {
+        return UIStackViewAlignmentTrailing;
+    }
+
+    return UIStackViewAlignmentLeading;
+}
+
 + (void)applyContainerConstraintsToContainer:(UIView *)container containedView:(UIView *)contained {
     if (!container || !contained) {
         UA_LDEBUG(@"Attempted to constrain a nil view");

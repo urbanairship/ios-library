@@ -5,6 +5,7 @@
 #import "UAScheduleInfo+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppMessageBannerDisplayContent.h"
+#import "UAInAppMessageFullScreenDisplayContent.h"
 #import "UAInAppMessageAudience.h"
 
 NSString *const UAScheduleInfoInAppMessageKey = @"message";

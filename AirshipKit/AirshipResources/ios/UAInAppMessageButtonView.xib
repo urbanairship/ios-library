@@ -17,11 +17,12 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="Vhy-Ya-qMY">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="100"/>
+                    <rect key="frame" x="20" y="0.0" width="335" height="100"/>
                 </stackView>
             </subviews>
             <constraints>
-                <constraint firstItem="Vhy-Ya-qMY" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="L8m-qT-0zu"/>
+                <constraint firstItem="Vhy-Ya-qMY" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="20" id="GIo-6N-yJq"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="Vhy-Ya-qMY" secondAttribute="trailing" constant="20" id="GU5-f3-vGH"/>
                 <constraint firstItem="Vhy-Ya-qMY" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="aTd-6Q-T0S"/>
                 <constraint firstItem="Vhy-Ya-qMY" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" id="b8W-Q0-R3T"/>
                 <constraint firstItem="Vhy-Ya-qMY" firstAttribute="centerY" secondItem="vUN-kp-3ea" secondAttribute="centerY" id="kiv-mm-7h9"/>
@@ -31,20 +32,21 @@
             <connections>
                 <outlet property="buttonContainer" destination="Vhy-Ya-qMY" id="qFw-Hr-htr"/>
             </connections>
-            <point key="canvasLocation" x="-25" y="-754"/>
+            <point key="canvasLocation" x="-25.5" y="-754"/>
         </view>
         <view contentMode="scaleToFill" id="YDU-2l-e1u" userLabel="In App Message Button View Separate" customClass="UAInAppMessageButtonView">
             <rect key="frame" x="0.0" y="0.0" width="375" height="100"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="dym-7B-qqF">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="100"/>
+                    <rect key="frame" x="20" y="0.0" width="335" height="100"/>
                 </stackView>
             </subviews>
             <constraints>
+                <constraint firstItem="dym-7B-qqF" firstAttribute="leading" secondItem="NVm-Ul-31I" secondAttribute="leading" constant="20" id="GB0-VG-aXP"/>
                 <constraint firstItem="dym-7B-qqF" firstAttribute="height" secondItem="YDU-2l-e1u" secondAttribute="height" id="mzT-xT-LVx"/>
                 <constraint firstItem="dym-7B-qqF" firstAttribute="centerY" secondItem="NVm-Ul-31I" secondAttribute="centerY" id="q5w-Nh-IZ5"/>
-                <constraint firstItem="dym-7B-qqF" firstAttribute="width" secondItem="YDU-2l-e1u" secondAttribute="width" id="sjd-lu-Gqd"/>
+                <constraint firstItem="NVm-Ul-31I" firstAttribute="trailing" secondItem="dym-7B-qqF" secondAttribute="trailing" constant="20" id="y3x-kq-ogh"/>
                 <constraint firstItem="dym-7B-qqF" firstAttribute="centerX" secondItem="NVm-Ul-31I" secondAttribute="centerX" id="y6O-jb-t1V"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
@@ -52,18 +54,19 @@
             <connections>
                 <outlet property="buttonContainer" destination="dym-7B-qqF" id="ubu-tR-FIi"/>
             </connections>
-            <point key="canvasLocation" x="-26" y="-589"/>
+            <point key="canvasLocation" x="-26.5" y="-589"/>
         </view>
         <view contentMode="scaleToFill" id="9dC-tD-hUh" userLabel="In App Message Button View Stacked" customClass="UAInAppMessageButtonView">
             <rect key="frame" x="0.0" y="0.0" width="375" height="171"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="IVA-NN-i5v">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="171"/>
+                    <rect key="frame" x="20" y="0.0" width="335" height="171"/>
                 </stackView>
             </subviews>
             <constraints>
-                <constraint firstItem="IVA-NN-i5v" firstAttribute="width" secondItem="9dC-tD-hUh" secondAttribute="width" id="JLq-eq-1wR"/>
+                <constraint firstItem="ZSi-AB-jF1" firstAttribute="trailing" secondItem="IVA-NN-i5v" secondAttribute="trailing" constant="20" id="G1Q-5H-Hbr"/>
+                <constraint firstItem="IVA-NN-i5v" firstAttribute="leading" secondItem="ZSi-AB-jF1" secondAttribute="leading" constant="20" id="Ip7-21-1nZ"/>
                 <constraint firstItem="IVA-NN-i5v" firstAttribute="centerY" secondItem="ZSi-AB-jF1" secondAttribute="centerY" id="Rix-De-WSH"/>
                 <constraint firstItem="IVA-NN-i5v" firstAttribute="centerX" secondItem="ZSi-AB-jF1" secondAttribute="centerX" id="eIe-77-NDs"/>
                 <constraint firstItem="IVA-NN-i5v" firstAttribute="height" secondItem="9dC-tD-hUh" secondAttribute="height" id="uvY-7p-dyp"/>
@@ -73,7 +76,7 @@
             <connections>
                 <outlet property="buttonContainer" destination="IVA-NN-i5v" id="3XY-7d-0DW"/>
             </connections>
-            <point key="canvasLocation" x="-26" y="-392"/>
+            <point key="canvasLocation" x="-26.5" y="-392.5"/>
         </view>
     </objects>
 </document>
