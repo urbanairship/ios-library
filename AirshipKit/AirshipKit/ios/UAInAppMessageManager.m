@@ -62,6 +62,7 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
         self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:[UAAutomationStore automationStoreWithStoreName:storeName] scheduleLimit:MaxSchedules];
         self.automationEngine.delegate = self;
 
+        [self.automationEngine start];
         [self updateEnginePauseState];
 
         self.displayInterval = DefaultMessageDisplayInterval;
