@@ -3,6 +3,7 @@
 #import <UIKit/UIKit.h>
 #import "UAInAppMessageMediaView+Internal.h"
 #import "UAInAppMessageTextView+Internal.h"
+#import "UAInAppMessageBannerDisplayContent+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return a configured UAInAppMessageBannerContentView instance.
  */
-+ (instancetype)contentViewWithLayout:(NSString *)contentLayout
++ (instancetype)contentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout
                              textView:(UAInAppMessageTextView *)textView
                                 image:(UIImage * _Nullable)image;
 

@@ -21,24 +21,54 @@ typedef NS_ENUM(NSInteger, UAInAppMessageBannerDisplayContentErrorCode) {
 };
 
 /**
+ * Banner placement.
+ */
+typedef NS_ENUM(NSInteger, UAInAppMessageBannerPlacementType) {
+    /**
+     * Banner placement top
+     */
+    UAInAppMessageBannerPlacementTop,
+    
+    /**
+     * Banner placement bottom
+     */
+    UAInAppMessageBannerPlacementBottom,
+};
+
+/**
+ * Content layout.
+ */
+typedef NS_ENUM(NSInteger, UAInAppMessageBannerContentLayoutType) {
+    /**
+     * Media on the left
+     */
+    UAInAppMessageBannerContentLayoutTypeMediaLeft,
+    
+    /**
+     * Media on the right
+     */
+    UAInAppMessageBannerContentLayoutTypeMediaRight,
+};
+
+/**
  * Display the message on top of the screen.
  */
-extern NSString *const UAInAppMessageBannerPlacementTop;
+extern NSString *const UAInAppMessageBannerPlacementTopValue;
 
 /**
  * Display the message on bottom of the screen.
  */
-extern NSString *const UAInAppMessageBannerPlacementBottom;
+extern NSString *const UAInAppMessageBannerPlacementBottomValue;
 
 /**
  * Template to display the optional media on the left.
  */
-extern NSString *const UAInAppMessageBannerContentLayoutMediaLeft;
+extern NSString *const UAInAppMessageBannerContentLayoutMediaLeftValue;
 
 /**
  * Template to display the optional media on the right.
  */
-extern NSString *const UAInAppMessageBannerContentLayoutMediaRight;
+extern NSString *const UAInAppMessageBannerContentLayoutMediaRightValue;
 
 /**
  * Default duration in milliseconds.
@@ -83,18 +113,18 @@ extern NSString *const UAInAppMessageBannerActions;
 /**
  * The banner's button layout. Defaults to UAInAppMessageButtonLayoutSeparate
  */
-@property(nonatomic, copy, nullable) NSString *buttonLayout;
+@property(nonatomic, assign) UAInAppMessageButtonLayoutType buttonLayout;
 
 /**
  * The banner's placement. Defaults to UAInAppMessageBannerPlacementBottom
  */
-@property(nonatomic, copy, nullable) NSString *placement;
+@property(nonatomic, assign) UAInAppMessageBannerPlacementType placement;
 
 /**
  * The banner's layout for the text and media. Defaults to
- * UAInAppMessageBannerContentLayoutMediaLeft
+ * UAInAppMessageBannerContentLayoutTypeMediaLeft
  */
-@property(nonatomic, copy, nullable) NSString *contentLayout;
+@property(nonatomic, assign) UAInAppMessageBannerContentLayoutType contentLayout;
 
 /**
  * The banner's display duration. Defaults to UAInAppMessageBannerDefaultDuration.
@@ -104,12 +134,12 @@ extern NSString *const UAInAppMessageBannerActions;
 /**
  * The banner's background color. Defaults to white.
  */
-@property(nonatomic, copy, nullable) NSString *backgroundColor;
+@property(nonatomic, strong, nullable) UIColor *backgroundColor;
 
 /**
  * The banner's dismiss button color. Defaults to black.
  */
-@property(nonatomic, copy, nullable) NSString *dismissButtonColor;
+@property(nonatomic, strong, nullable) UIColor *dismissButtonColor;
 
 /**
  * The banner's border radius. Defaults to 0.
@@ -151,18 +181,18 @@ extern NSString *const UAInAppMessageBannerActions;
 /**
  * The banner's button layout.
  */
-@property(nonatomic, copy, nullable, readonly) NSString *buttonLayout;
+@property(nonatomic, assign, readonly) UAInAppMessageButtonLayoutType buttonLayout;
 
 /**
  * The banner's placement. Defaults to UAInAppMessageBannerPlacementBottom
  */
-@property(nonatomic, copy, nullable, readonly) NSString *placement;
+@property(nonatomic, assign, readonly) UAInAppMessageBannerPlacementType placement;
 
 /**
  * The banner's layout for the text and media. Defaults to
- * UAInAppMessageBannerContentLayoutMediaLeft
+ * UAInAppMessageBannerContentLayoutTypeMediaLeft
  */
-@property(nonatomic, copy, nullable, readonly) NSString *contentLayout;
+@property(nonatomic, assign, readonly) UAInAppMessageBannerContentLayoutType contentLayout;
 
 /**
  * The banner's display duration. Defaults to UAInAppMessageBannerDefaultDuration.
@@ -172,12 +202,12 @@ extern NSString *const UAInAppMessageBannerActions;
 /**
  * The banner's background color. Defaults to white.
  */
-@property(nonatomic, copy, nullable, readonly) NSString *backgroundColor;
+@property(nonatomic, strong, nullable, readonly) UIColor *backgroundColor;
 
 /**
  * The banner's dismiss button color. Defaults to black.
  */
-@property(nonatomic, copy, nullable, readonly) NSString *dismissButtonColor;
+@property(nonatomic, strong, nullable, readonly) UIColor *dismissButtonColor;
 
 /**
  * The banner's border radius. Defaults to 0.

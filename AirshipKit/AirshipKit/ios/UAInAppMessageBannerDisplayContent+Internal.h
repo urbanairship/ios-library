@@ -9,22 +9,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- * Builder class for a UAInAppMessageBannerDisplayContent.
- */
-@interface UAInAppMessageBannerDisplayContentBuilder ()
-
-/**
- * Applies fields from a JSON object.
- *
- * @param json The json object.
- * @param error The optional error.
- * @returns `YES` if the json was able to be applied, otherwise `NO`.
- */
-- (BOOL)applyFromJSON:(id)json error:(NSError * _Nullable *)error;
-
-@end
-
 @interface UAInAppMessageBannerDisplayContent ()
 
 /**
@@ -50,18 +34,18 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The banner's button layout.
  */
-@property(nonatomic, copy, nullable) NSString *buttonLayout;
+@property(nonatomic, assign) UAInAppMessageButtonLayoutType buttonLayout;
 
 /**
  * The banner's placement. Defaults to UAInAppMessageBannerPlacementBottom
  */
-@property(nonatomic, copy, nullable) NSString *placement;
+@property(nonatomic, assign) UAInAppMessageBannerPlacementType placement;
 
 /**
  * The banner's layout for the text and media. Defaults to
- * UAInAppMessageBannerContentLayoutMediaLeft
+ * UAInAppMessageBannerContentLayoutTypeMediaLeft
  */
-@property(nonatomic, copy, nullable) NSString *contentLayout;
+@property(nonatomic, assign) UAInAppMessageBannerContentLayoutType contentLayout;
 
 /**
  * The banner's display duration. Defaults to UAInAppMessageBannerDefaultDuration.
@@ -71,12 +55,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The banner's background color. Defaults to white.
  */
-@property(nonatomic, copy, nullable) NSString *backgroundColor;
+@property(nonatomic, strong, nullable) UIColor *backgroundColor;
 
 /**
  * The banner's dismiss button color. Defaults to black.
  */
-@property(nonatomic, copy, nullable) NSString *dismissButtonColor;
+@property(nonatomic, strong, nullable) UIColor *dismissButtonColor;
 
 /**
  * The banner's border radius. Defaults to 0.

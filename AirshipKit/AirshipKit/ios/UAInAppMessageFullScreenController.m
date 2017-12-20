@@ -94,21 +94,16 @@ double const DefaultFullScreenAnimationDuration = 0.2;
 
     UIView *parentView = [UAUtils mainWindow];
 
-
-    NSArray<UAInAppMessageButtonInfo *> *buttons = self.displayContent.buttons;
-    NSString *buttonLayout = self.displayContent.buttonLayout;
-    UIColor *dismissColor = [UAColorUtils colorWithHexString:self.displayContent.dismissButtonColor];
-
     if (!parentView) {
         UA_LDEBUG(@"Unable to find parent view, canceling in-app message full screen display");
         return completionHandler();
     }
 
-    UAInAppMessageButtonView *buttonView = [UAInAppMessageButtonView buttonViewWithButtons:buttons
-                                                                                    layout:buttonLayout
+    UAInAppMessageButtonView *buttonView = [UAInAppMessageButtonView buttonViewWithButtons:self.displayContent.buttons
+                                                                                    layout:self.displayContent.buttonLayout
                                                                                     target:self
                                                                                   selector:@selector(buttonTapped:)
-                                                                        dismissButtonColor:dismissColor];
+                                                                        dismissButtonColor:self.displayContent.dismissButtonColor];
 
     UAInAppMessageCloseButton *closeButton = [self addCloseButton];
     UAInAppMessageButton *footerButton = [self addFooterButtonWithButtonInfo:self.displayContent.footer];
@@ -174,7 +169,7 @@ double const DefaultFullScreenAnimationDuration = 0.2;
     UAInAppMessageButton *button = (UAInAppMessageButton *)sender;
 
     // Check button behavior
-    if ([button.buttonInfo.behavior isEqualToString:UAInAppMessageButtonInfoBehaviorCancel]) {
+    if (button.buttonInfo.behavior == UAInAppMessageButtonInfoBehaviorCancel) {
         // Cancel IAM schedule
         [[UAirship inAppMessageManager] cancelMessageWithID:self.messageID];
     }

@@ -22,10 +22,6 @@ typedef NS_ENUM(NSInteger, UALegacyInAppMessagePosition) {
  */
 typedef NS_ENUM(NSInteger, UALegacyInAppMessageDisplayType) {
     /**
-     * Unknown or unsupported display type.
-     */
-    UALegacyInAppMessageDisplayTypeUnknown,
-    /**
      * Banner display type.
      */
     UALegacyInAppMessageDisplayTypeBanner
@@ -76,8 +72,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The display type. Defaults to `UALegacyInAppMessageDisplayTypeBanner`
- * when built with the default class constructor, or `UALegacyInAppMessageDisplayTypeUnknown`
- * when built from a payload with a missing or unidentified display type.
+ * when built with the default class constructor.
+ * When built from a payload with a missing or unidentified display type,
+ * the message will be nil.
  */
 @property(nonatomic, assign) UALegacyInAppMessageDisplayType displayType;
 

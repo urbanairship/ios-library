@@ -18,13 +18,35 @@ typedef NS_ENUM(NSInteger, UAInAppMessageErrorCode) {
 };
 
 /**
- * Banner display types.
+ * Display types.
  */
-extern NSString *const UAInAppMessageDisplayTypeBanner;
-extern NSString *const UAInAppMessageDisplayTypeFullScreen;
-extern NSString *const UAInAppMessageDisplayTypeModal;
-extern NSString *const UAInAppMessageDisplayTypeHTML;
-extern NSString *const UAInAppMessageDisplayTypeCustom;
+typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
+    /**
+     * Banner display
+     */
+    UAInAppMessageDisplayTypeBanner,
+    
+    /**
+     * Full screen display
+     */
+    UAInAppMessageDisplayTypeFullScreen,
+    
+    /**
+     * Modal display
+     */
+    UAInAppMessageDisplayTypeModal,
+    
+    /**
+     * HTML display
+     */
+    UAInAppMessageDisplayTypeHTML,
+    
+    /**
+     * Custom display
+     */
+    UAInAppMessageDisplayTypeCustom
+    
+};
 
 /**
  * Builder class for a UAInAppMessage.
@@ -43,7 +65,7 @@ extern NSString *const UAInAppMessageDisplayTypeCustom;
 /**
  * The display type.
  */
-@property(nonatomic, copy) NSString *displayType;
+@property(nonatomic, assign) UAInAppMessageDisplayType displayType;
 
 /**
  * The display content for the message.
@@ -79,7 +101,7 @@ extern NSString *const UAInAppMessageDisplayTypeCustom;
 /**
  * The display type.
  */
-@property(nonatomic, copy) NSString *displayType;
+@property(nonatomic, assign) UAInAppMessageDisplayType displayType;
 
 /**
  * The display content for the message.

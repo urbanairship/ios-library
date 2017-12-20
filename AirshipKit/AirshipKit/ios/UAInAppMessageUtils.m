@@ -7,7 +7,7 @@
 @implementation UAInAppMessageUtils
 
 + (void)applyButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo button:(UAInAppMessageButton *)button {
-    button.backgroundColor = [UAColorUtils colorWithHexString:buttonInfo.backgroundColor];
+    button.backgroundColor = buttonInfo.backgroundColor;
 
     // Title label should resize for text length
     button.titleLabel.numberOfLines = 0;
@@ -29,11 +29,11 @@
 }
 
 + (UIStackViewAlignment)stackAlignmentWithTextInfo:(UAInAppMessageTextInfo *)textInfo {
-    if ([textInfo.alignment isEqualToString:UAInAppMessageTextInfoAlignmentLeft]) {
+    if (textInfo.alignment == NSTextAlignmentLeft) {
         return UIStackViewAlignmentLeading;
-    } else if ([textInfo.alignment isEqualToString:UAInAppMessageTextInfoAlignmentCenter]) {
+    } else if (textInfo.alignment == NSTextAlignmentCenter) {
         return UIStackViewAlignmentCenter;
-    } else if ([textInfo.alignment isEqualToString:UAInAppMessageTextInfoAlignmentRight]) {
+    } else if (textInfo.alignment == NSTextAlignmentRight) {
         return UIStackViewAlignmentTrailing;
     }
 
@@ -121,12 +121,12 @@
     [attributes setObject:font forKey:NSFontAttributeName];
 
     // Underline
-    if ([textInfo.styles containsObject:UAInAppMessageTextInfoStyleUnderline]) {
+    if (textInfo.style == UAInAppMessageTextInfoStyleUnderline) {
         [attributes setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
     }
 
     // Color
-    [attributes setObject:[UAColorUtils colorWithHexString:textInfo.color] forKey:NSForegroundColorAttributeName];
+    [attributes setObject:textInfo.color forKey:NSForegroundColorAttributeName];
 
     // Alignment and word wrapping
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
@@ -138,15 +138,7 @@
 }
 
 + (NSTextAlignment)alignmentWithTextInfo:(UAInAppMessageTextInfo *)textInfo {
-    if ([textInfo.alignment isEqualToString:UAInAppMessageTextInfoAlignmentLeft]) {
-        return NSTextAlignmentLeft;
-    } else if ([textInfo.alignment isEqualToString:UAInAppMessageTextInfoAlignmentCenter]) {
-        return NSTextAlignmentCenter;
-    } else if ([textInfo.alignment isEqualToString:UAInAppMessageTextInfoAlignmentRight]) {
-        return NSTextAlignmentRight;
-    }
-
-    return NSTextAlignmentLeft;
+    return textInfo.alignment;
 }
 
 + (UIFont *)fontWithTextInfo:(UAInAppMessageTextInfo *)textInfo {
@@ -154,11 +146,11 @@
 
     UIFontDescriptorSymbolicTraits traits = 0;
 
-    if ([textInfo.styles containsObject:UAInAppMessageTextInfoStyleBold]) {
+    if (textInfo.style == UAInAppMessageTextInfoStyleBold) {
         traits = traits | UIFontDescriptorTraitBold;
     }
 
-    if ([textInfo.styles containsObject:UAInAppMessageTextInfoStyleItalic]) {
+    if (textInfo.style == UAInAppMessageTextInfoStyleItalic) {
         traits = traits | UIFontDescriptorTraitItalic;
     }
 

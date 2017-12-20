@@ -8,22 +8,27 @@
 @interface UAInAppMessageDisplayContent : NSObject
 
 /**
- * Buttons are displayed with a space between them.
+ * Button layout.
  */
-extern NSString *const UAInAppMessageButtonLayoutStacked;
+typedef NS_ENUM(NSInteger, UAInAppMessageButtonLayoutType) {
+    /**
+     * Stacked button layout
+     */
+    UAInAppMessageButtonLayoutTypeStacked,
+    
+    /**
+     * Separate button layout
+     */
+    UAInAppMessageButtonLayoutTypeSeparate,
+    
+    /**
+     * Joined button layout
+     */
+    UAInAppMessageButtonLayoutTypeJoined,
+};
 
 /**
- * Buttons are displayed right next to each other.
- */
-extern NSString *const UAInAppMessageButtonLayoutSeparate;
-
-/**
- * Buttons are stacked.
- */
-extern NSString *const UAInAppMessageButtonLayoutJoined;
-
-/**
- * JSON keys.
+ * JSON keys and values.
  */
 extern NSString *const UAInAppMessageBodyKey;
 extern NSString *const UAInAppMessageHeadingKey;
@@ -38,6 +43,22 @@ extern NSString *const UAInAppMessageURLKey;
 extern NSString *const UAInAppMessageDismissButtonColorKey;
 extern NSString *const UAInAppMessageFooterKey;
 extern NSString *const UAInAppMessageDurationKey;
+
+/**
+ * Buttons are displayed with a space between them.
+ */
+extern NSString *const UAInAppMessageButtonLayoutStackedValue;
+
+/**
+ * Buttons are displayed right next to each other.
+ */
+extern NSString *const UAInAppMessageButtonLayoutSeparateValue;
+
+/**
+ * Buttons are stacked.
+ */
+extern NSString *const UAInAppMessageButtonLayoutJoinedValue;
+
 
 /**
  * Method to return the display content as its JSON representation.

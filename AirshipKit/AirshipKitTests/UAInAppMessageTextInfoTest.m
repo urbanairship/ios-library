@@ -9,25 +9,17 @@
 
 @implementation UAInAppMessageTextInfoTest
 
-- (void)setUp {
-    [super setUp];
-}
-
-- (void)tearDown {
-    [super tearDown];
-}
-
 - (void)testTextInfo {
     UAInAppMessageTextInfo *fromBuilderTextInfo = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
         builder.text = @"text";
-        builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
-        builder.color = @"hexcolor";
-        builder.styles = @[UAInAppMessageTextInfoStyleBold, UAInAppMessageTextInfoStyleItalic, UAInAppMessageTextInfoStyleUnderline];
+        builder.alignment = NSTextAlignmentCenter;
+        builder.color = [UIColor redColor];
+        builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
         builder.size = 11;
     }];
     
-    UAInAppMessageTextInfo *fromJSONTextInfo = [UAInAppMessageTextInfo textInfoWithJSON:@{@"alignment" : UAInAppMessageTextInfoAlignmentCenter,
-                                                                                          @"color" : @"hexcolor",
+    UAInAppMessageTextInfo *fromJSONTextInfo = [UAInAppMessageTextInfo textInfoWithJSON:@{@"alignment" : UAInAppMessageTextInfoAlignmentCenterValue,
+                                                                                          @"color" : @"#FFFF0000",
                                                                                           @"size" : @11,
                                                                                           @"style" :     @[@"bold",
                                                                                                            @"italic",
@@ -40,7 +32,7 @@
     NSDictionary *JSONFromJSONTextInfo = [UAInAppMessageTextInfo JSONWithTextInfo:fromJSONTextInfo];
 
     // Test isEqual and hashing
-    XCTAssertTrue([fromBuilderTextInfo isEqual:fromJSONTextInfo] == YES);
+    XCTAssertTrue([fromBuilderTextInfo isEqual:fromJSONTextInfo]);
     XCTAssertEqual(fromBuilderTextInfo.hash, fromJSONTextInfo.hash);
     
     // Test conversion to JSON

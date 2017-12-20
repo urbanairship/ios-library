@@ -136,7 +136,7 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
 }
 
 - (void)setFactoryBlock:(id<UAInAppMessageAdapterProtocol> (^)(UAInAppMessage* message))factory
-         forDisplayType:(NSString *)displayType {
+         forDisplayType:(UAInAppMessageDisplayType)displayType {
     NSMutableDictionary *adapterFactories;
 
     if (!self.adapterFactories) {
@@ -145,7 +145,7 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
         adapterFactories = [NSMutableDictionary dictionaryWithDictionary:self.adapterFactories];
     }
 
-    [adapterFactories setObject:factory forKey:displayType];
+    [adapterFactories setObject:factory forKey:[NSNumber numberWithInt:displayType]];
     self.adapterFactories = [NSDictionary dictionaryWithDictionary:adapterFactories];
 }
 
@@ -184,10 +184,10 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
 
     if (!self.currentAdapter) {
 
-        id<UAInAppMessageAdapterProtocol> (^factory)(UAInAppMessage* message) = self.adapterFactories[info.message.displayType];
+        id<UAInAppMessageAdapterProtocol> (^factory)(UAInAppMessage* message) = self.adapterFactories[@(info.message.displayType)];
 
         if (!factory) {
-            UA_LWARN(@"Factory not present for display type:%@", info.message.displayType);
+            UA_LWARN(@"Factory not present for display type:%ld", (long)info.message.displayType);
             return NO;
         }
 

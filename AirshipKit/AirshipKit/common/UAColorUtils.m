@@ -32,10 +32,16 @@
         return nil;
     };
 
-    return [UIColor colorWithRed:((component & 0xFF0000) >> 16)/255.0
-                           green:((component & 0xFF00) >> 8)/255.0
-                            blue:(component & 0xFF)/255.0
-                           alpha:width == 24 ? 1.0 : ((component & 0xFF000000) >> 24)/255.0];
+    CGFloat red = ((component & 0xFF0000) >> 16)/255.0;
+    CGFloat green = ((component & 0xFF00) >> 8)/255.0;
+    CGFloat blue = (component & 0xFF)/255.0;
+    CGFloat alpha = (width == 24) ? 1.0 : ((component & 0xFF000000) >> 24)/255.0;
+    
+    UIColor *color = [UIColor colorWithRed:red
+                           green:green
+                            blue:blue
+                           alpha:alpha];
+    return color;
 }
 
 + (NSString *)hexStringWithColor:(UIColor *)color {

@@ -4,6 +4,7 @@
 #import "UAInAppMessageTagSelector.h"
 #import "UAJSONPredicate.h"
 #import "UAVersionMatcher+Internal.h"
+#import "UAGlobal.h"
 
 NSString * const UAInAppMessageAudienceNewUserKey = @"new_user";
 NSString * const UAInAppMessageAudienceNotificationOptInKey = @"notifications_opt_in";
@@ -21,6 +22,8 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
 @implementation UAInAppMessageAudience
 
 + (instancetype)audienceWithJSON:(id)json error:(NSError **)error {
+    UAInAppMessageAudienceBuilder *builder = [[UAInAppMessageAudienceBuilder alloc] init];
+    
     if (!json || ![json isKindOfClass:[NSDictionary class]]) {
         *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Json must be a dictionary. Invalid value: %@", json]];
         return nil;
@@ -32,6 +35,7 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
             *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"%@\" key must be a boolean. Invalid value: %@", UAInAppMessageAudienceNewUserKey, onlyNewUser]];
             return nil;
         }
+        builder.isNewUser = onlyNewUser;
     }
     
     id notificationsOptIn = json[UAInAppMessageAudienceNotificationOptInKey];
@@ -40,6 +44,7 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
             *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"%@\" key must be a boolean. Invalid value: %@", UAInAppMessageAudienceNotificationOptInKey, notificationsOptIn]];
             return nil;
         }
+        builder.notificationsOptIn = notificationsOptIn;
     }
     
     id locationOptIn = json[UAInAppMessageAudienceLocationOptInKey];
@@ -48,6 +53,7 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
             *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"%@\" key must be a boolean. Invalid value: %@", UAInAppMessageAudienceLocationOptInKey, locationOptIn]];
             return nil;
         }
+        builder.locationOptIn = locationOptIn;
     }
 
     id languageTags = json[UAInAppMessageAudienceLanguageTagsKey];
@@ -56,12 +62,17 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
             *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"%@\" key must be an array. Invalid value: %@", UAInAppMessageAudienceLanguageTagsKey, languageTags]];
             return nil;
         }
+        builder.languageTags = languageTags;
     }
     
     id tagSelector = json[UAInAppMessageAudienceTagSelectorKey];
     if (tagSelector) {
         if (![tagSelector isKindOfClass:[NSDictionary class]]) {
             *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"%@\" key must be a dictionary. Invalid value: %@", UAInAppMessageAudienceTagSelectorKey, tagSelector]];
+            return nil;
+        }
+        builder.tagSelector = [UAInAppMessageTagSelector parseJson:tagSelector error:error];
+        if (!builder.tagSelector) {
             return nil;
         }
     }
@@ -72,24 +83,10 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
             *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"%@\" key must be a string. Invalid value: %@", UAInAppMessageAudienceAppVersionKey, versionConstraint]];
             return nil;
         }
-    }
-    
-    __block NSError *builderError;
-    UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder *builder) {
-        builder.isNewUser = onlyNewUser;
-        builder.notificationsOptIn = notificationsOptIn;
-        builder.locationOptIn = locationOptIn;
-        builder.languageTags = languageTags;
-        builder.tagSelector = [UAInAppMessageTagSelector parseJson:tagSelector error:&builderError];
         builder.versionMatcher = [UAVersionMatcher matcherWithVersionConstraint:versionConstraint];
-    }];
-    
-    if (builderError) {
-        *error = builderError;
-        return nil;
-    } else {
-        return audience;
     }
+    
+    return [[UAInAppMessageAudience alloc] initWithBuilder:builder];
 }
 
 + (NSError *)invalidJSONErrorWithMsg:(NSString *)msg {
@@ -110,6 +107,11 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
 
 - (instancetype)initWithBuilder:(UAInAppMessageAudienceBuilder *)builder {
     if (self = [super init]) {
+        if (![UAInAppMessageAudience validateBuilder:builder]) {
+            UA_LDEBUG(@"UAInAppMessageAudience could not be initialized, builder has missing or invalid parameters.");
+            return nil;
+        }
+        
         self.isNewUser = builder.isNewUser;
         self.notificationsOptIn = builder.notificationsOptIn;
         self.locationOptIn = builder.locationOptIn;
@@ -118,6 +120,14 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
         self.versionMatcher = builder.versionMatcher;
     }
     return self;
+}
+
+#pragma mark - Validation
+
+// Validates builder contents
++ (BOOL)validateBuilder:(UAInAppMessageAudienceBuilder *)builder {
+    // REVISIT - what do we need to validate this builder?
+    return YES;
 }
 
 - (NSDictionary *)toJsonValue {

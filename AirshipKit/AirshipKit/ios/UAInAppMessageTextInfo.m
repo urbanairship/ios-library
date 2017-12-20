@@ -3,19 +3,12 @@
 #import "UAInAppMessageTextInfo.h"
 #import <UIKit/UIKit.h>
 #import "UAGlobal.h"
+#import "UAColorUtils+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 NSString *const UAInAppMessageTextInfoDomain = @"com.urbanairship.in_app_message_text_info";
 
-NSString *const UAInAppMessageTextInfoAlignmentRight = @"right";
-NSString *const UAInAppMessageTextInfoAlignmentCenter = @"center";
-NSString *const UAInAppMessageTextInfoAlignmentLeft = @"left";
-
-NSString *const UAInAppMessageTextInfoStyleBold = @"bold";
-NSString *const UAInAppMessageTextInfoStyleItalic = @"italic";
-NSString *const UAInAppMessageTextInfoStyleUnderline = @"underline";
-
-// JSON keys
+// JSON keys and values
 NSString *const UAInAppMessageTextInfoTextKey = @"text";
 NSString *const UAInAppMessageTextInfoFontFamiliesKey = @"font_family";
 NSString *const UAInAppMessageTextInfoColorKey = @"color";
@@ -23,16 +16,35 @@ NSString *const UAInAppMessageTextInfoSizeKey = @"size";
 NSString *const UAInAppMessageTextInfoAlignmentKey = @"alignment";
 NSString *const UAInAppMessageTextInfoStyleKey = @"style";
 
+NSString *const UAInAppMessageTextInfoAlignmentRightValue = @"right";
+NSString *const UAInAppMessageTextInfoAlignmentCenterValue = @"center";
+NSString *const UAInAppMessageTextInfoAlignmentLeftValue = @"left";
+
+NSString *const UAInAppMessageTextInfoStyleBoldValue = @"bold";
+NSString *const UAInAppMessageTextInfoStyleItalicValue = @"italic";
+NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
+
 @interface UAInAppMessageTextInfo ()
 @property(nonatomic, copy) NSString *text;
 @property(nonatomic, copy) NSArray<NSString *> *fontFamilies;
-@property(nonatomic, copy) NSString *color;
+@property(nonatomic, strong) UIColor *color;
 @property(nonatomic, assign) NSUInteger size;
-@property(nonatomic, copy) NSString *alignment;
-@property(nonatomic, copy) NSArray<NSString *> *styles;
+@property(nonatomic, assign) NSTextAlignment alignment;
+@property(nonatomic, assign) UAInAppMessageTextInfoStyleType style;
 @end
 
 @implementation UAInAppMessageTextInfoBuilder
+
+// set default values for properties
+- (instancetype)init {
+    if (self = [super init]) {
+        self.color = [UIColor blackColor];
+        self.size = 14;
+        self.alignment = NSTextAlignmentLeft;
+    }
+    return self;
+}
+
 @end
 
 @implementation UAInAppMessageTextInfo
@@ -47,10 +59,10 @@ NSString *const UAInAppMessageTextInfoStyleKey = @"style";
 
     if (self) {
         self.text = builder.text;
-        self.color = builder.color ?: @"#000000";
-        self.size = builder.size ?: 14;
-        self.alignment = builder.alignment ?: UAInAppMessageTextInfoAlignmentLeft;
-        self.styles = builder.styles;
+        self.color = builder.color;
+        self.size = builder.size;
+        self.alignment = builder.alignment;
+        self.style = builder.style;
         self.fontFamilies = builder.fontFamilies;
     }
 
@@ -68,7 +80,9 @@ NSString *const UAInAppMessageTextInfoStyleKey = @"style";
     return [[UAInAppMessageTextInfo alloc] initWithBuilder:builder];
 }
 
-+ (nullable instancetype)textInfoWithJSON:(id)json error:(NSError * _Nullable *)error {
++ (nullable instancetype)textInfoWithJSON:(id)json error:(NSError **)error {
+    UAInAppMessageTextInfoBuilder *builder = [[UAInAppMessageTextInfoBuilder alloc] init];
+    
     if (![json isKindOfClass:[NSDictionary class]]) {
         if (error) {
             NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize invalid object: %@", json];
@@ -76,54 +90,51 @@ NSString *const UAInAppMessageTextInfoStyleKey = @"style";
                                           code:UAInAppMessageTextInfoErrorCodeInvalidJSON
                                       userInfo:@{NSLocalizedDescriptionKey:msg}];
         }
-
         return nil;
     }
-
-    NSString *text;
+    
     id textInfo = json[UAInAppMessageTextInfoTextKey];
-    if (textInfo && ![textInfo isKindOfClass:[NSString class]]) {
-        if (error) {
-            NSString *msg = [NSString stringWithFormat:@"In-app message text info text must be a string. Invalid value: %@", textInfo];
-            *error =  [NSError errorWithDomain:UAInAppMessageTextInfoDomain
-                                          code:UAInAppMessageTextInfoErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+    if (textInfo) {
+        if (![textInfo isKindOfClass:[NSString class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"In-app message text info text must be a string. Invalid value: %@", textInfo];
+                *error =  [NSError errorWithDomain:UAInAppMessageTextInfoDomain
+                                              code:UAInAppMessageTextInfoErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
         }
-
-        return nil;
+        builder.text = textInfo;
     }
-
-    text = textInfo;
-
-    NSString *color;
+    
     id textColor = json[UAInAppMessageTextInfoColorKey];
-    if (textColor && ![textColor isKindOfClass:[NSString class]]) {
-        if (error) {
-            NSString *msg = [NSString stringWithFormat:@"In-app message text color must be a hex string. Invalid value: %@", textColor];
-            *error =  [NSError errorWithDomain:UAInAppMessageTextInfoDomain
-                                          code:UAInAppMessageTextInfoErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+    if (textColor) {
+        if (![textColor isKindOfClass:[NSString class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"In-app message text color must be a hex string. Invalid value: %@", textColor];
+                *error =  [NSError errorWithDomain:UAInAppMessageTextInfoDomain
+                                              code:UAInAppMessageTextInfoErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
         }
-
-        return nil;
+        builder.color = [UAColorUtils colorWithHexString:textColor];
     }
-    color = textColor;
-
-    NSUInteger size;
+    
     id textSize = json[UAInAppMessageTextInfoSizeKey];
-    if (textSize && ![textSize isKindOfClass:[NSNumber class]]) {
-        if (error) {
-            NSString *msg = [NSString stringWithFormat:@"In-app message text size must be a number. Invalid value: %@", textSize];
-            *error =  [NSError errorWithDomain:UAInAppMessageTextInfoDomain
-                                          code:UAInAppMessageTextInfoErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+    if (textSize) {
+        if (![textSize isKindOfClass:[NSNumber class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"In-app message text size must be a number. Invalid value: %@", textSize];
+                *error =  [NSError errorWithDomain:UAInAppMessageTextInfoDomain
+                                              code:UAInAppMessageTextInfoErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
         }
-
-        return nil;
+        builder.size = [textSize unsignedIntegerValue];
     }
-    size = [textSize unsignedIntegerValue];
 
-    NSString *alignment;
     id alignmentContents = json[UAInAppMessageTextInfoAlignmentKey];
     if (alignmentContents) {
         if (![alignmentContents isKindOfClass:[NSString class]]) {
@@ -135,101 +146,94 @@ NSString *const UAInAppMessageTextInfoStyleKey = @"style";
             }
             return nil;
         }
-
-        alignment = [alignmentContents lowercaseString];
-
-        if ([UAInAppMessageTextInfoAlignmentLeft isEqualToString:alignment]) {
-            alignment = UAInAppMessageTextInfoAlignmentLeft;
-        } else if ([UAInAppMessageTextInfoAlignmentCenter isEqualToString:alignment]) {
-            alignment = UAInAppMessageTextInfoAlignmentCenter;
-        } else if ([UAInAppMessageTextInfoAlignmentRight isEqualToString:alignment]) {
-            alignment = UAInAppMessageTextInfoAlignmentRight;
+        
+        alignmentContents = [alignmentContents lowercaseString];
+        
+        if ([UAInAppMessageTextInfoAlignmentLeftValue isEqualToString:alignmentContents]) {
+            builder.alignment = NSTextAlignmentLeft;
+        } else if ([UAInAppMessageTextInfoAlignmentCenterValue isEqualToString:alignmentContents]) {
+            builder.alignment = NSTextAlignmentCenter;
+        } else if ([UAInAppMessageTextInfoAlignmentRightValue isEqualToString:alignmentContents]) {
+            builder.alignment = NSTextAlignmentRight;
         } else {
             if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Invalid in-app message text alignment: %@", alignment];
+                NSString *msg = [NSString stringWithFormat:@"Invalid in-app message text alignment: %@", alignmentContents];
                 *error =  [NSError errorWithDomain:UAInAppMessageTextInfoDomain
                                               code:UAInAppMessageTextInfoErrorCodeInvalidJSON
                                           userInfo:@{NSLocalizedDescriptionKey:msg}];
             }
-
             return nil;
         }
     }
 
-    NSMutableArray *styles = [NSMutableArray array];
     id stylesArr = json[UAInAppMessageTextInfoStyleKey];
-    if (stylesArr && ![stylesArr isKindOfClass:[NSArray class]]) {
-        if (error) {
-            NSString *msg = [NSString stringWithFormat:@"Styles must be an array. Invalid value %@", stylesArr];
-            *error =  [NSError errorWithDomain:UAInAppMessageTextInfoDomain
-                                          code:UAInAppMessageTextInfoErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
-        }
-
-        return nil;
-    }
-
-    for (id style in stylesArr) {
-        if (![style isKindOfClass:[NSString class]]) {
+    if (stylesArr) {
+        if (![stylesArr isKindOfClass:[NSArray class]]) {
             if (error) {
-                NSString *msg = [NSString stringWithFormat:@"style types must be strings. Invalid value %@", style];
+                NSString *msg = [NSString stringWithFormat:@"Styles must be an array. Invalid value %@", stylesArr];
                 *error =  [NSError errorWithDomain:UAInAppMessageTextInfoDomain
                                               code:UAInAppMessageTextInfoErrorCodeInvalidJSON
                                           userInfo:@{NSLocalizedDescriptionKey:msg}];
             }
             return nil;
         }
-
-        if ([UAInAppMessageTextInfoStyleBold isEqualToString:style]) {
-            [styles addObject:UAInAppMessageTextInfoStyleBold];
-        } else if ([UAInAppMessageTextInfoStyleItalic isEqualToString:style]) {
-            [styles addObject:UAInAppMessageTextInfoStyleItalic];
-        } else if ([UAInAppMessageTextInfoStyleUnderline isEqualToString:style]) {
-            [styles addObject:UAInAppMessageTextInfoStyleUnderline];
-        } else {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Invalid in-app message style: %@", style];
-                *error =  [NSError errorWithDomain:UAInAppMessageTextInfoDomain
-                                              code:UAInAppMessageTextInfoErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+        
+        for (id styleStr in stylesArr) {
+            if (![styleStr isKindOfClass:[NSString class]]) {
+                if (error) {
+                    NSString *msg = [NSString stringWithFormat:@"style types must be strings. Invalid value %@", styleStr];
+                    *error =  [NSError errorWithDomain:UAInAppMessageTextInfoDomain
+                                                  code:UAInAppMessageTextInfoErrorCodeInvalidJSON
+                                              userInfo:@{NSLocalizedDescriptionKey:msg}];
+                }
+                return nil;
             }
-
-            return nil;
+            
+            if ([UAInAppMessageTextInfoStyleBoldValue isEqualToString:styleStr]) {
+                builder.style |= UAInAppMessageTextInfoStyleBold;
+            } else if ([UAInAppMessageTextInfoStyleItalicValue isEqualToString:styleStr]) {
+                builder.style |= UAInAppMessageTextInfoStyleItalic;
+            } else if ([UAInAppMessageTextInfoStyleUnderlineValue isEqualToString:styleStr]) {
+                builder.style |= UAInAppMessageTextInfoStyleUnderline;
+            } else {
+                if (error) {
+                    NSString *msg = [NSString stringWithFormat:@"Invalid in-app message style: %@", styleStr];
+                    *error =  [NSError errorWithDomain:UAInAppMessageTextInfoDomain
+                                                  code:UAInAppMessageTextInfoErrorCodeInvalidJSON
+                                              userInfo:@{NSLocalizedDescriptionKey:msg}];
+                }
+                return nil;
+            }
         }
     }
 
     id fontFamilies = json[UAInAppMessageTextInfoFontFamiliesKey];
-    if (fontFamilies && ![fontFamilies isKindOfClass:[NSArray class]]) {
-        if (error) {
-            NSString *msg = [NSString stringWithFormat:@"Font families must be an array. Invalid value %@", fontFamilies];
-            *error =  [NSError errorWithDomain:UAInAppMessageTextInfoDomain
-                                          code:UAInAppMessageTextInfoErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
-        }
-
-        return nil;
-    }
-
-    for (id fontFamily in fontFamilies) {
-        if (![fontFamily isKindOfClass:[NSString class]]) {
+    if (fontFamilies) {
+        if (![fontFamilies isKindOfClass:[NSArray class]]) {
             if (error) {
-                NSString *msg = [NSString stringWithFormat:@"A font family must be a string. Invalid value %@", fontFamily];
+                NSString *msg = [NSString stringWithFormat:@"Font families must be an array. Invalid value %@", fontFamilies];
                 *error =  [NSError errorWithDomain:UAInAppMessageTextInfoDomain
                                               code:UAInAppMessageTextInfoErrorCodeInvalidJSON
                                           userInfo:@{NSLocalizedDescriptionKey:msg}];
             }
             return nil;
         }
+        
+        for (id fontFamily in fontFamilies) {
+            if (![fontFamily isKindOfClass:[NSString class]]) {
+                if (error) {
+                    NSString *msg = [NSString stringWithFormat:@"A font family must be a string. Invalid value %@", fontFamily];
+                    *error =  [NSError errorWithDomain:UAInAppMessageTextInfoDomain
+                                                  code:UAInAppMessageTextInfoErrorCodeInvalidJSON
+                                              userInfo:@{NSLocalizedDescriptionKey:msg}];
+                }
+                return nil;
+            }
+        }
+        builder.fontFamilies = fontFamilies;
     }
 
-    return [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
-        builder.text = text;
-        builder.color = color;
-        builder.size = size;
-        builder.alignment = alignment;
-        builder.fontFamilies = fontFamilies;
-        builder.styles = styles;
-    }];
+    return [[UAInAppMessageTextInfo alloc] initWithBuilder:builder];
 }
 
 + (NSDictionary *)JSONWithTextInfo:(UAInAppMessageTextInfo *)textInfo {
@@ -241,10 +245,32 @@ NSString *const UAInAppMessageTextInfoStyleKey = @"style";
 
     json[UAInAppMessageTextInfoTextKey] = textInfo.text;
     json[UAInAppMessageTextInfoFontFamiliesKey] = textInfo.fontFamilies;
-    json[UAInAppMessageTextInfoColorKey] = textInfo.color;
+    json[UAInAppMessageTextInfoColorKey] = [UAColorUtils hexStringWithColor:textInfo.color];
     json[UAInAppMessageTextInfoSizeKey] = [NSNumber numberWithInteger:textInfo.size];
-    json[UAInAppMessageTextInfoAlignmentKey] = textInfo.alignment;
-    json[UAInAppMessageTextInfoStyleKey] = textInfo.styles;
+    switch (textInfo.alignment) {
+        case NSTextAlignmentLeft:
+        default:
+            json[UAInAppMessageTextInfoAlignmentKey] = UAInAppMessageTextInfoAlignmentLeftValue;
+            break;
+        case NSTextAlignmentCenter:
+            json[UAInAppMessageTextInfoAlignmentKey] = UAInAppMessageTextInfoAlignmentCenterValue;
+            break;
+        case NSTextAlignmentRight:
+            json[UAInAppMessageTextInfoAlignmentKey] = UAInAppMessageTextInfoAlignmentRightValue;
+            break;
+    }
+    
+    NSMutableArray<NSString *> *stylesAsJSON = [NSMutableArray array];
+    if (textInfo.style & UAInAppMessageTextInfoStyleBold) {
+        [stylesAsJSON addObject:UAInAppMessageTextInfoStyleBoldValue];
+    }
+    if (textInfo.style & UAInAppMessageTextInfoStyleItalic) {
+        [stylesAsJSON addObject:UAInAppMessageTextInfoStyleItalicValue];
+    }
+    if (textInfo.style & UAInAppMessageTextInfoStyleUnderline) {
+        [stylesAsJSON addObject:UAInAppMessageTextInfoStyleUnderlineValue];
+    }
+    json[UAInAppMessageTextInfoStyleKey] = stylesAsJSON;
 
     return [NSDictionary dictionaryWithDictionary:json];
 }
@@ -276,12 +302,11 @@ NSString *const UAInAppMessageTextInfoStyleKey = @"style";
 }
 
 - (BOOL)isEqualToInAppMessageTextInfo:(UAInAppMessageTextInfo *)info {
-
     if (info.text != self.text && ![self.text isEqualToString:info.text]) {
         return NO;
     }
 
-    if (info.color != self.color && ![self.color isEqualToString:info.color]) {
+    if (info.color != self.color && ![[UAColorUtils hexStringWithColor:self.color] isEqualToString:[UAColorUtils hexStringWithColor:info.color]]) {
         return NO;
     }
 
@@ -289,11 +314,11 @@ NSString *const UAInAppMessageTextInfoStyleKey = @"style";
         return NO;
     }
 
-    if (info.alignment != self.alignment && ![self.alignment isEqualToString:info.alignment]) {
+    if (info.alignment != self.alignment) {
         return NO;
     }
 
-    if (info.styles != self.styles && ![self.styles isEqualToArray:info.styles]) {
+    if (info.style != self.style) {
         return NO;
     }
 
@@ -309,8 +334,8 @@ NSString *const UAInAppMessageTextInfoStyleKey = @"style";
     result = 31 * result + [self.text hash];
     result = 31 * result + [self.color hash];
     result = 31 * result + self.size;
-    result = 31 * result + [self.alignment hash];
-    result = 31 * result + [self.styles hash];
+    result = 31 * result + self.alignment;
+    result = 31 * result + self.style;
     result = 31 * result + [self.fontFamilies hash];
 
     return result;

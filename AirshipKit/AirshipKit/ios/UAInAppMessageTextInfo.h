@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -15,6 +15,32 @@ typedef NS_ENUM(NSInteger, UAInAppMessageTextInfoErrorCode) {
 };
 
 /**
+ * Represents the possible text styling options.
+ */
+typedef NS_OPTIONS(NSUInteger, UAInAppMessageTextInfoStyleType) {
+    /**
+     * Normal style
+     */
+    UAInAppMessageTextInfoStyleNormal = 0,
+    
+    /**
+     * Bold style
+     */
+    UAInAppMessageTextInfoStyleBold = 1 << 0,
+    
+    /**
+     * Italic style
+     */
+    UAInAppMessageTextInfoStyleItalic  = 1 << 1,
+    
+    /**
+     * Underline style
+     */
+    UAInAppMessageTextInfoStyleUnderline  = 1 << 2
+};
+
+
+/**
  * JSON keys.
  */
 extern NSString *const UAInAppMessageTextInfoTextKey;
@@ -27,32 +53,32 @@ extern NSString *const UAInAppMessageTextInfoFontFamiliesKey;
 /**
  * Right text alignment.
  */
-extern NSString *const UAInAppMessageTextInfoAlignmentRight;
+extern NSString *const UAInAppMessageTextInfoAlignmentRightValue;
 
 /**
  * Center text alignment.
  */
-extern NSString *const UAInAppMessageTextInfoAlignmentCenter;
+extern NSString *const UAInAppMessageTextInfoAlignmentCenterValue;
 
 /**
  * Left text alignment.
  */
-extern NSString *const UAInAppMessageTextInfoAlignmentLeft;
+extern NSString *const UAInAppMessageTextInfoAlignmentLeftValue;
 
 /**
  * Bold text style.
  */
-extern NSString *const UAInAppMessageTextInfoStyleBold;
+extern NSString *const UAInAppMessageTextInfoStyleBoldValue;
 
 /**
  * Italic text style.
  */
-extern NSString *const UAInAppMessageTextInfoStyleItalic;
+extern NSString *const UAInAppMessageTextInfoStyleItalicValue;
 
 /**
  * Underline text style.
  */
-extern NSString *const UAInAppMessageTextInfoStyleUnderline;
+extern NSString *const UAInAppMessageTextInfoStyleUnderlineValue;
 
 /**
  * Builder class for a UAInAppMessageTextInfo object.
@@ -67,7 +93,7 @@ extern NSString *const UAInAppMessageTextInfoStyleUnderline;
 /**
  * Text color. Defaults to black.
  */
-@property(nonatomic, copy) NSString *color;
+@property(nonatomic, strong) UIColor *color;
 
 /**
  * Text size. Defaults to 14sp.
@@ -75,14 +101,14 @@ extern NSString *const UAInAppMessageTextInfoStyleUnderline;
 @property(nonatomic, assign) NSUInteger size;
 
 /**
- * Text alignment. Defaults to UAInAppMessageTextInfoAlignmentLeft.
+ * Text alignment. Defaults to NSTextAlignmentLeft.
  */
-@property(nonatomic, copy) NSString *alignment;
+@property(nonatomic, assign) NSTextAlignment alignment;
 
 /**
  * Text styles.
  */
-@property(nonatomic, copy) NSArray<NSString *> *styles;
+@property(nonatomic, assign) UAInAppMessageTextInfoStyleType style;
 
 /**
  * Font families - first valid font name in collection is used.
@@ -105,7 +131,7 @@ extern NSString *const UAInAppMessageTextInfoStyleUnderline;
 /**
  * Text color. Defaults to black.
  */
-@property(nonatomic, copy, readonly, nullable) NSString *color;
+@property(nonatomic, strong, readonly, nullable) UIColor *color;
 
 /**
  * Text size. Defaults to 14sp.
@@ -113,14 +139,14 @@ extern NSString *const UAInAppMessageTextInfoStyleUnderline;
 @property(nonatomic, assign, readonly) NSUInteger size;
 
 /**
- * Text alignment. Defaults to UAInAppMessageTextInfoAlignmentLeft.
+ * Text alignment. Defaults to NSTextAlignmentLeft.
  */
-@property(nonatomic, copy, readonly, nullable) NSString *alignment;
+@property(nonatomic, assign, readonly) NSTextAlignment alignment;
 
 /**
  * Text styles.
  */
-@property(nonatomic, copy, readonly, nullable) NSArray<NSString *> *styles;
+@property(nonatomic, assign, readonly) UAInAppMessageTextInfoStyleType style;
 
 /**
  * Font families.

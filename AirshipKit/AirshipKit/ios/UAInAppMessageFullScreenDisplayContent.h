@@ -21,19 +21,39 @@ typedef NS_ENUM(NSInteger, UAInAppMessageFullScreenDisplayContentErrorCode) {
 };
 
 /**
+ * Content layout.
+ */
+typedef NS_ENUM(NSInteger, UAInAppMessageFullScreenContentLayoutType) {
+    /**
+     * Media on the left
+     */
+    UAInAppMessageFullScreenContentLayoutHeaderMediaBody,
+
+    /**
+     * Media on the right
+     */
+    UAInAppMessageFullScreenContentLayoutMediaHeaderBody,
+
+    /**
+     * Media on the right
+     */
+    UAInAppMessageFullScreenContentLayoutHeaderBodyMedia,
+};
+
+/**
  * Template with display order of header, media, body, buttons, footer.
  */
-extern NSString *const UAInAppMessageFullScreenContentLayoutHeaderMediaBody;
+extern NSString *const UAInAppMessageFullScreenContentLayoutHeaderMediaBodyValue;
 
 /**
  * Template with display order of media, header, body, buttons, footer.
  */
-extern NSString *const UAInAppMessageFullScreenContentLayoutMediaHeaderBody;
+extern NSString *const UAInAppMessageFullScreenContentLayoutMediaHeaderBodyValue;
 
 /**
  * Template with display order of header, body, media, buttons, footer.
  */
-extern NSString *const UAInAppMessageFullScreenContentLayoutHeaderBodyMedia;
+extern NSString *const UAInAppMessageFullScreenContentLayoutHeaderBodyMediaValue;
 
 /**
  * Maximum number of button supported by a full screen.
@@ -74,23 +94,23 @@ extern NSUInteger const UAInAppMessageFullScreenMaxButtons;
  * The full screen's button layout. Defaults to UAInAppMessageButtonLayoutSeparate.
  * If more than 2 buttons are supplied, defaults to UAInAppMessageButtonLayoutStacked.
  */
-@property(nonatomic, copy, nullable) NSString *buttonLayout;
+@property(nonatomic, assign) UAInAppMessageButtonLayoutType buttonLayout;
 
 /**
  * The full screen's layout for the text and media. Defaults to
  * UAInAppMessageFullScreenContentLayoutHeaderMediaBody
  */
-@property(nonatomic, copy, nullable) NSString *contentLayout;
+@property(nonatomic, assign) UAInAppMessageFullScreenContentLayoutType contentLayout;
 
 /**
  * The full screen's background color. Defaults to white.
  */
-@property(nonatomic, copy, nullable) NSString *backgroundColor;
+@property(nonatomic, nullable) UIColor *backgroundColor;
 
 /**
  * The full screen's dismiss button color. Defaults to black.
  */
-@property(nonatomic, copy, nullable) NSString *dismissButtonColor;
+@property(nonatomic, nullable) UIColor *dismissButtonColor;
 
 @end
 
@@ -128,23 +148,23 @@ extern NSUInteger const UAInAppMessageFullScreenMaxButtons;
  * The full screen's button layout. Defaults to UAInAppMessageButtonLayoutSeparate.
  * If more than 2 buttons are supplied, defaults to UAInAppMessageButtonLayoutStacked.
  */
-@property(nonatomic, copy, nullable, readonly) NSString *buttonLayout;
+@property(nonatomic, assign, readonly) UAInAppMessageButtonLayoutType buttonLayout;
 
 /**
  * The full screen's layout for the text and media. Defaults to
  * UAInAppMessageFullScreenContentLayoutHeaderMediaBody
  */
-@property(nonatomic, copy, nullable, readonly) NSString *contentLayout;
+@property(nonatomic, assign, readonly) UAInAppMessageFullScreenContentLayoutType contentLayout;
 
 /**
  * The full screen's background color. Defaults to white.
  */
-@property(nonatomic, copy, nullable, readonly) NSString *backgroundColor;
+@property(nonatomic, strong, readonly) UIColor *backgroundColor;
 
 /**
  * The full screen's dismiss button color. Defaults to black.
  */
-@property(nonatomic, copy, nullable, readonly) NSString *dismissButtonColor;
+@property(nonatomic, strong, readonly) UIColor *dismissButtonColor;
 
 /**
  * Factory method for building full screen display content with JSON.

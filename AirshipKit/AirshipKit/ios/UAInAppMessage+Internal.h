@@ -23,13 +23,19 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAInAppMessage ()
 
 /**
- * In-app message json keys.
+ * In-app message json keys and values.
  */
 extern NSString *const UAInAppMessageIDKey;
 extern NSString *const UAInAppMessageDisplayTypeKey;
 extern NSString *const UAInAppMessageDisplayContentKey;
 extern NSString *const UAInAppMessageExtrasKey;
 extern NSString *const UAInAppMessageAudienceKey;
+
+extern NSString *const UAInAppMessageDisplayTypeBannerValue;
+extern NSString *const UAInAppMessageDisplayTypeFullScreenValue;
+extern NSString *const UAInAppMessageDisplayTypeModalValue;
+extern NSString *const UAInAppMessageDisplayTypeHTMLValue;
+extern NSString *const UAInAppMessageDisplayTypeCustomValue;
 
 /**
  * JSON object representing the entire in-app message.

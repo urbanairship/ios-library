@@ -49,30 +49,28 @@ NSString *const UAScheduleInfoInAppMessageKey = @"message";
     if (![builder applyFromJson:json error:error]) {
         return nil;
     }
-    if (*error) {
-        return nil;
-    }
 
     // message ID
     id messagePayload = json[UAScheduleInfoInAppMessageKey];
-    if (![messagePayload isKindOfClass:[NSDictionary class]]) {
-        if (error) {
-            NSString *msg = [NSString stringWithFormat:@"In-app message payload must be a dictionary. Invalid value: %@", messagePayload];
-            *error =  [NSError errorWithDomain:UAScheduleInfoErrorDomain
-                                          code:UAScheduleInfoErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+    if (messagePayload) {
+        if (![messagePayload isKindOfClass:[NSDictionary class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"In-app message payload must be a dictionary. Invalid value: %@", messagePayload];
+                *error =  [NSError errorWithDomain:UAScheduleInfoErrorDomain
+                                              code:UAScheduleInfoErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            
+            return nil;
         }
-
-        return nil;
+        
+        // message with JSON expects displayType to be NSString
+        builder.message = [UAInAppMessage messageWithJSON:messagePayload error:error];
+        if (!builder.message) {
+            return nil;
+        }
     }
-
-    // message with JSON expects displayType to be NSString
-    UAInAppMessage *message = [UAInAppMessage messageWithJSON:messagePayload error:error];
-    if (*error) {
-        return nil;
-    }
-    builder.message = message;
-
+    
     return [[UAInAppMessageScheduleInfo alloc] initWithBuilder:builder];
 }
 

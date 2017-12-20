@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param factory The adapter factory.
  */
 - (void)setFactoryBlock:(id<UAInAppMessageAdapterProtocol> (^)(UAInAppMessage* message))factory
-         forDisplayType:(NSString *)displayType;
+         forDisplayType:(UAInAppMessageDisplayType)displayType;
 
 /**
  * Schedules an in-app message.

@@ -26,7 +26,7 @@
             builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
                 builder.text = @"Dismiss";
             }];
-            builder.backgroundColor = @"#ff0000"; // red
+            builder.backgroundColor = [UIColor redColor]; // red
         }];
 
         builder.buttons = @[button, button, button, button, button];
@@ -47,7 +47,7 @@
             builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
                 builder.text = @"Dismiss";
             }];
-            builder.backgroundColor = @"#ff0000"; // red
+            builder.backgroundColor = [UIColor redColor]; // red
         }];
 
         builder.buttons = @[button, button, button, button, button, button];
@@ -96,9 +96,9 @@
 
 - (void)testFullScreenDisplayContent {
     UAInAppMessageFullScreenDisplayContent *fromBuilderFullScreenDisplayContent =  [UAInAppMessageFullScreenDisplayContent fullScreenDisplayContentWithBuilderBlock:^(UAInAppMessageFullScreenDisplayContentBuilder *builder) {
-        builder.buttonLayout = UAInAppMessageButtonLayoutJoined;
+        builder.buttonLayout = UAInAppMessageButtonLayoutTypeJoined;
         builder.contentLayout = UAInAppMessageFullScreenContentLayoutHeaderMediaBody;
-        builder.dismissButtonColor = @"#00ff00"; // green
+        builder.dismissButtonColor = [UIColor greenColor];
 
         builder.media = [UAInAppMessageMediaInfo mediaInfoWithBuilderBlock:^(UAInAppMessageMediaInfoBuilder * _Nonnull builder) {
             builder.url = @"https://pbs.twimg.com/profile_images/693434931263832064/MQM3kVE-_400x400.jpg";
@@ -107,40 +107,40 @@
 
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"headline content";
-            builder.color = @"#ff0000"; // red
+            builder.color = [UIColor redColor];
             builder.size = 11;
-            builder.alignment = UAInAppMessageTextInfoAlignmentLeft;
-            builder.styles = @[UAInAppMessageTextInfoStyleBold, UAInAppMessageTextInfoStyleItalic, UAInAppMessageTextInfoStyleUnderline];
+            builder.alignment = NSTextAlignmentLeft;
+            builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
         }];;
 
         builder.body = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"body content";
-            builder.color = @"#00ff00"; // green
+            builder.color = [UIColor greenColor];
             builder.size = 11;
-            builder.alignment = UAInAppMessageTextInfoAlignmentLeft;
-            builder.styles = @[UAInAppMessageTextInfoStyleBold, UAInAppMessageTextInfoStyleItalic, UAInAppMessageTextInfoStyleUnderline];
+            builder.alignment = NSTextAlignmentLeft;
+            builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
         }];
 
         UAInAppMessageButtonInfo *button1 = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
             builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
                 builder.text = @"Dismiss";
-                builder.color = @"#0000ff"; // blue
+                builder.color = [UIColor blueColor];
                 builder.size = 11;
-                builder.alignment = UAInAppMessageTextInfoAlignmentLeft;
-                builder.styles = @[UAInAppMessageTextInfoStyleBold, UAInAppMessageTextInfoStyleItalic, UAInAppMessageTextInfoStyleUnderline];
+                builder.alignment = NSTextAlignmentLeft;
+                builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
             }];
-            builder.backgroundColor = @"#ff0000"; // red
+            builder.backgroundColor = [UIColor redColor];
         }];
 
         UAInAppMessageButtonInfo *button2 = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
             builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
                 builder.text = @"Cancel";
-                builder.color = @"#ff0000"; // red
+                builder.color = [UIColor redColor];
                 builder.size = 9;
-                builder.alignment = UAInAppMessageTextInfoAlignmentRight;
-                builder.styles = @[UAInAppMessageTextInfoStyleBold, UAInAppMessageTextInfoStyleItalic, UAInAppMessageTextInfoStyleUnderline];
+                builder.alignment = NSTextAlignmentRight;
+                builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
             }];
-            builder.backgroundColor = @"#0000ff"; // blue
+            builder.backgroundColor = [UIColor blueColor];
             builder.borderRadius = 10;
             builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
         }];
@@ -148,12 +148,12 @@
         UAInAppMessageButtonInfo *footerButton = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
             builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
                 builder.text = @"footer link";
-                builder.color = @"#ff0000"; // red
+                builder.color = [UIColor redColor];
                 builder.size = 9;
-                builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
-                builder.styles = @[UAInAppMessageTextInfoStyleUnderline];
+                builder.alignment = NSTextAlignmentCenter;
+                builder.style = UAInAppMessageTextInfoStyleUnderline;
             }];
-            builder.backgroundColor = @"#ff000000"; // clear
+            builder.backgroundColor = [UIColor clearColor];
             builder.borderRadius = 10;
             builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
         }];
@@ -164,15 +164,13 @@
     }];
 
     NSDictionary *JSONFromBuilderFullScreenDisplayContent = [fromBuilderFullScreenDisplayContent toJsonValue];
-    UAInAppMessageFullScreenDisplayContent *fromJSONFullScreenDisplayContent = [UAInAppMessageFullScreenDisplayContent fullScreenDisplayContentWithJSON:JSONFromBuilderFullScreenDisplayContent error:nil];
-    NSDictionary *JSONFromJSONFullScreenDisplayContent = [fromJSONFullScreenDisplayContent toJsonValue];
+    NSError *error;
+    UAInAppMessageFullScreenDisplayContent *fromJSONFullScreenDisplayContent = [UAInAppMessageFullScreenDisplayContent fullScreenDisplayContentWithJSON:JSONFromBuilderFullScreenDisplayContent error:&error];
+    XCTAssertNil(error);
 
     // Test isEqual and hashing
-    XCTAssertTrue([fromBuilderFullScreenDisplayContent isEqual:fromJSONFullScreenDisplayContent] == YES);
+    XCTAssertEqualObjects(fromBuilderFullScreenDisplayContent, fromJSONFullScreenDisplayContent);
     XCTAssertEqual(fromBuilderFullScreenDisplayContent.hash, fromJSONFullScreenDisplayContent.hash);
-
-    // Test conversion to JSON
-    XCTAssertEqualObjects(JSONFromBuilderFullScreenDisplayContent, JSONFromJSONFullScreenDisplayContent);
 }
 
 @end

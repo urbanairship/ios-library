@@ -116,11 +116,8 @@
     weirdPayload[@"display"] = weirdDisplay;
     UALegacyInAppMessage *iam = [UALegacyInAppMessage messageWithPayload:weirdPayload];
 
-    // default to unknown
-    XCTAssertEqual(iam.displayType, UALegacyInAppMessageDisplayTypeUnknown);
-
-    // default to bottom
-    XCTAssertEqual(iam.position, UALegacyInAppMessagePositionBottom);
+    // invalid payload results in nil message
+    XCTAssertNil(iam);
 }
 
 /**
@@ -128,7 +125,7 @@
  */
 - (void)testSoftTypeChecking {
     NSMutableDictionary *weirdPayload = [NSMutableDictionary dictionaryWithDictionary:self.payload];
-    NSDictionary *weirdDisplay = @{@"alert":@{@"not_a" : @"string"}, @"type":@24, @"duration":@"not a number", @"position":@[@1, @2, @3]};
+    NSDictionary *weirdDisplay = @{@"alert":@{@"not_a" : @"string"}, @"type":@"banner", @"duration":@"not a number", @"position":@[@1, @2, @3]};
 
     weirdPayload[@"display"] = weirdDisplay;
 
@@ -137,8 +134,8 @@
     // alert has no default, so it should be nil in this case
     XCTAssertNil(iam.alert);
 
-    // default to unknown (as opposed to banner, which is the default when constructing a new object)
-    XCTAssertEqual(iam.displayType, UALegacyInAppMessageDisplayTypeUnknown);
+    // set to banner
+    XCTAssertEqual(iam.displayType, UALegacyInAppMessageDisplayTypeBanner);
 
     // default to bottom
     XCTAssertEqual(iam.position, UALegacyInAppMessagePositionBottom);

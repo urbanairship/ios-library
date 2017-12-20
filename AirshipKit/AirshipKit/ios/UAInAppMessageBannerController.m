@@ -120,15 +120,14 @@ double const MinimumSwipeVelocity = 100.0;
     }
 
     UIView *parentView = [UAUtils mainWindow];
-    NSString *placement = self.displayContent.placement;
 
     UAInAppMessageTextInfo *heading = self.displayContent.heading;
     UAInAppMessageTextInfo *body = self.displayContent.body;
-    NSString *contentLayout = self.displayContent.contentLayout;
+    UAInAppMessageBannerContentLayoutType contentLayout = self.displayContent.contentLayout;
 
     NSArray<UAInAppMessageButtonInfo *> *buttons = self.displayContent.buttons;
-    NSString *buttonLayout = self.displayContent.buttonLayout;
-    UIColor *dismissColor = [UAColorUtils colorWithHexString:self.displayContent.dismissButtonColor];
+    UAInAppMessageButtonLayoutType buttonLayout = self.displayContent.buttonLayout;
+    UIColor *dismissColor = self.displayContent.dismissButtonColor;
 
     if (!parentView) {
         UA_LDEBUG(@"Unable to find parent view, canceling in-app message banner display");
@@ -156,7 +155,7 @@ double const MinimumSwipeVelocity = 100.0;
 
     [self addInitialConstraintsToParentView:parentView
                                  bannerView:self.bannerView
-                                  placement:placement];
+                                  placement:self.displayContent.placement];
 
     self.showCompletionHandler = completionHandler;
 
@@ -201,7 +200,7 @@ double const MinimumSwipeVelocity = 100.0;
     //TODO Run actions for button info utils method
 
     // Check button behavior
-    if ([button.buttonInfo.behavior isEqualToString:UAInAppMessageButtonInfoBehaviorCancel]) {
+    if (button.buttonInfo.behavior == UAInAppMessageButtonInfoBehaviorCancel) {
         // Cancel IAM schedule
         [[UAirship inAppMessageManager] cancelMessageWithID:self.messageID];
     }
@@ -214,7 +213,7 @@ double const MinimumSwipeVelocity = 100.0;
 
 - (void)addInitialConstraintsToParentView:(UIView *)parentView
                                bannerView:(UAInAppMessageBannerView *)bannerView
-                                placement:(NSString *)placement {
+                                placement:(UAInAppMessageBannerPlacementType)placement {
 
     // Center on X axis
     [NSLayoutConstraint constraintWithItem:bannerView
@@ -259,24 +258,29 @@ double const MinimumSwipeVelocity = 100.0;
     maxWidth.priority = UILayoutPriorityRequired;
     maxWidth.active = YES;
 
-    if ([placement isEqualToString:UAInAppMessageBannerPlacementTop]) {
-        // Top constraint is used for animating the message in the top position.
-        self.verticalConstraint = [NSLayoutConstraint constraintWithItem:bannerView
-                                                               attribute:NSLayoutAttributeTop
-                                                               relatedBy:NSLayoutRelationEqual
-                                                                  toItem:parentView
-                                                               attribute:NSLayoutAttributeTop
-                                                              multiplier:1
-                                                                constant:-bannerView.bounds.size.height];
-    } else if ([placement isEqualToString:UAInAppMessageBannerPlacementBottom]) {
-        // Bottom constraint is used for animating the message in the bottom position.
-        self.verticalConstraint = [NSLayoutConstraint constraintWithItem:bannerView
-                                                               attribute:NSLayoutAttributeBottom
-                                                               relatedBy:NSLayoutRelationEqual
-                                                                  toItem:parentView
-                                                               attribute:NSLayoutAttributeBottom
-                                                              multiplier:1
-                                                                constant:bannerView.bounds.size.height];
+    switch (placement) {
+        case UAInAppMessageBannerPlacementTop:
+            // Top constraint is used for animating the message in the top position.
+            self.verticalConstraint = [NSLayoutConstraint constraintWithItem:bannerView
+                                                                   attribute:NSLayoutAttributeTop
+                                                                   relatedBy:NSLayoutRelationEqual
+                                                                      toItem:parentView
+                                                                   attribute:NSLayoutAttributeTop
+                                                                  multiplier:1
+                                                                    constant:-bannerView.bounds.size.height];
+
+            break;
+        case UAInAppMessageBannerPlacementBottom:
+            // Bottom constraint is used for animating the message in the bottom position.
+            self.verticalConstraint = [NSLayoutConstraint constraintWithItem:bannerView
+                                                                   attribute:NSLayoutAttributeBottom
+                                                                   relatedBy:NSLayoutRelationEqual
+                                                                      toItem:parentView
+                                                                   attribute:NSLayoutAttributeBottom
+                                                                  multiplier:1
+                                                                    constant:bannerView.bounds.size.height];
+
+            break;
     }
 
     self.verticalConstraint.active = YES;
@@ -297,10 +301,13 @@ double const MinimumSwipeVelocity = 100.0;
 }
 
 - (void)bannerView:(UAInAppMessageBannerView *)bannerView animateOutWithParentView:(UIView *)parentView completionHandler:(void (^)(void))completionHandler {
-    if ([self.displayContent.placement isEqualToString:UAInAppMessageBannerPlacementTop]) {
-        self.verticalConstraint.constant = -bannerView.bounds.size.height;
-    } else if ([self.displayContent.placement isEqualToString:UAInAppMessageBannerPlacementBottom]) {
-        self.verticalConstraint.constant = bannerView.bounds.size.height;
+    switch (self.displayContent.placement) {
+        case UAInAppMessageBannerPlacementTop:
+            self.verticalConstraint.constant = -bannerView.bounds.size.height;
+            break;
+        case UAInAppMessageBannerPlacementBottom:
+            self.verticalConstraint.constant = bannerView.bounds.size.height;
+            break;
     }
 
     [UIView animateWithDuration:DefaultAnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
@@ -344,8 +351,6 @@ double const MinimumSwipeVelocity = 100.0;
         return;
     }
 
-    NSString *placement = self.displayContent.placement;
-
     CGPoint velocity = [recognizer velocityInView:self.bannerView.superview];
     CGPoint translation = [recognizer translationInView:self.bannerView.superview];
 
@@ -358,11 +363,15 @@ double const MinimumSwipeVelocity = 100.0;
     BOOL yVelocityBelowThreshold = absoluteVelocityY < MinimumSwipeVelocity;
     BOOL xVelocityExceedsYVelocity = absoluteVelocityY < absoluteVelocityX;
 
-    BOOL bannerHasTopPlacement = [placement isEqualToString:UAInAppMessageBannerPlacementTop];
-    BOOL bannerHasBottomPlacement = [placement isEqualToString:UAInAppMessageBannerPlacementBottom];
-    BOOL swipeIsAwayFromBannerPlacement = (translation.y < 0 && bannerHasBottomPlacement) ||
-    (translation.y > 0 && bannerHasTopPlacement);
-
+    BOOL swipeIsAwayFromBannerPlacement = NO;
+    switch (self.displayContent.placement) {
+        case UAInAppMessageBannerPlacementTop:
+            swipeIsAwayFromBannerPlacement = (translation.y > 0);
+            break;
+        case UAInAppMessageBannerPlacementBottom:
+            swipeIsAwayFromBannerPlacement = (translation.y < 0);
+            break;
+    }
     if (xVelocityExceedsYVelocity ||  yVelocityBelowThreshold) {
         return;
     }

@@ -64,20 +64,20 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
         [UAInAppMessageUtils applyContainerConstraintsToContainer:self.closeButtonView containedView:closeButton];
 
 
-        if ([displayContent.contentLayout isEqualToString:UAInAppMessageFullScreenContentLayoutHeaderMediaBody]) {
+        if (displayContent.contentLayout == UAInAppMessageFullScreenContentLayoutHeaderMediaBody) {
             self.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:nil];
             self.bottomTextView = [UAInAppMessageTextView textViewWithHeading:nil body:displayContent.body];
 
             [self.containerStackView addArrangedSubview:self.topTextView];
             [self.containerStackView addArrangedSubview:imageView];
             [self.containerStackView addArrangedSubview:self.bottomTextView];
-        } else if ([displayContent.contentLayout isEqualToString:UAInAppMessageFullScreenContentLayoutHeaderBodyMedia]) {
+        } else if (displayContent.contentLayout == UAInAppMessageFullScreenContentLayoutHeaderBodyMedia) {
             
             self.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:displayContent.body];
 
             [self.containerStackView addArrangedSubview:self.topTextView];
             [self.containerStackView addArrangedSubview:imageView];
-        } else if ([displayContent.contentLayout isEqualToString:UAInAppMessageFullScreenContentLayoutMediaHeaderBody]) {
+        } else if (displayContent.contentLayout == UAInAppMessageFullScreenContentLayoutMediaHeaderBody) {
             self.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:displayContent.body];
 
             [self.containerStackView addArrangedSubview:imageView];
@@ -96,7 +96,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
         }
 
         self.displayContent = displayContent;
-        self.backgroundColor = [UAColorUtils colorWithHexString:displayContent.backgroundColor];
+        self.backgroundColor = displayContent.backgroundColor;
 
         self.translatesAutoresizingMaskIntoConstraints = NO;
     }

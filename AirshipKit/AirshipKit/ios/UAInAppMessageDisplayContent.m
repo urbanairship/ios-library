@@ -7,9 +7,9 @@
 /**
  * Button Layout
  */
-NSString *const UAInAppMessageButtonLayoutStacked = @"stacked";
-NSString *const UAInAppMessageButtonLayoutSeparate = @"separate";
-NSString *const UAInAppMessageButtonLayoutJoined = @"joined";
+NSString *const UAInAppMessageButtonLayoutStackedValue = @"stacked";
+NSString *const UAInAppMessageButtonLayoutSeparateValue = @"separate";
+NSString *const UAInAppMessageButtonLayoutJoinedValue = @"joined";
 
 /**
  * JSON Keys

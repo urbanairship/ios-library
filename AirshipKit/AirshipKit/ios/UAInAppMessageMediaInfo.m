@@ -5,20 +5,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSString *const UAInAppMessageMediaInfoTypeImage = @"image";
-NSString *const UAInAppMessageMediaInfoTypeVideo = @"video";
-NSString *const UAInAppMessageMediaInfoTypeYouTube = @"youtube";
-
 NSString *const UAInAppMessageMediaInfoDomain = @"com.urbanairship.in_app_message_media_info";
 
 NSString *const UAInAppMessageMediaInfoURLKey = @"url";
 NSString *const UAInAppMessageMediaInfoTypeKey = @"type";
 NSString *const UAInAppMessageMediaInfoDescriptionKey = @"description";
 
+NSString *const UAInAppMessageMediaInfoTypeImageValue = @"image";
+NSString *const UAInAppMessageMediaInfoTypeVideoValue = @"video";
+NSString *const UAInAppMessageMediaInfoTypeYouTubeValue = @"youtube";
 
 @interface UAInAppMessageMediaInfo ()
 @property(nonatomic, copy) NSString *url;
-@property(nonatomic, copy) NSString *type;
+@property(nonatomic, assign) UAInAppMessageMediaInfoType type;
 @property(nonatomic, copy) NSString *mediaDescription;
 @end
 
@@ -55,22 +54,23 @@ NSString *const UAInAppMessageMediaInfoDescriptionKey = @"description";
 }
 
 + (nullable instancetype)mediaInfoWithJSON:(id)json error:(NSError * _Nullable *)error {
-
-    NSString *url;
+    UAInAppMessageMediaInfoBuilder *builder = [[UAInAppMessageMediaInfoBuilder alloc] init];
+    
     id urlText = json[UAInAppMessageMediaInfoURLKey];
-    if (urlText && ![urlText isKindOfClass:[NSString class]]) {
-        if (error) {
-            NSString *msg = [NSString stringWithFormat:@"In-app message media URL must be a string. Invalid value: %@", urlText];
-            *error =  [NSError errorWithDomain:UAInAppMessageMediaInfoDomain
-                                          code:UAInAppMessageMediaInfoErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+    if (urlText) {
+        if (![urlText isKindOfClass:[NSString class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"In-app message media URL must be a string. Invalid value: %@", urlText];
+                *error =  [NSError errorWithDomain:UAInAppMessageMediaInfoDomain
+                                              code:UAInAppMessageMediaInfoErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            
+            return nil;
         }
-
-        return nil;
+        builder.url = urlText;
     }
-    url = urlText;
 
-    NSString *mediaType;
     id mediaContents = json[UAInAppMessageMediaInfoTypeKey];
     if (mediaContents) {
         if (![mediaContents isKindOfClass:[NSString class]]) {
@@ -83,45 +83,41 @@ NSString *const UAInAppMessageMediaInfoDescriptionKey = @"description";
             return nil;
         }
 
-        mediaType = [mediaContents lowercaseString];
+        mediaContents = [mediaContents lowercaseString];
 
-        if ([UAInAppMessageMediaInfoTypeImage isEqualToString:mediaType]) {
-            mediaType = UAInAppMessageMediaInfoTypeImage;
-        } else if ([UAInAppMessageMediaInfoTypeVideo isEqualToString:mediaType]) {
-            mediaType = UAInAppMessageMediaInfoTypeVideo;
-        } else if ([UAInAppMessageMediaInfoTypeYouTube isEqualToString:mediaType]) {
-            mediaType = UAInAppMessageMediaInfoTypeYouTube;
+        if ([UAInAppMessageMediaInfoTypeImageValue isEqualToString:mediaContents]) {
+            builder.type = UAInAppMessageMediaInfoTypeImage;
+        } else if ([UAInAppMessageMediaInfoTypeVideoValue isEqualToString:mediaContents]) {
+            builder.type = UAInAppMessageMediaInfoTypeVideo;
+        } else if ([UAInAppMessageMediaInfoTypeYouTubeValue isEqualToString:mediaContents]) {
+            builder.type = UAInAppMessageMediaInfoTypeYouTube;
         } else {
             if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Invalid in-app message media type: %@", mediaType];
+                NSString *msg = [NSString stringWithFormat:@"Invalid in-app message media type: %@", mediaContents];
                 *error =  [NSError errorWithDomain:UAInAppMessageMediaInfoDomain
                                               code:UAInAppMessageMediaInfoErrorCodeInvalidJSON
                                           userInfo:@{NSLocalizedDescriptionKey:msg}];
             }
-
             return nil;
         }
     }
 
-    NSString *description;
     id descriptionText = json[UAInAppMessageMediaInfoDescriptionKey];
-    if (descriptionText && ![descriptionText isKindOfClass:[NSString class]]) {
-        if (error) {
-            NSString *msg = [NSString stringWithFormat:@"In-app message media description must be a string. Invalid value: %@", descriptionText];
-            *error =  [NSError errorWithDomain:UAInAppMessageMediaInfoDomain
-                                          code:UAInAppMessageMediaInfoErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+    if (descriptionText) {
+        if (![descriptionText isKindOfClass:[NSString class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"In-app message media description must be a string. Invalid value: %@", descriptionText];
+                *error =  [NSError errorWithDomain:UAInAppMessageMediaInfoDomain
+                                              code:UAInAppMessageMediaInfoErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            
+            return nil;
         }
-
-        return nil;
+        builder.mediaDescription = descriptionText;
     }
-    description = descriptionText;
 
-    return [UAInAppMessageMediaInfo mediaInfoWithBuilderBlock:^(UAInAppMessageMediaInfoBuilder * _Nonnull builder) {
-        builder.url = url;
-        builder.type = mediaType;
-        builder.mediaDescription = description;
-    }];
+    return [[UAInAppMessageMediaInfo alloc] initWithBuilder:builder];
 }
 
 + (NSDictionary *)JSONWithMediaInfo:(UAInAppMessageMediaInfo *)mediaInfo {
@@ -132,7 +128,19 @@ NSString *const UAInAppMessageMediaInfoDescriptionKey = @"description";
     NSMutableDictionary *json = [NSMutableDictionary dictionary];
 
     json[UAInAppMessageMediaInfoURLKey] = mediaInfo.url;
-    json[UAInAppMessageMediaInfoTypeKey] = mediaInfo.type;
+
+    switch (mediaInfo.type) {
+        case UAInAppMessageMediaInfoTypeImage:
+            json[UAInAppMessageMediaInfoTypeKey] = UAInAppMessageMediaInfoTypeImageValue;
+            break;
+        case UAInAppMessageMediaInfoTypeVideo:
+            json[UAInAppMessageMediaInfoTypeKey] = UAInAppMessageMediaInfoTypeVideoValue;
+            break;
+        case UAInAppMessageMediaInfoTypeYouTube:
+            json[UAInAppMessageMediaInfoTypeKey] = UAInAppMessageMediaInfoTypeYouTubeValue;
+            break;
+    }
+
     json[UAInAppMessageMediaInfoDescriptionKey] = mediaInfo.mediaDescription;
 
     return [NSDictionary dictionaryWithDictionary:json];
@@ -147,8 +155,8 @@ NSString *const UAInAppMessageMediaInfoDescriptionKey = @"description";
         return NO;
     }
 
-    if (!builder.type) {
-        UA_LDEBUG(@"In-app media infos require a media type");
+    if (!builder.mediaDescription) {
+        UA_LDEBUG(@"In-app media infos require a media description.");
         return NO;
     }
 
@@ -175,7 +183,7 @@ NSString *const UAInAppMessageMediaInfoDescriptionKey = @"description";
         return NO;
     }
 
-    if ((info.type && !self.type) || (!info.type && self.type) || (self.type && ![self.type isEqualToString:info.type])) {
+    if (info.type != self.type) {
         return NO;
     }
 
@@ -191,7 +199,7 @@ NSString *const UAInAppMessageMediaInfoDescriptionKey = @"description";
 - (NSUInteger)hash {
     NSUInteger result = 1;
     result = 31 * result + [self.url hash];
-    result = 31 * result + [self.type hash];
+    result = 31 * result + self.type;
     result = 31 * result + [self.mediaDescription hash];
 
     return result;

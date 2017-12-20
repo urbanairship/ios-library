@@ -2,14 +2,12 @@
 
 #import "UAInAppMessageButtonInfo.h"
 #import "UAGlobal.h"
+#import "UAColorUtils+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 NSString *const UAInAppMessageButtonInfoDomain = @"com.urbanairship.in_app_message_button_info";
 
-NSString *const UAInAppMessageButtonInfoBehaviorCancel = @"cancel";
-NSString *const UAInAppMessageButtonInfoBehaviorDismiss = @"dismiss";
-
-// JSON Keys
+// JSON Keys and Values
 NSString *const UAInAppMessageButtonInfoLabelKey = @"label";
 NSString *const UAInAppMessageButtonInfoIdentifierKey = @"id";
 NSString *const UAInAppMessageButtonInfoBehaviorKey = @"behavior";
@@ -18,17 +16,31 @@ NSString *const UAInAppMessageButtonInfoBackgroundColorKey = @"background_color"
 NSString *const UAInAppMessageButtonInfoBorderColorKey = @"border_color";
 NSString *const UAInAppMessageButtonInfoActionsKey = @"actions";
 
+NSString *const UAInAppMessageButtonInfoBehaviorCancelValue = @"cancel";
+NSString *const UAInAppMessageButtonInfoBehaviorDismissValue = @"dismiss";
+
 @interface UAInAppMessageButtonInfo ()
 @property(nonatomic, strong) UAInAppMessageTextInfo *label;
 @property(nonatomic, copy) NSString *identifier;
-@property(nonatomic, copy) NSString *behavior;
-@property(nonatomic, copy) NSString *backgroundColor;
-@property(nonatomic, copy) NSString *borderColor;
+@property(nonatomic, assign) UAInAppMessageButtonInfoBehaviorType behavior;
+@property(nonatomic, strong) UIColor *backgroundColor;
+@property(nonatomic, strong) UIColor *borderColor;
 @property(nonatomic, assign) NSUInteger borderRadius;
 @property(nonatomic, copy, nullable) NSDictionary *actions;
 @end
 
 @implementation UAInAppMessageButtonInfoBuilder
+
+// set default values for properties
+- (instancetype)init {
+    if (self = [super init]) {
+        self.behavior = UAInAppMessageButtonInfoBehaviorDismiss;
+        self.backgroundColor = [UIColor blackColor];
+        self.borderColor = [UIColor blackColor];
+    }
+    return self;
+}
+
 @end
 
 @implementation UAInAppMessageButtonInfo
@@ -44,10 +56,10 @@ NSString *const UAInAppMessageButtonInfoActionsKey = @"actions";
     if (self) {
         self.label = builder.label;
         self.identifier = builder.identifier;
-        self.behavior = builder.behavior ?: UAInAppMessageButtonInfoBehaviorDismiss;
-        self.backgroundColor = builder.backgroundColor ?: @"#FF000000";
+        self.behavior = builder.behavior;
+        self.backgroundColor = builder.backgroundColor;
         self.borderRadius = builder.borderRadius;
-        self.borderColor = builder.borderColor ?: @"#FF000000";
+        self.borderColor = builder.borderColor;
         self.actions = builder.actions;
     }
 
@@ -65,37 +77,42 @@ NSString *const UAInAppMessageButtonInfoActionsKey = @"actions";
 }
 
 + (nullable instancetype)buttonInfoWithJSON:(id)json error:(NSError * _Nullable *)error {
+    UAInAppMessageButtonInfoBuilder *builder = [[UAInAppMessageButtonInfoBuilder alloc] init];
 
-    UAInAppMessageTextInfo *label;
     id labelDict = json[UAInAppMessageButtonInfoLabelKey];
-    if (labelDict && ![labelDict isKindOfClass:[NSDictionary class]]) {
-        if (error) {
-            NSString *msg = [NSString stringWithFormat:@"In-app message button label must be an dictionary. Invalid value: %@", labelDict];
-            *error =  [NSError errorWithDomain:UAInAppMessageButtonInfoDomain
-                                          code:UAInAppMessageButtonInfoErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+    if (labelDict) {
+        if (![labelDict isKindOfClass:[NSDictionary class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"In-app message button label must be an dictionary. Invalid value: %@", labelDict];
+                *error =  [NSError errorWithDomain:UAInAppMessageButtonInfoDomain
+                                              code:UAInAppMessageButtonInfoErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            
+            return nil;
         }
-
-        return nil;
+        
+        builder.label = [UAInAppMessageTextInfo textInfoWithJSON:labelDict error:error];
+        if (!builder.label) {
+            return nil;
+        }
     }
 
-    label = [UAInAppMessageTextInfo textInfoWithJSON:labelDict error:error];
-
-    NSString *identifier;
     id identifierText = json[UAInAppMessageButtonInfoIdentifierKey];
-    if (identifierText && ![identifierText isKindOfClass:[NSString class]]) {
-        if (error) {
-            NSString *msg = [NSString stringWithFormat:@"In-app message button identifier must be a string. Invalid value: %@", identifierText];
-            *error =  [NSError errorWithDomain:UAInAppMessageButtonInfoDomain
-                                          code:UAInAppMessageButtonInfoErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+    if (identifierText) {
+        if (![identifierText isKindOfClass:[NSString class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"In-app message button identifier must be a string. Invalid value: %@", identifierText];
+                *error =  [NSError errorWithDomain:UAInAppMessageButtonInfoDomain
+                                              code:UAInAppMessageButtonInfoErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            
+            return nil;
         }
-
-        return nil;
+        builder.identifier = identifierText;
     }
-    identifier = identifierText;
 
-    NSString *behavior;
     id behaviorContents = json[UAInAppMessageButtonInfoBehaviorKey];
     if (behaviorContents) {
         if (![behaviorContents isKindOfClass:[NSString class]]) {
@@ -108,15 +125,15 @@ NSString *const UAInAppMessageButtonInfoActionsKey = @"actions";
             return nil;
         }
 
-       behavior = [behaviorContents lowercaseString];
+       behaviorContents = [behaviorContents lowercaseString];
 
-        if ([UAInAppMessageButtonInfoBehaviorCancel isEqualToString:behavior]) {
-            behavior = UAInAppMessageButtonInfoBehaviorCancel;
-        } else if ([UAInAppMessageButtonInfoBehaviorDismiss isEqualToString:behavior]) {
-            behavior = UAInAppMessageButtonInfoBehaviorDismiss;
+        if ([UAInAppMessageButtonInfoBehaviorCancelValue isEqualToString:behaviorContents]) {
+            builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
+        } else if ([UAInAppMessageButtonInfoBehaviorDismissValue isEqualToString:behaviorContents]) {
+            builder.behavior = UAInAppMessageButtonInfoBehaviorDismiss;
         } else {
             if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Invalid in-app message button behavior: %@", behavior];
+                NSString *msg = [NSString stringWithFormat:@"Invalid in-app message button behavior: %@", behaviorContents];
                 *error =  [NSError errorWithDomain:UAInAppMessageButtonInfoDomain
                                               code:UAInAppMessageButtonInfoErrorCodeInvalidJSON
                                           userInfo:@{NSLocalizedDescriptionKey:msg}];
@@ -126,68 +143,68 @@ NSString *const UAInAppMessageButtonInfoActionsKey = @"actions";
         }
     }
 
-    NSString *backgroundColor;
     id backgroundColorHex = json[UAInAppMessageButtonInfoBackgroundColorKey];
-    if (backgroundColorHex && ![backgroundColorHex isKindOfClass:[NSString class]]) {
-        if (error) {
-            NSString *msg = [NSString stringWithFormat:@"In-app message button background color must be a hex string. Invalid value: %@", backgroundColorHex];
-            *error =  [NSError errorWithDomain:UAInAppMessageButtonInfoDomain
-                                          code:UAInAppMessageButtonInfoErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+    if (backgroundColorHex) {
+        
+        if (![backgroundColorHex isKindOfClass:[NSString class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"In-app message button background color must be a hex string. Invalid value: %@", backgroundColorHex];
+                *error =  [NSError errorWithDomain:UAInAppMessageButtonInfoDomain
+                                              code:UAInAppMessageButtonInfoErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            
+            return nil;
         }
-
-        return nil;
+        builder.backgroundColor = [UAColorUtils colorWithHexString:backgroundColorHex];
     }
-    backgroundColor = backgroundColorHex;
 
-    NSString *borderColor;
     id borderColorHex = json[UAInAppMessageButtonInfoBorderColorKey];
-    if (borderColorHex && ![borderColorHex isKindOfClass:[NSString class]]) {
-        if (error) {
-            NSString *msg = [NSString stringWithFormat:@"In-app message button border color must be a hex string. Invalid value: %@", borderColorHex];
-            *error =  [NSError errorWithDomain:UAInAppMessageButtonInfoDomain
-                                          code:UAInAppMessageButtonInfoErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+    if (borderColorHex) {
+        if (![borderColorHex isKindOfClass:[NSString class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"In-app message button border color must be a hex string. Invalid value: %@", borderColorHex];
+                *error =  [NSError errorWithDomain:UAInAppMessageButtonInfoDomain
+                                              code:UAInAppMessageButtonInfoErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            
+            return nil;
         }
-
-        return nil;
+        builder.borderColor = [UAColorUtils colorWithHexString:borderColorHex];
     }
-    borderColor = borderColorHex;
 
     id borderRadius = json[UAInAppMessageButtonInfoBorderRadiusKey];
-    if (borderRadius && ![borderRadius isKindOfClass:[NSNumber class]]) {
-        if (error) {
-            NSString *msg = [NSString stringWithFormat:@"Button border radius must be a number. Invalid value: %@", borderRadius];
-            *error =  [NSError errorWithDomain:UAInAppMessageButtonInfoDomain
-                                          code:UAInAppMessageButtonInfoErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+    if (borderRadius) {
+        if (![borderRadius isKindOfClass:[NSNumber class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Button border radius must be a number. Invalid value: %@", borderRadius];
+                *error =  [NSError errorWithDomain:UAInAppMessageButtonInfoDomain
+                                              code:UAInAppMessageButtonInfoErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
         }
-
-        return nil;
+        builder.borderRadius = [borderRadius unsignedIntegerValue];
     }
 
     // Actions
     id actions = json[UAInAppMessageButtonInfoActionsKey];
-    if (actions && ![actions isKindOfClass:[NSDictionary class]]) {
-        if (error) {
-            NSString *msg = [NSString stringWithFormat:@"Button actions payload must be a dictionary. Invalid value: %@", actions];
-            *error =  [NSError errorWithDomain:UAInAppMessageButtonInfoDomain
-                                          code:UAInAppMessageButtonInfoErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+    if (actions) {
+        if (![actions isKindOfClass:[NSDictionary class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Button actions payload must be a dictionary. Invalid value: %@", actions];
+                *error =  [NSError errorWithDomain:UAInAppMessageButtonInfoDomain
+                                              code:UAInAppMessageButtonInfoErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            
+            return nil;
         }
-
-        return nil;
+        builder.actions = actions;
     }
 
-    return [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
-        builder.label = label;
-        builder.identifier = identifier;
-        builder.behavior = behavior;
-        builder.backgroundColor = backgroundColor;
-        builder.borderColor = borderColor;
-        builder.borderRadius = [borderRadius unsignedIntegerValue];
-        builder.actions = actions;
-    }];
+    return [[UAInAppMessageButtonInfo alloc] initWithBuilder:builder];
 }
 
 + (NSDictionary *)JSONWithButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo {
@@ -200,9 +217,19 @@ NSString *const UAInAppMessageButtonInfoActionsKey = @"actions";
     json[UAInAppMessageButtonInfoLabelKey] = [UAInAppMessageTextInfo JSONWithTextInfo:buttonInfo.label];
     json[UAInAppMessageButtonInfoIdentifierKey] = buttonInfo.identifier;
     json[UAInAppMessageButtonInfoBorderRadiusKey] = [NSNumber numberWithInteger:buttonInfo.borderRadius];
-    json[UAInAppMessageButtonInfoBehaviorKey] = buttonInfo.behavior;
-    json[UAInAppMessageButtonInfoBorderColorKey] = buttonInfo.borderColor;
-    json[UAInAppMessageButtonInfoBackgroundColorKey] = buttonInfo.backgroundColor;
+    
+    switch (buttonInfo.behavior) {
+        case UAInAppMessageButtonInfoBehaviorCancel:
+            json[UAInAppMessageButtonInfoBehaviorKey] = UAInAppMessageButtonInfoBehaviorCancelValue;
+            break;
+        case UAInAppMessageButtonInfoBehaviorDismiss:
+        default:
+            json[UAInAppMessageButtonInfoBehaviorKey] = UAInAppMessageButtonInfoBehaviorDismissValue;
+            break;
+    }
+
+    json[UAInAppMessageButtonInfoBorderColorKey] = [UAColorUtils hexStringWithColor:buttonInfo.borderColor];
+    json[UAInAppMessageButtonInfoBackgroundColorKey] = [UAColorUtils hexStringWithColor:buttonInfo.backgroundColor];
     json[UAInAppMessageButtonInfoActionsKey] = buttonInfo.actions;
 
     return [NSDictionary dictionaryWithDictionary:json];
@@ -243,15 +270,15 @@ NSString *const UAInAppMessageButtonInfoActionsKey = @"actions";
         return NO;
     }
 
-    if (self.behavior != info.behavior && ![self.behavior isEqualToString:info.behavior]) {
+    if (self.behavior != info.behavior) {
         return NO;
     }
 
-    if (self.backgroundColor != info.backgroundColor && ![self.backgroundColor isEqualToString:info.backgroundColor]) {
+    if (self.backgroundColor != info.backgroundColor && ![[UAColorUtils hexStringWithColor:self.backgroundColor] isEqualToString:[UAColorUtils hexStringWithColor:info.backgroundColor]]) {
         return NO;
     }
 
-    if (self.borderColor != info.borderColor && ![self.borderColor isEqualToString:info.borderColor]) {
+    if (self.borderColor != info.borderColor && ![[UAColorUtils hexStringWithColor:self.borderColor] isEqualToString:[UAColorUtils hexStringWithColor:info.borderColor]]) {
         return NO;
     }
 
@@ -266,7 +293,7 @@ NSString *const UAInAppMessageButtonInfoActionsKey = @"actions";
     NSUInteger result = 1;
     result = 31 * result + [self.label hash];
     result = 31 * result + [self.identifier hash];
-    result = 31 * result + [self.behavior hash];
+    result = 31 * result + self.behavior;
     result = 31 * result + [self.backgroundColor hash];
     result = 31 * result + [self.borderColor hash];
     result = 31 * result + [self.actions hash];

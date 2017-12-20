@@ -998,6 +998,7 @@
 		DF17A1061F56330500DC39E0 /* UARemoteDataAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = DF17A1031F56330500DC39E0 /* UARemoteDataAPIClient.m */; };
 		DF17A1071F56330500DC39E0 /* UARemoteDataAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = DF17A1031F56330500DC39E0 /* UARemoteDataAPIClient.m */; };
 		DF17A1101F57617200DC39E0 /* UARemoteDataAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF17A10F1F57617200DC39E0 /* UARemoteDataAPIClientTest.m */; };
+		DF34E6681FE9F2E30020FF30 /* UAInAppMessageTextInfoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DF34E6671FE9F2E30020FF30 /* UAInAppMessageTextInfoTests.m */; };
 		DF544B911E428DC800F4F008 /* UATextInputNotificationActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF544B901E428DC800F4F008 /* UATextInputNotificationActionTest.m */; };
 		DF5ED8D91F743E7E002DDA24 /* UARemoteDataPayload+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF5ED8D71F743E7E002DDA24 /* UARemoteDataPayload+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF5ED8DA1F743E7E002DDA24 /* UARemoteDataPayload+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF5ED8D71F743E7E002DDA24 /* UARemoteDataPayload+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1932,6 +1933,7 @@
 		DF17A1021F56330500DC39E0 /* UARemoteDataAPIClient+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UARemoteDataAPIClient+Internal.h"; path = "common/UARemoteDataAPIClient+Internal.h"; sourceTree = "<group>"; };
 		DF17A1031F56330500DC39E0 /* UARemoteDataAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARemoteDataAPIClient.m; path = common/UARemoteDataAPIClient.m; sourceTree = "<group>"; };
 		DF17A10F1F57617200DC39E0 /* UARemoteDataAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARemoteDataAPIClientTest.m; sourceTree = "<group>"; };
+		DF34E6671FE9F2E30020FF30 /* UAInAppMessageTextInfoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageTextInfoTests.m; sourceTree = "<group>"; };
 		DF544B901E428DC800F4F008 /* UATextInputNotificationActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATextInputNotificationActionTest.m; sourceTree = "<group>"; };
 		DF5C88AF1EA916300041E088 /* UAMessageCenterMessageViewProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAMessageCenterMessageViewProtocol.h; path = ios/UAMessageCenterMessageViewProtocol.h; sourceTree = "<group>"; };
 		DF5ED8D71F743E7E002DDA24 /* UARemoteDataPayload+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UARemoteDataPayload+Internal.h"; path = "common/UARemoteDataPayload+Internal.h"; sourceTree = "<group>"; };
@@ -2470,6 +2472,7 @@
 				CC64F09B1D8B781C009CEF27 /* UALegacyInAppMessagingTest.m */,
 				997140EE1FB0F3E600EF5445 /* UAInAppMessageManagerTest.m */,
 				997AC8211FE5ACE000260440 /* UAInAppMessageFullScreenDisplayContentTest.m */,
+				DF34E6671FE9F2E30020FF30 /* UAInAppMessageTextInfoTests.m */,
 				997140F31FB0F45000EF5445 /* UAInAppMessageTest.m */,
 				DFFCF5AE1FCF53100014DE2E /* UAInAppRemoteDataClientTest.m */,
 				DF0221F11FD9F6EF00EF8C9D /* UAInAppMessageAudienceTest.m */,
@@ -4734,6 +4737,7 @@
 				CC64F10B1D8B781C009CEF27 /* UAJSONValueMatcherTests.m in Sources */,
 				CC64F12B1D8B781C009CEF27 /* UAWebViewCallDataTest.m in Sources */,
 				CC944EE01DB6AF0C00C42269 /* UAURLRequestOperationTest.m in Sources */,
+				DF34E6681FE9F2E30020FF30 /* UAInAppMessageTextInfoTests.m in Sources */,
 				CC64F1281D8B781C009CEF27 /* UAUserAPIClientTest.m in Sources */,
 				DFD442B61FD892AE002E4FA1 /* UAInAppMessageTagSelectorTest.m in Sources */,
 				CCB902251DCBBCDA009A66D7 /* UAAsyncOperationTest.m in Sources */,

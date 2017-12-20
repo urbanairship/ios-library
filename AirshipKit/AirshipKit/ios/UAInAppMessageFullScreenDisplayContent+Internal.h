@@ -9,22 +9,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- * Builder class for a UAInAppMessageFullScreenDisplayContent.
- */
-@interface UAInAppMessageFullScreenDisplayContentBuilder ()
-
-/**
- * Applies fields from a JSON object.
- *
- * @param json The json object.
- * @param error The optional error.
- * @returns `YES` if the json was able to be applied, otherwise `NO`.
- */
-- (BOOL)applyFromJSON:(id)json error:(NSError * _Nullable *)error;
-
-@end
-
 @interface UAInAppMessageFullScreenDisplayContent ()
 
 /**
@@ -56,23 +40,23 @@ NS_ASSUME_NONNULL_BEGIN
  * The full screen's button layout. Defaults to UAInAppMessageButtonLayoutSeparate.
  * If more than 2 buttons are supplied, defaults to UAInAppMessageButtonLayoutStacked.
  */
-@property(nonatomic, copy, nullable) NSString *buttonLayout;
+@property(nonatomic, assign) UAInAppMessageButtonLayoutType buttonLayout;
 
 /**
  * The full screen's layout for the text and media. Defaults to
  * UAInAppMessageFullScreenContentLayoutHeaderMediaBody
  */
-@property(nonatomic, copy, nullable) NSString *contentLayout;
+@property(nonatomic, assign) UAInAppMessageFullScreenContentLayoutType contentLayout;
 
 /**
  * The full screen's background color. Defaults to white.
  */
-@property(nonatomic, copy, nullable) NSString *backgroundColor;
+@property(nonatomic, strong) UIColor *backgroundColor;
 
 /**
  * The full screen's dismiss button color. Defaults to black.
  */
-@property(nonatomic, copy, nullable) NSString *dismissButtonColor;
+@property(nonatomic, strong) UIColor *dismissButtonColor;
 
 
 @end

@@ -11,29 +11,6 @@
 
 @implementation UAInAppMessageAudienceTest
 
-- (void)testJSON {
-    // setup
-    NSDictionary *originalJSON = @{@"new_user" : @YES,
-                                   @"notifications_opt_in" : @YES,
-                                   @"location_opt_in" : @NO,
-                                   @"locale" : @[@"en-us"],
-                                   @"tags" : @{
-                                      @"not" : @{
-                                              @"tag":@"not-tag"
-                                      }
-                                   },
-                                   @"app_version" : @"[1.0, 2.0]"
-                                   };
-    
-    // test
-    NSError *error;
-    UAInAppMessageAudience *audienceFromJSON = [UAInAppMessageAudience audienceWithJSON:originalJSON error:&error];
-    XCTAssertNotNil(audienceFromJSON);
-    XCTAssertNil(error);
-    NSDictionary *fromJSONAndBack = [audienceFromJSON toJsonValue];
-    XCTAssertNil(error);
-    XCTAssertEqualObjects(originalJSON, fromJSONAndBack);
-}
 - (void)testBuilderBlock {
     //setup
     __block NSError *error;

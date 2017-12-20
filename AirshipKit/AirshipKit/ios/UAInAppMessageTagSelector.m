@@ -64,7 +64,9 @@ NSString * const UAInAppMessageTagSelectorErrorDomain = @"com.urbanairship.in_ap
     }
     
     if (![json isKindOfClass:[NSDictionary class]]) {
-        *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Json must be a dictionary. Invalid value: %@", json]];
+        if (error) {
+            *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Json must be a dictionary. Invalid value: %@", json]];
+        }
         return nil;
     }
     
@@ -73,7 +75,9 @@ NSString * const UAInAppMessageTagSelectorErrorDomain = @"com.urbanairship.in_ap
         if ([tag isKindOfClass:[NSString class]]) {
             return [self tag:tag];
         } else {
-            *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"tag\" type must be a string. Invalid value: %@", tag]];
+            if (error) {
+                *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"tag\" type must be a string. Invalid value: %@", tag]];
+            }
             return nil;
         }
     }
@@ -83,7 +87,9 @@ NSString * const UAInAppMessageTagSelectorErrorDomain = @"com.urbanairship.in_ap
         if ([selectors isKindOfClass:[NSArray<NSDictionary *> class]]) {
             return [self or:[self parseSelectors:selectors error:error]];
         } else {
-            *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"OR\" type must be an array of dictionaries. Invalid value: %@", selectors]];
+            if (error) {
+                *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"OR\" type must be an array of dictionaries. Invalid value: %@", selectors]];
+            }
             return nil;
         }
     }
@@ -93,7 +99,9 @@ NSString * const UAInAppMessageTagSelectorErrorDomain = @"com.urbanairship.in_ap
         if ([selectors isKindOfClass:[NSArray<NSDictionary *> class]]) {
             return [self and:[self parseSelectors:selectors error:error]];
         } else {
-            *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"AND\" type must be an array of dictionaries. Invalid value: %@", selectors]];
+            if (error) {
+                *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"AND\" type must be an array of dictionaries. Invalid value: %@", selectors]];
+            }
             return nil;
         }
     }
@@ -103,7 +111,9 @@ NSString * const UAInAppMessageTagSelectorErrorDomain = @"com.urbanairship.in_ap
         if ([selector isKindOfClass:[NSDictionary class]]) {
             return [self not:[self parseJson:selector error:error]];
         } else {
-            *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"NOT\" type must be a single dictionary. Invalid value: %@", selectors]];
+            if (error) {
+                *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"NOT\" type must be a single dictionary. Invalid value: %@", selectors]];
+            }
             return nil;
         }
     }
@@ -123,10 +133,10 @@ NSString * const UAInAppMessageTagSelectorErrorDomain = @"com.urbanairship.in_ap
     
     for (NSDictionary *jsonSelector in jsonSelectors) {
         UAInAppMessageTagSelector *selector = [self parseJson:jsonSelector error:error];
-        if (selector && !*error) {
+        if (selector) {
             [selectors addObject:selector];
         } else {
-            if (!*error) {
+            if (error) {
                 *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"JSON parsing of selector failed. Invalid value: %@", jsonSelector]];
             }
             return nil;

@@ -52,7 +52,7 @@
     if ([displayType isEqualToString:@"banner"]) {
         message.displayType = UALegacyInAppMessageDisplayTypeBanner;
     } else {
-        message.displayType = UALegacyInAppMessageDisplayTypeUnknown;
+        return nil;
     }
 
     message.alert = typeCheck(display[@"alert"], [NSString class]);
@@ -66,6 +66,8 @@
     if ([positionString isEqualToString:@"top"]) {
         message.position = UALegacyInAppMessagePositionTop;
     } else if ([positionString isEqualToString:@"bottom"]) {
+        message.position = UALegacyInAppMessagePositionBottom;
+    } else {
         message.position = UALegacyInAppMessagePositionBottom;
     }
 

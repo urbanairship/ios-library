@@ -21,7 +21,7 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
 @implementation UAInAppMessageButtonView
 
 + (instancetype)buttonViewWithButtons:(NSArray<UAInAppMessageButtonInfo *> *)buttons
-                               layout:(NSString *)layout
+                               layout:(UAInAppMessageButtonLayoutType)layout
                                target:(id)target
                              selector:(SEL)selector
                    dismissButtonColor:(UIColor *)dismissButtonColor {
@@ -33,7 +33,7 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
 }
 
 - (instancetype)initWithButtons:(NSArray<UAInAppMessageButtonInfo *> *)buttons
-                         layout:(NSString *)layout
+                         layout:(UAInAppMessageButtonLayoutType)layout
                          target:(id)target
                        selector:(SEL)selector
              dismissButtonColor:(UIColor *)dismissButtonColor {
@@ -44,14 +44,16 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
     NSBundle *bundle = [UAirship resources];
 
     // Joined, Separate and Stacked views object at index 0,1,2, respectively.
-    if ([layout isEqualToString:UAInAppMessageButtonLayoutJoined]) {
-        self = [[bundle loadNibNamed:nibName owner:self options:nil] objectAtIndex:0];
-    } else if ([layout isEqualToString:UAInAppMessageButtonLayoutSeparate]) {
-        self = [[bundle loadNibNamed:nibName owner:self options:nil] objectAtIndex:1];
-    } else if ([layout isEqualToString:UAInAppMessageButtonLayoutStacked]) {
-        self = [[bundle loadNibNamed:nibName owner:self options:nil] objectAtIndex:2];
-    } else {
-        UA_LDEBUG(@"Invalid content layout for banner button view");
+    switch (layout) {
+        case UAInAppMessageButtonLayoutTypeJoined:
+            self = [[bundle loadNibNamed:nibName owner:self options:nil] objectAtIndex:0];
+            break;
+        case UAInAppMessageButtonLayoutTypeSeparate:
+            self = [[bundle loadNibNamed:nibName owner:self options:nil] objectAtIndex:1];
+            break;
+        case UAInAppMessageButtonLayoutTypeStacked:
+            self = [[bundle loadNibNamed:nibName owner:self options:nil] objectAtIndex:2];
+            break;
     }
 
     if (self) {
@@ -65,7 +67,8 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
 }
 
 - (void)addButtons:(NSArray<UAInAppMessageButtonInfo *> *)buttons
-            layout:layout target:(id)target
+            layout:(UAInAppMessageButtonLayoutType)layout
+            target:(id)target
           selector:(SEL)selector {
     if (!self.buttonContainer) {
         UA_LDEBUG(@"Button view container stack is nil");
@@ -88,7 +91,7 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
 
         // This rounds to the desired border radius which is 0 by default
         NSUInteger rounding = UAInAppMessageButtonRoundingOptionAllCorners;
-        if ([layout isEqualToString:UAInAppMessageButtonLayoutJoined]) {
+        if (layout == UAInAppMessageButtonLayoutTypeJoined) {
             if (buttonOrder == 0) {
                 rounding = UAInAppMessageButtonRoundingTopLeftCorner | UAInAppMessageButtonRoundingBottomLeftCorner;
             }
@@ -104,10 +107,10 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
         [button addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
 
         // Customize button background color if it has dismiss behavior, otherwise fall back to button color
-        if ([buttonInfo.behavior isEqualToString:UAInAppMessageButtonInfoBehaviorDismiss]) {
-            button.backgroundColor = self.dismissButtonColor ?: [UAColorUtils colorWithHexString:buttonInfo.backgroundColor];
+        if (buttonInfo.behavior == UAInAppMessageButtonInfoBehaviorDismiss) {
+            button.backgroundColor = self.dismissButtonColor ?: buttonInfo.backgroundColor;
         } else {
-            button.backgroundColor = [UAColorUtils colorWithHexString:buttonInfo.backgroundColor];
+            button.backgroundColor = buttonInfo.backgroundColor;
         }
 
         [self.buttonContainer addArrangedSubview:button];

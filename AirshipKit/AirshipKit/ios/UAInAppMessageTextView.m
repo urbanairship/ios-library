@@ -42,8 +42,8 @@ NSString *const UAInAppMessageTextViewNibName = @"UAInAppMessageTextView";
             [self.textContainer addArrangedSubview:headingLabel];
             self.textContainer.alignment = [UAInAppMessageUtils stackAlignmentWithTextInfo:heading];
         }
-        if (body) {
 
+        if (body) {
             UILabel *bodyLabel = [[UILabel alloc] init];
             bodyLabel.translatesAutoresizingMaskIntoConstraints = NO;
 

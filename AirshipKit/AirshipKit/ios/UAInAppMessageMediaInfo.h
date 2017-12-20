@@ -14,7 +14,27 @@ typedef NS_ENUM(NSInteger, UAMediaInfoErrorCode) {
 };
 
 /**
- * JSON keys.
+ * Media type.
+ */
+typedef NS_ENUM(NSInteger, UAInAppMessageMediaInfoType) {
+    /**
+     * Banner display
+     */
+    UAInAppMessageMediaInfoTypeImage,
+    
+    /**
+     * Full screen display
+     */
+    UAInAppMessageMediaInfoTypeVideo,
+    
+    /**
+     * YouTube video
+     */
+    UAInAppMessageMediaInfoTypeYouTube,
+};
+
+/**
+ * JSON keys and values.
  */
 extern NSString *const UAInAppMessageMediaURLKey;
 extern NSString *const UAInAppMessageMediaTypeKey;
@@ -23,17 +43,17 @@ extern NSString *const UAInAppMessageMediaDescriptionKey;
 /**
  * Image media type.
  */
-extern NSString *const UAInAppMessageMediaInfoTypeImage;
+extern NSString *const UAInAppMessageMediaInfoTypeImageValue;
 
 /**
  * Video media type.
  */
-extern NSString *const UAInAppMessageMediaInfoTypeVideo;
+extern NSString *const UAInAppMessageMediaInfoTypeVideoValue;
 
 /**
  * YouTube media type.
  */
-extern NSString *const UAInAppMessageMediaInfoTypeYouTube;
+extern NSString *const UAInAppMessageMediaInfoTypeYouTubeValue;
 
 /**
  * Builder class for a UAInAppMessageMediaInfo object.
@@ -48,7 +68,7 @@ extern NSString *const UAInAppMessageMediaInfoTypeYouTube;
 /**
  * Media type - media, video or YouTube video.
  */
-@property(nonatomic, copy) NSString *type;
+@property(nonatomic, assign) UAInAppMessageMediaInfoType type;
 
 /**
  * Media description.
@@ -71,7 +91,7 @@ extern NSString *const UAInAppMessageMediaInfoTypeYouTube;
 /**
  * Media type - media, video or YouTube video.
  */
-@property(nonatomic, copy, readonly) NSString *type;
+@property(nonatomic, assign, readonly) UAInAppMessageMediaInfoType type;
 
 /**
  * Media description.

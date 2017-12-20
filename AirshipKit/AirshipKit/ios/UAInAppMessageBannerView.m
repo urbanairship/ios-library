@@ -51,19 +51,18 @@ CGFloat const ShadowOpacity = 0.5;
     NSBundle *bundle = [UAirship resources];
     CGFloat shadowOffset;
 
-    NSString *placement = displayContent.placement;
     // Top and bottom banner views are firstObject and lastObject, respectively.
-    if ([placement isEqualToString:UAInAppMessageBannerPlacementTop]) {
-        self = [[bundle loadNibNamed:nibName owner:self options:nil] firstObject];
-        shadowOffset = ShadowOffset;
-        self.rounding = UIRectCornerBottomLeft | UIRectCornerBottomRight;
-    } else if ([placement isEqualToString:UAInAppMessageBannerPlacementBottom]) {
-        self = [[bundle loadNibNamed:nibName owner:self options:nil] lastObject];
-        shadowOffset = -ShadowOffset;
-        self.rounding = UIRectCornerTopLeft | UIRectCornerTopRight;
-    } else {
-        UA_LWARN(@"Invalid placement for banner view: %@", placement);
-        return nil;
+    switch (displayContent.placement) {
+        case UAInAppMessageBannerPlacementTop:
+            self = [[bundle loadNibNamed:nibName owner:self options:nil] firstObject];
+            shadowOffset = ShadowOffset;
+            self.rounding = UIRectCornerBottomLeft | UIRectCornerBottomRight;
+            break;
+        case UAInAppMessageBannerPlacementBottom:
+            self = [[bundle loadNibNamed:nibName owner:self options:nil] lastObject];
+            shadowOffset = -ShadowOffset;
+            self.rounding = UIRectCornerTopLeft | UIRectCornerTopRight;
+            break;
     }
 
     if (self) {
@@ -83,7 +82,7 @@ CGFloat const ShadowOpacity = 0.5;
         self.layer.shadowRadius = ShadowRadius;
         self.layer.shadowOpacity = ShadowOpacity;
 
-        self.tab.backgroundColor = [UAColorUtils colorWithHexString:displayContent.dismissButtonColor];
+        self.tab.backgroundColor = displayContent.dismissButtonColor;
         self.tab.layer.masksToBounds = YES;
         self.tab.layer.cornerRadius = self.tab.frame.size.height/2;
 
@@ -105,7 +104,7 @@ CGFloat const ShadowOpacity = 0.5;
                                            byRoundingCorners:(UIRectCorner)self.rounding
                                                  cornerRadii:(CGSize){bannerBorderRadius, bannerBorderRadius}].CGPath;
 
-    self.containerView.layer.backgroundColor = [[UAColorUtils colorWithHexString:self.displayContent.backgroundColor] CGColor];
+    self.containerView.layer.backgroundColor = [self.displayContent.backgroundColor CGColor];
 
     self.containerView.layer.mask = maskLayer;
 }

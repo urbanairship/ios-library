@@ -25,7 +25,7 @@
             builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
                 builder.text = @"Dismiss";
             }];
-            builder.backgroundColor = @"#ff0000"; // red
+            builder.backgroundColor = [UIColor redColor]; // red
         }];
 
         builder.buttons = @[button, button];
@@ -46,7 +46,7 @@
             builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
                 builder.text = @"Dismiss";
             }];
-            builder.backgroundColor = @"#ff0000"; // red
+            builder.backgroundColor = [UIColor redColor]; // red
         }];
 
         // 6 buttons with max buttons of 5
@@ -63,27 +63,27 @@
             builder.text = @"headline content";
         }];
 
-        builder.buttonLayout = UAInAppMessageButtonLayoutJoined;
+        builder.buttonLayout = UAInAppMessageButtonLayoutTypeJoined;
     }];
 
-    XCTAssertEqual(bannerWithJoinedButtons.buttonLayout, UAInAppMessageButtonLayoutJoined);
+    XCTAssertEqual(bannerWithJoinedButtons.buttonLayout, UAInAppMessageButtonLayoutTypeJoined);
 
     UAInAppMessageBannerDisplayContent *bannerWithSeparateButtons =  [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"headline content";
         }];
 
-        builder.buttonLayout = UAInAppMessageButtonLayoutSeparate;
+        builder.buttonLayout = UAInAppMessageButtonLayoutTypeSeparate;
     }];
 
-    XCTAssertEqual(bannerWithSeparateButtons.buttonLayout, UAInAppMessageButtonLayoutSeparate);
+    XCTAssertEqual(bannerWithSeparateButtons.buttonLayout, UAInAppMessageButtonLayoutTypeSeparate);
 
     UAInAppMessageBannerDisplayContent *bannerWithStackedButtons =  [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"headline content";
         }];
 
-        builder.buttonLayout = UAInAppMessageButtonLayoutStacked;
+        builder.buttonLayout = UAInAppMessageButtonLayoutTypeStacked;
     }];
 
     XCTAssertNil(bannerWithStackedButtons);
@@ -98,11 +98,12 @@
         builder.media = [UAInAppMessageMediaInfo mediaInfoWithBuilderBlock:^(UAInAppMessageMediaInfoBuilder * _Nonnull builder) {
             builder.type = UAInAppMessageMediaInfoTypeImage;
             builder.url = @"url string";
+            builder.mediaDescription = @"description";
         }];
 
     }];
 
-    XCTAssertEqualObjects(bannerWithImage.media.type, UAInAppMessageMediaInfoTypeImage);
+    XCTAssertEqual(bannerWithImage.media.type, UAInAppMessageMediaInfoTypeImage);
 
     UAInAppMessageBannerDisplayContent *bannerWithVideo =  [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
@@ -112,6 +113,7 @@
         builder.media = [UAInAppMessageMediaInfo mediaInfoWithBuilderBlock:^(UAInAppMessageMediaInfoBuilder * _Nonnull builder) {
             builder.type = UAInAppMessageMediaInfoTypeVideo;
             builder.url = @"url string";
+            builder.mediaDescription = @"description";
         }];
 
     }];
@@ -126,6 +128,7 @@
         builder.media = [UAInAppMessageMediaInfo mediaInfoWithBuilderBlock:^(UAInAppMessageMediaInfoBuilder * _Nonnull builder) {
             builder.type = UAInAppMessageMediaInfoTypeYouTube;
             builder.url = @"url string";
+            builder.mediaDescription = @"description";
         }];
 
     }];
@@ -175,16 +178,16 @@
     UAInAppMessageBannerDisplayContent *fromBuilderBannerDisplayContent = [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder * _Nonnull builder) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"heading";
-            builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
-            builder.color = @"hexcolor";
-            builder.styles = @[UAInAppMessageTextInfoStyleBold, UAInAppMessageTextInfoStyleItalic, UAInAppMessageTextInfoStyleUnderline];
+            builder.alignment = NSTextAlignmentCenter;
+            builder.color = [UIColor redColor];
+            builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
             builder.size = 11;
         }];
         builder.body = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"body";
-            builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
-            builder.color = @"hexcolor";
-            builder.styles = @[UAInAppMessageTextInfoStyleBold, UAInAppMessageTextInfoStyleItalic, UAInAppMessageTextInfoStyleUnderline];
+            builder.alignment = NSTextAlignmentCenter;
+            builder.color = [UIColor redColor];
+            builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic;
             builder.size = 11;
         }];;
         builder.media = [UAInAppMessageMediaInfo mediaInfoWithBuilderBlock:^(UAInAppMessageMediaInfoBuilder * _Nonnull builder) {
@@ -194,55 +197,51 @@
         builder.buttons = @[[UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
             builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
                 builder.text = @"button1";
-                builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
-                builder.color = @"hexcolor";
-                builder.styles = @[UAInAppMessageTextInfoStyleBold, UAInAppMessageTextInfoStyleItalic, UAInAppMessageTextInfoStyleUnderline];
+                builder.alignment = NSTextAlignmentCenter;
+                builder.color = [UIColor redColor];
+                builder.style = UAInAppMessageTextInfoStyleUnderline;
                 builder.size = 11;
             }];
 
             builder.identifier = @"identifier";
             builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
             builder.borderRadius = 11;
-            builder.backgroundColor = @"hexcolor";
-            builder.borderColor = @"hexcolor";
+            builder.backgroundColor = [UIColor redColor];
+            builder.borderColor = [UIColor redColor];
             builder.actions = @{@"+^t":@"test"};
         }], [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
             builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
                 builder.text = @"button2";
-                builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
-                builder.color = @"hexcolor";
-                builder.styles = @[UAInAppMessageTextInfoStyleBold, UAInAppMessageTextInfoStyleItalic, UAInAppMessageTextInfoStyleUnderline];
+                builder.alignment = NSTextAlignmentCenter;
+                builder.color = [UIColor redColor];
                 builder.size = 11;
             }];
 
             builder.identifier = @"identifier";
             builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
             builder.borderRadius = 11;
-            builder.backgroundColor = @"hexcolor";
-            builder.borderColor = @"hexcolor";
+            builder.backgroundColor = [UIColor redColor];
+            builder.borderColor = [UIColor redColor];
             builder.actions = @{@"+^t":@"test"};
         }]];
 
-        builder.buttonLayout = UAInAppMessageButtonLayoutSeparate;
+        builder.buttonLayout = UAInAppMessageButtonLayoutTypeSeparate;
         builder.placement = UAInAppMessageBannerPlacementTop;
-        builder.contentLayout = UAInAppMessageBannerContentLayoutMediaLeft;
+        builder.contentLayout = UAInAppMessageBannerContentLayoutTypeMediaLeft;
         builder.duration = 11;
-        builder.backgroundColor = @"hexcolor";
-        builder.dismissButtonColor = @"hexcolor";;
+        builder.dismissButtonColor = [UIColor redColor];
         builder.borderRadius = 11;
         builder.actions = @{@"^+t": @"sometag"};
     }];
 
     NSDictionary *JSONFromBuilderBannerDisplayContent = [fromBuilderBannerDisplayContent toJsonValue];
+    XCTAssertNotNil(JSONFromBuilderBannerDisplayContent);
     UAInAppMessageBannerDisplayContent *fromJSONBannerDisplayContent = [UAInAppMessageBannerDisplayContent bannerDisplayContentWithJSON:JSONFromBuilderBannerDisplayContent error:nil];
-    NSDictionary *JSONFromJSONBannerDisplayContent = [fromJSONBannerDisplayContent toJsonValue];
+    XCTAssertNotNil(fromJSONBannerDisplayContent);
 
     // Test isEqual and hashing
-    XCTAssertTrue([fromBuilderBannerDisplayContent isEqual:fromJSONBannerDisplayContent] == YES);
+    XCTAssertTrue([fromBuilderBannerDisplayContent isEqual:fromJSONBannerDisplayContent]);
     XCTAssertEqual(fromBuilderBannerDisplayContent.hash, fromJSONBannerDisplayContent.hash);
-
-    // Test conversion to JSON
-    XCTAssertEqualObjects(JSONFromBuilderBannerDisplayContent, JSONFromJSONBannerDisplayContent);
 }
 
 @end

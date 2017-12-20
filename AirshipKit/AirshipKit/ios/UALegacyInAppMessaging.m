@@ -24,10 +24,10 @@
 NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID";
 
 // The default primary color for IAMs: white
-#define kUALegacyInAppMessageDefaultPrimaryColor @"#FFFFFF";
+#define kUALegacyInAppMessageDefaultPrimaryColor [UIColor whiteColor]
 
 // The default secondary color for IAMs: gray-ish
-#define kUALegacyInAppMessageDefaultSecondaryColor @"#282828";
+#define kUALegacyInAppMessageDefaultSecondaryColor [UIColor colorWithRed:(28.0/255.0) green:(28.0/255.0) blue:(28.0/255.0) alpha:1]
 
 // APNS payload key
 #define kUALegacyIncomingInAppMessageKey @"com.urbanairship.in_app"
@@ -182,15 +182,15 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 }
 
 - (UAInAppMessageScheduleInfo *)scheduleInfoForMessage:(UALegacyInAppMessage *)message {
-    NSString *primaryColor = message.primaryColor ? [UAColorUtils hexStringWithColor:message.primaryColor] : kUALegacyInAppMessageDefaultPrimaryColor;
-    NSString *secondaryColor = message.secondaryColor ? [UAColorUtils hexStringWithColor:message.secondaryColor] : kUALegacyInAppMessageDefaultSecondaryColor;
+    UIColor *primaryColor = message.primaryColor ? message.primaryColor : kUALegacyInAppMessageDefaultPrimaryColor;
+    UIColor *secondaryColor = message.secondaryColor ? message.secondaryColor : kUALegacyInAppMessageDefaultSecondaryColor;
     float borderRadius = 2;
 
     UAInAppMessageBannerDisplayContent *displayContent = [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder * _Nonnull builder) {
         builder.backgroundColor = primaryColor;
         builder.dismissButtonColor = secondaryColor;
         builder.borderRadius = borderRadius;
-        builder.buttonLayout = UAInAppMessageButtonLayoutSeparate;
+        builder.buttonLayout = UAInAppMessageButtonLayoutTypeSeparate;
         builder.placement = message.position == UALegacyInAppMessagePositionTop ? UAInAppMessageBannerPlacementTop : UAInAppMessageBannerPlacementBottom;
         builder.actions = message.onClick;
 
@@ -211,7 +211,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
             }
             UANotificationAction *notificationAction = [message.notificationActions objectAtIndex:i];
             UAInAppMessageTextInfo *labelInfo = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
-                builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
+                builder.alignment = NSTextAlignmentCenter;
                 builder.color = primaryColor;
                 builder.text = notificationAction.title;
             }];

@@ -21,17 +21,17 @@
     UAInAppMessageButtonInfo *fromBuilderButtonInfo = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
         builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"text";
-            builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
-            builder.color = @"hexcolor";
-            builder.styles = @[UAInAppMessageTextInfoStyleBold, UAInAppMessageTextInfoStyleItalic, UAInAppMessageTextInfoStyleUnderline];
+            builder.alignment = NSTextAlignmentCenter;
+            builder.color = [UIColor redColor];
+            builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
             builder.size = 11;
         }];
 
         builder.identifier = @"identifier";
         builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
         builder.borderRadius = 11;
-        builder.backgroundColor = @"hexcolor";
-        builder.borderColor = @"hexcolor";
+        builder.backgroundColor = [UIColor redColor];
+        builder.borderColor = [UIColor redColor];
         builder.actions = @{@"+^t":@"test"};
     }];
 

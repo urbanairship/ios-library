@@ -16,7 +16,23 @@ typedef NS_ENUM(NSInteger, UAButtonInfoErrorCode) {
 };
 
 /**
- * JSON key.
+ * Button behavior.
+ */
+typedef NS_ENUM(NSInteger, UAInAppMessageButtonInfoBehaviorType) {
+    /**
+     * Dismiss behavior
+     */
+    UAInAppMessageButtonInfoBehaviorDismiss,
+    
+    /**
+     * Cancel behavior
+     */
+    UAInAppMessageButtonInfoBehaviorCancel,
+    
+};
+
+/**
+ * JSON keys and values.
  */
 extern NSString *const UAInAppMessageButtonInfoLabelKey;
 extern NSString *const UAInAppMessageButtonInfoIdentifierKey;
@@ -29,12 +45,12 @@ extern NSString *const UAInAppMessageButtonInfoActionsKey;
 /**
  * Cancels the in-app message's schedule when clicked.
  */
-extern NSString *const UAInAppMessageButtonInfoBehaviorCancel;
+extern NSString *const UAInAppMessageButtonInfoBehaviorCancelValue;
 
 /**
  * Dismisses the in-app message when clicked.
  */
-extern NSString *const UAInAppMessageButtonInfoBehaviorDismiss;
+extern NSString *const UAInAppMessageButtonInfoBehaviorDismissValue;
 
 
 /**
@@ -55,7 +71,7 @@ extern NSString *const UAInAppMessageButtonInfoBehaviorDismiss;
 /**
  * Button tap behavior. Defaults to UAInAppMessageButtonInfoBehaviorDismiss.
  */
-@property(nonatomic, copy) NSString *behavior;
+@property(nonatomic, assign) UAInAppMessageButtonInfoBehaviorType behavior;
 
 /**
  * Button border radius. Defaults to 0.
@@ -65,12 +81,12 @@ extern NSString *const UAInAppMessageButtonInfoBehaviorDismiss;
 /**
  * Button background color. Defaults to transparent.
  */
-@property(nonatomic, copy) NSString *backgroundColor;
+@property(nonatomic, strong) UIColor *backgroundColor;
 
 /**
  * Button border color. Defaults to transparent.
  */
-@property(nonatomic, copy) NSString *borderColor;
+@property(nonatomic, strong) UIColor *borderColor;
 
 /**
  * Button actions.
@@ -98,7 +114,7 @@ extern NSString *const UAInAppMessageButtonInfoBehaviorDismiss;
 /**
  * Button tap behavior. Defaults to UAInAppMessageButtonInfoBehaviorDismiss.
  */
-@property(nonatomic, copy, readonly, nullable) NSString *behavior;
+@property(nonatomic, assign, readonly) UAInAppMessageButtonInfoBehaviorType behavior;
 
 /**
  * Button border radius. Defaults to 0.
@@ -108,12 +124,12 @@ extern NSString *const UAInAppMessageButtonInfoBehaviorDismiss;
 /**
  * Button background color. Defaults to transparent.
  */
-@property(nonatomic, copy, readonly, nullable) NSString *backgroundColor;
+@property(nonatomic, strong, readonly, nullable) UIColor *backgroundColor;
 
 /**
  * Button border color. Defaults to transparent.
  */
-@property(nonatomic, copy, readonly, nullable) NSString *borderColor;
+@property(nonatomic, strong, readonly, nullable) UIColor *borderColor;
 
 /**
  * Button actions.

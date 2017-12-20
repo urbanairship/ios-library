@@ -21,22 +21,23 @@ NSString *const UAInAppMessageBannerContentViewNibName = @"UAInAppMessageBannerC
 
 @implementation UAInAppMessageBannerContentView
 
-+ (instancetype)contentViewWithLayout:(NSString *)contentLayout textView:(UAInAppMessageTextView *)textView image:(UIImage *)image {
++ (instancetype)contentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout textView:(UAInAppMessageTextView *)textView image:(UIImage *)image {
     return [[self alloc] initContentViewWithLayout:contentLayout textView:textView image:image];
 }
 
-- (instancetype)initContentViewWithLayout:(NSString *)contentLayout textView:(UAInAppMessageTextView *)textView image:(UIImage *)image {
+- (instancetype)initContentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout textView:(UAInAppMessageTextView *)textView image:(UIImage *)image {
 
     NSString *nibName = UAInAppMessageBannerContentViewNibName;
     NSBundle *bundle = [UAirship resources];
     
     // Left and right IAM views are firstObject and lastObject, respectively.
-    if ([contentLayout isEqualToString:UAInAppMessageBannerContentLayoutMediaLeft]) {
-        self = [[bundle loadNibNamed:nibName owner:self options:nil] firstObject];
-    } else if ([contentLayout isEqualToString:UAInAppMessageBannerContentLayoutMediaRight]) {
-        self = [[bundle loadNibNamed:nibName owner:self options:nil] lastObject];
-    } else {
-        UA_LWARN(@"Invalid content layout for banner content view");
+    switch (contentLayout) {
+        case UAInAppMessageBannerContentLayoutTypeMediaLeft:
+            self = [[bundle loadNibNamed:nibName owner:self options:nil] firstObject];
+            break;
+        case UAInAppMessageBannerContentLayoutTypeMediaRight:
+            self = [[bundle loadNibNamed:nibName owner:self options:nil] lastObject];
+            break;
     }
     
     if (self) {

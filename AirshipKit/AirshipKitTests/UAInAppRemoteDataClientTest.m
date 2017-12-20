@@ -25,6 +25,8 @@
 - (void)setUp {
     [super setUp];
     
+    uaLogLevel = UALogLevelDebug;
+    
     // mock remote data
     self.mockRemoteDataManager = [self mockForClass:[UARemoteDataManager class]];
     [[[self.mockRemoteDataManager expect] andDo:^(NSInvocation *invocation) {
@@ -118,6 +120,9 @@
                                             @"push_id": [NSUUID UUID].UUIDString,
                                             @"display_type": @"banner",
                                             @"display": @{
+                                                    @"body" : @{
+                                                            @"text" : @"hi there"
+                                                            },
                                                     },
                                             },
                                     @"created": @"2017-12-04T19:07:54.564",
@@ -172,6 +177,9 @@
                                             @"push_id": [NSUUID UUID].UUIDString,
                                             @"display_type": @"banner",
                                             @"display": @{
+                                                    @"body" : @{
+                                                            @"text" : @"hi there"
+                                                            },
                                                     },
                                             },
                                     @"created": @"2017-12-04T19:07:54.564",
@@ -234,6 +242,9 @@
                                             @"push_id": [NSUUID UUID].UUIDString,
                                             @"display_type": @"banner",
                                             @"display": @{
+                                                    @"body" : @{
+                                                            @"text" : @"hi there"
+                                                            },
                                                     },
                                             },
                                     @"created": @"2017-12-04T19:07:54.564",
@@ -301,6 +312,9 @@
                                             @"push_id": [NSUUID UUID].UUIDString,
                                             @"display_type": @"banner",
                                             @"display": @{
+                                                    @"body" : @{
+                                                            @"text" : @"hi there"
+                                                            },
                                                     },
                                             },
                                     @"created": @"2017-12-04T19:07:54.564",
@@ -319,6 +333,9 @@
                                             @"push_id": [NSUUID UUID].UUIDString,
                                             @"display_type": @"banner",
                                             @"display": @{
+                                                    @"body" : @{
+                                                            @"text" : @"hi there"
+                                                            },
                                                     },
                                             },
                                     @"created": @"2017-12-04T19:07:54.564",
@@ -402,6 +419,9 @@
                                        @"push_id": [NSUUID UUID].UUIDString,
                                        @"display_type": @"banner",
                                        @"display": @{
+                                               @"body" : @{
+                                                       @"text" : @"hi there"
+                                                       },
                                                },
                                        },
                                @"created": @"2017-12-04T19:07:54.564",
@@ -420,6 +440,9 @@
                                        @"push_id": [NSUUID UUID].UUIDString,
                                        @"display_type": @"banner",
                                        @"display": @{
+                                               @"body" : @{
+                                                       @"text" : @"hi there"
+                                                       },
                                                },
                                        },
                                @"created": @"2017-12-04T19:07:55.564",

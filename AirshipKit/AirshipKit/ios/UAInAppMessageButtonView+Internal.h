@@ -4,6 +4,7 @@
 #import <Foundation/Foundation.h>
 #import "UAInAppMessageButtonInfo.h"
 #import "UAInAppMessageButton+Internal.h"
+#import "UAInAppMessageBannerDisplayContent+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -25,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return a configured UAInAppMessageButtonView instance.
  */
 + (instancetype)buttonViewWithButtons:(NSArray<UAInAppMessageButtonInfo *> *)buttons
-                               layout:(NSString *)layout
+                               layout:(UAInAppMessageButtonLayoutType)layout
                                target:(id)target
                              selector:(SEL)selector
                    dismissButtonColor:(UIColor *)dismissButtonColor;

@@ -46,7 +46,7 @@
             builder.displayType = UAInAppMessageDisplayTypeBanner;
             builder.displayContent = [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
                 builder.placement = UAInAppMessageBannerPlacementTop;
-                builder.buttonLayout = UAInAppMessageButtonLayoutJoined;
+                builder.buttonLayout = UAInAppMessageButtonLayoutTypeJoined;
 
                 UAInAppMessageTextInfo *heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
                     builder.text = @"Here is a headline!";
@@ -84,7 +84,7 @@
     [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
         UA_STRONGIFY(self)
         return self.mockAdapter;
-    } forDisplayType:@"banner"];
+    } forDisplayType:UAInAppMessageDisplayTypeBanner];
 
     XCTestExpectation *prepareCalled = [self expectationWithDescription:@"prepare should be called"];
 
@@ -127,7 +127,7 @@
     [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
         UA_STRONGIFY(self)
         return self.mockAdapter;
-    } forDisplayType:@"banner"];
+    } forDisplayType:UAInAppMessageDisplayTypeBanner];
     
     // mock UALocation so it looks like user has opted in
     id mockAirship = [self mockForClass:[UAirship class]];
@@ -154,7 +154,7 @@
     [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
         UA_STRONGIFY(self)
         return self.mockAdapter;
-    } forDisplayType:@"banner"];
+    } forDisplayType:UAInAppMessageDisplayTypeBanner];
 
     //Check Schedule to set current schedule ID
     [self.manager isScheduleReadyToExecute:testSchedule];
@@ -192,7 +192,7 @@
     [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
         UA_STRONGIFY(self)
         return self.mockAdapter;
-    } forDisplayType:@"banner"];
+    } forDisplayType:UAInAppMessageDisplayTypeBanner];
 
     //Check Schedule to set current schedule ID
     XCTAssertFalse([self.manager isScheduleReadyToExecute:testSchedule]);
@@ -328,7 +328,7 @@
     UAInAppMessageScheduleInfo *anotherScheduleInfo = [UAInAppMessageScheduleInfo inAppMessageScheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
         UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
             builder.identifier = @"another test identifier";
-            builder.displayType = @"banner";
+            builder.displayType = UAInAppMessageDisplayTypeBanner;
         }];
         
         builder.message = message;

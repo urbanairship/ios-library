@@ -47,7 +47,6 @@
     self.bannerMessage.expiry = [NSDate dateWithTimeIntervalSinceNow:10000];
 
     self.nonBannerMessage.alert = @"blah";
-    self.nonBannerMessage.displayType = UALegacyInAppMessageDisplayTypeUnknown;
 
     self.payload = @{
                      @"display": @{

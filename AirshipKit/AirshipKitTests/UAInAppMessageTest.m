@@ -22,7 +22,7 @@
                                         @"text":@"the body"
                                         },
                                 },
-                  @"display_type": UAInAppMessageDisplayTypeBanner,
+                  @"display_type": UAInAppMessageDisplayTypeBannerValue,
                   @"extras": @{@"foo":@"baz", @"baz":@"foo"},
                   @"audience": @{@"new_user" : @YES}
                   };
@@ -35,7 +35,7 @@
     
     XCTAssertEqualObjects(@"blah",messageFromOriginalJSON.identifier);
     XCTAssertEqualObjects(@"the body",((UAInAppMessageBannerDisplayContent *)(messageFromOriginalJSON.displayContent)).body.text);
-    XCTAssertEqualObjects(UAInAppMessageDisplayTypeBanner, messageFromOriginalJSON.displayType);
+    XCTAssertEqual(UAInAppMessageDisplayTypeBanner, messageFromOriginalJSON.displayType);
     XCTAssertEqualObjects(@"baz",messageFromOriginalJSON.extras[@"foo"]);
     XCTAssertEqualObjects(@"foo",messageFromOriginalJSON.extras[@"baz"]);
     XCTAssertEqualObjects(@YES, messageFromOriginalJSON.audience.isNewUser);
