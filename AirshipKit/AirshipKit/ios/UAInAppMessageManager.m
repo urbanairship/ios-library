@@ -12,12 +12,14 @@
 #import "UAInAppRemoteDataClient+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAInAppMessageAudienceChecks+Internal.h"
+#import "UAPreferenceDataStore+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 NSTimeInterval const DefaultMessageDisplayInterval = 5;
 NSTimeInterval const MaxSchedules = 200;
 NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite";
+NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled";
 
 @interface UAInAppMessageManager ()
 
@@ -28,6 +30,7 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
 @property(nonatomic, strong, nullable) id<UAInAppMessageAdapterProtocol> currentAdapter;
 @property(nonatomic, strong, nullable) UAAutomationEngine *automationEngine;
 @property(nonatomic, strong) UAInAppRemoteDataClient *remoteDataClient;
+@property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 @end
 
@@ -54,13 +57,12 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
     self = [super initWithDataStore:dataStore];
 
     if (self) {
+        self.dataStore = dataStore;
         NSString *storeName = [NSString stringWithFormat:UAInAppAutomationStoreFileFormat, config.appKey];
         self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:[UAAutomationStore automationStoreWithStoreName:storeName] scheduleLimit:MaxSchedules];
         self.automationEngine.delegate = self;
 
-        if (self.componentEnabled) {
-            [self.automationEngine start];
-        }
+        [self updateEnginePauseState];
 
         self.displayInterval = DefaultMessageDisplayInterval;
         self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self remoteDataManager:remoteDataManager dataStore:dataStore push:push];
@@ -77,6 +79,7 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
     self = [super initWithDataStore:dataStore];
 
     if (self) {
+        self.dataStore = dataStore;
         self.automationEngine = automationEngine;
         self.displayInterval = DefaultMessageDisplayInterval;
         self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self remoteDataManager:remoteDataManager dataStore:dataStore push:push];
@@ -237,11 +240,22 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
 }
 
 - (void)onComponentEnableChange {
-    if (self.componentEnabled) {
-        // if component was disabled and is now enabled, resume automation engine
+    [self updateEnginePauseState];
+}
+
+- (void)setEnabled:(BOOL)enabled {
+    [self.dataStore setBool:enabled forKey:UAInAppMessageManagerEnabledKey];
+    [self updateEnginePauseState];
+}
+
+- (BOOL)isEnabled {
+    return [self.dataStore boolForKey:UAInAppMessageManagerEnabledKey default:YES];
+}
+
+- (void)updateEnginePauseState {
+    if (self.componentEnabled && self.isEnabled) {
         [self.automationEngine resume];
     } else {
-        // if component was enabled and is now disabled, pause automation engine
         [self.automationEngine pause];
     }
 }
@@ -250,7 +264,6 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
     [self.automationEngine stop];
     self.automationEngine.delegate = nil;
 }
-
 
 @end
 

@@ -16,6 +16,11 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAInAppMessageManager : UAComponent <UAAutomationEngineDelegate>
 
 /**
+ * In-app message enable flag.
+ */
+@property (nonatomic, assign, getter=isEnabled) BOOL enabled;
+
+/**
  * Allows setting factory blocks that builds InAppMessageAdapters for each given display type.
  *
  * @param displayType The display type.
@@ -72,13 +77,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)getSchedulesWithMessageID:(NSString *)messageID completionHandler:(void (^)(NSArray<UASchedule *> *))completionHandler;
 
-
 /**
  * Cancels multiple in-app messages via their identifiers.
  *
  * @param identifiers The identifiers of the in-app messages to be canceled.
  */
 -(void)cancelMessagesWithIDs:(NSArray<NSString *> *)identifiers;
+
 
 @end
 

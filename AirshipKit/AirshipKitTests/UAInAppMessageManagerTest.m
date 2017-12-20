@@ -277,50 +277,44 @@
     [self.mockAutomationEngine verify];
 }
 
-// Tests that componentEnabled switch pauses / resumes automation
-- (void)testComponentEnabledSwitch {
+- (void)testComponentEnabled {
     XCTAssertTrue(self.manager.componentEnabled);
-    
-    // setup
-    __block XCTestExpectation *pauseCalledExpectation = nil;
-    __block XCTestExpectation *resumeCalledExpectation = nil;
-    
-    [[[self.mockAutomationEngine stub] andDo:^(NSInvocation *invocation) {
-        if (pauseCalledExpectation) {
-            [pauseCalledExpectation fulfill];
-        } else {
-            XCTFail(@"Not expecting pause to be called");
-        }
-    }] pause];
-    
-    [[[self.mockAutomationEngine stub] andDo:^(NSInvocation *invocation) {
-        if (resumeCalledExpectation) {
-            [resumeCalledExpectation fulfill];
-        } else {
-            XCTFail(@"Not expecting resume to be called");
-        }
-    }] resume];
 
-    pauseCalledExpectation = [self expectationWithDescription:@"automation engine pause called"];
-
-    // test
+    // test disable
+    [[self.mockAutomationEngine expect] pause];
     self.manager.componentEnabled = NO;
-    XCTAssertFalse(self.manager.componentEnabled);
 
     // verify
-    [self waitForExpectationsWithTimeout:5 handler:nil];
     XCTAssertFalse(self.manager.componentEnabled);
+    [self.mockAutomationEngine verify];
 
-    //setup
-    pauseCalledExpectation = nil;
-    resumeCalledExpectation = [self expectationWithDescription:@"automation engine resume called"];
-
-    // test
+    // test enable
+    [[self.mockAutomationEngine expect] resume];
     self.manager.componentEnabled = YES;
-    
+
     // verify
-    [self waitForExpectationsWithTimeout:5 handler:nil];
     XCTAssertTrue(self.manager.componentEnabled);
+    [self.mockAutomationEngine verify];
+}
+
+- (void)testEnable {
+    XCTAssertTrue(self.manager.isEnabled);
+
+    // test disable
+    [[self.mockAutomationEngine expect] pause];
+    self.manager.enabled = NO;
+
+    // verify
+    XCTAssertFalse(self.manager.isEnabled);
+    [self.mockAutomationEngine verify];
+
+    // test enable
+    [[self.mockAutomationEngine expect] resume];
+    self.manager.enabled = YES;
+
+    // verify
+    XCTAssertTrue(self.manager.isEnabled);
+    [self.mockAutomationEngine verify];
 }
 
 - (void)testScheduleMessagesWithScheduleInfo {
