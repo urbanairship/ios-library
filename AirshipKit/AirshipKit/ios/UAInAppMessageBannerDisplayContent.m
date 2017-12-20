@@ -12,8 +12,8 @@ NSString *const UAInAppMessageBannerActionsKey = @"actions";
 NSString *const UAInAppMessageBannerDisplayContentDomain = @"com.urbanairship.banner_display_content";
 NSString *const UAInAppMessageBannerPlacementTop = @"top";
 NSString *const UAInAppMessageBannerPlacementBottom = @"bottom";
-NSString *const UAInAppMessageBannerContentLayoutMediaLeft = @"media_text";
-NSString *const UAInAppMessageBannerContentLayoutMediaRight = @"text_media";
+NSString *const UAInAppMessageBannerContentLayoutMediaLeft = @"media_left";
+NSString *const UAInAppMessageBannerContentLayoutMediaRight = @"media_right";
 
 // Constants
 NSUInteger const UAInAppMessageBannerDefaultDuration = 30000;

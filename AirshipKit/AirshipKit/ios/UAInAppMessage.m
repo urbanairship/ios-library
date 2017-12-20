@@ -22,7 +22,7 @@ NSString *const UAInAppMessageExtrasKey = @"extras";
 NSString *const UAInAppMessageAudienceKey = @"audience";
 
 NSString *const UAInAppMessageDisplayTypeBanner = @"banner";
-NSString *const UAInAppMessageDisplayTypeFullScreen = @"full_screen";
+NSString *const UAInAppMessageDisplayTypeFullScreen = @"fullscreen";
 NSString *const UAInAppMessageDisplayTypeModal = @"modal";
 NSString *const UAInAppMessageDisplayTypeHTML = @"html";
 NSString *const UAInAppMessageDisplayTypeCustom = @"custom";

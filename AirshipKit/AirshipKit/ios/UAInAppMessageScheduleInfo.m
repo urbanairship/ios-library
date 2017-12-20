@@ -72,7 +72,6 @@ NSString *const UAScheduleInfoInAppMessageKey = @"message";
         return nil;
     }
     builder.message = message;
-    builder.group = message.identifier;
 
     return [[UAInAppMessageScheduleInfo alloc] initWithBuilder:builder];
 }

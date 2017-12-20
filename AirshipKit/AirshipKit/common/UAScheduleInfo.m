@@ -19,6 +19,15 @@ NSString * const UAScheduleInfoErrorDomain = @"com.urbanairship.schedule_info";
 
 @implementation UAScheduleInfoBuilder
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.limit = 1;
+    }
+
+    return self;
+}
+
 - (BOOL)applyFromJson:(id)json error:(NSError * _Nullable *)error {
     if (![json isKindOfClass:[NSDictionary class]]) {
         if (error) {
@@ -156,12 +165,29 @@ NSString * const UAScheduleInfoErrorDomain = @"com.urbanairship.schedule_info";
         }
     }
 
-    self.triggers = triggers;
-    self.limit = [limit unsignedIntegerValue];
-    self.group = group;
-    self.start = start;
-    self.end = end;
-    self.delay = delay;
+    if (triggers) {
+        self.triggers = triggers;
+    }
+
+    if (limit) {
+        self.limit = [limit unsignedIntegerValue];
+    }
+
+    if (group) {
+        self.group = group;
+    }
+
+    if (start) {
+        self.start = start;
+    }
+
+    if (end) {
+        self.end = end;
+    }
+
+    if (delay) {
+        self.delay = delay;
+    }
 
     return YES;
 }
