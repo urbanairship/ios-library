@@ -4,7 +4,7 @@
 #import "UAInAppMessageFullScreenDisplayContent+Internal.h"
 #import "UAInAppMessageTextInfo.h"
 #import "UAInAppMessageButtonInfo.h"
-#import "UAInAppMessageMediaInfo.h"
+#import "UAInAppMessageMediaInfo+Internal.h"
 #import "UAInAppMessageDisplayContent.h"
 #import "UAInAppMessageUtils+Internal.h"
 
@@ -281,11 +281,13 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
     if (self.heading) {
         json[UAInAppMessageHeadingKey] = [UAInAppMessageTextInfo JSONWithTextInfo:self.heading];
     }
+
     if (self.body) {
         json[UAInAppMessageBodyKey] = [UAInAppMessageTextInfo JSONWithTextInfo:self.body];
     }
+
     if (self.media) {
-        json[UAInAppMessageMediaKey] = [UAInAppMessageMediaInfo JSONWithMediaInfo:self.media];
+        json[UAInAppMessageMediaKey] = [self.media toJson];
     }
 
     NSMutableArray *buttonsJSONs = [NSMutableArray array];

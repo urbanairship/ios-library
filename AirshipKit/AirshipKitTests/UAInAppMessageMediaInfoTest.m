@@ -1,7 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <XCTest/XCTest.h>
-#import "UAInAppMessageMediaInfo.h"
+#import "UAInAppMessageMediaInfo+Internal.h"
 
 @interface UAInAppMessageMediaInfoTest : XCTestCase
 
@@ -18,22 +18,14 @@
 }
 
 - (void)testMediaInfo {
-    UAInAppMessageMediaInfo *fromBuilderMediaInfo = [UAInAppMessageMediaInfo mediaInfoWithBuilderBlock:^(UAInAppMessageMediaInfoBuilder * _Nonnull builder) {
-        builder.url = @"theurl";
-        builder.type = UAInAppMessageMediaInfoTypeYouTube;
-        builder.mediaDescription = @"some description";
-    }];
+    UAInAppMessageMediaInfo *mediInfo = [UAInAppMessageMediaInfo mediaInfoWithURL:@"theurl"
+                                                               contentDescription:@"some desciription"
+                                                                             type:UAInAppMessageMediaInfoTypeYouTube];
 
-    NSDictionary *JSONFromBuilderMediaInfo = [UAInAppMessageMediaInfo JSONWithMediaInfo:fromBuilderMediaInfo];
-    UAInAppMessageMediaInfo *fromJSONMediaInfo = [UAInAppMessageMediaInfo mediaInfoWithJSON:JSONFromBuilderMediaInfo error:nil];
-    NSDictionary *JSONFromJSONMediaInfo = [UAInAppMessageMediaInfo JSONWithMediaInfo:fromJSONMediaInfo];
+    UAInAppMessageMediaInfo *fromJSON = [UAInAppMessageMediaInfo mediaInfoWithJSON:[mediInfo toJson] error:nil];
 
-    // Test isEqual and hashing
-    XCTAssertTrue([fromBuilderMediaInfo isEqual:fromJSONMediaInfo] == YES);
-    XCTAssertEqual(fromBuilderMediaInfo.hash, fromJSONMediaInfo.hash);
-
-    // Test conversion to JSON
-    XCTAssertEqualObjects(JSONFromBuilderMediaInfo, JSONFromJSONMediaInfo);
+    XCTAssertEqualObjects(mediInfo, fromJSON);
+    XCTAssertEqual(fromJSON.hash, fromJSON.hash);
 }
 
 @end

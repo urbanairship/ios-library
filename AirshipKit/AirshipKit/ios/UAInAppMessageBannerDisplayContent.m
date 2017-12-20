@@ -4,7 +4,7 @@
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 #import "UAInAppMessageTextInfo.h"
 #import "UAInAppMessageButtonInfo.h"
-#import "UAInAppMessageMediaInfo.h"
+#import "UAInAppMessageMediaInfo+Internal.h"
 #import "UAInAppMessageDisplayContent.h"
 #import "UAColorUtils+Internal.h"
 
@@ -89,16 +89,11 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     }
     
     if (json[UAInAppMessageMediaKey]) {
-        if (![json[UAInAppMessageMediaKey] isKindOfClass:[NSDictionary class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize media info object: %@", json];
-                *error =  [NSError errorWithDomain:UAInAppMessageBannerDisplayContentDomain
-                                              code:UAInAppMessageBannerDisplayContentErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
+        builder.media = [UAInAppMessageMediaInfo mediaInfoWithJSON:json[UAInAppMessageMediaKey] error:error];
+
+        if (!builder.media) {
             return nil;
         }
-        builder.media = [UAInAppMessageMediaInfo mediaInfoWithJSON:json[UAInAppMessageMediaKey] error:error];
     }
 
     NSMutableArray<UAInAppMessageButtonInfo *> *buttons = [NSMutableArray array];
@@ -338,25 +333,24 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
 
 - (NSDictionary *)toJsonValue {
     NSMutableDictionary *json = [NSMutableDictionary dictionary];
-    
-    if (!self) {
-        return [NSDictionary dictionaryWithDictionary:json];
-    }
-    
+
     if (self.heading) {
         json[UAInAppMessageHeadingKey] = [UAInAppMessageTextInfo JSONWithTextInfo:self.heading];
     }
+
     if (self.body) {
         json[UAInAppMessageBodyKey] = [UAInAppMessageTextInfo JSONWithTextInfo:self.body];
     }
+
     if (self.media) {
-        json[UAInAppMessageMediaKey] = [UAInAppMessageMediaInfo JSONWithMediaInfo:self.media];
+        json[UAInAppMessageMediaKey] = [self.media toJson];
     }
     
     NSMutableArray *buttonsJSONs = [NSMutableArray array];
     for (UAInAppMessageButtonInfo *buttonInfo in self.buttons) {
         [buttonsJSONs addObject:[UAInAppMessageButtonInfo JSONWithButtonInfo:buttonInfo]];
     }
+
     if (buttonsJSONs.count) {
         json[UAInAppMessageButtonsKey] = buttonsJSONs;
     }

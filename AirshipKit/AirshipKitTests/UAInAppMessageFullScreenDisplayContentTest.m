@@ -100,10 +100,8 @@
         builder.contentLayout = UAInAppMessageFullScreenContentLayoutHeaderMediaBody;
         builder.dismissButtonColor = [UIColor greenColor];
 
-        builder.media = [UAInAppMessageMediaInfo mediaInfoWithBuilderBlock:^(UAInAppMessageMediaInfoBuilder * _Nonnull builder) {
-            builder.url = @"https://pbs.twimg.com/profile_images/693434931263832064/MQM3kVE-_400x400.jpg";
-            builder.type = UAInAppMessageMediaInfoTypeImage;
-        }];
+        builder.media = [UAInAppMessageMediaInfo mediaInfoWithURL:@"some url"
+                                               contentDescription:@"some-description" type:UAInAppMessageMediaInfoTypeImage];
 
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"headline content";
