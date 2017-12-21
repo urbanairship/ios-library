@@ -762,6 +762,12 @@
         }
 
         UASchedule *schedule = [self scheduleFromData:scheduleData];
+        if (!schedule) {
+            UA_LERR(@"Failed to parse schedule data. Deleting. %@", scheduleData.identifier);
+            [scheduleData.managedObjectContext deleteObject:scheduleData];
+            continue;
+        }
+
         NSDate *delayedExecutionDate = scheduleData.delayedExecutionDate;
 
         // Set to pending if its currently idle
@@ -859,7 +865,8 @@
 
     UAScheduleInfo *info = [self.delegate createScheduleInfoWithBuilder:builder];
 
-    if (!info) {
+    if (![info isValid]) {
+        UA_LERR(@"Info is invalid: %@", info);
         return nil;
     }
 

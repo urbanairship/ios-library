@@ -27,7 +27,7 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
 
 @property(nonatomic, assign) BOOL isCurrentMessagePrepared;
 @property(nonatomic, assign) BOOL isDisplayLocked;
-@property(nonatomic, strong, nullable) NSDictionary *adapterFactories;
+@property(nonatomic, strong, nullable) NSMutableDictionary *adapterFactories;
 @property(nonatomic, strong, nullable) NSString *currentScheduleID;
 @property(nonatomic, strong, nullable) id<UAInAppMessageAdapterProtocol> currentAdapter;
 @property(nonatomic, strong, nullable) UAAutomationEngine *automationEngine;
@@ -59,6 +59,7 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
     self = [super initWithDataStore:dataStore];
 
     if (self) {
+        self.adapterFactories = [NSMutableDictionary dictionary];
         self.dataStore = dataStore;
         NSString *storeName = [NSString stringWithFormat:UAInAppAutomationStoreFileFormat, config.appKey];
         self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:[UAAutomationStore automationStoreWithStoreName:storeName] scheduleLimit:MaxSchedules];
@@ -82,6 +83,7 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
     self = [super initWithDataStore:dataStore];
 
     if (self) {
+        self.adapterFactories = [NSMutableDictionary dictionary];
         self.dataStore = dataStore;
         self.automationEngine = automationEngine;
         self.displayInterval = DefaultMessageDisplayInterval;
@@ -94,7 +96,6 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
 
 // Sets the default adapter factories
 - (void)setDefaultAdapterFactories {
-
     // Banner
     [self setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
         return [UAInAppMessageBannerAdapter adapterForMessage:message];
@@ -143,16 +144,12 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
 
 - (void)setFactoryBlock:(id<UAInAppMessageAdapterProtocol> (^)(UAInAppMessage* message))factory
          forDisplayType:(UAInAppMessageDisplayType)displayType {
-    NSMutableDictionary *adapterFactories;
 
-    if (!self.adapterFactories) {
-        adapterFactories = [NSMutableDictionary dictionary];
+    if (factory) {
+        self.adapterFactories[@(displayType)] = factory;
     } else {
-        adapterFactories = [NSMutableDictionary dictionaryWithDictionary:self.adapterFactories];
+        [self.adapterFactories removeObjectForKey:@(displayType)];
     }
-
-    [adapterFactories setObject:factory forKey:[NSNumber numberWithInt:displayType]];
-    self.adapterFactories = [NSDictionary dictionaryWithDictionary:adapterFactories];
 }
 
 - (void)unlockDisplayAfter:(NSTimeInterval)interval {
@@ -184,16 +181,15 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
     if (![UAInAppMessageAudienceChecks checkAudience:info.message.audience]) {
         UA_LDEBUG("InAppMessageManager - Message no longer meets audience conditions, cancelling schedule: %@",schedule.identifier);
         [self cancelMessageWithScheduleID:schedule.identifier];
-        // adapterWrappers.remove(scheduleId); - REVISIT - this is a line from Android. Does iOS implementation need to do something like this?
         return NO;
     }
 
     if (!self.currentAdapter) {
-
         id<UAInAppMessageAdapterProtocol> (^factory)(UAInAppMessage* message) = self.adapterFactories[@(info.message.displayType)];
 
         if (!factory) {
-            UA_LWARN(@"Factory not present for display type:%ld", (long)info.message.displayType);
+            UA_LWARN(@"Factory unavailable for message: %@. Cancelling schedule.", info.message);
+            [self cancelMessageWithScheduleID:schedule.identifier];
             return NO;
         }
 
@@ -201,7 +197,8 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
 
         // If no adapter factory available for specified displayType return NO
         if (!adapter) {
-            UA_LWARN(@"Factory failed to build adapter with message:%@", info.message);
+            UA_LWARN(@"Factory failed to build adapter with message: %@. Cancelling schedule.", info.message);
+            [self cancelMessageWithScheduleID:schedule.identifier];
             return NO;
         }
 
@@ -211,7 +208,6 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
         UA_WEAKIFY(self);
         [self.currentAdapter prepare:^{
             UA_STRONGIFY(self);
-
             self.isCurrentMessagePrepared = YES;
             [self.automationEngine scheduleConditionsChanged];
         }];

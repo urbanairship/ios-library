@@ -82,4 +82,17 @@ NSString *const UAScheduleInfoInAppMessageKey = @"message";
     
     return messagePayload[UAInAppMessageIDKey];
 }
+
+- (BOOL)isValid {
+    if (![super isValid]) {
+        return NO;
+    }
+
+    if (!self.message) {
+        return NO;
+    }
+
+    return YES;
+}
+
 @end

@@ -112,7 +112,23 @@
 }
 
 - (void)testIsScheduleReadyNoFactorySet {
-    [[self.mockAdapter reject] prepare:OCMOCK_ANY];
+    [self.manager setFactoryBlock:nil forDisplayType:UAInAppMessageDisplayTypeBanner];
+    
+    [[[self mockAutomationEngine] expect] cancelScheduleWithIdentifier:@"test IAM schedule"];
+
+    UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo];
+    XCTAssertFalse([self.manager isScheduleReadyToExecute:schedule]);
+
+    [self.mockAutomationEngine verify];
+    [self.mockAdapter verify];
+}
+
+- (void)testIsScheduleReadyNilAdapter {
+    [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
+        return nil;
+    } forDisplayType:UAInAppMessageDisplayTypeBanner];
+
+    [[[self mockAutomationEngine] expect] cancelScheduleWithIdentifier:@"test IAM schedule"];
 
     UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo];
     XCTAssertFalse([self.manager isScheduleReadyToExecute:schedule]);
