@@ -2,7 +2,7 @@
 
 #import "UAirship.h"
 #import "UAInAppMessageFullScreenDisplayContent+Internal.h"
-#import "UAInAppMessageTextInfo.h"
+#import "UAInAppMessageTextInfo+Internal.h"
 #import "UAInAppMessageButtonInfo.h"
 #import "UAInAppMessageMediaInfo+Internal.h"
 #import "UAInAppMessageDisplayContent.h"
@@ -62,15 +62,6 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
     }
     
     if (json[UAInAppMessageHeadingKey]) {
-        if (![json[UAInAppMessageHeadingKey] isKindOfClass:[NSDictionary class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize invalid text info object: %@", json];
-                *error =  [NSError errorWithDomain:UAInAppMessageFullScreenDisplayContentDomain
-                                              code:UAInAppMessageFullScreenDisplayContentErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-            return nil;
-        }
         builder.heading = [UAInAppMessageTextInfo textInfoWithJSON:json[UAInAppMessageHeadingKey] error:error];
         if (!builder.heading) {
             return nil;
@@ -78,15 +69,6 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
     }
     
     if (json[UAInAppMessageBodyKey]) {
-        if (![json[UAInAppMessageBodyKey] isKindOfClass:[NSDictionary class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize invalid text info object: %@", json];
-                *error =  [NSError errorWithDomain:UAInAppMessageFullScreenDisplayContentDomain
-                                              code:UAInAppMessageFullScreenDisplayContentErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-            return nil;
-        }
         builder.body = [UAInAppMessageTextInfo textInfoWithJSON:json[UAInAppMessageBodyKey] error:error];
         if (!builder.body) {
             return nil;
@@ -94,15 +76,6 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
     }
     
     if (json[UAInAppMessageMediaKey]) {
-        if (![json[UAInAppMessageMediaKey] isKindOfClass:[NSDictionary class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize media info object: %@", json];
-                *error =  [NSError errorWithDomain:UAInAppMessageFullScreenDisplayContentDomain
-                                              code:UAInAppMessageFullScreenDisplayContentErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-            return nil;
-        }
         builder.media = [UAInAppMessageMediaInfo mediaInfoWithJSON:json[UAInAppMessageMediaKey] error:error];
         if (!builder.media) {
             return nil;
@@ -279,11 +252,11 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
     NSMutableDictionary *json = [NSMutableDictionary dictionary];
 
     if (self.heading) {
-        json[UAInAppMessageHeadingKey] = [UAInAppMessageTextInfo JSONWithTextInfo:self.heading];
+        json[UAInAppMessageHeadingKey] = [self.heading toJson];
     }
 
     if (self.body) {
-        json[UAInAppMessageBodyKey] = [UAInAppMessageTextInfo JSONWithTextInfo:self.body];
+        json[UAInAppMessageBodyKey] = [self.body toJson];
     }
 
     if (self.media) {

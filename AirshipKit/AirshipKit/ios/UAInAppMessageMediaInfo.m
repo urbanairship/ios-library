@@ -180,10 +180,7 @@ NSString *const UAInAppMessageMediaInfoTypeYouTubeValue = @"youtube";
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<UAInAppMessageMediaInfo: url: %@, type: %@, contentDescription: %@>",
-            self.url,
-            [UAInAppMessageMediaInfo typeStringForType:self.type],
-            self.contentDescription];
+    return [NSString stringWithFormat:@"<UAInAppMessageMediaInfo: %@>", [self toJson]];
 }
 
 @end

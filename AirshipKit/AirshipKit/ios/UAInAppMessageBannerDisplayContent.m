@@ -2,7 +2,7 @@
 
 #import "UAirship.h"
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
-#import "UAInAppMessageTextInfo.h"
+#import "UAInAppMessageTextInfo+Internal.h"
 #import "UAInAppMessageButtonInfo.h"
 #import "UAInAppMessageMediaInfo+Internal.h"
 #import "UAInAppMessageDisplayContent.h"
@@ -63,29 +63,19 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     }
     
     if (json[UAInAppMessageHeadingKey]) {
-        if (![json[UAInAppMessageHeadingKey] isKindOfClass:[NSDictionary class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize invalid text info object: %@", json];
-                *error =  [NSError errorWithDomain:UAInAppMessageBannerDisplayContentDomain
-                                              code:UAInAppMessageBannerDisplayContentErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
+        builder.heading = [UAInAppMessageTextInfo textInfoWithJSON:json[UAInAppMessageHeadingKey] error:error];
+
+        if (!builder.heading) {
             return nil;
         }
-        builder.heading = [UAInAppMessageTextInfo textInfoWithJSON:json[UAInAppMessageHeadingKey] error:error];
     }
     
     if (json[UAInAppMessageBodyKey]) {
-        if (![json[UAInAppMessageBodyKey] isKindOfClass:[NSDictionary class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize invalid text info object: %@", json];
-                *error =  [NSError errorWithDomain:UAInAppMessageBannerDisplayContentDomain
-                                              code:UAInAppMessageBannerDisplayContentErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
+        builder.body = [UAInAppMessageTextInfo textInfoWithJSON:json[UAInAppMessageBodyKey] error:error];
+
+        if (!builder.body) {
             return nil;
         }
-        builder.body = [UAInAppMessageTextInfo textInfoWithJSON:json[UAInAppMessageBodyKey] error:error];
     }
     
     if (json[UAInAppMessageMediaKey]) {
@@ -335,11 +325,11 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     NSMutableDictionary *json = [NSMutableDictionary dictionary];
 
     if (self.heading) {
-        json[UAInAppMessageHeadingKey] = [UAInAppMessageTextInfo JSONWithTextInfo:self.heading];
+        json[UAInAppMessageHeadingKey] = [self.heading toJson];
     }
 
     if (self.body) {
-        json[UAInAppMessageBodyKey] = [UAInAppMessageTextInfo JSONWithTextInfo:self.body];
+        json[UAInAppMessageBodyKey] = [self.body toJson];
     }
 
     if (self.media) {

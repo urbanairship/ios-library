@@ -5,16 +5,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Represents the possible error conditions when deserializing text info from JSON.
- */
-typedef NS_ENUM(NSInteger, UAInAppMessageTextInfoErrorCode) {
-    /**
-     * Indicates an error with the text info JSON definition.
-     */
-    UAInAppMessageTextInfoErrorCodeInvalidJSON,
-};
-
-/**
  * Represents the possible text styling options.
  */
 typedef NS_OPTIONS(NSUInteger, UAInAppMessageTextInfoStyleType) {
@@ -38,47 +28,6 @@ typedef NS_OPTIONS(NSUInteger, UAInAppMessageTextInfoStyleType) {
      */
     UAInAppMessageTextInfoStyleUnderline  = 1 << 2
 };
-
-
-/**
- * JSON keys.
- */
-extern NSString *const UAInAppMessageTextInfoTextKey;
-extern NSString *const UAInAppMessageTextInfoColorKey;
-extern NSString *const UAInAppMessageTextInfoSizeKey;
-extern NSString *const UAInAppMessageTextInfoAlignmentKey;
-extern NSString *const UAInAppMessageTextInfoStyleKey;
-extern NSString *const UAInAppMessageTextInfoFontFamiliesKey;
-
-/**
- * Right text alignment.
- */
-extern NSString *const UAInAppMessageTextInfoAlignmentRightValue;
-
-/**
- * Center text alignment.
- */
-extern NSString *const UAInAppMessageTextInfoAlignmentCenterValue;
-
-/**
- * Left text alignment.
- */
-extern NSString *const UAInAppMessageTextInfoAlignmentLeftValue;
-
-/**
- * Bold text style.
- */
-extern NSString *const UAInAppMessageTextInfoStyleBoldValue;
-
-/**
- * Italic text style.
- */
-extern NSString *const UAInAppMessageTextInfoStyleItalicValue;
-
-/**
- * Underline text style.
- */
-extern NSString *const UAInAppMessageTextInfoStyleUnderlineValue;
 
 /**
  * Builder class for a UAInAppMessageTextInfo object.
@@ -115,8 +64,13 @@ extern NSString *const UAInAppMessageTextInfoStyleUnderlineValue;
  */
 @property(nonatomic, copy) NSArray<NSString *> *fontFamilies;
 
-@end
+/**
+ * Checks if the builder is valid and will produce a text info instance.
+ * @return YES if the builder is valid (reuires text), otherwise NO.
+ */
+- (BOOL)isValid;
 
+@end
 
 /**
  * Defines the text that appears in an in-app message.
@@ -153,22 +107,6 @@ extern NSString *const UAInAppMessageTextInfoStyleUnderlineValue;
  */
 @property(nonatomic, copy, readonly, nullable) NSArray<NSString *> *fontFamilies;
 
-/**
- * Factory method to create an in-app message text info from a JSON dictionary.
- *
- * @param json The JSON dictionary.
- * @param error An NSError pointer for storing errors, if applicable.
- * @return An in-app message text info or `nil` if the JSON is invalid.
- */
-+ (nullable instancetype)textInfoWithJSON:(id)json error:(NSError * _Nullable *)error;
-
-/**
- * Factory method to create a JSON dictionary from an in-app message text info.
- *
- * @param textInfo An in-app message text info.
- * @return The JSON dictionary.
- */
-+ (NSDictionary *)JSONWithTextInfo:(UAInAppMessageTextInfo *)textInfo;
 
 /**
  * Creates an in-app message text info with a builder block.

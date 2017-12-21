@@ -1,6 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAInAppMessageButtonInfo.h"
+#import "UAInAppMessageTextInfo+Internal.h"
 #import "UAGlobal.h"
 #import "UAColorUtils+Internal.h"
 
@@ -81,17 +82,6 @@ NSString *const UAInAppMessageButtonInfoBehaviorDismissValue = @"dismiss";
 
     id labelDict = json[UAInAppMessageButtonInfoLabelKey];
     if (labelDict) {
-        if (![labelDict isKindOfClass:[NSDictionary class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"In-app message button label must be an dictionary. Invalid value: %@", labelDict];
-                *error =  [NSError errorWithDomain:UAInAppMessageButtonInfoDomain
-                                              code:UAInAppMessageButtonInfoErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-            
-            return nil;
-        }
-        
         builder.label = [UAInAppMessageTextInfo textInfoWithJSON:labelDict error:error];
         if (!builder.label) {
             return nil;
@@ -214,7 +204,7 @@ NSString *const UAInAppMessageButtonInfoBehaviorDismissValue = @"dismiss";
 
     NSMutableDictionary *json = [NSMutableDictionary dictionary];
 
-    json[UAInAppMessageButtonInfoLabelKey] = [UAInAppMessageTextInfo JSONWithTextInfo:buttonInfo.label];
+    json[UAInAppMessageButtonInfoLabelKey] = [buttonInfo.label toJson];
     json[UAInAppMessageButtonInfoIdentifierKey] = buttonInfo.identifier;
     json[UAInAppMessageButtonInfoBorderRadiusKey] = [NSNumber numberWithInteger:buttonInfo.borderRadius];
     
