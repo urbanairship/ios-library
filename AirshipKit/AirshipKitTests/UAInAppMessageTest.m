@@ -40,7 +40,7 @@
     XCTAssertEqualObjects(@"foo",messageFromOriginalJSON.extras[@"baz"]);
     XCTAssertEqualObjects(@YES, messageFromOriginalJSON.audience.isNewUser);
 
-    NSDictionary *toJSON = [messageFromOriginalJSON toJsonValue];
+    NSDictionary *toJSON = [messageFromOriginalJSON toJSON];
     XCTAssertNotNil(toJSON);
     UAInAppMessage *messageFromToJSON = [UAInAppMessage messageWithJSON:toJSON error:&error];
     XCTAssertNotNil(messageFromToJSON);

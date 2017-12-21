@@ -1,7 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <XCTest/XCTest.h>
-#import "UAInAppMessageFullScreenDisplayContent.h"
+#import "UAInAppMessageFullScreenDisplayContent+Internal.h"
 #import "UAInAppMessage.h"
 #import "UABaseTest.h"
 
@@ -13,7 +13,7 @@
 @implementation UAInAppMessageFullScreenDisplayContentTest
 
 - (void)testTooManyButtons {
-    UAInAppMessageFullScreenDisplayContent *fiveButtons =  [UAInAppMessageFullScreenDisplayContent fullScreenDisplayContentWithBuilderBlock:^(UAInAppMessageFullScreenDisplayContentBuilder *builder) {
+    UAInAppMessageFullScreenDisplayContent *fiveButtons =  [UAInAppMessageFullScreenDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageFullScreenDisplayContentBuilder *builder) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"headline content";
         }];;
@@ -35,7 +35,7 @@
 
     XCTAssertTrue(fiveButtons.buttons.count == 5);
 
-    UAInAppMessageFullScreenDisplayContent *sixButtons =  [UAInAppMessageFullScreenDisplayContent fullScreenDisplayContentWithBuilderBlock:^(UAInAppMessageFullScreenDisplayContentBuilder *builder) {
+    UAInAppMessageFullScreenDisplayContent *sixButtons =  [UAInAppMessageFullScreenDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageFullScreenDisplayContentBuilder *builder) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"headline content";
         }];;
@@ -59,7 +59,7 @@
 }
 
 - (void)testNoHeaderOrBody {
-    UAInAppMessageFullScreenDisplayContent *headerAndBody =  [UAInAppMessageFullScreenDisplayContent fullScreenDisplayContentWithBuilderBlock:^(UAInAppMessageFullScreenDisplayContentBuilder *builder) {
+    UAInAppMessageFullScreenDisplayContent *headerAndBody =  [UAInAppMessageFullScreenDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageFullScreenDisplayContentBuilder *builder) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"headline content";
         }];
@@ -72,7 +72,7 @@
     XCTAssertEqualObjects(headerAndBody.heading.text, @"headline content");
     XCTAssertEqualObjects(headerAndBody.body.text, @"body content");
 
-    UAInAppMessageFullScreenDisplayContent *noHeader =  [UAInAppMessageFullScreenDisplayContent fullScreenDisplayContentWithBuilderBlock:^(UAInAppMessageFullScreenDisplayContentBuilder *builder) {
+    UAInAppMessageFullScreenDisplayContent *noHeader =  [UAInAppMessageFullScreenDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageFullScreenDisplayContentBuilder *builder) {
         builder.body = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"body content";
         }];
@@ -81,7 +81,7 @@
     XCTAssertNil(noHeader.heading);
     XCTAssertEqualObjects(noHeader.body.text, @"body content");
 
-    UAInAppMessageFullScreenDisplayContent *noBody =  [UAInAppMessageFullScreenDisplayContent fullScreenDisplayContentWithBuilderBlock:^(UAInAppMessageFullScreenDisplayContentBuilder *builder) {
+    UAInAppMessageFullScreenDisplayContent *noBody =  [UAInAppMessageFullScreenDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageFullScreenDisplayContentBuilder *builder) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"headline content";
         }];
@@ -90,14 +90,14 @@
     XCTAssertEqualObjects(noBody.heading.text, @"headline content");
     XCTAssertNil(noBody.body);
 
-    UAInAppMessageFullScreenDisplayContent *noHeaderOrBody =  [UAInAppMessageFullScreenDisplayContent fullScreenDisplayContentWithBuilderBlock:^(UAInAppMessageFullScreenDisplayContentBuilder *builder) {
+    UAInAppMessageFullScreenDisplayContent *noHeaderOrBody =  [UAInAppMessageFullScreenDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageFullScreenDisplayContentBuilder *builder) {
     }];
 
     XCTAssertNil(noHeaderOrBody);
 }
 
 - (void)testFullScreenDisplayContent {
-    UAInAppMessageFullScreenDisplayContent *fromBuilderFullScreenDisplayContent =  [UAInAppMessageFullScreenDisplayContent fullScreenDisplayContentWithBuilderBlock:^(UAInAppMessageFullScreenDisplayContentBuilder *builder) {
+    UAInAppMessageFullScreenDisplayContent *content =  [UAInAppMessageFullScreenDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageFullScreenDisplayContentBuilder *builder) {
         builder.buttonLayout = UAInAppMessageButtonLayoutTypeJoined;
         builder.contentLayout = UAInAppMessageFullScreenContentLayoutHeaderMediaBody;
         builder.dismissButtonColor = [UIColor greenColor];
@@ -166,14 +166,11 @@
 
     }];
 
-    NSDictionary *JSONFromBuilderFullScreenDisplayContent = [fromBuilderFullScreenDisplayContent toJsonValue];
-    NSError *error;
-    UAInAppMessageFullScreenDisplayContent *fromJSONFullScreenDisplayContent = [UAInAppMessageFullScreenDisplayContent fullScreenDisplayContentWithJSON:JSONFromBuilderFullScreenDisplayContent error:&error];
-    XCTAssertNil(error);
+    UAInAppMessageFullScreenDisplayContent *fromJSON = [UAInAppMessageFullScreenDisplayContent displayContentWithJSON:[content toJSON] error:nil];
 
     // Test isEqual and hashing
-    XCTAssertEqualObjects(fromBuilderFullScreenDisplayContent, fromJSONFullScreenDisplayContent);
-    XCTAssertEqual(fromBuilderFullScreenDisplayContent.hash, fromJSONFullScreenDisplayContent.hash);
+    XCTAssertEqualObjects(content, fromJSON);
+    XCTAssertEqual(content.hash, fromJSON.hash);
 }
 
 @end

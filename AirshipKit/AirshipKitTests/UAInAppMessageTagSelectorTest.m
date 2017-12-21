@@ -1,7 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAInAppMessageTagSelector.h"
+#import "UAInAppMessageTagSelector+Internal.h"
 
 @interface UAInAppMessageTagSelectorTest : UABaseTest
 
@@ -29,7 +29,7 @@
 
 - (void)testJSON {
     NSError *error;
-    UAInAppMessageTagSelector *toAndFromJson = [UAInAppMessageTagSelector parseJson:[self.selector toJsonValue] error:&error];
+    UAInAppMessageTagSelector *toAndFromJson = [UAInAppMessageTagSelector selectorWithJSON:[self.selector toJSON] error:&error];
     XCTAssertNil(error);
     XCTAssertEqualObjects(self.selector, toAndFromJson);
 }

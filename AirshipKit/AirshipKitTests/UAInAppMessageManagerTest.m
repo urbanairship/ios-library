@@ -43,8 +43,7 @@
 
         UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
             builder.identifier = @"test identifier";
-            builder.displayType = UAInAppMessageDisplayTypeBanner;
-            builder.displayContent = [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
+            builder.displayContent = [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
                 builder.placement = UAInAppMessageBannerPlacementTop;
                 builder.buttonLayout = UAInAppMessageButtonLayoutTypeJoined;
 
@@ -323,7 +322,6 @@
     UAInAppMessageScheduleInfo *anotherScheduleInfo = [UAInAppMessageScheduleInfo inAppMessageScheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
         UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
             builder.identifier = @"another test identifier";
-            builder.displayType = UAInAppMessageDisplayTypeBanner;
         }];
         
         builder.message = message;

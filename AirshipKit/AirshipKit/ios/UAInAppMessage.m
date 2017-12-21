@@ -1,18 +1,38 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAInAppMessage+Internal.h"
-#import "UAInAppMessageBannerDisplayContent.h"
-#import "UAInAppMessageFullScreenDisplayContent.h"
+#import "UAInAppMessageBannerDisplayContent+Internal.h"
+#import "UAInAppMessageFullScreenDisplayContent+Internal.h"
 #import "UAInAppMessageAudience+Internal.h"
 #import "UAGlobal.h"
 
 @implementation UAInAppMessageBuilder
 
-NSString * const UAInAppMessageErrorDomain = @"com.urbanairship.in_app_message";
+- (BOOL)isValid {
+    if (!self.identifier) {
+        UA_LERR(@"Messages require an ID.");
+        return NO;
+    }
 
+    if (!self.displayContent) {
+        UA_LERR(@"Messages require display content.");
+        return NO;
+    }
+
+    return YES;
+}
+@end
+
+@interface UAInAppMessage()
+@property(nonatomic, copy) NSString *identifier;
+@property(nonatomic, strong) UAInAppMessageDisplayContent *displayContent;
+@property(nonatomic, copy, nullable) NSDictionary *extras;
+@property(nonatomic, strong, nullable) UAInAppMessageAudience *audience;
 @end
 
 @implementation UAInAppMessage
+
+NSString * const UAInAppMessageErrorDomain = @"com.urbanairship.in_app_message";
 
 // Keys via IAM v2 spec
 NSString *const UAInAppMessageIDKey = @"message_id";
@@ -27,10 +47,6 @@ NSString *const UAInAppMessageDisplayTypeModalValue = @"modal";
 NSString *const UAInAppMessageDisplayTypeHTMLValue = @"html";
 NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
 
-+ (instancetype)message {
-    return [[self alloc] init];
-}
-
 + (instancetype)messageWithJSON:(NSDictionary *)json error:(NSError * _Nullable *)error {
     UAInAppMessageBuilder *builder = [[UAInAppMessageBuilder alloc] init];
     
@@ -44,7 +60,6 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
 
         return nil;
     }
-    builder.json = json;
 
     id identifier = json[UAInAppMessageIDKey];
     if (identifier) {
@@ -79,23 +94,18 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
             displayTypeStr = [displayTypeStr lowercaseString];
             
             if ([UAInAppMessageDisplayTypeBannerValue isEqualToString:displayTypeStr]) {
-                builder.displayType = UAInAppMessageDisplayTypeBanner;
-                builder.displayContent = [UAInAppMessageBannerDisplayContent bannerDisplayContentWithJSON:displayContentDict error:error];
+                builder.displayContent = [UAInAppMessageBannerDisplayContent displayContentWithJSON:displayContentDict error:error];
             } else if ([UAInAppMessageDisplayTypeFullScreenValue isEqualToString:displayTypeStr]) {
-                builder.displayType = UAInAppMessageDisplayTypeFullScreen;
-            	builder.displayContent = [UAInAppMessageFullScreenDisplayContent fullScreenDisplayContentWithJSON:displayContentDict error:error];
+            	builder.displayContent = [UAInAppMessageFullScreenDisplayContent displayContentWithJSON:displayContentDict error:error];
             } else if ([UAInAppMessageDisplayTypeModalValue isEqualToString:displayTypeStr]) {
-                builder.displayType = UAInAppMessageDisplayTypeModal;
                 // TODO uncomment this when modal is implemented see banner above for example
-                //builder.displayContent = [UAInAppMessageModalDisplayContent modalDisplayContentWithJSON:displayContentDict error:error];
+                //builder.displayContent = [UAInAppMessageModalDisplayContent displayContentWithJSON:displayContentDict error:error];
             } else if ([UAInAppMessageDisplayTypeHTMLValue isEqualToString:displayTypeStr]) {
-                builder.displayType = UAInAppMessageDisplayTypeHTML;
                 // TODO uncomment this when modal is implemented see banner above for example
-                //builder.displayContent = [UAInAppMessageHTMLDisplayContent htmlDisplayContentWithJSON:displayContentDict error:error];
+                //builder.displayContent = [UAInAppMessageHTMLDisplayContent displayContentWithJSON:displayContentDict error:error];
             } else if ([UAInAppMessageDisplayTypeCustomValue isEqualToString:displayTypeStr]) {
-                builder.displayType = UAInAppMessageDisplayTypeCustom;
                 // TODO uncomment this when modal is implemented see banner above for example
-                //builder.displayContent = [UAInAppMessageCustomDisplayContent customDisplayContentWithJSON:displayContentDict error:error];
+                //builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithJSON:displayContentDict error:error];
             } else {
                 if (error) {
                     NSString *msg = [NSString stringWithFormat:@"Message display type must be a string represening a valid display type. Invalid value: %@", displayTypeStr];
@@ -140,6 +150,16 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
         
         builder.audience = [UAInAppMessageAudience audienceWithJSON:audienceDict error:error];
     }
+
+    if (![builder isValid]) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Invalid message JSON: %@", json];
+            *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                          code:UAInAppMessageErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+        return nil;
+    }
     
     return [[UAInAppMessage alloc] initWithBuilder:builder];
 }
@@ -157,15 +177,13 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
 - (instancetype)initWithBuilder:(UAInAppMessageBuilder *)builder {
     self = [super init];
     
-    if (![UAInAppMessage validateBuilder:builder]) {
+    if (![builder isValid]) {
         UA_LDEBUG(@"UAInAppMessage could not be initialized, builder has missing or invalid parameters.");
         return nil;
     }
     
     if (self) {
-        self.json = builder.json;
         self.identifier = builder.identifier;
-        self.displayType = builder.displayType;
         self.displayContent = builder.displayContent;
         self.extras = builder.extras;
         self.audience = builder.audience;
@@ -176,13 +194,7 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
 
 #pragma mark - Validation
 
-// Validates builder contents
-+ (BOOL)validateBuilder:(UAInAppMessageBuilder *)builder {
-    // REVISIT - what do we need to validate this builder?
-    return YES;
-}
-
-- (NSDictionary *)toJsonValue {
+- (NSDictionary *)toJSON {
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
     
     [data setValue:self.identifier forKey:UAInAppMessageIDKey];
@@ -203,20 +215,16 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
             [data setValue:UAInAppMessageDisplayTypeCustomValue forKey:UAInAppMessageDisplayTypeKey];
             break;
     }
-    [data setValue:[self.displayContent toJsonValue] forKey:UAInAppMessageDisplayContentKey];
-    [data setValue:[self.audience toJsonValue] forKey:UAInAppMessageAudienceKey];
+
+    [data setValue:[self.displayContent toJSON] forKey:UAInAppMessageDisplayContentKey];
+    [data setValue:[self.audience toJSON] forKey:UAInAppMessageAudienceKey];
     [data setValue:self.extras forKey:UAInAppMessageExtrasKey];
 
-    return data;
-
+    return [data copy];
 }
 
 - (BOOL)isEqualToInAppMessage:(UAInAppMessage *)message {
     if (![self.identifier isEqualToString:message.identifier]) {
-        return NO;
-    }
-
-    if (self.displayType != message.displayType) {
         return NO;
     }
 
@@ -251,7 +259,6 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
 - (NSUInteger)hash {
     NSUInteger result = 1;
     result = 31 * result + [self.identifier hash];
-    result = 31 * result + self.displayType;
     result = 31 * result + [self.displayContent hash];
     result = 31 * result + [self.extras hash];
     result = 31 * result + [self.audience hash];
@@ -259,6 +266,11 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
     return result;
 }
 
-//TODO implement description method
+- (UAInAppMessageDisplayType)displayType {
+    return self.displayContent.displayType;
+}
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<UAInAppMessage: %@>", [self toJSON]];
+}
 @end

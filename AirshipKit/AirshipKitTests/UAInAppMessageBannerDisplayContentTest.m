@@ -1,7 +1,7 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <XCTest/XCTest.h>
-#import "UAInAppMessageBannerDisplayContent.h"
+#import "UAInAppMessageBannerDisplayContent+Internal.h"
 #import "UABaseTest.h"
 #import "UAInAppMessageMediaInfo.h"
 
@@ -12,7 +12,7 @@
 @implementation UAInAppMessageBannerDisplayContentTest
 
 - (void)testTooManyButtons {
-    UAInAppMessageBannerDisplayContent *twoButtons =  [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
+    UAInAppMessageBannerDisplayContent *twoButtons =  [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"headline content";
         }];;
@@ -34,7 +34,7 @@
 
     XCTAssertTrue(twoButtons.buttons.count == 2);
 
-    UAInAppMessageBannerDisplayContent *threeButtons =  [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
+    UAInAppMessageBannerDisplayContent *threeButtons =  [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"headline content";
         }];;
@@ -60,7 +60,7 @@
 }
 
 - (void)testValidButtonLayout {
-    UAInAppMessageBannerDisplayContent *bannerWithJoinedButtons =  [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
+    UAInAppMessageBannerDisplayContent *bannerWithJoinedButtons =  [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"headline content";
         }];
@@ -70,7 +70,7 @@
 
     XCTAssertEqual(bannerWithJoinedButtons.buttonLayout, UAInAppMessageButtonLayoutTypeJoined);
 
-    UAInAppMessageBannerDisplayContent *bannerWithSeparateButtons =  [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
+    UAInAppMessageBannerDisplayContent *bannerWithSeparateButtons =  [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"headline content";
         }];
@@ -80,7 +80,7 @@
 
     XCTAssertEqual(bannerWithSeparateButtons.buttonLayout, UAInAppMessageButtonLayoutTypeSeparate);
 
-    UAInAppMessageBannerDisplayContent *bannerWithStackedButtons =  [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
+    UAInAppMessageBannerDisplayContent *bannerWithStackedButtons =  [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"headline content";
         }];
@@ -92,7 +92,7 @@
 }
 
 - (void)testValidMediaType {
-    UAInAppMessageBannerDisplayContent *bannerWithImage =  [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
+    UAInAppMessageBannerDisplayContent *bannerWithImage =  [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"headline content";
         }];
@@ -104,7 +104,7 @@
 
     XCTAssertEqual(bannerWithImage.media.type, UAInAppMessageMediaInfoTypeImage);
 
-    UAInAppMessageBannerDisplayContent *bannerWithVideo =  [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
+    UAInAppMessageBannerDisplayContent *bannerWithVideo =  [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"headline content";
         }];
@@ -116,7 +116,7 @@
 
     XCTAssertNil(bannerWithVideo);
 
-    UAInAppMessageBannerDisplayContent *bannerWithYouTube =  [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
+    UAInAppMessageBannerDisplayContent *bannerWithYouTube =  [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"headline content";
         }];
@@ -131,7 +131,7 @@
 }
 
 - (void)testNoHeaderOrBody {
-    UAInAppMessageBannerDisplayContent *headerAndBody =  [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
+    UAInAppMessageBannerDisplayContent *headerAndBody =  [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"headline content";
         }];
@@ -144,7 +144,7 @@
     XCTAssertEqualObjects(headerAndBody.heading.text, @"headline content");
     XCTAssertEqualObjects(headerAndBody.body.text, @"body content");
 
-    UAInAppMessageBannerDisplayContent *noHeader =  [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
+    UAInAppMessageBannerDisplayContent *noHeader =  [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
         builder.body = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"body content";
         }];
@@ -153,7 +153,7 @@
     XCTAssertNil(noHeader.heading);
     XCTAssertEqualObjects(noHeader.body.text, @"body content");
 
-    UAInAppMessageBannerDisplayContent *noBody =  [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
+    UAInAppMessageBannerDisplayContent *noBody =  [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"headline content";
         }];
@@ -162,14 +162,14 @@
     XCTAssertEqualObjects(noBody.heading.text, @"headline content");
     XCTAssertNil(noBody.body);
 
-    UAInAppMessageBannerDisplayContent *noHeaderOrBody =  [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
+    UAInAppMessageBannerDisplayContent *noHeaderOrBody =  [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
     }];
 
     XCTAssertNil(noHeaderOrBody);
 }
 
 - (void)testBannerDisplayContent {
-    UAInAppMessageBannerDisplayContent *fromBuilderBannerDisplayContent = [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder * _Nonnull builder) {
+    UAInAppMessageBannerDisplayContent *banner = [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder * _Nonnull builder) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"heading";
             builder.alignment = NSTextAlignmentCenter;
@@ -227,14 +227,11 @@
         builder.actions = @{@"^+t": @"sometag"};
     }];
 
-    NSDictionary *JSONFromBuilderBannerDisplayContent = [fromBuilderBannerDisplayContent toJsonValue];
-    XCTAssertNotNil(JSONFromBuilderBannerDisplayContent);
-    UAInAppMessageBannerDisplayContent *fromJSONBannerDisplayContent = [UAInAppMessageBannerDisplayContent bannerDisplayContentWithJSON:JSONFromBuilderBannerDisplayContent error:nil];
-    XCTAssertNotNil(fromJSONBannerDisplayContent);
+    UAInAppMessageBannerDisplayContent *fromJSON = [UAInAppMessageBannerDisplayContent displayContentWithJSON:[banner toJSON] error:nil];
 
     // Test isEqual and hashing
-    XCTAssertTrue([fromBuilderBannerDisplayContent isEqual:fromJSONBannerDisplayContent]);
-    XCTAssertEqual(fromBuilderBannerDisplayContent.hash, fromJSONBannerDisplayContent.hash);
+    XCTAssertEqualObjects(banner, fromJSON);
+    XCTAssertEqual(banner.hash, fromJSON.hash);
 }
 
 @end

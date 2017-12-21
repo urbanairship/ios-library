@@ -13,6 +13,8 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAInAppMessageAudienceChecks+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
+#import "UAInAppMessage+Internal.h"
+
 
 NS_ASSUME_NONNULL_BEGIN
 

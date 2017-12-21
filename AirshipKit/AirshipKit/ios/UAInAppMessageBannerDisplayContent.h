@@ -11,16 +11,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Represents the possible error conditions when deserializing display content from JSON.
- */
-typedef NS_ENUM(NSInteger, UAInAppMessageBannerDisplayContentErrorCode) {
-    /**
-     * Indicates an error with the display content info JSON definition.
-     */
-    UAInAppMessageBannerDisplayContentErrorCodeInvalidJSON,
-};
-
-/**
  * Banner placement.
  */
 typedef NS_ENUM(NSInteger, UAInAppMessageBannerPlacementType) {
@@ -51,39 +41,9 @@ typedef NS_ENUM(NSInteger, UAInAppMessageBannerContentLayoutType) {
 };
 
 /**
- * Display the message on top of the screen.
- */
-extern NSString *const UAInAppMessageBannerPlacementTopValue;
-
-/**
- * Display the message on bottom of the screen.
- */
-extern NSString *const UAInAppMessageBannerPlacementBottomValue;
-
-/**
- * Template to display the optional media on the left.
- */
-extern NSString *const UAInAppMessageBannerContentLayoutMediaLeftValue;
-
-/**
- * Template to display the optional media on the right.
- */
-extern NSString *const UAInAppMessageBannerContentLayoutMediaRightValue;
-
-/**
- * Default duration in milliseconds.
- */
-extern NSUInteger const UAInAppMessageBannerDefaultDuration;
-
-/**
  * Maximum number of button supported by a banner.
  */
 extern NSUInteger const UAInAppMessageBannerMaxButtons;
-
-/**
- * JSON key for actions. Not supported in the API but is needed for compatibility of v1 banners.
- */
-extern NSString *const UAInAppMessageBannerActions;
 
 /**
  * Builder class for a UAInAppMessageBannerDisplayContent.
@@ -150,6 +110,12 @@ extern NSString *const UAInAppMessageBannerActions;
  * The banner's actions.
  */
 @property(nonatomic, copy, nullable) NSDictionary *actions;
+
+/**
+ * Checks if the builder is valid and will produce an display content instance.
+ * @return YES if the builder is valid, otherwise NO.
+ */
+- (BOOL)isValid;
 
 @end
 
@@ -219,21 +185,13 @@ extern NSString *const UAInAppMessageBannerActions;
  */
 @property(nonatomic, copy, nullable, readonly) NSDictionary *actions;
 
-/**
- * Factory method for building banner display content with JSON.
- *
- * @param json The json object.
- * @param error The optional error.
- * @returns `YES` if the json was able to be applied, otherwise `NO`.
- */
-+ (instancetype)bannerDisplayContentWithJSON:(id)json error:(NSError **)error;
 
 /**
  * Factory method for building banner display content with builder block.
  *
  * @param builderBlock The builder block.
  */
-+ (instancetype)bannerDisplayContentWithBuilderBlock:(void(^)(UAInAppMessageBannerDisplayContentBuilder *builder))builderBlock;
++ (instancetype)displayContentWithBuilderBlock:(void(^)(UAInAppMessageBannerDisplayContentBuilder *builder))builderBlock;
 
 @end
 

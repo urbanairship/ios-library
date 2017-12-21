@@ -190,7 +190,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     UIColor *secondaryColor = message.secondaryColor ? message.secondaryColor : kUALegacyInAppMessageDefaultSecondaryColor;
     float borderRadius = 2;
 
-    UAInAppMessageBannerDisplayContent *displayContent = [UAInAppMessageBannerDisplayContent bannerDisplayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder * _Nonnull builder) {
+    UAInAppMessageBannerDisplayContent *displayContent = [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder * _Nonnull builder) {
         builder.backgroundColor = primaryColor;
         builder.dismissButtonColor = secondaryColor;
         builder.borderRadius = borderRadius;
@@ -244,8 +244,6 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
             builder.displayContent = displayContent;
             builder.extras = message.extra;
             builder.identifier = message.identifier;
-            // Todo: this should not have to be set manually
-            builder.displayType = UAInAppMessageDisplayTypeBanner;
         }];
 
         builder.message = newMessage;

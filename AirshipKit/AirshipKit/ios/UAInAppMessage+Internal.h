@@ -6,16 +6,14 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Builder class for a UAInAppMessage.
+ * Represents the possible error conditions when deserializing an in-app message from JSON.
  */
-@interface UAInAppMessageBuilder ()
-
-/**
- * JSON object representing the entire in-app message.
- */
-@property(nonatomic, strong) NSDictionary *json;
-
-@end
+typedef NS_ENUM(NSInteger, UAInAppMessageErrorCode) {
+    /**
+     * Indicates an error with the in-app message JSON definition.
+     */
+    UAInAppMessageErrorCodeInvalidJSON,
+};
 
 /**
  * Model object representing in-app message data.
@@ -37,10 +35,22 @@ extern NSString *const UAInAppMessageDisplayTypeModalValue;
 extern NSString *const UAInAppMessageDisplayTypeHTMLValue;
 extern NSString *const UAInAppMessageDisplayTypeCustomValue;
 
+
 /**
- * JSON object representing the entire in-app message.
+ * Class factory method for constructing an in-app message from JSON.
+ *
+ * @param json JSON object that defines the message.
+ * @param error An NSError pointer for storing errors, if applicable.
+ * @return A fully configured instance of UAInAppMessage or nil if JSON parsing fails.
  */
-@property(nonatomic, strong) NSDictionary *json;
++ (nullable instancetype)messageWithJSON:(NSDictionary *)json error:(NSError * _Nullable *)error;
+
+/**
+ * Method to return the message as its JSON representation.
+ *
+ * @returns JSON representation of message (as NSDictionary)
+ */
+- (NSDictionary *)toJSON;
 
 @end
 

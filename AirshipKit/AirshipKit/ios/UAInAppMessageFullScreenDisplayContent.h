@@ -11,16 +11,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Represents the possible error conditions when deserializing display content from JSON.
- */
-typedef NS_ENUM(NSInteger, UAInAppMessageFullScreenDisplayContentErrorCode) {
-    /**
-     * Indicates an error with the display content info JSON definition.
-     */
-    UAInAppMessageFullScreenDisplayContentErrorCodeInvalidJSON,
-};
-
-/**
  * Content layout.
  */
 typedef NS_ENUM(NSInteger, UAInAppMessageFullScreenContentLayoutType) {
@@ -39,21 +29,6 @@ typedef NS_ENUM(NSInteger, UAInAppMessageFullScreenContentLayoutType) {
      */
     UAInAppMessageFullScreenContentLayoutHeaderBodyMedia,
 };
-
-/**
- * Template with display order of header, media, body, buttons, footer.
- */
-extern NSString *const UAInAppMessageFullScreenContentLayoutHeaderMediaBodyValue;
-
-/**
- * Template with display order of media, header, body, buttons, footer.
- */
-extern NSString *const UAInAppMessageFullScreenContentLayoutMediaHeaderBodyValue;
-
-/**
- * Template with display order of header, body, media, buttons, footer.
- */
-extern NSString *const UAInAppMessageFullScreenContentLayoutHeaderBodyMediaValue;
 
 /**
  * Maximum number of button supported by a full screen.
@@ -112,6 +87,12 @@ extern NSUInteger const UAInAppMessageFullScreenMaxButtons;
  */
 @property(nonatomic, nullable) UIColor *dismissButtonColor;
 
+/**
+ * Checks if the builder is valid and will produce an display content instance.
+ * @return YES if the builder is valid, otherwise NO.
+ */
+- (BOOL)isValid;
+
 @end
 
 /**
@@ -167,20 +148,11 @@ extern NSUInteger const UAInAppMessageFullScreenMaxButtons;
 @property(nonatomic, strong, readonly) UIColor *dismissButtonColor;
 
 /**
- * Factory method for building full screen display content with JSON.
- *
- * @param json The json object.
- * @param error The optional error.
- * @returns `YES` if the json was able to be applied, otherwise `NO`.
- */
-+ (instancetype)fullScreenDisplayContentWithJSON:(id)json error:(NSError **)error;
-
-/**
  * Factory method for building full screen display content with builder block.
  *
  * @param builderBlock The builder block.
  */
-+ (instancetype)fullScreenDisplayContentWithBuilderBlock:(void(^)(UAInAppMessageFullScreenDisplayContentBuilder *builder))builderBlock;
++ (instancetype)displayContentWithBuilderBlock:(void(^)(UAInAppMessageFullScreenDisplayContentBuilder *builder))builderBlock;
 
 @end
 

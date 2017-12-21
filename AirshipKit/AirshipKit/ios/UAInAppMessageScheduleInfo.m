@@ -20,7 +20,7 @@ NSString *const UAScheduleInfoInAppMessageKey = @"message";
 
 - (NSString *)data {
     if (self.message) {
-        return [NSJSONSerialization stringWithObject:[self.message toJsonValue]];
+        return [NSJSONSerialization stringWithObject:[self.message toJSON]];
     } else {
         return nil;
     }

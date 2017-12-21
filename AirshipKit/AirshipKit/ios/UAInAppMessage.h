@@ -7,46 +7,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- * Represents the possible error conditions when deserializing an in-app message from JSON.
- */
-typedef NS_ENUM(NSInteger, UAInAppMessageErrorCode) {
-    /**
-     * Indicates an error with the in-app message JSON definition.
-     */
-    UAInAppMessageErrorCodeInvalidJSON,
-};
-
-/**
- * Display types.
- */
-typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
-    /**
-     * Banner display
-     */
-    UAInAppMessageDisplayTypeBanner,
-    
-    /**
-     * Full screen display
-     */
-    UAInAppMessageDisplayTypeFullScreen,
-    
-    /**
-     * Modal display
-     */
-    UAInAppMessageDisplayTypeModal,
-    
-    /**
-     * HTML display
-     */
-    UAInAppMessageDisplayTypeHTML,
-    
-    /**
-     * Custom display
-     */
-    UAInAppMessageDisplayTypeCustom
-    
-};
 
 /**
  * Builder class for a UAInAppMessage.
@@ -62,10 +22,6 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
 */
 @property(nonatomic, copy, nullable) NSString *identifier;
 
-/**
- * The display type.
- */
-@property(nonatomic, assign) UAInAppMessageDisplayType displayType;
 
 /**
  * The display content for the message.
@@ -81,6 +37,12 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
  * The audience conditions for the messages.
  */
 @property(nonatomic, strong, nullable) UAInAppMessageAudience *audience;
+
+/**
+ * Checks if the builder is valid and will produce a message instance.
+ * @return YES if the builder is valid (requires display content and an ID), otherwise NO.
+ */
+- (BOOL)isValid;
 
 @end
 
@@ -96,44 +58,27 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
 /**
 * The unique identifier for the message.
 */
-@property(nonatomic, copy, nullable) NSString *identifier;
+@property(nonatomic, copy, readonly) NSString *identifier;
 
 /**
  * The display type.
  */
-@property(nonatomic, assign) UAInAppMessageDisplayType displayType;
+@property(nonatomic, readonly) UAInAppMessageDisplayType displayType;
 
 /**
  * The display content for the message.
  */
-@property(nonatomic, strong, nullable) UAInAppMessageDisplayContent *displayContent;
+@property(nonatomic, strong, readonly) UAInAppMessageDisplayContent *displayContent;
 
 /**
  * The extras for the messages.
  */
-@property(nonatomic, copy, nullable) NSDictionary *extras;
+@property(nonatomic, copy, nullable, readonly) NSDictionary *extras;
 
 /**
  * The audience conditions for the messages.
  */
-@property(nonatomic, strong, nullable) UAInAppMessageAudience *audience;
-
-/**
- * Class factory method for constructing an unconfigured
- * in-app message model.
- *
- * @return An unconfigured instance of UAInAppMessage.
- */
-+ (instancetype)message;
-
-/**
- * Class factory method for constructing an in-app message from JSON.
- *
- * @param json JSON object that defines the message.
- * @param error An NSError pointer for storing errors, if applicable.
- * @return A fully configured instance of UAInAppMessage or nil if JSON parsing fails.
- */
-+ (nullable instancetype)messageWithJSON:(NSDictionary *)json error:(NSError * _Nullable *)error;
+@property(nonatomic, strong, nullable, readonly) UAInAppMessageAudience *audience;
 
 /**
  * Class factory method for constructing an in-app message
@@ -143,13 +88,6 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
  * @return A fully configured instance of UAInAppMessage.
  */
 + (instancetype)messageWithBuilderBlock:(void(^)(UAInAppMessageBuilder *builder))builderBlock;
-
-/**
- * Method to return the message as its JSON representation.
- *
- * @returns JSON representation of message (as NSDictionary)
- */
-- (NSDictionary *)toJsonValue;
 
 @end
 

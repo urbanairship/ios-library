@@ -1,6 +1,6 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UAInAppMessageTagSelector.h"
+#import "UAInAppMessageTagSelector+Internal.h"
 
 /**
  * Represents the type of the tag selector.
@@ -58,11 +58,7 @@ NSString * const UAInAppMessageTagSelectorErrorDomain = @"com.urbanairship.in_ap
     return [[self alloc] initWithType:UAInAppMessageTagSelectorTypeTag selectors:nil tag:tag];
 }
 
-+ (instancetype)parseJson:(NSDictionary *)json error:(NSError **)error {
-    if (!json) {
-        return nil;
-    }
-    
++ (instancetype)selectorWithJSON:(NSDictionary *)json error:(NSError **)error {
     if (![json isKindOfClass:[NSDictionary class]]) {
         if (error) {
             *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Json must be a dictionary. Invalid value: %@", json]];
@@ -109,7 +105,7 @@ NSString * const UAInAppMessageTagSelectorErrorDomain = @"com.urbanairship.in_ap
     id selector = json[UAInAppMessageTagSelectorNOTJSONKey];
     if (selector) {
         if ([selector isKindOfClass:[NSDictionary class]]) {
-            return [self not:[self parseJson:selector error:error]];
+            return [self not:[self selectorWithJSON:selector error:error]];
         } else {
             if (error) {
                 *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"NOT\" type must be a single dictionary. Invalid value: %@", selectors]];
@@ -132,7 +128,7 @@ NSString * const UAInAppMessageTagSelectorErrorDomain = @"com.urbanairship.in_ap
     NSMutableArray<UAInAppMessageTagSelector *> *selectors = [NSMutableArray arrayWithCapacity:jsonSelectors.count];
     
     for (NSDictionary *jsonSelector in jsonSelectors) {
-        UAInAppMessageTagSelector *selector = [self parseJson:jsonSelector error:error];
+        UAInAppMessageTagSelector *selector = [self selectorWithJSON:jsonSelector error:error];
         if (selector) {
             [selectors addObject:selector];
         } else {
@@ -146,7 +142,7 @@ NSString * const UAInAppMessageTagSelectorErrorDomain = @"com.urbanairship.in_ap
     return selectors;
 }
 
-- (NSDictionary *)toJsonValue {
+- (NSDictionary *)toJSON {
     NSMutableDictionary *json = [NSMutableDictionary dictionaryWithCapacity:1];
     
     switch (self.type) {
@@ -155,15 +151,15 @@ NSString * const UAInAppMessageTagSelectorErrorDomain = @"com.urbanairship.in_ap
             break;
             
         case UAInAppMessageTagSelectorTypeNOT:
-            json[UAInAppMessageTagSelectorNOTJSONKey] = [self.selectors[0] toJsonValue];
+            json[UAInAppMessageTagSelectorNOTJSONKey] = [self.selectors[0] toJSON];
             break;
             
         case UAInAppMessageTagSelectorTypeOR:
-            json[UAInAppMessageTagSelectorORJSONKey] = [self selectorsToJsonValue];
+            json[UAInAppMessageTagSelectorORJSONKey] = [self selectorsToJSON];
             break;
 
         case UAInAppMessageTagSelectorTypeAND:
-            json[UAInAppMessageTagSelectorANDJSONKey] = [self selectorsToJsonValue];
+            json[UAInAppMessageTagSelectorANDJSONKey] = [self selectorsToJSON];
             break;
 
         default:
@@ -173,10 +169,10 @@ NSString * const UAInAppMessageTagSelectorErrorDomain = @"com.urbanairship.in_ap
     return json;
 }
 
-- (NSArray<NSDictionary *> *)selectorsToJsonValue {
+- (NSArray<NSDictionary *> *)selectorsToJSON {
     NSMutableArray<NSDictionary *> *selectorsAsJson = [NSMutableArray arrayWithCapacity:self.selectors.count];
     for (UAInAppMessageTagSelector *selector in self.selectors) {
-        [selectorsAsJson addObject:[selector toJsonValue]];
+        [selectorsAsJson addObject:[selector toJSON]];
     }
     return selectorsAsJson;
 }

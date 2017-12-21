@@ -8,6 +8,36 @@
 @interface UAInAppMessageDisplayContent : NSObject
 
 /**
+ * Display types.
+ */
+typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
+    /**
+     * Banner display
+     */
+    UAInAppMessageDisplayTypeBanner,
+
+    /**
+     * Full screen display
+     */
+    UAInAppMessageDisplayTypeFullScreen,
+
+    /**
+     * Modal display
+     */
+    UAInAppMessageDisplayTypeModal,
+
+    /**
+     * HTML display
+     */
+    UAInAppMessageDisplayTypeHTML,
+
+    /**
+     * Custom display
+     */
+    UAInAppMessageDisplayTypeCustom
+};
+
+/**
  * Button layout.
  */
 typedef NS_ENUM(NSInteger, UAInAppMessageButtonLayoutType) {
@@ -59,6 +89,11 @@ extern NSString *const UAInAppMessageButtonLayoutSeparateValue;
  */
 extern NSString *const UAInAppMessageButtonLayoutJoinedValue;
 
+/**
+ * The display type.
+ */
+@property(nonatomic, readonly) UAInAppMessageDisplayType displayType;
+
 
 /**
  * Method to return the display content as its JSON representation.
@@ -66,7 +101,7 @@ extern NSString *const UAInAppMessageButtonLayoutJoinedValue;
  *
  * @returns JSON representation of the display content (as NSDictionary)
  */
-- (NSDictionary *)toJsonValue;
+- (NSDictionary *)toJSON;
 
 @end
 

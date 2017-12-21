@@ -34,11 +34,37 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
     return self;
 }
 
+- (BOOL)isValid {
+    if (self.heading == nil && self.body == nil) {
+        UA_LERR(@"Full screen display must have either its body or heading defined.");
+        return NO;
+    }
+
+    if (self.buttons.count > UAInAppMessageFullScreenMaxButtons) {
+        UA_LERR(@"Full screen display allows a maximum of %lu buttons", (unsigned long)UAInAppMessageFullScreenMaxButtons);
+        return NO;
+    }
+
+    return YES;
+}
+
+@end
+
+@interface UAInAppMessageFullScreenDisplayContent()
+@property(nonatomic, strong, nullable) UAInAppMessageTextInfo *heading;
+@property(nonatomic, strong, nullable) UAInAppMessageTextInfo *body;
+@property(nonatomic, strong, nullable) UAInAppMessageMediaInfo *media;
+@property(nonatomic, strong, nullable) UAInAppMessageButtonInfo *footer;
+@property(nonatomic, copy, nullable) NSArray<UAInAppMessageButtonInfo *> *buttons;
+@property(nonatomic, assign) UAInAppMessageButtonLayoutType buttonLayout;
+@property(nonatomic, assign) UAInAppMessageFullScreenContentLayoutType contentLayout;
+@property(nonatomic, strong) UIColor *backgroundColor;
+@property(nonatomic, strong) UIColor *dismissButtonColor;
 @end
 
 @implementation UAInAppMessageFullScreenDisplayContent
 
-+ (instancetype)fullScreenDisplayContentWithBuilderBlock:(void(^)(UAInAppMessageFullScreenDisplayContentBuilder *builder))builderBlock {
++ (instancetype)displayContentWithBuilderBlock:(void(^)(UAInAppMessageFullScreenDisplayContentBuilder *builder))builderBlock {
     UAInAppMessageFullScreenDisplayContentBuilder *builder = [[UAInAppMessageFullScreenDisplayContentBuilder alloc] init];
 
     if (builderBlock) {
@@ -48,7 +74,7 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
     return [[UAInAppMessageFullScreenDisplayContent alloc] initWithBuilder:builder];
 }
 
-+ (instancetype)fullScreenDisplayContentWithJSON:(id)json error:(NSError **)error {
++ (instancetype)displayContentWithJSON:(id)json error:(NSError **)error {
     UAInAppMessageFullScreenDisplayContentBuilder *builder = [[UAInAppMessageFullScreenDisplayContentBuilder alloc] init];
 
     if (![json isKindOfClass:[NSDictionary class]]) {
@@ -212,14 +238,25 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
             return nil;
         }
     }
-    
+
+    if (![builder isValid]) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Invalid full screen display content: %@", json];
+            *error =  [NSError errorWithDomain:UAInAppMessageFullScreenDisplayContentDomain
+                                          code:UAInAppMessageFullScreenDisplayContentErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+        }
+
+        return nil;
+    }
+
     return [[UAInAppMessageFullScreenDisplayContent alloc] initWithBuilder:builder];
 }
 
 - (instancetype)initWithBuilder:(UAInAppMessageFullScreenDisplayContentBuilder *)builder {
     self = [super self];
 
-    if (![UAInAppMessageFullScreenDisplayContent validateBuilder:builder]) {
+    if (![builder isValid]) {
         UA_LDEBUG(@"UAInAppMessageFullScreenDisplayContent could not be initialized, builder has missing or invalid parameters.");
         return nil;
     }
@@ -242,20 +279,15 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
     return self;
 }
 
-- (NSDictionary *)toJsonValue {
+- (NSDictionary *)toJSON {
     NSMutableDictionary *json = [NSMutableDictionary dictionary];
 
-    if (self.heading) {
-        json[UAInAppMessageHeadingKey] = [self.heading toJSON];
-    }
-
-    if (self.body) {
-        json[UAInAppMessageBodyKey] = [self.body toJSON];
-    }
-
-    if (self.media) {
-        json[UAInAppMessageMediaKey] = [self.media toJSON];
-    }
+    [json setValue:[self.heading toJSON] forKey:UAInAppMessageHeadingKey];
+    [json setValue:[self.body toJSON] forKey:UAInAppMessageBodyKey];
+    [json setValue:[self.media toJSON] forKey:UAInAppMessageMediaKey];
+    [json setValue:[UAColorUtils hexStringWithColor:self.backgroundColor] forKey:UAInAppMessageBackgroundColorKey];
+    [json setValue:[UAColorUtils hexStringWithColor:self.dismissButtonColor] forKey:UAInAppMessageDismissButtonColorKey];
+    [json setValue:[self.footer toJSON] forKey:UAInAppMessageFooterKey];
 
     NSMutableArray *buttonsJSONs = [NSMutableArray array];
     for (UAInAppMessageButtonInfo *buttonInfo in self.buttons) {
@@ -263,58 +295,35 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
     }
 
     if (buttonsJSONs.count) {
-        json[UAInAppMessageButtonsKey] = buttonsJSONs;
-    }
-
-    if (self.footer) {
-        json[UAInAppMessageFooterKey] = [self.footer toJSON];
+        [json setValue:buttonsJSONs forKey:UAInAppMessageButtonsKey];
     }
 
     switch (self.buttonLayout) {
         case UAInAppMessageButtonLayoutTypeStacked:
-            json[UAInAppMessageButtonLayoutKey] = UAInAppMessageButtonLayoutStackedValue;
+            [json setValue:UAInAppMessageButtonLayoutStackedValue forKey:UAInAppMessageButtonLayoutKey];
             break;
         case UAInAppMessageButtonLayoutTypeSeparate:
-            json[UAInAppMessageButtonLayoutKey] = UAInAppMessageButtonLayoutSeparateValue;
+            [json setValue:UAInAppMessageButtonLayoutSeparateValue forKey:UAInAppMessageButtonLayoutKey];
             break;
         case UAInAppMessageButtonLayoutTypeJoined:
-            json[UAInAppMessageButtonLayoutKey] = UAInAppMessageButtonLayoutJoinedValue;
+            [json setValue:UAInAppMessageButtonLayoutJoinedValue forKey:UAInAppMessageButtonLayoutKey];
             break;
     }
-    
+
+
     switch (self.contentLayout) {
         case UAInAppMessageFullScreenContentLayoutHeaderMediaBody:
-            json[UAInAppMessageContentLayoutKey] = UAInAppMessageFullScreenContentLayoutHeaderMediaBodyValue;
+            [json setValue:UAInAppMessageFullScreenContentLayoutHeaderMediaBodyValue forKey:UAInAppMessageContentLayoutKey];
             break;
         case UAInAppMessageFullScreenContentLayoutMediaHeaderBody:
-            json[UAInAppMessageContentLayoutKey] = UAInAppMessageFullScreenContentLayoutMediaHeaderBodyValue;
+            [json setValue:UAInAppMessageFullScreenContentLayoutMediaHeaderBodyValue forKey:UAInAppMessageContentLayoutKey];
             break;
         case UAInAppMessageFullScreenContentLayoutHeaderBodyMedia:
-            json[UAInAppMessageContentLayoutKey] = UAInAppMessageFullScreenContentLayoutHeaderBodyMediaValue;
+            [json setValue:UAInAppMessageFullScreenContentLayoutHeaderBodyMediaValue forKey:UAInAppMessageContentLayoutKey];
             break;
     }
-    
-    json[UAInAppMessageBackgroundColorKey] = [UAColorUtils hexStringWithColor:self.backgroundColor];
-    json[UAInAppMessageDismissButtonColorKey] = [UAColorUtils hexStringWithColor:self.dismissButtonColor];
 
-    return [NSDictionary dictionaryWithDictionary:json];
-}
-
-#pragma mark - Validation
-
-// Validates builder contents for the FullScreen type
-+ (BOOL)validateBuilder:(UAInAppMessageFullScreenDisplayContentBuilder *)builder {
-    if (builder.heading == nil && builder.body == nil) {
-        UA_LDEBUG(@"Full screen display must have either its body or heading defined.");
-        return NO;
-    }
-
-    if (builder.buttons.count > UAInAppMessageFullScreenMaxButtons) {
-        UA_LDEBUG(@"Full screen display allows a maximum of %lu buttons", (unsigned long)UAInAppMessageFullScreenMaxButtons);
-        return NO;
-    }
-
-    return YES;
+    return [json copy];
 }
 
 #pragma mark - NSObject
@@ -389,7 +398,11 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"UAInAppMessageFullScreenDisplayContent: %lu", (unsigned long)self.hash];
+    return [NSString stringWithFormat:@"<UAInAppMessageFullScreenDisplayContent: %@>", [self toJSON]];
+}
+
+-(UAInAppMessageDisplayType)displayType {
+    return UAInAppMessageDisplayTypeFullScreen;
 }
 
 @end

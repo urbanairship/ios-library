@@ -30,7 +30,7 @@ NSString *const UAInAppMessageDurationKey = @"duration";
 /*
  * Sub-classes must override this method
  */
-- (NSDictionary *)toJsonValue {
+- (NSDictionary *)toJSON {
     return nil;
 }
 

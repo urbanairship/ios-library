@@ -3,7 +3,7 @@
 #import "UABaseTest.h"
 #import "UAInAppMessageAudience+Internal.h"
 #import "UAVersionMatcher+Internal.h"
-#import "UAInAppMessageTagSelector.h"
+#import "UAInAppMessageTagSelector+Internal.h"
 
 @interface UAInAppMessageAudienceTest : UABaseTest
 
@@ -19,7 +19,7 @@
         builder.notificationsOptIn = @YES;
         builder.locationOptIn = @NO;
         builder.languageTags = @[@"en-us"];
-        builder.tagSelector = [UAInAppMessageTagSelector parseJson:@{
+        builder.tagSelector = [UAInAppMessageTagSelector selectorWithJSON:@{
                                 @"not" : @{
                                         @"tag":@"not-tag"
                                         }
@@ -28,11 +28,11 @@
     }];
     
     // test
-    UAInAppMessageAudience *audienceFromJSON = [UAInAppMessageAudience audienceWithJSON:[originalAudience toJsonValue] error:&error];
+    UAInAppMessageAudience *fromJSON = [UAInAppMessageAudience audienceWithJSON:[originalAudience toJSON] error:&error];
     
     // verify
-    XCTAssertEqualObjects(originalAudience, audienceFromJSON);
-    XCTAssertEqual(originalAudience.hash, audienceFromJSON.hash);
+    XCTAssertEqualObjects(originalAudience, fromJSON);
+    XCTAssertEqual(originalAudience.hash, fromJSON.hash);
 }
 
 
