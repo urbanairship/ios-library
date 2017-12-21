@@ -159,7 +159,9 @@ double const MinimumSwipeVelocity = 100.0;
 
     self.showCompletionHandler = completionHandler;
 
+    UA_WEAKIFY(self);
     [self bannerView:self.bannerView animateInWithParentView:parentView completionHandler:^{
+        UA_STRONGIFY(self);
         [self scheduleDismissalTimer];
         [self observeAppState];
         self.isShowing = YES;
@@ -177,8 +179,11 @@ double const MinimumSwipeVelocity = 100.0;
 
     [self beginTeardown];
 
+    UA_WEAKIFY(self);
     dispatch_async(dispatch_get_main_queue(), ^{
+        UA_STRONGIFY(self);
         [self bannerView:self.bannerView animateOutWithParentView:self.bannerView.superview completionHandler:^{
+            UA_STRONGIFY(self);
             [self finishTeardown];
         }];
     });

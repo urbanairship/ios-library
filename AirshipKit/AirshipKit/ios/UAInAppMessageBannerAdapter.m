@@ -48,10 +48,11 @@ NSString *const UAInAppMessageBannerAdapterCacheName = @"UAInAppMessageBannerAda
     NSURL *imageURL = [NSURL URLWithString:displayContent.media.url];
 
     // Prefetch image save as file copy what message center does
+    UA_WEAKIFY(self);
     [UAInAppMessageUtils prefetchContentsOfURL:imageURL
                                      WithCache:self.imageCache
                              completionHandler:^(NSString *cacheKey) {
-
+        UA_STRONGIFY(self);
         NSData *data = [self.imageCache objectForKey:cacheKey];
         if (data) {
             UIImage *prefetchedImage = [UIImage imageWithData:data];

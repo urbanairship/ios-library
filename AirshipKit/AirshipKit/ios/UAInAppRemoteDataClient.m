@@ -50,8 +50,10 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
     if (self) {
         self.inAppMessageScheduler = scheduler;
         self.dataStore = dataStore;
+        UA_WEAKIFY(self);
         self.remoteDataSubscription = [remoteDataManager subscribeWithTypes:@[UAInAppMessages]
                                                                       block:^(NSArray<UARemoteDataPayload *> * _Nonnull messagePayloads) {
+                                                                          UA_STRONGIFY(self);
                                                                           // get the array of messages from the remote data
                                                                           if (messagePayloads.count) {
                                                                               UARemoteDataPayload *messagePayload = messagePayloads[0];
@@ -158,7 +160,9 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
     
     // schedule new messages, and save all remaining message ids and the payload time stamp
     if (newSchedules.count) {
+        UA_WEAKIFY(self);
         [self.inAppMessageScheduler scheduleMessagesWithScheduleInfo:newSchedules completionHandler:^(void) {
+            UA_STRONGIFY(self);
             [self setScheduledMessageIDs:messageIDs];
             [self.dataStore setObject:thisPayloadTimeStamp forKey:UAInAppMessagesLastPayloadTimeStampKey];
         }];

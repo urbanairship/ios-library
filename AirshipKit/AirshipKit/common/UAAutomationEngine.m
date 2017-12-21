@@ -171,7 +171,9 @@
     [self.automationStore saveSchedule:schedule limit:self.scheduleLimit completionHandler:^(BOOL success) {
         // If saving the schedule was successful, process any compound triggers
         if (success) {
+            UA_WEAKIFY(self);
             dispatch_async(dispatch_get_main_queue(), ^{
+                UA_STRONGIFY(self);
                 [self checkCompoundTriggerState:@[schedule]];
             });
         }
@@ -420,7 +422,9 @@
             NSSet *timersToCancel = [schedulesToCancel valueForKeyPath:@"identifier"];
 
             // Handle timers on the main queue
+            UA_WEAKIFY(self);
             dispatch_async(dispatch_get_main_queue(), ^{
+                UA_STRONGIFY(self);
                 [self cancelTimersWithIdentifiers:timersToCancel];
             });
         }
@@ -462,8 +466,9 @@
                                             repeats:NO];
 
     // Schedule the timer on the main queue
+    UA_WEAKIFY(self);
     dispatch_async(dispatch_get_main_queue(), ^{
-
+        UA_STRONGIFY(self);
         // Make sure we have a background task identifier before starting the timer
         if (self.backgroundTaskIdentifier == UIBackgroundTaskInvalid) {
             self.backgroundTaskIdentifier = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
@@ -514,7 +519,9 @@
         [self processTriggeredSchedules:schedules];
 
         // Check if we need to end the background task on the main queue
+        UA_WEAKIFY(self);
         dispatch_async(dispatch_get_main_queue(), ^{
+            UA_STRONGIFY(self);
             if (!self.activeTimers.count) {
                 [self endBackgroundTask];
             }

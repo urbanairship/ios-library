@@ -126,7 +126,9 @@ double const DefaultFullScreenAnimationDuration = 0.2;
     [parentView addSubview:self.fullScreenView];
     [self addInitialConstraintsToParentView:parentView fullScreenView:self.fullScreenView];
 
+    UA_WEAKIFY(self);
     [self fullScreenView:self.fullScreenView animateInWithParentView:parentView completionHandler:^{
+        UA_STRONGIFY(self);
         self.isShowing = YES;
     }];
 }
@@ -163,8 +165,11 @@ double const DefaultFullScreenAnimationDuration = 0.2;
 
     [self beginTeardown];
 
+    UA_WEAKIFY(self);
     dispatch_async(dispatch_get_main_queue(), ^{
+        UA_STRONGIFY(self);
         [self fullScreenView:self.fullScreenView animateOutWithParentView:self.fullScreenView.superview completionHandler:^{
+            UA_STRONGIFY(self);
             [self finishTeardown];
             self.isShowing = NO;
         }];
