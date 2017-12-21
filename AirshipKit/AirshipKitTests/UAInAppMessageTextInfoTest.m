@@ -19,7 +19,7 @@
         builder.size = 11;
     }];
     
-    UAInAppMessageTextInfo *fromJSON = [UAInAppMessageTextInfo textInfoWithJSON:[textInfo toJson] error:nil];
+    UAInAppMessageTextInfo *fromJSON = [UAInAppMessageTextInfo textInfoWithJSON:[textInfo toJSON] error:nil];
 
     // Test isEqual and hashing
     XCTAssertEqualObjects(textInfo, fromJSON);

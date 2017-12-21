@@ -3,7 +3,7 @@
 #import "UAirship.h"
 #import "UAInAppMessageFullScreenDisplayContent+Internal.h"
 #import "UAInAppMessageTextInfo+Internal.h"
-#import "UAInAppMessageButtonInfo.h"
+#import "UAInAppMessageButtonInfo+Internal.h"
 #import "UAInAppMessageMediaInfo+Internal.h"
 #import "UAInAppMessageDisplayContent.h"
 #import "UAInAppMessageUtils+Internal.h"
@@ -206,17 +206,11 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
     }
     
     if (json[UAInAppMessageFooterKey]) {
-        if (![json[UAInAppMessageFooterKey] isKindOfClass:[NSDictionary class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize media info object: %@", json];
-                *error =  [NSError errorWithDomain:UAInAppMessageFullScreenDisplayContentDomain
-                                              code:UAInAppMessageFullScreenDisplayContentErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-            
+        builder.footer = [UAInAppMessageButtonInfo buttonInfoWithJSON:json[UAInAppMessageFooterKey] error:error];
+
+        if (!builder.footer) {
             return nil;
         }
-        builder.footer = [UAInAppMessageButtonInfo buttonInfoWithJSON:json[UAInAppMessageFooterKey] error:error];
     }
     
     return [[UAInAppMessageFullScreenDisplayContent alloc] initWithBuilder:builder];
@@ -252,26 +246,29 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
     NSMutableDictionary *json = [NSMutableDictionary dictionary];
 
     if (self.heading) {
-        json[UAInAppMessageHeadingKey] = [self.heading toJson];
+        json[UAInAppMessageHeadingKey] = [self.heading toJSON];
     }
 
     if (self.body) {
-        json[UAInAppMessageBodyKey] = [self.body toJson];
+        json[UAInAppMessageBodyKey] = [self.body toJSON];
     }
 
     if (self.media) {
-        json[UAInAppMessageMediaKey] = [self.media toJson];
+        json[UAInAppMessageMediaKey] = [self.media toJSON];
     }
 
     NSMutableArray *buttonsJSONs = [NSMutableArray array];
     for (UAInAppMessageButtonInfo *buttonInfo in self.buttons) {
-        [buttonsJSONs addObject:[UAInAppMessageButtonInfo JSONWithButtonInfo:buttonInfo]];
+        [buttonsJSONs addObject:[buttonInfo toJSON]];
     }
+
     if (buttonsJSONs.count) {
         json[UAInAppMessageButtonsKey] = buttonsJSONs;
     }
 
-    json[UAInAppMessageFooterKey] = [UAInAppMessageButtonInfo JSONWithButtonInfo:self.footer];
+    if (self.footer) {
+        json[UAInAppMessageFooterKey] = [self.footer toJSON];
+    }
 
     switch (self.buttonLayout) {
         case UAInAppMessageButtonLayoutTypeStacked:

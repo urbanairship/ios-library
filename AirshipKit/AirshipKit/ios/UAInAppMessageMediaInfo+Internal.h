@@ -35,7 +35,7 @@ typedef NS_ENUM(NSInteger, UAMediaInfoErrorCode) {
  *
  * @returns JSON representation of the media info.
  */
-- (NSDictionary *)toJson;
+- (NSDictionary *)toJSON;
 
 
 @end

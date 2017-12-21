@@ -22,7 +22,7 @@
                                                                contentDescription:@"some desciription"
                                                                              type:UAInAppMessageMediaInfoTypeYouTube];
 
-    UAInAppMessageMediaInfo *fromJSON = [UAInAppMessageMediaInfo mediaInfoWithJSON:[mediInfo toJson] error:nil];
+    UAInAppMessageMediaInfo *fromJSON = [UAInAppMessageMediaInfo mediaInfoWithJSON:[mediInfo toJSON] error:nil];
 
     XCTAssertEqualObjects(mediInfo, fromJSON);
     XCTAssertEqual(fromJSON.hash, fromJSON.hash);

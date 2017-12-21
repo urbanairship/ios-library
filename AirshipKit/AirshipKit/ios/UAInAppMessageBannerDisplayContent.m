@@ -3,7 +3,7 @@
 #import "UAirship.h"
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 #import "UAInAppMessageTextInfo+Internal.h"
-#import "UAInAppMessageButtonInfo.h"
+#import "UAInAppMessageButtonInfo+Internal.h"
 #import "UAInAppMessageMediaInfo+Internal.h"
 #import "UAInAppMessageDisplayContent.h"
 #import "UAColorUtils+Internal.h"
@@ -325,20 +325,20 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     NSMutableDictionary *json = [NSMutableDictionary dictionary];
 
     if (self.heading) {
-        json[UAInAppMessageHeadingKey] = [self.heading toJson];
+        json[UAInAppMessageHeadingKey] = [self.heading toJSON];
     }
 
     if (self.body) {
-        json[UAInAppMessageBodyKey] = [self.body toJson];
+        json[UAInAppMessageBodyKey] = [self.body toJSON];
     }
 
     if (self.media) {
-        json[UAInAppMessageMediaKey] = [self.media toJson];
+        json[UAInAppMessageMediaKey] = [self.media toJSON];
     }
     
     NSMutableArray *buttonsJSONs = [NSMutableArray array];
     for (UAInAppMessageButtonInfo *buttonInfo in self.buttons) {
-        [buttonsJSONs addObject:[UAInAppMessageButtonInfo JSONWithButtonInfo:buttonInfo]];
+        [buttonsJSONs addObject:[buttonInfo toJSON]];
     }
 
     if (buttonsJSONs.count) {
@@ -379,7 +379,10 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     json[UAInAppMessageBackgroundColorKey] = [UAColorUtils hexStringWithColor:self.backgroundColor];
     json[UAInAppMessageDismissButtonColorKey] = [UAColorUtils hexStringWithColor:self.dismissButtonColor];
     json[UAInAppMessageBorderRadiusKey] = [NSNumber numberWithInteger:self.borderRadius];
-    json[UAInAppMessageBannerActionsKey] = self.actions;
+
+    if (self.actions) {
+        json[UAInAppMessageBannerActionsKey] = self.actions;
+    }
     
     return [NSDictionary dictionaryWithDictionary:json];
 }

@@ -6,16 +6,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Represents the possible error conditions when deserializing button info from JSON.
- */
-typedef NS_ENUM(NSInteger, UAButtonInfoErrorCode) {
-    /**
-     * Indicates an error with the button info JSON definition.
-     */
-    UAInAppMessageButtonInfoErrorCodeInvalidJSON,
-};
-
-/**
  * Button behavior.
  */
 typedef NS_ENUM(NSInteger, UAInAppMessageButtonInfoBehaviorType) {
@@ -30,28 +20,6 @@ typedef NS_ENUM(NSInteger, UAInAppMessageButtonInfoBehaviorType) {
     UAInAppMessageButtonInfoBehaviorCancel,
     
 };
-
-/**
- * JSON keys and values.
- */
-extern NSString *const UAInAppMessageButtonInfoLabelKey;
-extern NSString *const UAInAppMessageButtonInfoIdentifierKey;
-extern NSString *const UAInAppMessageButtonInfoBehaviorKey;
-extern NSString *const UAInAppMessageButtonInfoBorderRadiusKey;
-extern NSString *const UAInAppMessageButtonInfoBackgroundColorKey;
-extern NSString *const UAInAppMessageButtonInfoBorderColorKey;
-extern NSString *const UAInAppMessageButtonInfoActionsKey;
-
-/**
- * Cancels the in-app message's schedule when clicked.
- */
-extern NSString *const UAInAppMessageButtonInfoBehaviorCancelValue;
-
-/**
- * Dismisses the in-app message when clicked.
- */
-extern NSString *const UAInAppMessageButtonInfoBehaviorDismissValue;
-
 
 /**
  * Builder class for an UAInAppMessageButtonInfo object.
@@ -92,6 +60,12 @@ extern NSString *const UAInAppMessageButtonInfoBehaviorDismissValue;
  * Button actions.
  */
 @property(nonatomic, copy, nullable) NSDictionary *actions;
+
+/**
+ * Checks if the builder is valid and will produce a text info instance.
+ * @return YES if the builder is valid (requires label and id), otherwise NO.
+ */
+- (BOOL)isValid;
 
 @end
 
@@ -136,22 +110,6 @@ extern NSString *const UAInAppMessageButtonInfoBehaviorDismissValue;
  */
 @property(nonatomic, copy, readonly, nullable) NSDictionary *actions;
 
-/**
- * Factory method to create an in-app message button info from a JSON payload.
- *
- * @param json The JSON payload.
- * @param error An NSError pointer for storing errors, if applicable.
- * @return An in-app message button info or `nil` if the JSON is invalid.
- */
-+ (nullable instancetype)buttonInfoWithJSON:(id)json error:(NSError * _Nullable *)error;
-
-/**
- * Factory method to create a JSON dictionary from an in-app message button info.
- *
- * @param buttonInfo An in-app message button info.
- * @return The JSON dictionary.
- */
-+ (NSDictionary *)JSONWithButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo;
 
 /**
  * Creates an in-app message button info with a builder block.

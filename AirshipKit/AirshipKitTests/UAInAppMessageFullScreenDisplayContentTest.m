@@ -27,6 +27,7 @@
                 builder.text = @"Dismiss";
             }];
             builder.backgroundColor = [UIColor redColor]; // red
+            builder.identifier = @"button";
         }];
 
         builder.buttons = @[button, button, button, button, button];
@@ -48,6 +49,7 @@
                 builder.text = @"Dismiss";
             }];
             builder.backgroundColor = [UIColor redColor]; // red
+            builder.identifier = @"button";
         }];
 
         builder.buttons = @[button, button, button, button, button, button];
@@ -128,6 +130,7 @@
                 builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
             }];
             builder.backgroundColor = [UIColor redColor];
+            builder.identifier = @"button";
         }];
 
         UAInAppMessageButtonInfo *button2 = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
@@ -141,6 +144,7 @@
             builder.backgroundColor = [UIColor blueColor];
             builder.borderRadius = 10;
             builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
+            builder.identifier = @"button";
         }];
 
         UAInAppMessageButtonInfo *footerButton = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
@@ -154,6 +158,7 @@
             builder.backgroundColor = [UIColor clearColor];
             builder.borderRadius = 10;
             builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
+            builder.identifier = @"button";
         }];
 
         builder.buttons = @[button1, button2];

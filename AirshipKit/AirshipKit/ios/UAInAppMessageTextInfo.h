@@ -66,7 +66,7 @@ typedef NS_OPTIONS(NSUInteger, UAInAppMessageTextInfoStyleType) {
 
 /**
  * Checks if the builder is valid and will produce a text info instance.
- * @return YES if the builder is valid (reuires text), otherwise NO.
+ * @return YES if the builder is valid (requires text), otherwise NO.
  */
 - (BOOL)isValid;
 

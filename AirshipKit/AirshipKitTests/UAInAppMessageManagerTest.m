@@ -59,6 +59,7 @@
 
                 UAInAppMessageButtonInfo *button = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
                     builder.label = buttonTex;
+                    builder.identifier = @"button";
                 }];
 
                 builder.buttons = @[button];

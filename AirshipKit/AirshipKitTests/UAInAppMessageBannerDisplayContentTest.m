@@ -26,6 +26,7 @@
                 builder.text = @"Dismiss";
             }];
             builder.backgroundColor = [UIColor redColor]; // red
+            builder.identifier = @"button";
         }];
 
         builder.buttons = @[button, button];
@@ -47,6 +48,7 @@
                 builder.text = @"Dismiss";
             }];
             builder.backgroundColor = [UIColor redColor]; // red
+            builder.identifier = @"button";
         }];
 
         // 6 buttons with max buttons of 5

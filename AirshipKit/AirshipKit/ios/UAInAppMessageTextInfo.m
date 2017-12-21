@@ -255,7 +255,7 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
     return [[UAInAppMessageTextInfo alloc] initWithBuilder:builder];
 }
 
-- (NSDictionary *)toJson {
+- (NSDictionary *)toJSON {
     NSMutableDictionary *json = [NSMutableDictionary dictionary];
 
     [json setValue:self.text forKey:UAInAppMessageTextInfoTextKey];
@@ -361,7 +361,7 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<UAInAppMessageTextInfo: %@>", [self toJson]];
+    return [NSString stringWithFormat:@"<UAInAppMessageTextInfo: %@>", [self toJSON]];
 }
 
 @end

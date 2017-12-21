@@ -1,9 +1,10 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import <XCTest/XCTest.h>
-#import "UAInAppMessageButtonInfo.h"
+#import "UABaseTest.h"
+#import "UAInAppMessageButtonInfo+Internal.h"
 
-@interface UAInAppMessageButtonInfoTest : XCTestCase
+@interface UAInAppMessageButtonInfoTest : UABaseTest
 
 @end
 
@@ -18,7 +19,7 @@
 }
 
 - (void)testButtonInfo {
-    UAInAppMessageButtonInfo *fromBuilderButtonInfo = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
+    UAInAppMessageButtonInfo *buttonInfo = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
         builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"text";
             builder.alignment = NSTextAlignmentCenter;
@@ -35,16 +36,43 @@
         builder.actions = @{@"+^t":@"test"};
     }];
 
-    NSDictionary *JSONFromBuilderButtonInfo = [UAInAppMessageButtonInfo JSONWithButtonInfo:fromBuilderButtonInfo];
-    UAInAppMessageButtonInfo *fromJSONButtonInfo = [UAInAppMessageButtonInfo buttonInfoWithJSON:JSONFromBuilderButtonInfo error:nil];
-    NSDictionary *JSONFromJSONButtonInfo = [UAInAppMessageButtonInfo JSONWithButtonInfo:fromJSONButtonInfo];
+    UAInAppMessageButtonInfo *fromJSON = [UAInAppMessageButtonInfo buttonInfoWithJSON:[buttonInfo toJSON] error:nil];
 
     // Test isEqual and hashing
-    XCTAssertTrue([fromBuilderButtonInfo isEqual:fromJSONButtonInfo] == YES);
-    XCTAssertEqual(fromBuilderButtonInfo.hash, fromJSONButtonInfo.hash);
+    XCTAssertEqualObjects(buttonInfo, fromJSON);
+    XCTAssertEqual(buttonInfo.hash, fromJSON.hash);
+}
+- (void)testMissingLabel {
+    UAInAppMessageButtonInfo *buttonInfo = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
+        builder.identifier = @"identifier";
+        builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
+        builder.borderRadius = 11;
+        builder.backgroundColor = [UIColor redColor];
+        builder.borderColor = [UIColor redColor];
+        builder.actions = @{@"+^t":@"test"};
+    }];
 
-    // Test conversion to JSON
-    XCTAssertEqualObjects(JSONFromBuilderButtonInfo, JSONFromJSONButtonInfo);
+   XCTAssertNil(buttonInfo);
+}
+
+- (void)testMissingID {
+    UAInAppMessageButtonInfo *buttonInfo = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
+        builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+            builder.text = @"text";
+            builder.alignment = NSTextAlignmentCenter;
+            builder.color = [UIColor redColor];
+            builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
+            builder.size = 11;
+        }];
+
+        builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
+        builder.borderRadius = 11;
+        builder.backgroundColor = [UIColor redColor];
+        builder.borderColor = [UIColor redColor];
+        builder.actions = @{@"+^t":@"test"};
+    }];
+
+    XCTAssertNil(buttonInfo);
 }
 
 @end
