@@ -229,14 +229,14 @@ double const MinimumSwipeVelocity = 100.0;
                                 multiplier:1
                                   constant:0].active = YES;
 
-    // Constrain width
+    // Constrain leading edge
     NSLayoutConstraint *leading = [NSLayoutConstraint constraintWithItem:bannerView
-                                                               attribute:NSLayoutAttributeWidth
+                                                               attribute:NSLayoutAttributeLeading
                                                                relatedBy:NSLayoutRelationEqual
                                                                   toItem:parentView
-                                                               attribute:NSLayoutAttributeWidth
+                                                               attribute:NSLayoutAttributeLeading
                                                               multiplier:1
-                                                                constant:0];
+                                                                constant:DefaultTrailingEdgeSpace];
 
     leading.priority = UILayoutPriorityDefaultHigh;
     leading.active = YES;
