@@ -118,6 +118,13 @@ double const DefaultFullScreenAnimationDuration = 0.2;
     UIImageView *imageView;
     if (self.image) {
         imageView = [[UIImageView alloc] initWithImage:self.image];
+        [NSLayoutConstraint constraintWithItem:imageView
+                                     attribute:NSLayoutAttributeHeight
+                                     relatedBy:NSLayoutRelationEqual
+                                        toItem:imageView
+                                     attribute:NSLayoutAttributeWidth
+                                    multiplier:(imageView.frame.size.height / imageView.frame.size.width)
+                                      constant:0].active = YES;
     }
 
     self.fullScreenView = [UAInAppMessageFullScreenView fullScreenMessageViewWithDisplayContent:self.displayContent
@@ -221,7 +228,6 @@ double const DefaultFullScreenAnimationDuration = 0.2;
                                  attribute:NSLayoutAttributeCenterX
                                 multiplier:1
                                   constant:0].active = YES;
-
 
     // Set width
     [NSLayoutConstraint constraintWithItem:fullScreenView
