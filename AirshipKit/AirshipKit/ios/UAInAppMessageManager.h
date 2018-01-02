@@ -10,6 +10,31 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
+ * Delegate protocol for receiving in-app messaging related
+ * callbacks.
+ */
+@protocol UAInAppMessagingDelegate <NSObject>
+
+@optional
+
+///---------------------------------------------------------------------------------------
+/// @name In App Messaging Delegate Methods
+///---------------------------------------------------------------------------------------
+
+/**
+ * Indicates that an in-app message will be displayed.
+ * @param message The associated in-app message.
+ */
+- (void)messageWillBeDisplayed:(UAInAppMessage *)message;
+
+/**
+ * Indicates that an in-app message has been dismissed.
+ */
+- (void)messageDismissed:(UAInAppMessage *)message;
+
+@end
+
+/**
  * In-app message manager provides a control interface for creating,
  * canceling and executing in-app message schedules.
  */
@@ -19,6 +44,11 @@ NS_ASSUME_NONNULL_BEGIN
  * In-app message enable flag.
  */
 @property (nonatomic, assign, getter=isEnabled) BOOL enabled;
+
+/**
+ * In-app messaging delegate.
+ */
+@property (nonatomic, weak) id<UAInAppMessagingDelegate> delegate;
 
 /**
  * Allows setting factory blocks that builds InAppMessageAdapters for each given display type.

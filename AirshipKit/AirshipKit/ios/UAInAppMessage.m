@@ -233,14 +233,14 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
         return NO;
     }
 
-    if (![self.extras isEqualToDictionary:message.extras]) {
+    if (self.extras != message.extras && ![self.extras isEqualToDictionary:message.extras]) {
         return NO;
     }
 
     if (![self.audience isEqual:message.audience]) {
         return NO;
     }
-    
+
     return YES;
 }
 

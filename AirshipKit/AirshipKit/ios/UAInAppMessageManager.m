@@ -227,6 +227,14 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
     // Lock Display
     [self lockDisplay];
 
+    UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
+    UAInAppMessage *message = info.message;
+
+    // Notify delegate that the message is about to be displayed
+    if ([self.delegate respondsToSelector:@selector(messageWillBeDisplayed:)]) {
+        [self.delegate messageWillBeDisplayed:message];
+    }
+
     UA_WEAKIFY(self);
     [self.currentAdapter display:^{
         UA_STRONGIFY(self);
@@ -234,6 +242,12 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
         self.currentScheduleID = nil;
         // Start timer to unlock display after display interval
         [self unlockDisplayAfter:self.displayInterval];
+
+        // Notify delegate that the message has been dismissed
+        if ([self.delegate respondsToSelector:@selector(messageDismissed:)]) {
+            [self.delegate messageDismissed:message];
+        }
+
         completionHandler();
     }];
 }
