@@ -8,6 +8,8 @@
 #import "UAInAppMessageMediaView+Internal.h"
 #import "UAInAppMessageUtils+Internal.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 NSString *const UAInAppMessageBannerContentViewNibName = @"UAInAppMessageBannerContentView";
 
 @interface UAInAppMessageBannerContentView ()
@@ -21,11 +23,11 @@ NSString *const UAInAppMessageBannerContentViewNibName = @"UAInAppMessageBannerC
 
 @implementation UAInAppMessageBannerContentView
 
-+ (instancetype)contentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout textView:(UAInAppMessageTextView *)textView image:(UIImage *)image {
++ (instancetype)contentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout textView:(UAInAppMessageTextView *)textView image:(UIImage * _Nullable)image {
     return [[self alloc] initContentViewWithLayout:contentLayout textView:textView image:image];
 }
 
-- (instancetype)initContentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout textView:(UAInAppMessageTextView *)textView image:(UIImage *)image {
+- (instancetype)initContentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout textView:(UAInAppMessageTextView *)textView image:(UIImage * _Nullable)image {
 
     NSString *nibName = UAInAppMessageBannerContentViewNibName;
     NSBundle *bundle = [UAirship resources];
@@ -52,7 +54,7 @@ NSString *const UAInAppMessageBannerContentViewNibName = @"UAInAppMessageBannerC
         if (image) {
             [self addImage:image];
         } else {
-            [self.imageContainerView removeFromSuperview]; //remove constraints
+            [self.imageContainerView removeFromSuperview];
         }
 
         [self addTextView:textView];
@@ -78,3 +80,6 @@ NSString *const UAInAppMessageBannerContentViewNibName = @"UAInAppMessageBannerC
 }
 
 @end
+
+NS_ASSUME_NONNULL_END
+

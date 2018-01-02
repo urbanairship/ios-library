@@ -18,8 +18,8 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 @interface UAInAppMessageFullScreenView ()
 
 @property (nonatomic, strong) IBOutlet UIStackView *containerStackView;
-@property (strong, nonatomic) IBOutlet UIView *closeButtonView;
-@property (strong, nonatomic) IBOutlet UIView *footerView;
+@property (strong, nonatomic) IBOutlet UIView *closeButtonContainer;
+@property (strong, nonatomic) IBOutlet UIView *footerButtonContainer;
 
 @property (nonatomic, strong) UAInAppMessageFullScreenDisplayContent *displayContent;
 
@@ -60,10 +60,11 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
         self.imageView = imageView;
         self.buttonView = buttonView;
 
-        [self.closeButtonView addSubview:closeButton];
-        [UAInAppMessageUtils applyContainerConstraintsToContainer:self.closeButtonView containedView:closeButton];
+        // Always add the close button
+        [self.closeButtonContainer addSubview:closeButton];
+        [UAInAppMessageUtils applyContainerConstraintsToContainer:self.closeButtonContainer containedView:closeButton];
 
-
+        // Add views that belong in the stack - adding views that are nil will result in no-op
         if (displayContent.contentLayout == UAInAppMessageFullScreenContentLayoutHeaderMediaBody) {
             self.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:nil];
             self.bottomTextView = [UAInAppMessageTextView textViewWithHeading:nil body:displayContent.body];
@@ -83,16 +84,15 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
             [self.containerStackView addArrangedSubview:imageView];
             [self.containerStackView addArrangedSubview:self.topTextView];
         }
-
-        // Buttons are always above the footer
+        // Button container is always the last thing in the stack
         [self.containerStackView addArrangedSubview:self.buttonView];
 
-        // Need to remove footer view from the superview if footer is nil
+        // Explicitly remove footer view from the superview if footer is nil
         if (footerButton) {
-            [self.footerView addSubview:footerButton];
-            [UAInAppMessageUtils applyContainerConstraintsToContainer:self.footerView containedView:footerButton];
+            [self.footerButtonContainer addSubview:footerButton];
+            [UAInAppMessageUtils applyContainerConstraintsToContainer:self.footerButtonContainer containedView:footerButton];
         } else {
-            [self.footerView removeFromSuperview];
+            [self.footerButtonContainer removeFromSuperview];
         }
 
         self.displayContent = displayContent;

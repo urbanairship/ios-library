@@ -12,7 +12,6 @@
 #import "UAColorUtils+Internal.h"
 #import "UAInAppMessageCloseButton+Internal.h"
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 @class UAInAppMessageTextView;
@@ -113,9 +112,13 @@ double const DefaultFullScreenAnimationDuration = 0.2;
                                                                         dismissButtonColor:self.displayContent.dismissButtonColor];
 
     UAInAppMessageCloseButton *closeButton = [self addCloseButton];
+
     UAInAppMessageButton *footerButton = [self addFooterButtonWithButtonInfo:self.displayContent.footer];
 
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:self.image];
+    UIImageView *imageView;
+    if (self.image) {
+        imageView = [[UIImageView alloc] initWithImage:self.image];
+    }
 
     self.fullScreenView = [UAInAppMessageFullScreenView fullScreenMessageViewWithDisplayContent:self.displayContent
                                                                                     closeButton:closeButton

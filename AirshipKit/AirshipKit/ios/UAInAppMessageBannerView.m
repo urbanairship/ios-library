@@ -10,6 +10,8 @@
 
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 // UAInAppMessageBannerContentView nib name
 NSString *const UAInAppMessageBannerViewNibName = @"UAInAppMessageBannerView";
 CGFloat const BannerIsBeingTappedAlpha = 0.7;
@@ -37,7 +39,7 @@ CGFloat const ShadowOpacity = 0.5;
 
 + (instancetype)bannerMessageViewWithDisplayContent:(UAInAppMessageBannerDisplayContent *)displayContent
                                   bannerContentView:(UAInAppMessageBannerContentView *)contentView
-                                         buttonView:(UAInAppMessageButtonView *)buttonView {
+                                         buttonView:(UAInAppMessageButtonView * _Nullable)buttonView {
 
     return [[UAInAppMessageBannerView alloc] initBannerViewWithDisplayContent:displayContent
                                                             bannerContentView:contentView
@@ -46,7 +48,7 @@ CGFloat const ShadowOpacity = 0.5;
 
 - (instancetype)initBannerViewWithDisplayContent:(UAInAppMessageBannerDisplayContent *)displayContent
                                bannerContentView:(UAInAppMessageBannerContentView *)contentView
-                                      buttonView:(UAInAppMessageButtonView *)buttonView {
+                                      buttonView:(UAInAppMessageButtonView * _Nullable)buttonView {
     NSString *nibName = UAInAppMessageBannerViewNibName;
     NSBundle *bundle = [UAirship resources];
     CGFloat shadowOffset;
@@ -67,7 +69,12 @@ CGFloat const ShadowOpacity = 0.5;
 
     if (self) {
         [self addBannerContentView:contentView];
-        [self addButtonView:buttonView];
+
+        if (buttonView) {
+            [self addButtonView:buttonView];
+        } else {
+            [self.buttonContainerView removeFromSuperview];
+        }
 
         self.displayContent = displayContent;
         // The layer color is set to background color to preserve rounding and shadow
@@ -138,3 +145,5 @@ CGFloat const ShadowOpacity = 0.5;
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

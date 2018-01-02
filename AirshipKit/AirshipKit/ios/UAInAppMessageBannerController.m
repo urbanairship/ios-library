@@ -140,12 +140,15 @@ double const MinimumSwipeVelocity = 100.0;
     UAInAppMessageBannerContentView *bannerContentView = [UAInAppMessageBannerContentView contentViewWithLayout:contentLayout
                                                                                                        textView:textView
                                                                                                           image:self.image];
-
-    UAInAppMessageButtonView *buttonView = [UAInAppMessageButtonView buttonViewWithButtons:buttons
-                                                                                    layout:buttonLayout
-                                                                                    target:self
-                                                                                  selector:@selector(buttonTapped:)
-                                                                        dismissButtonColor:dismissColor];
+    // Only add button view if buttons are present
+    UAInAppMessageButtonView *buttonView;
+    if (buttons.count) {
+        buttonView = [UAInAppMessageButtonView buttonViewWithButtons:buttons
+                                                              layout:buttonLayout
+                                                              target:self
+                                                            selector:@selector(buttonTapped:)
+                                                  dismissButtonColor:dismissColor];
+    }
 
     self.bannerView = [UAInAppMessageBannerView bannerMessageViewWithDisplayContent:self.displayContent
                                                                   bannerContentView:bannerContentView

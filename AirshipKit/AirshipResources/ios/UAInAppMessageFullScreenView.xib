@@ -83,9 +83,9 @@
             </constraints>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <connections>
-                <outlet property="closeButtonView" destination="dFs-4m-tfK" id="tIp-t3-pas"/>
-                <outlet property="containerStackView" destination="Dgh-Mi-mKc" id="cm5-Vp-ewo"/>
-                <outlet property="footerView" destination="rsN-La-UOG" id="zxv-9d-96e"/>
+                <outlet property="closeButtonContainer" destination="dFs-4m-tfK" id="kAD-3E-ayk"/>
+                <outlet property="containerStackView" destination="Dgh-Mi-mKc" id="2tL-PN-m1G"/>
+                <outlet property="footerButtonContainer" destination="rsN-La-UOG" id="sTA-XJ-G1s"/>
             </connections>
             <point key="canvasLocation" x="220.5" y="8.5"/>
         </view>
