@@ -1,7 +1,8 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAActionScheduleInfo.h"
+#import "UAScheduleInfo+Internal.h"
+#import "UAActionScheduleInfo+Internal.h"
 #import "UAUtils.h"
 
 @interface UAActionInfoTests : UABaseTest
@@ -26,7 +27,7 @@
                                     };
 
     NSError *error = nil;
-    UAActionScheduleInfo *info = [UAActionScheduleInfo actionScheduleInfoWithJSON:scheduleJSON error:&error];
+    UAActionScheduleInfo *info = [UAActionScheduleInfo scheduleInfoWithJSON:scheduleJSON error:&error];
 
     XCTAssertEqualObjects(info.group, @"test group");
     XCTAssertEqual(info.limit, 1);
@@ -44,7 +45,7 @@
     // Minimum required fields
     NSDictionary *validJSON = @{ UAActionScheduleInfoActionsKey: @{ @"action_name": @"action_value" },
                                  UAScheduleInfoTriggersKey: @[ @{ UAScheduleTriggerTypeKey: UAScheduleTriggerAppForegroundName, UAScheduleTriggerGoalKey: @(1) }] };
-    XCTAssertNotNil([UAActionScheduleInfo actionScheduleInfoWithJSON:validJSON error:nil]);
+    XCTAssertNotNil([UAActionScheduleInfo scheduleInfoWithJSON:validJSON error:nil]);
 
     for (NSString *key in validJSON.allKeys) {
         NSError *error = nil;
@@ -52,13 +53,13 @@
 
         // Missing required value
         [invalidJSON removeObjectForKey:key];
-        XCTAssertNil([UAActionScheduleInfo actionScheduleInfoWithJSON:invalidJSON error:&error]);
+        XCTAssertNil([UAActionScheduleInfo scheduleInfoWithJSON:invalidJSON error:&error]);
         XCTAssertNotNil(error);
 
         // Invalid valid
         error = nil;
         invalidJSON[key] = @"what";
-        XCTAssertNil([UAActionScheduleInfo actionScheduleInfoWithJSON:invalidJSON error:&error]);
+        XCTAssertNil([UAActionScheduleInfo scheduleInfoWithJSON:invalidJSON error:&error]);
         XCTAssertNotNil(error);
     }
 }

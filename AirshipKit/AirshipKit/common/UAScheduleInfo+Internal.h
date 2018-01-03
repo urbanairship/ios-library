@@ -4,6 +4,66 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * Represents the possible error conditions when deserializing schedule info from JSON.
+ */
+typedef NS_ENUM(NSInteger, UAScheduleInfoErrorCode) {
+    /**
+     * Indicates an error with the schedule info JSON definition.
+     */
+    UAScheduleInfoErrorCodeInvalidJSON,
+};
+
+/**
+ * The domain for NSErrors.
+ */
+extern NSString * const UAScheduleInfoErrorDomain;
+
+/**
+ * JSON key for the actions's priority.
+ */
+extern NSString *const UAScheduleInfoPriorityKey;
+
+/**
+ * JSON key for the schedule's limit.
+ */
+extern NSString *const UAScheduleInfoLimitKey;
+
+/**
+ * JSON key for the schedule's group.
+ */
+extern NSString *const UAScheduleInfoGroupKey;
+
+/**
+ * JSON key for the schedule's end.
+ */
+extern NSString *const UAScheduleInfoEndKey;
+
+/**
+ * JSON key for the schedule's start.
+ */
+extern NSString *const UAScheduleInfoStartKey;
+
+/**
+ * JSON key for the schedule's triggers.
+ */
+extern NSString *const UAScheduleInfoTriggersKey;
+
+/**
+ * JSON key for the schedule's delay.
+ */
+extern NSString *const UAScheduleInfoDelayKey;
+
+/**
+ * JSON key for the schedule's interval.
+ */
+extern NSString *const UAScheduleInfoIntervalKey;
+
+/**
+ * JSON key for the schedule's edit grace period.
+ */
+extern NSString *const UAScheduleInfoEditGracePeriodKey;
+
 /*
  * SDK-private extensions to UAScheduleTrigger
  */

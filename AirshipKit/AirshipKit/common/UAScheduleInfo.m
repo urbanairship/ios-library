@@ -1,6 +1,5 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UAActionScheduleInfo.h"
 #import "UAScheduleInfo+Internal.h"
 #import "UAUtils.h"
 
@@ -231,6 +230,10 @@ NSString * const UAScheduleInfoErrorDomain = @"com.urbanairship.schedule_info";
     if (editGracePeriodDays) {
         // JSON value is in days
         self.editGracePeriod = [editGracePeriodDays doubleValue] * 24 * 60 * 60;
+    }
+
+    if (priority) {
+        self.priority = [priority integerValue];
     }
 
     return YES;

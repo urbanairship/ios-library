@@ -25,32 +25,13 @@ NSString *const UAScheduleInfoInAppMessageKey = @"message";
         return nil;
     }
 }
-@end
 
-@implementation UAInAppMessageScheduleInfo
-
-- (UAInAppMessage *)message {
-    return [UAInAppMessage messageWithJSON:[NSJSONSerialization objectWithString:self.data] error:nil];
-}
-
-+ (instancetype)inAppMessageScheduleInfoWithBuilderBlock:(void(^)(UAInAppMessageScheduleInfoBuilder *builder))builderBlock {
-    UAInAppMessageScheduleInfoBuilder *builder = [[UAInAppMessageScheduleInfoBuilder alloc] init];
-    builder.limit = 1;
-
-    if (builderBlock) {
-        builderBlock(builder);
+- (BOOL)applyFromJson:(id)json error:(NSError * _Nullable *)error {
+    if (![super applyFromJson:json error:error]) {
+        return NO;
     }
 
-    return [[UAInAppMessageScheduleInfo alloc] initWithBuilder:builder];
-}
-
-+ (instancetype)inAppMessageScheduleInfoWithJSON:(id)json error:(NSError **)error {
-    UAInAppMessageScheduleInfoBuilder *builder = [[UAInAppMessageScheduleInfoBuilder alloc] init];
-    if (![builder applyFromJson:json error:error]) {
-        return nil;
-    }
-
-    // message ID
+    // Message
     id messagePayload = json[UAScheduleInfoInAppMessageKey];
     if (messagePayload) {
         if (![messagePayload isKindOfClass:[NSDictionary class]]) {
@@ -60,18 +41,45 @@ NSString *const UAScheduleInfoInAppMessageKey = @"message";
                                               code:UAScheduleInfoErrorCodeInvalidJSON
                                           userInfo:@{NSLocalizedDescriptionKey:msg}];
             }
-            
-            return nil;
+
+            return NO;
         }
-        
-        // message with JSON expects displayType to be NSString
-        builder.message = [UAInAppMessage messageWithJSON:messagePayload error:error];
-        if (!builder.message) {
-            return nil;
+
+        self.message = [UAInAppMessage messageWithJSON:messagePayload error:error];
+        if (!self.message) {
+            return NO;
         }
     }
+
+    return YES;
+}
+
+@end
+
+@implementation UAInAppMessageScheduleInfo
+
+- (UAInAppMessage *)message {
+    return [UAInAppMessage messageWithJSON:[NSJSONSerialization objectWithString:self.data] error:nil];
+}
+
++ (instancetype)scheduleInfoWithBuilderBlock:(void(^)(UAInAppMessageScheduleInfoBuilder *builder))builderBlock {
+    UAInAppMessageScheduleInfoBuilder *builder = [[UAInAppMessageScheduleInfoBuilder alloc] init];
+    builder.limit = 1;
+
+    if (builderBlock) {
+        builderBlock(builder);
+    }
+
+    return [[self alloc] initWithBuilder:builder];
+}
+
++ (instancetype)scheduleInfoWithJSON:(id)json error:(NSError **)error {
+    UAInAppMessageScheduleInfoBuilder *builder = [[UAInAppMessageScheduleInfoBuilder alloc] init];
+    if (![builder applyFromJson:json error:error]) {
+        return nil;
+    }
     
-    return [[UAInAppMessageScheduleInfo alloc] initWithBuilder:builder];
+    return [[self alloc] initWithBuilder:builder];
 }
 
 + (NSString *)parseMessageID:(id)json {

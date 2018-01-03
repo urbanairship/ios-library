@@ -9,6 +9,8 @@
 #import "UAirship.h"
 #import "UAUtils.h"
 #import "UASchedule+Internal.h"
+#import "UAScheduleInfo+Internal.h"
+#import "UAActionScheduleInfo+Internal.h"
 
 @interface UAScheduleActionTests : UABaseTest
 @property(nonatomic, strong) UAScheduleAction *action;
@@ -70,7 +72,7 @@
                                     UAScheduleInfoTriggersKey: @[ @{ UAScheduleTriggerTypeKey: UAScheduleTriggerAppForegroundName, UAScheduleTriggerGoalKey: @(1) }] };
 
     NSError *error;
-    UAActionScheduleInfo *expectedInfo = [UAActionScheduleInfo actionScheduleInfoWithJSON:scheduleJSON error:&error];
+    UAActionScheduleInfo *expectedInfo = [UAActionScheduleInfo scheduleInfoWithJSON:scheduleJSON error:&error];
     XCTAssertNil(error);
 
 

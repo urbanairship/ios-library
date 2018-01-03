@@ -48,14 +48,14 @@ extern NSString *const UAScheduleInfoInAppMessageKey;
  * @param error An NSError pointer for storing errors, if applicable.
  * @return An in-app message schedule info or `nil` if the JSON is invalid.
  */
-+ (nullable instancetype)inAppMessageScheduleInfoWithJSON:(id)json error:(NSError * _Nullable *)error;
++ (nullable instancetype)scheduleInfoWithJSON:(id)json error:(NSError * _Nullable *)error;
 
 /**
  * Creates an in-app message schedule info with a builder block.
  *
  * @return The in-app message schedule info.
  */
-+ (instancetype)inAppMessageScheduleInfoWithBuilderBlock:(void(^)(UAInAppMessageScheduleInfoBuilder *builder))builderBlock;
++ (instancetype)scheduleInfoWithBuilderBlock:(void(^)(UAInAppMessageScheduleInfoBuilder *builder))builderBlock;
 
 /**
  * Return the message id from a JSON payload.

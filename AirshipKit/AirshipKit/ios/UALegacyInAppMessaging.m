@@ -236,7 +236,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         builder.buttons = buttonInfos;
     }];
 
-    UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo inAppMessageScheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
+    UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
         builder.triggers = @[[UAScheduleTrigger activeSessionTriggerWithCount:1]];
         builder.end = message.expiry;
 

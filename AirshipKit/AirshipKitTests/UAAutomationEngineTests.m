@@ -71,7 +71,7 @@
 - (void)testschedule {
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"scheduled action"];
 
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
         builder.actions = @{@"oh": @"hi"};
         builder.triggers = @[foregroundTrigger];
@@ -88,12 +88,12 @@
 
 - (void)testScheduleMultiple {
     // setup
-    UAActionScheduleInfo *scheduleInfo1 = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UAActionScheduleInfo *scheduleInfo1 = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
         builder.actions = @{@"oh": @"hi"};
         builder.triggers = @[foregroundTrigger];
     }];
-    UAActionScheduleInfo *scheduleInfo2 = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UAActionScheduleInfo *scheduleInfo2 = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:3];
         builder.actions = @{@"hey": @"there"};
         builder.triggers = @[foregroundTrigger];
@@ -130,7 +130,7 @@
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"scheduled action"];
 
     // Missing action
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
         builder.triggers = @[foregroundTrigger];
     }];
@@ -144,7 +144,7 @@
 }
 
 - (void)testScheduleOverLimit {
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger screenTriggerForScreenName:@"NEVERTRIGGERTHISNAME" count:10];
         builder.actions = @{@"oh": @"hi"};
         builder.triggers = @[foregroundTrigger];
@@ -207,7 +207,7 @@
         // Give all the schedules the same trigger
         UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
 
-        UAActionScheduleInfo *info = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder * _Nonnull builder) {
+        UAActionScheduleInfo *info = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder * _Nonnull builder) {
             builder.actions = @{@"cool": @"story"};
             builder.priority = [testPriorityLevels[i] integerValue];
             builder.triggers = @[trigger];
@@ -232,7 +232,7 @@
     for (int i = 0; i < 10; i++) {
         XCTestExpectation *testExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"scheduled foo action: %d", i]];
 
-        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
             UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
             builder.actions = @{@"oh": @"hi"};
             builder.triggers = @[foregroundTrigger];
@@ -255,7 +255,7 @@
     for (int i = 0; i < 15; i++) {
         XCTestExpectation *testExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"scheduled bar action: %d", i]];
 
-        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
             UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
             builder.actions = @{@"oh": @"hi"};
             builder.triggers = @[foregroundTrigger];
@@ -295,7 +295,7 @@
 
     XCTestExpectation *scheduleExpectation = [self expectationWithDescription:@"scheduled actions"];
 
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
         builder.actions = @{@"oh": @"hi"};
         builder.triggers = @[foregroundTrigger];
@@ -329,7 +329,7 @@
     for (int i = 0; i < 10; i++) {
         XCTestExpectation *testExpectation = [self expectationWithDescription:@"scheduled actions"];
 
-        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
             UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
             builder.actions = @{@"oh": @"hi"};
             builder.triggers = @[foregroundTrigger];
@@ -360,7 +360,7 @@
 
     XCTestExpectation *scheduleExpectation = [self expectationWithDescription:@"scheduled actions"];
 
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
         builder.actions = @{@"oh": @"hi"};
         builder.triggers = @[foregroundTrigger];
@@ -393,7 +393,7 @@
 
     // Schedule 10 under "foo"
     for (int i = 0; i < 10; i++) {
-        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
             UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
             builder.actions = @{@"oh": @"hi"};
             builder.triggers = @[foregroundTrigger];
@@ -405,7 +405,7 @@
     // Schedule 15 under "bar"
     NSMutableArray *barSchedules = [NSMutableArray arrayWithCapacity:15];
     for (int i = 0; i < 15; i++) {
-        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
             UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
             builder.actions = @{@"oh": @"hi"};
             builder.triggers = @[foregroundTrigger];
@@ -433,7 +433,7 @@
 
 - (void)testCancelAll {
 
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
         builder.actions = @{@"oh": @"hi"};
         builder.triggers = @[foregroundTrigger];
@@ -459,7 +459,7 @@
 
     NSDate *futureDate = [NSDate dateWithTimeIntervalSinceNow:100];
 
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
         builder.actions = @{@"oh": @"hi"};
         builder.triggers = @[foregroundTrigger];
@@ -521,7 +521,7 @@
 - (void)testScheduleDeletesExpiredSchedules {
     NSDate *futureDate = [NSDate dateWithTimeIntervalSinceNow:100];
 
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
         builder.actions = @{@"oh": @"hi"};
         builder.triggers = @[foregroundTrigger];
@@ -544,7 +544,7 @@
     [[[mockedDate stub] andReturn:[futureDate dateByAddingTimeInterval:1]] date];
 
     // Schedule more actions
-    scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
         builder.actions = @{@"oh": @"hi"};
         builder.triggers = @[foregroundTrigger];
@@ -760,7 +760,7 @@
 
 - (void)testCancellationTriggers {
     // Schedule the action
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
         builder.actions = @{@"test action": @"test value"};
 
         UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
@@ -843,7 +843,7 @@
  */
 - (void)verifyDelay:(UAScheduleDelay *)delay fulfillmentBlock:(void (^)(void))fulfillmentBlock {
     // Schedule the action
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
         builder.actions = @{@"test action": @"test value"};
 
         UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
@@ -916,7 +916,7 @@
    // Create a start date in the future
     NSDate *startDate = [NSDate dateWithTimeIntervalSinceNow:1000];
 
-    UAActionScheduleInfo *info = [UAActionScheduleInfo actionScheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder * _Nonnull builder) {
+    UAActionScheduleInfo *info = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder * _Nonnull builder) {
         builder.actions = @{@"cool": @"story"};
         builder.triggers = @[trigger];
         builder.start = startDate;

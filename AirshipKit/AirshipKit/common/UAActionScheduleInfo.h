@@ -45,7 +45,6 @@ extern NSString *const UAActionScheduleInfoActionsKey;
  */
 @property(nonatomic, readonly, nullable) NSString *group;
 
-
 /**
  * Actions payload to run when the schedule is triggered.
  */
@@ -56,21 +55,11 @@ extern NSString *const UAActionScheduleInfoActionsKey;
 ///---------------------------------------------------------------------------------------
 
 /**
- * Factory method to create an action schedule info from a JSON payload.
- *
- * @param json The JSON payload.
- * @param error An NSError pointer for storing errors, if applicable.
- * @return An action schedule info or `nil` if the JSON is invalid.
- */
-+ (nullable instancetype)actionScheduleInfoWithJSON:(id)json error:(NSError * _Nullable *)error;
-
-/**
  * Creates an action schedule info with a builder block.
  *
  * @return The action schedule info.
  */
-+ (instancetype)actionScheduleInfoWithBuilderBlock:(void(^)(UAActionScheduleInfoBuilder *builder))builderBlock;
-
++ (instancetype)scheduleInfoWithBuilderBlock:(void(^)(UAActionScheduleInfoBuilder *builder))builderBlock;
 
 @end
 
