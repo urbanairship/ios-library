@@ -237,7 +237,7 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
         return NO;
     }
 
-    if (![self.audience isEqual:message.audience]) {
+    if (self.audience != message.audience && ![self.audience isEqual:message.audience]) {
         return NO;
     }
 
