@@ -208,6 +208,8 @@
     scheduleData.triggers = [self createTriggerDataFromTriggers:schedule.info.triggers scheduleStart:schedule.info.start schedule:scheduleData];
     scheduleData.start = schedule.info.start;
     scheduleData.end = schedule.info.end;
+    scheduleData.interval = @(schedule.info.interval);
+    scheduleData.editGracePeriod = @(schedule.info.editGracePeriod);
 
     if (schedule.info.delay) {
         scheduleData.delay = [self createDelayDataFromDelay:schedule.info.delay scheduleStart:schedule.info.start schedule:scheduleData];

@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13241" systemVersion="16G29" minimumToolsVersion="Xcode 7.0" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13772" systemVersion="16G1114" minimumToolsVersion="Xcode 7.0" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
     <entity name="UAScheduleData" representedClassName="UAScheduleData" elementID="UAActionScheduleData" syncable="YES">
         <attribute name="data" optional="YES" attributeType="String" elementID="actions" syncable="YES"/>
         <attribute name="delayedExecutionDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="editGracePeriod" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="end" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="executionState" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" elementID="isPendingExecution" syncable="YES"/>
+        <attribute name="executionStateChangeDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="group" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="interval" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="limit" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="priority" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="start" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
@@ -32,7 +35,7 @@
         <relationship name="schedule" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UAScheduleData" inverseName="triggers" inverseEntity="UAScheduleData" syncable="YES"/>
     </entity>
     <elements>
-        <element name="UAScheduleData" positionX="-540" positionY="-63" width="128" height="225"/>
+        <element name="UAScheduleData" positionX="-540" positionY="-63" width="128" height="270"/>
         <element name="UAScheduleDelayData" positionX="-234" positionY="-27" width="128" height="135"/>
         <element name="UAScheduleTriggerData" positionX="-191" positionY="378" width="128" height="150"/>
     </elements>

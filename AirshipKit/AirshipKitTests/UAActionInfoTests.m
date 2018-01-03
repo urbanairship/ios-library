@@ -20,7 +20,10 @@
                                     UAActionScheduleInfoActionsKey: @{ @"action_name": @"action_value" },
                                     UAScheduleInfoEndKey:[[UAUtils ISODateFormatterUTCWithDelimiter] stringFromDate:end],
                                     UAScheduleInfoStartKey:[[UAUtils ISODateFormatterUTCWithDelimiter] stringFromDate:start],
-                                    UAScheduleInfoTriggersKey: @[ @{ UAScheduleTriggerTypeKey: UAScheduleTriggerAppForegroundName, UAScheduleTriggerGoalKey: @(1) }] };
+                                    UAScheduleInfoTriggersKey: @[ @{ UAScheduleTriggerTypeKey: UAScheduleTriggerAppForegroundName, UAScheduleTriggerGoalKey: @(1) }],
+                                    UAScheduleInfoEditGracePeriodKey: @(1),
+                                    UAScheduleInfoIntervalKey: @(20)
+                                    };
 
     NSError *error = nil;
     UAActionScheduleInfo *info = [UAActionScheduleInfo actionScheduleInfoWithJSON:scheduleJSON error:&error];
@@ -30,6 +33,9 @@
     XCTAssertEqualObjects(info.actions, @{ @"action_name": @"action_value" });
     XCTAssertEqualWithAccuracy([info.start timeIntervalSinceNow], [start timeIntervalSinceNow], 1);
     XCTAssertEqualWithAccuracy([info.end timeIntervalSinceNow], [end timeIntervalSinceNow], 1);
+    XCTAssertEqualWithAccuracy(info.editGracePeriod, 86400, 1);
+    XCTAssertEqualWithAccuracy(info.interval, 20, 1);
+
     XCTAssertEqual(info.triggers.count, 1);
     XCTAssertNil(error);
 }

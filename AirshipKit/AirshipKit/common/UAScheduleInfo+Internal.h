@@ -50,6 +50,18 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy, nullable) NSString *group;
 
 /**
+ * The schedule's edit grace period. The amount of time the schedule will still be editable after it has been expired
+ * or finished executing.
+ */
+@property(nonatomic, assign) NSTimeInterval editGracePeriod;
+
+/**
+ * The schedule's interval. The amount of time to pause the schedule after executing.
+ */
+@property(nonatomic, assign) NSTimeInterval interval;
+
+
+/**
  * Default init method.
  *
  * @param builder The schedule info builder.

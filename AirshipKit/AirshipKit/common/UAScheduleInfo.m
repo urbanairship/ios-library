@@ -13,9 +13,10 @@ NSString *const UAScheduleInfoEndKey = @"end";
 NSString *const UAScheduleInfoStartKey = @"start";
 NSString *const UAScheduleInfoTriggersKey = @"triggers";
 NSString *const UAScheduleInfoDelayKey = @"delay";
+NSString *const UAScheduleInfoIntervalKey = @"interval";
+NSString *const UAScheduleInfoEditGracePeriodKey = @"edit_grace_period";
 
 NSString * const UAScheduleInfoErrorDomain = @"com.urbanairship.schedule_info";
-
 
 @implementation UAScheduleInfoBuilder
 
@@ -156,6 +157,8 @@ NSString * const UAScheduleInfoErrorDomain = @"com.urbanairship.schedule_info";
                                               code:UAScheduleInfoErrorCodeInvalidJSON
                                           userInfo:@{NSLocalizedDescriptionKey:msg}];
             }
+
+            return NO;
         }
 
         delay = [UAScheduleDelay delayWithJSON:json[UAScheduleInfoDelayKey] error:error];
@@ -163,6 +166,38 @@ NSString * const UAScheduleInfoErrorDomain = @"com.urbanairship.schedule_info";
         if (!delay) {
             return NO;
         }
+    }
+
+    // Interval
+    NSNumber *interval;
+    if (json[UAScheduleInfoIntervalKey]) {
+        if (![json[UAScheduleInfoIntervalKey] isKindOfClass:[NSNumber class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Interval must be a number. Invalid value: %@", json[UAScheduleInfoIntervalKey]];
+                *error =  [NSError errorWithDomain:UAScheduleInfoErrorDomain
+                                              code:UAScheduleInfoErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return NO;
+        }
+
+        interval = json[UAScheduleInfoIntervalKey];
+    }
+
+    // Edit Grace Period
+    NSNumber *editGracePeriodDays;
+    if (json[UAScheduleInfoEditGracePeriodKey]) {
+        if (![json[UAScheduleInfoEditGracePeriodKey] isKindOfClass:[NSNumber class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Edit grace period must be a number. Invalid value: %@", json[UAScheduleInfoEditGracePeriodKey]];
+                *error =  [NSError errorWithDomain:UAScheduleInfoErrorDomain
+                                              code:UAScheduleInfoErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return NO;
+        }
+
+        editGracePeriodDays = json[UAScheduleInfoEditGracePeriodKey];
     }
 
     if (triggers) {
@@ -187,6 +222,15 @@ NSString * const UAScheduleInfoErrorDomain = @"com.urbanairship.schedule_info";
 
     if (delay) {
         self.delay = delay;
+    }
+
+    if (interval) {
+        self.interval = [interval doubleValue];
+    }
+
+    if (editGracePeriodDays) {
+        // JSON value is in days
+        self.editGracePeriod = [editGracePeriodDays doubleValue] * 24 * 60 * 60;
     }
 
     return YES;
@@ -222,6 +266,8 @@ NSString * const UAScheduleInfoErrorDomain = @"com.urbanairship.schedule_info";
         self.delay = builder.delay;
         self.start = builder.start ?: [NSDate distantPast];
         self.end = builder.end ?: [NSDate distantFuture];
+        self.editGracePeriod = builder.editGracePeriod;
+        self.interval = builder.interval;
     }
 
     return self;
@@ -241,6 +287,14 @@ NSString * const UAScheduleInfoErrorDomain = @"com.urbanairship.schedule_info";
     }
 
     if (self.limit != scheduleInfo.limit) {
+        return NO;
+    }
+
+    if (self.interval != scheduleInfo.interval) {
+        return NO;
+    }
+
+    if (self.editGracePeriod != scheduleInfo.editGracePeriod) {
         return NO;
     }
 
@@ -296,7 +350,8 @@ NSString * const UAScheduleInfoErrorDomain = @"com.urbanairship.schedule_info";
     result = 31 * result + [self.triggers hash];
     result = 31 * result + [self.data hash];
     result = 31 * result + [self.delay hash];
-
+    result = 31 * result + self.editGracePeriod;
+    result = 31 * result + self.interval;
     return result;
 }
 

@@ -862,6 +862,8 @@
     builder.end = scheduleData.end;
     builder.priority = [scheduleData.priority integerValue];
     builder.limit = [scheduleData.limit unsignedIntegerValue];
+    builder.interval = [scheduleData.interval doubleValue];
+    builder.editGracePeriod = [scheduleData.editGracePeriod doubleValue];
 
     UAScheduleInfo *info = [self.delegate createScheduleInfoWithBuilder:builder];
 

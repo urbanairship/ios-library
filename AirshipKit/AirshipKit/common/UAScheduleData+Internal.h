@@ -79,9 +79,24 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, retain) NSNumber *executionState;
 
 /**
+ * The schedule's execution state change date.
+ */
+@property (nullable, nonatomic, retain, readonly) NSDate *executionStateChangeDate;
+
+/**
  * The delayed execution date. This delay date takes precedent over the delay in seconds.
  */
 @property (nullable, nonatomic, retain) NSDate *delayedExecutionDate;
+
+/**
+ * The schedule's edit grace period in seconds.
+ */
+@property(nullable, nonatomic, retain) NSNumber *editGracePeriod;
+
+/**
+ * The schedule's interval in seconds.
+ */
+@property(nullable, nonatomic, retain) NSNumber *interval;
 
 @end
 

@@ -69,6 +69,17 @@ extern NSString *const UAScheduleInfoTriggersKey;
 extern NSString *const UAScheduleInfoDelayKey;
 
 /**
+ * JSON key for the schedule's interval.
+ */
+extern NSString *const UAScheduleInfoIntervalKey;
+
+/**
+ * JSON key for the schedule's edit grace period.
+ */
+extern NSString *const UAScheduleInfoEditGracePeriodKey;
+
+
+/**
  * Max number of triggers a schedule can support.
  */
 extern NSUInteger const UAScheduleInfoMaxTriggers;
@@ -115,6 +126,17 @@ extern NSUInteger const UAScheduleInfoMaxTriggers;
  */
 @property(nonatomic, strong, nullable) UAScheduleDelay *delay;
 
+/**
+ * The schedule's edit grace period. The amount of time the schedule will still be editable after it has been expired
+ * or finished executing.
+ */
+@property(nonatomic, assign) NSTimeInterval editGracePeriod;
+
+/**
+ * The schedule's interval. The amount of time to pause the schedule after executing.
+ */
+@property(nonatomic, assign) NSTimeInterval interval;
+
 @end
 
 /**
@@ -159,6 +181,15 @@ extern NSUInteger const UAScheduleInfoMaxTriggers;
  */
 @property(nonatomic, readonly) UAScheduleDelay *delay;
 
+/**
+ * The schedule's edit grace period.
+ */
+@property(nonatomic, readonly) NSTimeInterval editGracePeriod;
+
+/**
+ * The schedule's interval.
+ */
+@property(nonatomic, readonly) NSTimeInterval interval;
 
 /**
  * Checks if the schedule info is valid. A valid schedule
