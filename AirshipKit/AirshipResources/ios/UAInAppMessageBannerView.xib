@@ -11,66 +11,67 @@
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
-        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" id="iN0-l3-epB" userLabel="In App Message Banner View Top" customClass="UAInAppMessageBannerView">
+        <view contentMode="scaleToFill" id="aYE-JN-m3c" userLabel="In App Message Banner View Top" customClass="UAInAppMessageBannerView">
             <rect key="frame" x="0.0" y="0.0" width="375" height="384"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="84P-C4-xfS" userLabel="Container View">
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3me-ax-tOr" userLabel="Container View">
                     <rect key="frame" x="0.0" y="0.0" width="375" height="384"/>
                     <subviews>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1vn-UO-fK3" userLabel="Tab">
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d3j-OF-iBo" userLabel="Tab">
                             <rect key="frame" x="170" y="369" width="35" height="5"/>
                             <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="5" id="s7P-6t-m2b"/>
-                                <constraint firstAttribute="width" constant="35" id="sL0-7i-xkT"/>
+                                <constraint firstAttribute="height" constant="5" id="BLw-0Q-GGD"/>
+                                <constraint firstAttribute="width" constant="35" id="s13-Zk-Lhe"/>
                             </constraints>
                         </view>
-                        <view contentMode="scaleToFill" verticalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="9V4-xU-3xZ" userLabel="Banner Content Container View">
+                        <view contentMode="scaleToFill" verticalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="A4y-Le-7Tg" userLabel="Banner Content Container View">
                             <rect key="frame" x="0.0" y="20" width="375" height="294"/>
                         </view>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eMT-fH-nJt" userLabel="Button Container View">
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1dl-fi-7LK" userLabel="Button Container View">
                             <rect key="frame" x="0.0" y="324" width="375" height="35"/>
                             <constraints>
-                                <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="35" id="Knx-2p-0EZ"/>
+                                <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="35" id="LxC-ti-qq2"/>
                             </constraints>
                         </view>
                     </subviews>
                     <gestureRecognizers/>
                     <constraints>
-                        <constraint firstItem="9V4-xU-3xZ" firstAttribute="top" secondItem="84P-C4-xfS" secondAttribute="top" constant="20" id="7CY-lY-uDG"/>
-                        <constraint firstAttribute="trailing" secondItem="eMT-fH-nJt" secondAttribute="trailing" id="Jsr-G2-jva"/>
-                        <constraint firstItem="eMT-fH-nJt" firstAttribute="top" secondItem="9V4-xU-3xZ" secondAttribute="bottom" constant="10" id="Krx-64-NOf"/>
-                        <constraint firstItem="9V4-xU-3xZ" firstAttribute="leading" secondItem="84P-C4-xfS" secondAttribute="leading" id="NAt-iz-WjU"/>
-                        <constraint firstAttribute="trailing" secondItem="9V4-xU-3xZ" secondAttribute="trailing" id="Od4-cN-Gjv"/>
-                        <constraint firstAttribute="bottom" secondItem="1vn-UO-fK3" secondAttribute="bottom" constant="10" id="Pzs-Jg-j5o"/>
-                        <constraint firstItem="1vn-UO-fK3" firstAttribute="top" secondItem="9V4-xU-3xZ" secondAttribute="bottom" priority="250" constant="10" id="YSg-EX-YUi"/>
-                        <constraint firstItem="1vn-UO-fK3" firstAttribute="top" secondItem="eMT-fH-nJt" secondAttribute="bottom" constant="10" id="aNn-2I-Tv3"/>
-                        <constraint firstItem="1vn-UO-fK3" firstAttribute="centerX" secondItem="84P-C4-xfS" secondAttribute="centerX" id="fYc-N9-lwr"/>
-                        <constraint firstItem="eMT-fH-nJt" firstAttribute="leading" secondItem="84P-C4-xfS" secondAttribute="leading" id="vRa-nU-Xge"/>
+                        <constraint firstItem="A4y-Le-7Tg" firstAttribute="top" secondItem="3me-ax-tOr" secondAttribute="top" constant="20" id="0pm-g8-eyn"/>
+                        <constraint firstItem="d3j-OF-iBo" firstAttribute="centerX" secondItem="3me-ax-tOr" secondAttribute="centerX" id="H7e-zG-uUm"/>
+                        <constraint firstItem="d3j-OF-iBo" firstAttribute="top" secondItem="1dl-fi-7LK" secondAttribute="bottom" constant="10" id="HE3-3p-9u4"/>
+                        <constraint firstAttribute="trailing" secondItem="1dl-fi-7LK" secondAttribute="trailing" id="JDs-8v-YAX"/>
+                        <constraint firstItem="1dl-fi-7LK" firstAttribute="leading" secondItem="3me-ax-tOr" secondAttribute="leading" id="Uwj-Bf-RVk"/>
+                        <constraint firstAttribute="bottom" secondItem="d3j-OF-iBo" secondAttribute="bottom" constant="10" id="Yt8-dl-LjM"/>
+                        <constraint firstAttribute="trailing" secondItem="A4y-Le-7Tg" secondAttribute="trailing" id="cmI-UF-uGV"/>
+                        <constraint firstItem="d3j-OF-iBo" firstAttribute="top" secondItem="A4y-Le-7Tg" secondAttribute="bottom" priority="250" constant="10" id="d3r-jB-F0B"/>
+                        <constraint firstItem="1dl-fi-7LK" firstAttribute="top" secondItem="A4y-Le-7Tg" secondAttribute="bottom" constant="10" id="iyV-3I-47L"/>
+                        <constraint firstItem="A4y-Le-7Tg" firstAttribute="leading" secondItem="3me-ax-tOr" secondAttribute="leading" id="jx2-bN-neL"/>
                     </constraints>
                 </view>
             </subviews>
             <gestureRecognizers/>
             <constraints>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="84P-C4-xfS" secondAttribute="trailing" id="Bvn-pj-UdK"/>
-                <constraint firstItem="84P-C4-xfS" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="Jjt-i5-E5Q"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="84P-C4-xfS" secondAttribute="bottom" id="Q2R-Wa-cFk"/>
-                <constraint firstItem="84P-C4-xfS" firstAttribute="centerY" secondItem="vUN-kp-3ea" secondAttribute="centerY" id="Sp8-6N-hvf"/>
-                <constraint firstItem="84P-C4-xfS" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="daS-tk-YDI"/>
-                <constraint firstItem="84P-C4-xfS" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" id="xCr-r0-e67"/>
+                <constraint firstItem="6xT-tW-dyV" firstAttribute="trailing" secondItem="3me-ax-tOr" secondAttribute="trailing" id="5dz-Py-ChZ"/>
+                <constraint firstItem="3me-ax-tOr" firstAttribute="centerX" secondItem="6xT-tW-dyV" secondAttribute="centerX" id="VnY-xj-ERi"/>
+                <constraint firstItem="6xT-tW-dyV" firstAttribute="bottom" secondItem="3me-ax-tOr" secondAttribute="bottom" id="ix4-ij-csp"/>
+                <constraint firstItem="3me-ax-tOr" firstAttribute="leading" secondItem="6xT-tW-dyV" secondAttribute="leading" id="oEJ-jW-yJr"/>
+                <constraint firstItem="6xT-tW-dyV" firstAttribute="top" secondItem="3me-ax-tOr" secondAttribute="top" id="thC-a2-Tcf"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <viewLayoutGuide key="safeArea" id="6xT-tW-dyV"/>
             <connections>
-                <outlet property="bannerContentContainerView" destination="9V4-xU-3xZ" id="QXt-Ig-wLC"/>
-                <outlet property="buttonContainerView" destination="eMT-fH-nJt" id="6zs-sn-iha"/>
-                <outlet property="containerView" destination="84P-C4-xfS" id="Sr5-uh-NzT"/>
-                <outlet property="tab" destination="1vn-UO-fK3" id="Bbr-6r-TMW"/>
+                <outlet property="bannerContentContainerView" destination="A4y-Le-7Tg" id="Mzy-WX-1Km"/>
+                <outlet property="buttonContainerView" destination="1dl-fi-7LK" id="xmY-8N-SJA"/>
+                <outlet property="containerView" destination="3me-ax-tOr" id="t5q-MG-ZDF"/>
+                <outlet property="contentTopConstraint" destination="0pm-g8-eyn" id="9xH-rv-KAr"/>
+                <outlet property="tab" destination="d3j-OF-iBo" id="Oi7-Yr-aeM"/>
+                <outlet property="topConstraint" destination="thC-a2-Tcf" id="Vfr-5H-5bf"/>
             </connections>
-            <point key="canvasLocation" x="147.5" y="-878"/>
+            <point key="canvasLocation" x="273" y="-889"/>
         </view>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="bMF-qS-Jcv" userLabel="In App Message Banner View Bottom" customClass="UAInAppMessageBannerView">
             <rect key="frame" x="0.0" y="0.0" width="375" height="384"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -115,8 +116,7 @@
             <constraints>
                 <constraint firstItem="OZc-8h-5Bw" firstAttribute="centerX" secondItem="J4n-yC-XC3" secondAttribute="centerX" id="3sA-fv-q7Z"/>
                 <constraint firstItem="OZc-8h-5Bw" firstAttribute="leading" secondItem="J4n-yC-XC3" secondAttribute="leading" id="730-o8-TdD"/>
-                <constraint firstItem="J4n-yC-XC3" firstAttribute="bottom" secondItem="OZc-8h-5Bw" secondAttribute="bottom" id="A8u-P3-r3l"/>
-                <constraint firstItem="OZc-8h-5Bw" firstAttribute="centerY" secondItem="J4n-yC-XC3" secondAttribute="centerY" id="C0C-0Z-Ke3"/>
+                <constraint firstItem="OZc-8h-5Bw" firstAttribute="bottom" secondItem="J4n-yC-XC3" secondAttribute="bottom" id="A8u-P3-r3l"/>
                 <constraint firstItem="OZc-8h-5Bw" firstAttribute="top" secondItem="J4n-yC-XC3" secondAttribute="top" id="ZO7-QR-XtN"/>
                 <constraint firstItem="J4n-yC-XC3" firstAttribute="trailing" secondItem="OZc-8h-5Bw" secondAttribute="trailing" id="ksE-OZ-6br"/>
             </constraints>
@@ -124,11 +124,14 @@
             <viewLayoutGuide key="safeArea" id="J4n-yC-XC3"/>
             <connections>
                 <outlet property="bannerContentContainerView" destination="Q1Q-Fn-4BB" id="anO-K1-lQ7"/>
+                <outlet property="bottomConstraint" destination="A8u-P3-r3l" id="UZA-K8-qg7"/>
                 <outlet property="buttonContainerView" destination="U3b-0L-Ls4" id="xhb-sR-woq"/>
                 <outlet property="containerView" destination="OZc-8h-5Bw" id="ntt-EJ-7UH"/>
+                <outlet property="contentBottomConstraint" destination="ZmL-1V-AAn" id="vcF-Zk-Ewp"/>
+                <outlet property="noButtonsContentBottomConstraint" destination="Qcb-rR-71D" id="NLM-wm-oCf"/>
                 <outlet property="tab" destination="wWP-qH-7ee" id="0ZJ-Mg-NFZ"/>
             </connections>
-            <point key="canvasLocation" x="147.5" y="-435"/>
+            <point key="canvasLocation" x="272.5" y="-453"/>
         </view>
     </objects>
 </document>

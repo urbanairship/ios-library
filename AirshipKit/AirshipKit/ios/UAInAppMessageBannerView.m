@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // UAInAppMessageBannerContentView nib name
 NSString *const UAInAppMessageBannerViewNibName = @"UAInAppMessageBannerView";
+CGFloat const VerticalPaddingToSafeArea = 20;
 CGFloat const BannerIsBeingTappedAlpha = 0.7;
 CGFloat const ShadowOffset = 2.0;
 CGFloat const ShadowRadius = 4.0;
@@ -32,6 +33,13 @@ CGFloat const ShadowOpacity = 0.5;
 
 @property (nonatomic, strong) UAInAppMessageBannerDisplayContent *displayContent;
 @property (nonatomic, assign) UAInAppMessageButtonRounding rounding;
+
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *topConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *bottomConstraint;
+
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *contentTopConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *contentBottomConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *noButtonsContentBottomConstraint;
 
 @end
 
@@ -99,12 +107,29 @@ CGFloat const ShadowOpacity = 0.5;
     return self;
 }
 
--(void)layoutSubviews {
+- (void)layoutSubviews {
     [super layoutSubviews];
+    // Applies iPhone X inset spacing, otherwise no-op
+    [self applyInsetSpacing];
     [self applyLayerRounding];
 }
 
--(void)applyLayerRounding {
+- (void)applyInsetSpacing {
+    if (@available(iOS 11.0, *)) {
+        UIWindow *window = [UIApplication sharedApplication].keyWindow;
+
+        self.topConstraint.constant = window.safeAreaInsets.top;
+        self.contentTopConstraint.constant = window.safeAreaInsets.top ?: VerticalPaddingToSafeArea;
+
+        self.bottomConstraint.constant = window.safeAreaInsets.bottom;
+        self.contentBottomConstraint.constant = window.safeAreaInsets.bottom ?: VerticalPaddingToSafeArea;
+        self.noButtonsContentBottomConstraint.constant = window.safeAreaInsets.bottom ?: VerticalPaddingToSafeArea;
+    }
+
+    [self layoutIfNeeded];
+}
+
+- (void)applyLayerRounding {
     NSUInteger bannerBorderRadius = self.displayContent.borderRadius;
     CAShapeLayer * maskLayer = [CAShapeLayer layer];
     maskLayer.path = [UIBezierPath bezierPathWithRoundedRect:self.containerView.bounds
@@ -116,7 +141,7 @@ CGFloat const ShadowOpacity = 0.5;
     self.containerView.layer.mask = maskLayer;
 }
 
--(void)setIsBeingTapped:(BOOL)isBeingTapped {
+- (void)setIsBeingTapped:(BOOL)isBeingTapped {
     _isBeingTapped = isBeingTapped;
     if (isBeingTapped) {
         self.alpha = BannerIsBeingTappedAlpha;
