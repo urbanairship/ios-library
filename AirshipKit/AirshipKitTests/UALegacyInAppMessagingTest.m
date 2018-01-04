@@ -126,7 +126,7 @@
         completionHandler(@[dummySchedule]);
     }] getSchedulesWithMessageID:[OCMArg any] completionHandler:[OCMArg any]];
 
-    [[self.mockInAppMessageManager expect] cancelMessageWithID:messageID];
+    [[self.mockInAppMessageManager expect] cancelMessagesWithID:messageID];
     [self.inAppMessaging handleNotificationResponse:response];
 
     [self. mockAnalytics verify];
@@ -152,7 +152,7 @@
                                                                                            responseText:nil];
 
     [[self.mockAnalytics reject] addEvent:[OCMArg any]];
-    [[self.mockInAppMessageManager reject] cancelMessageWithID:[OCMArg any]];
+    [[self.mockInAppMessageManager reject] cancelMessagesWithID:[OCMArg any]];
     [self.inAppMessaging handleNotificationResponse:response];
 
     [self.mockAnalytics verify];
@@ -190,7 +190,7 @@
                                                                                            responseText:nil];
 
     [[self.mockAnalytics reject] addEvent:[OCMArg any]];
-    [[self.mockInAppMessageManager reject] cancelMessageWithID:[OCMArg any]];
+    [[self.mockInAppMessageManager reject] cancelMessagesWithID:[OCMArg any]];
     [self.inAppMessaging handleNotificationResponse:response];
 
     [self.mockAnalytics verify];

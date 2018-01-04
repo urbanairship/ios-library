@@ -114,7 +114,7 @@
 - (void)testIsScheduleReadyNoFactorySet {
     [self.manager setFactoryBlock:nil forDisplayType:UAInAppMessageDisplayTypeBanner];
     
-    [[[self mockAutomationEngine] expect] cancelScheduleWithIdentifier:@"test IAM schedule"];
+    [[[self mockAutomationEngine] expect] cancelScheduleWithID:@"test IAM schedule"];
 
     UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo];
     XCTAssertFalse([self.manager isScheduleReadyToExecute:schedule]);
@@ -128,7 +128,7 @@
         return nil;
     } forDisplayType:UAInAppMessageDisplayTypeBanner];
 
-    [[[self mockAutomationEngine] expect] cancelScheduleWithIdentifier:@"test IAM schedule"];
+    [[[self mockAutomationEngine] expect] cancelScheduleWithID:@"test IAM schedule"];
 
     UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo];
     XCTAssertFalse([self.manager isScheduleReadyToExecute:schedule]);
@@ -273,7 +273,7 @@
 
     [[self.mockAutomationEngine expect] cancelSchedulesWithGroup:self.scheduleInfo.message.identifier];
 
-    [manager cancelMessageWithID:self.scheduleInfo.message.identifier];
+    [manager cancelMessagesWithID:self.scheduleInfo.message.identifier];
 
     [self.mockAutomationEngine verify];
 }
@@ -286,9 +286,9 @@
 
     UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo];
 
-    [[self.mockAutomationEngine expect] cancelScheduleWithIdentifier:testSchedule.identifier];
+    [[self.mockAutomationEngine expect] cancelScheduleWithID:testSchedule.identifier];
 
-    [manager cancelMessageWithScheduleID:testSchedule.identifier];
+    [manager cancelScheduleWithID:testSchedule.identifier];
 
     [self.mockAutomationEngine verify];
 }
@@ -366,25 +366,6 @@
     // verify
     XCTAssertTrue(completionHandlerCalled);
     [self.mockAutomationEngine verify];
-}
-
-- (void)testCancelMessagesWithIDs {
-    // setup
-    NSArray<NSString *> *messageIDsToCancel = @[[[NSUUID UUID] UUIDString], [[NSUUID UUID] UUIDString]];
-    
-    // expectations
-    __block NSUInteger callsToCancelSchedulesWithGroup = 0;
-    [[self.mockAutomationEngine stub] cancelSchedulesWithGroup:[OCMArg checkWithBlock:^BOOL(NSString *messageID) {
-        XCTAssertEqualObjects(messageID,messageIDsToCancel[callsToCancelSchedulesWithGroup]);
-        callsToCancelSchedulesWithGroup++;
-        return YES;
-    }]];
-     
-    // test
-    [self.manager cancelMessagesWithIDs:messageIDsToCancel];
-    
-    // verify
-    XCTAssertEqual(callsToCancelSchedulesWithGroup, messageIDsToCancel.count);
 }
 
 @end

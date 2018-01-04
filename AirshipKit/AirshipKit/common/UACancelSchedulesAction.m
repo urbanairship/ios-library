@@ -70,13 +70,13 @@ NSString *const UACancelSchedulesActionGroups = @"groups";
 
         // Single ID
         if ([ids isKindOfClass:[NSString class]]) {
-            [[UAirship automation] cancelScheduleWithIdentifier:ids];
+            [[UAirship automation] cancelScheduleWithID:ids];
         } else if ([ids isKindOfClass:[NSArray class]]) {
 
             // Array of IDs
             for (id value in ids) {
                 if ([value isKindOfClass:[NSString class]]) {
-                    [[UAirship automation] cancelScheduleWithIdentifier:value];
+                    [[UAirship automation] cancelScheduleWithID:value];
                 }
             }
         }

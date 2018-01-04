@@ -155,7 +155,9 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
     
     // cancel deleted messages
     if (deletedMessageIDs.count) {
-        [self.inAppMessageScheduler cancelMessagesWithIDs:deletedMessageIDs];
+        for (NSString *messageID in deletedMessageIDs) {
+            [self.inAppMessageScheduler cancelMessagesWithID:messageID];
+        }
     }
     
     // schedule new messages, and save all remaining message ids and the payload time stamp

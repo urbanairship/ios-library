@@ -122,8 +122,8 @@
     arguments.situation = UASituationManualInvocation;
     arguments.value = @{UACancelSchedulesActionIDs: @[@"ID 1", @"ID 2"] };
 
-    [[self.mockAutomation expect] cancelScheduleWithIdentifier:@"ID 1"];
-    [[self.mockAutomation expect] cancelScheduleWithIdentifier:@"ID 2"];
+    [[self.mockAutomation expect] cancelScheduleWithID:@"ID 1"];
+    [[self.mockAutomation expect] cancelScheduleWithID:@"ID 2"];
 
     [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
         actionPerformed = YES;

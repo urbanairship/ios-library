@@ -3,8 +3,8 @@
 #import <Foundation/Foundation.h>
 #import "UAInAppMessage.h"
 #import "UAInAppMessageScheduleInfo.h"
+#import "UASchedule.h"
 #import "UAInAppMessageAdapterProtocol.h"
-#import "UAAutomationEngine.h"
 #import "UAComponent.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
  * In-app message manager provides a control interface for creating,
  * canceling and executing in-app message schedules.
  */
-@interface UAInAppMessageManager : UAComponent <UAAutomationEngineDelegate>
+@interface UAInAppMessageManager : UAComponent
 
 /**
  * In-app message enable flag.
@@ -52,14 +52,14 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param scheduleID The schedule ID for the message to be canceled.
  */
-- (void)cancelMessageWithScheduleID:(NSString *)scheduleID;
+- (void)cancelScheduleWithID:(NSString *)scheduleID;
 
 /**
- * Cancels an in-app message via its identifier.
+ * Cancels in-app messages with the spcified message ID.
  *
- * @param identifier The identifier of the in-app message to be canceled.
+ * @param identifier The message ID.
  */
-- (void)cancelMessageWithID:(NSString *)identifier;
+- (void)cancelMessagesWithID:(NSString *)identifier;
 
 /**
  * Gets schedules with the provided identifier.
@@ -67,7 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param identifier The scheduler identifier corresponding to the in-app message to be canceled.
  * @param completionHandler The completion handler to be called when fetch operation completes.
  */
-- (void)getScheduleWithIdentifier:(NSString *)identifier completionHandler:(void (^)(UASchedule *))completionHandler;
+- (void)getScheduleWithID:(NSString *)identifier completionHandler:(void (^)(UASchedule *))completionHandler;
 
 /**
  * Gets schedules whose group is the provided message ID.
@@ -76,13 +76,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @param completionHandler The completion handler to be called when fetch operation completes.
  */
 - (void)getSchedulesWithMessageID:(NSString *)messageID completionHandler:(void (^)(NSArray<UASchedule *> *))completionHandler;
-
-/**
- * Cancels multiple in-app messages via their identifiers.
- *
- * @param identifiers The identifiers of the in-app messages to be canceled.
- */
--(void)cancelMessagesWithIDs:(NSArray<NSString *> *)identifiers;
 
 
 @end

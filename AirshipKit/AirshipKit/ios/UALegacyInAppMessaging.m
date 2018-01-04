@@ -94,7 +94,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
             UA_STRONGIFY(self);
             if (schedules.count) {
                 UA_LINFO(@"The in-app message delivery push was directly launched for message: %@", pendingMessageID);
-                [self.inAppMessageManager cancelMessageWithID:pendingMessageID];
+                [self.inAppMessageManager cancelMessagesWithID:pendingMessageID];
                 self.pendingMessageID = nil;
 
                 UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent directOpenResolutionWithMessageID:pendingMessageID];
@@ -168,7 +168,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
             UA_STRONGIFY(self);
             // If it's still scheduled, cancel it
             if (schedules.count) {
-                [self.inAppMessageManager cancelMessageWithID:pendingMessageID];
+                [self.inAppMessageManager cancelMessagesWithID:pendingMessageID];
 
                 UA_LDEBUG(@"LegacyInAppMessageManager - Pending in-app message replaced");
 

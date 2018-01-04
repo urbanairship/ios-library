@@ -77,7 +77,7 @@
     }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY completionHandler:OCMOCK_ANY];
     [[[self.mockScheduler stub] andDo:^(NSInvocation *invocation) {
         XCTFail(@"No messages should be cancelled");
-    }] cancelMessagesWithIDs:OCMOCK_ANY];
+    }] cancelMessagesWithID:OCMOCK_ANY];
     
     // test
     self.publishBlock(@[]);
@@ -101,7 +101,7 @@
     }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY completionHandler:OCMOCK_ANY];
     [[[self.mockScheduler stub] andDo:^(NSInvocation *invocation) {
         XCTFail(@"No messages should be cancelled");
-    }] cancelMessagesWithIDs:OCMOCK_ANY];
+    }] cancelMessagesWithID:OCMOCK_ANY];
     
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
@@ -158,7 +158,7 @@
     }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY completionHandler:OCMOCK_ANY];
     [[[self.mockScheduler stub] andDo:^(NSInvocation *invocation) {
         XCTFail(@"No messages should be cancelled");
-    }] cancelMessagesWithIDs:OCMOCK_ANY];
+    }] cancelMessagesWithID:OCMOCK_ANY];
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
@@ -216,7 +216,7 @@
     
     [[[self.mockScheduler stub] andDo:^(NSInvocation *invocation) {
         XCTFail(@"No messages should be cancelled");
-    }] cancelMessagesWithIDs:OCMOCK_ANY];
+    }] cancelMessagesWithID:OCMOCK_ANY];
     
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
@@ -281,7 +281,7 @@
     
     [[[self.mockScheduler stub] andDo:^(NSInvocation *invocation) {
         XCTFail(@"No messages should be cancelled");
-    }] cancelMessagesWithIDs:OCMOCK_ANY];
+    }] cancelMessagesWithID:OCMOCK_ANY];
     
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
@@ -348,66 +348,54 @@
                                             ]
                                     };
     NSArray *inAppMessages = @[message1,message2];
-    NSUInteger expectedNumberOfScheduleInfos = inAppMessages.count;
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
                                                                                        data:@{@"in_app_messages":inAppMessages}];
-    
+    __block NSUInteger scheduledMessages = 0;
+    __block NSUInteger cancelledMessages = 0;
+
     // expectations
-    __block NSUInteger callsToScheduleMessages = 0;
     [[[self.mockScheduler expect] andDo:^(NSInvocation *invocation) {
-        callsToScheduleMessages++;
-        
         void *arg;
         [invocation getArgument:&arg atIndex:2];
         NSArray<UAInAppMessageScheduleInfo *> *scheduleInfo = (__bridge NSArray<UAInAppMessageScheduleInfo *> *)arg;
-        
-        XCTAssertEqual(scheduleInfo.count, expectedNumberOfScheduleInfos);
-        
+
+        scheduledMessages += scheduleInfo.count;
+
         [invocation getArgument:&arg atIndex:3];
         void (^completionHandler)(NSArray<UASchedule *> *) = (__bridge void (^)(NSArray<UASchedule *> *))arg;
         
         completionHandler(@[]);
     }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-    
-    __block NSUInteger callsToCancelMessages = 0;
-    __block NSUInteger expectedNumberOfMessagesToCancel = 0;
+
     [[[self.mockScheduler stub] andDo:^(NSInvocation *invocation) {
-        callsToCancelMessages++;
-        
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-        NSArray<NSString *> *messageIDs = (__bridge NSArray<NSString *> *)arg;
-        
-        XCTAssertEqual(messageIDs.count, expectedNumberOfMessagesToCancel);
-        XCTAssertEqualObjects(messageIDs[0], message1ID);
-    }] cancelMessagesWithIDs:OCMOCK_ANY];
+        cancelledMessages += 1;
+    }] cancelMessagesWithID:OCMOCK_ANY];
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
     
     // verify
     [self.mockScheduler verify];
-    XCTAssertEqual(callsToScheduleMessages,1);
-    XCTAssertEqual(callsToCancelMessages,0);
+    XCTAssertEqual(scheduledMessages, 2);
+    XCTAssertEqual(cancelledMessages, 0);
 
     // setup to delete one message
+    scheduledMessages = 0;
+    cancelledMessages = 0;
+
     inAppMessages = @[message2];
     inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                              timestamp:[NSDate date]
                                                                   data:@{@"in_app_messages":inAppMessages}];
-    
-    // expectations
-    expectedNumberOfScheduleInfos = 0;
-    expectedNumberOfMessagesToCancel = 1;
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
     
     // verify
     [self.mockScheduler verify];
-    XCTAssertEqual(callsToScheduleMessages,1);
-    XCTAssertEqual(callsToCancelMessages,1);
+    XCTAssertEqual(scheduledMessages, 0);
+    XCTAssertEqual(cancelledMessages, 1);
 }
 
 - (void)testEmptyInAppMessageListAfterNonEmptyList {
@@ -455,65 +443,51 @@
                                        ]
                                };
     NSArray *inAppMessages = @[message1,message2];
-    NSUInteger expectedNumberOfScheduleInfos = inAppMessages.count;
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
                                                                                        data:@{@"in_app_messages":inAppMessages}];
     
+    __block NSUInteger scheduledMessages = 0;
+    __block NSUInteger cancelledMessages = 0;
+
     // expectations
-    __block NSUInteger callsToScheduleMessages = 0;
     [[[self.mockScheduler expect] andDo:^(NSInvocation *invocation) {
-        callsToScheduleMessages++;
-        
         void *arg;
         [invocation getArgument:&arg atIndex:2];
         NSArray<UAInAppMessageScheduleInfo *> *scheduleInfo = (__bridge NSArray<UAInAppMessageScheduleInfo *> *)arg;
-        
-        XCTAssertEqual(scheduleInfo.count, expectedNumberOfScheduleInfos);
-        
+
+        scheduledMessages += scheduleInfo.count;
+
         [invocation getArgument:&arg atIndex:3];
         void (^completionHandler)(NSArray<UASchedule *> *) = (__bridge void (^)(NSArray<UASchedule *> *))arg;
-        
+
         completionHandler(@[]);
     }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-    
-    __block NSUInteger callsToCancelMessages = 0;
-    __block NSUInteger expectedNumberOfMessagesToCancel = 0;
+
     [[[self.mockScheduler stub] andDo:^(NSInvocation *invocation) {
-        callsToCancelMessages++;
-        
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-        NSArray<NSString *> *messageIDs = (__bridge NSArray<NSString *> *)arg;
-        
-        XCTAssertEqual(messageIDs.count, expectedNumberOfMessagesToCancel);
-        XCTAssertEqualObjects(messageIDs[0], message1ID);
-    }] cancelMessagesWithIDs:OCMOCK_ANY];
+        cancelledMessages += 1;
+    }] cancelMessagesWithID:OCMOCK_ANY];
+
     
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
     
     // verify
     [self.mockScheduler verify];
-    XCTAssertEqual(callsToScheduleMessages,1);
-    XCTAssertEqual(callsToCancelMessages,0);
+    XCTAssertEqual(scheduledMessages, 2);
+    XCTAssertEqual(cancelledMessages, 0);
     
     // setup empty payload
     UARemoteDataPayload *emptyInAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                        timestamp:[NSDate date]
                                                                                             data:@{}];
     
-    // expectations
-    expectedNumberOfScheduleInfos = 0;
-    expectedNumberOfMessagesToCancel = 2;
-    
     // test
     self.publishBlock(@[emptyInAppRemoteDataPayload]);
     
     // verify
     [self.mockScheduler verify];
-    XCTAssertEqual(callsToScheduleMessages,1);
-    XCTAssertEqual(callsToCancelMessages,1);
+    XCTAssertEqual(cancelledMessages, 2);
 }
 
 - (void)testNewUserCutoffTime {

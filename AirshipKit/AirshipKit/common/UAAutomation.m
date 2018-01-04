@@ -1,4 +1,4 @@
- /* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAAutomation+Internal.h"
 #import "UASchedule+Internal.h"
@@ -13,7 +13,6 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
 
 @implementation UAAutomation
 
-
 - (instancetype)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super initWithDataStore:dataStore];
 
@@ -22,9 +21,9 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
         NSString *storeName = [NSString stringWithFormat:UAAutomationStoreFileFormat, config.appKey];
 
         self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:[UAAutomationStore automationStoreWithStoreName:storeName]
-                                                                    scheduleLimit:UAAutomationScheduleLimit];
+                                                                          scheduleLimit:UAAutomationScheduleLimit];
         self.automationEngine.delegate = self;
-        
+
         if (self.componentEnabled) {
             [self.automationEngine start];
         }
@@ -46,8 +45,8 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
     [self.automationEngine schedule:scheduleInfo completionHandler:completionHandler];
 }
 
-- (void)cancelScheduleWithIdentifier:(NSString *)identifier {
-    [self.automationEngine cancelScheduleWithIdentifier:identifier];
+- (void)cancelScheduleWithID:(NSString *)identifier {
+    [self.automationEngine cancelScheduleWithID:identifier];
 }
 
 - (void)cancelAll {
@@ -58,8 +57,8 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
     [self.automationEngine cancelSchedulesWithGroup:group];
 }
 
-- (void)getScheduleWithIdentifier:(NSString *)identifier completionHandler:(void (^)(UASchedule *))completionHandler {
-    [self.automationEngine getScheduleWithIdentifier:identifier completionHandler:completionHandler];
+- (void)getScheduleWithID:(NSString *)identifier completionHandler:(void (^)(UASchedule *))completionHandler {
+    [self.automationEngine getScheduleWithID:identifier completionHandler:completionHandler];
 }
 
 - (void)getSchedules:(void (^)(NSArray<UASchedule *> *))completionHandler {
@@ -111,3 +110,4 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
 }
 
 @end
+

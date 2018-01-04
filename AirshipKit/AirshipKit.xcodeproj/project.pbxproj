@@ -417,9 +417,6 @@
 		99E2DA2F1FB62E2800C9F2CC /* UARemoteDataAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF17A1021F56330500DC39E0 /* UARemoteDataAPIClient+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99E2DA301FB62E5C00C9F2CC /* UARemoteDataStorePayload+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF5ED8FE1F7475FE002DDA24 /* UARemoteDataStorePayload+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99E2DA311FB62E6C00C9F2CC /* UARemoteDataManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF17A0FC1F56327A00DC39E0 /* UARemoteDataManager+Internal.h */; };
-		99E2DA331FB636C500C9F2CC /* UAAutomationEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E2DA321FB6363300C9F2CC /* UAAutomationEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		99E2DA341FB636C600C9F2CC /* UAAutomationEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E2DA321FB6363300C9F2CC /* UAAutomationEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		99E2DA351FB636C700C9F2CC /* UAAutomationEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E2DA321FB6363300C9F2CC /* UAAutomationEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99E2DA381FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E2DA361FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99E2DA391FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E2DA361FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99E2DA3A1FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 99E2DA371FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.m */; };
@@ -1465,7 +1462,6 @@
 		99B6EE6D1F3BA1DF00C4E3F1 /* UAURLActionPredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAURLActionPredicate.m; path = common/UAURLActionPredicate.m; sourceTree = "<group>"; };
 		99B6EE6E1F3BA1DF00C4E3F1 /* UAURLActionPredicate+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAURLActionPredicate+Internal.h"; path = "common/UAURLActionPredicate+Internal.h"; sourceTree = "<group>"; };
 		99E2DA2A1FB6271400C9F2CC /* UAInAppMessageManager+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAInAppMessageManager+Internal.h"; path = "ios/UAInAppMessageManager+Internal.h"; sourceTree = "<group>"; };
-		99E2DA321FB6363300C9F2CC /* UAAutomationEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAAutomationEngine.h; path = common/UAAutomationEngine.h; sourceTree = "<group>"; };
 		99E2DA361FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAInAppMessageBannerAdapter.h; path = ios/UAInAppMessageBannerAdapter.h; sourceTree = "<group>"; };
 		99E2DA371FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAInAppMessageBannerAdapter.m; path = ios/UAInAppMessageBannerAdapter.m; sourceTree = "<group>"; };
 		99E2DA3C1FBA29B200C9F2CC /* UAInAppMessageBannerController+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAInAppMessageBannerController+Internal.h"; path = "ios/UAInAppMessageBannerController+Internal.h"; sourceTree = "<group>"; };
@@ -2183,7 +2179,6 @@
 				6E12138D1E5D1B95006738FD /* UAScheduleDelay.m */,
 				6EADE7011FA8FA0E0007F924 /* UAAutomationEngine.m */,
 				6EADE7001FA8FA0D0007F924 /* UAAutomationEngine+Internal.h */,
-				99E2DA321FB6363300C9F2CC /* UAAutomationEngine.h */,
 				6EADE6FC1FA8F9FB0007F924 /* UAScheduleInfo.h */,
 				6EADE6FA1FA8F9FA0007F924 /* UAScheduleInfo.m */,
 				6EADE6FB1FA8F9FB0007F924 /* UAScheduleInfo+Internal.h */,
@@ -3547,7 +3542,6 @@
 				99978EE81EBA7BE7000F4AF7 /* UADeepLinkAction.h in Headers */,
 				CC70E8EB1DDA985D000E2528 /* UA_Base64.h in Headers */,
 				CC40DC391D8C996A00BABD4F /* UAAnalytics.h in Headers */,
-				99E2DA331FB636C500C9F2CC /* UAAutomationEngine.h in Headers */,
 				CC40DD001D8C996A00BABD4F /* UAPush.h in Headers */,
 				CC40DD091D8C996A00BABD4F /* UARetailEventTemplate.h in Headers */,
 				CC40DCD61D8C996A00BABD4F /* UALocationEvent.h in Headers */,
@@ -3817,7 +3811,6 @@
 				99666DA11EDF2BB400BAE46B /* UAScheduleTrigger+Internal.h in Headers */,
 				99666DA21EDF2BB400BAE46B /* UAScheduleTrigger.h in Headers */,
 				99666D951EDF2BAE00BAE46B /* UAScheduleTriggerData+Internal.h in Headers */,
-				99E2DA341FB636C600C9F2CC /* UAAutomationEngine.h in Headers */,
 				99666E4A1EDF2C8D00BAE46B /* UAScreenTrackingEvent+Internal.h in Headers */,
 				99666E2A1EDF2C7C00BAE46B /* UASQLite+Internal.h in Headers */,
 				9960B9011EDE4D86007D6D97 /* UASwizzler+Internal.h in Headers */,
@@ -3957,7 +3950,6 @@
 				DF7E22941ED62E0900C79C46 /* NSString+UAURLEncoding.h in Headers */,
 				DF7E22951ED62E0900C79C46 /* UIWebView+UAAdditions.h in Headers */,
 				DF7E22961ED62E0900C79C46 /* UADisposable.h in Headers */,
-				99E2DA351FB636C700C9F2CC /* UAAutomationEngine.h in Headers */,
 				DF7E22981ED62E0900C79C46 /* NSManagedObjectContext+UAAdditions.h in Headers */,
 				DF7E22991ED62E0900C79C46 /* NSOperationQueue+UAAdditions.h in Headers */,
 				DF7E229A1ED62E0900C79C46 /* UAActionJSDelegate.h in Headers */,

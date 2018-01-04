@@ -1,8 +1,9 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
-#import "UAAutomationEngine.h"
 #import "UAAutomationStore+Internal.h"
 #import "UAAnalytics+Internal.h"
+#import "UASchedule.h"
+#import "UAScheduleInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -10,7 +11,6 @@ NS_ASSUME_NONNULL_BEGIN
  * Schedule execution states.
  */
 typedef NS_ENUM(NSUInteger, UAScheduleState) {
-
     /**
      * Schedule is idle.
      */
@@ -26,6 +26,39 @@ typedef NS_ENUM(NSUInteger, UAScheduleState) {
      */
     UAScheduleStateExecuting = 2
 };
+
+/**
+ * Automation engine delegate
+ */
+@protocol UAAutomationEngineDelegate <NSObject>
+
+/**
+ * Creates a schedule info from a builder.
+ *
+ * @param builder The schedule info builder.
+ * @returns Schedule info.
+ */
+- (UAScheduleInfo *)createScheduleInfoWithBuilder:(UAScheduleInfoBuilder *)builder;
+
+/**
+ * Checks if a schedule is ready to execute.
+ *
+ * @param schedule The schedule.
+ * @returns `YES` if the schedule should be executed, otherwise `NO`.
+ */
+- (BOOL)isScheduleReadyToExecute:(UASchedule *)schedule;
+
+/**
+ * Executes a schedule.
+ *
+ * @param schedule The schedule.
+ * @param completionHandler Completion handler when the schedule is finished executing.
+ */
+- (void)executeSchedule:(nonnull UASchedule *)schedule
+      completionHandler:(void (^)(void))completionHandler;
+
+@end
+
 
 /**
  * Automation engine.
@@ -101,7 +134,7 @@ typedef NS_ENUM(NSUInteger, UAScheduleState) {
  *
  * @param identifier A schedule identifier.
  */
-- (void)cancelScheduleWithIdentifier:(NSString *)identifier;
+- (void)cancelScheduleWithID:(NSString *)identifier;
 
 /**
  * Cancels all schedules of the given group.
@@ -121,8 +154,8 @@ typedef NS_ENUM(NSUInteger, UAScheduleState) {
  * @param identifier A schedule identifier.
  * @param completionHandler The completion handler with the result.
  */
-- (void)getScheduleWithIdentifier:(NSString *)identifier
-                completionHandler:(void (^)(UASchedule * __nullable))completionHandler;
+- (void)getScheduleWithID:(NSString *)identifier
+        completionHandler:(void (^)(UASchedule * __nullable))completionHandler;
 
 /**
  * Gets all schedules.

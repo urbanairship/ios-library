@@ -313,7 +313,7 @@
 
     XCTestExpectation *fetchExpectation = [self expectationWithDescription:@"schedules fetched properly"];
 
-    [self.automationEngine getScheduleWithIdentifier:scheduleIdentifier completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine getScheduleWithID:scheduleIdentifier completionHandler:^(UASchedule *schedule) {
         XCTAssertEqualObjects(scheduleInfo, schedule.info);
         XCTAssertEqualObjects(scheduleIdentifier, schedule.identifier);
         [fetchExpectation fulfill];
@@ -376,7 +376,7 @@
 
     [self waitForExpectationsWithTimeout:5 handler:nil];
 
-    [self.automationEngine cancelScheduleWithIdentifier:scheduleIdentifier];
+    [self.automationEngine cancelScheduleWithID:scheduleIdentifier];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"schedules fetched"];
 
@@ -497,7 +497,7 @@
 
     // Verify getScheduleWithIdentifier:completionHandler: does not return the expired schedule
     XCTestExpectation *identifierExpectation = [self expectationWithDescription:@"fetched schedule"];
-    [self.automationEngine getScheduleWithIdentifier:scheduleIdentifier completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine getScheduleWithID:scheduleIdentifier completionHandler:^(UASchedule *schedule) {
         XCTAssertNil(schedule);
         [identifierExpectation fulfill];
     }];
@@ -897,7 +897,7 @@
 
     // Verify the schedule is deleted
     XCTestExpectation *fetchExpectation = [self expectationWithDescription:@"schedule fetched"];
-    [self.automationEngine getScheduleWithIdentifier:scheduleId completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine getScheduleWithID:scheduleId completionHandler:^(UASchedule *schedule) {
         XCTAssertNil(schedule);
         [fetchExpectation fulfill];
     }];
@@ -963,7 +963,7 @@
 
     // Verify the schedule is deleted
     XCTestExpectation *fetchExpectation = [self expectationWithDescription:@"schedule fetched"];
-    [self.automationEngine getScheduleWithIdentifier:scheduleId completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine getScheduleWithID:scheduleId completionHandler:^(UASchedule *schedule) {
         [fetchExpectation fulfill];
     }];
     [self waitForExpectationsWithTimeout:5 handler:nil];

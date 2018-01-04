@@ -36,7 +36,7 @@ extern NSUInteger const UAAutomationScheduleLimit;
  *
  * @param identifier A schedule identifier.
  */
-- (void)cancelScheduleWithIdentifier:(NSString *)identifier;
+- (void)cancelScheduleWithID:(NSString *)identifier;
 
 /**
  * Cancels all schedules of the given group.
@@ -56,8 +56,8 @@ extern NSUInteger const UAAutomationScheduleLimit;
  * @param identifier A schedule identifier.
  * @param completionHandler The completion handler with the result.
  */
-- (void)getScheduleWithIdentifier:(NSString *)identifier
-                completionHandler:(void (^)(UASchedule * __nullable))completionHandler;
+- (void)getScheduleWithID:(NSString *)identifier
+        completionHandler:(void (^)(UASchedule * __nullable))completionHandler;
 
 /**
  * Gets all schedules.

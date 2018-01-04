@@ -209,8 +209,8 @@ double const MinimumSwipeVelocity = 100.0;
 
     // Check button behavior
     if (button.buttonInfo.behavior == UAInAppMessageButtonInfoBehaviorCancel) {
-        // Cancel IAM schedule
-        [[UAirship inAppMessageManager] cancelMessageWithID:self.messageID];
+        // TODO: Cancel based on schedule ID not Message ID.
+        [[UAirship inAppMessageManager] cancelMessagesWithID:self.messageID];
     }
 
     [self dismiss];

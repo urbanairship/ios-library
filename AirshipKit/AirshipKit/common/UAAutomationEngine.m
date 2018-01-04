@@ -199,6 +199,7 @@
         }
     }
     
+
     if (!schedules.count) {
         // don't save if there are no schedules
         completionHandler();
@@ -214,7 +215,7 @@
     }
 }
 
-- (void)cancelScheduleWithIdentifier:(NSString *)identifier {
+- (void)cancelScheduleWithID:(NSString *)identifier {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", identifier];
     [self.automationStore deleteSchedulesWithPredicate:predicate];
     [self cancelTimersWithIdentifiers:[NSSet setWithArray:@[identifier]]];
@@ -231,7 +232,7 @@
     [self cancelTimersWithGroup:group];
 }
 
-- (void)getScheduleWithIdentifier:(NSString *)identifier completionHandler:(void (^)(UASchedule *))completionHandler {
+- (void)getScheduleWithID:(NSString *)identifier completionHandler:(void (^)(UASchedule *))completionHandler {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@ && end >= %@", identifier, [NSDate date]];
     [self.automationStore fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
         UASchedule *schedule;

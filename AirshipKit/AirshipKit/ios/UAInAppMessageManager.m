@@ -23,7 +23,7 @@ NSTimeInterval const MaxSchedules = 200;
 NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite";
 NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled";
 
-@interface UAInAppMessageManager ()
+@interface UAInAppMessageManager ()  <UAAutomationEngineDelegate>
 
 @property(nonatomic, assign) BOOL isCurrentMessagePrepared;
 @property(nonatomic, assign) BOOL isDisplayLocked;
@@ -107,8 +107,8 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
     } forDisplayType:UAInAppMessageDisplayTypeFullScreen];
 }
 
-- (void)getScheduleWithIdentifier:(NSString *)identifier completionHandler:(void (^)(UASchedule *))completionHandler {
-    [self.automationEngine getScheduleWithIdentifier:identifier completionHandler:completionHandler];
+- (void)getScheduleWithID:(NSString *)identifier completionHandler:(void (^)(UASchedule *))completionHandler {
+    [self.automationEngine getScheduleWithID:identifier completionHandler:completionHandler];
 }
 
 - (void)getSchedulesWithMessageID:(NSString *)messageID completionHandler:(void (^)(NSArray<UASchedule *> *))completionHandler {
@@ -124,18 +124,12 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
     [self.automationEngine scheduleMultiple:scheduleInfos completionHandler:completionHandler];
 }
 
-- (void)cancelMessageWithID:(NSString *)identifier {
+- (void)cancelMessagesWithID:(NSString *)identifier {
     [self.automationEngine cancelSchedulesWithGroup:identifier];
 }
 
-- (void)cancelMessagesWithIDs:(NSArray<NSString *> *)identifiers {
-    for (NSString *messageID in identifiers) {
-        [self cancelMessageWithID:messageID];
-    }
-}
-
-- (void)cancelMessageWithScheduleID:(NSString *)scheduleID {
-    [self.automationEngine cancelScheduleWithIdentifier:scheduleID];
+- (void)cancelScheduleWithID:(NSString *)scheduleID {
+    [self.automationEngine cancelScheduleWithID:scheduleID];
 }
 
 - (UAScheduleInfo *)createScheduleInfoWithBuilder:(UAScheduleInfoBuilder *)builder {
@@ -180,7 +174,7 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
 
     if (![UAInAppMessageAudienceChecks checkAudience:info.message.audience]) {
         UA_LDEBUG("InAppMessageManager - Message no longer meets audience conditions, cancelling schedule: %@",schedule.identifier);
-        [self cancelMessageWithScheduleID:schedule.identifier];
+        [self cancelScheduleWithID:schedule.identifier];
         return NO;
     }
 
@@ -189,7 +183,7 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
 
         if (!factory) {
             UA_LWARN(@"Factory unavailable for message: %@. Cancelling schedule.", info.message);
-            [self cancelMessageWithScheduleID:schedule.identifier];
+            [self cancelScheduleWithID:schedule.identifier];
             return NO;
         }
 
@@ -198,7 +192,7 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
         // If no adapter factory available for specified displayType return NO
         if (!adapter) {
             UA_LWARN(@"Factory failed to build adapter with message: %@. Cancelling schedule.", info.message);
-            [self cancelMessageWithScheduleID:schedule.identifier];
+            [self cancelScheduleWithID:schedule.identifier];
             return NO;
         }
 
