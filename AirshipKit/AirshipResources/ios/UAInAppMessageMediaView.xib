@@ -6,48 +6,32 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" id="iN0-l3-epB" userLabel="Image View" customClass="UAInAppMessageMediaView">
-            <rect key="frame" x="0.0" y="0.0" width="230" height="230"/>
+        <view contentMode="scaleAspectFill" id="iN0-l3-epB" customClass="UAInAppMessageMediaView">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="375"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="sQ8-gv-GNE">
-                    <rect key="frame" x="0.0" y="0.5" width="230" height="230"/>
-                    <constraints>
-                        <constraint firstAttribute="width" secondItem="sQ8-gv-GNE" secondAttribute="height" multiplier="1:1" id="eK9-A7-gdQ"/>
-                    </constraints>
+                <imageView opaque="NO" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="rOW-Oh-XmU">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="375"/>
                 </imageView>
             </subviews>
-            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="sQ8-gv-GNE" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" id="InR-zQ-y6q"/>
-                <constraint firstItem="sQ8-gv-GNE" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="avo-BO-aIY"/>
-                <constraint firstItem="sQ8-gv-GNE" firstAttribute="centerY" secondItem="vUN-kp-3ea" secondAttribute="centerY" id="ifr-DZ-lg7"/>
-                <constraint firstItem="sQ8-gv-GNE" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="wcG-qF-GYI"/>
+                <constraint firstItem="rOW-Oh-XmU" firstAttribute="centerY" secondItem="vUN-kp-3ea" secondAttribute="centerY" id="62r-kv-9n7"/>
+                <constraint firstItem="rOW-Oh-XmU" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" placeholder="YES" identifier="This width is removed at build time for letterboxing" id="CN5-LQ-3sr"/>
+                <constraint firstItem="rOW-Oh-XmU" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" id="nNY-No-scU"/>
+                <constraint firstItem="rOW-Oh-XmU" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" placeholder="YES" identifier="This height is removed at build time for letterboxing" id="rvf-gd-vQY"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
-            <point key="canvasLocation" x="-38" y="131"/>
-        </view>
-        <view contentMode="scaleToFill" id="6Og-HG-EkK" userLabel="Video View">
-            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-            <viewLayoutGuide key="safeArea" id="jBf-LQ-qHv"/>
-            <point key="canvasLocation" x="35" y="633"/>
-        </view>
-        <view contentMode="scaleToFill" id="OJm-X8-8G7" userLabel="YouTube View">
-            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-            <viewLayoutGuide key="safeArea" id="I7d-gz-dGX"/>
-            <point key="canvasLocation" x="35" y="1495"/>
+            <connections>
+                <outlet property="imageView" destination="rOW-Oh-XmU" id="7Da-b5-j7z"/>
+            </connections>
+            <point key="canvasLocation" x="61.5" y="191"/>
         </view>
     </objects>
 </document>
