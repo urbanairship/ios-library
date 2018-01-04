@@ -33,7 +33,7 @@ NSString *const UAInAppMessageFullScreenAdapterCacheName = @"UAInAppMessageFullS
     return self;
 }
 
-- (void)prepare:(void (^)(void))completionHandler {
+- (void)prepare:(void (^)(UAInAppMessagePrepareResult))completionHandler {
     UAInAppMessageFullScreenDisplayContent *displayContent = (UAInAppMessageFullScreenDisplayContent *)self.message.displayContent;
 
     if (!displayContent.media) {
@@ -41,7 +41,7 @@ NSString *const UAInAppMessageFullScreenAdapterCacheName = @"UAInAppMessageFullS
                                                                                                      displayContent:displayContent
                                                                                                               image:nil];
 
-        completionHandler();
+        completionHandler(UAInAppMessagePrepareResultSuccess);
         return;
     }
 
@@ -61,7 +61,7 @@ NSString *const UAInAppMessageFullScreenAdapterCacheName = @"UAInAppMessageFullS
                                                                                                                                            image:prefetchedImage];
                                  }
 
-                                 completionHandler();
+                                 completionHandler(UAInAppMessagePrepareResultSuccess);
                              }];
 }
 

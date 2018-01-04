@@ -33,15 +33,14 @@ NSString *const UAInAppMessageBannerAdapterCacheName = @"UAInAppMessageBannerAda
     return self;
 }
 
-- (void)prepare:(void (^)(void))completionHandler {
+- (void)prepare:(void (^)(UAInAppMessagePrepareResult))completionHandler {
     UAInAppMessageBannerDisplayContent *displayContent = (UAInAppMessageBannerDisplayContent *)self.message.displayContent;
 
     if (!displayContent.media) {
         self.bannerController = [UAInAppMessageBannerController bannerControllerWithBannerMessageID:self.message.identifier
                                                                                      displayContent:displayContent
                                                                                               image:nil];
-
-        completionHandler();
+        completionHandler(UAInAppMessagePrepareResultSuccess);
         return;
     }
 
@@ -52,17 +51,16 @@ NSString *const UAInAppMessageBannerAdapterCacheName = @"UAInAppMessageBannerAda
     [UAInAppMessageUtils prefetchContentsOfURL:imageURL
                                      WithCache:self.imageCache
                              completionHandler:^(NSString *cacheKey) {
-        UA_STRONGIFY(self);
-        NSData *data = [self.imageCache objectForKey:cacheKey];
-        if (data) {
-            UIImage *prefetchedImage = [UIImage imageWithData:data];
-            self.bannerController = [UAInAppMessageBannerController bannerControllerWithBannerMessageID:self.message.identifier
-                                                                                         displayContent:displayContent
-                                                                                                  image:prefetchedImage];
-        }
-
-        completionHandler();
-    }];
+                                 UA_STRONGIFY(self);
+                                 NSData *data = [self.imageCache objectForKey:cacheKey];
+                                 if (data) {
+                                     UIImage *prefetchedImage = [UIImage imageWithData:data];
+                                     self.bannerController = [UAInAppMessageBannerController bannerControllerWithBannerMessageID:self.message.identifier
+                                                                                                                  displayContent:displayContent
+                                                                                                                           image:prefetchedImage];
+                                 }
+                                 completionHandler(UAInAppMessagePrepareResultSuccess);
+                             }];
 }
 
 - (void)display:(void (^)(void))completionHandler {
@@ -86,3 +84,4 @@ NSString *const UAInAppMessageBannerAdapterCacheName = @"UAInAppMessageBannerAda
 }
 
 @end
+
