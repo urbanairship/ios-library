@@ -39,7 +39,7 @@ extern NSUInteger const UAScheduleInfoMaxTriggers;
 
 /**
  * Number of times the actions will be triggered until the schedule is
- * canceled.
+ * finished.
  */
 @property(nonatomic, assign) NSUInteger limit;
 
@@ -55,7 +55,7 @@ extern NSUInteger const UAScheduleInfoMaxTriggers;
 @property(nonatomic, strong, nullable) NSDate *start;
 
 /**
- * The schedule's end time. After the end time the schedule will be canceled.
+ * The schedule's end time. After the end time the schedule will be finished.
  */
 @property(nonatomic, strong, nullable) NSDate *end;
 
@@ -65,7 +65,7 @@ extern NSUInteger const UAScheduleInfoMaxTriggers;
 @property(nonatomic, strong, nullable) UAScheduleDelay *delay;
 
 /**
- * The schedule's edit grace period. The amount of time the schedule will still be editable after it has been expired
+ * The schedule's edit grace period. The amount of time the schedule will still be editable after it has expired
  * or finished executing.
  */
 @property(nonatomic, assign) NSTimeInterval editGracePeriod;

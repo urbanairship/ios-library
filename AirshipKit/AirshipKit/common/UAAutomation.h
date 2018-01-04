@@ -4,6 +4,7 @@
 #import "UASchedule.h"
 #import "UAActionScheduleInfo.h"
 #import "UAComponent.h"
+#import "UAActionScheduleEdits.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -74,6 +75,17 @@ extern NSUInteger const UAAutomationScheduleLimit;
  */
 - (void)getSchedulesWithGroup:(NSString *)group
             completionHandler:(void (^)(NSArray<UASchedule *> *))completionHandler;
+
+/**
+ * Edits a schedule.
+ *
+ * @param identifier A schedule identifier.
+ * @param edits The edits to apply.
+ * @param completionHandler The completion handler with the result.
+ */
+- (void)editScheduleWithID:(NSString *)identifier
+                     edits:(UAActionScheduleEdits *)edits
+         completionHandler:(void (^)(UASchedule * __nullable))completionHandler;
 
 @end
 

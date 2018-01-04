@@ -71,6 +71,13 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
     [self.automationEngine getSchedulesWithGroup:group completionHandler:completionHandler];
 }
 
+- (void)editScheduleWithID:(NSString *)identifier
+                     edits:(UAActionScheduleEdits *)edits
+         completionHandler:(void (^)(UASchedule * __nullable))completionHandler {
+
+    [self.automationEngine editScheduleWithID:identifier edits:edits completionHandler:completionHandler];
+}
+
 - (UAScheduleInfo *)createScheduleInfoWithBuilder:(UAScheduleInfoBuilder *)builder {
     return [[UAActionScheduleInfo alloc] initWithBuilder:builder];
 }

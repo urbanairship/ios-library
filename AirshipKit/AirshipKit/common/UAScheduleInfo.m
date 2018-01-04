@@ -168,23 +168,20 @@ NSString * const UAScheduleInfoErrorDomain = @"com.urbanairship.schedule_info";
     }
 
     // Interval
-    NSNumber *interval;
-    if (json[UAScheduleInfoIntervalKey]) {
-        if (![json[UAScheduleInfoIntervalKey] isKindOfClass:[NSNumber class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Interval must be a number. Invalid value: %@", json[UAScheduleInfoIntervalKey]];
-                *error =  [NSError errorWithDomain:UAScheduleInfoErrorDomain
-                                              code:UAScheduleInfoErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-            return NO;
+    id interval = json[UAScheduleInfoIntervalKey];
+    if (interval && ![interval isKindOfClass:[NSNumber class]]) {
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Interval must be a number. Invalid value: %@", json[UAScheduleInfoIntervalKey]];
+            *error =  [NSError errorWithDomain:UAScheduleInfoErrorDomain
+                                          code:UAScheduleInfoErrorCodeInvalidJSON
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
         }
 
-        interval = json[UAScheduleInfoIntervalKey];
+        return NO;
     }
 
     // Edit Grace Period
-    NSNumber *editGracePeriodDays;
+    NSNumber *editGracePeriod;
     if (json[UAScheduleInfoEditGracePeriodKey]) {
         if (![json[UAScheduleInfoEditGracePeriodKey] isKindOfClass:[NSNumber class]]) {
             if (error) {
@@ -196,7 +193,7 @@ NSString * const UAScheduleInfoErrorDomain = @"com.urbanairship.schedule_info";
             return NO;
         }
 
-        editGracePeriodDays = json[UAScheduleInfoEditGracePeriodKey];
+        editGracePeriod = @([json[UAScheduleInfoEditGracePeriodKey] doubleValue] * 24 * 60 * 60);
     }
 
     if (triggers) {
@@ -227,9 +224,8 @@ NSString * const UAScheduleInfoErrorDomain = @"com.urbanairship.schedule_info";
         self.interval = [interval doubleValue];
     }
 
-    if (editGracePeriodDays) {
-        // JSON value is in days
-        self.editGracePeriod = [editGracePeriodDays doubleValue] * 24 * 60 * 60;
+    if (editGracePeriod) {
+        self.editGracePeriod = [editGracePeriod doubleValue];
     }
 
     if (priority) {

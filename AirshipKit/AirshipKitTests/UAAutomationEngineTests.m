@@ -816,6 +816,82 @@
     [self waitForExpectationsWithTimeout:5 handler:nil];
 }
 
+- (void)testEdits {
+    // Schedule the action
+    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        builder.actions = @{@"test action": @"test value"};
+        builder.editGracePeriod = 1000;
+
+        UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
+        UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher key:UACustomEventNameKey];
+        UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+        builder.triggers = @[[UAScheduleTrigger customEventTriggerWithPredicate:predicate count:1]];
+    }];
+
+    XCTestExpectation *actionsScheduled = [self expectationWithDescription:@"actions scheduled"];
+    __block NSString *identifier;
+    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+        identifier = schedule.identifier;
+        [actionsScheduled fulfill];
+    }];
+
+    [self waitForExpectationsWithTimeout:5 handler:nil];
+
+    // When isScheduleReadyToExecute is called on the mockDelegate do this
+    [[[self.mockDelegate expect] andReturnValue:OCMOCK_VALUE(YES)] isScheduleReadyToExecute:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UASchedule *schedule = obj;
+        return  [schedule.identifier isEqualToString:identifier];
+    }]];
+
+    // When executeSchedule is called on the mockDelegate call the callback
+    XCTestExpectation *executeSchedule = [self expectationWithDescription:@"schedule is executing"];
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^handler)(void) = (__bridge void (^)(void))arg;
+        handler();
+        [executeSchedule fulfill];
+    }] executeSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UASchedule *schedule = obj;
+        return  [schedule.identifier isEqualToString:identifier];
+    }] completionHandler:OCMOCK_ANY];
+
+    // Trigger the scheduled actions
+    UACustomEvent *purchase = [UACustomEvent eventWithName:@"purchase"];
+    [self emitEvent:purchase];
+
+    [self waitForExpectationsWithTimeout:5 handler:nil];
+
+    XCTestExpectation *checkFinishedState = [self expectationWithDescription:@"not pending execution"];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", identifier];
+    [self.automationEngine.automationStore fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
+        XCTAssertEqual(1, schedulesData.count);
+        XCTAssertEqual(UAScheduleStateFinished, [schedulesData[0].executionState intValue]);
+        [checkFinishedState fulfill];
+    }];
+
+    [self waitForExpectationsWithTimeout:5 handler:nil];
+
+    UAActionScheduleEdits *edits = [UAActionScheduleEdits editsWithBuilderBlock:^(UAActionScheduleEditsBuilder *  builder) {
+        builder.limit = @(2);
+    }];
+
+
+    XCTestExpectation *updated = [self expectationWithDescription:@"schedule updated"];
+    [self.automationEngine editScheduleWithID:identifier edits:edits completionHandler:^(UASchedule *schedule) {
+        XCTAssertNotNil(schedule);
+        [updated fulfill];
+    }];
+
+    XCTestExpectation *checkIdleState = [self expectationWithDescription:@"not pending execution"];
+    [self.automationEngine.automationStore fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
+        XCTAssertEqual(1, schedulesData.count);
+        XCTAssertEqual(UAScheduleStateIdle, [schedulesData[0].executionState intValue]);
+        [checkIdleState fulfill];
+    }];
+
+    [self waitForExpectationsWithTimeout:5 handler:nil];
+}
 /**
  * Helper method for simulating a full transition from the background to the active state.
  */

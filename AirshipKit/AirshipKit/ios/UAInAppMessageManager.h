@@ -6,6 +6,7 @@
 #import "UASchedule.h"
 #import "UAInAppMessageAdapterProtocol.h"
 #import "UAComponent.h"
+#import "UAInAppMessageScheduleEdits.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -107,6 +108,16 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)getSchedulesWithMessageID:(NSString *)messageID completionHandler:(void (^)(NSArray<UASchedule *> *))completionHandler;
 
+/**
+ * Edits a schedule.
+ *
+ * @param identifier A schedule identifier.
+ * @param edits The edits to apply.
+ * @param completionHandler The completion handler with the result.
+ */
+- (void)editScheduleWithID:(NSString *)identifier
+                     edits:(UAInAppMessageScheduleEdits *)edits
+         completionHandler:(void (^)(UASchedule * __nullable))completionHandler;
 
 @end
 

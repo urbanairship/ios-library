@@ -132,6 +132,13 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
     [self.automationEngine cancelScheduleWithID:scheduleID];
 }
 
+- (void)editScheduleWithID:(NSString *)identifier
+                     edits:(UAInAppMessageScheduleEdits *)edits
+         completionHandler:(void (^)(UASchedule * __nullable))completionHandler {
+
+    [self.automationEngine editScheduleWithID:identifier edits:edits completionHandler:completionHandler];
+}
+
 - (UAScheduleInfo *)createScheduleInfoWithBuilder:(UAScheduleInfoBuilder *)builder {
     return [[UAInAppMessageScheduleInfo alloc] initWithBuilder:builder];
 }
@@ -234,6 +241,8 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
         UA_STRONGIFY(self);
         self.currentAdapter = nil;
         self.currentScheduleID = nil;
+        self.isCurrentMessagePrepared = NO;
+
         // Start timer to unlock display after display interval
         [self unlockDisplayAfter:self.displayInterval];
 

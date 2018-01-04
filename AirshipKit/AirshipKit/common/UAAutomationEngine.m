@@ -17,11 +17,13 @@
 #import "UAGlobal.h"
 #import "UAirship.h"
 #import "UAApplicationMetrics.h"
+#import "UAScheduleEdits+Internal.h"
 
 @interface UAAutomationStateCondition : NSObject
 
 @property (nonatomic, copy, nonnull) BOOL (^predicate)(void);
 @property (nonatomic, copy, nonnull) id (^argumentGenerator)(void);
+@property (nonatomic, strong, nonnull) NSDate *stateChangeDate;
 
 - (instancetype)initWithPredicate:(BOOL (^_Nonnull)(void))predicate argumentGenerator:(id (^)(void))argumentGenerator;
 
@@ -34,6 +36,7 @@
     if (self) {
         self.predicate = predicate;
         self.argumentGenerator = argumentGenerator;
+        self.stateChangeDate = [NSDate date];
     }
     return self;
 }
@@ -112,12 +115,14 @@
                                                  name:UARegionEventAdded
                                                object:nil];
 
+    [self cleanSchedules];
     [self resetExecutingSchedules];
     [self createStateConditions];
     [self restoreCompoundTriggers];
     [self rescheduleTimers];
     [self updateTriggersWithType:UAScheduleTriggerAppInit argument:nil incrementAmount:1.0];
     [self scheduleConditionsChanged];
+
     self.isStarted = YES;
 }
 
@@ -160,9 +165,7 @@
         return;
     }
 
-    // Delete any expired schedules before trying to save a schedule to free up the limit
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"end <= %@", [NSDate date]];
-    [self.automationStore deleteSchedulesWithPredicate:predicate];
+    [self cleanSchedules];
 
     // Create a schedule to save
     UASchedule *schedule = [UASchedule scheduleWithIdentifier:[NSUUID UUID].UUIDString info:scheduleInfo];
@@ -186,10 +189,8 @@
 }
 
 - (void)scheduleMultiple:(NSArray<UAScheduleInfo *> *)scheduleInfos completionHandler:(void (^)(void))completionHandler {
-    // Delete any expired schedules before trying to save a schedule to free up the limit
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"end <= %@", [NSDate date]];
-    [self.automationStore deleteSchedulesWithPredicate:predicate];
-    
+    [self cleanSchedules];
+
     // Create schedules to save (only allow valid schedules)
     NSMutableArray<UASchedule *> *schedules = [NSMutableArray arrayWithCapacity:scheduleInfos.count];
     for (UAScheduleInfo *scheduleInfo in scheduleInfos) {
@@ -198,7 +199,6 @@
             [schedules addObject:schedule];
         }
     }
-    
 
     if (!schedules.count) {
         // don't save if there are no schedules
@@ -274,6 +274,73 @@
     }];
 }
 
+- (void)editScheduleWithID:(NSString *)identifier
+                     edits:(UAScheduleEdits *)edits
+         completionHandler:(void (^)(UASchedule *))completionHandler {
+
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", identifier];
+    [self.automationStore fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
+        UASchedule *schedule;
+
+        if (schedulesData.count) {
+            UAScheduleData *scheduleData = [schedulesData firstObject];
+            [UAAutomationEngine applyEdits:edits toData:scheduleData];
+            schedule = [self scheduleFromData:scheduleData];
+
+            BOOL overLimit = [scheduleData.limit unsignedIntegerValue] > 0 && scheduleData.triggeredCount >= scheduleData.limit;
+            BOOL isExpired = [scheduleData.end compare:[NSDate date]] == NSOrderedAscending;
+
+            // Check if the schedule needs to be rehabilitated or finished due to the edits
+            if ([scheduleData.executionState unsignedIntegerValue] == UAScheduleStateFinished && !overLimit && !isExpired) {
+                NSDate *finishDate = scheduleData.executionStateChangeDate;
+                scheduleData.executionState = @(UAScheduleStateIdle);
+
+                // Handle any state changes that might have been missed while the schedule was finished
+                UA_WEAKIFY(self);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    UA_STRONGIFY(self);
+                    [self checkCompoundTriggerState:@[schedule] forStateNewerThanDate:finishDate];
+                });
+
+            } else if ([scheduleData.executionState unsignedIntegerValue] != UAScheduleStateFinished && (overLimit || isExpired)) {
+                scheduleData.executionState = @(UAScheduleStateFinished);
+            }
+        }
+
+        if (completionHandler) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionHandler(schedule);
+            });
+        }
+    }];
+}
+
+- (void)cleanSchedules {
+    // Expired schedules
+    NSPredicate *expiredPredicate = [NSPredicate predicateWithFormat:@"end <= %@ && executionState != %d", [NSDate date], UAScheduleStateFinished];
+    [self.automationStore fetchSchedulesWithPredicate:expiredPredicate limit:self.scheduleLimit completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
+        for (UAScheduleData *scheduleData in schedulesData) {
+            if ([scheduleData.editGracePeriod doubleValue] > 0) {
+                scheduleData.executionState = @(UAScheduleStateFinished);
+            } else {
+                [scheduleData.managedObjectContext deleteObject:scheduleData];
+            }
+        }
+    }];
+
+    // Finished schedules
+    NSPredicate *finishedPredicate = [NSPredicate predicateWithFormat:@"executionState == %d", UAScheduleStateFinished];
+    [self.automationStore fetchSchedulesWithPredicate:finishedPredicate limit:self.scheduleLimit completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
+        for (UAScheduleData *scheduleData in schedulesData) {
+            NSDate *finishDate = [scheduleData.executionStateChangeDate dateByAddingTimeInterval:[scheduleData.editGracePeriod doubleValue]];
+            if ([finishDate compare:[NSDate date]] == NSOrderedAscending) {
+                [scheduleData.managedObjectContext deleteObject:scheduleData];
+            }
+        }
+    }];
+}
+
+
 
 #pragma mark -
 #pragma mark Event listeners
@@ -297,6 +364,8 @@
 
     // Active session triggers are also updated by foreground transitions
     [self updateTriggersWithType:UAScheduleTriggerActiveSession argument:nil incrementAmount:1.0];
+    UAAutomationStateCondition *condition = self.stateConditions[@(UAScheduleTriggerActiveSession)];
+    condition.stateChangeDate = [NSDate date];
 
     [self scheduleConditionsChanged];
 }
@@ -305,7 +374,7 @@
     if (!self.isBackgrounded) {
         self.isForegrounded = NO;
         self.isBackgrounded = YES;
-        
+
         [self updateTriggersWithType:UAScheduleTriggerAppBackground argument:nil incrementAmount:1.0];
         [self scheduleConditionsChanged];
     }
@@ -367,14 +436,14 @@
     if (self.paused) {
         return;
     }
-    
+
     UA_LDEBUG(@"Updating triggers with type: %ld", (long)triggerType);
 
     NSDate *start = [NSDate date];
 
     // Only update schedule triggers and active cancellation triggers
-    NSString *format = @"(schedule.identifier LIKE %@ AND type = %ld AND start <= %@) AND (delay == nil || delay.schedule.executionState == %d)";
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:format, scheduleID, triggerType, start, UAScheduleStatePendingExecution];
+    NSString *format = @"(schedule.identifier LIKE %@ AND type = %ld AND start <= %@) AND ((delay != nil AND schedule.executionState == %d) OR (delay == nil AND schedule.executionState == %d))";
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:format, scheduleID, triggerType, start, UAScheduleStatePendingExecution, UAScheduleStateIdle];
 
     [self.automationStore fetchTriggersWithPredicate:predicate completionHandler:^(NSArray<UAScheduleTriggerData *> *triggers) {
 
@@ -655,6 +724,17 @@
  * @param schedules The schedules.
  */
 - (void)checkCompoundTriggerState:(NSArray<UASchedule *> *)schedules {
+    [self checkCompoundTriggerState:schedules forStateNewerThanDate:[NSDate distantPast]];
+}
+
+/**
+ * Sorts provided schedules in ascending prioirty order and checks whether any compound triggers
+ * assigned to those schedules have currently valid state conditions, updating them if necessary.
+ *
+ * @param schedules The schedules.
+ * @param date Filters out state triggers based on the state change date.
+ */
+- (void)checkCompoundTriggerState:(NSArray<UASchedule *> *)schedules forStateNewerThanDate:(NSDate *)date {
     // Sort schedules by priority in ascending order
     schedules = [self sortedSchedulesByPriority:schedules];
 
@@ -664,12 +744,12 @@
             UAScheduleTriggerType type = trigger.type;
             UAAutomationStateCondition *condition = self.stateConditions[@(type)];
 
-            if ([checkedTriggerTypes containsObject:@(type)]) {
+            if (!condition || [checkedTriggerTypes containsObject:@(type)]) {
                 continue;
             }
 
             // If there is a matching condition and the condition holds, update all of the schedule's triggers of that type
-            if (condition && condition.predicate()) {
+            if ([date compare:condition.stateChangeDate] == NSOrderedAscending && condition.predicate()) {
                 id argument = condition.argumentGenerator ? condition.argumentGenerator() : nil;
                 [self updateTriggersWithScheduleID:schedule.identifier type:type argument:argument incrementAmount:1.0];
             }
@@ -740,10 +820,11 @@
     schedules = [self sortedScheduleDataByPriority:schedules];
 
     for (UAScheduleData *scheduleData in schedules) {
-        // If the schedule has expired, delete it
+
+        // Check for expired schedules
         if ([scheduleData.end compare:[NSDate date]] == NSOrderedAscending) {
-            [scheduleData.managedObjectContext deleteObject:scheduleData];
-            UA_LTRACE(@"Schedule expired, deleting schedule: %@", scheduleData.identifier);
+            UA_LTRACE(@"Schedule expired schedule: %@", scheduleData.identifier);
+            scheduleData.executionState = @(UAScheduleStateFinished);
             continue;
         }
 
@@ -819,21 +900,27 @@
 }
 
 - (void)scheduleFinishedExecuting:(NSString *)scheduleID {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@ && executionState == %d", scheduleID, UAScheduleStateExecuting];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", scheduleID];
 
     [self.automationStore fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAScheduleData *> *result) {
         if (result.count > 0) {
             UAScheduleData *scheduleData = result.firstObject;
-
-            scheduleData.executionState = @(UAScheduleStateIdle);
             scheduleData.delayedExecutionDate = nil;
+            scheduleData.triggeredCount = @([scheduleData.triggeredCount integerValue] + 1);
 
-            if ([scheduleData.limit integerValue] > 0) {
-                scheduleData.triggeredCount = @([scheduleData.triggeredCount integerValue] + 1);
-                if (scheduleData.triggeredCount >= scheduleData.limit) {
-                    UA_LDEBUG(@"Limit reached for schedule %@", scheduleData.identifier);
-                    [scheduleData.managedObjectContext deleteObject:scheduleData];
-                }
+            BOOL deleteSchedule = NO;
+
+            if ([scheduleData.limit unsignedIntegerValue] > 0 && scheduleData.triggeredCount >= scheduleData.limit) {
+                UA_LDEBUG(@"Limit reached for schedule %@", scheduleData.identifier);
+                scheduleData.executionState = @(UAScheduleStateFinished);
+                deleteSchedule = [scheduleData.editGracePeriod doubleValue] <= 0;
+            } else if ([scheduleData.executionState unsignedIntegerValue] != UAScheduleStateFinished) {
+                scheduleData.executionState = @(UAScheduleStateIdle);
+            }
+
+            if (deleteSchedule) {
+                UA_LDEBUG(@"Deleting schedule %@", scheduleData.identifier);
+                [scheduleData.managedObjectContext deleteObject:scheduleData];
             }
         }
     }];
@@ -847,7 +934,6 @@
         [[UIApplication sharedApplication] endBackgroundTask:self.backgroundTaskIdentifier];
         self.backgroundTaskIdentifier = UIBackgroundTaskInvalid;
     }
-
 }
 
 #pragma mark -
@@ -917,6 +1003,34 @@
     return [UAJSONPredicate predicateWithJSON:json error:nil];
 }
 
++ (void)applyEdits:(UAScheduleEdits *)edits toData:(UAScheduleData *)scheduleData {
+    if (edits.data) {
+        scheduleData.data = edits.data;
+    }
+
+    if (edits.start) {
+        scheduleData.start = edits.start;
+    }
+
+    if (edits.end) {
+        scheduleData.end = edits.end;
+    }
+
+    if (edits.interval) {
+        scheduleData.interval = edits.interval;
+    }
+
+    if (edits.editGracePeriod) {
+        scheduleData.editGracePeriod = edits.editGracePeriod;
+    }
+
+    if (edits.limit) {
+        scheduleData.limit = edits.limit;
+    }
+
+    if (edits.priority) {
+        scheduleData.priority = edits.priority;
+    }
+}
+
 @end
-
-

@@ -2,6 +2,7 @@
 
 #import "UAAutomationStore+Internal.h"
 #import "UAAnalytics+Internal.h"
+#import "UAScheduleEdits.h"
 #import "UASchedule.h"
 #import "UAScheduleInfo.h"
 
@@ -24,7 +25,17 @@ typedef NS_ENUM(NSUInteger, UAScheduleState) {
     /**
      * Schedule is executing.
      */
-    UAScheduleStateExecuting = 2
+    UAScheduleStateExecuting = 2,
+
+    /**
+     * Schedule is paused.
+     */
+    UAScheduleStatePaused = 3,
+
+    /**
+     * Schedule is finished.
+     */
+    UAScheduleStateFinished = 4
 };
 
 /**
@@ -172,6 +183,18 @@ typedef NS_ENUM(NSUInteger, UAScheduleState) {
  */
 - (void)getSchedulesWithGroup:(NSString *)group
             completionHandler:(void (^)(NSArray<UASchedule *> *))completionHandler;
+
+
+/**
+ * Edits a schedule.
+ *
+ * @param identifier A schedule identifier.
+ * @param edits The edits to apply.
+ * @param completionHandler The completion handler with the result.
+ */
+- (void)editScheduleWithID:(NSString *)identifier
+                     edits:(UAScheduleEdits *)edits
+         completionHandler:(void (^)(UASchedule * __nullable))completionHandler;
 
 @end
 
