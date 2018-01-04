@@ -43,17 +43,19 @@ class HomeViewController: UIViewController {
         if (sender == channelIDButton) {
             if ((UAirship.push().channelID) != nil) {
                 UIPasteboard.general.string = UAirship.push().channelID
-                // TODO: Replace this
-                /*
-                let message = UALegacyInAppMessage()
-                message.alert = NSLocalizedString("UA_Copied_To_Clipboard", tableName: "UAPushUI", comment: "Copied to clipboard string")
-                message.position = UALegacyInAppMessagePosition.top
-                message.duration = 1.5
-                message.primaryColor = UIColor(red: 255/255, green: 200/255, blue: 40/255, alpha: 1)
-                message.secondaryColor = UIColor(red: 0/255, green: 105/255, blue: 143/255, alpha: 1)
 
-                UAirship.inAppMessaging().display(message)
-                */
+                let message = NSLocalizedString("UA_Copied_To_Clipboard", tableName: "UAPushUI", comment: "Copied to clipboard string")
+
+                let alert = UIAlertController(title: nil, message: message, preferredStyle: UIAlertControllerStyle.alert)
+                let buttonTitle = NSLocalizedString("UA_OK", tableName: "UAPushUI", comment: "OK button string")
+
+                let okAction = UIAlertAction(title: buttonTitle, style: UIAlertActionStyle.default, handler: { (action: UIAlertAction) in
+                    self.dismiss(animated: true, completion: nil)
+                })
+
+                alert.addAction(okAction)
+
+                self.present(alert, animated: true, completion: nil)
             }
         }
     }
