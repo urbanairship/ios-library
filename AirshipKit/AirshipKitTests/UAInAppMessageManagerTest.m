@@ -15,6 +15,7 @@
 
 @interface UAInAppMessageManagerTest : UABaseTest
 @property(nonatomic, strong) UAInAppMessageManager *manager;
+@property(nonatomic, strong) id mockDelegate;
 @property(nonatomic, strong) id mockAdapter;
 @property(nonatomic, strong) id mockAutomationEngine;
 @property(nonatomic, strong) UAInAppMessageScheduleInfo *scheduleInfo;
@@ -28,6 +29,7 @@
 - (void)setUp {
     [super setUp];
 
+    self.mockDelegate = [self mockForProtocol:@protocol(UAInAppMessagingDelegate)];
     self.mockAdapter = [self mockForProtocol:@protocol(UAInAppMessageAdapterProtocol)];
     self.mockAutomationEngine = [self mockForClass:[UAAutomationEngine class]];
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"UAInAppMessageManagerTest."];
@@ -39,8 +41,9 @@
                                                             dataStore:self.dataStore
                                                                  push:self.mockPush];
 
-    self.scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
+    self.manager.delegate = self.mockDelegate;
 
+    self.scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
         UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
             builder.identifier = @"test identifier";
             builder.displayContent = [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
@@ -73,6 +76,7 @@
 }
 
 - (void)tearDown {
+    [self.mockDelegate stopMocking];
     [self.mockAdapter stopMocking];
 
     [super tearDown];
@@ -186,6 +190,9 @@
         [displayBlockCalled fulfill];
     }] display:OCMOCK_ANY];
 
+    [[self.mockDelegate expect] messageWillBeDisplayed:self.scheduleInfo.message];
+    [[self.mockDelegate expect] messageDismissed:self.scheduleInfo.message];
+
     __block BOOL executeCompletionCalled = NO;
 
     // Call to executeSchedule should execute display block
@@ -198,6 +205,7 @@
     // Ensure the delegate calls the execute completion block
     XCTAssertTrue(executeCompletionCalled);
     [self.mockAdapter verify];
+    [self.mockDelegate verify];
 }
 
 - (void)testDisplayLock {
