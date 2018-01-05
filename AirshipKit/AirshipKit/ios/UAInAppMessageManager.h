@@ -52,6 +52,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) id<UAInAppMessagingDelegate> delegate;
 
 /**
+ * Message display interval.
+ */
+@property(nonatomic, assign) NSTimeInterval displayInterval;
+
+/**
  * Allows setting factory blocks that builds InAppMessageAdapters for each given display type.
  *
  * @param displayType The display type.

@@ -34,6 +34,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy, nullable) NSDictionary *extras;
 
 /**
+* The display actions for the message.
+*/
+@property(nonatomic, copy, nullable) NSDictionary *actions;
+
+/**
  * The audience conditions for the messages.
  */
 @property(nonatomic, strong, nullable) UAInAppMessageAudience *audience;
@@ -74,6 +79,11 @@ NS_ASSUME_NONNULL_BEGIN
  * The extras for the messages.
  */
 @property(nonatomic, copy, nullable, readonly) NSDictionary *extras;
+
+/**
+ * Display actons.
+ */
+@property(nonatomic, copy, nullable, readonly) NSDictionary *actions;
 
 /**
  * The audience conditions for the messages.

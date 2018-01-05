@@ -56,10 +56,15 @@ NSString *const UAScheduleInfoInAppMessageKey = @"message";
 
 @end
 
+
 @implementation UAInAppMessageScheduleInfo
+@synthesize message = _message;
 
 - (UAInAppMessage *)message {
-    return [UAInAppMessage messageWithJSON:[NSJSONSerialization objectWithString:self.data] error:nil];
+    if (!_message) {
+        _message = [UAInAppMessage messageWithJSON:[NSJSONSerialization objectWithString:self.data] error:nil];
+    }
+    return _message;
 }
 
 + (instancetype)scheduleInfoWithBuilderBlock:(void(^)(UAInAppMessageScheduleInfoBuilder *builder))builderBlock {

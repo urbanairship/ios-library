@@ -28,6 +28,7 @@ extern NSString *const UAInAppMessageDisplayTypeKey;
 extern NSString *const UAInAppMessageDisplayContentKey;
 extern NSString *const UAInAppMessageExtrasKey;
 extern NSString *const UAInAppMessageAudienceKey;
+extern NSString *const UAInAppMessageActionsKey;
 
 extern NSString *const UAInAppMessageDisplayTypeBannerValue;
 extern NSString *const UAInAppMessageDisplayTypeFullScreenValue;

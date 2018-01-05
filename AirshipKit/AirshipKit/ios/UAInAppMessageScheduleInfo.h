@@ -39,7 +39,7 @@ extern NSString *const UAScheduleInfoInAppMessageKey;
 /**
  * Message to display when schedule is triggered.
  */
-@property(nonatomic, strong, nullable) UAInAppMessage *message;
+@property(nonatomic, readonly) UAInAppMessage *message;
 
 /**
  * Factory method to create an in-app message schedule info from a JSON payload.

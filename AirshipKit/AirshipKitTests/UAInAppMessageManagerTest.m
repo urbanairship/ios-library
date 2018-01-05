@@ -12,6 +12,7 @@
 #import "UAPush+Internal.h"
 #import "UAInAppMessageAudience.h"
 #import "UALocation+Internal.h"
+#import "UAActionRunner+Internal.h"
 
 @interface UAInAppMessageManagerTest : UABaseTest
 @property(nonatomic, strong) UAInAppMessageManager *manager;
@@ -21,7 +22,7 @@
 @property(nonatomic, strong) UAInAppMessageScheduleInfo *scheduleInfo;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) id mockPush;
-
+@property (nonatomic, strong) id mockActionRunner;
 @end
 
 @implementation UAInAppMessageManagerTest
@@ -35,7 +36,8 @@
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"UAInAppMessageManagerTest."];
     [self.dataStore removeAll];
     self.mockPush = [self mockForClass:[UAPush class]];
-    
+    self.mockActionRunner = [self mockForClass:[UAActionRunner class]];
+
     self.manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine
                                                     remoteDataManager:[self mockForClass:[UARemoteDataManager class]]
                                                             dataStore:self.dataStore
@@ -46,6 +48,8 @@
     self.scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
         UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
             builder.identifier = @"test identifier";
+            builder.actions = @{@"cool": @"story"};
+
             builder.displayContent = [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
                 builder.placement = UAInAppMessageBannerPlacementTop;
                 builder.buttonLayout = UAInAppMessageButtonLayoutTypeJoined;
@@ -244,6 +248,11 @@
         [displayBlockCalled fulfill];
     }] display:OCMOCK_ANY];
 
+    [[self.mockActionRunner expect] runActionsWithActionValues:self.scheduleInfo.message.actions
+                                                     situation:UASituationManualInvocation
+                                                      metadata:nil
+                                             completionHandler:OCMOCK_ANY];
+
     [[self.mockDelegate expect] messageWillBeDisplayed:self.scheduleInfo.message];
     [[self.mockDelegate expect] messageDismissed:self.scheduleInfo.message];
 
@@ -261,6 +270,7 @@
     XCTAssertTrue(executeCompletionCalled);
     [self.mockAdapter verify];
     [self.mockDelegate verify];
+    [self.mockActionRunner verify];
 }
 
 - (void)testDisplayLock {

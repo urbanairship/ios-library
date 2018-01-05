@@ -28,6 +28,7 @@
 @property(nonatomic, strong) UAInAppMessageDisplayContent *displayContent;
 @property(nonatomic, copy, nullable) NSDictionary *extras;
 @property(nonatomic, strong, nullable) UAInAppMessageAudience *audience;
+@property(nonatomic, copy, nullable) NSDictionary *actions;
 @end
 
 @implementation UAInAppMessage
@@ -40,6 +41,7 @@ NSString *const UAInAppMessageDisplayTypeKey = @"display_type";
 NSString *const UAInAppMessageDisplayContentKey = @"display";
 NSString *const UAInAppMessageExtrasKey = @"extras";
 NSString *const UAInAppMessageAudienceKey = @"audience";
+NSString *const UAInAppMessageActionsKey = @"actions";
 
 NSString *const UAInAppMessageDisplayTypeBannerValue = @"banner";
 NSString *const UAInAppMessageDisplayTypeFullScreenValue = @"fullscreen";
@@ -135,6 +137,20 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
         }
         builder.extras = extras;
     }
+
+    id actions = json[UAInAppMessageActionsKey];
+    if (actions) {
+        if (![actions isKindOfClass:[NSDictionary class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Message actions must be a dictionary. Invalid value: %@", actions];
+                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                              code:UAInAppMessageErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        }
+        builder.actions = actions;
+    }
     
     id audienceDict = json[UAInAppMessageAudienceKey];
     if (audienceDict) {
@@ -187,6 +203,7 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
         self.displayContent = builder.displayContent;
         self.extras = builder.extras;
         self.audience = builder.audience;
+        self.actions = builder.actions;
     }
 
     return self;
@@ -219,6 +236,7 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
     [data setValue:[self.displayContent toJSON] forKey:UAInAppMessageDisplayContentKey];
     [data setValue:[self.audience toJSON] forKey:UAInAppMessageAudienceKey];
     [data setValue:self.extras forKey:UAInAppMessageExtrasKey];
+    [data setValue:self.actions forKey:UAInAppMessageActionsKey];
 
     return [data copy];
 }
@@ -238,6 +256,10 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
     }
 
     if (self.audience != message.audience && ![self.audience isEqual:message.audience]) {
+        return NO;
+    }
+
+    if (self.actions != message.actions && ![self.actions isEqualToDictionary:message.actions]) {
         return NO;
     }
 
@@ -262,6 +284,7 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
     result = 31 * result + [self.displayContent hash];
     result = 31 * result + [self.extras hash];
     result = 31 * result + [self.audience hash];
+    result = 31 * result + [self.actions hash];
 
     return result;
 }

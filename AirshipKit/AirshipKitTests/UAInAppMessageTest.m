@@ -24,7 +24,8 @@
                                 },
                   @"display_type": UAInAppMessageDisplayTypeBannerValue,
                   @"extras": @{@"foo":@"baz", @"baz":@"foo"},
-                  @"audience": @{@"new_user" : @YES}
+                  @"audience": @{@"new_user" : @YES},
+                  @"actions": @{@"cool":@"story"}
                   };
     
     // test
@@ -38,6 +39,7 @@
     XCTAssertEqual(UAInAppMessageDisplayTypeBanner, messageFromOriginalJSON.displayType);
     XCTAssertEqualObjects(@"baz",messageFromOriginalJSON.extras[@"foo"]);
     XCTAssertEqualObjects(@"foo",messageFromOriginalJSON.extras[@"baz"]);
+    XCTAssertEqualObjects(@"story",messageFromOriginalJSON.actions[@"cool"]);
     XCTAssertEqualObjects(@YES, messageFromOriginalJSON.audience.isNewUser);
 
     NSDictionary *toJSON = [messageFromOriginalJSON toJSON];

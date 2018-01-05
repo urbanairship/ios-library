@@ -20,11 +20,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAInAppMessageManager ()
 
 /**
-* Display lock interval.
-*/
-@property(nonatomic, assign) NSTimeInterval displayInterval;
-
-/**
  * Init method.
  *
  * @param automationEngine Automation engine.

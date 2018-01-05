@@ -15,6 +15,7 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAAsyncOperation+Internal.h"
+#import "UAActionRunner+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -168,10 +169,17 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
 }
 
 - (void)unlockDisplayAfter:(NSTimeInterval)interval {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(interval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        self.isDisplayLocked = false;
-        [self.automationEngine scheduleConditionsChanged];
-    });
+    if (interval > 0) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(interval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            self.isDisplayLocked = false;
+            [self.automationEngine scheduleConditionsChanged];
+        });
+    } else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.isDisplayLocked = false;
+            [self.automationEngine scheduleConditionsChanged];
+        });
+    }
 }
 
 - (void)lockDisplay {
@@ -262,6 +270,17 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
     UA_WEAKIFY(self);
     [scheduleData.adapter display:^{
         UA_STRONGIFY(self);
+        UA_LDEBUG(@"Schedule %@ finished displaying", schedule.identifier);
+
+        if (info.message.actions) {
+            [UAActionRunner runActionsWithActionValues:info.message.actions
+                                             situation:UASituationManualInvocation
+                                              metadata:nil
+                                     completionHandler:^(UAActionResult *result) {
+                                         UA_LTRACE(@"Finished running actions for schedule %@", schedule.identifier);
+                                     }];
+        }
+
         // Start timer to unlock display after display interval
         [self unlockDisplayAfter:self.displayInterval];
         [self.scheduleData removeObjectForKey:schedule.identifier];
