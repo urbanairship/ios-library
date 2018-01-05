@@ -87,6 +87,7 @@
 #import "UAInAppMessageFullScreenDisplayContent.h"
 #import "UAInAppMessageManager.h"
 #import "UAInAppMessageMediaInfo.h"
+#import "UAInAppMessageModalDisplayContent.h"
 #import "UAInAppMessageScheduleEdits.h"
 #import "UAInAppMessageScheduleInfo.h"
 #import "UAInAppMessageTagSelector.h"
