@@ -4,6 +4,8 @@
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAInAppMessageButtonView+Internal.h"
 
+NSString *const UADefaultSerifFont = @"Times New Roman";
+
 @implementation UAInAppMessageUtils
 
 + (void)applyButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo button:(UAInAppMessageButton *)button {
@@ -142,7 +144,7 @@
 }
 
 + (UIFont *)fontWithTextInfo:(UAInAppMessageTextInfo *)textInfo {
-    UIFont *font = [UAInAppMessageUtils fontWithFontFamilies:textInfo.fontFamilies size:textInfo.size];
+    NSString *fontFamily = [UAInAppMessageUtils resolveFontFamily:textInfo.fontFamilies];
 
     UIFontDescriptorSymbolicTraits traits = 0;
 
@@ -154,38 +156,39 @@
         traits = traits | UIFontDescriptorTraitItalic;
     }
 
-    UIFontDescriptor *styledFontDescriptor = [font.fontDescriptor
-                                              fontDescriptorWithSymbolicTraits:traits];
+    id attributes = @{ UIFontDescriptorFamilyAttribute: fontFamily,
+                       UIFontDescriptorTraitsAttribute: @{UIFontSymbolicTrait: [NSNumber numberWithInteger:traits] }};
 
-    // Replace font with correct face, leave the size set
-    font = [UIFont fontWithDescriptor:styledFontDescriptor size:0];
+    UIFontDescriptor *fontDescriptor = [UIFontDescriptor fontDescriptorWithFontAttributes:attributes];
 
-    return font;
+    return [UIFont fontWithDescriptor:fontDescriptor size:textInfo.size];
 }
 
-
-+ (UIFont *)fontWithFontFamilies:(NSArray<NSString *> *)fontFamilies size:(CGFloat)size {
++ (NSString *)resolveFontFamily:(NSArray *)fontFamilies {
     for (id fontFamily in fontFamilies) {
         if (![fontFamily isKindOfClass:[NSString class]]) {
             continue;
         }
 
-        NSArray<NSString *> *fontNames = [UIFont fontNamesForFamilyName:fontFamily];
+        NSString *family = fontFamily;
 
-        UIFont *font;
+        if ([fontFamily caseInsensitiveCompare:@"serif"] == NSOrderedSame) {
+            family = UADefaultSerifFont;
+        }
 
-        for (NSString *fontName in fontNames) {
-            font = [UIFont fontWithName:fontName size:size];
+        if ([fontFamily caseInsensitiveCompare:@"sans-serif"] == NSOrderedSame) {
+            family = [UIFont systemFontOfSize:[UIFont systemFontSize]].familyName;
+        }
 
-            // Return first valid font
-            if (font) {
-                return font;
-            }
+        if ([UIFont fontNamesForFamilyName:family].count) {
+            return family;
         }
     }
 
-    UA_LDEBUG(@"No valid font available, returning system font");
-    return [UIFont systemFontOfSize:size];
+    UA_LDEBUG(@"Unable to find any available font families %@. Defaulting to system font.", fontFamilies);
+    return [UIFont systemFontOfSize:[UIFont systemFontSize]].familyName;
 }
+
+
 
 @end
