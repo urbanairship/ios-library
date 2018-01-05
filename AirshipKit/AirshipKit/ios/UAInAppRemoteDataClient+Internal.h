@@ -14,7 +14,17 @@
  */
 @interface UAInAppRemoteDataClient : NSObject
 
+/**
+ * New user cut off time. Any schedules that have
+ * a new user condition will be dropped if the schedule create time is after the
+ * cut off time.
+ */
 @property (nonatomic, strong) NSDate *scheduleNewUserCutOffTime;
+
+/**
+ * Operation queue. Exposed for testing.
+ */
+@property (nonatomic, readonly) NSOperationQueue *operationQueue;
 
 /**
  * Create a remote data client for in-app messaging.

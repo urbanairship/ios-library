@@ -134,7 +134,7 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
     [self.automationEngine schedule:scheduleInfo completionHandler:completionHandler];;
 }
 
-- (void)scheduleMessagesWithScheduleInfo:(NSArray<UAInAppMessageScheduleInfo *> *)scheduleInfos completionHandler:(void (^)(void))completionHandler {
+- (void)scheduleMessagesWithScheduleInfo:(NSArray<UAInAppMessageScheduleInfo *> *)scheduleInfos completionHandler:(void (^)(NSArray <UASchedule *> *))completionHandler {
     [self.automationEngine scheduleMultiple:scheduleInfos completionHandler:completionHandler];
 }
 

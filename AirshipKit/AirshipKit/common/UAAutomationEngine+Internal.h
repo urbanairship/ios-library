@@ -133,7 +133,7 @@ typedef NS_ENUM(NSUInteger, UAScheduleState) {
  * Note: If any schedule info is invalid, that schedule won't be scheduled and it will be [NSNull null] in the schedules
  *       returned in the completionHandler.
  */
-- (void)scheduleMultiple:(NSArray<UAScheduleInfo *> *)scheduleInfos completionHandler:(void (^)(void))completionHandler;
+- (void)scheduleMultiple:(NSArray<UAScheduleInfo *> *)scheduleInfos completionHandler:(void (^)(NSArray <UASchedule *> *))completionHandler;
 
 /**
  * Called when one of the schedule conditions changes.

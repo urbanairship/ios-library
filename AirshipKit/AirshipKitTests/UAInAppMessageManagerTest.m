@@ -411,10 +411,10 @@
     [[[self.mockAutomationEngine expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void (^completionHandler)(void) = (__bridge void (^)(void))arg;
+        void (^completionHandler)(NSArray *) = (__bridge void (^)(NSArray *))arg;
         
         if (completionHandler) {
-            completionHandler();
+            completionHandler(@[]);
         }
     }] scheduleMultiple:[OCMArg checkWithBlock:^BOOL(NSArray<UAInAppMessageScheduleInfo *> *scheduleInfos) {
         return [scheduleInfos isEqualToArray:submittedScheduleInfos];
@@ -422,8 +422,9 @@
     
     // test
     __block BOOL completionHandlerCalled = NO;
-    [self.manager scheduleMessagesWithScheduleInfo:submittedScheduleInfos completionHandler:^(void) {
+    [self.manager scheduleMessagesWithScheduleInfo:submittedScheduleInfos completionHandler:^(NSArray<UASchedule *> *schedules) {
         completionHandlerCalled = YES;
+
     }];
     
     // verify

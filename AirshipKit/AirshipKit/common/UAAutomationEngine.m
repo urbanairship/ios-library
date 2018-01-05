@@ -188,7 +188,7 @@
     }];
 }
 
-- (void)scheduleMultiple:(NSArray<UAScheduleInfo *> *)scheduleInfos completionHandler:(void (^)(void))completionHandler {
+- (void)scheduleMultiple:(NSArray<UAScheduleInfo *> *)scheduleInfos completionHandler:(void (^)(NSArray <UASchedule *> *))completionHandler {
     [self cleanSchedules];
 
     // Create schedules to save (only allow valid schedules)
@@ -202,13 +202,13 @@
 
     if (!schedules.count) {
         // don't save if there are no schedules
-        completionHandler();
+        completionHandler(@[]);
     } else {
         // Try to save the schedules
         [self.automationStore saveSchedules:schedules limit:self.scheduleLimit completionHandler:^(BOOL success) {
             if (completionHandler) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    completionHandler();
+                    completionHandler(schedules);
                 });
             }
         }];

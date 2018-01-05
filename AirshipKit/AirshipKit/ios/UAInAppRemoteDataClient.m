@@ -12,27 +12,19 @@
 #import "UAInAppMessageManager.h"
 #import "UAInAppMessageAudienceChecks+Internal.h"
 #import "UAPush+Internal.h"
+#import "UAInAppMessageScheduleEdits+Internal.h"
+#import "UAScheduleEdits+Internal.h"
 
 NSString * const UAInAppMessages = @"in_app_messages";
 NSString * const UAInAppMessagesCreatedJSONKey = @"created";
 NSString * const UAInAppMessagesUpdatedJSONKey = @"last_updated";
 
 @interface UAInAppRemoteDataClient()
-/**
- * The in app message scheduler.
- */
-@property (nonatomic,strong) UAInAppMessageManager *inAppMessageScheduler;
-
-/**
- * The SDK preferences data store.
- */
+@property (nonatomic,strong) UAInAppMessageManager *inAppMessageManager;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
-
-/**
- * The subscription for remote data.
- */
 @property (nonatomic, strong) UADisposable *remoteDataSubscription;
-
+@property (nonatomic, copy) NSDictionary *scheduleIDMap;
+@property (nonatomic, strong) NSOperationQueue *operationQueue;
 @end
 
 @implementation UAInAppRemoteDataClient
@@ -48,26 +40,25 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
     
     self = [self init];
     if (self) {
-        self.inAppMessageScheduler = scheduler;
+        self.operationQueue = [[NSOperationQueue alloc] init];
+        self.operationQueue.maxConcurrentOperationCount = 1;
+
+        self.inAppMessageManager = scheduler;
         self.dataStore = dataStore;
         UA_WEAKIFY(self);
         self.remoteDataSubscription = [remoteDataManager subscribeWithTypes:@[UAInAppMessages]
                                                                       block:^(NSArray<UARemoteDataPayload *> * _Nonnull messagePayloads) {
                                                                           UA_STRONGIFY(self);
-                                                                          // get the array of messages from the remote data
-                                                                          if (messagePayloads.count) {
-                                                                              UARemoteDataPayload *messagePayload = messagePayloads[0];
-                                                                              if (![messagePayload.type isEqualToString:UAInAppMessages]) {
-                                                                                  return;
-                                                                              }
-                                                                              
-                                                                              [self processInAppMessageData:messagePayload];
-                                                                          }
+                                                                          [self.operationQueue addOperationWithBlock:^{
+                                                                              UA_STRONGIFY(self);
+                                                                              [self processInAppMessageData:[messagePayloads firstObject]];
+                                                                          }];
                                                                       }];
         if (!self.scheduleNewUserCutOffTime) {
             self.scheduleNewUserCutOffTime = (push.channelID) ? [NSDate distantPast] : [NSDate date];
         }
     }
+
     return self;
 }
 
@@ -86,7 +77,15 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
 }
 
 - (void)processInAppMessageData:(UARemoteDataPayload *)messagePayload {
-    // get the in-app message data, if it exists
+    NSDate *thisPayloadTimeStamp = messagePayload.timestamp;
+    NSDate *lastUpdate = [self.dataStore objectForKey:UAInAppMessagesLastPayloadTimeStampKey] ?: [NSDate distantPast];
+
+    // Skip if the payload timestamp is same as the last updated timestamp
+    if ([thisPayloadTimeStamp isEqualToDate:lastUpdate]) {
+        return;
+    }
+
+    // Get the in-app message data, if it exists
     NSArray *messages;
     NSDictionary *messageData = messagePayload.data;
     if (!messageData || !messageData[UAInAppMessages] || ![messageData[UAInAppMessages] isKindOfClass:[NSArray class]]) {
@@ -95,23 +94,14 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
         messages = messageData[UAInAppMessages];
     }
 
-    // get the payload's last modified timestamp
-    NSDate *thisPayloadTimeStamp = messagePayload.timestamp;
-    
-    // get last updated time and current in-app message ids from the datastore
-    NSDate *lastUpdate = [self.dataStore objectForKey:UAInAppMessagesLastPayloadTimeStampKey] ?: [NSDate distantPast];
-    
-    // skip if payload timestamp hasn't changed
-    if ([thisPayloadTimeStamp isEqualToDate:lastUpdate]) {
-        return;
-    }
-    
-    NSArray<NSString *> *currentMessageIDs = [[self getScheduledMessageIDs] copy];
-    
+    __block NSMutableDictionary *scheduleIDMap = [NSMutableDictionary dictionaryWithDictionary:self.scheduleIDMap];
     NSMutableArray<NSString *> *messageIDs = [NSMutableArray array];
     NSMutableArray<UAInAppMessageScheduleInfo *> *newSchedules = [NSMutableArray array];
-    
-    // validate messages and create new schedules
+
+    // Dispatch group
+    dispatch_group_t dispatchGroup = dispatch_group_create();
+
+    // Validate messages and create new schedules
     for (NSDictionary *message in messages) {
         NSDate *createdTimeStamp = [UAUtils parseISO8601DateFromString:message[UAInAppMessagesCreatedJSONKey]];
         NSDate *lastUpdatedTimeStamp = [UAUtils parseISO8601DateFromString:message[UAInAppMessagesUpdatedJSONKey]];
@@ -127,51 +117,112 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
         }
         
         [messageIDs addObject:messageID];
-        
+
+        // Ignore any messages that have not updated since the last payload
+        if ([lastUpdate compare:lastUpdatedTimeStamp] != NSOrderedAscending) {
+            continue;
+        }
+
+        // If we do not have a schedule ID for the message ID, try to look it up first
+        if (!scheduleIDMap[messageID]) {
+            dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+            [self.inAppMessageManager getSchedulesWithMessageID:messageID completionHandler:^(NSArray<UASchedule *> *schedules) {
+                dispatch_semaphore_signal(semaphore);
+
+                // Make sure we only have a single schedule for the message ID
+                if (schedules.count == 1) {
+                    scheduleIDMap[messageID] = schedules[0].identifier;
+                }
+            }];
+            dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+        }
+
         if ([createdTimeStamp compare:lastUpdate] == NSOrderedDescending) {
-            // this is a new message
-            if ([currentMessageIDs containsObject:messageID]) {
-                // it's an error if there are already schedules for this message - skip
-                continue;
-            }
+            // New in-app message
             NSError *error;
             UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithJSON:message error:&error];
             if (!scheduleInfo || error) {
                 UA_LERR(@"Failed to parse in-app message: %@ - %@", message, error);
                 continue;
             }
-            NSDate *createdTimeStamp = [UAUtils parseISO8601DateFromString:message[UAInAppMessagesCreatedJSONKey]];
+
             if ([self checkSchedule:scheduleInfo createdTimeStamp:createdTimeStamp]) {
                 [newSchedules addObject:scheduleInfo];
             }
-        } else if (lastUpdatedTimeStamp > lastUpdate) {
-            // TODO: updates - Implement equivalent to Android SDK
+        } else if (scheduleIDMap[messageID]) {
+            // Update
+            __block NSError *error;
+            UAInAppMessageScheduleEdits *edits = [UAInAppMessageScheduleEdits editsWithBuilderBlock:^(UAInAppMessageScheduleEditsBuilder *builder) {
+                [builder applyFromJson:message error:&error];
+                if (!builder.end) {
+                    builder.end = [NSDate distantFuture];
+                }
+            }];
+
+            if (!edits || error) {
+                UA_LERR(@"Failed to parse in-app message edits: %@ - %@", message, error);
+                continue;
+            }
+
+            dispatch_group_enter(dispatchGroup);
+            [self.inAppMessageManager editScheduleWithID:scheduleIDMap[messageID]
+                                                     edits:edits
+                                         completionHandler:^(UASchedule *schedule) {
+                                             dispatch_group_leave(dispatchGroup);
+                                             if (schedule) {
+                                                 UA_LTRACE("Updated in-app message: %@", messageID);
+                                             }
+                                         }];
         }
     }
-    
-    // get list of deleted messages which are messages that arrived in an earlier remote data, but no longer exist
-    NSMutableArray<NSString *> *deletedMessageIDs = [NSMutableArray arrayWithArray:[self getScheduledMessageIDs]];
+
+
+    // End any messages that are no longer in the listing
+    NSMutableArray<NSString *> *deletedMessageIDs = [NSMutableArray arrayWithArray:scheduleIDMap.allKeys];
     [deletedMessageIDs removeObjectsInArray:messageIDs];
-    
-    // cancel deleted messages
+
     if (deletedMessageIDs.count) {
+        UAInAppMessageScheduleEdits *edits = [UAInAppMessageScheduleEdits editsWithBuilderBlock:^(UAInAppMessageScheduleEditsBuilder *builder) {
+            builder.end = [NSDate distantPast];
+        }];
+
         for (NSString *messageID in deletedMessageIDs) {
-            [self.inAppMessageScheduler cancelMessagesWithID:messageID];
+            dispatch_group_enter(dispatchGroup);
+            [self.inAppMessageManager editScheduleWithID:scheduleIDMap[messageID]
+                                                     edits:edits
+                                         completionHandler:^(UASchedule *schedule) {
+                                             dispatch_group_leave(dispatchGroup);
+                                             if (schedule) {
+                                                 UA_LTRACE("Ended in-app message: %@", messageID);
+                                             }
+                                         }];
         }
     }
-    
-    // schedule new messages, and save all remaining message ids and the payload time stamp
+
+    // New messages
     if (newSchedules.count) {
-        UA_WEAKIFY(self);
-        [self.inAppMessageScheduler scheduleMessagesWithScheduleInfo:newSchedules completionHandler:^(void) {
-            UA_STRONGIFY(self);
-            [self setScheduledMessageIDs:messageIDs];
-            [self.dataStore setObject:thisPayloadTimeStamp forKey:UAInAppMessagesLastPayloadTimeStampKey];
+        dispatch_group_enter(dispatchGroup);
+
+        [self.inAppMessageManager scheduleMessagesWithScheduleInfo:newSchedules completionHandler:^(NSArray<UASchedule *> *schedules) {
+            for (UASchedule *schedule in schedules) {
+                if (!schedule) {
+                    continue;
+                }
+                UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
+                UA_LTRACE(@"Scheduled new in-app messages: %@", info.message.identifier);
+                scheduleIDMap[info.message.identifier] = schedule.identifier;
+            }
+
+            dispatch_group_leave(dispatchGroup);
         }];
-    } else {
-        [self setScheduledMessageIDs:messageIDs];
-        [self.dataStore setObject:thisPayloadTimeStamp forKey:UAInAppMessagesLastPayloadTimeStampKey];
-   }
+    }
+
+    // Wait for everything to finish
+    dispatch_group_wait(dispatchGroup,  DISPATCH_TIME_FOREVER);
+
+    // Save state
+    self.scheduleIDMap = scheduleIDMap;
+    [self.dataStore setObject:thisPayloadTimeStamp forKey:UAInAppMessagesLastPayloadTimeStampKey];
 }
 
 - (BOOL)checkSchedule:(UAInAppMessageScheduleInfo *)scheduleInfo createdTimeStamp:(NSDate *)createdTimeStamp {
@@ -180,45 +231,19 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
     return [UAInAppMessageAudienceChecks checkAudience:audience isNewUser:isNewUser];
 }
 
-/**
- * Gets the stored scheduled message IDs.
- *
- * @return The list of scheduled message IDs.
- */
-- (NSArray<NSString *> *)getScheduledMessageIDs {
-    NSArray<NSString *> *scheduledMessageIDs = [self.dataStore arrayForKey:UAInAppMessagesScheduledMessagesKey];
-    if (!scheduledMessageIDs) {
-        scheduledMessageIDs = [NSArray array];
-    }
-    
-    return scheduledMessageIDs;
+- (void)setScheduleIDMap:(NSDictionary *)scheduleIDMap {
+    [self.dataStore setObject:scheduleIDMap forKey:UAInAppMessagesScheduledMessagesKey];
 }
 
-/**
- * Sets the stored scheduled message IDs.
- *
- * @param messageIDs The list of scheduled message IDs.
- */
-- (void)setScheduledMessageIDs:(NSArray<NSString *> *)messageIDs {
-    [self.dataStore setObject:messageIDs forKey:UAInAppMessagesScheduledMessagesKey];
+- (NSDictionary *)scheduleIDMap {
+    return [self.dataStore dictionaryForKey:UAInAppMessagesScheduledMessagesKey];
 }
 
-/**
- * Gets the stored schedule new user cut off time.
- *
- * @return The new user cut off time.
- */
 - (NSDate *)scheduleNewUserCutOffTime {
     return [self.dataStore objectForKey:UAInAppMessagesScheduledNewUserCutoffTimeKey];
 }
 
-/**
- * Sets the schedule new user cut off time. Any schedules that have
- * a new user condition will be dropped if the schedule create time is after the
- * cut off time.
- *
- * @param time The schedule new user cut off time.
- */- (void)setScheduleNewUserCutOffTime:(NSDate *)time {
+- (void)setScheduleNewUserCutOffTime:(NSDate *)time {
     [self.dataStore setObject:time forKey:UAInAppMessagesScheduledNewUserCutoffTimeKey];
 }
 

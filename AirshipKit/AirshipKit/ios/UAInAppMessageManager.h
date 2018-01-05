@@ -76,7 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param completionHandler The completion handler to be called when scheduling completes.
  */
 - (void)scheduleMessagesWithScheduleInfo:(NSArray<UAInAppMessageScheduleInfo *> *)scheduleInfos
-                       completionHandler:(void (^)(void))completionHandler;
+                       completionHandler:(void (^)(NSArray <UASchedule *> *))completionHandler;
 
 /**
  * Cancels an in-app message via its schedule info.

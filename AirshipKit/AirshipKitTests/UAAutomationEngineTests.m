@@ -117,7 +117,7 @@
     }] limit:UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT completionHandler:OCMOCK_ANY];
     
     // test
-    [self.automationEngine scheduleMultiple:submittedSchedules completionHandler:^(void) {
+    [self.automationEngine scheduleMultiple:submittedSchedules completionHandler:^(NSArray<UASchedule *> *schedules) {
         [completionHandlerCalledExpectation fulfill];
     }];
     
