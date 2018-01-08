@@ -4,4 +4,6 @@
 
 @interface UAInAppMessageCloseButton : UIButton
 
+@property (nonatomic,strong) UIColor *dismissButtonColor;
+
 @end

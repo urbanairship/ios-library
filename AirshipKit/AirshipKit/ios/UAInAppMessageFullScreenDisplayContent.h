@@ -15,17 +15,17 @@ NS_ASSUME_NONNULL_BEGIN
  */
 typedef NS_ENUM(NSInteger, UAInAppMessageFullScreenContentLayoutType) {
     /**
-     * Media on the left
+     * Header, Media, Body
      */
     UAInAppMessageFullScreenContentLayoutHeaderMediaBody,
 
     /**
-     * Media on the right
+     * Media, Header, Body
      */
     UAInAppMessageFullScreenContentLayoutMediaHeaderBody,
 
     /**
-     * Media on the right
+     * Header, Body, Media
      */
     UAInAppMessageFullScreenContentLayoutHeaderBodyMedia,
 };

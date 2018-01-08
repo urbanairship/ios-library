@@ -170,8 +170,13 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
             }
             return nil;
         }
+    } else {
+        // default is different if more than 2 buttons
+        if (builder.buttons.count > 2) {
+            builder.buttonLayout = UAInAppMessageButtonLayoutTypeStacked;
+        }
     }
-    
+
     id layoutContents = json[UAInAppMessageContentLayoutKey];
     if (layoutContents) {
         if (![layoutContents isKindOfClass:[NSString class]]) {
@@ -267,10 +272,7 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
         self.media = builder.media;
         self.footer = builder.footer;
         self.buttons = builder.buttons;
-        if (self.buttons.count > 2) {
-            self.buttonLayout = UAInAppMessageButtonLayoutTypeStacked;
-        }
-
+        self.buttonLayout = builder.buttonLayout;
         self.contentLayout = builder.contentLayout;
         self.backgroundColor = builder.backgroundColor;
         self.dismissButtonColor = builder.dismissButtonColor;

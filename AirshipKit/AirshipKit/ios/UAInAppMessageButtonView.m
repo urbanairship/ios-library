@@ -12,9 +12,8 @@
 NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
 
 @interface UAInAppMessageButtonView ()
-@property(nonatomic, strong) NSString *buttonLayout;
+
 @property (strong, nonatomic) IBOutlet UIStackView *buttonContainer;
-@property (strong, nonatomic) UIColor *dismissButtonColor;
 
 @end
 
@@ -23,20 +22,17 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
 + (instancetype)buttonViewWithButtons:(NSArray<UAInAppMessageButtonInfo *> *)buttons
                                layout:(UAInAppMessageButtonLayoutType)layout
                                target:(id)target
-                             selector:(SEL)selector
-                   dismissButtonColor:(UIColor *)dismissButtonColor {
+                             selector:(SEL)selector {
     return [[UAInAppMessageButtonView alloc] initWithButtons:buttons
                                                       layout:layout
                                                       target:target
-                                                    selector:selector
-                                          dismissButtonColor:dismissButtonColor];
+                                                    selector:selector];
 }
 
 - (instancetype)initWithButtons:(NSArray<UAInAppMessageButtonInfo *> *)buttons
                          layout:(UAInAppMessageButtonLayoutType)layout
                          target:(id)target
-                       selector:(SEL)selector
-             dismissButtonColor:(UIColor *)dismissButtonColor {
+                       selector:(SEL)selector {
 
     self = [super init];
 
@@ -57,7 +53,6 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
     }
 
     if (self) {
-        self.dismissButtonColor = dismissButtonColor;
         self.translatesAutoresizingMaskIntoConstraints = NO;
         [self addButtons:buttons layout:layout target:target selector:selector];
     }
@@ -106,12 +101,7 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
         [UAInAppMessageUtils applyButtonInfo:buttonInfo button:button];
         [button addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
 
-        // Customize button background color if it has dismiss behavior, otherwise fall back to button color
-        if (buttonInfo.behavior == UAInAppMessageButtonInfoBehaviorDismiss) {
-            button.backgroundColor = self.dismissButtonColor ?: buttonInfo.backgroundColor;
-        } else {
-            button.backgroundColor = buttonInfo.backgroundColor;
-        }
+        button.backgroundColor = buttonInfo.backgroundColor;
 
         [self.buttonContainer addArrangedSubview:button];
         [self.buttonContainer layoutIfNeeded];

@@ -4,8 +4,15 @@
 
 @implementation UAInAppMessageCloseButton
 
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+    if (self = [super initWithCoder:aDecoder]) {
+        self.dismissButtonColor = [UIColor darkGrayColor];
+    }
+    return self;
+}
+
 - (void)drawRect:(CGRect)rect {
-    UIColor *strokeColor = [UIColor darkGrayColor];
+    UIColor *strokeColor = self.dismissButtonColor;
 
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetFillColorWithColor(context, [UIColor clearColor].CGColor);

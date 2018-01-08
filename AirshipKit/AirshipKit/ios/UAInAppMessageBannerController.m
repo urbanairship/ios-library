@@ -127,7 +127,6 @@ double const MinimumSwipeVelocity = 100.0;
 
     NSArray<UAInAppMessageButtonInfo *> *buttons = self.displayContent.buttons;
     UAInAppMessageButtonLayoutType buttonLayout = self.displayContent.buttonLayout;
-    UIColor *dismissColor = self.displayContent.dismissButtonColor;
 
     if (!parentView) {
         UA_LDEBUG(@"Unable to find parent view, canceling in-app message banner display");
@@ -146,8 +145,7 @@ double const MinimumSwipeVelocity = 100.0;
         buttonView = [UAInAppMessageButtonView buttonViewWithButtons:buttons
                                                               layout:buttonLayout
                                                               target:self
-                                                            selector:@selector(buttonTapped:)
-                                                  dismissButtonColor:dismissColor];
+                                                            selector:@selector(buttonTapped:)];
     }
 
     self.bannerView = [UAInAppMessageBannerView bannerMessageViewWithDisplayContent:self.displayContent
