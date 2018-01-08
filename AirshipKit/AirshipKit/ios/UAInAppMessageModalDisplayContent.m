@@ -34,7 +34,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
 }
 
 - (BOOL)isValid {
-    if (self.heading == nil && self.body == nil) {
+    if (!self.heading && !self.body) {
         UA_LERR(@"Modal display must have either its body or heading defined.");
         return NO;
     }

@@ -143,7 +143,10 @@
 }
 
 - (void)testIsScheduleReadyNoFactorySet {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     [self.manager setFactoryBlock:nil forDisplayType:UAInAppMessageDisplayTypeBanner];
+#pragma clang diagnostic pop
     
     [[[self mockAutomationEngine] expect] cancelScheduleWithID:@"test IAM schedule"];
 

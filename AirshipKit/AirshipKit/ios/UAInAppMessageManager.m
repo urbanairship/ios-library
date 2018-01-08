@@ -7,6 +7,7 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAInAppMessageBannerAdapter.h"
 #import "UAInAppMessageFullScreenAdapter.h"
+#import "UAInAppMessageModalAdapter.h"
 #import "UAGlobal.h"
 #import "UAConfig.h"
 #import "UAInAppRemoteDataClient+Internal.h"
@@ -120,6 +121,11 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
     [self setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
         return [UAInAppMessageFullScreenAdapter adapterForMessage:message];
     } forDisplayType:UAInAppMessageDisplayTypeFullScreen];
+
+    // Modal
+    [self setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
+        return [UAInAppMessageModalAdapter adapterForMessage:message];
+    } forDisplayType:UAInAppMessageDisplayTypeModal];
 }
 
 - (void)getScheduleWithID:(NSString *)identifier completionHandler:(void (^)(UASchedule *))completionHandler {

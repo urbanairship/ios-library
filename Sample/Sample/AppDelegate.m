@@ -76,7 +76,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(refreshMessageCenterBadge)
                                                  name:UAInboxMessageListUpdatedNotification object:nil];
-    [UAirship setLogLevel:UALogLevelTrace];
 
     return YES;
 }

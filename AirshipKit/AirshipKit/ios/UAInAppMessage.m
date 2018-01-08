@@ -3,6 +3,7 @@
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 #import "UAInAppMessageFullScreenDisplayContent+Internal.h"
+#import "UAInAppMessageModalDisplayContent+Internal.h"
 #import "UAInAppMessageAudience+Internal.h"
 #import "UAGlobal.h"
 
@@ -100,8 +101,7 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
             } else if ([UAInAppMessageDisplayTypeFullScreenValue isEqualToString:displayTypeStr]) {
             	builder.displayContent = [UAInAppMessageFullScreenDisplayContent displayContentWithJSON:displayContentDict error:error];
             } else if ([UAInAppMessageDisplayTypeModalValue isEqualToString:displayTypeStr]) {
-                // TODO uncomment this when modal is implemented see banner above for example
-                //builder.displayContent = [UAInAppMessageModalDisplayContent displayContentWithJSON:displayContentDict error:error];
+                builder.displayContent = [UAInAppMessageModalDisplayContent displayContentWithJSON:displayContentDict error:error];
             } else if ([UAInAppMessageDisplayTypeHTMLValue isEqualToString:displayTypeStr]) {
                 // TODO uncomment this when modal is implemented see banner above for example
                 //builder.displayContent = [UAInAppMessageHTMLDisplayContent displayContentWithJSON:displayContentDict error:error];
