@@ -33,6 +33,8 @@
 @end
 
 @implementation UAInAppMessage
+@synthesize campaigns = _campaigns;
+@synthesize source = _source;
 
 NSString * const UAInAppMessageErrorDomain = @"com.urbanairship.in_app_message";
 
@@ -43,6 +45,8 @@ NSString *const UAInAppMessageDisplayContentKey = @"display";
 NSString *const UAInAppMessageExtrasKey = @"extras";
 NSString *const UAInAppMessageAudienceKey = @"audience";
 NSString *const UAInAppMessageActionsKey = @"actions";
+NSString *const UAInAppMessageCampaignsKey = @"campaigns";
+NSString *const UAInAppMessageSourceKey = @"source";
 
 NSString *const UAInAppMessageDisplayTypeBannerValue = @"banner";
 NSString *const UAInAppMessageDisplayTypeFullScreenValue = @"fullscreen";
@@ -50,7 +54,16 @@ NSString *const UAInAppMessageDisplayTypeModalValue = @"modal";
 NSString *const UAInAppMessageDisplayTypeHTMLValue = @"html";
 NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
 
+NSString *const UAInAppMessageSourceAppDefinedValue = @"app-defined";
+NSString *const UAInAppMessageSourceRemoteDataValue = @"remote-data";
+NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
+
+
 + (instancetype)messageWithJSON:(NSDictionary *)json error:(NSError * _Nullable *)error {
+    return [UAInAppMessage messageWithJSON:json defaultSource:UAInAppMessageSourceAppDefined error:error];
+}
+
++ (instancetype)messageWithJSON:(NSDictionary *)json defaultSource:(UAInAppMessageSource)defaultSource error:(NSError * _Nullable *)error {
     UAInAppMessageBuilder *builder = [[UAInAppMessageBuilder alloc] init];
     
     if (![json isKindOfClass:[NSDictionary class]]) {
@@ -147,9 +160,27 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
                                               code:UAInAppMessageErrorCodeInvalidJSON
                                           userInfo:@{NSLocalizedDescriptionKey:msg}];
             }
+
             return nil;
         }
+
         builder.actions = actions;
+    }
+
+    id campaigns = json[UAInAppMessageCampaignsKey];
+    if (campaigns) {
+        if (![campaigns isKindOfClass:[NSDictionary class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Message campagins must be a dictionary. Invalid value: %@", campaigns];
+                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                              code:UAInAppMessageErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+
+            return nil;
+        }
+
+        builder.campaigns = campaigns;
     }
     
     id audienceDict = json[UAInAppMessageAudienceKey];
@@ -166,6 +197,30 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
         
         builder.audience = [UAInAppMessageAudience audienceWithJSON:audienceDict error:error];
     }
+
+    id sourceStr = json[UAInAppMessageSourceKey];
+    if (sourceStr && [sourceStr isKindOfClass:[NSString class]]) {
+        sourceStr = [sourceStr lowercaseString];
+
+        if ([UAInAppMessageSourceAppDefinedValue isEqualToString:sourceStr]) {
+            builder.source = UAInAppMessageSourceAppDefined;
+        } else if ([UAInAppMessageSourceRemoteDataValue isEqualToString:sourceStr]) {
+            builder.source = UAInAppMessageSourceRemoteData;
+        } else if ([UAInAppMessageSourceLegacyPushValue isEqualToString:sourceStr]) {
+            builder.source = UAInAppMessageSourceLegacyPush;
+        } else {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Invalid source: %@", sourceStr];
+                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                              code:UAInAppMessageErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        }
+    } else {
+        builder.source = defaultSource;
+    }
+
 
     if (![builder isValid]) {
         if (error) {
@@ -204,9 +259,19 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
         self.extras = builder.extras;
         self.audience = builder.audience;
         self.actions = builder.actions;
+        _campaigns = builder.campaigns;
+        _source = builder.source;
     }
 
     return self;
+}
+
+- (UAInAppMessageSource)source {
+    return _source;
+}
+
+- (NSDictionary *)campaigns {
+    return _campaigns;
 }
 
 #pragma mark - Validation
@@ -233,10 +298,25 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
             break;
     }
 
+    switch (self.source) {
+        case UAInAppMessageSourceRemoteData:
+            [data setValue:UAInAppMessageSourceRemoteDataValue forKey:UAInAppMessageSourceKey];
+            break;
+
+        case UAInAppMessageSourceLegacyPush:
+            [data setValue:UAInAppMessageSourceLegacyPushValue forKey:UAInAppMessageSourceKey];
+            break;
+
+        case UAInAppMessageSourceAppDefined:
+            [data setValue:UAInAppMessageSourceAppDefinedValue forKey:UAInAppMessageSourceKey];
+            break;
+    }
+
     [data setValue:[self.displayContent toJSON] forKey:UAInAppMessageDisplayContentKey];
     [data setValue:[self.audience toJSON] forKey:UAInAppMessageAudienceKey];
     [data setValue:self.extras forKey:UAInAppMessageExtrasKey];
     [data setValue:self.actions forKey:UAInAppMessageActionsKey];
+    [data setValue:self.campaigns forKey:UAInAppMessageCampaignsKey];
 
     return [data copy];
 }
@@ -263,8 +343,17 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
         return NO;
     }
 
+    if (self.campaigns != message.campaigns && ![self.campaigns isEqualToDictionary:message.campaigns]) {
+        return NO;
+    }
+
+    if (self.source != message.source) {
+        return NO;
+    }
+
     return YES;
 }
+
 
 - (BOOL)isEqual:(id)object {
     if (self == object) {
@@ -285,6 +374,8 @@ NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
     result = 31 * result + [self.extras hash];
     result = 31 * result + [self.audience hash];
     result = 31 * result + [self.actions hash];
+    result = 31 * result + [self.campaigns hash];
+    result = 31 * result + self.source;
 
     return result;
 }

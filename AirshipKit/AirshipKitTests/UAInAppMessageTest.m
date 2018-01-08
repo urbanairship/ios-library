@@ -25,7 +25,9 @@
                   @"display_type": UAInAppMessageDisplayTypeBannerValue,
                   @"extras": @{@"foo":@"baz", @"baz":@"foo"},
                   @"audience": @{@"new_user" : @YES},
-                  @"actions": @{@"cool":@"story"}
+                  @"actions": @{@"cool":@"story"},
+                  @"source": @"remote-data",
+                  @"campaigns": @{ @"some": @"campaign info"}
                   };
     
     // test
@@ -41,6 +43,8 @@
     XCTAssertEqualObjects(@"foo",messageFromOriginalJSON.extras[@"baz"]);
     XCTAssertEqualObjects(@"story",messageFromOriginalJSON.actions[@"cool"]);
     XCTAssertEqualObjects(@YES, messageFromOriginalJSON.audience.isNewUser);
+    XCTAssertEqualObjects(@{ @"some": @"campaign info"}, messageFromOriginalJSON.campaigns);
+    XCTAssertEqual(UAInAppMessageSourceRemoteData, messageFromOriginalJSON.source);
 
     NSDictionary *toJSON = [messageFromOriginalJSON toJSON];
     XCTAssertNotNil(toJSON);
@@ -49,6 +53,57 @@
     XCTAssertNil(error);
 
     XCTAssertEqualObjects(messageFromOriginalJSON, messageFromToJSON);
+}
+
+- (void)testJSONDefaultSource {
+    // setup
+    NSDictionary *originalJSON = @{
+                                   @"message_id": @"blah",
+                                   @"display": @{@"body": @{
+                                                         @"text":@"the body"
+                                                         },
+                                                 },
+                                   @"display_type": UAInAppMessageDisplayTypeBannerValue,
+                                   };
+
+    NSArray *sources = @[@(UAInAppMessageSourceAppDefined),
+                         @(UAInAppMessageSourceRemoteData),
+                         @(UAInAppMessageSourceAppDefined)];
+
+    for (NSNumber *source in sources) {
+        NSInteger value = [source integerValue];
+        NSError *error;
+        UAInAppMessage *fromJSON = [UAInAppMessage messageWithJSON:originalJSON
+                                                     defaultSource:value
+                                                             error:&error];
+        XCTAssertNotNil(fromJSON);
+        XCTAssertNil(error);
+
+        XCTAssertEqual(value, fromJSON.source);
+    }
+}
+
+- (void)testJSONWithSource {
+    // setup
+    NSDictionary *originalJSON = @{
+                                   @"message_id": @"blah",
+                                   @"display": @{@"body": @{
+                                                         @"text":@"the body"
+                                                         },
+                                                 },
+                                   @"source": @"remote-data",
+                                   @"display_type": UAInAppMessageDisplayTypeBannerValue,
+                                   };
+
+
+    NSError *error;
+    UAInAppMessage *fromJSON = [UAInAppMessage messageWithJSON:originalJSON
+                                                 defaultSource:UAInAppMessageSourceLegacyPush
+                                                         error:&error];
+    XCTAssertNotNil(fromJSON);
+    XCTAssertNil(error);
+
+    XCTAssertEqual(UAInAppMessageSourceRemoteData, fromJSON.source);
 }
 
 @end
