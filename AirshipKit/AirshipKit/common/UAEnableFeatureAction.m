@@ -63,7 +63,10 @@ NSString *const UAEnableBackgroundLocationActionValue = @"background_location";
 }
 
 - (void)navigateToSystemSettings {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+#pragma GCC diagnostic pop
 }
 
 - (void)enableUserNotifications:(UAActionCompletionHandler)completionHandler {
