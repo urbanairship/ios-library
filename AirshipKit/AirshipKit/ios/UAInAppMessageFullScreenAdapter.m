@@ -51,17 +51,19 @@ NSString *const UAInAppMessageFullScreenAdapterCacheName = @"UAInAppMessageFullS
     UA_WEAKIFY(self);
     [UAInAppMessageUtils prefetchContentsOfURL:mediaURL
                                      WithCache:self.imageCache
-                             completionHandler:^(NSString *cacheKey) {
-                                 UA_STRONGIFY(self);
-                                 NSData *data = [self.imageCache objectForKey:cacheKey];
-                                 if (data) {
-                                     UIImage *prefetchedImage = [UIImage imageWithData:data];
-                                     self.fullScreenController = [UAInAppMessageFullScreenController fullScreenControllerWithFullScreenMessageID:self.message.identifier
-                                                                                                                                  displayContent:displayContent
-                                                                                                                                           image:prefetchedImage];
+                             completionHandler:^(NSString *cacheKey, UAInAppMessagePrepareResult result) {
+                                 if (cacheKey){
+                                     UA_STRONGIFY(self);
+                                     NSData *data = [self.imageCache objectForKey:cacheKey];
+                                     if (data) {
+                                         UIImage *prefetchedImage = [UIImage imageWithData:data];
+                                         self.fullScreenController = [UAInAppMessageFullScreenController fullScreenControllerWithFullScreenMessageID:self.message.identifier
+                                                                                                                                      displayContent:displayContent
+                                                                                                                                               image:prefetchedImage];
+                                     }
                                  }
 
-                                 completionHandler(UAInAppMessagePrepareResultSuccess);
+                                 completionHandler(result);
                              }];
 }
 

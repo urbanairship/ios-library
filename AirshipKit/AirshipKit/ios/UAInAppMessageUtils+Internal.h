@@ -7,6 +7,7 @@
 #import "UAInAppMessageButtonView+Internal.h"
 #import "UAInAppMessageTextView+Internal.h"
 #import "UAInAppMessageButton+Internal.h"
+#import "UAInAppMessageAdapterProtocol.h"
 
 @interface UAInAppMessageUtils : NSObject
 
@@ -43,9 +44,9 @@
  *
  * @param url The url of the data contents you wish to cache.
  * @param cache The cache instance.
- * @param completionHandler The completion handler with cache key for pulling conents out of cache.
+ * @param completionHandler The completion handler with cache key for pulling conents out of cache, and a result status.
  */
-+ (void)prefetchContentsOfURL:(NSURL *)url WithCache:(NSCache *)cache completionHandler:(void (^)(NSString *cacheKey))completionHandler;
++ (void)prefetchContentsOfURL:(NSURL *)url WithCache:(NSCache *)cache completionHandler:(void (^)(NSString *cacheKey, UAInAppMessagePrepareResult result))completionHandler;
 
 
 /**

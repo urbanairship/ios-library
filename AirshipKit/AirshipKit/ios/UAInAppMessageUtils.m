@@ -91,25 +91,71 @@ NSString *const UADefaultSerifFont = @"Times New Roman";
     heightConstraint.active = true;
 }
 
-+ (void)prefetchContentsOfURL:(NSURL *)url WithCache:(NSCache *)cache completionHandler:(void (^)(NSString *cacheKey))completionHandler {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        // This blocks a background thread until download is complete
-        NSData *downloadedData = [NSData dataWithContentsOfURL:url];
-        NSString *cacheKey = [url absoluteString];
++ (void)prefetchContentsOfURL:(NSURL *)url WithCache:(NSCache *)cache completionHandler:(void (^)(NSString *cacheKey, UAInAppMessagePrepareResult result))completionHandler {
 
-        if (downloadedData) {
-            NSString *cachesDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-            NSString *file = [cachesDirectory stringByAppendingPathComponent:cacheKey];
-            [downloadedData writeToFile:file atomically:YES];
-
-            [cache setObject:downloadedData forKey:cacheKey];
-        }
-
-        // Call back on main queue
+    // Call completion handler on main queue
+    void (^complete)(NSString *, UAInAppMessagePrepareResult) = ^(NSString * key, UAInAppMessagePrepareResult result) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            completionHandler(cacheKey);
+            completionHandler(key, result);
         });
-    });
+    };
+
+    [[[NSURLSession sharedSession]
+      downloadTaskWithURL:url
+      completionHandler:^(NSURL *temporaryFileLocation, NSURLResponse *response, NSError *error) {
+
+          if (error) {
+              UA_LERR(@"Error prefetching media at URL: %@, %@", url, error.localizedDescription);
+              return complete(nil, UAInAppMessagePrepareResultCancel);
+          }
+
+          if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+              NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+              NSInteger status = httpResponse.statusCode;
+              if (status >= 500 && status <= 599) {
+                  return complete(nil, UAInAppMessagePrepareResultRetry);
+              } else if (status != 200) {
+                  return complete(nil, UAInAppMessagePrepareResultCancel);
+              }
+          }
+
+          NSString *cacheKey = url.absoluteString;
+          NSString *cachesDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+          NSString *cachedDestination = [cachesDirectory stringByAppendingPathComponent:cacheKey];
+
+          NSFileManager *fm = [NSFileManager defaultManager];
+
+          // Remove anything currently existing at the destination path
+          if ([fm fileExistsAtPath:cachedDestination]) {
+              [fm removeItemAtPath:cachedDestination error:&error];
+
+              if (error) {
+                  UA_LERR(@"Error removing file %@: %@", cachedDestination, error.localizedDescription);
+                  return complete(nil, UAInAppMessagePrepareResultCancel);
+              }
+          }
+
+          // Move temp file to destination path
+          [fm createDirectoryAtPath:[cachedDestination stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:nil];
+          [fm moveItemAtPath:temporaryFileLocation.path toPath:cachedDestination error:&error];
+
+          if (error) {
+              UA_LERR(@"Error moving temp file %@ to %@: %@", temporaryFileLocation.path, cachedDestination, error.localizedDescription);
+              return complete(nil, UAInAppMessagePrepareResultCancel);
+          }
+
+          NSData *fileData = [NSData dataWithContentsOfFile:cachedDestination
+                                                    options:NSDataReadingMappedIfSafe
+                                                      error:&error];
+
+          if (error) {
+              UA_LERR(@"Error reading media data at %@", cachedDestination);
+              return complete(nil, UAInAppMessagePrepareResultCancel);
+          }
+
+          [cache setObject:fileData forKey:cacheKey];
+          complete(cacheKey, UAInAppMessagePrepareResultSuccess);
+      }] resume];
 }
 
 #pragma mark -
