@@ -66,7 +66,7 @@
                 <view contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="AGo-BI-V0D" userLabel="ContainerView">
                     <rect key="frame" x="-0.5" y="0.0" width="375" height="120"/>
                     <subviews>
-                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="TJ0-ZI-VmX">
+                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="TJ0-ZI-VmX">
                             <rect key="frame" x="235" y="0.0" width="120" height="120"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="120" id="Cr3-Ne-QtH"/>
