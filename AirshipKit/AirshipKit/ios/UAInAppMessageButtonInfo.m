@@ -36,8 +36,8 @@ NSString *const UAInAppMessageButtonInfoBehaviorDismissValue = @"dismiss";
 - (instancetype)init {
     if (self = [super init]) {
         self.behavior = UAInAppMessageButtonInfoBehaviorDismiss;
-        self.backgroundColor = [UIColor blackColor];
-        self.borderColor = [UIColor blackColor];
+        self.backgroundColor = [UIColor clearColor];
+        self.borderColor = [UIColor clearColor];
     }
     return self;
 }
