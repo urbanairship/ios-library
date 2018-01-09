@@ -206,6 +206,14 @@
     } else {
         // Try to save the schedules
         [self.automationStore saveSchedules:schedules limit:self.scheduleLimit completionHandler:^(BOOL success) {
+            if (success) {
+                UA_WEAKIFY(self);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    UA_STRONGIFY(self);
+                    [self checkCompoundTriggerState:schedules];
+                });
+            }
+
             if (completionHandler) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     completionHandler(schedules);
