@@ -42,6 +42,34 @@ NSString *const UADefaultSerifFont = @"Times New Roman";
 
     return UIStackViewAlignmentLeading;
 }
++ (void)applyCenterConstraintsToContainer:(UIView *)container containedView:(UIView *)contained {
+    if (!container || !contained) {
+        UA_LDEBUG(@"Attempted to constrain a nil view");
+        return;
+    }
+
+    container.translatesAutoresizingMaskIntoConstraints = NO;
+    contained.translatesAutoresizingMaskIntoConstraints = NO;
+
+    NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:contained
+                                                                         attribute:NSLayoutAttributeCenterX
+                                                                         relatedBy:NSLayoutRelationEqual
+                                                                            toItem:container
+                                                                         attribute:NSLayoutAttributeCenterX
+                                                                        multiplier:1.0f
+                                                                          constant:0.0f];
+
+    NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:contained
+                                                                         attribute:NSLayoutAttributeCenterY
+                                                                         relatedBy:NSLayoutRelationEqual
+                                                                            toItem:container
+                                                                         attribute:NSLayoutAttributeCenterY
+                                                                        multiplier:1.0f
+                                                                          constant:0.0f];
+    centerXConstraint.active = true;
+    centerYConstraint.active = true;
+}
+
 
 + (void)applyContainerConstraintsToContainer:(UIView *)container containedView:(UIView *)contained {
     if (!container || !contained) {

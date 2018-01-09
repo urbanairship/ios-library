@@ -39,6 +39,18 @@
 + (void)applyContainerConstraintsToContainer:(UIView *)container containedView:(UIView *)contained;
 
 /**
+ * Constrains the contained view to the center of the container
+ *
+ * This method has the side effect of setting both view parameters translatesAutoresizingMasksIntoConstraints to NO.
+ * This is done to ensure that autoresizing mask constraints do not conflict with the centering constraints.
+ *
+ * @param container The container view.
+ * @param contained The contained view.
+ */
++ (void)applyCenterConstraintsToContainer:(UIView *)container containedView:(UIView *)contained;
+
+
+/**
  * Caches url data contents using a background thread. Calls completion handler on main thread
  * with cache key under which the cached contents are stored.
  *

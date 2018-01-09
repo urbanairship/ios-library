@@ -75,8 +75,56 @@ NSString *const UAInAppMessageBannerContentViewNibName = @"UAInAppMessageBannerC
 - (void)addImage:(UIImage *)image {
     UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
 
+
+    CGFloat imageAspect = image.size.width/image.size.height;
     [self.imageContainerView addSubview:imageView];
-    [UAInAppMessageUtils applyContainerConstraintsToContainer:self.imageContainerView containedView:imageView];
+
+   if (imageAspect > 1) { // wide sizing should letterbox
+        [self.imageContainerView setBackgroundColor:[UIColor clearColor]];
+        [NSLayoutConstraint constraintWithItem:imageView
+                                     attribute:NSLayoutAttributeWidth
+                                     relatedBy:NSLayoutRelationEqual
+                                        toItem:self.imageContainerView
+                                     attribute:NSLayoutAttributeWidth
+                                    multiplier:1
+                                      constant:0].active = YES;
+
+        // Himage = (Wcontainter) * Himage/Wimage + 0
+        [NSLayoutConstraint constraintWithItem:imageView
+                                     attribute:NSLayoutAttributeHeight
+                                     relatedBy:NSLayoutRelationEqual
+                                        toItem:self.imageContainerView
+                                     attribute:NSLayoutAttributeWidth
+                                    multiplier:(1/imageAspect)
+                                      constant:0].active = YES;
+
+        //center image
+        [UAInAppMessageUtils applyCenterConstraintsToContainer:imageView containedView:self.imageContainerView];
+
+    } else if (imageAspect < 1) { // tall images should letterbox
+        [self.imageContainerView setBackgroundColor:[UIColor clearColor]];
+        [NSLayoutConstraint constraintWithItem:imageView
+                                     attribute:NSLayoutAttributeHeight
+                                     relatedBy:NSLayoutRelationEqual
+                                        toItem:self.imageContainerView
+                                     attribute:NSLayoutAttributeHeight
+                                    multiplier:1
+                                      constant:0].active = YES;
+
+        // Wimage = (Hcontainter) * Wimage/Himage + 0
+        [NSLayoutConstraint constraintWithItem:imageView
+                                     attribute:NSLayoutAttributeWidth
+                                     relatedBy:NSLayoutRelationEqual
+                                        toItem:self.imageContainerView
+                                     attribute:NSLayoutAttributeHeight
+                                    multiplier:imageAspect
+                                      constant:0].active = YES;
+        //center image
+        [UAInAppMessageUtils applyCenterConstraintsToContainer:imageView containedView:self.imageContainerView];
+
+    } else { // ideal images should keep default aspect fit with no clipping
+        [UAInAppMessageUtils applyContainerConstraintsToContainer:self.imageContainerView containedView:imageView];
+    }
 }
 
 @end
