@@ -20,6 +20,8 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 @property (nonatomic, strong) IBOutlet UIStackView *containerStackView;
 @property (strong, nonatomic) IBOutlet UIView *closeButtonContainer;
 @property (strong, nonatomic) IBOutlet UIView *footerButtonContainer;
+@property (strong, nonatomic) IBOutlet UIView *messageTop;
+@property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
 
 @property (nonatomic, strong) UAInAppMessageFullScreenDisplayContent *displayContent;
 
@@ -97,11 +99,30 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 
         self.displayContent = displayContent;
         self.backgroundColor = displayContent.backgroundColor;
+        self.scrollView.backgroundColor = displayContent.backgroundColor;
+        self.messageTop.backgroundColor = displayContent.backgroundColor;
 
         self.translatesAutoresizingMaskIntoConstraints = NO;
     }
 
     return self;
+}
+
+-(void)layoutSubviews {
+    [super layoutSubviews];
+
+    if (@available(iOS 11.0, *)) {
+        UIWindow *window = [UIApplication sharedApplication].keyWindow;
+
+        // Black out the inset when iPhone X is horizontal
+        if (window.safeAreaInsets.top == 0 && window.safeAreaInsets.left > 0) {
+            self.backgroundColor = [UIColor blackColor];
+        } else {
+            self.backgroundColor = self.displayContent.backgroundColor;
+        }
+    }
+
+    [self.containerStackView layoutIfNeeded];
 }
 
 @end

@@ -12,11 +12,11 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="UAInAppMessageFullScreenView">
+        <view clipsSubviews="YES" contentMode="scaleToFill" id="iN0-l3-epB" customClass="UAInAppMessageFullScreenView">
             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <scrollView multipleTouchEnabled="YES" contentMode="scaleAspectFill" bounces="NO" showsHorizontalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hEr-Uv-JrX">
+                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFill" bounces="NO" showsHorizontalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hEr-Uv-JrX">
                     <rect key="frame" x="0.0" y="60" width="375" height="607"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nxZ-dF-if9" userLabel="WrapperView">
@@ -76,7 +76,7 @@
                 <constraint firstItem="hEr-Uv-JrX" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="6WA-od-AoQ"/>
                 <constraint firstItem="Rls-sN-lHt" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="-20" id="AQo-xW-N3w"/>
                 <constraint firstItem="Rls-sN-lHt" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" id="E1I-lg-5yw"/>
-                <constraint firstItem="Rls-sN-lHt" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="OLf-M7-644"/>
+                <constraint firstItem="Rls-sN-lHt" firstAttribute="width" secondItem="hEr-Uv-JrX" secondAttribute="width" id="OTA-nc-Ozq"/>
                 <constraint firstItem="hEr-Uv-JrX" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="OnV-4n-C5z"/>
                 <constraint firstItem="hEr-Uv-JrX" firstAttribute="top" secondItem="Rls-sN-lHt" secondAttribute="bottom" id="PE7-az-ONh"/>
                 <constraint firstItem="hEr-Uv-JrX" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="RIb-p3-z8V"/>
@@ -86,6 +86,8 @@
                 <outlet property="closeButtonContainer" destination="dFs-4m-tfK" id="kAD-3E-ayk"/>
                 <outlet property="containerStackView" destination="Dgh-Mi-mKc" id="2tL-PN-m1G"/>
                 <outlet property="footerButtonContainer" destination="rsN-La-UOG" id="sTA-XJ-G1s"/>
+                <outlet property="messageTop" destination="Rls-sN-lHt" id="Zi8-Nh-E5v"/>
+                <outlet property="scrollView" destination="hEr-Uv-JrX" id="sph-01-ODf"/>
             </connections>
             <point key="canvasLocation" x="220.5" y="8.5"/>
         </view>
