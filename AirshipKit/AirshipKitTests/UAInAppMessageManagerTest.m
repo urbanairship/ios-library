@@ -13,6 +13,7 @@
 #import "UAInAppMessageAudience.h"
 #import "UALocation+Internal.h"
 #import "UAActionRunner+Internal.h"
+#import "UAInAppMessageAudienceChecks+Internal.h"
 
 @interface UAInAppMessageManagerTest : UABaseTest
 @property(nonatomic, strong) UAInAppMessageManager *manager;
@@ -193,12 +194,9 @@
         [prepareCalled fulfill];
     }] prepare:OCMOCK_ANY];
 
-    // mock UALocation so it looks like user has opted in
-    id mockAirship = [self mockForClass:[UAirship class]];
-    [UAirship setSharedAirship:mockAirship];
-    id mockLocation = [self strictMockForClass:[UALocation class]];
-    [[[mockLocation stub] andReturnValue:@YES] isLocationUpdatesEnabled];
-    [[[mockAirship stub] andReturn:mockLocation] sharedLocation];
+    // Mock the checks to reject the audience
+    id checks = [self mockForClass:[UAInAppMessageAudienceChecks class]];
+    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:self.scheduleInfo.message.audience];
 
     // should never display for display, as audience will fail first
     [[self.mockAdapter reject] display:OCMOCK_ANY];
@@ -217,6 +215,7 @@
     XCTAssertTrue(executeCompletionCalled);
     [self.mockAdapter verify];
     [self.mockDelegate verify];
+    [checks verify];
 }
 
 - (void)testExecuteSchedule {

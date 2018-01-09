@@ -11,7 +11,7 @@
 
 @implementation UAInAppMessageAudienceChecks
 
-+ (BOOL)checkAudience:(UAInAppMessageAudience *)audience isNewUser:(BOOL)isNewUser {
++ (BOOL)checkScheduleAudienceConditions:(UAInAppMessageAudience *)audience isNewUser:(BOOL)isNewUser {
     if (!audience) {
         return YES;
     }
@@ -19,22 +19,22 @@
     if ((audience.isNewUser) && ([audience.isNewUser boolValue] != isNewUser)) {
         return NO;
     }
-        
-    return [self checkAudience:audience];
-    
+
+    return YES;
 }
-+ (BOOL)checkAudience:(UAInAppMessageAudience *)audience {
+
++ (BOOL)checkDisplayAudienceConditions:(UAInAppMessageAudience *)audience {
     if (!audience) {
         return YES;
     }
     
     // Location opt-in
-    if (audience.locationOptIn && ([audience.locationOptIn boolValue] != [UAirship location].locationUpdatesEnabled)) {
+    if (audience.locationOptIn && ([audience.locationOptIn boolValue] != [self isLocationOptedIn])) {
         return NO;
     }
     
     // Notification opt-in
-    if (audience.notificationsOptIn && ([audience.notificationsOptIn boolValue] != [UAirship push].userPushNotificationsEnabled)) {
+    if (audience.notificationsOptIn && ([audience.notificationsOptIn boolValue] != [self isNotificationsOptedIn])) {
         return NO;
     }
 
@@ -92,6 +92,27 @@
     }
     
     return YES;
+}
+
+
++ (BOOL)isLocationOptedIn {
+    if (![UAirship location].locationUpdatesEnabled) {
+        return NO;
+    }
+
+    switch ([CLLocationManager authorizationStatus]) {
+        case kCLAuthorizationStatusDenied:
+        case kCLAuthorizationStatusRestricted:
+        case kCLAuthorizationStatusNotDetermined:
+            return NO;
+        case kCLAuthorizationStatusAuthorizedAlways:
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+            return YES;
+    }
+}
+
++ (BOOL)isNotificationsOptedIn {
+    return [UAirship push].userPushNotificationsEnabled && [UAirship push].authorizedNotificationOptions != UANotificationOptionNone;
 }
 
 @end

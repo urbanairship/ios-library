@@ -228,7 +228,7 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
 - (BOOL)checkSchedule:(UAInAppMessageScheduleInfo *)scheduleInfo createdTimeStamp:(NSDate *)createdTimeStamp {
     UAInAppMessageAudience *audience = scheduleInfo.message.audience;
     BOOL isNewUser = ([createdTimeStamp compare:self.scheduleNewUserCutOffTime] == NSOrderedAscending);
-    return [UAInAppMessageAudienceChecks checkAudience:audience isNewUser:isNewUser];
+    return [UAInAppMessageAudienceChecks checkScheduleAudienceConditions:audience isNewUser:isNewUser];
 }
 
 - (void)setScheduleIDMap:(NSDictionary *)scheduleIDMap {

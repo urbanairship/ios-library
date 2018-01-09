@@ -10,20 +10,20 @@
 @interface UAInAppMessageAudienceChecks : NSObject
 
 /**
- * Check if the user is part of the specified audience
+ * Check scheduling audience conditions.
  *
  * @param audience The specified audience
  * @param isNewUser System flag indicating the current user is a new user
  * @return YES if the current user is a member of the specified audience
  */
-+ (BOOL)checkAudience:(UAInAppMessageAudience *)audience isNewUser:(BOOL)isNewUser;
++ (BOOL)checkScheduleAudienceConditions:(UAInAppMessageAudience *)audience isNewUser:(BOOL)isNewUser;
 
 /**
- * Check if the user is part of the specified audience
+ * Check display audience conditions.
  *
  * @param audience The specified audience
  * @return YES if the current user is a member of the specified audience
  */
-+ (BOOL)checkAudience:(UAInAppMessageAudience *)audience;
++ (BOOL)checkDisplayAudienceConditions:(UAInAppMessageAudience *)audience;
 
 @end

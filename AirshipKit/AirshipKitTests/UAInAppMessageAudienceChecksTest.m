@@ -13,6 +13,7 @@
 @interface UAInAppMessageAudienceChecksTest : UABaseTest
 
 @property (nonatomic, strong) id mockAirship;
+@property (nonatomic, strong) id mockLocationManager;
 
 @end
 
@@ -23,6 +24,9 @@
 
     self.mockAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
+
+    self.mockLocationManager = [self mockForClass:[CLLocationManager class]];
+
 }
 
 - (void)tearDown {
@@ -34,10 +38,12 @@
     UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
     }];
     
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkAudience:audience]);
+    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
 }
 
 - (void)testLocationOptIn {
+    [[[self.mockLocationManager stub] andReturnValue:@(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
+
     // setup
     UAInAppMessageAudience *requiresOptedIn = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
         builder.locationOptIn = @YES;
@@ -52,8 +58,8 @@
     [[[self.mockAirship stub] andReturn:mockLocation] sharedLocation];
 
     // test
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkAudience:requiresOptedIn]);
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkAudience:requiresOptedOut]);
+    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
+    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
 }
 
 - (void)testLocationOptOut {
@@ -71,8 +77,8 @@
     [[[self.mockAirship stub] andReturn:mockLocation] sharedLocation];
     
     // test
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkAudience:requiresOptedIn]);
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkAudience:requiresOptedOut]);
+    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
+    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
 }
 
 - (void)testNotificationOptIn {
@@ -85,13 +91,14 @@
         builder.notificationsOptIn = @NO;
     }];
     
-    id mockPush = [self strictMockForClass:[UAPush class]];
+    id mockPush = [self mockForClass:[UAPush class]];
     [[[mockPush stub] andReturnValue:@YES] userPushNotificationsEnabled];
+    [[[mockPush stub] andReturnValue:@(UANotificationOptionAlert)] authorizedNotificationOptions];
     [[[self.mockAirship stub] andReturn:mockPush] sharedPush];
     
     // test
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkAudience:requiresOptedIn]);
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkAudience:requiresOptedOut]);
+    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
+    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
 }
 
 - (void)testNotificationOptOut {
@@ -109,8 +116,8 @@
     [[[self.mockAirship stub] andReturn:mockPush] sharedPush];
     
     // test
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkAudience:requiresOptedIn]);
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkAudience:requiresOptedOut]);
+    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
+    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
 }
 
 - (void)testNewUser {
@@ -124,10 +131,10 @@
     }];
 
     // test
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkAudience:requiresNewUser isNewUser:NO]);
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkAudience:requiresExistingUser isNewUser:NO]);
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkAudience:requiresNewUser isNewUser:YES]);
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkAudience:requiresExistingUser isNewUser:YES]);
+    XCTAssertFalse([UAInAppMessageAudienceChecks checkScheduleAudienceConditions:requiresNewUser isNewUser:NO]);
+    XCTAssertTrue([UAInAppMessageAudienceChecks checkScheduleAudienceConditions:requiresExistingUser isNewUser:NO]);
+    XCTAssertTrue([UAInAppMessageAudienceChecks checkScheduleAudienceConditions:requiresNewUser isNewUser:YES]);
+    XCTAssertFalse([UAInAppMessageAudienceChecks checkScheduleAudienceConditions:requiresExistingUser isNewUser:YES]);
 }
 
 - (void)testTagSelector {
@@ -145,10 +152,10 @@
     }];
     
     // test
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkAudience:audience]);
+    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
 
     [tags addObject:@"expected tag"];
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkAudience:audience]);
+    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
 }
 
 - (void)testLanguageIDs {
@@ -156,17 +163,17 @@
     UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
         builder.languageTags = @[@"en-US"];
     }];
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkAudience:audience]);
+    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
 
     audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
         builder.languageTags = @[@"fr_CA",@"en"];
     }];
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkAudience:audience]);
+    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
     
     audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
         builder.languageTags = @[@"fr",@"de-CH"];
     }];
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkAudience:audience]);
+    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
 }
 
 - (void)testAppVersion {
@@ -184,13 +191,13 @@
     
     // test
     mockVersion = @"1.0";
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkAudience:audience]);
+    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
     
     mockVersion = @"2";
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkAudience:audience]);
+    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
     
     mockVersion = @"3";
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkAudience:audience]);
+    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
 }
 
 

@@ -263,7 +263,7 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
         return;
     }
 
-    if (![UAInAppMessageAudienceChecks checkAudience:info.message.audience]) {
+    if (![UAInAppMessageAudienceChecks checkDisplayAudienceConditions:info.message.audience]) {
         UA_LDEBUG("InAppMessageManager - Message no longer meets audience conditions, schedule: %@", schedule.identifier);
         completionHandler();
         return;
