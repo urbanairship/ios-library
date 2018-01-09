@@ -5,6 +5,7 @@
 #import "UAInAppMessageFullScreenDisplayContent+Internal.h"
 #import "UAInAppMessageFullScreenController+Internal.h"
 #import "UAInAppMessageUtils+Internal.h"
+#import "UAUtils.h"
 
 @interface UAInAppMessageFullScreenAdapter ()
 @property (nonatomic, strong) UAInAppMessage *message;
@@ -67,16 +68,9 @@ NSString *const UAInAppMessageFullScreenAdapterCacheName = @"UAInAppMessageFullS
                              }];
 }
 
-- (void)display:(void (^)(void))completionHandler {
-    if (!self.fullScreenController) {
-        UA_LDEBUG(@"Attempted to display an in-app message with a nil full screen controller. This means an app state change likely interrupted the prepare and display cycle before display could occur.");
-        completionHandler();
-        return;
-    }
-
-    [self.fullScreenController show:^() {
-        completionHandler();
-    }];
+- (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
+    [self.fullScreenController showWithParentView:[UAUtils mainWindow]
+                                completionHandler:completionHandler];
 }
 
 - (void)dealloc {

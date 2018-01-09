@@ -243,10 +243,10 @@
 
     XCTestExpectation *displayBlockCalled = [self expectationWithDescription:@"display block should be called"];
     [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
-        void (^displayBlock)(void);
+        void (^displayBlock)(UAInAppMessageResolution *);
         [invocation getArgument:&displayBlock atIndex:2];
 
-        displayBlock();
+        displayBlock([UAInAppMessageResolution userDismissedResolution]);
 
         [displayBlockCalled fulfill];
     }] display:OCMOCK_ANY];
@@ -307,10 +307,10 @@
     XCTestExpectation *displayBlockCalled = [self expectationWithDescription:@"display block should be called"];
 
     [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
-        void (^displayBlock)(void);
+        void (^displayBlock)(UAInAppMessageResolution *);
         [invocation getArgument:&displayBlock atIndex:2];
 
-        displayBlock();
+        displayBlock([UAInAppMessageResolution messageClickResolution]);
 
         // Schedule should not be ready immediately after display (2nd call to isScheduleReady)
         XCTAssertFalse([self.manager isScheduleReadyToExecute:testSchedule]);

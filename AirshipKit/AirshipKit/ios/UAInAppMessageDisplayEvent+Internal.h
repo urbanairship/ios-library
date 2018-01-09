@@ -15,9 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- * Factory method to create a UAInAppDisplayEvent event.
+ * Factory method to create an event.
  * @param message The in-app message.
- * @return A in-app display event.
+ * @return An in-app display event.
  */
 + (instancetype)eventWithMessage:(UAInAppMessage *)message;
 

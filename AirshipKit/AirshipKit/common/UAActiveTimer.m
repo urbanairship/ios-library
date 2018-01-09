@@ -7,7 +7,7 @@
 @interface UAActiveTimer()
 @property (assign, getter=isStarted) BOOL started;
 @property (assign, getter=isActive) BOOL active;
-@property (assign) NSTimeInterval ellapsedTime;
+@property (assign) NSTimeInterval elapsedTime;
 @property (strong) NSDate *activeStartDate;
 @end
 
@@ -25,6 +25,8 @@
                                                  selector:@selector(willResignActive)
                                                      name:UIApplicationWillResignActiveNotification
                                                    object:nil];
+
+        self.active = ([UIApplication sharedApplication].applicationState == UIApplicationStateActive);
     }
 
     return self;
@@ -48,7 +50,7 @@
     }
 
     if (self.activeStartDate) {
-        self.ellapsedTime += [self.activeStartDate timeIntervalSinceNow];
+        self.elapsedTime += [[NSDate date] timeIntervalSinceDate:self.activeStartDate];
         self.activeStartDate = nil;
     }
 
@@ -65,15 +67,15 @@
 - (void)willResignActive {
     self.active = NO;
     if (self.started && self.activeStartDate) {
-        self.ellapsedTime += [self.activeStartDate timeIntervalSinceNow];
+        self.elapsedTime += [[NSDate date] timeIntervalSinceDate:self.activeStartDate];
         self.activeStartDate = nil;
     }
 }
 
 - (NSTimeInterval)time {
-    NSTimeInterval totalTime = self.ellapsedTime;
+    NSTimeInterval totalTime = self.elapsedTime;
     if (self.started && self.activeStartDate) {
-        totalTime += [self.activeStartDate timeIntervalSinceNow];
+        totalTime += [[NSDate date] timeIntervalSinceDate:self.activeStartDate];
     }
     return totalTime;
 }

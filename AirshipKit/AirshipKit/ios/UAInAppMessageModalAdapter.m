@@ -5,11 +5,13 @@
 #import "UAInAppMessageModalDisplayContent+Internal.h"
 #import "UAInAppMessageModalViewController+Internal.h"
 #import "UAInAppMessageUtils+Internal.h"
+#import "UAUtils.h"
 
 @interface UAInAppMessageModalAdapter ()
 @property (nonatomic, strong) UAInAppMessage *message;
 @property (nonatomic, strong) UAInAppMessageModalViewController *modalController;
 @property (nonatomic, strong) NSCache *imageCache;
+
 @end
 
 NSString *const UAInAppMessageModalAdapterCacheName = @"UAInAppMessageModalAdapterCache";
@@ -51,7 +53,7 @@ NSString *const UAInAppMessageModalAdapterCacheName = @"UAInAppMessageModalAdapt
     UA_WEAKIFY(self);
     [UAInAppMessageUtils prefetchContentsOfURL:mediaURL
                                      WithCache:self.imageCache
-                             completionHandler:^(NSString *cacheKey) {
+                             completionHandler:^(NSString *cacheKey, UAInAppMessagePrepareResult result) {
                                  UA_STRONGIFY(self);
                                  NSData *data = [self.imageCache objectForKey:cacheKey];
                                  if (data) {
@@ -61,21 +63,13 @@ NSString *const UAInAppMessageModalAdapterCacheName = @"UAInAppMessageModalAdapt
                                                                                                                                      image:prefetchedImage];
                                  }
                                  
-                                 completionHandler(UAInAppMessagePrepareResultSuccess);
+                                 completionHandler(result);
                              }];
 
 }
 
-- (void)display:(void (^)(void))completionHandler {
-    if (!self.modalController) {
-        UA_LDEBUG(@"Attempted to display an in-app message with a nil modal controller. This means an app state change likely interrupted the prepare and display cycle before display could occur.");
-        completionHandler();
-        return;
-    }
-    
-    [self.modalController show:^() {
-        completionHandler();
-    }];
+- (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
+    [self.modalController showWithCompletionHandler:completionHandler];
 }
 
 - (void)dealloc {

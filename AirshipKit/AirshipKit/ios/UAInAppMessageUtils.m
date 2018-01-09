@@ -3,6 +3,7 @@
 #import "UAGlobal.h"
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAInAppMessageButtonView+Internal.h"
+#import "UAActionRunner+Internal.h"
 
 NSString *const UADefaultSerifFont = @"Times New Roman";
 
@@ -235,6 +236,16 @@ NSString *const UADefaultSerifFont = @"Times New Roman";
     return [UIFont systemFontOfSize:[UIFont systemFontSize]].familyName;
 }
 
++ (void)runActionsForButton:(UAInAppMessageButton *)button {
+    if (button.buttonInfo.actions) {
+        [UAActionRunner runActionsWithActionValues:button.buttonInfo.actions
+                                         situation:UASituationManualInvocation
+                                          metadata:nil
+                                 completionHandler:^(UAActionResult *result) {
+                                     UA_LINFO(@"Button actions finished running.");
+                                 }];
+    }
+}
 
 
 @end

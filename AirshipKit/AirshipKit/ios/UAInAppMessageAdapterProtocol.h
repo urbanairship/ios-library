@@ -2,6 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAInAppMessage.h"
+#import "UAInAppMessageResolution.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -53,7 +54,7 @@ typedef NS_ENUM(NSUInteger, UAInAppMessagePrepareResult) {
  * @param completionHandler the completion handler to be called when adapter has finished
  * displaying the in-app message.
  */
-- (void)display:(void (^)(void))completionHandler;
+- (void)display:(void (^)(UAInAppMessageResolution *))completionHandler;
 
 @end
 

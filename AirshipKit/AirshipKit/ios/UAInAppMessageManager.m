@@ -17,6 +17,10 @@
 #import "UAInAppMessage+Internal.h"
 #import "UAAsyncOperation+Internal.h"
 #import "UAActionRunner+Internal.h"
+#import "UAInAppMessageResolutionEvent+Internal.h"
+#import "UAInAppMessageDisplayEvent+Internal.h"
+#import "UAirship.h"
+#import "UAActiveTimer+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -273,10 +277,28 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
         [self.delegate messageWillBeDisplayed:message];
     }
 
+    // Display event
+    UAEvent *event = [UAInAppMessageDisplayEvent eventWithMessage:info.message];
+    [[UAirship shared].analytics addEvent:event];
+
+    // Display time timer
+    UAActiveTimer *timer = [[UAActiveTimer alloc] init];
+    [timer start];
+
     UA_WEAKIFY(self);
-    [scheduleData.adapter display:^{
+    [scheduleData.adapter display:^(UAInAppMessageResolution *resolution) {
         UA_STRONGIFY(self);
         UA_LDEBUG(@"Schedule %@ finished displaying", schedule.identifier);
+
+        // Resolution event
+        [timer stop];
+        UAEvent *event = [UAInAppMessageResolutionEvent eventWithMessage:info.message resolution:resolution displayTime:timer.time];
+        [[UAirship shared].analytics addEvent:event];
+
+        // Cancel button
+        if (resolution.type == UAInAppMessageResolutionTypeButtonClick && resolution.buttonInfo.behavior == UAInAppMessageButtonInfoBehaviorCancel) {
+            [self cancelScheduleWithID:schedule.identifier];
+        }
 
         if (info.message.actions) {
             [UAActionRunner runActionsWithActionValues:info.message.actions
@@ -286,6 +308,8 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
                                          UA_LTRACE(@"Finished running actions for schedule %@", schedule.identifier);
                                      }];
         }
+
+
 
         // Start timer to unlock display after display interval
         [self unlockDisplayAfter:self.displayInterval];
@@ -298,6 +322,12 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
 
         completionHandler();
     }];
+}
+
+- (void)scheduleExpired:(UASchedule *)schedule {
+    UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
+    UAEvent *event = [UAInAppMessageResolutionEvent eventWithExpiredMessage:info.message expiredDate:info.end];
+    [[UAirship shared].analytics addEvent:event];
 }
 
 - (void)prepareMessageWithScheduleData:(UAInAppMessageScheduleData *)scheduleData delay:(NSTimeInterval)delay {

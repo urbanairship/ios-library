@@ -56,4 +56,11 @@
  */
 + (UIStackViewAlignment)stackAlignmentWithTextInfo:(UAInAppMessageTextInfo *)textInfo;
 
+/**
+ * Runs actions for a button.
+ *
+ * @param button The button.
+ */
++ (void)runActionsForButton:(UAInAppMessageButton *)button;
+
 @end

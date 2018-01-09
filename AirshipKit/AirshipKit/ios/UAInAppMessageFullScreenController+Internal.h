@@ -2,6 +2,8 @@
 
 #import <UIKit/UIKit.h>
 #import "UAInAppMessageFullScreenDisplayContent.h"
+#import "UAInAppMessageResolution.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -25,9 +27,10 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The method to show the full screen controller.
  *
+ * @param parentView The parent view.
  * @param completionHandler The completion handler that's called when show operation completes.
  */
-- (void)show:(void (^)(void))completionHandler;
+- (void)showWithParentView:(UIView *)parentView completionHandler:(void (^)(UAInAppMessageResolution *))completionHandler;
 
 @end
 

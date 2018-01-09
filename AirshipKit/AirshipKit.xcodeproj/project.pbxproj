@@ -673,8 +673,6 @@
 		CC40DCA31D8C996A00BABD4F /* UALegacyInAppMessaging+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB781D8C996900BABD4F /* UALegacyInAppMessaging+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CC40DCA41D8C996A00BABD4F /* UALegacyInAppMessaging.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB791D8C996900BABD4F /* UALegacyInAppMessaging.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC40DCA51D8C996A00BABD4F /* UALegacyInAppMessaging.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB7A1D8C996900BABD4F /* UALegacyInAppMessaging.m */; };
-		CC40DCA61D8C996A00BABD4F /* UALegacyInAppResolutionEvent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB7B1D8C996900BABD4F /* UALegacyInAppResolutionEvent+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CC40DCA71D8C996A00BABD4F /* UALegacyInAppResolutionEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB7C1D8C996900BABD4F /* UALegacyInAppResolutionEvent.m */; };
 		CC40DCA81D8C996A00BABD4F /* UAInbox+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB7D1D8C996900BABD4F /* UAInbox+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CC40DCA91D8C996A00BABD4F /* UAInbox.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB7E1D8C996900BABD4F /* UAInbox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC40DCAA1D8C996A00BABD4F /* UAInbox.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB7F1D8C996900BABD4F /* UAInbox.m */; };
@@ -848,7 +846,6 @@
 		CC40DD6A1D8C9A1C00BABD4F /* UAEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB601D8C996900BABD4F /* UAEvent.m */; };
 		CC40DD701D8C9A1C00BABD4F /* UALegacyInAppMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB6D1D8C996900BABD4F /* UALegacyInAppMessage.m */; };
 		CC40DD751D8C9A1C00BABD4F /* UALegacyInAppMessaging.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB7A1D8C996900BABD4F /* UALegacyInAppMessaging.m */; };
-		CC40DD761D8C9A1C00BABD4F /* UALegacyInAppResolutionEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB7C1D8C996900BABD4F /* UALegacyInAppResolutionEvent.m */; };
 		CC40DD771D8C9A1C00BABD4F /* UAInbox.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB7F1D8C996900BABD4F /* UAInbox.m */; };
 		CC40DD781D8C9A1C00BABD4F /* UAInboxAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB811D8C996900BABD4F /* UAInboxAPIClient.m */; };
 		CC40DD791D8C9A1C00BABD4F /* UAInboxStore.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB831D8C996900BABD4F /* UAInboxStore.m */; };
@@ -947,7 +944,6 @@
 		CC64F0F91D8B781C009CEF27 /* UAEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0911D8B781C009CEF27 /* UAEventTest.m */; };
 		CC64F0FF1D8B781C009CEF27 /* UALegacyInAppMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F09A1D8B781C009CEF27 /* UALegacyInAppMessageTest.m */; };
 		CC64F1001D8B781C009CEF27 /* UALegacyInAppMessagingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F09B1D8B781C009CEF27 /* UALegacyInAppMessagingTest.m */; };
-		CC64F1011D8B781C009CEF27 /* UALegacyInAppResolutionEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F09C1D8B781C009CEF27 /* UALegacyInAppResolutionEventTest.m */; };
 		CC64F1021D8B781C009CEF27 /* UAInboxAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F09D1D8B781C009CEF27 /* UAInboxAPIClientTest.m */; };
 		CC64F1031D8B781C009CEF27 /* UAInboxMessageListTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F09E1D8B781C009CEF27 /* UAInboxMessageListTest.m */; };
 		CC64F1041D8B781C009CEF27 /* UAInboxMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F09F1D8B781C009CEF27 /* UAInboxMessageTest.m */; };
@@ -1176,7 +1172,6 @@
 		DF7E221E1ED62D9B00C79C46 /* UAActionRegistryEntry+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DAF51D8C996900BABD4F /* UAActionRegistryEntry+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7E221F1ED62D9B00C79C46 /* UAActionResult+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DAF81D8C996900BABD4F /* UAActionResult+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7E22201ED62D9B00C79C46 /* UAActionRunner+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DAFB1D8C996900BABD4F /* UAActionRunner+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DF7E22221ED62D9B00C79C46 /* UALegacyInAppResolutionEvent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB7B1D8C996900BABD4F /* UALegacyInAppResolutionEvent+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7E22251ED62D9B00C79C46 /* UALegacyInAppMessaging+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB781D8C996900BABD4F /* UALegacyInAppMessaging+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7E22261ED62D9B00C79C46 /* UAEventData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F1881DBED9FA00B4842D /* UAEventData+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7E22271ED62D9B00C79C46 /* UAEventStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F18D1DBEDA1900B4842D /* UAEventStore+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1728,8 +1723,6 @@
 		CC40DB781D8C996900BABD4F /* UALegacyInAppMessaging+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UALegacyInAppMessaging+Internal.h"; path = "ios/UALegacyInAppMessaging+Internal.h"; sourceTree = "<group>"; };
 		CC40DB791D8C996900BABD4F /* UALegacyInAppMessaging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALegacyInAppMessaging.h; path = ios/UALegacyInAppMessaging.h; sourceTree = "<group>"; };
 		CC40DB7A1D8C996900BABD4F /* UALegacyInAppMessaging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALegacyInAppMessaging.m; path = ios/UALegacyInAppMessaging.m; sourceTree = "<group>"; };
-		CC40DB7B1D8C996900BABD4F /* UALegacyInAppResolutionEvent+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UALegacyInAppResolutionEvent+Internal.h"; path = "ios/UALegacyInAppResolutionEvent+Internal.h"; sourceTree = "<group>"; };
-		CC40DB7C1D8C996900BABD4F /* UALegacyInAppResolutionEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALegacyInAppResolutionEvent.m; path = ios/UALegacyInAppResolutionEvent.m; sourceTree = "<group>"; };
 		CC40DB7D1D8C996900BABD4F /* UAInbox+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAInbox+Internal.h"; path = "ios/UAInbox+Internal.h"; sourceTree = "<group>"; };
 		CC40DB7E1D8C996900BABD4F /* UAInbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAInbox.h; path = ios/UAInbox.h; sourceTree = "<group>"; };
 		CC40DB7F1D8C996900BABD4F /* UAInbox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAInbox.m; path = ios/UAInbox.m; sourceTree = "<group>"; };
@@ -1903,7 +1896,6 @@
 		CC64F0911D8B781C009CEF27 /* UAEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventTest.m; sourceTree = "<group>"; };
 		CC64F09A1D8B781C009CEF27 /* UALegacyInAppMessageTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALegacyInAppMessageTest.m; sourceTree = "<group>"; };
 		CC64F09B1D8B781C009CEF27 /* UALegacyInAppMessagingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALegacyInAppMessagingTest.m; sourceTree = "<group>"; };
-		CC64F09C1D8B781C009CEF27 /* UALegacyInAppResolutionEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALegacyInAppResolutionEventTest.m; sourceTree = "<group>"; };
 		CC64F09D1D8B781C009CEF27 /* UAInboxAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxAPIClientTest.m; sourceTree = "<group>"; };
 		CC64F09E1D8B781C009CEF27 /* UAInboxMessageListTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageListTest.m; sourceTree = "<group>"; };
 		CC64F09F1D8B781C009CEF27 /* UAInboxMessageTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageTest.m; sourceTree = "<group>"; };
@@ -2624,7 +2616,6 @@
 		CC04F2141DCAB68300B4842D /* Events */ = {
 			isa = PBXGroup;
 			children = (
-				CC64F09C1D8B781C009CEF27 /* UALegacyInAppResolutionEventTest.m */,
 				6E598D852003F014005B234B /* UAInAppMessageResolutionEventTest.m */,
 				6E598D8720040E7F005B234B /* UAInAppMessageDisplayEventTest.m */,
 			);
@@ -3036,8 +3027,6 @@
 		CC40DDE51D91D79600BABD4F /* Events */ = {
 			isa = PBXGroup;
 			children = (
-				CC40DB7B1D8C996900BABD4F /* UALegacyInAppResolutionEvent+Internal.h */,
-				CC40DB7C1D8C996900BABD4F /* UALegacyInAppResolutionEvent.m */,
 				6E598D5520003E99005B234B /* UAInAppMessageResolution.h */,
 				6E598D5620003E99005B234B /* UAInAppMessageResolution.m */,
 				6E598D5B2000436C005B234B /* UAInAppMessageResolutionEvent+Internal.h */,
@@ -3749,7 +3738,6 @@
 				CC40DC231D8C996A00BABD4F /* UAActionResult+Internal.h in Headers */,
 				CC40DC261D8C996A00BABD4F /* UAActionRunner+Internal.h in Headers */,
 				6EADE7021FA8FA0E0007F924 /* UAAutomationEngine+Internal.h in Headers */,
-				CC40DCA61D8C996A00BABD4F /* UALegacyInAppResolutionEvent+Internal.h in Headers */,
 				CC40DCA31D8C996A00BABD4F /* UALegacyInAppMessaging+Internal.h in Headers */,
 				CC04F18F1DBEDA1900B4842D /* UAEventStore+Internal.h in Headers */,
 				CC40DD171D8C996A00BABD4F /* UASQLite+Internal.h in Headers */,
@@ -4202,7 +4190,6 @@
 				DF7E221F1ED62D9B00C79C46 /* UAActionResult+Internal.h in Headers */,
 				DF7E22201ED62D9B00C79C46 /* UAActionRunner+Internal.h in Headers */,
 				99666D751EDF266400BAE46B /* UAActionPredicateProtocol+Internal.h in Headers */,
-				DF7E22221ED62D9B00C79C46 /* UALegacyInAppResolutionEvent+Internal.h in Headers */,
 				6ED87F9C1FEB18DD003B652A /* UAInAppMessageMediaInfo+Internal.h in Headers */,
 				99EC01991FE1FED100B9C408 /* UAInAppMessageFullScreenAdapter.h in Headers */,
 				997AC8181FE37C4200260440 /* UAInAppMessageCloseButton+Internal.h in Headers */,
@@ -4776,7 +4763,6 @@
 				CC40DCB31D8C996A00BABD4F /* UAInboxMessageData.m in Sources */,
 				CC40DC1F1D8C996A00BABD4F /* UAActionRegistry.m in Sources */,
 				CC04F1AB1DC018F600B4842D /* UAEventManager.m in Sources */,
-				CC40DCA71D8C996A00BABD4F /* UALegacyInAppResolutionEvent.m in Sources */,
 				CC40DCD21D8C996A00BABD4F /* UALegacyAPNSRegistration.m in Sources */,
 				99E2DA461FBA2A0000C9F2CC /* UAInAppMessageBannerView.m in Sources */,
 				CC40DC101D8C996A00BABD4F /* NSString+UAURLEncoding.m in Sources */,
@@ -4961,7 +4947,6 @@
 				CC64F10A1D8B781C009CEF27 /* UAJSONPredicateTests.m in Sources */,
 				CC64F1131D8B781C009CEF27 /* UANamedUserTest.m in Sources */,
 				CC64F1061D8B781C009CEF27 /* UAInstallAttributionEventTest.m in Sources */,
-				CC64F1011D8B781C009CEF27 /* UALegacyInAppResolutionEventTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5098,7 +5083,6 @@
 				6EF2DF111E5CBAED0062099A /* UAScheduleDelayData.m in Sources */,
 				CC04F1911DBEDA1900B4842D /* UAEventStore.m in Sources */,
 				CC40DD751D8C9A1C00BABD4F /* UALegacyInAppMessaging.m in Sources */,
-				CC40DD761D8C9A1C00BABD4F /* UALegacyInAppResolutionEvent.m in Sources */,
 				CC40DD771D8C9A1C00BABD4F /* UAInbox.m in Sources */,
 				CC40DD781D8C9A1C00BABD4F /* UAInboxAPIClient.m in Sources */,
 				CC40DD791D8C9A1C00BABD4F /* UAInboxStore.m in Sources */,

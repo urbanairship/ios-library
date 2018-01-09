@@ -11,6 +11,7 @@
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAInAppMessageManager+Internal.h"
 #import "UAColorUtils+Internal.h"
+#import "UAActionRunner+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -68,7 +69,7 @@ double const MinimumSwipeVelocity = 100.0;
 /**
  * The completion handler passed in when the message is shown.
  */
-@property (nonatomic, copy, nullable) void (^showCompletionHandler)(void);
+@property (nonatomic, copy, nullable) void (^showCompletionHandler)(UAInAppMessageResolution *);
 
 /**
  * Flag representing the display state of the banner.
@@ -112,14 +113,11 @@ double const MinimumSwipeVelocity = 100.0;
 #pragma mark -
 #pragma mark Core Functionality
 
-- (void)show:(void (^)(void))completionHandler  {
+- (void)showWithParentView:(UIView *)parentView completionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
     if (self.isShowing) {
-        UA_LDEBUG(@"In-app message banner has already been displayed");
-
-        completionHandler();
+        UA_LWARN(@"In-app message banner has already been displayed");
+        return;
     }
-
-    UIView *parentView = [UAUtils mainWindow];
 
     UAInAppMessageTextInfo *heading = self.displayContent.heading;
     UAInAppMessageTextInfo *body = self.displayContent.body;
@@ -127,11 +125,6 @@ double const MinimumSwipeVelocity = 100.0;
 
     NSArray<UAInAppMessageButtonInfo *> *buttons = self.displayContent.buttons;
     UAInAppMessageButtonLayoutType buttonLayout = self.displayContent.buttonLayout;
-
-    if (!parentView) {
-        UA_LDEBUG(@"Unable to find parent view, canceling in-app message banner display");
-        completionHandler();
-    }
 
     UAInAppMessageTextView *textView = [UAInAppMessageTextView textViewWithHeading:heading
                                                                               body:body];
@@ -171,10 +164,9 @@ double const MinimumSwipeVelocity = 100.0;
     [self initializeGestureRecognizersWithBannerView:self.bannerView parentView:parentView];
 }
 
-- (void)dismiss  {
-
+- (void)dismissWithResolution:(UAInAppMessageResolution *)resolution  {
     if (self.showCompletionHandler) {
-        self.showCompletionHandler();
+        self.showCompletionHandler(resolution);
         self.showCompletionHandler = nil;
     }
 
@@ -192,26 +184,27 @@ double const MinimumSwipeVelocity = 100.0;
 
 - (void)messageTapped {
     self.bannerView.isBeingTapped = NO;
-    // TODO Run actions
-    [self dismiss];
+
+    if (self.displayContent.actions) {
+        [UAActionRunner runActionsWithActionValues:self.displayContent.actions
+                                         situation:UASituationManualInvocation
+                                          metadata:nil
+                                 completionHandler:^(UAActionResult *result) {
+                                     UA_LINFO(@"Message tap actions finished running.");
+                                 }];
+    }
+
+    [self dismissWithResolution:[UAInAppMessageResolution messageClickResolution]];
 }
 
 - (void)messageSwiped {
-    [self dismiss];
+    [self dismissWithResolution:[UAInAppMessageResolution userDismissedResolution]];
 }
 
 - (void)buttonTapped:(id)sender {
     UAInAppMessageButton *button = (UAInAppMessageButton *)sender;
-
-    //TODO Run actions for button info utils method
-
-    // Check button behavior
-    if (button.buttonInfo.behavior == UAInAppMessageButtonInfoBehaviorCancel) {
-        // TODO: Cancel based on schedule ID not Message ID.
-        [[UAirship inAppMessageManager] cancelMessagesWithID:self.messageID];
-    }
-
-    [self dismiss];
+    [UAInAppMessageUtils runActionsForButton:button];
+    [self dismissWithResolution:[UAInAppMessageResolution buttonClickResolutionWithButtonInfo:button.buttonInfo]];
 }
 
 #pragma mark -
@@ -471,9 +464,13 @@ double const MinimumSwipeVelocity = 100.0;
 
     self.dismissalTimer = [NSTimer scheduledTimerWithTimeInterval:timeInterval
                                                            target:self
-                                                         selector:@selector(dismiss)
+                                                         selector:@selector(timerFired)
                                                          userInfo:nil
                                                           repeats:NO];
+}
+
+- (void)timerFired {
+    [self dismissWithResolution:[UAInAppMessageResolution timedOutResolution]];
 }
 
 #pragma mark -

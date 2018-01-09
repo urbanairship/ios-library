@@ -301,7 +301,6 @@
                     UA_STRONGIFY(self);
                     [self checkCompoundTriggerState:@[schedule] forStateNewerThanDate:finishDate];
                 });
-
             } else if ([scheduleData.executionState unsignedIntegerValue] != UAScheduleStateFinished && (overLimit || isExpired)) {
                 scheduleData.executionState = @(UAScheduleStateFinished);
             }
@@ -320,6 +319,7 @@
     NSPredicate *expiredPredicate = [NSPredicate predicateWithFormat:@"end <= %@ && executionState != %d", [NSDate date], UAScheduleStateFinished];
     [self.automationStore fetchSchedulesWithPredicate:expiredPredicate limit:self.scheduleLimit completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
         for (UAScheduleData *scheduleData in schedulesData) {
+            [self notifyExpiredSchedule:scheduleData];
             if ([scheduleData.editGracePeriod doubleValue] > 0) {
                 scheduleData.executionState = @(UAScheduleStateFinished);
             } else {
@@ -825,6 +825,7 @@
         if ([scheduleData.end compare:[NSDate date]] == NSOrderedAscending) {
             UA_LTRACE(@"Schedule expired schedule: %@", scheduleData.identifier);
             scheduleData.executionState = @(UAScheduleStateFinished);
+            [self notifyExpiredSchedule:scheduleData];
             continue;
         }
 
@@ -897,6 +898,20 @@
             scheduleData.executionState = @(UAScheduleStateExecuting); // executing
         }
     }
+}
+
+- (void)notifyExpiredSchedule:(UAScheduleData *)scheduleData {
+    UA_WEAKIFY(self);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UA_STRONGIFY(self);
+        id<UAAutomationEngineDelegate> delegate = self.delegate;
+        if ([delegate respondsToSelector:@selector(scheduleExpired:)]) {
+            UASchedule *schedule = [self scheduleFromData:scheduleData];
+            if (schedule) {
+                [delegate scheduleExpired:schedule];
+            }
+        }
+    });
 }
 
 - (void)scheduleFinishedExecuting:(NSString *)scheduleID {

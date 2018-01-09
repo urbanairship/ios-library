@@ -5,6 +5,7 @@
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 #import "UAInAppMessageBannerController+Internal.h"
 #import "UAInAppMessageUtils+Internal.h"
+#import "UAUtils.h"
 
 @interface UAInAppMessageBannerAdapter ()
 @property (nonatomic, strong) UAInAppMessage *message;
@@ -44,6 +45,7 @@ NSString *const UAInAppMessageBannerAdapterCacheName = @"UAInAppMessageBannerAda
         return;
     }
 
+
     NSURL *imageURL = [NSURL URLWithString:displayContent.media.url];
 
     // Prefetch image save as file copy what message center does
@@ -66,16 +68,9 @@ NSString *const UAInAppMessageBannerAdapterCacheName = @"UAInAppMessageBannerAda
                              }];
 }
 
-- (void)display:(void (^)(void))completionHandler {
-    if (!self.bannerController) {
-        UA_LDEBUG(@"Attempted to display an in-app message banner with a nil banner controller. This means an app state change likely interrupted the prepare and display cycle before display could occur.");
-        completionHandler();
-        return;
-    }
-
-    [self.bannerController show:^() {
-        completionHandler();
-    }];
+- (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
+    [self.bannerController showWithParentView:[UAUtils mainWindow]
+                            completionHandler:completionHandler];
 }
 
 - (void)dealloc {

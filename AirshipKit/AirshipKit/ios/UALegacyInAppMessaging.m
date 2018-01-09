@@ -4,7 +4,7 @@
 #import "UALegacyInAppMessage.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAAnalytics.h"
-#import "UALegacyInAppResolutionEvent+Internal.h"
+#import "UAInAppMessageResolutionEvent+Internal.h"
 #import "UANotificationContent.h"
 #import "UANotificationResponse.h"
 #import "UAInAppMessageScheduleInfo.h"
@@ -97,7 +97,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
                 [self.inAppMessageManager cancelMessagesWithID:pendingMessageID];
                 self.pendingMessageID = nil;
 
-                UALegacyInAppResolutionEvent *event = [UALegacyInAppResolutionEvent directOpenResolutionWithMessageID:pendingMessageID];
+                UAInAppMessageResolutionEvent *event = [UAInAppMessageResolutionEvent legacyDirectOpenEventWithMessageID:pendingMessageID];
                 [self.analytics addEvent:event];
             } else {
                 self.pendingMessageID = nil;
@@ -172,8 +172,8 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
                 UA_LDEBUG(@"LegacyInAppMessageManager - Pending in-app message replaced");
 
-                UALegacyInAppResolutionEvent *resolutionEvent = [UALegacyInAppResolutionEvent replacedResolutionWithMessageID:pendingMessageID replacement:messageID];
-                [self.analytics addEvent:resolutionEvent];
+                UAInAppMessageResolutionEvent *event = [UAInAppMessageResolutionEvent legacyReplacedEventWithMessageID:pendingMessageID replacementID:messageID];
+                [self.analytics addEvent:event];
             } else {
                 self.pendingMessageID = nil;
             }

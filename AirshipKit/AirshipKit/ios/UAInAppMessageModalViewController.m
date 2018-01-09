@@ -191,7 +191,7 @@ double const DefaultModalAnimationDuration = 0.2;
 /**
  * The completion handler passed in when the message is shown.
  */
-@property (nonatomic, copy, nullable) void (^showCompletionHandler)(void);
+@property (nonatomic, copy, nullable) void (^showCompletionHandler)(UAInAppMessageResolution *);
 
 @end
 
@@ -225,10 +225,10 @@ double const DefaultModalAnimationDuration = 0.2;
 #pragma mark -
 #pragma mark Core Functionality
 
-- (void)show:(void (^)(void))completionHandler  {
+- (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
     if (self.isShowing) {
         UA_LWARN(@"In-app message modal has already been displayed");
-        completionHandler();
+        return;
     }
     
     self.showCompletionHandler = completionHandler;
@@ -384,9 +384,9 @@ double const DefaultModalAnimationDuration = 0.2;
     return footerButton;
 }
 
-- (void)dismiss  {
+- (void)dismissWithResolution:(UAInAppMessageResolution *)resolution  {
     if (self.showCompletionHandler) {
-        self.showCompletionHandler();
+        self.showCompletionHandler(resolution);
         self.showCompletionHandler = nil;
     }
     
@@ -409,19 +409,13 @@ double const DefaultModalAnimationDuration = 0.2;
 - (IBAction)buttonTapped:(id)sender {
     // Check for close button
     if ([sender isKindOfClass:[UAInAppMessageCloseButton class]]) {
-        [self dismiss];
+        [self dismissWithResolution:[UAInAppMessageResolution userDismissedResolution]];
         return;
     }
     
     UAInAppMessageButton *button = (UAInAppMessageButton *)sender;
-    
-    // Check button behavior
-    if (button.buttonInfo.behavior == UAInAppMessageButtonInfoBehaviorCancel) {
-        // TODO: Cancel based on schedule ID not Message ID.
-        [[UAirship inAppMessageManager] cancelMessagesWithID:self.messageID];
-    }
-    
-    [self dismiss];
+    [UAInAppMessageUtils runActionsForButton:button];
+    [self dismissWithResolution:[UAInAppMessageResolution buttonClickResolutionWithButtonInfo:button.buttonInfo]];
 }
 
 @end

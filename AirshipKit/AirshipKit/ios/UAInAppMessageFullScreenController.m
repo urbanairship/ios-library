@@ -56,7 +56,7 @@ double const DefaultFullScreenAnimationDuration = 0.2;
 /**
  * The completion handler passed in when the message is shown.
  */
-@property (nonatomic, copy, nullable) void (^showCompletionHandler)(void);
+@property (nonatomic, copy, nullable) void (^showCompletionHandler)(UAInAppMessageResolution *);
 
 @end
 
@@ -89,20 +89,7 @@ double const DefaultFullScreenAnimationDuration = 0.2;
 #pragma mark Core Functionality
 
 
-- (void)show:(void (^)(void))completionHandler  {
-    if (self.isShowing) {
-        UA_LDEBUG(@"In-app message full screen has already been displayed");
-
-        completionHandler();
-    }
-
-    UIView *parentView = [UAUtils mainWindow];
-
-    if (!parentView) {
-        UA_LDEBUG(@"Unable to find parent view, canceling in-app message full screen display");
-        completionHandler();
-    }
-
+- (void)showWithParentView:(UIView *)parentView completionHandler:(void (^)(UAInAppMessageResolution *))completionHandler {
     self.showCompletionHandler = completionHandler;
     
     UAInAppMessageButtonView *buttonView = [UAInAppMessageButtonView buttonViewWithButtons:self.displayContent.buttons
@@ -143,7 +130,6 @@ double const DefaultFullScreenAnimationDuration = 0.2;
 }
 
 - (UAInAppMessageCloseButton * _Nullable)addCloseButton {
-
     UAInAppMessageCloseButton *closeButton = [[UAInAppMessageCloseButton alloc] init];
     closeButton.dismissButtonColor = self.displayContent.dismissButtonColor;
     [closeButton addTarget:self
@@ -167,9 +153,9 @@ double const DefaultFullScreenAnimationDuration = 0.2;
     return footerButton;
 }
 
-- (void)dismiss  {
+- (void)dismissWithResolution:(UAInAppMessageResolution *)resolution  {
     if (self.showCompletionHandler) {
-        self.showCompletionHandler();
+        self.showCompletionHandler(resolution);
         self.showCompletionHandler = nil;
     }
 
@@ -189,19 +175,13 @@ double const DefaultFullScreenAnimationDuration = 0.2;
 - (void)buttonTapped:(id)sender {
     // Check for close button
     if ([sender isKindOfClass:[UAInAppMessageCloseButton class]]) {
-        [self dismiss];
+        [self dismissWithResolution:[UAInAppMessageResolution userDismissedResolution]];
         return;
     }
 
     UAInAppMessageButton *button = (UAInAppMessageButton *)sender;
-
-    // Check button behavior
-    if (button.buttonInfo.behavior == UAInAppMessageButtonInfoBehaviorCancel) {
-        // TODO: Cancel based on schedule ID not Message ID.
-        [[UAirship inAppMessageManager] cancelMessagesWithID:self.messageID];
-    }
-
-    [self dismiss];
+    [UAInAppMessageUtils runActionsForButton:button];
+    [self dismissWithResolution:[UAInAppMessageResolution buttonClickResolutionWithButtonInfo:button.buttonInfo]];
 }
 
 #pragma mark -

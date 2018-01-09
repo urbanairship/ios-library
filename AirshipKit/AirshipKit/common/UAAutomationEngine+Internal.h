@@ -68,6 +68,13 @@ typedef NS_ENUM(NSUInteger, UAScheduleState) {
 - (void)executeSchedule:(nonnull UASchedule *)schedule
       completionHandler:(void (^)(void))completionHandler;
 
+@optional
+
+/**
+ * Called when a schedule is expired.
+ */
+- (void)scheduleExpired:(nonnull UASchedule *)schedule;
+
 @end
 
 

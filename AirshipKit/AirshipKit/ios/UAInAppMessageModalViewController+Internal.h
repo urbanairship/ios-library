@@ -2,6 +2,7 @@
 
 #import <UIKit/UIKit.h>
 #import "UAInAppMessageModalDisplayContent.h"
+#import "UAInAppMessageResolution.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -28,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param completionHandler The completion handler that's called when show operation completes.
  */
-- (void)show:(void (^)(void))completionHandler;
+- (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution *))completionHandler;
 
 @end
 
