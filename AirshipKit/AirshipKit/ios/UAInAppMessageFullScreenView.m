@@ -89,6 +89,12 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
         // Button container is always the last thing in the stack
         [self.containerStackView addArrangedSubview:self.buttonView];
 
+        // Add invisible spacer to guarantee it expands instead of other views
+        UIView *spacer = [[UIView alloc] initWithFrame:CGRectZero];
+        spacer.backgroundColor = [UIColor clearColor];
+        [spacer setContentHuggingPriority:1 forAxis:UILayoutConstraintAxisVertical];
+        [self.containerStackView addArrangedSubview:spacer];
+
         // Explicitly remove footer view from the superview if footer is nil
         if (footerButton) {
             [self.footerButtonContainer addSubview:footerButton];
