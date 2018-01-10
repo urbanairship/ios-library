@@ -148,8 +148,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.mockAnalytics = [self mockForClass:[UAAnalytics class]];
 
     self.mockAirship =[self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
-    [[[self.mockAirship stub] andReturn:self.mockAnalytics] analytics];
+    [[[self.mockAirship stub] andReturn:self.mockAnalytics] sharedAnalytics];
     [[[self.mockAirship stub] andReturn:self.dataStore] dataStore];
 
     self.mockPushDelegate = [self mockForProtocol:@protocol(UAPushNotificationDelegate)];
@@ -172,6 +171,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     self.mockTagGroupsAPIClient = [self mockForClass:[UATagGroupsAPIClient class]];
     self.push.tagGroupsAPIClient = self.mockTagGroupsAPIClient;
+
+    [UAirship setSharedAirship:self.mockAirship];
 }
 
 - (void)tearDown {
@@ -179,7 +180,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.registrationDelegate = nil;
 
     [self.dataStore removeAll];
-
     [super tearDown];
 }
 

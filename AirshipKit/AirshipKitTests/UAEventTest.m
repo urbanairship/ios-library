@@ -7,7 +7,7 @@
 #import "UAPush+Internal.h"
 #import "UAUser+Internal.h"
 #import "UAEvent.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UAAnalytics.h"
 #import "UAAppInitEvent+Internal.h"
 #import "UAAppExitEvent+Internal.h"
@@ -46,10 +46,11 @@
 
     self.airship = [self mockForClass:[UAirship class]];
 
-    [[[self.airship stub] andReturn:self.airship] shared];
-    [[[self.airship stub] andReturn:self.analytics] analytics];
+    [[[self.airship stub] andReturn:self.analytics] sharedAnalytics];
     [[[self.airship stub] andReturn:self.push] push];
     [[[self.airship stub] andReturn:self.user] inboxUser];
+
+    [UAirship setSharedAirship:self.airship];
 
     self.utils = [self mockForClass:[UAUtils class]];
 

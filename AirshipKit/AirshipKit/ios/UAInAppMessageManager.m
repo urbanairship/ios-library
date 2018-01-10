@@ -279,7 +279,7 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
 
     // Display event
     UAEvent *event = [UAInAppMessageDisplayEvent eventWithMessage:info.message];
-    [[UAirship shared].analytics addEvent:event];
+    [[UAirship analytics] addEvent:event];
 
     // Display time timer
     UAActiveTimer *timer = [[UAActiveTimer alloc] init];
@@ -293,7 +293,7 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
         // Resolution event
         [timer stop];
         UAEvent *event = [UAInAppMessageResolutionEvent eventWithMessage:info.message resolution:resolution displayTime:timer.time];
-        [[UAirship shared].analytics addEvent:event];
+        [[UAirship analytics] addEvent:event];
 
         // Cancel button
         if (resolution.type == UAInAppMessageResolutionTypeButtonClick && resolution.buttonInfo.behavior == UAInAppMessageButtonInfoBehaviorCancel) {
@@ -327,7 +327,7 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
 - (void)scheduleExpired:(UASchedule *)schedule {
     UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
     UAEvent *event = [UAInAppMessageResolutionEvent eventWithExpiredMessage:info.message expiredDate:info.end];
-    [[UAirship shared].analytics addEvent:event];
+    [[UAirship analytics] addEvent:event];
 }
 
 - (void)prepareMessageWithScheduleData:(UAInAppMessageScheduleData *)scheduleData delay:(NSTimeInterval)delay {

@@ -33,8 +33,8 @@ NSString *const UAInAppMessageEventAppDefinedSourceValue = @"app-defined";
 
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
     [data setValue:identifier forKey:UAInAppMessageEventIDKey];
-    [data setValue:[UAirship shared].analytics.conversionSendID forKey:UAInAppMessageEventConversionSendIDKey];
-    [data setValue:[UAirship shared].analytics.conversionPushMetadata forKey:UAInAppMessageEventConversionMetadataKey];
+    [data setValue:[UAirship analytics].conversionSendID forKey:UAInAppMessageEventConversionSendIDKey];
+    [data setValue:[UAirship analytics].conversionPushMetadata forKey:UAInAppMessageEventConversionMetadataKey];
 
     if (source == UAInAppMessageSourceAppDefined) {
         [data setValue:UAInAppMessageEventAppDefinedSourceValue forKey:UAInAppMessageEventSourceKey];

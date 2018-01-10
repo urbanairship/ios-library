@@ -44,7 +44,7 @@
 + (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     UA_LINFO(@"Application registered device token: %@", [UAUtils deviceTokenStringFromDeviceToken:deviceToken]);
 
-    [[UAirship shared].analytics addEvent:[UADeviceRegistrationEvent event]];
+    [[UAirship analytics] addEvent:[UADeviceRegistrationEvent event]];
 
     [[UAirship push] application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
 }
@@ -182,7 +182,7 @@
     NSDictionary *actionsPayload = [self actionsPayloadForNotificationContent:response.notificationContent actionIdentifier:response.actionIdentifier];
 
     if ([response.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
-        [[UAirship shared].analytics launchedFromNotification:response.notificationContent.notificationInfo];
+        [[UAirship analytics] launchedFromNotification:response.notificationContent.notificationInfo];
         situation = UASituationLaunchedFromPush;
     } else {
         UANotificationAction *notificationAction = [self notificationActionForCategory:response.notificationContent.categoryIdentifier
@@ -195,7 +195,7 @@
         }
 
         if (notificationAction.options & UANotificationActionOptionForeground) {
-            [[UAirship shared].analytics launchedFromNotification:response.notificationContent.notificationInfo];
+            [[UAirship analytics] launchedFromNotification:response.notificationContent.notificationInfo];
             situation = UASituationForegroundInteractiveButton;
         } else {
             situation = UASituationBackgroundInteractiveButton;
@@ -206,7 +206,7 @@
                                                                   notification:response.notificationContent.notificationInfo
                                                                   responseText:response.responseText];
 
-        [[UAirship shared].analytics addEvent:event];
+        [[UAirship analytics] addEvent:event];
     }
 
     NSMutableDictionary *metadata = [NSMutableDictionary dictionary];

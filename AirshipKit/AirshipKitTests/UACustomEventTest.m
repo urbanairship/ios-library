@@ -3,7 +3,7 @@
 #import "UABaseTest.h"
 #import "UACustomEvent+Internal.h"
 #import "UAAnalytics.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 
 @interface UACustomEventTest : UABaseTest
@@ -18,9 +18,9 @@
     [super setUp];
 
     self.analytics = [self mockForClass:[UAAnalytics class]];
-    self.airship = [self strictMockForClass:[UAirship class]];
-    [[[self.airship stub] andReturn:self.airship] shared];
-    [[[self.airship stub] andReturn:self.analytics] analytics];
+    self.airship = [self mockForClass:[UAirship class]];
+    [[[self.airship stub] andReturn:self.analytics] sharedAnalytics];
+    [UAirship setSharedAirship:self.airship];
 }
 
 - (void)tearDown {

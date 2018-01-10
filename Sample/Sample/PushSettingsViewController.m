@@ -16,7 +16,7 @@
 
     // Initialize switches
     self.locationEnabledSwitch.on = [UAirship location].locationUpdatesEnabled;
-    self.analyticsSwitch.on = [UAirship shared].analytics.enabled;
+    self.analyticsSwitch.on = [UAirship analytics].enabled;
 
     // Add observer to didBecomeActive to update upon retrun from system settings screen
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didBecomeActive) name:@"UIApplicationDidBecomeActiveNotification" object:nil];
@@ -45,7 +45,7 @@
 
     [UAirship location].locationUpdatesEnabled = self.locationEnabledSwitch.on;
 
-    [UAirship shared].analytics.enabled = self.analyticsSwitch.on;
+    [UAirship analytics].enabled = self.analyticsSwitch.on;
 }
 
 - (void)refreshView {

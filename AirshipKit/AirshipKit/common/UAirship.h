@@ -64,12 +64,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 @property (nonatomic, strong, readonly) UAConfig *config;
 
-/**
- * The shared analytics manager. There are not currently any user-defined events,
- * so this is for internal library use only at this time.
- */
-@property (nonatomic, strong, readonly) UAAnalytics *analytics;
-
 
 /**
  * The default action registry.
@@ -88,7 +82,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 @property (nonatomic, assign, readonly) BOOL remoteNotificationBackgroundModeEnabled;
 
-
 /**
  * A user configurable JavaScript delegate.
  *
@@ -105,6 +98,11 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * The channel capture utility.
  */
 @property (nonatomic, strong, readonly) UAChannelCapture *channelCapture;
+
+/**
+ * Analytics instance.
+ */
+@property (nonatomic, strong, readonly) UAAnalytics *analytics;
 
 ///---------------------------------------------------------------------------------------
 /// @name Logging
@@ -227,17 +225,20 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 + (nullable NSBundle *) resources;
 
-
 /**
  * Returns the `UALocation` instance.
  */
 + (null_unspecified UALocation *)location;
 
-
 /**
  * Returns the `UAAutomation` instance.
  */
 + (null_unspecified UAAutomation *)automation;
+
+/**
+ * Returns the default `UAAnalytics` instance.
+ */
++ (null_unspecified UAAnalytics *)analytics;
 
 NS_ASSUME_NONNULL_END
 

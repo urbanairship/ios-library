@@ -14,6 +14,7 @@
 #import "UADeviceRegistrationEvent+Internal.h"
 #import "UAConfig.h"
 #import "UANotificationContent.h"
+#import "UAirship+Internal.h"
 
 #if !TARGET_OS_TV
 #import "UAInbox+Internal.h"
@@ -80,10 +81,12 @@
     [[[self.mockedInbox stub] andReturn:self.mockedMessageList] messageList];
 
     self.mockedAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
-    [[[self.mockedAirship stub] andReturn:self.mockedAnalytics] analytics];
+    [[[self.mockedAirship stub] andReturn:self.mockedAnalytics] sharedAnalytics];
     [[[self.mockedAirship stub] andReturn:self.mockedPush] push];
     [[[self.mockedAirship stub] andReturn:self.mockedInbox] inbox];
+
+    [UAirship setSharedAirship:self.mockedAirship];
+
 
     self.notification = @{
                           @"aps": @{

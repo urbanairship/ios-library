@@ -2,7 +2,7 @@
 
 #import "UABaseTest.h"
 #import "UAAnalytics.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UAInAppMessageResolutionEvent+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAUtils.h"
@@ -24,9 +24,8 @@
     [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionPushMetadata];
 
     self.airship = [self mockForClass:[UAirship class]];
-    [[[self.airship stub] andReturn:self.airship] shared];
-    [[[self.airship stub] andReturn:self.analytics] analytics];
-
+    [[[self.airship stub] andReturn:self.analytics] sharedAnalytics];
+    [UAirship setSharedAirship:self.airship];
 
     self.displayContent = [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
         builder.placement = UAInAppMessageBannerPlacementTop;

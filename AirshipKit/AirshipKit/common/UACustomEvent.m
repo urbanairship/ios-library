@@ -199,11 +199,11 @@ NSString *const UACustomEventTemplateTypeKey = @"template_type";
     [dictionary setValue:self.eventName forKey:UACustomEventNameKey];
 
     // Conversion Send ID
-    NSString *sendID = self.conversionSendID ?:[UAirship shared].analytics.conversionSendID;
+    NSString *sendID = self.conversionSendID ?:[UAirship analytics].conversionSendID;
     [dictionary setValue:sendID forKey:UACustomEventConversionSendIDKey];
 
     // Conversion Send Metadata
-    NSString *sendMetadata = self.conversionPushMetadata ?:[UAirship shared].analytics.conversionPushMetadata;
+    NSString *sendMetadata = self.conversionPushMetadata ?:[UAirship analytics].conversionPushMetadata;
     [dictionary setValue:sendMetadata forKey:UACustomEventConversionMetadataKey];
 
     // Interaction
@@ -271,7 +271,7 @@ NSString *const UACustomEventTemplateTypeKey = @"template_type";
 }
 
 - (void)track {
-    [[UAirship shared].analytics addEvent:self];
+    [[UAirship analytics] addEvent:self];
 }
 
 @end

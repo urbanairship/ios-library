@@ -2,7 +2,7 @@
 
 #import "UABaseTest.h"
 #import "UAanalytics.h"
-#import "UAirship.h"
+#import "UAirship+Internal.H"
 #import "UAAddCustomEventAction.h"
 #import "UAAction+Internal.h"
 #import "UACustomEvent.h"
@@ -22,9 +22,9 @@
 
     self.analytics = [self mockForClass:[UAAnalytics class]];
     self.airship = [self strictMockForClass:[UAirship class]];
-    [[[self.airship stub] andReturn:self.airship] shared];
-    [[[self.airship stub] andReturn:self.analytics] analytics];
+    [[[self.airship stub] andReturn:self.analytics] sharedAnalytics];
 
+    [UAirship setSharedAirship:self.airship];
     self.action = [[UAAddCustomEventAction alloc] init];
 }
 

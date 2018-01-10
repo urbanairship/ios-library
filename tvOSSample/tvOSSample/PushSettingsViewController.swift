@@ -41,7 +41,7 @@ class PushSettingsViewController: UITableViewController, UARegistrationDelegate 
 
         pushEnabled = UAirship.push().userPushNotificationsEnabled
         locationEnabled = UAirship.location().isLocationUpdatesEnabled
-        analytics = UAirship.shared().analytics.isEnabled
+        analytics = UAirship.analytics().isEnabled
 
         refreshView()
 
@@ -107,7 +107,7 @@ class PushSettingsViewController: UITableViewController, UARegistrationDelegate 
             break
         case (analyticsEnabledIndexPath!.section, analyticsEnabledIndexPath!.row) :
             analytics = !analytics;
-            UAirship.shared().analytics.isEnabled = analytics
+            UAirship.analytics().isEnabled = analytics
             refreshView()
             break
         case (locationEnabledIndexPath!.section, locationEnabledIndexPath!.row) :

@@ -717,7 +717,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         payload.quietTime = [self.quietTime copy];
     }
 
-    if ([UAirship shared].analytics.isEnabled) {
+    if ([UAirship analytics].isEnabled) {
         NSString *localeLanguage = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
         NSString *localeCountry = [[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleCountryCode];
 
