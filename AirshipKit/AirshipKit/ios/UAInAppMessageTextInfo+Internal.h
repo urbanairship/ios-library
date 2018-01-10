@@ -37,13 +37,6 @@ typedef NS_ENUM(NSInteger, UAInAppMessageTextInfoErrorCode) {
  */
 - (NSDictionary *)toJSON;
 
-/**
- * Creates an in-app message text info with a builder block.
- *
- * @return The in-app message text info.
- */
-+ (nullable instancetype)textInfoWithBuilderBlock:(void(^)(UAInAppMessageTextInfoBuilder *builder))builderBlock;
-
 @end
 
 NS_ASSUME_NONNULL_END

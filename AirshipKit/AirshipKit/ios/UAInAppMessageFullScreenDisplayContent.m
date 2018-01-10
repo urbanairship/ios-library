@@ -64,7 +64,7 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
 
 @implementation UAInAppMessageFullScreenDisplayContent
 
-+ (instancetype)displayContentWithBuilderBlock:(void(^)(UAInAppMessageFullScreenDisplayContentBuilder *builder))builderBlock {
++ (nullable instancetype)displayContentWithBuilderBlock:(void(^)(UAInAppMessageFullScreenDisplayContentBuilder *builder))builderBlock {
     UAInAppMessageFullScreenDisplayContentBuilder *builder = [[UAInAppMessageFullScreenDisplayContentBuilder alloc] init];
 
     if (builderBlock) {
@@ -74,7 +74,7 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
     return [[UAInAppMessageFullScreenDisplayContent alloc] initWithBuilder:builder];
 }
 
-+ (instancetype)displayContentWithJSON:(id)json error:(NSError **)error {
++ (nullable instancetype)displayContentWithJSON:(id)json error:(NSError **)error {
     UAInAppMessageFullScreenDisplayContentBuilder *builder = [[UAInAppMessageFullScreenDisplayContentBuilder alloc] init];
 
     if (![json isKindOfClass:[NSDictionary class]]) {
@@ -258,7 +258,7 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
     return [[UAInAppMessageFullScreenDisplayContent alloc] initWithBuilder:builder];
 }
 
-- (instancetype)initWithBuilder:(UAInAppMessageFullScreenDisplayContentBuilder *)builder {
+- (nullable instancetype)initWithBuilder:(UAInAppMessageFullScreenDisplayContentBuilder *)builder {
     self = [super self];
 
     if (![builder isValid]) {
@@ -311,7 +311,6 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
             [json setValue:UAInAppMessageButtonLayoutJoinedValue forKey:UAInAppMessageButtonLayoutKey];
             break;
     }
-
 
     switch (self.contentLayout) {
         case UAInAppMessageFullScreenContentLayoutHeaderMediaBody:

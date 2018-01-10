@@ -66,7 +66,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
 
 @implementation UAInAppMessageModalDisplayContent
 
-+ (instancetype)displayContentWithBuilderBlock:(void(^)(UAInAppMessageModalDisplayContentBuilder *builder))builderBlock {
++ (nullable instancetype)displayContentWithBuilderBlock:(void(^)(UAInAppMessageModalDisplayContentBuilder *builder))builderBlock {
     UAInAppMessageModalDisplayContentBuilder *builder = [[UAInAppMessageModalDisplayContentBuilder alloc] init];
     
     if (builderBlock) {
@@ -76,7 +76,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
     return [[UAInAppMessageModalDisplayContent alloc] initWithBuilder:builder];
 }
 
-+ (instancetype)displayContentWithJSON:(id)json error:(NSError **)error {
++ (nullable instancetype)displayContentWithJSON:(id)json error:(NSError **)error {
     UAInAppMessageModalDisplayContentBuilder *builder = [[UAInAppMessageModalDisplayContentBuilder alloc] init];
     
     if (![json isKindOfClass:[NSDictionary class]]) {
@@ -268,7 +268,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
     
     return [[UAInAppMessageModalDisplayContent alloc] initWithBuilder:builder];}
 
-- (instancetype)initWithBuilder:(UAInAppMessageModalDisplayContentBuilder *)builder {
+- (nullable instancetype)initWithBuilder:(UAInAppMessageModalDisplayContentBuilder *)builder {
     self = [super self];
     
     if (![builder isValid]) {

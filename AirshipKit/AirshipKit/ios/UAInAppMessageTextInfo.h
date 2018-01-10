@@ -107,11 +107,10 @@ typedef NS_OPTIONS(NSUInteger, UAInAppMessageTextInfoStyleType) {
  */
 @property(nonatomic, copy, readonly, nullable) NSArray<NSString *> *fontFamilies;
 
-
 /**
  * Creates an in-app message text info with a builder block.
  *
- * @return The in-app message text info.
+ * @return The in-app message text info if the builder sucessfully built it, otherwise nil.
  */
 + (nullable instancetype)textInfoWithBuilderBlock:(void(^)(UAInAppMessageTextInfoBuilder *builder))builderBlock;
 

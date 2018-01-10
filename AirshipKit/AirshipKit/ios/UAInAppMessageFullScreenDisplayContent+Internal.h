@@ -26,9 +26,10 @@ typedef NS_ENUM(NSInteger, UAInAppMessageFullScreenDisplayContentErrorCode) {
  *
  * @param json The json object.
  * @param error The optional error.
- * @returns `YES` if the json was able to be applied, otherwise `NO`.
+ *
+ * @returns the display content if the json was able to be applied, otherwise nil.
  */
-+ (instancetype)displayContentWithJSON:(id)json error:(NSError **)error;
++ (nullable instancetype)displayContentWithJSON:(id)json error:(NSError **)error;
 
 @end
 

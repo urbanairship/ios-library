@@ -80,12 +80,12 @@ extern NSUInteger const UAInAppMessageFullScreenMaxButtons;
 /**
  * The full screen's background color. Defaults to white.
  */
-@property(nonatomic, nullable) UIColor *backgroundColor;
+@property(nonatomic, strong, nullable) UIColor *backgroundColor;
 
 /**
  * The full screen's dismiss button color. Defaults to black.
  */
-@property(nonatomic, nullable) UIColor *dismissButtonColor;
+@property(nonatomic, strong, nullable) UIColor *dismissButtonColor;
 
 /**
  * Checks if the builder is valid and will produce an display content instance.
@@ -151,8 +151,10 @@ extern NSUInteger const UAInAppMessageFullScreenMaxButtons;
  * Factory method for building full screen display content with builder block.
  *
  * @param builderBlock The builder block.
+ *
+ * @returns the display content if the builder block successfully built it, otherwise nil.
  */
-+ (instancetype)displayContentWithBuilderBlock:(void(^)(UAInAppMessageFullScreenDisplayContentBuilder *builder))builderBlock;
++ (nullable instancetype)displayContentWithBuilderBlock:(void(^)(UAInAppMessageFullScreenDisplayContentBuilder *builder))builderBlock;
 
 @end
 

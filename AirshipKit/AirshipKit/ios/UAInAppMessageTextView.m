@@ -5,6 +5,8 @@
 #import "UAInAppMessageTextInfo.h"
 #import "UAInAppMessageUtils+Internal.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 NSString *const UAInAppMessageTextViewNibName = @"UAInAppMessageTextView";
 
 @interface UAInAppMessageTextView ()
@@ -16,12 +18,12 @@ NSString *const UAInAppMessageTextViewNibName = @"UAInAppMessageTextView";
 
 @implementation UAInAppMessageTextView
 
-+ (instancetype)textViewWithHeading:(UAInAppMessageTextInfo *)heading
-                               body:(UAInAppMessageTextInfo *)body {
++ (nullable instancetype)textViewWithHeading:(UAInAppMessageTextInfo * _Nullable)heading
+                               body:(UAInAppMessageTextInfo * _Nullable)body {
     return [[UAInAppMessageTextView alloc] initWithHeading:heading body:body];
 }
 
-- (instancetype)initWithHeading:(UAInAppMessageTextInfo *)heading body:(UAInAppMessageTextInfo *)body {
+- (nullable instancetype)initWithHeading:(UAInAppMessageTextInfo * _Nullable)heading body:(UAInAppMessageTextInfo * _Nullable)body {
     self = [super init];
 
     NSString *nibName = UAInAppMessageTextViewNibName;
@@ -57,7 +59,13 @@ NSString *const UAInAppMessageTextViewNibName = @"UAInAppMessageTextView";
         }];
     }
 
+    if (!heading && !body) {
+        return nil;
+    }
+
     return self;
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

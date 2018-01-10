@@ -78,7 +78,7 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
 
 @implementation UAInAppMessageBannerDisplayContent
 
-+ (instancetype)displayContentWithBuilderBlock:(void(^)(UAInAppMessageBannerDisplayContentBuilder *builder))builderBlock {
++ (nullable instancetype)displayContentWithBuilderBlock:(void(^)(UAInAppMessageBannerDisplayContentBuilder *builder))builderBlock {
     UAInAppMessageBannerDisplayContentBuilder *builder = [[UAInAppMessageBannerDisplayContentBuilder alloc] init];
 
     if (builderBlock) {
@@ -88,7 +88,7 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     return [[UAInAppMessageBannerDisplayContent alloc] initWithBuilder:builder];
 }
 
-+ (instancetype)displayContentWithJSON:(id)json error:(NSError **)error {
++ (nullable instancetype)displayContentWithJSON:(id)json error:(NSError **)error {
     UAInAppMessageBannerDisplayContentBuilder *builder = [[UAInAppMessageBannerDisplayContentBuilder alloc] init];
     
     if (![json isKindOfClass:[NSDictionary class]]) {
@@ -319,7 +319,7 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     return [[UAInAppMessageBannerDisplayContent alloc] initWithBuilder:builder];
 }
 
-- (instancetype)initWithBuilder:(UAInAppMessageBannerDisplayContentBuilder *)builder {
+- (nullable instancetype)initWithBuilder:(UAInAppMessageBannerDisplayContentBuilder *)builder {
     self = [super init];
 
     if (![builder isValid]) {

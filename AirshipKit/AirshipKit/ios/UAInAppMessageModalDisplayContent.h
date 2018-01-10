@@ -79,12 +79,12 @@ extern NSUInteger const UAInAppMessageModalMaxButtons;
 /**
  * The modal message's background color. Defaults to white.
  */
-@property(nonatomic, nullable) UIColor *backgroundColor;
+@property(nonatomic, strong, nullable) UIColor *backgroundColor;
 
 /**
  * The modal message's dismiss button color. Defaults to black.
  */
-@property(nonatomic, nullable) UIColor *dismissButtonColor;
+@property(nonatomic, strong, nullable) UIColor *dismissButtonColor;
 
 /**
  * The modal message's border radius. Defaults to 0.
@@ -159,8 +159,10 @@ extern NSUInteger const UAInAppMessageModalMaxButtons;
  * Factory method for building modal message display content with builder block.
  *
  * @param builderBlock The builder block.
+ *
+ * @returns the display content if the builder block successfully built it, otherwise nil.
  */
-+ (instancetype)displayContentWithBuilderBlock:(void(^)(UAInAppMessageModalDisplayContentBuilder *builder))builderBlock;
++ (nullable instancetype)displayContentWithBuilderBlock:(void(^)(UAInAppMessageModalDisplayContentBuilder *builder))builderBlock;
 
 @end
 

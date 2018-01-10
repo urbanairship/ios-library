@@ -190,8 +190,10 @@ extern NSUInteger const UAInAppMessageBannerMaxButtons;
  * Factory method for building banner display content with builder block.
  *
  * @param builderBlock The builder block.
+ *
+ * @returns the display content if the builder block successfully built it, otherwise nil.
  */
-+ (instancetype)displayContentWithBuilderBlock:(void(^)(UAInAppMessageBannerDisplayContentBuilder *builder))builderBlock;
++ (nullable instancetype)displayContentWithBuilderBlock:(void(^)(UAInAppMessageBannerDisplayContentBuilder *builder))builderBlock;
 
 @end
 

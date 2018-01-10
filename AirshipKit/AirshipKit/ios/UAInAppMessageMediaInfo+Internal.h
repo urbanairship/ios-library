@@ -37,7 +37,6 @@ typedef NS_ENUM(NSInteger, UAMediaInfoErrorCode) {
  */
 - (NSDictionary *)toJSON;
 
-
 @end
 
 NS_ASSUME_NONNULL_END

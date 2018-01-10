@@ -114,7 +114,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageButtonInfoBehaviorType) {
 /**
  * Creates an in-app message button info with a builder block.
  *
- * @return The in-app message button info.
+ * @return The in-app message button info if the builder sucessfully built it, otherwise nil.
  */
 + (nullable instancetype)buttonInfoWithBuilderBlock:(void(^)(UAInAppMessageButtonInfoBuilder *builder))builderBlock;
 
