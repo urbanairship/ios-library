@@ -2,7 +2,7 @@
 
 #import "UABaseTest.h"
 #import "UAanalytics.h"
-#import "UAirship+Internal.H"
+#import "UAirship+Internal.h"
 #import "UAAddCustomEventAction.h"
 #import "UAAction+Internal.h"
 #import "UACustomEvent.h"
