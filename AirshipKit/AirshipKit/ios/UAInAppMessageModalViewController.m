@@ -62,7 +62,7 @@ double const DefaultModalAnimationDuration = 0.2;
 
         // change constraints on modal view for the shrunken scroll view
         self.modalViewMaxHeightConstraint.active = NO;
-        self.modalViewActualHeightConstraint.constant = self.modalView.frame.size.height - shrinkScrollView;
+        self.modalViewActualHeightConstraint.constant = ceil(self.modalView.frame.size.height - shrinkScrollView);
         self.modalViewActualHeightConstraint.active = YES;
         
         [self setNeedsLayout];
@@ -296,6 +296,14 @@ double const DefaultModalAnimationDuration = 0.2;
     if (self.image) {
         imageView = [[UIImageView alloc] initWithImage:self.image];
         imageView.contentMode = UIViewContentModeScaleAspectFit;
+        
+        [NSLayoutConstraint constraintWithItem:imageView
+                                     attribute:NSLayoutAttributeHeight
+                                     relatedBy:NSLayoutRelationEqual
+                                        toItem:imageView
+                                     attribute:NSLayoutAttributeWidth
+                                    multiplier:(self.image.size.height / self.image.size.width)
+                                      constant:0].active = YES;
         
         [containerForMediaView addSubview:imageView];
         [UAInAppMessageUtils applyContainerConstraintsToContainer:containerForMediaView containedView:imageView];
