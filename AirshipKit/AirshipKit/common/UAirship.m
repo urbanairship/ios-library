@@ -396,7 +396,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 }
 
 - (UAAnalytics *)analytics {
-    return sharedAirship_.sharedAnalytics;
+    return self.sharedAnalytics;
 }
 
 + (UARemoteDataManager *)remoteDataManager {
