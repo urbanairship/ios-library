@@ -39,7 +39,7 @@
 
     NSDictionary *channelDict = @{@"group1" : @[@"tag1", @"tag2"],@"group2" : @[@"tag3", @"tag4"]};
     NSDictionary *namedUserDict = @{@"group3" : @[@"tag5", @"tag6"]};
-    NSDictionary *dict = @{@"channel" : channelDict, @"named_user" : namedUserDict};
+    NSDictionary *dict = @{@"channel" : channelDict, @"named_user" : namedUserDict, @"device": @[@"device tag", @"another device tag"]};
     self.dictArgs = [UAActionArguments argumentsWithValue:dict withSituation:UASituationWebViewInvocation];
 
     NSDictionary *dictIntKeys = @{@1 : channelDict, @2 : namedUserDict};
@@ -144,7 +144,8 @@
     [action runWithArguments:self.arrayArgs completionHandler:^(UAActionResult *result) {
            [self.mockPush verify];
     }];
-    
+
+    [[self.mockPush expect] addTags:@[@"device tag", @"another device tag"]];
     [[self.mockPush expect] addTags:@[@"tag1", @"tag2"] group:@"group1"];
     [[self.mockPush expect] addTags:@[@"tag3", @"tag4"] group:@"group2"];
     [[self.mockNamedUser expect] addTags:@[@"tag5", @"tag6"] group:@"group3"];
@@ -179,6 +180,7 @@
            [self.mockPush verify];
     }];
 
+    [[self.mockPush expect] removeTags:@[@"device tag", @"another device tag"]];
     [[self.mockPush expect] removeTags:@[@"tag1", @"tag2"] group:@"group1"];
     [[self.mockPush expect] removeTags:@[@"tag3", @"tag4"] group:@"group2"];
     [[self.mockNamedUser expect] removeTags:@[@"tag5", @"tag6"] group:@"group3"];
