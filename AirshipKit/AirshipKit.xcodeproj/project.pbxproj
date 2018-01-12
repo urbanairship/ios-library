@@ -3434,12 +3434,12 @@
 		DF7E79F61EE1D39800D4EF02 /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				DFFA739F1FFDB42D00D2DA1A /* UAInAppMessageModalViewController.xib */,
 				6E7700A81F04790C00B5E465 /* UANativeBridge */,
 				6E7700A91F04790C00B5E465 /* UANotificationCategories.plist */,
 				CC89997E1D8B642D00A0CECC /* Info.plist */,
 				99978EEA1EBAB7E7000F4AF7 /* UADefaultActions.plist */,
 				CC8999A51D8B642D00A0CECC /* UAMessageCenterPlaceholderIcon.png */,
+				DFFA739F1FFDB42D00D2DA1A /* UAInAppMessageModalViewController.xib */,
 				99E2DA481FBA2A4400C9F2CC /* UAInAppMessageBannerView.xib */,
 				998B22621FD896EF00C535AE /* UAInAppMessageBannerContentView.xib */,
 				99EC01931FE0B0F500B9C408 /* UAInAppMessageFullScreenView.xib */,

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -40,10 +40,10 @@
                             <rect key="frame" x="0.0" y="0.0" width="327" height="35"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kjI-XO-DcA" userLabel="Close Button" customClass="UAInAppMessageCloseButton">
-                                    <rect key="frame" x="302" y="10" width="15" height="15"/>
+                                    <rect key="frame" x="292" y="0.0" width="35" height="35"/>
                                     <constraints>
-                                        <constraint firstAttribute="width" constant="15" id="QXR-c4-O6R"/>
-                                        <constraint firstAttribute="height" constant="15" id="StN-6d-1kJ"/>
+                                        <constraint firstAttribute="width" constant="35" id="QXR-c4-O6R"/>
+                                        <constraint firstAttribute="height" constant="35" id="StN-6d-1kJ"/>
                                     </constraints>
                                     <state key="normal" title="Button"/>
                                     <connections>
@@ -53,10 +53,10 @@
                             </subviews>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
-                                <constraint firstAttribute="trailing" secondItem="kjI-XO-DcA" secondAttribute="trailing" constant="10" id="AHw-TG-WDb"/>
+                                <constraint firstAttribute="trailing" secondItem="kjI-XO-DcA" secondAttribute="trailing" id="AHw-TG-WDb"/>
                                 <constraint firstAttribute="height" constant="35" id="Na0-2s-I3l"/>
-                                <constraint firstItem="kjI-XO-DcA" firstAttribute="top" secondItem="ITh-ke-3Lu" secondAttribute="top" constant="10" id="dIS-Ru-szy"/>
-                                <constraint firstAttribute="bottom" secondItem="kjI-XO-DcA" secondAttribute="bottom" constant="10" id="o1V-K9-rZH"/>
+                                <constraint firstItem="kjI-XO-DcA" firstAttribute="top" secondItem="ITh-ke-3Lu" secondAttribute="top" id="dIS-Ru-szy"/>
+                                <constraint firstAttribute="bottom" secondItem="kjI-XO-DcA" secondAttribute="bottom" id="o1V-K9-rZH"/>
                             </constraints>
                         </view>
                         <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DIK-Y7-gKS" customClass="UAInAppMessageModalScrollView">
