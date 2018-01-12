@@ -2,6 +2,8 @@
 
 #import "UABaseTest.h"
 #import "UAJSONValueMatcher.h"
+#import "UAJSONMatcher.h"
+#import "UAJSONPredicate.h"
 
 @interface UAJSONValueMatcherTests : UABaseTest
 
@@ -177,8 +179,55 @@
     XCTAssertFalse([matcher evaluateObject:@"2.0.1"]);
 }
 
-- (void)testInvalidPayload {
+- (void)testArrayContains {
+    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWhereStringEquals:@"bingo"]];
+    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
 
+    UAJSONValueMatcher *matcher = [UAJSONValueMatcher matcherWithArrayContainsPredicate:predicate];
+
+    XCTAssertNotNil(matcher);
+
+    // Invalid values
+    XCTAssertFalse([matcher evaluateObject:@"1.0"]);
+    XCTAssertFalse([matcher evaluateObject:@{@"bingo": @"what"}]);
+    XCTAssertFalse([matcher evaluateObject:@(1)]);
+    XCTAssertFalse([matcher evaluateObject:nil]);
+
+    // Valid values
+    NSArray *value = @[@"thats", @"a", @"bingo"];
+    XCTAssertTrue([matcher evaluateObject:value]);
+    value = @[@"thats", @"a"];
+    XCTAssertFalse([matcher evaluateObject:value]);
+    value = @[];
+    XCTAssertFalse([matcher evaluateObject:@[]]);
+}
+
+- (void)testArrayContainsAtIndex {
+    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWhereStringEquals:@"bingo"]];
+    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+
+    UAJSONValueMatcher *matcher = [UAJSONValueMatcher matcherWithArrayContainsPredicate:predicate atIndex:1];
+
+    XCTAssertNotNil(matcher);
+
+    // Invalid values
+    XCTAssertFalse([matcher evaluateObject:@"1.0"]);
+    XCTAssertFalse([matcher evaluateObject:@{@"bingo": @"what"}]);
+    XCTAssertFalse([matcher evaluateObject:@(1)]);
+    XCTAssertFalse([matcher evaluateObject:nil]);
+
+    // Valid values
+    NSArray *value = @[@"thats", @"bingo", @"a"];
+    XCTAssertTrue([matcher evaluateObject:value]);
+    value = @[@"thats", @"a", @"bingo"];
+    XCTAssertFalse([matcher evaluateObject:value]);
+    value = @[@"thats"];
+    XCTAssertFalse([matcher evaluateObject:value]);
+    value = @[];
+    XCTAssertFalse([matcher evaluateObject:@[]]);
+}
+
+- (void)testInvalidPayload {
     // Invalid combo
     NSError *error;
     NSDictionary *json = @{ @"is_present": @(NO), @"equals": @(100) };
@@ -226,5 +275,6 @@
     XCTAssertNil([UAJSONValueMatcher matcherWithJSON:@"cool" error:&error]);
     XCTAssertNotNil(error);
 }
+
 
 @end

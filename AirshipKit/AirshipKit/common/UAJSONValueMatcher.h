@@ -2,6 +2,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class UAJSONPredicate;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -96,6 +98,23 @@ extern NSString * const UAJSONValueMatcherErrorDomain;
  * @return A value matcher.
  */
 + (nullable instancetype)matcherWithVersionConstraint:(NSString *)versionConstraint;
+
+/**
+ * Factory method to create a matcher for an array value.
+ *
+ * @param predicate A predicate to be used to evaluate each value in the array for a match.
+ * @return A value matcher.
+ */
++ (nullable instancetype)matcherWithArrayContainsPredicate:(UAJSONPredicate *)predicate;
+
+/**
+ * Factory method to create a matcher for a value in an array.
+ *
+ * @param predicate A predicate to be used to evaluate the value at the index.
+ * @param index The array index.
+ * @return A value matcher.
+ */
++ (nullable instancetype)matcherWithArrayContainsPredicate:(UAJSONPredicate *)predicate atIndex:(NSUInteger)index;
 
 /**
  * Factory method to create a matcher from a JSON payload.
