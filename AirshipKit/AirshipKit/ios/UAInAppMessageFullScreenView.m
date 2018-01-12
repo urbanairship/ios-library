@@ -18,7 +18,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 @interface UAInAppMessageFullScreenView ()
 
 @property (nonatomic, strong) IBOutlet UIStackView *containerStackView;
-@property (strong, nonatomic) IBOutlet UIView *closeButtonContainer;
+@property (strong, nonatomic) IBOutlet UAInAppMessageCloseButton *closeButtonContainer;
 @property (strong, nonatomic) IBOutlet UIView *footerButtonContainer;
 @property (strong, nonatomic) IBOutlet UIView *messageTop;
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;

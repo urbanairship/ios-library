@@ -16,7 +16,7 @@
 
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetFillColorWithColor(context, [UIColor clearColor].CGColor);
-    NSInteger xInset = 1;
+    NSInteger xInset = 10;
 
     CGRect xFrame = CGRectInset(self.bounds, xInset, xInset);
 
