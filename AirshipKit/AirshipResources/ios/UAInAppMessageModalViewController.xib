@@ -39,8 +39,8 @@
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ITh-ke-3Lu" userLabel="Close Button Container View">
                             <rect key="frame" x="0.0" y="0.0" width="327" height="35"/>
                             <subviews>
-                                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kjI-XO-DcA" userLabel="Close Button" customClass="UAInAppMessageCloseButton">
-                                    <rect key="frame" x="302" y="10" width="35" height="35"/>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kjI-XO-DcA" userLabel="Close Button" customClass="UAInAppMessageCloseButton">
+                                    <rect key="frame" x="292" y="0.0" width="35" height="35"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="35" id="QXR-c4-O6R"/>
                                         <constraint firstAttribute="height" constant="35" id="StN-6d-1kJ"/>
