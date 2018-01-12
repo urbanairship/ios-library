@@ -179,9 +179,9 @@ double const DefaultModalAnimationDuration = 0.2;
 @property (nonatomic, assign) BOOL isShowing;
 
 /**
- * The modal message's media.
+ * The modal message's media view.
  */
-@property (nonatomic, strong) UIImage *image;
+@property (nonatomic, strong) UAInAppMessageMediaView *mediaView;
 
 /**
  * The modal display content.
@@ -200,23 +200,23 @@ double const DefaultModalAnimationDuration = 0.2;
 @dynamic view;
 
 + (instancetype)modalControllerWithModalMessageID:(NSString *)messageID
-                                             displayContent:(UAInAppMessageModalDisplayContent *)displayContent
-                                                      image:(UIImage *_Nullable)image {
+                                   displayContent:(UAInAppMessageModalDisplayContent *)displayContent
+                                        mediaView:(UAInAppMessageMediaView *_Nullable)mediaView {
     
     return [[self alloc] initWithModalMessageID:messageID
-                                      displayContent:displayContent
-                                               image:image];
+                                 displayContent:displayContent
+                                      mediaView:mediaView];
 }
 
 - (instancetype)initWithModalMessageID:(NSString *)messageID
-                             displayContent:(UAInAppMessageModalDisplayContent *)displayContent
-                                      image:(UIImage *_Nullable)image {
+                        displayContent:(UAInAppMessageModalDisplayContent *)displayContent
+                             mediaView:(UAInAppMessageMediaView *_Nullable)mediaView {
     self = [self initWithNibName:@"UAInAppMessageModalViewController" bundle:[UAirship resources]];
 
     if (self) {
         self.messageID = messageID;
         self.displayContent = displayContent;
-        self.image = image;
+        self.mediaView = mediaView;
     }
     
     return self;
@@ -291,22 +291,10 @@ double const DefaultModalAnimationDuration = 0.2;
         [UAInAppMessageUtils applyContainerConstraintsToContainer:containerForHeaderView containedView:headerView];
     }
     
-    // Only create image view if image is present
-    UIImageView *imageView;
-    if (self.image) {
-        imageView = [[UIImageView alloc] initWithImage:self.image];
-        imageView.contentMode = UIViewContentModeScaleAspectFit;
-        
-        [NSLayoutConstraint constraintWithItem:imageView
-                                     attribute:NSLayoutAttributeHeight
-                                     relatedBy:NSLayoutRelationEqual
-                                        toItem:imageView
-                                     attribute:NSLayoutAttributeWidth
-                                    multiplier:(self.image.size.height / self.image.size.width)
-                                      constant:0].active = YES;
-        
-        [containerForMediaView addSubview:imageView];
-        [UAInAppMessageUtils applyContainerConstraintsToContainer:containerForMediaView containedView:imageView];
+    // Only create media view if media is present
+    if (self.mediaView) {
+        [containerForMediaView addSubview:self.mediaView];
+        [UAInAppMessageUtils applyContainerConstraintsToContainer:containerForMediaView containedView:self.mediaView];
     }
  
     // Only create body view if body is present

@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 // UAInAppMessageButtonView nib name
 NSString *const UAInAppMessageMediaViewNibName = @"UAInAppMessageMediaView";
 CGFloat const DefaultVideoHeightPadding = 60;
-CGFloat const DefaultVideoAspectRatio = 1.7779;
+CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
 
 @interface UAInAppMessageMediaView()
 @property (nonatomic, strong, nullable) IBOutlet UIImageView *imageView;
@@ -61,7 +61,6 @@ CGFloat const DefaultVideoAspectRatio = 1.7779;
         WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
 
         config.allowsInlineMediaPlayback = YES;
-        config.allowsPictureInPictureMediaPlayback = YES;
         config.allowsPictureInPictureMediaPlayback = YES;
 
         //This may work someday

@@ -7,6 +7,7 @@
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 #import "UAColorUtils+Internal.h"
+#import "UAUtils.h"
 
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 
@@ -16,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 NSString *const UAInAppMessageBannerViewNibName = @"UAInAppMessageBannerView";
 CGFloat const VerticalPaddingToSafeArea = 20;
 CGFloat const BannerIsBeingTappedAlpha = 0.7;
+CGFloat const DefaultBannerHeightPadding = 60;
+
 CGFloat const ShadowOffset = 2.0;
 CGFloat const ShadowRadius = 4.0;
 CGFloat const ShadowOpacity = 0.5;
@@ -40,6 +43,8 @@ CGFloat const ShadowOpacity = 0.5;
 @property (strong, nonatomic) IBOutlet NSLayoutConstraint *contentTopConstraint;
 @property (strong, nonatomic) IBOutlet NSLayoutConstraint *contentBottomConstraint;
 @property (strong, nonatomic) IBOutlet NSLayoutConstraint *noButtonsContentBottomConstraint;
+@property (strong, nonatomic) NSLayoutConstraint *heightConstraint;
+
 
 @end
 
@@ -112,6 +117,17 @@ CGFloat const ShadowOpacity = 0.5;
     // Applies iPhone X inset spacing, otherwise no-op
     [self applyInsetSpacing];
     [self applyLayerRounding];
+
+    // Limit absolute banner height to window height - padding
+    self.heightConstraint = [NSLayoutConstraint constraintWithItem:self
+                                                         attribute:NSLayoutAttributeHeight
+                                                         relatedBy:NSLayoutRelationLessThanOrEqual
+                                                            toItem:nil
+                                                         attribute:NSLayoutAttributeNotAnAttribute
+                                                        multiplier:1
+                                                          constant:[UAUtils mainWindow].frame.size.height - DefaultBannerHeightPadding];
+    self.heightConstraint.active = YES;
+    [self layoutIfNeeded];
 }
 
 - (void)applyInsetSpacing {

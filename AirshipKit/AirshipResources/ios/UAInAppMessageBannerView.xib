@@ -39,6 +39,7 @@
                     <gestureRecognizers/>
                     <constraints>
                         <constraint firstItem="A4y-Le-7Tg" firstAttribute="top" secondItem="3me-ax-tOr" secondAttribute="top" constant="20" id="0pm-g8-eyn"/>
+                        <constraint firstItem="A4y-Le-7Tg" firstAttribute="leading" secondItem="3me-ax-tOr" secondAttribute="leading" id="3Rc-bg-CwK"/>
                         <constraint firstItem="d3j-OF-iBo" firstAttribute="centerX" secondItem="3me-ax-tOr" secondAttribute="centerX" id="H7e-zG-uUm"/>
                         <constraint firstItem="d3j-OF-iBo" firstAttribute="top" secondItem="1dl-fi-7LK" secondAttribute="bottom" constant="10" id="HE3-3p-9u4"/>
                         <constraint firstAttribute="trailing" secondItem="1dl-fi-7LK" secondAttribute="trailing" id="JDs-8v-YAX"/>
@@ -47,7 +48,6 @@
                         <constraint firstAttribute="trailing" secondItem="A4y-Le-7Tg" secondAttribute="trailing" id="cmI-UF-uGV"/>
                         <constraint firstItem="d3j-OF-iBo" firstAttribute="top" secondItem="A4y-Le-7Tg" secondAttribute="bottom" priority="250" constant="10" id="d3r-jB-F0B"/>
                         <constraint firstItem="1dl-fi-7LK" firstAttribute="top" secondItem="A4y-Le-7Tg" secondAttribute="bottom" constant="10" id="iyV-3I-47L"/>
-                        <constraint firstItem="A4y-Le-7Tg" firstAttribute="leading" secondItem="3me-ax-tOr" secondAttribute="leading" id="jx2-bN-neL"/>
                     </constraints>
                 </view>
             </subviews>

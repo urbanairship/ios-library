@@ -418,7 +418,7 @@
 		998767341FC4F1CF00197AF4 /* UAInAppMessageUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 998767311FC4F1CF00197AF4 /* UAInAppMessageUtils+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		998767351FC4F1CF00197AF4 /* UAInAppMessageUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 998767321FC4F1CF00197AF4 /* UAInAppMessageUtils.m */; };
 		998767361FC4F1CF00197AF4 /* UAInAppMessageUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 998767321FC4F1CF00197AF4 /* UAInAppMessageUtils.m */; };
-		998B225A1FD8661200C535AE /* UAInAppMessageMediaView+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 998B22581FD8661200C535AE /* UAInAppMessageMediaView+Internal.h */; };
+		998B225A1FD8661200C535AE /* UAInAppMessageMediaView+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 998B22581FD8661200C535AE /* UAInAppMessageMediaView+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		998B225B1FD8661200C535AE /* UAInAppMessageMediaView.m in Sources */ = {isa = PBXBuildFile; fileRef = 998B22591FD8661200C535AE /* UAInAppMessageMediaView.m */; };
 		998B22631FD896EF00C535AE /* UAInAppMessageBannerContentView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 998B22621FD896EF00C535AE /* UAInAppMessageBannerContentView.xib */; };
 		998B22661FD89D4400C535AE /* UAInAppMessageBannerContentView+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 998B22641FD89D4400C535AE /* UAInAppMessageBannerContentView+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -510,7 +510,7 @@
 		99E2DA751FBB76E000C9F2CC /* UAInAppMessageTextInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E2DA721FBB76E000C9F2CC /* UAInAppMessageTextInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99E2DA761FBB76E000C9F2CC /* UAInAppMessageTextInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 99E2DA731FBB76E000C9F2CC /* UAInAppMessageTextInfo.m */; };
 		99E2DA771FBB76E000C9F2CC /* UAInAppMessageTextInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 99E2DA731FBB76E000C9F2CC /* UAInAppMessageTextInfo.m */; };
-		99EC01621FDF2F4200B9C408 /* UAInAppMessageMediaView+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 998B22581FD8661200C535AE /* UAInAppMessageMediaView+Internal.h */; };
+		99EC01621FDF2F4200B9C408 /* UAInAppMessageMediaView+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 998B22581FD8661200C535AE /* UAInAppMessageMediaView+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99EC01631FDF2F4200B9C408 /* UAInAppMessageMediaView.m in Sources */ = {isa = PBXBuildFile; fileRef = 998B22591FD8661200C535AE /* UAInAppMessageMediaView.m */; };
 		99EC01731FE0752000B9C408 /* UAInAppMessageFullScreenDisplayContent.m in Sources */ = {isa = PBXBuildFile; fileRef = 99EC01711FE0751E00B9C408 /* UAInAppMessageFullScreenDisplayContent.m */; };
 		99EC01741FE0752000B9C408 /* UAInAppMessageFullScreenDisplayContent.m in Sources */ = {isa = PBXBuildFile; fileRef = 99EC01711FE0751E00B9C408 /* UAInAppMessageFullScreenDisplayContent.m */; };

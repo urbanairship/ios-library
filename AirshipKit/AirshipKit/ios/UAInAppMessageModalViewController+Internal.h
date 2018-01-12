@@ -6,6 +6,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class UAInAppMessageMediaView;
+
 /**
  * The modal controller.
  */
@@ -16,13 +18,13 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param identifer The message identifier.
  * @param displayContent The display content.
- * @param image The image.
+ * @param mediaView The media view.
  *
  * @return a configured UAInAppMessageModalView instance.
  */
 + (instancetype)modalControllerWithModalMessageID:(NSString *)identifer
-                                             displayContent:(UAInAppMessageModalDisplayContent *)displayContent
-                                                      image:(UIImage * _Nullable)image;
+                                   displayContent:(UAInAppMessageModalDisplayContent *)displayContent
+                                        mediaView:(UAInAppMessageMediaView * _Nullable)mediaView;
 
 /**
  * The method to show the modal controller.

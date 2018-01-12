@@ -27,7 +27,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 
 @property (nonatomic, strong) UAInAppMessageTextView *topTextView;
 @property (nonatomic, strong) UAInAppMessageTextView *bottomTextView;
-@property (nonatomic, strong) UIImageView *imageView;
+@property (nonatomic, strong) UAInAppMessageMediaView *mediaView;
 @property (nonatomic, strong) UAInAppMessageButtonView *buttonView;
 
 @end
@@ -38,20 +38,20 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
                                             closeButton:(UAInAppMessageCloseButton *)closeButton
                                              buttonView:(UAInAppMessageButtonView * _Nullable)buttonView
                                            footerButton:(UIButton * _Nullable)footerButton
-                                              imageView:(UIImageView * _Nullable) imageView {
+                                              mediaView:(UAInAppMessageMediaView * _Nullable)mediaView {
 
     return [[UAInAppMessageFullScreenView alloc] initFullScreenViewWithDisplayContent:displayContent
                                                                           closeButton:closeButton
                                                                            buttonView:buttonView
                                                                          footerButton:footerButton
-                                                                            imageView:imageView];
+                                                                            mediaView:mediaView];
 }
 
 - (instancetype)initFullScreenViewWithDisplayContent:(UAInAppMessageFullScreenDisplayContent *)displayContent
                                          closeButton:(UAInAppMessageCloseButton *)closeButton
                                           buttonView:(UAInAppMessageButtonView * _Nullable)buttonView
                                         footerButton:(UIButton * _Nullable)footerButton
-                                           imageView:(UIImageView * _Nullable)imageView {
+                                           mediaView:(UAInAppMessageMediaView * _Nullable)mediaView {
 
     NSString *nibName = UAInAppMessageFullScreenViewNibName;
     NSBundle *bundle = [UAirship resources];
@@ -59,7 +59,8 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
     self = [[bundle loadNibNamed:nibName owner:self options:nil] firstObject];
 
     if (self) {
-        self.imageView = imageView;
+        self.translatesAutoresizingMaskIntoConstraints = NO;
+        self.mediaView = mediaView;
         self.buttonView = buttonView;
 
         // Always add the close button
@@ -72,18 +73,18 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
             self.bottomTextView = [UAInAppMessageTextView textViewWithHeading:nil body:displayContent.body];
 
             [self.containerStackView addArrangedSubview:self.topTextView];
-            [self.containerStackView addArrangedSubview:imageView];
+            [self.containerStackView addArrangedSubview:mediaView];
             [self.containerStackView addArrangedSubview:self.bottomTextView];
         } else if (displayContent.contentLayout == UAInAppMessageFullScreenContentLayoutHeaderBodyMedia) {
             
             self.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:displayContent.body];
 
             [self.containerStackView addArrangedSubview:self.topTextView];
-            [self.containerStackView addArrangedSubview:imageView];
+            [self.containerStackView addArrangedSubview:mediaView];
         } else if (displayContent.contentLayout == UAInAppMessageFullScreenContentLayoutMediaHeaderBody) {
             self.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:displayContent.body];
 
-            [self.containerStackView addArrangedSubview:imageView];
+            [self.containerStackView addArrangedSubview:mediaView];
             [self.containerStackView addArrangedSubview:self.topTextView];
         }
         // Button container is always the last thing in the stack

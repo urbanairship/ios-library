@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class UAInAppMessageButtonView;
 @class UAInAppMessageFullScreenContentView;
 @class UAInAppMessageFullScreenDisplayContent;
-
+@class UAInAppMessageMediaView;
 /**
  * The full screen view.
  */
@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param closeButton The button that closes the full screen view.
  * @param buttonView The subview that holds the buttons.
  * @param footerButton The button that displays footer link text and opens the footer link.
- * @param imageView The image view.
+ * @param mediaView The media view.
  *
  * @return a configured UAInAppMessageFullScreenView instance.
  */
@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
                                             closeButton:(UIButton *)closeButton
                                              buttonView:( UAInAppMessageButtonView * _Nullable)buttonView
                                            footerButton:(UIButton * _Nullable )footerButton
-                                              imageView:(UIImageView * _Nullable)imageView;
+                                              mediaView:(UAInAppMessageMediaView * _Nullable)mediaView;
 
 @end
 

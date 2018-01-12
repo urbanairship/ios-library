@@ -34,9 +34,9 @@ double const DefaultFullScreenAnimationDuration = 0.2;
 @property (nonatomic, assign) BOOL isShowing;
 
 /**
- * The the full screen's media.
+ * The the full screen's media view.
  */
-@property (nonatomic, strong) UIImage *image;
+@property (nonatomic, strong) UAInAppMessageMediaView *mediaView;
 
 /**
  * The full screen display content consisting of the text and image.
@@ -64,22 +64,22 @@ double const DefaultFullScreenAnimationDuration = 0.2;
 
 + (instancetype)fullScreenControllerWithFullScreenMessageID:(NSString *)messageID
                                              displayContent:(UAInAppMessageFullScreenDisplayContent *)displayContent
-                                                      image:(UIImage *_Nullable)image {
+                                                  mediaView:(UAInAppMessageMediaView *_Nullable)mediaView {
 
     return [[self alloc] initWithFullScreenMessageID:messageID
                                       displayContent:displayContent
-                                               image:image];
+                                           mediaView:mediaView];
 }
 
 - (instancetype)initWithFullScreenMessageID:(NSString *)messageID
                              displayContent:(UAInAppMessageFullScreenDisplayContent *)displayContent
-                                      image:(UIImage *_Nullable)image {
+                                  mediaView:(UAInAppMessageMediaView *_Nullable)mediaView {
     self = [super init];
 
     if (self) {
         self.messageID = messageID;
         self.displayContent = displayContent;
-        self.image = image;
+        self.mediaView = mediaView;
     }
 
     return self;
@@ -101,23 +101,11 @@ double const DefaultFullScreenAnimationDuration = 0.2;
 
     UAInAppMessageButton *footerButton = [self addFooterButtonWithButtonInfo:self.displayContent.footer];
 
-    UIImageView *imageView;
-    if (self.image) {
-        imageView = [[UIImageView alloc] initWithImage:self.image];
-        [NSLayoutConstraint constraintWithItem:imageView
-                                     attribute:NSLayoutAttributeHeight
-                                     relatedBy:NSLayoutRelationEqual
-                                        toItem:imageView
-                                     attribute:NSLayoutAttributeWidth
-                                    multiplier:(imageView.frame.size.height / imageView.frame.size.width)
-                                      constant:0].active = YES;
-    }
-
     self.fullScreenView = [UAInAppMessageFullScreenView fullScreenMessageViewWithDisplayContent:self.displayContent
                                                                                     closeButton:closeButton
                                                                                      buttonView:buttonView
                                                                                    footerButton:footerButton
-                                                                                      imageView:imageView];
+                                                                                      mediaView:self.mediaView];
 
     [parentView addSubview:self.fullScreenView];
     [self addInitialConstraintsToParentView:parentView fullScreenView:self.fullScreenView];
@@ -228,15 +216,6 @@ double const DefaultFullScreenAnimationDuration = 0.2;
 
 - (void)fullScreenView:(UAInAppMessageFullScreenView *)fullScreenView animateInWithParentView:(UIView *)parentView completionHandler:(void (^)(void))completionHandler {
     self.verticalConstraint.constant = 0;
-
-    // Center on Y axis
-    [NSLayoutConstraint constraintWithItem:fullScreenView
-                                 attribute:NSLayoutAttributeCenterY
-                                 relatedBy:NSLayoutRelationEqual
-                                    toItem:parentView
-                                 attribute:NSLayoutAttributeCenterY
-                                multiplier:1
-                                  constant:0].active = YES;
 
     // Set Height
     [NSLayoutConstraint constraintWithItem:fullScreenView

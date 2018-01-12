@@ -15,7 +15,7 @@ NSString *const UAInAppMessageBannerContentViewNibName = @"UAInAppMessageBannerC
 @interface UAInAppMessageBannerContentView ()
 
 // Subviews
-@property(nonatomic, strong) IBOutlet UIView *imageContainerView;
+@property(nonatomic, strong) IBOutlet UIView *mediaContainerView;
 @property(nonatomic, strong) IBOutlet UIView *textContainerView;
 @property (nonatomic, strong) IBOutlet UIView *containerView;
 
@@ -52,15 +52,17 @@ NSString *const UAInAppMessageBannerContentViewNibName = @"UAInAppMessageBannerC
         self.containerView.backgroundColor = [UIColor clearColor];
 
         if (image) {
-            [self addImage:image];
+            UAInAppMessageMediaView *mediaView = [UAInAppMessageMediaView mediaViewWithImage:image];
+            [self.mediaContainerView addSubview:mediaView];
+            [UAInAppMessageUtils applyContainerConstraintsToContainer:self.mediaContainerView containedView:mediaView];
         } else {
-            [self.imageContainerView removeFromSuperview];
+            [self.mediaContainerView removeFromSuperview];
         }
 
         [self addTextView:textView];
 
         [self.textContainerView layoutIfNeeded];
-        [self.imageContainerView layoutIfNeeded];
+        [self.mediaContainerView layoutIfNeeded];
         [self layoutIfNeeded];
     }
     
@@ -70,61 +72,6 @@ NSString *const UAInAppMessageBannerContentViewNibName = @"UAInAppMessageBannerC
 - (void)addTextView:(UAInAppMessageTextView *)textView {
     [self.textContainerView addSubview:textView];
     [UAInAppMessageUtils applyContainerConstraintsToContainer:self.textContainerView containedView:textView];
-}
-
-- (void)addImage:(UIImage *)image {
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
-
-
-    CGFloat imageAspect = image.size.width/image.size.height;
-    [self.imageContainerView addSubview:imageView];
-
-   if (imageAspect > 1) { // wide sizing should letterbox
-        [self.imageContainerView setBackgroundColor:[UIColor clearColor]];
-        [NSLayoutConstraint constraintWithItem:imageView
-                                     attribute:NSLayoutAttributeWidth
-                                     relatedBy:NSLayoutRelationEqual
-                                        toItem:self.imageContainerView
-                                     attribute:NSLayoutAttributeWidth
-                                    multiplier:1
-                                      constant:0].active = YES;
-
-        // Himage = (Wcontainter) * Himage/Wimage + 0
-        [NSLayoutConstraint constraintWithItem:imageView
-                                     attribute:NSLayoutAttributeHeight
-                                     relatedBy:NSLayoutRelationEqual
-                                        toItem:self.imageContainerView
-                                     attribute:NSLayoutAttributeWidth
-                                    multiplier:(1/imageAspect)
-                                      constant:0].active = YES;
-
-        //center image
-        [UAInAppMessageUtils applyCenterConstraintsToContainer:imageView containedView:self.imageContainerView];
-
-    } else if (imageAspect < 1) { // tall images should letterbox
-        [self.imageContainerView setBackgroundColor:[UIColor clearColor]];
-        [NSLayoutConstraint constraintWithItem:imageView
-                                     attribute:NSLayoutAttributeHeight
-                                     relatedBy:NSLayoutRelationEqual
-                                        toItem:self.imageContainerView
-                                     attribute:NSLayoutAttributeHeight
-                                    multiplier:1
-                                      constant:0].active = YES;
-
-        // Wimage = (Hcontainter) * Wimage/Himage + 0
-        [NSLayoutConstraint constraintWithItem:imageView
-                                     attribute:NSLayoutAttributeWidth
-                                     relatedBy:NSLayoutRelationEqual
-                                        toItem:self.imageContainerView
-                                     attribute:NSLayoutAttributeHeight
-                                    multiplier:imageAspect
-                                      constant:0].active = YES;
-        //center image
-        [UAInAppMessageUtils applyCenterConstraintsToContainer:imageView containedView:self.imageContainerView];
-
-    } else { // ideal images should keep default aspect fit with no clipping
-        [UAInAppMessageUtils applyContainerConstraintsToContainer:self.imageContainerView containedView:imageView];
-    }
 }
 
 @end

@@ -6,6 +6,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class UAInAppMessageMediaView;
+
 /**
  * The full screen controller.
  */
@@ -16,13 +18,13 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param identifer The message identifier.
  * @param displayContent The display content.
- * @param image The image.
+ * @param media The mediaView.
  *
  * @return a configured UAInAppMessageFullScreenView instance.
  */
 + (instancetype)fullScreenControllerWithFullScreenMessageID:(NSString *)identifer
                                              displayContent:(UAInAppMessageFullScreenDisplayContent *)displayContent
-                                                      image:(UIImage * _Nullable)image;
+                                                  mediaView:(UAInAppMessageMediaView * _Nullable)media;
 
 /**
  * The method to show the full screen controller.

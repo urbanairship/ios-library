@@ -5,6 +5,7 @@
 #import "UAInAppMessageFullScreenDisplayContent+Internal.h"
 #import "UAInAppMessageFullScreenController+Internal.h"
 #import "UAInAppMessageUtils+Internal.h"
+#import "UAInAppMessageMediaView+Internal.h"
 #import "UAUtils.h"
 
 @interface UAInAppMessageFullScreenAdapter ()
@@ -40,8 +41,17 @@ NSString *const UAInAppMessageFullScreenAdapterCacheName = @"UAInAppMessageFullS
     if (!displayContent.media) {
         self.fullScreenController = [UAInAppMessageFullScreenController fullScreenControllerWithFullScreenMessageID:self.message.identifier
                                                                                                      displayContent:displayContent
-                                                                                                              image:nil];
+                                                                                                          mediaView:nil];
 
+        completionHandler(UAInAppMessagePrepareResultSuccess);
+        return;
+    }
+
+    if (displayContent.media.type != UAInAppMessageMediaInfoTypeImage) {
+        UAInAppMessageMediaView *mediaView = [UAInAppMessageMediaView mediaViewWithMediaInfo:displayContent.media];
+        self.fullScreenController = [UAInAppMessageFullScreenController fullScreenControllerWithFullScreenMessageID:self.message.identifier
+                                                                                                     displayContent:displayContent
+                                                                                                          mediaView:mediaView];
         completionHandler(UAInAppMessagePrepareResultSuccess);
         return;
     }
@@ -58,9 +68,11 @@ NSString *const UAInAppMessageFullScreenAdapterCacheName = @"UAInAppMessageFullS
                                      NSData *data = [self.imageCache objectForKey:cacheKey];
                                      if (data) {
                                          UIImage *prefetchedImage = [UIImage imageWithData:data];
+
+                                         UAInAppMessageMediaView *mediaView = [UAInAppMessageMediaView mediaViewWithImage:prefetchedImage];
                                          self.fullScreenController = [UAInAppMessageFullScreenController fullScreenControllerWithFullScreenMessageID:self.message.identifier
                                                                                                                                       displayContent:displayContent
-                                                                                                                                               image:prefetchedImage];
+                                                                                                                                           mediaView:mediaView];
                                      }
                                  }
 

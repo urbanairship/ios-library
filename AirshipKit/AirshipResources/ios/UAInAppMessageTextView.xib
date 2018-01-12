@@ -21,10 +21,10 @@
                 </stackView>
             </subviews>
             <constraints>
-                <constraint firstItem="oAg-Fq-dBy" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="8Xg-HV-s2s"/>
                 <constraint firstItem="oAg-Fq-dBy" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="20" id="Jiw-MX-ed7"/>
+                <constraint firstItem="oAg-Fq-dBy" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="KyW-25-eAe"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="oAg-Fq-dBy" secondAttribute="trailing" constant="20" id="WBU-mS-qKu"/>
-                <constraint firstItem="oAg-Fq-dBy" firstAttribute="centerY" secondItem="vUN-kp-3ea" secondAttribute="centerY" id="nKt-cx-SNi"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="oAg-Fq-dBy" secondAttribute="bottom" id="gFf-ZG-DMM"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>

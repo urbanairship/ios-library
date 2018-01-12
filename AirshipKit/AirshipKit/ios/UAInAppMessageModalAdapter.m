@@ -4,6 +4,7 @@
 #import "UAInAppMessageModalAdapter.h"
 #import "UAInAppMessageModalDisplayContent+Internal.h"
 #import "UAInAppMessageModalViewController+Internal.h"
+#import "UAInAppMessageMediaView+Internal.h"
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAUtils.h"
 
@@ -41,8 +42,17 @@ NSString *const UAInAppMessageModalAdapterCacheName = @"UAInAppMessageModalAdapt
     if (!displayContent.media) {
         self.modalController = [UAInAppMessageModalViewController modalControllerWithModalMessageID:self.message.identifier
                                                                                                      displayContent:displayContent
-                                                                                                              image:nil];
+                                                                                                              mediaView:nil];
         
+        completionHandler(UAInAppMessagePrepareResultSuccess);
+        return;
+    }
+
+    if (displayContent.media.type != UAInAppMessageMediaInfoTypeImage) {
+        UAInAppMessageMediaView *mediaView = [UAInAppMessageMediaView mediaViewWithMediaInfo:displayContent.media];
+        self.modalController = [UAInAppMessageModalViewController modalControllerWithModalMessageID:self.message.identifier
+                                                                                     displayContent:displayContent
+                                                                                          mediaView:mediaView];
         completionHandler(UAInAppMessagePrepareResultSuccess);
         return;
     }
@@ -58,9 +68,10 @@ NSString *const UAInAppMessageModalAdapterCacheName = @"UAInAppMessageModalAdapt
                                  NSData *data = [self.imageCache objectForKey:cacheKey];
                                  if (data) {
                                      UIImage *prefetchedImage = [UIImage imageWithData:data];
+                                     UAInAppMessageMediaView *mediaView = [UAInAppMessageMediaView mediaViewWithImage:prefetchedImage];
                                      self.modalController = [UAInAppMessageModalViewController modalControllerWithModalMessageID:self.message.identifier
-                                                                                                                            displayContent:displayContent
-                                                                                                                                     image:prefetchedImage];
+                                                                                                                  displayContent:displayContent
+                                                                                                                       mediaView:mediaView];
                                  }
                                  
                                  completionHandler(result);
