@@ -892,6 +892,91 @@
 
     [self waitForExpectationsWithTimeout:5 handler:nil];
 }
+
+- (void)testInterval {
+    // Schedule the action
+    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        builder.actions = @{@"test action": @"test value"};
+        UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
+        UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher key:UACustomEventNameKey];
+        UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+        builder.triggers = @[[UAScheduleTrigger customEventTriggerWithPredicate:predicate count:1]];
+        builder.interval = 100;
+        builder.limit = 2;
+    }];
+
+    __block NSString *scheduleId;
+    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+        scheduleId = schedule.identifier;
+    }];
+
+    // When isScheduleReadyToExecute is called on the mockDelegate do this
+    [[[self.mockDelegate expect] andReturnValue:OCMOCK_VALUE(YES)] isScheduleReadyToExecute:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UASchedule *schedule = obj;
+        return  [schedule.identifier isEqualToString:scheduleId];
+    }]];
+
+
+    id mockRunLoop = [self partialMockForObject:[NSRunLoop mainRunLoop]];
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    XCTestExpectation *timerScheduled = [self expectationWithDescription:@"timer scheduled"];
+    __block NSTimer *timer;
+    [[[mockRunLoop expect] andDo:^(NSInvocation *invocation) {
+        [invocation getArgument:&timer atIndex:2];
+        [timerScheduled fulfill];
+    }] addTimer:OCMOCK_ANY forMode:NSDefaultRunLoopMode];
+
+    XCTestExpectation *executeSchedule = [self expectationWithDescription:@"schedule is executing"];
+    __block bool scheduleExecuted = NO;
+
+    // When executeSchedule is called on the mockDelegate do this
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^handler)(void) = (__bridge void (^)(void))arg;
+        handler();
+        scheduleExecuted = YES;
+        [executeSchedule fulfill];
+    }] executeSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UASchedule *schedule = obj;
+        return  [schedule.identifier isEqualToString:scheduleId];
+    }] completionHandler:OCMOCK_ANY];
+
+    // Trigger the scheduled actions
+    UACustomEvent *purchase = [UACustomEvent eventWithName:@"purchase"];
+    [self emitEvent:purchase];
+
+    // Wait for the action to fire
+    [self waitForExpectationsWithTimeout:5 handler:nil];
+
+    // Verify the schedule is paused
+    XCTestExpectation *checkPauseState = [self expectationWithDescription:@"pause state"];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", scheduleId];
+    [self.automationEngine.automationStore fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
+        XCTAssertEqual(1, schedulesData.count);
+        XCTAssertEqual(UAScheduleStatePaused, [schedulesData[0].executionState intValue]);
+        [checkPauseState fulfill];
+    }];
+
+    [self waitForExpectationsWithTimeout:5 handler:nil];
+
+    // Fire the timer
+    [timer fire];
+
+    // Verify we are back to idle
+    XCTestExpectation *checkIdleState = [self expectationWithDescription:@"idle state"];
+    predicate = [NSPredicate predicateWithFormat:@"identifier == %@", scheduleId];
+    [self.automationEngine.automationStore fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
+        XCTAssertEqual(1, schedulesData.count);
+        XCTAssertEqual(UAScheduleStateIdle, [schedulesData[0].executionState intValue]);
+        [checkIdleState fulfill];
+    }];
+
+    [self waitForExpectationsWithTimeout:5 handler:nil];
+}
+
+
 /**
  * Helper method for simulating a full transition from the background to the active state.
  */

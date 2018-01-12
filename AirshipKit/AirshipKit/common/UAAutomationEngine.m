@@ -117,9 +117,9 @@
 
     [self cleanSchedules];
     [self resetExecutingSchedules];
+    [self rescheduleTimers];
     [self createStateConditions];
     [self restoreCompoundTriggers];
-    [self rescheduleTimers];
     [self updateTriggersWithType:UAScheduleTriggerAppInit argument:nil incrementAmount:1.0];
     [self scheduleConditionsChanged];
 
@@ -521,25 +521,23 @@
  *
  * @param scheduleData The schedule's data.
  */
-- (void)startTimerForSchedule:(UAScheduleData *)scheduleData {
+- (void)startTimerForSchedule:(UAScheduleData *)scheduleData
+                 timeInterval:(NSTimeInterval)timeInterval
+                     selector:(SEL)selector {
+
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
     [userInfo setValue:scheduleData.identifier forKey:@"identifier"];
     [userInfo setValue:scheduleData.group forKey:@"group"];
     [userInfo setValue:scheduleData.delayedExecutionDate forKey:@"delayedExecutionDate"];
 
-
-    NSTimeInterval delay = [scheduleData.delay.seconds doubleValue];
-    if (scheduleData.delayedExecutionDate) {
-        delay = [scheduleData.delayedExecutionDate timeIntervalSinceNow];
+    // NSTimer should set the time to .1 if 0 or less
+    if (timeInterval <= 0) {
+        timeInterval = .1;
     }
 
-    if (delay <= 0) {
-        delay = .1;
-    }
-
-    NSTimer *timer = [NSTimer timerWithTimeInterval:delay
+    NSTimer *timer = [NSTimer timerWithTimeInterval:timeInterval
                                              target:self
-                                           selector:@selector(scheduleTimerFired:)
+                                           selector:selector
                                            userInfo:userInfo
                                             repeats:NO];
 
@@ -550,7 +548,7 @@
         // Make sure we have a background task identifier before starting the timer
         if (self.backgroundTaskIdentifier == UIBackgroundTaskInvalid) {
             self.backgroundTaskIdentifier = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-                UA_LTRACE(@"Automation background task expired. Cancelling delayed scheduled actions.");
+                UA_LTRACE(@"Automation background task expired. Cancelling timer alarm.");
                 [self cancelTimers];
             }];
 
@@ -561,9 +559,22 @@
             }
         }
 
-        UA_LTRACE(@"Starting automation timer for %f seconds with user info %@", delay, timer.userInfo);
+        UA_LTRACE(@"Starting automation timer for %f seconds with user info %@", timeInterval, timer.userInfo);
         [self.activeTimers addObject:timer];
         [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
+    });
+}
+
+- (void)finishTimer:(NSTimer *)timer {
+    [timer invalidate];
+    [self.activeTimers removeObject:timer];
+
+    UA_WEAKIFY(self);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UA_STRONGIFY(self);
+        if (!self.activeTimers.count) {
+            [self endBackgroundTask];
+        }
     });
 }
 
@@ -572,16 +583,16 @@
  *
  * @param timer The timer.
  */
-- (void)scheduleTimerFired:(NSTimer *)timer {
+- (void)delayTimerFired:(NSTimer *)timer {
     // Called on the main queue
-
-    [self.activeTimers removeObject:timer];
-
-    UA_LTRACE(@"Automation timer fired: %@", timer.userInfo);
+    UA_LTRACE(@"Automation delay timer fired: %@", timer.userInfo);
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@ AND executionState == %d AND delayedExecutionDate == %@",
                               timer.userInfo[@"identifier"], UAScheduleStatePendingExecution, timer.userInfo[@"delayedExecutionDate"]];
 
+    UA_WEAKIFY(self);
     [self.automationStore fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAScheduleData *> *schedules) {
+
+        UA_STRONGIFY(self);
         if (schedules.count != 1) {
             return;
         }
@@ -596,14 +607,38 @@
 
         [self processTriggeredSchedules:schedules];
 
-        // Check if we need to end the background task on the main queue
-        UA_WEAKIFY(self);
+        [self finishTimer:timer];
+    }];
+}
+
+/**
+ * Interval timer fired for a schedule. Method is called on the main queue.
+ *
+ * @param timer The timer.
+ */
+- (void)intervalTimerFired:(NSTimer *)timer {
+    UA_LTRACE(@"Automation interval timer fired: %@", timer.userInfo);
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@ AND executionState == %d",
+                              timer.userInfo[@"identifier"], UAScheduleStatePaused];
+
+    UA_WEAKIFY(self);
+    [self.automationStore fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAScheduleData *> *schedules) {
+        if (schedules.count != 1) {
+            return;
+        }
+
+        UAScheduleData *scheduleData = schedules[0];
+        UASchedule *schedule = [self scheduleFromData:scheduleData];
+        NSDate *pauseDate = scheduleData.executionStateChangeDate;
+
+        scheduleData.executionState = @(UAScheduleStateIdle);
+
         dispatch_async(dispatch_get_main_queue(), ^{
             UA_STRONGIFY(self);
-            if (!self.activeTimers.count) {
-                [self endBackgroundTask];
-            }
+            [self checkCompoundTriggerState:@[schedule] forStateNewerThanDate:pauseDate];
         });
+
+        [self finishTimer:timer];
     }];
 }
 
@@ -667,9 +702,14 @@
 - (void)rescheduleTimers {
     [self cancelTimers];
 
+    // Delay timers
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"executionState == %d AND delayedExecutionDate > %@",
                               UAScheduleStatePendingExecution, [NSDate date]];
+
+    UA_WEAKIFY(self);
     [self.automationStore fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:^(NSArray<UAScheduleData *> *schedules) {
+
+        UA_STRONGIFY(self);
         for (UAScheduleData *scheduleData in schedules) {
 
             // If the delayedExecutionDate is greater than the original delay it probably means a clock adjustment. Reset the delay.
@@ -677,7 +717,28 @@
                 scheduleData.delayedExecutionDate = [NSDate dateWithTimeIntervalSinceNow:[scheduleData.delay.seconds doubleValue]];
             }
 
-            [self startTimerForSchedule:scheduleData];
+            [self startTimerForSchedule:scheduleData
+                           timeInterval:[scheduleData.delay.seconds doubleValue]
+                               selector:@selector(delayTimerFired:)];
+        }
+    }];
+
+    // Interval timers
+    predicate = [NSPredicate predicateWithFormat:@"executionState == %d", UAScheduleStatePaused];
+    [self.automationStore fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:^(NSArray<UAScheduleData *> *schedules) {
+
+        UA_STRONGIFY(self);
+        for (UAScheduleData *scheduleData in schedules) {
+            NSTimeInterval interval = [scheduleData.interval doubleValue];
+            NSTimeInterval pauseTime = -[scheduleData.executionStateChangeDate timeIntervalSinceNow];
+            NSTimeInterval remainingTime = interval - pauseTime;
+            if (remainingTime > interval) {
+                remainingTime = interval;
+            }
+
+            [self startTimerForSchedule:scheduleData
+                           timeInterval:remainingTime
+                               selector:@selector(intervalTimerFired:)];
         }
     }];
 }
@@ -848,7 +909,9 @@
             }
 
             // Start a timer
-            [self startTimerForSchedule:scheduleData];
+            [self startTimerForSchedule:scheduleData
+                           timeInterval:[scheduleData.delay.seconds doubleValue]
+                               selector:@selector(delayTimerFired:)];
             continue;
         }
 
@@ -938,7 +1001,16 @@
                 scheduleData.executionState = @(UAScheduleStateFinished);
                 deleteSchedule = [scheduleData.editGracePeriod doubleValue] <= 0;
             } else if ([scheduleData.executionState unsignedIntegerValue] != UAScheduleStateFinished) {
-                scheduleData.executionState = @(UAScheduleStateIdle);
+
+                if (scheduleData.interval) {
+                    scheduleData.executionState = @(UAScheduleStatePaused);
+
+                    [self startTimerForSchedule:scheduleData
+                                   timeInterval:[scheduleData.interval doubleValue]
+                                       selector:@selector(intervalTimerFired:)];
+                } else {
+                    scheduleData.executionState = @(UAScheduleStateIdle);
+                }
             }
 
             if (deleteSchedule) {
