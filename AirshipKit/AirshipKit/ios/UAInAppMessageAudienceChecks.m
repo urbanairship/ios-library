@@ -8,6 +8,7 @@
 #import "UAPush+Internal.h"
 #import "UAInAppMessageTagSelector.h"
 #import "UAVersionMatcher+Internal.h"
+#import <CommonCrypto/CommonDigest.h>
 
 @implementation UAInAppMessageAudienceChecks
 
@@ -18,6 +19,18 @@
     
     if ((audience.isNewUser) && ([audience.isNewUser boolValue] != isNewUser)) {
         return NO;
+    }
+
+    if (audience.testDevices.count) {
+        NSString *channel = [UAirship push].channelID;
+        if (!channel) {
+            return NO;
+        }
+
+        NSString *hash = [self sha256HexStringForString:channel];
+        if (![audience.testDevices containsObject:hash]) {
+            return NO;
+        }
     }
 
     return YES;
@@ -113,6 +126,22 @@
 
 + (BOOL)isNotificationsOptedIn {
     return [UAirship push].userPushNotificationsEnabled && [UAirship push].authorizedNotificationOptions != UANotificationOptionNone;
+}
+
++ (NSString*)sha256HexStringForString:(NSString*)input {
+    NSData *dataIn = [input dataUsingEncoding:NSUTF8StringEncoding];
+    NSMutableData *dataOut = [NSMutableData dataWithLength:CC_SHA256_DIGEST_LENGTH];
+
+    CC_SHA256(dataIn.bytes, (CC_LONG) dataIn.length, dataOut.mutableBytes);
+
+    const unsigned char *bytes = (const unsigned char *)[dataOut bytes];
+    NSMutableString* hexString = [NSMutableString stringWithCapacity:CC_SHA256_DIGEST_LENGTH * 2];
+
+    for(int i = 0; i < CC_SHA256_DIGEST_LENGTH; i++) {
+        [hexString appendFormat:@"%02x", bytes[i]];
+    }
+
+    return [hexString copy];
 }
 
 @end

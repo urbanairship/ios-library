@@ -12,6 +12,7 @@ NSString * const UAInAppMessageAudienceLocationOptInKey = @"location_opt_in";
 NSString * const UAInAppMessageAudienceLanguageTagsKey = @"locale";
 NSString * const UAInAppMessageAudienceTagSelectorKey = @"tags";
 NSString * const UAInAppMessageAudienceAppVersionKey = @"app_version";
+NSString * const UAInAppMessageAudienceTestDevicesKey = @"test_devices";
 
 NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_message_audience";
 
@@ -24,6 +25,9 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
 @end
 
 @implementation UAInAppMessageAudience
+
+@synthesize isNewUser = _isNewUser;
+@synthesize testDevices = _testDevices;
 
 + (instancetype)audienceWithJSON:(id)json error:(NSError **)error {
     UAInAppMessageAudienceBuilder *builder = [[UAInAppMessageAudienceBuilder alloc] init];
@@ -104,6 +108,27 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
         builder.versionMatcher = [UAVersionMatcher matcherWithVersionConstraint:versionConstraint];
     }
 
+    id testDevices = json[UAInAppMessageAudienceTestDevicesKey];
+    if (testDevices) {
+        if (![testDevices isKindOfClass:[NSArray class]]) {
+            if (error) {
+                *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"%@\" key must be an array. Invalid value: %@", UAInAppMessageAudienceTestDevicesKey, testDevices]];
+            }
+            return nil;
+        }
+
+        for (id value in testDevices) {
+            if (![value isKindOfClass:[NSString class]]) {
+                if (error) {
+                    *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Invalid test device value: %@", value]];
+                }
+                return nil;
+            }
+        }
+
+        builder.testDevices = testDevices;
+    }
+
     if (![builder isValid]) {
         if (error) {
             *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Invalid audience %@", json]];
@@ -138,7 +163,8 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
             return nil;
         }
 
-        self.isNewUser = builder.isNewUser;
+        _isNewUser = builder.isNewUser;
+        _testDevices = builder.testDevices;
         self.notificationsOptIn = builder.notificationsOptIn;
         self.locationOptIn = builder.locationOptIn;
         self.languageIDs = builder.languageTags;
@@ -146,6 +172,14 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
         self.versionMatcher = builder.versionMatcher;
     }
     return self;
+}
+
+- (NSArray *)testDevices {
+    return _testDevices;
+}
+
+- (NSNumber *)isNewUser {
+    return _isNewUser;
 }
 
 #pragma mark - Validation
@@ -159,6 +193,7 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
     [json setValue:self.languageIDs forKey:UAInAppMessageAudienceLanguageTagsKey];
     [json setValue:[self.tagSelector toJSON] forKey:UAInAppMessageAudienceTagSelectorKey];
     [json setValue:self.versionMatcher.versionConstraint forKey:UAInAppMessageAudienceAppVersionKey];
+    [json setValue:self.testDevices forKey:UAInAppMessageAudienceTestDevicesKey];
     return [json copy];
 }
 
@@ -193,6 +228,9 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
     if ((self.versionMatcher != audience.versionMatcher) && ![self.versionMatcher isEqual:audience.versionMatcher]) {
         return NO;
     }
+    if ((self.testDevices != audience.testDevices) && ![self.testDevices isEqual:audience.testDevices]) {
+        return NO;
+    }
     return YES;
 }
 
@@ -204,6 +242,7 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
     result = 31 * result + [self.languageIDs hash];
     result = 31 * result + [self.tagSelector hash];
     result = 31 * result + [self.versionMatcher hash];
+    result = 31 * result + [self.testDevices hash];
     return result;
 }
 

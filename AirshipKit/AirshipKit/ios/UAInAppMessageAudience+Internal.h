@@ -21,6 +21,11 @@ typedef NS_ENUM(NSInteger, UAInAppMessageAudienceErrorCode) {
  */
 @property(nonatomic, copy) NSNumber *isNewUser;
 
+/**
+ * Test devices.
+ */
+@property(nonatomic, copy) NSArray<NSString *> *testDevices;
+
 @end
 
 @interface UAInAppMessageAudience()
@@ -28,7 +33,12 @@ typedef NS_ENUM(NSInteger, UAInAppMessageAudienceErrorCode) {
 /**
  * The new user flag.
  */
-@property(nonatomic, strong) NSNumber *isNewUser;
+@property(nonatomic, readonly) NSNumber *isNewUser;
+
+/**
+ * Test devices.
+ */
+@property(nonatomic, readonly) NSArray<NSString *> *testDevices;
 
 /**
  * Factory method for building audience model from JSON.

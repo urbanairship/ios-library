@@ -14,6 +14,7 @@
 
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockLocationManager;
+@property (nonatomic, strong) id mockPush;
 
 @end
 
@@ -23,15 +24,11 @@
     [super setUp];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
+    self.mockPush = [self mockForClass:[UAPush class]];
+    [[[self.mockAirship stub] andReturn:self.mockPush] sharedPush];
     [UAirship setSharedAirship:self.mockAirship];
 
     self.mockLocationManager = [self mockForClass:[CLLocationManager class]];
-
-}
-
-- (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
-    [super tearDown];
 }
 
 - (void)testEmptyAudience {
@@ -91,11 +88,9 @@
         builder.notificationsOptIn = @NO;
     }];
     
-    id mockPush = [self mockForClass:[UAPush class]];
-    [[[mockPush stub] andReturnValue:@YES] userPushNotificationsEnabled];
-    [[[mockPush stub] andReturnValue:@(UANotificationOptionAlert)] authorizedNotificationOptions];
-    [[[self.mockAirship stub] andReturn:mockPush] sharedPush];
-    
+    [[[self.mockPush stub] andReturnValue:@YES] userPushNotificationsEnabled];
+    [[[self.mockPush stub] andReturnValue:@(UANotificationOptionAlert)] authorizedNotificationOptions];
+
     // test
     XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
     XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
@@ -111,10 +106,8 @@
         builder.notificationsOptIn = @NO;
     }];
     
-    id mockPush = [self strictMockForClass:[UAPush class]];
-    [[[mockPush stub] andReturnValue:@NO] userPushNotificationsEnabled];
-    [[[self.mockAirship stub] andReturn:mockPush] sharedPush];
-    
+    [[[self.mockPush stub] andReturnValue:@NO] userPushNotificationsEnabled];
+
     // test
     XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
     XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
@@ -141,12 +134,10 @@
     // setup
     NSMutableArray<NSString *> *tags = [NSMutableArray array];
     
-    id mockPush = [self mockForClass:[UAPush class]];
-    [[[mockPush stub] andDo:^(NSInvocation *invocation) {
+    [[[self.mockPush stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:(void *)&tags];
     }] tags];
-    [[[self.mockAirship stub] andReturn:mockPush] sharedPush];
-    
+
     UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
         builder.tagSelector = [UAInAppMessageTagSelector tag:@"expected tag"];
     }];
@@ -156,6 +147,27 @@
 
     [tags addObject:@"expected tag"];
     XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
+}
+
+
+- (void)testTestDevices {
+    [[[self.mockPush stub] andReturn:@"test channel"] channelID];
+
+    UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+        builder.testDevices = @[@"a1b22f49b878ed38e3a9f0ab3dab5b5dda30bc7dfe1d9502b32393f53aac74a0"]; // test channel
+    }];
+
+    XCTAssertTrue([UAInAppMessageAudienceChecks checkScheduleAudienceConditions:audience isNewUser:YES]);
+}
+
+- (void)testNotTestDevice {
+    [[[self.mockPush stub] andReturn:@"some other channel"] channelID];
+
+    UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+        builder.testDevices = @[@"a1b22f49b878ed38e3a9f0ab3dab5b5dda30bc7dfe1d9502b32393f53aac74a0"]; // test channel
+    }];
+
+    XCTAssertFalse([UAInAppMessageAudienceChecks checkScheduleAudienceConditions:audience isNewUser:YES]);
 }
 
 - (void)testLanguageIDs {

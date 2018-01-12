@@ -25,6 +25,7 @@
                                         }
                                 } error:&error];
         builder.versionMatcher = [UAVersionMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"];
+        builder.testDevices = @[@"test-device"];
     }];
     
     // test
