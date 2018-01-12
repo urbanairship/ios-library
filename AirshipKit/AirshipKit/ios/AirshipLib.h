@@ -82,6 +82,7 @@
 #import "UAInAppMessageBannerAdapter.h"
 #import "UAInAppMessageBannerDisplayContent.h"
 #import "UAInAppMessageButtonInfo.h"
+#import "UAInAppMessageCustomDisplayContent.h"
 #import "UAInAppMessageDisplayContent.h"
 #import "UAInAppMessageFullScreenAdapter.h"
 #import "UAInAppMessageFullScreenDisplayContent.h"
