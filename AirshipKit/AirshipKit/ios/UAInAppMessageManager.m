@@ -35,7 +35,7 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
 @interface UAInAppMessageScheduleData : NSObject
 @property(nonatomic, strong, nonnull) id<UAInAppMessageAdapterProtocol> adapter;
 @property(nonatomic, copy, nonnull) NSString *scheduleID;
-@property(assign) BOOL isReady;
+@property(assign) BOOL isPrepareFinished;
 + (instancetype)dataWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter scheduleID:(NSString *)scheduleID;
 @end
 
@@ -237,15 +237,18 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
         UA_LTRACE(@"Display is locked. Schedule: %@ not ready.", schedule.identifier);
         return NO;
     }
-
-    if (data.isReady) {
-        UA_LTRACE(@"Schedule %@ ready!", schedule.identifier);
-        return YES;
-    } else {
+    if (!data.isPrepareFinished) {
         UA_LTRACE(@"Message not prepared. Schedule %@ is not ready.", schedule.identifier);
         return NO;
     }
 
+    if (![data.adapter isReadyToDisplay]) {
+        UA_LTRACE(@"Adapter ready check failed. Schedule: %@ not ready.", schedule.identifier);
+        return NO;
+    }
+
+    UA_LTRACE(@"Schedule %@ ready!", schedule.identifier);
+    return YES;
 }
 
 - (void)executeSchedule:(nonnull UASchedule *)schedule
@@ -343,7 +346,7 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
                 UA_LDEBUG(@"Prepare result: %ld schedule: %@", (unsigned long)result, scheduleData.scheduleID);
                 switch (result) {
                     case UAInAppMessagePrepareResultSuccess:
-                        scheduleData.isReady = YES;
+                        scheduleData.isPrepareFinished = YES;
                         [self.automationEngine scheduleConditionsChanged];
                         break;
 

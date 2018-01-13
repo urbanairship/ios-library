@@ -49,6 +49,13 @@ typedef NS_ENUM(NSUInteger, UAInAppMessagePrepareResult) {
 - (void)prepare:(void (^)(UAInAppMessagePrepareResult result))completionHandler;
 
 /**
+ * Informs the adapter of the ready state of the in-app message immediately before display.
+ *
+ * @return `YES` if the in-app message is ready, `NO` otherwise.
+ */
+- (BOOL)isReadyToDisplay;
+
+/**
  * Displays the in-app message.
  *
  * @param completionHandler the completion handler to be called when adapter has finished

@@ -80,6 +80,16 @@ NSString *const UAInAppMessageFullScreenAdapterCacheName = @"UAInAppMessageFullS
                              }];
 }
 
+- (BOOL)isReadyToDisplay {
+    BOOL noConnection = ([[UAUtils connectionType] isEqual:kUAConnectionTypeNone]);
+    UAInAppMessageFullScreenDisplayContent* fullScreenContent = (UAInAppMessageFullScreenDisplayContent *)self.message.displayContent;
+    if (noConnection && (fullScreenContent.media.type == UAInAppMessageMediaInfoTypeVideo || fullScreenContent.media.type == UAInAppMessageMediaInfoTypeYouTube)) {
+        return NO;
+    }
+
+    return YES;
+}
+
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
     [self.fullScreenController showWithParentView:[UAUtils mainWindow]
                                 completionHandler:completionHandler];

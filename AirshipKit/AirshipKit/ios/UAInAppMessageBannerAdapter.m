@@ -73,6 +73,10 @@ NSString *const UAInAppMessageBannerAdapterCacheName = @"UAInAppMessageBannerAda
                             completionHandler:completionHandler];
 }
 
+- (BOOL)isReadyToDisplay {
+    return YES;
+}
+
 - (void)dealloc {
     if (self.imageCache) {
         [self.imageCache removeAllObjects];

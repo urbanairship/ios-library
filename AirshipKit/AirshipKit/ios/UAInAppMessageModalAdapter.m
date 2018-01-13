@@ -76,7 +76,16 @@ NSString *const UAInAppMessageModalAdapterCacheName = @"UAInAppMessageModalAdapt
                                  
                                  completionHandler(result);
                              }];
+}
 
+- (BOOL)isReadyToDisplay {
+    BOOL noConnection = ([[UAUtils connectionType] isEqual:kUAConnectionTypeNone]);
+    UAInAppMessageModalDisplayContent* modalContent = (UAInAppMessageModalDisplayContent *)self.message.displayContent;
+    if (noConnection && (modalContent.media.type == UAInAppMessageMediaInfoTypeVideo || modalContent.media.type == UAInAppMessageMediaInfoTypeYouTube)) {
+        return NO;
+    }
+
+    return YES;
 }
 
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
