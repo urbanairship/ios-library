@@ -84,6 +84,7 @@ return [[self alloc] initWithButtonInfo:buttonInfo
 
     if (!self.isFooter) {
         [self applyLayerRounding];
+        [self applyBorder];
     }
 }
 
@@ -94,8 +95,32 @@ return [[self alloc] initWithButtonInfo:buttonInfo
     maskLayer.path = [UIBezierPath bezierPathWithRoundedRect:self.bounds
                                            byRoundingCorners:(UIRectCorner)self.rounding
                                                  cornerRadii:(CGSize){radius, radius}].CGPath;
-
     self.layer.mask = maskLayer;
+
+
+}
+
+-(void)applyBorder {
+    CGFloat radius = self.buttonInfo.borderRadius;
+    CGPathRef borderPath = [UIBezierPath bezierPathWithRoundedRect:self.bounds
+                                               byRoundingCorners:(UIRectCorner)self.rounding
+                                                     cornerRadii:(CGSize){radius, radius}].CGPath;
+
+    CAShapeLayer *borderLayer = [CAShapeLayer layer];
+    borderLayer.frame = self.bounds;
+    borderLayer.lineWidth = 2;
+    borderLayer.fillColor = [[UIColor clearColor] CGColor];
+    borderLayer.strokeColor = [self.buttonInfo.borderColor CGColor];
+    borderLayer.path = borderPath;
+
+    // Remove last applied shape layer
+    for (CALayer *layer in self.layer.sublayers) {
+        if ([layer isKindOfClass:[CAShapeLayer class]]) {
+            [layer removeFromSuperlayer];
+        }
+    }
+
+    [self.layer addSublayer:borderLayer];
 }
 
 @end
