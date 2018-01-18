@@ -276,8 +276,8 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
     [self lockDisplay];
 
     // Notify delegate that the message is about to be displayed
-    if ([self.delegate respondsToSelector:@selector(messageWillBeDisplayed:)]) {
-        [self.delegate messageWillBeDisplayed:message];
+    if ([self.delegate respondsToSelector:@selector(messageWillBeDisplayed:scheduleID:)]) {
+        [self.delegate messageWillBeDisplayed:message scheduleID:schedule.identifier];
     }
 
     // Display event
@@ -318,9 +318,9 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
         [self unlockDisplayAfter:self.displayInterval];
         [self.scheduleData removeObjectForKey:schedule.identifier];
 
-        // Notify delegate that the message has been dismissed
-        if ([self.delegate respondsToSelector:@selector(messageDismissed:)]) {
-            [self.delegate messageDismissed:message];
+        // Notify delegate that the message has finished displaying
+        if ([self.delegate respondsToSelector:@selector(messageFinishedDisplaying:scheduleID:resolution:)]) {
+            [self.delegate messageFinishedDisplaying:message scheduleID:schedule.identifier resolution:resolution];
         }
 
         completionHandler();

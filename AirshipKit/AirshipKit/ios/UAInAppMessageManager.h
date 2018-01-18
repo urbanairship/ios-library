@@ -25,13 +25,17 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Indicates that an in-app message will be displayed.
  * @param message The associated in-app message.
+ * @param scheduleID The schedule ID.
  */
-- (void)messageWillBeDisplayed:(UAInAppMessage *)message;
+- (void)messageWillBeDisplayed:(UAInAppMessage *)message scheduleID:(NSString *)scheduleID;
 
 /**
- * Indicates that an in-app message has been dismissed.
+ * Indicates that an in-app message has finished displaying.
+ * @param message The associated in-app message.
+ * @param scheduleID The schedule ID.
+ * @param resolution The resolution info.
  */
-- (void)messageDismissed:(UAInAppMessage *)message;
+- (void)messageFinishedDisplaying:(UAInAppMessage *)message scheduleID:(NSString *)scheduleID resolution:(UAInAppMessageResolution *)resolution;
 
 @end
 

@@ -255,8 +255,8 @@
                                                       metadata:nil
                                              completionHandler:OCMOCK_ANY];
 
-    [[self.mockDelegate expect] messageWillBeDisplayed:self.scheduleInfo.message];
-    [[self.mockDelegate expect] messageDismissed:self.scheduleInfo.message];
+    [[self.mockDelegate expect] messageWillBeDisplayed:self.scheduleInfo.message scheduleID:testSchedule.identifier];
+    [[self.mockDelegate expect] messageFinishedDisplaying:self.scheduleInfo.message scheduleID:testSchedule.identifier resolution:OCMOCK_ANY];
 
     __block BOOL executeCompletionCalled = NO;
 
