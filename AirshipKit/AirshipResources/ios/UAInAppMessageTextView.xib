@@ -16,15 +16,25 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="205"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <stackView opaque="NO" contentMode="scaleAspectFill" axis="vertical" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="oAg-Fq-dBy">
+                <stackView opaque="NO" contentMode="scaleAspectFill" verticalHuggingPriority="1000" axis="vertical" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="oAg-Fq-dBy">
                     <rect key="frame" x="20" y="0.0" width="335" height="205"/>
                 </stackView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uuH-ZW-dkT">
+                    <rect key="frame" x="20" y="205" width="335" height="0.0"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" priority="250" id="oiF-RH-GeX"/>
+                    </constraints>
+                </view>
             </subviews>
             <constraints>
+                <constraint firstItem="uuH-ZW-dkT" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="20" id="0IB-4p-v5n"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="uuH-ZW-dkT" secondAttribute="bottom" id="3al-X5-B9i"/>
                 <constraint firstItem="oAg-Fq-dBy" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="20" id="Jiw-MX-ed7"/>
                 <constraint firstItem="oAg-Fq-dBy" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="KyW-25-eAe"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="oAg-Fq-dBy" secondAttribute="trailing" constant="20" id="WBU-mS-qKu"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="oAg-Fq-dBy" secondAttribute="bottom" id="gFf-ZG-DMM"/>
+                <constraint firstItem="uuH-ZW-dkT" firstAttribute="width" secondItem="oAg-Fq-dBy" secondAttribute="width" id="sh6-lT-rKT"/>
+                <constraint firstItem="uuH-ZW-dkT" firstAttribute="top" secondItem="oAg-Fq-dBy" secondAttribute="bottom" id="wKa-e1-FZN"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>

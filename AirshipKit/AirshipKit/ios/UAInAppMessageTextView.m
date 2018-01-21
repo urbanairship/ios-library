@@ -12,6 +12,8 @@ NSString *const UAInAppMessageTextViewNibName = @"UAInAppMessageTextView";
 @interface UAInAppMessageTextView ()
 
 @property (strong, nonatomic) UILabel *headingLabel;
+@property (strong, nonatomic) UILabel *bodyLabel;
+
 @property (strong, nonatomic) IBOutlet UIStackView *textContainer;
 
 @end
@@ -39,18 +41,26 @@ NSString *const UAInAppMessageTextViewNibName = @"UAInAppMessageTextView";
             headingLabel.translatesAutoresizingMaskIntoConstraints = NO;
 
             self.headingLabel = headingLabel;
+            [self.headingLabel setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
 
             [UAInAppMessageUtils applyTextInfo:heading label:headingLabel];
+
             [self.textContainer addArrangedSubview:headingLabel];
+
             self.textContainer.alignment = [UAInAppMessageUtils stackAlignmentWithTextInfo:heading];
         }
 
         if (body) {
             UILabel *bodyLabel = [[UILabel alloc] init];
             bodyLabel.translatesAutoresizingMaskIntoConstraints = NO;
+            self.bodyLabel = bodyLabel;
+            [self.bodyLabel setContentHuggingPriority:UILayoutPriorityRequired
+                                              forAxis:UILayoutConstraintAxisVertical];
 
             [UAInAppMessageUtils applyTextInfo:body label:bodyLabel];
+
             [self.textContainer addArrangedSubview:bodyLabel];
+
             self.textContainer.alignment = [UAInAppMessageUtils stackAlignmentWithTextInfo:body];
         }
 

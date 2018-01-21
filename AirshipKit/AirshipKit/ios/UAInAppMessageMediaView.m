@@ -9,13 +9,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-// UAInAppMessageButtonView nib name
-NSString *const UAInAppMessageMediaViewNibName = @"UAInAppMessageMediaView";
 CGFloat const DefaultVideoHeightPadding = 60;
 CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
 
 @interface UAInAppMessageMediaView()
-@property (nonatomic, strong, nullable) IBOutlet UIImageView *imageView;
+@property (nonatomic, strong, nullable) UIImageView *imageView;
 @property (nonatomic, strong, nullable) WKWebView *webView;
 
 @property (nonatomic, strong) UAInAppMessageMediaInfo *mediaInfo;
@@ -37,29 +35,32 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
 }
 
 - (instancetype)initWithImage:(UIImage *)image {
-    NSBundle *bundle = [UAirship resources];
+    self = [super init];
 
-    self = [[bundle loadNibNamed:UAInAppMessageMediaViewNibName owner:self options:nil] firstObject];
     if (self) {
         self.translatesAutoresizingMaskIntoConstraints = NO;
 
         self.webView = nil;
-        self.webView.opaque = NO;
 
-        [self addImage:image];
+        self.imageView = [[UIImageView alloc] initWithFrame:self.frame];
+        [self addSubview:self.imageView];
+        [self.imageView setImage:image];
+        [UAInAppMessageUtils applyContainerConstraintsToContainer:self containedView:self.imageView];
     }
 
     return self;
 }
 
 - (instancetype)initWithMediaInfo:(UAInAppMessageMediaInfo *)mediaInfo {
-    NSBundle *bundle = [UAirship resources];
-
-    self = [[bundle loadNibNamed:UAInAppMessageMediaViewNibName owner:self options:nil] firstObject];
+    self = [super init];
 
     if (self) {
-        WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
+        self.translatesAutoresizingMaskIntoConstraints = NO;
+        self.mediaInfo = mediaInfo;
 
+        self.imageView = nil;
+
+        WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
         config.allowsInlineMediaPlayback = YES;
         config.allowsPictureInPictureMediaPlayback = YES;
 
@@ -73,15 +74,9 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
 #pragma GCC diagnostic pop
         }
 
-        // We need to manually add a webview because WKWebView does not work in IB
         self.webView = [[WKWebView alloc] initWithFrame:self.frame configuration:config];
         [self addSubview:self.webView];
         [UAInAppMessageUtils applyContainerConstraintsToContainer:self containedView:self.webView];
-
-        self.translatesAutoresizingMaskIntoConstraints = NO;
-        self.mediaInfo = mediaInfo;
-        self.imageView = nil;
-        self.imageView.opaque = NO;
     }
 
     return self;
@@ -93,7 +88,7 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
     if (!self.superview) {
         return;
     }
-
+    CGFloat aspectRatio = DefaultVideoAspectRatio;
     switch (self.mediaInfo.type) {
         case UAInAppMessageMediaInfoTypeVideo: {
             self.imageView = nil;
@@ -107,7 +102,6 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
             break;
         }
         case UAInAppMessageMediaInfoTypeYouTube: {
-            self.imageView = nil;
             [self.webView.scrollView setScrollEnabled:NO];
             NSString *urlString = [NSString stringWithFormat:@"%@%@", self.mediaInfo.url, @"?playsinline=1"];
             NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlString]];
@@ -115,8 +109,10 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
             break;
         }
         case UAInAppMessageMediaInfoTypeImage: {
-            // Images have static size in superview
-            return;
+            if (self.imageView.image.size.height != 0) {
+                aspectRatio = self.imageView.image.size.width/self.imageView.image.size.height;
+            }
+            break;
         }
     }
 
@@ -125,7 +121,7 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
                                                          relatedBy:NSLayoutRelationEqual
                                                             toItem:self
                                                          attribute:NSLayoutAttributeHeight
-                                                        multiplier:DefaultVideoAspectRatio
+                                                        multiplier:aspectRatio
                                                           constant:0];
 
     self.widthConstraint = [NSLayoutConstraint constraintWithItem:self
@@ -135,60 +131,8 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
                                                         attribute:NSLayoutAttributeWidth
                                                        multiplier:1
                                                          constant:0];
-    self.aspectConstraint.priority = 250;
     self.aspectConstraint.active = YES;
-
     self.widthConstraint.active = YES;
-    self.heightConstraint.active = YES;
-}
-
-- (void)addImage:(UIImage *)image {
-    CGFloat imageAspect = image.size.width/image.size.height;
-    [self.imageView setImage:image];
-
-    if (imageAspect > 1) { // wide sizing should letterbox
-        [self.imageView setBackgroundColor:[UIColor clearColor]];
-        [NSLayoutConstraint constraintWithItem:self.imageView
-                                     attribute:NSLayoutAttributeWidth
-                                     relatedBy:NSLayoutRelationEqual
-                                        toItem:self
-                                     attribute:NSLayoutAttributeWidth
-                                    multiplier:1
-                                      constant:0].active = YES;
-
-        // Himage = (Wcontainter) * Himage/Wimage + 0
-        [NSLayoutConstraint constraintWithItem:self.imageView
-                                     attribute:NSLayoutAttributeHeight
-                                     relatedBy:NSLayoutRelationEqual
-                                        toItem:self
-                                     attribute:NSLayoutAttributeWidth
-                                    multiplier:(1/imageAspect)
-                                      constant:0].active = YES;
-        //center image
-        [UAInAppMessageUtils applyCenterConstraintsToContainer:self containedView:self.imageView];
-    } else if (imageAspect < 1) { // tall images should letterbox
-        [self setBackgroundColor:[UIColor clearColor]];
-        [NSLayoutConstraint constraintWithItem:self.imageView
-                                     attribute:NSLayoutAttributeHeight
-                                     relatedBy:NSLayoutRelationEqual
-                                        toItem:self
-                                     attribute:NSLayoutAttributeHeight
-                                    multiplier:1
-                                      constant:0].active = YES;
-
-        // Wimage = (Hcontainter) * Wimage/Himage + 0
-        [NSLayoutConstraint constraintWithItem:self.imageView
-                                     attribute:NSLayoutAttributeWidth
-                                     relatedBy:NSLayoutRelationEqual
-                                        toItem:self
-                                     attribute:NSLayoutAttributeHeight
-                                    multiplier:imageAspect
-                                      constant:0].active = YES;
-        //center image
-        [UAInAppMessageUtils applyCenterConstraintsToContainer:self containedView:self.imageView];
-    } else { // ideal images should keep default aspect fit with no clipping
-        [UAInAppMessageUtils applyContainerConstraintsToContainer:self containedView:self.imageView];
-    }
 }
 
 -(void)layoutSubviews {
@@ -202,8 +146,10 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
                                                          attribute:NSLayoutAttributeNotAnAttribute
                                                         multiplier:1
                                                           constant:[UAUtils mainWindow].frame.size.height - DefaultVideoHeightPadding];
+
+    // Tall media can potentially break this we need it to be non-required
+    self.heightConstraint.priority = 250;
     self.heightConstraint.active = YES;
-    
 }
 
 @end

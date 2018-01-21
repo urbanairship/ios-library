@@ -463,7 +463,6 @@
 		99CA7BE11EDF33A10051E2CA /* UAEvents.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1841DBED84600B4842D /* UAEvents.xcdatamodeld */; };
 		99CA7BE21EDF33A80051E2CA /* UAAutomation.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CC8999A01D8B642D00A0CECC /* UAAutomation.xcdatamodeld */; };
 		99CA7BEE1EDF41750051E2CA /* AirshipResources tvOS.bundle in Resources */ = {isa = PBXBuildFile; fileRef = DF7E739E1E7B3F0A0039F65D /* AirshipResources tvOS.bundle */; };
-		99E24BE81FFECAEB000BBC24 /* UAInAppMessageMediaView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 99E24BE71FFECAEB000BBC24 /* UAInAppMessageMediaView.xib */; };
 		99E2DA2B1FB62D1400C9F2CC /* UAInAppMessage+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 997141211FB2431500EF5445 /* UAInAppMessage+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99E2DA2C1FB62D1600C9F2CC /* UAInAppMessage+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 997141211FB2431500EF5445 /* UAInAppMessage+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99E2DA2D1FB62D2300C9F2CC /* UAInAppMessageManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E2DA2A1FB6271400C9F2CC /* UAInAppMessageManager+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1551,7 +1550,6 @@
 		99B6EE661F3B9B5300C4E3F1 /* UAEnableFeatureActionPredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAEnableFeatureActionPredicate.m; path = common/UAEnableFeatureActionPredicate.m; sourceTree = "<group>"; };
 		99B6EE6D1F3BA1DF00C4E3F1 /* UAURLActionPredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAURLActionPredicate.m; path = common/UAURLActionPredicate.m; sourceTree = "<group>"; };
 		99B6EE6E1F3BA1DF00C4E3F1 /* UAURLActionPredicate+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAURLActionPredicate+Internal.h"; path = "common/UAURLActionPredicate+Internal.h"; sourceTree = "<group>"; };
-		99E24BE71FFECAEB000BBC24 /* UAInAppMessageMediaView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAInAppMessageMediaView.xib; sourceTree = "<group>"; };
 		99E2DA2A1FB6271400C9F2CC /* UAInAppMessageManager+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAInAppMessageManager+Internal.h"; path = "ios/UAInAppMessageManager+Internal.h"; sourceTree = "<group>"; };
 		99E2DA361FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAInAppMessageBannerAdapter.h; path = ios/UAInAppMessageBannerAdapter.h; sourceTree = "<group>"; };
 		99E2DA371FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAInAppMessageBannerAdapter.m; path = ios/UAInAppMessageBannerAdapter.m; sourceTree = "<group>"; };
@@ -3479,7 +3477,6 @@
 				99E2DA4A1FBA2A6800C9F2CC /* UAInAppMessageButtonView.xib */,
 				99E2DA4C1FBA2A7900C9F2CC /* UAInAppMessageTextView.xib */,
 				CC8999A21D8B642D00A0CECC /* UAMessageCenterListCell.xib */,
-				99E24BE71FFECAEB000BBC24 /* UAInAppMessageMediaView.xib */,
 				CC8999A61D8B642D00A0CECC /* UALegacyInAppMessageView.xib */,
 				CC8999A31D8B642D00A0CECC /* UAMessageCenterListViewController.xib */,
 				6114091D1DB19C1F001F82A5 /* UALandingPageOverlayView.xib */,
@@ -4522,7 +4519,6 @@
 				6E7700AB1F04790C00B5E465 /* UANotificationCategories.plist in Resources */,
 				DFECEA851E65E900006AA8EA /* UAOverlayView.xib in Resources */,
 				CC8999AE1D8B642D00A0CECC /* UAMessageCenterPlaceholderIcon.png in Resources */,
-				99E24BE81FFECAEB000BBC24 /* UAInAppMessageMediaView.xib in Resources */,
 				99E2DA491FBA2A4400C9F2CC /* UAInAppMessageBannerView.xib in Resources */,
 				CC70E9901DDB8AF8000E2528 /* UrbanAirship.strings in Resources */,
 				998B22631FD896EF00C535AE /* UAInAppMessageBannerContentView.xib in Resources */,
