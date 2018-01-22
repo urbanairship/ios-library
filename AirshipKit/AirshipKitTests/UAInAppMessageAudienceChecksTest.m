@@ -9,6 +9,7 @@
 #import "UAPush+Internal.h"
 #import "UAInAppMessageTagSelector.h"
 #import "UAApplicationMetrics+Internal.h"
+#import "UAJSONPredicate.h"
 
 @interface UAInAppMessageAudienceChecksTest : UABaseTest
 
@@ -198,7 +199,8 @@
     [[[self.mockAirship stub] andReturn:mockApplicationMetrics] applicationMetrics];
     
     UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
-        builder.versionMatcher = [UAVersionMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"];
+        UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"] key:@"version" scope:@[@"ios"]];
+        builder.versionPredicate = [UAJSONPredicate predicateWithJSONMatcher:matcher];
     }];
     
     // test

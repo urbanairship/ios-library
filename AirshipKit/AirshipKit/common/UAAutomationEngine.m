@@ -767,7 +767,7 @@
         return [UAirship shared].applicationMetrics.isAppVersionUpdated;
     } argumentGenerator:^id {
         NSString *currentVersion = [UAirship shared].applicationMetrics.currentAppVersion;
-        return currentVersion ? @{@"ios" : currentVersion} : nil;
+        return currentVersion ? @{@"ios" : @{@"version": currentVersion}} : nil;
     }];
 
     [self.stateConditions setObject:activeSessionCondition forKey:@(UAScheduleTriggerActiveSession)];

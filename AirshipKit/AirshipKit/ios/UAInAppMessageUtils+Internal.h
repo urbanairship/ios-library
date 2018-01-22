@@ -60,7 +60,6 @@
  */
 + (void)prefetchContentsOfURL:(NSURL *)url WithCache:(NSCache *)cache completionHandler:(void (^)(NSString *cacheKey, UAInAppMessagePrepareResult result))completionHandler;
 
-
 /**
  * Converts the text info alignment into stack alignment.
  *

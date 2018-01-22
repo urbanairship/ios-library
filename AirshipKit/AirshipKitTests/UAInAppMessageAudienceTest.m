@@ -4,6 +4,7 @@
 #import "UAInAppMessageAudience+Internal.h"
 #import "UAVersionMatcher+Internal.h"
 #import "UAInAppMessageTagSelector+Internal.h"
+#import "UAJSONPredicate.h"
 
 @interface UAInAppMessageAudienceTest : UABaseTest
 
@@ -24,7 +25,9 @@
                                         @"tag":@"not-tag"
                                         }
                                 } error:&error];
-        builder.versionMatcher = [UAVersionMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"];
+
+        UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"] key:@"version" scope:@[@"ios"]];
+        builder.versionPredicate = [UAJSONPredicate predicateWithJSONMatcher:matcher];
         builder.testDevices = @[@"test-device"];
     }];
     

@@ -8,7 +8,9 @@
 #import "UAPush+Internal.h"
 #import "UAInAppMessageTagSelector.h"
 #import "UAVersionMatcher+Internal.h"
+#import "UAJSONPredicate.h"
 #import <CommonCrypto/CommonDigest.h>
+
 
 @implementation UAInAppMessageAudienceChecks
 
@@ -97,9 +99,10 @@
     }
     
     // version
-    if (audience.versionMatcher) {
-        NSString *currentAppVersion = [UAirship shared].applicationMetrics.currentAppVersion;
-        if (![audience.versionMatcher evaluateObject:currentAppVersion]) {
+    if (audience.versionPredicate) {
+        NSString *currentVersion = [UAirship shared].applicationMetrics.currentAppVersion;
+        id versionObject = currentVersion ? @{@"ios" : @{@"version": currentVersion}} : nil;
+        if (!versionObject || ![audience.versionPredicate evaluateObject:versionObject]) {
             return NO;
         }
     }

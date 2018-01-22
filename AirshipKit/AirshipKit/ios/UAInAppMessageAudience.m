@@ -16,6 +16,14 @@ NSString * const UAInAppMessageAudienceTestDevicesKey = @"test_devices";
 
 NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_message_audience";
 
+@interface UAInAppMessageAudience()
+@property(nonatomic, strong, nullable) NSNumber *notificationsOptIn;
+@property(nonatomic, strong, nullable) NSNumber *locationOptIn;
+@property(nonatomic, strong, nullable) NSArray<NSString *> *languageIDs;
+@property(nonatomic, strong, nullable) UAInAppMessageTagSelector *tagSelector;
+@property(nonatomic, strong, nullable) UAJSONPredicate *versionPredicate;
+@end
+
 @implementation UAInAppMessageAudienceBuilder
 
 - (BOOL)isValid {
@@ -85,27 +93,18 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
 
     id tagSelector = json[UAInAppMessageAudienceTagSelectorKey];
     if (tagSelector) {
-        if (![tagSelector isKindOfClass:[NSDictionary class]]) {
-            if (error) {
-                *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"%@\" key must be a dictionary. Invalid value: %@", UAInAppMessageAudienceTagSelectorKey, tagSelector]];
-            }
-            return nil;
-        }
         builder.tagSelector = [UAInAppMessageTagSelector selectorWithJSON:tagSelector error:error];
         if (!builder.tagSelector) {
             return nil;
         }
     }
 
-    id versionConstraint = json[UAInAppMessageAudienceAppVersionKey];
-    if (versionConstraint) {
-        if (![versionConstraint isKindOfClass:[NSString class]]) {
-            if (error) {
-                *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"%@\" key must be a string. Invalid value: %@", UAInAppMessageAudienceAppVersionKey, versionConstraint]];
-            }
+    id versionPredicate = json[UAInAppMessageAudienceAppVersionKey];
+    if (versionPredicate) {
+        builder.versionPredicate = [UAJSONPredicate predicateWithJSON:versionPredicate error:error];
+        if (!builder.versionPredicate) {
             return nil;
         }
-        builder.versionMatcher = [UAVersionMatcher matcherWithVersionConstraint:versionConstraint];
     }
 
     id testDevices = json[UAInAppMessageAudienceTestDevicesKey];
@@ -169,7 +168,8 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
         self.locationOptIn = builder.locationOptIn;
         self.languageIDs = builder.languageTags;
         self.tagSelector = builder.tagSelector;
-        self.versionMatcher = builder.versionMatcher;
+        self.versionPredicate = builder.versionPredicate;
+
     }
     return self;
 }
@@ -192,7 +192,7 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
     [json setValue:self.locationOptIn forKey:UAInAppMessageAudienceLocationOptInKey];
     [json setValue:self.languageIDs forKey:UAInAppMessageAudienceLanguageTagsKey];
     [json setValue:[self.tagSelector toJSON] forKey:UAInAppMessageAudienceTagSelectorKey];
-    [json setValue:self.versionMatcher.versionConstraint forKey:UAInAppMessageAudienceAppVersionKey];
+    [json setValue:self.versionPredicate.payload forKey:UAInAppMessageAudienceAppVersionKey];
     [json setValue:self.testDevices forKey:UAInAppMessageAudienceTestDevicesKey];
     return [json copy];
 }
@@ -225,7 +225,7 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
     if ((self.tagSelector != audience.tagSelector) && ![self.tagSelector isEqual:audience.tagSelector]) {
         return NO;
     }
-    if ((self.versionMatcher != audience.versionMatcher) && ![self.versionMatcher isEqual:audience.versionMatcher]) {
+    if ((self.versionPredicate != audience.versionPredicate) && ![self.versionPredicate.payload isEqual:audience.versionPredicate.payload]) {
         return NO;
     }
     if ((self.testDevices != audience.testDevices) && ![self.testDevices isEqual:audience.testDevices]) {
@@ -241,7 +241,7 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
     result = 31 * result + [self.locationOptIn hash];
     result = 31 * result + [self.languageIDs hash];
     result = 31 * result + [self.tagSelector hash];
-    result = 31 * result + [self.versionMatcher hash];
+    result = 31 * result + [self.versionPredicate.payload hash];
     result = 31 * result + [self.testDevices hash];
     return result;
 }

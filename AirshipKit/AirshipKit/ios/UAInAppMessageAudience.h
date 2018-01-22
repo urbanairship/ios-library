@@ -4,6 +4,7 @@
 
 @class UAInAppMessageTagSelector;
 @class UAVersionMatcher;
+@class UAJSONPredicate;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -29,14 +30,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong, nullable) NSArray<NSString *> *languageTags;
 
 /**
- * The tag selector
+ * The tag selector.
  */
 @property(nonatomic, strong, nullable) UAInAppMessageTagSelector *tagSelector;
 
 /**
- * The app version predicate
+ * The app version predicate.
  */
-@property(nonatomic, strong, nullable) UAVersionMatcher *versionMatcher;
+@property(nonatomic, strong, nullable) UAJSONPredicate *versionPredicate;
 
 /**
  * Checks if the builder is valid and will produce a audience.
@@ -54,27 +55,27 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The notifications opt in flag.
  */
-@property(nonatomic, strong) NSNumber *notificationsOptIn;
+@property(nonatomic, readonly, nullable) NSNumber *notificationsOptIn;
 
 /**
  * The location opt in flag.
  */
-@property(nonatomic, strong) NSNumber *locationOptIn;
+@property(nonatomic, readonly, nullable) NSNumber *locationOptIn;
 
 /**
  * The language tags.
  */
-@property(nonatomic, strong, nullable) NSArray<NSString *> *languageIDs;
+@property(nonatomic, readonly, nullable) NSArray<NSString *> *languageIDs;
 
 /**
  * The tag selector
  */
-@property(nonatomic, strong, nullable) UAInAppMessageTagSelector *tagSelector;
+@property(nonatomic, readonly, nullable) UAInAppMessageTagSelector *tagSelector;
 
 /**
- * The app version matcher
+ * The app version predicate.
  */
-@property(nonatomic, strong, nullable) UAVersionMatcher *versionMatcher;
+@property(nonatomic, readonly, nullable) UAJSONPredicate *versionPredicate;
 
 /**
  * Factory method for building audience model from a builder block.
