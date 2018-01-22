@@ -13,22 +13,18 @@
 @property (nonatomic, strong) NSCache *imageCache;
 @end
 
-NSString *const UAInAppMessageBannerAdapterCacheName = @"UAInAppMessageBannerAdapterCache";
-
 @implementation UAInAppMessageBannerAdapter
 
 + (instancetype)adapterForMessage:(UAInAppMessage *)message {
     return [[UAInAppMessageBannerAdapter alloc] initWithMessage:message];
 }
 
--(instancetype)initWithMessage:(UAInAppMessage *)message {
+- (instancetype)initWithMessage:(UAInAppMessage *)message {
     self = [super init];
 
     if (self) {
         self.message = message;
-        self.imageCache = [[NSCache alloc] init];
-        [self.imageCache setName:UAInAppMessageBannerAdapterCacheName];
-        [self.imageCache setCountLimit:1];
+        self.imageCache = [UAInAppMessageUtils createImageCache];
     }
 
     return self;
@@ -36,45 +32,25 @@ NSString *const UAInAppMessageBannerAdapterCacheName = @"UAInAppMessageBannerAda
 
 - (void)prepare:(void (^)(UAInAppMessagePrepareResult))completionHandler {
     UAInAppMessageBannerDisplayContent *displayContent = (UAInAppMessageBannerDisplayContent *)self.message.displayContent;
+    [UAInAppMessageUtils prepareMediaView:displayContent.media imageCache:self.imageCache completionHandler:^(UAInAppMessagePrepareResult result, UAInAppMessageMediaView *mediaView) {
+        if (result == UAInAppMessagePrepareResultSuccess) {
+            self.bannerController = [UAInAppMessageBannerController bannerControllerWithBannerMessageID:self.message.identifier
+                                                                                                         displayContent:displayContent
+                                                                                                              mediaView:mediaView];
+        }
+        completionHandler(result);
+    }];
+}
 
-    if (!displayContent.media) {
-        self.bannerController = [UAInAppMessageBannerController bannerControllerWithBannerMessageID:self.message.identifier
-                                                                                     displayContent:displayContent
-                                                                                              image:nil];
-        completionHandler(UAInAppMessagePrepareResultSuccess);
-        return;
-    }
 
-
-    NSURL *imageURL = [NSURL URLWithString:displayContent.media.url];
-
-    // Prefetch image save as file copy what message center does
-    UA_WEAKIFY(self);
-    [UAInAppMessageUtils prefetchContentsOfURL:imageURL
-                                     WithCache:self.imageCache
-                             completionHandler:^(NSString *cacheKey, UAInAppMessagePrepareResult result) {
-                                 if (cacheKey) {
-                                     UA_STRONGIFY(self);
-                                     NSData *data = [self.imageCache objectForKey:cacheKey];
-                                     if (data) {
-                                         UIImage *prefetchedImage = [UIImage imageWithData:data];
-                                         self.bannerController = [UAInAppMessageBannerController bannerControllerWithBannerMessageID:self.message.identifier
-                                                                                                                      displayContent:displayContent
-                                                                                                                               image:prefetchedImage];
-                                     }
-                                 }
-
-                                 completionHandler(result);
-                             }];
+- (BOOL)isReadyToDisplay {
+    UAInAppMessageBannerDisplayContent* displayContent = (UAInAppMessageBannerDisplayContent *)self.message.displayContent;
+    return [UAInAppMessageUtils isReadyToDisplayWithMedia:displayContent.media];
 }
 
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
     [self.bannerController showWithParentView:[UAUtils mainWindow]
                             completionHandler:completionHandler];
-}
-
-- (BOOL)isReadyToDisplay {
-    return YES;
 }
 
 - (void)dealloc {

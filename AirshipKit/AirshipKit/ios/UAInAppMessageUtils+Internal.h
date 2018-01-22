@@ -8,6 +8,7 @@
 #import "UAInAppMessageTextView+Internal.h"
 #import "UAInAppMessageButton+Internal.h"
 #import "UAInAppMessageAdapterProtocol.h"
+#import "UAInAppMessageMediaView+Internal.h"
 
 @interface UAInAppMessageUtils : NSObject
 
@@ -49,7 +50,6 @@
  */
 + (void)applyCenterConstraintsToContainer:(UIView *)container containedView:(UIView *)contained;
 
-
 /**
  * Caches url data contents using a background thread. Calls completion handler on main thread
  * with cache key under which the cached contents are stored.
@@ -73,5 +73,29 @@
  * @param button The button.
  */
 + (void)runActionsForButton:(UAInAppMessageButton *)button;
+
+/**
+ * Creates an NSCache for the adapter's media.
+ *
+ * @return The NSCache
+ */
++ (NSCache *)createImageCache;
+
+/**
+ * Prepares in-app message to display.
+ *
+ * @param media media info object for this message
+ * @param imageCache the cache for images
+ * @param completionHandler the completion handler to be called when media is ready.
+ */
++ (void)prepareMediaView:(UAInAppMessageMediaInfo *)media imageCache:(NSCache *)imageCache completionHandler:(void (^)(UAInAppMessagePrepareResult, UAInAppMessageMediaView *))completionHandler;
+
+/**
+ * Informs the adapter of the ready state of the in-app message immediately before display.
+ *
+ * @param media media info object for this message
+ * @return `YES` if the in-app message is ready, `NO` otherwise.
+ */
++ (BOOL)isReadyToDisplayWithMedia:(UAInAppMessageMediaInfo *)media;
 
 @end

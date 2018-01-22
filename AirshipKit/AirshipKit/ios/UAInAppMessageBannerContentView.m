@@ -23,11 +23,11 @@ NSString *const UAInAppMessageBannerContentViewNibName = @"UAInAppMessageBannerC
 
 @implementation UAInAppMessageBannerContentView
 
-+ (instancetype)contentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout textView:(UAInAppMessageTextView *)textView image:(UIImage * _Nullable)image {
-    return [[self alloc] initContentViewWithLayout:contentLayout textView:textView image:image];
++ (instancetype)contentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout textView:(UAInAppMessageTextView *)textView mediaView:(UAInAppMessageMediaView * _Nullable)mediaView {
+    return [[self alloc] initContentViewWithLayout:contentLayout textView:textView mediaView:mediaView];
 }
 
-- (instancetype)initContentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout textView:(UAInAppMessageTextView *)textView image:(UIImage * _Nullable)image {
+- (instancetype)initContentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout textView:(UAInAppMessageTextView *)textView mediaView:(UAInAppMessageMediaView * _Nullable)mediaView {
 
     NSString *nibName = UAInAppMessageBannerContentViewNibName;
     NSBundle *bundle = [UAirship resources];
@@ -51,8 +51,7 @@ NSString *const UAInAppMessageBannerContentViewNibName = @"UAInAppMessageBannerC
         self.containerView.translatesAutoresizingMaskIntoConstraints = NO;
         self.containerView.backgroundColor = [UIColor clearColor];
 
-        if (image) {
-            UAInAppMessageMediaView *mediaView = [UAInAppMessageMediaView mediaViewWithImage:image];
+        if (mediaView) {
             [self.mediaContainerView addSubview:mediaView];
             [UAInAppMessageUtils applyContainerConstraintsToContainer:self.mediaContainerView containedView:mediaView];
         } else {

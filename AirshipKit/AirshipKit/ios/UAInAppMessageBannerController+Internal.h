@@ -4,6 +4,8 @@
 #import "UAInAppMessageBannerDisplayContent.h"
 #import "UAInAppMessageResolution.h"
 
+@class UAInAppMessageMediaView;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -17,13 +19,13 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param identifer The message identifier.
  * @param displayContent The display content.
- * @param image The image.
+ * @param mediaView The media view.
  *
  * @return a configured UAInAppMessageBannerView instance.
  */
 + (instancetype)bannerControllerWithBannerMessageID:(NSString *)identifer
                                      displayContent:(UAInAppMessageBannerDisplayContent *)displayContent
-                                              image:(UIImage * _Nullable)image;
+                                              mediaView:(UAInAppMessageMediaView *_Nullable)mediaView;
 
 /**
  * The method to show the banner controller.

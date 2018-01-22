@@ -42,9 +42,9 @@ double const MinimumSwipeVelocity = 100.0;
 @property (nonatomic, strong) UAInAppMessageBannerDisplayContent *displayContent;
 
 /**
- * The banner image.
+ * The banner's media view.
  */
-@property (nonatomic, strong) UIImage *image;
+@property (nonatomic, strong) UAInAppMessageMediaView *mediaView;
 
 /**
  * The banner view. Contains contentView, buttonsView and textView subviews.
@@ -89,22 +89,22 @@ double const MinimumSwipeVelocity = 100.0;
 
 + (instancetype)bannerControllerWithBannerMessageID:(NSString *)messageID
                                      displayContent:(UAInAppMessageBannerDisplayContent *)displayContent
-                                              image:(UIImage * _Nullable)image {
+                                              mediaView:(UAInAppMessageMediaView *_Nullable)mediaView {
 
     return [[self alloc] initWithBannerMessageID:messageID
                                   displayContent:displayContent
-                                           image:image];
+                                           mediaView:mediaView];
 }
 
 - (instancetype)initWithBannerMessageID:(NSString *)messageID
                          displayContent:(UAInAppMessageBannerDisplayContent *)displayContent
-                                  image:(UIImage * _Nullable)image {
+                                  mediaView:(UAInAppMessageMediaView *_Nullable)mediaView {
     self = [super init];
 
     if (self) {
         self.messageID = messageID;
         self.displayContent = displayContent;
-        self.image = image;
+        self.mediaView = mediaView;
     }
 
     return self;
@@ -131,7 +131,7 @@ double const MinimumSwipeVelocity = 100.0;
 
     UAInAppMessageBannerContentView *bannerContentView = [UAInAppMessageBannerContentView contentViewWithLayout:contentLayout
                                                                                                        textView:textView
-                                                                                                          image:self.image];
+                                                                                                          mediaView:self.mediaView];
     // Only add button view if buttons are present
     UAInAppMessageButtonView *buttonView;
     if (buttons.count) {

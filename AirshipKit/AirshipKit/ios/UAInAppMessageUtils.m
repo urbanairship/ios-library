@@ -4,8 +4,10 @@
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAInAppMessageButtonView+Internal.h"
 #import "UAActionRunner+Internal.h"
+#import "UAUtils.h"
 
 NSString *const UADefaultSerifFont = @"Times New Roman";
+NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
 
 @implementation UAInAppMessageUtils
 
@@ -275,5 +277,53 @@ NSString *const UADefaultSerifFont = @"Times New Roman";
     }
 }
 
+#pragma mark -
+#pragma mark Adapter utilities
+
++ (NSCache *)createImageCache {
+    NSCache *imageCache = [[NSCache alloc] init];
+    [imageCache setName:UAInAppMessageAdapterCacheName];
+    [imageCache setCountLimit:1];
+    
+    return imageCache;
+}
+
++ (void)prepareMediaView:(UAInAppMessageMediaInfo *)media imageCache:(NSCache *)imageCache completionHandler:(void (^)(UAInAppMessagePrepareResult, UAInAppMessageMediaView *))completionHandler {
+    if (!media) {
+        completionHandler(UAInAppMessagePrepareResultSuccess,nil);
+        return;
+    }
+    
+    if (media.type != UAInAppMessageMediaInfoTypeImage) {
+        UAInAppMessageMediaView *mediaView = [UAInAppMessageMediaView mediaViewWithMediaInfo:media];
+        completionHandler(UAInAppMessagePrepareResultSuccess,mediaView);
+        return;
+    }
+    
+    NSURL *mediaURL = [NSURL URLWithString:media.url];
+    
+    // Prefetch image
+    [UAInAppMessageUtils prefetchContentsOfURL:mediaURL
+                                     WithCache:imageCache
+                             completionHandler:^(NSString *cacheKey, UAInAppMessagePrepareResult result) {
+                                 UAInAppMessageMediaView *mediaView;
+                                 if (cacheKey){
+                                     NSData *data = [imageCache objectForKey:cacheKey];
+                                     if (data) {
+                                         UIImage *prefetchedImage = [UIImage imageWithData:data];
+                                         mediaView = [UAInAppMessageMediaView mediaViewWithImage:prefetchedImage];
+                                     }
+                                 }
+                                 completionHandler(result,mediaView);
+                             }];
+}
+
++ (BOOL)isReadyToDisplayWithMedia:(UAInAppMessageMediaInfo *)media {
+    BOOL noConnection = ([[UAUtils connectionType] isEqual:kUAConnectionTypeNone]);
+    if (noConnection && (media.type == UAInAppMessageMediaInfoTypeVideo || media.type == UAInAppMessageMediaInfoTypeYouTube)) {
+        return NO;
+    }    
+    return YES;
+}
 
 @end

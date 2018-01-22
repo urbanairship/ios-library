@@ -14,22 +14,18 @@
 @property (nonatomic, strong) NSCache *imageCache;
 @end
 
-NSString *const UAInAppMessageFullScreenAdapterCacheName = @"UAInAppMessageFullScreenAdapterCache";
-
 @implementation UAInAppMessageFullScreenAdapter
 
 + (instancetype)adapterForMessage:(UAInAppMessage *)message {
     return [[UAInAppMessageFullScreenAdapter alloc] initWithMessage:message];
 }
 
--(instancetype)initWithMessage:(UAInAppMessage *)message {
+- (instancetype)initWithMessage:(UAInAppMessage *)message {
     self = [super init];
 
     if (self) {
         self.message = message;
-        self.imageCache = [[NSCache alloc] init];
-        [self.imageCache setName:UAInAppMessageFullScreenAdapterCacheName];
-        [self.imageCache setCountLimit:1];
+        self.imageCache = [UAInAppMessageUtils createImageCache];
     }
 
     return self;
@@ -37,57 +33,19 @@ NSString *const UAInAppMessageFullScreenAdapterCacheName = @"UAInAppMessageFullS
 
 - (void)prepare:(void (^)(UAInAppMessagePrepareResult))completionHandler {
     UAInAppMessageFullScreenDisplayContent *displayContent = (UAInAppMessageFullScreenDisplayContent *)self.message.displayContent;
-
-    if (!displayContent.media) {
-        self.fullScreenController = [UAInAppMessageFullScreenController fullScreenControllerWithFullScreenMessageID:self.message.identifier
-                                                                                                     displayContent:displayContent
-                                                                                                          mediaView:nil];
-
-        completionHandler(UAInAppMessagePrepareResultSuccess);
-        return;
-    }
-
-    if (displayContent.media.type != UAInAppMessageMediaInfoTypeImage) {
-        UAInAppMessageMediaView *mediaView = [UAInAppMessageMediaView mediaViewWithMediaInfo:displayContent.media];
-        self.fullScreenController = [UAInAppMessageFullScreenController fullScreenControllerWithFullScreenMessageID:self.message.identifier
-                                                                                                     displayContent:displayContent
-                                                                                                          mediaView:mediaView];
-        completionHandler(UAInAppMessagePrepareResultSuccess);
-        return;
-    }
-
-    NSURL *mediaURL = [NSURL URLWithString:displayContent.media.url];
-
-    // Prefetch image save as file copy what message center does
-    UA_WEAKIFY(self);
-    [UAInAppMessageUtils prefetchContentsOfURL:mediaURL
-                                     WithCache:self.imageCache
-                             completionHandler:^(NSString *cacheKey, UAInAppMessagePrepareResult result) {
-                                 if (cacheKey){
-                                     UA_STRONGIFY(self);
-                                     NSData *data = [self.imageCache objectForKey:cacheKey];
-                                     if (data) {
-                                         UIImage *prefetchedImage = [UIImage imageWithData:data];
-
-                                         UAInAppMessageMediaView *mediaView = [UAInAppMessageMediaView mediaViewWithImage:prefetchedImage];
-                                         self.fullScreenController = [UAInAppMessageFullScreenController fullScreenControllerWithFullScreenMessageID:self.message.identifier
-                                                                                                                                      displayContent:displayContent
-                                                                                                                                           mediaView:mediaView];
-                                     }
-                                 }
-
-                                 completionHandler(result);
-                             }];
+    [UAInAppMessageUtils prepareMediaView:displayContent.media imageCache:self.imageCache completionHandler:^(UAInAppMessagePrepareResult result, UAInAppMessageMediaView *mediaView) {
+        if (result == UAInAppMessagePrepareResultSuccess) {
+            self.fullScreenController = [UAInAppMessageFullScreenController fullScreenControllerWithFullScreenMessageID:self.message.identifier
+                                                                                                         displayContent:displayContent
+                                                                                                              mediaView:mediaView];
+        }
+        completionHandler(result);
+    }];
 }
 
 - (BOOL)isReadyToDisplay {
-    BOOL noConnection = ([[UAUtils connectionType] isEqual:kUAConnectionTypeNone]);
     UAInAppMessageFullScreenDisplayContent* fullScreenContent = (UAInAppMessageFullScreenDisplayContent *)self.message.displayContent;
-    if (noConnection && (fullScreenContent.media.type == UAInAppMessageMediaInfoTypeVideo || fullScreenContent.media.type == UAInAppMessageMediaInfoTypeYouTube)) {
-        return NO;
-    }
-
-    return YES;
+    return [UAInAppMessageUtils isReadyToDisplayWithMedia:fullScreenContent.media];
 }
 
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {

@@ -15,8 +15,6 @@
 
 @end
 
-NSString *const UAInAppMessageModalAdapterCacheName = @"UAInAppMessageModalAdapterCache";
-
 @implementation UAInAppMessageModalAdapter
 
 + (instancetype)adapterForMessage:(UAInAppMessage *)message {
@@ -28,64 +26,27 @@ NSString *const UAInAppMessageModalAdapterCacheName = @"UAInAppMessageModalAdapt
     
     if (self) {
         self.message = message;
-        self.imageCache = [[NSCache alloc] init];
-        [self.imageCache setName:UAInAppMessageModalAdapterCacheName];
-        [self.imageCache setCountLimit:1];
+        self.imageCache = [UAInAppMessageUtils createImageCache];
     }
     
     return self;
 }
 
-- (void)prepare:(void (^)(UAInAppMessagePrepareResult result))completionHandler {
+- (void)prepare:(void (^)(UAInAppMessagePrepareResult))completionHandler {
     UAInAppMessageModalDisplayContent *displayContent = (UAInAppMessageModalDisplayContent *)self.message.displayContent;
-    
-    if (!displayContent.media) {
-        self.modalController = [UAInAppMessageModalViewController modalControllerWithModalMessageID:self.message.identifier
-                                                                                                     displayContent:displayContent
-                                                                                                              mediaView:nil];
-        
-        completionHandler(UAInAppMessagePrepareResultSuccess);
-        return;
-    }
-
-    if (displayContent.media.type != UAInAppMessageMediaInfoTypeImage) {
-        UAInAppMessageMediaView *mediaView = [UAInAppMessageMediaView mediaViewWithMediaInfo:displayContent.media];
-        self.modalController = [UAInAppMessageModalViewController modalControllerWithModalMessageID:self.message.identifier
-                                                                                     displayContent:displayContent
-                                                                                          mediaView:mediaView];
-        completionHandler(UAInAppMessagePrepareResultSuccess);
-        return;
-    }
-    
-    NSURL *mediaURL = [NSURL URLWithString:displayContent.media.url];
-    
-    // Prefetch image save as file copy what message center does
-    UA_WEAKIFY(self);
-    [UAInAppMessageUtils prefetchContentsOfURL:mediaURL
-                                     WithCache:self.imageCache
-                             completionHandler:^(NSString *cacheKey, UAInAppMessagePrepareResult result) {
-                                 UA_STRONGIFY(self);
-                                 NSData *data = [self.imageCache objectForKey:cacheKey];
-                                 if (data) {
-                                     UIImage *prefetchedImage = [UIImage imageWithData:data];
-                                     UAInAppMessageMediaView *mediaView = [UAInAppMessageMediaView mediaViewWithImage:prefetchedImage];
-                                     self.modalController = [UAInAppMessageModalViewController modalControllerWithModalMessageID:self.message.identifier
-                                                                                                                  displayContent:displayContent
-                                                                                                                       mediaView:mediaView];
-                                 }
-                                 
-                                 completionHandler(result);
-                             }];
+    [UAInAppMessageUtils prepareMediaView:displayContent.media imageCache:self.imageCache completionHandler:^(UAInAppMessagePrepareResult result, UAInAppMessageMediaView *mediaView) {
+        if (result == UAInAppMessagePrepareResultSuccess) {
+            self.modalController = [UAInAppMessageModalViewController modalControllerWithModalMessageID:self.message.identifier
+                                                                                                         displayContent:displayContent
+                                                                                                              mediaView:mediaView];
+        }
+        completionHandler(result);
+    }];
 }
 
 - (BOOL)isReadyToDisplay {
-    BOOL noConnection = ([[UAUtils connectionType] isEqual:kUAConnectionTypeNone]);
     UAInAppMessageModalDisplayContent* modalContent = (UAInAppMessageModalDisplayContent *)self.message.displayContent;
-    if (noConnection && (modalContent.media.type == UAInAppMessageMediaInfoTypeVideo || modalContent.media.type == UAInAppMessageMediaInfoTypeYouTube)) {
-        return NO;
-    }
-
-    return YES;
+    return [UAInAppMessageUtils isReadyToDisplayWithMedia:modalContent.media];
 }
 
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
