@@ -76,6 +76,7 @@
 		6E598D842003EB76005B234B /* UAActiveTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E598D7E2003EB76005B234B /* UAActiveTimer.m */; };
 		6E598D862003F014005B234B /* UAInAppMessageResolutionEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E598D852003F014005B234B /* UAInAppMessageResolutionEventTest.m */; };
 		6E598D8820040E7F005B234B /* UAInAppMessageDisplayEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E598D8720040E7F005B234B /* UAInAppMessageDisplayEventTest.m */; };
+		6E5F723620169A6600D684B7 /* UADeepLinkActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E5F723520169A6600D684B7 /* UADeepLinkActionTest.m */; };
 		6E7700AA1F04790C00B5E465 /* UANativeBridge in Resources */ = {isa = PBXBuildFile; fileRef = 6E7700A81F04790C00B5E465 /* UANativeBridge */; };
 		6E7700AB1F04790C00B5E465 /* UANotificationCategories.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E7700A91F04790C00B5E465 /* UANotificationCategories.plist */; };
 		6EADE6FD1FA8F9FB0007F924 /* UAScheduleInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EADE6FA1FA8F9FA0007F924 /* UAScheduleInfo.m */; };
@@ -1467,6 +1468,7 @@
 		6E598D7E2003EB76005B234B /* UAActiveTimer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAActiveTimer.m; path = common/UAActiveTimer.m; sourceTree = "<group>"; };
 		6E598D852003F014005B234B /* UAInAppMessageResolutionEventTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageResolutionEventTest.m; sourceTree = "<group>"; };
 		6E598D8720040E7F005B234B /* UAInAppMessageDisplayEventTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageDisplayEventTest.m; sourceTree = "<group>"; };
+		6E5F723520169A6600D684B7 /* UADeepLinkActionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADeepLinkActionTest.m; sourceTree = "<group>"; };
 		6E7700A81F04790C00B5E465 /* UANativeBridge */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UANativeBridge; sourceTree = "<group>"; };
 		6E7700A91F04790C00B5E465 /* UANotificationCategories.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UANotificationCategories.plist; sourceTree = "<group>"; };
 		6EADE6FA1FA8F9FA0007F924 /* UAScheduleInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAScheduleInfo.m; path = common/UAScheduleInfo.m; sourceTree = "<group>"; };
@@ -2590,6 +2592,7 @@
 				53911BDC1E23EBA500EE7007 /* UAChannelCaptureActionTest.m */,
 				6E3673DF1E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m */,
 				996A03B91EF08EBF003424E0 /* UARateAppActionTest.m */,
+				6E5F723520169A6600D684B7 /* UADeepLinkActionTest.m */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -4916,6 +4919,7 @@
 				CC944EDC1DB6AEC600C42269 /* UARequestTest.m in Sources */,
 				CC64F0E61D8B781C009CEF27 /* UAApplicationMetricsTest.m in Sources */,
 				DFD852221F31558F004DB178 /* UALegacyPushTest.m in Sources */,
+				6E5F723620169A6600D684B7 /* UADeepLinkActionTest.m in Sources */,
 				CC64F0DA1D8B781C009CEF27 /* UAActionInfoTests.m in Sources */,
 				CC64F1191D8B781C009CEF27 /* UAOverlayInboxMessageActionTest.m in Sources */,
 				CC64F0E91D8B781C009CEF27 /* UAAutoIntegrationTest.m in Sources */,

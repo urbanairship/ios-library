@@ -43,6 +43,27 @@
 @class UAInbox;
 #endif
 
+//---------------------------------------------------------------------------------------
+// UADeepLinkDelegate Protocol
+//---------------------------------------------------------------------------------------
+
+/**
+ * Protocol to be implemented by deep link handlers.
+ */
+@protocol UADeepLinkDelegate<NSObject>
+
+@optional
+
+/**
+ * Called when a deep link has been triggered from Urban Airship. If implemented, the delegate is responsible for processing the provided url.
+ *
+ * @param url The url for the deep link.
+ * @param completionHandler The completion handler to execute when the deep link processing is complete.
+ */
+-(void)receivedDeepLink:(NSURL *_Nonnull)url completionHandler:(void (^_Nonnull)(void))completionHandler;
+
+@end
+
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -88,6 +109,13 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * NOTE: this delegate is not retained.
  */
 @property (nonatomic, weak, nullable) id<UAJavaScriptDelegate> jsDelegate;
+
+/**
+ * A user configurable deep link delegate.
+ *
+ * NOTE: this delegate is not retained.
+ */
+@property (nonatomic, weak, nullable) id<UADeepLinkDelegate> deepLinkDelegate;
 
 /**
  * The whitelist used for validating webview URLs.
