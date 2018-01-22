@@ -80,7 +80,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, getter=isAutomaticSetupEnabled) BOOL automaticSetupEnabled;
 
 /**
- * An array of UAWhitelist entry strings.
+ * An array of UAWhitelist entry strings. The whitelist used for validating URLs for landing pages,
+ * wallet action, open external URL action, deep link action (if delegate is not set), and
+ * HTML in-app messages.
  *
  * @note See UAWhitelist for pattern entry syntax.
  */

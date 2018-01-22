@@ -5,15 +5,37 @@
 
 @implementation UADeepLinkAction
 
+- (BOOL)acceptsArguments:(UAActionArguments *)arguments {
+    if (arguments.situation == UASituationBackgroundPush || arguments.situation == UASituationBackgroundInteractiveButton) {
+        return NO;
+    }
+
+    NSURL *url = [UAOpenExternalURLAction parseURLFromArguments:arguments.value];
+    if (!url) {
+        return NO;
+    }
+
+    return YES;
+}
+
 - (void)performWithArguments:(UAActionArguments *)arguments completionHandler:(UAActionCompletionHandler)completionHandler{
+    NSURL *url = [UAOpenExternalURLAction parseURLFromArguments:arguments];
+
     id strongDelegate = [UAirship shared].deepLinkDelegate;
     if ([strongDelegate respondsToSelector:@selector(receivedDeepLink:completionHandler:)]) {
-        NSURL *url = [arguments.value isKindOfClass:[NSURL class]] ? arguments.value : [NSURL URLWithString:arguments.value];
         [strongDelegate receivedDeepLink:url completionHandler:^{
             completionHandler([UAActionResult resultWithValue:url.absoluteString]);
         }];
     } else{
-        [super performWithArguments:arguments completionHandler:completionHandler];
+        if (![[UAirship shared].whitelist isWhitelisted:url]) {
+            UA_LERR(@"URL %@ not whitelisted. Unable to open url.", url);
+            NSError *error =  [NSError errorWithDomain:UAOpenExternalURLActionErrorDomain
+                                                  code:UAOpenExternalURLActionErrorCodeURLFailedToOpen
+                                              userInfo:@{NSLocalizedDescriptionKey : @"URL not whitelisted."}];
+            completionHandler([UAActionResult resultWithError:error]);
+        } else {
+            [super performWithArguments:arguments completionHandler:completionHandler];
+        }
     }
 }
 

@@ -5,7 +5,7 @@
 #import "UAURLProtocol.h"
 #import "UAOverlayViewController.h"
 #import "UAAction+Internal.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UAConfig.h"
 #import "UAUtils.h"
 #import "NSString+UAURLEncoding.h"
@@ -17,6 +17,7 @@
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockConfig;
 @property (nonatomic, strong) UALandingPageAction *action;
+@property (nonatomic, assign) id mockWhitelist;
 
 
 @end
@@ -31,8 +32,11 @@
 
     self.mockConfig = [self mockForClass:[UAConfig class]];
     self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    self.mockWhitelist =  [self mockForClass:[UAWhitelist class]];
+
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
+    [[[self.mockAirship stub] andReturn:self.mockWhitelist] whitelist];
+    [UAirship setSharedAirship:self.mockAirship];
 
     [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
     [[[self.mockConfig stub] andReturn:kUAProductionLandingPageContentURL] landingPageContentURL];
@@ -40,23 +44,17 @@
     [[[self.mockConfig stub] andReturnValue:OCMOCK_VALUE((NSUInteger)100)] cacheDiskSizeInMB];
 }
 
-- (void)tearDown {
-    [self.mockOverlayViewController stopMocking];
-    [self.mockURLProtocol stopMocking];
-    [self.mockAirship stopMocking];
-    [self.mockConfig stopMocking];
-    [super tearDown];
-}
-
 /**
  * Test accepts arguments
  */
 - (void)testAcceptsArguments {
-    [self verifyAcceptsArgumentsWithValue:@"foo.urbanairship.com" shouldAccept:true];
-    [self verifyAcceptsArgumentsWithValue:@"https://foo.urbanairship.com" shouldAccept:true];
-    [self verifyAcceptsArgumentsWithValue:@"http://foo.urbanairship.com" shouldAccept:true];
-    [self verifyAcceptsArgumentsWithValue:@"file://foo.urbanairship.com" shouldAccept:true];
-    [self verifyAcceptsArgumentsWithValue:[NSURL URLWithString:@"https://foo.urbanairship.com"] shouldAccept:true];
+    [[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] isWhitelisted:OCMOCK_ANY];
+
+    [self verifyAcceptsArgumentsWithValue:@"foo.urbanairship.com" shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@"https://foo.urbanairship.com" shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@"http://foo.urbanairship.com" shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@"file://foo.urbanairship.com" shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:[NSURL URLWithString:@"https://foo.urbanairship.com"] shouldAccept:YES];
 
     // Verify UA content ID urls
     [self verifyAcceptsArgumentsWithValue:@"u:content-id" shouldAccept:true];
@@ -67,16 +65,33 @@
  * as a URL
  */
 - (void)testAcceptsArgumentsNo {
-    [self verifyAcceptsArgumentsWithValue:nil shouldAccept:false];
-    [self verifyAcceptsArgumentsWithValue:[[NSObject alloc] init] shouldAccept:false];
-    [self verifyAcceptsArgumentsWithValue:@[] shouldAccept:false];
-    [self verifyAcceptsArgumentsWithValue:@"u:" shouldAccept:false];
+    [[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] isWhitelisted:OCMOCK_ANY];
+
+    [self verifyAcceptsArgumentsWithValue:nil shouldAccept:NO];
+    [self verifyAcceptsArgumentsWithValue:[[NSObject alloc] init] shouldAccept:NO];
+    [self verifyAcceptsArgumentsWithValue:@[] shouldAccept:NO];
+    [self verifyAcceptsArgumentsWithValue:@"u:" shouldAccept:NO];
+}
+
+/**
+ * Test rejects arguments with URLs that are not whitelisted.
+ */
+- (void)testWhiteList {
+    [[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(NO)] isWhitelisted:OCMOCK_ANY];
+
+    [self verifyAcceptsArgumentsWithValue:@"foo.urbanairship.com" shouldAccept:NO];
+    [self verifyAcceptsArgumentsWithValue:@"https://foo.urbanairship.com" shouldAccept:NO];
+    [self verifyAcceptsArgumentsWithValue:@"http://foo.urbanairship.com" shouldAccept:NO];
+    [self verifyAcceptsArgumentsWithValue:@"file://foo.urbanairship.com" shouldAccept:NO];
+    [self verifyAcceptsArgumentsWithValue:[NSURL URLWithString:@"https://foo.urbanairship.com"] shouldAccept:NO];
 }
 
 /**
  * Test perform in UASituationBackgroundPush
  */
 - (void)testPerformInForeground {
+    [[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] isWhitelisted:OCMOCK_ANY];
+
     // Verify https is added to schemeless urls
     [self verifyPerformInForegroundWithValue:@"foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com"];
 
