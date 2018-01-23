@@ -17,27 +17,27 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFill" bounces="NO" showsHorizontalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hEr-Uv-JrX">
-                    <rect key="frame" x="0.0" y="80" width="375" height="587"/>
+                    <rect key="frame" x="0.0" y="20" width="375" height="647"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nxZ-dF-if9" userLabel="WrapperView">
-                            <rect key="frame" x="0.0" y="0.0" width="375" height="625"/>
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="650"/>
                             <subviews>
                                 <stackView opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="Dgh-Mi-mKc" userLabel="Full Screen Stack View">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="570"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="595"/>
                                 </stackView>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rsN-La-UOG" userLabel="Footer Container View">
-                                    <rect key="frame" x="0.0" y="580" width="375" height="35"/>
+                                    <rect key="frame" x="0.0" y="605" width="375" height="35"/>
                                     <constraints>
-                                        <constraint firstAttribute="height" constant="35" id="XdO-ZE-UJI"/>
+                                        <constraint firstAttribute="height" constant="35" placeholder="YES" id="XdO-ZE-UJI"/>
                                     </constraints>
                                 </view>
                             </subviews>
                             <constraints>
                                 <constraint firstItem="rsN-La-UOG" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Dgh-Mi-mKc" secondAttribute="bottom" constant="10" id="0D6-HO-TmE"/>
                                 <constraint firstItem="Dgh-Mi-mKc" firstAttribute="trailing" secondItem="nxZ-dF-if9" secondAttribute="trailing" id="38K-Ja-MKv"/>
+                                <constraint firstAttribute="height" constant="650" placeholder="YES" identifier="This is removed at build time" id="4V8-J1-qgU"/>
                                 <constraint firstItem="rsN-La-UOG" firstAttribute="bottom" secondItem="nxZ-dF-if9" secondAttribute="bottom" constant="-10" id="4iw-X8-Uyp"/>
                                 <constraint firstAttribute="bottom" secondItem="Dgh-Mi-mKc" secondAttribute="bottom" priority="250" constant="10" identifier="Fallback constraint when footer is nil." id="BXZ-hk-yfh"/>
-                                <constraint firstAttribute="height" constant="625" placeholder="YES" id="C3a-MY-xDi"/>
                                 <constraint firstItem="rsN-La-UOG" firstAttribute="trailing" secondItem="nxZ-dF-if9" secondAttribute="trailing" id="Cz9-uT-xrE"/>
                                 <constraint firstItem="Dgh-Mi-mKc" firstAttribute="top" secondItem="nxZ-dF-if9" secondAttribute="top" id="HHM-b9-y3E"/>
                                 <constraint firstItem="Dgh-Mi-mKc" firstAttribute="leading" secondItem="nxZ-dF-if9" secondAttribute="leading" id="IJV-07-dM9"/>
@@ -55,40 +55,18 @@
                         <constraint firstItem="nxZ-dF-if9" firstAttribute="trailing" secondItem="hEr-Uv-JrX" secondAttribute="trailing" id="Yum-9D-zGh"/>
                     </constraints>
                 </scrollView>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Rls-sN-lHt" userLabel="Message Top">
-                    <rect key="frame" x="0.0" y="20" width="375" height="60"/>
-                    <subviews>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dFs-4m-tfK" userLabel="Close Button Container" customClass="UAInAppMessageCloseButton">
-                            <rect key="frame" x="340" y="25" width="35" height="35"/>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="35" id="7Ch-eH-MrS"/>
-                                <constraint firstAttribute="width" constant="35" id="F0R-6D-9z8"/>
-                            </constraints>
-                        </view>
-                    </subviews>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="60" id="4Tx-bg-igh"/>
-                        <constraint firstAttribute="bottom" secondItem="dFs-4m-tfK" secondAttribute="bottom" id="aue-aq-MPt"/>
-                        <constraint firstAttribute="trailing" secondItem="dFs-4m-tfK" secondAttribute="trailing" id="kzv-Kq-RCc"/>
-                    </constraints>
-                </view>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstItem="hEr-Uv-JrX" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="6WA-od-AoQ"/>
-                <constraint firstItem="Rls-sN-lHt" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="AQo-xW-N3w"/>
-                <constraint firstItem="Rls-sN-lHt" firstAttribute="width" secondItem="hEr-Uv-JrX" secondAttribute="width" id="Dkd-Ec-M5C"/>
-                <constraint firstItem="Rls-sN-lHt" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" id="E1I-lg-5yw"/>
                 <constraint firstItem="hEr-Uv-JrX" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="OnV-4n-C5z"/>
-                <constraint firstItem="hEr-Uv-JrX" firstAttribute="top" secondItem="Rls-sN-lHt" secondAttribute="bottom" id="PE7-az-ONh"/>
                 <constraint firstItem="hEr-Uv-JrX" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="RIb-p3-z8V"/>
+                <constraint firstItem="hEr-Uv-JrX" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="Ri0-Rq-Npt"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <connections>
-                <outlet property="closeButtonContainer" destination="dFs-4m-tfK" id="kAD-3E-ayk"/>
                 <outlet property="containerStackView" destination="Dgh-Mi-mKc" id="2tL-PN-m1G"/>
                 <outlet property="footerButtonContainer" destination="rsN-La-UOG" id="sTA-XJ-G1s"/>
-                <outlet property="messageTop" destination="Rls-sN-lHt" id="8nN-sj-G17"/>
                 <outlet property="scrollView" destination="hEr-Uv-JrX" id="gLP-dp-phf"/>
             </connections>
             <point key="canvasLocation" x="220.5" y="8.5"/>
