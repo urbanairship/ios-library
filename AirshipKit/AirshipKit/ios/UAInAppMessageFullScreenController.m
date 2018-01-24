@@ -215,16 +215,15 @@ double const DefaultFullScreenAnimationDuration = 0.2;
 }
 
 - (void)fullScreenView:(UAInAppMessageFullScreenView *)fullScreenView animateInWithParentView:(UIView *)parentView completionHandler:(void (^)(void))completionHandler {
-    self.verticalConstraint.constant = 0;
+    self.verticalConstraint.active = false;
+    self.verticalConstraint = [NSLayoutConstraint constraintWithItem:fullScreenView
+                                                           attribute:NSLayoutAttributeTop
+                                                           relatedBy:NSLayoutRelationEqual
+                                                              toItem:parentView
+                                                           attribute:NSLayoutAttributeTop                                                         multiplier:1
+                                                            constant:0];
 
-    // Set Height
-    [NSLayoutConstraint constraintWithItem:fullScreenView
-                                 attribute:NSLayoutAttributeHeight
-                                 relatedBy:NSLayoutRelationEqual
-                                    toItem:parentView
-                                 attribute:NSLayoutAttributeHeight
-                                multiplier:1
-                                  constant:0].active = YES;
+    self.verticalConstraint.active = YES;
 
     [UIView animateWithDuration:DefaultFullScreenAnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         [parentView layoutIfNeeded];

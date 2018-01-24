@@ -76,6 +76,52 @@ NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
     centerYConstraint.active = true;
 }
 
++ (void)applyCloseButtonConstraintsToContainer:(UIView *)container closeButton:(UAInAppMessageCloseButton *)closeButton {
+    if (!container || !closeButton) {
+        UA_LDEBUG(@"Attempted to constrain a nil view");
+        return;
+    }
+
+    // This is a side effect, but these should be set to NO by default when using autolayout
+    container.translatesAutoresizingMaskIntoConstraints = NO;
+    closeButton.translatesAutoresizingMaskIntoConstraints = NO;
+
+    NSLayoutConstraint *trailingConstraint = [NSLayoutConstraint constraintWithItem:closeButton
+                                                                          attribute:NSLayoutAttributeTrailing
+                                                                          relatedBy:NSLayoutRelationEqual
+                                                                             toItem:container
+                                                                          attribute:NSLayoutAttributeTrailing
+                                                                         multiplier:1.0f
+                                                                           constant:0.0f];
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:closeButton
+                                                                     attribute:NSLayoutAttributeTop
+                                                                     relatedBy:NSLayoutRelationEqual
+                                                                        toItem:container
+                                                                     attribute:NSLayoutAttributeTop
+                                                                    multiplier:1.0f
+                                                                      constant:0.0f];
+
+    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:closeButton
+                                                                       attribute:NSLayoutAttributeWidth
+                                                                       relatedBy:NSLayoutRelationEqual
+                                                                          toItem:nil
+                                                                       attribute:NSLayoutAttributeNotAnAttribute
+                                                                      multiplier:1.0f
+                                                                        constant:35.0f];
+
+    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:closeButton
+                                                                        attribute:NSLayoutAttributeHeight
+                                                                        relatedBy:NSLayoutRelationEqual
+                                                                           toItem:nil
+                                                                        attribute:NSLayoutAttributeNotAnAttribute
+                                                                       multiplier:1.0f
+                                                                         constant:35.0f];
+
+    trailingConstraint.active = YES;
+    topConstraint.active = YES;
+    widthConstraint.active = YES;
+    heightConstraint.active = YES;
+}
 
 + (void)applyContainerConstraintsToContainer:(UIView *)container containedView:(UIView *)contained {
     if (!container || !contained) {
@@ -102,7 +148,6 @@ NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
                                                                          attribute:NSLayoutAttributeCenterY
                                                                         multiplier:1.0f
                                                                           constant:0.0f];
-
 
     NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:contained
                                                                        attribute:NSLayoutAttributeWidth

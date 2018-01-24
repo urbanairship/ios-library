@@ -19,10 +19,10 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 @interface UAInAppMessageFullScreenView ()
 
 @property (nonatomic, strong) IBOutlet UIStackView *containerStackView;
-@property (strong, nonatomic) IBOutlet UAInAppMessageCloseButton *closeButtonContainer;
 @property (strong, nonatomic) IBOutlet UIView *footerButtonContainer;
-@property (strong, nonatomic) IBOutlet UIView *messageTop;
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
+
+@property (strong, nonatomic) UAInAppMessageCloseButton *closeButton;
 
 @property (nonatomic, strong) UAInAppMessageFullScreenDisplayContent *displayContent;
 
@@ -30,6 +30,8 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 @property (nonatomic, strong) UAInAppMessageTextView *bottomTextView;
 @property (nonatomic, strong) UAInAppMessageMediaView *mediaView;
 @property (nonatomic, strong) UAInAppMessageButtonView *buttonView;
+
+@property (nonatomic, strong) UIView *statusBarPaddingView;
 
 @end
 
@@ -64,30 +66,43 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
         self.mediaView = mediaView;
         self.buttonView = buttonView;
 
-        // Always add the close button
-        [self.closeButtonContainer addSubview:closeButton];
-        [UAInAppMessageUtils applyContainerConstraintsToContainer:self.closeButtonContainer containedView:closeButton];
+        self.closeButton = closeButton;
+
+        self.statusBarPaddingView = [[UIView alloc] init];
+        NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self.statusBarPaddingView
+                                                                            attribute:NSLayoutAttributeHeight
+                                                                            relatedBy:NSLayoutRelationEqual
+                                                                               toItem:nil
+                                                                            attribute:NSLayoutAttributeNotAnAttribute                                                     multiplier:1
+                                                                             constant:0];
+        heightConstraint.active = YES;
+
+        self.statusBarPaddingView.backgroundColor = displayContent.backgroundColor;
 
         // Add views that belong in the stack - adding views that are nil will result in no-op
         if (displayContent.contentLayout == UAInAppMessageFullScreenContentLayoutHeaderMediaBody) {
             self.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:nil];
             self.bottomTextView = [UAInAppMessageTextView textViewWithHeading:nil body:displayContent.body];
-
+            [self.containerStackView addArrangedSubview:[self createBarCloseView]];
             [self.containerStackView addArrangedSubview:self.topTextView];
             [self.containerStackView addArrangedSubview:mediaView];
             [self.containerStackView addArrangedSubview:self.bottomTextView];
         } else if (displayContent.contentLayout == UAInAppMessageFullScreenContentLayoutHeaderBodyMedia) {
-            
             self.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:displayContent.body];
 
+            [self.containerStackView addArrangedSubview:[self createBarCloseView]];
             [self.containerStackView addArrangedSubview:self.topTextView];
             [self.containerStackView addArrangedSubview:mediaView];
+
+            
         } else if (displayContent.contentLayout == UAInAppMessageFullScreenContentLayoutMediaHeaderBody) {
+            // Add close button to top layer of a compound view containing the media view
+            [self.containerStackView addArrangedSubview:[self createCompoundCloseView]];
             self.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:displayContent.body];
 
-            [self.containerStackView addArrangedSubview:mediaView];
             [self.containerStackView addArrangedSubview:self.topTextView];
         }
+
         // Button container is always the last thing in the stack
         [self.containerStackView addArrangedSubview:self.buttonView];
 
@@ -108,7 +123,6 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
         self.displayContent = displayContent;
         self.backgroundColor = displayContent.backgroundColor;
         self.scrollView.backgroundColor = displayContent.backgroundColor;
-        self.messageTop.backgroundColor = displayContent.backgroundColor;
 
         self.translatesAutoresizingMaskIntoConstraints = NO;
     }
@@ -116,12 +130,48 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
     return self;
 }
 
+-(UIView *)createCompoundCloseView {
+    UIView *mediaCompoundView = [[UIView alloc] init];
+    mediaCompoundView.backgroundColor = [UIColor clearColor];
+
+    [mediaCompoundView addSubview:self.mediaView];
+    [UAInAppMessageUtils applyContainerConstraintsToContainer:mediaCompoundView containedView:self.mediaView];
+    [mediaCompoundView addSubview:self.closeButton];
+    [UAInAppMessageUtils applyCloseButtonConstraintsToContainer:mediaCompoundView closeButton:self.closeButton];
+
+    return mediaCompoundView;
+}
+
+-(UIView *)createBarCloseView {
+    UIView *barView = [[UIView alloc] init];
+    barView.backgroundColor = self.displayContent.backgroundColor;
+    [barView addSubview:self.closeButton];
+    [UAInAppMessageUtils applyCloseButtonConstraintsToContainer:barView closeButton:self.closeButton];
+
+    NSLayoutConstraint *barHeight = [NSLayoutConstraint constraintWithItem:barView
+                                                                       attribute:NSLayoutAttributeHeight
+                                                                       relatedBy:NSLayoutRelationEqual
+                                                                          toItem:self.closeButton
+                                                                       attribute:NSLayoutAttributeHeight
+                                                                      multiplier:1.0f
+                                                                        constant:0];
+    barHeight.active = YES;
+
+    return barView;
+}
+
 -(void)layoutSubviews {
     [super layoutSubviews];
 
-    if (@available(iOS 11.0, *)) {
-        UIWindow *window = [UAUtils mainWindow];
+    UIWindow *window = [UIApplication sharedApplication].keyWindow;
 
+    if ([UIApplication sharedApplication].statusBarFrame.size.height == 0) {
+        [self.containerStackView removeArrangedSubview:self.statusBarPaddingView];
+    } else {
+        [self.containerStackView insertArrangedSubview:self.statusBarPaddingView atIndex:0];
+    }
+
+    if (@available(iOS 11.0, *)) {
         // Black out the inset when iPhone X is horizontal
         if (window.safeAreaInsets.top == 0 && window.safeAreaInsets.left > 0) {
             self.backgroundColor = [UIColor blackColor];
@@ -136,3 +186,4 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 @end
 
 NS_ASSUME_NONNULL_END
+

@@ -9,6 +9,7 @@
 #import "UAInAppMessageButton+Internal.h"
 #import "UAInAppMessageAdapterProtocol.h"
 #import "UAInAppMessageMediaView+Internal.h"
+#import "UAInAppMessageCloseButton+Internal.h"
 
 @interface UAInAppMessageUtils : NSObject
 
@@ -50,6 +51,17 @@
  * @param contained The contained view.
  */
 + (void)applyCenterConstraintsToContainer:(UIView *)container containedView:(UIView *)contained;
+
+/**
+ * Constrains the close button view to the upper right of the container
+ *
+ * This method has the side effect of setting both view parameters translatesAutoresizingMasksIntoConstraints to NO.
+ * This is done to ensure that autoresizing mask constraints do not conflict with the close button constraints.
+ *
+ * @param container The container view.
+ * @param closeButton The contained close button.
+ */
++ (void)applyCloseButtonConstraintsToContainer:(UIView *)container closeButton:(UAInAppMessageCloseButton *)closeButton;
 
 /**
  * Caches url data contents using a background thread. Calls completion handler on main thread
