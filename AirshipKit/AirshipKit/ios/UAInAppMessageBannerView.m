@@ -126,6 +126,10 @@ CGFloat const ShadowOpacity = 0.5;
                                                          attribute:NSLayoutAttributeNotAnAttribute
                                                         multiplier:1
                                                           constant:[UAUtils mainWindow].frame.size.height - DefaultBannerHeightPadding];
+
+    // This will be overridden until we can clip tall images (or something similar)
+    self.heightConstraint.priority = 250;
+
     self.heightConstraint.active = YES;
     [self layoutIfNeeded];
 }
