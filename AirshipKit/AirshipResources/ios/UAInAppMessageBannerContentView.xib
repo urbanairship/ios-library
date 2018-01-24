@@ -17,16 +17,17 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="CwK-FL-VAk" userLabel="ContainerView">
-                    <rect key="frame" x="-0.5" y="0.0" width="375" height="120"/>
+                    <rect key="frame" x="0.5" y="0.0" width="375" height="120"/>
                     <subviews>
                         <view opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="500" translatesAutoresizingMaskIntoConstraints="NO" id="6QX-8T-8Be">
                             <rect key="frame" x="20" y="0.0" width="120" height="121"/>
                             <constraints>
-                                <constraint firstAttribute="width" constant="120" id="NDK-1g-BfK"/>
+                                <constraint firstAttribute="width" priority="751" constant="120" id="NDK-1g-BfK"/>
+                                <constraint firstAttribute="width" relation="lessThanOrEqual" constant="120" id="dYV-qQ-ha9"/>
                             </constraints>
                         </view>
                         <view contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="UGz-LO-0Cf" userLabel="Text Container View" customClass="UAInAppMessageTextView">
-                            <rect key="frame" x="140" y="0.0" width="235" height="120"/>
+                            <rect key="frame" x="139.5" y="0.0" width="235" height="120"/>
                         </view>
                         <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fqe-vD-Gmm" userLabel="Media Padding View">
                             <rect key="frame" x="0.0" y="120" width="120" height="0.0"/>
@@ -75,7 +76,8 @@
                         <view opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="500" translatesAutoresizingMaskIntoConstraints="NO" id="VNH-yL-Bh8">
                             <rect key="frame" x="235" y="0.0" width="120" height="120"/>
                             <constraints>
-                                <constraint firstAttribute="width" constant="120" id="DAA-6C-RZf"/>
+                                <constraint firstAttribute="width" relation="lessThanOrEqual" constant="120" id="CZg-ok-yNT"/>
+                                <constraint firstAttribute="width" priority="751" constant="120" placeholder="YES" id="DAA-6C-RZf"/>
                             </constraints>
                         </view>
                         <view contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="GTX-VX-8Bf" customClass="UAInAppMessageTextView">

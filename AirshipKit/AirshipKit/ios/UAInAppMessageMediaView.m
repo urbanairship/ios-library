@@ -88,6 +88,7 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
     if (!self.superview) {
         return;
     }
+
     CGFloat aspectRatio = DefaultVideoAspectRatio;
     switch (self.mediaInfo.type) {
         case UAInAppMessageMediaInfoTypeVideo: {
@@ -131,6 +132,12 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
                                                         attribute:NSLayoutAttributeWidth
                                                        multiplier:1
                                                          constant:0];
+
+    // If the image is taller than it is wide make the width breakable
+    if (aspectRatio < 1) {
+        self.widthConstraint.priority = 750;
+    }
+
     self.aspectConstraint.active = YES;
     self.widthConstraint.active = YES;
 }
@@ -138,6 +145,7 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
 -(void)layoutSubviews {
     [super layoutSubviews];
 
+    self.heightConstraint.active = NO;
     // Limit absolute height to window height - padding
     self.heightConstraint = [NSLayoutConstraint constraintWithItem:self
                                                          attribute:NSLayoutAttributeHeight
