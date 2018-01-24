@@ -29,11 +29,11 @@
             </subviews>
             <constraints>
                 <constraint firstItem="uuH-ZW-dkT" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="10" id="0IB-4p-v5n"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="uuH-ZW-dkT" secondAttribute="trailing" constant="10" id="2ba-Fp-f3h"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="uuH-ZW-dkT" secondAttribute="bottom" id="3al-X5-B9i"/>
                 <constraint firstItem="oAg-Fq-dBy" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="10" id="Jiw-MX-ed7"/>
                 <constraint firstItem="oAg-Fq-dBy" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="KyW-25-eAe"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="oAg-Fq-dBy" secondAttribute="trailing" constant="10" id="WBU-mS-qKu"/>
-                <constraint firstItem="uuH-ZW-dkT" firstAttribute="width" secondItem="oAg-Fq-dBy" secondAttribute="width" id="sh6-lT-rKT"/>
                 <constraint firstItem="uuH-ZW-dkT" firstAttribute="top" secondItem="oAg-Fq-dBy" secondAttribute="bottom" id="wKa-e1-FZN"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
