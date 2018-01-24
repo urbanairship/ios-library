@@ -16,6 +16,7 @@ NSString *const UAChannelCaptureEnabledKey = @"UAChannelCaptureEnabled";
 @property (nonatomic, strong) UAPush *push;
 @property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+@property bool enableChannelCapture;
 
 @end
 
@@ -40,6 +41,7 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
                                                      selector:@selector(didBecomeActive)
                                                          name:UIApplicationDidBecomeActiveNotification
                                                        object:nil];
+            self.enableChannelCapture = true;
         }
     }
 
@@ -59,10 +61,12 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
 - (void)enable:(NSTimeInterval)duration {
     NSDate *date = [NSDate dateWithTimeIntervalSinceNow:duration];
     [self.dataStore setObject:date forKey:UAChannelCaptureEnabledKey];
+    self.enableChannelCapture = true;
 }
 
 - (void)disable {
     [self.dataStore removeObjectForKey:UAChannelCaptureEnabledKey];
+    self.enableChannelCapture = false;
 }
 
 - (void)didBecomeActive {
@@ -73,7 +77,7 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
  * Checks the clipboard for the token and displays an alert if the token is available.
  */
 - (void)checkClipboard {
-    if (!self.push.channelID) {
+    if (!self.push.channelID || !self.enableChannelCapture) {
         return;
     }
 
