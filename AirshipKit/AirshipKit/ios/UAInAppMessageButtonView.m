@@ -106,7 +106,6 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
         button.backgroundColor = buttonInfo.backgroundColor;
 
         [self.buttonContainer addArrangedSubview:button];
-        [self.buttonContainer layoutIfNeeded];
         buttonOrder++;
 
         maxButtonHeight = MAX(maxButtonHeight,button.heightConstraint.constant);
@@ -121,6 +120,8 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
     if (self.buttonContainer.subviews.count == 0) {
         [self.buttonContainer removeFromSuperview];
     }
+
+    [self.buttonContainer layoutIfNeeded];
 }
 
 @end
