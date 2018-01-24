@@ -132,6 +132,7 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
             }
             
             if (!builder.displayContent) {
+                UA_LERR(@"Unable to create message, missing display content");
                 return nil;
             }
         }

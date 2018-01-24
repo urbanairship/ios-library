@@ -245,7 +245,8 @@
     [self.automationStore fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
         UASchedule *schedule;
         if (schedulesData.count) {
-            schedule = [self scheduleFromData:schedulesData.firstObject];
+            UAScheduleData *scheduleData = schedulesData.firstObject;
+            schedule = [self scheduleFromData:scheduleData];
         }
 
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -259,7 +260,10 @@
     [self.automationStore fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
         NSMutableArray *schedules = [NSMutableArray array];
         for (UAScheduleData *scheduleData in schedulesData) {
-            [schedules addObject:[self scheduleFromData:scheduleData]];
+            UASchedule *schedule = [self scheduleFromData:scheduleData];
+            if (schedule) {
+                [schedules addObject:schedule];
+            }
         }
 
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -273,7 +277,10 @@
     [self.automationStore fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
         NSMutableArray *schedules = [NSMutableArray array];
         for (UAScheduleData *scheduleData in schedulesData) {
-            [schedules addObject:[self scheduleFromData:scheduleData]];
+            UASchedule *schedule = [self scheduleFromData:scheduleData];
+            if (schedule) {
+                [schedules addObject:[self scheduleFromData:scheduleData]];
+            }
         }
 
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -293,7 +300,14 @@
         if (schedulesData.count) {
             UAScheduleData *scheduleData = [schedulesData firstObject];
             [UAAutomationEngine applyEdits:edits toData:scheduleData];
+
             schedule = [self scheduleFromData:scheduleData];
+
+            if (!schedule) {
+                UA_LERR(@"Failed to parse schedule data. Deleting %@", scheduleData.identifier);
+                [scheduleData.managedObjectContext deleteObject:scheduleData];
+                return completionHandler(nil);
+            }
 
             BOOL overLimit = [scheduleData.limit unsignedIntegerValue] > 0 && scheduleData.triggeredCount >= scheduleData.limit;
             BOOL isExpired = [scheduleData.end compare:[NSDate date]] == NSOrderedAscending;
@@ -917,7 +931,7 @@
 
         UASchedule *schedule = [self scheduleFromData:scheduleData];
         if (!schedule) {
-            UA_LERR(@"Failed to parse schedule data. Deleting. %@", scheduleData.identifier);
+            UA_LERR(@"Failed to parse schedule data. Deleting %@", scheduleData.identifier);
             [scheduleData.managedObjectContext deleteObject:scheduleData];
             continue;
         }
@@ -1047,14 +1061,22 @@
     builder.interval = [scheduleData.interval doubleValue];
     builder.editGracePeriod = [scheduleData.editGracePeriod doubleValue];
 
+    UASchedule *schedule;
     UAScheduleInfo *info = [self.delegate createScheduleInfoWithBuilder:builder];
 
     if (![info isValid]) {
         UA_LERR(@"Info is invalid: %@", info);
-        return nil;
+        schedule = nil;
+    } else {
+        schedule = [UASchedule scheduleWithIdentifier:scheduleData.identifier info:info];
     }
 
-    return [UASchedule scheduleWithIdentifier:scheduleData.identifier info:info];
+    if (!schedule) {
+        UA_LERR(@"Failed to parse schedule data. Deleting %@", scheduleData.identifier);
+        [scheduleData.managedObjectContext deleteObject:scheduleData];
+    }
+
+    return schedule;
 }
 
 + (NSArray<UAScheduleTrigger *> *)triggersFromData:(NSSet<UAScheduleTriggerData *> *)data {
