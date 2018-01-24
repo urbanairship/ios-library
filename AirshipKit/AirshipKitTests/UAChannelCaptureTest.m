@@ -80,7 +80,6 @@
  * Test channel capture tool always works when backgorundPushNotificationsAllowed is NO.
  */
 - (void)testChannelCaptureToolBackgroundRefreshDisabled {
-    [self.channelCapture disable];
     [[[self.mockPush stub] andReturnValue:@(NO)] backgroundPushNotificationsAllowed];
     [self verifyChannelCaptureDisplayedWithUrl:@"oh/hi?channel=CHANNEL"];
 }
