@@ -1450,7 +1450,6 @@
 		3C5A250C20115BE600F25829 /* UAInAppMessageHTMLView+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAInAppMessageHTMLView+Internal.h"; path = "ios/UAInAppMessageHTMLView+Internal.h"; sourceTree = "<group>"; };
 		3C5A250D20115BE600F25829 /* UAInAppMessageHTMLView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAInAppMessageHTMLView.m; path = ios/UAInAppMessageHTMLView.m; sourceTree = "<group>"; };
 		3C5A25162012BFB900F25829 /* UAInAppMessageHTMLView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInAppMessageHTMLView.xib; sourceTree = "<group>"; };
-		3C5A25172012BFB900F25829 /* UAInAppMessageMediaView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInAppMessageMediaView.xib; sourceTree = "<group>"; };
 		3C77BF912016B22900AD37F3 /* UAInAppMessageHTMLDisplayContentTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageHTMLDisplayContentTest.m; sourceTree = "<group>"; };
 		3C7B15F42009766800ECA6D0 /* UAInAppMessageHTMLAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAInAppMessageHTMLAdapter.h; path = ios/UAInAppMessageHTMLAdapter.h; sourceTree = "<group>"; };
 		3C7B15F52009766800ECA6D0 /* UAInAppMessageHTMLAdapter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAInAppMessageHTMLAdapter.m; path = ios/UAInAppMessageHTMLAdapter.m; sourceTree = "<group>"; };
@@ -3524,7 +3523,6 @@
 				99978EEA1EBAB7E7000F4AF7 /* UADefaultActions.plist */,
 				CC8999A51D8B642D00A0CECC /* UAMessageCenterPlaceholderIcon.png */,
 				3C5A25162012BFB900F25829 /* UAInAppMessageHTMLView.xib */,
-				3C5A25172012BFB900F25829 /* UAInAppMessageMediaView.xib */,
 				DFFA739F1FFDB42D00D2DA1A /* UAInAppMessageModalViewController.xib */,
 				99E2DA481FBA2A4400C9F2CC /* UAInAppMessageBannerView.xib */,
 				998B22621FD896EF00C535AE /* UAInAppMessageBannerContentView.xib */,
