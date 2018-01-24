@@ -17,6 +17,8 @@ Pod::Spec.new do |s|
 
    s.ios.resource_bundle     = { 'AirshipResources' =>  ['AirshipKit/AirshipResources/common/*', 'AirshipKit/AirshipResources/ios/*'] }
    s.tvos.resource_bundle    = { 'AirshipResources tvOS' =>  ['AirshipKit/AirshipResources/common/*', 'AirshipKit/AirshipResources/tvos/*'] }
+   s.ios.exclude_files       = 'AirshipKit/AirshipResources/ios/Info.plist'
+   s.tvos.exclude_files      = 'AirshipKit/AirshipResources/tvos/Info.plist'
    s.source_files            = 'AirshipKit/AirshipKit/common/*.{h,m,mm}'
    s.ios.source_files        = 'AirshipKit/AirshipKit/ios/*.{h,m,mm}'
    s.tvos.source_files       = 'AirshipKit/AirshipKit/tvos/*.{h,m,mm}'
