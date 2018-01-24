@@ -61,7 +61,7 @@ NSString *const UAInAppMessageButtonInfoBehaviorDismissValue = @"dismiss";
 @implementation UAInAppMessageButtonInfo
 
 - (instancetype)initWithBuilder:(UAInAppMessageButtonInfoBuilder *)builder {
-    self = [super self];
+    self = [super init];
 
     if (![builder isValid]) {
         UA_LDEBUG(@"UAInAppMessageButtonInfo instance could not be initialized, builder has missing or invalid parameters.");

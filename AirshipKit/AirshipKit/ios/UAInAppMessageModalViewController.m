@@ -11,7 +11,6 @@
 #import "UAColorUtils+Internal.h"
 #import "UAInAppMessageCloseButton+Internal.h"
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 @class UAInAppMessageTextView;

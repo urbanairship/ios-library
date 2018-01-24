@@ -259,7 +259,7 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
 }
 
 - (nullable instancetype)initWithBuilder:(UAInAppMessageFullScreenDisplayContentBuilder *)builder {
-    self = [super self];
+    self = [super init];
 
     if (![builder isValid]) {
         UA_LDEBUG(@"UAInAppMessageFullScreenDisplayContent could not be initialized, builder has missing or invalid parameters.");

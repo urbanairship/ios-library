@@ -97,7 +97,7 @@ double const DefaultFullScreenAnimationDuration = 0.2;
                                                                                     target:self
                                                                                   selector:@selector(buttonTapped:)];
 
-    UAInAppMessageCloseButton *closeButton = [self addCloseButton];
+    UAInAppMessageCloseButton *closeButton = [self createCloseButton];
 
     UAInAppMessageButton *footerButton = [self addFooterButtonWithButtonInfo:self.displayContent.footer];
 
@@ -115,7 +115,7 @@ double const DefaultFullScreenAnimationDuration = 0.2;
     }];
 }
 
-- (UAInAppMessageCloseButton * _Nullable)addCloseButton {
+- (UAInAppMessageCloseButton * _Nullable)createCloseButton {
     UAInAppMessageCloseButton *closeButton = [[UAInAppMessageCloseButton alloc] init];
     closeButton.dismissButtonColor = self.displayContent.dismissButtonColor;
     [closeButton addTarget:self

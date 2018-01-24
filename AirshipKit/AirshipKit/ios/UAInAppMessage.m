@@ -5,6 +5,7 @@
 #import "UAInAppMessageFullScreenDisplayContent+Internal.h"
 #import "UAInAppMessageModalDisplayContent+Internal.h"
 #import "UAInAppMessageCustomDisplayContent+Internal.h"
+#import "UAInAppMessageHTMLDisplayContent+Internal.h"
 #import "UAInAppMessageAudience+Internal.h"
 #import "UAGlobal.h"
 
@@ -117,8 +118,7 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
             } else if ([UAInAppMessageDisplayTypeModalValue isEqualToString:displayTypeStr]) {
                 builder.displayContent = [UAInAppMessageModalDisplayContent displayContentWithJSON:displayContentDict error:error];
             } else if ([UAInAppMessageDisplayTypeHTMLValue isEqualToString:displayTypeStr]) {
-                // TODO uncomment this when modal is implemented see banner above for example
-                //builder.displayContent = [UAInAppMessageHTMLDisplayContent displayContentWithJSON:displayContentDict error:error];
+                builder.displayContent = [UAInAppMessageHTMLDisplayContent displayContentWithJSON:displayContentDict error:error];
             } else if ([UAInAppMessageDisplayTypeCustomValue isEqualToString:displayTypeStr]) {
                 builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithJSON:displayContentDict error:error];
             } else {

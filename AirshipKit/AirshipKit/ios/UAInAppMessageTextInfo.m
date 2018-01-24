@@ -58,7 +58,7 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
 @implementation UAInAppMessageTextInfo
 
 - (nullable instancetype)initWithBuilder:(UAInAppMessageTextInfoBuilder *)builder {
-    self = [super self];
+    self = [super init];
 
     if (![builder isValid]) {
         UA_LERR(@"UAInAppMessageTextInfo could not be initialized, builder has missing or invalid parameters.");

@@ -31,7 +31,7 @@
     return self;
 }
 
-- (void)prepare:(void (^)(UAInAppMessagePrepareResult))completionHandler {
+- (void)prepare:(void (^)(UAInAppMessagePrepareResult))completionHandler {    
     UAInAppMessageFullScreenDisplayContent *displayContent = (UAInAppMessageFullScreenDisplayContent *)self.message.displayContent;
     [UAInAppMessageUtils prepareMediaView:displayContent.media imageCache:self.imageCache completionHandler:^(UAInAppMessagePrepareResult result, UAInAppMessageMediaView *mediaView) {
         if (result == UAInAppMessagePrepareResultSuccess) {

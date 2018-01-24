@@ -86,6 +86,8 @@
 #import "UAInAppMessageDisplayContent.h"
 #import "UAInAppMessageFullScreenAdapter.h"
 #import "UAInAppMessageFullScreenDisplayContent.h"
+#import "UAInAppMessageHTMLAdapter.h"
+#import "UAInAppMessageHTMLDisplayContent.h"
 #import "UAInAppMessageManager.h"
 #import "UAInAppMessageMediaInfo.h"
 #import "UAInAppMessageModalAdapter.h"

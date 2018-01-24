@@ -270,7 +270,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
     return [[UAInAppMessageModalDisplayContent alloc] initWithBuilder:builder];}
 
 - (nullable instancetype)initWithBuilder:(UAInAppMessageModalDisplayContentBuilder *)builder {
-    self = [super self];
+    self = [super init];
     
     if (![builder isValid]) {
         UA_LDEBUG(@"UAInAppMessageModalDisplayContent could not be initialized, builder has missing or invalid parameters.");

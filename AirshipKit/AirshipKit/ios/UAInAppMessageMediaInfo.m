@@ -30,7 +30,7 @@ NSString *const UAInAppMessageMediaInfoTypeYouTubeValue = @"youtube";
               contentDescription:(NSString *)contentDescription
                        type:(UAInAppMessageMediaInfoType)type {
 
-    self = [super self];
+    self = [super init];
 
     if (self) {
         self.url = url;
