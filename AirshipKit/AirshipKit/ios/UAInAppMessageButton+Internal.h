@@ -40,6 +40,11 @@ typedef NS_OPTIONS(NSUInteger, UAInAppMessageButtonRounding) {
 @property(nonatomic, strong, readonly) UAInAppMessageButtonInfo *buttonInfo;
 
 /**
+ * A height constraint for the button.
+ */
+@property(nonatomic, strong) NSLayoutConstraint *heightConstraint;
+
+/**
  * Factory method for creating an in-app message button.
  *
  * @param buttonInfo The button info.

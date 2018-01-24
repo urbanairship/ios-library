@@ -11,7 +11,7 @@ NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
 
 @implementation UAInAppMessageUtils
 
-+ (void)applyButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo button:(UAInAppMessageButton *)button {
++ (void)applyButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo button:(UAInAppMessageButton *)button buttonMargin:(CGFloat)buttonMargin {
     button.backgroundColor = buttonInfo.backgroundColor;
 
     // Title label should resize for text length
@@ -21,6 +21,21 @@ NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
     NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:buttonInfo.label.text attributes:attributes];
 
     [button setAttributedTitle:attributedTitle forState:UIControlStateNormal];
+    
+    CGFloat buttonHeight = button.titleLabel.intrinsicContentSize.height + 2 * buttonMargin;
+    if (!button.heightConstraint) {
+        button.heightConstraint = [NSLayoutConstraint constraintWithItem:button
+                                                               attribute:NSLayoutAttributeHeight
+                                                               relatedBy:NSLayoutRelationEqual
+                                                                  toItem:nil
+                                                               attribute:NSLayoutAttributeNotAnAttribute
+                                                              multiplier:1.0f
+                                                                constant:buttonHeight];
+    }
+    
+    button.heightConstraint.active = YES;
+    button.heightConstraint.constant = buttonHeight;
+    
 }
 
 + (void)applyTextInfo:(UAInAppMessageTextInfo *)textInfo label:(UILabel *)label {

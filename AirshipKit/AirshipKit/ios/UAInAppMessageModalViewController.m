@@ -57,7 +57,7 @@ double const DefaultModalAnimationDuration = 0.2;
     [super layoutSubviews];
     
     // do we need to shrink the scroll view to fit a smaller content size?
-    if (self.frame.size.height > self.contentView.frame.size.height) {
+    if (self.frame.size.height > (self.contentView.frame.size.height + 1)) {
         CGFloat shrinkScrollView = self.frame.size.height - self.contentView.frame.size.height;
 
         // change constraints on modal view for the shrunken scroll view
@@ -289,12 +289,16 @@ double const DefaultModalAnimationDuration = 0.2;
         
         [containerForHeaderView addSubview:headerView];
         [UAInAppMessageUtils applyContainerConstraintsToContainer:containerForHeaderView containedView:headerView];
+    } else {
+        [containerForHeaderView removeFromSuperview];
     }
     
     // Only create media view if media is present
     if (self.mediaView) {
         [containerForMediaView addSubview:self.mediaView];
         [UAInAppMessageUtils applyContainerConstraintsToContainer:containerForMediaView containedView:self.mediaView];
+    } else {
+        [containerForMediaView removeFromSuperview];
     }
  
     // Only create body view if body is present
@@ -304,6 +308,8 @@ double const DefaultModalAnimationDuration = 0.2;
         
         [containerForBodyView addSubview:bodyView];
         [UAInAppMessageUtils applyContainerConstraintsToContainer:containerForBodyView containedView:bodyView];
+    } else {
+        [containerForBodyView removeFromSuperview];
     }
     
     // Only create button view if there are buttons
@@ -317,20 +323,19 @@ double const DefaultModalAnimationDuration = 0.2;
             [self.buttonContainerView addSubview:buttonView];
             [UAInAppMessageUtils applyContainerConstraintsToContainer:self.buttonContainerView containedView:buttonView];
         } else {
-            self.buttonContainerView = nil;
+            [self.buttonContainerView removeFromSuperview];
         }
+    } else {
+        [self.buttonContainerView removeFromSuperview];
     }
     
     // footer view
     UAInAppMessageButton *footerButton = [self createFooterButtonWithButtonInfo:self.displayContent.footer];
     if (footerButton) {
-        // footer
-        if (footerButton) {
-            [self.footerContainerView addSubview:footerButton];
-            [UAInAppMessageUtils applyContainerConstraintsToContainer:self.footerContainerView containedView:footerButton];
-        } else {
-            self.footerContainerView = nil;
-        }
+        [self.footerContainerView addSubview:footerButton];
+        [UAInAppMessageUtils applyContainerConstraintsToContainer:self.footerContainerView containedView:footerButton];
+    } else {
+        [self.footerContainerView removeFromSuperview];
     }
     
     // will make opaque as part of animation when view appears

@@ -17,8 +17,9 @@
  *
  * @param buttonInfo The button info.
  * @param button The button.
+ * @param buttonMargin Specify the top and bottom margin between the edge of the button and the edge of the label
  */
-+ (void)applyButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo button:(UAInAppMessageButton *)button;
++ (void)applyButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo button:(UAInAppMessageButton *)button buttonMargin:(CGFloat)buttonMargin;
 
 /**
  * Applies text info to a text label.

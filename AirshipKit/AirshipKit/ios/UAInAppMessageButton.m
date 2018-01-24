@@ -5,6 +5,8 @@
 #import "UAInAppMessageUtils+Internal.h"
 
 CGFloat const ButtonIsBeingTappedAlpha = 0.7;
+CGFloat const UAInAppMessageButtonMargin = 15;
+CGFloat const UAInAppMessageFooterMargin = 0;
 
 @interface UAInAppMessageButton ()
 @property(nonatomic, strong) UAInAppMessageButtonInfo *buttonInfo;
@@ -33,7 +35,7 @@ return [[self alloc] initWithButtonInfo:buttonInfo
         self.buttonInfo = buttonInfo;
         self.rounding = 0;
         self.isFooter = true;
-        [UAInAppMessageUtils applyButtonInfo:buttonInfo button:self];
+        [UAInAppMessageUtils applyButtonInfo:buttonInfo button:self buttonMargin:UAInAppMessageFooterMargin];
 
         // Apply rounding on layout subviews
         [self layoutSubviews];
@@ -49,7 +51,7 @@ return [[self alloc] initWithButtonInfo:buttonInfo
     if (self) {
         self.buttonInfo = buttonInfo;
         self.rounding = rounding;
-        [UAInAppMessageUtils applyButtonInfo:buttonInfo button:self];
+        [UAInAppMessageUtils applyButtonInfo:buttonInfo button:self buttonMargin:UAInAppMessageButtonMargin];
 
         // Apply rounding on layout subviews
         [self layoutSubviews];

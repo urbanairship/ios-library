@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -17,12 +17,12 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="Vhy-Ya-qMY">
-                    <rect key="frame" x="20" y="0.0" width="335" height="100"/>
+                    <rect key="frame" x="10" y="0.0" width="355" height="100"/>
                 </stackView>
             </subviews>
             <constraints>
-                <constraint firstItem="Vhy-Ya-qMY" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="20" id="GIo-6N-yJq"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="Vhy-Ya-qMY" secondAttribute="trailing" constant="20" id="GU5-f3-vGH"/>
+                <constraint firstItem="Vhy-Ya-qMY" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="10" id="GIo-6N-yJq"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="Vhy-Ya-qMY" secondAttribute="trailing" constant="10" id="GU5-f3-vGH"/>
                 <constraint firstItem="Vhy-Ya-qMY" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="aTd-6Q-T0S"/>
                 <constraint firstItem="Vhy-Ya-qMY" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" id="b8W-Q0-R3T"/>
                 <constraint firstItem="Vhy-Ya-qMY" firstAttribute="centerY" secondItem="vUN-kp-3ea" secondAttribute="centerY" id="kiv-mm-7h9"/>
@@ -39,14 +39,14 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="dym-7B-qqF">
-                    <rect key="frame" x="20" y="0.0" width="335" height="100"/>
+                    <rect key="frame" x="10" y="0.0" width="355" height="100"/>
                 </stackView>
             </subviews>
             <constraints>
-                <constraint firstItem="dym-7B-qqF" firstAttribute="leading" secondItem="NVm-Ul-31I" secondAttribute="leading" constant="20" id="GB0-VG-aXP"/>
+                <constraint firstItem="dym-7B-qqF" firstAttribute="leading" secondItem="NVm-Ul-31I" secondAttribute="leading" constant="10" id="GB0-VG-aXP"/>
                 <constraint firstItem="dym-7B-qqF" firstAttribute="height" secondItem="YDU-2l-e1u" secondAttribute="height" id="mzT-xT-LVx"/>
                 <constraint firstItem="dym-7B-qqF" firstAttribute="centerY" secondItem="NVm-Ul-31I" secondAttribute="centerY" id="q5w-Nh-IZ5"/>
-                <constraint firstItem="NVm-Ul-31I" firstAttribute="trailing" secondItem="dym-7B-qqF" secondAttribute="trailing" constant="20" id="y3x-kq-ogh"/>
+                <constraint firstItem="NVm-Ul-31I" firstAttribute="trailing" secondItem="dym-7B-qqF" secondAttribute="trailing" constant="10" id="y3x-kq-ogh"/>
                 <constraint firstItem="dym-7B-qqF" firstAttribute="centerX" secondItem="NVm-Ul-31I" secondAttribute="centerX" id="y6O-jb-t1V"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
@@ -61,12 +61,12 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="IVA-NN-i5v">
-                    <rect key="frame" x="20" y="0.0" width="335" height="171"/>
+                    <rect key="frame" x="10" y="0.0" width="355" height="171"/>
                 </stackView>
             </subviews>
             <constraints>
-                <constraint firstItem="ZSi-AB-jF1" firstAttribute="trailing" secondItem="IVA-NN-i5v" secondAttribute="trailing" constant="20" id="G1Q-5H-Hbr"/>
-                <constraint firstItem="IVA-NN-i5v" firstAttribute="leading" secondItem="ZSi-AB-jF1" secondAttribute="leading" constant="20" id="Ip7-21-1nZ"/>
+                <constraint firstItem="ZSi-AB-jF1" firstAttribute="trailing" secondItem="IVA-NN-i5v" secondAttribute="trailing" constant="10" id="G1Q-5H-Hbr"/>
+                <constraint firstItem="IVA-NN-i5v" firstAttribute="leading" secondItem="ZSi-AB-jF1" secondAttribute="leading" constant="10" id="Ip7-21-1nZ"/>
                 <constraint firstItem="IVA-NN-i5v" firstAttribute="centerY" secondItem="ZSi-AB-jF1" secondAttribute="centerY" id="Rix-De-WSH"/>
                 <constraint firstItem="IVA-NN-i5v" firstAttribute="centerX" secondItem="ZSi-AB-jF1" secondAttribute="centerX" id="eIe-77-NDs"/>
                 <constraint firstItem="IVA-NN-i5v" firstAttribute="height" secondItem="9dC-tD-hUh" secondAttribute="height" id="uvY-7p-dyp"/>

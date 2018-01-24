@@ -61,7 +61,7 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
 
 }
 
-- (void)addButtons:(NSArray<UAInAppMessageButtonInfo *> *)buttons
+- (void)addButtons:(NSArray<UAInAppMessageButtonInfo *> *)buttonInfos
             layout:(UAInAppMessageButtonLayoutType)layout
             target:(id)target
           selector:(SEL)selector {
@@ -81,7 +81,10 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
     }
 
     NSUInteger buttonOrder = 0;
-    for (UAInAppMessageButtonInfo *buttonInfo in buttons) {
+    CGFloat maxButtonHeight = 0;
+    NSMutableArray<UAInAppMessageButton *> *buttons = [NSMutableArray array];
+    
+    for (UAInAppMessageButtonInfo *buttonInfo in buttonInfos) {
         UAInAppMessageButton *button;
 
         // This rounds to the desired border radius which is 0 by default
@@ -97,8 +100,7 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
 
         button = [UAInAppMessageButton buttonWithButtonInfo:buttonInfo
                                                    rounding:rounding];
-
-        [UAInAppMessageUtils applyButtonInfo:buttonInfo button:button];
+        
         [button addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
 
         button.backgroundColor = buttonInfo.backgroundColor;
@@ -106,6 +108,14 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
         [self.buttonContainer addArrangedSubview:button];
         [self.buttonContainer layoutIfNeeded];
         buttonOrder++;
+
+        maxButtonHeight = MAX(maxButtonHeight,button.heightConstraint.constant);
+        [buttons addObject:button];
+    }
+    
+    // make all the buttons the same height as the tallest button
+    for (UAInAppMessageButton *button in buttons) {
+        button.heightConstraint.constant = maxButtonHeight;
     }
 
     if (self.buttonContainer.subviews.count == 0) {

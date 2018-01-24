@@ -29,6 +29,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
         self.contentLayout = UAInAppMessageModalContentLayoutHeaderMediaBody;
         self.backgroundColor = [UIColor whiteColor];
         self.dismissButtonColor = [UIColor blackColor];
+        self.buttonLayout = UAInAppMessageButtonLayoutTypeStacked;
     }
     return self;
 }
