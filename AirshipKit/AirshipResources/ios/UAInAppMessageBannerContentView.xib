@@ -37,7 +37,6 @@
                     </subviews>
                     <constraints>
                         <constraint firstAttribute="bottom" secondItem="UGz-LO-0Cf" secondAttribute="bottom" id="1hd-i9-4dd"/>
-                        <constraint firstItem="UGz-LO-0Cf" firstAttribute="width" secondItem="CwK-FL-VAk" secondAttribute="width" priority="250" id="34j-PM-tBj"/>
                         <constraint firstItem="UGz-LO-0Cf" firstAttribute="leading" secondItem="6QX-8T-8Be" secondAttribute="trailing" id="77e-hL-mqE"/>
                         <constraint firstItem="fqe-vD-Gmm" firstAttribute="leading" secondItem="CwK-FL-VAk" secondAttribute="leading" id="JNw-FA-zu7"/>
                         <constraint firstAttribute="bottom" secondItem="fqe-vD-Gmm" secondAttribute="bottom" id="PCC-Fe-NW1"/>
@@ -46,6 +45,7 @@
                         <constraint firstItem="6QX-8T-8Be" firstAttribute="leading" secondItem="CwK-FL-VAk" secondAttribute="leading" constant="20" id="bop-Xc-D3i"/>
                         <constraint firstItem="fqe-vD-Gmm" firstAttribute="top" secondItem="6QX-8T-8Be" secondAttribute="bottom" constant="-1" id="oCD-Dm-Mv7"/>
                         <constraint firstAttribute="trailing" secondItem="UGz-LO-0Cf" secondAttribute="trailing" id="wGS-uT-bg9"/>
+                        <constraint firstItem="UGz-LO-0Cf" firstAttribute="leading" secondItem="CwK-FL-VAk" secondAttribute="leading" priority="750" id="zb7-Rt-ys3"/>
                     </constraints>
                 </view>
             </subviews>
@@ -94,13 +94,13 @@
                         <constraint firstAttribute="bottom" secondItem="Y02-V2-YH8" secondAttribute="bottom" id="7pC-Sy-FrF"/>
                         <constraint firstItem="GTX-VX-8Bf" firstAttribute="leading" secondItem="AGo-BI-V0D" secondAttribute="leading" id="9h3-md-rqW"/>
                         <constraint firstItem="VNH-yL-Bh8" firstAttribute="top" secondItem="AGo-BI-V0D" secondAttribute="top" id="AM7-gz-kqh"/>
-                        <constraint firstItem="GTX-VX-8Bf" firstAttribute="width" secondItem="AGo-BI-V0D" secondAttribute="width" priority="250" id="Gyf-Kg-e6x"/>
                         <constraint firstItem="Y02-V2-YH8" firstAttribute="top" secondItem="VNH-yL-Bh8" secondAttribute="bottom" id="H0B-JU-7Ck"/>
                         <constraint firstItem="VNH-yL-Bh8" firstAttribute="leading" secondItem="GTX-VX-8Bf" secondAttribute="trailing" constant="20" id="YCd-rP-DJS"/>
                         <constraint firstItem="GTX-VX-8Bf" firstAttribute="top" secondItem="AGo-BI-V0D" secondAttribute="top" id="YwI-6c-NB2"/>
                         <constraint firstItem="Y02-V2-YH8" firstAttribute="width" secondItem="VNH-yL-Bh8" secondAttribute="width" id="hkH-Dn-gz9"/>
                         <constraint firstAttribute="trailing" secondItem="Y02-V2-YH8" secondAttribute="trailing" constant="20" id="pHs-HL-0yZ"/>
                         <constraint firstAttribute="trailing" secondItem="VNH-yL-Bh8" secondAttribute="trailing" constant="20" id="rWd-yr-435"/>
+                        <constraint firstAttribute="trailing" secondItem="GTX-VX-8Bf" secondAttribute="trailing" priority="750" id="wVh-Zq-u7D"/>
                     </constraints>
                 </view>
             </subviews>
