@@ -14,6 +14,7 @@
 
 @property (strong, nonatomic) NSString *linkPromptTitle;
 @property (strong, nonatomic) NSString *linkPromptBody;
+@property (strong, nonatomic) NSString *itunesID;
 
 @end
 
@@ -30,6 +31,7 @@ NSTimeInterval const kSecondsInYear = 31536000;
 NSString *const UARateAppShowLinkPromptKey = @"show_link_prompt";
 NSString *const UARateAppLinkPromptTitleKey = @"link_prompt_title";
 NSString *const UARateAppLinkPromptBodyKey = @"link_prompt_body";
+NSString *const UARateAppItunesIDKey = @"itunes_id";
 
 // Internal
 NSString *const UARateAppNibName = @"UARateAppPromptView";
@@ -51,7 +53,13 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
         return;
     }
 
-    NSString *linkString = [NSString stringWithFormat:UARateAppItunesURLFormat, [[UAirship shared].config itunesID]];
+    NSString *itunesID = self.itunesID;
+
+    if (!itunesID) {
+        itunesID = [[UAirship shared].config itunesID] ?: @"";
+    }
+
+    NSString *linkString = [NSString stringWithFormat:UARateAppItunesURLFormat, itunesID];
 
     // If the user doesn't want to show a link prompt just open link to store
     if (!self.showLinkPrompt) {
@@ -72,6 +80,7 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
     id showLinkPrompt;
     id linkPromptTitle;
     id linkPromptBody;
+    id itunesID;
 
     if (arguments.value != nil && ![arguments.value isKindOfClass:[NSDictionary class]]) {
         UA_LWARN(@"Unable to parse arguments: %@", arguments);
@@ -81,6 +90,7 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
     showLinkPrompt = [arguments.value objectForKey:UARateAppShowLinkPromptKey];
     linkPromptTitle = [arguments.value objectForKey:UARateAppLinkPromptTitleKey];
     linkPromptBody = [arguments.value objectForKey:UARateAppLinkPromptBodyKey];
+    itunesID = [arguments.value objectForKey:UARateAppItunesIDKey] ?: [[UAirship shared].config itunesID];
 
     if (!showLinkPrompt) {
         UA_LWARN(@"show_link_prompt not provided in arguments: %@, show_link_prompt is required.", arguments);
@@ -89,12 +99,6 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
 
     if (![showLinkPrompt isKindOfClass:[NSNumber class]]) {
         UA_LWARN(@"Parsed an invalid show_link_prompt from arguments: %@. show_link_prompt must be an NSNumber or BOOL.", arguments);
-        return NO;
-    }
-
-
-    if (![[UAirship shared].config itunesID]) {
-        UA_LWARN(@"iTunes ID is required.");
         return NO;
     }
 
@@ -122,9 +126,25 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
         }
     }
 
+    if (!itunesID) {
+        UA_LWARN(@"iTunes ID is required.");
+        return NO;
+    } else {
+        if (![itunesID isKindOfClass:[NSString class]]) {
+            UA_LWARN(@"Parsed an invalid itunes ID from arguments: %@. Link itunes ID must be an NSString.", arguments);
+            return NO;
+        }
+
+        if ([itunesID length] == 0) {
+            UA_LWARN(@"Parsed an invalid itunes ID from arguments: %@ - itunes ID must not be an empty string.", arguments);
+            return NO;
+        }
+    }
+
     self.showLinkPrompt = [showLinkPrompt boolValue];
     self.linkPromptTitle = linkPromptTitle;
     self.linkPromptBody = linkPromptBody;
+    self.itunesID = itunesID;
 
     return YES;
 }
@@ -195,7 +215,7 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
     }
 }
 
-// Rate app action for iOS 8+ with applications track ID using a store URL link
+// Rate app action for iOS 8+ with application's track ID using a store URL link
 -(void)displayLinkPrompt:(NSString *)linkString completionHandler:(void (^)(BOOL dismissed))completionHandler {
 
     if (![self canLinkToStore:linkString]) {

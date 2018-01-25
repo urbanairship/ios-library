@@ -202,6 +202,10 @@
     [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@1} shouldAccept:YES];
     [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@0} shouldAccept:YES];
 
+    // Accept when itunes ID link prompt flag and itunes ID argument are set
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES, UARateAppItunesIDKey:@"1111111111"} shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO, UARateAppItunesIDKey:@"1111111111"} shouldAccept:YES];
+
     // Accept header and description of proper length
     [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES, UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
     [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO, UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:YES];
@@ -220,10 +224,15 @@
 
 // Tests acceptable arguments are accepted for the legacy implementation < 10.3
 - (void)testAcceptedArgumentsLegacy {
-    [[[self.mockConfig stub] andReturn:@"1195168544"] itunesID];
-
     self.testOSMajorVersion = 9;
     self.testOSMinorVersion = 0;
+
+    // Accept when itunes ID link prompt flag and itunes ID argument are set
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES, UARateAppItunesIDKey:@"1111111111"} shouldAccept:YES];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO, UARateAppItunesIDKey:@"1111111111"} shouldAccept:YES];
+
+    [[[self.mockConfig stub] andReturn:@"1195168544"] itunesID];
+
     [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES} shouldAccept:YES];
     [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO} shouldAccept:YES];
     [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@1} shouldAccept:YES];
@@ -248,6 +257,10 @@
 // Tests that unacceptable arguments are rejected in iOS 10.3+
 - (void)testRejectedArguments {
 
+    // Reject empty itunes ID arg
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES, UARateAppItunesIDKey:@""} shouldAccept:NO];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO, UARateAppItunesIDKey:@""} shouldAccept:NO];
+
     // Don't accept a UARateAppAction without an iTunes ID
     [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES} shouldAccept:NO];
     [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO} shouldAccept:NO];
@@ -268,13 +281,16 @@
     [self verifyAcceptsArgumentsWithValue:@{UARateAppLinkPromptTitleKey :@"A header", UARateAppLinkPromptBodyKey :@"a descriptiion"} shouldAccept:NO];
 
     [self verifyAcceptsArgumentsWithValue:@{} shouldAccept:NO];
-
 }
 
 // Tests that unacceptable arguments are rejected for the legacy implementation < 10.3
 - (void)testRejectedArgumentsLegacy {
     self.testOSMajorVersion = 9;
     self.testOSMinorVersion = 0;
+
+    // Reject empty itunes ID arg
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES, UARateAppItunesIDKey:@""} shouldAccept:NO];
+    [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@NO, UARateAppItunesIDKey:@""} shouldAccept:NO];
 
     // Don't accept a UARateAppAction without an iTunes ID key
     [self verifyAcceptsArgumentsWithValue:@{UARateAppShowLinkPromptKey:@YES} shouldAccept:NO];
