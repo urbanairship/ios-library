@@ -33,7 +33,7 @@
 /**
  * Constrains the contained view to the center of the container with equivalent size
  *
- * This method has the side effect of setting both view parameters translatesAutoresizingMasksIntoConstraints to NO.
+ * This method has the side effect of setting both views' translatesAutoresizingMasksIntoConstraints parameters to NO.
  * This is done to ensure that autoresizing mask constraints do not conflict with the centering constraints.
  * 
  * @param container The container view.
@@ -44,7 +44,7 @@
 /**
  * Constrains the contained view to the center of the container
  *
- * This method has the side effect of setting both view parameters translatesAutoresizingMasksIntoConstraints to NO.
+ * This method has the side effect of setting both views' translatesAutoresizingMasksIntoConstraints parameters to NO.
  * This is done to ensure that autoresizing mask constraints do not conflict with the centering constraints.
  *
  * @param container The container view.
@@ -55,7 +55,7 @@
 /**
  * Constrains the close button view to the upper right of the container
  *
- * This method has the side effect of setting both view parameters translatesAutoresizingMasksIntoConstraints to NO.
+ * This method has the side effect of setting both views' translatesAutoresizingMasksIntoConstraints parameters to NO.
  * This is done to ensure that autoresizing mask constraints do not conflict with the close button constraints.
  *
  * @param container The container view.
