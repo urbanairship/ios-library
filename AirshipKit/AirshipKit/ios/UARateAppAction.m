@@ -12,9 +12,9 @@
 
 @property (assign) BOOL showLinkPrompt;
 
-@property (strong, nonatomic) NSString *linkPromptTitle;
-@property (strong, nonatomic) NSString *linkPromptBody;
-@property (strong, nonatomic) NSString *itunesID;
+@property (nonatomic, copy) NSString *linkPromptTitle;
+@property (nonatomic, copy) NSString *linkPromptBody;
+@property (nonatomic, copy) NSString *itunesID;
 
 @end
 
@@ -53,13 +53,7 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
         return;
     }
 
-    NSString *itunesID = self.itunesID;
-
-    if (!itunesID) {
-        itunesID = [[UAirship shared].config itunesID] ?: @"";
-    }
-
-    NSString *linkString = [NSString stringWithFormat:UARateAppItunesURLFormat, itunesID];
+    NSString *linkString = [NSString stringWithFormat:UARateAppItunesURLFormat, self.itunesID];
 
     // If the user doesn't want to show a link prompt just open link to store
     if (!self.showLinkPrompt) {
