@@ -413,7 +413,6 @@
 		996B95551FAB932B009B49BC /* UAInAppMessageScheduleInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 996B95511FAB932B009B49BC /* UAInAppMessageScheduleInfo.m */; };
 		996B95571FAB932B009B49BC /* UAInAppMessageScheduleInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 996B95511FAB932B009B49BC /* UAInAppMessageScheduleInfo.m */; };
 		996B95601FAB95D5009B49BC /* UAInAppMessageAdapterProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B955E1FAB95D5009B49BC /* UAInAppMessageAdapterProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		996B95621FAB95D5009B49BC /* UAInAppMessageAdapterProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B955E1FAB95D5009B49BC /* UAInAppMessageAdapterProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		996B95681FAB95F8009B49BC /* UAInAppMessageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B95661FAB95F8009B49BC /* UAInAppMessageManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		996B956A1FAB95F8009B49BC /* UAInAppMessageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B95661FAB95F8009B49BC /* UAInAppMessageManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		996B956B1FAB95F8009B49BC /* UAInAppMessageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 996B95671FAB95F8009B49BC /* UAInAppMessageManager.m */; };
@@ -511,7 +510,6 @@
 		99E2DA581FBA2AD300C9F2CC /* UAInAppMessageButtonView.m in Sources */ = {isa = PBXBuildFile; fileRef = 99E2DA551FBA2AD300C9F2CC /* UAInAppMessageButtonView.m */; };
 		99E2DA591FBA2AD300C9F2CC /* UAInAppMessageButtonView.m in Sources */ = {isa = PBXBuildFile; fileRef = 99E2DA551FBA2AD300C9F2CC /* UAInAppMessageButtonView.m */; };
 		99E2DA5C1FBA2AE400C9F2CC /* UAInAppMessageTextView+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E2DA5A1FBA2AE400C9F2CC /* UAInAppMessageTextView+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		99E2DA5D1FBA2AE400C9F2CC /* UAInAppMessageTextView+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E2DA5A1FBA2AE400C9F2CC /* UAInAppMessageTextView+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99E2DA5E1FBA2AE400C9F2CC /* UAInAppMessageTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 99E2DA5B1FBA2AE400C9F2CC /* UAInAppMessageTextView.m */; };
 		99E2DA5F1FBA2AE400C9F2CC /* UAInAppMessageTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 99E2DA5B1FBA2AE400C9F2CC /* UAInAppMessageTextView.m */; };
 		99E2DA621FBA2AF900C9F2CC /* UAInAppMessageButtonInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E2DA601FBA2AF900C9F2CC /* UAInAppMessageButtonInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1347,6 +1345,8 @@
 		DF9666781FB521B200CC243C /* UARemoteConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DF9666731FB521B200CC243C /* UARemoteConfigManager.m */; };
 		DF9666791FB521B200CC243C /* UARemoteConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DF9666731FB521B200CC243C /* UARemoteConfigManager.m */; };
 		DF96667D1FB526A000CC243C /* UARemoteConfigManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DF96667C1FB526A000CC243C /* UARemoteConfigManagerTests.m */; };
+		DF987CC92019686E00DB315C /* UAInAppMessageAdapterProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B955E1FAB95D5009B49BC /* UAInAppMessageAdapterProtocol.h */; };
+		DF987CCA2019686E00DB315C /* UAInAppMessageTextView+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E2DA5A1FBA2AE400C9F2CC /* UAInAppMessageTextView+Internal.h */; };
 		DF9FED0A1F75D64900C79417 /* UARemoteDataStoreTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF9FED091F75D64900C79417 /* UARemoteDataStoreTest.m */; };
 		DF9FED0B1F7AD1E300C79417 /* UARemoteDataStorePayload.m in Sources */ = {isa = PBXBuildFile; fileRef = DF5ED8FF1F7475FE002DDA24 /* UARemoteDataStorePayload.m */; };
 		DFA1815E1E688EBB00446942 /* UABaseNativeBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = DFA1815D1E688EBB00446942 /* UABaseNativeBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -4228,10 +4228,8 @@
 				DFE92A191ED8A61300ED3838 /* UALandingPageActionPredicate+Internal.h in Headers */,
 				DFE92A1A1ED8A61300ED3838 /* UAOverlayInboxMessageActionPredicate+Internal.h in Headers */,
 				DFE92A1B1ED8A61300ED3838 /* UAShareActionPredicate+Internal.h in Headers */,
-				996B95621FAB95D5009B49BC /* UAInAppMessageAdapterProtocol.h in Headers */,
-				99E2DA5D1FBA2AE400C9F2CC /* UAInAppMessageTextView+Internal.h in Headers */,
-				996B95621FAB95D5009B49BC /* UAInAppMessageAdapterProtocol.h in Headers */,
-				99E2DA5D1FBA2AE400C9F2CC /* UAInAppMessageTextView+Internal.h in Headers */,
+				DF987CC92019686E00DB315C /* UAInAppMessageAdapterProtocol.h in Headers */,
+				DF987CCA2019686E00DB315C /* UAInAppMessageTextView+Internal.h in Headers */,
 				DFE92A1C1ED8A61300ED3838 /* UAAddCustomEventActionPredicate+Internal.h in Headers */,
 				DF7E21F61ED62D5E00C79C46 /* UAScheduleData+Internal.h in Headers */,
 				DF7E21F71ED62D5E00C79C46 /* UAAutomationStore+Internal.h in Headers */,
@@ -4454,7 +4452,7 @@
 		494DD94E1B0EB677009C134E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0910;
+				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
 					494DD9561B0EB677009C134E = {

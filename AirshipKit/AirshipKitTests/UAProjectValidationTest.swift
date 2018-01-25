@@ -58,15 +58,21 @@ class UAProjectValidationTest: XCTestCase {
         var filesFromProjectWithOptionals : Array<URL?> = []
 
         for target in xcodeProject!.project.targets {
-            if (target.name != buildTarget) {
+            if (target.value?.name != buildTarget) {
                 continue
             }
-            for buildPhase in target.buildPhases {
-                if ((type(of:buildPhase) == XcodeEdit.PBXSourcesBuildPhase.self)
-                    || (type(of:buildPhase) == XcodeEdit.PBXHeadersBuildPhase.self)) {
-
-                    filesFromProjectWithOptionals += buildPhase.files.map {
-                        return ($0.fileRef as? PBXFileReference)?.fullPath.url(with:convertSourceTreeFolderToURL)
+            for buildPhaseReference : Reference<PBXBuildPhase> in (target.value?.buildPhases)! {
+                if let buildPhase : PBXBuildPhase = buildPhaseReference.value {
+                    if ((type(of:buildPhase) == XcodeEdit.PBXSourcesBuildPhase.self)
+                        || (type(of:buildPhase) == XcodeEdit.PBXHeadersBuildPhase.self)) {
+                        
+                        filesFromProjectWithOptionals += buildPhase.files.map {
+                            if let buildFile : PBXBuildFile = $0.value {
+                                return (buildFile.fileRef?.value as? PBXFileReference)?.fullPath?.url(with:convertSourceTreeFolderToURL)
+                            } else {
+                                return URL(string:"")
+                            }
+                        }
                     }
                 }
             }

@@ -51,3 +51,7 @@ rm -rf "${DERIVED_DATA}"
 
 end_time=`date +%s`
 echo execution time was `expr $end_time - $start_time` s.
+
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+printf "\n${GREEN}*** CI TASKS COMPLETED SUCCESSFULLY ***${NC}\n\n"

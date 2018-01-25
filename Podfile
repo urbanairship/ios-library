@@ -5,22 +5,16 @@ use_frameworks!
 target 'AirshipKitTests' do
    project 'AirshipKit/AirshipKit.xcodeproj'
    pod 'OCMock', '~> 3.4.1'
-   pod 'XcodeEdit', '~> 1.1', :inhibit_warnings => true
+   pod 'XcodeEdit', '~> 2.1', :inhibit_warnings => true
 end
 
 target 'TestShipTests' do
    project 'TestShip/TestShip.xcodeproj'
-   pod 'KIF', :configurations => ['Debug'], :inhibit_warnings => true
+   pod 'KIF', :configurations => ['Debug']
 end
 
 post_install do |installer|
     installer.pods_project.targets.each do |target|
-	# remove this when OCMock fixes documentation warning
-	if target.name == 'OCMock'
-            target.build_configurations.each do |config|
-                config.build_settings['CLANG_WARN_DOCUMENTATION_COMMENTS'] = 'NO'
-            end
-        end
 	# Disable bitcode in KIF by default because of issue below:
 	# https://github.com/kif-framework/KIF/issues/796
         if target.name == 'KIF'
