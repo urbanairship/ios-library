@@ -131,6 +131,15 @@ double const DefaultModalAnimationDuration = 0.2;
 @property (strong, nonatomic) IBOutlet NSLayoutConstraint *modalViewActualHeightConstraint;
 
 /**
+ * Constraints used to align the media view to the top of the close button if the media view
+ * is the top-most view.
+ */
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *scrollTopViewToCloseButtonBottom;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *scrollTopViewToCloseButtonTop;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *scrollMiddleViewToCloseButtonBottom;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *scrollMiddleViewToCloseButtonTop;
+
+/**
  * View to hold close (dismiss) button at top of modal message
  */
 @property (weak, nonatomic) IBOutlet UIView *closeButtonContainerView;
@@ -341,6 +350,34 @@ double const DefaultModalAnimationDuration = 0.2;
     self.view.alpha = 0;
 }
 
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    
+    // if there is a media view, and it is the top view in the scroll view, put it behind the close button
+    // rather than underneath it.
+    if (self.mediaView) {
+        switch (self.displayContent.contentLayout) {
+            case UAInAppMessageModalContentLayoutMediaHeaderBody:
+                // media view is the top view
+                self.scrollTopViewToCloseButtonBottom.active = NO;
+                self.scrollTopViewToCloseButtonTop.active = YES;
+                [self.contentView bringSubviewToFront:self.closeButtonContainerView];
+                break;
+            case UAInAppMessageModalContentLayoutHeaderMediaBody:
+                // media view is the top view if there is no header
+                if (!self.displayContent.heading) {
+                    self.scrollMiddleViewToCloseButtonBottom.active = NO;
+                    self.scrollMiddleViewToCloseButtonTop.active = YES;
+                    [self.contentView bringSubviewToFront:self.closeButtonContainerView];
+                }
+                break;
+            case UAInAppMessageModalContentLayoutHeaderBodyMedia:
+                // media view can not be the top view
+                break;
+        }
+    }
+}
+
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     // before the view changes size (rotates), restore the old constraints. Once view has changed sized,
     // the new constraints will be recalculated in [UAInAppMessageModalScrollView layoutSubviews].
@@ -359,8 +396,6 @@ double const DefaultModalAnimationDuration = 0.2;
         [UIView animateWithDuration:DefaultModalAnimationDuration animations:^{
             self.view.alpha = 1;
  
-            // TBD - iOS modal animation seems to start with the modal a bit bigger than the final size and shrinks it as it fades in
-
             [self.view setNeedsLayout];
             [self.view layoutIfNeeded];
         } completion:^(BOOL finished) {
