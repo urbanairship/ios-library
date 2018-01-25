@@ -133,7 +133,7 @@ CGFloat const ShadowOpacity = 0.5;
 
 - (void)applyInsetSpacing {
     if (@available(iOS 11.0, *)) {
-        UIWindow *window = [UIApplication sharedApplication].keyWindow;
+        UIWindow *window = [UAUtils mainWindow];
 
         self.topConstraint.constant = window.safeAreaInsets.top;
         self.contentTopConstraint.constant = window.safeAreaInsets.top ?: VerticalPaddingToSafeArea;

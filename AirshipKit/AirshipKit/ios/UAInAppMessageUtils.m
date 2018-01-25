@@ -48,17 +48,6 @@ NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
     [label setAttributedText:attributedText];
 }
 
-+ (UIStackViewAlignment)stackAlignmentWithTextInfo:(UAInAppMessageTextInfo *)textInfo {
-    if (textInfo.alignment == NSTextAlignmentLeft) {
-        return UIStackViewAlignmentLeading;
-    } else if (textInfo.alignment == NSTextAlignmentCenter) {
-        return UIStackViewAlignmentCenter;
-    } else if (textInfo.alignment == NSTextAlignmentRight) {
-        return UIStackViewAlignmentTrailing;
-    }
-
-    return UIStackViewAlignmentLeading;
-}
 + (void)applyCenterConstraintsToContainer:(UIView *)container containedView:(UIView *)contained {
     if (!container || !contained) {
         UA_LDEBUG(@"Attempted to constrain a nil view");

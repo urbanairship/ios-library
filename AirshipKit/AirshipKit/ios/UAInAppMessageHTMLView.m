@@ -7,6 +7,7 @@
 #import "UAirship.h"
 #import "UAWebView+Internal.h"
 #import "UABeveledLoadingIndicator.h"
+#import "UAUtils.h"
 
 NSString *const UAInAppMessageHTMLViewNibName = @"UAInAppMessageHTMLView";
 
@@ -60,7 +61,7 @@ NSString *const UAInAppMessageHTMLViewNibName = @"UAInAppMessageHTMLView";
     [super layoutSubviews];
 
     if (@available(iOS 11.0, *)) {
-        UIWindow *window = [UIApplication sharedApplication].keyWindow;
+        UIWindow *window = [UAUtils mainWindow];
 
         // Black out the inset when iPhone X is horizontal
         if (window.safeAreaInsets.top == 0 && window.safeAreaInsets.left > 0) {

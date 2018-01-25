@@ -10,6 +10,7 @@
 #import "UAColorUtils+Internal.h"
 #import "UAInAppMessageFullScreenDisplayContent+Internal.h"
 #import "UAInAppMessageCloseButton+Internal.h"
+#import "UAUtils.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -119,7 +120,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
     [super layoutSubviews];
 
     if (@available(iOS 11.0, *)) {
-        UIWindow *window = [UIApplication sharedApplication].keyWindow;
+        UIWindow *window = [UAUtils mainWindow];
 
         // Black out the inset when iPhone X is horizontal
         if (window.safeAreaInsets.top == 0 && window.safeAreaInsets.left > 0) {
