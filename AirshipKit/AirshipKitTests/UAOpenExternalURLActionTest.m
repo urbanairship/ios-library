@@ -51,6 +51,8 @@
 - (void)tearDown {
     [self.mockApplication stopMocking];
     [self.mockProcessInfo stopMocking];
+    [self.mockWhitelist stopMocking];
+    [self.mockAirship stopMocking];
     [super tearDown];
 }
 
@@ -58,7 +60,7 @@
  * Test accepts valid arguments
  */
 - (void)testAcceptsArguments {
-    [[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] isWhitelisted:OCMOCK_ANY];
+    [[[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isWhitelisted:OCMOCK_ANY scope:UAWhitelistScopeOpenURL];
 
     UAAction *action = [[UAOpenExternalURLAction alloc] init];
 
@@ -89,7 +91,7 @@
  * Test rejects arguments with URLs that are not whitelisted.
  */
 - (void)testWhiteList {
-    [[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(NO)] isWhitelisted:OCMOCK_ANY];
+    [[[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(NO)] ignoringNonObjectArgs] isWhitelisted:OCMOCK_ANY scope:UAWhitelistScopeOpenURL];
 
     UAAction *action = [[UAOpenExternalURLAction alloc] init];
 
@@ -107,7 +109,7 @@
  * Test perform with a string URL
  */
 - (void)testPerformWithStringURL {
-    [[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] isWhitelisted:OCMOCK_ANY];
+    [[[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isWhitelisted:OCMOCK_ANY scope:UAWhitelistScopeOpenURL];
 
     XCTestExpectation *openURLExpectation = [self expectationWithDescription:@"openURL finished"];
 
@@ -142,7 +144,7 @@
  * Test perform with a string URL on iOS 9
  */
 - (void)testPerformWithStringURLiOS9 {
-    [[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] isWhitelisted:OCMOCK_ANY];
+    [[[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isWhitelisted:OCMOCK_ANY scope:UAWhitelistScopeOpenURL];
 
     self.testOSMajorVersion = 9;
 
@@ -181,7 +183,7 @@
  * Test perform with a NSURL
  */
 - (void)testPerformWithNSURL {
-    [[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] isWhitelisted:OCMOCK_ANY];
+    [[[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isWhitelisted:OCMOCK_ANY scope:UAWhitelistScopeOpenURL];
 
     XCTestExpectation *openURLExpectation = [self expectationWithDescription:@"openURL finished"];
 
@@ -216,7 +218,7 @@
  * Test perform with a NSURL iOS 9
  */
 - (void)testPerformWithNSURLiOS9 {
-    [[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] isWhitelisted:OCMOCK_ANY];
+    [[[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isWhitelisted:OCMOCK_ANY scope:UAWhitelistScopeOpenURL];
 
     self.testOSMajorVersion = 9;
 
@@ -256,7 +258,7 @@
  * Test perform when the application is unable to open the URL it returns an error
  */
 - (void)testPerformError {
-    [[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] isWhitelisted:OCMOCK_ANY];
+    [[[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isWhitelisted:OCMOCK_ANY scope:UAWhitelistScopeOpenURL];
 
     XCTestExpectation *openURLExpectation = [self expectationWithDescription:@"openURL finished"];
 
@@ -292,7 +294,7 @@
  * Test perform when the application is unable to open the URL it returns an error iOS 9
  */
 - (void)testPerformErroriOS9 {
-    [[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] isWhitelisted:OCMOCK_ANY];
+    [[[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isWhitelisted:OCMOCK_ANY scope:UAWhitelistScopeOpenURL];
 
     self.testOSMajorVersion = 9;
 
@@ -331,7 +333,7 @@
  * Test normalizing apple iTunes NSURL
  */
 - (void)testPerformWithiTunesNSURL {
-    [[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] isWhitelisted:OCMOCK_ANY];
+    [[[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isWhitelisted:OCMOCK_ANY scope:UAWhitelistScopeOpenURL];
 
     XCTestExpectation *openURLExpectation = [self expectationWithDescription:@"openURL finished"];
 
@@ -363,7 +365,7 @@
  * Test normalizing apple iTunes URLs iOS9
  */
 - (void)testPerformWithiTunesURL {
-    [[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] isWhitelisted:OCMOCK_ANY];
+    [[[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isWhitelisted:OCMOCK_ANY scope:UAWhitelistScopeOpenURL];
 
     self.testOSMajorVersion = 9;
 
