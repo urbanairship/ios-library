@@ -163,6 +163,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, getter=isChannelCaptureEnabled) BOOL channelCaptureEnabled;
 
 /**
+ * Enables or disables whitelist checks at the scope `UAWhitelistScopeOpenURL`. If disabled,
+ * all whitelist checks for this scope will be allowed.
+ *
+ * Defaults to `NO`.
+ */
+@property (nonatomic, assign, getter=isOpenURLWhitelistingEnabled) BOOL openURLWhitelistingEnabled;
+
+/**
  * Flag indicating whether delayed channel creation is enabled. If set to `YES` channel 
  * creation will not occur until channel creation is manually enabled.
  *

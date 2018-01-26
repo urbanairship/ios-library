@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)prepare:(nonnull void (^)(UAInAppMessagePrepareResult))completionHandler {
     UAInAppMessageHTMLDisplayContent *content = (UAInAppMessageHTMLDisplayContent *)self.message.displayContent;
-    BOOL whitelisted = [[UAirship shared].whitelist isWhitelisted:[NSURL URLWithString:content.url]];
+    BOOL whitelisted = [[UAirship shared].whitelist isWhitelisted:[NSURL URLWithString:content.url] scope:UAWhitelistScopeOpenURL];
     if (!whitelisted) {
         UA_LERR(@"HTML in-app message URL is not whitelisted. Unable to display message.");
         return completionHandler(UAInAppMessagePrepareResultCancel);

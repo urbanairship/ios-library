@@ -6,6 +6,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_OPTIONS(NSUInteger, UAWhitelistScope) {
+    UAWhitelistScopeJavaScriptInterface = 1 << 0,
+    UAWhitelistScopeOpenURL = 1 << 1,
+    UAWhitelistScopeAll = UAWhitelistScopeJavaScriptInterface | UAWhitelistScopeOpenURL
+};
+
 /**
  * Class for whitelisting and verifying webview URLs.
  *
@@ -30,6 +36,16 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAWhitelist : NSObject
 
 ///---------------------------------------------------------------------------------------
+/// @name Properties
+///---------------------------------------------------------------------------------------
+
+/**
+ * Enables or disables whitelist checks at the scope `UAWhitelistScopeOpenURL`. If disabled,
+ * all whitelist checks for this scope will be allowed.
+ */
+@property(nonatomic, assign, getter=isOpenURLWhitelistingEnabled) BOOL openURLWhitelistingEnabled;
+
+///---------------------------------------------------------------------------------------
 /// @name Whitelist Creation
 ///---------------------------------------------------------------------------------------
 
@@ -41,22 +57,40 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)whitelistWithConfig:(UAConfig *)config;
 
+
 ///---------------------------------------------------------------------------------------
 /// @name Whitelist Core Methods
 ///---------------------------------------------------------------------------------------
 
 /**
- * Add an entry to the whitelist.
+ * Add an entry to the whitelist, with the implicit scope `UAWhitelistScopeAll`.
  * @param patternString A whitelist pattern string.
  * @return `YES` if the whitelist pattern was validated and added, `NO` otherwise.
  */
 - (BOOL)addEntry:(NSString *)patternString;
+
 /**
- * Determines whether a given URL is whitelisted.
+ * Add an entry to the whitelist.
+ * @param patternString A whitelist pattern string.
+ * @param scope The scope of the pattern.
+ * @return `YES` if the whitelist pattern was validated and added, `NO` otherwise.
+ */
+- (BOOL)addEntry:(NSString *)patternString scope:(UAWhitelistScope)scope;
+
+/**
+ * Determines whether a given URL is whitelisted, with the implicit scope `UAWhitelistScopeAll`.
  * @param url The URL under consideration.
  * @return `YES` if the the URL is whitelisted, `NO` otherwise.
  */
 - (BOOL)isWhitelisted:(NSURL *)url;
+
+/**
+ * Determines whether a given URL is whitelisted.
+ * @param url The URL under consideration.
+ * @param scope The scope of the desired match.
+ * @return `YES` if the the URL is whitelisted, `NO` otherwise.
+ */
+- (BOOL)isWhitelisted:(NSURL *)url scope:(UAWhitelistScope)scope;
 
 @end
 
