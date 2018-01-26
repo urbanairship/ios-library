@@ -155,7 +155,7 @@
     [[[self.mockPush stub] andReturn:@"test channel"] channelID];
 
     UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
-        builder.testDevices = @[@"a1b22f49b878ed38e3a9f0ab3dab5b5dda30bc7dfe1d9502b32393f53aac74a0"]; // test channel
+        builder.testDevices = @[@"obIvSbh47TjjqfCrPatbXQ==\n"]; // test channel
     }];
 
     XCTAssertTrue([UAInAppMessageAudienceChecks checkScheduleAudienceConditions:audience isNewUser:YES]);
@@ -165,7 +165,7 @@
     [[[self.mockPush stub] andReturn:@"some other channel"] channelID];
 
     UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
-        builder.testDevices = @[@"a1b22f49b878ed38e3a9f0ab3dab5b5dda30bc7dfe1d9502b32393f53aac74a0"]; // test channel
+        builder.testDevices = @[@"obIvSbh47TjjqfCrPatbXQ==\n"]; // test channel
     }];
 
     XCTAssertFalse([UAInAppMessageAudienceChecks checkScheduleAudienceConditions:audience isNewUser:YES]);

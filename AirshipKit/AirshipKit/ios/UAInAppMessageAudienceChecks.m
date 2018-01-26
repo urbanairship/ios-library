@@ -10,6 +10,7 @@
 #import "UAVersionMatcher+Internal.h"
 #import "UAJSONPredicate.h"
 #import <CommonCrypto/CommonDigest.h>
+#import "UA_Base64.h"
 
 
 @implementation UAInAppMessageAudienceChecks
@@ -29,10 +30,15 @@
             return NO;
         }
 
-        NSString *hash = [self sha256HexStringForString:channel];
-        if (![audience.testDevices containsObject:hash]) {
-            return NO;
+        NSData *digest = [[self sha256DigestWithString:channel] subdataWithRange:NSMakeRange(0, 16)];
+        for (NSString *testDevice in audience.testDevices) {
+            NSData *decoded = UA_dataFromBase64String(testDevice);
+            if ([decoded isEqual:digest]) {
+                return YES;
+            }
         }
+
+        return NO;
     }
 
     return YES;
@@ -131,20 +137,12 @@
     return [UAirship push].userPushNotificationsEnabled && [UAirship push].authorizedNotificationOptions != UANotificationOptionNone;
 }
 
-+ (NSString*)sha256HexStringForString:(NSString*)input {
++ (NSData*)sha256DigestWithString:(NSString*)input {
     NSData *dataIn = [input dataUsingEncoding:NSUTF8StringEncoding];
     NSMutableData *dataOut = [NSMutableData dataWithLength:CC_SHA256_DIGEST_LENGTH];
 
     CC_SHA256(dataIn.bytes, (CC_LONG) dataIn.length, dataOut.mutableBytes);
-
-    const unsigned char *bytes = (const unsigned char *)[dataOut bytes];
-    NSMutableString* hexString = [NSMutableString stringWithCapacity:CC_SHA256_DIGEST_LENGTH * 2];
-
-    for(int i = 0; i < CC_SHA256_DIGEST_LENGTH; i++) {
-        [hexString appendFormat:@"%02x", bytes[i]];
-    }
-
-    return [hexString copy];
+    return dataOut;
 }
 
 @end
