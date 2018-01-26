@@ -6,9 +6,25 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * Scope option for whitelist matching.
+ */
 typedef NS_OPTIONS(NSUInteger, UAWhitelistScope) {
+    /**
+     * Applies to the JavaScript Native Bridge interface. This is the de-facto scope
+     * prior to SDK 9.
+     */
     UAWhitelistScopeJavaScriptInterface = 1 << 0,
+
+    /**
+     * Applies to loading or opening of URLs.
+     */
     UAWhitelistScopeOpenURL = 1 << 1,
+
+    /**
+     * Applies to both the JavaScript interface and loading URLs. This is the default scope unless
+     * otherwise specified.
+     */
     UAWhitelistScopeAll = UAWhitelistScopeJavaScriptInterface | UAWhitelistScopeOpenURL
 };
 
