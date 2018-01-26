@@ -9,12 +9,40 @@
  */
 typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 
+@interface UAWhitelistEntry : NSObject
+
+@property(nonatomic, assign) UAWhitelistScope scope;
+@property(nonatomic, copy) UAWhitelistMatcher matcher;
+
++ (instancetype)entryWithMatcher:(UAWhitelistMatcher)matcher scope:(UAWhitelistScope)scope;
+
+@end
+
+@implementation UAWhitelistEntry
+
++ (instancetype)entryWithMatcher:(UAWhitelistMatcher)matcher scope:(UAWhitelistScope)scope {
+    return [[self alloc] initWithMatcher:matcher scope:scope];
+}
+
+- (instancetype)initWithMatcher:(UAWhitelistMatcher)matcher scope:(UAWhitelistScope)scope {
+    self = [super init];
+
+    if (self) {
+        self.matcher = matcher;
+        self.scope = scope;
+    }
+
+    return self;
+}
+
+@end
+
 @interface UAWhitelist ()
 
 /**
  * Dictionary of sets of UAWhitelistMatcher blocks per scope.
  */
-@property(nonatomic, strong) NSMutableDictionary *matchers;
+@property(nonatomic, strong) NSMutableSet *entries;
 /**
  * Regex that matches valid whitelist pattern entries
  */
@@ -27,7 +55,7 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.matchers = [self createMatchersDictionary];
+        self.entries = [NSMutableSet set];
         self.openURLWhitelistingEnabled = YES;
     }
     return self;
@@ -38,23 +66,13 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 
     [whitelist addEntry:@"https://*.urbanairship.com"];
 
-    for (NSString *entry in config.whitelist) {
-        [whitelist addEntry:entry];
+    for (NSString *pattern in config.whitelist) {
+        [whitelist addEntry:pattern];
     }
 
     whitelist.openURLWhitelistingEnabled = config.isOpenURLWhitelistingEnabled;
 
     return whitelist;
-}
-
-- (NSMutableDictionary *)createMatchersDictionary {
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-
-    for (NSNumber *scopeNumber in @[@(UAWhitelistScopeJavaScriptInterface), @(UAWhitelistScopeOpenURL), @(UAWhitelistScopeAll)]) {
-        [dictionary setObject:[NSMutableSet set] forKey:scopeNumber];
-    }
-
-    return dictionary;
 }
 
 /**
@@ -215,14 +233,6 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
     return matches > 0;
 }
 
-- (void)addMatcher:(UAWhitelistMatcher)matcher scope:(UAWhitelistScope)scope {
-    [self.matchers[@(scope)] addObject:matcher];
-}
-
-- (NSSet *)matchersForScope:(UAWhitelistScope)scope {
-    return self.matchers[@(scope)];
-}
-
 - (BOOL)addEntry:(NSString *)patternString scope:(UAWhitelistScope)scope {
 
     if (!patternString || ![self validatePattern:patternString]) {
@@ -238,7 +248,7 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
     // If we have just a wildcard, we need to add a special matcher for both file and https/http
     // URLs.
     if ([patternString isEqualToString:@"*"]) {
-        [self addMatcher:[self wildcardMatcher] scope:scope];
+        [self.entries addObject:[UAWhitelistEntry entryWithMatcher:[self wildcardMatcher] scope:scope]];
         return YES;
     }
 
@@ -262,7 +272,7 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
         return matchedScheme && matchedHost && matchedPath;
     };
 
-    [self addMatcher:[patternMatcher copy] scope:scope];
+    [self.entries addObject:[UAWhitelistEntry entryWithMatcher:[patternMatcher copy] scope:scope]];
 
     return YES;
 }
@@ -271,42 +281,21 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
     return [self addEntry:patternString scope:UAWhitelistScopeAll];
 }
 
-- (BOOL)hasMatchForURL:(NSURL *)url scope:(UAWhitelistScope)scope {
-    for (UAWhitelistMatcher matcher in [self matchersForScope:scope]) {
-        if (matcher(url)){
-            return YES;
-        };
-    }
-
-    return NO;
-}
-
 - (BOOL)isWhitelisted:(NSURL *)url scope:(UAWhitelistScope)scope {
 
-    // If the desired scope is open URL and the feature is disabled, succeed early
     if (scope == UAWhitelistScopeOpenURL && !self.isOpenURLWhitelistingEnabled) {
         return YES;
     }
 
-    // If there's a match at the desired scope level, succeed
-    if ([self hasMatchForURL:url scope:scope]) {
-        return YES;
-    }
+    NSUInteger matchedScope = 0;
 
-    // If we are matching against the outer scope, we may also succeed if there are matches for both the inner scopes
-    if (scope == UAWhitelistScopeAll) {
-        if ([self hasMatchForURL:url scope:UAWhitelistScopeJavaScriptInterface] && [self hasMatchForURL:url scope:UAWhitelistScopeOpenURL]) {
-            return YES;
-        }
-    } else {
-        // Otherwise we may succeed if there is a match at the outer scope
-        if ([self hasMatchForURL:url scope:UAWhitelistScopeAll]) {
-            return YES;
+    for (UAWhitelistEntry *entry in self.entries) {
+        if (entry.matcher(url)) {
+            matchedScope |= entry.scope;
         }
     }
 
-    // Otherwise fail
-    return NO;
+    return (((UAWhitelistScope)matchedScope & scope) == scope);
 }
 
 - (BOOL)isWhitelisted:(NSURL *)url {
