@@ -22,7 +22,7 @@
                         <view opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="500" translatesAutoresizingMaskIntoConstraints="NO" id="6QX-8T-8Be">
                             <rect key="frame" x="20" y="0.0" width="120" height="121"/>
                             <constraints>
-                                <constraint firstAttribute="width" priority="751" constant="120" id="NDK-1g-BfK"/>
+                                <constraint firstAttribute="width" priority="999" constant="120" id="NDK-1g-BfK"/>
                                 <constraint firstAttribute="width" relation="lessThanOrEqual" constant="120" id="dYV-qQ-ha9"/>
                             </constraints>
                         </view>
@@ -46,7 +46,7 @@
                         <constraint firstItem="6QX-8T-8Be" firstAttribute="leading" secondItem="CwK-FL-VAk" secondAttribute="leading" constant="20" id="bop-Xc-D3i"/>
                         <constraint firstItem="fqe-vD-Gmm" firstAttribute="top" secondItem="6QX-8T-8Be" secondAttribute="bottom" constant="-1" id="oCD-Dm-Mv7"/>
                         <constraint firstAttribute="trailing" secondItem="UGz-LO-0Cf" secondAttribute="trailing" id="wGS-uT-bg9"/>
-                        <constraint firstItem="UGz-LO-0Cf" firstAttribute="leading" secondItem="CwK-FL-VAk" secondAttribute="leading" priority="750" id="zb7-Rt-ys3"/>
+                        <constraint firstItem="UGz-LO-0Cf" firstAttribute="leading" secondItem="CwK-FL-VAk" secondAttribute="leading" priority="998" id="zb7-Rt-ys3"/>
                     </constraints>
                 </view>
             </subviews>
@@ -77,7 +77,7 @@
                             <rect key="frame" x="235" y="0.0" width="120" height="120"/>
                             <constraints>
                                 <constraint firstAttribute="width" relation="lessThanOrEqual" constant="120" id="CZg-ok-yNT"/>
-                                <constraint firstAttribute="width" priority="751" constant="120" placeholder="YES" id="DAA-6C-RZf"/>
+                                <constraint firstAttribute="width" priority="999" constant="120" placeholder="YES" id="DAA-6C-RZf"/>
                             </constraints>
                         </view>
                         <view contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="GTX-VX-8Bf" customClass="UAInAppMessageTextView">
@@ -102,7 +102,7 @@
                         <constraint firstItem="Y02-V2-YH8" firstAttribute="width" secondItem="VNH-yL-Bh8" secondAttribute="width" id="hkH-Dn-gz9"/>
                         <constraint firstAttribute="trailing" secondItem="Y02-V2-YH8" secondAttribute="trailing" constant="20" id="pHs-HL-0yZ"/>
                         <constraint firstAttribute="trailing" secondItem="VNH-yL-Bh8" secondAttribute="trailing" constant="20" id="rWd-yr-435"/>
-                        <constraint firstAttribute="trailing" secondItem="GTX-VX-8Bf" secondAttribute="trailing" priority="750" id="wVh-Zq-u7D"/>
+                        <constraint firstAttribute="trailing" secondItem="GTX-VX-8Bf" secondAttribute="trailing" priority="998" id="wVh-Zq-u7D"/>
                     </constraints>
                 </view>
             </subviews>

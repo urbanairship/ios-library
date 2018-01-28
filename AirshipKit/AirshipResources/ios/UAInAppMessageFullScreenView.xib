@@ -37,7 +37,7 @@
                                 <constraint firstItem="Dgh-Mi-mKc" firstAttribute="trailing" secondItem="nxZ-dF-if9" secondAttribute="trailing" id="38K-Ja-MKv"/>
                                 <constraint firstAttribute="height" constant="650" placeholder="YES" identifier="This is removed at build time" id="4V8-J1-qgU"/>
                                 <constraint firstItem="rsN-La-UOG" firstAttribute="bottom" secondItem="nxZ-dF-if9" secondAttribute="bottom" constant="-10" id="4iw-X8-Uyp"/>
-                                <constraint firstAttribute="bottom" secondItem="Dgh-Mi-mKc" secondAttribute="bottom" priority="250" constant="10" identifier="Fallback constraint when footer is nil." id="BXZ-hk-yfh"/>
+                                <constraint firstAttribute="bottom" secondItem="Dgh-Mi-mKc" secondAttribute="bottom" priority="999" constant="10" identifier="Fallback constraint when footer is nil." id="BXZ-hk-yfh"/>
                                 <constraint firstItem="rsN-La-UOG" firstAttribute="trailing" secondItem="nxZ-dF-if9" secondAttribute="trailing" id="Cz9-uT-xrE"/>
                                 <constraint firstItem="Dgh-Mi-mKc" firstAttribute="top" secondItem="nxZ-dF-if9" secondAttribute="top" id="HHM-b9-y3E"/>
                                 <constraint firstItem="Dgh-Mi-mKc" firstAttribute="leading" secondItem="nxZ-dF-if9" secondAttribute="leading" id="IJV-07-dM9"/>
