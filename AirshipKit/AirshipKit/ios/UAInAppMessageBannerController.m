@@ -227,7 +227,7 @@ double const MinimumSwipeVelocity = 100.0;
                                                               multiplier:1
                                                                 constant:DefaultTrailingEdgeSpace];
 
-    leading.priority = UILayoutPriorityRequired;
+    leading.priority = 999;
     leading.active = YES;
 
     // Constrain Trailing edge
@@ -238,7 +238,7 @@ double const MinimumSwipeVelocity = 100.0;
                                                                 attribute:NSLayoutAttributeTrailingMargin
                                                                multiplier:1
                                                                  constant:-DefaultTrailingEdgeSpace];
-    trailing.priority = UILayoutPriorityRequired;
+    trailing.priority = 999;
     trailing.active = YES;
 
     // Set max width
