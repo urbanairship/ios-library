@@ -1,4 +1,4 @@
-/* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2018 Urban Airship and Contributors */
 
 #import "UAInAppMessageHTMLView+Internal.h"
 #import "UAInAppMessageCloseButton+Internal.h"

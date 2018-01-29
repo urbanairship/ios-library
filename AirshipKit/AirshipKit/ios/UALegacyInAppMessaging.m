@@ -1,4 +1,4 @@
-/* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2018 Urban Airship and Contributors */
 
 #import "UALegacyInAppMessaging+Internal.h"
 #import "UALegacyInAppMessage.h"
