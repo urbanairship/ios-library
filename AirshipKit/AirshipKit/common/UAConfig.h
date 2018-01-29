@@ -80,7 +80,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, getter=isAutomaticSetupEnabled) BOOL automaticSetupEnabled;
 
 /**
- * An array of UAWhitelist entry strings.
+ * An array of UAWhitelist entry strings. The whitelist used for validating URLs for landing pages,
+ * wallet action, open external URL action, deep link action (if delegate is not set), and
+ * HTML in-app messages.
  *
  * @note See UAWhitelist for pattern entry syntax.
  */
@@ -159,6 +161,14 @@ NS_ASSUME_NONNULL_BEGIN
  * Defaults to `YES`.
  */
 @property (nonatomic, assign, getter=isChannelCaptureEnabled) BOOL channelCaptureEnabled;
+
+/**
+ * Enables or disables whitelist checks at the scope `UAWhitelistScopeOpenURL`. If disabled,
+ * all whitelist checks for this scope will be allowed.
+ *
+ * Defaults to `NO`.
+ */
+@property (nonatomic, assign, getter=isOpenURLWhitelistingEnabled) BOOL openURLWhitelistingEnabled;
 
 /**
  * Flag indicating whether delayed channel creation is enabled. If set to `YES` channel 

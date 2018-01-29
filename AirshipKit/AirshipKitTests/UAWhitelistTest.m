@@ -8,6 +8,7 @@
 @interface UAWhitelistTest : UABaseTest
 
 @property(nonatomic, strong) UAWhitelist *whitelist;
+@property(nonnull, strong) NSArray *scopes;
 
 @end
 
@@ -16,6 +17,7 @@
 - (void)setUp {
     [super setUp];
     self.whitelist = [[UAWhitelist alloc] init];
+    self.scopes = @[@(UAWhitelistScopeJavaScriptInterface), @(UAWhitelistScopeOpenURL), @(UAWhitelistScopeAll)];
 }
 
 - (void)tearDown {
@@ -26,11 +28,14 @@
  * Test an empty white list rejects all URLs.
  */
 - (void)testEmptyWhitelist {
-    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"urbanairship.com"]]);
-    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"www.urbanairship.com"]]);
-    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"http://www.urbanairship.com"]]);
-    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://www.urbanairship.com"]]);
-    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"file:///*"]]);
+    for (NSNumber *number in self.scopes) {
+        UAWhitelistScope scope = (UAWhitelistScope)number.unsignedIntegerValue;
+        XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"urbanairship.com"] scope:scope]);
+        XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"www.urbanairship.com"] scope:scope]);
+        XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"http://www.urbanairship.com"] scope:scope]);
+        XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://www.urbanairship.com"] scope:scope]);
+        XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"file:///*"] scope:scope]);
+    }
 }
 
 /**
@@ -40,13 +45,17 @@
     UAConfig *config = [UAConfig config];
     UAWhitelist *whitelist = [UAWhitelist whitelistWithConfig:config];
 
-    XCTAssertTrue([whitelist isWhitelisted:[NSURL URLWithString:@"https://device-api.urbanairship.com/api/user/"]]);
+    for (NSNumber *number in self.scopes) {
+        UAWhitelistScope scope = (UAWhitelistScope)number.unsignedIntegerValue;
 
-    // Starbucks
-    XCTAssertTrue([whitelist isWhitelisted:[NSURL URLWithString:@"https://sbux-dl.urbanairship.com/binary/token/"]]);
+        XCTAssertTrue([whitelist isWhitelisted:[NSURL URLWithString:@"https://device-api.urbanairship.com/api/user/"] scope:scope]);
 
-    // Landing Page
-    XCTAssertTrue([whitelist isWhitelisted:[NSURL URLWithString:@"https://dl.urbanairship.com/aaa/message_id"]]);
+        // Starbucks
+        XCTAssertTrue([whitelist isWhitelisted:[NSURL URLWithString:@"https://sbux-dl.urbanairship.com/binary/token/"] scope:scope]);
+
+        // Landing Page
+        XCTAssertTrue([whitelist isWhitelisted:[NSURL URLWithString:@"https://dl.urbanairship.com/aaa/message_id"] scope:scope]);
+    }
 }
 
 /**
@@ -245,6 +254,48 @@
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://what.urbanairship.com/anythingHTML/test.html"]]);
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://what.urbanairship.com/anythingHTML/foo/bar/index.html"]]);
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://urbanairship.com/what/index.html"]]);
+}
+
+- (void)testScope {
+    [self.whitelist addEntry:@"*://*.urbanairship.com/accept-js.html" scope:UAWhitelistScopeJavaScriptInterface];
+    [self.whitelist addEntry:@"*://*.urbanairship.com/accept-url.html" scope:UAWhitelistScopeOpenURL];
+    [self.whitelist addEntry:@"*://*.urbanairship.com/accept-all.html" scope:UAWhitelistScopeAll];
+
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://urbanairship.com/accept-js.html"] scope:UAWhitelistScopeJavaScriptInterface]);
+    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://urbanairship.com/accept-js.html"] scope:UAWhitelistScopeOpenURL]);
+    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://urbanairship.com/accept-js.html"] scope:UAWhitelistScopeAll]);
+
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://urbanairship.com/accept-url.html"] scope:UAWhitelistScopeOpenURL]);
+    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://urbanairship.com/accept-url.html"] scope:UAWhitelistScopeJavaScriptInterface]);
+    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://urbanairship.com/accept-url.html"] scope:UAWhitelistScopeAll]);
+
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://urbanairship.com/accept-all.html"] scope:UAWhitelistScopeAll]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://urbanairship.com/accept-all.html"] scope:UAWhitelistScopeJavaScriptInterface]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://urbanairship.com/accept-all.html"] scope:UAWhitelistScopeOpenURL]);
+}
+
+- (void)testDisableOpenURLWhitelisting {
+    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://someurl.com"] scope:UAWhitelistScopeOpenURL]);
+
+    self.whitelist.openURLWhitelistingEnabled = NO;
+
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://someurl.com"] scope:UAWhitelistScopeOpenURL]);
+    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://someurl.com"] scope:UAWhitelistScopeJavaScriptInterface]);
+    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://someurl.com"] scope:UAWhitelistScopeAll]);
+}
+
+- (void)testAddAllScopesSeparately {
+    [self.whitelist addEntry:@"*://*.urbanairship.com/all.html" scope:UAWhitelistScopeOpenURL];
+    [self.whitelist addEntry:@"*://*.urbanairship.com/all.html" scope:UAWhitelistScopeJavaScriptInterface];
+
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://urbanairship.com/all.html"] scope:UAWhitelistScopeAll]);
+}
+
+- (void)testAllScopeMatchesInnerScopes {
+    [self.whitelist addEntry:@"*://*.urbanairship.com/all.html" scope:UAWhitelistScopeAll];
+
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://urbanairship.com/all.html"] scope:UAWhitelistScopeJavaScriptInterface]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://urbanairship.com/all.html"] scope:UAWhitelistScopeOpenURL]);
 }
 
 @end

@@ -19,7 +19,6 @@
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
 
     self.mockDelegate = [self mockForProtocol:@protocol(UADeepLinkDelegate)];
-    [[[self.mockAirship stub] andReturn:self.mockDelegate] deepLinkDelegate];
 
     self.action = [[UADeepLinkAction alloc] init];
 }
@@ -28,6 +27,8 @@
  * Test deep link action calls the delegate
  */
 - (void)testPerformWithDeepLinkDelegate {
+    [[[self.mockAirship stub] andReturn:self.mockDelegate] deepLinkDelegate];
+
     NSURL *url = [NSURL URLWithString:@"http://some-deep-link"];
     id arg = [UAActionArguments argumentsWithValue: @"http://some-deep-link" withSituation:UASituationManualInvocation];
 
@@ -40,6 +41,22 @@
 
     XCTestExpectation *actionFinished = [self expectationWithDescription:@"action finished"];
     [self.action performWithArguments:arg completionHandler:^(UAActionResult *result) {
+        [actionFinished fulfill];
+    }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self.mockDelegate verify];
+}
+
+/**
+ * Test that URLs that are not whitelisted will generate an error if the delegate is not set.
+ */
+- (void)testWhiteListNoDelegate {
+    id arg = [UAActionArguments argumentsWithValue: @"http://some-deep-link" withSituation:UASituationManualInvocation];
+
+    XCTestExpectation *actionFinished = [self expectationWithDescription:@"action finished"];
+    [self.action performWithArguments:arg completionHandler:^(UAActionResult *result) {
+        XCTAssertNotNil(result.error);
         [actionFinished fulfill];
     }];
 

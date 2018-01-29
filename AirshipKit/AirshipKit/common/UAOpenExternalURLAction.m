@@ -1,6 +1,8 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
 #import "UAOpenExternalURLAction.h"
+#import "UAirship.h"
+#import "UAWhitelist.h"
 
 NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions.externalurlaction";
 
@@ -14,17 +16,23 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
         return NO;
     }
 
-    if ([arguments.value isKindOfClass:[NSString class]]) {
-        return [NSURL URLWithString:arguments.value] != nil;
+    NSURL *url = [UAOpenExternalURLAction parseURLFromArguments:arguments];
+    if (!url) {
+        return NO;
     }
 
-    return [arguments.value isKindOfClass:[NSURL class]];
+    if (![[UAirship shared].whitelist isWhitelisted:url scope:UAWhitelistScopeOpenURL]) {
+        UA_LERR(@"URL %@ not whitelisted. Unable to open URL.", url);
+        return NO;
+    }
+
+    return YES;
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
-    NSURL *url = [self createURLFromValue:arguments.value];
+    NSURL *url = [UAOpenExternalURLAction parseURLFromArguments:arguments];
 
     // do this in the background in case we're opening our own app!
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
@@ -66,8 +74,12 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
     }
 }
 
-- (NSURL *)createURLFromValue:(id)value {
-    NSURL *url = [value isKindOfClass:[NSURL class]] ? value : [NSURL URLWithString:value];
++ (NSURL *)parseURLFromArguments:(UAActionArguments *)arguments {
+    if (![arguments.value isKindOfClass:[NSString class]] && ![arguments.value isKindOfClass:[NSURL class]]) {
+        return nil;
+    }
+
+    NSURL *url = [arguments.value isKindOfClass:[NSURL class]] ? arguments.value : [NSURL URLWithString:arguments.value];
 
     if ([[url host] isEqualToString:@"phobos.apple.com"] || [[url host] isEqualToString:@"itunes.apple.com"]) {
         // Set the url scheme to http, as it could be itms which will cause the store to launch twice (undesireable)

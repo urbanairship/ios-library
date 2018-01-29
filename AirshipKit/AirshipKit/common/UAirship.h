@@ -118,7 +118,8 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 @property (nonatomic, weak, nullable) id<UADeepLinkDelegate> deepLinkDelegate;
 
 /**
- * The whitelist used for validating webview URLs.
+ * The whitelist used for validating URLs for landing pages, wallet action, open external URL action,
+ * deep link action (if delegate is not set), and HTML in-app messages.
  */
 @property (nonatomic, strong, readonly) UAWhitelist *whitelist;
 

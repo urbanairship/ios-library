@@ -144,7 +144,17 @@ NSString *const UALandingPageFill = @"fill";
         return NO;
     }
 
-    return (BOOL)([self parseURLFromValue:arguments.value] != nil);
+    NSURL *url = [self parseURLFromValue:arguments.value];
+    if (!url) {
+        return NO;
+    }
+
+    if (![[UAirship shared].whitelist isWhitelisted:url scope:UAWhitelistScopeOpenURL]) {
+        UA_LERR(@"URL %@ not whitelisted. Unable to display landing page.", url);
+        return NO;
+    }
+
+    return YES;
 }
 
 - (void)prefetchURL:(NSURL *)landingPageURL withUsername:(NSString *)username

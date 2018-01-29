@@ -166,8 +166,6 @@
     // Try to schedule 1 more, verifty it fails
     [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
         XCTAssertNil(schedule);
-        NSLog(@"what");
-
         [testExpectation fulfill];
     }];
 

@@ -165,7 +165,7 @@ NSString * const UAInAppMessageTagSelectorErrorDomain = @"com.urbanairship.in_ap
         default:
             break;
     }
-    NSLog(@"json = %@",json);
+    
     return json;
 }
 
