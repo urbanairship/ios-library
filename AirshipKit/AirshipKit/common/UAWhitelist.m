@@ -9,12 +9,40 @@
  */
 typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 
+@interface UAWhitelistEntry : NSObject
+
+@property(nonatomic, assign) UAWhitelistScope scope;
+@property(nonatomic, copy) UAWhitelistMatcher matcher;
+
++ (instancetype)entryWithMatcher:(UAWhitelistMatcher)matcher scope:(UAWhitelistScope)scope;
+
+@end
+
+@implementation UAWhitelistEntry
+
++ (instancetype)entryWithMatcher:(UAWhitelistMatcher)matcher scope:(UAWhitelistScope)scope {
+    return [[self alloc] initWithMatcher:matcher scope:scope];
+}
+
+- (instancetype)initWithMatcher:(UAWhitelistMatcher)matcher scope:(UAWhitelistScope)scope {
+    self = [super init];
+
+    if (self) {
+        self.matcher = matcher;
+        self.scope = scope;
+    }
+
+    return self;
+}
+
+@end
+
 @interface UAWhitelist ()
 
 /**
- * Set of UAWhitelistMatcher blocks
+ * Dictionary of sets of UAWhitelistMatcher blocks per scope.
  */
-@property(nonatomic, strong) NSMutableSet *matchers;
+@property(nonatomic, strong) NSMutableSet *entries;
 /**
  * Regex that matches valid whitelist pattern entries
  */
@@ -27,7 +55,8 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.matchers = [NSMutableSet set];
+        self.entries = [NSMutableSet set];
+        self.openURLWhitelistingEnabled = YES;
     }
     return self;
 }
@@ -37,9 +66,11 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 
     [whitelist addEntry:@"https://*.urbanairship.com"];
 
-    for (NSString *entry in config.whitelist) {
-        [whitelist addEntry:entry];
+    for (NSString *pattern in config.whitelist) {
+        [whitelist addEntry:pattern];
     }
+
+    whitelist.openURLWhitelistingEnabled = config.isOpenURLWhitelistingEnabled;
 
     return whitelist;
 }
@@ -202,7 +233,7 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
     return matches > 0;
 }
 
-- (BOOL)addEntry:(NSString *)patternString {
+- (BOOL)addEntry:(NSString *)patternString scope:(UAWhitelistScope)scope {
 
     if (!patternString || ![self validatePattern:patternString]) {
         UA_LWARN(@"Invalid whitelist pattern: %@", patternString);
@@ -217,7 +248,7 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
     // If we have just a wildcard, we need to add a special matcher for both file and https/http
     // URLs.
     if ([patternString isEqualToString:@"*"]) {
-        [self.matchers addObject:[self wildcardMatcher]];
+        [self.entries addObject:[UAWhitelistEntry entryWithMatcher:[self wildcardMatcher] scope:scope]];
         return YES;
     }
 
@@ -241,19 +272,34 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
         return matchedScheme && matchedHost && matchedPath;
     };
 
-    [self.matchers addObject:[patternMatcher copy]];
+    [self.entries addObject:[UAWhitelistEntry entryWithMatcher:[patternMatcher copy] scope:scope]];
 
     return YES;
 }
 
-- (BOOL)isWhitelisted:(NSURL *)url {
-    for (UAWhitelistMatcher matcher in self.matchers) {
-        if (matcher(url)){
-            return YES;
-        };
+- (BOOL)addEntry:(NSString *)patternString {
+    return [self addEntry:patternString scope:UAWhitelistScopeAll];
+}
+
+- (BOOL)isWhitelisted:(NSURL *)url scope:(UAWhitelistScope)scope {
+
+    if (scope == UAWhitelistScopeOpenURL && !self.isOpenURLWhitelistingEnabled) {
+        return YES;
     }
 
-    return NO;
+    NSUInteger matchedScope = 0;
+
+    for (UAWhitelistEntry *entry in self.entries) {
+        if (entry.matcher(url)) {
+            matchedScope |= entry.scope;
+        }
+    }
+
+    return (((UAWhitelistScope)matchedScope & scope) == scope);
+}
+
+- (BOOL)isWhitelisted:(NSURL *)url {
+    return [self isWhitelisted:url scope:UAWhitelistScopeAll];
 }
 
 @end

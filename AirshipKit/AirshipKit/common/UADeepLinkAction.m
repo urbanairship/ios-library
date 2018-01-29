@@ -27,7 +27,7 @@
             completionHandler([UAActionResult resultWithValue:url.absoluteString]);
         }];
     } else{
-        if (![[UAirship shared].whitelist isWhitelisted:url]) {
+        if (![[UAirship shared].whitelist isWhitelisted:url scope:UAWhitelistScopeOpenURL]) {
             UA_LERR(@"URL %@ not whitelisted. Unable to open url.", url);
             NSError *error =  [NSError errorWithDomain:UAOpenExternalURLActionErrorDomain
                                                   code:UAOpenExternalURLActionErrorCodeURLFailedToOpen

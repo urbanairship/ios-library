@@ -32,6 +32,7 @@
         self.whitelist = @[];
         self.clearNamedUserOnAppRestore = NO;
         self.channelCaptureEnabled = YES;
+        self.openURLWhitelistingEnabled = NO;
         self.customConfig = @{};
         self.channelCreationDelayEnabled = NO;
         self.defaultDetectProvisioningMode = YES;
@@ -71,6 +72,7 @@
         _whitelist = config.whitelist;
         _clearNamedUserOnAppRestore = config.clearNamedUserOnAppRestore;
         _channelCaptureEnabled = config.channelCaptureEnabled;
+        _openURLWhitelistingEnabled = config.openURLWhitelistingEnabled;
         _customConfig = config.customConfig;
         _channelCreationDelayEnabled = config.channelCreationDelayEnabled;
         _defaultDetectProvisioningMode = config.defaultDetectProvisioningMode;
@@ -105,6 +107,7 @@
             "Whitelist: %@\n"
             "Clear named user on App Restore: %d\n"
             "Channel Capture Enabled: %d\n"
+            "URL Whitelisting Enabled: %d\n"
             "Custom Config: %@\n"
             "Delay Channel Creation: %d\n"
             "Default Message Center Style Config File: %@\n"
@@ -132,6 +135,7 @@
             self.whitelist,
             self.clearNamedUserOnAppRestore,
             self.channelCaptureEnabled,
+            self.openURLWhitelistingEnabled,
             self.customConfig,
             self.channelCreationDelayEnabled,
             self.messageCenterStyleConfig,

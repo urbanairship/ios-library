@@ -149,7 +149,7 @@ NSString *const UALandingPageFill = @"fill";
         return NO;
     }
 
-    if (![[UAirship shared].whitelist isWhitelisted:url]) {
+    if (![[UAirship shared].whitelist isWhitelisted:url scope:UAWhitelistScopeOpenURL]) {
         UA_LERR(@"URL %@ not whitelisted. Unable to display landing page.", url);
         return NO;
     }

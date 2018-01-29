@@ -26,7 +26,7 @@
         return;
     }
     
-    if (![[UAirship shared].whitelist isWhitelisted:url]) {
+    if (![[UAirship shared].whitelist isWhitelisted:url scope:UAWhitelistScopeJavaScriptInterface]) {
         // Don't log in the special case of about:blank URLs
         if (![url.absoluteString isEqualToString:@"about:blank"]) {
             UA_LINFO(@"URL %@ is not whitelisted, not populating JS interface", url);
@@ -228,7 +228,7 @@
 - (BOOL)isWhiteListedAirshipRequest:(NSURLRequest *)request {
     // uairship://command/[<arguments>][?<options>]
     NSURL *requestURL = (request.mainDocumentURL) ? request.mainDocumentURL : request.URL;
-    return ([[request.URL scheme] isEqualToString:@"uairship"] && ([[UAirship shared].whitelist isWhitelisted:requestURL]));
+    return ([[request.URL scheme] isEqualToString:@"uairship"] && ([[UAirship shared].whitelist isWhitelisted:requestURL scope:UAWhitelistScopeJavaScriptInterface]));
 }
 
 @end

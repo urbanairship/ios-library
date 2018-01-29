@@ -44,11 +44,19 @@
     [[[self.mockConfig stub] andReturnValue:OCMOCK_VALUE((NSUInteger)100)] cacheDiskSizeInMB];
 }
 
+- (void)tearDown {
+    [self.mockAirship stopMocking];
+    [self.mockWhitelist stopMocking];
+    [self.mockConfig stopMocking];
+    [self.mockURLProtocol stopMocking];
+    [self.mockOverlayViewController stopMocking];
+}
+
 /**
  * Test accepts arguments
  */
 - (void)testAcceptsArguments {
-    [[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] isWhitelisted:OCMOCK_ANY];
+    [[[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isWhitelisted:OCMOCK_ANY scope:UAWhitelistScopeOpenURL];
 
     [self verifyAcceptsArgumentsWithValue:@"foo.urbanairship.com" shouldAccept:YES];
     [self verifyAcceptsArgumentsWithValue:@"https://foo.urbanairship.com" shouldAccept:YES];
@@ -65,7 +73,7 @@
  * as a URL
  */
 - (void)testAcceptsArgumentsNo {
-    [[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] isWhitelisted:OCMOCK_ANY];
+    [[[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isWhitelisted:OCMOCK_ANY scope:UAWhitelistScopeOpenURL];
 
     [self verifyAcceptsArgumentsWithValue:nil shouldAccept:NO];
     [self verifyAcceptsArgumentsWithValue:[[NSObject alloc] init] shouldAccept:NO];
@@ -77,7 +85,7 @@
  * Test rejects arguments with URLs that are not whitelisted.
  */
 - (void)testWhiteList {
-    [[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(NO)] isWhitelisted:OCMOCK_ANY];
+    [[[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(NO)] ignoringNonObjectArgs] isWhitelisted:OCMOCK_ANY scope:UAWhitelistScopeOpenURL];
 
     [self verifyAcceptsArgumentsWithValue:@"foo.urbanairship.com" shouldAccept:NO];
     [self verifyAcceptsArgumentsWithValue:@"https://foo.urbanairship.com" shouldAccept:NO];
@@ -90,7 +98,7 @@
  * Test perform in UASituationBackgroundPush
  */
 - (void)testPerformInForeground {
-    [[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] isWhitelisted:OCMOCK_ANY];
+    [[[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isWhitelisted:OCMOCK_ANY scope:UAWhitelistScopeOpenURL];
 
     // Verify https is added to schemeless urls
     [self verifyPerformInForegroundWithValue:@"foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com"];

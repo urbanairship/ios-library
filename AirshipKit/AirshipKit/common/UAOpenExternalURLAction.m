@@ -21,7 +21,7 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
         return NO;
     }
 
-    if (![[UAirship shared].whitelist isWhitelisted:url]) {
+    if (![[UAirship shared].whitelist isWhitelisted:url scope:UAWhitelistScopeOpenURL]) {
         UA_LERR(@"URL %@ not whitelisted. Unable to open URL.", url);
         return NO;
     }
