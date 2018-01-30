@@ -43,7 +43,7 @@
                         <constraint firstAttribute="bottom" secondItem="fqe-vD-Gmm" secondAttribute="bottom" id="PCC-Fe-NW1"/>
                         <constraint firstItem="UGz-LO-0Cf" firstAttribute="top" secondItem="CwK-FL-VAk" secondAttribute="top" id="VzT-Wc-NR4"/>
                         <constraint firstItem="fqe-vD-Gmm" firstAttribute="width" secondItem="6QX-8T-8Be" secondAttribute="width" id="ZR0-lR-Epx"/>
-                        <constraint firstItem="6QX-8T-8Be" firstAttribute="leading" secondItem="CwK-FL-VAk" secondAttribute="leading" constant="20" id="bop-Xc-D3i"/>
+                        <constraint firstItem="6QX-8T-8Be" firstAttribute="leading" secondItem="CwK-FL-VAk" secondAttribute="leading" constant="10" id="bop-Xc-D3i"/>
                         <constraint firstItem="fqe-vD-Gmm" firstAttribute="top" secondItem="6QX-8T-8Be" secondAttribute="bottom" constant="-1" id="oCD-Dm-Mv7"/>
                         <constraint firstAttribute="trailing" secondItem="UGz-LO-0Cf" secondAttribute="trailing" id="wGS-uT-bg9"/>
                         <constraint firstItem="UGz-LO-0Cf" firstAttribute="leading" secondItem="CwK-FL-VAk" secondAttribute="leading" priority="998" id="zb7-Rt-ys3"/>
@@ -101,7 +101,7 @@
                         <constraint firstItem="GTX-VX-8Bf" firstAttribute="top" secondItem="AGo-BI-V0D" secondAttribute="top" id="YwI-6c-NB2"/>
                         <constraint firstItem="Y02-V2-YH8" firstAttribute="width" secondItem="VNH-yL-Bh8" secondAttribute="width" id="hkH-Dn-gz9"/>
                         <constraint firstAttribute="trailing" secondItem="Y02-V2-YH8" secondAttribute="trailing" constant="20" id="pHs-HL-0yZ"/>
-                        <constraint firstAttribute="trailing" secondItem="VNH-yL-Bh8" secondAttribute="trailing" constant="20" id="rWd-yr-435"/>
+                        <constraint firstAttribute="trailing" secondItem="VNH-yL-Bh8" secondAttribute="trailing" constant="10" id="rWd-yr-435"/>
                         <constraint firstAttribute="trailing" secondItem="GTX-VX-8Bf" secondAttribute="trailing" priority="998" id="wVh-Zq-u7D"/>
                     </constraints>
                 </view>
