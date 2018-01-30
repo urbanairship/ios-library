@@ -7,7 +7,7 @@
 
 /**
  * Opens a deep link URL. This action is registered under
- * the names ^d and deep_link.
+ * the names ^d and deep_link_action.
  *
  * Expected argument values: NSString
  *
