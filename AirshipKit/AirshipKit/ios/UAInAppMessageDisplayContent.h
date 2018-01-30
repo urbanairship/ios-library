@@ -75,17 +75,17 @@ extern NSString *const UAInAppMessageFooterKey;
 extern NSString *const UAInAppMessageDurationKey;
 
 /**
- * Buttons are displayed with a space between them.
+ * Buttons are stacked.
  */
 extern NSString *const UAInAppMessageButtonLayoutStackedValue;
 
 /**
- * Buttons are displayed right next to each other.
+ * Buttons are displayed with a space between them.
  */
 extern NSString *const UAInAppMessageButtonLayoutSeparateValue;
 
 /**
- * Buttons are stacked.
+ * Buttons are displayed right next to each other.
  */
 extern NSString *const UAInAppMessageButtonLayoutJoinedValue;
 

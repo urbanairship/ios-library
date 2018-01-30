@@ -9,12 +9,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 typedef NS_ENUM(NSInteger, UAInAppMessageMediaInfoType) {
     /**
-     * Banner display
+     * Image media type
      */
     UAInAppMessageMediaInfoTypeImage,
     
     /**
-     * Full screen display
+     * Video media type
      */
     UAInAppMessageMediaInfoTypeVideo,
     
@@ -35,7 +35,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageMediaInfoType) {
 @property(nonatomic, copy, readonly) NSString *url;
 
 /**
- * Media type - media, video or YouTube video.
+ * Media type - image, video or YouTube video.
  */
 @property(nonatomic, assign, readonly) UAInAppMessageMediaInfoType type;
 
