@@ -83,9 +83,8 @@
                         <view contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="GTX-VX-8Bf" customClass="UAInAppMessageTextView">
                             <rect key="frame" x="0.0" y="0.0" width="215.5" height="120"/>
                         </view>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Y02-V2-YH8" userLabel="Media Padding View">
+                        <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Y02-V2-YH8" userLabel="Media Padding View">
                             <rect key="frame" x="235" y="120" width="120" height="0.0"/>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <constraints>
                                 <constraint firstAttribute="height" priority="250" id="603-Aq-rqh"/>
                             </constraints>

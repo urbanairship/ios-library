@@ -19,9 +19,8 @@
                 <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1000" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="oAg-Fq-dBy">
                     <rect key="frame" x="10" y="0.0" width="355" height="205"/>
                 </stackView>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uuH-ZW-dkT">
+                <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uuH-ZW-dkT" userLabel="Padding View">
                     <rect key="frame" x="10" y="205" width="355" height="0.0"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="height" priority="250" id="oiF-RH-GeX"/>
                     </constraints>
