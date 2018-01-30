@@ -77,7 +77,7 @@
                             <rect key="frame" x="235" y="0.0" width="120" height="120"/>
                             <constraints>
                                 <constraint firstAttribute="width" relation="lessThanOrEqual" constant="120" id="CZg-ok-yNT"/>
-                                <constraint firstAttribute="width" priority="999" constant="120" placeholder="YES" id="DAA-6C-RZf"/>
+                                <constraint firstAttribute="width" priority="999" constant="120" id="DAA-6C-RZf"/>
                             </constraints>
                         </view>
                         <view contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="GTX-VX-8Bf" customClass="UAInAppMessageTextView">

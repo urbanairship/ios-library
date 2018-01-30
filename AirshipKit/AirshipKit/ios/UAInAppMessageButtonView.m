@@ -89,7 +89,7 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
 
         // This rounds to the desired border radius which is 0 by default
         NSUInteger rounding = UAInAppMessageButtonRoundingOptionAllCorners;
-        if (layout == UAInAppMessageButtonLayoutTypeJoined) {
+        if (layout == UAInAppMessageButtonLayoutTypeJoined && buttonInfos.count > 1) {
             if (buttonOrder == 0) {
                 rounding = UAInAppMessageButtonRoundingTopLeftCorner | UAInAppMessageButtonRoundingBottomLeftCorner;
             }

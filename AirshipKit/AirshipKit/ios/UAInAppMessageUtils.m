@@ -20,6 +20,20 @@ NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
     NSDictionary *attributes = [UAInAppMessageUtils attributesWithTextInfo:buttonInfo.label];
     NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:buttonInfo.label.text attributes:attributes];
 
+    switch (buttonInfo.label.alignment) {
+        case NSTextAlignmentLeft:
+            button.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+            button.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
+            break;
+        case NSTextAlignmentRight:
+            button.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
+            button.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 10);
+            break;
+        default:
+            button.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+            break;
+    }
+
     [button setAttributedTitle:attributedTitle forState:UIControlStateNormal];
     
     CGFloat buttonHeight = button.titleLabel.intrinsicContentSize.height + 2 * buttonMargin;
