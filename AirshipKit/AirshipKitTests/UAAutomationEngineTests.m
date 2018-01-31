@@ -63,6 +63,7 @@
     [self.mockDelegate stopMocking];
     [self.mockAirship stopMocking];
     [self.mockMetrics stopMocking];
+    [self.mockAutomationStore stopMocking];
     [self.automationEngine stop];
     self.automationEngine = nil;
     [super tearDown];
