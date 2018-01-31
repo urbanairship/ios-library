@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -47,10 +47,10 @@
                                     <rect key="frame" x="0.0" y="0.0" width="335" height="375"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ITh-ke-3Lu" userLabel="Close Button Container View">
-                                            <rect key="frame" x="0.0" y="0.0" width="335" height="35"/>
+                                            <rect key="frame" x="300" y="0.0" width="35" height="35"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kjI-XO-DcA" userLabel="Close Button" customClass="UAInAppMessageCloseButton">
-                                                    <rect key="frame" x="300" y="0.0" width="35" height="35"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="35" height="35"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="35" id="QXR-c4-O6R"/>
                                                         <constraint firstAttribute="height" constant="35" id="StN-6d-1kJ"/>
@@ -63,6 +63,7 @@
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <constraints>
+                                                <constraint firstAttribute="width" constant="35" id="0zJ-4l-TFR"/>
                                                 <constraint firstAttribute="trailing" secondItem="kjI-XO-DcA" secondAttribute="trailing" id="AHw-TG-WDb"/>
                                                 <constraint firstAttribute="height" constant="35" id="Na0-2s-I3l"/>
                                                 <constraint firstItem="kjI-XO-DcA" firstAttribute="top" secondItem="ITh-ke-3Lu" secondAttribute="top" id="dIS-Ru-szy"/>
@@ -101,7 +102,6 @@
                                         <constraint firstItem="dkq-Bz-oo3" firstAttribute="leading" secondItem="kRl-GT-BSO" secondAttribute="leading" id="K2P-Ic-pN7"/>
                                         <constraint firstItem="0h2-KT-igf" firstAttribute="width" secondItem="kRl-GT-BSO" secondAttribute="width" id="La6-En-Ycj"/>
                                         <constraint firstAttribute="trailing" secondItem="dkq-Bz-oo3" secondAttribute="trailing" id="Myj-bf-5Gp"/>
-                                        <constraint firstItem="ITh-ke-3Lu" firstAttribute="leading" secondItem="kRl-GT-BSO" secondAttribute="leading" id="PSz-Fd-Hfp"/>
                                         <constraint firstAttribute="bottom" secondItem="dkq-Bz-oo3" secondAttribute="bottom" priority="100" id="Y53-0G-rHJ"/>
                                         <constraint firstAttribute="bottom" secondItem="0h2-KT-igf" secondAttribute="bottom" id="Z33-6z-QZh"/>
                                         <constraint firstItem="wsc-p3-tfh" firstAttribute="top" secondItem="dkq-Bz-oo3" secondAttribute="bottom" constant="20" id="ZNF-hz-bc7"/>

@@ -28,12 +28,12 @@ double const DefaultModalAnimationDuration = 0.2;
 /**
  * The modal message view.
  */
-@property (nonatomic,strong) UIView *modalView;
+@property (nonatomic, weak) UIView *modalView;
 
 /**
  * Content view to hold header, media and body views. Used for UIScrollView sizing.
  */
-@property (nonatomic,strong) UIView *contentView;
+@property (nonatomic, weak) UIView *contentView;
 
 /**
  * The maximum height constraint on the modal view. Active at init.

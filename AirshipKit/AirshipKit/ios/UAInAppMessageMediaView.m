@@ -22,6 +22,8 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
 @property (nonatomic, strong, nullable) NSLayoutConstraint *widthConstraint;
 @property (nonatomic, strong, nullable) NSLayoutConstraint *heightConstraint;
 
+@property (nonatomic, strong) id<NSObject> modalWindowResignedKey;
+@property (nonatomic, strong, nullable) id<NSObject> videoWindowResignedKey;
 @end
 
 @implementation UAInAppMessageMediaView
@@ -142,8 +144,32 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
     self.widthConstraint.active = YES;
 }
 
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self.videoWindowResignedKey];
+    [[NSNotificationCenter defaultCenter] removeObserver:self.modalWindowResignedKey];
+}
+
 -(void)layoutSubviews {
     [super layoutSubviews];
+
+    if (self.hideWindowWhenVideoIsFullScreen) {
+        if (!self.modalWindowResignedKey) {
+            UA_WEAKIFY(self);
+            self.modalWindowResignedKey = [[NSNotificationCenter defaultCenter] addObserverForName:UIWindowDidResignKeyNotification object:self.window queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+                UA_STRONGIFY(self);
+                self.window.hidden = YES;
+                if (self.videoWindowResignedKey) {
+                    [[NSNotificationCenter defaultCenter] removeObserver:self.videoWindowResignedKey];
+                }
+                self.videoWindowResignedKey = [[NSNotificationCenter defaultCenter] addObserverForName:UIWindowDidResignKeyNotification object:[[UIApplication sharedApplication] keyWindow] queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+                    UA_STRONGIFY(self);
+                    [self.window makeKeyAndVisible];
+                    [[NSNotificationCenter defaultCenter] removeObserver:self.videoWindowResignedKey];
+                    self.videoWindowResignedKey = nil;
+                }];
+            }];
+        }
+    }
 
     self.heightConstraint.active = NO;
     // Limit absolute height to window height - padding
