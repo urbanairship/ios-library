@@ -142,7 +142,7 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
             // New in-app message
             NSError *error;
             UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithJSON:message
-                                                                                          defaultSource:UAInAppMessageSourceRemoteData
+                                                                                                 source:UAInAppMessageSourceRemoteData
                                                                                                   error:&error];
             if (!scheduleInfo || error) {
                 UA_LERR(@"Failed to parse in-app message: %@ - %@", message, error);

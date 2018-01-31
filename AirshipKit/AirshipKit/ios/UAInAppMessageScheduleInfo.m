@@ -26,11 +26,7 @@ NSString *const UAScheduleInfoInAppMessageKey = @"message";
     }
 }
 
-- (BOOL)applyFromJson:(id)json error:(NSError * _Nullable *)error {
-    return [self applyFromJson:json defaultSource:UAInAppMessageSourceAppDefined error:error];
-}
-
-- (BOOL)applyFromJson:(id)json defaultSource:(UAInAppMessageSource)source error:(NSError * _Nullable *)error {
+- (BOOL)applyFromJson:(id)json source:(UAInAppMessageSource)source error:(NSError * _Nullable *)error {
     if (![super applyFromJson:json error:error]) {
         return NO;
     }
@@ -82,19 +78,9 @@ NSString *const UAScheduleInfoInAppMessageKey = @"message";
     return [[self alloc] initWithBuilder:builder];
 }
 
-+ (instancetype)scheduleInfoWithJSON:(id)json error:(NSError **)error {
++ (instancetype)scheduleInfoWithJSON:(id)json source:(UAInAppMessageSource)source error:(NSError **)error {
     UAInAppMessageScheduleInfoBuilder *builder = [[UAInAppMessageScheduleInfoBuilder alloc] init];
-    if (![builder applyFromJson:json error:error]) {
-        return nil;
-    }
-
-    
-    return [[self alloc] initWithBuilder:builder];
-}
-
-+ (instancetype)scheduleInfoWithJSON:(id)json defaultSource:(UAInAppMessageSource)defaultSource error:(NSError **)error {
-    UAInAppMessageScheduleInfoBuilder *builder = [[UAInAppMessageScheduleInfoBuilder alloc] init];
-    if (![builder applyFromJson:json defaultSource:defaultSource error:error]) {
+    if (![builder applyFromJson:json source:source error:error]) {
         return nil;
     }
 
