@@ -30,7 +30,7 @@
     
     XCTAssertEqualObjects([UAColorUtils hexStringWithColor:textInfo.color], [UAColorUtils hexStringWithColor:[UIColor blackColor]]);
     XCTAssertEqual(textInfo.size, 14);
-    XCTAssertEqual(textInfo.alignment, NSTextAlignmentLeft);
+    XCTAssertEqual(textInfo.alignment, UAInAppMessageTextInfoAlignmentNone);
     
 }
 

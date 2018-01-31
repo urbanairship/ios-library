@@ -29,7 +29,7 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
 @property(nonatomic, copy) NSArray<NSString *> *fontFamilies;
 @property(nonatomic, strong) UIColor *color;
 @property(nonatomic, assign) NSUInteger size;
-@property(nonatomic, assign) NSTextAlignment alignment;
+@property(nonatomic, assign) UAInAppMessageTextInfoAlignmentType alignment;
 @property(nonatomic, assign) UAInAppMessageTextInfoStyleType style;
 @end
 
@@ -39,7 +39,7 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
     if (self = [super init]) {
         self.color = [UIColor blackColor];
         self.size = 14;
-        self.alignment = NSTextAlignmentLeft;
+        self.alignment = UAInAppMessageTextInfoAlignmentNone;
     }
     return self;
 }
@@ -158,11 +158,11 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
         alignmentContents = [alignmentContents lowercaseString];
         
         if ([UAInAppMessageTextInfoAlignmentLeftValue isEqualToString:alignmentContents]) {
-            builder.alignment = NSTextAlignmentLeft;
+            builder.alignment = UAInAppMessageTextInfoAlignmentLeft;
         } else if ([UAInAppMessageTextInfoAlignmentCenterValue isEqualToString:alignmentContents]) {
-            builder.alignment = NSTextAlignmentCenter;
+            builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
         } else if ([UAInAppMessageTextInfoAlignmentRightValue isEqualToString:alignmentContents]) {
-            builder.alignment = NSTextAlignmentRight;
+            builder.alignment = UAInAppMessageTextInfoAlignmentRight;
         } else {
             if (error) {
                 NSString *msg = [NSString stringWithFormat:@"Invalid in-app message text alignment: %@", alignmentContents];
@@ -263,15 +263,16 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
     [json setValue:@(self.size) forKey:UAInAppMessageTextInfoSizeKey];
 
     switch (self.alignment) {
-        case NSTextAlignmentCenter:
+        case UAInAppMessageTextInfoAlignmentCenter:
             [json setValue:UAInAppMessageTextInfoAlignmentCenterValue forKey:UAInAppMessageTextInfoAlignmentKey];
             break;
-        case NSTextAlignmentRight:
+        case UAInAppMessageTextInfoAlignmentRight:
             [json setValue:UAInAppMessageTextInfoAlignmentRightValue forKey:UAInAppMessageTextInfoAlignmentKey];
             break;
-        case NSTextAlignmentLeft:
-        default:
+        case UAInAppMessageTextInfoAlignmentLeft:
             [json setValue:UAInAppMessageTextInfoAlignmentLeftValue forKey:UAInAppMessageTextInfoAlignmentKey];
+            break;
+        case UAInAppMessageTextInfoAlignmentNone:
             break;
     }
 

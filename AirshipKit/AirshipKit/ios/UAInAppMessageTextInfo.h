@@ -21,13 +21,39 @@ typedef NS_OPTIONS(NSUInteger, UAInAppMessageTextInfoStyleType) {
     /**
      * Italic style
      */
-    UAInAppMessageTextInfoStyleItalic  = 1 << 1,
+    UAInAppMessageTextInfoStyleItalic = 1 << 1,
     
     /**
      * Underline style
      */
-    UAInAppMessageTextInfoStyleUnderline  = 1 << 2
+    UAInAppMessageTextInfoStyleUnderline = 1 << 2
 };
+
+/**
+ * Represents the possible text alignment options.
+ */
+typedef NS_OPTIONS(NSUInteger, UAInAppMessageTextInfoAlignmentType) {
+    /**
+     * Unspecified alignment (actual alignment specified by container)
+     */
+    UAInAppMessageTextInfoAlignmentNone = 0,
+    
+    /**
+     * Left Alignment
+     */
+    UAInAppMessageTextInfoAlignmentLeft = 1,
+    
+    /**
+     * Center Alignment
+     */
+    UAInAppMessageTextInfoAlignmentCenter = 2,
+    
+    /**
+     * Right Alignment
+     */
+    UAInAppMessageTextInfoAlignmentRight = 3
+};
+
 
 /**
  * Builder class for a UAInAppMessageTextInfo object.
@@ -50,9 +76,9 @@ typedef NS_OPTIONS(NSUInteger, UAInAppMessageTextInfoStyleType) {
 @property(nonatomic, assign) NSUInteger size;
 
 /**
- * Text alignment. Defaults to NSTextAlignmentLeft.
+ * Text alignment. Defaults to UAInAppMessageTextInfoAlignmentNone.
  */
-@property(nonatomic, assign) NSTextAlignment alignment;
+@property(nonatomic, assign) UAInAppMessageTextInfoAlignmentType alignment;
 
 /**
  * Text styles.
@@ -93,9 +119,9 @@ typedef NS_OPTIONS(NSUInteger, UAInAppMessageTextInfoStyleType) {
 @property(nonatomic, assign, readonly) NSUInteger size;
 
 /**
- * Text alignment. Defaults to NSTextAlignmentLeft.
+ * Text alignment. Defaults to UAInAppMessageTextInfoAlignmentNone.
  */
-@property(nonatomic, assign, readonly) NSTextAlignment alignment;
+@property(nonatomic, assign, readonly) UAInAppMessageTextInfoAlignmentType alignment;
 
 /**
  * Text styles.

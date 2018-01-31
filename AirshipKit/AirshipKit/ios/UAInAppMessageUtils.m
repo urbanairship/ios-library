@@ -21,15 +21,16 @@ NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
     NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:buttonInfo.label.text attributes:attributes];
 
     switch (buttonInfo.label.alignment) {
-        case NSTextAlignmentLeft:
+        case UAInAppMessageTextInfoAlignmentLeft:
             button.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
             button.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
             break;
-        case NSTextAlignmentRight:
+        case UAInAppMessageTextInfoAlignmentRight:
             button.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
             button.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 10);
             break;
-        default:
+        case UAInAppMessageTextInfoAlignmentCenter:
+        case UAInAppMessageTextInfoAlignmentNone:
             button.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
             break;
     }
@@ -280,7 +281,16 @@ NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
 }
 
 + (NSTextAlignment)alignmentWithTextInfo:(UAInAppMessageTextInfo *)textInfo {
-    return textInfo.alignment;
+    switch (textInfo.alignment) {
+        case UAInAppMessageTextInfoAlignmentLeft:
+            return NSTextAlignmentLeft;
+        case UAInAppMessageTextInfoAlignmentCenter:
+            return NSTextAlignmentCenter;
+        case UAInAppMessageTextInfoAlignmentRight:
+            return NSTextAlignmentRight;
+        case UAInAppMessageTextInfoAlignmentNone:
+            return NSTextAlignmentLeft;
+    }
 }
 
 + (UIFont *)fontWithTextInfo:(UAInAppMessageTextInfo *)textInfo {
