@@ -88,7 +88,7 @@
         builder.buttonLayout = UAInAppMessageButtonLayoutTypeStacked;
     }];
 
-    XCTAssertNil(bannerWithStackedButtons);
+    XCTAssertEqual(bannerWithStackedButtons.buttonLayout, UAInAppMessageButtonLayoutTypeStacked);
 }
 
 - (void)testValidMediaType {

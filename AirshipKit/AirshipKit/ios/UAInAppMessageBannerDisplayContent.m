@@ -37,11 +37,6 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
 
 
 - (BOOL)isValid {
-    if (self.buttonLayout == UAInAppMessageButtonLayoutTypeStacked) {
-        UA_LERR(@"Banner style does not support stacked button layouts");
-        return NO;
-    }
-
     if (self.heading == nil && self.body == nil) {
         UA_LERR(@"Banner must have either its body or heading defined.");
         return NO;
