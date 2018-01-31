@@ -36,23 +36,25 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
 @interface UAInAppMessageScheduleData : NSObject
 @property(nonatomic, strong, nonnull) id<UAInAppMessageAdapterProtocol> adapter;
 @property(nonatomic, copy, nonnull) NSString *scheduleID;
+@property(nonatomic, strong, nonnull) UAInAppMessage *message;
 @property(assign) BOOL isPrepareFinished;
-+ (instancetype)dataWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter scheduleID:(NSString *)scheduleID;
++ (instancetype)dataWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter scheduleID:(NSString *)scheduleID message:(UAInAppMessage *)message;
 @end
 
 @implementation UAInAppMessageScheduleData
 
-- (instancetype)initWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter scheduleID:(NSString *)scheduleID {
+- (instancetype)initWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter scheduleID:(NSString *)scheduleID message:(UAInAppMessage *)message {
     self = [super init];
     if (self) {
         self.adapter = adapter;
         self.scheduleID = scheduleID;
+        self.message = message;
     }
     return self;
 }
 
-+ (instancetype)dataWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter scheduleID:(NSString *)scheduleID {
-    return [[self alloc] initWithAdapter:adapter scheduleID:scheduleID];
++ (instancetype)dataWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter scheduleID:(NSString *)scheduleID message:(UAInAppMessage *)message {
+    return [[self alloc] initWithAdapter:adapter scheduleID:scheduleID message:message];
 }
 
 @end
@@ -214,6 +216,12 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
     UAInAppMessageScheduleData *data = self.scheduleData[schedule.identifier];
 
     if (!data) {
+        // Check the audience condtions before we create the adapter
+        if (![UAInAppMessageAudienceChecks checkDisplayAudienceConditions:info.message.audience]) {
+            UA_LDEBUG(@"Message audience conditions not met, skipping display for schedule:  %@", schedule.identifier);
+            return YES;
+        }
+
         id<UAInAppMessageAdapterProtocol> (^factory)(UAInAppMessage* message) = self.adapterFactories[@(info.message.displayType)];
 
         if (!factory) {
@@ -231,10 +239,19 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
             return NO;
         }
 
-        UAInAppMessageScheduleData *data = [UAInAppMessageScheduleData dataWithAdapter:adapter scheduleID:schedule.identifier];
+        UAInAppMessageScheduleData *data = [UAInAppMessageScheduleData dataWithAdapter:adapter
+                                                                            scheduleID:schedule.identifier
+                                                                               message:info.message];
         self.scheduleData[schedule.identifier] = data;
         [self prepareMessageWithScheduleData:data delay:0];
         return NO;
+    }
+
+    // Check the audience again before we allow the schedule to be ready
+    if (![UAInAppMessageAudienceChecks checkDisplayAudienceConditions:info.message.audience]) {
+        UA_LDEBUG(@"Message audience conditions not met, skipping display for schedule:  %@", schedule.identifier);
+        [self.scheduleData removeObjectForKey:schedule.identifier];
+        return YES;
     }
 
     // If the display is locked via timer return no
@@ -252,6 +269,7 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
         return NO;
     }
 
+
     UA_LTRACE(@"Schedule %@ ready!", schedule.identifier);
     return YES;
 }
@@ -266,13 +284,6 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
     UAInAppMessageScheduleData *scheduleData = self.scheduleData[schedule.identifier];
 
     if (!scheduleData) {
-        UA_LERR("InAppMessageManager - Missing schedule data for schedule: %@", schedule.identifier);
-        completionHandler();
-        return;
-    }
-
-    if (![UAInAppMessageAudienceChecks checkDisplayAudienceConditions:info.message.audience]) {
-        UA_LDEBUG("InAppMessageManager - Message no longer meets audience conditions, schedule: %@", schedule.identifier);
         completionHandler();
         return;
     }
@@ -346,6 +357,11 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
         UA_LDEBUG(@"Operation for schedule: %@ delay: %f", scheduleData.scheduleID, delay);
 
         dispatch_async(dispatch_get_main_queue(), ^{
+            // Check the audience condtions to break the prepare loop
+            if (![UAInAppMessageAudienceChecks checkDisplayAudienceConditions:scheduleData.message.audience]) {
+                return;
+            }
+
             [scheduleData.adapter prepare:^(UAInAppMessagePrepareResult result) {
                 UA_STRONGIFY(self);
                 UA_LDEBUG(@"Prepare result: %ld schedule: %@", (unsigned long)result, scheduleData.scheduleID);
