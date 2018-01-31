@@ -30,6 +30,7 @@
 		53911BDD1E23EBA500EE7007 /* UAChannelCaptureActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53911BDC1E23EBA500EE7007 /* UAChannelCaptureActionTest.m */; };
 		53BC50201E202FAA00E24306 /* UAChannelCaptureAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BC501F1E202FAA00E24306 /* UAChannelCaptureAction.m */; };
 		6114091E1DB19C1F001F82A5 /* UALandingPageOverlayView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6114091D1DB19C1F001F82A5 /* UALandingPageOverlayView.xib */; };
+		6E0B841C20227F01008A1F96 /* UAInAppMessageScheduleInfoTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E0B841B20227F01008A1F96 /* UAInAppMessageScheduleInfoTest.m */; };
 		6E12138E1E5D1B95006738FD /* UAScheduleDelay.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E12138C1E5D1B95006738FD /* UAScheduleDelay.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E12138F1E5D1B95006738FD /* UAScheduleDelay.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E12138D1E5D1B95006738FD /* UAScheduleDelay.m */; };
 		6E1213901E5D1B95006738FD /* UAScheduleDelay.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E12138D1E5D1B95006738FD /* UAScheduleDelay.m */; };
@@ -1466,6 +1467,7 @@
 		53BC501E1E202DED00E24306 /* UAChannelCaptureAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAChannelCaptureAction.h; path = ios/UAChannelCaptureAction.h; sourceTree = "<group>"; };
 		53BC501F1E202FAA00E24306 /* UAChannelCaptureAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAChannelCaptureAction.m; path = ios/UAChannelCaptureAction.m; sourceTree = "<group>"; };
 		6114091D1DB19C1F001F82A5 /* UALandingPageOverlayView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UALandingPageOverlayView.xib; sourceTree = "<group>"; };
+		6E0B841B20227F01008A1F96 /* UAInAppMessageScheduleInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageScheduleInfoTest.m; sourceTree = "<group>"; };
 		6E12138C1E5D1B95006738FD /* UAScheduleDelay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAScheduleDelay.h; path = common/UAScheduleDelay.h; sourceTree = "<group>"; };
 		6E12138D1E5D1B95006738FD /* UAScheduleDelay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAScheduleDelay.m; path = common/UAScheduleDelay.m; sourceTree = "<group>"; };
 		6E2E6D721EB3A34B006056BF /* UASwizzler+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UASwizzler+Internal.h"; path = "common/UASwizzler+Internal.h"; sourceTree = "<group>"; };
@@ -2690,6 +2692,7 @@
 				DF0221F31FDB03B100EF8C9D /* UAInAppMessageAudienceChecksTest.m */,
 				6E598D531FFDA0CC005B234B /* UAInAppMessageScheduleEditsTests.m */,
 				3C77BF912016B22900AD37F3 /* UAInAppMessageHTMLDisplayContentTest.m */,
+				6E0B841B20227F01008A1F96 /* UAInAppMessageScheduleInfoTest.m */,
 			);
 			name = "In-app Messaging";
 			sourceTree = "<group>";
@@ -4974,6 +4977,7 @@
 				CC64F1081D8B781C009CEF27 /* UAirshipTest.m in Sources */,
 				DFB5F1311FC4EE380085F784 /* UAComponentDisablerTests.m in Sources */,
 				6E598D862003F014005B234B /* UAInAppMessageResolutionEventTest.m in Sources */,
+				6E0B841C20227F01008A1F96 /* UAInAppMessageScheduleInfoTest.m in Sources */,
 				CC64F1031D8B781C009CEF27 /* UAInboxMessageListTest.m in Sources */,
 				9928146E1EF494BA00D0D388 /* UARateAppActionTest.m in Sources */,
 				CC64F1201D8B781C009CEF27 /* UAScheduleActionTests.m in Sources */,

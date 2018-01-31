@@ -8,10 +8,11 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAUtils.h"
 #import "UAGlobal.h"
-#import "UAInAppMessageScheduleInfo.h"
+#import "UAInAppMessageScheduleInfo+Internal.h"
 #import "UAInAppMessageManager.h"
 #import "UAInAppMessageAudienceChecks+Internal.h"
 #import "UAPush+Internal.h"
+#import "UAInAppMessage+Internal.h"
 #import "UAInAppMessageScheduleEdits+Internal.h"
 #import "UAScheduleEdits+Internal.h"
 
@@ -140,7 +141,9 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
         if ([createdTimeStamp compare:lastUpdate] == NSOrderedDescending) {
             // New in-app message
             NSError *error;
-            UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithJSON:message error:&error];
+            UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithJSON:message
+                                                                                          defaultSource:UAInAppMessageSourceRemoteData
+                                                                                                  error:&error];
             if (!scheduleInfo || error) {
                 UA_LERR(@"Failed to parse in-app message: %@ - %@", message, error);
                 continue;
