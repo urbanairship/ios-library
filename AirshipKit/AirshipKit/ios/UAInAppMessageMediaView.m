@@ -99,7 +99,7 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
             [self.webView setBackgroundColor:[UIColor blackColor]];
             [self.webView.scrollView setBackgroundColor:[UIColor blackColor]];
 
-            NSString *html = [NSString stringWithFormat:@"<body style=\"margin:0\"><video playsinline controls width=\"100%%\" src=\"%@\"></video></body>", self.mediaInfo.url];
+            NSString *html = [NSString stringWithFormat:@"<body style=\"margin:0\"><video playsinline controls height=\"100%%\" width=\"100%%\" src=\"%@\"></video></body>", self.mediaInfo.url];
             [self.webView loadHTMLString:html baseURL:[NSURL URLWithString:self.mediaInfo.url]];
 
             break;
