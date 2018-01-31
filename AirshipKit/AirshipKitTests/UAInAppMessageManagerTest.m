@@ -182,24 +182,13 @@
         return self.mockAdapter;
     } forDisplayType:UAInAppMessageDisplayTypeBanner];
 
-    XCTestExpectation *prepareCalled = [self expectationWithDescription:@"prepare should be called"];
-    [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
-        UA_STRONGIFY(self)
-        void (^prepareBlock)(UAInAppMessagePrepareResult);
-        [invocation getArgument:&prepareBlock atIndex:2];
-
-        // Expect schedule conditions changed when prepare completes/prep block runs
-        [[self.mockAutomationEngine expect] scheduleConditionsChanged];
-        prepareBlock(UAInAppMessagePrepareResultSuccess);
-        [prepareCalled fulfill];
-    }] prepare:OCMOCK_ANY];
-
     // Mock the checks to reject the audience
     id checks = [self mockForClass:[UAInAppMessageAudienceChecks class]];
     [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:self.scheduleInfo.message.audience];
 
     // should never display for display, as audience will fail first
     [[self.mockAdapter reject] display:OCMOCK_ANY];
+    [[self.mockAdapter reject] prepare:OCMOCK_ANY];
 
     __block BOOL executeCompletionCalled = NO;
 
@@ -208,8 +197,6 @@
     [self.manager executeSchedule:testSchedule completionHandler:^{
         executeCompletionCalled = YES;
     }];
-
-    [self waitForExpectationsWithTimeout:5 handler:nil];
 
     // Ensure the delegate calls the execute completion block
     XCTAssertTrue(executeCompletionCalled);
