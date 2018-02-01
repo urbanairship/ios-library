@@ -3,11 +3,29 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
-Version 9.0 - ??? ??, ????
+Version 9.0.0 - Feb 2, 2018
 ==================================
+
+Major release required for new in-app messaging capabilities.
+
 Changes
 -------
-- Removed a lot of deprecated code. Please see [Migration Guide](Documentation/Migration/Migration%20Guide.md#urban-airship-library-8x-to-90).
+- In-app messaging v2. The new in-app messaging module includes several different view types
+that are fully configurable, including modal, banner, and fullscreen. An in-app message is able to
+be triggered using the same rules as the Action automation module.
+- Automation schedule priority: Used to determine the execution order of schedules if multiple
+schedules are triggered by the same event.
+- Support for editing automation schedules.
+- New active session automation trigger. The trigger will increment its count if it has been scheduled
+during an active session instead of waiting for the next foreground.
+- New app version automation trigger. The trigger will increment its count if the app has been updated to
+a specified version.
+- Extended whitelist URL checking for URL loading instead of just JS bridge injection. By default these
+checks are disabled, but you can enable them with the AirshipConfigOptions field enableUrlWhitelisting.
+- A rate app action to prompt the user to rate the application.
+- Updated localizations.
+- Removed deprecated code. Please see [Migration Guide](Documentation/Migration/Migration%20Guide.md#urban-airship-library-8x-to-90).
+
 
 Version 8.6.3 - November 20, 2017
 ==================================

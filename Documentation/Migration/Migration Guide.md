@@ -17,7 +17,7 @@ UAScheduleDelay now supports multiple screens:
 * property: `NSString *screen` -> `NSArray *screens`
 
 ## In App Messaging
-Urban Airship's banner-only In-App Messaging feature has been replaced with a more functional In-App Messaging feature that supports banner, modal and full screen messages. Please refer to [In-App Messaging for iOS](https://docs.urbanairship.com/guides/ios-iam) for more information.
+Urban Airship's banner-only In-App Messaging feature has been replaced with a more functional In-App Messaging feature that supports banner, modal and full screen messages. Please refer to [In-App Messaging for iOS](https://docs.urbanairship.com/guides/ios-in-app-messaging/) for more information.
 
 ## Message Center
 UIWebView support has been removed from the UA Message Center. Other Message Center code has been renamed or removed. The changes are as follows:
@@ -74,10 +74,10 @@ UIWebView support has been removed from the UA Message Center. Other Message Cen
         * No replacement
     * [richContentWindow](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Classes/UAWebViewCallData.html#/c:objc(cs)UAWebViewCallData(py)richContentWindow)
         * No replacement
-        
+
 ### Other
 * [UAActionJSDelegate](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes.html#/c:objc(cs)UAActionJSDelegate)
     * [UAActionMetadataWebViewKey](https://docs.urbanairship.com/reference/libraries/ios/8.6.0/Constants.html#/c:@UAActionMetadataWebViewKey)
         * No replacement - no longer supported
- 
+
 ***See [legacy migration guide](Migration%20Guide%20(Legacy).md) for older migrations***
