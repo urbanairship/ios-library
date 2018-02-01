@@ -3,7 +3,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- * Builder class for a UAScheduleEdits.
+ * Builder class for UAScheduleEdits.
  */
 @interface UAScheduleEditsBuilder : NSObject
 

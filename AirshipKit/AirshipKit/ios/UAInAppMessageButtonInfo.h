@@ -22,7 +22,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageButtonInfoBehaviorType) {
 };
 
 /**
- * Builder class for an UAInAppMessageButtonInfo object.
+ * Builder class for UAInAppMessageButtonInfo.
  */
 @interface UAInAppMessageButtonInfoBuilder : NSObject
 

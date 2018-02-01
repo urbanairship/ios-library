@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- * Builder class for a UAInAppMessage.
+ * Builder class for UAInAppMessage.
  */
 @interface UAInAppMessageBuilder : NSObject
 

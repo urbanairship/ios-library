@@ -3,7 +3,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- * Display content for a in-app message.
+ * Display content for an in-app message.
  */
 @interface UAInAppMessageDisplayContent : NSObject
 

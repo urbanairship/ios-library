@@ -6,7 +6,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Custom display content.
+ * Display content for a custom in-app message.
  */
 @interface UAInAppMessageCustomDisplayContent : UAInAppMessageDisplayContent
 

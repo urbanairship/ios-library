@@ -4,7 +4,7 @@
 #import "UAInAppMessageAdapterProtocol.h"
 
 /**
- * Full screen display adapter.
+ * Full screen in-app message display adapter.
  */
 @interface UAInAppMessageFullScreenAdapter : NSObject <UAInAppMessageAdapterProtocol>
 

@@ -23,7 +23,7 @@ extern NSInteger const UAScheduleInfoMinPriority;
 extern NSUInteger const UAScheduleInfoMaxTriggers;
 
 /**
- * Builder class for a UAScheduleInfo.
+ * Builder class for UAScheduleInfo.
  */
 @interface UAScheduleInfoBuilder : NSObject
 

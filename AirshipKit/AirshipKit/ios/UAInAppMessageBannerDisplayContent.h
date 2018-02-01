@@ -46,7 +46,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageBannerContentLayoutType) {
 extern NSUInteger const UAInAppMessageBannerMaxButtons;
 
 /**
- * Builder class for a UAInAppMessageBannerDisplayContent.
+ * Builder class for UAInAppMessageBannerDisplayContent.
  */
 @interface UAInAppMessageBannerDisplayContentBuilder : NSObject
 
@@ -120,7 +120,7 @@ extern NSUInteger const UAInAppMessageBannerMaxButtons;
 @end
 
 /**
- * Display content for a in-app message banner.
+ * Display content for a banner in-app message.
  */
 @interface UAInAppMessageBannerDisplayContent : UAInAppMessageDisplayContent
 

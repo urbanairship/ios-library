@@ -4,7 +4,7 @@
 #import "UAInAppMessageAdapterProtocol.h"
 
 /**
- * Banner display adapter.
+ * Banner in-app message display adapter.
  */
 @interface UAInAppMessageBannerAdapter : NSObject <UAInAppMessageAdapterProtocol>
 

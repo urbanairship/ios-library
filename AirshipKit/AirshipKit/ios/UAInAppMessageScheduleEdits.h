@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- * Builder class for a UAInAppMessageScheduleEdits.
+ * Builder class for UAInAppMessageScheduleEdits.
  */
 @interface UAInAppMessageScheduleEditsBuilder : UAScheduleEditsBuilder
 
@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /**
- * Defines the scheduled in-app message.
+ * Defines edits for an existing in-app message.
  */
 @interface UAInAppMessageScheduleEdits : UAScheduleEdits
 

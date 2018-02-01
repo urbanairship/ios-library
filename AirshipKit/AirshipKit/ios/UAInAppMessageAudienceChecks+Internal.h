@@ -5,7 +5,7 @@
 @class UAInAppMessageAudience;
 
 /**
- * Class for checking if the current user is a member of an In App Message audience.
+ * Class for checking if the current user is a member of an in-app message audience.
  */
 @interface UAInAppMessageAudienceChecks : NSObject
 

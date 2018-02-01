@@ -4,7 +4,7 @@
 #import "UAInAppMessageAdapterProtocol.h"
 
 /**
- * Modal display adapter.
+ * Modal in-app message display adapter.
  */
 @interface UAInAppMessageModalAdapter : NSObject <UAInAppMessageAdapterProtocol>
 

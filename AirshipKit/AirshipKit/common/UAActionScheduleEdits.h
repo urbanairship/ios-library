@@ -6,7 +6,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Builder class for a UAActionScheduleEdits.
+ * Builder class for UAActionScheduleEdits.
  */
 @interface UAActionScheduleEditsBuilder : UAScheduleEditsBuilder
 

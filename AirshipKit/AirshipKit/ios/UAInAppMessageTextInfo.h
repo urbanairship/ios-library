@@ -56,7 +56,7 @@ typedef NS_OPTIONS(NSUInteger, UAInAppMessageTextInfoAlignmentType) {
 
 
 /**
- * Builder class for a UAInAppMessageTextInfo object.
+ * Builder class for UAInAppMessageTextInfo.
  */
 @interface UAInAppMessageTextInfoBuilder : NSObject
 

@@ -36,7 +36,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageModalContentLayoutType) {
 extern NSUInteger const UAInAppMessageModalMaxButtons;
 
 /**
- * Builder class for a UAInAppMessageModalDisplayContent.
+ * Builder class for UAInAppMessageModalDisplayContent.
  */
 @interface UAInAppMessageModalDisplayContentBuilder : NSObject
 
@@ -100,7 +100,7 @@ extern NSUInteger const UAInAppMessageModalMaxButtons;
 @end
 
 /**
- * Display content for an in-app modal message.
+ * Display content for a modal in-app message.
  */
 @interface UAInAppMessageModalDisplayContent : UAInAppMessageDisplayContent
 

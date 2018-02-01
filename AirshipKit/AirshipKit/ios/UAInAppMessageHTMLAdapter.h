@@ -4,7 +4,7 @@
 #import "UAInAppMessageAdapterProtocol.h"
 
 /**
- * HTML display adapter.
+ * HTML in-app message display adapter.
  */
 @interface UAInAppMessageHTMLAdapter : NSObject <UAInAppMessageAdapterProtocol>
 

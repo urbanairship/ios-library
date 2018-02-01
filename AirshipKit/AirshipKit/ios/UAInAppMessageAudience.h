@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- * Builder class for a UAInAppMessageAudience.
+ * Builder class for UAInAppMessageAudience.
  */
 @interface UAInAppMessageAudienceBuilder : NSObject
 
@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /**
- * Model object for an In App Message audience constraint.
+ * Model object for an in-app message audience constraint.
  */
 @interface UAInAppMessageAudience : NSObject
 

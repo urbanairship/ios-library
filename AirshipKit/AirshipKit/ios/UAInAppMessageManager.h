@@ -40,8 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /**
- * In-app message manager provides a control interface for creating,
- * canceling and executing in-app message schedules.
+ * Provides a control interface for creating, canceling and executing in-app message schedules.
  */
 @interface UAInAppMessageManager : UAComponent
 

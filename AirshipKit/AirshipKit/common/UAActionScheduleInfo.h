@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSString *const UAActionScheduleInfoActionsKey;
 
 /**
- * Builder class for a UAActionScheduleInfo.
+ * Builder class for UAActionScheduleInfo.
  */
 @interface UAActionScheduleInfoBuilder : UAScheduleInfoBuilder
 

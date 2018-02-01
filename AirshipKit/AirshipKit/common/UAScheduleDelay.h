@@ -82,7 +82,7 @@ typedef NS_ENUM(NSInteger, UAScheduleDelayAppState) {
 };
 
 /**
- * Builder class for a UAScheduleDelay.
+ * Builder class for UAScheduleDelay.
  */
 @interface UAScheduleDelayBuilder : NSObject
 

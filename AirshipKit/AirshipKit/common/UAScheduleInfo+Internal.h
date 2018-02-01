@@ -132,7 +132,7 @@ extern NSString *const UAScheduleInfoEditGracePeriodKey;
 @end
 
 /**
- * Builder class for a UAScheduleInfo.
+ * Builder class for UAScheduleInfo.
  */
 @interface UAScheduleInfoBuilder ()
 

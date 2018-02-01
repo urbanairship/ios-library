@@ -36,7 +36,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageFullScreenContentLayoutType) {
 extern NSUInteger const UAInAppMessageFullScreenMaxButtons;
 
 /**
- * Builder class for a UAInAppMessageFullScreenDisplayContent.
+ * Builder class for UAInAppMessageFullScreenDisplayContent.
  */
 @interface UAInAppMessageFullScreenDisplayContentBuilder : NSObject
 
@@ -96,7 +96,7 @@ extern NSUInteger const UAInAppMessageFullScreenMaxButtons;
 @end
 
 /**
- * Display content for a in-app message full screen.
+ * Display content for a full screen in-app message.
  */
 @interface UAInAppMessageFullScreenDisplayContent : UAInAppMessageDisplayContent
 

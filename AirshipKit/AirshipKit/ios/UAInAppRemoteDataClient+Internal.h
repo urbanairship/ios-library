@@ -10,7 +10,7 @@
 /**
  * Client class to connect the Remote Data and the In App Messaging services.
  * This class parses the remote data payloads, and asks the in app scheduler to
- * create, update, or delete In App messages, as appropriate.
+ * create, update, or delete in-app messages, as appropriate.
  */
 @interface UAInAppRemoteDataClient : NSObject
 

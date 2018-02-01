@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSString *const UAScheduleInfoInAppMessageKey;
 
 /**
- * Builder class for a UAInAppMessageScheduleInfo.
+ * Builder class for UAInAppMessageScheduleInfo.
  */
 @interface UAInAppMessageScheduleInfoBuilder : UAScheduleInfoBuilder
 
@@ -28,7 +28,7 @@ extern NSString *const UAScheduleInfoInAppMessageKey;
 @end
 
 /**
- * Defines the scheduled in-app message.
+ * Defines the schedule and content for an in-app message.
  */
 @interface UAInAppMessageScheduleInfo : UAScheduleInfo
 

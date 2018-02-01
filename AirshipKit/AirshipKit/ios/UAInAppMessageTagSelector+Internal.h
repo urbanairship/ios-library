@@ -16,7 +16,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageTagSelectorErrorCode) {
 };
 
 /**
- * Model object for an In App Message audience constraint's tag selector.
+ * Model object for an in-app message audience constraint's tag selector.
  */
 @interface UAInAppMessageTagSelector()
 
