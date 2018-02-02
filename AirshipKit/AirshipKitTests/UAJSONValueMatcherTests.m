@@ -33,6 +33,28 @@
     XCTAssertNil(error);
 }
 
+- (void)testEqualsBoolean {
+    UAJSONValueMatcher *matcher = [UAJSONValueMatcher matcherWhereBooleanEquals:NO];
+    XCTAssertTrue([matcher evaluateObject:@(NO)]);
+
+    XCTAssertFalse([matcher evaluateObject:nil]);
+    XCTAssertFalse([matcher evaluateObject:matcher]);
+    XCTAssertFalse([matcher evaluateObject:@"not cool"]);
+    XCTAssertFalse([matcher evaluateObject:@(1)]);
+    XCTAssertFalse([matcher evaluateObject:@(YES)]);
+}
+
+- (void)testEqualsBooleanPayload {
+    NSDictionary *json = @{ @"equals": @(YES) };
+    UAJSONValueMatcher *matcher = [UAJSONValueMatcher matcherWhereBooleanEquals:YES];
+
+    // Verify the JSONValue recreates the expected matcher
+    NSError *error = nil;
+    XCTAssertEqualObjects(matcher, [UAJSONValueMatcher matcherWithJSON:json error:&error]);
+    XCTAssertNil(error);
+}
+
+
 - (void)testEqualsNumber {
     UAJSONValueMatcher *matcher = [UAJSONValueMatcher matcherWhereNumberEquals:@(123.35)];
     XCTAssertTrue([matcher evaluateObject:@(123.35)]);
@@ -254,12 +276,6 @@
 
     // Invalid at_most value
     json = @{ @"at_most": @"cool story" };
-    error = nil;
-    XCTAssertNil([UAJSONValueMatcher matcherWithJSON:json error:&error]);
-    XCTAssertNotNil(error);
-
-    // Invalid equals value
-    json = @{ @"equals": @[] };
     error = nil;
     XCTAssertNil([UAJSONValueMatcher matcherWithJSON:json error:&error]);
     XCTAssertNotNil(error);

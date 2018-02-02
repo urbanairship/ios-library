@@ -8,9 +8,8 @@
 @interface UAJSONValueMatcher ()
 @property(nonatomic, strong) NSNumber *atLeast;
 @property(nonatomic, strong) NSNumber *atMost;
-@property(nonatomic, strong) NSNumber *equalsNumber;
-@property(nonatomic, copy) NSString *equalsString;
 @property(nonatomic, assign) NSNumber *isPresent;
+@property(nonatomic, copy) id equals;
 @property(nonatomic, copy) NSString *versionConstraint;
 @property(nonatomic, strong) UAVersionMatcher *versionMatcher;
 @property(nonatomic, strong) UAJSONPredicate *arrayPredicate;
@@ -33,7 +32,7 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
 - (NSDictionary *)payload {
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];
 
-    [payload setValue:self.equalsNumber ?: self.equalsString forKey:UAJSONValueMatcherEquals];
+    [payload setValue:self.equals forKey:UAJSONValueMatcherEquals];
     [payload setValue:self.atLeast forKey:UAJSONValueMatcherAtLeast];
     [payload setValue:self.atMost forKey:UAJSONValueMatcherAtMost];
     [payload setValue:self.isPresent forKey:UAJSONValueMatcherIsPresent];
@@ -49,16 +48,13 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
         return [self.isPresent boolValue] == (value != nil);
     }
 
-    if (self.equalsString && ![self.equalsString isEqual:value]) {
+    if (self.equals && ![self.equals isEqual:value]) {
         return NO;
     }
 
     NSNumber *numberValue = [value isKindOfClass:[NSNumber class]] ? value : nil;
     NSString *stringValue = [value isKindOfClass:[NSString class]] ? value : nil;
 
-    if (self.equalsNumber && !(numberValue && [self.equalsNumber isEqualToNumber:numberValue])) {
-        return NO;
-    }
 
     if (self.atLeast && !(numberValue && [self.atLeast compare:numberValue] != NSOrderedDescending)) {
         return NO;
@@ -119,13 +115,19 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
 
 + (instancetype)matcherWhereNumberEquals:(NSNumber *)number {
     UAJSONValueMatcher *matcher = [[UAJSONValueMatcher alloc] init];
-    matcher.equalsNumber = number;
+    matcher.equals = number;
+    return matcher;
+}
+
++ (instancetype)matcherWhereBooleanEquals:(BOOL)boolean {
+    UAJSONValueMatcher *matcher = [[UAJSONValueMatcher alloc] init];
+    matcher.equals = @(boolean);
     return matcher;
 }
 
 + (instancetype)matcherWhereStringEquals:(NSString *)string {
     UAJSONValueMatcher *matcher = [[UAJSONValueMatcher alloc] init];
-    matcher.equalsString = string;
+    matcher.equals = string;
     return matcher;
 }
 
@@ -173,16 +175,17 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
         return nil;
     }
 
+    if ([self isEqualMatcherExpression:json]) {
+        UAJSONValueMatcher *matcher = [[UAJSONValueMatcher alloc] init];
+        matcher.equals = json[UAJSONValueMatcherEquals];
+        return matcher;
+    }
+
     if ([self isNumericMatcherExpression:json]) {
         UAJSONValueMatcher *matcher = [[UAJSONValueMatcher alloc] init];
         matcher.atMost = json[UAJSONValueMatcherAtMost];
         matcher.atLeast = json[UAJSONValueMatcherAtLeast];
-        matcher.equalsNumber = json[UAJSONValueMatcherEquals];
         return matcher;
-    }
-
-    if ([self isStringMatcherExpression:json]) {
-        return [self matcherWhereStringEquals:json[UAJSONValueMatcherEquals]];
     }
 
     if ([self isPresentMatcherExpression:json]) {
@@ -218,16 +221,23 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
     return nil;
 }
 
++ (BOOL)isEqualMatcherExpression:(NSDictionary *)expression {
+    // "equals": *
+    if ([expression count] != 1) {
+        return NO;
+    }
+
+    return expression[UAJSONValueMatcherEquals] != nil;
+}
 
 + (BOOL)isNumericMatcherExpression:(NSDictionary *)expression {
-    // "equals": number | "at_least": number | "at_most": number | "at_least": number, "at_most": number
+    // "at_least": number | "at_most": number | "at_least": number, "at_most": number
     if ([expression count] == 0 || [expression count] > 2) {
         return NO;
     }
 
     if ([expression count] == 1) {
-        return [expression[UAJSONValueMatcherEquals] isKindOfClass:[NSNumber class]] ||
-        [expression[UAJSONValueMatcherAtLeast] isKindOfClass:[NSNumber class]] ||
+        return [expression[UAJSONValueMatcherAtLeast] isKindOfClass:[NSNumber class]] ||
         [expression[UAJSONValueMatcherAtMost] isKindOfClass:[NSNumber class]];
     }
 
@@ -237,15 +247,6 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
     }
 
     return [expression[UAJSONValueMatcherEquals] isKindOfClass:[NSNumber class]];
-}
-
-+ (BOOL)isStringMatcherExpression:(NSDictionary *)expression {
-    if ([expression count] != 1) {
-        return NO;
-    }
-
-    id subexp = expression[UAJSONValueMatcherEquals];
-    return [subexp isKindOfClass:[NSString class]];
 }
 
 + (BOOL)isPresentMatcherExpression:(NSDictionary *)expression {
@@ -285,10 +286,7 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
 }
 
 - (BOOL)isEqualToJSONValueMatcher:(nullable UAJSONValueMatcher *)matcher {
-    if (self.equalsNumber && (!matcher.equalsNumber || ![self.equalsNumber isEqualToNumber:matcher.equalsNumber])) {
-        return NO;
-    }
-    if (self.equalsString && (!matcher.equalsString || ![self.equalsString isEqualToString:matcher.equalsString])) {
+    if (self.equals && (!matcher.equals || ![self.equals isEqual:matcher.equals])) {
         return NO;
     }
     if (self.atLeast && (!matcher.atLeast || ![self.atLeast isEqualToNumber:matcher.atLeast])) {
@@ -314,7 +312,7 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
 
 - (NSUInteger)hash {
     NSUInteger result = 1;
-    result = 31 * result + [self.equalsNumber hash];
+    result = 31 * result + [self.equals hash];
     result = 31 * result + [self.atLeast hash];
     result = 31 * result + [self.atMost hash];
     result = 31 * result + [self.isPresent hash];

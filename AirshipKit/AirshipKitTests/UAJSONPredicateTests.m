@@ -157,6 +157,59 @@
     XCTAssertNil(error);
 }
 
+- (void)testEqualArray {
+    NSDictionary *json = @{ @"value": @{ @"equals": @[@"cool", @"story"]} };
+
+    NSError *error = nil;
+    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSON:json error:&error];
+
+    XCTAssertNil(error);
+    XCTAssertNotNil(predicate);
+
+    id value;
+    value = @[@"cool", @"story"];
+    XCTAssertTrue([predicate evaluateObject:value]);
+
+    value = @[@"cool"];
+    XCTAssertFalse([predicate evaluateObject:value]);
+
+    value = @[@"cool", @"story", @"another key"];
+    XCTAssertFalse([predicate evaluateObject:value]);
+
+    XCTAssertFalse([predicate evaluateObject:nil]);
+    XCTAssertFalse([predicate evaluateObject:predicate]);
+    XCTAssertFalse([predicate evaluateObject:@"bar"]);
+    XCTAssertFalse([predicate evaluateObject:@(1)]);
+    XCTAssertFalse([predicate evaluateObject:@(YES)]);
+}
+
+- (void)testEqualObject {
+    NSDictionary *json = @{ @"value": @{ @"equals": @{ @"cool": @"story" } } };
+
+    NSError *error = nil;
+    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSON:json error:&error];
+
+    XCTAssertNil(error);
+    XCTAssertNotNil(predicate);
+
+    id value;
+    value = @{ @"cool": @"story"};
+    XCTAssertTrue([predicate evaluateObject:value]);
+
+    value = @{ @"cool": @"story?"};
+    XCTAssertFalse([predicate evaluateObject:value]);
+
+    value = @{ @"cool": @"story", @"another_key": @"another_value" };
+    XCTAssertFalse([predicate evaluateObject:value]);
+
+    XCTAssertFalse([predicate evaluateObject:nil]);
+    XCTAssertFalse([predicate evaluateObject:predicate]);
+    XCTAssertFalse([predicate evaluateObject:@"bar"]);
+    XCTAssertFalse([predicate evaluateObject:@(1)]);
+    XCTAssertFalse([predicate evaluateObject:@(YES)]);
+}
+
+
 - (void)testInvalidPayload {
     NSError *error = nil;
 
