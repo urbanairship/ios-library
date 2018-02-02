@@ -76,6 +76,14 @@ extern NSString * const UAJSONValueMatcherErrorDomain;
 + (instancetype)matcherWhereNumberEquals:(NSNumber *)number;
 
 /**
+ * Factory method to create a matcher for an exact boolean.
+ *
+ * @param boolean The expected boolean value.
+ * @return A value matcher.
+ */
++ (instancetype)matcherWhereBooleanEquals:(BOOL)boolean;
+
+/**
  * Factory method to create a matcher for an exact string.
  *
  * @param string The expected string value.
