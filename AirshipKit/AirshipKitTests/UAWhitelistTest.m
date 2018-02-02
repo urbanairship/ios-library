@@ -56,6 +56,11 @@
         // Landing Page
         XCTAssertTrue([whitelist isWhitelisted:[NSURL URLWithString:@"https://dl.urbanairship.com/aaa/message_id"] scope:scope]);
     }
+
+    // YouTube
+    XCTAssertTrue([whitelist isWhitelisted:[NSURL URLWithString:@"https://*.youtube.com"] scope:UAWhitelistScopeOpenURL]);
+    XCTAssertFalse([whitelist isWhitelisted:[NSURL URLWithString:@"https://*.youtube.com"] scope:UAWhitelistScopeJavaScriptInterface]);
+    XCTAssertFalse([whitelist isWhitelisted:[NSURL URLWithString:@"https://*.youtube.com"] scope:UAWhitelistScopeAll]);
 }
 
 /**
