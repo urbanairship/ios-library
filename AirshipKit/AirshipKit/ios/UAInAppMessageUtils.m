@@ -5,6 +5,7 @@
 #import "UAInAppMessageButtonView+Internal.h"
 #import "UAActionRunner+Internal.h"
 #import "UAUtils.h"
+#import "UAirship.h"
 
 NSString *const UADefaultSerifFont = @"Times New Roman";
 NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
@@ -366,15 +367,23 @@ NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
         completionHandler(UAInAppMessagePrepareResultSuccess,nil);
         return;
     }
-    
+
+    NSURL *mediaURL = [NSURL URLWithString:media.url];
+
     if (media.type != UAInAppMessageMediaInfoTypeImage) {
+        if (![[UAirship shared].whitelist isWhitelisted:mediaURL scope:UAWhitelistScopeOpenURL]) {
+            UA_LERR(@"URL %@ not whitelisted. Unable to display media.", mediaURL);
+            completionHandler(UAInAppMessagePrepareResultCancel, nil);
+            return;
+        }
+
         UAInAppMessageMediaView *mediaView = [UAInAppMessageMediaView mediaViewWithMediaInfo:media];
-        completionHandler(UAInAppMessagePrepareResultSuccess,mediaView);
+
+        completionHandler(UAInAppMessagePrepareResultSuccess, mediaView);
         return;
     }
-    
-    NSURL *mediaURL = [NSURL URLWithString:media.url];
-    
+
+
     // Prefetch image
     [UAInAppMessageUtils prefetchContentsOfURL:mediaURL
                                      WithCache:imageCache
