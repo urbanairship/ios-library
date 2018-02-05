@@ -181,25 +181,23 @@ NSString *const UAEventKey = @"event";
         return;
     }
 
-    UA_LDEBUG(@"Adding %@ event %@.", event.eventType, event.eventID);
-    [self.eventManager addEvent:event sessionID:self.sessionID];
-    UA_LTRACE(@"Event added: %@.", event);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UA_LDEBUG(@"Adding %@ event %@.", event.eventType, event.eventID);
+        [self.eventManager addEvent:event sessionID:self.sessionID];
+        UA_LTRACE(@"Event added: %@.", event);
 
-    if ([event isKindOfClass:[UACustomEvent class]]) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        if ([event isKindOfClass:[UACustomEvent class]]) {
             [[NSNotificationCenter defaultCenter] postNotificationName:UACustomEventAdded
                                                                 object:self
                                                               userInfo:@{UAEventKey: event}];
-        });
-    }
+        }
 
-    if ([event isKindOfClass:[UARegionEvent class]]) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        if ([event isKindOfClass:[UARegionEvent class]]) {
             [[NSNotificationCenter defaultCenter] postNotificationName:UARegionEventAdded
                                                                 object:self
                                                               userInfo:@{UAEventKey: event}];
-        });
-    }
+        }
+    });
 }
 
 

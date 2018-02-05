@@ -120,11 +120,16 @@
     [[[mockEvent stub] andReturnValue:OCMOCK_VALUE(YES)] isValid];
 
     // Ensure event is added
-    [[self.mockEventManager expect] addEvent:mockEvent sessionID:OCMOCK_ANY];
+    XCTestExpectation *eventAdded = [self expectationWithDescription:@"Notification event added"];
+    [[[self.mockEventManager expect] andDo:^(NSInvocation *invocation) {
+        [eventAdded fulfill];
+    }] addEvent:mockEvent sessionID:OCMOCK_ANY];
+
 
     // Add valid event
     [self.analytics addEvent:mockEvent];
 
+    [self waitForExpectationsWithTimeout:1 handler:nil];
     [self.mockEventManager verify];
     [mockEvent stopMocking];
 }
@@ -157,8 +162,10 @@
 - (void)testAssociateDeviceIdentifiers {
 
     NSDictionary *identifiers = @{@"some identifer": @"some value"};
-
-    [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+    XCTestExpectation *eventAdded = [self expectationWithDescription:@"Notification event added"];
+    [[[self.mockEventManager expect] andDo:^(NSInvocation *invocation) {
+        [eventAdded fulfill];
+    }] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         if (![obj isKindOfClass:[UAAssociateIdentifiersEvent class]]) {
             return NO;
         }
@@ -170,6 +177,7 @@
     // Associate the identifiers
     [self.analytics associateDeviceIdentifiers:[UAAssociatedIdentifiers identifiersWithDictionary:identifiers]];
 
+    [self waitForExpectationsWithTimeout:1 handler:nil];
     XCTAssertEqualObjects(identifiers, [self.analytics currentAssociatedDeviceIdentifiers].allIDs, @"DeviceIdentifiers should match");
 
     // Verify the event was added
@@ -228,11 +236,13 @@
  * Test that tracking event adds itself on background
  */
 - (void)testTrackingEventBackground{
-
     [self.analytics trackScreen:@"test_screen"];
 
     // Expect that the event is added to the mock DB Manager upon background
-    [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+    XCTestExpectation *eventAdded = [self expectationWithDescription:@"Notification event added"];
+    [[[self.mockEventManager expect] andDo:^(NSInvocation *invocation) {
+        [eventAdded fulfill];
+    }] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         if (![obj isKindOfClass:[UAScreenTrackingEvent class]]) {
             return NO;
         }
@@ -246,6 +256,8 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification
                                                         object:nil];
 
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+
     [self.mockEventManager verify];
 }
 
@@ -257,7 +269,10 @@
     [self.analytics trackScreen:@"test_screen"];
 
     // Expect that the event is added to the mock DB Manager upon terminate
-    [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+    XCTestExpectation *eventAdded = [self expectationWithDescription:@"Notification event added"];
+    [[[self.mockEventManager expect] andDo:^(NSInvocation *invocation) {
+        [eventAdded fulfill];
+    }] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         if (![obj isKindOfClass:[UAScreenTrackingEvent class]]) {
             return NO;
         }
@@ -271,6 +286,8 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillTerminateNotification
                                                         object:nil];
 
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+
     [self.mockEventManager verify];
 }
 
@@ -281,7 +298,10 @@
     __block NSTimeInterval approxStartTime = [NSDate date].timeIntervalSince1970;
 
     // Expect that the mock event is added to the mock DB Manager
-    [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+    XCTestExpectation *eventAdded = [self expectationWithDescription:@"Notification event added"];
+    [[[self.mockEventManager expect] andDo:^(NSInvocation *invocation) {
+        [eventAdded fulfill];
+    }] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         if (![obj isKindOfClass:[UAScreenTrackingEvent class]]) {
             return NO;
         }
@@ -295,6 +315,8 @@
     }] sessionID:OCMOCK_ANY];
 
     [self.analytics trackScreen:@"second_screen"];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 
     [self.mockEventManager verify];
 }
