@@ -5,6 +5,7 @@
 /**
  * A notification service extension for downloading and attaching media.
  */
+__IOS_AVAILABLE(10.0) __TVOS_PROHIBITED __WATCHOS_PROHIBITED
 @interface UAMediaAttachmentExtension : UNNotificationServiceExtension
 
 /**

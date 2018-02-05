@@ -241,6 +241,8 @@ static NSString *urlForBlankPage = @"about:blank";
     }];
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-implementations"
 - (void)loadMessage:(UAInboxMessage *)message onlyIfChanged:(BOOL)onlyIfChanged {
     if (!message) {
         if (self.messageState == LOADING) {
@@ -276,6 +278,7 @@ static NSString *urlForBlankPage = @"about:blank";
         }
     }
 }
+#pragma GCC diagnostic pop
 
 - (void)loadMessageIntoWebView {
     self.title = self.message.title;
