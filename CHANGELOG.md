@@ -3,8 +3,20 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
-Version 9.0.0 - Feb 2, 2018
-==================================
+Version 9.0.1 - February 5, 2018
+================================
+
+Patch release to fix a CocoaPods iOS 9 deployment issue with the AirshipAppExtensions
+and fixes a background thread warning when adding analytic events from a background
+thread.
+
+Bug fixes
+---------
+- Fix CocoaPods iOS 9 deployment issue with the AirshipAppExtensions.
+- Fix background thread warning when adding an event on a background thread.
+
+Version 9.0.0 - February 2, 2018
+================================
 
 Major release required for new in-app messaging capabilities.
 
