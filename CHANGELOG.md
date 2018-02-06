@@ -7,7 +7,7 @@ Version 9.0.1 - February 5, 2018
 ================================
 
 Patch release to fix a CocoaPods iOS 9 deployment issue with the AirshipAppExtensions
-and fixes a background thread warning when adding analytic events from a background
+and fixes a Main Thread Checker warning when adding analytic events from a background
 thread.
 
 Bug fixes
