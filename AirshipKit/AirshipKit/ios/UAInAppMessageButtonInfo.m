@@ -6,6 +6,8 @@
 #import "UAColorUtils+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+NSUInteger const UAInAppMessageButtonInfoIDLimit = 100;
 NSString *const UAInAppMessageButtonInfoDomain = @"com.urbanairship.in_app_message_button_info";
 
 // JSON Keys and Values
@@ -48,8 +50,8 @@ NSString *const UAInAppMessageButtonInfoBehaviorDismissValue = @"dismiss";
         return NO;
     }
 
-    if (!self.identifier) {
-        UA_LERR(@"In-app button infos require an identifier");
+    if (!self.identifier.length || self.identifier.length > UAInAppMessageButtonInfoIDLimit) {
+        UA_LERR(@"In-app button infos require an identifier between [1, 100] characters");
         return NO;
     }
 

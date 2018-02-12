@@ -7,6 +7,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * Message identifier limit (100 characters).
+ */
+extern NSUInteger const UAInAppMessageIDLimit;
 
 /**
  * Builder class for UAInAppMessage.
@@ -18,8 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
-* The unique identifier for the message.
-*/
+ * Message identifier. Required. Must be between [1-100] characters.
+ */
 @property(nonatomic, copy, nullable) NSString *identifier;
 
 
