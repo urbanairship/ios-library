@@ -7,6 +7,7 @@
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 #import "UAInAppMessageAudience+Internal.h"
+#import "UAInAppMessageCustomDisplayContent.h"
 
 @interface UAInAppMessageTest : UABaseTest
 @property(nonatomic, strong) NSDictionary *json;
@@ -105,5 +106,41 @@
 
     XCTAssertEqual(UAInAppMessageSourceRemoteData, fromJSON.source);
 }
+
+- (void)testBuilder {
+    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
+        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{@"cool": @"story"}];
+        builder.identifier = [@"" stringByPaddingToLength:UAInAppMessageButtonInfoIDLimit withString:@"ID" startingAtIndex:0];
+    }];
+
+    XCTAssertNotNil(message);
+}
+
+- (void)testMissingID {
+    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
+        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{@"cool": @"story"}];
+    }];
+
+    XCTAssertNil(message);
+}
+
+- (void)testEmptyID {
+    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
+        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{@"cool": @"story"}];
+        builder.identifier = @"";
+    }];
+
+    XCTAssertNil(message);
+}
+
+- (void)testExceedsMaxIDLength {
+    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
+        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{@"cool": @"story"}];
+        builder.identifier = [@"" stringByPaddingToLength:UAInAppMessageButtonInfoIDLimit + 1 withString:@"YOLO" startingAtIndex:0];
+    }];
+
+    XCTAssertNil(message);
+}
+
 
 @end

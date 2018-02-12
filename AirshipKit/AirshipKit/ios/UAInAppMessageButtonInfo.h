@@ -22,6 +22,12 @@ typedef NS_ENUM(NSInteger, UAInAppMessageButtonInfoBehaviorType) {
 };
 
 /**
+ * Button identifier limit (100 characters).
+ */
+extern NSUInteger const UAInAppMessageButtonInfoIDLimit;
+
+
+/**
  * Builder class for UAInAppMessageButtonInfo.
  */
 @interface UAInAppMessageButtonInfoBuilder : NSObject
@@ -32,7 +38,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageButtonInfoBehaviorType) {
 @property(nonatomic, strong) UAInAppMessageTextInfo *label;
 
 /**
- * Button identifier.
+ * Button identifier. Required. Must be between [1-100] characters.
  */
 @property(nonatomic, copy) NSString *identifier;
 

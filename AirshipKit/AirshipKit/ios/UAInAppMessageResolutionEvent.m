@@ -7,6 +7,8 @@
 #import "UAUtils.h"
 #import "UAInAppMessageEventUtils+Internal.h"
 
+NSUInteger const MaxButtonDescriptionLength = 30;
+
 NSString *const UAInAppMessageResolutionEventType = @"in_app_resolution";
 
 // Keys
@@ -111,10 +113,18 @@ NSString *const UAInAppMessageResolutionEventExpired = @"expired";
             break;
 
         case UAInAppMessageResolutionTypeButtonClick:
+        {
             [resolutionData setValue:UAInAppMessageResolutionEventButtonClick forKey:UAInAppMessageResolutionEventTypeKey];
             [resolutionData setValue:resolution.buttonInfo.identifier forKey:UAInAppMessageResolutionEventButtonIDKey];
-            [resolutionData setValue:resolution.buttonInfo.label.text forKey:UAInAppMessageResolutionEventButtonDescriptionKey];
+
+            NSString *description = resolution.buttonInfo.label.text;
+            if (description.length > MaxButtonDescriptionLength) {
+                description = [description substringToIndex:MaxButtonDescriptionLength];
+            }
+
+            [resolutionData setValue:description forKey:UAInAppMessageResolutionEventButtonDescriptionKey];
             break;
+        }
 
         case UAInAppMessageResolutionTypeMessageClick:
             [resolutionData setValue:UAInAppMessageResolutionEventMessageClick forKey:UAInAppMessageResolutionEventTypeKey];

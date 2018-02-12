@@ -9,11 +9,13 @@
 #import "UAInAppMessageAudience+Internal.h"
 #import "UAGlobal.h"
 
+NSUInteger const UAInAppMessageIDLimit = 100;
+
 @implementation UAInAppMessageBuilder
 
 - (BOOL)isValid {
-    if (!self.identifier) {
-        UA_LERR(@"Messages require an ID.");
+    if (!self.identifier.length || self.identifier.length > UAInAppMessageIDLimit) {
+        UA_LERR(@"In-app message requires an identifier between [1, 100] characters");
         return NO;
     }
 
