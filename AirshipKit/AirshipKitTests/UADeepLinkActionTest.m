@@ -64,5 +64,16 @@
     [self.mockDelegate verify];
 }
 
+
+/**
+ * Test that strings are accepted.
+ */
+- (void)testAcceptsArgument {
+    id arg = [UAActionArguments argumentsWithValue: @"http://some-deep-link" withSituation:UASituationManualInvocation];
+
+    XCTAssertTrue([self.action acceptsArguments:arg]);
+}
+
+
 @end
 

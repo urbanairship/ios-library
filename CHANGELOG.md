@@ -3,6 +3,17 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 9.0.2 - February 12, 2018
+=================================
+
+Patch release to fix a crash with the deep link and landing page actions. Applications running 9.0.0 and 9.0.1 should update to this release.
+
+Bug fixes
+---------
+- Fix crash in the deep link and landing page action.
+- Added overlay behind the in-app message dialog.
+- Added missing checks for identifier lengths for both in-app messages and message buttons.
+
 Version 9.0.1 - February 5, 2018
 ================================
 

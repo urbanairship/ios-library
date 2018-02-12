@@ -10,7 +10,7 @@
         return NO;
     }
 
-    NSURL *url = [UAOpenExternalURLAction parseURLFromArguments:arguments.value];
+    NSURL *url = [UAOpenExternalURLAction parseURLFromArguments:arguments];
     if (!url) {
         return NO;
     }
